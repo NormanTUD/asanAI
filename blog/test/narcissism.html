@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narzisstische Manipulationsstrategien – Interaktive Visualisierung</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin: 20px 0 10px;
+            background: linear-gradient(90deg, #ff6b6b, #ffa500, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .section {
+            background: rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 1000px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .section h2 {
+            color: #ffa500;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .section p, .section .desc {
+            color: #ccc;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        .slider-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 15px 0;
+        }
+        .slider-item {
+            flex: 1 1 220px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .slider-item label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #ffcc80;
+            font-size: 0.9em;
+        }
+        .slider-item input[type="range"] {
+            width: 100%;
+            accent-color: #ff6b6b;
+        }
+        .slider-item .val {
+            text-align: right;
+            font-size: 1.3em;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        .slider-item .explain {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 4px;
+        }
+        canvas {
+            display: block;
+            margin: 15px auto;
+            max-width: 100%;
+        }
+        .chart-container {
+            position: relative;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 700px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .phase-indicator {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .phase-box {
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-align: center;
+            min-width: 120px;
+        }
+        .timeline-canvas {
+            border-radius: 12px;
+            background: rgba(0,0,0,0.25);
+        }
+        .legend-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 10px 0;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+        }
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+        .info-card {
+            background: rgba(255,107,107,0.1);
+            border-left: 4px solid #ff6b6b;
+            padding: 14px 18px;
+            border-radius: 0 10px 10px 0;
+            margin: 12px 0;
+        }
+        .info-card strong { color: #ffa500; }
+        #gaslightCanvas {
+            cursor: pointer;
+        }
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            border: none;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: bold;
+            margin: 5px;
+            transition: transform 0.15s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn:active { transform: scale(0.97); }
+        .center { text-align: center; }
+        .score-display {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            transition: color 0.3s;
+        }
+        .tactic-list {
+            columns: 2;
+            column-gap: 20px;
+        }
+        @media (max-width: 600px) {
+            .tactic-list { columns: 1; }
+        }
+        .tactic-list li {
+            break-inside: avoid;
+            margin-bottom: 8px;
+            padding: 6px 0;
+            list-style: none;
+            position: relative;
+            padding-left: 22px;
+        }
+        .tactic-list li::before {
+            content: "⚠️";
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🎭 Narzisstische Manipulationsstrategien</h1>
+<p class="subtitle">Interaktive Visualisierungen zum Verständnis psychologischer Manipulation</p>
+
+<!-- ============ SECTION 1: Love Bombing Cycle ============ -->
+<div class="section">
+    <h2>1. 🔄 Der narzisstische Kreislauf (Idealisierung → Abwertung → Verwerfen)</h2>
+    <p class="desc">
+        Narzissten folgen einem typischen Beziehungsmuster: Zuerst wird das Opfer mit überschwänglicher Zuneigung überschüttet 
+        (<strong>Love Bombing / Idealisierung</strong>), dann folgt die <strong>Abwertung</strong> durch Kritik, Gaslighting und 
+        emotionale Kälte, und schließlich das <strong>Verwerfen</strong> – nur um den Kreislauf mit <strong>Hoovering</strong> 
+        (Zurückholen) erneut zu starten.
+    </p>
+    
+    <div class="slider-group">
+        <div class="slider-item">
+            <label>⏱️ Zykluslänge (Monate)</label>
+            <input type="range" id="cycleLength" min="2" max="24" value="8" oninput="updateCycle()">
+            <div class="val" id="cycleLengthVal">8</div>
+            <div class="explain">Wie lang ein kompletter Zyklus dauert</div>
+        </div>
+        <div class="slider-item">
+            <label>💕 Love-Bombing Intensität</label>
+            <input type="range" id="loveBombIntensity" min="30" max="100" value="90" oninput="updateCycle()">
+            <div class="val" id="loveBombVal">90%</div>
+            <div class="explain">Wie extrem die anfängliche Idealisierung ist</div>
+        </div>
+        <div class="slider-item">
+            <label>📉 Abwertungstiefe</label>
+            <input type="range" id="devalDepth" min="30" max="100" value="80" oninput="updateCycle()">
+            <div class="val" id="devalVal">80%</div>
+            <div class="explain">Wie tief die emotionale Abwertung geht</div>
+        </div>
+        <div class="slider-item">
+            <label>🔁 Anzahl Zyklen</label>
+            <input type="range" id="numCycles" min="1" max="5" value="3" oninput="updateCycle()">
+            <div class="val" id="numCyclesVal">3</div>
+            <div class="explain">Wie oft sich das Muster wiederholt</div>
+        </div>
+    </div>
+
+    <div class="phase-indicator" id="phaseIndicator">
+        <div class="phase-box" style="background:rgba(0,200,100,0.25);color:#4cff9f;">💕 Idealisierung</div>
+        <div class="phase-box" style="background:rgba(255,165,0,0.25);color:#ffa500;">📉 Abwertung</div>
+        <div class="phase-box" style="background:rgba(255,50,50,0.25);color:#ff6b6b;">🗑️ Verwerfen</div>
+        <div class="phase-box" style="background:rgba(150,100,255,0.25);color:#b388ff;">🔁 Hoovering</div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="cycleChart" height="300"></canvas>
+    </div>
+    
+    <div class="info-card">
+        <strong>Warum funktioniert das?</strong> Das intermittierende Verstärken (mal Liebe, mal Entzug) erzeugt eine 
+        <em>Trauma-Bindung</em> – ähnlich wie bei einer Sucht. Das Opfer jagt dem „High" der Idealisierungsphase hinterher.
+    </div>
+</div>
+
+<!-- ============ SECTION 2: Gaslighting Simulation ============ -->
+<div class="section">
+    <h2>2. 🔥 Gaslighting – Realitätsverzerrung</h2>
+    <p class="desc">
+        Gaslighting ist eine Manipulationstechnik, bei der das Opfer dazu gebracht wird, an der eigenen Wahrnehmung zu zweifeln. 
+        Der Narzisst leugnet Gesagtes, verdreht Fakten und behauptet, das Opfer sei „zu empfindlich" oder „verrückt".
+    </p>
+
+    <div class="slider-group">
+        <div class="slider-item">
+            <label>🌫️ Gaslighting-Intensität</label>
+            <input type="range" id="gaslightLevel" min="0" max="100" value="0" oninput="updateGaslight()">
+            <div class="val" id="gaslightVal">0%</div>
+            <div class="explain">Bewege den Slider, um die Verzerrung zu sehen</div>
+        </div>
+        <div class="slider-item">
+            <label>🧠 Selbstvertrauen des Opfers</label>
+            <div class="score-display" id="confidenceScore">100%</div>
+            <div class="explain">Sinkt mit zunehmendem Gaslighting</div>
+        </div>
+    </div>
+
+    <canvas id="gaslightCanvas" width="700" height="320" class="timeline-canvas"></canvas>
+    
+    <div class="legend-box">
+        <div class="legend-item"><div class="legend-dot" style="background:#4cff9f;"></div> Objektive Realität</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;"></div> Wahrnehmung des Opfers (verzerrt)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffa500;"></div> Behauptung des Narzissten</div>
+    </div>
+
+    <div class="info-card">
+        <strong>Typische Gaslighting-Sätze:</strong><br>
+        „Das habe ich nie gesagt." · „Du bildest dir das ein." · „Du bist zu empfindlich." · 
+        „Alle anderen sehen das anders als du." · „Du verdrehst mal wieder alles."
+    </div>
+</div>
+
+<!-- ============ SECTION 3: Taktiken-Radar ============ -->
+<div class="section">
+    <h2>3. 🕸️ Manipulations-Radar: Taktiken im Überblick</h2>
+    <p class="desc">
+        Stelle mit den Slidern ein, wie stark ein Narzisst verschiedene Taktiken einsetzt. 
+        Das Radar-Diagramm zeigt das „Manipulationsprofil".
+    </p>
+
+    <div class="grid-2">
+        <div>
+            <div class="slider-group" style="flex-direction:column;">
+                <div class="slider-item">
+                    <label>💕 Love Bombing</label>
+                    <input type="range" id="r_lovebomb" min="0" max="10" value="9" oninput="updateRadar()">
+                </div>
+                <div class="slider-item">
+                    <label>🔥 Gaslighting</label>
+                    <input type="range" id="r_gaslight" min="0" max="10" value="8" oninput="updateRadar()">
+                </div>
+                <div class="slider-item">
+                    <label>🤫 Silent Treatment</label>
+                    <input type="range" id="r_silent" min="0" max="10" value="7" oninput="updateRadar()">
+                </div>
+                <div class="slider-item">
+                    <label>🎭 Triangulation</label>
+                    <input type="range" id="r_triangulation" min="0" max="10" value="6" oninput="updateRadar()">
+                </div>
+                <div class="slider-item">
+                    <label>🪞 Projektion</label>
+                    <input type="range" id="r_projection" min="0" max="10" value="7" oninput="updateRadar()">
+                </div>
+                <div class="slider-item">
+                    <label>🎯 Blame Shifting</label>
+                    <input type="range" id="r_blame" min="0" max="10" value="8" oninput="updateRadar()">
+                </div>
+                <div class="slider-item">
+                    <label>🔁 Hoovering</label>
+                    <input type="range" id="r_hoover" min="0" max="10" value="6" oninput="updateRadar()">
+                </div>
+                <div class="slider-item">
+                    <label>🎪 Flying Monkeys</label>
+                    <input type="range" id="r_flyingmonkeys" min="0" max="10" value="5" oninput="updateRadar()">
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="chart-container">
+                <canvas id="radarChart" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <strong>Erklärung der Taktiken:</strong>
+        <ul class="tactic-list">
+            <li><strong>Love Bombing:</strong> Überschwängliche Zuneigung, Geschenke, ständige Nachrichten – um schnell emotionale Abhängigkeit zu erzeugen.</li>
+            <li><strong>Gaslighting:</strong> Realität des Opfers wird systematisch in Frage gestellt.</li>
+            <li><strong>Silent Treatment:</strong> Bestrafung durch Schweigen und emotionalen Entzug.</li>
+            <li><strong>Triangulation:</strong> Einbeziehung Dritter, um Eifersucht und Unsicherheit zu erzeugen.</li>
+            <li><strong>Projektion:</strong> Eigene negative Eigenschaften werden dem Opfer zugeschrieben.</li>
+            <li><strong>Blame Shifting:</strong> Schuld wird immer auf das Opfer geschoben.</li>
+            <li><strong>Hoovering:</strong> Zurückholen des Opfers nach einer Trennung durch falsche Versprechungen.</li>
+            <li><strong>Flying Monkeys:</strong> Dritte werden instrumentalisiert, um das Opfer zu kontrollieren oder zu diskreditieren.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ SECTION 4: Emotional Impact Over Time ============ -->
+<div class="section">
+    <h2>4. 📊 Emotionale Auswirkungen auf das Opfer über die Zeit</h2>
+    <p class="desc">
+        Diese Visualisierung zeigt, wie sich verschiedene psychische Kennwerte des Opfers über die Dauer einer 
+        narzisstischen Beziehung verändern.
+    </p>
+
+    <div class="slider-group">
+        <div class="slider-item">
+            <label>📅 Beziehungsdauer (Jahre)</label>
+            <input type="range" id="relDuration" min="1" max="10" value="5" oninput="updateImpact()">
+            <div class="val" id="relDurationVal">5 Jahre</div>
+        </div>
+        <div class="slider-item">
+            <label>💪 Anfängliche Resilienz</label>
+            <input type="range" id="resilience" min="20" max="100" value="80" oninput="updateImpact()">
+            <div class="val" id="resilienceVal">80%</div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="impactChart" height="300"></canvas>
+    </div>
+
+    <div class="legend-box">
+        <div class="legend-item"><div class="legend-dot" style="background:#4cff9f;"></div> Selbstwertgefühl</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b;"></div> Angstlevel</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#64b5f6;"></div> Soziale Isolation</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffa500;"></div> Abhängigkeit vom Narzissten</div>
+    </div>
+</div>
+
+<!-- ============ SECTION 5: Power & Control Wheel ============ -->
+<div class="section">
+    <h2>5. 🎡 Macht- und Kontrollrad</h2>
+    <p class="desc">
+        Das Macht- und Kontrollrad zeigt, wie verschiedene Formen der Manipulation zusammenwirken, 
+        um das Opfer in einem Netz der Abhängigkeit zu halten. Klicke auf die Segmente für Details.
+    </p>
+
+    <div class="center">
+        <canvas id="wheelCanvas" width="500" height="500" class="timeline-canvas"></canvas>
+    </div>
+    <div id="wheelInfo" class="info-card" style="min-height:60px;">
+        <strong>Klicke auf ein Segment</strong> im Rad, um mehr über die jeweilige Kontrollstrategie zu erfahren.
+    </div>
+</div>
+
+<!-- ============ SECTION 6: Recovery ============ -->
+<div class="section">
+    <h2>6. 🌱 Erholung nach narzisstischem Missbrauch</h2>
+    <p class="desc">
+        Die gute Nachricht: Erholung ist möglich! Diese Simulation zeigt den typischen Heilungsverlauf 
+        nach dem Verlassen einer narzisstischen Beziehung.
+    </p>
+
+    <div class="slider-group">
+        <div class="slider-item">
+            <label>🛡️ Therapie / Unterstützung</label>
+            <input type="range" id="therapyLevel" min="0" max="100" value="70" oninput="updateRecovery()">
+            <div class="val" id="therapyVal">70%</div>
+            <div class="explain">Professionelle Hilfe & soziales Netzwerk</div>
+        </div>
+        <div class="slider-item">
+            <label>🚫 No-Contact Konsequenz</label>
+            <input type="range" id="noContact" min="0" max="100" value="80" oninput="updateRecovery()">
+            <div class="val" id="noContactVal">80%</div>
+            <div class="explain">Wie konsequent der Kontaktabbruch ist</div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <canvas id="recoveryChart" height="300"></canvas>
+    </div>
+
+    <div class="info-card">
+        <strong>💡 Wichtige Schritte zur Erholung:</strong><br>
+        ✅ No-Contact-Regel konsequent einhalten · ✅ Professionelle Therapie (z.B. Traumatherapie) · 
+        ✅ Psychoedukation über Narzissmus · ✅ Soziales Netzwerk aufbauen · 
+        ✅ Selbstfürsorge und Grenzen setzen lernen
+    </div>
+</div>
+
+<div style="text-align:center; padding:30px; color:#666; font-size:0.85em;">
+    ⚠️ Diese Seite dient der Aufklärung und ersetzt keine professionelle psychologische Beratung.<br>
+    Bei Betroffenheit wende dich an eine Beratungsstelle oder Therapeut:in.
+</div>
+
+<script>
+// ==========================================
+// 1. NARCISSISTIC CYCLE CHART
+// ==========================================
+let cycleChart;
+
+function generateCycleData() {
+    const cycleLen = parseInt(document.getElementById('cycleLength').value);
+    const loveIntensity = parseInt(document.getElementById('loveBombIntensity').value);
+    const devalDepth = parseInt(document.getElementById('devalDepth').value);
+    const numCycles = parseInt(document.getElementById('numCycles').value);
+
+    document.getElementById('cycleLengthVal').textContent = cycleLen;
+    document.getElementById('loveBombVal').textContent = loveIntensity + '%';
+    document.getElementById('devalVal').textContent = devalDepth + '%';
+    document.getElementById('numCyclesVal').textContent = numCycles;
+
+    const labels = [];
+    const narcData = [];
+    const victimSelfWorth = [];
+    const phases = [];
+
+    for (let c = 0; c < numCycles; c++) {
+        const totalPoints = cycleLen * 4;
+        for (let i = 0; i < totalPoints; i++) {
+            const month = c * cycleLen + (i / 4);
+            labels.push('M' + Math.round(month));
+
+            const progress = i / totalPoints;
+
+            let narcVal, selfWorth, phase;
+
+            if (progress < 0.3) {
+                // Love Bombing / Idealisierung
+                const t = progress / 0.3;
+                narcVal = 20 + loveIntensity * 0.8 * Math.sin(t * Math.PI / 2);
+                selfWorth = 50 + (loveIntensity * 0.4) * t;
+                phase = 'love';
+            } else if (progress < 0.65) {
+                // Abwertung
+                const t = (progress - 0.3) / 0.35;
+                narcVal = 20 + loveIntensity * 0.8 - (loveIntensity * 0.8 + devalDepth * 0.6) * t;
+                selfWorth = 50 + (loveIntensity * 0.4) - (loveIntensity * 0.4 + devalDepth * 0.5) * t;
+                phase = 'deval';
+            } else if (progress < 0.85) {
+                // Verwerfen
+                const t = (progress - 0.65) / 0.2;
+                narcVal = 20 - devalDepth * 0.6 + devalDepth * 0.2 * Math.sin(t * Math.PI);
+                selfWorth = 50 - devalDepth * 0.5 * (1 + 0.2 * t);
+                phase = 'discard';
+            } else {
+                // Hoovering
+                const t = (progress - 0.85) / 0.15;
+                narcVal = 20 - devalDepth * 0.3 + (loveIntensity * 0.5) * t;
+                selfWorth = 50 - devalDepth * 0.5 + devalDepth * 0.15 * t;
+                phase = 'hoover';
+            }
+
+            // Each cycle the baseline self-worth drops
+            selfWorth -= c * 12;
+
+            narcData.push(Math.max(-30, Math.min(100, narcVal)));
+            victimSelfWorth.push(Math.max(0, Math.min(100, selfWorth)));
+        }
+    }
+
+    return { labels, narcData, victimSelfWorth };
+}
+
+function updateCycle() {
+    const data = generateCycleData();
+
+    cycleChart.data.labels = data.labels;
+    cycleChart.data.datasets[0].data = data.narcData;
+    cycleChart.data.datasets[1].data = data.victimSelfWorth;
+    cycleChart.update();
+}
+
+function initCycleChart() {
+    const data = generateCycleData();
+    const ctx = document.getElementById('cycleChart').getContext('2d');
+
+    cycleChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [
+                {
+                    label: 'Zuneigung des Narzissten',
+                    data: data.narcData,
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255,107,107,0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 2.5
+                },
+                {
+                    label: 'Selbstwert des Opfers',
+                    data: data.victimSelfWorth,
+                    borderColor: '#4cff9f',
+                    backgroundColor: 'rgba(76,255,159,0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 2.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#ccc' } }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#888', maxTicksLimit: 15 },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                },
+                y: {
+                    min: -30, max: 110,
+                    ticks: { color: '#888' },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                }
+            },
+            interaction: { intersect: false, mode: 'index' }
+        }
+    });
+}
+
+// ==========================================
+// 2. GASLIGHTING CANVAS
+// ==========================================
+function updateGaslight() {
+    const level = parseInt(document.getElementById('gaslightLevel').value);
+    document.getElementById('gaslightVal').textContent = level + '%';
+
+    const confidence = Math.max(5, 100 - level * 0.9);
+    const confEl = document.getElementById('confidenceScore');
+    confEl.textContent = Math.round(confidence) + '%';
+
+    if (confidence > 70) confEl.style.color = '#4cff9f';
+    else if (confidence > 40) confEl.style.color = '#ffa500';
+    else confEl.style.color = '#ff6b6b';
+
+    drawGaslight(level);
+}
+
+function drawGaslight(level) {
+    const canvas = document.getElementById('gaslightCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(0, 0, W, H);
+
+    const points = 50;
+    const dx = W / points;
+
+    // Objective reality (green) – stable sine wave
+    ctx.beginPath();
+    ctx.strokeStyle = '#4cff9f';
+    ctx.lineWidth = 3;
+    for (let i = 0; i <= points; i++) {
+        const x = i * dx;
+        const y = H / 2 + Math.sin(i * 0.3) * 40;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Narcissist's claim (orange) – inverted/shifted
+    ctx.beginPath();
+    ctx.strokeStyle = '#ffa500';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 4]);
+    for (let i = 0; i <= points; i++) {
+        const x = i * dx;
+        const y = H / 2 - Math.sin(i * 0.3) * 40 * (level / 100);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Victim's distorted perception (red) – increasingly chaotic
+    ctx.beginPath();
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2.5;
+    for (let i = 0; i <= points; i++) {
+        const x = i * dx;
+        const distortion = (level / 100) * (Math.random() - 0.5) * 80;
+        const drift = (level / 100) * Math.sin(i * 0.15) * 50;
+        const y = H / 2 + Math.sin(i * 0.3) * 40 * (1 - level / 200) + distortion + drift;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Labels
+    ctx.font = '13px Segoe UI';
+    ctx.fillStyle = '#888';
+    ctx.fillText('Zeit →', W - 55, H - 10);
+    ctx.fillText('Wahrnehmung', 5, 18);
+
+    // Fog overlay for high gaslighting
+    if (level > 30) {
+        ctx.fillStyle = `rgba(80, 40, 80, ${level / 300})`;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.font = `${14 + level / 8}px Segoe UI`;
+        ctx.fillStyle = `rgba(255, 165, 0, ${level / 120})`;
+        ctx.textAlign = 'center';
+
+        const phrases = [
+            '"Das habe ich nie gesagt."',
+            '"Du bildest dir das ein."',
+            '"Du bist zu empfindlich."',
+            '"Das ist nie passiert."',
+            '"Alle sehen das anders."',
+            '"Du verdrehst alles."'
+        ];
+
+        for (let p = 0; p < Math.min(phrases.length, Math.floor(level / 15)); p++) {
+            const px = W * 0.15 + Math.sin(p * 2.1 + Date.now() / 3000) * W * 0.3;
+            const py = 40 + p * 45;
+            ctx.fillText(phrases[p], px + W * 0.2, py);
+        }
+        ctx.textAlign = 'start';
+    }
+}
+
+// ==========================================
+// 3. RADAR CHART
+// ==========================================
+let radarChart;
+
+function getRadarValues() {
+    return [
+        parseInt(document.getElementById('r_lovebomb').value),
+        parseInt(document.getElementById('r_gaslight').value),
+        parseInt(document.getElementById('r_silent').value),
+        parseInt(document.getElementById('r_triangulation').value),
+        parseInt(document.getElementById('r_projection').value),
+        parseInt(document.getElementById('r_blame').value),
+        parseInt(document.getElementById('r_hoover').value),
+        parseInt(document.getElementById('r_flyingmonkeys').value)
+    ];
+}
+
+function updateRadar() {
+    radarChart.data.datasets[0].data = getRadarValues();
+    radarChart.update();
+}
+
+function initRadarChart() {
+    const ctx = document.getElementById('radarChart').getContext('2d');
+    radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: [
+                'Love Bombing', 'Gaslighting', 'Silent Treatment',
+                'Triangulation', 'Projektion', 'Blame Shifting',
+                'Hoovering', 'Flying Monkeys'
+            ],
+            datasets: [{
+                label: 'Manipulationsprofil',
+                data: getRadarValues(),
+                backgroundColor: 'rgba(255, 107, 107, 0.25)',
+                borderColor: '#ff6b6b',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#ffa500',
+                pointBorderColor: '#fff',
+                pointRadius: 5,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: {
+                    min: 0, max: 10,
+                    ticks: { stepSize: 2, color: '#888', backdropColor: 'transparent' },
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    angleLines: { color: 'rgba(255,255,255,0.1)' },
+                    pointLabels: { color: '#ffcc80', font: { size: 11 } }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#ccc' } }
+            }
+        }
+    });
+}
+
+// ==========================================
+// 4. EMOTIONAL IMPACT CHART
+// ==========================================
+let impactChart;
+
+function generateImpactData() {
+    const years = parseInt(document.getElementById('relDuration').value);
+    const resilience = parseInt(document.getElementById('resilience').value);
+
+    document.getElementById('relDurationVal').textContent = years + ' Jahre';
+    document.getElementById('resilienceVal').textContent = resilience + '%';
+
+    const labels = [];
+    const selfWorth = [];
+    const anxiety = [];
+    const isolation = [];
+    const dependency = [];
+
+    const points = years * 12;
+    for (let i = 0; i <= points; i++) {
+        const t = i / points; // 0 to 1
+        const month = i;
+        labels.push(month % 12 === 0 ? `Jahr ${month / 12}` : '');
+
+        // Self-worth decays exponentially, modulated by resilience
+        const resilienceFactor = resilience / 100;
+        const decay = Math.exp(-t * (3.5 - resilienceFactor * 2));
+        selfWorth.push(Math.max(5, resilienceFactor * 85 * decay + 10 + Math.sin(t * 20) * 5));
+
+        // Anxiety increases
+        anxiety.push(Math.min(95, 10 + (1 - decay) * 70 * (1.1 - resilienceFactor * 0.3) + Math.sin(t * 15) * 5));
+
+        // Social isolation increases
+        isolation.push(Math.min(90, 5 + (1 - decay) * 65 * (1 - resilienceFactor * 0.2)));
+
+        // Dependency on narcissist increases then plateaus
+        dependency.push(Math.min(90, 15 + 70 * (1 - Math.exp(-t * 4)) * (1.1 - resilienceFactor * 0.3)));
+    }
+
+    return { labels, selfWorth, anxiety, isolation, dependency };
+}
+
+function updateImpact() {
+    const data = generateImpactData();
+    impactChart.data.labels = data.labels;
+    impactChart.data.datasets[0].data = data.selfWorth;
+    impactChart.data.datasets[1].data = data.anxiety;
+    impactChart.data.datasets[2].data = data.isolation;
+    impactChart.data.datasets[3].data = data.dependency;
+    impactChart.update();
+}
+
+function initImpactChart() {
+    const data = generateImpactData();
+    const ctx = document.getElementById('impactChart').getContext('2d');
+
+    impactChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [
+                {
+                    label: 'Selbstwertgefühl',
+                    data: data.selfWorth,
+                    borderColor: '#4cff9f',
+                    backgroundColor: 'rgba(76,255,159,0.08)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                },
+                {
+                    label: 'Angstlevel',
+                    data: data.anxiety,
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255,107,107,0.08)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                },
+                {
+                    label: 'Soziale Isolation',
+                    data: data.isolation,
+                    borderColor: '#64b5f6',
+                    backgroundColor: 'rgba(100,181,246,0.08)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                },
+                {
+                    label: 'Abhängigkeit',
+                    data: data.dependency,
+                    borderColor: '#ffa500',
+                    backgroundColor: 'rgba(255,165,0,0.08)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { labels: { color: '#ccc' } } },
+            scales: {
+                x: {
+                    ticks: { color: '#888', maxTicksLimit: 12 },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                },
+                y: {
+                    min: 0, max: 100,
+                    ticks: { color: '#888', callback: v => v + '%' },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                }
+            },
+            interaction: { intersect: false, mode: 'index' }
+        }
+    });
+}
+
+// ==========================================
+// 5. POWER & CONTROL WHEEL
+// ==========================================
+const wheelSegments = [
+    {
+        label: 'Emotionaler\nMissbrauch',
+        color: '#ff6b6b',
+        info: '<strong>Emotionaler Missbrauch:</strong> Ständige Kritik, Demütigung, Beschimpfungen, Namensgebung. Das Opfer wird systematisch entwertet, bis es glaubt, wertlos zu sein.'
+    },
+    {
+        label: 'Isolation',
+        color: '#ffa500',
+        info: '<strong>Isolation:</strong> Kontakte zu Freunden und Familie werden unterbunden. Der Narzisst kontrolliert, mit wem das Opfer spricht, wohin es geht und was es liest.'
+    },
+    {
+        label: 'Finanzielle\nKontrolle',
+        color: '#ffcc00',
+        info: '<strong>Finanzielle Kontrolle:</strong> Zugang zu Geld wird eingeschränkt. Das Opfer muss um Erlaubnis bitten, Geld auszugeben. Finanzielle Abhängigkeit wird erzeugt.'
+    },
+    {
+        label: 'Einschüchterung',
+        color: '#b388ff',
+        info: '<strong>Einschüchterung:</strong> Drohende Blicke, Schreien, Gegenstände zerstören, Drohungen. Das Opfer lebt in ständiger Angst und Anspannung.'
+    },
+    {
+        label: 'Kinder\ninstrumentalisieren',
+        color: '#64b5f6',
+        info: '<strong>Kinder instrumentalisieren:</strong> Kinder werden als Druckmittel benutzt, gegen das Opfer aufgehetzt oder als Spione eingesetzt.'
+    },
+    {
+        label: 'Schuld-\numkehr',
+        color: '#4cff9f',
+        info: '<strong>Schuldumkehr:</strong> Egal was passiert – das Opfer ist schuld. Der Narzisst übernimmt nie Verantwortung und dreht jede Situation so, dass das Opfer sich schuldig fühlt.'
+    },
+    {
+        label: 'Minimieren &\nLeugnen',
+        color: '#ff80ab',
+        info: '<strong>Minimieren & Leugnen:</strong> Missbrauch wird heruntergespielt oder komplett geleugnet. „So schlimm war das doch nicht." „Das bildest du dir ein."'
+    },
+    {
+        label: 'Privilegien\nbeanspruchen',
+        color: '#80deea',
+        info: '<strong>Privilegien beanspruchen:</strong> Der Narzisst behandelt das Opfer wie einen Diener, trifft alle Entscheidungen allein und definiert die Rollen in der Beziehung.'
+    }
+];
+
+function drawWheel(highlightIndex = -1) {
+    const canvas = document.getElementById('wheelCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+    const cx = W / 2;
+    const cy = H / 2;
+    const R = Math.min(W, H) / 2 - 30;
+
+    ctx.clearRect(0, 0, W, H);
+
+    const segCount = wheelSegments.length;
+    const angleStep = (Math.PI * 2) / segCount;
+
+    for (let i = 0; i < segCount; i++) {
+        const startAngle = i * angleStep - Math.PI / 2;
+        const endAngle = startAngle + angleStep;
+        const seg = wheelSegments[i];
+
+        const isHighlight = i === highlightIndex;
+        const r = isHighlight ? R + 8 : R;
+
+        // Draw segment
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, startAngle, endAngle);
+        ctx.closePath();
+
+        ctx.fillStyle = isHighlight ? seg.color : seg.color + '88';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Label
+        const midAngle = startAngle + angleStep / 2;
+        const labelR = r * 0.65;
+        const lx = cx + Math.cos(midAngle) * labelR;
+        const ly = cy + Math.sin(midAngle) * labelR;
+
+        ctx.save();
+        ctx.translate(lx, ly);
+        ctx.fillStyle = isHighlight ? '#fff' : '#ddd';
+        ctx.font = isHighlight ? 'bold 12px Segoe UI' : '11px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const lines = seg.label.split('\n');
+        lines.forEach((line, li) => {
+            ctx.fillText(line, 0, (li - (lines.length - 1) / 2) * 14);
+        });
+        ctx.restore();
+    }
+
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, 45, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fill();
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffa500';
+    ctx.font = 'bold 11px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('MACHT &', cx, cy - 8);
+    ctx.fillText('KONTROLLE', cx, cy + 8);
+}
+
+function handleWheelClick(e) {
+    const canvas = document.getElementById('wheelCanvas');
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const dx = mx - cx;
+    const dy = my - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const R = Math.min(canvas.width, canvas.height) / 2 - 30;
+
+    if (dist < 45 || dist > R + 15) {
+        drawWheel(-1);
+        document.getElementById('wheelInfo').innerHTML = '<strong>Klicke auf ein Segment</strong> im Rad, um mehr über die jeweilige Kontrollstrategie zu erfahren.';
+        return;
+    }
+
+    let angle = Math.atan2(dy, dx) + Math.PI / 2;
+    if (angle < 0) angle += Math.PI * 2;
+
+    const segCount = wheelSegments.length;
+    const segIndex = Math.floor(angle / (Math.PI * 2 / segCount)) % segCount;
+
+    drawWheel(segIndex);
+    document.getElementById('wheelInfo').innerHTML = wheelSegments[segIndex].info;
+}
+
+// ==========================================
+// 6. RECOVERY CHART
+// ==========================================
+let recoveryChart;
+
+function generateRecoveryData() {
+    const therapy = parseInt(document.getElementById('therapyLevel').value);
+    const noContact = parseInt(document.getElementById('noContact').value);
+
+    document.getElementById('therapyVal').textContent = therapy + '%';
+    document.getElementById('noContactVal').textContent = noContact + '%';
+
+    const labels = [];
+    const selfWorth = [];
+    const anxiety = [];
+    const freedom = [];
+
+    const months = 36;
+    for (let i = 0; i <= months; i++) {
+        labels.push(i % 6 === 0 ? `Monat ${i}` : '');
+        const t = i / months;
+
+        const therapyFactor = therapy / 100;
+        const ncFactor = noContact / 100;
+        const healRate = 0.5 + therapyFactor * 0.35 + ncFactor * 0.15;
+
+        // Self-worth recovery – starts low, recovers
+        const swBase = 15 + 75 * (1 - Math.exp(-t * 3 * healRate));
+        // Setbacks if no-contact is low
+        const setback = (1 - ncFactor) * Math.sin(t * 12) * 15;
+        selfWorth.push(Math.max(5, Math.min(95, swBase + setback)));
+
+        // Anxiety decreases
+        const anxBase = 85 - 70 * (1 - Math.exp(-t * 2.5 * healRate));
+        anxiety.push(Math.max(5, Math.min(95, anxBase - setback * 0.5)));
+
+        // Sense of freedom increases
+        freedom.push(Math.min(95, 5 + 85 * (1 - Math.exp(-t * 2 * healRate))));
+    }
+
+    return { labels, selfWorth, anxiety, freedom };
+}
+
+function updateRecovery() {
+    const data = generateRecoveryData();
+    recoveryChart.data.labels = data.labels;
+    recoveryChart.data.datasets[0].data = data.selfWorth;
+    recoveryChart.data.datasets[1].data = data.anxiety;
+    recoveryChart.data.datasets[2].data = data.freedom;
+    recoveryChart.update();
+}
+
+function initRecoveryChart() {
+    const data = generateRecoveryData();
+    const ctx = document.getElementById('recoveryChart').getContext('2d');
+
+    recoveryChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [
+                {
+                    label: 'Selbstwertgefühl',
+                    data: data.selfWorth,
+                    borderColor: '#4cff9f',
+                    backgroundColor: 'rgba(76,255,159,0.1)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                },
+                {
+                    label: 'Angstlevel',
+                    data: data.anxiety,
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255,107,107,0.1)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                },
+                {
+                    label: 'Freiheitsgefühl',
+                    data: data.freedom,
+                    borderColor: '#64b5f6',
+                    backgroundColor: 'rgba(100,181,246,0.1)',
+                    fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#ccc' } },
+                title: {
+                    display: true,
+                    text: '🌱 Heilungsverlauf nach Trennung',
+                    color: '#ffa500',
+                    font: { size: 14 }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#888', maxTicksLimit: 8 },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                },
+                y: {
+                    min: 0, max: 100,
+                    ticks: { color: '#888', callback: v => v + '%' },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                }
+            },
+            interaction: { intersect: false, mode: 'index' }
+        }
+    });
+}
+
+// ==========================================
+// INIT EVERYTHING
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    initCycleChart();
+    drawGaslight(0);
+    initRadarChart();
+    initImpactChart();
+    drawWheel(-1);
+    initRecoveryChart();
+
+    document.getElementById('wheelCanvas').addEventListener('click', handleWheelClick);
+
+    // Animate gaslighting phrases
+    setInterval(() => {
+        const level = parseInt(document.getElementById('gaslightLevel').value);
+        if (level > 20) drawGaslight(level);
+    }, 2000);
+});
+</script>
+
+</body>
+</html>
