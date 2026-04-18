@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pullback – Visuell erklärt</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            padding: 30px 20px 15px;
+            background: linear-gradient(135deg, #1a1a3e, #0a0a1a);
+        }
+        header h1 {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, #00c6ff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        header p { color: #aaa; margin-top: 8px; font-size: 1.15em; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+        .section {
+            background: #12122a;
+            border: 1px solid #2a2a5a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            font-size: 1.4em;
+            color: #a855f7;
+            margin-bottom: 12px;
+        }
+        .section p {
+            line-height: 1.8;
+            font-size: 1.05em;
+            color: #c8c8e0;
+            margin-bottom: 8px;
+        }
+
+        .canvas-wrap {
+            background: #0d0d24;
+            border-radius: 12px;
+            border: 1px solid #2a2a5a;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        canvas { display: block; width: 100%; cursor: pointer; }
+
+        .controls {
+            display: flex; flex-wrap: wrap; gap: 12px;
+            margin-top: 14px; align-items: center;
+        }
+        button.btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #a855f7, #6d28d9);
+            color: #fff; border: none; border-radius: 8px;
+            font-size: 1em; cursor: pointer; transition: transform 0.15s;
+        }
+        button.btn:hover { transform: scale(1.05); }
+        button.btn.secondary {
+            background: linear-gradient(135deg, #2a2a5a, #1a1a3e);
+            border: 1px solid #4a4a8a;
+        }
+
+        .story-text {
+            background: #1a1a3e;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 14px;
+            min-height: 60px;
+            line-height: 1.8;
+            color: #d0d0f0;
+            font-size: 1.08em;
+        }
+
+        .analogy-box {
+            background: linear-gradient(135deg, #1a1a3e, #12122a);
+            border-left: 4px solid #facc15;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            font-size: 1.05em;
+            line-height: 1.7;
+        }
+        .analogy-box strong { color: #facc15; }
+
+        .progress-bar {
+            display: flex; gap: 6px; margin-top: 14px;
+        }
+        .progress-dot {
+            width: 40px; height: 6px; border-radius: 3px;
+            background: #2a2a5a; transition: background 0.3s;
+        }
+        .progress-dot.active { background: #a855f7; }
+        .progress-dot.done { background: #22c55e; }
+
+        @media (max-width: 700px) {
+            header h1 { font-size: 1.5em; }
+            .controls { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🔄 Was ist ein Pullback?</h1>
+    <p>Kein Mathe-Jargon. Nur Bilder und Geschichten.</p>
+</header>
+
+<div class="container">
+
+    <!-- ANALOGIE -->
+    <div class="section">
+        <h2>🗺️ Die Landkarten-Analogie</h2>
+        <p>
+            Stell dir vor: Du hast eine <strong style="color:#f97316">Wetterkarte</strong> von einem Land.
+            Auf dieser Karte siehst du, wo es regnet, wo die Sonne scheint, wie warm es ist.
+        </p>
+        <p>
+            Jetzt hast du ein <strong style="color:#00c6ff">Foto aus dem Weltraum</strong> – es zeigt dasselbe Land,
+            aber verzerrt, gedreht, gestaucht. Die Karte und das Foto zeigen das Gleiche, aber anders.
+        </p>
+        <div class="analogy-box">
+            <strong>Der Pullback</strong> ist wie das Übertragen der Wetter-Informationen
+            von der Karte zurück auf das Satellitenfoto. Du „ziehst" die Information
+            von einem Bild auf das andere zurück – auch wenn die Formen anders aussehen.
+        </div>
+    </div>
+
+    <!-- INTERAKTIVE STORY -->
+    <div class="section">
+        <h2>🎬 Schritt für Schritt – Klick dich durch!</h2>
+        <p>Klicke auf „Weiter", um die Geschichte des Pullbacks visuell zu erleben.</p>
+
+        <div class="progress-bar" id="progressBar"></div>
+
+        <div class="canvas-wrap">
+            <canvas id="storyCanvas" width="1100" height="550"></canvas>
+        </div>
+
+        <div class="story-text" id="storyText">
+            Klicke auf <strong>Weiter</strong>, um zu starten!
+        </div>
+
+        <div class="controls">
+            <button class="btn secondary" id="prevBtn">← Zurück</button>
+            <button class="btn" id="nextBtn">Weiter →</button>
+        </div>
+    </div>
+
+    <!-- INTERAKTIVES BEISPIEL -->
+    <div class="section">
+        <h2>🎮 Spiel damit! Zieh den Punkt herum</h2>
+        <p>
+            Ziehe den <strong style="color:#fff">weißen Punkt</strong> auf der linken Fläche herum.
+            Beobachte, wie sich alles auf der rechten Fläche verändert – und wie die
+            Information „zurückgezogen" wird.
+        </p>
+
+        <div class="canvas-wrap">
+            <canvas id="playCanvas" width="1100" height="520"></canvas>
+        </div>
+
+        <div class="story-text" id="playText">
+            Klicke und ziehe den weißen Punkt auf der linken Seite!
+        </div>
+    </div>
+
+    <!-- WARUM IST DAS WICHTIG -->
+    <div class="section">
+        <h2>💡 Warum ist das nützlich?</h2>
+
+        <div class="canvas-wrap">
+            <canvas id="useCaseCanvas" width="1100" height="400"></canvas>
+        </div>
+
+        <div class="analogy-box" style="border-left-color: #22c55e; margin-top: 16px;">
+            <strong style="color:#22c55e;">Alltagsbeispiele:</strong><br>
+            🗺️ <strong>GPS-Navigation:</strong> Dein Handy „zieht" die Straßenkarte auf deinen Bildschirm zurück – egal wie du das Handy drehst.<br>
+            🎨 <strong>Textur-Mapping in Spielen:</strong> Ein 2D-Bild wird auf eine 3D-Figur „gezogen" – das ist ein Pullback!<br>
+            🌍 <strong>Kartografie:</strong> Die Erdkugel wird auf eine flache Karte projiziert. Entfernungen und Winkel „zurückziehen" = Pullback.<br>
+            🎵 <strong>Musik-Transposition:</strong> Ein Lied in eine andere Tonart verschieben – die Struktur bleibt, die Töne ändern sich.
+        </div>
+    </div>
+
+    <!-- ZUSAMMENFASSUNG -->
+    <div class="section">
+        <h2>🧠 Zusammenfassung in einem Bild</h2>
+        <p>Der ganze Pullback auf einen Blick:</p>
+        <div class="canvas-wrap">
+            <canvas id="summaryCanvas" width="1100" height="450"></canvas>
+        </div>
+        <div class="analogy-box">
+            <strong>Merke dir:</strong> Der Pullback nimmt Information, die auf einer „Ziel-Welt" lebt,
+            und überträgt sie zurück in die „Ausgangs-Welt". Dabei benutzt er die Verbindung
+            zwischen beiden Welten (die Abbildung), um alles korrekt zu übersetzen.
+            <br><br>
+            ➡️ Die Abbildung geht <strong>vorwärts</strong> (von A nach B).<br>
+            ⬅️ Der Pullback geht <strong>rückwärts</strong> (Information von B zurück nach A).
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+//  HELPERS
+// ============================================================
+function arrow(ctx, x1, y1, x2, y2, color, lw, headSize) {
+    headSize = headSize || 12;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw || 2;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    const a = Math.atan2(y2 - y1, x2 - x1);
+    ctx.save();
+    ctx.translate(x2, y2);
+    ctx.rotate(a);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-headSize, -headSize / 2.5);
+    ctx.lineTo(-headSize, headSize / 2.5);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+}
+
+function curvedArrow(ctx, x1, y1, x2, y2, bend, color, lw, headSize) {
+    headSize = headSize || 12;
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 + bend;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw || 2;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.quadraticCurveTo(mx, my, x2, y2);
+    ctx.stroke();
+    const t = 0.96;
+    const bx = (1-t)*(1-t)*x1 + 2*(1-t)*t*mx + t*t*x2;
+    const by = (1-t)*(1-t)*y1 + 2*(1-t)*t*my + t*t*y2;
+    const a = Math.atan2(y2 - by, x2 - bx);
+    ctx.save();
+    ctx.translate(x2, y2);
+    ctx.rotate(a);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-headSize, -headSize / 2.5);
+    ctx.lineTo(-headSize, headSize / 2.5);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+}
+
+function blob(ctx, cx, cy, r, color, fillAlpha, wobble) {
+    ctx.save();
+    ctx.beginPath();
+    for (let a = 0; a < Math.PI * 2; a += 0.02) {
+        let rr = r;
+        if (wobble) {
+            for (let w of wobble) rr += w.amp * Math.sin(w.freq * a + (w.phase || 0));
+        }
+        const px = cx + rr * Math.cos(a), py = cy + rr * Math.sin(a);
+        a < 0.01 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = color.replace('1)', fillAlpha + ')').replace('rgb', 'rgba');
+    if (color.startsWith('#')) {
+        ctx.fillStyle = color + Math.round(fillAlpha * 255).toString(16).padStart(2, '0');
+    }
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+}
+
+function label(ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color;
+    ctx.font = `bold ${size || 20}px sans-serif`;
+    ctx.textAlign = align || 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x, y);
+    ctx.textAlign = 'left';
+}
+
+function drawCloud(ctx, cx, cy, w, h, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha || 0.15;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, w, h, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, w, h, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+}
+
+// ============================================================
+//  STORY CANVAS (Step-by-step)
+// ============================================================
+const storyCanvas = document.getElementById('storyCanvas');
+const storyCtx = storyCanvas.getContext('2d');
+const storyText = document.getElementById('storyText');
+const progressBar = document.getElementById('progressBar');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+const stories = [
+    {
+        text: `Hier sind zwei Welten: <strong style="color:#00c6ff">Welt A</strong> (links) und <strong style="color:#f97316">Welt B</strong> (rechts). Stell dir vor, Welt A ist dein Zimmer und Welt B ist eine Karte deines Zimmers.`,
+        draw: (ctx, W, H, t) => {
+            drawCloud(ctx, 270, 280, 180, 160, '#00c6ff', 0.1);
+            label(ctx, '🏠 Welt A', 270, 100, '#00c6ff', 26);
+            label(ctx, '(dein Zimmer)', 270, 130, '#5599cc', 16);
+
+            drawCloud(ctx, 830, 280, 180, 160, '#f97316', 0.1);
+            label(ctx, '🗺️ Welt B', 830, 100, '#f97316', 26);
+            label(ctx, '(die Karte)', 830, 130, '#cc8855', 16);
+
+            // Cute room items in A
+            label(ctx, '🛏️', 220, 250, '#fff', 40);
+            label(ctx, '🪑', 320, 300, '#fff', 35);
+            label(ctx, '📚', 250, 340, '#fff', 30);
+
+            // Map items in B
+            ctx.save();
+            ctx.globalAlpha = 0.5 + 0.3 * Math.sin(t * 0.05);
+            label(ctx, '▭', 790, 250, '#f97316', 30);
+            label(ctx, '◇', 870, 290, '#f97316', 25);
+            label(ctx, '▪', 810, 330, '#f97316', 20);
+            ctx.restore();
+        }
+    },
+    {
+        text: `Es gibt eine <strong style="color:#a855f7">Verbindung</strong> zwischen den beiden Welten – eine Abbildung. Sie sagt: „Dieses Ding in deinem Zimmer entspricht diesem Symbol auf der Karte."`,
+        draw: (ctx, W, H, t) => {
+            drawCloud(ctx, 270, 280, 180, 160, '#00c6ff', 0.1);
+            label(ctx, '🏠 Welt A', 270, 100, '#00c6ff', 26);
+            drawCloud(ctx, 830, 280, 180, 160, '#f97316', 0.1);
+            label(ctx, '🗺️ Welt B', 830, 100, '#f97316', 26);
+
+            label(ctx, '🛏️', 220, 250, '#fff', 40);
+            label(ctx, '🪑', 320, 300, '#fff', 35);
+            label(ctx, '📚', 250, 340, '#fff', 30);
+
+            label(ctx, '▭', 790, 250, '#f97316', 30);
+            label(ctx, '◇', 870, 290, '#f97316', 25);
+            label(ctx, '▪', 810, 330, '#f97316', 20);
+
+            // Connecting arrows
+            const pulse = 0.6 + 0.4 * Math.sin(t * 0.06);
+            ctx.save();
+            ctx.globalAlpha = pulse;
+            curvedArrow(ctx, 260, 250, 775, 250, -40, '#a855f7', 3, 14);
+            curvedArrow(ctx, 340, 300, 855, 290, -20, '#a855f7', 3, 14);
+            curvedArrow(ctx, 275, 340, 795, 330, 20, '#a855f7', 3, 14);
+            ctx.restore();
+
+            label(ctx, '↔ Verbindung', 550, 200, '#a855f7', 22);
+            label(ctx, '„Das Bett ist hier, der Stuhl ist da..."', 550, 235, '#8866bb', 15);
+        }
+    },
+    {
+        text: `Jetzt kommt das Spannende: Auf <strong style="color:#f97316">Welt B</strong> (der Karte) gibt es <strong style="color:#22c55e">Zusatz-Information</strong> – zum Beispiel: Temperatur! Warme und kalte Zonen sind eingezeichnet.`,
+        draw: (ctx, W, H, t) => {
+            drawCloud(ctx, 270, 280, 180, 160, '#00c6ff', 0.1);
+            label(ctx, '🏠 Welt A', 270, 100, '#00c6ff', 26);
+            drawCloud(ctx, 830, 280, 180, 160, '#f97316', 0.1);
+            label(ctx, '🗺️ Welt B', 830, 100, '#f97316', 26);
+
+            // Temperature overlay on B
+            ctx.save();
+            const grd = ctx.createRadialGradient(800, 260, 20, 800, 260, 140);
+            grd.addColorStop(0, 'rgba(255, 80, 80, 0.4)');
+            grd.addColorStop(0.5, 'rgba(255, 200, 50, 0.25)');
+            grd.addColorStop(1, 'rgba(50, 100, 255, 0.3)');
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.ellipse(830, 280, 175, 155, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            label(ctx, '🌡️ Temperatur-Info', 830, 460, '#22c55e', 18);
+            label(ctx, '🔴 warm', 750, 240, '#ff6666', 16);
+            label(ctx, '🔵 kalt', 910, 340, '#6688ff', 16);
+
+            // A is still plain
+            label(ctx, '❓', 270, 280, '#555', 60);
+            label(ctx, 'Hier fehlt die Info noch!', 270, 400, '#666', 15);
+        }
+    },
+    {
+        text: `<strong style="color:#facc15">Der Pullback!</strong> Wir „ziehen" die Temperatur-Information von der Karte <strong>zurück</strong> in dein Zimmer. Jetzt weißt du: Neben dem Bett ist es warm, beim Regal ist es kalt!`,
+        draw: (ctx, W, H, t) => {
+            drawCloud(ctx, 270, 280, 180, 160, '#00c6ff', 0.1);
+            label(ctx, '🏠 Welt A', 270, 100, '#00c6ff', 26);
+            drawCloud(ctx, 830, 280, 180, 160, '#f97316', 0.1);
+            label(ctx, '🗺️ Welt B', 830, 100, '#f97316', 26);
+
+            // Temperature on B
+            ctx.save();
+            const grd = ctx.createRadialGradient(800, 260, 20, 800, 260, 140);
+            grd.addColorStop(0, 'rgba(255, 80, 80, 0.35)');
+            grd.addColorStop(0.5, 'rgba(255, 200, 50, 0.2)');
+            grd.addColorStop(1, 'rgba(50, 100, 255, 0.25)');
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.ellipse(830, 280, 175, 155, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // PULLBACK arrow
+            const bounce = Math.sin(t * 0.08) * 8;
+            ctx.save();
+            ctx.setLineDash([12, 8]);
+            curvedArrow(ctx, 780, 380 + bounce, 350, 380 + bounce, 60, '#facc15', 4, 16);
+            ctx.setLineDash([]);
+            ctx.restore();
+            label(ctx, '⬅️ PULLBACK!', 550, 430 + bounce, '#facc15', 24);
+            label(ctx, 'Information zurückziehen', 550, 460 + bounce, '#ccaa33', 15);
+
+            // Temperature now on A too!
+            ctx.save();
+            const grd2 = ctx.createRadialGradient(240, 260, 15, 240, 260, 130);
+            grd2.addColorStop(0, 'rgba(255, 80, 80, 0.35)');
+            grd2.addColorStop(0.5, 'rgba(255, 200, 50, 0.2)');
+            grd2.addColorStop(1, 'rgba(50, 100, 255, 0.25)');
+            ctx.fillStyle = grd2;
+            ctx.beginPath();
+            ctx.ellipse(270, 280, 175, 155, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            label(ctx, '🛏️🔴', 220, 250, '#fff', 30);
+            label(ctx, '🪑🟡', 320, 300, '#fff', 28);
+            label(ctx, '📚🔵', 250, 340, '#fff', 25);
+
+            label(ctx, '✅ Jetzt hat Welt A die Info!', 270, 460, '#22c55e', 16);
+        }
+    },
+    {
+        text: `<strong>Wichtig:</strong> Die Verbindung geht <strong style="color:#a855f7">vorwärts</strong> (A → B), aber die Information wird <strong style="color:#facc15">rückwärts</strong> gezogen (B → A). Das ist der Kern des Pullbacks!`,
+        draw: (ctx, W, H, t) => {
+            drawCloud(ctx, 270, 280, 160, 140, '#00c6ff', 0.1);
+            label(ctx, 'Welt A', 270, 120, '#00c6ff', 26);
+            drawCloud(ctx, 830, 280, 160, 140, '#f97316', 0.1);
+            label(ctx, 'Welt B', 830, 120, '#f97316', 26);
+
+            // Forward arrow (top)
+            const p1 = 0.6 + 0.4 * Math.sin(t * 0.05);
+            ctx.save();
+            ctx.globalAlpha = p1;
+            curvedArrow(ctx, 400, 200, 700, 200, -50, '#a855f7', 4, 16);
+            label(ctx, 'Verbindung →', 550, 140, '#a855f7', 20);
+            label(ctx, '(geht vorwärts)', 550, 165, '#7744aa', 14);
+            ctx.restore();
+
+            // Backward arrow (bottom)
+            const p2 = 0.6 + 0.4 * Math.sin(t * 0.05 + Math.PI);
+            ctx.save();
+            ctx.globalAlpha = p2;
+            ctx.setLineDash([10, 6]);
+            curvedArrow(ctx, 700, 370, 400, 370, 50, '#facc15', 4, 16);
+            ctx.setLineDash([]);
+            label(ctx, '← Pullback', 550, 435, '#facc15', 20);
+            label(ctx, '(zieht Info rückwärts)', 550, 460, '#aa8833', 14);
+            ctx.restore();
+
+            // Emoji summary
+            label(ctx, '📦', 270, 280, '#fff', 50);
+            label(ctx, '📦 + 🌡️', 830, 280, '#fff', 40);
+
+            // Result
+            ctx.save();
+            ctx.globalAlpha = 0.5 + 0.5 * Math.abs(Math.sin(t * 0.04));
+            label(ctx, '→ 📦 + 🌡️', 270, 400, '#facc15', 22);
+            ctx.restore();
+        }
+    },
+    {
+        text: `Und das Coole: Auch wenn Welt A und Welt B <strong>ganz unterschiedlich geformt</strong> sind – der Pullback funktioniert trotzdem! Er passt die Information an die Form von A an.`,
+        draw: (ctx, W, H, t) => {
+            // Wobbly A
+            ctx.save();
+            ctx.beginPath();
+            for (let a = 0; a < Math.PI * 2; a += 0.02) {
+                let r = 150 + 30 * Math.sin(3 * a + t * 0.02) + 15 * Math.cos(5 * a);
+                const px = 270 + r * Math.cos(a), py = 280 + r * Math.sin(a);
+                a < 0.01 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 198, 255, 0.08)';
+            ctx.fill();
+            ctx.strokeStyle = '#00c6ff';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.restore();
+            label(ctx, 'Welt A', 270, 100, '#00c6ff', 24);
+            label(ctx, '(komische Form)', 270, 125, '#5599cc', 14);
+
+            // Square-ish B
+            ctx.save();
+            ctx.fillStyle = 'rgba(249, 115, 22, 0.08)';
+            ctx.strokeStyle = '#f97316';
+            ctx.lineWidth = 2.5;
+            roundRect(ctx, 680, 140, 300, 280, 20);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+            label(ctx, 'Welt B', 830, 100, '#f97316', 24);
+            label(ctx, '(andere Form)', 830, 125, '#cc8855', 14);
+
+            // Color pattern on B
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const hue = (i * 50 + j * 70 + t) % 360;
+                    ctx.fillStyle = `hsla(${hue}, 70%, 55%, 0.3)`;
+                    ctx.fillRect(695 + i * 56, 155 + j * 65, 50, 58);
+                }
+            }
+
+            // Pullback arrow
+            ctx.save();
+            ctx.setLineDash([10, 6]);
+            curvedArrow(ctx, 670, 350, 420, 320, 60, '#facc15', 3, 14);
+            ctx.setLineDash([]);
+            ctx.restore();
+            label(ctx, '⬅️ Pullback', 550, 400, '#facc15', 20);
+
+            // Color pattern adapted to A's shape
+            ctx.save();
+            ctx.globalAlpha = 0.4;
+            for (let a = 0; a < Math.PI * 2; a += 0.3) {
+                for (let d = 40; d < 140; d += 30) {
+                    let r = d + 10 * Math.sin(3 * a + t * 0.02);
+                    const px = 270 + r * Math.cos(a), py = 280 + r * Math.sin(a);
+                    const hue = (a * 80 + d * 2 + t) % 360;
+                    ctx.fillStyle = `hsla(${hue}, 70%, 55%, 0.5)`;
+                    ctx.                    ctx.beginPath();
+                    ctx.arc(px, py, 12, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.restore();
+
+            label(ctx, '✅ Passt sich an!', 270, 460, '#22c55e', 18);
+        }
+    }
+];
+
+// Round rect helper
+function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+}
+
+let storyStep = -1;
+let storyT = 0;
+
+// Build progress dots
+for (let i = 0; i < stories.length; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot';
+    progressBar.appendChild(dot);
+}
+
+function updateProgress() {
+    const dots = progressBar.querySelectorAll('.progress-dot');
+    dots.forEach((d, i) => {
+        d.className = 'progress-dot';
+        if (i < storyStep) d.classList.add('done');
+        if (i === storyStep) d.classList.add('active');
+    });
+}
+
+function goToStep(step) {
+    storyStep = Math.max(-1, Math.min(stories.length - 1, step));
+    if (storyStep >= 0) {
+        storyText.innerHTML = stories[storyStep].text;
+    } else {
+        storyText.innerHTML = 'Klicke auf <strong>Weiter</strong>, um zu starten!';
+    }
+    storyT = 0;
+    updateProgress();
+    prevBtn.style.opacity = storyStep <= 0 ? '0.4' : '1';
+    nextBtn.textContent = storyStep >= stories.length - 1 ? '✅ Fertig!' : 'Weiter →';
+}
+
+nextBtn.addEventListener('click', () => {
+    if (storyStep < stories.length - 1) goToStep(storyStep + 1);
+});
+prevBtn.addEventListener('click', () => {
+    if (storyStep > 0) goToStep(storyStep - 1);
+});
+
+function animStory() {
+    storyT++;
+    const W = storyCanvas.width, H = storyCanvas.height;
+    storyCtx.clearRect(0, 0, W, H);
+
+    if (storyStep >= 0 && storyStep < stories.length) {
+        stories[storyStep].draw(storyCtx, W, H, storyT);
+    } else {
+        // Intro screen
+        label(storyCtx, '👆 Klicke „Weiter" um zu starten', 550, 280, '#666', 22);
+    }
+    requestAnimationFrame(animStory);
+}
+goToStep(-1);
+animStory();
+
+
+// ============================================================
+//  INTERACTIVE PLAY CANVAS (Section 3)
+// ============================================================
+const playCanvas = document.getElementById('playCanvas');
+const playCtx = playCanvas.getContext('2d');
+const playText = document.getElementById('playText');
+
+let dragPoint = { x: 0.5, y: 0.5 }; // normalized 0..1
+let isDragging = false;
+let playT = 0;
+
+// Map function: a fun nonlinear warp
+function mapPoint(nx, ny) {
+    // φ: some visible distortion
+    const u = nx * nx + 0.1 * Math.sin(ny * 4);
+    const v = nx * ny + 0.2 * Math.cos(nx * 3);
+    return { u: Math.max(0, Math.min(1, u)), v: Math.max(0, Math.min(1, v)) };
+}
+
+// Temperature function on B
+function tempAt(u, v) {
+    return Math.sin(u * 3.5) * Math.cos(v * 3.5);
+}
+
+function drawPlay() {
+    playT++;
+    const W = playCanvas.width, H = playCanvas.height;
+    const ctx = playCtx;
+    ctx.clearRect(0, 0, W, H);
+
+    const leftX = 50, leftY = 60, leftW = 440, leftH = 400;
+    const rightX = 610, rightY = 60, rightW = 440, rightH = 400;
+
+    // --- Draw Welt B (right) with temperature ---
+    ctx.save();
+    ctx.fillStyle = 'rgba(249, 115, 22, 0.05)';
+    roundRect(ctx, rightX, rightY, rightW, rightH, 16);
+    ctx.fill();
+    ctx.strokeStyle = '#f97316';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    label(ctx, '🗺️ Welt B – hat die Info (Temperatur)', rightX + rightW / 2, rightY - 15, '#f97316', 17);
+
+    // Temperature grid on B
+    const res = 20;
+    for (let i = 0; i < res; i++) {
+        for (let j = 0; j < res; j++) {
+            const u = i / res, v = j / res;
+            const temp = tempAt(u, v);
+            const r = temp > 0 ? Math.round(temp * 255) : 0;
+            const b = temp < 0 ? Math.round(-temp * 255) : 0;
+            ctx.fillStyle = `rgba(${r}, ${Math.round(80 + Math.abs(temp) * 80)}, ${b}, 0.6)`;
+            ctx.fillRect(
+                rightX + u * rightW,
+                rightY + v * rightH,
+                rightW / res + 1,
+                rightH / res + 1
+            );
+        }
+    }
+
+    // Mapped point on B
+    const mapped = mapPoint(dragPoint.x, dragPoint.y);
+    const bpx = rightX + mapped.u * rightW;
+    const bpy = rightY + mapped.v * rightH;
+    ctx.beginPath();
+    ctx.arc(bpx, bpy, 10, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.strokeStyle = '#f97316';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // --- Draw Welt A (left) with pullback temperature ---
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 198, 255, 0.05)';
+    roundRect(ctx, leftX, leftY, leftW, leftH, 16);
+    ctx.fill();
+    ctx.strokeStyle = '#00c6ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+
+    label(ctx, '🏠 Welt A – Pullback holt die Info hierher!', leftX + leftW / 2, leftY - 15, '#00c6ff', 17);
+
+    // Pullback temperature on A
+    for (let i = 0; i < res; i++) {
+        for (let j = 0; j < res; j++) {
+            const ax = i / res, ay = j / res;
+            const m = mapPoint(ax, ay);
+            const temp = tempAt(m.u, m.v); // pullback!
+            const r = temp > 0 ? Math.round(temp * 255) : 0;
+            const bl = temp < 0 ? Math.round(-temp * 255) : 0;
+            ctx.fillStyle = `rgba(${r}, ${Math.round(80 + Math.abs(temp) * 80)}, ${bl}, 0.6)`;
+            ctx.fillRect(
+                leftX + ax * leftW,
+                leftY + ay * leftH,
+                leftW / res + 1,
+                leftH / res + 1
+            );
+        }
+    }
+
+    // Draggable point on A
+    const apx = leftX + dragPoint.x * leftW;
+    const apy = leftY + dragPoint.y * leftH;
+
+    // Glow
+    ctx.save();
+    ctx.shadowColor = '#fff';
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.arc(apx, apy, 14, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = '#00c6ff';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(apx, apy, 14, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Connecting dashed line
+    ctx.save();
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = 'rgba(168, 85, 247, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(apx, apy);
+    ctx.quadraticCurveTo(550, Math.min(apy, bpy) - 30, bpx, bpy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Arrow label
+    label(ctx, '→ Verbindung →', 550, Math.min(apy, bpy) - 50, '#a855f7', 15);
+
+    // Temperature readout
+    const currentTemp = tempAt(mapped.u, mapped.v);
+    const tempStr = currentTemp > 0 ? '🔴 Warm' : '🔵 Kalt';
+    const intensity = Math.abs(currentTemp * 100).toFixed(0);
+
+    playText.innerHTML = `
+        <strong>Punkt auf Welt A:</strong> Du bist hier ⬤<br>
+        <strong>Verbindung schickt ihn nach Welt B:</strong> dort landet er ⬤<br>
+        <strong>Temperatur dort:</strong> ${tempStr} (Intensität: ${intensity}%)<br>
+        <strong style="color:#facc15">Pullback:</strong> Diese Temperatur wird zurück auf Welt A übertragen!
+        Das Farbmuster links ist die „zurückgezogene" Version des Musters rechts.
+    `;
+
+    requestAnimationFrame(drawPlay);
+}
+
+// Mouse / Touch interaction
+function getCanvasPos(e) {
+    const rect = playCanvas.getBoundingClientRect();
+    const scaleX = playCanvas.width / rect.width;
+    const scaleY = playCanvas.height / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+    };
+}
+
+function isInLeftArea(cx, cy) {
+    return cx >= 50 && cx <= 490 && cy >= 60 && cy <= 460;
+}
+
+playCanvas.addEventListener('mousedown', e => {
+    const pos = getCanvasPos(e);
+    if (isInLeftArea(pos.x, pos.y)) {
+        isDragging = true;
+        dragPoint.x = Math.max(0, Math.min(1, (pos.x - 50) / 440));
+        dragPoint.y = Math.max(0, Math.min(1, (pos.y - 60) / 400));
+    }
+});
+
+playCanvas.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    const pos = getCanvasPos(e);
+    dragPoint.x = Math.max(0, Math.min(1, (pos.x - 50) / 440));
+    dragPoint.y = Math.max(0, Math.min(1, (pos.y - 60) / 400));
+});
+
+playCanvas.addEventListener('mouseup', () => isDragging = false);
+playCanvas.addEventListener('mouseleave', () => isDragging = false);
+
+// Touch support
+playCanvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const pos = getCanvasPos(e);
+    if (isInLeftArea(pos.x, pos.y)) {
+        isDragging = true;
+        dragPoint.x = Math.max(0, Math.min(1, (pos.x - 50) / 440));
+        dragPoint.y = Math.max(0, Math.min(1, (pos.y - 60) / 400));
+    }
+}, { passive: false });
+
+playCanvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!isDragging) return;
+    const pos = getCanvasPos(e);
+    dragPoint.x = Math.max(0, Math.min(1, (pos.x - 50) / 440));
+    dragPoint.y = Math.max(0, Math.min(1, (pos.y - 60) / 400));
+}, { passive: false });
+
+playCanvas.addEventListener('touchend', () => isDragging = false);
+
+drawPlay();
+
+
+// ============================================================
+//  USE CASE CANVAS (Section 4)
+// ============================================================
+const ucCanvas = document.getElementById('useCaseCanvas');
+const ucCtx = ucCanvas.getContext('2d');
+let ucT = 0;
+
+function drawUseCases() {
+    ucT++;
+    const W = ucCanvas.width, H = ucCanvas.height;
+    const ctx = ucCtx;
+    ctx.clearRect(0, 0, W, H);
+
+    const cases = [
+        { emoji: '🗺️', title: 'GPS', x: 150, y: 200, color: '#00c6ff' },
+        { emoji: '🎮', title: 'Texturen', x: 400, y: 200, color: '#a855f7' },
+        { emoji: '🌍', title: 'Karten', x: 650, y: 200, color: '#22c55e' },
+        { emoji: '🎵', title: 'Musik', x: 900, y: 200, color: '#facc15' },
+    ];
+
+    cases.forEach((c, i) => {
+        const bounce = Math.sin(ucT * 0.04 + i * 1.5) * 10;
+
+        // Card background
+        ctx.save();
+        ctx.fillStyle = 'rgba(255,255,255,0.04)';
+        roundRect(ctx, c.x - 90, c.y - 80 + bounce, 180, 200, 16);
+        ctx.fill();
+        ctx.strokeStyle = c.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        // Emoji
+        label(ctx, c.emoji, c.x, c.y - 20 + bounce, '#fff', 50);
+
+        // Title
+        label(ctx, c.title, c.x, c.y + 60 + bounce, c.color, 20);
+
+        // Pullback arrow
+        ctx.save();
+        ctx.globalAlpha = 0.4 + 0.3 * Math.sin(ucT * 0.05 + i);
+        const ay = c.y + 90 + bounce;
+        curvedArrow(ctx, c.x + 30, ay, c.x - 30, ay, 20, c.color, 2, 8);
+        label(ctx, '↩', c.x, ay + 25 + 5 * Math.sin(ucT * 0.06 + i), c.color, 18);
+        ctx.restore();
+    });
+
+    label(ctx, 'Überall wo Information von einer Darstellung in eine andere übertragen wird!', W / 2, 370, '#888', 16);
+
+    requestAnimationFrame(drawUseCases);
+}
+drawUseCases();
+
+
+// ============================================================
+//  SUMMARY CANVAS (Section 5)
+// ============================================================
+const sumCanvas = document.getElementById('summaryCanvas');
+const sumCtx = sumCanvas.getContext('2d');
+let sumT = 0;
+
+function drawSummary() {
+    sumT++;
+    const W = sumCanvas.width, H = sumCanvas.height;
+    const ctx = sumCtx;
+    ctx.clearRect(0, 0, W, H);
+
+    // Welt A
+    const ax = 220, ay = 225;
+    ctx.save();
+    ctx.beginPath();
+    for (let a = 0; a < Math.PI * 2; a += 0.02) {
+        let r = 130 + 20 * Math.sin(3 * a + sumT * 0.015) + 10 * Math.cos(4 * a);
+        const px = ax + r * Math.cos(a), py = ay + r * Math.sin(a);
+        a < 0.01 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(0, 198, 255, 0.1)';
+    ctx.fill();
+    ctx.strokeStyle = '#00c6ff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
+    label(ctx, '🏠 Welt A', ax, 55, '#00c6ff', 24);
+
+    // Welt B
+    const bx = 880, by = 225;
+    ctx.save();
+    ctx.beginPath();
+    for (let a = 0; a < Math.PI * 2; a += 0.02) {
+        let r = 130 + 25 * Math.sin(2 * a + 1) + 12 * Math.cos(5 * a + sumT * 0.01);
+        const px = bx + r * Math.cos(a), py = by + r * Math.sin(a);
+        a < 0.01 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(249, 115, 22, 0.1)';
+    ctx.fill();
+    ctx.strokeStyle = '#f97316';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
+    label(ctx, '🗺️ Welt B', bx, 55, '#f97316', 24);
+
+    // Info on B
+    ctx.save();
+    const grd = ctx.createRadialGradient(bx - 20, by - 20, 10, bx, by, 120);
+    grd.addColorStop(0, 'rgba(34, 197, 94, 0.4)');
+    grd.addColorStop(1, 'rgba(34, 197, 94, 0.02)');
+    ctx.fillStyle = grd;
+    ctx.beginPath();
+    ctx.arc(bx, by, 120, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    label(ctx, '🌡️ Info', bx, by, '#22c55e', 22);
+
+    // Forward arrow (top)
+    const fPulse = 0.5 + 0.5 * Math.sin(sumT * 0.04);
+    ctx.save();
+    ctx.globalAlpha = 0.4 + 0.3 * fPulse;
+    curvedArrow(ctx, ax + 150, ay - 100, bx - 150, by - 100, -60, '#a855f7', 4, 16);
+    ctx.restore();
+    label(ctx, '➡️ Verbindung (vorwärts)', 550, 95, '#a855f7', 19);
+
+    // Pullback arrow (bottom) – animated
+    const bPulse = 0.5 + 0.5 * Math.sin(sumT * 0.04 + Math.PI);
+    ctx.save();
+    ctx.globalAlpha = 0.5 + 0.5 * bPulse;
+    ctx.setLineDash([12, 8]);
+    curvedArrow(ctx, bx - 150, by + 110, ax + 150, ay + 110, 60, '#facc15', 5, 18);
+    ctx.setLineDash([]);
+    ctx.restore();
+    label(ctx, '⬅️ PULLBACK (Info rückwärts)', 550, 385, '#facc15', 19);
+
+    // Pulled back info on A
+    ctx.save();
+    ctx.globalAlpha = 0.3 + 0.3 * bPulse;
+    const grd2 = ctx.createRadialGradient(ax + 10, ay - 10, 10, ax, ay, 110);
+    grd2.addColorStop(0, 'rgba(250, 204, 21, 0.4)');
+    grd2.addColorStop(1, 'rgba(250, 204, 21, 0.02)');
+    ctx.fillStyle = grd2;
+    ctx.beginPath();
+    ctx.arc(ax, ay, 110, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    label(ctx, '🌡️ Info ✅', ax, ay, '#facc15', 20);
+
+    // Bottom summary
+    label(ctx, '„Nimm die Info von B und übersetze sie für A"', 550, 435, '#999', 17);
+
+    requestAnimationFrame(drawSummary);
+}
+drawSummary();
+
+</script>
+</body>
+</html>
