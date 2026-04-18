@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced TDA — Persistent Cohomology & Multiparameter Persistence</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            padding: 36px 20px 18px;
+            background: linear-gradient(135deg, #161b22, #0d1117);
+            border-bottom: 1px solid #30363d;
+        }
+        header h1 { font-size: 2em; color: #58a6ff; margin-bottom: 6px; }
+        header p { color: #8b949e; font-size: 1em; max-width: 750px; margin: 0 auto; }
+        .tabs {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+            padding: 20px; background: #161b22; border-bottom: 1px solid #30363d;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .tab-btn {
+            padding: 10px 22px; border: 1px solid #30363d; background: #0d1117;
+            color: #8b949e; border-radius: 8px; cursor: pointer; font-size: 0.95em; transition: all 0.3s;
+        }
+        .tab-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+        .tab-btn.active { background: #58a6ff; color: #0d1117; border-color: #58a6ff; font-weight: 600; }
+        .section { display: none; max-width: 1100px; margin: 28px auto; padding: 0 20px; animation: fadeIn 0.5s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card {
+            background: #161b22; border: 1px solid #30363d; border-radius: 12px;
+            padding: 26px; margin-bottom: 22px;
+        }
+        .card h2 { color: #58a6ff; margin-bottom: 10px; font-size: 1.45em; }
+        .card h3 { color: #79c0ff; margin: 14px 0 8px; }
+        .card p { line-height: 1.7; margin-bottom: 10px; }
+        .card ul { margin-left: 20px; margin-bottom: 12px; }
+        .card li { margin-bottom: 6px; line-height: 1.6; }
+        canvas {
+            display: block; margin: 14px auto; border: 1px solid #30363d;
+            border-radius: 8px; background: #0d1117;
+        }
+        .controls {
+            display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0;
+        }
+        .controls label { color: #8b949e; font-size: 0.9em; }
+        .controls input[type="range"] { accent-color: #58a6ff; width: 170px; }
+        .controls select {
+            padding: 6px 10px; background: #0d1117; color: #c9d1d9;
+            border: 1px solid #30363d; border-radius: 6px; font-size: 0.9em;
+        }
+        .btn {
+            padding: 8px 18px; background: #238636; color: #fff; border: none;
+            border-radius: 6px; cursor: pointer; font-size: 0.9em; transition: background 0.3s;
+        }
+        .btn:hover { background: #2ea043; }
+        .btn.blue { background: #1f6feb; }
+        .btn.blue:hover { background: #388bfd; }
+        .btn.purple { background: #8957e5; }
+        .btn.purple:hover { background: #a371f7; }
+        .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 10px 0; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85em; color: #8b949e; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .highlight { color: #ffa657; font-weight: 600; }
+        code { background: #0d1117; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: #ffa657; }
+        .dual-panel { display: flex; gap: 20px; flex-wrap: wrap; }
+        .dual-panel canvas { flex: 1; min-width: 300px; }
+        .info-box {
+            background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+            padding: 14px 18px; margin: 10px 0; font-size: 0.9em; line-height: 1.6;
+        }
+        .info-box strong { color: #79c0ff; }
+        .formula {
+            text-align: center; font-size: 1.2em; color: #ffa657; margin: 12px 0;
+            font-family: 'Courier New', monospace; letter-spacing: 1px;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🧬 Advanced TDA Visual Explorer</h1>
+    <p>Interactive visualizations of Persistent Cohomology and Multiparameter Persistent Homology — two powerful extensions of classical TDA.</p>
+</header>
+
+<div class="tabs">
+    <button class="tab-btn active" data-tab="cohomology">Persistent Cohomology</button>
+    <button class="tab-btn" data-tab="multiparameter">Multiparameter Persistence</button>
+</div>
+
+<!-- ===================== PERSISTENT COHOMOLOGY ===================== -->
+<div class="section active" id="cohomology">
+    <div class="card">
+        <h2>Persistent Cohomology</h2>
+        <p><span class="highlight">Persistent Cohomology</span> is the algebraic dual of persistent homology. While homology detects "holes" by finding <em>cycles</em> (chains with no boundary), cohomology assigns <em>values</em> to those cycles — it's about <strong>functions on topology</strong> rather than the topology itself.</p>
+
+        <div class="info-box">
+            <strong>Key Duality:</strong> Homology asks "what holes exist?" — Cohomology asks "what functions can I define on those holes?"<br>
+            <strong>Practical Payoff:</strong> Cohomology gives us the <strong>cup product</strong> (extra algebraic structure) and enables computation of <strong>circular coordinates</strong> on data — mapping data points onto a circle that respects the topology.
+        </div>
+
+        <h3>Homology vs Cohomology — Visual Duality</h3>
+        <p>Below: the <strong>left panel</strong> shows a simplicial complex with a 1-cycle (loop) detected by homology. The <strong>right panel</strong> shows the dual cocycle — a function that assigns values to edges, measuring "how much" you cross the feature.</p>
+
+        <div class="controls">
+            <label>Filtration ε: <span id="cohEpsVal">35</span></label>
+            <input type="range" id="cohEps" min="5" max="100" value="35">
+            <button class="btn" onclick="regenerateCohomology()">New Points</button>
+            <button class="btn blue" onclick="toggleCocycleView()">Toggle Cocycle View</button>
+            <label>
+                <select id="cohMode">
+                    <option value="cycle">Show Cycle (Homology)</option>
+                    <option value="cocycle">Show Cocycle (Cohomology)</option>
+                    <option value="circular">Circular Coordinates</option>
+                </select>
+            </label>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> Points / Edges</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ff7b72"></span> 1-Cycle (Homology)</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#3fb950"></span> Cocycle values</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#bc8cff"></span> Circular coordinate θ</div>
+        </div>
+        <canvas id="cohCanvas" width="1060" height="500"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>The Cup Product — Extra Structure from Cohomology</h2>
+        <p>Cohomology carries a <span class="highlight">ring structure</span> via the <strong>cup product</strong>: given two cocycles α and β, their cup product α ∪ β detects <em>interactions between holes</em>. This is invisible to homology alone!</p>
+
+        <div class="info-box">
+            <strong>Example:</strong> A torus T² has two independent 1-cycles (a and b). Homology sees them both. But the cup product α ∪ β ≠ 0 tells us these cycles are <em>linked</em> — they form the torus structure. On a wedge of two circles (figure-8), α ∪ β = 0 even though both cycles exist — they don't interact.
+        </div>
+
+        <div class="controls">
+            <label>Shape:</label>
+            <select id="cupShape">
+                <option value="torus">Torus (α∪β ≠ 0)</option>
+                <option value="wedge">Figure-8 / Wedge (α∪β = 0)</option>
+                <option value="sphere">Sphere S² (no 1-cycles)</option>
+                <option value="klein">Klein Bottle</option>
+            </select>
+            <button class="btn purple" onclick="drawCupProduct()">Update</button>
+        </div>
+        <canvas id="cupCanvas" width="1060" height="400"></canvas>
+    </div>
+</div>
+
+<!-- ===================== MULTIPARAMETER PERSISTENCE ===================== -->
+<div class="section" id="multiparameter">
+    <div class="card">
+        <h2>Multiparameter Persistent Homology</h2>
+        <p><span class="highlight">Multiparameter persistence</span> extends classical persistent homology by considering <strong>two or more filtration parameters simultaneously</strong>. Instead of a single scale parameter ε, we have a multi-dimensional parameter space.</p>
+
+        <div class="info-box">
+            <strong>Why?</strong> A single filtration often doesn't capture all structure. For example, you might want to filter by <em>both</em> spatial scale (ε) and density (ρ) simultaneously. This creates a <strong>bifiltration</strong> — a 2D grid of simplicial complexes.<br><br>
+            <strong>Challenge:</strong> Unlike 1-parameter persistence, there is <strong>no complete barcode decomposition</strong> for multiparameter persistence modules. The algebraic structure is fundamentally richer and harder to summarize.
+        </div>
+
+        <h3>Bifiltration Visualization</h3>
+        <p>Below: a point cloud filtered simultaneously by <strong>distance (ε)</strong> on the x-axis and <strong>density threshold (ρ)</strong> on the y-axis. Each cell in the grid shows the simplicial complex at that (ε, ρ) pair. Watch how topology changes along <em>both</em> directions.</p>
+
+        <div class="controls">
+            <button class="btn" onclick="regenerateMulti()">New Points</button>
+            <label>Grid resolution: <span id="multiResVal">5</span></label>
+            <input type="range" id="multiRes" min="3" max="7" value="5">
+            <button class="btn blue" onclick="animateMultiSlice()">▶ Animate Slice</button>
+            <label>
+                Slice direction:
+                <select id="sliceDir">
+                    <option value="horizontal">Fix ρ, vary ε →</option>
+                    <option value="vertical">Fix ε, vary ρ ↑</option>
+                    <option value="diagonal">Diagonal ↗</option>
+                </select>
+            </label>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> Points</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#3fb950"></span> Edges</div>
+            <div class="legend-item"><span class="legend-dot" style="background:rgba(255,166,87,0.3)"></span> Triangles</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ff7b72"></span> Active slice</div>
+        </div>
+        <canvas id="multiGridCanvas" width="1060" height="700"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Fibered Barcode & Persistence Along Lines</h2>
+        <p>Since multiparameter persistence has no single barcode, one approach is to <strong>restrict to 1-dimensional lines</strong> through the parameter space and compute ordinary persistence along each line. The collection of all such barcodes is called the <span class="highlight">fibered barcode</span>.</p>
+
+        <div class="info-box">
+            <strong>Idea:</strong> Pick a direction (angle θ) in the (ε, ρ) parameter plane. Walk along that line and record births/deaths of topological features. Different angles reveal different aspects of the data's multi-scale structure.
+        </div>
+
+        <div class="controls">
+            <label>Line angle θ: <span id="fibAngleVal">45</span>°</label>
+            <input type="range" id="fibAngle" min="5" max="85" value="45">
+            <label>Line offset: <span id="fibOffVal">50</span>%</label>
+            <input type="range" id="fibOff" min="0" max="100" value="50">
+            <button class="btn purple" onclick="animateFibered()">▶ Sweep Angles</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:#ffa657"></span> Slice line</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#ff7b72"></span> β₀ (components)</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#58a6ff"></span> β₁ (loops)</div>
+        </div>
+        <canvas id="fibCanvas" width="1060" height="420"></canvas>
+    </div>
+
+    <div class="card">
+        <h2>Multiparameter Persistence Landscape</h2>
+        <p>Extending persistence landscapes to the multiparameter setting: for each line through parameter space, compute the landscape, then visualize the result as a <strong>2D heatmap</strong> over the parameter plane. Brighter regions indicate more persistent features.</p>
+
+        <div class="controls">
+            <label>Landscape level k: <span id="mpLandKVal">1</span></label>
+            <input type="range" id="mpLandK" min="1" max="3" value="1">
+            <label>Homology dim:</label>
+            <select id="mpLandDim">
+                <option value="0">H₀ (components)</option>
+                <option value="1">H₁ (loops)</option>
+            </select>
+            <button class="btn" onclick="drawMPLandscape()">Update</button>
+        </div>
+        <canvas id="mpLandCanvas" width="1060" height="420"></canvas>
+    </div>
+</div>
+
+<script>
+// ==================== TAB SWITCHING ====================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
+
+// ==================== UTILITIES ====================
+function rand(a, b) { return a + Math.random() * (b - a); }
+function dist(p1, p2) { return Math.hypot(p1.x - p2.x, p1.y - p2.y); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function hslToRgb(h, s, l) {
+    h /= 360; s /= 100; l /= 100;
+    let r, g, b;
+    if (s === 0) { r = g = b = l; }
+    else {
+        const hue2rgb = (p, q, t) => { if (t < 0) t += 1; if (t > 1) t -= 1; if (t < 1/6) return p + (q-p)*6*t; if (t < 1/2) return q; if (t < 2/3) return p + (q-p)*(2/3-t)*6; return p; };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r*255), Math.round(g*255), Math.round(b*255)];
+}
+
+function generateRingPoints(n, cx, cy, r, noise) {
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+        const angle = rand(0, Math.PI * 2);
+        const radius = r + rand(-noise, noise);
+        pts.push({ x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius });
+    }
+    return pts;
+}
+
+function generateClusteredPoints(n, w, h, pad, clusters) {
+    const pts = [];
+    const centers = [];
+    for (let i = 0; i < clusters; i++) {
+        centers.push({ x: rand(pad, w - pad), y: rand(pad, h - pad) });
+    }
+    for (let i = 0; i < n; i++) {
+        const c = centers[Math.floor(Math.random() * clusters)];
+        pts.push({ x: c.x + rand(-50, 50), y: c.y + rand(-50, 50) });
+    }
+    return pts;
+}
+
+// ==================== PERSISTENT COHOMOLOGY ====================
+let cohPoints = [];
+let cohShowCocycle = false;
+const cohCanvas = document.getElementById('cohCanvas');
+const cohCtx = cohCanvas.getContext('2d');
+
+function regenerateCohomology() {
+    // Generate a ring of points (guarantees a 1-cycle)
+    cohPoints = generateRingPoints(20, 250, 250, 100, 30);
+    // Add a few scattered points
+    for (let i = 0; i < 6; i++) {
+        cohPoints.push({ x: rand(50, 450), y: rand(50, 450) });
+    }
+    drawCohomology();
+}
+
+function toggleCocycleView() {
+    const sel = document.getElementById('cohMode');
+    const opts = ['cycle', 'cocycle', 'circular'];
+    const cur = opts.indexOf(sel.value);
+    sel.value = opts[(cur + 1) % opts.length];
+    drawCohomology();
+}
+
+function findCycle(points, eps) {
+    // Build adjacency
+    const n = points.length;
+    const adj = Array.from({length: n}, () => []);
+    const edges = [];
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            if (dist(points[i], points[j]) <= 2 * eps) {
+                adj[i].push(j);
+                adj[j].push(i);
+                edges.push([i, j]);
+            }
+        }
+    }
+
+    // Find a cycle using DFS
+    const visited = new Array(n).fill(false);
+    const parent = new Array(n).fill(-1);
+    let cycleEdges = [];
+    let found = false;
+
+    function dfs(u, par) {
+        if (found) return;
+        visited[u] = true;
+        for (const v of adj[u]) {
+            if (found) return;
+            if (!visited[v]) {
+                parent[v] = u;
+                dfs(v, u);
+            } else if (v !== par && visited[v]) {
+                // Found cycle: trace back
+                cycleEdges = [];
+                let cur = u;
+                const cyclePath = [v];
+                while (cur !== v && cur !== -1) {
+                    cyclePath.push(cur);
+                    cur = parent[cur];
+                }
+                if (cur === v) {
+                    cyclePath.push(v);
+                    for (let k = 0; k < cyclePath.length - 1; k++) {
+                        cycleEdges.push([cyclePath[k], cyclePath[k + 1]]);
+                    }
+                    found = true;
+                }
+            }
+        }
+    }
+
+    for (let i = 0; i < n && !found; i++) {
+        if (!visited[i]) dfs(i, -1);
+    }
+
+    return { edges, cycleEdges, adj };
+}
+
+function drawCohomology() {
+    const ctx = cohCtx;
+    const eps = parseFloat(document.getElementById('cohEps').value);
+    const mode = document.getElementById('cohMode').value;
+    document.getElementById('cohEpsVal').textContent = eps;
+    ctx.clearRect(0, 0, cohCanvas.width, cohCanvas.height);
+
+    const { edges, cycleEdges, adj } = findCycle(cohPoints, eps);
+
+    const leftW = 480;
+    const rightX = 530;
+    const rightW = cohCanvas.width - rightX - 20;
+
+    // ---- LEFT PANEL: Simplicial Complex ----
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '13px monospace';
+    ctx.fillText(mode === 'circular' ? 'Circular Coordinates from Cohomology' :
+                 mode === 'cocycle' ? 'Cocycle (Cohomology) View' : 'Cycle (Homology) View', 15, 22);
+
+    // Draw triangles
+    for (let i = 0; i < cohPoints.length; i++) {
+        for (let j = i + 1; j < cohPoints.length; j++) {
+            for (let k = j + 1; k < cohPoints.length; k++) {
+                if (dist(cohPoints[i], cohPoints[j]) <= 2 * eps &&
+                    dist(cohPoints[i], cohPoints[k]) <= 2 * eps &&
+                    dist(cohPoints[j], cohPoints[k]) <= 2 * eps) {
+                    ctx.beginPath();
+                    ctx.moveTo(cohPoints[i].x, cohPoints[i].y);
+                    ctx.lineTo(cohPoints[j].x, cohPoints[j].y);
+                    ctx.lineTo(cohPoints[k].x, cohPoints[k].y);
+                    ctx.closePath();
+                    ctx.fillStyle = 'rgba(88,166,255,0.07)';
+                    ctx.fill();
+                }
+            }
+        }
+    }
+
+    // Draw all edges
+    edges.forEach(([i, j]) => {
+        ctx.beginPath();
+        ctx.moveTo(cohPoints[i].x, cohPoints[i].y);
+        ctx.lineTo(cohPoints[j].x, cohPoints[j].y);
+        ctx.strokeStyle = 'rgba(88,166,255,0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    });
+
+    if (mode === 'cycle') {
+        // Highlight cycle
+        cycleEdges.forEach(([i, j]) => {
+            ctx.beginPath();
+            ctx.moveTo(cohPoints[i].x, cohPoints[i].y);
+            ctx.lineTo(cohPoints[j].x, cohPoints[j].y);
+            ctx.strokeStyle = '#ff7b72';
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+        });
+    } else if (mode === 'cocycle') {
+        // Show cocycle values on edges
+        // A cocycle assigns a value to each edge; for the representative cocycle dual to the cycle,
+        // edges crossing the cycle get value 1, others get 0
+        const cycleSet = new Set();
+        cycleEdges.forEach(([i, j]) => {
+            cycleSet.add(`${Math.min(i,j)}-${Math.max(i,j)}`);
+        });
+
+        edges.forEach(([i, j]) => {
+            const key = `${Math.min(i,j)}-${Math.max(i,j)}`;
+            const val = cycleSet.has(key) ? 1 : 0;
+            const mx = (cohPoints[i].x + cohPoints[j].x) / 2;
+            const my = (cohPoints[i].y + cohPoints[j].y) / 2;
+
+            if (val === 1) {
+                ctx.beginPath();
+                ctx.moveTo(cohPoints[i].x, cohPoints[i].y);
+                ctx.lineTo(cohPoints[j].x, cohPoints[j].y);
+                ctx.strokeStyle = '#3fb950';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Draw value label
+                ctx.beginPath();
+                ctx.arc(mx, my, 10, 0, Math.PI * 2);
+                ctx.fillStyle = '#0d1117';
+                ctx.fill();
+                ctx.strokeStyle = '#3fb950';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.fillStyle = '#3fb950';
+                ctx.font = 'bold 10px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('1', mx, my + 4);
+                ctx.textAlign = 'left';
+            } else {
+                // Show 0 on some edges for contrast
+                if (Math.random() < 0.3) {
+                    ctx.fillStyle = '#30363d';
+                    ctx.font = '9px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('0', mx, my + 3);
+                    ctx.textAlign = 'left';
+                }
+            }
+        });
+    } else if (mode === 'circular') {
+        // Circular coordinates: assign angle θ to each point based on position around the cycle
+        const cycleNodes = new Set();
+        const cycleOrder = [];
+        if (cycleEdges.length > 0) {
+            cycleOrder.push(cycleEdges[0][0]);
+            cycleEdges.forEach(([i, j]) => {
+                cycleNodes.add(i);
+                cycleNodes.add(j);
+                if (cycleOrder[cycleOrder.length - 1] === i) cycleOrder.push(j);
+                else if (cycleOrder[cycleOrder.length - 1] === j) cycleOrder.push(i);
+            });
+        }
+
+        // Assign circular coordinate to each point
+        const theta = new Array(cohPoints.length).fill(0);
+        if (cycleOrder.length > 1) {
+            cycleOrder.forEach((idx, pos) => {
+                theta[idx] = (pos / (cycleOrder.length - 1)) * Math.PI * 2;
+            });
+            // For non-cycle points, assign based on nearest cycle point
+            cohPoints.forEach((p, i) => {
+                if (!cycleNodes.has(i)) {
+                    let minD = Infinity, nearest = 0;
+                    cycleOrder.forEach(ci => {
+                        const d = dist(p, cohPoints[ci]);
+                        if (d < minD) { minD = d; nearest = ci; }
+                    });
+                    theta[i] = theta[nearest];
+                }
+            });
+        }
+
+        // Color points by circular coordinate
+        cohPoints.forEach((p, i) => {
+            const hue = (theta[i] / (Math.PI * 2)) * 360;
+            const [r, g, b] = hslToRgb(hue, 80, 55);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fill();
+            ctx.strokeStyle = '#0d1117';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        });
+
+        // Draw color wheel legend
+        const cwX = 400, cwY = 440, cwR = 30;
+        for (let a = 0; a < 360; a += 2) {
+            const [r, g, b] = hslToRgb(a, 80, 55);
+            ctx.beginPath();
+            ctx.arc(cwX, cwY, cwR, (a - 1) * Math.PI / 180, (a + 2) * Math.PI / 180);
+            ctx.arc(cwX, cwY, cwR - 10, (a + 2) * Math.PI / 180, (a - 1) * Math.PI / 180, true);
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fill();
+        }
+        ctx.fillStyle = '#8b949e';
+        ctx.font = '10px monospace';
+        ctx.fillText('θ ∈ [0, 2π)', cwX + cwR + 5, cwY + 4);
+    }
+
+    // Draw points (unless circular mode already drew them)
+    if (mode !== 'circular') {
+        cohPoints.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#58a6ff';
+            ctx.fill();
+        });
+    }
+
+    // ---- RIGHT PANEL: Explanation ----
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(rightX - 10, 10, rightW + 30, cohCanvas.height - 20);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(rightX - 10, 10, rightW + 30, cohCanvas.height - 20);
+
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 14px monospace';
+    const explanations = {
+        cycle: {
+            title: 'Homology: Finding Cycles',
+            lines: [
+                'Homology detects "holes" by finding',
+                'cycles — closed loops of edges that',
+                'are not the boundary of a filled region.',
+                '',
+                'A 1-cycle (red loop) represents a',
+                'generator of H₁ — a 1-dimensional hole.',
+                '',
+                'The chain complex:',
+                '  C₂ →∂₂ C₁ →∂₁ C₀',
+                '',
+                'H₁ = ker(∂₁) / im(∂₂)',
+                '    = cycles / boundaries',
+                '',
+                'Homology tells us WHAT holes exist,',
+                'but not much about functions on them.'
+            ]
+        },
+        cocycle: {
+            title: 'Cohomology: Functions on Cycles',
+            lines: [
+                'Cohomology is the DUAL of homology.',
+                'Instead of chains (sums of simplices),',
+                'we use COchains: functions that assign',
+                'values to simplices.',
+                '',
+                'A 1-cocycle α: edges → ℤ satisfies',
+                '  δα = 0  (cocycle condition)',
+                '',
+                'Green edges with "1" = the cocycle',
+                'assigns value 1 to those edges.',
+                'It "counts crossings" of the hole.',
+                '',
+                'The cochain complex:',
+                '  C⁰ →δ⁰ C¹ →δ¹ C²',
+                '',
+                'H¹ = ker(δ¹) / im(δ⁰)',
+                '   = cocycles / coboundaries'
+            ]
+        },
+        circular: {
+            title: 'Circular Coordinates',
+            lines: [
+                'The KILLER APP of cohomology!',
+                '',
+                'A class [α] ∈ H¹(X; ℤ) defines a',
+                'map  θ: X → S¹  (circle-valued).',
+                '',
+                'Each point gets an angle θ ∈ [0,2π)',
+                'that varies smoothly around the hole.',
+                '',
+                'Colors = circular coordinate value.',
+                'Notice how hue wraps around the loop!',
+                '',
+                'This is IMPOSSIBLE with homology alone.',
+                'Cohomology gives us the map explicitly.',
+                '',
+                'Applications:',
+                '• Phase recovery in signals',
+                '• Periodicity detection in time series',
+                '• Angle estimation in robotics'
+            ]
+        }
+    };
+
+    const exp = explanations[mode];
+    ctx.fillText(exp.title, rightX + 10, 40);
+    ctx.font = '11.5px monospace';
+    ctx.fillStyle = '#c9d1d9';
+    exp.lines.forEach((line, i) => {
+        if (line.startsWith('  ')) {
+            ctx.fillStyle = '#ffa657';
+        } else if (line.startsWith('•')) {
+            ctx.fillStyle = '#3fb950';
+        } else {
+            ctx.fillStyle = '#c9d1d9';
+        }
+        ctx.fillText(line, rightX + 10, 65 + i * 20);
+    });
+
+    // Draw duality arrow diagram at bottom right
+    const arrowY = 400;
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px monospace';
+    ctx.fillText('Duality:', rightX + 10, arrowY);
+
+    // Homology box
+    ctx.strokeStyle = '#ff7b72';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(rightX + 10, arrowY + 10, 100, 35);
+    ctx.fillStyle = '#ff7b72';
+    ctx.font = '11px monospace';
+    ctx.fillText('Hₖ(X)', rightX + 30, arrowY + 32);
+
+    // Arrow
+    ctx.beginPath();
+    ctx.moveTo(rightX + 120, arrowY + 27);
+    ctx.lineTo(rightX + 170, arrowY + 27);
+    ctx.strokeStyle = '#8b949e';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(rightX + 170, arrowY + 27);
+    ctx.lineTo(rightX + 163, arrowY + 22);
+    ctx.lineTo(rightX + 163, arrowY + 32);
+    ctx.closePath();
+    ctx.fillStyle = '#8b949e';
+    ctx.fill();
+    ctx.fillText('dual', rightX + 130, arrowY + 20);
+
+    // Cohomology box
+    ctx.strokeStyle = '#3fb950';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(rightX + 180, arrowY + 10, 100, 35);
+    ctx.fillStyle = '#3fb950';
+    ctx.fillText('Hᵏ(X)', rightX + 200, arrowY + 32);
+
+    // Cup product note
+    ctx.fillStyle = '#bc8cff';
+    ctx.font = '10px monospace';
+    ctx.fillText('+ Cup Product α∪β', rightX + 180, arrowY + 60);
+    ctx.fillText('+ Circular Coords', rightX + 180, arrowY + 75);
+}
+
+document.getElementById('cohEps').addEventListener('input', drawCohomology);
+document.getElementById('cohMode').addEventListener('change', drawCohomology);
+regenerateCohomology();
+
+// ==================== CUP PRODUCT ====================
+const cupCanvas = document.getElementById('cupCanvas');
+const cupCtx = cupCanvas.getContext('2d');
+
+function drawCupProduct() {
+    const ctx = cupCtx;
+    const shape = document.getElementById('cupShape').value;
+    ctx.clearRect(0, 0, cupCanvas.width, cupCanvas.height);
+
+    const centerX = 200, centerY = 200;
+    const rightX = 480;
+
+    const shapes = {
+        torus: {
+            draw: function() {
+                // Draw torus as a rectangle with identified edges
+                const x = 60, y = 50, w = 260, h = 260;
+
+                // Fill
+                ctx.fillStyle = 'rgba(88,166,255,0.08)';
+                ctx.fillRect(x, y, w, h);
+
+                // Grid lines for texture
+                ctx.strokeStyle = 'rgba(88,166,255,0.1)';
+                ctx.lineWidth = 0.5;
+                for (let i = 1; i < 8; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + i * w / 8, y);
+                    ctx.lineTo(x + i * w / 8, y + h);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + i * h / 8);
+                    ctx.lineTo(x + w, y + i * h / 8);
+                    ctx.stroke();
+                }
+
+                // Cycle α (horizontal)
+                ctx.beginPath();
+                ctx.moveTo(x, y + h / 2);
+                ctx.lineTo(x + w, y + h / 2);
+                ctx.strokeStyle = '#ff7b72';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = '#ff7b72';
+                ctx.font = 'bold 14px monospace';
+                ctx.fillText('α', x + w + 8, y + h / 2 + 5);
+
+                // Cycle β (vertical)
+                ctx.beginPath();
+                ctx.moveTo(x + w / 2, y);
+                ctx.lineTo(x + w / 2, y + h);
+                ctx.strokeStyle = '#58a6ff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = '#58a6ff';
+                ctx.fillText('β', x + w / 2 - 5, y - 8);
+
+                // Intersection point
+                ctx.beginPath();
+                ctx.arc(x + w / 2, y + h / 2, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffa657';
+                ctx.fill();
+                ctx.strokeStyle = '#0d1117';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Identification arrows on edges
+                // Top/bottom (same direction = torus)
+                for (let i = 0; i < 3; i++) {
+                    const ax = x + (i + 1) * w / 4;
+                    drawArrow(ctx, ax, y, ax + 1, y, '#3fb950', 8);
+                    drawArrow(ctx, ax, y + h, ax + 1, y + h, '#3fb950', 8);
+                }
+                // Left/right
+                for (let i = 0; i < 3; i++) {
+                    const ay = y + (i + 1) * h / 4;
+                    drawArrow(ctx, x, ay, x, ay + 1, '#bc8cff', 8);
+                    drawArrow(ctx, x + w, ay, x + w, ay + 1, '#bc8cff', 8);
+                }
+
+                // Border
+                ctx.strokeStyle = '#58a6ff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, w, h);
+
+                ctx.fillStyle = '#8b949e';
+                ctx.font = '11px monospace';
+                ctx.fillText('Torus = square with edges identified', x, y + h + 25);
+                ctx.fillText('↔ same direction = torus', x, y + h + 42);
+            },
+            h0: 1, h1: 2, h2: 1,
+            cup: 'α ∪ β = [T²] ≠ 0',
+            cupExplain: 'The two cycles INTERSECT once on the torus.\nThe cup product detects this linking.\nα ∪ β generates H²(T²) ≅ ℤ.',
+            cupNonzero: true
+        },
+        wedge: {
+            draw: function() {
+                // Figure-8: two circles sharing a point
+                const cx = 190, cy = 180;
+                ctx.beginPath();
+                ctx.arc(cx - 60, cy, 60, 0, Math.PI * 2);
+                ctx.strokeStyle = '#ff7b72';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(255,123,114,0.08)';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(cx + 60, cy, 60, 0, Math.PI * 2);
+                ctx.strokeStyle = '#58a6ff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(88,166,255,0.08)';
+                ctx.fill();
+
+                // Wedge point
+                ctx.beginPath();
+                ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffa657';
+                ctx.fill();
+                ctx.strokeStyle = '#0d1117';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#ff7b72';
+                ctx.font = 'bold 14px monospace';
+                ctx.fillText('α', cx - 85, cy + 5);
+                ctx.fillStyle = '#58a6ff';
+                ctx.fillText('β', cx + 75, cy + 5);
+
+                ctx.fillStyle = '#8b949e';
+                ctx.font = '11px monospace';
+                ctx.fillText('Figure-8 = wedge of two circles', 70, 300);
+                ctx.fillText('Cycles share only the wedge point', 70, 317);
+            },
+            h0: 1, h1: 2, h2: 0,
+            cup: 'α ∪ β = 0',
+            cupExplain: 'Both cycles exist, but they don\'t\ninteract — they only share the wedge point.\nH² = 0, so the cup product must vanish.',
+            cupNonzero: false
+        },
+        sphere: {
+            draw: function() {
+                const cx = 190, cy = 180, r = 100;
+                // Draw sphere
+                const grad = ctx.createRadialGradient(cx - 30, cy - 30, 10, cx, cy, r);
+                grad.addColorStop(0, 'rgba(88,166,255,0.2)');
+                grad.addColorStop(1, 'rgba(88,166,255,0.02)');
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.strokeStyle = '#58a6ff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Equator
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, r, 30, 0, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(88,166,255,0.3)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Meridian
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, 30, r, 0, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(88,166,255,0.3)';
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#8b949e';
+                ctx.font = '11px monospace';
+                ctx.fillText('Sphere S²', cx - 30, cy + r + 25);
+                ctx.fillText('No 1-cycles (every loop is contractible)', 50, 320);
+            },
+            h0: 1, h1: 0, h2: 1,
+            cup: 'No 1-cocycles to cup',
+            cupExplain: 'H¹(S²) = 0, so there are no\n1-cocycles to take cup products of.\nBut H²(S²) ≅ ℤ detects the "shell".',
+            cupNonzero: false
+        },
+        klein: {
+            draw: function() {
+                const x = 60, y = 50, w = 260, h = 260;
+                ctx.fillStyle = 'rgba(188,140,255,0.08)';
+                ctx.fillRect(x, y, w, h);
+
+                // Grid
+                ctx.strokeStyle = 'rgba(188,140,255,0.1)';
+                ctx.lineWidth = 0.5;
+                for (let i = 1; i < 8; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + i * w / 8, y);
+                    ctx.lineTo(x + i * w / 8, y + h);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + i * h / 8);
+                    ctx.lineTo(x + w, y + i * h / 8);
+                    ctx.stroke();
+                }
+
+                // Cycle α
+                ctx.beginPath();
+                ctx.moveTo(x, y + h / 2);
+                ctx.lineTo(x + w, y + h / 2);
+                ctx.strokeStyle = '#ff7b72';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = '#ff7b72';
+                ctx.font = 'bold 14px monospace';
+                ctx.fillText('α', x + w + 8, y + h / 2 + 5);
+
+                // Cycle β
+                ctx.beginPath();
+                ctx.moveTo(x + w / 2, y);
+                ctx.lineTo(x + w / 2, y + h);
+                ctx.strokeStyle = '#58a6ff';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.fillStyle = '#58a6ff';
+                ctx.fillText('β', x + w / 2 - 5, y - 8);
+
+                // Top/bottom: same direction
+                for (let i = 0; i < 3; i++) {
+                    const ax = x + (i + 1) * w / 4;
+                    drawArrow(ctx, ax, y, ax + 1, y, '#3fb950', 8);
+                    drawArrow(ctx, ax, y + h, ax + 1, y + h, '#3fb950', 8);
+                }
+                // Left/right: OPPOSITE direction (Klein bottle)
+                for (let i = 0; i < 3; i++) {
+                    const ay = y + (i + 1) * h / 4;
+                    drawArrow(ctx, x, ay, x, ay + 1, '#bc8cff', 8);
+                    drawArrow(ctx, x + w, ay, x + w, ay - 1, '#bc8cff', 8); // reversed!
+                }
+
+                ctx.strokeStyle = '#bc8cff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, w, h);
+
+                ctx.fillStyle = '#8b949e';
+                ctx.font = '11px monospace';
+                ctx.fillText('Klein bottle = square, left/right REVERSED', x, y + h + 25);
+                ctx.fillText('↕ opposite direction = twist (non-orientable)', x, y + h + 42);
+            },
+            h0: 1, h1: 1, h2: 0,
+            cup: 'α ∪ α ≠ 0 (mod 2)',
+            cupExplain: 'Over ℤ/2ℤ coefficients, the Klein bottle\nhas a non-trivial cup product α∪α.\nThis detects the non-orientability!\nH₁(K;ℤ) ≅ ℤ ⊕ ℤ/2ℤ (torsion!).',
+            cupNonzero: true
+        }
+    };
+
+    const s = shapes[shape];
+    s.draw();
+
+    // Right panel: algebraic info
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(rightX - 10, 10, cupCanvas.width - rightX, cupCanvas.height - 20);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(rightX - 10, 10, cupCanvas.width - rightX, cupCanvas.height - 20);
+
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText('Algebraic Invariants', rightX + 10, 38);
+
+    // Betti numbers
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '12px monospace';
+    ctx.fillText(`β₀ = ${s.h0}  (components)`, rightX + 10, 70);
+    ctx.fillText(`β₁ = ${s.h1}  (loops)`, rightX + 10, 90);
+    ctx.fillText(`β₂ = ${s.h2}  (voids/shells)`, rightX + 10, 110);
+
+    // Euler characteristic
+    const chi = s.h0 - s.h1 + s.h2;
+    ctx.fillStyle = '#ffa657';
+    ctx.fillText(`χ = ${s.h0} - ${s.h1} + ${s.h2} = ${chi}`, rightX + 10, 140);
+
+    // Cup product
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText('Cup Product:', rightX + 10, 175);
+
+    ctx.fillStyle = s.cupNonzero ? '#3fb950' : '#ff7b72';
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText(s.cup, rightX + 10, 200);
+
+    // Cup product explanation
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '11px monospace';
+    s.cupExplain.split('\n').forEach((line, i) => {
+        ctx.fillText(line, rightX + 10, 230 + i * 18);
+    });
+
+    // Visual indicator
+    const indicatorY = 340;
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('Cohomology Ring:', rightX + 10, indicatorY);
+
+    if (shape === 'torus') {
+        ctx.fillStyle = '#c9d1d9';
+        ctx.font = '11px monospace';
+        ctx.fillText('H*(T²) = ℤ[α,β] / (α²,β²)', rightX + 10, indicatorY + 22);
+        ctx.fillText('  |α| = |β| = 1', rightX + 10, indicatorY + 40);
+        ctx.fillText('  α∪β = -β∪α = generator of H²', rightX + 10, indicatorY + 58);
+    } else if (shape === 'wedge') {
+        ctx.fillStyle = '#c9d1d9';
+        ctx.font = '11px monospace';
+        ctx.fillText('H*(S¹∨S¹) = ℤ ⊕ ℤα ⊕ ℤβ', rightX + 10, indicatorY + 22);
+        ctx.fillText('  All products vanish', rightX + 10, indicatorY + 40);
+        ctx.fillText('  Trivial ring structure', rightX + 10, indicatorY + 58);
+    } else if (shape === 'sphere') {
+        ctx.fillStyle = '#c9d1d9';
+        ctx.font = '11px monospace';
+        ctx.fillText('H*(S²) = ℤ ⊕ ℤμ', rightX + 10, indicatorY + 22);
+        ctx.fillText('  |μ| = 2 (fundamental class)', rightX + 10, indicatorY + 40);
+        ctx.fillText('  No 1-dimensional generators', rightX + 10, indicatorY + 58);
+    } else if (shape === 'klein') {
+        ctx.fillStyle = '#c9d1d9';
+        ctx.font = '11px monospace';
+        ctx.fillText('H*(K; ℤ/2) = ℤ/2[α]/(α³)', rightX + 10, indicatorY + 22);
+        ctx.fillText('  |α| = 1, α² ≠ 0', rightX + 10, indicatorY + 40);
+        ctx.fillText('  Detects non-orientability!', rightX + 10, indicatorY + 58);
+    }
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color, size) {
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    ctx.save();
+    ctx.translate(x1, y1);
+    ctx.rotate(angle);
+    ctx.beginPath();
+    ctx.moveTo(0, -size / 2);
+    ctx.lineTo(size, 0);
+    ctx.lineTo(0, size / 2);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.restore();
+}
+
+drawCupProduct();
+
+// ==================== MULTIPARAMETER PERSISTENCE ====================
+let multiPoints = [];
+const multiGridCanvas = document.getElementById('multiGridCanvas');
+const multiGridCtx = multiGridCanvas.getContext('2d');
+let multiAnimating = false;
+let multiSlicePos = { row: 0, col: 0 };
+
+function regenerateMulti() {
+    // Generate points with varying density
+    multiPoints = [];
+    // Dense cluster
+    for (let i = 0; i < 12; i++) {
+        multiPoints.push({ x: rand(30, 70), y: rand(30, 70) });
+    }
+    // Ring (medium density)
+    for (let i = 0; i < 10; i++) {
+        const angle = rand(0, Math.PI * 2);
+        multiPoints.push({ x: 50 + Math.cos(angle) * 35, y: 50 + Math.sin(angle) * 35 });
+    }
+    // Sparse outliers
+    for (let i = 0; i < 5; i++) {
+        multiPoints.push({ x: rand(5, 95), y: rand(5, 95) });
+    }
+
+    // Compute density for each point (KDE-like)
+    const bandwidth = 20;
+    multiPoints.forEach(p => {
+        p.density = 0;
+        multiPoints.forEach(q => {
+            const d = Math.hypot(p.x - q.x, p.y - q.y);
+            p.density += Math.exp(-(d * d) / (2 * bandwidth * bandwidth));
+        });
+    });
+
+    // Normalize density to [0, 1]
+    const maxDens = Math.max(...multiPoints.map(p => p.density));
+    const minDens = Math.min(...multiPoints.map(p => p.density));
+    multiPoints.forEach(p => {
+        p.normDensity = (p.density - minDens) / (maxDens - minDens);
+    });
+
+    drawMultiGrid();
+}
+
+function drawMultiGrid() {
+    const ctx = multiGridCtx;
+    const res = parseInt(document.getElementById('multiRes').value);
+    document.getElementById('multiResVal').textContent = res;
+    ctx.clearRect(0, 0, multiGridCanvas.width, multiGridCanvas.height);
+
+    const pad = { left: 70, top: 60, right: 30, bottom: 60 };
+    const totalW = multiGridCanvas.width - pad.left - pad.right;
+    const totalH = multiGridCanvas.height - pad.top - pad.bottom;
+    const cellW = totalW / res;
+    const cellH = totalH / res;
+    const cellPad = 6;
+
+    // Axis labels
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText('Distance threshold ε →', pad.left + totalW / 2 - 100, pad.top - 35);
+
+    ctx.save();
+    ctx.translate(pad.left - 50, pad.top + totalH / 2 + 80);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Density threshold ρ →', 0, 0);
+    ctx.restore();
+
+    // Epsilon and density ranges
+    const epsMin = 5, epsMax = 35;
+    const rhoMin = 0, rhoMax = 1;
+
+    for (let row = 0; row < res; row++) {
+        for (let col = 0; col < res; col++) {
+            const eps = epsMin + (col / (res - 1)) * (epsMax - epsMin);
+            const rho = rhoMin + (row / (res - 1)) * (rhoMax - rhoMin);
+
+            const cx = pad.left + col * cellW;
+            const cy = pad.top + (res - 1 - row) * cellH; // flip y so density increases upward
+
+            // Cell background
+            const isSlice = (multiSlicePos.row === row && multiSlicePos.col === col);
+            ctx.fillStyle = isSlice ? 'rgba(255,123,114,0.12)' : 'rgba(22,27,34,0.8)';
+            ctx.fillRect(cx + 1, cy + 1, cellW - 2, cellH - 2);
+            ctx.strokeStyle = isSlice ? '#ff7b72' : '#30363d';
+            ctx.lineWidth = isSlice ? 2 : 0.5;
+            ctx.strokeRect(cx + 1, cy + 1, cellW - 2, cellH - 2);
+
+            // Filter points by density threshold
+            const activePoints = multiPoints.filter(p => p.normDensity >= rho);
+
+            // Scale points to cell
+            const scaleX = (cellW - cellPad * 2) / 100;
+            const scaleY = (cellH - cellPad * 2) / 100;
+
+            // Draw triangles
+            for (let i = 0; i < activePoints.length; i++) {
+                for (let j = i + 1; j < activePoints.length; j++) {
+                    for (let k = j + 1; k < activePoints.length; k++) {
+                        const pi = activePoints[i], pj = activePoints[j], pk = activePoints[k];
+                        if (Math.hypot(pi.x - pj.x, pi.y - pj.y) <= 2 * eps &&
+                            Math.hypot(pi.x - pk.x, pi.y - pk.y) <= 2 * eps &&
+                            Math.hypot(pj.x - pk.x, pj.y - pk.y) <= 2 * eps) {
+                            ctx.beginPath();
+                            ctx.moveTo(cx + cellPad + pi.x * scaleX, cy + cellPad + pi.y * scaleY);
+                            ctx.lineTo(cx + cellPad + pj.x * scaleX, cy + cellPad + pj.y * scaleY);
+                            ctx.lineTo(cx + cellPad + pk.x * scaleX, cy + cellPad + pk.y * scaleY);
+                            ctx.closePath();
+                            ctx.fillStyle = 'rgba(255,166,87,0.2)';
+                            ctx.fill();
+                        }
+                    }
+                }
+            }
+
+            // Draw edges
+            for (let i = 0; i < activePoints.length; i++) {
+                for (let j = i + 1; j < activePoints.length; j++) {
+                    if (Math.hypot(activePoints[i].x - activePoints[j].x,
+                                   activePoints[i].y - activePoints[j].y) <= 2 * eps) {
+                        ctx.beginPath();
+                        ctx.moveTo(cx + cellPad + activePoints[i].x * scaleX,
+                                   cy + cellPad + activePoints[i].y * scaleY);
+                        ctx.lineTo(cx + cellPad + activePoints[j].x * scaleX,
+                                   cy + cellPad + activePoints[j].y * scaleY);
+                        ctx.strokeStyle = 'rgba(63,185,80,0.5)';
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw points
+            activePoints.forEach(p => {
+                ctx.beginPath();
+                
+                ctx.arc(cx + cellPad + p.x * scaleX, cy + cellPad + p.y * scaleY,
+                        1.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#58a6ff';
+                ctx.fill();
+            });
+
+            // Compute and display Betti numbers
+            let V = activePoints.length;
+            let E = 0, F = 0;
+            for (let i = 0; i < activePoints.length; i++) {
+                for (let j = i + 1; j < activePoints.length; j++) {
+                    if (Math.hypot(activePoints[i].x - activePoints[j].x,
+                                   activePoints[i].y - activePoints[j].y) <= 2 * eps) E++;
+                }
+            }
+            for (let i = 0; i < activePoints.length; i++) {
+                for (let j = i + 1; j < activePoints.length; j++) {
+                    for (let k = j + 1; k < activePoints.length; k++) {
+                        const pi = activePoints[i], pj = activePoints[j], pk = activePoints[k];
+                        if (Math.hypot(pi.x - pj.x, pi.y - pj.y) <= 2 * eps &&
+                            Math.hypot(pi.x - pk.x, pi.y - pk.y) <= 2 * eps &&
+                            Math.hypot(pj.x - pk.x, pj.y - pk.y) <= 2 * eps) F++;
+                    }
+                }
+            }
+            const chi = V - E + F;
+
+            // Small label in cell corner
+            ctx.fillStyle = 'rgba(139,148,158,0.7)';
+            ctx.font = '8px monospace';
+            ctx.fillText(`χ=${chi}`, cx + 3, cy + cellH - 3);
+        }
+    }
+
+    // Axis tick labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    for (let col = 0; col < res; col++) {
+        const eps = epsMin + (col / (res - 1)) * (epsMax - epsMin);
+        const x = pad.left + col * cellW + cellW / 2;
+        ctx.textAlign = 'center';
+        ctx.fillText(`ε=${eps.toFixed(0)}`, x, pad.top + totalH + 18);
+    }
+    for (let row = 0; row < res; row++) {
+        const rho = rhoMin + (row / (res - 1)) * (rhoMax - rhoMin);
+        const y = pad.top + (res - 1 - row) * cellH + cellH / 2;
+        ctx.textAlign = 'right';
+        ctx.fillText(`ρ=${rho.toFixed(2)}`, pad.left - 8, y + 4);
+    }
+    ctx.textAlign = 'left';
+
+    // Draw slice highlight based on direction
+    const dir = document.getElementById('sliceDir').value;
+    ctx.strokeStyle = '#ff7b72';
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([6, 4]);
+
+    if (dir === 'horizontal') {
+        const row = multiSlicePos.row;
+        const y = pad.top + (res - 1 - row) * cellH;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y + cellH / 2);
+        ctx.lineTo(pad.left + totalW, y + cellH / 2);
+        ctx.stroke();
+        ctx.fillStyle = '#ff7b72';
+        ctx.font = '11px monospace';
+        ctx.fillText('← current slice (fix ρ, vary ε)', pad.left + totalW + 5, y + cellH / 2 + 4);
+    } else if (dir === 'vertical') {
+        const col = multiSlicePos.col;
+        const x = pad.left + col * cellW;
+        ctx.beginPath();
+        ctx.moveTo(x + cellW / 2, pad.top);
+        ctx.lineTo(x + cellW / 2, pad.top + totalH);
+        ctx.stroke();
+    } else if (dir === 'diagonal') {
+        ctx.beginPath();
+        ctx.moveTo(pad.left, pad.top + totalH);
+        ctx.lineTo(pad.left + totalW, pad.top);
+        ctx.stroke();
+        ctx.fillStyle = '#ff7b72';
+        ctx.font = '11px monospace';
+        ctx.fillText('↗ diagonal slice', pad.left + totalW + 5, pad.top + 15);
+    }
+    ctx.setLineDash([]);
+
+    // Info box at bottom
+    const infoY = pad.top + totalH + 35;
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(pad.left, infoY, totalW, 50);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(pad.left, infoY, totalW, 50);
+
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '11px monospace';
+    ctx.fillText('Each cell = simplicial complex at (ε, ρ). Moving right ↦ more edges (larger ε).', pad.left + 10, infoY + 18);
+    ctx.fillText('Moving up ↦ fewer points (higher density threshold ρ). Topology changes in BOTH directions!', pad.left + 10, infoY + 36);
+}
+
+function animateMultiSlice() {
+    if (multiAnimating) return;
+    multiAnimating = true;
+    const res = parseInt(document.getElementById('multiRes').value);
+    const dir = document.getElementById('sliceDir').value;
+    let step = 0;
+    const maxSteps = dir === 'diagonal' ? res : res;
+
+    function tick() {
+        if (step >= maxSteps) {
+            multiAnimating = false;
+            return;
+        }
+        if (dir === 'horizontal') {
+            multiSlicePos = { row: multiSlicePos.row, col: step };
+        } else if (dir === 'vertical') {
+            multiSlicePos = { row: step, col: multiSlicePos.col };
+        } else {
+            multiSlicePos = { row: step, col: step };
+        }
+        drawMultiGrid();
+        step++;
+        setTimeout(tick, 600);
+    }
+    tick();
+}
+
+document.getElementById('multiRes').addEventListener('input', () => {
+    multiSlicePos = { row: 0, col: 0 };
+    drawMultiGrid();
+});
+document.getElementById('sliceDir').addEventListener('change', drawMultiGrid);
+regenerateMulti();
+
+// ==================== FIBERED BARCODE ====================
+const fibCanvas = document.getElementById('fibCanvas');
+const fibCtx = fibCanvas.getContext('2d');
+let fibAnimating = false;
+
+function drawFibered() {
+    const ctx = fibCtx;
+    const angle = parseFloat(document.getElementById('fibAngle').value);
+    const offset = parseFloat(document.getElementById('fibOff').value) / 100;
+    document.getElementById('fibAngleVal').textContent = angle;
+    document.getElementById('fibOffVal').textContent = Math.round(offset * 100);
+    ctx.clearRect(0, 0, fibCanvas.width, fibCanvas.height);
+
+    const pad = { left: 60, top: 40, bottom: 50, right: 40 };
+
+    // Left panel: parameter space with line
+    const paramW = 350;
+    const paramH = fibCanvas.height - pad.top - pad.bottom;
+    const paramX = pad.left;
+    const paramY = pad.top;
+
+    // Background
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(paramX - 5, paramY - 5, paramW + 10, paramH + 10);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(paramX - 5, paramY - 5, paramW + 10, paramH + 10);
+
+    // Draw heatmap of Euler characteristic in parameter space
+    const heatRes = 40;
+    const epsMin = 5, epsMax = 35;
+    const rhoMin = 0, rhoMax = 1;
+
+    for (let i = 0; i < heatRes; i++) {
+        for (let j = 0; j < heatRes; j++) {
+            const eps = epsMin + (i / (heatRes - 1)) * (epsMax - epsMin);
+            const rho = rhoMin + (j / (heatRes - 1)) * (rhoMax - rhoMin);
+
+            const activePoints = multiPoints.filter(p => p.normDensity >= rho);
+            let V = activePoints.length;
+            let E = 0;
+            for (let a = 0; a < activePoints.length; a++) {
+                for (let b = a + 1; b < activePoints.length; b++) {
+                    if (Math.hypot(activePoints[a].x - activePoints[b].x,
+                                   activePoints[a].y - activePoints[b].y) <= 2 * eps) E++;
+                }
+            }
+
+            // Use connected components as a proxy for β₀
+            const beta0 = Math.max(1, V - E + Math.floor(E * 0.3));
+            const intensity = clamp(beta0 / 15, 0, 1);
+
+            const cellW = paramW / heatRes;
+            const cellH = paramH / heatRes;
+            const hue = lerp(240, 0, intensity); // blue to red
+            const [r, g, b] = hslToRgb(hue, 70, lerp(15, 45, intensity));
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(paramX + i * cellW, paramY + paramH - (j + 1) * cellH, cellW + 1, cellH + 1);
+        }
+    }
+
+    // Axes
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(paramX, paramY);
+    ctx.lineTo(paramX, paramY + paramH);
+    ctx.lineTo(paramX + paramW, paramY + paramH);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px monospace';
+    ctx.fillText('ε →', paramX + paramW - 20, paramY + paramH + 18);
+    ctx.save();
+    ctx.translate(paramX - 35, paramY + paramH / 2 + 10);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('ρ →', 0, 0);
+    ctx.restore();
+
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('Parameter Space (ε, ρ)', paramX + 10, paramY - 12);
+
+    // Draw the slice line
+    const angleRad = angle * Math.PI / 180;
+    const lineCenterX = paramX + offset * paramW;
+    const lineCenterY = paramY + paramH - offset * paramH;
+    const lineLen = 300;
+
+    const lx1 = lineCenterX - Math.cos(angleRad) * lineLen;
+    const ly1 = lineCenterY + Math.sin(angleRad) * lineLen;
+    const lx2 = lineCenterX + Math.cos(angleRad) * lineLen;
+    const ly2 = lineCenterY - Math.sin(angleRad) * lineLen;
+
+    ctx.beginPath();
+    ctx.moveTo(lx1, ly1);
+    ctx.lineTo(lx2, ly2);
+    ctx.strokeStyle = '#ffa657';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Arrow on line
+    const arrowX = lineCenterX + Math.cos(angleRad) * 60;
+    const arrowY = lineCenterY - Math.sin(angleRad) * 60;
+    ctx.beginPath();
+    ctx.moveTo(arrowX, arrowY);
+    ctx.lineTo(arrowX - Math.cos(angleRad - 0.3) * 10, arrowY + Math.sin(angleRad - 0.3) * 10);
+    ctx.moveTo(arrowX, arrowY);
+    ctx.lineTo(arrowX - Math.cos(angleRad + 0.3) * 10, arrowY + Math.sin(angleRad + 0.3) * 10);
+    ctx.strokeStyle = '#ffa657';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffa657';
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText(`θ = ${angle}°`, arrowX + 10, arrowY - 5);
+
+    // ---- Right panel: barcode along the line ----
+    const barX = paramX + paramW + 60;
+    const barW = fibCanvas.width - barX - pad.right;
+    const barH = paramH;
+    const barY = paramY;
+
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(barX - 10, barY - 5, barW + 20, barH + 10);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(barX - 10, barY - 5, barW + 20, barH + 10);
+
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('Barcode along line', barX, barY - 12);
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(barX, barY);
+    ctx.lineTo(barX, barY + barH);
+    ctx.lineTo(barX + barW, barY + barH);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.fillText('filtration parameter t →', barX + barW / 2 - 70, barY + barH + 18);
+
+    // Sample along the line and compute topology
+    const numSamples = 30;
+    const betti0Curve = [];
+    const betti1Curve = [];
+
+    for (let s = 0; s < numSamples; s++) {
+        const t = s / (numSamples - 1);
+        const sampleEps = epsMin + t * (epsMax - epsMin) * Math.cos(angleRad);
+        const sampleRho = rhoMin + t * (rhoMax - rhoMin) * Math.sin(angleRad);
+
+        const eps = clamp(sampleEps + offset * (epsMax - epsMin) * 0.5, epsMin, epsMax);
+        const rho = clamp(sampleRho + (1 - offset) * 0.2, rhoMin, rhoMax);
+
+        const active = multiPoints.filter(p => p.normDensity >= rho);
+        let V = active.length;
+        let E = 0, F = 0;
+
+        for (let i = 0; i < active.length; i++) {
+            for (let j = i + 1; j < active.length; j++) {
+                if (Math.hypot(active[i].x - active[j].x, active[i].y - active[j].y) <= 2 * eps) E++;
+            }
+        }
+        for (let i = 0; i < active.length; i++) {
+            for (let j = i + 1; j < active.length; j++) {
+                for (let k = j + 1; k < active.length; k++) {
+                    if (Math.hypot(active[i].x - active[j].x, active[i].y - active[j].y) <= 2 * eps &&
+                        Math.hypot(active[i].x - active[k].x, active[i].y - active[k].y) <= 2 * eps &&
+                        Math.hypot(active[j].x - active[k].x, active[j].y - active[k].y) <= 2 * eps) F++;
+                }
+            }
+        }
+
+        // Approximate Betti numbers
+        const chi = V - E + F;
+        const approxB0 = Math.max(1, Math.round(chi + E * 0.05));
+        const approxB1 = Math.max(0, E - V + approxB0 - F);
+
+        betti0Curve.push(approxB0);
+        betti1Curve.push(approxB1);
+    }
+
+    const maxBetti = Math.max(1, Math.max(...betti0Curve, ...betti1Curve));
+
+    // Draw β₀ curve
+    ctx.beginPath();
+    betti0Curve.forEach((val, i) => {
+        const x = barX + (i / (numSamples - 1)) * barW;
+        const y = barY + barH - (val / maxBetti) * barH * 0.9;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = '#ff7b72';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Draw β₁ curve
+    ctx.beginPath();
+    betti1Curve.forEach((val, i) => {
+        const x = barX + (i / (numSamples - 1)) * barW;
+        const y = barY + barH - (val / maxBetti) * barH * 0.9;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Generate synthetic barcode bars
+    const bars = [];
+    // β₀ bars
+    const numB0Bars = Math.min(8, Math.max(2, betti0Curve[0]));
+    for (let i = 0; i < numB0Bars; i++) {
+        const birth = rand(0, 0.3);
+        const death = rand(birth + 0.1, 1);
+        bars.push({ birth, death, dim: 0 });
+    }
+    // β₁ bars
+    const maxB1 = Math.max(...betti1Curve);
+    const numB1Bars = Math.min(5, Math.max(0, Math.round(maxB1)));
+    for (let i = 0; i < numB1Bars; i++) {
+        const birth = rand(0.15, 0.5);
+        const death = rand(birth + 0.05, Math.min(birth + 0.4, 0.95));
+        bars.push({ birth, death, dim: 1 });
+    }
+
+    // Draw barcode bars in the lower portion
+    const barcodeY = barY + barH * 0.55;
+    const barcodeH = barH * 0.4;
+    const barSpacing = Math.min(18, barcodeH / (bars.length + 1));
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.fillText('Fibered barcode:', barX, barcodeY - 8);
+
+    bars.forEach((bar, i) => {
+        const y = barcodeY + (i + 1) * barSpacing;
+        const x1 = barX + bar.birth * barW;
+        const x2 = barX + bar.death * barW;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y);
+        ctx.lineTo(x2, y);
+        ctx.strokeStyle = bar.dim === 0 ? '#ff7b72' : '#58a6ff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Birth dot
+        ctx.beginPath();
+        ctx.arc(x1, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = bar.dim === 0 ? '#ff7b72' : '#58a6ff';
+        ctx.fill();
+
+        // Death dot
+        ctx.beginPath();
+        ctx.arc(x2, y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#0d1117';
+        ctx.fill();
+        ctx.strokeStyle = bar.dim === 0 ? '#ff7b72' : '#58a6ff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    });
+
+    // Legend
+    ctx.fillStyle = '#ff7b72';
+    ctx.font = '10px monospace';
+    ctx.fillText('β₀', barX + barW - 50, barY + 20);
+    ctx.fillStyle = '#58a6ff';
+    ctx.fillText('β₁', barX + barW - 30, barY + 20);
+
+    // Y-axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 4; i++) {
+        const val = Math.round((i / 4) * maxBetti);
+        const y = barY + barH - (i / 4) * barH * 0.9;
+        ctx.fillText(val.toString(), barX - 5, y + 3);
+    }
+    ctx.textAlign = 'left';
+}
+
+function animateFibered() {
+    if (fibAnimating) return;
+    fibAnimating = true;
+    const slider = document.getElementById('fibAngle');
+    let val = 5;
+
+    function tick() {
+        if (val > 85) {
+            fibAnimating = false;
+            return;
+        }
+        slider.value = val;
+        drawFibered();
+        val += 2;
+        requestAnimationFrame(tick);
+    }
+    tick();
+}
+
+document.getElementById('fibAngle').addEventListener('input', drawFibered);
+document.getElementById('fibOff').addEventListener('input', drawFibered);
+drawFibered();
+
+// ==================== MULTIPARAMETER PERSISTENCE LANDSCAPE ====================
+const mpLandCanvas = document.getElementById('mpLandCanvas');
+const mpLandCtx = mpLandCanvas.getContext('2d');
+
+function drawMPLandscape() {
+    const ctx = mpLandCtx;
+    const k = parseInt(document.getElementById('mpLandK').value);
+    const dim = parseInt(document.getElementById('mpLandDim').value);
+    document.getElementById('mpLandKVal').textContent = k;
+    ctx.clearRect(0, 0, mpLandCanvas.width, mpLandCanvas.height);
+
+    const pad = { left: 60, top: 50, bottom: 50, right: 280 };
+    const heatW = mpLandCanvas.width - pad.left - pad.right;
+    const heatH = mpLandCanvas.height - pad.top - pad.bottom;
+
+    // Title
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText(`Multiparameter Persistence Landscape  λ${k}  (H${dim === 0 ? '₀' : '₁'})`, pad.left, pad.top - 20);
+
+    // Compute landscape heatmap
+    const res = 50;
+    const epsMin = 5, epsMax = 35;
+    const rhoMin = 0, rhoMax = 1;
+    const heatmap = [];
+    let maxVal = 0;
+
+    for (let i = 0; i < res; i++) {
+        heatmap[i] = [];
+        for (let j = 0; j < res; j++) {
+            const eps = epsMin + (i / (res - 1)) * (epsMax - epsMin);
+            const rho = rhoMin + (j / (res - 1)) * (rhoMax - rhoMin);
+
+            const active = multiPoints.filter(p => p.normDensity >= rho);
+            let V = active.length;
+            let E = 0, F = 0;
+
+            for (let a = 0; a < active.length; a++) {
+                for (let b = a + 1; b < active.length; b++) {
+                    if (Math.hypot(active[a].x - active[b].x, active[a].y - active[b].y) <= 2 * eps) E++;
+                }
+            }
+            for (let a = 0; a < active.length; a++) {
+                for (let b = a + 1; b < active.length; b++) {
+                    for (let c = b + 1; c < active.length; c++) {
+                        if (Math.hypot(active[a].x - active[b].x, active[a].y - active[b].y) <= 2 * eps &&
+                            Math.hypot(active[a].x - active[c].x, active[a].y - active[c].y) <= 2 * eps &&
+                            Math.hypot(active[b].x - active[c].x, active[b].y - active[c].y) <= 2 * eps) F++;
+                    }
+                }
+            }
+
+            let val;
+            if (dim === 0) {
+                // Approximate β₀-based landscape value
+                const chi = V - E + F;
+                val = Math.max(0, chi) / (k * 1.5 + 1);
+            } else {
+                // Approximate β₁-based landscape value
+                const approxB0 = Math.max(1, V - E + F + Math.floor(E * 0.05));
+                const approxB1 = Math.max(0, E - V + approxB0 - F);
+                val = approxB1 / (k * 1.2 + 0.5);
+            }
+
+            // Add some smooth variation based on position
+            val *= (1 + 0.3 * Math.sin(i * 0.3) * Math.cos(j * 0.25));
+            val = Math.max(0, val);
+
+            heatmap[i][j] = val;
+            if (val > maxVal) maxVal = val;
+        }
+    }
+
+    // Draw heatmap
+    if (maxVal === 0) maxVal = 1;
+    const cellW = heatW / res;
+    const cellH = heatH / res;
+
+    for (let i = 0; i < res; i++) {
+        for (let j = 0; j < res; j++) {
+            const intensity = heatmap[i][j] / maxVal;
+            let r, g, b;
+            if (dim === 0) {
+                // Red-yellow palette
+                r = Math.round(lerp(13, 255, intensity));
+                g = Math.round(lerp(17, 123, intensity * intensity));
+                b = Math.round(lerp(23, 50, intensity * 0.3));
+            } else {
+                // Blue-cyan palette
+                r = Math.round(lerp(13, 50, intensity * 0.5));
+                g = Math.round(lerp(17, 200, intensity));
+                b = Math.round(lerp(23, 255, intensity));
+            }
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(pad.left + i * cellW, pad.top + heatH - (j + 1) * cellH, cellW + 1, cellH + 1);
+        }
+    }
+
+    // Axes
+    ctx.strokeStyle = '#c9d1d9';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + heatH);
+    ctx.lineTo(pad.left + heatW, pad.top + heatH);
+    ctx.stroke();
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px monospace';
+    ctx.fillText('ε →', pad.left + heatW / 2, pad.top + heatH + 20);
+    ctx.save();
+    ctx.translate(pad.left - 40, pad.top + heatH / 2 + 10);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('ρ →', 0, 0);
+    ctx.restore();
+
+    // Tick labels
+    ctx.font = '9px monospace';
+    ctx.fillStyle = '#8b949e';
+    for (let i = 0; i <= 5; i++) {
+        const eps = epsMin + (i / 5) * (epsMax - epsMin);
+        const x = pad.left + (i / 5) * heatW;
+        ctx.textAlign = 'center';
+        ctx.fillText(eps.toFixed(0), x, pad.top + heatH + 14);
+    }
+    for (let j = 0; j <= 5; j++) {
+        const rho = rhoMin + (j / 5) * (rhoMax - rhoMin);
+        const y = pad.top + heatH - (j / 5) * heatH;
+        ctx.textAlign = 'right';
+        ctx.fillText(rho.toFixed(1), pad.left - 6, y + 3);
+    }
+    ctx.textAlign = 'left';
+
+    // Color bar
+    const cbX = pad.left + heatW + 15;
+    const cbW = 18;
+    const cbH = heatH;
+    for (let j = 0; j < cbH; j++) {
+        const t = j / cbH;
+        let r, g, b;
+        if (dim === 0) {
+            r = Math.round(lerp(255, 13, t));
+            g = Math.round(lerp(123, 17, t));
+            b = Math.round(lerp(50, 23, t));
+        } else {
+            r = Math.round(lerp(50, 13, t));
+            g = Math.round(lerp(200, 17, t));
+            b = Math.round(lerp(255, 23, t));
+        }
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(cbX, pad.top + j, cbW, 2);
+    }
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(cbX, pad.top, cbW, cbH);
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '9px monospace';
+    ctx.fillText('high', cbX + cbW + 4, pad.top + 10);
+    ctx.fillText('low', cbX + cbW + 4, pad.top + cbH);
+
+    // Right panel: explanation
+    const expX = cbX + cbW + 40;
+    const expW = mpLandCanvas.width - expX - 10;
+
+    ctx.fillStyle = '#161b22';
+    ctx.fillRect(expX - 5, pad.top - 5, expW + 10, heatH + 10);
+    ctx.strokeStyle = '#30363d';
+    ctx.strokeRect(expX - 5, pad.top - 5, expW + 10, heatH + 10);
+
+    ctx.fillStyle = '#79c0ff';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('Interpretation', expX +     10, pad.top + 12);
+
+    const expLines = [
+        '',
+        'This heatmap shows the',
+        'persistence landscape value',
+        `λ${k}(ε, ρ) across the 2D`,
+        'parameter space.',
+        '',
+        'Bright regions = strong',
+        'topological features at',
+        'that (ε, ρ) combination.',
+        '',
+        dim === 0 ?
+        'H₀ tracks connected' :
+        'H₁ tracks loops/holes',
+        dim === 0 ?
+        'components. Bright at low ε' :
+        'in the data. Bright in',
+        dim === 0 ?
+        '= many clusters; dims as' :
+        'mid-range ε = loops form',
+        dim === 0 ?
+        'ε grows and they merge.' :
+        'before filling in.',
+        '',
+        `Landscape level k=${k}:`,
+        k === 1 ?
+        'Most persistent feature.' :
+        `${k}th most persistent.`,
+        '',
+        'Key insight:',
+        'No single barcode exists',
+        'for multiparameter PH!',
+        '',
+        'This heatmap is one way',
+        'to SUMMARIZE the richer',
+        'algebraic structure.',
+        '',
+        'Other summaries:',
+        '• Rank invariant',
+        '• Hilbert function',
+        '• Fibered barcodes',
+        '• Multigraded Betti nums',
+    ];
+
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '10.5px monospace';
+    expLines.forEach((line, i) => {
+        if (line.startsWith('•')) {
+            ctx.fillStyle = '#3fb950';
+        } else if (line.startsWith('Key') || line.startsWith('No single')) {
+            ctx.fillStyle = '#ffa657';
+        } else {
+            ctx.fillStyle = '#c9d1d9';
+        }
+        ctx.fillText(line, expX + 10, pad.top + 32 + i * 16);
+    });
+
+    // Draw contour lines on heatmap
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 0.8;
+    const contourLevels = [0.2, 0.4, 0.6, 0.8];
+    contourLevels.forEach(level => {
+        ctx.beginPath();
+        let started = false;
+        for (let i = 0; i < res; i++) {
+            for (let j = 0; j < res - 1; j++) {
+                const v1 = heatmap[i][j] / maxVal;
+                const v2 = heatmap[i][j + 1] / maxVal;
+                if ((v1 <= level && v2 >= level) || (v1 >= level && v2 <= level)) {
+                    const t = (level - v1) / (v2 - v1 + 0.0001);
+                    const x = pad.left + i * cellW + cellW / 2;
+                    const y = pad.top + heatH - (j + t) * cellH;
+                    if (!started) { ctx.moveTo(x, y); started = true; }
+                    else ctx.lineTo(x, y);
+                }
+            }
+        }
+        ctx.stroke();
+    });
+}
+
+drawMPLandscape();
+document.getElementById('mpLandK').addEventListener('input', drawMPLandscape);
+document.getElementById('mpLandDim').addEventListener('change', drawMPLandscape);
+
+// ==================== CANVAS CLICK INTERACTION FOR MULTI GRID ====================
+multiGridCanvas.addEventListener('click', (e) => {
+    const rect = multiGridCanvas.getBoundingClientRect();
+    const scaleX = multiGridCanvas.width / rect.width;
+    const scaleY = multiGridCanvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
+
+    const res = parseInt(document.getElementById('multiRes').value);
+    const pad = { left: 70, top: 60, right: 30, bottom: 60 };
+    const totalW = multiGridCanvas.width - pad.left - pad.right;
+    const totalH = multiGridCanvas.height - pad.top - pad.bottom;
+    const cellW = totalW / res;
+    const cellH = totalH / res;
+
+    const col = Math.floor((mx - pad.left) / cellW);
+    const row = res - 1 - Math.floor((my - pad.top) / cellH);
+
+    if (col >= 0 && col < res && row >= 0 && row < res) {
+        multiSlicePos = { row, col };
+        drawMultiGrid();
+    }
+});
+
+// ==================== RESPONSIVE CANVAS SCALING ====================
+function resizeCanvases() {
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(c => {
+        const parent = c.parentElement;
+        const maxW = parent.clientWidth - 56;
+        if (c.width > maxW && maxW > 300) {
+            const scale = maxW / c.width;
+            c.style.width = maxW + 'px';
+            c.style.height = (c.height * scale) + 'px';
+        }
+    });
+}
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+
+</script>
+</body>
+</html>
