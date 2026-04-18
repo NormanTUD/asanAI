@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumünster – Die Stadt im Herzen Schleswig-Holsteins</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2e;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        #mainCanvas {
+            display: block;
+            cursor: pointer;
+        }
+
+        #ui-overlay {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(100, 180, 255, 0.4);
+            border-color: rgba(100, 180, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        #info-box {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 46, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(100, 180, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px 30px;
+            max-width: 600px;
+            width: 90%;
+            z-index: 10;
+            text-align: center;
+            transition: opacity 0.5s;
+        }
+
+        #info-box h2 {
+            color: #64b4ff;
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        #info-box p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        #tooltip {
+            position: fixed;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            pointer-events: none;
+            z-index: 20;
+            display: none;
+            border: 1px solid #64b4ff;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="mainCanvas"></canvas>
+
+<div id="ui-overlay">
+    <button class="nav-btn active" data-scene="overview">🏙️ Überblick</button>
+    <button class="nav-btn" data-scene="history">📜 Geschichte</button>
+    <button class="nav-btn" data-scene="industry">🏭 Textilstadt</button>
+    <button class="nav-btn" data-scene="nature">🌿 Natur & Parks</button>
+    <button class="nav-btn" data-scene="landmarks">🏛️ Wahrzeichen</button>
+    <button class="nav-btn" data-scene="facts">📊 Fakten</button>
+</div>
+
+<div id="info-box">
+    <h2 id="info-title">Willkommen in Neumünster</h2>
+    <p id="info-text">Klicke auf die Buttons oben, um verschiedene Aspekte der Stadt zu entdecken. Neumünster liegt im Herzen Schleswig-Holsteins und hat rund 80.000 Einwohner.</p>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+let W, H;
+let currentScene = 'overview';
+let animTime = 0;
+let particles = [];
+let transitionAlpha = 0;
+let transitioning = false;
+let mouseX = 0, mouseY = 0;
+let interactiveAreas = [];
+
+function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Partikel-System
+class Particle {
+    constructor() {
+        this.reset();
+    }
+    reset() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.opacity = Math.random() * 0.5 + 0.2;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(100, 180, 255, ${this.opacity})`;
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+// Hilfsfunktionen
+function drawGradientBg(color1, color2) {
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, color1);
+    grad.addColorStop(1, color2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+}
+
+function drawStar(cx, cy, spikes, outerR, innerR, color) {
+    let rot = Math.PI / 2 * 3;
+    let step = Math.PI / spikes;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - outerR);
+    for (let i = 0; i < spikes; i++) {
+        ctx.lineTo(cx + Math.cos(rot) * outerR, cy + Math.sin(rot) * outerR);
+        rot += step;
+        ctx.lineTo(cx + Math.cos(rot) * innerR, cy + Math.sin(rot) * innerR);
+        rot += step;
+    }
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+function drawBuilding(x, y, w, h, color, windows = true) {
+    // Gebäude-Körper
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y - h, w, h);
+
+    // Dach
+    ctx.beginPath();
+    ctx.moveTo(x - 5, y - h);
+    ctx.lineTo(x + w / 2, y - h - 20);
+    ctx.lineTo(x + w + 5, y - h);
+    ctx.closePath();
+    ctx.fillStyle = shadeColor(color, -30);
+    ctx.fill();
+
+    // Fenster
+    if (windows) {
+        const winW = w * 0.15;
+        const winH = h * 0.08;
+        const cols = 3;
+        const rows = Math.floor(h / 40);
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const wx = x + (w / (cols + 1)) * (c + 1) - winW / 2;
+                const wy = y - h + 30 + r * 35;
+                const glow = Math.sin(animTime * 2 + r + c) * 0.3 + 0.7;
+                ctx.fillStyle = `rgba(255, 220, 100, ${glow})`;
+                ctx.fillRect(wx, wy, winW, winH);
+            }
+        }
+    }
+}
+
+function shadeColor(color, percent) {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+    const G = Math.min(255, Math.max(0, (num >> 8 & 0x00FF) + amt));
+    const B = Math.min(255, Math.max(0, (num & 0x0000FF) + amt));
+    return `rgb(${R},${G},${B})`;
+}
+
+function drawTree(x, y, size) {
+    // Stamm
+    ctx.fillStyle = '#5a3a1a';
+    ctx.fillRect(x - size * 0.1, y - size * 0.5, size * 0.2, size * 0.5);
+    // Krone
+    ctx.beginPath();
+    ctx.arc(x, y - size * 0.7, size * 0.4, 0, Math.PI * 2);
+    ctx.fillStyle = `hsl(${120 + Math.sin(animTime + x) * 15}, 50%, ${30 + Math.sin(animTime * 0.5 + x) * 5}%)`;
+    ctx.fill();
+}
+
+function drawWater(x, y, w, h) {
+    for (let i = 0; i < h; i += 3) {
+        const wave = Math.sin(animTime * 2 + i * 0.1) * 5;
+        const alpha = 0.3 + (i / h) * 0.3;
+        ctx.fillStyle = `rgba(40, 100, 200, ${alpha})`;
+        ctx.fillRect(x + wave, y + i, w, 2);
+    }
+}
+
+function drawChurch(x, y, scale) {
+    const s = scale;
+    // Turm
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(x - 15 * s, y - 120 * s, 30 * s, 120 * s);
+    // Spitze
+    ctx.beginPath();
+    ctx.moveTo(x - 18 * s, y - 120 * s);
+    ctx.lineTo(x, y - 170 * s);
+    ctx.lineTo(x + 18 * s, y - 120 * s);
+    ctx.closePath();
+    ctx.fillStyle = '#2c2c2c';
+    ctx.fill();
+    // Kreuz
+    ctx.strokeStyle = '#FFD700';
+    ctx.lineWidth = 3 * s;
+    ctx.beginPath();
+    ctx.moveTo(x, y - 170 * s);
+    ctx.lineTo(x, y - 190 * s);
+    ctx.moveTo(x - 8 * s, y - 182 * s);
+    ctx.lineTo(x + 8 * s, y - 182 * s);
+    ctx.stroke();
+    // Kirchenschiff
+    ctx.fillStyle = '#A0522D';
+    ctx.fillRect(x - 40 * s, y - 60 * s, 80 * s, 60 * s);
+    // Fenster (Rosette)
+    ctx.beginPath();
+    ctx.arc(x, y - 40 * s, 12 * s, 0, Math.PI * 2);
+    const glow = Math.sin(animTime * 1.5) * 0.3 + 0.7;
+    ctx.fillStyle = `rgba(200, 150, 255, ${glow})`;
+    ctx.fill();
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
+
+function drawFactory(x, y, scale) {
+    const s = scale;
+    // Hauptgebäude
+    ctx.fillStyle = '#6B3A2A';
+    ctx.fillRect(x - 60 * s, y - 50 * s, 120 * s, 50 * s);
+    // Sägezahndach
+    for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x - 60 * s + i * 30 * s, y - 50 * s);
+        ctx.lineTo(x - 45 * s + i * 30 * s, y - 70 * s);
+        ctx.lineTo(x - 30 * s + i * 30 * s, y - 50 * s);
+        ctx.closePath();
+        ctx.fillStyle = '#555';
+        ctx.fill();
+    }
+    // Schornstein
+    ctx.fillStyle = '#444';
+    ctx.fillRect(x + 40 * s, y - 100 * s, 15 * s, 60 * s);
+    // Rauch
+    for (let i = 0; i < 5; i++) {
+        const smokeY = y - 100 * s - i * 15 * s;
+        const smokeX = x + 47 * s + Math.sin(animTime * 2 + i) * 10 * s;
+        const smokeSize = (5 + i * 4) * s;
+        ctx.beginPath();
+        ctx.arc(smokeX, smokeY, smokeSize, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(150, 150, 150, ${0.3 - i * 0.05})`;
+        ctx.fill();
+    }
+}
+
+function drawTextWithShadow(text, x, y, font, color) {
+    ctx.font = font;
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillText(text, x + 2, y + 2);
+    ctx.fillStyle = color;
+    ctx.fillText(text, x, y);
+}
+
+// ========== SZENEN ==========
+
+function drawOverview() {
+    drawGradientBg('#0a0a2e', '#1a1a4e');
+    interactiveAreas = [];
+
+    // Sterne
+    for (let i = 0; i < 50; i++) {
+        const sx = (i * 137.5) % W;
+        const sy = (i * 97.3) % (H * 0.4);
+        const twinkle = Math.sin(animTime * 3 + i) * 0.3 + 0.7;
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
+        ctx.fill();
+    }
+
+    // Mond
+    ctx.beginPath();
+    ctx.arc(W * 0.85, H * 0.15, 40, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffe8a0';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(W * 0.85 + 12, H * 0.15 - 5, 35, 0, Math.PI * 2);
+    ctx.fillStyle = '#0a0a2e';
+    ctx.fill();
+
+    const groundY = H * 0.7;
+
+    // Boden / Gras
+    ctx.fillStyle = '#1a3a1a';
+    ctx.fillRect(0, groundY, W, H - groundY);
+    const grassGrad = ctx.createLinearGradient(0, groundY, 0, groundY + 30);
+    grassGrad.addColorStop(0, '#2a5a2a');
+    grassGrad.addColorStop(1, '#1a3a1a');
+    ctx.fillStyle = grassGrad;
+    ctx.fillRect(0, groundY, W, 30);
+
+    // Skyline Neumünster
+    const cx = W / 2;
+
+    // Vicelinkirche (Mitte)
+    drawChurch(cx, groundY, 1.2);
+    interactiveAreas.push({ x: cx - 50, y: groundY - 230, w: 100, h: 230, label: 'Vicelinkirche – Wahrzeichen der Stadt' });
+
+    // Gebäude links
+    drawBuilding(cx - 250, groundY, 60, 100, '#4a6a8a');
+    drawBuilding(cx - 180, groundY, 50, 130, '#5a5a7a');
+    drawBuilding(cx - 120, groundY, 45, 80, '#6a7a6a');
+    interactiveAreas.push({ x: cx - 250, y: groundY - 130, w: 175, h: 130, label: 'Innenstadt & Einkaufsmeile' });
+
+    // Gebäude rechts
+    drawBuilding(cx + 80, groundY, 55, 110, '#5a6a7a');
+    drawBuilding(cx + 145, groundY, 65, 90, '#6a6a5a');
+    drawBuilding(cx + 220, groundY, 50, 140, '#4a5a6a');
+    interactiveAreas.push({ x: cx + 80, y: groundY - 140, w: 190, h: 140, label: 'Wohngebiete & Gewerbe' });
+
+    // Designer Outlet (stilisiert)
+    ctx.fillStyle = '#7a5a3a';
+    ctx.fillRect(cx + 300, groundY - 40, 120, 40);
+    ctx.fillStyle = '#9a7a5a';
+    ctx.beginPath();
+    ctx.arc(cx + 360, groundY - 40, 30, Math.PI, 0);
+    ctx.fill();
+    drawTextWithShadow('OUTLET', cx + 325, groundY - 15, '12px Arial', '#FFD700');
+    interactiveAreas.push({ x: cx + 300, y: groundY - 70, w: 120, h: 70, label: 'Designer Outlet Neumünster – Shopping-Highlight' });
+
+    // Bäume
+    drawTree(cx - 320, groundY, 40);
+    drawTree(cx - 350, groundY, 30);
+    drawTree(cx + 430, groundY, 35);
+    drawTree(cx + 460, groundY, 45);
+
+    // Schwale (Fluss)
+    drawWater(0, groundY + 40, W, 30);
+    drawTextWithShadow('~ Schwale ~', cx - 30, groundY + 60, '14px italic Georgia', 'rgba(100,180,255,0.8)');
+
+    // Titel
+    ctx.textAlign = 'center';
+    const titlePulse = Math.sin(animTime) * 5;
+    drawTextWithShadow('🏙️ NEUMÜNSTER', cx, H * 0.12 + titlePulse, 'bold 48px Segoe UI', '#64b4ff');
+    drawTextWithShadow('Im Herzen Schleswig-Holsteins', cx, H * 0.12 + 35 + titlePulse, '20px Georgia', '#aaa');
+    ctx.textAlign = 'left';
+
+    // Kompass
+    const compX = 80, compY = H * 0.35;
+    ctx.beginPath();
+    ctx.arc(compX, compY, 35, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#ff6666';
+    ctx.fillText('N', compX, compY - 18);
+    ctx.fillStyle = '#aaa';
+    ctx.fillText('S', compX, compY + 28);
+    ctx.fillText('W', compX - 24, compY + 5);
+    ctx.fillText('O', compX + 24, compY + 5);
+    ctx.textAlign = 'left';
+}
+
+function drawHistory() {
+    drawGradientBg('#1a0a00', '#2a1a10');
+    interactiveAreas = [];
+
+    ctx.textAlign = 'center';
+    drawTextWithShadow('📜 Geschichte Neumünsters', W / 2, 100, 'bold 36px Segoe UI', '#FFD700');
+    ctx.textAlign = 'left';
+
+    // Zeitstrahl
+    const timelineY = H * 0.45;
+    const startX = W * 0.08;
+    const endX = W * 0.92;
+
+    // Linie
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(startX, timelineY);
+    ctx.lineTo(endX, timelineY);
+    ctx.stroke();
+
+    const events = [
+        { year: '1127', text: 'Gründung des\nAugustiner-Chorherrenstifts\ndurch Vicelin', emoji: '⛪' },
+        { year: '1332', text: 'Erste urkundliche\nErwähnung als\n"Novum Monasterium"', emoji: '📜' },
+        { year: '1529', text: 'Reformation\nin Neumünster', emoji: '✝️' },
+        { year: '~1800', text: 'Aufstieg zur\nTextil- und\nTuchstadt', emoji: '🧵' },
+        { year: '1870', text: 'Eisenbahnanschluss\nund Industrialisierung', emoji: '🚂' },
+        { year: '1901', text: 'Stadtrecht\nerhalten', emoji: '🏛️' },
+        { year: '1945', text: 'Zerstörung im\n2. Weltkrieg &\nWiederaufbau', emoji: '🔨' },
+        { year: 'Heute', text: 'Moderne Stadt\nmit ~80.000\nEinwohnern', emoji: '🏙️' },
+    ];
+
+    const spacing = (endX - startX) / (events.length - 1);
+
+    events.forEach((ev, i) => {
+        const x = startX + i * spacing;
+        const above = i % 2 === 0;
+        const yOff = above ? -1 : 1;
+        const progress = Math.max(0, Math.min(1, (animTime - i * 0.3) * 2));
+
+        if (progress <= 0) return;
+
+        // Punkt
+        ctx.beginPath();
+        ctx.arc(x, timelineY, 8 * progress, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFD700';
+        ctx.fill();
+
+        // Linie zum Text
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.4 * progress})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, timelineY);
+        ctx.lineTo(x, timelineY + yOff * 60 * progress);
+        ctx.stroke();
+
+        // Emoji
+        ctx.textAlign = 'center';
+        ctx.font = `${28 * progress}px Arial`;
+        ctx.fillText(ev.emoji, x, timelineY + yOff * 80 * progress);
+
+        // Jahr
+        ctx.font = `bold ${14 * progress}px Arial`;
+        ctx.fillStyle = '#FFD700';
+        ctx.fillText(ev.year, x, timelineY + yOff * 105 * progress);
+
+        // Text
+        ctx.font = `${11 * progress}px Arial`;
+        ctx.fillStyle = '#ccc';
+        const lines = ev.text.split('\n');
+        lines.forEach((line, li) => {
+            ctx.fillText(line, x, timelineY + yOff * (120 + li * 15) * progress);
+        });
+
+        ctx.textAlign = 'left';
+
+        interactiveAreas.push({ x: x - 30, y: timelineY - 130, w: 60, h: 260, label: `${ev.year}: ${ev.text.replace(/\n/g, ' ')}` });
+    });
+
+    // Alte Pergament-Ecke
+    ctx.fillStyle = 'rgba(139, 90, 43, 0.15)';
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    ctx.lineTo(150, H);
+    ctx.lineTo(0, H - 150);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawIndustry() {
+    drawGradientBg('#1a1a1a', '#2a2020');
+    interactiveAreas = [];
+
+    ctx.textAlign = 'center';
+    drawTextWithShadow('🏭 Neumünster – Die Textilstadt', W / 2, 100, 'bold 36px Segoe UI', '#ff9944');
+    ctx.textAlign = 'left';
+
+    const groundY = H * 0.75;
+
+    // Boden
+    ctx.fillStyle = '#2a2a2a';
+    ctx.fillRect(0, groundY, W, H - groundY);
+
+    // Fabrik links
+    drawFactory(W * 0.25, groundY, 1.5);
+    interactiveAreas.push({ x: W * 0.25 - 90, y: groundY - 160, w: 200, h: 160, label: 'Tuchindustrie – Neumünster war das Zentrum der norddeutschen Textilproduktion' });
+
+    // Fabrik rechts
+    drawFactory(W * 0.7, groundY, 1.2);
+    interactiveAreas.push({ x: W * 0.7 - 75, y: groundY - 130, w: 170, h: 130, label: 'Lederverarbeitung – Wichtiger Industriezweig' });
+
+    // Spinnrad (animiert)
+    const wheelX = W * 0.48;
+    const wheelY = groundY - 80;
+    const wheelR = 50;
+    ctx.strokeStyle = '#B8860B';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(wheelX, wheelY, wheelR, 0, Math.PI * 2);
+    ctx.stroke();
+    // Speichen
+    for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + animTime * 2;
+        ctx.beginPath();
+        ctx.moveTo(wheelX, wheelY);
+        ctx.lineTo(wheelX + Math.cos(angle) * wheelR, wheelY + Math.sin(angle) * wheelR);
+        ctx.stroke();
+    }
+    ctx.textAlign = 'center';
+    drawTextWithShadow('🧵 Spinnrad', wheelX, wheelY + wheelR + 25, '14px Arial', '#B8860B');
+    ctx.textAlign = 'left';
+
+    interactiveAreas.push({ x: wheelX - 55, y: wheelY - 55, w: 110, h: 140, label: 'Vom Spinnrad zur Fabrik – Neumünsters Textiltradition reicht Jahrhunderte zurück' });
+
+    // Stoffbahnen (animiert)
+    const fabricColors = ['#cc3333', '#3366cc', '#33aa33', '#cc9933'];
+    for (let i = 0; i < 4; i++) {
+        const fx = W * 0.1 + i * (W * 0.22);
+        const fy = H * 0.3;
+        const fWidth = W * 0.15;
+        ctx.fillStyle = fabricColors[i];
+        ctx.globalAlpha = 0.6;
+        for (let j = 0; j < 8; j++) {
+            const wave = Math.sin(animTime * 2 + j * 0.5 + i) * 3;
+            ctx.fillRect(fx + wave, fy + j * 6, fWidth, 4);
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // Info-Boxen
+    const infoBoxes = [
+        { x: W * 0.05, y: H * 0.5, icon: '🧶', text: '19. Jh.: Größtes\nTextilzentrum\nNorddeutschlands' },
+        { x: W * 0.35, y: H * 0.5, icon: '⚙️', text: 'Industrialisierung\nbrachte Wohlstand\nund Wachstum' },
+        { x: W * 0.65, y: H * 0.5, icon: '🔄', text: 'Strukturwandel:\nVon Textil zu\nDienstleistung' },
+    ];
+
+    infoBoxes.forEach(box => {
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.strokeStyle = 'rgba(255, 153, 68, 0.3)';
+        ctx.lineWidth = 1;
+        const bw = 160, bh = 80;
+        ctx.beginPath();
+        ctx.roundRect(box.x, box.y, bw, bh, 10);
+        ctx.fill();
+        ctx.stroke();
+        ctx.textAlign = 'center';
+        ctx.font = '24px Arial';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(box.icon, box.x + bw / 2, box.y + 25);
+        ctx.font = '12px Arial';
+        ctx.fillStyle = '#ccc';
+        box.text.split('\n').forEach((line, li) => {
+            ctx.fillText(line, box.x + bw / 2, box.y + 45 + li * 14);
+        });
+        ctx.textAlign = 'left';
+    });
+}
+
+function drawNature() {
+    // Himmel
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, H);
+    skyGrad.addColorStop(0, '#87CEEB');
+    skyGrad.addColorStop(0.6, '#b0e0b0');
+    skyGrad.addColorStop(1, '#2a5a2a');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, W, H);
+    interactiveAreas = [];
+
+    // Sonne
+    const sunX = W    * 0.85;
+    const sunY = H * 0.12;
+    const sunGlow = Math.sin(animTime) * 5;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, 45 + sunGlow, 0, Math.PI * 2);
+    const sunGrad = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, 50);
+    sunGrad.addColorStop(0, '#FFE87C');
+    sunGrad.addColorStop(0.5, '#FFD700');
+    sunGrad.addColorStop(1, 'rgba(255, 215, 0, 0)');
+    ctx.fillStyle = sunGrad;
+    ctx.fill();
+
+    // Sonnenstrahlen
+    for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2 + animTime * 0.3;
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.15 + Math.sin(animTime + i) * 0.1})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(sunX + Math.cos(angle) * 50, sunY + Math.sin(angle) * 50);
+        ctx.lineTo(sunX + Math.cos(angle) * 80, sunY + Math.sin(angle) * 80);
+        ctx.stroke();
+    }
+
+    ctx.textAlign = 'center';
+    drawTextWithShadow('🌿 Natur & Parks in Neumünster', W / 2, 90, 'bold 36px Segoe UI', '#2d7a2d');
+    ctx.textAlign = 'left';
+
+    const groundY = H * 0.65;
+
+    // Hügel im Hintergrund
+    ctx.beginPath();
+    ctx.moveTo(0, groundY);
+    for (let x = 0; x <= W; x += 5) {
+        const hillY = groundY - Math.sin(x * 0.005) * 40 - Math.sin(x * 0.01 + 1) * 20;
+        ctx.lineTo(x, hillY);
+    }
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+    ctx.fillStyle = '#3a7a3a';
+    ctx.fill();
+
+    // Vorderer Hügel
+    ctx.beginPath();
+    ctx.moveTo(0, groundY + 40);
+    for (let x = 0; x <= W; x += 5) {
+        const hillY = groundY + 40 - Math.sin(x * 0.008 + 2) * 25;
+        ctx.lineTo(x, hillY);
+    }
+    ctx.lineTo(W, H);
+    ctx.lineTo(0, H);
+    ctx.closePath();
+    ctx.fillStyle = '#2a6a2a';
+    ctx.fill();
+
+    // Einfelder See
+    const lakeX = W * 0.15;
+    const lakeY = groundY - 10;
+    const lakeW = W * 0.3;
+    const lakeH = 80;
+    ctx.beginPath();
+    ctx.ellipse(lakeX + lakeW / 2, lakeY + lakeH / 2, lakeW / 2, lakeH / 2, 0, 0, Math.PI * 2);
+    const lakeGrad = ctx.createRadialGradient(lakeX + lakeW / 2, lakeY + lakeH / 2, 10, lakeX + lakeW / 2, lakeY + lakeH / 2, lakeW / 2);
+    lakeGrad.addColorStop(0, '#4a90d9');
+    lakeGrad.addColorStop(1, '#2a6ab0');
+    ctx.fillStyle = lakeGrad;
+    ctx.fill();
+
+    // Wellen auf dem See
+    for (let i = 0; i < 6; i++) {
+        const waveX = lakeX + 30 + i * 40;
+        const waveY = lakeY + lakeH / 2 + Math.sin(animTime * 2 + i) * 5;
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(waveX, waveY);
+        ctx.quadraticCurveTo(waveX + 10, waveY - 5, waveX + 20, waveY);
+        ctx.stroke();
+    }
+
+    ctx.textAlign = 'center';
+    drawTextWithShadow('🏊 Einfelder See', lakeX + lakeW / 2, lakeY + lakeH + 20, 'bold 14px Arial', '#fff');
+    ctx.textAlign = 'left';
+    interactiveAreas.push({ x: lakeX, y: lakeY, w: lakeW, h: lakeH + 25, label: 'Einfelder See – Beliebtes Naherholungsgebiet zum Baden, Segeln und Spazieren' });
+
+    // Stadtwald / Brachenfelder Gehölz
+    const forestX = W * 0.55;
+    const forestY = groundY - 30;
+    for (let i = 0; i < 12; i++) {
+        const tx = forestX + i * 25 + Math.sin(i * 3) * 10;
+        const ty = forestY + Math.sin(i * 2) * 15;
+        const tSize = 35 + Math.sin(i) * 10;
+        drawTree(tx, ty, tSize);
+    }
+    ctx.textAlign = 'center';
+    drawTextWithShadow('🌲 Stadtwald', forestX + 140, forestY + 40, 'bold 14px Arial', '#fff');
+    ctx.textAlign = 'left';
+    interactiveAreas.push({ x: forestX - 10, y: forestY - 60, w: 310, h: 100, label: 'Stadtwald & Brachenfelder Gehölz – Grüne Lunge der Stadt' });
+
+    // Tierpark
+    const tpX = W * 0.75;
+    const tpY = groundY + 50;
+    ctx.fillStyle = 'rgba(255,255,255,0.08)';
+    ctx.beginPath();
+    ctx.roundRect(tpX, tpY, 180, 90, 10);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(45, 122, 45, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.font = '36px Arial';
+    ctx.fillStyle = '#fff';
+    ctx.fillText('🦌🦉🐻', tpX + 90, tpY + 45);
+    drawTextWithShadow('Tierpark Neumünster', tpX + 90, tpY + 75, 'bold 13px Arial', '#8fbc8f');
+    ctx.textAlign = 'left';
+    interactiveAreas.push({ x: tpX, y: tpY, w: 180, h: 90, label: 'Tierpark Neumünster – Heimat von über 700 Tieren aus aller Welt' });
+
+    // Schwale-Aue
+    const schwaleX = W * 0.05;
+    const schwaleY = H * 0.82;
+    ctx.strokeStyle = '#4a90d9';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (let x = 0; x < W; x += 5) {
+        const sy = schwaleY + Math.sin(x * 0.02 + animTime * 2) * 8;
+        if (x === 0) ctx.moveTo(x, sy);
+        else ctx.lineTo(x, sy);
+    }
+    ctx.stroke();
+    ctx.textAlign = 'center';
+    drawTextWithShadow('~ Schwale ~', W * 0.5, schwaleY - 15, 'italic 14px Georgia', '#4a90d9');
+    ctx.textAlign = 'left';
+
+    // Vögel
+    for (let i = 0; i < 5; i++) {
+        const bx = (W * 0.3 + i * 60 + animTime * 20) % (W + 100) - 50;
+        const by = H * 0.2 + Math.sin(animTime * 3 + i * 2) * 15 + i * 20;
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(bx - 8, by + 4);
+        ctx.quadraticCurveTo(bx - 4, by - 4, bx, by);
+        ctx.quadraticCurveTo(bx + 4, by - 4, bx + 8, by + 4);
+        ctx.stroke();
+    }
+}
+
+function drawLandmarks() {
+    drawGradientBg('#0a1a2e', '#1a2a4e');
+    interactiveAreas = [];
+
+    ctx.textAlign = 'center';
+    drawTextWithShadow('🏛️ Wahrzeichen & Sehenswürdigkeiten', W / 2, 90, 'bold 34px Segoe UI', '#64b4ff');
+    ctx.textAlign = 'left';
+
+    const landmarks = [
+        {
+            name: 'Vicelinkirche',
+            emoji: '⛪',
+            desc: 'Älteste Kirche der Stadt,\nbenannt nach dem Missionar\nVicelin (12. Jh.)',
+            color: '#8B4513'
+        },
+        {
+            name: 'Rathaus',
+            emoji: '🏛️',
+            desc: 'Sitz der Stadtverwaltung\nim Herzen der City',
+            color: '#6a7a8a'
+        },
+        {
+            name: 'Designer Outlet',
+            emoji: '🛍️',
+            desc: 'Eines der größten\nOutlet-Center\nNorddeutschlands',
+            color: '#9a7a5a'
+        },
+        {
+            name: 'Museum Tuch + Technik',
+            emoji: '🏭',
+            desc: 'Textilmuseum – zeigt die\nGeschichte der Tuchmacherei\nin Neumünster',
+            color: '#7a5a4a'
+        },
+        {
+            name: 'Holstenhallen',
+            emoji: '🎪',
+            desc: 'Großes Messe- und\nVeranstaltungszentrum\nmit überregionaler Bedeutung',
+            color: '#5a6a7a'
+        },
+        {
+            name: 'Caspar-von-Saldern-Haus',
+            emoji: '🏠',
+            desc: 'Historisches Gebäude\nund Kulturzentrum',
+            color: '#7a6a5a'
+        }
+    ];
+
+    const cols = 3;
+    const rows = 2;
+    const cardW = W * 0.26;
+    const cardH = H * 0.3;
+    const startX = (W - cols * cardW - (cols - 1) * 30) / 2;
+    const startY = 130;
+
+    landmarks.forEach((lm, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const cx = startX + col * (cardW + 30);
+        const cy = startY + row * (cardH + 25);
+
+        const hoverScale = 1;
+        const fadeIn = Math.min(1, Math.max(0, (animTime - i * 0.2) * 3));
+
+        ctx.globalAlpha = fadeIn;
+
+        // Karte
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.strokeStyle = `rgba(100, 180, 255, ${0.2 + Math.sin(animTime + i) * 0.1})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(cx, cy, cardW, cardH, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        // Gebäude-Silhouette
+        const buildH = cardH * 0.35;
+        const buildW = cardW * 0.4;
+        const buildX = cx + cardW / 2 - buildW / 2;
+        const buildY = cy + 60;
+        ctx.fillStyle = lm.color;
+        ctx.fillRect(buildX, buildY, buildW, buildH);
+
+        // Dach
+        ctx.beginPath();
+        ctx.moveTo(buildX - 5, buildY);
+        ctx.lineTo(buildX + buildW / 2, buildY - 20);
+        ctx.lineTo(buildX + buildW + 5, buildY);
+        ctx.closePath();
+        ctx.fillStyle = shadeColor(lm.color, -20);
+        ctx.fill();
+
+        // Fenster leuchten
+        for (let wy = 0; wy < 3; wy++) {
+            for (let wx = 0; wx < 3; wx++) {
+                const winX = buildX + 8 + wx * (buildW / 3 - 2);
+                const winY = buildY + 8 + wy * (buildH / 3);
+                const glow = Math.sin(animTime * 2 + wx + wy + i) * 0.3 + 0.6;
+                ctx.fillStyle = `rgba(255, 220, 100, ${glow})`;
+                ctx.fillRect(winX, winY, buildW * 0.12, buildH * 0.12);
+            }
+        }
+
+        // Emoji
+        ctx.textAlign = 'center';
+        ctx.font = '32px Arial';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(lm.emoji, cx + cardW / 2, cy + 35);
+
+        // Name
+        drawTextWithShadow(lm.name, cx + cardW / 2, cy + cardH - 55, 'bold 15px Segoe UI', '#64b4ff');
+
+        // Beschreibung
+        ctx.font = '11px Arial';
+        ctx.fillStyle = '#aaa';
+        const descLines = lm.desc.split('\n');
+        descLines.forEach((line, li) => {
+            ctx.fillText(line, cx + cardW / 2, cy + cardH - 38 + li * 14);
+        });
+
+        ctx.textAlign = 'left';
+        ctx.globalAlpha = 1;
+
+        interactiveAreas.push({ x: cx, y: cy, w: cardW, h: cardH, label: `${lm.name}: ${lm.desc.replace(/\n/g, ' ')}` });
+    });
+}
+
+function drawFacts() {
+    drawGradientBg('#0a0a2e', '#1a1a3e');
+    interactiveAreas = [];
+
+    ctx.textAlign = 'center';
+    drawTextWithShadow('📊 Neumünster in Zahlen', W / 2, 90, 'bold 36px Segoe UI', '#64b4ff');
+    ctx.textAlign = 'left';
+
+    const facts = [
+        { label: 'Einwohner', value: 80000, unit: '', color: '#4a9eff', icon: '👥' },
+        { label: 'Fläche (km²)', value: 71.6, unit: ' km²', color: '#44cc88', icon: '📐' },
+        { label: 'Gründung', value: 1127, unit: '', color: '#ffaa44', icon: '📜' },
+        { label: 'Stadtrecht seit', value: 1901, unit: '', color: '#ff6688', icon: '🏛️' },
+        { label: 'Höhe ü. NN (m)', value: 22, unit: ' m', color: '#aa88ff', icon: '⛰️' },
+    ];
+
+    const barMaxW = W * 0.45;
+    const barH = 40;
+    const startX = W * 0.3;
+    const startY = 150;
+    const spacing = 75;
+
+    facts.forEach((fact, i) => {
+        const y = startY + i * spacing;
+        const progress = Math.min(1, Math.max(0, (animTime - i * 0.3) * 1.5));
+        const barW = barMaxW * progress;
+
+        // Hintergrund-Bar
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.beginPath();
+        ctx.roundRect(startX, y, barMaxW, barH, 8);
+        ctx.fill();
+
+        // Fortschritts-Bar
+        const barGrad = ctx.createLinearGradient(startX, y, startX + barW, y);
+        barGrad.addColorStop(0, fact.color);
+        barGrad.addColorStop(1, shadeColor(fact.color, -30));
+        ctx.fillStyle = barGrad;
+        ctx.beginPath();
+        ctx.roundRect(startX, y, barW, barH, 8);
+        ctx.fill();
+
+        // Glow-Effekt
+        ctx.shadowColor = fact.color;
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = 'rgba(0,0,0,0)';
+        ctx.fillRect(startX, y, barW, barH);
+        ctx.shadowBlur = 0;
+
+        // Icon
+        ctx.textAlign = 'right';
+        ctx.font = '28px Arial';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(fact.icon, startX - 15, y + 30);
+
+        // Label
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.fillStyle = '#ccc';
+        ctx.fillText(fact.label, startX - 50, y + 26);
+
+        // Wert
+        ctx.textAlign = 'left';
+        const displayVal = fact.value >= 100 ?
+            Math.round(fact.value * progress).toLocaleString('de-DE') :
+            (fact.value * progress).toFixed(fact.value % 1 !== 0 ? 1 : 0);
+        ctx.font = 'bold 18px Segoe UI';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(displayVal + fact.unit, startX + barW + 15, y + 28);
+    });
+
+    // Zusätzliche Fun Facts
+    const funFacts = [
+        '🚆 Wichtiger Eisenbahnknotenpunkt (Hamburg–Kiel & Neumünster–Bad Segeberg)',
+        '🛍️ Das Designer Outlet zieht jährlich Millionen Besucher an',
+        '🧵 Spitzname: "Stadt der Tuche und Leder"',
+        '🐻 Der Tierpark beherbergt über 700 Tiere',
+        '🎪 Die Holstenhallen sind eines der größten Messezentren im Norden',
+    ];
+
+    const funY = startY + facts.length * spacing + 40;
+    ctx.textAlign = 'center';
+    drawTextWithShadow('💡 Wusstest du?', W / 2, funY, 'bold 22px Segoe UI', '#FFD700');
+
+    funFacts.forEach((ff, i) => {
+        const fadeIn = Math.min(1, Math.max(0, (animTime - 2 - i * 0.4) * 2));
+        ctx.globalAlpha = fadeIn;
+        ctx.font = '14px Segoe UI';
+        ctx.fillStyle = '#bbb';
+        ctx.fillText(ff, W / 2, funY + 30 + i * 28);
+    });
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
+}
+
+// ========== SZENEN-VERWALTUNG ==========
+
+const scenes = {
+    overview: { draw: drawOverview, title: 'Willkommen in Neumünster', text: 'Neumünster ist eine kreisfreie Stadt im Zentrum Schleswig-Holsteins mit rund 80.000 Einwohnern. Sie liegt an der Schwale und ist ein wichtiger Verkehrsknotenpunkt zwischen Hamburg und Kiel. Bewege die Maus über die Gebäude für mehr Infos!' },
+    history: { draw: drawHistory, title: 'Geschichte', text: 'Neumünster wurde 1127 durch den Missionar Vicelin gegründet, der hier ein Augustiner-Chorherrenstift errichtete. Der Name "Novum Monasterium" (Neues Münster) gab der Stadt ihren Namen. Im 19. Jahrhundert entwickelte sie sich zum Textilzentrum Norddeutschlands.' },
+    industry: { draw: drawIndustry, title: 'Die Textilstadt', text: 'Neumünster war das Zentrum der norddeutschen Textil- und Lederindustrie. Tuchfabriken und Gerbereien prägten die Stadt über Jahrhunderte. Heute erinnert das Museum "Tuch + Technik" an diese Tradition. Die Wirtschaft hat sich zu Dienstleistung und Handel gewandelt.' },
+    nature: { draw: drawNature, title: 'Natur & Erholung', text: 'Neumünster bietet viel Grün: Der Einfelder See im Norden ist ein beliebtes Naherholungsgebiet. Der Tierpark beherbergt über 700 Tiere. Stadtwald, Brachenfelder Gehölz und die Schwale-Aue laden zu Spaziergängen ein.' },
+    landmarks: { draw: drawLandmarks, title: 'Wahrzeichen', text: 'Von der historischen Vicelinkirche über das Museum Tuch + Technik bis zum modernen Designer Outlet – Neumünster hat viele Sehenswürdigkeiten. Die Holstenhallen sind ein überregional bekanntes Messe- und Veranstaltungszentrum.' },
+    facts: { draw: drawFacts, title: 'Fakten & Zahlen', text: 'Neumünster in Zahlen: ~80.000 Einwohner, 71,6 km² Fläche, gegründet 1127, Stadtrecht seit 1901. Die Stadt liegt auf 22 m über NN und ist ein wichtiger Eisenbahnknotenpunkt in Schleswig-Holstein.' },
+};
+
+// Navigation
+document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const scene = btn.dataset.scene;
+        if (scene === currentScene) return;
+
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        currentScene = scene;
+        animTime = 0;
+
+        const info = scenes[scene];
+        document.getElementById('info-title').textContent = info.title;
+        document.getElementById('info-text').textContent = info.text;
+    });
+});
+
+// Maus-Tracking
+canvas.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    let found = false;
+    for (const area of interactiveAreas) {
+        if (mouseX >= area.x && mouseX <= area.x + area.w &&
+            mouseY >= area.y && mouseY <= area.y + area.h) {
+            tooltip.style.display = 'block';
+            tooltip.style.left = (mouseX + 15) + 'px';
+            tooltip.style.top = (mouseY - 10) + 'px';
+            tooltip.textContent = area.label;
+            canvas.style.cursor = 'pointer';
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        tooltip.style.display = 'none';
+        canvas.style.cursor = 'default';
+    }
+});
+
+canvas.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+});
+
+// ========== ANIMATIONS-LOOP ==========
+
+function animate() {
+    animTime += 0.016;
+
+    // Szene zeichnen
+    const scene = scenes[currentScene];
+    if (scene) scene.draw();
+
+    // Partikel
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+
+    // Maus-Glow-Effekt
+    const glowGrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 100);
+    glowGrad.addColorStop(0, 'rgba(100, 180, 255, 0.03)');
+    glowGrad.addColorStop(1, 'rgba(100, 180, 255, 0)');
+    ctx.fillStyle = glowGrad;
+    ctx.fillRect(mouseX - 100, mouseY - 100, 200, 200);
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
