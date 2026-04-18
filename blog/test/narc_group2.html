@@ -1,0 +1,2463 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Die Architektur der Manipulation – Abstrakte Visualisierung</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #06060a;
+            --surface: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.05);
+            --text: #b0b0b0;
+            --text-dim: #555;
+            --accent: #8b5cf6;
+            --danger: #ef4444;
+            --warm: #f59e0b;
+            --safe: #10b981;
+            --ice: #38bdf8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---- SCROLL CONTAINER ---- */
+        .scroll-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 24px;
+            position: relative;
+        }
+
+        /* ---- HERO ---- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+        .hero canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .hero-text {
+            position: relative;
+            z-index: 2;
+        }
+        .hero h1 {
+            font-size: clamp(2.5em, 6vw, 5em);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1.05;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .hero h1 span {
+            display: block;
+            font-weight: 300;
+            font-size: 0.4em;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .hero p {
+            max-width: 550px;
+            color: #666;
+            font-size: 1em;
+            line-height: 1.8;
+        }
+        .scroll-arrow {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+            animation: scrollPulse 2s infinite;
+        }
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        /* ---- CANVAS SCENES ---- */
+        .scene {
+            width: 100%;
+            max-width: 1000px;
+            position: relative;
+        }
+        .scene canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border-radius: 24px;
+        }
+        .scene-label {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ---- SLIDER DOCK ---- */
+        .dock {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(6,6,10,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        .dock label {
+            font-size: 0.8em;
+            color: #777;
+            font-weight: 500;
+        }
+        .dock input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 180px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+        }
+        .dock input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(139,92,246,0.5);
+        }
+        .dock .dock-val {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 30px;
+            text-align: right;
+        }
+
+        /* ---- TEXT BLOCKS ---- */
+        .text-block {
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .text-block h2 {
+            font-size: clamp(1.6em, 3.5vw, 2.4em);
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+            margin-bottom: 14px;
+        }
+        .text-block p {
+            font-size: 0.95em;
+            line-height: 1.8;
+            color: #777;
+        }
+        .text-block .kicker {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* ---- CHAT V2 ---- */
+        .chat-v2 {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+        .chat-v2-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .chat-v2-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            position: relative;
+        }
+        .chat-v2-avatar .mask-layer {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            transition: opacity 0.3s;
+        }
+        .chat-v2-name { color: #ddd; font-weight: 600; font-size: 0.95em; }
+        .chat-v2-status { color: #555; font-size: 0.75em; }
+        .chat-v2-body {
+            padding: 24px;
+            min-height: 420px;
+            max-height: 520px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        .chat-v2-body::-webkit-scrollbar { width: 3px; }
+        .chat-v2-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+        .bubble {
+            max-width: 82%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin-bottom: 8px;
+            font-size: 0.88em;
+            line-height: 1.6;
+            opacity: 0;
+            transform: translateY(8px) scale(0.97);
+            animation: bubbleIn 0.35s ease forwards;
+        }
+        @keyframes bubbleIn {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .bubble-them {
+            background: rgba(139,92,246,0.1);
+            border: 1px solid rgba(139,92,246,0.12);
+            color: #c4b5fd;
+            border-bottom-left-radius: 6px;
+            margin-right: auto;
+        }
+        .bubble-me {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #999;
+            border-bottom-right-radius: 6px;
+            margin-left: auto;
+        }
+        .bubble-decode {
+            max-width: 92%;
+            margin: 4px auto 16px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.78em;
+            line-height: 1.5;
+            text-align: center;
+            position: relative;
+        }
+        .bubble-decode.tactic {
+            background: rgba(239,68,68,0.06);
+            border: 1px solid rgba(239,68,68,0.1);
+            color: #f87171;
+        }
+        .bubble-decode.effect {
+            background: rgba(245,158,11,0.06);
+            border: 1px solid rgba(245,158,11,0.1);
+            color: #fbbf24;
+        }
+        .bubble-decode.result {
+            background: rgba(139,92,246,0.06);
+            border: 1px solid rgba(139,92,246,0.1);
+            color: #a78bfa;
+        }
+        .bubble-time {
+            text-align: center;
+            font-size: 0.72em;
+            color: #333;
+            margin: 16px 0 8px;
+            letter-spacing: 1px;
+        }
+
+        .chat-v2-nav {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: #777;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s;
+        }
+        .nav-pill:hover {
+            border-color: rgba(139,92,246,0.4);
+            color: #b39ddb;
+            background: rgba(139,92,246,0.08);
+        }
+        .nav-pill.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(139,92,246,0.12);
+        }
+
+        /* ---- SEPARATOR ---- */
+        .sep {
+            width: 40px;
+            height: 1px;
+            background: var(--border);
+            margin: 0 auto;
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (max-width: 600px) {
+            .dock { flex-wrap: wrap; justify-content: center; border-radius: 20px; }
+            .dock input[type="range"] { width: 140px; }
+            .scene { height: 350px !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+    <canvas id="heroCanvas"></canvas>
+    <div class="hero-text">
+        <h1>
+            <span>Psychologie der Manipulation</span>
+            Die unsichtbaren<br>Architekturen
+        </h1>
+        <p>
+            Wie verdeckte Narzissten und manipulative Gruppen Realität verformen, 
+            Identität erodieren und Abhängigkeit erzeugen – 
+            sichtbar gemacht durch abstrakte Visualisierungen.
+        </p>
+    </div>
+    <div class="scroll-arrow"></div>
+</div>
+
+<!-- ============ 1: THE TWO FIELDS ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Energiefeld</div>
+        <h2>Zwei Menschen. Ein Raum.</h2>
+        <p>
+            Links: ein verdeckter Narzisst. Rechts: das Gegenüber. 
+            Bewege den Slider und beobachte, wie sich das Energiefeld verändert – 
+            wie der eine Raum einnimmt und der andere schrumpft.
+        </p>
+    </div>
+    <div class="scene" style="height:500px;">
+        <canvas id="fieldCanvas"></canvas>
+        <div class="dock">
+            <label>Manipulationslevel</label>
+            <input type="range" id="fieldSlider" min="0" max="100" value="0">
+            <span class="dock-val" id="fieldVal">0</span>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 2: EROSION PARTICLES ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Erosion</div>
+        <h2>Das Selbst löst sich auf</h2>
+        <p>
+            Jedes Partikel repräsentiert einen Teil deiner Identität – 
+            Selbstvertrauen, Meinungen, Grenzen, Freude. 
+            Beobachte, wie sie langsam angezogen, absorbiert und aufgelöst werden.
+        </p>
+    </div>
+    <div class="scene" style="height:550px;">
+        <canvas id="erosionCanvas"></canvas>
+        <div class="dock">
+            <label>Jahre</label>
+            <input type="range" id="erosionSlider" min="0" max="100" value="0">
+            <span class="dock-val" id="erosionVal">0</span>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 3: THE CYCLE – HEARTBEAT ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Der Zyklus</div>
+        <h2>Idealisierung. Abwertung. Verwerfen.</h2>
+        <p>
+            Der narzisstische Kreislauf als Herzschlag – 
+            die Hochs werden niedriger, die Tiefs tiefer. 
+            Jeder Zyklus nimmt mehr als er gibt.
+        </p>
+    </div>
+    <div class="scene" style="height:400px;">
+        <canvas id="cycleCanvas"></canvas>
+    </div>
+</div>
+
+<!-- ============ 4: GASLIGHTING – REALITY SPLIT ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Gaslighting</div>
+        <h2>Wenn Realität sich spaltet</h2>
+        <p>
+            Oben: was wirklich passiert ist. Unten: was du zu glauben beginnst. 
+            Bewege den Slider und beobachte, wie die beiden Linien auseinanderdriften.
+        </p>
+    </div>
+    <div class="scene" style="height:450px;">
+        <canvas id="gasCanvas"></canvas>
+        <div class="dock">
+            <label>Gaslighting</label>
+            <input type="range" id="gasSlider" min="0" max="100" value="0">
+            <span class="dock-val" id="gasVal">0</span>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 5: GROUP – GRAVITY WELL ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Gruppendynamik</div>
+        <h2>Das Gravitationsfeld der Macht</h2>
+        <p>
+            In manipulativen Gruppen kreisen alle um einen Mittelpunkt. 
+            Wer zu nah kommt, wird verschluckt. Wer sich entfernt, wird zurückgezogen. 
+            Beobachte die Orbits.
+        </p>
+    </div>
+    <div class="scene" style="height:550px;">
+        <canvas id="gravityCanvas"></canvas>
+        <div class="dock">
+            <label>Kontrolle</label>
+            <input type="range" id="gravSlider" min="0" max="100" value="40">
+            <span class="dock-val" id="gravVal">40</span>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 6: DOUBLE BIND – IMPOSSIBLE MAZE ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Double Bind</div>
+        <h2>Jeder Weg führt in die Schuld</h2>
+        <p>
+            Die Double-Bind-Falle als visuelles Labyrinth – 
+            egal welchen Pfad du wählst, er endet in einer Sackgasse. 
+            Klicke, um verschiedene Szenarien zu sehen.
+        </p>
+    </div>
+    <div class="scene" style="height:480px;">
+        <canvas id="mazeCanvas"></canvas>
+    </div>
+</div>
+
+<!-- ============ 7: CHAT SIMULATION V2 ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Dekodiert</div>
+        <h2>Die Sprache der Manipulation</h2>
+        <p>
+            Echte Gesprächsmuster – Satz für Satz dekodiert. 
+            Was gesagt wird. Was gemeint ist. Was es bewirkt.
+        </p>
+    </div>
+    <div class="chat-v2">
+        <div class="chat-v2-header">
+            <div class="chat-v2-avatar" style="background:rgba(139,92,246,0.15);">
+                <div class="mask-layer" id="avatarMask" style="opacity:1;">😊</div>
+                <div class="mask-layer" id="avatarTrue" style="opacity:0;">🎭</div>
+            </div>
+            <div>
+                <div class="chat-v2-name">Verdeckter Narzisst</div>
+                <div class="chat-v2-status" id="chatStatus">Szenario wählen</div>
+            </div>
+        </div>
+        <div class="chat-v2-body" id="chatBody"></div>
+        <div class="chat-v2-nav" id="chatNav">
+            <button class="nav-pill" onclick="runChat('covert_gaslight')">Gaslighting</button>
+            <button class="nav-pill" onclick="runChat('covert_guilt')">Schuldumkehr</button>
+            <button class="nav-pill" onclick="runChat('covert_silent')">Schweigen</button>
+            <button class="nav-pill" onclick="runChat('covert_triangulate')">Triangulation</button>
+            <button class="nav-pill" onclick="runChat('covert_group')">Gruppendruck</button>
+            <button class="nav-pill" onclick="runChat('covert_hoover')">Hoovering</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 8: INFORMATION ASYMMETRY ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Informationskontrolle</div>
+        <h2>Jeder kennt eine andere Wahrheit</h2>
+        <p>
+            Der Anführer ist der einzige Knotenpunkt. 
+            Alle Informationen fließen durch ihn – gefiltert, verzerrt, instrumentalisiert. 
+            Hover über die Knoten.
+        </p>
+    </div>
+    <div class="scene" style="height:500px;">
+        <canvas id="infoCanvas"></canvas>
+    </div>
+</div>
+
+<!-- ============ 9: RECOVERY – LIGHT RETURNS ============ -->
+<div class="scroll-section">
+    <div class="text-block">
+        <div class="kicker">Heilung</div>
+        <h2>Das Licht kehrt zurück</h2>
+        <p>
+            Erholung ist nicht linear. Es gibt Rückschläge, Trigger, dunkle Tage. 
+            Aber mit jedem Tag ohne Manipulation wächst etwas Neues. 
+            Bewege den Slider durch die Zeit.
+        </p>
+    </div>
+    <div class="scene" style="height:500px;">
+        <canvas id="recoveryCanvas"></canvas>
+        <div class="dock">
+            <label>Monate nach Trennung</label>
+            <input type="range" id="recoverySlider" min="0" max="100" value="0">
+            <span class="dock-val" id="recoveryVal">0</span>
+        </div>
+    </div>
+</div>
+
+<div style="text-align:center;padding:60px 20px;color:#333;font-size:0.75em;line-height:2;">
+    ⚠️ Diese Visualisierung dient der Aufklärung und ersetzt keine professionelle Beratung.<br>
+    Telefonseelsorge: 0800 111 0 111 · Hilfetelefon: 08000 116 016
+</div>
+
+<script>
+// ==========================================
+// UTILITIES
+// ==========================================
+function getCanvas(id) {
+    const c = document.getElementById(id);
+    const ctx = c.getContext('2d');
+    return { c, ctx };
+}
+
+function sizeCanvas(c) {
+    c.width = c.offsetWidth * (window.devicePixelRatio || 1);
+    c.height = c.offsetHeight * (window.devicePixelRatio || 1);
+    c.getContext('2d').scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+    return { w: c.offsetWidth, h: c.offsetHeight };
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+// ==========================================
+// HERO – Particle Threads
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('heroCanvas');
+    let W, H;
+    const particles = [];
+
+    function resize() {
+        const s = sizeCanvas(c);
+        W = s.w; H = s.h;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    for (let i = 0; i < 60; i++) {
+        particles.push({
+            x: Math.random() * 2000,
+            y: Math.random() * 2000,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.4,
+            r: Math.random() * 1.5 + 0.5,
+            a: Math.random() * 0.4 + 0.1
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0 || p.x > W) p.vx *= -1;
+            if (p.y < 0 || p.y > H) p.vy *= -1;
+        });
+
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                if (d < 120) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = `rgba(139,92,246,${0.08 * (1 - d / 120)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(139,92,246,${p.a})`;
+            ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// 1: TWO ENERGY FIELDS
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('fieldCanvas');
+    let W, H, time = 0;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const slider = document.getElementById('fieldSlider');
+    const valEl = document.getElementById('fieldVal');
+
+    // Particles for each person
+    const narcParticles = [];
+    const victimParticles = [];
+
+    for (let i = 0; i < 120; i++) {
+        narcParticles.push({
+            angle: Math.random() * Math.PI * 2,
+            dist: 20 + Math.random() * 80,
+            speed: 0.005 + Math.random() * 0.015,
+            size: Math.random() * 3 + 1,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+    for (let i = 0; i < 120; i++) {
+        victimParticles.push({
+            angle: Math.random() * Math.PI * 2,
+            dist: 20 + Math.random() * 80,
+            speed: 0.005 + Math.random() * 0.015,
+            size: Math.random() * 3 + 1,
+            phase: Math.random() * Math.PI * 2,
+            origDist: 20 + Math.random() * 80
+        });
+    }
+
+    function draw() {
+        time += 0.01;
+        const level = parseInt(slider.value);
+        valEl.textContent = level;
+
+        ctx.clearRect(0, 0, W, H);
+
+        const narcX = lerp(W * 0.35, W * 0.45, level / 100);
+        const narcY = H / 2;
+        const victimX = lerp(W * 0.65, W * 0.58, level / 100);
+        const victimY = H / 2;
+
+        const narcRadius = lerp(80, 180, level / 100);
+        const victimRadius = lerp(80, 25, level / 100);
+
+        // Narcissist field glow
+        const narcGrd = ctx.createRadialGradient(narcX, narcY, 0, narcX, narcY, narcRadius * 2);
+        narcGrd.addColorStop(0, `rgba(139,92,246,${0.06 + level * 0.001})`);
+        narcGrd.addColorStop(0.5, `rgba(139,92,246,${0.02 + level * 0.0005})`);
+        narcGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = narcGrd;
+        ctx.fillRect(0, 0, W, H);
+
+        // Victim field glow
+        const victimGrd = ctx.createRadialGradient(victimX, victimY, 0, victimX, victimY, victimRadius * 2);
+        const victimAlpha = Math.max(0.01, 0.06 - level * 0.0005);
+        victimGrd.addColorStop(0, `rgba(16,185,129,${victimAlpha})`);
+        victimGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = victimGrd;
+        ctx.fillRect(0, 0, W, H);
+
+        // Narcissist particles – expand
+        narcParticles.forEach(p => {
+            p.angle += p.speed;
+            const d = p.dist * (narcRadius / 80);
+            const wobble = Math.sin(time * 2 + p.phase) * 8;
+            const x = narcX + Math.cos(p.angle) * (d + wobble);
+            const y = narcY + Math.sin(p.angle) * (d + wobble);
+
+            ctx.beginPath();
+            ctx.arc(x, y, p.size * (0.8 + level * 0.005), 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(139,92,246,${0.15 + level * 0.003})`;
+            ctx.fill();
+        });
+
+        // Victim particles – compress and some get pulled
+        victimParticles.forEach((p, i) => {
+            p.angle += p.speed;
+            const compression = victimRadius / 80;
+            let d = p.origDist * compression;
+
+            // Some particles get pulled toward narcissist
+            const pullStrength = level / 100;
+            if (i < level * 0.8) {
+                const targetX = narcX + Math.cos(p.angle + time * 0.5) * narcRadius * 0.6;
+                const targetY = narcY + Math.sin(p.angle + time * 0.5) * narcRadius * 0.6;
+                const currentX = victimX + Math.cos(p.angle) * d;
+                const currentY = victimY + Math.sin(p.angle) * d;
+                const x = lerp(currentX, targetX, pullStrength * (i / (level * 0.8)));
+                const y = lerp(currentY, targetY, pullStrength * (i / (level * 0.8)));
+
+                ctx.beginPath();
+                ctx.arc(x, y, p.size * Math.max(0.3, 1 - pullStrength), 0, Math.PI * 2);
+                const alpha = lerp(0.4, 0.08, pullStrength * (i / (level * 0.8)));
+                ctx.fillStyle = `rgba(16,185,129,${alpha})`;
+                ctx.fill();
+
+                // Fading trail
+                if (pullStrength > 0.3) {
+                    ctx.beginPath();
+                    ctx.moveTo(victimX + Math.cos(p.angle) * d, victimY + Math.sin(p.angle) * d);
+                    ctx.lineTo(x, y);
+                    ctx.strokeStyle = `rgba(139,92,246,${pullStrength * 0.06})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            } else {
+                const x = victimX + Math.cos(p.angle) * d;
+                const y = victimY + Math.sin(p.angle) * d;
+                ctx.beginPath();
+                ctx.arc(x, y, p.size * compression, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(16,185,129,${0.3 * compression})`;
+                ctx.fill();
+            }
+        });
+
+        // Center cores
+        // Narcissist core – grows
+        const narcCoreR = lerp(12, 28, level / 100);
+        ctx.beginPath();
+        ctx.arc(narcX, narcY, narcCoreR, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(139,92,246,${0.2 + level * 0.003})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(139,92,246,${0.4 + level * 0.004})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Victim core – shrinks
+        const victimCoreR = lerp(12, 4, level / 100);
+        ctx.beginPath();
+        ctx.arc(victimX, victimY, victimCoreR, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(16,185,129,${lerp(0.3, 0.08, level / 100)})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(16,185,129,${lerp(0.5, 0.1, level / 100)})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Labels
+        ctx.font = '500 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(139,92,246,${0.5 + level * 0.004})`;
+        ctx.fillText('Narzisst', narcX, narcY + narcCoreR + 22);
+
+        ctx.fillStyle = `rgba(16,185,129,${lerp(0.5, 0.15, level / 100)})`;
+        ctx.fillText('Du', victimX, victimY + victimCoreR + 22);
+
+        // State text
+        ctx.font = '300 13px Inter';
+        ctx.fillStyle = '#444';
+        ctx.textAlign = 'center';
+        let state = '';
+        if (level < 10) state = 'Zwei gleichwertige Energiefelder';
+        else if (level < 30) state = 'Subtile Verschiebung – kaum spürbar';
+        else if (level < 50) state = 'Dein Raum wird kleiner';
+        else if (level < 70) state = 'Du wirst absorbiert';
+        else if (level < 90) state = 'Kaum noch eigener Raum';
+        else state = 'Vollständig vereinnahmt';
+        ctx.fillText(state, W / 2, H - 60);
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// 2: EROSION PARTICLES
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('erosionCanvas');
+    let W, H, time = 0;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const slider = document.getElementById('erosionSlider');
+    const valEl = document.getElementById('erosionVal');
+
+    const aspects = [
+        { label: 'Selbstvertrauen', color: [16, 185, 129] },
+        { label: 'Eigene Meinung', color: [56, 189, 248] },
+        { label: 'Grenzen', color: [239, 68, 68] },
+        { label: 'Freude', color: [245, 158, 11] },
+        { label: 'Soziale Kontakte', color: [168, 85, 247] },
+        { label: 'Körpergefühl', color: [236, 72, 153] },
+        { label: 'Wahrnehmung', color: [99, 102, 241] },
+        { label: 'Hoffnung', color: [34, 211, 238] }
+    ];
+
+    // Create particles for each aspect
+    const allParticles = [];
+    aspects.forEach((asp, ai) => {
+        for (let i = 0; i < 35; i++) {
+            const angle = (ai / aspects.length) * Math.PI * 2 + (Math.random() - 0.5) * 0.6;
+            const dist = 40 + Math.random() * 100;
+            allParticles.push({
+                aspect: ai,
+                homeAngle: angle,
+                homeDist: dist,
+                x: 0, y: 0,
+                size: Math.random() * 3 + 1.5,
+                phase: Math.random() * Math.PI * 2,
+                speed: 0.002 + Math.random() * 0.008,
+                absorbed: false,
+                absorbTime: 0.1 + Math.random() * 0.9
+            });
+        }
+    });
+
+    // The void – narcissistic black hole
+    let voidPulse = 0;
+
+    function draw() {
+        time += 0.008;
+        const level = parseInt(slider.value);
+        const years = (level / 100 * 10).toFixed(1);
+        valEl.textContent = years + 'y';
+
+        ctx.clearRect(0, 0, W, H);
+
+        const cx = W / 2;
+        const cy = H / 2;
+        const t = level / 100;
+
+        // The void grows
+        voidPulse = Math.sin(time * 2) * 0.1 + 1;
+        const voidR = lerp(15, 80, t) * voidPulse;
+
+        // Void glow
+        const voidGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, voidR * 3);
+        voidGrd.addColorStop(0, `rgba(20,0,30,${0.3 + t * 0.5})`);
+        voidGrd.addColorStop(0.5, `rgba(139,92,246,${t * 0.05})`);
+        voidGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = voidGrd;
+        ctx.fillRect(0, 0, W, H);
+
+        // Void core
+        ctx.beginPath();
+        ctx.arc(cx, cy, voidR, 0, Math.PI * 2);
+        const coreGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, voidR);
+        coreGrd.addColorStop(0, `rgba(0,0,0,${0.5 + t * 0.4})`);
+        coreGrd.addColorStop(0.7, `rgba(60,20,80,${0.2 + t * 0.3})`);
+        coreGrd.addColorStop(1, `rgba(139,92,246,${0.05 + t * 0.1})`);
+        ctx.fillStyle = coreGrd;
+        ctx.fill();
+
+        // Event horizon ring
+        ctx.beginPath();
+        ctx.arc(cx, cy, voidR + 3, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(139,92,246,${0.1 + t * 0.2 + Math.sin(time * 3) * 0.05})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Draw particles
+        allParticles.forEach(p => {
+            const asp = aspects[p.aspect];
+            const [r, g, b] = asp.color;
+
+            // Is this particle absorbed yet?
+            const isAbsorbed = t >= p.absorbTime;
+
+            if (isAbsorbed) {
+                // Spiral into void
+                const absorbProgress = clamp((t - p.absorbTime) / 0.3, 0, 1);
+                const spiralAngle = p.homeAngle + time * 2 + absorbProgress * Math.PI * 4;
+                const spiralDist = lerp(p.homeDist, 0, absorbProgress);
+
+                p.x = cx + Math.cos(spiralAngle) * spiralDist;
+                p.y = cy + Math.sin(spiralAngle) * spiralDist;
+
+                const alpha = lerp(0.5, 0, absorbProgress);
+                const size = lerp(p.size, 0, absorbProgress);
+
+                if (alpha > 0.01 && size > 0.1) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+                    ctx.fill();
+
+                    // Trail
+                    if (absorbProgress > 0.1 && absorbProgress < 0.9) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(cx, cy);
+                        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha * 0.15})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            } else {
+                // Orbit peacefully with slight pull
+                const pull = t / p.absorbTime;
+                const wobble = Math.sin(time + p.phase) * 5 * (1 - pull);
+                const dist = p.homeDist * (1 - pull * 0.4) + wobble;
+                const angle = p.homeAngle + time * p.speed + Math.sin(time * 0.5 + p.phase) * 0.1;
+
+                p.x = cx + Math.cos(angle) * dist;
+                p.y = cy + Math.sin(angle) * dist;
+
+                const alpha = lerp(0.5, 0.2, pull);
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+                ctx.fill();
+
+                // Subtle pull line at higher levels
+                if (pull > 0.5) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(cx, cy);
+                    ctx.strokeStyle = `rgba(${r},${g},${b},${(pull - 0.5) * 0.06})`;
+                    ctx.lineWidth = 0.3;
+                    ctx.stroke();
+                }
+            }
+        });
+
+        // Aspect labels around the edge
+        aspects.forEach((asp, i) => {
+            const angle = (i / aspects.length) * Math.PI * 2 - Math.PI / 2;
+            const labelDist = Math.min(W, H) * 0.4;
+            const lx = cx + Math.cos(angle) * labelDist;
+            const ly = cy + Math.sin(angle) * labelDist;
+
+            // Count remaining particles
+            const total = allParticles.filter(p => p.aspect === i).length;
+            const remaining = allParticles.filter(p => p.aspect === i && t < p.absorbTime).length;
+            const pct = Math.round((remaining / total) * 100);
+
+            const [r, g, b] = asp.color;
+            const alpha = lerp(0.7, 0.15, t);
+
+            ctx.font = '500 10px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+            ctx.fillText(asp.label, lx, ly);
+            ctx.font = '700 11px Inter';
+            ctx.fillText(pct + '%', lx, ly + 15);
+        });
+
+        // Center label
+        ctx.font = '300 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(139,92,246,${0.3 + t * 0.4})`;
+        if (t < 0.1) ctx.fillText('', cx, cy + 4);
+        else if (t < 0.5) ctx.fillText('Absorption', cx, cy + 4);
+        else ctx.fillText('Auslöschung', cx, cy + 4);
+
+        // Bottom state
+        ctx.font = '300 12px Inter';
+        ctx.fillStyle = '#333';
+        let stateText = '';
+        if (t < 0.1) stateText = 'Intakte Identität – alle Aspekte lebendig';
+        else if (t < 0.3) stateText = 'Erste Partikel werden angezogen';
+        else if (t < 0.5) stateText = 'Beschleunigte Erosion – Grenzen lösen sich auf';
+        else if (t < 0.7) stateText = 'Schwerer Identitätsverlust';
+        else if (t < 0.9) stateText = 'Fast vollständige Absorption';
+        else stateText = 'Nur noch Fragmente des früheren Selbst';
+        ctx.fillText(stateText, cx, H - 55);
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// 3: THE CYCLE – HEARTBEAT
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('cycleCanvas');
+    let W, H, time = 0;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function draw() {
+        time += 0.008;
+        ctx.clearRect(0, 0, W, H);
+
+        const cx = W / 2;
+        const cy = H / 2;
+        const amplitude = H * 0.3;
+
+        // Draw the narcissistic cycle as a waveform
+        const cycles = 3.5;
+        const points = 400;
+
+        // Narcissist's "love" output
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+            const x = (i / points) * W;
+            const t = (i / points) * cycles;
+            const cycleNum = Math.floor(t);
+            const cyclePos = t - cycleNum;
+
+            // Each cycle: sharp rise (love bomb), plateau, decline, crash
+            let y;
+            if (cyclePos < 0.2) {
+                // Love bombing – sharp rise
+                const p = cyclePos / 0.2;
+                const peak = Math.max(0.3, 1 - cycleNum * 0.2);
+                y = cy - amplitude * peak * Math.sin(p * Math.PI / 2);
+            } else if (cyclePos < 0.35) {
+                // Brief plateau
+                const p = (cyclePos - 0.2) / 0.15;
+                const peak = Math.max(0.3, 1 - cycleNum * 0.2);
+                y = cy - amplitude * peak * (1 - p * 0.3);
+            } else if (cyclePos < 0.7) {
+                // Devaluation – gradual decline
+                const p = (cyclePos - 0.35) / 0.35;
+                const peak = Math.max(0.3, 1 - cycleNum * 0.2);
+                const valley = Math.min(0.9, 0.3 + cycleNum * 0.2);
+                y = cy - amplitude * peak * 0.7 + amplitude * (peak * 0.7 + valley) * p;
+            } else {
+                // Discard + hoovering start
+                const p = (cyclePos - 0.7) / 0.3;
+                const valley = Math.min(0.9, 0.3 + cycleNum * 0.2);
+                y = cy + amplitude * valley * (1 - p * 0.5);
+            }
+
+            // Scroll animation
+            const scrollX = x - (time * 30) % (W * 0.1);
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(139,92,246,0.6)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Fill under curve
+        ctx.lineTo(W, cy);
+        ctx.lineTo(0, cy);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(139,92,246,0.04)';
+        ctx.fill();
+
+        // Victim's self-worth – declining baseline
+        ctx.beginPath();
+        for (let i = 0; i <= points; i++) {
+            const x = (i / points) * W;
+            const t = (i / points) * cycles;
+            const cycleNum = Math.floor(t);
+            const cyclePos = t - cycleNum;
+
+            const baseline = cy + (i / points) * amplitude * 0.6;
+            let y;
+            if (cyclePos < 0.2) {
+                y = baseline - amplitude * 0.3 * Math.sin(cyclePos / 0.2 * Math.PI / 2);
+            } else if (cyclePos < 0.7) {
+                const p = (cyclePos - 0.2) / 0.5;
+                y = baseline - amplitude * 0.3 * (1 - p) + amplitude * 0.15 * p;
+            } else {
+                y = baseline + amplitude * 0.15 * Math.sin((cyclePos - 0.7) / 0.3 * Math.PI);
+            }
+
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(16,185,129,0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Center line
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(W, cy);
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Phase labels
+        ctx.font = '600 10px Inter';
+        ctx.textAlign = 'center';
+        const phases = [
+            { label: 'IDEALISIERUNG', x: 0.07, color: 'rgba(139,92,246,0.5)' },
+            { label: 'ABWERTUNG', x: 0.22, color: 'rgba(245,158,11,0.5)' },
+            { label: 'VERWERFEN', x: 0.38, color: 'rgba(239,68,68,0.5)' },
+            { label: 'HOOVERING', x: 0.48, color: 'rgba(139,92,246,0.3)' }
+        ];
+        phases.forEach(ph => {
+            ctx.fillStyle = ph.color;
+            ctx.fillText(ph.label, W * ph.x, 20);
+        });
+
+        // Cycle numbers
+        ctx.font = '300 9px Inter';
+        ctx.fillStyle = '#333';
+        for (let i = 0; i < 4; i++) {
+            ctx.fillText(`Zyklus ${i + 1}`, W * (i / cycles + 0.14), H - 15);
+        }
+
+        // Legend
+        ctx.font = '400 11px Inter';
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'rgba(139,92,246,0.6)';
+        ctx.fillText('— Zuneigung des Narzissten', W - 20, 20);
+        ctx.fillStyle = 'rgba(16,185,129,0.5)';
+        ctx.fillText('— Selbstwert des Opfers', W - 20, 38);
+
+        // Animated scan line
+        const scanX = ((time * 40) % W);
+        ctx.beginPath();
+        ctx.moveTo(scanX, 0);
+        ctx.lineTo(scanX, H);
+        ctx.strokeStyle = 'rgba(139,92,246,0.15)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// 4: GASLIGHTING – REALITY SPLIT
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('gasCanvas');
+    let W, H, time = 0;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const slider = document.getElementById('gasSlider');
+    const valEl = document.getElementById('gasVal');
+
+    // Pre-generate "reality" as smooth noise
+    const realityPoints = [];
+    const numPoints = 200;
+    for (let i = 0; i < numPoints; i++) {
+        realityPoints.push(
+            Math.sin(i * 0.08) * 0.3 +
+            Math.sin(i * 0.03) * 0.5 +
+            Math.sin(i * 0.15) * 0.15
+        );
+    }
+
+    function draw() {
+        time += 0.01;
+        const level = parseInt(slider.value);
+        valEl.textContent = level;
+
+        ctx.clearRect(0, 0, W, H);
+
+        const topZone = H * 0.35;
+        const bottomZone = H * 0.65;
+        const midLine = H * 0.5;
+        const amp = H * 0.12;
+
+        // Dividing line
+        ctx.beginPath();
+        ctx.moveTo(0, midLine);
+        ctx.lineTo(W, midLine);
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Labels
+        ctx.font = '600 10px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(16,185,129,0.4)';
+        ctx.fillText('OBJEKTIVE REALITÄT', 15, 25);
+        ctx.fillStyle = 'rgba(239,68,68,0.4)';
+        ctx.fillText('WAHRNEHMUNG DES OPFERS', 15, midLine + 20);
+
+        // Draw objective reality (top) – stable, clear
+        ctx.beginPath();
+        for (let i = 0; i < numPoints; i++) {
+            const x = (i / numPoints) * W;
+            const y = topZone + realityPoints[i] * amp;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(16,185,129,0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Glow under reality line
+        ctx.lineTo(W, topZone + amp * 2);
+        ctx.lineTo(0, topZone + amp * 2);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(16,185,129,0.03)';
+        ctx.fill();
+
+        // Draw distorted perception (bottom) – increasingly chaotic
+        ctx.beginPath();
+        const distortion = level / 100;
+        for (let i = 0; i < numPoints; i++) {
+            const x = (i / numPoints) * W;
+
+            // Start with reality, then distort
+            let val = realityPoints[i];
+
+            // Add noise proportional to gaslighting level
+            val += distortion * (Math.sin(i * 0.5 + time * 3) * 0.4);
+            val += distortion * (Math.random() - 0.5) * 0.6;
+
+            // Inversion – reality gets flipped
+            val = lerp(val, -val * 0.7, distortion * 0.5);
+
+            // Drift
+            val += distortion * Math.sin(i * 0.02 + time) * 0.8;
+
+            const y = bottomZone + val * amp;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = `rgba(239,68,68,${0.3 + distortion * 0.4})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Narcissist's claimed reality (dashed)
+        if (level > 15) {
+            ctx.beginPath();
+            ctx.setLineDash([6, 8]);
+            for (let i = 0; i < numPoints; i++) {
+                const x = (i / numPoints) * W;
+                const val = -realityPoints[i] * 0.8 + Math.sin(i * 0.04) * 0.3;
+                const y = bottomZone + val * amp;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = `rgba(245,158,11,${distortion * 0.4})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = '400 9px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillStyle = `rgba(245,158,11,${distortion * 0.4})`;
+            ctx.fillText('Behauptung des Narzissten', W - 15, bottomZone - amp - 5);
+        }
+
+        // Connecting lines showing divergence
+        if (level > 5) {
+            for (let i = 0; i < numPoints; i += 12) {
+                const x = (i / numPoints) * W;
+                const yTop = topZone + realityPoints[i] * amp;
+
+                let val = realityPoints[i];
+                val += distortion * (Math.sin(i * 0.5 + time * 3) * 0.4);
+                val = lerp(val, -val * 0.7, distortion * 0.5);
+                val += distortion * Math.sin(i * 0.02 + time) * 0.8;
+                const yBottom = bottomZone + val * amp;
+
+                ctx.beginPath();
+                ctx.moveTo(x, yTop);
+                ctx.lineTo(x, yBottom);
+                ctx.strokeStyle = `rgba(255,255,255,${distortion * 0.03})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        }
+
+        // Fog overlay at high levels
+        if (level > 40) {
+            const fogAlpha = (level - 40) / 200;
+            ctx.fillStyle = `rgba(10,5,15,${fogAlpha})`;
+            ctx.fillRect(0, midLine, W, H / 2);
+
+            // Floating phrases
+            const phrases = [
+                '"Das habe ich nie gesagt"',
+                '"Du bildest dir das ein"',
+                '"Du bist zu empfindlich"',
+                '"Das ist nie passiert"',
+                '"Alle sehen das anders"'
+            ];
+            const visCount = Math.min(phrases.length, Math.floor((level - 40) / 12));
+            ctx.font = '300 11px Inter';
+            for (let p = 0; p < visCount; p++) {
+                const px = W * 0.2 + Math.sin(time * 0.7 + p * 2) * W * 0.3;
+                const py = bottomZone + 10 + p * 25 + Math.cos(time + p) * 5;
+                ctx.fillStyle = `rgba(245,158,11,${0.15 + Math.sin(time + p) * 0.05})`;
+                ctx.textAlign = 'center';
+                ctx.fillText(phrases[p], px, py);
+            }
+        }
+
+        // State
+        ctx.font = '300 12px Inter';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        let state = '';
+        if (level < 10) state = 'Wahrnehmung und Realität stimmen überein';
+        else if (level < 30) state = 'Erste Verzerrungen – leichte Verwirrung';
+        else if (level < 50) state = 'Zunehmende Diskrepanz – „Stimmt etwas nicht mit mir?"';
+        else if (level < 70) state = 'Realitätsverlust – „Vielleicht hat er/sie recht"';
+        else if (level < 90) state = 'Schwere Dissoziation – eigene Wahrnehmung wird aufgegeben';
+        else state = 'Vollständige Übernahme der falschen Realität';
+        ctx.fillText(state, W / 2, H - 55);
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// 5: GROUP GRAVITY WELL
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('gravityCanvas');
+    let W, H, time = 0;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const slider = document.getElementById('gravSlider');
+    const valEl = document.getElementById('gravVal');
+
+    const orbiters = [];
+    const roles = [
+        { label: 'Flying Monkey', color: [245, 158, 11], dist: 0.6, speed: 1.2, size: 6 },
+        { label: 'Flying Monkey', color: [245, 158, 11], dist: 0.55, speed: 1.0, size: 5 },
+        { label: 'Golden Child', color: [234, 179, 8], dist: 0.4, speed: 1.5, size: 7 },
+        { label: 'Sündenbock', color: [239, 68, 68], dist: 0.85, speed: 0.6, size: 7 },
+        { label: 'Mitläufer', color: [148, 163, 184], dist: 0.7, speed: 0.8, size: 5 },
+        { label: 'Mitläufer', color: [148, 163, 184], dist: 0.65, speed: 0.9, size: 5 },
+        { label: 'Neues Mitglied', color: [16, 185, 129], dist: 0.9, speed: 0.4, size: 6 },
+        { label: 'Zweifler', color: [226, 232, 240], dist: 0.95, speed: 0.3, size: 5 }
+    ];
+
+    roles.forEach((r, i) => {
+        orbiters.push({
+            ...r,
+            angle: (i / roles.length) * Math.PI * 2 + Math.random() * 0.5,
+            currentDist: r.dist,
+            wobblePhase: Math.random() * Math.PI * 2
+        });
+    });
+
+    // Debris particles
+    const debris = [];
+    for (let i = 0; i < 80; i++) {
+        debris.push({
+            angle: Math.random() * Math.PI * 2,
+            dist: 0.15 + Math.random() * 0.95,
+            speed: 0.3 + Math.random() * 1.5,
+            size: Math.random() * 1.5 + 0.3,
+            alpha: Math.random() * 0.2 + 0.05
+        });
+    }
+
+    function draw() {
+        time += 0.006;
+        const level = parseInt(slider.value);
+        valEl.textContent = level;
+        const control = level / 100;
+
+        ctx.clearRect(0, 0, W, H);
+
+        const cx = W / 2;
+        const cy = H / 2;
+        const maxOrbit = Math.min(W, H) * 0.42;
+
+        // Gravity well visualization – concentric rings
+        const ringCount = 8;
+        for (let r = ringCount; r >= 1; r--) {
+            const radius = maxOrbit * (r / ringCount);
+            const alpha = 0.02 + control * 0.02 * (1 - r / ringCount);
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Gravity well gradient
+        const wellR = lerp(30, 80, control);
+        const wellGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, wellR * 3);
+        wellGrd.addColorStop(0, `rgba(60,20,100,${0.3 + control * 0.4})`);
+        wellGrd.addColorStop(0.3, `rgba(139,92,246,${control * 0.08})`);
+        wellGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = wellGrd;
+        ctx.fillRect(0, 0, W, H);
+
+        // Core
+        ctx.beginPath();
+        ctx.arc(cx, cy, wellR, 0, Math.PI * 2);
+        const coreGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, wellR);
+        coreGrd.addColorStop(0, `rgba(0,0,0,${0.6 + control * 0.3})`);
+        coreGrd.addColorStop(0.6, `rgba(80,30,120,${0.2 + control * 0.2})`);
+        coreGrd.addColorStop(1, `rgba(139,92,246,${0.1 + control * 0.15})`);
+        ctx.fillStyle = coreGrd;
+        ctx.fill();
+
+        // Core pulse ring
+        const pulseR = wellR + Math.sin(time * 3) * 5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, pulseR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(139,92,246,${0.15 + Math.sin(time * 3) * 0.1})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Core label
+        ctx.font = '600 10px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(139,92,246,${0.4 + control * 0.3})`;
+        ctx.fillText('ANFÜHRER', cx, cy + 4);
+
+        // Debris
+        debris.forEach(d => {
+            d.angle += d.speed * 0.003 * (1 + control * 2);
+            const pullFactor = 1 - control * 0.3 * (1 - d.dist);
+            const dist = d.dist * maxOrbit * pullFactor;
+            const x = cx + Math.cos(d.angle) * dist;
+            const y = cy + Math.sin(d.angle) * dist * 0.85; // slight ellipse
+
+            ctx.beginPath();
+            ctx.arc(x, y, d.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(139,92,246,${d.alpha * (0.5 + control * 0.5)})`;
+            ctx.fill();
+        });
+
+        // Orbiters
+        orbiters.forEach((o, i) => {
+            // Speed increases with control
+            o.angle += o.speed * 0.004 * (1 + control * 1.5);
+
+            // Distance decreases with control (pulled in)
+            const targetDist = o.dist * (1 - control * 0.4);
+            o.currentDist = lerp(o.currentDist, targetDist, 0.02);
+
+            // Wobble
+            const wobble = Math.sin(time * 2 + o.wobblePhase) * 0.02 * (1 - control * 0.5);
+
+            const dist = (o.currentDist + wobble) * maxOrbit;
+            const x = cx + Math.cos(o.angle) * dist;
+            const y = cy + Math.sin(o.angle) * dist * 0.85;
+
+            const [r, g, b] = o.color;
+
+            // Orbit trail
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, dist, dist * 0.85, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(${r},${g},${b},${0.04 + control * 0.03})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+
+            // Connection to center
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = `rgba(${r},${g},${b},${0.03 + control * 0.06})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+
+            // Glow
+            const glowGrd = ctx.createRadialGradient(x, y, 0, x, y, o.size * 4);
+            glowGrd.addColorStop(0, `rgba(${r},${g},${b},0.15)`);
+            glowGrd.addColorStop(1, 'transparent');
+            ctx.fillStyle = glowGrd;
+            ctx.fillRect(x - o.size * 4, y - o.size * 4, o.size * 8, o.size * 8);
+
+            // Body
+            ctx.beginPath();
+            ctx.arc(x, y, o.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},0.7)`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(${r},${g},${b},0.4)`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Label
+            ctx.font = '400 9px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = `rgba(${r},${g},${b},0.5)`;
+            ctx.fillText(o.label, x, y + o.size + 14);
+        });
+
+        // Sündenbock special – pushed out at high control
+        const scapegoat = orbiters[3];
+        if (control > 0.5) {
+            const sgX = cx + Math.cos(scapegoat.angle) * scapegoat.currentDist * maxOrbit;
+            const sgY = cy + Math.sin(scapegoat.angle) * scapegoat.currentDist * maxOrbit * 0.85;
+
+            // Attack lines from others
+            orbiters.forEach((o, i) => {
+                if (i === 3) return;
+                const ox = cx + Math.cos(o.angle) * o.currentDist * maxOrbit;
+                const oy = cy + Math.sin(o.angle) * o.currentDist * maxOrbit * 0.85;
+
+                const attackAlpha = (control - 0.5) * 0.15;
+                ctx.beginPath();
+                ctx.moveTo(ox, oy);
+                ctx.lineTo(sgX, sgY);
+                ctx.strokeStyle = `rgba(239,68,68,${attackAlpha})`;
+                ctx.lineWidth = 0.5;
+                ctx.setLineDash([2, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+        }
+
+        // State text
+        ctx.font = '300 12px Inter';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        let state = '';
+        if (control < 0.2) state = 'Lockere Gruppe – freie Bewegung';
+        else if (control < 0.4) state = 'Zunehmende Anziehung zum Zentrum';
+        else if (control < 0.6) state = 'Orbits verengen sich – Autonomie schwindet';
+        else if (control < 0.8) state = 'Enge Kontrolle – Sündenbock wird angegriffen';
+        else state = 'Totale Kontrolle – alle kreisen nur noch um den Anführer';
+        ctx.fillText(state, cx, H - 55);
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// 6: DOUBLE BIND MAZE
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('mazeCanvas');
+    let W, H, time = 0;
+    let currentBind = 0;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const binds = [
+        {
+            trigger: 'Du sagst deine Meinung',
+            pathA: { choice: 'Offen sprechen', result: '„Du bist so aggressiv!"', end: 'Schuld für Ehrlichkeit' },
+            pathB: { choice: 'Schweigen', result: '„Du sagst ja nie was du denkst!"', end: 'Schuld für Schweigen' }
+        },
+        {
+            trigger: 'Du zeigst Gefühle',
+            pathA: { choice: 'Weinen', result: '„Du bist so überempfindlich!"', end: 'Schuld für Emotionen' },
+            pathB: { choice: 'Stark bleiben', result: '„Dir ist alles egal!"', end: 'Schuld für Stärke' }
+        },
+        {
+            trigger: 'Du brauchst Nähe',
+            pathA: { choice: 'Nähe suchen', result: '„Du bist so anhänglich!"', end: 'Schuld für Bedürfnisse' },
+            pathB: { choice: 'Abstand halten', result: '„Du liebst mich nicht!"', end: 'Schuld für Distanz' }
+        },
+        {
+            trigger: 'Du setzt eine Grenze',
+            pathA: { choice: 'Grenze setzen', result: '„Du bist so egoistisch!"', end: 'Schuld für Selbstschutz' },
+            pathB: { choice: 'Nachgeben', result: '„Du bist so schwach!"', end: 'Schuld für Nachgeben' }
+        },
+        {
+            trigger: 'Du hast Erfolg',
+            pathA: { choice: 'Freude zeigen', result: '„Du bist so arrogant!"', end: 'Schuld für Freude' },
+            pathB: { choice: 'Herunterspielen', result: '„Du schätzt nichts wert!"', end: 'Schuld für Bescheidenheit' }
+        }
+    ];
+
+    c.addEventListener('click', () => {
+        currentBind = (currentBind + 1) % binds.length;
+    });
+
+    function draw() {
+        time += 0.015;
+        ctx.clearRect(0, 0, W, H);
+
+        const bind = binds[currentBind];
+        const cx = W / 2;
+
+        // Trigger node at top
+        const trigY = 60;
+        drawNode(cx, trigY, bind.trigger, [139, 92, 246], 0.8, true);
+
+        // Fork
+        const forkY = 130;
+        ctx.beginPath();
+        ctx.moveTo(cx, trigY + 25);
+        ctx.lineTo(cx, forkY);
+        ctx.strokeStyle = 'rgba(139,92,246,0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Left path
+        const leftX = cx - W * 0.22;
+        const rightX = cx + W * 0.22;
+
+        // Fork lines
+        ctx.beginPath();
+        ctx.moveTo(cx, forkY);
+        ctx.quadraticCurveTo(leftX + (cx - leftX) * 0.5, forkY + 20, leftX, forkY + 50);
+        ctx.strokeStyle = 'rgba(239,68,68,0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(cx, forkY);
+        ctx.quadraticCurveTo(rightX - (rightX - cx) * 0.5, forkY + 20, rightX, forkY + 50);
+        ctx.strokeStyle = 'rgba(245,158,11,0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Choice nodes
+        const choiceY = forkY + 70;
+        drawNode(leftX, choiceY, bind.pathA.choice, [239, 68, 68], 0.5);
+        drawNode(rightX, choiceY, bind.pathB.choice, [245, 158, 11], 0.5);
+
+        // Lines to response
+        const respY = choiceY + 75;
+        ctx.beginPath();
+        ctx.moveTo(leftX, choiceY + 22);
+        ctx.lineTo(leftX, respY - 22);
+        ctx.strokeStyle = 'rgba(239,68,68,0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(rightX, choiceY + 22);
+        ctx.lineTo(rightX, respY - 22);
+        ctx.strokeStyle = 'rgba(245,158,11,0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Response nodes
+        drawNode(leftX, respY, bind.pathA.result, [239, 68, 68], 0.6);
+        drawNode(rightX, respY, bind.pathB.result, [245, 158, 11], 0.6);
+
+        // Both converge to trap
+        const trapY = respY + 85;
+
+        ctx.beginPath();
+        ctx.moveTo(leftX, respY + 22);
+        ctx.quadraticCurveTo(leftX + (cx - leftX) * 0.3, trapY - 30, cx, trapY - 20);
+        ctx.strokeStyle = 'rgba(239,68,68,0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(rightX, respY + 22);
+        ctx.quadraticCurveTo(rightX - (rightX - cx) * 0.3, trapY - 30, cx, trapY - 20);
+        ctx.strokeStyle = 'rgba(245,158,11,0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Trap node – pulsing
+        const pulse = 0.85 + Math.sin(time * 2.5) * 0.15;
+        const trapR = 60 * pulse;
+
+        const trapGrd = ctx.createRadialGradient(cx, trapY, 0, cx, trapY, trapR);
+        trapGrd.addColorStop(0, `rgba(239,68,68,${0.12 * pulse})`);
+        trapGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = trapGrd;
+        ctx.fillRect(cx - trapR, trapY - trapR, trapR * 2, trapR * 2);
+
+        ctx.font = '600 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(239,68,68,${0.6 + Math.sin(time * 2.5) * 0.2})`;
+        ctx.fillText('DU BIST SCHULD', cx, trapY);
+
+        ctx.font = '300 10px Inter';
+        ctx.fillStyle = 'rgba(239,68,68,0.35)';
+        ctx.fillText(bind.pathA.end + '  ·  ' + bind.pathB.end, cx, trapY + 18);
+
+        // Bottom text
+        ctx.font = '300 11px Inter';
+        ctx.fillStyle = '#333';
+        ctx.fillText(`Szenario ${currentBind + 1}/${binds.length} · Klicke für nächstes`, cx, H - 30);
+
+        ctx.font = '300 10px Inter';
+        ctx.fillStyle = '#2a2a2a';
+        ctx.fillText('Die einzige Gewinnstrategie: Das Spiel nicht mitspielen.', cx, H - 12);
+
+        requestAnimationFrame(draw);
+    }
+
+    function drawNode(x, y, text, color, alpha, isMain) {
+        const [r, g, b] = color;
+        const padding = isMain ? 18 : 14;
+        const fontSize = isMain ? 13 : 11;
+        const fontWeight = isMain ? '600' : '400';
+
+        ctx.font = `${fontWeight} ${fontSize}px Inter`;
+        const textWidth = ctx.measureText(text).width;
+        const boxW = textWidth + padding * 2;
+        const boxH = fontSize + padding * 1.5;
+
+        // Box
+        ctx.beginPath();
+        const boxX = x - boxW / 2;
+        const boxY = y - boxH / 2;
+        roundRect(ctx, boxX, boxY, boxW, boxH, 10);
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha * 0.08})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha * 0.25})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Text
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.fillText(text, x, y);
+        ctx.textBaseline = 'alphabetic';
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+
+    draw();
+})();
+
+// ==========================================
+// 7: CHAT SIMULATION V2
+// ==========================================
+const chatScenarios = {
+    covert_gaslight: {
+        title: 'Gaslighting',
+        status: 'tippt...',
+        messages: [
+            { from: 'them', text: 'Schatz, wovon redest du? Ich habe das nie gesagt.' },
+            { type: 'tactic', text: 'LEUGNEN – Gesagtes wird komplett abgestritten' },
+            { from: 'me', text: 'Aber ich habe es genau gehört, du hast gesagt dass...' },
+            { from: 'them', text: 'Du hörst in letzter Zeit wirklich Dinge, die nicht da sind. Das macht mir ehrlich gesagt Sorgen.' },
+            { type: 'tactic', text: 'PSEUDO-FÜRSORGE – Sorge wird vorgetäuscht, um das Opfer als instabil darzustellen' },
+            { from: 'me', text: 'Ich bin mir aber sicher...' },
+            { from: 'them', text: 'Erinnerst du dich, wie du letzte Woche auch schon etwas verwechselt hast? Vielleicht solltest du wirklich mal mit jemandem reden. Ich sage das nur, weil ich dich liebe.' },
+            { type: 'effect', text: 'WIRKUNG: Vergangene Situationen werden als „Beweis" herangezogen. Liebe wird als Tarnung benutzt.' },
+            { from: 'me', text: '...vielleicht hast du recht. Tut mir leid.' },
+            { type: 'result', text: 'ERGEBNIS: Das Opfer gibt die eigene Wahrnehmung auf und entschuldigt sich für die Realität.' }
+        ]
+    },
+    covert_guilt: {
+        title: 'Schuldumkehr',
+        status: 'online',
+        messages: [
+            { from: 'me', text: 'Ich würde heute gerne meine Schwester besuchen.' },
+            { from: 'them', text: 'Ja klar. Geh ruhig.' },
+            { type: 'tactic', text: 'PASSIVE AGGRESSION – Erlaubnis mit emotionalem Gift' },
+            { from: 'me', text: 'Ist alles okay?' },
+            { from: 'them', text: 'Ja. Ich meine, ich hatte einen furchtbaren Tag und bin gerade ziemlich am Ende, aber du musst natürlich nicht hier sein.' },
+            { type: 'tactic', text: 'MÄRTYRER-ROLLE – Leid wird inszeniert, um Schuldgefühle zu erzeugen' },
+            { from: 'them', text: 'Ich komme schon klar. Alleine. Wie immer.' },
+            { type: 'effect', text: 'WIRKUNG: Jedes Mal, wenn du etwas für dich tust, fühlst du dich schuldig.' },
+            { from: 'me', text: 'Ich bleibe bei dir. Ist schon gut.' },
+            { type: 'result', text: 'ERGEBNIS: Soziale Isolation verstärkt sich. Eigene Bedürfnisse werden aufgegeben.' }
+        ]
+    },
+    covert_silent: {
+        title: 'Schweigen als Waffe',
+        status: 'zuletzt online vor 3 Tagen',
+        messages: [
+            { from: 'me', text: 'Hey, alles okay? 💙', time: 'Montag 09:15' },
+            { from: 'me', text: 'Habe ich irgendwas falsch gemacht?', time: 'Montag 18:30' },
+            { type: 'tactic', text: 'SILENT TREATMENT – Bestrafung durch Entzug. Das Opfer weiß nicht wofür.' },
+            { from: 'me', text: 'Bitte rede mit mir. Es tut mir leid, was auch immer es war.', time: 'Dienstag 21:00' },
+            { type: 'effect', text: 'WIRKUNG: Präventive Entschuldigung für unbekannte „Vergehen" – erlernte Hilflosigkeit' },
+            { from: 'me', text: 'Ich vermisse dich so sehr. Bitte melde dich.', time: 'Mittwoch 14:00' },
+            { from: 'them', text: 'Ich brauchte einfach Abstand. Nicht alles dreht sich um dich.', time: 'Mittwoch 22:47' },
+            { type: 'tactic', text: 'UMKEHRUNG – 3 Tage Schweigen werden normalisiert, Sorge wird als Egoismus umgedeutet' },
+            { from: 'me', text: 'Du hast recht. Tut mir leid. Ich bin so froh dass du schreibst.' },
+            { type: 'result', text: 'ERGEBNIS: Die Erleichterung nach dem Schweigen erzeugt Trauma-Bindung. Der Zyklus wiederholt sich.' }
+        ]
+    },
+    covert_triangulate: {
+        title: 'Triangulation',
+        status: 'online',
+        messages: [
+            { from: 'them', text: 'War heute mit einer Kollegin essen. Sie ist wirklich eine besondere Person.' },
+            { type: 'tactic', text: 'TRIANGULATION – Eine dritte Person wird eingeführt, um Unsicherheit zu erzeugen' },
+            { from: 'me', text: 'Oh, das klingt nett.' },
+            { from: 'them', text: 'Ja, sie versteht mich einfach. Ohne dass ich viel erklären muss. Das ist selten.' },
+            { type: 'tactic', text: 'IMPLIZITER VERGLEICH – Du wirst als „weniger als" positioniert' },
+            { from: 'me', text: 'Ich versuche dich auch zu verstehen...' },
+            { from: 'them', text: 'Ich weiß. Aber es ist halt anders. Sie urteilt nicht. Sie hört einfach zu.' },
+            { type: 'effect', text: 'WIRKUNG: Egal was du sagst, du kannst nicht „gewinnen". Die andere Person ist ein unerreichbares Ideal.' },
+            { from: 'me', text: 'Ich kann mich ändern. Sag mir was du brauchst.' },
+            { type: 'result', text: 'ERGEBNIS: Selbstwert sinkt. Du versuchst verzweifelt, einem Standard zu genügen, der sich ständig verschiebt.' }
+        ]
+    },
+    covert_group: {
+        title: 'Gruppendruck',
+        status: 'Gruppenadmin',
+        messages: [
+            { from: 'them', text: 'Wir haben gestern über dich gesprochen. Alle machen sich Sorgen.' },
+            { type: 'tactic', text: 'FLYING MONKEYS – Die Gruppe wird als Druckmittel instrumentalisiert' },
+            { from: 'me', text: 'Worüber denn?' },
+            { from: 'them', text: 'Dass du dich so verändert hast. Dass du dich von uns entfernst. Wir sind doch deine Familie.' },
+            { type: 'tactic', text: 'ISOLATION DURCH INKLUSION – Distanz wird als Verrat geframt' },
+            { from: 'me', text: 'Ich brauche nur manchmal etwas Raum für mich.' },
+            { from: 'them', text: 'Raum? Wir geben dir doch alles. Niemand da draußen wird dich so akzeptieren wie wir. Das weißt du.' },
+            { type: 'effect', text: 'WIRKUNG: Angst vor der Außenwelt wird geschürt. Die Gruppe wird als einziger sicherer Hafen dargestellt.' },
+            { from: 'me', text: 'Ja... ihr habt wahrscheinlich recht.' },
+            { type: 'result', text: 'ERGEBNIS: Totale Abhängigkeit von der Gruppe. Eigene Wahrnehmung wird der Gruppenrealität untergeordnet.' }
+        ]
+    },
+    covert_hoover: {
+        title: 'Hoovering',
+        status: 'nach 4 Wochen Stille',
+        messages: [
+            { from: 'them', text: 'Ich weiß, ich sollte nicht schreiben. Aber ich kann nicht aufhören, an dich zu denken.' },
+            { type: 'tactic', text: 'HOOVERING – Kontaktaufnahme nach Trennung, um das Opfer zurückzuziehen' },
+            { from: 'them', text: 'Ich war in Therapie. Ich habe verstanden, was ich falsch gemacht habe. Du hattest in allem recht.' },
+            { type: 'tactic', text: 'FALSCHE EINSICHT – Veränderung wird behauptet, selten belegt' },
+            { from: 'me', text: 'Es hat so wehgetan...' },
+            { from: 'them', text: 'Ich weiß. Und ich werde alles tun, um das wiedergutzumachen. Du bist der einzige Mensch, der mich wirklich kennt. Ohne dich bin ich verloren.' },
+            { type: 'effect', text: 'WIRKUNG: Rettungsinstinkte werden aktiviert. Die Sehnsucht nach der Idealisierungsphase wird getriggert.' },
+            { from: 'me', text: 'Eine Chance. Aber es muss sich wirklich ändern.' },
+            { type: 'result', text: 'ERGEBNIS: Der Zyklus beginnt von vorn. Ohne echte, langfristige Therapie ändern sich narzisstische Muster nicht.' }
+        ]
+    }
+};
+
+let chatTimer = null;
+
+function runChat(key) {
+    const scenario = chatScenarios[key];
+    const body = document.getElementById('chatBody');
+    const status = document.getElementById('chatStatus');
+    const maskEl = document.getElementById('avatarMask');
+    
+    const trueEl = document.getElementById('avatarTrue');
+
+    // Update nav pills
+    document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+
+    // Clear
+    body.innerHTML = '';
+    if (chatTimer) clearTimeout(chatTimer);
+    status.textContent = scenario.status;
+
+    // Reveal mask over time
+    maskEl.style.opacity = '1';
+    trueEl.style.opacity = '0';
+
+    const msgs = scenario.messages;
+    let i = 0;
+    let maskRevealed = false;
+
+    function showNext() {
+        if (i >= msgs.length) return;
+        const msg = msgs[i];
+        const div = document.createElement('div');
+
+        if (msg.time) {
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'bubble-time';
+            timeDiv.textContent = msg.time;
+            body.appendChild(timeDiv);
+        }
+
+        if (msg.from === 'them') {
+            div.className = 'bubble bubble-them';
+            div.textContent = msg.text;
+            // Gradually reveal true face
+            if (!maskRevealed && i > msgs.length * 0.5) {
+                maskEl.style.opacity = '0';
+                trueEl.style.opacity = '1';
+                maskRevealed = true;
+            }
+        } else if (msg.from === 'me') {
+            div.className = 'bubble bubble-me';
+            div.textContent = msg.text;
+        } else if (msg.type === 'tactic') {
+            div.className = 'bubble-decode tactic';
+            div.textContent = '⚠️ ' + msg.text;
+        } else if (msg.type === 'effect') {
+            div.className = 'bubble-decode effect';
+            div.textContent = '💡 ' + msg.text;
+        } else if (msg.type === 'result') {
+            div.className = 'bubble-decode result';
+            div.textContent = '🔮 ' + msg.text;
+        }
+
+        body.appendChild(div);
+        body.scrollTop = body.scrollHeight;
+
+        i++;
+        const delay = msg.type ? 900 : msg.from === 'them' ? 1400 : 1000;
+        chatTimer = setTimeout(showNext, delay);
+    }
+
+    showNext();
+}
+
+// ==========================================
+// 8: INFORMATION ASYMMETRY
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('infoCanvas');
+    let W, H, time = 0;
+    let hoveredNode = -1;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const nodes = [
+        {
+            id: 'leader',
+            label: 'Anführer',
+            x: 0.5, y: 0.5,
+            r: 24,
+            color: [139, 92, 246],
+            truth: 'Kennt alle Versionen. Erzählt jedem eine andere „Wahrheit".'
+        },
+        {
+            id: 'a',
+            label: 'Person A',
+            x: 0.22, y: 0.25,
+            r: 16,
+            color: [245, 158, 11],
+            truth: 'Glaubt: „Person C redet schlecht über dich." (Erfunden)'
+        },
+        {
+            id: 'b',
+            label: 'Person B',
+            x: 0.78, y: 0.25,
+            r: 16,
+            color: [56, 189, 248],
+            truth: 'Glaubt: „Nur der Anführer versteht mich wirklich."'
+        },
+        {
+            id: 'c',
+            label: 'Person C',
+            x: 0.22, y: 0.75,
+            r: 16,
+            color: [16, 185, 129],
+            truth: 'Glaubt: „Person A hat mich hintergangen." (Inszeniert)'
+        },
+        {
+            id: 'd',
+            label: 'Person D',
+            x: 0.78, y: 0.75,
+            r: 16,
+            color: [236, 72, 153],
+            truth: 'Glaubt: „Ohne die Gruppe bin ich verloren."'
+        }
+    ];
+
+    c.addEventListener('mousemove', function(e) {
+        const rect = c.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        const mx = (e.clientX - rect.left);
+        const my = (e.clientY - rect.top);
+
+        hoveredNode = -1;
+        nodes.forEach((n, i) => {
+            const nx = n.x * W;
+            const ny = n.y * H;
+            const dx = mx - nx;
+            const dy = my - ny;
+            if (Math.sqrt(dx * dx + dy * dy) < n.r + 15) {
+                hoveredNode = i;
+            }
+        });
+        c.style.cursor = hoveredNode >= 0 ? 'pointer' : 'default';
+    });
+
+    c.addEventListener('mouseleave', () => { hoveredNode = -1; });
+
+    function draw() {
+        time += 0.012;
+        ctx.clearRect(0, 0, W, H);
+
+        const leader = nodes[0];
+        const lx = leader.x * W;
+        const ly = leader.y * H;
+
+        // Blocked connections between non-leaders
+        for (let i = 1; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const n1 = nodes[i];
+                const n2 = nodes[j];
+                const x1 = n1.x * W, y1 = n1.y * H;
+                const x2 = n2.x * W, y2 = n2.y * H;
+
+                ctx.beginPath();
+                ctx.setLineDash([2, 6]);
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Block symbol
+                const mx = (x1 + x2) / 2;
+                const my = (y1 + y2) / 2;
+                ctx.beginPath();
+                ctx.arc(mx, my, 6, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(239,68,68,0.12)';
+                ctx.fill();
+                ctx.font = '8px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'rgba(239,68,68,0.35)';
+                ctx.fillText('✕', mx, my);
+                ctx.textBaseline = 'alphabetic';
+            }
+        }
+
+        // Connections from leader to each member
+        for (let i = 1; i < nodes.length; i++) {
+            const n = nodes[i];
+            const nx = n.x * W;
+            const ny = n.y * H;
+            const [r, g, b] = n.color;
+            const isHovered = hoveredNode === i || hoveredNode === 0;
+
+            // Line
+            ctx.beginPath();
+            const cpx = (lx + nx) / 2 + Math.sin(time + i * 1.5) * 20;
+            const cpy = (ly + ny) / 2 + Math.cos(time + i * 1.5) * 20;
+            ctx.moveTo(lx, ly);
+            ctx.quadraticCurveTo(cpx, cpy, nx, ny);
+            ctx.strokeStyle = isHovered
+                ? `rgba(${r},${g},${b},0.5)`
+                : `rgba(${r},${g},${b},0.1)`;
+            ctx.lineWidth = isHovered ? 2 : 1;
+            ctx.stroke();
+
+            // Animated data pulse
+            const pulseT = (time * 0.5 + i * 0.3) % 1;
+            const px = lx + (nx - lx) * pulseT;
+            const py = ly + (ny - ly) * pulseT;
+            ctx.beginPath();
+            ctx.arc(px, py, isHovered ? 4 : 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},${isHovered ? 0.7 : 0.25})`;
+            ctx.fill();
+
+            // Arrow direction indicator
+            const angle = Math.atan2(ny - ly, nx - lx);
+            const arrowX = nx - Math.cos(angle) * (n.r + 12);
+            const arrowY = ny - Math.sin(angle) * (n.r + 12);
+            ctx.beginPath();
+            ctx.moveTo(arrowX, arrowY);
+            ctx.lineTo(arrowX - Math.cos(angle - 0.35) * 8, arrowY - Math.sin(angle - 0.35) * 8);
+            ctx.lineTo(arrowX - Math.cos(angle + 0.35) * 8, arrowY - Math.sin(angle + 0.35) * 8);
+            ctx.closePath();
+            ctx.fillStyle = `rgba(${r},${g},${b},${isHovered ? 0.5 : 0.12})`;
+            ctx.fill();
+        }
+
+        // Draw nodes
+        nodes.forEach((n, i) => {
+            const nx = n.x * W;
+            const ny = n.y * H;
+            const [r, g, b] = n.color;
+            const isHovered = hoveredNode === i;
+
+            // Glow
+            if (isHovered) {
+                const grd = ctx.createRadialGradient(nx, ny, 0, nx, ny, n.r * 4);
+                grd.addColorStop(0, `rgba(${r},${g},${b},0.12)`);
+                grd.addColorStop(1, 'transparent');
+                ctx.fillStyle = grd;
+                ctx.fillRect(nx - n.r * 4, ny - n.r * 4, n.r * 8, n.r * 8);
+            }
+
+            // Circle
+            ctx.beginPath();
+            ctx.arc(nx, ny, n.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},${isHovered ? 0.25 : 0.1})`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(${r},${g},${b},${isHovered ? 0.7 : 0.3})`;
+            ctx.lineWidth = isHovered ? 2 : 1;
+            ctx.stroke();
+
+            // Label
+            ctx.font = `${isHovered ? '600' : '400'} ${i === 0 ? 11 : 10}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.fillStyle = `rgba(${r},${g},${b},${isHovered ? 0.9 : 0.5})`;
+            ctx.fillText(n.label, nx, ny + n.r + 18);
+
+            // Truth bubble on hover
+            if (isHovered) {
+                const bubbleW = 240;
+                const bubbleH = 36;
+                const bubbleX = nx - bubbleW / 2;
+                const bubbleY = i === 0 ? ny - n.r - bubbleH - 15 : ny + n.r + 28;
+
+                ctx.beginPath();
+                ctx.moveTo(bubbleX + 10, bubbleY);
+                ctx.lineTo(bubbleX + bubbleW - 10, bubbleY);
+                ctx.quadraticCurveTo(bubbleX + bubbleW, bubbleY, bubbleX + bubbleW, bubbleY + 10);
+                ctx.lineTo(bubbleX + bubbleW, bubbleY + bubbleH - 10);
+                ctx.quadraticCurveTo(bubbleX + bubbleW, bubbleY + bubbleH, bubbleX + bubbleW - 10, bubbleY + bubbleH);
+                ctx.lineTo(bubbleX + 10, bubbleY + bubbleH);
+                ctx.quadraticCurveTo(bubbleX, bubbleY + bubbleH, bubbleX, bubbleY + bubbleH - 10);
+                ctx.lineTo(bubbleX, bubbleY + 10);
+                ctx.quadraticCurveTo(bubbleX, bubbleY, bubbleX + 10, bubbleY);
+                ctx.closePath();
+
+                ctx.fillStyle = 'rgba(6,6,10,0.9)';
+                ctx.fill();
+                ctx.strokeStyle = `rgba(${r},${g},${b},0.3)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.font = '400 10px Inter';
+                ctx.fillStyle = `rgba(${r},${g},${b},0.8)`;
+                ctx.textAlign = 'center';
+
+                // Simple word wrap
+                const words = n.truth.split(' ');
+                let line = '';
+                let lineY = bubbleY + 15;
+                words.forEach(word => {
+                    const test = line + word + ' ';
+                    if (ctx.measureText(test).width > bubbleW - 20) {
+                        ctx.fillText(line.trim(), nx, lineY);
+                        line = word + ' ';
+                        lineY += 14;
+                    } else {
+                        line = test;
+                    }
+                });
+                ctx.fillText(line.trim(), nx, lineY);
+            }
+        });
+
+        // Bottom text
+        ctx.font = '300 11px Inter';
+        ctx.fillStyle = '#2a2a2a';
+        ctx.textAlign = 'center';
+        ctx.fillText('Alle Informationen fließen nur über den Anführer · Direkte Kommunikation wird verhindert', W / 2, H - 20);
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// 9: RECOVERY – LIGHT RETURNS
+// ==========================================
+(function() {
+    const { c, ctx } = getCanvas('recoveryCanvas');
+    let W, H, time = 0;
+
+    function resize() { const s = sizeCanvas(c); W = s.w; H = s.h; }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const slider = document.getElementById('recoverySlider');
+    const valEl = document.getElementById('recoveryVal');
+
+    // Light particles that grow over time
+    const lights = [];
+    for (let i = 0; i < 150; i++) {
+        lights.push({
+            x: Math.random() * 2000,
+            y: Math.random() * 2000,
+            birthTime: Math.random(), // 0-1, when this light appears
+            size: Math.random() * 3 + 1,
+            color: [
+                [16, 185, 129],
+                [56, 189, 248],
+                [245, 158, 11],
+                [168, 85, 247],
+                [236, 72, 153],
+                [34, 211, 238]
+            ][Math.floor(Math.random() * 6)],
+            speed: Math.random() * 0.3 + 0.1,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+
+    // Dark particles that fade
+    const darks = [];
+    for (let i = 0; i < 60; i++) {
+        darks.push({
+            x: Math.random() * 2000,
+            y: Math.random() * 2000,
+            deathTime: Math.random() * 0.7, // when this dark fades
+            size: Math.random() * 4 + 2,
+            phase: Math.random() * Math.PI * 2
+        });
+    }
+
+    // Setback moments
+    const setbacks = [0.12, 0.25, 0.42, 0.6];
+
+    function draw() {
+        time += 0.008;
+        const level = parseInt(slider.value);
+        const t = level / 100;
+        const months = Math.round(t * 36);
+        valEl.textContent = months + 'm';
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Check if we're in a setback zone
+        let inSetback = false;
+        let setbackIntensity = 0;
+        setbacks.forEach(s => {
+            const dist = Math.abs(t - s);
+            if (dist < 0.05) {
+                inSetback = true;
+                setbackIntensity = Math.max(setbackIntensity, 1 - dist / 0.05);
+            }
+        });
+
+        // Background transitions from dark to warm
+        const bgR = lerp(6, 12, t);
+        const bgG = lerp(6, 14, t);
+        const bgB = lerp(10, 20, t);
+        ctx.fillStyle = `rgb(${bgR},${bgG},${bgB})`;
+        ctx.fillRect(0, 0, W, H);
+
+        // During setbacks, flash darker
+        if (inSetback) {
+            ctx.fillStyle = `rgba(20,0,30,${setbackIntensity * 0.3})`;
+            ctx.fillRect(0, 0, W, H);
+        }
+
+        // Dark particles – fade out over time
+        darks.forEach(d => {
+            const alpha = t <= d.deathTime
+                ? 0.15
+                : Math.max(0, 0.15 - (t - d.deathTime) * 0.5);
+
+            if (alpha > 0.005) {
+                const x = d.x % W;
+                const y = d.y % H;
+                const wobbleX = Math.sin(time + d.phase) * 2;
+                const wobbleY = Math.cos(time * 0.7 + d.phase) * 2;
+
+                ctx.beginPath();
+                ctx.arc(x + wobbleX, y + wobbleY, d.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(60,20,80,${alpha + (inSetback ? setbackIntensity * 0.1 : 0)})`;
+                ctx.fill();
+            }
+        });
+
+        // Light particles – appear over time
+        lights.forEach(l => {
+            if (t < l.birthTime) return;
+
+            const age = (t - l.birthTime) / (1 - l.birthTime);
+            let alpha = Math.min(0.5, age * 0.6);
+
+            // Dim during setbacks
+            if (inSetback) {
+                alpha *= (1 - setbackIntensity * 0.6);
+            }
+
+            const [r, g, b] = l.color;
+            const x = (l.x % W) + Math.sin(time * l.speed + l.phase) * 8;
+            const y = (l.y % H) + Math.cos(time * l.speed * 0.7 + l.phase) * 8;
+            const size = l.size * Math.min(1, age * 2);
+
+            // Glow
+            const grd = ctx.createRadialGradient(x, y, 0, x, y, size * 5);
+            grd.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.3})`);
+            grd.addColorStop(1, 'transparent');
+            ctx.fillStyle = grd;
+            ctx.fillRect(x - size * 5, y - size * 5, size * 10, size * 10);
+
+            // Core
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+            ctx.fill();
+        });
+
+        // Central figure – grows and brightens
+        const cx = W / 2;
+        const cy = H / 2;
+        const figureAlpha = lerp(0.05, 0.5, t);
+        const figureR = lerp(15, 40, t);
+
+        // During setbacks, figure dims
+        const effectiveAlpha = inSetback
+            ? figureAlpha * (1 - setbackIntensity * 0.5)
+            : figureAlpha;
+
+        // Aura
+        const auraR = figureR * 3;
+        const auraGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, auraR);
+        auraGrd.addColorStop(0, `rgba(16,185,129,${effectiveAlpha * 0.2})`);
+        auraGrd.addColorStop(0.5, `rgba(56,189,248,${effectiveAlpha * 0.08})`);
+        auraGrd.addColorStop(1, 'transparent');
+        ctx.fillStyle = auraGrd;
+        ctx.fillRect(cx - auraR, cy - auraR, auraR * 2, auraR * 2);
+
+        // Core
+        ctx.beginPath();
+        ctx.arc(cx, cy, figureR, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(16,185,129,${effectiveAlpha * 0.3})`;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(16,185,129,${effectiveAlpha * 0.6})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Inner label
+        ctx.font = `${lerp(9, 14, t)}px Inter`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = `rgba(16,185,129,${effectiveAlpha})`;
+
+        let selfLabel = '';
+        if (t < 0.1) selfLabel = '...';
+        else if (t < 0.3) selfLabel = 'ich?';
+        else if (t < 0.5) selfLabel = 'ich.';
+        else if (t < 0.7) selfLabel = 'ICH';
+        else selfLabel = 'ICH ✦';
+        ctx.fillText(selfLabel, cx, cy);
+        ctx.textBaseline = 'alphabetic';
+
+        // Milestone markers
+        const milestones = [
+            { t: 0.08, label: '🚪 Trennung', y: 0.15 },
+            { t: 0.15, label: '🔁 Hoovering-Versuch', y: 0.25 },
+            { t: 0.3, label: '💡 Erste Klarheit', y: 0.15 },
+            { t: 0.5, label: '🛡️ Grenzen setzen', y: 0.25 },
+            { t: 0.7, label: '🌱 Neues Selbstbild', y: 0.15 },
+            { t: 0.9, label: '✨ Wachstum', y: 0.25 }
+        ];
+
+        milestones.forEach(m => {
+            if (t >= m.t) {
+                const mx = m.t * W;
+                const my = H * m.y;
+                const age = Math.min(1, (t - m.t) * 10);
+
+                ctx.font = '400 10px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = `rgba(200,200,200,${age * 0.4})`;
+                ctx.fillText(m.label, mx, my);
+
+                // Vertical line
+                ctx.beginPath();
+                ctx.moveTo(mx, my + 8);
+                ctx.lineTo(mx, H * 0.85);
+                ctx.strokeStyle = `rgba(255,255,255,${age * 0.03})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        });
+
+        // Setback indicators
+        setbacks.forEach(s => {
+            if (t >= s - 0.02 && t <= s + 0.05) {
+                const sx = s * W;
+                ctx.font = '400 9px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = 'rgba(239,68,68,0.4)';
+                ctx.fillText('↓ Rückschlag', sx, H * 0.88);
+            }
+        });
+
+        // State text
+        ctx.font = '300 12px Inter';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        let state = '';
+        if (t < 0.05) state = 'Dunkelheit. Aber du bist raus.';
+        else if (t < 0.15) state = 'Verwirrung, Trauer, Sehnsucht – das ist normal.';
+        else if (t < 0.3) state = 'Erste Momente der Klarheit zwischen den Wellen.';
+        else if (t < 0.5) state = 'Du beginnst zu verstehen, was passiert ist.';
+        else if (t < 0.7) state = 'Neue Grenzen. Neues Vertrauen in die eigene Wahrnehmung.';
+        else if (t < 0.9) state = 'Du findest zurück zu dir. Stärker als zuvor.';
+        else state = 'Post-traumatisches Wachstum. Du bist frei.';
+
+        if (inSetback && t > 0.1) {
+            state = 'Rückschlag – das gehört dazu. Es geht vorbei.';
+            ctx.fillStyle = 'rgba(239,68,68,0.35)';
+        }
+
+        ctx.fillText(state, W / 2, H - 55);
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// ==========================================
+// SCROLL REVEAL
+// ==========================================
+(function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.scroll-section').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(40px)';
+        section.style.transition = 'opacity 1s ease, transform 1s ease';
+        observer.observe(section);
+    });
+})();
+
+</script>
+</body>
+</html>
