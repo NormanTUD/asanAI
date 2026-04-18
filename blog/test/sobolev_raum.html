@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobolev-Räume – Visuelle Erklärung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            background: linear-gradient(90deg, #00d2ff, #7b2ff7, #ff6ec7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #aaa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: 2px solid #7b2ff7;
+            background: transparent;
+            color: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: #7b2ff7;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(123, 47, 247, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            color: #00d2ff;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        .card h3 {
+            color: #ff6ec7;
+            margin: 15px 0 10px;
+            font-size: 1.2em;
+        }
+
+        .card p, .card li {
+            line-height: 1.8;
+            font-size: 1.05em;
+            color: #ccc;
+        }
+
+        .card ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .formula {
+            background: rgba(123, 47, 247, 0.15);
+            border-left: 4px solid #7b2ff7;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 0 12px 12px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.15em;
+            color: #e8d5ff;
+            overflow-x: auto;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        canvas {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 100%;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .controls label {
+            color: #aaa;
+            font-size: 0.95em;
+        }
+
+        .controls select, .controls input[type="range"] {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #7b2ff7;
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        .controls input[type="range"] {
+            width: 150px;
+            accent-color: #7b2ff7;
+        }
+
+        .controls button {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #7b2ff7, #00d2ff);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: transform 0.2s;
+        }
+
+        .controls button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .comparison-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .comparison-item h4 {
+            color: #00d2ff;
+            margin-bottom: 10px;
+        }
+
+        /* Hierarchy Visualization */
+        .hierarchy {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin: 30px 0;
+        }
+
+        .hierarchy-level {
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            min-width: 250px;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: default;
+        }
+
+        .hierarchy-level:hover {
+            transform: scale(1.05);
+        }
+
+        .hierarchy-arrow {
+            font-size: 1.5em;
+            color: #7b2ff7;
+        }
+
+        .h-smooth {
+            background: linear-gradient(135deg, #00d2ff33, #00d2ff11);
+            border: 2px solid #00d2ff;
+        }
+
+        .h-sobolev {
+            background: linear-gradient(135deg, #7b2ff733, #7b2ff711);
+            border: 2px solid #7b2ff7;
+        }
+
+        .h-lp {
+            background: linear-gradient(135deg, #ff6ec733, #ff6ec711);
+            border: 2px solid #ff6ec7;
+        }
+
+        .h-dist {
+            background: linear-gradient(135deg, #ffaa0033, #ffaa0011);
+            border: 2px solid #ffaa00;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dashed #7b2ff7;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #1a1a3e;
+            color: #ddd;
+            text-align: left;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            border: 1px solid #7b2ff7;
+            font-size: 0.9em;
+            line-height: 1.5;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Animated Norm Bar */
+        .norm-bar-container {
+            margin: 15px 0;
+        }
+
+        .norm-bar {
+            height: 30px;
+            border-radius: 15px;
+            background: linear-gradient(90deg, #7b2ff7, #00d2ff);
+            transition: width 0.8s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .norm-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        /* Application cards */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            border-color: #7b2ff7;
+        }
+
+        .app-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .app-card h4 {
+            color: #00d2ff;
+            margin-bottom: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #555;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Sobolev-Räume W<sup>k,p</sup>(Ω)</h1>
+    <p>Eine interaktive visuelle Einführung in die Funktionalanalysis</p>
+</header>
+
+<div class="container">
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('intro')">🎯 Einführung</button>
+        <button class="tab-btn" onclick="showTab('definition')">📐 Definition</button>
+        <button class="tab-btn" onclick="showTab('visual')">📊 Visualisierung</button>
+        <button class="tab-btn" onclick="showTab('norm')">📏 Sobolev-Norm</button>
+        <button class="tab-btn" onclick="showTab('hierarchy')">🏗️ Hierarchie</button>
+        <button class="tab-btn" onclick="showTab('embeddings')">🔗 Einbettungen</button>
+        <button class="tab-btn" onclick="showTab('applications')">🚀 Anwendungen</button>
+    </div>
+
+    <!-- INTRO -->
+    <div id="intro" class="tab-content active">
+        <div class="card">
+            <h2>🎯 Was ist ein Sobolev-Raum?</h2>
+            <p>Stell dir vor, du willst eine physikalische Gleichung lösen – z.B. wie sich Wärme in einem Metallstab ausbreitet. Dafür brauchst du Funktionen, die du <strong>ableiten</strong> kannst. Aber in der realen Welt sind Funktionen oft nicht glatt genug für klassische Ableitungen.</p>
+
+            <h3>Das Problem</h3>
+            <p>Klassische Ableitungen erfordern, dass eine Funktion „glatt" ist. Aber viele natürliche Phänomene erzeugen Funktionen mit Knicken, Sprüngen oder anderen Unregelmäßigkeiten.</p>
+
+            <h3>Die Lösung: Sobolev-Räume</h3>
+            <p>Sobolev-Räume erweitern den Begriff der Ableitung durch sogenannte <strong>schwache Ableitungen</strong>. Eine Funktion muss nicht mehr klassisch differenzierbar sein – es reicht, wenn sie „im Mittel" differenzierbar ist.</p>
+
+            <div class="formula">
+                W<sup>k,p</sup>(Ω) = { f ∈ L<sup>p</sup>(Ω) : D<sup>α</sup>f ∈ L<sup>p</sup>(Ω) für alle |α| ≤ k }
+            </div>
+
+            <h3>Analogie: Der „verzeihende" Mathematik-Lehrer</h3>
+            <p>
+                Denk an einen strengen Lehrer (klassische Analysis): „Deine Funktion hat einen Knick bei x=0? Nicht differenzierbar! Raus!"<br><br>
+                Der Sobolev-Raum ist wie ein verständnisvoller Lehrer: „Okay, dein Knick ist nicht ideal, aber <em>im Großen und Ganzen</em> verhält sich deine Funktion gut genug. Du darfst bleiben."
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>🔑 Die drei Schlüsselparameter</h2>
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <h4>k – Ableitungsordnung</h4>
+                    <p>Wie viele (schwache) Ableitungen existieren müssen. k=1 heißt: Funktion + erste Ableitung müssen „gut" sein.</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>p – Integrierbarkeitsgrad</h4>
+                    <p>Wie stark die Funktion und ihre Ableitungen integrierbar sein müssen. p=2 ist besonders schön (Hilbert-Raum!).</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>Ω – Das Gebiet</h4>
+                    <p>Der Bereich, auf dem wir arbeiten – z.B. ein Intervall [0,1], eine Scheibe in ℝ², oder ein 3D-Körper.</p>
+                </div>
+                <div class="comparison-item">
+                    <h4>D<sup>α</sup> – Schwache Ableitung</h4>
+                    <p>Die verallgemeinerte Ableitung, definiert über Integration gegen Testfunktionen (distributionell).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEFINITION -->
+    <div id="definition" class="tab-content">
+        <div class="card">
+            <h2>📐 Formale Definition</h2>
+
+            <h3>Schwache Ableitung</h3>
+            <p>Eine Funktion <em>v</em> ∈ L<sup>p</sup>(Ω) heißt <strong>schwache Ableitung</strong> von <em>u</em> der Ordnung α, wenn gilt:</p>
+            <div class="formula">
+                ∫<sub>Ω</sub> u · D<sup>α</sup>φ dx = (-1)<sup>|α|</sup> ∫<sub>Ω</sub> v · φ dx &nbsp;&nbsp; ∀ φ ∈ C<sub>0</sub><sup>∞</sup>(Ω)
+            </div>
+            <p>Das bedeutet: Statt die Ableitung direkt an <em>u</em> zu berechnen, „schieben" wir sie per partieller Integration auf glatte Testfunktionen φ.</p>
+
+            <h3>Der Sobolev-Raum W<sup>k,p</sup>(Ω)</h3>
+            <div class="formula">
+                W<sup>k,p</sup>(Ω) = { u ∈ L<sup>p</sup>(Ω) : D<sup>α</sup>u ∈ L<sup>p</sup>(Ω) für alle Multiindizes α mit |α| ≤ k }
+            </div>
+
+            <h3>Spezialfall: H<sup>k</sup>(Ω) = W<sup>k,2</sup>(Ω)</h3>
+            <p>Für p = 2 erhalten wir einen <strong>Hilbert-Raum</strong> mit dem Skalarprodukt:</p>
+            <div class="formula">
+                ⟨u, v⟩<sub>H<sup>k</sup></sub> = Σ<sub>|α|≤k</sub> ∫<sub>Ω</sub> D<sup>α</sup>u · D<sup>α</sup>v dx
+            </div>
+            <p>Das ist extrem nützlich, weil Hilbert-Räume die schönste Geometrie haben (Projektionen, Orthogonalität, Riesz-Darstellungssatz).</p>
+
+            <h3>Sobolev-Raum mit Nullrandwerten: W<sub>0</sub><sup>k,p</sup>(Ω)</h3>
+            <div class="formula">
+                W<sub>0</sub><sup>k,p</sup>(Ω) = Abschluss von C<sub>0</sub><sup>∞</sup>(Ω) in W<sup>k,p</sup>(Ω)
+            </div>
+            <p>Hier verschwinden die Funktionen am Rand von Ω – wichtig für Dirichlet-Randwertprobleme.</p>
+        </div>
+
+        <div class="card">
+            <h2>Beispiel: |x| in W<sup>1,2</sup>(-1,1)</h2>
+            <p>Die Betragsfunktion f(x) = |x| hat bei x = 0 einen Knick. Klassisch ist sie dort nicht differenzierbar.</p>
+            <p><strong>Aber:</strong> Die schwache Ableitung existiert und ist die Vorzeichenfunktion:</p>
+            <div class="formula">
+                f'(x) = sign(x) = { -1 für x < 0, +1 für x > 0 }
+            </div>
+            <p>Da sowohl |x| als auch sign(x) in L²(-1,1) liegen, gilt: <strong>|x| ∈ W<sup>1,2</sup>(-1,1) = H¹(-1,1)</strong>.</p>
+        </div>
+    </div>
+
+    <!-- VISUAL -->
+    <div id="visual" class="tab-content">
+        <div class="card">
+            <h2>📊 Interaktive Visualisierung</h2>
+            <p>Wähle verschiedene Funktionen und sieh, ob sie in bestimmten Sobolev-Räumen liegen.</p>
+
+            <div class="controls">
+                <label>Funktion:</label>
+                <select id="funcSelect" onchange="drawFunctionPlot()">
+                    <option value="abs">|x| – Betragsfunktion</option>
+                    <option value="smooth">sin(πx) – Glatte Funktion</option>
+                    <option value="step">Heaviside – Sprungfunktion</option>
+                    <option value="cusp">|x|^(1/2) – Spitze</option>
+                    <option value="oscillate">x·sin(1/x) – Oszillierend</option>
+                </select>
+                <button onclick="drawFunctionPlot()">Aktualisieren</button>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="funcCanvas" width="800" height="400"></canvas>
+            </div>
+
+            <div id="funcInfo" class="card" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="card">
+            <h2>🔬 Schwache vs. Klassische Ableitung</h2>
+            <p>Vergleiche die klassische und schwache Ableitung für verschiedene Funktionen:</p>
+
+            <div class="controls">
+                <label>Funktion:</label>
+                <select id="derivSelect" onchange="drawDerivativePlot()">
+                    <option value="abs">|x|</option>
+                    <option value="smooth">sin(πx)</option>
+                    <option value="step">Heaviside</option>
+                </select>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="canvas-container">
+                    <p style="color:#00d2ff; margin-bottom:8px;">Funktion f(x)</p>
+                    <canvas id="derivCanvas1" width="380" height="280"></canvas>
+                </div>
+                <div class="canvas-container">
+                    <p style="color:#ff6ec7; margin-bottom:8px;">Schwache Ableitung f'(x)</p>
+                    <canvas id="derivCanvas2" width="380" height="280"></canvas>
+                </div>
+            </div>
+
+            <div id="derivInfo" class="card" style="margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <!-- NORM -->
+    <div id="norm" class="tab-content">
+        <div class="card">
+            <h2>📏 Die Sobolev-Norm</h2>
+            <p>Die Norm im Sobolev-Raum misst nicht nur die „Größe" der Funktion, sondern auch die ihrer Ableitungen:</p>
+
+            <div class="formula">
+                ‖u‖<sub>W<sup>k,p</sup></sub> = ( Σ<sub>|α|≤k</sub> ‖D<sup>α</sup>u‖<sub>L<sup>p</sup></sub><sup>p</sup> )<sup>1/p</sup>
+            </div>
+
+            <p>Für den Spezialfall W<sup>1,2</sup>:</p>
+            <div class="formula">
+                ‖u‖<sub>H¹</sub> = ( ∫|u|² dx + ∫|u'|² dx )<sup>1/2</sup>
+            </div>
+
+            <h3>Interaktiver Norm-Vergleich</h3>
+            <p>Wähle eine Funktion und sieh, wie sich die verschiedenen Norm-Anteile verhalten:</p>
+
+            <div class="controls">
+                <label>Funktion:</label>
+                <select id="normSelect" onchange="updateNormBars()">
+                    <option value="sin">sin(πx) auf [0,1]</option>
+                    <option value="sin2">sin(2πx) auf [0,1]</option>
+                    <option value="sin5">sin(5πx) auf [0,1]</option>
+                    <option value="poly">x² auf [0,1]</option>
+                    <option value="linear">x auf [0,1]</option>
+                </select>
+                <label>Sobolev-Ordnung k:</label>
+                <select id="normK" onchange="updateNormBars()">
+                    <option value="0">k = 0 (nur L²)</option>
+                    <option value="1" selected>k = 1 (H¹)</option>
+                    <option value="2">k = 2 (H²)</option>
+                </select>
+            </div>
+
+            <div id="normBars" class="norm-bar-container"></div>
+            <div id="normTotal" style="text-align:center; margin-top:15px; font-size:1.2em; color:#00d2ff;"></div>
+        </div>
+
+        <div class="card">
+            <h2>🌊 Frequenz und Sobolev-Norm</h2>
+            <p>Höhere Frequenzen → größere Ableitungen → größere Sobolev-Norm. Das zeigt, warum Sobolev-Räume „Glattheit" messen.</p>
+
+            <div class="controls">
+                <label>Frequenz ω:</label>
+                <input type="range" id="freqSlider" min="1" max="20" value="3" oninput="drawFreqPlot()">
+                <span id="freqLabel" style="color:#fff;">3</span>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="freqCanvas" width="800" height="300"></canvas>
+            </div>
+            <div id="freqNormInfo" style="text-align:center; margin-top:10px; color:#ccc;"></div>
+        </div>
+    </div>
+
+    <!-- HIERARCHY -->
+    <div id="hierarchy" class="tab-content">
+        <div class="card">
+            <h2>🏗️ Hierarchie der Funktionenräume</h2>
+            <p>Sobolev-Räume ordnen sich in eine natürliche Hierarchie ein. Je mehr Ableitungen existieren, desto „kleiner" (eingeschränkter) ist der Raum:</p>
+
+            <div class="hierarchy">
+                <div class="hierarchy-level h-smooth">C<sup>∞</sup>(Ω) – Unendlich oft differenzierbar</div>
+                <div class="hierarchy-arrow">⊂ ↓</div>
+                <div class="hierarchy-level h-smooth" style="border-color:#00b4d8;">C<sup>k</sup>(Ω) – k-mal stetig differenzierbar</div>
+                <div class="hierarchy-arrow">⊂ ↓</div>
+                <div class="hierarchy-level h-sobolev">W<sup>k,p</sup>(Ω) – k schwache Ableitungen in L<sup>p</sup></div>
+                <div class="hierarchy-arrow">⊂ ↓</div>
+                <div class="hierarchy-level h-sobolev" style="border-color:#9b59b6;">W<sup>1,p</sup>(Ω) – 1 schwache Ableitung in L<sup>p</sup></div>
+                <div class="hierarchy-arrow">⊂ ↓</div>
+                <div class="hierarchy-level h-lp">L<sup>p</sup>(Ω) – p-fach integrierbare Funktionen</div>
+                <div class="hierarchy-arrow">⊂ ↓</div>
+                <div class="hierarchy-level h-dist">D'(Ω) – Distributionen (verallgemeinerte Funktionen)</div>
+            </div>
+
+            <p style="margin-top:20px; text-align:center; color:#aaa;">
+                ↑ Mehr Regularität (glatter) &nbsp;&nbsp;|&nbsp;&nbsp; ↓ Weniger Regularität (wilder)
+            </p>
+        </div>
+
+        <div class="card">
+            <h2>Verschachtelung der Sobolev-Räume</h2>
+
+            <div class="canvas-container">
+                <canvas id="nestingCanvas" width="700" height="400"></canvas>
+            </div>
+            <p style="text-align:center; color:#aaa; margin-top:10px;">
+                Größerer Kreis = größerer Raum (mehr Funktionen enthalten)
+            </p>
+        </div>
+    </div>
+
+    <!-- EMBEDDINGS -->
+    <div id="embeddings" class="tab-content">
+        <div class="card">
+            <h2>🔗 Sobolev-Einbettungssätze</h2>
+            <p>Die Einbettungssätze sind das Herzstück der Theorie. Sie sagen: „Wenn eine Funktion genug schwache Ableitungen hat, dann ist sie automatisch regulärer als erwartet."</p>
+
+            <h3>Satz von Sobolev (Einbettung in L<sup>q</sup>)</h3>
+            <div class="formula">
+                Wenn kp < n: &nbsp; W<sup>k,p</sup>(Ω) ↪ L<sup>q</sup>(Ω) &nbsp; mit &nbsp; q = np/(n - kp) &nbsp; (Sobolev-Exponent)
+            </div>
+            <p>n = Dimension des Gebiets. Man „gewinnt" Integrierbarkeit durch Differenzierbarkeit!</p>
+
+            <h3>Satz von Morrey (Einbettung in C<sup>α</sup>)</h3>
+            <div class="formula">
+                Wenn kp > n: &nbsp; W<sup>k,p</sup>(Ω) ↪ C<sup>0,α</sup>(Ω̄) &nbsp; mit &nbsp; α = k - n/p
+            </div>
+            <p>Wenn genug Ableitungen existieren, ist die Funktion sogar <strong>stetig</strong> (und Hölder-stetig)!</p>
+
+            <h3>Interaktiver Einbettungsrechner</h3>
+            <div class="controls">
+                <label>Dimension n:</label>
+                <select id="embN" onchange="calcEmbedding()">
+                    <option value="1">n = 1</option>
+                    <option value="2" selected>n = 2</option>
+                    <option value="3">n = 3</option>
+                </select>
+                <label>Ordnung k:</label>
+                <select id="embK" onchange="calcEmbedding()">
+                    <option value="1" selected>k = 1</option>
+                    <option value="2">k = 2</option>
+                    <option value="3">k = 3</option>
+                </select>
+                <label>Exponent p:</label>
+                <input type="range" id="embP" min="1" max="10" value="2" step="0.5" oninput="calcEmbedding()">
+                <span id="embPLabel" style="color:#fff;">2</span>
+            </div>
+
+            <div id="embeddingResult" class="card" style="margin-top:15px;"></div>
+
+            <div class="canvas-container">
+                <canvas id="embeddingCanvas" width="700" height="350"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATIONS -->
+    <div id="applications" class="tab-content">
+        <div class="card">
+            <h2>🚀 Anwendungen von Sobolev-Räumen</h2>
+            <p>Sobolev-Räume sind nicht nur abstrakte Mathematik – sie sind das Fundament moderner Naturwissenschaft und Technik.</p>
+
+            <div class="app-grid">
+                <div class="app-card">
+                    <div class="icon">🌡️</div>
+                    <h4>Wärmeleitungsgleichung</h4>
+                    <p>∂u/∂t = Δu beschreibt, wie sich Temperatur ausbreitet. Lösungen leben in Sobolev-Räumen, weil sie schwach differenzierbar, aber nicht immer klassisch glatt sind.</p>
+                </div>
+                <div class="app-card">
+                    <div class="icon">🌊</div>
+                    <h4>Wellengleichung</h4>
+                    <p>∂²u/∂t² = c²Δu modelliert Schall, Licht und Erdbeben. Die Existenz schwacher Lösungen wird in H¹ bewiesen.</p>
+                </div>
+                <div class="app-card">
+                    <div class="icon">🏗️</div>
+                    <h4>Elastizitätstheorie</h4>
+                    <p>Verformungen von Brücken und Gebäuden werden durch PDEs beschrieben, deren Lösungen in W<sup>1,2</sup> liegen.</p>
+                </div>
+                <div class="app-card">
+                    <div class="icon">💧</div>
+                    <h4>Navier-Stokes-Gleichungen</h4>
+                    <p>Strömungsmechanik! Die Existenz schwacher Lösungen nutzt Sobolev-Räume. Das Millennium-Problem steckt hier drin.</p>
+                </div>
+                <div class="app-card">
+                    <div class="icon">🖥️</div>
+                    <h4>Finite-Elemente-Methode (FEM)</h4>
+                    <p>Die wichtigste numerische Methode für PDEs basiert direkt auf der schwachen Formulierung in Sobolev-Räumen.</p>
+                </div>
+                <div class="app-card">
+                    <div class="icon">🧠</div>
+                    <h4>Machine Learning</h4>
+                    <p>Sobolev-Training: Neuronale Netze werden nicht nur auf Funktionswerte, sondern auch auf Ableitungen trainiert – Regularisierung via Sobolev-Norm.</p>
+                </div>
+                <div class="app-card">
+                    <div class="icon">📡</div>
+                    <h4>Signalverarbeitung</h4>
+                    <p>Sobolev-Glattheit bestimmt, wie gut ein Signal komprimiert oder rekonstruiert werden kann.</p>
+                </div>
+                <div class="app-card">
+                    <div class="icon">⚛️</div>
+                    <h4>Quantenmechanik</h4>
+                    <p>Wellenfunktionen ψ leben in H¹(ℝ³). Die kinetische Energie ist ∫|∇ψ|² dx – genau die H¹-Seminorm!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎓 Der Weg zur schwachen Lösung (Lax-Milgram)</h2>
+            <p>So löst man eine PDE mit Sobolev-Räumen:</p>
+
+            <div class="formula">
+                1. Starte mit der PDE: -Δu = f in Ω, u = 0 auf ∂Ω<br><br>
+                2. Multipliziere mit Testfunktion v ∈ H₀¹(Ω) und integriere:<br>
+                &nbsp;&nbsp;&nbsp; ∫<sub>Ω</sub> ∇u · ∇v dx = ∫<sub>Ω</sub> f · v dx<br><br>
+                3. Definiere Bilinearform: a(u,v) = ∫ ∇u · ∇v dx<br><br>
+                4. Prüfe Koerzivität: a(u,u) ≥ α‖u‖²<sub>H¹</sub> (Poincaré!)<br><br>
+                5. Lax-Milgram → ∃! schwache Lösung u ∈ H₀¹(Ω)
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    Sobolev-Räume – Interaktive Visualisierung | Erstellt mit HTML, CSS & JavaScript
+</footer>
+
+<script>
+    // ==================== TAB NAVIGATION ====================
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        event.target.classList.add('active');
+
+        // Trigger draws when tab becomes visible
+        if (tabId === 'visual') {
+            drawFunctionPlot();
+            drawDerivativePlot();
+        } else if (tabId === 'norm') {
+            updateNormBars();
+            drawFreqPlot();
+        } else if (tabId === 'hierarchy') {
+            drawNestingDiagram();
+        } else if (tabId === 'embeddings') {
+            calcEmbedding();
+        }
+    }
+
+    // ==================== FUNCTION DEFINITIONS ====================
+    const functions = {
+        abs: {
+            f: x => Math.abs(x),
+            df: x => x > 0.001 ? 1 : (x < -0.001 ? -1 : 0),
+            ddf: x => 0,
+            name: '|x|',
+            range: [-2, 2],
+            info: `<h3>f(x) = |x|</h3>
+                   <p>✅ <strong>In W<sup>1,p</sup></strong> für alle 1 ≤ p ≤ ∞: Die schwache Ableitung ist sign(x).</p>
+                   <p>❌ <strong>Nicht in W<sup>2,p</sup></strong>: Die zweite schwache Ableitung wäre 2·δ(0) – eine Distribution, nicht in L<sup>p</sup>.</p>`
+        },
+        smooth: {
+            f: x => Math.sin(Math.PI * x),
+            df: x => Math.PI * Math.cos(Math.PI * x),
+            ddf: x => -Math.PI * Math.PI * Math.sin(Math.PI * x),
+            name: 'sin(πx)',
+            range: [-2, 2],
+            info: `<h3>f(x) = sin(πx)</h3>
+                   <p>✅ <strong>In W<sup>k,p</sup></strong> für alle k und p: Unendlich oft differenzierbar, alle Ableitungen beschränkt.</p>
+                   <p>✅ Sogar in C<sup>∞</sup> – der „Musterschüler" unter den Funktionen.</p>`
+        },
+        step: {
+            f: x => x >= 0 ? 1 : 0,
+            df: x => 0,
+            ddf: x => 0,
+            name: 'Heaviside(x)',
+            range: [-2, 2],
+            info: `<h3>f(x) = Heaviside(x)</h3>
+                   <p>✅ <strong>In L<sup>p</sup></strong> für alle p: Die Funktion ist beschränkt und messbar.</p>
+                   <p>❌ <strong>Nicht in W<sup>1,p</sup></strong>: Die schwache Ableitung wäre δ(0) – eine Distribution, nicht in L<sup>p</sup>.</p>
+                   <p>⚠️ Der Sprung bei x=0 verhindert die Zugehörigkeit zu jedem Sobolev-Raum mit k ≥ 1.</p>`
+        },
+        cusp: {
+            f: x => Math.sqrt(Math.abs(x)),
+            df: x => x > 0.01 ? 0.5 / Math.sqrt(x) : (x < -0.01 ? -0.5 / Math.sqrt(-x) : 0),
+            ddf: x => 0,
+            name: '|x|^(1/2)',
+            range: [-2, 2],
+            info: `<h3>f(x) = |x|<sup>1/2</sup></h3>
+                   <p>✅ <strong>In W<sup>1,p</sup> für p < 2</strong> (in 1D): Die Ableitung 1/(2√|x|) ist in L<sup>p</sup> für p < 2.</p>
+                   <p>❌ <strong>Nicht in W<sup>1,2</sup></strong>: ∫|f'|² dx divergiert wegen der Singularität bei 0.</p>`
+        },
+        oscillate: {
+            f: x => Math.abs(x) < 0.001 ? 0 : x * Math.sin(1 / x),
+            df: x => Math.abs(x) < 0.01 ? 0 : Math.sin(1 / x) - Math.cos(1 / x) / x,
+            ddf: x => 0,
+            name: 'x·sin(1/x)',
+            range: [-1, 1],
+            info: `<h3>f(x) = x·sin(1/x)</h3>
+                   <p>✅ <strong>In L<sup>p</sup></strong>: Beschränkt, also in allen L<sup>p</sup>.</p>
+                   <p>⚠️ <strong>In W<sup>1,p</sup> für p < ∞</strong>: Die Ableitung oszilliert wild, ist aber noch integrierbar.</p>
+                   <p>Zeigt: Sobolev-Funktionen können sehr „wild" aussehen!</p>`
+        }
+    };
+
+    // ==================== DRAWING UTILITIES ====================
+    function drawAxes(ctx, w, h, xRange, yRange, color = '#444') {
+        const [xMin, xMax] = xRange;
+        const [yMin, yMax] = yRange;
+
+        const toCanvasX = x => (x - xMin) / (xMax - xMin) * w;
+        const toCanvasY = y => h - (y - yMin) / (yMax - yMin) * h;
+
+        // Grid
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 0.5;
+        for (let x = Math.ceil(xMin); x <= xMax; x++) {
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(x), 0);
+            ctx.lineTo(toCanvasX(x), h);
+            ctx.stroke();
+        }
+        for (let y = Math.ceil(yMin); y <= yMax; y++) {
+            ctx.beginPath();
+            ctx.moveTo(0, toCanvasY(y));
+            ctx.lineTo(w, toCanvasY(y));
+            ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+
+        // X-axis
+        if (yMin <= 0 && yMax >= 0) {
+            ctx.beginPath();
+            ctx.moveTo(0, toCanvasY(0));
+            ctx.lineTo(w, toCanvasY(0));
+            ctx.stroke();
+        }
+
+        // Y-axis
+        if (xMin <= 0 && xMax >= 0) {
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(0), 0);
+            ctx.lineTo(toCanvasX(0), h);
+            ctx.stroke();
+        }
+
+        // Labels
+        ctx.fillStyle = '#666';
+        ctx.font = '11px monospace';
+        for (let x = Math.ceil(xMin); x <= xMax; x++) {
+            if (x !== 0) ctx.fillText(x, toCanvasX(x) + 3, toCanvasY(0) - 5);
+        }
+        for (let y = Math.ceil(yMin); y <= yMax; y++) {
+            if (y !== 0) ctx.fillText(y, toCanvasX(0) + 5, toCanvasY(y) - 3);
+        }
+
+        return { toCanvasX, toCanvasY };
+    }
+
+    function plotFunction(ctx, fn, xRange, yRange, w, h, color, lineWidth = 2.5) {
+        const [xMin, xMax] = xRange;
+        const [yMin, yMax] = yRange;
+        const toCanvasX = x => (x - xMin) / (xMax - xMin) * w;
+        const toCanvasY = y => h - (y - yMin) / (yMax - yMin) * h;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.beginPath();
+
+        let started = false;
+        const steps = w * 2;
+        for (let i = 0; i <= steps; i++) {
+            const x = xMin + (xMax - xMin) * i / steps;
+            let y = fn(x);
+            if (!isFinite(y) || Math.abs(y) > 100) {
+                started = false;
+                continue;
+            }
+            const cx = toCanvasX(x);
+            const cy = toCanvasY(y);
+            if (!started) {
+                ctx.moveTo(cx, cy);
+                started = true;
+            } else {
+                ctx.lineTo(cx, cy);
+            }
+        }
+        ctx.stroke();
+    }
+
+    // ==================== FUNCTION PLOT ====================
+    function drawFunctionPlot() {
+        const canvas = document.getElementById('funcCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const key = document.getElementById('funcSelect').value;
+        const func = functions[key];
+        const xRange = func.range;
+
+        // Compute y range
+        let yMin = -0.5, yMax = 2;
+        const samples = [];
+        for (let i = 0; i <= 500; i++) {
+            const x = xRange[0] + (xRange[1] - xRange[0]) * i / 500;
+            const y = func.f(x);
+            if (isFinite(y)) samples.push(y);
+        }
+        if (samples.length > 0) {
+            yMin = Math.min(...samples) - 0.5;
+            yMax = Math.max(...samples) + 0.5;
+        }
+        const yRange = [yMin, yMax];
+
+        drawAxes(ctx, w, h, xRange, yRange);
+        plotFunction(ctx, func.f, xRange, yRange, w, h, '#00d2ff');
+
+        // Title
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.fillText('f(x) = ' + func.name, 20, 30);
+
+        document.getElementById('funcInfo').innerHTML = func.info;
+    }
+
+    // ==================== DERIVATIVE PLOT ====================
+    function drawDerivativePlot() {
+        const key = document.getElementById('derivSelect').value;
+        const func = functions[key];
+        const xRange = func.range;
+
+        // Canvas 1: Function
+        const c1 = document.getElementById('derivCanvas1');
+        const ctx1 = c1.getContext('2d');
+        ctx1.clearRect(0, 0, c1.width, c1.height);
+
+        let samples = [];
+        for (let i = 0; i <= 500; i++) {
+            const x = xRange[0] + (xRange[1] - xRange[0]) * i / 500;
+            const y = func.f(x);
+            if (isFinite(y)) samples.push(y);
+        }
+        let yRange1 = [Math.min(...samples) - 0.5, Math.max(...samples) + 0.5];
+
+        drawAxes(ctx1, c1.width, c1.height, xRange, yRange1);
+        plotFunction(ctx1, func.f, xRange, yRange1, c1.width, c1.height, '#00d2ff');
+
+        ctx1.fillStyle = '#fff';
+        ctx1.font = 'bold 14px Segoe UI';
+        ctx1.fillText('f(x) = ' + func.name, 10, 20);
+
+        // Canvas 2: Derivative
+        const c2 = document.getElementById('derivCanvas2');
+        const ctx2 = c2.getContext('2d');
+        ctx2.clearRect(0, 0, c2.width, c2.height);
+
+        samples = [];
+        for (let i = 0; i <= 500; i++) {
+            const x = xRange[0] + (xRange[1] - xRange[0]) * i / 500;
+            const y = func.df(x);
+            if (isFinite(y) && Math.abs(y) < 50) samples.push(y);
+        }
+        let yRange2 = samples.length > 0
+            ? [Math.min(...samples) - 0.5, Math.max(...samples) + 0.5]
+            : [-2, 2];
+
+        drawAxes(ctx2, c2.width, c2.height, xRange, yRange2);
+        plotFunction(ctx2, func.df, xRange, yRange2, c2.width, c2.height, '#ff6ec7');
+
+        ctx2.fillStyle = '#fff';
+        ctx2.font = 'bold 14px Segoe UI';
+        ctx2.fillText("f'(x) schwach", 10, 20);
+
+        // Info
+        const infos = {
+            abs: `<p><strong>|x|</strong>: Knick bei x=0, aber schwache Ableitung sign(x) existiert → <span style="color:#0f0;">∈ W<sup>1,2</sup></span></p>`,
+            smooth: `<p><strong>sin(πx)</strong>: Glatt, klassische = schwache Ableitung → <span style="color:#0f0;">∈ W<sup>k,p</sup> ∀k,p</span></p>`,
+            step: `<p><strong>Heaviside</strong>: Sprung bei x=0, schwache Ableitung wäre δ(0) → <span style="color:#f00;">∉ W<sup>1,p</sup></span></p>`
+        };
+        document.getElementById('derivInfo').innerHTML = infos[key] || '';
+    }
+
+    // ==================== NORM BARS ====================
+    function updateNormBars() {
+        const funcKey = document.getElementById('normSelect').value;
+        const k = parseInt(document.getElementById('normK').value);
+
+        // Numerical integration on [0,1]
+        const N = 1000;
+        const dx = 1 / N;
+
+        const funcs = {
+            sin: {
+                name: 'sin(πx)',
+                derivs: [
+                    x => Math.sin(Math.PI * x),
+                    x => Math.PI * Math.cos(Math.PI * x),
+                    x => -Math.PI * Math.PI * Math.sin(Math.PI * x)
+                ]
+            },
+            sin2: {
+                name: 'sin(2πx)',
+                derivs: [
+                    x => Math.sin(2 * Math.PI * x),
+                    x => 2 * Math.PI * Math.cos(2 * Math.PI * x),
+                    x => -4 * Math.PI * Math.PI * Math.sin(2 * Math.PI * x)
+                ]
+            },
+            sin5: {
+                name: 'sin(5πx)',
+                derivs: [
+                    x => Math.sin(5 * Math.PI * x),
+                    x => 5 * Math.PI * Math.cos(5 * Math.PI * x),
+                    x => -25 * Math.PI * Math.PI * Math.sin(5 * Math.PI * x)
+                ]
+            },
+            poly: {
+                name: 'x²',
+                derivs: [
+                    x => x * x,
+                    x => 2 * x,
+                    x => 2
+                ]
+            },
+            linear: {
+                name: 'x',
+                derivs: [
+                    x => x,
+                    x => 1,
+                    x => 0
+                ]
+            }
+        };
+
+        const f = funcs[funcKey];
+        const norms = [];
+        let totalSq = 0;
+
+        for (let order = 0; order <= k; order++) {
+            if (order >= f.derivs.length) {
+                norms.push({ order, value: 0 });
+                continue;
+            }
+            let integral = 0;
+            for (let i = 0; i < N; i++) {
+                const x = (i + 0.5) * dx;
+                const val = f.derivs[order](x);
+                integral += val * val * dx;
+            }
+            norms.push({ order, value: Math.sqrt(integral) });
+            totalSq += integral;
+        }
+
+        const totalNorm = Math.sqrt(totalSq);
+        const maxVal = Math.max(...norms.map(n => n.value), 0.01);
+
+        const labels = ['‖f‖<sub>L²</sub>', "‖f'‖<sub>L²</sub>", "‖f''‖<sub>L²</sub>"];
+        const colors = ['#00d2ff', '#7b2ff7', '#ff6ec7'];
+
+        let html = '';
+        norms.forEach((n, i) => {
+            const pct = (n.value / maxVal) * 100;
+            html += `
+                <div class="norm-label">
+                    <span>${labels[i] || `‖D<sup>${i}</sup>f‖`}</span>
+                    <span>${n.value.toFixed(4)}</span>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); border-radius:15px; overflow:hidden; margin-bottom:12px;">
+                    <div class="norm-bar" style="width:${pct}%; background:${colors[i] || '#fff'};">${n.value.toFixed(2)}</div>
+                </div>
+            `;
+        });
+
+        document.getElementById('normBars').innerHTML = html;
+        document.getElementById('normTotal').innerHTML =
+            `<strong>Sobolev-Norm ‖f‖<sub>H<sup>${k}</sup></sub> = ${totalNorm.toFixed(4)}</strong>`;
+    }
+
+    // ==================== FREQUENCY PLOT ====================
+    function drawFreqPlot() {
+        const canvas = document.getElementById('freqCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const omega = parseInt(document.getElementById('freqSlider').value);
+        document.getElementById('freqLabel').textContent = omega;
+
+        const xRange = [0, 1];
+        const yRange = [-1.5, 1.5];
+
+        drawAxes(ctx, w, h, xRange, yRange);
+
+        // Function
+        const f = x => Math.sin(omega * Math.PI * x);
+        const df = x => omega * Math.PI * Math.cos(omega * Math.PI * x);
+
+        plotFunction(ctx, f, xRange, yRange, w, h, '#00d2ff', 2.5);
+
+        // Scale derivative to fit
+        const maxDeriv = omega * Math.PI;
+        const scaledDf = x => df(x) / maxDeriv;
+        plotFunction(ctx, scaledDf, xRange, yRange, w, h, '#ff6ec7', 1.5);
+
+        // Legend
+        ctx.fillStyle = '#00d2ff';
+        ctx.font = '13px Segoe UI';
+        ctx.fillText(`f(x) = sin(${omega}πx)`, 20, 25);
+        ctx.fillStyle = '#ff6ec7';
+        ctx.fillText(`f'(x) = ${omega}π·cos(${omega}πx) [skaliert]`, 20, 45);
+
+        // Compute norms
+        const N = 1000;
+        const dx = 1 / N;
+        let l2 = 0, h1semi = 0;
+        for (let i = 0; i < N; i++) {
+            const x = (i + 0.5) * dx;
+            l2 += f(x) ** 2 * dx;
+            h1semi += df(x) ** 2 * dx;
+        }
+        l2 = Math.sqrt(l2);
+        h1semi = Math.sqrt(h1semi);
+        const h1 = Math.sqrt(l2 ** 2 + h1semi ** 2);
+
+        document.getElementById('freqNormInfo').innerHTML =
+            `‖f‖<sub>L²</sub> = ${l2.toFixed(3)} &nbsp;|&nbsp; ‖f'‖<sub>L²</sub> = ${h1semi.toFixed(3)} &nbsp;|&nbsp; <strong>‖f‖<sub>H¹</sub> = ${h1.toFixed(3)}</strong>
+             <br><span style="color:#ff6ec7;">↑ Höhere Frequenz → größere H¹-Norm (Sobolev „bestraft" Oszillationen)</span>`;
+    }
+
+    // ==================== NESTING DIAGRAM ====================
+    function drawNestingDiagram() {
+        const canvas = document.getElementById('nestingCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2, cy = h / 2;
+
+        const levels = [
+            { label: 'D\'(Ω) – Distributionen', r: 180, color: '#ffaa00' },
+            { label: 'L²(Ω)', r: 145, color: '#ff6ec7' },
+            { label: 'W^{1,2}(Ω) = H¹', r: 110, color: '#9b59b6' },
+            { label: 'W^{2,2}(Ω) = H²', r: 80, color: '#7b2ff7' },
+            { label: 'C^∞(Ω)', r: 45, color: '#00d2ff' }
+        ];
+
+        levels.forEach(level => {
+            // Filled ellipse
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, level.r * 1.4, level.r, 0, 0, 2 * Math.PI);
+            ctx.fillStyle = level.color + '15';
+            ctx.fill();
+            ctx.strokeStyle = level.color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = level.color;
+            ctx.font = 'bold 13px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(level.label, cx, cy - level.r + 18);
+        });
+
+        ctx.textAlign = 'left';
+    }
+
+    // ==================== EMBEDDING CALCULATOR ====================
+    function calcEmbedding() {
+        const n = parseInt(document.getElementById('embN').value);
+        const k = parseInt(document.getElementById('embK').value);
+        const p = parseFloat(document.getElementById('embP').value);
+        document.getElementById('embPLabel').textContent = p;
+
+        const kp = k * p;
+        let html = `<h3>W<sup>${k},${p}</sup>(Ω) mit Ω ⊂ ℝ<sup>${n}</sup></h3>`;
+
+        if (kp < n) {
+            const qStar = (n * p) / (n - kp);
+            html += `<p>📊 <strong>Fall kp < n</strong> (${kp.toFixed(1)} < ${n}): Subkritischer Fall</p>`;
+            html += `<div class="formula">W<sup>${k},${p}</sup>(Ω) ↪ L<sup>q</sup>(Ω) für q ≤ ${qStar.toFixed(2)} (Sobolev-Exponent q* = np/(n-kp))</div>`;
+            html += `<p style="color:#00d2ff;">→ Man gewinnt Integrierbarkeit, aber keine Stetigkeit.</p>`;
+        } else if (Math.abs(kp - n) < 0.01) {
+            html += `<p>⚡ <strong>Fall kp = n</strong> (${kp.toFixed(1)} = ${n}): Kritischer Fall</p>`;
+            html += `<div class="formula">W<sup>${k},${p}</sup>(Ω) ↪ L<sup>q</sup>(Ω) für alle q < ∞ (aber nicht L<sup>∞</sup>!)</div>`;
+            html += `<p style="color:#ffaa00;">→ Grenzfall – fast stetig, aber nicht ganz.</p>`;
+        } else {
+            const alpha = k - n / p;
+            html += `<p>✨ <strong>Fall kp > n</strong> (${kp.toFixed(1)} > ${n}): Superkritischer Fall</p>`;
+            html += `<div class="formula">W<sup>${k},${p}</sup>(Ω) ↪ C<sup>0,${alpha.toFixed(2)}</sup>(Ω̄) – Hölder-stetig mit Exponent α = ${alpha.toFixed(2)}</div>`;
+            html += `<p style="color:#0f0;">→ Funktionen sind automatisch stetig! Genug Ableitungen erzwingen Regularität.</p>`;
+            if (alpha >= 1) {
+                html += `<p style="color:#0f0;">Sogar klassisch differenzierbar (α ≥ 1)!</p>`;
+            }
+        
+        }
+
+        document.getElementById('embeddingResult').innerHTML = html;
+        drawEmbeddingDiagram(n, k, p);
+    }
+
+    function drawEmbeddingDiagram(n, k, p) {
+        const canvas = document.getElementById('embeddingCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const kp = k * p;
+
+        // Draw a visual diagram showing the three regimes
+        const regions = [
+            { label: 'kp < n\n(Subkritisch)', x: w * 0.18, color: '#ff6ec7', desc: 'Einbettung in Lq' },
+            { label: 'kp = n\n(Kritisch)', x: w * 0.5, color: '#ffaa00', desc: 'Einbettung in alle Lq, q<∞' },
+            { label: 'kp > n\n(Superkritisch)', x: w * 0.82, color: '#00ff88', desc: 'Einbettung in C^{0,α}' }
+        ];
+
+        // Background regions
+        ctx.fillStyle = '#ff6ec711';
+        ctx.fillRect(0, 60, w / 3, h - 80);
+        ctx.fillStyle = '#ffaa0011';
+        ctx.fillRect(w / 3, 60, w / 3, h - 80);
+        ctx.fillStyle = '#00ff8811';
+        ctx.fillRect(2 * w / 3, 60, w / 3, h - 80);
+
+        // Dividers
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(w / 3, 60);
+        ctx.lineTo(w / 3, h - 20);
+        ctx.moveTo(2 * w / 3, 60);
+        ctx.lineTo(2 * w / 3, h - 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Labels
+        regions.forEach(r => {
+            ctx.fillStyle = r.color;
+            ctx.font = 'bold 15px Segoe UI';
+            ctx.textAlign = 'center';
+            const lines = r.label.split('\n');
+            lines.forEach((line, i) => {
+                ctx.fillText(line, r.x, 90 + i * 20);
+            });
+            ctx.font = '12px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText(r.desc, r.x, 140);
+        });
+
+        // Current position indicator
+        let indicatorX;
+        if (kp < n) {
+            indicatorX = (kp / n) * (w / 3);
+        } else if (kp === n) {
+            indicatorX = w / 2;
+        } else {
+            indicatorX = 2 * w / 3 + Math.min((kp - n) / (3 * n), 1) * (w / 3 - 20);
+        }
+
+        // Draw indicator
+        const indicatorY = h * 0.55;
+        ctx.beginPath();
+        ctx.arc(indicatorX, indicatorY, 18, 0, 2 * Math.PI);
+        ctx.fillStyle = kp < n ? '#ff6ec7' : (kp <= n + 0.01 ? '#ffaa00' : '#00ff88');
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`kp=${kp.toFixed(1)}`, indicatorX, indicatorY + 4);
+
+        // Arrow pointing to indicator
+        ctx.fillStyle = '#fff';
+        ctx.font = '13px Segoe UI';
+        ctx.fillText(`W^{${k},${p}}(ℝ^${n})`, indicatorX, indicatorY - 30);
+
+        // Scale at bottom
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(20, h - 30);
+        ctx.lineTo(w - 20, h - 30);
+        ctx.stroke();
+
+        ctx.fillStyle = '#888';
+        ctx.font = '11px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('kp →', w - 40, h - 15);
+        ctx.fillText('0', 20, h - 15);
+        ctx.fillText(`n = ${n}`, w / 3, h - 15);
+
+        // Tick at n
+        ctx.strokeStyle = '#ffaa00';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(w / 3, h - 35);
+        ctx.lineTo(w / 3, h - 25);
+        ctx.stroke();
+
+        ctx.textAlign = 'left';
+    }
+
+    // ==================== INITIAL DRAWS ====================
+    window.addEventListener('load', () => {
+        drawFunctionPlot();
+        drawDerivativePlot();
+    });
+
+    // ==================== RESPONSIVE CANVAS ====================
+    function resizeCanvases() {
+        const canvases = document.querySelectorAll('canvas');
+        canvases.forEach(c => {
+            const parent = c.parentElement;
+            if (parent.clientWidth < c.width) {
+                const scale = parent.clientWidth / c.width;
+                c.style.width = parent.clientWidth + 'px';
+                c.style.height = (c.height * scale) + 'px';
+            }
+        });
+    }
+
+    window.addEventListener('resize', resizeCanvases);
+    window.addEventListener('load', resizeCanvases);
+</script>
+
+</body>
+</html>
