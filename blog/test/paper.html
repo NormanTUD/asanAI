@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer Layers as Fibre Bundle Morphisms — Interactive Explorer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a0e17;
+    color: #c8d6e5;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { color: #f5f6fa; }
+  a { color: #74b9ff; }
+
+  /* Top header */
+  .header {
+    text-align: center;
+    padding: 32px 20px 12px;
+    background: linear-gradient(180deg, #0f1923 0%, #0a0e17 100%);
+    border-bottom: 1px solid #1e2d3d;
+  }
+  .header h1 { font-size: 1.55rem; margin-bottom: 6px; }
+  .header p { font-size: 0.92rem; color: #8395a7; max-width: 820px; margin: 0 auto; line-height: 1.55; }
+
+  /* Tab bar */
+  .tabs {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;
+    padding: 14px 10px;
+    background: #0f1923;
+    border-bottom: 1px solid #1e2d3d;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .tab-btn {
+    padding: 8px 18px; border: 1px solid #1e2d3d; border-radius: 8px;
+    background: transparent; color: #8395a7; cursor: pointer;
+    font-size: 0.85rem; transition: all .2s;
+  }
+  .tab-btn:hover { border-color: #74b9ff; color: #dfe6e9; }
+  .tab-btn.active { background: #1e3a5f; border-color: #74b9ff; color: #fff; }
+
+  /* Sections */
+  .section { display: none; padding: 24px 20px 40px; max-width: 1100px; margin: 0 auto; }
+  .section.active { display: block; }
+  .section h2 { margin-bottom: 10px; font-size: 1.3rem; }
+  .section .desc { color: #8395a7; font-size: 0.9rem; line-height: 1.6; margin-bottom: 18px; max-width: 800px; }
+
+  /* Canvas wrapper */
+  .canvas-wrap {
+    position: relative; background: #101820; border: 1px solid #1e2d3d;
+    border-radius: 12px; overflow: hidden; margin-bottom: 16px;
+  }
+  canvas { display: block; width: 100%; height: auto; }
+
+  /* Controls */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+    padding: 12px 16px; background: #0f1923; border: 1px solid #1e2d3d;
+    border-radius: 10px; margin-bottom: 14px;
+  }
+  .ctrl-group { display: flex; flex-direction: column; gap: 3px; }
+  .ctrl-group label { font-size: 0.78rem; color: #8395a7; }
+  .ctrl-group input[type=range] { width: 160px; accent-color: #74b9ff; }
+  .ctrl-group select, .ctrl-group button {
+    padding: 5px 10px; border-radius: 6px; border: 1px solid #1e2d3d;
+    background: #162032; color: #dfe6e9; font-size: 0.82rem; cursor: pointer;
+  }
+  .ctrl-group button:hover { background: #1e3a5f; }
+  .val { font-size: 0.78rem; color: #74b9ff; min-width: 28px; text-align: right; }
+
+  /* Info boxes */
+  .info-box {
+    background: #0f1923; border-left: 3px solid #74b9ff; padding: 12px 16px;
+    border-radius: 0 8px 8px 0; margin-bottom: 14px; font-size: 0.88rem; line-height: 1.6;
+  }
+  .info-box strong { color: #dfe6e9; }
+
+  /* Legend */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: #8395a7;
+    margin-bottom: 10px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-swatch { width: 16px; height: 16px; border-radius: 3px; }
+
+  /* Conjecture cards */
+  .conj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 14px; margin-top: 14px; }
+  .conj-card {
+    background: #0f1923; border: 1px solid #1e2d3d; border-radius: 10px;
+    padding: 16px; transition: border-color .2s;
+  }
+  .conj-card:hover { border-color: #74b9ff; }
+  .conj-card h3 { font-size: 0.95rem; margin-bottom: 6px; color: #74b9ff; }
+  .conj-card p { font-size: 0.84rem; line-height: 1.55; color: #8395a7; }
+</style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<div class="header">
+  <h1>Transformer Layers as Fibre Bundle Morphisms</h1>
+  <p>An interactive exploration of the conjecture that transformer layers don't move points through a fixed space — they <em>morph the space itself</em> via Lipschitz-continuous maps, forming a fibre bundle whose geometry encodes the model's reasoning.</p>
+</div>
+
+<!-- ==================== TABS ==================== -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="grid">Deformed Grid</button>
+  <button class="tab-btn" data-tab="fibre">Fibre View</button>
+  <button class="tab-btn" data-tab="jacobian">Jacobian Field</button>
+  <button class="tab-btn" data-tab="curvature">Curvature</button>
+  <button class="tab-btn" data-tab="residual">Residual Stream</button>
+  <button class="tab-btn" data-tab="topo">Topology</button>
+</div>
+
+<!-- ==================== 1. OVERVIEW ==================== -->
+<div class="section active" id="sec-overview">
+  <h2>Core Idea</h2>
+  <div class="desc">In general relativity, gravity doesn't push objects through space — it changes the geometry of space itself, and objects follow geodesics. This paper proposes the same reinterpretation for transformers: <strong>attention and feed-forward layers morph the representation space via Lipschitz-continuous maps</strong>, and the information content of the model is encoded in the geometry of those morphings.</div>
+
+  <div class="info-box">
+    <strong>Fibre Bundle Structure:</strong> The base manifold <em>M</em> is the set of token positions {1,…,n}. Over each position sits a <em>fibre</em> — the stack of representation spaces across all L layers. Each layer defines a map Φ<sup>(ℓ)</sup> : ℝ<sup>d</sup> → ℝ<sup>d</sup> that acts on every fibre simultaneously.
+  </div>
+
+  <h2 style="margin-top:24px;">Conjectures</h2>
+  <div class="conj-grid">
+    <div class="conj-card">
+      <h3>C1 — Space-Morphing, Not Point-Moving</h3>
+      <p>A transformer layer is better described as a deformation of the embedding space than as a displacement of individual token vectors. The <em>geometry of the map</em> — its Jacobian field, eigenvalue spectrum, divergence, curl, and shear — provides access to the model's reasoning.</p>
+    </div>
+    <div class="conj-card">
+      <h3>C2 — Holographic Scrambling</h3>
+      <p>Due to polysemanticity, information about any single concept is spread across many dimensions and layers — like a hologram where removing a part reduces resolution but doesn't remove any single region of the image entirely.</p>
+    </div>
+    <div class="conj-card">
+      <h3>C3 — Topological Computation</h3>
+      <p>The scrambled representations contain topological structures (persistent loops, helices, spirals) that perform the model's actual computations — analogous to states on a Turing machine tape.</p>
+    </div>
+    <div class="conj-card">
+      <h3>C4 — Inner Layers Compute, Outer Layers Translate</h3>
+      <p>Middle layers perform the bulk of geometric computation (large deformations, high curvature), while first and last layers translate between token-embedding space and the model's internal geometric language. The last layer often <em>morphs space back</em> toward the embedding geometry.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 2. DEFORMED GRID ==================== -->
+<div class="section" id="sec-grid">
+  <h2>2D Deformed Grid</h2>
+  <div class="desc">A regular grid in PCA-projected embedding space is deformed by the cumulative layer maps. The deformation of the grid <strong>is</strong> the space-morphing map Φ<sup>(0:ℓ)</sup>. Drag the <em>Layer</em> slider to watch the space morph layer by layer. Notice how inner layers produce large, complex deformations while the last layer often reverses much of it.</div>
+
+  <div class="controls" id="grid-controls">
+    <div class="ctrl-group">
+      <label>Layer <span class="val" id="grid-layer-val">0</span> / <span id="grid-layer-max">11</span></label>
+      <input type="range" id="grid-layer" min="0" max="11" value="0">
+    </div>
+    <div class="ctrl-group">
+      <label>Morph Strength <span class="val" id="grid-strength-val">1.0</span></label>
+      <input type="range" id="grid-strength" min="0" max="200" value="100">
+    </div>
+    <div class="ctrl-group">
+      <label>Grid Density <span class="val" id="grid-density-val">14</span></label>
+      <input type="range" id="grid-density" min="5" max="30" value="14">
+    </div>
+    <div class="ctrl-group">
+      <label>Non-linearity</label>
+      <select id="grid-nonlin">
+        <option value="relu">ReLU (collapse)</option>
+        <option value="gelu" selected>GELU (smooth)</option>
+        <option value="tanh">Tanh (saturate)</option>
+        <option value="swish">Swish</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>&nbsp;</label>
+      <button id="grid-animate-btn">▶ Animate Layers</button>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#3498db;"></div> Contraction</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#95a5a6;"></div> Near-isometry</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#e74c3c;"></div> Expansion</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f1c40f; border-radius:50%;width:12px;height:12px;"></div> Token positions</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="gridCanvas" width="1000" height="700"></canvas>
+  </div>
+  <div class="info-box" id="grid-info">Layer 0 (embedding): The grid is undeformed — this is the original PCA-projected embedding space.</div>
+</div>
+
+<!-- ==================== 3. FIBRE VIEW ==================== -->
+<div class="section" id="sec-fibre">
+  <h2>Fibre View</h2>
+  <div class="desc">Each vertical strand is a <em>fibre</em> — one token position tracked from the embedding layer (bottom) to the final layer (top). Lateral displacement shows how the token's representation moves through PCA-projected space across layers. Compare two prompts to see how specific dimensions respond selectively to semantic changes.</div>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Prompt</label>
+      <select id="fibre-prompt">
+        <option value="blue">the sky is blue</option>
+        <option value="red">the sky is red</option>
+        <option value="both">Compare both</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>PCA Dimension X <span class="val" id="fibre-dimx-val">0</span></label>
+      <input type="range" id="fibre-dimx" min="0" max="11" value="0">
+    </div>
+    <div class="ctrl-group">
+      <label>Spread <span class="val" id="fibre-spread-val">1.0</span></label>
+      <input type="range" id="fibre-spread" min="20" max="300" value="100">
+    </div>
+    <div class="ctrl-group">
+      <label>Highlight Token</label>
+      <select id="fibre-highlight">
+        <option value="-1">All</option>
+        <option value="0">the</option>
+        <option value="1">sky</option>
+        <option value="2">is</option>
+        <option value="3">blue / red</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#3498db;"></div> "blue" prompt</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#e74c3c;"></div> "red" prompt</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="fibreCanvas" width="1000" height="700"></canvas>
+  </div>
+  <div class="info-box">The fibres diverge most in the middle layers and in specific dimensions — illustrating that the fibre bundle encodes semantic distinctions in specific geometric directions at specific layers, not uniformly.</div>
+</div>
+
+<!-- ==================== 4. JACOBIAN FIELD ==================== -->
+<div class="section" id="sec-jacobian">
+  <h2>Jacobian Field</h2>
+  <div class="desc">The <strong>pure morphing</strong>, stripped of all data points. At every point on a dense grid, the local Jacobian decomposition is rendered: <em>divergence</em> (expansion/contraction), <em>curl</em> (rotation), <em>shear</em> (anisotropic distortion), and <em>flow vectors</em>. This is the diffeomorphism watching itself in a mirror.</div>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Layer <span class="val" id="jac-layer-val">3</span></label>
+      <input type="range" id="jac-layer" min="0" max="11" value="3">
+    </div>
+    <div class="ctrl-group">
+      <label>Display</label>
+      <select id="jac-mode">
+        <option value="composite">Composite</option>
+        <option value="divergence">Divergence only</option>
+        <option value="curl">Curl only</option>
+        <option value="shear">Shear only</option>
+        <option value="flow">Flow vectors only</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>Arrow Scale <span class="val" id="jac-arrow-val">1.0</span></label>
+      <input type="range" id="jac-arrow" min="10" max="300" value="100">
+    </div>
+    <div class="ctrl-group">
+      <label>Field Resolution <span class="val" id="jac-res-val">18</span></label>
+      <input type="range" id="jac-res" min="8" max="32" value="18">
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#e74c3c;"></div> Positive divergence (expansion)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#3498db;"></div> Negative divergence (contraction)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#9b59b6;"></div> High curl (rotation)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f39c12;"></div> High shear</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="jacCanvas" width="1000" height="700"></canvas>
+  </div>
+  <div class="info-box" id="jac-info">Hover over the field to inspect local Jacobian values. The divergence (tr J) tells you if space is locally expanding or contracting; the curl (antisymmetric part) tells you about rotational mixing; the shear (traceless symmetric part) tells you about anisotropic distortion.</div>
+</div>
+
+<!-- ==================== 5. CURVATURE ==================== -->
+<div class="section" id="sec-curvature">
+  <h2>Curvature Across Layers</h2>
+  <div class="desc">Beyond per-layer Jacobians, the fibre bundle gives rise to <em>curvature</em> that measures how geometry changes <strong>across</strong> layers. This view shows Ollivier–Ricci curvature (token convergence/divergence), scalar curvature (volume change), and Procrustes deviation (frame rotation) as functions of layer depth.</div>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Metric</label>
+      <select id="curv-metric">
+        <option value="orc">Ollivier–Ricci Curvature</option>
+        <option value="scalar">Scalar Curvature (Δ log Vol)</option>
+        <option value="procrustes">Procrustes Deviation ‖R−I‖</option>
+        <option value="all">All three</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>Noise Seed <span class="val" id="curv-seed-val">42</span></label>
+      <input type="range" id="curv-seed" min="1" max="100" value="42">
+    </div>
+    <div class="ctrl-group">
+      <label>Smoothing <span class="val" id="curv-smooth-val">0.3</span></label>
+      <input type="range" id="curv-smooth" min="0" max="100" value="30">
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="curvCanvas" width="1000" height="500"></canvas>
+  </div>
+  <div class="info-box">Notice the characteristic pattern: curvature peaks in the middle layers (where the model is "computing" in its internal geometric language) and drops at the boundaries (where it translates to/from token space). This supports Conjecture C4.</div>
+</div>
+
+<!-- ==================== 6. RESIDUAL STREAM ==================== -->
+<div class="section" id="sec-residual">
+  <h2>Residual Stream — Wave of Deformations</h2>
+  <div class="desc">The residual connection h<sup>(ℓ+1)</sup> = h<sup>(ℓ)</sup> + Δ<sup>(ℓ)</sup> means each layer contributes an additive delta. The cumulative effect is a superposition of deformations — a "wave" of space-morphing propagating from layer 0 to layer L. Watch the deltas accumulate.</div>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Token <span class="val" id="res-token-val">0</span></label>
+      <input type="range" id="res-token" min="0" max="3" value="0">
+    </div>
+    <div class="ctrl-group">
+      <label>Show</label>
+      <select id="res-mode">
+        <option value="cumulative">Cumulative h(ℓ)</option>
+        <option value="deltas">Per-layer Δ(ℓ)</option>
+        <option value="both">Both</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>Dimensions shown <span class="val" id="res-dims-val">8</span></label>
+      <input type="range" id="res-dims" min="2" max="16" value="8">
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="resCanvas" width="1000" height="500"></canvas>
+  </div>
+  <div class="info-box">Each colored line is one dimension of the representation vector. The cumulative view shows the running sum; the delta view shows each layer's individual contribution. The "wave" is the collective pattern of these deltas propagating through the layer stack.</div>
+</div>
+
+<!-- ==================== 7. TOPOLOGY ==================== -->
+<div class="section" id="sec-topo">
+  <h2>Persistent Homology — Topological Structures</h2>
+  <div class="desc">Conjecture C3 posits that topological structures (loops, voids, connected components) in the representation space perform computation. This view shows a simulated <em>persistence barcode</em>: each bar represents a topological feature that is "born" at some filtration scale and "dies" at another. Long bars = robust features.</div>
+
+  <div class="controls">
+    <div class="ctrl-group">
+      <label>Layer <span class="val" id="topo-layer-val">5</span></label>
+      <input type="range" id="topo-layer" min="0" max="11" value="5">
+    </div>
+    <div class="ctrl-group">
+      <label>Homology Dimension</label>
+      <select id="topo-dim">
+        <option value="0">H₀ (components)</option>
+        <option value="1" selected>H₁ (loops)</option>
+        <option value="2">H₂ (voids)</option>
+        <option value="all">All</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <label>Noise <span class="val" id="topo-noise-val">0.2</span></label>
+      <input type="range" id="topo-noise" min="0" max="100" value="20">
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="topoCanvas" width="1000" height="500"></canvas>
+  </div>
+  <div class="info-box">Long bars indicate robust topological features that persist across scales — these are candidates for the "computational structures" described in Conjecture C3. Notice how the barcode changes across layers: middle layers tend to have more complex topology.</div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + btn.dataset.tab).classList.add('active');
+    // Trigger redraw
+    const ev = new Event('input');
+    document.querySelectorAll('#sec-' + btn.dataset.tab + ' input, #sec-' + btn.dataset.tab + ' select').forEach(el => el.dispatchEvent(ev));
+  });
+});
+
+// ============================================================
+// UTILITY: seeded PRNG
+// ============================================================
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    var t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// ============================================================
+// SIMULATED LAYER TRANSFORMS
+// We simulate 12 layers of a GPT-2-like transformer.
+// Each layer has a random (seeded) affine + nonlinearity transform.
+// ============================================================
+const NUM_LAYERS = 12;
+const TOKENS = ['the', 'sky', 'is', 'blue'];
+const TOKENS_RED = ['the', 'sky', 'is', 'red'];
+const TOKEN_COLORS = ['#f1c40f', '#2ecc71', '#e67e22', '#9b59b6'];
+
+// Generate per-layer transform parameters (seeded)
+function generateLayerParams(seed) {
+  const rng = mulberry32(seed);
+  const layers = [];
+  for (let l = 0; l < NUM_LAYERS; l++) {
+    // 2x2 matrix (for our 2D projection)
+    const intensity = (l >= 3 && l <= 8) ? 1.0 : (l === 11 ? 0.7 : 0.4); // inner layers stronger
+    const a = (rng() - 0.5) * 0.6 * intensity;
+    const b = (rng() - 0.5) * 0.6 * intensity;
+    const c = (rng() - 0.5) * 0.6 * intensity;
+    const d = (rng() - 0.5) * 0.6 * intensity;
+    const tx = (rng() - 0.5) * 0.3 * intensity;
+    const ty = (rng() - 0.5) * 0.3 * intensity;
+    // Last layer: partial reversal
+    const rev = (l === NUM_LAYERS - 1) ? -0.6 : 0;
+    layers.push({ a: a + rev * 0.3, b, c, d: d + rev * 0.3, tx, ty, intensity });
+  }
+  return layers;
+}
+
+const LAYER_PARAMS = generateLayerParams(12345);
+
+// Nonlinearity functions
+function applyNonlin(x, type) {
+  switch(type) {
+    case 'relu': return Math.max(0, x);
+    case 'gelu': {
+      const c = 0.7978845608; // sqrt(2/pi)
+      return 0.5 * x * (1 + Math.tanh(c * (x + 0.044715 * x * x * x)));
+    }
+    case 'tanh': return Math.tanh(x);
+    case 'swish': return x / (1 + Math.exp(-x));
+    default: return x;
+  }
+}
+
+// Apply one layer transform to a 2D point
+function applyLayer(px, py, l, strength, nonlin) {
+  const p = LAYER_PARAMS[l];
+  const s = strength;
+  let dx = p.a * px + p.b * py + p.tx;
+  let dy = p.c * px + p.d * py + p.ty;
+  dx = applyNonlin(dx, nonlin) * s;
+  dy = applyNonlin(dy, nonlin) * s;
+  return [px + dx, py + dy];
+}
+
+// Apply layers 0..maxLayer cumulatively
+function applyLayers(px, py, maxLayer, strength, nonlin) {
+  let x = px, y = py;
+  for (let l = 0; l <= maxLayer; l++) {
+    [x, y] = applyLayer(x, y, l, strength, nonlin);
+  }
+  return [x, y];
+}
+
+// ============================================================
+// 2. DEFORMED GRID
+// ============================================================
+(function() {
+  const canvas = document.getElementById('gridCanvas');
+  const ctx = canvas.getContext('2d');
+  const layerSlider = document.getElementById('grid-layer');
+  const strengthSlider = document.getElementById('grid-strength');
+  const densitySlider = document.getElementById('grid-density');
+  const nonlinSelect = document.getElementById('grid-nonlin');
+  const animBtn = document.getElementById('grid-animate-btn');
+  const info = document.getElementById('grid-info');
+
+  // Token initial positions (in normalized coords -1..1)
+  const tokenPos = [[-0.3, 0.2], [0.1, -0.1], [0.4, 0.3], [-0.1, -0.4]];
+
+  let animating = false;
+  let animFrame = null;
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const layer = parseInt(layerSlider.value);
+    const strength = parseFloat(strengthSlider.value) / 100;
+    const density = parseInt(densitySlider.value);
+    const nonlin = nonlinSelect.value;
+
+    document.getElementById('grid-layer-val').textContent = layer;
+    document.getElementById('grid-strength-val').textContent = strength.toFixed(1);
+    document.getElementById('grid-density-val').textContent = density;
+
+    // Info text
+    const layerDescs = [
+      'embedding: undeformed original space',
+      'layer 1: mild initial translation',
+      'layer 2: beginning geometric adjustment',
+      'layer 3: entering the computation zone',
+      'layer 4: significant space deformation',
+      'layer 5: peak inner-layer morphing',
+      'layer 6: complex geometric computation',
+      'layer 7: continued deep processing',
+      'layer 8: deformation still strong',
+      'layer 9: beginning to settle',
+      'layer 10: transitioning toward output',
+      'layer 11 (last): partial reversal toward embedding geometry'
+    ];
+    info.textContent = `Layer ${layer} — ${layerDescs[layer]}`;
+
+    // Map from normalized coords to canvas
+    const margin = 60;
+    const scale = Math.min(W - 2 * margin, H - 2 * margin) / 2.8;
+    const cx = W / 2, cy = H / 2;
+    function toScreen(x, y) { return [cx + x * scale, cy - y * scale]; }
+
+    // Draw grid lines
+    const range = 1.3;
+    const step = (2 * range) / density;
+
+    // Horizontal lines
+    for (let row = -range; row <= range + 0.001; row += step) {
+      ctx.beginPath();
+      let prevColor = null;
+      for (let col = -range; col <= range + 0.001; col += step / 4) {
+        let x = col, y = row;
+        let ox = x, oy = y;
+        if (layer > 0) {
+          [x, y] = applyLayers(ox, oy, layer - 1, strength, nonlin);
+        }
+        const [sx, sy] = toScreen(x, y);
+
+        // Color by local strain (distance ratio)
+        let strainColor = '#556677';
+        if (layer > 0) {
+          const eps = 0.02;
+          let [x2, y2] = applyLayers(ox + eps, oy, layer - 1, strength, nonlin);
+          const origDist = eps;
+          const newDist = Math.sqrt((x2 - x) ** 2 + (y2 - y) ** 2);
+          const ratio = newDist / origDist;
+          if (ratio > 1.15) {
+            const t = Math.min((ratio - 1.15) / 1.5, 1);
+            strainColor = `rgba(231,76,60,${0.3 + 0.7 * t})`;
+          } else if (ratio < 0.85) {
+            const t = Math.min((0.85 - ratio) / 0.6, 1);
+            strainColor = `rgba(52,152,219,${0.3 + 0.7 * t})`;
+          } else {
+            strainColor = 'rgba(149,165,166,0.4)';
+          }
+        }
+
+        if (col === -range) {
+          ctx.moveTo(sx, sy);
+        } else {
+          ctx.strokeStyle = strainColor;
+          ctx.lineWidth = 1.2;
+          ctx.lineTo(sx, sy);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+        }
+      }
+    }
+
+    // Vertical lines
+    for (let col = -range; col <= range + 0.001; col += step) {
+      ctx.beginPath();
+      for (let row = -range; row <= range + 0.001; row += step / 4) {
+        let x = col, y = row;
+        let ox = x, oy = y;
+        if (layer > 0) {
+          [x, y] = applyLayers(ox, oy, layer - 1, strength, nonlin);
+        }
+        const [sx, sy] = toScreen(x, y);
+
+        let strainColor = '#556677';
+        if (layer > 0) {
+          const eps = 0.02;
+          let [x2, y2] = applyLayers(ox, oy + eps, layer - 1, strength, nonlin);
+          const origDist = eps;
+          const newDist = Math.sqrt((x2 - x) ** 2 + (y2 - y) ** 2);
+          const ratio = newDist / origDist;
+          if (ratio > 1.15) {
+            const t = Math.min((ratio - 1.15) / 1.5, 1);
+            strainColor = `rgba(231,76,60,${0.3 + 0.7 * t})`;
+          } else if (ratio < 0.85) {
+            const t = Math.min((0.85 - ratio) / 0.6, 1);
+            strainColor = `rgba(52,152,219,${0.3 + 0.7 * t})`;
+          } else {
+            strainColor = 'rgba(149,165,166,0.4)';
+          }
+        }
+
+        if (row === -range) {
+          ctx.moveTo(sx, sy);
+        } else {
+          ctx.strokeStyle = strainColor;
+          ctx.lineWidth = 1.2;
+          ctx.lineTo(sx, sy);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+        }
+      }
+    }
+
+    // Draw token positions
+    for (let t = 0; t < TOKENS.length; t++) {
+      let x = tokenPos[t][0], y = tokenPos[t][1];
+      if (layer > 0) {
+        [x, y] = applyLayers(tokenPos[t][0], tokenPos[t][1], layer - 1, strength, nonlin);
+      }
+      const [sx, sy] = toScreen(x, y);
+      ctx.beginPath();
+      ctx.arc(sx, sy, 7, 0, Math.PI * 2);
+      ctx.fillStyle = TOKEN_COLORS[t];
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = '12px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(TOKENS[t], sx, sy - 14);
+    }
+
+    // Layer label
+    ctx.fillStyle = '#8395a7';
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Layer ${layer} | Strength ${strength.toFixed(1)} | ${nonlin.toUpperCase()}`, 16, 24);
+  }
+
+  [layerSlider, strengthSlider, densitySlider, nonlinSelect].forEach(el => el.addEventListener('input', draw));
+
+  // Animation
+  let animInterval = null;
+  animBtn.addEventListener('click', () => {
+    if (animInterval) {
+      clearInterval(animInterval);
+      animInterval = null;
+      animBtn.textContent = '▶ Animate Layers';
+      return;
+    }
+    animBtn.textContent = '⏸ Pause';
+    layerSlider.value = 0;
+    animInterval = setInterval(() => {
+      let v = parseInt(layerSlider.value);
+      v++;
+      if (v > NUM_LAYERS - 1) { v = 0; }
+      layerSlider.value = v;
+      draw();
+    }, 600);
+  });
+
+  draw();
+})();
+
+// ============================================================
+// 3. FIBRE VIEW
+// ============================================================
+(function() {
+  const canvas = document.getElementById('fibreCanvas');
+  const ctx = canvas.getContext('2d');
+  const promptSel = document.getElementById('fibre-prompt');
+  const dimxSlider = document.getElementById('fibre-dimx');
+  const spreadSlider = document.getElementById('fibre-spread');
+  const highlightSel = document.getElementById('fibre-highlight');
+
+  // Generate fibre trajectories (simulated PCA projections per layer)
+  function genTrajectories(seed) {
+    const rng = mulberry32(seed);
+    const trajs = [];
+    for (let t = 0; t < 4; t++) {
+      const traj = [];
+      let x = (rng() - 0.5) * 0.6;
+      for (let l = 0; l <= NUM_LAYERS; l++) {
+        const intensity = (l >= 3 && l <= 8) ? 0.15 : 0.05;
+        x += (rng() - 0.5) * intensity * 2;
+        traj.push(x);
+      }
+      trajs.push(traj);
+    }
+    return trajs;
+  }
+
+  const trajBlue = genTrajectories(111);
+  const trajRed = genTrajectories(222);
+  // Make the last token (blue/red) diverge more
+  for (let l = 4; l <= NUM_LAYERS; l++) {
+    trajRed[3][l] += 0.12 * (l - 3);
+    trajBlue[3][l] -= 0.05 * (l - 3);
+  }
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const prompt = promptSel.value;
+    const dimx = parseInt(dimxSlider.value);
+    const spread = parseFloat(spreadSlider.value) / 100;
+    const highlight = parseInt(highlightSel.value);
+
+    document.getElementById('fibre-dimx-val').textContent = dimx;
+    document.getElementById('fibre-spread-val').textContent = spread.toFixed(1);
+
+    const margin = { top: 50, bottom: 50, left: 80, right: 80 };
+    const plotW = W - margin.left - margin.right;
+    const plotH = H - margin.top - margin.bottom;
+
+    // Layer axis (vertical)
+    const layerY = l => margin.top + plotH - (l / NUM_LAYERS) * plotH;
+    // Value axis (horizontal)
+    const valX = v => margin.left + plotW / 2 + v * plotW * spread;
+
+    // Draw layer lines
+    ctx.strokeStyle = '#1e2d3d';
+    ctx.lineWidth = 0.5;
+    for (let l = 0; l <= NUM_LAYERS; l++) {
+      const y = layerY(l);
+      ctx.beginPath();
+      ctx.moveTo(margin.left, y);
+      ctx.lineTo(W - margin.right, y);
+      ctx.stroke();
+      ctx.fillStyle = '#556677';
+      ctx.font = '11px Segoe UI, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(`L${l}`, margin.left - 8, y + 4);
+    }
+
+    // Draw fibres
+    function drawFibres(trajs, colors, alpha, prefix) {
+      for (let t = 0; t < 4; t++) {
+        if (highlight >= 0 && highlight !== t) continue;
+        const dimOffset = dimx * 0.03 * (t + 1); // simulate different PCA dims
+        ctx.beginPath();
+        ctx.strokeStyle = colors[t];
+        ctx.lineWidth = 2.5;
+        ctx.globalAlpha = alpha;
+        for (let l = 0; l <= NUM_LAYERS; l++) {
+          const x = valX(trajs[t][l] + dimOffset);
+          const y = layerY(l);
+          if (l === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Dots at each layer
+        for (let l = 0; l <= NUM_LAYERS; l++) {
+          const x = valX(trajs[t][l] + dimOffset);
+          const y = layerY(l);
+          ctx.beginPath();
+          ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = colors[t];
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // Token label at bottom
+        const bx = valX(trajs[t][0] + dimOffset);
+        ctx.fillStyle = colors[t];
+        ctx.font = '12px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        const label = prefix ? `${prefix}:${TOKENS[t]}` : TOKENS[t];
+        ctx.fillText(label, bx, layerY(0) + 22);
+      }
+    }
+
+    const blueColors = ['#f1c40f', '#2ecc71', '#e67e22', '#3498db'];
+    const redColors = ['#f1c40faa', '#2ecc71aa', '#e67e22aa', '#e74c3c'];
+
+    if (prompt === 'blue' || prompt === 'both') {
+      drawFibres(trajBlue, blueColors, prompt === 'both' ? 0.7 : 1, prompt === 'both' ? 'B' : '');
+    }
+    if (prompt === 'red' || prompt === 'both') {
+      drawFibres(trajRed, redColors, prompt === 'both' ? 0.7 : 1, prompt === 'both' ? 'R' : '');
+    }
+
+    // Title
+    ctx.fillStyle = '#8395a7';
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`PCA Dimension offset: ${dimx} | Spread: ${spread.toFixed(1)}`, 16, 24);
+  }
+
+  [promptSel, dimxSlider, spreadSlider, highlightSel].forEach(el => el.addEventListener('input', draw));
+  draw();
+})();
+
+// ============================================================
+// 4. JACOBIAN FIELD
+// ============================================================
+(function() {
+  const canvas = document.getElementById('jacCanvas');
+  const ctx = canvas.getContext('2d');
+  const layerSlider = document.getElementById('jac-layer');
+  const modeSel = document.getElementById('jac-mode');
+  const arrowSlider = document.getElementById('jac-arrow');
+  const resSlider = document.getElementById('jac-res');
+
+  let mouseX = -1, mouseY = -1;
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    mouseX = (e.clientX - rect.left) * scaleX;
+    mouseY = (e.clientY - rect.top) * scaleY;
+    draw();
+  });
+  canvas.addEventListener('mouseleave', () => { mouseX = -1; mouseY = -1; draw(); });
+
+  // Compute Jacobian at a point for a given layer
+  function jacobianAt(px, py, layer, eps) {
+    eps = eps || 0.01;
+    const [fx, fy] = applyLayer(px, py, layer, 1.0, 'gelu');
+    const [fxpx, fypx] = applyLayer(px + eps, py, layer, 1.0, 'gelu');
+    const [fxpy, fypy] = applyLayer(px, py + eps, layer, 1.0, 'gelu');
+    const dfdx_x = (fxpx - fx) / eps;
+    const dfdx_y = (fypx - fy) / eps;
+    const dfdy_x = (fxpy - fx) / eps;
+    const dfdy_y = (fypy - fy) / eps;
+    return { a: dfdx_x, b: dfdy_x, c: dfdx_y, d: dfdy_y };
+  }
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const layer = parseInt(layerSlider.value);
+    const mode = modeSel.value;
+    const arrowScale = parseFloat(arrowSlider.value) / 100;
+    const res = parseInt(resSlider.value);
+
+    document.getElementById('jac-layer-val').textContent = layer;
+    document.getElementById('jac-arrow-val').textContent = arrowScale.toFixed(1);
+    document.getElementById('jac-res-val').textContent = res;
+
+    const margin = 40;
+    const scale = Math.min(W - 2 * margin, H - 2 * margin) / 2.8;
+    const cx = W / 2, cy = H / 2;
+    function toScreen(x, y) { return [cx + x * scale, cy - y * scale]; }
+    function fromScreen(sx, sy) { return [(sx - cx) / scale, -(sy - cy) / scale]; }
+
+    const range = 1.3;
+    const step = (2 * range) / res;
+    const cellW = step * scale;
+
+    let hoveredInfo = null;
+
+    for (let gx = -range; gx < range; gx += step) {
+      for (let gy = -range; gy < range; gy += step) {
+        const px = gx + step / 2;
+        const py = gy + step / 2;
+        const J = jacobianAt(px, py, layer);
+
+        const div = J.a + J.d; // trace
+        const curlVal = (J.b - J.c) / 2; // antisymmetric
+        const symA = (J.a + J.a) / 2, symB = (J.b + J.c) / 2;
+        const symD = (J.d + J.d) / 2;
+        const traceHalf = (symA + symD) / 2;
+        const shear = Math.sqrt((symA - traceHalf) ** 2 + symB ** 2);
+
+        const [sx, sy] = toScreen(px, py);
+
+        // Check hover
+        if (mouseX >= 0 && Math.abs(mouseX - sx) < cellW / 2 && Math.abs(mouseY - sy) < cellW / 2) {
+          hoveredInfo = { px, py, div, curl: curlVal, shear, J };
+        }
+
+        // Background color
+        if (mode === 'composite' || mode === 'divergence') {
+          const intensity = Math.min(Math.abs(div) * 2, 1);
+          if (div > 0) {
+            ctx.fillStyle = `rgba(231,76,60,${intensity * 0.5})`;
+          } else {
+            ctx.fillStyle = `rgba(52,152,219,${intensity * 0.5})`;
+          }
+          ctx.fillRect(sx - cellW / 2, sy - cellW / 2, cellW, cellW);
+        }
+
+        if (mode === 'curl') {
+          const intensity = Math.min(Math.abs(curlVal) * 3, 1);
+          ctx.fillStyle = `rgba(155,89,182,${intensity * 0.6})`;
+          ctx.fillRect(sx - cellW / 2, sy - cellW / 2, cellW, cellW);
+        }
+
+        if (mode === 'shear') {
+          const intensity = Math.min(shear * 3, 1);
+          ctx.fillStyle = `rgba(243,156,18,${intensity * 0.6})`;
+          ctx.fillRect(sx - cellW / 2, sy - cellW / 2, cellW, cellW);
+        }
+
+        if (mode === 'composite') {
+          // Overlay curl as small circle
+          const curlR = Math.min(Math.abs(curlVal) * 20, 8);
+          if (curlR > 1) {
+            ctx.beginPath();
+            ctx.arc(sx, sy, curlR, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(155,89,182,0.5)`;
+            ctx.fill();
+          }
+        }
+
+        // Flow arrows
+        if (mode === 'composite' || mode === 'flow') {
+          const [fx, fy] = applyLayer(px, py, layer, 1.0, 'gelu');
+          const dx = (fx - px) * arrowScale * scale * 0.8;
+          const dy = -(fy - py) * arrowScale * scale * 0.8;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          if (len > 2) {
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(sx + dx, sy + dy);
+            ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+            // Arrowhead
+            const angle = Math.atan2(dy, dx);
+            const headLen = Math.min(6, len * 0.3);
+            ctx.beginPath();
+            ctx.moveTo(sx + dx, sy + dy);
+            ctx.lineTo(sx + dx - headLen * Math.cos(angle - 0.4), sy + dy - headLen * Math.sin(angle - 0.4));
+            ctx.moveTo(sx + dx, sy + dy);
+            ctx.lineTo(sx + dx - headLen * Math.cos(angle + 0.4), sy + dy - headLen * Math.sin(angle + 0.4));
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    // Hover tooltip
+    if (hoveredInfo) {
+      const h = hoveredInfo;
+      const info = document.getElementById('jac-info');
+      info.innerHTML = `<strong>Point (${h.px.toFixed(2)}, ${h.py.toFixed(2)})</strong> — ` +
+        `Divergence: <span style="color:${h.div > 0 ? '#e74c3c' : '#3498db'}">${h.div.toFixed(3)}</span> | ` +
+        `Curl: <span style="color:#9b59b6">${h.curl.toFixed(3)}</span> | ` +
+        `Shear: <span style="color:#f39c12">${h.shear.toFixed(3)}</span> | ` +
+        `J = [[${h.J.a.toFixed(2)}, ${h.J.b.toFixed(2)}], [${h.J.c.toFixed(2)}, ${h.J.d.toFixed(2)}]]`;
+
+      // Highlight cell
+      const [sx, sy] = toScreen(h.px, h.py);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(sx - cellW / 2, sy - cellW / 2, cellW, cellW);
+    }
+
+    // Title
+    ctx.fillStyle = '#8395a7';
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Layer ${layer} → ${layer + 1} | Mode: ${mode}`, 16, 24);
+  }
+
+  [layerSlider, modeSel, arrowSlider, resSlider].forEach(el => el.addEventListener('input', draw));
+  draw();
+})();
+
+// ============================================================
+// 5. CURVATURE
+// ============================================================
+(function() {
+  const canvas = document.getElementById('curvCanvas');
+  const ctx = canvas.getContext('2d');
+  const metricSel = document.getElementById('curv-metric');
+  const seedSlider = document.getElementById('curv-seed');
+  const smoothSlider = document.getElementById('curv-smooth');
+
+  function generateCurveData(seed, smooth) {
+    const rng = mulberry32(seed);
+    const orc = [], scalar = [], procrustes = [];
+    for (let l = 0; l < NUM_LAYERS; l++) {
+      // Inner layers (3-8) have higher curvature
+      const innerBoost = (l >= 3 && l <= 8) ? 1.5 : (l >= 1 && l <= 9) ? 0.8 : 0.3;
+      // Last layer: moderate but different sign
+      const lastFactor = (l === NUM_LAYERS - 1) ? -0.5 : 1;
+      orc.push((rng() - 0.3) * innerBoost * lastFactor);
+      scalar.push((rng() - 0.4) * innerBoost * 1.2);
+      procrustes.push(rng() * innerBoost * 0.8);
+    }
+
+    // Smooth
+    function smoothArr(arr, s) {
+      if (s <= 0) return arr;
+      const out = [...arr];
+      for (let iter = 0; iter < Math.floor(s * 5); iter++) {
+        for (let i = 1; i < arr.length - 1; i++) {
+          out[i] = out[i] * 0.6 + (out[i - 1] + out[i + 1]) * 0.2;
+        }
+      }
+      return out;
+    }
+
+    return {
+      orc: smoothArr(orc, smooth),
+      scalar: smoothArr(scalar, smooth),
+      procrustes: smoothArr(procrustes, smooth)
+    };
+  }
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const metric = metricSel.value;
+    const seed = parseInt(seedSlider.value);
+    const smooth = parseFloat(smoothSlider.value) / 100;
+
+    document.getElementById('curv-seed-val').textContent = seed;
+    document.getElementById('curv-smooth-val').textContent = smooth.toFixed(1);
+
+    const data = generateCurveData(seed, smooth);
+
+    const margin = { top: 40, bottom: 50, left: 70, right: 30 };
+    const plotW = W - margin.left - margin.right;
+    const plotH = H - margin.top - margin.bottom;
+
+    // Find y range
+    let allVals = [];
+    if (metric === 'orc' || metric === 'all') allVals.push(...data.orc);
+    if (metric === 'scalar' || metric === 'all') allVals.push(...data.scalar);
+    if (metric === 'procrustes' || metric === 'all') allVals.push(...data.procrustes);
+    const yMin = Math.min(...allVals) - 0.2;
+    const yMax = Math.max(...allVals) + 0.2;
+
+    const xPos = l => margin.left + (l / (NUM_LAYERS - 1)) * plotW;
+    const yPos = v => margin.top + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+
+    // Grid
+    ctx.strokeStyle = '#1e2d3d';
+    ctx.lineWidth = 0.5;
+    for (let l = 0; l < NUM_LAYERS; l++) {
+      const x = xPos(l);
+      ctx.beginPath(); ctx.moveTo(x, margin.top); ctx.lineTo(x, margin.top + plotH); ctx.stroke();
+      ctx.fillStyle = '#556677';
+      ctx.font = '11px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`L${l}`, x, margin.top + plotH + 18);
+    }
+
+    // Zero line
+    if (yMin < 0 && yMax > 0) {
+      const zy = yPos(0);
+      ctx.strokeStyle = '#334455';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(margin.left, zy); ctx.lineTo(margin.left + plotW, zy); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Inner layer highlight
+    ctx.fillStyle = 'rgba(116,185,255,0.05)';
+    ctx.fillRect(xPos(3), margin.top, xPos(8) - xPos(3), plotH);
+    ctx.fillStyle = '#556677';
+    ctx.font = '10px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('← inner computation zone →', (xPos(3) + xPos(8)) / 2, margin.top + 16);
+
+    // Draw curves
+    function drawCurve(arr, color, label) {
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      for (let l = 0; l < NUM_LAYERS; l++) {
+        const x = xPos(l), y = yPos(arr[l]);
+        if (l === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Dots
+      for (let l = 0; l < NUM_LAYERS; l++) {
+        const x = xPos(l), y = yPos(arr[l]);
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+    }
+
+    if (metric === 'orc' || metric === 'all') drawCurve(data.orc, '#3498db', 'ORC');
+    if (metric === 'scalar' || metric === 'all') drawCurve(data.scalar, '#e74c3c', 'Scalar');
+    if (metric === 'procrustes' || metric === 'all') drawCurve(data.procrustes, '#2ecc71', 'Procrustes');
+
+    // Legend
+    const legendItems = [];
+    if (metric === 'orc' || metric === 'all') legendItems.push({ color: '#3498db', label: 'Ollivier–Ricci' });
+    if (metric === 'scalar' || metric === 'all') legendItems.push({ color: '#e74c3c', label: 'Scalar Curvature' });
+    if (metric === 'procrustes' || metric === 'all') legendItems.push({ color: '#2ecc71', label: 'Procrustes ‖R−I‖' });
+
+    let lx = margin.left + 10;
+    legendItems.forEach(item => {
+      ctx.fillStyle = item.color;
+      ctx.fillRect(lx, margin.top - 24, 14, 14);
+      ctx.fillStyle = '#c8d6e5';
+      ctx.font = '11px Segoe UI, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label, lx + 18, margin.top - 13);
+      lx += ctx.measureText(item.label).width + 36;
+    });
+
+    // Y axis label
+    ctx.save();
+    ctx.translate(16, margin.top + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = '#8395a7';
+    ctx.font = '12px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Curvature Value', 0, 0);
+    ctx.restore();
+  }
+
+  [metricSel, seedSlider, smoothSlider].forEach(el => el.addEventListener('input', draw));
+  draw();
+})();
+
+// ============================================================
+// 6. RESIDUAL STREAM
+// ============================================================
+(function() {
+  const canvas = document.getElementById('resCanvas');
+  const ctx = canvas.getContext('2d');
+  const tokenSlider = document.getElementById('res-token');
+  const modeSel = document.getElementById('res-mode');
+  const dimsSlider = document.getElementById('res-dims');
+
+  // Generate simulated residual stream data
+  function genResidualData(tokenIdx, numDims) {
+    const rng = mulberry32(7777 + tokenIdx * 100);
+    const deltas = []; // per layer, per dim
+    const cumulative = [];
+    const running = new Array(numDims).fill(0);
+
+    // Initial embedding
+    const embed = [];
+    for (let d = 0; d < numDims; d++) embed.push((rng() - 0.5) * 0.5);
+    for (let d = 0; d < numDims; d++) running[d] = embed[d];
+    cumulative.push([...running]);
+
+    for (let l = 0; l < NUM_LAYERS; l++) {
+      const layerDelta = [];
+      const innerBoost = (l >= 3 && l <= 8) ? 1.0 : (l === 11 ? 0.6 : 0.4);
+      for (let d = 0; d < numDims; d++) {
+        const delta = (rng() - 0.5) * 0.25 * innerBoost;
+        layerDelta.push(delta);
+        running[d] += delta;
+      }
+      deltas.push(layerDelta);
+      cumulative.push([...running]);
+    }
+    return { cumulative, deltas, embed };
+  }
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const tokenIdx = parseInt(tokenSlider.value);
+    const mode = modeSel.value;
+    const numDims = parseInt(dimsSlider.value);
+
+    document.getElementById('res-token-val').textContent = tokenIdx;
+    document.getElementById('res-dims-val').textContent = numDims;
+
+    const data = genResidualData(tokenIdx, numDims);
+
+    const margin = { top: 40, bottom: 50, left: 70, right: 30 };
+    const plotW = W - margin.left - margin.right;
+    const plotH = H - margin.top - margin.bottom;
+
+    // X axis: layers
+    const xPos = l => margin.left + (l / NUM_LAYERS) * plotW;
+
+    // Find y range
+    let allVals = [];
+    if (mode === 'cumulative' || mode === 'both') {
+      data.cumulative.forEach(arr => arr.slice(0, numDims).forEach(v => allVals.push(v)));
+    }
+    if (mode === 'deltas' || mode === 'both') {
+      data.deltas.forEach(arr => arr.slice(0, numDims).forEach(v => allVals.push(v)));
+    }
+    const yMin = Math.min(...allVals) - 0.1;
+    const yMax = Math.max(...allVals) + 0.1;
+    const yPos = v => margin.top + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+
+    // Grid
+    ctx.strokeStyle = '#1e2d3d';
+    ctx.lineWidth = 0.5;
+    for (let l = 0; l <= NUM_LAYERS; l++) {
+      const x = xPos(l);
+      ctx.beginPath(); ctx.moveTo(x, margin.top); ctx.lineTo(x, margin.top + plotH); ctx.stroke();
+      ctx.fillStyle = '#556677';
+      ctx.font = '11px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`L${l}`, x, margin.top + plotH + 18);
+    }
+
+    // Zero line
+    if (yMin < 0 && yMax > 0) {
+      const zy = yPos(0);
+      ctx.strokeStyle = '#334455';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(margin.left, zy); ctx.lineTo(margin.left + plotW, zy); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Color palette for dimensions
+    const dimColors = [
+      '#e74c3c', '#3498db', '#2ecc71', '#f39c12',
+      '#9b59b6', '#1abc9c', '#e67e22', '#74b9ff',
+      '#fd79a8', '#00cec9', '#fdcb6e', '#6c5ce7',
+      '#fab1a0', '#81ecec', '#ffeaa7', '#a29bfe'
+    ];
+
+    // Draw cumulative
+    if (mode === 'cumulative' || mode === 'both') {
+      for (let d = 0; d < numDims; d++) {
+        ctx.beginPath();
+        ctx.strokeStyle = dimColors[d % dimColors.length];
+        ctx.lineWidth = mode === 'both' ? 2 : 2.5;
+        ctx.globalAlpha = mode === 'both' ? 0.8 : 1;
+        for (let l = 0; l <= NUM_LAYERS; l++) {
+          const x = xPos(l);
+          const y = yPos(data.cumulative[l][d]);
+          if (l === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Draw deltas as bars or lines
+    if (mode === 'deltas' || mode === 'both') {
+      for (let d = 0; d < numDims; d++) {
+        ctx.beginPath();
+        ctx.strokeStyle = dimColors[d % dimColors.length];
+        ctx.lineWidth = mode === 'both' ? 1.5 : 2.5;
+        ctx.globalAlpha = mode === 'both' ? 0.5 : 1;
+        ctx.setLineDash(mode === 'both' ? [4, 3] : []);
+        for (let l = 0; l < NUM_LAYERS; l++) {
+          const x = xPos(l + 1);
+          const y = yPos(data.deltas[l][d]);
+          if (l === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Legend
+    ctx.font = '10px Segoe UI, sans-serif';
+    for (let d = 0; d < Math.min(numDims, 8); d++) {
+      const lx = margin.left + d * 70;
+      ctx.fillStyle = dimColors[d % dimColors.length];
+      ctx.fillRect(lx, margin.top - 24, 12, 12);
+      ctx.fillStyle = '#8395a7';
+      ctx.textAlign = 'left';
+      ctx.fillText(`dim ${d}`, lx + 16, margin.top - 14);
+    }
+
+    // Title
+    ctx.fillStyle = '#8395a7';
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Token: "${TOKENS[tokenIdx]}" | Mode: ${mode} | Dims: ${numDims}`, margin.left, margin.top - 30);
+
+    // Inner layer zone
+    ctx.fillStyle = 'rgba(116,185,255,0.04)';
+    ctx.fillRect(xPos(3), margin.top, xPos(9) - xPos(3), plotH);
+  }
+
+  [tokenSlider, modeSel, dimsSlider].forEach(el => el.addEventListener('input', draw));
+  draw();
+})();
+
+// ============================================================
+// 7. TOPOLOGY (Persistence Barcode)
+// ============================================================
+(function() {
+  const canvas = document.getElementById('topoCanvas');
+  const ctx = canvas.getContext('2d');
+  const layerSlider = document.getElementById('topo-layer');
+  const dimSel = document.getElementById('topo-dim');
+  const noiseSlider = document.getElementById('topo-noise');
+
+  function generateBarcodes(layer, noise, seed) {
+    const rng = mulberry32(seed + layer * 37);
+    const innerBoost = (layer >= 3 && layer <= 8) ? 1.5 : 0.7;
+
+    // H0: connected components (many short bars + a few long ones)
+    const h0 = [];
+    const numH0 = Math.floor(8 + rng() * 6 * innerBoost);
+    for (let i = 0; i < numH0; i++) {
+      const birth = rng() * 0.3 * (1 + noise);
+      const persistence = rng() * (i < 2 ? 1.5 : 0.4) * innerBoost + noise * rng() * 0.2;
+      h0.push({ birth, death: birth + persistence });
+    }
+
+    // H1: loops (fewer, some long)
+    const h1 = [];
+    const numH1 = Math.floor(3 + rng() * 5 * innerBoost);
+    for (let i = 0; i < numH1; i++) {
+      const birth = 0.1 + rng() * 0.5 * (1 + noise);
+      const persistence = rng() * (i < 1 ? 1.8 : 0.6) * innerBoost + noise * rng() * 0.3;
+      h1.push({ birth, death: birth + persistence });
+    }
+
+    // H2: voids (rare, mostly in inner layers)
+    const h2 = [];
+    const numH2 = Math.floor(rng() * 3 * innerBoost);
+    for (let i = 0; i < numH2; i++) {
+      const birth = 0.3 + rng() * 0.4;
+      const persistence = rng() * 1.0 * innerBoost + noise * rng() * 0.2;
+      h2.push({ birth, death: birth + persistence });
+    }
+
+    return { h0, h1, h2 };
+  }
+
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const layer = parseInt(layerSlider.value);
+    const dim = dimSel.value;
+    const noise = parseFloat(noiseSlider.value) / 100;
+
+    document.getElementById('topo-layer-val').textContent = layer;
+    document.getElementById('topo-noise-val').textContent = noise.toFixed(2);
+
+    const barcodes = generateBarcodes(layer, noise, 999);
+
+    const margin = { top: 50, bottom: 40, left: 80, right: 40 };
+    const plotW = W - margin.left - margin.right;
+    const plotH = H - margin.top - margin.bottom;
+
+    // Collect bars to draw
+    let bars = [];
+    const colors = { h0: '#3498db', h1: '#e74c3c', h2: '#2ecc71' };
+    const labels = { h0: 'H₀ (components)', h1: 'H₁ (loops)', h2: 'H₂ (voids)' };
+
+    if (dim === '0' || dim === 'all') bars.push(...barcodes.h0.map(b => ({ ...b, type: 'h0' })));
+    if (dim === '1' || dim === 'all') bars.push(...barcodes.h1.map(b => ({ ...b, type: 'h1' })));
+    if (dim === '2' || dim === 'all') bars.push(...barcodes.h2.map(b => ({ ...b, type: 'h2' })));
+
+    // Sort by persistence (longest first)
+    bars.sort((a, b) => (b.death - b.birth) - (a.death - a.birth));
+
+    // Find x range
+    const maxDeath = Math.max(...bars.map(b => b.death), 1);
+    const xScale = plotW / (maxDeath * 1.1);
+    const xPos = v => margin.left + v * xScale;
+
+    // Bar height
+    const barH = Math.min(16, plotH / (bars.length + 1));
+    const gap = 2;
+
+    // X axis
+    ctx.strokeStyle = '#334455';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin.left, margin.top + plotH);
+    ctx.lineTo(margin.left + plotW, margin.top + plotH);
+    ctx.stroke();
+
+    // X axis ticks
+    const numTicks = 8;
+    for (let i = 0; i <= numTicks; i++) {
+      const v = (maxDeath * 1.1 / numTicks) * i;
+      const x = xPos(v);
+      ctx.beginPath();
+      ctx.moveTo(x, margin.top + plotH);
+      ctx.lineTo(x, margin.top + plotH + 6);
+      ctx.stroke();
+      ctx.fillStyle = '#556677';
+      ctx.font = '10px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(v.toFixed(1), x, margin.top + plotH + 18);
+    }
+
+    // X axis label
+    ctx.fillStyle = '#8395a7';
+    ctx.font = '12px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Filtration Scale (ε)', margin.left + plotW / 2, margin.top + plotH + 34);
+
+    // Draw bars
+    for (let i = 0; i < bars.length; i++) {
+      const bar = bars[i];
+      const y = margin.top + i * (barH + gap);
+      if (y + barH > margin.top + plotH) break;
+
+      const x1 = xPos(bar.birth);
+      const x2 = xPos(bar.death);
+      const persistence = bar.death - bar.birth;
+      const maxPersistence = bars[0].death - bars[0].birth;
+      const alpha = 0.4 + 0.6 * (persistence / maxPersistence);
+
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = colors[bar.type];
+      ctx.fillRect(x1, y, x2 - x1, barH);
+
+      // Birth dot
+      ctx.beginPath();
+      ctx.arc(x1, y + barH / 2, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+
+      // Death dot
+      ctx.beginPath();
+      ctx.arc(x2, y + barH / 2, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+
+      ctx.globalAlpha = 1;
+    }
+
+    // Legend
+    let lx = margin.left;
+    const activeTypes = new Set(bars.map(b => b.type));
+    activeTypes.forEach(type => {
+      ctx.fillStyle = colors[type];
+      ctx.fillRect(lx, margin.top - 30, 14, 14);
+      ctx.fillStyle = '#c8d6e5';
+      ctx.font = '11px Segoe UI, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(labels[type], lx + 18, margin.top - 19);
+      lx += ctx.measureText(labels[type]).width + 40;
+    });
+
+    // Title
+    ctx.fillStyle = '#8395a7';
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Layer ${layer} | ${bars.length} features | Noise: ${noise.toFixed(2)}`, margin.left, margin.top - 38);
+
+    // Annotation for long bars
+    if (bars.length > 0) {
+      const longest = bars[0];
+      const persistence = (longest.death - longest.birth).toFixed(2);
+      ctx.fillStyle = colors[longest.type];
+      ctx.font = '10px Segoe UI, sans-serif';
+      ctx.textAlign = 'left';
+      const annotX = xPos(longest.death) + 8;
+      const annotY = margin.top + barH / 2 + 4;
+      ctx.fillText(`← persistence = ${persistence} (robust feature)`, annotX, annotY);
+    }
+  }
+
+  [layerSlider, dimSel, noiseSlider].forEach(el => el.addEventListener('input', draw));
+  draw();
+})();
+
+// ============================================================
+// INITIAL DRAW TRIGGER
+// ============================================================
+window.addEventListener('resize', () => {
+  document.querySelectorAll('.section.active input, .section.active select').forEach(el => {
+    el.dispatchEvent(new Event('input'));
+  });
+});
+</script>
+</body>
+</html>
