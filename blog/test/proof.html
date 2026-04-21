@@ -400,7 +400,39 @@
   <span class="cmt">(* Key insight: each (i,k) term cancels with (k,i) term *)</span>
   <span class="cmt">(* Σ_i Σ_k (J(k,i)² - J(i,k)²)/4 is antisymmetric under i↔k swap *)</span>
   <span class="cmt">(* So the sum + its swap = 0, hence the sum itself = 0 *)</span>
-  ...
+Theorem frobenius_sym_antisym_orthogonal :
+  forall (n : nat) (J : Mat),
+    frobenius_inner n (mat_sym J) (mat_antisym J) = 0.
+Proof.
+  intros n J.
+  unfold frobenius_inner.
+  unfold trace_n, mat_mult, mat_transpose, mat_sym, mat_antisym.
+  rewrite (sum_f_ext _ (fun i =>
+    sum_f (fun k => (J k i * J k i - J i k * J i k) / 4) n) n).
+  2: {
+    intros i Hi. apply sum_f_ext. intros k Hk. field.
+  }
+  assert (Hkey :
+    sum_f (fun i => sum_f (fun k =>
+      (J k i * J k i - J i k * J i k) / 4) n) n +
+    sum_f (fun i => sum_f (fun k =>
+      (J k i * J k i - J i k * J i k) / 4) n) n = 0).
+  {
+    rewrite (sum_f_swap (fun i k => (J k i * J k i - J i k * J i k) / 4) n n)
+      at 1.
+    rewrite <- sum_f_add.
+    rewrite (sum_f_ext _ (fun _ => 0) n).
+    2: {
+      intros k Hk.
+      rewrite <- sum_f_add.
+      rewrite (sum_f_ext _ (fun _ => 0) n).
+      2: { intros i Hi. lra. }
+      apply sum_f_zero.
+    }
+    apply sum_f_zero.
+  }
+  lra.
+Qed.
 <span class="kw">Qed.</span></div>
 
   <div id="sec4-chart" class="plotly-chart"></div>
@@ -508,7 +540,50 @@
     <span class="fn">trace_n</span> n (<span class="fn">mat_mult</span> n C (<span class="fn">mat_mult</span> n A B)).
 <span class="kw">Proof.</span>
   <span class="cmt">(* Uses: tr(XY) = tr(YX) + associativity *)</span>
-  ...
+Theorem trace_cyclic_3_general :
+  forall (n : nat) (A B C : Mat),
+    trace_n n (mat_mult n A (mat_mult n B C)) =
+    trace_n n (mat_mult n C (mat_mult n A B)).
+Proof.
+  intros n A B C.
+  (* Step 1: tr(A(BC)) = tr((BC)A) by tr(XY) = tr(YX) *)
+  rewrite (trace_mult_commutative_general n A (mat_mult n B C)).
+  (* Now goal: tr((BC)A) = tr(C(AB)) *)
+  (* Step 2: Show (BC)A =_eq A(BC) ... no, we need associativity *)
+  (* tr((BC)A) -- use assoc to get tr(B(CA)) *)
+  unfold trace_n.
+  rewrite (sum_f_ext _ (fun i => mat_mult n B (mat_mult n C A) i i) n).
+  2: {
+    intros i Hi.
+    apply (mat_mult_assoc_general n B C A i i Hi Hi).
+  }
+  (* Now goal: sum_f (fun i => mat_mult n B (mat_mult n C A) i i) n =
+               sum_f (fun i => mat_mult n C (mat_mult n A B) i i) n *)
+  fold (trace_n n (mat_mult n B (mat_mult n C A))).
+  fold (trace_n n (mat_mult n C (mat_mult n A B))).
+  (* tr(B(CA)) = tr((CA)B) = tr(C(AB)) *)
+  rewrite (trace_mult_commutative_general n B (mat_mult n C A)).
+  unfold trace_n.
+  rewrite (sum_f_ext _ (fun i => mat_mult n C (mat_mult n A B) i i) n).
+  2: {
+    intros i Hi.
+    apply (mat_mult_assoc_general n C A B i i Hi Hi).
+  }
+  reflexivity.
+Qed.
+
+(* tr(ABC) = tr(BCA) *)
+Theorem trace_cyclic_3_general' :
+  forall (n : nat) (A B C : Mat),
+    trace_n n (mat_mult n A (mat_mult n B C)) =
+    trace_n n (mat_mult n B (mat_mult n C A)).
+Proof.
+  intros n A B C.
+  rewrite trace_cyclic_3_general.
+  rewrite trace_cyclic_3_general.
+  reflexivity.
+Qed.
+
 <span class="kw">Qed.</span></div>
 
   <div class="controls">
