@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Coq Proof Explorer: Transformer Jacobian Geometry — Deep Dive</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #d29922;
+    --purple: #bc8cff;
+    --code-bg: #0d1117;
+    --highlight-kw: #ff7b72;
+    --highlight-tac: #d2a8ff;
+    --highlight-type: #79c0ff;
+    --highlight-comment: #8b949e;
+    --highlight-str: #a5d6ff;
+    --explain-bg: rgba(88,166,255,0.04);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    padding: 20px; max-width: 1500px; margin: 0 auto;
+  }
+  h1 { text-align:center; font-size:2.1em; margin-bottom:8px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .subtitle { text-align:center; color:var(--dim); margin-bottom:30px; font-size:0.95em; }
+  .section { background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:28px; margin-bottom:28px; }
+  .section h2 { font-size:1.4em; margin-bottom:6px; color:var(--accent);
+    display:flex; align-items:center; gap:10px; }
+  .section h2 .badge { font-size:0.6em; background:var(--green); color:#000;
+    padding:2px 8px; border-radius:20px; font-weight:700; }
+  .section .description { color:var(--dim); margin-bottom:16px; font-size:0.92em; }
+
+  .explain {
+    background: var(--explain-bg); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 16px 0;
+    font-size: 0.93em; color: var(--text); line-height: 1.8;
+  }
+  .explain strong { color: var(--accent); }
+  .explain em { color: var(--orange); font-style: normal; font-weight: 600; }
+  .explain .analogy {
+    display: block; margin-top: 10px; padding: 10px 14px;
+    background: rgba(63,185,80,0.06); border-left: 3px solid var(--green);
+    border-radius: 0 6px 6px 0; font-size: 0.92em; color: var(--green);
+  }
+  .explain .why-care {
+    display: block; margin-top: 10px; padding: 10px 14px;
+    background: rgba(210,169,34,0.06); border-left: 3px solid var(--orange);
+    border-radius: 0 6px 6px 0; font-size: 0.92em; color: var(--orange);
+  }
+
+  .coq-code {
+    background:var(--code-bg); border:1px solid var(--border); border-radius:8px;
+    padding:16px; font-family:'Fira Code','Cascadia Code','JetBrains Mono',monospace;
+    font-size:0.82em; overflow-x:auto; margin-bottom:16px; line-height:1.7; white-space:pre-wrap;
+  }
+  .kw { color:var(--highlight-kw); font-weight:600; }
+  .tac { color:var(--highlight-tac); }
+  .typ { color:var(--highlight-type); }
+  .cmt { color:var(--highlight-comment); font-style:italic; }
+  .fn { color:var(--green); }
+
+  .vis-container { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start; }
+  .vis-panel { flex:1; min-width:300px; }
+  .controls { background:rgba(88,166,255,0.06); border:1px solid var(--border);
+    border-radius:8px; padding:16px; margin-bottom:16px; }
+  .controls label { display:block; font-size:0.85em; color:var(--dim); margin-bottom:4px; }
+  .controls input[type="range"] { width:100%; margin-bottom:8px; accent-color:var(--accent); }
+  .controls .val { font-family:monospace; color:var(--accent); font-weight:600; }
+  .slider-row { display:flex; gap:16px; flex-wrap:wrap; }
+  .slider-row > div { flex:1; min-width:140px; }
+
+  .equation { text-align:center; font-size:1.05em; padding:12px;
+    background:rgba(88,166,255,0.04); border-radius:8px; margin:12px 0;
+    font-family:'Georgia',serif; color:var(--text); }
+  .equation .eq-sym { color:var(--orange); font-weight:700; }
+  .equation .eq-val { color:var(--green); font-family:monospace; }
+
+  .plotly-chart { width:100%; min-height:350px; }
+  .check { color:var(--green); } .cross { color:var(--red); }
+
+  canvas.geo-canvas { border:1px solid var(--border); border-radius:8px; display:block; margin:0 auto 12px; }
+
+  .matrix-grid { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-bottom:12px; }
+  .matrix-card { text-align:center; }
+  .matrix-card .label { font-size:0.8em; color:var(--dim); margin-bottom:4px; }
+  .matrix-card .values { font-family:monospace; font-size:0.78em; color:var(--text);
+    background:var(--code-bg); border:1px solid var(--border); border-radius:4px;
+    padding:6px 10px; white-space:pre; }
+
+  .toc { background:var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:20px; margin-bottom:24px; }
+  .toc h3 { color:var(--accent); margin-bottom:10px; }
+  .toc ul { list-style:none; columns:2; column-gap:24px; }
+  .toc li { margin-bottom:4px; font-size:0.88em; }
+  .toc a { color:var(--dim); text-decoration:none; transition:color 0.2s; }
+  .toc a:hover { color:var(--accent); }
+  .toc .num { color:var(--accent); font-weight:600; margin-right:4px; }
+
+  .step-box { background:rgba(188,140,255,0.05); border:1px solid rgba(188,140,255,0.2);
+    border-radius:8px; padding:14px 18px; margin:10px 0; }
+  .step-box .step-title { color:var(--purple); font-weight:700; font-size:0.95em; margin-bottom:6px; }
+  .step-box p { font-size:0.9em; color:var(--dim); }
+
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:768px) {
+    .toc ul { columns:1; }
+    .vis-container, .two-col { display:block; }
+    .vis-panel { margin-bottom:12px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🔬 Transformer Jacobian Geometry — Deep Interactive Proof Explorer</h1>
+<p class="subtitle">Machine-checked in Coq · Every theorem explained in plain English · Geometric visualizations · Drag sliders to explore</p>
+
+<!-- ============================================================ -->
+<!-- INTRO                                                        -->
+<!-- ============================================================ -->
+<div class="section">
+  <h2>🧭 What Is This About?</h2>
+  <div class="explain">
+    <strong>The big picture:</strong> A transformer layer is a function that takes a vector of numbers (a "hidden state") and outputs a new vector. The <em>Jacobian matrix</em> captures how every output dimension changes when you wiggle every input dimension — it's the "derivative" of the whole layer.
+    <span class="analogy">🎯 <strong>Analogy:</strong> If the transformer layer is a machine that reshapes clay, the Jacobian tells you exactly how each point of the clay gets stretched, compressed, and rotated at each moment.</span>
+    <br><br>
+    This Coq proof establishes <strong>10 fundamental geometric properties</strong> of this Jacobian matrix. These aren't approximations — they're <em>mathematically exact</em>, verified by a computer proof assistant (Coq), meaning no logical step can be wrong.
+    <span class="why-care">💡 <strong>Why care?</strong> These properties tell us that transformer layers have a clean geometric structure: stretching and rotation are independent, volume change comes only from stretching, and the decomposition is unique and orthogonal. This matters for understanding training dynamics, gradient flow, and representational geometry.</span>
+  </div>
+</div>
+
+<div class="toc">
+  <h3>📑 Table of Contents</h3>
+  <ul>
+    <li><a href="#sec0"><span class="num">§0</span> The Jacobian: What It Is (2D Vector Field)</a></li>
+    <li><a href="#sec1"><span class="num">§1</span> Decomposition: J = J_sym + J_antisym</a></li>
+    <li><a href="#sec2"><span class="num">§2</span> Symmetry & Antisymmetry Properties</a></li>
+    <li><a href="#sec3"><span class="num">§3</span> Trace = Divergence (Volume Change)</a></li>
+    <li><a href="#sec4"><span class="num">§4</span> Frobenius Orthogonality</a></li>
+    <li><a href="#sec5"><span class="num">§5</span> Idempotence & Cross-Annihilation</a></li>
+    <li><a href="#sec6"><span class="num">§6</span> Shear Tensor is Trace-Free</a></li>
+    <li><a href="#sec7"><span class="num">§7</span> Residual Connection: J = I + Δ</a></li>
+    <li><a href="#sec8"><span class="num">§8</span> Trace Cyclicity: tr(ABC) = tr(BCA) = tr(CAB)</a></li>
+    <li><a href="#sec9"><span class="num">§9</span> Orthogonal Similarity Invariance</a></li>
+    <li><a href="#sec10"><span class="num">§10</span> Grand Summary: All 10 Properties</a></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 0: What is a Jacobian?                               -->
+<!-- ============================================================ -->
+<div class="section" id="sec0">
+  <h2>§0 The Jacobian Matrix — What It Is</h2>
+  <div class="explain">
+    <strong>In plain English:</strong> Suppose you have a function f that takes a 2D point (x, y) and outputs a new 2D point (u, v). The Jacobian matrix J at a point tells you: "If I nudge x a tiny bit, how much do u and v change? If I nudge y, how much do u and v change?"
+    <br><br>
+    Formally: J[i][j] = ∂fᵢ/∂xⱼ — the partial derivative of the i-th output with respect to the j-th input.
+    <br><br>
+    <strong>Visually:</strong> The Jacobian transforms a tiny circle of input perturbations into an ellipse of output perturbations. The <em>symmetric part</em> controls the stretching (ellipse shape), and the <em>antisymmetric part</em> controls the rotation (ellipse orientation).
+    <span class="analogy">🎯 <strong>Analogy:</strong> Think of the Jacobian as a local "lens" — at each point in space, it tells you how the function magnifies, squishes, and twists things nearby.</span>
+  </div>
+
+  <div class="controls">
+    <div class="slider-row">
+      <div>
+        <label>J[0][0] (∂u/∂x): <span class="val" id="s0-v-00">1.5</span></label>
+        <input type="range" id="s0-00" min="-3" max="3" step="0.05" value="1.5">
+      </div>
+      <div>
+        <label>J[0][1] (∂u/∂y): <span class="val" id="s0-v-01">0.8</span></label>
+        <input type="range" id="s0-01" min="-3" max="3" step="0.05" value="0.8">
+      </div>
+      <div>
+        <label>J[1][0] (∂v/∂x): <span class="val" id="s0-v-10">-0.3</span></label>
+        <input type="range" id="s0-10" min="-3" max="3" step="0.05" value="-0.3">
+      </div>
+      <div>
+        <label>J[1][1] (∂v/∂y): <span class="val" id="s0-v-11">1.2</span></label>
+        <input type="range" id="s0-11" min="-3" max="3" step="0.05" value="1.2">
+      </div>
+    </div>
+  </div>
+
+  <div class="explain" style="font-size:0.88em;">
+    <strong>What you see below:</strong> A unit circle (blue) is transformed by the Jacobian into an ellipse. The <em>symmetric part</em> (green) shows pure stretching — no rotation. The <em>antisymmetric part</em> (red) shows pure rotation — no stretching. Together they reconstruct the full transformation.
+  </div>
+
+  <canvas id="sec0-canvas" class="geo-canvas" width="700" height="350"></canvas>
+  <div class="equation" id="sec0-equation"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: Jacobian Decomposition                            -->
+<!-- ============================================================ -->
+<div class="section" id="sec1">
+  <h2>§1 Jacobian Decomposition: J = J_sym + J_antisym <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What this theorem says in plain English:</strong> Any matrix J can be split into exactly two parts:
+    <ul style="margin:8px 0 8px 20px;">
+      <li><strong>J_sym = (J + Jᵀ) / 2</strong> — the symmetric part. This is the "stretching" component. It tells you how the function expands or compresses space along different directions.</li>
+      <li><strong>J_antisym = (J − Jᵀ) / 2</strong> — the antisymmetric part. This is the "rotation" component. It tells you how the function twists space around.</li>
+    </ul>
+    And when you add them back together, you get exactly J. No information is lost, nothing is added.
+    <span class="analogy">🎯 <strong>Analogy:</strong> It's like decomposing any motion of your hand into "opening/closing your fingers" (stretching) and "rotating your wrist" (rotation). Every hand motion is exactly the sum of these two independent motions.</span>
+    <span class="why-care">💡 <strong>Why this matters for transformers:</strong> This means we can separately analyze how a transformer layer stretches representations (which affects information content) and how it rotates them (which affects which directions encode what). These are fundamentally different geometric operations.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">jacobian_decomposition_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">mat_eq</span> n J (<span class="fn">mat_add</span> (<span class="fn">mat_sym</span> J) (<span class="fn">mat_antisym</span> J)).
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J i j Hi Hj.
+  <span class="tac">unfold</span> mat_add, mat_sym, mat_antisym.
+  <span class="tac">field</span>.
+<span class="kw">Qed.</span></div>
+
+  <div class="step-box">
+    <div class="step-title">🔍 How the proof works (step by step):</div>
+    <p>1. <code>intros n J i j Hi Hj</code> — "Let n be any dimension, J any matrix, and i,j any valid indices."</p>
+    <p>2. <code>unfold mat_add, mat_sym, mat_antisym</code> — "Expand the definitions." Now the goal becomes: J(i,j) = (J(i,j)+J(j,i))/2 + (J(i,j)−J(j,i))/2</p>
+    <p>3. <code>field</code> — "This is just algebra." The two halves add up: (a+b)/2 + (a−b)/2 = a. Done!</p>
+  </div>
+
+  <div class="controls">
+    <p style="margin-bottom:10px; font-size:0.9em;">Edit the 3×3 Jacobian matrix entries and watch the decomposition update in real time:</p>
+    <div class="slider-row" id="sec1-sliders"></div>
+  </div>
+
+  <div class="equation" id="sec1-equation"></div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec1-heatmap-J" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec1-heatmap-sym" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec1-heatmap-antisym" class="plotly-chart"></div></div>
+  </div>
+
+  <div class="explain" style="margin-top:12px;">
+    <strong>Reading the heatmaps:</strong> Blue = positive values, Red = negative values, Black = zero. Notice how J_sym is always mirror-symmetric across the diagonal (top-left to bottom-right), while J_antisym is always sign-flipped across the diagonal (and has zeros on the diagonal itself).
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Symmetry & Antisymmetry                           -->
+<!-- ============================================================ -->
+<div class="section" id="sec2">
+  <h2>§2 Symmetry & Antisymmetry Properties <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What these theorems say:</strong>
+    <ul style="margin:8px 0 8px 20px;">
+      <li><strong>J_symᵀ = J_sym</strong> — "The symmetric part is actually symmetric." If you flip it across the diagonal (transpose), nothing changes. Entry (i,j) always equals entry (j,i).</li>
+      <li><strong>J_antisymᵀ = −J_antisym</strong> — "The antisymmetric part is actually antisymmetric." If you flip it across the diagonal, every entry gets negated. This forces the diagonal to be zero (since a = −a means a = 0).</li>
+    </ul>
+    <span class="analogy">🎯 <strong>Analogy:</strong> A symmetric matrix is like a rubber sheet being stretched — it pulls equally in both directions between any two points. An antisymmetric matrix is like a whirlpool — the force from point A to B is exactly opposite to the force from B to A.</span>
+    <span class="why-care">💡 <strong>Why this matters:</strong> These aren't just naming conventions — they're structural guarantees. The symmetric part can be diagonalized with real eigenvalues (principal stretch directions). The antisymmetric part generates rotations. This is the foundation of continuum mechanics applied to neural networks.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">sym_is_symmetric_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">mat_eq</span> n (<span class="fn">mat_transpose</span> (<span class="fn">mat_sym</span> J)) (<span class="fn">mat_sym</span> J).
+<span class="kw">Proof.</span>  <span class="tac">intros</span> n J i j Hi Hj. <span class="tac">unfold</span> mat_transpose, mat_sym. <span class="tac">field</span>. <span class="kw">Qed.</span>
+<span class="cmt">(* Expanding: transpose of (J(i,j)+J(j,i))/2 = (J(j,i)+J(i,j))/2 = same thing. *)</span>
+
+<span class="kw">Theorem</span> <span class="fn">antisym_is_antisymmetric_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">mat_eq</span> n (<span class="fn">mat_transpose</span> (<span class="fn">mat_antisym</span> J)) (<span class="fn">mat_neg</span> (<span class="fn">mat_antisym</span> J)).
+<span class="kw">Proof.</span>  <span class="tac">intros</span> n J i j Hi Hj. <span class="tac">unfold</span> mat_transpose, mat_antisym, mat_neg. <span class="tac">field</span>. <span class="kw">Qed.</span>
+<span class="cmt">(* Expanding: transpose of (J(i,j)−J(j,i))/2 = (J(j,i)−J(i,j))/2 = −(J(i,j)−J(j,i))/2. *)</span></div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec2-sym-vs-transpose" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec2-antisym-vs-neg-transpose" class="plotly-chart"></div></div>
+  </div>
+
+  <div class="explain">
+    <strong>Reading the bar charts:</strong> Each group of bars shows the same matrix entry computed two different ways. For the left chart, the blue bar (J_sym) and green bar (J_symᵀ) should be identical — and they are. For the right chart, the orange bar (J_antisym) and purple bar (−J_antisymᵀ) should be identical — and they are. This is the visual proof.
+  </div>
+
+  <div class="equation" id="sec2-equation"></div>
+
+  <canvas id="sec2-canvas" class="geo-canvas" width="700" height="300"></canvas>
+  <div class="explain" style="font-size:0.88em;">
+    <strong>Geometric view above:</strong> The left shows J_sym's effect on a grid — pure stretching, symmetric about principal axes. The right shows J_antisym's effect — pure rotation, no stretching. Notice how the symmetric part creates elliptical distortion while the antisymmetric part creates circular swirling.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: Trace Properties                                  -->
+<!-- ============================================================ -->
+<div class="section" id="sec3">
+  <h2>§3 Trace = Divergence = Volume Change <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What the trace is:</strong> The trace of a matrix is just the sum of its diagonal entries: tr(J) = J[0][0] + J[1][1] + J[2][2] + ...
+    <br><br>
+    <strong>What it means geometrically:</strong> The trace equals the <em>divergence</em> of the vector field — it measures how much the transformation expands or compresses volume at a point. Positive trace = expansion (things spread out). Negative trace = compression (things squeeze together). Zero trace = volume-preserving.
+    <br><br>
+    <strong>The three theorems here say:</strong>
+    <ul style="margin:8px 0 8px 20px;">
+      <li><em>tr(J) = tr(J_sym)</em> — Volume change comes entirely from the stretching part. Rotation doesn't change volume.</li>
+      <li><em>tr(J_antisym) = 0</em> — The rotation part never changes volume. (Because diagonal entries of an antisymmetric matrix are always zero!)</li>
+      <li><em>tr(cJ) = c · tr(J)</em> — Scaling the transformation scales the volume change proportionally.</li>
+    </ul>
+    <span class="analogy">🎯 <strong>Analogy:</strong> Spinning a ball doesn't change its volume — only squeezing or inflating it does. The trace captures only the squeezing/inflating, never the spinning.</span>
+    <span class="why-care">💡 <strong>For transformers:</strong> This means the "information capacity" change of a layer (measured by how much it expands/compresses the representation space) is entirely determined by the symmetric part of its Jacobian. The rotational part just reorients information without changing capacity.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">divergence_from_symmetric_part_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">trace_n</span> n J = <span class="fn">trace_n</span> n (<span class="fn">mat_sym</span> J).
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J. <span class="tac">unfold</span> trace_n, mat_sym.
+  <span class="tac">apply</span> sum_f_ext. <span class="tac">intros</span> i _. <span class="tac">field</span>.
+<span class="kw">Qed.</span>
+<span class="cmt">(* Key insight: on the diagonal, sym(J)(i,i) = (J(i,i)+J(i,i))/2 = J(i,i). *)</span>
+<span class="cmt">(* So summing the diagonal of sym(J) gives the same as summing the diagonal of J. *)</span>
+
+<span class="kw">Theorem</span> <span class="fn">antisym_trace_zero_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">trace_n</span> n (<span class="fn">mat_antisym</span> J) = 0.
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J. <span class="tac">unfold</span> trace_n, mat_antisym.
+  <span class="tac">rewrite</span> (sum_f_ext _ (fun _ => 0) n).
+  - <span class="tac">apply</span> sum_f_zero.
+  - <span class="tac">intros</span> i _. <span class="tac">field</span>.   <span class="cmt">(* antisym(J)(i,i) = (J(i,i)−J(i,i))/2 = 0 *)</span>
+<span class="kw">Qed.</span></div>
+
+  <div class="controls">
+    <label>Scale factor c: <span class="val" id="sec3-c-val">1.00</span></label>
+    <input type="range" id="sec3-c" min="-3" max="3" step="0.05" value="1">
+  </div>
+
+  <div id="sec3-chart" class="plotly-chart"></div>
+
+  <div class="explain">
+    <strong>Reading the chart:</strong> The blue line (tr(cJ)) and yellow dotted line (c·tr(J)) overlap perfectly — trace is linear. The green dashed line (tr(sym(cJ))) also overlaps — divergence comes from the symmetric part. The red line (tr(antisym(cJ))) is always flat at zero — rotation never contributes to volume change. The purple diamond shows your current slider position.
+  </div>
+
+  <div class="equation" id="sec3-equation"></div>
+
+  <canvas id="sec3-canvas" class="geo-canvas" width="700" height="250"></canvas>
+  <div class="explain" style="font-size:0.88em;">
+    <strong>Above:</strong> A small square of area is transformed by J. The area ratio (output area / input area) is related to the determinant, but the <em>rate of area change</em> is the trace (divergence). Green = expanding, Red = compressing.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: Frobenius Orthogonality                           -->
+<!-- ============================================================ -->
+<div class="section" id="sec4">
+  <h2>§4 Frobenius Orthogonality <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What these theorems say:</strong>
+    <ul style="margin:8px 0 8px 20px;">
+      <li><strong>⟨J_sym, J_antisym⟩_F = 0</strong> — The symmetric and antisymmetric parts are <em>perpendicular</em> in matrix space. Their Frobenius inner product (which is like a dot product but for matrices) is exactly zero.</li>
+    </ul>
+    <strong>What is the Frobenius inner product?</strong> Think of "unrolling" a matrix into a long vector (just list all entries in order). The Frobenius inner product is just the ordinary dot product of these unrolled vectors. Formally: ⟨A, B⟩_F = Σᵢ Σⱼ A[i][j] · B[i][j] = tr(AᵀB).
+    <br><br>
+    <strong>Why is this zero?</strong> The proof uses a beautiful swap-and-cancel argument. Each term in the double sum at position (i,k) is (J[k][i]² − J[i][k]²)/4. When you swap i↔k, this becomes (J[i][k]² − J[k][i]²)/4 — the exact negative! So every term cancels with its partner, and the whole sum is zero.
+    <span class="analogy">🎯 <strong>Analogy:</strong> Imagine two arrows in space that are perfectly perpendicular (like North and East). No matter how long each arrow is, their dot product is zero — they share no common direction. Similarly, the stretching part and the rotation part of J live in completely independent "directions" in matrix space.</span>
+    <span class="why-care">💡 <strong>Why this matters:</strong> Because the parts are orthogonal, we get a <em>Pythagorean theorem for matrices</em>: ‖J‖² = ‖J_sym‖² + ‖J_antisym‖². The total "energy" of the Jacobian splits cleanly into stretching energy and rotation energy with no cross-terms. This means you can measure them independently.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">frobenius_sym_antisym_orthogonal</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">frobenius_inner</span> n (<span class="fn">mat_sym</span> J) (<span class="fn">mat_antisym</span> J) = 0.
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J.
+  <span class="tac">unfold</span> frobenius_inner, trace_n, mat_mult, mat_transpose, mat_sym, mat_antisym.
+  <span class="cmt">(* Rewrite each summand to (J(k,i)² − J(i,k)²)/4 *)</span>
+  <span class="tac">rewrite</span> (sum_f_ext _ (fun i =>
+    sum_f (fun k => (J k i * J k i - J i k * J i k) / 4) n) n).
+  <span class="cmt">(* Key: sum S + sum S = 0, because swapping i↔k negates each term *)</span>
+  <span class="tac">assert</span> (Hkey : S + S = 0).  <span class="cmt">(* where S is the double sum *)</span>
+  { <span class="tac">rewrite</span> (sum_f_swap ...) at 1.
+    <span class="tac">rewrite</span> <- sum_f_add.
+    <span class="cmt">(* Each inner sum: f(i,k) + f(k,i) = 0 by lra *)</span>
+    ... }
+  <span class="tac">lra</span>.  <span class="cmt">(* S + S = 0 implies S = 0 *)</span>
+<span class="kw">Qed.</span></div>
+
+  <div class="step-box">
+    <div class="step-title">🔍 The swap-and-cancel argument visualized:</div>
+    <p>Consider the matrix of terms f(i,k) = (J[k][i]² − J[i][k]²)/4. This matrix is <em>antisymmetric</em>: f(i,k) = −f(k,i). When you sum all entries of an antisymmetric matrix, every above-diagonal term cancels with its below-diagonal partner, and diagonal terms are zero. So the total sum must be zero.</p>
+  </div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec4-chart" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec4-cancel-chart" class="plotly-chart"></div></div>
+  </div>
+
+  <div class="explain">
+    <strong>Reading the left chart:</strong> The bars show ‖J‖²_F, ‖J_sym‖²_F, ‖J_antisym‖²_F, their sum, and the inner product. The inner product bar (rightmost) should be zero (green). The Pythagorean identity says the first bar equals the fourth bar.
+    <br><br>
+    <strong>Reading the right chart:</strong> This shows the individual terms f(i,k) = (J[k][i]² − J[i][k]²)/4 in the Frobenius inner product sum. Notice how terms above the diagonal (blue) are exactly negated by terms below the diagonal (red), and diagonal terms are zero. This is the cancellation that makes the proof work.
+  </div>
+
+  <div class="equation" id="sec4-equation"></div>
+
+  <canvas id="sec4-canvas" class="geo-canvas" width="700" height="300"></canvas>
+  <div class="explain" style="font-size:0.88em;">
+    <strong>Geometric view above:</strong> In the "matrix space" (here projected to 2D), J_sym and J_antisym are shown as perpendicular vectors. J is their sum (the diagonal of the rectangle). The right angle confirms orthogonality. Drag the §1 sliders to see how the vectors change while always staying perpendicular.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: Idempotence & Cross-Annihilation                  -->
+<!-- ============================================================ -->
+<div class="section" id="sec5">
+  <h2>§5 Idempotence & Cross-Annihilation <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What these four theorems say in plain English:</strong>
+    <ul style="margin:8px 0 8px 20px;">
+      <li><strong>sym(sym(J)) = sym(J)</strong> — "Symmetrizing something that's already symmetric does nothing." If you've already extracted the stretching part, extracting it again gives the same thing. This is called <em>idempotence</em>.</li>
+      <li><strong>antisym(antisym(J)) = antisym(J)</strong> — Same for the rotation part.</li>
+      <li><strong>sym(antisym(J)) = 0</strong> — "The stretching part of a pure rotation is zero." If you take something that's purely rotational and ask 'what's the stretching component?', the answer is nothing.</li>
+      <li><strong>antisym(sym(J)) = 0</strong> — "The rotation part of a pure stretch is zero." Vice versa.</li>
+    </ul>
+    Together, these four properties say that sym and antisym are <em>complementary orthogonal projections</em>. They're like two filters: one passes only horizontal light (stretching), the other only vertical light (rotation). Applying the same filter twice doesn't change anything, and applying the wrong filter blocks everything.
+    <span class="analogy">🎯 <strong>Analogy:</strong> Think of polarized sunglasses. A horizontal polarizer (sym) passes horizontal light and blocks vertical. Putting two horizontal polarizers in a row is the same as one (idempotent). Putting a horizontal polarizer after a vertical one (cross-annihilation) blocks all light.</span>
+    <span class="why-care">💡 <strong>Why this matters:</strong> This guarantees the decomposition is <em>unique and clean</em>. There's exactly one way to split J into stretching and rotation, and the two parts don't "leak" into each other. For transformer analysis, this means measurements of strain and rotation are unambiguous.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">sym_idempotent_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">mat_eq</span> n (<span class="fn">mat_sym</span> (<span class="fn">mat_sym</span> J)) (<span class="fn">mat_sym</span> J).
+<span class="kw">Proof.</span>  <span class="tac">intros</span> n J i j Hi Hj. <span class="tac">unfold</span> mat_sym. <span class="tac">field</span>. <span class="kw">Qed.</span>
+<span class="cmt">(* sym(sym(J))(i,j) = ((J(i,j)+J(j,i))/2 + (J(j,i)+J(i,j))/2) / 2
+                    = (J(i,j)+J(j,i)) / 2 = sym(J)(i,j)  ✓ *)</span>
+
+<span class="kw">Theorem</span> <span class="fn">sym_of_antisym_zero_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="fn">mat_eq</span> n (<span class="fn">mat_sym</span> (<span class="fn">mat_antisym</span> J)) mat_zero.
+<span class="kw">Proof.</span>  <span class="tac">intros</span> n J i j Hi Hj. <span class="tac">unfold</span> mat_sym, mat_antisym, mat_zero. <span class="tac">field</span>. <span class="kw">Qed.</span>
+<span class="cmt">(* sym(antisym(J))(i,j) = ((J(i,j)−J(j,i))/2 + (J(j,i)−J(i,j))/2) / 2
+                        = 0 / 2 = 0  ✓ *)</span></div>
+
+  <div class="step-box">
+    <div class="step-title">🔍 Why does field solve these instantly?</div>
+    <p>After unfolding definitions, each goal is a rational arithmetic identity. For example, sym(antisym(J))(i,j) expands to ((a−b)/2 + (b−a)/2)/2 where a=J(i,j) and b=J(j,i). This simplifies to 0/2 = 0. The <code>field</code> tactic handles this automatically.</p>
+  </div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec5-chart" class="plotly-chart"></div></div>
+    <div class="vis-panel">
+      <div class="matrix-grid" id="sec5-matrices"></div>
+      <canvas id="sec5-canvas" class="geo-canvas" width="340" height="280"></canvas>
+    </div>
+  </div>
+
+  <div class="explain">
+    <strong>Reading the bar chart:</strong> Each bar shows the maximum absolute error for one of the four properties. All bars should be at machine-zero (≈10⁻¹⁶). The y-axis is logarithmic — if a bar is visible above 10⁻¹⁰, something is wrong.
+    <br><br>
+    <strong>Reading the matrices:</strong> sym(antisym(J)) and antisym(sym(J)) are displayed numerically. Every entry should be 0.000 (or very close to it).
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: Shear Tensor                                      -->
+<!-- ============================================================ -->
+<div class="section" id="sec6">
+  <h2>§6 Shear Tensor is Trace-Free <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What is the shear tensor?</strong> We already know J_sym captures all the stretching. But stretching has two sub-components:
+    <ul style="margin:8px 0 8px 20px;">
+      <li><strong>Uniform expansion/compression</strong> — scaling everything equally in all directions. This is captured by (tr(J_sym)/n) · I, a scalar multiple of the identity.</li>
+      <li><strong>Pure shear</strong> — stretching more in some directions than others, but with no net volume change. This is the shear tensor S = J_sym − (tr(J_sym)/n) · I.</li>
+    </ul>
+    <strong>The theorem says:</strong> tr(S) = 0. The shear tensor has zero trace, meaning it causes zero net volume change. All volume change is captured by the (tr/n)·I part.
+    <br><br>
+    <strong>The proof is elegant:</strong> tr(S) = tr(J_sym) − tr((tr(J_sym)/n)·I) = tr(J_sym) − (tr(J_sym)/n)·n = tr(J_sym) − tr(J_sym) = 0.
+    <span class="analogy">🎯 <strong>Analogy:</strong> Imagine squeezing a balloon. The shear is like squeezing it from the sides (it gets taller but thinner — shape changes but volume doesn't). The expansion part is like inflating it (volume changes but shape stays the same). The shear tensor isolates the shape-change-only part.</span>
+    <span class="why-care">💡 <strong>For transformers:</strong> This three-way decomposition (rotation + uniform scaling + shear) gives a complete geometric picture: J = rotation + (volume change rate)·I/n + pure shape change. Each component is independently measurable and has a distinct geometric meaning.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Definition</span> <span class="fn">mat_shear</span> (n : <span class="typ">nat</span>) (A : <span class="typ">Mat</span>) : <span class="typ">Mat</span> :=
+  <span class="kw">fun</span> i j =>
+    <span class="fn">mat_sym</span> A i j - (<span class="fn">trace_n</span> n (<span class="fn">mat_sym</span> A) / INR n) *
+                    (<span class="kw">if</span> Nat.eq_dec i j <span class="kw">then</span> 1 <span class="kw">else</span> 0).
+
+<span class="kw">Theorem</span> <span class="fn">shear_trace_free_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    (n > 0)%nat -> <span class="fn">trace_n</span> n (<span class="fn">mat_shear</span> n J) = 0.
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J Hn.
+  <span class="tac">unfold</span> trace_n, mat_shear.
+  <span class="cmt">(* Diagonal entries: sym(J)(i,i) − tr(sym(J))/n *)</span>
+  <span class="cmt">(* Sum = tr(sym(J)) − n · tr(sym(J))/n = 0 *)</span>
+  ...
+  <span class="tac">field</span>. <span class="tac">exact</span> HnR.  <span class="cmt">(* need n ≠ 0 for division *)</span>
+<span class="kw">Qed.</span></div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec6-heatmap-sym" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec6-heatmap-shear" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec6-heatmap-iso" class="plotly-chart"></div></div>
+  </div>
+
+  <div class="explain">
+    <strong>Reading the three heatmaps:</strong>
+    <ul style="margin:4px 0 4px 16px;">
+      <li><strong>Left (J_sym):</strong> The full symmetric part, with nonzero trace (shown in title).</li>
+      <li><strong>Middle (Shear S):</strong> The trace-free part. Notice the diagonal values have been adjusted so they sum to zero.</li>
+      <li><strong>Right (Isotropic):</strong> The (tr/n)·I part — a diagonal matrix with equal entries. This is the pure volume-change component.</li>
+    </ul>
+    Together: J_sym = Shear + Isotropic. The shear changes shape, the isotropic part changes volume.
+  </div>
+
+  <div class="equation" id="sec6-equation"></div>
+
+  <canvas id="sec6-canvas" class="geo-canvas" width="700" height="250"></canvas>
+  <div class="explain" style="font-size:0.88em;">
+    <strong>Above:</strong> A circle is transformed by J_sym (left), by the shear alone (middle), and by the isotropic part alone (right). The shear distorts the circle into an ellipse without changing area. The isotropic part scales the circle uniformly. Together they give the full J_sym effect.
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: Residual Connection                               -->
+<!-- ============================================================ -->
+<div class="section" id="sec7">
+  <h2>§7 Residual Connection: J = I + Δ <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What is a residual connection?</strong> In a transformer, each layer doesn't completely replace the hidden state — it <em>adds</em> to it: h_new = h_old + Δ(h_old). This "skip connection" is crucial for training deep networks.
+    <br><br>
+    <strong>At the Jacobian level:</strong> The Jacobian of h_new with respect to h_old is J = I + J_Δ, where I is the identity matrix (from the "pass-through" of h_old) and J_Δ is the Jacobian of the residual block Δ.
+    <br><br>
+    <strong>Two theorems:</strong>
+    <ul style="margin:8px 0 8px 20px;">
+      <li><em>tr(I + J_Δ) = n + tr(J_Δ)</em> — The divergence of the full layer is the dimension n (from the identity) plus the divergence of the residual block. The identity contributes a "baseline expansion" of n.</li>
+      <li><em>antisym(I + J_Δ) = antisym(J_Δ)</em> — The rotation comes entirely from the residual block. The identity is perfectly symmetric, so it contributes zero rotation.</li>
+    </ul>
+    <span class="analogy">🎯 <strong>Analogy:</strong> Imagine you're walking forward (the identity — you keep going where you were going) while a wind blows you sideways (the residual Δ). Your total velocity is your walking speed plus the wind. The "rotation" (change of direction) comes entirely from the wind, not from your steady walking.</span>
+    <span class="why-care">💡 <strong>For transformers:</strong> This explains why residual connections stabilize training. The identity provides a guaranteed baseline divergence of n (no information loss), and the residual block only needs to learn small corrections. The rotation (which reorients representations) is entirely learned.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">residual_divergence_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J_delta : <span class="typ">Mat</span>),
+    <span class="fn">trace_n</span> n (<span class="fn">mat_add</span> mat_id J_delta) = INR n + <span class="fn">trace_n</span> n J_delta.
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J_delta.
+  <span class="tac">rewrite</span> trace_additive_general.  <span class="cmt">(* tr(A+B) = tr(A) + tr(B) *)</span>
+  <span class="tac">rewrite</span> trace_id_general.         <span class="cmt">(* tr(I) = n *)</span>
+  <span class="tac">reflexivity</span>.
+<span class="kw">Qed.</span>
+
+<span class="kw">Theorem</span> <span class="fn">residual_antisym_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J_delta : <span class="typ">Mat</span>),
+    <span class="fn">mat_eq</span> n (<span class="fn">mat_antisym</span> (<span class="fn">mat_add</span> mat_id J_delta)) (<span class="fn">mat_antisym</span> J_delta).
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J_delta i j Hi Hj.
+  <span class="tac">unfold</span> mat_antisym, mat_add, mat_id.
+  <span class="cmt">(* Case split: if i=j, both sides are 0. If i≠j, the 1s cancel. *)</span>
+  <span class="tac">destruct</span> (Nat.eq_dec i j); <span class="tac">destruct</span> (Nat.eq_dec j i); <span class="tac">field</span>.
+<span class="kw">Qed.</span></div>
+
+  <div class="step-box">
+    <div class="step-title">🔍 Why does the identity contribute no rotation?</div>
+    <p>The identity matrix I has I[i][j] = 1 if i=j, 0 otherwise. It's perfectly symmetric: I = Iᵀ. So antisym(I) = (I − Iᵀ)/2 = 0. When we compute antisym(I + J_Δ) = antisym(I) + antisym(J_Δ) = 0 + antisym(J_Δ), the identity drops out completely.</p>
+  </div>
+
+  <div class="controls">
+    <div class="slider-row">
+      <div>
+        <label>Dimension n: <span class="val" id="sec7-n-val">3</span></label>
+        <input type="range" id="sec7-n" min="1" max="10" step="1" value="3">
+      </div>
+      <div>
+        <label>Scale of Δ entries: <span class="val" id="sec7-scale-val">0.50</span></label>
+        <input type="range" id="sec7-scale" min="0" max="2" step="0.05" value="0.5">
+      </div>
+    </div>
+  </div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec7-chart" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec7-decomp-chart" class="plotly-chart"></div></div>
+  </div>
+
+  <div class="explain">
+    <strong>Left chart:</strong> As you increase the Δ scale, tr(I+Δ) (blue) and n+tr(Δ) (green dashed) always overlap perfectly — confirming the divergence formula.
+    <br><br>
+    <strong>Right chart:</strong> A stacked bar showing how the total divergence breaks down: the blue portion is always exactly n (from the identity), and the green portion is tr(Δ) (from the residual block). The identity provides a stable "floor" of divergence.
+  </div>
+
+  <div class="equation" id="sec7-equation"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: Trace Cyclicity                                   -->
+<!-- ============================================================ -->
+<div class="section" id="sec8">
+  <h2>§8 Trace Cyclicity: tr(ABC) = tr(BCA) = tr(CAB) <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What this theorem says:</strong> You can cyclically permute matrices inside a trace without changing the result. tr(ABC) = tr(BCA) = tr(CAB). Note: you can NOT arbitrarily reorder them — tr(ABC) ≠ tr(BAC) in general. Only <em>cyclic</em> permutations work.
+    <br><br>
+    <strong>How the proof works:</strong>
+    <ol style="margin:8px 0 8px 20px;">
+      <li>Start with the 2-matrix version: tr(XY) = tr(YX). This follows from swapping the summation order in the double sum Σᵢ Σₖ X[i][k]·Y[k][i].</li>
+      <li>For three matrices: tr(A·(BC)) = tr((BC)·A) by the 2-matrix version (treating BC as one matrix).</li>
+      <li>Then use associativity: (BC)A = B(CA), so tr(B(CA)) = tr((CA)B) = tr(C(AB)) by applying the 2-matrix version again.</li>
+    </ol>
+    <span class="analogy">🎯 <strong>Analogy:</strong> Imagine three people A, B, C sitting in a circle, each passing a number to the next person who multiplies it. The total product around the circle is the same no matter who you start counting from — because it's a circle!</span>
+    <span class="why-care">💡 <strong>For transformers:</strong> When analyzing compositions of multiple layers (J₃ · J₂ · J₁), trace cyclicity lets us compute the divergence starting from any layer. This is essential for analyzing multi-layer gradient flow and information propagation.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">trace_cyclic_3_general</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (A B C : <span class="typ">Mat</span>),
+    <span class="fn">trace_n</span> n (<span class="fn">mat_mult</span> n A (<span class="fn">mat_mult</span> n B C)) =
+    <span class="fn">trace_n</span> n (<span class="fn">mat_mult</span> n C (<span class="fn">mat_mult</span> n A B)).
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n A B C.
+  <span class="cmt">(* Step 1: tr(A(BC)) = tr((BC)A) by tr(XY) = tr(YX) *)</span>
+  <span class="tac">rewrite</span> (trace_mult_commutative_general n A (mat_mult n B C)).
+  <span class="cmt">(* Step 2: tr((BC)A) = tr(B(CA)) by associativity *)</span>
+  ...
+  <span class="cmt">(* Step 3: tr(B(CA)) = tr((CA)B) by tr(XY) = tr(YX) *)</span>
+  <span class="tac">rewrite</span> (trace_mult_commutative_general n B (mat_mult n C A)).
+  <span class="cmt">(* Step 4: tr((CA)B) = tr(C(AB)) by associativity *)</span>
+  ...
+  <span class="tac">reflexivity</span>.
+<span class="kw">Qed.</span></div>
+
+  <div class="controls">
+    <button id="sec8-randomize" style="padding:8px 20px; background:var(--accent); color:#000; border:none; border-radius:6px; cursor:pointer; font-weight:600;">🎲 Randomize A, B, C</button>
+    <span style="margin-left:12px; font-size:0.85em; color:var(--dim);">Click repeatedly to see that the three traces always match, no matter what random matrices you get.</span>
+  </div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec8-chart" class="plotly-chart"></div></div>
+    <div class="vis-panel"><div id="sec8-diff-chart" class="plotly-chart"></div></div>
+  </div>
+
+  <div class="explain">
+    <strong>Left chart:</strong> History of tr(ABC), tr(BCA), tr(CAB) across random trials. All three lines overlap perfectly — they're always equal.
+    <br><br>
+    <strong>Right chart:</strong> The differences |tr(ABC)−tr(BCA)| and |tr(ABC)−tr(CAB)| across trials. These should all be at machine epsilon (≈10⁻¹²), confirming exact equality up to floating-point precision.
+  </div>
+
+  <div class="equation" id="sec8-equation"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: Orthogonal Similarity                             -->
+<!-- ============================================================ -->
+<div class="section" id="sec9">
+  <h2>§9 Orthogonal Similarity Invariance <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>What this theorem says:</strong> If Q is an orthogonal matrix (QQᵀ = I, meaning Q is a rotation/reflection), then tr(QᵀJQ) = tr(J). The trace (divergence) doesn't change when you rotate your coordinate system.
+    <br><br>
+    <strong>How the proof works:</strong>
+    <ol style="margin:8px 0 8px 20px;">
+      <li>tr(Qᵀ(JQ)) = tr((JQ)Qᵀ) by trace cyclicity (tr(XY) = tr(YX))</li>
+      <li>tr((JQ)Qᵀ) = tr(J(QQᵀ)) by associativity</li>
+      <li>tr(J(QQᵀ)) = tr(J·I) = tr(J) because QQᵀ = I</li>
+    </ol>
+    <span class="analogy">🎯 <strong>Analogy:</strong> Imagine measuring the temperature in a room. You can set up your thermometer facing North, or rotate it to face East — the temperature reading doesn't change. Similarly, the trace (divergence) is a "scalar" quantity that doesn't depend on which coordinate axes you use. Rotating your axes (via Q) doesn't affect it.</span>
+    <span class="why-care">💡 <strong>For transformers:</strong> Different attention heads may operate in different rotated subspaces. This theorem guarantees that the divergence (information capacity change) is the same regardless of which basis you measure it in. It's an intrinsic property of the layer, not an artifact of representation.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">trace_orthogonal_similarity</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (Q J : <span class="typ">Mat</span>),
+    <span class="fn">mat_eq</span> n (<span class="fn">mat_mult</span> n Q (<span class="fn">mat_transpose</span> Q)) mat_id ->
+    <span class="fn">trace_n</span> n (<span class="fn">mat_mult</span> n (<span class="fn">mat_transpose</span> Q) (<span class="fn">mat_mult</span> n J Q)) =
+    <span class="fn">trace_n</span> n J.
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n Q J HQ.
+  <span class="cmt">(* Step 1: tr(Qᵀ(JQ)) = tr((JQ)Qᵀ) by tr(XY) = tr(YX) *)</span>
+  <span class="tac">rewrite</span> trace_mult_commutative_general.
+  <span class="cmt">(* Step 2: tr((JQ)Qᵀ) = tr(J(QQᵀ)) by associativity *)</span>
+  <span class="tac">assert</span> (Hassoc : ...).
+  { <span class="tac">apply</span> mat_eq_trace_ext. <span class="tac">apply</span> mat_mult_assoc_general. }
+  <span class="tac">rewrite</span> Hassoc.
+  <span class="cmt">(* Step 3: tr(J(QQᵀ)) = tr(J·I) since QQᵀ = I *)</span>
+  <span class="tac">assert</span> (HJI : ...).
+  { <span class="tac">apply</span> mat_eq_trace_ext. <span class="tac">intros</span> i j Hi Hj.
+    <span class="tac">unfold</span> mat_mult. <span class="tac">f_equal</span>. <span class="tac">apply</span> HQ; <span class="tac">assumption</span>. }
+  <span class="tac">rewrite</span> HJI.
+  <span class="cmt">(* Step 4: tr(J·I) = tr(J) by right-identity *)</span>
+  <span class="tac">unfold</span> trace_n, mat_mult, mat_id.
+  <span class="tac">apply</span> sum_f_ext. <span class="tac">intros</span> i Hi.
+  <span class="tac">apply</span> sum_f_delta_right. <span class="tac">exact</span> Hi.
+<span class="kw">Qed.</span></div>
+
+  <div class="step-box">
+    <div class="step-title">🔍 The four-step chain in detail:</div>
+    <p><strong>Step 1 (Cyclicity):</strong> tr(QᵀJQ) = tr(Qᵀ · (JQ)) = tr((JQ) · Qᵀ). We used <code>trace_mult_commutative_general</code> — the same theorem from §8 that says tr(XY) = tr(YX).</p>
+    <p><strong>Step 2 (Associativity):</strong> tr((JQ)Qᵀ) = tr(J(QQᵀ)). We used <code>mat_mult_assoc_general</code> to re-bracket the product.</p>
+    <p><strong>Step 3 (Orthogonality hypothesis):</strong> Since QQᵀ = I (our assumption), we replace QQᵀ with I to get tr(J·I).</p>
+    <p><strong>Step 4 (Right identity):</strong> J·I = J, so tr(J·I) = tr(J). Done!</p>
+  </div>
+
+  <div class="controls">
+    <label>Rotation angle θ: <span class="val" id="sec9-theta-val">0.00</span> rad (<span id="sec9-deg-val">0.0</span>°)</label>
+    <input type="range" id="sec9-theta" min="0" max="6.283" step="0.02" value="0">
+  </div>
+
+  <div class="vis-container">
+    <div class="vis-panel"><div id="sec9-chart" class="plotly-chart"></div></div>
+    <div class="vis-panel"><canvas id="sec9-canvas" class="geo-canvas" width="350" height="350"></canvas></div>
+  </div>
+
+  <div class="explain">
+    <strong>Left chart:</strong> As θ sweeps from 0 to 2π, tr(J) (blue) stays perfectly flat, and tr(QᵀJQ) (green dashed) traces right on top of it. They never diverge — the trace is truly rotation-invariant.
+    <br><br>
+    <strong>Right canvas:</strong> The 2×2 matrix J transforms a unit circle into an ellipse (blue). As you rotate Q (change θ), the rotated-basis version QᵀJQ transforms the same circle into a different-looking ellipse (green) — but the trace (sum of eigenvalues, related to the ellipse's "total stretch") stays the same.
+  </div>
+
+  <div class="equation" id="sec9-equation"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: Grand Summary                                    -->
+<!-- ============================================================ -->
+<div class="section" id="sec10">
+  <h2>§10 Grand Summary: All 10 Properties <span class="badge">Qed ✓</span></h2>
+
+  <div class="explain">
+    <strong>The final theorem</strong> <code>transformer_jacobian_geometry_complete</code> bundles all 10 properties into a single conjunction. In Coq, a conjunction A ∧ B ∧ C ∧ ... means ALL of these must be true simultaneously. The proof simply references each individual theorem we proved above.
+    <br><br>
+    <strong>What this means:</strong> For ANY matrix J of ANY dimension n, ALL of the following hold simultaneously:
+    <ol style="margin:8px 0 8px 20px;">
+      <li>J decomposes into symmetric + antisymmetric parts</li>
+      <li>The symmetric part is genuinely symmetric</li>
+      <li>The antisymmetric part is genuinely antisymmetric</li>
+      <li>The two parts are Frobenius-orthogonal</li>
+      <li>Divergence comes only from the symmetric part</li>
+      <li>The antisymmetric part has zero trace</li>
+      <li>The symmetric projector is idempotent</li>
+      <li>The antisymmetric projector is idempotent</li>
+      <li>sym(antisym(J)) = 0 (cross-annihilation)</li>
+      <li>antisym(sym(J)) = 0 (cross-annihilation)</li>
+    </ol>
+    <span class="why-care">💡 <strong>The big takeaway:</strong> The Jacobian of any transformer layer has a clean, unique, orthogonal decomposition into stretching and rotation. Volume change is entirely determined by stretching. This geometric structure is not approximate — it's mathematically exact and machine-verified.</span>
+  </div>
+
+  <div class="coq-code"><span class="kw">Theorem</span> <span class="fn">transformer_jacobian_geometry_complete</span> :
+  <span class="kw">forall</span> (n : <span class="typ">nat</span>) (J : <span class="typ">Mat</span>),
+    <span class="cmt">(* 1 *)</span>  mat_eq n J (mat_add (mat_sym J) (mat_antisym J))                    <span class="kw">/\</span>
+    <span class="cmt">(* 2 *)</span>  mat_eq n (mat_transpose (mat_sym J)) (mat_sym J)                    <span class="kw">/\</span>
+    <span class="cmt">(* 3 *)</span>  mat_eq n (mat_transpose (mat_antisym J)) (mat_neg (mat_antisym J))  <span class="kw">/\</span>
+    <span class="cmt">(* 4 *)</span>  frobenius_inner n (mat_sym J) (mat_antisym J) = 0                    <span class="kw">/\</span>
+    <span class="cmt">(* 5 *)</span>  trace_n n J = trace_n n (mat_sym J)                                  <span class="kw">/\</span>
+    <span class="cmt">(* 6 *)</span>  trace_n n (mat_antisym J) = 0                                        <span class="kw">/\</span>
+    <span class="cmt">(* 7 *)</span>  mat_eq n (mat_sym (mat_sym J)) (mat_sym J)                           <span class="kw">/\</span>
+    <span class="cmt">(* 8 *)</span>  mat_eq n (mat_antisym (mat_antisym J)) (mat_antisym J)               <span class="kw">/\</span>
+    <span class="cmt">(* 9 *)</span>  mat_eq n (mat_sym (mat_antisym J)) mat_zero                          <span class="kw">/\</span>
+    <span class="cmt">(* 10 *)</span> mat_eq n (mat_antisym (mat_sym J)) mat_zero.
+<span class="kw">Proof.</span>
+  <span class="tac">intros</span> n J. <span class="tac">repeat split</span>.
+  - <span class="tac">exact</span> (jacobian_decomposition_general n J).
+  - <span class="tac">exact</span> (sym_is_symmetric_general n J).
+  - <span class="tac">exact</span> (antisym_is_antisymmetric_general n J).
+  - <span class="tac">exact</span> (frobenius_sym_antisym_orthogonal n J).
+  - <span class="tac">exact</span> (divergence_from_symmetric_part_general n J).
+  - <span class="tac">exact</span> (antisym_trace_zero_general n J).
+  - <span class="tac">exact</span> (sym_idempotent_general n J).
+  - <span class="tac">exact</span> (antisym_idempotent_general n J).
+  - <span class="tac">exact</span> (sym_of_antisym_zero_general n J).
+  - <span class="tac">exact</span> (antisym_of_sym_zero_general n J).
+<span class="kw">Qed.</span></div>
+
+  <div class="step-box">
+    <div class="step-title">🔍 How the final proof works:</div>
+    <p><code>intros n J</code> — "Let n and J be arbitrary."</p>
+    <p><code>repeat split</code> — "Break the 10-way conjunction into 10 separate goals."</p>
+    <p>Each <code>exact (...)</code> — "This goal is exactly the theorem we already proved." No new reasoning needed — just assembly.</p>
+  </div>
+
+  <div id="sec10-results" style="margin-top:16px;"></div>
+
+  <div id="sec10-radar" class="plotly-chart" style="margin-top:16px;"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT ENGINE                                            -->
+<!-- ============================================================ -->
+<script>
+// ============================================================
+// UTILITY: Matrix operations (mirrors the Coq definitions)
+// ============================================================
+function matAdd(A, B) {
+  return A.map((row, i) => row.map((v, j) => v + B[i][j]));
+}
+function matScale(c, A) {
+  return A.map(row => row.map(v => c * v));
+}
+function matTranspose(A) {
+  return A[0].map((_, j) => A.map(row => row[j]));
+}
+function matNeg(A) {
+  return A.map(row => row.map(v => -v));
+}
+function matSym(A) {
+  return A.map((row, i) => row.map((v, j) => (A[i][j] + A[j][i]) / 2));
+}
+function matAntisym(A) {
+  return A.map((row, i) => row.map((v, j) => (A[i][j] - A[j][i]) / 2));
+}
+function matMult(A, B) {
+  const n = A.length;
+  const C = Array.from({length: n}, () => Array(n).fill(0));
+  for (let i = 0; i < n; i++)
+    for (let j = 0; j < n; j++)
+      for (let k = 0; k < n; k++)
+        C[i][j] += A[i][k] * B[k][j];
+  return C;
+}
+function trace(A) {
+  let s = 0; for (let i = 0; i < A.length; i++) s += A[i][i]; return s;
+}
+function matId(n) {
+  return Array.from({length: n}, (_, i) => Array.from({length: n}, (_, j) => i === j ? 1 : 0));
+}
+function matZero(n) {
+  return Array.from({length: n}, () => Array(n).fill(0));
+}
+function frobInner(A, B) {
+  return trace(matMult(matTranspose(A), B));
+}
+function frobNorm(A) { return Math.sqrt(frobInner(A, A)); }
+function matSub(A, B) {
+  return A.map((row, i) => row.map((v, j) => v - B[i][j]));
+}
+function matShear(A) {
+  const n = A.length, S = matSym(A), t = trace(S), I = matId(n);
+  return S.map((row, i) => row.map((v, j) => v - (t / n) * I[i][j]));
+}
+function matIso(A) {
+  const n = A.length, S = matSym(A), t = trace(S), I = matId(n);
+  return I.map((row, i) => row.map((v, j) => (t / n) * v));
+}
+function matMaxAbs(A) {
+  let m = 0; for (const row of A) for (const v of row) m = Math.max(m, Math.abs(v)); return m;
+}
+function matApproxEqual(A, B, eps = 1e-10) {
+  for (let i = 0; i < A.length; i++)
+    for (let j = 0; j < A[0].length; j++)
+      if (Math.abs(A[i][j] - B[i][j]) > eps) return false;
+  return true;
+}
+function randomMat(n, scale = 2) {
+  return Array.from({length: n}, () => Array.from({length: n}, () => (Math.random() - 0.5) * 2 * scale));
+}
+function matToStr(A, prec = 3) {
+  return A.map(row => row.map(v => v.toFixed(prec).padStart(8)).join(' ')).join('\n');
+}
+function rotMat2(theta) {
+  const c = Math.cos(theta), s = Math.sin(theta);
+  return [[c, -s], [s, c]];
+}
+// Apply 2x2 matrix to [x,y]
+function applyMat2(M, x, y) {
+  return [M[0][0]*x + M[0][1]*y, M[1][0]*x + M[1][1]*y];
+}
+// Generate unit circle points
+function unitCircle(nPts) {
+  const xs = [], ys = [];
+  for (let i = 0; i <= nPts; i++) {
+    const t = (2 * Math.PI * i) / nPts;
+    xs.push(Math.cos(t)); ys.push(Math.sin(t));
+  }
+  return { xs, ys };
+}
+// Transform circle by matrix
+function transformCircle(M, nPts) {
+  const c = unitCircle(nPts);
+  const txs = [], tys = [];
+  for (let i = 0; i < c.xs.length; i++) {
+    const [tx, ty] = applyMat2(M, c.xs[i], c.ys[i]);
+    txs.push(tx); tys.push(ty);
+  }
+  return { xs: txs, ys: tys };
+}
+
+// Plotly defaults
+const plotlyLayout = {
+  paper_bgcolor: '#161b22', plot_bgcolor: '#0d1117',
+  font: { color: '#e6edf3', family: '-apple-system, sans-serif' },
+  margin: { t: 40, b: 40, l: 50, r: 20 },
+};
+const divergingColorscale = [[0, '#f85149'], [0.5, '#0d1117'], [1, '#58a6ff']];
+
+function makeHeatmap(divId, Z, title) {
+  const maxVal = Math.max(0.01, matMaxAbs(Z));
+  const labels = Z.map(row => row.map(v => v.toFixed(3)));
+  Plotly.newPlot(divId, [{
+    z: Z.slice().reverse(), type: 'heatmap', colorscale: divergingColorscale,
+    zmin: -maxVal, zmax: maxVal,
+    text: labels.slice().reverse(), texttemplate: '%{text}',
+    textfont: { size: 11, color: '#e6edf3' },
+    hovertemplate: 'row %{y}, col %{x}: %{z:.4f}<extra></extra>',
+    showscale: false,
+  }], {
+    ...plotlyLayout,
+    title: { text: title, font: { size: 13, color: '#8b949e' } },
+    xaxis: { visible: false }, yaxis: { visible: false },
+    width: 300, height: 300,
+  }, { responsive: true, displayModeBar: false });
+}
+
+// Helper to get current J from §1 sliders
+function getJ3() {
+  const J = matZero(3);
+  for (let i = 0; i < 3; i++)
+    for (let j = 0; j < 3; j++)
+      J[i][j] = parseFloat(document.getElementById(`s1-${i}${j}`).value);
+  return J;
+}
+
+// Helper to get 2x2 J from §0 sliders
+function getJ2_sec0() {
+  return [
+    [parseFloat(document.getElementById('s0-00').value), parseFloat(document.getElementById('s0-01').value)],
+    [parseFloat(document.getElementById('s0-10').value), parseFloat(document.getElementById('s0-11').value)],
+  ];
+}
+
+// ============================================================
+// SECTION 0: What is a Jacobian — Canvas visualization
+// ============================================================
+(function() {
+  const ids = ['s0-00','s0-01','s0-10','s0-11'];
+  const valIds = ['s0-v-00','s0-v-01','s0-v-10','s0-v-11'];
+
+  function update0() {
+    for (let k = 0; k < ids.length; k++)
+      document.getElementById(valIds[k]).textContent = parseFloat(document.getElementById(ids[k]).value).toFixed(2);
+
+    const J = getJ2_sec0();
+    const S = matSym(J);
+    const A = matAntisym(J);
+    const nPts = 120;
+
+    const canvas = document.getElementById('sec0-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Three panels
+    const panels = [
+      { M: J, label: 'J (full)', color: '#58a6ff', cx: W/6 },
+      { M: S, label: 'J_sym (stretch)', color: '#3fb950', cx: W/2 },
+      { M: A, label: 'J_antisym (rotation)', color: '#f85149', cx: 5*W/6 },
+    ];
+
+    const scale = 45;
+
+    for (const panel of panels) {
+      const cx = panel.cx, cy = H/2;
+
+      // Draw axes
+      ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx - 80, cy); ctx.lineTo(cx + 80, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy - 80); ctx.lineTo(cx, cy + 80); ctx.stroke();
+
+      // Draw unit circle
+      ctx.strokeStyle = 'rgba(88,166,255,0.2)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= nPts; i++) {
+        const t = (2 * Math.PI * i) / nPts;
+        const x = cx + Math.cos(t) * scale, y = cy - Math.sin(t) * scale;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Draw transformed ellipse
+      ctx.strokeStyle = panel.color; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i <= nPts; i++) {
+        const t = (2 * Math.PI * i) / nPts;
+        const [tx, ty] = applyMat2(panel.M, Math.cos(t), Math.sin(t));
+        const x = cx + tx * scale, y = cy - ty * scale;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Draw some arrows showing transformation of basis vectors
+      ctx.strokeStyle = panel.color; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.6;
+      for (const [bx, by] of [[1,0],[0,1],[-1,0],[0,-1]]) {
+        const [tx, ty] = applyMat2(panel.M, bx, by);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + tx * scale, cy - ty * scale);
+        ctx.stroke();
+        // Arrowhead
+        const len = Math.sqrt(tx*tx + ty*ty);
+        if (len > 0.1) {
+          const ax = tx/len, ay = ty/len;
+          const ex = cx + tx*scale, ey = cy - ty*scale;
+          ctx.beginPath();
+          ctx.moveTo(ex, ey);
+          ctx.lineTo(ex - (ax*8 + ay*4), ey + (ay*8 - ax*4));
+          ctx.moveTo(ex, ey);
+          ctx.lineTo(ex - (ax*8 - ay*4), ey + (ay*8 + ax*4));
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+
+      // Label
+      ctx.fillStyle = panel.color; ctx.font = '12px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(panel.label, cx, 20);
+    }
+
+    // Equation
+    document.getElementById('sec0-equation').innerHTML =
+      `J = [[${J[0][0].toFixed(2)}, ${J[0][1].toFixed(2)}], [${J[1][0].toFixed(2)}, ${J[1][1].toFixed(2)}]] &nbsp;&nbsp;` +
+      `det(J) = <span class="eq-val">${(J[0][0]*J[1][1] - J[0][1]*J[1][0]).toFixed(3)}</span> &nbsp;&nbsp;` +
+      `tr(J) = <span class="eq-val">${(J[0][0]+J[1][1]).toFixed(3)}</span>`;
+  }
+
+  ids.forEach(id => document.getElementById(id).addEventListener('input', update0));
+  update0();
+})();
+
+// ============================================================
+// SECTION 1: Jacobian Decomposition
+// ============================================================
+(function() {
+  const N = 3;
+  const defaults = [[2, 1, -1], [0, 3, 2], [-1, 0, 1]];
+  const container = document.getElementById('sec1-sliders');
+  const inputs = [];
+
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      const div = document.createElement('div');
+      div.innerHTML = `<label>J[${i}][${j}]: <span class="val" id="s1-v-${i}${j}">${defaults[i][j].toFixed(1)}</span></label>
+        <input type="range" id="s1-${i}${j}" min="-5" max="5" step="0.1" value="${defaults[i][j]}">`;
+      container.appendChild(div);
+      inputs.push({ i, j, inp: div.querySelector('input') });
+      div.querySelector('input').addEventListener('input', update1);
+    }
+  }
+
+  function update1() {
+    const J = matZero(N);
+    for (const { i, j, inp } of inputs) {
+      J[i][j] = parseFloat(inp.value);
+      document.getElementById(`s1-v-${i}${j}`).textContent = parseFloat(inp.value).toFixed(1);
+    }
+    const S = matSym(J), A = matAntisym(J), recon = matAdd(S, A);
+
+    makeHeatmap('sec1-heatmap-J', J, 'J (original)');
+    makeHeatmap('sec1-heatmap-sym', S, 'J_sym = (J+Jᵀ)/2');
+    makeHeatmap('sec1-heatmap-antisym', A, 'J_antisym = (J−Jᵀ)/2');
+
+    const ok = matApproxEqual(J, recon);
+    document.getElementById('sec1-equation').innerHTML =
+      `J <span class="eq-sym">=</span> J<sub>sym</sub> + J<sub>antisym</sub> &nbsp;&nbsp;` +
+      `max|J − (J<sub>sym</sub>+J<sub>antisym</sub>)| = <span class="eq-val">${matMaxAbs(matSub(J, recon)).toExponential(2)}</span> ` +
+      (ok ? '<span class="check">✓ VERIFIED</span>' : '<span class="cross">✗ ERROR</span>');
+  }
+  update1();
+})();
+
+// ============================================================
+// SECTION 2: Symmetry & Antisymmetry
+// ============================================================
+(function() {
+  function update2() {
+    const J = getJ3();
+    const S = matSym(J), A = matAntisym(J);
+    const ST = matTranspose(S), AT = matTranspose(A), negA = matNeg(A);
+
+    const labels = [];
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) labels.push(`(${i},${j})`);
+
+    Plotly.newPlot('sec2-sym-vs-transpose', [{
+      x: labels, y: S.flat(), name: 'J_sym', type: 'bar', marker: { color: '#58a6ff' }
+    }, {
+      x: labels, y: ST.flat(), name: 'J_symᵀ', type: 'bar', marker: { color: '#3fb950' }
+    }], {
+      ...plotlyLayout,
+      title: { text: 'J_sym vs J_symᵀ (should be identical)', font: { size: 13, color: '#8b949e' } },
+      barmode: 'group', xaxis: { color: '#8b949e' }, yaxis: { color: '#8b949e' },
+      legend: { font: { color: '#8b949e' } }, height: 300,
+    }, { responsive: true, displayModeBar: false });
+
+    Plotly.newPlot('sec2-antisym-vs-neg-transpose', [{
+      x: labels, y: A.flat(), name: 'J_antisym', type: 'bar', marker: { color: '#d29922' }
+    }, {
+      x: labels, y: AT.flat().map(v => -v), name: '−J_antisymᵀ', type: 'bar', marker: { color: '#bc8cff' }
+    }], {
+      ...plotlyLayout,
+      title: { text: 'J_antisym vs −J_antisymᵀ (should be identical)', font: { size: 13, color: '#8b949e' } },
+      barmode: 'group', xaxis: { color: '#8b949e' }, yaxis: { color: '#8b949e' },
+      legend: { font: { color: '#8b949e' } }, height: 300,
+    }, { responsive: true, displayModeBar: false });
+
+    const symOk = matApproxEqual(S, ST), antiOk = matApproxEqual(AT, negA);
+    document.getElementById('sec2-equation').innerHTML =
+      `J<sub>sym</sub>ᵀ = J<sub>sym</sub> → max|diff| = <span class="eq-val">${matMaxAbs(matSub(S, ST)).toExponential(2)}</span> ` +
+      (symOk ? '<span class="check">✓</span>' : '<span class="cross">✗</span>') +
+      ` &nbsp;|&nbsp; J<sub>antisym</sub>ᵀ = −J<sub>antisym</sub> → max|diff| = <span class="eq-val">${matMaxAbs(matSub(AT, negA)).toExponential(2)}</span> ` +
+      (antiOk ? '<span class="check">✓</span>' : '<span class="cross">✗</span>');
+  }
+
+  // Draw geometric view on canvas
+  function drawSec2Canvas() {
+    const J = getJ2_sec0();
+    const S = matSym(J), A = matAntisym(J);
+    const canvas = document.getElementById('sec2-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const scale = 50;
+    const panels = [
+      { M: S, label: 'J_sym: stretches grid symmetrically', color: '#3fb950', cx: W/4 },
+      { M: A, label: 'J_antisym: rotates grid (no stretch)', color: '#f85149', cx: 3*W/4 },
+    ];
+
+    for (const panel of panels) {
+      const cx = panel.cx, cy = H/2;
+      // Grid lines
+      ctx.strokeStyle = '#30363d'; ctx.lineWidth = 0.5;
+      for (let g = -2; g <= 2; g += 0.5) {
+        // Horizontal grid line transformed
+        ctx.strokeStyle = 'rgba(88,166,255,0.15)'; ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        for (let t = -2; t <= 2; t += 0.05) {
+          const [tx, ty] = applyMat2(panel.M, t, g);
+          const x = cx + tx * scale, y = cy - ty * scale;
+          t === -2 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        // Vertical grid line transformed
+        ctx.beginPath();
+        for (let t = -2; t <= 2; t += 0.05) {
+          const [tx, ty] = applyMat2(panel.M, g, t);
+          const x = cx + tx * scale, y = cy - ty * scale;
+          t === -2 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      // Transformed circle
+      ctx.strokeStyle = panel.color; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i <= 120; i++) {
+        const t = (2 * Math.PI * i) / 120;
+        const [tx, ty] = applyMat2(panel.M, Math.cos(t), Math.sin(t));
+        const x = cx + tx * scale, y = cy - ty * scale;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      // Label
+      ctx.fillStyle = panel.color; ctx.font = '11px -apple-system, sans-serif';
+      ctx.textAlign = 'center'; ctx.fillText(panel.label, cx, 18);
+    }
+  }
+
+  document.querySelectorAll('#sec1-sliders input').forEach(inp => inp.addEventListener('input', update2));
+  ['s0-00','s0-01','s0-10','s0-11'].forEach(id =>
+    document.getElementById(id).addEventListener('input', () => { drawSec2Canvas(); }));
+  update2();
+  drawSec2Canvas();
+})();
+
+// ============================================================
+// SECTION 3: Trace Properties
+// ============================================================
+(function() {
+  const slider = document.getElementById('sec3-c');
+  const valSpan = document.getElementById('sec3-c-val');
+
+  function update3() {
+    const c = parseFloat(slider.value);
+    valSpan.textContent = c.toFixed(2);
+    const J = getJ3();
+
+    const cs = [], trJ_vals = [], trSym_vals = [], trAnti_vals = [], trScaled_vals = [];
+    for (let cc = -3; cc <= 3; cc += 0.1) {
+      cs.push(cc);
+      const cJ = matScale(cc, J);
+      trJ_vals.push(trace(cJ));
+      trSym_vals.push(trace(matSym(cJ)));
+      trAnti_vals.push(trace(matAntisym(cJ)));
+      trScaled_vals.push(cc * trace(J));
+    }
+
+    Plotly.newPlot('sec3-chart', [
+      { x: cs, y: trJ_vals, name: 'tr(cJ)', line: { color: '#58a6ff', width: 3 } },
+      { x: cs, y: trSym_vals, name: 'tr(sym(cJ))', line: { color: '#3fb950', width: 2, dash: 'dash' } },
+      { x: cs, y: trAnti_vals, name: 'tr(antisym(cJ))', line: { color: '#f85149', width: 2 } },
+      { x: cs, y: trScaled_vals, name: 'c·tr(J)', line: { color: '#d29922', width: 2, dash: 'dot' } },
+      { x: [c], y: [c * trace(J)], mode: 'markers', name: 'current c',
+        marker: { size: 14, color: '#bc8cff', symbol: 'diamond' } },
+    ], {
+      ...plotlyLayout,
+      title: { text: 'Trace properties as c varies', font: { size: 13, color: '#8b949e' } },
+      xaxis: { title: 'c', color: '#8b949e' },
+      yaxis: { title: 'trace value', color: '#8b949e' },
+      legend: { font: { color: '#8b949e' }, x: 0.02, y: 0.98 },
+      height: 380,
+      shapes: [{ type: 'line', x0: c, x1: c, y0: -30, y1: 30,
+        line: { color: '#bc8cff', width: 1, dash: 'dot' } }],
+    }, { responsive: true, displayModeBar: false });
+
+    const trAnti = trace(matAntisym(J));
+    document.getElementById('sec3-equation').innerHTML =
+      `tr(J) = <span class="eq-val">${trace(J).toFixed(4)}</span> &nbsp;|&nbsp; ` +
+      `tr(J<sub>sym</sub>) = <span class="eq-val">${trace(matSym(J)).toFixed(4)}</span> &nbsp;|&nbsp; ` +
+      `tr(J<sub>antisym</sub>) = <span class="eq-val">${trAnti.toFixed(4)}</span> ` +
+      (Math.abs(trAnti) < 1e-10 ? '<span class="check">= 0 ✓</span>' : '<span class="cross">≠ 0 ✗</span>') +
+      ` &nbsp;|&nbsp; tr(${c.toFixed(2)}·J) = <span class="eq-val">${(c * trace(J)).toFixed(4)}</span> = ` +
+      `${c.toFixed(2)} × ${trace(J).toFixed(4)} <span class="check">✓</span>`;
+
+    // Canvas: area change visualization
+    drawSec3Canvas(c);
+  }
+
+  function drawSec3Canvas(c) {
+    const J2 = getJ2_sec0();
+    const canvas = document.getElementById('sec3-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const scale = 40;
+    const cx1 = W/4, cx2 = 3*W/4, cy = H/2;
+
+    // Input square
+    const sq = [[-0.8,-0.8],[0.8,-0.8],[0.8,0.8],[-0.8,0.8],[-0.8,-0.8]];
+
+    // Draw input square
+    ctx.strokeStyle = 'rgba(88,166,255,0.4)'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let k = 0; k < sq.length; k++) {
+      const x = cx1 + sq[k][0]*scale, y = cy - sq[k][1]*scale;
+      k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(88,166,255,0.08)'; ctx.fill();
+
+    // Transformed shape
+    const cJ = matScale(c, J2);
+    ctx.strokeStyle = trace(cJ) > 0 ? '#3fb950' : '#f85149'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let k = 0; k < sq.length; k++) {
+      const [tx, ty] = applyMat2(cJ, sq[k][0], sq[k][1]);
+      const x = cx2 + tx*scale, y = cy - ty*scale;
+      k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    const fillColor = trace(cJ) > 0 ? 'rgba(63,185,80,0.1)' : 'rgba(248,81,73,0.1)';
+    ctx.fillStyle = fillColor; ctx.fill();
+
+    // Labels
+    ctx.fillStyle = '#8b949e'; ctx.font = '11px -apple-system, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('Input square', cx1, 18);
+    ctx.fillText(`Transformed by ${c.toFixed(1)}·J₂ₓ₂`, cx2, 18);
+    const det = cJ[0][0]*cJ[1][1] - cJ[0][1]*cJ[1][0];
+    ctx.fillText(`det = ${det.toFixed(3)}, tr = ${trace(cJ).toFixed(3)}`, cx2, H - 8);
+    ctx.fillStyle = trace(cJ) > 0 ? '#3fb950' : '#f85149';
+    ctx.fillText(trace(cJ) > 0 ? '↗ expanding' : '↙ compressing', cx2, H - 22);
+  }
+
+  slider.addEventListener('input', update3);
+  document.querySelectorAll('#sec1-sliders input').forEach(inp => inp.addEventListener('input', update3));
+  ['s0-00','s0-01','s0-10','s0-11'].forEach(id =>
+    document.getElementById(id).addEventListener('input', update3));
+  update3();
+})();
+
+// ============================================================
+// SECTION 4: Frobenius Orthogonality
+// ============================================================
+(function() {
+  function update4() {
+    const J = getJ3();
+    const S = matSym(J), A = matAntisym(J);
+    const fS = frobNorm(S), fA = frobNorm(A), fJ = frobNorm(J);
+    const inner = frobInner(S, A);
+    const lhs = fJ * fJ, rhs = fS * fS + fA * fA;
+
+    Plotly.newPlot('sec4-chart', [{
+      x: ['‖J‖²_F', '‖J_sym‖²_F', '‖J_antisym‖²_F', '‖J_sym‖²+‖J_anti‖²', '⟨J_sym, J_anti⟩_F'],
+      y: [lhs, fS*fS, fA*fA, rhs, inner],
+      type: 'bar',
+      marker: { color: ['#58a6ff', '#3fb950', '#d29922', '#bc8cff',
+        Math.abs(inner) < 1e-8 ? '#3fb950' : '#f85149'] },
+      text: [lhs.toFixed(4), (fS*fS).toFixed(4), (fA*fA).toFixed(4), rhs.toFixed(4), inner.toExponential(3)],
+      textposition: 'outside', textfont: { color: '#e6edf3', size: 11 },
+    }], {
+      ...plotlyLayout,
+      title: { text: 'Frobenius Orthogonality & Pythagorean Theorem', font: { size: 13, color: '#8b949e' } },
+      xaxis: { color: '#8b949e' }, yaxis: { title: 'value', color: '#8b949e' }, height: 350,
+    }, { responsive: true, displayModeBar: false });
+
+    // Cancellation chart: show individual terms f(i,k) = (J[k][i]² - J[i][k]²)/4
+    const terms = [], termLabels = [], termColors = [];
+    for (let i = 0; i < 3; i++) for (let k = 0; k < 3; k++) {
+      const val = (J[k][i]*J[k][i] - J[i][k]*J[i][k]) / 4;
+      terms.push(val);
+      termLabels.push(`(${i},${k})`);
+      termColors.push(i === k ? '#8b949e' : (val > 0 ? '#58a6ff' : '#f85149'));
+    }
+
+    Plotly.newPlot('sec4-cancel-chart', [{
+      x: termLabels, y: terms, type: 'bar',
+      marker: { color: termColors },
+      text: terms.map(v => v.toFixed(4)), textposition: 'outside',
+      textfont: { color: '#e6edf3', size: 10 },
+    }], {
+      ...plotlyLayout,
+      title: { text: 'Individual terms (J[k][i]²−J[i][k]²)/4 — they cancel pairwise!', font: { size: 12, color: '#8b949e' } },
+      xaxis: { title: '(i,k)', color: '#8b949e' }, yaxis: { color: '#8b949e' }, height: 300,
+      annotations: [{ x: 0.5, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false,
+        text: `Sum = ${terms.reduce((a,b)=>a+b,0).toExponential(2)}`,
+        font: { color: '#3fb950', size: 12 } }],
+    }, { responsive: true, displayModeBar: false });
+
+    const ok = Math.abs(inner) < 1e-8, pythOk = Math.abs(lhs - rhs) < 1e-8;
+    document.getElementById('sec4-equation').innerHTML =
+      `⟨J<sub>sym</sub>, J<sub>antisym</sub>⟩<sub>F</sub> = <span class="eq-val">${inner.toExponential(3)}</span> ` +
+      (ok ? '<span class="check">= 0 ✓</span>' : '<span class="cross">≠ 0 ✗</span>') +
+      ` &nbsp;&nbsp;|&nbsp;&nbsp; ‖J‖² = ‖J<sub>sym</sub>‖² + ‖J<sub>anti</sub>‖² → ` +
+      `<span class="eq-val">${lhs.toFixed(4)}</span> = <span class="eq-val">${rhs.toFixed(4)}</span> ` +
+      (pythOk ? '<span class="check">✓ Pythagorean</span>' : '<span class="cross">✗</span>');
+
+    // Canvas: orthogonality in matrix space
+    drawSec4Canvas();
+  }
+
+  function drawSec4Canvas() {
+    const J = getJ3();
+    const S = matSym(J), A = matAntisym(J);
+    const canvas = document.getElementById('sec4-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W/2, cy = H/2;
+    const fS = frobNorm(S), fA = frobNorm(A);
+    const maxNorm = Math.max(fS, fA, 0.1);
+    const scale = 100 / maxNorm;
+
+    // Draw J_sym vector (horizontal = symmetric direction)
+    const sx = fS * scale, sy = 0;
+    // Draw J_antisym vector (vertical = antisymmetric direction)
+    const ax = 0, ay = fA * scale;
+    // Draw J = S + A (diagonal)
+    const jx = sx, jy = ay;
+
+    // Rectangle showing orthogonality
+    ctx.strokeStyle = 'rgba(88,166,255,0.15)'; ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cx + sx, cy); ctx.lineTo(cx + sx, cy - ay);
+    ctx.moveTo(cx, cy - ay); ctx.lineTo(cx + sx, cy - ay);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Right angle marker
+    const rSize = 10;
+    ctx.strokeStyle = '#8b949e'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx + rSize, cy); ctx.lineTo(cx + rSize, cy - rSize);
+    ctx.lineTo(cx, cy - rSize); ctx.stroke();
+
+    // J_sym arrow
+    ctx.strokeStyle = '#3fb950'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + sx, cy); ctx.stroke();
+    drawArrowhead(ctx, cx + sx, cy, 0, '#3fb950');
+    ctx.fillStyle = '#3fb950'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(`J_sym (‖${fS.toFixed(2)}‖)`, cx + sx/2, cy + 20);
+
+    // J_antisym arrow
+    ctx.strokeStyle = '#f85149'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - ay); ctx.stroke();
+    drawArrowhead(ctx, cx, cy - ay, -Math.PI/2, '#f85149');
+    ctx.fillStyle = '#f85149'; ctx.textAlign = 'left';
+    ctx.fillText(`J_anti (‖${fA.toFixed(2)}‖)`, cx + 8, cy - ay/2);
+
+    // J = S + A arrow (diagonal)
+    ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + jx, cy - jy); ctx.stroke();
+    const angle = Math.atan2(-jy, jx);
+    drawArrowhead(ctx, cx + jx, cy - jy, angle, '#58a6ff');
+    ctx.fillStyle = '#58a6ff'; ctx.textAlign = 'left';
+    ctx.fillText(`J (‖${frobNorm(J).toFixed(2)}‖)`, cx + jx + 5, cy - jy - 5);
+
+    // Label
+    ctx.fillStyle = '#8b949e'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('Matrix space: J_sym ⊥ J_antisym', cx, H - 8);
+  }
+
+  function drawArrowhead(ctx, x, y, angle, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - 10*Math.cos(angle - 0.3), y - 10*Math.sin(angle - 0.3));
+    ctx.lineTo(x - 10*Math.cos(angle + 0.3), y - 10*Math.sin(angle + 0.3));
+    ctx.closePath(); ctx.fill();
+  }
+
+  document.querySelectorAll('#sec1-sliders input').forEach(inp => inp.addEventListener('input', update4));
+  update4();
+})();
+
+// ============================================================
+// SECTION 5: Idempotence & Cross-Annihilation
+// ============================================================
+(function() {
+  function update5() {
+    const J = getJ3();
+    const S = matSym(J), A = matAntisym(J);
+    const SS = matSym(S), AA = matAntisym(A), SA = matSym(A), AS_ = matAntisym(S);
+
+    const tests = [
+      { name: 'sym(sym(J)) = sym(J)', val: matMaxAbs(matSub(SS, S)) },
+      { name: 'antisym(antisym(J)) = antisym(J)', val: matMaxAbs(matSub(AA, A)) },
+      { name: 'sym(antisym(J)) = 0', val: matMaxAbs(SA) },
+      { name: 'antisym(sym(J)) = 0', val: matMaxAbs(AS_) },
+    ];
+
+    Plotly.newPlot('sec5-chart', [{
+      x: tests.map(t => t.name), y: tests.map(t => t.val), type: 'bar',
+      marker: { color: tests.map(t => t.val < 1e-10 ? '#3fb950' : '#f85149') },
+      text: tests.map(t => t.val.toExponential(2)),
+      textposition: 'outside', textfont: { color: '#e6edf3', size: 11 },
+    }], {
+      ...plotlyLayout,
+      title: { text: 'Max absolute error for each property', font: { size: 13, color: '#8b949e' } },
+      xaxis: { color: '#8b949e', tickangle: -15, tickfont: { size: 9 } },
+      yaxis: { title: 'max |error|', color: '#8b949e', type: 'log', range: [-16, 1] },
+      height: 320,
+    }, { responsive: true, displayModeBar: false });
+
+    document.getElementById('sec5-matrices').innerHTML = `
+      <div class="matrix-card"><div class="label">sym(antisym(J)) — should be 0</div><div class="values">${matToStr(SA)}</div></div>
+      <div class="matrix-card"><div class="label">antisym(sym(J)) — should be 0</div><div class="values">${matToStr(AS_)}</div></div>
+    `;
+
+    // Canvas: polarizer analogy
+    const canvas = document.getElementById('sec5-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const labels = ['sym', 'sym∘sym', 'sym∘anti', 'anti∘sym'];
+    const colors = ['#3fb950', '#3fb950', '#f85149', '#f85149'];
+    const results = ['= sym(J)', '= sym(J) ✓', '= 0 ✓', '= 0 ✓'];
+    const barWidths = [0.8, 0.8, 0, 0]; // visual "pass-through" amount
+
+    for (let k = 0; k < 4; k++) {
+      const y = 30 + k * 62;
+      // Filter box
+      ctx.fillStyle = 'rgba(88,166,255,0.08)';
+      ctx.strokeStyle = colors[k]; ctx.lineWidth = 2;
+      ctx.fillRect(20, y, 120, 40); ctx.strokeRect(20, y, 120, 40);
+      ctx.fillStyle = colors[k]; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(labels[k], 80, y + 25);
+
+      // Arrow in
+      ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(150, y + 20); ctx.lineTo(200, y + 20); ctx.stroke();
+
+      // Result bar
+      const bw = barWidths[k] * 100;
+      ctx.fillStyle = bw > 0 ? 'rgba(63,185,80,0.3)' : 'rgba(248,81,73,0.3)';
+      ctx.fillRect(210, y + 5, bw, 30);
+      ctx.strokeStyle = bw > 0 ? '#3fb950' : '#f85149'; ctx.lineWidth = 1;
+      ctx.strokeRect(210, y + 5, Math.max(bw, 2), 30);
+
+      // Result text
+      ctx.fillStyle = '#e6edf3'; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+      ctx.fillText(results[k], 220 + bw, y + 25);
+    }
+  }
+
+  document.querySelectorAll('#sec1-sliders input').forEach(inp => inp.addEventListener('input', update5));
+  update5();
+})();
+
+// ============================================================
+// SECTION 6: Shear Tensor
+// ============================================================
+(function() {
+  function update6() {
+    const J = getJ3();
+    const S = matSym(J), shear = matShear(J), iso = matIso(J);
+
+    makeHeatmap('sec6-heatmap-sym', S, `J_sym (tr=${trace(S).toFixed(3)})`);
+    makeHeatmap('sec6-heatmap-shear', shear, `Shear S (tr=${trace(shear).toFixed(3)})`);
+    makeHeatmap('sec6-heatmap-iso', iso, `Isotropic (tr/n)·I (tr=${trace(iso).toFixed(3)})`);
+
+    const trShear = trace(shear);
+    document.getElementById('sec6-equation').innerHTML =
+      `J<sub>sym</sub> = Shear + (tr/n)·I &nbsp;&nbsp;|&nbsp;&nbsp; ` +
+      `tr(J<sub>sym</sub>) = <span class="eq-val">${trace(S).toFixed(4)}</span>, ` +
+      `tr(Shear) = <span class="eq-val">${trShear.toExponential(3)}</span> ` +
+      (Math.abs(trShear) < 1e-10 ? '<span class="check">= 0 ✓ trace-free</span>' : '<span class="cross">≠ 0 ✗</span>') +
+      `, tr(Iso) = <span class="eq-val">${trace(iso).toFixed(4)}</span>`;
+
+    // Canvas: circle → ellipse decomposition
+    drawSec6Canvas();
+  }
+
+  function drawSec6Canvas() {
+    const J2 = getJ2_sec0();
+    const S2 = matSym(J2);
+    const t2 = trace(S2);
+    const iso2 = [[t2/2, 0], [0, t2/2]];
+    const shear2 = matSub(S2, iso2);
+
+    const canvas = document.getElementById('sec6-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const panels = [
+      { M: S2, label: 'J_sym (full stretch)', color: '#3fb950', cx: W/6 },
+      { M: shear2, label: 'Shear only (tr=0)', color: '#d29922', cx: W/2 },
+      { M: iso2, label: 'Isotropic (uniform)', color: '#bc8cff', cx: 5*W/6 },
+    ];
+    const scale = 40;
+
+    for (const panel of panels) {
+      const cx = panel.cx, cy = H/2;
+      // Unit circle reference
+      ctx.strokeStyle = 'rgba(88,166,255,0.2)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= 80; i++) {
+        const t = (2*Math.PI*i)/80;
+        const x = cx + Math.cos(t)*scale, y = cy - Math.sin(t)*scale;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      // Transformed
+      ctx.strokeStyle = panel.color; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i <= 80; i++) {
+        const t = (2*Math.PI*i)/80;
+        const [tx, ty] = applyMat2(panel.M, Math.cos(t), Math.sin(t));
+        const x = cx + tx*scale, y = cy - ty*scale;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.fillStyle = panel.color; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(panel.label, cx, 16);
+    }
+  }
+
+  document.querySelectorAll('#sec1-sliders input').forEach(inp => inp.addEventListener('input', update6));
+  ['s0-00','s0-01','s0-10','s0-11'].forEach(id =>
+    document.getElementById(id).addEventListener('input', update6));
+  update6();
+})();
+
+// ============================================================
+// SECTION 7: Residual Connection
+// ============================================================
+(function() {
+  const nSlider = document.getElementById('sec7-n');
+  const scaleSlider = document.getElementById('sec7-scale');
+
+  function genDelta(n, scale) {
+    const D = [];
+    for (let i = 0; i < n; i++) {
+      D.push([]);
+      for (let j = 0; j < n; j++)
+        D[i].push(Math.sin((i+1)*3.7 + (j+1)*2.3) * scale);
+    }
+    return D;
+  }
+
+  function update7() {
+    const n = parseInt(nSlider.value), scale = parseFloat(scaleSlider.value);
+    document.getElementById('sec7-n-val').textContent = n;
+    document.getElementById('sec7-scale-val').textContent = scale.toFixed(2);
+
+    const D = genDelta(n, scale), I = matId(n), J = matAdd(I, D);
+    const trJ = trace(J), trD = trace(D), expected = n + trD;
+
+    // Sweep scale
+    const scales = [], trJ_vals = [], nPlusTrD_vals = [];
+    for (let s = 0; s <= 2; s += 0.05) {
+      scales.push(s);
+      const dd = genDelta(n, s);
+      trJ_vals.push(trace(matAdd(matId(n), dd)));
+      nPlusTrD_vals.push(n + trace(dd));
+    }
+
+    Plotly.newPlot('sec7-chart', [
+      { x: scales, y: trJ_vals, name: 'tr(I + Δ)', line: { color: '#58a6ff', width: 3 } },
+      { x: scales, y: nPlusTrD_vals, name: 'n + tr(Δ)', line: { color: '#3fb950', width: 2, dash: 'dash' } },
+      { x: [scale], y: [trace(matAdd(matId(n), genDelta(n, scale)))], mode: 'markers', name: 'current',
+        marker: { size: 14, color: '#bc8cff', symbol: 'diamond' } },
+    ], {
+      ...plotlyLayout,
+      title: { text: `Residual divergence (n=${n})`, font: { size: 13, color: '#8b949e' } },
+      xaxis: { title: 'Δ scale', color: '#8b949e' },
+      yaxis: { title: 'trace value', color: '#8b949e' },
+      legend: { font: { color: '#8b949e' } },
+      height: 350,
+    }, { responsive: true, displayModeBar: false });
+
+    // Decomposition stacked bar
+    Plotly.newPlot('sec7-decomp-chart', [{
+      x: ['Divergence breakdown'],
+      y: [n],
+      name: 'tr(I) = n',
+      type: 'bar',
+      marker: { color: '#58a6ff' },
+      text: [n.toFixed(0)],
+      textposition: 'inside',
+      textfont: { color: '#fff', size: 13 },
+    }, {
+      x: ['Divergence breakdown'],
+      y: [trD],
+      name: 'tr(Δ)',
+      type: 'bar',
+      marker: { color: trD >= 0 ? '#3fb950' : '#f85149' },
+      text: [trD.toFixed(3)],
+      textposition: 'inside',
+      textfont: { color: '#fff', size: 13 },
+    }], {
+      ...plotlyLayout,
+      barmode: 'stack',
+      title: { text: 'Divergence = n + tr(Δ)', font: { size: 13, color: '#8b949e' } },
+      xaxis: { color: '#8b949e' },
+      yaxis: { title: 'trace value', color: '#8b949e' },
+      legend: { font: { color: '#8b949e' } },
+      height: 350,
+      annotations: [{
+        x: 'Divergence breakdown', y: trJ,
+        text: `Total: ${trJ.toFixed(3)}`,
+        showarrow: true, arrowhead: 2,
+        font: { color: '#e6edf3', size: 12 },
+        ax: 60, ay: -30,
+      }],
+    }, { responsive: true, displayModeBar: false });
+
+    const antiJ = matAntisym(J);
+    const antiD = matAntisym(D);
+    const antiMatch = matApproxEqual(antiJ, antiD);
+
+    document.getElementById('sec7-equation').innerHTML =
+      `tr(I + Δ) = <span class="eq-val">${trJ.toFixed(4)}</span> &nbsp;|&nbsp; ` +
+      `n + tr(Δ) = <span class="eq-val">${n}</span> + <span class="eq-val">${trD.toFixed(4)}</span> = <span class="eq-val">${expected.toFixed(4)}</span> ` +
+      (Math.abs(trJ - expected) < 1e-10 ? '<span class="check">✓</span>' : '<span class="cross">✗</span>') +
+      ` &nbsp;&nbsp;|&nbsp;&nbsp; antisym(I+Δ) = antisym(Δ) → max|diff| = <span class="eq-val">${matMaxAbs(matSub(antiJ, antiD)).toExponential(2)}</span> ` +
+      (antiMatch ? '<span class="check">✓</span>' : '<span class="cross">✗</span>');
+  }
+
+  nSlider.addEventListener('input', update7);
+  scaleSlider.addEventListener('input', update7);
+  update7();
+})();
+
+// ============================================================
+// SECTION 8: Trace Cyclicity
+// ============================================================
+(function() {
+  let A3, B3, C3;
+
+  function randomize8() {
+    A3 = randomMat(3, 3);
+    B3 = randomMat(3, 3);
+    C3 = randomMat(3, 3);
+    update8();
+  }
+
+  function update8() {
+    if (!A3) { randomize8(); return; }
+
+    const ABC = matMult(A3, matMult(B3, C3));
+    const BCA = matMult(B3, matMult(C3, A3));
+    const CAB = matMult(C3, matMult(A3, B3));
+    const trABC = trace(ABC), trBCA = trace(BCA), trCAB = trace(CAB);
+
+    const AB = matMult(A3, B3), BA = matMult(B3, A3);
+    const trAB = trace(AB), trBA = trace(BA);
+
+    if (!update8.history) update8.history = { trABC: [], trBCA: [], trCAB: [], diffs1: [], diffs2: [], idx: [] };
+    const h = update8.history;
+    const idx = h.idx.length;
+    h.idx.push(idx);
+    h.trABC.push(trABC); h.trBCA.push(trBCA); h.trCAB.push(trCAB);
+    h.diffs1.push(Math.abs(trABC - trBCA));
+    h.diffs2.push(Math.abs(trABC - trCAB));
+
+    const maxH = 30;
+    if (h.idx.length > maxH) {
+      h.idx = h.idx.slice(-maxH); h.trABC = h.trABC.slice(-maxH);
+      h.trBCA = h.trBCA.slice(-maxH); h.trCAB = h.trCAB.slice(-maxH);
+      h.diffs1 = h.diffs1.slice(-maxH); h.diffs2 = h.diffs2.slice(-maxH);
+    }
+
+    Plotly.newPlot('sec8-chart', [
+      { x: h.idx, y: h.trABC, name: 'tr(ABC)', mode: 'lines+markers',
+        line: { color: '#58a6ff', width: 3 }, marker: { size: 6 } },
+      { x: h.idx, y: h.trBCA, name: 'tr(BCA)', mode: 'lines+markers',
+        line: { color: '#3fb950', width: 2, dash: 'dash' }, marker: { size: 6 } },
+      { x: h.idx, y: h.trCAB, name: 'tr(CAB)', mode: 'lines+markers',
+        line: { color: '#d29922', width: 2, dash: 'dot' }, marker: { size: 6 } },
+    ], {
+      ...plotlyLayout,
+      title: { text: 'Trace cyclicity across random trials', font: { size: 13, color: '#8b949e' } },
+      xaxis: { title: 'trial', color: '#8b949e' },
+      yaxis: { title: 'trace value', color: '#8b949e' },
+      legend: { font: { color: '#8b949e' } }, height: 350,
+    }, { responsive: true, displayModeBar: false });
+
+    // Difference chart
+    Plotly.newPlot('sec8-diff-chart', [
+      { x: h.idx, y: h.diffs1, name: '|tr(ABC)−tr(BCA)|', mode: 'lines+markers',
+        line: { color: '#58a6ff', width: 2 }, marker: { size: 5 } },
+      { x: h.idx, y: h.diffs2, name: '|tr(ABC)−tr(CAB)|', mode: 'lines+markers',
+        line: { color: '#d29922', width: 2 }, marker: { size: 5 } },
+    ], {
+      ...plotlyLayout,
+      title: { text: 'Differences (should be ≈ 0)', font: { size: 13, color: '#8b949e' } },
+      xaxis: { title: 'trial', color: '#8b949e' },
+      yaxis: { title: '|difference|', color: '#8b949e', type: 'log', range: [-16, 0] },
+      legend: { font: { color: '#8b949e' } }, height: 300,
+    }, { responsive: true, displayModeBar: false });
+
+    const ok3 = Math.abs(trABC - trBCA) < 1e-8 && Math.abs(trABC - trCAB) < 1e-8;
+    const ok2 = Math.abs(trAB - trBA) < 1e-8;
+    document.getElementById('sec8-equation').innerHTML =
+      `tr(ABC) = <span class="eq-val">${trABC.toFixed(6)}</span> &nbsp;|&nbsp; ` +
+      `tr(BCA) = <span class="eq-val">${trBCA.toFixed(6)}</span> &nbsp;|&nbsp; ` +
+      `tr(CAB) = <span class="eq-val">${trCAB.toFixed(6)}</span> ` +
+      (ok3 ? '<span class="check">✓ all equal</span>' : '<span class="cross">✗</span>') +
+      `<br>tr(AB) = <span class="eq-val">${trAB.toFixed(6)}</span> &nbsp;|&nbsp; ` +
+      `tr(BA) = <span class="eq-val">${trBA.toFixed(6)}</span> ` +
+      (ok2 ? '<span class="check">✓</span>' : '<span class="cross">✗</span>');
+  }
+
+  document.getElementById('sec8-randomize').addEventListener('click', randomize8);
+  randomize8();
+})();
+
+// ============================================================
+// SECTION 9: Orthogonal Similarity Invariance
+// ============================================================
+(function() {
+  const thetaSlider = document.getElementById('sec9-theta');
+  const thetaVal = document.getElementById('sec9-theta-val');
+  const degVal = document.getElementById('sec9-deg-val');
+  const J2 = [[3, 1], [-2, 4]];
+
+  function update9() {
+    const theta = parseFloat(thetaSlider.value);
+    thetaVal.textContent = theta.toFixed(2);
+    degVal.textContent = (theta * 180 / Math.PI).toFixed(1);
+
+    const Q = rotMat2(theta), QT = matTranspose(Q);
+    const QTJQ = matMult(QT, matMult(J2, Q));
+    const trJ = trace(J2), trQTJQ = trace(QTJQ);
+    const QQT = matMult(Q, QT), isOrth = matApproxEqual(QQT, matId(2));
+
+    const thetas = [], trOriginal = [], trRotated = [];
+    for (let t = 0; t <= 6.3; t += 0.05) {
+      thetas.push(t);
+      const Qq = rotMat2(t), QqT = matTranspose(Qq);
+      trOriginal.push(trJ);
+      trRotated.push(trace(matMult(QqT, matMult(J2, Qq))));
+    }
+
+    Plotly.newPlot('sec9-chart', [
+      { x: thetas, y: trOriginal, name: 'tr(J)', line: { color: '#58a6ff', width: 3 } },
+      { x: thetas, y: trRotated, name: 'tr(QᵀJQ)', line: { color: '#3fb950', width: 2, dash: 'dash' } },
+      { x: [theta], y: [trQTJQ], mode: 'markers', name: 'current θ',
+        marker: { size: 14, color: '#bc8cff', symbol: 'diamond' } },
+    ], {
+      ...plotlyLayout,
+      title: { text: 'Trace invariance under orthogonal similarity (2×2)', font: { size: 13, color: '#8b949e' } },
+      xaxis: { title: 'θ (radians)', color: '#8b949e' },
+      yaxis: { title: 'trace value', color: '#8b949e', range: [trJ - 2, trJ + 2] },
+      legend: { font: { color: '#8b949e' } }, height: 350,
+      shapes: [{ type: 'line', x0: theta, x1: theta, y0: trJ - 2, y1: trJ + 2,
+        line: { color: '#bc8cff', width: 1, dash: 'dot' } }],
+    }, { responsive: true, displayModeBar: false });
+
+    // Canvas: ellipse under rotation
+    const canvas = document.getElementById('sec9-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    const cx = W/2, cy = H/2, scale = 35;
+
+    // Axes
+    ctx.strokeStyle = '#30363d'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx - 130, cy); ctx.lineTo(cx + 130, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy - 130); ctx.lineTo(cx, cy + 130); ctx.stroke();
+
+    // Unit circle
+    ctx.strokeStyle = 'rgba(88,166,255,0.15)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+      const t = (2*Math.PI*i)/100;
+      const x = cx + Math.cos(t)*scale, y = cy - Math.sin(t)*scale;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // J ellipse
+    ctx.strokeStyle = '#58a6ff'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+      const t = (2*Math.PI*i)/100;
+      const [tx, ty] = applyMat2(J2, Math.cos(t), Math.sin(t));
+      const x = cx + tx*scale, y = cy - ty*scale;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // QᵀJQ ellipse
+    ctx.strokeStyle = '#3fb950'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+      const t = (2*Math.PI*i)/100;
+      const [tx, ty] = applyMat2(QTJQ, Math.cos(t), Math.sin(t));
+      const x = cx + tx*scale, y = cy - ty*scale;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw Q rotation arrow
+    const arrowR = 110;
+    ctx.strokeStyle = '#bc8cff'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, arrowR, -0.1, -theta - 0.1, theta > 0);
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#58a6ff'; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('J (blue solid)', 10, 20);
+    ctx.fillStyle = '#3fb950';
+    ctx.fillText('QᵀJQ (green dashed)', 10, 36);
+    ctx.fillStyle = '#bc8cff';
+    ctx.fillText(`θ = ${(theta*180/Math.PI).toFixed(1)}°`, 10, 52);
+    ctx.fillStyle = '#8b949e'; ctx.textAlign = 'center';
+    ctx.fillText('Same trace, different shape!', cx, H - 10);
+
+    const ok = Math.abs(trJ - trQTJQ) < 1e-10;
+    document.getElementById('sec9-equation').innerHTML =
+      `J = [[3,1],[-2,4]], θ = <span class="eq-val">${theta.toFixed(2)}</span> rad (<span class="eq-val">${(theta*180/Math.PI).toFixed(1)}</span>°) &nbsp;&nbsp;|&nbsp;&nbsp; ` +
+      `QQᵀ = I? ${isOrth ? '<span class="check">✓</span>' : '<span class="cross">✗</span>'} &nbsp;&nbsp;|&nbsp;&nbsp; ` +
+      `tr(J) = <span class="eq-val">${trJ.toFixed(6)}</span> &nbsp;|&nbsp; ` +
+      `tr(QᵀJQ) = <span class="eq-val">${trQTJQ.toFixed(6)}</span> ` +
+      (ok ? '<span class="check">✓ invariant</span>' : '<span class="cross">✗</span>');
+  }
+
+  thetaSlider.addEventListener('input', update9);
+  update9();
+})();
+
+// ============================================================
+// SECTION 10: Grand Summary
+// ============================================================
+(function() {
+  function update10() {
+    const J = getJ3();
+    const n = 3;
+    const S = matSym(J), A = matAntisym(J), Z = matZero(n);
+
+    const tests = [
+      { name: '1. J = J_sym + J_antisym', pass: matApproxEqual(J, matAdd(S, A)),
+        val: matMaxAbs(matSub(J, matAdd(S, A))), coq: 'jacobian_decomposition_general' },
+      { name: '2. J_symᵀ = J_sym', pass: matApproxEqual(matTranspose(S), S),
+        val: matMaxAbs(matSub(matTranspose(S), S)), coq: 'sym_is_symmetric_general' },
+      { name: '3. J_antisymᵀ = −J_antisym', pass: matApproxEqual(matTranspose(A), matNeg(A)),
+        val: matMaxAbs(matSub(matTranspose(A), matNeg(A))), coq: 'antisym_is_antisymmetric_general' },
+      { name: '4. ⟨J_sym, J_antisym⟩_F = 0', pass: Math.abs(frobInner(S, A)) < 1e-10,
+        val: Math.abs(frobInner(S, A)), coq: 'frobenius_sym_antisym_orthogonal' },
+      { name: '5. tr(J) = tr(J_sym)', pass: Math.abs(trace(J) - trace(S)) < 1e-10,
+        val: Math.abs(trace(J) - trace(S)), coq: 'divergence_from_symmetric_part_general' },
+      { name: '6. tr(J_antisym) = 0', pass: Math.abs(trace(A)) < 1e-10,
+        val: Math.abs(trace(A)), coq: 'antisym_trace_zero_general' },
+      { name: '7. sym(sym(J)) = sym(J)', pass: matApproxEqual(matSym(S), S),
+        val: matMaxAbs(matSub(matSym(S), S)), coq: 'sym_idempotent_general' },
+      { name: '8. antisym(antisym(J)) = antisym(J)', pass: matApproxEqual(matAntisym(A), A),
+        val: matMaxAbs(matSub(matAntisym(A), A)), coq: 'antisym_idempotent_general' },
+      { name: '9. sym(antisym(J)) = 0', pass: matApproxEqual(matSym(A), Z),
+        val: matMaxAbs(matSym(A)), coq: 'sym_of_antisym_zero_general' },
+      { name: '10. antisym(sym(J)) = 0', pass: matApproxEqual(matAntisym(S), Z),
+        val: matMaxAbs(matAntisym(S)), coq: 'antisym_of_sym_zero_general' },
+    ];
+
+    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.88em;">';
+    html += '<tr style="border-bottom:1px solid var(--border);">' +
+      '<th style="text-align:left; padding:8px; color:var(--dim);">Property</th>' +
+      '<th style="text-align:left; padding:8px; color:var(--dim);">Coq Theorem</th>' +
+      '<th style="text-align:right; padding:8px; color:var(--dim);">Max |error|</th>' +
+      '<th style="text-align:center; padding:8px; color:var(--dim);">Status</th></tr>';
+
+    let allPass = true;
+    for (const t of tests) {
+      if (!t.pass) allPass = false;
+      html += `<tr style="border-bottom:1px solid rgba(48,54,61,0.5);">` +
+        `<td style="padding:8px; color:var(--text);">${t.name}</td>` +
+        `<td style="padding:8px; font-family:monospace; font-size:0.85em; color:var(--accent);">${t.coq}</td>` +
+        `<td style="padding:8px; text-align:right; font-family:monospace; color:var(--dim);">${t.val.toExponential(2)}</td>` +
+        `<td style="padding:8px; text-align:center; font-size:1.2em;">${t.pass ? '<span class="check">✓</span>' : '<span class="cross">✗</span>'}</td></tr>`;
+    }
+    html += '</table>';
+    html += `<div class="equation" style="margin-top:16px; font-size:1.2em;">` +
+      (allPass
+        ? '<span class="check">🎉 ALL 10 PROPERTIES VERIFIED — Proof is numerically consistent</span>'
+        : '<span class="cross">⚠ Some properties failed numerical verification</span>') +
+      `</div>`;
+    document.getElementById('sec10-results').innerHTML = html;
+
+    // Radar chart
+    const radarVals = tests.map(t => t.pass ? 1 : 0);
+    Plotly.newPlot('sec10-radar', [{
+      type: 'scatterpolar',
+      r: [...radarVals, radarVals[0]],
+      theta: [...tests.map((t, i) => `P${i+1}`), 'P1'],
+      fill: 'toself',
+      fillcolor: allPass ? 'rgba(63,185,80,0.15)' : 'rgba(248,81,73,0.15)',
+      line: { color: allPass ? '#3fb950' : '#f85149', width: 2 },
+      marker: { size: 8, color: tests.map(t => t.pass ? '#3fb950' : '#f85149') },
+      text: tests.map(t => t.name),
+      hovertemplate: '%{text}<br>%{r}<extra></extra>',
+    }], {
+      ...plotlyLayout,
+      polar: {
+        bgcolor: '#0d1117',
+        radialaxis: { visible: true, range: [0, 1.2], color: '#8b949e',
+          tickvals: [0, 1], ticktext: ['FAIL', 'PASS'] },
+        angularaxis: { color: '#8b949e' },
+      },
+      title: { text: 'Property Verification Radar', font: { size: 13, color: '#8b949e' } },
+      height: 400,
+      showlegend: false,
+    }, { responsive: true, displayModeBar: false });
+  }
+
+  document.querySelectorAll('#sec1-sliders input').forEach(inp => inp.addEventListener('input', update10));
+  update10();
+})();
+
+</script>
+
+</body>
+</html>
