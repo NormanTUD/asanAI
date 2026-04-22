@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Persistent Landscapes & Wasserstein-1 Distance Explorer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    overflow-x: hidden;
+  }
+  h1 {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.8em;
+    background: linear-gradient(135deg, #1a1e2e, #162030);
+    border-bottom: 2px solid #30363d;
+    color: #58a6ff;
+  }
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .section {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .section h2 {
+    color: #58a6ff;
+    margin-bottom: 8px;
+    font-size: 1.3em;
+  }
+  .section .desc {
+    color: #8b949e;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    font-size: 0.95em;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  canvas {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background: #0d1117;
+    border: 1px solid #21262d;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 12px;
+    align-items: center;
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .control-group label {
+    font-size: 0.82em;
+    color: #8b949e;
+  }
+  .control-group input[type="range"] {
+    width: 160px;
+    accent-color: #58a6ff;
+  }
+  .control-group .val {
+    font-size: 0.78em;
+    color: #58a6ff;
+    font-weight: bold;
+  }
+  button {
+    background: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s;
+  }
+  button:hover {
+    background: #30363d;
+    border-color: #58a6ff;
+    color: #58a6ff;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 10px;
+    font-size: 0.82em;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-color {
+    width: 20px;
+    height: 4px;
+    border-radius: 2px;
+  }
+  .info-box {
+    background: #1c2333;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: #8b949e;
+  }
+  .info-box strong { color: #58a6ff; }
+  .wasserstein-val {
+    font-size: 1.8em;
+    color: #f0883e;
+    font-weight: bold;
+    text-align: center;
+    padding: 16px;
+    background: #1c2333;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #30363d;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .tab {
+    padding: 8px 18px;
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 0.9em;
+    color: #8b949e;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: #161b22;
+    color: #58a6ff;
+    border-bottom-color: #161b22;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .point-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 0.8em;
+  }
+  .point-badge {
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 2px 8px;
+    color: #c9d1d9;
+  }
+  .step-indicator {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .step {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;
+    font-weight: bold;
+    border: 2px solid #30363d;
+    color: #8b949e;
+    transition: all 0.3s;
+  }
+  .step.active {
+    border-color: #58a6ff;
+    color: #58a6ff;
+    background: #1c2333;
+  }
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: #30363d;
+  }
+</style>
+</head>
+<body>
+
+<h1>🏔️ Persistent Landscapes & Wasserstein-1 Distance Explorer</h1>
+
+<div class="container">
+
+  <!-- SECTION 1: Persistence Diagram Basics -->
+  <div class="section">
+    <h2>① Persistence Diagram — The Starting Point</h2>
+    <p class="desc">
+      A <strong>persistence diagram</strong> is a multiset of points (b, d) where <strong>b = birth time</strong> and <strong>d = death time</strong> of a topological feature (like a loop or connected component). Points near the diagonal (b ≈ d) are "noise"; points far from the diagonal are significant features. <strong>Drag the points</strong> to see how they change!
+    </p>
+    <div class="grid">
+      <div>
+        <canvas id="canvasPD" width="500" height="500"></canvas>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color" style="background:#f97583;"></div> Persistence points (b, d)</div>
+          <div class="legend-item"><div class="legend-color" style="background:#484f58;"></div> Diagonal (b = d)</div>
+        </div>
+      </div>
+      <div>
+        <div class="controls">
+          <button id="btnAddPoint">+ Add Point</button>
+          <button id="btnRemovePoint">− Remove Last</button>
+          <button id="btnResetPD">Reset</button>
+          <button id="btnPreset1">Preset: Clean Signal</button>
+          <button id="btnPreset2">Preset: Noisy</button>
+        </div>
+        <div class="point-display" id="pointList"></div>
+        <div class="info-box">
+          <strong>How to read this:</strong> Each dot is a topological feature. The x-axis is when it's "born" and the y-axis is when it "dies." The further from the diagonal, the more persistent (important) the feature. Try dragging points toward or away from the diagonal!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: From PD to Persistent Landscape -->
+  <div class="section">
+    <h2>② From Persistence Diagram → Persistent Landscape</h2>
+    <p class="desc">
+      Each point (b, d) in the persistence diagram generates a <strong>tent function</strong>: a triangle peaking at midpoint m = (b+d)/2 with height h = (d−b)/2. The <strong>k-th landscape function λₖ(t)</strong> is the k-th largest value among all tent functions at each t. The landscape is a <em>functional summary</em> of the diagram.
+    </p>
+
+    <div class="step-indicator">
+      <div class="step active" id="step1">1</div>
+      <div class="step-line"></div>
+      <div class="step" id="step2">2</div>
+      <div class="step-line"></div>
+      <div class="step" id="step3">3</div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="tabTents">Tent Functions</div>
+      <div class="tab" data-tab="tabLandscape">Landscape Layers</div>
+      <div class="tab" data-tab="tabBoth">Combined View</div>
+    </div>
+
+    <div id="tabTents" class="tab-content active">
+      <canvas id="canvasTents" width="1000" height="400"></canvas>
+      <div class="info-box">
+        Each persistence point (b, d) creates a <strong>tent (triangle)</strong>. It rises linearly from b to midpoint (b+d)/2, then falls linearly to d. The height is (d−b)/2 — so more persistent features make taller tents.
+      </div>
+    </div>
+    <div id="tabLandscape" class="tab-content">
+      <canvas id="canvasLandscape" width="1000" height="400"></canvas>
+      <div class="info-box">
+        <strong>λ₁(t)</strong> (first landscape) = the maximum of all tent functions at each t.<br>
+        <strong>λ₂(t)</strong> = the second largest value, and so on. Each layer captures progressively less prominent features.
+      </div>
+    </div>
+    <div id="tabBoth" class="tab-content">
+      <canvas id="canvasBoth" width="1000" height="400"></canvas>
+      <div class="info-box">
+        Here you see both the individual tent functions (thin lines) and the resulting landscape layers (thick filled). The landscape "peels off" the top envelope, then the next, and so on.
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>Number of landscape layers to show</label>
+        <input type="range" id="sliderLayers" min="1" max="6" value="3">
+        <span class="val" id="valLayers">3</span>
+      </div>
+      <div class="control-group">
+        <label>Animation speed</label>
+        <input type="range" id="sliderAnimSpeed" min="0" max="100" value="0">
+        <span class="val" id="valAnimSpeed">Off</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Wasserstein-1 Distance -->
+  <div class="section">
+    <h2>③ Wasserstein-1 Distance Between Two Diagrams</h2>
+    <p class="desc">
+      The <strong>Wasserstein-1 distance</strong> (a.k.a. Earth Mover's Distance for persistence diagrams) measures how much "work" it takes to transform one diagram into another. Each point can be matched to a point in the other diagram or projected to the diagonal. The cost is the sum of L∞ distances of the optimal matching.
+    </p>
+
+    <div class="grid">
+      <div>
+        <h3 style="color:#f97583; margin-bottom:8px;">Diagram A (Red)</h3>
+        <canvas id="canvasPDA" width="500" height="400"></canvas>
+        <div class="controls">
+          <button id="btnAddA">+ Add</button>
+          <button id="btnRemoveA">− Remove</button>
+          <button id="btnResetA">Reset A</button>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:#79c0ff; margin-bottom:8px;">Diagram B (Blue)</h3>
+        <canvas id="canvasPDB" width="500" height="400"></canvas>
+        <div class="controls">
+          <button id="btnAddB">+ Add</button>
+          <button id="btnRemoveB">− Remove</button>
+          <button id="btnResetB">Reset B</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="wasserstein-val">
+      W₁ = <span id="wassersteinValue">0.000</span>
+    </div>
+
+    <canvas id="canvasMatching" width="1000" height="400"></canvas>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#f97583;"></div> Diagram A points</div>
+      <div class="legend-item"><div class="legend-color" style="background:#79c0ff;"></div> Diagram B points</div>
+      <div class="legend-item"><div class="legend-color" style="background:#f0883e;"></div> Matching lines (cost)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#484f58;"></div> Projection to diagonal</div>
+    </div>
+
+    <div class="controls" style="margin-top:12px;">
+      <div class="control-group">
+        <label>Shift all B points horizontally</label>
+        <input type="range" id="sliderShiftB" min="-50" max="50" value="0">
+        <span class="val" id="valShiftB">0</span>
+      </div>
+      <div class="control-group">
+        <label>Spread B points</label>
+        <input type="range" id="sliderSpreadB" min="50" max="200" value="100">
+        <span class="val" id="valSpreadB">100%</span>
+      </div>
+      <button id="btnPresetClose">Preset: Nearly Identical</button>
+      <button id="btnPresetFar">Preset: Very Different</button>
+      <button id="btnPresetPartial">Preset: Partial Overlap</button>
+    </div>
+
+    <div class="info-box">
+      <strong>Intuition:</strong> Imagine each red point is a pile of dirt and each blue point is a hole. W₁ measures the minimum total dirt × distance to fill all holes. Points with no match get projected to the diagonal (they "disappear"). A small W₁ means the diagrams are similar; a large W₁ means they are very different.
+    </div>
+  </div>
+
+  <!-- SECTION 4: Landscape-based Wasserstein -->
+  <div class="section">
+    <h2>④ Wasserstein-1 via Landscapes: ∫|λᴬ(t) − λᴮ(t)| dt</h2>
+    <p class="desc">
+      Persistent landscapes give an alternative way to compare diagrams. The <strong>L¹ distance between landscapes</strong> is the integral of the absolute difference of the landscape functions. This is related to (but not identical to) the diagram-level Wasserstein distance, and is often easier to compute and has nice statistical properties.
+    </p>
+
+    <canvas id="canvasLandscapeCompare" width="1000" height="400"></canvas>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#f97583;"></div> Landscape A (λᴬ)</div>
+      <div class="legend-item"><div class="legend-color" style="background:#79c0ff;"></div> Landscape B (λᴮ)</div>
+      <div class="legend-item"><div class="legend-color" style="background:rgba(240,136,62,0.3); width:20px; height:12px;"></div> |λᴬ − λᴮ| (shaded area = distance)</div>
+    </div>
+
+    <div class="wasserstein-val">
+      Landscape L¹ distance (layer 1): <span id="landscapeDistance">0.000</span>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>Compare landscape layer</label>
+        <input type="range" id="sliderCompareLayer" min="1" max="4" value="1">
+        <span class="val" id="valCompareLayer">λ₁</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+const COLORS = {
+  bg: '#0d1117',
+  grid: '#21262d',
+  axis: '#30363d',
+  text: '#8b949e',
+  diag: '#484f58',
+  red: '#f97583',
+  blue: '#79c0ff',
+  green: '#56d364',
+  orange: '#f0883e',
+  purple: '#bc8cff',
+  yellow: '#e3b341',
+  pink: '#ff7eb6',
+  layers: ['#f97583', '#79c0ff', '#56d364', '#e3b341', '#bc8cff', '#ff7eb6']
+};
+
+function getCtx(id) {
+  const c = document.getElementById(id);
+  return { canvas: c, ctx: c.getContext('2d'), w: c.width, h: c.height };
+}
+
+function drawGrid(ctx, w, h, padding, maxVal) {
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 0.5;
+  const steps = 10;
+  for (let i = 0; i <= steps; i++) {
+    const x = padding + (i / steps) * (w - 2 * padding);
+    const y = padding + (i / steps) * (h - 2 * padding);
+    ctx.beginPath(); ctx.moveTo(x, padding); ctx.lineTo(x, h - padding); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padding, y); ctx.lineTo(w - padding, y); ctx.stroke();
+  }
+}
+
+function drawAxes(ctx, w, h, padding, xLabel, yLabel, maxVal) {
+  ctx.strokeStyle = COLORS.axis;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(padding, h - padding);
+  ctx.lineTo(w - padding, h - padding);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(padding, h - padding);
+  ctx.lineTo(padding, padding);
+  ctx.stroke();
+
+  ctx.fillStyle = COLORS.text;
+  ctx.font = '12px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(xLabel, w / 2, h - 5);
+  ctx.save();
+  ctx.translate(12, h / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText(yLabel, 0, 0);
+  ctx.restore();
+
+  // Tick labels
+  const steps = 5;
+  for (let i = 0; i <= steps; i++) {
+    const val = (i / steps) * maxVal;
+    const x = padding + (i / steps) * (w - 2 * padding);
+    const y = h - padding - (i / steps) * (h - 2 * padding);
+    ctx.fillStyle = COLORS.text;
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(val.toFixed(1), x, h - padding + 14);
+    ctx.textAlign = 'right';
+    ctx.fillText(val.toFixed(1), padding - 6, y + 4);
+  }
+}
+
+function toCanvasX(val, maxVal, w, padding) {
+  return padding + (val / maxVal) * (w - 2 * padding);
+}
+function toCanvasY(val, maxVal, h, padding) {
+  return h - padding - (val / maxVal) * (h - 2 * padding);
+}
+function fromCanvasX(cx, maxVal, w, padding) {
+  return ((cx - padding) / (w - 2 * padding)) * maxVal;
+}
+function fromCanvasY(cy, maxVal, h, padding) {
+  return ((h - padding - cy) / (h - 2 * padding)) * maxVal;
+}
+
+// ============================================================
+// SECTION 1: PERSISTENCE DIAGRAM
+// ============================================================
+const PD_MAX = 10;
+const PD_PAD = 50;
+
+let pdPoints = [
+  { b: 1, d: 5 },
+  { b: 2, d: 7 },
+  { b: 3, d: 4 },
+  { b: 0.5, d: 8.5 },
+  { b: 4, d: 6 },
+];
+
+let dragPDIndex = -1;
+
+function drawPD() {
+  const { canvas, ctx, w, h } = getCtx('canvasPD');
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0, 0, w, h);
+
+  drawGrid(ctx, w, h, PD_PAD, PD_MAX);
+  drawAxes(ctx, w, h, PD_PAD, 'Birth (b)', 'Death (d)', PD_MAX);
+
+  // Diagonal
+  ctx.strokeStyle = COLORS.diag;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(toCanvasX(0, PD_MAX, w, PD_PAD), toCanvasY(0, PD_MAX, h, PD_PAD));
+  ctx.lineTo(toCanvasX(PD_MAX, PD_MAX, w, PD_PAD), toCanvasY(PD_MAX, PD_MAX, h, PD_PAD));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Persistence bars (vertical lines to diagonal)
+  pdPoints.forEach((p, i) => {
+    const cx = toCanvasX(p.b, PD_MAX, w, PD_PAD);
+    const cy = toCanvasY(p.d, PD_MAX, h, PD_PAD);
+    const diagY = toCanvasY(p.b, PD_MAX, h, PD_PAD);
+
+    ctx.strokeStyle = 'rgba(249,117,131,0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx, diagY);
+    ctx.stroke();
+  });
+
+  // Points
+  pdPoints.forEach((p, i) => {
+    const cx = toCanvasX(p.b, PD_MAX, w, PD_PAD);
+    const cy = toCanvasY(p.d, PD_MAX, h, PD_PAD);
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.red;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(i + 1, cx, cy + 3);
+  });
+
+  // Update point list
+  const list = document.getElementById('pointList');
+  list.innerHTML = pdPoints.map((p, i) =>
+    `<span class="point-badge">${i + 1}: (${p.b.toFixed(1)}, ${p.d.toFixed(1)}) pers=${(p.d - p.b).toFixed(1)}</span>`
+  ).join('');
+}
+
+// Drag interactions for PD
+const canvasPD = document.getElementById('canvasPD');
+canvasPD.addEventListener('mousedown', (e) => {
+  const rect = canvasPD.getBoundingClientRect();
+  const scaleX = canvasPD.width / rect.width;
+  const scaleY = canvasPD.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  pdPoints.forEach((p, i) => {
+    const cx = toCanvasX(p.b, PD_MAX, canvasPD.width, PD_PAD);
+    const cy = toCanvasY(p.d, PD_MAX, canvasPD.height, PD_PAD);
+    if (Math.hypot(mx - cx, my - cy) < 14) dragPDIndex = i;
+  });
+});
+
+canvasPD.addEventListener('mousemove', (e) => {
+  if (dragPDIndex < 0) return;
+  const rect = canvasPD.getBoundingClientRect();
+  const scaleX = canvasPD.width / rect.width;
+  const scaleY = canvasPD.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+
+  let b = fromCanvasX(mx, PD_MAX, canvasPD.width, PD_PAD);
+  let d = fromCanvasY(my, PD_MAX, canvasPD.height, PD_PAD);
+  b = Math.max(0, Math.min(PD_MAX - 0.1, b));
+  d = Math.max(b + 0.1, Math.min(PD_MAX, d));
+  pdPoints[dragPDIndex] = { b, d };
+  renderAll();
+});
+
+canvasPD.addEventListener('mouseup', () => { dragPDIndex = -1; });
+canvasPD.addEventListener('mouseleave', () => { dragPDIndex = -1; });
+
+document.getElementById('btnAddPoint').addEventListener('click', () => {
+  const b = Math.random() * 6;
+  const d = b + 0.5 + Math.random() * 4;
+  pdPoints.push({ b, d: Math.min(d, PD_MAX) });
+  renderAll();
+});
+
+document.getElementById('btnRemovePoint').addEventListener('click', () => {
+  if (pdPoints.length > 1) pdPoints.pop();
+  renderAll();
+});
+
+document.getElementById('btnResetPD').addEventListener('click', () => {
+  pdPoints = [
+    { b: 1, d: 5 }, { b: 2, d: 7 }, { b: 3, d: 4 },
+    { b: 0.5, d: 8.5 }, { b: 4, d: 6 },
+  ];
+  renderAll();
+});
+
+document.getElementById('btnPreset1').addEventListener('click', () => {
+  pdPoints = [
+    { b: 0.5, d: 9 }, { b: 1, d: 8 }, { b: 3, d: 7 },
+  ];
+  renderAll();
+});
+
+document.getElementById('btnPreset2').addEventListener('click', () => {
+  pdPoints = [];
+  for (let i = 0; i < 12; i++) {
+    const b = Math.random() * 8;
+    const d = b + 0.2 + Math.random() * 2;
+    pdPoints.push({ b, d: Math.min(d, PD_MAX) });
+  }
+  // Add a few significant ones
+  pdPoints.push({ b: 0.5, d: 9 });
+  pdPoints.push({ b: 1, d: 7.5 });
+  renderAll();
+});
+
+// ============================================================
+// SECTION 2: TENT FUNCTIONS & LANDSCAPES
+// ============================================================
+const LAND_PAD = 50;
+
+function tentFunction(b, d, t) {
+  const m = (b + d) / 2;
+  const halfLife = (d - b) / 2;
+  if (t <= b || t >= d) return 0;
+  if (t <= m) return t - b;
+  return d - t;
+}
+
+function computeLandscapeLayers(points, numLayers, tMin, tMax, resolution) {
+  const dt = (tMax - tMin) / resolution;
+  const layers = [];
+  for (let k = 0; k < numLayers; k++) {
+    layers.push([]);
+  }
+
+  for (let i = 0; i <= resolution; i++) {
+    const t = tMin + i * dt;
+    const values = points.map(p => tentFunction(p.b, p.d, t));
+    values.sort((a, b) => b - a); // descending
+
+    for (let k = 0; k < numLayers; k++) {
+      layers[k].push({ t, v: k < values.length ? Math.max(0, values[k]) : 0 });
+    }
+  }
+  return layers;
+}
+
+function drawTentFunctions(canvasId, points, maxT, maxV) {
+  const { canvas, ctx, w, h } = getCtx(canvasId);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0, 0, w, h);
+
+  drawGrid(ctx, w, h, LAND_PAD, maxT);
+  drawAxes(ctx, w, h, LAND_PAD, 't', 'Value', maxT);
+
+  // Draw y-axis scale based on maxV
+  ctx.fillStyle = COLORS.text;
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 5; i++) {
+    const val = (i / 5) * maxV;
+    const y = h - LAND_PAD - (val / maxV) * (h - 2 * LAND_PAD);
+    ctx.fillText(val.toFixed(1), LAND_PAD - 6, y + 4);
+  }
+
+  const resolution = 300;
+
+  points.forEach((p, idx) => {
+    ctx.strokeStyle = COLORS.layers[idx % COLORS.layers.length];
+    
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+
+    for (let i = 0; i <= resolution; i++) {
+      const t = (i / resolution) * maxT;
+      const v = tentFunction(p.b, p.d, t);
+      const cx = LAND_PAD + (t / maxT) * (w - 2 * LAND_PAD);
+      const cy = h - LAND_PAD - (v / maxV) * (h - 2 * LAND_PAD);
+      if (i === 0) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Label the tent peak
+    const m = (p.b + p.d) / 2;
+    const peak = (p.d - p.b) / 2;
+    const peakX = LAND_PAD + (m / maxT) * (w - 2 * LAND_PAD);
+    const peakY = h - LAND_PAD - (peak / maxV) * (h - 2 * LAND_PAD);
+    ctx.fillStyle = COLORS.layers[idx % COLORS.layers.length];
+    ctx.font = 'bold 10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${idx + 1}`, peakX, peakY - 8);
+  });
+}
+
+function drawLandscapeLayers(canvasId, points, maxT, maxV, numLayers, showTents) {
+  const { canvas, ctx, w, h } = getCtx(canvasId);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0, 0, w, h);
+
+  drawGrid(ctx, w, h, LAND_PAD, maxT);
+  drawAxes(ctx, w, h, LAND_PAD, 't', 'λₖ(t)', maxT);
+
+  // Y-axis labels
+  ctx.fillStyle = COLORS.text;
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 5; i++) {
+    const val = (i / 5) * maxV;
+    const y = h - LAND_PAD - (val / maxV) * (h - 2 * LAND_PAD);
+    ctx.fillText(val.toFixed(1), LAND_PAD - 6, y + 4);
+  }
+
+  const resolution = 300;
+  const layers = computeLandscapeLayers(points, numLayers, 0, maxT, resolution);
+
+  // Optionally draw tent functions underneath
+  if (showTents) {
+    points.forEach((p, idx) => {
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i <= resolution; i++) {
+        const t = (i / resolution) * maxT;
+        const v = tentFunction(p.b, p.d, t);
+        const cx = LAND_PAD + (t / maxT) * (w - 2 * LAND_PAD);
+        const cy = h - LAND_PAD - (v / maxV) * (h - 2 * LAND_PAD);
+        if (i === 0) ctx.moveTo(cx, cy);
+        else ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+    });
+  }
+
+  // Draw layers from back to front (highest k first)
+  for (let k = numLayers - 1; k >= 0; k--) {
+    const layer = layers[k];
+    const color = COLORS.layers[k % COLORS.layers.length];
+
+    // Filled area
+    ctx.beginPath();
+    ctx.moveTo(LAND_PAD, h - LAND_PAD);
+    layer.forEach(pt => {
+      const cx = LAND_PAD + (pt.t / maxT) * (w - 2 * LAND_PAD);
+      const cy = h - LAND_PAD - (pt.v / maxV) * (h - 2 * LAND_PAD);
+      ctx.lineTo(cx, cy);
+    });
+    ctx.lineTo(LAND_PAD + (w - 2 * LAND_PAD), h - LAND_PAD);
+    ctx.closePath();
+    ctx.fillStyle = color + '22';
+    ctx.fill();
+
+    // Stroke
+    ctx.beginPath();
+    layer.forEach((pt, i) => {
+      const cx = LAND_PAD + (pt.t / maxT) * (w - 2 * LAND_PAD);
+      const cy = h - LAND_PAD - (pt.v / maxV) * (h - 2 * LAND_PAD);
+      if (i === 0) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    });
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Label
+    let maxPt = layer.reduce((a, b) => b.v > a.v ? b : a, layer[0]);
+    if (maxPt.v > 0.01) {
+      const lx = LAND_PAD + (maxPt.t / maxT) * (w - 2 * LAND_PAD);
+      const ly = h - LAND_PAD - (maxPt.v / maxV) * (h - 2 * LAND_PAD);
+      ctx.fillStyle = color;
+      ctx.font = 'bold 12px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(`λ${k + 1}`, lx + 6, ly - 4);
+    }
+  }
+}
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const parent = tab.parentElement;
+    const section = parent.parentElement;
+    parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    section.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    const target = section.querySelector('#' + tab.dataset.tab);
+    if (target) target.classList.add('active');
+
+    // Update step indicators
+    const tabs = Array.from(parent.querySelectorAll('.tab'));
+    const idx = tabs.indexOf(tab);
+    document.querySelectorAll('.step').forEach((s, i) => {
+      s.classList.toggle('active', i <= idx);
+    });
+
+    renderAll();
+  });
+});
+
+// Sliders
+document.getElementById('sliderLayers').addEventListener('input', (e) => {
+  document.getElementById('valLayers').textContent = e.target.value;
+  renderAll();
+});
+
+document.getElementById('sliderAnimSpeed').addEventListener('input', (e) => {
+  const v = parseInt(e.target.value);
+  document.getElementById('valAnimSpeed').textContent = v === 0 ? 'Off' : v + '%';
+});
+
+// ============================================================
+// SECTION 3: WASSERSTEIN-1 DISTANCE
+// ============================================================
+const W_MAX = 10;
+const W_PAD = 45;
+
+let pointsA = [
+  { b: 1, d: 5 },
+  { b: 2, d: 7 },
+  { b: 0.5, d: 8 },
+];
+
+let pointsB = [
+  { b: 1.5, d: 5.5 },
+  { b: 2.5, d: 7.5 },
+  { b: 1, d: 8.5 },
+];
+
+let dragWA = -1, dragWB = -1;
+
+function drawWassersteinDiagram(canvasId, points, color, label) {
+  const { canvas, ctx, w, h } = getCtx(canvasId);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0, 0, w, h);
+
+  drawGrid(ctx, w, h, W_PAD, W_MAX);
+  drawAxes(ctx, w, h, W_PAD, 'Birth', 'Death', W_MAX);
+
+  // Diagonal
+  ctx.strokeStyle = COLORS.diag;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(toCanvasX(0, W_MAX, w, W_PAD), toCanvasY(0, W_MAX, h, W_PAD));
+  ctx.lineTo(toCanvasX(W_MAX, W_MAX, w, W_PAD), toCanvasY(W_MAX, W_MAX, h, W_PAD));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Points
+  points.forEach((p, i) => {
+    const cx = toCanvasX(p.b, W_MAX, w, W_PAD);
+    const cy = toCanvasY(p.d, W_MAX, h, W_PAD);
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(i + 1, cx, cy + 3);
+  });
+}
+
+// Drag for diagram A
+const canvasPDA = document.getElementById('canvasPDA');
+canvasPDA.addEventListener('mousedown', (e) => {
+  const rect = canvasPDA.getBoundingClientRect();
+  const scaleX = canvasPDA.width / rect.width;
+  const scaleY = canvasPDA.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+  pointsA.forEach((p, i) => {
+    const cx = toCanvasX(p.b, W_MAX, canvasPDA.width, W_PAD);
+    const cy = toCanvasY(p.d, W_MAX, canvasPDA.height, W_PAD);
+    if (Math.hypot(mx - cx, my - cy) < 14) dragWA = i;
+  });
+});
+canvasPDA.addEventListener('mousemove', (e) => {
+  if (dragWA < 0) return;
+  const rect = canvasPDA.getBoundingClientRect();
+  const scaleX = canvasPDA.width / rect.width;
+  const scaleY = canvasPDA.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+  let b = fromCanvasX(mx, W_MAX, canvasPDA.width, W_PAD);
+  let d = fromCanvasY(my, W_MAX, canvasPDA.height, W_PAD);
+  b = Math.max(0, Math.min(W_MAX - 0.1, b));
+  d = Math.max(b + 0.1, Math.min(W_MAX, d));
+  pointsA[dragWA] = { b, d };
+  renderAll();
+});
+canvasPDA.addEventListener('mouseup', () => { dragWA = -1; });
+canvasPDA.addEventListener('mouseleave', () => { dragWA = -1; });
+
+// Drag for diagram B
+const canvasPDB = document.getElementById('canvasPDB');
+canvasPDB.addEventListener('mousedown', (e) => {
+  const rect = canvasPDB.getBoundingClientRect();
+  const scaleX = canvasPDB.width / rect.width;
+  const scaleY = canvasPDB.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+  pointsB.forEach((p, i) => {
+    const cx = toCanvasX(p.b, W_MAX, canvasPDB.width, W_PAD);
+    const cy = toCanvasY(p.d, W_MAX, canvasPDB.height, W_PAD);
+    if (Math.hypot(mx - cx, my - cy) < 14) dragWB = i;
+  });
+});
+canvasPDB.addEventListener('mousemove', (e) => {
+  if (dragWB < 0) return;
+  const rect = canvasPDB.getBoundingClientRect();
+  const scaleX = canvasPDB.width / rect.width;
+  const scaleY = canvasPDB.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+  let b = fromCanvasX(mx, W_MAX, canvasPDB.width, W_PAD);
+  let d = fromCanvasY(my, W_MAX, canvasPDB.height, W_PAD);
+  b = Math.max(0, Math.min(W_MAX - 0.1, b));
+  d = Math.max(b + 0.1, Math.min(W_MAX, d));
+  pointsB[dragWB] = { b, d };
+  renderAll();
+});
+canvasPDB.addEventListener('mouseup', () => { dragWB = -1; });
+canvasPDB.addEventListener('mouseleave', () => { dragWB = -1; });
+
+// Buttons for A and B
+document.getElementById('btnAddA').addEventListener('click', () => {
+  const b = Math.random() * 6;
+  pointsA.push({ b, d: Math.min(b + 0.5 + Math.random() * 4, W_MAX) });
+  renderAll();
+});
+document.getElementById('btnRemoveA').addEventListener('click', () => {
+  if (pointsA.length > 1) pointsA.pop();
+  renderAll();
+});
+document.getElementById('btnResetA').addEventListener('click', () => {
+  pointsA = [{ b: 1, d: 5 }, { b: 2, d: 7 }, { b: 0.5, d: 8 }];
+  renderAll();
+});
+document.getElementById('btnAddB').addEventListener('click', () => {
+  const b = Math.random() * 6;
+  pointsB.push({ b, d: Math.min(b + 0.5 + Math.random() * 4, W_MAX) });
+  renderAll();
+});
+document.getElementById('btnRemoveB').addEventListener('click', () => {
+  if (pointsB.length > 1) pointsB.pop();
+  renderAll();
+});
+document.getElementById('btnResetB').addEventListener('click', () => {
+  pointsB = [{ b: 1.5, d: 5.5 }, { b: 2.5, d: 7.5 }, { b: 1, d: 8.5 }];
+  renderAll();
+});
+
+// Presets
+document.getElementById('btnPresetClose').addEventListener('click', () => {
+  pointsA = [{ b: 1, d: 5 }, { b: 2, d: 7 }, { b: 3, d: 8 }];
+  pointsB = [{ b: 1.1, d: 5.1 }, { b: 2.1, d: 7.1 }, { b: 3.1, d: 8.1 }];
+  document.getElementById('sliderShiftB').value = 0;
+  document.getElementById('sliderSpreadB').value = 100;
+  renderAll();
+});
+document.getElementById('btnPresetFar').addEventListener('click', () => {
+  pointsA = [{ b: 0.5, d: 9 }, { b: 1, d: 8 }];
+  pointsB = [{ b: 5, d: 6 }, { b: 7, d: 8 }];
+  document.getElementById('sliderShiftB').value = 0;
+  document.getElementById('sliderSpreadB').value = 100;
+  renderAll();
+});
+document.getElementById('btnPresetPartial').addEventListener('click', () => {
+  pointsA = [{ b: 1, d: 5 }, { b: 2, d: 7 }, { b: 3, d: 9 }, { b: 4, d: 6 }];
+  pointsB = [{ b: 1, d: 5 }, { b: 6, d: 8 }];
+  document.getElementById('sliderShiftB').value = 0;
+  document.getElementById('sliderSpreadB').value = 100;
+  renderAll();
+});
+
+// Sliders for B
+document.getElementById('sliderShiftB').addEventListener('input', (e) => {
+  document.getElementById('valShiftB').textContent = e.target.value;
+  renderAll();
+});
+document.getElementById('sliderSpreadB').addEventListener('input', (e) => {
+  document.getElementById('valSpreadB').textContent = e.target.value + '%';
+  renderAll();
+});
+
+// ============================================================
+// WASSERSTEIN-1 COMPUTATION (Greedy approximation)
+// ============================================================
+function lInfDist(p1, p2) {
+  return Math.max(Math.abs(p1.b - p2.b), Math.abs(p1.d - p2.d));
+}
+
+function projToDiag(p) {
+  const mid = (p.b + p.d) / 2;
+  return { b: mid, d: mid };
+}
+
+function costToDiag(p) {
+  return (p.d - p.b) / 2;
+}
+
+function computeWasserstein1(A, B) {
+  // Augment both sets with diagonal projections
+  const n = A.length;
+  const m = B.length;
+
+  // Build cost matrix for Hungarian-like assignment
+  // Each point in A can match to a point in B or go to diagonal
+  // Each point in B can match to a point in A or go to diagonal
+  // We use a greedy approach for simplicity (not optimal but illustrative)
+
+  const totalSize = n + m;
+  const costMatrix = [];
+
+  // Create augmented sets:
+  // First n entries are A points, next m entries are diagonal projections of B
+  // First m entries of columns are B points, next n entries are diagonal projections of A
+
+  for (let i = 0; i < totalSize; i++) {
+    costMatrix[i] = [];
+    for (let j = 0; j < totalSize; j++) {
+      if (i < n && j < m) {
+        // A[i] matched to B[j]
+        costMatrix[i][j] = lInfDist(A[i], B[j]);
+      } else if (i < n && j >= m) {
+        // A[i] matched to diagonal (only if j - m === i)
+        costMatrix[i][j] = (j - m === i) ? costToDiag(A[i]) : 9999;
+      } else if (i >= n && j < m) {
+        // B[j] matched to diagonal (only if i - n === j)
+        costMatrix[i][j] = (i - n === j) ? costToDiag(B[j]) : 9999;
+      } else {
+        // diagonal to diagonal = 0
+        costMatrix[i][j] = 0;
+      }
+    }
+  }
+
+  // Simple greedy matching (for visualization purposes)
+  const usedRows = new Set();
+  const usedCols = new Set();
+  const matching = [];
+  let totalCost = 0;
+
+  // Collect all possible assignments with costs
+  const assignments = [];
+  for (let i = 0; i < totalSize; i++) {
+    for (let j = 0; j < totalSize; j++) {
+      assignments.push({ i, j, cost: costMatrix[i][j] });
+    }
+  }
+  assignments.sort((a, b) => a.cost - b.cost);
+
+  for (const asgn of assignments) {
+    if (usedRows.has(asgn.i) || usedCols.has(asgn.j)) continue;
+    usedRows.add(asgn.i);
+    usedCols.add(asgn.j);
+    matching.push(asgn);
+    totalCost += asgn.cost;
+    if (usedRows.size === totalSize) break;
+  }
+
+  return { totalCost, matching, n, m };
+}
+
+function getShiftedB() {
+  const shift = parseFloat(document.getElementById('sliderShiftB').value) / 10;
+  const spread = parseFloat(document.getElementById('sliderSpreadB').value) / 100;
+
+  const centerB = pointsB.reduce((s, p) => s + (p.b + p.d) / 2, 0) / pointsB.length;
+
+  return pointsB.map(p => {
+    const midOrig = (p.b + p.d) / 2;
+    const halfLife = (p.d - p.b) / 2;
+    const newMid = centerB + (midOrig - centerB) * spread + shift;
+    const newHalf = halfLife * spread;
+    const nb = Math.max(0, newMid - newHalf);
+    const nd = Math.min(W_MAX, Math.max(nb + 0.1, newMid + newHalf));
+    return { b: nb, d: nd };
+  });
+}
+
+function drawMatchingDiagram() {
+  const { canvas, ctx, w, h } = getCtx('canvasMatching');
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0, 0, w, h);
+
+  drawGrid(ctx, w, h, W_PAD, W_MAX);
+  drawAxes(ctx, w, h, W_PAD, 'Birth', 'Death', W_MAX);
+
+  // Diagonal
+  ctx.strokeStyle = COLORS.diag;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(toCanvasX(0, W_MAX, w, W_PAD), toCanvasY(0, W_MAX, h, W_PAD));
+  ctx.lineTo(toCanvasX(W_MAX, W_MAX, w, W_PAD), toCanvasY(W_MAX, W_MAX, h, W_PAD));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  const shiftedB = getShiftedB();
+  const result = computeWasserstein1(pointsA, shiftedB);
+
+  // Draw matching lines
+  result.matching.forEach(m => {
+    if (m.cost < 0.001) return;
+
+    let x1, y1, x2, y2;
+    let matchColor = COLORS.orange;
+
+    if (m.i < result.n && m.j < result.m) {
+      // A[i] to B[j]
+      x1 = toCanvasX(pointsA[m.i].b, W_MAX, w, W_PAD);
+      y1 = toCanvasY(pointsA[m.i].d, W_MAX, h, W_PAD);
+      x2 = toCanvasX(shiftedB[m.j].b, W_MAX, w, W_PAD);
+      y2 = toCanvasY(shiftedB[m.j].d, W_MAX, h, W_PAD);
+    } else if (m.i < result.n) {
+      // A[i] to diagonal
+      const p = pointsA[m.i];
+      const proj = projToDiag(p);
+      x1 = toCanvasX(p.b, W_MAX, w, W_PAD);
+      y1 = toCanvasY(p.d, W_MAX, h, W_PAD);
+      x2 = toCanvasX(proj.b, W_MAX, w, W_PAD);
+      y2 = toCanvasY(proj.d, W_MAX, h, W_PAD);
+      matchColor = COLORS.diag;
+    } else if (m.j < result.m) {
+      // B[j] to diagonal
+      const p = shiftedB[m.j];
+      const proj = projToDiag(p);
+      x1 = toCanvasX(p.b, W_MAX, w, W_PAD);
+      y1 = toCanvasY(p.d, W_MAX, h, W_PAD);
+      x2 = toCanvasX(proj.b, W_MAX, w, W_PAD);
+      y2 = toCanvasY(proj.d, W_MAX, h, W_PAD);
+      matchColor = COLORS.diag;
+    } else {
+      return;
+    }
+
+    ctx.strokeStyle = matchColor;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Cost label
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+    if (m.cost > 0.05) {
+      ctx.fillStyle = matchColor;
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(m.cost.toFixed(2), midX + 12, midY - 4);
+    }
+  });
+
+  // Draw A points
+  pointsA.forEach((p, i) => {
+    const cx = toCanvasX(p.b, W_MAX, w, W_PAD);
+    const cy = toCanvasY(p.d, W_MAX, h, W_PAD);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.red;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('A' + (i + 1), cx, cy + 3);
+  });
+
+  // Draw B points (shifted)
+  shiftedB.forEach((p, i) => {
+    const cx = toCanvasX(p.b, W_MAX, w, W_PAD);
+    const cy = toCanvasY(p.d, W_MAX, h, W_PAD);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.blue;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('B' + (i + 1), cx, cy + 3);
+  });
+
+  // Update W1 value
+  document.getElementById('wassersteinValue').textContent = result.totalCost.toFixed(3);
+}
+
+// ============================================================
+// SECTION 4: LANDSCAPE COMPARISON
+// ============================================================
+document.getElementById('sliderCompareLayer').addEventListener('input', (e) => {
+  document.getElementById('valCompareLayer').textContent = 'λ' + e.target.value;
+  renderAll();
+});
+
+function drawLandscapeComparison() {
+  const { canvas, ctx, w, h } = getCtx('canvasLandscapeCompare');
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = COLORS.bg;
+  ctx.fillRect(0, 0, w, h);
+
+  const maxT = W_MAX;
+  const resolution = 300;
+  const layerIdx = parseInt(document.getElementById('sliderCompareLayer').value) - 1;
+
+  const shiftedB = getShiftedB();
+
+  const layersA = computeLandscapeLayers(pointsA, layerIdx + 1, 0, maxT, resolution);
+  const layersB = computeLandscapeLayers(shiftedB, layerIdx + 1, 0, maxT, resolution);
+
+  const layerA = layersA[layerIdx] || [];
+  const layerB = layersB[layerIdx] || [];
+
+  // Find max value for scaling
+  let maxV = 1;
+  layerA.forEach(p => { if (p.v > maxV) maxV = p.v; });
+  layerB.forEach(p => { if (p.v > maxV) maxV = p.v; });
+  maxV = Math.ceil(maxV * 1.2);
+  if (maxV < 1) maxV = 1;
+
+  drawGrid(ctx, w, h, LAND_PAD, maxT);
+  drawAxes(ctx, w, h, LAND_PAD, 't', `λ${layerIdx + 1}(t)`, maxT);
+
+  // Y-axis labels
+  ctx.fillStyle = COLORS.text;
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 5; i++) {
+    const val = (i / 5) * maxV;
+    const y = h - LAND_PAD - (val / maxV) * (h - 2 * LAND_PAD);
+    ctx.fillText(val.toFixed(1), LAND_PAD - 6, y + 4);
+  }
+
+  // Shaded difference area
+  ctx.beginPath();
+  for (let i = 0; i <= resolution; i++) {
+    const t = (i / resolution) * maxT;
+    const vA = layerA[i] ? layerA[i].v : 0;
+    const vB = layerB[i] ? layerB[i].v : 0;
+    const vMax = Math.max(vA, vB);
+    const cx = LAND_PAD + (t / maxT) * (w - 2 * LAND_PAD);
+    const cy = h - LAND_PAD - (vMax / maxV) * (h - 2 * LAND_PAD);
+    if (i === 0) ctx.moveTo(cx, cy);
+    else ctx.lineTo(cx, cy);
+  }
+  for (let i = resolution; i >= 0; i--) {
+    const t = (i / resolution) * maxT;
+    const vA = layerA[i] ? layerA[i].v : 0;
+    const vB = layerB[i] ? layerB[i].v : 0;
+    const vMin = Math.min(vA, vB);
+    const cx = LAND_PAD + (t / maxT) * (w - 2 * LAND_PAD);
+    const cy = h - LAND_PAD - (vMin / maxV) * (h - 2 * LAND_PAD);
+    ctx.lineTo(cx, cy);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(240, 136, 62, 0.3)';
+  ctx.fill();
+
+  // Draw landscape A
+  ctx.beginPath();
+  layerA.forEach((pt, i) => {
+    const cx = LAND_PAD + (pt.t / maxT) * (w - 2 * LAND_PAD);
+    const cy = h - LAND_PAD - (pt.v / maxV) * (h - 2 * LAND_PAD);
+    if (i === 0) ctx.moveTo(cx, cy);
+    else ctx.lineTo(cx, cy);
+  });
+  ctx.strokeStyle = COLORS.red;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Draw landscape B
+  ctx.beginPath();
+  layerB.forEach((pt, i) => {
+    const cx = LAND_PAD + (pt.t / maxT) * (w - 2 * LAND_PAD);
+    const cy = h - LAND_PAD - (pt.v / maxV) * (h - 2 * LAND_PAD);
+    if (i === 0) ctx.moveTo(cx, cy);
+    else ctx.lineTo(cx, cy);
+  });
+  ctx.strokeStyle = COLORS.blue;
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Labels
+  let maxPtA = layerA.reduce((a, b) => b.v > a.v ? b : a, layerA[0] || { t: 0, v: 0 });
+  if (maxPtA.v > 0.01) {
+    const lx = LAND_PAD + (maxPtA.t / maxT) * (w - 2 * LAND_PAD);
+    const ly = h - LAND_PAD - (maxPtA.v / maxV) * (h - 2 * LAND_PAD);
+    ctx.fillStyle = COLORS.red;
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`A: λ${layerIdx + 1}`, lx + 8, ly - 6);
+  }
+
+  let maxPtB = layerB.reduce((a, b) => b.v > a.v ? b : a, layerB[0] || { t: 0, v: 0 });
+  if (maxPtB.v > 0.01) {
+    const lx = LAND_PAD + (maxPtB.t / maxT) * (w - 2 * LAND_PAD);
+    const ly = h - LAND_PAD - (maxPtB.v / maxV) * (h - 2 * LAND_PAD);
+    ctx.fillStyle = COLORS.blue;
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`B: λ${layerIdx + 1}`, lx + 8, ly + 14);
+  }
+
+  // Compute L1 distance (integral of |A - B|)
+  let l1Distance = 0;
+  const dt = maxT / resolution;
+  for (let i = 0; i <= resolution; i++) {
+    const vA = layerA[i] ? layerA[i].v : 0;
+    const vB = layerB[i] ? layerB[i].v : 0;
+    l1Distance += Math.abs(vA - vB) * dt;
+  }
+
+  document.getElementById('landscapeDistance').textContent = l1Distance.toFixed(3);
+}
+
+// ============================================================
+// MASTER RENDER FUNCTION
+// ============================================================
+function renderAll() {
+  // Section 1: Persistence Diagram
+  drawPD();
+
+  // Section 2: Tent functions and landscapes
+  const maxT = PD_MAX;
+  let maxV = 0;
+  pdPoints.forEach(p => {
+    const h = (p.d - p.b) / 2;
+    if (h > maxV) maxV = h;
+  });
+  maxV = Math.ceil(maxV * 1.2);
+  if (maxV < 1) maxV = 1;
+
+  const numLayers = parseInt(document.getElementById('sliderLayers').value);
+
+  drawTentFunctions('canvasTents', pdPoints, maxT, maxV);
+  drawLandscapeLayers('canvasLandscape', pdPoints, maxT, maxV, numLayers, false);
+  drawLandscapeLayers('canvasBoth', pdPoints, maxT, maxV, numLayers, true);
+
+  // Section 3: Wasserstein diagrams
+  const shiftedB = getShiftedB();
+  drawWassersteinDiagram('canvasPDA', pointsA, COLORS.red, 'A');
+  drawWassersteinDiagram('canvasPDB', shiftedB, COLORS.blue, 'B');
+  drawMatchingDiagram();
+
+  // Section 4: Landscape comparison
+  drawLandscapeComparison();
+}
+
+// ============================================================
+// ANIMATION LOOP
+// ============================================================
+let animTime = 0;
+
+function animate() {
+  const speed = parseInt(document.getElementById('sliderAnimSpeed').value);
+  if (speed > 0) {
+    animTime += speed * 0.0005;
+
+    // Gently oscillate the first PD point to show dynamic behavior
+    if (pdPoints.length > 0) {
+      const origB = 1;
+      const origD = 5;
+      pdPoints[0] = {
+        b: origB + Math.sin(animTime) * 0.8,
+        d: origD + Math.cos(animTime * 0.7) * 1.2
+      };
+      // Ensure validity
+      if (pdPoints[0].b < 0) pdPoints[0].b = 0;
+      if (pdPoints[0].d <= pdPoints[0].b) pdPoints[0].d = pdPoints[0].b + 0.1;
+    }
+
+    renderAll();
+  }
+  requestAnimationFrame(animate);
+}
+
+// ============================================================
+// TOUCH SUPPORT FOR MOBILE
+// ============================================================
+function addTouchSupport(canvas, mousedownHandler, mousemoveHandler, mouseupHandler) {
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('mousedown', {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: touch.clientX,
+      clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    const mouseEvent = new MouseEvent('mouseup', {});
+    canvas.dispatchEvent(mouseEvent);
+  }, { passive: false });
+}
+
+addTouchSupport(canvasPD);
+addTouchSupport(canvasPDA);
+addTouchSupport(canvasPDB);
+
+// ============================================================
+// HANDLE HIGH-DPI DISPLAYS
+// ============================================================
+function setupHiDPI(canvasId) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+
+  // Only scale if the canvas hasn't been scaled yet
+  if (!canvas.dataset.scaled) {
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(dpr, dpr);
+
+    // Store original dimensions for drawing calculations
+    canvas.width = parseInt(canvas.getAttribute('width')) || 500;
+    canvas.height = parseInt(canvas.getAttribute('height')) || 400;
+    canvas.dataset.scaled = 'true';
+  }
+}
+
+// ============================================================
+// INITIALIZE
+// ============================================================
+renderAll();
+animate();
+
+</script>
+</body>
+</html>
