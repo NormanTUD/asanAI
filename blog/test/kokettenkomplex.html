@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chain Complexes (Kettenkomplexe) — Interactive Visual Guide</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --accent: #6c63ff;
+    --accent2: #00c9a7;
+    --accent3: #ff6b6b;
+    --accent4: #ffd93d;
+    --text: #e4e4e7;
+    --muted: #8888a0;
+    --border: #2a2d3a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 80px 20px 50px;
+    background: linear-gradient(135deg, #1a1d2790, #6c63ff15);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .hero p { color: var(--muted); font-size: 1.15rem; max-width: 700px; margin: 0 auto; }
+
+  /* Sections */
+  section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    color: var(--accent2);
+  }
+  section .subtitle { color: var(--muted); margin-bottom: 30px; font-size: 1rem; }
+
+  /* Chain diagram */
+  .chain-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 30px 10px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .chain-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+    transition: transform 0.3s;
+    cursor: pointer;
+  }
+  .chain-node:hover { transform: scale(1.12); }
+  .chain-node .circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.1rem;
+    border: 2.5px solid var(--accent);
+    background: var(--card);
+    transition: all 0.3s;
+    position: relative;
+  }
+  .chain-node:hover .circle {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px #6c63ff55;
+  }
+  .chain-node .label {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: center;
+  }
+  .chain-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+    position: relative;
+  }
+  .chain-arrow .arrow-line {
+    width: 50px; height: 2px;
+    background: var(--accent);
+    position: relative;
+  }
+  .chain-arrow .arrow-line::after {
+    content: '';
+    position: absolute;
+    right: -2px; top: -5px;
+    border: 6px solid transparent;
+    border-left: 8px solid var(--accent);
+  }
+  .chain-arrow .arrow-label {
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-style: italic;
+  }
+
+  /* Cochain (reversed arrows) */
+  .cochain .chain-arrow .arrow-line::after {
+    right: auto; left: -2px;
+    border-left: none;
+    border-right: 8px solid var(--accent3);
+  }
+  .cochain .chain-arrow .arrow-line { background: var(--accent3); }
+  .cochain .chain-arrow .arrow-label { color: var(--accent3); }
+  .cochain .chain-node .circle { border-color: var(--accent3); }
+  .cochain .chain-node:hover .circle { background: var(--accent3); box-shadow: 0 0 20px #ff6b6b55; }
+
+  /* Info cards */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .info-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .info-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--accent4);
+  }
+  .info-card p { font-size: 0.92rem; color: var(--muted); }
+  .info-card .math {
+    background: #23263a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.92rem;
+    color: var(--accent2);
+    overflow-x: auto;
+  }
+
+  /* Interactive homology */
+  .homology-demo {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .homology-demo h3 { color: var(--accent); margin-bottom: 16px; }
+
+  .demo-controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .demo-controls button {
+    padding: 10px 20px;
+    border: 1.5px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.25s;
+  }
+  .demo-controls button:hover, .demo-controls button.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .demo-canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    border-radius: 12px;
+    background: #12141c;
+    overflow: hidden;
+  }
+  canvas#homologyCanvas { width: 100%; height: 100%; display: block; }
+
+  .demo-explanation {
+    margin-top: 16px;
+    padding: 16px;
+    background: #23263a;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    color: var(--muted);
+    min-height: 60px;
+    transition: all 0.3s;
+  }
+
+  /* Double complex */
+  .double-complex-grid {
+    display: inline-grid;
+    gap: 0;
+    margin: 20px auto;
+    justify-content: center;
+  }
+  .dc-cell {
+    width: 70px; height: 70px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    position: relative;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .dc-cell:hover {
+    border-color: var(--accent2);
+    background: #6c63ff22;
+    z-index: 2;
+  }
+  .dc-cell.highlight { border-color: var(--accent4); background: #ffd93d22; }
+
+  /* SVG overlay for double complex arrows */
+  .dc-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  /* Euler characteristic */
+  .euler-interactive {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .euler-interactive h3 { color: var(--accent4); margin-bottom: 16px; }
+  .euler-sliders { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .euler-sliders label {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 0.88rem; color: var(--muted);
+  }
+  .euler-sliders input[type=range] {
+    width: 140px;
+    accent-color: var(--accent);
+  }
+  .euler-result {
+    font-size: 1.3rem;
+    color: var(--accent4);
+    font-weight: 700;
+    padding: 14px;
+    background: #23263a;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  /* Chain map section */
+  .chainmap-svg-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .tab-bar button {
+    padding: 8px 18px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.25s;
+  }
+  .tab-bar button.active {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: #00c9a712;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: #23263a;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    color: var(--text);
+    max-width: 280px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 100;
+    box-shadow: 0 8px 30px #00000055;
+  }
+  .tooltip.visible { opacity: 1; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.8rem; }
+    .chain-diagram { gap: 0; }
+    .chain-node .circle { width: 48px; height: 48px; font-size: 0.9rem; }
+    .chain-arrow { min-width: 45px; }
+    .chain-arrow .arrow-line { width: 30px; }
+    .dc-cell { width: 52px; height: 52px; font-size: 0.72rem; }
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in { animation: fadeInUp 0.6s ease forwards; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <h1>Kettenkomplexe</h1>
+    <p>An interactive visual guide to chain complexes, cochain complexes, homology, double complexes, chain maps, and the Euler characteristic.</p>
+  </div>
+</header>
+
+<!-- Section 1: Chain Complex -->
+<section id="sec-chain">
+  <div class="container">
+    <h2>1. Chain Complex <span style="color:var(--muted);font-size:1rem;">(Kettenkomplex)</span></h2>
+    <p class="subtitle">A sequence of abelian groups (or R-modules) connected by boundary operators d<sub>n</sub> such that d<sub>n</sub> ∘ d<sub>n+1</sub> = 0.</p>
+
+    <div class="chain-diagram" id="chainDiagram"></div>
+
+    <div class="info-grid">
+      <div class="info-card" data-tip="Elements of Cₙ are called n-chains.">
+        <h3>n-Chains</h3>
+        <p>Elements of each module C<sub>n</sub> in the sequence.</p>
+        <div class="math">x ∈ C<sub>n</sub></div>
+      </div>
+      <div class="info-card" data-tip="Zₙ = ker dₙ — elements mapped to 0 by the boundary operator.">
+        <h3>n-Cycles (Zykel)</h3>
+        <p>Elements in the kernel of d<sub>n</sub>.</p>
+        <div class="math">Z<sub>n</sub> = ker d<sub>n</sub> ⊆ C<sub>n</sub></div>
+      </div>
+      <div class="info-card" data-tip="Bₙ = im d_{n+1} — elements that are images of the next boundary map.">
+        <h3>n-Boundaries (Ränder)</h3>
+        <p>Elements in the image of d<sub>n+1</sub>.</p>
+        <div class="math">B<sub>n</sub> = im d<sub>n+1</sub> ⊆ C<sub>n</sub></div>
+      </div>
+      <div class="info-card" data-tip="Since d∘d = 0, every boundary is a cycle. Homology measures the gap.">
+        <h3>Homology H<sub>n</sub></h3>
+        <p>Cycles modulo boundaries — measures failure of exactness.</p>
+        <div class="math">H<sub>n</sub> = Z<sub>n</sub> / B<sub>n</sub></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 2: Cochain Complex -->
+<section id="sec-cochain">
+  <div class="container">
+    <h2>2. Cochain Complex <span style="color:var(--muted);font-size:1rem;">(Kokettenkomplex)</span></h2>
+    <p class="subtitle">Like a chain complex, but the maps go "upward": d<sup>n</sup>: C<sup>n</sup> → C<sup>n+1</sup>, with d<sup>n</sup> ∘ d<sup>n−1</sup> = 0.</p>
+
+    <div class="chain-diagram cochain" id="cochainDiagram"></div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>n-Cocycles (Kozykel)</h3>
+        <div class="math">Z<sup>n</sup> = ker d<sup>n</sup> ⊆ C<sup>n</sup></div>
+      </div>
+      <div class="info-card">
+        <h3>n-Coboundaries (Koränder)</h3>
+        <div class="math">B<sup>n</sup> = im d<sup>n−1</sup> ⊆ C<sup>n</sup></div>
+      </div>
+      <div class="info-card">
+        <h3>Cohomology H<sup>n</sup></h3>
+        <div class="math">H<sup>n</sup> = Z<sup>n</sup> / B<sup>n</sup></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 3: Interactive Homology Demo -->
+<section id="sec-homology">
+  <div class="container">
+    <h2>3. Homology — Interactive Demo</h2>
+    <p class="subtitle">See how cycles, boundaries, and homology classes work in ℤ-modules. Click an example to visualize.</p>
+
+    <div class="homology-demo">
+      <h3>Choose an Example</h3>
+      <div class="demo-controls">
+        <button class="active" onclick="setHomologyExample(0, this)">Exact Sequence (H=0)</button>
+        <button onclick="setHomologyExample(1, this)">Non-trivial H₁ ≅ ℤ</button>
+        <button onclick="setHomologyExample(2, this)">H₁ ≅ ℤ/2ℤ</button>
+      </div>
+      <div class="demo-canvas-wrap">
+        <canvas id="homologyCanvas"></canvas>
+      </div>
+      <div class="demo-explanation" id="homologyExplanation">
+        This is an exact sequence: every cycle is a boundary, so H₁ = 0. The complex has no "holes."
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 4: Chain Map -->
+<section id="sec-chainmap">
+  <div class="container">
+    <h2>4. Chain Map <span style="color:var(--muted);font-size:1rem;">(Kettenhomomorphismus)</span></h2>
+    <p class="subtitle">A chain map f: (A, d<sub>A</sub>) → (B, d<sub>B</sub>) is a family of maps f<sub>n</sub>: A<sub>n</sub> → B<sub>n</sub> commuting with the boundary operators: d<sub>B,n</sub> ∘ f<sub>n</sub> = f<sub>n−1</sub> ∘ d<sub>A,n</sub>.</p>
+
+    <div class="chainmap-svg-wrap">
+      <svg id="chainmapSVG" width="700" height="280" viewBox="0 0 700 280"></svg>
+    </div>
+
+    <div class="info-card" style="max-width:600px;margin:0 auto;">
+      <h3>Commutativity Condition</h3>
+      <p>The diagram commutes: going right then down equals going down then right.</p>
+      <div class="math">d<sub>B,n</sub> ∘ f<sub>n</sub> = f<sub>n−1</sub> ∘ d<sub>A,n</sub></div>
+      <p style="margin-top:10px;">This ensures f maps cycles to cycles and boundaries to boundaries, so it induces a map on homology.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Section 5: Double Complex -->
+<section id="sec-double">
+  <div class="container">
+    <h2>5. Double Complex <span style="color:var(--muted);font-size:1rem;">(Doppelkomplex)</span></h2>
+    <p class="subtitle">A grid of objects D<sub>p,q</sub> with horizontal maps d and vertical maps d', satisfying d∘d = 0, d'∘d' = 0, and d∘d' + d'∘d = 0.</p>
+
+    <div class="tab-bar">
+      <button class="active" onclick="showDCTab('grid', this)">Grid View</button>
+      <button onclick="showDCTab('total', this)">Total Complex</button>
+    </div>
+
+    <div class="tab-content active" id="dc-grid">
+      <p style="color:var(--muted);margin-bottom:12px;font-size:0.9rem;">Hover over cells to highlight the diagonal (total complex degree). Click a cell to see its maps.</p>
+      <div class="dc-wrapper">
+        <div class="double-complex-grid" id="dcGrid" style="display:grid;"></div>
+      </div>
+      <div class="demo-explanation" id="dcExplanation">Hover over a cell to see details.</div>
+    </div>
+
+    <div class="tab-content" id="dc-total">
+      <div class="info-card" style="max-width:650px;margin:0 auto;">
+        <h3>Total Complex Tot(D)<sub>n</sub></h3>
+        <p>The total complex collapses the double complex into a single chain complex by summing along anti-diagonals:</p>
+        <div class="math">Tot(D)<sub>n</sub> = ⊕<sub>p+q=n</sub> D<sub>p,q</sub></div>
+        <p style="margin-top:10px;">The boundary map on an element x ∈ D<sub>p,q</sub> is:</p>
+        <div class="math">d<sub>n</sub>(x) = d(x) + d'(x)</div>
+        <p style="margin-top:10px;">The anti-commutativity condition d∘d' + d'∘d = 0 ensures d<sub>n</sub> ∘ d<sub>n+1</sub> = 0.</p>
+      </div>
+      <div class="chain-diagram" id="totalChainDiagram" style="margin-top:20px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 6: Euler Characteristic -->
+<section id="sec-euler">
+  <div class="container">
+    <h2>6. Euler Characteristic <span style="color:var(--muted);font-size:1rem;">(Euler-Charakteristik)</span></h2>
+    <p class="subtitle">For a cochain complex with finite-dimensional cohomology, χ = Σ (−1)<sup>i</sup> dim H<sup>i</sup>. Equivalently, χ = Σ (−1)<sup>i</sup> dim C<sup>i</sup>.</p>
+
+    <div class="euler-interactive">
+      <h3>Adjust Dimensions</h3>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:16px;">Set the dimensions of C<sup>0</sup>, C<sup>1</sup>, C<sup>2</sup>, C<sup>3</sup> and see the Euler characteristic update live.</p>
+      <div class="euler-sliders" id="eulerSliders"></div>
+      <div class="euler-result" id="eulerResult">χ = 0</div>
+      <p style="color:var(--muted);font-size:0.85rem;margin-top:12px;">
+        <strong style="color:var(--accent4);">Special case:</strong> For a complex C<sup>0</sup> → C<sup>1</sup> (a single map f), χ = dim ker f − dim coker f, which is the <em>Fredholm index</em>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Section 7: Examples -->
+<section id="sec-examples" style="border-bottom:none;">
+  <div class="container">
+    <h2>7. Examples</h2>
+    <p class="subtitle">Classical appearances of chain and cochain complexes.</p>
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>Simplicial Complex</h3>
+        <p>The chain groups are generated by simplices of each dimension. The boundary operator maps an n-simplex to the alternating sum of its (n−1)-faces.</p>
+      </div>
+      <div class="info-card">
+        <h3>Singular Homology</h3>
+        <p>The singular chain complex of a topological space X uses continuous maps from standard simplices into X. Its homology captures "holes" in X.</p>
+      </div>
+      <div class="info-card">
+        <h3>Group (Co)homology</h3>
+        <p>For a group G and a G-module M, one constructs a (co)chain complex whose (co)homology groups are the group (co)homology H<sup>n</sup>(G, M).</p>
+      </div>
+      <div class="info-card">
+        <h3>de Rham Complex</h3>
+        <p>On a smooth manifold, the exterior derivative d gives a cochain complex of differential forms: Ω<sup>0</sup> → Ω<sup>1</sup> → Ω<sup>2</sup> → ⋯</p>
+      </div>
+      <div class="info-card">
+        <h3>Single Morphism f: A → B</h3>
+        <p>Any homomorphism defines a two-term complex. H<sup>0</sup> = ker f, H<sup>1</sup> = coker f. The Euler characteristic is the Fredholm index.</p>
+      </div>
+      <div class="info-card">
+        <h3>Elliptic / Dirac Complex</h3>
+        <p>A cochain complex of differential operators on a manifold, important in global analysis and the Atiyah-Singer index theorem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="text-align:center;padding:40px 20px;color:var(--muted);font-size:0.85rem;border-top:1px solid var(--border);">
+  Interactive Chain Complex Explorer — Built for visual learning of homological algebra.
+</footer>
+
+<script>
+// ============================================================
+// UTILITY
+// ============================================================
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+// Tooltip
+const tooltip = $('#tooltip');
+document.addEventListener('mousemove', e => {
+  tooltip.style.left = e.clientX + 14 + 'px';
+  tooltip.style.top = e.clientY + 14 + 'px';
+});
+$$('.info-card[data-tip]').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    tooltip.textContent = card.dataset.tip;
+    tooltip.classList.add('visible');
+  });
+  card.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+});
+
+// ============================================================
+// 1. BUILD CHAIN DIAGRAM
+// ============================================================
+function buildChainDiagram(containerId, labels, arrowLabels, isCochain) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  for (let i = 0; i < labels.length; i++) {
+    // Node
+    const node = document.createElement('div');
+    node.className = 'chain-node';
+    node.innerHTML = `<div class="circle">${labels[i]}</div><div class="label">${isCochain ? 'degree ' + (i - 1) : 'degree ' + (labels.length - 2 - i)}</div>`;
+    container.appendChild(node);
+
+    // Arrow (except after last)
+    if (i < labels.length - 1) {
+      const arrow = document.createElement('div');
+      arrow.className = 'chain-arrow';
+      const lbl = arrowLabels[i] || '';
+      arrow.innerHTML = `<div class="arrow-label">${lbl}</div><div class="arrow-line"></div>`;
+      container.appendChild(arrow);
+    }
+  }
+}
+
+// Chain complex: ... → C_{n+1} → C_n → C_{n-1} → ...
+buildChainDiagram('chainDiagram',
+  ['⋯', 'C<sub>n+2</sub>', 'C<sub>n+1</sub>', 'C<sub>n</sub>', 'C<sub>n−1</sub>', 'C<sub>n−2</sub>', '⋯'],
+  ['', 'd<sub>n+2</sub>', 'd<sub>n+1</sub>', 'd<sub>n</sub>', 'd<sub>n−1</sub>', ''],
+  false
+);
+
+// Cochain complex: ... → C^{n-1} → C^n → C^{n+1} → ...
+buildChainDiagram('cochainDiagram',
+  ['⋯', 'C<sup>n−2</sup>', 'C<sup>n−1</sup>', 'C<sup>n</sup>', 'C<sup>n+1</sup>', 'C<sup>n+2</sup>', '⋯'],
+  ['', 'd<sup>n−2</sup>', 'd<sup>n−1</sup>', 'd<sup>n</sup>', 'd<sup>n+1</sup>', ''],
+  true
+);
+
+// ============================================================
+// 3. HOMOLOGY INTERACTIVE DEMO
+// ============================================================
+const canvas = document.getElementById('homologyCanvas');
+const ctx = canvas.getContext('2d');
+let currentExample = 0;
+
+const examples = [
+  {
+    title: 'Exact Sequence (H₁ = 0)',
+    explanation: `<strong>Exact at C₁:</strong> We have C₂ = ℤ, C₁ = ℤ, C₀ = ℤ with d₂(x) = 2x and d₁(x) = 0.<br>
+      ker d₁ = ℤ, im d₂ = 2ℤ. Wait — that gives H₁ = ℤ/2ℤ!<br><br>
+      Actually, let's use: d₂: ℤ → ℤ, x ↦ x and d₁: ℤ → ℤ, x ↦ 0.<br>
+      Then ker d₁ = ℤ, im d₂ = ℤ, so H₁ = ℤ/ℤ = 0. The sequence is exact — no "holes."`,
+    // C2 --d2--> C1 --d1--> C0
+    // Z --id--> Z --0--> Z
+    modules: ['ℤ', 'ℤ', 'ℤ'],
+    maps: ['×1 (id)', '×0'],
+    ker: 'ker d₁ = ℤ',
+    im: 'im d₂ = ℤ',
+    homology: 'H₁ = ℤ / ℤ = 0',
+    cycleElements: [0, 1, 2, 3, -1, -2, -3],
+    boundaryElements: [0, 1, 2, 3, -1, -2, -3],
+  },
+  {
+    title: 'Non-trivial H₁ ≅ ℤ',
+    explanation: `<strong>Non-trivial homology:</strong> C₂ = 0, C₁ = ℤ, C₀ = 0 with d₂ = 0 and d₁ = 0.<br>
+      ker d₁ = ℤ, im d₂ = 0. So H₁ = ℤ/0 = ℤ.<br><br>
+      Every element of C₁ is a cycle, but none (except 0) is a boundary. This represents a "hole" — like the 1-dimensional hole in a circle S¹.`,
+    modules: ['0', 'ℤ', '0'],
+    maps: ['0', '0'],
+    ker: 'ker d₁ = ℤ',
+    im: 'im d₂ = 0',
+    homology: 'H₁ = ℤ / 0 ≅ ℤ',
+    cycleElements: [0, 1, 2, 3, -1, -2, -3],
+    boundaryElements: [0],
+  },
+  {
+    title: 'H₁ ≅ ℤ/2ℤ (Torsion)',
+    explanation: `<strong>Torsion in homology:</strong> C₂ = ℤ, C₁ = ℤ, C₀ = ℤ with d₂(x) = 2x and d₁(x) = 0.<br>
+      ker d₁ = ℤ (everything), im d₂ = 2ℤ (even integers).<br>
+      H₁ = ℤ / 2ℤ ≅ {0, 1} — two homology classes.<br><br>
+      Odd integers are cycles but not boundaries. Even integers are both. This detects ℤ/2ℤ torsion, as in ℝP².`,
+    modules: ['ℤ', 'ℤ', 'ℤ'],
+    maps: ['×2', '×0'],
+    ker: 'ker d₁ = ℤ',
+    im: 'im d₂ = 2ℤ',
+    homology: 'H₁ = ℤ / 2ℤ ≅ {0, 1}',
+    cycleElements: [0, 1, 2, 3, -1, -2, -3],
+    boundaryElements: [0, 2, -2, 4, -4],
+  }
+];
+
+function setHomologyExample(idx, btn) {
+  currentExample = idx;
+  $$('.demo-controls button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  $('#homologyExplanation').innerHTML = examples[idx].explanation;
+  drawHomology();
+}
+
+function drawHomology() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const w = rect.width;
+  const h = rect.height;
+  const ex = examples[currentExample];
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw three modules
+  const moduleX = [w * 0.18, w * 0.5, w * 0.82];
+  const moduleY = h * 0.32;
+  const radius = 38;
+
+  // Arrows between modules
+  for (let i = 0; i < 2; i++) {
+    const x1 = moduleX[i] + radius + 5;
+    const x2 = moduleX[i + 1] - radius - 5;
+    const y = moduleY;
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y);
+    ctx.lineTo(x2 - 10, y);
+    ctx.strokeStyle = '#6c63ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(x2, y);
+    ctx.lineTo(x2 - 12, y - 6);
+    ctx.lineTo(x2 - 12, y + 6);
+    ctx.fillStyle = '#6c63ff';
+    ctx.fill();
+
+    // Arrow label
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = '14px "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(ex.maps[i], (x1 + x2) / 2, y - 14);
+  }
+
+  // Module circles
+  const colors = ['#ff6b6b', '#6c63ff', '#00c9a7'];
+  const labels_top = ['C₂', 'C₁', 'C₀'];
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.arc(moduleX[i], moduleY, radius, 0, Math.PI * 2);
+    ctx.fillStyle = colors[i] + '22';
+    ctx.fill();
+    ctx.strokeStyle = colors[i];
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = 'bold 16px "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(labels_top[i], moduleX[i], moduleY - 12);
+
+    ctx.fillStyle = colors[i];
+    ctx.font = '14px "Segoe UI", sans-serif';
+    ctx.fillText(ex.modules[i], moduleX[i], moduleY + 12);
+  }
+
+  // Lower section: Cycles, Boundaries, Homology at C₁
+  const secY = h * 0.68;
+  const boxW = w * 0.26;
+  const boxH = 70;
+  const boxGap = w * 0.04;
+  const startX = w * 0.5 - (boxW * 3 + boxGap * 2) / 2;
+
+  const sections = [
+    { label: 'Cycles (ker d₁)', value: ex.ker, color: '#00c9a7', elements: ex.cycleElements },
+    { label: 'Boundaries (im d₂)', value: ex.im, color: '#ffd93d', elements: ex.boundaryElements },
+    { label: 'Homology H₁', value: ex.homology, color: '#ff6b6b' },
+  ];
+
+  for (let i = 0; i < 3; i++) {
+    const bx = startX + i * (boxW + boxGap);
+    const by = secY;
+
+    // Box
+    ctx.beginPath();
+    ctx.roundRect(bx, by, boxW, boxH, 10);
+    ctx.fillStyle = sections[i].color + '15';
+    ctx.fill();
+    ctx.strokeStyle = sections[i].color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = sections[i].color;
+    ctx.font = 'bold 12px "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(sections[i].label, bx + boxW / 2, by + 10);
+
+    // Value
+    ctx.fillStyle = '#e4e4e7';
+    ctx.font = '13px "Courier New", monospace';
+    ctx.fillText(sections[i].value, bx + boxW / 2, by + 34);
+
+    // Elements dots for cycles and boundaries
+    if (sections[i].elements) {
+      const elems = sections[i].elements;
+      const dotY = by + 58;
+      const dotSpacing = Math.min(18, (boxW - 20) / elems.length);
+      const dotStartX = bx + boxW / 2 - (elems.length - 1) * dotSpacing / 2;
+      for (let j = 0; j < elems.length; j++) {
+        ctx.beginPath();
+        ctx.arc(dotStartX + j * dotSpacing, dotY, 4, 0, Math.PI * 2);
+        ctx.fillStyle = sections[i].color + '88';
+        ctx.fill();
+      }
+    }
+  }
+
+  // Connecting lines from C₁ to the sections
+  ctx.beginPath();
+  ctx.setLineDash([4, 4]);
+  ctx.moveTo(moduleX[1], moduleY + radius + 5);
+  ctx.lineTo(moduleX[1], secY - 10);
+  ctx.strokeStyle = '#6c63ff55';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Title
+  ctx.fillStyle = '#e4e4e7';
+  ctx.font = 'bold 14px "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(ex.title, w / 2, 24);
+
+  // d∘d = 0 reminder
+  ctx.fillStyle = '#8888a0';
+  ctx.font = '12px "Segoe UI", sans-serif';
+  ctx.fillText('Key property: d₁ ∘ d₂ = 0  ⟹  im d₂ ⊆ ker d₁  ⟹  B₁ ⊆ Z₁', w / 2, h - 16);
+}
+
+// roundRect polyfill
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    if (r > w / 2) r = w / 2;
+    if (r > h / 2) r = h / 2;
+    this.moveTo(x + r, y);
+    this.arcTo(x + w, y, x + w, y + h, r);
+    this.arcTo(x + w, y + h, x, y + h, r);
+    this.arcTo(x, y + h, x, y, r);
+    this.arcTo(x, y, x + w, y, r);
+    this.closePath();
+  };
+}
+
+window.addEventListener('resize', drawHomology);
+setTimeout(drawHomology, 100);
+
+// ============================================================
+// 4. CHAIN MAP SVG
+// ============================================================
+function buildChainMapSVG() {
+  const svg = document.getElementById('chainmapSVG');
+  const ns = 'http://www.w3.org/2000/svg';
+
+  svg.innerHTML = '';
+
+  const topY = 60;
+  const botY = 200;
+  const xs = [100, 250, 400, 550];
+  const labels_top = ['A_{n+1}', 'A_n', 'A_{n-1}', 'A_{n-2}'];
+  const labels_bot = ['B_{n+1}', 'B_n', 'B_{n-1}', 'B_{n-2}'];
+  const dLabelsTop = ['d_A', 'd_A', 'd_A'];
+  const dLabelsBot = ['d_B', 'd_B', 'd_B'];
+  const fLabels = ['f_{n+1}', 'f_n', 'f_{n-1}', 'f_{n-2}'];
+
+  function addText(x, y, text, fill, fontSize, anchor) {
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', x);
+    t.setAttribute('y', y);
+    t.setAttribute('fill', fill || '#e4e4e7');
+    t.setAttribute('font-size', fontSize || '14');
+    t.setAttribute('text-anchor', anchor || 'middle');
+    t.setAttribute('font-family', '"Segoe UI", sans-serif');
+    t.textContent = text;
+    svg.appendChild(t);
+  }
+
+  function addArrow(x1, y1, x2, y2, color, dashed) {
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y2', y2);
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', '2');
+    if (dashed) line.setAttribute('stroke-dasharray', '6,4');
+    line.setAttribute('marker-end', `url(#arrowhead-${color.replace('#', '')})`);
+    svg.appendChild(line);
+  }
+
+  // Arrowhead markers
+  ['6c63ff', '00c9a7', 'ff6b6b', 'ffd93d'].forEach(c => {
+    const defs = document.createElementNS(ns, 'defs');
+    const marker = document.createElementNS(ns, 'marker');
+    marker.setAttribute('id', `arrowhead-${c}`);
+    marker.setAttribute('markerWidth', '10');
+    marker.setAttribute('markerHeight', '7');
+    marker.setAttribute('refX', '9');
+    marker.setAttribute('refY', '3.5');
+    marker.setAttribute('orient', 'auto');
+    const polygon = document.createElementNS(ns, 'polygon');
+    polygon.setAttribute('points', '0 0, 10 3.5, 0 7');
+    polygon.setAttribute('fill', `#${c}`);
+    marker.appendChild(polygon);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+  });
+
+  // Top row nodes and arrows
+  for (let i = 0; i < 4; i++) {
+    // Node circles
+    const circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('cx', xs[i]);
+    circle.setAttribute('cy', topY);
+    circle.setAttribute('r', '28');
+    circle.setAttribute('fill', '#6c63ff15');
+    circle.setAttribute('stroke', '#6c63ff');
+    circle.setAttribute('stroke-width', '2');
+    svg.appendChild(circle);
+    addText(xs[i], topY + 5, labels_top[i], '#e4e4e7', '13');
+
+    // Bottom row
+    const circle2 = document.createElementNS(ns, 'circle');
+    circle2.setAttribute('cx', xs[i]);
+    circle2.setAttribute('cy', botY);
+    circle2.setAttribute('r', '28');
+    circle2.setAttribute('fill', '#00c9a715');
+    circle2.setAttribute('stroke', '#00c9a7');
+    circle2.setAttribute('stroke-width', '2');
+    svg.appendChild(circle2);
+    addText(xs[i], botY + 5, labels_bot[i], '#e4e4e7', '13');
+
+    // Vertical arrows (f_n)
+    addArrow(xs[i], topY + 32, xs[i], botY - 32, '#ffd93d', true);
+    addText(xs[i] + 20, (topY + botY) / 2 + 5, fLabels[i], '#ffd93d', '12');
+
+    // Horizontal arrows
+    if (i < 3) {
+      addArrow(xs[i] + 32, topY, xs[i + 1] - 32, topY, '#6c63ff', false);
+      addText((xs[i] + xs[i + 1]) / 2, topY - 16, dLabelsTop[i], '#6c63ff', '12');
+
+      addArrow(xs[i] + 32, botY, xs[i + 1] - 32, botY, '#00c9a7', false);
+      addText((xs[i] + xs[i + 1]) / 2, botY - 16, dLabelsBot[i], '#00c9a7', '12');
+    }
+  }
+
+  // Labels
+  addText(30, topY + 5, '(A, d_A):', '#6c63ff', '13', 'start');
+  addText(30, botY + 5, '(B, d_B):', '#00c9a7', '13', 'start');
+
+  // Commutative square highlight
+  const rect = document.createElementNS(ns, 'rect');
+  rect.setAttribute('x', xs[1] - 40);
+  rect.setAttribute('y', topY - 40);
+  rect.setAttribute('width', xs[2] - xs[1] + 80);
+  rect.setAttribute('height', botY - topY + 80);
+  rect.setAttribute('rx', '12');
+  rect.setAttribute('fill', 'none');
+  rect.setAttribute('stroke', '#ffd93d33');
+  rect.setAttribute('stroke-width', '1.5');
+  rect.setAttribute('stroke-dasharray', '8,4');
+  svg.appendChild(rect);
+  addText((xs[1] + xs[2]) / 2, botY + 55, 'Commutative square: d_B ∘ f_n = f_{n-1} ∘ d_A', '#ffd93d', '11');
+}
+
+buildChainMapSVG();
+
+// ============================================================
+// 5. DOUBLE COMPLEX
+// ============================================================
+const DC_ROWS = 4;
+const DC_COLS = 4;
+
+function buildDoubleComplex() {
+  const grid = document.getElementById('dcGrid');
+  grid.style.gridTemplateColumns = `repeat(${DC_COLS}, 70px)`;
+  grid.style.gridTemplateRows = `repeat(${DC_ROWS}, 70px)`;
+  grid.style.gap = '6px';
+  grid.innerHTML = '';
+
+  for (let q = DC_ROWS - 1; q >= 0; q--) {
+    for (let p = 0; p < DC_COLS; p++) {
+      const cell = document.createElement('div');
+      cell.className = 'dc-cell';
+      cell.textContent = `D${p},${q}`;
+      cell.dataset.p = p;
+      cell.dataset.q = q;
+      cell.dataset.diag = p + q;
+
+      cell.addEventListener('mouseenter', () => {
+        const diag = parseInt(cell.dataset.diag);
+        $$('.dc-cell').forEach(c => {
+          if (parseInt(c.dataset.diag) === diag) c.classList.add('highlight');
+          else c.classList.remove('highlight');
+        });
+        const pp = cell.dataset.p, qq = cell.dataset.q;
+        $('#dcExplanation').innerHTML = `
+          <strong>D<sub>${pp},${qq}</sub></strong> — on diagonal p+q = ${diag} (Tot(D)<sub>${diag}</sub>).<br>
+          Horizontal map: d: D<sub>${pp},${qq}</sub> → D<sub>${pp - 1},${qq}</sub><br>
+          Vertical map: d': D<sub>${pp},${qq}</sub> → D<sub>${pp},${qq - 1}</sub><br>
+          <span style="color:var(--accent4);">Anti-commutativity: d∘d' + d'∘d = 0</span>
+        `;
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        $$('.dc-cell').forEach(c => c.classList.remove('highlight'));
+      });
+
+      grid.appendChild(cell);
+    }
+  }
+}
+
+buildDoubleComplex();
+
+// Total complex diagram
+buildChainDiagram('totalChainDiagram',
+  ['⋯', 'Tot<sub>n+1</sub>', 'Tot<sub>n</sub>', 'Tot<sub>n−1</sub>', '⋯'],
+  ['', 'd<sub>n+1</sub>', 'd<sub>n</sub>', ''],
+  false
+);
+
+function showDCTab(tabId, btn) {
+  $$('#sec-double .tab-bar button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  $$('#sec-double .tab-content').forEach(tc => tc.classList.remove('active'));
+  document.getElementById('dc-' + tabId).classList.add('active');
+}
+
+// ============================================================
+// 6. EULER CHARACTERISTIC
+// ============================================================
+const eulerDims = [2, 3, 1, 0];
+
+function buildEulerSliders() {
+  const container = document.getElementById('eulerSliders');
+  container.innerHTML = '';
+  for (let i = 0; i < 4; i++) {
+    const label = document.createElement('label');
+    label.innerHTML = `dim C<sup>${i}</sup> = <strong id="eulerVal${i}">${eulerDims[i]}</strong>`;
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = 0;
+    input.max = 10;
+    input.value = eulerDims[i];
+    input.addEventListener('input', (e) => {
+      eulerDims[i] = parseInt(e.target.value);
+      document.getElementById(`eulerVal${i}`).textContent = eulerDims[i];
+      updateEuler();
+    });
+    label.appendChild(input);
+    container.appendChild(label);
+  }
+  updateEuler();
+}
+
+function updateEuler() {
+  let chi = 0;
+  let terms = [];
+  for (let i = 0; i < 4; i++) {
+    const sign = (i % 2 === 0) ? 1 : -1;
+    chi += sign * eulerDims[i];
+    terms.push(`${sign === 1 ? '+' : '−'} ${eulerDims[i]}`);
+  }
+  const formula = terms.join(' ').replace(/^\+\s*/, '');
+  document.getElementById('eulerResult').innerHTML = `
+    χ(C, d) = ${formula} = <strong style="font-size:1.6rem;">${chi}</strong>
+    <br><span style="font-size:0.85rem;color:var(--muted);">= Σ (−1)<sup>i</sup> dim C<sup>i</sup></span>
+  `;
+}
+
+buildEulerSliders();
+
+// ============================================================
+// SCROLL ANIMATIONS
+// ============================================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('animate-in');
+    }
+  });
+}, { threshold: 0.1 });
+
+$$('section, .info-card, .homology-demo, .euler-interactive').forEach(el => observer.observe(el));
+
+</script>
+</body>
+</html>
