@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catastrophe Theory Interactive Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px 10px;
+            background: linear-gradient(135deg, #0d0d2b, #1a1a3e);
+            border-bottom: 2px solid #4a00e0;
+        }
+
+        .header h1 {
+            font-size: 2.4em;
+            background: linear-gradient(90deg, #8e2de2, #4a00e0, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #aaa;
+            font-size: 1.05em;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 18px 10px;
+            background: #0d0d2b;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #222;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: 1px solid #4a00e0;
+            background: transparent;
+            color: #ccc;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(74, 0, 224, 0.2);
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 0 15px rgba(74, 0, 224, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel {
+            background: #111133;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #2a2a5a;
+        }
+
+        .panel h2 {
+            color: #8e2de2;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+
+        .panel h3 {
+            color: #00d2ff;
+            margin: 12px 0 6px;
+            font-size: 1.1em;
+        }
+
+        .panel p, .panel li {
+            line-height: 1.7;
+            color: #ccc;
+        }
+
+        .panel ul {
+            padding-left: 20px;
+        }
+
+        .formula {
+            background: #1a1a4a;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.15em;
+            color: #00d2ff;
+            display: inline-block;
+            margin: 8px 0;
+            border-left: 3px solid #8e2de2;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .controls {
+            background: #0f0f2f;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid #333;
+        }
+
+        .slider-group {
+            margin: 10px 0;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.95em;
+            color: #aaa;
+        }
+
+        .slider-group label span.val {
+            color: #00d2ff;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #2a2a5a;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a00e0, #8e2de2);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(142, 45, 226, 0.5);
+        }
+
+        .plot-container {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #2a2a5a;
+        }
+
+        .canvas-container {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #2a2a5a;
+            background: #000;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+        }
+
+        .info-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        .badge-dim { background: #1a3a5a; color: #00d2ff; }
+        .badge-codim { background: #3a1a5a; color: #d070ff; }
+        .badge-type { background: #1a4a2a; color: #70ff90; }
+
+        .explanation {
+            background: rgba(142, 45, 226, 0.1);
+            border-left: 3px solid #8e2de2;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 10px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .animate-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #e02d6a, #e04a2d);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .animate-btn:hover {
+            box-shadow: 0 0 20px rgba(224, 45, 106, 0.5);
+            transform: scale(1.03);
+        }
+
+        .animate-btn.running {
+            background: linear-gradient(135deg, #2de06a, #2de0c0);
+        }
+
+        .status-text {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+
+        .ball-canvas {
+            background: radial-gradient(ellipse at center, #0a0a2a, #000);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+            font-size: 0.9em;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 10px 14px;
+            border: 1px solid #2a2a5a;
+            text-align: center;
+        }
+
+        .comparison-table th {
+            background: #1a1a4a;
+            color: #8e2de2;
+        }
+
+        .comparison-table td {
+            background: #0f0f2f;
+        }
+
+        .highlight-row td {
+            background: rgba(74, 0, 224, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>🌀 Catastrophe Theory Explorer</h1>
+    <p>
+        Interactively explore René Thom's classification of catastrophes — sudden qualitative changes in systems
+        governed by smooth potential functions. Use sliders, animations, and 3D plots to build deep visual intuition.
+    </p>
+</div>
+
+<div class="tab-container">
+    <button class="tab-btn active" onclick="switchTab('overview')">📖 Overview</button>
+    <button class="tab-btn" onclick="switchTab('fold')">Fold</button>
+    <button class="tab-btn" onclick="switchTab('cusp')">Cusp</button>
+    <button class="tab-btn" onclick="switchTab('swallowtail')">Swallowtail</button>
+    <button class="tab-btn" onclick="switchTab('butterfly')">Butterfly</button>
+    <button class="tab-btn" onclick="switchTab('ball')">🎱 Ball-on-Surface</button>
+    <button class="tab-btn" onclick="switchTab('hysteresis')">⚡ Hysteresis</button>
+    <button class="tab-btn" onclick="switchTab('compare')">📊 Compare All</button>
+</div>
+
+<!-- ==================== OVERVIEW ==================== -->
+<div class="tab-content active" id="tab-overview">
+    <div class="panel">
+        <h2>What is Catastrophe Theory?</h2>
+        <p>
+            Catastrophe theory, developed by French mathematician <strong>René Thom</strong> in the 1960s–70s,
+            studies how small, smooth changes in <em>control parameters</em> can cause sudden, discontinuous jumps
+            in the <em>state</em> of a system. It's a branch of <strong>bifurcation theory</strong> within
+            dynamical systems and singularity theory in mathematics.
+        </p>
+
+        <h3>Core Idea</h3>
+        <p>
+            Consider a system described by a <strong>potential function</strong> V(x; a, b, …) where <em>x</em> is the
+            state variable and <em>a, b, …</em> are control parameters. The system naturally sits at <strong>minima</strong>
+            of V (stable equilibria). As you smoothly change the control parameters, the shape of V changes — and at
+            critical moments, a minimum can <em>disappear</em>, forcing the system to jump to a different minimum.
+            That sudden jump is the <strong>catastrophe</strong>.
+        </p>
+
+        <h3>Thom's Classification Theorem</h3>
+        <p>
+            Thom proved that for systems with ≤ 2 state variables and ≤ 4 control parameters, there are exactly
+            <strong>7 elementary catastrophes</strong> (up to smooth equivalence). The four "cuspoid" catastrophes
+            (1 state variable) are explored here:
+        </p>
+
+        <div style="overflow-x:auto; margin-top:15px;">
+            <table class="comparison-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Potential V(x)</th>
+                    <th>State Vars</th>
+                    <th>Control Params</th>
+                    <th>Codimension</th>
+                </tr>
+                <tr>
+                    <td><strong>Fold</strong> (A₂)</td>
+                    <td class="formula" style="font-size:0.95em">x³ + ax</td>
+                    <td>1</td><td>1 (a)</td><td>1</td>
+                </tr>
+                <tr>
+                    <td><strong>Cusp</strong> (A₃)</td>
+                    <td class="formula" style="font-size:0.95em">x⁴ + ax² + bx</td>
+                    <td>1</td><td>2 (a, b)</td><td>2</td>
+                </tr>
+                <tr>
+                    <td><strong>Swallowtail</strong> (A₄)</td>
+                    <td class="formula" style="font-size:0.95em">x⁵ + ax³ + bx² + cx</td>
+                    <td>1</td><td>3 (a, b, c)</td><td>3</td>
+                </tr>
+                <tr>
+                    <td><strong>Butterfly</strong> (A₅)</td>
+                    <td class="formula" style="font-size:0.95em">x⁶ + ax⁴ + bx³ + cx² + dx</td>
+                    <td>1</td><td>4 (a, b, c, d)</td><td>4</td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>Key Concepts</h3>
+        <ul>
+            <li><strong>Equilibria:</strong> Points where dV/dx = 0 (critical points of the potential)</li>
+            <li><strong>Stability:</strong> Minima of V are stable; maxima are unstable</li>
+            <li><strong>Bifurcation Set:</strong> The set of control parameter values where the number/type of equilibria changes</li>
+            <li><strong>Hysteresis:</strong> The system's state depends on its history — path-dependent jumps</li>
+            <li><strong>Catastrophe Manifold:</strong> The surface dV/dx = 0 in (x, params) space</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ==================== FOLD ==================== -->
+<div class="tab-content" id="tab-fold">
+    <div class="panel">
+        <h2>Fold Catastrophe (A₂)</h2>
+        <div>
+            <span class="info-badge badge-dim">1 state variable</span>
+            <span class="info-badge badge-codim">Codimension 1</span>
+            <span class="info-badge badge-type">Simplest catastrophe</span>
+        </div>
+        <div class="formula">V(x) = x³ + a·x</div>
+        <p style="margin-top:10px">
+            The fold is the simplest catastrophe. For <strong>a &lt; 0</strong>, V(x) has both a local min and max
+            (two equilibria). At <strong>a = 0</strong>, they merge into an inflection point. For <strong>a &gt; 0</strong>,
+            there are no equilibria — the potential is monotonic. The single equilibrium simply <em>vanishes</em>.
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="panel">
+            <h3>Potential V(x) = x³ + ax</h3>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>Parameter a: <span class="val" id="fold-a-val">-1.00</span></label>
+                    <input type="range" id="fold-a" min="-3" max="3" step="0.05" value="-1" oninput="updateFold()">
+                </div>
+                <button class="animate-btn" onclick="animateFold()">▶ Animate a: -3 → +3</button>
+                <div class="status-text" id="fold-status"></div>
+            </div>
+            <div class="plot-container" id="fold-potential-plot" style="height:400px;"></div>
+        </div>
+
+        <div class="panel">
+            <h3>Bifurcation Diagram & Equilibria</h3>
+            <div class="explanation">
+                The <strong>catastrophe manifold</strong> is the curve dV/dx = 3x² + a = 0, i.e., x = ±√(-a/3).
+                It exists only for a ≤ 0. The blue curve shows stable equilibria (minima), red shows unstable (maxima).
+                At a = 0, they collide and annihilate — the <strong>fold point</strong>.
+            </div>
+            <div class="plot-container" id="fold-bifurcation-plot" style="height:400px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== CUSP ==================== -->
+<div class="tab-content" id="tab-cusp">
+    <div class="panel">
+        <h2>Cusp Catastrophe (A₃)</h2>
+        <div>
+            <span class="info-badge badge-dim">1 state variable</span>
+            <span class="info-badge badge-codim">Codimension 2</span>
+            <span class="info-badge badge-type">Most famous catastrophe</span>
+        </div>
+        <div class="formula">V(x) = x⁴ + a·x² + b·x</div>
+        <p style="margin-top:10px">
+            The cusp is the most widely applied catastrophe. It features <strong>bimodality</strong> (two competing
+            stable states), <strong>hysteresis</strong> (path-dependent jumping), and <strong>divergence</strong>
+            (small changes in b cause huge differences when a &lt; 0). The bifurcation set in (a,b)-space forms a
+            cusp-shaped curve.
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="panel">
+            <h3>Potential V(x)</h3>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>a (splitting factor): <span class="val" id="cusp-a-val">-2.00</span></label>
+                    <input type="range" id="cusp-a" min="-4" max="4" step="0.05" value="-2" oninput="updateCusp()">
+                </div>
+                <div class="slider-group">
+                    <label>b (normal factor): <span class="val" id="cusp-b-val">0.00</span></label>
+                    <input type="range" id="cusp-b" min="-4" max="4" step="0.05" value="0" oninput="updateCusp()">
+                </div>
+                <button class="animate-btn" onclick="animateCuspHysteresis()">▶ Hysteresis Loop</button>
+                <div class="status-text" id="cusp-status"></div>
+            </div>
+            <div class="plot-container" id="cusp-potential-plot" style="height:380px;"></div>
+        </div>
+
+        <div class="panel">
+            <h3>3D Catastrophe Surface</h3>
+            <div class="explanation">
+                The surface shows dV/dx = 4x³ + 2ax + b = 0 — all equilibria in (a, b, x) space.
+                The folded sheet creates the cusp. Inside the cusp region, 3 equilibria coexist (2 stable, 1 unstable).
+            </div>
+            <div class="plot-container" id="cusp-surface-plot" style="height:450px;"></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Bifurcation Set in (a, b) Control Space</h3>
+        <div class="explanation">
+            The cusp curve is defined by the simultaneous conditions dV/dx = 0 and d²V/dx² = 0,
+            giving <strong>8a³ + 27b² = 0</strong>. Inside this cusp, the system is bistable.
+            The red dot shows current (a, b) position.
+        </div>
+        <div class="plot-container" id="cusp-bifurcation-plot" style="height:400px;"></div>
+    </div>
+</div>
+
+<!-- ==================== SWALLOWTAIL ==================== -->
+<div class="tab-content" id="tab-swallowtail">
+    <div class="panel">
+        <h2>Swallowtail Catastrophe (A₄)</h2>
+        <div>
+            <span class="info-badge badge-dim">1 state variable</span>
+            <span class="info-badge badge-codim">Codimension 3</span>
+            <span class="info-badge badge-type">Named for its bifurcation shape</span>
+        </div>
+        <div class="formula">V(x) = x⁵ + a·x³ + b·x² + c·x</div>
+        <p style="margin-top:10px">
+            The swallowtail adds a third control parameter. Its bifurcation set in (a, b, c)-space has a
+            characteristic swallowtail shape. For certain parameter values, up to <strong>3 stable states</strong>
+            can coexist, enabling richer transition behavior.
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="panel">
+            <h3>Potential V(x)</h3>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>a: <span class="val" id="st-a-val">-3.00</span></label>
+                    <input type="range" id="st-a" min="-5" max="5" step="0.1" value="-3" oninput="updateSwallowtail()">
+                </div>
+                <div class="slider-group">
+                    <label>b: <span class="val" id="st-b-val">0.00</span></label>
+                    <input type="range" id="st-b" min="-5" max="5" step="0.1" value="0" oninput="updateSwallowtail()">
+                </div>
+                <div class="slider-group">
+                    <label>c: <span class="val" id="st-c-val">2.00</span></label>
+                    <input type="range" id="st-c" min="-8" max="8" step="0.1" value="2" oninput="updateSwallowtail()">
+                </div>
+                <button class="animate-btn" onclick="animateSwallowtail()">▶ Sweep c</button>
+                <div class="status-text" id="st-status"></div>
+            </div>
+            <div class="plot-container" id="st-potential-plot" style="height:400px;"></div>
+        </div>
+
+        <div class="panel">
+            <h3>Equilibria vs c (with current a, b fixed)</h3>
+            <div class="explanation">
+                This shows how equilibrium positions change as c varies, with a and b fixed at their slider values.
+                Blue = stable (minima), red = unstable (maxima). Vertical dashed line = current c.
+            </div>
+            <div class="plot-container" id="st-bifurcation-plot" style="height:400px;"></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>Swallowtail Surface: Bifurcation set slice at current a</h3>
+        <div class="explanation">
+            For the current value of a, this shows the bifurcation set in the (b, c) plane — the boundary where
+            equilibria appear/disappear. The characteristic "swallowtail" shape is visible for a &lt; 0.
+        </div>
+        <div class="plot-container" id="st-surface-plot" style="height:450px;"></div>
+    </div>
+</div>
+
+<!-- ==================== BUTTERFLY ==================== -->
+<div class="tab-content" id="tab-butterfly">
+    <div class="panel">
+        <h2>Butterfly Catastrophe (A₅)</h2>
+        <div>
+            <span class="info-badge badge-dim">1 state variable</span>
+            <span class="info-badge badge-codim">Codimension 4</span>
+            <span class="info-badge badge-type">Highest cuspoid elementary catastrophe</span>
+        </div>
+        <div class="formula">V(x) = x⁶ + a·x⁴ + b·x³ + c·x² + d·x</div>
+        <p style="margin-top:10px">
+            The butterfly catastrophe has 4 control parameters and can exhibit up to <strong>3 coexisting stable
+            states</strong> separated by 2 unstable ones (5 equilibria total). The "butterfly factor" d controls
+            whether the system prefers a compromise middle state or extreme states.
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="panel">
+            <h3>Potential V(x)</h3>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>a: <span class="val" id="bf-a-val">-4.00</span></label>
+                    <input type="range" id="bf-a" min="-6" max="6" step="0.1" value="-4" oninput="updateButterfly()">
+                </div>
+                <div class="slider-group">
+                    <label>b: <span class="val" id="bf-b-val">0.00</span></label>
+                    <input type="range" id="bf-b" min="-6" max="6" step="0.1" value="0" oninput="updateButterfly()">
+                </div>
+                <div class="slider-group">
+                    <label>c: <span class="val" id="bf-c-val">4.00</span></label>
+                    <input type="range" id="bf-c" min="-10" max="10" step="0.1" value="4" oninput="updateButterfly()">
+                </div>
+                <div class="slider-group">
+                    <label>d (butterfly factor): <span class="val" id="bf-d-val">0.00</span></label>
+                    <input type="range" id="bf-d" min="-10" max="10" step="0.1" value="0" oninput="updateButterfly()">
+                </div>
+            </div>
+            <div class="plot-container" id="bf-potential-plot" style="height:400px;"></div>
+        </div>
+
+        <div class="panel">
+            <h3>Equilibria vs d (butterfly factor)</h3>
+            <div class="explanation">
+                With a, b, c fixed, this shows how equilibria split and merge as d varies.
+                The butterfly factor can create or destroy the middle stable state.
+            </div>
+            <div class="plot-container" id="bf-bifurcation-plot" style="height:400px;"></div>
+            <div style="margin-top:10px">
+                <button class="animate-btn" onclick="animateButterfly()">▶ Sweep d</button>
+                <div class="status-text" id="bf-status"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== BALL ON SURFACE ==================== -->
+<div class="tab-content" id="tab-ball">
+    <div class="panel">
+        <h2>🎱 Ball-on-Potential Simulation</h2>
+        <p>
+            Watch a ball roll on the cusp potential surface in real time. The ball seeks the nearest minimum
+            via gradient descent with damping. Change parameters to see it <strong>jump catastrophically</strong>
+            when its current minimum disappears!
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="panel">
+            <h3>Ball Simulation (Cusp Potential)</h3>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>a (splitting): <span class="val" id="ball-a-val">-3.00</span></label>
+                    <input type="range" id="ball-a" min="-5" max="3" step="0.05" value="-3" oninput="updateBall()">
+                </div>
+                <div class="slider-group">
+                    <label>b (bias): <span class="val" id="ball-b-val">0.00</span></label>
+                    <input type="range" id="ball-b" min="-6" max="6" step="0.05" value="0" oninput="updateBall()">
+                </div>
+                <div class="slider-group">
+                    <label>Damping: <span class="val" id="ball-damp-val">0.92</span></label>
+                    <input type="range" id="ball-damp" min="0.8" max="0.99" step="0.01" value="0.92" oninput="updateBall()">
+                </div>
+                <button class="animate-btn" onclick="triggerCatastrophe()">💥 Trigger Catastrophe</button>
+                <button class="animate-btn" onclick="resetBall()">🔄 Reset Ball</button>
+            </div>
+            <div class="canvas-container">
+                <canvas id="ball-canvas" class="ball-canvas" width="600" height="400"></canvas>
+            </div>
+            <div class="status-text" id="ball-status">Ball position: x = 0.00</div>
+        </div>
+
+        <div class="panel">
+            <h3>Phase Portrait</h3>
+            <div class="explanation">
+                The phase portrait shows the ball's position (x) vs velocity (dx/dt). A stable equilibrium
+                appears as a spiral sink. During a catastrophe, the trajectory makes a dramatic excursion.
+            </div>
+            <div class="canvas-container">
+                <canvas id="phase-canvas" width="600" height="400"></canvas>
+            </div>
+            <div style="margin-top:10px">
+                <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div> Ball trajectory</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#ff4466"></div> Catastrophe jump</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== HYSTERESIS ==================== -->
+<div class="tab-content" id="tab-hysteresis">
+    <div class="panel">
+        <h2>⚡ Hysteresis Explorer</h2>
+        <p>
+            Hysteresis is a hallmark of the cusp catastrophe: the system's state depends on its <strong>history</strong>.
+            As you sweep the bias parameter b back and forth, the system jumps at <em>different</em> critical values
+            depending on direction. The enclosed area represents <strong>dissipated energy</strong>.
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="panel">
+            <h3>Hysteresis Loop</h3>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>a (splitting — more negative = wider loop): <span class="val" id="hyst-a-val">-3.00</span></label>
+                    <input type="range" id="hyst-a" min="-6" max="-0.5" step="0.1" value="-3" oninput="updateHysteresis()">
+                </div>
+                <div class="slider-group">
+                    <label>Sweep speed: <span class="val" id="hyst-speed-val">1.0</span></label>
+                    <input type="range" id="hyst-speed" min="0.2" max="3" step="0.1" value="1" oninput="document.getElementById('hyst-speed-val').textContent=this.value">
+                </div>
+                <button class="animate-btn" onclick="startHysteresis()">▶ Run Hysteresis Loop</button>
+                <button class="animate-btn" onclick="stopHysteresis()">⏹ Stop</button>
+                <div class="status-text" id="hyst-status"></div>
+            </div>
+            <div class="plot-container" id="hyst-loop-plot" style="height:420px;"></div>
+        </div>
+
+        <div class="panel">
+            <h3>Potential During Sweep</h3>
+            <div class="explanation">
+                Watch the potential function change shape in real time during the hysteresis sweep.
+                The green dot shows the current state. Notice how it stays in its well until the well vanishes!
+            </div>
+            <div class="plot-container" id="hyst-potential-plot" style="height:420px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== COMPARE ALL ==================== -->
+<div class="tab-content" id="tab-compare">
+    <div class="panel">
+        <h2>📊 Compare All Elementary Cuspoid Catastrophes</h2>
+        <p>
+            See all four cuspoid catastrophes side by side. Each is shown with representative parameter values
+            that highlight their multi-well structure.
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="panel">
+            <h3>Fold: V = x³ + ax</h3>
+            <div class="plot-container" id="cmp-fold-plot" style="height:300px;"></div>
+        </div>
+        <div class="panel">
+            <h3>Cusp: V = x⁴ + ax² + bx</h3>
+            <div class="plot-container" id="cmp-cusp-plot" style="height:300px;"></div>
+        </div>
+        <div class="panel">
+            <h3>Swallowtail: V = x⁵ + ax³ + bx² + cx</h3>
+            <div class="plot-container" id="cmp-st-plot" style="height:300px;"></div>
+        </div>
+        <div class="panel">
+            <h3>Butterfly: V = x⁶ + ax⁴ + bx³ + cx² + dx</h3>
+            <div class="plot-container" id="cmp-bf-plot" style="height:300px;"></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>Properties Comparison</h2>
+        <table class="comparison-table">
+            <tr>
+                <th>Property</th>
+                <th>Fold</th>
+                <th>Cusp</th>
+                <th>Swallowtail</th>
+                <th>Butterfly</th>
+            </tr>
+            <tr>
+                <td>Germ</td>
+                <td>x³</td>
+                <td>x⁴</td>
+                <td>x⁵</td>
+                <td>x⁶</td>
+            </tr>
+            <tr>
+                <td>Max stable states</td>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>Max equilibria</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>Hysteresis</td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>Yes (nested)</td>
+                <td>Yes (nested)</td>
+            </tr>
+            <tr>
+                <td>Control params</td>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>Applications</td>
+                <td>Saddle-node bifurcation</td>
+                <td>Phase transitions, opinion dynamics</td>
+                <td>Optics (caustics), wavefronts</td>
+                <td>Triple-point transitions</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ============ TAB SWITCHING ============
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.target.classList.add('active');
+
+    // Initialize plots on first view
+    setTimeout(() => {
+        switch(tabName) {
+            case 'fold': updateFold(); drawFoldBifurcation(); break;
+            case 'cusp': updateCusp(); drawCuspSurface(); drawCuspBifurcationSet(); break;
+            case 'swallowtail': updateSwallowtail(); break;
+            case 'butterfly': updateButterfly(); break;
+            case 'ball': initBallSim(); break;
+            case 'hysteresis': updateHysteresis(); break;
+            case 'compare': drawComparison(); break;
+        }
+    }, 50);
+}
+
+const plotLayout = {
+    paper_bgcolor: '#111133',
+    plot_bgcolor: '#0a0a2a',
+    font: { color: '#ccc', family: 'Segoe UI' },
+    margin: { t: 30, b: 50, l: 55, r: 20 },
+    xaxis: { gridcolor: '#1a1a4a', zerolinecolor: '#333', title: { font: { size: 13 } } },
+    yaxis: { gridcolor: '#1a1a4a', zerolinecolor: '#333', title: { font: { size: 13 } } },
+};
+
+const plotConfig = { responsive: true, displayModeBar: false };
+
+function linspace(a, b, n) {
+    const arr = [];
+    const step = (b - a) / (n - 1);
+    for (let i = 0; i < n; i++) arr.push(a + step * i);
+    return arr;
+}
+
+// ============ FOLD CATASTROPHE ============
+function updateFold() {
+    const a = parseFloat(document.getElementById('fold-a').value);
+    document.getElementById('fold-a-val').textContent = a.toFixed(2);
+
+    const x = linspace(-3, 3, 300);
+    const V = x.map(xi => xi*xi*xi + a*xi);
+    const dV = x.map(xi => 3*xi*xi + a);
+
+    // Find equilibria
+    const eqPoints = [];
+    if (a <= 0) {
+        const xeq = Math.sqrt(-a/3);
+        eqPoints.push({ x: -xeq, stable: true });
+        eqPoints.push({ x: xeq, stable: false });
+    }
+
+    const traces = [{
+        x: x, y: V, type: 'scatter', mode: 'lines',
+        line: { color: '#00d2ff', width: 3 },
+        name: 'V(x)'
+    }];
+
+    eqPoints.forEach(eq => {
+        const yVal = eq.x*eq.x*eq.x + a*eq.x;
+        traces.push({
+            x: [eq.x], y: [yVal], type: 'scatter', mode: 'markers',
+            marker: { size: 14, color: eq.stable ? '#00ff88' : '#ff4466', symbol: eq.stable ? 'circle' : 'x',
+                      line: { width: 2, color: '#fff' } },
+            name: eq.stable ? 'Stable' : 'Unstable',
+            showlegend: false
+        });
+    });
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'x', range: [-3, 3] },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)', range: [-10, 10] },
+        showlegend: false,
+        annotations: [{
+            x: 0.02, y: 0.98, xref: 'paper', yref: 'paper',
+            text: a < 0 ? '2 equilibria (fold exists)' : a === 0 ? 'Fold point!' : 'No equilibria',
+            showarrow: false,
+            font: { color: a === 0 ? '#ffaa00' : '#aaa', size: 13 },
+            bgcolor: 'rgba(0,0,0,0.5)', borderpad: 4
+        }]
+    };
+
+    Plotly.react('fold-potential-plot', traces, layout, plotConfig);
+}
+
+function drawFoldBifurcation() {
+    const aVals = linspace(-3, 0, 200);
+    const stableX = aVals.map(a => -Math.sqrt(-a/3));
+    const unstableX = aVals.map(a => Math.sqrt(-a/3));
+
+    const a = parseFloat(document.getElementById('fold-a').value);
+
+    const traces = [
+        { x: aVals, y: stableX, mode: 'lines', line: { color: '#00ff88', width: 3 }, name: 'Stable (min)' },
+        { x: aVals, y: unstableX, mode: 'lines', line: { color: '#ff4466', width: 3, dash: 'dash' }, name: 'Unstable (max)' },
+        { x: [0], y: [0], mode: 'markers', marker: { size: 14, color: '#ffaa00', symbol: 'star' }, name: 'Fold point' }
+    ];
+
+    if (a <= 0) {
+        traces.push({
+            x: [a, a], y: [-Math.sqrt(-a/3), Math.sqrt(-a/3)],
+            mode: 'markers', marker: { size: 10, color: ['#00ff88', '#ff4466'] },
+            name: 'Current', showlegend: false
+        });
+    }
+
+    // Vertical line for current a
+    traces.push({
+        x: [a, a], y: [-2, 2], mode: 'lines',
+        line: { color: '#ffffff33', width: 1, dash: 'dot' },
+        showlegend: false
+    });
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'a (control parameter)', range: [-3.5, 1] },
+        yaxis: { ...plotLayout.yaxis, title: 'x (equilibrium)', range: [-2, 2] },
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)' }
+    };
+
+    Plotly.react('fold-bifurcation-plot', traces, layout, plotConfig);
+}
+
+let foldAnimId = null;
+function animateFold() {
+    if (foldAnimId) { cancelAnimationFrame(foldAnimId); foldAnimId = null; }
+    const slider = document.getElementById('fold-a');
+    let val = -3;
+    function step() {
+        val += 0.04;
+        if (val > 3) { document.getElementById('fold-status').textContent = 'Animation complete'; return; }
+        slider.value = val;
+        document.getElementById('fold-status').textContent = `Animating... a = ${val.toFixed(2)}`;
+        updateFold();
+        drawFoldBifurcation();
+        foldAnimId = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// ============ CUSP CATASTROPHE ============
+function updateCusp() {
+    const a = parseFloat(document.getElementById('cusp-a').value);
+    const b = parseFloat(document.getElementById('cusp-b').value);
+    document.getElementById('cusp-a-val').textContent = a.toFixed(2);
+    document.getElementById('cusp-b-val').textContent = b.toFixed(2);
+
+    const x = linspace(-3, 3, 400);
+    const V = x.map(xi => xi**4 + a*xi**2 + b*xi);
+
+    // Find equilibria numerically: dV/dx = 4x³ + 2ax + b = 0
+    const equilibria = findCubicRoots(4, 0, 2*a, b);
+
+    const traces = [{
+        x: x, y: V, type: 'scatter', mode: 'lines',
+        line: { color: '#00d2ff', width: 3 }, name: 'V(x)'
+    }];
+
+    equilibria.forEach(xeq => {
+        const d2V = 12*xeq*xeq + 2*a;
+        const yVal = xeq**4 + a*xeq**2 + b*xeq;
+        const stable = d2V > 0;
+        traces.push({
+            x: [xeq], y: [yVal], mode: 'markers',
+            marker: { size: 12, color: stable ? '#00ff88' : '#ff4466',
+                      symbol: stable ? 'circle' : 'x', line: { width: 2, color: '#fff' } },
+            showlegend: false
+        });
+    });
+
+    const nStable = equilibria.filter(xeq => 12*xeq*xeq + 2*a > 0).length;
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'x', range: [-3, 3] },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)' },
+        showlegend: false,
+        annotations: [{
+            x: 0.02, y: 0.98, xref: 'paper', yref: 'paper',
+            text: `${equilibria.length} equilibria (${nStable} stable)`,
+            showarrow: false, font: { color: '#aaa', size: 13 },
+            bgcolor: 'rgba(0,0,0,0.5)', borderpad: 4
+        }]
+    };
+
+    Plotly.react('cusp-potential-plot', traces, layout, plotConfig);
+    drawCuspBifurcationSet();
+}
+
+function drawCuspSurface() {
+    // 3D surface: equilibrium manifold 4x³ + 2ax + b = 0 → b = -4x³ - 2ax
+    const xVals = linspace(-2, 2, 80);
+    const aVals = linspace(-4, 2, 80);
+
+    const bSurface = [];
+    for (let i = 0; i < aVals.length; i++) {
+        const row = [];
+        for (let j = 0; j < xVals.length; j++) {
+            row.push(-4*xVals[j]**3 - 2*aVals[i]*xVals[j]);
+        }
+        bSurface.push(row);
+    }
+
+    const trace = {
+        type: 'surface',
+        x: xVals, y: aVals, z: bSurface,
+        colorscale: [
+            [0, '#4a00e0'], [0.25, '#8e2de2'], [0.5, '#00d2ff'],
+            [0.75, '#00ff88'], [1, '#ffaa00']
+        ],
+        opacity: 0.85,
+        contours: {
+            z: { show: true, usecolormap: true, highlightcolor: "#fff", project: { z: true } }
+        },
+        showscale: false
+    };
+
+    const layout = {
+        paper_bgcolor: '#111133',
+        plot_bgcolor: '#0a0a2a',
+        font: { color: '#ccc' },
+        margin: { t: 10, b: 10, l: 10, r: 10 },
+        scene: {
+            xaxis: { title: 'x (state)', gridcolor: '#1a1a4a', color: '#aaa' },
+            yaxis: { title: 'a (splitting)', gridcolor: '#1a1a4a', color: '#aaa' },
+            zaxis: { title: 'b (normal)', gridcolor: '#1a1a4a', color: '#aaa' },
+            bgcolor: '#0a0a2a',
+            camera: { eye: { x: 1.8, y: 1.2, z: 0.8 } }
+        }
+    };
+
+    Plotly.react('cusp-surface-plot', [trace], layout, plotConfig);
+}
+
+function drawCuspBifurcationSet() {
+    const a = parseFloat(document.getElementById('cusp-a').value);
+    const b = parseFloat(document.getElementById('cusp-b').value);
+
+    // Cusp curve: 8a³ + 27b² = 0 → b = ±√(-8a³/27)
+    const aVals = linspace(-4, 0, 300);
+    const bPos = aVals.map(ai => Math.sqrt(-8*ai**3/27));
+    const bNeg = aVals.map(ai => -Math.sqrt(-8*ai**3/27));
+
+    const traces = [
+        { x: aVals, y: bPos, mode: 'lines', line: { color: '#ffaa00', width: 3 }, name: 'Bifurcation set' },
+        { x: aVals, y: bNeg, mode: 'lines', line: { color: '#ffaa00', width: 3 }, showlegend: false },
+        { x: [a], y: [b], mode: 'markers', marker: { size: 14, color: '#ff4466', symbol: 'circle',
+          line: { width: 2, color: '#fff' } }, name: 'Current (a,b)' },
+        { x: [0], y: [0], mode: 'markers', marker: { size: 10, color: '#fff', symbol: 'diamond' }, name: 'Cusp point' }
+    ];
+
+    // Shade the bistable region
+    const fillA = [...aVals, ...aVals.slice().reverse()];
+    const fillB = [...bPos, ...bNeg.slice().reverse()];
+    traces.unshift({
+        x: fillA, y: fillB, fill: 'toself',
+        fillcolor: 'rgba(142, 45, 226, 0.15)',
+        line: { color: 'transparent' },
+        name: 'Bistable region', hoverinfo: 'skip'
+    });
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'a (splitting factor)', range: [-5, 2] },
+        yaxis: { ...plotLayout.yaxis, title: 'b (normal factor)', range: [-6, 6] },
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)' },
+        annotations: [{
+            x: -2.5, y: 0, text: 'BISTABLE<br>REGION', showarrow: false,
+            font: { color: 'rgba(142,45,226,0.6)', size: 14 }
+        }]
+    };
+
+    Plotly.react('cusp-bifurcation-plot', traces, layout, plotConfig);
+}
+
+// Cubic root finder (real roots of ax³ + bx² + cx + d = 0)
+function findCubicRoots(a, b, c, d) {
+    // Numerical approach: scan for sign changes
+    const roots = [];
+    const xRange = linspace(-4, 4, 2000);
+    for (let i = 0; i < xRange.length - 1; i++) {
+        const f0 = a*xRange[i]**3 + b*xRange[i]**2 + c*xRange[i] + d;
+        const f1 = a*xRange[i+1]**3 + b*xRange[i+1]**2 + c*xRange[i+1] + d;
+        if (f0 * f1 <= 0) {
+            // Bisection
+            let lo = xRange[i], hi = xRange[i+1];
+            for (let j = 0; j < 50; j++) {
+                const mid = (lo + hi) / 2;
+                const fm = a*mid**3 + b*mid**2 + c*mid + d;
+                if (fm * (a*lo**3 + b*lo**2 + c*lo + d) <= 0) hi = mid;
+                else lo = mid;
+            }
+            roots.push((lo + hi) / 2);
+        }
+    }
+    return roots;
+}
+
+// General polynomial root finder (scan + bisection)
+function findPolyRoots(coeffs, xmin, xmax, n) {
+    // coeffs = [c_n, c_{n-1}, ..., c_1, c_0] for c_n*x^n + ... + c_0
+    function evalPoly(x) {
+        let val = 0;
+        for (let i = 0; i < coeffs.length; i++) {
+            val += coeffs[i] * x**(coeffs.length - 1 - i);
+        }
+        return val;
+    }
+
+    const roots = [];
+    const xRange = linspace(xmin, xmax, n || 3000);
+    for (let i = 0; i < xRange.length - 1; i++) {
+        const f0 = evalPoly(xRange[i]);
+        const f1 = evalPoly(xRange[i+1]);
+        if (f0 * f1 <= 0) {
+            let lo = xRange[i], hi = xRange[i+1];
+            for (let j = 0; j < 60; j++) {
+                const mid = (lo + hi) / 2;
+                if (evalPoly(mid) * evalPoly(lo) <= 0) hi = mid;
+                else lo = mid;
+            }
+            roots.push((lo + hi) / 2);
+        }
+    }
+    return roots;
+}
+
+let cuspAnimId = null;
+function animateCuspHysteresis() {
+    if (cuspAnimId) { cancelAnimationFrame(cuspAnimId); cuspAnimId = null; }
+    const slider = document.getElementById('cusp-b');
+    let val = -5;
+    let dir = 1;
+    let cycles = 0;
+    function step() {
+        val += 0.06 * dir;
+        if (val > 5) { dir = -1; }
+        if (val < -5) { dir = 1; cycles++; }
+        if (cycles >= 2) { document.getElementById('cusp-status').textContent = 'Animation complete'; return; }
+        slider.value = val;
+        document.getElementById('cusp-status').textContent = `Sweeping b = ${val.toFixed(2)} (${dir > 0 ? '→' : '←'})`;
+        updateCusp();
+        cuspAnimId = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// ============ SWALLOWTAIL CATASTROPHE ============
+function updateSwallowtail() {
+    const a = parseFloat(document.getElementById('st-a').value);
+    const b = parseFloat(document.getElementById('st-b').value);
+    const c = parseFloat(document.getElementById('st-c').value);
+    document.getElementById('st-a-val').textContent = a.toFixed(2);
+    document.getElementById('st-b-val').textContent = b.toFixed(2);
+    document.getElementById('st-c-val').textContent = c.toFixed(2);
+
+    // Potential
+    const x = linspace(-3, 3, 400);
+    const V = x.map(xi => xi**5 + a*xi**3 + b*xi**2 + c*xi);
+
+    // dV/dx = 5x⁴ + 3ax² + 2bx + c
+    const equilibria = findPolyRoots([5, 0, 3*a, 2*b, c], -3, 3);
+
+    const traces = [{
+        x: x, y: V, mode: 'lines', line: { color: '#00d2ff', width: 3 }, name: 'V(x)'
+    }];
+
+    equilibria.forEach(xeq => {
+        const d2V = 20*xeq**3 + 6*a*xeq + 2*b;
+        const yVal = xeq**5 + a*xeq**3 + b*xeq**2 + c*xeq;
+        const stable = d2V > 0;
+        traces.push({
+            x: [xeq], y: [yVal], mode: 'markers',
+            marker: { size: 12, color: stable ? '#00ff88' : '#ff4466',
+                      symbol: stable ? 'circle' : 'x', line: { width: 2, color: '#fff' } },
+            showlegend: false
+        });
+    });
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'x', range: [-3, 3] },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)' },
+        showlegend: false
+    };
+
+    Plotly.react('st-potential-plot', traces, layout, plotConfig);
+
+    // Bifurcation diagram: equilibria vs c
+    drawSwallowtailBifurcation(a, b, c);
+    drawSwallowtailSurface(a);
+}
+
+function drawSwallowtailBifurcation(a, b, cCurrent) {
+    const cVals = linspace(-8, 8, 300);
+    const stableX = [], stableC = [];
+    const unstableX = [], unstableC = [];
+
+    cVals.forEach(c => {
+        const roots = findPolyRoots([5, 0, 3*a, 2*b, c], -3.5, 3.5);
+        roots.forEach(xeq => {
+            const d2V = 20*xeq**3 + 6*a*xeq + 2*b;
+            if (d2V > 0) { stableX.push(xeq); stableC.push(c); }
+            else { unstableX.push(xeq); unstableC.push(c); }
+        });
+    });
+
+    const traces = [
+        { x: stableC, y: stableX, mode: 'markers', marker: { size: 2, color: '#00ff88' }, name: 'Stable' },
+        { x: unstableC, y: unstableX, mode: 'markers', marker: { size: 2, color: '#ff4466' }, name: 'Unstable' },
+        { x: [cCurrent, cCurrent], y: [-4, 4], mode: 'lines',
+          line: { color: '#ffaa00', width: 2, dash: 'dash' }, name: 'Current c' }
+    ];
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'c', range: [-8, 8] },
+        yaxis: { ...plotLayout.yaxis, title: 'x (equilibrium)', range: [-3.5, 3.5] },
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)' }
+    };
+
+    Plotly.react('st-bifurcation-plot', traces, layout, plotConfig);
+}
+
+function drawSwallowtailSurface(a) {
+    // For fixed a, bifurcation set in (b,c) plane
+    // Conditions: dV/dx = 0 AND d²V/dx² = 0
+    // 5x⁴ + 3ax² + 2bx + c = 0
+    // 20x³ + 6ax + 2b = 0 → b = -10x³ - 3ax
+    // c = -5x⁴ - 3ax² - 2bx = -5x⁴ - 3ax² - 2(-10x³ - 3ax)x = -5x⁴ - 3ax² + 20x⁴ + 6ax² = 15x⁴ + 3ax²
+
+    const xVals = linspace(-2.5, 2.5, 500);
+    const bVals = xVals.map(x => -10*x**3 - 3*a*x);
+    const cVals = xVals.map(x => 15*x**4 + 3*a*x**2);
+
+    const bCurrent = parseFloat(document.getElementById('st-b').value);
+    const cCurrent = parseFloat(document.getElementById('st-c').value);
+
+    const traces = [
+        { x: bVals, y: cVals, mode: 'lines', line: { color: '#ffaa00', width: 3 }, name: 'Bifurcation set' },
+        { x: [bCurrent], y: [cCurrent], mode: 'markers',
+          marker: { size: 14, color: '#ff4466', line: { width: 2, color: '#fff' } }, name: 'Current (b,c)' }
+    ];
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'b' },
+        
+        yaxis: { ...plotLayout.yaxis, title: 'c' },
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)' },
+        title: { text: `Swallowtail bifurcation set (a = ${a.toFixed(1)})`, font: { size: 14, color: '#aaa' } }
+    };
+
+    Plotly.react('st-surface-plot', traces, layout, plotConfig);
+}
+
+let stAnimId = null;
+function animateSwallowtail() {
+    if (stAnimId) { cancelAnimationFrame(stAnimId); stAnimId = null; }
+    const slider = document.getElementById('st-c');
+    let val = -8;
+    function step() {
+        val += 0.08;
+        if (val > 8) { document.getElementById('st-status').textContent = 'Animation complete'; return; }
+        slider.value = val;
+        document.getElementById('st-status').textContent = `Sweeping c = ${val.toFixed(2)}`;
+        updateSwallowtail();
+        stAnimId = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// ============ BUTTERFLY CATASTROPHE ============
+function updateButterfly() {
+    const a = parseFloat(document.getElementById('bf-a').value);
+    const b = parseFloat(document.getElementById('bf-b').value);
+    const c = parseFloat(document.getElementById('bf-c').value);
+    const d = parseFloat(document.getElementById('bf-d').value);
+    document.getElementById('bf-a-val').textContent = a.toFixed(2);
+    document.getElementById('bf-b-val').textContent = b.toFixed(2);
+    document.getElementById('bf-c-val').textContent = c.toFixed(2);
+    document.getElementById('bf-d-val').textContent = d.toFixed(2);
+
+    const x = linspace(-3, 3, 400);
+    const V = x.map(xi => xi**6 + a*xi**4 + b*xi**3 + c*xi**2 + d*xi);
+
+    // dV/dx = 6x⁵ + 4ax³ + 3bx² + 2cx + d
+    const equilibria = findPolyRoots([6, 0, 4*a, 3*b, 2*c, d], -3, 3);
+
+    const traces = [{
+        x: x, y: V, mode: 'lines', line: { color: '#00d2ff', width: 3 }, name: 'V(x)'
+    }];
+
+    equilibria.forEach(xeq => {
+        const d2V = 30*xeq**4 + 12*a*xeq**2 + 6*b*xeq + 2*c;
+        const yVal = xeq**6 + a*xeq**4 + b*xeq**3 + c*xeq**2 + d*xeq;
+        const stable = d2V > 0;
+        traces.push({
+            x: [xeq], y: [yVal], mode: 'markers',
+            marker: { size: 12, color: stable ? '#00ff88' : '#ff4466',
+                      symbol: stable ? 'circle' : 'x', line: { width: 2, color: '#fff' } },
+            showlegend: false
+        });
+    });
+
+    const nStable = equilibria.filter(xeq => (30*xeq**4 + 12*a*xeq**2 + 6*b*xeq + 2*c) > 0).length;
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'x', range: [-3, 3] },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)' },
+        showlegend: false,
+        annotations: [{
+            x: 0.02, y: 0.98, xref: 'paper', yref: 'paper',
+            text: `${equilibria.length} equilibria (${nStable} stable)`,
+            showarrow: false, font: { color: '#aaa', size: 13 },
+            bgcolor: 'rgba(0,0,0,0.5)', borderpad: 4
+        }]
+    };
+
+    Plotly.react('bf-potential-plot', traces, layout, plotConfig);
+    drawButterflyBifurcation(a, b, c, d);
+}
+
+function drawButterflyBifurcation(a, b, c, dCurrent) {
+    const dVals = linspace(-10, 10, 300);
+    const stableX = [], stableD = [];
+    const unstableX = [], unstableD = [];
+
+    dVals.forEach(d => {
+        const roots = findPolyRoots([6, 0, 4*a, 3*b, 2*c, d], -3.5, 3.5);
+        roots.forEach(xeq => {
+            const d2V = 30*xeq**4 + 12*a*xeq**2 + 6*b*xeq + 2*c;
+            if (d2V > 0) { stableX.push(xeq); stableD.push(d); }
+            else { unstableX.push(xeq); unstableD.push(d); }
+        });
+    });
+
+    const traces = [
+        { x: stableD, y: stableX, mode: 'markers', marker: { size: 2, color: '#00ff88' }, name: 'Stable' },
+        { x: unstableD, y: unstableX, mode: 'markers', marker: { size: 2, color: '#ff4466' }, name: 'Unstable' },
+        { x: [dCurrent, dCurrent], y: [-4, 4], mode: 'lines',
+          line: { color: '#ffaa00', width: 2, dash: 'dash' }, name: 'Current d' }
+    ];
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'd (butterfly factor)', range: [-10, 10] },
+        yaxis: { ...plotLayout.yaxis, title: 'x (equilibrium)', range: [-3.5, 3.5] },
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)' }
+    };
+
+    Plotly.react('bf-bifurcation-plot', traces, layout, plotConfig);
+}
+
+let bfAnimId = null;
+function animateButterfly() {
+    if (bfAnimId) { cancelAnimationFrame(bfAnimId); bfAnimId = null; }
+    const slider = document.getElementById('bf-d');
+    let val = -10;
+    function step() {
+        val += 0.1;
+        if (val > 10) { document.getElementById('bf-status').textContent = 'Animation complete'; return; }
+        slider.value = val;
+        document.getElementById('bf-status').textContent = `Sweeping d = ${val.toFixed(2)}`;
+        updateButterfly();
+        bfAnimId = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// ============ BALL-ON-SURFACE SIMULATION ============
+let ballState = { x: -1.5, v: 0, trail: [], phaseTrail: [], catastropheTrail: [] };
+let ballAnimRunning = false;
+let ballAnimId2 = null;
+
+function initBallSim() {
+    if (!ballAnimRunning) {
+        ballAnimRunning = true;
+        ballState = { x: -1.5, v: 0, trail: [], phaseTrail: [], catastropheTrail: [] };
+        runBallSim();
+    }
+}
+
+function updateBall() {
+    document.getElementById('ball-a-val').textContent = parseFloat(document.getElementById('ball-a').value).toFixed(2);
+    document.getElementById('ball-b-val').textContent = parseFloat(document.getElementById('ball-b').value).toFixed(2);
+    document.getElementById('ball-damp-val').textContent = parseFloat(document.getElementById('ball-damp').value).toFixed(2);
+}
+
+function resetBall() {
+    ballState = { x: -1.5, v: 0, trail: [], phaseTrail: [], catastropheTrail: [] };
+}
+
+function triggerCatastrophe() {
+    // Smoothly sweep b to cause a catastrophe
+    const slider = document.getElementById('ball-b');
+    const startVal = parseFloat(slider.value);
+    const targetVal = startVal < 0 ? 5 : -5;
+    let progress = 0;
+
+    function sweep() {
+        progress += 0.015;
+        if (progress > 1) {
+            document.getElementById('ball-status').textContent = '💥 Catastrophe triggered!';
+            return;
+        }
+        const val = startVal + (targetVal - startVal) * progress;
+        slider.value = val;
+        updateBall();
+        requestAnimationFrame(sweep);
+    }
+    sweep();
+}
+
+function runBallSim() {
+    const canvas = document.getElementById('ball-canvas');
+    const ctx = canvas.getContext('2d');
+    const phaseCanvas = document.getElementById('phase-canvas');
+    const phaseCtx = phaseCanvas.getContext('2d');
+
+    // High-DPI support
+    function setupCanvas(cvs, context) {
+        const rect = cvs.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        cvs.width = rect.width * dpr;
+        cvs.height = rect.height * dpr;
+        context.scale(dpr, dpr);
+        return { w: rect.width, h: rect.height };
+    }
+
+    const { w, h } = setupCanvas(canvas, ctx);
+    const phase = setupCanvas(phaseCanvas, phaseCtx);
+
+    function cuspV(x, a, b) { return x**4 + a*x**2 + b*x; }
+    function cuspdV(x, a, b) { return 4*x**3 + 2*a*x + b; }
+
+    function drawFrame() {
+        if (!ballAnimRunning) return;
+
+        const a = parseFloat(document.getElementById('ball-a').value);
+        const b = parseFloat(document.getElementById('ball-b').value);
+        const damping = parseFloat(document.getElementById('ball-damp').value);
+
+        // Physics step (multiple substeps for stability)
+        const dt = 0.02;
+        for (let i = 0; i < 5; i++) {
+            const force = -cuspdV(ballState.x, a, b);
+            ballState.v += force * dt;
+            ballState.v *= damping;
+            ballState.x += ballState.v * dt;
+            // Clamp
+            if (ballState.x > 4) { ballState.x = 4; ballState.v *= -0.5; }
+            if (ballState.x < -4) { ballState.x = -4; ballState.v *= -0.5; }
+        }
+
+        // Record trails
+        ballState.trail.push({ x: ballState.x, y: cuspV(ballState.x, a, b) });
+        if (ballState.trail.length > 80) ballState.trail.shift();
+
+        ballState.phaseTrail.push({ x: ballState.x, v: ballState.v });
+        if (ballState.phaseTrail.length > 300) ballState.phaseTrail.shift();
+
+        // ---- Draw potential canvas ----
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw potential curve
+        ctx.beginPath();
+        ctx.strokeStyle = '#00d2ff';
+        ctx.lineWidth = 2.5;
+        const xMin = -3.5, xMax = 3.5;
+        const yMin = -15, yMax = 15;
+
+        function toScreenX(x) { return ((x - xMin) / (xMax - xMin)) * w; }
+        function toScreenY(y) { return h - ((y - yMin) / (yMax - yMin)) * h; }
+
+        for (let px = 0; px < w; px++) {
+            const x = xMin + (px / w) * (xMax - xMin);
+            const y = cuspV(x, a, b);
+            if (px === 0) ctx.moveTo(px, toScreenY(y));
+            else ctx.lineTo(px, toScreenY(y));
+        }
+        ctx.stroke();
+
+        // Draw equilibria
+        const eqs = findCubicRoots(4, 0, 2*a, b);
+        eqs.forEach(xeq => {
+            const d2V = 12*xeq**2 + 2*a;
+            const yVal = cuspV(xeq, a, b);
+            ctx.beginPath();
+            ctx.arc(toScreenX(xeq), toScreenY(yVal), 6, 0, Math.PI * 2);
+            ctx.fillStyle = d2V > 0 ? '#00ff8855' : '#ff446655';
+            ctx.fill();
+            ctx.strokeStyle = d2V > 0 ? '#00ff88' : '#ff4466';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
+
+        // Draw trail
+        if (ballState.trail.length > 1) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(255,170,0,0.3)';
+            ctx.lineWidth = 2;
+            ballState.trail.forEach((p, i) => {
+                const sx = toScreenX(p.x), sy = toScreenY(p.y);
+                if (i === 0) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            });
+            ctx.stroke();
+        }
+
+        // Draw ball
+        const ballScreenX = toScreenX(ballState.x);
+        const ballScreenY = toScreenY(cuspV(ballState.x, a, b));
+
+        // Glow
+        const glow = ctx.createRadialGradient(ballScreenX, ballScreenY, 0, ballScreenX, ballScreenY, 20);
+        glow.addColorStop(0, 'rgba(255,100,50,0.6)');
+        glow.addColorStop(1, 'rgba(255,100,50,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(ballScreenX - 20, ballScreenY - 20, 40, 40);
+
+        ctx.beginPath();
+        ctx.arc(ballScreenX, ballScreenY, 10, 0, Math.PI * 2);
+        const ballGrad = ctx.createRadialGradient(ballScreenX - 3, ballScreenY - 3, 1, ballScreenX, ballScreenY, 10);
+        ballGrad.addColorStop(0, '#ffcc66');
+        ballGrad.addColorStop(1, '#ff6622');
+        ctx.fillStyle = ballGrad;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#aaa';
+        ctx.font = '12px Segoe UI';
+        ctx.fillText('x →', w - 30, h - 8);
+        ctx.fillText('V(x) →', 5, 15);
+
+        // Axis ticks
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 0.5;
+        for (let xt = Math.ceil(xMin); xt <= Math.floor(xMax); xt++) {
+            const sx = toScreenX(xt);
+            ctx.beginPath(); ctx.moveTo(sx, h - 5); ctx.lineTo(sx, h); ctx.stroke();
+            ctx.fillStyle = '#666';
+            ctx.fillText(xt, sx - 3, h - 8);
+        }
+
+        // ---- Draw phase portrait ----
+        phaseCtx.fillStyle = 'rgba(0,0,10,0.08)';
+        phaseCtx.fillRect(0, 0, phase.w, phase.h);
+
+        const pxMin = -4, pxMax = 4, pvMin = -8, pvMax = 8;
+        function toPhaseX(x) { return ((x - pxMin) / (pxMax - pxMin)) * phase.w; }
+        function toPhaseY(v) { return phase.h - ((v - pvMin) / (pvMax - pvMin)) * phase.h; }
+
+        // Draw axes
+        phaseCtx.strokeStyle = '#222';
+        phaseCtx.lineWidth = 1;
+        phaseCtx.beginPath();
+        phaseCtx.moveTo(toPhaseX(0), 0); phaseCtx.lineTo(toPhaseX(0), phase.h);
+        phaseCtx.moveTo(0, toPhaseY(0)); phaseCtx.lineTo(phase.w, toPhaseY(0));
+        phaseCtx.stroke();
+
+        // Draw phase trail
+        if (ballState.phaseTrail.length > 1) {
+            phaseCtx.beginPath();
+            phaseCtx.strokeStyle = '#00ff88';
+            phaseCtx.lineWidth = 1.5;
+            const trail = ballState.phaseTrail;
+            for (let i = Math.max(0, trail.length - 200); i < trail.length; i++) {
+                const sx = toPhaseX(trail[i].x), sy = toPhaseY(trail[i].v);
+                if (i === Math.max(0, trail.length - 200)) phaseCtx.moveTo(sx, sy);
+                else phaseCtx.lineTo(sx, sy);
+            }
+            phaseCtx.stroke();
+        }
+
+        // Current point
+        const cpx = toPhaseX(ballState.x), cpy = toPhaseY(ballState.v);
+        phaseCtx.beginPath();
+        phaseCtx.arc(cpx, cpy, 5, 0, Math.PI * 2);
+        phaseCtx.fillStyle = '#ffaa00';
+        phaseCtx.fill();
+
+        // Labels
+        phaseCtx.fillStyle = '#666';
+        phaseCtx.font = '11px Segoe UI';
+        phaseCtx.fillText('x', phase.w - 15, toPhaseY(0) - 5);
+        phaseCtx.fillText('v', toPhaseX(0) + 5, 15);
+
+        document.getElementById('ball-status').textContent =
+            `Ball: x = ${ballState.x.toFixed(3)}, v = ${ballState.v.toFixed(3)}`;
+
+        ballAnimId2 = requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+}
+
+// ============ HYSTERESIS EXPLORER ============
+let hystAnimId = null;
+let hystState = { x: -2, bHistory: [], xHistory: [], sweepDir: 1, running: false };
+
+function updateHysteresis() {
+    document.getElementById('hyst-a-val').textContent = parseFloat(document.getElementById('hyst-a').value).toFixed(2);
+    drawHysteresisStatic();
+}
+
+function drawHysteresisStatic() {
+    const a = parseFloat(document.getElementById('hyst-a').value);
+
+    // Draw the equilibrium curve x vs b for this a
+    const bVals = linspace(-6, 6, 400);
+    const stableX = [], stableB = [];
+    const unstableX = [], unstableB = [];
+
+    bVals.forEach(b => {
+        const roots = findCubicRoots(4, 0, 2*a, b);
+        roots.forEach(xeq => {
+            const d2V = 12*xeq**2 + 2*a;
+            if (d2V > 0) { stableX.push(xeq); stableB.push(b); }
+            else { unstableX.push(xeq); unstableB.push(b); }
+        });
+    });
+
+    const traces = [
+        { x: stableB, y: stableX, mode: 'markers', marker: { size: 2.5, color: '#00ff88' }, name: 'Stable equilibria' },
+        { x: unstableB, y: unstableX, mode: 'markers', marker: { size: 2, color: '#ff446666' }, name: 'Unstable' }
+    ];
+
+    // Add hysteresis path if we have history
+    if (hystState.bHistory.length > 1) {
+        traces.push({
+            x: hystState.bHistory, y: hystState.xHistory,
+            mode: 'lines+markers',
+            line: { color: '#ffaa00', width: 2 },
+            marker: { size: 1 },
+            name: 'System path'
+        });
+
+        // Current point
+        traces.push({
+            x: [hystState.bHistory[hystState.bHistory.length-1]],
+            y: [hystState.xHistory[hystState.xHistory.length-1]],
+            mode: 'markers',
+            marker: { size: 14, color: '#ff4466', symbol: 'circle', line: { width: 2, color: '#fff' } },
+            name: 'Current state'
+        });
+    }
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'b (bias parameter)', range: [-6.5, 6.5] },
+        yaxis: { ...plotLayout.yaxis, title: 'x (state)', range: [-3, 3] },
+        legend: { x: 0.02, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)' }
+    };
+
+    Plotly.react('hyst-loop-plot', traces, layout, plotConfig);
+}
+
+function drawHysteresisPotential(a, b, currentX) {
+    const x = linspace(-3, 3, 300);
+    const V = x.map(xi => xi**4 + a*xi**2 + b*xi);
+
+    const traces = [{
+        x: x, y: V, mode: 'lines', line: { color: '#00d2ff', width: 3 }, name: 'V(x)'
+    }];
+
+    // Current state marker
+    if (currentX !== undefined) {
+        const yVal = currentX**4 + a*currentX**2 + b*currentX;
+        traces.push({
+            x: [currentX], y: [yVal], mode: 'markers',
+            marker: { size: 16, color: '#00ff88', symbol: 'circle',
+                      line: { width: 3, color: '#fff' } },
+            name: 'Current state'
+        });
+    }
+
+    // Mark equilibria
+    const eqs = findCubicRoots(4, 0, 2*a, b);
+    eqs.forEach(xeq => {
+        const d2V = 12*xeq**2 + 2*a;
+        const yVal = xeq**4 + a*xeq**2 + b*xeq;
+        traces.push({
+            x: [xeq], y: [yVal], mode: 'markers',
+            marker: { size: 8, color: d2V > 0 ? '#00ff8866' : '#ff446666',
+                      symbol: d2V > 0 ? 'circle' : 'x' },
+            showlegend: false
+        });
+    });
+
+    const layout = {
+        ...plotLayout,
+        xaxis: { ...plotLayout.xaxis, title: 'x', range: [-3, 3] },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)' },
+        showlegend: false,
+        annotations: [{
+            x: 0.02, y: 0.98, xref: 'paper', yref: 'paper',
+            text: `b = ${b.toFixed(2)}`,
+            showarrow: false, font: { color: '#ffaa00', size: 14 },
+            bgcolor: 'rgba(0,0,0,0.5)', borderpad: 4
+        }]
+    };
+
+    Plotly.react('hyst-potential-plot', traces, layout, plotConfig);
+}
+
+function startHysteresis() {
+    stopHysteresis();
+    const a = parseFloat(document.getElementById('hyst-a').value);
+
+    // Initialize state at left stable equilibrium
+    hystState = { x: 0, bHistory: [], xHistory: [], sweepDir: 1, running: true };
+
+    // Find initial stable equilibrium for b = -6
+    const initRoots = findCubicRoots(4, 0, 2*a, -6);
+    const stableRoots = initRoots.filter(xeq => 12*xeq**2 + 2*a > 0);
+    if (stableRoots.length > 0) {
+        hystState.x = stableRoots[0]; // leftmost stable
+    } else {
+        hystState.x = -2;
+    }
+
+    let b = -6;
+    let sweepDir = 1;
+    let cycles = 0;
+
+    function step() {
+        if (!hystState.running) return;
+
+        const speed = parseFloat(document.getElementById('hyst-speed').value);
+        b += 0.04 * speed * sweepDir;
+
+        if (b > 6) { sweepDir = -1; }
+        if (b < -6) { sweepDir = 1; cycles++; }
+        if (cycles >= 2) {
+            hystState.running = false;
+            document.getElementById('hyst-status').textContent = 'Hysteresis loop complete!';
+            return;
+        }
+
+        // Gradient descent to track equilibrium
+        const damping = 0.85;
+        for (let i = 0; i < 10; i++) {
+            const force = -(4*hystState.x**3 + 2*a*hystState.x + b);
+            hystState.x += force * 0.03;
+        }
+
+        // Clamp
+        hystState.x = Math.max(-3.5, Math.min(3.5, hystState.x));
+
+        hystState.bHistory.push(b);
+        hystState.xHistory.push(hystState.x);
+
+        // Keep trail manageable
+        if (hystState.bHistory.length > 2000) {
+            hystState.bHistory = hystState.bHistory.slice(-1500);
+            hystState.xHistory = hystState.xHistory.slice(-1500);
+        }
+
+        document.getElementById('hyst-status').textContent =
+            `b = ${b.toFixed(2)}, x = ${hystState.x.toFixed(3)}, direction: ${sweepDir > 0 ? '→' : '←'}`;
+
+        drawHysteresisStatic();
+        drawHysteresisPotential(a, b, hystState.x);
+
+        hystAnimId = requestAnimationFrame(step);
+    }
+
+    step();
+}
+
+function stopHysteresis() {
+    hystState.running = false;
+    if (hystAnimId) {
+        cancelAnimationFrame(hystAnimId);
+        hystAnimId = null;
+    }
+}
+
+// ============ COMPARISON PLOTS ============
+function drawComparison() {
+    // Fold
+    const x = linspace(-2.5, 2.5, 300);
+
+    // Fold with a = -1 (has equilibria)
+    Plotly.react('cmp-fold-plot', [
+        { x, y: x.map(xi => xi**3 - xi), mode: 'lines', line: { color: '#00d2ff', width: 2 }, name: 'a = -1' },
+        { x, y: x.map(xi => xi**3 + xi), mode: 'lines', line: { color: '#ff4466', width: 2, dash: 'dash' }, name: 'a = +1' }
+    ], {
+        ...plotLayout, showlegend: true,
+        legend: { x: 0.6, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)', font: { size: 11 } },
+        xaxis: { ...plotLayout.xaxis, title: 'x' },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)', range: [-5, 5] }
+    }, plotConfig);
+
+    // Cusp
+    Plotly.react('cmp-cusp-plot', [
+        { x, y: x.map(xi => xi**4 - 2*xi**2), mode: 'lines', line: { color: '#00ff88', width: 2 }, name: 'a=-2, b=0' },
+        { x, y: x.map(xi => xi**4 - 2*xi**2 + xi), mode: 'lines', line: { color: '#ffaa00', width: 2, dash: 'dash' }, name: 'a=-2, b=1' },
+        { x, y: x.map(xi => xi**4 + xi**2), mode: 'lines', line: { color: '#ff4466', width: 2, dash: 'dot' }, name: 'a=+1, b=0' }
+    ], {
+        ...plotLayout, showlegend: true,
+        legend: { x: 0.5, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)', font: { size: 10 } },
+        xaxis: { ...plotLayout.xaxis, title: 'x' },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)', range: [-5, 5] }
+    }, plotConfig);
+
+    // Swallowtail
+    Plotly.react('cmp-st-plot', [
+        { x, y: x.map(xi => xi**5 - 3*xi**3 + 2*xi), mode: 'lines', line: { color: '#d070ff', width: 2 }, name: 'a=-3,b=0,c=2' },
+        { x, y: x.map(xi => xi**5 - 3*xi**3 + xi**2 + 2*xi), mode: 'lines', line: { color: '#00d2ff', width: 2, dash: 'dash' }, name: 'a=-3,b=1,c=2' }
+    ], {
+        ...plotLayout, showlegend: true,
+        legend: { x: 0.4, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)', font: { size: 10 } },
+        xaxis: { ...plotLayout.xaxis, title: 'x' },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)', range: [-8, 8] }
+    }, plotConfig);
+
+    // Butterfly
+    Plotly.react('cmp-bf-plot', [
+        { x, y: x.map(xi => xi**6 - 4*xi**4 + 4*xi**2), mode: 'lines', line: { color: '#ff6b6b', width: 2 }, name: 'd=0 (3 wells)' },
+        { x, y: x.map(xi => xi**6 - 4*xi**4 + 4*xi**2 + 2*xi), mode: 'lines', line: { color: '#00ff88', width: 2, dash: 'dash' }, name: 'd=2 (biased)' }
+    ], {
+        ...plotLayout, showlegend: true,
+        legend: { x: 0.45, y: 0.98, bgcolor: 'rgba(0,0,0,0.5)', font: { size: 10 } },
+        xaxis: { ...plotLayout.xaxis, title: 'x' },
+        yaxis: { ...plotLayout.yaxis, title: 'V(x)', range: [-5, 8] }
+    }, plotConfig);
+}
+
+// ============ INITIALIZE ON LOAD ============
+window.addEventListener('load', () => {
+    // Initialize the first visible tab (overview has no plots)
+    // Pre-warm fold if user clicks it
+    setTimeout(() => {
+        updateFold();
+        drawFoldBifurcation();
+    }, 200);
+});
+
+// Clean up animations when switching tabs
+window.addEventListener('beforeunload', () => {
+    if (foldAnimId) cancelAnimationFrame(foldAnimId);
+    if (cuspAnimId) cancelAnimationFrame(cuspAnimId);
+    if (stAnimId) cancelAnimationFrame(stAnimId);
+    if (bfAnimId) cancelAnimationFrame(bfAnimId);
+    if (ballAnimId2) cancelAnimationFrame(ballAnimId2);
+    if (hystAnimId) cancelAnimationFrame(hystAnimId);
+    ballAnimRunning = false;
+    hystState.running = false;
+});
+
+// Handle window resize for ball canvas
+window.addEventListener('resize', () => {
+    if (ballAnimRunning) {
+        // Restart ball sim to recalculate canvas dimensions
+        ballAnimRunning = false;
+        if (ballAnimId2) cancelAnimationFrame(ballAnimId2);
+        setTimeout(() => {
+            ballAnimRunning = true;
+            runBallSim();
+        }, 100);
+    }
+});
+</script>
+
+</body>
+</html>
