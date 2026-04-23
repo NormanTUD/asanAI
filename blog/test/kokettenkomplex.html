@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chain Complexes (Kettenkomplexe) — Interactive Visual Guide</title>
+<title>Chain Complexes — From Zero to Homology (Interactive Visual Guide)</title>
 <style>
   :root {
     --bg: #0f1117;
@@ -12,6 +12,7 @@
     --accent2: #00c9a7;
     --accent3: #ff6b6b;
     --accent4: #ffd93d;
+    --accent5: #c084fc;
     --text: #e4e4e7;
     --muted: #8888a0;
     --border: #2a2d3a;
@@ -23,216 +24,377 @@
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.7;
+    line-height: 1.75;
     overflow-x: hidden;
   }
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
 
   /* Hero */
   .hero {
     text-align: center;
-    padding: 80px 20px 50px;
+    padding: 70px 20px 50px;
     background: linear-gradient(135deg, #1a1d2790, #6c63ff15);
     border-bottom: 1px solid var(--border);
   }
   .hero h1 {
-    font-size: 2.8rem;
+    font-size: 2.6rem;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 12px;
   }
-  .hero p { color: var(--muted); font-size: 1.15rem; max-width: 700px; margin: 0 auto; }
+  .hero p { color: var(--muted); font-size: 1.1rem; max-width: 720px; margin: 0 auto; }
 
   /* Sections */
-  section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  section { padding: 50px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
   section h2 {
-    font-size: 1.8rem;
-    margin-bottom: 8px;
+    font-size: 1.7rem;
+    margin-bottom: 6px;
     color: var(--accent2);
   }
-  section .subtitle { color: var(--muted); margin-bottom: 30px; font-size: 1rem; }
+  section .subtitle { color: var(--muted); margin-bottom: 24px; font-size: 0.98rem; }
 
-  /* Chain diagram */
-  .chain-diagram {
+  /* Analogy boxes */
+  .analogy {
+    background: linear-gradient(135deg, #6c63ff10, #00c9a710);
+    border-left: 4px solid var(--accent2);
+    border-radius: 0 12px 12px 0;
+    padding: 18px 22px;
+    margin: 18px 0;
+    font-size: 0.95rem;
+  }
+  .analogy strong { color: var(--accent2); }
+  .analogy .emoji { font-size: 1.3rem; margin-right: 6px; }
+
+  /* Key idea boxes */
+  .key-idea {
+    background: var(--card);
+    border: 1.5px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 18px 0;
+  }
+  .key-idea h4 { color: var(--accent); margin-bottom: 8px; font-size: 1rem; }
+  .key-idea .math-block {
+    background: #23263a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    color: var(--accent2);
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  /* Interactive group explorer */
+  .group-explorer {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    margin: 20px 0;
+  }
+  .group-explorer h3 { color: var(--accent4); margin-bottom: 14px; }
+
+  .group-table-wrap {
+    overflow-x: auto;
+    margin: 14px 0;
+  }
+  .group-table {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  .group-table td, .group-table th {
+    width: 48px; height: 42px;
+    text-align: center;
+    border: 1px solid var(--border);
+    font-size: 0.88rem;
+    font-family: 'Courier New', monospace;
+    transition: background 0.2s;
+  }
+  .group-table th {
+    background: var(--accent) !important;
+    color: #fff;
+    font-weight: 700;
+  }
+  .group-table td { background: var(--card); cursor: pointer; }
+  .group-table td:hover { background: #6c63ff33; }
+  .group-table td.highlight-cell { background: #ffd93d33; color: var(--accent4); font-weight: 700; }
+
+  .group-selector {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;
+  }
+  .group-selector button {
+    padding: 8px 16px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.25s;
+  }
+  .group-selector button:hover, .group-selector button.active {
+    border-color: var(--accent4);
+    color: var(--accent4);
+    background: #ffd93d12;
+  }
+
+  /* Visual direction diagrams */
+  .direction-demo {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0;
-    padding: 30px 10px;
+    padding: 24px 10px;
     overflow-x: auto;
     flex-wrap: nowrap;
   }
-  .chain-node {
+  .dir-node {
     display: flex;
     flex-direction: column;
     align-items: center;
     min-width: 80px;
     transition: transform 0.3s;
-    cursor: pointer;
   }
-  .chain-node:hover { transform: scale(1.12); }
-  .chain-node .circle {
-    width: 64px; height: 64px;
+  .dir-node .circle {
+    width: 60px; height: 60px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 1.1rem;
+    font-weight: 700; font-size: 0.95rem;
     border: 2.5px solid var(--accent);
     background: var(--card);
     transition: all 0.3s;
-    position: relative;
   }
-  .chain-node:hover .circle {
+  .dir-node:hover .circle {
     background: var(--accent);
     color: #fff;
-    box-shadow: 0 0 20px #6c63ff55;
+    box-shadow: 0 0 18px #6c63ff55;
   }
-  .chain-node .label {
-    margin-top: 8px;
-    font-size: 0.78rem;
+  .dir-node .label {
+    margin-top: 6px;
+    font-size: 0.75rem;
     color: var(--muted);
     text-align: center;
   }
-  .chain-arrow {
+  .dir-arrow {
     display: flex;
     flex-direction: column;
     align-items: center;
     min-width: 70px;
     position: relative;
   }
-  .chain-arrow .arrow-line {
-    width: 50px; height: 2px;
-    background: var(--accent);
+  .dir-arrow .arrow-line {
+    width: 46px; height: 2px;
     position: relative;
   }
-  .chain-arrow .arrow-line::after {
+  .dir-arrow .arrow-line.right { background: var(--accent); }
+  .dir-arrow .arrow-line.right::after {
     content: '';
     position: absolute;
     right: -2px; top: -5px;
     border: 6px solid transparent;
     border-left: 8px solid var(--accent);
   }
-  .chain-arrow .arrow-label {
-    font-size: 0.82rem;
-    color: var(--accent);
+  .dir-arrow .arrow-line.left { background: var(--accent3); }
+  .dir-arrow .arrow-line.left::after {
+    content: '';
+    position: absolute;
+    left: -2px; top: -5px;
+    border: 6px solid transparent;
+    border-right: 8px solid var(--accent3);
+  }
+  .dir-arrow .arrow-label {
+    font-size: 0.8rem;
     margin-bottom: 4px;
     font-style: italic;
   }
-
-  /* Cochain (reversed arrows) */
-  .cochain .chain-arrow .arrow-line::after {
-    right: auto; left: -2px;
-    border-left: none;
-    border-right: 8px solid var(--accent3);
-  }
-  .cochain .chain-arrow .arrow-line { background: var(--accent3); }
-  .cochain .chain-arrow .arrow-label { color: var(--accent3); }
-  .cochain .chain-node .circle { border-color: var(--accent3); }
-  .cochain .chain-node:hover .circle { background: var(--accent3); box-shadow: 0 0 20px #ff6b6b55; }
+  .dir-arrow .arrow-label.chain-color { color: var(--accent); }
+  .dir-arrow .arrow-label.cochain-color { color: var(--accent3); }
 
   /* Info cards */
   .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 18px;
   }
   .info-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 24px;
+    padding: 22px;
     transition: border-color 0.3s, transform 0.3s;
   }
   .info-card:hover {
     border-color: var(--accent);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
   }
   .info-card h3 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     margin-bottom: 8px;
     color: var(--accent4);
   }
-  .info-card p { font-size: 0.92rem; color: var(--muted); }
+  .info-card p { font-size: 0.9rem; color: var(--muted); }
   .info-card .math {
     background: #23263a;
     border-radius: 8px;
     padding: 10px 14px;
     margin-top: 10px;
     font-family: 'Courier New', monospace;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     color: var(--accent2);
     overflow-x: auto;
+    text-align: center;
   }
 
-  /* Interactive homology */
-  .homology-demo {
+  /* Boundary operator visual */
+  .boundary-visual {
     background: var(--card);
-    border-radius: 16px;
-    padding: 30px;
+    border-radius: 14px;
+    padding: 24px;
     border: 1px solid var(--border);
-    margin-top: 20px;
+    margin: 20px 0;
   }
-  .homology-demo h3 { color: var(--accent); margin-bottom: 16px; }
+  .boundary-visual h3 { color: var(--accent); margin-bottom: 14px; }
+  .boundary-canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    border-radius: 12px;
+    background: #12141c;
+    overflow: hidden;
+  }
+  canvas { display: block; }
 
-  .demo-controls {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
+  .boundary-controls {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;
   }
-  .demo-controls button {
-    padding: 10px 20px;
+  .boundary-controls button {
+    padding: 8px 16px;
     border: 1.5px solid var(--accent);
     background: transparent;
     color: var(--accent);
     border-radius: 8px;
     cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.25s;
+  }
+  .boundary-controls button:hover, .boundary-controls button.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .explanation-box {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: #23263a;
+    border-radius: 10px;
     font-size: 0.9rem;
+    color: var(--muted);
+    min-height: 50px;
+    transition: all 0.3s;
+  }
+
+  /* Module visual */
+  .module-visual {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin: 18px 0;
+  }
+  .module-box {
+    flex: 1;
+    min-width: 200px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .module-box h4 { color: var(--accent5); margin-bottom: 8px; font-size: 0.95rem; }
+  .module-box p { font-size: 0.88rem; color: var(--muted); }
+  .module-box .example-list {
+    list-style: none;
+    margin-top: 10px;
+  }
+  .module-box .example-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .module-box .example-list li:last-child { border-bottom: none; }
+  .module-box .example-list li span.tag {
+    display: inline-block;
+    background: #6c63ff22;
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    margin-right: 6px;
+  }
+
+  /* Homology demo */
+  .homology-demo {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .homology-demo h3 { color: var(--accent); margin-bottom: 14px; }
+  .demo-controls {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;
+  }
+  .demo-controls button {
+    padding: 9px 18px;
+    border: 1.5px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
     transition: all 0.25s;
   }
   .demo-controls button:hover, .demo-controls button.active {
     background: var(--accent);
     color: #fff;
   }
-
   .demo-canvas-wrap {
     position: relative;
     width: 100%;
-    height: 360px;
+    height: 380px;
     border-radius: 12px;
     background: #12141c;
     overflow: hidden;
   }
-  canvas#homologyCanvas { width: 100%; height: 100%; display: block; }
 
-  .demo-explanation {
-    margin-top: 16px;
-    padding: 16px;
-    background: #23263a;
-    border-radius: 10px;
-    font-size: 0.92rem;
-    color: var(--muted);
-    min-height: 60px;
-    transition: all 0.3s;
+  /* Chain map SVG */
+  .chainmap-svg-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    overflow-x: auto;
   }
 
   /* Double complex */
-  .double-complex-grid {
-    display: inline-grid;
-    gap: 0;
-    margin: 20px auto;
+  .dc-wrapper {
+    position: relative;
+    display: flex;
     justify-content: center;
+    margin: 20px 0;
   }
   .dc-cell {
-    width: 70px; height: 70px;
+    width: 68px; height: 68px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-size: 0.85rem;
+    font-weight: 700; font-size: 0.82rem;
     border: 1.5px solid var(--border);
     border-radius: 8px;
     background: var(--card);
-    position: relative;
     transition: all 0.3s;
     cursor: pointer;
   }
@@ -243,65 +405,18 @@
   }
   .dc-cell.highlight { border-color: var(--accent4); background: #ffd93d22; }
 
-  /* SVG overlay for double complex arrows */
-  .dc-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-  }
-
-  /* Euler characteristic */
-  .euler-interactive {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 30px;
-    border: 1px solid var(--border);
-    margin-top: 20px;
-  }
-  .euler-interactive h3 { color: var(--accent4); margin-bottom: 16px; }
-  .euler-sliders { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
-  .euler-sliders label {
-    display: flex; flex-direction: column; gap: 4px;
-    font-size: 0.88rem; color: var(--muted);
-  }
-  .euler-sliders input[type=range] {
-    width: 140px;
-    accent-color: var(--accent);
-  }
-  .euler-result {
-    font-size: 1.3rem;
-    color: var(--accent4);
-    font-weight: 700;
-    padding: 14px;
-    background: #23263a;
-    border-radius: 10px;
-    text-align: center;
-  }
-
-  /* Chain map section */
-  .chainmap-svg-wrap {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-    overflow-x: auto;
-  }
-
   /* Tabs */
   .tab-bar {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap;
   }
   .tab-bar button {
-    padding: 8px 18px;
+    padding: 8px 16px;
     border: 1.5px solid var(--border);
     background: transparent;
     color: var(--muted);
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.88rem;
+    font-size: 0.86rem;
     transition: all 0.25s;
   }
   .tab-bar button.active {
@@ -312,16 +427,91 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
+  /* Euler */
+  .euler-interactive {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .euler-interactive h3 { color: var(--accent4); margin-bottom: 14px; }
+  .euler-sliders { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 18px; }
+  .euler-sliders label {
+    display: flex; flex-direction: column; gap: 4px;
+    font-size: 0.86rem; color: var(--muted);
+  }
+  .euler-sliders input[type=range] {
+    width: 130px;
+    accent-color: var(--accent);
+  }
+  .euler-result {
+    font-size: 1.2rem;
+    color: var(--accent4);
+    font-weight: 700;
+    padding: 14px;
+    background: #23263a;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  /* Collapsible */
+  .collapsible {
+    margin: 14px 0;
+  }
+  .collapsible-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #23263a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    color: var(--accent2);
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: all 0.25s;
+  }
+  .collapsible-toggle:hover {
+    border-color: var(--accent2);
+    background: #00c9a710;
+  }
+  .collapsible-toggle .arrow {
+    transition: transform 0.3s;
+    font-size: 0.8rem;
+  }
+  .collapsible-toggle.open .arrow { transform: rotate(90deg); }
+  .collapsible-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 18px;
+    background: #1e2130;
+    border-radius: 0 0 10px 10px;
+    border: 1px solid transparent;
+  }
+  .collapsible-body.open {
+    max-height: 2000px;
+    padding: 18px;
+    border-color: var(--border);
+    border-top: none;
+  }
+  .collapsible-body p { font-size: 0.9rem; color: var(--muted); margin-bottom: 10px; }
+  .collapsible-body p:last-child { margin-bottom: 0; }
+
   /* Tooltip */
   .tooltip {
     position: fixed;
     background: #23263a;
     border: 1px solid var(--accent);
     border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 0.85rem;
+    padding: 10px 14px;
+    font-size: 0.83rem;
     color: var(--text);
-    max-width: 280px;
+    max-width: 260px;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s;
@@ -330,24 +520,30 @@
   }
   .tooltip.visible { opacity: 1; }
 
+  footer {
+    text-align: center;
+    padding: 36px 20px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--border);
+  }
+
   /* Responsive */
   @media (max-width: 700px) {
-    .hero h1 { font-size: 1.8rem; }
-    .chain-diagram { gap: 0; }
-    .chain-node .circle { width: 48px; height: 48px; font-size: 0.9rem; }
-    .chain-arrow { min-width: 45px; }
-    .chain-arrow .arrow-line { width: 30px; }
-    .dc-cell { width: 52px; height: 52px; font-size: 0.72rem; }
+    .hero h1 { font-size: 1.7rem; }
+    .dir-node .circle { width: 46px; height: 46px; font-size: 0.8rem; }
+    .dir-arrow { min-width: 50px; }
+    .dir-arrow .arrow-line { width: 32px; }
+    .dc-cell { width: 50px; height: 50px; font-size: 0.7rem; }
+    .module-visual { flex-direction: column; }
   }
 
-  /* Animations */
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
+    from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
   }
-  .animate-in { animation: fadeInUp 0.6s ease forwards; }
+  .animate-in { animation: fadeInUp 0.5s ease forwards; }
 
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -355,122 +551,339 @@
 </head>
 <body>
 
-<!-- Tooltip -->
 <div class="tooltip" id="tooltip"></div>
 
-<!-- Hero -->
+<!-- ==================== HERO ==================== -->
 <header class="hero">
   <div class="container">
-    <h1>Kettenkomplexe</h1>
-    <p>An interactive visual guide to chain complexes, cochain complexes, homology, double complexes, chain maps, and the Euler characteristic.</p>
+    <h1>Chain Complexes — From Zero to Homology</h1>
+    <p>An interactive guide that starts from "what is a group?" and builds all the way up to chain complexes, homology, and beyond. No prerequisites assumed.</p>
   </div>
 </header>
 
-<!-- Section 1: Chain Complex -->
+<!-- ==================== SECTION 0: ABELIAN GROUPS ==================== -->
+<section id="sec-groups">
+  <div class="container">
+    <h2>0. What Is an Abelian Group?</h2>
+    <p class="subtitle">Before we can talk about chain complexes, we need to understand the objects they're made of.</p>
+
+    <div class="analogy">
+      <span class="emoji">🧮</span>
+      <strong>Everyday analogy:</strong> Think of a <em>bag of coins</em>. You can add coins together, you can remove coins (negative = taking away), and the order you combine them doesn't matter. That's an abelian group — a collection of things you can "add" and "subtract," where <strong>order doesn't matter</strong>.
+    </div>
+
+    <div class="key-idea">
+      <h4>Formal Definition (in plain English)</h4>
+      <p>An <strong>abelian group</strong> is a set G with an operation "+" that satisfies:</p>
+      <ul style="margin:10px 0 10px 20px; color:var(--muted); font-size:0.92rem;">
+        <li><strong style="color:var(--accent2);">Closure:</strong> Adding two elements gives another element in G</li>
+        <li><strong style="color:var(--accent2);">Associativity:</strong> (a + b) + c = a + (b + c)</li>
+        <li><strong style="color:var(--accent2);">Identity:</strong> There's a "zero" element: a + 0 = a</li>
+        <li><strong style="color:var(--accent2);">Inverses:</strong> Every element has a negative: a + (−a) = 0</li>
+        <li><strong style="color:var(--accent2);">Commutativity:</strong> a + b = b + a &nbsp;← <em>This is what makes it "abelian"!</em></li>
+      </ul>
+      <p style="font-size:0.88rem; color:var(--muted);">Named after mathematician Niels Henrik Abel. A group that is NOT abelian would be one where order matters — like rotating a Rubik's cube (doing move A then B ≠ B then A).</p>
+    </div>
+
+    <div class="group-explorer">
+      <h3>🔬 Interactive: Explore Addition Tables</h3>
+      <p style="color:var(--muted); font-size:0.9rem; margin-bottom:10px;">Click a group to see its addition table. Notice how every table is <strong>symmetric across the diagonal</strong> — that's the commutativity (abelian property)! Hover over any cell to highlight its row and column.</p>
+      <div class="group-selector" id="groupSelector"></div>
+      <div class="group-table-wrap">
+        <table class="group-table" id="groupTable"></table>
+      </div>
+      <div class="explanation-box" id="groupExplanation">Select a group above to explore its addition table.</div>
+    </div>
+
+    <div class="collapsible">
+      <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+        <span class="arrow">▶</span> Why "abelian"? Why does commutativity matter so much?
+      </button>
+      <div class="collapsible-body">
+        <p>In many areas of math — especially algebra and topology — we need to do arithmetic with our objects. We want to say things like "this cycle minus that boundary = this homology class."</p>
+        <p>If the group weren't abelian (if a + b ≠ b + a), then the order we combine things would matter, and quotient constructions (like "cycles modulo boundaries") would become much more complicated. Abelian groups behave like "generalized number systems" where addition works the way you'd expect.</p>
+        <p><strong style="color:var(--accent2);">Key examples:</strong> The integers ℤ, the integers mod n (ℤ/nℤ), the real numbers ℝ, vectors in ℝⁿ — all abelian groups under addition.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 1: MODULES ==================== -->
+<section id="sec-modules">
+  <div class="container">
+    <h2>1. What Are Modules and R-Modules?</h2>
+    <p class="subtitle">Modules are like vector spaces, but more general. They're the "upgraded" version of abelian groups.</p>
+
+    <div class="analogy">
+      <span class="emoji">📦</span>
+      <strong>Everyday analogy:</strong> Imagine you have a collection of <em>colored blocks</em> (that's your abelian group — you can add and subtract blocks). Now imagine you also have a set of <em>scaling knobs</em> (that's your ring R). You can turn a knob to "scale" a block — stretch it, shrink it, or flip it. An <strong>R-module</strong> is the blocks + the knobs together, with rules about how scaling interacts with adding.
+    </div>
+
+    <div class="module-visual">
+      <div class="module-box">
+        <h4>Vector Space (you probably know this)</h4>
+        <p>Vectors you can add together, and scale by <strong>real numbers</strong>.</p>
+        <ul class="example-list">
+          <li><span class="tag">Scalars</span> Real numbers ℝ (a field)</li>
+          <li><span class="tag">Vectors</span> Arrows in 2D/3D space</li>
+          <li><span class="tag">Operations</span> Add vectors, scale by any real number</li>
+        </ul>
+      </div>
+      <div class="module-box">
+        <h4>R-Module (the generalization)</h4>
+        <p>Same idea, but scalars come from a <strong>ring R</strong> instead of a field.</p>
+        <ul class="example-list">
+          <li><span class="tag">Scalars</span> Any ring R (like ℤ, polynomials, etc.)</li>
+          <li><span class="tag">Elements</span> An abelian group M</li>
+          <li><span class="tag">Operations</span> Add elements, scale by ring elements</li>
+        </ul>
+      </div>
+      <div class="module-box">
+        <h4>ℤ-Module = Abelian Group!</h4>
+        <p>When R = ℤ (integers), "scaling" just means repeated addition. So a ℤ-module is <strong>exactly</strong> an abelian group.</p>
+        <ul class="example-list">
+          <li><span class="tag">3 · x</span> means x + x + x</li>
+          <li><span class="tag">−2 · x</span> means −x − x</li>
+          <li><span class="tag">0 · x</span> means the zero element</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key-idea">
+      <h4>Why do chain complexes use modules?</h4>
+      <p style="font-size:0.9rem; color:var(--muted);">Chain complexes are sequences of abelian groups (or more generally, R-modules) connected by maps. Using modules gives us flexibility:</p>
+      <ul style="margin:10px 0 0 20px; color:var(--muted); font-size:0.9rem;">
+        <li>With <strong>ℤ-modules</strong> (= abelian groups): we get integer-valued homology (the most common kind)</li>
+        <li>With <strong>ℝ-modules</strong> (= real vector spaces): we get real-valued homology (useful in differential geometry)</li>
+        <li>With <strong>ℤ/2ℤ-modules</strong>: we get mod-2 homology (useful when we don't care about orientation)</li>
+      </ul>
+    </div>
+
+    <div class="collapsible">
+      <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+        <span class="arrow">▶</span> What's a ring? Why not just use fields (like ℝ)?
+      </button>
+      <div class="collapsible-body">
+        <p>A <strong>ring</strong> is a set with addition and multiplication, where addition forms an abelian group and multiplication is associative and distributes over addition. Unlike a field, you <em>don't</em> need every nonzero element to have a multiplicative inverse.</p>
+        <p><strong>Examples of rings:</strong> ℤ (integers — you can't always divide!), polynomials ℤ[x], matrices, etc.</p>
+        <p>We use rings instead of fields because many natural situations (like integer homology) involve ℤ, which is a ring but NOT a field (you can't divide 1 by 2 and stay in ℤ). Modules over rings are more general and cover more cases than vector spaces over fields.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 2: BOUNDARY OPERATORS ==================== -->
+<section id="sec-boundary">
+  <div class="container">
+    <h2>2. What Is a Boundary Operator?</h2>
+    <p class="subtitle">The "boundary" map is the key ingredient that connects the modules in a chain complex.</p>
+
+    <div class="analogy">
+      <span class="emoji">🔗</span>
+      <strong>Everyday analogy:</strong> Imagine you have a <em>solid triangle</em> (a filled-in shape). The <strong>boundary</strong> of that triangle is its three edges. Now, the boundary of each <em>edge</em> is its two endpoints. The <strong>boundary operator</strong> is the machine that takes a shape and returns its border — the "skin" around it.
+    </div>
+
+    <div class="key-idea">
+      <h4>The Golden Rule: Boundary of a Boundary = Nothing</h4>
+      <p style="font-size:0.9rem; color:var(--muted);">If you take the boundary of a triangle, you get a loop of edges. If you then take the boundary of that loop... you get nothing! Every edge's start-point cancels with the previous edge's end-point. This is the fundamental property:</p>
+      <div class="math-block">∂ ∘ ∂ = 0 &nbsp;&nbsp;&nbsp; (applying the boundary operator twice always gives zero)</div>
+      <p style="font-size:0.88rem; color:var(--muted); margin-top:10px;">This is written as d<sub>n</sub> ∘ d<sub>n+1</sub> = 0. It's the <em>single most important equation</em> in all of homological algebra.</p>
+    </div>
+
+    <div class="boundary-visual">
+      <h3>🎨 Interactive: See the Boundary Operator in Action</h3>
+      <p style="color:var(--muted); font-size:0.9rem; margin-bottom:10px;">Click a shape to see its boundary computed step by step.</p>
+      <div class="boundary-controls" id="boundaryControls">
+        <button class="active" onclick="setBoundaryExample(0, this)">Edge [v₀, v₁]</button>
+        <button onclick="setBoundaryExample(1, this)">Triangle [v₀, v₁, v₂]</button>
+        <button onclick="setBoundaryExample(2, this)">Tetrahedron [v₀, v₁, v₂, v₃]</button>
+      </div>
+      <div class="boundary-canvas-wrap">
+        <canvas id="boundaryCanvas"></canvas>
+      </div>
+      <div class="explanation-box" id="boundaryExplanation">
+        <strong>Edge [v₀, v₁]:</strong> ∂([v₀, v₁]) = v₁ − v₀. The boundary of an edge is its endpoint minus its start-point.
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+        <span class="arrow">▶</span> Why the alternating signs? What's with the minus?
+      </button>
+      <div class="collapsible-body">
+        <p>The signs encode <strong>orientation</strong>. When we say ∂([v₀, v₁]) = v₁ − v₀, the minus sign means "v₀ is the start, v₁ is the end." The edge has a direction.</p>
+        <p>For a triangle [v₀, v₁, v₂], the boundary is [v₁, v₂] − [v₀, v₂] + [v₀, v₁]. The alternating signs ensure that when you walk around the boundary, all the edges line up consistently — and when you take the boundary again, everything cancels to zero.</p>
+        <p>The general formula for an n-simplex [v₀, ..., vₙ] is:</p>
+        <p style="text-align:center; color:var(--accent2); font-family:monospace;">∂([v₀, ..., vₙ]) = Σᵢ (−1)ⁱ [v₀, ..., v̂ᵢ, ..., vₙ]</p>
+        <p>where v̂ᵢ means "remove vertex vᵢ." Each face appears with a sign that alternates + − + − ...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 3: CHAIN COMPLEXES ==================== -->
 <section id="sec-chain">
   <div class="container">
-    <h2>1. Chain Complex <span style="color:var(--muted);font-size:1rem;">(Kettenkomplex)</span></h2>
-    <p class="subtitle">A sequence of abelian groups (or R-modules) connected by boundary operators d<sub>n</sub> such that d<sub>n</sub> ∘ d<sub>n+1</sub> = 0.</p>
+    <h2>3. Chain Complexes — Putting It All Together</h2>
+    <p class="subtitle">A chain complex is a sequence of modules connected by boundary operators, where ∂∘∂ = 0.</p>
 
-    <div class="chain-diagram" id="chainDiagram"></div>
+    <div class="analogy">
+      <span class="emoji">🔗</span>
+      <strong>Everyday analogy:</strong> Imagine a <em>chain of rooms</em> connected by doors. Each room holds a different "type" of object (points, edges, triangles, ...). The doors (boundary operators) transform objects from one room to the next. The rule is: if you go through two doors in a row, you always end up with nothing. That's ∂∘∂ = 0.
+    </div>
+
+    <div class="key-idea">
+      <h4>The Picture</h4>
+      <div class="math-block">⋯ → C₃ →<sup>∂₃</sup> C₂ →<sup>∂₂</sup> C₁ →<sup>∂₁</sup> C₀ → 0</div>
+      <p style="font-size:0.9rem; color:var(--muted); margin-top:10px;">Each Cₙ is a module (abelian group). Each arrow ∂ₙ is a boundary operator. The key constraint: ∂ₙ ∘ ∂ₙ₊₁ = 0 for all n.</p>
+    </div>
+
+    <p style="color:var(--muted); font-size:0.92rem; margin:14px 0;">Here's the chain complex visualized. Hover over any node to see what it represents:</p>
+
+    <div class="direction-demo" id="chainDiagram"></div>
 
     <div class="info-grid">
-      <div class="info-card" data-tip="Elements of Cₙ are called n-chains.">
+      <div class="info-card">
         <h3>n-Chains</h3>
-        <p>Elements of each module C<sub>n</sub> in the sequence.</p>
-        <div class="math">x ∈ C<sub>n</sub></div>
+        <p>Elements of Cₙ. These are the "raw material" — formal sums of n-dimensional pieces.</p>
+        <div class="math">x ∈ Cₙ</div>
       </div>
-      <div class="info-card" data-tip="Zₙ = ker dₙ — elements mapped to 0 by the boundary operator.">
+      <div class="info-card">
         <h3>n-Cycles (Zykel)</h3>
-        <p>Elements in the kernel of d<sub>n</sub>.</p>
-        <div class="math">Z<sub>n</sub> = ker d<sub>n</sub> ⊆ C<sub>n</sub></div>
+        <p>Chains whose boundary is zero. They're "closed loops" — they have no boundary.</p>
+        <div class="math">Zₙ = ker ∂ₙ ⊆ Cₙ</div>
       </div>
-      <div class="info-card" data-tip="Bₙ = im d_{n+1} — elements that are images of the next boundary map.">
+      <div class="info-card">
         <h3>n-Boundaries (Ränder)</h3>
-        <p>Elements in the image of d<sub>n+1</sub>.</p>
-        <div class="math">B<sub>n</sub> = im d<sub>n+1</sub> ⊆ C<sub>n</sub></div>
+        <p>Chains that ARE the boundary of something one dimension higher.</p>
+        <div class="math">Bₙ = im ∂ₙ₊₁ ⊆ Cₙ</div>
       </div>
-      <div class="info-card" data-tip="Since d∘d = 0, every boundary is a cycle. Homology measures the gap.">
-        <h3>Homology H<sub>n</sub></h3>
-        <p>Cycles modulo boundaries — measures failure of exactness.</p>
-        <div class="math">H<sub>n</sub> = Z<sub>n</sub> / B<sub>n</sub></div>
+      <div class="info-card">
+        <h3>Homology Hₙ</h3>
+        <p>Cycles that are NOT boundaries. This measures "holes" — things that look closed but aren't filled in.</p>
+        <div class="math">Hₙ = Zₙ / Bₙ</div>
+      </div>
+    </div>
+
+    <div class="collapsible">
+      <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+        <span class="arrow">▶</span> What does "ker" and "im" mean? What's a quotient Zₙ/Bₙ?
+      </button>
+      <div class="collapsible-body">
+        <p><strong style="color:var(--accent2);">ker ∂ₙ (kernel):</strong> All elements x in Cₙ such that ∂ₙ(x) = 0. In other words, everything that the boundary operator sends to zero. These are the "closed" things — they have no boundary.</p>
+        <p><strong style="color:var(--accent2);">im ∂ₙ₊₁ (image):</strong> All elements in Cₙ that are the output of ∂ₙ₊₁ applied to something in Cₙ₊₁. These are the things that ARE boundaries of higher-dimensional objects.</p>
+        <p><strong style="color:var(--accent2);">Zₙ / Bₙ (quotient):</strong> We take all cycles and declare two cycles to be "the same" if they differ by a boundary. It's like saying: "I don't care about the trivial loops (ones that bound a filled region) — I only care about the interesting loops (ones that go around actual holes)."</p>
+        <p><strong>Example:</strong> On a donut (torus), there's a loop going around the hole and a loop going around the tube. Neither of these loops is the boundary of any filled region on the torus. So they represent non-trivial homology classes. H₁(torus) ≅ ℤ ⊕ ℤ (two independent "holes").</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Section 2: Cochain Complex -->
-<section id="sec-cochain">
+<!-- ==================== SECTION 4: DIRECTION OF MAPS ==================== -->
+<section id="sec-direction">
   <div class="container">
-    <h2>2. Cochain Complex <span style="color:var(--muted);font-size:1rem;">(Kokettenkomplex)</span></h2>
-    <p class="subtitle">Like a chain complex, but the maps go "upward": d<sup>n</sup>: C<sup>n</sup> → C<sup>n+1</sup>, with d<sup>n</sup> ∘ d<sup>n−1</sup> = 0.</p>
+    <h2>4. Chain vs. Cochain: Which Way Do the Arrows Go?</h2>
+    <p class="subtitle">The direction of the maps is the key difference between chain complexes and cochain complexes.</p>
 
-    <div class="chain-diagram cochain" id="cochainDiagram"></div>
+    <div class="analogy">
+      <span class="emoji">⬅️➡️</span>
+      <strong>Everyday analogy:</strong> Think of a building with floors. In a <strong>chain complex</strong>, you take the elevator <em>down</em> — from higher floors (higher-dimensional objects) to lower floors. In a <strong>cochain complex</strong>, you take the elevator <em>up</em> — from lower floors to higher floors. Same building, opposite direction.
+    </div>
 
-    <div class="info-grid">
-      <div class="info-card">
-        <h3>n-Cocycles (Kozykel)</h3>
-        <div class="math">Z<sup>n</sup> = ker d<sup>n</sup> ⊆ C<sup>n</sup></div>
-      </div>
-      <div class="info-card">
-        <h3>n-Coboundaries (Koränder)</h3>
-        <div class="math">B<sup>n</sup> = im d<sup>n−1</sup> ⊆ C<sup>n</sup></div>
-      </div>
-      <div class="info-card">
-        <h3>Cohomology H<sup>n</sup></h3>
-        <div class="math">H<sup>n</sup> = Z<sup>n</sup> / B<sup>n</sup></div>
+    <div class="key-idea">
+      <h4>Chain Complex — Maps Go DOWN (decreasing index)</h4>
+      <div class="math-block">⋯ → C₃ →<sup>∂₃</sup> C₂ →<sup>∂₂</sup> C₁ →<sup>∂₁</sup> C₀ → 0</div>
+      <p style="font-size:0.88rem; color:var(--muted); margin-top:6px;">The subscripts decrease: ∂ₙ : Cₙ → Cₙ₋₁. We go from dimension n to dimension n−1.</p>
+    </div>
+
+    <p style="color:var(--accent); font-weight:600; margin:14px 0 6px;">▼ Chain Complex (arrows go right, indices decrease):</p>
+    <div class="direction-demo" id="chainDirectionDemo"></div>
+
+    <div class="key-idea" style="margin-top:24px;">
+      <h4>Cochain Complex — Maps Go UP (increasing index)</h4>
+      <div class="math-block">0 → C⁰ →<sup>d⁰</sup> C¹ →<sup>d¹</sup> C² →<sup>d²</sup> C³ → ⋯</div>
+      <p style="font-size:0.88rem; color:var(--muted); margin-top:6px;">The superscripts increase: dⁿ : Cⁿ → Cⁿ⁺¹. We go from dimension n to dimension n+1.</p>
+    </div>
+
+    <p style="color:var(--accent3); font-weight:600; margin:14px 0 6px;">▲ Cochain Complex (arrows go right, indices increase):</p>
+    <div class="direction-demo" id="cochainDirectionDemo"></div>
+
+    <div class="collapsible">
+      <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+        <span class="arrow">▶</span> Why have both? When do you use chains vs. cochains?
+      </button>
+      <div class="collapsible-body">
+        <p><strong style="color:var(--accent);">Chain complexes</strong> arise naturally when you decompose a space into pieces (simplices, cells) and ask "what is the boundary of this piece?" The boundary of a triangle is edges, the boundary of an edge is points — you go <em>down</em> in dimension.</p>
+        <p><strong style="color:var(--accent3);">Cochain complexes</strong> arise when you <em>dualize</em> — instead of studying the shapes themselves, you study <em>functions on shapes</em>. For example, differential forms on a manifold: a 0-form (function) gets differentiated to a 1-form, which gets differentiated to a 2-form, etc. You go <em>up</em> in dimension.</p>
+        <p><strong>Key examples:</strong></p>
+        <ul style="margin-left:20px;">
+          <li><strong>de Rham complex</strong> (cochain): Ω⁰ →<sup>d</sup> Ω¹ →<sup>d</sup> Ω² → ⋯ (differential forms, exterior derivative goes up)</li>
+          <li><strong>Singular chain complex</strong> (chain): C₂ →<sup>∂</sup> C₁ →<sup>∂</sup> C₀ (simplices, boundary goes down)</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Section 3: Interactive Homology Demo -->
+<!-- ==================== SECTION 5: HOMOLOGY INTERACTIVE ==================== -->
 <section id="sec-homology">
   <div class="container">
-    <h2>3. Homology — Interactive Demo</h2>
-    <p class="subtitle">See how cycles, boundaries, and homology classes work in ℤ-modules. Click an example to visualize.</p>
+    <h2>5. Homology — Interactive Demo</h2>
+    <p class="subtitle">See how cycles, boundaries, and homology classes work. Click an example to visualize.</p>
 
     <div class="homology-demo">
       <h3>Choose an Example</h3>
       <div class="demo-controls">
-        <button class="active" onclick="setHomologyExample(0, this)">Exact Sequence (H=0)</button>
-        <button onclick="setHomologyExample(1, this)">Non-trivial H₁ ≅ ℤ</button>
-        <button onclick="setHomologyExample(2, this)">H₁ ≅ ℤ/2ℤ</button>
+        <button class="active" onclick="setHomologyExample(0, this)">Exact (H₁ = 0)</button>
+        <button onclick="setHomologyExample(1, this)">H₁ ≅ ℤ (a hole!)</button>
+        <button onclick="setHomologyExample(2, this)">H₁ ≅ ℤ/2ℤ (torsion)</button>
       </div>
       <div class="demo-canvas-wrap">
         <canvas id="homologyCanvas"></canvas>
       </div>
-      <div class="demo-explanation" id="homologyExplanation">
+      <div class="explanation-box" id="homologyExplanation">
         This is an exact sequence: every cycle is a boundary, so H₁ = 0. The complex has no "holes."
       </div>
     </div>
   </div>
 </section>
 
-<!-- Section 4: Chain Map -->
+<!-- ==================== SECTION 6: CHAIN MAPS ==================== -->
 <section id="sec-chainmap">
   <div class="container">
-    <h2>4. Chain Map <span style="color:var(--muted);font-size:1rem;">(Kettenhomomorphismus)</span></h2>
-    <p class="subtitle">A chain map f: (A, d<sub>A</sub>) → (B, d<sub>B</sub>) is a family of maps f<sub>n</sub>: A<sub>n</sub> → B<sub>n</sub> commuting with the boundary operators: d<sub>B,n</sub> ∘ f<sub>n</sub> = f<sub>n−1</sub> ∘ d<sub>A,n</sub>.</p>
+    <h2>6. Chain Maps — Connecting Two Complexes</h2>
+    <p class="subtitle">A chain map is a "translation" between two chain complexes that respects the boundary operators.</p>
+
+    <div class="analogy">
+      <span class="emoji">🗺️</span>
+      <strong>Everyday analogy:</strong> Imagine two different maps of the same city — one from Google Maps and one hand-drawn. A <strong>chain map</strong> is like a translation guide that converts locations on one map to locations on the other, in a way that preserves the street connections (boundaries). If two places are connected by a road on map A, their translations are connected by a road on map B.
+    </div>
 
     <div class="chainmap-svg-wrap">
       <svg id="chainmapSVG" width="700" height="280" viewBox="0 0 700 280"></svg>
     </div>
 
-    <div class="info-card" style="max-width:600px;margin:0 auto;">
-      <h3>Commutativity Condition</h3>
-      <p>The diagram commutes: going right then down equals going down then right.</p>
-      <div class="math">d<sub>B,n</sub> ∘ f<sub>n</sub> = f<sub>n−1</sub> ∘ d<sub>A,n</sub></div>
-      <p style="margin-top:10px;">This ensures f maps cycles to cycles and boundaries to boundaries, so it induces a map on homology.</p>
+    <div class="info-card" style="max-width:650px;margin:0 auto;">
+      <h3>The Commuting Square Condition</h3>
+      <p>For every n, this diagram must "commute" — both paths give the same result:</p>
+      <div class="math">d_B ∘ f_n = f_{n−1} ∘ d_A</div>
+      <p style="margin-top:10px; font-size:0.88rem; color:var(--muted);">
+        "Go right then down" = "Go down then right." This ensures that f maps cycles to cycles and boundaries to boundaries, so it induces a well-defined map on homology: f* : Hₙ(A) → Hₙ(B).
+      </p>
     </div>
   </div>
 </section>
 
-<!-- Section 5: Double Complex -->
+<!-- ==================== SECTION 7: DOUBLE COMPLEX ==================== -->
 <section id="sec-double">
   <div class="container">
-    <h2>5. Double Complex <span style="color:var(--muted);font-size:1rem;">(Doppelkomplex)</span></h2>
-    <p class="subtitle">A grid of objects D<sub>p,q</sub> with horizontal maps d and vertical maps d', satisfying d∘d = 0, d'∘d' = 0, and d∘d' + d'∘d = 0.</p>
+    <h2>7. Double Complex — A Grid of Modules</h2>
+    <p class="subtitle">A double complex is a 2D grid of modules with horizontal and vertical boundary maps.</p>
+
+    <div class="analogy">
+      <span class="emoji">🏢</span>
+      <strong>Everyday analogy:</strong> Imagine a <em>spreadsheet</em> where every cell contains a module. You can move <em>right</em> (horizontal boundary d) or <em>down</em> (vertical boundary d'). The rule is: going right twice = 0, going down twice = 0, and going right-then-down <em>anti-commutes</em> with going down-then-right (they cancel each other out).
+    </div>
 
     <div class="tab-bar">
       <button class="active" onclick="showDCTab('grid', this)">Grid View</button>
@@ -478,81 +891,84 @@
     </div>
 
     <div class="tab-content active" id="dc-grid">
-      <p style="color:var(--muted);margin-bottom:12px;font-size:0.9rem;">Hover over cells to highlight the diagonal (total complex degree). Click a cell to see its maps.</p>
+      <p style="color:var(--muted);margin-bottom:12px;font-size:0.9rem;">Hover over cells to highlight the diagonal (total complex degree). Elements on the same diagonal get summed together in the total complex.</p>
       <div class="dc-wrapper">
         <div class="double-complex-grid" id="dcGrid" style="display:grid;"></div>
       </div>
-      <div class="demo-explanation" id="dcExplanation">Hover over a cell to see details.</div>
+      <div class="explanation-box" id="dcExplanation">Hover over a cell to see details.</div>
     </div>
 
     <div class="tab-content" id="dc-total">
       <div class="info-card" style="max-width:650px;margin:0 auto;">
-        <h3>Total Complex Tot(D)<sub>n</sub></h3>
-        <p>The total complex collapses the double complex into a single chain complex by summing along anti-diagonals:</p>
-        <div class="math">Tot(D)<sub>n</sub> = ⊕<sub>p+q=n</sub> D<sub>p,q</sub></div>
-        <p style="margin-top:10px;">The boundary map on an element x ∈ D<sub>p,q</sub> is:</p>
-        <div class="math">d<sub>n</sub>(x) = d(x) + d'(x)</div>
-        <p style="margin-top:10px;">The anti-commutativity condition d∘d' + d'∘d = 0 ensures d<sub>n</sub> ∘ d<sub>n+1</sub> = 0.</p>
+        <h3>Total Complex Tot(D)ₙ</h3>
+        <p>We collapse the 2D grid into a 1D chain complex by summing along anti-diagonals:</p>
+        <div class="math">Tot(D)ₙ = ⊕<sub>p+q=n</sub> D<sub>p,q</sub></div>
+        <p style="margin-top:10px;">Think of it as: "all the cells whose coordinates add up to n get combined into one big module."</p>
       </div>
-      <div class="chain-diagram" id="totalChainDiagram" style="margin-top:20px;"></div>
+      <div class="direction-demo" id="totalChainDiagram" style="margin-top:20px;"></div>
     </div>
   </div>
 </section>
 
-<!-- Section 6: Euler Characteristic -->
+<!-- ==================== SECTION 8: EULER CHARACTERISTIC ==================== -->
 <section id="sec-euler">
   <div class="container">
-    <h2>6. Euler Characteristic <span style="color:var(--muted);font-size:1rem;">(Euler-Charakteristik)</span></h2>
-    <p class="subtitle">For a cochain complex with finite-dimensional cohomology, χ = Σ (−1)<sup>i</sup> dim H<sup>i</sup>. Equivalently, χ = Σ (−1)<sup>i</sup> dim C<sup>i</sup>.</p>
+    <h2>8. Euler Characteristic — One Number to Rule Them All</h2>
+    <p class="subtitle">A single number that captures the "shape" of a chain complex.</p>
+
+    <div class="analogy">
+      <span class="emoji">🎯</span>
+      <strong>Everyday analogy:</strong> For a polyhedron (like a cube), the Euler characteristic is <strong>V − E + F</strong> (vertices minus edges plus faces). For a cube: 8 − 12 + 6 = <strong>2</strong>. For a donut: 0. This number tells you the "type" of shape — and it generalizes to any chain complex!
+    </div>
 
     <div class="euler-interactive">
-      <h3>Adjust Dimensions</h3>
-      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:16px;">Set the dimensions of C<sup>0</sup>, C<sup>1</sup>, C<sup>2</sup>, C<sup>3</sup> and see the Euler characteristic update live.</p>
+      <h3>🎛️ Adjust Dimensions and See χ Update Live</h3>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:16px;">Set the dimensions of C⁰, C¹, C², C³ and watch the Euler characteristic change.</p>
       <div class="euler-sliders" id="eulerSliders"></div>
       <div class="euler-result" id="eulerResult">χ = 0</div>
       <p style="color:var(--muted);font-size:0.85rem;margin-top:12px;">
-        <strong style="color:var(--accent4);">Special case:</strong> For a complex C<sup>0</sup> → C<sup>1</sup> (a single map f), χ = dim ker f − dim coker f, which is the <em>Fredholm index</em>.
+        <strong style="color:var(--accent4);">Formula:</strong> χ = Σ (−1)<sup>i</sup> dim C<sup>i</sup> = dim C⁰ − dim C¹ + dim C² − dim C³ + ⋯
       </p>
     </div>
   </div>
 </section>
 
-<!-- Section 7: Examples -->
+<!-- ==================== SECTION 9: EXAMPLES ==================== -->
 <section id="sec-examples" style="border-bottom:none;">
   <div class="container">
-    <h2>7. Examples</h2>
-    <p class="subtitle">Classical appearances of chain and cochain complexes.</p>
+    <h2>9. Where Do Chain Complexes Show Up?</h2>
+    <p class="subtitle">They're everywhere in mathematics — here are the greatest hits.</p>
     <div class="info-grid">
       <div class="info-card">
-        <h3>Simplicial Complex</h3>
-        <p>The chain groups are generated by simplices of each dimension. The boundary operator maps an n-simplex to the alternating sum of its (n−1)-faces.</p>
+        <h3>🔺 Simplicial Homology</h3>
+        <p>Break a shape into triangles (simplices). The chain groups are generated by simplices of each dimension. The boundary operator maps a triangle to its edges, an edge to its vertices.</p>
       </div>
       <div class="info-card">
-        <h3>Singular Homology</h3>
-        <p>The singular chain complex of a topological space X uses continuous maps from standard simplices into X. Its homology captures "holes" in X.</p>
+        <h3>🌀 Singular Homology</h3>
+        <p>Use continuous maps from standard simplices into any topological space X. The resulting homology captures "holes" in X — H₁ counts 1D holes (loops), H₂ counts 2D holes (cavities), etc.</p>
       </div>
       <div class="info-card">
-        <h3>Group (Co)homology</h3>
-        <p>For a group G and a G-module M, one constructs a (co)chain complex whose (co)homology groups are the group (co)homology H<sup>n</sup>(G, M).</p>
+        <h3>📐 de Rham Cohomology</h3>
+        <p>On a smooth manifold, differential forms form a cochain complex under exterior derivative d. Closed forms modulo exact forms = cohomology. Connects calculus to topology!</p>
       </div>
       <div class="info-card">
-        <h3>de Rham Complex</h3>
-        <p>On a smooth manifold, the exterior derivative d gives a cochain complex of differential forms: Ω<sup>0</sup> → Ω<sup>1</sup> → Ω<sup>2</sup> → ⋯</p>
+        <h3>👥 Group Cohomology</h3>
+        <p>For a group G acting on a module M, construct a cochain complex whose cohomology measures how "twisted" the action is. Appears in number theory, representation theory, and physics.</p>
       </div>
       <div class="info-card">
-        <h3>Single Morphism f: A → B</h3>
-        <p>Any homomorphism defines a two-term complex. H<sup>0</sup> = ker f, H<sup>1</sup> = coker f. The Euler characteristic is the Fredholm index.</p>
+        <h3>🔢 Single Map f: A → B</h3>
+        <p>Any homomorphism is a two-term chain complex! H⁰ = ker f (what gets killed), H¹ = coker f (what's not hit). The Euler characteristic is the Fredholm index.</p>
       </div>
       <div class="info-card">
-        <h3>Elliptic / Dirac Complex</h3>
-        <p>A cochain complex of differential operators on a manifold, important in global analysis and the Atiyah-Singer index theorem.</p>
+        <h3>⚛️ Elliptic Complexes</h3>
+        <p>Cochain complexes of differential operators on manifolds. Central to the Atiyah-Singer index theorem, which connects analysis, topology, and geometry in a single formula.</p>
       </div>
     </div>
   </div>
 </section>
 
-<footer style="text-align:center;padding:40px 20px;color:var(--muted);font-size:0.85rem;border-top:1px solid var(--border);">
-  Interactive Chain Complex Explorer — Built for visual learning of homological algebra.
+<footer>
+  Chain Complexes — From Zero to Homology | An interactive visual guide to homological algebra for everyone.
 </footer>
 
 <script>
@@ -568,130 +984,480 @@ document.addEventListener('mousemove', e => {
   tooltip.style.left = e.clientX + 14 + 'px';
   tooltip.style.top = e.clientY + 14 + 'px';
 });
-$$('.info-card[data-tip]').forEach(card => {
-  card.addEventListener('mouseenter', () => {
-    tooltip.textContent = card.dataset.tip;
-    tooltip.classList.add('visible');
-  });
-  card.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
-});
+
+// Collapsible sections
+function toggleCollapsible(btn) {
+  btn.classList.toggle('open');
+  const body = btn.nextElementSibling;
+  body.classList.toggle('open');
+}
 
 // ============================================================
-// 1. BUILD CHAIN DIAGRAM
+// 0. GROUP EXPLORER
 // ============================================================
-function buildChainDiagram(containerId, labels, arrowLabels, isCochain) {
+const groups = [
+  {
+    name: 'ℤ/2ℤ',
+    description: 'The simplest non-trivial group: just {0, 1} with addition mod 2. Like a light switch — flip twice and you\'re back.',
+    elements: [0, 1],
+    op: (a, b, n) => (a + b) % 2,
+  },
+  {
+    name: 'ℤ/3ℤ',
+    description: 'Three elements {0, 1, 2} with addition mod 3. Like a clock with only 3 hours.',
+    elements: [0, 1, 2],
+    op: (a, b, n) => (a + b) % 3,
+  },
+  {
+    name: 'ℤ/4ℤ',
+    description: 'Four elements {0, 1, 2, 3} with addition mod 4. Like the four compass directions — turn 4 times and you\'re back.',
+    elements: [0, 1, 2, 3],
+    op: (a, b, n) => (a + b) % 4,
+  },
+  {
+    name: 'ℤ/5ℤ',
+    description: 'Five elements {0, 1, 2, 3, 4} with addition mod 5. A prime-order group — every non-zero element generates the whole group.',
+    elements: [0, 1, 2, 3, 4],
+    op: (a, b, n) => (a + b) % 5,
+  },
+  {
+    name: 'ℤ/2ℤ × ℤ/2ℤ',
+    description: 'The Klein four-group: {(0,0), (0,1), (1,0), (1,1)}. Four elements, but NOT cyclic — no single element generates everything.',
+    elements: ['(0,0)', '(0,1)', '(1,0)', '(1,1)'],
+    op: (a, b, n) => {
+      const pairs = [[0,0],[0,1],[1,0],[1,1]];
+      const pa = pairs[a], pb = pairs[b];
+      const result = [(pa[0]+pb[0])%2, (pa[1]+pb[1])%2];
+      return pairs.findIndex(p => p[0]===result[0] && p[1]===result[1]);
+    },
+  },
+];
+
+function buildGroupSelector() {
+  const container = document.getElementById('groupSelector');
+  groups.forEach((g, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = g.name;
+    if (i === 0) btn.classList.add('active');
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      buildGroupTable(i);
+    });
+    container.appendChild(btn);
+  });
+  buildGroupTable(0);
+}
+
+function buildGroupTable(groupIdx) {
+  const g = groups[groupIdx];
+  const table = document.getElementById('groupTable');
+  const n = g.elements.length;
+  table.innerHTML = '';
+
+  // Header row
+  const headerRow = document.createElement('tr');
+  const cornerTh = document.createElement('th');
+  cornerTh.textContent = '+';
+  headerRow.appendChild(cornerTh);
+  for (let j = 0; j < n; j++) {
+    const th = document.createElement('th');
+    th.textContent = g.elements[j];
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  // Data rows
+  for (let i = 0; i < n; i++) {
+    const row = document.createElement('tr');
+    const rowHeader = document.createElement('th');
+    rowHeader.textContent = g.elements[i];
+    row.appendChild(rowHeader);
+    for (let j = 0; j < n; j++) {
+      const td = document.createElement('td');
+      const result = g.op(i, j, n);
+      td.textContent = g.elements[result];
+      td.dataset.row = i;
+      td.dataset.col = j;
+      td.addEventListener('mouseenter', () => highlightRowCol(i, j));
+      td.addEventListener('mouseleave', clearHighlights);
+      row.appendChild(td);
+    }
+    table.appendChild(row);
+  }
+
+  document.getElementById('groupExplanation').innerHTML = `
+    <strong style="color:var(--accent4);">${g.name}:</strong> ${g.description}<br>
+    <span style="color:var(--accent2);">Notice:</span> The table is symmetric across the main diagonal — that's commutativity (a + b = b + a), which makes this an <em>abelian</em> group!
+  `;
+}
+
+function highlightRowCol(r, c) {
+  $$('#groupTable td').forEach(td => {
+    td.classList.remove('highlight-cell');
+    if (parseInt(td.dataset.row) === r || parseInt(td.dataset.col) === c) {
+      td.classList.add('highlight-cell');
+    }
+  });
+}
+
+function clearHighlights() {
+  $$('#groupTable td').forEach(td => td.classList.remove('highlight-cell'));
+}
+
+buildGroupSelector();
+
+// ============================================================
+// 2. BOUNDARY OPERATOR VISUAL
+// ============================================================
+const boundaryCanvas = document.getElementById('boundaryCanvas');
+const bCtx = boundaryCanvas.getContext('2d');
+let currentBoundaryExample = 0;
+
+const boundaryExamples = [
+  {
+    title: 'Edge [v₀, v₁]',
+    explanation: `<strong>∂([v₀, v₁]) = v₁ − v₀</strong><br><br>The boundary of an edge is: its endpoint minus its start-point. The "minus" encodes direction — the edge goes FROM v₀ TO v₁.<br><br>If you think of the edge as a tiny arrow, its boundary tells you where the arrow starts (with a −) and where it ends (with a +).`,
+  },
+  {
+    title: 'Triangle [v₀, v₁, v₂]',
+    explanation: `<strong>∂([v₀, v₁, v₂]) = [v₁, v₂] − [v₀, v₂] + [v₀, v₁]</strong><br><br>The boundary of a triangle is its three edges, with alternating signs. Walk around the boundary: go from v₁→v₂, then v₂→v₀ (that's −[v₀,v₂] reversed), then v₀→v₁. You trace out the whole border!<br><br><strong style="color:var(--accent2);">Check ∂∘∂ = 0:</strong> Apply ∂ again to each edge, and the vertices cancel in pairs.`,
+  },
+  {
+    title: 'Tetrahedron [v₀, v₁, v₂, v₃]',
+    explanation: `<strong>∂([v₀,v₁,v₂,v₃]) = [v₁,v₂,v₃] − [v₀,v₂,v₃] + [v₀,v₁,v₃] − [v₀,v₁,v₂]</strong><br><br>The boundary of a tetrahedron (solid 3D shape) is its four triangular faces, with alternating signs. Each face is obtained by removing one vertex.<br><br><strong style="color:var(--accent2);">Check ∂∘∂ = 0:</strong> Apply ∂ to each triangular face — you get edges. Every edge appears exactly twice with opposite signs, so they all cancel!`,
+  },
+];
+
+function setBoundaryExample(idx, btn) {
+  currentBoundaryExample = idx;
+  $$('#boundaryControls button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  $('#boundaryExplanation').innerHTML = boundaryExamples[idx].explanation;
+  drawBoundary();
+}
+
+function drawBoundary() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = boundaryCanvas.parentElement.getBoundingClientRect();
+  boundaryCanvas.width = rect.width * dpr;
+  boundaryCanvas.height = rect.height * dpr;
+  boundaryCanvas.style.width = rect.width + 'px';
+  boundaryCanvas.style.height = rect.height + 'px';
+  bCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const w = rect.width;
+  const h = rect.height;
+  bCtx.clearRect(0, 0, w, h);
+
+  const cx = w / 2;
+  const cy = h / 2;
+
+  if (currentBoundaryExample === 0) {
+    // Edge: two points connected by a line
+    const x0 = cx - 120, y0 = cy;
+    const x1 = cx + 120, y1 = cy;
+
+    // Draw edge
+    bCtx.beginPath();
+    bCtx.moveTo(x0, y0);
+    bCtx.lineTo(x1, y1);
+    bCtx.strokeStyle = '#6c63ff';
+    bCtx.lineWidth = 3;
+    bCtx.stroke();
+
+    // Arrow on edge
+    const mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+    bCtx.beginPath();
+    bCtx.moveTo(mx + 8, my - 8);
+    bCtx.lineTo(mx + 8, my);
+    bCtx.lineTo(mx, my);
+    bCtx.strokeStyle = '#6c63ff';
+    bCtx.lineWidth = 2;
+    bCtx.stroke();
+
+    // Vertices
+    drawVertex(bCtx, x0, y0, 'v₀', '#ff6b6b', '−');
+    drawVertex(bCtx, x1, y1, 'v₁', '#00c9a7', '+');
+
+    // Label
+    bCtx.fillStyle = '#8888a0';
+    bCtx.font = '13px "Segoe UI", sans-serif';
+    bCtx.textAlign = 'center';
+    bCtx.fillText('∂([v₀, v₁]) = v₁ − v₀', cx, cy - 60);
+    bCtx.fillText('The edge goes from v₀ to v₁', cx, cy + 70);
+
+  } else if (currentBoundaryExample === 1) {
+    // Triangle
+    const r = 100;
+    const pts = [];
+    for (let i = 0; i < 3; i++) {
+      const angle = -Math.PI / 2 + (2 * Math.PI * i) / 3;
+      pts.push({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
+    }
+
+    // Fill triangle
+    bCtx.beginPath();
+    bCtx.moveTo(pts[0].x, pts[0].y);
+    bCtx.lineTo(pts[1].x, pts[1].y);
+    bCtx.lineTo(pts[2].x, pts[2].y);
+    bCtx.closePath();
+    bCtx.fillStyle = '#6c63ff15';
+    bCtx.fill();
+
+    // Edges with colors
+    const edgeColors = ['#00c9a7', '#ff6b6b', '#6c63ff'];
+    const edgeLabels = ['[v₁,v₂] (+)', '[v₀,v₂] (−)', '[v₀,v₁] (+)'];
+    const edgePairs = [[1, 2], [0, 2], [0, 1]];
+
+    for (let i = 0; i < 3; i++) {
+      const [a, b] = edgePairs[i];
+      bCtx.beginPath();
+      bCtx.moveTo(pts[a].x, pts[a].y);
+      bCtx.lineTo(pts[b].x, pts[b].y);
+      bCtx.strokeStyle = edgeColors[i];
+      bCtx.lineWidth = 3;
+      bCtx.stroke();
+
+      // Edge label
+      const emx = (pts[a].x + pts[b].x) / 2;
+      const emy = (pts[a].y + pts[b].y) / 2;
+      const offX = (emy - cy) * 0.3;
+      const offY = -(emx - cx) * 0.3;
+      bCtx.fillStyle = edgeColors[i];
+      bCtx.font = '11px "Segoe UI", sans-serif';
+      bCtx.textAlign = 'center';
+      bCtx.fillText(edgeLabels[i], emx + offX, emy + offY);
+    }
+
+    // Vertices
+    const vLabels = ['v₀', 'v₁', 'v₂'];
+    for (let i = 0; i < 3; i++) {
+      drawVertex(bCtx, pts[i].x, pts[i].y, vLabels[i], '#ffd93d', '');
+    }
+
+    bCtx.fillStyle = '#8888a0';
+    bCtx.font = '13px "Segoe UI", sans-serif';
+    bCtx.textAlign = 'center';
+    bCtx.fillText('∂([v₀,v₁,v₂]) = [v₁,v₂] − [v₀,v₂] + [v₀,v₁]', cx, h - 20);
+
+  } else if (currentBoundaryExample === 2) {
+    // Tetrahedron (3D projected to 2D)
+    const pts = [
+      { x: cx, y: cy - 110 },       // v0 top
+      { x: cx - 110, y: cy + 70 },  // v1 bottom-left
+      { x: cx + 110, y: cy + 70 },  // v2 bottom-right
+      { x: cx + 20, y: cy - 10 },   // v3 center-ish (interior point projected)
+    ];
+
+    // Draw all edges
+    const edgePairs = [[0,1],[0,2],[0,3],[1,2],[1,3],[2,3]];
+    for (const [a, b] of edgePairs) {
+      bCtx.beginPath();
+      bCtx.moveTo(pts[a].x, pts[a].y);
+      bCtx.lineTo(pts[b].x, pts[b].y);
+      bCtx.strokeStyle = '#6c63ff44';
+      bCtx.lineWidth = 1.5;
+      bCtx.stroke();
+    }
+
+    // Highlight the four faces with different colors
+    const faces = [
+      { verts: [1, 2, 3], color: '#00c9a7', label: '+[v₁,v₂,v₃]' },
+      { verts: [0, 2, 3], color: '#ff6b6b', label: '−[v₀,v₂,v₃]' },
+      { verts: [0, 1, 3], color: '#6c63ff', label: '+[v₀,v₁,v₃]' },
+      { verts: [0, 1, 2], color: '#ffd93d', label: '−[v₀,v₁,v₂]' },
+    ];
+
+    for (const face of faces) {
+      const [a, b, c] = face.verts;
+      bCtx.beginPath();
+      bCtx.moveTo(pts[a].x, pts[a].y);
+      bCtx.lineTo(pts[b].x, pts[b].y);
+      bCtx.lineTo(pts[c].x, pts[c].y);
+      bCtx.closePath();
+      bCtx.fillStyle = face.color + '18';
+      bCtx.fill();
+      bCtx.strokeStyle = face.color;
+      bCtx.lineWidth = 2;
+      bCtx.stroke();
+
+      // Face label at centroid
+      const fcx = (pts[a].x + pts[b].x + pts[c].x) / 3;
+      const fcy = (pts[a].y + pts[b].y + pts[c].y) / 3;
+      bCtx.fillStyle = face.color;
+      bCtx.font = '10px "Segoe UI", sans-serif';
+      bCtx.textAlign = 'center';
+      bCtx.fillText(face.label, fcx, fcy);
+    }
+
+    // Vertices
+    const vLabels = ['v₀', 'v₁', 'v₂', 'v₃'];
+    const vColors = ['#ff6b6b', '#00c9a7', '#6c63ff', '#ffd93d'];
+    for (let i = 0; i < 4; i++) {
+      drawVertex(bCtx, pts[i].x, pts[i].y, vLabels[i], vColors[i], '');
+    }
+
+    bCtx.fillStyle = '#8888a0';
+    bCtx.font = '12px "Segoe UI", sans-serif';
+    bCtx.textAlign = 'center';
+    bCtx.fillText('∂([v₀,v₁,v₂,v₃]) = [v₁,v₂,v₃] − [v₀,v₂,v₃] + [v₀,v₁,v₃] − [v₀,v₁,v₂]', cx, h - 14);
+  }
+}
+
+function drawVertex(context, x, y, label, color, sign) {
+  context.beginPath();
+  context.arc(x, y, 10, 0, Math.PI * 2);
+  context.fillStyle = color;
+  context.fill();
+  context.strokeStyle = '#0f1117';
+  context.lineWidth = 2;
+  context.stroke();
+
+  context.fillStyle = '#e4e4e7';
+  context.font = 'bold 12px "Segoe UI", sans-serif';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillText(label, x, y - 20);
+
+  if (sign) {
+    context.fillStyle = color;
+    context.font = 'bold 16px "Segoe UI", sans-serif';
+    context.fillText(sign, x, y + 22);
+  }
+}
+
+window.addEventListener('resize', drawBoundary);
+setTimeout(drawBoundary, 120);
+
+// ============================================================
+// 3. CHAIN COMPLEX DIRECTION DIAGRAMS
+// ============================================================
+function buildDirectionDiagram(containerId, labels, arrowLabels, arrowType) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
   for (let i = 0; i < labels.length; i++) {
-    // Node
     const node = document.createElement('div');
-    node.className = 'chain-node';
-    node.innerHTML = `<div class="circle">${labels[i]}</div><div class="label">${isCochain ? 'degree ' + (i - 1) : 'degree ' + (labels.length - 2 - i)}</div>`;
+    node.className = 'dir-node';
+    node.innerHTML = `<div class="circle">${labels[i]}</div><div class="label">${labels[i].replace(/<[^>]*>/g, '')}</div>`;
     container.appendChild(node);
 
-    // Arrow (except after last)
     if (i < labels.length - 1) {
       const arrow = document.createElement('div');
-      arrow.className = 'chain-arrow';
+      arrow.className = 'dir-arrow';
       const lbl = arrowLabels[i] || '';
-      arrow.innerHTML = `<div class="arrow-label">${lbl}</div><div class="arrow-line"></div>`;
+      const colorClass = arrowType === 'chain' ? 'chain-color' : 'cochain-color';
+      const lineClass = arrowType === 'chain' ? 'right' : 'right';
+      arrow.innerHTML = `<div class="arrow-label ${colorClass}">${lbl}</div><div class="arrow-line ${lineClass}"></div>`;
       container.appendChild(arrow);
     }
   }
 }
 
-// Chain complex: ... → C_{n+1} → C_n → C_{n-1} → ...
-buildChainDiagram('chainDiagram',
-  ['⋯', 'C<sub>n+2</sub>', 'C<sub>n+1</sub>', 'C<sub>n</sub>', 'C<sub>n−1</sub>', 'C<sub>n−2</sub>', '⋯'],
-  ['', 'd<sub>n+2</sub>', 'd<sub>n+1</sub>', 'd<sub>n</sub>', 'd<sub>n−1</sub>', ''],
-  false
+// Chain: indices decrease left to right
+buildDirectionDiagram('chainDiagram',
+  ['⋯', 'C₃', 'C₂', 'C₁', 'C₀', '0'],
+  ['', '∂₃', '∂₂', '∂₁', ''],
+  'chain'
 );
 
-// Cochain complex: ... → C^{n-1} → C^n → C^{n+1} → ...
-buildChainDiagram('cochainDiagram',
-  ['⋯', 'C<sup>n−2</sup>', 'C<sup>n−1</sup>', 'C<sup>n</sup>', 'C<sup>n+1</sup>', 'C<sup>n+2</sup>', '⋯'],
-  ['', 'd<sup>n−2</sup>', 'd<sup>n−1</sup>', 'd<sup>n</sup>', 'd<sup>n+1</sup>', ''],
-  true
+// Chain direction demo
+buildDirectionDiagram('chainDirectionDemo',
+  ['⋯', 'C₃', 'C₂', 'C₁', 'C₀', '0'],
+  ['', '∂₃', '∂₂', '∂₁', ''],
+  'chain'
+);
+
+// Cochain direction demo
+buildDirectionDiagram('cochainDirectionDemo',
+  ['0', 'C⁰', 'C¹', 'C²', 'C³', '⋯'],
+  ['', 'd⁰', 'd¹', 'd²', ''],
+  'cochain'
+);
+
+// Total complex diagram
+buildDirectionDiagram('totalChainDiagram',
+  ['⋯', 'Tot₃', 'Tot₂', 'Tot₁', 'Tot₀', '0'],
+  ['', 'D₃', 'D₂', 'D₁', ''],
+  'chain'
 );
 
 // ============================================================
-// 3. HOMOLOGY INTERACTIVE DEMO
+// 5. HOMOLOGY INTERACTIVE DEMO
 // ============================================================
-const canvas = document.getElementById('homologyCanvas');
-const ctx = canvas.getContext('2d');
-let currentExample = 0;
+const homCanvas = document.getElementById('homologyCanvas');
+const hCtx = homCanvas.getContext('2d');
+let currentHomExample = 0;
 
-const examples = [
+const homExamples = [
   {
     title: 'Exact Sequence (H₁ = 0)',
-    explanation: `<strong>Exact at C₁:</strong> We have C₂ = ℤ, C₁ = ℤ, C₀ = ℤ with d₂(x) = 2x and d₁(x) = 0.<br>
-      ker d₁ = ℤ, im d₂ = 2ℤ. Wait — that gives H₁ = ℤ/2ℤ!<br><br>
-      Actually, let's use: d₂: ℤ → ℤ, x ↦ x and d₁: ℤ → ℤ, x ↦ 0.<br>
-      Then ker d₁ = ℤ, im d₂ = ℤ, so H₁ = ℤ/ℤ = 0. The sequence is exact — no "holes."`,
-    // C2 --d2--> C1 --d1--> C0
-    // Z --id--> Z --0--> Z
+    explanation: `<strong>Exact at C₁:</strong> C₂ = ℤ, C₁ = ℤ, C₀ = ℤ with ∂₂(x) = x (identity) and ∂₁(x) = 0.<br>
+      ker ∂₁ = ℤ (everything), im ∂₂ = ℤ (everything).<br>
+      <strong style="color:var(--accent2);">H₁ = ℤ / ℤ = 0.</strong> Every cycle is a boundary — no holes!`,
     modules: ['ℤ', 'ℤ', 'ℤ'],
     maps: ['×1 (id)', '×0'],
-    ker: 'ker d₁ = ℤ',
-    im: 'im d₂ = ℤ',
+    ker: 'ker ∂₁ = ℤ',
+    im: 'im ∂₂ = ℤ',
     homology: 'H₁ = ℤ / ℤ = 0',
     cycleElements: [0, 1, 2, 3, -1, -2, -3],
     boundaryElements: [0, 1, 2, 3, -1, -2, -3],
   },
   {
-    title: 'Non-trivial H₁ ≅ ℤ',
-    explanation: `<strong>Non-trivial homology:</strong> C₂ = 0, C₁ = ℤ, C₀ = 0 with d₂ = 0 and d₁ = 0.<br>
-      ker d₁ = ℤ, im d₂ = 0. So H₁ = ℤ/0 = ℤ.<br><br>
-      Every element of C₁ is a cycle, but none (except 0) is a boundary. This represents a "hole" — like the 1-dimensional hole in a circle S¹.`,
+    title: 'H₁ ≅ ℤ (a hole!)',
+    explanation: `<strong>Non-trivial homology:</strong> C₂ = 0, C₁ = ℤ, C₀ = 0 with ∂₂ = 0 and ∂₁ = 0.<br>
+      ker ∂₁ = ℤ (everything is a cycle), im ∂₂ = 0 (nothing is a boundary).<br>
+      <strong style="color:var(--accent2);">H₁ = ℤ / 0 ≅ ℤ.</strong> Every non-zero cycle represents a genuine hole — like the loop around a circle S¹!`,
     modules: ['0', 'ℤ', '0'],
     maps: ['0', '0'],
-    ker: 'ker d₁ = ℤ',
-    im: 'im d₂ = 0',
+    ker: 'ker ∂₁ = ℤ',
+    im: 'im ∂₂ = 0',
     homology: 'H₁ = ℤ / 0 ≅ ℤ',
     cycleElements: [0, 1, 2, 3, -1, -2, -3],
     boundaryElements: [0],
   },
   {
-    title: 'H₁ ≅ ℤ/2ℤ (Torsion)',
-    explanation: `<strong>Torsion in homology:</strong> C₂ = ℤ, C₁ = ℤ, C₀ = ℤ with d₂(x) = 2x and d₁(x) = 0.<br>
-      ker d₁ = ℤ (everything), im d₂ = 2ℤ (even integers).<br>
-      H₁ = ℤ / 2ℤ ≅ {0, 1} — two homology classes.<br><br>
-      Odd integers are cycles but not boundaries. Even integers are both. This detects ℤ/2ℤ torsion, as in ℝP².`,
+    title: 'H₁ ≅ ℤ/2ℤ (torsion)',
+    explanation: `<strong>Torsion:</strong> C₂ = ℤ, C₁ = ℤ, C₀ = ℤ with ∂₂(x) = 2x and ∂₁(x) = 0.<br>
+      ker ∂₁ = ℤ, im ∂₂ = 2ℤ (only even integers are boundaries).<br>
+      <strong style="color:var(--accent2);">H₁ = ℤ / 2ℤ ≅ {0̄, 1̄}.</strong> Odd integers are cycles but NOT boundaries. This is "torsion" — like in ℝP².`,
     modules: ['ℤ', 'ℤ', 'ℤ'],
     maps: ['×2', '×0'],
-    ker: 'ker d₁ = ℤ',
-    im: 'im d₂ = 2ℤ',
-    homology: 'H₁ = ℤ / 2ℤ ≅ {0, 1}',
+    ker: 'ker ∂₁ = ℤ',
+    im: 'im ∂₂ = 2ℤ',
+    homology: 'H₁ = ℤ / 2ℤ ≅ {0̄, 1̄}',
     cycleElements: [0, 1, 2, 3, -1, -2, -3],
     boundaryElements: [0, 2, -2, 4, -4],
   }
 ];
 
 function setHomologyExample(idx, btn) {
-  currentExample = idx;
+  currentHomExample = idx;
   $$('.demo-controls button').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  $('#homologyExplanation').innerHTML = examples[idx].explanation;
-  drawHomology();
+  $('#homologyExplanation').innerHTML = homExamples[idx].explanation;
+  drawHomologyDemo();
 }
 
-function drawHomology() {
+function drawHomologyDemo() {
   const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const rect = homCanvas.parentElement.getBoundingClientRect();
+  homCanvas.width = rect.width * dpr;
+  homCanvas.height = rect.height * dpr;
+  homCanvas.style.width = rect.width + 'px';
+  homCanvas.style.height = rect.height + 'px';
+  hCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const w = rect.width;
   const h = rect.height;
-  const ex = examples[currentExample];
+  const ex = homExamples[currentHomExample];
 
-  ctx.clearRect(0, 0, w, h);
+  hCtx.clearRect(0, 0, w, h);
 
   // Draw three modules
   const moduleX = [w * 0.18, w * 0.5, w * 0.82];
-  const moduleY = h * 0.32;
-  const radius = 38;
+  const moduleY = h * 0.28;
+  const radius = 36;
 
   // Arrows between modules
   for (let i = 0; i < 2; i++) {
@@ -699,124 +1465,126 @@ function drawHomology() {
     const x2 = moduleX[i + 1] - radius - 5;
     const y = moduleY;
 
-    ctx.beginPath();
-    ctx.moveTo(x1, y);
-    ctx.lineTo(x2 - 10, y);
-    ctx.strokeStyle = '#6c63ff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    hCtx.beginPath();
+    hCtx.moveTo(x1, y);
+    hCtx.lineTo(x2 - 10, y);
+    hCtx.strokeStyle = '#6c63ff';
+    hCtx.lineWidth = 2;
+    hCtx.stroke();
 
-    // Arrowhead
-    ctx.beginPath();
-    ctx.moveTo(x2, y);
-    ctx.lineTo(x2 - 12, y - 6);
-    ctx.lineTo(x2 - 12, y + 6);
-    ctx.fillStyle = '#6c63ff';
-    ctx.fill();
+    hCtx.beginPath();
+    hCtx.moveTo(x2, y);
+    hCtx.lineTo(x2 - 12, y - 6);
+    hCtx.lineTo(x2 - 12, y + 6);
+    hCtx.fillStyle = '#6c63ff';
+    hCtx.fill();
 
-    // Arrow label
-    ctx.fillStyle = '#6c63ff';
-    ctx.font = '14px "Segoe UI", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(ex.maps[i], (x1 + x2) / 2, y - 14);
+    hCtx.fillStyle = '#6c63ff';
+    hCtx.font = '14px "Segoe UI", sans-serif';
+    hCtx.textAlign = 'center';
+    hCtx.fillText(ex.maps[i], (x1 + x2) / 2, y - 14);
   }
 
   // Module circles
   const colors = ['#ff6b6b', '#6c63ff', '#00c9a7'];
   const labels_top = ['C₂', 'C₁', 'C₀'];
   for (let i = 0; i < 3; i++) {
-    ctx.beginPath();
-    ctx.arc(moduleX[i], moduleY, radius, 0, Math.PI * 2);
-    ctx.fillStyle = colors[i] + '22';
-    ctx.fill();
-    ctx.strokeStyle = colors[i];
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
+    hCtx.beginPath();
+    hCtx.arc(moduleX[i], moduleY, radius, 0, Math.PI * 2);
+    hCtx.fillStyle = colors[i] + '22';
+    hCtx.fill();
+    hCtx.strokeStyle = colors[i];
+    hCtx.lineWidth = 2.5;
+    hCtx.stroke();
 
-    ctx.fillStyle = '#e4e4e7';
-    ctx.font = 'bold 16px "Segoe UI", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(labels_top[i], moduleX[i], moduleY - 12);
+    hCtx.fillStyle = '#e4e4e7';
+    hCtx.font = 'bold 15px "Segoe UI", sans-serif';
+    hCtx.textAlign = 'center';
+    hCtx.textBaseline = 'middle';
+    hCtx.fillText(labels_top[i], moduleX[i], moduleY - 10);
 
-    ctx.fillStyle = colors[i];
-    ctx.font = '14px "Segoe UI", sans-serif';
-    ctx.fillText(ex.modules[i], moduleX[i], moduleY + 12);
+    hCtx.fillStyle = colors[i];
+    hCtx.font = '13px "Segoe UI", sans-serif';
+    hCtx.fillText(ex.modules[i], moduleX[i], moduleY + 12);
   }
 
-  // Lower section: Cycles, Boundaries, Homology at C₁
-  const secY = h * 0.68;
-  const boxW = w * 0.26;
-  const boxH = 70;
-  const boxGap = w * 0.04;
-  const startX = w * 0.5 - (boxW * 3 + boxGap * 2) / 2;
+  // Lower section: Cycles, Boundaries, Homology
+  const secY = h * 0.58;
+  const boxW = Math.min(w * 0.26, 200);
+  const boxH = 90;
+  const totalBoxWidth = boxW * 3 + 30;
+  const startX = (w - totalBoxWidth) / 2;
 
   const sections = [
-    { label: 'Cycles (ker d₁)', value: ex.ker, color: '#00c9a7', elements: ex.cycleElements },
-    { label: 'Boundaries (im d₂)', value: ex.im, color: '#ffd93d', elements: ex.boundaryElements },
+    { label: 'Cycles (ker ∂₁)', value: ex.ker, color: '#00c9a7', elements: ex.cycleElements },
+    { label: 'Boundaries (im ∂₂)', value: ex.im, color: '#ffd93d', elements: ex.boundaryElements },
     { label: 'Homology H₁', value: ex.homology, color: '#ff6b6b' },
   ];
 
   for (let i = 0; i < 3; i++) {
-    const bx = startX + i * (boxW + boxGap);
+    const bx = startX + i * (boxW + 15);
     const by = secY;
 
-    // Box
-    ctx.beginPath();
-    ctx.roundRect(bx, by, boxW, boxH, 10);
-    ctx.fillStyle = sections[i].color + '15';
-    ctx.fill();
-    ctx.strokeStyle = sections[i].color;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    hCtx.beginPath();
+    if (hCtx.roundRect) {
+      hCtx.roundRect(bx, by, boxW, boxH, 10);
+    } else {
+      hCtx.rect(bx, by, boxW, boxH);
+    }
+    hCtx.fillStyle = sections[i].color + '15';
+    hCtx.fill();
+    hCtx.strokeStyle = sections[i].color;
+    hCtx.lineWidth = 1.5;
+    hCtx.stroke();
 
-    // Label
-    ctx.fillStyle = sections[i].color;
-    ctx.font = 'bold 12px "Segoe UI", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.fillText(sections[i].label, bx + boxW / 2, by + 10);
+    hCtx.fillStyle = sections[i].color;
+    hCtx.font = 'bold 11px "Segoe UI", sans-serif';
+    hCtx.textAlign = 'center';
+    hCtx.textBaseline = 'top';
+    hCtx.fillText(sections[i].label, bx + boxW / 2, by + 8);
 
-    // Value
-    ctx.fillStyle = '#e4e4e7';
-    ctx.font = '13px "Courier New", monospace';
-    ctx.fillText(sections[i].value, bx + boxW / 2, by + 34);
+    hCtx.fillStyle = '#e4e4e7';
+    hCtx.font = '12px "Courier New", monospace';
+    hCtx.fillText(sections[i].value, bx + boxW / 2, by + 30);
 
-    // Elements dots for cycles and boundaries
     if (sections[i].elements) {
       const elems = sections[i].elements;
-      const dotY = by + 58;
-      const dotSpacing = Math.min(18, (boxW - 20) / elems.length);
+      const dotY = by + 62;
+      const dotSpacing = Math.min(16, (boxW - 20) / elems.length);
       const dotStartX = bx + boxW / 2 - (elems.length - 1) * dotSpacing / 2;
       for (let j = 0; j < elems.length; j++) {
-        ctx.beginPath();
-        ctx.arc(dotStartX + j * dotSpacing, dotY, 4, 0, Math.PI * 2);
-        ctx.fillStyle = sections[i].color + '88';
-        ctx.fill();
+        hCtx.beginPath();
+        hCtx.arc(dotStartX + j * dotSpacing, dotY, 4, 0, Math.PI * 2);
+        hCtx.fillStyle = sections[i].color + '88';
+        hCtx.fill();
+
+        hCtx.fillStyle = sections[i].color;
+        hCtx.font = '9px monospace';
+        hCtx.fillText(String(elems[j]), dotStartX + j * dotSpacing, dotY + 14);
       }
     }
   }
 
-  // Connecting lines from C₁ to the sections
-  ctx.beginPath();
-  ctx.setLineDash([4, 4]);
-  ctx.moveTo(moduleX[1], moduleY + radius + 5);
-  ctx.lineTo(moduleX[1], secY - 10);
-  ctx.strokeStyle = '#6c63ff55';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  ctx.setLineDash([]);
+  // Connecting line from C₁ down
+  hCtx.beginPath();
+  hCtx.setLineDash([4, 4]);
+  hCtx.moveTo(moduleX[1], moduleY + radius + 5);
+  hCtx.lineTo(moduleX[1], secY - 10);
+  hCtx.strokeStyle = '#6c63ff44';
+  hCtx.lineWidth = 1.5;
+  hCtx.stroke();
+  hCtx.setLineDash([]);
 
   // Title
-  ctx.fillStyle = '#e4e4e7';
-  ctx.font = 'bold 14px "Segoe UI", sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(ex.title, w / 2, 24);
+  hCtx.fillStyle = '#e4e4e7';
+  hCtx.font = 'bold 14px "Segoe UI", sans-serif';
+  hCtx.textAlign = 'center';
+  hCtx.fillText(ex.title, w / 2, 22);
 
-  // d∘d = 0 reminder
-  ctx.fillStyle = '#8888a0';
-  ctx.font = '12px "Segoe UI", sans-serif';
-  ctx.fillText('Key property: d₁ ∘ d₂ = 0  ⟹  im d₂ ⊆ ker d₁  ⟹  B₁ ⊆ Z₁', w / 2, h - 16);
+  // Footer
+  hCtx.fillStyle = '#8888a0';
+  hCtx.font = '11px "Segoe UI", sans-serif';
+  hCtx.fillText('∂₁ ∘ ∂₂ = 0  ⟹  im ∂₂ ⊆ ker ∂₁  ⟹  Boundaries ⊆ Cycles', w / 2, h - 12);
 }
 
 // roundRect polyfill
@@ -833,57 +1601,48 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
   };
 }
 
-window.addEventListener('resize', drawHomology);
-setTimeout(drawHomology, 100);
+window.addEventListener('resize', drawHomologyDemo);
+setTimeout(drawHomologyDemo, 150);
 
 // ============================================================
-// 4. CHAIN MAP SVG
+// 6. CHAIN MAP SVG
 // ============================================================
 function buildChainMapSVG() {
   const svg = document.getElementById('chainmapSVG');
   const ns = 'http://www.w3.org/2000/svg';
-
   svg.innerHTML = '';
 
   const topY = 60;
-  const botY = 200;
+  const botY = 210;
   const xs = [100, 250, 400, 550];
-  const labels_top = ['A_{n+1}', 'A_n', 'A_{n-1}', 'A_{n-2}'];
-  const labels_bot = ['B_{n+1}', 'B_n', 'B_{n-1}', 'B_{n-2}'];
-  const dLabelsTop = ['d_A', 'd_A', 'd_A'];
-  const dLabelsBot = ['d_B', 'd_B', 'd_B'];
-  const fLabels = ['f_{n+1}', 'f_n', 'f_{n-1}', 'f_{n-2}'];
+  const labels_top = ['A₃', 'A₂', 'A₁', 'A₀'];
+  const labels_bot = ['B₃', 'B₂', 'B₁', 'B₀'];
+  const dLabelsTop = ['∂ᴬ₃', '∂ᴬ₂', '∂ᴬ₁'];
+  const dLabelsBot = ['∂ᴮ₃', '∂ᴮ₂', '∂ᴮ₁'];
+  const fLabels = ['f₃', 'f₂', 'f₁', 'f₀'];
 
-  function addText(x, y, text, fill, fontSize, anchor) {
-    const t = document.createElementNS(ns, 'text');
-    t.setAttribute('x', x);
-    t.setAttribute('y', y);
-    t.setAttribute('fill', fill || '#e4e4e7');
-    t.setAttribute('font-size', fontSize || '14');
-    t.setAttribute('text-anchor', anchor || 'middle');
-    t.setAttribute('font-family', '"Segoe UI", sans-serif');
-    t.textContent = text;
-    svg.appendChild(t);
+  function addEl(tag, attrs) {
+    const el = document.createElementNS(ns, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    svg.appendChild(el);
+    return el;
   }
 
-  function addArrow(x1, y1, x2, y2, color, dashed) {
-    const line = document.createElementNS(ns, 'line');
-    line.setAttribute('x1', x1);
-    line.setAttribute('y1', y1);
-    line.setAttribute('x2', x2);
-    line.setAttribute('y2', y2);
-    line.setAttribute('stroke', color);
-    line.setAttribute('stroke-width', '2');
-    if (dashed) line.setAttribute('stroke-dasharray', '6,4');
-    line.setAttribute('marker-end', `url(#arrowhead-${color.replace('#', '')})`);
-    svg.appendChild(line);
+  function addText(x, y, text, fill, fontSize, anchor) {
+    const t = addEl('text', {
+      x, y, fill: fill || '#e4e4e7',
+      'font-size': fontSize || '13',
+      'text-anchor': anchor || 'middle',
+      'font-family': '"Segoe UI", sans-serif'
+    });
+    t.textContent = text;
   }
 
   // Arrowhead markers
-  ['6c63ff', '00c9a7', 'ff6b6b', 'ffd93d'].forEach(c => {
-    const defs = document.createElementNS(ns, 'defs');
+  ['6c63ff', '00c9a7', 'ffd93d'].forEach(c => {
+    const defs = addEl('defs', {});
     const marker = document.createElementNS(ns, 'marker');
-    marker.setAttribute('id', `arrowhead-${c}`);
+    marker.setAttribute('id', `ah-${c}`);
     marker.setAttribute('markerWidth', '10');
     marker.setAttribute('markerHeight', '7');
     marker.setAttribute('refX', '9');
@@ -897,75 +1656,67 @@ function buildChainMapSVG() {
     svg.appendChild(defs);
   });
 
-  // Top row nodes and arrows
   for (let i = 0; i < 4; i++) {
-    // Node circles
-    const circle = document.createElementNS(ns, 'circle');
-    circle.setAttribute('cx', xs[i]);
-    circle.setAttribute('cy', topY);
-    circle.setAttribute('r', '28');
-    circle.setAttribute('fill', '#6c63ff15');
-    circle.setAttribute('stroke', '#6c63ff');
-    circle.setAttribute('stroke-width', '2');
-    svg.appendChild(circle);
+    // Top row circles
+    addEl('circle', { cx: xs[i], cy: topY, r: 26, fill: '#6c63ff15', stroke: '#6c63ff', 'stroke-width': 2 });
     addText(xs[i], topY + 5, labels_top[i], '#e4e4e7', '13');
 
-    // Bottom row
-    const circle2 = document.createElementNS(ns, 'circle');
-    circle2.setAttribute('cx', xs[i]);
-    circle2.setAttribute('cy', botY);
-    circle2.setAttribute('r', '28');
-    circle2.setAttribute('fill', '#00c9a715');
-    circle2.setAttribute('stroke', '#00c9a7');
-    circle2.setAttribute('stroke-width', '2');
-    svg.appendChild(circle2);
+    // Bottom row circles
+    addEl('circle', { cx: xs[i], cy: botY, r: 26, fill: '#00c9a715', stroke: '#00c9a7', 'stroke-width': 2 });
     addText(xs[i], botY + 5, labels_bot[i], '#e4e4e7', '13');
 
     // Vertical arrows (f_n)
-    addArrow(xs[i], topY + 32, xs[i], botY - 32, '#ffd93d', true);
-    addText(xs[i] + 20, (topY + botY) / 2 + 5, fLabels[i], '#ffd93d', '12');
+    addEl('line', {
+      x1: xs[i], y1: topY + 30, x2: xs[i], y2: botY - 30,
+      stroke: '#ffd93d', 'stroke-width': 2, 'stroke-dasharray': '6,4',
+      'marker-end': 'url(#ah-ffd93d)'
+    });
+    addText(xs[i] + 18, (topY + botY) / 2 + 4, fLabels[i], '#ffd93d', '11');
 
     // Horizontal arrows
     if (i < 3) {
-      addArrow(xs[i] + 32, topY, xs[i + 1] - 32, topY, '#6c63ff', false);
-      addText((xs[i] + xs[i + 1]) / 2, topY - 16, dLabelsTop[i], '#6c63ff', '12');
+      addEl('line', {
+        x1: xs[i] + 30, y1: topY, x2: xs[i + 1] - 30, y2: topY,
+        stroke: '#6c63ff', 'stroke-width': 2,
+        'marker-end': `url(#ah-6c63ff)`
+      });
+      addText((xs[i] + xs[i + 1]) / 2, topY - 16, dLabelsTop[i], '#6c63ff', '11');
 
-      addArrow(xs[i] + 32, botY, xs[i + 1] - 32, botY, '#00c9a7', false);
-      addText((xs[i] + xs[i + 1]) / 2, botY - 16, dLabelsBot[i], '#00c9a7', '12');
+      addEl('line', {
+        x1: xs[i] + 30, y1: botY, x2: xs[i + 1] - 30, y2: botY,
+        stroke: '#00c9a7', 'stroke-width': 2,
+        'marker-end': `url(#ah-00c9a7)`
+      });
+      addText((xs[i] + xs[i + 1]) / 2, botY - 16, dLabelsBot[i], '#00c9a7', '11');
     }
   }
 
-  // Labels
-  addText(30, topY + 5, '(A, d_A):', '#6c63ff', '13', 'start');
-  addText(30, botY + 5, '(B, d_B):', '#00c9a7', '13', 'start');
+  // Row labels
+  addText(30, topY + 5, '(A, ∂ᴬ):', '#6c63ff', '12', 'start');
+  addText(30, botY + 5, '(B, ∂ᴮ):', '#00c9a7', '12', 'start');
 
   // Commutative square highlight
-  const rect = document.createElementNS(ns, 'rect');
-  rect.setAttribute('x', xs[1] - 40);
-  rect.setAttribute('y', topY - 40);
-  rect.setAttribute('width', xs[2] - xs[1] + 80);
-  rect.setAttribute('height', botY - topY + 80);
-  rect.setAttribute('rx', '12');
-  rect.setAttribute('fill', 'none');
-  rect.setAttribute('stroke', '#ffd93d33');
-  rect.setAttribute('stroke-width', '1.5');
-  rect.setAttribute('stroke-dasharray', '8,4');
-  svg.appendChild(rect);
-  addText((xs[1] + xs[2]) / 2, botY + 55, 'Commutative square: d_B ∘ f_n = f_{n-1} ∘ d_A', '#ffd93d', '11');
+  const highlightRect = addEl('rect', {
+    x: xs[1] - 38, y: topY - 38,
+    width: xs[2] - xs[1] + 76, height: botY - topY + 76,
+    rx: 12, fill: 'none', stroke: '#ffd93d33',
+    'stroke-width': 1.5, 'stroke-dasharray': '8,4'
+  });
+  addText((xs[1] + xs[2]) / 2, botY + 55, '∂ᴮ ∘ fₙ = fₙ₋₁ ∘ ∂ᴬ  (commutative square)', '#ffd93d', '11');
 }
 
 buildChainMapSVG();
 
 // ============================================================
-// 5. DOUBLE COMPLEX
+// 7. DOUBLE COMPLEX
 // ============================================================
 const DC_ROWS = 4;
 const DC_COLS = 4;
 
 function buildDoubleComplex() {
   const grid = document.getElementById('dcGrid');
-  grid.style.gridTemplateColumns = `repeat(${DC_COLS}, 70px)`;
-  grid.style.gridTemplateRows = `repeat(${DC_ROWS}, 70px)`;
+  grid.style.gridTemplateColumns = `repeat(${DC_COLS}, 68px)`;
+  grid.style.gridTemplateRows = `repeat(${DC_ROWS}, 68px)`;
   grid.style.gap = '6px';
   grid.innerHTML = '';
 
@@ -986,10 +1737,10 @@ function buildDoubleComplex() {
         });
         const pp = cell.dataset.p, qq = cell.dataset.q;
         $('#dcExplanation').innerHTML = `
-          <strong>D<sub>${pp},${qq}</sub></strong> — on diagonal p+q = ${diag} (Tot(D)<sub>${diag}</sub>).<br>
-          Horizontal map: d: D<sub>${pp},${qq}</sub> → D<sub>${pp - 1},${qq}</sub><br>
-          Vertical map: d': D<sub>${pp},${qq}</sub> → D<sub>${pp},${qq - 1}</sub><br>
-          <span style="color:var(--accent4);">Anti-commutativity: d∘d' + d'∘d = 0</span>
+          <strong style="color:var(--accent2);">D<sub>${pp},${qq}</sub></strong> — sits on diagonal p+q = ${diag}, so it contributes to <strong>Tot(D)<sub>${diag}</sub></strong>.<br>
+          <span style="color:var(--accent);">→ Horizontal map d:</span> D<sub>${pp},${qq}</sub> → D<sub>${parseInt(pp)-1},${qq}</sub> (goes left)<br>
+          <span style="color:var(--accent3);">↓ Vertical map d':</span> D<sub>${pp},${qq}</sub> → D<sub>${pp},${parseInt(qq)-1}</sub> (goes down)<br>
+          <span style="color:var(--accent4);">Rule: d∘d' + d'∘d = 0 (anti-commutativity)</span>
         `;
       });
 
@@ -1004,13 +1755,6 @@ function buildDoubleComplex() {
 
 buildDoubleComplex();
 
-// Total complex diagram
-buildChainDiagram('totalChainDiagram',
-  ['⋯', 'Tot<sub>n+1</sub>', 'Tot<sub>n</sub>', 'Tot<sub>n−1</sub>', '⋯'],
-  ['', 'd<sub>n+1</sub>', 'd<sub>n</sub>', ''],
-  false
-);
-
 function showDCTab(tabId, btn) {
   $$('#sec-double .tab-bar button').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -1019,7 +1763,7 @@ function showDCTab(tabId, btn) {
 }
 
 // ============================================================
-// 6. EULER CHARACTERISTIC
+// 8. EULER CHARACTERISTIC
 // ============================================================
 const eulerDims = [2, 3, 1, 0];
 
@@ -1051,12 +1795,11 @@ function updateEuler() {
   for (let i = 0; i < 4; i++) {
     const sign = (i % 2 === 0) ? 1 : -1;
     chi += sign * eulerDims[i];
-    terms.push(`${sign === 1 ? '+' : '−'} ${eulerDims[i]}`);
+    terms.push(`${sign === 1 ? (i === 0 ? '' : '+ ') : '− '}${eulerDims[i]}`);
   }
-  const formula = terms.join(' ').replace(/^\+\s*/, '');
   document.getElementById('eulerResult').innerHTML = `
-    χ(C, d) = ${formula} = <strong style="font-size:1.6rem;">${chi}</strong>
-    <br><span style="font-size:0.85rem;color:var(--muted);">= Σ (−1)<sup>i</sup> dim C<sup>i</sup></span>
+    χ = ${terms.join(' ')} = <strong style="font-size:1.5rem;">${chi}</strong>
+    <br><span style="font-size:0.85rem;color:var(--muted);">= dim C⁰ − dim C¹ + dim C² − dim C³</span>
   `;
 }
 
@@ -1073,7 +1816,7 @@ const observer = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 
-$$('section, .info-card, .homology-demo, .euler-interactive').forEach(el => observer.observe(el));
+$$('section, .info-card, .homology-demo, .euler-interactive, .group-explorer, .boundary-visual').forEach(el => observer.observe(el));
 
 </script>
 </body>
