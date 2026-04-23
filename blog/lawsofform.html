@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laws of Form — Interactive Explorer</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --muted: #8b949e;
+  --accent: #58a6ff;
+  --marked: #f0883e;
+  --unmarked: #238636;
+  --cross: #bc8cff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+h1 { font-size: 1.8rem; margin-bottom: 4px; color: var(--accent); }
+h2 { font-size: 1.3rem; margin: 24px 0 8px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+h3 { font-size: 1.05rem; margin: 16px 0 6px; color: var(--cross); }
+p, li { color: var(--muted); font-size: 0.95rem; }
+.subtitle { color: var(--muted); margin-bottom: 20px; font-style: italic; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;
+}
+
+/* Distinction visualizer */
+.distinction-box {
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 20px auto;
+  transition: all 0.5s ease;
+  font-size: 1.4rem;
+  font-weight: bold;
+  position: relative;
+}
+.distinction-box.unmarked {
+  background: transparent;
+  border: 3px dashed var(--border);
+  color: var(--muted);
+}
+.distinction-box.marked {
+  background: radial-gradient(circle, #1a2636 0%, #0f1923 100%);
+  border: 3px solid var(--marked);
+  color: var(--marked);
+  box-shadow: 0 0 30px rgba(240,136,62,0.15);
+}
+.inner-label, .outer-label {
+  position: absolute;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.inner-label { top: 50%; transform: translateY(-50%); }
+.outer-label { top: -28px; left: 50%; transform: translateX(-50%); }
+
+/* Slider styles */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+.slider-row label {
+  min-width: 160px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  outline: none;
+  flex: 1;
+  min-width: 120px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+.slider-value {
+  min-width: 90px;
+  text-align: center;
+  padding: 4px 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+/* Notation display */
+.notation {
+  font-family: monospace;
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 12px 0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  transition: all 0.3s;
+}
+
+/* Cross / mark symbol */
+.cross {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 3px solid var(--marked);
+  border-bottom: 3px solid var(--marked);
+  min-width: 28px;
+  min-height: 28px;
+  padding: 2px 8px 4px 8px;
+  margin: 0 2px;
+  color: var(--text);
+  font-size: 1.1rem;
+  vertical-align: bottom;
+  transition: all 0.3s;
+}
+.cross.empty { color: transparent; min-width: 20px; }
+.cross.nested {
+  border-color: var(--cross);
+}
+
+/* Result badge */
+.result-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 8px auto;
+  text-align: center;
+}
+.result-badge.marked-state {
+  background: rgba(240,136,62,0.15);
+  color: var(--marked);
+  border: 1px solid var(--marked);
+}
+.result-badge.unmarked-state {
+  background: rgba(35,134,54,0.15);
+  color: var(--unmarked);
+  border: 1px solid var(--unmarked);
+}
+
+/* Truth table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.9rem;
+}
+th, td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+th { background: var(--bg); color: var(--accent); }
+td { color: var(--text); }
+tr.highlight td { background: rgba(88,166,255,0.1); }
+
+/* Depth visualizer */
+.depth-viz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  padding: 20px;
+}
+.depth-ring {
+  border: 3px solid;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.pulsing { animation: pulse 1.5s infinite; }
+
+/* Toggle */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+.toggle {
+  position: relative;
+  width: 50px; height: 26px;
+  background: var(--border);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.toggle.on { background: var(--accent); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 20px; height: 20px;
+  background: white;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform 0.3s;
+}
+.toggle.on::after { transform: translateX(24px); }
+
+.explanation {
+  background: rgba(88,166,255,0.05);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.flex-center { display:flex; align-items:center; justify-content:center; flex-direction:column; }
+.flex-row { display:flex; align-items:center; justify-content:center; gap: 20px; flex-wrap:wrap; }
+
+.arrow { font-size: 1.8rem; color: var(--accent); }
+</style>
+</head>
+<body>
+
+<h1>⊃ Laws of Form</h1>
+<p class="subtitle">An interactive exploration of G. Spencer-Brown's calculus of indications (1969)</p>
+
+<!-- ==================== SECTION 1 ==================== -->
+<h2>1. The Distinction — The Primordial Act</h2>
+<div class="card">
+  <p>Everything begins with a <strong>distinction</strong>: drawing a boundary that creates two sides — an inside (marked state) and an outside (unmarked state). Move the slider to make a distinction.</p>
+
+  <div class="slider-row">
+    <label>Draw a distinction:</label>
+    <input type="range" id="distinctionSlider" min="0" max="1" step="1" value="0">
+    <span class="slider-value" id="distinctionLabel">Void</span>
+  </div>
+
+  <div id="distinctionViz" class="distinction-box unmarked">
+    <span id="distinctionInner">∅</span>
+    <span class="outer-label" id="outerLabel">— no distinction —</span>
+  </div>
+
+  <div class="flex-center">
+    <div class="result-badge unmarked-state" id="distinctionResult">Unmarked State (void)</div>
+  </div>
+
+  <div class="explanation">
+    <strong>Key idea:</strong> Before any distinction, there is the <em>void</em> — undifferentiated nothingness.
+    The moment you draw a boundary (a circle, a line), you create <em>two states</em>: the marked (inside) and the unmarked (outside).
+    The mark — Spencer-Brown's "cross" ⌐ — is both the act of distinction and the name of the marked state.
+  </div>
+</div>
+
+<!-- ==================== SECTION 2 ==================== -->
+<h2>2. Axiom 1 — The Law of Calling</h2>
+<div class="card">
+  <p>Calling a name twice is the same as calling it once. Redundant distinctions collapse.</p>
+  <p style="margin-top:4px"><strong>Formal:</strong> ⌐⌐ = ⌐ &nbsp;(mark mark = mark)</p>
+
+  <div class="slider-row">
+    <label>Number of marks:</label>
+    <input type="range" id="callingSlider" min="1" max="6" step="1" value="1">
+    <span class="slider-value" id="callingCount">1</span>
+  </div>
+
+  <div class="notation" id="callingInput"></div>
+  <div class="arrow flex-center">↓ condenses to ↓</div>
+  <div class="notation" id="callingOutput"></div>
+
+  <div class="flex-center" style="margin-top:8px">
+    <div class="result-badge marked-state" id="callingResult">= Marked State</div>
+  </div>
+
+  <div class="explanation">
+    <strong>Analogy:</strong> Saying "it's hot, it's hot, it's hot" conveys the same information as saying "it's hot" once.
+    Repeating a distinction side-by-side doesn't change the value. Any number of adjacent marks = one mark.
+  </div>
+</div>
+
+<!-- ==================== SECTION 3 ==================== -->
+<h2>3. Axiom 2 — The Law of Crossing</h2>
+<div class="card">
+  <p>Crossing a boundary twice returns you to where you started. A mark inside a mark cancels out.</p>
+  <p style="margin-top:4px"><strong>Formal:</strong> ⌐(⌐) = &nbsp;(nothing) &nbsp;— crossing twice = unmarked state</p>
+
+  <div class="slider-row">
+    <label>Nesting depth:</label>
+    <input type="range" id="crossingSlider" min="0" max="8" step="1" value="0">
+    <span class="slider-value" id="crossingCount">0</span>
+  </div>
+
+  <div class="notation" id="crossingNotation"></div>
+
+  <div id="crossingDepthViz" class="depth-viz"></div>
+
+  <div class="flex-center">
+    <div class="result-badge" id="crossingResult">Unmarked State</div>
+  </div>
+
+  <div class="explanation">
+    <strong>Key insight:</strong> Nesting marks is like crossing a boundary repeatedly.<br>
+    • <strong>Even depth</strong> (0, 2, 4…) → you're back <em>outside</em> → <strong>Unmarked State</strong><br>
+    • <strong>Odd depth</strong> (1, 3, 5…) → you're <em>inside</em> → <strong>Marked State</strong><br>
+    This is the foundation of all oscillation and self-reference in the calculus.
+  </div>
+</div>
+
+<!-- ==================== SECTION 4 ==================== -->
+<h2>4. Combining Both Axioms — Expression Evaluator</h2>
+<div class="card">
+  <p>Build an expression using adjacent marks (calling) and nested marks (crossing), and watch it reduce.</p>
+
+  <div class="slider-row">
+    <label>Adjacent marks (calling):</label>
+    <input type="range" id="comboAdj" min="0" max="5" step="1" value="0">
+    <span class="slider-value" id="comboAdjVal">0</span>
+  </div>
+  <div class="slider-row">
+    <label>Nesting depth of last mark:</label>
+    <input type="range" id="comboNest" min="0" max="5" step="1" value="0">
+    <span class="slider-value" id="comboNestVal">0</span>
+  </div>
+
+  <h3>Expression:</h3>
+  <div class="notation" id="comboExpr"></div>
+
+  <h3>Step-by-step reduction:</h3>
+  <div id="comboSteps" style="font-size:0.9rem; color:var(--muted); margin:8px 0;"></div>
+
+  <h3>Result:</h3>
+  <div class="flex-center">
+    <div class="result-badge" id="comboResult">Unmarked State</div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 5 ==================== -->
+<h2>5. Mapping to Logic — Boolean Interpretation</h2>
+<div class="card">
+  <p>Spencer-Brown showed his calculus is equivalent to Boolean logic. The <em>mark</em> = <strong>True</strong>, the <em>unmarked state</em> = <strong>False</strong>. The cross acts as <strong>NOT</strong>, and adjacency (calling) acts as <strong>OR</strong>.</p>
+
+  <div class="flex-row" style="margin: 16px 0;">
+    <div>
+      <div class="toggle-row">
+        <label style="min-width:30px; font-weight:bold; color:var(--accent)">p:</label>
+        <div class="toggle" id="toggleP" onclick="toggleBool('P')"></div>
+        <span class="slider-value" id="valP">False</span>
+      </div>
+      <div class="toggle-row">
+        <label style="min-width:30px; font-weight:bold; color:var(--accent)">q:</label>
+        <div class="toggle" id="toggleQ" onclick="toggleBool('Q')"></div>
+        <span class="slider-value" id="valQ">False</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Operations in Laws of Form notation:</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Operation</th>
+        <th>LoF Notation</th>
+        <th>Boolean</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody id="logicTable"></tbody>
+  </table>
+
+  <div class="explanation">
+    <strong>Notation key:</strong><br>
+    • <code>⌐(p)</code> = NOT p (crossing/negation)<br>
+    • <code>p q</code> = p OR q (calling/adjacency)<br>
+    • <code>⌐(p q)</code> = NOT(p OR q) = NOR(p,q)<br>
+    • <code>⌐(⌐(p) ⌐(q))</code> = NOT(NOT p OR NOT q) = p AND q<br>
+    • <code>⌐(p) q</code> = (NOT p) OR q = p → q (implication)
+  </div>
+</div>
+
+<!-- ==================== SECTION 6 ==================== -->
+<h2>6. Re-entry — Self-Reference & Imaginary Values</h2>
+<div class="card">
+  <p>What happens when a form refers to <em>itself</em>? Spencer-Brown introduced <strong>re-entry</strong>: a mark whose inside is… itself. This creates oscillation — an "imaginary" logical value, analogous to √(−1).</p>
+
+  <div class="slider-row">
+    <label>Time step:</label>
+    <input type="range" id="reentrySlider" min="0" max="20" step="1" value="0">
+    <span class="slider-value" id="reentryTime">t=0</span>
+  </div>
+
+  <div class="toggle-row">
+    <label>Auto-oscillate:</label>
+    <div class="toggle" id="toggleOsc" onclick="toggleOscillate()"></div>
+  </div>
+
+  <div class="notation" id="reentryNotation" style="font-size:1.2rem;"></div>
+
+  <div class="flex-center">
+    <div class="distinction-box" id="reentryViz" style="width:160px;height:160px;font-size:1.1rem;">
+    </div>
+  </div>
+
+  <div id="reentryHistory" style="font-family:monospace; font-size:0.85rem; color:var(--muted); margin-top:12px; text-align:center; word-break:break-all;"></div>
+
+  <div class="explanation">
+    <strong>The equation f = ⌐(f)</strong> has no fixed Boolean solution. If f is marked, then ⌐(f) is unmarked — contradiction!
+    Spencer-Brown's resolution: f <em>oscillates</em> between marked and unmarked over time, creating a <strong>third value</strong> — the <em>imaginary</em> state.
+    This is the seed of time, oscillation, and self-reference in the calculus. It anticipates concepts in cybernetics, autopoiesis, and the foundations of computation.
+  </div>
+</div>
+
+<!-- ==================== SECTION 7 ==================== -->
+<h2>7. Summary of the Entire Calculus</h2>
+<div class="card">
+  <table>
+    <tr><th>Concept</th><th>Symbol</th><th>Meaning</th></tr>
+    <tr><td>Unmarked state</td><td>( )</td><td>The void, nothing, false</td></tr>
+    <tr><td>Mark / Cross</td><td>⌐</td><td>Distinction, true, NOT</td></tr>
+    <tr><td>Law of Calling</td><td>⌐⌐ = ⌐</td><td>Idempotence: repeating = same</td></tr>
+    <tr><td>Law of Crossing</td><td>⌐(⌐) = ( )</td><td>Double negation cancels</td></tr>
+    <tr><td>Re-entry</td><td>f = ⌐(f)</td><td>Self-reference → oscillation</td></tr>
+  </table>
+  <div class="explanation">
+    With just <em>one symbol</em> and <em>two axioms</em>, Spencer-Brown derived the entirety of Boolean algebra and opened the door to self-referential, time-dependent logic.
+    The profound message: <strong>the universe begins with a distinction</strong>.
+  </div>
+</div>
+
+<p style="text-align:center; margin:30px 0; color:var(--muted); font-style:italic;">
+  "Draw a distinction and a universe comes into being." — G. Spencer-Brown
+</p>
+
+<script>
+// ===== Section 1: Distinction =====
+const distinctionSlider = document.getElementById('distinctionSlider');
+const distinctionViz = document.getElementById('distinctionViz');
+const distinctionInner = document.getElementById('distinctionInner');
+const distinctionLabel = document.getElementById('distinctionLabel');
+const distinctionResult = document.getElementById('distinctionResult');
+const outerLabel = document.getElementById('outerLabel');
+
+distinctionSlider.addEventListener('input', () => {
+  const v = +distinctionSlider.value;
+  if (v === 0) {
+    distinctionViz.className = 'distinction-box unmarked';
+    distinctionInner.textContent = '∅';
+    distinctionLabel.textContent = 'Void';
+    outerLabel.textContent = '— no distinction —';
+    distinctionResult.textContent = 'Unmarked State (void)';
+    distinctionResult.className = 'result-badge unmarked-state';
+  } else {
+    distinctionViz.className = 'distinction-box marked';
+    distinctionInner.textContent = '⌐';
+    distinctionLabel.textContent = 'Marked';
+    outerLabel.textContent = 'outside (unmarked)';
+    distinctionResult.textContent = 'Marked State ⌐';
+    distinctionResult.className = 'result-badge marked-state';
+  }
+});
+
+// ===== Section 2: Law of Calling =====
+const callingSlider = document.getElementById('callingSlider');
+const callingCount = document.getElementById('callingCount');
+const callingInput = document.getElementById('callingInput');
+const callingOutput = document.getElementById('callingOutput');
+
+function buildCross(content, nested) {
+  const c = document.createElement('span');
+  c.className = 'cross' + (nested ? ' nested' : '');
+  if (content === '') { c.classList.add('empty'); c.innerHTML = '&nbsp;'; }
+  else c.textContent = content;
+  return c;
+}
+
+function updateCalling() {
+  const n = +callingSlider.value;
+  callingCount.textContent = n;
+  callingInput.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    callingInput.appendChild(buildCross('', false));
+  }
+  callingOutput.innerHTML = '';
+  callingOutput.appendChild(buildCross('', false));
+}
+callingSlider.addEventListener('input', updateCalling);
+updateCalling();
+
+// ===== Section 3: Law of Crossing =====
+const crossingSlider = document.getElementById('crossingSlider');
+const crossingCountEl = document.getElementById('crossingCount');
+const crossingNotation = document.getElementById('crossingNotation');
+const crossingResult = document.getElementById('crossingResult');
+const crossingDepthViz = document.getElementById('crossingDepthViz');
+
+function updateCrossing() {
+  const depth = +crossingSlider.value;
+  crossingCountEl.textContent = depth;
+
+  // Build notation string
+  if (depth === 0) {
+    crossingNotation.textContent = '(void — nothing)';
+  } else {
+    let s = '';
+    for (let i = 0; i < depth; i++) s += '⌐(';
+    s = s.slice(0, -1); // remove last '('
+    for (let i = 0; i < depth - 1; i++) s += ')';
+    crossingNotation.textContent = s;
+  }
+
+  // Build nested circles
+  crossingDepthViz.innerHTML = '';
+  if (depth === 0) {
+    crossingDepthViz.innerHTML = '<span style="color:var(--muted)">∅ void</span>';
+  } else {
+    const colors = ['#f0883e','#bc8cff','#58a6ff','#3fb950','#f778ba','#d2a8ff','#79c0ff','#ffa657'];
+    let current = null;
+    for (let i = depth - 1; i >= 0; i--) {
+      const ring = document.createElement('div');
+      ring.className = 'depth-ring';
+      const size = 40 + i * 30;
+      ring.style.width = size + 'px';
+      ring.style.height = size + 'px';
+      ring.style.borderColor = colors[i % colors.length];
+      if (current) ring.appendChild(current);
+      else {
+        const inner = document.createElement('span');
+        inner.style.fontSize = '0.7rem';
+        inner.style.color = 'var(--muted)';
+        inner.textContent = depth % 2 === 1 ? '⌐' : '∅';
+        ring.appendChild(inner);
+      }
+      current = ring;
+    }
+    crossingDepthViz.appendChild(current);
+  }
+
+  // Result
+  const isMarked = depth % 2 === 1;
+  crossingResult.textContent = isMarked ? 'Marked State ⌐' : 'Unmarked State ∅';
+  crossingResult.className = 'result-badge ' + (isMarked ? 'marked-state' : 'unmarked-state');
+}
+crossingSlider.addEventListener('input', updateCrossing);
+updateCrossing();
+
+// ===== Section 4: Combined Evaluator =====
+const comboAdj = document.getElementById('comboAdj');
+const comboNest = document.getElementById('comboNest');
+const comboAdjVal = document.getElementById('comboAdjVal');
+const comboNestVal = document.getElementById('comboNestVal');
+const comboExpr = document.getElementById('comboExpr');
+const comboSteps = document.getElementById('comboSteps');
+const comboResult = document.getElementById('comboResult');
+
+function updateCombo() {
+  const adj = +comboAdj.value;
+  const nest = +comboNest.value;
+  comboAdjVal.textContent = adj;
+  comboNestVal.textContent = nest;
+
+  // Build expression description
+  let exprStr = '';
+  if (adj === 0 && nest === 0) {
+    exprStr = '(void)';
+  } else {
+    // Adjacent marks
+    const adjPart = adj > 0 ? '⌐'.repeat(adj) : '';
+    // Nested part
+    let nestPart = '';
+    if (nest > 0) {
+      for (let i = 0; i < nest; i++) nestPart += '⌐(';
+      nestPart = nestPart.slice(0,-1);
+      for (let i = 0; i < nest-1; i++) nestPart += ')';
+    }
+    if (adj > 0 && nest > 0) exprStr = adjPart + ' ' + nestPart;
+    else exprStr = adjPart + nestPart;
+  }
+  comboExpr.textContent = exprStr;
+
+  // Evaluate
+  let steps = [];
+  // Adjacent marks: by Law of Calling, n adjacent marks → 1 mark (if n > 0)
+  // Nested marks: by Law of Crossing, depth d → marked if odd, unmarked if even
+  let adjResult = adj > 0; // true = marked
+  let nestResult = nest % 2 === 1; // true = marked
+
+  if (adj === 0 && nest === 0) {
+    steps.push('No marks at all → void (unmarked state).');
+    comboResult.textContent = 'Unmarked State ∅';
+    comboResult.className = 'result-badge unmarked-state';
+  } else if (adj > 0 && nest === 0) {
+    if (adj > 1) steps.push(`Law of Calling: ${adj} adjacent marks → 1 mark.`);
+    else steps.push('Single mark → marked state.');
+    comboResult.textContent = 'Marked State ⌐';
+    comboResult.className = 'result-badge marked-state';
+  } else if (adj === 0 && nest > 0) {
+    steps.push(`Law of Crossing: ${nest} nested marks → ${nest % 2 === 1 ? 'marked (odd depth)' : 'unmarked (even depth)'}.`);
+    comboResult.textContent = nestResult ? 'Marked State ⌐' : 'Unmarked State ∅';
+    comboResult.className = 'result-badge ' + (nestResult ? 'marked-state' : 'unmarked-state');
+  } else {
+    if (adj > 1) steps.push(`Law of Calling: ${adj} adjacent marks condense to 1 mark.`);
+    steps.push(`Law of Crossing: ${nest} nested marks → ${nestResult ? 'marked' : 'unmarked'}.`);
+    // Adjacent marks with a nested expression: both are side by side
+    // In LoF, adjacency = OR. marked OR anything = marked.
+    // If adj > 0, we have at least one bare mark. A bare mark = marked state.
+    // marked OR (nested result) = marked. (since marked = true, true OR x = true)
+    steps.push(`Adjacency (calling/OR): marked ∨ ${nestResult ? 'marked' : 'unmarked'} = marked.`);
+    comboResult.textContent = 'Marked State ⌐';
+    comboResult.className = 'result-badge marked-state';
+  }
+  comboSteps.innerHTML = steps.map((s,i) => `<div style="margin:4px 0;">Step ${i+1}: ${s}</div>`).join('');
+}
+comboAdj.addEventListener('input', updateCombo);
+comboNest.addEventListener('input', updateCombo);
+updateCombo();
+
+// ===== Section 5: Boolean Logic =====
+let boolP = false, boolQ = false;
+
+function toggleBool(which) {
+  if (which === 'P') { boolP = !boolP; }
+  else { boolQ = !boolQ; }
+  document.getElementById('toggleP').className = 'toggle' + (boolP ? ' on' : '');
+  document.getElementById('toggleQ').className = 'toggle' + (boolQ ? ' on' : '');
+  document.getElementById('valP').textContent = boolP ? 'True' : 'False';
+  document.getElementById('valQ').textContent = boolQ ? 'True' : 'False';
+  updateLogicTable();
+}
+
+function lofMark(val) {
+  return val ? '⌐' : '∅';
+}
+
+function updateLogicTable() {
+  const p = boolP, q = boolQ;
+  const rows = [
+    {
+      op: 'NOT p',
+      lof: `⌐(${lofMark(p)})`,
+      bool: `¬${p}`,
+      result: !p
+    },
+    {
+      op: 'NOT q',
+      lof: `⌐(${lofMark(q)})`,
+      bool: `¬${q}`,
+      result: !q
+    },
+    {
+      op: 'p OR q',
+      lof: `${lofMark(p)} ${lofMark(q)}`,
+      bool: `${p} ∨ ${q}`,
+      result: p || q
+    },
+    {
+      op: 'p AND q',
+      lof: `⌐(⌐(${lofMark(p)}) ⌐(${lofMark(q)}))`,
+      bool: `${p} ∧ ${q}`,
+      result: p && q
+    },
+    {
+      op: 'p NOR q',
+      lof: `⌐(${lofMark(p)} ${lofMark(q)})`,
+      bool: `¬(${p} ∨ ${q})`,
+      result: !(p || q)
+    },
+    {
+      op: 'p NAND q',
+      lof: `⌐(${lofMark(p)}) ⌐(${lofMark(q)})`,
+      bool: `¬(${p} ∧ ${q})`,
+      result: !(p && q)
+    },
+    {
+      op: 'p → q (implication)',
+      lof: `⌐(${lofMark(p)}) ${lofMark(q)}`,
+      bool: `¬${p} ∨ ${q}`,
+      result: !p || q
+    },
+    {
+      op: 'p ↔ q (equivalence)',
+      lof: `⌐(${lofMark(p)} ⌐(${lofMark(q)})) ⌐(⌐(${lofMark(p)}) ${lofMark(q)})`,
+      bool: `${p} ↔ ${q}`,
+      result: p === q
+    }
+  ];
+
+  const tbody = document.getElementById('logicTable');
+  tbody.innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    const resultStr = r.result ? 'Marked ⌐' : 'Unmarked ∅';
+    const resultColor = r.result ? 'color:var(--marked)' : 'color:var(--unmarked)';
+    tr.innerHTML = `
+      <td>${r.op}</td>
+      <td style="font-family:monospace; font-size:0.8rem;">${r.lof}</td>
+      <td style="font-family:monospace;">${r.bool}</td>
+      <td style="${resultColor}; font-weight:bold;">${resultStr}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+updateLogicTable();
+
+// ===== Section 6: Re-entry / Self-Reference =====
+const reentrySlider = document.getElementById('reentrySlider');
+const reentryTime = document.getElementById('reentryTime');
+const reentryNotation = document.getElementById('reentryNotation');
+const reentryViz = document.getElementById('reentryViz');
+const reentryHistory = document.getElementById('reentryHistory');
+
+let oscillating = false;
+let oscInterval = null;
+
+function getReentryState(t) {
+  return t % 2 === 0;
+}
+
+function updateReentry() {
+  const t = +reentrySlider.value;
+  reentryTime.textContent = `t=${t}`;
+
+  const state = getReentryState(t);
+  const stateLabel = state ? 'Marked ⌐' : 'Unmarked ∅';
+
+  // Notation
+  reentryNotation.innerHTML = `
+    <span style="color:var(--muted)">f = ⌐(f)</span>
+    <span style="margin:0 12px;">→</span>
+    <span>At t=${t}: <strong style="color:${state ? 'var(--marked)' : 'var(--unmarked)'}">${stateLabel}</strong></span>
+  `;
+
+  // Visual
+  if (state) {
+    reentryViz.className = 'distinction-box marked';
+    reentryViz.innerHTML = '<span>⌐</span><span class="outer-label">t=' + t + '</span>';
+  } else {
+    reentryViz.className = 'distinction-box unmarked';
+    reentryViz.innerHTML = '<span>∅</span><span class="outer-label">t=' + t + '</span>';
+  }
+
+  // History trail
+  let trail = '';
+  for (let i = 0; i <= t; i++) {
+    const s = getReentryState(i);
+    trail += `<span style="color:${s ? 'var(--marked)' : 'var(--unmarked)'}; margin:0 2px;">${s ? '⌐' : '∅'}</span>`;
+  }
+  reentryHistory.innerHTML = '<strong style="color:var(--text)">History: </strong>' + trail;
+}
+
+reentrySlider.addEventListener('input', () => {
+  updateReentry();
+});
+
+function toggleOscillate() {
+  oscillating = !oscillating;
+  document.getElementById('toggleOsc').className = 'toggle' + (oscillating ? ' on' : '');
+  if (oscillating) {
+    oscInterval = setInterval(() => {
+      let v = +reentrySlider.value;
+      v = (v + 1) % 21;
+      reentrySlider.value = v;
+      updateReentry();
+    }, 500);
+  } else {
+    clearInterval(oscInterval);
+    oscInterval = null;
+  }
+}
+
+updateReentry();
+
+</script>
+</body>
+</html>
