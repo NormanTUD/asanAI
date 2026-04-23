@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frege's Grundlagen der Arithmetik — Interactive Explorer</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --card: #16213e;
+    --accent: #e94560;
+    --accent2: #0f3460;
+    --text: #eaeaea;
+    --muted: #a0a0b8;
+    --green: #4ecca3;
+    --yellow: #f0c040;
+    --blue: #4ea8de;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 0;
+  }
+  header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    background: linear-gradient(135deg, var(--accent2), var(--bg));
+    border-bottom: 2px solid var(--accent);
+  }
+  header h1 { font-size: 2rem; letter-spacing: 1px; }
+  header h1 span { color: var(--accent); }
+  header p { color: var(--muted); margin-top: 8px; font-size: 1rem; max-width: 700px; margin-inline: auto; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 30px 20px 60px; }
+
+  /* Navigation Tabs */
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 30px;
+  }
+  .tab-btn {
+    background: var(--card); border: 1px solid var(--accent2); color: var(--muted);
+    padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+    transition: all 0.3s;
+  }
+  .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+  .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--accent2);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+    transition: border-color 0.3s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card h2 { font-size: 1.3rem; margin-bottom: 6px; color: var(--green); }
+  .card h3 { font-size: 1.05rem; margin: 16px 0 6px; color: var(--yellow); }
+  .card p, .card li { color: var(--muted); font-size: 0.95rem; }
+  .card ul { padding-left: 20px; margin-top: 4px; }
+  .card li { margin-bottom: 4px; }
+  .quote {
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    margin: 14px 0;
+    font-style: italic;
+    color: var(--text);
+    background: rgba(233,69,96,0.06);
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Interactive controls */
+  .control-row {
+    display: flex; align-items: center; gap: 14px; margin: 14px 0; flex-wrap: wrap;
+  }
+  .control-row label { min-width: 160px; font-weight: 600; color: var(--text); font-size: 0.95rem; }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    flex: 1; min-width: 160px; height: 8px;
+    background: var(--accent2); border-radius: 4px; outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--accent); cursor: pointer; border: 2px solid #fff;
+  }
+  .val-badge {
+    background: var(--accent);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  /* Visual areas */
+  .visual-area {
+    background: rgba(0,0,0,0.25);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    min-height: 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .obj {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: 50%;
+    margin: 6px;
+    font-size: 1.5rem;
+    transition: all 0.4s;
+    animation: popIn 0.35s ease;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .obj.apple { background: #c0392b33; border: 2px solid #e74c3c; }
+  .obj.star  { background: #f39c1233; border: 2px solid #f1c40f; }
+  .obj.blue  { background: #2980b933; border: 2px solid #3498db; }
+  .obj.ghost { background: transparent; border: 2px dashed #555; }
+
+  .result-box {
+    background: linear-gradient(135deg, var(--accent2), #0a1628);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 14px;
+    font-size: 1rem;
+    color: var(--green);
+    text-align: center;
+  }
+  .result-box .big { font-size: 2rem; font-weight: 800; display: block; margin: 6px 0; }
+
+  /* Concept selector */
+  select {
+    background: var(--accent2); color: var(--text); border: 1px solid var(--accent);
+    padding: 8px 14px; border-radius: 8px; font-size: 0.95rem; cursor: pointer;
+  }
+
+  /* Extension visualization */
+  .ext-grid {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 14px;
+  }
+  .ext-set {
+    background: rgba(0,0,0,0.3);
+    border: 2px solid var(--blue);
+    border-radius: 12px;
+    padding: 14px 18px;
+    min-width: 100px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .ext-set.highlight { border-color: var(--green); box-shadow: 0 0 16px rgba(78,202,163,0.3); }
+  .ext-set .set-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+  .ext-set .set-items { font-size: 1.3rem; letter-spacing: 4px; }
+
+  /* Hume's Principle */
+  .hp-visual {
+    display: flex; gap: 30px; justify-content: center; align-items: center; flex-wrap: wrap;
+    margin: 18px 0;
+  }
+  .hp-group {
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 18px;
+    min-width: 140px;
+    text-align: center;
+    border: 2px solid var(--accent2);
+  }
+  .hp-group .group-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
+  .hp-arrow { font-size: 2rem; color: var(--green); }
+  .hp-match { color: var(--green); font-weight: 700; }
+  .hp-nomatch { color: var(--accent); font-weight: 700; }
+
+  /* Definition chain */
+  .chain {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    flex-wrap: wrap; margin: 16px 0;
+  }
+  .chain-node {
+    background: var(--accent2);
+    border: 2px solid var(--blue);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+  }
+  .chain-node.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chain-arrow { color: var(--muted); font-size: 1.3rem; }
+
+  /* Psychologism toggle */
+  .toggle-row {
+    display: flex; gap: 14px; margin: 14px 0; align-items: center; flex-wrap: wrap;
+  }
+  .toggle-btn {
+    padding: 10px 20px; border-radius: 8px; border: 2px solid var(--accent2);
+    background: var(--card); color: var(--muted); cursor: pointer; font-size: 0.95rem;
+    transition: all 0.3s;
+  }
+  .toggle-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .toggle-btn:hover { border-color: var(--accent); }
+
+  .explanation-box {
+    background: rgba(78,202,163,0.08);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  footer {
+    text-align: center; padding: 30px; color: var(--muted); font-size: 0.85rem;
+    border-top: 1px solid var(--accent2);
+  }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.3rem; }
+    .card { padding: 18px; }
+    .control-row { flex-direction: column; align-items: flex-start; }
+    input[type="range"] { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Gottlob Frege — <span>Die Grundlagen der Arithmetik</span></h1>
+  <p>An interactive exploration of the foundational ideas in Frege's 1884 masterwork on the philosophy of arithmetic. Move sliders, click options, and watch the concepts come alive.</p>
+</header>
+
+<div class="container">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="anti-psych">Anti-Psychologism</button>
+    <button class="tab-btn" data-tab="concept-obj">Concept &amp; Object</button>
+    <button class="tab-btn" data-tab="number-concept">Number as Concept</button>
+    <button class="tab-btn" data-tab="extensions">Extensions of Concepts</button>
+    <button class="tab-btn" data-tab="hume">Hume's Principle</button>
+    <button class="tab-btn" data-tab="definitions">Defining 0, 1, 2…</button>
+    <button class="tab-btn" data-tab="context">Context Principle</button>
+  </div>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <div class="section active" id="overview">
+    <div class="card">
+      <h2>What is the Grundlagen?</h2>
+      <p>Published in 1884, <em>Die Grundlagen der Arithmetik</em> is Frege's attempt to answer one deceptively simple question:</p>
+      <div class="quote">"What is the number one? What does the symbol '1' mean?"</div>
+      <p>Frege argued that previous answers fell into three traps:</p>
+      <ul>
+        <li><strong>Psychologism</strong> — treating numbers as mental images or ideas in our heads.</li>
+        <li><strong>Empiricism (Mill)</strong> — treating numbers as properties of physical heaps of things.</li>
+        <li><strong>Formalism</strong> — treating numbers as meaningless symbols manipulated by rules.</li>
+      </ul>
+      <p style="margin-top:14px;">Frege's revolutionary alternative: <strong>Numbers are logical objects</strong>, defined purely through concepts and their extensions. Use the tabs above to explore each key idea interactively.</p>
+
+      <h3>The Big Ideas at a Glance</h3>
+      <div class="chain" id="overviewChain">
+        <div class="chain-node" id="oc1">Anti-Psychologism</div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node" id="oc2">Concepts &amp; Objects</div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node" id="oc3">Numbers ≈ Concepts</div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node" id="oc4">Extensions</div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node" id="oc5">Hume's Principle</div>
+        <div class="chain-arrow">→</div>
+        <div class="chain-node" id="oc6">Definitions of 0,1,2…</div>
+      </div>
+      <p style="color:var(--muted);text-align:center;margin-top:8px;">Hover over each node or explore the tabs above.</p>
+    </div>
+  </div>
+
+  <!-- ===================== ANTI-PSYCHOLOGISM ===================== -->
+  <div class="section" id="anti-psych">
+    <div class="card">
+      <h2>Idea 1: Anti-Psychologism</h2>
+      <p>Frege's first move is <strong>negative</strong>: numbers are NOT mental images, feelings, or subjective ideas. They are objective, mind-independent entities.</p>
+      <div class="quote">"One must separate the psychological from the logical, the subjective from the objective."<br>— Frege, Grundlagen, Introduction</div>
+
+      <h3>Interactive: Subjective vs. Objective</h3>
+      <p>Click a view to see how Frege would critique it:</p>
+      <div class="toggle-row">
+        <button class="toggle-btn active" data-view="psycho" id="btn-psycho">🧠 Psychologism</button>
+        <button class="toggle-btn" data-view="empiric" id="btn-empiric">🪨 Empiricism (Mill)</button>
+        <button class="toggle-btn" data-view="frege" id="btn-frege">⭐ Frege's View</button>
+      </div>
+      <div class="explanation-box" id="psychExplanation">
+        <strong>Psychologism:</strong> "The number 3 is a mental image I form when I think of three things."<br><br>
+        <strong>Frege's Critique:</strong> If numbers were mental images, then your "3" and my "3" would be different (since we have different minds). But 2+1=3 is true for everyone. Mathematics would collapse into subjective psychology. We couldn't even disagree about arithmetic, because we'd each be talking about our own private ideas.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Slider: How Many People Think of "5"?</h3>
+      <p>Move the slider to change how many people are imagining the number 5. Does the <em>number itself</em> change?</p>
+      <div class="control-row">
+        <label>People thinking of 5:</label>
+        <input type="range" id="psychSlider" min="0" max="10" value="3">
+        <span class="val-badge" id="psychVal">3</span>
+      </div>
+      <div class="visual-area" id="psychVisual"></div>
+      <div class="result-box" id="psychResult"></div>
+    </div>
+  </div>
+
+  <!-- ===================== CONCEPT & OBJECT ===================== -->
+  <div class="section" id="concept-obj">
+    <div class="card">
+      <h2>Idea 2: Concepts and Objects</h2>
+      <p>Frege draws a sharp distinction between <strong>concepts</strong> (predicates, functions that return true/false) and <strong>objects</strong> (things that fall under concepts).</p>
+      <div class="quote">"A concept is a function whose value is always a truth-value."</div>
+      <ul>
+        <li><strong>Object:</strong> The Moon, Julius Caesar, the number 4 — things we can refer to.</li>
+        <li><strong>Concept:</strong> "is a planet", "is even", "is greater than 3" — predicates that objects satisfy or don't.</li>
+      </ul>
+
+      <h3>Interactive: Test Objects Against a Concept</h3>
+      <p>Choose a concept, then see which objects fall under it:</p>
+      <div class="control-row">
+        <label>Select a concept:</label>
+        <select id="conceptSelect">
+          <option value="even">is an even number</option>
+          <option value="prime">is a prime number</option>
+          <option value="gt">is greater than N</option>
+          <option value="square">is a perfect square</option>
+        </select>
+      </div>
+      <div class="control-row" id="conceptThreshRow" style="display:none;">
+        <label>Threshold N:</label>
+        <input type="range" id="conceptThresh" min="0" max="12" value="5">
+        <span class="val-badge" id="conceptThreshVal">5</span>
+      </div>
+      <div class="visual-area" id="conceptVisual"></div>
+      <div class="result-box" id="conceptResult"></div>
+    </div>
+  </div>
+
+  <!-- ===================== NUMBER AS CONCEPT ===================== -->
+  <div class="section" id="number-concept">
+    <div class="card">
+      <h2>Idea 3: Numbers Attach to Concepts, Not Objects</h2>
+      <p>This is one of Frege's most important insights. When we say "there are 3 apples on the table", the number 3 is <strong>not a property of the apples</strong> — it is a property of the <strong>concept</strong> "apple on the table".</p>
+      <div class="quote">"The content of a statement of number is an assertion about a concept."<br>— Grundlagen, §46</div>
+      <p>The same physical pile can be "1 deck of cards" or "52 cards" — the number depends on which concept you apply.</p>
+
+      <h3>Interactive: Same Objects, Different Concepts</h3>
+      <p>Use the slider to place objects on the table. Then switch concepts to see the count change — even though the physical situation stays the same!</p>
+      <div class="control-row">
+        <label>Pairs of shoes on table:</label>
+        <input type="range" id="shoeSlider" min="0" max="6" value="3">
+        <span class="val-badge" id="shoeVal">3</span>
+      </div>
+      <div class="visual-area" id="shoeVisual"></div>
+      <div class="toggle-row">
+        <button class="toggle-btn active" data-concept="pairs" id="btn-pairs">👟 Count: Pairs of shoes</button>
+        <button class="toggle-btn" data-concept="shoes" id="btn-shoes">🥿 Count: Individual shoes</button>
+        <button class="toggle-btn" data-concept="soles" id="btn-soles">🦶 Count: Soles</button>
+      </div>
+      <div class="result-box" id="shoeResult"></div>
+    </div>
+  </div>
+
+  <!-- ===================== EXTENSIONS ===================== -->
+  <div class="section" id="extensions">
+    <div class="card">
+      <h2>Idea 4: Extensions of Concepts</h2>
+      <p>The <strong>extension</strong> of a concept is the collection of all objects that fall under it. Two concepts have the <strong>same extension</strong> if and only if exactly the same objects fall under both.</p>
+      <div class="quote">The extension of "is a planet in our solar system" = {Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune}.</div>
+      <p>Frege uses extensions to define numbers: the number belonging to a concept F is <em>the extension of the concept "equinumerous with F"</em>.</p>
+
+      <h3>Interactive: Building Extensions</h3>
+      <p>Adjust the slider to control the size of a concept's extension. Watch how different concepts can share the same <em>number</em>.</p>
+      <div class="control-row">
+        <label>Size of Concept F:</label>
+        <input type="range" id="extSliderF" min="0" max="7" value="3">
+        <span class="val-badge" id="extValF">3</span>
+      </div>
+      <div class="control-row">
+        <label>Size of Concept G:</label>
+        <input type="range" id="extSliderG" min="0" max="7" value="3">
+        <span class="val-badge" id="extValG">3</span>
+      </div>
+      <div class="ext-grid" id="extVisual"></div>
+      <div class="result-box" id="extResult"></div>
+    </div>
+  </div>
+
+  <!-- ===================== HUME'S PRINCIPLE ===================== -->
+  <div class="section" id="hume">
+    <div class="card">
+      <h2>Idea 5: Hume's Principle (Equinumerosity)</h2>
+      <p>Two concepts have the <strong>same number</strong> if and only if there exists a <strong>one-to-one correspondence</strong> (bijection) between their extensions.</p>
+      <div class="quote">"The number which belongs to the concept F is the same as the number which belongs to the concept G if and only if F and G are equinumerous."<br>— Grundlagen, §63</div>
+      <p>This is now called <strong>Hume's Principle</strong> (HP). Frege uses it as the key criterion for when two concepts share a number — without needing to say what numbers <em>are</em> first.</p>
+
+      <h3>Interactive: One-to-One Correspondence</h3>
+      <p>Adjust the sizes of two groups. When they match, a one-to-one correspondence exists and they share the same number.</p>
+      <div class="control-row">
+        <label>🍎 Apples (Concept F):</label>
+        <input type="range" id="humeSliderF" min="0" max="8" value="4">
+        <span class="val-badge" id="humeValF">4</span>
+      </div>
+      <div class="control-row">
+        <label>⭐ Stars (Concept G):</label>
+        <input type="range" id="humeSliderG" min="0" max="8" value="4">
+        <span class="val-badge" id="humeValG">4</span>
+      </div>
+      <div class="hp-visual" id="humeVisual"></div>
+      <div class="result-box" id="humeResult"></div>
+    </div>
+  </div>
+
+  <!-- ===================== DEFINITIONS ===================== -->
+  <div class="section" id="definitions">
+    <div class="card">
+      <h2>Idea 6: Defining 0, 1, 2, 3…</h2>
+      <p>With all the machinery in place, Frege defines the natural numbers purely logically:</p>
+      <ul>
+        <li><strong>0</strong> = the number belonging to the concept "is not identical with itself" (nothing satisfies this — the extension is empty).</li>
+        <li><strong>1</strong> = the number belonging to the concept "is identical with 0" (exactly one thing: 0 itself).</li>
+        <li><strong>2</strong> = the number belonging to the concept "is identical with 0 or identical with 1".</li>
+        <li>And so on: each new number is defined using the numbers already defined.</li>
+      </ul>
+      <div class="quote">"0 is the number which belongs to the concept 'not identical with itself'."<br>— Grundlagen, §74</div>
+
+      <h3>Interactive: Step Through the Definitions</h3>
+      <p>Use the slider to build up the natural numbers one by one. Watch how each number is defined from the previous ones.</p>
+      <div class="control-row">
+        <label>Build up to number:</label>
+        <input type="range" id="defSlider" min="0" max="6" value="0">
+        <span class="val-badge" id="defVal">0</span>
+      </div>
+      <div class="visual-area" id="defVisual"></div>
+      <div class="result-box" id="defResult"></div>
+    </div>
+  </div>
+
+  <!-- ===================== CONTEXT PRINCIPLE ===================== -->
+  <div class="section" id="context">
+    <div class="card">
+      <h2>Idea 7: The Context Principle</h2>
+      <p>One of Frege's three foundational principles stated in the introduction:</p>
+      <div class="quote">"Never ask for the meaning of a word in isolation, but only in the context of a sentence."<br>— Grundlagen, Introduction</div>
+      <p>We don't need to point to some mysterious object "3" to give it meaning. We only need to fix the meaning of every <em>sentence</em> in which "3" appears. If we can determine the truth of "3 = 3", "3 > 2", "3 is prime", etc., then "3" has a perfectly determinate meaning.</p>
+
+      <h3>Interactive: Word in Isolation vs. in Context</h3>
+      <p>Type a number below and see how its meaning is determined not by pointing at something, but by the sentences it appears in.</p>
+      <div class="control-row">
+        <label>Choose a number:</label>
+        <input type="range" id="ctxSlider" min="0" max="9" value="3">
+        <span class="val-badge" id="ctxVal">3</span>
+      </div>
+      <div class="visual-area" id="ctxVisual" style="text-align:left;padding:20px 28px;"></div>
+      <div class="explanation-box" id="ctxExplanation">
+        The meaning of a number is fully determined by the totality of true sentences in which it appears — not by a mental picture or a physical heap.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Frege's <em>Grundlagen der Arithmetik</em> (1884) Interactive Explorer — Built for conceptual understanding, not historical completeness.
+</footer>
+
+<script>
+// ==================== TAB NAVIGATION ====================
+const tabBtns = document.querySelectorAll('.tab-btn');
+const sections = document.querySelectorAll('.section');
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ==================== OVERVIEW CHAIN HOVER ====================
+const chainNodes = document.querySelectorAll('#overviewChain .chain-node');
+const tabMap = { oc1: 'anti-psych', oc2: 'concept-obj', oc3: 'number-concept', oc4: 'extensions', oc5: 'hume', oc6: 'definitions' };
+chainNodes.forEach(node => {
+  node.style.cursor = 'pointer';
+  node.addEventListener('mouseenter', () => node.classList.add('active'));
+  node.addEventListener('mouseleave', () => node.classList.remove('active'));
+  node.addEventListener('click', () => {
+    const tabId = tabMap[node.id];
+    tabBtns.forEach(b => { b.classList.remove('active'); if(b.dataset.tab===tabId) b.classList.add('active'); });
+    sections.forEach(s => { s.classList.remove('active'); if(s.id===tabId) s.classList.add('active'); });
+  });
+});
+
+// ==================== ANTI-PSYCHOLOGISM ====================
+const psychSlider = document.getElementById('psychSlider');
+const psychVal = document.getElementById('psychVal');
+const psychVisual = document.getElementById('psychVisual');
+const psychResult = document.getElementById('psychResult');
+
+function updatePsych() {
+  const n = parseInt(psychSlider.value);
+  psychVal.textContent = n;
+  let html = '';
+  const emojis = ['🧑','👩','👨','👧','👦','🧓','👩‍🦰','👨‍🦱','👩‍🦳','👴','👶'];
+  for (let i = 0; i < n; i++) {
+    html += `<div class="obj" style="background:rgba(78,202,163,0.1);border:2px solid var(--green);font-size:1.6rem;">${emojis[i % emojis.length]}<span style="font-size:0.6rem;position:absolute;bottom:-2px;right:2px;">💭5</span></div>`;
+  }
+  if (n === 0) html = '<p style="color:var(--muted);">Nobody is thinking of the number 5.</p>';
+  psychVisual.innerHTML = html;
+  psychResult.innerHTML = n === 0
+    ? `Even with <span class="big">0 people</span> thinking of 5, the number 5 still exists. It is not a mental entity.`
+    : `<span class="big">${n} ${n===1?'person thinks':'people think'}</span> of 5but the number 5 remains exactly the same.<br>Your "5" and my "5" are <strong>the same object</strong> — not ${n} different private ideas.`;
+}
+updatePsych();
+psychSlider.addEventListener('input', updatePsych);
+
+// Psychologism toggle buttons
+const psychBtns = document.querySelectorAll('[data-view]');
+const psychExpl = document.getElementById('psychExplanation');
+const psychTexts = {
+  psycho: `<strong>Psychologism:</strong> "The number 3 is a mental image I form when I think of three things."<br><br>
+    <strong>Frege's Critique:</strong> If numbers were mental images, then your "3" and my "3" would be different (since we have different minds). But 2+1=3 is true for everyone. Mathematics would collapse into subjective psychology. We couldn't even disagree about arithmetic, because we'd each be talking about our own private ideas.`,
+  empiric: `<strong>Empiricism (Mill):</strong> "The number 3 is a property of physical aggregates — I learn it by observing heaps of 3 things."<br><br>
+    <strong>Frege's Critique:</strong> Consider: is a deck of cards 1 thing or 52 things? The same physical aggregate can be counted differently depending on the <em>concept</em> applied. Numbers can't be physical properties because the same physical stuff yields different numbers under different descriptions. Also, what physical heap corresponds to 0? Or to 1,000,000?`,
+  frege: `<strong>Frege's View:</strong> Numbers are <em>objective, logical objects</em>. They are not in anyone's head, nor are they physical properties of heaps.<br><br>
+    They are defined through <strong>concepts</strong> and <strong>extensions</strong>. The number 3 is the extension of the concept "equinumerous with the concept F" where F has exactly 3 objects falling under it. This is purely logical — no psychology, no physics.`
+};
+psychBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    psychBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    psychExpl.innerHTML = psychTexts[btn.dataset.view];
+  });
+});
+
+// ==================== CONCEPT & OBJECT ====================
+const conceptSelect = document.getElementById('conceptSelect');
+const conceptThreshRow = document.getElementById('conceptThreshRow');
+const conceptThresh = document.getElementById('conceptThresh');
+const conceptThreshVal = document.getElementById('conceptThreshVal');
+const conceptVisual = document.getElementById('conceptVisual');
+const conceptResult = document.getElementById('conceptResult');
+
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let i = 2; i <= Math.sqrt(n); i++) { if (n % i === 0) return false; }
+  return true;
+}
+function isSquare(n) {
+  return Number.isInteger(Math.sqrt(n));
+}
+
+function updateConcept() {
+  const type = conceptSelect.value;
+  const thresh = parseInt(conceptThresh.value);
+  conceptThreshVal.textContent = thresh;
+  conceptThreshRow.style.display = type === 'gt' ? 'flex' : 'none';
+
+  const numbers = [0,1,2,3,4,5,6,7,8,9,10,11,12];
+  let testFn, conceptName;
+  switch(type) {
+    case 'even': testFn = n => n % 2 === 0; conceptName = 'is an even number'; break;
+    case 'prime': testFn = isPrime; conceptName = 'is a prime number'; break;
+    case 'gt': testFn = n => n > thresh; conceptName = `is greater than ${thresh}`; break;
+    case 'square': testFn = isSquare; conceptName = 'is a perfect square'; break;
+  }
+
+  let html = '';
+  let falling = [];
+  numbers.forEach(n => {
+    const passes = testFn(n);
+    if (passes) falling.push(n);
+    const color = passes ? 'border-color:var(--green);background:rgba(78,202,163,0.15);color:var(--green);' : 'border-color:#444;background:rgba(0,0,0,0.2);color:#555;';
+    html += `<div class="obj" style="border-radius:10px;width:52px;height:52px;font-size:1.1rem;font-weight:700;${color}">${n}</div>`;
+  });
+  conceptVisual.innerHTML = html;
+
+  conceptResult.innerHTML = `<strong>Concept:</strong> "${conceptName}"<br>
+    <strong>Objects falling under it:</strong> {${falling.join(', ')}}<br>
+    <strong>Extension size:</strong> <span class="big">${falling.length}</span>
+    The concept maps each object to <span style="color:var(--green);">TRUE</span> or <span style="color:var(--accent);">FALSE</span>.`;
+}
+updateConcept();
+conceptSelect.addEventListener('change', updateConcept);
+conceptThresh.addEventListener('input', updateConcept);
+
+// ==================== NUMBER AS CONCEPT (SHOES) ====================
+const shoeSlider = document.getElementById('shoeSlider');
+const shoeVal = document.getElementById('shoeVal');
+const shoeVisual = document.getElementById('shoeVisual');
+const shoeResult = document.getElementById('shoeResult');
+let shoeMode = 'pairs';
+
+function updateShoes() {
+  const pairs = parseInt(shoeSlider.value);
+  shoeVal.textContent = pairs;
+
+  let html = '';
+  for (let i = 0; i < pairs; i++) {
+    html += `<span style="font-size:2rem;margin:6px;display:inline-block;">👟👟</span>`;
+  }
+  if (pairs === 0) html = '<p style="color:var(--muted);">No shoes on the table.</p>';
+  shoeVisual.innerHTML = html;
+
+  let count, conceptName;
+  switch(shoeMode) {
+    case 'pairs': count = pairs; conceptName = 'pair of shoes on the table'; break;
+    case 'shoes': count = pairs * 2; conceptName = 'individual shoe on the table'; break;
+    case 'soles': count = pairs * 4; conceptName = 'sole on the table'; break;
+  }
+
+  shoeResult.innerHTML = `Under the concept <strong>"${conceptName}"</strong>:<br>
+    <span class="big">${count}</span>
+    Same physical objects — different concept — <strong>different number!</strong><br>
+    This is why Frege says: "The content of a statement of number is an assertion about a <em>concept</em>."`;
+}
+
+const shoeBtns = document.querySelectorAll('[data-concept]');
+shoeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    shoeBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    shoeMode = btn.dataset.concept;
+    updateShoes();
+  });
+});
+updateShoes();
+shoeSlider.addEventListener('input', updateShoes);
+
+// ==================== EXTENSIONS ====================
+const extSliderF = document.getElementById('extSliderF');
+const extSliderG = document.getElementById('extSliderG');
+const extValF = document.getElementById('extValF');
+const extValG = document.getElementById('extValG');
+const extVisual = document.getElementById('extVisual');
+const extResult = document.getElementById('extResult');
+
+function updateExtensions() {
+  const f = parseInt(extSliderF.value);
+  const g = parseInt(extSliderG.value);
+  extValF.textContent = f;
+  extValG.textContent = g;
+
+  const emojisF = ['🍎','🍊','🍋','🍇','🍓','🍒','🍑'];
+  const emojisG = ['⭐','🌙','☀️','🪐','💫','✨','🌟'];
+
+  const same = f === g;
+  const highlightClass = same ? 'highlight' : '';
+
+  let html = `
+    <div class="ext-set ${highlightClass}">
+      <div class="set-label">Extension of F</div>
+      <div class="set-items">${f === 0 ? '∅' : emojisF.slice(0, f).join('')}</div>
+      <div style="margin-top:6px;font-size:0.85rem;color:var(--muted);">|F| = ${f}</div>
+    </div>
+    <div class="ext-set ${highlightClass}">
+      <div class="set-label">Extension of G</div>
+      <div class="set-items">${g === 0 ? '∅' : emojisG.slice(0, g).join('')}</div>
+      <div style="margin-top:6px;font-size:0.85rem;color:var(--muted);">|G| = ${g}</div>
+    </div>
+  `;
+  extVisual.innerHTML = html;
+
+  if (same) {
+    extResult.innerHTML = `<span class="big" style="color:var(--green);">Same Number! (${f})</span>
+      F and G are <strong>equinumerous</strong> — there exists a one-to-one correspondence between their extensions.<br>
+      They both belong to the same equivalence class, which <em>is</em> the number ${f} (in Frege's definition).`;
+  } else {
+    extResult.innerHTML = `<span class="big" style="color:var(--accent);">Different Numbers (${f} ≠ ${g})</span>
+      F and G are <strong>not equinumerous</strong> — no one-to-one correspondence exists.<br>
+      They belong to different equivalence classes and thus represent different numbers.`;
+  }
+}
+updateExtensions();
+extSliderF.addEventListener('input', updateExtensions);
+extSliderG.addEventListener('input', updateExtensions);
+
+// ==================== HUME'S PRINCIPLE ====================
+const humeSliderF = document.getElementById('humeSliderF');
+const humeSliderG = document.getElementById('humeSliderG');
+const humeValF = document.getElementById('humeValF');
+const humeValG = document.getElementById('humeValG');
+const humeVisual = document.getElementById('humeVisual');
+const humeResult = document.getElementById('humeResult');
+
+function updateHume() {
+  const f = parseInt(humeSliderF.value);
+  const g = parseInt(humeSliderG.value);
+  humeValF.textContent = f;
+  humeValG.textContent = g;
+
+  const match = f === g;
+  const maxN = Math.max(f, g);
+
+  let leftItems = '', rightItems = '', arrows = '';
+  for (let i = 0; i < maxN; i++) {
+    const inF = i < f;
+    const inG = i < g;
+    leftItems += inF ? `<div class="obj apple" style="width:38px;height:38px;font-size:1.2rem;">🍎</div>` : '';
+    rightItems += inG ? `<div class="obj star" style="width:38px;height:38px;font-size:1.2rem;">⭐</div>` : '';
+  }
+
+  if (f === 0 && g === 0) {
+    leftItems = '<p style="color:var(--muted);font-size:0.85rem;">∅ (empty)</p>';
+    rightItems = '<p style="color:var(--muted);font-size:0.85rem;">∅ (empty)</p>';
+  } else if (f === 0) {
+    leftItems = '<p style="color:var(--muted);font-size:0.85rem;">∅ (empty)</p>';
+  } else if (g === 0) {
+    rightItems = '<p style="color:var(--muted);font-size:0.85rem;">∅ (empty)</p>';
+  }
+
+  const arrowSymbol = match ? `<div class="hp-arrow hp-match">⟷<br><span style="font-size:0.7rem;">1-to-1</span></div>` : `<div class="hp-arrow hp-nomatch">✗<br><span style="font-size:0.7rem;">no bijection</span></div>`;
+
+  humeVisual.innerHTML = `
+    <div class="hp-group" style="border-color:${match ? 'var(--green)' : 'var(--accent)'};">
+      <div class="group-label">Concept F (Apples)</div>
+      ${leftItems}
+    </div>
+    ${arrowSymbol}
+    <div class="hp-group" style="border-color:${match ? 'var(--green)' : 'var(--accent)'};">
+      <div class="group-label">Concept G (Stars)</div>
+      ${rightItems}
+    </div>
+  `;
+
+  if (match) {
+    humeResult.innerHTML = `<span class="big" style="color:var(--green);">#F = #G = ${f}</span>
+      <strong>Hume's Principle satisfied!</strong> A one-to-one correspondence exists.<br>
+      Each 🍎 maps to exactly one ⭐ and vice versa. Therefore, by Hume's Principle, the number belonging to F <em>equals</em> the number belonging to G.`;
+  } else {
+    const diff = Math.abs(f - g);
+    const more = f > g ? 'F (Apples)' : 'G (Stars)';
+    humeResult.innerHTML = `<span class="big" style="color:var(--accent);">#F = ${f} ≠ ${g} = #G</span>
+      <strong>Hume's Principle says: different numbers.</strong><br>
+      ${more} has ${diff} more element${diff > 1 ? 's' : ''} — no bijection is possible. The numbers belonging to F and G are distinct.`;
+  }
+}
+updateHume();
+humeSliderF.addEventListener('input', updateHume);
+humeSliderG.addEventListener('input', updateHume);
+
+// ==================== DEFINITIONS OF 0, 1, 2… ====================
+const defSlider = document.getElementById('defSlider');
+const defVal = document.getElementById('defVal');
+const defVisual = document.getElementById('defVisual');
+const defResult = document.getElementById('defResult');
+
+const defData = [
+  {
+    num: 0,
+    concept: 'is not identical with itself',
+    extension: '∅ (nothing)',
+    emoji: '',
+    explanation: `<strong>0</strong> is defined as the number belonging to the concept <em>"is not identical with itself"</em>.<br>
+      No object satisfies "x ≠ x" — so the extension is <strong>empty</strong>. The number of things falling under this concept is 0.<br>
+      This is a purely logical definition — no appeal to intuition or experience!`
+  },
+  {
+    num: 1,
+    concept: 'is identical with 0',
+    extension: '{ 0 }',
+    emoji: '0️⃣',
+    explanation: `<strong>1</strong> is defined as the number belonging to the concept <em>"is identical with 0"</em>.<br>
+      Exactly one object satisfies this: the number 0 itself (which we just defined). So the extension is {0}, which has exactly <strong>1</strong> member.`
+  },
+  {
+    num: 2,
+    concept: 'is identical with 0 or with 1',
+    extension: '{ 0, 1 }',
+    emoji: '0️⃣ 1️⃣',
+    explanation: `<strong>2</strong> is defined as the number belonging to the concept <em>"is 0 or is 1"</em>.<br>
+      Two objects satisfy this: 0 and 1. The extension is {0, 1}, which has <strong>2</strong> members.`
+  },
+  {
+    num: 3,
+    concept: 'is identical with 0, 1, or 2',
+    extension: '{ 0, 1, 2 }',
+    emoji: '0️⃣ 1️⃣ 2️⃣',
+    explanation: `<strong>3</strong> is defined as the number belonging to the concept <em>"is 0, 1, or 2"</em>.<br>
+      Three objects: 0, 1, and 2. The extension {0, 1, 2} has <strong>3</strong> members.`
+  },
+  {
+    num: 4,
+    concept: 'is identical with 0, 1, 2, or 3',
+    extension: '{ 0, 1, 2, 3 }',
+    emoji: '0️⃣ 1️⃣ 2️⃣ 3️⃣',
+    explanation: `<strong>4</strong> = the number belonging to <em>"is 0, 1, 2, or 3"</em>.<br>
+      Extension: {0, 1, 2, 3} — <strong>4</strong> members. The pattern continues!`
+  },
+  {
+    num: 5,
+    concept: 'is identical with 0, 1, 2, 3, or 4',
+    extension: '{ 0, 1, 2, 3, 4 }',
+    emoji: '0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣',
+    explanation: `<strong>5</strong> = the number belonging to <em>"is 0, 1, 2, 3, or 4"</em>.<br>
+      Extension: {0, 1, 2, 3, 4} — <strong>5</strong> members.`
+  },
+  {
+    num: 6,
+    concept: 'is identical with 0, 1, 2, 3, 4, or 5',
+    extension: '{ 0, 1, 2, 3, 4, 5 }',
+    emoji: '0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣',
+    explanation: `<strong>6</strong> = the number belonging to <em>"is 0, 1, 2, 3, 4, or 5"</em>.<br>
+      Extension: {0, 1, 2, 3, 4, 5} — <strong>6</strong> members.<br><br>
+      🔑 <strong>Key insight:</strong> Each natural number n is defined as the number of its predecessors {0, 1, …, n−1}. The whole number line bootstraps itself from pure logic!`
+  }
+];
+
+function updateDef() {
+  const n = parseInt(defSlider.value);
+  defVal.textContent = n;
+
+  let chainHtml = '';
+  for (let i = 0; i <= n; i++) {
+    if (i > 0) chainHtml += '<div class="chain-arrow">→</div>';
+    chainHtml += `<div class="chain-node ${i === n ? 'active' : ''}" style="font-size:1.4rem;">${i}</div>`;
+  }
+  if (n < 6) {
+    chainHtml += '<div class="chain-arrow" style="color:#444;">→</div>';
+    chainHtml += '<div class="chain-node" style="color:#444;border-color:#333;">…</div>';
+  }
+
+  let extHtml = '';
+  if (n === 0) {
+    extHtml = '<div style="font-size:1.5rem;margin:10px 0;">{ &nbsp; } = ∅</div>';
+  } else {
+    const items = [];
+    for (let i = 0; i < n; i++) items.push(`<span style="font-size:1.3rem;margin:0 4px;padding:6px 12px;background:rgba(78,202,163,0.15);border:1px solid var(--green);border-radius:8px;display:inline-block;">${i}</span>`);
+    extHtml = `<div style="margin:10px 0;">Extension: { ${items.join(' ')} }</div>`;
+  }
+
+  defVisual.innerHTML = `
+    <div class="chain" style="margin-bottom:16px;">${chainHtml}</div>
+    <div style="color:var(--yellow);font-size:0.95rem;margin:8px 0;">
+      Concept for <strong>${n}</strong>: "${defData[n].concept}"
+    </div>
+    ${extHtml}
+  `;
+
+  defResult.innerHTML = defData[n].explanation;
+}
+updateDef();
+defSlider.addEventListener('input', updateDef);
+
+// ==================== CONTEXT PRINCIPLE ====================
+const ctxSlider = document.getElementById('ctxSlider');
+const ctxVal = document.getElementById('ctxVal');
+const ctxVisual = document.getElementById('ctxVisual');
+const ctxExplanation = document.getElementById('ctxExplanation');
+
+function updateContext() {
+  const n = parseInt(ctxSlider.value);
+  ctxVal.textContent = n;
+
+  const sentences = [
+    { text: `${n} = ${n}`, truth: true, note: 'Identity (always true)' },
+    { text: `${n} + 1 = ${n + 1}`, truth: true, note: 'Successor relation' },
+    { text: `${n} is even`, truth: n % 2 === 0, note: 'Parity' },
+    { text: `${n} is prime`, truth: isPrime(n), note: 'Primality' },
+    { text: `${n} > 5`, truth: n > 5, note: 'Ordering' },
+    { text: `${n} × 2 = ${n * 2}`, truth: true, note: 'Multiplication' },
+    { text: `${n}² = ${n * n}`, truth: true, note: 'Squaring' },
+    { text: `${n} is the successor of ${n - 1}`, truth: n > 0, note: n === 0 ? '0 has no predecessor in ℕ' : 'Predecessor relation' },
+  ];
+
+  let html = `<div style="margin-bottom:12px;color:var(--yellow);font-weight:700;">Sentences containing "${n}":</div>`;
+  sentences.forEach(s => {
+    const color = s.truth ? 'var(--green)' : 'var(--accent)';
+    const icon = s.truth ? '✓ TRUE' : '✗ FALSE';
+    html += `<div style="display:flex;align-items:center;gap:12px;margin:8px 0;padding:8px 12px;background:rgba(0,0,0,0.2);border-radius:8px;border-left:3px solid ${color};">
+      <span style="color:${color};font-weight:700;min-width:80px;font-size:0.85rem;">${icon}</span>
+      <span style="flex:1;font-family:monospace;font-size:0.95rem;">${s.text}</span>
+      <span style="color:var(--muted);font-size:0.8rem;">${s.note}</span>
+    </div>`;
+  });
+
+  ctxVisual.innerHTML = html;
+
+  ctxExplanation.innerHTML = `<strong>The Context Principle:</strong> The number <strong>${n}</strong> doesn't get its meaning from a mental picture of ${n} things, or from pointing at a heap. Its meaning is fully determined by the <strong>truth-values of all sentences</strong> in which it appears.<br><br>
+    We know what "${n}" means because we know that "${n} + 1 = ${n + 1}" is true, that "${n} is ${n % 2 === 0 ? 'even' : 'odd'}" is ${n % 2 === 0 ? 'true' : 'true'}, that "${n} > 5" is ${n > 5 ? 'true' : 'false'}, and so on. <strong>Meaning lives in sentences, not in isolated words.</strong>`;
+}
+updateContext();
+ctxSlider.addEventListener('input', updateContext);
+
+</script>
+</body>
+</html>
