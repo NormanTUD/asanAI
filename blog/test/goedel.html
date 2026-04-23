@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gödel's Incompleteness Theorems — Interactive Explorer</title>
+<style>
+:root {
+--bg: #0f1117;
+--card: #1a1d27;
+--accent: #6c63ff;
+--accent2: #ff6584;
+--accent3: #43e97b;
+--text: #e2e2e2;
+--muted: #888;
+--border: #2a2d3a;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+background: var(--bg);
+color: var(--text);
+line-height: 1.6;
+padding: 20px;
+max-width: 1100px;
+margin: 0 auto;
+}
+h1 {
+text-align: center;
+font-size: 2rem;
+margin: 20px 0 8px;
+background: linear-gradient(135deg, var(--accent), var(--accent2));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+.subtitle {
+text-align: center;
+color: var(--muted);
+margin-bottom: 30px;
+font-size: 0.95rem;
+}
+.card {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 14px;
+padding: 28px;
+margin-bottom: 24px;
+}
+.card h2 {
+font-size: 1.25rem;
+margin-bottom: 6px;
+color: var(--accent);
+}
+.card h2 .num {
+display: inline-block;
+background: var(--accent);
+color: #fff;
+width: 28px; height: 28px;
+border-radius: 50%;
+text-align: center;
+line-height: 28px;
+font-size: 0.85rem;
+margin-right: 8px;
+}
+.card .desc {
+color: var(--muted);
+font-size: 0.9rem;
+margin-bottom: 18px;
+}
+.slider-row {
+display: flex;
+align-items: center;
+gap: 14px;
+margin-bottom: 12px;
+flex-wrap: wrap;
+}
+.slider-row label {
+min-width: 180px;
+font-size: 0.9rem;
+}
+.slider-row input[type=range] {
+flex: 1;
+min-width: 150px;
+accent-color: var(--accent);
+height: 6px;
+}
+.slider-row .val {
+min-width: 40px;
+text-align: right;
+font-weight: bold;
+color: var(--accent);
+}
+.viz {
+margin-top: 16px;
+position: relative;
+}
+/* ---- Section 1: Formal System Strength ---- */
+#formalViz {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+justify-content: center;
+}
+#formalViz .stmt {
+width: 46px; height: 46px;
+border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+font-size: 0.7rem; font-weight: bold;
+transition: all 0.35s;
+position: relative;
+}
+#formalViz .stmt.provable { background: var(--accent); color: #fff; }
+#formalViz .stmt.true-unprovable { background: var(--accent2); color: #fff; }
+#formalViz .stmt.undecidable { background: var(--border); color: var(--muted); }
+.legend {
+display: flex; gap: 18px; margin-top: 12px; font-size: 0.82rem; flex-wrap: wrap;
+}
+.legend span {
+display: flex; align-items: center; gap: 6px;
+}
+.legend .dot {
+width: 14px; height: 14px; border-radius: 4px; display: inline-block;
+}
+.result-box {
+margin-top: 14px;
+padding: 14px 18px;
+border-radius: 10px;
+background: #12141c;
+border-left: 4px solid var(--accent);
+font-size: 0.92rem;
+line-height: 1.7;
+}
+.result-box.warn { border-left-color: var(--accent2); }
+.result-box.ok { border-left-color: var(--accent3); }
+
+/* ---- Section 2: Gödel Numbering ---- */
+#godelInput {
+background: #12141c;
+border: 1px solid var(--border);
+color: var(--text);
+padding: 10px 14px;
+border-radius: 8px;
+font-size: 1rem;
+width: 100%;
+margin-bottom: 12px;
+font-family: 'Courier New', monospace;
+}
+#godelOutput {
+display: flex;
+flex-wrap: wrap;
+gap: 6px;
+}
+#godelOutput .gchar {
+display: flex;
+flex-direction: column;
+align-items: center;
+background: #12141c;
+border-radius: 8px;
+padding: 8px 10px;
+min-width: 44px;
+transition: all 0.25s;
+}
+#godelOutput .gchar .ch {
+font-family: 'Courier New', monospace;
+font-size: 1.1rem;
+color: var(--accent);
+}
+#godelOutput .gchar .code {
+font-size: 0.72rem;
+color: var(--muted);
+margin-top: 2px;
+}
+#godelNumber {
+margin-top: 12px;
+font-family: 'Courier New', monospace;
+word-break: break-all;
+font-size: 0.85rem;
+color: var(--accent3);
+}
+
+/* ---- Section 3: Self-Reference Paradox ---- */
+#selfRefViz {
+text-align: center;
+padding: 20px;
+}
+.loop-container {
+position: relative;
+width: 320px;
+height: 320px;
+margin: 0 auto;
+}
+.loop-container svg {
+width: 100%; height: 100%;
+}
+#selfRefStatement {
+font-family: 'Courier New', monospace;
+font-size: 1rem;
+color: var(--accent2);
+margin-top: 14px;
+min-height: 3em;
+}
+
+/* ---- Section 4: Consistency vs Completeness ---- */
+#tradeoffViz {
+position: relative;
+height: 300px;
+border-radius: 10px;
+overflow: hidden;
+background: #12141c;
+}
+#tradeoffCanvas {
+width: 100%;
+height: 100%;
+}
+
+/* ---- Section 5: Second Theorem ---- */
+#consistencyViz {
+text-align: center;
+}
+.mirror-box {
+display: inline-block;
+border: 2px solid var(--accent);
+border-radius: 12px;
+padding: 24px 32px;
+margin: 10px;
+transition: all 0.4s;
+max-width: 400px;
+}
+.mirror-box.shattered {
+border-color: var(--accent2);
+animation: shake 0.5s;
+}
+@keyframes shake {
+0%, 100% { transform: translateX(0); }
+20% { transform: translateX(-6px); }
+40% { transform: translateX(6px); }
+60% { transform: translateX(-4px); }
+80% { transform: translateX(4px); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+body { padding: 10px; }
+.card { padding: 18px; }
+h1 { font-size: 1.4rem; }
+.loop-container { width: 260px; height: 260px; }
+}
+</style>
+</head>
+<body>
+
+<h1>Gödel's Incompleteness Theorems</h1>
+<p class="subtitle">Move the sliders. Watch the results. Build your intuition.</p>
+
+<!-- ===== SECTION 1: Formal System Strength ===== -->
+<div class="card">
+<h2><span class="num">1</span> The Limits of Formal Systems</h2>
+<p class="desc">
+A <b>formal system</b> has axioms and rules to prove statements. Gödel showed that any sufficiently powerful consistent system
+has <em>true statements it cannot prove</em>. Drag the sliders to explore.
+</p>
+
+<div class="slider-row">
+<label>System strength (axioms)</label>
+<input type="range" id="axiomSlider" min="1" max="20" value="5">
+<span class="val" id="axiomVal">5</span>
+</div>
+<div class="slider-row">
+<label>Statements in universe</label>
+<input type="range" id="stmtSlider" min="10" max="60" value="30">
+<span class="val" id="stmtVal">30</span>
+</div>
+<div class="slider-row">
+<label>Consistency enforced</label>
+<input type="range" id="consistSlider" min="0" max="1" step="1" value="1">
+<span class="val" id="consistVal">Yes</span>
+</div>
+
+<div class="viz" id="formalViz"></div>
+<div class="legend">
+<span><span class="dot" style="background:var(--accent)"></span> Provable</span>
+<span><span class="dot" style="background:var(--accent2)"></span> True but Unprovable</span>
+<span><span class="dot" style="background:var(--border)"></span> Independent / Unknown</span>
+</div>
+<div class="result-box" id="formalResult"></div>
+</div>
+
+<!-- ===== SECTION 2: Gödel Numbering ===== -->
+<div class="card">
+<h2><span class="num">2</span> Gödel Numbering — Encoding Statements as Numbers</h2>
+<p class="desc">
+Gödel's key trick: assign a unique number to every symbol, formula, and proof.
+This lets the system <em>talk about itself</em> using arithmetic.
+Type any logical formula below.
+</p>
+<input type="text" id="godelInput" value="∀x (x = x)" placeholder="Type a formula…">
+<div class="viz" id="godelOutput"></div>
+<div id="godelNumber"></div>
+<div class="result-box" id="godelResult">
+Each symbol gets a prime-power code. The product of all codes is the <b>Gödel number</b> of the whole formula —
+a single integer that uniquely represents the statement inside arithmetic itself.
+</div>
+</div>
+
+<!-- ===== SECTION 3: Self-Reference ===== -->
+<div class="card">
+<h2><span class="num">3</span> Self-Reference — The Liar Meets Mathematics</h2>
+<p class="desc">
+Gödel constructed a sentence <b>G</b> that essentially says: <em>"I am not provable in this system."</em>
+Use the slider to watch the paradox unfold.
+</p>
+<div class="slider-row">
+<label>Assume G is…</label>
+<input type="range" id="selfRefSlider" min="0" max="2" step="1" value="0">
+<span class="val" id="selfRefVal">—</span>
+</div>
+<div class="viz" id="selfRefViz">
+<div class="loop-container">
+<svg viewBox="0 0 320 320" id="loopSvg"></svg>
+</div>
+<div id="selfRefStatement"></div>
+</div>
+<div class="result-box" id="selfRefResult"></div>
+</div>
+
+<!-- ===== SECTION 4: Consistency vs Completeness Trade-off ===== -->
+<div class="card">
+<h2><span class="num">4</span> The Trade-off: Consistency vs. Completeness</h2>
+<p class="desc">
+You can't have both full consistency <em>and</em> full completeness in a sufficiently powerful system.
+Drag the slider to see the trade-off in real time.
+</p>
+<div class="slider-row">
+<label>← More Consistent &nbsp;|&nbsp; More Complete →</label>
+<input type="range" id="tradeoffSlider" min="0" max="100" value="50">
+<span class="val" id="tradeoffVal">50%</span>
+</div>
+<div class="viz" id="tradeoffViz">
+<canvas id="tradeoffCanvas"></canvas>
+</div>
+<div class="result-box" id="tradeoffResult"></div>
+</div>
+
+<!-- ===== SECTION 5: Second Incompleteness Theorem ===== -->
+<div class="card">
+<h2><span class="num">5</span> The Second Theorem — No Self-Proof of Consistency</h2>
+<p class="desc">
+Gödel's <b>Second Incompleteness Theorem</b>: a consistent system powerful enough to do arithmetic
+<em>cannot prove its own consistency</em>. Press the button to try.
+</p>
+<div class="viz" id="consistencyViz">
+<div class="mirror-box" id="mirrorBox">
+<div style="font-size:1.3rem;margin-bottom:8px;">System <b>S</b></div>
+<div id="mirrorContent" style="font-size:0.9rem;color:var(--muted);">
+"I want to prove: <em>S is consistent</em>"
+</div>
+<button id="proveBtn" style="
+margin-top:14px; padding:10px 28px;
+background:var(--accent); color:#fff; border:none;
+border-radius:8px; font-size:1rem; cursor:pointer;
+">Attempt Proof</button>
+</div>
+</div>
+<div class="result-box" id="consistencyResult">
+Click the button above to see what happens when a system tries to prove its own consistency.
+</div>
+</div>
+
+<!-- ===== SUMMARY ===== -->
+<div class="card" style="border-left:4px solid var(--accent3);">
+<h2 style="color:var(--accent3);">Summary — The Big Ideas</h2>
+<ol style="padding-left:20px; font-size:0.95rem; line-height:2;">
+<li><b>First Theorem:</b> Any consistent formal system strong enough to express arithmetic contains true statements that cannot be proved within it.</li>
+<li><b>Gödel Numbering:</b> Statements can be encoded as numbers, letting the system reason about its own sentences.</li>
+<li><b>Self-Reference:</b> A sentence can be constructed that says "I am not provable," creating an inescapable dilemma.</li>
+<li><b>Trade-off:</b> You must sacrifice either completeness or consistency — you cannot have both.</li>
+<li><b>Second Theorem:</b> A consistent system cannot prove its own consistency from within.</li>
+</ol>
+</div>
+
+<script>
+// ============================================================
+// SECTION 1 — Formal System Visualisation
+// ============================================================
+const axiomSlider = document.getElementById('axiomSlider');
+const stmtSlider = document.getElementById('stmtSlider');
+const consistSlider = document.getElementById('consistSlider');
+
+function updateFormal() {
+const axioms = +axiomSlider.value;
+const stmts = +stmtSlider.value;
+const consistent = +consistSlider.value === 1;
+
+document.getElementById('axiomVal').textContent = axioms;
+document.getElementById('stmtVal').textContent = stmts;
+document.getElementById('consistVal').textContent = consistent ? 'Yes' : 'No';
+
+const container = document.getElementById('formalViz');
+container.innerHTML = '';
+
+// Seed a deterministic "random" from axioms
+let seed = axioms * 137;
+const rng = () => { seed = (seed * 16807 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+
+let provable = 0, trueUnprovable = 0, undecidable = 0;
+
+for (let i = 0; i < stmts; i++) {
+const div = document.createElement('div');
+div.className = 'stmt';
+const r = rng();
+// More axioms → more provable; but some always remain unprovable if consistent
+const provThreshold = consistent ? Math.min(0.85, axioms / 25) : (axioms / 20);
+const trueThreshold = consistent ? provThreshold + 0.12 : provThreshold + 0.02;
+
+if (r < provThreshold) {
+div.classList.add('provable');
+div.textContent = '✓';
+provable++;
+} else if (r < trueThreshold && consistent) {
+div.classList.add('true-unprovable');
+div.textContent = 'T';
+trueUnprovable++;
+} else {
+div.classList.add('undecidable');
+div.textContent = '?';
+undecidable++;
+}
+container.appendChild(div);
+}
+
+const box = document.getElementById('formalResult');
+if (!consistent) {
+box.className = 'result-box warn';
+box.innerHTML = `<b>⚠ Inconsistent system!</b> With consistency off, the system can "prove" almost anything (${provable}/${stmts} provable), but some "proofs" are of <em>false</em> statements. The system is useless — it proves contradictions.`;
+} else if (trueUnprovable > 0) {
+box.className = 'result-box warn';
+box.innerHTML = `<b>Gödel's First Theorem in action:</b> ${provable} provable, <span style="color:var(--accent2)">${trueUnprovable} true-but-unprovable</span>, ${undecidable} unknown out of ${stmts} statements.<br>No matter how many axioms you add, <em>some true statements always escape proof</em> — as long as the system stays consistent.`;
+} else {
+box.className = 'result-box ok';
+box.innerHTML = `${provable} provable, ${undecidable} unknown out of ${stmts}. Try increasing the statement count to see unprovable truths appear!`;
+}
+}
+axiomSlider.addEventListener('input', updateFormal);
+stmtSlider.addEventListener('input', updateFormal);
+consistSlider.addEventListener('input', updateFormal);
+updateFormal();
+
+// ============================================================
+// SECTION 2 — Gödel Numbering
+// ============================================================
+const primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,233,239,241,251,257,263,269,271,277,281,283];
+
+const symbolMap = {
+'0':1,'S':2,'+':3,'×':4,'=':5,'(':6,')':7,
+'∀':8,'∃':9,'¬':10,'→':11,'∧':12,'∨':13,
+'x':14,'y':15,'z':16,'a':17,'b':18,'c':19,
+' ':0,',':20,'.':21,'1':22,'2':23,'3':24,
+'4':25,'5':26,'6':27,'7':28,'8':29,'9':30
+};
+
+function getCode(ch) {
+if (symbolMap[ch] !== undefined) return symbolMap[ch];
+const c = ch.charCodeAt(0);
+return (c % 30) + 31; // fallback
+}
+
+function updateGodel() {
+const input = document.getElementById('godelInput').value;
+const container = document.getElementById('godelOutput');
+container.innerHTML = '';
+
+let factors = [];
+for (let i = 0; i < input.length && i < primes.length; i++) {
+const ch = input[i];
+const code = getCode(ch);
+const div = document.createElement('div');
+div.className = 'gchar';
+div.innerHTML = `<span class="ch">${ch === ' ' ? '␣' : ch}</span><span class="code">${primes[i]}<sup>${code}</sup></span>`;
+container.appendChild(div);
+factors.push(`${primes[i]}^${code}`);
+}
+
+const godelNum = document.getElementById('godelNumber');
+if (input.length > 0) {
+godelNum.innerHTML = `<b>Gödel number</b> = ${factors.join(' × ')}`;
+// Show a truncated big number representation
+let display = '';
+try {
+let big = 1n;
+for (let i = 0; i < input.length && i < primes.length; i++) {
+big *= BigInt(primes[i]) ** BigInt(getCode(input[i]));
+}
+const s = big.toString();
+if (s.length > 80) {
+display = s.slice(0, 40) + '…' + s.slice(-20) + ` (${s.length} digits)`;
+} else {
+display = s;
+}
+} catch(e) {
+display = '(number too large to display)';
+}
+godelNum.innerHTML += `<br><span style="color:var(--accent)">${display}</span>`;
+} else {
+godelNum.innerHTML = '';
+}
+}
+document.getElementById('godelInput').addEventListener('input', updateGodel);
+updateGodel();
+
+// ============================================================
+// SECTION 3 — Self-Reference Loop
+// ============================================================
+const selfRefSlider = document.getElementById('selfRefSlider');
+
+function drawLoop(state) {
+const svg = document.getElementById('loopSvg');
+const cx = 160, cy = 140, r = 100;
+
+const stateColors = ['var(--muted)', 'var(--accent)', 'var(--accent2)'];
+const color = stateColors[state];
+
+let arrowAnim = state > 0 ? `<animateTransform attributeName="transform" type="rotate" from="0 ${cx} ${cy}" to="360 ${cx} ${cy}" dur="${state===1?'3s':'1.5s'}" repeatCount="indefinite"/>` : '';
+
+svg.innerHTML = `
+<defs>
+<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="${color}" />
+</marker>
+</defs>
+<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="3" stroke-dasharray="${state===0?'8 6':'none'}" opacity="${state===0?0.4:0.8}"/>
+<g>
+<line x1="${cx}" y1="${cy - r}" x2="${cx + 14}" y2="${cy - r + 10}" stroke="${color}" stroke-width="3" marker-end="url(#arrowhead)" />
+${arrowAnim}
+</g>
+<text x="${cx}" y="${cy - 10}" text-anchor="middle" fill="${color}" font-size="28" font-weight="bold">G</text>
+<text x="${cx}" y="${cy + 18}" text-anchor="middle" fill="var(--muted)" font-size="11">"I am not provable"</text>
+${state === 1 ? `<text x="${cx}" y="${cy + r + 36}" text-anchor="middle" fill="var(--accent)" font-size="13">If G is provable → G is false → Contradiction!</text>` : ''}
+${state === 2 ? `<text x="${cx}" y="${cy + r + 36}" text-anchor="middle" fill="var(--accent2)" font-size="13">If G is false → G IS provable → Contradiction!</text>` : ''}
+${state === 0 ? `<text x="${cx}" y="${cy + r + 36}" text-anchor="middle" fill="var(--muted)" font-size="13">Drag the slider to explore both assumptions →</text>` : ''}
+`;
+}
+
+function updateSelfRef() {
+const v = +selfRefSlider.value;
+const labels = ['Undecided', 'Provable (true)', 'Not provable (false)'];
+document.getElementById('selfRefVal').textContent = labels[v];
+drawLoop(v);
+
+const stmt = document.getElementById('selfRefStatement');
+const result = document.getElementById('selfRefResult');
+
+if (v === 0) {
+stmt.innerHTML = `<span style="color:var(--muted)">G says: "This statement is not provable in system S."</span>`;
+result.className = 'result-box';
+result.innerHTML = 'Choose an assumption with the slider above. What happens if G is provable? What if it\'s not?';
+} else if (v === 1) {
+stmt.innerHTML = `<span style="color:var(--accent)">Assume G <b>is provable</b>…<br>→ Then what G says is true → "G is not provable" is true<br>→ <b>Contradiction!</b> G is both provable and not provable.</span>`;
+result.className = 'result-box warn';
+result.innerHTML = `<b>💥 Contradiction!</b> If G is provable, then the system proves something that says "I\'m not provable." A consistent system can\'t prove falsehoods, so <em>G cannot be provable</em> (if the system is consistent).`;
+} else {
+stmt.innerHTML = `<span style="color:var(--accent2)">Assume G <b>is not provable</b>…<br>→ Then what G says is <em>true</em> (it correctly claims its own unprovability)<br>→ G is <b>true but unprovable!</b></span>`;
+result.className = 'result-box ok';
+result.innerHTML = `<b>✅ This is Gödel\'s result!</b> G is a <em>true statement that the system cannot prove</em>. The system is <b>incomplete</b> — there exist truths beyond its reach. This is the <b>First Incompleteness Theorem</b>.`;
+}
+}
+selfRefSlider.addEventListener('input', updateSelfRef);
+updateSelfRef();
+
+// ============================================================
+// SECTION 4 — Consistency vs Completeness Trade-off
+// ============================================================
+const tradeoffSlider = document.getElementById('tradeoffSlider');
+const tradeoffCanvas = document.getElementById('tradeoffCanvas');
+const ctx = tradeoffCanvas.getContext('2d');
+
+function updateTradeoff() {
+const v = +tradeoffSlider.value;
+document.getElementById('tradeoffVal').textContent = v + '%';
+
+const W = tradeoffCanvas.width = tradeoffCanvas.offsetWidth * 2;
+const H = tradeoffCanvas.height = tradeoffCanvas.offsetHeight * 2;
+ctx.scale(1, 1);
+ctx.clearRect(0, 0, W, H);
+
+const pad = 60;
+const gw = W - pad * 2;
+const gh = H - pad * 2;
+
+// Axes
+ctx.strokeStyle = '#444';
+ctx.lineWidth = 2;
+ctx.beginPath();
+ctx.moveTo(pad, pad);
+ctx.lineTo(pad, pad + gh);
+ctx.lineTo(pad + gw, pad + gh);
+ctx.stroke();
+
+// Labels
+ctx.fillStyle = 'var(--muted)';
+ctx.fillStyle = '#888';
+ctx.font = '22px system-ui';
+ctx.textAlign = 'center';
+ctx.fillText('Completeness →', pad + gw / 2, H - 10);
+ctx.save();
+ctx.translate(18, pad + gh / 2);
+ctx.rotate(-Math.PI / 2);
+ctx.fillText('Consistency →', 0, 0);
+ctx.restore();
+
+// The impossible region (upper right)
+ctx.fillStyle = 'rgba(255,101,132,0.08)';
+ctx.beginPath();
+ctx.moveTo(pad + gw * 0.55, pad);
+ctx.lineTo(pad + gw, pad);
+ctx.lineTo(pad + gw, pad + gh * 0.45);
+ctx.quadraticCurveTo(pad + gw * 0.7, pad + gh * 0.15, pad + gw * 0.55, pad);
+ctx.fill();
+
+ctx.fillStyle = 'rgba(255,101,132,0.5)';
+ctx.font = '20px system-ui';
+ctx.fillText('IMPOSSIBLE', pad + gw * 0.78, pad + gh * 0.18);
+ctx.font = '14px system-ui';
+ctx.fillText('(by Gödel)', pad + gw * 0.78, pad + gh * 0.24);
+
+// The boundary curve
+ctx.strokeStyle = '#ff6584';
+ctx.lineWidth = 3;
+ctx.setLineDash([8, 4]);
+ctx.beginPath();
+for (let t = 0; t <= 1; t += 0.01) {
+const x = pad + t * gw;
+const y = pad + gh - gh * Math.pow(1 - t, 0.6) * 0.95;
+if (t === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+}
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Current position dot
+const t = v / 100;
+const dotX = pad + t * gw;
+const consistency = Math.pow(1 - t, 0.6) * 0.95;
+const dotY = pad + gh - gh * consistency;
+
+// Glow
+const grad = ctx.createRadialGradient(dotX, dotY, 0, dotX, dotY, 30);
+grad.addColorStop(0, 'rgba(108,99,255,0.6)');
+grad.addColorStop(1, 'rgba(108,99,255,0)');
+ctx.fillStyle = grad;
+ctx.beginPath();
+ctx.arc(dotX, dotY, 30, 0, Math.PI * 2);
+ctx.fill();
+
+ctx.fillStyle = '#6c63ff';
+ctx.beginPath();
+ctx.arc(dotX, dotY, 10, 0, Math.PI * 2);
+ctx.fill();
+ctx.fillStyle = '#fff';
+ctx.font = 'bold 16px system-ui';
+ctx.textAlign = 'center';
+ctx.fillText('S', dotX, dotY + 5);
+
+// Dashed lines to axes
+ctx.strokeStyle = '#6c63ff55';
+ctx.lineWidth = 1;
+ctx.setLineDash([4, 4]);
+ctx.beginPath();
+ctx.moveTo(dotX, dotY);
+ctx.lineTo(dotX, pad + gh);
+ctx.moveTo(dotX, dotY);
+ctx.lineTo(pad, dotY);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Axis values
+ctx.fillStyle = '#6c63ff';
+ctx.font = '16px system-ui';
+ctx.fillText(Math.round(t * 100) + '%', dotX, pad + gh + 30);
+    ctx.save();
+    ctx.translate(pad - 10, dotY);
+    ctx.rotate(0);
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(consistency * 100) + '%', -4, 5);
+    ctx.restore();
+
+    const result = document.getElementById('tradeoffResult');
+    if (v < 30) {
+        result.className = 'result-box ok';
+        result.innerHTML = `<b>High consistency, low completeness.</b> Your system S is very reliable — it never proves false things — but there are <em>many</em> true statements it simply cannot reach. This is the safe zone most mathematicians accept.`;
+    } else if (v < 70) {
+        result.className = 'result-box';
+        result.innerHTML = `<b>Balanced zone.</b> System S proves a moderate number of statements while staying fairly consistent. But notice: as you push completeness higher, consistency must drop. You're approaching Gödel's boundary.`;
+    } else if (v < 90) {
+        result.className = 'result-box warn';
+        result.innerHTML = `<b>⚠ Danger zone!</b> You're demanding S prove almost everything. To do so, the system must accept axioms that risk contradictions. You're pressing against the <em>impossible region</em> — the boundary Gödel proved you cannot cross.`;
+    } else {
+        result.className = 'result-box warn';
+        result.innerHTML = `<b>💥 Approaching inconsistency!</b> A system that proves "everything" is trivially inconsistent — it proves both P and ¬P. Such a system is useless. This is exactly what Gödel's theorem prevents: <em>you cannot have 100% completeness with any consistency</em>.`;
+    }
+}
+tradeoffSlider.addEventListener('input', updateTradeoff);
+window.addEventListener('resize', updateTradeoff);
+updateTradeoff();
+
+// ============================================================
+// SECTION 5 — Second Incompleteness Theorem
+// ============================================================
+const proveBtn = document.getElementById('proveBtn');
+let proveState = 0;
+
+proveBtn.addEventListener('click', () => {
+    const box = document.getElementById('mirrorBox');
+    const content = document.getElementById('mirrorContent');
+    const result = document.getElementById('consistencyResult');
+
+    proveState++;
+
+    if (proveState === 1) {
+        // Attempt 1: Searching
+        box.style.borderColor = 'var(--accent)';
+        content.innerHTML = `<span style="color:var(--accent)">Searching for proof of "S is consistent"…</span>`;
+        proveBtn.textContent = 'Keep trying…';
+        result.className = 'result-box';
+        result.innerHTML = `The system is searching through its theorems, trying to derive a proof that it itself is consistent…`;
+
+        // Animate dots
+        let dots = 0;
+        const interval = setInterval(() => {
+            dots = (dots + 1) % 4;
+            content.innerHTML = `<span style="color:var(--accent)">Searching for proof of "S is consistent"${'.'.repeat(dots)}</span>`;
+        }, 400);
+        setTimeout(() => {
+            clearInterval(interval);
+            content.innerHTML = `<span style="color:var(--accent)">Searching for proof of "S is consistent"…<br><small>No proof found yet. Digging deeper…</small></span>`;
+        }, 2500);
+
+    } else if (proveState === 2) {
+        // Attempt 2: Encountering the problem
+        content.innerHTML = `<span style="color:#f0ad4e">
+            ⚠ Problem detected!<br>
+            <small>If S could prove "S is consistent," then S could prove G is true…<br>
+            But G says "I am not provable in S"…<br>
+            So S would prove something that says it can't be proved!</small>
+        </span>`;
+        proveBtn.textContent = 'Force the proof!';
+        box.style.borderColor = '#f0ad4e';
+        result.className = 'result-box warn';
+        result.innerHTML = `<b>The system has hit a wall.</b> It realizes that proving its own consistency would let it prove the Gödel sentence G — but that would create a contradiction. The proof is <em>self-defeating</em>.`;
+
+    } else if (proveState === 3) {
+        // Attempt 3: Failure / Shatter
+        box.classList.add('shattered');
+        box.style.borderColor = 'var(--accent2)';
+        content.innerHTML = `<span style="color:var(--accent2)">
+            <b style="font-size:1.5rem">✗ IMPOSSIBLE</b><br><br>
+            <small>A consistent system <b>cannot</b> prove its own consistency.<br>
+            Any such "proof" would make the system inconsistent.</small>
+        </span>`;
+        proveBtn.textContent = 'Reset';
+        result.className = 'result-box warn';
+        result.innerHTML = `<b>Gödel's Second Incompleteness Theorem:</b> If system S is consistent and powerful enough to express basic arithmetic, then S <em>cannot prove</em> the statement "S is consistent."<br><br>
+        <b>Why?</b> Gödel showed that "S is consistent" is logically equivalent to the Gödel sentence G (which says "I am not provable in S"). Since G is unprovable in S (by the First Theorem), "S is consistent" is also unprovable in S.<br><br>
+        <b>Implication:</b> We can never have absolute mathematical certainty <em>from within</em> a system. To prove S is consistent, you need a <em>stronger</em> system — but then who proves <em>that</em> system is consistent? It's turtles all the way down. 🐢`;
+
+    } else {
+        // Reset
+        proveState = 0;
+        box.classList.remove('shattered');
+        box.style.borderColor = 'var(--accent)';
+        content.innerHTML = `"I want to prove: <em>S is consistent</em>"`;
+        proveBtn.textContent = 'Attempt Proof';
+        result.className = 'result-box';
+        result.innerHTML = 'Click the button above to see what happens when a system tries to prove its own consistency.';
+    }
+});
+
+// ============================================================
+// Smooth scroll for a nicer experience
+// ============================================================
+document.querySelectorAll('.card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = `opacity 0.5s ${i * 0.1}s, transform 0.5s ${i * 0.1}s`;
+    setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+    }, 50);
+});
+
+</script>
+</body>
+</html>
