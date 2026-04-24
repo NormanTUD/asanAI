@@ -17,7 +17,7 @@ The tools of the past were forged in the fires of unrelated Necessity. The **sta
 
 In the same way, the **silicon architectures** designed for the fleeting light of digital games provided, by chance, the massive parallel strength required to sustain a mechanical mind. This is the **hidden harmony** of invention: a solution in one domain becomes the unexpected catalyst in another. 
 
-As Whitehead observed, the world is a **constantly changing, interwoven pattern**. The breakthroughs of the present are not a final destination; they are **momentary patterns** in a much larger, inseparable reality. Just as a river never stands still, the ideas captured in this document will eventually be pulled apart and woven into **new and unrecognizable forms**. We trace this specific lineage of the LLM not as a finished monument, but as a testament to a world that is constantly being repurposed by its own changing needs.
+As Whitehead observed, the world is a **constantly changing, interwoven pattern**. The breakthroughs of the present are not a final destination; they are **momentary patterns** in a much larger, inseparable reality. Just as a river never stands still, the ideas captured in this document will eventually be pulled apart and woven into **new and unrecognizable forms**. We trace this specific lineage of the LLM not as a finished monument, but as a testament to a world that is constantly being repurposed by its own changes, which then again create new waves propagating through the space of ideas and inventions.
 
 ## The Abstraction of Labor: From Wheels to Thought
 
