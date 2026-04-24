@@ -73,6 +73,7 @@
   #log .r { color: #f85149; }
   #log .i { color: #58a6ff; }
   #log .s { color: #bc8cff; font-weight: bold; }
+  #log .w { color: #f0883e; font-weight: bold; }
   #main { flex: 1; display: flex; flex-direction: column; position: relative; }
   #plotly-div { flex: 1; min-height: 0; }
   #hud {
@@ -92,17 +93,20 @@
   .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
   #loss-chart { height: 100px; width: 100%; }
   #scheduler-banner {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(188,140,255,0.15); border: 2px solid #bc8cff;
-    border-radius: 12px; padding: 14px 28px; font-family: monospace;
-    font-size: 1em; color: #bc8cff; pointer-events: none; z-index: 20;
+    border-radius: 12px; padding: 10px 24px; font-family: monospace;
+    font-size: 0.85em; color: #bc8cff; pointer-events: none; z-index: 100;
     display: none; text-align: center; backdrop-filter: blur(4px);
-    animation: bannerPulse 0.6s ease-in-out;
+    white-space: pre-line;
+    animation: bannerSlideUp 0.4s ease-out;
   }
-  @keyframes bannerPulse {
-    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  @keyframes bannerSlideUp {
+    0% { transform: translateX(-50%) translateY(30px); opacity: 0; }
+    100% { transform: translateX(-50%) translateY(0); opacity: 1; }
   }
   #minima-list {
     background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
@@ -168,6 +172,7 @@
       <div class="leg-item"><div class="leg-dot" style="background:#3fb950"></div> Found better minimum</div>
       <div class="leg-item"><div class="leg-dot" style="background:#f85149"></div> Rejected / rollback</div>
       <div class="leg-item"><div class="leg-dot" style="background:#bc8cff"></div> Checkpoint (saved state)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#f0883e"></div> Expanding search radius</div>
     </div>
     <div id="hud">
       <div>Step: <span id="h-step">0</span></div>
@@ -180,11 +185,12 @@
         Current LR: <span class="lr-val" id="h-lr">—</span>
       </div>
       <div>LR Phase: <span id="h-lr-phase">—</span></div>
+      <div>Explore ×: <span id="h-explore-mul">1.0</span></div>
       <div>Minima Found: <span id="h-minima">0</span> / <span id="h-minima-total">3+</span></div>
     </div>
-    <div id="scheduler-banner"></div>
   </div>
   <div id="loss-chart"></div>
+  <div id="scheduler-banner"></div>
 </div>
 
 <script>
@@ -205,7 +211,7 @@ const V = id => parseFloat($(id).value);
 });
 
 // ============================================================
-//  LANDSCAPE WITH GUARANTEED 3+ LOCAL MINIMA
+//  LANDSCAPE WITH GUARANTEED 3+ LOCAL MINIMA (FULLY RANDOMIZED)
 // ============================================================
 class Landscape {
   constructor(extraBasins, roughness) {
@@ -218,41 +224,58 @@ class Landscape {
   generate(extraBasins, roughness) {
     this.basins = [];
 
-    // GUARANTEED 3 well-separated local minima at known positions
-    // We place them with increasing depth so there's a clear ordering
-    const guaranteed = [
-      { cx: -3.0 + (Math.random()-0.5)*0.8, cy: -3.0 + (Math.random()-0.5)*0.8, amp: -1.2, sx: 1.2, sy: 1.2, label: 'Shallow' },
-      { cx:  0.5 + (Math.random()-0.5)*0.8, cy:  2.5 + (Math.random()-0.5)*0.8, amp: -2.2, sx: 1.0, sy: 1.0, label: 'Medium' },
-      { cx:  3.0 + (Math.random()-0.5)*0.8, cy: -1.5 + (Math.random()-0.5)*0.8, amp: -3.5, sx: 0.9, sy: 0.9, label: 'Global' },
-    ];
+    const guaranteed = [];
+    const labels = ['Shallow', 'Medium', 'Global'];
+    const amps = [-1.2, -2.2, -3.5];
+    const usedPositions = [];
+
+    for (let i = 0; i < 3; i++) {
+      let cx, cy, tooClose;
+      let attempts = 0;
+      do {
+        cx = (Math.random() - 0.5) * 9;
+        cy = (Math.random() - 0.5) * 9;
+        tooClose = usedPositions.some(p => {
+          const dx = cx - p[0], dy = cy - p[1];
+          return Math.sqrt(dx*dx + dy*dy) < 2.5;
+        });
+        attempts++;
+      } while (tooClose && attempts < 200);
+
+      usedPositions.push([cx, cy]);
+      guaranteed.push({
+        cx, cy,
+        amp: amps[i],
+        sx: 0.8 + Math.random() * 0.6,
+        sy: 0.8 + Math.random() * 0.6,
+        label: labels[i]
+      });
+    }
 
     for (const g of guaranteed) {
       this.basins.push(g);
     }
 
-    // Extra random basins
     for (let i = 0; i < extraBasins; i++) {
       this.basins.push({
-        cx: (Math.random() - 0.5) * 8,
-        cy: (Math.random() - 0.5) * 8,
+        cx: (Math.random() - 0.5) * 10,
+        cy: (Math.random() - 0.5) * 10,
         amp: -(0.3 + Math.random() * 1.5),
         sx: 0.7 + Math.random() * 1.5,
         sy: 0.7 + Math.random() * 1.5,
       });
     }
 
-    // Some hills (barriers between basins)
     for (let i = 0; i < 4; i++) {
       this.basins.push({
-        cx: (Math.random() - 0.5) * 7,
-        cy: (Math.random() - 0.5) * 7,
+        cx: (Math.random() - 0.5) * 10,
+        cy: (Math.random() - 0.5) * 10,
         amp: 0.4 + Math.random() * 1.2,
         sx: 1.0 + Math.random() * 1.5,
         sy: 1.0 + Math.random() * 1.5,
       });
     }
 
-    // Roughness
     this.sinP = [];
     const m = Math.floor(roughness * 6);
     for (let i = 0; i < m; i++) {
@@ -264,15 +287,13 @@ class Landscape {
       });
     }
 
-    // Find actual minima by gradient descent from guaranteed positions
     this.knownMinima = [];
     for (const g of guaranteed) {
-      const m = this._findMinimum(g.cx, g.cy);
-      m.label = g.label;
-      m.guaranteedAmp = g.amp;
-      this.knownMinima.push(m);
+      const min = this._findMinimum(g.cx, g.cy);
+      min.label = g.label;
+      min.guaranteedAmp = g.amp;
+      this.knownMinima.push(min);
     }
-    // Sort by loss (weakest = highest loss first)
     this.knownMinima.sort((a, b) => b.loss - a.loss);
   }
 
@@ -289,7 +310,7 @@ class Landscape {
   }
 
   eval(x, y) {
-    let z = 0.015 * (x * x + y * y); // gentle bowl
+    let z = 0.015 * (x * x + y * y);
     for (const b of this.basins) {
       const dx = (x - b.cx) / b.sx, dy = (y - b.cy) / b.sy;
       z += b.amp * Math.exp(-0.5 * (dx * dx + dy * dy));
@@ -312,9 +333,9 @@ class Landscape {
 let land = new Landscape(4, 0.3);
 
 // ============================================================
-//  GRID DATA FOR PLOTLY
+//  GRID DATA FOR PLOTLY (reduced for performance)
 // ============================================================
-const GRID = 50; // lower than 80 for performance
+const GRID = 40;
 const RANGE = 5.5;
 let gridXvals = [], gridYvals = [], gridZ = [];
 
@@ -351,6 +372,27 @@ let ball = null;
 let currentLR = 0;
 let bannerTimeout = null;
 
+// Helper: find which basin a position settles into
+function findSettledBasin(x, y) {
+  let sx = x, sy = y;
+  for (let i = 0; i < 300; i++) {
+    const [gx, gy] = land.grad(sx, sy);
+    sx -= 0.01 * gx;
+    sy -= 0.01 * gy;
+    sx = Math.max(-5.5, Math.min(5.5, sx));
+    sy = Math.max(-5.5, Math.min(5.5, sy));
+  }
+  return { x: sx, y: sy, loss: land.eval(sx, sy) };
+}
+
+// Check if two positions are in the same basin
+function isSameBasin(x1, y1, x2, y2, threshold) {
+  const b1 = findSettledBasin(x1, y1);
+  const b2 = findSettledBasin(x2, y2);
+  const dx = b1.x - b2.x, dy = b1.y - b2.y;
+  return Math.sqrt(dx*dx + dy*dy) < (threshold || 1.0);
+}
+
 function makeBall(x, y) {
   return {
     x, y, vx: 0, vy: 0,
@@ -359,20 +401,22 @@ function makeBall(x, y) {
     stale: 0,
     step: 0,
     trail: [],
-    // Checkpoint
     cpX: 0, cpY: 0, cpVx: 0, cpVy: 0, cpLoss: Infinity,
-    // Exploration
-    phase: 'descent', // 'descent', 'jumping', 'descending_candidate'
+    phase: 'descent',
     jumpStepsLeft: 0,
     descentStepsLeft: 0,
-    // Stats
     jumps: 0, accepts: 0, rejects: 0,
     rejectedTrails: [],
     _rejectFade: 0,
-    // LR state
     lrMultiplier: 1.0,
     lrDecayAccum: 1.0,
     minimaVisited: [],
+    // Adaptive exploration state
+    sameBasinStreak: 0,     // consecutive jumps that landed in same basin
+    exploreMultiplier: 1.0, // grows when stuck in same basin
+    lastBasinX: NaN,        // settled position of last basin we were in
+    lastBasinY: NaN,
+    extraJumpSteps: 0,      // bonus random steps from adaptation
   };
 }
 
@@ -381,22 +425,20 @@ function showBanner(msg, duration) {
   el.textContent = msg;
   el.style.display = 'block';
   el.style.animation = 'none';
-  el.offsetHeight; // reflow
-  el.style.animation = 'bannerPulse 0.6s ease-in-out';
+  el.offsetHeight;
+  el.style.animation = 'bannerSlideUp 0.4s ease-out';
   if (bannerTimeout) clearTimeout(bannerTimeout);
   bannerTimeout = setTimeout(() => { el.style.display = 'none'; }, duration || 2500);
 }
 
 function resetBall() {
-  // Start at the weakest (shallowest) minimum
-  const weakest = land.knownMinima[0]; // sorted weakest first
+  const weakest = land.knownMinima[0];
   ball = makeBall(weakest.x + (Math.random()-0.5)*0.3, weakest.y + (Math.random()-0.5)*0.3);
   ball.lrDecayAccum = 1.0;
   ball.lrMultiplier = 1.0;
   currentLR = V('lr') * 0.002;
   lossHist.length = 0;
   lrHist.length = 0;
-  // Reset minima visited status
   for (const m of land.knownMinima) m.visited = false;
   clearLog();
   log('i', 'Ball placed near weakest minimum. Press Start.');
@@ -430,7 +472,6 @@ function updateMinimaList() {
     const div = document.createElement('div');
     div.className = 'm-item';
     if (m.visited) div.classList.add('visited');
-    // Check if ball is near this minimum
     if (ball) {
       const dx = ball.x - m.x, dy = ball.y - m.y;
       if (Math.sqrt(dx*dx + dy*dy) < 0.8) div.classList.add('current');
@@ -441,7 +482,6 @@ function updateMinimaList() {
   }
 }
 
-// Check if ball is near a known minimum
 function checkMinimaProximity() {
   if (!ball) return;
   for (const m of land.knownMinima) {
@@ -459,7 +499,7 @@ function checkMinimaProximity() {
 }
 
 // ============================================================
-//  PLOTLY SETUP
+//  PLOTLY SETUP (optimized for responsiveness)
 // ============================================================
 const plotDiv = $('plotly-div');
 let plotInited = false;
@@ -467,7 +507,6 @@ let plotInited = false;
 function buildTraces() {
   const traces = [];
 
-  // Surface
   traces.push({
     type: 'surface',
     x: gridXvals,
@@ -517,15 +556,24 @@ function buildTraces() {
     hovertext: mText,
   });
 
-  // Trail
+  // Trail — downsample for performance
   if (ball.trail.length > 1) {
-    // Split trail into segments by type for coloring
+    const maxTrailPoints = 600;
+    let trail = ball.trail;
+    if (trail.length > maxTrailPoints) {
+      const step = Math.ceil(trail.length / maxTrailPoints);
+      const sampled = [];
+      for (let i = 0; i < trail.length; i += step) sampled.push(trail[i]);
+      if (sampled[sampled.length-1] !== trail[trail.length-1]) sampled.push(trail[trail.length-1]);
+      trail = sampled;
+    }
+
     let segStart = 0;
-    for (let i = 1; i <= ball.trail.length; i++) {
-      const prevS = ball.trail[i-1].s;
-      const curS = i < ball.trail.length ? ball.trail[i].s : null;
-      if (curS !== prevS || i === ball.trail.length) {
-        const seg = ball.trail.slice(segStart, i);
+    for (let i = 1; i <= trail.length; i++) {
+      const prevS = trail[i-1].s;
+      const curS = i < trail.length ? trail[i].s : null;
+      if (curS !== prevS || i === trail.length) {
+        const seg = trail.slice(segStart, i);
         if (seg.length > 1) {
           const color = prevS === 'j' ? '#d29922' : prevS === 'a' ? '#3fb950' : '#58a6ff';
           traces.push({
@@ -563,7 +611,7 @@ function buildTraces() {
   }
 
   // Checkpoint marker during exploration
-  if (ball.state === 'exploring') {
+  if (ball.phase === 'jumping' || ball.phase === 'descending_candidate') {
     const cpz = land.eval(ball.cpX, ball.cpY);
     traces.push({
       type: 'scatter3d',
@@ -578,9 +626,30 @@ function buildTraces() {
     });
   }
 
+  // Explore radius indicator — show expanding search area when adapting
+  if (ball.exploreMultiplier > 1.3 && (ball.phase === 'jumping')) {
+    const radius = ball.exploreMultiplier * 0.8;
+    const circX = [], circY = [], circZ = [];
+    for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.2) {
+      const px = ball.cpX + Math.cos(a) * radius;
+      const py = ball.cpY + Math.sin(a) * radius;
+      circX.push(px);
+      circY.push(py);
+      circZ.push(land.eval(px, py) + 0.12);
+    }
+    traces.push({
+      type: 'scatter3d',
+      x: circX, y: circY, z: circZ,
+      mode: 'lines',
+      line: { color: '#f0883e', width: 3, dash: 'dot' },
+      showlegend: false,
+      hoverinfo: 'skip'
+    });
+  }
+
   // Ball
   const bz = land.eval(ball.x, ball.y);
-  const ballColor = ball.phase === 'jumping' ? '#d29922' :
+  const ballColor = ball.phase === 'jumping' ? (ball.exploreMultiplier > 1.5 ? '#f0883e' : '#d29922') :
                     ball.phase === 'descending_candidate' ? '#3fb950' :
                     ball.state === 'running' ? '#58a6ff' : '#8b949e';
   traces.push({
@@ -588,7 +657,7 @@ function buildTraces() {
     x: [ball.x], y: [ball.y], z: [bz + 0.18],
     mode: 'markers+text',
     marker: {
-      size: 10,
+      size: ball.exploreMultiplier > 1.5 && ball.phase === 'jumping' ? 13 : 10,
       color: ballColor,
       symbol: 'circle',
       line: { color: '#ffffff', width: 2 }
@@ -644,7 +713,7 @@ function initPlot() {
   plotInited = true;
 
   plotDiv.on('plotly_click', function(data) {
-    if (!ball || ball.state === 'exploring' || ball.state === 'jumping') return;
+    if (!ball || ball.phase === 'jumping' || ball.phase === 'descending_candidate') return;
     const pt = data.points[0];
     if (pt && pt.curveNumber === 0) {
       ball.x = pt.x;
@@ -658,6 +727,9 @@ function initPlot() {
       ball._rejectFade = 0;
       ball.lrDecayAccum = 1.0;
       ball.lrMultiplier = 1.0;
+      ball.sameBasinStreak = 0;
+      ball.exploreMultiplier = 1.0;
+      ball.extraJumpSteps = 0;
       lossHist.length = 0;
       lrHist.length = 0;
       log('i', `Ball placed at (${ball.x.toFixed(2)}, ${ball.y.toFixed(2)}), loss=${ball.bestLoss.toFixed(4)}`);
@@ -666,7 +738,7 @@ function initPlot() {
 }
 
 let lastPlotUpdate = 0;
-const PLOT_UPDATE_INTERVAL = 120; // ms — less frequent = less lag
+const PLOT_UPDATE_INTERVAL = 150;
 
 function updatePlot(now) {
   if (!plotInited) return;
@@ -681,7 +753,7 @@ function updatePlot(now) {
 const lossChartDiv = $('loss-chart');
 let lossChartInited = false;
 let lastChartUpdate = 0;
-const CHART_UPDATE_INTERVAL = 200;
+const CHART_UPDATE_INTERVAL = 300;
 
 function initLossChart() {
   Plotly.newPlot(lossChartDiv, [{
@@ -735,7 +807,7 @@ function updateLossChart(now) {
 }
 
 // ============================================================
-//  PHYSICS — DESCENT + JUMP + DESCEND CYCLE
+//  PHYSICS — DESCENT + JUMP + DESCEND CYCLE + ADAPTIVE RADIUS
 // ============================================================
 function clampBall() {
   ball.x = Math.max(-5.5, Math.min(5.5, ball.x));
@@ -756,7 +828,6 @@ function doStep() {
 
   if (ball.state === 'running') {
     if (ball.phase === 'descent') {
-      // Normal gradient descent with decaying LR
       ball.lrDecayAccum *= decay;
       const lr = getEffectiveLR();
       currentLR = lr;
@@ -773,7 +844,7 @@ function doStep() {
 
       const newLoss = land.eval(ball.x, ball.y);
       ball.trail.push({ x: ball.x, y: ball.y, z: newLoss, s: 'n' });
-      if (ball.trail.length > 4000) ball.trail.shift();
+      if (ball.trail.length > 2000) ball.trail.shift();
 
       if (newLoss < ball.bestLoss - V('pthr')) {
         ball.bestLoss = newLoss;
@@ -794,27 +865,39 @@ function doStep() {
         ball.cpVy = ball.vy;
         ball.cpLoss = loss;
 
-        // LR SCHEDULER → OPTIMIZER communication
+        // Record the basin we're currently in for same-basin detection
+        const currentBasin = findSettledBasin(ball.x, ball.y);
+        ball.lastBasinX = currentBasin.x;
+        ball.lastBasinY = currentBasin.y;
+
+        // Apply adaptive exploration multiplier
+        const effectiveJmul = V('jmul') * ball.exploreMultiplier;
+        const effectiveSteps = Math.round(V('estep') * (1 + ball.extraJumpSteps / V('estep')));
+
+        if (ball.exploreMultiplier > 1.05) {
+          log('w', `🔍 Adaptive: explore ×${ball.exploreMultiplier.toFixed(1)} (streak: ${ball.sameBasinStreak}), steps: ${effectiveSteps}`);
+        }
+
         log('s', `📋 SCHEDULER → OPTIMIZER: Save checkpoint at loss=${loss.toFixed(4)}`);
-        log('s', `📋 SCHEDULER → OPTIMIZER: Increase LR ×${V('jmul')} for exploration`);
-        showBanner(`📋 LR Scheduler → Optimizer\nSave checkpoint · Boost LR ×${V('jmul')}\nExploring for better basin...`, 3000);
+        log('s', `📋 SCHEDULER → OPTIMIZER: Increase LR ×${effectiveJmul.toFixed(0)} for exploration`);
+        showBanner(`📋 LR Scheduler → Optimizer\nSave checkpoint · Boost LR ×${effectiveJmul.toFixed(0)}${ball.exploreMultiplier > 1.05 ? '\n🔍 Expanding search (streak ' + ball.sameBasinStreak + ')' : ''}\nExploring for better basin...`, 3000);
 
         ball.phase = 'jumping';
-        ball.jumpStepsLeft = Math.round(V('estep'));
-        ball.lrMultiplier = V('jmul');
-        ball.lrDecayAccum = 1.0; // reset decay for jump phase
+        ball.jumpStepsLeft = effectiveSteps;
+        ball.lrMultiplier = effectiveJmul;
+        ball.lrDecayAccum = 1.0;
         ball.stale = 0;
       }
     }
     else if (ball.phase === 'jumping') {
-      // Random exploration with high LR
       const lr = getEffectiveLR();
       currentLR = lr;
 
       const [gx, gy] = land.grad(ball.x, ball.y);
-      // Add strong random perturbation
-      ball.vx = mom * ball.vx - lr * gx + (Math.random() - 0.5) * lr * 3;
-      ball.vy = mom * ball.vy - lr * gy + (Math.random() - 0.5) * lr * 3;
+      // Random perturbation scales with exploreMultiplier
+      const noiseScale = lr * 3 * Math.max(1, ball.exploreMultiplier * 0.7);
+      ball.vx = mom * ball.vx - lr * gx + (Math.random() - 0.5) * noiseScale;
+      ball.vy = mom * ball.vy - lr * gy + (Math.random() - 0.5) * noiseScale;
       ball.vx *= fric;
       ball.vy *= fric;
       ball.x += ball.vx;
@@ -825,9 +908,8 @@ function doStep() {
 
       const newLoss = land.eval(ball.x, ball.y);
       ball.trail.push({ x: ball.x, y: ball.y, z: newLoss, s: 'j' });
-      if (ball.trail.length > 4000) ball.trail.shift();
+      if (ball.trail.length > 2000) ball.trail.shift();
 
-      // Check if we've stumbled onto a slope leading to a better minimum
       const [gx2, gy2] = land.grad(ball.x, ball.y);
       const gradMag = Math.sqrt(gx2*gx2 + gy2*gy2);
       const onSlope = gradMag > 0.3 && newLoss < ball.cpLoss - 0.1;
@@ -846,13 +928,12 @@ function doStep() {
         ball.phase = 'descending_candidate';
         ball.descentStepsLeft = Math.round(V('dstep'));
         ball.lrMultiplier = 1.0;
-        ball.lrDecayAccum = 1.0; // fresh decay for descent
+        ball.lrDecayAccum = 1.0;
         ball.vx = 0;
         ball.vy = 0;
       }
     }
     else if (ball.phase === 'descending_candidate') {
-      // Descend to candidate minimum with normal (decaying) LR
       ball.lrDecayAccum *= decay;
       const lr = getEffectiveLR();
       currentLR = lr;
@@ -870,31 +951,56 @@ function doStep() {
 
       const newLoss = land.eval(ball.x, ball.y);
       ball.trail.push({ x: ball.x, y: ball.y, z: newLoss, s: 'a' });
-      if (ball.trail.length > 4000) ball.trail.shift();
+      if (ball.trail.length > 2000) ball.trail.shift();
 
       checkMinimaProximity();
 
       if (ball.descentStepsLeft <= 0) {
         const candLoss = land.eval(ball.x, ball.y);
 
-        if (candLoss < ball.cpLoss) {
-          // Accept new position
+        // Check if we ended up in the same basin we started from
+        const candidateBasin = findSettledBasin(ball.x, ball.y);
+        const dx = candidateBasin.x - ball.lastBasinX;
+        const dy = candidateBasin.y - ball.lastBasinY;
+        const sameBasin = Math.sqrt(dx*dx + dy*dy) < 1.0;
+
+        if (candLoss < ball.cpLoss && !sameBasin) {
+          // Genuinely new and better basin — accept and RESET adaptive state
           ball.accepts++;
-          log('a', `✓ ACCEPTED! ${ball.cpLoss.toFixed(4)} → ${candLoss.toFixed(4)}`);
-          log('s', `📋 SCHEDULER → OPTIMIZER: New minimum accepted. Reset LR decay.`);
-          showBanner(`📋 LR Scheduler → Optimizer\n✓ New minimum accepted!\nLoss: ${ball.cpLoss.toFixed(4)} → ${candLoss.toFixed(4)}`, 3000);
+          ball.sameBasinStreak = 0;
+          ball.exploreMultiplier = 1.0;
+          ball.extraJumpSteps = 0;
+          log('a', `✓ ACCEPTED! ${ball.cpLoss.toFixed(4)} → ${candLoss.toFixed(4)} (NEW basin)`);
+          log('s', `📋 SCHEDULER → OPTIMIZER: New minimum accepted. Explore radius reset.`);
+          showBanner(`📋 LR Scheduler → Optimizer\n✓ New basin accepted!\nLoss: ${ball.cpLoss.toFixed(4)} → ${candLoss.toFixed(4)}\nExplore radius reset`, 3000);
+          ball.bestLoss = candLoss;
+          ball.stale = 0;
+          ball.rejectedTrails = [];
+          ball._rejectFade = 0;
+        } else if (candLoss < ball.cpLoss && sameBasin) {
+          // Better loss but SAME basin — accept position but INCREASE explore radius
+          ball.accepts++;
+          ball.sameBasinStreak++;
+          ball.exploreMultiplier = Math.min(6.0, 1.0 + ball.sameBasinStreak * 0.5);
+          ball.extraJumpSteps = Math.min(60, ball.sameBasinStreak * 8);
+          log('w', `⚠ ACCEPTED but SAME BASIN (streak ${ball.sameBasinStreak}). Expanding search ×${ball.exploreMultiplier.toFixed(1)}`);
+          log('s', `📋 SCHEDULER → OPTIMIZER: Same basin detected! Widening exploration radius.`);
+          showBanner(`📋 LR Scheduler → Optimizer\n⚠ Same basin! Accepted but expanding\nExplore ×${ball.exploreMultiplier.toFixed(1)} · +${ball.extraJumpSteps} steps\nNeed to escape further!`, 3500);
           ball.bestLoss = candLoss;
           ball.stale = 0;
           ball.rejectedTrails = [];
           ball._rejectFade = 0;
         } else {
-          // Reject — rollback to checkpoint
+          // Rejected — also increase explore radius since we couldn't find better
           ball.rejects++;
-          log('r', `✗ REJECTED (${candLoss.toFixed(4)} ≥ ${ball.cpLoss.toFixed(4)}). Rolling back.`);
-          log('s', `📋 SCHEDULER → OPTIMIZER: Reset to last checkpoint!`);
-          showBanner(`📋 LR Scheduler → Optimizer\n✗ Candidate rejected!\nReset to last checkpoint\nLoss: ${ball.cpLoss.toFixed(4)}`, 3000);
+          ball.sameBasinStreak++;
+          ball.exploreMultiplier = Math.min(6.0, 1.0 + ball.sameBasinStreak * 0.5);
+          ball.extraJumpSteps = Math.min(60, ball.sameBasinStreak * 8);
+          log('r', `✗ REJECTED (${candLoss.toFixed(4)} ≥ ${ball.cpLoss.toFixed(4)})${sameBasin ? ' [same basin]' : ''}. Rolling back.`);
+          log('w', `🔍 Streak ${ball.sameBasinStreak}: expanding explore ×${ball.exploreMultiplier.toFixed(1)}, +${ball.extraJumpSteps} steps`);
+          log('s', `📋 SCHEDULER → OPTIMIZER: Reset to checkpoint. Wider search next time.`);
+          showBanner(`📋 LR Scheduler → Optimizer\n✗ Rejected! Rolling back\n🔍 Expanding search ×${ball.exploreMultiplier.toFixed(1)}\n+${ball.extraJumpSteps} extra jump steps`, 3000);
 
-          // Save rejected trail
           const rejectTrail = [];
           for (let i = ball.trail.length - 1; i >= 0; i--) {
             if (ball.trail[i].s === 'j' || ball.trail[i].s === 'a') {
@@ -909,11 +1015,9 @@ function doStep() {
           ball.vx = ball.cpVx;
           ball.vy = ball.cpVy;
           ball.stale = 0;
-          // Slightly raise bestLoss to allow re-triggering
           ball.bestLoss = ball.cpLoss + 0.02;
         }
 
-        // Back to normal descent
         ball.phase = 'descent';
         ball.lrMultiplier = 1.0;
         ball.lrDecayAccum = 1.0;
@@ -936,7 +1040,6 @@ function updateHUD() {
   $('h-acc').textContent = ball.accepts;
   $('h-rej').textContent = ball.rejects;
 
-  // LR display
   $('h-lr').textContent = currentLR.toExponential(3);
   const phaseLabels = {
     descent: '📉 Descending (decay)',
@@ -944,6 +1047,12 @@ function updateHUD() {
     descending_candidate: '🎯 Candidate descent'
   };
   $('h-lr-phase').textContent = phaseLabels[ball.phase] || ball.phase;
+
+  // Explore multiplier display
+  const emul = ball.exploreMultiplier || 1.0;
+  const emulEl = $('h-explore-mul');
+  emulEl.textContent = `${emul.toFixed(1)}×${ball.sameBasinStreak > 0 ? ' (streak ' + ball.sameBasinStreak + ')' : ''}`;
+  emulEl.style.color = emul > 1.5 ? '#f0883e' : emul > 1.05 ? '#d29922' : '#58a6ff';
 
   const labels = {
     idle: '⏹ Idle', paused: '⏸ Paused', running: '🏃 Running'
@@ -984,7 +1093,6 @@ $('btn-newmap').addEventListener('click', () => {
   land = new Landscape(V('nbas'), V('rough'));
   computeGrid();
   resetBall();
-  // Reinit plot with new surface
   Plotly.react(plotDiv, buildTraces(), plotLayout, plotConfig);
   log('i', 'New landscape generated with 3+ guaranteed minima.');
 });
@@ -999,6 +1107,7 @@ log('i', 'Welcome to BasinHopper 3D!');
 log('i', 'Ball starts at weakest local minimum.');
 log('i', 'Press Start to begin. Watch the LR scheduler communicate with the optimizer!');
 log('i', 'The ball will descend → plateau → jump randomly → find slope → descend to new minimum.');
+log('i', '🔍 NEW: If jumps keep landing in the same basin, search radius auto-expands!');
 
 // ============================================================
 //  MAIN LOOP
