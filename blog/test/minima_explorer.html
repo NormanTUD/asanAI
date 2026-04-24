@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BasinHopper – Loss Landscape Explorer</title>
+<title>BasinHopper 3D – Loss Landscape Explorer</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -14,880 +14,1079 @@
     overflow: hidden;
   }
   #sidebar {
-    width: 340px;
-    min-width: 340px;
+    width: 330px;
+    min-width: 330px;
     background: #161b22;
-    padding: 20px;
+    padding: 16px;
     overflow-y: auto;
     border-right: 1px solid #30363d;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
-  #sidebar h1 {
-    font-size: 1.3em;
-    color: #58a6ff;
-    margin-bottom: 4px;
-  }
-  #sidebar h2 {
-    font-size: 0.95em;
-    color: #8b949e;
-    font-weight: normal;
-    margin-bottom: 8px;
-  }
-  .control-group {
+  #sidebar h1 { font-size: 1.2em; color: #58a6ff; }
+  #sidebar h2 { font-size: 0.85em; color: #8b949e; font-weight: normal; margin-bottom: 4px; }
+  .cg {
     background: #0d1117;
     border: 1px solid #30363d;
     border-radius: 8px;
-    padding: 12px;
+    padding: 10px;
   }
-  .control-group h3 {
-    font-size: 0.85em;
-    color: #58a6ff;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .cg h3 { font-size: 0.8em; color: #58a6ff; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .sr {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
   }
-  .slider-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6px;
+  .sr label { font-size: 0.78em; color: #8b949e; flex: 1; }
+  .sr input[type=range] { width: 110px; accent-color: #58a6ff; }
+  .sr .v { width: 44px; text-align: right; font-size: 0.78em; color: #e6edf3; font-family: monospace; }
+  .tr { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .tr label { font-size: 0.8em; }
+  .sw { position: relative; width: 38px; height: 20px; }
+  .sw input { opacity: 0; width: 0; height: 0; }
+  .st {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background: #30363d; border-radius: 20px; transition: 0.3s;
   }
-  .slider-row label {
-    font-size: 0.82em;
-    color: #8b949e;
-    flex: 1;
+  .st:before {
+    content: ""; position: absolute; height: 14px; width: 14px; left: 3px; bottom: 3px;
+    background: #c9d1d9; border-radius: 50%; transition: 0.3s;
   }
-  .slider-row input[type=range] {
-    width: 120px;
-    accent-color: #58a6ff;
-  }
-  .slider-row .val {
-    width: 50px;
-    text-align: right;
-    font-size: 0.82em;
-    color: #e6edf3;
-    font-family: monospace;
-  }
-  .toggle-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-  }
-  .toggle-row label { font-size: 0.85em; }
-  .switch {
-    position: relative;
-    width: 42px;
-    height: 22px;
-  }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider-toggle {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: #30363d;
-    border-radius: 22px;
-    transition: 0.3s;
-  }
-  .slider-toggle:before {
-    content: "";
-    position: absolute;
-    height: 16px; width: 16px;
-    left: 3px; bottom: 3px;
-    background: #c9d1d9;
-    border-radius: 50%;
-    transition: 0.3s;
-  }
-  .switch input:checked + .slider-toggle { background: #238636; }
-  .switch input:checked + .slider-toggle:before { transform: translateX(20px); }
+  .sw input:checked + .st { background: #238636; }
+  .sw input:checked + .st:before { transform: translateX(18px); }
   button {
-    padding: 8px 16px;
-    border: 1px solid #30363d;
-    background: #21262d;
-    color: #c9d1d9;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85em;
-    transition: 0.2s;
+    padding: 6px 12px; border: 1px solid #30363d; background: #21262d; color: #c9d1d9;
+    border-radius: 6px; cursor: pointer; font-size: 0.8em; transition: 0.2s;
   }
   button:hover { background: #30363d; border-color: #58a6ff; }
-  button.primary { background: #238636; border-color: #238636; color: #fff; }
-  button.primary:hover { background: #2ea043; }
-  button.danger { background: #da3633; border-color: #da3633; color: #fff; }
-  button.danger:hover { background: #f85149; }
-  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  button.p { background: #238636; border-color: #238636; color: #fff; }
+  button.p:hover { background: #2ea043; }
+  button.d { background: #da3633; border-color: #da3633; color: #fff; }
+  .br { display: flex; gap: 6px; flex-wrap: wrap; }
   #log {
-    flex: 1;
-    min-height: 80px;
-    background: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    padding: 8px;
-    font-family: monospace;
-    font-size: 0.75em;
-    overflow-y: auto;
-    color: #8b949e;
-    line-height: 1.5;
+    flex: 1; min-height: 60px; background: #0d1117; border: 1px solid #30363d;
+    border-radius: 8px; padding: 6px; font-family: monospace; font-size: 0.7em;
+    overflow-y: auto; color: #8b949e; line-height: 1.4;
   }
-  #log .jump { color: #d29922; }
-  #log .accept { color: #3fb950; }
-  #log .reject { color: #f85149; }
-  #log .info { color: #58a6ff; }
-  #canvas-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
-  canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
+  #log .j { color: #d29922; }
+  #log .a { color: #3fb950; }
+  #log .r { color: #f85149; }
+  #log .i { color: #58a6ff; }
+  #main { flex: 1; display: flex; flex-direction: column; position: relative; }
+  #view3d { flex: 1; position: relative; }
+  canvas { width: 100%; height: 100%; display: block; }
   #hud {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    background: rgba(22,27,34,0.9);
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-family: monospace;
-    font-size: 0.8em;
-    line-height: 1.7;
-    pointer-events: none;
+    position: absolute; top: 10px; right: 12px;
+    background: rgba(22,27,34,0.92); border: 1px solid #30363d;
+    border-radius: 8px; padding: 8px 12px; font-family: monospace;
+    font-size: 0.75em; line-height: 1.6; pointer-events: none;
   }
   #hud span { color: #58a6ff; }
+  #legend {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(22,27,34,0.92); border: 1px solid #30363d;
+    border-radius: 8px; padding: 8px 12px; font-size: 0.75em; pointer-events: none;
+  }
+  .leg-item { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
 </style>
 </head>
 <body>
 
 <div id="sidebar">
-  <h1>🏔️ BasinHopper</h1>
+  <h1>🏔️ BasinHopper 3D</h1>
   <h2>Interactive Loss Landscape Explorer</h2>
 
-  <div class="control-group">
-    <h3>⚙️ Base Optimizer</h3>
-    <div class="slider-row">
-      <label>Learning Rate</label>
-      <input type="range" id="lr" min="0.1" max="5" step="0.1" value="1.2">
-      <div class="val" id="lr-val">1.2</div>
-    </div>
-    <div class="slider-row">
-      <label>Momentum</label>
-      <input type="range" id="momentum" min="0" max="0.99" step="0.01" value="0.85">
-      <div class="val" id="momentum-val">0.85</div>
-    </div>
-    <div class="slider-row">
-      <label>Friction (drag)</label>
-      <input type="range" id="friction" min="0.8" max="1" step="0.005" value="0.97">
-      <div class="val" id="friction-val">0.97</div>
-    </div>
+  <div class="cg">
+    <h3>⚙️ Optimizer</h3>
+    <div class="sr"><label>Learning Rate</label><input type="range" id="lr" min="0.05" max="3" step="0.05" value="0.8"><div class="v" id="lr-v">0.80</div></div>
+    <div class="sr"><label>Momentum</label><input type="range" id="mom" min="0" max="0.99" step="0.01" value="0.80"><div class="v" id="mom-v">0.80</div></div>
+    <div class="sr"><label>Friction</label><input type="range" id="fric" min="0.80" max="1" step="0.005" value="0.96"><div class="v" id="fric-v">0.960</div></div>
   </div>
 
-  <div class="control-group">
+  <div class="cg">
     <h3>🚀 Basin Hopping</h3>
-    <div class="toggle-row">
-      <label class="switch">
-        <input type="checkbox" id="hopping-enabled" checked>
-        <span class="slider-toggle"></span>
-      </label>
-      <label>Enable Basin Hopping</label>
+    <div class="tr">
+      <label class="sw"><input type="checkbox" id="hop-on" checked><span class="st"></span></label>
+      <label>Enable Hopping</label>
     </div>
-    <div class="slider-row">
-      <label>Patience (steps)</label>
-      <input type="range" id="patience" min="10" max="200" step="5" value="60">
-      <div class="val" id="patience-val">60</div>
-    </div>
-    <div class="slider-row">
-      <label>Plateau Threshold</label>
-      <input type="range" id="plateau-thresh" min="0.001" max="0.1" step="0.001" value="0.01">
-      <div class="val" id="plateau-thresh-val">0.010</div>
-    </div>
-    <div class="slider-row">
-      <label>Jump LR Multiplier</label>
-      <input type="range" id="jump-mult" min="2" max="80" step="1" value="30">
-      <div class="val" id="jump-mult-val">30</div>
-    </div>
-    <div class="slider-row">
-      <label>Exploration Steps</label>
-      <input type="range" id="explore-steps" min="1" max="30" step="1" value="8">
-      <div class="val" id="explore-steps-val">8</div>
-    </div>
-    <div class="slider-row">
-      <label>Descent Steps</label>
-      <input type="range" id="descent-steps" min="1" max="60" step="1" value="25">
-      <div class="val" id="descent-steps-val">25</div>
-    </div>
+    <div class="sr"><label>Patience</label><input type="range" id="pat" min="10" max="300" step="5" value="80"><div class="v" id="pat-v">80</div></div>
+    <div class="sr"><label>Plateau Thresh</label><input type="range" id="pthr" min="0.001" max="0.1" step="0.001" value="0.008"><div class="v" id="pthr-v">0.008</div></div>
+    <div class="sr"><label>Jump LR ×</label><input type="range" id="jmul" min="2" max="100" step="1" value="35"><div class="v" id="jmul-v">35</div></div>
+    <div class="sr"><label>Explore Steps</label><input type="range" id="estep" min="1" max="40" step="1" value="10"><div class="v" id="estep-v">10</div></div>
+    <div class="sr"><label>Descent Steps</label><input type="range" id="dstep" min="1" max="80" step="1" value="30"><div class="v" id="dstep-v">30</div></div>
+    <div class="sr"><label>Candidates (n)</label><input type="range" id="ncand" min="1" max="5" step="1" value="3"><div class="v" id="ncand-v">3</div></div>
   </div>
 
-  <div class="control-group">
+  <div class="cg">
     <h3>🌄 Landscape</h3>
-    <div class="slider-row">
-      <label>Complexity</label>
-      <input type="range" id="complexity" min="1" max="8" step="1" value="4">
-      <div class="val" id="complexity-val">4</div>
-    </div>
-    <div class="slider-row">
-      <label>Roughness</label>
-      <input type="range" id="roughness" min="0" max="2" step="0.05" value="0.6">
-      <div class="val" id="roughness-val">0.60</div>
-    </div>
-    <div class="slider-row">
-      <label>Speed</label>
-      <input type="range" id="speed" min="0.2" max="5" step="0.1" value="1.0">
-      <div class="val" id="speed-val">1.0</div>
-    </div>
+    <div class="sr"><label>Basins</label><input type="range" id="nbas" min="3" max="15" step="1" value="7"><div class="v" id="nbas-v">7</div></div>
+    <div class="sr"><label>Roughness</label><input type="range" id="rough" min="0" max="2" step="0.05" value="0.5"><div class="v" id="rough-v">0.50</div></div>
+    <div class="sr"><label>Sim Speed</label><input type="range" id="spd" min="0.2" max="5" step="0.1" value="1.0"><div class="v" id="spd-v">1.0</div></div>
   </div>
 
-  <div class="btn-row">
-    <button class="primary" id="btn-start">▶ Start</button>
+  <div class="cg">
+    <h3>🎨 View</h3>
+    <div class="tr">
+      <label class="sw"><input type="checkbox" id="show3d" checked><span class="st"></span></label>
+      <label>3D Perspective</label>
+    </div>
+    <div class="sr"><label>Rotation</label><input type="range" id="rot" min="0" max="360" step="1" value="35"><div class="v" id="rot-v">35</div></div>
+    <div class="sr"><label>Tilt</label><input type="range" id="tilt" min="10" max="85" step="1" value="55"><div class="v" id="tilt-v">55</div></div>
+    <div class="sr"><label>Height Scale</label><input type="range" id="hscale" min="0.3" max="3" step="0.1" value="1.2"><div class="v" id="hscale-v">1.2</div></div>
+  </div>
+
+  <div class="br">
+    <button class="p" id="btn-go">▶ Start</button>
     <button id="btn-pause">⏸ Pause</button>
-    <button class="danger" id="btn-reset">↺ Reset</button>
-    <button id="btn-new-landscape">🗺 New Map</button>
+    <button class="d" id="btn-reset">↺ Reset</button>
+    <button id="btn-newmap">🗺 New Map</button>
   </div>
 
   <div id="log"></div>
 </div>
 
-<div id="canvas-wrap">
-  <canvas id="canvas"></canvas>
-  <div id="hud">
-    <div>Step: <span id="hud-step">0</span></div>
-    <div>Loss: <span id="hud-loss">—</span></div>
-    <div>Best: <span id="hud-best">—</span></div>
-    <div>State: <span id="hud-state">idle</span></div>
-    <div>Stale: <span id="hud-stale">0</span></div>
+<div id="main">
+  <div id="view3d">
+    <canvas id="c"></canvas>
+    <div id="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#58a6ff"></div> Normal descent</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#d29922"></div> Jump (explore)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#3fb950"></div> Candidate descent</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#f85149"></div> Rejected / rollback</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#bc8cff"></div> Checkpoint</div>
+    </div>
+    <div id="hud">
+      <div>Step: <span id="h-step">0</span></div>
+      <div>Loss: <span id="h-loss">—</span></div>
+      <div>Best: <span id="h-best">—</span></div>
+      <div>State: <span id="h-state">idle</span></div>
+      <div>Stale: <span id="h-stale">0</span></div>
+      <div>Jumps: <span id="h-jumps">0</span> ✓<span id="h-acc">0</span> ✗<span id="h-rej">0</span></div>
+    </div>
   </div>
+  <canvas id="lc"></canvas>
 </div>
 
 <script>
 // ============================================================
-//  LANDSCAPE GENERATION
+//  UTILS
 // ============================================================
-class Landscape {
-  constructor(complexity = 4, roughness = 0.6, seed = null) {
-    this.seed = seed || Math.random() * 10000;
-    this.complexity = complexity;
-    this.roughness = roughness;
-    this.gaussians = [];
-    this._generate();
-  }
+const $ = id => document.getElementById(id);
+const V = id => parseFloat($(id).value);
+const C = id => $(id).checked;
 
-  _rng() {
-    // simple seeded pseudo-random
-    this.seed = (this.seed * 9301 + 49297) % 233280;
-    return this.seed / 233280;
-  }
-
-  _generate() {
-    this.gaussians = [];
-    const n = this.complexity * 3 + 2;
-    for (let i = 0; i < n; i++) {
-      this.gaussians.push({
-        cx: this._rng() * 10 - 5,
-        cy: this._rng() * 10 - 5,
-        amp: (this._rng() - 0.5) * 4,
-        sx: 0.5 + this._rng() * 2.5,
-        sy: 0.5 + this._rng() * 2.5,
-      });
-    }
-    // Add some sine-based roughness
-    this.sinParams = [];
-    const m = Math.floor(this.roughness * 6);
-    for (let i = 0; i < m; i++) {
-      this.sinParams.push({
-        fx: (this._rng() - 0.5) * 3,
-        fy: (this._rng() - 0.5) * 3,
-        amp: this._rng() * this.roughness * 0.8,
-        phase: this._rng() * Math.PI * 2,
-      });
-    }
-  }
-
-  eval(x, y) {
-    let z = 0;
-    // base bowl
-    z += 0.04 * (x * x + y * y);
-    // gaussians
-    for (const g of this.gaussians) {
-      const dx = (x - g.cx) / g.sx;
-      const dy = (y - g.cy) / g.sy;
-      z += g.amp * Math.exp(-0.5 * (dx * dx + dy * dy));
-    }
-    // roughness
-    for (const s of this.sinParams) {
-      z += s.amp * Math.sin(s.fx * x + s.fy * y + s.phase);
-    }
-    return z;
-  }
-
-  gradient(x, y) {
-    const h = 0.005;
-    const dzdx = (this.eval(x + h, y) - this.eval(x - h, y)) / (2 * h);
-    const dzdy = (this.eval(x, y + h) - this.eval(x, y - h)) / (2 * h);
-    return [dzdx, dzdy];
-  }
-}
-
-// ============================================================
-//  RENDERER
-// ============================================================
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-
-function resize() {
-  const wrap = document.getElementById('canvas-wrap');
-  canvas.width = wrap.clientWidth * devicePixelRatio;
-  canvas.height = wrap.clientHeight * devicePixelRatio;
-  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-}
-window.addEventListener('resize', resize);
-resize();
-
-const W = () => canvas.width / devicePixelRatio;
-const H = () => canvas.height / devicePixelRatio;
-
-// Map world coords to screen
-const VIEW = { xMin: -6, xMax: 6, yMin: -2, yMax: 5 };
-// We'll render a side-view: x = world x, screen y = loss value
-// But also show a top-down mini-map
-
-function worldToScreen(x, z) {
-  const sx = ((x - VIEW.xMin) / (VIEW.xMax - VIEW.xMin)) * W();
-  const sy = H() - ((z - VIEW.yMin) / (VIEW.yMax - VIEW.yMin)) * H();
-  return [sx, sy];
-}
-
-// We'll use a 1D slice through the landscape for the main view
-// and a 2D top-down heatmap in a corner
-
-let landscape = new Landscape(4, 0.6);
-let sliceY = 0; // y-coordinate of the 1D slice
-
-function drawLandscape1D() {
-  const steps = Math.ceil(W() / 2);
-  ctx.beginPath();
-  for (let i = 0; i <= steps; i++) {
-    const x = VIEW.xMin + (i / steps) * (VIEW.xMax - VIEW.xMin);
-    const z = landscape.eval(x, sliceY);
-    const [sx, sy] = worldToScreen(x, z);
-    if (i === 0) ctx.moveTo(sx, sy);
-    else ctx.lineTo(sx, sy);
-  }
-  // Fill below
-  ctx.lineTo(W(), H() + 10);
-  ctx.lineTo(0, H() + 10);
-  ctx.closePath();
-
-  const grad = ctx.createLinearGradient(0, 0, 0, H());
-  grad.addColorStop(0, 'rgba(30,80,160,0.7)');
-  grad.addColorStop(0.5, 'rgba(20,60,120,0.5)');
-  grad.addColorStop(1, 'rgba(10,30,60,0.3)');
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  // Outline
-  ctx.beginPath();
-  for (let i = 0; i <= steps; i++) {
-    const x = VIEW.xMin + (i / steps) * (VIEW.xMax - VIEW.xMin);
-    const z = landscape.eval(x, sliceY);
-    const [sx, sy] = worldToScreen(x, z);
-    if (i === 0) ctx.moveTo(sx, sy);
-    else ctx.lineTo(sx, sy);
-  }
-  ctx.strokeStyle = '#58a6ff';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-}
-
-function drawGrid() {
-  ctx.strokeStyle = 'rgba(48,54,61,0.5)';
-  ctx.lineWidth = 0.5;
-  for (let v = Math.ceil(VIEW.yMin); v <= VIEW.yMax; v++) {
-    const [, sy] = worldToScreen(0, v);
-    ctx.beginPath();
-    ctx.moveTo(0, sy);
-    ctx.lineTo(W(), sy);
-    ctx.stroke();
-    ctx.fillStyle = '#484f58';
-    ctx.font = '11px monospace';
-    ctx.fillText(v.toFixed(0), 4, sy - 3);
-  }
-}
-
-// ============================================================
-//  BALL / OPTIMIZER STATE
-// ============================================================
-let ball = {
-  x: -4.5,
-  vx: 0,
-  state: 'idle', // idle | running | exploring_jump | exploring_descent | paused
-  bestLoss: Infinity,
-  stepsWithoutImprovement: 0,
-  step: 0,
-  trail: [],
-  checkpointX: null,
-  checkpointVx: null,
-  checkpointLoss: null,
-  exploreStepsLeft: 0,
-  descentStepsLeft: 0,
-  jumpCount: 0,
-  acceptCount: 0,
-  rejectCount: 0,
-};
-
-function resetBall() {
-  ball.x = -4.5 + Math.random() * 1.5;
-  ball.vx = 0;
-  ball.state = 'idle';
-  ball.bestLoss = Infinity;
-  ball.stepsWithoutImprovement = 0;
-  ball.step = 0;
-  ball.trail = [];
-  ball.checkpointX = null;
-  ball.checkpointVx = null;
-  ball.checkpointLoss = null;
-  ball.exploreStepsLeft = 0;
-  ball.descentStepsLeft = 0;
-  ball.jumpCount = 0;
-  ball.acceptCount = 0;
-  ball.rejectCount = 0;
-  clearLog();
-  logMsg('info', 'Ball reset. Press Start.');
-}
-
-// ============================================================
-//  CONTROLS
-// ============================================================
-function getVal(id) { return parseFloat(document.getElementById(id).value); }
-function isChecked(id) { return document.getElementById(id).checked; }
-
-// Wire up slider displays
-const sliders = ['lr','momentum','friction','patience','plateau-thresh','jump-mult',
-                 'explore-steps','descent-steps','complexity','roughness','speed'];
-sliders.forEach(id => {
-  const el = document.getElementById(id);
-  const valEl = document.getElementById(id + '-val');
-  el.addEventListener('input', () => {
-    let v = parseFloat(el.value);
-    if (id === 'plateau-thresh') valEl.textContent = v.toFixed(3);
-    else if (id === 'roughness') valEl.textContent = v.toFixed(2);
-    else valEl.textContent = v;
+// Wire sliders
+['lr','mom','fric','pat','pthr','jmul','estep','dstep','ncand','nbas','rough','spd','rot','tilt','hscale'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    let v = V(id);
+    if (id === 'pthr') $(id+'-v').textContent = v.toFixed(3);
+    else if (id === 'rough') $(id+'-v').textContent = v.toFixed(2);
+    else if (id === 'fric') $(id+'-v').textContent = v.toFixed(3);
+    else if (id === 'lr') $(id+'-v').textContent = v.toFixed(2);
+    else $(id+'-v').textContent = v;
   });
 });
 
-document.getElementById('btn-start').addEventListener('click', () => {
-  if (ball.state === 'idle' || ball.state === 'paused') {
-    ball.state = 'running';
-    logMsg('info', 'Optimization started.');
+// ============================================================
+//  LANDSCAPE
+// ============================================================
+class Landscape {
+  constructor(nBasins, roughness) {
+    this.basins = [];
+    this.sinP = [];
+    this.generate(nBasins || 7, roughness || 0.5);
   }
-});
-document.getElementById('btn-pause').addEventListener('click', () => {
-  if (ball.state === 'running' || ball.state === 'exploring_jump' || ball.state === 'exploring_descent') {
-    ball.state = 'paused';
-    logMsg('info', 'Paused.');
+  generate(nBasins, roughness) {
+    this.basins = [];
+    for (let i = 0; i < nBasins; i++) {
+      this.basins.push({
+        cx: (Math.random() - 0.5) * 8,
+        cy: (Math.random() - 0.5) * 8,
+        amp: -(0.5 + Math.random() * 3),
+        sx: 0.6 + Math.random() * 2,
+        sy: 0.6 + Math.random() * 2,
+      });
+    }
+    for (let i = 0; i < 3; i++) {
+      this.basins.push({
+        cx: (Math.random() - 0.5) * 8,
+        cy: (Math.random() - 0.5) * 8,
+        amp: 0.3 + Math.random() * 1.5,
+        sx: 0.8 + Math.random() * 1.5,
+        sy: 0.8 + Math.random() * 1.5,
+      });
+    }
+    this.sinP = [];
+    const m = Math.floor(roughness * 8);
+    for (let i = 0; i < m; i++) {
+      this.sinP.push({
+        fx: (Math.random() - 0.5) * 3,
+        fy: (Math.random() - 0.5) * 3,
+        amp: Math.random() * roughness * 0.4,
+        ph: Math.random() * Math.PI * 2,
+      });
+    }
   }
-});
-document.getElementById('btn-reset').addEventListener('click', () => { resetBall(); });
-document.getElementById('btn-new-landscape').addEventListener('click', () => {
-  landscape = new Landscape(getVal('complexity'), getVal('roughness'));
-  sliceY = 0;
-  resetBall();
-  logMsg('info', 'New landscape generated.');
-});
+  eval(x, y) {
+    let z = 0.02 * (x * x + y * y);
+    for (const b of this.basins) {
+      const dx = (x - b.cx) / b.sx, dy = (y - b.cy) / b.sy;
+      z += b.amp * Math.exp(-0.5 * (dx * dx + dy * dy));
+    }
+    for (const s of this.sinP) {
+      z += s.amp * Math.sin(s.fx * x + s.fy * y + s.ph);
+    }
+    return z;
+  }
+  grad(x, y) {
+    const h = 0.005;
+    return [
+      (this.eval(x + h, y) - this.eval(x - h, y)) / (2 * h),
+      (this.eval(x, y + h) - this.eval(x, y - h)) / (2 * h)
+    ];
+  }
+}
+
+let land = new Landscape(7, 0.5);
+
+// ============================================================
+//  DECLARE SHARED STATE BEFORE ANY FUNCTION USES IT
+// ============================================================
+const lossHist = [];
+const MAX_HIST = 600;
+
+// ============================================================
+//  BALL STATE
+// ============================================================
+let ball = null;
+
+function makeBall(x, y) {
+  return {
+    x, y, vx: 0, vy: 0,
+    state: 'idle',
+    bestLoss: Infinity,
+    stale: 0,
+    step: 0,
+    trail: [],
+    cpX: 0, cpY: 0, cpVx: 0, cpVy: 0, cpLoss: Infinity,
+    candidates: [],
+    currentCand: 0,
+    exploreLeft: 0,
+    descentLeft: 0,
+    jumps: 0, accepts: 0, rejects: 0,
+    candTrails: [],
+    rejectedTrails: [],
+    _rejectFade: 0,
+  };
+}
+
+function resetBall() {
+  ball = makeBall(-3.5 + Math.random() * 1.5, -3.5 + Math.random() * 1.5);
+  lossHist.length = 0;
+  clearLog();
+  log('i', 'Ball reset. Click landscape to place, then Start.');
+}
 
 // ============================================================
 //  LOGGING
 // ============================================================
-const logEl = document.getElementById('log');
-function logMsg(cls, msg) {
+const logEl = $('log');
+function log(cls, msg) {
+  if (!ball) return;
   const d = document.createElement('div');
   d.className = cls;
   d.textContent = `[${ball.step}] ${msg}`;
   logEl.appendChild(d);
   logEl.scrollTop = logEl.scrollHeight;
+  if (logEl.children.length > 200) logEl.removeChild(logEl.firstChild);
 }
 function clearLog() { logEl.innerHTML = ''; }
 
 // ============================================================
-//  PHYSICS STEP
+//  CANVAS SETUP
 // ============================================================
-function physicsStep() {
-  if (ball.state === 'idle' || ball.state === 'paused') return;
+const canv = $('c');
+const cx = canv.getContext('2d');
 
-  const lr = getVal('lr') * 0.002;
-  const mom = getVal('momentum');
-  const friction = getVal('friction');
-  const hoppingEnabled = isChecked('hopping-enabled');
-  const patience = getVal('patience');
-  const plateauThresh = getVal('plateau-thresh');
-  const jumpMult = getVal('jump-mult');
-  const exploreSteps = getVal('explore-steps');
-  const descentSteps = getVal('descent-steps');
+function resize() {
+  const wrap = $('view3d');
+  canv.width = wrap.clientWidth * devicePixelRatio;
+  canv.height = wrap.clientHeight * devicePixelRatio;
+  cx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  const lc = $('lc');
+  lc.width = wrap.clientWidth * devicePixelRatio;
+  lc.height = 80 * devicePixelRatio;
+  lc.style.height = '80px';
+}
+window.addEventListener('resize', resize);
+resize();
 
-  const [grad] = landscape.gradient(ball.x, sliceY);
-  const currentLoss = landscape.eval(ball.x, sliceY);
+const CW = () => canv.width / devicePixelRatio;
+const CH = () => canv.height / devicePixelRatio;
+
+// ============================================================
+//  LANDSCAPE GRID
+// ============================================================
+let gridZ = null;
+const GRID = 80;
+const RANGE = 6;
+
+function computeGrid() {
+  gridZ = [];
+  for (let iy = 0; iy <= GRID; iy++) {
+    gridZ[iy] = [];
+    for (let ix = 0; ix <= GRID; ix++) {
+      const wx = -RANGE + (ix / GRID) * 2 * RANGE;
+      const wy = -RANGE + (iy / GRID) * 2 * RANGE;
+      gridZ[iy][ix] = land.eval(wx, wy);
+    }
+  }
+}
+computeGrid();
+
+// ============================================================
+//  3D PROJECTION
+// ============================================================
+function project(wx, wy, wz) {
+  const rot = V('rot') * Math.PI / 180;
+  const tilt = V('tilt') * Math.PI / 180;
+  const hs = V('hscale');
+
+  const rx = wx * Math.cos(rot) - wy * Math.sin(rot);
+  const ry = wx * Math.sin(rot) + wy * Math.cos(rot);
+  const rz = wz * hs;
+
+  const ty = ry * Math.cos(tilt) - rz * Math.sin(tilt);
+  const tz = ry * Math.sin(tilt) + rz * Math.cos(tilt);
+
+  const scale = CW() / 14;
+  const sx = CW() / 2 + rx * scale;
+  const sy = CH() / 2 - tz * scale * 0.8 + ty * scale * 0.15;
+  return [sx, sy, tz];
+}
+
+function projectPt(wx, wy) {
+  const wz = land.eval(wx, wy);
+  if (C('show3d')) {
+    const [sx, sy] = project(wx, wy, wz);
+    return [sx, sy];
+  } else {
+    const px = ((wx + RANGE) / (2 * RANGE)) * CW();
+    const py = ((wy + RANGE) / (2 * RANGE)) * CH();
+    return [px, py];
+  }
+}
+
+function lossToColor(z) {
+  const t = Math.max(0, Math.min(1, (z + 3) / 5));
+  const r = Math.floor(10 + t * 60);
+  const g = Math.floor(30 + (1 - t) * 140);
+  const b = Math.floor(80 + (1 - t) * 120);
+  return `rgb(${r},${g},${b})`;
+}
+
+// ============================================================
+//  DRAW SURFACE
+// ============================================================
+function drawSurface() {
+  const is3D = C('show3d');
+
+  if (!is3D) {
+    const cellW = CW() / GRID;
+    const cellH = CH() / GRID;
+    for (let iy = 0; iy < GRID; iy++) {
+      for (let ix = 0; ix < GRID; ix++) {
+        cx.fillStyle = lossToColor(gridZ[iy][ix]);
+        cx.fillRect(ix * cellW, iy * cellH, cellW + 1, cellH + 1);
+      }
+    }
+    // Draw contour lines
+    for (let iy = 1; iy < GRID; iy++) {
+      for (let ix = 1; ix < GRID; ix++) {
+        const z = gridZ[iy][ix];
+        const zl = gridZ[iy][ix - 1];
+        const zu = gridZ[iy - 1][ix];
+        for (let level = -4; level <= 4; level += 0.5) {
+          if ((z >= level && zl < level) || (z < level && zl >= level) ||
+              (z >= level && zu < level) || (z < level && zu >= level)) {
+            cx.fillStyle = 'rgba(255,255,255,0.08)';
+            cx.fillRect(ix * cellW, iy * cellH, cellW, cellH);
+            break;
+          }
+        }
+      }
+    }
+    return;
+  }
+
+  // 3D surface with painter's algorithm
+  const quads = [];
+  const step = 2;
+  for (let iy = 0; iy < GRID; iy += step) {
+    for (let ix = 0; ix < GRID; ix += step) {
+      const wx0 = -RANGE + (ix / GRID) * 2 * RANGE;
+      const wy0 = -RANGE + (iy / GRID) * 2 * RANGE;
+      const wx1 = -RANGE + (Math.min(ix + step, GRID) / GRID) * 2 * RANGE;
+      const wy1 = -RANGE + (Math.min(iy + step, GRID) / GRID) * 2 * RANGE;
+      const z00 = gridZ[iy][ix];
+      const z10 = gridZ[iy][Math.min(ix + step, GRID)];
+      const z01 = gridZ[Math.min(iy + step, GRID)][ix];
+      const z11 = gridZ[Math.min(iy + step, GRID)][Math.min(ix + step, GRID)];
+      const avgZ = (z00 + z10 + z01 + z11) / 4;
+
+      const p00 = project(wx0, wy0, z00);
+      const p10 = project(wx1, wy0, z10);
+      const p01 = project(wx0, wy1, z01);
+      const p11 = project(wx1, wy1, z11);
+      const depth = (p00[2] + p10[2] + p01[2] + p11[2]) / 4;
+      quads.push({ p00, p10, p01, p11, avgZ, depth });
+    }
+  }
+
+  quads.sort((a, b) => a.depth - b.depth);
+
+  for (const q of quads) {
+    cx.beginPath();
+    cx.moveTo(q.p00[0], q.p00[1]);
+    cx.lineTo(q.p10[0], q.p10[1]);
+    cx.lineTo(q.p11[0], q.p11[1]);
+    cx.lineTo(q.p01[0], q.p01[1]);
+    cx.closePath();
+    cx.fillStyle = lossToColor(q.avgZ);
+    cx.fill();
+    cx.strokeStyle = 'rgba(88,166,255,0.1)';
+    cx.lineWidth = 0.5;
+    cx.stroke();
+  }
+}
+
+// ============================================================
+//  PHYSICS
+// ============================================================
+function clampBall() {
+  ball.x = Math.max(-5.5, Math.min(5.5, ball.x));
+  ball.y = Math.max(-5.5, Math.min(5.5, ball.y));
+}
+
+function clampXY(obj) {
+  obj.x = Math.max(-5.5, Math.min(5.5, obj.x));
+  obj.y = Math.max(-5.5, Math.min(5.5, obj.y));
+}
+
+function doStep() {
+  if (!ball || ball.state === 'idle' || ball.state === 'paused') return;
+
+  const lr = V('lr') * 0.002;
+  const mom = V('mom');
+  const fric = V('fric');
 
   if (ball.state === 'running') {
-    // Normal SGD with momentum
-    ball.vx = mom * ball.vx - lr * grad;
-    ball.vx *= friction;
+    const [gx, gy] = land.grad(ball.x, ball.y);
+    const loss = land.eval(ball.x, ball.y);
+
+    ball.vx = mom * ball.vx - lr * gx;
+    ball.vy = mom * ball.vy - lr * gy;
+    ball.vx *= fric;
+    ball.vy *= fric;
     ball.x += ball.vx;
-
-    // Clamp
-    ball.x = Math.max(VIEW.xMin + 0.1, Math.min(VIEW.xMax - 0.1, ball.x));
-
+    ball.y += ball.vy;
+    clampBall();
     ball.step++;
-    ball.trail.push({ x: ball.x, z: currentLoss, state: 'normal' });
-    if (ball.trail.length > 2000) ball.trail.shift();
 
-    // Plateau detection
-    if (currentLoss < ball.bestLoss - plateauThresh) {
-      ball.bestLoss = currentLoss;
-      ball.stepsWithoutImprovement = 0;
+    const newLoss = land.eval(ball.x, ball.y);
+    ball.trail.push({ x: ball.x, y: ball.y, z: newLoss, s: 'n' });
+    if (ball.trail.length > 3000) ball.trail.shift();
+
+    if (newLoss < ball.bestLoss - V('pthr')) {
+      ball.bestLoss = newLoss;
+      ball.stale = 0;
     } else {
-      ball.stepsWithoutImprovement++;
+      ball.stale++;
     }
 
-    // Trigger exploration?
-    if (hoppingEnabled && ball.stepsWithoutImprovement >= patience) {
-      ball.jumpCount++;
-      logMsg('jump', `Plateau detected! loss=${currentLoss.toFixed(4)}, stale=${ball.stepsWithoutImprovement}. Jumping... (#${ball.jumpCount})`);
-      ball.checkpointX = ball.x;
-      ball.checkpointVx = ball.vx;
-      ball.checkpointLoss = currentLoss;
-      ball.state = 'exploring_jump';
-      ball.exploreStepsLeft = exploreSteps;
-      ball.vx = 0;
+    if (C('hop-on') && ball.stale >= V('pat')) {
+      startExploration();
     }
   }
-  else if (ball.state === 'exploring_jump') {
-    // Big LR steps
-    const jumpLr = lr * jumpMult;
-    ball.vx = mom * ball.vx - jumpLr * grad;
-    ball.vx *= friction;
-    // Add some random perturbation for diversity
-    ball.vx += (Math.random() - 0.5) * jumpLr * 5;
-    ball.x += ball.vx;
-    ball.x = Math.max(VIEW.xMin + 0.1, Math.min(VIEW.xMax - 0.1, ball.x));
+  else if (ball.state === 'exploring') {
+    const cand = ball.candidates[ball.currentCand];
+    if (!cand) { finishExploration(); return; }
 
-    ball.step++;
-    ball.trail.push({ x: ball.x, z: landscape.eval(ball.x, sliceY), state: 'jump' });
-    if (ball.trail.length > 2000) ball.trail.shift();
-
-    ball.exploreStepsLeft--;
-    if (ball.exploreStepsLeft <= 0) {
-      ball.state = 'exploring_descent';
-      ball.descentStepsLeft = getVal('descent-steps');
-      ball.vx = 0;
-      logMsg('info', `Jump phase done at x=${ball.x.toFixed(3)}. Rolling down...`);
+    if (cand.phase === 'jump') {
+      const jumpLr = lr * V('jmul');
+      const [gx, gy] = land.grad(cand.x, cand.y);
+      cand.vx = mom * cand.vx - jumpLr * gx + (Math.random() - 0.5) * jumpLr * 4;
+      cand.vy = mom * cand.vy - jumpLr * gy + (Math.random() - 0.5) * jumpLr * 4;
+      cand.vx *= fric;
+      cand.vy *= fric;
+      cand.x += cand.vx;
+      cand.y += cand.vy;
+      clampXY(cand);
+      cand.trail.push({ x: cand.x, y: cand.y, z: land.eval(cand.x, cand.y), s: 'j' });
+      cand.stepsLeft--;
+      ball.step++;
+      if (cand.stepsLeft <= 0) {
+        cand.phase = 'descent';
+        cand.stepsLeft = Math.round(V('dstep'));
+        cand.vx = 0;
+        cand.vy = 0;
+      }
     }
-  }
-  else if (ball.state === 'exploring_descent') {
-    // Normal descent in new basin
-    ball.vx = mom * ball.vx - lr * grad;
-    ball.vx *= friction;
-    ball.x += ball.vx;
-    ball.x = Math.max(VIEW.xMin + 0.1, Math.min(VIEW.xMax - 0.1, ball.x));
-
-    ball.step++;
-    ball.trail.push({ x: ball.x, z: landscape.eval(ball.x, sliceY), state: 'descent' });
-    if (ball.trail.length > 2000) ball.trail.shift();
-
-    ball.descentStepsLeft--;
-    if (ball.descentStepsLeft <= 0) {
-      const newLoss = landscape.eval(ball.x, sliceY);
-      if (newLoss < ball.checkpointLoss) {
-        // Accept!
-        ball.acceptCount++;
-        logMsg('accept', `✓ Better basin found! ${ball.checkpointLoss.toFixed(4)} → ${newLoss.toFixed(4)}`);
-        ball.bestLoss = newLoss;
-        ball.stepsWithoutImprovement = 0;
-        ball.state = 'running';
-      } else {
-        // Reject — roll back
-        ball.rejectCount++;
-        logMsg('reject', `✗ Worse basin (${newLoss.toFixed(4)} ≥ ${ball.checkpointLoss.toFixed(4)}). Rolling back.`);
-        ball.x = ball.checkpointX;
-        ball.vx = ball.checkpointVx;
-        ball.stepsWithoutImprovement = 0;
-        // Slightly increase best loss tolerance to avoid immediate re-trigger
-        ball.bestLoss = ball.checkpointLoss + 0.05;
-        ball.state = 'running';
-        ball.trail.push({ x: ball.x, z: ball.checkpointLoss, state: 'rollback' });
+    else if (cand.phase === 'descent') {
+      const [gx, gy] = land.grad(cand.x, cand.y);
+      cand.vx = mom * cand.vx - lr * gx;
+      cand.vy = mom * cand.vy - lr * gy;
+      cand.vx *= fric;
+      cand.vy *= fric;
+      cand.x += cand.vx;
+      cand.y += cand.vy;
+      clampXY(cand);
+      cand.trail.push({ x: cand.x, y: cand.y, z: land.eval(cand.x, cand.y), s: 'd' });
+      cand.stepsLeft--;
+      ball.step++;
+      if (cand.stepsLeft <= 0) {
+        cand.finalLoss = land.eval(cand.x, cand.y);
+        log('i', `Candidate ${ball.currentCand + 1}: loss=${cand.finalLoss.toFixed(4)} at (${cand.x.toFixed(2)},${cand.y.toFixed(2)})`);
+        ball.currentCand++;
+        if (ball.currentCand >= ball.candidates.length) {
+          finishExploration();
+        }
       }
     }
   }
 }
 
-// ============================================================
-//  DRAW BALL & TRAIL
-// ============================================================
-function drawBall() {
-  const z = landscape.eval(ball.x, sliceY);
-  const [sx, sy] = worldToScreen(ball.x, z);
+function startExploration() {
+  ball.jumps++;
+  const loss = land.eval(ball.x, ball.y);
+  const n = Math.round(V('ncand'));
+  log('j', `Plateau! loss=${loss.toFixed(4)}, stale=${ball.stale}. Launching ${n} candidate(s)...`);
 
-  // Trail
-  if (ball.trail.length > 1) {
-    for (let i = 1; i < ball.trail.length; i++) {
-      const p = ball.trail[i];
-      const pp = ball.trail[i - 1];
-      const [x1, y1] = worldToScreen(pp.x, pp.z);
-      const [x2, y2] = worldToScreen(p.x, p.z);
-      const alpha = 0.15 + 0.6 * (i / ball.trail.length);
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      if (p.state === 'jump') ctx.strokeStyle = `rgba(210,153,34,${alpha})`;
-      else if (p.state === 'descent') ctx.strokeStyle = `rgba(63,185,80,${alpha})`;
-      else if (p.state === 'rollback') ctx.strokeStyle = `rgba(248,81,73,${alpha})`;
-      else ctx.strokeStyle = `rgba(88,166,255,${alpha})`;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+  ball.cpX = ball.x;
+  ball.cpY = ball.y;
+  ball.cpVx = ball.vx;
+  ball.cpVy = ball.vy;
+  ball.cpLoss = loss;
+  ball.state = 'exploring';
+  ball.currentCand = 0;
+  ball.candidates = [];
+
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI * 2 * i / n) + (Math.random() - 0.5) * 0.8;
+    ball.candidates.push({
+      x: ball.cpX,
+      y: ball.cpY,
+      vx: Math.cos(angle) * 0.02,
+      vy: Math.sin(angle) * 0.02,
+      phase: 'jump',
+      stepsLeft: Math.round(V('estep')),
+      trail: [{ x: ball.cpX, y: ball.cpY, z: loss, s: 'j' }],
+      finalLoss: Infinity,
+    });
+  }
+}
+
+function finishExploration() {
+  let bestIdx = -1, bestLoss = Infinity;
+  for (let i = 0; i < ball.candidates.length; i++) {
+    if (ball.candidates[i].finalLoss < bestLoss) {
+      bestLoss = ball.candidates[i].finalLoss;
+      bestIdx = i;
     }
   }
 
-  // Checkpoint marker
-  if (ball.checkpointX !== null && (ball.state === 'exploring_jump' || ball.state === 'exploring_descent')) {
-    const cz = landscape.eval(ball.checkpointX, sliceY);
-    const [cx, cy] = worldToScreen(ball.checkpointX, cz);
-    ctx.beginPath();
-    ctx.arc(cx, cy - 12, 6, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(248,81,73,0.6)';
-    ctx.fill();
-    ctx.strokeStyle = '#f85149';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    // Flag
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - 12);
-    ctx.lineTo(cx, cy - 30);
-    ctx.strokeStyle = '#f85149';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.fillStyle = '#f85149';
-    ctx.font = '10px monospace';
-    ctx.fillText('checkpoint', cx + 4, cy - 22);
+  ball.candTrails = ball.candidates.map(c => [...c.trail]);
+
+  if (bestLoss < ball.cpLoss) {
+    ball.accepts++;
+    const best = ball.candidates[bestIdx];
+    log('a', `✓ Accepted candidate ${bestIdx + 1}! ${ball.cpLoss.toFixed(4)} → ${bestLoss.toFixed(4)}`);
+    ball.x = best.x;
+    ball.y = best.y;
+    ball.vx = 0;
+    ball.vy = 0;
+    ball.bestLoss = bestLoss;
+    ball.stale = 0;
+    ball.rejectedTrails = [];
+    for (let i = 0; i < ball.candidates.length; i++) {
+      if (i !== bestIdx) ball.rejectedTrails.push(ball.candTrails[i]);
+    }
+    for (const pt of best.trail) {
+      ball.trail.push({ ...pt, s: pt.s === 'j' ? 'j' : 'a' });
+    }
+  } else {
+    ball.rejects++;
+    log('r', `✗ All candidates worse (best=${bestLoss.toFixed(4)} ≥ ${ball.cpLoss.toFixed(4)}). Rolling back.`);
+    ball.rejectedTrails = [...ball.candTrails];
+    ball.x = ball.cpX;
+    ball.y = ball.cpY;
+    ball.vx = ball.cpVx;
+    ball.vy = ball.cpVy;
+    ball.stale = 0;
+    ball.bestLoss = ball.cpLoss + 0.05;
   }
 
-  // Ball glow
-  const glowColor = ball.state === 'exploring_jump' ? 'rgba(210,153,34,0.3)' :
-                     ball.state === 'exploring_descent' ? 'rgba(63,185,80,0.3)' :
-                     'rgba(88,166,255,0.3)';
-  const glowR = ball.state.startsWith('exploring') ? 20 : 14;
-  const grd = ctx.createRadialGradient(sx, sy - 12, 2, sx, sy - 12, glowR);
-  grd.addColorStop(0, glowColor);
-  grd.addColorStop(1, 'transparent');
-  ctx.fillStyle = grd;
-  ctx.fillRect(sx - glowR, sy - 12 - glowR, glowR * 2, glowR * 2);
+  ball.state = 'running';
+  ball.candidates = [];
+  ball._rejectFade = 0;
+}
+
+// ============================================================
+//  DRAW TRAILS
+// ============================================================
+function drawTrailSegments(trail, lineWidth) {
+  if (!trail || trail.length < 2) return;
+  for (let i = 1; i < trail.length; i++) {
+    const a = trail[i - 1], b = trail[i];
+    const [x1, y1] = projectPt(a.x, a.y);
+    const [x2, y2] = projectPt(b.x, b.y);
+    const alpha = 0.15 + 0.7 * (i / trail.length);
+    cx.beginPath();
+    cx.moveTo(x1, y1);
+    cx.lineTo(x2, y2);
+    if (b.s === 'j') cx.strokeStyle = `rgba(210,153,34,${alpha})`;
+    else if (b.s === 'd' || b.s === 'a') cx.strokeStyle = `rgba(63,185,80,${alpha})`;
+    else if (b.s === 'r') cx.strokeStyle = `rgba(248,81,73,${alpha})`;
+    else cx.strokeStyle = `rgba(88,166,255,${alpha})`;
+    cx.lineWidth = lineWidth || 2;
+    cx.stroke();
+  }
+}
+
+// ============================================================
+//  DRAW BALL & CANDIDATES
+// ============================================================
+function drawBall() {
+  if (!ball) return;
+
+  // Draw fading rejected trails
+  if (ball.rejectedTrails && ball.rejectedTrails.length > 0) {
+    const fadeAlpha = Math.max(0, 1 - (ball._rejectFade || 0) / 200);
+    if (fadeAlpha > 0.01) {
+      for (const rt of ball.rejectedTrails) {
+        if (rt.length < 2) continue;
+        for (let i = 1; i < rt.length; i++) {
+          const a = rt[i - 1], b = rt[i];
+          const [x1, y1] = projectPt(a.x, a.y);
+          const [x2, y2] = projectPt(b.x, b.y);
+          cx.beginPath();
+          cx.moveTo(x1, y1);
+          cx.lineTo(x2, y2);
+          cx.strokeStyle = `rgba(248,81,73,${0.3 * fadeAlpha})`;
+          cx.lineWidth = 1.5;
+          cx.setLineDash([3, 3]);
+          cx.stroke();
+          cx.setLineDash([]);
+        }
+        // X mark at end
+        const last = rt[rt.length - 1];
+        const [ex, ey] = projectPt(last.x, last.y);
+        cx.globalAlpha = fadeAlpha;
+        cx.strokeStyle = '#f85149';
+        cx.lineWidth = 2;
+        cx.beginPath(); cx.moveTo(ex - 5, ey - 5); cx.lineTo(ex + 5, ey + 5); cx.stroke();
+        cx.beginPath(); cx.moveTo(ex + 5, ey - 5); cx.lineTo(ex - 5, ey + 5); cx.stroke();
+        cx.globalAlpha = 1;
+      }
+    }
+  }
+
+  // Main trail
+  drawTrailSegments(ball.trail, 2);
+
+  // Active candidate trails during exploration
+  if (ball.state === 'exploring') {
+    // Checkpoint marker
+    const [cpx, cpy] = projectPt(ball.cpX, ball.cpY);
+    cx.beginPath();
+    cx.arc(cpx, cpy, 10, 0, Math.PI * 2);
+    cx.fillStyle = 'rgba(188,140,255,0.3)';
+    cx.fill();
+    cx.strokeStyle = '#bc8cff';
+    cx.lineWidth = 2;
+    cx.stroke();
+    // Flag pole
+    cx.beginPath();
+    cx.moveTo(cpx, cpy);
+    cx.lineTo(cpx, cpy - 28);
+    cx.strokeStyle = '#bc8cff';
+    cx.lineWidth = 1.5;
+    cx.stroke();
+    // Flag
+    cx.beginPath();
+    cx.moveTo(cpx, cpy - 28);
+    cx.lineTo(cpx + 14, cpy - 22);
+    cx.lineTo(cpx, cpy - 16);
+    cx.closePath();
+    cx.fillStyle = 'rgba(188,140,255,0.7)';
+    cx.fill();
+    cx.fillStyle = '#bc8cff';
+    cx.font = 'bold 10px monospace';
+    cx.fillText('CP', cpx + 16, cpy - 20);
+
+    // Draw each candidate
+    for (let i = 0; i < ball.candidates.length; i++) {
+      const cand = ball.candidates[i];
+      if (cand.trail.length < 2) continue;
+
+      // Dashed line from checkpoint to first jump point
+      const [sx, sy] = projectPt(ball.cpX, ball.cpY);
+      const firstPt = cand.trail[Math.min(1, cand.trail.length - 1)];
+      const [fx, fy] = projectPt(firstPt.x, firstPt.y);
+      cx.beginPath();
+      cx.setLineDash([4, 4]);
+      cx.moveTo(sx, sy);
+      cx.lineTo(fx, fy);
+      cx.strokeStyle = 'rgba(188,140,255,0.3)';
+      cx.lineWidth = 1;
+      cx.stroke();
+      cx.setLineDash([]);
+
+      // Trail
+      for (let j = 1; j < cand.trail.length; j++) {
+        const a = cand.trail[j - 1], b = cand.trail[j];
+        const [x1, y1] = projectPt(a.x, a.y);
+        const [x2, y2] = projectPt(b.x, b.y);
+        const alpha = 0.3 + 0.6 * (j / cand.trail.length);
+        cx.beginPath();
+        cx.moveTo(x1, y1);
+        cx.lineTo(x2, y2);
+        cx.strokeStyle = b.s === 'j' ? `rgba(210,153,34,${alpha})` : `rgba(63,185,80,${alpha})`;
+        cx.lineWidth = 2.5;
+        cx.stroke();
+      }
+
+      // Candidate ball
+      const isActive = (i === ball.currentCand);
+      const [bx, by] = projectPt(cand.x, cand.y);
+
+      if (isActive) {
+        // Active glow
+        const gr = cx.createRadialGradient(bx, by, 2, bx, by, 16);
+        gr.addColorStop(0, cand.phase === 'jump' ? 'rgba(210,153,34,0.4)' : 'rgba(63,185,80,0.4)');
+        gr.addColorStop(1, 'transparent');
+        cx.fillStyle = gr;
+        cx.fillRect(bx - 18, by - 18, 36, 36);
+      }
+
+      cx.beginPath();
+      cx.arc(bx, by, isActive ? 7 : 5, 0, Math.PI * 2);
+      if (isActive) {
+        cx.fillStyle = cand.phase === 'jump' ? '#d29922' : '#3fb950';
+      } else if (cand.finalLoss < Infinity) {
+        cx.fillStyle = '#8b949e';
+      } else {
+        cx.fillStyle = 'rgba(150,150,150,0.4)';
+      }
+      cx.fill();
+      cx.strokeStyle = isActive ? '#fff' : 'rgba(255,255,255,0.5)';
+      cx.lineWidth = isActive ? 2 : 1;
+      cx.stroke();
+
+      // Label
+      cx.fillStyle = isActive ? '#fff' : '#8b949e';
+      cx.font = `${isActive ? 'bold ' : ''}10px monospace`;
+      cx.fillText(`C${i + 1}`, bx + 9, by + 3);
+      if (cand.finalLoss < Infinity) {
+        cx.fillStyle = '#8b949e';
+        cx.font = '9px monospace';
+        cx.fillText(cand.finalLoss.toFixed(3), bx + 9, by + 14);
+      }
+    }
+  }
+
+  // Main ball
+  const [bx, by] = projectPt(ball.x, ball.y);
+
+  // Glow
+  const glowCol = ball.state === 'exploring' ? 'rgba(188,140,255,0.35)' :
+                  ball.state === 'running' ? 'rgba(88,166,255,0.35)' : 'rgba(100,100,100,0.2)';
+  const gr = cx.createRadialGradient(bx, by, 2, bx, by, 20);
+  gr.addColorStop(0, glowCol);
+  gr.addColorStop(1, 'transparent');
+  cx.fillStyle = gr;
+  cx.fillRect(bx - 22, by - 22, 44, 44);
 
   // Ball
-  ctx.beginPath();
-  ctx.arc(sx, sy - 12, 8, 0, Math.PI * 2);
-  const ballColor = ball.state === 'exploring_jump' ? '#d29922' :
-                    ball.state === 'exploring_descent' ? '#3fb950' :
-                    '#58a6ff';
-  ctx.fillStyle = ballColor;
-  ctx.fill();
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  cx.beginPath();
+  cx.arc(bx, by, 10, 0, Math.PI * 2);
+  const ballCol = ball.state === 'exploring' ? '#bc8cff' :
+                  ball.state === 'running' ? '#58a6ff' : '#8b949e';
+  cx.fillStyle = ballCol;
+  cx.fill();
+  cx.strokeStyle = '#fff';
+  cx.lineWidth = 2.5;
+  cx.stroke();
+
+  // Inner highlight
+  cx.beginPath();
+  cx.arc(bx - 3, by - 3, 3, 0, Math.PI * 2);
+  cx.fillStyle = 'rgba(255,255,255,0.3)';
+  cx.fill();
 
   // Velocity arrow
-  if (Math.abs(ball.vx) > 0.001) {
-    const arrowLen = Math.min(Math.abs(ball.vx) * 3000, 60) * Math.sign(ball.vx);
-    ctx.beginPath();
-    ctx.moveTo(sx, sy - 12);
-    ctx.lineTo(sx + arrowLen, sy - 12);
-    ctx.strokeStyle = ballColor;
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-    // Arrowhead
-    const dir = Math.sign(arrowLen);
-    ctx.beginPath();
-    ctx.moveTo(sx + arrowLen, sy - 12);
-    ctx.lineTo(sx + arrowLen - dir * 8, sy - 17);
-    ctx.lineTo(sx + arrowLen - dir * 8, sy - 7);
-    ctx.closePath();
-    ctx.fillStyle = ballColor;
-    ctx.fill();
+  const vMag = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+  if (vMag > 0.0005 && ball.state === 'running') {
+    const nx = ball.vx / vMag, ny = ball.vy / vMag;
+    const [ax, ay] = projectPt(ball.x + nx * 0.5, ball.y + ny * 0.5);
+    const dx = ax - bx, dy = ay - by;
+    const dMag = Math.sqrt(dx * dx + dy * dy) || 1;
+    const arrowScale = Math.min(vMag * 4000, 55);
+    const adx = (dx / dMag) * arrowScale, ady = (dy / dMag) * arrowScale;
+    cx.beginPath();
+    cx.moveTo(bx, by);
+    cx.lineTo(bx + adx, by + ady);
+    cx.strokeStyle = ballCol;
+    cx.lineWidth = 2.5;
+    cx.stroke();
+    const angle = Math.atan2(ady, adx);
+    cx.beginPath();
+    cx.moveTo(bx + adx, by + ady);
+    cx.lineTo(bx + adx - 8 * Math.cos(angle - 0.4), by + ady - 8 * Math.sin(angle - 0.4));
+    cx.lineTo(bx + adx - 8 * Math.cos(angle + 0.4), by + ady - 8 * Math.sin(angle + 0.4));
+    cx.closePath();
+    cx.fillStyle = ballCol;
+    cx.fill();
   }
+
+  // Position label
+  cx.fillStyle = 'rgba(255,255,255,0.6)';
+  cx.font = '9px monospace';
+  cx.fillText(`(${ball.x.toFixed(2)}, ${ball.y.toFixed(2)})`, bx + 14, by - 8);
 }
 
 // ============================================================
-//  HUD UPDATE
+//  LOSS CHART
 // ============================================================
-function updateHUD() {
-  const z = landscape.eval(ball.x, sliceY);
-  document.getElementById('hud-step').textContent = ball.step;
-  document.getElementById('hud-loss').textContent = z.toFixed(4);
-  document.getElementById('hud-best').textContent = ball.bestLoss === Infinity ? '—' : ball.bestLoss.toFixed(4);
-  document.getElementById('hud-stale').textContent = ball.stepsWithoutImprovement;
-
-  let stateLabel = ball.state;
-  if (ball.state === 'exploring_jump') stateLabel = '🚀 JUMPING';
-  else if (ball.state === 'exploring_descent') stateLabel = '⛰️ DESCENDING';
-  else if (ball.state === 'running') stateLabel = '🏃 Running';
-  else if (ball.state === 'paused') stateLabel = '⏸ Paused';
-  else if (ball.state === 'idle') stateLabel = '⏹ Idle';
-  document.getElementById('hud-state').textContent = stateLabel;
-}
-
-// ============================================================
-//  LOSS CHART (mini sparkline at bottom)
-// ============================================================
-const lossHistory = [];
-const MAX_HISTORY = 500;
-
 function drawLossChart() {
-  if (lossHistory.length < 2) return;
+  const lc = $('lc');
+  const lctx = lc.getContext('2d');
+  lctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  const w = lc.width / devicePixelRatio;
+  const h = lc.height / devicePixelRatio;
 
-  const chartH = 60;
-  const chartW = W();
-  const chartY = H() - chartH - 10;
+  lctx.clearRect(0, 0, w, h);
+  lctx.fillStyle = '#0d1117';
+  lctx.fillRect(0, 0, w, h);
 
-  // Background
-  ctx.fillStyle = 'rgba(13,17,23,0.75)';
-  ctx.fillRect(0, chartY, chartW, chartH + 10);
-  ctx.strokeStyle = '#30363d';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(0, chartY, chartW, chartH);
+  if (lossHist.length < 2) {
+    lctx.fillStyle = '#484f58';
+    lctx.font = '11px monospace';
+    lctx.fillText('Loss chart appears here once running...', 10, h / 2);
+    return;
+  }
 
-  // Label
-  ctx.fillStyle = '#484f58';
-  ctx.font = '10px monospace';
-  ctx.fillText('Loss over time', 6, chartY + 12);
-
-  // Find range
   let minL = Infinity, maxL = -Infinity;
-  for (const l of lossHistory) {
-    if (l.val < minL) minL = l.val;
-    if (l.val > maxL) maxL = l.val;
+  for (const l of lossHist) {
+    if (l.v < minL) minL = l.v;
+    if (l.v > maxL) maxL = l.v;
   }
   const range = maxL - minL || 1;
+  const pad = 4;
 
-  // Draw
-  ctx.beginPath();
-  for (let i = 0; i < lossHistory.length; i++) {
-    const px = (i / MAX_HISTORY) * chartW;
-    const py = chartY + chartH - ((lossHistory[i].val - minL) / range) * (chartH - 16) - 4;
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
+  // Grid
+  lctx.strokeStyle = 'rgba(48,54,61,0.5)';
+  lctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + (i / 4) * (h - 2 * pad);
+    lctx.beginPath();
+    lctx.moveTo(0, y);
+    lctx.lineTo(w, y);
+    lctx.stroke();
   }
-  ctx.strokeStyle = '#58a6ff';
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
+
+  // Loss line
+  lctx.beginPath();
+  for (let i = 0; i < lossHist.length; i++) {
+    const px = (i / MAX_HIST) * w;
+    const py = pad + (1 - (lossHist[i].v - minL) / range) * (h - 2 * pad);
+    if (i === 0) lctx.moveTo(px, py);
+    else lctx.lineTo(px, py);
+  }
+  lctx.strokeStyle = '#58a6ff';
+  lctx.lineWidth = 1.5;
+  lctx.stroke();
 
   // Best line
-  if (ball.bestLoss !== Infinity) {
-    const by = chartY + chartH - ((ball.bestLoss - minL) / range) * (chartH - 16) - 4;
-    ctx.beginPath();
-    ctx.setLineDash([4, 4]);
-    ctx.moveTo(0, by);
-    ctx.lineTo(chartW, by);
-    ctx.strokeStyle = '#3fb950';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.setLineDash([]);
+  if (ball && ball.bestLoss !== Infinity) {
+    const by = pad + (1 - (ball.bestLoss - minL) / range) * (h - 2 * pad);
+    lctx.beginPath();
+    lctx.setLineDash([4, 4]);
+    lctx.moveTo(0, by);
+    lctx.lineTo(w, by);
+    lctx.strokeStyle = '#3fb950';
+    lctx.lineWidth = 1;
+    lctx.stroke();
+    lctx.setLineDash([]);
+    lctx.fillStyle = '#3fb950';
+    lctx.font = '9px monospace';
+    lctx.fillText(`best: ${ball.bestLoss.toFixed(4)}`, w - 100, by - 3);
   }
+
+  // Labels
+  lctx.fillStyle = '#484f58';
+  lctx.font = '9px monospace';
+  lctx.fillText(`max: ${maxL.toFixed(3)}`, 4, 12);
+  lctx.fillText(`min: ${minL.toFixed(3)}`, 4, h - 4);
+  lctx.fillText('Loss over time', w / 2 - 40, 12);
 }
 
 // ============================================================
-//  LEGEND
+//  HUD
 // ============================================================
-function drawLegend() {
-  const lx = 12, ly = 14;
-  const items = [
-    { color: '#58a6ff', label: 'Normal descent' },
-    { color: '#d29922', label: 'Jump (exploration)' },
-    { color: '#3fb950', label: 'Descent (new basin)' },
-    { color: '#f85149', label: 'Rollback' },
-  ];
-  ctx.font = '11px Segoe UI, sans-serif';
-  items.forEach((item, i) => {
-    const y = ly + i * 18;
-    ctx.fillStyle = item.color;
-    ctx.fillRect(lx, y, 12, 12);
-    ctx.fillStyle = '#8b949e';
-    ctx.fillText(item.label, lx + 18, y + 10);
-  });
+function updateHUD() {
+  if (!ball) return;
+  const z = land.eval(ball.x, ball.y);
+  $('h-step').textContent = ball.step;
+  $('h-loss').textContent = z.toFixed(4);
+  $('h-best').textContent = ball.bestLoss === Infinity ? '—' : ball.bestLoss.toFixed(4);
+  $('h-stale').textContent = ball.stale;
+  $('h-jumps').textContent = ball.jumps;
+  $('h-acc').textContent = ball.accepts;
+  $('h-rej').textContent = ball.rejects;
 
-  // Stats
-  const statsY = ly + items.length * 18 + 8;
-  ctx.fillStyle = '#484f58';
-  ctx.font = '11px monospace';
-  ctx.fillText(`Jumps: ${ball.jumpCount}  Accepted: ${ball.acceptCount}  Rejected: ${ball.rejectCount}`, lx, statsY);
+  const labels = {
+    idle: '⏹ Idle', paused: '⏸ Paused', running: '🏃 Running', exploring: '🚀 Exploring'
+  };
+  let st = labels[ball.state] || ball.state;
+  if (ball.state === 'exploring' && ball.currentCand < ball.candidates.length) {
+    const cand = ball.candidates[ball.currentCand];
+    st += ` C${ball.currentCand + 1}/${ball.candidates.length} (${cand.phase})`;
+  }
+  $('h-state').textContent = st;
 }
 
 // ============================================================
 //  CLICK TO PLACE BALL
 // ============================================================
-canvas.addEventListener('click', (e) => {
-  const rect = canvas.getBoundingClientRect();
+canv.addEventListener('click', (e) => {
+  if (!ball || ball.state === 'exploring') return;
+  const rect = canv.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
 
-  // Convert screen to world
-  const wx = VIEW.xMin + (mx / (rect.width)) * (VIEW.xMax - VIEW.xMin);
-  const wz = VIEW.yMax - (my / (rect.height)) * (VIEW.yMax - VIEW.yMin);
+  if (!C('show3d')) {
+    const wx = -RANGE + (mx / rect.width) * 2 * RANGE;
+    const wy = -RANGE + (my / rect.height) * 2 * RANGE;
+    ball.x = wx;
+    ball.y = wy;
+  } else {
+    let bestDist = Infinity, bestWx = 0, bestWy = 0;
+    for (let iy = 0; iy <= GRID; iy += 2) {
+      for (let ix = 0; ix <= GRID; ix += 2) {
+        const wx = -RANGE + (ix / GRID) * 2 * RANGE;
+        const wy = -RANGE + (iy / GRID) * 2 * RANGE;
+        const [sx, sy] = projectPt(wx, wy);
+        const d = (sx - mx) * (sx - mx) + (sy - my) * (sy - my);
+        if (d < bestDist) { bestDist = d; bestWx = wx; bestWy = wy; }
+      }
+    }
+    ball.x = bestWx;
+    ball.y = bestWy;
+  }
 
-  // Place ball at this x, on the landscape surface
-  ball.x = wx;
   ball.vx = 0;
-  ball.bestLoss = landscape.eval(ball.x, sliceY);
-  ball.stepsWithoutImprovement = 0;
+  ball.vy = 0;
+  ball.bestLoss = land.eval(ball.x, ball.y);
+  ball.stale = 0;
   ball.trail = [];
-  lossHistory.length = 0;
-  logMsg('info', `Ball placed at x=${wx.toFixed(3)}, loss=${ball.bestLoss.toFixed(4)}`);
+  ball.candTrails = [];
+  ball.rejectedTrails = [];
+  ball._rejectFade = 0;
+  lossHist.length = 0;
+  log('i', `Ball placed at (${ball.x.toFixed(2)}, ${ball.y.toFixed(2)}), loss=${ball.bestLoss.toFixed(4)}`);
+});
+
+// ============================================================
+//  MOUSE DRAG FOR 3D ROTATION
+// ============================================================
+let dragging = false, dragStartX = 0, dragStartRot = 0;
+canv.addEventListener('mousedown', (e) => {
+  if (e.button === 2 || e.shiftKey) {
+    dragging = true;
+    dragStartX = e.clientX;
+    dragStartRot = V('rot');
+    e.preventDefault();
+  }
+});
+window.addEventListener('mousemove', (e) => {
+  if (dragging) {
+    const delta = (e.clientX - dragStartX) * 0.5;
+    let newRot = (dragStartRot + delta) % 360;
+    if (newRot < 0) newRot += 360;
+    $('rot').value = newRot;
+    $('rot-v').textContent = Math.round(newRot);
+  }
+});
+window.addEventListener('mouseup', () => { dragging = false; });
+canv.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// ============================================================
+//  BUTTONS
+// ============================================================
+$('btn-go').addEventListener('click', () => {
+  if (ball && (ball.state === 'idle' || ball.state === 'paused')) {
+    ball.state = 'running';
+    log('i', 'Started.');
+  }
+});
+$('btn-pause').addEventListener('click', () => {
+  if (ball && ball.state !== 'idle') {
+    ball.state = 'paused';
+    log('i', 'Paused.');
+  }
+});
+$('btn-reset').addEventListener('click', resetBall);
+$('btn-newmap').addEventListener('click', () => {
+  land = new Landscape(V('nbas'), V('rough'));
+  computeGrid();
+  resetBall();
+  log('i', 'New landscape generated.');
 });
 
 // ============================================================
 //  MAIN LOOP
 // ============================================================
-let lastTime = 0;
-let accumulator = 0;
-const FIXED_DT = 1000 / 60; // 60 Hz physics
+let lastT = 0;
+let acc = 0;
+const FDT = 1000 / 60;
 
-function frame(timestamp) {
-  const dt = timestamp - lastTime;
-  lastTime = timestamp;
+function frame(ts) {
+  const dt = Math.min(ts - lastT, 100);
+  lastT = ts;
+  const spd = V('spd');
+  acc += dt * spd;
 
-  const speed = getVal('speed');
-  accumulator += dt * speed;
-
-  // Run physics steps
-  const maxStepsPerFrame = 20;
-  let stepsThisFrame = 0;
-  while (accumulator >= FIXED_DT && stepsThisFrame < maxStepsPerFrame) {
-    physicsStep();
-    accumulator -= FIXED_DT;
-    stepsThisFrame++;
-
-    // Record loss
-    if (ball.state !== 'idle' && ball.state !== 'paused') {
-      const z = landscape.eval(ball.x, sliceY);
-      lossHistory.push({ val: z, state: ball.state });
-      if (lossHistory.length > MAX_HISTORY) lossHistory.shift();
+  let steps = 0;
+  while (acc >= FDT && steps < 25) {
+    doStep();
+    acc -= FDT;
+    steps++;
+    if (ball && ball.state !== 'idle' && ball.state !== 'paused') {
+      lossHist.push({ v: land.eval(ball.x, ball.y) });
+      if (lossHist.length > MAX_HIST) lossHist.shift();
     }
   }
-  if (accumulator > FIXED_DT * maxStepsPerFrame) accumulator = 0;
+  if (acc > FDT * 25) acc = 0;
 
-  // === RENDER ===
-  ctx.clearRect(0, 0, W(), H());
+  // Fade rejected trails
+  if (ball && ball.rejectedTrails && ball.rejectedTrails.length > 0 && ball.state === 'running') {
+    ball._rejectFade = (ball._rejectFade || 0) + 1;
+    if (ball._rejectFade > 200) {
+      ball.rejectedTrails = [];
+      ball._rejectFade = 0;
+    }
+  }
 
-  // Background
-  ctx.fillStyle = '#0d1117';
-  ctx.fillRect(0, 0, W(), H());
+  // Render
+  cx.clearRect(0, 0, CW(), CH());
+  cx.fillStyle = '#0d1117';
+  cx.fillRect(0, 0, CW(), CH());
 
-  drawGrid();
-  drawLandscape1D();
+  drawSurface();
   drawBall();
-  drawLossChart();
-  drawLegend();
   updateHUD();
+  drawLossChart();
 
   requestAnimationFrame(frame);
 }
@@ -896,8 +1095,11 @@ function frame(timestamp) {
 //  INIT
 // ============================================================
 resetBall();
-logMsg('info', 'Welcome to BasinHopper! Click on the landscape to place the ball, then press Start.');
-logMsg('info', 'Toggle Basin Hopping on/off to see the difference.');
+log('i', 'Welcome to BasinHopper 3D!');
+log('i', 'Click landscape to place ball, then press Start.');
+log('i', 'Left-click = place ball. Shift+drag = rotate 3D view.');
+log('i', 'Toggle hopping on/off to compare behavior.');
+log('i', 'Set Candidates > 1 to see multi-directional exploration!');
 requestAnimationFrame(frame);
 
 </script>
