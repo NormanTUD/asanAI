@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReLU Funktionsapproximation – Interaktive Visualisierung</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    overflow-x: hidden;
+  }
+  .header {
+    text-align: center;
+    padding: 30px 20px 10px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-bottom: 2px solid #0f3460;
+  }
+  .header h1 {
+    font-size: 1.8em;
+    background: linear-gradient(90deg, #e94560, #0f3460, #53d8fb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header p { color: #8899aa; font-size: 0.95em; max-width: 800px; margin: 0 auto; }
+
+  .main-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .panel {
+    background: #1a1a2e;
+    border-radius: 12px;
+    border: 1px solid #2a2a4a;
+    padding: 20px;
+    flex: 1;
+    min-width: 300px;
+  }
+  .panel h2 {
+    font-size: 1.1em;
+    color: #53d8fb;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a2a4a;
+  }
+  .panel h3 {
+    font-size: 0.95em;
+    color: #e94560;
+    margin: 15px 0 8px;
+  }
+
+  .canvas-container {
+    flex: 2;
+    min-width: 500px;
+  }
+  canvas {
+    width: 100%;
+    background: #12121f;
+    border-radius: 8px;
+    border: 1px solid #2a2a4a;
+    cursor: crosshair;
+  }
+
+  .controls-panel { min-width: 320px; max-width: 400px; }
+
+  .slider-group {
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #12121f;
+    border-radius: 8px;
+  }
+  .slider-group label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    color: #aab;
+    margin-bottom: 4px;
+  }
+  .slider-group label span.val {
+    color: #53d8fb;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+  }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #2a2a4a;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #e94560;
+    cursor: pointer;
+    border: 2px solid #fff;
+  }
+
+  .formula-box {
+    background: #0d0d1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82em;
+    color: #53d8fb;
+    margin: 10px 0;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    margin: 4px;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: #e94560; color: white; }
+  .btn-primary:hover { background: #ff6b81; }
+  .btn-secondary { background: #2a2a4a; color: #aab; }
+  .btn-secondary:hover { background: #3a3a5a; }
+
+  .target-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 10px 0;
+  }
+  .target-selector .btn { font-size: 0.78em; padding: 6px 10px; }
+  .target-selector .btn.active { background: #0f3460; color: #53d8fb; border: 1px solid #53d8fb; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 10px 0;
+    font-size: 0.82em;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-color {
+    width: 20px; height: 4px;
+    border-radius: 2px;
+  }
+
+  .relu-unit {
+    background: #12121f;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 8px 0;
+    border-left: 3px solid #e94560;
+  }
+  .relu-unit .unit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .relu-unit .unit-header span {
+    font-size: 0.85em;
+    color: #e94560;
+    font-weight: bold;
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    font-size: 0.85em;
+  }
+  .checkbox-group input[type="checkbox"] {
+    accent-color: #e94560;
+    width: 16px; height: 16px;
+  }
+
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 15px;
+  }
+  .tab-bar .btn { border-radius: 6px 6px 0 0; }
+  .tab-bar .btn.active { background: #12121f; color: #53d8fb; }
+
+  .explanation {
+    font-size: 0.82em;
+    color: #889;
+    line-height: 1.5;
+    margin: 10px 0;
+    padding: 10px;
+    background: #12121f;
+    border-radius: 8px;
+    border-left: 3px solid #53d8fb;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+    padding: 10px;
+    background: #12121f;
+    border-radius: 8px;
+  }
+  .stat-item { text-align: center; }
+  .stat-item .stat-val { font-size: 1.2em; color: #53d8fb; font-weight: bold; font-family: monospace; }
+  .stat-item .stat-label { font-size: 0.7em; color: #667; }
+
+  .section-full {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .main-container { flex-direction: column; }
+    .controls-panel { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧠 ReLU Funktionsapproximation</h1>
+  <p>Verstehe visuell, wie ein Dense-ReLU-Dense Netzwerk beliebige Funktionen durch stückweise lineare Approximation nachbildet</p>
+</div>
+
+<div class="main-container">
+
+  <!-- Main Plot -->
+  <div class="panel canvas-container">
+    <h2>📊 Funktionsplot</h2>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background:#e94560"></div> Zielfunktion</div>
+      <div class="legend-item"><div class="legend-color" style="background:#53d8fb"></div> ReLU-Approximation</div>
+      <div class="legend-item"><div class="legend-color" style="background:#444; height:2px; border-top: 2px dashed #666"></div> Einzelne ReLU-Einheiten</div>
+    </div>
+    <canvas id="mainCanvas" width="900" height="500"></canvas>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-val" id="statMSE">0.000</div><div class="stat-label">MSE (Fehler)</div></div>
+      <div class="stat-item"><div class="stat-val" id="statUnits">4</div><div class="stat-label">ReLU-Einheiten</div></div>
+      <div class="stat-item"><div class="stat-val" id="statKnicks">4</div><div class="stat-label">Knickpunkte</div></div>
+    </div>
+
+    <h3>Zielfunktion wählen</h3>
+    <div class="target-selector" id="targetSelector">
+      <button class="btn btn-secondary active" data-fn="sin">sin(x)</button>
+      <button class="btn btn-secondary" data-fn="quadratic">x²</button>
+      <button class="btn btn-secondary" data-fn="abs">|x|</button>
+      <button class="btn btn-secondary" data-fn="step">Stufe</button>
+      <button class="btn btn-secondary" data-fn="sawtooth">Sägezahn</button>
+      <button class="btn btn-secondary" data-fn="gaussian">Gauß</button>
+      <button class="btn btn-secondary" data-fn="cubic">x³/10</button>
+      <button class="btn btn-secondary" data-fn="complex">sin+cos</button>
+    </div>
+
+    <div class="checkbox-group">
+      <input type="checkbox" id="showIndividual" checked>
+      <label for="showIndividual">Einzelne ReLU-Einheiten anzeigen</label>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="showKnicks" checked>
+      <label for="showKnicks">Knickpunkte markieren</label>
+    </div>
+    <div class="checkbox-group">
+      <input type="checkbox" id="showError">
+      <label for="showError">Fehlerfläche anzeigen</label>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="panel controls-panel">
+    <h2>🎛️ Steuerung</h2>
+
+    <div class="slider-group">
+      <label>Anzahl ReLU-Einheiten <span class="val" id="numUnitsVal">4</span></label>
+      <input type="range" id="numUnits" min="1" max="20" value="4">
+    </div>
+
+    <div style="display:flex; gap:6px; margin-bottom:15px;">
+      <button class="btn btn-primary" id="btnAutoFit">⚡ Auto-Fit</button>
+      <button class="btn btn-secondary" id="btnReset">🔄 Reset</button>
+      <button class="btn btn-secondary" id="btnAnimate">▶ Animieren</button>
+    </div>
+
+    <h3>Globale Parameter</h3>
+    <div class="slider-group">
+      <label>Bias (Verschiebung y) <span class="val" id="globalBiasVal">0.00</span></label>
+      <input type="range" id="globalBias" min="-3" max="3" step="0.01" value="0">
+    </div>
+
+    <h3>Einzelne ReLU-Einheiten</h3>
+    <div class="explanation">
+      Jede Einheit berechnet: <strong>aᵢ · ReLU(wᵢ · x + bᵢ)</strong><br>
+      <strong>wᵢ</strong> = Gewicht (Steigung), <strong>bᵢ</strong> = Bias (Knickposition), <strong>aᵢ</strong> = Ausgabegewicht
+    </div>
+    <div id="unitControls"></div>
+
+    <h3>📐 Aktuelle Formel</h3>
+    <div class="formula-box" id="formulaBox">f(x) = bias + Σ aᵢ · max(0, wᵢ·x + bᵢ)</div>
+
+    <h3>💡 Erklärung</h3>
+    <div class="explanation" id="explanationBox">
+      <strong>So funktioniert es:</strong><br><br>
+      1. Jede ReLU-Einheit erzeugt einen <strong>Knick</strong> an der Stelle x = -bᵢ/wᵢ<br><br>
+      2. Links vom Knick ist der Beitrag 0 (abgeschnitten!)<br><br>
+      3. Rechts vom Knick steigt/fällt die Linie mit Steigung aᵢ·wᵢ<br><br>
+      4. Durch <strong>Addition</strong> aller Einheiten entsteht eine stückweise lineare Funktion<br><br>
+      5. Mehr Einheiten = mehr Knicke = bessere Approximation! 🎯
+    </div>
+  </div>
+
+  <!-- Decomposition View -->
+  <div class="panel section-full">
+    <h2>🔬 Zerlegungsansicht – Wie sich die Approximation aufbaut</h2>
+    <canvas id="decompCanvas" width="1200" height="300"></canvas>
+    <div class="explanation">
+      Diese Ansicht zeigt, wie jede ReLU-Einheit einzeln aussieht und wie sie sich Schritt für Schritt zur Gesamtapproximation aufsummieren.
+      Von links nach rechts wird jeweils eine weitere Einheit hinzugefügt.
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// CORE DATA & STATE
+// ============================================================
+const state = {
+  targetFn: 'sin',
+  numUnits: 4,
+  globalBias: 0,
+  units: [],
+  showIndividual: true,
+  showKnicks: true,
+  showError: false,
+  animating: false,
+  xMin: -5,
+  xMax: 5,
+  yMin: -3,
+  yMax: 3,
+};
+
+const targetFunctions = {
+  sin: x => Math.sin(x),
+  quadratic: x => x * x / 5 - 1,
+  abs: x => Math.abs(x) - 1,
+  step: x => x > 0 ? 1 : (x < 0 ? -1 : 0),
+  sawtooth: x => 2 * (x / 3 - Math.floor(x / 3 + 0.5)),
+  gaussian: x => 2 * Math.exp(-x * x / 2) - 1,
+  cubic: x => x * x * x / 30,
+  complex: x => Math.sin(x) + 0.5 * Math.cos(2 * x),
+};
+
+function initUnits(n) {
+  state.units = [];
+  const spread = (state.xMax - state.xMin) / (n + 1);
+  for (let i = 0; i < n; i++) {
+    const pos = state.xMin + spread * (i + 1);
+    state.units.push({
+      w: 1.0,
+      b: -pos,
+      a: 0.5 * (i % 2 === 0 ? 1 : -1),
+    });
+  }
+}
+
+function relu(x) { return Math.max(0, x); }
+
+function evaluateNetwork(x) {
+  let sum = state.globalBias;
+  for (const u of state.units) {
+    sum += u.a * relu(u.w * x + u.b);
+  }
+  return sum;
+}
+
+function evaluateUnit(x, unit) {
+  return unit.a * relu(unit.w * x + unit.b);
+}
+
+// ============================================================
+// AUTO-FIT (simple gradient-free optimization)
+// ============================================================
+function autoFit() {
+  const fn = targetFunctions[state.targetFn];
+  const samples = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = state.xMin + (state.xMax - state.xMin) * i / 200;
+    samples.push({ x, y: fn(x) });
+  }
+
+  // Simple iterative fitting
+  const n = state.units.length;
+
+  // Distribute knick points evenly
+  for (let i = 0; i < n; i++) {
+    const pos = state.xMin + (state.xMax - state.xMin) * (i + 1) / (n + 1);
+    state.units[i].w = 1.0;
+    state.units[i].b = -pos;
+    state.units[i].a = 0;
+  }
+  state.globalBias = 0;
+
+  // Sort units by knick position
+  state.units.sort((a, b) => (-a.b / a.w) - (-b.b / b.w));
+
+  // Least squares fit using pseudo-inverse approach (simple version)
+  // Build matrix: each column is relu(w_i * x + b_i) for each sample
+  const m = samples.length;
+  const cols = n + 1; // +1 for bias
+
+  // Simple gradient descent
+  const lr = 0.001;
+  for (let iter = 0; iter < 3000; iter++) {
+    let gradBias = 0;
+    const gradA = new Array(n).fill(0);
+    const gradW = new Array(n).fill(0);
+    const gradB = new Array(n).fill(0);
+
+    for (const s of samples) {
+      let pred = state.globalBias;
+      const reluVals = [];
+      const preRelu = [];
+      for (let j = 0; j < n; j++) {
+        const pre = state.units[j].w * s.x + state.units[j].b;
+        preRelu.push(pre);
+        const rv = relu(pre);
+        reluVals.push(rv);
+        pred += state.units[j].a * rv;
+      }
+      const err = pred - s.y;
+
+      gradBias += 2 * err / m;
+      for (let j = 0; j < n; j++) {
+        gradA[j] += 2 * err * reluVals[j] / m;
+        if (preRelu[j] > 0) {
+          gradW[j] += 2 * err * state.units[j].a * s.x / m;
+          gradB[j] += 2 * err * state.units[j].a / m;
+        }
+      }
+    }
+
+    state.globalBias -= lr * gradBias;
+    for (let j = 0; j < n; j++) {
+      state.units[j].a -= lr * gradA[j];
+      state.units[j].w -= lr * 0.5 * gradW[j];
+      state.units[j].b -= lr * 0.5 * gradB[j];
+    }
+  }
+
+  // Clamp values
+  for (let j = 0; j < n; j++) {
+    state.units[j].w = clamp(state.units[j].w, -10, 10);
+    state.units[j].b = clamp(state.units[j].b, -10, 10);
+    state.units[j].a = clamp(state.units[j].a, -10, 10);
+  }
+  state.globalBias = clamp(state.globalBias, -5, 5);
+
+  updateUI();
+  draw();
+}
+
+function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+// ============================================================
+// DRAWING
+// ============================================================
+function getCanvasCtx(id) {
+  const canvas = document.getElementById(id);
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return { ctx, w: rect.width, h: rect.height };
+}
+
+function mapX(x, w) {
+  return ((x - state.xMin) / (state.xMax - state.xMin)) * (w - 80) + 50;
+}
+function mapY(y, h) {
+  return h - (((y - state.yMin) / (state.yMax - state.yMin)) * (h - 60) + 40);
+}
+function unmapX(px, w) {
+  return ((px - 50) / (w - 80)) * (state.xMax - state.xMin) + state.xMin;
+}
+
+function drawGrid(ctx, w, h) {
+  ctx.strokeStyle = '#1e1e3a';
+  ctx.lineWidth = 1;
+
+  // Vertical grid lines
+  for (let x = Math.ceil(state.xMin); x <= state.xMax; x++) {
+    const px = mapX(x, w);
+    ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke();
+  }
+  // Horizontal grid lines
+  for (let y = Math.ceil(state.yMin); y <= state.yMax; y++) {
+    const py = mapY(y, h);
+    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(w, py); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#3a3a5a';
+  ctx.lineWidth = 2;
+  const zeroX = mapX(0, w);
+  const zeroY = mapY(0, h);
+  ctx.beginPath(); ctx.moveTo(zeroX, 0); ctx.lineTo(zeroX, h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, zeroY); ctx.lineTo(w, zeroY); ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#556';
+  ctx.font = '11px monospace';
+  ctx.textAlign = 'center';
+  for (let x = Math.ceil(state.xMin); x <= state.xMax; x++) {
+    ctx.fillText(x, mapX(x, w), mapY(0, h) + 15);
+  }
+  ctx.textAlign = 'right';
+  for (let y = Math.ceil(state.yMin); y <= state.yMax; y++) {
+    if (y !== 0) ctx.fillText(y, mapX(0, w) - 8, mapY(y, h) + 4);
+  }
+}
+
+function drawFunction(ctx, w, h, fn, color, lineWidth, dashed) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  if (dashed) ctx.setLineDash([6, 4]);
+  else ctx.setLineDash([]);
+
+  ctx.beginPath();
+  let started = false;
+  for (let px = 50; px < w - 30; px++) {
+    const x = unmapX(px, w);
+    const y = fn(x);
+    const py = mapY(y, h);
+    if (!started) { ctx.moveTo(px, py); started = true; }
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawErrorArea(ctx, w, h) {
+  const fn = targetFunctions[state.targetFn];
+  ctx.fillStyle = 'rgba(233, 69, 96, 0.15)';
+  for (let px = 50; px < w - 30; px++) {
+    const x = unmapX(px, w);
+    const yTarget = mapY(fn(x), h);
+    const yApprox = mapY(evaluateNetwork(x), h);
+    const top = Math.min(yTarget, yApprox);
+    const bot = Math.max(yTarget, yApprox);
+    ctx.fillRect(px, top, 1, bot - top);
+  }
+}
+
+function computeMSE() {
+  const fn = targetFunctions[state.targetFn];
+  let sum = 0;
+  const n = 200;
+  for (let i = 0; i <= n; i++) {
+    const x = state.xMin + (state.xMax - state.xMin) * i / n;
+    const diff = fn(x) - evaluateNetwork(x);
+    sum += diff * diff;
+  }
+  return sum / (n + 1);
+}
+
+function draw() {
+  // Main canvas
+  const { ctx, w, h } = getCanvasCtx('mainCanvas');
+  ctx.clearRect(0, 0, w, h);
+  drawGrid(ctx, w, h);
+
+  const fn = targetFunctions[state.targetFn];
+
+  // Error area
+  if (state.showError) drawErrorArea(ctx, w, h);
+
+  // Target function
+  drawFunction(ctx, w, h, fn, '#e94560', 3, false);
+
+  // Individual ReLU units
+  if (state.showIndividual) {
+    const colors = ['#ff6b6b55', '#ffd93d55', '#6bcb7755', '#4ecdc455', '#45b7d155', '#a55eea55', '#fd9644aa', '#fc5c6555', '#26de8155', '#0fb9b155'];
+    for (let i = 0; i < state.units.length; i++) {
+      const u = state.units[i];
+      drawFunction(ctx, w, h, x => evaluateUnit(x, u), colors[i % colors.length], 1.5, true);
+    }
+  }
+
+  // Approximation
+  drawFunction(ctx, w, h, x => evaluateNetwork(x), '#53d8fb', 2.5, false);
+
+  // Knick points
+  if (state.showKnicks) {
+    for (let i = 0; i < state.units.length; i++) {
+      const u = state.units[i];
+      if (Math.abs(u.w) > 0.001) {
+        const knickX = -u.b / u.w;
+        if (knickX >= state.xMin && knickX <= state.xMax) {
+          const px = mapX(knickX, w);
+          const py = mapY(evaluateNetwork(knickX), h);
+          ctx.beginPath();
+          ctx.arc(px, py, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffd93d';
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  // Stats
+  const mse = computeMSE();
+  document.getElementById('statMSE').textContent = mse.toFixed(4);
+  document.getElementById('statUnits').textContent = state.units.length;
+  let knickCount = 0;
+  for (const u of state.units) {
+    if (Math.abs(u.w) > 0.001) {
+      const kx = -u.b / u.w;
+      if (kx >= state.xMin && kx <= state.xMax) knickCount++;
+    }
+  }
+  document.getElementById('statKnicks').textContent = knickCount;
+
+  // Decomposition canvas
+  drawDecomposition();
+
+  // Formula
+  updateFormula();
+}
+
+function drawDecomposition() {
+  const { ctx, w, h } = getCanvasCtx('decompCanvas');
+  ctx.clearRect(0, 0, w, h);
+
+  const n = state.units.length;
+  const cols = Math.min(n + 1, 8); // show max 8 columns
+  const colW = w / cols;
+  const fn = targetFunctions[state.targetFn];
+
+  for (let col = 0; col < cols && col <= n; col++) {
+    const ox = col * colW;
+
+    // Mini grid
+    ctx.strokeStyle = '#1a1a2e';
+    ctx.lineWidth = 0.5;
+    const miniMapX = (x) => ox + 10 + ((x - state.xMin) / (state.xMax - state.xMin)) * (colW - 20);
+    const miniMapY = (y) => h - (((y - state.yMin) / (state.yMax - state.yMin)) * (h - 30) + 15);
+
+    // Border
+    ctx.strokeStyle = '#2a2a4a';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(ox + 5, 5, colW - 10, h - 10);
+
+    // Zero line
+    ctx.strokeStyle = '#2a2a4a';
+    ctx.lineWidth = 0.5;
+    const zy = miniMapY(0);
+    ctx.beginPath(); ctx.moveTo(ox + 10, zy); ctx.lineTo(ox + colW - 10, zy); ctx.stroke();
+
+    // Target function (faint)
+    ctx.strokeStyle = '#e9456033';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    let started = false;
+    for (let px = ox + 10; px < ox + colW - 10; px++) {
+      const x = state.xMin + ((px - ox - 10) / (colW - 20)) * (state.xMax - state.xMin);
+      const y = targetFunctions[state.targetFn](x);
+      const py = miniMapY(y);
+      if (!started) { ctx.moveTo(px, py); started = true; }
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+
+    if (col < n) {
+      // Draw individual unit
+      const u = state.units[col];
+      ctx.strokeStyle = '#ffd93d';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      started = false;
+      for (let px = ox + 10; px < ox + colW - 10; px++) {
+        const x = state.xMin + ((px - ox - 10) / (colW - 20)) * (state.xMax - state.xMin);
+        const y = evaluateUnit(x, u);
+        const py = miniMapY(y);
+        if (!started) { ctx.moveTo(px, py); started = true; }
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw cumulative sum up to this unit
+      ctx.strokeStyle = '#53d8fb';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      started = false;
+      for (let px = ox + 10; px < ox + colW - 10; px++) {
+        const x = state.xMin + ((px - ox - 10) / (colW - 20)) * (state.xMax - state.xMin);
+        let sum = state.globalBias;
+        for (let j = 0; j <= col; j++) {
+          sum += evaluateUnit(x, state.units[j]);
+        }
+        const py = miniMapY(sum);
+        if (!started) { ctx.moveTo(px, py); started = true; }
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = '#ffd93d';
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Unit ${col + 1}`, ox + colW / 2, 18);
+
+      ctx.fillStyle = '#556';
+      ctx.font = '9px monospace';
+      ctx.fillText(`+Σ(1..${col + 1})`, ox + colW / 2, h - 3);
+    } else {
+      // Final sum column
+      ctx.strokeStyle = '#53d8fb';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      started = false;
+      for (let px = ox + 10; px < ox + colW - 10; px++) {
+        const x = state.xMin + ((px - ox - 10) / (colW - 20)) * (state.xMax - state.xMin);
+        const y = evaluateNetwork(x);
+        const py = miniMapY(y);
+        if (!started) { ctx.moveTo(px, py); started = true; }
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = '#53d8fb';
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('Σ Gesamt', ox + colW / 2, 18);
+    }
+  }
+}
+
+// ============================================================
+// FORMULA DISPLAY
+// ============================================================
+function updateFormula() {
+  let formula = `f(x) = ${state.globalBias.toFixed(2)}`;
+  for (let i = 0; i < state.units.length; i++) {
+    const u = state.units[i];
+    const sign = u.a >= 0 ? '+' : '-';
+    const aAbs = Math.abs(u.a).toFixed(2);
+    const wStr = u.w.toFixed(2);
+    const bSign = u.b >= 0 ? '+' : '-';
+    const bAbs = Math.abs(u.b).toFixed(2);
+    formula += `\n  ${sign} ${aAbs} · ReLU(${wStr}·x ${bSign} ${bAbs})`;
+
+    if (Math.abs(u.w) > 0.001) {
+      const knick = (-u.b / u.w).toFixed(2);
+      formula += `  [Knick bei x=${knick}]`;
+    }
+  }
+  document.getElementById('formulaBox').textContent = formula;
+}
+
+// ============================================================
+// UI CONTROLS
+// ============================================================
+function buildUnitControls() {
+  const container = document.getElementById('unitControls');
+  container.innerHTML = '';
+
+  for (let i = 0; i < state.units.length; i++) {
+    const u = state.units[i];
+    const div = document.createElement('div');
+    div.className = 'relu-unit';
+    div.innerHTML = `
+      <div class="unit-header">
+        <span>ReLU-Einheit ${i + 1}</span>
+        <span style="font-size:0.75em; color:#556;">Knick: x=${Math.abs(u.w) > 0.001 ? (-u.b / u.w).toFixed(2) : '∞'}</span>
+      </div>
+      <div class="slider-group">
+        <label>wᵢ (Gewicht) <span class="val" id="w${i}Val">${u.w.toFixed(2)}</span></label>
+        <input type="range" id="w${i}" min="-5" max="5" step="0.05" value="${u.w}" data-unit="${i}" data-param="w">
+      </div>
+      <div class="slider-group">
+        <label>bᵢ (Bias) <span class="val" id="b${i}Val">${u.b.toFixed(2)}</span></label>
+        <input type="range" id="b${i}" min="-8" max="8" step="0.05" value="${u.b}" data-unit="${i}" data-param="b">
+      </div>
+      <div class="slider-group">
+        <label>aᵢ (Ausgabegewicht) <span class="val" id="a${i}Val">${u.a.toFixed(2)}</span></label>
+        <input type="range" id="a${i}" min="-5" max="5" step="0.05" value="${u.a}" data-unit="${i}" data-param="a">
+      </div>
+    `;
+    container.appendChild(div);
+
+    // Attach listeners
+    for (const param of ['w', 'b', 'a']) {
+      const slider = document.getElementById(`${param}${i}`);
+      slider.addEventListener('input', (e) => {
+        const idx = parseInt(e.target.dataset.unit);
+        const p = e.target.dataset.param;
+        state.units[idx][p] = parseFloat(e.target.value);
+        document.getElementById(`${p}${idx}Val`).textContent = parseFloat(e.target.value).toFixed(2);
+
+        // Update knick display
+        const header = e.target.closest('.relu-unit').querySelector('.unit-header span:last-child');
+        const uu = state.units[idx];
+        header.textContent = `Knick: x=${Math.abs(uu.w) > 0.001 ? (-uu.b / uu.w).toFixed(2) : '∞'}`;
+
+        draw();
+      });
+    }
+  }
+}
+
+function updateUI() {
+  document.getElementById('numUnitsVal').textContent = state.units.length;
+  document.getElementById('numUnits').value = state.units.length;
+  document.getElementById('globalBiasVal').textContent = state.globalBias.toFixed(2);
+  document.getElementById('globalBias').value = state.globalBias;
+  buildUnitControls();
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.getElementById('numUnits').addEventListener('input', (e) => {
+  const n = parseInt(e.target.value);
+  document.getElementById('numUnitsVal').textContent = n;
+
+  // Preserve existing units, add/remove as needed
+  while (state.units.length < n) {
+    const pos = state.xMin + (state.xMax - state.xMin) * Math.random();
+    state.units.push({ w: 1.0, b: -pos, a: 0.3 * (Math.random() > 0.5 ? 1 : -1) });
+  }
+  while (state.units.length > n) {
+    state.units.pop();
+  }
+
+  buildUnitControls();
+  draw();
+});
+
+document.getElementById('globalBias').addEventListener('input', (e) => {
+  state.globalBias = parseFloat(e.target.value);
+  document.getElementById('globalBiasVal').textContent = state.globalBias.toFixed(2);
+  draw();
+});
+
+document.getElementById('btnAutoFit').addEventListener('click', () => {
+  document.getElementById('btnAutoFit').textContent = '⏳ Fitting...';
+  setTimeout(() => {
+    autoFit();
+    document.getElementById('btnAutoFit').textContent = '⚡ Auto-Fit';
+  }, 50);
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  initUnits(state.units.length);
+  state.globalBias = 0;
+  updateUI();
+  draw();
+});
+
+let animationId = null;
+document.getElementById('btnAnimate').addEventListener('click', () => {
+  if (state.animating) {
+    state.animating = false;
+    cancelAnimationFrame(animationId);
+    document.getElementById('btnAnimate').textContent = '▶ Animieren';
+    return;
+  }
+
+  state.animating = true;
+  document.getElementById('btnAnimate').textContent = '⏸ Stopp';
+
+  // Animate: gradually improve fit
+  const fn = targetFunctions[state.targetFn];
+  const lr = 0.0005;
+
+  function animStep() {
+    if (!state.animating) return;
+
+    const samples = [];
+    for (let i = 0; i <= 100; i++) {
+      const x = state.xMin + (state.xMax - state.xMin) * i / 100;
+      samples.push({ x, y: fn(x) });
+    }
+
+    const n = state.units.length;
+    const m = samples.length;
+
+    for (const s of samples) {
+      let pred = state.globalBias;
+      const reluVals = [];
+      const preRelu = [];
+      for (let j = 0; j < n; j++) {
+        const pre = state.units[j].w * s.x + state.units[j].b;
+        preRelu.push(pre);
+        reluVals.push(relu(pre));
+        pred += state.units[j].a * reluVals[j];
+      }
+      const err = pred - s.y;
+
+      state.globalBias -= lr * 2 * err / m;
+      for (let j = 0; j < n; j++) {
+        state.units[j].a -= lr * 2 * err * reluVals[j] / m;
+        if (preRelu[j] > 0) {
+          state.units[j].w -= lr * err * state.units[j].a * s.x / m;
+          state.units[j].b -= lr * err * state.units[j].a / m;
+        }
+      }
+    }
+
+    // Clamp
+    for (let j = 0; j < n; j++) {
+      state.units[j].w = clamp(state.units[j].w, -10, 10);
+      state.units[j].b = clamp(state.units[j].b, -10, 10);
+      state.units[j].a = clamp(state.units[j].a, -10, 10);
+    }
+    state.globalBias = clamp(state.globalBias, -5, 5);
+
+    // Update slider displays (not rebuilding, just values)
+    for (let i = 0; i < n; i++) {
+      const wEl = document.getElementById(`w${i}`);
+      const bEl = document.getElementById(`b${i}`);
+      const aEl = document.getElementById(`a${i}`);
+      if (wEl) {
+        wEl.value = state.units[i].w;
+        document.getElementById(`w${i}Val`).textContent = state.units[i].w.toFixed(2);
+      }
+      if (bEl) {
+        bEl.value = state.units[i].b;
+        document.getElementById(`b${i}Val`).textContent = state.units[i].b.toFixed(2);
+      }
+      if (aEl) {
+        aEl.value = state.units[i].a;
+        document.getElementById(`a${i}Val`).textContent = state.units[i].a.toFixed(2);
+      }
+    }
+    document.getElementById('globalBias').value = state.globalBias;
+    document.getElementById('globalBiasVal').textContent = state.globalBias.toFixed(2);
+
+    draw();
+    animationId = requestAnimationFrame(animStep);
+  }
+
+  animStep();
+});
+
+// Target function selector
+document.querySelectorAll('#targetSelector .btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('#targetSelector .btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    state.targetFn = e.target.dataset.fn;
+    draw();
+  });
+});
+
+// Checkboxes
+document.getElementById('showIndividual').addEventListener('change', (e) => {
+  state.showIndividual = e.target.checked;
+  draw();
+});
+document.getElementById('showKnicks').addEventListener('change', (e) => {
+  state.showKnicks = e.target.checked;
+  draw();
+});
+document.getElementById('showError').addEventListener('change', (e) => {
+  state.showError = e.target.checked;
+  draw();
+});
+
+// Resize handler
+window.addEventListener('resize', () => draw());
+
+// ============================================================
+// INIT
+// ============================================================
+initUnits(4);
+updateUI();
+draw();
+</script>
+</body>
+</html>
