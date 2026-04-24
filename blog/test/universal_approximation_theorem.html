@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Latin-Modern.min.css">
 <script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
 <style>
+.ed-wrap{display:inline-flex;flex-direction:column;align-items:center;vertical-align:baseline;margin:0 1px}
+.ed-wrap .ed-lbl{font-size:.55em;color:#556;font-family:monospace;line-height:1;margin-top:1px;white-space:nowrap}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#08080f;color:#ccc;line-height:1.5}
 .hdr{text-align:center;padding:22px 16px 10px;background:linear-gradient(135deg,#0c0c1a,#10102a);border-bottom:2px solid #1a1a3a}
@@ -211,9 +213,10 @@ document.addEventListener('mousedown',e=>{if(popEd.contains(e.target))return;if(
 // Key insight: NEVER split \left(...\right) across chunks!
 // Use \bigl( \bigr) or plain ( ) instead.
 // ============================================================
-function T(s){return{t:'t',v:s}}   // tex chunk
-function N(eid){return{t:'n',e:eid}} // editable number
-function BR(){return{t:'b'}}         // line break
+function T(s){return{t:'t',v:s}}
+function N(eid){return{t:'n',e:eid}}
+function NL(eid,label){return{t:'nl',e:eid,l:label}}  // NEW: number with label
+function BR(){return{t:'b'}}
 
 function renderHybrid(elId,parts){
   const el=document.getElementById(elId);el.innerHTML='';
@@ -233,6 +236,17 @@ function renderHybrid(elId,parts){
       span.addEventListener('click',e=>{e.stopPropagation();openPop(p.e,span.getBoundingClientRect())});
       row.appendChild(span);
     }
+    if(p.t==='nl'){
+      const ed=editables.find(e=>e.id===p.e);
+      const wrap=document.createElement('span');wrap.className='ed-wrap';
+      const span=document.createElement('span');span.className='ed-n';span.setAttribute('data-eid',p.e);
+      span.textContent=ed?ed.get().toFixed(2):'??';
+      span.addEventListener('click',e=>{e.stopPropagation();openPop(p.e,span.getBoundingClientRect())});
+      wrap.appendChild(span);
+      const lbl=document.createElement('span');lbl.className='ed-lbl';lbl.textContent=p.l;
+      wrap.appendChild(lbl);
+      row.appendChild(wrap);
+    }
   }
 }
 
@@ -250,122 +264,134 @@ function buildFormulas(){
   }
   regEd('b2',()=>S.b2,v=>{S.b2=v},-5,5,'b₂ Dense2 Bias');
 
-  // ---- TOTAL ----
-  {
-    const p=[T('\\hat{y}(x) = '),N('b2')];
-    for(let i=0;i<n;i++){
-      p.push(T(S.W2[i]>=0?' + ':' - '));
-      p.push(N(`w2.${i}`));
+// ---- TOTAL ----
+{
+  const p = [
+    T('\\underbrace{\\hat{y}(x)}_{\\text{network output}} = '),
+    NL('b2','b₂ bias')
+  ];
+  for(let i=0;i<n;i++){
+    p.push(T(S.W2[i]>=0?' + ':' - '));
+    p.push(NL(`w2.${i}`,`w₂,${i+1}`));
+    p.push(T('\\cdot \\mathrm{ReLU}\\Bigl('));
+    p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} +'));
+    p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+    p.push(T('\\Bigr)'));
+  }
+  renderHybrid('fTot',p);
+}
+
+// ---- DENSE 1 ----
+{
+  const p = [
+    T('\\underbrace{\\mathbf{h}}_{\\text{pre-act}} = \\underbrace{W_1}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b_1}_{\\text{biases}}')
+  ];
+  for(let i=0;i<n;i++){
+    p.push(BR());
+    p.push(T(`\\underbrace{h_{${i+1}}}_{\\text{unit ${i+1}}} = `));
+    p.push(NL(`w1.${i}`,`w₁,${i+1} weight`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} \\;+\\;'));
+    p.push(NL(`b1.${i}`,`b₁,${i+1} bias`));
+  }
+  renderHybrid('fD1',p);
+}
+
+// ---- RELU ----
+{
+  const p = [
+    T('\\underbrace{\\mathbf{z}}_{\\text{activations}} = \\underbrace{\\mathrm{ReLU}}_{\\max(0,\\cdot)}(\\mathbf{h})')
+  ];
+  for(let i=0;i<n;i++){
+    p.push(BR());
+    p.push(T(`\\underbrace{z_{${i+1}}}_{\\text{act ${i+1}}} = \\max\\bigl(0,\\;`));
+    p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} + '));
+    p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+    p.push(T('\\bigr)'));
+  }
+  renderHybrid('fR',p);
+}
+
+// ---- DENSE 2 ----
+{
+  const p = [
+    T('\\underbrace{\\hat{y}}_{\\text{output}} = \\underbrace{W_2^\\top}_{\\text{weights}} \\underbrace{\\mathbf{z}}_{\\text{acts}} + \\underbrace{b_2}_{\\text{bias}} = ')
+  ];
+  for(let i=0;i<n;i++){
+    if(i>0) p.push(T('+'));
+    p.push(NL(`w2.${i}`,`w₂,${i+1}`));
+    p.push(T(`\\cdot \\underbrace{z_{${i+1}}}_{\\text{act ${i+1}}}`));
+  }
+  p.push(T('\\;+\\;'));
+  p.push(NL('b2','b₂ bias'));
+  renderHybrid('fD2',p);
+}
+
+// ---- BUMPS ----
+{
+  const bumps=detectBumps();
+  const p=[];
+  if(bumps.length===0){
+    p.push(T('\\text{No bumps detected. Use Auto-Fit!}'));
+  } else {
+    for(let k=0;k<bumps.length;k++){
+      const bp=bumps[k],i=bp.i,j=bp.j;
+      if(k>0) p.push(BR());
+      p.push(T(`\\textcolor{#ffd93d}{\\text{Bump ${k+1}:}}\\;`));
+      p.push(NL(`w2.${i}`,`w₂,${i+1}`));
       p.push(T('\\cdot \\mathrm{ReLU}\\bigl('));
-      p.push(N(`w1.${i}`));
-      p.push(T('\\cdot x +'));
-      p.push(N(`b1.${i}`));
+      p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+      p.push(T('\\cdot \\underbrace{x}_{\\text{in}}+'));
+      p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+      p.push(T('\\bigr) \\;+\\;'));
+      p.push(NL(`w2.${j}`,`w₂,${j+1}`));
+      p.push(T('\\cdot \\mathrm{ReLU}\\bigl('));
+      p.push(NL(`w1.${j}`,`w₁,${j+1}`));
+      p.push(T('\\cdot \\underbrace{x}_{\\text{in}}+'));
+      p.push(NL(`b1.${j}`,`b₁,${j+1}`));
       p.push(T('\\bigr)'));
-    }
-    renderHybrid('fTot',p);
-  }
-
-  // ---- DENSE 1 ----
-  {
-    const p=[T('\\mathbf{h} = W_1 \\cdot x + b_1')];
-    for(let i=0;i<n;i++){
       p.push(BR());
-      p.push(T(`h_{${i+1}} = `));
-      p.push(N(`w1.${i}`));
-      p.push(T('\\cdot x \\;+\\;'));
-      p.push(N(`b1.${i}`));
+      p.push(T(`\\quad\\small\\text{active in [${bp.x1.toFixed(2)}, ${bp.x2.toFixed(2)}], slopes: ${bp.sI.toFixed(2)} / ${bp.sJ.toFixed(2)}}`));
     }
-    renderHybrid('fD1',p);
   }
+  renderHybrid('fBumps',p);
+}
 
-  // ---- RELU ----
-  {
-    const p=[T('\\mathbf{z} = \\mathrm{ReLU}(\\mathbf{h})')];
-    for(let i=0;i<n;i++){
-      p.push(BR());
-      p.push(T(`z_{${i+1}} = \\max\\bigl(0,\\;`));
-      p.push(N(`w1.${i}`));
-      p.push(T('\\cdot x + '));
-      p.push(N(`b1.${i}`));
-      p.push(T('\\bigr)'));
+// ---- EXPANDED ----
+{
+  const p = [
+    T('\\underbrace{\\hat{y}(x)}_{\\text{output}} = '),
+    NL('b2','b₂ out bias')
+  ];
+  for(let i=0;i<n;i++){
+    const kx=knickX(i),slope=S.W2[i]*S.W1[i];
+    p.push(BR());
+    p.push(T(`\\quad ${slope>=0?'+':'-'}\\;`));
+    p.push(NL(`w2.${i}`,`w₂,${i+1}`));
+    p.push(T('\\cdot \\max\\bigl(0,\\;'));
+    p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} + '));
+    p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+    p.push(T('\\bigr)'));
+    if(!isNaN(kx)){
+      p.push(T(`\\;\\small\\leftarrow \\text{U${i+1}: kink } x\\!=${kx.toFixed(2)},\\; \\underbrace{m}_{\\text{slope}}\\!=${slope.toFixed(2)}`));
     }
-    renderHybrid('fR',p);
   }
+  renderHybrid('fExp',p);
+}
 
-  // ---- DENSE 2 ----
-  {
-    const p=[T('\\hat{y} = W_2^\\top \\mathbf{z} + b_2 = ')];
-    for(let i=0;i<n;i++){
-      if(i>0)p.push(T('+'));
-      p.push(N(`w2.${i}`));
-      p.push(T(`\\cdot z_{${i+1}}`));
-    }
-    p.push(T('\\;+\\;'));
-    p.push(N('b2'));
-    renderHybrid('fD2',p);
+// ---- KNICK POINTS ----
+{
+  const p=[];let any=false;
+  for(let i=0;i<n;i++){
+    const kx=knickX(i);if(isNaN(kx))continue;any=true;
+    if(p.length>0) p.push(BR());
+    p.push(T(`\\underbrace{x_{\\text{k},${i+1}}}_{\\text{kink ${i+1}}} = -\\dfrac{\\overbrace{${S.b1[i].toFixed(2)}}^{b_{1,${i+1}}}}{\\underbrace{${S.W1[i].toFixed(2)}}_{w_{1,${i+1}}}} = ${kx.toFixed(3)}`));
   }
-
-  // ---- BUMPS ----
-  {
-    const bumps=detectBumps();
-    const p=[];
-    if(bumps.length===0){
-      p.push(T('\\text{Keine Bumps erkannt. Nutze Auto-Fit!}'));
-    } else {
-      for(let k=0;k<bumps.length;k++){
-        const bp=bumps[k],i=bp.i,j=bp.j;
-        if(k>0)p.push(BR());
-        p.push(T(`\\textcolor{#ffd93d}{\\text{Bump ${k+1}:}}\\;`));
-        p.push(N(`w2.${i}`));
-        p.push(T('\\cdot \\mathrm{ReLU}\\bigl('));
-        p.push(N(`w1.${i}`));
-        p.push(T('x+'));
-        p.push(N(`b1.${i}`));
-        p.push(T('\\bigr) \\;+\\;'));
-        p.push(N(`w2.${j}`));
-        p.push(T('\\cdot \\mathrm{ReLU}\\bigl('));
-        p.push(N(`w1.${j}`));
-        p.push(T('x+'));
-        p.push(N(`b1.${j}`));
-        p.push(T('\\bigr)'));
-        p.push(BR());
-        p.push(T(`\\quad\\small\\text{aktiv in [${bp.x1.toFixed(2)}, ${bp.x2.toFixed(2)}], Steigungen: ${bp.sI.toFixed(2)} / ${bp.sJ.toFixed(2)}}`));
-      }
-    }
-    renderHybrid('fBumps',p);
-  }
-
-  // ---- EXPANDED ----
-  {
-    const p=[T('\\hat{y}(x) = '),N('b2')];
-    for(let i=0;i<n;i++){
-      const kx=knickX(i),slope=S.W2[i]*S.W1[i];
-      p.push(BR());
-      p.push(T(`\\quad ${slope>=0?'+':'-'}\\;`));
-      p.push(N(`w2.${i}`));
-      p.push(T('\\cdot \\max\\bigl(0,\\;'));
-      p.push(N(`w1.${i}`));
-      p.push(T('\\, x + '));
-      p.push(N(`b1.${i}`));
-      p.push(T('\\bigr)'));
-      if(!isNaN(kx)){
-        p.push(T(`\\;\\small\\leftarrow \\text{U${i+1}: knick } x\\!=${kx.toFixed(2)},\\; m\\!=${slope.toFixed(2)}`));
-      }
-    }
-    renderHybrid('fExp',p);
-  }
-
-  // ---- KNICK POINTS ----
-  {
-    const p=[];let any=false;
-    for(let i=0;i<n;i++){
-      const kx=knickX(i);if(isNaN(kx))continue;any=true;
-      if(p.length>0)p.push(BR());
-      p.push(T(`x_{\\text{k},${i+1}} = -\\dfrac{${S.b1[i].toFixed(2)}}{${S.W1[i].toFixed(2)}} = ${kx.toFixed(3)}`));
-    }
-    if(!any)p.push(T('\\text{(keine Knickpunkte)}'));
-    renderHybrid('fKn',p);
-  }
+  if(!any) p.push(T('\\text{(no kink points)}'));
+  renderHybrid('fKn',p);
+}
 }
 
 // ============================================================
