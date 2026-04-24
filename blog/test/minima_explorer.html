@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BasinHopper 3D – Loss Landscape Explorer</title>
+<script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #sidebar {
+    width: 330px;
+    min-width: 330px;
+    background: #161b22;
+    padding: 16px;
+    overflow-y: auto;
+    border-right: 1px solid #30363d;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  #sidebar h1 { font-size: 1.2em; color: #58a6ff; }
+  #sidebar h2 { font-size: 0.85em; color: #8b949e; font-weight: normal; margin-bottom: 4px; }
+  .cg {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  .cg h3 { font-size: 0.8em; color: #58a6ff; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .sr {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
+  }
+  .sr label { font-size: 0.78em; color: #8b949e; flex: 1; }
+  .sr input[type=range] { width: 110px; accent-color: #58a6ff; }
+  .sr .v { width: 50px; text-align: right; font-size: 0.78em; color: #e6edf3; font-family: monospace; }
+  .tr { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .tr label { font-size: 0.8em; }
+  .sw { position: relative; width: 38px; height: 20px; }
+  .sw input { opacity: 0; width: 0; height: 0; }
+  .st {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background: #30363d; border-radius: 20px; transition: 0.3s;
+  }
+  .st:before {
+    content: ""; position: absolute; height: 14px; width: 14px; left: 3px; bottom: 3px;
+    background: #c9d1d9; border-radius: 50%; transition: 0.3s;
+  }
+  .sw input:checked + .st { background: #238636; }
+  .sw input:checked + .st:before { transform: translateX(18px); }
+  button {
+    padding: 6px 12px; border: 1px solid #30363d; background: #21262d; color: #c9d1d9;
+    border-radius: 6px; cursor: pointer; font-size: 0.8em; transition: 0.2s;
+  }
+  button:hover { background: #30363d; border-color: #58a6ff; }
+  button.p { background: #238636; border-color: #238636; color: #fff; }
+  button.p:hover { background: #2ea043; }
+  button.d { background: #da3633; border-color: #da3633; color: #fff; }
+  .br { display: flex; gap: 6px; flex-wrap: wrap; }
+  #log {
+    flex: 1; min-height: 60px; background: #0d1117; border: 1px solid #30363d;
+    border-radius: 8px; padding: 6px; font-family: monospace; font-size: 0.7em;
+    overflow-y: auto; color: #8b949e; line-height: 1.4;
+  }
+  #log .j { color: #d29922; }
+  #log .a { color: #3fb950; }
+  #log .r { color: #f85149; }
+  #log .i { color: #58a6ff; }
+  #log .s { color: #bc8cff; font-weight: bold; }
+  #main { flex: 1; display: flex; flex-direction: column; position: relative; }
+  #plotly-div { flex: 1; min-height: 0; }
+  #hud {
+    position: absolute; top: 10px; right: 12px;
+    background: rgba(22,27,34,0.92); border: 1px solid #30363d;
+    border-radius: 8px; padding: 8px 12px; font-family: monospace;
+    font-size: 0.75em; line-height: 1.6; pointer-events: none; z-index: 10;
+  }
+  #hud span { color: #58a6ff; }
+  #hud .lr-val { color: #d29922; font-weight: bold; font-size: 1.1em; }
+  #legend {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(22,27,34,0.92); border: 1px solid #30363d;
+    border-radius: 8px; padding: 8px 12px; font-size: 0.75em; pointer-events: none; z-index: 10;
+  }
+  .leg-item { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+  #loss-chart { height: 100px; width: 100%; }
+  #scheduler-banner {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(188,140,255,0.15); border: 2px solid #bc8cff;
+    border-radius: 12px; padding: 14px 28px; font-family: monospace;
+    font-size: 1em; color: #bc8cff; pointer-events: none; z-index: 20;
+    display: none; text-align: center; backdrop-filter: blur(4px);
+    animation: bannerPulse 0.6s ease-in-out;
+  }
+  @keyframes bannerPulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+  #minima-list {
+    background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+    padding: 6px; font-family: monospace; font-size: 0.7em; max-height: 80px;
+    overflow-y: auto;
+  }
+  #minima-list .m-item { display: flex; justify-content: space-between; padding: 1px 4px; border-radius: 3px; }
+  #minima-list .m-item.visited { background: rgba(63,185,80,0.1); }
+  #minima-list .m-item.current { background: rgba(88,166,255,0.15); border: 1px solid #58a6ff; }
+  #minima-list .m-item.target { background: rgba(210,153,34,0.1); }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h1>🏔️ BasinHopper 3D</h1>
+  <h2>Interactive Loss Landscape Explorer</h2>
+
+  <div class="cg">
+    <h3>⚙️ Optimizer</h3>
+    <div class="sr"><label>Base LR</label><input type="range" id="lr" min="0.05" max="3" step="0.05" value="0.8"><div class="v" id="lr-v">0.80</div></div>
+    <div class="sr"><label>Momentum</label><input type="range" id="mom" min="0" max="0.99" step="0.01" value="0.80"><div class="v" id="mom-v">0.80</div></div>
+    <div class="sr"><label>Friction</label><input type="range" id="fric" min="0.80" max="1" step="0.005" value="0.96"><div class="v" id="fric-v">0.960</div></div>
+    <div class="sr"><label>LR Decay</label><input type="range" id="lrdecay" min="0.990" max="1" step="0.001" value="0.998"><div class="v" id="lrdecay-v">0.998</div></div>
+  </div>
+
+  <div class="cg">
+    <h3>🚀 Basin Hopping</h3>
+    <div class="sr"><label>Patience</label><input type="range" id="pat" min="20" max="400" step="5" value="120"><div class="v" id="pat-v">120</div></div>
+    <div class="sr"><label>Plateau Thresh</label><input type="range" id="pthr" min="0.001" max="0.1" step="0.001" value="0.005"><div class="v" id="pthr-v">0.005</div></div>
+    <div class="sr"><label>Jump LR ×</label><input type="range" id="jmul" min="5" max="150" step="1" value="50"><div class="v" id="jmul-v">50</div></div>
+    <div class="sr"><label>Random Steps</label><input type="range" id="estep" min="5" max="80" step="1" value="25"><div class="v" id="estep-v">25</div></div>
+    <div class="sr"><label>Descent Steps</label><input type="range" id="dstep" min="10" max="150" step="1" value="60"><div class="v" id="dstep-v">60</div></div>
+  </div>
+
+  <div class="cg">
+    <h3>🌄 Landscape</h3>
+    <div class="sr"><label>Extra Basins</label><input type="range" id="nbas" min="0" max="10" step="1" value="4"><div class="v" id="nbas-v">4</div></div>
+    <div class="sr"><label>Roughness</label><input type="range" id="rough" min="0" max="1.5" step="0.05" value="0.3"><div class="v" id="rough-v">0.30</div></div>
+    <div class="sr"><label>Sim Speed</label><input type="range" id="spd" min="0.5" max="8" step="0.5" value="2.0"><div class="v" id="spd-v">2.0</div></div>
+  </div>
+
+  <div class="cg">
+    <h3>📍 Known Minima</h3>
+    <div id="minima-list"></div>
+  </div>
+
+  <div class="br">
+    <button class="p" id="btn-go">▶ Start</button>
+    <button id="btn-pause">⏸ Pause</button>
+    <button class="d" id="btn-reset">↺ Reset</button>
+    <button id="btn-newmap">🗺 New Map</button>
+  </div>
+
+  <div id="log"></div>
+</div>
+
+<div id="main">
+  <div id="plotly-div">
+    <div id="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#58a6ff"></div> Gradient descent (low LR)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#d29922"></div> Random jump (high LR)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#3fb950"></div> Found better minimum</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#f85149"></div> Rejected / rollback</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#bc8cff"></div> Checkpoint (saved state)</div>
+    </div>
+    <div id="hud">
+      <div>Step: <span id="h-step">0</span></div>
+      <div>Loss: <span id="h-loss">—</span></div>
+      <div>Best: <span id="h-best">—</span></div>
+      <div>State: <span id="h-state">idle</span></div>
+      <div>Stale: <span id="h-stale">0</span></div>
+      <div>Jumps: <span id="h-jumps">0</span> ✓<span id="h-acc">0</span> ✗<span id="h-rej">0</span></div>
+      <div style="margin-top:4px;border-top:1px solid #30363d;padding-top:4px">
+        Current LR: <span class="lr-val" id="h-lr">—</span>
+      </div>
+      <div>LR Phase: <span id="h-lr-phase">—</span></div>
+      <div>Minima Found: <span id="h-minima">0</span> / <span id="h-minima-total">3+</span></div>
+    </div>
+    <div id="scheduler-banner"></div>
+  </div>
+  <div id="loss-chart"></div>
+</div>
+
+<script>
+// ============================================================
+//  UTILS
+// ============================================================
+const $ = id => document.getElementById(id);
+const V = id => parseFloat($(id).value);
+
+['lr','mom','fric','lrdecay','pat','pthr','jmul','estep','dstep','nbas','rough','spd'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    let v = V(id);
+    if (['pthr'].includes(id)) $(id+'-v').textContent = v.toFixed(3);
+    else if (['rough','lr'].includes(id)) $(id+'-v').textContent = v.toFixed(2);
+    else if (['fric','lrdecay'].includes(id)) $(id+'-v').textContent = v.toFixed(3);
+    else $(id+'-v').textContent = v;
+  });
+});
+
+// ============================================================
+//  LANDSCAPE WITH GUARANTEED 3+ LOCAL MINIMA
+// ============================================================
+class Landscape {
+  constructor(extraBasins, roughness) {
+    this.basins = [];
+    this.sinP = [];
+    this.knownMinima = [];
+    this.generate(extraBasins || 4, roughness || 0.3);
+  }
+
+  generate(extraBasins, roughness) {
+    this.basins = [];
+
+    // GUARANTEED 3 well-separated local minima at known positions
+    // We place them with increasing depth so there's a clear ordering
+    const guaranteed = [
+      { cx: -3.0 + (Math.random()-0.5)*0.8, cy: -3.0 + (Math.random()-0.5)*0.8, amp: -1.2, sx: 1.2, sy: 1.2, label: 'Shallow' },
+      { cx:  0.5 + (Math.random()-0.5)*0.8, cy:  2.5 + (Math.random()-0.5)*0.8, amp: -2.2, sx: 1.0, sy: 1.0, label: 'Medium' },
+      { cx:  3.0 + (Math.random()-0.5)*0.8, cy: -1.5 + (Math.random()-0.5)*0.8, amp: -3.5, sx: 0.9, sy: 0.9, label: 'Global' },
+    ];
+
+    for (const g of guaranteed) {
+      this.basins.push(g);
+    }
+
+    // Extra random basins
+    for (let i = 0; i < extraBasins; i++) {
+      this.basins.push({
+        cx: (Math.random() - 0.5) * 8,
+        cy: (Math.random() - 0.5) * 8,
+        amp: -(0.3 + Math.random() * 1.5),
+        sx: 0.7 + Math.random() * 1.5,
+        sy: 0.7 + Math.random() * 1.5,
+      });
+    }
+
+    // Some hills (barriers between basins)
+    for (let i = 0; i < 4; i++) {
+      this.basins.push({
+        cx: (Math.random() - 0.5) * 7,
+        cy: (Math.random() - 0.5) * 7,
+        amp: 0.4 + Math.random() * 1.2,
+        sx: 1.0 + Math.random() * 1.5,
+        sy: 1.0 + Math.random() * 1.5,
+      });
+    }
+
+    // Roughness
+    this.sinP = [];
+    const m = Math.floor(roughness * 6);
+    for (let i = 0; i < m; i++) {
+      this.sinP.push({
+        fx: (Math.random() - 0.5) * 2.5,
+        fy: (Math.random() - 0.5) * 2.5,
+        amp: Math.random() * roughness * 0.25,
+        ph: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // Find actual minima by gradient descent from guaranteed positions
+    this.knownMinima = [];
+    for (const g of guaranteed) {
+      const m = this._findMinimum(g.cx, g.cy);
+      m.label = g.label;
+      m.guaranteedAmp = g.amp;
+      this.knownMinima.push(m);
+    }
+    // Sort by loss (weakest = highest loss first)
+    this.knownMinima.sort((a, b) => b.loss - a.loss);
+  }
+
+  _findMinimum(startX, startY) {
+    let x = startX, y = startY;
+    for (let i = 0; i < 500; i++) {
+      const [gx, gy] = this.grad(x, y);
+      x -= 0.01 * gx;
+      y -= 0.01 * gy;
+      x = Math.max(-5.5, Math.min(5.5, x));
+      y = Math.max(-5.5, Math.min(5.5, y));
+    }
+    return { x, y, loss: this.eval(x, y), visited: false };
+  }
+
+  eval(x, y) {
+    let z = 0.015 * (x * x + y * y); // gentle bowl
+    for (const b of this.basins) {
+      const dx = (x - b.cx) / b.sx, dy = (y - b.cy) / b.sy;
+      z += b.amp * Math.exp(-0.5 * (dx * dx + dy * dy));
+    }
+    for (const s of this.sinP) {
+      z += s.amp * Math.sin(s.fx * x + s.fy * y + s.ph);
+    }
+    return z;
+  }
+
+  grad(x, y) {
+    const h = 0.005;
+    return [
+      (this.eval(x + h, y) - this.eval(x - h, y)) / (2 * h),
+      (this.eval(x, y + h) - this.eval(x, y - h)) / (2 * h)
+    ];
+  }
+}
+
+let land = new Landscape(4, 0.3);
+
+// ============================================================
+//  GRID DATA FOR PLOTLY
+// ============================================================
+const GRID = 50; // lower than 80 for performance
+const RANGE = 5.5;
+let gridXvals = [], gridYvals = [], gridZ = [];
+
+function computeGrid() {
+  gridXvals = [];
+  gridYvals = [];
+  gridZ = [];
+  for (let iy = 0; iy <= GRID; iy++) {
+    const wy = -RANGE + (iy / GRID) * 2 * RANGE;
+    gridYvals.push(wy);
+  }
+  for (let ix = 0; ix <= GRID; ix++) {
+    const wx = -RANGE + (ix / GRID) * 2 * RANGE;
+    gridXvals.push(wx);
+  }
+  for (let iy = 0; iy <= GRID; iy++) {
+    const row = [];
+    const wy = gridYvals[iy];
+    for (let ix = 0; ix <= GRID; ix++) {
+      row.push(land.eval(gridXvals[ix], wy));
+    }
+    gridZ.push(row);
+  }
+}
+computeGrid();
+
+// ============================================================
+//  SHARED STATE
+// ============================================================
+const lossHist = [];
+const lrHist = [];
+const MAX_HIST = 800;
+let ball = null;
+let currentLR = 0;
+let bannerTimeout = null;
+
+function makeBall(x, y) {
+  return {
+    x, y, vx: 0, vy: 0,
+    state: 'idle',
+    bestLoss: Infinity,
+    stale: 0,
+    step: 0,
+    trail: [],
+    // Checkpoint
+    cpX: 0, cpY: 0, cpVx: 0, cpVy: 0, cpLoss: Infinity,
+    // Exploration
+    phase: 'descent', // 'descent', 'jumping', 'descending_candidate'
+    jumpStepsLeft: 0,
+    descentStepsLeft: 0,
+    // Stats
+    jumps: 0, accepts: 0, rejects: 0,
+    rejectedTrails: [],
+    _rejectFade: 0,
+    // LR state
+    lrMultiplier: 1.0,
+    lrDecayAccum: 1.0,
+    minimaVisited: [],
+  };
+}
+
+function showBanner(msg, duration) {
+  const el = $('scheduler-banner');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  el.offsetHeight; // reflow
+  el.style.animation = 'bannerPulse 0.6s ease-in-out';
+  if (bannerTimeout) clearTimeout(bannerTimeout);
+  bannerTimeout = setTimeout(() => { el.style.display = 'none'; }, duration || 2500);
+}
+
+function resetBall() {
+  // Start at the weakest (shallowest) minimum
+  const weakest = land.knownMinima[0]; // sorted weakest first
+  ball = makeBall(weakest.x + (Math.random()-0.5)*0.3, weakest.y + (Math.random()-0.5)*0.3);
+  ball.lrDecayAccum = 1.0;
+  ball.lrMultiplier = 1.0;
+  currentLR = V('lr') * 0.002;
+  lossHist.length = 0;
+  lrHist.length = 0;
+  // Reset minima visited status
+  for (const m of land.knownMinima) m.visited = false;
+  clearLog();
+  log('i', 'Ball placed near weakest minimum. Press Start.');
+  log('i', `Known minima: ${land.knownMinima.map((m,i) => `${m.label}(${m.loss.toFixed(2)})`).join(' > ')}`);
+  updateMinimaList();
+}
+
+// ============================================================
+//  LOGGING
+// ============================================================
+const logEl = $('log');
+function log(cls, msg) {
+  const step = ball ? ball.step : 0;
+  const d = document.createElement('div');
+  d.className = cls;
+  d.textContent = `[${step}] ${msg}`;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+  if (logEl.children.length > 300) logEl.removeChild(logEl.firstChild);
+}
+function clearLog() { logEl.innerHTML = ''; }
+
+// ============================================================
+//  MINIMA LIST UI
+// ============================================================
+function updateMinimaList() {
+  const el = $('minima-list');
+  el.innerHTML = '';
+  for (let i = 0; i < land.knownMinima.length; i++) {
+    const m = land.knownMinima[i];
+    const div = document.createElement('div');
+    div.className = 'm-item';
+    if (m.visited) div.classList.add('visited');
+    // Check if ball is near this minimum
+    if (ball) {
+      const dx = ball.x - m.x, dy = ball.y - m.y;
+      if (Math.sqrt(dx*dx + dy*dy) < 0.8) div.classList.add('current');
+    }
+    const rank = land.knownMinima.length - i;
+    div.innerHTML = `<span style="color:${m.visited ? '#3fb950' : '#8b949e'}">${m.visited ? '✓' : '○'} #${rank} ${m.label}</span><span style="color:#58a6ff">loss: ${m.loss.toFixed(3)}</span>`;
+    el.appendChild(div);
+  }
+}
+
+// Check if ball is near a known minimum
+function checkMinimaProximity() {
+  if (!ball) return;
+  for (const m of land.knownMinima) {
+    const dx = ball.x - m.x, dy = ball.y - m.y;
+    if (Math.sqrt(dx*dx + dy*dy) < 0.6 && !m.visited) {
+      m.visited = true;
+      const count = land.knownMinima.filter(mm => mm.visited).length;
+      log('a', `🎯 Reached minimum "${m.label}" (loss=${m.loss.toFixed(4)})! [${count}/${land.knownMinima.length}]`);
+      if (count === land.knownMinima.length) {
+        log('a', `🏆 ALL MINIMA VISITED! Global minimum found!`);
+        showBanner('🏆 ALL MINIMA EXPLORED!', 4000);
+      }
+    }
+  }
+}
+
+// ============================================================
+//  PLOTLY SETUP
+// ============================================================
+const plotDiv = $('plotly-div');
+let plotInited = false;
+
+function buildTraces() {
+  const traces = [];
+
+  // Surface
+  traces.push({
+    type: 'surface',
+    x: gridXvals,
+    y: gridYvals,
+    z: gridZ,
+    colorscale: [
+      [0, '#0a1628'],
+      [0.12, '#0d2847'],
+      [0.25, '#0e4466'],
+      [0.4, '#1a6e5c'],
+      [0.55, '#2d8a4e'],
+      [0.7, '#6aaa3a'],
+      [0.85, '#c4a535'],
+      [1, '#e06040']
+    ],
+    opacity: 0.82,
+    showscale: false,
+    contours: {
+      z: { show: true, usecolormap: true, highlightcolor: '#fff', project: { z: false } }
+    },
+    lighting: { ambient: 0.6, diffuse: 0.5, specular: 0.15, roughness: 0.9 },
+    name: 'Loss Surface',
+    hovertemplate: 'x: %{x:.2f}<br>y: %{y:.2f}<br>loss: %{z:.4f}<extra></extra>'
+  });
+
+  if (!ball) return traces;
+
+  // Known minima markers
+  const mX = [], mY = [], mZ = [], mText = [], mColors = [];
+  for (const m of land.knownMinima) {
+    mX.push(m.x);
+    mY.push(m.y);
+    mZ.push(m.loss + 0.15);
+    mText.push(`${m.label}<br>loss: ${m.loss.toFixed(3)}${m.visited ? '<br>✓ VISITED' : ''}`);
+    mColors.push(m.visited ? '#3fb950' : '#8b949e');
+  }
+  traces.push({
+    type: 'scatter3d',
+    x: mX, y: mY, z: mZ,
+    mode: 'markers+text',
+    marker: { size: 6, color: mColors, symbol: 'diamond', line: { color: '#fff', width: 1 } },
+    text: land.knownMinima.map(m => m.label),
+    textposition: 'top center',
+    textfont: { size: 9, color: '#c9d1d9' },
+    name: 'Minima',
+    hovertemplate: '%{text}<extra></extra>',
+    hovertext: mText,
+  });
+
+  // Trail
+  if (ball.trail.length > 1) {
+    // Split trail into segments by type for coloring
+    let segStart = 0;
+    for (let i = 1; i <= ball.trail.length; i++) {
+      const prevS = ball.trail[i-1].s;
+      const curS = i < ball.trail.length ? ball.trail[i].s : null;
+      if (curS !== prevS || i === ball.trail.length) {
+        const seg = ball.trail.slice(segStart, i);
+        if (seg.length > 1) {
+          const color = prevS === 'j' ? '#d29922' : prevS === 'a' ? '#3fb950' : '#58a6ff';
+          traces.push({
+            type: 'scatter3d',
+            x: seg.map(p => p.x),
+            y: seg.map(p => p.y),
+            z: seg.map(p => p.z + 0.06),
+            mode: 'lines',
+            line: { color: color, width: prevS === 'j' ? 5 : 3 },
+            showlegend: false,
+            hoverinfo: 'skip'
+          });
+        }
+        segStart = i;
+      }
+    }
+  }
+
+  // Rejected trails
+  if (ball.rejectedTrails && ball.rejectedTrails.length > 0) {
+    const fadeAlpha = Math.max(0.05, 1 - (ball._rejectFade || 0) / 150);
+    for (const rt of ball.rejectedTrails) {
+      if (rt.length < 2) continue;
+      traces.push({
+        type: 'scatter3d',
+        x: rt.map(p => p.x),
+        y: rt.map(p => p.y),
+        z: rt.map(p => p.z + 0.08),
+        mode: 'lines',
+        line: { color: `rgba(248,81,73,${fadeAlpha})`, width: 2, dash: 'dash' },
+        showlegend: false,
+        hoverinfo: 'skip'
+      });
+    }
+  }
+
+  // Checkpoint marker during exploration
+  if (ball.state === 'exploring') {
+    const cpz = land.eval(ball.cpX, ball.cpY);
+    traces.push({
+      type: 'scatter3d',
+      x: [ball.cpX], y: [ball.cpY], z: [cpz + 0.25],
+      mode: 'markers+text',
+      marker: { size: 10, color: '#bc8cff', symbol: 'diamond', line: { color: '#fff', width: 2 } },
+      text: ['CP'],
+      textposition: 'top center',
+      textfont: { size: 10, color: '#bc8cff' },
+      name: 'Checkpoint',
+      hoverinfo: 'skip'
+    });
+  }
+
+  // Ball
+  const bz = land.eval(ball.x, ball.y);
+  const ballColor = ball.phase === 'jumping' ? '#d29922' :
+                    ball.phase === 'descending_candidate' ? '#3fb950' :
+                    ball.state === 'running' ? '#58a6ff' : '#8b949e';
+  traces.push({
+    type: 'scatter3d',
+    x: [ball.x], y: [ball.y], z: [bz + 0.18],
+    mode: 'markers+text',
+    marker: {
+      size: 10,
+      color: ballColor,
+      symbol: 'circle',
+      line: { color: '#ffffff', width: 2 }
+    },
+    text: [`(${ball.x.toFixed(2)}, ${ball.y.toFixed(2)})`],
+    textposition: 'top center',
+    textfont: { size: 10, color: '#ffffff' },
+    name: 'Ball',
+    hovertemplate: `x: %{x:.2f}<br>y: %{y:.2f}<br>loss: ${bz.toFixed(4)}<extra>Ball</extra>`
+  });
+
+  return traces;
+}
+
+const plotLayout = {
+  paper_bgcolor: '#0d1117',
+  plot_bgcolor: '#0d1117',
+  margin: { l: 0, r: 0, t: 0, b: 0 },
+  scene: {
+    xaxis: {
+      title: 'x', range: [-RANGE, RANGE],
+      backgroundcolor: '#0d1117', gridcolor: '#21262d',
+      showbackground: true, color: '#8b949e', tickfont: { size: 10 }
+    },
+    yaxis: {
+      title: 'y', range: [-RANGE, RANGE],
+      backgroundcolor: '#0d1117', gridcolor: '#21262d',
+      showbackground: true, color: '#8b949e', tickfont: { size: 10 }
+    },
+    zaxis: {
+      title: 'loss',
+      backgroundcolor: '#0d1117', gridcolor: '#21262d',
+      showbackground: true, color: '#8b949e', tickfont: { size: 10 }
+    },
+    camera: {
+      eye: { x: 1.5, y: 1.5, z: 1.0 },
+      up: { x: 0, y: 0, z: 1 }
+    },
+    aspectratio: { x: 1, y: 1, z: 0.5 }
+  },
+  showlegend: false
+};
+
+const plotConfig = {
+  responsive: true,
+  displayModeBar: false,
+  displaylogo: false,
+  scrollZoom: true
+};
+
+function initPlot() {
+  Plotly.newPlot(plotDiv, buildTraces(), plotLayout, plotConfig);
+  plotInited = true;
+
+  plotDiv.on('plotly_click', function(data) {
+    if (!ball || ball.state === 'exploring' || ball.state === 'jumping') return;
+    const pt = data.points[0];
+    if (pt && pt.curveNumber === 0) {
+      ball.x = pt.x;
+      ball.y = pt.y;
+      ball.vx = 0;
+      ball.vy = 0;
+      ball.bestLoss = land.eval(ball.x, ball.y);
+      ball.stale = 0;
+      ball.trail = [];
+      ball.rejectedTrails = [];
+      ball._rejectFade = 0;
+      ball.lrDecayAccum = 1.0;
+      ball.lrMultiplier = 1.0;
+      lossHist.length = 0;
+      lrHist.length = 0;
+      log('i', `Ball placed at (${ball.x.toFixed(2)}, ${ball.y.toFixed(2)}), loss=${ball.bestLoss.toFixed(4)}`);
+    }
+  });
+}
+
+let lastPlotUpdate = 0;
+const PLOT_UPDATE_INTERVAL = 120; // ms — less frequent = less lag
+
+function updatePlot(now) {
+  if (!plotInited) return;
+  if (now - lastPlotUpdate < PLOT_UPDATE_INTERVAL) return;
+  lastPlotUpdate = now;
+  Plotly.react(plotDiv, buildTraces(), plotLayout, plotConfig);
+}
+
+// ============================================================
+//  LOSS + LR CHART (Plotly)
+// ============================================================
+const lossChartDiv = $('loss-chart');
+let lossChartInited = false;
+let lastChartUpdate = 0;
+const CHART_UPDATE_INTERVAL = 200;
+
+function initLossChart() {
+  Plotly.newPlot(lossChartDiv, [{
+    y: [], mode: 'lines', line: { color: '#58a6ff', width: 1.5 }, name: 'Loss', yaxis: 'y'
+  }, {
+    y: [], mode: 'lines', line: { color: '#d29922', width: 1.5, dash: 'dot' }, name: 'LR', yaxis: 'y2'
+  }], {
+    paper_bgcolor: '#0d1117',
+    plot_bgcolor: '#0d1117',
+    margin: { l: 40, r: 40, t: 5, b: 20 },
+    xaxis: { color: '#484f58', gridcolor: '#21262d', showticklabels: false },
+    yaxis: { color: '#58a6ff', gridcolor: '#21262d', tickfont: { size: 9, color: '#58a6ff' }, title: { text: 'Loss', font: { size: 9, color: '#58a6ff' } } },
+    yaxis2: { color: '#d29922', tickfont: { size: 9, color: '#d29922' }, overlaying: 'y', side: 'right', title: { text: 'LR', font: { size: 9, color: '#d29922' } }, showgrid: false },
+    showlegend: false
+  }, { responsive: true, displayModeBar: false });
+  lossChartInited = true;
+}
+
+function updateLossChart(now) {
+  if (!lossChartInited || lossHist.length < 2) return;
+  if (now - lastChartUpdate < CHART_UPDATE_INTERVAL) return;
+  lastChartUpdate = now;
+
+  Plotly.react(lossChartDiv, [{
+    y: lossHist.map(l => l.v),
+    mode: 'lines',
+    line: { color: '#58a6ff', width: 1.5 },
+    name: 'Loss',
+    yaxis: 'y'
+  }, {
+    y: lrHist.map(l => l.v),
+    mode: 'lines',
+    line: { color: '#d29922', width: 1.5, dash: 'dot' },
+    name: 'LR',
+    yaxis: 'y2'
+  }, ball && ball.bestLoss !== Infinity ? {
+    y: Array(lossHist.length).fill(ball.bestLoss),
+    mode: 'lines',
+    line: { color: '#3fb950', width: 1, dash: 'dash' },
+    name: 'Best',
+    yaxis: 'y'
+  } : null].filter(Boolean), {
+    paper_bgcolor: '#0d1117',
+    plot_bgcolor: '#0d1117',
+    margin: { l: 40, r: 40, t: 5, b: 20 },
+    xaxis: { color: '#484f58', gridcolor: '#21262d', showticklabels: false },
+    yaxis: { color: '#58a6ff', gridcolor: '#21262d', tickfont: { size: 9, color: '#58a6ff' } },
+    yaxis2: { color: '#d29922', tickfont: { size: 9, color: '#d29922' }, overlaying: 'y', side: 'right', showgrid: false },
+    showlegend: false
+  }, { responsive: true, displayModeBar: false });
+}
+
+// ============================================================
+//  PHYSICS — DESCENT + JUMP + DESCEND CYCLE
+// ============================================================
+function clampBall() {
+  ball.x = Math.max(-5.5, Math.min(5.5, ball.x));
+  ball.y = Math.max(-5.5, Math.min(5.5, ball.y));
+}
+
+function getEffectiveLR() {
+  const baseLR = V('lr') * 0.002;
+  return baseLR * ball.lrMultiplier * ball.lrDecayAccum;
+}
+
+function doStep() {
+  if (!ball || ball.state === 'idle' || ball.state === 'paused') return;
+
+  const mom = V('mom');
+  const fric = V('fric');
+  const decay = V('lrdecay');
+
+  if (ball.state === 'running') {
+    if (ball.phase === 'descent') {
+      // Normal gradient descent with decaying LR
+      ball.lrDecayAccum *= decay;
+      const lr = getEffectiveLR();
+      currentLR = lr;
+
+      const [gx, gy] = land.grad(ball.x, ball.y);
+      ball.vx = mom * ball.vx - lr * gx;
+      ball.vy = mom * ball.vy - lr * gy;
+      ball.vx *= fric;
+      ball.vy *= fric;
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+      clampBall();
+      ball.step++;
+
+      const newLoss = land.eval(ball.x, ball.y);
+      ball.trail.push({ x: ball.x, y: ball.y, z: newLoss, s: 'n' });
+      if (ball.trail.length > 4000) ball.trail.shift();
+
+      if (newLoss < ball.bestLoss - V('pthr')) {
+        ball.bestLoss = newLoss;
+        ball.stale = 0;
+      } else {
+        ball.stale++;
+      }
+
+      checkMinimaProximity();
+
+      // Plateau detected → save checkpoint and start jumping
+      if (ball.stale >= V('pat')) {
+        ball.jumps++;
+        const loss = land.eval(ball.x, ball.y);
+        ball.cpX = ball.x;
+        ball.cpY = ball.y;
+        ball.cpVx = ball.vx;
+        ball.cpVy = ball.vy;
+        ball.cpLoss = loss;
+
+        // LR SCHEDULER → OPTIMIZER communication
+        log('s', `📋 SCHEDULER → OPTIMIZER: Save checkpoint at loss=${loss.toFixed(4)}`);
+        log('s', `📋 SCHEDULER → OPTIMIZER: Increase LR ×${V('jmul')} for exploration`);
+        showBanner(`📋 LR Scheduler → Optimizer\nSave checkpoint · Boost LR ×${V('jmul')}\nExploring for better basin...`, 3000);
+
+        ball.phase = 'jumping';
+        ball.jumpStepsLeft = Math.round(V('estep'));
+        ball.lrMultiplier = V('jmul');
+        ball.lrDecayAccum = 1.0; // reset decay for jump phase
+        ball.stale = 0;
+      }
+    }
+    else if (ball.phase === 'jumping') {
+      // Random exploration with high LR
+      const lr = getEffectiveLR();
+      currentLR = lr;
+
+      const [gx, gy] = land.grad(ball.x, ball.y);
+      // Add strong random perturbation
+      ball.vx = mom * ball.vx - lr * gx + (Math.random() - 0.5) * lr * 3;
+      ball.vy = mom * ball.vy - lr * gy + (Math.random() - 0.5) * lr * 3;
+      ball.vx *= fric;
+      ball.vy *= fric;
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+      clampBall();
+      ball.step++;
+      ball.jumpStepsLeft--;
+
+      const newLoss = land.eval(ball.x, ball.y);
+      ball.trail.push({ x: ball.x, y: ball.y, z: newLoss, s: 'j' });
+      if (ball.trail.length > 4000) ball.trail.shift();
+
+      // Check if we've stumbled onto a slope leading to a better minimum
+      const [gx2, gy2] = land.grad(ball.x, ball.y);
+      const gradMag = Math.sqrt(gx2*gx2 + gy2*gy2);
+      const onSlope = gradMag > 0.3 && newLoss < ball.cpLoss - 0.1;
+
+      if (ball.jumpStepsLeft <= 0 || onSlope) {
+        if (onSlope) {
+          log('j', `🎯 Found promising slope! grad=${gradMag.toFixed(3)}, loss=${newLoss.toFixed(4)}`);
+          log('s', `📋 SCHEDULER → OPTIMIZER: Reduce LR, follow gradient to new minimum`);
+          showBanner(`📋 LR Scheduler → Optimizer\nPromising slope found!\nReducing LR for descent...`, 2500);
+        } else {
+          log('j', `Random exploration done. Descending from current position...`);
+          log('s', `📋 SCHEDULER → OPTIMIZER: Reduce LR for candidate descent`);
+          showBanner(`📋 LR Scheduler → Optimizer\nExploration complete\nReducing LR for descent...`, 2000);
+        }
+
+        ball.phase = 'descending_candidate';
+        ball.descentStepsLeft = Math.round(V('dstep'));
+        ball.lrMultiplier = 1.0;
+        ball.lrDecayAccum = 1.0; // fresh decay for descent
+        ball.vx = 0;
+        ball.vy = 0;
+      }
+    }
+    else if (ball.phase === 'descending_candidate') {
+      // Descend to candidate minimum with normal (decaying) LR
+      ball.lrDecayAccum *= decay;
+      const lr = getEffectiveLR();
+      currentLR = lr;
+
+      const [gx, gy] = land.grad(ball.x, ball.y);
+      ball.vx = mom * ball.vx - lr * gx;
+      ball.vy = mom * ball.vy - lr * gy;
+      ball.vx *= fric;
+      ball.vy *= fric;
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+      clampBall();
+      ball.step++;
+      ball.descentStepsLeft--;
+
+      const newLoss = land.eval(ball.x, ball.y);
+      ball.trail.push({ x: ball.x, y: ball.y, z: newLoss, s: 'a' });
+      if (ball.trail.length > 4000) ball.trail.shift();
+
+      checkMinimaProximity();
+
+      if (ball.descentStepsLeft <= 0) {
+        const candLoss = land.eval(ball.x, ball.y);
+
+        if (candLoss < ball.cpLoss) {
+          // Accept new position
+          ball.accepts++;
+          log('a', `✓ ACCEPTED! ${ball.cpLoss.toFixed(4)} → ${candLoss.toFixed(4)}`);
+          log('s', `📋 SCHEDULER → OPTIMIZER: New minimum accepted. Reset LR decay.`);
+          showBanner(`📋 LR Scheduler → Optimizer\n✓ New minimum accepted!\nLoss: ${ball.cpLoss.toFixed(4)} → ${candLoss.toFixed(4)}`, 3000);
+          ball.bestLoss = candLoss;
+          ball.stale = 0;
+          ball.rejectedTrails = [];
+          ball._rejectFade = 0;
+        } else {
+          // Reject — rollback to checkpoint
+          ball.rejects++;
+          log('r', `✗ REJECTED (${candLoss.toFixed(4)} ≥ ${ball.cpLoss.toFixed(4)}). Rolling back.`);
+          log('s', `📋 SCHEDULER → OPTIMIZER: Reset to last checkpoint!`);
+          showBanner(`📋 LR Scheduler → Optimizer\n✗ Candidate rejected!\nReset to last checkpoint\nLoss: ${ball.cpLoss.toFixed(4)}`, 3000);
+
+          // Save rejected trail
+          const rejectTrail = [];
+          for (let i = ball.trail.length - 1; i >= 0; i--) {
+            if (ball.trail[i].s === 'j' || ball.trail[i].s === 'a') {
+              rejectTrail.unshift(ball.trail[i]);
+            } else break;
+          }
+          ball.rejectedTrails = [rejectTrail];
+          ball._rejectFade = 0;
+
+          ball.x = ball.cpX;
+          ball.y = ball.cpY;
+          ball.vx = ball.cpVx;
+          ball.vy = ball.cpVy;
+          ball.stale = 0;
+          // Slightly raise bestLoss to allow re-triggering
+          ball.bestLoss = ball.cpLoss + 0.02;
+        }
+
+        // Back to normal descent
+        ball.phase = 'descent';
+        ball.lrMultiplier = 1.0;
+        ball.lrDecayAccum = 1.0;
+      }
+    }
+  }
+}
+
+// ============================================================
+//  HUD
+// ============================================================
+function updateHUD() {
+  if (!ball) return;
+  const z = land.eval(ball.x, ball.y);
+  $('h-step').textContent = ball.step;
+  $('h-loss').textContent = z.toFixed(4);
+  $('h-best').textContent = ball.bestLoss === Infinity ? '—' : ball.bestLoss.toFixed(4);
+  $('h-stale').textContent = ball.stale;
+  $('h-jumps').textContent = ball.jumps;
+  $('h-acc').textContent = ball.accepts;
+  $('h-rej').textContent = ball.rejects;
+
+  // LR display
+  $('h-lr').textContent = currentLR.toExponential(3);
+  const phaseLabels = {
+    descent: '📉 Descending (decay)',
+    jumping: '🚀 Jumping (high LR)',
+    descending_candidate: '🎯 Candidate descent'
+  };
+  $('h-lr-phase').textContent = phaseLabels[ball.phase] || ball.phase;
+
+  const labels = {
+    idle: '⏹ Idle', paused: '⏸ Paused', running: '🏃 Running'
+  };
+  let st = labels[ball.state] || ball.state;
+  if (ball.state === 'running') {
+    st += ` [${ball.phase}]`;
+    if (ball.phase === 'jumping') st += ` (${ball.jumpStepsLeft} left)`;
+    if (ball.phase === 'descending_candidate') st += ` (${ball.descentStepsLeft} left)`;
+  }
+  $('h-state').textContent = st;
+
+  const visited = land.knownMinima.filter(m => m.visited).length;
+  $('h-minima').textContent = visited;
+  $('h-minima-total').textContent = land.knownMinima.length;
+}
+
+// ============================================================
+//  BUTTONS
+// ============================================================
+$('btn-go').addEventListener('click', () => {
+  if (ball && (ball.state === 'idle' || ball.state === 'paused')) {
+    ball.state = 'running';
+    ball.phase = 'descent';
+    log('i', 'Started. Descending from weakest minimum...');
+    log('s', '📋 SCHEDULER → OPTIMIZER: Begin with base LR, decay active');
+    showBanner('📋 LR Scheduler → Optimizer\nStarting descent\nBase LR with decay', 2000);
+  }
+});
+$('btn-pause').addEventListener('click', () => {
+  if (ball && ball.state !== 'idle') {
+    ball.state = 'paused';
+    log('i', 'Paused.');
+  }
+});
+$('btn-reset').addEventListener('click', resetBall);
+$('btn-newmap').addEventListener('click', () => {
+  land = new Landscape(V('nbas'), V('rough'));
+  computeGrid();
+  resetBall();
+  // Reinit plot with new surface
+  Plotly.react(plotDiv, buildTraces(), plotLayout, plotConfig);
+  log('i', 'New landscape generated with 3+ guaranteed minima.');
+});
+
+// ============================================================
+//  INIT
+// ============================================================
+initPlot();
+initLossChart();
+resetBall();
+log('i', 'Welcome to BasinHopper 3D!');
+log('i', 'Ball starts at weakest local minimum.');
+log('i', 'Press Start to begin. Watch the LR scheduler communicate with the optimizer!');
+log('i', 'The ball will descend → plateau → jump randomly → find slope → descend to new minimum.');
+
+// ============================================================
+//  MAIN LOOP
+// ============================================================
+let lastT = 0;
+let acc = 0;
+const FDT = 1000 / 60;
+
+function frame(ts) {
+  const dt = Math.min(ts - lastT, 100);
+  lastT = ts;
+  const spd = V('spd');
+  acc += dt * spd;
+
+  let steps = 0;
+  while (acc >= FDT && steps < 20) {
+    doStep();
+    acc -= FDT;
+    steps++;
+    if (ball && ball.state === 'running') {
+      const loss = land.eval(ball.x, ball.y);
+      lossHist.push({ v: loss });
+      lrHist.push({ v: currentLR });
+      if (lossHist.length > MAX_HIST) lossHist.shift();
+      if (lrHist.length > MAX_HIST) lrHist.shift();
+    }
+  }
+  if (acc > FDT * 20) acc = 0;
+
+  // Fade rejected trails
+  if (ball && ball.rejectedTrails && ball.rejectedTrails.length > 0 && ball.state === 'running' && ball.phase === 'descent') {
+    ball._rejectFade = (ball._rejectFade || 0) + 1;
+    if (ball._rejectFade > 150) {
+      ball.rejectedTrails = [];
+      ball._rejectFade = 0;
+    }
+  }
+
+  updatePlot(ts);
+  updateLossChart(ts);
+  updateHUD();
+  updateMinimaList();
+
+  requestAnimationFrame(frame);
+}
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
