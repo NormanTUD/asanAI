@@ -11,7 +11,7 @@ TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks
 </div>
 
 <div class="md">
-We do not present this history as a straight road leading inevitably to the **Large Language Model**. Rather, we view it as a series of shifting currents that have merged, for a brief moment, into a single powerful stream. What we witness today is an **emergent phenomenon**, one possibility among many, born from a web of ideas that were never intended to meet.
+We do not present this history as a straight road leading inevitably to the **Large Language Model**. Rather, we view it as a series of shifting currents that have merged, for a brief moment, into a single powerful stream. What we witness today is an **emergent phenomenon**, one possibility among many, born from a web of ideas that were never intended to meet, but matched when they did.
 
 The tools of the past were forged in the fires of unrelated Necessity. The **statistical laws** once used by astronomers to bring order to the wandering stars were not designed to map the syntax of human longing. Yet, in the fluid exchange of human inquiry, these methods for measuring **probability and error** have become the very scales upon which we weigh the next word in a sequence. 
 
