@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Principia Mathematica — Interactive Explorer</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card: #161b22;
+  --border: #30363d;
+  --accent: #58a6ff;
+  --accent2: #f78166;
+  --accent3: #7ee787;
+  --accent4: #d2a8ff;
+  --text: #e6edf3;
+  --muted: #8b949e;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent4));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 30px;
+  font-size: 0.95rem;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: box-shadow 0.3s;
+}
+.card:hover {
+  box-shadow: 0 0 20px rgba(88,166,255,0.08);
+}
+.card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card h2 .num {
+  background: var(--accent);
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 700;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.card .desc {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 18px;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.control-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 200px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+.output {
+  background: #0d1117;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-family: 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.95rem;
+  min-height: 50px;
+  transition: all 0.3s;
+}
+.output .symbol {
+  color: var(--accent);
+  font-weight: 600;
+}
+.output .result {
+  color: var(--accent3);
+  font-weight: 700;
+}
+.output .warn {
+  color: var(--accent2);
+}
+.output .purple {
+  color: var(--accent4);
+}
+.truth-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+}
+.truth-table th, .truth-table td {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.truth-table th {
+  background: #1c2333;
+  color: var(--accent);
+}
+.truth-table td.true { color: var(--accent3); font-weight: 700; }
+.truth-table td.false { color: var(--accent2); font-weight: 700; }
+.visual-sets {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+.set-circle {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: center;
+  border: 2px solid;
+  transition: all 0.4s;
+  position: relative;
+}
+.type-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 140px;
+  margin: 14px 0;
+  padding: 0 10px;
+}
+.type-level {
+  flex: 1;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: height 0.4s, background 0.4s;
+  max-width: 110px;
+  text-align: center;
+  word-break: break-word;
+}
+select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+button {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+button:hover { opacity: 0.85; }
+.peano-chain {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+  font-family: 'Fira Code', monospace;
+}
+.peano-num {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+.peano-arrow {
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+.highlight-box {
+  border-left: 3px solid var(--accent4);
+  padding: 10px 14px;
+  margin: 10px 0;
+  background: rgba(210,168,255,0.05);
+  border-radius: 0 6px 6px 0;
+  font-size: 0.9rem;
+}
+.paradox-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 16px 0;
+}
+.paradox-box {
+  padding: 16px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+  transition: all 0.4s;
+  min-width: 140px;
+}
+.arrow-right {
+  font-size: 1.5rem;
+  color: var(--muted);
+}
+.tab-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.tab-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: var(--border);
+  color: var(--text);
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  background: var(--accent);
+  color: #000;
+}
+.inference-step {
+  padding: 8px 12px;
+  margin: 4px 0;
+  border-radius: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.88rem;
+  transition: all 0.3s;
+}
+</style>
+</head>
+<body>
+
+<h1>Principia Mathematica — Interactive Explorer</h1>
+<p class="subtitle">Russell & Whitehead (1910–1913) · Explore the foundations of mathematics through logic</p>
+
+<!-- ============================================ -->
+<!-- CARD 1: Propositional Logic -->
+<!-- ============================================ -->
+<div class="card">
+  <h2><span class="num">1</span> Propositional Logic — The Bedrock</h2>
+  <p class="desc">
+    <em>Principia</em> builds all of mathematics from a tiny set of logical connectives.
+    Use the sliders to set truth values for <strong>p</strong> and <strong>q</strong>, then see every connective evaluated in real time.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>p = <span id="pVal">T</span></label>
+      <input type="range" id="pSlider" min="0" max="1" value="1">
+    </div>
+    <div class="control-group">
+      <label>q = <span id="qVal">T</span></label>
+      <input type="range" id="qSlider" min="0" max="1" value="1">
+    </div>
+  </div>
+
+  <div class="output" id="propOutput"></div>
+
+  <div class="highlight-box" style="margin-top:14px">
+    <strong>Why it matters:</strong> Russell & Whitehead showed that just <span style="color:var(--accent)">~</span> (not) and <span style="color:var(--accent)">∨</span> (or) are sufficient to define <em>all</em> propositional logic. Every other connective (∧, →, ↔) is defined in terms of these two.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CARD 2: Truth Table Generator -->
+<!-- ============================================ -->
+<div class="card">
+  <h2><span class="num">2</span> Truth Tables — Tautologies & Contradictions</h2>
+  <p class="desc">
+    A key goal of <em>Principia</em> was to identify <strong>tautologies</strong> — formulas true under every assignment.
+    Choose a formula to see its full truth table and whether it's a tautology.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Formula</label>
+      <select id="formulaSelect">
+        <option value="impl">p → (q → p)  [Axiom-like]</option>
+        <option value="lem">p ∨ ¬p  [Law of Excluded Middle]</option>
+        <option value="contra">p ∧ ¬p  [Contradiction]</option>
+        <option value="mp">(p → q) → (¬q → ¬p)  [Contrapositive]</option>
+        <option value="demorgan">¬(p ∧ q) ↔ (¬p ∨ ¬q)  [De Morgan]</option>
+        <option value="peirce">((p → q) → p) → p  [Peirce's Law]</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="output" id="ttOutput"></div>
+</div>
+
+<!-- ============================================ -->
+<!-- CARD 3: Type Theory — Russell's Paradox Resolver -->
+<!-- ============================================ -->
+<div class="card">
+  <h2><span class="num">3</span> Type Theory — Taming Russell's Paradox</h2>
+  <p class="desc">
+    The famous paradox: "Does the set of all sets that don't contain themselves contain itself?"
+    Russell introduced a <strong>hierarchy of types</strong> so that a set at level <em>n</em> can only contain members of level <em>n−1</em>.
+    Use the slider to explore different type levels.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Type levels to show: <span id="typeLevelVal">3</span></label>
+      <input type="range" id="typeLevelSlider" min="1" max="6" value="3">
+    </div>
+  </div>
+
+  <div class="type-bar" id="typeBar"></div>
+  <div class="output" id="typeOutput"></div>
+
+  <div class="paradox-visual" id="paradoxVisual"></div>
+
+  <div class="highlight-box">
+    <strong>The fix:</strong> "The set of all sets that don't contain themselves" is <em>ill-formed</em> in type theory — you can't ask whether a set of type <em>n</em> contains itself, because it can only contain objects of type <em>n−1</em>.
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CARD 4: Peano Arithmetic from Logic -->
+<!-- ============================================ -->
+<div class="card">
+  <h2><span class="num">4</span> Building Numbers from Pure Logic</h2>
+  <p class="desc">
+    Perhaps the most famous achievement: defining natural numbers as <strong>classes of classes</strong>.
+    <strong>0</strong> = the class of all empty classes. <strong>1</strong> = the class of all singleton classes.
+    <strong>n+1</strong> = the successor of <strong>n</strong>. Slide to see how numbers are constructed.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Count up to: <span id="peanoVal">5</span></label>
+      <input type="range" id="peanoSlider" min="0" max="12" value="5">
+    </div>
+  </div>
+
+  <div class="peano-chain" id="peanoChain"></div>
+  <div class="output" id="peanoOutput" style="margin-top:12px"></div>
+
+  <div class="highlight-box">
+    <strong>The famous proof:</strong> It takes Russell & Whitehead until <strong>page 379</strong> of Volume I to prove that <span style="color:var(--accent3)">1 + 1 = 2</span>. The comment reads: <em>"The above proposition is occasionally useful."</em>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- CARD 5: Inference Rules — Modus Ponens Machine -->
+<!-- ============================================ -->
+<div class="card">
+  <h2><span class="num">5</span> Modus Ponens — The Engine of Deduction</h2>
+  <p class="desc">
+    <em>Principia</em> uses very few inference rules. The most important is <strong>Modus Ponens</strong>:
+    "If <em>p</em> is true, and <em>p → q</em> is true, then <em>q</em> is true."
+    Build a chain of deductions by choosing premises.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Premise p</label>
+      <select id="mpPremise">
+        <option value="rain">It is raining</option>
+        <option value="socrates">Socrates is a man</option>
+        <option value="even">n is even</option>
+        <option value="axiom">Axiom A holds</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Implication p → q</label>
+      <select id="mpImpl">
+        <option value="wet">If raining → ground is wet</option>
+        <option value="mortal">If man → mortal</option>
+        <option value="div2">If even → divisible by 2</option>
+        <option value="thm">If Axiom A → Theorem B</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Chain length: <span id="chainVal">1</span></label>
+      <input type="range" id="chainSlider" min="1" max="5" value="1">
+    </div>
+  </div>
+
+  <div class="output" id="mpOutput"></div>
+</div>
+
+<!-- ============================================ -->
+<!-- CARD 6: Quantifiers & Predicate Logic -->
+<!-- ============================================ -->
+<div class="card">
+  <h2><span class="num">6</span> Predicate Logic & Quantifiers</h2>
+  <p class="desc">
+    Beyond propositions, <em>Principia</em> uses <strong>∀</strong> (for all) and <strong>∃</strong> (there exists)
+    to talk about properties of objects. Adjust the domain size and predicate to see how quantified statements evaluate.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Domain size: <span id="domainVal">5</span></label>
+      <input type="range" id="domainSlider" min="1" max="12" value="5">
+    </div>
+    <div class="control-group">
+      <label>Predicate P(x)</label>
+      <select id="predSelect">
+        <option value="even">x is even</option>
+        <option value="prime">x is prime</option>
+        <option value="pos">x > 0</option>
+        <option value="square">x is a perfect square</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="output" id="quantOutput"></div>
+</div>
+
+<!-- ============================================ -->
+<!-- CARD 7: Logicism — The Big Picture -->
+<!-- ============================================ -->
+<div class="card">
+  <h2><span class="num">7</span> The Logicist Programme — Big Picture</h2>
+  <p class="desc">
+    The grand claim: <strong>All of mathematics reduces to logic.</strong>
+    Slide through the layers to see how each mathematical concept is built from the one below it.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Reveal layers: <span id="layerVal">1</span></label>
+      <input type="range" id="layerSlider" min="1" max="7" value="1">
+    </div>
+  </div>
+
+  <div class="output" id="layerOutput"></div>
+
+  <div class="highlight-box" style="margin-top:14px">
+    <strong>Historical note:</strong> In 1931, Gödel showed that any consistent system powerful enough to express arithmetic must contain true statements it <em>cannot prove</em> — imposing fundamental limits on the Principia programme. But the work remains one of the greatest intellectual achievements in history.
+  </div>
+</div>
+
+<p style="text-align:center; color:var(--muted); margin-top:30px; font-size:0.85rem;">
+  Interactive demo inspired by <em>Principia Mathematica</em> (1910–1913) by Alfred North Whitehead & Bertrand Russell.
+</p>
+
+<script>
+// ===== CARD 1: Propositional Logic =====
+const pSlider = document.getElementById('pSlider');
+const qSlider = document.getElementById('qSlider');
+const pVal = document.getElementById('pVal');
+const qVal = document.getElementById('qVal');
+const propOutput = document.getElementById('propOutput');
+
+function tf(v) { return v ? 'T' : 'F'; }
+function tfClass(v) { return v ? 'result' : 'warn'; }
+
+function updateProp() {
+  const p = pSlider.value === '1';
+  const q = qSlider.value === '1';
+  pVal.textContent = tf(p);
+  qVal.textContent = tf(q);
+
+  const not_p = !p;
+  const not_q = !q;
+  const and_pq = p && q;
+  const or_pq = p || q;
+  const impl_pq = !p || q;
+  const bicond = (p === q);
+
+  propOutput.innerHTML = `
+    <span class="symbol">¬p</span> = <span class="${tfClass(not_p)}">${tf(not_p)}</span> &nbsp;|&nbsp;
+    <span class="symbol">¬q</span> = <span class="${tfClass(not_q)}">${tf(not_q)}</span> &nbsp;|&nbsp;
+    <span class="symbol">p ∧ q</span> = <span class="${tfClass(and_pq)}">${tf(and_pq)}</span> &nbsp;|&nbsp;
+    <span class="symbol">p ∨ q</span> = <span class="${tfClass(or_pq)}">${tf(or_pq)}</span> &nbsp;|&nbsp;
+    <span class="symbol">p → q</span> = <span class="${tfClass(impl_pq)}">${tf(impl_pq)}</span> &nbsp;|&nbsp;
+    <span class="symbol">p ↔ q</span> = <span class="${tfClass(bicond)}">${tf(bicond)}</span>
+    <br><br>
+    <span style="color:var(--muted); font-size:0.85rem;">
+      <em>Principia</em> notation: &nbsp;
+      <span class="symbol">~p</span> for ¬p &nbsp;|&nbsp;
+      <span class="symbol">p ∨ q</span> for disjunction &nbsp;|&nbsp;
+      <span class="symbol">p ⊃ q</span> for p → q &nbsp; (defined as <span class="symbol">~p ∨ q</span>)
+    </span>
+  `;
+}
+pSlider.addEventListener('input', updateProp);
+qSlider.addEventListener('input', updateProp);
+updateProp();
+
+// ===== CARD 2: Truth Tables =====
+const formulaSelect = document.getElementById('formulaSelect');
+const ttOutput = document.getElementById('ttOutput');
+
+const formulas = {
+  impl: { name: 'p → (q → p)', fn: (p,q) => !p || (!q || p) },
+  lem: { name: 'p ∨ ¬p', fn: (p,q) => p || !p },
+  contra: { name: 'p ∧ ¬p', fn: (p,q) => p && !p },
+  mp: { name: '(p → q) → (¬q → ¬p)', fn: (p,q) => !(!p || q) || (q || !p) },
+  demorgan: { name: '¬(p ∧ q) ↔ (¬p ∨ ¬q)', fn: (p,q) => (!(p && q)) === (!p || !q) },
+  peirce: { name: '((p → q) → p) → p', fn: (p,q) => !((!p || q) ? p : true) ? false : ( ((!p||q)?p:true) ? p : true ) }
+};
+
+// Fix Peirce's law
+formulas.peirce.fn = (p,q) => {
+  const inner = (!p || q); // p -> q
+  const mid = !inner || p; // (p->q)->p
+  return !mid || p; // ((p->q)->p)->p
+};
+
+function updateTT() {
+  const key = formulaSelect.value;
+  const f = formulas[key];
+  const vals = [[false,false],[false,true],[true,false],[true,true]];
+  let allTrue = true;
+  let allFalse = true;
+
+  let html = `<strong style="color:var(--accent)">${f.name}</strong><br>`;
+  html += `<table class="truth-table"><tr><th>p</th><th>q</th><th>Result</th></tr>`;
+  for (const [p,q] of vals) {
+    const r = f.fn(p,q);
+    if (!r) allTrue = false;
+    if (r) allFalse = false;
+    html += `<tr>
+      <td class="${p?'true':'false'}">${tf(p)}</td>
+      <td class="${q?'true':'false'}">${tf(q)}</td>
+      <td class="${r?'true':'false'}">${tf(r)}</td>
+    </tr>`;
+  }
+  html += `</table>`;
+
+  if (allTrue) html += `<br><span class="result">✓ TAUTOLOGY</span> — true under every assignment. This is a <strong>logical law</strong>.`;
+  else if (allFalse) html += `<br><span class="warn">✗ CONTRADICTION</span> — false under every assignment.`;
+  else html += `<br><span class="purple">◐ CONTINGENT</span> — true under some assignments, false under others.`;
+
+  ttOutput.innerHTML = html;
+}
+formulaSelect.addEventListener('change', updateTT);
+updateTT();
+
+// ===== CARD 3: Type Theory =====
+const typeLevelSlider = document.getElementById('typeLevelSlider');
+const typeLevelVal = document.getElementById('typeLevelVal');
+const typeBar = document.getElementById('typeBar');
+const typeOutput = document.getElementById('typeOutput');
+const paradoxVisual = document.getElementById('paradoxVisual');
+
+const typeLabels = [
+  { name: 'Individuals', desc: 'Concrete objects: Socrates, 🍎, a point', color: 'var(--accent3)' },
+  { name: 'Type 1 Sets', desc: 'Sets of individuals: {Socrates, Plato}', color: 'var(--accent)' },
+  { name: 'Type 2 Sets', desc: 'Sets of Type 1 sets: {{a,b}, {c}}', color: 'var(--accent4)' },
+  { name: 'Type 3 Sets', desc: 'Sets of Type 2 sets', color: 'var(--accent2)' },
+  { name: 'Type 4 Sets', desc: 'Sets of Type 3 sets', color: '#f0e68c' },
+  { name: 'Type 5 Sets', desc: 'Sets of Type 4 sets', color: '#87ceeb' },
+];
+
+function updateType() {
+  const n = parseInt(typeLevelSlider.value);
+  typeLevelVal.textContent = n;
+
+  let barHTML = '';
+  for (let i = 0; i < n; i++) {
+    const h = 30 + i * 20;
+    barHTML += `<div class="type-level" style="height:${h}px; background:${typeLabels[i].color}; color:#000;">
+      ${i === 0 ? 'Type 0' : 'Type ' + i}<br>${typeLabels[i].name.split(' ')[0]}
+    </div>`;
+  }
+  typeBar.innerHTML = barHTML;
+
+  let outHTML = '';
+  for (let i = 0; i < n; i++) {
+    outHTML += `<span style="color:${typeLabels[i].color}">▸ Level ${i}: ${typeLabels[i].name}</span> — ${typeLabels[i].desc}<br>`;
+  }
+  if (n >= 2) {
+    outHTML += `<br><span class="purple">Rule:</span> A Type ${n-1} set can <strong>only</strong> contain Type ${n-2} members. It <strong>cannot</strong> contain itself!`;
+  }
+  typeOutput.innerHTML = outHTML;
+
+  // Paradox visual
+  paradoxVisual.innerHTML = `
+    <div class="paradox-box" style="border:2px solid var(--accent2); background:rgba(247,129,102,0.1);">
+      R = {x | x ∉ x}<br>
+      <span style="font-size:0.8rem; color:var(--muted);">Naïve set theory</span>
+    </div>
+    <div class="arrow-right">→</div>
+    <div class="paradox-box" style="border:2px solid var(--accent3); background:rgba(126,231,135,0.1);">
+      ${n >= 2 ? '❌ Ill-formed!<br><span style="font-size:0.8rem;">x ∈ x violates type rules</span>' : 'Need ≥ 2 levels to see the fix'}
+    </div>
+  `;
+}
+typeLevelSlider.addEventListener('input', updateType);
+updateType();
+
+// ===== CARD 4: Peano Numbers =====
+const peanoSlider = document.getElementById('peanoSlider');
+const peanoValEl = document.getElementById('peanoVal');
+const peanoChain = document.getElementById('peanoChain');
+const peanoOutput = document.getElementById('peanoOutput');
+
+const numColors = ['#58a6ff','#7ee787','#f78166','#d2a8ff','#f0e68c','#87ceeb','#ff6b9d','#c4b5fd','#67e8f9','#fbbf24','#a3e635','#f472b6','#34d399'];
+
+function successorNotation(n) {
+  if (n === 0) return '0';
+  let s = '0';
+  for (let i = 0; i < n; i++) s = 'S(' + s + ')';
+  return s;
+}
+
+function classNotation(n) {
+  if (n === 0) return 'the class whose only member is ∅';
+  if (n === 1) return 'the class of all singletons {x}';
+  if (n === 2) return 'the class of all pairs {x, y}';
+  if (n === 3) return 'the class of all triples {x, y, z}';
+  return `the class of all ${n}-element collections`;
+}
+
+function updatePeano() {
+  const n = parseInt(peanoSlider.value);
+  peanoValEl.textContent = n;
+
+  let chainHTML = '';
+  for (let i = 0; i <= n; i++) {
+    chainHTML += `<span class="peano-num" style="background:${numColors[i % numColors.length]}; color:#000;">${i}</span>`;
+    if (i < n) chainHTML += `<span class="peano-arrow">→</span>`;
+  }
+  peanoChain.innerHTML = chainHTML;
+
+  let outHTML = `<strong style="color:var(--accent)">Successor chain up to ${n}:</strong><br>`;
+  for (let i = 0; i <= n; i++) {
+    outHTML += `<span style="color:${numColors[i % numColors.length]}">▸ ${i}</span> = <span class="purple">${successorNotation(i)}</span>`;
+    outHTML += ` — <span style="color:var(--muted)">${classNotation(i)}</span><br>`;
+  }
+
+  if (n >= 2) {
+    outHTML += `<br><span class="result">✓ 1 + 1 = S(0) + S(0) = S(S(0)) = 2</span>`;
+    outHTML += `<br><span style="color:var(--muted); font-size:0.85rem;">In Principia notation: ∗54·43 ⊢ : α, β ∈ 1 . ⊃ . α ∪ β ∈ 2</span>`;
+  }
+
+  peanoOutput.innerHTML = outHTML;
+}
+peanoSlider.addEventListener('input', updatePeano);
+updatePeano();
+
+// ===== CARD 5: Modus Ponens =====
+const mpPremise = document.getElementById('mpPremise');
+const mpImpl = document.getElementById('mpImpl');
+const chainSlider = document.getElementById('chainSlider');
+const chainValEl = document.getElementById('chainVal');
+const mpOutput = document.getElementById('mpOutput');
+
+const premiseMap = {
+  rain: 'It is raining',
+  socrates: 'Socrates is a man',
+  even: 'n is even',
+  axiom: 'Axiom A holds'
+};
+
+const implChains = {
+  wet: [
+    ['It is raining', 'The ground is wet'],
+    ['The ground is wet', 'People slip'],
+    ['People slip', 'Hospital visits increase'],
+    ['Hospital visits increase', 'Doctors are busy'],
+    ['Doctors are busy', 'Wait times grow']
+  ],
+  mortal: [
+    ['Socrates is a man', 'Socrates is mortal'],
+    ['Socrates is mortal', 'Socrates will die'],
+    ['Socrates will die', 'Socrates is remembered'],
+    ['Socrates is remembered', 'Philosophy endures'],
+    ['Philosophy endures', 'Wisdom spreads']
+  ],
+  div2: [
+    ['n is even', 'n is divisible by 2'],
+    ['n is divisible by 2', 'n/2 is an integer'],
+    ['n/2 is an integer', 'n/2 can be a set size'],
+    ['n/2 can be a set size', 'We can pair elements'],
+    ['We can pair elements', 'A bijection exists']
+  ],
+  thm: [
+    ['Axiom A holds', 'Theorem B follows'],
+    ['Theorem B follows', 'Lemma C is proven'],
+    ['Lemma C is proven', 'Theorem D follows'],
+    ['Theorem D follows', 'Corollary E holds'],
+    ['Corollary E holds', 'The theory is consistent']
+  ]
+};
+
+function updateMP() {
+  const pKey = mpPremise.value;
+  const iKey = mpImpl.value;
+  const chainLen = parseInt(chainSlider.value);
+  chainValEl.textContent = chainLen;
+
+  const chain = implChains[iKey];
+  let html = '';
+
+  // Step 0: premise
+  html += `<div class="inference-step" style="background:rgba(88,166,255,0.1); border-left:3px solid var(--accent);">
+    <span class="symbol">Premise:</span> <span class="result">${chain[0][0]}</span>
+  </div>`;
+
+  for (let i = 0; i < Math.min(chainLen, chain.length); i++) {
+    html += `<div class="inference-step" style="background:rgba(210,168,255,0.07); border-left:3px solid var(--accent4);">
+      <span class="purple">Rule (MP):</span> ${chain[i][0]} <span class="symbol">→</span> ${chain[i][1]}
+    </div>`;
+    html += `<div class="inference-step" style="background:rgba(126,231,135,0.1); border-left:3px solid var(--accent3);">
+      <span class="result">∴ ${chain[i][1]}</span>
+    </div>`;
+  }
+
+  html += `<br><span style="color:var(--muted); font-size:0.85rem;">
+    Principia notation: &nbsp; p, &nbsp; p ⊃ q &nbsp; ⊢ &nbsp; q &nbsp; (repeated ${Math.min(chainLen, chain.length)} time${chainLen > 1 ? 's' : ''})
+  </span>`;
+
+  mpOutput.innerHTML = html;
+}
+mpPremise.addEventListener('change', updateMP);
+mpImpl.addEventListener('change', updateMP);
+chainSlider.addEventListener('input', updateMP);
+updateMP();
+
+// ===== CARD 6: Quantifiers =====
+const domainSlider = document.getElementById('domainSlider');
+const domainValEl = document.getElementById('domainVal');
+const predSelect = document.getElementById('predSelect');
+const quantOutput = document.getElementById('quantOutput');
+
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let i = 2; i * i <= n; i++) { if (n % i === 0) return false; }
+  return true;
+}
+function isSquare(n) {
+  const s = Math.sqrt(n);
+  return Math.floor(s) === s;
+}
+
+const predicates = {
+  even: { name: 'x is even', fn: x => x % 2 === 0 },
+  prime: { name: 'x is prime', fn: isPrime },
+  pos: { name: 'x > 0', fn: x => x > 0 },
+  square: { name: 'x is a perfect square', fn: isSquare }
+};
+
+function updateQuant() {
+  const size = parseInt(domainSlider.value);
+  domainValEl.textContent = size;
+  const pKey = predSelect.value;
+  const pred = predicates[pKey];
+
+  const domain = [];
+  for (let i = 0; i < size; i++) domain.push(i);
+
+  const results = domain.map(x => ({ x, val: pred.fn(x) }));
+  const allTrue = results.every(r => r.val);
+  const someTrue = results.some(r => r.val);
+
+  let html = `<strong style="color:var(--accent)">Domain:</strong> {${domain.join(', ')}} &nbsp; | &nbsp; <strong style="color:var(--accent)">P(x):</strong> ${pred.name}<br><br>`;
+
+  // Individual evaluations
+  html += `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">`;
+  for (const r of results) {
+    const bg = r.val ? 'rgba(126,231,135,0.15)' : 'rgba(247,129,102,0.15)';
+    const border = r.val ? 'var(--accent3)' : 'var(--accent2)';
+    const icon = r.val ? '✓' : '✗';
+    html += `<span style="padding:4px 10px; border-radius:6px; background:${bg}; border:1px solid ${border}; font-size:0.85rem; font-family:monospace;">
+      P(${r.x})=${icon}
+    </span>`;
+  }
+  html += `</div>`;
+
+  // Universal
+  html += `<span class="symbol">∀x P(x)</span> — "For all x in the domain, P(x)" → <span class="${tfClass(allTrue)}">${tf(allTrue)}</span>`;
+  if (!allTrue) {
+    const counter = results.find(r => !r.val);
+    html += ` <span style="color:var(--muted)">(counterexample: x=${counter.x})</span>`;
+  }
+  html += `<br>`;
+
+  // Existential
+  html += `<span class="symbol">∃x P(x)</span> — "There exists an x such that P(x)" → <span class="${tfClass(someTrue)}">${tf(someTrue)}</span>`;
+  if (someTrue) {
+    const witness = results.find(r => r.val);
+    html += ` <span style="color:var(--muted)">(witness: x=${witness.x})</span>`;
+  }
+  html += `<br><br>`;
+
+  // Negation relationships
+  html += `<span style="color:var(--muted); font-size:0.85rem;">
+    Principia equivalences: &nbsp;
+    <span class="symbol">~(∀x)P(x)</span> ≡ <span class="symbol">(∃x)~P(x)</span> → <span class="${tfClass(!allTrue)}">${tf(!allTrue)}</span> &nbsp;|&nbsp;
+    <span class="symbol">~(∃x)P(x)</span> ≡ <span class="symbol">(∀x)~P(x)</span> → <span class="${tfClass(!someTrue)}">${tf(!someTrue)}</span>
+  </span>`;
+
+  quantOutput.innerHTML = html;
+}
+domainSlider.addEventListener('input', updateQuant);
+predSelect.addEventListener('change', updateQuant);
+updateQuant();
+
+// ===== CARD 7: Logicist Layers =====
+const layerSlider = document.getElementById('layerSlider');
+const layerValEl = document.getElementById('layerVal');
+const layerOutput = document.getElementById('layerOutput');
+
+const layers = [
+  { name: 'Propositional Logic', icon: '⊥ ⊤ ¬ ∨ ∧ →', color: 'var(--accent)', desc: 'The foundation: truth values, connectives, tautologies.' },
+  { name: 'Predicate Logic', icon: '∀ ∃ P(x)', color: 'var(--accent3)', desc: 'Quantifiers over variables; properties and relations.' },
+  { name: 'Classes (Set Theory)', icon: '{ } ∈ ∪ ∩', color: 'var(--accent4)', desc: 'Classes defined by predicates; membership via type hierarchy.' },
+  { name: 'Relations & Functions', icon: 'R(x,y) f: A→B', color: 'var(--accent2)', desc: 'Ordered pairs, domains, ranges — all defined as classes of classes.' },
+  { name: 'Natural Numbers', icon: '0, S(0), S(S(0))…', color: '#f0e68c', desc: 'Numbers as equivalence classes of equinumerous sets.' },
+  { name: 'Arithmetic', icon: '+ × < =', color: '#87ceeb', desc: 'Addition, multiplication, ordering — all derived from successor.' },
+  { name: 'Real Analysis & Beyond', icon: 'ℝ lim ∫ ∞', color: '#ff6b9d', desc: 'Dedekind cuts, limits, continuity — the full power of mathematics.' }
+];
+
+function updateLayers() {
+  const n = parseInt(layerSlider.value);
+  layerValEl.textContent = n;
+
+  let html = '';
+  for (let i = 0; i < layers.length; i++) {
+    const l = layers[i];
+    const visible = i < n;
+    const opacity = visible ? 1 : 0.2;
+    const arrow = i > 0 ? `<div style="text-align:center; color:var(--muted); font-size:1.2rem; margin:4px 0;">▲ built from ▲</div>` : '';
+
+    html += arrow;
+    html += `<div style="
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: 1px solid ${visible ? l.color : 'var(--border)'};
+      background: ${visible ? l.color + '15' : 'transparent'};
+      opacity: ${opacity};
+      transition: all 0.4s;
+      margin: 2px 0;
+    ">
+      <span style="color:${l.color}; font-weight:700;">Layer ${i + 1}: ${l.name}</span>
+      <span style="float:right; font-family:monospace; font-size:0.85rem; color:${l.color};">${l.icon}</span>
+      <br><span style="color:var(--muted); font-size:0.85rem;">${l.desc}</span>
+    </div>`;
+  }
+
+  if (n === 7) {
+    html += `<br><div style="text-align:center; font-size:1.1rem;">
+      <span class="result">🎉 The full Logicist vision: Mathematics = Logic!</span><br>
+      <span style="color:var(--muted); font-size:0.85rem;">
+        (Until Gödel's Incompleteness Theorems showed inherent limits in 1931)
+      </span>
+    </div>`;
+  }
+
+  layerOutput.innerHTML = html;
+}
+layerSlider.addEventListener('input', updateLayers);
+updateLayers();
+
+</script>
+</body>
+</html>

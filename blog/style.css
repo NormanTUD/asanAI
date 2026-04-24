@@ -3079,3 +3079,7 @@ TOKENIZER LAB — Visual Polish
 .quote-guillemet {
 	user-select: none;
 }
+
+img {
+	user-select: none;
+}

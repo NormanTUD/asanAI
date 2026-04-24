@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dense-ReLU-Dense + Bumps</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Latin-Modern.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+.ed-wrap{display:inline-flex;flex-direction:column;align-items:center;vertical-align:baseline;margin:0 1px}
+.ed-wrap .ed-lbl{font-size:.55em;color:#556;font-family:monospace;line-height:1;margin-top:1px;white-space:nowrap}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#08080f;color:#ccc;line-height:1.5}
+.hdr{text-align:center;padding:22px 16px 10px;background:linear-gradient(135deg,#0c0c1a,#10102a);border-bottom:2px solid #1a1a3a}
+.hdr h1{font-size:1.5em;background:linear-gradient(90deg,#e94560,#53d8fb,#ffd93d);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr p{color:#556;font-size:.84em;max-width:750px;margin:6px auto 0}
+.wrap{display:flex;flex-wrap:wrap;gap:14px;padding:14px;max-width:1550px;margin:0 auto}
+.col-l{flex:2;min-width:480px;display:flex;flex-direction:column;gap:14px}
+.col-r{flex:1.3;min-width:370px;max-width:540px;display:flex;flex-direction:column;gap:14px}
+.cd{background:#0e0e1c;border:1px solid #1a1a30;border-radius:10px;padding:14px}
+.cd h2{font-size:.9em;color:#53d8fb;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid #1a1a30}
+canvas{width:100%;border-radius:7px;background:#0a0a14;border:1px solid #1a1a30;cursor:crosshair;display:block}
+.leg{display:flex;flex-wrap:wrap;gap:12px;margin:6px 0;font-size:.75em}
+.leg i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:4px}
+.fb{background:#08080f;border:1px solid #151528;border-radius:7px;padding:12px 14px;margin:6px 0;overflow-x:auto;line-height:2.6;min-height:36px}
+.fb .mr{display:flex;flex-wrap:wrap;align-items:baseline;gap:0;margin:2px 0}
+.fb .mr.ind{padding-left:20px}
+.fb .tc{display:inline-block;vertical-align:baseline}
+.fb .brk{flex-basis:100%;height:4px}
+.ed-n{display:inline-block;cursor:pointer;padding:1px 5px;border-radius:4px;transition:all .12s;font-family:"Temml",KaTeX_Main,"Times New Roman",serif;font-size:1.05em;color:#53d8fb;vertical-align:baseline;min-width:2em;text-align:center}
+.ed-n:hover{background:rgba(83,216,251,.18);box-shadow:0 0 8px rgba(83,216,251,.15)}
+.ed-n.active{background:rgba(233,69,96,.22);box-shadow:0 0 10px rgba(233,69,96,.25)}
+.pop-ed{position:fixed;z-index:9999;background:#14142a;border:1px solid #53d8fb;border-radius:9px;padding:12px 14px;box-shadow:0 10px 40px rgba(0,0,0,.7);display:none;min-width:210px}
+.pop-ed.vis{display:block}
+.pop-ed label{font-size:.72em;color:#556;display:block;margin-bottom:2px}
+.pop-ed .erow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.pop-ed input[type=number]{width:82px;background:#08080f;border:1px solid #2a2a4a;color:#53d8fb;padding:4px 6px;border-radius:4px;font-family:monospace;font-size:.88em;text-align:center}
+.pop-ed input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:3px;background:#2a2a4a;outline:none;margin-top:4px}
+.pop-ed input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#e94560;cursor:pointer;border:2px solid #fff}
+.pop-ed .rl{font-size:.65em;color:#445}
+.bt{padding:5px 13px;border:none;border-radius:6px;cursor:pointer;font-size:.8em;margin:3px;transition:all .12s}
+.bt-p{background:#e94560;color:#fff}.bt-p:hover{background:#ff6b81}
+.bt-s{background:#1a1a30;color:#889}.bt-s:hover{background:#2a2a40}
+.bt-sm{padding:3px 8px;font-size:.72em}
+.tgt-row{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.tgt-row .bt.act{background:#0f3460;color:#53d8fb;border:1px solid #53d8fb}
+.chk{display:flex;align-items:center;gap:6px;font-size:.8em;margin:4px 0}
+.chk input{accent-color:#e94560;width:14px;height:14px}
+.stats{display:flex;justify-content:space-around;padding:8px;background:#08080f;border-radius:7px;margin:6px 0}
+.stats .s{text-align:center}.stats .v{font-size:1em;color:#53d8fb;font-weight:bold;font-family:monospace}.stats .l{font-size:.65em;color:#445}
+.arch{display:flex;align-items:center;justify-content:center;gap:0;margin:8px 0;padding:10px;background:#08080f;border-radius:7px;flex-wrap:wrap}
+.arch-n{padding:7px 12px;border-radius:7px;font-size:.76em;text-align:center;font-weight:bold;min-width:60px}
+.arch-a{color:#333;font-size:1.3em;margin:0 3px}
+.a-in{background:#142014;color:#6bcb77;border:1px solid #1a3a1a}
+.a-d{background:#141430;color:#53d8fb;border:1px solid #1a1a50}
+.a-r{background:#301414;color:#e94560;border:1px solid #501a1a}
+.a-o{background:#2a2a14;color:#ffd93d;border:1px solid #4a4a1a}
+.note{font-size:.76em;color:#556;line-height:1.5;padding:7px 10px;background:#08080f;border-radius:6px;border-left:3px solid #53d8fb;margin:6px 0}
+.note-bump{border-left-color:#ffd93d}
+@media(max-width:900px){.wrap{flex-direction:column}.col-r{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="hdr">
+<h1>Dense → ReLU → Dense + Bump-Funktionen</h1>
+<p>Klicke auf jede blaue Zahl in den Formeln, um sie live zu editieren. Sieh wie sich Plot, Bumps und alle Formeln sofort ändern.</p>
+</div>
+<div class="wrap">
+<div class="col-l">
+<div class="cd">
+<h2>📊 Hauptplot</h2>
+<div class="leg">
+<span><i style="background:#e94560"></i>Zielfunktion</span>
+<span><i style="background:#53d8fb"></i>Netz ŷ(x)</span>
+<span><i style="background:#ffd93d88"></i>Bumps</span>
+<span><i style="background:#6bcb7788"></i>Einzel-ReLUs</span>
+</div>
+<canvas id="cMain" height="400"></canvas>
+<div class="stats">
+<div class="s"><div class="v" id="sMSE">0.000</div><div class="l">MSE</div></div>
+<div class="s"><div class="v" id="sN">4</div><div class="l">Hidden</div></div>
+<div class="s"><div class="v" id="sP">0</div><div class="l">Parameter</div></div>
+<div class="s"><div class="v" id="sBumps">0</div><div class="l">Bumps</div></div>
+</div>
+</div>
+<div class="cd">
+<h2>🏔️ Bump-Funktionen (aus ReLU-Paaren)</h2>
+<div class="note note-bump"><strong>Bump = ReLU-Differenz:</strong> Zwei benachbarte ReLU-Einheiten mit entgegengesetzter Steigung bilden eine "Hut"-Funktion, die nur in einem Intervall [a,b] aktiv ist.</div>
+<canvas id="cBump" height="250"></canvas>
+</div>
+<div class="cd">
+<h2>🔬 Kumulative Zerlegung</h2>
+<canvas id="cDecomp" height="180"></canvas>
+</div>
+<div class="cd">
+<h2>🎯 Zielfunktion &amp; Steuerung</h2>
+<div class="tgt-row" id="tgtRow">
+<button class="bt bt-s act" data-fn="sin">sin(x)</button>
+<button class="bt bt-s" data-fn="quad">x²</button>
+<button class="bt bt-s" data-fn="abs">|x|</button>
+<button class="bt bt-s" data-fn="step">Stufe</button>
+<button class="bt bt-s" data-fn="saw">Sägezahn</button>
+<button class="bt bt-s" data-fn="gauss">Gauß</button>
+<button class="bt bt-s" data-fn="cubic">x³</button>
+<button class="bt bt-s" data-fn="sincos">sin+cos</button>
+</div>
+<div class="chk"><input type="checkbox" id="chkU" checked><label for="chkU">Einzel-ReLU-Beiträge</label></div>
+<div class="chk"><input type="checkbox" id="chkB" checked><label for="chkB">Bump-Funktionen</label></div>
+<div class="chk"><input type="checkbox" id="chkK" checked><label for="chkK">Knickpunkte</label></div>
+<div class="chk"><input type="checkbox" id="chkE"><label for="chkE">Fehlerfläche</label></div>
+<div style="margin-top:8px">
+<button class="bt bt-p" id="btnFit">⚡ Auto-Fit</button>
+<button class="bt bt-s" id="btnReset">🔄 Reset</button>
+<button class="bt bt-s" id="btnAnim">▶ Animieren</button>
+</div>
+</div>
+</div>
+<div class="col-r">
+<div class="cd">
+<h2>🏗️ Architektur</h2>
+<div class="arch">
+<div class="arch-n a-in">x<br><span style="font-size:.6em;font-weight:normal">Input</span></div>
+<div class="arch-a">→</div>
+<div class="arch-n a-d">Dense₁<br><span style="font-size:.6em;font-weight:normal" id="archLbl">4 units</span></div>
+<div class="arch-a">→</div>
+<div class="arch-n a-r">ReLU</div>
+<div class="arch-a">→</div>
+<div class="arch-n a-d">Dense₂<br><span style="font-size:.6em;font-weight:normal">1 unit</span></div>
+<div class="arch-a">→</div>
+<div class="arch-n a-o">ŷ</div>
+</div>
+<div style="text-align:center;margin-top:5px">
+<span style="font-size:.8em;color:#667">Hidden Units: </span>
+<button class="bt bt-s bt-sm" id="btnM">−</button>
+<span id="nD" style="font-size:1.05em;color:#53d8fb;font-weight:bold;margin:0 8px">4</span>
+<button class="bt bt-s bt-sm" id="btnP">+</button>
+</div>
+</div>
+<div class="cd"><h2>📐 Gesamtformel</h2>
+<div class="note">Klicke auf <span style="color:#53d8fb">blaue Zahlen</span> → Inline-Editor!</div>
+<div class="fb" id="fTot"></div></div>
+<div class="cd"><h2>🔢 Dense Layer 1: h = W₁x + b₁</h2><div class="fb" id="fD1"></div></div>
+<div class="cd"><h2>⚡ ReLU: z = max(0, h)</h2><div class="fb" id="fR"></div></div>
+<div class="cd"><h2>🔢 Dense Layer 2: ŷ = W₂ᵀz + b₂</h2><div class="fb" id="fD2"></div></div>
+<div class="cd"><h2>🏔️ Bump-Definitionen</h2>
+<div class="note note-bump">Bumps: benachbarte ReLU-Paare mit entgegengesetzter Steigung.</div>
+<div class="fb" id="fBumps"></div></div>
+<div class="cd"><h2>📝 Expandiert</h2><div class="fb" id="fExp"></div></div>
+<div class="cd"><h2>📍 Knickpunkte</h2><div class="fb" id="fKn"></div></div>
+</div>
+</div>
+<div class="pop-ed" id="popEd">
+<label id="popLbl">Parameter</label>
+<div class="erow"><input type="number" id="popNum" step="0.05"><span class="rl" id="popRng">[-5, 5]</span></div>
+<input type="range" id="popSlider" min="-5" max="5" step="0.01">
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const S={fn:'sin',N:4,W1:[],b1:[],W2:[],b2:0,showU:true,showB:true,showK:true,showE:false,anim:false,xMin:-5,xMax:5,yMin:-3,yMax:3};
+const TF={sin:x=>Math.sin(x),quad:x=>x*x/5-1,abs:x=>Math.abs(x)-1,step:x=>x>0?1:x<0?-1:0,saw:x=>2*(x/3-Math.floor(x/3+.5)),gauss:x=>2*Math.exp(-x*x/2)-1,cubic:x=>x*x*x/30,sincos:x=>Math.sin(x)+.5*Math.cos(2*x)};
+function initW(n){S.N=n;S.W1=[];S.b1=[];S.W2=[];const sp=(S.xMax-S.xMin)/(n+1);for(let i=0;i<n;i++){S.W1.push(1);S.b1.push(-(S.xMin+sp*(i+1)));S.W2.push(.4*(i%2===0?1:-1))}S.b2=0}
+const relu=x=>Math.max(0,x);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function fwd(x){let y=S.b2;for(let i=0;i<S.N;i++)y+=S.W2[i]*relu(S.W1[i]*x+S.b1[i]);return y}
+function unitVal(x,i){return S.W2[i]*relu(S.W1[i]*x+S.b1[i])}
+function knickX(i){return Math.abs(S.W1[i])>1e-6?-S.b1[i]/S.W1[i]:NaN}
+
+// ============================================================
+// BUMP DETECTION
+// ============================================================
+function detectBumps(){
+  const idx=[];
+  for(let i=0;i<S.N;i++){const kx=knickX(i);if(!isNaN(kx))idx.push({i,kx})}
+  idx.sort((a,b)=>a.kx-b.kx);
+  const bumps=[];
+  for(let k=0;k<idx.length-1;k++){
+    const i=idx[k].i,j=idx[k+1].i;
+    const sI=S.W2[i]*S.W1[i],sJ=S.W2[j]*S.W1[j];
+    if(sI*sJ<0) bumps.push({i,j,x1:idx[k].kx,x2:idx[k+1].kx,sI,sJ,eval:x=>unitVal(x,i)+unitVal(x,j)});
+  }
+  return bumps;
+}
+
+// ============================================================
+// EDITABLE SYSTEM
+// ============================================================
+let editables=[],activeEd=null;
+const popEd=document.getElementById('popEd'),popNum=document.getElementById('popNum'),popSlider=document.getElementById('popSlider'),popLbl=document.getElementById('popLbl'),popRng=document.getElementById('popRng');
+function regEd(id,get,set,mn,mx,label){editables.push({id,get,set,min:mn,max:mx,label})}
+function clearEd(){editables=[]}
+function closePop(){popEd.classList.remove('vis');document.querySelectorAll('.ed-n.active').forEach(e=>e.classList.remove('active'));activeEd=null}
+function openPop(id,rect){
+  const ed=editables.find(e=>e.id===id);if(!ed)return;activeEd=ed;
+  popLbl.textContent=ed.label;popNum.value=ed.get().toFixed(3);popNum.step=0.05;
+  popSlider.min=ed.min;popSlider.max=ed.max;popSlider.step=0.01;popSlider.value=ed.get();
+  popRng.textContent=`[${ed.min}, ${ed.max}]`;
+  let left=rect.left+rect.width/2-105,top=rect.bottom+6;
+  if(left<5)left=5;if(left>window.innerWidth-220)left=window.innerWidth-220;
+  if(top>window.innerHeight-100)top=rect.top-90;
+  popEd.style.left=left+'px';popEd.style.top=top+'px';popEd.classList.add('vis');
+  document.querySelectorAll('.ed-n.active').forEach(e=>e.classList.remove('active'));
+  const el=document.querySelector(`[data-eid="${id}"]`);if(el)el.classList.add('active');
+}
+popNum.addEventListener('input',()=>{if(!activeEd)return;const v=parseFloat(popNum.value);if(isNaN(v))return;activeEd.set(clamp(v,activeEd.min,activeEd.max));popSlider.value=activeEd.get();fullRedraw()});
+popSlider.addEventListener('input',()=>{if(!activeEd)return;activeEd.set(parseFloat(popSlider.value));popNum.value=activeEd.get().toFixed(3);fullRedraw()});
+document.addEventListener('mousedown',e=>{if(popEd.contains(e.target))return;if(e.target.closest&&e.target.closest('.ed-n'))return;closePop()});
+
+// ============================================================
+// HYBRID FORMULA RENDERING
+// Key insight: NEVER split \left(...\right) across chunks!
+// Use \bigl( \bigr) or plain ( ) instead.
+// ============================================================
+function T(s){return{t:'t',v:s}}
+function N(eid){return{t:'n',e:eid}}
+function NL(eid,label){return{t:'nl',e:eid,l:label}}  // NEW: number with label
+function BR(){return{t:'b'}}
+
+function renderHybrid(elId,parts){
+  const el=document.getElementById(elId);el.innerHTML='';
+  let row=document.createElement('div');row.className='mr';el.appendChild(row);
+  for(const p of parts){
+    if(p.t==='b'){row=document.createElement('div');row.className='mr ind';el.appendChild(row);continue}
+    if(p.t==='t'){
+      const span=document.createElement('span');span.className='tc';
+      try{span.innerHTML=temml.renderToString(p.v,{displayMode:false})}
+      catch(e){span.textContent=p.v;span.style.color='#e94560';span.style.fontSize='.75em'}
+      row.appendChild(span);
+    }
+    if(p.t==='n'){
+      const ed=editables.find(e=>e.id===p.e);
+      const span=document.createElement('span');span.className='ed-n';span.setAttribute('data-eid',p.e);
+      span.textContent=ed?ed.get().toFixed(2):'??';
+      span.addEventListener('click',e=>{e.stopPropagation();openPop(p.e,span.getBoundingClientRect())});
+      row.appendChild(span);
+    }
+    if(p.t==='nl'){
+      const ed=editables.find(e=>e.id===p.e);
+      const wrap=document.createElement('span');wrap.className='ed-wrap';
+      const span=document.createElement('span');span.className='ed-n';span.setAttribute('data-eid',p.e);
+      span.textContent=ed?ed.get().toFixed(2):'??';
+      span.addEventListener('click',e=>{e.stopPropagation();openPop(p.e,span.getBoundingClientRect())});
+      wrap.appendChild(span);
+      const lbl=document.createElement('span');lbl.className='ed-lbl';lbl.textContent=p.l;
+      wrap.appendChild(lbl);
+      row.appendChild(wrap);
+    }
+  }
+}
+
+// ============================================================
+// BUILD ALL FORMULAS
+// ============================================================
+function buildFormulas(){
+  clearEd();
+  const n=S.N;
+  for(let i=0;i<n;i++){
+    const ii=i;
+    regEd(`w1.${i}`,()=>S.W1[ii],v=>{S.W1[ii]=v},-8,8,`W₁[${i+1}] Dense1 Gewicht`);
+    regEd(`b1.${i}`,()=>S.b1[ii],v=>{S.b1[ii]=v},-10,10,`b₁[${i+1}] Dense1 Bias`);
+    regEd(`w2.${i}`,()=>S.W2[ii],v=>{S.W2[ii]=v},-8,8,`W₂[${i+1}] Dense2 Gewicht`);
+  }
+  regEd('b2',()=>S.b2,v=>{S.b2=v},-5,5,'b₂ Dense2 Bias');
+
+// ---- TOTAL ----
+{
+  const p = [
+    T('\\underbrace{\\hat{y}(x)}_{\\text{network output}} = '),
+    NL('b2','b₂ bias')
+  ];
+  for(let i=0;i<n;i++){
+    p.push(T(S.W2[i]>=0?' + ':' - '));
+    p.push(NL(`w2.${i}`,`w₂,${i+1}`));
+    p.push(T('\\cdot \\mathrm{ReLU}\\Bigl('));
+    p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} +'));
+    p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+    p.push(T('\\Bigr)'));
+  }
+  renderHybrid('fTot',p);
+}
+
+// ---- DENSE 1 ----
+{
+  const p = [
+    T('\\underbrace{\\mathbf{h}}_{\\text{pre-act}} = \\underbrace{W_1}_{\\text{weights}} \\cdot \\underbrace{x}_{\\text{input}} + \\underbrace{b_1}_{\\text{biases}}')
+  ];
+  for(let i=0;i<n;i++){
+    p.push(BR());
+    p.push(T(`\\underbrace{h_{${i+1}}}_{\\text{unit ${i+1}}} = `));
+    p.push(NL(`w1.${i}`,`w₁,${i+1} weight`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} \\;+\\;'));
+    p.push(NL(`b1.${i}`,`b₁,${i+1} bias`));
+  }
+  renderHybrid('fD1',p);
+}
+
+// ---- RELU ----
+{
+  const p = [
+    T('\\underbrace{\\mathbf{z}}_{\\text{activations}} = \\underbrace{\\mathrm{ReLU}}_{\\max(0,\\cdot)}(\\mathbf{h})')
+  ];
+  for(let i=0;i<n;i++){
+    p.push(BR());
+    p.push(T(`\\underbrace{z_{${i+1}}}_{\\text{act ${i+1}}} = \\max\\bigl(0,\\;`));
+    p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} + '));
+    p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+    p.push(T('\\bigr)'));
+  }
+  renderHybrid('fR',p);
+}
+
+// ---- DENSE 2 ----
+{
+  const p = [
+    T('\\underbrace{\\hat{y}}_{\\text{output}} = \\underbrace{W_2^\\top}_{\\text{weights}} \\underbrace{\\mathbf{z}}_{\\text{acts}} + \\underbrace{b_2}_{\\text{bias}} = ')
+  ];
+  for(let i=0;i<n;i++){
+    if(i>0) p.push(T('+'));
+    p.push(NL(`w2.${i}`,`w₂,${i+1}`));
+    p.push(T(`\\cdot \\underbrace{z_{${i+1}}}_{\\text{act ${i+1}}}`));
+  }
+  p.push(T('\\;+\\;'));
+  p.push(NL('b2','b₂ bias'));
+  renderHybrid('fD2',p);
+}
+
+// ---- BUMPS ----
+{
+  const bumps=detectBumps();
+  const p=[];
+  if(bumps.length===0){
+    p.push(T('\\text{No bumps detected. Use Auto-Fit!}'));
+  } else {
+    for(let k=0;k<bumps.length;k++){
+      const bp=bumps[k],i=bp.i,j=bp.j;
+      if(k>0) p.push(BR());
+      p.push(T(`\\textcolor{#ffd93d}{\\text{Bump ${k+1}:}}\\;`));
+      p.push(NL(`w2.${i}`,`w₂,${i+1}`));
+      p.push(T('\\cdot \\mathrm{ReLU}\\bigl('));
+      p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+      p.push(T('\\cdot \\underbrace{x}_{\\text{in}}+'));
+      p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+      p.push(T('\\bigr) \\;+\\;'));
+      p.push(NL(`w2.${j}`,`w₂,${j+1}`));
+      p.push(T('\\cdot \\mathrm{ReLU}\\bigl('));
+      p.push(NL(`w1.${j}`,`w₁,${j+1}`));
+      p.push(T('\\cdot \\underbrace{x}_{\\text{in}}+'));
+      p.push(NL(`b1.${j}`,`b₁,${j+1}`));
+      p.push(T('\\bigr)'));
+      p.push(BR());
+      p.push(T(`\\quad\\small\\text{active in [${bp.x1.toFixed(2)}, ${bp.x2.toFixed(2)}], slopes: ${bp.sI.toFixed(2)} / ${bp.sJ.toFixed(2)}}`));
+    }
+  }
+  renderHybrid('fBumps',p);
+}
+
+// ---- EXPANDED ----
+{
+  const p = [
+    T('\\underbrace{\\hat{y}(x)}_{\\text{output}} = '),
+    NL('b2','b₂ out bias')
+  ];
+  for(let i=0;i<n;i++){
+    const kx=knickX(i),slope=S.W2[i]*S.W1[i];
+    p.push(BR());
+    p.push(T(`\\quad ${slope>=0?'+':'-'}\\;`));
+    p.push(NL(`w2.${i}`,`w₂,${i+1}`));
+    p.push(T('\\cdot \\max\\bigl(0,\\;'));
+    p.push(NL(`w1.${i}`,`w₁,${i+1}`));
+    p.push(T('\\cdot \\underbrace{x}_{\\text{input}} + '));
+    p.push(NL(`b1.${i}`,`b₁,${i+1}`));
+    p.push(T('\\bigr)'));
+    if(!isNaN(kx)){
+      p.push(T(`\\;\\small\\leftarrow \\text{U${i+1}: kink } x\\!=${kx.toFixed(2)},\\; \\underbrace{m}_{\\text{slope}}\\!=${slope.toFixed(2)}`));
+    }
+  }
+  renderHybrid('fExp',p);
+}
+
+// ---- KNICK POINTS ----
+{
+  const p=[];let any=false;
+  for(let i=0;i<n;i++){
+    const kx=knickX(i);if(isNaN(kx))continue;any=true;
+    if(p.length>0) p.push(BR());
+    p.push(T(`\\underbrace{x_{\\text{k},${i+1}}}_{\\text{kink ${i+1}}} = -\\dfrac{\\overbrace{${S.b1[i].toFixed(2)}}^{b_{1,${i+1}}}}{\\underbrace{${S.W1[i].toFixed(2)}}_{w_{1,${i+1}}}} = ${kx.toFixed(3)}`));
+  }
+  if(!any) p.push(T('\\text{(no kink points)}'));
+  renderHybrid('fKn',p);
+}
+}
+
+// ============================================================
+// DRAWING
+// ============================================================
+function getCtx(id){const c=document.getElementById(id);const d=window.devicePixelRatio||1;const r=c.getBoundingClientRect();c.width=r.width*d;c.height=r.height*d;const ctx=c.getContext('2d');ctx.scale(d,d);return{ctx,w:r.width,h:r.height}}
+function mX(x,w){return((x-S.xMin)/(S.xMax-S.xMin))*(w-70)+45}
+function mY(y,h){return h-(((y-S.yMin)/(S.yMax-S.yMin))*(h-50)+30)}
+function umX(px,w){return((px-45)/(w-70))*(S.xMax-S.xMin)+S.xMin}
+
+function drawGrid(ctx,w,h){
+  ctx.strokeStyle='#131325';ctx.lineWidth=1;
+  for(let x=Math.ceil(S.xMin);x<=S.xMax;x++){const px=mX(x,w);ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke()}
+  for(let y=Math.ceil(S.yMin);y<=S.yMax;y++){const py=mY(y,h);ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(w,py);ctx.stroke()}
+  ctx.strokeStyle='#2a2a4a';ctx.lineWidth=1.5;
+  const zx=mX(0,w),zy=mY(0,h);
+  ctx.beginPath();ctx.moveTo(zx,0);ctx.lineTo(zx,h);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,zy);ctx.lineTo(w,zy);ctx.stroke();
+  ctx.fillStyle='#3a3a5a';ctx.font='10px monospace';ctx.textAlign='center';
+  for(let x=Math.ceil(S.xMin);x<=S.xMax;x++)ctx.fillText(x,mX(x,w),mY(0,h)+13);
+  ctx.textAlign='right';
+  for(let y=Math.ceil(S.yMin);y<=S.yMax;y++)if(y!==0)ctx.fillText(y,mX(0,w)-6,mY(y,h)+4);
+}
+
+function drawCurve(ctx,w,h,fn,color,lw,dash){
+  ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.setLineDash(dash||[]);
+  ctx.beginPath();let s=false;
+  for(let px=45;px<w-25;px++){
+    const x=umX(px,w),y=fn(x),py=mY(y,h);
+    if(py>-100&&py<h+100){if(!s){ctx.moveTo(px,py);s=true}else ctx.lineTo(px,py)}else{s=false}
+  }
+  ctx.stroke();ctx.setLineDash([]);
+}
+
+// ============================================================
+// MAIN PLOT
+// ============================================================
+function drawMain(){
+  const{ctx,w,h}=getCtx('cMain');
+  ctx.clearRect(0,0,w,h);drawGrid(ctx,w,h);
+  const fn=TF[S.fn];
+  if(S.showE){
+    ctx.fillStyle='rgba(233,69,96,.12)';
+    for(let px=45;px<w-25;px++){const x=umX(px,w);const y1=mY(fn(x),h),y2=mY(fwd(x),h);ctx.fillRect(px,Math.min(y1,y2),1,Math.abs(y2-y1))}
+  }
+  drawCurve(ctx,w,h,fn,'#e94560',2.5);
+  if(S.showU){
+    const cols=['#6bcb7766','#45b7d166','#ffd93d66','#a55eea66','#fd964466','#fc5c6566','#26de8166','#0fb9b166','#ff6b6b66','#74b9ff66'];
+    for(let i=0;i<S.N;i++){const ii=i;drawCurve(ctx,w,h,x=>unitVal(x,ii),cols[i%cols.length],1.3,[5,3])}
+  }
+  const bumps=detectBumps();
+  if(S.showB){
+    const bC=['#ffd93d88','#ff6b6b88','#6bcb7788','#a55eea88','#53d8fb88'];
+    bumps.forEach((bp,k)=>{
+      drawCurve(ctx,w,h,bp.eval,bC[k%bC.length],2,[8,4]);
+      ctx.fillStyle=bC[k%bC.length].replace('88','18');
+      const px1=mX(bp.x1,w),px2=mX(bp.x2,w);
+      ctx.fillRect(Math.min(px1,px2),0,Math.abs(px2-px1),h);
+    });
+  }
+  drawCurve(ctx,w,h,fwd,'#53d8fb',2.5);
+  if(S.showK){
+    for(let i=0;i<S.N;i++){
+      const kx=knickX(i);if(isNaN(kx)||kx<S.xMin||kx>S.xMax)continue;
+      const px=mX(kx,w),py=mY(fwd(kx),h);
+      ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fillStyle='#ffd93d';ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle='#ffd93daa';ctx.font='bold 9px monospace';ctx.textAlign='center';
+      ctx.fillText('k'+(i+1),px,py-10);
+    }
+  }
+  let mse=0;const ns=200;
+  for(let i=0;i<=ns;i++){const x=S.xMin+(S.xMax-S.xMin)*i/ns;const d=fn(x)-fwd(x);mse+=d*d}
+  mse/=(ns+1);
+  document.getElementById('sMSE').textContent=mse.toFixed(4);
+  document.getElementById('sN').textContent=S.N;
+  document.getElementById('sP').textContent=S.N*3+1;
+  document.getElementById('sBumps').textContent=bumps.length;
+}
+
+// ============================================================
+// BUMP PLOT
+// ============================================================
+function drawBumpPlot(){
+  const{ctx,w,h}=getCtx('cBump');ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='#131325';ctx.lineWidth=1;
+  for(let x=Math.ceil(S.xMin);x<=S.xMax;x++){const px=mX(x,w);ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,h);ctx.stroke()}
+  const bumps=detectBumps();
+  if(bumps.length===0){
+    ctx.fillStyle='#33334a';ctx.font='13px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Keine Bumps erkannt – nutze Auto-Fit oder passe Gewichte an',w/2,h/2-5);return;
+  }
+  let byMin=0,byMax=0;
+  bumps.forEach(bp=>{for(let px=45;px<w-25;px++){const x=umX(px,w),v=bp.eval(x);if(v<byMin)byMin=v;if(v>byMax)byMax=v}});
+  const bPad=Math.max(.3,(byMax-byMin)*.15);byMin-=bPad;byMax+=bPad;
+  if(byMax-byMin<.1){byMin=-1;byMax=1}
+  const bmY=y=>h-(((y-byMin)/(byMax-byMin))*(h-40)+20);
+  ctx.strokeStyle='#2a2a4a';ctx.lineWidth=1;const bzy=bmY(0);
+  ctx.beginPath();ctx.moveTo(0,bzy);ctx.lineTo(w,bzy);ctx.stroke();
+  const bC=['#ffd93d','#ff6b6b','#6bcb77','#a55eea','#53d8fb','#fd9644'];
+  bumps.forEach((bp,k)=>{
+    const col=bC[k%bC.length];
+    ctx.fillStyle=col+'15';const px1=mX(bp.x1,w),px2=mX(bp.x2,w);
+    ctx.fillRect(Math.min(px1,px2),0,Math.abs(px2-px1),h);
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.setLineDash([]);ctx.beginPath();let st=false;
+    for(let px=45;px<w-25;px++){const x=umX(px,w),v=bp.eval(x),py=bmY(v);if(!st){ctx.moveTo(px,py);st=true}else ctx.lineTo(px,py)}
+    ctx.stroke();
+    ctx.lineWidth=1;ctx.setLineDash([4,3]);
+    [bp.i,bp.j].forEach(idx=>{ctx.strokeStyle=col+'88';ctx.beginPath();st=false;
+      for(let px=45;px<w-25;px++){const x=umX(px,w),v=unitVal(x,idx),py=bmY(v);if(!st){ctx.moveTo(px,py);st=true}else ctx.lineTo(px,py)}
+      ctx.stroke()});
+    ctx.setLineDash([]);
+    ctx.fillStyle=col;ctx.font='bold 11px monospace';ctx.textAlign='center';
+    const mid=(bp.x1+bp.x2)/2;ctx.fillText('Bump '+(k+1),mX(mid,w),16);
+    ctx.font='9px monospace';ctx.fillStyle=col+'aa';ctx.fillText('['+bp.x1.toFixed(1)+', '+bp.x2.toFixed(1)+']',mX(mid,w),28);
+    [bp.x1,bp.x2].forEach(kx=>{const px=mX(kx,w),py=bmY(bp.eval(kx));ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke()});
+  });
+}
+
+// ============================================================
+// DECOMPOSITION PLOT
+// ============================================================
+function drawDecomp(){
+  const{ctx,w,h}=getCtx('cDecomp');ctx.clearRect(0,0,w,h);
+  const n=S.N,cols=Math.min(n+1,10),cW=w/cols;
+  for(let col=0;col<cols&&col<=n;col++){
+    const ox=col*cW;
+    const mmX=x=>ox+8+((x-S.xMin)/(S.xMax-S.xMin))*(cW-16);
+    const mmY=y=>h-(((y-S.yMin)/(S.yMax-S.yMin))*(h-30)+15);
+    ctx.strokeStyle='#1a1a30';ctx.lineWidth=1;ctx.strokeRect(ox+3,3,cW-6,h-6);
+    ctx.strokeStyle='#1a1a30';ctx.lineWidth=.5;const zy=mmY(0);
+    ctx.beginPath();ctx.moveTo(ox+8,zy);ctx.lineTo(ox+cW-8,zy);ctx.stroke();
+    ctx.strokeStyle='#e9456030';ctx.lineWidth=1;ctx.setLineDash([]);ctx.beginPath();let s=false;
+    for(let px=ox+8;px<ox+cW-8;px++){const x=S.xMin+((px-ox-8)/(cW-16))*(S.xMax-S.xMin);const py=mmY(TF[S.fn](x));if(!s){ctx.moveTo(px,py);s=true}else ctx.lineTo(px,py)}
+    ctx.stroke();
+    if(col<n){
+      ctx.strokeStyle='#ffd93d88';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();s=false;
+      for(let px=ox+8;px<ox+cW-8;px++){const x=S.xMin+((px-ox-8)/(cW-16))*(S.xMax-S.xMin);const py=mmY(unitVal(x,col));if(!s){ctx.moveTo(px,py);s=true}else ctx.lineTo(px,py)}
+      ctx.stroke();ctx.setLineDash([]);
+      ctx.strokeStyle='#53d8fb';ctx.lineWidth=2;ctx.beginPath();s=false;
+      for(let px=ox+8;px<ox+cW-8;px++){const x=S.xMin+((px-ox-8)/(cW-16))*(S.xMax-S.xMin);let sum=S.b2;for(let j=0;j<=col;j++)sum+=unitVal(x,j);const py=mmY(sum);if(!s){ctx.moveTo(px,py);s=true}else ctx.lineTo(px,py)}
+      ctx.stroke();
+      ctx.fillStyle='#ffd93d';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('U'+(col+1),ox+cW/2,13);
+      ctx.fillStyle='#445';ctx.font='8px monospace';ctx.fillText('\u03A31..'+(col+1),ox+cW/2,h-4);
+    } else {
+      ctx.strokeStyle='#53d8fb';ctx.lineWidth=2;ctx.beginPath();s=false;
+      for(let px=ox+8;px<ox+cW-8;px++){const x=S.xMin+((px-ox-8)/(cW-16))*(S.xMax-S.xMin);const py=mmY(fwd(x));if(!s){ctx.moveTo(px,py);s=true}else ctx.lineTo(px,py)}
+      ctx.stroke();
+      ctx.fillStyle='#53d8fb';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('\u03A3 total',ox+cW/2,13);
+    }
+  }
+}
+
+// ============================================================
+// FULL REDRAW
+// ============================================================
+function fullRedraw(){
+  drawMain();drawBumpPlot();drawDecomp();buildFormulas();
+  document.getElementById('archLbl').textContent=S.N+' units';
+  document.getElementById('nD').textContent=S.N;
+}
+
+// ============================================================
+// AUTO-FIT
+// ============================================================
+function autoFit(){
+  const fn=TF[S.fn],samples=[];
+  for(let i=0;i<=200;i++){const x=S.xMin+(S.xMax-S.xMin)*i/200;samples.push({x,y:fn(x)})}
+  const n=S.N,m=samples.length,sp=(S.xMax-S.xMin)/(n+1);
+  for(let i=0;i<n;i++){S.W1[i]=1;S.b1[i]=-(S.xMin+sp*(i+1));S.W2[i]=0}
+  S.b2=0;
+  const lr=0.001;
+  for(let iter=0;iter<3000;iter++){
+    let gB2=0;const gW2=new Array(n).fill(0),gW1=new Array(n).fill(0),gB1=new Array(n).fill(0);
+    for(const s of samples){
+      let pred=S.b2;const pre=[],rv=[];
+      for(let j=0;j<n;j++){pre[j]=S.W1[j]*s.x+S.b1[j];rv[j]=relu(pre[j]);pred+=S.W2[j]*rv[j]}
+      const err=pred-s.y;gB2+=2*err/m;
+      for(let j=0;j<n;j++){gW2[j]+=2*err*rv[j]/m;if(pre[j]>0){gW1[j]+=2*err*S.W2[j]*s.x/m;gB1[j]+=2*err*S.W2[j]/m}}
+    }
+    S.b2-=lr*gB2;
+    for(let j=0;j<n;j++){S.W2[j]-=lr*gW2[j];S.W1[j]-=lr*.5*gW1[j];S.b1[j]-=lr*.5*gB1[j]}
+  }
+  for(let j=0;j<n;j++){S.W1[j]=clamp(S.W1[j],-8,8);S.b1[j]=clamp(S.b1[j],-10,10);S.W2[j]=clamp(S.W2[j],-8,8)}
+  S.b2=clamp(S.b2,-5,5);fullRedraw();
+}
+
+// ============================================================
+// ANIMATION
+// ============================================================
+let animId=null;
+function toggleAnim(){
+  if(S.anim){S.anim=false;cancelAnimationFrame(animId);document.getElementById('btnAnim').textContent='\u25B6 Animieren';return}
+  S.anim=true;document.getElementById('btnAnim').textContent='\u23F8 Stopp';
+  const fn=TF[S.fn],lr=0.0005;let fc=0;
+  function step(){
+    if(!S.anim)return;
+    const samples=[];for(let i=0;i<=100;i++){const x=S.xMin+(S.xMax-S.xMin)*i/100;samples.push({x,y:fn(x)})}
+    const n=S.N,m=samples.length;
+    for(const s of samples){
+      let pred=S.b2;const pre=[],rv=[];
+      for(let j=0;j<n;j++){pre[j]=S.W1[j]*s.x+S.b1[j];rv[j]=relu(pre[j]);pred+=S.W2[j]*rv[j]}
+      const err=pred-s.y;S.b2-=lr*2*err/m;
+      for(let j=0;j<n;j++){S.W2[j]-=lr*2*err*rv[j]/m;if(pre[j]>0){S.W1[j]-=lr*err*S.W2[j]*s.x/m;S.b1[j]-=lr*err*S.W2[j]/m}}
+    }
+    for(let j=0;j<n;j++){S.W1[j]=clamp(S.W1[j],-8,8);S.b1[j]=clamp(S.b1[j],-10,10);S.W2[j]=clamp(S.W2[j],-8,8)}
+    S.b2=clamp(S.b2,-5,5);
+    drawMain();drawBumpPlot();drawDecomp();
+    fc++;if(fc%8===0)buildFormulas();
+    animId=requestAnimationFrame(step);
+  }
+  step();
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.getElementById('btnFit').addEventListener('click',()=>{
+  const b=document.getElementById('btnFit');b.textContent='\u23F3 Fitting...';
+  setTimeout(()=>{autoFit();b.textContent='\u26A1 Auto-Fit'},30);
+});
+document.getElementById('btnReset').addEventListener('click',()=>{if(S.anim)toggleAnim();initW(S.N);fullRedraw()});
+document.getElementById('btnAnim').addEventListener('click',toggleAnim);
+document.getElementById('btnP').addEventListener('click',()=>{
+  if(S.anim)toggleAnim();if(S.N>=16)return;
+  const pos=S.xMin+(S.xMax-S.xMin)*Math.random();
+  S.W1.push(1);S.b1.push(-pos);S.W2.push(.3*(Math.random()>.5?1:-1));
+  S.N++;closePop();fullRedraw();
+});
+document.getElementById('btnM').addEventListener('click',()=>{
+  if(S.anim)toggleAnim();if(S.N<=1)return;
+  S.W1.pop();S.b1.pop();S.W2.pop();S.N--;closePop();fullRedraw();
+});
+document.querySelectorAll('#tgtRow .bt').forEach(b=>{
+  b.addEventListener('click',e=>{document.querySelectorAll('#tgtRow .bt').forEach(x=>x.classList.remove('act'));e.target.classList.add('act');S.fn=e.target.dataset.fn;fullRedraw()});
+});
+document.getElementById('chkU').addEventListener('change',e=>{S.showU=e.target.checked;drawMain()});
+document.getElementById('chkB').addEventListener('change',e=>{S.showB=e.target.checked;drawMain()});
+document.getElementById('chkK').addEventListener('change',e=>{S.showK=e.target.checked;drawMain()});
+document.getElementById('chkE').addEventListener('change',e=>{S.showE=e.target.checked;drawMain()});
+window.addEventListener('resize',()=>{drawMain();drawBumpPlot();drawDecomp()});
+
+// ============================================================
+// INIT
+// ============================================================
+initW(4);
+fullRedraw();
+</script>
+</body>
+</html>

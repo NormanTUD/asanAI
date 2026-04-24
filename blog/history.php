@@ -11,13 +11,13 @@ TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks
 </div>
 
 <div class="md">
-We do not present this history as a straight road leading inevitably to the **Large Language Model**. Rather, we view it as a series of shifting currents that have merged, for a brief moment, into a single powerful stream. What we witness today is an **emergent phenomenon**, one possibility among many, born from a web of ideas that were never intended to meet.
+We do not present this history as a straight road leading inevitably to the **Large Language Model**. Rather, we view it as a series of shifting currents that have merged, for a brief moment, into a single powerful stream. What we witness today is an **emergent phenomenon**, one possibility among many, born from a web of ideas that were never intended to meet, but matched when they did.
 
 The tools of the past were forged in the fires of unrelated Necessity. The **statistical laws** once used by astronomers to bring order to the wandering stars were not designed to map the syntax of human longing. Yet, in the fluid exchange of human inquiry, these methods for measuring **probability and error** have become the very scales upon which we weigh the next word in a sequence. 
 
 In the same way, the **silicon architectures** designed for the fleeting light of digital games provided, by chance, the massive parallel strength required to sustain a mechanical mind. This is the **hidden harmony** of invention: a solution in one domain becomes the unexpected catalyst in another. 
 
-As Whitehead observed, the world is a **constantly changing, interwoven pattern**. The breakthroughs of the present are not a final destination; they are **momentary patterns** in a much larger, inseparable reality. Just as a river never stands still, the ideas captured in this document will eventually be pulled apart and woven into **new and unrecognizable forms**. We trace this specific lineage of the LLM not as a finished monument, but as a testament to a world that is constantly being repurposed by its own changing needs.
+As Whitehead observed, the world is a **constantly changing, interwoven pattern**. The breakthroughs of the present are not a final destination; they are **momentary patterns** in a much larger, inseparable reality. Just as a river never stands still, the ideas captured in this document will eventually be pulled apart and woven into **new and unrecognizable forms**. We trace this specific lineage of the LLM not as a finished monument, but as a testament to a world that is constantly being repurposed by its own changes, which then again create new waves propagating through the space of ideas and inventions.
 
 ## The Abstraction of Labor: From Wheels to Thought
 
@@ -340,7 +340,7 @@ Inspired by Babbage's Analytical Engine, Aiken designed the **ASCC (Mark I)**. W
 ### John von Neumann & The Stored-Program Concept (1945)
 Before von Neumann, computers like the ENIAC had to be physically rewired to change tasks. His \citetitle{vonneumann} proposed the **Von Neumann Architecture**.
 
-One of his**Big Ideas** for **Computing**: Data and instructions are stored in the same memory. This allowed the computer to be "reprogrammed" via software rather than hardware switches.
+One of his **Big Ideas** for **Computing**: Data and instructions are stored in the same memory. This allowed the computer to be "reprogrammed" via software rather than hardware switches.
 
 ### Alan Turing: Theory and the Universal Machine (1936-1950)
 \citeauthor{turing1937} provided the mathematical proof for what a computer *could* do.
