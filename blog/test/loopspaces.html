@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop Spaces – Homotopietypentheorie Visualisierung</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2e;
+            color: #e0e0ff;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(180deg, #12124a, #0a0a2e);
+        }
+
+        header h1 {
+            font-size: 2.4em;
+            background: linear-gradient(90deg, #7eb4ff, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            color: #a0a0d0;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .section h2 {
+            font-size: 1.6em;
+            color: #c084fc;
+            margin-bottom: 10px;
+        }
+
+        .section .description {
+            color: #a0a0d0;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .controls button {
+            padding: 10px 22px;
+            border: 1px solid rgba(192, 132, 252, 0.4);
+            background: rgba(192, 132, 252, 0.1);
+            color: #c084fc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .controls button:hover {
+            background: rgba(192, 132, 252, 0.25);
+            border-color: #c084fc;
+        }
+
+        .controls button.active {
+            background: rgba(192, 132, 252, 0.35);
+            border-color: #c084fc;
+            color: #fff;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #a0a0d0;
+        }
+
+        .slider-group input[type="range"] {
+            accent-color: #c084fc;
+            width: 140px;
+        }
+
+        .slider-group label {
+            min-width: 100px;
+            font-size: 0.9em;
+        }
+
+        .math-box {
+            background: rgba(126, 180, 255, 0.08);
+            border-left: 3px solid #7eb4ff;
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.05em;
+            color: #b0c4ff;
+            line-height: 1.8;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 800px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            header h1 { font-size: 1.6em; }
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: rgba(244, 114, 182, 0.15);
+            border: 1px solid rgba(244, 114, 182, 0.3);
+            color: #f472b6;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-bottom: 12px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #a0a0d0;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        #homotopy-info {
+            text-align: center;
+            margin-top: 10px;
+            color: #a0a0d0;
+            font-size: 0.95em;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Ω – Loop Spaces in der Homotopietypentheorie</h1>
+    <p>
+        Interaktive Visualisierungen zu Schleifenräumen (Loop Spaces), 
+        Homotopien zwischen Pfaden und der iterierten Loop-Space-Struktur Ωⁿ(X, x₀).
+        Erkunde die fundamentalen Konzepte der HoTT visuell!
+    </p>
+</header>
+
+<div class="container">
+
+    <!-- Section 1: Basispunkt-Schleifen -->
+    <div class="section">
+        <span class="info-badge">Grundlagen</span>
+        <h2>1. Schleifen am Basispunkt</h2>
+        <p class="description">
+            Ein <strong>Loop Space</strong> Ω(X, x₀) ist der Raum aller Schleifen in X, 
+            die am Basispunkt x₀ beginnen und enden. Jede Schleife ist ein Pfad 
+            p : x₀ =_X x₀. Klicke auf die Fläche, um neue Schleifen zu erzeugen!
+        </p>
+        <div class="math-box">
+            Ω(X, x₀) := (x₀ =_X x₀)<br>
+            ∀ p : Ω(X, x₀),  p(0) = x₀ = p(1)
+        </div>
+        <canvas id="canvas-loops" width="700" height="450"></canvas>
+        <div class="controls">
+            <button onclick="addLoop()">+ Schleife hinzufügen</button>
+            <button onclick="clearLoops()">Zurücksetzen</button>
+            <button onclick="toggleAnimation('loops')">Animation ▶/⏸</button>
+            <div class="slider-group">
+                <label>Geschwindigkeit:</label>
+                <input type="range" id="speed-loops" min="1" max="10" value="4">
+            </div>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Basispunkt x₀</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#7eb4ff"></div> Schleifen</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div> Laufender Punkt</div>
+        </div>
+    </div>
+
+    <!-- Section 2: Homotopie zwischen Schleifen -->
+    <div class="section">
+        <span class="info-badge">Pfad-Homotopie</span>
+        <h2>2. Homotopie zwischen Schleifen</h2>
+        <p class="description">
+            Zwei Schleifen p, q : Ω(X, x₀) sind <strong>homotop</strong>, wenn es eine 
+            stetige Deformation von p nach q gibt, die den Basispunkt fixiert hält. 
+            In HoTT entspricht dies einem Pfad im Loop Space: h : p =_{Ω(X,x₀)} q.
+            Ziehe den Slider, um die Homotopie zu sehen!
+        </p>
+        <div class="math-box">
+            h : p =_{Ω(X,x₀)} q<br>
+            Ω²(X, x₀) := Ω(Ω(X, x₀), refl_{x₀})
+        </div>
+        <canvas id="canvas-homotopy" width="700" height="450"></canvas>
+        <div class="controls">
+            <div class="slider-group">
+                <label>Homotopie t:</label>
+                <input type="range" id="homotopy-t" min="0" max="100" value="0">
+                <span id="homotopy-t-val">0.00</span>
+            </div>
+            <button onclick="animateHomotopy()">Auto-Animation ▶</button>
+            <button onclick="switchHomotopyPair()">Nächstes Paar</button>
+        </div>
+        <div id="homotopy-info">Schleife p (blau) → Schleife q (pink)</div>
+    </div>
+
+    <!-- Section 3: Schleifenkomposition -->
+    <div class="section">
+        <span class="info-badge">Gruppenstruktur</span>
+        <h2>3. Schleifenkomposition (Konkatenation)</h2>
+        <p class="description">
+            Loop Spaces tragen eine natürliche <strong>Gruppenstruktur</strong>: 
+            Schleifen können komponiert (hintereinander ausgeführt) werden. 
+            Die Komposition p · q durchläuft erst p, dann q. 
+            Das neutrale Element ist refl_{x₀} (die konstante Schleife).
+        </p>
+        <div class="math-box">
+            (·) : Ω(X,x₀) × Ω(X,x₀) → Ω(X,x₀)<br>
+            refl_{x₀} · p = p = p · refl_{x₀}<br>
+            p · p⁻¹ = refl_{x₀}
+        </div>
+        <canvas id="canvas-composition" width="700" height="450"></canvas>
+        <div class="controls">
+            <button id="btn-loop-p" class="active" onclick="showComposition('p')">Schleife p</button>
+            <button id="btn-loop-q" onclick="showComposition('q')">Schleife q</button>
+            <button id="btn-loop-pq" onclick="showComposition('pq')">p · q</button>
+            <button id="btn-loop-inv" onclick="showComposition('inv')">p⁻¹</button>
+            <button onclick="toggleAnimation('comp')">Animation ▶/⏸</button>
+        </div>
+    </div>
+
+    <!-- Section 4: Iterierte Loop Spaces -->
+    <div class="section">
+        <span class="info-badge">Höhere Struktur</span>
+        <h2>4. Iterierte Loop Spaces Ωⁿ</h2>
+        <p class="description">
+            Man kann den Loop-Space-Konstruktor iterieren: Ω²(X, x₀) ist der Raum 
+            der Schleifen von Schleifen (Homotopien zwischen der Identitätsschleife), 
+            Ω³ der Raum der Schleifen von Schleifen von Schleifen, usw. 
+            Höhere Loop Spaces werden zunehmend <strong>abelsch</strong> (Eckmann-Hilton).
+        </p>
+        <div class="math-box">
+            Ω⁰(X, x₀) = X<br>
+            Ωⁿ⁺¹(X, x₀) = Ω(Ωⁿ(X, x₀), refl...refl_{x₀})<br>
+            Eckmann-Hilton: Ω²(X, x₀) ist abelsch
+        </div>
+        <div class="grid-2">
+            <div>
+                <canvas id="canvas-omega1" width="330" height="330"></canvas>
+                <p style="text-align:center; margin-top:8px; color:#7eb4ff;">Ω¹ – Schleifen</p>
+            </div>
+            <div>
+                <canvas id="canvas-omega2" width="330" height="330"></canvas>
+                <p style="text-align:center; margin-top:8px; color:#c084fc;">Ω² – Schleifen von Schleifen</p>
+            </div>
+        </div>
+        <div class="controls">
+            <button onclick="toggleAnimation('omega')">Animation ▶/⏸</button>
+            <div class="slider-group">
+                <label>Komplexität:</label>
+                <input type="range" id="omega-complexity" min="1" max="6" value="3">
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Fundamentalgruppe π₁ -->
+    <div class="section">
+        <span class="info-badge">π₁ Visualisierung</span>
+        <h2>5. Fundamentalgruppe π₁ – Windungszahlen</h2>
+        <p class="description">
+            Die Fundamentalgruppe π₁(X, x₀) = ‖Ω(X, x₀)‖₀ ist die 0-Trunkierung 
+            des Loop Space. Für den Kreis S¹ gilt: π₁(S¹) ≅ ℤ. 
+            Jede Schleife wird durch ihre <strong>Windungszahl</strong> klassifiziert.
+            Klicke die Buttons, um verschiedene Windungszahlen zu sehen!
+        </p>
+        <div class="math-box">
+            π₁(S¹) ≅ ℤ<br>
+            loop^n : Ω(S¹, base),  n ∈ ℤ<br>
+            ‖Ω(S¹, base)‖₀ ≅ ℤ
+        </div>
+        <canvas id="canvas-winding" width="700" height="450"></canvas>
+        <div class="controls">
+            <button onclick="setWinding(-3)">n = -3</button>
+            <button onclick="setWinding(-2)">n = -2</button>
+            <button onclick="setWinding(-1)">n = -1</button>
+            <button onclick="setWinding(0)" class="active" id="btn-w0">n = 0</button>
+            <button onclick="setWinding(1)">n = 1</button>
+            <button onclick="setWinding(2)">n = 2</button>
+            <button onclick="setWinding(3)">n = 3</button>
+            <button onclick="toggleAnimation('winding')">Animation ▶/⏸</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+const animations = {
+    loops: true,
+    comp: true,
+    omega: true,
+    winding: true,
+    homotopyAuto: false
+};
+
+let globalTime = 0;
+
+// ============================================================
+// 1. LOOPS AT BASEPOINT
+// ============================================================
+const canvasLoops = document.getElementById('canvas-loops');
+const ctxLoops = canvasLoops.getContext('2d');
+const baseX = 350, baseY = 225;
+
+let loops = [];
+const loopColors = ['#7eb4ff', '#c084fc', '#60d4f0', '#a78bfa', '#38bdf8', '#818cf8'];
+
+function generateLoop() {
+    const angle = Math.random() * Math.PI * 2;
+    const rx = 60 + Math.random() * 120;
+    const ry = 40 + Math.random() * 100;
+    const rotation = Math.random() * Math.PI * 2;
+    const lobes = Math.floor(Math.random() * 3) + 1;
+    const color = loopColors[loops.length % loopColors.length];
+    const phase = Math.random() * Math.PI * 2;
+    return { angle, rx, ry, rotation, lobes, color, phase };
+}
+
+function addLoop() {
+    if (loops.length < 8) {
+        loops.push(generateLoop());
+    }
+}
+
+function clearLoops() {
+    loops = [];
+}
+
+// Initialize with 2 loops
+addLoop(); addLoop();
+
+function getLoopPoint(loop, t) {
+    const theta = t * Math.PI * 2 * loop.lobes;
+    const r = Math.sin(t * Math.PI);
+    const x = r * loop.rx * Math.cos(theta);
+    const y = r * loop.ry * Math.sin(theta);
+    // Rotate
+    const cos = Math.cos(loop.rotation);
+    const sin = Math.sin(loop.rotation);
+    return {
+        x: baseX + x * cos - y * sin,
+        y: baseY + x * sin + y * cos
+    };
+}
+
+function drawLoopsScene(time) {
+    ctxLoops.clearRect(0, 0, 700, 450);
+
+    // Grid
+    ctxLoops.strokeStyle = 'rgba(126,180,255,0.06)';
+    ctxLoops.lineWidth = 1;
+    for (let i = 0; i < 700; i += 35) {
+        ctxLoops.beginPath(); ctxLoops.moveTo(i, 0); ctxLoops.lineTo(i, 450); ctxLoops.stroke();
+    }
+    for (let i = 0; i < 450; i += 35) {
+        ctxLoops.beginPath(); ctxLoops.moveTo(0, i); ctxLoops.lineTo(700, i); ctxLoops.stroke();
+    }
+
+    const speed = document.getElementById('speed-loops').value / 4;
+
+    // Draw loops
+    loops.forEach((loop, idx) => {
+        ctxLoops.beginPath();
+        ctxLoops.strokeStyle = loop.color;
+        ctxLoops.lineWidth = 2.5;
+        ctxLoops.globalAlpha = 0.7;
+        for (let i = 0; i <= 200; i++) {
+            const t = i / 200;
+            const pt = getLoopPoint(loop, t);
+            if (i === 0) ctxLoops.moveTo(pt.x, pt.y);
+            else ctxLoops.lineTo(pt.x, pt.y);
+        }
+        ctxLoops.stroke();
+        ctxLoops.globalAlpha = 1;
+
+        // Moving point
+        const tPoint = ((time * speed * 0.01 + loop.phase) % 1);
+        const pt = getLoopPoint(loop, tPoint);
+        ctxLoops.beginPath();
+        ctxLoops.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+        ctxLoops.fillStyle = '#4ade80';
+        ctxLoops.fill();
+        ctxLoops.strokeStyle = '#fff';
+        ctxLoops.lineWidth = 1.5;
+        ctxLoops.stroke();
+    });
+
+    // Basepoint
+    ctxLoops.beginPath();
+    ctxLoops.arc(baseX, baseY, 8, 0, Math.PI * 2);
+    ctxLoops.fillStyle = '#f472b6';
+    ctxLoops.fill();
+    ctxLoops.strokeStyle = '#fff';
+    ctxLoops.lineWidth = 2;
+    ctxLoops.stroke();
+
+    ctxLoops.fillStyle = '#fff';
+    ctxLoops.font = 'bold 14px monospace';
+    ctxLoops.fillText('x₀', baseX + 14, baseY + 5);
+
+    // Label
+    ctxLoops.fillStyle = 'rgba(255,255,255,0.3)';
+    ctxLoops.font = '12px sans-serif';
+    ctxLoops.fillText(`${loops.length} Schleife(n) in Ω(X, x₀)`, 16, 430);
+}
+
+// ============================================================
+// 2. HOMOTOPY BETWEEN LOOPS
+// ============================================================
+const canvasHom = document.getElementById('canvas-homotopy');
+const ctxHom = canvasHom.getContext('2d');
+
+const homotopyPairs = [
+    {
+        p: (t) => ({ x: 350 + 150 * Math.sin(t * Math.PI * 2), y: 225 - 120 * Math.sin(t * Math.PI) * Math.cos(t * Math.PI * 0.5) }),
+        q: (t) => ({ x: 350 + 80 * Math.sin(t * Math.PI * 2) * Math.cos(t * Math.PI), y: 225 - 80 * Math.sin(t * Math.PI * 2) }),
+        name_p: 'Große Schleife', name_q: 'Acht-Schleife'
+    },
+    {
+        p: (t) => ({ x: 350 + 130 * Math.sin(t * Math.PI * 2), y: 225 + 130 * Math.cos(t * Math.PI * 2) - 130 }),
+        q: (t) => ({ x: 350 + 40 * Math.sin(t * Math.PI * 4) * Math.sin(t * Math.PI), y: 225 + 40 * Math.cos(t * Math.PI * 2) * Math.sin(t * Math.PI) }),
+        name_p: 'Kreisschleife', name_q: 'Kleine Blume'
+    },
+    {
+        p: (t) => {
+            const s = Math.sin(t * Math.PI);
+            return { x: 350 + 160 * s * Math.cos(t * Math.PI * 3), y: 225 + 100 * s * Math.sin(t * Math.PI * 3) };
+        },
+        q: (t) => {
+            const s = Math.sin(t * Math.PI);
+            return { x: 350 + 60 * s * Math.cos(t * Math.PI * 5), y: 225 + 60 * s * Math.sin(t * Math.PI * 5) };
+        },
+        name_p: 'Dreiblatt', name_q: 'Fünfblatt'
+    }
+];
+
+let currentPairIdx = 0;
+
+function switchHomotopyPair() {
+    currentPairIdx = (currentPairIdx + 1) % homotopyPairs.length;
+    document.getElementById('homotopy-t').value = 0;
+    const pair = homotopyPairs[currentPairIdx];
+    document.getElementById('homotopy-info').textContent = `${pair.name_p} (blau) → ${pair.name_q} (pink)`;
+}
+
+let homotopyAnimDir = 1;
+
+function animateHomotopy() {
+    animations.homotopyAuto = !animations.homotopyAuto;
+}
+
+function drawHomotopyScene() {
+    ctxHom.clearRect(0, 0, 700, 450);
+
+    const pair = homotopyPairs[currentPairIdx];
+    let tParam = document.getElementById('homotopy-t').value / 100;
+
+    if (animations.homotopyAuto) {
+        let val = parseFloat(document.getElementById('homotopy-t').value);
+        val += homotopyAnimDir * 0.5;
+        if (val >= 100) { val = 100; homotopyAnimDir = -1; }
+        if (val <= 0) { val = 0; homotopyAnimDir = 1; }
+        document.getElementById('homotopy-t').value = val;
+        tParam = val / 100;
+    }
+
+    document.getElementById('homotopy-t-val').textContent = tParam.toFixed(2);
+
+    // Grid
+    ctxHom.strokeStyle = 'rgba(192,132,252,0.05)';
+    ctxHom.lineWidth = 1;
+    for (let i = 0; i < 700; i += 35) {
+        ctxHom.beginPath(); ctxHom.moveTo(i, 0); ctxHom.lineTo(i, 450); ctxHom.stroke();
+    }
+    for (let i = 0; i < 450; i += 35) {
+        ctxHom.beginPath(); ctxHom.moveTo(0, i); ctxHom.lineTo(700, i); ctxHom.stroke();
+    }
+
+    // Draw ghost of p
+    ctxHom.beginPath();
+    ctxHom.strokeStyle = 'rgba(126,180,255,0.25)';
+    ctxHom.lineWidth = 1.5;
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const pt = pair.p(t);
+        if (i === 0) ctxHom.moveTo(pt.x, pt.y); else ctxHom.lineTo(pt.x, pt.y);
+    }
+    ctxHom.stroke();
+
+    // Draw ghost of q
+    ctxHom.beginPath();
+    ctxHom.strokeStyle = 'rgba(244,114,182,0.25)';
+    ctxHom.lineWidth = 1.5;
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const pt = pair.q(t);
+        if (i === 0) ctxHom.moveTo(pt.x, pt.y); else ctxHom.lineTo(pt.x, pt.y);
+    }
+    ctxHom.stroke();
+
+    // Interpolated loop
+    ctxHom.beginPath();
+    const interpColor = `hsl(${260 + tParam * 60}, 80%, 70%)`;
+    ctxHom.strokeStyle = interpColor;
+    ctxHom.lineWidth = 3;
+    ctxHom.shadowColor = interpColor;
+    ctxHom.shadowBlur = 8;
+    for (let i = 0; i <= 300; i++) {
+        const t = i / 300;
+        const pp = pair.p(t);
+        const pq = pair.q(t);
+        const x = pp.x * (1 - tParam) + pq.x * tParam;
+        const y = pp.y * (1 - tParam) + pq.y * tParam;
+        if (i === 0) ctxHom.moveTo(x, y); else ctxHom.lineTo(x, y);
+    }
+    ctxHom.stroke();
+    ctxHom.shadowBlur = 0;
+
+    // Intermediate loops (faint)
+    for (let s = 0.2; s < 1; s += 0.2) {
+        if (Math.abs(s - tParam) < 0.05) continue;
+        ctxHom.beginPath();
+        ctxHom.strokeStyle = `rgba(192,132,252,0.08)`;
+        ctxHom.lineWidth = 1;
+        for (let i = 0; i <= 150; i++) {
+            const t = i / 150;
+            const pp = pair.p(t);
+            const pq = pair.q(t);
+            const x = pp.x * (1 - s) + pq.x * s;
+            const y = pp.y * (1 - s) + pq.y * s;
+            if (i === 0) ctxHom.moveTo(x, y); else ctxHom.lineTo(x, y);
+        }
+        ctxHom.stroke();
+    }
+
+    // Basepoint
+    ctxHom.beginPath();
+    ctxHom.arc(350, 225, 7, 0, Math.PI * 2);
+    ctxHom.fillStyle = '#f472b6';
+    ctxHom.fill();
+    ctxHom.strokeStyle = '#fff';
+    ctxHom.lineWidth = 2;
+    ctxHom.stroke();
+
+    ctxHom.fillStyle = '#fff';
+    ctxHom.font = 'bold 13px monospace';
+    ctxHom.fillText('x₀', 362, 230);
+
+    // Labels
+    ctxHom.fillStyle = 'rgba(126,180,255,0.6)';
+    ctxHom.font = '13px sans-serif';
+    ctxHom.fillText('p', 20, 30);
+    ctxHom.fillStyle = 'rgba(244,114,182,0.6)';
+    ctxHom.fillText('q', 40, 30);
+    ctxHom.fillStyle = 'rgba(255,255,255,0.4)';
+    ctxHom.fillText(`t = ${tParam.toFixed(2)}`, 620, 30);
+}
+
+// ============================================================
+// 3. LOOP COMPOSITION
+// ============================================================
+const canvasComp = document.getElementById('canvas-composition');
+const ctxComp = canvasComp.getContext('2d');
+
+let compMode = 'p';
+let compTime = 0;
+
+function showComposition(mode) {
+    compMode = mode;
+    document.querySelectorAll('#btn-loop-p, #btn-loop-q, #btn-loop-pq, #btn-loop-inv').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-loop-' + mode).classList.add('active');
+    compTime = 0;
+}
+
+function loopP(t) {
+    const s = Math.sin(t * Math.PI);
+    return {
+        x: 350 + 140 * s * Math.cos(t * Math.PI * 2),
+        y: 225 - 100 * s * Math.sin(t * Math.PI * 2)
+    };
+}
+
+function loopQ(t) {
+    const s = Math.sin(t * Math.PI);
+    return {
+        x: 350 - 90 * s * Math.cos(t * Math.PI * 4),
+        y: 225 + 80 * s * Math.sin(t * Math.PI * 2)
+    };
+}
+
+function loopPInv(t) {
+    return loopP(1 - t);
+}
+
+function loopPQ(t) {
+    if (t < 0.5) {
+        return loopP(t * 2);
+    } else {
+        return loopQ((t - 0.5) * 2);
+    }
+}
+
+function getCompLoop(t) {
+    switch (compMode) {
+        case 'p': return loopP(t);
+        case 'q': return loopQ(t);
+        case 'pq': return loopPQ(t);
+        case 'inv': return loopPInv(t);
+    }
+}
+
+function drawCompositionScene(time) {
+    ctxComp.clearRect(0, 0, 700, 450);
+
+    // Grid
+    ctxComp.strokeStyle = 'rgba(126,180,255,0.05)';
+    ctxComp.lineWidth = 1;
+    for (let i = 0; i < 700; i += 35) {
+        ctxComp.beginPath(); ctxComp.moveTo(i, 0); ctxComp.lineTo(i, 450); ctxComp.stroke();
+    }
+    for (let i = 0; i < 450; i += 35) {
+        ctxComp.beginPath(); ctxComp.moveTo(0, i); ctxComp.lineTo(700, i); ctxComp.stroke();
+    }
+
+    // Ghost loops p and q
+    ctxComp.globalAlpha = 0.15;
+    ctxComp.lineWidth = 1.5;
+
+    // Ghost p
+    ctxComp.beginPath();
+    ctxComp.strokeStyle = '#7eb4ff';
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const pt = loopP(t);
+        if (i === 0) ctxComp.moveTo(pt.x, pt.y); else ctxComp.lineTo(pt.x, pt.y);
+    }
+    ctxComp.stroke();
+
+    // Ghost q
+    ctxComp.beginPath();
+    ctxComp.strokeStyle = '#f472b6';
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const pt = loopQ(t);
+        if (i === 0) ctxComp.moveTo(pt.x, pt.y); else ctxComp.lineTo(pt.x, pt.y);
+    }
+    ctxComp.stroke();
+    ctxComp.globalAlpha = 1;
+
+    // Active loop
+    const colors = { p: '#7eb4ff', q: '#f472b6', pq: '#c084fc', inv: '#4ade80' };
+    const labels = { p: 'p', q: 'q', pq: 'p · q', inv: 'p⁻¹' };
+    const color = colors[compMode];
+
+    ctxComp.beginPath();
+    ctxComp.strokeStyle = color;
+    ctxComp.lineWidth = 3;
+    ctxComp.shadowColor = color;
+    ctxComp.shadowBlur = 10;
+
+    for (let i = 0; i <= 300; i++) {
+        const t = i / 300;
+        const pt = getCompLoop(t);
+        if (i === 0) ctxComp.moveTo(pt.x, pt.y); else ctxComp.lineTo(pt.x, pt.y);
+    }
+    ctxComp.stroke();
+    ctxComp.shadowBlur = 0;
+
+    // Direction arrows along the path
+    for (let a = 0.15; a < 1; a += 0.25) {
+        const pt1 = getCompLoop(a);
+        const pt2 = getCompLoop(a + 0.01);
+        const angle = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x);
+        ctxComp.save();
+        ctxComp.translate(pt1.x, pt1.y);
+        ctxComp.rotate(angle);
+        ctxComp.beginPath();
+        ctxComp.moveTo(8, 0);
+        ctxComp.lineTo(-4, -5);
+        ctxComp.lineTo(-4, 5);
+        ctxComp.closePath();
+        ctxComp.fillStyle = color;
+        ctxComp.globalAlpha = 0.7;
+        ctxComp.fill();
+        ctxComp.restore();
+        ctxComp.globalAlpha = 1;
+    }
+
+    // Moving point
+    if (animations.comp) {
+        compTime = (compTime + 0.004) % 1;
+    }
+    const movPt = getCompLoop(compTime);
+    ctxComp.beginPath();
+    ctxComp.arc(movPt.x, movPt.y, 6, 0, Math.PI * 2);
+    ctxComp.fillStyle = '#fff';
+    ctxComp.fill();
+    ctxComp.strokeStyle = color;
+    ctxComp.lineWidth = 2;
+    ctxComp.stroke();
+
+    // Trail
+    ctxComp.beginPath();
+    ctxComp.strokeStyle = color;
+    ctxComp.lineWidth = 1.5;
+    ctxComp.globalAlpha = 0.3;
+    const trailLen = 0.08;
+    for (let i = 0; i <= 30; i++) {
+        const t = compTime - trailLen + (trailLen * i / 30);
+        const tt = ((t % 1) + 1) % 1;
+        const pt = getCompLoop(tt);
+        if (i === 0) ctxComp.moveTo(pt.x, pt.y); else ctxComp.lineTo(pt.x, pt.y);
+    }
+    ctxComp.stroke();
+    ctxComp.globalAlpha = 1;
+
+    // Composition midpoint marker for p·q
+    if (compMode === 'pq') {
+        const midPt = getCompLoop(0.5);
+        ctxComp.beginPath();
+        ctxComp.arc(midPt.x, midPt.y, 4, 0, Math.PI * 2);
+        ctxComp.fillStyle = '#fbbf24';
+        ctxComp.fill();
+        ctxComp.fillStyle = '#fbbf24';
+        ctxComp.font = '12px monospace';
+        ctxComp.fillText('p→q', midPt.x + 8, midPt.y - 8);
+    }
+
+    // Basepoint
+    ctxComp.beginPath();
+    ctxComp.arc(350, 225, 8, 0, Math.PI * 2);
+    ctxComp.fillStyle = '#f472b6';
+    ctxComp.fill();
+    ctxComp.strokeStyle = '#fff';
+    ctxComp.lineWidth = 2;
+    ctxComp.stroke();
+
+    ctxComp.fillStyle = '#fff';
+    ctxComp.font = 'bold 14px monospace';
+    ctxComp.fillText('x₀', 362, 230);
+
+    // Mode label
+    ctxComp.fillStyle = color;
+    ctxComp.font = 'bold 18px monospace';
+    ctxComp.fillText(labels[compMode], 30, 35);
+
+    ctxComp.fillStyle = 'rgba(255,255,255,0.3)';
+    ctxComp.font = '12px sans-serif';
+    ctxComp.fillText('Geisterschleifen: p (blau), q (pink)', 16, 430);
+}
+
+// ============================================================
+// 4. ITERATED LOOP SPACES
+// ============================================================
+const canvasO1 = document.getElementById('canvas-omega1');
+const ctxO1 = canvasO1.getContext('2d');
+const canvasO2 = document.getElementById('canvas-omega2');
+const ctxO2 = canvasO2.getContext('2d');
+
+function drawOmega1(time) {
+    ctxO1.clearRect(0, 0, 330, 330);
+    const cx = 165, cy = 165;
+    const complexity = parseInt(document.getElementById('omega-complexity').value);
+
+    // Background circle (space X)
+    ctxO1.beginPath();
+    ctxO1.arc(cx, cy, 140, 0, Math.PI * 2);
+    ctxO1.strokeStyle = 'rgba(126,180,255,0.15)';
+    ctxO1.lineWidth = 1;
+    ctxO1.stroke();
+
+    // Draw multiple loops in Ω¹
+    for (let k = 0; k < complexity; k++) {
+        const phase = (k / complexity) * Math.PI * 2;
+        const hue = (k / complexity) * 120 + 200;
+        ctxO1.beginPath();
+        ctxO1.strokeStyle = `hsla(${hue}, 70%, 65%, 0.6)`;
+        ctxO1.lineWidth = 2;
+
+        for (let i = 0; i <= 200; i++) {
+            const t = i / 200;
+            const s = Math.sin(t * Math.PI);
+            const wobble = Math.sin(time * 0.02 + phase) * 15;
+            const r = (50 + k * 18 + wobble) * s;
+            const angle = t * Math.PI * 2 * (1 + k * 0.3) + phase;
+            const x = cx + r * Math.cos(angle);
+            const y = cy + r * Math.sin(angle);
+            if (i === 0) ctxO1.moveTo(x, y); else ctxO1.lineTo(x, y);
+        }
+        ctxO1.stroke();
+    }
+
+    // Basepoint
+    ctxO1.beginPath();
+    ctxO1.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctxO1.fillStyle = '#f472b6';
+    ctxO1.fill();
+    ctxO1.strokeStyle = '#fff';
+    ctxO1.lineWidth = 1.5;
+    ctxO1.stroke();
+
+    ctxO1.fillStyle = '#fff';
+    ctxO1.font = 'bold 12px monospace';
+    ctxO1.fillText('x₀', cx + 10, cy + 4);
+}
+
+function drawOmega2(time) {
+    ctxO2.clearRect(0, 0, 330, 330);
+    const cx = 165, cy = 165;
+    const complexity = parseInt(document.getElementById('omega-complexity').value);
+
+    // The "space" of loops (represented as a square [0,1]²)
+    ctxO2.strokeStyle = 'rgba(192,132,252,0.2)';
+    ctxO2.lineWidth = 1;
+    ctxO2.strokeRect(40, 40, 250, 250);
+
+    // Labels for the square
+    ctxO2.fillStyle = 'rgba(192,132,252,0.4)';
+    ctxO2.font = '11px monospace';
+    ctxO2.fillText('refl', 40, 35);
+    ctxO2.fillText('refl', 290, 35);
+    ctxO2.fillText('refl', 40, 305);
+    ctxO2.fillText('refl', 290, 305);
+    ctxO2.fillText('s →', 155, 35);
+    ctxO2.fillText('t ↓', 25, 170);
+
+    // Draw Ω² elements as 2D homotopies (surfaces in the square)
+    for (let k = 0; k < complexity; k++) {
+        const phase = (k / complexity) * Math.PI * 2;
+        const hue = (k / complexity) * 80 + 260;
+
+        // Each Ω² element is a map [0,1]² → X with boundary = refl
+        // Visualize as contour lines
+        for (let row = 0; row <= 10; row++) {
+            const tVal = row / 10;
+            ctxO2.beginPath();
+            ctxO2.strokeStyle = `hsla(${hue}, 70%, 60%, ${0.15 + 0.03 * k})`;
+            ctxO2.lineWidth = 1.5;
+
+            for (let col = 0; col <= 50; col++) {
+                const sVal = col / 50;
+                // Deformation: boundary must be identity
+                const boundaryFade = Math.sin(sVal * Math.PI) * Math.sin(tVal * Math.PI);
+                const wobble = Math.sin(time * 0.025 + phase) * 8;
+                const dx = boundaryFade * (30 + wobble) * Math.sin((sVal + tVal) * Math.PI * (k + 1) + phase);
+                const dy = boundaryFade * (20 + wobble) * Math.cos((sVal - tVal) * Math.PI * (k + 1) + phase);
+
+                const x = 40 + sVal * 250 + dx;
+                const y = 40 + tVal * 250 + dy;
+                if (col === 0) ctxO2.moveTo(x, y); else ctxO2.lineTo(x, y);
+            }
+            ctxO2.stroke();
+        }
+    }
+
+    // Highlight boundary (should be refl = straight lines)
+    ctxO2.strokeStyle = 'rgba(244,114,182,0.5)';
+    ctxO2.lineWidth = 2;
+    ctxO2.setLineDash([4, 4]);
+    ctxO2.strokeRect(40, 40, 250, 250);
+    ctxO2.setLineDash([]);
+
+    // Center label
+    ctxO2.fillStyle = 'rgba(192,132,252,0.6)';
+    ctxO2.font = 'bold 14px monospace';
+    ctxO2.fillText('Ω²', cx - 10, cy + 5);
+}
+
+// ============================================================
+// 5. WINDING NUMBERS / FUNDAMENTAL GROUP
+// ============================================================
+const canvasWind = document.getElementById('canvas-winding');
+const ctxWind = canvasWind.getContext('2d');
+
+let windingNumber = 0;
+let windTime = 0;
+
+function setWinding(n) {
+    windingNumber = n;
+    windTime = 0;
+    document.querySelectorAll('.controls button').forEach(b => {
+        if (b.textContent === `n = ${n}`) b.classList.add('active');
+        else if (b.textContent.startsWith('n =')) b.classList.remove('active');
+    });
+}
+
+function drawWindingScene(time) {
+    ctxWind.clearRect(0, 0, 700, 450);
+    const cx = 350, cy = 225, R = 140;
+
+    // Grid
+    ctxWind.strokeStyle = 'rgba(126,180,255,0.04)';
+    ctxWind.lineWidth = 1;
+    for (let i = 0; i < 700; i += 35) {
+        ctxWind.beginPath(); ctxWind.moveTo(i, 0); ctxWind.lineTo(i, 450); ctxWind.stroke();
+    }
+    for (let i = 0; i < 450; i += 35) {
+        ctxWind.beginPath(); ctxWind.moveTo(0, i); ctxWind.lineTo(700, i); ctxWind.stroke();
+    }
+
+    // The circle S¹
+    ctxWind.beginPath();
+    ctxWind.arc(cx, cy, R, 0, Math.PI * 2);
+    ctxWind.strokeStyle = 'rgba(126,180,255,0.3)';
+    ctxWind.lineWidth = 2;
+    ctxWind.stroke();
+
+    ctxWind.fillStyle = 'rgba(126,180,255,0.15)';
+    ctxWind.font = '16px monospace';
+    ctxWind.fillText('S¹', cx + R + 15, cy + 5);
+
+    const n = windingNumber;
+
+    if (n === 0) {
+        // Constant loop (refl)
+        ctxWind.beginPath();
+        ctxWind.arc(cx + R, cy, 8, 0, Math.PI * 2);
+        ctxWind.fillStyle = '#4ade80';
+        ctxWind.fill();
+        ctxWind.strokeStyle = '#fff';
+        ctxWind.lineWidth = 2;
+        ctxWind.stroke();
+
+        ctxWind.fillStyle = '#4ade80';
+        ctxWind.font = '14px sans-serif';
+        ctxWind.fillText('refl (konstante Schleife)', cx - 80, cy + R + 40);
+    } else {
+        // Draw the winding loop with visual offset for visibility
+        const absN = Math.abs(n);
+        const dir = Math.sign(n);
+        const totalAngle = dir * absN * Math.PI * 2;
+
+        // Draw the path with a spiral offset for visibility
+        ctxWind.beginPath();
+        const hue = n > 0 ? 200 : 340;
+        ctxWind.strokeStyle = `hsla(${hue}, 80%, 65%, 0.8)`;
+        ctxWind.lineWidth = 3;
+        ctxWind.shadowColor = `hsla(${hue}, 80%, 65%, 0.5)`;
+        ctxWind.shadowBlur = 8;
+
+        const steps = absN * 200;
+        for (let i = 0; i <= steps; i++) {
+            const t = i / steps;
+            const angle = t * totalAngle;
+            // Spiral offset to make multiple windings visible
+            const spiralOffset = 8 * Math.sin(t * absN * Math.PI) * (1 + t * 0.5);
+            const r = R + spiralOffset;
+            const x = cx + r * Math.cos(angle);
+            const y = cy - r * Math.sin(angle);
+            if (i === 0) ctxWind.moveTo(x, y); else ctxWind.lineTo(x, y);
+        }
+        ctxWind.stroke();
+        ctxWind.shadowBlur = 0;
+
+        // Animated point
+        if (animations.winding) {
+            windTime = (windTime + 0.003) % 1;
+        }
+        const tPt = windTime;
+        const anglePt = tPt * totalAngle;
+        const spiralPt = 8 * Math.sin(tPt * absN * Math.PI) * (1 + tPt * 0.5);
+        const rPt = R + spiralPt;
+        const px = cx + rPt * Math.cos(anglePt);
+        const py = cy - rPt * Math.sin(anglePt);
+
+        // Trail
+        ctxWind.beginPath();
+        ctxWind.strokeStyle = `hsla(${hue}, 80%, 65%, 0.3)`;
+        ctxWind.lineWidth = 2;
+        const trailSteps = 40;
+        for (let i = 0; i <= trailSteps; i++) {
+            const tt = tPt - 0.05 + (0.05 * i / trailSteps);
+            const ttt = ((tt % 1) + 1) % 1;
+            const a = ttt * totalAngle;
+            const sp = 8 * Math.sin(ttt * absN * Math.PI) * (1 + ttt * 0.5);
+            const rr = R + sp;
+            const xx = cx + rr * Math.cos(a);
+            const yy = cy - rr * Math.sin(a);
+            if (i === 0) ctxWind.moveTo(xx, yy); else ctxWind.lineTo(xx, yy);
+        }
+        ctxWind.stroke();
+
+        ctxWind.beginPath();
+        ctxWind.arc(px, py, 6, 0, Math.PI * 2);
+        ctxWind.fillStyle = '#fff';
+        ctxWind.fill();
+        ctxWind.strokeStyle = `hsl(${hue}, 80%, 65%)`;
+        ctxWind.lineWidth = 2;
+        ctxWind.stroke();
+
+        // Direction arrows
+        for (let a = 0.1; a < 1; a += 0.3 / absN) {
+            const t1 = a;
+            const t2 = a + 0.005;
+            const a1 = t1 * totalAngle;
+            const a2 = t2 * totalAngle;
+            const sp1 = 8 * Math.sin(t1 * absN * Math.PI) * (1 + t1 * 0.5);
+            const sp2 = 8 * Math.sin(t2 * absN * Math.PI) * (1 + t2 * 0.5);
+            const x1 = cx + (R + sp1) * Math.cos(a1);
+            const y1 = cy - (R + sp1) * Math.sin(a1);
+            const x2 = cx + (R + sp2) * Math.cos(a2);
+            const y2 = cy - (R + sp2) * Math.sin(a2);
+            const arrowAngle = Math.atan2(y2 - y1, x2 - x1);
+
+            ctxWind.save();
+            ctxWind.translate(x1, y1);
+            ctxWind.rotate(arrowAngle);
+            ctxWind.beginPath();
+            ctxWind.moveTo(6, 0);
+            ctxWind.lineTo(-3, -4);
+            ctxWind.lineTo(-3, 4);
+            ctxWind.closePath();
+            ctxWind.fillStyle = `hsla(${hue}, 80%, 65%, 0.5)`;
+            ctxWind.fill();
+            ctxWind.restore();
+        }
+
+        // Label
+        ctxWind.fillStyle = `hsl(${hue}, 80%, 65%)`;
+        ctxWind.font = 'bold 16px sans-serif';
+        const dirLabel = n > 0 ? 'gegen Uhrzeigersinn' : 'im Uhrzeigersinn';
+        ctxWind.fillText(`loop^${n} (${absN}× ${dirLabel})`, cx - 140, cy + R + 40);
+    }
+
+    // Basepoint on circle
+    ctxWind.beginPath();
+    ctxWind.arc(cx + R, cy, 7, 0, Math.PI * 2);
+    ctxWind.fillStyle = '#f472b6';
+    ctxWind.fill();
+    ctxWind.strokeStyle = '#fff';
+    ctxWind.lineWidth = 2;
+    ctxWind.stroke();
+
+    ctxWind.fillStyle = '#fff';
+    ctxWind.font = 'bold 13px monospace';
+    ctxWind.fillText('base', cx + R + 12, cy - 12);
+
+    // Winding number display
+    ctxWind.fillStyle = '#c084fc';
+    ctxWind.font = 'bold 24px monospace';
+    ctxWind.fillText(`n = ${n}`, 30, 40);
+
+    ctxWind.fillStyle = 'rgba(255,255,255,0.3)';
+    ctxWind.font = '13px monospace';
+    ctxWind.fillText('π₁(S¹) ≅ ℤ', 30, 65);
+}
+
+// ============================================================
+// TOGGLE ANIMATIONS
+// ============================================================
+function toggleAnimation(key) {
+    animations[key] = !animations[key];
+}
+
+// ============================================================
+// MAIN ANIMATION LOOP
+// ============================================================
+function mainLoop() {
+    globalTime++;
+
+    if (animations.loops) {
+        drawLoopsScene(globalTime);
+    } else {
+        drawLoopsScene(globalTime); // still draw, just don't advance
+    }
+
+    drawHomotopyScene();
+    drawCompositionScene(globalTime);
+
+    if (animations.omega) {
+        drawOmega1(globalTime);
+        drawOmega2(globalTime);
+    }
+
+    drawWindingScene(globalTime);
+
+    requestAnimationFrame(mainLoop);
+}
+
+// Start
+mainLoop();
+
+// ============================================================
+// CANVAS CLICK INTERACTION: Add loops by clicking
+// ============================================================
+canvasLoops.addEventListener('click', (e) => {
+    const rect = canvasLoops.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (loops.length < 10) {
+        const dx = x - baseX;
+        const dy = y - baseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const loop = generateLoop();
+        loop.rx = dist * 0.6 + 30;
+        loop.ry = dist * 0.4 + 20;
+        loop.rotation = Math.atan2(dy, dx);
+        loops.push(loop);
+    }
+});
+
+// Responsive canvas sizing
+function resizeCanvases() {
+    const containers = document.querySelectorAll('.section');
+    containers.forEach(c => {
+        const canvases = c.querySelectorAll('canvas');
+        canvases.forEach(canvas => {
+            const maxW = c.clientWidth - 60;
+            if (canvas.width > maxW && maxW > 200) {
+                const scale = maxW / canvas.width;
+                canvas.style.width = maxW + 'px';
+                canvas.style.height = (canvas.height * scale) + 'px';
+            }
+        });
+    });
+}
+
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+</script>
+
+</body>
+</html>
