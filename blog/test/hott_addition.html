@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Addition in der Homotopie-Typentheorie – Visuell erklärt</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0a0a1a;
+    --surface: #12122a;
+    --surface2: #1a1a3a;
+    --accent1: #6c5ce7;
+    --accent2: #00cec9;
+    --accent3: #fd79a8;
+    --accent4: #fdcb6e;
+    --text: #e8e8f0;
+    --text-dim: #8888aa;
+    --glow1: rgba(108, 92, 231, 0.3);
+    --glow2: rgba(0, 206, 201, 0.3);
+    --glow3: rgba(253, 121, 168, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--glow1), transparent 70%);
+    top: -100px; left: -100px;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, var(--glow2), transparent 70%);
+    bottom: -100px; right: -100px;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(40px, -40px); }
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 2rem;
+  }
+
+  .scroll-hint {
+    position: relative;
+    z-index: 1;
+    animation: bounce 2s infinite;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+  }
+
+  section {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .step {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    border: 1px solid rgba(108, 92, 231, 0.2);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .step:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(108, 92, 231, 0.15);
+  }
+
+  .step-number {
+    position: absolute;
+    top: -10px; right: 20px;
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgba(108, 92, 231, 0.1);
+    line-height: 1;
+  }
+
+  .step h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--accent2);
+  }
+
+  .step p {
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+  }
+
+  .canvas-container {
+    background: var(--bg);
+    border-radius: 16px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+
+  canvas {
+    border-radius: 12px;
+    max-width: 100%;
+  }
+
+  .controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .controls label {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--surface2);
+    outline: none;
+    width: 120px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent1);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--glow1);
+  }
+
+  .btn {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent1), #8b7cf7);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px var(--glow1);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid rgba(108, 92, 231, 0.3);
+  }
+
+  .btn-secondary:hover {
+    background: var(--accent1);
+  }
+
+  .number-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .num-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .num-a { background: rgba(108, 92, 231, 0.2); color: var(--accent1); border: 2px solid var(--accent1); }
+  .num-b { background: rgba(253, 121, 168, 0.2); color: var(--accent3); border: 2px solid var(--accent3); }
+  .num-result { background: rgba(0, 206, 201, 0.2); color: var(--accent2); border: 2px solid var(--accent2); }
+
+  .op-symbol {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent4);
+  }
+
+  .explanation-box {
+    background: rgba(108, 92, 231, 0.08);
+    border-left: 4px solid var(--accent1);
+    border-radius: 0 12px 12px 0;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .explanation-box h3 {
+    color: var(--accent1);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .explanation-box p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+  }
+
+  .interactive-playground {
+    background: linear-gradient(135deg, var(--surface), var(--surface2));
+    border: 2px solid var(--accent2);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .interactive-playground h2 {
+    color: var(--accent4);
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .phase-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+
+  .phase-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--surface2);
+    transition: background 0.3s;
+  }
+
+  .phase-dot.active {
+    background: var(--accent2);
+    box-shadow: 0 0 10px var(--glow2);
+  }
+
+  .status-text {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent4);
+    font-size: 0.95rem;
+    min-height: 1.5em;
+    margin: 0.5rem 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--surface2);
+  }
+
+  @media (max-width: 600px) {
+    .step { padding: 1.5rem; }
+    .controls { flex-direction: column; align-items: flex-start; }
+    .num-badge { width: 45px; height: 45px; font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Addition in der<br>Homotopie-Typentheorie</h1>
+  <p class="subtitle">
+    Wie wird aus Schleifen auf einem Kreis eine Addition?<br>
+    Eine interaktive, visuelle Erklärung – ganz ohne Formeln.
+  </p>
+  <div class="scroll-hint" onclick="document.getElementById('start').scrollIntoView({behavior:'smooth'})">⬇️</div>
+</div>
+
+<section id="start">
+
+  <!-- STEP 1: Was ist ein Pfad? -->
+  <div class="step">
+    <div class="step-number">1</div>
+    <h2>🛤️ Was ist ein Pfad?</h2>
+    <p>
+      In der Homotopie-Typentheorie (HoTT) ist <strong>Gleichheit ein Pfad</strong>.
+      Wenn zwei Punkte gleich sind, gibt es einen Weg (Pfad) zwischen ihnen.
+      Stell dir vor: Statt zu sagen „A = B" sagst du „Es gibt einen Weg von A nach B".
+    </p>
+    <div class="canvas-container">
+      <canvas id="canvas-path" width="700" height="250"></canvas>
+    </div>
+    <div class="controls">
+      <button class="btn btn-primary" onclick="animatePath()">▶ Pfad zeigen</button>
+      <button class="btn btn-secondary" onclick="resetPath()">↺ Reset</button>
+    </div>
+    <div class="explanation-box">
+      <h3>💡 Kernidee</h3>
+      <p>In HoTT ist „Gleichheit" nicht einfach wahr/falsch – sie ist ein <strong>Objekt</strong> (ein Pfad), das man untersuchen, verformen und verketten kann.</p>
+    </div>
+  </div>
+
+  <!-- STEP 2: Schleifen = Zahlen -->
+  <div class="step">
+    <div class="step-number">2</div>
+    <h2>🔄 Schleifen sind Zahlen!</h2>
+    <p>
+      Nimm einen Kreis mit einem ausgezeichneten Punkt (Basispunkt). Eine <strong>Schleife</strong> ist ein Pfad, der am Basispunkt startet und dort wieder endet.
+      Einmal herum = 1. Zweimal herum = 2. Null mal = 0. Rückwärts = negative Zahlen!
+    </p>
+    <div class="canvas-container">
+      <canvas id="canvas-loops" width="700" height="350"></canvas>
+    </div>
+    <div class="controls">
+      <label>Zahl (Schleifen): <strong id="loop-count-label">1</strong></label>
+      <input type="range" id="loop-slider" min="-3" max="5" value="1" step="1" oninput="updateLoops()">
+      <button class="btn btn-primary" onclick="animateLoops()">▶ Animieren</button>
+      <button class="btn btn-secondary" onclick="resetLoops()">↺ Reset</button>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent1)"></div> Basispunkt</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> Wandernder Punkt</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent4)"></div> Pfad-Spur</div>
+    </div>
+    <div class="explanation-box">
+      <h3>💡 Die Fundamentalgruppe des Kreises</h3>
+      <p>Die Menge aller Schleifen auf dem Kreis (bis auf stetige Verformung) bildet die ganzen Zahlen ℤ. Das ist ein zentrales Ergebnis in HoTT: <strong>Ω(S¹) ≅ ℤ</strong>.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3: Pfadverkettung = Addition -->
+  <div class="step">
+    <div class="step-number">3</div>
+    <h2>🔗 Pfadverkettung = Addition</h2>
+    <p>
+      Wenn du zwei Schleifen hintereinander ausführst, bekommst du eine neue Schleife.
+      <strong>Erst a-mal herum, dann b-mal herum = (a+b)-mal herum.</strong>
+      Das ist Addition! Rein topologisch, durch Verketten von Pfaden.
+    </p>
+    <div class="number-display">
+      <div class="num-badge num-a" id="badge-a">2</div>
+      <div class="op-symbol">+</div>
+      <div class="num-badge num-b" id="badge-b">3</div>
+      <div class="op-symbol">=</div>
+      <div class="num-badge num-result" id="badge-result">5</div>
+    </div>
+    <div class="canvas-container">
+      <canvas id="canvas-concat" width="700" height="400"></canvas>
+    </div>
+    <div class="controls">
+      <label>a = <strong id="a-label">2</strong></label>
+      <input type="range" id="a-slider" min="0" max="5" value="2" step="1" oninput="updateConcat()">
+      <label>b = <strong id="b-label">3</strong></label>
+      <input type="range" id="b-slider" min="0" max="5" value="3" step="1" oninput="updateConcat()">
+      <button class="btn btn-primary" onclick="animateConcat()">▶ Addition animieren</button>
+      <button class="btn btn-secondary" onclick="resetConcat()">↺ Reset</button>
+    </div>
+    <p class="status-text" id="concat-status"></p>
+    <div class="explanation-box">
+      <h3>💡 Warum das funktioniert</h3>
+      <p>Pfadverkettung ist assoziativ (bis auf Homotopie), hat ein neutrales Element (der konstante Pfad = 0 Schleifen), und jeder Pfad hat eine Umkehrung (rückwärts laufen = negative Zahl). Das macht es zu einer <strong>Gruppe</strong> – und diese Gruppe ist genau ℤ mit der Addition!</p>
+    </div>
+  </div>
+
+  <!-- STEP 4: Homotopie – Verformung -->
+  <div class="step">
+    <div class="step-number">4</div>
+    <h2>🧊 Homotopie: Wege zwischen Wegen</h2>
+    <p>
+      Zwei Pfade können „gleich" sein, wenn man den einen stetig in den anderen verformen kann.
+      Das ist eine <strong>Homotopie</strong> – ein Pfad zwischen Pfaden!
+      In HoTT entspricht das einer Gleichheit zwischen Gleichheiten.
+    </p>
+    <div class="canvas-container">
+      <canvas id="canvas-homotopy" width="700" height="300"></canvas>
+    </div>
+    <div class="controls">
+      <label>Verformung: <strong id="homotopy-label">0%</strong></label>
+      <input type="range" id="homotopy-slider" min="0" max="100" value="0" step="1" oninput="updateHomotopy()">
+      <button class="btn btn-primary" onclick="animateHomotopy()">▶ Verformen</button>
+      <button class="btn btn-secondary" onclick="resetHomotopy()">↺ Reset</button>
+    </div>
+    <div class="explanation-box">
+      <h3>💡 Höhere Struktur</h3>
+      <p>In HoTT gibt es nicht nur Pfade (Gleichheiten), sondern auch Pfade zwischen Pfaden (Gleichheiten zwischen Gleichheiten), und so weiter – unendlich viele Ebenen! Das macht die Theorie so reichhaltig.</p>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE PLAYGROUND -->
+  <div class="interactive-playground">
+    <h2>🎮 Spielplatz: Probier es selbst!</h2>
+    <p style="text-align:center; color:var(--text-dim); margin-bottom:1.5rem;">
+      Wähle zwei Zahlen und beobachte, wie ihre Schleifen verkettet werden.
+    </p>
+    <div class="number-display">
+      <div class="num-badge num-a" id="play-badge-a">1</div>
+      <div class="op-symbol">+</div>
+      <div class="num-badge num-b" id="play-badge-b">1</div>
+      <div class="op-symbol">=</div>
+      <div class="num-badge num-result" id="play-badge-result">2</div>
+    </div>
+    <div class="canvas-container">
+      <canvas id="canvas-playground" width="700" height="400"></canvas>
+    </div>
+    <div class="controls" style="justify-content:center;">
+      <label>a = <strong id="play-a-label">1</strong></label>
+      <input type="range" id="play-a" min="-3" max="5" value="1" step="1" oninput="updatePlayground()">
+      <label>b = <strong id="play-b-label">1</strong></label>
+      <input type="range" id="play-b" min="-3" max="5" value="1" step="1" oninput="updatePlayground()">
+      <button class="btn btn-primary" onclick="animatePlayground()">▶ Abspielen</button>
+      <button class="btn btn-secondary" onclick="resetPlayground()">↺ Reset</button>
+    </div>
+    <div class="phase-indicator" id="phase-dots">
+      <div class="phase-dot active" id="phase0"></div>
+      <div class="phase-dot" id="phase1"></div>
+      <div class="phase-dot" id="phase2"></div>
+    </div>
+    <p class="status-text" id="play-status">Bereit – drücke ▶</p>
+    <div class="legend" style="justify-content:center;">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent1)"></div> Schleife a</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent3)"></div> Schleife b</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> Ergebnis a+b</div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Zusammenfassung -->
+  <div class="step">
+    <div class="step-number">5</div>
+    <h2>🎯 Zusammenfassung</h2>
+    <p>So funktioniert Addition in der Homotopie-Typentheorie:</p>
+    <div style="display:grid; gap:1rem; margin-top:1rem;">
+      <div class="explanation-box">
+        <h3>1️⃣ Zahlen = Schleifen</h3>
+        <p>Natürliche Zahlen (und ganze Zahlen) werden als Schleifen auf dem Kreis S¹ dargestellt. Die Zahl n entspricht n-maligem Herumlaufen.</p>
+      </div>
+      <div class="explanation-box">
+        <h3>2️⃣ Addition = Pfadverkettung</h3>
+        <p>a + b bedeutet: Erst a-mal herumlaufen, dann b-mal herumlaufen. Die verkettete Schleife läuft (a+b)-mal herum.</p>
+      </div>
+      <div class="explanation-box">
+        <h3>3️⃣ Gleichheit = Homotopie</h3>
+        <p>Dass 2+3 = 3+2 gilt, zeigt man durch eine stetige Verformung (Homotopie) der einen Schleife in die andere.</p>
+      </div>
+      <div class="explanation-box">
+        <h3>4️⃣ Alles ist Topologie</h3>
+        <p>Die gesamte Arithmetik entsteht aus der topologischen Struktur des Kreises. Typen sind Räume, Terme sind Punkte, Gleichheiten sind Pfade.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  Interaktive Visualisierung der Addition in HoTT · Erstellt mit HTML5 Canvas & JavaScript
+</footer>
+
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function getCtx(id) {
+  const c = document.getElementById(id);
+  return { canvas: c, ctx: c.getContext('2d'), w: c.width, h: c.height };
+}
+
+function clear(ctx, w, h) {
+  ctx.clearRect(0, 0, w, h);
+}
+
+function drawCircle(ctx, cx, cy, r, color, lineWidth = 2) {
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+}
+
+function drawPoint(ctx, x, y, r, color, glow = false) {
+  if (glow) {
+    ctx.beginPath();
+    ctx.arc(x, y, r + 8, 0, Math.PI * 2);
+    ctx.fillStyle = color.replace(')', ', 0.25)').replace('rgb', 'rgba');
+    ctx.fill();
+  }
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawArrowArc(ctx, cx, cy, r, startAngle, endAngle, color, lineWidth = 3, clockwise = false) {
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, endAngle, clockwise);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+
+  // Arrowhead
+  const angle = endAngle;
+  const dir = clockwise ? 1 : -1;
+  const ax = cx + r * Math.cos(angle);
+  const ay = cy + r * Math.sin(angle);
+  const tangentAngle = angle + (clockwise ? -Math.PI / 2 : Math.PI / 2);
+  const arrowLen = 10;
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(ax - arrowLen * Math.cos(tangentAngle - 0.4), ay - arrowLen * Math.sin(tangentAngle - 0.4));
+  ctx.moveTo(ax, ay);
+  ctx.lineTo(ax - arrowLen * Math.cos(tangentAngle + 0.4), ay - arrowLen * Math.sin(tangentAngle + 0.4));
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+}
+
+function drawLabel(ctx, text, x, y, color = '#e8e8f0', font = '14px Inter') {
+  ctx.font = font;
+  ctx.fillStyle = color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+}
+
+const COLORS = {
+  accent1: '#6c5ce7',
+  accent2: '#00cec9',
+  accent3: '#fd79a8',
+  accent4: '#fdcb6e',
+  dim: '#8888aa',
+  text: '#e8e8f0',
+  grid: 'rgba(136,136,170,0.1)',
+  circle: 'rgba(136,136,170,0.3)',
+};
+
+let animations = {};
+
+function cancelAnim(key) {
+  if (animations[key]) {
+    cancelAnimationFrame(animations[key]);
+    animations[key] = null;
+  }
+}
+
+// ============================================================
+// STEP 1: PATH VISUALIZATION
+// ============================================================
+let pathProgress = 0;
+
+function drawPathScene(progress) {
+  const { ctx, w, h } = getCtx('canvas-path');
+  clear(ctx, w, h);
+
+  const ax = 150, ay = h / 2;
+  const bx = w - 150, by = h / 2;
+
+  // Draw dashed guide
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.bezierCurveTo(ax + 100, ay - 80, bx - 100, ay - 80, bx, by);
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw path up to progress
+  if (progress > 0) {
+    ctx.beginPath();
+    const steps = Math.floor(progress * 100);
+    for (let i = 0; i <= steps; i++) {
+      const t = i / 100;
+      const x = (1-t)**3*ax + 3*(1-t)**2*t*(ax+100) + 3*(1-t)*t**2*(bx-100) + t**3*bx;
+      const y = (1-t)**3*ay + 3*(1-t)**2*t*(ay-80) + 3*(1-t)*t**2*(by-80) + t**3*by;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = COLORS.accent2;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = COLORS.accent2;
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Moving point
+    const t = progress;
+    const px = (1-t)**3*ax + 3*(1-t)**2*t*(ax+100) + 3*(1-t)*t**2*(bx-100) + t**3*bx;
+    const py = (1-t)**3*ay + 3*(1-t)**3*ay + 3*(1-t)**2*t*(ay-80) + 3*(1-t)*t**2*(by-80) + t**3*by;
+    drawPoint(ctx, px, py, 8, COLORS.accent2, true);
+  }
+
+  // Points A and B
+  drawPoint(ctx, ax, ay, 10, COLORS.accent1, true);
+  drawPoint(ctx, bx, by, 10, COLORS.accent3, true);
+
+  drawLabel(ctx, 'A', ax, ay + 30, COLORS.accent1, 'bold 16px Inter');
+  drawLabel(ctx, 'B', bx, by + 30, COLORS.accent3, 'bold 16px Inter');
+  drawLabel(ctx, 'Pfad = Gleichheit (A = B)', w / 2, h - 20, COLORS.dim, '14px Inter');
+}
+
+function animatePath() {
+  cancelAnim('path');
+  pathProgress = 0;
+  function step() {
+    pathProgress += 0.012;
+    if (pathProgress > 1) pathProgress = 1;
+    drawPathScene(pathProgress);
+    if (pathProgress < 1) animations.path = requestAnimationFrame(step);
+  }
+  step();
+}
+
+function resetPath() {
+  cancelAnim('path');
+  pathProgress = 0;
+  drawPathScene(0);
+}
+
+drawPathScene(0);
+
+// ============================================================
+// STEP 2: LOOPS = NUMBERS
+// ============================================================
+let loopAnimProgress = 0;
+let loopTarget = 1;
+
+function drawLoopScene(progress) {
+  const { ctx, w, h } = getCtx('canvas-loops');
+  clear(ctx, w, h);
+
+  const cx = w / 2, cy = h / 2;
+  const R = 110;
+
+  // Draw the circle (the space S¹)
+  drawCircle(ctx, cx, cy, R, COLORS.circle, 2);
+
+  // Draw base point at top
+  const baseX = cx + R * Math.cos(-Math.PI / 2);
+  const baseY = cy + R * Math.sin(-Math.PI / 2);
+
+  // Label
+  const n = parseInt(document.getElementById('loop-slider').value);
+  drawLabel(ctx, `S¹ (der Kreis)`, cx, cy + R + 40, COLORS.dim, '13px Inter');
+  drawLabel(ctx, `Zahl: ${n}  →  ${Math.abs(n)} Schleife${Math.abs(n) !== 1 ? 'n' : ''} ${n < 0 ? '(rückwärts)' : n === 0 ? '(keine Bewegung)' : '(vorwärts)'}`, cx, 25, COLORS.accent4, 'bold 14px Inter');
+
+  // Draw winding indicator rings
+  if (n !== 0) {
+    const absN = Math.abs(n);
+    for (let i = 0; i < absN; i++) {
+      const ringR = R + 8 + i * 6;
+      const opacity = 0.15 + 0.1 * i;
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+      ctx.strokeStyle = n > 0 ? `rgba(108, 92, 231, ${opacity})` : `rgba(253, 121, 168, ${opacity})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
+  // Draw the trail
+  if (progress > 0 && n !== 0) {
+    const totalAngle = n * Math.PI * 2;
+    const currentAngle = totalAngle * progress;
+    const startAngle = -Math.PI / 2;
+
+    ctx.beginPath();
+    const steps = Math.floor(Math.abs(currentAngle) / 0.02);
+    for (let i = 0; i <= steps; i++) {
+      const a = startAngle + (currentAngle * i / steps);
+      const spiralR = R + 3 * Math.sin(i / steps * Math.abs(n) * Math.PI * 2);
+      const x = cx + spiralR * Math.cos(a);
+      const y = cy + spiralR * Math.sin(a);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = COLORS.accent4;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = COLORS.accent4;
+    ctx.shadowBlur = 8;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Moving point
+    const angle = startAngle + currentAngle;
+    const px = cx + R * Math.cos(angle);
+    const py = cy + R * Math.sin(angle);
+    drawPoint(ctx, px, py, 8, COLORS.accent2, true);
+  }
+
+  // Base point (always on top)
+  drawPoint(ctx, baseX, baseY, 10, COLORS.accent1, true);
+  drawLabel(ctx, 'Basis', baseX + 25, baseY - 10, COLORS.accent1, 'bold 12px Inter');
+}
+
+function updateLoops() {
+  const n = parseInt(document.getElementById('loop-slider').value);
+  document.getElementById('loop-count-label').textContent = n;
+  loopAnimProgress = 0;
+  drawLoopScene(0);
+}
+
+function animateLoops() {
+  cancelAnim('loops');
+  loopAnimProgress = 0;
+  const n = parseInt(document.getElementById('loop-slider').value);
+  if (n === 0) { drawLoopScene(0); return; }
+  function step() {
+    loopAnimProgress += 0.005;
+    if (loopAnimProgress > 1) loopAnimProgress = 1;
+    drawLoopScene(loopAnimProgress);
+    if (loopAnimProgress < 1) animations.loops = requestAnimationFrame(step);
+  }
+  step();
+}
+
+function resetLoops() {
+  cancelAnim('loops');
+  loopAnimProgress = 0;
+  drawLoopScene(0);
+}
+
+drawLoopScene(0);
+
+// ============================================================
+// STEP 3: CONCATENATION = ADDITION
+// ============================================================
+let concatProgress = 0;
+let concatPhase = 0; // 0 = idle, 1 = loop a, 2 = loop b
+
+function drawConcatScene(progress, phase) {
+  const { ctx, w, h } = getCtx('canvas-concat');
+  clear(ctx, w, h);
+
+  const a = parseInt(document.getElementById('a-slider').value);
+  const b = parseInt(document.getElementById('b-slider').value);
+
+  // Three circles: a, a+b combined, b
+  const spacing = 220;
+  const circles = [
+    { cx: w / 2 - spacing, cy: h / 2, label: `a = ${a}`, color: COLORS.accent1 },
+    { cx: w / 2, cy: h / 2, label: `a + b = ${a + b}`, color: COLORS.accent2 },
+    { cx: w / 2 + spacing, cy: h / 2, label: `b = ${b}`, color: COLORS.accent3 },
+  ];
+  const R = 80;
+
+  circles.forEach((c, idx) => {
+    drawCircle(ctx, c.cx, c.cy, R, COLORS.circle, 2);
+    drawLabel(ctx, c.label, c.cx, c.cy + R + 25, c.color, 'bold 14px Inter');
+
+    // Base point
+    const bx = c.cx + R * Math.cos(-Math.PI / 2);
+    const by = c.cy + R * Math.sin(-Math.PI / 2);
+    drawPoint(ctx, bx, by, 6, c.color, false);
+  });
+
+  // Draw static loops for circle a
+  if (phase === 0 || phase >= 1) {
+    const c = circles[0];
+    const loopsA = a;
+    if (loopsA > 0) {
+      for (let i = 0; i < loopsA; i++) {
+        const ringR = R + 4 + i * 5;
+        ctx.beginPath();
+        ctx.arc(c.cx, c.cy, ringR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(108, 92, 231, 0.3)`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Draw static loops for circle b
+  if (phase === 0 || phase >= 1) {
+    const c = circles[2];
+    const loopsB = b;
+    if (loopsB > 0) {
+      for (let i = 0; i < loopsB; i++) {
+        const ringR = R + 4 + i * 5;
+        ctx.beginPath();
+        ctx.arc(c.cx, c.cy, ringR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(253, 121, 168, 0.3)`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Animate on the center circle
+  const cc = circles[1];
+  const startAngle = -Math.PI / 2;
+
+  if (phase === 1 && a > 0) {
+    // Drawing loop a on center circle
+    const totalAngle = a * Math.PI * 2;
+    const currentAngle = totalAngle * progress;
+    ctx.beginPath();
+    const steps = Math.max(1, Math.floor(Math.abs(currentAngle) / 0.03));
+    for (let i = 0; i <= steps; i++) {
+      const ang = startAngle + (currentAngle * i / steps);
+      const x = cc.cx + R * Math.cos(ang);
+      const y = cc.cy + R * Math.sin(ang);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = COLORS.accent1;
+    ctx.lineWidth = 4;
+    ctx.shadowColor = COLORS.accent1;
+    ctx.shadowBlur = 10;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Moving point
+    const angle = startAngle + currentAngle;
+    drawPoint(ctx, cc.cx + R * Math.cos(angle), cc.cy + R * Math.sin(angle), 7, COLORS.accent1, true);
+  }
+
+  if (phase === 2) {
+    // Draw completed loop a
+    if (a > 0) {
+      const totalAngleA = a * Math.PI * 2;
+      ctx.beginPath();
+      const steps = Math.max(1, Math.floor(Math.abs(totalAngleA) / 0.03));
+      for (let i = 0; i <= steps; i++) {
+        const ang = startAngle + (totalAngleA * i / steps);
+        const x = cc.cx + (R - 3) * Math.cos(ang);
+        const y = cc.cy + (R - 3) * Math.sin(ang);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = COLORS.accent1;
+      ctx.lineWidth = 3;
+      ctx.globalAlpha = 0.6;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    // Drawing loop b on center circle (continuing from where a ended)
+    if (b > 0) {
+      const offsetAngle = a * Math.PI * 2;
+      const totalAngleB = b * Math.PI * 2;
+      const currentAngle = totalAngleB * progress;
+      ctx.beginPath();
+      const steps = Math.max(1, Math.floor(Math.abs(currentAngle) / 0.03));
+      for (let i = 0; i <= steps; i++) {
+        const ang = startAngle + offsetAngle + (currentAngle * i / steps);
+        const x = cc.cx + R * Math.cos(ang);
+        const y = cc.cy + R * Math.sin(ang);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = COLORS.accent3;
+      ctx.lineWidth = 4;
+      ctx.shadowColor = COLORS.accent3;
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Moving point
+      const angle = startAngle + offsetAngle + currentAngle;
+      drawPoint(ctx, cc.cx + R * Math.cos(angle), cc.cy + R * Math.sin(angle), 7, COLORS.accent3, true);
+    }
+  }
+
+  if (phase === 3) {
+    // Show completed result
+    const totalAngle = (a + b) * Math.PI * 2;
+    if (totalAngle !== 0) {
+      ctx.beginPath();
+      const steps = Math.max(1, Math.floor(Math.abs(totalAngle) / 0.03));
+      for (let i = 0; i <= steps; i++) {
+        const ang = startAngle + (totalAngle * i / steps);
+        const x = cc.cx + R * Math.cos(ang);
+        const y = cc.cy + R * Math.sin(ang);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = COLORS.accent2;
+      ctx.lineWidth = 4;
+      ctx.shadowColor = COLORS.accent2;
+      ctx.shadowBlur = 15;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Winding rings
+    for (let i = 0; i < a + b; i++) {
+      const ringR = R + 4 + i * 5;
+      ctx.beginPath();
+      ctx.arc(cc.cx, cc.cy, ringR, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(0, 206, 201, 0.25)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
+  // Arrows between circles
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(circles[0].cx + R + 15, circles[0].cy);
+  ctx.lineTo(circles[1].cx - R - 15, circles[1].cy);
+  ctx.strokeStyle = COLORS.dim;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(circles[2].cx - R - 15, circles[2].cy);
+  ctx.lineTo(circles[1].cx + R + 15, circles[1].cy);
+  ctx.strokeStyle = COLORS.dim;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function updateConcat() {
+  const a = parseInt(document.getElementById('a-slider').value);
+  const b = parseInt(document.getElementById('b-slider').value);
+  document.getElementById('a-label').textContent = a;
+  document.getElementById('b-label').textContent = b;
+  document.getElementById('badge-a').textContent = a;
+  document.getElementById('badge-b').textContent = b;
+  document.getElementById('badge-result').textContent = a + b;
+  concatPhase = 0;
+  concatProgress = 0;
+  drawConcatScene(0, 0);
+  document.getElementById('concat-status').textContent = '';
+}
+
+function animateConcat() {
+  cancelAnim('concat');
+  const a = parseInt(document.getElementById('a-slider').value);
+  const b = parseInt(document.getElementById('b-slider').value);
+  concatPhase = 1;
+  concatProgress = 0;
+
+  const statusEl = document.getElementById('concat-status');
+
+  function step() {
+    concatProgress += 0.008;
+    if (concatProgress > 1) {
+      concatProgress = 0;
+      concatPhase++;
+      if (concatPhase > 3) {
+        concatPhase = 3;
+        concatProgress = 1;
+        drawConcatScene(1, 3);
+        statusEl.textContent = `✅ Fertig! ${a} + ${b} = ${a + b} Schleifen`;
+        return;
+      }
+    }
+
+    if (concatPhase === 1) {
+      statusEl.textContent = `Phase 1: Schleife a (${a}× herum) wird gezeichnet...`;
+      if (a === 0) { concatPhase = 2; concatProgress = 0; }
+    } else if (concatPhase === 2) {
+      statusEl.textContent = `Phase 2: Schleife b (${b}× herum) wird angehängt...`;
+      if (b === 0) { concatPhase = 3; concatProgress = 0; }
+    } else if (concatPhase === 3) {
+      statusEl.textContent = `✅ Fertig! ${a} + ${b} = ${a + b} Schleifen`;
+    }
+
+    drawConcatScene(concatProgress, concatPhase);
+    if (concatPhase < 3 || concatProgress < 1) {
+      animations.concat = requestAnimationFrame(step);
+    }
+  }
+  step();
+}
+
+function resetConcat() {
+  cancelAnim('concat');
+  concatPhase = 0;
+  concatProgress = 0;
+  drawConcatScene(0, 0);
+  document.getElementById('concat-status').textContent = '';
+}
+
+updateConcat();
+
+// ============================================================
+// STEP 4: HOMOTOPY
+// ============================================================
+let homotopyT = 0;
+
+function drawHomotopyScene(t) {
+  const { ctx, w, h } = getCtx('canvas-homotopy');
+  clear(ctx, w, h);
+
+  const ax = 120, ay = h / 2;
+  const bx = w - 120, by = h / 2;
+
+  // Path 1 (top curve)
+  const cp1y = -80;
+  // Path 2 (bottom curve)
+  const cp2y = 80;
+
+  // Interpolated control point
+  const cpy = cp1y + (cp2y - cp1y) * t;
+
+  // Draw both reference paths faintly
+  ctx.setLineDash([3, 3]);
+  // Top path
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.bezierCurveTo(ax + 150, ay + cp1y, bx - 150, ay + cp1y, bx, by);
+  ctx.strokeStyle = 'rgba(108, 92, 231, 0.2)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Bottom path
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.bezierCurveTo(ax + 150, ay + cp2y, bx - 150, ay + cp2y, bx, by);
+  ctx.strokeStyle = 'rgba(253, 121, 168, 0.2)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw interpolated path
+  ctx.beginPath();
+  ctx.moveTo(ax, ay);
+  ctx.bezierCurveTo(ax + 150, ay + cpy, bx - 150, ay + cpy, bx, by);
+  const gradient = ctx.createLinearGradient(ax, 0, bx, 0);
+  gradient.addColorStop(0, COLORS.accent1);
+  gradient.addColorStop(1, COLORS.accent3);
+  ctx.strokeStyle = gradient;
+  ctx.lineWidth = 4;
+  ctx.shadowColor = t < 0.5 ? COLORS.accent1 : COLORS.accent3;
+  ctx.shadowBlur = 12;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Draw intermediate paths (ghosting effect)
+  for (let i = 0; i <= 1; i += 0.2) {
+    const interCpy = cp1y + (cp2y - cp1y) * i;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.bezierCurveTo(ax + 150, ay + interCpy, bx - 150, ay + interCpy, bx, by);
+    ctx.strokeStyle = `rgba(253, 203, 110, 0.08)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Points
+  drawPoint(ctx, ax, ay, 8, COLORS.accent1, true);
+  drawPoint(ctx, bx, by, 8, COLORS.accent3, true);
+
+  // Labels
+  drawLabel(ctx, 'Pfad 1', w / 2, 25, COLORS.accent1, '13px Inter');
+  drawLabel(ctx, 'Pfad 2', w / 2, h - 15, COLORS.accent3, '13px Inter');
+  drawLabel(ctx, `Homotopie: ${Math.round(t * 100)}%`, w / 2, h / 2 - R - 10, COLORS.accent4, 'bold 13px Inter');
+
+  // Vertical arrow showing deformation
+  const arrowX = w - 50;
+  ctx.beginPath();
+  ctx.moveTo(arrowX, 40);
+  ctx.lineTo(arrowX, h - 40);
+  ctx.strokeStyle = COLORS.accent4;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // Arrow head
+  ctx.beginPath();
+  ctx.moveTo(arrowX, h - 40);
+  ctx.lineTo(arrowX - 5, h - 50);
+  ctx.moveTo(arrowX, h - 40);
+  ctx.lineTo(arrowX + 5, h - 50);
+  ctx.stroke();
+
+  // Marker on arrow
+  const markerY = 40 + (h - 80) * t;
+  drawPoint(ctx, arrowX, markerY, 6, COLORS.accent4, true);
+}
+
+function updateHomotopy() {
+  homotopyT = parseInt(document.getElementById('homotopy-slider').value) / 100;
+  document.getElementById('homotopy-label').textContent = Math.round(homotopyT * 100) + '%';
+  drawHomotopyScene(homotopyT);
+}
+
+function animateHomotopy() {
+  cancelAnim('homotopy');
+  homotopyT = 0;
+  let direction = 1;
+  function step() {
+    homotopyT += 0.008 * direction;
+    if (homotopyT >= 1) { homotopyT = 1; direction = -1; }
+    if (homotopyT <= 0 && direction === -1) {
+      homotopyT = 0;
+      drawHomotopyScene(0);
+      document.getElementById('homotopy-slider').value = 0;
+      document.getElementById('homotopy-label').textContent = '0%';
+      return;
+    }
+    document.getElementById('homotopy-slider').value = Math.round(homotopyT * 100);
+    document.getElementById('homotopy-label').textContent = Math.round(homotopyT * 100) + '%';
+    drawHomotopyScene(homotopyT);
+    animations.homotopy = requestAnimationFrame(step);
+  }
+  step();
+}
+
+function resetHomotopy() {
+  cancelAnim('homotopy');
+  homotopyT = 0;
+  document.getElementById('homotopy-slider').value = 0;
+  document.getElementById('homotopy-label').textContent = '0%';
+  drawHomotopyScene(0);
+}
+
+drawHomotopyScene(0);
+
+// ============================================================
+// PLAYGROUND
+// ============================================================
+let playProgress = 0;
+let playPhase = 0;
+
+function drawPlayground(progress, phase) {
+  const { ctx, w, h } = getCtx('canvas-playground');
+  clear(ctx, w, h);
+
+  const a = parseInt(document.getElementById('play-a').value);
+  const b = parseInt(document.getElementById('play-b').value);
+  const sum = a + b;
+
+  const cx = w / 2, cy = h / 2;
+  const R = 130;
+
+  // Background grid circles
+  for (let r = 30; r <= R + 60; r += 30) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = COLORS.grid;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Main circle
+  drawCircle(ctx, cx, cy, R, 'rgba(136,136,170,0.5)', 2);
+
+  // Base point
+  const startAngle = -Math.PI / 2;
+  const baseX = cx + R * Math.cos(startAngle);
+  const baseY = cy + R * Math.sin(startAngle);
+
+  // Draw winding number text
+  drawLabel(ctx, `Ω(S¹) ≅ ℤ`, cx, 25, COLORS.dim, '13px JetBrains Mono');
+
+  // Phase 0: idle
+  // Phase 1: animate loop a
+  // Phase 2: animate loop b (continuing)
+  // Phase 3: show result
+
+  const drawTrail = (startOff, numLoops, prog, color, rOffset) => {
+    if (numLoops === 0) return;
+    const totalAngle = numLoops * Math.PI * 2;
+    const currentAngle = totalAngle * prog;
+    const dir = numLoops > 0 ? 1 : -1;
+
+    ctx.beginPath();
+    const steps = Math.max(2, Math.floor(Math.abs(currentAngle) / 0.02));
+    for (let i = 0; i <= steps; i++) {
+      const frac = i / steps;
+      const ang = startAngle + startOff + currentAngle * frac;
+      const wobble = Math.sin(frac * Math.abs(numLoops) * Math.PI * 4) * 3;
+      const x = cx + (R + rOffset + wobble) * Math.cos(ang);
+      const y = cy + (R + rOffset + wobble) * Math.sin(ang);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 12;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Moving point
+    const endAng = startAngle + startOff + currentAngle;
+    const px = cx + R * Math.cos(endAng);
+    const py = cy + R * Math.sin(endAng);
+    drawPoint(ctx, px, py, 9, color, true);
+  };
+
+  if (phase === 1) {
+    drawTrail(0, a, progress, COLORS.accent1, -4);
+  } else if (phase === 2) {
+    // Draw completed a trail
+    drawTrail(0, a, 1, COLORS.accent1, -4);
+    // Draw b trail
+    const aOffset = a * Math.PI * 2;
+    drawTrail(aOffset, b, progress, COLORS.accent3, 4);
+  } else if (phase === 3) {
+    // Draw the combined result
+    drawTrail(0, sum, 1, COLORS.accent2, 0);
+
+    // Pulsing glow
+    const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 300);
+    ctx.beginPath();
+    ctx.arc(cx, cy, R + 20, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 206, 201, ${0.1 + 0.1 * pulse})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Winding count rings
+  if (phase === 3 && sum !== 0) {
+    for (let i = 0; i < Math.abs(sum); i++) {
+      const ringR = R + 15 + i * 6;
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(0, 206, 201, 0.15)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    drawLabel(ctx, `Windungszahl: ${sum}`, cx, cy + R + 50, COLORS.accent2, 'bold 15px Inter');
+  }
+
+  // Base point always on top
+  drawPoint(ctx, baseX, baseY, 10, COLORS.accent4, true);
+  drawLabel(ctx, 'base', baseX + 20, baseY - 15, COLORS.accent4, 'bold 12px Inter');
+}
+
+function updatePlayground() {
+  const a = parseInt(document.getElementById('play-a').value);
+  const b = parseInt(document.getElementById('play-b').value);
+  document.getElementById('play-a-label').textContent = a;
+  document.getElementById('play-b-label').textContent = b;
+  document.getElementById('play-badge-a').textContent = a;
+  document.getElementById('play-badge-b').textContent = b;
+  document.getElementById('play-badge-result').textContent = a + b;
+  playPhase = 0;
+  playProgress = 0;
+  drawPlayground(0, 0);
+  document.getElementById('play-status').textContent = 'Bereit – drücke ▶';
+  updatePhaseDots(0);
+}
+
+function updatePhaseDots(phase) {
+  for (let i = 0; i < 3; i++) {
+    document.getElementById('phase' + i).classList.toggle('active', i <= phase);
+  }
+}
+
+function animatePlayground() {
+  cancelAnim('playground');
+  const a = parseInt(document.getElementById('play-a').value);
+  const b = parseInt(document.getElementById('play-b').value);
+  playPhase = 1;
+  playProgress = 0;
+  const statusEl = document.getElementById('play-status');
+
+  function step() {
+    const speed = 0.006;
+    playProgress += speed;
+
+    if (playProgress > 1) {
+      playProgress = 0;
+      playPhase++;
+      if (playPhase > 3) {
+        playPhase = 3;
+        playProgress = 1;
+        drawPlayground(1, 3);
+        statusEl.textContent = `✅ ${a} + ${b} = ${a + b}  (${Math.abs(a + b)} Schleifen ${a + b >= 0 ? 'vorwärts' : 'rückwärts'})`;
+        updatePhaseDots(2);
+        // Keep pulsing
+        function pulse() {
+          drawPlayground(1, 3);
+          animations.playground = requestAnimationFrame(pulse);
+        }
+        pulse();
+        return;
+      }
+    }
+
+    if (playPhase === 1) {
+      statusEl.textContent = `🔵 Phase 1: Schleife a = ${a} wird gezeichnet...`;
+      updatePhaseDots(0);
+      if (a === 0) { playPhase = 2; playProgress = 0; }
+    } else if (playPhase === 2) {
+      statusEl.textContent = `🟣 Phase 2: Schleife b = ${b} wird angehängt...`;
+      updatePhaseDots(1);
+      if (b === 0) { playPhase = 3; playProgress = 0; }
+    }
+
+    drawPlayground(playProgress, playPhase);
+    animations.playground = requestAnimationFrame(step);
+  }
+  step();
+}
+
+function resetPlayground() {
+  cancelAnim('playground');
+  playPhase = 0;
+  playProgress = 0;
+  drawPlayground(0, 0);
+  document.getElementById('play-status').textContent = 'Bereit – drücke ▶';
+  updatePhaseDots(0);
+}
+
+updatePlayground();
+
+// ============================================================
+// INITIAL DRAW & RESIZE HANDLING
+// ============================================================
+
+// Redraw all static scenes on load
+window.addEventListener('load', () => {
+  drawPathScene(0);
+  drawLoopScene(0);
+  drawConcatScene(0, 0);
+  drawHomotopyScene(0);
+  drawPlayground(0, 0);
+});
+
+// ============================================================
+// SCROLL REVEAL ANIMATION
+// ============================================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step, .interactive-playground').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(30px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+
+</script>
+</body>
+</html>
