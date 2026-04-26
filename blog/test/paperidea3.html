@@ -719,42 +719,59 @@ const RenderTarget = (() => {
     const imgMargin = 12;
     const imgSize = Math.min(w, h) - imgMargin * 2;
     const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
+    const cellSize = imgSize / SZ; // size of one image pixel on screen
 
-    // Render image with variable pixelation based on focus
-    // Strategy: for each output pixel, determine the focus level,
-    // then sample from a block of appropriate size
-    const outRes = imgSize;
-    for (let py = 0; py < outRes; py++) {
-      for (let px = 0; px < outRes; px++) {
-        const nx = px / outRes, ny = py / outRes;
-        const ix = Math.floor(nx * SZ), iy = Math.floor(ny * SZ);
-        const focusIdx = Math.min(SZ-1, iy) * SZ + Math.min(SZ-1, ix);
-        const focus = focusMap[focusIdx];
-
-        // Pixelation: low focus = large blocks, high focus = pixel-perfect
-        const blockSize = Math.max(1, Math.round((1 - focus) * maxPix));
-
-        // Snap to block grid
-        const bx = Math.floor(px / blockSize) * blockSize;
-        const by = Math.floor(py / blockSize) * blockSize;
-        const bnx = (bx + blockSize/2) / outRes;
-        const bny = (by + blockSize/2) / outRes;
-        const bix = Math.min(SZ-1, Math.floor(bnx * SZ));
-        const biy = Math.min(SZ-1, Math.floor(bny * SZ));
-
-        const v = image[biy * SZ + bix];
+    // Pass 1: Draw the fully pixelated version using large blocks
+    // We tile the image into blocks whose size depends on maxPixelation
+    const maxBlockPx = maxPix; // in image-space pixels
+    for (let by = 0; by < SZ; by += maxBlockPx) {
+      for (let bx = 0; bx < SZ; bx += maxBlockPx) {
+        // Sample from block center
+        const cx = Math.min(SZ - 1, bx + Math.floor(maxBlockPx / 2));
+        const cy = Math.min(SZ - 1, by + Math.floor(maxBlockPx / 2));
+        const v = image[cy * SZ + cx];
         const b = Math.max(0, Math.min(1, v));
 
-        // Color: warm where focused, cool where pixelated
-        const focusColor = focus;
-        const r = Math.floor(30 + b * 200 + focusColor * 25);
-        const g = Math.floor(25 + b * 180 + focusColor * 15);
-        const bl = Math.floor(15 + b * 100 - focusColor * 10 + (1-focusColor) * 30);
+        const screenX = ox + bx * cellSize;
+        const screenY = oy + by * cellSize;
+        const blockW = Math.min(maxBlockPx, SZ - bx) * cellSize;
+        const blockH = Math.min(maxBlockPx, SZ - by) * cellSize;
 
-        ctxTarget.fillStyle = `rgb(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,bl)})`;
-        ctxTarget.fillRect(ox + px, oy + py, 1.2, 1.2);
+        // Cool/muted color for unfocused
+        const r = Math.floor(20 + b * 120);
+        const g = Math.floor(25 + b * 130);
+        const bl = Math.floor(45 + b * 160);
+
+        ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
+        ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
       }
     }
+
+    // Pass 2: Overdraw sharp (focused) pixels on top
+    // For each image pixel, if focus is high enough, draw it crisply
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const focus = focusMap[y * SZ + x];
+        if (focus < 0.15) continue; // skip fully unfocused pixels
+
+        const v = image[y * SZ + x];
+        const b = Math.max(0, Math.min(1, v));
+
+        // Warm, bright color for focused areas
+        const r = Math.floor(30 + b * 225);
+        const g = Math.floor(25 + b * 200);
+        const bl = Math.floor(10 + b * 100);
+
+        const screenX = ox + x * cellSize;
+        const screenY = oy + y * cellSize;
+
+        // Alpha blend: focus controls how much the crisp pixel shows
+        ctxTarget.globalAlpha = focus;
+        ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
+        ctxTarget.fillRect(screenX, screenY, cellSize + 0.5, cellSize + 0.5);
+      }
+    }
+    ctxTarget.globalAlpha = 1.0;
 
     // Overlay focus points
     const focusPoints = FocusMap.getAllFocusPoints();
