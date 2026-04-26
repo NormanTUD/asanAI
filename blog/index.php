@@ -25,7 +25,7 @@
 	incl("Brief History of AI", "history");
 	incl("Basic math concepts", "math");
 	incl("The History of Language: From Sanskrit to LLMs", "language");
-	incl("Statistics: The Language of AI", "statistics");
+	incl("Statistics: A useful helper in AI", "statistics");
 	incl("Loss: Teaching through Failure", "losslab");
 	/*
 	incl('Derivatives: How AI "Learns" to get better', "derivativelab");
