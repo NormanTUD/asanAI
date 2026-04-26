@@ -753,36 +753,25 @@ const RenderEmbed = (() => {
     ctxEmbed.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctxEmbed.clearRect(0, 0, w, h);
 
-    // Background field — show chaotic hash influence
-    const imgData = ctxEmbed.createImageData(w, h);
-    for (let py = 0; py < h; py++) {
-      for (let px = 0; px < w; px++) {
-        const nx = px / w, ny = py / h;
-        let r = 8, g = 10, b = 24;
+    // Clean dark background — NO chaotic hash color field
+    ctxEmbed.fillStyle = '#0a0e1a';
+    ctxEmbed.fillRect(0, 0, w, h);
 
-        // Show where this embedding point would focus on the image (faint)
-        for (let s = 0; s < StalkModule.N_STALKS; s++) {
-          const sc = StalkModule.COLORS[s];
-          const d = Math.hypot(nx - StalkModule.stalks[s].embedPoint.x, ny - StalkModule.stalks[s].embedPoint.y);
-          const glow = Math.exp(-d * d / 0.02) * 0.15;
-          r += sc[0] * glow; g += sc[1] * glow; b += sc[2] * glow;
-        }
-
-        // Show chaotic hash field as subtle texture
-        const hashPt = ChaoticHash.tokenToFocus(nx, ny, 0, 0);
-        const hashBright = (Math.sin(hashPt.x * 20) * Math.cos(hashPt.y * 20)) * 0.03;
-        r += 60 * Math.abs(hashBright);
-        g += 40 * Math.abs(hashBright);
-        b += 80 * Math.abs(hashBright);
-
-        const idx = (py * w + px) * 4;
-        imgData.data[idx] = Math.min(255, Math.floor(r));
-        imgData.data[idx+1] = Math.min(255, Math.floor(g));
-        imgData.data[idx+2] = Math.min(255, Math.floor(b));
-        imgData.data[idx+3] = 255;
-      }
+    // Subtle glow around each token position only
+    for (let s = 0; s < StalkModule.N_STALKS; s++) {
+      const sc = StalkModule.COLORS[s];
+      const st = StalkModule.stalks[s];
+      const grd = ctxEmbed.createRadialGradient(
+        st.embedPoint.x * w, st.embedPoint.y * h, 0,
+        st.embedPoint.x * w, st.embedPoint.y * h, 30
+      );
+      grd.addColorStop(0, `rgba(${sc[0]},${sc[1]},${sc[2]},0.08)`);
+      grd.addColorStop(1, `rgba(${sc[0]},${sc[1]},${sc[2]},0)`);
+      ctxEmbed.fillStyle = grd;
+      ctxEmbed.beginPath();
+      ctxEmbed.arc(st.embedPoint.x * w, st.embedPoint.y * h, 30, 0, Math.PI * 2);
+      ctxEmbed.fill();
     }
-    ctxEmbed.putImageData(imgData, 0, 0);
 
     // Grid
     ctxEmbed.strokeStyle = 'rgba(162,155,254,0.06)';
@@ -793,36 +782,11 @@ const RenderEmbed = (() => {
       ctxEmbed.beginPath(); ctxEmbed.moveTo(0, t*h); ctxEmbed.lineTo(w, t*h); ctxEmbed.stroke();
     }
 
-    // Draw focus point connections (faint lines from token to its focus points)
+    // Draw stalks — NO focus point lines, NO dashed connections, NO arrows
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
       const isSelected = s === State.selectedStalk;
-
-      if (isSelected) {
-        for (let l = 0; l < State.visibleLayers; l++) {
-          const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
-          const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
-          ctxEmbed.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.25)`;
-          ctxEmbed.lineWidth = 1;
-          ctxEmbed.setLineDash([2, 3]);
-          ctxEmbed.beginPath();
-          ctxEmbed.moveTo(st.embedPoint.x * w, st.embedPoint.y * h);
-          ctxEmbed.lineTo(fp.x * w, fp.y * h);
-          ctxEmbed.stroke();
-          ctxEmbed.setLineDash([]);
-
-          // Focus point marker
-          ctxEmbed.beginPath();
-          ctxEmbed.arc(fp.x * w, fp.y * h, 3, 0, Math.PI * 2);
-          ctxEmbed.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.6)`;
-          ctxEmbed.fill();
-          ctxEmbed.font = '6px monospace';
-          ctxEmbed.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.5)`;
-          ctxEmbed.textAlign = 'center';
-          ctxEmbed.fillText(`f${l}`, fp.x * w, fp.y * h - 5);
-        }
-      }
 
       // Stalk dot
       const sz = isSelected ? 8 : 5;
@@ -851,6 +815,7 @@ const RenderEmbed = (() => {
         ctxEmbed.setLineDash([]);
       }
 
+      // Label
       ctxEmbed.font = `${isSelected ? 'bold ' : ''}8px monospace`;
       ctxEmbed.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
       ctxEmbed.textAlign = 'center';
@@ -867,7 +832,7 @@ const RenderEmbed = (() => {
     ctxEmbed.font = 'bold 9px monospace';
     ctxEmbed.fillStyle = 'rgba(162,155,254,0.6)';
     ctxEmbed.textAlign = 'center';
-    ctxEmbed.fillText('Embedding Space — Chaotic Lens', w / 2, 12);
+    ctxEmbed.fillText('Embedding Space', w / 2, 12);
   }
 
   return { render };
@@ -905,7 +870,7 @@ const RenderTarget = (() => {
         const cellSize = imgSize / SZ;
 
         // === Pass 1: Coarsest — fill everything at lego-block resolution ===
-        // NOW COLORFUL but very pixelated
+        // Muted, desaturated, pixelated — NOT rainbow/LSD
         for (let by = 0; by < SZ; by += maxPix) {
             for (let bx = 0; bx < SZ; bx += maxPix) {
                 const cx = Math.min(SZ - 1, bx + Math.floor(maxPix / 2));
@@ -917,20 +882,10 @@ const RenderTarget = (() => {
                 const blockW = Math.min(maxPix, SZ - bx) * cellSize;
                 const blockH = Math.min(maxPix, SZ - by) * cellSize;
 
-                // Colorful but chunky — use position-based hue for unfocused areas
-                const hueAngle = (cx / SZ * 360 + cy / SZ * 120) % 360;
-                const hRad = hueAngle * Math.PI / 180;
-                const saturation = 0.6 + b * 0.4;
-                const lightness = 0.15 + b * 0.45;
-
-                // HSL-ish to RGB (simplified)
-                const rBase = lightness + saturation * lightness * Math.cos(hRad);
-                const gBase = lightness + saturation * lightness * Math.cos(hRad - 2.094);
-                const bBase = lightness + saturation * lightness * Math.cos(hRad + 2.094);
-
-                const r = Math.floor(Math.min(255, Math.max(0, rBase * 255)));
-                const g = Math.floor(Math.min(255, Math.max(0, gBase * 255)));
-                const bl = Math.floor(Math.min(255, Math.max(0, bBase * 255)));
+                // Muted blue-gray tones — clearly pixelated but not colorful
+                const r = Math.floor(12 + b * 45);
+                const g = Math.floor(15 + b * 55);
+                const bl = Math.floor(28 + b * 75);
 
                 ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
                 ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
@@ -1001,7 +956,7 @@ const RenderTarget = (() => {
 
         ctxTarget.globalAlpha = 1.0;
 
-        // === Lens Pointer Visualization (NO weird lines — clean crosshairs only) ===
+        // === Lens Pointer Visualization — clean crosshairs only, no lines ===
         for (let s = 0; s < StalkModule.N_STALKS; s++) {
             const st = StalkModule.stalks[s];
             const sc = StalkModule.COLORS[s];
@@ -1019,7 +974,6 @@ const RenderTarget = (() => {
             const cpx = ox + centX * imgSize;
             const cpy = oy + centY * imgSize;
 
-            // Simple crosshair + circle — no dashed leader lines, no arrows
             const chSize = isSelected ? 10 : 6;
             const chAlpha = isSelected ? 0.9 : 0.5;
             ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${chAlpha})`;
@@ -1028,7 +982,6 @@ const RenderTarget = (() => {
             ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy - chSize); ctxTarget.lineTo(cpx, cpy + chSize); ctxTarget.stroke();
             ctxTarget.beginPath(); ctxTarget.arc(cpx, cpy, chSize * 0.7, 0, Math.PI * 2); ctxTarget.stroke();
 
-            // Label near crosshair (no leader lines)
             ctxTarget.font = `${isSelected ? 'bold ' : ''}8px monospace`;
             ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
             ctxTarget.textAlign = 'center';
