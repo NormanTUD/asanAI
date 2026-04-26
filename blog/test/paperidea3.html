@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Layer-Progressive Warped Space — FFT × Jacobi</title>
+<title>Spatial Focus Explorer — Chaotic Lens Encoding</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#050810;color:#e2e8f0;font-family:system-ui,sans-serif;overflow-y:auto;overflow-x:hidden}
@@ -50,77 +50,71 @@ button.red:hover{background:#e74c3c40}
 </head>
 <body>
 
-<h1>🌊 Layer-Progressive Warped Space: FFT × Jacobi</h1>
-<p class="subtitle">Space complexity increases <b>layer by layer</b>, not stalk by stalk. Layer 0 = nearly flat grid. Each deeper layer warps more, accumulating FFT detail and Jacobi curvature. All stalks on the same layer share the same space geometry.</p>
+<h1>🔍 Spatial Focus Explorer — Chaotic Lens Encoding</h1>
+<p class="subtitle">Move the tokens in the embedding space. The <b>positions</b> determine which parts of the image are in focus (sharp) and which are pixelated. The relationship is non-obvious — <b>explore it!</b> The total displacement from default positions controls the sway intensity.</p>
 
 <div class="main">
 
 <!-- LEFT COLUMN -->
 <div class="col col-left">
   <div class="panel">
-    <h2>🌊 Embedding Space (Layer -1)</h2>
-    <p>Each stalk has a point here. Select a stalk below, then click/drag to move it.</p>
+    <h2>🌊 Embedding Space</h2>
+    <p>Drag tokens to change which image regions are focused. The mapping is chaotic — discover the pattern!</p>
     <canvas id="cvEmbed" width="290" height="290" class="clickable"></canvas>
     <div class="stalk-selector" id="stalkSelector"></div>
-    <p><span class="mode-label" id="modeLabel">Mode: Move Stalk</span></p>
+    <p><span class="mode-label" id="modeLabel">Drag tokens to explore</span></p>
   </div>
 
   <div class="panel">
-    <h2>🎛 Controls</h2>
+    <h2>🎛️ Controls</h2>
     <div class="controls">
       <button onclick="Ctrl.play()" id="btnPlay">▶ Animate</button>
       <button onclick="Ctrl.pause()">⏸ Pause</button>
       <button onclick="Ctrl.reset()">↺ Reset</button>
-      <button onclick="Ctrl.clearTargets()" class="red">✕ Clear Targets</button>
     </div>
     <div class="slider-row">
       <label>Layers:</label>
-      <input type="range" id="slLayers" min="1" max="5" value="5" oninput="Ctrl.setLayers(+this.value)">
-      <span class="val" id="vLayers">5</span>
+      <input type="range" id="slLayers" min="1" max="5" value="4" oninput="Ctrl.setLayers(+this.value)">
+      <span class="val" id="vLayers">4</span>
     </div>
     <div class="slider-row">
       <label>Curvature K:</label>
-      <input type="range" id="slCurv" min="5" max="150" value="40" oninput="Ctrl.setCurvature(+this.value)">
-      <span class="val" id="vCurv">0.40</span>
+      <input type="range" id="slCurv" min="5" max="200" value="60" oninput="Ctrl.setCurvature(+this.value)">
+      <span class="val" id="vCurv">0.60</span>
     </div>
     <div class="slider-row">
-      <label>Sway:</label>
-      <input type="range" id="slSway" min="0" max="80" value="20" oninput="Ctrl.setSway(+this.value)">
-      <span class="val" id="vSway">20</span>
-    </div>
-    <div class="slider-row">
-      <label>Field decay:</label>
-      <input type="range" id="slDecay" min="5" max="100" value="35" oninput="Ctrl.setDecay(+this.value)">
-      <span class="val" id="vDecay">0.35</span>
+      <label>Focus radius:</label>
+      <input type="range" id="slFocus" min="5" max="80" value="25" oninput="Ctrl.setFocusRadius(+this.value)">
+      <span class="val" id="vFocus">0.25</span>
     </div>
     <div class="slider-row">
       <label>Warp strength:</label>
-      <input type="range" id="slWarp" min="0" max="100" value="50" oninput="Ctrl.setWarp(+this.value)">
-      <span class="val" id="vWarp">0.50</span>
+      <input type="range" id="slWarp" min="0" max="100" value="55" oninput="Ctrl.setWarp(+this.value)">
+      <span class="val" id="vWarp">0.55</span>
     </div>
     <div class="slider-row">
       <label>Grid density:</label>
-      <input type="range" id="slGrid" min="6" max="28" value="14" oninput="Ctrl.setGridDensity(+this.value)">
-      <span class="val" id="vGrid">14</span>
+      <input type="range" id="slGrid" min="6" max="28" value="16" oninput="Ctrl.setGridDensity(+this.value)">
+      <span class="val" id="vGrid">16</span>
     </div>
     <div class="slider-row">
-      <label>Layer growth:</label>
-      <input type="range" id="slGrowth" min="10" max="100" value="50" oninput="Ctrl.setGrowth(+this.value)">
-      <span class="val" id="vGrowth">0.50</span>
+      <label>Pixelation max:</label>
+      <input type="range" id="slPixel" min="1" max="8" value="5" oninput="Ctrl.setPixelation(+this.value)">
+      <span class="val" id="vPixel">5</span>
     </div>
   </div>
 
   <div class="panel">
-    <h2>📐 Layer-Progressive Warping</h2>
+    <h2>📐 How It Works</h2>
     <ul>
-      <li><b>Layer 0</b>: nearly flat grid — only DC / lowest frequencies</li>
-      <li><b>Layer 1</b>: slight bending — low-freq FFT bands added</li>
-      <li><b>Layer 2–4</b>: progressively more warped — higher freq bands accumulate</li>
-      <li>The <b>Jacobi matrix</b> J(layer) grows with layer depth</li>
-      <li>All stalks at the same layer share the <b>same warped space</b></li>
-      <li>Each stalk contributes its own FFT band <b>within</b> that shared space</li>
+      <li>Each token position is hashed through a <b>chaotic spatial map</b> (Arnold's cat map variant)</li>
+      <li>The hash determines a <b>focus point</b> on the image</li>
+      <li>Regions near focus points are <b>sharp</b>; distant regions are <b>pixelated</b></li>
+      <li>Total displacement of all tokens from defaults = <b>sway intensity</b></li>
+      <li>Each layer adds more warping complexity</li>
+      <li>The Jacobi matrix shows local space distortion per layer</li>
     </ul>
-    <p><span class="formula">warp(x, layer) = growth^layer × J(x) × ∇FFT_cumulative(layer)</span></p>
+    <p><span class="formula">focus(token) = CatMap(pos) ⊕ layer_freq</span></p>
     <div class="layer-colors" id="layerColorLegend"></div>
   </div>
 </div>
@@ -130,13 +124,13 @@ button.red:hover{background:#e74c3c40}
   <div class="panel" style="padding:5px">
     <canvas id="cvMain" class="clickable"></canvas>
     <div class="legend">
-      <span><span class="dot" style="background:#e74c3c"></span> Target pts</span>
       <span><span class="dot" style="background:#64b5f6"></span> S0</span>
       <span><span class="dot" style="background:#81c784"></span> S1</span>
       <span><span class="dot" style="background:#ffd54f"></span> S2</span>
       <span><span class="dot" style="background:#ff8a65"></span> S3</span>
       <span><span class="dot" style="background:#ce93d8"></span> S4</span>
-      <span>🖱 Click resolved image = set target</span>
+      <span>🔍 Sharp regions = token focus zones</span>
+      <span>▦ Pixelated = unfocused</span>
     </div>
   </div>
 </div>
@@ -144,31 +138,31 @@ button.red:hover{background:#e74c3c40}
 <!-- RIGHT COLUMN -->
 <div class="col col-right">
   <div class="panel">
-    <h2>🎯 Target Image (click to set high-res regions)</h2>
+    <h2>🖼️ Focused Image</h2>
     <canvas id="cvTarget" width="290" height="290" class="clickable"></canvas>
-    <p style="font-size:0.65em;color:#475569;text-align:center;margin-top:2px">Click to add/remove target points.</p>
+    <p style="font-size:0.65em;color:#475569;text-align:center;margin-top:2px">Sharp where tokens focus, pixelated elsewhere. Move tokens to discover the mapping!</p>
   </div>
 
   <div class="panel">
-    <h3>Layer-by-Layer Space Warping</h3>
+    <h3>Layer Warped Space</h3>
     <div class="tab-bar" id="layerTabs"></div>
-    <canvas id="cvDetail" width="290" height="290" class="clickable"></canvas>
-    <p style="font-size:0.63em;color:#475569;margin-top:2px">Shows the <b>shared warped space</b> at the selected layer. All stalks live in this same geometry. Deeper layers = more complex bending.</p>
+    <canvas id="cvDetail" width="290" height="290"></canvas>
+    <p style="font-size:0.63em;color:#475569;margin-top:2px">Warped grid for selected layer. Deeper layers = more complex bending. Focus points shown as bright spots.</p>
   </div>
 
   <div class="panel">
     <h3>Jacobi Matrix — Layer Progression</h3>
     <canvas id="cvJacobiMat" width="290" height="290"></canvas>
-    <p style="font-size:0.63em;color:#475569;margin-top:2px">The 2×2 Jacobi matrix for each layer (rows = layers, cols = J components). Watch complexity grow downward.</p>
+    <p style="font-size:0.63em;color:#475569;margin-top:2px">2×2 Jacobi components per layer. Rows = layers, columns = ∂u/∂x, ∂u/∂y, ∂v/∂x, ∂v/∂y. Complexity grows downward.</p>
   </div>
 
   <div class="panel">
-    <h3>Per-Stalk Contribution</h3>
+    <h3>Focus Strength per Token</h3>
     <canvas id="cvContrib" width="290" height="160"></canvas>
   </div>
 
   <div class="panel info-box" id="infoBox">
-    <p>Click the smiley to set target regions. Move stalks in the embedding space. Watch the grid warp <b>layer by layer</b>.</p>
+    <p>Drag tokens in the embedding space. Watch the image change — some parts become sharp, others pixelated. <b>Can you figure out the pattern?</b></p>
   </div>
 </div>
 
@@ -176,7 +170,7 @@ button.red:hover{background:#e74c3c40}
 
 <script>
 // ============================================================
-// MODULE: HiDPI Canvas Setup
+// HiDPI
 // ============================================================
 const DPR = window.devicePixelRatio || 1;
 function setupHiDPI(canvas, w, h) {
@@ -187,117 +181,91 @@ function setupHiDPI(canvas, w, h) {
 }
 
 // ============================================================
-// MODULE: Image Data (swappable)
+// Image Data — richer smiley with gradients
 // ============================================================
 const ImageModule = (() => {
-  const SZ = 32;
-  const smiley = new Float64Array(SZ * SZ);
+  const SZ = 48;
+  const image = new Float64Array(SZ * SZ);
   for (let y = 0; y < SZ; y++) {
     for (let x = 0; x < SZ; x++) {
       const cx = x - SZ/2 + 0.5, cy = y - SZ/2 + 0.5;
       const r = Math.sqrt(cx*cx + cy*cy);
       let v = 0;
-      if (Math.abs(r - 13) < 1.8) v = 1;
-      if (r < 11.5) v = Math.max(v, 0.18);
-      if (Math.hypot(cx - 4.5, cy + 3) < 2.2) v = 1;
-      if (Math.hypot(cx + 4.5, cy + 3) < 2.2) v = 1;
-      if (r > 5 && r < 8.5 && cy > 2.5 && Math.abs(cx) < 8) v = 1;
-      smiley[y * SZ + x] = v;
+      // Face outline
+      if (Math.abs(r - 19) < 2.5) v = 1;
+      // Face fill
+      if (r < 17) v = Math.max(v, 0.22 + 0.08 * Math.sin(cx * 0.3) * Math.cos(cy * 0.3));
+      // Eyes
+      if (Math.hypot(cx - 6.5, cy + 4) < 3.2) v = Math.max(v, 0.9 - Math.hypot(cx - 6.5, cy + 4) * 0.15);
+      if (Math.hypot(cx + 6.5, cy + 4) < 3.2) v = Math.max(v, 0.9 - Math.hypot(cx + 6.5, cy + 4) * 0.15);
+      // Eye highlights
+      if (Math.hypot(cx - 5.5, cy + 5) < 1.2) v = 1;
+      if (Math.hypot(cx + 5.5, cy + 5) < 1.2) v = 1;
+      // Mouth
+      if (r > 7 && r < 12 && cy > 4 && Math.abs(cx) < 11) v = Math.max(v, 0.85);
+      // Nose
+      if (Math.abs(cx) < 1.5 && cy > -2 && cy < 2) v = Math.max(v, 0.5);
+      // Cheek blush
+      const cheekL = Math.hypot(cx - 12, cy - 2);
+      const cheekR = Math.hypot(cx + 12, cy - 2);
+      if (cheekL < 4) v = Math.max(v, 0.35 * (1 - cheekL/4));
+      if (cheekR < 4) v = Math.max(v, 0.35 * (1 - cheekR/4));
+      // Eyebrows
+      if (Math.abs(cy + 9) < 1.2 && Math.abs(cx - 6.5) < 4) v = Math.max(v, 0.7);
+      if (Math.abs(cy + 9) < 1.2 && Math.abs(cx + 6.5) < 4) v = Math.max(v, 0.7);
+      image[y * SZ + x] = Math.min(1, v);
     }
   }
-  return { SZ, image: smiley };
+  return { SZ, image };
 })();
 
 // ============================================================
-// MODULE: FFT (swappable)
+// Chaotic Spatial Hash — Arnold's Cat Map variant
+// This creates a non-obvious but deterministic mapping from
+// token embedding position to image focus point
 // ============================================================
-const FFTModule = (() => {
-  const SZ = ImageModule.SZ;
-
-  function fft2Forward(real) {
-    const N = SZ;
-    const reTmp = new Float64Array(N*N), imTmp = new Float64Array(N*N);
-    for (let y = 0; y < N; y++) {
-      for (let k = 0; k < N; k++) {
-        let re = 0, im = 0;
-        for (let n = 0; n < N; n++) {
-          const angle = -2*Math.PI*k*n/N;
-          re += real[y*N+n]*Math.cos(angle);
-          im += real[y*N+n]*Math.sin(angle);
-        }
-        reTmp[y*N+k] = re; imTmp[y*N+k] = im;
-      }
+const ChaoticHash = (() => {
+  // Arnold's cat map: (x,y) -> ((2x+y) mod 1, (x+y) mod 1) — iterated
+  function catMapIterate(x, y, iterations) {
+    let u = x, v = y;
+    for (let i = 0; i < iterations; i++) {
+      const nu = (2 * u + v) % 1;
+      const nv = (u + v) % 1;
+      u = nu < 0 ? nu + 1 : nu;
+      v = nv < 0 ? nv + 1 : nv;
     }
-    const reOut = new Float64Array(N*N), imOut = new Float64Array(N*N);
-    for (let x = 0; x < N; x++) {
-      for (let k = 0; k < N; k++) {
-        let re = 0, im = 0;
-        for (let n = 0; n < N; n++) {
-          const angle = -2*Math.PI*k*n/N;
-          const c = Math.cos(angle), s = Math.sin(angle);
-          re += reTmp[n*N+x]*c - imTmp[n*N+x]*s;
-          im += reTmp[n*N+x]*s + imTmp[n*N+x]*c;
-        }
-        reOut[k*N+x] = re; imOut[k*N+x] = im;
-      }
-    }
-    return { re: reOut, im: imOut };
+    return { x: u, y: v };
   }
 
-  function fft2Inverse(re, im) {
-    const N = SZ;
-    const reTmp = new Float64Array(N*N), imTmp = new Float64Array(N*N);
-    for (let x = 0; x < N; x++) {
-      for (let n = 0; n < N; n++) {
-        let rr = 0, ii = 0;
-        for (let k = 0; k < N; k++) {
-          const angle = 2*Math.PI*k*n/N;
-          const c = Math.cos(angle), s = Math.sin(angle);
-          rr += re[k*N+x]*c - im[k*N+x]*s;
-          ii += re[k*N+x]*s + im[k*N+x]*c;
-        }
-        reTmp[n*N+x] = rr/N; imTmp[n*N+x] = ii/N;
-      }
-    }
-    const out = new Float64Array(N*N);
-    for (let y = 0; y < N; y++) {
-      for (let n = 0; n < N; n++) {
-        let rr = 0;
-        for (let k = 0; k < N; k++) {
-          const angle = 2*Math.PI*k*n/N;
-          rr += reTmp[y*N+k]*Math.cos(angle) - imTmp[y*N+k]*Math.sin(angle);
-        }
-        out[y*N+n] = rr/N;
-      }
-    }
-    return out;
+  // Hash a token position to a focus point on the image
+  // Uses cat map + sinusoidal perturbation for extra non-linearity
+  function tokenToFocus(tokenX, tokenY, stalkIdx, layerIdx) {
+    // Seed with stalk and layer for variation
+    const seed1 = (stalkIdx * 0.618033988 + layerIdx * 0.414213562) % 1;
+    const seed2 = (stalkIdx * 0.324719 + layerIdx * 0.731688) % 1;
+
+    // Perturb input with sinusoidal mixing
+    let px = (tokenX + seed1 + 0.1 * Math.sin(tokenY * 7.3 + stalkIdx * 2.1)) % 1;
+    let py = (tokenY + seed2 + 0.1 * Math.cos(tokenX * 5.7 + layerIdx * 1.7)) % 1;
+    if (px < 0) px += 1;
+    if (py < 0) py += 1;
+
+    // Apply cat map iterations (more iterations = more chaotic)
+    const iterations = 3 + layerIdx;
+    const result = catMapIterate(px, py, iterations);
+
+    // One more sinusoidal fold for extra non-obviousness
+    const fx = (result.x + 0.05 * Math.sin(result.y * 11.3 + stalkIdx)) % 1;
+    const fy = (result.y + 0.05 * Math.sin(result.x * 9.7 + layerIdx)) % 1;
+
+    return { x: fx < 0 ? fx + 1 : fx, y: fy < 0 ? fy + 1 : fy };
   }
 
-  const F = fft2Forward(ImageModule.image);
-
-  const magnitude = new Float64Array(SZ*SZ);
-  const phase = new Float64Array(SZ*SZ);
-  for (let i = 0; i < SZ*SZ; i++) {
-    magnitude[i] = Math.sqrt(F.re[i]**2 + F.im[i]**2);
-    phase[i] = Math.atan2(F.im[i], F.re[i]);
-  }
-
-  const gradX = new Float64Array(SZ*SZ);
-  const gradY = new Float64Array(SZ*SZ);
-  for (let y = 0; y < SZ; y++) {
-    for (let x = 0; x < SZ; x++) {
-      const xp = (x+1) % SZ, xm = (x-1+SZ) % SZ;
-      const yp = (y+1) % SZ, ym = (y-1+SZ) % SZ;
-      gradX[y*SZ+x] = (magnitude[y*SZ+xp] - magnitude[y*SZ+xm]) * 0.5;
-      gradY[y*SZ+x] = (magnitude[yp*SZ+x] - magnitude[ym*SZ+x]) * 0.5;
-    }
-  }
-
-  return { F, magnitude, phase, gradX, gradY, fft2Forward, fft2Inverse };
+  return { tokenToFocus, catMapIterate };
 })();
 
 // ============================================================
-// MODULE: Stalks (swappable)
+// Stalks
 // ============================================================
 const StalkModule = (() => {
   const N_STALKS = 5;
@@ -305,241 +273,71 @@ const StalkModule = (() => {
   const COLORS = [[100,181,246],[129,199,132],[255,213,79],[255,138,101],[206,147,216]];
   const NAMES = ['S0','S1','S2','S3','S4'];
 
+  const DEFAULT_POSITIONS = [];
   const stalks = [];
   for (let s = 0; s < N_STALKS; s++) {
     const angle = s * Math.PI * 2 / N_STALKS + 0.3;
     const radius = 0.25 + (s % 2) * 0.1;
+    const pos = { x: 0.5 + Math.cos(angle) * radius, y: 0.5 + Math.sin(angle) * radius };
+    DEFAULT_POSITIONS.push({ x: pos.x, y: pos.y });
     stalks.push({
-      embedPoint: { x: 0.5 + Math.cos(angle) * radius, y: 0.5 + Math.sin(angle) * radius },
-      freqLo: s * (SZ/2) / N_STALKS,
-      freqHi: (s+1) * (SZ/2) / N_STALKS,
-      color: COLORS[s],
+      embedPoint: { x: pos.x, y: pos.y },
       phase: s * 1.4 + 0.3,
+      color: COLORS[s],
     });
-  }
-
-  const stalkFFTMagnitudes = [];
-  const stalkProjections = [];
-  const stalkMaskedRe = [];
-  const stalkMaskedIm = [];
-
-  for (let s = 0; s < N_STALKS; s++) {
-    const st = stalks[s];
-    const maskedRe = new Float64Array(SZ*SZ);
-    const maskedIm = new Float64Array(SZ*SZ);
-    const mag = new Float64Array(SZ*SZ);
-    for (let fy = 0; fy < SZ; fy++) {
-      for (let fx = 0; fx < SZ; fx++) {
-        const cfx = fx < SZ/2 ? fx : fx - SZ;
-        const cfy = fy < SZ/2 ? fy : fy - SZ;
-        const freq = Math.sqrt(cfx*cfx + cfy*cfy);
-        if (freq >= st.freqLo && freq < st.freqHi) {
-          maskedRe[fy*SZ+fx] = FFTModule.F.re[fy*SZ+fx];
-          maskedIm[fy*SZ+fx] = FFTModule.F.im[fy*SZ+fx];
-          mag[fy*SZ+fx] = Math.sqrt(FFTModule.F.re[fy*SZ+fx]**2 + FFTModule.F.im[fy*SZ+fx]**2);
-        }
-      }
-    }
-    stalkMaskedRe.push(maskedRe);
-    stalkMaskedIm.push(maskedIm);
-    stalkFFTMagnitudes.push(mag);
-    stalkProjections.push(FFTModule.fft2Inverse(maskedRe, maskedIm));
   }
 
   function resetPositions() {
     for (let s = 0; s < N_STALKS; s++) {
-      const angle = s * Math.PI * 2 / N_STALKS + 0.3;
-      const radius = 0.25 + (s % 2) * 0.1;
-      stalks[s].embedPoint = { x: 0.5 + Math.cos(angle) * radius, y: 0.5 + Math.sin(angle) * radius };
+      stalks[s].embedPoint = { x: DEFAULT_POSITIONS[s].x, y: DEFAULT_POSITIONS[s].y };
     }
   }
 
-  return { N_STALKS, COLORS, NAMES, stalks, stalkFFTMagnitudes, stalkProjections, stalkMaskedRe, stalkMaskedIm, resetPositions };
+  // Total displacement from defaults — drives sway
+  function totalDisplacement() {
+    let total = 0;
+    for (let s = 0; s < N_STALKS; s++) {
+      total += Math.hypot(
+        stalks[s].embedPoint.x - DEFAULT_POSITIONS[s].x,
+        stalks[s].embedPoint.y - DEFAULT_POSITIONS[s].y
+      );
+    }
+    return total;
+  }
+
+  return { N_STALKS, COLORS, NAMES, stalks, DEFAULT_POSITIONS, resetPositions, totalDisplacement };
 })();
 
 // ============================================================
-// MODULE: Layer-Progressive Jacobi Field (KEY CHANGE: complexity per layer)
-// ============================================================
-const MAX_LAYERS = 5;
-const LAYER_COLORS = [
-  [60, 120, 180],   // L0: cool blue — simple
-  [80, 170, 140],   // L1: teal
-  [180, 180, 80],   // L2: olive
-  [220, 140, 60],   // L3: orange
-  [200, 80, 160],   // L4: magenta — complex
-];
-
-const JacobiModule = (() => {
-  const SZ = ImageModule.SZ;
-
-  function jacobiMagnitude(distance, K) {
-    const sqrtK = Math.sqrt(Math.max(0.01, K));
-    const t = distance * Math.PI * 1.5;
-    return Math.abs(Math.sin(sqrtK * t) / sqrtK);
-  }
-
-  function getStalkWeight(stalkIdx, targetPoints, curvatureK, fieldDecay) {
-    if (targetPoints.length === 0) return 0.5;
-    const st = StalkModule.stalks[stalkIdx];
-    let totalWeight = 0;
-    for (const tp of targetPoints) {
-      const d = Math.hypot(st.embedPoint.x - tp.x, st.embedPoint.y - tp.y);
-      const J = jacobiMagnitude(d, curvatureK);
-      const decay = Math.exp(-d * d / (2 * fieldDecay * fieldDecay));
-      totalWeight += J * decay;
-    }
-    return Math.min(1, totalWeight / targetPoints.length);
-  }
-
-  // ============================================================
-  // KEY: Compute warp field FOR A LAYER, not for a stalk.
-  // layerIdx determines complexity. All stalks contribute their FFT
-  // bands up to this layer's cumulative frequency cutoff.
-  // ============================================================
-  function computeLayerWarpField(layerIdx, numLayers, targetPoints, curvatureK, fieldDecay, warpStrength, layerGrowth) {
-    // Layer progression: layer 0 gets only lowest freqs, layer N-1 gets all
-    // The warp intensity grows exponentially with layer depth
-    const layerFraction = (layerIdx + 1) / numLayers; // 0.2 .. 1.0
-    const warpScale = warpStrength * Math.pow(layerGrowth * 2 + 0.5, layerIdx); // exponential growth
-
-    // Cumulative FFT magnitude up to this layer's frequency cutoff
-    const cumulativeMag = new Float64Array(SZ * SZ);
-    const cumulativeGradX = new Float64Array(SZ * SZ);
-    const cumulativeGradY = new Float64Array(SZ * SZ);
-
-    // Each layer includes all stalk bands with freqHi <= layerFraction * maxFreq
-    // Plus partial contribution from the "current" band
-    const maxFreq = SZ / 2;
-    const layerFreqCutoff = layerFraction * maxFreq;
-
-    for (let s = 0; s < StalkModule.N_STALKS; s++) {
-      const st = StalkModule.stalks[s];
-      // How much of this stalk's band is included at this layer?
-      let inclusion = 0;
-      if (st.freqHi <= layerFreqCutoff) {
-        inclusion = 1.0; // fully included
-      } else if (st.freqLo < layerFreqCutoff) {
-        inclusion = (layerFreqCutoff - st.freqLo) / (st.freqHi - st.freqLo); // partial
-      }
-      if (inclusion <= 0) continue;
-
-      const weight = getStalkWeight(s, targetPoints, curvatureK, fieldDecay);
-      const mag = StalkModule.stalkFFTMagnitudes[s];
-
-      for (let i = 0; i < SZ * SZ; i++) {
-        cumulativeMag[i] += mag[i] * inclusion * (0.3 + weight * 0.7);
-      }
-    }
-
-    // Compute gradient of cumulative magnitude
-    let maxMag = 0;
-    for (let i = 0; i < SZ*SZ; i++) if (cumulativeMag[i] > maxMag) maxMag = cumulativeMag[i];
-    if (maxMag < 1e-10) maxMag = 1;
-
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        const xp = (x+1) % SZ, xm = (x-1+SZ) % SZ;
-        const yp = (y+1) % SZ, ym = (y-1+SZ) % SZ;
-        cumulativeGradX[y*SZ+x] = (cumulativeMag[y*SZ+xp] - cumulativeMag[y*SZ+xm]) * 0.5 / maxMag;
-        cumulativeGradY[y*SZ+x] = (cumulativeMag[yp*SZ+x] - cumulativeMag[ym*SZ+x]) * 0.5 / maxMag;
-      }
-    }
-
-    // Displacement field: Jacobi field from ALL stalks, weighted, scaled by layer depth
-    const dx = new Float64Array(SZ * SZ);
-    const dy = new Float64Array(SZ * SZ);
-
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        const nx = x / SZ, ny = y / SZ;
-
-        // Accumulate Jacobi contributions from all stalks
-        let totalJ = 0;
-        for (let s = 0; s < StalkModule.N_STALKS; s++) {
-          const st = StalkModule.stalks[s];
-          const d = Math.hypot(nx - st.embedPoint.x, ny - st.embedPoint.y);
-          const J = jacobiMagnitude(d, curvatureK);
-          const w = getStalkWeight(s, targetPoints, curvatureK, fieldDecay);
-          totalJ += J * w;
-        }
-        totalJ /= StalkModule.N_STALKS;
-
-        // Target proximity boost
-        let targetBoost = 1.0;
-        for (const tp of targetPoints) {
-          const td = Math.hypot(nx - tp.x, ny - tp.y);
-          targetBoost += Math.exp(-td*td / (2 * 0.15 * 0.15)) * 0.5;
-        }
-
-        const scale = warpScale * totalJ * targetBoost * 1.5;
-        dx[y*SZ+x] = scale * cumulativeGradX[y*SZ+x];
-        dy[y*SZ+x] = scale * cumulativeGradY[y*SZ+x];
-      }
-    }
-
-    // Compute Jacobi matrix components
-    const J00 = new Float64Array(SZ*SZ);
-    const J01 = new Float64Array(SZ*SZ);
-    const J10 = new Float64Array(SZ*SZ);
-    const J11 = new Float64Array(SZ*SZ);
-
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        const xp = Math.min(SZ-1, x+1), xm = Math.max(0, x-1);
-        const yp = Math.min(SZ-1, y+1), ym = Math.max(0, y-1);
-        const ddx_dx = (dx[y*SZ+xp] - dx[y*SZ+xm]) / (xp - xm || 1);
-        const ddx_dy = (dx[yp*SZ+x] - dx[ym*SZ+x]) / (yp - ym || 1);
-        const ddy_dx = (dy[y*SZ+xp] - dy[y*SZ+xm]) / (xp - xm || 1);
-        const ddy_dy = (dy[yp*SZ+x] - dy[ym*SZ+x]) / (yp - ym || 1);
-        J00[y*SZ+x] = 1 + ddx_dx;
-        J01[y*SZ+x] = ddx_dy;
-        J10[y*SZ+x] = ddy_dx;
-        J11[y*SZ+x] = 1 + ddy_dy;
-      }
-    }
-
-    return { dx, dy, J00, J01, J10, J11, cumulativeMag, layerFraction, warpScale };
-  }
-
-  return { jacobiMagnitude, getStalkWeight, computeLayerWarpField };
-})();
-
-// ============================================================
-// MODULE: State (swappable)
+// State
 // ============================================================
 const State = (() => {
-  let targetPoints = [];
   let selectedStalk = 0;
-  let visibleLayers = 5;
-  let curvatureK = 0.40;
-  let swayAmount = 0.20;
-  let fieldDecay = 0.35;
-  let warpStrength = 0.50;
-  let gridDensity = 14;
-  let layerGrowth = 0.50;
+  let visibleLayers = 4;
+  let curvatureK = 0.60;
+  let focusRadius = 0.25;
+  let warpStrength = 0.55;
+  let gridDensity = 16;
+  let maxPixelation = 5;
   let time = 0;
   let animating = true;
   let detailLayer = 0;
 
   return {
-    get targetPoints() { return targetPoints; },
-    set targetPoints(v) { targetPoints = v; },
     get selectedStalk() { return selectedStalk; },
     set selectedStalk(v) { selectedStalk = v; },
     get visibleLayers() { return visibleLayers; },
     set visibleLayers(v) { visibleLayers = v; },
     get curvatureK() { return curvatureK; },
     set curvatureK(v) { curvatureK = v; },
-    get swayAmount() { return swayAmount; },
-    set swayAmount(v) { swayAmount = v; },
-    get fieldDecay() { return fieldDecay; },
-    set fieldDecay(v) { fieldDecay = v; },
+    get focusRadius() { return focusRadius; },
+    set focusRadius(v) { focusRadius = v; },
     get warpStrength() { return warpStrength; },
     set warpStrength(v) { warpStrength = v; },
     get gridDensity() { return gridDensity; },
     set gridDensity(v) { gridDensity = v; },
-    get layerGrowth() { return layerGrowth; },
-    set layerGrowth(v) { layerGrowth = v; },
+    get maxPixelation() { return maxPixelation; },
+    set maxPixelation(v) { maxPixelation = v; },
     get time() { return time; },
     set time(v) { time = v; },
     get animating() { return animating; },
@@ -550,7 +348,164 @@ const State = (() => {
 })();
 
 // ============================================================
-// MODULE: Controls (swappable)
+// Focus Map — computes per-pixel focus (sharpness) from all tokens
+// ============================================================
+const FocusMap = (() => {
+  const SZ = ImageModule.SZ;
+
+  // Returns a SZ×SZ array of focus values [0..1] where 1 = sharp, 0 = maximally pixelated
+  function computeFocusMap() {
+    const focus = new Float64Array(SZ * SZ);
+    const nLayers = State.visibleLayers;
+
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const nx = x / SZ, ny = y / SZ;
+        let maxFocus = 0;
+
+        for (let s = 0; s < StalkModule.N_STALKS; s++) {
+          const st = StalkModule.stalks[s];
+          for (let l = 0; l < nLayers; l++) {
+            const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+            const d = Math.hypot(nx - fp.x, ny - fp.y);
+            // Focus falls off with distance from focus point
+            const layerWeight = (l + 1) / nLayers; // deeper layers contribute more
+            const focusVal = Math.exp(-d * d / (2 * State.focusRadius * State.focusRadius)) * layerWeight;
+            maxFocus = Math.max(maxFocus, focusVal);
+          }
+        }
+        focus[y * SZ + x] = Math.min(1, maxFocus);
+      }
+    }
+    return focus;
+  }
+
+  // Get all focus points for visualization
+  function getAllFocusPoints() {
+    const points = [];
+    for (let s = 0; s < StalkModule.N_STALKS; s++) {
+      const st = StalkModule.stalks[s];
+      for (let l = 0; l < State.visibleLayers; l++) {
+        const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+        points.push({ x: fp.x, y: fp.y, stalk: s, layer: l });
+      }
+    }
+    return points;
+  }
+
+  return { computeFocusMap, getAllFocusPoints };
+})();
+
+// ============================================================
+// Layer Warp Fields
+// ============================================================
+const MAX_LAYERS = 5;
+const LAYER_COLORS = [
+  [60, 120, 180],
+  [80, 170, 140],
+  [180, 180, 80],
+  [220, 140, 60],
+  [200, 80, 160],
+];
+
+const WarpModule = (() => {
+  const SZ = ImageModule.SZ;
+
+  function computeLayerWarpField(layerIdx) {
+    const nLayers = State.visibleLayers;
+    const layerFraction = (layerIdx + 1) / nLayers;
+    const warpScale = State.warpStrength * Math.pow(1.8, layerIdx) * 0.3;
+
+    const dx = new Float64Array(SZ * SZ);
+    const dy = new Float64Array(SZ * SZ);
+
+    // Each stalk's focus point creates a warp attractor
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const nx = x / SZ, ny = y / SZ;
+        let totalDx = 0, totalDy = 0;
+
+        for (let s = 0; s < StalkModule.N_STALKS; s++) {
+          const st = StalkModule.stalks[s];
+          const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, layerIdx);
+
+          const ddx = fp.x - nx, ddy = fp.y - ny;
+          const dist = Math.sqrt(ddx * ddx + ddy * ddy) + 0.001;
+
+          // Jacobi-like oscillatory field
+          const sqrtK = Math.sqrt(Math.max(0.01, State.curvatureK));
+          const J = Math.sin(sqrtK * dist * Math.PI * 3) / (sqrtK * dist * 5 + 1);
+
+          // Attraction toward focus point, modulated by Jacobi field
+          totalDx += ddx * J * warpScale;
+          totalDy += ddy * J * warpScale;
+
+          // Add rotational component for visual interest
+          const rotAngle = dist * sqrtK * 2 + s * 1.2;
+          totalDx += Math.cos(rotAngle) * J * warpScale * 0.3;
+          totalDy += Math.sin(rotAngle) * J * warpScale * 0.3;
+        }
+
+        dx[y * SZ + x] = totalDx / StalkModule.N_STALKS;
+        dy[y * SZ + x] = totalDy / StalkModule.N_STALKS;
+      }
+    }
+
+    // Compute Jacobi matrix
+    const J00 = new Float64Array(SZ*SZ);
+    const J01 = new Float64Array(SZ*SZ);
+    const J10 = new Float64Array(SZ*SZ);
+    const J11 = new Float64Array(SZ*SZ);
+
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const xp = Math.min(SZ-1, x+1), xm = Math.max(0, x-1);
+        const yp = Math.min(SZ-1, y+1), ym = Math.max(0, y-1);
+        const dxRange = xp - xm || 1;
+        const dyRange = yp - ym || 1;
+        J00[y*SZ+x] = 1 + (dx[y*SZ+xp] - dx[y*SZ+xm]) / dxRange;
+        J01[y*SZ+x] = (dx[yp*SZ+x] - dx[ym*SZ+x]) / dyRange;
+        J10[y*SZ+x] = (dy[y*SZ+xp] - dy[y*SZ+xm]) / dxRange;
+        J11[y*SZ+x] = 1 + (dy[yp*SZ+x] - dy[ym*SZ+x]) / dyRange;
+      }
+    }
+
+    return { dx, dy, J00, J01, J10, J11, warpScale, layerFraction };
+  }
+
+  let cachedFields = [];
+  let cacheKey = '';
+
+  function invalidateCache() { cacheKey = ''; }
+
+  function getLayerField(layerIdx) {
+    const key = `${layerIdx}-${State.visibleLayers}-${State.curvatureK}-${State.focusRadius}-${State.warpStrength}-${StalkModule.stalks.map(s=>s.embedPoint.x.toFixed(4)+s.embedPoint.y.toFixed(4)).join(',')}`;
+    if (cacheKey !== key) {
+      cachedFields = [];
+      for (let l = 0; l < State.visibleLayers; l++) {
+        cachedFields[l] = computeLayerWarpField(l);
+      }
+      cacheKey = key;
+    }
+    return cachedFields[layerIdx];
+  }
+
+  function sampleBilinear(field, nx, ny) {
+    const fx = Math.max(0, Math.min(SZ - 1.001, nx * (SZ - 1)));
+    const fy = Math.max(0, Math.min(SZ - 1.001, ny * (SZ - 1)));
+    const ix = Math.floor(fx), iy = Math.floor(fy);
+    const ix1 = Math.min(SZ-1, ix+1), iy1 = Math.min(SZ-1, iy+1);
+    const tx = fx - ix, ty = fy - iy;
+    const v00 = field[iy*SZ+ix], v10 = field[iy*SZ+ix1];
+    const v01 = field[iy1*SZ+ix], v11 = field[iy1*SZ+ix1];
+    return v00*(1-tx)*(1-ty) + v10*tx*(1-ty) + v01*(1-tx)*ty + v11*tx*ty;
+  }
+
+  return { computeLayerWarpField, getLayerField, sampleBilinear, invalidateCache };
+})();
+
+// ============================================================
+// Controls
 // ============================================================
 const Ctrl = (() => {
   function play() { State.animating = true; document.getElementById('btnPlay').textContent = '▶ Playing...'; }
@@ -558,62 +513,37 @@ const Ctrl = (() => {
   function reset() {
     pause();
     State.time = 0;
-    State.targetPoints = [];
     State.selectedStalk = 0;
-    State.visibleLayers = 5;
-    State.curvatureK = 0.40;
-    State.swayAmount = 0.20;
-    State.fieldDecay = 0.35;
-    State.warpStrength = 0.50;
-    State.gridDensity = 14;
-    State.layerGrowth = 0.50;
+    State.visibleLayers = 4;
+    State.curvatureK = 0.60;
+    State.focusRadius = 0.25;
+    State.warpStrength = 0.55;
+    State.gridDensity = 16;
+    State.maxPixelation = 5;
     State.detailLayer = 0;
     StalkModule.resetPositions();
-    document.getElementById('slLayers').value = 5; document.getElementById('vLayers').textContent = '5';
-    document.getElementById('slCurv').value = 40; document.getElementById('vCurv').textContent = '0.40';
-    document.getElementById('slSway').value = 20; document.getElementById('vSway').textContent = '20';
-    document.getElementById('slDecay').value = 35; document.getElementById('vDecay').textContent = '0.35';
-    document.getElementById('slWarp').value = 50; document.getElementById('vWarp').textContent = '0.50';
-    document.getElementById('slGrid').value = 14; document.getElementById('vGrid').textContent = '14';
-    document.getElementById('slGrowth').value = 50; document.getElementById('vGrowth').textContent = '0.50';
+    WarpModule.invalidateCache();
+    document.getElementById('slLayers').value = 4; document.getElementById('vLayers').textContent = '4';
+    document.getElementById('slCurv').value = 60; document.getElementById('vCurv').textContent = '0.60';
+    document.getElementById('slFocus').value = 25; document.getElementById('vFocus').textContent = '0.25';
+    document.getElementById('slWarp').value = 55; document.getElementById('vWarp').textContent = '0.55';
+    document.getElementById('slGrid').value = 16; document.getElementById('vGrid').textContent = '16';
+    document.getElementById('slPixel').value = 5; document.getElementById('vPixel').textContent = '5';
     buildUI();
     updateInfo();
   }
-  function clearTargets() { State.targetPoints = []; updateInfo(); }
-  function setLayers(v) { State.visibleLayers = v; document.getElementById('vLayers').textContent = v; buildUI(); }
-  function setCurvature(v) { State.curvatureK = v / 100; document.getElementById('vCurv').textContent = (v/100).toFixed(2); updateInfo(); }
-  function setSway(v) { State.swayAmount = v / 100; document.getElementById('vSway').textContent = v; }
-  function setDecay(v) { State.fieldDecay = v / 100; document.getElementById('vDecay').textContent = (v/100).toFixed(2); updateInfo(); }
-  function setWarp(v) { State.warpStrength = v / 100; document.getElementById('vWarp').textContent = (v/100).toFixed(2); }
+  function setLayers(v) { State.visibleLayers = v; document.getElementById('vLayers').textContent = v; WarpModule.invalidateCache(); buildUI(); }
+  function setCurvature(v) { State.curvatureK = v / 100; document.getElementById('vCurv').textContent = (v/100).toFixed(2); WarpModule.invalidateCache(); updateInfo(); }
+  function setFocusRadius(v) { State.focusRadius = v / 100; document.getElementById('vFocus').textContent = (v/100).toFixed(2); }
+  function setWarp(v) { State.warpStrength = v / 100; document.getElementById('vWarp').textContent = (v/100).toFixed(2); WarpModule.invalidateCache(); }
   function setGridDensity(v) { State.gridDensity = v; document.getElementById('vGrid').textContent = v; }
-  function setGrowth(v) { State.layerGrowth = v / 100; document.getElementById('vGrowth').textContent = (v/100).toFixed(2); }
+  function setPixelation(v) { State.maxPixelation = v; document.getElementById('vPixel').textContent = v; }
 
-  return { play, pause, reset, clearTargets, setLayers, setCurvature, setSway, setDecay, setWarp, setGridDensity, setGrowth };
+  return { play, pause, reset, setLayers, setCurvature, setFocusRadius, setWarp, setGridDensity, setPixelation };
 })();
 
 // ============================================================
-// MODULE: Cumulative Image (swappable)
-// ============================================================
-const ImageRecon = (() => {
-  const SZ = ImageModule.SZ;
-
-  function getCumulativeImage() {
-    const img = new Float64Array(SZ * SZ);
-    for (let s = 0; s < StalkModule.N_STALKS; s++) {
-      const proj = StalkModule.stalkProjections[s];
-      const weight = JacobiModule.getStalkWeight(s, State.targetPoints, State.curvatureK, State.fieldDecay);
-      for (let i = 0; i < SZ * SZ; i++) {
-        img[i] += proj[i] * (0.2 + weight * 0.8);
-      }
-    }
-    return img;
-  }
-
-  return { getCumulativeImage };
-})();
-
-// ============================================================
-// CANVAS SETUP
+// Canvas Setup
 // ============================================================
 const cvEmbed = document.getElementById('cvEmbed');
 const ctxEmbed = setupHiDPI(cvEmbed, 290, 290);
@@ -641,248 +571,7 @@ let mainDim = resizeMain();
 window.addEventListener('resize', () => { mainDim = resizeMain(); });
 
 // ============================================================
-// MODULE: Layer-Warped Grid Renderer (KEY CHANGE: layer-based, not stalk-based)
-// ============================================================
-const WarpedGridRenderer = (() => {
-  const SZ = ImageModule.SZ;
-
-  // Cache warp fields per layer to avoid recomputation within a frame
-  let cachedFields = [];
-  let cacheKey = '';
-
-  function invalidateCache() { cacheKey = ''; }
-
-  function getLayerField(layerIdx) {
-    const key = `${layerIdx}-${State.visibleLayers}-${State.curvatureK}-${State.fieldDecay}-${State.warpStrength}-${State.layerGrowth}-${State.targetPoints.length}-${StalkModule.stalks.map(s=>s.embedPoint.x.toFixed(3)+s.embedPoint.y.toFixed(3)).join(',')}`;
-    if (cacheKey !== key) {
-      cachedFields = [];
-      for (let l = 0; l < State.visibleLayers; l++) {
-        cachedFields[l] = JacobiModule.computeLayerWarpField(
-          l, State.visibleLayers, State.targetPoints,
-          State.curvatureK, State.fieldDecay, State.warpStrength, State.layerGrowth
-        );
-      }
-      cacheKey = key;
-    }
-    return cachedFields[layerIdx];
-  }
-
-  function sampleBilinear(field, nx, ny) {
-    const fx = nx * (SZ - 1), fy = ny * (SZ - 1);
-    const ix = Math.floor(fx), iy = Math.floor(fy);
-    const ix1 = Math.min(SZ-1, ix+1), iy1 = Math.min(SZ-1, iy+1);
-    const tx = fx - ix, ty = fy - iy;
-    const v00 = field[iy*SZ+ix], v10 = field[iy*SZ+ix1];
-    const v01 = field[iy1*SZ+ix], v11 = field[iy1*SZ+ix1];
-    return v00*(1-tx)*(1-ty) + v10*tx*(1-ty) + v01*(1-tx)*ty + v11*tx*ty;
-  }
-
-  // Draw the warped grid for a LAYER (shared by all stalks)
-  // stalkIdx is used only for coloring the stalk's FFT contribution within the shared space
-  function drawLayerWarpedGrid(ctx, ox, oy, size, layerIdx, stalkIdx, gridN, alpha) {
-    if (gridN < 2) gridN = 2;
-    const field = getLayerField(layerIdx);
-    if (!field) return;
-    const { dx, dy, J00, J01, J10, J11, cumulativeMag } = field;
-
-    // Use stalk-specific FFT magnitude for cell coloring
-    const stalkMag = StalkModule.stalkFFTMagnitudes[stalkIdx];
-    const sc = StalkModule.COLORS[stalkIdx];
-    const lc = LAYER_COLORS[Math.min(layerIdx, LAYER_COLORS.length - 1)];
-
-    let maxCumMag = 0, maxStalkMag = 0;
-    for (let i = 0; i < SZ*SZ; i++) {
-      if (cumulativeMag[i] > maxCumMag) maxCumMag = cumulativeMag[i];
-      if (stalkMag[i] > maxStalkMag) maxStalkMag = stalkMag[i];
-    }
-    if (maxCumMag < 1e-10) maxCumMag = 1;
-    if (maxStalkMag < 1e-10) maxStalkMag = 1;
-
-    // Draw filled cells
-    for (let gy = 0; gy < gridN; gy++) {
-      for (let gx = 0; gx < gridN; gx++) {
-        const corners = [
-          [gx / gridN, gy / gridN],
-          [(gx+1) / gridN, gy / gridN],
-          [(gx+1) / gridN, (gy+1) / gridN],
-          [gx / gridN, (gy+1) / gridN],
-        ];
-
-        const warped = corners.map(([nx, ny]) => {
-          const ddx = sampleBilinear(dx, nx, ny);
-          const ddy = sampleBilinear(dy, nx, ny);
-          return [ox + nx * size + ddx * size, oy + ny * size + ddy * size];
-        });
-
-        // Cell center
-        const cnx = (gx + 0.5) / gridN, cny = (gy + 0.5) / gridN;
-        const stalkVal = sampleBilinear(stalkMag, cnx, cny) / maxStalkMag;
-        const cumVal = sampleBilinear(cumulativeMag, cnx, cny) / maxCumMag;
-
-        // Jacobi determinant for distortion coloring
-        const det = sampleBilinear(J00, cnx, cny) * sampleBilinear(J11, cnx, cny)
-                   - sampleBilinear(J01, cnx, cny) * sampleBilinear(J10, cnx, cny);
-        const distortion = Math.abs(det - 1);
-
-        // Color: blend stalk color (FFT) with layer color (space complexity)
-        const layerBlend = layerIdx / Math.max(1, State.visibleLayers - 1); // 0..1
-        const brightness = stalkVal * 0.6 + cumVal * 0.4;
-        const r = Math.min(255, Math.floor(
-          sc[0] * brightness * (1 - layerBlend * 0.4) +
-          lc[0] * brightness * layerBlend * 0.4 +
-          distortion * 80
-        ));
-        const g = Math.min(255, Math.floor(
-          sc[1] * brightness * (1 - layerBlend * 0.4) +
-          lc[1] * brightness * layerBlend * 0.4 +
-          distortion * 30
-        ));
-        const b = Math.min(255, Math.floor(
-          sc[2] * brightness * (1 - layerBlend * 0.4) +
-          lc[2] * brightness * layerBlend * 0.4 +
-          distortion * 60
-        ));
-        const cellAlpha = (0.06 + brightness * 0.7) * alpha;
-
-        ctx.beginPath();
-        ctx.moveTo(warped[0][0], warped[0][1]);
-        ctx.lineTo(warped[1][0], warped[1][1]);
-        ctx.lineTo(warped[2][0], warped[2][1]);
-        ctx.lineTo(warped[3][0], warped[3][1]);
-        ctx.closePath();
-        ctx.fillStyle = `rgba(${r},${g},${b},${cellAlpha.toFixed(3)})`;
-        ctx.fill();
-      }
-    }
-
-    // Draw warped grid lines — colored by LAYER (shared space)
-    ctx.lineWidth = 0.6;
-    const lineAlpha = alpha * 0.35;
-    const lr = Math.floor(lc[0] * 0.5 + sc[0] * 0.5);
-    const lg = Math.floor(lc[1] * 0.5 + sc[1] * 0.5);
-    const lb = Math.floor(lc[2] * 0.5 + sc[2] * 0.5);
-
-    // Horizontal
-    for (let gy = 0; gy <= gridN; gy++) {
-      ctx.beginPath();
-      const steps = gridN * 2;
-      for (let gx = 0; gx <= steps; gx++) {
-        const nx = gx / steps, ny = gy / gridN;
-        const ddx = sampleBilinear(dx, nx, Math.min(0.999, ny));
-        const ddy = sampleBilinear(dy, nx, Math.min(0.999, ny));
-        const px = ox + nx * size + ddx * size;
-        const py = oy + ny * size + ddy * size;
-        if (gx === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = `rgba(${lr},${lg},${lb},${lineAlpha.toFixed(3)})`;
-      ctx.stroke();
-    }
-    // Vertical
-    for (let gx = 0; gx <= gridN; gx++) {
-      ctx.beginPath();
-      const steps = gridN * 2;
-      for (let gy = 0; gy <= steps; gy++) {
-        const nx = gx / gridN, ny = gy / steps;
-        const ddx = sampleBilinear(dx, Math.min(0.999, nx), ny);
-        const ddy = sampleBilinear(dy, Math.min(0.999, nx), ny);
-        const px = ox + nx * size + ddx * size;
-        const py = oy + ny * size + ddy * size;
-        if (gy === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = `rgba(${lr},${lg},${lb},${lineAlpha.toFixed(3)})`;
-      ctx.stroke();
-    }
-  }
-
-  // Draw a layer's warped grid WITHOUT stalk coloring (pure layer space view)
-  function drawPureLayerGrid(ctx, ox, oy, size, layerIdx, gridN, alpha) {
-    if (gridN < 2) gridN = 2;
-    const field = getLayerField(layerIdx);
-    if (!field) return;
-    const { dx, dy, J00, J01, J10, J11, cumulativeMag } = field;
-    const lc = LAYER_COLORS[Math.min(layerIdx, LAYER_COLORS.length - 1)];
-
-    let maxMag = 0;
-    for (let i = 0; i < SZ*SZ; i++) if (cumulativeMag[i] > maxMag) maxMag = cumulativeMag[i];
-    if (maxMag < 1e-10) maxMag = 1;
-
-    // Filled cells
-    for (let gy = 0; gy < gridN; gy++) {
-      for (let gx = 0; gx < gridN; gx++) {
-        const corners = [
-          [gx / gridN, gy / gridN],
-          [(gx+1) / gridN, gy / gridN],
-          [(gx+1) / gridN, (gy+1) / gridN],
-          [gx / gridN, (gy+1) / gridN],
-        ];
-        const warped = corners.map(([nx, ny]) => {
-          const ddx = sampleBilinear(dx, nx, ny);
-          const ddy = sampleBilinear(dy, nx, ny);
-          return [ox + nx * size + ddx * size, oy + ny * size + ddy * size];
-        });
-
-        const cnx = (gx + 0.5) / gridN, cny = (gy + 0.5) / gridN;
-        const magVal = sampleBilinear(cumulativeMag, cnx, cny) / maxMag;
-        const det = sampleBilinear(J00, cnx, cny) * sampleBilinear(J11, cnx, cny)
-                   - sampleBilinear(J01, cnx, cny) * sampleBilinear(J10, cnx, cny);
-        const distortion = Math.abs(det - 1);
-
-        const r = Math.min(255, Math.floor(lc[0] * magVal * 0.9 + distortion * 100));
-        const g = Math.min(255, Math.floor(lc[1] * magVal * 0.9 + distortion * 40));
-        const b = Math.min(255, Math.floor(lc[2] * magVal * 0.9 + distortion * 70));
-        const cellAlpha = (0.05 + magVal * 0.75) * alpha;
-
-        ctx.beginPath();
-        ctx.moveTo(warped[0][0], warped[0][1]);
-        ctx.lineTo(warped[1][0], warped[1][1]);
-        ctx.lineTo(warped[2][0], warped[2][1]);
-        ctx.lineTo(warped[3][0], warped[3][1]);
-        ctx.closePath();
-        ctx.fillStyle = `rgba(${r},${g},${b},${cellAlpha.toFixed(3)})`;
-        ctx.fill();
-      }
-    }
-
-    // Grid lines
-    ctx.lineWidth = 0.7;
-    const lineAlpha = alpha * 0.4;
-    for (let gy = 0; gy <= gridN; gy++) {
-      ctx.beginPath();
-      const steps = gridN * 2;
-      for (let gx = 0; gx <= steps; gx++) {
-        const nx = gx / steps, ny = Math.min(0.999, gy / gridN);
-        const ddx = sampleBilinear(dx, nx, ny);
-        const ddy = sampleBilinear(dy, nx, ny);
-        const px = ox + nx * size + ddx * size;
-        const py = oy + ny * size + ddy * size;
-        if (gx === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${lineAlpha.toFixed(3)})`;
-      ctx.stroke();
-    }
-    for (let gx = 0; gx <= gridN; gx++) {
-      ctx.beginPath();
-      const steps = gridN * 2;
-      for (let gy = 0; gy <= steps; gy++) {
-        const nx = Math.min(0.999, gx / gridN), ny = gy / steps;
-        const ddx = sampleBilinear(dx, nx, ny);
-        const ddy = sampleBilinear(dy, nx, ny);
-        const px = ox + nx * size + ddx * size;
-        const py = oy + ny * size + ddy * size;
-        if (gy === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${lineAlpha.toFixed(3)})`;
-      ctx.stroke();
-    }
-  }
-
-  return { drawLayerWarpedGrid, drawPureLayerGrid, getLayerField, sampleBilinear, invalidateCache };
-})();
-
-// ============================================================
-// MODULE: Render Embedding Space (swappable)
+// Render Embedding Space
 // ============================================================
 const RenderEmbed = (() => {
   function render() {
@@ -890,25 +579,28 @@ const RenderEmbed = (() => {
     ctxEmbed.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctxEmbed.clearRect(0, 0, w, h);
 
+    // Background field — show chaotic hash influence
     const imgData = ctxEmbed.createImageData(w, h);
     for (let py = 0; py < h; py++) {
       for (let px = 0; px < w; px++) {
         const nx = px / w, ny = py / h;
         let r = 8, g = 10, b = 24;
+
+        // Show where this embedding point would focus on the image (faint)
         for (let s = 0; s < StalkModule.N_STALKS; s++) {
-          const st = StalkModule.stalks[s];
-          const d = Math.hypot(nx - st.embedPoint.x, ny - st.embedPoint.y);
-          const J = JacobiModule.jacobiMagnitude(d, State.curvatureK) * 0.15;
           const sc = StalkModule.COLORS[s];
-          r += sc[0] * J * 0.08; g += sc[1] * J * 0.08; b += sc[2] * J * 0.08;
+          const d = Math.hypot(nx - StalkModule.stalks[s].embedPoint.x, ny - StalkModule.stalks[s].embedPoint.y);
+          const glow = Math.exp(-d * d / 0.02) * 0.15;
+          r += sc[0] * glow; g += sc[1] * glow; b += sc[2] * glow;
         }
-        for (const tp of State.targetPoints) {
-          const d = Math.hypot(nx - tp.x, ny - tp.y);
-          if (d < 0.06) {
-            const intensity = (1 - d / 0.06) * 0.4;
-            r += 231 * intensity; g += 76 * intensity; b += 60 * intensity;
-          }
-        }
+
+        // Show chaotic hash field as subtle texture
+        const hashPt = ChaoticHash.tokenToFocus(nx, ny, 0, 0);
+        const hashBright = (Math.sin(hashPt.x * 20) * Math.cos(hashPt.y * 20)) * 0.03;
+        r += 60 * Math.abs(hashBright);
+        g += 40 * Math.abs(hashBright);
+        b += 80 * Math.abs(hashBright);
+
         const idx = (py * w + px) * 4;
         imgData.data[idx] = Math.min(255, Math.floor(r));
         imgData.data[idx+1] = Math.min(255, Math.floor(g));
@@ -918,6 +610,7 @@ const RenderEmbed = (() => {
     }
     ctxEmbed.putImageData(imgData, 0, 0);
 
+    // Grid
     ctxEmbed.strokeStyle = 'rgba(162,155,254,0.06)';
     ctxEmbed.lineWidth = 0.5;
     for (let i = 0; i <= 8; i++) {
@@ -926,41 +619,38 @@ const RenderEmbed = (() => {
       ctxEmbed.beginPath(); ctxEmbed.moveTo(0, t*h); ctxEmbed.lineTo(w, t*h); ctxEmbed.stroke();
     }
 
+    // Draw focus point connections (faint lines from token to its focus points)
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
       const isSelected = s === State.selectedStalk;
 
-      for (const tp of State.targetPoints) {
-        const d = Math.hypot(st.embedPoint.x - tp.x, st.embedPoint.y - tp.y);
-        const J = JacobiModule.jacobiMagnitude(d, State.curvatureK);
-        const alpha = isSelected ? 0.5 : 0.15;
-        ctxEmbed.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(alpha * J).toFixed(3)})`;
-        ctxEmbed.lineWidth = isSelected ? 1.5 : 0.7;
-        ctxEmbed.setLineDash([3, 4]);
-        ctxEmbed.beginPath();
-        ctxEmbed.moveTo(st.embedPoint.x * w, st.embedPoint.y * h);
-        const mx = (st.embedPoint.x + tp.x) / 2;
-        const my = (st.embedPoint.y + tp.y) / 2;
-        const cpx = -(tp.y - st.embedPoint.y) * 0.12;
-        const cpy = (tp.x - st.embedPoint.x) * 0.12;
-        ctxEmbed.quadraticCurveTo((mx + cpx) * w, (my + cpy) * h, tp.x * w, tp.y * h);
-        ctxEmbed.stroke();
-        ctxEmbed.setLineDash([]);
-      }
-
       if (isSelected) {
-        for (let ring = 1; ring <= 4; ring++) {
-          const ringR = ring * 0.1;
-          const J = JacobiModule.jacobiMagnitude(ringR, State.curvatureK);
-          ctxEmbed.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(J * 0.25).toFixed(3)})`;
-          ctxEmbed.lineWidth = J * 1.5 + 0.3;
+        for (let l = 0; l < State.visibleLayers; l++) {
+          const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+          const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
+          ctxEmbed.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.25)`;
+          ctxEmbed.lineWidth = 1;
+          ctxEmbed.setLineDash([2, 3]);
           ctxEmbed.beginPath();
-          ctxEmbed.arc(st.embedPoint.x * w, st.embedPoint.y * h, ringR * w, 0, Math.PI * 2);
+          ctxEmbed.moveTo(st.embedPoint.x * w, st.embedPoint.y * h);
+          ctxEmbed.lineTo(fp.x * w, fp.y * h);
           ctxEmbed.stroke();
+          ctxEmbed.setLineDash([]);
+
+          // Focus point marker
+          ctxEmbed.beginPath();
+          ctxEmbed.arc(fp.x * w, fp.y * h, 3, 0, Math.PI * 2);
+          ctxEmbed.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.6)`;
+          ctxEmbed.fill();
+          ctxEmbed.font = '6px monospace';
+          ctxEmbed.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.5)`;
+          ctxEmbed.textAlign = 'center';
+          ctxEmbed.fillText(`f${l}`, fp.x * w, fp.y * h - 5);
         }
       }
 
+      // Stalk dot
       const sz = isSelected ? 8 : 5;
       ctxEmbed.beginPath();
       ctxEmbed.arc(st.embedPoint.x * w, st.embedPoint.y * h, sz, 0, Math.PI * 2);
@@ -974,48 +664,130 @@ const RenderEmbed = (() => {
       ctxEmbed.fill();
       if (isSelected) { ctxEmbed.strokeStyle = '#fbbf24'; ctxEmbed.lineWidth = 2; ctxEmbed.stroke(); }
 
+      // Default position ghost
+      const dp = StalkModule.DEFAULT_POSITIONS[s];
+      const displacement = Math.hypot(st.embedPoint.x - dp.x, st.embedPoint.y - dp.y);
+      if (displacement > 0.01) {
+        ctxEmbed.beginPath();
+        ctxEmbed.arc(dp.x * w, dp.y * h, 3, 0, Math.PI * 2);
+        ctxEmbed.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.2)`;
+        ctxEmbed.lineWidth = 1;
+        ctxEmbed.setLineDash([1, 2]);
+        ctxEmbed.stroke();
+        ctxEmbed.setLineDash([]);
+      }
+
       ctxEmbed.font = `${isSelected ? 'bold ' : ''}8px monospace`;
       ctxEmbed.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
       ctxEmbed.textAlign = 'center';
       ctxEmbed.fillText(StalkModule.NAMES[s], st.embedPoint.x * w, st.embedPoint.y * h - sz - 3);
-
-      const weight = JacobiModule.getStalkWeight(s, State.targetPoints, State.curvatureK, State.fieldDecay);
-      ctxEmbed.font = '7px monospace';
-      ctxEmbed.fillStyle = `rgba(255,220,100,${isSelected ? 0.8 : 0.4})`;
-      ctxEmbed.fillText(`w=${weight.toFixed(2)}`, st.embedPoint.x * w, st.embedPoint.y * h + sz + 9);
     }
 
-    // Target points
-    for (let i = 0; i < State.targetPoints.length; i++) {
-      const tp = State.targetPoints[i];
-      ctxEmbed.beginPath();
-      ctxEmbed.arc(tp.x * w, tp.y * h, 5, 0, Math.PI * 2);
-      ctxEmbed.fillStyle = 'rgba(231,76,60,0.8)';
-      ctxEmbed.fill();
-      ctxEmbed.strokeStyle = 'rgba(255,255,255,0.5)';
-      ctxEmbed.lineWidth = 1;
-      ctxEmbed.stroke();
-      ctxEmbed.font = '7px monospace';
-      ctxEmbed.fillStyle = 'rgba(231,76,60,0.9)';
-      ctxEmbed.textAlign = 'center';
-      ctxEmbed.fillText(`T${i}`, tp.x * w, tp.y * h - 8);
-    }
+    // Total displacement indicator
+    const totalDisp = StalkModule.totalDisplacement();
+    ctxEmbed.font = '7px monospace';
+    ctxEmbed.fillStyle = 'rgba(255,220,100,0.6)';
+    ctxEmbed.textAlign = 'left';
+    ctxEmbed.fillText(`Σ displacement: ${totalDisp.toFixed(3)} → sway: ${(totalDisp * 15).toFixed(1)}°`, 4, h - 4);
 
     ctxEmbed.font = 'bold 9px monospace';
     ctxEmbed.fillStyle = 'rgba(162,155,254,0.6)';
     ctxEmbed.textAlign = 'center';
-    ctxEmbed.fillText('Layer -1: Embedding Manifold', w / 2, 12);
-    ctxEmbed.font = '7px monospace';
-    ctxEmbed.fillStyle = 'rgba(0,206,201,0.5)';
-    ctxEmbed.textAlign = 'left';
-    ctxEmbed.fillText(`K=${State.curvatureK.toFixed(2)}`, 4, h - 4);
+    ctxEmbed.fillText('Embedding Space — Chaotic Lens', w / 2, 12);
   }
 
   return { render };
 })();
 
 // ============================================================
-// MODULE: Render Main Kelp Forest (KEY CHANGE: layer-based warping)
+// Render Focused Image (right panel)
+// ============================================================
+const RenderTarget = (() => {
+  const SZ = ImageModule.SZ;
+
+  function render() {
+    const w = 290, h = 290;
+    ctxTarget.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctxTarget.clearRect(0, 0, w, h);
+    ctxTarget.fillStyle = '#0d1220';
+    ctxTarget.fillRect(0, 0, w, h);
+
+    const focusMap = FocusMap.computeFocusMap();
+    const image = ImageModule.image;
+    const maxPix = State.maxPixelation;
+
+    const imgMargin = 12;
+    const imgSize = Math.min(w, h) - imgMargin * 2;
+    const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
+
+    // Render image with variable pixelation based on focus
+    // Strategy: for each output pixel, determine the focus level,
+    // then sample from a block of appropriate size
+    const outRes = imgSize;
+    for (let py = 0; py < outRes; py++) {
+      for (let px = 0; px < outRes; px++) {
+        const nx = px / outRes, ny = py / outRes;
+        const ix = Math.floor(nx * SZ), iy = Math.floor(ny * SZ);
+        const focusIdx = Math.min(SZ-1, iy) * SZ + Math.min(SZ-1, ix);
+        const focus = focusMap[focusIdx];
+
+        // Pixelation: low focus = large blocks, high focus = pixel-perfect
+        const blockSize = Math.max(1, Math.round((1 - focus) * maxPix));
+
+        // Snap to block grid
+        const bx = Math.floor(px / blockSize) * blockSize;
+        const by = Math.floor(py / blockSize) * blockSize;
+        const bnx = (bx + blockSize/2) / outRes;
+        const bny = (by + blockSize/2) / outRes;
+        const bix = Math.min(SZ-1, Math.floor(bnx * SZ));
+        const biy = Math.min(SZ-1, Math.floor(bny * SZ));
+
+        const v = image[biy * SZ + bix];
+        const b = Math.max(0, Math.min(1, v));
+
+        // Color: warm where focused, cool where pixelated
+        const focusColor = focus;
+        const r = Math.floor(30 + b * 200 + focusColor * 25);
+        const g = Math.floor(25 + b * 180 + focusColor * 15);
+        const bl = Math.floor(15 + b * 100 - focusColor * 10 + (1-focusColor) * 30);
+
+        ctxTarget.fillStyle = `rgb(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,bl)})`;
+        ctxTarget.fillRect(ox + px, oy + py, 1.2, 1.2);
+      }
+    }
+
+    // Overlay focus points
+    const focusPoints = FocusMap.getAllFocusPoints();
+    for (const fp of focusPoints) {
+      const fpX = ox + fp.x * imgSize;
+      const fpY = oy + fp.y * imgSize;
+      const sc = StalkModule.COLORS[fp.stalk];
+      const lc = LAYER_COLORS[Math.min(fp.layer, LAYER_COLORS.length - 1)];
+
+      // Glow
+      const grd = ctxTarget.createRadialGradient(fpX, fpY, 0, fpX, fpY, State.focusRadius * imgSize * 0.5);
+      grd.addColorStop(0, `rgba(${sc[0]},${sc[1]},${sc[2]},0.15)`);
+      grd.addColorStop(1, `rgba(${sc[0]},${sc[1]},${sc[2]},0)`);
+      ctxTarget.fillStyle = grd;
+      ctxTarget.beginPath();
+      ctxTarget.arc(fpX, fpY, State.focusRadius * imgSize * 0.5, 0, Math.PI * 2);
+      ctxTarget.fill();
+
+      // Dot
+      ctxTarget.beginPath();
+      ctxTarget.arc(fpX, fpY, 2.5, 0, Math.PI * 2);
+      ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.7)`;
+      ctxTarget.fill();
+    }
+
+    cvTarget._imgBounds = { x: ox, y: oy, w: imgSize, h: imgSize };
+  }
+
+  return { render };
+})();
+
+// ============================================================
+// Render Main Kelp Forest
 // ============================================================
 const RenderMain = (() => {
   const SZ = ImageModule.SZ;
@@ -1034,21 +806,25 @@ const RenderMain = (() => {
 
     const margin = 30;
     const baseY = H - 40;
-    const topY = 90;
+    const topY = 100;
     const layerSpacing = (baseY - topY) / (State.visibleLayers + 1);
     const stalkSpacing = (W - 2 * margin) / (StalkModule.N_STALKS + 1);
-    const plateSize = Math.min(55, stalkSpacing * 0.6);
+    const plateSize = Math.min(60, stalkSpacing * 0.65);
 
-    // Base manifold line
+    // Total displacement drives sway
+    const totalDisp = StalkModule.totalDisplacement();
+    const swayIntensity = totalDisp * 15; // more displacement = more sway
+
+    // Base line
     ctxMain.strokeStyle = 'rgba(162,155,254,0.2)';
     ctxMain.lineWidth = 1;
     ctxMain.beginPath(); ctxMain.moveTo(margin, baseY); ctxMain.lineTo(W - margin, baseY); ctxMain.stroke();
     ctxMain.font = '8px monospace';
     ctxMain.fillStyle = 'rgba(162,155,254,0.3)';
     ctxMain.textAlign = 'center';
-    ctxMain.fillText('Token Index Space', W / 2, baseY + 15);
+    ctxMain.fillText(`Token Index Space — Sway: ${swayIntensity.toFixed(1)}° (from Σ displacement)`, W / 2, baseY + 15);
 
-    // Layer lines with LAYER COLORS showing progressive complexity
+    // Layer lines
     for (let l = 0; l < State.visibleLayers; l++) {
       const ly = baseY - (l + 1) * layerSpacing;
       const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
@@ -1061,32 +837,26 @@ const RenderMain = (() => {
       ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.5)`;
       ctxMain.textAlign = 'right';
       ctxMain.fillText(`L${l}`, margin - 4, ly + 3);
-
-      // Layer complexity indicator bar
-      const complexityFrac = (l + 1) / State.visibleLayers;
-      const barW = 30 * complexityFrac;
-      ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.15)`;
-      ctxMain.fillRect(margin - 2, ly - 3, barW, 6);
-      ctxMain.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.3)`;
-      ctxMain.lineWidth = 0.5;
-      ctxMain.strokeRect(margin - 2, ly - 3, barW, 6);
     }
 
-    // Invalidate warp cache so layer fields are fresh
-    WarpedGridRenderer.invalidateCache();
+    WarpModule.invalidateCache();
 
     // Draw each stalk
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
       const baseX = margin + (s + 1) * stalkSpacing;
-      const weight = JacobiModule.getStalkWeight(s, State.targetPoints, State.curvatureK, State.fieldDecay);
       const isSelected = s === State.selectedStalk;
 
-      // Compute layer points with sway
+      // Per-stalk displacement from default
+      const dp = StalkModule.DEFAULT_POSITIONS[s];
+      const stalkDisp = Math.hypot(st.embedPoint.x - dp.x, st.embedPoint.y - dp.y);
+
+      // Compute layer points with sway driven by total displacement
       const points = [];
       for (let l = 0; l < State.visibleLayers; l++) {
-        const swayX = Math.sin(State.time * 0.5 + st.phase + l * 0.45) * State.swayAmount * 20 * (l + 1) / State.visibleLayers;
+        const swayRad = swayIntensity * Math.PI / 180;
+        const swayX = Math.sin(State.time * 0.5 + st.phase + l * 0.45) * swayRad * 12 * (l + 1) / State.visibleLayers;
         const ly = baseY - (l + 1) * layerSpacing;
         points.push({ x: baseX + swayX, y: ly, layer: l });
       }
@@ -1095,8 +865,8 @@ const RenderMain = (() => {
       ctxMain.lineWidth = isSelected ? 3 : 2;
       for (let p = 0; p < points.length; p++) {
         const pt = points[p];
-        const alpha = 0.2 + weight * 0.6;
-        ctxMain.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(isSelected ? alpha + 0.2 : alpha).toFixed(3)})`;
+        const alpha = 0.3 + stalkDisp * 2;
+        ctxMain.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${Math.min(1, isSelected ? alpha + 0.2 : alpha).toFixed(3)})`;
         ctxMain.beginPath();
         if (p === 0) {
           ctxMain.moveTo(baseX, baseY);
@@ -1109,49 +879,50 @@ const RenderMain = (() => {
         ctxMain.stroke();
       }
 
-      // Draw LAYER-WARPED GRID plates — same layer = same space geometry
+      // Draw warped grid plates per layer
       for (let p = 0; p < points.length; p++) {
         const pt = points[p];
         const layerIdx = pt.layer;
-        const thisPlateSize = plateSize * (0.4 + weight * 0.6);
-        const alpha = isSelected ? 0.5 + weight * 0.4 : 0.15 + weight * 0.4;
+        const thisPlateSize = plateSize * (0.5 + stalkDisp * 1.5);
+        const clampedPlate = Math.min(plateSize * 1.2, Math.max(plateSize * 0.3, thisPlateSize));
+        const alpha = isSelected ? 0.6 : 0.25;
 
         // Plate background
         ctxMain.fillStyle = `rgba(10,14,26,${(alpha * 0.7).toFixed(3)})`;
-        ctxMain.fillRect(pt.x - thisPlateSize/2 - 1, pt.y - thisPlateSize/2 - 1, thisPlateSize + 2, thisPlateSize + 2);
+        ctxMain.fillRect(pt.x - clampedPlate/2 - 1, pt.y - clampedPlate/2 - 1, clampedPlate + 2, clampedPlate + 2);
 
-        // === LAYER-BASED WARPED GRID: shared space per layer, stalk FFT coloring ===
-        WarpedGridRenderer.drawLayerWarpedGrid(
+        // Draw warped grid for this layer
+        drawStalkPlateWarpedGrid(
           ctxMain,
-          pt.x - thisPlateSize / 2,
-          pt.y - thisPlateSize / 2,
-          thisPlateSize,
+          pt.x - clampedPlate / 2,
+          pt.y - clampedPlate / 2,
+          clampedPlate,
           layerIdx,
           s,
           Math.max(6, Math.floor(State.gridDensity * 0.5)),
           alpha
         );
 
-        // Layer color border to show shared space
+        // Layer color border
         const lc = LAYER_COLORS[Math.min(layerIdx, LAYER_COLORS.length - 1)];
-        ctxMain.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.5).toFixed(3)})`;
+        ctxMain.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.6).toFixed(3)})`;
         ctxMain.lineWidth = isSelected ? 1.8 : 1;
-        ctxMain.strokeRect(pt.x - thisPlateSize/2, pt.y - thisPlateSize/2, thisPlateSize, thisPlateSize);
+        ctxMain.strokeRect(pt.x - clampedPlate/2, pt.y - clampedPlate/2, clampedPlate, clampedPlate);
 
-        // Thin stalk-color inner border
+        // Stalk inner border
         ctxMain.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(alpha * 0.3).toFixed(3)})`;
         ctxMain.lineWidth = 0.5;
-        ctxMain.strokeRect(pt.x - thisPlateSize/2 + 1, pt.y - thisPlateSize/2 + 1, thisPlateSize - 2, thisPlateSize - 2);
+        ctxMain.strokeRect(pt.x - clampedPlate/2 + 1, pt.y - clampedPlate/2 + 1, clampedPlate - 2, clampedPlate - 2);
 
         // Layer label
         ctxMain.font = '6px monospace';
-        ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.7).toFixed(3)})`;
+        ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.8).toFixed(3)})`;
         ctxMain.textAlign = 'left';
-        ctxMain.fillText(`L${layerIdx}`, pt.x - thisPlateSize/2 + 2, pt.y - thisPlateSize/2 + 7);
+        ctxMain.fillText(`L${layerIdx}`, pt.x - clampedPlate/2 + 2, pt.y - clampedPlate/2 + 7);
 
         // Node dot
         ctxMain.beginPath();
-        ctxMain.arc(pt.x, pt.y, 2 + weight * 2, 0, Math.PI * 2);
+        ctxMain.arc(pt.x, pt.y, 2 + stalkDisp * 3, 0, Math.PI * 2);
         ctxMain.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.9)`;
         ctxMain.fill();
       }
@@ -1173,20 +944,14 @@ const RenderMain = (() => {
       ctxMain.fillText(StalkModule.NAMES[s], baseX, baseY + 13);
     }
 
-    // ============================================================
-    // RESOLVED IMAGE at top
-    // ============================================================
-    const resolvedSize = Math.min(85, W * 0.12);
+    // Focused image at top
+    const resolvedSize = Math.min(90, W * 0.13);
     const resolvedX = W / 2;
     const resolvedY = topY / 2 + 5;
 
-    const resolvedImg = ImageRecon.getCumulativeImage();
-    let minV = Infinity, maxV = -Infinity;
-    for (let i = 0; i < SZ*SZ; i++) {
-      if (resolvedImg[i] < minV) minV = resolvedImg[i];
-      if (resolvedImg[i] > maxV) maxV = resolvedImg[i];
-    }
-    const range = maxV - minV || 1;
+    const focusMapData = FocusMap.computeFocusMap();
+    const image = ImageModule.image;
+    const maxPix = State.maxPixelation;
     const rps = resolvedSize / SZ;
 
     ctxMain.fillStyle = 'rgba(10,14,26,0.85)';
@@ -1194,20 +959,17 @@ const RenderMain = (() => {
 
     for (let y = 0; y < SZ; y++) {
       for (let x = 0; x < SZ; x++) {
-        const v = (resolvedImg[y*SZ+x] - minV) / range;
+        const focus = focusMapData[y * SZ + x];
+        const blockSize = Math.max(1, Math.round((1 - focus) * maxPix));
+        const bx = Math.floor(x / blockSize) * blockSize;
+        const by = Math.floor(y / blockSize) * blockSize;
+        const bix = Math.min(SZ-1, bx + Math.floor(blockSize/2));
+        const biy = Math.min(SZ-1, by + Math.floor(blockSize/2));
+        const v = image[biy * SZ + bix];
         const b = Math.max(0, Math.min(1, v));
         ctxMain.fillStyle = `rgb(${Math.floor(30+b*225)},${Math.floor(25+b*195)},${Math.floor(15+b*105)})`;
         ctxMain.fillRect(resolvedX - resolvedSize/2 + x*rps, resolvedY - resolvedSize/2 + y*rps, rps+0.5, rps+0.5);
       }
-    }
-
-    for (const tp of State.targetPoints) {
-      const tpX = resolvedX - resolvedSize/2 + tp.x * resolvedSize;
-      const tpY = resolvedY - resolvedSize/2 + tp.y * resolvedSize;
-      ctxMain.beginPath();
-      ctxMain.arc(tpX, tpY, 3, 0, Math.PI * 2);
-      ctxMain.fillStyle = 'rgba(231,76,60,0.8)';
-      ctxMain.fill();
     }
 
     ctxMain.strokeStyle = 'rgba(255,220,100,0.4)';
@@ -1217,9 +979,7 @@ const RenderMain = (() => {
     ctxMain.font = '9px monospace';
     ctxMain.fillStyle = 'rgba(255,220,100,0.6)';
     ctxMain.textAlign = 'center';
-    ctxMain.fillText('Resolved (click to add target)', resolvedX, resolvedY - resolvedSize/2 - 7);
-
-    cvMain._resolvedBounds = { x: resolvedX - resolvedSize/2, y: resolvedY - resolvedSize/2, w: resolvedSize, h: resolvedSize };
+    ctxMain.fillText('Focused Image (drag tokens to change)', resolvedX, resolvedY - resolvedSize/2 - 7);
 
     // Ambient particles
     for (let i = 0; i < 15; i++) {
@@ -1232,98 +992,139 @@ const RenderMain = (() => {
     }
   }
 
-  return { render };
-})();
+  // Draw warped grid for a stalk plate — shows the warp field with stalk-specific coloring
+  function drawStalkPlateWarpedGrid(ctx, ox, oy, size, layerIdx, stalkIdx, gridN, alpha) {
+    if (gridN  < 2) gridN = 2;
+    const SZ = ImageModule.SZ;
+    const field = WarpModule.getLayerField(layerIdx);
+    if (!field) return;
+    const { dx, dy, J00, J01, J10, J11 } = field;
 
-// ============================================================
-// MODULE: Render Target Image (swappable)
-// ============================================================
-const RenderTarget = (() => {
-  const SZ = ImageModule.SZ;
+    const sc = StalkModule.COLORS[stalkIdx];
+    const lc = LAYER_COLORS[Math.min(layerIdx, LAYER_COLORS.length - 1)];
 
-  function render() {
-    const w = 290, h = 290;
-    ctxTarget.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctxTarget.clearRect(0, 0, w, h);
-    ctxTarget.fillStyle = '#0d1220';
-    ctxTarget.fillRect(0, 0, w, h);
+    // Get focus point for this stalk at this layer
+    const st = StalkModule.stalks[stalkIdx];
+    const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, stalkIdx, layerIdx);
 
-    const resolvedImg = ImageRecon.getCumulativeImage();
-    let minV = Infinity, maxV = -Infinity;
-    for (let i = 0; i < SZ*SZ; i++) {
-      if (resolvedImg[i] < minV) minV = resolvedImg[i];
-      if (resolvedImg[i] > maxV) maxV = resolvedImg[i];
-    }
-    const range = maxV - minV || 1;
-    const imgMargin = 12;
-    const imgSize = Math.min(w, h) - imgMargin * 2;
-    const ps = imgSize / SZ;
-    const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
+    // Draw filled cells with warp-based coloring
+    for (let gy = 0; gy < gridN; gy++) {
+      for (let gx = 0; gx < gridN; gx++) {
+        const corners = [
+          [gx / gridN, gy / gridN],
+          [(gx+1) / gridN, gy / gridN],
+          [(gx+1) / gridN, (gy+1) / gridN],
+          [gx / gridN, (gy+1) / gridN],
+        ];
 
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        const v = (resolvedImg[y*SZ+x] - minV) / range;
-        const b = Math.max(0, Math.min(1, v));
-        const nx = x / SZ, ny = y / SZ;
+        const warped = corners.map(([nx, ny]) => {
+          const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+          const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+          return [ox + nx * size + ddx * size, oy + ny * size + ddy * size];
+        });
 
-        let targetProximity = 0;
-        for (const tp of State.targetPoints) {
-          const d = Math.hypot(nx - tp.x, ny - tp.y);
-          targetProximity = Math.max(targetProximity, Math.exp(-d*d / (2 * 0.08 * 0.08)));
-        }
+        // Cell center
+        const cnx = (gx + 0.5) / gridN, cny = (gy + 0.5) / gridN;
 
-        const r = Math.floor(30 + b * 220 + targetProximity * 30);
-        const g = Math.floor(25 + b * 190 - targetProximity * 20);
-        const bl = Math.floor(15 + b * 100 - targetProximity * 15);
-        ctxTarget.fillStyle = `rgb(${Math.min(255,r)},${Math.max(0,g)},${Math.max(0,bl)})`;
-        ctxTarget.fillRect(ox + x*ps, oy + y*ps, ps+0.5, ps+0.5);
+        // Distance from cell center to focus point (in normalized space)
+        const distToFocus = Math.hypot(cnx - fp.x, cny - fp.y);
+        const focusBright = Math.exp(-distToFocus * distToFocus / (2 * 0.15 * 0.15));
+
+        // Jacobi determinant for distortion coloring
+        const det = WarpModule.sampleBilinear(J00, cnx, cny) * WarpModule.sampleBilinear(J11, cnx, cny)
+                   - WarpModule.sampleBilinear(J01, cnx, cny) * WarpModule.sampleBilinear(J10, cnx, cny);
+        const distortion = Math.abs(det - 1);
+
+        // Color: blend stalk color with layer color, modulated by focus proximity and distortion
+        const layerBlend = layerIdx / Math.max(1, State.visibleLayers - 1);
+        const brightness = focusBright * 0.7 + distortion * 0.3;
+        const r = Math.min(255, Math.floor(
+          sc[0] * brightness * (1 - layerBlend * 0.4) +
+          lc[0] * brightness * layerBlend * 0.4 +
+          distortion * 80
+        ));
+        const g = Math.min(255, Math.floor(
+          sc[1] * brightness * (1 - layerBlend * 0.4) +
+          lc[1] * brightness * layerBlend * 0.4 +
+          distortion * 30
+        ));
+        const b = Math.min(255, Math.floor(
+          sc[2] * brightness * (1 - layerBlend * 0.4) +
+          lc[2] * brightness * layerBlend * 0.4 +
+          distortion * 60
+        ));
+        const cellAlpha = (0.06 + brightness * 0.65) * alpha;
+
+        ctx.beginPath();
+        ctx.moveTo(warped[0][0], warped[0][1]);
+        ctx.lineTo(warped[1][0], warped[1][1]);
+        ctx.lineTo(warped[2][0], warped[2][1]);
+        ctx.lineTo(warped[3][0], warped[3][1]);
+        ctx.closePath();
+        ctx.fillStyle = `rgba(${r},${g},${b},${cellAlpha.toFixed(3)})`;
+        ctx.fill();
       }
     }
 
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        if (ImageModule.image[y*SZ+x] > 0.8) {
-          ctxTarget.fillStyle = 'rgba(162,155,254,0.08)';
-          ctxTarget.fillRect(ox + x*ps, oy + y*ps, ps+0.5, ps+0.5);
-        }
+    // Draw warped grid lines
+    ctx.lineWidth = 0.6;
+    const lineAlpha = alpha * 0.35;
+    const lr = Math.floor(lc[0] * 0.5 + sc[0] * 0.5);
+    const lg = Math.floor(lc[1] * 0.5 + sc[1] * 0.5);
+    const lb = Math.floor(lc[2] * 0.5 + sc[2] * 0.5);
+
+    // Horizontal lines
+    for (let gy = 0; gy <= gridN; gy++) {
+      ctx.beginPath();
+      const steps = gridN * 2;
+      for (let gx = 0; gx <= steps; gx++) {
+        const nx = gx / steps, ny = Math.min(0.999, gy / gridN);
+        const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+        const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+        const px = ox + nx * size + ddx * size;
+        const py = oy + ny * size + ddy * size;
+        if (gx === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
       }
+      ctx.strokeStyle = `rgba(${lr},${lg},${lb},${lineAlpha.toFixed(3)})`;
+      ctx.stroke();
+    }
+    // Vertical lines
+    for (let gx = 0; gx <= gridN; gx++) {
+      ctx.beginPath();
+      const steps = gridN * 2;
+      for (let gy = 0; gy <= steps; gy++) {
+        const nx = Math.min(0.999, gx / gridN), ny = gy / steps;
+        const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+        const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+        const px = ox + nx * size + ddx * size;
+        const py = oy + ny * size + ddy * size;
+        if (gy === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.strokeStyle = `rgba(${lr},${lg},${lb},${lineAlpha.toFixed(3)})`;
+      ctx.stroke();
     }
 
-    for (let i = 0; i < State.targetPoints.length; i++) {
-      const tp = State.targetPoints[i];
-      const tpX = ox + tp.x * imgSize;
-      const tpY = oy + tp.y * imgSize;
-
-      const grd = ctxTarget.createRadialGradient(tpX, tpY, 0, tpX, tpY, 20);
-      grd.addColorStop(0, 'rgba(231,76,60,0.3)');
-      grd.addColorStop(1, 'rgba(231,76,60,0)');
-      ctxTarget.fillStyle = grd;
-      ctxTarget.beginPath();
-      ctxTarget.arc(tpX, tpY, 20, 0, Math.PI * 2);
-      ctxTarget.fill();
-
-      ctxTarget.beginPath();
-      ctxTarget.arc(tpX, tpY, 5, 0, Math.PI * 2);
-      ctxTarget.fillStyle = 'rgba(231,76,60,0.9)';
-      ctxTarget.fill();
-      ctxTarget.strokeStyle = 'rgba(255,255,255,0.6)';
-      ctxTarget.lineWidth = 1;
-      ctxTarget.stroke();
-
-      ctxTarget.font = '8px monospace';
-      ctxTarget.fillStyle = 'rgba(255,255,255,0.8)';
-      ctxTarget.textAlign = 'center';
-      ctxTarget.fillText(`T${i}`, tpX, tpY - 9);
+    // Draw focus point marker within the plate
+    const fpScreenX = ox + fp.x * size;
+    const fpScreenY = oy + fp.y * size;
+    if (fpScreenX >= ox && fpScreenX <= ox + size && fpScreenY >= oy && fpScreenY <= oy + size) {
+      ctx.beginPath();
+      ctx.arc(fpScreenX, fpScreenY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${(alpha * 0.7).toFixed(3)})`;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(fpScreenX, fpScreenY, 5, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(alpha * 0.4).toFixed(3)})`;
+      ctx.lineWidth = 0.7;
+      ctx.stroke();
     }
-
-    cvTarget._imgBounds = { x: ox, y: oy, w: imgSize, h: imgSize };
   }
 
   return { render };
 })();
 
 // ============================================================
-// MODULE: Render Detail — Layer-by-Layer warped grid (KEY CHANGE)
+// Render Detail — Layer warped grid (right panel)
 // ============================================================
 const RenderDetail = (() => {
   const SZ = ImageModule.SZ;
@@ -1340,74 +1141,141 @@ const RenderDetail = (() => {
     const gridMargin = 15;
     const gridSize = Math.min(w, h) - gridMargin * 2;
 
-    // Draw the PURE LAYER warped grid (shared space, no stalk coloring)
-    WarpedGridRenderer.drawPureLayerGrid(
-      ctxDetail,
-      gridMargin,
-      gridMargin,
-      gridSize,
-      l,
-      State.gridDensity,
-      0.9
-    );
+    const field = WarpModule.getLayerField(l);
+    if (!field) return;
+    const { dx, dy, J00, J01, J10, J11 } = field;
+    const gridN = State.gridDensity;
 
-    // Overlay stalk embedding points
+    // Draw filled cells
+    for (let gy = 0; gy < gridN; gy++) {
+      for (let gx = 0; gx < gridN; gx++) {
+        const corners = [
+          [gx / gridN, gy / gridN],
+          [(gx+1) / gridN, gy / gridN],
+          [(gx+1) / gridN, (gy+1) / gridN],
+          [gx / gridN, (gy+1) / gridN],
+        ];
+        const warped = corners.map(([nx, ny]) => {
+          const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+          const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+          return [gridMargin + nx * gridSize + ddx * gridSize, gridMargin + ny * gridSize + ddy * gridSize];
+        });
+
+        const cnx = (gx + 0.5) / gridN, cny = (gy + 0.5) / gridN;
+        const det = WarpModule.sampleBilinear(J00, cnx, cny) * WarpModule.sampleBilinear(J11, cnx, cny)
+                   - WarpModule.sampleBilinear(J01, cnx, cny) * WarpModule.sampleBilinear(J10, cnx, cny);
+        const distortion = Math.abs(det - 1);
+
+        // Color by distortion and focus proximity
+        let maxFocusBright = 0;
+        let dominantStalk = 0;
+        for (let s = 0; s < StalkModule.N_STALKS; s++) {
+          const st = StalkModule.stalks[s];
+          const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+          const d = Math.hypot(cnx - fp.x, cny - fp.y);
+          const fb = Math.exp(-d * d / (2 * 0.12 * 0.12));
+          if (fb > maxFocusBright) { maxFocusBright = fb; dominantStalk = s; }
+        }
+
+        const dsc = StalkModule.COLORS[dominantStalk];
+        const brightness = maxFocusBright * 0.6 + distortion * 0.4 + 0.05;
+        const r = Math.min(255, Math.floor(lc[0] * brightness * 0.5 + dsc[0] * maxFocusBright * 0.5 + distortion * 100));
+        const g = Math.min(255, Math.floor(lc[1] * brightness * 0.5 + dsc[1] * maxFocusBright * 0.5 + distortion * 40));
+        const b = Math.min(255, Math.floor(lc[2] * brightness * 0.5 + dsc[2] * maxFocusBright * 0.5 + distortion * 70));
+        const cellAlpha = 0.05 + brightness * 0.7;
+
+        ctxDetail.beginPath();
+        ctxDetail.moveTo(warped[0][0], warped[0][1]);
+        ctxDetail.lineTo(warped[1][0], warped[1][1]);
+        ctxDetail.lineTo(warped[2][0], warped[2][1]);
+        ctxDetail.lineTo(warped[3][0], warped[3][1]);
+        ctxDetail.closePath();
+        ctxDetail.fillStyle = `rgba(${r},${g},${b},${cellAlpha.toFixed(3)})`;
+        ctxDetail.fill();
+      }
+    }
+
+    // Grid lines
+    ctxDetail.lineWidth = 0.7;
+    const lineAlpha = 0.4;
+    for (let gy = 0; gy <= gridN; gy++) {
+      ctxDetail.beginPath();
+      const steps = gridN * 2;
+      for (let gx = 0; gx <= steps; gx++) {
+        const nx = gx / steps, ny = Math.min(0.999, gy / gridN);
+        const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+        const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+        const px = gridMargin + nx * gridSize + ddx * gridSize;
+        const py = gridMargin + ny * gridSize + ddy * gridSize;
+        if (gx === 0) ctxDetail.moveTo(px, py); else ctxDetail.lineTo(px, py);
+      }
+      ctxDetail.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${lineAlpha.toFixed(3)})`;
+      ctxDetail.stroke();
+    }
+    for (let gx = 0; gx <= gridN; gx++) {
+      ctxDetail.beginPath();
+      const steps = gridN * 2;
+      for (let gy = 0; gy <= steps; gy++) {
+        const nx = Math.min(0.999, gx / gridN), ny = gy / steps;
+        const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+        const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+        const px = gridMargin + nx * gridSize + ddx * gridSize;
+        const py = gridMargin + ny * gridSize + ddy * gridSize;
+        if (gy === 0) ctxDetail.moveTo(px, py); else ctxDetail.lineTo(px, py);
+      }
+      ctxDetail.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${lineAlpha.toFixed(3)})`;
+      ctxDetail.stroke();
+    }
+
+    // Overlay focus points for all stalks at this layer
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
-      const epX = gridMargin + st.embedPoint.x * gridSize;
-      const epY = gridMargin + st.embedPoint.y * gridSize;
-      const weight = JacobiModule.getStalkWeight(s, State.targetPoints, State.curvatureK, State.fieldDecay);
+      const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+      const fpX = gridMargin + fp.x * gridSize;
+      const fpY = gridMargin + fp.y * gridSize;
 
+      // Glow
+      const grd = ctxDetail.createRadialGradient(fpX, fpY, 0, fpX, fpY, 15);
+      grd.addColorStop(0, `rgba(${sc[0]},${sc[1]},${sc[2]},0.4)`);
+      grd.addColorStop(1, `rgba(${sc[0]},${sc[1]},${sc[2]},0)`);
+      ctxDetail.fillStyle = grd;
       ctxDetail.beginPath();
-      ctxDetail.arc(epX, epY, 4 + weight * 3, 0, Math.PI * 2);
-      ctxDetail.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(0.4 + weight * 0.5).toFixed(3)})`;
-      ctxDetail.lineWidth = 1.5;
-      ctxDetail.stroke();
-      ctxDetail.beginPath();
-      ctxDetail.arc(epX, epY, 2, 0, Math.PI * 2);
-      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.9)`;
+      ctxDetail.arc(fpX, fpY, 15, 0, Math.PI * 2);
       ctxDetail.fill();
 
-      ctxDetail.font = '7px monospace';
-      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.7)`;
-      ctxDetail.textAlign = 'center';
-      ctxDetail.fillText(StalkModule.NAMES[s], epX, epY - 7);
-    }
-
-    // Overlay target points
-    for (let i = 0; i < State.targetPoints.length; i++) {
-      const tp = State.targetPoints[i];
-      const tpX = gridMargin + tp.x * gridSize;
-      const tpY = gridMargin + tp.y * gridSize;
+      // Dot
       ctxDetail.beginPath();
-      ctxDetail.arc(tpX, tpY, 4, 0, Math.PI * 2);
-      ctxDetail.fillStyle = 'rgba(231,76,60,0.7)';
+      ctxDetail.arc(fpX, fpY, 3.5, 0, Math.PI * 2);
+      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.9)`;
       ctxDetail.fill();
       ctxDetail.strokeStyle = 'rgba(255,255,255,0.5)';
       ctxDetail.lineWidth = 1;
       ctxDetail.stroke();
+
+      ctxDetail.font = '7px monospace';
+      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.8)`;
+      ctxDetail.textAlign = 'center';
+      ctxDetail.fillText(StalkModule.NAMES[s], fpX, fpY - 7);
     }
 
     // Title
-    const layerFrac = ((l + 1) / State.visibleLayers * 100).toFixed(0);
     ctxDetail.font = 'bold 9px monospace';
     ctxDetail.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.9)`;
     ctxDetail.textAlign = 'center';
-    ctxDetail.fillText(`Layer ${l} — Shared Warped Space (${layerFrac}% freq)`, w / 2, 11);
+    ctxDetail.fillText(`Layer ${l} — Warped Space (focus points shown)`, w / 2, 11);
 
-    const field = WarpedGridRenderer.getLayerField(l);
-    const warpInfo = field ? `warpScale=${field.warpScale.toFixed(3)}` : '';
     ctxDetail.font = '7px monospace';
     ctxDetail.fillStyle = 'rgba(255,220,100,0.6)';
-    ctxDetail.fillText(`${warpInfo} | growth=${State.layerGrowth.toFixed(2)} | K=${State.curvatureK.toFixed(2)}`, w / 2, h - 4);
+    ctxDetail.textAlign = 'center';
+    ctxDetail.fillText(`warpScale=${field.warpScale.toFixed(3)} | K=${State.curvatureK.toFixed(2)} | focusR=${State.focusRadius.toFixed(2)}`, w / 2, h - 4);
   }
 
   return { render };
 })();
 
 // ============================================================
-// MODULE: Render Jacobi Matrix — Layer Progression (KEY CHANGE)
+// Render Jacobi Matrix — Layer Progression
 // ============================================================
 const RenderJacobiMat = (() => {
   const SZ = ImageModule.SZ;
@@ -1439,23 +1307,18 @@ const RenderJacobiMat = (() => {
 
     // Each row = one layer
     for (let l = 0; l < nLayers; l++) {
-      const field = WarpedGridRenderer.getLayerField(l);
+      const field = WarpModule.getLayerField(l);
       if (!field) continue;
       const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
       const components = [field.J00, field.J01, field.J10, field.J11];
       const rowY = topMargin + l * (cellH + gap);
-
-      // Row label
-      ctxJacobiMat.font = '6px monospace';
-      ctxJacobiMat.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.6)`;
-      ctxJacobiMat.textAlign = 'right';
 
       for (let c = 0; c < 4; c++) {
         const comp = components[c];
         const colX = leftMargin + c * (cellW + gap);
 
         let minV = Infinity, maxV = -Infinity;
-        for (let i = 0; i < SZ*SZ; i++) {
+        for (let i = 0; i < SZ * SZ; i++) {
           if (comp[i] < minV) minV = comp[i];
           if (comp[i] > maxV) maxV = comp[i];
         }
@@ -1463,7 +1326,7 @@ const RenderJacobiMat = (() => {
 
         for (let y = 0; y < SZ; y++) {
           for (let x = 0; x < SZ; x++) {
-            const v = (comp[y*SZ+x] - minV) / range;
+            const v = (comp[y * SZ + x] - minV) / range;
             const centered = v * 2 - 1;
             let r, g, b;
             if (centered < 0) {
@@ -1480,21 +1343,21 @@ const RenderJacobiMat = (() => {
             b = Math.min(255, Math.max(0, b));
 
             ctxJacobiMat.fillStyle = `rgb(${r},${g},${b})`;
-            ctxJacobiMat.fillRect(colX + x*ps, rowY + y*ps, ps+0.5, ps+0.5);
+            ctxJacobiMat.fillRect(colX + x * ps, rowY + y * ps, ps + 0.5, ps + 0.5);
           }
         }
 
         // Border with layer color
         ctxJacobiMat.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.3)`;
         ctxJacobiMat.lineWidth = 0.5;
-        ctxJacobiMat.strokeRect(colX, rowY, SZ*ps, SZ*ps);
+        ctxJacobiMat.strokeRect(colX, rowY, SZ * ps, SZ * ps);
       }
 
       // Layer label on the right
       ctxJacobiMat.font = '6px monospace';
       ctxJacobiMat.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.7)`;
       ctxJacobiMat.textAlign = 'left';
-      ctxJacobiMat.fillText(`L${l}`, w - 14, rowY + SZ*ps/2 + 2);
+      ctxJacobiMat.fillText(`L${l}`, w - 14, rowY + SZ * ps / 2 + 2);
     }
 
     ctxJacobiMat.font = 'bold 7px monospace';
@@ -1507,8 +1370,7 @@ const RenderJacobiMat = (() => {
 })();
 
 // ============================================================
-// MODULE: Render Contribution
-// MODULE: Render Contribution Bars (swappable)
+// Render Contribution — Focus Strength per Token
 // ============================================================
 const RenderContrib = (() => {
   function render() {
@@ -1527,13 +1389,28 @@ const RenderContrib = (() => {
     ctxContrib.font = 'bold 8px monospace';
     ctxContrib.fillStyle = 'rgba(0,206,201,0.7)';
     ctxContrib.textAlign = 'center';
-    ctxContrib.fillText('Per-Stalk Weight (Jacobi → target proximity)', w / 2, 12);
+    ctxContrib.fillText('Per-Token Focus Strength (chaotic hash coverage)', w / 2, 12);
+
+    const totalDisp = StalkModule.totalDisplacement();
 
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const y = startY + s * (barH + gap);
       const sc = StalkModule.COLORS[s];
-      const weight = JacobiModule.getStalkWeight(s, State.targetPoints, State.curvatureK, State.fieldDecay);
+      const st = StalkModule.stalks[s];
       const isSelected = s === State.selectedStalk;
+
+      // Compute this stalk's total focus coverage
+      let coverage = 0;
+      for (let l = 0; l < State.visibleLayers; l++) {
+        const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+        // How much of the image does this focus point cover?
+        coverage += State.focusRadius * (l + 1) / State.visibleLayers;
+      }
+      coverage = Math.min(1, coverage / State.visibleLayers);
+
+      // Per-stalk displacement
+      const dp = StalkModule.DEFAULT_POSITIONS[s];
+      const stalkDisp = Math.hypot(st.embedPoint.x - dp.x, st.embedPoint.y - dp.y);
 
       ctxContrib.font = `${isSelected ? 'bold ' : ''}8px monospace`;
       ctxContrib.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.7})`;
@@ -1543,7 +1420,7 @@ const RenderContrib = (() => {
       ctxContrib.fillStyle = 'rgba(30,41,59,0.7)';
       ctxContrib.fillRect(barX, y, barW, barH);
 
-      const fillW = barW * weight;
+      const fillW = barW * coverage;
       const barGrad = ctxContrib.createLinearGradient(barX, y, barX + fillW, y);
       barGrad.addColorStop(0, `rgba(${sc[0]},${sc[1]},${sc[2]},0.8)`);
       barGrad.addColorStop(1, `rgba(${sc[0]},${sc[1]},${sc[2]},0.4)`);
@@ -1557,38 +1434,26 @@ const RenderContrib = (() => {
       ctxContrib.font = '7px monospace';
       ctxContrib.fillStyle = 'rgba(255,255,255,0.7)';
       ctxContrib.textAlign = 'left';
-      ctxContrib.fillText(`${(weight * 100).toFixed(0)}%`, barX + fillW + 4, y + barH / 2 + 3);
+      ctxContrib.fillText(`${(coverage * 100).toFixed(0)}%`, barX + fillW + 4, y + barH / 2 + 3);
 
-      // Show which layers this stalk's freq band contributes to
-      const maxFreq = ImageModule.SZ / 2;
-      const st = StalkModule.stalks[s];
-      let layersActive = '';
-      for (let l = 0; l < State.visibleLayers; l++) {
-        const layerFreqCutoff = ((l + 1) / State.visibleLayers) * maxFreq;
-        if (st.freqLo < layerFreqCutoff) {
-          const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
-          layersActive += `L${l} `;
-        }
-      }
+      // Show displacement
       ctxContrib.font = '6px monospace';
       ctxContrib.fillStyle = 'rgba(148,163,184,0.4)';
       ctxContrib.textAlign = 'left';
-      ctxContrib.fillText(`freq ${st.freqLo.toFixed(1)}-${st.freqHi.toFixed(1)} → ${layersActive.trim()}`, barX + 2, y + barH - 2);
+      ctxContrib.fillText(`Δ=${stalkDisp.toFixed(3)} | layers: ${State.visibleLayers}`, barX + 2, y + barH - 2);
     }
 
-    if (State.targetPoints.length === 0) {
-      ctxContrib.font = '9px monospace';
-      ctxContrib.fillStyle = 'rgba(148,163,184,0.4)';
-      ctxContrib.textAlign = 'center';
-      ctxContrib.fillText('(all equal — click smiley to set targets)', w / 2, h - 8);
-    }
+    ctxContrib.font = '7px monospace';
+    ctxContrib.fillStyle = 'rgba(255,220,100,0.5)';
+    ctxContrib.textAlign = 'center';
+    ctxContrib.fillText(`Σ displacement: ${totalDisp.toFixed(3)} → sway: ${(totalDisp * 15).toFixed(1)}°`, w / 2, h - 6);
   }
 
   return { render };
 })();
 
 // ============================================================
-// UI BUILDERS
+// UI Builders
 // ============================================================
 function buildUI() {
   // Stalk selector
@@ -1600,7 +1465,7 @@ function buildUI() {
   }
   el.innerHTML = html;
 
-  // Layer tabs for detail view (KEY CHANGE: tabs are layers, not stalks)
+  // Layer tabs
   const tabs = document.getElementById('layerTabs');
   let tabHtml = '';
   for (let l = 0; l < State.visibleLayers; l++) {
@@ -1614,8 +1479,7 @@ function buildUI() {
   let legendHtml = '';
   for (let l = 0; l < MAX_LAYERS; l++) {
     const lc = LAYER_COLORS[l];
-    const freqPct = (((l + 1) / MAX_LAYERS) * 100).toFixed(0);
-    legendHtml += `<span class="lc" style="background:rgba(${lc[0]},${lc[1]},${lc[2]},0.2);color:rgb(${lc[0]},${lc[1]},${lc[2]})">L${l}: ${freqPct}%</span>`;
+    legendHtml += `<span class="lc" style="background:rgba(${lc[0]},${lc[1]},${lc[2]},0.2);color:rgb(${lc[0]},${lc[1]},${lc[2]})">L${l}</span>`;
   }
   legend.innerHTML = legendHtml;
 }
@@ -1634,45 +1498,31 @@ function selectDetailLayer(l) {
 
 function updateInfo() {
   const el = document.getElementById('infoBox');
-  if (State.targetPoints.length === 0) {
-    el.innerHTML = '<p>Click the smiley (right panel or top of kelp forest) to set <b>target regions</b>. Space warping increases <b>layer by layer</b> — L0 is nearly flat, L4 is heavily bent. All stalks at the same layer share the same warped space.</p>';
-    return;
-  }
+  const totalDisp = StalkModule.totalDisplacement();
+  const swayDeg = (totalDisp * 15).toFixed(1);
 
-  let html = `<p><b>${State.targetPoints.length} target point${State.targetPoints.length > 1 ? 's' : ''}</b> set.</p>`;
+  let html = `<p><b>Total displacement:</b> ${totalDisp.toFixed(3)} → <b>Sway: ${swayDeg}°</b></p>`;
+  html += `<p>The chaotic hash (Arnold's cat map) maps each token position to focus points on the image. The mapping is <span class="hl">non-obvious</span> — small moves can shift focus dramatically!</p>`;
 
-  let bestStalk = 0, bestWeight = 0;
-  for (let s = 0; s < StalkModule.N_STALKS; s++) {
-    const w = JacobiModule.getStalkWeight(s, State.targetPoints, State.curvatureK, State.fieldDecay);
-    if (w > bestWeight) { bestWeight = w; bestStalk = s; }
-  }
-  const bsc = StalkModule.COLORS[bestStalk];
-  html += `<p>Strongest stalk: <span class="hl" style="color:rgb(${bsc[0]},${bsc[1]},${bsc[2]})">${StalkModule.NAMES[bestStalk]}</span> (${(bestWeight*100).toFixed(0)}%)</p>`;
+  // Show focus points for selected stalk
+  const s = State.selectedStalk;
+  const st = StalkModule.stalks[s];
+  const sc = StalkModule.COLORS[s];
+  html += `<p style="margin-top:3px"><b style="color:rgb(${sc[0]},${sc[1]},${sc[2]})">${StalkModule.NAMES[s]}</b> at (${st.embedPoint.x.toFixed(3)}, ${st.embedPoint.y.toFixed(3)})</p>`;
 
-  let weakStalk = 0, weakWeight = 1;
-  for (let s = 0; s < StalkModule.N_STALKS; s++) {
-    const w = JacobiModule.getStalkWeight(s, State.targetPoints, State.curvatureK, State.fieldDecay);
-    if (w < weakWeight) { weakWeight = w; weakStalk = s; }
-  }
-  html += `<p>Weakest: ${StalkModule.NAMES[weakStalk]} (${(weakWeight*100).toFixed(0)}%)</p>`;
-
-  // Layer progression info
-  html += `<p style="margin-top:4px"><b>Layer progression:</b></p>`;
   for (let l = 0; l < State.visibleLayers; l++) {
-    const field = WarpedGridRenderer.getLayerField(l);
+    const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
     const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
-    const freqPct = (((l + 1) / State.visibleLayers) * 100).toFixed(0);
-    const warpInfo = field ? field.warpScale.toFixed(3) : '?';
-    html += `<span style="color:rgb(${lc[0]},${lc[1]},${lc[2]});font-size:0.65em;margin-right:6px">L${l}: ${freqPct}% freq, warp=${warpInfo}</span>`;
+    html += `<span style="color:rgb(${lc[0]},${lc[1]},${lc[2]});font-size:0.65em;margin-right:4px">L${l}→(${fp.x.toFixed(2)},${fp.y.toFixed(2)})</span>`;
   }
 
-  html += `<p style="font-size:0.65em;color:#475569;margin-top:4px">Grid bending = Jacobi matrix of the warp map. Complexity grows layer-by-layer. All stalks at the same layer share the same warped geometry.</p>`;
+  html += `<p style="font-size:0.65em;color:#475569;margin-top:4px">The Arnold cat map creates a <b>chaotic but deterministic</b> mapping. Small position changes can cause large focus shifts. Explore!</p>`;
 
   el.innerHTML = html;
 }
 
 // ============================================================
-// CLICK HANDLERS
+// Click Handlers
 // ============================================================
 
 // Embedding space: move selected stalk or select stalk
@@ -1693,35 +1543,84 @@ cvEmbed.addEventListener('click', (e) => {
     selectStalk(clickedStalk);
   } else {
     StalkModule.stalks[State.selectedStalk].embedPoint = { x: nx, y: ny };
-    WarpedGridRenderer.invalidateCache();
+    WarpModule.invalidateCache();
   }
   updateInfo();
 });
 
 // Embedding space: drag support
 let embedDragging = false;
+let dragStalkIdx = -1;
+
 cvEmbed.addEventListener('mousedown', (e) => {
   const rect = cvEmbed.getBoundingClientRect();
   const mx = (e.clientX - rect.left) / rect.width;
   const my = (e.clientY - rect.top) / rect.height;
-  const d = Math.hypot(mx - StalkModule.stalks[State.selectedStalk].embedPoint.x, my - StalkModule.stalks[State.selectedStalk].embedPoint.y);
-  if (d < 0.08) embedDragging = true;
+
+  // Check if near any stalk
+  for (let s = 0; s < StalkModule.N_STALKS; s++) {
+    const d = Math.hypot(mx - StalkModule.stalks[s].embedPoint.x, my - StalkModule.stalks[s].embedPoint.y);
+    if (d < 0.06) {
+      embedDragging = true;
+      dragStalkIdx = s;
+      selectStalk(s);
+      break;
+    }
+  }
 });
+
 cvEmbed.addEventListener('mousemove', (e) => {
-  if (!embedDragging) return;
+  if (!embedDragging || dragStalkIdx < 0) return;
   const rect = cvEmbed.getBoundingClientRect();
   const mx = (e.clientX - rect.left) / rect.width;
   const my = (e.clientY - rect.top) / rect.height;
-  StalkModule.stalks[State.selectedStalk].embedPoint = {
+  StalkModule.stalks[dragStalkIdx].embedPoint = {
     x: Math.max(0.05, Math.min(0.95, mx)),
     y: Math.max(0.05, Math.min(0.95, my))
   };
-  WarpedGridRenderer.invalidateCache();
+  WarpModule.invalidateCache();
   updateInfo();
 });
-window.addEventListener('mouseup', () => { embedDragging = false; });
 
-// Target image: add/remove target point
+window.addEventListener('mouseup', () => { embedDragging = false; dragStalkIdx = -1; });
+
+// Touch support for embedding space
+cvEmbed.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const rect = cvEmbed.getBoundingClientRect();
+  const touch = e.touches[0];
+  const mx = (touch.clientX - rect.left) / rect.width;
+  const my = (touch.clientY - rect.top) / rect.height;
+
+  for (let s = 0; s < StalkModule.N_STALKS; s++) {
+    const d = Math.hypot(mx - StalkModule.stalks[s].embedPoint.x, my - StalkModule.stalks[s].embedPoint.y);
+    if (d < 0.08) {
+      embedDragging = true;
+      dragStalkIdx = s;
+      selectStalk(s);
+      break;
+    }
+  }
+}, { passive: false });
+
+cvEmbed.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (!embedDragging || dragStalkIdx < 0) return;
+  const rect = cvEmbed.getBoundingClientRect();
+  const touch = e.touches[0];
+  const mx = (touch.clientX - rect.left) / rect.width;
+  const my = (touch.clientY - rect.top) / rect.height;
+  StalkModule.stalks[dragStalkIdx].embedPoint = {
+    x: Math.max(0.05, Math.min(0.95, mx)),
+    y: Math.max(0.05, Math.min(0.95, my))
+  };
+  WarpModule.invalidateCache();
+  updateInfo();
+}, { passive: false });
+
+cvEmbed.addEventListener('touchend', () => { embedDragging = false; dragStalkIdx = -1; });
+
+// Target image click — no targets in this version, just info
 cvTarget.addEventListener('click', (e) => {
   const rect = cvTarget.getBoundingClientRect();
   const mx = e.clientX - rect.left, my = e.clientY - rect.top;
@@ -1731,68 +1630,12 @@ cvTarget.addEventListener('click', (e) => {
   const nx = (mx / scaleX - bounds.x) / bounds.w;
   const ny = (my / scaleY - bounds.y) / bounds.h;
   if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
-    let removed = false;
-    for (let i = State.targetPoints.length - 1; i >= 0; i--) {
-      const d = Math.hypot(nx - State.targetPoints[i].x, ny - State.targetPoints[i].y);
-      if (d < 0.06) {
-        State.targetPoints.splice(i, 1);
-        removed = true;
-        break;
-      }
-    }
-    if (!removed) {
-      State.targetPoints.push({ x: nx, y: ny });
-    }
-    WarpedGridRenderer.invalidateCache();
-    updateInfo();
-  }
-});
-
-// Main canvas: click resolved image to add target
-cvMain.addEventListener('click', (e) => {
-  const rect = cvMain.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  const bounds = cvMain._resolvedBounds;
-  if (!bounds) return;
-  const scaleX = rect.width / mainDim.w, scaleY = rect.height / mainDim.h;
-  const nx = (mx / scaleX - bounds.x) / bounds.w;
-  const ny = (my / scaleY - bounds.y) / bounds.h;
-  if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
-    State.targetPoints.push({ x: nx, y: ny });
-    WarpedGridRenderer.invalidateCache();
-    updateInfo();
-  }
-});
-
-// Detail canvas: click to add/remove target
-cvDetail.addEventListener('click', (e) => {
-  const rect = cvDetail.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-  const scaleX = rect.width / 290, scaleY = rect.height / 290;
-  const gridMargin = 15;
-  const gridSize = Math.min(290, 290) - gridMargin * 2;
-  const nx = (mx / scaleX - gridMargin) / gridSize;
-  const ny = (my / scaleY - gridMargin) / gridSize;
-  if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
-    let removed = false;
-    for (let i = State.targetPoints.length - 1; i >= 0; i--) {
-      const d = Math.hypot(nx - State.targetPoints[i].x, ny - State.targetPoints[i].y);
-      if (d < 0.06) {
-        State.targetPoints.splice(i, 1);
-        removed = true;
-        break;
-      }
-    }
-    if (!removed) {
-      State.targetPoints.push({ x: nx, y: ny });
-    }
-    WarpedGridRenderer.invalidateCache();
-    updateInfo();
+    document.getElementById('modeLabel').textContent = `Clicked image at (${nx.toFixed(2)}, ${ny.toFixed(2)}) — move tokens to focus here!`;
   }
 });
 
 // ============================================================
-// ANIMATION LOOP
+// Animation Loop
 // ============================================================
 let frameCount = 0;
 
@@ -1818,10 +1661,11 @@ function animate(timestamp) {
 }
 
 // ============================================================
-// INIT
+// Init
 // ============================================================
 buildUI();
 updateInfo();
+Ctrl.play();
 animate(0);
 
 </script>
