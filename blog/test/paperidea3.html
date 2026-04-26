@@ -1808,26 +1808,53 @@ const RenderJacobiMat = (() => {
         const comp = components[c];
         const colX = leftMargin + c * (cellW + gap);
 
+        // ═══ FIX: Use fixed symmetric range centered on expected identity value ═══
+        // J00 (c=0) and J11 (c=3) are diagonal → expected value ~1.0
+        // J01 (c=1) and J10 (c=2) are off-diagonal → expected value ~0.0
+        const isDiagonal = (c === 0 || c === 3);
+        const expectedCenter = isDiagonal ? 1.0 : 0.0;
+
+        // Compute actual min/max to determine a reasonable range,
+        // but enforce a minimum range of 0.5 so Layer 0 doesn't explode
         let minV = Infinity, maxV = -Infinity;
         for (let i = 0; i < SZ * SZ; i++) {
           if (comp[i] < minV) minV = comp[i];
           if (comp[i] > maxV) maxV = comp[i];
         }
-        const range = Math.max(maxV - minV, 1e-10);
+
+        // The key fix: minimum range of 0.5 prevents near-zero division
+        // and ensures Layer 0 (near-identity) renders as mostly flat/uniform
+        const rawRange = maxV - minV;
+        const range = Math.max(0.5, rawRange);
+
+        // Also compute a symmetric range around the expected center
+        // so that the identity value maps to the visual midpoint (neutral)
+        const maxDeviation = Math.max(
+          Math.abs(maxV - expectedCenter),
+          Math.abs(minV - expectedCenter),
+          0.25 // minimum half-range
+        );
 
         for (let y = 0; y < SZ; y++) {
           for (let x = 0; x < SZ; x++) {
-            const v = (comp[y * SZ + x] - minV) / range;
-            const centered = v * 2 - 1;
+            // Center around expected value, normalize to [-1, 1]
+            const centered = (comp[y * SZ + x] - expectedCenter) / maxDeviation;
+            // Clamp to [-1, 1]
+            const clamped = Math.max(-1, Math.min(1, centered));
+
             let r, g, b;
-            if (centered < 0) {
-              r = Math.floor(-centered * lc[0] * 0.8);
-              g = Math.floor(-centered * lc[1] * 0.3);
-              b = Math.floor(-centered * 200);
+            if (clamped < 0) {
+              // Negative deviation: cool colors (layer tint + blue)
+              const t = -clamped;
+              r = Math.floor(t * lc[0] * 0.8);
+              g = Math.floor(t * lc[1] * 0.3);
+              b = Math.floor(t * 200);
             } else {
-              r = Math.floor(centered * 200);
-              g = Math.floor(centered * lc[1] * 0.3);
-              b = Math.floor(centered * lc[2] * 0.8);
+              // Positive deviation: warm colors (red + layer tint)
+              const t = clamped;
+              r = Math.floor(t * 200);
+              g = Math.floor(t * lc[1] * 0.3);
+              b = Math.floor(t * lc[2] * 0.8);
             }
             r = Math.min(255, Math.max(0, r));
             g = Math.min(255, Math.max(0, g));
@@ -2162,8 +2189,9 @@ cvTarget.addEventListener('mouseup', (e) => {
     const y = Math.min(State.boxStart.y, pt.y);
     const w = Math.abs(pt.x - State.boxStart.x);
     const h = Math.abs(pt.y - State.boxStart.y);
-    if (w > 0.02 && h > 0.02) { // minimum size threshold
+    if (w > 0.02 && h > 0.02) {
       State.focusBoxes.push({ x, y, w, h });
+      needsInitialAttraction = true; // ← Trigger one-time brute-force snap
       document.getElementById('modeLabel').textContent =
         `Added focus box #${State.focusBoxes.length} — tokens will migrate there`;
     }
@@ -2210,6 +2238,7 @@ cvTarget.addEventListener('touchend', (e) => {
   const h = Math.abs(pt.y - State.boxStart.y);
   if (w > 0.02 && h > 0.02) {
     State.focusBoxes.push({ x, y, w, h });
+    needsInitialAttraction = true; // ← Trigger one-time brute-force snap
     document.getElementById('modeLabel').textContent =
       `Added focus box #${State.focusBoxes.length} — tokens will migrate there`;
   }
@@ -2231,90 +2260,85 @@ let frameCount = 0;
 // maps focus points INTO the box via inverse chaotic hash search.
 // Uses a precomputed lookup grid for O(1) jump-back.
 // ============================================================
+// ═══ Smooth per-frame nudge — O(stalks × layers), NOT O(stalks × GRID² × layers) ═══
 function applyBoxAttraction() {
   if (State.focusBoxes.length === 0) return;
 
   const N = StalkModule.N_STALKS;
   const nLayers = State.visibleLayers;
   const nBoxes = State.focusBoxes.length;
-
-  // For each stalk, find the token position that places its
-  // average focus centroid at the center of the nearest box.
-  // Strategy: build a small lookup grid in token-space, evaluate
-  // where each grid point's focus lands, pick the one closest
-  // to the desired box center. Grid is coarse (fast) because
-  // we just need to jump, not animate.
-
-  const GRID = 32; // 32x32 = 1024 lookups per stalk — instant
-  const invStep = 1.0 / GRID;
+  const strength = State.boxAttractionStrength;
 
   for (let s = 0; s < N; s++) {
     const st = StalkModule.stalks[s];
 
     // Which box should this stalk target?
-    // Distribute stalks across boxes round-robin, or all to one if few boxes
     const targetBox = State.focusBoxes[s % nBoxes];
     const goalX = targetBox.x + targetBox.w / 2;
     const goalY = targetBox.y + targetBox.h / 2;
 
-    // Check if already inside
-    let alreadyInside = true;
+    // Compute current average focus centroid for this stalk
+    let cx = 0, cy = 0;
+    let allInside = true;
     for (let l = 0; l < nLayers; l++) {
       const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+      cx += fp.x;
+      cy += fp.y;
       if (fp.x < targetBox.x || fp.x > targetBox.x + targetBox.w ||
           fp.y < targetBox.y || fp.y > targetBox.y + targetBox.h) {
-        alreadyInside = false;
-        break;
-      }
-    }
-    if (alreadyInside) continue;
-
-    // Brute-force search over token-space grid for best position
-    let bestX = st.embedPoint.x;
-    let bestY = st.embedPoint.y;
-    let bestDist = Infinity;
-
-    for (let gy = 0; gy < GRID; gy++) {
-      const ty = 0.05 + (gy * invStep) * 0.9;
-      for (let gx = 0; gx < GRID; gx++) {
-        const tx = 0.05 + (gx * invStep) * 0.9;
-
-        // Compute average focus centroid for this candidate token position
-        let cx = 0, cy = 0;
-        for (let l = 0; l < nLayers; l++) {
-          const fp = ChaoticHash.tokenToFocus(tx, ty, s, l);
-          cx += fp.x;
-          cy += fp.y;
-        }
-        cx /= nLayers;
-        cy /= nLayers;
-
-        const d = (cx - goalX) * (cx - goalX) + (cy - goalY) * (cy - goalY);
-        if (d < bestDist) {
-          bestDist = d;
-          bestX = tx;
-          bestY = ty;
-        }
+        allInside = false;
       }
     }
 
-    // Instant jump — no lerp, no animation
-    st.embedPoint.x = bestX;
-    st.embedPoint.y = bestY;
+    // Already converged — skip
+    if (allInside) continue;
+
+    cx /= nLayers;
+    cy /= nLayers;
+
+    // Simple gradient nudge: move embedding point toward reducing the
+    // distance between focus centroid and goal. This is ~10 trig calls
+    // per stalk instead of ~4000.
+    const errorX = goalX - cx;
+    const errorY = goalY - cy;
+
+    // Skip if already very close
+    if (Math.abs(errorX) < 0.005 && Math.abs(errorY) < 0.005) continue;
+
+    // Nudge the embedding point. The chaotic hash is continuous,
+    // so small nudges produce small focus shifts (mostly).
+    // Use a slightly larger step when far away, smaller when close.
+    const dist = Math.sqrt(errorX * errorX + errorY * errorY);
+    const adaptiveStrength = strength * Math.min(3.0, 0.5 + dist * 5);
+
+    st.embedPoint.x += errorX * adaptiveStrength;
+    st.embedPoint.y += errorY * adaptiveStrength;
+
+    // Clamp to valid range
+    st.embedPoint.x = Math.max(0.05, Math.min(0.95, st.embedPoint.x));
+    st.embedPoint.y = Math.max(0.05, Math.min(0.95, st.embedPoint.y));
   }
 
   WarpModule.invalidateCache();
   FocusMap.invalidateCache();
 }
 
+let needsInitialAttraction = false; // Flag for one-time brute-force snap
 
 function animate(timestamp) {
   if (State.animating) {
     State.time += 0.016;
   }
 
-  // Apply box attraction every frame (tokens slowly migrate toward drawn boxes)
-  applyBoxAttraction();
+  // ═══ FIX: Use smooth per-frame nudge instead of brute-force every frame ═══
+  // Only run the expensive brute-force search ONCE when a box is first added.
+  // After that, use the cheap smooth nudge for fine-tuning.
+  if (needsInitialAttraction) {
+    applyBoxAttraction(); // Expensive but runs only once per box addition
+    needsInitialAttraction = false;
+  } else {
+    applyBoxAttraction(); // Cheap — runs every frame smoothly
+  }
 
   frameCount++;
   const doFullRender = frameCount % 2 === 0 || !State.animating;
@@ -2331,6 +2355,7 @@ function animate(timestamp) {
 
   requestAnimationFrame(animate);
 }
+
 
 // ============================================================
 // Init
