@@ -509,81 +509,67 @@ const FocusMap = (() => {
     // Base focus from token transport
     const lastLayer = nLayers - 1;
     if (transportedMaps.length > 0) {
-      for (let y = 0; y < SZ; y++) {
-        for (let x = 0; x < SZ; x++) {
-          const idx = y * SZ + x;
-          let maxVal = 0;
-          for (let s = 0; s < N; s++) {
-            if (transportedMaps[lastLayer] && transportedMaps[lastLayer][s]) {
-              maxVal = Math.max(maxVal, transportedMaps[lastLayer][s][idx]);
+        for (let y = 0; y < SZ; y++) {
+            for (let x = 0; x < SZ; x++) {
+                const idx = y * SZ + x;
+                let maxVal = 0;
+                for (let s = 0; s < N; s++) {
+                    if (transportedMaps[lastLayer] && transportedMaps[lastLayer][s]) {
+                        maxVal = Math.max(maxVal, transportedMaps[lastLayer][s][idx]);
+                    }
+                }
+                focus[idx] = Math.min(1, maxVal);
             }
-          }
-          focus[idx] = Math.min(1, maxVal);
         }
-      }
     }
 
-    // If no boxes, return raw focus
+    // If no boxes, return raw focus (moderate detail everywhere)
     if (boxes.length === 0) return focus;
 
     // Compute box heat map (stacked selections)
     const heat = computeBoxHeatMap();
-    const maxHeat = Math.max(1, boxes.length); // normalize by number of boxes
+    const maxHeat = Math.max(1, boxes.length);
 
-    // Suppression factor: more boxes = more suppression of non-selected areas
-    const suppressionPower = Math.min(4.0, 1.0 + boxes.length * 0.6);
+    // ── KEY FIX: compute total selected area fraction ──
+    let totalSelectedArea = 0;
+    for (const box of boxes) {
+        totalSelectedArea += box.w * box.h;
+    }
+    // Clamp to [0, 1] — overlapping boxes can exceed 1.0
+    totalSelectedArea = Math.min(1.0, totalSelectedArea);
 
-    // Combine: heat modulates focus
-    // High heat → clarity approaches 1.0
-    // Zero heat → clarity suppressed toward 0
+    // Inverse relationship: smaller selection → MORE detail inside
+    // When totalSelectedArea ≈ 1.0 (everything selected) → focusBoost ≈ 0 (very basic)
+    // When totalSelectedArea ≈ 0.01 (tiny selection) → focusBoost ≈ 1.0 (full detail)
+    const focusBoost = Math.pow(1.0 - totalSelectedArea, 0.5);
+
+    // Suppression for areas OUTSIDE boxes also scales with selection size
+    // Small selection → strong suppression outside (everything else very pixelated)
+    // Large selection → weak suppression (everything roughly the same low detail)
+    const suppressionStrength = Math.max(0.5, 3.0 * (1.0 - totalSelectedArea));
+
+    // Base level when everything is selected — very low detail
+    // This ensures that selecting everything gives you the basic smiley
+    const baseWhenFullySelected = 0.05;
+
     const combined = new Float64Array(SZ * SZ);
     for (let i = 0; i < SZ * SZ; i++) {
-      const h = heat[i] / maxHeat; // 0..1 normalized heat
-      const baseFocus = focus[i];
+        const h = heat[i] / maxHeat; // 0..1 normalized heat
 
-      if (h > 0.01) {
-        // In or near a box: boost clarity based on stacking
-        // More stacked boxes = closer to 1.0
-        combined[i] = Math.min(1.0, baseFocus * 0.3 + h * 0.7 + baseFocus * h * 0.3);
-      } else {
-        // Outside all boxes: suppress
-        combined[i] = baseFocus * Math.pow(0.15, suppressionPower * 0.5);
-      }
-    }
-
-    // Enforce max 25% at full clarity (focus >= 0.95)
-    // Count how many pixels are at high clarity
-    let highCount = 0;
-    const totalPixels = SZ * SZ;
-    const maxHighPixels = Math.floor(totalPixels * 0.25);
-
-    // Collect all values and sort to find threshold
-    const sorted = Array.from(combined).sort((a, b) => b - a);
-    const threshold = sorted[maxHighPixels] || 0;
-
-    // If too many pixels are high, scale down those above threshold
-    if (sorted[0] > 0.95 && highCount > maxHighPixels) {
-      for (let i = 0; i < SZ * SZ; i++) {
-        if (combined[i] > threshold) {
-          // Keep the top 25% at their values, compress the rest
-          // Actually just let the natural distribution handle it
+        if (h > 0.01) {
+            // Inside a box: clarity scales INVERSELY with total selected area
+            // Small box = high focusBoost = crisp
+            // Huge box (everything) = low focusBoost = still pixelated/basic
+            combined[i] = Math.min(1.0, baseWhenFullySelected + h * focusBoost);
+        } else {
+            // Outside all boxes: always suppressed, more so when selection is small
+            const baseFocus = focus[i];
+            combined[i] = baseFocus * Math.pow(0.08, suppressionStrength);
         }
-      }
-    }
-
-    // Softer approach: use the threshold to create a natural distribution
-    // Top 25% stays as-is, everything else gets scaled relative to threshold
-    if (threshold > 0.01) {
-      for (let i = 0; i < SZ * SZ; i++) {
-        if (combined[i] <= threshold) {
-          combined[i] = combined[i] * (0.5 / Math.max(0.01, threshold));
-          combined[i] = Math.min(combined[i], 0.5); // cap non-focused at 0.5
-        }
-      }
     }
 
     return combined;
-  }
+}
 
   function getAllFocusPoints() {
     const points = [];
@@ -934,283 +920,272 @@ const RenderEmbed = (() => {
 //  - Stacked selections make the focused area even crisper
 // ============================================================
 const RenderTarget = (() => {
-  const SZ = ImageModule.SZ;
+    const SZ = ImageModule.SZ;
 
-  function render() {
-    const w = 290, h = 290;
-    ctxTarget.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctxTarget.clearRect(0, 0, w, h);
-    ctxTarget.fillStyle = '#0d1220';
-    ctxTarget.fillRect(0, 0, w, h);
+    function render() {
+        const w = 290, h = 290;
+        ctxTarget.setTransform(DPR, 0, 0, DPR, 0, 0);
+        ctxTarget.clearRect(0, 0, w, h);
+        ctxTarget.fillStyle = '#0d1220';
+        ctxTarget.fillRect(0, 0, w, h);
 
-    const focusMap = FocusMap.computeFocusMap();
-    const image = ImageModule.image;
-    const maxPix = State.maxPixelation;
+        const focusMap = FocusMap.computeFocusMap();
+        const image = ImageModule.image;
+        const maxPix = State.maxPixelation;
 
-    const imgMargin = 12;
-    const imgSize = Math.min(w, h) - imgMargin * 2;
-    const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
+        const imgMargin = 12;
+        const imgSize = Math.min(w, h) - imgMargin * 2;
+        const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
+        const cellSize = imgSize / SZ;
 
-    // ── Grid-in-grid rendering ──
-    // The idea: divide the image into blocks. The block size is
-    // determined by the focus level at that region.
-    // focus ≈ 0 → block size = maxPix (lego blocks)
-    // focus ≈ 1 → block size = 1 (pixel-perfect, SVG-like)
-    // In between → intermediate block sizes (2, 3, etc.)
-    // This creates a visible "resolution gradient" — the bleed-out.
+        // ── Adaptive block rendering ──
+        // For each pixel, determine its effective block size from focus.
+        // focus ≈ 0 → block size = maxPix (lego blocks, very basic)
+        // focus ≈ 1 → block size = 1 (pixel-perfect, full detail)
+        // We render from coarsest to finest, each pass overwriting where appropriate.
 
-    // We render in multiple passes from coarsest to finest.
-    // Each pass only draws where its resolution level is appropriate.
-
-    const cellSize = imgSize / SZ;
-
-    // Pass 1: Coarsest — fill everything at lego-block resolution
-    // This is the "background" that shows through where focus is low
-    for (let by = 0; by < SZ; by += maxPix) {
-      for (let bx = 0; bx < SZ; bx += maxPix) {
-        const cx = Math.min(SZ - 1, bx + Math.floor(maxPix / 2));
-        const cy = Math.min(SZ - 1, by + Math.floor(maxPix / 2));
-        const v = image[cy * SZ + cx];
-        const b = Math.max(0, Math.min(1, v));
-        const screenX = ox + bx * cellSize;
-        const screenY = oy + by * cellSize;
-        const blockW = Math.min(maxPix, SZ - bx) * cellSize;
-        const blockH = Math.min(maxPix, SZ - by) * cellSize;
-        // Desaturated, dim colors for unfocused areas
-        const r = Math.floor(15 + b * 60);
-        const g = Math.floor(18 + b * 65);
-        const bl = Math.floor(35 + b * 80);
-        ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
-        ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
-      }
-    }
-
-    // Draw block grid lines for the coarsest level (lego look)
-    ctxTarget.strokeStyle = 'rgba(30,41,59,0.4)';
-    ctxTarget.lineWidth = 0.5;
-    for (let by = 0; by <= SZ; by += maxPix) {
-      const sy = oy + by * cellSize;
-      ctxTarget.beginPath();
-      ctxTarget.moveTo(ox, sy);
-      ctxTarget.lineTo(ox + imgSize, sy);
-      ctxTarget.stroke();
-    }
-    for (let bx = 0; bx <= SZ; bx += maxPix) {
-      const sx = ox + bx * cellSize;
-      ctxTarget.beginPath();
-      ctxTarget.moveTo(sx, oy);
-      ctxTarget.lineTo(sx, oy + imgSize);
-      ctxTarget.stroke();
-    }
-
-    // Passes 2..N: progressively finer grids where focus warrants it
-    // Block sizes: maxPix, maxPix/2 (or 3), 2, 1
-    const blockSizes = [];
-    for (let bs = maxPix; bs >= 1; bs = Math.max(1, Math.floor(bs / 2))) {
-      blockSizes.push(bs);
-      if (bs === 1) break;
-    }
-    // Ensure we have at least [maxPix, ..., 1]
-    if (blockSizes[blockSizes.length - 1] !== 1) blockSizes.push(1);
-
-    // Each block size corresponds to a focus threshold
-    // blockSizes[0] = maxPix → focus threshold 0 (always drawn, already done above)
-    // blockSizes[last] = 1 → focus threshold ~0.8+ (only in sharpest areas)
-    for (let bi = 1; bi < blockSizes.length; bi++) {
-      const bs = blockSizes[bi];
-      const focusThreshold = bi / blockSizes.length; // e.g., 0.25, 0.5, 0.75, 1.0
-
-      for (let by = 0; by < SZ; by += bs) {
-        for (let bx = 0; bx < SZ; bx += bs) {
-          // Check focus at block center
-          const cx = Math.min(SZ - 1, bx + Math.floor(bs / 2));
-          const cy = Math.min(SZ - 1, by + Math.floor(bs / 2));
-          const focus = focusMap[cy * SZ + cx];
-
-          if (focus < focusThreshold * 0.7) continue; // skip if not focused enough
-
-          // Alpha based on how much this resolution level is "earned"
-          const alpha = Math.min(1.0, (focus - focusThreshold * 0.5) / (focusThreshold * 0.5 + 0.01));
-          if (alpha <= 0.02) continue;
-
-          const v = image[cy * SZ + cx];
-          const b = Math.max(0, Math.min(1, v));
-
-          // Color gets warmer and brighter with more focus
-          const warmth = focus;
-          const r = Math.floor(20 + b * (120 + warmth * 105));
-          const g = Math.floor(20 + b * (110 + warmth * 90));
-          const bl2 = Math.floor(30 + b * (80 + warmth * 30));
-
-          const screenX = ox + bx * cellSize;
-          const screenY = oy + by * cellSize;
-          const blockW = Math.min(bs, SZ - bx) * cellSize;
-          const blockH = Math.min(bs, SZ - by) * cellSize;
-
-          ctxTarget.globalAlpha = alpha;
-          ctxTarget.fillStyle = `rgb(${r},${g},${bl2})`;
-          ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
-
-          // Draw sub-grid lines for this resolution level (grid-in-grid effect)
-          if (bs > 1 && bs < maxPix) {
-            ctxTarget.strokeStyle = `rgba(162,155,254,${alpha * 0.15})`;
-            ctxTarget.lineWidth = 0.3;
-            // Only draw the subdividing lines within this block
-            const parentBs = blockSizes[bi - 1];
-            if (bx % parentBs === 0 && by % parentBs === 0) {
-              // We're at a parent block boundary — draw inner grid
-              for (let sy = by; sy <= Math.min(SZ, by + parentBs); sy += bs) {
-                const screenSy = oy + sy * cellSize;
-                ctxTarget.beginPath();
-                ctxTarget.moveTo(ox + bx * cellSize, screenSy);
-                ctxTarget.lineTo(ox + Math.min(SZ, bx + parentBs) * cellSize, screenSy);
-                ctxTarget.stroke();
-              }
-              for (let sx = bx; sx <= Math.min(SZ, bx + parentBs); sx += bs) {
-                const screenSx = ox + sx * cellSize;
-                ctxTarget.beginPath();
-                ctxTarget.moveTo(screenSx, oy + by * cellSize);
-                ctxTarget.lineTo(screenSx, oy + Math.min(SZ, by + parentBs) * cellSize);
-                ctxTarget.stroke();
-              }
+        // Pass 1: Coarsest — fill everything at lego-block resolution (the "basic smiley")
+        for (let by = 0; by < SZ; by += maxPix) {
+            for (let bx = 0; bx < SZ; bx += maxPix) {
+                const cx = Math.min(SZ - 1, bx + Math.floor(maxPix / 2));
+                const cy = Math.min(SZ - 1, by + Math.floor(maxPix / 2));
+                const v = image[cy * SZ + cx];
+                const b = Math.max(0, Math.min(1, v));
+                const screenX = ox + bx * cellSize;
+                const screenY = oy + by * cellSize;
+                const blockW = Math.min(maxPix, SZ - bx) * cellSize;
+                const blockH = Math.min(maxPix, SZ - by) * cellSize;
+                // Desaturated, dim colors for unfocused areas
+                const r = Math.floor(15 + b * 60);
+                const g = Math.floor(18 + b * 65);
+                const bl = Math.floor(35 + b * 80);
+                ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
+                ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
             }
-          }
         }
-      }
-    }
 
-    ctxTarget.globalAlpha = 1.0;
-
-    // ── Lens Pointer Visualization (same as before) ──
-    for (let s = 0; s < StalkModule.N_STALKS; s++) {
-      const st = StalkModule.stalks[s];
-      const sc = StalkModule.COLORS[s];
-      const isSelected = s === State.selectedStalk;
-
-      let centX = 0, centY = 0;
-      for (let l = 0; l < State.visibleLayers; l++) {
-        const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
-        centX += fp.x;
-        centY += fp.y;
-      }
-      centX /= State.visibleLayers;
-      centY /= State.visibleLayers;
-
-      const cpx = ox + centX * imgSize;
-      const cpy = oy + centY * imgSize;
-
-      const chSize = isSelected ? 10 : 6;
-      const chAlpha = isSelected ? 0.9 : 0.5;
-      ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${chAlpha})`;
-      ctxTarget.lineWidth = isSelected ? 2 : 1;
-      ctxTarget.beginPath(); ctxTarget.moveTo(cpx - chSize, cpy); ctxTarget.lineTo(cpx + chSize, cpy); ctxTarget.stroke();
-      ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy - chSize); ctxTarget.lineTo(cpx, cpy + chSize); ctxTarget.stroke();
-      ctxTarget.beginPath(); ctxTarget.arc(cpx, cpy, chSize * 0.7, 0, Math.PI * 2); ctxTarget.stroke();
-
-      let labelX, labelY;
-      if (centX < 0.5) { labelX = ox - 2; } else { labelX = ox + imgSize + 2; }
-      labelY = oy + centY * imgSize;
-
-      ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.7 : 0.3})`;
-      ctxTarget.lineWidth = isSelected ? 1.8 : 1;
-      ctxTarget.setLineDash([3, 2]);
-      ctxTarget.beginPath(); ctxTarget.moveTo(labelX, labelY); ctxTarget.lineTo(cpx, cpy); ctxTarget.stroke();
-      ctxTarget.setLineDash([]);
-
-      const angle = Math.atan2(cpy - labelY, cpx - labelX);
-      const aLen = 6;
-      ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.8 : 0.4})`;
-      ctxTarget.beginPath();
-      ctxTarget.moveTo(cpx, cpy);
-      ctxTarget.lineTo(cpx - aLen * Math.cos(angle - 0.4), cpy - aLen * Math.sin(angle - 0.4));
-      ctxTarget.lineTo(cpx - aLen * Math.cos(angle + 0.4), cpy - aLen * Math.sin(angle + 0.4));
-      ctxTarget.closePath(); ctxTarget.fill();
-
-      ctxTarget.font = `${isSelected ? 'bold ' : ''}8px monospace`;
-      ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
-      ctxTarget.textAlign = centX < 0.5 ? 'right' : 'left';
-      ctxTarget.fillText(StalkModule.NAMES[s], labelX + (centX < 0.5 ? -2 : 2), labelY + 3);
-
-      for (let l = 0; l < State.visibleLayers; l++) {
-        const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
-        const fpX = ox + fp.x * imgSize;
-        const fpY = oy + fp.y * imgSize;
-        const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
-        ctxTarget.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.4 : 0.15})`;
-        ctxTarget.lineWidth = 0.7;
-        ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy); ctxTarget.lineTo(fpX, fpY); ctxTarget.stroke();
-        ctxTarget.beginPath(); ctxTarget.arc(fpX, fpY, isSelected ? 2.5 : 1.5, 0, Math.PI * 2);
-        ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.7 : 0.35})`; ctxTarget.fill();
-      }
-    }
-
-    // ── Draw focus boxes with stacking indicator ──
-    for (let i = 0; i < State.focusBoxes.length; i++) {
-      const box = State.focusBoxes[i];
-      const bx = ox + box.x * imgSize;
-      const by = oy + box.y * imgSize;
-      const bw = box.w * imgSize;
-      const bh = box.h * imgSize;
-
-      // Count how many boxes overlap this one's center
-      const bcx = box.x + box.w / 2, bcy = box.y + box.h / 2;
-      let stackCount = 0;
-      for (const other of State.focusBoxes) {
-        if (bcx >= other.x && bcx <= other.x + other.w &&
-            bcy >= other.y && bcy <= other.y + other.h) {
-          stackCount++;
+        // Draw block grid lines for the coarsest level (lego look)
+        ctxTarget.strokeStyle = 'rgba(30,41,59,0.4)';
+        ctxTarget.lineWidth = 0.5;
+        for (let by = 0; by <= SZ; by += maxPix) {
+            const sy = oy + by * cellSize;
+            ctxTarget.beginPath();
+            ctxTarget.moveTo(ox, sy);
+            ctxTarget.lineTo(ox + imgSize, sy);
+            ctxTarget.stroke();
         }
-      }
+        for (let bx = 0; bx <= SZ; bx += maxPix) {
+            const sx = ox + bx * cellSize;
+            ctxTarget.beginPath();
+            ctxTarget.moveTo(sx, oy);
+            ctxTarget.lineTo(sx, oy + imgSize);
+            ctxTarget.stroke();
+        }
 
-      const pulseAlpha = 0.5 + 0.3 * Math.sin(State.time * 3 + i);
-      const stackBrightness = Math.min(1.0, stackCount * 0.3);
+        // Passes 2..N: progressively finer grids where focus warrants it
+        const blockSizes = [];
+        for (let bs = maxPix; bs >= 1; bs = Math.max(1, Math.floor(bs / 2))) {
+            blockSizes.push(bs);
+            if (bs === 1) break;
+        }
+        if (blockSizes[blockSizes.length - 1] !== 1) blockSizes.push(1);
 
-      ctxTarget.strokeStyle = `rgba(251,191,36,${pulseAlpha + stackBrightness * 0.3})`;
-      ctxTarget.lineWidth = 1.5 + stackCount * 0.5;
-      ctxTarget.setLineDash([4, 3]);
-      ctxTarget.strokeRect(bx, by, bw, bh);
-      ctxTarget.setLineDash([]);
+        for (let bi = 1; bi < blockSizes.length; bi++) {
+            const bs = blockSizes[bi];
+            // Focus threshold: this resolution level only appears where focus exceeds this
+            const focusThreshold = bi / blockSizes.length;
 
-      // Fill with stacking-aware gold tint
-      ctxTarget.fillStyle = `rgba(251,191,36,${0.04 + stackCount * 0.03})`;
-      ctxTarget.fillRect(bx, by, bw, bh);
+            for (let by = 0; by < SZ; by += bs) {
+                for (let bx = 0; bx < SZ; bx += bs) {
+                    const cx = Math.min(SZ - 1, bx + Math.floor(bs / 2));
+                    const cy = Math.min(SZ - 1, by + Math.floor(bs / 2));
+                    const focus = focusMap[cy * SZ + cx];
 
-      // Stack count badge
-      if (stackCount > 1) {
-        ctxTarget.font = 'bold 8px monospace';
-        ctxTarget.fillStyle = `rgba(251,191,36,${0.7 + stackBrightness * 0.3})`;
-        ctxTarget.textAlign = 'left';
-        ctxTarget.fillText(`Focus #${i + 1} [×${stackCount}]`, bx + 2, by - 3);
-      } else {
-        ctxTarget.font = 'bold 7px monospace';
-        ctxTarget.fillStyle = 'rgba(251,191,36,0.8)';
-        ctxTarget.textAlign = 'left';
-        ctxTarget.fillText(`Focus #${i + 1}`, bx + 2, by - 3);
-      }
+                    // Only draw if focus is high enough for this resolution level
+                    if (focus < focusThreshold * 0.6) continue;
+
+                    // Alpha: smooth transition into this detail level
+                    const alpha = Math.min(1.0, (focus - focusThreshold * 0.4) / (focusThreshold * 0.6 + 0.01));
+                    if (alpha <= 0.02) continue;
+
+                    const v = image[cy * SZ + cx];
+                    const b = Math.max(0, Math.min(1, v));
+
+                    // Color gets warmer and brighter with more focus
+                    const warmth = focus;
+                    const r = Math.floor(20 + b * (120 + warmth * 105));
+                    const g = Math.floor(20 + b * (110 + warmth * 90));
+                    const bl2 = Math.floor(30 + b * (80 + warmth * 30));
+
+                    const screenX = ox + bx * cellSize;
+                    const screenY = oy + by * cellSize;
+                    const blockW = Math.min(bs, SZ - bx) * cellSize;
+                    const blockH = Math.min(bs, SZ - by) * cellSize;
+
+                    ctxTarget.globalAlpha = alpha;
+                    ctxTarget.fillStyle = `rgb(${r},${g},${bl2})`;
+                    ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
+
+                    // Draw sub-grid lines for this resolution level (grid-in-grid effect)
+                    if (bs > 1 && bs < maxPix && alpha > 0.3) {
+                        ctxTarget.strokeStyle = `rgba(162,155,254,${alpha * 0.12})`;
+                        ctxTarget.lineWidth = 0.3;
+                        const parentBs = blockSizes[bi - 1];
+                        if (bx % parentBs === 0 && by % parentBs === 0) {
+                            for (let sy = by; sy <= Math.min(SZ, by + parentBs); sy += bs) {
+                                const screenSy = oy + sy * cellSize;
+                                ctxTarget.beginPath();
+                                ctxTarget.moveTo(ox + bx * cellSize, screenSy);
+                                ctxTarget.lineTo(ox + Math.min(SZ, bx + parentBs) * cellSize, screenSy);
+                                ctxTarget.stroke();
+                            }
+                            for (let sx = bx; sx <= Math.min(SZ, bx + parentBs); sx += bs) {
+                                const screenSx = ox + sx * cellSize;
+                                ctxTarget.beginPath();
+                                ctxTarget.moveTo(screenSx, oy + by * cellSize);
+                                ctxTarget.lineTo(screenSx, oy + Math.min(SZ, by + parentBs) * cellSize);
+                                ctxTarget.stroke();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        ctxTarget.globalAlpha = 1.0;
+
+        // ── Lens Pointer Visualization ──
+        for (let s = 0; s < StalkModule.N_STALKS; s++) {
+            const st = StalkModule.stalks[s];
+            const sc = StalkModule.COLORS[s];
+            const isSelected = s === State.selectedStalk;
+
+            let centX = 0, centY = 0;
+            for (let l = 0; l < State.visibleLayers; l++) {
+                const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+                centX += fp.x;
+                centY += fp.y;
+            }
+            centX /= State.visibleLayers;
+            centY /= State.visibleLayers;
+
+            const cpx = ox + centX * imgSize;
+            const cpy = oy + centY * imgSize;
+
+            const chSize = isSelected ? 10 : 6;
+            const chAlpha = isSelected ? 0.9 : 0.5;
+            ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${chAlpha})`;
+            ctxTarget.lineWidth = isSelected ? 2 : 1;
+            ctxTarget.beginPath(); ctxTarget.moveTo(cpx - chSize, cpy); ctxTarget.lineTo(cpx + chSize, cpy); ctxTarget.stroke();
+            ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy - chSize); ctxTarget.lineTo(cpx, cpy + chSize); ctxTarget.stroke();
+            ctxTarget.beginPath(); ctxTarget.arc(cpx, cpy, chSize * 0.7, 0, Math.PI * 2); ctxTarget.stroke();
+
+            let labelX, labelY;
+            if (centX < 0.5) { labelX = ox - 2; } else { labelX = ox + imgSize + 2; }
+            labelY = oy + centY * imgSize;
+
+            ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.7 : 0.3})`;
+            ctxTarget.lineWidth = isSelected ? 1.8 : 1;
+            ctxTarget.setLineDash([3, 2]);
+            ctxTarget.beginPath(); ctxTarget.moveTo(labelX, labelY); ctxTarget.lineTo(cpx, cpy); ctxTarget.stroke();
+            ctxTarget.setLineDash([]);
+
+            const angle = Math.atan2(cpy - labelY, cpx - labelX);
+            const aLen = 6;
+            ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.8 : 0.4})`;
+            ctxTarget.beginPath();
+            ctxTarget.moveTo(cpx, cpy);
+            ctxTarget.lineTo(cpx - aLen * Math.cos(angle - 0.4), cpy - aLen * Math.sin(angle - 0.4));
+            ctxTarget.lineTo(cpx - aLen * Math.cos(angle + 0.4), cpy - aLen * Math.sin(angle + 0.4));
+            ctxTarget.closePath(); ctxTarget.fill();
+
+            ctxTarget.font = `${isSelected ? 'bold ' : ''}8px monospace`;
+            ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
+            ctxTarget.textAlign = centX < 0.5 ? 'right' : 'left';
+            ctxTarget.fillText(StalkModule.NAMES[s], labelX + (centX < 0.5 ? -2 : 2), labelY + 3);
+
+            for (let l = 0; l < State.visibleLayers; l++) {
+                const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+                const fpX = ox + fp.x * imgSize;
+                const fpY = oy + fp.y * imgSize;
+                const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
+                ctxTarget.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.4 : 0.15})`;
+                ctxTarget.lineWidth = 0.7;
+                ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy); ctxTarget.lineTo(fpX, fpY); ctxTarget.stroke();
+                ctxTarget.beginPath(); ctxTarget.arc(fpX, fpY, isSelected ? 2.5 : 1.5, 0, Math.PI * 2);
+                ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.7 : 0.35})`; ctxTarget.fill();
+            }
+        }
+
+        // ── Draw focus boxes with area indicator ──
+        const totalSelectedArea = State.focusBoxes.reduce((sum, box) => sum + box.w * box.h, 0);
+        const clampedArea = Math.min(1.0, totalSelectedArea);
+
+        for (let i = 0; i < State.focusBoxes.length; i++) {
+            const box = State.focusBoxes[i];
+            const bx = ox + box.x * imgSize;
+            const by = oy + box.y * imgSize;
+            const bw = box.w * imgSize;
+            const bh = box.h * imgSize;
+
+            const pulseAlpha = 0.5 + 0.3 * Math.sin(State.time * 3 + i);
+
+            ctxTarget.strokeStyle = `rgba(251,191,36,${pulseAlpha})`;
+            ctxTarget.lineWidth = 1.5;
+            ctxTarget.setLineDash([4, 3]);
+            ctxTarget.strokeRect(bx, by, bw, bh);
+            ctxTarget.setLineDash([]);
+
+            ctxTarget.fillStyle = `rgba(251,191,36,0.04)`;
+            ctxTarget.fillRect(bx, by, bw, bh);
+
+            ctxTarget.font = 'bold 7px monospace';
+            ctxTarget.fillStyle = 'rgba(251,191,36,0.8)';
+            ctxTarget.textAlign = 'left';
+            ctxTarget.fillText(`#${i + 1} (${(box.w * box.h * 100).toFixed(0)}% area)`, bx + 2, by - 3);
+        }
+
+        // Show total area and resulting detail level
+        if (State.focusBoxes.length > 0) {
+            const detailLevel = Math.pow(1.0 - clampedArea, 0.5);
+            ctxTarget.font = 'bold 8px monospace';
+            ctxTarget.fillStyle = 'rgba(251,191,36,0.9)';
+            ctxTarget.textAlign = 'center';
+            ctxTarget.fillText(
+                `Area: ${(clampedArea * 100).toFixed(0)}% → Detail: ${(detailLevel * 100).toFixed(0)}%`,
+                w / 2, h - 4
+            );
+        }
+
+        // If currently drawing a box, show preview
+        if (State.isDrawingBox && State.boxStart && State._boxCurrent) {
+            const bs = State.boxStart;
+            const bc = State._boxCurrent;
+            const bx = ox + Math.min(bs.x, bc.x) * imgSize;
+            const by = oy + Math.min(bs.y, bc.y) * imgSize;
+            const bw = Math.abs(bc.x - bs.x) * imgSize;
+            const bh = Math.abs(bc.y - bs.y) * imgSize;
+
+            ctxTarget.strokeStyle = 'rgba(251,191,36,0.9)';
+            ctxTarget.lineWidth = 2;
+            ctxTarget.setLineDash([2, 2]);
+            ctxTarget.strokeRect(bx, by, bw, bh);
+            ctxTarget.setLineDash([]);
+            ctxTarget.fillStyle = 'rgba(251,191,36,0.1)';
+            ctxTarget.fillRect(bx, by, bw, bh);
+
+            // Show preview area percentage
+            const previewArea = Math.abs(bc.x - bs.x) * Math.abs(bc.y - bs.y);
+            ctxTarget.font = '7px monospace';
+            ctxTarget.fillStyle = 'rgba(251,191,36,0.8)';
+            ctxTarget.textAlign = 'center';
+            ctxTarget.fillText(`${(previewArea * 100).toFixed(0)}%`, bx + bw / 2, by + bh / 2 + 3);
+        }
+
+        cvTarget._imgBounds = { x: ox, y: oy, w: imgSize, h: imgSize };
     }
 
-    // If currently drawing a box, show preview
-    if (State.isDrawingBox && State.boxStart && State._boxCurrent) {
-      const bs = State.boxStart;
-      const bc = State._boxCurrent;
-      const bx = ox + Math.min(bs.x, bc.x) * imgSize;
-      const by = oy + Math.min(bs.y, bc.y) * imgSize;
-      const bw = Math.abs(bc.x - bs.x) * imgSize;
-      const bh = Math.abs(bc.y - bs.y) * imgSize;
-
-      ctxTarget.strokeStyle = 'rgba(251,191,36,0.9)';
-      ctxTarget.lineWidth = 2;
-      ctxTarget.setLineDash([2, 2]);
-      ctxTarget.strokeRect(bx, by, bw, bh);
-      ctxTarget.setLineDash([]);
-      ctxTarget.fillStyle = 'rgba(251,191,36,0.1)';
-      ctxTarget.fillRect(bx, by, bw, bh);
-    }
-
-    cvTarget._imgBounds = { x: ox, y: oy, w: imgSize, h: imgSize };
-  }
-
-  return { render };
+    return { render };
 })();
 
 // ============================================================
