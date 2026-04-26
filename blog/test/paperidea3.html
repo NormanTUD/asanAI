@@ -360,22 +360,23 @@ const State = (() => {
 // ============================================================
 // Focus Map — computes per-pixel focus (sharpness) from all tokens
 // ============================================================
+// ============================================================
+// REPLACE: FocusMap module
+// Now supports:
+//  - Stacked box selections: more boxes in an area = higher clarity (up to 1.0)
+//  - Max 25% of image can be at full clarity
+//  - Focus "bleed-out": smooth falloff from focused to pixelated
+//  - Non-selected areas become progressively more pixelated with more boxes
+// ============================================================
 const FocusMap = (() => {
   const SZ = ImageModule.SZ;
 
-  // Per-stalk, per-layer focus maps (before and after transport)
-  // transportedMaps[layer][stalk] = Float64Array(SZ*SZ)
   let transportedMaps = [];
   let rawMaps = [];
   let transportCacheKey = '';
 
-  // Parallel transport: after each layer, stalks exchange focus info
-  // over the residual stream. Each stalk's map is blended with its
-  // neighbors' maps, weighted by a transport kernel that depends on
-  // the geometric relationship (embedding distance) between stalks.
   function computeTransportWeights() {
     const N = StalkModule.N_STALKS;
-    // weights[i][j] = how much stalk j's map flows into stalk i
     const weights = [];
     for (let i = 0; i < N; i++) {
       weights[i] = new Float64Array(N);
@@ -384,31 +385,19 @@ const FocusMap = (() => {
       for (let j = 0; j < N; j++) {
         const pj = StalkModule.stalks[j].embedPoint;
         const d = Math.hypot(pi.x - pj.x, pi.y - pj.y);
-        // Parallel transport coupling: closer stalks in embedding space
-        // communicate more strongly. Self-connection is strongest.
-        if (i === j) {
-          weights[i][j] = 1.0;
-        } else {
-          // Gaussian coupling with characteristic scale ~0.3
-          weights[i][j] = 0.35 * Math.exp(-d * d / (2 * 0.12 * 0.12));
-        }
+        weights[i][j] = (i === j) ? 1.0 : 0.35 * Math.exp(-d * d / (2 * 0.12 * 0.12));
         totalW += weights[i][j];
       }
-      // Normalize so total weight = 1 (convex combination)
-      for (let j = 0; j < N; j++) {
-        weights[i][j] /= totalW;
-      }
+      for (let j = 0; j < N; j++) weights[i][j] /= totalW;
     }
     return weights;
   }
 
-  // Compute the raw (pre-transport) focus map for one stalk at one layer
   function computeRawStalkLayerMap(stalkIdx, layerIdx) {
     const map = new Float64Array(SZ * SZ);
     const st = StalkModule.stalks[stalkIdx];
     const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, stalkIdx, layerIdx);
     const layerWeight = (layerIdx + 1) / State.visibleLayers;
-
     for (let y = 0; y < SZ; y++) {
       for (let x = 0; x < SZ; x++) {
         const nx = x / SZ, ny = y / SZ;
@@ -419,9 +408,8 @@ const FocusMap = (() => {
     return map;
   }
 
-  // Full computation: raw maps per stalk per layer, then parallel transport after each layer
   function computeAllMaps() {
-    const key = `${State.visibleLayers}-${State.focusRadius}-${State.curvatureK}-${StalkModule.stalks.map(s => s.embedPoint.x.toFixed(4) + s.embedPoint.y.toFixed(4)).join(',')}`;
+    const key = `${State.visibleLayers}-${State.focusRadius}-${State.curvatureK}-${State.focusBoxes.length}-${StalkModule.stalks.map(s => s.embedPoint.x.toFixed(4) + s.embedPoint.y.toFixed(4)).join(',')}`;
     if (transportCacheKey === key) return;
     transportCacheKey = key;
 
@@ -432,30 +420,25 @@ const FocusMap = (() => {
     rawMaps = [];
     transportedMaps = [];
 
-    // Accumulator: each stalk carries a "residual stream" focus map
-    // that accumulates across layers
     const residualStream = [];
     for (let s = 0; s < N; s++) {
-      residualStream[s] = new Float64Array(SZ * SZ); // starts at zero
+      residualStream[s] = new Float64Array(SZ * SZ);
     }
 
     for (let l = 0; l < nLayers; l++) {
       rawMaps[l] = [];
       transportedMaps[l] = [];
 
-      // Step 1: Each stalk computes its raw contribution at this layer
       for (let s = 0; s < N; s++) {
         rawMaps[l][s] = computeRawStalkLayerMap(s, l);
       }
 
-      // Step 2: Add raw contribution to residual stream (residual connection)
       for (let s = 0; s < N; s++) {
         for (let i = 0; i < SZ * SZ; i++) {
           residualStream[s][i] += rawMaps[l][s][i];
         }
       }
 
-      // Step 3: Parallel transport — exchange maps between stalks over residual stream
       const transported = [];
       for (let s = 0; s < N; s++) {
         transported[s] = new Float64Array(SZ * SZ);
@@ -468,7 +451,6 @@ const FocusMap = (() => {
         }
       }
 
-      // Step 4: Write transported result back into residual stream
       for (let s = 0; s < N; s++) {
         residualStream[s] = transported[s];
         transportedMaps[l][s] = new Float64Array(transported[s]);
@@ -476,34 +458,133 @@ const FocusMap = (() => {
     }
   }
 
-  // Returns a SZ×SZ array of focus values [0..1] where 1 = sharp, 0 = maximally pixelated
-  // This is the FINAL focus map after all layers of parallel transport
+  // Compute per-pixel "box heat" — how many boxes overlap each pixel,
+  // with smooth bleed-out from box edges
+  function computeBoxHeatMap() {
+    const heat = new Float64Array(SZ * SZ);
+    const boxes = State.focusBoxes;
+    if (boxes.length === 0) return heat;
+
+    const bleedRadius = 0.08; // normalized bleed distance
+
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const nx = x / SZ, ny = y / SZ;
+        let totalHeat = 0;
+
+        for (const box of boxes) {
+          // Signed distance to box interior (negative = inside)
+          const dx = Math.max(box.x - nx, 0, nx - (box.x + box.w));
+          const dy = Math.max(box.y - ny, 0, ny - (box.y + box.h));
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist <= 0) {
+            // Inside box: full contribution
+            totalHeat += 1.0;
+          } else if (dist < bleedRadius) {
+            // Bleed zone: smooth cubic falloff
+            const t = dist / bleedRadius;
+            const falloff = 1.0 - t * t * (3.0 - 2.0 * t); // smoothstep
+            totalHeat += falloff;
+          }
+        }
+
+        heat[y * SZ + x] = totalHeat;
+      }
+    }
+    return heat;
+  }
+
+  // Returns SZ×SZ focus values [0..1]
+  // With stacked boxes: more overlap = higher clarity
+  // Enforces max 25% of pixels at full clarity
+  // Non-selected areas get suppressed proportional to total box count
   function computeFocusMap() {
     computeAllMaps();
     const focus = new Float64Array(SZ * SZ);
     const nLayers = State.visibleLayers;
     const N = StalkModule.N_STALKS;
+    const boxes = State.focusBoxes;
 
-    if (transportedMaps.length === 0) return focus;
-
-    // Use the final layer's transported maps, take max across all stalks
+    // Base focus from token transport
     const lastLayer = nLayers - 1;
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        const idx = y * SZ + x;
-        let maxVal = 0;
-        for (let s = 0; s < N; s++) {
-          if (transportedMaps[lastLayer] && transportedMaps[lastLayer][s]) {
-            maxVal = Math.max(maxVal, transportedMaps[lastLayer][s][idx]);
+    if (transportedMaps.length > 0) {
+      for (let y = 0; y < SZ; y++) {
+        for (let x = 0; x < SZ; x++) {
+          const idx = y * SZ + x;
+          let maxVal = 0;
+          for (let s = 0; s < N; s++) {
+            if (transportedMaps[lastLayer] && transportedMaps[lastLayer][s]) {
+              maxVal = Math.max(maxVal, transportedMaps[lastLayer][s][idx]);
+            }
           }
+          focus[idx] = Math.min(1, maxVal);
         }
-        focus[idx] = Math.min(1, maxVal);
       }
     }
-    return focus;
+
+    // If no boxes, return raw focus
+    if (boxes.length === 0) return focus;
+
+    // Compute box heat map (stacked selections)
+    const heat = computeBoxHeatMap();
+    const maxHeat = Math.max(1, boxes.length); // normalize by number of boxes
+
+    // Suppression factor: more boxes = more suppression of non-selected areas
+    const suppressionPower = Math.min(4.0, 1.0 + boxes.length * 0.6);
+
+    // Combine: heat modulates focus
+    // High heat → clarity approaches 1.0
+    // Zero heat → clarity suppressed toward 0
+    const combined = new Float64Array(SZ * SZ);
+    for (let i = 0; i < SZ * SZ; i++) {
+      const h = heat[i] / maxHeat; // 0..1 normalized heat
+      const baseFocus = focus[i];
+
+      if (h > 0.01) {
+        // In or near a box: boost clarity based on stacking
+        // More stacked boxes = closer to 1.0
+        combined[i] = Math.min(1.0, baseFocus * 0.3 + h * 0.7 + baseFocus * h * 0.3);
+      } else {
+        // Outside all boxes: suppress
+        combined[i] = baseFocus * Math.pow(0.15, suppressionPower * 0.5);
+      }
+    }
+
+    // Enforce max 25% at full clarity (focus >= 0.95)
+    // Count how many pixels are at high clarity
+    let highCount = 0;
+    const totalPixels = SZ * SZ;
+    const maxHighPixels = Math.floor(totalPixels * 0.25);
+
+    // Collect all values and sort to find threshold
+    const sorted = Array.from(combined).sort((a, b) => b - a);
+    const threshold = sorted[maxHighPixels] || 0;
+
+    // If too many pixels are high, scale down those above threshold
+    if (sorted[0] > 0.95 && highCount > maxHighPixels) {
+      for (let i = 0; i < SZ * SZ; i++) {
+        if (combined[i] > threshold) {
+          // Keep the top 25% at their values, compress the rest
+          // Actually just let the natural distribution handle it
+        }
+      }
+    }
+
+    // Softer approach: use the threshold to create a natural distribution
+    // Top 25% stays as-is, everything else gets scaled relative to threshold
+    if (threshold > 0.01) {
+      for (let i = 0; i < SZ * SZ; i++) {
+        if (combined[i] <= threshold) {
+          combined[i] = combined[i] * (0.5 / Math.max(0.01, threshold));
+          combined[i] = Math.min(combined[i], 0.5); // cap non-focused at 0.5
+        }
+      }
+    }
+
+    return combined;
   }
 
-  // Get all focus points for visualization
   function getAllFocusPoints() {
     const points = [];
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
@@ -516,36 +597,24 @@ const FocusMap = (() => {
     return points;
   }
 
-  // Get transport weights for visualization
-  function getTransportWeights() {
-    return computeTransportWeights();
-  }
+  function getTransportWeights() { return computeTransportWeights(); }
 
-  // Get per-stalk transported map at a given layer
   function getTransportedMap(layer, stalk) {
     computeAllMaps();
-    if (transportedMaps[layer] && transportedMaps[layer][stalk]) {
-      return transportedMaps[layer][stalk];
-    }
+    if (transportedMaps[layer] && transportedMaps[layer][stalk]) return transportedMaps[layer][stalk];
     return null;
   }
 
-  // Get per-stalk raw map at a given layer
   function getRawMap(layer, stalk) {
     computeAllMaps();
-    if (rawMaps[layer] && rawMaps[layer][stalk]) {
-      return rawMaps[layer][stalk];
-    }
+    if (rawMaps[layer] && rawMaps[layer][stalk]) return rawMaps[layer][stalk];
     return null;
   }
 
-  function invalidateCache() {
-    transportCacheKey = '';
-  }
+  function invalidateCache() { transportCacheKey = ''; }
 
-  return { computeFocusMap, getAllFocusPoints, getTransportWeights, getTransportedMap, getRawMap, invalidateCache };
+  return { computeFocusMap, computeBoxHeatMap, getAllFocusPoints, getTransportWeights, getTransportedMap, getRawMap, invalidateCache };
 })();
-
 
 // ============================================================
 // Layer Warp Fields
@@ -855,6 +924,15 @@ const RenderEmbed = (() => {
 // ============================================================
 // Render Focused Image (right panel)
 // ============================================================
+// ============================================================
+// REPLACE: RenderTarget module
+// Grid-in-grid rendering:
+//  - Low focus → large "lego block" pixels
+//  - High focus → tiny crisp pixels (grid inside grid)
+//  - Focus bleeds out visibly: you can SEE the transition
+//    from crisp SVG-like detail to chunky blocks
+//  - Stacked selections make the focused area even crisper
+// ============================================================
 const RenderTarget = (() => {
   const SZ = ImageModule.SZ;
 
@@ -872,9 +950,22 @@ const RenderTarget = (() => {
     const imgMargin = 12;
     const imgSize = Math.min(w, h) - imgMargin * 2;
     const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
+
+    // ── Grid-in-grid rendering ──
+    // The idea: divide the image into blocks. The block size is
+    // determined by the focus level at that region.
+    // focus ≈ 0 → block size = maxPix (lego blocks)
+    // focus ≈ 1 → block size = 1 (pixel-perfect, SVG-like)
+    // In between → intermediate block sizes (2, 3, etc.)
+    // This creates a visible "resolution gradient" — the bleed-out.
+
+    // We render in multiple passes from coarsest to finest.
+    // Each pass only draws where its resolution level is appropriate.
+
     const cellSize = imgSize / SZ;
 
-    // Pass 1: pixelated base
+    // Pass 1: Coarsest — fill everything at lego-block resolution
+    // This is the "background" that shows through where focus is low
     for (let by = 0; by < SZ; by += maxPix) {
       for (let bx = 0; bx < SZ; bx += maxPix) {
         const cx = Math.min(SZ - 1, bx + Math.floor(maxPix / 2));
@@ -885,42 +976,117 @@ const RenderTarget = (() => {
         const screenY = oy + by * cellSize;
         const blockW = Math.min(maxPix, SZ - bx) * cellSize;
         const blockH = Math.min(maxPix, SZ - by) * cellSize;
-        const r = Math.floor(20 + b * 120);
-        const g = Math.floor(25 + b * 130);
-        const bl = Math.floor(45 + b * 160);
+        // Desaturated, dim colors for unfocused areas
+        const r = Math.floor(15 + b * 60);
+        const g = Math.floor(18 + b * 65);
+        const bl = Math.floor(35 + b * 80);
         ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
         ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
       }
     }
 
-    // Pass 2: sharp focused pixels
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        const focus = focusMap[y * SZ + x];
-        if (focus < 0.15) continue;
-        const v = image[y * SZ + x];
-        const b = Math.max(0, Math.min(1, v));
-        const r = Math.floor(30 + b * 225);
-        const g = Math.floor(25 + b * 200);
-        const bl = Math.floor(10 + b * 100);
-        const screenX = ox + x * cellSize;
-        const screenY = oy + y * cellSize;
-        ctxTarget.globalAlpha = focus;
-        ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
-        ctxTarget.fillRect(screenX, screenY, cellSize + 0.5, cellSize + 0.5);
+    // Draw block grid lines for the coarsest level (lego look)
+    ctxTarget.strokeStyle = 'rgba(30,41,59,0.4)';
+    ctxTarget.lineWidth = 0.5;
+    for (let by = 0; by <= SZ; by += maxPix) {
+      const sy = oy + by * cellSize;
+      ctxTarget.beginPath();
+      ctxTarget.moveTo(ox, sy);
+      ctxTarget.lineTo(ox + imgSize, sy);
+      ctxTarget.stroke();
+    }
+    for (let bx = 0; bx <= SZ; bx += maxPix) {
+      const sx = ox + bx * cellSize;
+      ctxTarget.beginPath();
+      ctxTarget.moveTo(sx, oy);
+      ctxTarget.lineTo(sx, oy + imgSize);
+      ctxTarget.stroke();
+    }
+
+    // Passes 2..N: progressively finer grids where focus warrants it
+    // Block sizes: maxPix, maxPix/2 (or 3), 2, 1
+    const blockSizes = [];
+    for (let bs = maxPix; bs >= 1; bs = Math.max(1, Math.floor(bs / 2))) {
+      blockSizes.push(bs);
+      if (bs === 1) break;
+    }
+    // Ensure we have at least [maxPix, ..., 1]
+    if (blockSizes[blockSizes.length - 1] !== 1) blockSizes.push(1);
+
+    // Each block size corresponds to a focus threshold
+    // blockSizes[0] = maxPix → focus threshold 0 (always drawn, already done above)
+    // blockSizes[last] = 1 → focus threshold ~0.8+ (only in sharpest areas)
+    for (let bi = 1; bi < blockSizes.length; bi++) {
+      const bs = blockSizes[bi];
+      const focusThreshold = bi / blockSizes.length; // e.g., 0.25, 0.5, 0.75, 1.0
+
+      for (let by = 0; by < SZ; by += bs) {
+        for (let bx = 0; bx < SZ; bx += bs) {
+          // Check focus at block center
+          const cx = Math.min(SZ - 1, bx + Math.floor(bs / 2));
+          const cy = Math.min(SZ - 1, by + Math.floor(bs / 2));
+          const focus = focusMap[cy * SZ + cx];
+
+          if (focus < focusThreshold * 0.7) continue; // skip if not focused enough
+
+          // Alpha based on how much this resolution level is "earned"
+          const alpha = Math.min(1.0, (focus - focusThreshold * 0.5) / (focusThreshold * 0.5 + 0.01));
+          if (alpha <= 0.02) continue;
+
+          const v = image[cy * SZ + cx];
+          const b = Math.max(0, Math.min(1, v));
+
+          // Color gets warmer and brighter with more focus
+          const warmth = focus;
+          const r = Math.floor(20 + b * (120 + warmth * 105));
+          const g = Math.floor(20 + b * (110 + warmth * 90));
+          const bl2 = Math.floor(30 + b * (80 + warmth * 30));
+
+          const screenX = ox + bx * cellSize;
+          const screenY = oy + by * cellSize;
+          const blockW = Math.min(bs, SZ - bx) * cellSize;
+          const blockH = Math.min(bs, SZ - by) * cellSize;
+
+          ctxTarget.globalAlpha = alpha;
+          ctxTarget.fillStyle = `rgb(${r},${g},${bl2})`;
+          ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
+
+          // Draw sub-grid lines for this resolution level (grid-in-grid effect)
+          if (bs > 1 && bs < maxPix) {
+            ctxTarget.strokeStyle = `rgba(162,155,254,${alpha * 0.15})`;
+            ctxTarget.lineWidth = 0.3;
+            // Only draw the subdividing lines within this block
+            const parentBs = blockSizes[bi - 1];
+            if (bx % parentBs === 0 && by % parentBs === 0) {
+              // We're at a parent block boundary — draw inner grid
+              for (let sy = by; sy <= Math.min(SZ, by + parentBs); sy += bs) {
+                const screenSy = oy + sy * cellSize;
+                ctxTarget.beginPath();
+                ctxTarget.moveTo(ox + bx * cellSize, screenSy);
+                ctxTarget.lineTo(ox + Math.min(SZ, bx + parentBs) * cellSize, screenSy);
+                ctxTarget.stroke();
+              }
+              for (let sx = bx; sx <= Math.min(SZ, bx + parentBs); sx += bs) {
+                const screenSx = ox + sx * cellSize;
+                ctxTarget.beginPath();
+                ctxTarget.moveTo(screenSx, oy + by * cellSize);
+                ctxTarget.lineTo(screenSx, oy + Math.min(SZ, by + parentBs) * cellSize);
+                ctxTarget.stroke();
+              }
+            }
+          }
+        }
       }
     }
+
     ctxTarget.globalAlpha = 1.0;
 
-    // ── NEW: Lens Pointer Visualization ──
-    // For each stalk, draw a bold arrow from the token label to its
-    // average focus centroid across layers, plus a crosshair at the centroid.
+    // ── Lens Pointer Visualization (same as before) ──
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
       const isSelected = s === State.selectedStalk;
 
-      // Compute centroid of all focus points for this stalk across layers
       let centX = 0, centY = 0;
       for (let l = 0; l < State.visibleLayers; l++) {
         const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
@@ -933,48 +1099,24 @@ const RenderTarget = (() => {
       const cpx = ox + centX * imgSize;
       const cpy = oy + centY * imgSize;
 
-      // Crosshair at centroid
       const chSize = isSelected ? 10 : 6;
       const chAlpha = isSelected ? 0.9 : 0.5;
       ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${chAlpha})`;
       ctxTarget.lineWidth = isSelected ? 2 : 1;
-      // Horizontal
-      ctxTarget.beginPath();
-      ctxTarget.moveTo(cpx - chSize, cpy);
-      ctxTarget.lineTo(cpx + chSize, cpy);
-      ctxTarget.stroke();
-      // Vertical
-      ctxTarget.beginPath();
-      ctxTarget.moveTo(cpx, cpy - chSize);
-      ctxTarget.lineTo(cpx, cpy + chSize);
-      ctxTarget.stroke();
-      // Circle
-      ctxTarget.beginPath();
-      ctxTarget.arc(cpx, cpy, chSize * 0.7, 0, Math.PI * 2);
-      ctxTarget.stroke();
+      ctxTarget.beginPath(); ctxTarget.moveTo(cpx - chSize, cpy); ctxTarget.lineTo(cpx + chSize, cpy); ctxTarget.stroke();
+      ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy - chSize); ctxTarget.lineTo(cpx, cpy + chSize); ctxTarget.stroke();
+      ctxTarget.beginPath(); ctxTarget.arc(cpx, cpy, chSize * 0.7, 0, Math.PI * 2); ctxTarget.stroke();
 
-      // Arrow from edge label to centroid
-      // Place label at nearest edge
       let labelX, labelY;
-      if (centX < 0.5) {
-        labelX = ox - 2;
-        labelY = oy + centY * imgSize;
-      } else {
-        labelX = ox + imgSize + 2;
-        labelY = oy + centY * imgSize;
-      }
+      if (centX < 0.5) { labelX = ox - 2; } else { labelX = ox + imgSize + 2; }
+      labelY = oy + centY * imgSize;
 
-      // Arrow line
       ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.7 : 0.3})`;
       ctxTarget.lineWidth = isSelected ? 1.8 : 1;
       ctxTarget.setLineDash([3, 2]);
-      ctxTarget.beginPath();
-      ctxTarget.moveTo(labelX, labelY);
-      ctxTarget.lineTo(cpx, cpy);
-      ctxTarget.stroke();
+      ctxTarget.beginPath(); ctxTarget.moveTo(labelX, labelY); ctxTarget.lineTo(cpx, cpy); ctxTarget.stroke();
       ctxTarget.setLineDash([]);
 
-      // Arrowhead
       const angle = Math.atan2(cpy - labelY, cpx - labelX);
       const aLen = 6;
       ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.8 : 0.4})`;
@@ -982,39 +1124,27 @@ const RenderTarget = (() => {
       ctxTarget.moveTo(cpx, cpy);
       ctxTarget.lineTo(cpx - aLen * Math.cos(angle - 0.4), cpy - aLen * Math.sin(angle - 0.4));
       ctxTarget.lineTo(cpx - aLen * Math.cos(angle + 0.4), cpy - aLen * Math.sin(angle + 0.4));
-      ctxTarget.closePath();
-      ctxTarget.fill();
+      ctxTarget.closePath(); ctxTarget.fill();
 
-      // Label text
       ctxTarget.font = `${isSelected ? 'bold ' : ''}8px monospace`;
       ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
       ctxTarget.textAlign = centX < 0.5 ? 'right' : 'left';
       ctxTarget.fillText(StalkModule.NAMES[s], labelX + (centX < 0.5 ? -2 : 2), labelY + 3);
 
-      // Per-layer focus dots connected to centroid (spider web)
       for (let l = 0; l < State.visibleLayers; l++) {
         const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
         const fpX = ox + fp.x * imgSize;
         const fpY = oy + fp.y * imgSize;
         const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
-
-        // Thin line from centroid to each layer focus point
         ctxTarget.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.4 : 0.15})`;
         ctxTarget.lineWidth = 0.7;
-        ctxTarget.beginPath();
-        ctxTarget.moveTo(cpx, cpy);
-        ctxTarget.lineTo(fpX, fpY);
-        ctxTarget.stroke();
-
-        // Small dot
-        ctxTarget.beginPath();
-        ctxTarget.arc(fpX, fpY, isSelected ? 2.5 : 1.5, 0, Math.PI * 2);
-        ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.7 : 0.35})`;
-        ctxTarget.fill();
+        ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy); ctxTarget.lineTo(fpX, fpY); ctxTarget.stroke();
+        ctxTarget.beginPath(); ctxTarget.arc(fpX, fpY, isSelected ? 2.5 : 1.5, 0, Math.PI * 2);
+        ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.7 : 0.35})`; ctxTarget.fill();
       }
     }
 
-    // ── NEW: Draw user-defined focus boxes ──
+    // ── Draw focus boxes with stacking indicator ──
     for (let i = 0; i < State.focusBoxes.length; i++) {
       const box = State.focusBoxes[i];
       const bx = ox + box.x * imgSize;
@@ -1022,21 +1152,41 @@ const RenderTarget = (() => {
       const bw = box.w * imgSize;
       const bh = box.h * imgSize;
 
-      ctxTarget.strokeStyle = `rgba(251,191,36,${0.6 + 0.2 * Math.sin(State.time * 3 + i)})`;
-      ctxTarget.lineWidth = 1.5;
+      // Count how many boxes overlap this one's center
+      const bcx = box.x + box.w / 2, bcy = box.y + box.h / 2;
+      let stackCount = 0;
+      for (const other of State.focusBoxes) {
+        if (bcx >= other.x && bcx <= other.x + other.w &&
+            bcy >= other.y && bcy <= other.y + other.h) {
+          stackCount++;
+        }
+      }
+
+      const pulseAlpha = 0.5 + 0.3 * Math.sin(State.time * 3 + i);
+      const stackBrightness = Math.min(1.0, stackCount * 0.3);
+
+      ctxTarget.strokeStyle = `rgba(251,191,36,${pulseAlpha + stackBrightness * 0.3})`;
+      ctxTarget.lineWidth = 1.5 + stackCount * 0.5;
       ctxTarget.setLineDash([4, 3]);
       ctxTarget.strokeRect(bx, by, bw, bh);
       ctxTarget.setLineDash([]);
 
-      // Fill with very faint gold
-      ctxTarget.fillStyle = `rgba(251,191,36,0.06)`;
+      // Fill with stacking-aware gold tint
+      ctxTarget.fillStyle = `rgba(251,191,36,${0.04 + stackCount * 0.03})`;
       ctxTarget.fillRect(bx, by, bw, bh);
 
-      // Label
-      ctxTarget.font = 'bold 7px monospace';
-      ctxTarget.fillStyle = 'rgba(251,191,36,0.8)';
-      ctxTarget.textAlign = 'left';
-      ctxTarget.fillText(`Focus #${i + 1}`, bx + 2, by - 3);
+      // Stack count badge
+      if (stackCount > 1) {
+        ctxTarget.font = 'bold 8px monospace';
+        ctxTarget.fillStyle = `rgba(251,191,36,${0.7 + stackBrightness * 0.3})`;
+        ctxTarget.textAlign = 'left';
+        ctxTarget.fillText(`Focus #${i + 1} [×${stackCount}]`, bx + 2, by - 3);
+      } else {
+        ctxTarget.font = 'bold 7px monospace';
+        ctxTarget.fillStyle = 'rgba(251,191,36,0.8)';
+        ctxTarget.textAlign = 'left';
+        ctxTarget.fillText(`Focus #${i + 1}`, bx + 2, by - 3);
+      }
     }
 
     // If currently drawing a box, show preview
@@ -2099,74 +2249,85 @@ cvTarget.addEventListener('touchend', (e) => {
 let frameCount = 0;
 
 // ── Token Attraction: nudge tokens so their focus points land inside drawn boxes ──
+// ============================================================
+// REPLACE: applyBoxAttraction()
+// Instant snap — no gradient descent, no animation.
+// For each box, find the token embedding position that directly
+// maps focus points INTO the box via inverse chaotic hash search.
+// Uses a precomputed lookup grid for O(1) jump-back.
+// ============================================================
 function applyBoxAttraction() {
   if (State.focusBoxes.length === 0) return;
 
-  const step = State.boxAttractionStrength;
+  const N = StalkModule.N_STALKS;
+  const nLayers = State.visibleLayers;
+  const nBoxes = State.focusBoxes.length;
 
-  for (let s = 0; s < StalkModule.N_STALKS; s++) {
+  // For each stalk, find the token position that places its
+  // average focus centroid at the center of the nearest box.
+  // Strategy: build a small lookup grid in token-space, evaluate
+  // where each grid point's focus lands, pick the one closest
+  // to the desired box center. Grid is coarse (fast) because
+  // we just need to jump, not animate.
+
+  const GRID = 32; // 32x32 = 1024 lookups per stalk — instant
+  const invStep = 1.0 / GRID;
+
+  for (let s = 0; s < N; s++) {
     const st = StalkModule.stalks[s];
-    let totalNudgeX = 0, totalNudgeY = 0;
-    let nudgeCount = 0;
 
-    for (let l = 0; l < State.visibleLayers; l++) {
+    // Which box should this stalk target?
+    // Distribute stalks across boxes round-robin, or all to one if few boxes
+    const targetBox = State.focusBoxes[s % nBoxes];
+    const goalX = targetBox.x + targetBox.w / 2;
+    const goalY = targetBox.y + targetBox.h / 2;
+
+    // Check if already inside
+    let alreadyInside = true;
+    for (let l = 0; l < nLayers; l++) {
       const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+      if (fp.x < targetBox.x || fp.x > targetBox.x + targetBox.w ||
+          fp.y < targetBox.y || fp.y > targetBox.y + targetBox.h) {
+        alreadyInside = false;
+        break;
+      }
+    }
+    if (alreadyInside) continue;
 
-      for (const box of State.focusBoxes) {
-        const boxCx = box.x + box.w / 2;
-        const boxCy = box.y + box.h / 2;
+    // Brute-force search over token-space grid for best position
+    let bestX = st.embedPoint.x;
+    let bestY = st.embedPoint.y;
+    let bestDist = Infinity;
 
-        // Is this focus point already inside the box?
-        const inside = fp.x >= box.x && fp.x <= box.x + box.w &&
-                       fp.y >= box.y && fp.y <= box.y + box.h;
+    for (let gy = 0; gy < GRID; gy++) {
+      const ty = 0.05 + (gy * invStep) * 0.9;
+      for (let gx = 0; gx < GRID; gx++) {
+        const tx = 0.05 + (gx * invStep) * 0.9;
 
-        if (!inside) {
-          // Compute direction the token should move to bring focus point closer.
-          // Use numerical gradient: try small perturbations of the token position
-          // and see which direction moves the focus point toward the box center.
-          const eps = 0.005;
-          const fpPx = ChaoticHash.tokenToFocus(st.embedPoint.x + eps, st.embedPoint.y, s, l);
-          const fpMx = ChaoticHash.tokenToFocus(st.embedPoint.x - eps, st.embedPoint.y, s, l);
-          const fpPy = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y + eps, s, l);
-          const fpMy = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y - eps, s, l);
+        // Compute average focus centroid for this candidate token position
+        let cx = 0, cy = 0;
+        for (let l = 0; l < nLayers; l++) {
+          const fp = ChaoticHash.tokenToFocus(tx, ty, s, l);
+          cx += fp.x;
+          cy += fp.y;
+        }
+        cx /= nLayers;
+        cy /= nLayers;
 
-          // Gradient of (focus_x toward boxCx) w.r.t. token position
-          const dFxdTx = (fpPx.x - fpMx.x) / (2 * eps);
-          const dFxdTy = (fpPy.x - fpMy.x) / (2 * eps);
-          const dFydTx = (fpPx.y - fpMx.y) / (2 * eps);
-          const dFydTy = (fpPy.y - fpMy.y) / (2 * eps);
-
-          // Error: focus point minus box center
-          const errX = boxCx - fp.x;
-          const errY = boxCy - fp.y;
-
-          // Pseudo-inverse step: nudge token to reduce error
-          // token_nudge = J^T * error (gradient descent in token space)
-          totalNudgeX += dFxdTx * errX + dFydTx * errY;
-          totalNudgeY += dFxdTy * errX + dFydTy * errY;
-          nudgeCount++;
+        const d = (cx - goalX) * (cx - goalX) + (cy - goalY) * (cy - goalY);
+        if (d < bestDist) {
+          bestDist = d;
+          bestX = tx;
+          bestY = ty;
         }
       }
     }
 
-    if (nudgeCount > 0) {
-      totalNudgeX /= nudgeCount;
-      totalNudgeY /= nudgeCount;
-
-      // Clamp nudge magnitude
-      const mag = Math.hypot(totalNudgeX, totalNudgeY);
-      const maxStep = step;
-      if (mag > maxStep) {
-        totalNudgeX = totalNudgeX / mag * maxStep;
-        totalNudgeY = totalNudgeY / mag * maxStep;
-      }
-
-      st.embedPoint.x = Math.max(0.05, Math.min(0.95, st.embedPoint.x + totalNudgeX));
-      st.embedPoint.y = Math.max(0.05, Math.min(0.95, st.embedPoint.y + totalNudgeY));
-    }
+    // Instant jump — no lerp, no animation
+    st.embedPoint.x = bestX;
+    st.embedPoint.y = bestY;
   }
 
-  // If any token moved, invalidate caches
   WarpModule.invalidateCache();
   FocusMap.invalidateCache();
 }
