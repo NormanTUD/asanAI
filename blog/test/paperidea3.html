@@ -1762,7 +1762,6 @@ const RenderJacobiMat = (() => {
       ctxJacobiMat.fillText(compLabels[c], cx, 11);
     }
 
-    // Each row = one layer
     for (let l = 0; l < nLayers; l++) {
       const field = WarpModule.getLayerField(l);
       if (!field) continue;
@@ -1774,57 +1773,44 @@ const RenderJacobiMat = (() => {
         const comp = components[c];
         const colX = leftMargin + c * (cellW + gap);
 
-        // ═══ FIX: Use fixed symmetric range centered on expected identity value ═══
-        // J00 (c=0) and J11 (c=3) are diagonal → expected value ~1.0
-        // J01 (c=1) and J10 (c=2) are off-diagonal → expected value ~0.0
-        const isDiagonal = (c === 0 || c === 3);
-        const expectedCenter = isDiagonal ? 1.0 : 0.0;
-
-        // Compute actual min/max to determine a reasonable range,
-        // but enforce a minimum range of 0.5 so Layer 0 doesn't explode
+        // Compute actual range for this component
         let minV = Infinity, maxV = -Infinity;
         for (let i = 0; i < SZ * SZ; i++) {
           if (comp[i] < minV) minV = comp[i];
           if (comp[i] > maxV) maxV = comp[i];
         }
 
-        // The key fix: minimum range of 0.5 prevents near-zero division
-        // and ensures Layer 0 (near-identity) renders as mostly flat/uniform
-        const rawRange = maxV - minV;
-        const range = Math.max(0.5, rawRange);
-
-        // Also compute a symmetric range around the expected center
-        // so that the identity value maps to the visual midpoint (neutral)
-        const maxDeviation = Math.max(
-          Math.abs(maxV - expectedCenter),
-          Math.abs(minV - expectedCenter),
-          0.25 // minimum half-range
-        );
+        // Map the full actual range to [0, 1] for visualization
+        // This ensures we always see structure regardless of magnitude
+        const range = maxV - minV;
+        const safeRange = range < 1e-8 ? 1.0 : range;
 
         for (let y = 0; y < SZ; y++) {
           for (let x = 0; x < SZ; x++) {
-            // Center around expected value, normalize to [-1, 1]
-            const centered = (comp[y * SZ + x] - expectedCenter) / maxDeviation;
-            // Clamp to [-1, 1]
-            const clamped = Math.max(-1, Math.min(1, centered));
+            // Normalize to [0, 1] across actual data range
+            const t = (comp[y * SZ + x] - minV) / safeRange;
 
+            // Diverging colormap: blue (low) -> dark mid -> warm (high)
+            // with layer tint mixed in so each layer row looks distinct
             let r, g, b;
-            if (clamped < 0) {
-              // Negative deviation: cool colors (layer tint + blue)
-              const t = -clamped;
-              r = Math.floor(t * lc[0] * 0.8);
-              g = Math.floor(t * lc[1] * 0.3);
-              b = Math.floor(t * 200);
+            if (t < 0.5) {
+              // Low end: cool blue/cyan with layer tint
+              const s = (0.5 - t) * 2; // 1 at min, 0 at mid
+              r = Math.floor(10 + lc[0] * s * 0.3);
+              g = Math.floor(20 + lc[1] * s * 0.4 + (1 - s) * 15);
+              b = Math.floor(60 + s * 180);
             } else {
-              // Positive deviation: warm colors (red + layer tint)
-              const t = clamped;
-              r = Math.floor(t * 200);
-              g = Math.floor(t * lc[1] * 0.3);
-              b = Math.floor(t * lc[2] * 0.8);
+              // High end: warm orange/red with layer tint
+              const s = (t - 0.5) * 2; // 0 at mid, 1 at max
+              r = Math.floor(30 + s * 220);
+              g = Math.floor(15 + lc[1] * s * 0.3 + (1 - s) * 15);
+              b = Math.floor(10 + lc[2] * (1 - s) * 0.3);
             }
-            r = Math.min(255, Math.max(0, r));
-            g = Math.min(255, Math.max(0, g));
-            b = Math.min(255, Math.max(0, b));
+
+            // Add a base brightness so nothing is fully black
+            r = Math.min(255, Math.max(8, r));
+            g = Math.min(255, Math.max(8, g));
+            b = Math.min(255, Math.max(8, b));
 
             ctxJacobiMat.fillStyle = `rgb(${r},${g},${b})`;
             ctxJacobiMat.fillRect(colX + x * ps, rowY + y * ps, ps + 0.5, ps + 0.5);
@@ -1835,6 +1821,12 @@ const RenderJacobiMat = (() => {
         ctxJacobiMat.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.3)`;
         ctxJacobiMat.lineWidth = 0.5;
         ctxJacobiMat.strokeRect(colX, rowY, SZ * ps, SZ * ps);
+
+        // Show value range as tiny label
+        ctxJacobiMat.font = '4px monospace';
+        ctxJacobiMat.fillStyle = 'rgba(148,163,184,0.5)';
+        ctxJacobiMat.textAlign = 'left';
+        ctxJacobiMat.fillText(`${minV.toFixed(2)}..${maxV.toFixed(2)}`, colX + 1, rowY + SZ * ps - 1);
       }
 
       // Layer label on the right
