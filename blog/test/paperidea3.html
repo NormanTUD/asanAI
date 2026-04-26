@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelp Forest of Fibre Bundles — Holographic Layer Projection</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050810;color:#e2e8f0;font-family:system-ui,sans-serif;overflow:hidden}
+canvas{display:block}
+#ui{position:fixed;top:12px;left:12px;z-index:10;pointer-events:none}
+#ui *{pointer-events:auto}
+#ui h1{font-size:1.1em;color:#a29bfe;margin-bottom:4px;text-shadow:0 0 20px #a29bfe60}
+#ui p{font-size:0.75em;color:#64748b;max-width:320px;line-height:1.4;margin-bottom:6px}
+.ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+button{background:#6c5ce720;border:1px solid #6c5ce740;color:#a29bfe;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.72em;transition:all 0.2s}
+button:hover{background:#6c5ce740;border-color:#a29bfe}
+button.active{background:#6c5ce760;border-color:#a29bfe;color:#fff}
+.slider-row{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:0.72em;color:#64748b}
+.slider-row input{width:100px;accent-color:#a29bfe}
+.slider-row .val{color:#fbbf24;min-width:28px}
+#info{position:fixed;bottom:12px;left:12px;z-index:10;background:#0a0e1a90;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;max-width:360px;font-size:0.72em;color:#94a3b8;line-height:1.5;backdrop-filter:blur(8px)}
+#info b{color:#a29bfe}
+#info .formula{font-family:'Courier New',monospace;color:#fbbf24;background:#0f172a;padding:2px 6px;border-radius:3px;font-size:0.95em}
+</style>
+</head>
+<body>
+<div id="ui">
+  <h1>🌿 Kelp Forest of Fibre Bundles</h1>
+  <p>Each stalk is a fibre at a token-index position. Layers stack vertically. The Jacobian field at each layer contains holographically FFT-encoded projection data that progressively resolves a smiley face.</p>
+  <div class="ctrl">
+    <button onclick="toggleAnim()" id="btnAnim">▶ Animate</button>
+    <button onclick="resetView()">↺ Reset</button>
+    <button onclick="toggleMode('kelp')" id="btnKelp" class="active">Kelp View</button>
+    <button onclick="toggleMode('flat')" id="btnFlat">Flat Layers</button>
+  </div>
+  <div class="slider-row">
+    <label>Layers visible:</label>
+    <input type="range" id="slLayers" min="1" max="5" value="5">
+    <span class="val" id="vLayers">5</span>
+  </div>
+  <div class="slider-row">
+    <label>Rotation:</label>
+    <input type="range" id="slRot" min="0" max="360" value="25">
+    <span class="val" id="vRot">25°</span>
+  </div>
+  <div class="slider-row">
+    <label>Sway:</label>
+    <input type="range" id="slSway" min="0" max="100" value="40">
+    <span class="val" id="vSway">40</span>
+  </div>
+</div>
+<div id="info">
+  <b>Fibre Bundle Holographic Projection</b><br>
+  The smiley is encoded via 2D FFT into Jacobian field patterns. Each layer's "stalk" carries one frequency band — low frequencies (global shape) at the base, high frequencies (edges, details) at the top.<br><br>
+  <b>Layer projection:</b> Each layer focuses on a spatial region, making that area + its neighborhood clearer while the rest stays blurry.<br><br>
+  <span class="formula">J(x) = Σ_ℓ FFT⁻¹(mask_ℓ · F̂(smiley)) · attn_ℓ(x)</span>
+</div>
+<canvas id="cv"></canvas>
+
+<script>
+// ============================================================
+// SETUP
+// ============================================================
+const canvas = document.getElementById('cv');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ============================================================
+// SMILEY TARGET IMAGE (32x32)
+// ============================================================
+const SZ = 32;
+const smiley = new Float64Array(SZ * SZ);
+for (let y = 0; y < SZ; y++) {
+  for (let x = 0; x < SZ; x++) {
+    const cx = x - SZ/2 + 0.5, cy = y - SZ/2 + 0.5;
+    const r = Math.sqrt(cx*cx + cy*cy);
+    let v = 0;
+    // Face circle
+    if (Math.abs(r - 12) < 1.5) v = 1;
+    // Fill face lightly
+    if (r < 11) v = Math.max(v, 0.25);
+    // Left eye
+    if (Math.hypot(cx - 4, cy + 3) < 2) v = 1;
+    // Right eye
+    if (Math.hypot(cx + 4, cy + 3) < 2) v = 1;
+    // Smile arc
+    if (r > 5.5 && r < 8 && cy > 2 && Math.abs(cx) < 8) v = 1;
+    smiley[y * SZ + x] = v;
+  }
+}
+
+// ============================================================
+// 2D FFT (simple DFT for 32x32 — fine for visualization)
+// ============================================================
+function fft2Forward(real) {
+  const N = SZ;
+  const reOut = new Float64Array(N*N);
+  const imOut = new Float64Array(N*N);
+  // Row-wise DFT
+  const reTmp = new Float64Array(N*N);
+  const imTmp = new Float64Array(N*N);
+  for (let y = 0; y < N; y++) {
+    for (let k = 0; k < N; k++) {
+      let re = 0, im = 0;
+      for (let n = 0; n < N; n++) {
+        const angle = -2 * Math.PI * k * n / N;
+        re += real[y*N+n] * Math.cos(angle);
+        im += real[y*N+n] * Math.sin(angle);
+      }
+      reTmp[y*N+k] = re;
+      imTmp[y*N+k] = im;
+    }
+  }
+  // Column-wise DFT
+  for (let x = 0; x < N; x++) {
+    for (let k = 0; k < N; k++) {
+      let re = 0, im = 0;
+      for (let n = 0; n < N; n++) {
+        const angle = -2 * Math.PI * k * n / N;
+        re += reTmp[n*N+x] * Math.cos(angle) - imTmp[n*N+x] * Math.sin(angle);
+        im += reTmp[n*N+x] * Math.sin(angle) + imTmp[n*N+x] * Math.cos(angle);
+      }
+      reOut[k*N+x] = re;
+      imOut[k*N+x] = im;
+    }
+  }
+  return { re: reOut, im: imOut };
+}
+
+function fft2Inverse(re, im) {
+  const N = SZ;
+  const out = new Float64Array(N*N);
+  // Column-wise IDFT
+  const reTmp = new Float64Array(N*N);
+  const imTmp = new Float64Array(N*N);
+  for (let x = 0; x < N; x++) {
+    for (let n = 0; n < N; n++) {
+      let rr = 0, ii = 0;
+      for (let k = 0; k < N; k++) {
+        const angle = 2 * Math.PI * k * n / N;
+        rr += re[k*N+x] * Math.cos(angle) - im[k*N+x] * Math.sin(angle);
+        ii += re[k*N+x] * Math.sin(angle) + im[k*N+x] * Math.cos(angle);
+      }
+      reTmp[n*N+x] = rr / N;
+      imTmp[n*N+x] = ii / N;
+    }
+  }
+  // Row-wise IDFT
+  for (let y = 0; y < N; y++) {
+    for (let n = 0; n < N; n++) {
+      let rr = 0;
+      for (let k = 0; k < N; k++) {
+        const angle = 2 * Math.PI * k * n / N;
+        rr += reTmp[y*N+k] * Math.cos(angle) - imTmp[y*N+k] * Math.sin(angle);
+      }
+      out[y*N+n] = rr / N;
+    }
+  }
+  return out;
+}
+
+// Compute FFT of smiley
+const F = fft2Forward(smiley);
+
+// ============================================================
+// LAYER DEFINITIONS: each layer has a frequency mask + spatial focus
+// ============================================================
+const N_LAYERS = 5;
+
+// Frequency bands: layer 0 = lowest freq, layer 4 = highest
+// Each layer also has a spatial attention center
+const layers = [];
+const _seed = [42, 137, 256, 389, 501];
+function srand(s) { return () => { s = (s * 16807) % 2147483647; return (s-1)/2147483646; }; }
+
+for (let l = 0; l < N_LAYERS; l++) {
+  const rng = srand(_seed[l]);
+  // Frequency ring: inner radius to outer radius (in freq space, 0 = DC, SZ/2 = Nyquist)
+  const freqLo = l * (SZ/2) / N_LAYERS;
+  const freqHi = (l + 1) * (SZ/2) / N_LAYERS;
+  // Spatial attention focus (in [0,1] image space)
+  // Each layer focuses on a different part of the smiley
+  const focusPoints = [
+    { x: 0.5, y: 0.5 },   // center (face)
+    { x: 0.37, y: 0.4 },  // left eye area
+    { x: 0.63, y: 0.4 },  // right eye area
+    { x: 0.5, y: 0.65 },  // mouth area
+    { x: 0.5, y: 0.25 },  // top of head
+  ];
+  layers.push({
+    freqLo, freqHi,
+    focus: focusPoints[l],
+    focusRadius: 0.25 + l * 0.03,
+    color: [
+      [100, 180, 255],
+      [120, 255, 200],
+      [255, 200, 100],
+      [255, 130, 180],
+      [180, 140, 255]
+    ][l],
+    stalkColor: [
+      'rgba(100,180,255,',
+      'rgba(120,255,200,',
+      'rgba(255,200,100,',
+      'rgba(255,130,180,',
+      'rgba(180,140,255,'
+    ][l]
+  });
+}
+
+// Precompute per-layer FFT-masked images (the "holographic projection" at each layer)
+const layerProjections = [];
+const layerFFTMagnitudes = []; // for visualizing the FFT pattern on the stalk
+
+for (let l = 0; l < N_LAYERS; l++) {
+  const layer = layers[l];
+  const maskedRe = new Float64Array(SZ*SZ);
+  const maskedIm = new Float64Array(SZ*SZ);
+  const magnitude = new Float64Array(SZ*SZ);
+
+  for (let fy = 0; fy < SZ; fy++) {
+    for (let fx = 0; fx < SZ; fx++) {
+      // Centered frequency distance
+      const cfx = fx < SZ/2 ? fx : fx - SZ;
+      const cfy = fy < SZ/2 ? fy : fy - SZ;
+      const freq = Math.sqrt(cfx*cfx + cfy*cfy);
+
+      if (freq >= layer.freqLo && freq < layer.freqHi) {
+        maskedRe[fy*SZ+fx] = F.re[fy*SZ+fx];
+        maskedIm[fy*SZ+fx] = F.im[fy*SZ+fx];
+        magnitude[fy*SZ+fx] = Math.sqrt(F.re[fy*SZ+fx]**2 + F.im[fy*SZ+fx]**2);
+      }
+    }
+  }
+
+  const proj = fft2Inverse(maskedRe, maskedIm);
+  layerProjections.push(proj);
+  layerFFTMagnitudes.push(magnitude);
+}
+
+// Precompute cumulative projections with spatial attention weighting
+function getCumulativeImage(upToLayer) {
+  const img = new Float64Array(SZ*SZ);
+  for (let l = 0; l <= upToLayer && l < N_LAYERS; l++) {
+    const layer = layers[l];
+    const proj = layerProjections[l];
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const nx = x / SZ, ny = y / SZ;
+        const dx = nx - layer.focus.x, dy = ny - layer.focus.y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        // Spatial attention: Gaussian centered on focus, but never zero
+        const attn = 0.3 + 0.7 * Math.exp(-d*d / (2 * layer.focusRadius * layer.focusRadius));
+        img[y*SZ+x] += proj[y*SZ+x] * attn;
+      }
+    }
+  }
+  return img;
+}
+
+// ============================================================
+// 3D PROJECTION HELPERS
+// ============================================================
+let rotY = 25 * Math.PI / 180;
+let rotX = -15 * Math.PI / 180;
+let viewMode = 'kelp';
+let animating = false;
+let animTimer = null;
+let time = 0;
+let visibleLayers = 5;
+let swayAmount = 0.4;
+
+function project3D(x, y, z) {
+  // Rotate around Y
+  let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+  let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+  // Rotate around X
+  let y1 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+  let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
+  // Perspective
+  const fov = 600;
+  const dist = fov + z2;
+  const scale = fov / Math.max(dist, 100);
+  return {
+    sx: W/2 + x1 * scale,
+    sy: H/2 + y1 * scale,
+    z: z2,
+    scale
+  };
+}
+
+// ============================================================
+// STALK POSITIONS (token index space — the "kelp forest" base)
+// ============================================================
+const N_STALKS = 7; // 7 positions in index space
+const stalkBasePositions = [];
+for (let i = 0; i < N_STALKS; i++) {
+  const angle = (i / N_STALKS) * Math.PI * 2;
+  const radius = 120 + (i % 3) * 40;
+  stalkBasePositions.push({
+    x: Math.cos(angle) * radius,
+    z: Math.sin(angle) * radius,
+    phase: i * 1.3
+  });
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function drawFFTPattern(cx, cy, size, layerIdx, alpha, scale3d) {
+  // Draw the FFT magnitude pattern as the "holographic encoding" on the stalk
+  const mag = layerFFTMagnitudes[layerIdx];
+  let maxMag = 0;
+  for (let i = 0; i < SZ*SZ; i++) if (mag[i] > maxMag) maxMag = mag[i];
+  if (maxMag < 1e-10) maxMag = 1;
+
+  const ps = size / SZ;
+  const col = layers[layerIdx].color;
+
+  for (let y = 0; y < SZ; y++) {
+    for (let x = 0; x < SZ; x++) {
+      const v = mag[y*SZ+x] / maxMag;
+      if (v < 0.05) continue;
+      const a = v * alpha * 0.8;
+      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${a.toFixed(3)})`;
+      ctx.fillRect(
+        cx - size/2 + x * ps,
+        cy - size/2 + y * ps,
+        ps + 0.5, ps + 0.5
+      );
+    }
+  }
+}
+
+function drawProjectionImage(cx, cy, size, upToLayer, alpha) {
+  const img = getCumulativeImage(upToLayer);
+  let maxV = 0, minV = Infinity;
+  for (let i = 0; i < SZ*SZ; i++) {
+    if (img[i] > maxV) maxV = img[i];
+    if (img[i] < minV) minV = img[i];
+  }
+  const range = maxV - minV || 1;
+  const ps = size / SZ;
+
+  for (let y = 0; y < SZ; y++) {
+    for (let x = 0; x < SZ; x++) {
+      const v = (img[y*SZ+x] - minV) / range;
+      const bright = Math.max(0, Math.min(1, v));
+      const a = alpha * (0.3 + bright * 0.7);
+      ctx.fillStyle = `rgba(${Math.floor(200+bright*55)},${Math.floor(180+bright*75)},${Math.floor(100+bright*100)},${a.toFixed(3)})`;
+      ctx.fillRect(
+        cx - size/2 + x * ps,
+        cy - size/2 + y * ps,
+        ps + 0.5, ps + 0.5
+      );
+    }
+  }
+}
+
+function drawSpatialFocus(cx, cy, size, layerIdx, alpha) {
+  const layer = layers[layerIdx];
+  const col = layer.color;
+  const focusSX = cx - size/2 + layer.focus.x * size;
+  const focusSY = cy - size/2 + layer.focus.y * size;
+  const focusR = layer.focusRadius * size;
+
+  const grad = ctx.createRadialGradient(focusSX, focusSY, 0, focusSX, focusSY, focusR);
+  grad.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},${(alpha*0.3).toFixed(3)})`);
+  grad.addColorStop(1, `rgba(${col[0]},${col[1]},${col[2]},0)`);
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(focusSX, focusSY, focusR, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function render() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bgGrad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.7);
+  bgGrad.addColorStop(0, '#0a1628');
+  bgGrad.addColorStop(1, '#050810');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Collect all drawable elements for depth sorting
+  const drawables = [];
+
+  const layerSpacing = 80;
+  const baseYOffset = (N_LAYERS - 1) * layerSpacing / 2;
+
+  for (let si = 0; si < N_STALKS; si++) {
+    const stalk = stalkBasePositions[si];
+    const sway = swayAmount;
+
+    // Draw stalk segments (the "kelp" strands)
+    const stalkPoints = [];
+    for (let l = 0; l < visibleLayers; l++) {
+      const swayX = Math.sin(time * 0.7 + stalk.phase + l * 0.5) * sway * 20 * (l + 1) / N_LAYERS;
+      const swayZ = Math.cos(time * 0.5 + stalk.phase + l * 0.7) * sway * 15 * (l + 1) / N_LAYERS;
+
+      const x3d = stalk.x + swayX;
+      const y3d = baseYOffset - l * layerSpacing;
+      const z3d = stalk.z + swayZ;
+
+      const p = project3D(x3d, y3d, z3d);
+      stalkPoints.push({ ...p, layer: l, x3d, y3d, z3d });
+    }
+
+    // Stalk line
+    drawables.push({
+      z: stalkPoints.reduce((s, p) => s + p.z, 0) / stalkPoints.length,
+      type: 'stalk',
+      points: stalkPoints,
+      stalkIdx: si
+    });
+
+    // Layer plates (the FFT-encoded Jacobian field projections)
+    for (let l = 0; l < visibleLayers; l++) {
+      const pt = stalkPoints[l];
+      drawables.push({
+        z: pt.z,
+        type: 'plate',
+        pt,
+        layer: l,
+        stalkIdx: si
+      });
+    }
+  }
+
+  // Draw the "ground plane" — base manifold
+  drawables.push({
+    z: 1000, // far back
+    type: 'ground'
+  });
+
+  // Sort by depth (far first)
+  drawables.sort((a, b) => b.z - a.z);
+
+  for (const d of drawables) {
+    if (d.type === 'ground') {
+      // Draw base manifold grid
+      ctx.save();
+      ctx.globalAlpha = 0.15;
+      const gridN = 10;
+      const gridSize = 350;
+      for (let i = -gridN; i <= gridN; i++) {
+        // X lines
+        const p1 = project3D(i * gridSize / gridN, baseYOffset + 30, -gridSize);
+        const p2 = project3D(i * gridSize / gridN, baseYOffset + 30, gridSize);
+        ctx.strokeStyle = '#a29bfe';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(p1.sx, p1.sy);
+        ctx.lineTo(p2.sx, p2.sy);
+        ctx.stroke();
+        // Z lines
+        const p3 = project3D(-gridSize, baseYOffset + 30, i * gridSize / gridN);
+        const p4 = project3D(gridSize, baseYOffset + 30, i * gridSize / gridN);
+        ctx.beginPath();
+        ctx.moveTo(p3.sx, p3.sy);
+        ctx.lineTo(p4.sx, p4.sy);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Label
+      const labelP = project3D(0, baseYOffset + 60, 0);
+      ctx.font = '11px monospace';
+      ctx.fillStyle = 'rgba(162,155,254,0.5)';
+      ctx.textAlign = 'center';
+      ctx.fillText('Base Manifold: Token Index Space', labelP.sx, labelP.sy);
+    }
+
+    if (d.type === 'stalk') {
+      const pts = d.points;
+      const si = d.stalkIdx;
+
+      // Draw the stalk strand (kelp stem)
+      ctx.beginPath();
+      ctx.moveTo(pts[0].sx, pts[0].sy);
+      for (let i = 1; i < pts.length; i++) {
+        const prev = pts[i-1], curr = pts[i];
+        const cpx = (prev.sx + curr.sx) / 2;
+        const cpy = (prev.sy + curr.sy) / 2;
+        ctx.quadraticCurveTo(prev.sx, prev.sy, cpx, cpy);
+      }
+      ctx.lineTo(pts[pts.length-1].sx, pts[pts.length-1].sy);
+
+      // Glow
+      ctx.strokeStyle = `rgba(${layers[0].color[0]},${layers[0].color[1]},${layers[0].color[2]},0.08)`;
+      ctx.lineWidth = 12 * pts[0].scale;
+      ctx.stroke();
+
+      // Main line
+      const grad = ctx.createLinearGradient(pts[0].sx, pts[0].sy, pts[pts.length-1].sx, pts[pts.length-1].sy);
+      for (let l = 0; l < pts.length; l++) {
+        const col = layers[Math.min(l, N_LAYERS-1)].color;
+        grad.addColorStop(l / (pts.length - 1), `rgba(${col[0]},${col[1]},${col[2]},0.6)`);
+      }
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5 * pts[0].scale;
+      ctx.stroke();
+
+      // Base node
+      const base = pts[0];
+      ctx.beginPath();
+      ctx.arc(base.sx, base.sy, 4 * base.scale, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(162,155,254,0.8)`;
+      ctx.fill();
+
+      // Index label
+      ctx.font = `${Math.max(8, 10 * base.scale)}px monospace`;
+      ctx.fillStyle = 'rgba(162,155,254,0.6)';
+      ctx.textAlign = 'center';
+      ctx.fillText(`idx ${si}`, base.sx, base.sy + 16 * base.scale);
+    }
+
+    if (d.type === 'plate') {
+      const pt = d.pt;
+      const l = d.layer;
+      const plateSize = Math.max(20, 55 * pt.scale);
+      const alpha = Math.max(0.15, Math.min(0.85, 0.5 * pt.scale));
+
+      // Draw the FFT-encoded pattern (the holographic Jacobian field data)
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.7;
+
+      // Background plate
+      ctx.fillStyle = `rgba(10,14,26,0.6)`;
+      ctx.fillRect(pt.sx - plateSize/2 - 2, pt.sy - plateSize/2 - 2, plateSize + 4, plateSize + 4);
+
+      // FFT pattern (the holographic encoding)
+      drawFFTPattern(pt.sx, pt.sy, plateSize, l, alpha * 0.9, pt.scale);
+
+      // Spatial focus glow
+      drawSpatialFocus(pt.sx, pt.sy, plateSize, l, alpha * 0.5);
+
+      // Border
+      const col = layers[l].color;
+      ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${(alpha*0.5).toFixed(3)})`;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(pt.sx - plateSize/2, pt.sy - plateSize/2, plateSize, plateSize);
+
+      // Layer label
+      ctx.font = `${Math.max(6, 8 * pt.scale)}px monospace`;
+      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${(alpha*0.8).toFixed(3)})`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`L${l}`, pt.sx, pt.sy - plateSize/2 - 3);
+
+      // "Projection beam" — show what this layer contributes to the resolved image
+      // Small resolved image thumbnail next to the plate
+      if (d.stalkIdx === 0 || d.stalkIdx === 3) { // Only show on a couple stalks to avoid clutter
+        const thumbSize = plateSize * 0.6;
+        const thumbX = pt.sx + plateSize/2 + 8;
+        const thumbY = pt.sy - thumbSize/2;
+        ctx.globalAlpha = alpha * 0.5;
+        drawProjectionImage(thumbX + thumbSize/2, thumbY + thumbSize/2, thumbSize, l, alpha * 0.6);
+        ctx.strokeStyle = `rgba(255,220,100,${(alpha*0.3).toFixed(3)})`;
+        ctx.lineWidth = 0.5;
+        ctx.setLineDash([2, 2]);
+        ctx.strokeRect(thumbX, thumbY, thumbSize, thumbSize);
+        ctx.setLineDash([]);
+
+        // Arrow from plate to thumbnail
+        ctx.strokeStyle = `rgba(255,220,100,${(alpha*0.2).toFixed(3)})`;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(pt.sx + plateSize/2, pt.sy);
+        ctx.lineTo(thumbX, pt.sy);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+
+      // Node dot on stalk
+      ctx.beginPath();
+      ctx.arc(pt.sx, pt.sy, 3 * pt.scale, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.9)`;
+      ctx.fill();
+    }
+  }
+
+  // ============================================================
+  // FINAL RESOLVED IMAGE — show at the top of the scene
+  // ============================================================
+  const finalP = project3D(0, -N_LAYERS * layerSpacing - 40, 0);
+  const finalSize = Math.max(60, 120 * finalP.scale);
+
+  // Background plate for final image
+  ctx.save();
+  ctx.globalAlpha = 0.85;
+  ctx.fillStyle = 'rgba(10,14,26,0.8)';
+  ctx.strokeStyle = 'rgba(255,220,100,0.4)';
+  ctx.lineWidth = 2;
+  ctx.fillRect(finalP.sx - finalSize/2 - 4, finalP.sy - finalSize/2 - 4, finalSize + 8, finalSize + 8);
+  ctx.strokeRect(finalP.sx - finalSize/2 - 4, finalP.sy - finalSize/2 - 4, finalSize + 8, finalSize + 8);
+
+  // Draw the cumulative resolved image
+  drawProjectionImage(finalP.sx, finalP.sy, finalSize, visibleLayers - 1, 0.9);
+
+  ctx.font = `${Math.max(9, 12 * finalP.scale)}px monospace`;
+  ctx.fillStyle = 'rgba(255,220,100,0.8)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Resolved Image', finalP.sx, finalP.sy - finalSize/2 - 10);
+  ctx.font = `${Math.max(7, 9 * finalP.scale)}px monospace`;
+  ctx.fillStyle = 'rgba(255,220,100,0.5)';
+  ctx.fillText(`(${visibleLayers} layer${visibleLayers > 1 ? 's' : ''} accumulated)`, finalP.sx, finalP.sy + finalSize/2 + 14);
+  ctx.restore();
+
+  // ============================================================
+  // AMBIENT PARTICLES (spores / plankton in the kelp forest)
+  // ============================================================
+  for (let i = 0; i < 40; i++) {
+    const px = Math.sin(time * 0.3 + i * 2.1) * 300;
+    const py = Math.cos(time * 0.2 + i * 1.7) * 200 - 50;
+    const pz = Math.sin(time * 0.15 + i * 3.3) * 300;
+    const pp = project3D(px, py, pz);
+    if (pp.z < -500) continue;
+    const pAlpha = Math.max(0, Math.min(0.3, 0.15 * pp.scale));
+    const pSize = Math.max(0.5, 2 * pp.scale);
+    ctx.beginPath();
+    ctx.arc(pp.sx, pp.sy, pSize, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(162,155,254,${pAlpha.toFixed(3)})`;
+    ctx.fill();
+  }
+
+  // ============================================================
+  // LAYER DEPTH LABELS on the side
+  // ============================================================
+  for (let l = 0; l < visibleLayers; l++) {
+    const labelP = project3D(-280, baseYOffset - l * layerSpacing, 0);
+    ctx.font = `${Math.max(8, 10 * labelP.scale)}px monospace`;
+    ctx.fillStyle = `rgba(${layers[l].color[0]},${layers[l].color[1]},${layers[l].color[2]},0.6)`;
+    ctx.textAlign = 'right';
+    ctx.fillText(`Layer ${l}`, labelP.sx, labelP.sy);
+
+    // Frequency band info
+    ctx.font = `${Math.max(6, 8 * labelP.scale)}px monospace`;
+    ctx.fillStyle = 'rgba(148,163,184,0.4)';
+    ctx.fillText(`freq: ${layers[l].freqLo.toFixed(1)}–${layers[l].freqHi.toFixed(1)}`, labelP.sx, labelP.sy + 12 * labelP.scale);
+
+    // Focus region info
+    const focusNames = ['center', 'left eye', 'right eye', 'mouth', 'top head'];
+    ctx.fillText(`focus: ${focusNames[l]}`, labelP.sx, labelP.sy + 22 * labelP.scale);
+  }
+
+  // Title
+  ctx.font = 'bold 14px monospace';
+  ctx.fillStyle = 'rgba(162,155,254,0.7)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Fibre Bundle Kelp Forest — Holographic Layer Projections', W/2, 30);
+  ctx.font = '10px monospace';
+  ctx.fillStyle = 'rgba(148,163,184,0.5)';
+  ctx.fillText('Each stalk carries FFT-encoded Jacobian field data that progressively resolves the smiley', W/2, 48);
+}
+
+// ============================================================
+// ANIMATION LOOP
+// ============================================================
+let running = true;
+
+function animate() {
+  if (animating) {
+    time += 0.016;
+  }
+  render();
+  if (running) requestAnimationFrame(animate);
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function toggleAnim() {
+  animating = !animating;
+  document.getElementById('btnAnim').textContent = animating ? '⏸ Pause' : '▶ Animate';
+}
+
+function resetView() {
+  rotY = 25 * Math.PI / 180;
+  rotX = -15 * Math.PI / 180;
+  time = 0;
+  visibleLayers = 5;
+  swayAmount = 0.4;
+  document.getElementById('slLayers').value = 5;
+  document.getElementById('vLayers').textContent = '5';
+  document.getElementById('slRot').value = 25;
+  document.getElementById('vRot').textContent = '25°';
+  document.getElementById('slSway').value = 40;
+  document.getElementById('vSway').textContent = '40';
+}
+
+function toggleMode(mode) {
+  viewMode = mode;
+  document.getElementById('btnKelp').classList.toggle('active', mode === 'kelp');
+  document.getElementById('btnFlat').classList.toggle('active', mode === 'flat');
+  if (mode === 'flat') {
+    rotX = 0;
+    rotY = 0;
+  } else {
+    rotX = -15 * Math.PI / 180;
+    rotY = 25 * Math.PI / 180;
+  }
+}
+
+document.getElementById('slLayers').addEventListener('input', function() {
+  visibleLayers = +this.value;
+  document.getElementById('vLayers').textContent = this.value;
+});
+
+document.getElementById('slRot').addEventListener('input', function() {
+  rotY = +this.value * Math.PI / 180;
+  document.getElementById('vRot').textContent = this.value + '°';
+});
+
+document.getElementById('slSway').addEventListener('input', function() {
+  swayAmount = +this.value / 100;
+  document.getElementById('vSway').textContent = this.value;
+});
+
+// ============================================================
+// MOUSE DRAG FOR ROTATION
+// ============================================================
+let dragging = false;
+let lastMX = 0, lastMY = 0;
+
+canvas.addEventListener('mousedown', (e) => {
+  dragging = true;
+  lastMX = e.clientX;
+  lastMY = e.clientY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  const dx = e.clientX - lastMX;
+  const dy = e.clientY - lastMY;
+  rotY += dx * 0.005;
+  rotX += dy * 0.005;
+  rotX = Math.max(-Math.PI/2, Math.min(Math.PI/4, rotX));
+  lastMX = e.clientX;
+  lastMY = e.clientY;
+  document.getElementById('slRot').value = Math.round(rotY * 180 / Math.PI) % 360;
+  document.getElementById('vRot').textContent = Math.round(rotY * 180 / Math.PI) % 360 + '°';
+});
+
+window.addEventListener('mouseup', () => { dragging = false; });
+
+// Start
+animating = true;
+document.getElementById('btnAnim').textContent = '⏸ Pause';
+animate();
+
+</script>
+</body>
+</html>
