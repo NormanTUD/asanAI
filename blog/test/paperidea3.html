@@ -499,76 +499,42 @@ const FocusMap = (() => {
   // With stacked boxes: more overlap = higher clarity
   // Enforces max 25% of pixels at full clarity
   // Non-selected areas get suppressed proportional to total box count
-  function computeFocusMap() {
+function computeFocusMap() {
     computeAllMaps();
-    const focus = new Float64Array(SZ * SZ);
+    const focus = new Float64Array(SZ * SZ); // all zeros by default
     const nLayers = State.visibleLayers;
     const N = StalkModule.N_STALKS;
     const boxes = State.focusBoxes;
 
-    // Base focus from token transport
-    const lastLayer = nLayers - 1;
-    if (transportedMaps.length > 0) {
-        for (let y = 0; y < SZ; y++) {
-            for (let x = 0; x < SZ; x++) {
-                const idx = y * SZ + x;
-                let maxVal = 0;
-                for (let s = 0; s < N; s++) {
-                    if (transportedMaps[lastLayer] && transportedMaps[lastLayer][s]) {
-                        maxVal = Math.max(maxVal, transportedMaps[lastLayer][s][idx]);
-                    }
-                }
-                focus[idx] = Math.min(1, maxVal);
-            }
-        }
-    }
-
-    // If no boxes, return raw focus (moderate detail everywhere)
+    // ★ KEY CHANGE: If no boxes, return ALL ZEROS → everything maximally pixelated
     if (boxes.length === 0) return focus;
 
     // Compute box heat map (stacked selections)
     const heat = computeBoxHeatMap();
     const maxHeat = Math.max(1, boxes.length);
 
-    // ── KEY FIX: compute total selected area fraction ──
     let totalSelectedArea = 0;
     for (const box of boxes) {
         totalSelectedArea += box.w * box.h;
     }
-    // Clamp to [0, 1] — overlapping boxes can exceed 1.0
     totalSelectedArea = Math.min(1.0, totalSelectedArea);
 
-    // Inverse relationship: smaller selection → MORE detail inside
-    // When totalSelectedArea ≈ 1.0 (everything selected) → focusBoost ≈ 0 (very basic)
-    // When totalSelectedArea ≈ 0.01 (tiny selection) → focusBoost ≈ 1.0 (full detail)
     const focusBoost = Math.pow(1.0 - totalSelectedArea, 0.5);
-
-    // Suppression for areas OUTSIDE boxes also scales with selection size
-    // Small selection → strong suppression outside (everything else very pixelated)
-    // Large selection → weak suppression (everything roughly the same low detail)
     const suppressionStrength = Math.max(0.5, 3.0 * (1.0 - totalSelectedArea));
-
-    // Base level when everything is selected — very low detail
-    // This ensures that selecting everything gives you the basic smiley
     const baseWhenFullySelected = 0.05;
 
-    const combined = new Float64Array(SZ * SZ);
     for (let i = 0; i < SZ * SZ; i++) {
-        const h = heat[i] / maxHeat; // 0..1 normalized heat
+        const h = heat[i] / maxHeat;
 
         if (h > 0.01) {
-            // Inside a box: clarity scales INVERSELY with total selected area
-            // Small box = high focusBoost = crisp
-            // Huge box (everything) = low focusBoost = still pixelated/basic
-            combined[i] = Math.min(1.0, baseWhenFullySelected + h * focusBoost);
+            focus[i] = Math.min(1.0, baseWhenFullySelected + h * focusBoost);
         } else {
-            // Outside all boxes: always suppressed, more so when selection is small
-            const baseFocus = focus[i];
-            combined[i] = baseFocus * Math.pow(0.08, suppressionStrength);
+            // Outside all boxes: near-zero focus → maximally pixelated
+            focus[i] = 0.0;
         }
     }
 
-    return combined;
+    return focus;
 }
 
   function getAllFocusPoints() {
@@ -2262,98 +2228,101 @@ let frameCount = 0;
 // ============================================================
 // ═══ Smooth per-frame nudge — O(stalks × layers), NOT O(stalks × GRID² × layers) ═══
 function applyBoxAttraction() {
-  if (State.focusBoxes.length === 0) return;
+    if (State.focusBoxes.length === 0) return;
 
-  const N = StalkModule.N_STALKS;
-  const nLayers = State.visibleLayers;
-  const nBoxes = State.focusBoxes.length;
-  const strength = State.boxAttractionStrength;
+    const N = StalkModule.N_STALKS;
+    const nLayers = State.visibleLayers;
+    const nBoxes = State.focusBoxes.length;
 
-  for (let s = 0; s < N; s++) {
-    const st = StalkModule.stalks[s];
+    // Grid search resolution for inverse hash lookup
+    const GRID = 40;
+    const step = 0.9 / GRID; // search within [0.05, 0.95]
 
-    // Which box should this stalk target?
-    const targetBox = State.focusBoxes[s % nBoxes];
-    const goalX = targetBox.x + targetBox.w / 2;
-    const goalY = targetBox.y + targetBox.h / 2;
+    for (let s = 0; s < N; s++) {
+        const targetBox = State.focusBoxes[s % nBoxes];
+        const goalX = targetBox.x + targetBox.w / 2;
+        const goalY = targetBox.y + targetBox.h / 2;
 
-    // Compute current average focus centroid for this stalk
-    let cx = 0, cy = 0;
-    let allInside = true;
-    for (let l = 0; l < nLayers; l++) {
-      const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
-      cx += fp.x;
-      cy += fp.y;
-      if (fp.x < targetBox.x || fp.x > targetBox.x + targetBox.w ||
-          fp.y < targetBox.y || fp.y > targetBox.y + targetBox.h) {
-        allInside = false;
-      }
+        // Check if already converged — all focus points inside box
+        let allInside = true;
+        for (let l = 0; l < nLayers; l++) {
+            const fp = ChaoticHash.tokenToFocus(
+                StalkModule.stalks[s].embedPoint.x,
+                StalkModule.stalks[s].embedPoint.y, s, l
+            );
+            if (fp.x < targetBox.x || fp.x > targetBox.x + targetBox.w ||
+                fp.y < targetBox.y || fp.y > targetBox.y + targetBox.h) {
+                allInside = false;
+                break;
+            }
+        }
+        if (allInside) continue;
+
+        // ★ Brute-force grid search: find embedding position whose average
+        // focus centroid is closest to box center. Do it ONCE, instantly.
+        let bestX = StalkModule.stalks[s].embedPoint.x;
+        let bestY = StalkModule.stalks[s].embedPoint.y;
+        let bestDist = Infinity;
+
+        for (let gy = 0; gy <= GRID; gy++) {
+            for (let gx = 0; gx <= GRID; gx++) {
+                const ex = 0.05 + gx * step;
+                const ey = 0.05 + gy * step;
+                let cx = 0, cy = 0;
+                for (let l = 0; l < nLayers; l++) {
+                    const fp = ChaoticHash.tokenToFocus(ex, ey, s, l);
+                    cx += fp.x;
+                    cy += fp.y;
+                }
+                cx /= nLayers;
+                cy /= nLayers;
+                const d = (cx - goalX) * (cx - goalX) + (cy - goalY) * (cy - goalY);
+                if (d < bestDist) {
+                    bestDist = d;
+                    bestX = ex;
+                    bestY = ey;
+                }
+            }
+        }
+
+        // ★ Snap instantly — no animation, no lerp
+        StalkModule.stalks[s].embedPoint.x = bestX;
+        StalkModule.stalks[s].embedPoint.y = bestY;
     }
 
-    // Already converged — skip
-    if (allInside) continue;
-
-    cx /= nLayers;
-    cy /= nLayers;
-
-    // Simple gradient nudge: move embedding point toward reducing the
-    // distance between focus centroid and goal. This is ~10 trig calls
-    // per stalk instead of ~4000.
-    const errorX = goalX - cx;
-    const errorY = goalY - cy;
-
-    // Skip if already very close
-    if (Math.abs(errorX) < 0.005 && Math.abs(errorY) < 0.005) continue;
-
-    // Nudge the embedding point. The chaotic hash is continuous,
-    // so small nudges produce small focus shifts (mostly).
-    // Use a slightly larger step when far away, smaller when close.
-    const dist = Math.sqrt(errorX * errorX + errorY * errorY);
-    const adaptiveStrength = strength * Math.min(3.0, 0.5 + dist * 5);
-
-    st.embedPoint.x += errorX * adaptiveStrength;
-    st.embedPoint.y += errorY * adaptiveStrength;
-
-    // Clamp to valid range
-    st.embedPoint.x = Math.max(0.05, Math.min(0.95, st.embedPoint.x));
-    st.embedPoint.y = Math.max(0.05, Math.min(0.95, st.embedPoint.y));
-  }
-
-  WarpModule.invalidateCache();
-  FocusMap.invalidateCache();
+    WarpModule.invalidateCache();
+    FocusMap.invalidateCache();
 }
 
 let needsInitialAttraction = false; // Flag for one-time brute-force snap
 
 function animate(timestamp) {
-  if (State.animating) {
-    State.time += 0.016;
-  }
+    if (State.animating) {
+        State.time += 0.016;
+    }
 
-  // ═══ FIX: Use smooth per-frame nudge instead of brute-force every frame ═══
-  // Only run the expensive brute-force search ONCE when a box is first added.
-  // After that, use the cheap smooth nudge for fine-tuning.
-  if (needsInitialAttraction) {
-    applyBoxAttraction(); // Expensive but runs only once per box addition
-    needsInitialAttraction = false;
-  } else {
-    applyBoxAttraction(); // Cheap — runs every frame smoothly
-  }
+    // ★ Only run attraction ONCE when a new box is added — instant snap
+    if (needsInitialAttraction) {
+        applyBoxAttraction();
+        needsInitialAttraction = false;
+        updateInfo();
+    }
+    // ★ No per-frame attraction call anymore — points are fixed after snap
 
-  frameCount++;
-  const doFullRender = frameCount % 2 === 0 || !State.animating;
+    frameCount++;
+    const doFullRender = frameCount % 2 === 0 || !State.animating;
 
-  RenderEmbed.render();
-  RenderMain.render();
+    RenderEmbed.render();
+    RenderMain.render();
 
-  if (doFullRender) {
-    RenderTarget.render();
-    RenderDetail.render();
-    RenderJacobiMat.render();
-    RenderContrib.render();
-  }
+    if (doFullRender) {
+        RenderTarget.render();
+        RenderDetail.render();
+        RenderJacobiMat.render();
+        RenderContrib.render();
+    }
 
-  requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 }
 
 
