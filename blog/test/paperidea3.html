@@ -591,15 +591,23 @@ const WarpModule = (() => {
     const dx = new Float64Array(SZ * SZ);
     const dy = new Float64Array(SZ * SZ);
 
-    // Each stalk's focus point creates a warp attractor
+    // Collect fixed focus points for this layer
+    const focusPoints = [];
+    for (let s = 0; s < StalkModule.N_STALKS; s++) {
+      const st = StalkModule.stalks[s];
+      const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, layerIdx);
+      focusPoints.push(fp);
+    }
+
+    // Each focus point creates a warp attractor that pulls SPACE toward it
+    // The focus points themselves are the fixed anchors — space deforms around them
     for (let y = 0; y < SZ; y++) {
       for (let x = 0; x < SZ; x++) {
         const nx = x / SZ, ny = y / SZ;
         let totalDx = 0, totalDy = 0;
 
         for (let s = 0; s < StalkModule.N_STALKS; s++) {
-          const st = StalkModule.stalks[s];
-          const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, layerIdx);
+          const fp = focusPoints[s];
 
           const ddx = fp.x - nx, ddy = fp.y - ny;
           const dist = Math.sqrt(ddx * ddx + ddy * ddy) + 0.001;
@@ -623,6 +631,26 @@ const WarpModule = (() => {
       }
     }
 
+    // Zero out warp displacement AT the focus points themselves
+    // so the grid passes through them undisturbed — points stay fixed
+    for (let s = 0; s < StalkModule.N_STALKS; s++) {
+      const fp = focusPoints[s];
+      const pinRadius = 3; // pixels around focus point to pin
+      const fpx = Math.floor(fp.x * SZ);
+      const fpy = Math.floor(fp.y * SZ);
+      for (let py = Math.max(0, fpy - pinRadius); py <= Math.min(SZ - 1, fpy + pinRadius); py++) {
+        for (let px = Math.max(0, fpx - pinRadius); px <= Math.min(SZ - 1, fpx + pinRadius); px++) {
+          const d = Math.hypot(px - fpx, py - fpy);
+          if (d <= pinRadius) {
+            const fade = d / pinRadius; // 0 at center, 1 at edge
+            const smoothFade = fade * fade * (3 - 2 * fade); // smoothstep
+            dx[py * SZ + px] *= smoothFade;
+            dy[py * SZ + px] *= smoothFade;
+          }
+        }
+      }
+    }
+
     // Compute Jacobi matrix
     const J00 = new Float64Array(SZ*SZ);
     const J01 = new Float64Array(SZ*SZ);
@@ -642,7 +670,7 @@ const WarpModule = (() => {
       }
     }
 
-    return { dx, dy, J00, J01, J10, J11, warpScale, layerFraction };
+    return { dx, dy, J00, J01, J10, J11, warpScale, layerFraction, focusPoints };
   }
 
   let cachedFields = [];
@@ -1513,7 +1541,7 @@ const RenderDetail = (() => {
 
     const field = WarpModule.getLayerField(l);
     if (!field) return;
-    const { dx, dy, J00, J01, J10, J11 } = field;
+    const { dx, dy, J00, J01, J10, J11, focusPoints } = field;
     const gridN = State.gridDensity;
 
     // Draw filled cells with distortion coloring
@@ -1536,11 +1564,11 @@ const RenderDetail = (() => {
                    - WarpModule.sampleBilinear(J01, cnx, cny) * WarpModule.sampleBilinear(J10, cnx, cny);
         const distortion = Math.abs(det - 1);
 
+        // Find which focus point is closest (in UNWARPED space)
         let maxFocusBright = 0;
         let dominantStalk = 0;
         for (let s = 0; s < StalkModule.N_STALKS; s++) {
-          const st = StalkModule.stalks[s];
-          const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+          const fp = focusPoints[s];
           const d = Math.hypot(cnx - fp.x, cny - fp.y);
           const fb = Math.exp(-d * d / (2 * 0.12 * 0.12));
           if (fb > maxFocusBright) { maxFocusBright = fb; dominantStalk = s; }
@@ -1564,11 +1592,10 @@ const RenderDetail = (() => {
       }
     }
 
-    // Warped grid lines ONLY (no straight reference lines)
+    // Warped grid lines
     const lineAlpha = 0.4;
     const steps = gridN * 2;
 
-    // Horizontal warped lines
     ctxDetail.lineWidth = 0.7;
     for (let gy = 0; gy <= gridN; gy++) {
       ctxDetail.beginPath();
@@ -1584,7 +1611,6 @@ const RenderDetail = (() => {
       ctxDetail.stroke();
     }
 
-    // Vertical warped lines
     for (let gx = 0; gx <= gridN; gx++) {
       ctxDetail.beginPath();
       for (let gy = 0; gy <= steps; gy++) {
@@ -1599,43 +1625,67 @@ const RenderDetail = (() => {
       ctxDetail.stroke();
     }
 
-    // Focus point overlays for all stalks at this layer
+    // === Focus points drawn at FIXED unwarped positions ===
+    // The grid warps around them but the dots stay put — 
+    // this creates the illusion that the points are fixed anchors
+    // and the space is what's moving
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
-      const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
-      const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+      const fp = focusPoints[s];
+
+      // FIXED position — no warp applied to the dot
       const fpX = gridMargin + fp.x * gridSize;
       const fpY = gridMargin + fp.y * gridSize;
 
-      // Glow
-      const grd = ctxDetail.createRadialGradient(fpX, fpY, 0, fpX, fpY, 15);
-      grd.addColorStop(0, `rgba(${sc[0]},${sc[1]},${sc[2]},0.4)`);
+      // Show where the grid WOULD place this point (warped position) as a ghost
+      const wdx = WarpModule.sampleBilinear(dx, fp.x, fp.y);
+      const wdy = WarpModule.sampleBilinear(dy, fp.x, fp.y);
+      const warpedX = fpX + wdx * gridSize;
+      const warpedY = fpY + wdy * gridSize;
+
+      // Ghost ring at warped position (should be very close due to pinning)
+      ctxDetail.beginPath();
+      ctxDetail.arc(warpedX, warpedY, 6, 0, Math.PI * 2);
+      ctxDetail.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.15)`;
+      ctxDetail.lineWidth = 0.5;
+      ctxDetail.stroke();
+
+      // Glow at fixed position
+      const grd = ctxDetail.createRadialGradient(fpX, fpY, 0, fpX, fpY, 18);
+      grd.addColorStop(0, `rgba(${sc[0]},${sc[1]},${sc[2]},0.5)`);
+      grd.addColorStop(0.5, `rgba(${sc[0]},${sc[1]},${sc[2]},0.15)`);
       grd.addColorStop(1, `rgba(${sc[0]},${sc[1]},${sc[2]},0)`);
       ctxDetail.fillStyle = grd;
       ctxDetail.beginPath();
-      ctxDetail.arc(fpX, fpY, 15, 0, Math.PI * 2);
+      ctxDetail.arc(fpX, fpY, 18, 0, Math.PI * 2);
       ctxDetail.fill();
 
-      // Dot
+      // Pin marker — small diamond shape to emphasize "fixed"
+      const pinSz = 4;
       ctxDetail.beginPath();
-      ctxDetail.arc(fpX, fpY, 3.5, 0, Math.PI * 2);
-      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.9)`;
+      ctxDetail.moveTo(fpX, fpY - pinSz);
+      ctxDetail.lineTo(fpX + pinSz, fpY);
+      ctxDetail.lineTo(fpX, fpY + pinSz);
+      ctxDetail.lineTo(fpX - pinSz, fpY);
+      ctxDetail.closePath();
+      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.95)`;
       ctxDetail.fill();
-      ctxDetail.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctxDetail.strokeStyle = 'rgba(255,255,255,0.6)';
       ctxDetail.lineWidth = 1;
       ctxDetail.stroke();
 
-      ctxDetail.font = '7px monospace';
-      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.8)`;
+      // Label
+      ctxDetail.font = 'bold 7px monospace';
+      ctxDetail.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.9)`;
       ctxDetail.textAlign = 'center';
-      ctxDetail.fillText(StalkModule.NAMES[s], fpX, fpY - 7);
+      ctxDetail.fillText(StalkModule.NAMES[s], fpX, fpY - pinSz - 4);
     }
 
     // Title
     ctxDetail.font = 'bold 9px monospace';
     ctxDetail.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.9)`;
     ctxDetail.textAlign = 'center';
-    ctxDetail.fillText(`Layer ${l} — Warped Space (focus points shown)`, w / 2, 11);
+    ctxDetail.fillText(`Layer ${l} — Space warps around fixed focus points`, w / 2, 11);
 
     ctxDetail.font = '7px monospace';
     ctxDetail.fillStyle = 'rgba(255,220,100,0.6)';
