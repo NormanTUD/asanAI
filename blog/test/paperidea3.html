@@ -904,13 +904,8 @@ const RenderTarget = (() => {
         const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
         const cellSize = imgSize / SZ;
 
-        // ── Adaptive block rendering ──
-        // For each pixel, determine its effective block size from focus.
-        // focus ≈ 0 → block size = maxPix (lego blocks, very basic)
-        // focus ≈ 1 → block size = 1 (pixel-perfect, full detail)
-        // We render from coarsest to finest, each pass overwriting where appropriate.
-
-        // Pass 1: Coarsest — fill everything at lego-block resolution (the "basic smiley")
+        // === Pass 1: Coarsest — fill everything at lego-block resolution ===
+        // NOW COLORFUL but very pixelated
         for (let by = 0; by < SZ; by += maxPix) {
             for (let bx = 0; bx < SZ; bx += maxPix) {
                 const cx = Math.min(SZ - 1, bx + Math.floor(maxPix / 2));
@@ -921,17 +916,29 @@ const RenderTarget = (() => {
                 const screenY = oy + by * cellSize;
                 const blockW = Math.min(maxPix, SZ - bx) * cellSize;
                 const blockH = Math.min(maxPix, SZ - by) * cellSize;
-                // Desaturated, dim colors for unfocused areas
-                const r = Math.floor(15 + b * 60);
-                const g = Math.floor(18 + b * 65);
-                const bl = Math.floor(35 + b * 80);
+
+                // Colorful but chunky — use position-based hue for unfocused areas
+                const hueAngle = (cx / SZ * 360 + cy / SZ * 120) % 360;
+                const hRad = hueAngle * Math.PI / 180;
+                const saturation = 0.6 + b * 0.4;
+                const lightness = 0.15 + b * 0.45;
+
+                // HSL-ish to RGB (simplified)
+                const rBase = lightness + saturation * lightness * Math.cos(hRad);
+                const gBase = lightness + saturation * lightness * Math.cos(hRad - 2.094);
+                const bBase = lightness + saturation * lightness * Math.cos(hRad + 2.094);
+
+                const r = Math.floor(Math.min(255, Math.max(0, rBase * 255)));
+                const g = Math.floor(Math.min(255, Math.max(0, gBase * 255)));
+                const bl = Math.floor(Math.min(255, Math.max(0, bBase * 255)));
+
                 ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
                 ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
             }
         }
 
         // Draw block grid lines for the coarsest level (lego look)
-        ctxTarget.strokeStyle = 'rgba(30,41,59,0.4)';
+        ctxTarget.strokeStyle = 'rgba(30,41,59,0.5)';
         ctxTarget.lineWidth = 0.5;
         for (let by = 0; by <= SZ; by += maxPix) {
             const sy = oy + by * cellSize;
@@ -948,7 +955,7 @@ const RenderTarget = (() => {
             ctxTarget.stroke();
         }
 
-        // Passes 2..N: progressively finer grids where focus warrants it
+        // === Passes 2..N: progressively finer grids where focus warrants it ===
         const blockSizes = [];
         for (let bs = maxPix; bs >= 1; bs = Math.max(1, Math.floor(bs / 2))) {
             blockSizes.push(bs);
@@ -958,7 +965,6 @@ const RenderTarget = (() => {
 
         for (let bi = 1; bi < blockSizes.length; bi++) {
             const bs = blockSizes[bi];
-            // Focus threshold: this resolution level only appears where focus exceeds this
             const focusThreshold = bi / blockSizes.length;
 
             for (let by = 0; by < SZ; by += bs) {
@@ -967,17 +973,15 @@ const RenderTarget = (() => {
                     const cy = Math.min(SZ - 1, by + Math.floor(bs / 2));
                     const focus = focusMap[cy * SZ + cx];
 
-                    // Only draw if focus is high enough for this resolution level
                     if (focus < focusThreshold * 0.6) continue;
 
-                    // Alpha: smooth transition into this detail level
                     const alpha = Math.min(1.0, (focus - focusThreshold * 0.4) / (focusThreshold * 0.6 + 0.01));
                     if (alpha <= 0.02) continue;
 
                     const v = image[cy * SZ + cx];
                     const b = Math.max(0, Math.min(1, v));
 
-                    // Color gets warmer and brighter with more focus
+                    // Focused areas: bright, warm, full color detail
                     const warmth = focus;
                     const r = Math.floor(20 + b * (120 + warmth * 105));
                     const g = Math.floor(20 + b * (110 + warmth * 90));
@@ -991,36 +995,13 @@ const RenderTarget = (() => {
                     ctxTarget.globalAlpha = alpha;
                     ctxTarget.fillStyle = `rgb(${r},${g},${bl2})`;
                     ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
-
-                    // Draw sub-grid lines for this resolution level (grid-in-grid effect)
-                    if (bs > 1 && bs < maxPix && alpha > 0.3) {
-                        ctxTarget.strokeStyle = `rgba(162,155,254,${alpha * 0.12})`;
-                        ctxTarget.lineWidth = 0.3;
-                        const parentBs = blockSizes[bi - 1];
-                        if (bx % parentBs === 0 && by % parentBs === 0) {
-                            for (let sy = by; sy <= Math.min(SZ, by + parentBs); sy += bs) {
-                                const screenSy = oy + sy * cellSize;
-                                ctxTarget.beginPath();
-                                ctxTarget.moveTo(ox + bx * cellSize, screenSy);
-                                ctxTarget.lineTo(ox + Math.min(SZ, bx + parentBs) * cellSize, screenSy);
-                                ctxTarget.stroke();
-                            }
-                            for (let sx = bx; sx <= Math.min(SZ, bx + parentBs); sx += bs) {
-                                const screenSx = ox + sx * cellSize;
-                                ctxTarget.beginPath();
-                                ctxTarget.moveTo(screenSx, oy + by * cellSize);
-                                ctxTarget.lineTo(screenSx, oy + Math.min(SZ, by + parentBs) * cellSize);
-                                ctxTarget.stroke();
-                            }
-                        }
-                    }
                 }
             }
         }
 
         ctxTarget.globalAlpha = 1.0;
 
-        // ── Lens Pointer Visualization ──
+        // === Lens Pointer Visualization (NO weird lines — clean crosshairs only) ===
         for (let s = 0; s < StalkModule.N_STALKS; s++) {
             const st = StalkModule.stalks[s];
             const sc = StalkModule.COLORS[s];
@@ -1038,6 +1019,7 @@ const RenderTarget = (() => {
             const cpx = ox + centX * imgSize;
             const cpy = oy + centY * imgSize;
 
+            // Simple crosshair + circle — no dashed leader lines, no arrows
             const chSize = isSelected ? 10 : 6;
             const chAlpha = isSelected ? 0.9 : 0.5;
             ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${chAlpha})`;
@@ -1046,44 +1028,24 @@ const RenderTarget = (() => {
             ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy - chSize); ctxTarget.lineTo(cpx, cpy + chSize); ctxTarget.stroke();
             ctxTarget.beginPath(); ctxTarget.arc(cpx, cpy, chSize * 0.7, 0, Math.PI * 2); ctxTarget.stroke();
 
-            let labelX, labelY;
-            if (centX < 0.5) { labelX = ox - 2; } else { labelX = ox + imgSize + 2; }
-            labelY = oy + centY * imgSize;
-
-            ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.7 : 0.3})`;
-            ctxTarget.lineWidth = isSelected ? 1.8 : 1;
-            ctxTarget.setLineDash([3, 2]);
-            ctxTarget.beginPath(); ctxTarget.moveTo(labelX, labelY); ctxTarget.lineTo(cpx, cpy); ctxTarget.stroke();
-            ctxTarget.setLineDash([]);
-
-            const angle = Math.atan2(cpy - labelY, cpx - labelX);
-            const aLen = 6;
-            ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.8 : 0.4})`;
-            ctxTarget.beginPath();
-            ctxTarget.moveTo(cpx, cpy);
-            ctxTarget.lineTo(cpx - aLen * Math.cos(angle - 0.4), cpy - aLen * Math.sin(angle - 0.4));
-            ctxTarget.lineTo(cpx - aLen * Math.cos(angle + 0.4), cpy - aLen * Math.sin(angle + 0.4));
-            ctxTarget.closePath(); ctxTarget.fill();
-
+            // Label near crosshair (no leader lines)
             ctxTarget.font = `${isSelected ? 'bold ' : ''}8px monospace`;
             ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
-            ctxTarget.textAlign = centX < 0.5 ? 'right' : 'left';
-            ctxTarget.fillText(StalkModule.NAMES[s], labelX + (centX < 0.5 ? -2 : 2), labelY + 3);
+            ctxTarget.textAlign = 'center';
+            ctxTarget.fillText(StalkModule.NAMES[s], cpx, cpy - chSize - 3);
 
+            // Small dots for individual layer focus points (no connecting lines)
             for (let l = 0; l < State.visibleLayers; l++) {
                 const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
                 const fpX = ox + fp.x * imgSize;
                 const fpY = oy + fp.y * imgSize;
                 const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
-                ctxTarget.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.4 : 0.15})`;
-                ctxTarget.lineWidth = 0.7;
-                ctxTarget.beginPath(); ctxTarget.moveTo(cpx, cpy); ctxTarget.lineTo(fpX, fpY); ctxTarget.stroke();
                 ctxTarget.beginPath(); ctxTarget.arc(fpX, fpY, isSelected ? 2.5 : 1.5, 0, Math.PI * 2);
                 ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.7 : 0.35})`; ctxTarget.fill();
             }
         }
 
-        // ── Draw focus boxes with area indicator ──
+        // === Draw focus boxes ===
         const totalSelectedArea = State.focusBoxes.reduce((sum, box) => sum + box.w * box.h, 0);
         const clampedArea = Math.min(1.0, totalSelectedArea);
 
@@ -1111,7 +1073,6 @@ const RenderTarget = (() => {
             ctxTarget.fillText(`#${i + 1} (${(box.w * box.h * 100).toFixed(0)}% area)`, bx + 2, by - 3);
         }
 
-        // Show total area and resulting detail level
         if (State.focusBoxes.length > 0) {
             const detailLevel = Math.pow(1.0 - clampedArea, 0.5);
             ctxTarget.font = 'bold 8px monospace';
@@ -1140,7 +1101,6 @@ const RenderTarget = (() => {
             ctxTarget.fillStyle = 'rgba(251,191,36,0.1)';
             ctxTarget.fillRect(bx, by, bw, bh);
 
-            // Show preview area percentage
             const previewArea = Math.abs(bc.x - bs.x) * Math.abs(bc.y - bs.y);
             ctxTarget.font = '7px monospace';
             ctxTarget.fillStyle = 'rgba(251,191,36,0.8)';
@@ -1603,7 +1563,7 @@ const RenderDetail = (() => {
     const { dx, dy, J00, J01, J10, J11 } = field;
     const gridN = State.gridDensity;
 
-    // Draw filled cells
+    // Draw filled cells with distortion coloring
     for (let gy = 0; gy < gridN; gy++) {
       for (let gx = 0; gx < gridN; gx++) {
         const corners = [
@@ -1623,7 +1583,6 @@ const RenderDetail = (() => {
                    - WarpModule.sampleBilinear(J01, cnx, cny) * WarpModule.sampleBilinear(J10, cnx, cny);
         const distortion = Math.abs(det - 1);
 
-        // Color by distortion and focus proximity
         let maxFocusBright = 0;
         let dominantStalk = 0;
         for (let s = 0; s < StalkModule.N_STALKS; s++) {
@@ -1652,12 +1611,14 @@ const RenderDetail = (() => {
       }
     }
 
-    // Grid lines
-    ctxDetail.lineWidth = 0.7;
+    // Warped grid lines ONLY (no straight reference lines)
     const lineAlpha = 0.4;
+    const steps = gridN * 2;
+
+    // Horizontal warped lines
+    ctxDetail.lineWidth = 0.7;
     for (let gy = 0; gy <= gridN; gy++) {
       ctxDetail.beginPath();
-      const steps = gridN * 2;
       for (let gx = 0; gx <= steps; gx++) {
         const nx = gx / steps, ny = Math.min(0.999, gy / gridN);
         const ddx = WarpModule.sampleBilinear(dx, nx, ny);
@@ -1669,9 +1630,10 @@ const RenderDetail = (() => {
       ctxDetail.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${lineAlpha.toFixed(3)})`;
       ctxDetail.stroke();
     }
+
+    // Vertical warped lines
     for (let gx = 0; gx <= gridN; gx++) {
       ctxDetail.beginPath();
-      const steps = gridN * 2;
       for (let gy = 0; gy <= steps; gy++) {
         const nx = Math.min(0.999, gx / gridN), ny = gy / steps;
         const ddx = WarpModule.sampleBilinear(dx, nx, ny);
@@ -1684,7 +1646,7 @@ const RenderDetail = (() => {
       ctxDetail.stroke();
     }
 
-    // Overlay focus points for all stalks at this layer
+    // Focus point overlays for all stalks at this layer
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
