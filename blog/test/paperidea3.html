@@ -3,77 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kelp Forest of Fibre Bundles — Holographic Layer Projection</title>
+<title>Kelp Forest — Embedding Space Jacobi Field Interaction</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#050810;color:#e2e8f0;font-family:system-ui,sans-serif;overflow:hidden}
-canvas{display:block}
-#ui{position:fixed;top:12px;left:12px;z-index:10;pointer-events:none}
-#ui *{pointer-events:auto}
-#ui h1{font-size:1.1em;color:#a29bfe;margin-bottom:4px;text-shadow:0 0 20px #a29bfe60}
-#ui p{font-size:0.75em;color:#64748b;max-width:320px;line-height:1.4;margin-bottom:6px}
-.ctrl{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-button{background:#6c5ce720;border:1px solid #6c5ce740;color:#a29bfe;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.72em;transition:all 0.2s}
+body{background:#050810;color:#e2e8f0;font-family:system-ui,sans-serif;overflow-x:hidden;overflow-y:auto}
+h1{font-size:1.2em;text-align:center;margin:12px 0 2px;color:#a29bfe;text-shadow:0 0 20px #a29bfe40}
+.subtitle{text-align:center;color:#64748b;font-size:0.75em;margin-bottom:10px;max-width:750px;margin-left:auto;margin-right:auto;line-height:1.5}
+.main{display:flex;gap:10px;padding:0 10px 14px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.col{display:flex;flex-direction:column;gap:8px}
+.col-left{width:300px;min-width:260px}
+.col-center{flex:1;min-width:480px;max-width:780px}
+.col-right{width:280px;min-width:240px}
+.panel{background:#0d1220;border:1px solid #1e293b;border-radius:10px;padding:10px;position:relative}
+.panel h2{font-size:0.85em;color:#a29bfe;margin-bottom:5px;border-bottom:1px solid #1e293b;padding-bottom:3px}
+.panel h3{font-size:0.78em;color:#00cec9;margin-bottom:3px}
+.panel p,.panel li{font-size:0.72em;color:#94a3b8;line-height:1.5}
+.panel ul{padding-left:14px;margin-bottom:4px}
+canvas{border-radius:6px;display:block}
+canvas.clickable{cursor:crosshair}
+.controls{display:flex;gap:5px;flex-wrap:wrap;margin:5px 0}
+button{background:#6c5ce720;border:1px solid #6c5ce740;color:#a29bfe;padding:4px 9px;border-radius:6px;cursor:pointer;font-size:0.7em;transition:all 0.15s}
 button:hover{background:#6c5ce740;border-color:#a29bfe}
 button.active{background:#6c5ce760;border-color:#a29bfe;color:#fff}
-.slider-row{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:0.72em;color:#64748b}
-.slider-row input{width:100px;accent-color:#a29bfe}
-.slider-row .val{color:#fbbf24;min-width:28px}
-#info{position:fixed;bottom:12px;left:12px;z-index:10;background:#0a0e1a90;border:1px solid #1e293b;border-radius:8px;padding:10px 14px;max-width:360px;font-size:0.72em;color:#94a3b8;line-height:1.5;backdrop-filter:blur(8px)}
-#info b{color:#a29bfe}
-#info .formula{font-family:'Courier New',monospace;color:#fbbf24;background:#0f172a;padding:2px 6px;border-radius:3px;font-size:0.95em}
+.slider-row{display:flex;align-items:center;gap:5px;margin:3px 0;font-size:0.7em;color:#64748b}
+.slider-row input{width:80px;accent-color:#a29bfe}
+.slider-row .val{color:#fbbf24;min-width:22px}
+.legend{display:flex;gap:7px;flex-wrap:wrap;font-size:0.65em;color:#64748b;margin:4px 0}
+.legend span{display:flex;align-items:center;gap:3px}
+.legend .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.focus-info{background:#1a1040;border:1px solid #a29bfe30;border-radius:8px;padding:9px;margin-top:5px;min-height:50px;transition:all 0.3s}
+.focus-info b{color:#fbbf24}
+.focus-info .region-name{color:#fd79a8;font-weight:bold}
+.formula{font-family:'Courier New',monospace;color:#fbbf24;background:#0f172a;padding:2px 5px;border-radius:3px;font-size:0.82em;display:inline-block;margin:2px 0}
+.embed-label{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:0.65em;color:#64748b;pointer-events:none}
+.layer-strip{display:flex;gap:3px;margin:4px 0}
+.layer-chip{width:26px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.58em;font-weight:bold;cursor:pointer;border:2px solid transparent;transition:all 0.15s}
+.layer-chip:hover{transform:scale(1.1)}
+.layer-chip.active{border-color:#fff;box-shadow:0 0 6px rgba(255,255,255,0.3)}
+.geodesic-info{font-size:0.65em;color:#00cec9;margin-top:4px;padding:4px 6px;background:#0a1628;border-radius:4px;border:1px solid #00cec920}
 </style>
 </head>
 <body>
-<div id="ui">
-  <h1>🌿 Kelp Forest of Fibre Bundles</h1>
-  <p>Each stalk is a fibre at a token-index position. Layers stack vertically. The Jacobian field at each layer contains holographically FFT-encoded projection data that progressively resolves a smiley face.</p>
-  <div class="ctrl">
-    <button onclick="toggleAnim()" id="btnAnim">▶ Animate</button>
-    <button onclick="resetView()">↺ Reset</button>
-    <button onclick="toggleMode('kelp')" id="btnKelp" class="active">Kelp View</button>
-    <button onclick="toggleMode('flat')" id="btnFlat">Flat Layers</button>
+
+<h1>🌿 Embedding Space → Jacobi Field → Kelp Forest Projection</h1>
+<p class="subtitle">Click in the <b>Layer -1 Embedding Space</b> (left panel) to set a point. This reshapes the Jacobi field across all layers — the geodesic distance from your point to each layer's focus determines how strongly that layer resolves each region. The relationship between embedding position and spatial focus creates the holographic projection.</p>
+
+<div class="main">
+
+<!-- LEFT COLUMN: Embedding Space + Controls -->
+<div class="col col-left">
+  <div class="panel" style="position:relative">
+    <h2>🌐 Layer -1: Embedding Space</h2>
+    <p>Click to place your point. Geodesic distances from here reshape all Jacobi fields.</p>
+    <canvas id="cvEmbed" width="280" height="280" class="clickable"></canvas>
+    <span class="embed-label">2D Embedding Manifold (click anywhere)</span>
   </div>
-  <div class="slider-row">
-    <label>Layers visible:</label>
-    <input type="range" id="slLayers" min="1" max="5" value="5">
-    <span class="val" id="vLayers">5</span>
+
+  <div class="panel">
+    <h2>🎛 Controls</h2>
+    <div class="controls">
+      <button onclick="playAnim()" id="btnPlay">▶ Animate</button>
+      <button onclick="pauseAnim()">⏸ Pause</button>
+      <button onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div class="slider-row">
+      <label>Layers:</label>
+      <input type="range" id="slLayers" min="1" max="5" value="5" oninput="setLayers(+this.value)">
+      <span class="val" id="vLayers">5</span>
+    </div>
+    <div class="slider-row">
+      <label>Sway:</label>
+      <input type="range" id="slSway" min="0" max="100" value="25" oninput="setSway(+this.value)">
+      <span class="val" id="vSway">25</span>
+    </div>
+    <div class="slider-row">
+      <label>Curvature K:</label>
+      <input type="range" id="slCurv" min="1" max="100" value="30" oninput="setCurvature(+this.value)">
+      <span class="val" id="vCurv">0.30</span>
+    </div>
+    <div class="slider-row">
+      <label>Field strength:</label>
+      <input type="range" id="slField" min="10" max="100" value="70" oninput="setFieldStrength(+this.value)">
+      <span class="val" id="vField">70</span>
+    </div>
   </div>
-  <div class="slider-row">
-    <label>Rotation:</label>
-    <input type="range" id="slRot" min="0" max="360" value="25">
-    <span class="val" id="vRot">25°</span>
+
+  <div class="panel">
+    <h2>📐 Layer Highlight</h2>
+    <div class="layer-strip" id="layerStrip"></div>
+    <p style="margin-top:4px">Active: <b id="activeLayerLabel">All</b></p>
   </div>
-  <div class="slider-row">
-    <label>Sway:</label>
-    <input type="range" id="slSway" min="0" max="100" value="40">
-    <span class="val" id="vSway">40</span>
+
+  <div class="panel">
+    <h2>📖 Jacobi Field Geometry</h2>
+    <ul>
+      <li>The embedding point defines a <b>source</b> on the manifold</li>
+      <li>Jacobi fields describe how nearby geodesics spread from that source [[2]]</li>
+      <li>Sectional curvature K controls conjugate point distance: <span class="formula">d = π/√K</span> [[6]]</li>
+      <li>Each layer's focus is a point on the manifold — the geodesic distance to your embedding point determines the Jacobi field magnitude there [[3]]</li>
+      <li>This magnitude modulates how much each layer's FFT band contributes to resolving the image</li>
+    </ul>
   </div>
 </div>
-<div id="info">
-  <b>Fibre Bundle Holographic Projection</b><br>
-  The smiley is encoded via 2D FFT into Jacobian field patterns. Each layer's "stalk" carries one frequency band — low frequencies (global shape) at the base, high frequencies (edges, details) at the top.<br><br>
-  <b>Layer projection:</b> Each layer focuses on a spatial region, making that area + its neighborhood clearer while the rest stays blurry.<br><br>
-  <span class="formula">J(x) = Σ_ℓ FFT⁻¹(mask_ℓ · F̂(smiley)) · attn_ℓ(x)</span>
+
+<!-- CENTER COLUMN: Main Kelp Forest -->
+<div class="col col-center">
+  <div class="panel" style="padding:6px">
+    <canvas id="cvMain" class="clickable"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#64b5f6"></span> L0</span>
+      <span><span class="dot" style="background:#81c784"></span> L1</span>
+      <span><span class="dot" style="background:#ffd54f"></span> L2</span>
+      <span><span class="dot" style="background:#ff8a65"></span> L3</span>
+      <span><span class="dot" style="background:#ce93d8"></span> L4</span>
+      <span>🖱 Click resolved image to inspect region</span>
+    </div>
+  </div>
 </div>
-<canvas id="cv"></canvas>
+
+<!-- RIGHT COLUMN: Focus Detail -->
+<div class="col col-right">
+  <div class="panel">
+    <h2>🎯 Resolved Image (click to inspect)</h2>
+    <canvas id="cvResolved" width="250" height="250" class="clickable"></canvas>
+  </div>
+
+  <div class="panel">
+    <h3>Layer-by-Layer Breakdown</h3>
+    <canvas id="cvBreakdown" width="250" height="320"></canvas>
+  </div>
+
+  <div class="panel focus-info" id="focusInfo">
+    <p>Place a point in the embedding space (left) to reshape the Jacobi field. Then click the resolved image to inspect how layers contribute to a specific region.</p>
+  </div>
+
+  <div class="panel geodesic-info" id="geodesicInfo">
+    <b>Geodesic distances from embedding point:</b><br>
+    <span id="geodesicDistances">— click embedding space —</span>
+  </div>
+</div>
+
+</div>
 
 <script>
 // ============================================================
 // SETUP
 // ============================================================
-const canvas = document.getElementById('cv');
-const ctx = canvas.getContext('2d');
-let W, H;
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
+const dpr = window.devicePixelRatio || 1;
+
+function setupHiDPI(canvas, w, h) {
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  return ctx;
 }
-resize();
-window.addEventListener('resize', resize);
+
+const cvEmbed = document.getElementById('cvEmbed');
+const ctxEmbed = setupHiDPI(cvEmbed, 280, 280);
+
+const cvMain = document.getElementById('cvMain');
+const ctxMain = cvMain.getContext('2d');
+
+const cvResolved = document.getElementById('cvResolved');
+const ctxResolved = setupHiDPI(cvResolved, 250, 250);
+
+const cvBreakdown = document.getElementById('cvBreakdown');
+const ctxBreakdown = setupHiDPI(cvBreakdown, 250, 320);
+
+function resizeMain() {
+  const container = cvMain.parentElement;
+  const w = container.clientWidth - 12;
+  const h = Math.min(680, Math.max(450, window.innerHeight - 180));
+  cvMain.width = w * dpr;
+  cvMain.height = h * dpr;
+  cvMain.style.width = w + 'px';
+  cvMain.style.height = h + 'px';
+  ctxMain.setTransform(1, 0, 0, 1, 0, 0);
+  ctxMain.scale(dpr, dpr);
+  return { w, h };
+}
+let mainDim = resizeMain();
+window.addEventListener('resize', () => { mainDim = resizeMain(); });
 
 // ============================================================
-// SMILEY TARGET IMAGE (32x32)
+// SMILEY (32x32)
 // ============================================================
 const SZ = 32;
 const smiley = new Float64Array(SZ * SZ);
@@ -82,53 +198,43 @@ for (let y = 0; y < SZ; y++) {
     const cx = x - SZ/2 + 0.5, cy = y - SZ/2 + 0.5;
     const r = Math.sqrt(cx*cx + cy*cy);
     let v = 0;
-    // Face circle
-    if (Math.abs(r - 12) < 1.5) v = 1;
-    // Fill face lightly
-    if (r < 11) v = Math.max(v, 0.25);
-    // Left eye
-    if (Math.hypot(cx - 4, cy + 3) < 2) v = 1;
-    // Right eye
-    if (Math.hypot(cx + 4, cy + 3) < 2) v = 1;
-    // Smile arc
-    if (r > 5.5 && r < 8 && cy > 2 && Math.abs(cx) < 8) v = 1;
+    if (Math.abs(r - 13) < 1.8) v = 1;
+    if (r < 11.5) v = Math.max(v, 0.18);
+    if (Math.hypot(cx - 4.5, cy + 3) < 2.2) v = 1;
+    if (Math.hypot(cx + 4.5, cy + 3) < 2.2) v = 1;
+    if (r > 5 && r < 8.5 && cy > 2.5 && Math.abs(cx) < 8) v = 1;
     smiley[y * SZ + x] = v;
   }
 }
 
 // ============================================================
-// 2D FFT (simple DFT for 32x32 — fine for visualization)
+// 2D DFT
 // ============================================================
 function fft2Forward(real) {
   const N = SZ;
-  const reOut = new Float64Array(N*N);
-  const imOut = new Float64Array(N*N);
-  // Row-wise DFT
-  const reTmp = new Float64Array(N*N);
-  const imTmp = new Float64Array(N*N);
+  const reTmp = new Float64Array(N*N), imTmp = new Float64Array(N*N);
   for (let y = 0; y < N; y++) {
     for (let k = 0; k < N; k++) {
       let re = 0, im = 0;
       for (let n = 0; n < N; n++) {
-        const angle = -2 * Math.PI * k * n / N;
-        re += real[y*N+n] * Math.cos(angle);
-        im += real[y*N+n] * Math.sin(angle);
+        const angle = -2*Math.PI*k*n/N;
+        re += real[y*N+n]*Math.cos(angle);
+        im += real[y*N+n]*Math.sin(angle);
       }
-      reTmp[y*N+k] = re;
-      imTmp[y*N+k] = im;
+      reTmp[y*N+k] = re; imTmp[y*N+k] = im;
     }
   }
-  // Column-wise DFT
+  const reOut = new Float64Array(N*N), imOut = new Float64Array(N*N);
   for (let x = 0; x < N; x++) {
     for (let k = 0; k < N; k++) {
       let re = 0, im = 0;
       for (let n = 0; n < N; n++) {
-        const angle = -2 * Math.PI * k * n / N;
-        re += reTmp[n*N+x] * Math.cos(angle) - imTmp[n*N+x] * Math.sin(angle);
-        im += reTmp[n*N+x] * Math.sin(angle) + imTmp[n*N+x] * Math.cos(angle);
+        const angle = -2*Math.PI*k*n/N;
+        const c = Math.cos(angle), s = Math.sin(angle);
+        re += reTmp[n*N+x]*c - imTmp[n*N+x]*s;
+        im += reTmp[n*N+x]*s + imTmp[n*N+x]*c;
       }
-      reOut[k*N+x] = re;
-      imOut[k*N+x] = im;
+      reOut[k*N+x] = re; imOut[k*N+x] = im;
     }
   }
   return { re: reOut, im: imOut };
@@ -136,102 +242,87 @@ function fft2Forward(real) {
 
 function fft2Inverse(re, im) {
   const N = SZ;
-  const out = new Float64Array(N*N);
-  // Column-wise IDFT
-  const reTmp = new Float64Array(N*N);
-  const imTmp = new Float64Array(N*N);
+  const reTmp = new Float64Array(N*N), imTmp = new Float64Array(N*N);
   for (let x = 0; x < N; x++) {
     for (let n = 0; n < N; n++) {
       let rr = 0, ii = 0;
       for (let k = 0; k < N; k++) {
-        const angle = 2 * Math.PI * k * n / N;
-        rr += re[k*N+x] * Math.cos(angle) - im[k*N+x] * Math.sin(angle);
-        ii += re[k*N+x] * Math.sin(angle) + im[k*N+x] * Math.cos(angle);
+        const angle = 2*Math.PI*k*n/N;
+        const c = Math.cos(angle), s = Math.sin(angle);
+        rr += re[k*N+x]*c - im[k*N+x]*s;
+        ii += re[k*N+x]*s + im[k*N+x]*c;
       }
-      reTmp[n*N+x] = rr / N;
-      imTmp[n*N+x] = ii / N;
+      reTmp[n*N+x] = rr/N; imTmp[n*N+x] = ii/N;
     }
   }
-  // Row-wise IDFT
+  const out = new Float64Array(N*N);
   for (let y = 0; y < N; y++) {
     for (let n = 0; n < N; n++) {
       let rr = 0;
       for (let k = 0; k < N; k++) {
-        const angle = 2 * Math.PI * k * n / N;
-        rr += reTmp[y*N+k] * Math.cos(angle) - imTmp[y*N+k] * Math.sin(angle);
+        const angle = 2*Math.PI*k*n/N;
+        rr += reTmp[y*N+k]*Math.cos(angle) - imTmp[y*N+k]*Math.sin(angle);
       }
-      out[y*N+n] = rr / N;
+      out[y*N+n] = rr/N;
     }
   }
   return out;
 }
 
-// Compute FFT of smiley
 const F = fft2Forward(smiley);
 
 // ============================================================
-// LAYER DEFINITIONS: each layer has a frequency mask + spatial focus
+// LAYERS
 // ============================================================
 const N_LAYERS = 5;
+const LAYER_COLORS = [[100,181,246],[129,199,132],[255,213,79],[255,138,101],[206,147,216]];
+const LAYER_NAMES = ['L0: DC/global','L1: low freq','L2: mid freq','L3: mid-high','L4: high freq'];
 
-// Frequency bands: layer 0 = lowest freq, layer 4 = highest
-// Each layer also has a spatial attention center
+// Each layer has a "native" focus point in the embedding space
+// These are the points on the manifold that each layer naturally attends to
+const LAYER_EMBED_POINTS = [
+  { x: 0.5, y: 0.5 },   // center
+  { x: 0.3, y: 0.35 },  // upper-left region
+  { x: 0.7, y: 0.35 },  // upper-right region
+  { x: 0.5, y: 0.72 },  // lower-center
+  { x: 0.5, y: 0.2 },   // top
+];
+
+// Corresponding spatial focus in image space
+const LAYER_SPATIAL_FOCUS = [
+  { x: 0.5, y: 0.5, name: 'center (face)' },
+  { x: 0.36, y: 0.4, name: 'left eye' },
+  { x: 0.64, y: 0.4, name: 'right eye' },
+  { x: 0.5, y: 0.66, name: 'mouth' },
+  { x: 0.5, y: 0.22, name: 'top of head' },
+];
+
 const layers = [];
-const _seed = [42, 137, 256, 389, 501];
-function srand(s) { return () => { s = (s * 16807) % 2147483647; return (s-1)/2147483646; }; }
-
 for (let l = 0; l < N_LAYERS; l++) {
-  const rng = srand(_seed[l]);
-  // Frequency ring: inner radius to outer radius (in freq space, 0 = DC, SZ/2 = Nyquist)
-  const freqLo = l * (SZ/2) / N_LAYERS;
-  const freqHi = (l + 1) * (SZ/2) / N_LAYERS;
-  // Spatial attention focus (in [0,1] image space)
-  // Each layer focuses on a different part of the smiley
-  const focusPoints = [
-    { x: 0.5, y: 0.5 },   // center (face)
-    { x: 0.37, y: 0.4 },  // left eye area
-    { x: 0.63, y: 0.4 },  // right eye area
-    { x: 0.5, y: 0.65 },  // mouth area
-    { x: 0.5, y: 0.25 },  // top of head
-  ];
   layers.push({
-    freqLo, freqHi,
-    focus: focusPoints[l],
-    focusRadius: 0.25 + l * 0.03,
-    color: [
-      [100, 180, 255],
-      [120, 255, 200],
-      [255, 200, 100],
-      [255, 130, 180],
-      [180, 140, 255]
-    ][l],
-    stalkColor: [
-      'rgba(100,180,255,',
-      'rgba(120,255,200,',
-      'rgba(255,200,100,',
-      'rgba(255,130,180,',
-      'rgba(180,140,255,'
-    ][l]
+    freqLo: l * (SZ/2) / N_LAYERS,
+    freqHi: (l+1) * (SZ/2) / N_LAYERS,
+    embedPoint: LAYER_EMBED_POINTS[l],
+    spatialFocus: LAYER_SPATIAL_FOCUS[l],
+    focusRadius: 0.28,
+    color: LAYER_COLORS[l],
   });
 }
 
-// Precompute per-layer FFT-masked images (the "holographic projection" at each layer)
+// Precompute per-layer FFT-masked images
 const layerProjections = [];
-const layerFFTMagnitudes = []; // for visualizing the FFT pattern on the stalk
+const layerFFTMagnitudes = [];
 
 for (let l = 0; l < N_LAYERS; l++) {
   const layer = layers[l];
   const maskedRe = new Float64Array(SZ*SZ);
   const maskedIm = new Float64Array(SZ*SZ);
   const magnitude = new Float64Array(SZ*SZ);
-
   for (let fy = 0; fy < SZ; fy++) {
     for (let fx = 0; fx < SZ; fx++) {
-      // Centered frequency distance
       const cfx = fx < SZ/2 ? fx : fx - SZ;
       const cfy = fy < SZ/2 ? fy : fy - SZ;
       const freq = Math.sqrt(cfx*cfx + cfy*cfy);
-
       if (freq >= layer.freqLo && freq < layer.freqHi) {
         maskedRe[fy*SZ+fx] = F.re[fy*SZ+fx];
         maskedIm[fy*SZ+fx] = F.im[fy*SZ+fx];
@@ -239,26 +330,87 @@ for (let l = 0; l < N_LAYERS; l++) {
       }
     }
   }
-
-  const proj = fft2Inverse(maskedRe, maskedIm);
-  layerProjections.push(proj);
+  layerProjections.push(fft2Inverse(maskedRe, maskedIm));
   layerFFTMagnitudes.push(magnitude);
 }
 
-// Precompute cumulative projections with spatial attention weighting
+// ============================================================
+// JACOBI FIELD COMPUTATION
+// The embedding point determines geodesic distances to each layer's
+// native point. The Jacobi field magnitude at each layer is:
+// J(t) = sin(√K · t) / √K  (for positive curvature)
+// This modulates how much each layer contributes.
+// ============================================================
+let embeddingPoint = null; // { x, y } in [0,1]
+let curvatureK = 0.3;
+let fieldStrength = 0.7;
+
+function geodesicDistance(p1, p2) {
+  // Simple Euclidean distance on the 2D embedding manifold
+  return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+}
+
+function jacobiMagnitude(distance, K) {
+  // Jacobi field magnitude for constant positive curvature
+  // J(t) = sin(√K · t) / √K — describes how geodesics spread
+  const sqrtK = Math.sqrt(Math.max(0.01, K));
+  const t = distance * Math.PI; // scale distance to meaningful range
+  // Before conjugate point: positive, after: can be negative (focusing)
+  return Math.sin(sqrtK * t) / sqrtK;
+}
+
+function getLayerWeights() {
+  // Returns weight for each layer based on Jacobi field from embedding point
+  const weights = new Float64Array(N_LAYERS);
+  if (!embeddingPoint) {
+    // Default: equal weights
+    for (let l = 0; l < N_LAYERS; l++) weights[l] = 1.0;
+    return weights;
+  }
+  for (let l = 0; l < N_LAYERS; l++) {
+    const d = geodesicDistance(embeddingPoint, layers[l].embedPoint);
+    const J = jacobiMagnitude(d, curvatureK);
+    // Weight is based on Jacobi field magnitude — closer = stronger
+    // But also: the field can refocus at conjugate points
+    weights[l] = Math.max(0.05, Math.abs(J) * fieldStrength + (1 - fieldStrength) * 0.5);
+  }
+  // Normalize so max = 1
+  let maxW = 0;
+  for (let l = 0; l < N_LAYERS; l++) if (weights[l] > maxW) maxW = weights[l];
+  if (maxW > 0) for (let l = 0; l < N_LAYERS; l++) weights[l] /= maxW;
+  return weights;
+}
+
+function getSpatialAttention(layerIdx) {
+  // The spatial attention is modulated by the embedding point
+  // Closer embedding point to a layer's native point = tighter focus
+  // Farther = more diffuse
+  if (!embeddingPoint) return { cx: layers[layerIdx].spatialFocus.x, cy: layers[layerIdx].spatialFocus.y, radius: 0.28 };
+
+  const d = geodesicDistance(embeddingPoint, layers[layerIdx].embedPoint);
+  // Interpolate focus center between layer's native focus and a position influenced by embedding point
+  const influence = Math.exp(-d * d / 0.1);
+  const cx = layers[layerIdx].spatialFocus.x * (1 - influence * 0.5) + embeddingPoint.x * influence * 0.5;
+  const cy = layers[layerIdx].spatialFocus.y * (1 - influence * 0.5) + embeddingPoint.y * influence * 0.5;
+  // Radius: closer = tighter focus
+  const radius = 0.15 + (1 - influence) * 0.25;
+  return { cx, cy, radius };
+}
+
 function getCumulativeImage(upToLayer) {
   const img = new Float64Array(SZ*SZ);
+  const weights = getLayerWeights();
   for (let l = 0; l <= upToLayer && l < N_LAYERS; l++) {
-    const layer = layers[l];
     const proj = layerProjections[l];
+    const attn = getSpatialAttention(l);
+    const w = weights[l];
     for (let y = 0; y < SZ; y++) {
       for (let x = 0; x < SZ; x++) {
         const nx = x / SZ, ny = y / SZ;
-        const dx = nx - layer.focus.x, dy = ny - layer.focus.y;
+        const dx = nx - attn.cx, dy = ny - attn.cy;
         const d = Math.sqrt(dx*dx + dy*dy);
-        // Spatial attention: Gaussian centered on focus, but never zero
-        const attn = 0.3 + 0.7 * Math.exp(-d*d / (2 * layer.focusRadius * layer.focusRadius));
-        img[y*SZ+x] += proj[y*SZ+x] * attn;
+        const spatial = 0.2 + 0.8 * Math.exp(-d*d / (2 * attn.radius * attn.radius));
+        img[y*SZ+x] += proj[y*SZ+x] * spatial * w;
       }
     }
   }
@@ -266,495 +418,884 @@ function getCumulativeImage(upToLayer) {
 }
 
 // ============================================================
-// 3D PROJECTION HELPERS
+// STATE
 // ============================================================
-let rotY = 25 * Math.PI / 180;
-let rotX = -15 * Math.PI / 180;
-let viewMode = 'kelp';
-let animating = false;
-let animTimer = null;
-let time = 0;
 let visibleLayers = 5;
-let swayAmount = 0.4;
-
-function project3D(x, y, z) {
-  // Rotate around Y
-  let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
-  let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
-  // Rotate around X
-  let y1 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
-  let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
-  // Perspective
-  const fov = 600;
-  const dist = fov + z2;
-  const scale = fov / Math.max(dist, 100);
-  return {
-    sx: W/2 + x1 * scale,
-    sy: H/2 + y1 * scale,
-    z: z2,
-    scale
-  };
-}
+let swayAmount = 0.25;
+let time = 0;
+let animating = true;
+let highlightLayer = -1;
+let inspectRegion = null; // { x, y } in [0,1] on the resolved image
 
 // ============================================================
-// STALK POSITIONS (token index space — the "kelp forest" base)
+// STALK POSITIONS
 // ============================================================
-const N_STALKS = 7; // 7 positions in index space
-const stalkBasePositions = [];
+const N_STALKS = 7;
+const stalkPositions = [];
 for (let i = 0; i < N_STALKS; i++) {
-  const angle = (i / N_STALKS) * Math.PI * 2;
-  const radius = 120 + (i % 3) * 40;
-  stalkBasePositions.push({
-    x: Math.cos(angle) * radius,
-    z: Math.sin(angle) * radius,
-    phase: i * 1.3
-  });
+  stalkPositions.push({ phase: i * 1.3 + 0.5 });
 }
 
 // ============================================================
-// RENDER
+// BUILD UI
 // ============================================================
-function drawFFTPattern(cx, cy, size, layerIdx, alpha, scale3d) {
-  // Draw the FFT magnitude pattern as the "holographic encoding" on the stalk
-  const mag = layerFFTMagnitudes[layerIdx];
-  let maxMag = 0;
-  for (let i = 0; i < SZ*SZ; i++) if (mag[i] > maxMag) maxMag = mag[i];
-  if (maxMag < 1e-10) maxMag = 1;
+function buildLayerStrip() {
+  const el = document.getElementById('layerStrip');
+  let html = '<div class="layer-chip active" onclick="setHighlightLayer(-1)" id="lchipAll" style="background:#333;color:#fff;width:30px">All</div>';
+  for (let l = 0; l < N_LAYERS; l++) {
+    const c = LAYER_COLORS[l];
+    html += `<div class="layer-chip" onclick="setHighlightLayer(${l})" id="lchip${l}" style="background:rgba(${c[0]},${c[1]},${c[2]},0.3);color:rgb(${c[0]},${c[1]},${c[2]})">${l}</div>`;
+  }
+  el.innerHTML = html;
+}
+buildLayerStrip();
 
-  const ps = size / SZ;
-  const col = layers[layerIdx].color;
+// ============================================================
+// RENDER: EMBEDDING SPACE
+// ============================================================
+function renderEmbedding() {
+  const w = 280, h = 280;
+  ctxEmbed.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctxEmbed.clearRect(0, 0, w, h);
+
+  // Background manifold with curvature visualization
+  const imgData = ctxEmbed.createImageData(w, h);
+  const weights = getLayerWeights();
+
+  for (let py = 0; py < h; py++) {
+    for (let px = 0; px < w; px++) {
+      const nx = px / w, ny = py / h;
+      let r = 8, g = 12, b = 28;
+
+      // Show Jacobi field magnitude across the manifold
+      if (embeddingPoint) {
+        const d = Math.hypot(nx - embeddingPoint.x, ny - embeddingPoint.y);
+        const J = Math.abs(jacobiMagnitude(d, curvatureK));
+        r += J * 20;
+        g += J * 15;
+        b += J * 40;
+      }
+
+      // Show influence zones of each layer's embed point
+      for (let l = 0; l < N_LAYERS; l++) {
+        const lp = layers[l].embedPoint;
+        const d = Math.hypot(nx - lp.x, ny - lp.y);
+        if (d < 0.08) {
+          const c = LAYER_COLORS[l];
+          const intensity = (1 - d / 0.08) * 0.3 * (highlightLayer === -1 || highlightLayer === l ? 1 : 0.2);
+          r += c[0] * intensity;
+          g += c[1] * intensity;
+          b += c[2] * intensity;
+        }
+      }
+
+      const idx = (py * w + px) * 4;
+      imgData.data[idx] = Math.min(255, Math.floor(r));
+      imgData.data[idx+1] = Math.min(255, Math.floor(g));
+      imgData.data[idx+2] = Math.min(255, Math.floor(b));
+      imgData.data[idx+3] = 255;
+    }
+  }
+  ctxEmbed.putImageData(imgData, 0, 0);
+
+  // Grid lines (manifold structure)
+  ctxEmbed.strokeStyle = 'rgba(162,155,254,0.08)';
+  ctxEmbed.lineWidth = 0.5;
+  for (let i = 0; i <= 10; i++) {
+    const t = i / 10;
+    ctxEmbed.beginPath(); ctxEmbed.moveTo(t*w, 0); ctxEmbed.lineTo(t*w, h); ctxEmbed.stroke();
+    ctxEmbed.beginPath(); ctxEmbed.moveTo(0, t*h); ctxEmbed.lineTo(w, t*h); ctxEmbed.stroke();
+  }
+
+  // Draw geodesics from embedding point to each layer point
+  if (embeddingPoint) {
+    for (let l = 0; l < N_LAYERS; l++) {
+      const lp = layers[l].embedPoint;
+      const c = LAYER_COLORS[l];
+      const isHL = highlightLayer === -1 || highlightLayer === l;
+      const alpha = isHL ? 0.6 : 0.1;
+
+      // Geodesic line (curved slightly to suggest manifold geometry)
+      ctxEmbed.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`;
+      ctxEmbed.lineWidth = isHL ? 2 : 0.8;
+      ctxEmbed.setLineDash([4, 3]);
+      ctxEmbed.beginPath();
+      ctxEmbed.moveTo(embeddingPoint.x * w, embeddingPoint.y * h);
+      // Slight curve
+      const midX = (embeddingPoint.x + lp.x) / 2;
+      const midY = (embeddingPoint.y + lp.y) / 2;
+      const perpX = -(lp.y - embeddingPoint.y) * 0.15;
+      const perpY = (lp.x - embeddingPoint.x) * 0.15;
+      ctxEmbed.quadraticCurveTo((midX + perpX) * w, (midY + perpY) * w, lp.x * w, lp.y * h);
+      ctxEmbed.stroke();
+      ctxEmbed.setLineDash([]);
+
+      // Distance label at midpoint
+      const d = geodesicDistance(embeddingPoint, lp);
+      const labelX = (midX + perpX * 0.5) * w;
+      const labelY = (midY + perpY * 0.5) * h;
+      ctxEmbed.font = '8px monospace';
+      ctxEmbed.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${isHL ? 0.7 : 0.2})`;
+      ctxEmbed.textAlign = 'center';
+      ctxEmbed.fillText(`d=${d.toFixed(2)}`, labelX, labelY);
+    }
+
+    // Jacobi field wavefronts (concentric rings from embedding point)
+    const sqrtK = Math.sqrt(Math.max(0.01, curvatureK));
+    const conjugateDist = Math.PI / sqrtK / Math.PI; // normalized
+    for (let ring = 1; ring <= 5; ring++) {
+      const ringR = ring * 0.12;
+      const J = Math.abs(jacobiMagnitude(ringR, curvatureK));
+      ctxEmbed.strokeStyle = `rgba(162,155,254,${J * 0.3})`;
+      ctxEmbed.lineWidth = J * 2 + 0.3;
+      ctxEmbed.beginPath();
+      ctxEmbed.arc(embeddingPoint.x * w, embeddingPoint.y * h, ringR * w, 0, Math.PI * 2);
+      ctxEmbed.stroke();
+    }
+
+    // Embedding point itself
+    ctxEmbed.beginPath();
+    ctxEmbed.arc(embeddingPoint.x * w, embeddingPoint.y * h, 7, 0, Math.PI * 2);
+    const epGrad = ctxEmbed.createRadialGradient(
+      embeddingPoint.x * w, embeddingPoint.y * h, 0,
+      embeddingPoint.x * w, embeddingPoint.y * h, 7
+    );
+    epGrad.addColorStop(0, 'rgba(255,255,255,0.9)');
+    epGrad.addColorStop(1, 'rgba(162,155,254,0.6)');
+    ctxEmbed.fillStyle = epGrad;
+    ctxEmbed.fill();
+
+    // Glow
+    ctxEmbed.beginPath();
+    ctxEmbed.arc(embeddingPoint.x * w, embeddingPoint.y * h, 15, 0, Math.PI * 2);
+    ctxEmbed.fillStyle = 'rgba(162,155,254,0.15)';
+    ctxEmbed.fill();
+
+    ctxEmbed.font = '9px monospace';
+    ctxEmbed.fillStyle = 'rgba(255,255,255,0.8)';
+    ctxEmbed.textAlign = 'center';
+    ctxEmbed.fillText('embed pt', embeddingPoint.x * w, embeddingPoint.y * h - 12);
+  }
+
+  // Layer embed points
+  for (let l = 0; l < N_LAYERS; l++) {
+    const lp = layers[l].embedPoint;
+    const c = LAYER_COLORS[l];
+    const isHL = highlightLayer === -1 || highlightLayer === l;
+    const alpha = isHL ? 0.9 : 0.25;
+    const sz = isHL ? 6 : 4;
+
+    ctxEmbed.beginPath();
+    ctxEmbed.arc(lp.x * w, lp.y * h, sz, 0, Math.PI * 2);
+    ctxEmbed.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`;
+    ctxEmbed.fill();
+
+    if (isHL) {
+      ctxEmbed.font = '8px monospace';
+      ctxEmbed.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},0.9)`;
+      ctxEmbed.textAlign = 'center';
+      ctxEmbed.fillText(`L${l}`, lp.x * w, lp.y * h - 9);
+    }
+
+    // Show weight as ring size
+    if (embeddingPoint) {
+      const weights = getLayerWeights();
+      ctxEmbed.beginPath();
+      ctxEmbed.arc(lp.x * w, lp.y * h, sz + weights[l] * 8, 0, Math.PI * 2);
+      ctxEmbed.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha * 0.4})`;
+      ctxEmbed.lineWidth = 1.5;
+      ctxEmbed.stroke();
+    }
+  }
+
+  // Title
+  ctxEmbed.font = 'bold 10px monospace';
+  ctxEmbed.fillStyle = 'rgba(162,155,254,0.6)';
+  ctxEmbed.textAlign = 'center';
+  ctxEmbed.fillText('Layer -1: Embedding Manifold', w / 2, 14);
+
+  // Curvature indicator
+  ctxEmbed.font = '8px monospace';
+  ctxEmbed.fillStyle = 'rgba(0,206,201,0.6)';
+  ctxEmbed.textAlign = 'left';
+  ctxEmbed.fillText(`K = ${curvatureK.toFixed(2)}`, 6, h - 6);
+}
+
+// ============================================================
+// RENDER: MAIN KELP FOREST
+// ============================================================
+function renderMain() {
+  const W = mainDim.w, H = mainDim.h;
+  ctxMain.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctxMain.clearRect(0, 0, W, H);
+
+  // Background
+  const bgGrad = ctxMain.createRadialGradient(W/2, H*0.6, 0, W/2, H*0.6, Math.max(W,H)*0.7);
+  bgGrad.addColorStop(0, '#0a1628');
+  bgGrad.addColorStop(1, '#050810');
+  ctxMain.fillStyle = bgGrad;
+  ctxMain.fillRect(0, 0, W, H);
+
+  const margin = 35;
+  const baseY = H - 45;
+  const topY = 80;
+  const layerSpacing = (baseY - topY) / (N_LAYERS + 1);
+  const stalkSpacing = (W - 2 * margin) / (N_STALKS + 1);
+  const plateSize = Math.min(50, stalkSpacing * 0.65);
+
+  const weights = getLayerWeights();
+
+  // Base manifold line
+  ctxMain.strokeStyle = 'rgba(162,155,254,0.2)';
+  ctxMain.lineWidth = 1;
+  ctxMain.beginPath();
+  ctxMain.moveTo(margin, baseY);
+  ctxMain.lineTo(W - margin, baseY);
+  ctxMain.stroke();
+
+  // Tick marks
+  for (let i = 0; i <= N_STALKS + 1; i++) {
+    const x = margin + i * stalkSpacing;
+    ctxMain.beginPath(); ctxMain.moveTo(x, baseY - 4); ctxMain.lineTo(x, baseY + 4); ctxMain.stroke();
+  }
+
+  ctxMain.font = '9px monospace';
+  ctxMain.fillStyle = 'rgba(162,155,254,0.35)';
+  ctxMain.textAlign = 'center';
+  ctxMain.fillText('Token Index Space (Base Manifold)', W / 2, baseY + 18);
+
+  // Layer depth lines and labels
+  for (let l = 0; l < visibleLayers; l++) {
+    const ly = baseY - (l + 1) * layerSpacing;
+    const c = LAYER_COLORS[l];
+    const isHL = highlightLayer === -1 || highlightLayer === l;
+    const w_l = weights[l];
+
+    ctxMain.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${isHL ? 0.12 * w_l + 0.03 : 0.02})`;
+    ctxMain.lineWidth = isHL ? 1 : 0.5;
+    ctxMain.setLineDash([3, 6]);
+    ctxMain.beginPath(); ctxMain.moveTo(margin, ly); ctxMain.lineTo(W - margin, ly); ctxMain.stroke();
+    ctxMain.setLineDash([]);
+
+    // Layer label
+    ctxMain.font = '9px monospace';
+    ctxMain.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${isHL ? 0.8 : 0.2})`;
+    ctxMain.textAlign = 'right';
+    ctxMain.fillText(`L${l}`, margin - 5, ly + 3);
+
+    // Weight bar
+    const barW = 20 * w_l;
+    ctxMain.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${isHL ? 0.4 : 0.1})`;
+    ctxMain.fillRect(margin - 4 - barW, ly - 3, barW, 6);
+
+    // Freq info
+    ctxMain.font = '7px monospace';
+    ctxMain.fillStyle = 'rgba(148,163,184,0.3)';
+    ctxMain.textAlign = 'right';
+    ctxMain.fillText(`w=${w_l.toFixed(2)}`, margin - 5, ly + 12);
+  }
+
+  // Draw stalks
+  for (let si = 0; si < N_STALKS; si++) {
+    const stalk = stalkPositions[si];
+    const baseX = margin + (si + 1) * stalkSpacing;
+
+    const points = [];
+    for (let l = 0; l < visibleLayers; l++) {
+      const swayX = Math.sin(time * 0.5 + stalk.phase + l * 0.4) * swayAmount * 18 * (l + 1) / N_LAYERS;
+      const ly = baseY - (l + 1) * layerSpacing;
+      points.push({ x: baseX + swayX, y: ly, layer: l });
+    }
+
+    // Draw stem
+    ctxMain.lineWidth = 2;
+    for (let p = 0; p < points.length; p++) {
+      const pt = points[p];
+      const lc = LAYER_COLORS[pt.layer];
+      const isHL = highlightLayer === -1 || highlightLayer === pt.layer;
+      const w_l = weights[pt.layer];
+      const alpha = isHL ? 0.3 + w_l * 0.5 : 0.08;
+
+      ctxMain.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${alpha})`;
+      ctxMain.beginPath();
+      if (p === 0) {
+        ctxMain.moveTo(baseX, baseY);
+        ctxMain.quadraticCurveTo(baseX, (baseY + pt.y) / 2, pt.x, pt.y);
+      } else {
+        const prev = points[p - 1];
+        ctxMain.moveTo(prev.x, prev.y);
+        ctxMain.quadraticCurveTo(prev.x, (prev.y + pt.y) / 2, pt.x, pt.y);
+      }
+      ctxMain.stroke();
+    }
+
+    // Draw FFT plates
+    for (let p = 0; p < points.length; p++) {
+      const pt = points[p];
+      const l = pt.layer;
+      const lc = LAYER_COLORS[l];
+      const isHL = highlightLayer === -1 || highlightLayer === l;
+      const w_l = weights[l];
+      const alpha = isHL ? (0.2 + w_l * 0.6) : 0.06;
+
+      // Plate size modulated by weight
+      const thisPlateSize = plateSize * (0.5 + w_l * 0.5);
+
+      // Background
+      ctxMain.fillStyle = `rgba(10,14,26,${alpha * 0.8})`;
+      ctxMain.fillRect(pt.x - thisPlateSize/2 - 1, pt.y - thisPlateSize/2 - 1, thisPlateSize + 2, thisPlateSize + 2);
+
+      // FFT magnitude pattern
+      const mag = layerFFTMagnitudes[l];
+      let maxMag = 0;
+      for (let i = 0; i < SZ*SZ; i++) if (mag[i] > maxMag) maxMag = mag[i];
+      if (maxMag < 1e-10) maxMag = 1;
+      const ps = thisPlateSize / SZ;
+
+      for (let y = 0; y < SZ; y += (thisPlateSize < 30 ? 2 : 1)) {
+        for (let x = 0; x < SZ; x += (thisPlateSize < 30 ? 2 : 1)) {
+          const v = mag[y*SZ+x] / maxMag;
+          if (v < 0.05) continue;
+          const a = v * alpha * 0.9;
+          ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${a.toFixed(3)})`;
+          const step = thisPlateSize < 30 ? 2 : 1;
+          ctxMain.fillRect(
+            pt.x - thisPlateSize/2 + x * ps,
+            pt.y - thisPlateSize/2 + y * ps,
+            ps * step + 0.5, ps * step + 0.5
+          );
+        }
+      }
+
+      // Spatial attention glow (shifted by embedding influence)
+      const attn = getSpatialAttention(l);
+      const focusSX = pt.x - thisPlateSize/2 + attn.cx * thisPlateSize;
+      const focusSY = pt.y - thisPlateSize/2 + attn.cy * thisPlateSize;
+      const focusR = attn.radius * thisPlateSize;
+      const grad = ctxMain.createRadialGradient(focusSX, focusSY, 0, focusSX, focusSY, focusR);
+      grad.addColorStop(0, `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.4).toFixed(3)})`);
+      grad.addColorStop(1, `rgba(${lc[0]},${lc[1]},${lc[2]},0)`);
+      ctxMain.fillStyle = grad;
+      ctxMain.beginPath();
+      ctxMain.arc(focusSX, focusSY, focusR, 0, Math.PI * 2);
+      ctxMain.fill();
+
+      // Border
+      ctxMain.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.5).toFixed(3)})`;
+      ctxMain.lineWidth = w_l > 0.5 ? 1.5 : 0.7;
+      ctxMain.strokeRect(pt.x - thisPlateSize/2, pt.y - thisPlateSize/2, thisPlateSize, thisPlateSize);
+
+      // Node dot
+      ctxMain.beginPath();
+      ctxMain.arc(pt.x, pt.y, 2 + w_l * 2, 0, Math.PI * 2);
+      ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isHL ? 0.9 : 0.2})`;
+      ctxMain.fill();
+    }
+
+    // Base node
+    ctxMain.beginPath();
+    ctxMain.arc(baseX, baseY, 3.5, 0, Math.PI * 2);
+    ctxMain.fillStyle = 'rgba(162,155,254,0.7)';
+    ctxMain.fill();
+
+    ctxMain.font = '8px monospace';
+    ctxMain.fillStyle = 'rgba(162,155,254,0.4)';
+    ctxMain.textAlign = 'center';
+    ctxMain.fillText(`${si}`, baseX, baseY + 12);
+  }
+
+  // Resolved image at top
+  const resolvedSize = Math.min(80, W * 0.1);
+  const resolvedX = W / 2;
+  const resolvedY = topY / 2 + 10;
+
+  const resolvedImg = getCumulativeImage(visibleLayers - 1);
+  let minV = Infinity, maxV = -Infinity;
+  for (let i = 0; i < SZ*SZ; i++) {
+    if (resolvedImg[i] < minV) minV = resolvedImg[i];
+    if (resolvedImg[i] > maxV) maxV = resolvedImg[i];
+  }
+  const range = maxV - minV || 1;
+  const rps = resolvedSize / SZ;
+
+  ctxMain.fillStyle = 'rgba(10,14,26,0.85)';
+  ctxMain.fillRect(resolvedX - resolvedSize/2 - 3, resolvedY - resolvedSize/2 - 3, resolvedSize + 6, resolvedSize + 6);
 
   for (let y = 0; y < SZ; y++) {
     for (let x = 0; x < SZ; x++) {
-      const v = mag[y*SZ+x] / maxMag;
-      if (v < 0.05) continue;
-      const a = v * alpha * 0.8;
-      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${a.toFixed(3)})`;
-      ctx.fillRect(
-        cx - size/2 + x * ps,
-        cy - size/2 + y * ps,
-        ps + 0.5, ps + 0.5
-      );
+      const v = (resolvedImg[y*SZ+x] - minV) / range;
+      const b = Math.max(0, Math.min(1, v));
+      ctxMain.fillStyle = `rgb(${Math.floor(30+b*220)},${Math.floor(25+b*190)},${Math.floor(15+b*100)})`;
+      ctxMain.fillRect(resolvedX - resolvedSize/2 + x*rps, resolvedY - resolvedSize/2 + y*rps, rps+0.5, rps+0.5);
     }
+  }
+
+  // Inspect region marker
+  if (inspectRegion) {
+    const irX = resolvedX - resolvedSize/2 + inspectRegion.x * resolvedSize;
+    const irY = resolvedY - resolvedSize/2 + inspectRegion.y * resolvedSize;
+    ctxMain.strokeStyle = 'rgba(255,220,100,0.9)';
+    ctxMain.lineWidth = 1.5;
+    ctxMain.beginPath();
+    ctxMain.arc(irX, irY, 6, 0, Math.PI * 2);
+    ctxMain.stroke();
+  }
+
+  ctxMain.strokeStyle = 'rgba(255,220,100,0.35)';
+  ctxMain.lineWidth = 1.5;
+  ctxMain.strokeRect(resolvedX - resolvedSize/2 - 3, resolvedY - resolvedSize/2 - 3, resolvedSize + 6, resolvedSize + 6);
+
+  ctxMain.font = '9px monospace';
+  ctxMain.fillStyle = 'rgba(255,220,100,0.6)';
+  ctxMain.textAlign = 'center';
+  ctxMain.fillText('Resolved', resolvedX, resolvedY - resolvedSize/2 - 7);
+
+  // Store bounds
+  cvMain._resolvedBounds = {
+    x: resolvedX - resolvedSize/2,
+    y: resolvedY - resolvedSize/2,
+    w: resolvedSize,
+    h: resolvedSize
+  };
+
+  // Ambient particles
+  for (let i = 0; i < 20; i++) {
+    const px = (Math.sin(time * 0.25 + i * 2.3) * 0.5 + 0.5) * W;
+    const py = (Math.cos(time * 0.18 + i * 1.9) * 0.5 + 0.5) * H;
+    ctxMain.beginPath();
+    ctxMain.arc(px, py, 1, 0, Math.PI * 2);
+    ctxMain.fillStyle = `rgba(162,155,254,${(0.06 + Math.sin(time + i) * 0.03).toFixed(3)})`;
+    ctxMain.fill();
   }
 }
 
-function drawProjectionImage(cx, cy, size, upToLayer, alpha) {
-  const img = getCumulativeImage(upToLayer);
-  let maxV = 0, minV = Infinity;
+// ============================================================
+// RENDER: RESOLVED IMAGE (right panel)
+// ============================================================
+function renderResolved() {
+  const w = 250, h = 250;
+  ctxResolved.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctxResolved.clearRect(0, 0, w, h);
+  ctxResolved.fillStyle = '#0d1220';
+  ctxResolved.fillRect(0, 0, w, h);
+
+  const img = getCumulativeImage(visibleLayers - 1);
+  let minV = Infinity, maxV = -Infinity;
   for (let i = 0; i < SZ*SZ; i++) {
-    if (img[i] > maxV) maxV = img[i];
     if (img[i] < minV) minV = img[i];
+    if (img[i] > maxV) maxV = img[i];
   }
   const range = maxV - minV || 1;
-  const ps = size / SZ;
+  const margin = 15;
+  const imgSize = Math.min(w, h) - margin * 2;
+  const ps = imgSize / SZ;
+  const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
 
   for (let y = 0; y < SZ; y++) {
     for (let x = 0; x < SZ; x++) {
       const v = (img[y*SZ+x] - minV) / range;
-      const bright = Math.max(0, Math.min(1, v));
-      const a = alpha * (0.3 + bright * 0.7);
-      ctx.fillStyle = `rgba(${Math.floor(200+bright*55)},${Math.floor(180+bright*75)},${Math.floor(100+bright*100)},${a.toFixed(3)})`;
-      ctx.fillRect(
-        cx - size/2 + x * ps,
-        cy - size/2 + y * ps,
-        ps + 0.5, ps + 0.5
-      );
-    }
-  }
-}
-
-function drawSpatialFocus(cx, cy, size, layerIdx, alpha) {
-  const layer = layers[layerIdx];
-  const col = layer.color;
-  const focusSX = cx - size/2 + layer.focus.x * size;
-  const focusSY = cy - size/2 + layer.focus.y * size;
-  const focusR = layer.focusRadius * size;
-
-  const grad = ctx.createRadialGradient(focusSX, focusSY, 0, focusSX, focusSY, focusR);
-  grad.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},${(alpha*0.3).toFixed(3)})`);
-  grad.addColorStop(1, `rgba(${col[0]},${col[1]},${col[2]},0)`);
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(focusSX, focusSY, focusR, 0, Math.PI*2);
-  ctx.fill();
-}
-
-function render() {
-  ctx.clearRect(0, 0, W, H);
-
-  // Background gradient
-  const bgGrad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.7);
-  bgGrad.addColorStop(0, '#0a1628');
-  bgGrad.addColorStop(1, '#050810');
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, W, H);
-
-  // Collect all drawable elements for depth sorting
-  const drawables = [];
-
-  const layerSpacing = 80;
-  const baseYOffset = (N_LAYERS - 1) * layerSpacing / 2;
-
-  for (let si = 0; si < N_STALKS; si++) {
-    const stalk = stalkBasePositions[si];
-    const sway = swayAmount;
-
-    // Draw stalk segments (the "kelp" strands)
-    const stalkPoints = [];
-    for (let l = 0; l < visibleLayers; l++) {
-      const swayX = Math.sin(time * 0.7 + stalk.phase + l * 0.5) * sway * 20 * (l + 1) / N_LAYERS;
-      const swayZ = Math.cos(time * 0.5 + stalk.phase + l * 0.7) * sway * 15 * (l + 1) / N_LAYERS;
-
-      const x3d = stalk.x + swayX;
-      const y3d = baseYOffset - l * layerSpacing;
-      const z3d = stalk.z + swayZ;
-
-      const p = project3D(x3d, y3d, z3d);
-      stalkPoints.push({ ...p, layer: l, x3d, y3d, z3d });
-    }
-
-    // Stalk line
-    drawables.push({
-      z: stalkPoints.reduce((s, p) => s + p.z, 0) / stalkPoints.length,
-      type: 'stalk',
-      points: stalkPoints,
-      stalkIdx: si
-    });
-
-    // Layer plates (the FFT-encoded Jacobian field projections)
-    for (let l = 0; l < visibleLayers; l++) {
-      const pt = stalkPoints[l];
-      drawables.push({
-        z: pt.z,
-        type: 'plate',
-        pt,
-        layer: l,
-        stalkIdx: si
-      });
-    }
-  }
-
-  // Draw the "ground plane" — base manifold
-  drawables.push({
-    z: 1000, // far back
-    type: 'ground'
-  });
-
-  // Sort by depth (far first)
-  drawables.sort((a, b) => b.z - a.z);
-
-  for (const d of drawables) {
-    if (d.type === 'ground') {
-      // Draw base manifold grid
-      ctx.save();
-      ctx.globalAlpha = 0.15;
-      const gridN = 10;
-      const gridSize = 350;
-      for (let i = -gridN; i <= gridN; i++) {
-        // X lines
-        const p1 = project3D(i * gridSize / gridN, baseYOffset + 30, -gridSize);
-        const p2 = project3D(i * gridSize / gridN, baseYOffset + 30, gridSize);
-        ctx.strokeStyle = '#a29bfe';
-        ctx.lineWidth = 0.5;
-        ctx.beginPath();
-        ctx.moveTo(p1.sx, p1.sy);
-        ctx.lineTo(p2.sx, p2.sy);
-        ctx.stroke();
-        // Z lines
-        const p3 = project3D(-gridSize, baseYOffset + 30, i * gridSize / gridN);
-        const p4 = project3D(gridSize, baseYOffset + 30, i * gridSize / gridN);
-        ctx.beginPath();
-        ctx.moveTo(p3.sx, p3.sy);
-        ctx.lineTo(p4.sx, p4.sy);
-        ctx.stroke();
+      const b = Math.max(0, Math.min(1, v));
+      let dimFactor = 1;
+      if (inspectRegion) {
+        const nx = x / SZ, ny = y / SZ;
+        const d = Math.hypot(nx - inspectRegion.x, ny - inspectRegion.y);
+        dimFactor = 0.3 + 0.7 * Math.exp(-d*d / (2 * 0.1 * 0.1));
       }
-      ctx.restore();
+      const bright = b * dimFactor;
+      ctxResolved.fillStyle = `rgb(${Math.floor(30+bright*220)},${Math.floor(25+bright*190)},${Math.floor(15+bright*100)})`;
+      ctxResolved.fillRect(ox + x*ps, oy + y*ps, ps+0.5, ps+0.5);
+    }
+  }
+
+  // Layer spatial attention markers
+  const weights = getLayerWeights();
+  for (let l = 0; l < visibleLayers; l++) {
+    const attn = getSpatialAttention(l);
+    const c = LAYER_COLORS[l];
+    const isHL = highlightLayer === -1 || highlightLayer === l;
+    const ax = ox + attn.cx * imgSize;
+    const ay = oy + attn.cy * imgSize;
+    const ar = attn.radius * imgSize * 0.3;
+
+    ctxResolved.beginPath();
+    ctxResolved.arc(ax, ay, ar, 0, Math.PI * 2);
+    ctxResolved.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${isHL ? 0.5 * weights[l] : 0.08})`;
+    ctxResolved.lineWidth = isHL ? 1.5 : 0.5;
+    ctxResolved.stroke();
+
+    ctxResolved.beginPath();
+    ctxResolved.arc(ax, ay, 3, 0, Math.PI * 2);
+    ctxResolved.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${isHL ? 0.8 : 0.15})`;
+    ctxResolved.fill();
+
+    if (isHL && weights[l] > 0.3) {
+      ctxResolved.font = '7px monospace';
+      ctxResolved.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},0.7)`;
+      ctxResolved.textAlign = 'center';
+      ctxResolved.fillText(`L${l}`, ax, ay - 6);
+    }
+  }
+
+  // Inspect region
+  if (inspectRegion) {
+    const irX = ox + inspectRegion.x * imgSize;
+    const irY = oy + inspectRegion.y * imgSize;
+    ctxResolved.strokeStyle = 'rgba(255,220,100,0.9)';
+    ctxResolved.lineWidth = 2;
+    ctxResolved.beginPath();
+    ctxResolved.arc(irX, irY, 10, 0, Math.PI * 2);
+    ctxResolved.stroke();
+
+    ctxResolved.strokeStyle = 'rgba(255,220,100,0.3)';
+    ctxResolved.lineWidth = 0.5;
+    ctxResolved.beginPath();
+    ctxResolved.moveTo(irX - 15, irY); ctxResolved.lineTo(irX + 15, irY);
+    ctxResolved.moveTo(irX, irY - 15); ctxResolved.lineTo(irX, irY + 15);
+    ctxResolved.stroke();
+  }
+
+  cvResolved._imgBounds = { x: ox, y: oy, w: imgSize, h: imgSize };
+}
+
+// ============================================================
+// RENDER: BREAKDOWN (right panel)
+// ============================================================
+function renderBreakdown() {
+  const w = 250, h = 320;
+  ctxBreakdown.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctxBreakdown.clearRect(0, 0, w, h);
+  ctxBreakdown.fillStyle = '#0d1220';
+  ctxBreakdown.fillRect(0, 0, w, h);
+
+  if (!inspectRegion && !embeddingPoint) {
+    ctxBreakdown.font = '10px monospace';
+    ctxBreakdown.fillStyle = 'rgba(148,163,184,0.5)';
+    ctxBreakdown.textAlign = 'center';
+    ctxBreakdown.fillText('1. Click embedding space (left)', w/2, h/2 - 20);
+    ctxBreakdown.fillText('2. Click resolved image (above)', w/2, h/2);
+    ctxBreakdown.fillText('to see layer breakdown', w/2, h/2 + 20);
+    return;
+  }
+
+  const weights = getLayerWeights();
+  const thumbSize = 36;
+  const gap = 5;
+  const rowH = thumbSize + 24;
+  const startY = 8;
+
+  for (let l = 0; l < visibleLayers; l++) {
+    const y = startY + l * rowH;
+    const lc = LAYER_COLORS[l];
+    const isHL = highlightLayer === -1 || highlightLayer === l;
+    const w_l = weights[l];
+
+    // Layer label + weight
+    ctxBreakdown.font = 'bold 8px monospace';
+    ctxBreakdown.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isHL ? 0.9 : 0.3})`;
+    ctxBreakdown.textAlign = 'left';
+    ctxBreakdown.fillText(`L${l} (w=${w_l.toFixed(2)})`, 4, y + 9);
+
+    // Cumulative image thumbnail
+    const img = getCumulativeImage(l);
+    let minV = Infinity, maxV = -Infinity;
+    for (let i = 0; i < SZ*SZ; i++) {
+      if (img[i] < minV) minV = img[i];
+      if (img[i] > maxV) maxV = img[i];
+    }
+    const rng = maxV - minV || 1;
+    const tx = 4, ty = y + 12;
+    const tps = thumbSize / SZ;
+
+    for (let py = 0; py < SZ; py++) {
+      for (let px = 0; px < SZ; px++) {
+        const v = (img[py*SZ+px] - minV) / rng;
+        const b = Math.max(0, Math.min(1, v));
+        const alpha = isHL ? 1 : 0.3;
+        ctxBreakdown.fillStyle = `rgba(${Math.floor(30+b*220)},${Math.floor(25+b*190)},${Math.floor(15+b*100)},${alpha})`;
+        ctxBreakdown.fillRect(tx + px*tps, ty + py*tps, tps+0.5, tps+0.5);
+      }
+    }
+
+    // Inspect region marker on thumbnail
+    if (inspectRegion) {
+      const irX = tx + inspectRegion.x * thumbSize;
+      const irY = ty + inspectRegion.y * thumbSize;
+      ctxBreakdown.strokeStyle = 'rgba(255,220,100,0.7)';
+      ctxBreakdown.lineWidth = 1;
+      ctxBreakdown.beginPath();
+      ctxBreakdown.arc(irX, irY, 3, 0, Math.PI * 2);
+      ctxBreakdown.stroke();
+    }
+
+    // Zoomed view
+    if (inspectRegion) {
+      const zoomSize = thumbSize;
+      const zx = tx + thumbSize + gap;
+      const zy = ty;
+      const zoomRadius = 4;
+      const centerPX = Math.floor(inspectRegion.x * SZ);
+      const centerPY = Math.floor(inspectRegion.y * SZ);
+      const zps = zoomSize / (zoomRadius * 2);
+
+      ctxBreakdown.fillStyle = 'rgba(0,0,0,0.5)';
+      ctxBreakdown.fillRect(zx - 1, zy - 1, zoomSize + 2, zoomSize + 2);
+
+      for (let dy = -zoomRadius; dy < zoomRadius; dy++) {
+        for (let dx = -zoomRadius; dx < zoomRadius; dx++) {
+          const sx = centerPX + dx, sy = centerPY + dy;
+          if (sx < 0 || sx >= SZ || sy < 0 || sy >= SZ) continue;
+          const v = (img[sy*SZ+sx] - minV) / rng;
+          const b = Math.max(0, Math.min(1, v));
+          ctxBreakdown.fillStyle = `rgba(${Math.floor(30+b*220)},${Math.floor(25+b*190)},${Math.floor(15+b*100)},${isHL ? 1 : 0.3})`;
+          ctxBreakdown.fillRect(
+            zx + (dx + zoomRadius) * zps,
+            zy + (dy + zoomRadius) * zps,
+            zps + 0.5, zps + 0.5
+          );
+        }
+      }
+
+      ctxBreakdown.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isHL ? 0.5 : 0.15})`;
+      ctxBreakdown.lineWidth = 1;
+      ctxBreakdown.strokeRect(zx, zy, zoomSize, zoomSize);
 
       // Label
-      const labelP = project3D(0, baseYOffset + 60, 0);
-      ctx.font = '11px monospace';
-      ctx.fillStyle = 'rgba(162,155,254,0.5)';
-      ctx.textAlign = 'center';
-      ctx.fillText('Base Manifold: Token Index Space', labelP.sx, labelP.sy);
+      ctxBreakdown.font = '6px monospace';
+      ctxBreakdown.fillStyle = 'rgba(148,163,184,0.5)';
+      ctxBreakdown.textAlign = 'center';
+      ctxBreakdown.fillText('zoom', zx + zoomSize/2, zy + zoomSize + 8);
     }
 
-    if (d.type === 'stalk') {
-      const pts = d.points;
-      const si = d.stalkIdx;
+    // Jacobi field contribution bar
+    const barX = tx + thumbSize * 2 + gap * 2 + 4;
+    const barW = w - barX - 8;
+    const barH = 10;
+    const barY = ty + thumbSize / 2 - barH / 2;
 
-      // Draw the stalk strand (kelp stem)
-      ctx.beginPath();
-      ctx.moveTo(pts[0].sx, pts[0].sy);
-      for (let i = 1; i < pts.length; i++) {
-        const prev = pts[i-1], curr = pts[i];
-        const cpx = (prev.sx + curr.sx) / 2;
-        const cpy = (prev.sy + curr.sy) / 2;
-        ctx.quadraticCurveTo(prev.sx, prev.sy, cpx, cpy);
-      }
-      ctx.lineTo(pts[pts.length-1].sx, pts[pts.length-1].sy);
+    // Background
+    ctxBreakdown.fillStyle = 'rgba(30,41,59,0.8)';
+    ctxBreakdown.fillRect(barX, barY, barW, barH);
 
-      // Glow
-      ctx.strokeStyle = `rgba(${layers[0].color[0]},${layers[0].color[1]},${layers[0].color[2]},0.08)`;
-      ctx.lineWidth = 12 * pts[0].scale;
-      ctx.stroke();
+    // Jacobi weight fill
+    ctxBreakdown.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isHL ? 0.7 : 0.2})`;
+    ctxBreakdown.fillRect(barX, barY, barW * w_l, barH);
 
-      // Main line
-      const grad = ctx.createLinearGradient(pts[0].sx, pts[0].sy, pts[pts.length-1].sx, pts[pts.length-1].sy);
-      for (let l = 0; l < pts.length; l++) {
-        const col = layers[Math.min(l, N_LAYERS-1)].color;
-        grad.addColorStop(l / (pts.length - 1), `rgba(${col[0]},${col[1]},${col[2]},0.6)`);
-      }
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 2.5 * pts[0].scale;
-      ctx.stroke();
-
-      // Base node
-      const base = pts[0];
-      ctx.beginPath();
-      ctx.arc(base.sx, base.sy, 4 * base.scale, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(162,155,254,0.8)`;
-      ctx.fill();
-
-      // Index label
-      ctx.font = `${Math.max(8, 10 * base.scale)}px monospace`;
-      ctx.fillStyle = 'rgba(162,155,254,0.6)';
-      ctx.textAlign = 'center';
-      ctx.fillText(`idx ${si}`, base.sx, base.sy + 16 * base.scale);
+    // If we have an inspect region, show local clarity
+    if (inspectRegion) {
+      const localClarity = getRegionClarity(l, inspectRegion.x, inspectRegion.y, 0.15);
+      ctxBreakdown.fillStyle = 'rgba(255,220,100,0.5)';
+      ctxBreakdown.fillRect(barX, barY + barH + 2, barW * localClarity, 3);
     }
 
-    if (d.type === 'plate') {
-      const pt = d.pt;
-      const l = d.layer;
-      const plateSize = Math.max(20, 55 * pt.scale);
-      const alpha = Math.max(0.15, Math.min(0.85, 0.5 * pt.scale));
+    ctxBreakdown.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctxBreakdown.lineWidth = 0.5;
+    ctxBreakdown.strokeRect(barX, barY, barW, barH);
 
-      // Draw the FFT-encoded pattern (the holographic Jacobian field data)
-      ctx.save();
-      ctx.globalAlpha = alpha * 0.7;
+    // Weight value
+    ctxBreakdown.font = '7px monospace';
+    ctxBreakdown.fillStyle = `rgba(255,255,255,${isHL ? 0.6 : 0.2})`;
+    ctxBreakdown.textAlign = 'left';
+    ctxBreakdown.fillText(`J=${w_l.toFixed(2)}`, barX + barW + 3, barY + 8);
 
-      // Background plate
-      ctx.fillStyle = `rgba(10,14,26,0.6)`;
-      ctx.fillRect(pt.sx - plateSize/2 - 2, pt.sy - plateSize/2 - 2, plateSize + 4, plateSize + 4);
-
-      // FFT pattern (the holographic encoding)
-      drawFFTPattern(pt.sx, pt.sy, plateSize, l, alpha * 0.9, pt.scale);
-
-      // Spatial focus glow
-      drawSpatialFocus(pt.sx, pt.sy, plateSize, l, alpha * 0.5);
-
-      // Border
-      const col = layers[l].color;
-      ctx.strokeStyle = `rgba(${col[0]},${col[1]},${col[2]},${(alpha*0.5).toFixed(3)})`;
-      ctx.lineWidth = 1;
-      ctx.strokeRect(pt.sx - plateSize/2, pt.sy - plateSize/2, plateSize, plateSize);
-
-      // Layer label
-      ctx.font = `${Math.max(6, 8 * pt.scale)}px monospace`;
-      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${(alpha*0.8).toFixed(3)})`;
-      ctx.textAlign = 'center';
-      ctx.fillText(`L${l}`, pt.sx, pt.sy - plateSize/2 - 3);
-
-      // "Projection beam" — show what this layer contributes to the resolved image
-      // Small resolved image thumbnail next to the plate
-      if (d.stalkIdx === 0 || d.stalkIdx === 3) { // Only show on a couple stalks to avoid clutter
-        const thumbSize = plateSize * 0.6;
-        const thumbX = pt.sx + plateSize/2 + 8;
-        const thumbY = pt.sy - thumbSize/2;
-        ctx.globalAlpha = alpha * 0.5;
-        drawProjectionImage(thumbX + thumbSize/2, thumbY + thumbSize/2, thumbSize, l, alpha * 0.6);
-        ctx.strokeStyle = `rgba(255,220,100,${(alpha*0.3).toFixed(3)})`;
-        ctx.lineWidth = 0.5;
-        ctx.setLineDash([2, 2]);
-        ctx.strokeRect(thumbX, thumbY, thumbSize, thumbSize);
-        ctx.setLineDash([]);
-
-        // Arrow from plate to thumbnail
-        ctx.strokeStyle = `rgba(255,220,100,${(alpha*0.2).toFixed(3)})`;
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(pt.sx + plateSize/2, pt.sy);
-        ctx.lineTo(thumbX, pt.sy);
-        ctx.stroke();
-      }
-
-      ctx.restore();
-
-      // Node dot on stalk
-      ctx.beginPath();
-      ctx.arc(pt.sx, pt.sy, 3 * pt.scale, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},0.9)`;
-      ctx.fill();
+    // Separator
+    if (l < visibleLayers - 1) {
+      ctxBreakdown.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctxBreakdown.lineWidth = 0.5;
+      ctxBreakdown.beginPath();
+      ctxBreakdown.moveTo(4, y + rowH - 1);
+      ctxBreakdown.lineTo(w - 4, y + rowH - 1);
+      ctxBreakdown.stroke();
     }
   }
+}
 
-  // ============================================================
-  // FINAL RESOLVED IMAGE — show at the top of the scene
-  // ============================================================
-  const finalP = project3D(0, -N_LAYERS * layerSpacing - 40, 0);
-  const finalSize = Math.max(60, 120 * finalP.scale);
+function getRegionClarity(upToLayer, regionX, regionY, regionR) {
+  const img = getCumulativeImage(upToLayer);
+  let totalDiff = 0, count = 0;
+  for (let y = 0; y < SZ; y++) {
+    for (let x = 0; x < SZ; x++) {
+      const nx = x / SZ, ny = y / SZ;
+      const d = Math.hypot(nx - regionX, ny - regionY);
+      if (d < regionR) {
+        totalDiff += Math.abs(img[y*SZ+x] - smiley[y*SZ+x]);
+        count++;
+      }
+    }
+  }
+  return count > 0 ? 1 - totalDiff / count : 0;
+}
 
-  // Background plate for final image
-  ctx.save();
-  ctx.globalAlpha = 0.85;
-  ctx.fillStyle = 'rgba(10,14,26,0.8)';
-  ctx.strokeStyle = 'rgba(255,220,100,0.4)';
-  ctx.lineWidth = 2;
-  ctx.fillRect(finalP.sx - finalSize/2 - 4, finalP.sy - finalSize/2 - 4, finalSize + 8, finalSize + 8);
-  ctx.strokeRect(finalP.sx - finalSize/2 - 4, finalP.sy - finalSize/2 - 4, finalSize + 8, finalSize + 8);
-
-  // Draw the cumulative resolved image
-  drawProjectionImage(finalP.sx, finalP.sy, finalSize, visibleLayers - 1, 0.9);
-
-  ctx.font = `${Math.max(9, 12 * finalP.scale)}px monospace`;
-  ctx.fillStyle = 'rgba(255,220,100,0.8)';
-  ctx.textAlign = 'center';
-  ctx.fillText('Resolved Image', finalP.sx, finalP.sy - finalSize/2 - 10);
-  ctx.font = `${Math.max(7, 9 * finalP.scale)}px monospace`;
-  ctx.fillStyle = 'rgba(255,220,100,0.5)';
-  ctx.fillText(`(${visibleLayers} layer${visibleLayers > 1 ? 's' : ''} accumulated)`, finalP.sx, finalP.sy + finalSize/2 + 14);
-  ctx.restore();
-
-  // ============================================================
-  // AMBIENT PARTICLES (spores / plankton in the kelp forest)
-  // ============================================================
-  for (let i = 0; i < 40; i++) {
-    const px = Math.sin(time * 0.3 + i * 2.1) * 300;
-    const py = Math.cos(time * 0.2 + i * 1.7) * 200 - 50;
-    const pz = Math.sin(time * 0.15 + i * 3.3) * 300;
-    const pp = project3D(px, py, pz);
-    if (pp.z < -500) continue;
-    const pAlpha = Math.max(0, Math.min(0.3, 0.15 * pp.scale));
-    const pSize = Math.max(0.5, 2 * pp.scale);
-    ctx.beginPath();
-    ctx.arc(pp.sx, pp.sy, pSize, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(162,155,254,${pAlpha.toFixed(3)})`;
-    ctx.fill();
+// ============================================================
+// FOCUS INFO UPDATE
+// ============================================================
+function updateFocusInfo() {
+  const el = document.getElementById('focusInfo');
+  if (!embeddingPoint && !inspectRegion) {
+    el.innerHTML = '<p>Place a point in the embedding space (left) to reshape the Jacobi field. Then click the resolved image to inspect how layers contribute to a specific region.</p>';
+    return;
   }
 
-  // ============================================================
-  // LAYER DEPTH LABELS on the side
-  // ============================================================
-  for (let l = 0; l < visibleLayers; l++) {
-    const labelP = project3D(-280, baseYOffset - l * layerSpacing, 0);
-    ctx.font = `${Math.max(8, 10 * labelP.scale)}px monospace`;
-    ctx.fillStyle = `rgba(${layers[l].color[0]},${layers[l].color[1]},${layers[l].color[2]},0.6)`;
-    ctx.textAlign = 'right';
-    ctx.fillText(`Layer ${l}`, labelP.sx, labelP.sy);
-
-    // Frequency band info
-    ctx.font = `${Math.max(6, 8 * labelP.scale)}px monospace`;
-    ctx.fillStyle = 'rgba(148,163,184,0.4)';
-    ctx.fillText(`freq: ${layers[l].freqLo.toFixed(1)}–${layers[l].freqHi.toFixed(1)}`, labelP.sx, labelP.sy + 12 * labelP.scale);
-
-    // Focus region info
-    const focusNames = ['center', 'left eye', 'right eye', 'mouth', 'top head'];
-    ctx.fillText(`focus: ${focusNames[l]}`, labelP.sx, labelP.sy + 22 * labelP.scale);
+  let html = '';
+  if (embeddingPoint) {
+    html += `<p><b>Embedding point:</b> (${embeddingPoint.x.toFixed(2)}, ${embeddingPoint.y.toFixed(2)})</p>`;
   }
+  if (inspectRegion) {
+    html += `<p><b>Inspect region:</b> (${inspectRegion.x.toFixed(2)}, ${inspectRegion.y.toFixed(2)})</p>`;
 
-  // Title
-  ctx.font = 'bold 14px monospace';
-  ctx.fillStyle = 'rgba(162,155,254,0.7)';
-  ctx.textAlign = 'center';
-  ctx.fillText('Fibre Bundle Kelp Forest — Holographic Layer Projections', W/2, 30);
-  ctx.font = '10px monospace';
-  ctx.fillStyle = 'rgba(148,163,184,0.5)';
-  ctx.fillText('Each stalk carries FFT-encoded Jacobian field data that progressively resolves the smiley', W/2, 48);
+    // Find which layer contributes most to this region
+    const weights = getLayerWeights();
+    let bestLayer = 0, bestContrib = 0;
+    for (let l = 0; l < visibleLayers; l++) {
+      const attn = getSpatialAttention(l);
+      const d = Math.hypot(inspectRegion.x - attn.cx, inspectRegion.y - attn.cy);
+      const spatial = Math.exp(-d*d / (2 * attn.radius * attn.radius));
+      const contrib = spatial * weights[l];
+      if (contrib > bestContrib) { bestContrib = contrib; bestLayer = l; }
+    }
+    html += `<p>Strongest contributor: <span class="region-name">L${bestLayer} (${LAYER_SPATIAL_FOCUS[bestLayer].name})</span></p>`;
+    html += `<p style="font-size:0.68em;color:#64748b;margin-top:3px">The Jacobi field from your embedding point modulates each layer's weight. L${bestLayer} has both high geodesic-derived weight and spatial proximity to your inspected region.</p>`;
+  }
+  el.innerHTML = html;
+}
+
+function updateGeodesicInfo() {
+  const el = document.getElementById('geodesicDistances');
+  if (!embeddingPoint) {
+    el.textContent = '— click embedding space —';
+    return;
+  }
+  const weights = getLayerWeights();
+  let html = '';
+  for (let l = 0; l < N_LAYERS; l++) {
+    const d = geodesicDistance(embeddingPoint, layers[l].embedPoint);
+    const c = LAYER_COLORS[l];
+    html += `<span style="color:rgb(${c[0]},${c[1]},${c[2]})">L${l}: d=${d.toFixed(2)}, J=${weights[l].toFixed(2)}</span><br>`;
+  }
+  el.innerHTML = html;
+}
+
+// ============================================================
+// CLICK HANDLERS
+// ============================================================
+cvEmbed.addEventListener('click', (e) => {
+  const rect = cvEmbed.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) / rect.width;
+  const my = (e.clientY - rect.top) / rect.height;
+  embeddingPoint = { x: Math.max(0.02, Math.min(0.98, mx)), y: Math.max(0.02, Math.min(0.98, my)) };
+  updateGeodesicInfo();
+  updateFocusInfo();
+});
+
+cvResolved.addEventListener('click', (e) => {
+  const rect = cvResolved.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const bounds = cvResolved._imgBounds;
+  if (!bounds) return;
+  const nx = (mx - bounds.x * (rect.width / 250)) / (bounds.w * (rect.width / 250));
+  const ny = (my - bounds.y * (rect.height / 250)) / (bounds.h * (rect.height / 250));
+  if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
+    inspectRegion = { x: nx, y: ny };
+    updateFocusInfo();
+  }
+});
+
+cvMain.addEventListener('click', (e) => {
+  const rect = cvMain.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const bounds = cvMain._resolvedBounds;
+  if (!bounds) return;
+  const scaleX = rect.width / mainDim.w;
+  const scaleY = rect.height / mainDim.h;
+  const nx = (mx / scaleX - bounds.x) / bounds.w;
+  const ny = (my / scaleY - bounds.y) / bounds.h;
+  if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
+    inspectRegion = { x: nx, y: ny };
+    updateFocusInfo();
+  }
+});
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function setHighlightLayer(l) {
+  highlightLayer = l;
+  document.querySelectorAll('.layer-chip').forEach(el => el.classList.remove('active'));
+  if (l === -1) {
+    document.getElementById('lchipAll').classList.add('active');
+    document.getElementById('activeLayerLabel').textContent = 'All';
+  } else {
+    document.getElementById('lchip' + l).classList.add('active');
+    document.getElementById('activeLayerLabel').textContent = LAYER_NAMES[l];
+  }
+}
+
+function playAnim() {
+  animating = true;
+  document.getElementById('btnPlay').textContent = '▶ Playing...';
+}
+function pauseAnim() {
+  animating = false;
+  document.getElementById('btnPlay').textContent = '▶ Animate';
+}
+
+function setLayers(v) {
+  visibleLayers = v;
+  document.getElementById('vLayers').textContent = v;
+}
+function setSway(v) {
+  swayAmount = v / 100;
+  document.getElementById('vSway').textContent = v;
+}
+function setCurvature(v) {
+  curvatureK = v / 100;
+  document.getElementById('vCurv').textContent = curvatureK.toFixed(2);
+  updateGeodesicInfo();
+}
+function setFieldStrength(v) {
+  fieldStrength = v / 100;
+  document.getElementById('vField').textContent = v;
+  updateGeodesicInfo();
+}
+
+function resetAll() {
+  pauseAnim();
+  time = 0;
+  embeddingPoint = null;
+  inspectRegion = null;
+  visibleLayers = 5;
+  swayAmount = 0.25;
+  curvatureK = 0.3;
+  fieldStrength = 0.7;
+  highlightLayer = -1;
+  document.getElementById('slLayers').value = 5; document.getElementById('vLayers').textContent = '5';
+  document.getElementById('slSway').value = 25; document.getElementById('vSway').textContent = '25';
+  document.getElementById('slCurv').value = 30; document.getElementById('vCurv').textContent = '0.30';
+  document.getElementById('slField').value = 70; document.getElementById('vField').textContent = '70';
+  setHighlightLayer(-1);
+  updateGeodesicInfo();
+  updateFocusInfo();
 }
 
 // ============================================================
 // ANIMATION LOOP
 // ============================================================
-let running = true;
-
 function animate() {
   if (animating) {
     time += 0.016;
   }
-  render();
-  if (running) requestAnimationFrame(animate);
+  renderEmbedding();
+  renderMain();
+  renderResolved();
+  renderBreakdown();
+  requestAnimationFrame(animate);
 }
 
 // ============================================================
-// CONTROLS
+// INIT
 // ============================================================
-function toggleAnim() {
-  animating = !animating;
-  document.getElementById('btnAnim').textContent = animating ? '⏸ Pause' : '▶ Animate';
-}
-
-function resetView() {
-  rotY = 25 * Math.PI / 180;
-  rotX = -15 * Math.PI / 180;
-  time = 0;
-  visibleLayers = 5;
-  swayAmount = 0.4;
-  document.getElementById('slLayers').value = 5;
-  document.getElementById('vLayers').textContent = '5';
-  document.getElementById('slRot').value = 25;
-  document.getElementById('vRot').textContent = '25°';
-  document.getElementById('slSway').value = 40;
-  document.getElementById('vSway').textContent = '40';
-}
-
-function toggleMode(mode) {
-  viewMode = mode;
-  document.getElementById('btnKelp').classList.toggle('active', mode === 'kelp');
-  document.getElementById('btnFlat').classList.toggle('active', mode === 'flat');
-  if (mode === 'flat') {
-    rotX = 0;
-    rotY = 0;
-  } else {
-    rotX = -15 * Math.PI / 180;
-    rotY = 25 * Math.PI / 180;
-  }
-}
-
-document.getElementById('slLayers').addEventListener('input', function() {
-  visibleLayers = +this.value;
-  document.getElementById('vLayers').textContent = this.value;
-});
-
-document.getElementById('slRot').addEventListener('input', function() {
-  rotY = +this.value * Math.PI / 180;
-  document.getElementById('vRot').textContent = this.value + '°';
-});
-
-document.getElementById('slSway').addEventListener('input', function() {
-  swayAmount = +this.value / 100;
-  document.getElementById('vSway').textContent = this.value;
-});
-
-// ============================================================
-// MOUSE DRAG FOR ROTATION
-// ============================================================
-let dragging = false;
-let lastMX = 0, lastMY = 0;
-
-canvas.addEventListener('mousedown', (e) => {
-  dragging = true;
-  lastMX = e.clientX;
-  lastMY = e.clientY;
-});
-
-window.addEventListener('mousemove', (e) => {
-  if (!dragging) return;
-  const dx = e.clientX - lastMX;
-  const dy = e.clientY - lastMY;
-  rotY += dx * 0.005;
-  rotX += dy * 0.005;
-  rotX = Math.max(-Math.PI/2, Math.min(Math.PI/4, rotX));
-  lastMX = e.clientX;
-  lastMY = e.clientY;
-  document.getElementById('slRot').value = Math.round(rotY * 180 / Math.PI) % 360;
-  document.getElementById('vRot').textContent = Math.round(rotY * 180 / Math.PI) % 360 + '°';
-});
-
-window.addEventListener('mouseup', () => { dragging = false; });
-
-// Start
-animating = true;
-document.getElementById('btnAnim').textContent = '⏸ Pause';
+window.addEventListener('resize', () => { mainDim = resizeMain(); });
+updateGeodesicInfo();
+updateFocusInfo();
 animate();
 
 </script>
