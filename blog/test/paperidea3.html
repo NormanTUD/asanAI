@@ -353,28 +353,141 @@ const State = (() => {
 const FocusMap = (() => {
   const SZ = ImageModule.SZ;
 
-  // Returns a SZ×SZ array of focus values [0..1] where 1 = sharp, 0 = maximally pixelated
-  function computeFocusMap() {
-    const focus = new Float64Array(SZ * SZ);
-    const nLayers = State.visibleLayers;
+  // Per-stalk, per-layer focus maps (before and after transport)
+  // transportedMaps[layer][stalk] = Float64Array(SZ*SZ)
+  let transportedMaps = [];
+  let rawMaps = [];
+  let transportCacheKey = '';
+
+  // Parallel transport: after each layer, stalks exchange focus info
+  // over the residual stream. Each stalk's map is blended with its
+  // neighbors' maps, weighted by a transport kernel that depends on
+  // the geometric relationship (embedding distance) between stalks.
+  function computeTransportWeights() {
+    const N = StalkModule.N_STALKS;
+    // weights[i][j] = how much stalk j's map flows into stalk i
+    const weights = [];
+    for (let i = 0; i < N; i++) {
+      weights[i] = new Float64Array(N);
+      const pi = StalkModule.stalks[i].embedPoint;
+      let totalW = 0;
+      for (let j = 0; j < N; j++) {
+        const pj = StalkModule.stalks[j].embedPoint;
+        const d = Math.hypot(pi.x - pj.x, pi.y - pj.y);
+        // Parallel transport coupling: closer stalks in embedding space
+        // communicate more strongly. Self-connection is strongest.
+        if (i === j) {
+          weights[i][j] = 1.0;
+        } else {
+          // Gaussian coupling with characteristic scale ~0.3
+          weights[i][j] = 0.35 * Math.exp(-d * d / (2 * 0.12 * 0.12));
+        }
+        totalW += weights[i][j];
+      }
+      // Normalize so total weight = 1 (convex combination)
+      for (let j = 0; j < N; j++) {
+        weights[i][j] /= totalW;
+      }
+    }
+    return weights;
+  }
+
+  // Compute the raw (pre-transport) focus map for one stalk at one layer
+  function computeRawStalkLayerMap(stalkIdx, layerIdx) {
+    const map = new Float64Array(SZ * SZ);
+    const st = StalkModule.stalks[stalkIdx];
+    const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, stalkIdx, layerIdx);
+    const layerWeight = (layerIdx + 1) / State.visibleLayers;
 
     for (let y = 0; y < SZ; y++) {
       for (let x = 0; x < SZ; x++) {
         const nx = x / SZ, ny = y / SZ;
-        let maxFocus = 0;
+        const d = Math.hypot(nx - fp.x, ny - fp.y);
+        map[y * SZ + x] = Math.exp(-d * d / (2 * State.focusRadius * State.focusRadius)) * layerWeight;
+      }
+    }
+    return map;
+  }
 
-        for (let s = 0; s < StalkModule.N_STALKS; s++) {
-          const st = StalkModule.stalks[s];
-          for (let l = 0; l < nLayers; l++) {
-            const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
-            const d = Math.hypot(nx - fp.x, ny - fp.y);
-            // Focus falls off with distance from focus point
-            const layerWeight = (l + 1) / nLayers; // deeper layers contribute more
-            const focusVal = Math.exp(-d * d / (2 * State.focusRadius * State.focusRadius)) * layerWeight;
-            maxFocus = Math.max(maxFocus, focusVal);
+  // Full computation: raw maps per stalk per layer, then parallel transport after each layer
+  function computeAllMaps() {
+    const key = `${State.visibleLayers}-${State.focusRadius}-${State.curvatureK}-${StalkModule.stalks.map(s => s.embedPoint.x.toFixed(4) + s.embedPoint.y.toFixed(4)).join(',')}`;
+    if (transportCacheKey === key) return;
+    transportCacheKey = key;
+
+    const N = StalkModule.N_STALKS;
+    const nLayers = State.visibleLayers;
+    const weights = computeTransportWeights();
+
+    rawMaps = [];
+    transportedMaps = [];
+
+    // Accumulator: each stalk carries a "residual stream" focus map
+    // that accumulates across layers
+    const residualStream = [];
+    for (let s = 0; s < N; s++) {
+      residualStream[s] = new Float64Array(SZ * SZ); // starts at zero
+    }
+
+    for (let l = 0; l < nLayers; l++) {
+      rawMaps[l] = [];
+      transportedMaps[l] = [];
+
+      // Step 1: Each stalk computes its raw contribution at this layer
+      for (let s = 0; s < N; s++) {
+        rawMaps[l][s] = computeRawStalkLayerMap(s, l);
+      }
+
+      // Step 2: Add raw contribution to residual stream (residual connection)
+      for (let s = 0; s < N; s++) {
+        for (let i = 0; i < SZ * SZ; i++) {
+          residualStream[s][i] += rawMaps[l][s][i];
+        }
+      }
+
+      // Step 3: Parallel transport — exchange maps between stalks over residual stream
+      const transported = [];
+      for (let s = 0; s < N; s++) {
+        transported[s] = new Float64Array(SZ * SZ);
+        for (let j = 0; j < N; j++) {
+          const w = weights[s][j];
+          if (w < 0.001) continue;
+          for (let i = 0; i < SZ * SZ; i++) {
+            transported[s][i] += w * residualStream[j][i];
           }
         }
-        focus[y * SZ + x] = Math.min(1, maxFocus);
+      }
+
+      // Step 4: Write transported result back into residual stream
+      for (let s = 0; s < N; s++) {
+        residualStream[s] = transported[s];
+        transportedMaps[l][s] = new Float64Array(transported[s]);
+      }
+    }
+  }
+
+  // Returns a SZ×SZ array of focus values [0..1] where 1 = sharp, 0 = maximally pixelated
+  // This is the FINAL focus map after all layers of parallel transport
+  function computeFocusMap() {
+    computeAllMaps();
+    const focus = new Float64Array(SZ * SZ);
+    const nLayers = State.visibleLayers;
+    const N = StalkModule.N_STALKS;
+
+    if (transportedMaps.length === 0) return focus;
+
+    // Use the final layer's transported maps, take max across all stalks
+    const lastLayer = nLayers - 1;
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const idx = y * SZ + x;
+        let maxVal = 0;
+        for (let s = 0; s < N; s++) {
+          if (transportedMaps[lastLayer] && transportedMaps[lastLayer][s]) {
+            maxVal = Math.max(maxVal, transportedMaps[lastLayer][s][idx]);
+          }
+        }
+        focus[idx] = Math.min(1, maxVal);
       }
     }
     return focus;
@@ -393,8 +506,36 @@ const FocusMap = (() => {
     return points;
   }
 
-  return { computeFocusMap, getAllFocusPoints };
+  // Get transport weights for visualization
+  function getTransportWeights() {
+    return computeTransportWeights();
+  }
+
+  // Get per-stalk transported map at a given layer
+  function getTransportedMap(layer, stalk) {
+    computeAllMaps();
+    if (transportedMaps[layer] && transportedMaps[layer][stalk]) {
+      return transportedMaps[layer][stalk];
+    }
+    return null;
+  }
+
+  // Get per-stalk raw map at a given layer
+  function getRawMap(layer, stalk) {
+    computeAllMaps();
+    if (rawMaps[layer] && rawMaps[layer][stalk]) {
+      return rawMaps[layer][stalk];
+    }
+    return null;
+  }
+
+  function invalidateCache() {
+    transportCacheKey = '';
+  }
+
+  return { computeFocusMap, getAllFocusPoints, getTransportWeights, getTransportedMap, getRawMap, invalidateCache };
 })();
+
 
 // ============================================================
 // Layer Warp Fields
@@ -806,6 +947,61 @@ const RenderTarget = (() => {
 // ============================================================
 // Render Main Kelp Forest
 // ============================================================
+function drawStalkPlateWarpedGrid(ctx, ox, oy, size, layerIdx, stalkIdx, gridN, alpha) {
+  const SZ = ImageModule.SZ;
+  const field = WarpModule.getLayerField(layerIdx);
+  if (!field) return;
+  const { dx, dy } = field;
+  const sc = StalkModule.COLORS[stalkIdx];
+  const lc = LAYER_COLORS[Math.min(layerIdx, LAYER_COLORS.length - 1)];
+
+  // Draw warped grid lines
+  ctx.lineWidth = 0.4;
+  const steps = gridN * 2;
+
+  // Horizontal lines
+  for (let gy = 0; gy <= gridN; gy++) {
+    ctx.beginPath();
+    for (let gx = 0; gx <= steps; gx++) {
+      const nx = gx / steps;
+      const ny = Math.min(0.999, gy / gridN);
+      const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+      const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+      const px = ox + nx * size + ddx * size * 0.5;
+      const py = oy + ny * size + ddy * size * 0.5;
+      if (gx === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.5).toFixed(3)})`;
+    ctx.stroke();
+  }
+
+  // Vertical lines
+  for (let gx = 0; gx <= gridN; gx++) {
+    ctx.beginPath();
+    for (let gy = 0; gy <= steps; gy++) {
+      const nx = Math.min(0.999, gx / gridN);
+      const ny = gy / steps;
+      const ddx = WarpModule.sampleBilinear(dx, nx, ny);
+      const ddy = WarpModule.sampleBilinear(dy, nx, ny);
+      const px = ox + nx * size + ddx * size * 0.5;
+      const py = oy + ny * size + ddy * size * 0.5;
+      if (gy === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(alpha * 0.35).toFixed(3)})`;
+    ctx.stroke();
+  }
+
+  // Focus point for this stalk at this layer
+  const st = StalkModule.stalks[stalkIdx];
+  const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, stalkIdx, layerIdx);
+  const fpX = ox + fp.x * size;
+  const fpY = oy + fp.y * size;
+  ctx.beginPath();
+  ctx.arc(fpX, fpY, 1.5, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(alpha * 0.9).toFixed(3)})`;
+  ctx.fill();
+}
+
 const RenderMain = (() => {
   const SZ = ImageModule.SZ;
 
@@ -815,7 +1011,7 @@ const RenderMain = (() => {
     ctxMain.clearRect(0, 0, W, H);
 
     // Background
-    const bgGrad = ctxMain.createRadialGradient(W/2, H*0.6, 0, W/2, H*0.6, Math.max(W,H)*0.7);
+    const bgGrad = ctxMain.createRadialGradient(W / 2, H * 0.6, 0, W / 2, H * 0.6, Math.max(W, H) * 0.7);
     bgGrad.addColorStop(0, '#0a1628');
     bgGrad.addColorStop(1, '#050810');
     ctxMain.fillStyle = bgGrad;
@@ -828,57 +1024,145 @@ const RenderMain = (() => {
     const stalkSpacing = (W - 2 * margin) / (StalkModule.N_STALKS + 1);
     const plateSize = Math.min(60, stalkSpacing * 0.65);
 
-    // Total displacement drives sway
     const totalDisp = StalkModule.totalDisplacement();
-    const swayIntensity = totalDisp * 15; // more displacement = more sway
+    const swayIntensity = totalDisp * 15;
+
+    // Transport weights for visualization
+    const transportWeights = FocusMap.getTransportWeights();
 
     // Base line
     ctxMain.strokeStyle = 'rgba(162,155,254,0.2)';
     ctxMain.lineWidth = 1;
-    ctxMain.beginPath(); ctxMain.moveTo(margin, baseY); ctxMain.lineTo(W - margin, baseY); ctxMain.stroke();
+    ctxMain.beginPath();
+    ctxMain.moveTo(margin, baseY);
+    ctxMain.lineTo(W - margin, baseY);
+    ctxMain.stroke();
     ctxMain.font = '8px monospace';
     ctxMain.fillStyle = 'rgba(162,155,254,0.3)';
     ctxMain.textAlign = 'center';
     ctxMain.fillText(`Token Index Space — Sway: ${swayIntensity.toFixed(1)}° (from Σ displacement)`, W / 2, baseY + 15);
 
-    // Layer lines
+    // Layer lines + residual stream labels
     for (let l = 0; l < State.visibleLayers; l++) {
       const ly = baseY - (l + 1) * layerSpacing;
       const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
       ctxMain.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.08)`;
       ctxMain.lineWidth = 0.5;
       ctxMain.setLineDash([3, 8]);
-      ctxMain.beginPath(); ctxMain.moveTo(margin, ly); ctxMain.lineTo(W - margin, ly); ctxMain.stroke();
+      ctxMain.beginPath();
+      ctxMain.moveTo(margin, ly);
+      ctxMain.lineTo(W - margin, ly);
+      ctxMain.stroke();
       ctxMain.setLineDash([]);
       ctxMain.font = '7px monospace';
       ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.5)`;
       ctxMain.textAlign = 'right';
       ctxMain.fillText(`L${l}`, margin - 4, ly + 3);
+
+      // Label: "parallel transport" on the residual stream between layers
+      if (l < State.visibleLayers - 1) {
+        const midY = ly - layerSpacing * 0.5;
+        ctxMain.font = '6px monospace';
+        ctxMain.fillStyle = 'rgba(251,191,36,0.25)';
+        ctxMain.textAlign = 'center';
+        ctxMain.fillText('↕ residual stream + parallel transport ↕', W / 2, midY);
+      }
     }
 
     WarpModule.invalidateCache();
 
-    // Draw each stalk
+    // Precompute stalk plate positions for drawing transport connections
+    const stalkPlatePositions = [];
+    for (let s = 0; s < StalkModule.N_STALKS; s++) {
+      stalkPlatePositions[s] = [];
+      const st = StalkModule.stalks[s];
+      const baseX = margin + (s + 1) * stalkSpacing;
+      const dp = StalkModule.DEFAULT_POSITIONS[s];
+      const stalkDisp = Math.hypot(st.embedPoint.x - dp.x, st.embedPoint.y - dp.y);
+
+      for (let l = 0; l < State.visibleLayers; l++) {
+        const swayRad = swayIntensity * Math.PI / 180;
+        const swayX = Math.sin(State.time * 0.5 + st.phase + l * 0.45) * swayRad * 12 * (l + 1) / State.visibleLayers;
+        const ly = baseY - (l + 1) * layerSpacing;
+        const thisPlateSize = plateSize * (0.5 + stalkDisp * 1.5);
+        const clampedPlate = Math.min(plateSize * 1.2, Math.max(plateSize * 0.3, thisPlateSize));
+        stalkPlatePositions[s][l] = { x: baseX + swayX, y: ly, plate: clampedPlate };
+      }
+    }
+
+    // ── Draw parallel transport connections between stalks at each layer ──
+    for (let l = 0; l < State.visibleLayers; l++) {
+      for (let i = 0; i < StalkModule.N_STALKS; i++) {
+        for (let j = i + 1; j < StalkModule.N_STALKS; j++) {
+          const w_ij = transportWeights[i][j];
+          if (w_ij < 0.01) continue;
+
+          const posI = stalkPlatePositions[i][l];
+          const posJ = stalkPlatePositions[j][l];
+          const sci = StalkModule.COLORS[i];
+          const scj = StalkModule.COLORS[j];
+
+          // Arc upward proportional to weight
+          const midX = (posI.x + posJ.x) / 2;
+          const midY = posI.y - 8 - w_ij * 25;
+          const alpha = Math.min(0.7, w_ij * 2.5);
+
+          // Gradient line from stalk i color → gold → stalk j color
+          const grad = ctxMain.createLinearGradient(posI.x, posI.y, posJ.x, posJ.y);
+          grad.addColorStop(0, `rgba(${sci[0]},${sci[1]},${sci[2]},${alpha.toFixed(3)})`);
+          grad.addColorStop(0.5, `rgba(251,191,36,${(alpha * 0.6).toFixed(3)})`);
+          grad.addColorStop(1, `rgba(${scj[0]},${scj[1]},${scj[2]},${alpha.toFixed(3)})`);
+
+          ctxMain.strokeStyle = grad;
+          ctxMain.lineWidth = 0.5 + w_ij * 4;
+          ctxMain.setLineDash([2, 2]);
+          ctxMain.beginPath();
+          ctxMain.moveTo(posI.x, posI.y);
+          ctxMain.quadraticCurveTo(midX, midY, posJ.x, posJ.y);
+          ctxMain.stroke();
+          ctxMain.setLineDash([]);
+
+          // Animated flow particles along the transport arc
+          const nParticles = Math.max(1, Math.floor(w_ij * 6));
+          for (let p = 0; p < nParticles; p++) {
+            const t = ((State.time * 0.8 + p / nParticles + l * 0.2) % 1);
+            const px = (1 - t) * (1 - t) * posI.x + 2 * (1 - t) * t * midX + t * t * posJ.x;
+            const py = (1 - t) * (1 - t) * posI.y + 2 * (1 - t) * t * midY + t * t * posJ.y;
+
+            ctxMain.beginPath();
+            ctxMain.arc(px, py, 1.2 + w_ij * 2, 0, Math.PI * 2);
+            ctxMain.fillStyle = `rgba(251,191,36,${(alpha * 0.8).toFixed(3)})`;
+            ctxMain.fill();
+          }
+
+          // Weight label at midpoint
+          if (w_ij > 0.05) {
+            ctxMain.font = '5px monospace';
+            ctxMain.fillStyle = `rgba(251,191,36,${(alpha * 0.7).toFixed(3)})`;
+            ctxMain.textAlign = 'center';
+            ctxMain.fillText(`${(w_ij * 100).toFixed(0)}%`, midX, midY - 3);
+          }
+        }
+      }
+    }
+
+    // ── Draw each stalk ──
     for (let s = 0; s < StalkModule.N_STALKS; s++) {
       const st = StalkModule.stalks[s];
       const sc = StalkModule.COLORS[s];
       const baseX = margin + (s + 1) * stalkSpacing;
       const isSelected = s === State.selectedStalk;
 
-      // Per-stalk displacement from default
       const dp = StalkModule.DEFAULT_POSITIONS[s];
       const stalkDisp = Math.hypot(st.embedPoint.x - dp.x, st.embedPoint.y - dp.y);
 
-      // Compute layer points with sway driven by total displacement
       const points = [];
       for (let l = 0; l < State.visibleLayers; l++) {
-        const swayRad = swayIntensity * Math.PI / 180;
-        const swayX = Math.sin(State.time * 0.5 + st.phase + l * 0.45) * swayRad * 12 * (l + 1) / State.visibleLayers;
-        const ly = baseY - (l + 1) * layerSpacing;
-        points.push({ x: baseX + swayX, y: ly, layer: l });
+        const pos = stalkPlatePositions[s][l];
+        points.push({ x: pos.x, y: pos.y, layer: l });
       }
 
-      // Draw stem
+      // Draw stem segments
       ctxMain.lineWidth = isSelected ? 3 : 2;
       for (let p = 0; p < points.length; p++) {
         const pt = points[p];
@@ -896,17 +1180,37 @@ const RenderMain = (() => {
         ctxMain.stroke();
       }
 
+      // Draw residual stream indicator along the stem (thin gold dashed line)
+      ctxMain.setLineDash([1, 3]);
+      ctxMain.strokeStyle = `rgba(251,191,36,${isSelected ? 0.3 : 0.1})`;
+      ctxMain.lineWidth = 1;
+      for (let p = 0; p < points.length; p++) {
+        const pt = points[p];
+        if (p === 0) {
+          ctxMain.beginPath();
+          ctxMain.moveTo(baseX + 4, baseY);
+          ctxMain.lineTo(pt.x + 4, pt.y);
+          ctxMain.stroke();
+        } else {
+          const prev = points[p - 1];
+          ctxMain.beginPath();
+          ctxMain.moveTo(prev.x + 4, prev.y);
+          ctxMain.lineTo(pt.x + 4, pt.y);
+          ctxMain.stroke();
+        }
+      }
+      ctxMain.setLineDash([]);
+
       // Draw warped grid plates per layer
       for (let p = 0; p < points.length; p++) {
         const pt = points[p];
         const layerIdx = pt.layer;
-        const thisPlateSize = plateSize * (0.5 + stalkDisp * 1.5);
-        const clampedPlate = Math.min(plateSize * 1.2, Math.max(plateSize * 0.3, thisPlateSize));
+        const clampedPlate = stalkPlatePositions[s][layerIdx].plate;
         const alpha = isSelected ? 0.6 : 0.25;
 
         // Plate background
         ctxMain.fillStyle = `rgba(10,14,26,${(alpha * 0.7).toFixed(3)})`;
-        ctxMain.fillRect(pt.x - clampedPlate/2 - 1, pt.y - clampedPlate/2 - 1, clampedPlate + 2, clampedPlate + 2);
+        ctxMain.fillRect(pt.x - clampedPlate / 2 - 1, pt.y - clampedPlate / 2 - 1, clampedPlate + 2, clampedPlate + 2);
 
         // Draw warped grid for this layer
         drawStalkPlateWarpedGrid(
@@ -920,22 +1224,53 @@ const RenderMain = (() => {
           alpha
         );
 
+        // Show transported map as a subtle overlay on the plate
+        const tMap = FocusMap.getTransportedMap(layerIdx, s);
+        if (tMap) {
+          const pxSize = clampedPlate / SZ;
+          for (let iy = 0; iy < SZ; iy += 3) {
+            for (let ix = 0; ix < SZ; ix += 3) {
+              const val = Math.min(1, tMap[iy * SZ + ix]);
+              if (val < 0.1) continue;
+              ctxMain.fillStyle = `rgba(251,191,36,${(val * alpha * 0.3).toFixed(3)})`;
+              ctxMain.fillRect(
+                pt.x - clampedPlate / 2 + ix * pxSize,
+                pt.y - clampedPlate / 2 + iy * pxSize,
+                pxSize * 3 + 0.5,
+                pxSize * 3 + 0.5
+              );
+            }
+          }
+        }
+
         // Layer color border
         const lc = LAYER_COLORS[Math.min(layerIdx, LAYER_COLORS.length - 1)];
         ctxMain.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.6).toFixed(3)})`;
         ctxMain.lineWidth = isSelected ? 1.8 : 1;
-        ctxMain.strokeRect(pt.x - clampedPlate/2, pt.y - clampedPlate/2, clampedPlate, clampedPlate);
+        ctxMain.strokeRect(pt.x - clampedPlate / 2, pt.y - clampedPlate / 2, clampedPlate, clampedPlate);
 
         // Stalk inner border
         ctxMain.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(alpha * 0.3).toFixed(3)})`;
         ctxMain.lineWidth = 0.5;
-        ctxMain.strokeRect(pt.x - clampedPlate/2 + 1, pt.y - clampedPlate/2 + 1, clampedPlate - 2, clampedPlate - 2);
+        ctxMain.strokeRect(pt.x - clampedPlate / 2 + 1, pt.y - clampedPlate / 2 + 1, clampedPlate - 2, clampedPlate - 2);
 
         // Layer label
         ctxMain.font = '6px monospace';
         ctxMain.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${(alpha * 0.8).toFixed(3)})`;
         ctxMain.textAlign = 'left';
-        ctxMain.fillText(`L${layerIdx}`, pt.x - clampedPlate/2 + 2, pt.y - clampedPlate/2 + 7);
+        ctxMain.fillText(`L${layerIdx}`, pt.x - clampedPlate / 2 + 2, pt.y - clampedPlate / 2 + 7);
+
+        // Transport indicator: "T:XX%" showing how much this stalk received from others
+        let receivedTransport = 0;
+        for (let j = 0; j < StalkModule.N_STALKS; j++) {
+          if (j !== s) receivedTransport += transportWeights[s][j];
+        }
+        if (receivedTransport > 0.05) {
+          ctxMain.font = 'bold 5px monospace';
+          ctxMain.fillStyle = `rgba(251,191,36,${(alpha * 0.7).toFixed(3)})`;
+          ctxMain.textAlign = 'right';
+          ctxMain.fillText(`T:${(receivedTransport * 100).toFixed(0)}%`, pt.x + clampedPlate / 2 - 2, pt.y - clampedPlate / 2 + 7);
+        }
 
         // Node dot
         ctxMain.beginPath();
@@ -961,7 +1296,7 @@ const RenderMain = (() => {
       ctxMain.fillText(StalkModule.NAMES[s], baseX, baseY + 13);
     }
 
-    // Focused image at top
+    // ── Focused image at top (uses post-transport focus map) ──
     const resolvedSize = Math.min(90, W * 0.13);
     const resolvedX = W / 2;
     const resolvedY = topY / 2 + 5;
@@ -972,169 +1307,64 @@ const RenderMain = (() => {
     const rps = resolvedSize / SZ;
 
     ctxMain.fillStyle = 'rgba(10,14,26,0.85)';
-    ctxMain.fillRect(resolvedX - resolvedSize/2 - 3, resolvedY - resolvedSize/2 - 3, resolvedSize + 6, resolvedSize + 6);
+    ctxMain.fillRect(resolvedX - resolvedSize / 2 - 3, resolvedY - resolvedSize / 2 - 3, resolvedSize + 6, resolvedSize + 6);
 
-    for (let y = 0; y < SZ; y++) {
-      for (let x = 0; x < SZ; x++) {
-        const focus = focusMapData[y * SZ + x];
-        const blockSize = Math.max(1, Math.round((1 - focus) * maxPix));
-        const bx = Math.floor(x / blockSize) * blockSize;
-        const by = Math.floor(y / blockSize) * blockSize;
-        const bix = Math.min(SZ-1, bx + Math.floor(blockSize/2));
-        const biy = Math.min(SZ-1, by + Math.floor(blockSize/2));
-        const v = image[biy * SZ + bix];
+    // Pass 1: Draw pixelated base
+    const miniOx = resolvedX - resolvedSize / 2;
+    const miniOy = resolvedY - resolvedSize / 2;
+    for (let by = 0; by < SZ; by += maxPix) {
+      for (let bx = 0; bx < SZ; bx += maxPix) {
+        const cx = Math.min(SZ - 1, bx + Math.floor(maxPix / 2));
+        const cy = Math.min(SZ - 1, by + Math.floor(maxPix / 2));
+        const v = image[cy * SZ + cx];
         const b = Math.max(0, Math.min(1, v));
-        ctxMain.fillStyle = `rgb(${Math.floor(30+b*225)},${Math.floor(25+b*195)},${Math.floor(15+b*105)})`;
-        ctxMain.fillRect(resolvedX - resolvedSize/2 + x*rps, resolvedY - resolvedSize/2 + y*rps, rps+0.5, rps+0.5);
+        const blockW = Math.min(maxPix, SZ - bx) * rps;
+        const blockH = Math.min(maxPix, SZ - by) * rps;
+        ctxMain.fillStyle = `rgb(${Math.floor(20 + b * 120)},${Math.floor(25 + b * 130)},${Math.floor(45 + b * 160)})`;
+        ctxMain.fillRect(miniOx + bx * rps, miniOy + by * rps, blockW + 0.5, blockH + 0.5);
       }
     }
 
+    // Pass 2: Overdraw crisp focused pixels
+    for (let y = 0; y < SZ; y++) {
+      for (let x = 0; x < SZ; x++) {
+        const focus = focusMapData[y * SZ + x];
+        if (focus < 0.15) continue;
+        const v = image[y * SZ + x];
+        const b = Math.max(0, Math.min(1, v));
+        ctxMain.globalAlpha = focus;
+        ctxMain.fillStyle = `rgb(${Math.floor(30 + b * 225)},${Math.floor(25 + b * 195)},${Math.floor(15 + b * 105)})`;
+        ctxMain.fillRect(miniOx + x * rps, miniOy + y * rps, rps + 0.5, rps + 0.5);
+      }
+    }
+    ctxMain.globalAlpha = 1.0;
+
     ctxMain.strokeStyle = 'rgba(255,220,100,0.4)';
     ctxMain.lineWidth = 1.5;
-    ctxMain.strokeRect(resolvedX - resolvedSize/2 - 3, resolvedY - resolvedSize/2 - 3, resolvedSize + 6, resolvedSize + 6);
+    ctxMain.strokeRect(resolvedX - resolvedSize / 2 - 3, resolvedY - resolvedSize / 2 - 3, resolvedSize + 6, resolvedSize + 6);
 
     ctxMain.font = '9px monospace';
     ctxMain.fillStyle = 'rgba(255,220,100,0.6)';
     ctxMain.textAlign = 'center';
-    ctxMain.fillText('Focused Image (drag tokens to change)', resolvedX, resolvedY - resolvedSize/2 - 7);
+    ctxMain.fillText('Focused Image (post parallel transport)', resolvedX, resolvedY - resolvedSize / 2 - 7);
 
-    // Ambient particles
+    // ── Ambient particles ──
     for (let i = 0; i < 15; i++) {
       const px = (Math.sin(State.time * 0.2 + i * 2.5) * 0.5 + 0.5) * W;
-      const py = (Math.cos(State.time * 0.15 + i * 2.0) * 0.5 + 0.5) * H;
+      const py = (Math.cos(State.time * 0.15 + i * 1.8) * 0.5 + 0.5) * H;
+      const pAlpha = 0.03 + 0.02 * Math.sin(State.time + i);
       ctxMain.beginPath();
-      ctxMain.arc(px, py, 0.8, 0, Math.PI * 2);
-      ctxMain.fillStyle = 'rgba(162,155,254,0.06)';
+      ctxMain.arc(px, py, 1 + Math.sin(State.time * 0.3 + i) * 0.5, 0, Math.PI * 2);
+      ctxMain.fillStyle = `rgba(162,155,254,${pAlpha.toFixed(3)})`;
       ctxMain.fill();
     }
-  }
 
-  // Draw warped grid for a stalk plate — shows the warp field with stalk-specific coloring
-  function drawStalkPlateWarpedGrid(ctx, ox, oy, size, layerIdx, stalkIdx, gridN, alpha) {
-    if (gridN  < 2) gridN = 2;
-    const SZ = ImageModule.SZ;
-    const field = WarpModule.getLayerField(layerIdx);
-    if (!field) return;
-    const { dx, dy, J00, J01, J10, J11 } = field;
-
-    const sc = StalkModule.COLORS[stalkIdx];
-    const lc = LAYER_COLORS[Math.min(layerIdx, LAYER_COLORS.length - 1)];
-
-    // Get focus point for this stalk at this layer
-    const st = StalkModule.stalks[stalkIdx];
-    const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, stalkIdx, layerIdx);
-
-    // Draw filled cells with warp-based coloring
-    for (let gy = 0; gy < gridN; gy++) {
-      for (let gx = 0; gx < gridN; gx++) {
-        const corners = [
-          [gx / gridN, gy / gridN],
-          [(gx+1) / gridN, gy / gridN],
-          [(gx+1) / gridN, (gy+1) / gridN],
-          [gx / gridN, (gy+1) / gridN],
-        ];
-
-        const warped = corners.map(([nx, ny]) => {
-          const ddx = WarpModule.sampleBilinear(dx, nx, ny);
-          const ddy = WarpModule.sampleBilinear(dy, nx, ny);
-          return [ox + nx * size + ddx * size, oy + ny * size + ddy * size];
-        });
-
-        // Cell center
-        const cnx = (gx + 0.5) / gridN, cny = (gy + 0.5) / gridN;
-
-        // Distance from cell center to focus point (in normalized space)
-        const distToFocus = Math.hypot(cnx - fp.x, cny - fp.y);
-        const focusBright = Math.exp(-distToFocus * distToFocus / (2 * 0.15 * 0.15));
-
-        // Jacobi determinant for distortion coloring
-        const det = WarpModule.sampleBilinear(J00, cnx, cny) * WarpModule.sampleBilinear(J11, cnx, cny)
-                   - WarpModule.sampleBilinear(J01, cnx, cny) * WarpModule.sampleBilinear(J10, cnx, cny);
-        const distortion = Math.abs(det - 1);
-
-        // Color: blend stalk color with layer color, modulated by focus proximity and distortion
-        const layerBlend = layerIdx / Math.max(1, State.visibleLayers - 1);
-        const brightness = focusBright * 0.7 + distortion * 0.3;
-        const r = Math.min(255, Math.floor(
-          sc[0] * brightness * (1 - layerBlend * 0.4) +
-          lc[0] * brightness * layerBlend * 0.4 +
-          distortion * 80
-        ));
-        const g = Math.min(255, Math.floor(
-          sc[1] * brightness * (1 - layerBlend * 0.4) +
-          lc[1] * brightness * layerBlend * 0.4 +
-          distortion * 30
-        ));
-        const b = Math.min(255, Math.floor(
-          sc[2] * brightness * (1 - layerBlend * 0.4) +
-          lc[2] * brightness * layerBlend * 0.4 +
-          distortion * 60
-        ));
-        const cellAlpha = (0.06 + brightness * 0.65) * alpha;
-
-        ctx.beginPath();
-        ctx.moveTo(warped[0][0], warped[0][1]);
-        ctx.lineTo(warped[1][0], warped[1][1]);
-        ctx.lineTo(warped[2][0], warped[2][1]);
-        ctx.lineTo(warped[3][0], warped[3][1]);
-        ctx.closePath();
-        ctx.fillStyle = `rgba(${r},${g},${b},${cellAlpha.toFixed(3)})`;
-        ctx.fill();
-      }
-    }
-
-    // Draw warped grid lines
-    ctx.lineWidth = 0.6;
-    const lineAlpha = alpha * 0.35;
-    const lr = Math.floor(lc[0] * 0.5 + sc[0] * 0.5);
-    const lg = Math.floor(lc[1] * 0.5 + sc[1] * 0.5);
-    const lb = Math.floor(lc[2] * 0.5 + sc[2] * 0.5);
-
-    // Horizontal lines
-    for (let gy = 0; gy <= gridN; gy++) {
-      ctx.beginPath();
-      const steps = gridN * 2;
-      for (let gx = 0; gx <= steps; gx++) {
-        const nx = gx / steps, ny = Math.min(0.999, gy / gridN);
-        const ddx = WarpModule.sampleBilinear(dx, nx, ny);
-        const ddy = WarpModule.sampleBilinear(dy, nx, ny);
-        const px = ox + nx * size + ddx * size;
-        const py = oy + ny * size + ddy * size;
-        if (gx === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = `rgba(${lr},${lg},${lb},${lineAlpha.toFixed(3)})`;
-      ctx.stroke();
-    }
-    // Vertical lines
-    for (let gx = 0; gx <= gridN; gx++) {
-      ctx.beginPath();
-      const steps = gridN * 2;
-      for (let gy = 0; gy <= steps; gy++) {
-        const nx = Math.min(0.999, gx / gridN), ny = gy / steps;
-        const ddx = WarpModule.sampleBilinear(dx, nx, ny);
-        const ddy = WarpModule.sampleBilinear(dy, nx, ny);
-        const px = ox + nx * size + ddx * size;
-        const py = oy + ny * size + ddy * size;
-        if (gy === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = `rgba(${lr},${lg},${lb},${lineAlpha.toFixed(3)})`;
-      ctx.stroke();
-    }
-
-    // Draw focus point marker within the plate
-    const fpScreenX = ox + fp.x * size;
-    const fpScreenY = oy + fp.y * size;
-    if (fpScreenX >= ox && fpScreenX <= ox + size && fpScreenY >= oy && fpScreenY <= oy + size) {
-      ctx.beginPath();
-      ctx.arc(fpScreenX, fpScreenY, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${(alpha * 0.7).toFixed(3)})`;
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(fpScreenX, fpScreenY, 5, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${(alpha * 0.4).toFixed(3)})`;
-      ctx.lineWidth = 0.7;
-      ctx.stroke();
-    }
+    // ── Transport summary legend at bottom ──
+    ctxMain.font = '7px monospace';
+    ctxMain.fillStyle = 'rgba(251,191,36,0.4)';
+    ctxMain.textAlign = 'center';
+    ctxMain.fillText('⟷ dashed arcs = parallel transport between stalks over residual stream', W / 2, baseY + 28);
+    ctxMain.fillText('● gold particles = focus map data flowing between heads', W / 2, baseY + 36);
   }
 
   return { render };
