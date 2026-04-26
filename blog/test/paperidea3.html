@@ -73,6 +73,14 @@ button.red:hover{background:#e74c3c40}
       <button onclick="Ctrl.reset()">↺ Reset</button>
     </div>
     <div class="slider-row">
+      <label>Box attract:</label>
+      <input type="range" id="slAttract" min="1" max="50" value="20" oninput="Ctrl.setAttraction(+this.value)">
+      <span class="val" id="vAttract">0.020</span>
+    </div>
+    <div class="controls">
+      <button class="red" onclick="Ctrl.clearBoxes()">✕ Clear Focus Boxes</button>
+    </div>
+    <div class="slider-row">
       <label>Layers:</label>
       <input type="range" id="slLayers" min="1" max="5" value="4" oninput="Ctrl.setLayers(+this.value)">
       <span class="val" id="vLayers">4</span>
@@ -225,43 +233,30 @@ const ImageModule = (() => {
 // token embedding position to image focus point
 // ============================================================
 const ChaoticHash = (() => {
-  // Arnold's cat map: (x,y) -> ((2x+y) mod 1, (x+y) mod 1) — iterated
-  function catMapIterate(x, y, iterations) {
-    let u = x, v = y;
-    for (let i = 0; i < iterations; i++) {
-      const nu = (2 * u + v) % 1;
-      const nv = (u + v) % 1;
-      u = nu < 0 ? nu + 1 : nu;
-      v = nv < 0 ? nv + 1 : nv;
-    }
-    return { x: u, y: v };
-  }
-
-  // Hash a token position to a focus point on the image
-  // Uses cat map + sinusoidal perturbation for extra non-linearity
+  // Simplified: use a seeded sinusoidal fold instead of full Arnold cat map.
+  // Much easier to reason about: token position is smoothly (but non-linearly)
+  // mapped to a focus point. Moving a token "orbits" the focus point around.
   function tokenToFocus(tokenX, tokenY, stalkIdx, layerIdx) {
-    // Seed with stalk and layer for variation
-    const seed1 = (stalkIdx * 0.618033988 + layerIdx * 0.414213562) % 1;
-    const seed2 = (stalkIdx * 0.324719 + layerIdx * 0.731688) % 1;
+    const seed1 = stalkIdx * 0.618033988 + layerIdx * 0.414213562;
+    const seed2 = stalkIdx * 0.324719 + layerIdx * 0.731688;
 
-    // Perturb input with sinusoidal mixing
-    let px = (tokenX + seed1 + 0.1 * Math.sin(tokenY * 7.3 + stalkIdx * 2.1)) % 1;
-    let py = (tokenY + seed2 + 0.1 * Math.cos(tokenX * 5.7 + layerIdx * 1.7)) % 1;
-    if (px < 0) px += 1;
-    if (py < 0) py += 1;
+    // Two rounds of sinusoidal folding — non-linear but continuous,
+    // so nearby positions give nearby-ish (but sometimes jumping) results
+    let fx = tokenX + 0.15 * Math.sin(tokenY * 6.2832 + seed1 * 9.1) + seed1;
+    let fy = tokenY + 0.15 * Math.sin(tokenX * 6.2832 + seed2 * 7.3) + seed2;
 
-    // Apply cat map iterations (more iterations = more chaotic)
-    const iterations = 3 + layerIdx;
-    const result = catMapIterate(px, py, iterations);
+    // Second fold for more complexity per layer
+    fx += 0.08 * (layerIdx + 1) * Math.cos(fy * 4.0 + stalkIdx * 1.5);
+    fy += 0.08 * (layerIdx + 1) * Math.cos(fx * 4.0 + layerIdx * 2.3);
 
-    // One more sinusoidal fold for extra non-obviousness
-    const fx = (result.x + 0.05 * Math.sin(result.y * 11.3 + stalkIdx)) % 1;
-    const fy = (result.y + 0.05 * Math.sin(result.x * 9.7 + layerIdx)) % 1;
+    // Wrap to [0,1]
+    fx = fx % 1; if (fx < 0) fx += 1;
+    fy = fy % 1; if (fy < 0) fy += 1;
 
-    return { x: fx < 0 ? fx + 1 : fx, y: fy < 0 ? fy + 1 : fy };
+    return { x: fx, y: fy };
   }
 
-  return { tokenToFocus, catMapIterate };
+  return { tokenToFocus };
 })();
 
 // ============================================================
@@ -322,6 +317,11 @@ const State = (() => {
   let time = 0;
   let animating = true;
   let detailLayer = 0;
+  let focusBoxes = [];
+  let isDrawingBox = false;
+  let boxStart = null;
+  let boxAttractionStrength = 0.02;
+  let _boxCurrent = null;
 
   return {
     get selectedStalk() { return selectedStalk; },
@@ -344,6 +344,16 @@ const State = (() => {
     set animating(v) { animating = v; },
     get detailLayer() { return detailLayer; },
     set detailLayer(v) { detailLayer = v; },
+    get focusBoxes() { return focusBoxes; },
+    set focusBoxes(v) { focusBoxes = v; },
+    get isDrawingBox() { return isDrawingBox; },
+    set isDrawingBox(v) { isDrawingBox = v; },
+    get boxStart() { return boxStart; },
+    set boxStart(v) { boxStart = v; },
+    get boxAttractionStrength() { return boxAttractionStrength; },
+    set boxAttractionStrength(v) { boxAttractionStrength = v; },
+    get _boxCurrent() { return _boxCurrent; },
+    set _boxCurrent(v) { _boxCurrent = v; },
   };
 })();
 
@@ -679,8 +689,10 @@ const Ctrl = (() => {
   function setWarp(v) { State.warpStrength = v / 100; document.getElementById('vWarp').textContent = (v/100).toFixed(2); WarpModule.invalidateCache(); }
   function setGridDensity(v) { State.gridDensity = v; document.getElementById('vGrid').textContent = v; }
   function setPixelation(v) { State.maxPixelation = v; document.getElementById('vPixel').textContent = v; }
+  function setAttraction(v) { State.boxAttractionStrength = v / 1000; document.getElementById('vAttract').textContent = (v/1000).toFixed(3); }
+  function clearBoxes() { State.focusBoxes = []; document.getElementById('modeLabel').textContent = 'All focus boxes cleared'; }
 
-  return { play, pause, reset, setLayers, setCurvature, setFocusRadius, setWarp, setGridDensity, setPixelation };
+  return { play, pause, reset, setLayers, setCurvature, setFocusRadius, setWarp, setGridDensity, setPixelation, setAttraction, clearBoxes };
 })();
 
 // ============================================================
@@ -860,53 +872,39 @@ const RenderTarget = (() => {
     const imgMargin = 12;
     const imgSize = Math.min(w, h) - imgMargin * 2;
     const ox = (w - imgSize) / 2, oy = (h - imgSize) / 2;
-    const cellSize = imgSize / SZ; // size of one image pixel on screen
+    const cellSize = imgSize / SZ;
 
-    // Pass 1: Draw the fully pixelated version using large blocks
-    // We tile the image into blocks whose size depends on maxPixelation
-    const maxBlockPx = maxPix; // in image-space pixels
-    for (let by = 0; by < SZ; by += maxBlockPx) {
-      for (let bx = 0; bx < SZ; bx += maxBlockPx) {
-        // Sample from block center
-        const cx = Math.min(SZ - 1, bx + Math.floor(maxBlockPx / 2));
-        const cy = Math.min(SZ - 1, by + Math.floor(maxBlockPx / 2));
+    // Pass 1: pixelated base
+    for (let by = 0; by < SZ; by += maxPix) {
+      for (let bx = 0; bx < SZ; bx += maxPix) {
+        const cx = Math.min(SZ - 1, bx + Math.floor(maxPix / 2));
+        const cy = Math.min(SZ - 1, by + Math.floor(maxPix / 2));
         const v = image[cy * SZ + cx];
         const b = Math.max(0, Math.min(1, v));
-
         const screenX = ox + bx * cellSize;
         const screenY = oy + by * cellSize;
-        const blockW = Math.min(maxBlockPx, SZ - bx) * cellSize;
-        const blockH = Math.min(maxBlockPx, SZ - by) * cellSize;
-
-        // Cool/muted color for unfocused
+        const blockW = Math.min(maxPix, SZ - bx) * cellSize;
+        const blockH = Math.min(maxPix, SZ - by) * cellSize;
         const r = Math.floor(20 + b * 120);
         const g = Math.floor(25 + b * 130);
         const bl = Math.floor(45 + b * 160);
-
         ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
         ctxTarget.fillRect(screenX, screenY, blockW + 0.5, blockH + 0.5);
       }
     }
 
-    // Pass 2: Overdraw sharp (focused) pixels on top
-    // For each image pixel, if focus is high enough, draw it crisply
+    // Pass 2: sharp focused pixels
     for (let y = 0; y < SZ; y++) {
       for (let x = 0; x < SZ; x++) {
         const focus = focusMap[y * SZ + x];
-        if (focus < 0.15) continue; // skip fully unfocused pixels
-
+        if (focus < 0.15) continue;
         const v = image[y * SZ + x];
         const b = Math.max(0, Math.min(1, v));
-
-        // Warm, bright color for focused areas
         const r = Math.floor(30 + b * 225);
         const g = Math.floor(25 + b * 200);
         const bl = Math.floor(10 + b * 100);
-
         const screenX = ox + x * cellSize;
         const screenY = oy + y * cellSize;
-
-        // Alpha blend: focus controls how much the crisp pixel shows
         ctxTarget.globalAlpha = focus;
         ctxTarget.fillStyle = `rgb(${r},${g},${bl})`;
         ctxTarget.fillRect(screenX, screenY, cellSize + 0.5, cellSize + 0.5);
@@ -914,28 +912,149 @@ const RenderTarget = (() => {
     }
     ctxTarget.globalAlpha = 1.0;
 
-    // Overlay focus points
-    const focusPoints = FocusMap.getAllFocusPoints();
-    for (const fp of focusPoints) {
-      const fpX = ox + fp.x * imgSize;
-      const fpY = oy + fp.y * imgSize;
-      const sc = StalkModule.COLORS[fp.stalk];
-      const lc = LAYER_COLORS[Math.min(fp.layer, LAYER_COLORS.length - 1)];
+    // ── NEW: Lens Pointer Visualization ──
+    // For each stalk, draw a bold arrow from the token label to its
+    // average focus centroid across layers, plus a crosshair at the centroid.
+    for (let s = 0; s < StalkModule.N_STALKS; s++) {
+      const st = StalkModule.stalks[s];
+      const sc = StalkModule.COLORS[s];
+      const isSelected = s === State.selectedStalk;
 
-      // Glow
-      const grd = ctxTarget.createRadialGradient(fpX, fpY, 0, fpX, fpY, State.focusRadius * imgSize * 0.5);
-      grd.addColorStop(0, `rgba(${sc[0]},${sc[1]},${sc[2]},0.15)`);
-      grd.addColorStop(1, `rgba(${sc[0]},${sc[1]},${sc[2]},0)`);
-      ctxTarget.fillStyle = grd;
+      // Compute centroid of all focus points for this stalk across layers
+      let centX = 0, centY = 0;
+      for (let l = 0; l < State.visibleLayers; l++) {
+        const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+        centX += fp.x;
+        centY += fp.y;
+      }
+      centX /= State.visibleLayers;
+      centY /= State.visibleLayers;
+
+      const cpx = ox + centX * imgSize;
+      const cpy = oy + centY * imgSize;
+
+      // Crosshair at centroid
+      const chSize = isSelected ? 10 : 6;
+      const chAlpha = isSelected ? 0.9 : 0.5;
+      ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${chAlpha})`;
+      ctxTarget.lineWidth = isSelected ? 2 : 1;
+      // Horizontal
       ctxTarget.beginPath();
-      ctxTarget.arc(fpX, fpY, State.focusRadius * imgSize * 0.5, 0, Math.PI * 2);
+      ctxTarget.moveTo(cpx - chSize, cpy);
+      ctxTarget.lineTo(cpx + chSize, cpy);
+      ctxTarget.stroke();
+      // Vertical
+      ctxTarget.beginPath();
+      ctxTarget.moveTo(cpx, cpy - chSize);
+      ctxTarget.lineTo(cpx, cpy + chSize);
+      ctxTarget.stroke();
+      // Circle
+      ctxTarget.beginPath();
+      ctxTarget.arc(cpx, cpy, chSize * 0.7, 0, Math.PI * 2);
+      ctxTarget.stroke();
+
+      // Arrow from edge label to centroid
+      // Place label at nearest edge
+      let labelX, labelY;
+      if (centX < 0.5) {
+        labelX = ox - 2;
+        labelY = oy + centY * imgSize;
+      } else {
+        labelX = ox + imgSize + 2;
+        labelY = oy + centY * imgSize;
+      }
+
+      // Arrow line
+      ctxTarget.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.7 : 0.3})`;
+      ctxTarget.lineWidth = isSelected ? 1.8 : 1;
+      ctxTarget.setLineDash([3, 2]);
+      ctxTarget.beginPath();
+      ctxTarget.moveTo(labelX, labelY);
+      ctxTarget.lineTo(cpx, cpy);
+      ctxTarget.stroke();
+      ctxTarget.setLineDash([]);
+
+      // Arrowhead
+      const angle = Math.atan2(cpy - labelY, cpx - labelX);
+      const aLen = 6;
+      ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 0.8 : 0.4})`;
+      ctxTarget.beginPath();
+      ctxTarget.moveTo(cpx, cpy);
+      ctxTarget.lineTo(cpx - aLen * Math.cos(angle - 0.4), cpy - aLen * Math.sin(angle - 0.4));
+      ctxTarget.lineTo(cpx - aLen * Math.cos(angle + 0.4), cpy - aLen * Math.sin(angle + 0.4));
+      ctxTarget.closePath();
       ctxTarget.fill();
 
-      // Dot
-      ctxTarget.beginPath();
-      ctxTarget.arc(fpX, fpY, 2.5, 0, Math.PI * 2);
-      ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},0.7)`;
-      ctxTarget.fill();
+      // Label text
+      ctxTarget.font = `${isSelected ? 'bold ' : ''}8px monospace`;
+      ctxTarget.fillStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},${isSelected ? 1 : 0.6})`;
+      ctxTarget.textAlign = centX < 0.5 ? 'right' : 'left';
+      ctxTarget.fillText(StalkModule.NAMES[s], labelX + (centX < 0.5 ? -2 : 2), labelY + 3);
+
+      // Per-layer focus dots connected to centroid (spider web)
+      for (let l = 0; l < State.visibleLayers; l++) {
+        const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+        const fpX = ox + fp.x * imgSize;
+        const fpY = oy + fp.y * imgSize;
+        const lc = LAYER_COLORS[Math.min(l, LAYER_COLORS.length - 1)];
+
+        // Thin line from centroid to each layer focus point
+        ctxTarget.strokeStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.4 : 0.15})`;
+        ctxTarget.lineWidth = 0.7;
+        ctxTarget.beginPath();
+        ctxTarget.moveTo(cpx, cpy);
+        ctxTarget.lineTo(fpX, fpY);
+        ctxTarget.stroke();
+
+        // Small dot
+        ctxTarget.beginPath();
+        ctxTarget.arc(fpX, fpY, isSelected ? 2.5 : 1.5, 0, Math.PI * 2);
+        ctxTarget.fillStyle = `rgba(${lc[0]},${lc[1]},${lc[2]},${isSelected ? 0.7 : 0.35})`;
+        ctxTarget.fill();
+      }
+    }
+
+    // ── NEW: Draw user-defined focus boxes ──
+    for (let i = 0; i < State.focusBoxes.length; i++) {
+      const box = State.focusBoxes[i];
+      const bx = ox + box.x * imgSize;
+      const by = oy + box.y * imgSize;
+      const bw = box.w * imgSize;
+      const bh = box.h * imgSize;
+
+      ctxTarget.strokeStyle = `rgba(251,191,36,${0.6 + 0.2 * Math.sin(State.time * 3 + i)})`;
+      ctxTarget.lineWidth = 1.5;
+      ctxTarget.setLineDash([4, 3]);
+      ctxTarget.strokeRect(bx, by, bw, bh);
+      ctxTarget.setLineDash([]);
+
+      // Fill with very faint gold
+      ctxTarget.fillStyle = `rgba(251,191,36,0.06)`;
+      ctxTarget.fillRect(bx, by, bw, bh);
+
+      // Label
+      ctxTarget.font = 'bold 7px monospace';
+      ctxTarget.fillStyle = 'rgba(251,191,36,0.8)';
+      ctxTarget.textAlign = 'left';
+      ctxTarget.fillText(`Focus #${i + 1}`, bx + 2, by - 3);
+    }
+
+    // If currently drawing a box, show preview
+    if (State.isDrawingBox && State.boxStart && State._boxCurrent) {
+      const bs = State.boxStart;
+      const bc = State._boxCurrent;
+      const bx = ox + Math.min(bs.x, bc.x) * imgSize;
+      const by = oy + Math.min(bs.y, bc.y) * imgSize;
+      const bw = Math.abs(bc.x - bs.x) * imgSize;
+      const bh = Math.abs(bc.y - bs.y) * imgSize;
+
+      ctxTarget.strokeStyle = 'rgba(251,191,36,0.9)';
+      ctxTarget.lineWidth = 2;
+      ctxTarget.setLineDash([2, 2]);
+      ctxTarget.strokeRect(bx, by, bw, bh);
+      ctxTarget.setLineDash([]);
+      ctxTarget.fillStyle = 'rgba(251,191,36,0.1)';
+      ctxTarget.fillRect(bx, by, bw, bh);
     }
 
     cvTarget._imgBounds = { x: ox, y: oy, w: imgSize, h: imgSize };
@@ -1867,29 +1986,199 @@ cvEmbed.addEventListener('touchmove', (e) => {
 
 cvEmbed.addEventListener('touchend', () => { embedDragging = false; dragStalkIdx = -1; });
 
-// Target image click — no targets in this version, just info
-cvTarget.addEventListener('click', (e) => {
+// ── Remove old cvTarget click handler and replace with box-drawing ──
+
+// Helper: convert mouse event to normalized image coords
+function targetEventToNorm(e) {
   const rect = cvTarget.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   const bounds = cvTarget._imgBounds;
-  if (!bounds) return;
+  if (!bounds) return null;
   const scaleX = rect.width / 290, scaleY = rect.height / 290;
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
   const nx = (mx / scaleX - bounds.x) / bounds.w;
   const ny = (my / scaleY - bounds.y) / bounds.h;
-  if (nx >= 0 && nx <= 1 && ny >= 0 && ny <= 1) {
-    document.getElementById('modeLabel').textContent = `Clicked image at (${nx.toFixed(2)}, ${ny.toFixed(2)}) — move tokens to focus here!`;
+  if (nx < 0 || nx > 1 || ny < 0 || ny > 1) return null;
+  return { x: nx, y: ny };
+}
+
+function targetTouchToNorm(touch) {
+  const rect = cvTarget.getBoundingClientRect();
+  const bounds = cvTarget._imgBounds;
+  if (!bounds) return null;
+  const scaleX = rect.width / 290, scaleY = rect.height / 290;
+  const mx = touch.clientX - rect.left, my = touch.clientY - rect.top;
+  const nx = (mx / scaleX - bounds.x) / bounds.w;
+  const ny = (my / scaleY - bounds.y) / bounds.h;
+  if (nx < 0 || nx > 1 || ny < 0 || ny > 1) return null;
+  return { x: nx, y: ny };
+}
+
+// Mouse box drawing on target image
+cvTarget.addEventListener('mousedown', (e) => {
+  const pt = targetEventToNorm(e);
+  if (!pt) return;
+  State.isDrawingBox = true;
+  State.boxStart = pt;
+  State._boxCurrent = pt;
+});
+
+cvTarget.addEventListener('mousemove', (e) => {
+  if (!State.isDrawingBox) return;
+  const pt = targetEventToNorm(e);
+  if (pt) State._boxCurrent = pt;
+});
+
+cvTarget.addEventListener('mouseup', (e) => {
+  if (!State.isDrawingBox) return;
+  State.isDrawingBox = false;
+  const pt = targetEventToNorm(e);
+  if (pt && State.boxStart) {
+    const x = Math.min(State.boxStart.x, pt.x);
+    const y = Math.min(State.boxStart.y, pt.y);
+    const w = Math.abs(pt.x - State.boxStart.x);
+    const h = Math.abs(pt.y - State.boxStart.y);
+    if (w > 0.02 && h > 0.02) { // minimum size threshold
+      State.focusBoxes.push({ x, y, w, h });
+      document.getElementById('modeLabel').textContent =
+        `Added focus box #${State.focusBoxes.length} — tokens will migrate there`;
+    }
+  }
+  State.boxStart = null;
+  State._boxCurrent = null;
+});
+
+cvTarget.addEventListener('mouseleave', () => {
+  if (State.isDrawingBox) {
+    State.isDrawingBox = false;
+    State.boxStart = null;
+    State._boxCurrent = null;
   }
 });
+
+// Touch box drawing on target image
+cvTarget.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const pt = targetTouchToNorm(e.touches[0]);
+  if (!pt) return;
+  State.isDrawingBox = true;
+  State.boxStart = pt;
+  State._boxCurrent = pt;
+}, { passive: false });
+
+cvTarget.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (!State.isDrawingBox) return;
+  const pt = targetTouchToNorm(e.touches[0]);
+  if (pt) State._boxCurrent = pt;
+}, { passive: false });
+
+cvTarget.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  if (!State.isDrawingBox || !State.boxStart || !State._boxCurrent) {
+    State.isDrawingBox = false;
+    return;
+  }
+  const pt = State._boxCurrent;
+  const x = Math.min(State.boxStart.x, pt.x);
+  const y = Math.min(State.boxStart.y, pt.y);
+  const w = Math.abs(pt.x - State.boxStart.x);
+  const h = Math.abs(pt.y - State.boxStart.y);
+  if (w > 0.02 && h > 0.02) {
+    State.focusBoxes.push({ x, y, w, h });
+    document.getElementById('modeLabel').textContent =
+      `Added focus box #${State.focusBoxes.length} — tokens will migrate there`;
+  }
+  State.isDrawingBox = false;
+  State.boxStart = null;
+  State._boxCurrent = null;
+}, { passive: false });
 
 // ============================================================
 // Animation Loop
 // ============================================================
 let frameCount = 0;
 
+// ── Token Attraction: nudge tokens so their focus points land inside drawn boxes ──
+function applyBoxAttraction() {
+  if (State.focusBoxes.length === 0) return;
+
+  const step = State.boxAttractionStrength;
+
+  for (let s = 0; s < StalkModule.N_STALKS; s++) {
+    const st = StalkModule.stalks[s];
+    let totalNudgeX = 0, totalNudgeY = 0;
+    let nudgeCount = 0;
+
+    for (let l = 0; l < State.visibleLayers; l++) {
+      const fp = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y, s, l);
+
+      for (const box of State.focusBoxes) {
+        const boxCx = box.x + box.w / 2;
+        const boxCy = box.y + box.h / 2;
+
+        // Is this focus point already inside the box?
+        const inside = fp.x >= box.x && fp.x <= box.x + box.w &&
+                       fp.y >= box.y && fp.y <= box.y + box.h;
+
+        if (!inside) {
+          // Compute direction the token should move to bring focus point closer.
+          // Use numerical gradient: try small perturbations of the token position
+          // and see which direction moves the focus point toward the box center.
+          const eps = 0.005;
+          const fpPx = ChaoticHash.tokenToFocus(st.embedPoint.x + eps, st.embedPoint.y, s, l);
+          const fpMx = ChaoticHash.tokenToFocus(st.embedPoint.x - eps, st.embedPoint.y, s, l);
+          const fpPy = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y + eps, s, l);
+          const fpMy = ChaoticHash.tokenToFocus(st.embedPoint.x, st.embedPoint.y - eps, s, l);
+
+          // Gradient of (focus_x toward boxCx) w.r.t. token position
+          const dFxdTx = (fpPx.x - fpMx.x) / (2 * eps);
+          const dFxdTy = (fpPy.x - fpMy.x) / (2 * eps);
+          const dFydTx = (fpPx.y - fpMx.y) / (2 * eps);
+          const dFydTy = (fpPy.y - fpMy.y) / (2 * eps);
+
+          // Error: focus point minus box center
+          const errX = boxCx - fp.x;
+          const errY = boxCy - fp.y;
+
+          // Pseudo-inverse step: nudge token to reduce error
+          // token_nudge = J^T * error (gradient descent in token space)
+          totalNudgeX += dFxdTx * errX + dFydTx * errY;
+          totalNudgeY += dFxdTy * errX + dFydTy * errY;
+          nudgeCount++;
+        }
+      }
+    }
+
+    if (nudgeCount > 0) {
+      totalNudgeX /= nudgeCount;
+      totalNudgeY /= nudgeCount;
+
+      // Clamp nudge magnitude
+      const mag = Math.hypot(totalNudgeX, totalNudgeY);
+      const maxStep = step;
+      if (mag > maxStep) {
+        totalNudgeX = totalNudgeX / mag * maxStep;
+        totalNudgeY = totalNudgeY / mag * maxStep;
+      }
+
+      st.embedPoint.x = Math.max(0.05, Math.min(0.95, st.embedPoint.x + totalNudgeX));
+      st.embedPoint.y = Math.max(0.05, Math.min(0.95, st.embedPoint.y + totalNudgeY));
+    }
+  }
+
+  // If any token moved, invalidate caches
+  WarpModule.invalidateCache();
+  FocusMap.invalidateCache();
+}
+
+
 function animate(timestamp) {
   if (State.animating) {
     State.time += 0.016;
   }
+
+  // Apply box attraction every frame (tokens slowly migrate toward drawn boxes)
+  applyBoxAttraction();
 
   frameCount++;
   const doFullRender = frameCount % 2 === 0 || !State.animating;
