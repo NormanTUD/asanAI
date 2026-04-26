@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM as Fibre Bundle — Visual Explorer</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0a0e1a;color:#e2e8f0;line-height:1.6;padding:20px;max-width:1400px;margin:0 auto}
+h1{font-size:1.7em;text-align:center;margin-bottom:4px;color:#f8fafc;background:linear-gradient(90deg,#fd79a8,#a29bfe,#00cec9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:20px;font-size:0.9em}
+h2{font-size:1.15em;margin-bottom:10px;color:#a29bfe;border-bottom:1px solid #1e3a5f;padding-bottom:5px}
+.section{background:#111827;border-radius:14px;padding:20px;margin-bottom:20px;border:1px solid #1e293b}
+canvas{border-radius:8px;display:block;margin:0 auto}
+canvas.clickable{cursor:pointer}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+button{background:#6c5ce7;color:white;border:none;padding:7px 14px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:0.82em;transition:all 0.2s}
+button:hover{background:#a29bfe;transform:scale(1.03)}
+button.active{background:#fd79a8;box-shadow:0 0 12px #fd79a880}
+button.secondary{background:#475569}
+button.secondary:hover{background:#64748b}
+.slider-row{display:flex;align-items:center;gap:10px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+.slider-row label{font-size:0.82em;color:#94a3b8;min-width:80px;text-align:right}
+.slider-row input[type=range]{width:160px;accent-color:#a29bfe}
+.slider-row .val{font-size:0.82em;color:#fbbf24;min-width:40px}
+.insight{background:linear-gradient(135deg,#1a1040,#111827);border-left:4px solid #a29bfe;padding:16px 20px;border-radius:0 12px 12px 0;margin-top:14px;min-height:50px;transition:all 0.3s}
+.insight p{margin-bottom:8px;color:#cbd5e1;font-size:0.9em}
+.insight b{color:#a29bfe}
+.formula{font-family:'Courier New',monospace;background:#0f172a;padding:4px 12px;border-radius:6px;display:inline-block;color:#fbbf24;font-size:0.9em;margin:3px 0}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.panel{text-align:center}
+.panel h3{font-size:1em;margin-bottom:6px;color:#00cec9}
+.badge{font-size:0.68em;padding:2px 7px;border-radius:10px;vertical-align:middle}
+.badge.attn{background:#2d1b69;color:#a29bfe}
+.badge.ffn{background:#1b3a2d;color:#00cec9}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:8px 0;font-size:0.78em;color:#94a3b8}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.tab-bar{display:flex;gap:2px;justify-content:center;margin-bottom:12px}
+.tab-bar button{border-radius:8px 8px 0 0;font-size:0.78em;padding:6px 12px}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<h1>🔮 LLM Layers as Fibre Bundle Morphisms</h1>
+<p class="subtitle">Interactive visualization: how each transformer layer morphs space, focuses attention, and stores information holographically.</p>
+
+<!-- ===== SECTION 1: THE CORE IDEA ===== -->
+<div class="section">
+  <h2>🌀 Section 1: Space-Morphing, Not Point-Moving</h2>
+  <p style="color:#94a3b8;margin-bottom:12px;font-size:0.88em">Each layer doesn't move tokens through a fixed space — it <b style="color:#a29bfe">deforms the space itself</b> via Lipschitz maps. Watch a regular grid get morphed by successive layers.</p>
+  <div class="controls">
+    <button onclick="morphReset()" class="secondary">🔄 Reset</button>
+    <button onclick="morphStep(-1)" class="secondary">⏮ Prev Layer</button>
+    <button onclick="morphStep(1)">⏭ Next Layer</button>
+    <button onclick="morphPlay()" id="btnMorphPlay">▶ Animate</button>
+    <button onclick="morphPause()" class="secondary">⏸ Pause</button>
+  </div>
+  <div class="slider-row">
+    <label>Layer:</label>
+    <input type="range" id="sl-morph-layer" min="0" max="11" value="0">
+    <span class="val" id="v-morph-layer">0</span>
+    <label>Deformation t:</label>
+    <input type="range" id="sl-morph-t" min="0" max="100" value="100">
+    <span class="val" id="v-morph-t">1.00</span>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <h3>Embedding Space (Layer 0)</h3>
+      <canvas id="cvMorphRef" width="420" height="420"></canvas>
+    </div>
+    <div class="panel">
+      <h3>After Layer <span id="morphLayerLabel">0</span></h3>
+      <canvas id="cvMorphDef" width="420" height="420"></canvas>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="dot" style="background:#0077b6"></span> Contraction</span>
+    <span><span class="dot" style="background:#888"></span> Isometry</span>
+    <span><span class="dot" style="background:#e94560"></span> Expansion</span>
+    <span><span class="dot" style="background:#fbbf24"></span> Token positions</span>
+  </div>
+  <div class="insight" id="morphInsight">
+    <p>Press <b>▶ Animate</b> or <b>⏭ Next Layer</b> to watch the space deform layer by layer.</p>
+    <p>The grid lines <b>are</b> the space. When they bend, the geometry of meaning changes.</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: FIBRE BUNDLE VIEW ===== -->
+<div class="section">
+  <h2>🧬 Section 2: The Fibre Bundle — Layers as Fibres</h2>
+  <p style="color:#94a3b8;margin-bottom:12px;font-size:0.88em">Each token position is a point on the <b style="color:#a29bfe">base manifold</b>. Above each point, the <b style="color:#00cec9">fibre</b> stacks all layer representations. Attention decides <em>where</em> to focus; FFN decides <em>how</em> to morph.</p>
+  <div class="controls">
+    <button onclick="fibreAnimate()" id="btnFibreAnim">▶ Animate Parallel Transport</button>
+    <button onclick="fibrePause()" class="secondary">⏸ Pause</button>
+    <button onclick="fibreReset()" class="secondary">🔄 Reset</button>
+  </div>
+  <canvas id="cvFibre" width="900" height="500" class="clickable"></canvas>
+  <div class="legend">
+    <span><span class="dot" style="background:#e94560"></span> Token fibres</span>
+    <span><span class="dot" style="background:#00cec9"></span> Attn lens (where to focus)</span>
+    <span><span class="dot" style="background:#fbbf24"></span> FFN morphism (how to deform)</span>
+    <span><span class="dot" style="background:#a29bfe"></span> Parallel transport</span>
+  </div>
+  <div class="insight">
+    <p><b>Base manifold</b> = token index space (horizontal). <b>Fibres</b> = layer stack (vertical). Each layer's attention sub-layer acts as a <b style="color:#00cec9">context-dependent lens</b> deciding which information from other fibres to incorporate. The FFN sub-layer generates the <b style="color:#fbbf24">space-morphing map</b> — the actual diffeomorphism.</p>
+    <p>Parallel transport carries the morphism instructions between layers. The <b>connection</b> on the bundle determines how frames rotate as you move along a fibre — this rotation is the <b>holonomy</b>, and it encodes computation.</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: HOLOGRAPHIC LAYER FOCUSING ===== -->
+<div class="section">
+  <h2>🔬 Section 3: Holographic Focusing — Each Layer as a Lens</h2>
+  <p style="color:#94a3b8;margin-bottom:12px;font-size:0.88em">Like the hologram demo: each layer makes a <b style="color:#fd79a8">certain part</b> of the whole image clearer without destroying the rest. Attention selects the region; FFN sharpens it.</p>
+  <div class="controls">
+    <button onclick="holoPlay()" id="btnHoloPlay">▶ Play</button>
+    <button onclick="holoPause()" class="secondary">⏸ Pause</button>
+    <button onclick="holoNext()">⏭ Next Layer</button>
+    <button onclick="holoReset()" class="secondary">🔄 Reset</button>
+  </div>
+  <div class="slider-row">
+    <label>Layer:</label>
+    <input type="range" id="sl-holo-layer" min="0" max="11" value="0">
+    <span class="val" id="v-holo-layer">0</span>
+  </div>
+  <div class="grid-3">
+    <div class="panel">
+      <h3>Attention Focus <span class="badge attn">Lens</span></h3>
+      <canvas id="cvHoloAttn" width="280" height="280"></canvas>
+      <p style="font-size:0.75em;color:#64748b;margin-top:4px">Where this layer "looks"</p>
+    </div>
+    <div class="panel">
+      <h3>FFN Morphism <span class="badge ffn">Deform</span></h3>
+      <canvas id="cvHoloFFN" width="280" height="280"></canvas>
+      <p style="font-size:0.75em;color:#64748b;margin-top:4px">How the space is reshaped</p>
+    </div>
+    <div class="panel">
+      <h3>Cumulative Image</h3>
+      <canvas id="cvHoloResult" width="280" height="280"></canvas>
+      <p style="font-size:0.75em;color:#64748b;margin-top:4px">Running reconstruction</p>
+    </div>
+  </div>
+  <div class="insight" id="holoInsight">
+    <p>Press <b>▶ Play</b> to watch each layer progressively sharpen different regions of the "image" (the model's internal representation).</p>
+    <p>Like a hologram: early layers add <b>low-frequency</b> global structure. Later layers add <b>high-frequency</b> detail to specific regions selected by attention.</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: JACOBIAN FIELD & TOPOLOGICAL STRUCTURES ===== -->
+<div class="section">
+  <h2>🌊 Section 4: Jacobian Field — The Morphism's Fingerprint</h2>
+  <p style="color:#94a3b8;margin-bottom:12px;font-size:0.88em">The Jacobian field J(x) = ∂Φ/∂x encodes <b style="color:#a29bfe">how the space deforms at every point</b>. Divergence, curl, shear, and eigenvalues reveal the topological structures hidden inside.</p>
+  <div class="tab-bar" id="jacTabs">
+    <button class="active" onclick="setJacTab('divergence')">Divergence</button>
+    <button onclick="setJacTab('curl')">Curl</button>
+    <button onclick="setJacTab('shear')">Shear</button>
+    <button onclick="setJacTab('eigphase')">Eigenphase</button>
+    <button onclick="setJacTab('composite')">Composite</button>
+  </div>
+  <div class="slider-row">
+    <label>Layer:</label>
+    <input type="range" id="sl-jac-layer" min="0" max="11" value="5">
+    <span class="val" id="v-jac-layer">5</span>
+  </div>
+  <canvas id="cvJacobian" width="600" height="400"></canvas>
+  <div class="legend">
+    <span><span class="dot" style="background:#e94560"></span> Expansion (+div)</span>
+    <span><span class="dot" style="background:#0077b6"></span> Contraction (-div)</span>
+    <span><span class="dot" style="background:#fbbf24"></span> High curl (rotation)</span>
+    <span><span class="dot" style="background:#a29bfe"></span> High shear (anisotropy)</span>
+  </div>
+  <div class="insight">
+    <p>The Jacobian field is the <b>holographic carrier</b>: it encodes the model's distributed information as interference patterns in the deformation geometry.</p>
+    <p>Topological structures (loops, spirals, saddles) emerge in this field — they are the <b>scrambled computational circuits</b> that perform reasoning, arithmetic, and language generation.</p>
+    <p><span class="formula">J(x) = ∂Φ/∂x → {div, curl, shear, eigenspectrum}</span></p>
+  </div>
+</div>
+
+<!-- ===== SECTION 5: INNER LAYERS COMPUTE, OUTER TRANSLATE ===== -->
+<div class="section">
+  <h2>⚡ Section 5: Inner Layers Compute, Outer Layers Translate</h2>
+  <p style="color:#94a3b8;margin-bottom:12px;font-size:0.88em">The first and last layers translate between token space and the model's internal geometric language. The <b style="color:#fd79a8">middle layers</b> do the heavy computation — and the last layer often <b>reverses</b> the deformation.</p>
+  <canvas id="cvLayerProfile" width="900" height="250"></canvas>
+  <div class="insight">
+    <p><b>Observation:</b> Inner layers show the highest deformation magnitude (Jacobian norm), while the last layer often "unmorphs" the space back toward the embedding geometry so the language modeling head can read the result.</p>
+    <p>This is consistent with the conjecture that the model's <b>internal geometric language</b> is different from the token embedding space, and layers 1 and L serve as translators.</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 6: PUTTING IT ALL TOGETHER ===== -->
+<div class="section">
+  <h2>🧠 Section 6: The Full Picture</h2>
+  <div class="insight">
+    <p><b>1. Fibre Bundle Structure:</b> The LLM is a fibre bundle. Base manifold = token positions. Each fibre = the stack of representation spaces across layers. The structure group consists of Lipschitz maps (not diffeomorphisms, because ReLU collapses dimensions).</p>
+    <p><b>2. Attention = Lens:</b> Each attention head selects which region of the representation space to focus on — like choosing which part of a hologram to illuminate with a reference beam.</p>
+    <p><b>3. FFN = Diffeomorphism Generator:</b> The feed-forward network generates the actual space-morphing map. This map contains both the <b>data</b> (what the model knows) and the <b>instructions</b> (how to process it further) — holographically scrambled together.</p>
+    <p><b>4. Holographic Storage:</b> Due to polysemanticity (pigeonhole principle: more features than neurons), information is distributed across all dimensions. Destroying some dimensions blurs the whole picture but never erases any single concept — exactly like a hologram.</p>
+    <p><b>5. Topological Computation:</b> Inside the scrambled Jacobian fields, topological structures (persistent loops, spirals, connected components) perform the actual computation — analogous to homotopy type theory. The model "calculates" by deforming spaces, not by moving points.</p>
+    <p><b>6. Parallel Transport:</b> The connection on the fibre bundle determines how morphism instructions propagate between layers. The holonomy (accumulated frame rotation around a loop) encodes the net computational effect of a sequence of layers.</p>
+    <p><span class="formula">h_i^(L) = h_i^(0) + Σ_ℓ Δ_i^(ℓ)  ← superposition of deformations</span></p>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// SHARED UTILITIES
+// ============================================================
+const dpr = window.devicePixelRatio || 1;
+function setupHiDPI(id, w, h) {
+  const c = document.getElementById(id);
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.width = w + 'px'; c.style.height = h + 'px';
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+  return { c, ctx, w, h };
+}
+
+function s2c(s) {
+  if (s <= 0.5) return [0, 119 + Math.floor((1-s/0.5)*61), 182 + Math.floor((1-s/0.5)*38)];
+  if (s >= 1.5) return [233, 69, 96];
+  if (s < 1) { const f = (s-0.5)/0.5; return [Math.floor(f*120), Math.floor(180-f*80), Math.floor(220-f*120)]; }
+  const f2 = (s-1)/0.5; return [Math.floor(120+f2*113), Math.floor(100-f2*31), Math.floor(100-f2*4)];
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// Pseudo-random seeded
+let _seed = 42;
+function srand(s) { _seed = s; }
+function rand() { _seed = (_seed * 16807 + 0) % 2147483647; return (_seed - 1) / 2147483646; }
+
+// ============================================================
+// SIMULATED LLM DATA (12 layers, 6 tokens)
+// ============================================================
+const N_LAYERS = 12;
+const N_TOKENS = 6;
+const TOKENS = ['The', 'cat', 'sat', 'on', 'the', 'mat'];
+const TOKEN_COLORS = ['#e94560','#f5a623','#53a8b6','#7b68ee','#2ecc71','#fd79a8'];
+
+// Generate simulated per-layer deformation fields
+// Each layer has a different "character" of deformation
+srand(2026);
+const layerMorphs = [];
+for (let l = 0; l < N_LAYERS; l++) {
+  // Inner layers (3-8) have stronger deformations
+  const strength = l < 2 ? 0.3 : l > 9 ? 0.25 : 0.6 + 0.3 * Math.sin(l * 0.7);
+  // Each layer has 2-3 "vortex centers" that define the deformation
+  const nVortex = 2 + Math.floor(rand() * 2);
+  const vortices = [];
+  for (let v = 0; v < nVortex; v++) {
+    vortices.push({
+      cx: 0.15 + rand() * 0.7,
+      cy: 0.15 + rand() * 0.7,
+      strength: (rand() - 0.5) * strength * 0.15,
+      rotation: (rand() - 0.5) * strength * 0.3,
+      scale: 0.2 + rand() * 0.3
+    });
+  }
+  // Last layer: reversal tendency
+  const reversal = l >= 10 ? -0.4 * (l - 9) / 2 : 0;
+  layerMorphs.push({ vortices, strength, reversal, layer: l });
+}
+
+// Compute deformation at a point for a given layer
+function deformPoint(x, y, layer, t) {
+  const m = layerMorphs[layer];
+  let dx = 0, dy = 0;
+  for (const v of m.vortices) {
+    const ex = x - v.cx, ey = y - v.cy;
+    const d2 = ex * ex + ey * ey;
+    const w = Math.exp(-d2 / (2 * v.scale * v.scale));
+    // Radial + rotational component
+    dx += w * (v.strength * ex + v.rotation * (-ey));
+    dy += w * (v.strength * ey + v.rotation * ex);
+  }
+  // Reversal for last layers
+  if (m.reversal !== 0) {
+    dx += m.reversal * (x - 0.5) * 0.1;
+    dy += m.reversal * (y - 0.5) * 0.1;
+  }
+  return { dx: dx * t, dy: dy * t };
+}
+
+// Cumulative deformation up to layer L
+function cumulativeDeform(x, y, upToLayer, t) {
+  let cx = x, cy = y;
+  for (let l = 0; l <= upToLayer; l++) {
+    const d = deformPoint(cx, cy, l, t);
+    cx += d.dx; cy += d.dy;
+  }
+  return { x: cx, y: cy };
+}
+
+// Token base positions (in [0,1]^2)
+const tokenPos = TOKENS.map((_, i) => ({
+  x: 0.15 + (i / (N_TOKENS - 1)) * 0.7,
+  y: 0.4 + 0.15 * Math.sin(i * 1.2)
+}));
+
+// ============================================================
+// SECTION 1: SPACE-MORPHING VISUALIZATION
+// ============================================================
+const cvRef = setupHiDPI('cvMorphRef', 420, 420);
+const cvDef = setupHiDPI('cvMorphDef', 420, 420);
+let morphLayer = 0;
+let morphT = 1.0;
+let morphTimer = null;
+
+function drawGrid(ctx, w, h, N, deformFn, showTokens) {
+  const M = 20;
+  const pw = w - 2*M, ph = h - 2*M;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#0a0e1a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Build grid
+  const gN = N || 20;
+  for (let gy = 0; gy <= gN; gy++) {
+    ctx.beginPath();
+    for (let gx = 0; gx <= gN; gx++) {
+      const u = gx / gN, v = gy / gN;
+      const p = deformFn(u, v);
+      const sx = M + p.x * pw, sy = M + p.y * ph;
+      if (gx === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+    }
+    // Compute strain for color
+    const u0 = 0, v0 = gy / gN;
+    const p0 = deformFn(u0, v0);
+    const p1 = deformFn(1, v0);
+    const origLen = pw;
+    const defLen = Math.hypot((p1.x - p0.x) * pw, (p1.y - p0.y) * ph);
+    const strain = origLen > 0 ? defLen / origLen : 1;
+    const sc = s2c(strain);
+    ctx.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.7)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  for (let gx = 0; gx <= gN; gx++) {
+    ctx.beginPath();
+    for (let gy = 0; gy <= gN; gy++) {
+      const u = gx / gN, v = gy / gN;
+      const p = deformFn(u, v);
+      const sx = M + p.x * pw, sy = M + p.y * ph;
+      if (gy === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+    }
+    const u0 = gx / gN, v0 = 0;
+    const p0 = deformFn(u0, v0);
+    const p1 = deformFn(u0, 1);
+    const origLen = ph;
+    const defLen = Math.hypot((p1.x - p0.x) * pw, (p1.y - p0.y) * ph);
+    const strain = origLen > 0 ? defLen / origLen : 1;
+    const sc = s2c(strain);
+    ctx.strokeStyle = `rgba(${sc[0]},${sc[1]},${sc[2]},0.7)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Tokens
+  if (showTokens) {
+    for (let i = 0; i < N_TOKENS; i++) {
+      const tp = tokenPos[i];
+      const p = deformFn(tp.x, tp.y);
+      const sx = M + p.x * pw, sy = M + p.y * ph;
+      // Glow
+      const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, 18);
+      grad.addColorStop(0, TOKEN_COLORS[i] + '40');
+      grad.addColorStop(1, TOKEN_COLORS[i] + '00');
+      ctx.beginPath(); ctx.arc(sx, sy, 18, 0, Math.PI*2);
+      ctx.fillStyle = grad; ctx.fill();
+      // Dot
+      ctx.beginPath(); ctx.arc(sx, sy, 5, 0, Math.PI*2);
+      ctx.fillStyle = TOKEN_COLORS[i]; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+      // Label
+      ctx.font = 'bold 10px monospace';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.fillText(TOKENS[i], sx, sy - 10);
+    }
+  }
+}
+
+function renderMorph() {
+  const layer = morphLayer;
+  const t = morphT;
+  document.getElementById('v-morph-layer').textContent = layer;
+  document.getElementById('morphLayerLabel').textContent = layer;
+  document.getElementById('v-morph-t').textContent = t.toFixed(2);
+
+  // Reference grid (identity)
+  drawGrid(cvRef.ctx, cvRef.w, cvRef.h, 20, (u, v) => ({x: u, y: v}), true);
+
+  // Deformed grid
+  drawGrid(cvDef.ctx, cvDef.w, cvDef.h, 20, (u, v) => {
+    return cumulativeDeform(u, v, layer, t);
+  }, true);
+
+  // Insight
+  const ins = document.getElementById('morphInsight');
+  if (layer === 0) {
+    ins.innerHTML = '<p><b>Layer 0 (Embedding):</b> Minimal deformation. The space is close to the original embedding geometry.</p>';
+  } else if (layer <= 2) {
+    ins.innerHTML = `<p><b>Layer ${layer}:</b> Early layers begin gentle deformations — translating from token space into the model's internal geometric language.</p>`;
+  } else if (layer <= 8) {
+    ins.innerHTML = `<p><b>Layer ${layer} (Inner):</b> Strong, complex deformations! The model is <b>computing</b> — creating topological structures (loops, saddles) that encode reasoning.</p><p>Notice how different regions expand and contract differently — this is the <b>Jacobian field</b> at work.</p>`;
+  } else if (layer <= 10) {
+    ins.innerHTML = `<p><b>Layer ${layer}:</b> Deformation begins to stabilize. The model is consolidating its computation.</p>`;
+  } else {
+    ins.innerHTML = `<p><b>Layer ${layer} (Final):</b> The space is being <b>morphed back</b> toward the embedding geometry! The last layer "translates" the internal computation back into a form the language modeling head can read.</p><p>This reversal pattern is consistently observed across prompts.</p>`;
+  }
+}
+
+document.getElementById('sl-morph-layer').addEventListener('input', function() {
+  morphLayer = +this.value; renderMorph();
+});
+document.getElementById('sl-morph-t').addEventListener('input', function() {
+  morphT = +this.value / 100; renderMorph();
+});
+
+function morphStep(dir) {
+  morphLayer = clamp(morphLayer + dir, 0, N_LAYERS - 1);
+  document.getElementById('sl-morph-layer').value = morphLayer;
+  renderMorph();
+}
+
+let morphAnimTimer = null;
+let morphAnimLayer = 0;
+let morphAnimT = 0;
+
+function morphPlay() {
+  morphPause();
+  morphAnimLayer = morphLayer;
+  morphAnimT = 0;
+  morphAnimTimer = setInterval(() => {
+    morphAnimT += 0.04;
+    if (morphAnimT >= 1) {
+      morphAnimT = 0;
+      morphAnimLayer++;
+      if (morphAnimLayer >= N_LAYERS) {
+        morphAnimLayer = 0;
+      }
+      morphLayer = morphAnimLayer;
+      document.getElementById('sl-morph-layer').value = morphLayer;
+    }
+    morphT = morphAnimT;
+    document.getElementById('sl-morph-t').value = Math.round(morphT * 100);
+    renderMorph();
+  }, 40);
+}
+
+function morphPause() {
+  if (morphAnimTimer) { clearInterval(morphAnimTimer); morphAnimTimer = null; }
+}
+
+function morphReset() {
+  morphPause();
+  morphLayer = 0; morphT = 1.0;
+  document.getElementById('sl-morph-layer').value = 0;
+  document.getElementById('sl-morph-t').value = 100;
+  renderMorph();
+}
+
+renderMorph();
+
+// ============================================================
+// SECTION 2: FIBRE BUNDLE VIEW
+// ============================================================
+const cvFibre = setupHiDPI('cvFibre', 900, 500);
+let fibreAnimTimer = null;
+let fibreAnimPhase = 0;
+let fibreTransportLayer = 0;
+
+function drawFibreView() {
+  const ctx = cvFibre.ctx, w = cvFibre.w, h = cvFibre.h;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#0a0e1a';
+  ctx.fillRect(0, 0, w, h);
+
+  const M = 50;
+  const baseY = h - 80;
+  const topY = 60;
+  const layerH = (baseY - topY) / N_LAYERS;
+  const tokenSpacing = (w - 2 * M) / (N_TOKENS + 1);
+
+  // Draw base manifold (horizontal line at bottom)
+  ctx.strokeStyle = 'rgba(162,155,254,0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(M, baseY);
+  ctx.lineTo(w - M, baseY);
+  ctx.stroke();
+
+  // Label
+  ctx.font = 'bold 11px monospace';
+  ctx.fillStyle = '#a29bfe';
+  ctx.textAlign = 'center';
+  ctx.fillText('Base Manifold: Token Index Space', w / 2, baseY + 30);
+
+  // Draw layer labels on the left
+  for (let l = 0; l < N_LAYERS; l++) {
+    const ly = baseY - (l + 0.5) * layerH;
+    ctx.font = '9px monospace';
+    ctx.fillStyle = l === fibreTransportLayer ? '#fd79a8' : '#475569';
+    ctx.textAlign = 'right';
+    ctx.fillText('L' + l, M - 10, ly + 3);
+
+    // Horizontal guide line
+    ctx.strokeStyle = l === fibreTransportLayer ? 'rgba(253,121,168,0.15)' : 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = l === fibreTransportLayer ? 1 : 0.5;
+    ctx.beginPath();
+    ctx.moveTo(M, ly);
+    ctx.lineTo(w - M, ly);
+    ctx.stroke();
+  }
+
+  // Draw fibres (vertical strands for each token)
+  for (let ti = 0; ti < N_TOKENS; ti++) {
+    const baseX = M + (ti + 1) * tokenSpacing;
+    const col = TOKEN_COLORS[ti];
+
+    // Token label at base
+    ctx.font = 'bold 10px monospace';
+    ctx.fillStyle = col;
+    ctx.textAlign = 'center';
+    ctx.fillText(TOKENS[ti], baseX, baseY + 15);
+
+    // Base dot
+    ctx.beginPath();
+    ctx.arc(baseX, baseY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = col;
+    ctx.fill();
+
+    // Draw the fibre (vertical strand with deformation)
+    const points = [];
+    for (let l = 0; l <= N_LAYERS; l++) {
+      const ly = baseY - l * layerH;
+      // Compute lateral displacement from cumulative deformation
+      let dx = 0;
+      for (let ll = 0; ll < l; ll++) {
+        const d = deformPoint(tokenPos[ti].x, tokenPos[ti].y, ll, 1.0);
+        dx += d.dx * 300; // Scale for visibility
+      }
+      // Add gentle wave for visual appeal
+      dx += Math.sin(fibreAnimPhase + ti * 0.8 + l * 0.3) * 3;
+      points.push({ x: baseX + dx, y: ly });
+    }
+
+    // Draw fibre glow
+    ctx.strokeStyle = col + '15';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1], curr = points[i];
+      ctx.quadraticCurveTo(prev.x, (prev.y + curr.y) / 2, curr.x, curr.y);
+    }
+    ctx.stroke();
+
+    // Draw fibre line
+    ctx.strokeStyle = col + 'AA';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1], curr = points[i];
+      ctx.quadraticCurveTo(prev.x, (prev.y + curr.y) / 2, curr.x, curr.y);
+    }
+    ctx.stroke();
+
+    // Draw node dots at each layer
+    for (let l = 0; l <= N_LAYERS && l < points.length; l++) {
+      const pt = points[l];
+      const isTransport = (l === fibreTransportLayer || l === fibreTransportLayer + 1);
+      const r = isTransport ? 4 : 2.5;
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = isTransport ? '#fff' : col;
+      ctx.fill();
+    }
+
+    // Draw parallel transport arrow between transport layers
+    if (fibreTransportLayer < N_LAYERS && fibreTransportLayer < points.length - 1) {
+      const p1 = points[fibreTransportLayer];
+      const p2 = points[fibreTransportLayer + 1];
+      const midX = (p1.x + p2.x) / 2 + Math.sin(fibreAnimPhase + ti) * 8;
+      const midY = (p1.y + p2.y) / 2;
+
+      // Transport arrow
+      ctx.strokeStyle = '#a29bfe';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.quadraticCurveTo(midX, midY, p2.x, p2.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Arrowhead
+      const angle = Math.atan2(p2.y - midY, p2.x - midX);
+      ctx.fillStyle = '#a29bfe';
+      ctx.beginPath();
+      ctx.moveTo(p2.x, p2.y);
+      ctx.lineTo(p2.x - 6 * Math.cos(angle - 0.4), p2.y - 6 * Math.sin(angle - 0.4));
+      ctx.lineTo(p2.x - 6 * Math.cos(angle + 0.4), p2.y - 6 * Math.sin(angle + 0.4));
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  // Draw attention lens indicator
+  const attnLayer = fibreTransportLayer;
+  const attnY = baseY - (attnLayer + 0.5) * layerH;
+  // Attention focus region (cyan highlight)
+  const focusCenter = M + (2 + 1) * tokenSpacing; // Focus on token 2 ("sat")
+  const focusWidth = tokenSpacing * 2;
+  const grad = ctx.createRadialGradient(focusCenter, attnY, 0, focusCenter, attnY, focusWidth);
+  grad.addColorStop(0, 'rgba(0,206,201,0.12)');
+  grad.addColorStop(1, 'rgba(0,206,201,0)');
+  ctx.beginPath();
+  ctx.ellipse(focusCenter, attnY, focusWidth, layerH * 0.4, 0, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(0,206,201,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Attention label
+  ctx.font = '9px monospace';
+  ctx.fillStyle = '#00cec9';
+  ctx.textAlign = 'left';
+  ctx.fillText('Attn lens (where to focus)', focusCenter + focusWidth + 5, attnY - 5);
+
+  // FFN morphism indicator
+  const ffnY = attnY + layerH * 0.3;
+  ctx.font = '9px monospace';
+  ctx.fillStyle = '#fbbf24';
+  ctx.textAlign = 'left';
+  ctx.fillText('FFN morphism (how to deform)', w - M - 180, ffnY);
+
+  // Fibre label
+  ctx.save();
+  ctx.translate(M - 35, (baseY + topY) / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.font = 'bold 11px monospace';
+  ctx.fillStyle = '#00cec9';
+  ctx.textAlign = 'center';
+  ctx.fillText('Fibre: Layer Depth →', 0, 0);
+  ctx.restore();
+}
+
+function fibreAnimate() {
+  fibrePause();
+  fibreAnimTimer = setInterval(() => {
+    fibreAnimPhase += 0.05;
+    fibreTransportLayer = Math.floor((fibreAnimPhase * 0.5) % N_LAYERS);
+    drawFibreView();
+  }, 50);
+}
+
+function fibrePause() {
+  if (fibreAnimTimer) { clearInterval(fibreAnimTimer); fibreAnimTimer = null; }
+}
+
+function fibreReset() {
+  fibrePause();
+  fibreAnimPhase = 0;
+  fibreTransportLayer = 0;
+  drawFibreView();
+}
+
+cvFibre.c.addEventListener('click', (e) => {
+  const rect = cvFibre.c.getBoundingClientRect();
+  const my = e.clientY - rect.top;
+  const baseY = cvFibre.h - 80;
+  const topY = 60;
+  const layerH = (baseY - topY) / N_LAYERS;
+  const clickedLayer = Math.floor((baseY - my) / layerH);
+  if (clickedLayer >= 0 && clickedLayer < N_LAYERS) {
+    fibreTransportLayer = clickedLayer;
+    drawFibreView();
+  }
+});
+
+drawFibreView();
+
+// ============================================================
+// SECTION 3: HOLOGRAPHIC FOCUSING
+// ============================================================
+const cvHoloAttn = setupHiDPI('cvHoloAttn', 280, 280);
+const cvHoloFFN = setupHiDPI('cvHoloFFN', 280, 280);
+const cvHoloResult = setupHiDPI('cvHoloResult', 280, 280);
+
+let holoLayer = 0;
+let holoTimer = null;
+
+// Generate a "hidden image" — a smiley face in frequency space
+const HOLO_SIZE = 64;
+const holoTarget = new Float64Array(HOLO_SIZE * HOLO_SIZE);
+// Draw a smiley
+for (let y = 0; y < HOLO_SIZE; y++) {
+  for (let x = 0; x < HOLO_SIZE; x++) {
+    const cx = x - HOLO_SIZE / 2, cy = y - HOLO_SIZE / 2;
+    const r = Math.sqrt(cx * cx + cy * cy);
+    // Face outline
+    if (Math.abs(r - 24) < 2) holoTarget[y * HOLO_SIZE + x] = 1;
+    // Eyes
+    if (Math.hypot(cx - 8, cy + 6) < 3) holoTarget[y * HOLO_SIZE + x] = 1;
+    if (Math.hypot(cx + 8, cy + 6) < 3) holoTarget[y * HOLO_SIZE + x] = 1;
+    // Smile
+    if (r > 12 && r < 16 && cy > 4 && Math.abs(cx) < 14) holoTarget[y * HOLO_SIZE + x] = 1;
+  }
+}
+
+// Each layer "focuses" on a different region and adds detail there
+// Attention regions per layer (cx, cy, radius in [0,1] space)
+const holoAttnRegions = [];
+srand(777);
+for (let l = 0; l < N_LAYERS; l++) {
+  holoAttnRegions.push({
+    cx: 0.2 + rand() * 0.6,
+    cy: 0.2 + rand() * 0.6,
+    r: 0.15 + rand() * 0.2 - l * 0.005, // Smaller focus as layers go deeper
+    strength: 0.5 + rand() * 0.5
+  });
+}
+
+function renderHolo() {
+  const layer = holoLayer;
+  document.getElementById('v-holo-layer').textContent = layer;
+  document.getElementById('sl-holo-layer').value = layer;
+
+  const S = HOLO_SIZE;
+  const ps = 280 / S;
+
+  // Build cumulative result
+  const result = new Float64Array(S * S);
+  const attnMap = new Float64Array(S * S);
+  const ffnMap = new Float64Array(S * S);
+
+  for (let l = 0; l <= layer; l++) {
+    const region = holoAttnRegions[l];
+    for (let y = 0; y < S; y++) {
+      for (let x = 0; x < S; x++) {
+        const nx = x / S, ny = y / S;
+        const dx = nx - region.cx, dy = ny - region.cy;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const w = Math.exp(-d * d / (2 * region.r * region.r)) * region.strength;
+
+        // This layer's contribution: weighted version of the target
+        const contribution = holoTarget[y * S + x] * w;
+        result[y * S + x] += contribution / (N_LAYERS * 0.5);
+
+        if (l === layer) {
+          attnMap[y * S + x] = w;
+          ffnMap[y * S + x] = contribution;
+        }
+      }
+    }
+  }
+
+  // Clamp result
+  for (let i = 0; i < S * S; i++) result[i] = clamp(result[i], 0, 1);
+
+  // Draw attention map
+  const ctxA = cvHoloAttn.ctx;
+  ctxA.clearRect(0, 0, 280, 280);
+  for (let y = 0; y < S; y++) {
+    for (let x = 0; x < S; x++) {
+      const v = attnMap[y * S + x];
+      const r = Math.floor(v * 0), g = Math.floor(v * 206), b = Math.floor(v * 201);
+      ctxA.fillStyle = `rgb(${10 + r},${14 + g},${26 + b})`;
+      ctxA.fillRect(x * ps, y * ps, ps + 0.5, ps + 0.5);
+    }
+  }
+  // Draw region outline
+  const region = holoAttnRegions[layer];
+  ctxA.strokeStyle = '#00cec9';
+  ctxA.lineWidth = 2;
+  ctxA.setLineDash([4, 4]);
+  ctxA.beginPath();
+  ctxA.arc(region.cx * 280, region.cy * 280, region.r * 280, 0, Math.PI * 2);
+  ctxA.stroke();
+  ctxA.setLineDash([]);
+
+  // Draw FFN morphism map
+  const ctxF = cvHoloFFN.ctx;
+  ctxF.clearRect(0, 0, 280, 280);
+  let maxFFN = 0;
+  for (let i = 0; i < S * S; i++) if (Math.abs(ffnMap[i]) > maxFFN) maxFFN = Math.abs(ffnMap[i]);
+  if (maxFFN < 1e-8) maxFFN = 1;
+  for (let y = 0; y < S; y++) {
+    for (let x = 0; x < S; x++) {
+      const v = ffnMap[y * S + x] / maxFFN;
+      const r = Math.floor(v * 251), g = Math.floor(v * 191), b = Math.floor(v * 36);
+      ctxF.fillStyle = `rgb(${10 + r},${14 + g},${26 + b})`;
+      ctxF.fillRect(x * ps, y * ps, ps + 0.5, ps + 0.5);
+    }
+  }
+
+  // Draw cumulative result
+  const ctxR = cvHoloResult.ctx;
+  ctxR.clearRect(0, 0, 280, 280);
+  for (let y = 0; y < S; y++) {
+    for (let x = 0; x < S; x++) {
+      const v = result[y * S + x];
+      const bright = Math.floor(v * 255);
+      ctxR.fillStyle = `rgb(${10 + bright},${14 + Math.floor(bright * 0.9)},${26 + Math.floor(bright * 0.4)})`;
+      ctxR.fillRect(x * ps, y * ps, ps + 0.5, ps + 0.5);
+    }
+  }
+
+  // Insight
+  const ins = document.getElementById('holoInsight');
+  if (layer === 0) {
+    ins.innerHTML = '<p><b>Layer 0:</b> The first layer adds a broad, low-resolution contribution. The attention lens selects a wide region, and the FFN adds a blurry version of the target there.</p><p>Like a hologram: the first frequency component gives you the overall shape.</p>';
+  } else if (layer < 5) {
+    ins.innerHTML = `<p><b>Layer ${layer}:</b> Each layer focuses on a <b>different region</b> and adds detail there. The rest of the image is unchanged.</p><p>Notice: the whole image is getting clearer, but <b>different parts at different rates</b> — exactly like holographic reconstruction.</p>`;
+  } else if (layer < 10) {
+    ins.innerHTML = `<p><b>Layer ${layer}:</b> Mid-layers are adding finer detail. The attention regions are getting smaller and more focused.</p><p>This is the <b>inner computation</b> — the model is "thinking" by progressively sharpening specific aspects of its representation.</p>`;
+  } else {
+    ins.innerHTML = `<p><b>Layer ${layer}:</b> Final layers add the last details. The image should now be quite clear.</p><p>Key insight: <b>no single layer</b> produced the full image. Each layer contributed a <b>partial, distributed</b> refinement — holographic storage in action.</p>`;
+  }
+}
+
+function holoNext() {
+  if (holoLayer < N_LAYERS - 1) { holoLayer++; renderHolo(); }
+}
+
+function holoPlay() {
+  holoPause();
+  if (holoLayer >= N_LAYERS - 1) holoLayer = 0;
+  holoTimer = setInterval(() => {
+    holoLayer++;
+    if (holoLayer >= N_LAYERS) { holoPause(); return; }
+    renderHolo();
+  }, 800);
+}
+
+function holoPause() {
+  if (holoTimer) { clearInterval(holoTimer); holoTimer = null; }
+}
+
+function holoReset() {
+  holoPause();
+  holoLayer = 0;
+  renderHolo();
+}
+
+document.getElementById('sl-holo-layer').addEventListener('input', function() {
+  holoLayer = +this.value; renderHolo();
+});
+
+renderHolo();
+
+// ============================================================
+// SECTION 4: JACOBIAN FIELD
+// ============================================================
+const cvJac = setupHiDPI('cvJacobian', 600, 400);
+let jacTab = 'divergence';
+let jacLayer = 5;
+
+function setJacTab(tab) {
+  jacTab = tab;
+  // Update tab buttons
+  document.querySelectorAll('#jacTabs button').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(tab.substring(0, 4)));
+  });
+  renderJacobian();
+}
+
+document.getElementById('sl-jac-layer').addEventListener('input', function() {
+  jacLayer = +this.value;
+  document.getElementById('v-jac-layer').textContent = jacLayer;
+  renderJacobian();
+});
+
+function renderJacobian() {
+  const ctx = cvJac.ctx, w = cvJac.w, h = cvJac.h;
+  ctx.clearRect(0, 0, w, h);
+
+  const N = 60; // Grid resolution
+  const cellW = w / N, cellH = h / N;
+  const layer = jacLayer;
+
+  // Compute Jacobian field quantities on a grid
+  const eps = 0.005;
+  const data = [];
+  let minVal = Infinity, maxVal = -Infinity;
+
+  for (let gy = 0; gy < N; gy++) {
+    for (let gx = 0; gx < N; gx++) {
+      const u = (gx + 0.5) / N, v = (gy + 0.5) / N;
+
+      // Compute deformation and its Jacobian via finite differences
+      const d0 = deformPoint(u, v, layer, 1.0);
+      const dR = deformPoint(u + eps, v, layer, 1.0);
+      const dU = deformPoint(u, v + eps, layer, 1.0);
+
+      const J00 = (dR.dx - d0.dx) / eps;
+      const J01 = (dU.dx - d0.dx) / eps;
+      const J10 = (dR.dy - d0.dy) / eps;
+      const J11 = (dU.dy - d0.dy) / eps;
+
+      const divergence = J00 + J11;
+      const curl = J10 - J01;
+      const shear = Math.sqrt((J00 - J11) ** 2 + (J01 + J10) ** 2);
+      const eigphase = Math.atan2(J10 - J01, J00 + J11);
+
+      let val;
+      if (jacTab === 'divergence') val = divergence;
+      else if (jacTab === 'curl') val = curl;
+      else if (jacTab === 'shear') val = shear;
+      else if (jacTab === 'eigphase') val = eigphase;
+      else val = divergence; // composite uses divergence as base
+
+      if (val < minVal) minVal = val;
+      if (val > maxVal) maxVal = val;
+
+      data.push({ val, divergence, curl, shear, eigphase, dx: d0.dx, dy: d0.dy });
+    }
+  }
+
+  const range = maxVal - minVal || 1;
+
+  // Render heatmap
+  for (let gy = 0; gy < N; gy++) {
+    for (let gx = 0; gx < N; gx++) {
+      const d = data[gy * N + gx];
+      const norm = (d.val - minVal) / range;
+
+      let r, g, b;
+      if (jacTab === 'shear') {
+        r = Math.floor(norm * 162); g = Math.floor(norm * 155); b = Math.floor(norm * 254);
+      } else if (jacTab === 'eigphase') {
+        // HSL-like mapping
+        const hue = norm * 360;
+        const c2 = 0.7, x2 = c2 * (1 - Math.abs((hue / 60) % 2 - 1));
+        if (hue < 60) { r = Math.floor(c2 * 255); g = Math.floor(x2 * 255); b = 0; }
+        else if (hue < 120) { r = Math.floor(x2 * 255); g = Math.floor(c2 * 255); b = 0; }
+        else if (hue < 180) { r = 0; g = Math.floor(c2 * 255); b = Math.floor(x2 * 255); }
+        else if (hue < 240) { r = 0; g = Math.floor(x2 * 255); b = Math.floor(c2 * 255); }
+        else if (hue < 300) { r = Math.floor(x2 * 255); g = 0; b = Math.floor(c2 * 255); }
+        else { r = Math.floor(c2 * 255); g = 0; b = Math.floor(x2 * 255); }
+      } else {
+        // Diverging: blue (negative) -> black (zero) -> red (positive)
+        const center = (0 - minVal) / range;
+        const clamped = clamp(center, 0, 1);
+        if (norm < clamped) {
+          const t = (clamped - norm) / Math.max(clamped, 1e-8);
+          r = 0; g = Math.floor(t * 119); b = Math.floor(t * 182);
+        } else {
+          const t = (norm - clamped) / Math.max(1 - clamped, 1e-8);
+          r = Math.floor(t * 233); g = Math.floor(t * 69); b = Math.floor(t * 96);
+        }
+      }
+
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(gx * cellW, gy * cellH, cellW + 0.5, cellH + 0.5);
+    }
+  }
+
+  // Flow arrows overlay
+  const step = Math.max(1, Math.floor(N / 15));
+  for (let gy = 0; gy < N; gy += step) {
+    for (let gx = 0; gx < N; gx += step) {
+      const d = data[gy * N + gx];
+      const sx = (gx + 0.5) * cellW, sy = (gy + 0.5) * cellH;
+      const scale = cellW * step * 3;
+      let ax = d.dx * scale, ay = d.dy * scale;
+      const al = Math.hypot(ax, ay);
+      if (al < 1) continue;
+      const maxLen = cellW * step * 0.8;
+      if (al > maxLen) { ax *= maxLen / al; ay *= maxLen / al; }
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx + ax, sy + ay);
+      ctx.stroke();
+
+      const aa = Math.atan2(ay, ax);
+      const hl = Math.min(4, Math.hypot(ax, ay) * 0.3);
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.beginPath();
+      ctx.moveTo(sx + ax, sy + ay);
+      ctx.lineTo(sx + ax - hl * Math.cos(aa - 0.4), sy + ay - hl * Math.sin(aa - 0.4));
+      ctx.lineTo(sx + ax - hl * Math.cos(aa + 0.4), sy + ay - hl * Math.sin(aa + 0.4));
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+
+  // Token ghost positions
+  for (let i = 0; i < N_TOKENS; i++) {
+    const tp = tokenPos[i];
+    const sx = tp.x * w, sy = tp.y * h;
+    ctx.beginPath();
+    ctx.arc(sx, sy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    ctx.fill();
+    ctx.font = '8px monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.textAlign = 'center';
+    ctx.fillText(TOKENS[i], sx, sy - 6);
+  }
+}
+
+renderJacobian();
+
+// ============================================================
+// SECTION 5: LAYER PROFILE
+// ============================================================
+const cvProfile = setupHiDPI('cvLayerProfile', 900, 250);
+
+function renderLayerProfile() {
+  const ctx = cvProfile.ctx, w = cvProfile.w, h = cvProfile.h;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#0a0e1a';
+  ctx.fillRect(0, 0, w, h);
+
+  const M = 50;
+  const plotW = w - 2 * M, plotH = h - 80;
+  const barW = plotW / N_LAYERS - 4;
+
+  // Compute per-layer deformation magnitude
+  const layerMags = [];
+  let maxMag = 0;
+  for (let l = 0; l < N_LAYERS; l++) {
+    let totalMag = 0;
+    const nSamples = 100;
+    srand(l * 1000 + 42);
+    for (let s = 0; s < nSamples; s++) {
+      const u = rand(), v = rand();
+      const d = deformPoint(u, v, l, 1.0);
+      totalMag += Math.sqrt(d.dx * d.dx + d.dy * d.dy);
+    }
+    layerMags.push(totalMag / nSamples);
+    if (totalMag / nSamples > maxMag) maxMag = totalMag / nSamples;
+  }
+  if (maxMag < 1e-8) maxMag = 1;
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#0a0e1a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Title
+  ctx.font = 'bold 12px monospace';
+  ctx.fillStyle = '#94a3b8';
+  ctx.textAlign = 'center';
+  ctx.fillText('Per-Layer Deformation Magnitude (Jacobian Norm Proxy)', w / 2, 20);
+
+  // Bars
+  for (let l = 0; l < N_LAYERS; l++) {
+    const mag = layerMags[l];
+    const barH = (mag / maxMag) * plotH;
+    const x = M + l * (barW + 4) + 2;
+    const y = 40 + plotH - barH;
+
+    // Color: inner layers hotter
+    const isInner = l >= 3 && l <= 8;
+    const isLast = l >= 10;
+    let r, g, b;
+    if (isInner) {
+      const f = mag / maxMag;
+      r = Math.floor(233 * f + 100 * (1 - f));
+      g = Math.floor(69 * f + 50 * (1 - f));
+      b = Math.floor(96 * f + 80 * (1 - f));
+    } else if (isLast) {
+      r = 80; g = 130; b = 200;
+    } else {
+      r = 100; g = 100; b = 140;
+    }
+
+    // Bar glow
+    ctx.fillStyle = `rgba(${r},${g},${b},0.15)`;
+    ctx.fillRect(x - 2, y - 2, barW + 4, barH + 4);
+
+    // Bar
+    ctx.fillStyle = `rgb(${r},${g},${b})`;
+    ctx.fillRect(x, y, barW, barH);
+
+    // Label
+    ctx.font = '10px monospace';
+    ctx.fillStyle = isInner ? '#fd79a8' : isLast ? '#0077b6' : '#64748b';
+    ctx.textAlign = 'center';
+    ctx.fillText('L' + l, x + barW / 2, 40 + plotH + 16);
+
+    // Value
+    ctx.font = '8px monospace';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText(mag.toFixed(3), x + barW / 2, y - 4);
+  }
+
+  // Annotations
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'left';
+
+  // Inner layers bracket
+  const innerStart = M + 3 * (barW + 4);
+  const innerEnd = M + 9 * (barW + 4);
+  ctx.strokeStyle = '#fd79a8';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(innerStart, 40 + plotH + 28);
+  ctx.lineTo(innerEnd, 40 + plotH + 28);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#fd79a8';
+  ctx.textAlign = 'center';
+  ctx.fillText('← Inner layers: heavy computation →', (innerStart + innerEnd) / 2, 40 + plotH + 40);
+
+  // Last layers annotation
+  const lastStart = M + 10 * (barW + 4);
+  const lastEnd = M + 12 * (barW + 4);
+  ctx.fillStyle = '#0077b6';
+  ctx.fillText('← Reversal →', (lastStart + lastEnd) / 2, 40 + plotH + 40);
+}
+
+renderLayerProfile();
+
+// ============================================================
+// COMPOSITE TAB FOR JACOBIAN
+// ============================================================
+document.getElementById('sl-jac-layer').addEventListener('input', function() {
+  jacLayer = +this.value;
+  document.getElementById('v-jac-layer').textContent = jacLayer;
+  renderJacobian();
+});
+
+// ============================================================
+// WINDOW RESIZE HANDLER
+// ============================================================
+window.addEventListener('resize', function() {
+  renderMorph();
+  drawFibreView();
+  renderHolo();
+  renderJacobian();
+  renderLayerProfile();
+});
+
+</script>
+</body>
+</html>
