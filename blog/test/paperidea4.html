@@ -140,6 +140,7 @@ An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a lan
 <div class="cw"><canvas id="cPipe" height="440"></canvas></div>
 <div class="ctrl">
   <label>Layer: <input type="range" id="pLayer" min="0" max="110" value="0"><span id="pLayerV">0.0</span></label>
+  <label>Focus: <input type="range" id="pFocus" min="5" max="100" value="30"><span id="pFocusV">Narrow</span></label>
   <label><input type="checkbox" id="pGrid" checked> Grid</label>
   <label><input type="checkbox" id="pLens"> Lens</label>
   <label><input type="checkbox" id="pPatch" checked> Patches</label>
@@ -1082,7 +1083,7 @@ const PipeMod = (() => {
       if (document.getElementById('pLens').checked) render();
     });
 
-    ['pLayer','pGrid','pLens','pPatch'].forEach(id => {
+    ['pLayer','pGrid','pLens','pPatch','pFocus'].forEach(id => {
       const el = document.getElementById(id);
       if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
     });
@@ -1171,10 +1172,11 @@ const PipeMod = (() => {
     ctx.fillRect(0, 0, W, H);
 
     const lx = mouseX * W, ly = mouseY * H;
-    const focus = showLens ? (+document.getElementById('playF').value / 100) : 0.3;
+    const focus = showLens ? (+document.getElementById('pFocus').value / 100) : 0.3;
     const lensR = U.lerp(40, 160, focus);
 
-    document.getElementById('playFV').textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
+    const focusEl = document.getElementById('pFocusV');
+    if (focusEl) focusEl.textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
 
     const routing = U.clamp(1 - layer / 4, 0, 1);
     const resolving = U.clamp((layer - 2) / 5, 0, 1);
