@@ -40,6 +40,7 @@ button:hover{transform:translateY(-1px);filter:brightness(1.12)}
 .toc a:hover{color:#c4b5fd}
 .fade{opacity:0;transform:translateY(16px);transition:all .5s ease}
 .fade.vis{opacity:1;transform:translateY(0)}
+.zoom-hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(99,102,241,.85);color:#fff;padding:4px 14px;border-radius:20px;font-size:.72em;pointer-events:none;transition:opacity .3s}
 </style>
 </head>
 <body>
@@ -52,7 +53,7 @@ An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a lan
 
 <div class="toc">
 <strong style="color:#a5b4fc">📖 Contents</strong>
-<a href="#s1">1. The Core Idea — A Lens Drilling Through Layers</a>
+<a href="#s1">1. The Core Idea — Click to Drill Deeper</a>
 <a href="#s2">2. The Holographic Embedding — Every Piece Contains the Whole</a>
 <a href="#s3">3. Attention Heads as Lenses</a>
 <a href="#s4">4. Feed-Forward — Expanding Local Geometry</a>
@@ -60,24 +61,28 @@ An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a lan
 <a href="#s6">6. Hallucinations — Where the Map Lies</a>
 </div>
 
-<!-- ===== SECTION 1: HERO — LAYER STACK WITH LENS ===== -->
-<h2 id="s1">1. The Core Idea — A Lens Drilling Through Layers</h2>
+<!-- ===== SECTION 1 ===== -->
+<h2 id="s1">1. The Core Idea — Click to Drill Deeper</h2>
 <div class="card fade">
-<p>Imagine the model's knowledge as a <span class="hl">stack of transparent layers</span>. The bottom is the blurriest — everything superimposed. Each layer above sharpens certain regions. You hold a <span class="hl">magnifying lens</span> that drills through the stack. Where you point it, the layers combine to produce a sharp image. Move it elsewhere, and that region sharpens while the previous one blurs back.</p>
+<p>Imagine the model's knowledge as a <span class="hl">stack of transparent layers</span>. The bottom is the blurriest — everything superimposed. Each layer above sharpens certain regions. <strong>Click</strong> to place your attention. <strong>Click again</strong> to drill deeper — each click sharpens that region further while everything else gets more pixelated. This is the <span class="hl">resolution–breadth tradeoff</span>.</p>
 <div class="met">This is the transformer pipeline. The embedding is the blurriest layer. Attention chooses where to point the lens. Feed-forward sharpens the detail. The final layer glues the sharpened patches into a readable answer.</div>
-<div class="cw"><canvas id="cHero" height="480"></canvas></div>
+<div class="cw" style="position:relative">
+  <canvas id="cHero" height="520"></canvas>
+  <div class="zoom-hint" id="heroHint">Click anywhere to focus attention — click again to drill deeper</div>
+</div>
 <div class="ctrl">
-  <label>Lens Size: <input type="range" id="hSize" min="25" max="160" value="70"><span id="hSizeV">70</span></label>
   <label>Layer Depth: <input type="range" id="hDepth" min="0" max="110" value="0"><span id="hDepthV">0.0</span></label>
   <label><input type="checkbox" id="hGrid" checked> Grid</label>
   <label><input type="checkbox" id="hStack" checked> Stack View</label>
+  <button class="ba" onclick="HeroMod.resetZoom()">↺ Reset Zoom</button>
+  <button class="bp" onclick="HeroMod.autoZoom()">▶ Auto Drill</button>
 </div>
 <div class="tabs" id="hTabs"></div>
 <div class="sg" id="hStats"></div>
-<p style="text-align:center;font-size:.82em;color:#64748b">Move mouse over canvas to position the lens. Slide <strong>Layer Depth</strong> to watch routing → resolving → gluing. Switch objects to see different topological structures.</p>
+<p style="text-align:center;font-size:.82em;color:#64748b">Click to focus. Each click = one more attention layer drilling into that region. Right-click to zoom out. The focused area becomes <strong>crystal clear</strong> while everything else pixelates.</p>
 </div>
 
-<!-- ===== SECTION 2: HOLOGRAPHIC EMBEDDING ===== -->
+<!-- ===== SECTION 2 ===== -->
 <h2 id="s2">2. The Holographic Embedding — Every Piece Contains the Whole</h2>
 <div class="card fade">
 <p>The <span class="con">embedding layer</span> is the space of <strong>global sections</strong> — the coarsest image of the situs. Like a hologram, every piece contains the whole image, just at lower resolution.</p>
@@ -98,39 +103,44 @@ An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a lan
   <button class="bs" onclick="HoloMod.reset()">↺ Reset</button>
 </div>
 <div class="sg" id="eStats"></div>
-<p style="text-align:center;font-size:.82em;color:#64748b">Slide <strong>Damage</strong> to destroy tiles. The photograph loses regions permanently. The hologram degrades gracefully — the whole image blurs but nothing disappears.</p>
+<p style="text-align:center;font-size:.82em;color:#64748b">Slide <strong>Damage</strong> to destroy tiles. The photograph loses regions permanently. The hologram degrades gracefully.</p>
 </div>
 
-<!-- ===== SECTION 3: ATTENTION HEADS AS LENSES ===== -->
+<!-- ===== SECTION 3 ===== -->
 <h2 id="s3">3. Attention Heads as Lenses</h2>
 <div class="card fade">
-<p>Attention at each layer <span class="con">selects a covering</span>: which stalks to resolve. Each attention head is a separate lens. <strong>Narrow</strong> = sharp view of few stalks. <strong>Broad</strong> = blurred view of many. A <span class="hl">resolution–breadth tradeoff</span> in fixed dimensions.</p>
-<div class="cw"><canvas id="cHeads" height="420"></canvas></div>
+<p>Attention at each layer <span class="con">selects a covering</span>: which stalks to resolve. Each attention head is a separate lens. <strong>Drag the heads</strong> to see how they sharpen different regions of the image. Where heads overlap, resolution compounds. Where no head looks, the image stays pixelated.</p>
+<div class="cw" style="position:relative">
+  <canvas id="cHeads" height="460"></canvas>
+  <div class="zoom-hint" id="headsHint" style="opacity:1">Drag colored circles to reposition attention heads</div>
+</div>
 <div class="ctrl">
-  <label>Heads: <select id="aHeadN"><option value="1">1 head</option><option value="2">2 heads</option><option value="3" selected>3 heads</option><option value="4">4 heads</option></select></label>
+  <label>Heads: <select id="aHeadN"><option value="1">1 head</option><option value="2">2 heads</option><option value="3" selected>3 heads</option><option value="4">4 heads</option><option value="6">6 heads</option></select></label>
   <label>Entropy: <input type="range" id="aEnt" min="5" max="100" value="25"><span id="aEntV">Narrow</span></label>
-  <label><input type="checkbox" id="aShowFinal" checked> Show combined</label>
+  <label>Resolution Budget: <input type="range" id="aResBudget" min="10" max="100" value="60"><span id="aResBudgetV">60</span></label>
 </div>
 <div class="sg" id="aStats"></div>
-<p style="text-align:center;font-size:.82em;color:#64748b">Drag the colored lens circles to reposition attention heads. Each head sharpens its region; the combined image (bottom-right) shows the final result. More heads = more coverage but each is weaker.</p>
 </div>
 
-<!-- ===== SECTION 4: FFN EXPANSION ===== -->
+<!-- ===== SECTION 4 ===== -->
 <h2 id="s4">4. Feed-Forward — Expanding Local Geometry</h2>
 <div class="card fade">
-<p>The <span class="con">feed-forward sub-layer</span> locally expands geometry within each selected patch — stretching space so information is encoded in the <strong>Jacobian field</strong>, then compressing back.</p>
-<div class="met">Take a rubber sheet and <strong>stretch</strong> a small region — pulling apart compressed points to see fine details. Then let it snap back. The <em>pattern of stretching</em> carries the information.</div>
-<div class="cw"><canvas id="cFFN" height="380"></canvas></div>
+<p>The <span class="con">feed-forward sub-layer</span> locally expands geometry within each selected patch — stretching space so information is encoded in the <strong>Jacobian field</strong>, then compressing back. The warping is complex: multiple learned "weight centers" interact nonlinearly, creating interference patterns.</p>
+<div class="met">Take a rubber sheet and <strong>stretch</strong> it at multiple points simultaneously — each stretch center has a different strength and direction, and they interfere with each other. The resulting deformation pattern <em>is</em> the computation.</div>
+<div class="cw"><canvas id="cFFN" height="420"></canvas></div>
 <div class="ctrl">
   <label>Expansion: <input type="range" id="fStr" min="0" max="100" value="0"><span id="fStrV">0%</span></label>
+  <label>Weight Centers: <select id="fCenters"><option value="1">1 center</option><option value="3" selected>3 centers</option><option value="5">5 centers</option><option value="8">8 centers</option></select></label>
+  <label>Nonlinearity: <input type="range" id="fNonlin" min="0" max="100" value="50"><span id="fNonlinV">50%</span></label>
   <label><input type="checkbox" id="fJac" checked> Strain colors</label>
+  <label><input type="checkbox" id="fShowWeights" checked> Show weights</label>
   <button class="ba" onclick="FFNMod.anim()">▶ Animate</button>
   <button class="bs" onclick="FFNMod.reset()">↺ Reset</button>
 </div>
 <div class="sg" id="fStats"></div>
 </div>
 
-<!-- ===== SECTION 5: FULL PIPELINE ===== -->
+<!-- ===== SECTION 5 ===== -->
 <h2 id="s5">5. The Full Pipeline — Route → Resolve → Glue</h2>
 <div class="card fade">
 <div class="two" style="margin-bottom:12px">
@@ -151,7 +161,7 @@ An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a lan
 <div class="sg" id="pStats"></div>
 </div>
 
-<!-- ===== SECTION 6: HALLUCINATIONS ===== -->
+<!-- ===== SECTION 6 ===== -->
 <h2 id="s6">6. Hallucinations — Where the Map Lies</h2>
 <div class="card fade">
 <p>At patch borders where training thins, the model <strong>confidently expands</strong> a region never properly learned — filling it with topologically plausible but <span style="color:#ef4444;font-weight:700">factually wrong</span> continuations.</p>
@@ -172,7 +182,7 @@ An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a lan
 
 <script>
 // ================================================================
-// MODULE: Core Utilities
+// CORE UTILITIES
 // ================================================================
 const U = (() => {
   const TAU = Math.PI * 2, dpr = window.devicePixelRatio || 1;
@@ -181,7 +191,6 @@ const U = (() => {
   const dst = (x1,y1,x2,y2) => Math.hypot(x2-x1,y2-y1);
   const ease = t => t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
   const hx = (hex,a) => {const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`};
-  // Seeded PRNG
   const srand = s => () => {s=Math.sin(s*127.1+311.7)*43758.5453;return s-Math.floor(s)};
   const PAL = ['#818cf8','#f472b6','#34d399','#fbbf24','#60a5fa','#f87171','#a78bfa','#2dd4bf'];
 
@@ -211,102 +220,126 @@ const U = (() => {
   return {TAU,dpr,lerp,clamp,dst,ease,hx,srand,PAL,mkCanvas,drawGrid,drawLensRing};
 })();
 
-// ================================================================
-// MODULE: EventBus — modules communicate through this
-// ================================================================
 const Bus = (() => {
-  const listeners = {};
-  return {
-    on(evt, fn) { (listeners[evt] = listeners[evt]||[]).push(fn); },
-    emit(evt, data) { (listeners[evt]||[]).forEach(fn => fn(data)); }
-  };
+  const L = {};
+  return { on(e,f){(L[e]=L[e]||[]).push(f)}, emit(e,d){(L[e]||[]).forEach(f=>f(d))} };
 })();
 
-// ================================================================
-// MODULE: Shared State
-// ================================================================
-const State = {
-  mouse: {x:.5, y:.5},
-  objectType: 'smiley',
-  layerDepth: 0,
-};
+const State = { mouse:{x:.5,y:.5}, objectType:'smiley' };
 
 // ================================================================
-// MODULE: Object Generator — topological objects as pixel grids
+// HIGH-RES OBJECT GENERATOR — SVG-quality at full zoom
 // ================================================================
 const ObjGen = (() => {
   const SZ = 48;
 
-  function generate(type) {
-    const img = new Float64Array(SZ*SZ);
-    const rng = U.srand(42);
-    const cx = SZ/2-.5, cy = SZ/2-.5;
+  // Analytical SDF functions for crystal-clear rendering at any resolution
+  function sdfSmiley(nx, ny) {
+    // nx, ny in [-1,1]
+    const d = Math.hypot(nx, ny);
+    // Face outline
+    let face = Math.abs(d - 0.78) - 0.045;
+    // Fill
+    let fill = d - 0.78;
+    // Left eye
+    let eyeL = Math.hypot(nx + 0.27, ny + 0.18) - 0.1;
+    // Right eye
+    let eyeR = Math.hypot(nx - 0.27, ny + 0.18) - 0.1;
+    // Pupil L
+    let pupL = Math.hypot(nx + 0.27, ny + 0.2) - 0.04;
+    // Pupil R
+    let pupR = Math.hypot(nx - 0.27, ny + 0.2) - 0.04;
+    // Smile arc
+    const smileD = Math.hypot(nx, ny - 0.05);
+    let smile = Math.abs(smileD - 0.42) - 0.03;
+    if (ny < 0.12) smile = 1; // only bottom half
 
+    let v = 0;
+    if (fill < 0) v = 0.25;
+    if (face < 0) v = 1;
+    if (eyeL < 0) v = 0.85;
+    if (eyeR < 0) v = 0.85;
+    if (pupL < 0) v = 1;
+    if (pupR < 0) v = 1;
+    if (smile < 0) v = 0.9;
+    return v;
+  }
+
+  function sdfTorus3D(nx, ny, angle) {
+    // Project a 3D torus to 2D with rotation
+    const ca = Math.cos(angle), sa = Math.sin(angle);
+    const R = 0.5, r = 0.18;
+    // Sample many points on torus surface, find closest
+    let minD = 10;
+    for (let u = 0; u < U.TAU; u += 0.08) {
+      for (let v = 0; v < U.TAU; v += 0.15) {
+        const x3 = (R + r * Math.cos(v)) * Math.cos(u);
+        const y3 = (R + r * Math.cos(v)) * Math.sin(u);
+        const z3 = r * Math.sin(v);
+        // Rotate around Y
+        const rx = x3 * ca + z3 * sa;
+        const ry = y3;
+        const rz = -x3 * sa + z3 * ca;
+        const d = Math.hypot(nx - rx, ny - ry);
+        const depth = rz;
+        if (d < minD) minD = d;
+      }
+    }
+    return Math.exp(-minD * minD / 0.003);
+  }
+
+  // Generate at arbitrary resolution
+  function sample(type, nx, ny, time) {
+    time = time || 0;
     switch(type) {
-      case 'smiley': {
-        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
-          const dx=x-cx, dy=y-cy, r=Math.hypot(dx,dy);
-          let v=0;
-          if(r<19) v=.22+.06*Math.sin(dx*.3)*Math.cos(dy*.3);
-          if(Math.abs(r-19)<2.2) v=1;
-          if(Math.hypot(dx-6.5,dy+4)<3) v=Math.max(v,.85);
-          if(Math.hypot(dx+6.5,dy+4)<3) v=Math.max(v,.85);
-          if(Math.hypot(dx-5.5,dy+5)<1.1) v=1;
-          if(Math.hypot(dx+5.5,dy+5)<1.1) v=1;
-          if(r>7&&r<12&&dy>4&&Math.abs(dx)<11) v=Math.max(v,.8);
-          if(Math.abs(dx)<1.5&&dy>-2&&dy<2) v=Math.max(v,.45);
-          img[y*SZ+x]=Math.min(1,v);
-        }
-        break;
-      }
-      case 'torus': {
-        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
-          const nx=x/SZ*2-1, ny=y/SZ*2-1;
-          const R=.55, rr=.22;
-          const d=Math.hypot(nx,ny);
-          const ring=Math.abs(d-R);
-          let v=Math.exp(-ring*ring/(2*rr*rr));
-          v*=.5+.5*Math.cos(Math.atan2(ny,nx)*3);
-          img[y*SZ+x]=U.clamp(v,0,1);
-        }
-        break;
-      }
+      case 'smiley': return sdfSmiley(nx, ny);
+      case 'torus': return sdfTorus3D(nx, ny, time * 0.5);
       case 'trefoil': {
-        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
-          const nx=x/SZ*2-1, ny=y/SZ*2-1;
-          const a=Math.atan2(ny,nx);
-          const targetR=.3+.18*Math.cos(3*a);
-          const d=Math.hypot(nx,ny);
-	  const v=Math.exp(-((d-targetR)**2)/.008);
-          img[y*SZ+x]=U.clamp(v,0,1);
-        }
-        break;
+        const a = Math.atan2(ny, nx);
+        const targetR = 0.6 + 0.36 * Math.cos(3 * a);
+        const d = Math.hypot(nx, ny);
+        const edge = Math.abs(d - targetR) - 0.06;
+        return edge < 0 ? U.clamp(1 - Math.abs(edge) * 5, 0, 1) : Math.exp(-edge * edge / 0.002);
       }
       case 'clusters': {
-        const cs=[{x:-.4,y:-.35},{x:.4,y:-.3},{x:0,y:.45},{x:-.5,y:.3}];
-        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
-          const nx=x/SZ*2-1, ny=y/SZ*2-1;
-          let v=0;
-          cs.forEach(c=>{v=Math.max(v,Math.exp(-((nx-c.x)**2+(ny-c.y)**2)/.04))});
-          img[y*SZ+x]=U.clamp(v,0,1);
-        }
-        break;
+        const cs = [{x:-0.5,y:-0.45},{x:0.5,y:-0.35},{x:0,y:0.55},{x:-0.6,y:0.35}];
+        let v = 0;
+        cs.forEach(c => {
+          const d = Math.hypot(nx - c.x, ny - c.y);
+          const edge = Math.abs(d - 0.22) - 0.03;
+          if (edge < 0) v = Math.max(v, 0.9);
+          else v = Math.max(v, Math.exp(-edge * edge / 0.001));
+          // Inner dots
+          if (d < 0.05) v = Math.max(v, 1);
+        });
+        return v;
       }
       case 'rings': {
-        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
-          const nx=x/SZ*2-1, ny=y/SZ*2-1;
-          const d1=Math.abs(Math.hypot(nx+.35,ny)-.3);
-          const d2=Math.abs(Math.hypot(nx-.35,ny)-.3);
-          const v=Math.max(Math.exp(-d1*d1/.003),Math.exp(-d2*d2/.003));
-          img[y*SZ+x]=U.clamp(v,0,1);
-        }
-        break;
+        const d1 = Math.abs(Math.hypot(nx + 0.4, ny) - 0.35);
+        const d2 = Math.abs(Math.hypot(nx - 0.4, ny) - 0.35);
+        const e1 = d1 - 0.04, e2 = d2 - 0.04;
+        let v = 0;
+        if (e1 < 0) v = Math.max(v, 1 - Math.abs(e1) * 8);
+        else v = Math.max(v, Math.exp(-e1 * e1 / 0.001));
+        if (e2 < 0) v = Math.max(v, 1 - Math.abs(e2) * 8);
+        else v = Math.max(v, Math.exp(-e2 * e2 / 0.001));
+        return U.clamp(v, 0, 1);
       }
+    }
+    return 0;
+  }
+
+  // Generate low-res grid for fast rendering
+  function generate(type) {
+    const img = new Float64Array(SZ * SZ);
+    for (let y = 0; y < SZ; y++) for (let x = 0; x < SZ; x++) {
+      const nx = x / SZ * 2 - 1, ny = y / SZ * 2 - 1;
+      img[y * SZ + x] = sample(type, nx, ny, 0);
     }
     return img;
   }
 
-  // DCT basis for holographic demo
+  // DCT for holographic demo
   const N=16, Z=4, ZS=4;
   const CM=[];
   for(let k=0;k<N;k++){CM[k]=[];const a=k===0?Math.sqrt(1/N):Math.sqrt(2/N);for(let n=0;n<N;n++)CM[k][n]=a*Math.cos(Math.PI*(2*n+1)*k/(2*N))}
@@ -314,40 +347,40 @@ const ObjGen = (() => {
   function idct1(X){const x=new Float64Array(N);for(let n=0;n<N;n++){let s=0;for(let k=0;k<N;k++)s+=X[k]*CM[k][n];x[n]=s}return x}
   function dct2(im){const t=new Float64Array(N*N);for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=im[i*N+j];const d=dct1(r);for(let j=0;j<N;j++)t[i*N+j]=d[j]}const o=new Float64Array(N*N);for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=t[i*N+j];const d=dct1(c);for(let i=0;i<N;i++)o[i*N+j]=d[i]}return o}
   function idct2(co){const t=new Float64Array(N*N);for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=co[i*N+j];const d=idct1(c);for(let i=0;i<N;i++)t[i*N+j]=d[i]}const o=new Float64Array(N*N);for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=t[i*N+j];const d=idct1(r);for(let j=0;j<N;j++)o[i*N+j]=d[j]}return o}
-
-  // 16x16 smiley for holographic demo
   const SMILEY16=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0];
 
-  return {SZ, generate, N, Z, ZS, dct2, idct2, SMILEY16};
+  return {SZ, generate, sample, N, Z, ZS, dct2, idct2, SMILEY16};
 })();
 
 // ================================================================
-// MODULE: Hero — Layer Stack with Lens
+// HERO MODULE — Click-to-drill with progressive crystal-clear zoom
 // ================================================================
 const HeroMod = (() => {
   let ctx, W, H, c;
-  let currentImg = null;
-  let patches = [];
+  let currentType = 'smiley';
+  let zoomStack = []; // Each click adds a zoom level
+  let time = 0;
+  let animFrame = null;
+  let autoZoomAnim = null;
+
   const OBJECTS = ['smiley','torus','trefoil','clusters','rings'];
   const LABELS = ['😊 Smiley','🍩 Torus','🪢 Trefoil','🔵 Clusters','⭕ Rings'];
 
   function init() {
-    ({c, ctx, W, H} = U.mkCanvas('cHero', 480));
-    currentImg = ObjGen.generate(State.objectType);
-    patches = genPatches();
+    ({c, ctx, W, H} = U.mkCanvas('cHero', 520));
 
     // Build tabs
     const tabEl = document.getElementById('hTabs');
     let tabHtml = '';
     OBJECTS.forEach((o, i) => {
-      tabHtml += `<button class="tab${o === State.objectType ? ' on' : ''}" data-m="${o}">${LABELS[i]}</button>`;
+      tabHtml += `<button class="tab${o === currentType ? ' on' : ''}" data-m="${o}">${LABELS[i]}</button>`;
     });
     tabEl.innerHTML = tabHtml;
     tabEl.querySelectorAll('.tab').forEach(btn => {
       btn.onclick = () => {
-        State.objectType = btn.dataset.m;
-        currentImg = ObjGen.generate(State.objectType);
-        patches = genPatches();
+        currentType = btn.dataset.m;
+        State.objectType = currentType;
+        zoomStack = [];
         tabEl.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
         btn.classList.add('on');
         Bus.emit('objectChanged');
@@ -355,224 +388,279 @@ const HeroMod = (() => {
       };
     });
 
-    // Mouse tracking
+    // Click to drill deeper
+    c.addEventListener('click', e => {
+      const r = c.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width;
+      const my = (e.clientY - r.top) / r.height;
+      // Convert to normalized [-1,1] coords
+      const nx = mx * 2 - 1, ny = my * 2 - 1;
+      zoomStack.push({ nx, ny, time: performance.now() });
+      if (zoomStack.length > 8) zoomStack.shift();
+      const hint = document.getElementById('heroHint');
+      if (hint) hint.style.opacity = zoomStack.length > 2 ? '0' : '0.7';
+      render();
+    });
+
+    // Right-click to zoom out
+    c.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (zoomStack.length > 0) zoomStack.pop();
+      render();
+    });
+
+    // Mouse tracking for hover highlight
     c.addEventListener('mousemove', e => {
       const r = c.getBoundingClientRect();
       State.mouse.x = (e.clientX - r.left) / r.width;
       State.mouse.y = (e.clientY - r.top) / r.height;
-      render();
+      if (zoomStack.length === 0) render();
     });
 
-    // Slider listeners
-    ['hSize','hDepth','hGrid','hStack'].forEach(id => {
+    ['hDepth','hGrid','hStack'].forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener('input', render);
-      el.addEventListener('change', render);
+      if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
     });
+
+    // Animate torus rotation
+    function tick() {
+      time += 0.008;
+      if (currentType === 'torus') render();
+      animFrame = requestAnimationFrame(tick);
+    }
+    animFrame = requestAnimationFrame(tick);
 
     render();
   }
 
-  function genPatches() {
-    // Divide image into 4 quadrant patches
-    const SZ = ObjGen.SZ;
-    const cols = ['#818cf8','#f472b6','#34d399','#fbbf24'];
-    const names = ['Syntax','Semantics','Pragmatics','World'];
-    const p = [];
-    for (let qi = 0; qi < 4; qi++) {
-      const qr = Math.floor(qi / 2), qc = qi % 2;
-      const cx = (qc + 0.5) / 2, cy = (qr + 0.5) / 2;
-      // Compute average brightness in quadrant
-      let sum = 0, cnt = 0;
-      for (let y = qr * SZ/2; y < (qr+1) * SZ/2; y++)
-        for (let x = qc * SZ/2; x < (qc+1) * SZ/2; x++) {
-          sum += currentImg[y * SZ + x]; cnt++;
-        }
-      p.push({ cx, cy, r: 0.28, col: cols[qi], name: names[qi], avg: sum/cnt });
-    }
-    return p;
-  }
-
   function render() {
     if (!ctx) return;
-    const SZ = ObjGen.SZ;
-    const lensSize = +document.getElementById('hSize').value;
     const layerRaw = +document.getElementById('hDepth').value;
     const layer = layerRaw / 10;
     const showGrid = document.getElementById('hGrid').checked;
     const showStack = document.getElementById('hStack').checked;
 
-    document.getElementById('hSizeV').textContent = lensSize;
     document.getElementById('hDepthV').textContent = layer.toFixed(1);
 
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    const lx = State.mouse.x * W, ly = State.mouse.y * H;
-    const lensR = lensSize;
+    const zoomLevel = zoomStack.length;
+    const maxZoom = 8;
 
-    // Layer phases
+    // Compute the current view window in normalized [-1,1] space
+    let viewCx = 0, viewCy = 0, viewR = 1;
+    for (const z of zoomStack) {
+      // Each click zooms 2x toward the clicked point
+      const newR = viewR * 0.55;
+      viewCx = U.lerp(viewCx, z.nx, 0.5);
+      viewCy = U.lerp(viewCy, z.ny, 0.5);
+      viewR = newR;
+    }
+
+    // Layer-dependent deformation
     const routing = U.clamp(1 - layer / 4, 0, 1);
     const resolving = U.clamp((layer - 2) / 5, 0, 1);
     const gluing = U.clamp((layer - 8) / 3, 0, 1);
     const deform = layer === 0 ? 0 : (layer <= 3 ? layer * 0.07 : (layer <= 8 ? 0.21 + (layer-3)*0.035 : 0.385 - (layer-8)*0.11));
 
-    // Warp function
-    function warp(x, y) {
-      if (layer < 0.1) return [x, y];
-      let wx = x, wy = y;
+    function warpNorm(nx, ny) {
+      if (layer < 0.1) return [nx, ny];
+      let wx = nx, wy = ny;
       if (routing > 0) {
-        const dx = x - W/2, dy = y - H/2;
-        const d = Math.sqrt(dx*dx + dy*dy);
-        const a = deform * routing * Math.exp(-d*d/(W*W*0.15)) * 1.8;
+        const d = Math.hypot(nx, ny);
+        const a = deform * routing * Math.exp(-d*d/0.8) * 1.5;
         const cs = Math.cos(a), sn = Math.sin(a);
-        wx = W/2 + dx*cs - dy*sn;
-        wy = H/2 + dx*sn + dy*cs;
+        wx = nx*cs - ny*sn;
+        wy = nx*sn + ny*cs;
       }
       if (resolving > 0) {
-        for (const p of patches) {
-          const pcx = p.cx*W, pcy = p.cy*H;
-          const dx = wx-pcx, dy = wy-pcy;
-          const d = Math.sqrt(dx*dx+dy*dy);
-          const inf = deform * resolving * Math.exp(-d*d/7000) * 0.45;
-          wx += dx*inf; wy += dy*inf;
+        // Expand around 4 quadrant centers
+        const centers = [{x:-0.5,y:-0.5},{x:0.5,y:-0.5},{x:-0.5,y:0.5},{x:0.5,y:0.5}];
+        for (const cc of centers) {
+          const dx = wx - cc.x, dy = wy - cc.y;
+          const d = Math.hypot(dx, dy);
+          const inf = deform * resolving * Math.exp(-d*d/0.5) * 0.3;
+          wx += dx * inf;
+          wy += dy * inf;
         }
       }
       if (gluing > 0) {
-        wx = U.lerp(wx, x, gluing*0.7);
-        wy = U.lerp(wy, y, gluing*0.7);
+        wx = U.lerp(wx, nx, gluing * 0.7);
+        wy = U.lerp(wy, ny, gluing * 0.7);
       }
       return [wx, wy];
     }
 
-    // Draw grid
-    if (showGrid) {
-      U.drawGrid(ctx, W, H, warp, 28, `rgba(100,116,139,${0.05+deform*0.12})`, 0.5);
-    }
+    // Determine pixel resolution based on zoom level
+    // More zoom = more pixels in the focused area = crystal clear
+    const baseRes = 48;
+    const renderRes = Math.min(256, baseRes + zoomLevel * 30);
 
-    // Draw the image as pixels with lens sharpening
-    const cellW = W / SZ, cellH = H / SZ;
-    const maxBlur = 6;
+    // Render the image
+    const cellW = W / renderRes;
+    const cellH = H / renderRes;
 
-    for (let iy = 0; iy < SZ; iy++) {
-      for (let ix = 0; ix < SZ; ix++) {
-        const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
-        const [wx, wy] = warp(px, py);
-        const dToLens = U.dst(wx, wy, lx, ly);
+    // Precompute focus falloff for non-zoomed areas
+    const focusCx = zoomStack.length > 0 ? zoomStack[zoomStack.length-1].nx : 0;
+    const focusCy = zoomStack.length > 0 ? zoomStack[zoomStack.length-1].ny : 0;
+    const focusR = viewR * 1.5;
 
-        // Compute display value with lens sharpening
-        let val = currentImg[iy * SZ + ix];
-        let pixelSize = 1;
-        let alpha = 0.6;
+    for (let iy = 0; iy < renderRes; iy++) {
+      for (let ix = 0; ix < renderRes; ix++) {
+        // Map pixel to normalized coords within current view
+        const nx = viewCx + (ix / renderRes * 2 - 1) * viewR;
+        const ny = viewCy + (iy / renderRes * 2 - 1) * viewR;
 
-        if (dToLens < lensR) {
-          // Inside lens: sharp, bright
-          const sharpness = 1 - dToLens / lensR;
-          const layerBoost = U.clamp(layer / 11, 0, 1);
-          alpha = 0.6 + sharpness * 0.4 * (0.3 + layerBoost * 0.7);
-          val = U.lerp(val, val > 0.4 ? Math.min(1, val * 1.3) : val * 0.7, sharpness * 0.5 * (0.3 + layerBoost * 0.7));
-          pixelSize = 1;
-        } else {
-          // Outside lens: pixelated based on distance and layer
-          const blurDist = U.clamp((dToLens - lensR) / 200, 0, 1);
-          const layerClarity = U.clamp(layer / 11, 0, 0.5);
-          pixelSize = Math.max(1, Math.floor(maxBlur * blurDist * (1 - layerClarity)));
-          alpha = 0.3 + layerClarity * 0.2;
+        // Apply layer warp
+        const [wnx, wny] = warpNorm(nx, ny);
 
-          // Average with neighbors for blur
-          if (pixelSize > 1) {
-            let sum = 0, cnt = 0;
-            const br = Math.floor(pixelSize / 2);
-            for (let dy = -br; dy <= br; dy++) {
-              for (let dx = -br; dx <= br; dx++) {
-                const nx = U.clamp(ix+dx, 0, SZ-1), ny = U.clamp(iy+dy, 0, SZ-1);
-                sum += currentImg[ny*SZ+nx]; cnt++;
-              }
-            }
-            val = sum / cnt;
-          }
+        // Sample the object at this point (analytical = crystal clear at any zoom)
+        let val = ObjGen.sample(currentType, wnx, wny, time);
+
+        // Compute distance from focus center for blur effect
+        const dFocus = Math.hypot(nx - focusCx, ny - focusCy);
+        const focusStrength = zoomLevel > 0 ? U.clamp(1 - dFocus / focusR, 0, 1) : 1;
+
+        // Outside focus: pixelate by skipping detail
+        let pixelMult = 1;
+        if (zoomLevel > 0 && focusStrength < 0.3) {
+          pixelMult = Math.max(1, Math.floor((1 - focusStrength) * 6));
         }
 
-        // Color based on value and patch membership
+        // Color
+        const layerBoost = U.clamp(layer / 11, 0, 1);
+        const brightness = focusStrength * (0.5 + layerBoost * 0.5) + (1 - focusStrength) * 0.15;
+        const v = val * brightness;
+
         let r, g, b;
-        const warm = val;
-        r = Math.floor(15 + warm * 210);
-        g = Math.floor(12 + warm * 180);
-        b = Math.floor(25 + warm * 100);
-
-        // Tint by patch color if patches visible
-        const patchIdx = (iy < SZ/2 ? 0 : 1) * 2 + (ix < SZ/2 ? 0 : 1);
-        if (patches[patchIdx] && resolving > 0.1) {
-          const pc = patches[patchIdx].col;
-          const pr = parseInt(pc.slice(1,3),16), pg = parseInt(pc.slice(3,5),16), pb = parseInt(pc.slice(5,7),16);
-          const tint = resolving * 0.15;
-          r = Math.floor(U.lerp(r, pr, tint));
-          g = Math.floor(U.lerp(g, pg, tint));
-          b = Math.floor(U.lerp(b, pb, tint));
+        if (val > 0.6) {
+          // Bright features: warm white/gold
+          r = Math.floor(40 + v * 215);
+          g = Math.floor(35 + v * 195);
+          b = Math.floor(20 + v * 120);
+        } else if (val > 0.2) {
+          // Mid features: blue-purple tint
+          r = Math.floor(20 + v * 160);
+          g = Math.floor(18 + v * 140);
+          b = Math.floor(30 + v * 180);
+        } else {
+          // Background: dark blue
+          r = Math.floor(8 + v * 60);
+          g = Math.floor(8 + v * 50);
+          b = Math.floor(15 + v * 80);
         }
 
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        // Patch tinting during resolving phase
+        if (resolving > 0.1) {
+          const qi = (wnx > 0 ? 1 : 0) + (wny > 0 ? 2 : 0);
+          const pCols = [[129,140,248],[244,114,182],[52,211,153],[251,191,36]];
+          const pc = pCols[qi];
+          const tint = resolving * 0.12;
+          r = Math.floor(U.lerp(r, pc[0], tint));
+          g = Math.floor(U.lerp(g, pc[1], tint));
+          b = Math.floor(U.lerp(b, pc[2], tint));
+        }
 
-        // Draw at warped position
-        const drawW = cellW * Math.max(1, pixelSize * 0.5);
-        const drawH = cellH * Math.max(1, pixelSize * 0.5);
-        ctx.fillRect(wx - drawW/2, wy - drawH/2, drawW + 0.5, drawH + 0.5);
+        const alpha = U.clamp(0.3 + focusStrength * 0.7, 0.15, 1);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
+
+        const drawSize = cellW * pixelMult;
+        ctx.fillRect(ix * cellW, iy * cellH, drawSize + 0.5, drawSize + 0.5);
+
+        // Skip pixels for pixelated areas
+        if (pixelMult > 1) {
+          ix += pixelMult - 1;
+        }
       }
     }
     ctx.globalAlpha = 1;
 
-    // Draw lens
-    U.drawLensRing(ctx, lx, ly, lensR, 0.8);
+    // Draw grid overlay
+    if (showGrid && layer > 0.1) {
+      const gridStep = 30;
+      function warpScreen(x, y) {
+        const nx2 = viewCx + (x / W * 2 - 1) * viewR;
+        const ny2 = viewCy + (y / H * 2 - 1) * viewR;
+        const [wnx2, wny2] = warpNorm(nx2, ny2);
+        const sx = ((wnx2 - viewCx) / viewR + 1) / 2 * W;
+        const sy = ((wny2 - viewCy) / viewR + 1) / 2 * H;
+        return [sx, sy];
+      }
+      U.drawGrid(ctx, W, H, warpScreen, gridStep, `rgba(100,116,139,${0.04 + deform * 0.1})`, 0.4);
+    }
 
-    // Stack view: show layer slices on the right
+    // Draw zoom focus rings
+    for (let zi = 0; zi < zoomStack.length; zi++) {
+      const z = zoomStack[zi];
+      // Convert normalized coords to screen
+      const sx = ((z.nx - viewCx) / viewR + 1) / 2 * W;
+      const sy = ((z.ny - viewCy) / viewR + 1) / 2 * H;
+      const sr = W * 0.5 * Math.pow(0.55, zi + 1) / viewR;
+
+      const age = (performance.now() - z.time) / 1000;
+      const pulse = 0.7 + 0.3 * Math.sin(age * 2);
+
+      ctx.beginPath();
+      ctx.arc(sx, sy, Math.max(sr, 10), 0, U.TAU);
+      ctx.strokeStyle = `rgba(129,140,248,${0.3 * pulse})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Zoom level label
+      ctx.font = 'bold 9px system-ui';
+      ctx.fillStyle = `rgba(129,140,248,${0.5 * pulse})`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`×${Math.pow(2, zi+1).toFixed(0)}`, sx, sy - Math.max(sr, 10) - 4);
+    }
+
+    // Hover lens when no zoom
+    if (zoomStack.length === 0) {
+      const lx = State.mouse.x * W, ly = State.mouse.y * H;
+      U.drawLensRing(ctx, lx, ly, 60, 0.4);
+    }
+
+    // Stack view
     if (showStack) {
-      const stackW = 60, stackH = 50, stackX = W - stackW - 12, gap = 6;
+      const stackW = 55, stackH = 45, stackX = W - stackW - 10, gap = 5;
       const nLayers = 6;
       for (let li = 0; li < nLayers; li++) {
-        const sy = 10 + li * (stackH + gap);
+        const sy = 30 + li * (stackH + gap);
         const layerVal = li * 11 / (nLayers - 1);
         const isCurrent = Math.abs(layerVal - layer) < 1.5;
 
-        ctx.fillStyle = isCurrent ? 'rgba(129,140,248,0.15)' : 'rgba(15,23,42,0.7)';
-        ctx.fillRect(stackX - 2, sy - 2, stackW + 4, stackH + 4);
+        ctx.fillStyle = isCurrent ? 'rgba(129,140,248,0.12)' : 'rgba(10,14,26,0.8)';
+        ctx.fillRect(stackX - 1, sy - 1, stackW + 2, stackH + 2);
 
-        // Mini image at this layer's resolution
-        const miniBlur = Math.max(1, Math.floor((1 - layerVal/11) * 5));
-        const miniCellW = stackW / (SZ / miniBlur);
-        const miniCellH = stackH / (SZ / miniBlur);
-
-        for (let my = 0; my < SZ; my += miniBlur) {
-          for (let mx = 0; mx < SZ; mx += miniBlur) {
-            let sum = 0, cnt = 0;
-            for (let dy = 0; dy < miniBlur && my+dy < SZ; dy++)
-              for (let dx = 0; dx < miniBlur && mx+dx < SZ; dx++) {
-                sum += currentImg[(my+dy)*SZ+(mx+dx)]; cnt++;
-              }
-            const v = sum / cnt;
-            const br = Math.floor(20 + v * 200);
+        // Mini image — resolution increases with layer
+        const miniRes = 4 + li * 2;
+        const mCellW = stackW / miniRes, mCellH = stackH / miniRes;
+        for (let my = 0; my < miniRes; my++) {
+          for (let mx = 0; mx < miniRes; mx++) {
+            const mnx = mx / miniRes * 2 - 1, mny = my / miniRes * 2 - 1;
+            const v = ObjGen.sample(currentType, mnx, mny, time);
+            const clarity = 0.2 + (li / (nLayers-1)) * 0.8;
+            const br = Math.floor((20 + v * 200) * clarity);
             ctx.fillStyle = `rgb(${br},${Math.floor(br*0.85)},${Math.floor(br*0.5)})`;
-            ctx.fillRect(stackX + (mx/miniBlur)*miniCellW, sy + (my/miniBlur)*miniCellH,
-                         miniCellW + 0.5, miniCellH + 0.5);
+            ctx.fillRect(stackX + mx * mCellW, sy + my * mCellH, mCellW + 0.5, mCellH + 0.5);
           }
         }
 
-        ctx.strokeStyle = isCurrent ? '#818cf8' : '#1e293b';
-        ctx.lineWidth = isCurrent ? 2 : 0.5;
+        ctx.strokeStyle = isCurrent ? '#818cf8' : '#1a2340';
+        ctx.lineWidth = isCurrent ? 1.5 : 0.5;
         ctx.strokeRect(stackX, sy, stackW, stackH);
 
-        ctx.font = '8px system-ui';
+        ctx.font = '7px system-ui';
         ctx.fillStyle = isCurrent ? '#fbbf24' : '#475569';
         ctx.textAlign = 'right';
-        ctx.fillText(`L${li === 0 ? '0' : li === nLayers-1 ? '11' : Math.round(layerVal)}`, stackX - 4, sy + stackH/2 + 3);
+        ctx.fillText(`L${Math.round(layerVal)}`, stackX - 3, sy + stackH / 2 + 3);
       }
-
-      // Arrow showing current layer
-      ctx.font = '9px system-ui';
+      ctx.font = '8px system-ui';
       ctx.fillStyle = '#818cf8';
       ctx.textAlign = 'center';
-      ctx.fillText('Layer Stack', stackX + stackW/2, 8);
+      ctx.fillText('Layer Stack', stackX + stackW / 2, 25);
     }
 
     // Phase label
@@ -580,47 +668,78 @@ const HeroMod = (() => {
     ctx.textAlign = 'left';
     let phaseCol, phaseTxt;
     if (layer < 0.5) { phaseCol = '#64748b'; phaseTxt = '📥 Embedding: Blurriest global section'; }
-    else if (layer <= 3) { phaseCol = '#60a5fa'; phaseTxt = `🔀 Layer ${layer.toFixed(1)}: Routing — words to words`; }
-    else if (layer <= 8) { phaseCol = '#c084fc'; phaseTxt = `🔬 Layer ${layer.toFixed(1)}: Resolving — concepts to concepts`; }
-    else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${layer.toFixed(1)}: Gluing — reassembling`; }
+    else if (layer <= 3) { phaseCol = '#60a5fa'; phaseTxt = `🔀 Layer ${layer.toFixed(1)}: Routing`; }
+    else if (layer <= 8) { phaseCol = '#c084fc'; phaseTxt = `🔬 Layer ${layer.toFixed(1)}: Resolving`; }
+    else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${layer.toFixed(1)}: Gluing`; }
     ctx.fillStyle = phaseCol;
     ctx.fillText(phaseTxt, 10, 20);
+
+    // Zoom info
+    if (zoomLevel > 0) {
+      ctx.font = 'bold 11px system-ui';
+      ctx.fillStyle = '#fbbf24';
+      ctx.textAlign = 'right';
+      ctx.fillText(`Zoom: ×${Math.pow(2, zoomLevel).toFixed(0)} | Resolution: ${renderRes}px | Right-click to zoom out`, W - 10, 20);
+    }
 
     // Stats
     document.getElementById('hStats').innerHTML = `
       <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${layer.toFixed(1)}</div></div>
       <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${layer<0.5?'Embed':layer<=3?'Route':layer<=8?'Resolve':'Glue'}</div></div>
-      <div class="sc"><div class="l">DEFORMATION</div><div class="v" style="color:#fbbf24">${Math.round(deform*100)}%</div></div>
-      <div class="sc"><div class="l">LENS</div><div class="v" style="color:#34d399">${lensSize}px</div></div>
-      <div class="sc"><div class="l">OBJECT</div><div class="v" style="color:#f472b6">${State.objectType}</div></div>
+      <div class="sc"><div class="l">ZOOM</div><div class="v" style="color:#fbbf24">×${Math.pow(2,zoomLevel).toFixed(0)}</div><div class="s">${zoomLevel} clicks deep</div></div>
+      <div class="sc"><div class="l">RESOLUTION</div><div class="v" style="color:#34d399">${renderRes}px</div><div class="s">${zoomLevel>3?'Crystal clear':'Pixelated'}</div></div>
+      <div class="sc"><div class="l">OBJECT</div><div class="v" style="color:#f472b6">${currentType}</div></div>
     `;
   }
 
+  function resetZoom() {
+    zoomStack = [];
+    const hint = document.getElementById('heroHint');
+    if (hint) hint.style.opacity = '1';
+    render();
+  }
+
+  function autoZoom() {
+    if (autoZoomAnim) return;
+    resetZoom();
+    const targets = [
+      {nx: 0.3, ny: -0.2},
+      {nx: 0.35, ny: -0.15},
+      {nx: 0.33, ny: -0.18},
+      {nx: 0.32, ny: -0.17},
+    ];
+    let step = 0;
+    function next() {
+      if (step >= targets.length) { autoZoomAnim = null; return; }
+      zoomStack.push({ nx: targets[step].nx, ny: targets[step].ny, time: performance.now() });
+      step++;
+      render();
+      autoZoomAnim = setTimeout(next, 800);
+    }
+    autoZoomAnim = setTimeout(next, 300);
+  }
+
   setTimeout(init, 100);
-  return { render };
+  return { render, resetZoom, autoZoom };
 })();
 
 // ================================================================
-// MODULE: Holographic Embedding (Section 2)
+// HOLOGRAPHIC EMBEDDING (Section 2)
 // ================================================================
 const HoloMod = (() => {
   let ctxP, ctxH, WP, HP, WH, HH;
   const N = ObjGen.N;
-  const SZ = N; // 16x16
-  let damaged = new Array(16).fill(false); // 4x4 = 16 tiles
+  let damaged = new Array(16).fill(false);
   let ORI = [...ObjGen.SMILEY16];
   let DC = null;
-
-  function dct() { DC = ObjGen.dct2(ORI); }
 
   function init() {
     ({ctx: ctxP, W: WP, H: HP} = U.mkCanvas('cPhoto', 200));
     ({ctx: ctxH, W: WH, H: HH} = U.mkCanvas('cHolo', 200));
-    dct();
+    DC = ObjGen.dct2(ORI);
     document.getElementById('eDmg').addEventListener('input', () => {
       const v = +document.getElementById('eDmg').value;
       document.getElementById('eDmgV').textContent = v + '/16';
-      // Damage first v tiles
       damaged = new Array(16).fill(false);
       for (let i = 0; i < v; i++) damaged[i] = true;
       render();
@@ -629,10 +748,10 @@ const HoloMod = (() => {
   }
 
   function randomDamage() {
-    const indices = Array.from({length:16}, (_,i) => i);
-    for (let i = 15; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [indices[i],indices[j]] = [indices[j],indices[i]]; }
+    const idx = Array.from({length:16}, (_,i) => i);
+    for (let i = 15; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; }
     damaged = new Array(16).fill(false);
-    for (let i = 0; i < 8; i++) damaged[indices[i]] = true;
+    for (let i = 0; i < 8; i++) damaged[idx[i]] = true;
     document.getElementById('eDmg').value = 8;
     document.getElementById('eDmgV').textContent = '8/16';
     render();
@@ -659,8 +778,6 @@ const HoloMod = (() => {
   function render() {
     if (!ctxP) return;
     const Z = 4, ZS = 4;
-
-    // Photo: remove spatial tiles
     ctxP.clearRect(0,0,WP,HP); ctxP.fillStyle='#060b18'; ctxP.fillRect(0,0,WP,HP);
     const photoImg = new Float64Array(N*N);
     for (let z = 0; z < 16; z++) {
@@ -672,7 +789,6 @@ const HoloMod = (() => {
     }
     drawImg(ctxP, photoImg, WP, HP);
 
-    // Draw damage X marks on photo
     const ps = Math.min(WP, HP) / N;
     const ox = (WP - ps*N)/2, oy = (HP - ps*N)/2;
     for (let z = 0; z < 16; z++) {
@@ -684,7 +800,6 @@ const HoloMod = (() => {
       ctxP.beginPath(); ctxP.moveTo(bx+bw-4,by+4); ctxP.lineTo(bx+4,by+bw-4); ctxP.stroke();
     }
 
-    // Hologram: remove frequency tiles
     ctxH.clearRect(0,0,WH,HH); ctxH.fillStyle='#060b18'; ctxH.fillRect(0,0,WH,HH);
     const holoCo = new Float64Array(N*N);
     for (let z = 0; z < 16; z++) {
@@ -697,16 +812,13 @@ const HoloMod = (() => {
     const holoImg = ObjGen.idct2(holoCo);
     drawImg(ctxH, holoImg, WH, HH);
 
-    // Stats
     const alive = damaged.filter(d => !d).length;
     const pct = Math.round(100 * alive / 16);
-    // Photo quality: fraction of pixels correct
     let pCorrect = 0;
     for (let i = 0; i < N*N; i++) if (Math.abs(photoImg[i] - ORI[i]) < 0.01) pCorrect++;
     const pQ = Math.round(100 * pCorrect / (N*N));
-    // Holo quality: MSE-based
     let hMSE = 0;
-    for (let i = 0; i < N*N; i++) hMSE += (holoImg[i] - ORI[i])**2;
+    for (let i = 0; i < N*N; i++) hMSE += (holoImg[i] - ORI[i]) ** 2;
     hMSE /= N*N;
     const hQ = hMSE === 0 ? 100 : Math.max(0, Math.round(100*(1-Math.sqrt(hMSE))));
 
@@ -723,16 +835,17 @@ const HoloMod = (() => {
 })();
 
 // ================================================================
-// MODULE: Attention Heads (Section 3)
+// ATTENTION HEADS — Real image sharpening with draggable lenses
 // ================================================================
 const HeadsMod = (() => {
   let ctx, W, H, c;
   let heads = [];
   let dragIdx = -1;
-  const HEAD_COLORS = ['129,140,248','244,114,182','52,211,153','251,191,36'];
+  const HEAD_COLS_RGB = [[129,140,248],[244,114,182],[52,211,153],[251,191,36],[96,165,250],[248,113,113]];
+  const HEAD_COLS_STR = HEAD_COLS_RGB.map(c => c.join(','));
 
   function init() {
-    ({c, ctx, W, H} = U.mkCanvas('cHeads', 420));
+    ({c, ctx, W, H} = U.mkCanvas('cHeads', 460));
     resetHeads();
 
     c.addEventListener('mousedown', e => {
@@ -740,7 +853,7 @@ const HeadsMod = (() => {
       const mx = (e.clientX - r.left) / r.width * W;
       const my = (e.clientY - r.top) / r.height * H;
       for (let i = heads.length - 1; i >= 0; i--) {
-        if (U.dst(mx, my, heads[i].x, heads[i].y) < heads[i].r + 10) {
+        if (U.dst(mx, my, heads[i].x, heads[i].y) < heads[i].r + 15) {
           dragIdx = i; break;
         }
       }
@@ -755,9 +868,12 @@ const HeadsMod = (() => {
     c.addEventListener('mouseup', () => { dragIdx = -1; });
     c.addEventListener('mouseleave', () => { dragIdx = -1; });
 
-    ['aHeadN','aEnt','aShowFinal'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => { resetHeads(); render(); });
-      document.getElementById(id).addEventListener('change', () => { resetHeads(); render(); });
+    ['aHeadN','aEnt','aResBudget'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => { resetHeads(); render(); });
+        el.addEventListener('change', () => { resetHeads(); render(); });
+      }
     });
 
     render();
@@ -765,14 +881,17 @@ const HeadsMod = (() => {
 
   function resetHeads() {
     const n = +document.getElementById('aHeadN').value;
+    // Preserve positions if count unchanged
+    if (heads.length === n) return;
     heads = [];
     for (let i = 0; i < n; i++) {
       const angle = (i / n) * U.TAU + 0.5;
       heads.push({
-        x: W * 0.5 + Math.cos(angle) * W * 0.2,
-        y: H * 0.45 + Math.sin(angle) * H * 0.2,
+        x: W * 0.5 + Math.cos(angle) * W * 0.22,
+        y: H * 0.45 + Math.sin(angle) * H * 0.22,
         r: 50,
-        col: HEAD_COLORS[i % HEAD_COLORS.length]
+        col: HEAD_COLS_STR[i % HEAD_COLS_STR.length],
+        rgb: HEAD_COLS_RGB[i % HEAD_COLS_RGB.length]
       });
     }
   }
@@ -780,8 +899,9 @@ const HeadsMod = (() => {
   function render() {
     if (!ctx) return;
     const entropy = +document.getElementById('aEnt').value / 100;
-    const showFinal = document.getElementById('aShowFinal').checked;
+    const resBudget = +document.getElementById('aResBudget').value / 100;
     document.getElementById('aEntV').textContent = entropy < 0.3 ? 'Narrow' : entropy < 0.7 ? 'Medium' : 'Broad';
+    document.getElementById('aResBudgetV').textContent = Math.round(resBudget * 100);
 
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#060b18';
@@ -789,46 +909,91 @@ const HeadsMod = (() => {
 
     const SZ = ObjGen.SZ;
     const img = ObjGen.generate(State.objectType);
+
+    // Per-head lens radius depends on entropy and head count
+    const perHeadR = U.lerp(30, 140, entropy);
+    // Total resolution budget is fixed — more heads = less per head
+    const perHeadBudget = resBudget / Math.max(1, heads.length);
+
+    // Render the image with variable pixelation based on head coverage
+    // First pass: compute sharpness map
+    const sharpMap = new Float64Array(SZ * SZ);
+    const headMap = new Int8Array(SZ * SZ).fill(-1);
     const cellW = W / SZ, cellH = H / SZ;
 
-    // Per-head lens radius
-    const perHeadR = U.lerp(35, 130, entropy);
-    const perHeadStrength = 1 / Math.max(1, heads.length);
-
-    // Draw image with multi-head sharpening
     for (let iy = 0; iy < SZ; iy++) {
       for (let ix = 0; ix < SZ; ix++) {
         const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
-        let val = img[iy * SZ + ix];
         let totalSharp = 0;
-        let dominantHead = -1, bestDist = Infinity;
+        let bestHead = -1, bestDist = Infinity;
 
         for (let hi = 0; hi < heads.length; hi++) {
           const d = U.dst(px, py, heads[hi].x, heads[hi].y);
           if (d < perHeadR) {
-            const s = (1 - d / perHeadR) * perHeadStrength;
+            const s = (1 - d / perHeadR) * perHeadBudget;
             totalSharp += s;
-            if (d < bestDist) { bestDist = d; dominantHead = hi; }
+            if (d < bestDist) { bestDist = d; bestHead = hi; }
           }
         }
+        sharpMap[iy * SZ + ix] = U.clamp(totalSharp, 0, 1);
+        headMap[iy * SZ + ix] = bestHead;
+      }
+    }
 
-        totalSharp = U.clamp(totalSharp, 0, 1);
-        const displayVal = U.lerp(val * 0.3, val, 0.3 + totalSharp * 0.7);
-        const br = Math.floor(displayVal * 255);
+    // Second pass: render with variable pixelation
+    // Areas with high sharpness get 1:1 pixels; low sharpness gets blocky
+    const rendered = new Uint8Array(SZ * SZ); // track which pixels rendered
+
+    for (let iy = 0; iy < SZ; iy++) {
+      for (let ix = 0; ix < SZ; ix++) {
+        if (rendered[iy * SZ + ix]) continue;
+
+        const sharp = sharpMap[iy * SZ + ix];
+        const hIdx = headMap[iy * SZ + ix];
+
+        // Block size: 1 at full sharpness, up to 6 at zero
+        const blockSize = Math.max(1, Math.round(U.lerp(6, 1, sharp)));
+
+        // Average the block
+        let sum = 0, cnt = 0;
+        for (let by = 0; by < blockSize && iy + by < SZ; by++) {
+          for (let bx = 0; bx < blockSize && ix + bx < SZ; bx++) {
+            sum += img[(iy + by) * SZ + (ix + bx)];
+            rendered[(iy + by) * SZ + (ix + bx)] = 1;
+            cnt++;
+          }
+        }
+        const val = sum / cnt;
+
+        // Color: grayscale base + head tint
+        const brightness = U.lerp(val * 0.2, val, 0.2 + sharp * 0.8);
+        let r = Math.floor(brightness * 240);
+        let g = Math.floor(brightness * 220);
+        let b = Math.floor(brightness * 200);
 
         // Tint by dominant head
-        let r = br, g = br, b = br;
-        if (dominantHead >= 0 && totalSharp > 0.05) {
-          const parts = heads[dominantHead].col.split(',').map(Number);
-          const t = totalSharp * 0.2;
-          r = Math.floor(U.lerp(br, parts[0], t));
-          g = Math.floor(U.lerp(br, parts[1], t));
-          b = Math.floor(U.lerp(br, parts[2], t));
+        if (hIdx >= 0 && sharp > 0.05) {
+          const hc = heads[hIdx].rgb;
+          const t = sharp * 0.25;
+          r = Math.floor(U.lerp(r, hc[0], t));
+          g = Math.floor(U.lerp(g, hc[1], t));
+          b = Math.floor(U.lerp(b, hc[2], t));
         }
 
-        ctx.globalAlpha = 0.3 + totalSharp * 0.7;
-        ctx.fillStyle = `rgb(${r},${g},${b})`;
-        ctx.fillRect(px - cellW/2, py - cellH/2, cellW + 0.5, cellH + 0.5);
+        // Draw the block
+        const px = ix * cellW, py = iy * cellH;
+        const bw = blockSize * cellW, bh = blockSize * cellH;
+
+        ctx.globalAlpha = 0.2 + sharp * 0.8;
+        ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
+        ctx.fillRect(px, py, bw + 0.5, bh + 0.5);
+
+        // At high sharpness, draw crisp edges
+        if (sharp > 0.7 && val > 0.5) {
+          ctx.strokeStyle = `rgba(255,255,255,${(sharp - 0.7) * 0.3})`;
+          ctx.lineWidth = 0.5;
+          ctx.strokeRect(px + 0.5, py + 0.5, cellW - 1, cellH - 1);
+        }
       }
     }
     ctx.globalAlpha = 1;
@@ -836,47 +1001,52 @@ const HeadsMod = (() => {
     // Draw head lenses
     for (let hi = 0; hi < heads.length; hi++) {
       const h = heads[hi];
-      U.drawLensRing(ctx, h.x, h.y, perHeadR, 0.7, h.col);
-
-      // Label
-      ctx.font = 'bold 11px system-ui';
-      ctx.fillStyle = `rgba(${h.col},0.9)`;
-      ctx.textAlign = 'center';
-      ctx.fillText(`Head ${hi}`, h.x, h.y - perHeadR - 6);
+      U.drawLensRing(ctx, h.x, h.y, perHeadR, 0.65, h.col);
 
       // Drag handle
       ctx.beginPath();
-      ctx.arc(h.x, h.y, 6, 0, U.TAU);
-      ctx.fillStyle = `rgba(${h.col},0.8)`;
+      ctx.arc(h.x, h.y, 7, 0, U.TAU);
+      ctx.fillStyle = `rgba(${h.col},0.85)`;
       ctx.fill();
       ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2;
       ctx.stroke();
+
+      // Label
+      ctx.font = 'bold 10px system-ui';
+      ctx.fillStyle = `rgba(${h.col},0.9)`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`Head ${hi}`, h.x, h.y - perHeadR - 5);
+
+      // Show per-head budget
+      ctx.font = '8px system-ui';
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(`${Math.round(perHeadBudget * 100)}% budget`, h.x, h.y + perHeadR + 12);
     }
 
-    // Info
+    // Title
     ctx.font = 'bold 11px system-ui';
     ctx.fillStyle = '#818cf8';
     ctx.textAlign = 'center';
-    ctx.fillText(`${heads.length} Attention Head${heads.length>1?'s':''} — Entropy: ${entropy.toFixed(2)} — Drag to reposition`, W/2, 18);
+    ctx.fillText(`${heads.length} Attention Head${heads.length>1?'s':''} — Drag to reposition`, W/2, 16);
 
     // Tradeoff bar
-    const barW = 180, barH = 6, barX = W/2 - barW/2, barY = H - 20;
+    const barW = 200, barH = 6, barX = W/2 - barW/2, barY = H - 18;
     ctx.fillStyle = '#1a2340'; ctx.fillRect(barX, barY, barW, barH);
     ctx.fillStyle = '#818cf8'; ctx.fillRect(barX, barY, barW * entropy, barH);
-    ctx.font = '9px system-ui'; ctx.fillStyle = '#64748b';
-    ctx.textAlign = 'left'; ctx.fillText('Sharp/Few', barX, barY - 3);
-    ctx.textAlign = 'right'; ctx.fillText('Blurry/Many', barX + barW, barY - 3);
+    ctx.font = '8px system-ui'; ctx.fillStyle = '#64748b';
+    ctx.textAlign = 'left'; ctx.fillText('Sharp/Few', barX, barY - 2);
+    ctx.textAlign = 'right'; ctx.fillText('Blurry/Many', barX + barW, barY - 2);
 
     // Stats
-    const coverage = U.clamp(heads.length * entropy * 0.3, 0, 1);
-    const resolution = U.clamp(1 - entropy, 0, 1);
+    const totalCoverage = U.clamp(heads.length * entropy * 0.3, 0, 1);
+    const avgSharp = sharpMap.reduce((a,b) => a+b, 0) / sharpMap.length;
     document.getElementById('aStats').innerHTML = `
       <div class="sc"><div class="l">HEADS</div><div class="v" style="color:#818cf8">${heads.length}</div></div>
       <div class="sc"><div class="l">ENTROPY</div><div class="v" style="color:#fbbf24">${entropy.toFixed(2)}</div></div>
-      <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:#34d399">${Math.round(coverage*100)}%</div></div>
-      <div class="sc"><div class="l">RESOLUTION</div><div class="v" style="color:#34d399">${Math.round(resolution*100)}%</div></div>
-      <div class="sc"><div class="l">TRADEOFF</div><div class="v" style="color:#f472b6">${entropy<0.3?'Detail':entropy>0.7?'Breadth':'Balanced'}</div></div>
+      <div class="sc"><div class="l">AVG SHARPNESS</div><div class="v" style="color:#34d399">${Math.round(avgSharp*100)}%</div></div>
+      <div class="sc"><div class="l">BUDGET/HEAD</div><div class="v" style="color:#f472b6">${Math.round(perHeadBudget*100)}%</div></div>
+      <div class="sc"><div class="l">TRADEOFF</div><div class="v" style="color:#a78bfa">${entropy<0.3?'Detail':entropy>0.7?'Breadth':'Balanced'}</div></div>
     `;
   }
 
@@ -885,31 +1055,60 @@ const HeadsMod = (() => {
 })();
 
 // ================================================================
-// MODULE: FFN Expansion (Section 4)
+// FFN MODULE — Complex multi-center warping
 // ================================================================
 const FFNMod = (() => {
   let ctx, W, H;
   let animating = false;
+  let weightCenters = [];
+
+  function generateWeights(n) {
+    const rng = U.srand(77);
+    weightCenters = [];
+    for (let i = 0; i < n; i++) {
+      weightCenters.push({
+        x: 0.15 + rng() * 0.7,
+        y: 0.15 + rng() * 0.7,
+        strength: 0.3 + rng() * 0.7,
+        sign: rng() > 0.5 ? 1 : -1,
+        freq: 1 + rng() * 3,
+        phase: rng() * U.TAU,
+        col: U.PAL[i % U.PAL.length]
+      });
+    }
+  }
 
   function init() {
-    ({ctx, W, H} = U.mkCanvas('cFFN', 380));
-    ['fStr','fJac'].forEach(id => {
+    ({ctx, W, H} = U.mkCanvas('cFFN', 420));
+    generateWeights(3);
+
+    ['fStr','fJac','fNonlin','fShowWeights'].forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener('input', render);
-      el.addEventListener('change', render);
+      if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
     });
 
-    // Click to set expansion center
-    const c = document.getElementById('cFFN');
-    c.addEventListener('click', e => {
-      const r = c.getBoundingClientRect();
-      State.ffnCx = (e.clientX - r.left) / r.width;
-      State.ffnCy = (e.clientY - r.top) / r.height;
+    document.getElementById('fCenters').addEventListener('change', () => {
+      generateWeights(+document.getElementById('fCenters').value);
       render();
     });
 
-    State.ffnCx = 0.45;
-    State.ffnCy = 0.5;
+    // Click to add/move nearest weight center
+    const c = document.getElementById('cFFN');
+    c.addEventListener('click', e => {
+      const r = c.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width;
+      const my = (e.clientY - r.top) / r.height;
+      // Move nearest center
+      let bestI = 0, bestD = Infinity;
+      weightCenters.forEach((wc, i) => {
+        const d = U.dst(mx, my, wc.x, wc.y);
+        if (d < bestD) { bestD = d; bestI = i; }
+      });
+      weightCenters[bestI].x = mx;
+      weightCenters[bestI].y = my;
+      render();
+    });
+
     render();
   }
 
@@ -917,28 +1116,80 @@ const FFNMod = (() => {
     if (!ctx) return;
     const strength = +document.getElementById('fStr').value / 100;
     const showJac = document.getElementById('fJac').checked;
+    const nonlin = +document.getElementById('fNonlin').value / 100;
+    const showWeights = document.getElementById('fShowWeights').checked;
+
     document.getElementById('fStrV').textContent = Math.round(strength * 100) + '%';
+    document.getElementById('fNonlinV').textContent = Math.round(nonlin * 100) + '%';
 
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    const cx = (State.ffnCx || 0.45) * W;
-    const cy = (State.ffnCy || 0.5) * H;
-    const expR = 120;
-    const step = 24;
+    const step = 22;
 
+    // Complex multi-center warp with nonlinear interactions
     function warp(x, y) {
-      const dx = x - cx, dy = y - cy;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d < 1) return [x, y];
-      const factor = 1 + strength * 2 * Math.exp(-d * d / (2 * expR * expR));
-      return [cx + dx * factor, cy + dy * factor];
+      if (strength < 0.001) return [x, y];
+      let wx = x, wy = y;
+      const nx = x / W, ny = y / H;
+
+      for (const wc of weightCenters) {
+        const dx = nx - wc.x, dy = ny - wc.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const R = 0.2;
+
+        // Gaussian influence
+        const gauss = Math.exp(-d * d / (2 * R * R));
+
+        // Nonlinear component: ReLU-like + sinusoidal interference
+        let nlFactor = gauss;
+        if (nonlin > 0) {
+          // ReLU gate
+          const relu = Math.max(0, 1 - d / R);
+          // Sinusoidal interference between centers
+          const interference = Math.sin(d * wc.freq * 20 + wc.phase) * 0.3;
+          nlFactor = U.lerp(gauss, relu * (1 + interference * nonlin), nonlin);
+        }
+
+        const push = strength * wc.strength * wc.sign * nlFactor;
+
+        // Radial push/pull
+        if (d > 0.001) {
+          wx += (dx / d) * push * W * 0.15;
+          wy += (dy / d) * push * H * 0.15;
+        }
+
+        // Tangential swirl (nonlinear)
+        if (nonlin > 0.2) {
+          const swirl = strength * nonlin * gauss * wc.sign * 0.3;
+          wx += -dy / Math.max(d, 0.01) * swirl * W * 0.08;
+          wy += dx / Math.max(d, 0.01) * swirl * H * 0.08;
+        }
+      }
+
+      // Cross-center interference
+      if (weightCenters.length > 1 && nonlin > 0.3) {
+        for (let i = 0; i < weightCenters.length; i++) {
+          for (let j = i + 1; j < weightCenters.length; j++) {
+            const ci = weightCenters[i], cj = weightCenters[j];
+            const midX = (ci.x + cj.x) / 2, midY = (ci.y + cj.y) / 2;
+            const dMid = U.dst(nx, ny, midX, midY);
+            const interDist = U.dst(ci.x, ci.y, cj.x, cj.y);
+            const interStrength = Math.exp(-dMid * dMid / (interDist * interDist * 0.3));
+            const interPush = strength * nonlin * interStrength * 0.1;
+            wx += Math.sin(nx * 30 + cj.phase) * interPush * W * 0.05;
+            wy += Math.cos(ny * 30 + ci.phase) * interPush * H * 0.05;
+          }
+        }
+      }
+
+      return [wx, wy];
     }
 
-    // Strain coloring
+    // Strain coloring (Jacobian determinant)
     if (showJac) {
-      const gs = 6;
+      const gs = 5;
       for (let y = 0; y < H; y += gs) {
         for (let x = 0; x < W; x += gs) {
           const [wx, wy] = warp(x, y);
@@ -946,15 +1197,15 @@ const FFNMod = (() => {
           const [wux, wuy] = warp(x, y + 1);
           const det = Math.abs((wrx - wx) * (wuy - wy) - (wux - wx) * (wry - wy));
           let r = 0, g = 0, b = 0;
-          if (det > 1.15) {
-            const t = U.clamp((det - 1) / 2, 0, 1);
-            r = Math.floor(220 * t); g = Math.floor(60 * t); b = Math.floor(80 * t);
-          } else if (det < 0.85) {
+          if (det > 1.1) {
+            const t = U.clamp((det - 1) / 3, 0, 1);
+            r = Math.floor(230 * t); g = Math.floor(55 * t); b = Math.floor(75 * t);
+          } else if (det < 0.9) {
             const t = U.clamp((1 - det) / 0.5, 0, 1);
-            g = Math.floor(100 * t); b = Math.floor(170 * t);
+            g = Math.floor(90 * t); b = Math.floor(180 * t);
           }
-          if (r + g + b > 5) {
-            ctx.fillStyle = `rgba(${r},${g},${b},0.25)`;
+          if (r + g + b > 3) {
+            ctx.fillStyle = `rgba(${r},${g},${b},0.22)`;
             ctx.fillRect(x, y, gs, gs);
           }
         }
@@ -962,54 +1213,86 @@ const FFNMod = (() => {
     }
 
     // Grid
-    U.drawGrid(ctx, W, H, warp, step, 'rgba(100,116,139,0.18)', 0.7);
+    U.drawGrid(ctx, W, H, warp, step, `rgba(100,116,139,${0.1 + strength * 0.15})`, 0.6);
 
-    // Expansion center glow
-    if (strength > 0.01) {
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, expR * strength);
-      grad.addColorStop(0, `rgba(251,191,36,${0.1 * strength})`);
-      grad.addColorStop(1, 'rgba(251,191,36,0)');
-      ctx.beginPath();
-      ctx.arc(cx, cy, expR * Math.max(strength, 0.1), 0, U.TAU);
-      ctx.fillStyle = grad;
-      ctx.fill();
+    // Draw weight centers
+    if (showWeights) {
+      for (const wc of weightCenters) {
+        const wcx = wc.x * W, wcy = wc.y * H;
+        const R = 0.2 * Math.min(W, H);
+
+        // Influence radius
+        const grad = ctx.createRadialGradient(wcx, wcy, 0, wcx, wcy, R * strength);
+        grad.addColorStop(0, U.hx(wc.col, 0.12 * strength));
+        grad.addColorStop(1, U.hx(wc.col, 0));
+        ctx.beginPath();
+        ctx.arc(wcx, wcy, R * Math.max(strength, 0.05), 0, U.TAU);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Center dot
+        ctx.beginPath();
+        ctx.arc(wcx, wcy, 5, 0, U.TAU);
+        ctx.fillStyle = wc.col;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Sign indicator
+        ctx.font = 'bold 12px system-ui';
+        ctx.fillStyle = wc.sign > 0 ? '#34d399' : '#f87171';
+        ctx.textAlign = 'center';
+        ctx.fillText(wc.sign > 0 ? '+' : '−', wcx, wcy - 10);
+
+        // Strength label
+        ctx.font = '8px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`w=${wc.strength.toFixed(2)}`, wcx, wcy + 14);
+      }
     }
 
-    // Center dot
-    ctx.beginPath();
-    ctx.arc(cx, cy, 5, 0, U.TAU);
-    ctx.fillStyle = '#fbbf24';
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Labels
+    // Title
     ctx.font = 'bold 11px system-ui';
     ctx.fillStyle = '#818cf8';
     ctx.textAlign = 'center';
-    ctx.fillText(`Feed-Forward Expansion — ${Math.round(strength * 100)}%`, W / 2, 18);
+    ctx.fillText(`Feed-Forward: ${weightCenters.length} weight centers — ${Math.round(strength*100)}% expansion — ${Math.round(nonlin*100)}% nonlinearity`, W/2, 16);
 
+    // Legend
     if (showJac) {
       ctx.font = '9px system-ui';
-      ctx.fillStyle = '#e94960';
-      ctx.textAlign = 'left';
-      ctx.fillText('■ Expansion (det > 1)', 8, H - 24);
+      ctx.fillStyle = '#e94960'; ctx.textAlign = 'left';
+      ctx.fillText('■ Expansion (det > 1)', 8, H - 22);
       ctx.fillStyle = '#0077b6';
-      ctx.fillText('■ Contraction (det < 1)', 8, H - 10);
+      ctx.fillText('■ Contraction (det < 1)', 8, H - 8);
     }
 
-    ctx.font = '9px system-ui';
+    ctx.font = '8px system-ui';
     ctx.fillStyle = '#475569';
     ctx.textAlign = 'center';
-    ctx.fillText('Click to move expansion center', W / 2, H - 6);
+    ctx.fillText('Click to move nearest weight center', W/2, H - 4);
 
     // Stats
-    const maxDet = 1 + strength * 2;
+    let maxDet = 1, minDet = 1;
+    const testPts = 20;
+    for (let i = 0; i < testPts; i++) {
+      for (let j = 0; j < testPts; j++) {
+        const x = (i / testPts) * W, y = (j / testPts) * H;
+        const [wx, wy] = warp(x, y);
+        const [wrx, wry] = warp(x+1, y);
+        const [wux, wuy] = warp(x, y+1);
+        const det = Math.abs((wrx-wx)*(wuy-wy)-(wux-wx)*(wry-wy));
+        if (det > maxDet) maxDet = det;
+        if (det < minDet) minDet = det;
+      }
+    }
+
     document.getElementById('fStats').innerHTML = `
-      <div class="sc"><div class="l">EXPANSION</div><div class="v" style="color:#e94960">${maxDet.toFixed(2)}×</div></div>
-      <div class="sc"><div class="l">INNER DIM</div><div class="v" style="color:#fbbf24">${Math.round(768 + strength * 2304)}</div><div class="s">d_ff ≈ 4d</div></div>
-      <div class="sc"><div class="l">OUTPUT DIM</div><div class="v" style="color:#818cf8">768</div><div class="s">compressed back</div></div>
+      <div class="sc"><div class="l">EXPANSION</div><div class="v" style="color:#e94960">${maxDet.toFixed(2)}×</div><div class="s">max stretch</div></div>
+      <div class="sc"><div class="l">CONTRACTION</div><div class="v" style="color:#0077b6">${minDet.toFixed(2)}×</div><div class="s">max squeeze</div></div>
+      <div class="sc"><div class="l">WEIGHT CENTERS</div><div class="v" style="color:#fbbf24">${weightCenters.length}</div></div>
+      <div class="sc"><div class="l">INNER DIM</div><div class="v" style="color:#818cf8">${Math.round(768 + strength * 2304)}</div><div class="s">d_ff ≈ 4d</div></div>
+      <div class="sc"><div class="l">NONLINEARITY</div><div class="v" style="color:#a78bfa">${Math.round(nonlin*100)}%</div><div class="s">ReLU + interference</div></div>
     `;
   }
 
@@ -1019,7 +1302,7 @@ const FFNMod = (() => {
     const slider = document.getElementById('fStr');
     const start = performance.now();
     function step(now) {
-      const t = Math.min((now - start) / 2000, 1);
+      const t = Math.min((now - start) / 2500, 1);
       slider.value = Math.round(U.ease(t) * 100);
       render();
       if (t < 1) requestAnimationFrame(step);
@@ -1040,7 +1323,7 @@ const FFNMod = (() => {
 })();
 
 // ================================================================
-// MODULE: Full Pipeline (Section 5)
+// PIPELINE MODULE (Section 5)
 // ================================================================
 const PipeMod = (() => {
   let ctx, W, H, c;
@@ -1058,7 +1341,6 @@ const PipeMod = (() => {
     currentPts = genPts(mode);
     patches = genPatchesFromPts(currentPts);
 
-    // Build tabs
     const tabEl = document.getElementById('pTabs');
     let html = '';
     OBJECTS.forEach((o, i) => {
@@ -1097,47 +1379,37 @@ const PipeMod = (() => {
     const rng = U.srand(42);
     switch (type) {
       case 'smiley':
-        for (let i = 0; i < N * 0.4; i++) { const a = (i / (N * 0.4)) * U.TAU, r = 0.35 + (rng() - 0.5) * 0.015; pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'face' }); }
-        for (let i = 0; i < N * 0.08; i++) { const a = (i / (N * 0.08)) * U.TAU, r = 0.05; pts.push({ x: 0.38 + r * Math.cos(a), y: 0.4 + r * Math.sin(a), t: 'eye' }); }
-        for (let i = 0; i < N * 0.08; i++) { const a = (i / (N * 0.08)) * U.TAU, r = 0.05; pts.push({ x: 0.62 + r * Math.cos(a), y: 0.4 + r * Math.sin(a), t: 'eye' }); }
-        for (let i = 0; i < N * 0.12; i++) { const a = Math.PI * 0.15 + (i / (N * 0.12)) * Math.PI * 0.7, r = 0.2; pts.push({ x: 0.5 + r * Math.cos(a), y: 0.55 + r * Math.sin(a) * 0.5, t: 'mouth' }); }
-        for (let i = 0; i < N * 0.32; i++) { const a = rng() * U.TAU, r = rng() * 0.3; pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'fill' }); }
+        for (let i = 0; i < N*.4; i++) { const a=(i/(N*.4))*U.TAU, r=.35+(rng()-.5)*.015; pts.push({x:.5+r*Math.cos(a),y:.5+r*Math.sin(a),t:'face'}); }
+        for (let i = 0; i < N*.08; i++) { const a=(i/(N*.08))*U.TAU, r=.05; pts.push({x:.38+r*Math.cos(a),y:.4+r*Math.sin(a),t:'eye'}); }
+        for (let i = 0; i < N*.08; i++) { const a=(i/(N*.08))*U.TAU, r=.05; pts.push({x:.62+r*Math.cos(a),y:.4+r*Math.sin(a),t:'eye'}); }
+        for (let i = 0; i < N*.12; i++) { const a=Math.PI*.15+(i/(N*.12))*Math.PI*.7, r=.2; pts.push({x:.5+r*Math.cos(a),y:.55+r*Math.sin(a)*.5,t:'mouth'}); }
+        for (let i = 0; i < N*.32; i++) { const a=rng()*U.TAU, r=rng()*.3; pts.push({x:.5+r*Math.cos(a),y:.5+r*Math.sin(a),t:'fill'}); }
         break;
       case 'torus':
-        for (let i = 0; i < N; i++) { const u = rng() * U.TAU, v = rng() * U.TAU, R = 0.25, r = 0.1; pts.push({ x: 0.5 + (R + r * Math.cos(v)) * Math.cos(u), y: 0.5 + (R + r * Math.cos(v)) * Math.sin(u), t: 'torus', u, v }); }
+        for (let i=0;i<N;i++){const u=rng()*U.TAU,v=rng()*U.TAU,R=.25,r=.1;pts.push({x:.5+(R+r*Math.cos(v))*Math.cos(u),y:.5+(R+r*Math.cos(v))*Math.sin(u),t:'torus',u,v})}
         break;
       case 'trefoil':
-        for (let i = 0; i < N; i++) { const t = (i / N) * U.TAU, r = 0.15 * Math.cos(3 * t) + 0.25; pts.push({ x: 0.5 + r * Math.cos(t) + (rng() - 0.5) * 0.015, y: 0.5 + r * Math.sin(t) + (rng() - 0.5) * 0.015, t: 'knot', p: t }); }
+        for(let i=0;i<N;i++){const t=(i/N)*U.TAU,r=.15*Math.cos(3*t)+.25;pts.push({x:.5+r*Math.cos(t)+(rng()-.5)*.015,y:.5+r*Math.sin(t)+(rng()-.5)*.015,t:'knot',p:t})}
         break;
       case 'clusters':
-        [{cx:.25,cy:.3},{cx:.72,cy:.35},{cx:.5,cy:.75},{cx:.18,cy:.68}].forEach((cc, ci) => {
-          for (let i = 0; i < N / 4; i++) { const a = rng() * U.TAU, r = rng() * 0.1; pts.push({ x: cc.cx + r * Math.cos(a), y: cc.cy + r * Math.sin(a), t: 'cl', cl: ci }); }
-        });
+        [{cx:.25,cy:.3},{cx:.72,cy:.35},{cx:.5,cy:.75},{cx:.18,cy:.68}].forEach((cc,ci)=>{for(let i=0;i<N/4;i++){const a=rng()*U.TAU,r=rng()*.1;pts.push({x:cc.cx+r*Math.cos(a),y:cc.cy+r*Math.sin(a),t:'cl',cl:ci})}});
         break;
       case 'rings':
-        for (let i = 0; i < N / 2; i++) { const a = (i / (N / 2)) * U.TAU, r = 0.15 + (rng() - 0.5) * 0.015; pts.push({ x: 0.35 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'r1', p: a }); }
-        for (let i = 0; i < N / 2; i++) { const a = (i / (N / 2)) * U.TAU, r = 0.15 + (rng() - 0.5) * 0.015; pts.push({ x: 0.65 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'r2', p: a }); }
+        for(let i=0;i<N/2;i++){const a=(i/(N/2))*U.TAU,r=.15+(rng()-.5)*.015;pts.push({x:.35+r*Math.cos(a),y:.5+r*Math.sin(a),t:'r1',p:a})}
+        for(let i=0;i<N/2;i++){const a=(i/(N/2))*U.TAU,r=.15+(rng()-.5)*.015;pts.push({x:.65+r*Math.cos(a),y:.5+r*Math.sin(a),t:'r2',p:a})}
         break;
     }
     return pts;
   }
 
   function genPatchesFromPts(pts) {
-    const k = 4, rng2 = U.srand(99), cs = [];
-    for (let i = 0; i < k; i++) { const p = pts[Math.floor(rng2() * pts.length)]; cs.push({ x: p.x, y: p.y }); }
-    for (let iter = 0; iter < 3; iter++) {
-      const sums = cs.map(() => ({ sx: 0, sy: 0, n: 0 }));
-      pts.forEach(p => { let bi = 0, bd = Infinity; cs.forEach((cc, i) => { const d = U.dst(p.x, p.y, cc.x, cc.y); if (d < bd) { bd = d; bi = i; } }); sums[bi].sx += p.x; sums[bi].sy += p.y; sums[bi].n++; });
-      sums.forEach((s, i) => { if (s.n > 0) { cs[i].x = s.sx / s.n; cs[i].y = s.sy / s.n; } });
-    }
-    const result = [];
-    for (let i = 0; i < k; i++) {
-      const ms = pts.filter(p => { let bi = 0, bd = Infinity; cs.forEach((cc, j) => { const d = U.dst(p.x, p.y, cc.x, cc.y); if (d < bd) { bd = d; bi = j; } }); return bi === i; });
-      if (!ms.length) continue;
-      const cx2 = ms.reduce((s, p) => s + p.x, 0) / ms.length;
-      const cy2 = ms.reduce((s, p) => s + p.y, 0) / ms.length;
-      let mr = 0; ms.forEach(p => { const d = U.dst(p.x, p.y, cx2, cy2); if (d > mr) mr = d; });
-      result.push({ cx: cx2, cy: cy2, r: mr + 0.02, col: U.PAL[i] });
+    const k=4,rng2=U.srand(99),cs=[];
+    for(let i=0;i<k;i++){const p=pts[Math.floor(rng2()*pts.length)];cs.push({x:p.x,y:p.y})}
+    for(let iter=0;iter<3;iter++){const sums=cs.map(()=>({sx:0,sy:0,n:0}));pts.forEach(p=>{let bi=0,bd=Infinity;cs.forEach((cc,i)=>{const d=U.dst(p.x,p.y,cc.x,cc.y);if(d<bd){bd=d;bi=i}});sums[bi].sx+=p.x;sums[bi].sy+=p.y;sums[bi].n++});sums.forEach((s,i)=>{if(s.n>0){cs[i].x=s.sx/s.n;cs[i].y=s.sy/s.n}})}
+    const result=[];
+    for(let i=0;i<k;i++){const ms=pts.filter(p=>{let bi=0,bd=Infinity;cs.forEach((cc,j)=>{const d=U.dst(p.x,p.y,cc.x,cc.y);if(d<bd){bd=d;bi=j}});return bi===i});if(!ms.length)continue;const cx2=ms.reduce((s,p)=>s+p.x,0)/ms.length;const cy2=ms.reduce((s,p)=>s+p.y,0)/ms.length;
+      let mr=0;ms.forEach(p=>{const d=U.dst(p.x,p.y,cx2,cy2);if(d>mr)mr=d});
+      result.push({cx:cx2,cy:cy2,r:mr+.02,col:U.PAL[i]});
     }
     return result;
   }
@@ -1172,11 +1444,12 @@ const PipeMod = (() => {
     ctx.fillRect(0, 0, W, H);
 
     const lx = mouseX * W, ly = mouseY * H;
-    const focus = showLens ? (+document.getElementById('pFocus').value / 100) : 0.3;
+    const focusEl = document.getElementById('pFocus');
+    const focus = showLens && focusEl ? (+focusEl.value / 100) : 0.3;
     const lensR = U.lerp(40, 160, focus);
 
-    const focusEl = document.getElementById('pFocusV');
-    if (focusEl) focusEl.textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
+    const focusVEl = document.getElementById('pFocusV');
+    if (focusVEl) focusVEl.textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
 
     const routing = U.clamp(1 - layer / 4, 0, 1);
     const resolving = U.clamp((layer - 2) / 5, 0, 1);
@@ -1247,7 +1520,6 @@ const PipeMod = (() => {
 
     if (showLens) U.drawLensRing(ctx, lx, ly, lensR, 0.7);
 
-    // Phase label
     ctx.font = 'bold 11px system-ui';
     ctx.textAlign = 'center';
     let phaseCol, phaseTxt;
@@ -1293,7 +1565,7 @@ const PipeMod = (() => {
 })();
 
 // ================================================================
-// MODULE: Hallucination (Section 6)
+// HALLUCINATION MODULE (Section 6)
 // ================================================================
 const HalMod = (() => {
   let ctx, W, H, c;
@@ -1329,7 +1601,6 @@ const HalMod = (() => {
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    // Heatmap
     const step = 4;
     for (let y = 0; y < H; y += step) {
       for (let x = 0; x < W; x += step) {
@@ -1348,7 +1619,6 @@ const HalMod = (() => {
       }
     }
 
-    // Region labels
     for (const rg of regions) {
       const rx = rg.x * W, ry = rg.y * H, rr = rg.r * Math.min(W, H) * coverage;
       ctx.beginPath();
@@ -1364,7 +1634,6 @@ const HalMod = (() => {
       ctx.fillText(rg.label, rx, ry);
     }
 
-    // Query coverage
     let qCov = 0;
     for (const rg of regions) {
       const d = U.dst(qx, qy, rg.x, rg.y);
@@ -1373,7 +1642,6 @@ const HalMod = (() => {
     const conf = 0.72 + qCov * 0.23;
     const qCol = qCov > 0.5 ? '#34d399' : qCov > 0.2 ? '#fbbf24' : '#ef4444';
 
-    // Query dot
     const qpx = qx * W, qpy = qy * H;
     ctx.beginPath();
     ctx.arc(qpx, qpy, 10, 0, U.TAU);
@@ -1391,7 +1659,6 @@ const HalMod = (() => {
     ctx.textAlign = 'center';
     ctx.fillText('Query', qpx, qpy - 14);
 
-    // Bars
     const barW = 140, barH = 10, barX = W - barW - 16, barY = 16;
     ctx.fillStyle = '#1a2340';
     ctx.fillRect(barX, barY, barW, barH);
@@ -1408,7 +1675,6 @@ const HalMod = (() => {
     ctx.fillRect(barX, barY + 22, barW * qCov, barH);
     ctx.fillText(`Coverage: ${Math.round(qCov * 100)}%`, barX, barY + 19);
 
-    // Hallucination warning
     if (qCov < 0.3 && conf > 0.7) {
       ctx.font = 'bold 12px system-ui';
       ctx.fillStyle = '#ef4444';
@@ -1416,7 +1682,6 @@ const HalMod = (() => {
       ctx.fillText('⚠️ HALLUCINATION RISK: High confidence, low coverage!', W / 2, H - 12);
     }
 
-    // Stats
     const isHal = qCov < 0.3;
     document.getElementById('xStats').innerHTML = `
       <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:${qCol}">${Math.round(qCov*100)}%</div></div>
@@ -1431,7 +1696,7 @@ const HalMod = (() => {
 })();
 
 // ================================================================
-// MODULE: Scroll fade-in
+// SCROLL FADE-IN
 // ================================================================
 const fadeObs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
@@ -1439,27 +1704,19 @@ const fadeObs = new IntersectionObserver(entries => {
 document.querySelectorAll('.fade').forEach(el => fadeObs.observe(el));
 
 // ================================================================
-// MODULE: Resize handler
+// RESIZE HANDLER
 // ================================================================
 let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    // Reinitialize canvases that need it
-    // The modules will re-init on next render call
-    Bus.emit('resize');
-  }, 300);
+  resizeTimer = setTimeout(() => { Bus.emit('resize'); }, 300);
 });
 
 // ================================================================
-// MODULE: Keyboard shortcuts
+// KEYBOARD SHORTCUTS
 // ================================================================
 document.addEventListener('keydown', e => {
-  if (e.key === ' ') {
-    e.preventDefault();
-    // Toggle pipeline animation
-    PipeMod.anim();
-  }
+  if (e.key === ' ') { e.preventDefault(); PipeMod.anim(); }
 });
 
 </script>
