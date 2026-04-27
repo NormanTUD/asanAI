@@ -329,22 +329,33 @@ const ObjGen = (() => {
 })();
 
 // ================================================================
-// SECTION 1: HERO — Focus points increase local resolution
-// No viewport zoom. Image stays same size. Clicks add focus spots.
+// HERO MODULE (Section 1) — Two-pass pixelated/smooth rendering
 // ================================================================
 const HeroMod = (() => {
   let ctx, W, H, c;
   let currentType = 'smiley';
-  let focusPoints = []; // {nx, ny, strength} in normalized [-1,1]
+  let focusPoints = [];
   let time = 0;
   let animFrame = null;
   let autoAnim = null;
 
+  let loCanvas, loCtx, hiCanvas, hiCtx;
+  const LO_RES = 56;
+  const HI_RES = 512;
+
   const OBJECTS = ['smiley','torus','clusters','rings'];
-  const LABELS = ['😊 Smiley','🍩 Torus','🔵 Clusters','⭕ Rings'];
+  const LABELS = ['😊 Smiley','🍩 Torus','🌵 Clusters','⭕ Rings'];
 
   function init() {
     ({c, ctx, W, H} = U.mkCanvas('cHero', 480));
+
+    loCanvas = document.createElement('canvas');
+    loCanvas.width = LO_RES; loCanvas.height = LO_RES;
+    loCtx = loCanvas.getContext('2d');
+
+    hiCanvas = document.createElement('canvas');
+    hiCanvas.width = HI_RES; hiCanvas.height = HI_RES;
+    hiCtx = hiCanvas.getContext('2d');
 
     const tabEl = document.getElementById('hTabs');
     let tabHtml = '';
@@ -364,14 +375,12 @@ const HeroMod = (() => {
       };
     });
 
-    // Click to add focus point (or strengthen existing nearby one)
     c.addEventListener('click', e => {
       const r = c.getBoundingClientRect();
       const mx = (e.clientX - r.left) / r.width;
       const my = (e.clientY - r.top) / r.height;
       const nx = mx * 2 - 1, ny = my * 2 - 1;
 
-      // Check if near existing focus point — if so, strengthen it
       let found = false;
       for (const fp of focusPoints) {
         if (U.dst(nx, ny, fp.nx, fp.ny) < 0.25) {
@@ -385,7 +394,6 @@ const HeroMod = (() => {
         focusPoints.push({ nx, ny, strength: 0.4, radius: 0.4, time: performance.now() });
       }
 
-      // Weaken all other points slightly (attention budget)
       for (const fp of focusPoints) {
         if (!found || U.dst(nx, ny, fp.nx, fp.ny) >= 0.25) {
           fp.strength = Math.max(fp.strength * 0.85, 0.05);
@@ -424,6 +432,50 @@ const HeroMod = (() => {
     render();
   }
 
+  function renderToBuffer(bufCtx, res, warpNorm, layer) {
+    const id = bufCtx.createImageData(res, res);
+    const d = id.data;
+    const resolving = U.clamp((layer - 2) / 5, 0, 1);
+    const layerBoost = U.clamp(layer / 11, 0, 1);
+
+    for (let iy = 0; iy < res; iy++) {
+      for (let ix = 0; ix < res; ix++) {
+        const nx = ix / res * 2 - 1, ny = iy / res * 2 - 1;
+        const [wnx, wny] = warpNorm(nx, ny);
+        let val = ObjGen.sample(currentType, wnx, wny, time);
+
+        const bright = 0.5 + layerBoost * 0.5;
+        const v = val * bright;
+
+        let r, g, b;
+        if (val > 0.6) {
+          r = Math.floor(40 + v * 215); g = Math.floor(35 + v * 195); b = Math.floor(20 + v * 120);
+        } else if (val > 0.2) {
+          r = Math.floor(20 + v * 160); g = Math.floor(18 + v * 140); b = Math.floor(30 + v * 180);
+        } else {
+          r = Math.floor(8 + v * 60); g = Math.floor(8 + v * 50); b = Math.floor(15 + v * 80);
+        }
+
+        if (resolving > 0.1) {
+          const qi = (wnx > 0 ? 1 : 0) + (wny > 0 ? 2 : 0);
+          const pCols = [[129,140,248],[244,114,182],[52,211,153],[251,191,36]];
+          const pc = pCols[qi];
+          const tint = resolving * 0.12;
+          r = Math.floor(U.lerp(r, pc[0], tint));
+          g = Math.floor(U.lerp(g, pc[1], tint));
+          b = Math.floor(U.lerp(b, pc[2], tint));
+        }
+
+        const off = (iy * res + ix) * 4;
+        d[off]     = U.clamp(r, 0, 255);
+        d[off + 1] = U.clamp(g, 0, 255);
+        d[off + 2] = U.clamp(b, 0, 255);
+        d[off + 3] = 255;
+      }
+    }
+    bufCtx.putImageData(id, 0, 0);
+  }
+
   function render() {
     if (!ctx) return;
     const layerRaw = +document.getElementById('hDepth').value;
@@ -436,7 +488,6 @@ const HeroMod = (() => {
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    // Layer deformation
     const routing = U.clamp(1 - layer / 4, 0, 1);
     const resolving = U.clamp((layer - 2) / 5, 0, 1);
     const gluing = U.clamp((layer - 8) / 3, 0, 1);
@@ -464,75 +515,37 @@ const HeroMod = (() => {
       return [wx, wy];
     }
 
-    // Compute sharpness at each pixel based on focus points
-    // The image is always the same size — only resolution varies locally
-    const RES = 128; // fixed render resolution
-    const cellW = W / RES, cellH = H / RES;
+    // ---- PASS 1: Low-res pixelated background ----
+    renderToBuffer(loCtx, LO_RES, warpNorm, layer);
+    ctx.imageSmoothingEnabled = false;
+    ctx.globalAlpha = focusPoints.length > 0 ? 0.35 : 0.85;
+    ctx.drawImage(loCanvas, 0, 0, W, H);
+    ctx.globalAlpha = 1;
+    ctx.imageSmoothingEnabled = true;
 
-    for (let iy = 0; iy < RES; iy++) {
-      for (let ix = 0; ix < RES; ix++) {
-        const nx = ix / RES * 2 - 1, ny = iy / RES * 2 - 1;
+    // ---- PASS 2: High-res smooth render clipped to focus regions ----
+    if (focusPoints.length > 0) {
+      renderToBuffer(hiCtx, HI_RES, warpNorm, layer);
 
-        // Compute local sharpness from focus points
-        let sharpness = 0;
-        for (const fp of focusPoints) {
-          const d = U.dst(nx, ny, fp.nx, fp.ny);
-          const falloff = Math.exp(-d * d / (2 * fp.radius * fp.radius));
-          sharpness += falloff * fp.strength;
-        }
-        sharpness = U.clamp(sharpness, 0, 1);
+      for (const fp of focusPoints) {
+        const sx = (fp.nx + 1) / 2 * W;
+        const sy = (fp.ny + 1) / 2 * H;
+        const sr = fp.radius * Math.min(W, H) / 2;
+        const outerR = sr * 1.3;
 
-        // Base blur: everything starts blurry, focus makes it sharp
-        const baseBlur = focusPoints.length > 0 ? 0.05 : 0.5;
-        const effectiveSharp = Math.max(baseBlur, sharpness);
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(sx, sy, outerR, 0, U.TAU);
+        ctx.clip();
 
-        // Block size for pixelation: 1 = crystal clear, larger = blurry
-        const maxBlock = 8;
-        const blockSize = Math.max(1, Math.round(U.lerp(maxBlock, 1, effectiveSharp)));
-
-        // Snap to block grid
-        const bx = Math.floor(ix / blockSize) * blockSize;
-        const by = Math.floor(iy / blockSize) * blockSize;
-        if (ix !== bx || iy !== by) continue; // only draw block origins
-
-        // Sample center of block
-        const snx = (bx + blockSize/2) / RES * 2 - 1;
-        const sny = (by + blockSize/2) / RES * 2 - 1;
-        const [wnx, wny] = warpNorm(snx, sny);
-        let val = ObjGen.sample(currentType, wnx, wny, time);
-
-        // Color
-        const layerBoost = U.clamp(layer / 11, 0, 1);
-        const bright = effectiveSharp * (0.5 + layerBoost * 0.5) + (1 - effectiveSharp) * 0.12;
-        const v = val * bright;
-
-        let r, g, b;
-        if (val > 0.6) {
-          r = Math.floor(40 + v * 215); g = Math.floor(35 + v * 195); b = Math.floor(20 + v * 120);
-        } else if (val > 0.2) {
-          r = Math.floor(20 + v * 160); g = Math.floor(18 + v * 140); b = Math.floor(30 + v * 180);
-        } else {
-          r = Math.floor(8 + v * 60); g = Math.floor(8 + v * 50); b = Math.floor(15 + v * 80);
-        }
-
-        // Patch tinting
-        if (resolving > 0.1) {
-          const qi = (wnx > 0 ? 1 : 0) + (wny > 0 ? 2 : 0);
-          const pCols = [[129,140,248],[244,114,182],[52,211,153],[251,191,36]];
-          const pc = pCols[qi];
-          const tint = resolving * 0.12;
-          r = Math.floor(U.lerp(r, pc[0], tint));
-          g = Math.floor(U.lerp(g, pc[1], tint));
-          b = Math.floor(U.lerp(b, pc[2], tint));
-        }
-
-        const alpha = U.clamp(0.25 + effectiveSharp * 0.75, 0.15, 1);
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
-        ctx.fillRect(bx * cellW, by * cellH, blockSize * cellW + 0.5, blockSize * cellH + 0.5);
+        ctx.globalAlpha = fp.strength;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(hiCanvas, 0, 0, W, H);
+        ctx.globalAlpha = 1;
+        ctx.restore();
       }
     }
-    ctx.globalAlpha = 1;
 
     // Grid overlay
     if (showGrid && layer > 0.1) {
@@ -553,7 +566,6 @@ const HeroMod = (() => {
       const age = (performance.now() - fp.time) / 1000;
       const pulse = 0.6 + 0.4 * Math.sin(age * 2);
 
-      // Fuzzy border ring
       const grad = ctx.createRadialGradient(sx, sy, sr * 0.6, sx, sy, sr * 1.2);
       grad.addColorStop(0, `rgba(129,140,248,${0.08 * fp.strength * pulse})`);
       grad.addColorStop(1, 'rgba(129,140,248,0)');
@@ -568,7 +580,6 @@ const HeroMod = (() => {
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Strength label
       ctx.font = 'bold 9px system-ui';
       ctx.fillStyle = `rgba(129,140,248,${0.6 * pulse})`;
       ctx.textAlign = 'center';
@@ -621,14 +632,13 @@ const HeroMod = (() => {
     ctx.font = 'bold 12px system-ui';
     ctx.textAlign = 'left';
     let phaseCol, phaseTxt;
-    if (layer < 0.5) { phaseCol = '#64748b'; phaseTxt = '📥 Embedding: Blurriest global section'; }
+    if (layer < 0.5) { phaseCol = '#64748b'; phaseTxt = '🌑 Embedding: Blurriest global section'; }
     else if (layer <= 3) { phaseCol = '#60a5fa'; phaseTxt = `🔀 Layer ${layer.toFixed(1)}: Routing`; }
     else if (layer <= 8) { phaseCol = '#c084fc'; phaseTxt = `🔬 Layer ${layer.toFixed(1)}: Resolving`; }
     else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${layer.toFixed(1)}: Gluing`; }
     ctx.fillStyle = phaseCol;
     ctx.fillText(phaseTxt, 10, 20);
 
-    // Focus info
     if (focusPoints.length > 0) {
       ctx.font = 'bold 11px system-ui';
       ctx.fillStyle = '#fbbf24';
@@ -637,7 +647,6 @@ const HeroMod = (() => {
       ctx.fillText(`${focusPoints.length} focus point${focusPoints.length>1?'s':''} | Max: ${Math.round(maxStr*100)}% | Right-click to remove`, W - 10, 20);
     }
 
-    // Stats
     const maxStr = focusPoints.length > 0 ? Math.max(...focusPoints.map(f => f.strength)) : 0;
     document.getElementById('hStats').innerHTML = `
       <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${layer.toFixed(1)}</div></div>
@@ -658,7 +667,6 @@ const HeroMod = (() => {
   function autoZoom() {
     if (autoAnim) return;
     resetZoom();
-    // Auto-drill into the right eye of the smiley
     const targets = [
       {nx: -0.27, ny: -0.18, delay: 400},
       {nx: -0.27, ny: -0.18, delay: 700},
@@ -668,7 +676,6 @@ const HeroMod = (() => {
     function next() {
       if (step >= targets.length) { autoAnim = null; return; }
       const t = targets[step];
-      // Check if near existing
       let found = false;
       for (const fp of focusPoints) {
         if (U.dst(t.nx, t.ny, fp.nx, fp.ny) < 0.25) {
@@ -691,7 +698,6 @@ const HeroMod = (() => {
   setTimeout(init, 100);
   return { render, resetZoom, autoZoom };
 })();
-
 
 // ================================================================
 // HOLOGRAPHIC EMBEDDING (Section 2)
@@ -893,8 +899,21 @@ const HeadsMod = (() => {
   const HEAD_COLS_RGB = [[129,140,248],[244,114,182],[52,211,153],[251,191,36],[96,165,250],[248,113,113]];
   const HEAD_COLS_STR = HEAD_COLS_RGB.map(c => c.join(','));
 
+  let loCanvas, loCtx, hiCanvas, hiCtx;
+  const LO_RES = 56;
+  const HI_RES = 512;
+
   function init() {
     ({c, ctx, W, H} = U.mkCanvas('cHeads', 460));
+
+    loCanvas = document.createElement('canvas');
+    loCanvas.width = LO_RES; loCanvas.height = LO_RES;
+    loCtx = loCanvas.getContext('2d');
+
+    hiCanvas = document.createElement('canvas');
+    hiCanvas.width = HI_RES; hiCanvas.height = HI_RES;
+    hiCtx = hiCanvas.getContext('2d');
+
     resetHeads();
 
     c.addEventListener('mousedown', e => {
@@ -940,6 +959,27 @@ const HeadsMod = (() => {
     }
   }
 
+  function renderSdfToBuffer(bufCtx, res) {
+    const id = bufCtx.createImageData(res, res);
+    const d = id.data;
+    for (let iy = 0; iy < res; iy++) {
+      for (let ix = 0; ix < res; ix++) {
+        const nx = ix / res * 2 - 1, ny = iy / res * 2 - 1;
+        let val = ObjGen.sample(State.objectType, nx, ny, 0);
+        const brightness = val;
+        const r = Math.floor(brightness * 245);
+        const g = Math.floor(brightness * 225);
+        const b = Math.floor(brightness * 205);
+        const off = (iy * res + ix) * 4;
+        d[off] = U.clamp(r, 0, 255);
+        d[off+1] = U.clamp(g, 0, 255);
+        d[off+2] = U.clamp(b, 0, 255);
+        d[off+3] = 255;
+      }
+    }
+    bufCtx.putImageData(id, 0, 0);
+  }
+
   function render() {
     if (!ctx) return;
     const entropy = +document.getElementById('aEnt').value / 100;
@@ -951,62 +991,46 @@ const HeadsMod = (() => {
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    // Use analytical SDF for crystal-clear rendering
     const perHeadR = U.lerp(30, 140, entropy);
     const perHeadBudget = resBudget / Math.max(1, heads.length);
 
-    // Render at higher resolution (96px instead of 48)
-    const RES = 96;
-    const cellW = W / RES, cellH = H / RES;
-
-    for (let iy = 0; iy < RES; iy++) {
-      for (let ix = 0; ix < RES; ix++) {
-        const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
-        const nx = ix / RES * 2 - 1, ny = iy / RES * 2 - 1;
-
-        // Compute sharpness from heads
-        let totalSharp = 0;
-        let bestHead = -1, bestDist = Infinity;
-        for (let hi = 0; hi < heads.length; hi++) {
-          const d = U.dst(px, py, heads[hi].x, heads[hi].y);
-          if (d < perHeadR) {
-            const s = (1 - d / perHeadR) * perHeadBudget;
-            totalSharp += s;
-            if (d < bestDist) { bestDist = d; bestHead = hi; }
-          }
-        }
-        totalSharp = U.clamp(totalSharp, 0, 1);
-
-        // Block size for pixelation
-        const blockSize = Math.max(1, Math.round(U.lerp(8, 1, totalSharp)));
-        const bx = Math.floor(ix / blockSize) * blockSize;
-        const by = Math.floor(iy / blockSize) * blockSize;
-        if (ix !== bx || iy !== by) continue;
-
-        // Sample analytical SDF at block center
-        const snx = (bx + blockSize/2) / RES * 2 - 1;
-        const sny = (by + blockSize/2) / RES * 2 - 1;
-        let val = ObjGen.sample(State.objectType, snx, sny, 0);
-
-        const brightness = U.lerp(val * 0.15, val, 0.15 + totalSharp * 0.85);
-        let r = Math.floor(brightness * 245);
-        let g = Math.floor(brightness * 225);
-        let b = Math.floor(brightness * 205);
-
-        if (bestHead >= 0 && totalSharp > 0.05) {
-          const hc = heads[bestHead].rgb;
-          const t = totalSharp * 0.2;
-          r = Math.floor(U.lerp(r, hc[0], t));
-          g = Math.floor(U.lerp(g, hc[1], t));
-          b = Math.floor(U.lerp(b, hc[2], t));
-        }
-
-        ctx.globalAlpha = 0.15 + totalSharp * 0.85;
-        ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
-        ctx.fillRect(bx * cellW, by * cellH, blockSize * cellW + 0.5, blockSize * cellH + 0.5);
-      }
-    }
+    // ---- PASS 1: Low-res pixelated background ----
+    renderSdfToBuffer(loCtx, LO_RES);
+    ctx.imageSmoothingEnabled = false;
+    ctx.globalAlpha = heads.length > 0 ? 0.3 : 0.8;
+    ctx.drawImage(loCanvas, 0, 0, W, H);
     ctx.globalAlpha = 1;
+    ctx.imageSmoothingEnabled = true;
+
+    // ---- PASS 2: High-res smooth render clipped to head regions ----
+    renderSdfToBuffer(hiCtx, HI_RES);
+
+    for (let hi = 0; hi < heads.length; hi++) {
+      const h = heads[hi];
+      const outerR = perHeadR * 1.3;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(h.x, h.y, outerR, 0, U.TAU);
+      ctx.clip();
+
+      // Radial alpha for feathered edge
+      ctx.globalAlpha = perHeadBudget;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(hiCanvas, 0, 0, W, H);
+
+      // Apply color tint overlay for this head
+      const grad = ctx.createRadialGradient(h.x, h.y, 0, h.x, h.y, outerR);
+      grad.addColorStop(0, `rgba(${h.col},${0.08 * perHeadBudget})`);
+      grad.addColorStop(0.7, `rgba(${h.col},${0.04 * perHeadBudget})`);
+      grad.addColorStop(1, `rgba(${h.col},0)`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
 
     // Draw head lenses
     for (let hi = 0; hi < heads.length; hi++) {
@@ -1181,7 +1205,7 @@ const FFNMod = (() => {
     }
 
     // Grid
-    U.drawGrid(ctx, W, H, warp, step, `rgba(100,116,139,${0.1 + strength * 0.15})`, 0.6);
+    U.drawGrid(ctx, W, H, warp, 30, `rgba(100,116,139,${0.1 + strength * 0.15})`, 0.6);
 
     // Draw weight centers
     if (showWeights) {
@@ -1294,11 +1318,23 @@ const PipeMod = (() => {
   let mode = 'smiley';
   let time = 0;
 
+  let loCanvas, loCtx, hiCanvas, hiCtx;
+  const LO_RES = 56;
+  const HI_RES = 512;
+
   const OBJECTS = ['smiley','torus','clusters','rings'];
-  const LABELS = ['😊 Smiley','🍩 Torus','🔵 Clusters','⭕ Rings'];
+  const LABELS = ['😊 Smiley','🍩 Torus','🌵 Clusters','⭕ Rings'];
 
   function init() {
     ({c, ctx, W, H} = U.mkCanvas('cPipe', 440));
+
+    loCanvas = document.createElement('canvas');
+    loCanvas.width = LO_RES; loCanvas.height = LO_RES;
+    loCtx = loCanvas.getContext('2d');
+
+    hiCanvas = document.createElement('canvas');
+    hiCanvas.width = HI_RES; hiCanvas.height = HI_RES;
+    hiCtx = hiCanvas.getContext('2d');
 
     const tabEl = document.getElementById('pTabs');
     let html = '';
@@ -1316,7 +1352,6 @@ const PipeMod = (() => {
       };
     });
 
-    // Click to add focus points (like Section 1)
     c.addEventListener('click', e => {
       const r = c.getBoundingClientRect();
       const mx = (e.clientX - r.left) / r.width;
@@ -1362,15 +1397,58 @@ const PipeMod = (() => {
       if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
     });
 
-    // Torus animation
     function tick() {
       time += 0.008;
       if (mode === 'torus') render();
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
-
     render();
+  }
+
+  function renderSdfToBuffer(bufCtx, res, warpNorm, layer) {
+    const id = bufCtx.createImageData(res, res);
+    const d = id.data;
+    const showPatch = document.getElementById('pPatch').checked;
+    const resolving = U.clamp((layer - 2) / 5, 0, 1);
+    const layerBoost = U.clamp(layer / 11, 0, 1);
+
+    for (let iy = 0; iy < res; iy++) {
+      for (let ix = 0; ix < res; ix++) {
+        const nx = ix / res * 2 - 1, ny = iy / res * 2 - 1;
+        const [wnx, wny] = warpNorm(nx, ny);
+        let val = ObjGen.sample(mode, wnx, wny, time);
+
+        const bright = 0.5 + layerBoost * 0.5;
+        const v = val * bright;
+
+        let r, g, b;
+        if (val > 0.6) {
+          r = Math.floor(40 + v * 215); g = Math.floor(35 + v * 195); b = Math.floor(20 + v * 120);
+        } else if (val > 0.2) {
+          r = Math.floor(20 + v * 160); g = Math.floor(18 + v * 140); b = Math.floor(30 + v * 180);
+        } else {
+          r = Math.floor(8 + v * 60); g = Math.floor(8 + v * 50); b = Math.floor(15 + v * 80);
+        }
+
+        if (showPatch && resolving > 0.1) {
+          const qi = (wnx > 0 ? 1 : 0) + (wny > 0 ? 2 : 0);
+          const pCols = [[129,140,248],[244,114,182],[52,211,153],[251,191,36]];
+          const pc = pCols[qi];
+          const tint = resolving * 0.15;
+          r = Math.floor(U.lerp(r, pc[0], tint));
+          g = Math.floor(U.lerp(g, pc[1], tint));
+          b = Math.floor(U.lerp(b, pc[2], tint));
+        }
+
+        const off = (iy * res + ix) * 4;
+        d[off]     = U.clamp(r, 0, 255);
+        d[off + 1] = U.clamp(g, 0, 255);
+        d[off + 2] = U.clamp(b, 0, 255);
+        d[off + 3] = 255;
+      }
+    }
+    bufCtx.putImageData(id, 0, 0);
   }
 
   function render() {
@@ -1419,74 +1497,57 @@ const PipeMod = (() => {
       return [wx, wy];
     }
 
-    // Render pixel-grid image with focus-based sharpening
-    const RES = 96;
-    const cellW = W / RES, cellH = H / RES;
     const lx = mouseX * W, ly = mouseY * H;
     const lensR = U.lerp(40, 160, focus);
+    const hasFocus = focusPoints.length > 0 || showLens;
 
-    for (let iy = 0; iy < RES; iy++) {
-      for (let ix = 0; ix < RES; ix++) {
-        const nx = ix / RES * 2 - 1, ny = iy / RES * 2 - 1;
+    // ---- PASS 1: Low-res pixelated background ----
+    renderSdfToBuffer(loCtx, LO_RES, warpNorm, layer);
+    ctx.imageSmoothingEnabled = false;
+    ctx.globalAlpha = hasFocus ? 0.35 : 0.85;
+    ctx.drawImage(loCanvas, 0, 0, W, H);
+    ctx.globalAlpha = 1;
+    ctx.imageSmoothingEnabled = true;
 
-        // Sharpness from focus points
-        let sharpness = 0;
-        for (const fp of focusPoints) {
-          const d = U.dst(nx, ny, fp.nx, fp.ny);
-          const falloff = Math.exp(-d * d / (2 * fp.radius * fp.radius));
-          sharpness += falloff * fp.strength;
-        }
+    // ---- PASS 2: High-res smooth render clipped to focus regions ----
+    if (hasFocus) {
+      renderSdfToBuffer(hiCtx, HI_RES, warpNorm, layer);
 
-        // Lens sharpness
-        if (showLens) {
-          const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
-          const dLens = U.dst(px, py, lx, ly);
-          if (dLens < lensR) {
-            sharpness += (1 - dLens / lensR) * 0.5 * (1 - focus);
-          }
-        }
+      // Draw focus point regions
+      for (const fp of focusPoints) {
+        const sx = (fp.nx + 1) / 2 * W;
+        const sy = (fp.ny + 1) / 2 * H;
+        const sr = fp.radius * Math.min(W, H) / 2;
+        const outerR = sr * 1.3;
 
-        sharpness = U.clamp(sharpness, 0, 1);
-        const baseBlur = focusPoints.length > 0 ? 0.04 : 0.4;
-        const effectiveSharp = Math.max(baseBlur, sharpness);
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(sx, sy, outerR, 0, U.TAU);
+        ctx.clip();
 
-        const blockSize = Math.max(1, Math.round(U.lerp(7, 1, effectiveSharp)));
-        const bx = Math.floor(ix / blockSize) * blockSize;
-        const by = Math.floor(iy / blockSize) * blockSize;
-        if (ix !== bx || iy !== by) continue;
+        ctx.globalAlpha = fp.strength;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(hiCanvas, 0, 0, W, H);
+        ctx.globalAlpha = 1;
+        ctx.restore();
+      }
 
-        const snx = (bx + blockSize/2) / RES * 2 - 1;
-        const sny = (by + blockSize/2) / RES * 2 - 1;
-        const [wnx, wny] = warpNorm(snx, sny);
-        let val = ObjGen.sample(mode, wnx, wny, time);
+      // Draw lens region
+      if (showLens) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(lx, ly, lensR, 0, U.TAU);
+        ctx.clip();
 
-        const layerBoost = U.clamp(layer / 11, 0, 1);
-        const bright = effectiveSharp * (0.5 + layerBoost * 0.5) + (1 - effectiveSharp) * 0.1;
-        const v = val * bright;
-
-        let r, g, b;
-        if (val > 0.6) { r = Math.floor(40+v*215); g = Math.floor(35+v*195); b = Math.floor(20+v*120); }
-        else if (val > 0.2) { r = Math.floor(20+v*160); g = Math.floor(18+v*140); b = Math.floor(30+v*180); }
-        else { r = Math.floor(8+v*60); g = Math.floor(8+v*50); b = Math.floor(15+v*80); }
-
-        // Patch tinting
-        if (showPatch && resolving > 0.1) {
-          const qi = (wnx > 0 ? 1 : 0) + (wny > 0 ? 2 : 0);
-          const pCols = [[129,140,248],[244,114,182],[52,211,153],[251,191,36]];
-          const pc = pCols[qi];
-          const tint = resolving * 0.15;
-          r = Math.floor(U.lerp(r, pc[0], tint));
-          g = Math.floor(U.lerp(g, pc[1], tint));
-          b = Math.floor(U.lerp(b, pc[2], tint));
-        }
-
-        const alpha = U.clamp(0.2 + effectiveSharp * 0.8, 0.12, 1);
-        ctx.globalAlpha = alpha;
-        ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
-        ctx.fillRect(bx * cellW, by * cellH, blockSize * cellW + 0.5, blockSize * cellH + 0.5);
+        ctx.globalAlpha = 0.7;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(hiCanvas, 0, 0, W, H);
+        ctx.globalAlpha = 1;
+        ctx.restore();
       }
     }
-    ctx.globalAlpha = 1;
 
     // Grid overlay
     if (showGrid && layer > 0.1) {
@@ -1499,7 +1560,7 @@ const PipeMod = (() => {
       U.drawGrid(ctx, W, H, warpScreen, gridStep, `rgba(100,116,139,${0.04 + deform * 0.1})`, 0.4);
     }
 
-    // Lens overlay
+    // Lens overlay ring
     if (showLens) U.drawLensRing(ctx, lx, ly, lensR, 0.6);
 
     // Focus point indicators
@@ -1508,6 +1569,15 @@ const PipeMod = (() => {
       const sr = fp.radius * Math.min(W, H) / 2;
       const age = (performance.now() - fp.time) / 1000;
       const pulse = 0.6 + 0.4 * Math.sin(age * 2);
+
+      const grad = ctx.createRadialGradient(sx, sy, sr * 0.6, sx, sy, sr * 1.2);
+      grad.addColorStop(0, `rgba(129,140,248,${0.08 * fp.strength * pulse})`);
+      grad.addColorStop(1, 'rgba(129,140,248,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(sx, sy, sr * 1.2, 0, U.TAU);
+      ctx.fill();
+
       ctx.beginPath();
       ctx.arc(sx, sy, sr, 0, U.TAU);
       ctx.strokeStyle = `rgba(129,140,248,${0.2 * pulse})`;
@@ -1523,7 +1593,7 @@ const PipeMod = (() => {
     ctx.font = 'bold 11px system-ui';
     ctx.textAlign = 'center';
     let phaseCol, phaseTxt;
-    if (layer < 0.5) { phaseCol = '#64748b'; phaseTxt = '📥 Embedding: Global section (blurriest)'; }
+    if (layer < 0.5) { phaseCol = '#64748b'; phaseTxt = '🌑 Embedding: Global section (blurriest)'; }
     else if (layer <= 3) { phaseCol = '#60a5fa'; phaseTxt = `🔀 Layer ${layer.toFixed(1)}: Routing — words to words`; }
     else if (layer <= 8) { phaseCol = '#c084fc'; phaseTxt = `🔬 Layer ${layer.toFixed(1)}: Resolving — concepts to concepts`; }
     else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${layer.toFixed(1)}: Gluing — reassembling`; }
@@ -1556,7 +1626,6 @@ const PipeMod = (() => {
     function step(now) {
       const t = Math.min((now - start) / dur, 1);
       slider.value = Math.round(t * 110);
-      // Auto-add focus points at key moments
       if (Math.abs(t - 0.15) < 0.01) focusPoints.push({nx: -0.3, ny: -0.2, strength: 0.5, radius: 0.35, time: now});
       if (Math.abs(t - 0.35) < 0.01) focusPoints.push({nx: 0.3, ny: 0.2, strength: 0.5, radius: 0.35, time: now});
       if (Math.abs(t - 0.55) < 0.01) {
