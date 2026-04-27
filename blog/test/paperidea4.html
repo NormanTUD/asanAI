@@ -3,1111 +3,1023 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Situs: How AI Sees the World</title>
+<title>The Situs — How a Transformer Sees the World</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: #0f172a;
-    color: #e2e8f0;
-    line-height: 1.7;
-    overflow-x: hidden;
-  }
-  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
-  h1 { font-size: 2.2em; text-align: center; margin: 40px 0 10px; background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  h2 { font-size: 1.5em; margin: 50px 0 15px; color: #a5b4fc; border-bottom: 2px solid #1e293b; padding-bottom: 8px; }
-  h3 { font-size: 1.15em; margin: 30px 0 10px; color: #c4b5fd; }
-  p, .desc { font-size: 0.95em; color: #94a3b8; margin-bottom: 14px; }
-  .highlight { color: #fbbf24; font-weight: bold; }
-  .concept { color: #a78bfa; font-weight: bold; }
-  .metaphor { background: #1e293b; border-left: 4px solid #818cf8; padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 18px 0; font-style: italic; color: #cbd5e1; }
-  .section-card {
-    background: #1e293b; border: 1px solid #334155; border-radius: 16px;
-    padding: 24px; margin: 30px 0; position: relative; overflow: hidden;
-  }
-  .section-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, #818cf8, #c084fc, #f472b6);
-  }
-  canvas {
-    display: block; width: 100%; border-radius: 12px;
-    background: #0f172a; border: 1px solid #1e293b; cursor: crosshair;
-  }
-  .controls {
-    display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-    justify-content: center; margin: 14px 0;
-  }
-  .controls label { font-size: 0.85em; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
-  .controls input[type=range] { width: 160px; accent-color: #818cf8; }
-  .controls input[type=checkbox] { accent-color: #818cf8; }
-  button {
-    padding: 8px 20px; border: none; border-radius: 8px; cursor: pointer;
-    font-weight: bold; font-size: 0.9em; transition: all 0.2s;
-  }
-  button:hover { transform: translateY(-1px); filter: brightness(1.1); }
-  .btn-primary { background: #6366f1; color: white; }
-  .btn-secondary { background: #334155; color: #cbd5e1; }
-  .btn-accent { background: #f59e0b; color: #1e293b; }
-  .btn-success { background: #10b981; color: white; }
-  .stats-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px; margin: 14px 0;
-  }
-  .stat-card {
-    background: #0f172a; border: 1px solid #334155; border-radius: 10px;
-    padding: 12px; text-align: center;
-  }
-  .stat-card .label { font-size: 0.7em; color: #64748b; margin-bottom: 3px; }
-  .stat-card .value { font-size: 1.4em; font-weight: bold; }
-  .stat-card .sub { font-size: 0.65em; color: #475569; margin-top: 2px; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
-  .info-panel {
-    background: #0f172a; border: 1px solid #334155; border-radius: 10px;
-    padding: 14px; font-size: 0.85em; color: #94a3b8; line-height: 1.6;
-  }
-  .tab-bar { display: flex; gap: 4px; margin-bottom: 14px; flex-wrap: wrap; }
-  .tab-btn {
-    padding: 6px 14px; border-radius: 6px; font-size: 0.82em;
-    background: #334155; color: #94a3b8; border: none; cursor: pointer;
-    transition: all 0.2s;
-  }
-  .tab-btn.active { background: #6366f1; color: white; }
-  .legend-item { display: inline-flex; align-items: center; gap: 5px; margin-right: 14px; font-size: 0.8em; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-  .toc { background: #1e293b; border-radius: 12px; padding: 20px; margin: 30px 0; }
-  .toc a { color: #818cf8; text-decoration: none; display: block; padding: 4px 0; font-size: 0.9em; }
-  .toc a:hover { color: #c4b5fd; }
-  .fade-in { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
-  .fade-in.visible { opacity: 1; transform: translateY(0); }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#060b18;color:#e2e8f0;line-height:1.65;overflow-x:hidden}
+.wrap{max-width:1140px;margin:0 auto;padding:16px}
+h1{font-size:2em;text-align:center;margin:30px 0 8px;background:linear-gradient(135deg,#818cf8,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h2{font-size:1.3em;margin:36px 0 10px;color:#a5b4fc;border-bottom:2px solid #151d30;padding-bottom:6px}
+p{font-size:.92em;color:#94a3b8;margin-bottom:10px}
+.hl{color:#fbbf24;font-weight:700}
+.con{color:#a78bfa;font-weight:700}
+.met{background:#111827;border-left:4px solid #818cf8;padding:10px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-style:italic;color:#cbd5e1;font-size:.9em}
+.card{background:#0f1629;border:1px solid #1a2340;border-radius:14px;padding:18px;margin:22px 0;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#818cf8,#c084fc,#f472b6)}
+.cw{position:relative;width:100%;margin:8px 0}
+canvas{display:block;border-radius:8px;background:#060b18;border:1px solid #151d30;width:100%}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:10px 0}
+.ctrl label{font-size:.78em;color:#94a3b8;display:flex;align-items:center;gap:4px}
+.ctrl input[type=range]{width:130px;accent-color:#818cf8}
+.ctrl input[type=checkbox]{accent-color:#818cf8}
+.ctrl select{background:#1a2340;color:#cbd5e1;border:1px solid #2a3555;border-radius:6px;padding:3px 8px;font-size:.78em}
+button{padding:6px 16px;border:none;border-radius:7px;cursor:pointer;font-weight:700;font-size:.82em;transition:all .15s}
+button:hover{transform:translateY(-1px);filter:brightness(1.12)}
+.bp{background:#6366f1;color:#fff}.bs{background:#334155;color:#cbd5e1}.ba{background:#f59e0b;color:#1e293b}.bg{background:#10b981;color:#fff}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin:8px 0}
+.sc{background:#060b18;border:1px solid #1a2340;border-radius:8px;padding:8px;text-align:center}
+.sc .l{font-size:.6em;color:#64748b}.sc .v{font-size:1.2em;font-weight:700}.sc .s{font-size:.55em;color:#475569;margin-top:1px}
+.tabs{display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap}
+.tab{padding:4px 10px;border-radius:5px;font-size:.75em;background:#1a2340;color:#94a3b8;border:none;cursor:pointer;transition:all .15s}
+.tab.on{background:#6366f1;color:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:768px){.two{grid-template-columns:1fr}}
+.info{background:#060b18;border:1px solid #1a2340;border-radius:8px;padding:10px;font-size:.8em;color:#94a3b8;line-height:1.55}
+.toc{background:#0f1629;border-radius:10px;padding:16px;margin:20px 0}
+.toc a{color:#818cf8;text-decoration:none;display:block;padding:2px 0;font-size:.85em}
+.toc a:hover{color:#c4b5fd}
+.fade{opacity:0;transform:translateY(16px);transition:all .5s ease}
+.fade.vis{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="container">
-
-<h1>🌐 The Situs: How a Transformer Sees the World</h1>
-<p style="text-align:center; color:#64748b; max-width:700px; margin:0 auto 30px;">
-  An interactive visual guide to the <em>Grothendieck situs conjecture</em> — the idea that a language model's world-knowledge has the structure of a <strong>sheaf on a topological site</strong>, and that each layer of the transformer progressively resolves this structure from blurry global overview to sharp local detail.
+<h1>🌐 The Situs — How a Transformer Sees the World</h1>
+<p style="text-align:center;color:#64748b;max-width:680px;margin:0 auto 20px">
+An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a language model's world-knowledge as a <strong>sheaf on a topological site</strong>, progressively resolved from blurry global overview to sharp local detail.
 </p>
 
 <div class="toc">
-  <strong style="color:#a5b4fc;">📖 Contents</strong>
-  <a href="#sec-metaphor">1. The Metaphor: A Map You Can Zoom Into</a>
-  <a href="#sec-situs">2. What Is a Situs? (The Landscape of Knowledge)</a>
-  <a href="#sec-embedding">3. The Embedding Layer: The Blurriest Photo</a>
-  <a href="#sec-lens">4. Attention as a Magnifying Lens</a>
-  <a href="#sec-ffn">5. Feed-Forward: Expanding Local Geometry</a>
-  <a href="#sec-layers">6. Early Layers Route, Late Layers Resolve</a>
-  <a href="#sec-gluing">7. Sheaf Gluing: Reassembling the World</a>
-  <a href="#sec-hallucination">8. Hallucinations: Where the Map Lies</a>
-  <a href="#sec-playground">9. Full Playground</a>
+<strong style="color:#a5b4fc">📖 Contents</strong>
+<a href="#s1">1. The Core Idea — A Lens Drilling Through Layers</a>
+<a href="#s2">2. The Holographic Embedding — Every Piece Contains the Whole</a>
+<a href="#s3">3. Attention Heads as Lenses</a>
+<a href="#s4">4. Feed-Forward — Expanding Local Geometry</a>
+<a href="#s5">5. The Full Pipeline — Route → Resolve → Glue</a>
+<a href="#s6">6. Hallucinations — Where the Map Lies</a>
 </div>
 
-<!-- ============================================================ -->
-<h2 id="sec-metaphor">1. The Metaphor: A Map You Can Zoom Into</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>Imagine you have a <span class="highlight">satellite photo of the entire Earth</span> — but it's only 100×100 pixels. You can see continents, oceans, maybe the Sahara. But you can't read street signs or see individual trees.</p>
-
-<p>Now imagine you have a <span class="highlight">magnifying lens</span> you can place over any part of this blurry image. Where you place the lens, the image sharpens — you can see cities, then streets, then individual buildings. But the lens has a fixed size: <em>the more you zoom in on one area, the less you see of everything else.</em></p>
-
-<div class="metaphor">
-  This is exactly what a transformer does with language. The <strong>embedding layer</strong> is the blurry satellite photo — everything is there, but compressed and superimposed. Each <strong>attention layer</strong> is a magnifying lens that chooses where to look. Each <strong>feed-forward layer</strong> sharpens the detail within the lens. And the <strong>final layer</strong> glues the sharpened patches back together into a coherent answer.
+<!-- ===== SECTION 1: HERO — LAYER STACK WITH LENS ===== -->
+<h2 id="s1">1. The Core Idea — A Lens Drilling Through Layers</h2>
+<div class="card fade">
+<p>Imagine the model's knowledge as a <span class="hl">stack of transparent layers</span>. The bottom is the blurriest — everything superimposed. Each layer above sharpens certain regions. You hold a <span class="hl">magnifying lens</span> that drills through the stack. Where you point it, the layers combine to produce a sharp image. Move it elsewhere, and that region sharpens while the previous one blurs back.</p>
+<div class="met">This is the transformer pipeline. The embedding is the blurriest layer. Attention chooses where to point the lens. Feed-forward sharpens the detail. The final layer glues the sharpened patches into a readable answer.</div>
+<div class="cw"><canvas id="cHero" height="480"></canvas></div>
+<div class="ctrl">
+  <label>Lens Size: <input type="range" id="hSize" min="25" max="160" value="70"><span id="hSizeV">70</span></label>
+  <label>Layer Depth: <input type="range" id="hDepth" min="0" max="110" value="0"><span id="hDepthV">0.0</span></label>
+  <label><input type="checkbox" id="hGrid" checked> Grid</label>
+  <label><input type="checkbox" id="hStack" checked> Stack View</label>
+</div>
+<div class="tabs" id="hTabs"></div>
+<div class="sg" id="hStats"></div>
+<p style="text-align:center;font-size:.82em;color:#64748b">Move mouse over canvas to position the lens. Slide <strong>Layer Depth</strong> to watch routing → resolving → gluing. Switch objects to see different topological structures.</p>
 </div>
 
-<p>The mathematical framework that makes this precise is called a <span class="concept">sheaf on a Grothendieck site</span> — or, more poetically, a <em>situs</em>. Let's build up to it visually.</p>
-</div>
-
-<!-- ============================================================ -->
-<h2 id="sec-situs">2. What Is a Situs? (The Landscape of Knowledge)</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>A <span class="concept">situs</span> (Grothendieck site) is a way of organizing knowledge into <strong>patches</strong> that overlap and cover each other. Think of it like a patchwork quilt where:</p>
-<ul style="margin: 10px 0 10px 20px; color: #cbd5e1;">
-  <li>Each <strong>patch</strong> is a topic or concept (e.g., "mammals," "European capitals," "cooking verbs")</li>
-  <li>Patches can <strong>overlap</strong> (a "bat" belongs to both "mammals" and "flying things")</li>
-  <li>A set of patches <strong>covers</strong> a larger topic if together they exhaust it ("dogs" + "cats" + "horses" + … covers "domestic animals")</li>
-</ul>
-
-<p>At each point on a patch, there's local information — a <span class="concept">germ</span>. All the germs at one point form a <span class="concept">stalk</span>. And a consistent assignment of data across a whole patch is a <span class="concept">section</span>.</p>
-
-<canvas id="canvas-situs" height="420"></canvas>
-<div class="controls">
-  <button class="btn-primary" onclick="Situs.placePatches()">🗺️ Place Patches</button>
-  <button class="btn-accent" id="btn-situs-germs" onclick="Situs.showGerms()" disabled>🌱 Show Germs</button>
-  <button class="btn-success" id="btn-situs-stalks" onclick="Situs.showStalks()" disabled>🌾 Form Stalks</button>
-  <button class="btn-secondary" onclick="Situs.reset()">↺ Reset</button>
-</div>
-<div id="situs-info" style="text-align:center; font-size:0.85em; color:#64748b; margin-top:8px;">
-  Click <strong>Place Patches</strong> to scatter semantic patches on the situs.
-</div>
-</div>
-
-<!-- ============================================================ -->
-<h2 id="sec-embedding">3. The Embedding Layer: The Blurriest Photo</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>The <span class="concept">embedding layer</span> is the space of <strong>global sections</strong> — the coarsest, lowest-resolution image of the entire situs. Every concept the model has ever learned is compressed and superimposed into a fixed number of dimensions (typically 768 or more).</p>
-
-<div class="metaphor">
-  Think of it as a photograph where every image the camera has ever taken is printed on top of each other on the same piece of film. Everything is there — but it's all blurred together. This is <strong>polysemanticity</strong>: each dimension encodes many concepts at once.
-</div>
-
-<canvas id="canvas-embedding" height="400"></canvas>
-<div class="controls">
-  <label>Superposition Level:
-    <input type="range" id="embed-superposition" min="0" max="1" step="0.01" value="0.8">
-    <span id="embed-sup-val" style="color:#fbbf24; font-weight:bold;">80%</span>
-  </label>
-  <label><input type="checkbox" id="embed-show-labels" checked> Labels</label>
-</div>
-<div class="stats-grid" id="embed-stats"></div>
-<p class="desc" style="text-align:center;">
-  Drag the <strong>superposition slider</strong> left to "de-blur" the embedding — watch concepts separate as if you're increasing the resolution. At full superposition (right), everything overlaps — this is what the model actually starts with.
-</p>
-</div>
-
-<!-- ============================================================ -->
-<h2 id="sec-lens">4. Attention as a Magnifying Lens</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>Attention at each layer <span class="concept">selects a covering</span>: it decides which stalks to resolve and which germs to work with. This is the magnifying lens.</p>
-
-<ul style="margin: 10px 0 10px 20px; color: #cbd5e1;">
-  <li><strong>Narrow attention</strong> (low entropy) = sharp view of few stalks — like zooming in on one city</li>
-  <li><strong>Broad attention</strong> (high entropy) = blurred view of many stalks — like seeing the whole continent</li>
-</ul>
-
-<p>This is a <span class="highlight">resolution–breadth tradeoff</span> enforced by the convex combination in fixed dimensionality. You can't zoom in everywhere at once.</p>
-
-<canvas id="canvas-lens" height="500"></canvas>
-<div class="controls">
-  <label>Lens Focus (Entropy):
-    <input type="range" id="lens-entropy" min="0.05" max="1" step="0.01" value="0.3">
-    <span id="lens-entropy-val" style="color:#fbbf24; font-weight:bold;">Narrow</span>
-  </label>
-  <label>Lens Position X:
-    <input type="range" id="lens-x" min="0.1" max="0.9" step="0.01" value="0.5">
-  </label>
-  <label>Lens Position Y:
-    <input type="range" id="lens-y" min="0.1" max="0.9" step="0.01" value="0.5">
-  </label>
-</div>
-<div class="stats-grid" id="lens-stats"></div>
-<p class="desc" style="text-align:center;">
-  Move the lens over the image. <strong>Narrow focus</strong> reveals fine detail in a small area. <strong>Broad focus</strong> sees more but blurs everything. This is the attention entropy tradeoff — you can't have both in fixed dimensions.
-</p>
-</div>
-
-<!-- ============================================================ -->
-<h2 id="sec-ffn">5. Feed-Forward: Expanding Local Geometry</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>Once attention has selected <em>where</em> to look, the <span class="concept">feed-forward sub-layer</span> locally expands the geometry within each selected patch. It deforms space so that information is encoded in the resulting <strong>Jacobian field</strong>, then compresses back into dimensionality <em>d</em>.</p>
-
-<div class="metaphor">
-  Imagine taking a rubber sheet (the embedding space) and <strong>stretching</strong> a small region of it — pulling apart the points so you can see fine details that were compressed together. Then you let the sheet snap back to its original size, but now the <em>pattern of stretching</em> carries the information.
-</div>
-
-<canvas id="canvas-ffn" height="450"></canvas>
-<div class="controls">
-  <label>Expansion Strength:
-    <input type="range" id="ffn-strength" min="0" max="1" step="0.01" value="0">
-    <span id="ffn-strength-val" style="color:#fbbf24; font-weight:bold;">0%</span>
-  </label>
-  <label>Expansion Center X:
-    <input type="range" id="ffn-cx" min="0.15" max="0.85" step="0.01" value="0.45">
-  </label>
-  <label>Expansion Center Y:
-    <input type="range" id="ffn-cy" min="0.15" max="0.85" step="0.01" value="0.5">
-  </label>
-  <label><input type="checkbox" id="ffn-show-jacobian" checked> Show strain colors</label>
-  <button class="btn-accent" onclick="FFN.animate()">▶ Animate Expansion</button>
-  <button class="btn-secondary" onclick="FFN.reset()">↺ Reset</button>
-</div>
-<div class="stats-grid" id="ffn-stats"></div>
-</div>
-
-<!-- ============================================================ -->
-<h2 id="sec-layers">6. Early Layers Route, Late Layers Resolve</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>The conjecture proposes a division of labor across the transformer's depth:</p>
-
-<div class="two-col">
-  <div class="info-panel">
-    <h3 style="color:#60a5fa; margin-top:0;">🔀 Early Layers: Routers</h3>
-    <p>They tear open and rearrange the space to determine <em>where on the situs to look</em>. They connect <strong>words to words</strong> — figuring out syntactic structure, resolving references, grouping related tokens.</p>
-    <p style="color:#64748b; font-size:0.85em;">Like a librarian who, given a question, first figures out which section of the library to visit.</p>
+<!-- ===== SECTION 2: HOLOGRAPHIC EMBEDDING ===== -->
+<h2 id="s2">2. The Holographic Embedding — Every Piece Contains the Whole</h2>
+<div class="card fade">
+<p>The <span class="con">embedding layer</span> is the space of <strong>global sections</strong> — the coarsest image of the situs. Like a hologram, every piece contains the whole image, just at lower resolution.</p>
+<div class="met">Scratch half a photograph and half the image is gone forever. Scratch half a hologram and the <em>entire</em> image survives — just blurrier. The embedding works the same way: each dimension contributes to every concept.</div>
+<div class="two">
+  <div>
+    <p style="font-size:.8em;color:#60a5fa;font-weight:700">📷 Photograph (localized)</p>
+    <div class="cw"><canvas id="cPhoto" height="200"></canvas></div>
   </div>
-  <div class="info-panel">
-    <h3 style="color:#c084fc; margin-top:0;">🔬 Late Layers: Resolvers</h3>
-    <p>They connect <strong>concepts to concepts</strong> and work on ideas topologically, expanding local geometry at increasing resolution. They do the actual "thinking."</p>
-    <p style="color:#64748b; font-size:0.85em;">Like the librarian who, having found the right shelf, now reads and synthesizes the relevant passages.</p>
+  <div>
+    <p style="font-size:.8em;color:#34d399;font-weight:700">🌀 Hologram (distributed)</p>
+    <div class="cw"><canvas id="cHolo" height="200"></canvas></div>
   </div>
 </div>
-
-<canvas id="canvas-layers" height="420"></canvas>
-<div class="controls">
-  <label>Current Layer:
-    <input type="range" id="layer-slider" min="0" max="11" step="1" value="0">
-    <span id="layer-val" style="color:#fbbf24; font-weight:bold;">Layer 0 (Embedding)</span>
-  </label>
-  <button class="btn-primary" onclick="Layers.animateForward()">▶ Play Forward</button>
-  <button class="btn-secondary" onclick="Layers.reset()">↺ Reset</button>
+<div class="ctrl">
+  <label>Damage: <input type="range" id="eDmg" min="0" max="15" value="0"><span id="eDmgV">0/16</span></label>
+  <button class="ba" onclick="HoloMod.randomDamage()">🎲 Random 50%</button>
+  <button class="bs" onclick="HoloMod.reset()">↺ Reset</button>
 </div>
-<div class="stats-grid" id="layer-stats"></div>
+<div class="sg" id="eStats"></div>
+<p style="text-align:center;font-size:.82em;color:#64748b">Slide <strong>Damage</strong> to destroy tiles. The photograph loses regions permanently. The hologram degrades gracefully — the whole image blurs but nothing disappears.</p>
 </div>
 
-<!-- ============================================================ -->
-<h2 id="sec-gluing">7. Sheaf Gluing: Reassembling the World</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>The <span class="concept">final layer</span> performs sheaf <strong>gluing</strong> — reassembling locally resolved patches into a <strong>global section</strong> readable by the language-modeling head.</p>
-
-<div class="metaphor">
-  You've zoomed into different parts of the map, sharpened each one, and now you need to stitch them back together into a single coherent picture. The gluing condition says: <em>where two patches overlap, they must agree.</em> If they don't agree perfectly — because of polysemanticity and finite dimensions — you get <strong>approximate gluing</strong>, which is why the model sometimes contradicts itself.
+<!-- ===== SECTION 3: ATTENTION HEADS AS LENSES ===== -->
+<h2 id="s3">3. Attention Heads as Lenses</h2>
+<div class="card fade">
+<p>Attention at each layer <span class="con">selects a covering</span>: which stalks to resolve. Each attention head is a separate lens. <strong>Narrow</strong> = sharp view of few stalks. <strong>Broad</strong> = blurred view of many. A <span class="hl">resolution–breadth tradeoff</span> in fixed dimensions.</p>
+<div class="cw"><canvas id="cHeads" height="420"></canvas></div>
+<div class="ctrl">
+  <label>Heads: <select id="aHeadN"><option value="1">1 head</option><option value="2">2 heads</option><option value="3" selected>3 heads</option><option value="4">4 heads</option></select></label>
+  <label>Entropy: <input type="range" id="aEnt" min="5" max="100" value="25"><span id="aEntV">Narrow</span></label>
+  <label><input type="checkbox" id="aShowFinal" checked> Show combined</label>
+</div>
+<div class="sg" id="aStats"></div>
+<p style="text-align:center;font-size:.82em;color:#64748b">Drag the colored lens circles to reposition attention heads. Each head sharpens its region; the combined image (bottom-right) shows the final result. More heads = more coverage but each is weaker.</p>
 </div>
 
-<canvas id="canvas-gluing" height="420"></canvas>
-<div class="controls">
-  <button class="btn-primary" onclick="Gluing.scatter()">1. Scatter Patches</button>
-  <button class="btn-accent" id="btn-glue-resolve" onclick="Gluing.resolve()" disabled>2. Resolve Locally</button>
-  <button class="btn-success" id="btn-glue-glue" onclick="Gluing.glue()" disabled>3. Glue Together</button>
-  <button class="btn-secondary" onclick="Gluing.reset()">↺ Reset</button>
+<!-- ===== SECTION 4: FFN EXPANSION ===== -->
+<h2 id="s4">4. Feed-Forward — Expanding Local Geometry</h2>
+<div class="card fade">
+<p>The <span class="con">feed-forward sub-layer</span> locally expands geometry within each selected patch — stretching space so information is encoded in the <strong>Jacobian field</strong>, then compressing back.</p>
+<div class="met">Take a rubber sheet and <strong>stretch</strong> a small region — pulling apart compressed points to see fine details. Then let it snap back. The <em>pattern of stretching</em> carries the information.</div>
+<div class="cw"><canvas id="cFFN" height="380"></canvas></div>
+<div class="ctrl">
+  <label>Expansion: <input type="range" id="fStr" min="0" max="100" value="0"><span id="fStrV">0%</span></label>
+  <label><input type="checkbox" id="fJac" checked> Strain colors</label>
+  <button class="ba" onclick="FFNMod.anim()">▶ Animate</button>
+  <button class="bs" onclick="FFNMod.reset()">↺ Reset</button>
 </div>
-<div id="gluing-info" style="text-align:center; font-size:0.85em; color:#64748b; margin-top:8px;">
-  Click <strong>Scatter Patches</strong> to begin the gluing process.
-</div>
-</div>
-
-<!-- ============================================================ -->
-<h2 id="sec-hallucination">8. Hallucinations: Where the Map Lies</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>At the borders of expanded patches — where training coverage thins — the approximation degrades. The model confidently expands a region whose local structure was <strong>never properly learned</strong>, filling it with topologically plausible but <span style="color:#ef4444; font-weight:bold;">factually wrong</span> continuations.</p>
-
-<div class="metaphor">
-  Imagine your satellite map has high-resolution data for Europe and North America, but the data for central Africa is sparse. When you zoom into that region, the system <em>invents</em> plausible-looking terrain — rivers that don't exist, cities in the wrong place — because it extrapolates from patterns it learned elsewhere. It's not lying; it's <strong>filling in the blanks with its best geometric guess</strong>.
+<div class="sg" id="fStats"></div>
 </div>
 
-<canvas id="canvas-hallucination" height="420"></canvas>
-<div class="controls">
-  <label>Training Coverage:
-    <input type="range" id="halluc-coverage" min="0.1" max="1" step="0.01" value="0.7">
-    <span id="halluc-coverage-val" style="color:#fbbf24; font-weight:bold;">70%</span>
-  </label>
-  <label>Query Position X:
-    <input type="range" id="halluc-qx" min="0.05" max="0.95" step="0.01" value="0.75">
-  </label>
-  <label>Query Position Y:
-    <input type="range" id="halluc-qy" min="0.05" max="0.95" step="0.01" value="0.3">
-  </label>
+<!-- ===== SECTION 5: FULL PIPELINE ===== -->
+<h2 id="s5">5. The Full Pipeline — Route → Resolve → Glue</h2>
+<div class="card fade">
+<div class="two" style="margin-bottom:12px">
+  <div class="info"><h3 style="color:#60a5fa;margin:0 0 4px;font-size:.95em">🔀 Early Layers: Routers</h3><p>Tear open and rearrange space to determine <em>where</em> to look. Connect <strong>words to words</strong>.</p></div>
+  <div class="info"><h3 style="color:#c084fc;margin:0 0 4px;font-size:.95em">🔬 Late Layers: Resolvers</h3><p>Connect <strong>concepts to concepts</strong>, expand local geometry at increasing resolution.</p></div>
 </div>
-<div class="stats-grid" id="halluc-stats"></div>
-<p class="desc" style="text-align:center;">
-  Move the query point into <span style="color:#ef4444;">red zones</span> (low coverage) to see how the model's confidence remains high even where its knowledge is thin — the geometric signature of hallucination.
-</p>
+<div class="cw"><canvas id="cPipe" height="440"></canvas></div>
+<div class="ctrl">
+  <label>Layer: <input type="range" id="pLayer" min="0" max="110" value="0"><span id="pLayerV">0.0</span></label>
+  <label><input type="checkbox" id="pGrid" checked> Grid</label>
+  <label><input type="checkbox" id="pLens"> Lens</label>
+  <label><input type="checkbox" id="pPatch" checked> Patches</label>
+  <button class="bp" onclick="PipeMod.anim()">▶ Full Pipeline</button>
+  <button class="bs" onclick="PipeMod.reset()">↺ Reset</button>
 </div>
-
-<!-- ============================================================ -->
-<h2 id="sec-playground">9. Full Playground: The Complete Pipeline</h2>
-<!-- ============================================================ -->
-
-<div class="section-card fade-in">
-<p>Now let's see the <strong>entire pipeline</strong> in one view. A sentence enters as tokens, gets embedded (blurred), passes through layers that route and resolve, and emerges as a glued global section.</p>
-
-<div class="tab-bar" id="playground-tabs">
-  <button class="tab-btn active" onclick="Playground.setMode('smiley')">😊 Smiley</button>
-  <button class="tab-btn" onclick="Playground.setMode('torus')">🍩 Torus</button>
-  <button class="tab-btn" onclick="Playground.setMode('trefoil')">🪢 Trefoil Knot</button>
-  <button class="tab-btn" onclick="Playground.setMode('clusters')">🔵 Disconnected Clusters</button>
-  <button class="tab-btn" onclick="Playground.setMode('mobius')">♾️ Möbius Strip</button>
+<div class="tabs" id="pTabs"></div>
+<div class="sg" id="pStats"></div>
 </div>
 
-<canvas id="canvas-playground" height="550"></canvas>
-<div class="controls">
-  <label>Layer Depth:
-    <input type="range" id="play-layer" min="0" max="11" step="0.1" value="0">
-    <span id="play-layer-val" style="color:#fbbf24; font-weight:bold;">0.0</span>
-  </label>
-  <label>Lens Focus:
-    <input type="range" id="play-focus" min="0.05" max="1" step="0.01" value="0.3">
-    <span id="play-focus-val" style="color:#a78bfa; font-weight:bold;">Narrow</span>
-  </label>
-  <label><input type="checkbox" id="play-show-grid" checked> Deformed Grid</label>
-  <label><input type="checkbox" id="play-show-lens"> Lens Overlay</label>
-  <label><input type="checkbox" id="play-show-patches" checked> Patch Boundaries</label>
+<!-- ===== SECTION 6: HALLUCINATIONS ===== -->
+<h2 id="s6">6. Hallucinations — Where the Map Lies</h2>
+<div class="card fade">
+<p>At patch borders where training thins, the model <strong>confidently expands</strong> a region never properly learned — filling it with topologically plausible but <span style="color:#ef4444;font-weight:700">factually wrong</span> continuations.</p>
+<div class="met">Your satellite map has great data for Europe but sparse data for central Africa. Zoom in there and the system <em>invents</em> plausible terrain — rivers that don't exist. It's <strong>filling blanks with its best geometric guess</strong>.</div>
+<div class="cw"><canvas id="cHal" height="360"></canvas></div>
+<div class="ctrl">
+  <label>Coverage: <input type="range" id="xCov" min="10" max="100" value="70"><span id="xCovV">70%</span></label>
 </div>
-<div class="controls">
-  <button class="btn-primary" onclick="Playground.animateFullPipeline()">▶ Animate Full Pipeline</button>
-  <button class="btn-secondary" onclick="Playground.reset()">↺ Reset</button>
-</div>
-<div class="stats-grid" id="play-stats"></div>
-
-<div class="info-panel" style="margin-top:14px;">
-  <strong>🎯 What to explore:</strong>
-  <ul style="margin: 8px 0 0 18px; color: #94a3b8;">
-    <li>Switch between <strong>topological objects</strong> (smiley, torus, knot, clusters, Möbius) to see how the situs structure changes</li>
-    <li>Slide <strong>Layer Depth</strong> to watch early layers route (rearrange) and late layers resolve (sharpen)</li>
-    <li>Toggle the <strong>Lens</strong> to see the attention entropy tradeoff — narrow focus sharpens locally, broad focus blurs globally</li>
-    <li>Watch the <strong>deformed grid</strong> to see how the feed-forward layers stretch and compress space</li>
-    <li>Notice how the <strong>last layer reverses</strong> much of the deformation — gluing patches back into a readable output</li>
-  </ul>
-</div>
+<div class="sg" id="xStats"></div>
+<p style="text-align:center;font-size:.82em;color:#64748b">Move mouse into <span style="color:#ef4444">red zones</span> — confidence stays high even where knowledge is thin.</p>
 </div>
 
-<div style="text-align:center; padding: 40px 0; color: #475569; font-size: 0.85em;">
-  <p>Visualization for the paper <em>"Transformer Layers as Fibre Bundle Morphisms"</em></p>
-  <p>Conjecture: Embedding space as coarsest image of a Grothendieck situs</p>
+<div style="text-align:center;padding:24px 0;color:#475569;font-size:.8em">
+<p>Visualization for <em>"Transformer Layers as Fibre Bundle Morphisms"</em></p>
+<p>Conjecture: Embedding space as coarsest image of a Grothendieck situs</p>
 </div>
-
-</div><!-- /container -->
+</div>
 
 <script>
-// ============================================================
-// UTILITY FUNCTIONS
-// ============================================================
-const TAU = Math.PI * 2;
-const dpr = window.devicePixelRatio || 1;
+// ================================================================
+// MODULE: Core Utilities
+// ================================================================
+const U = (() => {
+  const TAU = Math.PI * 2, dpr = window.devicePixelRatio || 1;
+  const lerp = (a,b,t) => a+(b-a)*t;
+  const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
+  const dst = (x1,y1,x2,y2) => Math.hypot(x2-x1,y2-y1);
+  const ease = t => t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const hx = (hex,a) => {const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`};
+  // Seeded PRNG
+  const srand = s => () => {s=Math.sin(s*127.1+311.7)*43758.5453;return s-Math.floor(s)};
+  const PAL = ['#818cf8','#f472b6','#34d399','#fbbf24','#60a5fa','#f87171','#a78bfa','#2dd4bf'];
 
-function setupCanvas(id) {
-  const c = document.getElementById(id);
-  const rect = c.getBoundingClientRect();
-  c.width = rect.width * dpr;
-  c.height = rect.height * dpr;
-  const ctx = c.getContext('2d');
-  ctx.scale(dpr, dpr);
-  return { c, ctx, W: rect.width, H: rect.height };
-}
-
-function lerp(a, b, t) { return a + (b - a) * t; }
-function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-function dist(x1, y1, x2, y2) { return Math.hypot(x2 - x1, y2 - y1); }
-function ease(t) { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2; }
-
-function hexToRgba(hex, a) {
-  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-  return `rgba(${r},${g},${b},${a})`;
-}
-
-function drawGrid(ctx, W, H, warpFn, step, color, lineWidth) {
-  ctx.strokeStyle = color || 'rgba(100,116,139,0.15)';
-  ctx.lineWidth = lineWidth || 0.8;
-  for (let y = 0; y <= H; y += step) {
-    ctx.beginPath();
-    for (let x = 0; x <= W; x += step/3) {
-      const [wx, wy] = warpFn(x, y);
-      x === 0 ? ctx.moveTo(wx, wy) : ctx.lineTo(wx, wy);
-    }
-    ctx.stroke();
-  }
-  for (let x = 0; x <= W; x += step) {
-    ctx.beginPath();
-    for (let y = 0; y <= H; y += step/3) {
-      const [wx, wy] = warpFn(x, y);
-      y === 0 ? ctx.moveTo(wx, wy) : ctx.lineTo(wx, wy);
-    }
-    ctx.stroke();
-  }
-}
-
-function drawLens(ctx, cx, cy, radius, strength) {
-  for (let r = 0; r < 3; r++) {
-    const rr = radius + r * radius * 0.4;
-    const alpha = (0.3 - r * 0.08) * strength;
-    ctx.beginPath();
-    ctx.arc(cx, cy, rr, 0, TAU);
-    ctx.strokeStyle = `rgba(129,140,248,${alpha})`;
-    ctx.lineWidth = 2.5 - r * 0.5;
-    ctx.stroke();
-  }
-  // Inner glow
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-  grad.addColorStop(0, `rgba(129,140,248,${0.12 * strength})`);
-  grad.addColorStop(1, 'rgba(129,140,248,0)');
-  ctx.fillStyle = grad;
-  ctx.beginPath();
-  ctx.arc(cx, cy, radius, 0, TAU);
-  ctx.fill();
-}
-
-// Color palettes
-const COLORS = {
-  patches: ['#818cf8','#f472b6','#34d399','#fbbf24','#60a5fa','#f87171','#a78bfa','#2dd4bf'],
-  concepts: ['#e879f9','#22d3ee','#fb923c','#a3e635','#f43f5e','#38bdf8','#facc15','#4ade80'],
-};
-
-// ============================================================
-// SECTION 2: SITUS VISUALIZATION
-// ============================================================
-const Situs = (() => {
-  let { c, ctx, W, H } = { c: null, ctx: null, W: 0, H: 0 };
-  let patches = [];
-  let germs = [];
-  let stalks = [];
-  let phase = 0; // 0=empty, 1=patches, 2=germs, 3=stalks
-  let animFrame = null;
-  let time = 0;
-
-  const TOPICS = [
-    { name: 'Mammals', sub: ['Dogs','Cats','Whales','Bats'] },
-    { name: 'Music', sub: ['Jazz','Rock','Classical','Electronic'] },
-    { name: 'Cooking', sub: ['Baking','Grilling','Sauces','Spices'] },
-    { name: 'Physics', sub: ['Gravity','Quantum','Optics','Thermo'] },
-    { name: 'Languages', sub: ['Syntax','Semantics','Phonology','Morphology'] },
-  ];
-
-  function init() {
-    const setup = setupCanvas('canvas-situs');
-    c = setup.c; ctx = setup.ctx; W = setup.W; H = setup.H;
-    drawEmpty();
+  function mkCanvas(id, forceH) {
+    const c = document.getElementById(id);
+    const W = c.parentElement.clientWidth;
+    const H = forceH || Math.round(Math.min(420, W * 0.55));
+    c.style.width = W+'px'; c.style.height = H+'px';
+    c.width = W*dpr; c.height = H*dpr;
+    const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+    return {c, ctx, W, H};
   }
 
-  function drawEmpty() {
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#1e293b';
-    ctx.fillRect(0,0,W,H);
-    ctx.font = '16px system-ui';
-    ctx.fillStyle = '#475569';
-    ctx.textAlign = 'center';
-    ctx.fillText('Click "Place Patches" to begin exploring the situs', W/2, H/2);
+  function drawGrid(ctx, W, H, warp, step, col, lw) {
+    ctx.strokeStyle = col || 'rgba(100,116,139,0.1)'; ctx.lineWidth = lw || .6;
+    const sub = step/3;
+    for(let y=0;y<=H;y+=step){ctx.beginPath();for(let x=0;x<=W;x+=sub){const[wx,wy]=warp(x,y);x===0?ctx.moveTo(wx,wy):ctx.lineTo(wx,wy)}ctx.stroke()}
+    for(let x=0;x<=W;x+=step){ctx.beginPath();for(let y=0;y<=H;y+=sub){const[wx,wy]=warp(x,y);y===0?ctx.moveTo(wx,wy):ctx.lineTo(wx,wy)}ctx.stroke()}
   }
 
-  function placePatches() {
-    if (!ctx) init();
-    patches = [];
-    germs = [];
-    stalks = [];
-    phase = 1;
-
-    const cx = W/2, cy = H/2;
-    const radius = Math.min(W,H) * 0.32;
-
-    for (let i = 0; i < TOPICS.length; i++) {
-      const angle = (i / TOPICS.length) * TAU - Math.PI/2;
-      const x = cx + Math.cos(angle) * radius;
-      const y = cy + Math.sin(angle) * radius;
-      const r = 60 + Math.random() * 30;
-      patches.push({
-        x, y, r, topic: TOPICS[i],
-        color: COLORS.patches[i % COLORS.patches.length],
-        targetX: x, targetY: y, currentX: cx, currentY: cy,
-        progress: 0, delay: i * 120,
-      });
-    }
-
-    document.getElementById('btn-situs-germs').disabled = false;
-    document.getElementById('btn-situs-stalks').disabled = true;
-    document.getElementById('situs-info').innerHTML = `<strong>${patches.length} patches</strong> placed. Each patch is a semantic topic. Click <strong>Show Germs</strong> to see local data.`;
-
-    if (animFrame) cancelAnimationFrame(animFrame);
-    const startTime = performance.now();
-    function animate(now) {
-      const elapsed = now - startTime;
-      ctx.clearRect(0,0,W,H);
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0,0,W,H);
-
-      // Draw overlap connections
-      for (let i = 0; i < patches.length; i++) {
-        for (let j = i+1; j < patches.length; j++) {
-          const pi = patches[i], pj = patches[j];
-          const d = dist(pi.currentX, pi.currentY, pj.currentX, pj.currentY);
-          if (d < pi.r + pj.r) {
-            ctx.beginPath();
-            ctx.moveTo(pi.currentX, pi.currentY);
-            ctx.lineTo(pj.currentX, pj.currentY);
-            ctx.strokeStyle = 'rgba(129,140,248,0.15)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-          }
-        }
-      }
-
-      let allDone = true;
-      for (const p of patches) {
-        const t = clamp((elapsed - p.delay) / 800, 0, 1);
-        const e = ease(t);
-        p.currentX = lerp(W/2, p.targetX, e);
-        p.currentY = lerp(H/2, p.targetY, e);
-        if (t < 1) allDone = false;
-
-        // Patch circle
-        const grad = ctx.createRadialGradient(p.currentX, p.currentY, 0, p.currentX, p.currentY, p.r);
-        grad.addColorStop(0, hexToRgba(p.color, 0.25));
-        grad.addColorStop(1, hexToRgba(p.color, 0.03));
-        ctx.beginPath();
-        ctx.arc(p.currentX, p.currentY, p.r, 0, TAU);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = hexToRgba(p.color, 0.6);
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Label
-        ctx.font = 'bold 13px system-ui';
-        ctx.fillStyle = p.color;
-        ctx.textAlign = 'center';
-        ctx.fillText(p.topic.name, p.currentX, p.currentY - p.r - 8);
-      }
-
-      if (!allDone) animFrame = requestAnimationFrame(animate);
-      else { animFrame = null; drawGermsIfNeeded(); }
-    }
-    animFrame = requestAnimationFrame(animate);
+  function drawLensRing(ctx, cx, cy, r, s, col) {
+    col = col || '129,140,248';
+    for(let i=0;i<3;i++){const rr=r+i*r*.3,a=(.22-i*.06)*s;ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.strokeStyle=`rgba(${col},${a})`;ctx.lineWidth=2.2-i*.4;ctx.stroke()}
+    const g=ctx.createRadialGradient(cx,cy,0,cx,cy,r);g.addColorStop(0,`rgba(${col},${.08*s})`);g.addColorStop(1,`rgba(${col},0)`);ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.fill();
   }
 
-  function drawGermsIfNeeded() {
-    if (phase >= 2) drawScene();
-  }
-
-  function showGerms() {
-    if (phase < 1) return;
-    phase = 2;
-    germs = [];
-
-    for (const p of patches) {
-      for (const sub of p.topic.sub) {
-        const angle = Math.random() * TAU;
-        const rad = Math.random() * p.r * 0.7;
-        germs.push({
-          x: p.currentX + Math.cos(angle) * rad,
-          y: p.currentY + Math.sin(angle) * rad,
-          label: sub,
-          patch: p,
-          size: 4 + Math.random() * 3,
-        });
-      }
-    }
-
-    document.getElementById('btn-situs-stalks').disabled = false;
-    document.getElementById('situs-info').innerHTML = `<strong>${germs.length} germs</strong> scattered. Each germ is a local piece of data. Click <strong>Form Stalks</strong> to group them.`;
-    drawScene();
-  }
-
-  function showStalks() {
-    if (phase < 2) return;
-    phase = 3;
-    stalks = [];
-
-    for (const p of patches) {
-      const pGerms = germs.filter(g => g.patch === p);
-      if (pGerms.length > 0) {
-        stalks.push({ patch: p, germs: pGerms });
-      }
-    }
-
-    document.getElementById('situs-info').innerHTML = `<strong>${stalks.length} stalks</strong> formed. Each stalk collects all germs at a point. The situs is the landscape over which a sheaf is defined.`;
-    drawScene();
-  }
-
-  function drawScene() {
-    if (!ctx) return;
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0,0,W,H);
-
-    // Overlap connections
-    for (let i = 0; i < patches.length; i++) {
-      for (let j = i+1; j < patches.length; j++) {
-        const pi = patches[i], pj = patches[j];
-        const d2 = dist(pi.currentX, pi.currentY, pj.currentX, pj.currentY);
-        if (d2 < pi.r + pj.r) {
-          ctx.beginPath();
-          ctx.moveTo(pi.currentX, pi.currentY);
-          ctx.lineTo(pj.currentX, pj.currentY);
-          ctx.strokeStyle = 'rgba(129,140,248,0.12)';
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-        }
-      }
-    }
-
-    // Patches
-    for (const p of patches) {
-      const grad = ctx.createRadialGradient(p.currentX, p.currentY, 0, p.currentX, p.currentY, p.r);
-      grad.addColorStop(0, hexToRgba(p.color, 0.2));
-      grad.addColorStop(1, hexToRgba(p.color, 0.02));
-      ctx.beginPath();
-      ctx.arc(p.currentX, p.currentY, p.r, 0, TAU);
-      ctx.fillStyle = grad;
-      ctx.fill();
-      ctx.strokeStyle = hexToRgba(p.color, 0.5);
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      ctx.font = 'bold 12px system-ui';
-      ctx.fillStyle = p.color;
-      ctx.textAlign = 'center';
-      ctx.fillText(p.topic.name, p.currentX, p.currentY - p.r - 6);
-    }
-
-    // Germs
-    if (phase >= 2) {
-      for (const g of germs) {
-        ctx.beginPath();
-        ctx.arc(g.x, g.y, g.size, 0, TAU);
-        ctx.fillStyle = hexToRgba(g.patch.color, 0.8);
-        ctx.fill();
-        ctx.font = '9px system-ui';
-        ctx.fillStyle = '#cbd5e1';
-        ctx.textAlign = 'center';
-        ctx.fillText(g.label, g.x, g.y - g.size - 3);
-      }
-    }
-
-    // Stalks
-    if (phase >= 3) {
-      for (const s of stalks) {
-        // Draw connecting lines from patch center to each germ
-        for (const g of s.germs) {
-          ctx.beginPath();
-          ctx.moveTo(s.patch.currentX, s.patch.currentY);
-          ctx.lineTo(g.x, g.y);
-          ctx.strokeStyle = hexToRgba(s.patch.color, 0.3);
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-        // Stalk label
-        ctx.font = 'bold 10px system-ui';
-        ctx.fillStyle = '#fbbf24';
-        ctx.textAlign = 'center';
-        ctx.fillText(`Stalk (${s.germs.length} germs)`, s.patch.currentX, s.patch.currentY + 4);
-      }
-    }
-  }
-
-  function reset() {
-    patches = []; germs = []; stalks = []; phase = 0;
-    document.getElementById('btn-situs-germs').disabled = true;
-    document.getElementById('btn-situs-stalks').disabled = true;
-    document.getElementById('situs-info').innerHTML = 'Click <strong>Place Patches</strong> to scatter semantic patches on the situs.';
-    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
-    if (ctx) drawEmpty();
-  }
-
-  setTimeout(init, 100);
-  return { placePatches, showGerms, showStalks, reset };
+  return {TAU,dpr,lerp,clamp,dst,ease,hx,srand,PAL,mkCanvas,drawGrid,drawLensRing};
 })();
 
-// ============================================================
-// SECTION 3: EMBEDDING LAYER VISUALIZATION
-// ============================================================
-const EmbeddingViz = (() => {
-  let ctx, W, H;
-  const concepts = [
-    { name: 'King', baseX: 0.6, baseY: 0.3, color: '#fbbf24' },
-    { name: 'Queen', baseX: 0.65, baseY: 0.35, color: '#f472b6' },
-    { name: 'Man', baseX: 0.4, baseY: 0.5, color: '#60a5fa' },
-    { name: 'Woman', baseX: 0.45, baseY: 0.55, color: '#f472b6' },
-    { name: 'Dog', baseX: 0.2, baseY: 0.7, color: '#34d399' },
-    { name: 'Cat', baseX: 0.25, baseY: 0.65, color: '#34d399' },
-    { name: 'Paris', baseX: 0.8, baseY: 0.6, color: '#818cf8' },
-    { name: 'France', baseX: 0.75, baseY: 0.65, color: '#818cf8' },
-    { name: 'Music', baseX: 0.15, baseY: 0.3, color: '#fb923c' },
-    { name: 'Piano', baseX: 0.2, baseY: 0.25, color: '#fb923c' },
-    { name: 'Math', baseX: 0.85, baseY: 0.2, color: '#a78bfa' },
-    { name: 'Equation', baseX: 0.82, baseY: 0.25, color: '#a78bfa' },
-  ];
+// ================================================================
+// MODULE: EventBus — modules communicate through this
+// ================================================================
+const Bus = (() => {
+  const listeners = {};
+  return {
+    on(evt, fn) { (listeners[evt] = listeners[evt]||[]).push(fn); },
+    emit(evt, data) { (listeners[evt]||[]).forEach(fn => fn(data)); }
+  };
+})();
+
+// ================================================================
+// MODULE: Shared State
+// ================================================================
+const State = {
+  mouse: {x:.5, y:.5},
+  objectType: 'smiley',
+  layerDepth: 0,
+};
+
+// ================================================================
+// MODULE: Object Generator — topological objects as pixel grids
+// ================================================================
+const ObjGen = (() => {
+  const SZ = 48;
+
+  function generate(type) {
+    const img = new Float64Array(SZ*SZ);
+    const rng = U.srand(42);
+    const cx = SZ/2-.5, cy = SZ/2-.5;
+
+    switch(type) {
+      case 'smiley': {
+        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
+          const dx=x-cx, dy=y-cy, r=Math.hypot(dx,dy);
+          let v=0;
+          if(r<19) v=.22+.06*Math.sin(dx*.3)*Math.cos(dy*.3);
+          if(Math.abs(r-19)<2.2) v=1;
+          if(Math.hypot(dx-6.5,dy+4)<3) v=Math.max(v,.85);
+          if(Math.hypot(dx+6.5,dy+4)<3) v=Math.max(v,.85);
+          if(Math.hypot(dx-5.5,dy+5)<1.1) v=1;
+          if(Math.hypot(dx+5.5,dy+5)<1.1) v=1;
+          if(r>7&&r<12&&dy>4&&Math.abs(dx)<11) v=Math.max(v,.8);
+          if(Math.abs(dx)<1.5&&dy>-2&&dy<2) v=Math.max(v,.45);
+          img[y*SZ+x]=Math.min(1,v);
+        }
+        break;
+      }
+      case 'torus': {
+        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
+          const nx=x/SZ*2-1, ny=y/SZ*2-1;
+          const R=.55, rr=.22;
+          const d=Math.hypot(nx,ny);
+          const ring=Math.abs(d-R);
+          let v=Math.exp(-ring*ring/(2*rr*rr));
+          v*=.5+.5*Math.cos(Math.atan2(ny,nx)*3);
+          img[y*SZ+x]=U.clamp(v,0,1);
+        }
+        break;
+      }
+      case 'trefoil': {
+        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
+          const nx=x/SZ*2-1, ny=y/SZ*2-1;
+          const a=Math.atan2(ny,nx);
+          const targetR=.3+.18*Math.cos(3*a);
+          const d=Math.hypot(nx,ny);
+	  const v=Math.exp(-((d-targetR)**2)/.008);
+          img[y*SZ+x]=U.clamp(v,0,1);
+        }
+        break;
+      }
+      case 'clusters': {
+        const cs=[{x:-.4,y:-.35},{x:.4,y:-.3},{x:0,y:.45},{x:-.5,y:.3}];
+        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
+          const nx=x/SZ*2-1, ny=y/SZ*2-1;
+          let v=0;
+          cs.forEach(c=>{v=Math.max(v,Math.exp(-((nx-c.x)**2+(ny-c.y)**2)/.04))});
+          img[y*SZ+x]=U.clamp(v,0,1);
+        }
+        break;
+      }
+      case 'rings': {
+        for(let y=0;y<SZ;y++) for(let x=0;x<SZ;x++){
+          const nx=x/SZ*2-1, ny=y/SZ*2-1;
+          const d1=Math.abs(Math.hypot(nx+.35,ny)-.3);
+          const d2=Math.abs(Math.hypot(nx-.35,ny)-.3);
+          const v=Math.max(Math.exp(-d1*d1/.003),Math.exp(-d2*d2/.003));
+          img[y*SZ+x]=U.clamp(v,0,1);
+        }
+        break;
+      }
+    }
+    return img;
+  }
+
+  // DCT basis for holographic demo
+  const N=16, Z=4, ZS=4;
+  const CM=[];
+  for(let k=0;k<N;k++){CM[k]=[];const a=k===0?Math.sqrt(1/N):Math.sqrt(2/N);for(let n=0;n<N;n++)CM[k][n]=a*Math.cos(Math.PI*(2*n+1)*k/(2*N))}
+  function dct1(x){const X=new Float64Array(N);for(let k=0;k<N;k++){let s=0;for(let n=0;n<N;n++)s+=x[n]*CM[k][n];X[k]=s}return X}
+  function idct1(X){const x=new Float64Array(N);for(let n=0;n<N;n++){let s=0;for(let k=0;k<N;k++)s+=X[k]*CM[k][n];x[n]=s}return x}
+  function dct2(im){const t=new Float64Array(N*N);for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=im[i*N+j];const d=dct1(r);for(let j=0;j<N;j++)t[i*N+j]=d[j]}const o=new Float64Array(N*N);for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=t[i*N+j];const d=dct1(c);for(let i=0;i<N;i++)o[i*N+j]=d[i]}return o}
+  function idct2(co){const t=new Float64Array(N*N);for(let j=0;j<N;j++){const c=new Float64Array(N);for(let i=0;i<N;i++)c[i]=co[i*N+j];const d=idct1(c);for(let i=0;i<N;i++)t[i*N+j]=d[i]}const o=new Float64Array(N*N);for(let i=0;i<N;i++){const r=new Float64Array(N);for(let j=0;j<N;j++)r[j]=t[i*N+j];const d=idct1(r);for(let j=0;j<N;j++)o[i*N+j]=d[j]}return o}
+
+  // 16x16 smiley for holographic demo
+  const SMILEY16=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,0,0,1,1,1,1,0,0,1,1,0,0,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0];
+
+  return {SZ, generate, N, Z, ZS, dct2, idct2, SMILEY16};
+})();
+
+// ================================================================
+// MODULE: Hero — Layer Stack with Lens
+// ================================================================
+const HeroMod = (() => {
+  let ctx, W, H, c;
+  let currentImg = null;
+  let patches = [];
+  const OBJECTS = ['smiley','torus','trefoil','clusters','rings'];
+  const LABELS = ['😊 Smiley','🍩 Torus','🪢 Trefoil','🔵 Clusters','⭕ Rings'];
 
   function init() {
-    const s = setupCanvas('canvas-embedding');
-    ctx = s.ctx; W = s.W; H = s.H;
+    ({c, ctx, W, H} = U.mkCanvas('cHero', 480));
+    currentImg = ObjGen.generate(State.objectType);
+    patches = genPatches();
+
+    // Build tabs
+    const tabEl = document.getElementById('hTabs');
+    let tabHtml = '';
+    OBJECTS.forEach((o, i) => {
+      tabHtml += `<button class="tab${o === State.objectType ? ' on' : ''}" data-m="${o}">${LABELS[i]}</button>`;
+    });
+    tabEl.innerHTML = tabHtml;
+    tabEl.querySelectorAll('.tab').forEach(btn => {
+      btn.onclick = () => {
+        State.objectType = btn.dataset.m;
+        currentImg = ObjGen.generate(State.objectType);
+        patches = genPatches();
+        tabEl.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        Bus.emit('objectChanged');
+        render();
+      };
+    });
+
+    // Mouse tracking
+    c.addEventListener('mousemove', e => {
+      const r = c.getBoundingClientRect();
+      State.mouse.x = (e.clientX - r.left) / r.width;
+      State.mouse.y = (e.clientY - r.top) / r.height;
+      render();
+    });
+
+    // Slider listeners
+    ['hSize','hDepth','hGrid','hStack'].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
+    });
+
     render();
-    document.getElementById('embed-superposition').addEventListener('input', render);
-    document.getElementById('embed-show-labels').addEventListener('change', render);
+  }
+
+  function genPatches() {
+    // Divide image into 4 quadrant patches
+    const SZ = ObjGen.SZ;
+    const cols = ['#818cf8','#f472b6','#34d399','#fbbf24'];
+    const names = ['Syntax','Semantics','Pragmatics','World'];
+    const p = [];
+    for (let qi = 0; qi < 4; qi++) {
+      const qr = Math.floor(qi / 2), qc = qi % 2;
+      const cx = (qc + 0.5) / 2, cy = (qr + 0.5) / 2;
+      // Compute average brightness in quadrant
+      let sum = 0, cnt = 0;
+      for (let y = qr * SZ/2; y < (qr+1) * SZ/2; y++)
+        for (let x = qc * SZ/2; x < (qc+1) * SZ/2; x++) {
+          sum += currentImg[y * SZ + x]; cnt++;
+        }
+      p.push({ cx, cy, r: 0.28, col: cols[qi], name: names[qi], avg: sum/cnt });
+    }
+    return p;
   }
 
   function render() {
     if (!ctx) return;
-    const sup = parseFloat(document.getElementById('embed-superposition').value);
-    const showLabels = document.getElementById('embed-show-labels').checked;
-    document.getElementById('embed-sup-val').textContent = Math.round(sup * 100) + '%';
+    const SZ = ObjGen.SZ;
+    const lensSize = +document.getElementById('hSize').value;
+    const layerRaw = +document.getElementById('hDepth').value;
+    const layer = layerRaw / 10;
+    const showGrid = document.getElementById('hGrid').checked;
+    const showStack = document.getElementById('hStack').checked;
 
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0,0,W,H);
+    document.getElementById('hSizeV').textContent = lensSize;
+    document.getElementById('hDepthV').textContent = layer.toFixed(1);
 
-    const margin = 40;
-    const cx = W/2, cy = H/2;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#060b18';
+    ctx.fillRect(0, 0, W, H);
 
-    // At high superposition, all concepts collapse toward center
-    // At low superposition, they spread to their base positions
-    const pts = concepts.map(c => {
-      const x = lerp(c.baseX * (W - 2*margin) + margin, cx + (Math.random()-0.5)*30, sup);
-      const y = lerp(c.baseY * (H - 2*margin) + margin, cy + (Math.random()-0.5)*30, sup);
-      return { ...c, x, y };
-    });
+    const lx = State.mouse.x * W, ly = State.mouse.y * H;
+    const lensR = lensSize;
 
-    // Draw connections between similar concepts
-    for (let i = 0; i < pts.length; i++) {
-      for (let j = i+1; j < pts.length; j++) {
-        if (pts[i].color === pts[j].color) {
-          const d = dist(pts[i].x, pts[j].x, pts[i].y, pts[j].y);
-          const alpha = clamp(1 - d / 300, 0.05, 0.4);
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.strokeStyle = hexToRgba(pts[i].color, alpha);
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
+    // Layer phases
+    const routing = U.clamp(1 - layer / 4, 0, 1);
+    const resolving = U.clamp((layer - 2) / 5, 0, 1);
+    const gluing = U.clamp((layer - 8) / 3, 0, 1);
+    const deform = layer === 0 ? 0 : (layer <= 3 ? layer * 0.07 : (layer <= 8 ? 0.21 + (layer-3)*0.035 : 0.385 - (layer-8)*0.11));
+
+    // Warp function
+    function warp(x, y) {
+      if (layer < 0.1) return [x, y];
+      let wx = x, wy = y;
+      if (routing > 0) {
+        const dx = x - W/2, dy = y - H/2;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        const a = deform * routing * Math.exp(-d*d/(W*W*0.15)) * 1.8;
+        const cs = Math.cos(a), sn = Math.sin(a);
+        wx = W/2 + dx*cs - dy*sn;
+        wy = H/2 + dx*sn + dy*cs;
+      }
+      if (resolving > 0) {
+        for (const p of patches) {
+          const pcx = p.cx*W, pcy = p.cy*H;
+          const dx = wx-pcx, dy = wy-pcy;
+          const d = Math.sqrt(dx*dx+dy*dy);
+          const inf = deform * resolving * Math.exp(-d*d/7000) * 0.45;
+          wx += dx*inf; wy += dy*inf;
         }
       }
+      if (gluing > 0) {
+        wx = U.lerp(wx, x, gluing*0.7);
+        wy = U.lerp(wy, y, gluing*0.7);
+      }
+      return [wx, wy];
     }
 
-    // Draw concept dots
-    for (const p of pts) {
-      // Glow
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 25);
-      grad.addColorStop(0, hexToRgba(p.color, 0.3));
-      grad.addColorStop(1, hexToRgba(p.color, 0));
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 25, 0, TAU);
-      ctx.fillStyle = grad;
-      ctx.fill();
+    // Draw grid
+    if (showGrid) {
+      U.drawGrid(ctx, W, H, warp, 28, `rgba(100,116,139,${0.05+deform*0.12})`, 0.5);
+    }
 
-      // Dot
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 6, 0, TAU);
-      ctx.fillStyle = p.color;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+    // Draw the image as pixels with lens sharpening
+    const cellW = W / SZ, cellH = H / SZ;
+    const maxBlur = 6;
 
-      // Label
-      if (showLabels) {
-        ctx.font = 'bold 11px system-ui';
-        ctx.fillStyle = '#e2e8f0';
-        ctx.textAlign = 'center';
-        ctx.fillText(p.name, p.x, p.y - 12);
+    for (let iy = 0; iy < SZ; iy++) {
+      for (let ix = 0; ix < SZ; ix++) {
+        const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
+        const [wx, wy] = warp(px, py);
+        const dToLens = U.dst(wx, wy, lx, ly);
+
+        // Compute display value with lens sharpening
+        let val = currentImg[iy * SZ + ix];
+        let pixelSize = 1;
+        let alpha = 0.6;
+
+        if (dToLens < lensR) {
+          // Inside lens: sharp, bright
+          const sharpness = 1 - dToLens / lensR;
+          const layerBoost = U.clamp(layer / 11, 0, 1);
+          alpha = 0.6 + sharpness * 0.4 * (0.3 + layerBoost * 0.7);
+          val = U.lerp(val, val > 0.4 ? Math.min(1, val * 1.3) : val * 0.7, sharpness * 0.5 * (0.3 + layerBoost * 0.7));
+          pixelSize = 1;
+        } else {
+          // Outside lens: pixelated based on distance and layer
+          const blurDist = U.clamp((dToLens - lensR) / 200, 0, 1);
+          const layerClarity = U.clamp(layer / 11, 0, 0.5);
+          pixelSize = Math.max(1, Math.floor(maxBlur * blurDist * (1 - layerClarity)));
+          alpha = 0.3 + layerClarity * 0.2;
+
+          // Average with neighbors for blur
+          if (pixelSize > 1) {
+            let sum = 0, cnt = 0;
+            const br = Math.floor(pixelSize / 2);
+            for (let dy = -br; dy <= br; dy++) {
+              for (let dx = -br; dx <= br; dx++) {
+                const nx = U.clamp(ix+dx, 0, SZ-1), ny = U.clamp(iy+dy, 0, SZ-1);
+                sum += currentImg[ny*SZ+nx]; cnt++;
+              }
+            }
+            val = sum / cnt;
+          }
+        }
+
+        // Color based on value and patch membership
+        let r, g, b;
+        const warm = val;
+        r = Math.floor(15 + warm * 210);
+        g = Math.floor(12 + warm * 180);
+        b = Math.floor(25 + warm * 100);
+
+        // Tint by patch color if patches visible
+        const patchIdx = (iy < SZ/2 ? 0 : 1) * 2 + (ix < SZ/2 ? 0 : 1);
+        if (patches[patchIdx] && resolving > 0.1) {
+          const pc = patches[patchIdx].col;
+          const pr = parseInt(pc.slice(1,3),16), pg = parseInt(pc.slice(3,5),16), pb = parseInt(pc.slice(5,7),16);
+          const tint = resolving * 0.15;
+          r = Math.floor(U.lerp(r, pr, tint));
+          g = Math.floor(U.lerp(g, pg, tint));
+          b = Math.floor(U.lerp(b, pb, tint));
+        }
+
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+
+        // Draw at warped position
+        const drawW = cellW * Math.max(1, pixelSize * 0.5);
+        const drawH = cellH * Math.max(1, pixelSize * 0.5);
+        ctx.fillRect(wx - drawW/2, wy - drawH/2, drawW + 0.5, drawH + 0.5);
       }
     }
+    ctx.globalAlpha = 1;
 
-    // Info text
-    ctx.font = '12px system-ui';
-    ctx.fillStyle = '#64748b';
-    ctx.textAlign = 'center';
-    if (sup > 0.7) {
-      ctx.fillText('High superposition: all concepts compressed together (polysemanticity)', W/2, H - 15);
-    } else if (sup < 0.3) {
-      ctx.fillText('Low superposition: concepts clearly separated (ideal but requires more dimensions)', W/2, H - 15);
-    } else {
-      ctx.fillText('Partial superposition: some structure visible, some overlap', W/2, H - 15);
+    // Draw lens
+    U.drawLensRing(ctx, lx, ly, lensR, 0.8);
+
+    // Stack view: show layer slices on the right
+    if (showStack) {
+      const stackW = 60, stackH = 50, stackX = W - stackW - 12, gap = 6;
+      const nLayers = 6;
+      for (let li = 0; li < nLayers; li++) {
+        const sy = 10 + li * (stackH + gap);
+        const layerVal = li * 11 / (nLayers - 1);
+        const isCurrent = Math.abs(layerVal - layer) < 1.5;
+
+        ctx.fillStyle = isCurrent ? 'rgba(129,140,248,0.15)' : 'rgba(15,23,42,0.7)';
+        ctx.fillRect(stackX - 2, sy - 2, stackW + 4, stackH + 4);
+
+        // Mini image at this layer's resolution
+        const miniBlur = Math.max(1, Math.floor((1 - layerVal/11) * 5));
+        const miniCellW = stackW / (SZ / miniBlur);
+        const miniCellH = stackH / (SZ / miniBlur);
+
+        for (let my = 0; my < SZ; my += miniBlur) {
+          for (let mx = 0; mx < SZ; mx += miniBlur) {
+            let sum = 0, cnt = 0;
+            for (let dy = 0; dy < miniBlur && my+dy < SZ; dy++)
+              for (let dx = 0; dx < miniBlur && mx+dx < SZ; dx++) {
+                sum += currentImg[(my+dy)*SZ+(mx+dx)]; cnt++;
+              }
+            const v = sum / cnt;
+            const br = Math.floor(20 + v * 200);
+            ctx.fillStyle = `rgb(${br},${Math.floor(br*0.85)},${Math.floor(br*0.5)})`;
+            ctx.fillRect(stackX + (mx/miniBlur)*miniCellW, sy + (my/miniBlur)*miniCellH,
+                         miniCellW + 0.5, miniCellH + 0.5);
+          }
+        }
+
+        ctx.strokeStyle = isCurrent ? '#818cf8' : '#1e293b';
+        ctx.lineWidth = isCurrent ? 2 : 0.5;
+        ctx.strokeRect(stackX, sy, stackW, stackH);
+
+        ctx.font = '8px system-ui';
+        ctx.fillStyle = isCurrent ? '#fbbf24' : '#475569';
+        ctx.textAlign = 'right';
+        ctx.fillText(`L${li === 0 ? '0' : li === nLayers-1 ? '11' : Math.round(layerVal)}`, stackX - 4, sy + stackH/2 + 3);
+      }
+
+      // Arrow showing current layer
+      ctx.font = '9px system-ui';
+      ctx.fillStyle = '#818cf8';
+      ctx.textAlign = 'center';
+      ctx.fillText('Layer Stack', stackX + stackW/2, 8);
     }
 
+    // Phase label
+    ctx.font = 'bold 12px system-ui';
+    ctx.textAlign = 'left';
+    let phaseCol, phaseTxt;
+    if (layer < 0.5) { phaseCol = '#64748b'; phaseTxt = '📥 Embedding: Blurriest global section'; }
+    else if (layer <= 3) { phaseCol = '#60a5fa'; phaseTxt = `🔀 Layer ${layer.toFixed(1)}: Routing — words to words`; }
+    else if (layer <= 8) { phaseCol = '#c084fc'; phaseTxt = `🔬 Layer ${layer.toFixed(1)}: Resolving — concepts to concepts`; }
+    else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${layer.toFixed(1)}: Gluing — reassembling`; }
+    ctx.fillStyle = phaseCol;
+    ctx.fillText(phaseTxt, 10, 20);
+
     // Stats
-    const statsEl = document.getElementById('embed-stats');
-    statsEl.innerHTML = `
-      <div class="stat-card"><div class="label">CONCEPTS</div><div class="value" style="color:#818cf8">${concepts.length}</div></div>
-      <div class="stat-card"><div class="label">SUPERPOSITION</div><div class="value" style="color:#fbbf24">${Math.round(sup*100)}%</div></div>
-      <div class="stat-card"><div class="label">EFFECTIVE DIM</div><div class="value" style="color:#34d399">${Math.round(2 + (1-sup)*766)}</div><div class="sub">of 768</div></div>
-      <div class="stat-card"><div class="label">POLYSEMANTICITY</div><div class="value" style="color:#f472b6">${sup > 0.5 ? 'High' : sup > 0.2 ? 'Medium' : 'Low'}</div></div>
+    document.getElementById('hStats').innerHTML = `
+      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${layer.toFixed(1)}</div></div>
+      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${layer<0.5?'Embed':layer<=3?'Route':layer<=8?'Resolve':'Glue'}</div></div>
+      <div class="sc"><div class="l">DEFORMATION</div><div class="v" style="color:#fbbf24">${Math.round(deform*100)}%</div></div>
+      <div class="sc"><div class="l">LENS</div><div class="v" style="color:#34d399">${lensSize}px</div></div>
+      <div class="sc"><div class="l">OBJECT</div><div class="v" style="color:#f472b6">${State.objectType}</div></div>
+    `;
+  }
+
+  setTimeout(init, 100);
+  return { render };
+})();
+
+// ================================================================
+// MODULE: Holographic Embedding (Section 2)
+// ================================================================
+const HoloMod = (() => {
+  let ctxP, ctxH, WP, HP, WH, HH;
+  const N = ObjGen.N;
+  const SZ = N; // 16x16
+  let damaged = new Array(16).fill(false); // 4x4 = 16 tiles
+  let ORI = [...ObjGen.SMILEY16];
+  let DC = null;
+
+  function dct() { DC = ObjGen.dct2(ORI); }
+
+  function init() {
+    ({ctx: ctxP, W: WP, H: HP} = U.mkCanvas('cPhoto', 200));
+    ({ctx: ctxH, W: WH, H: HH} = U.mkCanvas('cHolo', 200));
+    dct();
+    document.getElementById('eDmg').addEventListener('input', () => {
+      const v = +document.getElementById('eDmg').value;
+      document.getElementById('eDmgV').textContent = v + '/16';
+      // Damage first v tiles
+      damaged = new Array(16).fill(false);
+      for (let i = 0; i < v; i++) damaged[i] = true;
+      render();
+    });
+    render();
+  }
+
+  function randomDamage() {
+    const indices = Array.from({length:16}, (_,i) => i);
+    for (let i = 15; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [indices[i],indices[j]] = [indices[j],indices[i]]; }
+    damaged = new Array(16).fill(false);
+    for (let i = 0; i < 8; i++) damaged[indices[i]] = true;
+    document.getElementById('eDmg').value = 8;
+    document.getElementById('eDmgV').textContent = '8/16';
+    render();
+  }
+
+  function reset() {
+    damaged = new Array(16).fill(false);
+    document.getElementById('eDmg').value = 0;
+    document.getElementById('eDmgV').textContent = '0/16';
+    render();
+  }
+
+  function drawImg(ctx, img, W, H) {
+    const ps = Math.min(W, H) / N;
+    const ox = (W - ps*N)/2, oy = (H - ps*N)/2;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      const v = U.clamp(img[y*N+x], 0, 1);
+      const r = Math.floor(30 + v*220), g = Math.floor(25 + v*190), b = Math.floor(15 + v*100);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(ox + x*ps, oy + y*ps, ps+0.5, ps+0.5);
+    }
+  }
+
+  function render() {
+    if (!ctxP) return;
+    const Z = 4, ZS = 4;
+
+    // Photo: remove spatial tiles
+    ctxP.clearRect(0,0,WP,HP); ctxP.fillStyle='#060b18'; ctxP.fillRect(0,0,WP,HP);
+    const photoImg = new Float64Array(N*N);
+    for (let z = 0; z < 16; z++) {
+      if (damaged[z]) continue;
+      const zr = Math.floor(z/Z), zc = z%Z;
+      for (let i = zr*ZS; i < (zr+1)*ZS; i++)
+        for (let j = zc*ZS; j < (zc+1)*ZS; j++)
+          photoImg[i*N+j] = ORI[i*N+j];
+    }
+    drawImg(ctxP, photoImg, WP, HP);
+
+    // Draw damage X marks on photo
+    const ps = Math.min(WP, HP) / N;
+    const ox = (WP - ps*N)/2, oy = (HP - ps*N)/2;
+    for (let z = 0; z < 16; z++) {
+      if (!damaged[z]) continue;
+      const zr = Math.floor(z/Z), zc = z%Z;
+      const bx = ox + zc*ZS*ps, by = oy + zr*ZS*ps, bw = ZS*ps;
+      ctxP.strokeStyle = '#ef4444'; ctxP.lineWidth = 2;
+      ctxP.beginPath(); ctxP.moveTo(bx+4,by+4); ctxP.lineTo(bx+bw-4,by+bw-4); ctxP.stroke();
+      ctxP.beginPath(); ctxP.moveTo(bx+bw-4,by+4); ctxP.lineTo(bx+4,by+bw-4); ctxP.stroke();
+    }
+
+    // Hologram: remove frequency tiles
+    ctxH.clearRect(0,0,WH,HH); ctxH.fillStyle='#060b18'; ctxH.fillRect(0,0,WH,HH);
+    const holoCo = new Float64Array(N*N);
+    for (let z = 0; z < 16; z++) {
+      if (damaged[z]) continue;
+      const zr = Math.floor(z/Z), zc = z%Z;
+      for (let i = zr*ZS; i < (zr+1)*ZS; i++)
+        for (let j = zc*ZS; j < (zc+1)*ZS; j++)
+          holoCo[i*N+j] = DC[i*N+j];
+    }
+    const holoImg = ObjGen.idct2(holoCo);
+    drawImg(ctxH, holoImg, WH, HH);
+
+    // Stats
+    const alive = damaged.filter(d => !d).length;
+    const pct = Math.round(100 * alive / 16);
+    // Photo quality: fraction of pixels correct
+    let pCorrect = 0;
+    for (let i = 0; i < N*N; i++) if (Math.abs(photoImg[i] - ORI[i]) < 0.01) pCorrect++;
+    const pQ = Math.round(100 * pCorrect / (N*N));
+    // Holo quality: MSE-based
+    let hMSE = 0;
+    for (let i = 0; i < N*N; i++) hMSE += (holoImg[i] - ORI[i])**2;
+    hMSE /= N*N;
+    const hQ = hMSE === 0 ? 100 : Math.max(0, Math.round(100*(1-Math.sqrt(hMSE))));
+
+    document.getElementById('eStats').innerHTML = `
+      <div class="sc"><div class="l">TILES ALIVE</div><div class="v" style="color:${pct>50?'#34d399':'#ef4444'}">${alive}/16</div></div>
+      <div class="sc"><div class="l">PHOTO QUALITY</div><div class="v" style="color:${pQ>50?'#34d399':'#ef4444'}">${pQ}%</div><div class="s">pixels intact</div></div>
+      <div class="sc"><div class="l">HOLO QUALITY</div><div class="v" style="color:${hQ>50?'#34d399':'#ef4444'}">${hQ}%</div><div class="s">graceful blur</div></div>
+      <div class="sc"><div class="l">KEY INSIGHT</div><div class="v" style="color:#fbbf24;font-size:.7em">${pct<70?'Photo loses regions; Holo blurs everywhere':'Both intact'}</div></div>
     `;
   }
 
   setTimeout(init, 200);
-  return {};
+  return { randomDamage, reset };
 })();
 
-// ============================================================
-// SECTION 4: ATTENTION LENS VISUALIZATION
-// ============================================================
-const LensViz = (() => {
-  let ctx, W, H;
-  let mouseX = 0.5, mouseY = 0.5;
-  let imageData = null;
-
-  // Generate a "smiley" pattern as our base image
-  function generateBaseImage(w, h) {
-    const data = new Float32Array(w * h);
-    const cx = w/2, cy = h/2, r = Math.min(w,h) * 0.35;
-
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const dx = x - cx, dy = y - cy;
-        const d = Math.sqrt(dx*dx + dy*dy);
-        let val = 0;
-
-        // Face circle
-        if (d < r) val = 0.3;
-
-        // Eyes
-        const eyeL = Math.sqrt((x - cx + r*0.3)**2 + (y - cy + r*0.2)**2);
-        const eyeR = Math.sqrt((x - cx - r*0.3)**2 + (y - cy + r*0.2)**2);
-        if (eyeL < r*0.12 || eyeR < r*0.12) val = 0.9;
-
-        // Smile
-        const smileDist = Math.sqrt(dx*dx + (dy - r*0.1)**2);
-        if (smileDist > r*0.4 && smileDist < r*0.55 && dy > r*0.1) val = 0.8;
-
-        // Background noise (represents compressed information)
-        val += (Math.sin(x*0.3)*Math.cos(y*0.2) + Math.sin(x*0.7+y*0.5)) * 0.05;
-
-        data[y * w + x] = clamp(val, 0, 1);
-      }
-    }
-    return data;
-  }
+// ================================================================
+// MODULE: Attention Heads (Section 3)
+// ================================================================
+const HeadsMod = (() => {
+  let ctx, W, H, c;
+  let heads = [];
+  let dragIdx = -1;
+  const HEAD_COLORS = ['129,140,248','244,114,182','52,211,153','251,191,36'];
 
   function init() {
-    const s = setupCanvas('canvas-lens');
-    ctx = s.ctx; W = s.W; H = s.H;
-    imageData = generateBaseImage(200, 200);
+    ({c, ctx, W, H} = U.mkCanvas('cHeads', 420));
+    resetHeads();
 
-    const c = document.getElementById('canvas-lens');
-    c.addEventListener('mousemove', (e) => {
-      const rect = c.getBoundingClientRect();
-      mouseX = (e.clientX - rect.left) / rect.width;
-      mouseY = (e.clientY - rect.top) / rect.height;
-      document.getElementById('lens-x').value = mouseX.toFixed(2);
-      document.getElementById('lens-y').value = mouseY.toFixed(2);
+    c.addEventListener('mousedown', e => {
+      const r = c.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width * W;
+      const my = (e.clientY - r.top) / r.height * H;
+      for (let i = heads.length - 1; i >= 0; i--) {
+        if (U.dst(mx, my, heads[i].x, heads[i].y) < heads[i].r + 10) {
+          dragIdx = i; break;
+        }
+      }
+    });
+    c.addEventListener('mousemove', e => {
+      if (dragIdx < 0) return;
+      const r = c.getBoundingClientRect();
+      heads[dragIdx].x = (e.clientX - r.left) / r.width * W;
+      heads[dragIdx].y = (e.clientY - r.top) / r.height * H;
       render();
     });
+    c.addEventListener('mouseup', () => { dragIdx = -1; });
+    c.addEventListener('mouseleave', () => { dragIdx = -1; });
 
-    document.getElementById('lens-entropy').addEventListener('input', render);
-    document.getElementById('lens-x').addEventListener('input', () => { mouseX = parseFloat(document.getElementById('lens-x').value); render(); });
-    document.getElementById('lens-y').addEventListener('input', () => { mouseY = parseFloat(document.getElementById('lens-y').value); render(); });
+    ['aHeadN','aEnt','aShowFinal'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => { resetHeads(); render(); });
+      document.getElementById(id).addEventListener('change', () => { resetHeads(); render(); });
+    });
 
     render();
   }
 
+  function resetHeads() {
+    const n = +document.getElementById('aHeadN').value;
+    heads = [];
+    for (let i = 0; i < n; i++) {
+      const angle = (i / n) * U.TAU + 0.5;
+      heads.push({
+        x: W * 0.5 + Math.cos(angle) * W * 0.2,
+        y: H * 0.45 + Math.sin(angle) * H * 0.2,
+        r: 50,
+        col: HEAD_COLORS[i % HEAD_COLORS.length]
+      });
+    }
+  }
+
   function render() {
-    if (!ctx || !imageData) return;
-    const entropy = parseFloat(document.getElementById('lens-entropy').value);
-    const lensX = mouseX * W;
-    const lensY = mouseY * H;
-    const lensRadius = lerp(40, 200, entropy);
+    if (!ctx) return;
+    const entropy = +document.getElementById('aEnt').value / 100;
+    const showFinal = document.getElementById('aShowFinal').checked;
+    document.getElementById('aEntV').textContent = entropy < 0.3 ? 'Narrow' : entropy < 0.7 ? 'Medium' : 'Broad';
 
-    document.getElementById('lens-entropy-val').textContent = entropy < 0.3 ? 'Narrow' : entropy < 0.7 ? 'Medium' : 'Broad';
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#060b18';
+    ctx.fillRect(0, 0, W, H);
 
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0,0,W,H);
+    const SZ = ObjGen.SZ;
+    const img = ObjGen.generate(State.objectType);
+    const cellW = W / SZ, cellH = H / SZ;
 
-    const imgW = 200, imgH = 200;
-    const cellW = W / imgW, cellH = H / imgH;
+    // Per-head lens radius
+    const perHeadR = U.lerp(35, 130, entropy);
+    const perHeadStrength = 1 / Math.max(1, heads.length);
 
-    // Draw base image (blurry everywhere)
-    for (let y = 0; y < imgH; y++) {
-      for (let x = 0; x < imgW; x++) {
-        const val = imageData[y * imgW + x];
-        const px = x * cellW, py = y * cellH;
-        const d = dist(px + cellW/2, py + cellH/2, lensX, lensY);
+    // Draw image with multi-head sharpening
+    for (let iy = 0; iy < SZ; iy++) {
+      for (let ix = 0; ix < SZ; ix++) {
+        const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
+        let val = img[iy * SZ + ix];
+        let totalSharp = 0;
+        let dominantHead = -1, bestDist = Infinity;
 
-        // Inside lens: sharp. Outside: blurry (averaged with neighbors)
-        let displayVal = val;
-        if (d > lensRadius) {
-          // Blur by averaging with neighbors
-          const blurAmount = clamp((d - lensRadius) / 100, 0, 1);
-          let sum = val, count = 1;
-          const blurR = Math.floor(blurAmount * 5) + 1;
-          for (let dy = -blurR; dy <= blurR; dy++) {
-            for (let dx = -blurR; dx <= blurR; dx++) {
-              const nx = clamp(x+dx, 0, imgW-1);
-              const ny = clamp(y+dy, 0, imgH-1);
-              sum += imageData[ny * imgW + nx];
-              count++;
-            }
+        for (let hi = 0; hi < heads.length; hi++) {
+          const d = U.dst(px, py, heads[hi].x, heads[hi].y);
+          if (d < perHeadR) {
+            const s = (1 - d / perHeadR) * perHeadStrength;
+            totalSharp += s;
+            if (d < bestDist) { bestDist = d; dominantHead = hi; }
           }
-          displayVal = lerp(val, sum/count, blurAmount * 0.8);
-        } else {
-          // Inside lens: enhance contrast
-          const sharpness = 1 - d / lensRadius;
-          displayVal = lerp(val, val > 0.5 ? 1 : 0, sharpness * 0.5 * (1 - entropy));
         }
 
-        const brightness = Math.floor(displayVal * 255);
-        const tint = d < lensRadius ? `rgba(129,140,248,${0.1 * (1 - d/lensRadius)})` : null;
-        ctx.fillStyle = `rgb(${brightness},${brightness},${Math.floor(brightness * 1.1)})`;
-        ctx.fillRect(px, py, cellW + 0.5, cellH + 0.5);
-        if (tint) {
-          ctx.fillStyle = tint;
-          ctx.fillRect(px, py, cellW + 0.5, cellH + 0.5);
+        totalSharp = U.clamp(totalSharp, 0, 1);
+        const displayVal = U.lerp(val * 0.3, val, 0.3 + totalSharp * 0.7);
+        const br = Math.floor(displayVal * 255);
+
+        // Tint by dominant head
+        let r = br, g = br, b = br;
+        if (dominantHead >= 0 && totalSharp > 0.05) {
+          const parts = heads[dominantHead].col.split(',').map(Number);
+          const t = totalSharp * 0.2;
+          r = Math.floor(U.lerp(br, parts[0], t));
+          g = Math.floor(U.lerp(br, parts[1], t));
+          b = Math.floor(U.lerp(br, parts[2], t));
         }
+
+        ctx.globalAlpha = 0.3 + totalSharp * 0.7;
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(px - cellW/2, py - cellH/2, cellW + 0.5, cellH + 0.5);
       }
     }
+    ctx.globalAlpha = 1;
 
-    // Draw lens overlay
-    drawLens(ctx, lensX, lensY, lensRadius, 1);
+    // Draw head lenses
+    for (let hi = 0; hi < heads.length; hi++) {
+      const h = heads[hi];
+      U.drawLensRing(ctx, h.x, h.y, perHeadR, 0.7, h.col);
 
-    // Info text
-    ctx.font = 'bold 12px system-ui';
+      // Label
+      ctx.font = 'bold 11px system-ui';
+      ctx.fillStyle = `rgba(${h.col},0.9)`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`Head ${hi}`, h.x, h.y - perHeadR - 6);
+
+      // Drag handle
+      ctx.beginPath();
+      ctx.arc(h.x, h.y, 6, 0, U.TAU);
+      ctx.fillStyle = `rgba(${h.col},0.8)`;
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // Info
+    ctx.font = 'bold 11px system-ui';
     ctx.fillStyle = '#818cf8';
     ctx.textAlign = 'center';
-    ctx.fillText(`Attention Lens — Entropy: ${entropy.toFixed(2)} — Radius: ${Math.round(lensRadius)}px`, W/2, 20);
+    ctx.fillText(`${heads.length} Attention Head${heads.length>1?'s':''} — Entropy: ${entropy.toFixed(2)} — Drag to reposition`, W/2, 18);
 
-    // Resolution-breadth tradeoff indicator
-    const barW = 200, barH = 8, barX = W/2 - barW/2, barY = H - 30;
-    ctx.fillStyle = '#1e293b';
-    ctx.fillRect(barX, barY, barW, barH);
-    ctx.fillStyle = '#818cf8';
-    ctx.fillRect(barX, barY, barW * entropy, barH);
-    ctx.font = '10px system-ui';
-    ctx.fillStyle = '#94a3b8';
-    ctx.textAlign = 'left';
-    ctx.fillText('Sharp/Few', barX, barY - 4);
-    ctx.textAlign = 'right';
-    ctx.fillText('Blurry/Many', barX + barW, barY - 4);
+    // Tradeoff bar
+    const barW = 180, barH = 6, barX = W/2 - barW/2, barY = H - 20;
+    ctx.fillStyle = '#1a2340'; ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = '#818cf8'; ctx.fillRect(barX, barY, barW * entropy, barH);
+    ctx.font = '9px system-ui'; ctx.fillStyle = '#64748b';
+    ctx.textAlign = 'left'; ctx.fillText('Sharp/Few', barX, barY - 3);
+    ctx.textAlign = 'right'; ctx.fillText('Blurry/Many', barX + barW, barY - 3);
 
     // Stats
-    const patchesInView = Math.round(1 + entropy * 10);
-    const resolution = Math.round((1 - entropy) * 100);
-    document.getElementById('lens-stats').innerHTML = `
-      <div class="stat-card"><div class="label">PATCHES IN VIEW</div><div class="value" style="color:#818cf8">${patchesInView}</div></div>
-      <div class="stat-card"><div class="label">RESOLUTION</div><div class="value" style="color:#34d399">${resolution}%</div></div>
-      <div class="stat-card"><div class="label">ENTROPY</div><div class="value" style="color:#fbbf24">${entropy.toFixed(2)}</div></div>
-      <div class="stat-card"><div class="label">TRADEOFF</div><div class="value" style="color:#f472b6">${entropy < 0.3 ? 'Detail' : entropy > 0.7 ? 'Breadth' : 'Balanced'}</div></div>
+    const coverage = U.clamp(heads.length * entropy * 0.3, 0, 1);
+    const resolution = U.clamp(1 - entropy, 0, 1);
+    document.getElementById('aStats').innerHTML = `
+      <div class="sc"><div class="l">HEADS</div><div class="v" style="color:#818cf8">${heads.length}</div></div>
+      <div class="sc"><div class="l">ENTROPY</div><div class="v" style="color:#fbbf24">${entropy.toFixed(2)}</div></div>
+      <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:#34d399">${Math.round(coverage*100)}%</div></div>
+      <div class="sc"><div class="l">RESOLUTION</div><div class="v" style="color:#34d399">${Math.round(resolution*100)}%</div></div>
+      <div class="sc"><div class="l">TRADEOFF</div><div class="v" style="color:#f472b6">${entropy<0.3?'Detail':entropy>0.7?'Breadth':'Balanced'}</div></div>
     `;
   }
 
-  setTimeout(init, 300);
+  setTimeout(init, 400);
   return {};
 })();
 
-// ============================================================
-// SECTION 5: FEED-FORWARD EXPANSION VISUALIZATION
-// ============================================================
-const FFN = (() => {
+// ================================================================
+// MODULE: FFN Expansion (Section 4)
+// ================================================================
+const FFNMod = (() => {
   let ctx, W, H;
   let animating = false;
-  let animProgress = 0;
 
   function init() {
-    const s = setupCanvas('canvas-ffn');
-    ctx = s.ctx; W = s.W; H = s.H;
-
-    ['ffn-strength','ffn-cx','ffn-cy','ffn-show-jacobian'].forEach(id => {
-      document.getElementById(id).addEventListener('input', render);
-      document.getElementById(id).addEventListener('change', render);
+    ({ctx, W, H} = U.mkCanvas('cFFN', 380));
+    ['fStr','fJac'].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
     });
+
+    // Click to set expansion center
+    const c = document.getElementById('cFFN');
+    c.addEventListener('click', e => {
+      const r = c.getBoundingClientRect();
+      State.ffnCx = (e.clientX - r.left) / r.width;
+      State.ffnCy = (e.clientY - r.top) / r.height;
+      render();
+    });
+
+    State.ffnCx = 0.45;
+    State.ffnCy = 0.5;
     render();
   }
 
   function render() {
     if (!ctx) return;
-    const strength = parseFloat(document.getElementById('ffn-strength').value);
-    const centerX = parseFloat(document.getElementById('ffn-cx').value);
-    const centerY = parseFloat(document.getElementById('ffn-cy').value);
-    const showJacobian = document.getElementById('ffn-show-jacobian').checked;
+    const strength = +document.getElementById('fStr').value / 100;
+    const showJac = document.getElementById('fJac').checked;
+    document.getElementById('fStrV').textContent = Math.round(strength * 100) + '%';
 
-    document.getElementById('ffn-strength-val').textContent = Math.round(strength * 100) + '%';
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#060b18';
+    ctx.fillRect(0, 0, W, H);
 
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0,0,W,H);
+    const cx = (State.ffnCx || 0.45) * W;
+    const cy = (State.ffnCy || 0.5) * H;
+    const expR = 120;
+    const step = 24;
 
-    const cx = centerX * W, cy = centerY * H;
-    const expansionRadius = 120;
-    const step = 25;
-
-    // Warp function: expand space around the center
     function warp(x, y) {
       const dx = x - cx, dy = y - cy;
-      const d = Math.sqrt(dx*dx + dy*dy);
+      const d = Math.sqrt(dx * dx + dy * dy);
       if (d < 1) return [x, y];
-      const factor = 1 + strength * 2 * Math.exp(-d*d / (2 * expansionRadius * expansionRadius));
+      const factor = 1 + strength * 2 * Math.exp(-d * d / (2 * expR * expR));
       return [cx + dx * factor, cy + dy * factor];
     }
 
-    // Draw deformed grid
-    drawGrid(ctx, W, H, warp, step, 'rgba(100,116,139,0.2)', 0.8);
-
-    // Draw strain coloring
-    if (showJacobian) {
-      const gridStep = 8;
-      for (let y = 0; y < H; y += gridStep) {
-        for (let x = 0; x < W; x += gridStep) {
+    // Strain coloring
+    if (showJac) {
+      const gs = 6;
+      for (let y = 0; y < H; y += gs) {
+        for (let x = 0; x < W; x += gs) {
           const [wx, wy] = warp(x, y);
           const [wrx, wry] = warp(x + 1, y);
           const [wux, wuy] = warp(x, y + 1);
-          const J00 = wrx - wx, J01 = wux - wx;
-          const J10 = wry - wy, J11 = wuy - wy;
-          const det = Math.abs(J00 * J11 - J01 * J10);
-          const strain = det;
-
-          let r, g, b;
-          if (strain > 1.2) {
-            const t = clamp((strain - 1) / 2, 0, 1);
-            r = Math.floor(233 * t); g = Math.floor(69 * t); b = Math.floor(96 * t);
-          } else if (strain < 0.8) {
-            const t = clamp((1 - strain) / 0.5, 0, 1);
-            r = 0; g = Math.floor(119 * t); b = Math.floor(182 * t);
-          } else {
-            r = 0; g = 0; b = 0;
+          const det = Math.abs((wrx - wx) * (wuy - wy) - (wux - wx) * (wry - wy));
+          let r = 0, g = 0, b = 0;
+          if (det > 1.15) {
+            const t = U.clamp((det - 1) / 2, 0, 1);
+            r = Math.floor(220 * t); g = Math.floor(60 * t); b = Math.floor(80 * t);
+          } else if (det < 0.85) {
+            const t = U.clamp((1 - det) / 0.5, 0, 1);
+            g = Math.floor(100 * t); b = Math.floor(170 * t);
           }
-
           if (r + g + b > 5) {
-            ctx.fillStyle = `rgba(${r},${g},${b},0.3)`;
-            ctx.fillRect(x, y, gridStep, gridStep);
+            ctx.fillStyle = `rgba(${r},${g},${b},0.25)`;
+            ctx.fillRect(x, y, gs, gs);
           }
         }
       }
     }
 
-    // Draw expansion center
-    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, expansionRadius * strength);
-    grad.addColorStop(1, 'rgba(251,191,36,0)');
-    ctx.beginPath();
-    ctx.arc(cx, cy, expansionRadius * Math.max(strength, 0.1), 0, TAU);
-    ctx.fillStyle = grad;
-    ctx.fill();
+    // Grid
+    U.drawGrid(ctx, W, H, warp, step, 'rgba(100,116,139,0.18)', 0.7);
 
-    // Center marker
+    // Expansion center glow
+    if (strength > 0.01) {
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, expR * strength);
+      grad.addColorStop(0, `rgba(251,191,36,${0.1 * strength})`);
+      grad.addColorStop(1, 'rgba(251,191,36,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, expR * Math.max(strength, 0.1), 0, U.TAU);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+
+    // Center dot
     ctx.beginPath();
-    ctx.arc(cx, cy, 5, 0, TAU);
+    ctx.arc(cx, cy, 5, 0, U.TAU);
     ctx.fillStyle = '#fbbf24';
     ctx.fill();
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Info
-    ctx.font = 'bold 12px system-ui';
+    // Labels
+    ctx.font = 'bold 11px system-ui';
     ctx.fillStyle = '#818cf8';
     ctx.textAlign = 'center';
-    ctx.fillText(`Feed-Forward Expansion — Strength: ${Math.round(strength*100)}%`, W/2, 20);
+    ctx.fillText(`Feed-Forward Expansion — ${Math.round(strength * 100)}%`, W / 2, 18);
 
-    // Legend
-    if (showJacobian) {
-      ctx.font = '10px system-ui';
+    if (showJac) {
+      ctx.font = '9px system-ui';
       ctx.fillStyle = '#e94960';
       ctx.textAlign = 'left';
-      ctx.fillText('■ Expansion (det > 1)', 10, H - 30);
+      ctx.fillText('■ Expansion (det > 1)', 8, H - 24);
       ctx.fillStyle = '#0077b6';
-      ctx.fillText('■ Contraction (det < 1)', 10, H - 15);
+      ctx.fillText('■ Contraction (det < 1)', 8, H - 10);
     }
+
+    ctx.font = '9px system-ui';
+    ctx.fillStyle = '#475569';
+    ctx.textAlign = 'center';
+    ctx.fillText('Click to move expansion center', W / 2, H - 6);
 
     // Stats
     const maxDet = 1 + strength * 2;
-    document.getElementById('ffn-stats').innerHTML = `
-      <div class="stat-card"><div class="label">EXPANSION</div><div class="value" style="color:#e94960">${maxDet.toFixed(2)}×</div><div class="sub">max local stretch</div></div>
-      <div class="stat-card"><div class="label">INNER DIM</div><div class="value" style="color:#fbbf24">${Math.round(768 + strength * 2304)}</div><div class="sub">d_ff ≈ 4d</div></div>
-      <div class="stat-card"><div class="label">OUTPUT DIM</div><div class="value" style="color:#818cf8">768</div><div class="sub">compressed back</div></div>
-      <div class="stat-card"><div class="label">JACOBIAN</div><div class="value" style="color:#34d399">${showJacobian ? 'Visible' : 'Hidden'}</div></div>
+    document.getElementById('fStats').innerHTML = `
+      <div class="sc"><div class="l">EXPANSION</div><div class="v" style="color:#e94960">${maxDet.toFixed(2)}×</div></div>
+      <div class="sc"><div class="l">INNER DIM</div><div class="v" style="color:#fbbf24">${Math.round(768 + strength * 2304)}</div><div class="s">d_ff ≈ 4d</div></div>
+      <div class="sc"><div class="l">OUTPUT DIM</div><div class="v" style="color:#818cf8">768</div><div class="s">compressed back</div></div>
     `;
   }
 
-  function animate() {
+  function anim() {
     if (animating) return;
     animating = true;
+    const slider = document.getElementById('fStr');
     const start = performance.now();
-    const duration = 2000;
-    const slider = document.getElementById('ffn-strength');
     function step(now) {
-      const t = Math.min((now - start) / duration, 1);
-      const e = ease(t);
-      slider.value = e;
+      const t = Math.min((now - start) / 2000, 1);
+      slider.value = Math.round(U.ease(t) * 100);
       render();
       if (t < 1) requestAnimationFrame(step);
       else animating = false;
@@ -1118,445 +1030,274 @@ const FFN = (() => {
 
   function reset() {
     animating = false;
-    document.getElementById('ffn-strength').value = 0;
-    render();
-  }
-
-  setTimeout(init, 400);
-  return { animate, reset, render };
-})();
-
-// ============================================================
-// SECTION 6: LAYER PROGRESSION VISUALIZATION
-// ============================================================
-const Layers = (() => {
-  let ctx, W, H;
-  let animFrame = null;
-
-  // Token data — positions evolve across layers
-  const tokens = [
-    { word: 'The', color: '#60a5fa' },
-    { word: 'cat', color: '#f472b6' },
-    { word: 'sat', color: '#34d399' },
-    { word: 'on', color: '#fbbf24' },
-    { word: 'the', color: '#60a5fa' },
-    { word: 'mat', color: '#a78bfa' },
-  ];
-
-  // Generate pseudo-random but deterministic positions per layer
-  function getTokenPos(tokenIdx, layer, W, H) {
-    const seed = tokenIdx * 137 + layer * 31;
-    const pseudoRand = (s) => {
-      let x = Math.sin(s) * 10000;
-      return x - Math.floor(x);
-    };
-
-    const margin = 60;
-    const baseX = margin + (tokenIdx / (tokens.length - 1)) * (W - 2 * margin);
-    const baseY = H / 2;
-
-    if (layer === 0) {
-      // Embedding: tokens evenly spaced
-      return [baseX, baseY];
-    }
-
-    // Early layers: rearrange (routing)
-    // Middle layers: cluster by meaning (resolving)
-    // Last layer: return toward original spacing (gluing)
-    const routingPhase = Math.max(0, 1 - layer / 4); // strong in layers 0-3
-    const resolvingPhase = clamp((layer - 2) / 5, 0, 1); // grows layers 2-7
-    const gluingPhase = clamp((layer - 8) / 3, 0, 1); // grows layers 8-11
-
-    // Routing: scramble positions
-    const scrambleX = (pseudoRand(seed + 1) - 0.5) * (W * 0.6) * routingPhase * (1 - gluingPhase);
-    const scrambleY = (pseudoRand(seed + 2) - 0.5) * (H * 0.5) * routingPhase * (1 - gluingPhase);
-
-    // Resolving: cluster similar tokens
-    const clusterCenters = {
-      'The': [W * 0.3, H * 0.35],
-      'the': [W * 0.3, H * 0.35],
-      'cat': [W * 0.6, H * 0.3],
-      'mat': [W * 0.6, H * 0.65],
-      'sat': [W * 0.5, H * 0.5],
-      'on': [W * 0.45, H * 0.55],
-    };
-    const cluster = clusterCenters[tokens[tokenIdx].word] || [W/2, H/2];
-    const clusterPull = resolvingPhase * (1 - gluingPhase);
-
-    // Gluing: return toward evenly spaced
-    const finalX = lerp(
-      lerp(baseX + scrambleX, cluster[0] + (pseudoRand(seed+3)-0.5)*40, clusterPull),
-      baseX,
-      gluingPhase
-    );
-    const finalY = lerp(
-      lerp(baseY + scrambleY, cluster[1] + (pseudoRand(seed+4)-0.5)*30, clusterPull),
-      baseY,
-      gluingPhase
-    );
-
-    return [clamp(finalX, margin, W - margin), clamp(finalY, margin/2, H - margin/2)];
-  }
-
-  function init() {
-    const s = setupCanvas('canvas-layers');
-    ctx = s.ctx; W = s.W; H = s.H;
-
-    document.getElementById('layer-slider').addEventListener('input', render);
-    render();
-  }
-
-  function render() {
-    if (!ctx) return;
-    const layer = parseInt(document.getElementById('layer-slider').value);
-
-    let layerLabel;
-    if (layer === 0) layerLabel = 'Layer 0 (Embedding)';
-    else if (layer <= 3) layerLabel = `Layer ${layer} (Router)`;
-    else if (layer <= 8) layerLabel = `Layer ${layer} (Resolver)`;
-    else layerLabel = `Layer ${layer} (Gluer)`;
-    document.getElementById('layer-val').textContent = layerLabel;
-
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, W, H);
-
-    // Draw grid deformation for this layer
-    const step = 30;
-    function warp(x, y) {
-      if (layer === 0) return [x, y];
-      let wx = x, wy = y;
-      for (let ti = 0; ti < tokens.length; ti++) {
-        const [tx, ty] = getTokenPos(ti, layer, W, H);
-        const [ox, oy] = getTokenPos(ti, 0, W, H);
-        const dx = tx - ox, dy = ty - oy;
-        const d = dist(x, y, ox, oy);
-        const influence = Math.exp(-d * d / (8000 + layer * 2000)) * 0.4;
-        wx += dx * influence;
-        wy += dy * influence;
-      }
-      return [wx, wy];
-    }
-
-    drawGrid(ctx, W, H, warp, step, `rgba(100,116,139,${0.08 + layer * 0.01})`, 0.6);
-
-    // Draw connections between tokens (attention-like)
-    if (layer > 0 && layer < 11) {
-      for (let i = 0; i < tokens.length; i++) {
-        for (let j = i + 1; j < tokens.length; j++) {
-          const [x1, y1] = getTokenPos(i, layer, W, H);
-          const [x2, y2] = getTokenPos(j, layer, W, H);
-          const d = dist(x1, y1, x2, y2);
-          const alpha = clamp(1 - d / 300, 0, 0.15);
-          if (alpha > 0.02) {
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.strokeStyle = `rgba(129,140,248,${alpha})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        }
-      }
-    }
-
-    // Draw tokens
-    for (let i = 0; i < tokens.length; i++) {
-      const [x, y] = getTokenPos(i, layer, W, H);
-      const t = tokens[i];
-
-      // Glow
-      const grad = ctx.createRadialGradient(x, y, 0, x, y, 30);
-      grad.addColorStop(0, hexToRgba(t.color, 0.25));
-      grad.addColorStop(1, hexToRgba(t.color, 0));
-      ctx.beginPath();
-      ctx.arc(x, y, 30, 0, TAU);
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // Dot
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, TAU);
-      ctx.fillStyle = t.color;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Label
-      ctx.font = 'bold 12px system-ui';
-      ctx.fillStyle = '#e2e8f0';
-      ctx.textAlign = 'center';
-      ctx.fillText(t.word, x, y - 16);
-    }
-
-    // Phase indicator
-    ctx.font = 'bold 14px system-ui';
-    ctx.textAlign = 'center';
-    let phaseColor, phaseText;
-    if (layer === 0) { phaseColor = '#64748b'; phaseText = '📥 Embedding: Blurry global section'; }
-    else if (layer <= 3) { phaseColor = '#60a5fa'; phaseText = '🔀 Routing: Connecting words to words'; }
-    else if (layer <= 8) { phaseColor = '#c084fc'; phaseText = '🔬 Resolving: Connecting concepts to concepts'; }
-    else { phaseColor = '#34d399'; phaseText = '🧩 Gluing: Reassembling global section'; }
-    ctx.fillStyle = phaseColor;
-    ctx.fillText(phaseText, W / 2, 25);
-
-    // Stats
-    const deformation = layer === 0 ? 0 : layer <= 3 ? layer * 25 : layer <= 8 ? 75 + (layer-3)*5 : 100 - (layer-8)*25;
-    document.getElementById('layer-stats').innerHTML = `
-      <div class="stat-card"><div class="label">LAYER</div><div class="value" style="color:#818cf8">${layer}</div><div class="sub">of 11</div></div>
-      <div class="stat-card"><div class="label">PHASE</div><div class="value" style="color:${phaseColor}">${layer === 0 ? 'Embed' : layer <= 3 ? 'Route' : layer <= 8 ? 'Resolve' : 'Glue'}</div></div>
-      <div class="stat-card"><div class="label">DEFORMATION</div><div class="value" style="color:#fbbf24">${deformation}%</div></div>
-      <div class="stat-card"><div class="label">CONNECTIONS</div><div class="value" style="color:#34d399">${layer === 0 ? 'None' : layer <= 3 ? 'Word↔Word' : 'Concept↔Concept'}</div></div>
-    `;
-  }
-
-  function animateForward() {
-    if (animFrame) return;
-    const slider = document.getElementById('layer-slider');
-    slider.value = 0;
-    render();
-    let current = 0;
-    function step() {
-      current++;
-      if (current > 11) { animFrame = null; return; }
-      slider.value = current;
-      render();
-      animFrame = setTimeout(step, 600);
-    }
-    animFrame = setTimeout(step, 600);
-  }
-
-  function reset() {
-    if (animFrame) { clearTimeout(animFrame); animFrame = null; }
-    document.getElementById('layer-slider').value = 0;
+    document.getElementById('fStr').value = 0;
     render();
   }
 
   setTimeout(init, 500);
-  return { animateForward, reset };
+  return { anim, reset };
 })();
 
-// ============================================================
-// SECTION 7: SHEAF GLUING VISUALIZATION
-// ============================================================
-const Gluing = (() => {
-  let ctx, W, H;
+// ================================================================
+// MODULE: Full Pipeline (Section 5)
+// ================================================================
+const PipeMod = (() => {
+  let ctx, W, H, c;
+  let currentPts = [];
   let patches = [];
-  let phase = 0; // 0=empty, 1=scattered, 2=resolved, 3=glued
   let animFrame = null;
+  let mouseX = 0.5, mouseY = 0.5;
+  let mode = 'smiley';
 
-  const PATCH_NAMES = ['Syntax', 'Semantics', 'Pragmatics', 'World Knowledge', 'Logic'];
+  const OBJECTS = ['smiley','torus','trefoil','clusters','rings'];
+  const LABELS = ['😊 Smiley','🍩 Torus','🪢 Trefoil','🔵 Clusters','⭕ Rings'];
 
   function init() {
-    const s = setupCanvas('canvas-gluing');
-    ctx = s.ctx; W = s.W; H = s.H;
-    drawEmpty();
-  }
+    ({c, ctx, W, H} = U.mkCanvas('cPipe', 440));
+    currentPts = genPts(mode);
+    patches = genPatchesFromPts(currentPts);
 
-  function drawEmpty() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, W, H);
-    ctx.font = '16px system-ui';
-    ctx.fillStyle = '#475569';
-    ctx.textAlign = 'center';
-    ctx.fillText('Click "Scatter Patches" to begin the gluing process', W / 2, H / 2);
-  }
-
-  function scatter() {
-    if (!ctx) init();
-    patches = [];
-    phase = 1;
-
-    for (let i = 0; i < PATCH_NAMES.length; i++) {
-      patches.push({
-        name: PATCH_NAMES[i],
-        x: 80 + Math.random() * (W - 160),
-        y: 80 + Math.random() * (H - 160),
-        targetX: 0, targetY: 0,
-        r: 50 + Math.random() * 20,
-        color: COLORS.patches[i],
-        resolved: false,
-        glued: false,
-        resolution: 0, // 0 = blurry, 1 = sharp
-      });
-    }
-
-    document.getElementById('btn-glue-resolve').disabled = false;
-    document.getElementById('btn-glue-glue').disabled = true;
-    document.getElementById('gluing-info').innerHTML = '<strong>Patches scattered.</strong> Each patch is a locally resolved section. Click <strong>Resolve Locally</strong>.';
-    drawScene();
-  }
-
-  function resolve() {
-    if (phase < 1) return;
-    phase = 2;
-
-    // Animate resolution
-    const start = performance.now();
-    function step(now) {
-      const t = Math.min((now - start) / 1500, 1);
-      patches.forEach(p => { p.resolution = ease(t); });
-      drawScene();
-      if (t < 1) requestAnimationFrame(step);
-      else {
-        patches.forEach(p => { p.resolved = true; p.resolution = 1; });
-        document.getElementById('btn-glue-glue').disabled = false;
-        document.getElementById('gluing-info').innerHTML = '<strong>Locally resolved!</strong> Each patch is now sharp. Click <strong>Glue Together</strong> to assemble the global section.';
-      }
-    }
-    requestAnimationFrame(step);
-  }
-
-  function glue() {
-    if (phase < 2) return;
-    phase = 3;
-
-    // Compute target positions: arrange in a line
-    const spacing = (W - 120) / patches.length;
-    patches.forEach((p, i) => {
-      p.targetX = 60 + spacing * i + spacing / 2;
-      p.targetY = H / 2;
+    // Build tabs
+    const tabEl = document.getElementById('pTabs');
+    let html = '';
+    OBJECTS.forEach((o, i) => {
+      html += `<button class="tab${o === mode ? ' on' : ''}" data-m="${o}">${LABELS[i]}</button>`;
+    });
+    tabEl.innerHTML = html;
+    tabEl.querySelectorAll('.tab').forEach(btn => {
+      btn.onclick = () => {
+        mode = btn.dataset.m;
+        currentPts = genPts(mode);
+        patches = genPatchesFromPts(currentPts);
+        tabEl.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        render();
+      };
     });
 
-    const start = performance.now();
-    function step(now) {
-      const t = Math.min((now - start) / 2000, 1);
-      const e = ease(t);
-      patches.forEach(p => {
-        p.x = lerp(p.x, p.targetX, e * 0.05 + 0.02);
-        p.y = lerp(p.y, p.targetY, e * 0.05 + 0.02);
-        p.glued = t > 0.8;
-      });
-      drawScene();
-      if (t < 1) requestAnimationFrame(step);
-      else {
-        document.getElementById('gluing-info').innerHTML = '<strong>Sheaf glued! ✓</strong> Locally resolved patches assembled into a global section readable by the language-modeling head.';
-      }
-    }
-    requestAnimationFrame(step);
+    c.addEventListener('mousemove', e => {
+      const r = c.getBoundingClientRect();
+      mouseX = (e.clientX - r.left) / r.width;
+      mouseY = (e.clientY - r.top) / r.height;
+      if (document.getElementById('pLens').checked) render();
+    });
+
+    ['pLayer','pGrid','pLens','pPatch'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
+    });
+
+    render();
   }
 
-  function drawScene() {
+  function genPts(type) {
+    const pts = [];
+    const N = 280;
+    const rng = U.srand(42);
+    switch (type) {
+      case 'smiley':
+        for (let i = 0; i < N * 0.4; i++) { const a = (i / (N * 0.4)) * U.TAU, r = 0.35 + (rng() - 0.5) * 0.015; pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'face' }); }
+        for (let i = 0; i < N * 0.08; i++) { const a = (i / (N * 0.08)) * U.TAU, r = 0.05; pts.push({ x: 0.38 + r * Math.cos(a), y: 0.4 + r * Math.sin(a), t: 'eye' }); }
+        for (let i = 0; i < N * 0.08; i++) { const a = (i / (N * 0.08)) * U.TAU, r = 0.05; pts.push({ x: 0.62 + r * Math.cos(a), y: 0.4 + r * Math.sin(a), t: 'eye' }); }
+        for (let i = 0; i < N * 0.12; i++) { const a = Math.PI * 0.15 + (i / (N * 0.12)) * Math.PI * 0.7, r = 0.2; pts.push({ x: 0.5 + r * Math.cos(a), y: 0.55 + r * Math.sin(a) * 0.5, t: 'mouth' }); }
+        for (let i = 0; i < N * 0.32; i++) { const a = rng() * U.TAU, r = rng() * 0.3; pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'fill' }); }
+        break;
+      case 'torus':
+        for (let i = 0; i < N; i++) { const u = rng() * U.TAU, v = rng() * U.TAU, R = 0.25, r = 0.1; pts.push({ x: 0.5 + (R + r * Math.cos(v)) * Math.cos(u), y: 0.5 + (R + r * Math.cos(v)) * Math.sin(u), t: 'torus', u, v }); }
+        break;
+      case 'trefoil':
+        for (let i = 0; i < N; i++) { const t = (i / N) * U.TAU, r = 0.15 * Math.cos(3 * t) + 0.25; pts.push({ x: 0.5 + r * Math.cos(t) + (rng() - 0.5) * 0.015, y: 0.5 + r * Math.sin(t) + (rng() - 0.5) * 0.015, t: 'knot', p: t }); }
+        break;
+      case 'clusters':
+        [{cx:.25,cy:.3},{cx:.72,cy:.35},{cx:.5,cy:.75},{cx:.18,cy:.68}].forEach((cc, ci) => {
+          for (let i = 0; i < N / 4; i++) { const a = rng() * U.TAU, r = rng() * 0.1; pts.push({ x: cc.cx + r * Math.cos(a), y: cc.cy + r * Math.sin(a), t: 'cl', cl: ci }); }
+        });
+        break;
+      case 'rings':
+        for (let i = 0; i < N / 2; i++) { const a = (i / (N / 2)) * U.TAU, r = 0.15 + (rng() - 0.5) * 0.015; pts.push({ x: 0.35 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'r1', p: a }); }
+        for (let i = 0; i < N / 2; i++) { const a = (i / (N / 2)) * U.TAU, r = 0.15 + (rng() - 0.5) * 0.015; pts.push({ x: 0.65 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), t: 'r2', p: a }); }
+        break;
+    }
+    return pts;
+  }
+
+  function genPatchesFromPts(pts) {
+    const k = 4, rng2 = U.srand(99), cs = [];
+    for (let i = 0; i < k; i++) { const p = pts[Math.floor(rng2() * pts.length)]; cs.push({ x: p.x, y: p.y }); }
+    for (let iter = 0; iter < 3; iter++) {
+      const sums = cs.map(() => ({ sx: 0, sy: 0, n: 0 }));
+      pts.forEach(p => { let bi = 0, bd = Infinity; cs.forEach((cc, i) => { const d = U.dst(p.x, p.y, cc.x, cc.y); if (d < bd) { bd = d; bi = i; } }); sums[bi].sx += p.x; sums[bi].sy += p.y; sums[bi].n++; });
+      sums.forEach((s, i) => { if (s.n > 0) { cs[i].x = s.sx / s.n; cs[i].y = s.sy / s.n; } });
+    }
+    const result = [];
+    for (let i = 0; i < k; i++) {
+      const ms = pts.filter(p => { let bi = 0, bd = Infinity; cs.forEach((cc, j) => { const d = U.dst(p.x, p.y, cc.x, cc.y); if (d < bd) { bd = d; bi = j; } }); return bi === i; });
+      if (!ms.length) continue;
+      const cx2 = ms.reduce((s, p) => s + p.x, 0) / ms.length;
+      const cy2 = ms.reduce((s, p) => s + p.y, 0) / ms.length;
+      let mr = 0; ms.forEach(p => { const d = U.dst(p.x, p.y, cx2, cy2); if (d > mr) mr = d; });
+      result.push({ cx: cx2, cy: cy2, r: mr + 0.02, col: U.PAL[i] });
+    }
+    return result;
+  }
+
+  function ptColor(p) {
+    switch (p.t) {
+      case 'face': return '#818cf8';
+      case 'eye': return '#f472b6';
+      case 'mouth': return '#fbbf24';
+      case 'fill': return '#334155';
+      case 'torus': return `hsl(${(p.u / U.TAU) * 360},70%,60%)`;
+      case 'knot': return `hsl(${(p.p / U.TAU) * 360},70%,60%)`;
+      case 'cl': return U.PAL[p.cl % U.PAL.length];
+      case 'r1': return `hsl(${(p.p / U.TAU) * 360},65%,55%)`;
+      case 'r2': return `hsl(${((p.p / U.TAU) * 360 + 180) % 360},65%,55%)`;
+      default: return '#94a3b8';
+    }
+  }
+
+  function render() {
     if (!ctx) return;
+    const layerRaw = +document.getElementById('pLayer').value;
+    const layer = layerRaw / 10;
+    const showGrid = document.getElementById('pGrid').checked;
+    const showLens = document.getElementById('pLens').checked;
+    const showPatch = document.getElementById('pPatch').checked;
+
+    document.getElementById('pLayerV').textContent = layer.toFixed(1);
+
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    // Draw overlap connections
-    for (let i = 0; i < patches.length; i++) {
-      for (let j = i + 1; j < patches.length; j++) {
-        const pi = patches[i], pj = patches[j];
-        const d = dist(pi.x, pi.y, pj.x, pj.y);
-        if (d < pi.r + pj.r + 30) {
-          ctx.beginPath();
-          ctx.moveTo(pi.x, pi.y);
-          ctx.lineTo(pj.x, pj.y);
-          const alpha = phase >= 3 ? 0.4 : 0.1;
-          ctx.strokeStyle = `rgba(52,211,153,${alpha})`;
-          ctx.lineWidth = phase >= 3 ? 3 : 1;
-          ctx.stroke();
+    const lx = mouseX * W, ly = mouseY * H;
+    const focus = showLens ? (+document.getElementById('playF').value / 100) : 0.3;
+    const lensR = U.lerp(40, 160, focus);
 
-          // Overlap indicator
-          if (phase >= 3) {
-            const mx = (pi.x + pj.x) / 2;
-            const my = (pi.y + pj.y) / 2;
-            ctx.font = 'bold 14px system-ui';
-            ctx.fillStyle = '#34d399';
-            ctx.textAlign = 'center';
-            ctx.fillText('✓', mx, my);
-          }
+    document.getElementById('playFV').textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
+
+    const routing = U.clamp(1 - layer / 4, 0, 1);
+    const resolving = U.clamp((layer - 2) / 5, 0, 1);
+    const gluing = U.clamp((layer - 8) / 3, 0, 1);
+    const deform = layer === 0 ? 0 : (layer <= 3 ? layer * 0.07 : (layer <= 8 ? 0.21 + (layer - 3) * 0.035 : 0.385 - (layer - 8) * 0.11));
+
+    function warp(x, y) {
+      if (layer < 0.1) return [x, y];
+      let wx = x, wy = y;
+      if (routing > 0) {
+        const dx = x - W / 2, dy = y - H / 2;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const a = deform * routing * Math.exp(-d * d / (W * W * 0.15)) * 1.8;
+        const cs2 = Math.cos(a), sn = Math.sin(a);
+        wx = W / 2 + dx * cs2 - dy * sn;
+        wy = H / 2 + dx * sn + dy * cs2;
+      }
+      if (resolving > 0) {
+        for (const p of patches) {
+          const pcx = p.cx * W, pcy = p.cy * H;
+          const dx = wx - pcx, dy = wy - pcy;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          const inf = deform * resolving * Math.exp(-d * d / 7000) * 0.45;
+          wx += dx * inf; wy += dy * inf;
         }
       }
+      if (gluing > 0) { wx = U.lerp(wx, x, gluing * 0.7); wy = U.lerp(wy, y, gluing * 0.7); }
+      return [wx, wy];
     }
 
-    // Draw patches
-    for (const p of patches) {
-      // Background circle
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-      const baseAlpha = 0.1 + p.resolution * 0.2;
-      grad.addColorStop(0, hexToRgba(p.color, baseAlpha + 0.1));
-      grad.addColorStop(1, hexToRgba(p.color, 0.02));
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, TAU);
-      ctx.fillStyle = grad;
-      ctx.fill();
+    if (showGrid) U.drawGrid(ctx, W, H, warp, 26, `rgba(100,116,139,${0.04 + deform * 0.12})`, 0.5);
 
-      // Border — sharper when resolved
-      ctx.strokeStyle = hexToRgba(p.color, 0.3 + p.resolution * 0.5);
-      ctx.lineWidth = 1 + p.resolution * 2;
-      ctx.stroke();
-
-      // Glued indicator
-      if (p.glued) {
-        ctx.strokeStyle = '#34d399';
-        ctx.lineWidth = 3;
+    if (showPatch) {
+      for (const p of patches) {
+        const [wcx, wcy] = warp(p.cx * W, p.cy * H);
+        const grad = ctx.createRadialGradient(wcx, wcy, 0, wcx, wcy, p.r * Math.min(W, H));
+        grad.addColorStop(0, U.hx(p.col, 0.06 + resolving * 0.08));
+        grad.addColorStop(1, U.hx(p.col, 0));
+        ctx.beginPath();
+        ctx.arc(wcx, wcy, p.r * Math.min(W, H), 0, U.TAU);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = U.hx(p.col, 0.12 + resolving * 0.18);
+        ctx.lineWidth = 1;
         ctx.stroke();
       }
+    }
 
-      // Internal detail (appears with resolution)
-      if (p.resolution > 0.1) {
-        const numDots = Math.floor(p.resolution * 8);
-        for (let d = 0; d < numDots; d++) {
-          const angle = (d / numDots) * TAU;
-          const dr = p.r * 0.4 * p.resolution;
-          const dx = p.x + Math.cos(angle) * dr;
-          const dy = p.y + Math.sin(angle) * dr;
-          ctx.beginPath();
-          ctx.arc(dx, dy, 2 + p.resolution * 2, 0, TAU);
-          ctx.fillStyle = hexToRgba(p.color, 0.3 + p.resolution * 0.4);
-          ctx.fill();
+    for (const p of currentPts) {
+      const px = p.x * W, py = p.y * H;
+      const [wx, wy] = warp(px, py);
+      let alpha = 0.35, size = 1.8;
+      if (showLens) {
+        const d = U.dst(wx, wy, lx, ly);
+        if (d < lensR) {
+          const sh = 1 - d / lensR;
+          alpha = 0.35 + sh * 0.55 * (1 - focus);
+          size = 1.8 + sh * 2.5 * (1 - focus);
         }
       }
-
-      // Label
-      ctx.font = `bold ${11 + p.resolution * 2}px system-ui`;
-      ctx.fillStyle = p.color;
-      ctx.textAlign = 'center';
-      ctx.fillText(p.name, p.x, p.y - p.r - 8);
-
-      // Resolution indicator
-      ctx.font = '10px system-ui';
-      ctx.fillStyle = '#64748b';
-      ctx.fillText(`${Math.round(p.resolution * 100)}% resolved`, p.x, p.y + p.r + 14);
+      ctx.beginPath();
+      ctx.arc(wx, wy, size, 0, U.TAU);
+      ctx.fillStyle = ptColor(p);
+      ctx.globalAlpha = alpha;
+      ctx.fill();
     }
+    ctx.globalAlpha = 1;
+
+    if (showLens) U.drawLensRing(ctx, lx, ly, lensR, 0.7);
 
     // Phase label
-    ctx.font = 'bold 14px system-ui';
+    ctx.font = 'bold 11px system-ui';
     ctx.textAlign = 'center';
-    if (phase === 1) {
-      ctx.fillStyle = '#fbbf24';
-      ctx.fillText('Presheaf: Patches scattered, not yet resolved', W / 2, 25);
-    } else if (phase === 2) {
-      ctx.fillStyle = '#818cf8';
-      ctx.fillText('Locally resolved: Each patch sharpened independently', W / 2, 25);
-    } else if (phase === 3) {
-      ctx.fillStyle = '#34d399';
-      ctx.fillText('Sheaf glued: Global section assembled ✓', W / 2, 25);
+    let phaseCol, phaseTxt;
+    if (layer < 0.5) { phaseCol = '#64748b'; phaseTxt = '📥 Embedding: Global section (blurriest)'; }
+    else if (layer <= 3) { phaseCol = '#60a5fa'; phaseTxt = `🔀 Layer ${layer.toFixed(1)}: Routing — words to words`; }
+    else if (layer <= 8) { phaseCol = '#c084fc'; phaseTxt = `🔬 Layer ${layer.toFixed(1)}: Resolving — concepts to concepts`; }
+    else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${layer.toFixed(1)}: Gluing — reassembling`; }
+    ctx.fillStyle = phaseCol;
+    ctx.fillText(phaseTxt, W / 2, 18);
+
+    document.getElementById('pStats').innerHTML = `
+      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${layer.toFixed(1)}</div></div>
+      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${layer < 0.5 ? 'Embed' : layer <= 3 ? 'Route' : layer <= 8 ? 'Resolve' : 'Glue'}</div></div>
+      <div class="sc"><div class="l">DEFORMATION</div><div class="v" style="color:#fbbf24">${Math.round(deform * 100)}%</div></div>
+      <div class="sc"><div class="l">OBJECT</div><div class="v" style="color:#34d399">${mode}</div><div class="s">${currentPts.length} pts</div></div>
+    `;
+  }
+
+  function anim() {
+    if (animFrame) return;
+    const slider = document.getElementById('pLayer');
+    slider.value = 0;
+    render();
+    const dur = 8000, start = performance.now();
+    function step(now) {
+      const t = Math.min((now - start) / dur, 1);
+      slider.value = Math.round(t * 110);
+      render();
+      if (t < 1) animFrame = requestAnimationFrame(step);
+      else animFrame = null;
     }
+    animFrame = requestAnimationFrame(step);
   }
 
   function reset() {
-    patches = []; phase = 0;
-    document.getElementById('btn-glue-resolve').disabled = true;
-    document.getElementById('btn-glue-glue').disabled = true;
-    document.getElementById('gluing-info').innerHTML = 'Click <strong>Scatter Patches</strong> to begin the gluing process.';
-    if (ctx) drawEmpty();
+    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+    document.getElementById('pLayer').value = 0;
+    render();
   }
 
   setTimeout(init, 600);
-  return { scatter, resolve, glue, reset };
+  return { anim, reset };
 })();
 
-// ============================================================
-// SECTION 8: HALLUCINATION VISUALIZATION
-// ============================================================
-const HallucinationViz = (() => {
-  let ctx, W, H;
+// ================================================================
+// MODULE: Hallucination (Section 6)
+// ================================================================
+const HalMod = (() => {
+  let ctx, W, H, c;
+  let qx = 0.75, qy = 0.3;
 
-  // Training data coverage: a set of "well-known" regions
-  const knownRegions = [
+  const regions = [
     { x: 0.25, y: 0.5, r: 0.2, label: 'Europe' },
     { x: 0.45, y: 0.35, r: 0.15, label: 'Science' },
     { x: 0.35, y: 0.7, r: 0.12, label: 'History' },
@@ -1564,537 +1305,159 @@ const HallucinationViz = (() => {
   ];
 
   function init() {
-    const s = setupCanvas('canvas-hallucination');
-    ctx = s.ctx; W = s.W; H = s.H;
+    ({c, ctx, W, H} = U.mkCanvas('cHal', 360));
+    document.getElementById('xCov').addEventListener('input', render);
 
-    ['halluc-coverage', 'halluc-qx', 'halluc-qy'].forEach(id => {
-      document.getElementById(id).addEventListener('input', render);
+    c.addEventListener('mousemove', e => {
+      const r = c.getBoundingClientRect();
+      qx = (e.clientX - r.left) / r.width;
+      qy = (e.clientY - r.top) / r.height;
+      render();
     });
+
     render();
   }
 
   function render() {
     if (!ctx) return;
-    const coverage = parseFloat(document.getElementById('halluc-coverage').value);
-    const qx = parseFloat(document.getElementById('halluc-qx').value);
-    const qy = parseFloat(document.getElementById('halluc-qy').value);
-
-    document.getElementById('halluc-coverage-val').textContent = Math.round(coverage * 100) + '%';
+    const coverage = +document.getElementById('xCov').value / 100;
+    document.getElementById('xCovV').textContent = Math.round(coverage * 100) + '%';
 
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0f172a';
+    ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    // Draw coverage heatmap
+    // Heatmap
     const step = 4;
     for (let y = 0; y < H; y += step) {
       for (let x = 0; x < W; x += step) {
         const nx = x / W, ny = y / H;
         let maxCov = 0;
-        for (const region of knownRegions) {
-          const d = dist(nx, ny, region.x, region.y);
-          const cov = Math.exp(-d * d / (2 * region.r * region.r * coverage));
-          maxCov = Math.max(maxCov, cov);
+        for (const rg of regions) {
+          const d = U.dst(nx, ny, rg.x, rg.y);
+          maxCov = Math.max(maxCov, Math.exp(-d * d / (2 * rg.r * rg.r * coverage)));
         }
-
         if (maxCov > 0.05) {
-          // Green = well-covered
-          const g = Math.floor(maxCov * 180);
-          ctx.fillStyle = `rgba(0,${g},0,${maxCov * 0.3})`;
+          ctx.fillStyle = `rgba(0,${Math.floor(maxCov * 160)},0,${maxCov * 0.25})`;
         } else {
-          // Red = poorly covered
-          ctx.fillStyle = `rgba(200,30,30,${0.08})`;
+          ctx.fillStyle = 'rgba(180,25,25,0.06)';
         }
         ctx.fillRect(x, y, step, step);
       }
     }
 
-    // Draw known region labels
-    for (const region of knownRegions) {
-      const rx = region.x * W, ry = region.y * H;
-      const rr = region.r * Math.min(W, H) * coverage;
-
+    // Region labels
+    for (const rg of regions) {
+      const rx = rg.x * W, ry = rg.y * H, rr = rg.r * Math.min(W, H) * coverage;
       ctx.beginPath();
-      ctx.arc(rx, ry, rr, 0, TAU);
-      ctx.strokeStyle = 'rgba(52,211,153,0.4)';
+      ctx.arc(rx, ry, rr, 0, U.TAU);
+      ctx.strokeStyle = 'rgba(52,211,153,0.35)';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([4, 4]);
       ctx.stroke();
       ctx.setLineDash([]);
-
-      ctx.font = '11px system-ui';
+      ctx.font = '10px system-ui';
       ctx.fillStyle = '#34d399';
       ctx.textAlign = 'center';
-      ctx.fillText(region.label, rx, ry);
+      ctx.fillText(rg.label, rx, ry);
     }
 
-    // Compute coverage at query point
+    // Query coverage
+    let qCov = 0;
+    for (const rg of regions) {
+      const d = U.dst(qx, qy, rg.x, rg.y);
+      qCov = Math.max(qCov, Math.exp(-d * d / (2 * rg.r * rg.r * coverage)));
+    }
+    const conf = 0.72 + qCov * 0.23;
+    const qCol = qCov > 0.5 ? '#34d399' : qCov > 0.2 ? '#fbbf24' : '#ef4444';
+
+    // Query dot
     const qpx = qx * W, qpy = qy * H;
-    let queryCoverage = 0;
-    for (const region of knownRegions) {
-      const d = dist(qx, qy, region.x, region.y);
-      const cov = Math.exp(-d * d / (2 * region.r * region.r * coverage));
-      queryCoverage = Math.max(queryCoverage, cov);
-    }
-
-    // Model confidence (always high — this is the problem!)
-    const modelConfidence = 0.7 + queryCoverage * 0.25 + Math.random() * 0.05;
-
-    // Query point
-    const qColor = queryCoverage > 0.5 ? '#34d399' : queryCoverage > 0.2 ? '#fbbf24' : '#ef4444';
     ctx.beginPath();
-    ctx.arc(qpx, qpy, 12, 0, TAU);
-    ctx.fillStyle = hexToRgba(qColor, 0.3);
+    ctx.arc(qpx, qpy, 10, 0, U.TAU);
+    ctx.fillStyle = U.hx(qCol, 0.25);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(qpx, qpy, 6, 0, TAU);
-    ctx.fillStyle = qColor;
+    ctx.arc(qpx, qpy, 5, 0, U.TAU);
+    ctx.fillStyle = qCol;
     ctx.fill();
     ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
-
-    // Label
-    ctx.font = 'bold 11px system-ui';
+    ctx.font = 'bold 10px system-ui';
     ctx.fillStyle = '#e2e8f0';
     ctx.textAlign = 'center';
-    ctx.fillText('Query', qpx, qpy - 18);
+    ctx.fillText('Query', qpx, qpy - 14);
 
-    // Confidence bar
-    const barW = 150, barH = 12, barX = W - barW - 20, barY = 20;
-    ctx.fillStyle = '#1e293b';
+    // Bars
+    const barW = 140, barH = 10, barX = W - barW - 16, barY = 16;
+    ctx.fillStyle = '#1a2340';
     ctx.fillRect(barX, barY, barW, barH);
-    ctx.fillStyle = qColor;
-    ctx.fillRect(barX, barY, barW * modelConfidence, barH);
-    ctx.font = '10px system-ui';
+    ctx.fillStyle = qCol;
+    ctx.fillRect(barX, barY, barW * conf, barH);
+    ctx.font = '9px system-ui';
     ctx.fillStyle = '#e2e8f0';
     ctx.textAlign = 'left';
-    ctx.fillText(`Model confidence: ${Math.round(modelConfidence * 100)}%`, barX, barY - 4);
+    ctx.fillText(`Confidence: ${Math.round(conf * 100)}%`, barX, barY - 3);
 
-    // Coverage bar
-    ctx.fillStyle = '#1e293b';
-    ctx.fillRect(barX, barY + 25, barW, barH);
-    ctx.fillStyle = queryCoverage > 0.5 ? '#34d399' : queryCoverage > 0.2 ? '#fbbf24' : '#ef4444';
-    ctx.fillRect(barX, barY + 25, barW * queryCoverage, barH);
-    ctx.fillText(`Actual coverage: ${Math.round(queryCoverage * 100)}%`, barX, barY + 21);
+    ctx.fillStyle = '#1a2340';
+    ctx.fillRect(barX, barY + 22, barW, barH);
+    ctx.fillStyle = qCov > 0.5 ? '#34d399' : qCov > 0.2 ? '#fbbf24' : '#ef4444';
+    ctx.fillRect(barX, barY + 22, barW * qCov, barH);
+    ctx.fillText(`Coverage: ${Math.round(qCov * 100)}%`, barX, barY + 19);
 
     // Hallucination warning
-    if (queryCoverage < 0.3 && modelConfidence > 0.7) {
-      ctx.font = 'bold 14px system-ui';
+    if (qCov < 0.3 && conf > 0.7) {
+      ctx.font = 'bold 12px system-ui';
       ctx.fillStyle = '#ef4444';
       ctx.textAlign = 'center';
-      ctx.fillText('⚠️ HALLUCINATION RISK: High confidence, low coverage!', W / 2, H - 15);
+      ctx.fillText('⚠️ HALLUCINATION RISK: High confidence, low coverage!', W / 2, H - 12);
     }
 
     // Stats
-    const isHallucinating = queryCoverage < 0.3;
-    document.getElementById('halluc-stats').innerHTML = `
-      <div class="stat-card"><div class="label">COVERAGE</div><div class="value" style="color:${qColor}">${Math.round(queryCoverage*100)}%</div></div>
-      <div class="stat-card"><div class="label">CONFIDENCE</div><div class="value" style="color:#818cf8">${Math.round(modelConfidence*100)}%</div></div>
-      <div class="stat-card"><div class="label">GAP</div><div class="value" style="color:${isHallucinating ? '#ef4444' : '#34d399'}">${Math.round((modelConfidence - queryCoverage)*100)}%</div></div>
-      <div class="stat-card"><div class="label">STATUS</div><div class="value" style="color:${isHallucinating ? '#ef4444' : '#34d399'}">${isHallucinating ? '⚠️ Hallucinating' : '✅ Grounded'}</div></div>
+    const isHal = qCov < 0.3;
+    document.getElementById('xStats').innerHTML = `
+      <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:${qCol}">${Math.round(qCov*100)}%</div></div>
+      <div class="sc"><div class="l">CONFIDENCE</div><div class="v" style="color:#818cf8">${Math.round(conf*100)}%</div></div>
+      <div class="sc"><div class="l">GAP</div><div class="v" style="color:${isHal?'#ef4444':'#34d399'}">${Math.round((conf-qCov)*100)}%</div></div>
+      <div class="sc"><div class="l">STATUS</div><div class="v" style="color:${isHal?'#ef4444':'#34d399'}">${isHal?'⚠️ Hallucinating':'✅ Grounded'}</div></div>
     `;
   }
 
-  setTimeout(init, 700);
+  setTimeout(init, 800);
   return {};
 })();
-// ============================================================
-// SECTION 9: FULL PLAYGROUND
-// ============================================================
-const Playground = (() => {
-  let ctx, W, H;
-  let mode = 'smiley';
-  let animFrame = null;
-  let mouseX = 0.5, mouseY = 0.5;
 
-  // Generate different topological objects as point clouds
-  function generateObject(type) {
-    const points = [];
-    const N = 300;
-
-    switch (type) {
-      case 'smiley': {
-        // Face outline
-        for (let i = 0; i < N * 0.4; i++) {
-          const a = (i / (N * 0.4)) * TAU;
-          const r = 0.35 + (Math.random() - 0.5) * 0.02;
-          points.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), type: 'face' });
-        }
-        // Left eye
-        for (let i = 0; i < N * 0.1; i++) {
-          const a = (i / (N * 0.1)) * TAU;
-          const r = 0.06 + (Math.random() - 0.5) * 0.01;
-          points.push({ x: 0.38 + r * Math.cos(a), y: 0.4 + r * Math.sin(a), type: 'eye' });
-        }
-        // Right eye
-        for (let i = 0; i < N * 0.1; i++) {
-          const a = (i / (N * 0.1)) * TAU;
-          const r = 0.06 + (Math.random() - 0.5) * 0.01;
-          points.push({ x: 0.62 + r * Math.cos(a), y: 0.4 + r * Math.sin(a), type: 'eye' });
-        }
-        // Smile
-        for (let i = 0; i < N * 0.15; i++) {
-          const a = Math.PI * 0.15 + (i / (N * 0.15)) * Math.PI * 0.7;
-          const r = 0.2 + (Math.random() - 0.5) * 0.01;
-          points.push({ x: 0.5 + r * Math.cos(a), y: 0.55 + r * Math.sin(a) * 0.5, type: 'mouth' });
-        }
-        // Fill
-        for (let i = 0; i < N * 0.25; i++) {
-          const a = Math.random() * TAU;
-          const r = Math.random() * 0.32;
-          points.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a), type: 'fill' });
-        }
-        break;
-      }
-      case 'torus': {
-        for (let i = 0; i < N; i++) {
-          const u = Math.random() * TAU;
-          const v = Math.random() * TAU;
-          const R = 0.25, r = 0.1;
-          const x = 0.5 + (R + r * Math.cos(v)) * Math.cos(u);
-          const y = 0.5 + (R + r * Math.cos(v)) * Math.sin(u);
-          points.push({ x, y, type: 'torus', u, v });
-        }
-        break;
-      }
-      case 'trefoil': {
-        for (let i = 0; i < N; i++) {
-          const t = (i / N) * TAU;
-          const r = 0.15 * Math.cos(3 * t) + 0.25;
-          const x = 0.5 + r * Math.cos(t) + (Math.random() - 0.5) * 0.02;
-          const y = 0.5 + r * Math.sin(t) + (Math.random() - 0.5) * 0.02;
-          points.push({ x, y, type: 'knot', t });
-        }
-        break;
-      }
-      case 'clusters': {
-        const centers = [
-          { cx: 0.25, cy: 0.3 }, { cx: 0.7, cy: 0.35 },
-          { cx: 0.5, cy: 0.75 }, { cx: 0.15, cy: 0.7 },
-        ];
-        centers.forEach((c, ci) => {
-          for (let i = 0; i < N / 4; i++) {
-            const a = Math.random() * TAU;
-            const r = Math.random() * 0.1;
-            points.push({ x: c.cx + r * Math.cos(a), y: c.cy + r * Math.sin(a), type: 'cluster', cluster: ci });
-          }
-        });
-        break;
-      }
-      case 'mobius': {
-        for (let i = 0; i < N; i++) {
-          const t = (i / N) * TAU;
-          const w = (Math.random() - 0.5) * 0.08;
-          const twist = t / 2;
-          const R = 0.28;
-          const x = 0.5 + (R + w * Math.cos(twist)) * Math.cos(t);
-          const y = 0.5 + (R + w * Math.cos(twist)) * Math.sin(t);
-          points.push({ x, y, type: 'mobius', t });
-        }
-        break;
-      }
-    }
-    return points;
-  }
-
-  let currentPoints = [];
-  let patchBoundaries = [];
-
-  function generatePatches(points) {
-    // Simple k-means-ish clustering for patch boundaries
-    const k = 4;
-    const centers = [];
-    for (let i = 0; i < k; i++) {
-      const p = points[Math.floor(Math.random() * points.length)];
-      centers.push({ x: p.x, y: p.y });
-    }
-    // Assign points to nearest center
-    const assignments = points.map(p => {
-      let best = 0, bestD = Infinity;
-      centers.forEach((c, i) => {
-        const d = dist(p.x, p.y, c.x, c.y);
-        if (d < bestD) { bestD = d; best = i; }
-      });
-      return best;
-    });
-    // Compute patch info
-    const patches = [];
-    const patchColors = ['#818cf8', '#f472b6', '#34d399', '#fbbf24'];
-    for (let i = 0; i < k; i++) {
-      const members = points.filter((_, j) => assignments[j] === i);
-      if (members.length === 0) continue;
-      const cx = members.reduce((s, p) => s + p.x, 0) / members.length;
-      const cy = members.reduce((s, p) => s + p.y, 0) / members.length;
-      let maxR = 0;
-      members.forEach(p => { const d = dist(p.x, p.y, cx, cy); if (d > maxR) maxR = d; });
-      patches.push({ cx, cy, r: maxR + 0.02, color: patchColors[i], members });
-    }
-    return patches;
-  }
-
-  function init() {
-    const s = setupCanvas('canvas-playground');
-    ctx = s.ctx; W = s.W; H = s.H;
-
-    const c = document.getElementById('canvas-playground');
-    c.addEventListener('mousemove', (e) => {
-      const rect = c.getBoundingClientRect();
-      mouseX = (e.clientX - rect.left) / rect.width;
-      mouseY = (e.clientY - rect.top) / rect.height;
-    });
-
-    ['play-layer', 'play-focus', 'play-show-grid', 'play-show-lens', 'play-show-patches'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.addEventListener('input', render);
-      if (el) el.addEventListener('change', render);
-    });
-
-    setMode('smiley');
-  }
-
-  function setMode(m) {
-    mode = m;
-    currentPoints = generateObject(m);
-    patchBoundaries = generatePatches(currentPoints);
-
-    // Update tab buttons
-    document.querySelectorAll('#playground-tabs .tab-btn').forEach(btn => {
-      btn.classList.remove('active');
-    });
-    const tabs = document.querySelectorAll('#playground-tabs .tab-btn');
-    tabs.forEach(btn => {
-      if (btn.textContent.toLowerCase().includes(m.substring(0, 4))) {
-        btn.classList.add('active');
-      }
-    });
-
-    render();
-  }
-
-  function render() {
-    if (!ctx) return;
-    const layer = parseFloat(document.getElementById('play-layer').value);
-    const focus = parseFloat(document.getElementById('play-focus').value);
-    const showGrid = document.getElementById('play-show-grid').checked;
-    const showLens = document.getElementById('play-show-lens').checked;
-    const showPatches = document.getElementById('play-show-patches').checked;
-
-    document.getElementById('play-layer-val').textContent = layer.toFixed(1);
-    document.getElementById('play-focus-val').textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
-
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, W, H);
-
-    const lensX = mouseX * W;
-    const lensY = mouseY * H;
-    const lensRadius = lerp(50, 180, focus);
-
-    // Layer-dependent deformation
-    const routingPhase = clamp(1 - layer / 4, 0, 1);
-    const resolvingPhase = clamp((layer - 2) / 5, 0, 1);
-    const gluingPhase = clamp((layer - 8) / 3, 0, 1);
-    const deformStrength = layer === 0 ? 0 : (layer <= 3 ? layer * 0.08 : (layer <= 8 ? 0.24 + (layer - 3) * 0.04 : 0.44 - (layer - 8) * 0.12));
-
-    // Warp function based on layer
-    function warp(x, y) {
-      if (layer === 0) return [x, y];
-      let wx = x, wy = y;
-
-      // Routing: swirl around center
-      if (routingPhase > 0) {
-        const dx = x - W / 2, dy = y - H / 2;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        const angle = deformStrength * routingPhase * Math.exp(-d * d / (W * W * 0.15)) * 2;
-        const cos = Math.cos(angle), sin = Math.sin(angle);
-        wx = W / 2 + dx * cos - dy * sin;
-        wy = H / 2 + dx * sin + dy * cos;
-      }
-
-      // Resolving: expand around patches
-      if (resolvingPhase > 0 && patchBoundaries.length > 0) {
-        for (const patch of patchBoundaries) {
-          const pcx = patch.cx * W, pcy = patch.cy * H;
-          const dx = wx - pcx, dy = wy - pcy;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          const influence = deformStrength * resolvingPhase * Math.exp(-d * d / (8000)) * 0.5;
-          wx += dx * influence;
-          wy += dy * influence;
-        }
-      }
-
-      // Gluing: contract back
-      if (gluingPhase > 0) {
-        wx = lerp(wx, x, gluingPhase * 0.7);
-        wy = lerp(wy, y, gluingPhase * 0.7);
-      }
-
-      return [wx, wy];
-    }
-
-    // Draw deformed grid
-    if (showGrid) {
-      const step = 30;
-      drawGrid(ctx, W, H, warp, step, `rgba(100,116,139,${0.06 + deformStrength * 0.15})`, 0.6);
-    }
-
-    // Draw patch boundaries
-    if (showPatches) {
-      for (const patch of patchBoundaries) {
-        const [wcx, wcy] = warp(patch.cx * W, patch.cy * H);
-        const grad = ctx.createRadialGradient(wcx, wcy, 0, wcx, wcy, patch.r * Math.min(W, H));
-        grad.addColorStop(0, hexToRgba(patch.color, 0.08 + resolvingPhase * 0.1));
-        grad.addColorStop(1, hexToRgba(patch.color, 0));
-        ctx.beginPath();
-        ctx.arc(wcx, wcy, patch.r * Math.min(W, H), 0, TAU);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = hexToRgba(patch.color, 0.15 + resolvingPhase * 0.2);
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-    }
-
-    // Draw points
-    for (const p of currentPoints) {
-      const px = p.x * W, py = p.y * H;
-      const [wx, wy] = warp(px, py);
-
-      // Lens effect: sharpen inside lens
-      let alpha = 0.4;
-      let size = 2;
-      if (showLens) {
-        const d = dist(wx, wy, lensX, lensY);
-        if (d < lensRadius) {
-          const sharpness = 1 - d / lensRadius;
-          alpha = 0.4 + sharpness * 0.5 * (1 - focus);
-          size = 2 + sharpness * 3 * (1 - focus);
-        }
-      }
-
-      // Color by type/cluster
-      let color;
-      switch (p.type) {
-        case 'face': color = '#818cf8'; break;
-        case 'eye': color = '#f472b6'; break;
-        case 'mouth': color = '#fbbf24'; break;
-        case 'fill': color = '#475569'; break;
-        case 'torus': color = `hsl(${(p.u / TAU) * 360}, 70%, 60%)`; break;
-        case 'knot': color = `hsl(${(p.t / TAU) * 360}, 70%, 60%)`; break;
-        case 'cluster': color = COLORS.patches[p.cluster % COLORS.patches.length]; break;
-        case 'mobius': color = `hsl(${(p.t / TAU) * 360}, 60%, 55%)`; break;
-        default: color = '#94a3b8';
-      }
-
-      ctx.beginPath();
-      ctx.arc(wx, wy, size, 0, TAU);
-      ctx.fillStyle = color;
-      ctx.globalAlpha = alpha;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-
-    // Draw lens overlay
-    if (showLens) {
-      drawLens(ctx, lensX, lensY, lensRadius, 0.8);
-    }
-
-    // Phase indicator
-    ctx.font = 'bold 13px system-ui';
-    ctx.textAlign = 'center';
-    let phaseColor, phaseText;
-    if (layer < 0.5) { phaseColor = '#64748b'; phaseText = '📥 Embedding: Global section (blurriest)'; }
-    else if (layer <= 3) { phaseColor = '#60a5fa'; phaseText = `🔀 Layer ${layer.toFixed(1)}: Routing — words to words`; }
-    else if (layer <= 8) { phaseColor = '#c084fc'; phaseText = `🔬 Layer ${layer.toFixed(1)}: Resolving — concepts to concepts`; }
-    else { phaseColor = '#34d399'; phaseText = `🧩 Layer ${layer.toFixed(1)}: Gluing — reassembling global section`; }
-    ctx.fillStyle = phaseColor;
-    ctx.fillText(phaseText, W / 2, 22);
-
-    // Object label
-    ctx.font = '11px system-ui';
-    ctx.fillStyle = '#475569';
-    ctx.textAlign = 'right';
-    const modeLabels = { smiley: '😊 Smiley', torus: '🍩 Torus', trefoil: '🪢 Trefoil Knot', clusters: '🔵 Disconnected Clusters', mobius: '♾️ Möbius Strip' };
-    ctx.fillText(modeLabels[mode] || mode, W - 10, 22);
-
-    // Stats
-    const statsEl = document.getElementById('play-stats');
-    if (statsEl) {
-      statsEl.innerHTML = `
-        <div class="stat-card"><div class="label">LAYER</div><div class="value" style="color:#818cf8">${layer.toFixed(1)}</div><div class="sub">of 11</div></div>
-        <div class="stat-card"><div class="label">PHASE</div><div class="value" style="color:${phaseColor}">${layer < 0.5 ? 'Embed' : layer <= 3 ? 'Route' : layer <= 8 ? 'Resolve' : 'Glue'}</div></div>
-        <div class="stat-card"><div class="label">DEFORMATION</div><div class="value" style="color:#fbbf24">${Math.round(deformStrength * 100)}%</div></div>
-        <div class="stat-card"><div class="label">OBJECT</div><div class="value" style="color:#34d399">${mode}</div><div class="sub">${currentPoints.length} pts</div></div>
-        <div class="stat-card"><div class="label">PATCHES</div><div class="value" style="color:#f472b6">${patchBoundaries.length}</div></div>
-      `;
-    }
-  }
-
-  function animateFullPipeline() {
-    if (animFrame) return;
-    const slider = document.getElementById('play-layer');
-    slider.value = 0;
-    render();
-
-    const duration = 8000;
-    const start = performance.now();
-
-    function step(now) {
-      const t = Math.min((now - start) / duration, 1);
-      const layerVal = t * 11;
-      slider.value = layerVal.toFixed(1);
-      render();
-      if (t < 1) {
-        animFrame = requestAnimationFrame(step);
-      } else {
-        animFrame = null;
-      }
-    }
-    animFrame = requestAnimationFrame(step);
-  }
-
-  function reset() {
-    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
-    document.getElementById('play-layer').value = 0;
-    render();
-  }
-
-  setTimeout(init, 800);
-  return { setMode, animateFullPipeline, reset };
-})();
-
-// ============================================================
-// SCROLL FADE-IN ANIMATION
-// ============================================================
-const fadeObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
+// ================================================================
+// MODULE: Scroll fade-in
+// ================================================================
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
 }, { threshold: 0.1 });
+document.querySelectorAll('.fade').forEach(el => fadeObs.observe(el));
 
-document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
-
-// ============================================================
-// WINDOW RESIZE HANDLER
-// ============================================================
-let resizeTimeout;
+// ================================================================
+// MODULE: Resize handler
+// ================================================================
+let resizeTimer;
 window.addEventListener('resize', () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    // Re-initialize all canvas-based visualizations
-    ['canvas-situs', 'canvas-embedding', 'canvas-lens', 'canvas-ffn',
-     'canvas-layers', 'canvas-gluing', 'canvas-hallucination', 'canvas-playground'].forEach(id => {
-      const c = document.getElementById(id);
-      if (c) {
-        const rect = c.getBoundingClientRect();
-        c.width = rect.width * dpr;
-        c.height = rect.height * dpr;
-      }
-    });
-  }, 250);
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    // Reinitialize canvases that need it
+    // The modules will re-init on next render call
+    Bus.emit('resize');
+  }, 300);
+});
+
+// ================================================================
+// MODULE: Keyboard shortcuts
+// ================================================================
+document.addEventListener('keydown', e => {
+  if (e.key === ' ') {
+    e.preventDefault();
+    // Toggle pipeline animation
+    PipeMod.anim();
+  }
 });
 
 </script>
