@@ -181,6 +181,14 @@ An interactive visual guide to the <em>Grothendieck situs conjecture</em>: a lan
 </div>
 
 <script>
+
+const Bus = (() => {
+  const L = {};
+  return { on(e,f){(L[e]=L[e]||[]).push(f)}, emit(e,d){(L[e]||[]).forEach(f=>f(d))} };
+})();
+
+const State = { mouse:{x:.5,y:.5}, objectType:'smiley' };
+
 // ================================================================
 // CORE UTILITIES
 // ================================================================
@@ -220,40 +228,24 @@ const U = (() => {
   return {TAU,dpr,lerp,clamp,dst,ease,hx,srand,PAL,mkCanvas,drawGrid,drawLensRing};
 })();
 
-const Bus = (() => {
-  const L = {};
-  return { on(e,f){(L[e]=L[e]||[]).push(f)}, emit(e,d){(L[e]||[]).forEach(f=>f(d))} };
-})();
-
-const State = { mouse:{x:.5,y:.5}, objectType:'smiley' };
 
 // ================================================================
-// HIGH-RES OBJECT GENERATOR — SVG-quality at full zoom
+// HIGH-RES OBJECT GENERATOR
 // ================================================================
 const ObjGen = (() => {
   const SZ = 48;
 
-  // Analytical SDF functions for crystal-clear rendering at any resolution
   function sdfSmiley(nx, ny) {
-    // nx, ny in [-1,1]
     const d = Math.hypot(nx, ny);
-    // Face outline
     let face = Math.abs(d - 0.78) - 0.045;
-    // Fill
     let fill = d - 0.78;
-    // Left eye
     let eyeL = Math.hypot(nx + 0.27, ny + 0.18) - 0.1;
-    // Right eye
     let eyeR = Math.hypot(nx - 0.27, ny + 0.18) - 0.1;
-    // Pupil L
     let pupL = Math.hypot(nx + 0.27, ny + 0.2) - 0.04;
-    // Pupil R
     let pupR = Math.hypot(nx - 0.27, ny + 0.2) - 0.04;
-    // Smile arc
     const smileD = Math.hypot(nx, ny - 0.05);
     let smile = Math.abs(smileD - 0.42) - 0.03;
-    if (ny < 0.12) smile = 1; // only bottom half
-
+    if (ny < 0.12) smile = 1;
     let v = 0;
     if (fill < 0) v = 0.25;
     if (face < 0) v = 1;
@@ -266,41 +258,28 @@ const ObjGen = (() => {
   }
 
   function sdfTorus3D(nx, ny, angle) {
-    // Project a 3D torus to 2D with rotation
     const ca = Math.cos(angle), sa = Math.sin(angle);
     const R = 0.5, r = 0.18;
-    // Sample many points on torus surface, find closest
     let minD = 10;
     for (let u = 0; u < U.TAU; u += 0.08) {
       for (let v = 0; v < U.TAU; v += 0.15) {
         const x3 = (R + r * Math.cos(v)) * Math.cos(u);
         const y3 = (R + r * Math.cos(v)) * Math.sin(u);
         const z3 = r * Math.sin(v);
-        // Rotate around Y
         const rx = x3 * ca + z3 * sa;
         const ry = y3;
-        const rz = -x3 * sa + z3 * ca;
         const d = Math.hypot(nx - rx, ny - ry);
-        const depth = rz;
         if (d < minD) minD = d;
       }
     }
     return Math.exp(-minD * minD / 0.003);
   }
 
-  // Generate at arbitrary resolution
   function sample(type, nx, ny, time) {
     time = time || 0;
     switch(type) {
       case 'smiley': return sdfSmiley(nx, ny);
       case 'torus': return sdfTorus3D(nx, ny, time * 0.5);
-      case 'trefoil': {
-        const a = Math.atan2(ny, nx);
-        const targetR = 0.6 + 0.36 * Math.cos(3 * a);
-        const d = Math.hypot(nx, ny);
-        const edge = Math.abs(d - targetR) - 0.06;
-        return edge < 0 ? U.clamp(1 - Math.abs(edge) * 5, 0, 1) : Math.exp(-edge * edge / 0.002);
-      }
       case 'clusters': {
         const cs = [{x:-0.5,y:-0.45},{x:0.5,y:-0.35},{x:0,y:0.55},{x:-0.6,y:0.35}];
         let v = 0;
@@ -309,7 +288,6 @@ const ObjGen = (() => {
           const edge = Math.abs(d - 0.22) - 0.03;
           if (edge < 0) v = Math.max(v, 0.9);
           else v = Math.max(v, Math.exp(-edge * edge / 0.001));
-          // Inner dots
           if (d < 0.05) v = Math.max(v, 1);
         });
         return v;
@@ -329,7 +307,6 @@ const ObjGen = (() => {
     return 0;
   }
 
-  // Generate low-res grid for fast rendering
   function generate(type) {
     const img = new Float64Array(SZ * SZ);
     for (let y = 0; y < SZ; y++) for (let x = 0; x < SZ; x++) {
@@ -339,7 +316,6 @@ const ObjGen = (() => {
     return img;
   }
 
-  // DCT for holographic demo
   const N=16, Z=4, ZS=4;
   const CM=[];
   for(let k=0;k<N;k++){CM[k]=[];const a=k===0?Math.sqrt(1/N):Math.sqrt(2/N);for(let n=0;n<N;n++)CM[k][n]=a*Math.cos(Math.PI*(2*n+1)*k/(2*N))}
@@ -353,23 +329,23 @@ const ObjGen = (() => {
 })();
 
 // ================================================================
-// HERO MODULE — Click-to-drill with progressive crystal-clear zoom
+// SECTION 1: HERO — Focus points increase local resolution
+// No viewport zoom. Image stays same size. Clicks add focus spots.
 // ================================================================
 const HeroMod = (() => {
   let ctx, W, H, c;
   let currentType = 'smiley';
-  let zoomStack = []; // Each click adds a zoom level
+  let focusPoints = []; // {nx, ny, strength} in normalized [-1,1]
   let time = 0;
   let animFrame = null;
-  let autoZoomAnim = null;
+  let autoAnim = null;
 
-  const OBJECTS = ['smiley','torus','trefoil','clusters','rings'];
-  const LABELS = ['😊 Smiley','🍩 Torus','🪢 Trefoil','🔵 Clusters','⭕ Rings'];
+  const OBJECTS = ['smiley','torus','clusters','rings'];
+  const LABELS = ['😊 Smiley','🍩 Torus','🔵 Clusters','⭕ Rings'];
 
   function init() {
-    ({c, ctx, W, H} = U.mkCanvas('cHero', 520));
+    ({c, ctx, W, H} = U.mkCanvas('cHero', 480));
 
-    // Build tabs
     const tabEl = document.getElementById('hTabs');
     let tabHtml = '';
     OBJECTS.forEach((o, i) => {
@@ -380,7 +356,7 @@ const HeroMod = (() => {
       btn.onclick = () => {
         currentType = btn.dataset.m;
         State.objectType = currentType;
-        zoomStack = [];
+        focusPoints = [];
         tabEl.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
         btn.classList.add('on');
         Bus.emit('objectChanged');
@@ -388,33 +364,50 @@ const HeroMod = (() => {
       };
     });
 
-    // Click to drill deeper
+    // Click to add focus point (or strengthen existing nearby one)
     c.addEventListener('click', e => {
       const r = c.getBoundingClientRect();
       const mx = (e.clientX - r.left) / r.width;
       const my = (e.clientY - r.top) / r.height;
-      // Convert to normalized [-1,1] coords
       const nx = mx * 2 - 1, ny = my * 2 - 1;
-      zoomStack.push({ nx, ny, time: performance.now() });
-      if (zoomStack.length > 8) zoomStack.shift();
+
+      // Check if near existing focus point — if so, strengthen it
+      let found = false;
+      for (const fp of focusPoints) {
+        if (U.dst(nx, ny, fp.nx, fp.ny) < 0.25) {
+          fp.strength = Math.min(fp.strength + 0.35, 1.0);
+          fp.radius = Math.max(fp.radius * 0.7, 0.08);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        focusPoints.push({ nx, ny, strength: 0.4, radius: 0.4, time: performance.now() });
+      }
+
+      // Weaken all other points slightly (attention budget)
+      for (const fp of focusPoints) {
+        if (!found || U.dst(nx, ny, fp.nx, fp.ny) >= 0.25) {
+          fp.strength = Math.max(fp.strength * 0.85, 0.05);
+        }
+      }
+
+      if (focusPoints.length > 6) focusPoints.shift();
       const hint = document.getElementById('heroHint');
-      if (hint) hint.style.opacity = zoomStack.length > 2 ? '0' : '0.7';
+      if (hint) hint.style.opacity = focusPoints.length > 1 ? '0' : '0.7';
       render();
     });
 
-    // Right-click to zoom out
     c.addEventListener('contextmenu', e => {
       e.preventDefault();
-      if (zoomStack.length > 0) zoomStack.pop();
+      if (focusPoints.length > 0) focusPoints.pop();
       render();
     });
 
-    // Mouse tracking for hover highlight
     c.addEventListener('mousemove', e => {
       const r = c.getBoundingClientRect();
       State.mouse.x = (e.clientX - r.left) / r.width;
       State.mouse.y = (e.clientY - r.top) / r.height;
-      if (zoomStack.length === 0) render();
     });
 
     ['hDepth','hGrid','hStack'].forEach(id => {
@@ -422,14 +415,12 @@ const HeroMod = (() => {
       if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
     });
 
-    // Animate torus rotation
     function tick() {
       time += 0.008;
       if (currentType === 'torus') render();
       animFrame = requestAnimationFrame(tick);
     }
     animFrame = requestAnimationFrame(tick);
-
     render();
   }
 
@@ -439,27 +430,13 @@ const HeroMod = (() => {
     const layer = layerRaw / 10;
     const showGrid = document.getElementById('hGrid').checked;
     const showStack = document.getElementById('hStack').checked;
-
     document.getElementById('hDepthV').textContent = layer.toFixed(1);
 
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    const zoomLevel = zoomStack.length;
-    const maxZoom = 8;
-
-    // Compute the current view window in normalized [-1,1] space
-    let viewCx = 0, viewCy = 0, viewR = 1;
-    for (const z of zoomStack) {
-      // Each click zooms 2x toward the clicked point
-      const newR = viewR * 0.55;
-      viewCx = U.lerp(viewCx, z.nx, 0.5);
-      viewCy = U.lerp(viewCy, z.ny, 0.5);
-      viewR = newR;
-    }
-
-    // Layer-dependent deformation
+    // Layer deformation
     const routing = U.clamp(1 - layer / 4, 0, 1);
     const resolving = U.clamp((layer - 2) / 5, 0, 1);
     const gluing = U.clamp((layer - 8) / 3, 0, 1);
@@ -472,87 +449,73 @@ const HeroMod = (() => {
         const d = Math.hypot(nx, ny);
         const a = deform * routing * Math.exp(-d*d/0.8) * 1.5;
         const cs = Math.cos(a), sn = Math.sin(a);
-        wx = nx*cs - ny*sn;
-        wy = nx*sn + ny*cs;
+        wx = nx*cs - ny*sn; wy = nx*sn + ny*cs;
       }
       if (resolving > 0) {
-        // Expand around 4 quadrant centers
         const centers = [{x:-0.5,y:-0.5},{x:0.5,y:-0.5},{x:-0.5,y:0.5},{x:0.5,y:0.5}];
         for (const cc of centers) {
           const dx = wx - cc.x, dy = wy - cc.y;
           const d = Math.hypot(dx, dy);
           const inf = deform * resolving * Math.exp(-d*d/0.5) * 0.3;
-          wx += dx * inf;
-          wy += dy * inf;
+          wx += dx * inf; wy += dy * inf;
         }
       }
-      if (gluing > 0) {
-        wx = U.lerp(wx, nx, gluing * 0.7);
-        wy = U.lerp(wy, ny, gluing * 0.7);
-      }
+      if (gluing > 0) { wx = U.lerp(wx, nx, gluing * 0.7); wy = U.lerp(wy, ny, gluing * 0.7); }
       return [wx, wy];
     }
 
-    // Determine pixel resolution based on zoom level
-    // More zoom = more pixels in the focused area = crystal clear
-    const baseRes = 48;
-    const renderRes = Math.min(256, baseRes + zoomLevel * 30);
+    // Compute sharpness at each pixel based on focus points
+    // The image is always the same size — only resolution varies locally
+    const RES = 128; // fixed render resolution
+    const cellW = W / RES, cellH = H / RES;
 
-    // Render the image
-    const cellW = W / renderRes;
-    const cellH = H / renderRes;
+    for (let iy = 0; iy < RES; iy++) {
+      for (let ix = 0; ix < RES; ix++) {
+        const nx = ix / RES * 2 - 1, ny = iy / RES * 2 - 1;
 
-    // Precompute focus falloff for non-zoomed areas
-    const focusCx = zoomStack.length > 0 ? zoomStack[zoomStack.length-1].nx : 0;
-    const focusCy = zoomStack.length > 0 ? zoomStack[zoomStack.length-1].ny : 0;
-    const focusR = viewR * 1.5;
-
-    for (let iy = 0; iy < renderRes; iy++) {
-      for (let ix = 0; ix < renderRes; ix++) {
-        // Map pixel to normalized coords within current view
-        const nx = viewCx + (ix / renderRes * 2 - 1) * viewR;
-        const ny = viewCy + (iy / renderRes * 2 - 1) * viewR;
-
-        // Apply layer warp
-        const [wnx, wny] = warpNorm(nx, ny);
-
-        // Sample the object at this point (analytical = crystal clear at any zoom)
-        let val = ObjGen.sample(currentType, wnx, wny, time);
-
-        // Compute distance from focus center for blur effect
-        const dFocus = Math.hypot(nx - focusCx, ny - focusCy);
-        const focusStrength = zoomLevel > 0 ? U.clamp(1 - dFocus / focusR, 0, 1) : 1;
-
-        // Outside focus: pixelate by skipping detail
-        let pixelMult = 1;
-        if (zoomLevel > 0 && focusStrength < 0.3) {
-          pixelMult = Math.max(1, Math.floor((1 - focusStrength) * 6));
+        // Compute local sharpness from focus points
+        let sharpness = 0;
+        for (const fp of focusPoints) {
+          const d = U.dst(nx, ny, fp.nx, fp.ny);
+          const falloff = Math.exp(-d * d / (2 * fp.radius * fp.radius));
+          sharpness += falloff * fp.strength;
         }
+        sharpness = U.clamp(sharpness, 0, 1);
+
+        // Base blur: everything starts blurry, focus makes it sharp
+        const baseBlur = focusPoints.length > 0 ? 0.05 : 0.5;
+        const effectiveSharp = Math.max(baseBlur, sharpness);
+
+        // Block size for pixelation: 1 = crystal clear, larger = blurry
+        const maxBlock = 8;
+        const blockSize = Math.max(1, Math.round(U.lerp(maxBlock, 1, effectiveSharp)));
+
+        // Snap to block grid
+        const bx = Math.floor(ix / blockSize) * blockSize;
+        const by = Math.floor(iy / blockSize) * blockSize;
+        if (ix !== bx || iy !== by) continue; // only draw block origins
+
+        // Sample center of block
+        const snx = (bx + blockSize/2) / RES * 2 - 1;
+        const sny = (by + blockSize/2) / RES * 2 - 1;
+        const [wnx, wny] = warpNorm(snx, sny);
+        let val = ObjGen.sample(currentType, wnx, wny, time);
 
         // Color
         const layerBoost = U.clamp(layer / 11, 0, 1);
-        const brightness = focusStrength * (0.5 + layerBoost * 0.5) + (1 - focusStrength) * 0.15;
-        const v = val * brightness;
+        const bright = effectiveSharp * (0.5 + layerBoost * 0.5) + (1 - effectiveSharp) * 0.12;
+        const v = val * bright;
 
         let r, g, b;
         if (val > 0.6) {
-          // Bright features: warm white/gold
-          r = Math.floor(40 + v * 215);
-          g = Math.floor(35 + v * 195);
-          b = Math.floor(20 + v * 120);
+          r = Math.floor(40 + v * 215); g = Math.floor(35 + v * 195); b = Math.floor(20 + v * 120);
         } else if (val > 0.2) {
-          // Mid features: blue-purple tint
-          r = Math.floor(20 + v * 160);
-          g = Math.floor(18 + v * 140);
-          b = Math.floor(30 + v * 180);
+          r = Math.floor(20 + v * 160); g = Math.floor(18 + v * 140); b = Math.floor(30 + v * 180);
         } else {
-          // Background: dark blue
-          r = Math.floor(8 + v * 60);
-          g = Math.floor(8 + v * 50);
-          b = Math.floor(15 + v * 80);
+          r = Math.floor(8 + v * 60); g = Math.floor(8 + v * 50); b = Math.floor(15 + v * 80);
         }
 
-        // Patch tinting during resolving phase
+        // Patch tinting
         if (resolving > 0.1) {
           const qi = (wnx > 0 ? 1 : 0) + (wny > 0 ? 2 : 0);
           const pCols = [[129,140,248],[244,114,182],[52,211,153],[251,191,36]];
@@ -563,63 +526,59 @@ const HeroMod = (() => {
           b = Math.floor(U.lerp(b, pc[2], tint));
         }
 
-        const alpha = U.clamp(0.3 + focusStrength * 0.7, 0.15, 1);
+        const alpha = U.clamp(0.25 + effectiveSharp * 0.75, 0.15, 1);
         ctx.globalAlpha = alpha;
         ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
-
-        const drawSize = cellW * pixelMult;
-        ctx.fillRect(ix * cellW, iy * cellH, drawSize + 0.5, drawSize + 0.5);
-
-        // Skip pixels for pixelated areas
-        if (pixelMult > 1) {
-          ix += pixelMult - 1;
-        }
+        ctx.fillRect(bx * cellW, by * cellH, blockSize * cellW + 0.5, blockSize * cellH + 0.5);
       }
     }
     ctx.globalAlpha = 1;
 
-    // Draw grid overlay
+    // Grid overlay
     if (showGrid && layer > 0.1) {
       const gridStep = 30;
       function warpScreen(x, y) {
-        const nx2 = viewCx + (x / W * 2 - 1) * viewR;
-        const ny2 = viewCy + (y / H * 2 - 1) * viewR;
-        const [wnx2, wny2] = warpNorm(nx2, ny2);
-        const sx = ((wnx2 - viewCx) / viewR + 1) / 2 * W;
-        const sy = ((wny2 - viewCy) / viewR + 1) / 2 * H;
-        return [sx, sy];
+        const snx = x / W * 2 - 1, sny = y / H * 2 - 1;
+        const [wnx, wny] = warpNorm(snx, sny);
+        return [((wnx + 1) / 2) * W, ((wny + 1) / 2) * H];
       }
       U.drawGrid(ctx, W, H, warpScreen, gridStep, `rgba(100,116,139,${0.04 + deform * 0.1})`, 0.4);
     }
 
-    // Draw zoom focus rings
-    for (let zi = 0; zi < zoomStack.length; zi++) {
-      const z = zoomStack[zi];
-      // Convert normalized coords to screen
-      const sx = ((z.nx - viewCx) / viewR + 1) / 2 * W;
-      const sy = ((z.ny - viewCy) / viewR + 1) / 2 * H;
-      const sr = W * 0.5 * Math.pow(0.55, zi + 1) / viewR;
+    // Draw focus point indicators
+    for (let fi = 0; fi < focusPoints.length; fi++) {
+      const fp = focusPoints[fi];
+      const sx = (fp.nx + 1) / 2 * W, sy = (fp.ny + 1) / 2 * H;
+      const sr = fp.radius * Math.min(W, H) / 2;
+      const age = (performance.now() - fp.time) / 1000;
+      const pulse = 0.6 + 0.4 * Math.sin(age * 2);
 
-      const age = (performance.now() - z.time) / 1000;
-      const pulse = 0.7 + 0.3 * Math.sin(age * 2);
+      // Fuzzy border ring
+      const grad = ctx.createRadialGradient(sx, sy, sr * 0.6, sx, sy, sr * 1.2);
+      grad.addColorStop(0, `rgba(129,140,248,${0.08 * fp.strength * pulse})`);
+      grad.addColorStop(1, 'rgba(129,140,248,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(sx, sy, sr * 1.2, 0, U.TAU);
+      ctx.fill();
 
       ctx.beginPath();
-      ctx.arc(sx, sy, Math.max(sr, 10), 0, U.TAU);
-      ctx.strokeStyle = `rgba(129,140,248,${0.3 * pulse})`;
-      ctx.lineWidth = 2;
+      ctx.arc(sx, sy, sr, 0, U.TAU);
+      ctx.strokeStyle = `rgba(129,140,248,${0.25 * pulse})`;
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Zoom level label
+      // Strength label
       ctx.font = 'bold 9px system-ui';
-      ctx.fillStyle = `rgba(129,140,248,${0.5 * pulse})`;
+      ctx.fillStyle = `rgba(129,140,248,${0.6 * pulse})`;
       ctx.textAlign = 'center';
-      ctx.fillText(`×${Math.pow(2, zi+1).toFixed(0)}`, sx, sy - Math.max(sr, 10) - 4);
+      ctx.fillText(`${Math.round(fp.strength * 100)}%`, sx, sy - sr - 4);
     }
 
-    // Hover lens when no zoom
-    if (zoomStack.length === 0) {
+    // Hover indicator when no focus
+    if (focusPoints.length === 0) {
       const lx = State.mouse.x * W, ly = State.mouse.y * H;
-      U.drawLensRing(ctx, lx, ly, 60, 0.4);
+      U.drawLensRing(ctx, lx, ly, 50, 0.3);
     }
 
     // Stack view
@@ -630,11 +589,8 @@ const HeroMod = (() => {
         const sy = 30 + li * (stackH + gap);
         const layerVal = li * 11 / (nLayers - 1);
         const isCurrent = Math.abs(layerVal - layer) < 1.5;
-
         ctx.fillStyle = isCurrent ? 'rgba(129,140,248,0.12)' : 'rgba(10,14,26,0.8)';
         ctx.fillRect(stackX - 1, sy - 1, stackW + 2, stackH + 2);
-
-        // Mini image — resolution increases with layer
         const miniRes = 4 + li * 2;
         const mCellW = stackW / miniRes, mCellH = stackH / miniRes;
         for (let my = 0; my < miniRes; my++) {
@@ -647,11 +603,9 @@ const HeroMod = (() => {
             ctx.fillRect(stackX + mx * mCellW, sy + my * mCellH, mCellW + 0.5, mCellH + 0.5);
           }
         }
-
         ctx.strokeStyle = isCurrent ? '#818cf8' : '#1a2340';
         ctx.lineWidth = isCurrent ? 1.5 : 0.5;
         ctx.strokeRect(stackX, sy, stackW, stackH);
-
         ctx.font = '7px system-ui';
         ctx.fillStyle = isCurrent ? '#fbbf24' : '#475569';
         ctx.textAlign = 'right';
@@ -674,69 +628,124 @@ const HeroMod = (() => {
     ctx.fillStyle = phaseCol;
     ctx.fillText(phaseTxt, 10, 20);
 
-    // Zoom info
-    if (zoomLevel > 0) {
+    // Focus info
+    if (focusPoints.length > 0) {
       ctx.font = 'bold 11px system-ui';
       ctx.fillStyle = '#fbbf24';
       ctx.textAlign = 'right';
-      ctx.fillText(`Zoom: ×${Math.pow(2, zoomLevel).toFixed(0)} | Resolution: ${renderRes}px | Right-click to zoom out`, W - 10, 20);
+      const maxStr = Math.max(...focusPoints.map(f => f.strength));
+      ctx.fillText(`${focusPoints.length} focus point${focusPoints.length>1?'s':''} | Max: ${Math.round(maxStr*100)}% | Right-click to remove`, W - 10, 20);
     }
 
     // Stats
+    const maxStr = focusPoints.length > 0 ? Math.max(...focusPoints.map(f => f.strength)) : 0;
     document.getElementById('hStats').innerHTML = `
       <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${layer.toFixed(1)}</div></div>
       <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${layer<0.5?'Embed':layer<=3?'Route':layer<=8?'Resolve':'Glue'}</div></div>
-      <div class="sc"><div class="l">ZOOM</div><div class="v" style="color:#fbbf24">×${Math.pow(2,zoomLevel).toFixed(0)}</div><div class="s">${zoomLevel} clicks deep</div></div>
-      <div class="sc"><div class="l">RESOLUTION</div><div class="v" style="color:#34d399">${renderRes}px</div><div class="s">${zoomLevel>3?'Crystal clear':'Pixelated'}</div></div>
+      <div class="sc"><div class="l">FOCUS PTS</div><div class="v" style="color:#fbbf24">${focusPoints.length}</div><div class="s">click to add</div></div>
+      <div class="sc"><div class="l">MAX SHARP</div><div class="v" style="color:#34d399">${Math.round(maxStr*100)}%</div><div class="s">${maxStr>0.8?'Crystal clear':maxStr>0.4?'Sharpening':'Blurry'}</div></div>
       <div class="sc"><div class="l">OBJECT</div><div class="v" style="color:#f472b6">${currentType}</div></div>
     `;
   }
 
   function resetZoom() {
-    zoomStack = [];
+    focusPoints = [];
     const hint = document.getElementById('heroHint');
     if (hint) hint.style.opacity = '1';
     render();
   }
 
   function autoZoom() {
-    if (autoZoomAnim) return;
+    if (autoAnim) return;
     resetZoom();
+    // Auto-drill into the right eye of the smiley
     const targets = [
-      {nx: 0.3, ny: -0.2},
-      {nx: 0.35, ny: -0.15},
-      {nx: 0.33, ny: -0.18},
-      {nx: 0.32, ny: -0.17},
+      {nx: -0.27, ny: -0.18, delay: 400},
+      {nx: -0.27, ny: -0.18, delay: 700},
+      {nx: -0.27, ny: -0.18, delay: 1000},
     ];
     let step = 0;
     function next() {
-      if (step >= targets.length) { autoZoomAnim = null; return; }
-      zoomStack.push({ nx: targets[step].nx, ny: targets[step].ny, time: performance.now() });
+      if (step >= targets.length) { autoAnim = null; return; }
+      const t = targets[step];
+      // Check if near existing
+      let found = false;
+      for (const fp of focusPoints) {
+        if (U.dst(t.nx, t.ny, fp.nx, fp.ny) < 0.25) {
+          fp.strength = Math.min(fp.strength + 0.35, 1.0);
+          fp.radius = Math.max(fp.radius * 0.7, 0.08);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        focusPoints.push({nx: t.nx, ny: t.ny, strength: 0.4, radius: 0.4, time: performance.now()});
+      }
       step++;
       render();
-      autoZoomAnim = setTimeout(next, 800);
+      autoAnim = setTimeout(next, targets[step-1].delay);
     }
-    autoZoomAnim = setTimeout(next, 300);
+    autoAnim = setTimeout(next, 300);
   }
 
   setTimeout(init, 100);
   return { render, resetZoom, autoZoom };
 })();
 
+
 // ================================================================
 // HOLOGRAPHIC EMBEDDING (Section 2)
 // ================================================================
 const HoloMod = (() => {
-  let ctxP, ctxH, WP, HP, WH, HH;
+  let ctxP, ctxH, WP, HP, WH, HH, cP, cH;
   const N = ObjGen.N;
   let damaged = new Array(16).fill(false);
   let ORI = [...ObjGen.SMILEY16];
   let DC = null;
 
   function init() {
-    ({ctx: ctxP, W: WP, H: HP} = U.mkCanvas('cPhoto', 200));
-    ({ctx: ctxH, W: WH, H: HH} = U.mkCanvas('cHolo', 200));
+    ({c: cP, ctx: ctxP, W: WP, H: HP} = U.mkCanvas('cPhoto', 200));
+    ({c: cH, ctx: ctxH, W: WH, H: HH} = U.mkCanvas('cHolo', 200));
     DC = ObjGen.dct2(ORI);
+
+    // Click on photo to toggle spatial tiles
+    cP.addEventListener('click', e => {
+      const r = cP.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width;
+      const my = (e.clientY - r.top) / r.height;
+      const ps = Math.min(WP, HP) / N;
+      const ox = (WP - ps*N) / 2 / WP;
+      const oy = (HP - ps*N) / 2 / HP;
+      const tileSize = (ps * 4) / WP;
+      const col = Math.floor((mx - ox) / tileSize);
+      const row = Math.floor((my - oy) / tileSize);
+      if (col >= 0 && col < 4 && row >= 0 && row < 4) {
+        const idx = row * 4 + col;
+        damaged[idx] = !damaged[idx];
+        syncSlider();
+        render();
+      }
+    });
+
+    // Click on hologram to toggle frequency tiles
+    cH.addEventListener('click', e => {
+      const r = cH.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width;
+      const my = (e.clientY - r.top) / r.height;
+      const ps = Math.min(WH, HH) / N;
+      const ox = (WH - ps*N) / 2 / WH;
+      const oy = (HH - ps*N) / 2 / HH;
+      const tileSize = (ps * 4) / WH;
+      const col = Math.floor((mx - ox) / tileSize);
+      const row = Math.floor((my - oy) / tileSize);
+      if (col >= 0 && col < 4 && row >= 0 && row < 4) {
+        const idx = row * 4 + col;
+        damaged[idx] = !damaged[idx];
+        syncSlider();
+        render();
+      }
+    });
+
     document.getElementById('eDmg').addEventListener('input', () => {
       const v = +document.getElementById('eDmg').value;
       document.getElementById('eDmgV').textContent = v + '/16';
@@ -747,24 +756,28 @@ const HoloMod = (() => {
     render();
   }
 
+  function syncSlider() {
+    const count = damaged.filter(d => d).length;
+    document.getElementById('eDmg').value = count;
+    document.getElementById('eDmgV').textContent = count + '/16';
+  }
+
   function randomDamage() {
     const idx = Array.from({length:16}, (_,i) => i);
     for (let i = 15; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [idx[i],idx[j]] = [idx[j],idx[i]]; }
     damaged = new Array(16).fill(false);
     for (let i = 0; i < 8; i++) damaged[idx[i]] = true;
-    document.getElementById('eDmg').value = 8;
-    document.getElementById('eDmgV').textContent = '8/16';
+    syncSlider();
     render();
   }
 
   function reset() {
     damaged = new Array(16).fill(false);
-    document.getElementById('eDmg').value = 0;
-    document.getElementById('eDmgV').textContent = '0/16';
+    syncSlider();
     render();
   }
 
-  function drawImg(ctx, img, W, H) {
+  function drawImg(ctx, img, W, H, showGrid) {
     const ps = Math.min(W, H) / N;
     const ox = (W - ps*N)/2, oy = (H - ps*N)/2;
     for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
@@ -772,6 +785,16 @@ const HoloMod = (() => {
       const r = Math.floor(30 + v*220), g = Math.floor(25 + v*190), b = Math.floor(15 + v*100);
       ctx.fillStyle = `rgb(${r},${g},${b})`;
       ctx.fillRect(ox + x*ps, oy + y*ps, ps+0.5, ps+0.5);
+    }
+    // Draw tile grid
+    if (showGrid) {
+      const ZS = 4;
+      ctx.strokeStyle = 'rgba(129,140,248,0.2)';
+      ctx.lineWidth = 0.5;
+      for (let i = 0; i <= 4; i++) {
+        ctx.beginPath(); ctx.moveTo(ox + i*ZS*ps, oy); ctx.lineTo(ox + i*ZS*ps, oy + N*ps); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ox, oy + i*ZS*ps); ctx.lineTo(ox + N*ps, oy + i*ZS*ps); ctx.stroke();
+      }
     }
   }
 
@@ -787,18 +810,26 @@ const HoloMod = (() => {
         for (let j = zc*ZS; j < (zc+1)*ZS; j++)
           photoImg[i*N+j] = ORI[i*N+j];
     }
-    drawImg(ctxP, photoImg, WP, HP);
+    drawImg(ctxP, photoImg, WP, HP, true);
 
+    // Draw X marks on damaged tiles
     const ps = Math.min(WP, HP) / N;
     const ox = (WP - ps*N)/2, oy = (HP - ps*N)/2;
     for (let z = 0; z < 16; z++) {
       if (!damaged[z]) continue;
       const zr = Math.floor(z/Z), zc = z%Z;
       const bx = ox + zc*ZS*ps, by = oy + zr*ZS*ps, bw = ZS*ps;
+      ctxP.fillStyle = 'rgba(239,68,68,0.15)';
+      ctxP.fillRect(bx, by, bw, bw);
       ctxP.strokeStyle = '#ef4444'; ctxP.lineWidth = 2;
       ctxP.beginPath(); ctxP.moveTo(bx+4,by+4); ctxP.lineTo(bx+bw-4,by+bw-4); ctxP.stroke();
       ctxP.beginPath(); ctxP.moveTo(bx+bw-4,by+4); ctxP.lineTo(bx+4,by+bw-4); ctxP.stroke();
     }
+    // Click hint
+    ctxP.font = '8px system-ui';
+    ctxP.fillStyle = '#64748b';
+    ctxP.textAlign = 'center';
+    ctxP.fillText('Click tiles to toggle', WP/2, HP - 4);
 
     ctxH.clearRect(0,0,WH,HH); ctxH.fillStyle='#060b18'; ctxH.fillRect(0,0,WH,HH);
     const holoCo = new Float64Array(N*N);
@@ -810,7 +841,25 @@ const HoloMod = (() => {
           holoCo[i*N+j] = DC[i*N+j];
     }
     const holoImg = ObjGen.idct2(holoCo);
-    drawImg(ctxH, holoImg, WH, HH);
+    drawImg(ctxH, holoImg, WH, HH, true);
+
+    // Draw X marks on holo too
+    const ps2 = Math.min(WH, HH) / N;
+    const ox2 = (WH - ps2*N)/2, oy2 = (HH - ps2*N)/2;
+    for (let z = 0; z < 16; z++) {
+      if (!damaged[z]) continue;
+      const zr = Math.floor(z/Z), zc = z%Z;
+      const bx = ox2 + zc*ZS*ps2, by = oy2 + zr*ZS*ps2, bw = ZS*ps2;
+      ctxH.fillStyle = 'rgba(239,68,68,0.1)';
+      ctxH.fillRect(bx, by, bw, bw);
+      ctxH.strokeStyle = 'rgba(239,68,68,0.4)'; ctxH.lineWidth = 1;
+      ctxH.beginPath(); ctxH.moveTo(bx+3,by+3); ctxH.lineTo(bx+bw-3,by+bw-3); ctxH.stroke();
+      ctxH.beginPath(); ctxH.moveTo(bx+bw-3,by+3); ctxH.lineTo(bx+3,by+bw-3); ctxH.stroke();
+    }
+    ctxH.font = '8px system-ui';
+    ctxH.fillStyle = '#64748b';
+    ctxH.textAlign = 'center';
+    ctxH.fillText('Click tiles to toggle', WH/2, HH - 4);
 
     const alive = damaged.filter(d => !d).length;
     const pct = Math.round(100 * alive / 16);
@@ -853,9 +902,7 @@ const HeadsMod = (() => {
       const mx = (e.clientX - r.left) / r.width * W;
       const my = (e.clientY - r.top) / r.height * H;
       for (let i = heads.length - 1; i >= 0; i--) {
-        if (U.dst(mx, my, heads[i].x, heads[i].y) < heads[i].r + 15) {
-          dragIdx = i; break;
-        }
+        if (U.dst(mx, my, heads[i].x, heads[i].y) < heads[i].r + 15) { dragIdx = i; break; }
       }
     });
     c.addEventListener('mousemove', e => {
@@ -875,13 +922,11 @@ const HeadsMod = (() => {
         el.addEventListener('change', () => { resetHeads(); render(); });
       }
     });
-
     render();
   }
 
   function resetHeads() {
     const n = +document.getElementById('aHeadN').value;
-    // Preserve positions if count unchanged
     if (heads.length === n) return;
     heads = [];
     for (let i = 0; i < n; i++) {
@@ -889,8 +934,7 @@ const HeadsMod = (() => {
       heads.push({
         x: W * 0.5 + Math.cos(angle) * W * 0.22,
         y: H * 0.45 + Math.sin(angle) * H * 0.22,
-        r: 50,
-        col: HEAD_COLS_STR[i % HEAD_COLS_STR.length],
+        r: 50, col: HEAD_COLS_STR[i % HEAD_COLS_STR.length],
         rgb: HEAD_COLS_RGB[i % HEAD_COLS_RGB.length]
       });
     }
@@ -907,26 +951,22 @@ const HeadsMod = (() => {
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    const SZ = ObjGen.SZ;
-    const img = ObjGen.generate(State.objectType);
-
-    // Per-head lens radius depends on entropy and head count
+    // Use analytical SDF for crystal-clear rendering
     const perHeadR = U.lerp(30, 140, entropy);
-    // Total resolution budget is fixed — more heads = less per head
     const perHeadBudget = resBudget / Math.max(1, heads.length);
 
-    // Render the image with variable pixelation based on head coverage
-    // First pass: compute sharpness map
-    const sharpMap = new Float64Array(SZ * SZ);
-    const headMap = new Int8Array(SZ * SZ).fill(-1);
-    const cellW = W / SZ, cellH = H / SZ;
+    // Render at higher resolution (96px instead of 48)
+    const RES = 96;
+    const cellW = W / RES, cellH = H / RES;
 
-    for (let iy = 0; iy < SZ; iy++) {
-      for (let ix = 0; ix < SZ; ix++) {
+    for (let iy = 0; iy < RES; iy++) {
+      for (let ix = 0; ix < RES; ix++) {
         const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
+        const nx = ix / RES * 2 - 1, ny = iy / RES * 2 - 1;
+
+        // Compute sharpness from heads
         let totalSharp = 0;
         let bestHead = -1, bestDist = Infinity;
-
         for (let hi = 0; hi < heads.length; hi++) {
           const d = U.dst(px, py, heads[hi].x, heads[hi].y);
           if (d < perHeadR) {
@@ -935,65 +975,35 @@ const HeadsMod = (() => {
             if (d < bestDist) { bestDist = d; bestHead = hi; }
           }
         }
-        sharpMap[iy * SZ + ix] = U.clamp(totalSharp, 0, 1);
-        headMap[iy * SZ + ix] = bestHead;
-      }
-    }
+        totalSharp = U.clamp(totalSharp, 0, 1);
 
-    // Second pass: render with variable pixelation
-    // Areas with high sharpness get 1:1 pixels; low sharpness gets blocky
-    const rendered = new Uint8Array(SZ * SZ); // track which pixels rendered
+        // Block size for pixelation
+        const blockSize = Math.max(1, Math.round(U.lerp(8, 1, totalSharp)));
+        const bx = Math.floor(ix / blockSize) * blockSize;
+        const by = Math.floor(iy / blockSize) * blockSize;
+        if (ix !== bx || iy !== by) continue;
 
-    for (let iy = 0; iy < SZ; iy++) {
-      for (let ix = 0; ix < SZ; ix++) {
-        if (rendered[iy * SZ + ix]) continue;
+        // Sample analytical SDF at block center
+        const snx = (bx + blockSize/2) / RES * 2 - 1;
+        const sny = (by + blockSize/2) / RES * 2 - 1;
+        let val = ObjGen.sample(State.objectType, snx, sny, 0);
 
-        const sharp = sharpMap[iy * SZ + ix];
-        const hIdx = headMap[iy * SZ + ix];
+        const brightness = U.lerp(val * 0.15, val, 0.15 + totalSharp * 0.85);
+        let r = Math.floor(brightness * 245);
+        let g = Math.floor(brightness * 225);
+        let b = Math.floor(brightness * 205);
 
-        // Block size: 1 at full sharpness, up to 6 at zero
-        const blockSize = Math.max(1, Math.round(U.lerp(6, 1, sharp)));
-
-        // Average the block
-        let sum = 0, cnt = 0;
-        for (let by = 0; by < blockSize && iy + by < SZ; by++) {
-          for (let bx = 0; bx < blockSize && ix + bx < SZ; bx++) {
-            sum += img[(iy + by) * SZ + (ix + bx)];
-            rendered[(iy + by) * SZ + (ix + bx)] = 1;
-            cnt++;
-          }
-        }
-        const val = sum / cnt;
-
-        // Color: grayscale base + head tint
-        const brightness = U.lerp(val * 0.2, val, 0.2 + sharp * 0.8);
-        let r = Math.floor(brightness * 240);
-        let g = Math.floor(brightness * 220);
-        let b = Math.floor(brightness * 200);
-
-        // Tint by dominant head
-        if (hIdx >= 0 && sharp > 0.05) {
-          const hc = heads[hIdx].rgb;
-          const t = sharp * 0.25;
+        if (bestHead >= 0 && totalSharp > 0.05) {
+          const hc = heads[bestHead].rgb;
+          const t = totalSharp * 0.2;
           r = Math.floor(U.lerp(r, hc[0], t));
           g = Math.floor(U.lerp(g, hc[1], t));
           b = Math.floor(U.lerp(b, hc[2], t));
         }
 
-        // Draw the block
-        const px = ix * cellW, py = iy * cellH;
-        const bw = blockSize * cellW, bh = blockSize * cellH;
-
-        ctx.globalAlpha = 0.2 + sharp * 0.8;
+        ctx.globalAlpha = 0.15 + totalSharp * 0.85;
         ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
-        ctx.fillRect(px, py, bw + 0.5, bh + 0.5);
-
-        // At high sharpness, draw crisp edges
-        if (sharp > 0.7 && val > 0.5) {
-          ctx.strokeStyle = `rgba(255,255,255,${(sharp - 0.7) * 0.3})`;
-          ctx.lineWidth = 0.5;
-          ctx.strokeRect(px + 0.5, py + 0.5, cellW - 1, cellH - 1);
-        }
+        ctx.fillRect(bx * cellW, by * cellH, blockSize * cellW + 0.5, blockSize * cellH + 0.5);
       }
     }
     ctx.globalAlpha = 1;
@@ -1002,35 +1012,20 @@ const HeadsMod = (() => {
     for (let hi = 0; hi < heads.length; hi++) {
       const h = heads[hi];
       U.drawLensRing(ctx, h.x, h.y, perHeadR, 0.65, h.col);
-
-      // Drag handle
-      ctx.beginPath();
-      ctx.arc(h.x, h.y, 7, 0, U.TAU);
-      ctx.fillStyle = `rgba(${h.col},0.85)`;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Label
+      ctx.beginPath(); ctx.arc(h.x, h.y, 7, 0, U.TAU);
+      ctx.fillStyle = `rgba(${h.col},0.85)`; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
       ctx.font = 'bold 10px system-ui';
       ctx.fillStyle = `rgba(${h.col},0.9)`;
       ctx.textAlign = 'center';
       ctx.fillText(`Head ${hi}`, h.x, h.y - perHeadR - 5);
-
-      // Show per-head budget
-      ctx.font = '8px system-ui';
-      ctx.fillStyle = '#94a3b8';
+      ctx.font = '8px system-ui'; ctx.fillStyle = '#94a3b8';
       ctx.fillText(`${Math.round(perHeadBudget * 100)}% budget`, h.x, h.y + perHeadR + 12);
     }
 
-    // Title
-    ctx.font = 'bold 11px system-ui';
-    ctx.fillStyle = '#818cf8';
-    ctx.textAlign = 'center';
+    ctx.font = 'bold 11px system-ui'; ctx.fillStyle = '#818cf8'; ctx.textAlign = 'center';
     ctx.fillText(`${heads.length} Attention Head${heads.length>1?'s':''} — Drag to reposition`, W/2, 16);
 
-    // Tradeoff bar
     const barW = 200, barH = 6, barX = W/2 - barW/2, barY = H - 18;
     ctx.fillStyle = '#1a2340'; ctx.fillRect(barX, barY, barW, barH);
     ctx.fillStyle = '#818cf8'; ctx.fillRect(barX, barY, barW * entropy, barH);
@@ -1038,13 +1033,9 @@ const HeadsMod = (() => {
     ctx.textAlign = 'left'; ctx.fillText('Sharp/Few', barX, barY - 2);
     ctx.textAlign = 'right'; ctx.fillText('Blurry/Many', barX + barW, barY - 2);
 
-    // Stats
-    const totalCoverage = U.clamp(heads.length * entropy * 0.3, 0, 1);
-    const avgSharp = sharpMap.reduce((a,b) => a+b, 0) / sharpMap.length;
     document.getElementById('aStats').innerHTML = `
       <div class="sc"><div class="l">HEADS</div><div class="v" style="color:#818cf8">${heads.length}</div></div>
       <div class="sc"><div class="l">ENTROPY</div><div class="v" style="color:#fbbf24">${entropy.toFixed(2)}</div></div>
-      <div class="sc"><div class="l">AVG SHARPNESS</div><div class="v" style="color:#34d399">${Math.round(avgSharp*100)}%</div></div>
       <div class="sc"><div class="l">BUDGET/HEAD</div><div class="v" style="color:#f472b6">${Math.round(perHeadBudget*100)}%</div></div>
       <div class="sc"><div class="l">TRADEOFF</div><div class="v" style="color:#a78bfa">${entropy<0.3?'Detail':entropy>0.7?'Breadth':'Balanced'}</div></div>
     `;
@@ -1067,8 +1058,8 @@ const FFNMod = (() => {
     weightCenters = [];
     for (let i = 0; i < n; i++) {
       weightCenters.push({
-        x: 0.15 + rng() * 0.7,
-        y: 0.15 + rng() * 0.7,
+        x: 0.05 + rng() * 0.9,
+        y: 0.05 + rng() * 0.9,
         strength: 0.3 + rng() * 0.7,
         sign: rng() > 0.5 ? 1 : -1,
         freq: 1 + rng() * 3,
@@ -1086,19 +1077,16 @@ const FFNMod = (() => {
       const el = document.getElementById(id);
       if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
     });
-
     document.getElementById('fCenters').addEventListener('change', () => {
       generateWeights(+document.getElementById('fCenters').value);
       render();
     });
 
-    // Click to add/move nearest weight center
     const c = document.getElementById('cFFN');
     c.addEventListener('click', e => {
       const r = c.getBoundingClientRect();
       const mx = (e.clientX - r.left) / r.width;
       const my = (e.clientY - r.top) / r.height;
-      // Move nearest center
       let bestI = 0, bestD = Infinity;
       weightCenters.forEach((wc, i) => {
         const d = U.dst(mx, my, wc.x, wc.y);
@@ -1108,7 +1096,6 @@ const FFNMod = (() => {
       weightCenters[bestI].y = my;
       render();
     });
-
     render();
   }
 
@@ -1118,7 +1105,6 @@ const FFNMod = (() => {
     const showJac = document.getElementById('fJac').checked;
     const nonlin = +document.getElementById('fNonlin').value / 100;
     const showWeights = document.getElementById('fShowWeights').checked;
-
     document.getElementById('fStrV').textContent = Math.round(strength * 100) + '%';
     document.getElementById('fNonlinV').textContent = Math.round(nonlin * 100) + '%';
 
@@ -1126,64 +1112,46 @@ const FFNMod = (() => {
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    const step = 22;
-
-    // Complex multi-center warp with nonlinear interactions
     function warp(x, y) {
       if (strength < 0.001) return [x, y];
       let wx = x, wy = y;
       const nx = x / W, ny = y / H;
-
       for (const wc of weightCenters) {
         const dx = nx - wc.x, dy = ny - wc.y;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        const R = 0.2;
-
-        // Gaussian influence
-        const gauss = Math.exp(-d * d / (2 * R * R));
-
-        // Nonlinear component: ReLU-like + sinusoidal interference
+        const d = Math.sqrt(dx*dx + dy*dy);
+        const R = 0.25;
+        const gauss = Math.exp(-d*d / (2*R*R));
         let nlFactor = gauss;
         if (nonlin > 0) {
-          // ReLU gate
           const relu = Math.max(0, 1 - d / R);
-          // Sinusoidal interference between centers
           const interference = Math.sin(d * wc.freq * 20 + wc.phase) * 0.3;
           nlFactor = U.lerp(gauss, relu * (1 + interference * nonlin), nonlin);
         }
-
         const push = strength * wc.strength * wc.sign * nlFactor;
-
-        // Radial push/pull
         if (d > 0.001) {
-          wx += (dx / d) * push * W * 0.15;
-          wy += (dy / d) * push * H * 0.15;
+          wx += (dx / d) * push * W * 0.18;
+          wy += (dy / d) * push * H * 0.18;
         }
-
-        // Tangential swirl (nonlinear)
         if (nonlin > 0.2) {
           const swirl = strength * nonlin * gauss * wc.sign * 0.3;
-          wx += -dy / Math.max(d, 0.01) * swirl * W * 0.08;
-          wy += dx / Math.max(d, 0.01) * swirl * H * 0.08;
+          wx += -dy / Math.max(d, 0.01) * swirl * W * 0.1;
+          wy += dx / Math.max(d, 0.01) * swirl * H * 0.1;
         }
       }
-
-      // Cross-center interference
       if (weightCenters.length > 1 && nonlin > 0.3) {
         for (let i = 0; i < weightCenters.length; i++) {
-          for (let j = i + 1; j < weightCenters.length; j++) {
+          for (let j = i+1; j < weightCenters.length; j++) {
             const ci = weightCenters[i], cj = weightCenters[j];
             const midX = (ci.x + cj.x) / 2, midY = (ci.y + cj.y) / 2;
             const dMid = U.dst(nx, ny, midX, midY);
             const interDist = U.dst(ci.x, ci.y, cj.x, cj.y);
-            const interStrength = Math.exp(-dMid * dMid / (interDist * interDist * 0.3));
+            const interStrength = Math.exp(-dMid * dMid / (interDist * interDist * 0.3 + 0.001));
             const interPush = strength * nonlin * interStrength * 0.1;
             wx += Math.sin(nx * 30 + cj.phase) * interPush * W * 0.05;
             wy += Math.cos(ny * 30 + ci.phase) * interPush * H * 0.05;
           }
         }
       }
-
       return [wx, wy];
     }
 
@@ -1219,9 +1187,7 @@ const FFNMod = (() => {
     if (showWeights) {
       for (const wc of weightCenters) {
         const wcx = wc.x * W, wcy = wc.y * H;
-        const R = 0.2 * Math.min(W, H);
-
-        // Influence radius
+        const R = 0.25 * Math.min(W, H);
         const grad = ctx.createRadialGradient(wcx, wcy, 0, wcx, wcy, R * strength);
         grad.addColorStop(0, U.hx(wc.col, 0.12 * strength));
         grad.addColorStop(1, U.hx(wc.col, 0));
@@ -1230,7 +1196,6 @@ const FFNMod = (() => {
         ctx.fillStyle = grad;
         ctx.fill();
 
-        // Center dot
         ctx.beginPath();
         ctx.arc(wcx, wcy, 5, 0, U.TAU);
         ctx.fillStyle = wc.col;
@@ -1239,26 +1204,22 @@ const FFNMod = (() => {
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // Sign indicator
         ctx.font = 'bold 12px system-ui';
         ctx.fillStyle = wc.sign > 0 ? '#34d399' : '#f87171';
         ctx.textAlign = 'center';
         ctx.fillText(wc.sign > 0 ? '+' : '−', wcx, wcy - 10);
 
-        // Strength label
         ctx.font = '8px system-ui';
         ctx.fillStyle = '#94a3b8';
         ctx.fillText(`w=${wc.strength.toFixed(2)}`, wcx, wcy + 14);
       }
     }
 
-    // Title
     ctx.font = 'bold 11px system-ui';
     ctx.fillStyle = '#818cf8';
     ctx.textAlign = 'center';
     ctx.fillText(`Feed-Forward: ${weightCenters.length} weight centers — ${Math.round(strength*100)}% expansion — ${Math.round(nonlin*100)}% nonlinearity`, W/2, 16);
 
-    // Legend
     if (showJac) {
       ctx.font = '9px system-ui';
       ctx.fillStyle = '#e94960'; ctx.textAlign = 'left';
@@ -1327,19 +1288,17 @@ const FFNMod = (() => {
 // ================================================================
 const PipeMod = (() => {
   let ctx, W, H, c;
-  let currentPts = [];
-  let patches = [];
+  let focusPoints = [];
   let animFrame = null;
   let mouseX = 0.5, mouseY = 0.5;
   let mode = 'smiley';
+  let time = 0;
 
-  const OBJECTS = ['smiley','torus','trefoil','clusters','rings'];
-  const LABELS = ['😊 Smiley','🍩 Torus','🪢 Trefoil','🔵 Clusters','⭕ Rings'];
+  const OBJECTS = ['smiley','torus','clusters','rings'];
+  const LABELS = ['😊 Smiley','🍩 Torus','🔵 Clusters','⭕ Rings'];
 
   function init() {
     ({c, ctx, W, H} = U.mkCanvas('cPipe', 440));
-    currentPts = genPts(mode);
-    patches = genPatchesFromPts(currentPts);
 
     const tabEl = document.getElementById('pTabs');
     let html = '';
@@ -1350,12 +1309,45 @@ const PipeMod = (() => {
     tabEl.querySelectorAll('.tab').forEach(btn => {
       btn.onclick = () => {
         mode = btn.dataset.m;
-        currentPts = genPts(mode);
-        patches = genPatchesFromPts(currentPts);
+        focusPoints = [];
         tabEl.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
         btn.classList.add('on');
         render();
       };
+    });
+
+    // Click to add focus points (like Section 1)
+    c.addEventListener('click', e => {
+      const r = c.getBoundingClientRect();
+      const mx = (e.clientX - r.left) / r.width;
+      const my = (e.clientY - r.top) / r.height;
+      const nx = mx * 2 - 1, ny = my * 2 - 1;
+
+      let found = false;
+      for (const fp of focusPoints) {
+        if (U.dst(nx, ny, fp.nx, fp.ny) < 0.25) {
+          fp.strength = Math.min(fp.strength + 0.3, 1.0);
+          fp.radius = Math.max(fp.radius * 0.75, 0.1);
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        focusPoints.push({ nx, ny, strength: 0.4, radius: 0.35, time: performance.now() });
+      }
+      for (const fp of focusPoints) {
+        if (!found || U.dst(nx, ny, fp.nx, fp.ny) >= 0.25) {
+          fp.strength = Math.max(fp.strength * 0.85, 0.05);
+        }
+      }
+      if (focusPoints.length > 5) focusPoints.shift();
+      render();
+    });
+
+    c.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (focusPoints.length > 0) focusPoints.pop();
+      render();
     });
 
     c.addEventListener('mousemove', e => {
@@ -1370,63 +1362,15 @@ const PipeMod = (() => {
       if (el) { el.addEventListener('input', render); el.addEventListener('change', render); }
     });
 
+    // Torus animation
+    function tick() {
+      time += 0.008;
+      if (mode === 'torus') render();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
     render();
-  }
-
-  function genPts(type) {
-    const pts = [];
-    const N = 280;
-    const rng = U.srand(42);
-    switch (type) {
-      case 'smiley':
-        for (let i = 0; i < N*.4; i++) { const a=(i/(N*.4))*U.TAU, r=.35+(rng()-.5)*.015; pts.push({x:.5+r*Math.cos(a),y:.5+r*Math.sin(a),t:'face'}); }
-        for (let i = 0; i < N*.08; i++) { const a=(i/(N*.08))*U.TAU, r=.05; pts.push({x:.38+r*Math.cos(a),y:.4+r*Math.sin(a),t:'eye'}); }
-        for (let i = 0; i < N*.08; i++) { const a=(i/(N*.08))*U.TAU, r=.05; pts.push({x:.62+r*Math.cos(a),y:.4+r*Math.sin(a),t:'eye'}); }
-        for (let i = 0; i < N*.12; i++) { const a=Math.PI*.15+(i/(N*.12))*Math.PI*.7, r=.2; pts.push({x:.5+r*Math.cos(a),y:.55+r*Math.sin(a)*.5,t:'mouth'}); }
-        for (let i = 0; i < N*.32; i++) { const a=rng()*U.TAU, r=rng()*.3; pts.push({x:.5+r*Math.cos(a),y:.5+r*Math.sin(a),t:'fill'}); }
-        break;
-      case 'torus':
-        for (let i=0;i<N;i++){const u=rng()*U.TAU,v=rng()*U.TAU,R=.25,r=.1;pts.push({x:.5+(R+r*Math.cos(v))*Math.cos(u),y:.5+(R+r*Math.cos(v))*Math.sin(u),t:'torus',u,v})}
-        break;
-      case 'trefoil':
-        for(let i=0;i<N;i++){const t=(i/N)*U.TAU,r=.15*Math.cos(3*t)+.25;pts.push({x:.5+r*Math.cos(t)+(rng()-.5)*.015,y:.5+r*Math.sin(t)+(rng()-.5)*.015,t:'knot',p:t})}
-        break;
-      case 'clusters':
-        [{cx:.25,cy:.3},{cx:.72,cy:.35},{cx:.5,cy:.75},{cx:.18,cy:.68}].forEach((cc,ci)=>{for(let i=0;i<N/4;i++){const a=rng()*U.TAU,r=rng()*.1;pts.push({x:cc.cx+r*Math.cos(a),y:cc.cy+r*Math.sin(a),t:'cl',cl:ci})}});
-        break;
-      case 'rings':
-        for(let i=0;i<N/2;i++){const a=(i/(N/2))*U.TAU,r=.15+(rng()-.5)*.015;pts.push({x:.35+r*Math.cos(a),y:.5+r*Math.sin(a),t:'r1',p:a})}
-        for(let i=0;i<N/2;i++){const a=(i/(N/2))*U.TAU,r=.15+(rng()-.5)*.015;pts.push({x:.65+r*Math.cos(a),y:.5+r*Math.sin(a),t:'r2',p:a})}
-        break;
-    }
-    return pts;
-  }
-
-  function genPatchesFromPts(pts) {
-    const k=4,rng2=U.srand(99),cs=[];
-    for(let i=0;i<k;i++){const p=pts[Math.floor(rng2()*pts.length)];cs.push({x:p.x,y:p.y})}
-    for(let iter=0;iter<3;iter++){const sums=cs.map(()=>({sx:0,sy:0,n:0}));pts.forEach(p=>{let bi=0,bd=Infinity;cs.forEach((cc,i)=>{const d=U.dst(p.x,p.y,cc.x,cc.y);if(d<bd){bd=d;bi=i}});sums[bi].sx+=p.x;sums[bi].sy+=p.y;sums[bi].n++});sums.forEach((s,i)=>{if(s.n>0){cs[i].x=s.sx/s.n;cs[i].y=s.sy/s.n}})}
-    const result=[];
-    for(let i=0;i<k;i++){const ms=pts.filter(p=>{let bi=0,bd=Infinity;cs.forEach((cc,j)=>{const d=U.dst(p.x,p.y,cc.x,cc.y);if(d<bd){bd=d;bi=j}});return bi===i});if(!ms.length)continue;const cx2=ms.reduce((s,p)=>s+p.x,0)/ms.length;const cy2=ms.reduce((s,p)=>s+p.y,0)/ms.length;
-      let mr=0;ms.forEach(p=>{const d=U.dst(p.x,p.y,cx2,cy2);if(d>mr)mr=d});
-      result.push({cx:cx2,cy:cy2,r:mr+.02,col:U.PAL[i]});
-    }
-    return result;
-  }
-
-  function ptColor(p) {
-    switch (p.t) {
-      case 'face': return '#818cf8';
-      case 'eye': return '#f472b6';
-      case 'mouth': return '#fbbf24';
-      case 'fill': return '#334155';
-      case 'torus': return `hsl(${(p.u / U.TAU) * 360},70%,60%)`;
-      case 'knot': return `hsl(${(p.p / U.TAU) * 360},70%,60%)`;
-      case 'cl': return U.PAL[p.cl % U.PAL.length];
-      case 'r1': return `hsl(${(p.p / U.TAU) * 360},65%,55%)`;
-      case 'r2': return `hsl(${((p.p / U.TAU) * 360 + 180) % 360},65%,55%)`;
-      default: return '#94a3b8';
-    }
   }
 
   function render() {
@@ -1439,87 +1383,143 @@ const PipeMod = (() => {
 
     document.getElementById('pLayerV').textContent = layer.toFixed(1);
 
+    const focusEl = document.getElementById('pFocus');
+    const focus = focusEl ? (+focusEl.value / 100) : 0.3;
+    const focusVEl = document.getElementById('pFocusV');
+    if (focusVEl) focusVEl.textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
+
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#060b18';
     ctx.fillRect(0, 0, W, H);
 
-    const lx = mouseX * W, ly = mouseY * H;
-    const focusEl = document.getElementById('pFocus');
-    const focus = showLens && focusEl ? (+focusEl.value / 100) : 0.3;
-    const lensR = U.lerp(40, 160, focus);
-
-    const focusVEl = document.getElementById('pFocusV');
-    if (focusVEl) focusVEl.textContent = focus < 0.3 ? 'Narrow' : focus < 0.7 ? 'Medium' : 'Broad';
-
     const routing = U.clamp(1 - layer / 4, 0, 1);
     const resolving = U.clamp((layer - 2) / 5, 0, 1);
     const gluing = U.clamp((layer - 8) / 3, 0, 1);
-    const deform = layer === 0 ? 0 : (layer <= 3 ? layer * 0.07 : (layer <= 8 ? 0.21 + (layer - 3) * 0.035 : 0.385 - (layer - 8) * 0.11));
+    const deform = layer === 0 ? 0 : (layer <= 3 ? layer * 0.07 : (layer <= 8 ? 0.21 + (layer-3)*0.035 : 0.385 - (layer-8)*0.11));
 
-    function warp(x, y) {
-      if (layer < 0.1) return [x, y];
-      let wx = x, wy = y;
+    function warpNorm(nx, ny) {
+      if (layer < 0.1) return [nx, ny];
+      let wx = nx, wy = ny;
       if (routing > 0) {
-        const dx = x - W / 2, dy = y - H / 2;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        const a = deform * routing * Math.exp(-d * d / (W * W * 0.15)) * 1.8;
-        const cs2 = Math.cos(a), sn = Math.sin(a);
-        wx = W / 2 + dx * cs2 - dy * sn;
-        wy = H / 2 + dx * sn + dy * cs2;
+        const d = Math.hypot(nx, ny);
+        const a = deform * routing * Math.exp(-d*d/0.8) * 1.5;
+        const cs = Math.cos(a), sn = Math.sin(a);
+        wx = nx*cs - ny*sn; wy = nx*sn + ny*cs;
       }
       if (resolving > 0) {
-        for (const p of patches) {
-          const pcx = p.cx * W, pcy = p.cy * H;
-          const dx = wx - pcx, dy = wy - pcy;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          const inf = deform * resolving * Math.exp(-d * d / 7000) * 0.45;
+        const centers = [{x:-0.5,y:-0.5},{x:0.5,y:-0.5},{x:-0.5,y:0.5},{x:0.5,y:0.5}];
+        for (const cc of centers) {
+          const dx = wx - cc.x, dy = wy - cc.y;
+          const d = Math.hypot(dx, dy);
+          const inf = deform * resolving * Math.exp(-d*d/0.5) * 0.3;
           wx += dx * inf; wy += dy * inf;
         }
       }
-      if (gluing > 0) { wx = U.lerp(wx, x, gluing * 0.7); wy = U.lerp(wy, y, gluing * 0.7); }
+      if (gluing > 0) { wx = U.lerp(wx, nx, gluing * 0.7); wy = U.lerp(wy, ny, gluing * 0.7); }
       return [wx, wy];
     }
 
-    if (showGrid) U.drawGrid(ctx, W, H, warp, 26, `rgba(100,116,139,${0.04 + deform * 0.12})`, 0.5);
+    // Render pixel-grid image with focus-based sharpening
+    const RES = 96;
+    const cellW = W / RES, cellH = H / RES;
+    const lx = mouseX * W, ly = mouseY * H;
+    const lensR = U.lerp(40, 160, focus);
 
-    if (showPatch) {
-      for (const p of patches) {
-        const [wcx, wcy] = warp(p.cx * W, p.cy * H);
-        const grad = ctx.createRadialGradient(wcx, wcy, 0, wcx, wcy, p.r * Math.min(W, H));
-        grad.addColorStop(0, U.hx(p.col, 0.06 + resolving * 0.08));
-        grad.addColorStop(1, U.hx(p.col, 0));
-        ctx.beginPath();
-        ctx.arc(wcx, wcy, p.r * Math.min(W, H), 0, U.TAU);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = U.hx(p.col, 0.12 + resolving * 0.18);
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      }
-    }
+    for (let iy = 0; iy < RES; iy++) {
+      for (let ix = 0; ix < RES; ix++) {
+        const nx = ix / RES * 2 - 1, ny = iy / RES * 2 - 1;
 
-    for (const p of currentPts) {
-      const px = p.x * W, py = p.y * H;
-      const [wx, wy] = warp(px, py);
-      let alpha = 0.35, size = 1.8;
-      if (showLens) {
-        const d = U.dst(wx, wy, lx, ly);
-        if (d < lensR) {
-          const sh = 1 - d / lensR;
-          alpha = 0.35 + sh * 0.55 * (1 - focus);
-          size = 1.8 + sh * 2.5 * (1 - focus);
+        // Sharpness from focus points
+        let sharpness = 0;
+        for (const fp of focusPoints) {
+          const d = U.dst(nx, ny, fp.nx, fp.ny);
+          const falloff = Math.exp(-d * d / (2 * fp.radius * fp.radius));
+          sharpness += falloff * fp.strength;
         }
+
+        // Lens sharpness
+        if (showLens) {
+          const px = (ix + 0.5) * cellW, py = (iy + 0.5) * cellH;
+          const dLens = U.dst(px, py, lx, ly);
+          if (dLens < lensR) {
+            sharpness += (1 - dLens / lensR) * 0.5 * (1 - focus);
+          }
+        }
+
+        sharpness = U.clamp(sharpness, 0, 1);
+        const baseBlur = focusPoints.length > 0 ? 0.04 : 0.4;
+        const effectiveSharp = Math.max(baseBlur, sharpness);
+
+        const blockSize = Math.max(1, Math.round(U.lerp(7, 1, effectiveSharp)));
+        const bx = Math.floor(ix / blockSize) * blockSize;
+        const by = Math.floor(iy / blockSize) * blockSize;
+        if (ix !== bx || iy !== by) continue;
+
+        const snx = (bx + blockSize/2) / RES * 2 - 1;
+        const sny = (by + blockSize/2) / RES * 2 - 1;
+        const [wnx, wny] = warpNorm(snx, sny);
+        let val = ObjGen.sample(mode, wnx, wny, time);
+
+        const layerBoost = U.clamp(layer / 11, 0, 1);
+        const bright = effectiveSharp * (0.5 + layerBoost * 0.5) + (1 - effectiveSharp) * 0.1;
+        const v = val * bright;
+
+        let r, g, b;
+        if (val > 0.6) { r = Math.floor(40+v*215); g = Math.floor(35+v*195); b = Math.floor(20+v*120); }
+        else if (val > 0.2) { r = Math.floor(20+v*160); g = Math.floor(18+v*140); b = Math.floor(30+v*180); }
+        else { r = Math.floor(8+v*60); g = Math.floor(8+v*50); b = Math.floor(15+v*80); }
+
+        // Patch tinting
+        if (showPatch && resolving > 0.1) {
+          const qi = (wnx > 0 ? 1 : 0) + (wny > 0 ? 2 : 0);
+          const pCols = [[129,140,248],[244,114,182],[52,211,153],[251,191,36]];
+          const pc = pCols[qi];
+          const tint = resolving * 0.15;
+          r = Math.floor(U.lerp(r, pc[0], tint));
+          g = Math.floor(U.lerp(g, pc[1], tint));
+          b = Math.floor(U.lerp(b, pc[2], tint));
+        }
+
+        const alpha = U.clamp(0.2 + effectiveSharp * 0.8, 0.12, 1);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = `rgb(${U.clamp(r,0,255)},${U.clamp(g,0,255)},${U.clamp(b,0,255)})`;
+        ctx.fillRect(bx * cellW, by * cellH, blockSize * cellW + 0.5, blockSize * cellH + 0.5);
       }
-      ctx.beginPath();
-      ctx.arc(wx, wy, size, 0, U.TAU);
-      ctx.fillStyle = ptColor(p);
-      ctx.globalAlpha = alpha;
-      ctx.fill();
     }
     ctx.globalAlpha = 1;
 
-    if (showLens) U.drawLensRing(ctx, lx, ly, lensR, 0.7);
+    // Grid overlay
+    if (showGrid && layer > 0.1) {
+      const gridStep = 28;
+      function warpScreen(x, y) {
+        const snx2 = x / W * 2 - 1, sny2 = y / H * 2 - 1;
+        const [wnx2, wny2] = warpNorm(snx2, sny2);
+        return [((wnx2 + 1) / 2) * W, ((wny2 + 1) / 2) * H];
+      }
+      U.drawGrid(ctx, W, H, warpScreen, gridStep, `rgba(100,116,139,${0.04 + deform * 0.1})`, 0.4);
+    }
 
+    // Lens overlay
+    if (showLens) U.drawLensRing(ctx, lx, ly, lensR, 0.6);
+
+    // Focus point indicators
+    for (const fp of focusPoints) {
+      const sx = (fp.nx + 1) / 2 * W, sy = (fp.ny + 1) / 2 * H;
+      const sr = fp.radius * Math.min(W, H) / 2;
+      const age = (performance.now() - fp.time) / 1000;
+      const pulse = 0.6 + 0.4 * Math.sin(age * 2);
+      ctx.beginPath();
+      ctx.arc(sx, sy, sr, 0, U.TAU);
+      ctx.strokeStyle = `rgba(129,140,248,${0.2 * pulse})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.font = 'bold 8px system-ui';
+      ctx.fillStyle = `rgba(129,140,248,${0.5 * pulse})`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`${Math.round(fp.strength * 100)}%`, sx, sy - sr - 3);
+    }
+
+    // Phase label
     ctx.font = 'bold 11px system-ui';
     ctx.textAlign = 'center';
     let phaseCol, phaseTxt;
@@ -1530,11 +1530,19 @@ const PipeMod = (() => {
     ctx.fillStyle = phaseCol;
     ctx.fillText(phaseTxt, W / 2, 18);
 
+    if (focusPoints.length > 0) {
+      ctx.font = '9px system-ui';
+      ctx.fillStyle = '#fbbf24';
+      ctx.textAlign = 'right';
+      ctx.fillText('Click to focus | Right-click to remove', W - 8, 18);
+    }
+
     document.getElementById('pStats').innerHTML = `
       <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${layer.toFixed(1)}</div></div>
       <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${layer < 0.5 ? 'Embed' : layer <= 3 ? 'Route' : layer <= 8 ? 'Resolve' : 'Glue'}</div></div>
       <div class="sc"><div class="l">DEFORMATION</div><div class="v" style="color:#fbbf24">${Math.round(deform * 100)}%</div></div>
-      <div class="sc"><div class="l">OBJECT</div><div class="v" style="color:#34d399">${mode}</div><div class="s">${currentPts.length} pts</div></div>
+      <div class="sc"><div class="l">FOCUS PTS</div><div class="v" style="color:#34d399">${focusPoints.length}</div></div>
+      <div class="sc"><div class="l">OBJECT</div><div class="v" style="color:#f472b6">${mode}</div></div>
     `;
   }
 
@@ -1542,11 +1550,18 @@ const PipeMod = (() => {
     if (animFrame) return;
     const slider = document.getElementById('pLayer');
     slider.value = 0;
+    focusPoints = [];
     render();
     const dur = 8000, start = performance.now();
     function step(now) {
       const t = Math.min((now - start) / dur, 1);
       slider.value = Math.round(t * 110);
+      // Auto-add focus points at key moments
+      if (Math.abs(t - 0.15) < 0.01) focusPoints.push({nx: -0.3, ny: -0.2, strength: 0.5, radius: 0.35, time: now});
+      if (Math.abs(t - 0.35) < 0.01) focusPoints.push({nx: 0.3, ny: 0.2, strength: 0.5, radius: 0.35, time: now});
+      if (Math.abs(t - 0.55) < 0.01) {
+        for (const fp of focusPoints) { fp.strength = Math.min(fp.strength + 0.3, 1); fp.radius *= 0.7; }
+      }
       render();
       if (t < 1) animFrame = requestAnimationFrame(step);
       else animFrame = null;
@@ -1557,6 +1572,7 @@ const PipeMod = (() => {
   function reset() {
     if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
     document.getElementById('pLayer').value = 0;
+    focusPoints = [];
     render();
   }
 
@@ -1581,14 +1597,12 @@ const HalMod = (() => {
   function init() {
     ({c, ctx, W, H} = U.mkCanvas('cHal', 360));
     document.getElementById('xCov').addEventListener('input', render);
-
     c.addEventListener('mousemove', e => {
       const r = c.getBoundingClientRect();
       qx = (e.clientX - r.left) / r.width;
       qy = (e.clientY - r.top) / r.height;
       render();
     });
-
     render();
   }
 
@@ -1643,41 +1657,27 @@ const HalMod = (() => {
     const qCol = qCov > 0.5 ? '#34d399' : qCov > 0.2 ? '#fbbf24' : '#ef4444';
 
     const qpx = qx * W, qpy = qy * H;
-    ctx.beginPath();
-    ctx.arc(qpx, qpy, 10, 0, U.TAU);
-    ctx.fillStyle = U.hx(qCol, 0.25);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(qpx, qpy, 5, 0, U.TAU);
-    ctx.fillStyle = qCol;
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.font = 'bold 10px system-ui';
-    ctx.fillStyle = '#e2e8f0';
-    ctx.textAlign = 'center';
-    ctx.fillText('Query', qpx, qpy - 14);
+    ctx.beginPath(); ctx.arc(qpx, qpy, 10, 0, U.TAU);
+    ctx.fillStyle = U.hx(qCol, 0.25); ctx.fill();
+    ctx.beginPath(); ctx.arc(qpx, qpy, 5, 0, U.TAU);
+    ctx.fillStyle = qCol; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.font = 'bold 10px system-ui'; ctx.fillStyle = '#e2e8f0';
+    ctx.textAlign = 'center'; ctx.fillText('Query', qpx, qpy - 14);
 
     const barW = 140, barH = 10, barX = W - barW - 16, barY = 16;
-    ctx.fillStyle = '#1a2340';
-    ctx.fillRect(barX, barY, barW, barH);
-    ctx.fillStyle = qCol;
-    ctx.fillRect(barX, barY, barW * conf, barH);
-    ctx.font = '9px system-ui';
-    ctx.fillStyle = '#e2e8f0';
-    ctx.textAlign = 'left';
+    ctx.fillStyle = '#1a2340'; ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = qCol; ctx.fillRect(barX, barY, barW * conf, barH);
+    ctx.font = '9px system-ui'; ctx.fillStyle = '#e2e8f0'; ctx.textAlign = 'left';
     ctx.fillText(`Confidence: ${Math.round(conf * 100)}%`, barX, barY - 3);
 
-    ctx.fillStyle = '#1a2340';
-    ctx.fillRect(barX, barY + 22, barW, barH);
+    ctx.fillStyle = '#1a2340'; ctx.fillRect(barX, barY + 22, barW, barH);
     ctx.fillStyle = qCov > 0.5 ? '#34d399' : qCov > 0.2 ? '#fbbf24' : '#ef4444';
     ctx.fillRect(barX, barY + 22, barW * qCov, barH);
     ctx.fillText(`Coverage: ${Math.round(qCov * 100)}%`, barX, barY + 19);
 
     if (qCov < 0.3 && conf > 0.7) {
-      ctx.font = 'bold 12px system-ui';
-      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 12px system-ui'; ctx.fillStyle = '#ef4444';
       ctx.textAlign = 'center';
       ctx.fillText('⚠️ HALLUCINATION RISK: High confidence, low coverage!', W / 2, H - 12);
     }
@@ -1694,6 +1694,7 @@ const HalMod = (() => {
   setTimeout(init, 800);
   return {};
 })();
+
 
 // ================================================================
 // SCROLL FADE-IN
