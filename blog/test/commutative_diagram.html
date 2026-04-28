@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kommutative Diagramme – Visuell & Intuitiv</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 40px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin: 30px 0 15px;
+            color: #667eea;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+            color: #a78bfa;
+        }
+
+        p, .explanation {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin: 10px 0;
+            color: #ccc;
+        }
+
+        .section {
+            background: #12122a;
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        canvas {
+            border-radius: 15px;
+            background: #080818;
+            border: 1px solid #333;
+        }
+
+        .interactive-area {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .svg-diagram {
+            width: 100%;
+            height: 400px;
+            border-radius: 15px;
+            background: radial-gradient(ellipse at center, #0f0f2a 0%, #080818 100%);
+            border: 1px solid #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Georgia', serif;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        input[type="range"] {
+            width: 300px;
+            accent-color: #667eea;
+        }
+
+        .slider-label {
+            color: #a78bfa;
+            font-size: 0.95em;
+            min-width: 80px;
+        }
+
+        .metaphor-box {
+            background: linear-gradient(135deg, #1a1a3e, #2a1a3e);
+            border: 1px solid #4a3a6a;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .metaphor-box::before {
+            content: "💡";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 1.5em;
+            background: #12122a;
+            padding: 0 10px;
+        }
+
+        .germ-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border-radius: 15px;
+            background: radial-gradient(ellipse at center, #0a1628 0%, #080818 100%);
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .nav-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-dot.active {
+            background: #667eea;
+            box-shadow: 0 0 10px #667eea;
+        }
+
+        .formula-display {
+            text-align: center;
+            padding: 20px;
+            background: #0a0a1a;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 1.3em;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .step-dot {
+            width: 30px;
+            height: 4px;
+            border-radius: 2px;
+            background: #333;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+        }
+
+        .topology-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes flow {
+            0% { stroke-dashoffset: 20; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .flowing {
+            animation: flow 1s linear infinite;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .section { padding: 20px; }
+            .svg-diagram { height: 300px; }
+            .germ-container { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kommutative Diagramme<br><small style="font-size:0.5em; opacity:0.7;">Von der Intuition zum Sehen</small></h1>
+
+        <!-- SECTION 1: Der Pfeil -->
+        <div class="section" id="section-arrow">
+            <h2>1. Der Pfeil: Eine Bewegung sehen</h2>
+            <p>Vergiss Symbole. Ein Pfeil ist eine <strong>Bewegung</strong>. Etwas verwandelt sich in etwas anderes.</p>
+            
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Du hast einen Klumpen Ton (A). Du formst ihn zu einer Schale (B). Die Bewegung deiner Hände – das ist der Pfeil f.</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="arrowCanvas" width="700" height="250"></canvas>
+            </div>
+
+            <div class="controls">
+                <button id="btnMorph" onclick="startMorph()">▶ Verwandlung starten</button>
+                <button id="btnReset1" onclick="resetMorph()">↺ Zurücksetzen</button>
+            </div>
+
+            <div class="slider-container">
+                <span class="slider-label">Tempo:</span>
+                <input type="range" id="morphSpeed" min="1" max="10" value="5">
+            </div>
+
+            <div class="formula-display">
+                \( A \xrightarrow{\quad f \quad} B \)
+            </div>
+
+            <p class="explanation">Der Pfeil <em>f</em> ist kein toter Buchstabe. Er ist die <strong>Essenz der Transformation</strong> – wie sich Struktur von einem Ort zu einem anderen bewegt.</p>
+        </div>
+
+        <!-- SECTION 2: Das Dreieck -->
+        <div class="section" id="section-triangle">
+            <h2>2. Das Dreieck: Zwei Wege, ein Ziel</h2>
+            <p>Jetzt wird es spannend. Du stehst bei A und willst nach C. Es gibt <strong>zwei Wege</strong>.</p>
+
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Du willst von deinem Haus zum Park. Du kannst direkt gehen (h), oder erst zum Laden (B) und dann zum Park (g). <em>Kommutativität</em> heißt: Du kommst am <strong>exakt selben Punkt</strong> im Park an!</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="triangleCanvas" width="700" height="400"></canvas>
+            </div>
+
+            <div class="controls">
+                <button onclick="animateTrianglePath('top')">Weg über B (oben)</button>
+                <button onclick="animateTrianglePath('direct')">Direkter Weg h</button>
+                <button onclick="animateTrianglePath('both')">Beide gleichzeitig!</button>
+                <button onclick="resetTriangle()">↺ Zurück</button>
+            </div>
+
+            <div class="formula-display">
+                \( g \circ f = h \)
+            </div>
+
+            <p class="explanation"><strong>Kommutativität = Egal welchen Weg du nimmst, das Ergebnis ist dasselbe.</strong> Die beiden Wege sind wie zwei verschiedene Rezepte für dasselbe Gericht.</p>
+        </div>
+
+        <!-- SECTION 3: Das Quadrat -->
+        <div class="section" id="section-square">
+            <h2>3. Das Kommutative Quadrat: Zwei Welten, eine Wahrheit</h2>
+            <p>Das Quadrat ist das <strong>Herzstück</strong>. Hier siehst du, wie zwei parallele Welten konsistent zusammenhängen.</p>
+
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Oben ist die Welt der Erwachsenen, unten die Welt der Kinder. Links ist "Montag", rechts ist "Freitag". Der obere Pfeil ist "eine Woche arbeiten". Der untere Pfeil ist "eine Woche Schule". Die vertikalen Pfeile übersetzen: "Was macht ein Erwachsener?" → "Was macht ein Kind?"</p>
+                <p>Kommutativität sagt: <em>Erst übersetzen, dann die Woche leben</em> = <em>Erst die Woche leben, dann übersetzen.</em></p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="squareCanvas" width="700" height="450"></canvas>
+            </div>
+
+            <div class="controls">
+                <button onclick="animateSquarePath('clockwise')">Weg: → dann ↓</button>
+                <button onclick="animateSquarePath('counter')">Weg: ↓ dann →</button>
+                <button onclick="animateSquarePath('both')">Beide Wege!</button>
+                <button onclick="toggleWater()">💧 Wasser gießen</button>
+                <button onclick="resetSquare()">↺ Zurück</button>
+            </div>
+
+            <div class="formula-display">
+                \( \beta \circ f = g \circ \alpha \)
+            </div>
+
+            <p class="explanation">Das ist die <strong>Garben-Bedingung</strong>, die du schon kennst! Lokale Daten müssen konsistent sein – egal in welcher Reihenfolge du einschränkst und transformierst.</p>
+        </div>
+
+        <!-- SECTION 4: Homotopie -->
+        <div class="section" id="section-homotopy">
+            <h2>4. Homotopie: Die Fläche zwischen den Wegen</h2>
+            <p>In der HoTT ist Gleichheit kein starres "=". Es ist ein <strong>Pfad</strong> – und zwischen Pfaden gibt es <strong>Flächen</strong>.</p>
+
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Zwei Gummibänder sind zwischen denselben zwei Nägeln gespannt. Du kannst das eine Band <em>kontinuierlich</em> in das andere verformen, ohne es zu zerreißen. Diese Verformung – das ist die <strong>Homotopie</strong>. Die Fläche, die das Band dabei überstreicht, ist die <strong>2-Zelle</strong>.</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="homotopyCanvas" width="700" height="400"></canvas>
+            </div>
+
+            <div class="slider-container">
+                <span class="slider-label">Homotopie t:</span>
+                <input type="range" id="homotopySlider" min="0" max="100" value="0" oninput="updateHomotopy(this.value)">
+                <span id="homotopyValue" class="slider-label">t = 0.00</span>
+            </div>
+
+            <div class="controls">
+                <button onclick="playHomotopy()">▶ Homotopie abspielen</button>
+                <button onclick="showFilledSurface()">Fläche füllen</button>
+                <button onclick="resetHomotopy()">↺ Zurück</button>
+            </div>
+
+            <div class="formula-display">
+                \( H : f \simeq g \quad \text{(ein Pfad zwischen Pfaden)} \)
+            </div>
+
+            <p class="explanation">In HoTT: Wenn \( p, q : a =_A b \) zwei Beweise der Gleichheit sind, dann ist ein Beweis \( H : p = q \) eine <strong>Fläche</strong> (2-Pfad) zwischen den Pfaden p und q.</p>
+        </div>
+
+        <!-- SECTION 5: Pullback -->
+        <div class="section" id="section-pullback">
+            <h2>5. Das Pullback: Konsistente Paare finden</h2>
+            <p>Der Pullback ist das <strong>Garben-Werkzeug</strong> schlechthin. Er findet alle Punkte, die "zusammenpassen".</p>
+
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Du hast eine Liste von Schülern (A) und eine Liste von Sportvereinen (B). Beide haben eine Verbindung zur Stadt (C) – jeder Schüler wohnt in einer Stadt, jeder Verein ist in einer Stadt. Der <strong>Pullback P</strong> ist die Liste aller Paare (Schüler, Verein), wo der Schüler in <em>derselben Stadt</em> wohnt wie der Verein!</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="pullbackCanvas" width="700" height="450"></canvas>
+            </div>
+
+            <div class="controls">
+                <button onclick="animatePullback('show')">Pullback zeigen</button>
+                <button onclick="animatePullback('pairs')">Konsistente Paare</button>
+                <button onclick="animatePullback('universal')">Universelle Eigenschaft</button>
+                <button onclick="resetPullback()">↺ Zurück</button>
+            </div>
+
+            <div class="formula-display">
+                \( P = A \times_C B = \{(a, b) \mid f(a) = g(b)\} \)
+            </div>
+
+            <p class="explanation">Der Pullback ist der Raum aller <strong>konsistenten Wahlen</strong>. In Garben: Es ist genau dort, wo lokale Schnitte auf verschiedenen offenen Mengen <strong>übereinstimmen</strong>.</p>
+        </div>
+
+        <!-- SECTION 6: Keime und Topologie -->
+        <div class="section" id="section-germs">
+            <h2>6. Keime (Germs): Die lokale Welt einer Garbe</h2>
+            <p>Ein <strong>Keim</strong> ist das, was eine Garbe "an einem Punkt sieht" – die gesamte lokale Information, zusammengeschrumpft auf einen infinitesimalen Blick.</p>
+
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Du stehst an einem Punkt auf einer Landkarte. Du kannst nicht die ganze Karte sehen, aber du kannst in jede Richtung ein <em>winziges Stück</em> sehen. Alle Funktionen, die in deiner winzigen Umgebung gleich aussehen, sind für dich <strong>derselbe Keim</strong>. Der Keim ist dein "lokales Wissen".</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="germCanvas" width="700" height="500"></canvas>
+            </div>
+
+            <div class="controls">
+                <button onclick="showGermLevel(1)">Offene Menge U₁</button>
+                <button onclick="showGermLevel(2)">Kleinere Menge U₂ ⊂ U₁</button>
+                <button onclick="showGermLevel(3)">Noch kleiner U₃ ⊂ U₂</button>
+                <button onclick="showGermLevel(0)">→ Keim (Limes)</button>
+                <button onclick="showStalks()">Halme zeigen</button>
+                <button onclick="resetGerms()">↺ Zurück</button>
+            </div>
+
+            <div class="formula-display">
+                \( \mathcal{F}_x = \varinjlim_{U \ni x} \mathcal{F}(U) \)
+            </div>
+
+            <p class="explanation">Der <strong>Halm</strong> (stalk) \(\mathcal{F}_x\) einer Garbe am Punkt x ist der direkte Limes über alle offenen Umgebungen von x. Jedes Element des Halms ist ein <strong>Keim</strong> – eine Äquivalenzklasse von lokalen Schnitten.</p>
+
+            <div class="topology-legend">
+                <div class="legend-item"><div class="legend-color" style="background: rgba(102, 126, 234, 0.3); border: 2px solid #667eea;"></div> Offene Menge</div>
+                <div class="legend-item"><div class="legend-color" style="background: #f5576c;"></div> Punkt x</div>
+                <div class="legend-item"><div class="legend-color" style="background: #ffd700;"></div> Keim / Schnitt</div>
+                <div class="legend-item"><div class="legend-color" style="background: #4ade80;"></div> Halm (Stalk)</div>
+            </div>
+        </div>
+
+        <!-- SECTION 7: Exakte Sequenz -->
+        <div class="section" id="section-exact">
+            <h2>7. Exakte Sequenzen: Der Fluss der Information</h2>
+            <p>Eine exakte Sequenz zeigt dir, wie Strukturen <strong>ineinander fließen</strong> – ohne Verlust, ohne Überschuss.</p>
+
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Ein Fluss (Information) fließt durch Becken. Was aus dem ersten Becken herausfließt, füllt <em>genau</em> den Eingang des nächsten. Kein Tropfen geht verloren, kein Tropfen kommt aus dem Nichts dazu. Das ist <strong>Exaktheit</strong>.</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="exactCanvas" width="700" height="350"></canvas>
+            </div>
+
+            <div class="controls">
+                <button onclick="animateExact('inject')">Injektion zeigen</button>
+                <button onclick="animateExact('surject')">Surjektion zeigen</button>
+                <button onclick="animateExact('flow')">Ganzen Fluss zeigen</button>
+                <button onclick="animateExact('kernel')">Kern = Bild zeigen</button>
+                <button onclick="resetExact()">↺ Zurück</button>
+            </div>
+
+            <div class="formula-display">
+                \( 0 \longrightarrow A \xrightarrow{\;f\;} B \xrightarrow{\;g\;} C \longrightarrow 0 \)
+            </div>
+
+            <p class="explanation"><strong>Exakt bei B</strong> bedeutet: \(\text{im}(f) = \ker(g)\). Alles was von A kommt, ist genau das, was von g "getötet" wird. B ist aus A und C <strong>zusammengebaut</strong>.</p>
+        </div>
+
+        <!-- SECTION 8: Der Étalé-Raum -->
+        <div class="section" id="section-etale">
+            <h2>8. Der Étalé-Raum: Die Garbe als Raum über dem Raum</h2>
+            <p>Jede Garbe kann man sich als einen <strong>Raum vorstellen, der über dem Basisraum schwebt</strong>. An jedem Punkt wächst ein "Halm" nach oben.</p>
+
+            <div class="metaphor-box">
+                <p><strong>Stell dir vor:</strong> Eine Wiese (der Basisraum X). An jedem Punkt der Wiese wächst ein Grashalm (der Stalk). Die Gesamtheit aller Grashalme bildet den Étalé-Raum. Ein <strong>Schnitt</strong> (section) ist wie mit der Hand über die Wiese fahren und von jedem Halm genau eine Höhe auswählen – eine glatte Auswahl.</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="etaleCanvas" width="700" height="450"></canvas>
+            </div>
+
+            <div class="controls">
+                <button onclick="animateEtale('stalks')">Halme wachsen lassen</button>
+                <button onclick="animateEtale('section')">Schnitt zeichnen</button>
+                <button onclick="animateEtale('restrict')">Einschränken auf U</button>
+                <button onclick="animateEtale('glue')">Verkleben!</button>
+                <button onclick="resetEtale()">↺ Zurück</button>
+            </div>
+
+            <div class="formula-display">
+                \( \text{Ét}(\mathcal{F}) \xrightarrow{\;\pi\;} X \quad \text{mit Faser } \pi^{-1}(x) = \mathcal{F}_x \)
+            </div>
+        </div>
+
+        <!-- SECTION 9: Zusammenfassung -->
+        <div class="section" id="section-summary">
+            <h2>🌟 Zusammenfassung: Dein visuelles Werkzeugset</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0;">
+                <div class="metaphor-box">
+                    <h3>Pfeil = Bewegung</h3>
+                    <p>Etwas verwandelt sich. Struktur fließt.</p>
+                </div>
+                <div class="metaphor-box">
+                    <h3>Dreieck = Zwei Wege</h3>
+                    <p>Kommutativ = selbes Ziel, egal welcher Weg.</p>
+                </div>
+                <div class="metaphor-box">
+                    <h3>Quadrat = Konsistenz</h3>
+                    <p>Zwei Welten, verbunden. Reihenfolge egal.</p>
+                </div>
+                <div class="metaphor-box">
+                    <h3>Homotopie = Fläche</h3>
+                    <p>Gleichheit ist ein Pfad. Pfade haben Flächen dazwischen.</p>
+                </div>
+                <div class="metaphor-box">
+                    <h3>Pullback = Übereinstimmung</h3>
+                    <p>Finde alle konsistenten Paare.</p>
+                </div>
+                <div class="metaphor-box">
+                    <h3>Keim = Lokales Wissen</h3>
+                    <p>Was du siehst, wenn du unendlich nah rangehst.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============================================
+    // SECTION 1: Arrow / Morphism Animation
+    // ============================================
+    let morphProgress = 0;
+    let morphAnimating = false;
+    let morphAnimId = null;
+
+    function drawArrow() {
+        const canvas = document.getElementById('arrowCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const t = morphProgress;
+
+        // Draw A (blob on left)
+        ctx.beginPath();
+        const aRadius = 40;
+        const ax = 150, ay = 125;
+        for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
+            const wobble = 1 + 0.15 * Math.sin(angle * 3 + Date.now() * 0.002);
+            const r = aRadius * wobble * (1 - t * 0.3);
+            const x = ax + r * Math.cos(angle);
+            const y = ay + r * Math.sin(angle);
+            if (angle === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fillStyle = `rgba(102, 126, 234, ${1 - t * 0.5})`;
+        ctx.fill();
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw B (bowl shape on right, appears with t)
+        if (t > 0) {
+            const bx = 550, by = 125;
+            ctx.beginPath();
+            ctx.ellipse(bx, by + 10, 50 * t, 30 * t, 0, 0.2, Math.PI - 0.2);
+            ctx.strokeStyle = `rgba(245, 87, 108, ${t})`;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Bowl interior glow
+            ctx.beginPath();
+            ctx.ellipse(bx, by + 15, 40 * t, 20 * t, 0, 0, Math.PI);
+            ctx.fillStyle = `rgba(245, 87, 108, ${t * 0.2})`;
+            ctx.fill();
+        }
+
+        // Draw arrow
+        const arrowStartX = 200;
+        const arrowEndX = 490;
+        const arrowY = 125;
+
+        // Arrow line
+        ctx.beginPath();
+        ctx.moveTo(arrowStartX, arrowY);
+        ctx.lineTo(arrowEndX, arrowY);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Arrowhead
+        ctx.beginPath();
+        ctx.moveTo(arrowEndX, arrowY);
+        ctx.lineTo(arrowEndX - 15, arrowY - 8);
+        ctx.lineTo(arrowEndX - 15, arrowY + 8);
+        ctx.closePath();
+        ctx.fillStyle = '#ffd700';
+        ctx.fill();
+
+        // Moving particle along arrow
+        if (morphAnimating) {
+            const particleX = arrowStartX + (arrowEndX - arrowStartX) * t;
+            ctx.beginPath();
+            ctx.arc(particleX, arrowY, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        // Labels
+        ctx.font = '24px Georgia';
+        ctx.fillStyle = '#667eea';
+        ctx.textAlign = 'center';
+        ctx.fillText('A', ax, ay + 60);
+
+        ctx.fillStyle = '#f5576c';
+        ctx.fillText('B', 550, 125 + 60);
+
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '20px Georgia, italic';
+        ctx.fillText('f', 350, arrowY - 15);
+    }
+
+    function startMorph() {
+        if (morphAnimating) return;
+        morphAnimating = true;
+        morphProgress = 0;
+        const speed = document.getElementById('morphSpeed').value / 500;
+
+        function animate() {
+            morphProgress += speed;
+            if (morphProgress >=  1) {
+                morphProgress = 1;
+                morphAnimating = false;
+            }
+            drawArrow();
+            if (morphAnimating) {
+                morphAnimId = requestAnimationFrame(animate);
+            }
+        }
+        animate();
+    }
+
+    function resetMorph() {
+        morphAnimating = false;
+        morphProgress = 0;
+        if (morphAnimId) cancelAnimationFrame(morphAnimId);
+        drawArrow();
+    }
+
+    // ============================================
+    // SECTION 2: Triangle Animation
+    // ============================================
+    let triangleParticles = [];
+    let triangleAnimId = null;
+
+    function drawTriangleBase() {
+        const canvas = document.getElementById('triangleCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const A = { x: 100, y: 350 };
+        const B = { x: 600, y: 80 };
+        const C = { x: 600, y: 350 };
+
+        // Draw edges
+        // A -> B (f)
+        drawArrowLine(ctx, A.x + 20, A.y - 10, B.x - 20, B.y + 10, '#667eea', 2);
+        // B -> C (g)
+        drawArrowLine(ctx, B.x, B.y + 20, C.x, C.y - 20, '#4ade80', 2);
+        // A -> C (h)
+        drawArrowLine(ctx, A.x + 20, A.y, C.x - 20, C.y, '#f5576c', 2);
+
+        // Draw nodes
+        drawNode(ctx, A.x, A.y, 'A', '#667eea');
+        drawNode(ctx, B.x, B.y, 'B', '#4ade80');
+        drawNode(ctx, C.x, C.y, 'C', '#f5576c');
+
+        // Labels
+        ctx.font = '18px Georgia';
+        ctx.fillStyle = '#667eea';
+        ctx.fillText('f', 320, 180);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('g', 620, 210);
+        ctx.fillStyle = '#f5576c';
+        ctx.fillText('h', 350, 370);
+
+        // Draw particles
+        triangleParticles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+    }
+
+    function drawArrowLine(ctx, x1, y1, x2, y2, color, width) {
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const headLen = 12;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.stroke();
+
+        // Arrowhead
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    function drawNode(ctx, x, y, label, color) {
+        ctx.beginPath();
+        ctx.arc(x, y, 22, 0, Math.PI * 2);
+        ctx.fillStyle = color + '33';
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.font = 'bold 20px Georgia';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, x, y);
+    }
+
+    function animateTrianglePath(path) {
+        if (triangleAnimId) cancelAnimationFrame(triangleAnimId);
+        triangleParticles = [];
+
+        const A = { x: 100, y: 350 };
+        const B = { x: 600, y: 80 };
+        const C = { x: 600, y: 350 };
+
+        if (path === 'top') {
+            triangleParticles.push({ x: A.x, y: A.y, t: 0, phase: 1, color: '#667eea' });
+        } else if (path === 'direct') {
+            triangleParticles.push({ x: A.x, y: A.y, t: 0, phase: 3, color: '#f5576c' });
+        } else if (path === 'both') {
+            triangleParticles.push({ x: A.x, y: A.y, t: 0, phase: 1, color: '#667eea' });
+            triangleParticles.push({ x: A.x, y: A.y, t: 0, phase: 3, color: '#f5576c' });
+        }
+
+        function animate() {
+            const A = { x: 100, y: 350 };
+            const B = { x: 600, y: 80 };
+            const C = { x: 600, y: 350 };
+
+            triangleParticles.forEach(p => {
+                p.t += 0.012;
+                if (p.phase === 1) {
+                    // A -> B
+                    p.x = A.x + (B.x - A.x) * p.t;
+                    p.y = A.y + (B.y - A.y) * p.t;
+                    if (p.t >= 1) { p.t = 0; p.phase = 2; }
+                } else if (p.phase === 2) {
+                    // B -> C
+                    p.x = B.x + (C.x - B.x) * p.t;
+                    p.y = B.y + (C.y - B.y) * p.t;
+                    if (p.t >= 1) { p.t = 1; p.phase = 0; }
+                } else if (p.phase === 3) {
+                    // A -> C direct
+                    p.x = A.x + (C.x - A.x) * p.t;
+                    p.y = A.y + (C.y - A.y) * p.t;
+                    if (p.t >= 1) { p.t = 1; p.phase = 0; }
+                }
+            });
+
+            drawTriangleBase();
+
+            if (triangleParticles.some(p => p.phase !== 0)) {
+                triangleAnimId = requestAnimationFrame(animate);
+            }
+        }
+        animate();
+    }
+
+    function resetTriangle() {
+        if (triangleAnimId) cancelAnimationFrame(triangleAnimId);
+        triangleParticles = [];
+        drawTriangleBase();
+    }
+
+    // ============================================
+    // SECTION 3: Commutative Square
+    // ============================================
+    let squareParticles = [];
+    let squareAnimId = null;
+    let waterMode = false;
+    let waterDrops = [];
+
+    function drawSquareBase() {
+        const canvas = document.getElementById('squareCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const A = { x: 150, y: 100 };
+        const B = { x: 550, y: 100 };
+        const C = { x: 150, y: 350 };
+        const D = { x: 550, y: 350 };
+
+        // Draw edges
+        drawArrowLine(ctx, A.x + 25, A.y, B.x - 25, B.y, '#667eea', 2);
+        drawArrowLine(ctx, A.x, A.y + 25, C.x, C.y - 25, '#a78bfa', 2);
+        drawArrowLine(ctx, B.x, B.y + 25, D.x, D.y - 25, '#f093fb', 2);
+        drawArrowLine(ctx, C.x + 25, C.y, D.x - 25, D.y, '#4ade80', 2);
+
+        // Draw nodes
+        drawNode(ctx, A.x, A.y, 'A', '#667eea');
+        drawNode(ctx, B.x, B.y, 'B', '#f093fb');
+        drawNode(ctx, C.x, C.y, 'C', '#a78bfa');
+        drawNode(ctx, D.x, D.y, 'D', '#4ade80');
+
+        // Labels
+        ctx.font = '18px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#667eea';
+        ctx.fillText('f', 350, 85);
+        ctx.fillStyle = '#a78bfa';
+        ctx.fillText('α', 125, 225);
+        ctx.fillStyle = '#f093fb';
+        ctx.fillText('β', 575, 225);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('g', 350, 385);
+
+        // Water drops
+        if (waterMode) {
+            waterDrops.forEach(d => {
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(100, 200, 255, ${d.alpha})`;
+                ctx.fill();
+            });
+        }
+
+        // Particles
+        squareParticles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.shadowColor = p.color;
+            ctx.shadowBlur = 15;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+    }
+
+    function animateSquarePath(path) {
+        if (squareAnimId) cancelAnimationFrame(squareAnimId);
+        squareParticles = [];
+
+        const A = { x: 150, y: 100 };
+        const B = { x: 550, y: 100 };
+        const C = { x: 150, y: 350 };
+        const D = { x: 550, y: 350 };
+
+        if (path === 'clockwise') {
+            squareParticles.push({ x: A.x, y: A.y, t: 0, phase: 'right', color: '#667eea' });
+        } else if (path === 'counter') {
+            squareParticles.push({ x: A.x, y: A.y, t: 0, phase: 'down', color: '#a78bfa' });
+        } else if (path === 'both') {
+            squareParticles.push({ x: A.x, y: A.y, t: 0, phase: 'right', color: '#667eea' });
+            squareParticles.push({ x: A.x, y: A.y, t: 0, phase: 'down', color: '#a78bfa' });
+        }
+
+        function animate() {
+            const A = { x: 150, y: 100 };
+            const B = { x: 550, y: 100 };
+            const C = { x: 150, y: 350 };
+            const D = { x: 550, y: 350 };
+
+            squareParticles.forEach(p => {
+                p.t += 0.01;
+                if (p.phase === 'right') {
+                    p.x = A.x + (B.x - A.x) * p.t;
+                    p.y = A.y;
+                    if (p.t >= 1) { p.t = 0; p.phase = 'down2'; }
+                } else if (p.phase === 'down2') {
+                    p.x = B.x;
+                    p.y = B.y + (D.y - B.y) * p.t;
+                    if (p.t >= 1) { p.t = 1; p.phase = 'done'; }
+                } else if (p.phase === 'down') {
+                    p.x = A.x;
+                    p.y = A.y + (C.y - A.y) * p.t;
+                    if (p.t >= 1) { p.t = 0; p.phase = 'right2'; }
+                } else if (p.phase === 'right2') {
+                    p.x = C.x + (D.x - C.x) * p.t;
+                    p.y = C.y;
+                    if (p.t >= 1) { p.t = 1; p.phase = 'done'; }
+                }
+            });
+
+            drawSquareBase();
+
+            if (squareParticles.some(p => p.phase !== 'done')) {
+                squareAnimId = requestAnimationFrame(animate);
+            } else {
+                // Show "they meet!" flash
+                const canvas = document.getElementById('squareCanvas');
+                const ctx = canvas.getContext('2d');
+                ctx.font = 'bold 22px Georgia';
+                ctx.fillStyle = '#ffd700';
+                ctx.textAlign = 'center';
+                ctx.fillText('✓ Selber Punkt! Kommutativ!', 350, 440);
+            }
+        }
+        animate();
+    }
+
+    function toggleWater() {
+        waterMode = !waterMode;
+        waterDrops = [];
+        if (waterMode) {
+            // Generate water drops flowing through both paths
+            for (let i = 0; i < 50; i++) {
+                const path = Math.random() > 0.5 ? 'cw' : 'ccw';
+                waterDrops.push({
+                    x: 150, y: 100,
+                    t: Math.random(),
+                    path: path,
+                    alpha: 0.3 + Math.random() * 0.7
+                });
+            }
+            animateWater();
+        }
+    }
+
+    function animateWater() {
+        if (!waterMode) return;
+        const A = { x: 150, y: 100 };
+        const B = { x: 550, y: 100 };
+        const C = { x: 150, y: 350 };
+        const D = { x: 550, y: 350 };
+
+        waterDrops.forEach(d => {
+            d.t += 0.005 + Math.random() * 0.003;
+            if (d.t > 2) d.t = 0;
+
+            if (d.path === 'cw') {
+                if (d.t <= 1) {
+                    d.x = A.x + (B.x - A.x) * d.t;
+                    d.y = A.y;
+                } else {
+                    d.x = B.x;
+                    d.y = B.y + (D.y - B.y) * (d.t - 1);
+                }
+            } else {
+                if (d.t <= 1) {
+                    d.x = A.x;
+                    d.y = A.y + (C.y - A.y) * d.t;
+                } else {
+                    d.x = C.x + (D.x - C.x) * (d.t - 1);
+                    d.y = C.y;
+                }
+            }
+        });
+
+        drawSquareBase();
+        if (waterMode) requestAnimationFrame(animateWater);
+    }
+
+    function resetSquare() {
+        if (squareAnimId) cancelAnimationFrame(squareAnimId);
+        squareParticles = [];
+        waterMode = false;
+        waterDrops = [];
+        drawSquareBase();
+    }
+
+    // ============================================
+    // SECTION 4: Homotopy
+    // ============================================
+    let homotopyT = 0;
+    let homotopyAnimId = null;
+    let showFilled = false;
+
+    function drawHomotopy(t) {
+        const canvas = document.getElementById('homotopyCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const startX = 100, startY = 200;
+        const endX = 600, endY = 200;
+
+        // Draw start and end points
+        ctx.beginPath();
+        ctx.arc(startX, startY, 10, 0, Math.PI * 2);
+        ctx.fillStyle = '#667eea';
+        ctx.fill();
+        ctx.font = '16px Georgia';
+        ctx.fillStyle = '#667eea';
+        ctx.textAlign = 'center';
+        ctx.fillText('a', startX, startY + 30);
+
+        ctx.beginPath();
+        ctx.arc(endX, endY, 10, 0, Math.PI * 2);
+        ctx.fillStyle = '#f5576c';
+        ctx.fill();
+        ctx.fillStyle = '#f5576c';
+        ctx.fillText('b', endX, endY + 30);
+
+        // Path f (top curve)
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.bezierCurveTo(250, 50, 450, 50, endX, endY);
+        ctx.strokeStyle = 'rgba(102, 126, 234, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Path g (bottom curve)
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.bezierCurveTo(250, 350, 450, 350, endX, endY);
+        ctx.strokeStyle = 'rgba(245, 87, 108, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Filled surface
+        if (showFilled) {
+            for (let s = 0; s <= 1; s += 0.02) {
+                const topY1 = startY + (50 - startY) * 3 * s * (1 - s) * (1 - s) + (50 - startY) * 3 * s * s * (1 - s);
+                const botY1 = startY + (350 - startY) * 3 * s * (1 - s) * (1 - s) + (350 - startY) * 3 * s * s * (1 - s);
+
+                ctx.beginPath();
+                const x = startX + (endX - startX) * s;
+                // Interpolate between top and bottom bezier at this x
+                const topCtrl1Y = 50, botCtrl1Y = 350;
+                const topBez = bezierPoint(startY, topCtrl1Y, topCtrl1Y, endY, s);
+                const botBez = bezierPoint(startY, botCtrl1Y, botCtrl1Y, endY, s);
+
+                ctx.moveTo(x, topBez);
+                ctx.lineTo(x, botBez);
+                ctx.strokeStyle = `rgba(160, 120, 255, 0.15)`;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+        }
+
+        // Interpolated path at time t
+        ctx.beginPath();
+        for (let s = 0; s <= 1; s += 0.01) {
+            const topBez = bezierPoint(startY, 50, 50, endY, s);
+            const botBez = bezierPoint(startY, 350, 350, endY, s);
+            const y = topBez + (botBez - topBez) * t;
+            const x = startX + (endX - startX) * s;
+            if (s === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = `hsl(${280 - t * 100}, 80%, 65%)`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Labels
+        ctx.font = '16px Georgia';
+        ctx.fillStyle = '#667eea';
+        ctx.fillText('Pfad f', 350, 60);
+        ctx.fillStyle = '#f5576c';
+        ctx.fillText('Pfad g', 350, 370);
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText(`H(t=${t.toFixed(2)})`, 350, 20);
+    }
+
+    function bezierPoint(p0, p1, p2, p3, t) {
+        const mt = 1 - t;
+        return mt * mt * mt * p0 + 3 * mt * mt * t * p1 + 3 * mt * t * t * p2 + t * t * t * p3;
+    }
+
+    function updateHomotopy(val) {
+        homotopyT = val / 100;
+        document.getElementById('homotopyValue').textContent = `t = ${homotopyT.toFixed(2)}`;
+        drawHomotopy(homotopyT);
+    }
+
+    function playHomotopy() {
+        if (homotopyAnimId) cancelAnimationFrame(homotopyAnimId);
+        homotopyT = 0;
+        const slider = document.getElementById('homotopySlider');
+
+        function animate() {
+            homotopyT += 0.005;
+            if (homotopyT > 1) homotopyT = 0;
+            slider.value = homotopyT * 100;
+            document.getElementById('homotopyValue').textContent = `t = ${homotopyT.toFixed(2)}`;
+            drawHomotopy(homotopyT);
+            homotopyAnimId = requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    function showFilledSurface() {
+        showFilled = !showFilled;
+        drawHomotopy(homotopyT);
+    }
+
+    function resetHomotopy() {
+        if (homotopyAnimId) cancelAnimationFrame(homotopyAnimId);
+        homotopyT = 0;
+        showFilled = false;
+        document.getElementById('homotopySlider').value = 0;
+        document.getElementById('homotopyValue').textContent = 't = 0.00';
+        drawHomotopy(0);
+    }
+
+    // ============================================
+    // SECTION 5: Pullback
+    // ============================================
+    let pullbackState = 'base';
+    let pullbackAnimId = null;
+
+    function drawPullbackBase() {
+        const canvas = document.getElementById('pullbackCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const A = { x: 150, y: 350 };
+        const B = { x: 550, y: 100 };
+        const C = { x: 550, y: 350 };
+        const P = { x: 150, y: 100 };
+
+        // Draw edges
+        drawArrowLine(ctx, A.x + 25, A.y, C.x - 25, C.y, '#667eea', 2);
+        drawArrowLine(ctx, B.x, B.y + 25, C.x, C.y - 25, '#4ade80', 2);
+
+        if (pullbackState !== 'base') {
+            // P -> A
+            drawArrowLine(ctx, P.x, P.y + 25, A.x, A.y - 25, '#a78bfa', 2);
+            // P -> B
+            drawArrowLine(ctx, P.x + 25, P.y, B.x - 25, B.y, '#f093fb', 2);
+
+            // Pullback corner symbol
+            ctx.beginPath();
+            ctx.moveTo(P.x + 15, P.y + 25);
+            ctx.lineTo(P.x + 15, P.y + 15);
+            ctx.lineTo(P.x + 25, P.y + 15);
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Draw nodes
+        drawNode(ctx, A.x, A.y, 'A', '#667eea');
+        drawNode(ctx, B.x, B.y, 'B', '#4ade80');
+        drawNode(ctx, C.x, C.y, 'C', '#f5576c');
+
+        if (pullbackState !== 'base') {
+            drawNode(ctx, P.x, P.y, 'P', '#ffd700');
+        }
+
+        // Labels
+        ctx.font = '18px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#667eea';
+        ctx.fillText('f', 350, 370);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('g', 575, 225);
+
+        if (pullbackState !== 'base') {
+            ctx.fillStyle = '#a78bfa';
+            ctx.fillText('π₁', 125, 225);
+            ctx.fillStyle = '#f093fb';
+            ctx.fillText('π₂', 350, 85);
+        }
+
+        // Show consistent pairs
+        if (pullbackState === 'pairs') {
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = '#ffd700';
+            ctx.textAlign = 'left';
+            ctx.fillText('P = { (a, b) | f(a) = g(b) in C }', 200, 430);
+
+            // Draw matching dots
+            const pairs = [
+                { ax: 170, ay: 330, bx: 530, by: 120, cx: 540, cy: 330 },
+                { ax: 180, ay: 340, bx: 540, by: 110, cx: 550, cy: 340 },
+                { ax: 160, ay: 360, bx: 560, by: 90, cx: 560, cy: 350 },
+            ];
+
+            pairs.forEach((pair, i) => {
+                // Highlight matching in C
+                ctx.beginPath();
+                ctx.arc(pair.cx, pair.cy, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffd700';
+                ctx.fill();
+            });
+        }
+
+        if (pullbackState === 'universal') {
+            // Draw Q with dashed arrow to P
+            const Q = { x: 50, y: 30 };
+            drawNode(ctx, Q.x, Q.y, 'Q', '#ff8c00');
+
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(Q.x + 20, Q.y + 15);
+            ctx.lineTo(P.x - 5, P.y - 15);
+            ctx.strokeStyle = '#ff8c00';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Arrowhead
+            ctx.beginPath();
+            ctx.moveTo(P.x - 5, P.y - 15);
+            ctx.lineTo(P.x - 15, P.y - 25);
+            ctx.lineTo(P.x - 18, P.y - 12);
+            ctx.closePath();
+            ctx.fillStyle = '#ff8c00';
+            ctx.fill();
+
+            ctx.font = '12px Georgia';
+            ctx.fillStyle = '#ff8c00';
+            ctx.fillText('∃! (eindeutig)', 60, 75);
+        }
+    }
+
+    function animatePullback(state) {
+        pullbackState = state;
+        drawPullbackBase();
+    }
+
+    function resetPullback() {
+        pullbackState = 'base';
+        drawPullbackBase();
+    }
+
+    // ============================================
+    // SECTION 6: Germs / Stalks
+    // ============================================
+    let germLevel = -1;
+    let germAnimId = null;
+    let showingStalks = false;
+
+    function drawGerms() {
+        const canvas = document.getElementById('germCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = 350, centerY = 280;
+        const pointX = 350, pointY = 280;
+
+        // Draw base space (a line/curve)
+        ctx.beginPath();
+        ctx.moveTo(50, 350);
+        ctx.bezierCurveTo(200, 320, 500, 320, 650, 350);
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Label base space
+        ctx.font = '14px Georgia';
+        ctx.fillStyle = '#666';
+        ctx.textAlign = 'center';
+        ctx.fillText('Basisraum X', 350, 390);
+
+        // Draw open sets (concentric circles getting smaller)
+        const radii = [180, 120, 60];
+        const colors = ['rgba(102, 126, 234, 0.1)', 'rgba(102, 126, 234, 0.2)', 'rgba(102, 126, 234, 0.35)'];
+        const borderColors = ['#667eea44', '#667eea88', '#667eeacc'];
+
+        for (let i = 0; i <= germLevel && i < 3; i++) {
+            ctx.beginPath();
+            ctx.ellipse(centerX, centerY - 30, radii[i], radii[i] * 0.6, 0, 0, Math.PI * 2);
+            ctx.fillStyle = colors[i];
+            ctx.fill();
+            ctx.strokeStyle = borderColors[i];
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = borderColors[i].replace('44', 'ff').replace('88', 'ff').replace('cc', 'ff');
+            ctx.fillText(`U${i + 1}`, centerX + radii[i] - 15, centerY - 30 - radii[i] * 0.6 + 15);
+        }
+
+        // Draw functions/sections on each open set
+        if (germLevel >= 0) {
+            for (let i = 0; i <= germLevel && i < 3; i++) {
+                ctx.beginPath();
+                const r = radii[i];
+                for (let x = centerX - r; x <= centerX + r; x += 2) {
+                    const relX = (x - centerX) / r;
+                    if (Math.abs(relX) > 0.95) continue;
+                    const maxY = r * 0.6 * Math.sqrt(1 - relX * relX);
+                    const funcY = centerY - 30 - maxY * 0.5 + Math.sin(relX * 3) * 20 * (1 - i * 0.2);
+                    if (x === centerX - r + 2) ctx.moveTo(x, funcY);
+                    else ctx.lineTo(x, funcY);
+                }
+                ctx.strokeStyle = `hsl(${45 + i * 10}, 90%, 55%)`;
+                ctx.lineWidth = 2;
+                
+                ctx.stroke();
+            }
+        }
+
+        // Germ limit (level 0 = show the germ point)
+        if (germLevel === 0) {
+            // Pulsing germ point
+            const pulseR = 8 + 3 * Math.sin(Date.now() * 0.005);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - 30, pulseR, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffd700';
+            ctx.shadowColor = '#ffd700';
+            ctx.shadowBlur = 20;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.font = 'bold 16px Georgia';
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText('Keim bei x', centerX, centerY + 30);
+            ctx.font = '13px Georgia';
+            ctx.fillStyle = '#ccc';
+            ctx.fillText('= Äquivalenzklasse aller Schnitte, die lokal gleich sind', centerX, centerY + 50);
+
+            // Animate pulsing
+            requestAnimationFrame(drawGerms);
+        }
+
+        // The point x
+        ctx.beginPath();
+        ctx.arc(centerX, 350, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#f5576c';
+        ctx.fill();
+        ctx.font = '14px Georgia';
+        ctx.fillStyle = '#f5576c';
+        ctx.fillText('x', centerX + 15, 355);
+
+        // Stalks visualization
+        if (showingStalks) {
+            drawStalksVisualization(ctx, canvas.width);
+        }
+    }
+
+    function drawStalksVisualization(ctx, width) {
+        // Draw multiple stalks growing up from the base line
+        const baseY = 350;
+        const points = [100, 200, 300, 350, 400, 500, 600];
+
+        points.forEach((px, i) => {
+            const stalkHeight = 80 + Math.sin(i * 1.5) * 40;
+
+            // Stalk line
+            ctx.beginPath();
+            ctx.moveTo(px, baseY);
+            ctx.lineTo(px, baseY - stalkHeight);
+            ctx.strokeStyle = '#4ade8088';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Stalk top (fiber)
+            ctx.beginPath();
+            ctx.arc(px, baseY - stalkHeight, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#4ade80';
+            ctx.fill();
+
+            // Label the special one
+            if (px === 350) {
+                ctx.beginPath();
+                ctx.moveTo(px, baseY);
+                ctx.lineTo(px, baseY - stalkHeight - 30);
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(px, baseY - stalkHeight - 30, 7, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffd700';
+                ctx.fill();
+
+                ctx.font = '13px Georgia';
+                ctx.fillStyle = '#ffd700';
+                ctx.textAlign = 'center';
+                ctx.fillText('ℱₓ', px + 20, baseY - stalkHeight - 30);
+            }
+        });
+
+        ctx.font = '13px Georgia';
+        ctx.fillStyle = '#4ade80';
+        ctx.textAlign = 'center';
+        ctx.fillText('Halme (Stalks) = Fasern über jedem Punkt', 350, 420);
+    }
+
+    function showGermLevel(level) {
+        germLevel = level;
+        showingStalks = false;
+        drawGerms();
+    }
+
+    function showStalks() {
+        showingStalks = true;
+        germLevel = -1;
+        drawGerms();
+    }
+
+    function resetGerms() {
+        germLevel = -1;
+        showingStalks = false;
+        drawGerms();
+    }
+
+    // ============================================
+    // SECTION 7: Exact Sequence
+    // ============================================
+    let exactState = 'base';
+    let exactAnimId = null;
+    let exactParticles = [];
+
+    function drawExactBase() {
+        const canvas = document.getElementById('exactCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const zero1 = { x: 50, y: 175 };
+        const A = { x: 180, y: 175 };
+        const B = { x: 350, y: 175 };
+        const C = { x: 520, y: 175 };
+        const zero2 = { x: 650, y: 175 };
+
+        // Draw arrows
+        drawArrowLine(ctx, zero1.x + 15, zero1.y, A.x - 25, A.y, '#555', 2);
+        drawArrowLine(ctx, A.x + 25, A.y, B.x - 25, B.y, '#667eea', 2);
+        drawArrowLine(ctx, B.x + 25, B.y, C.x - 25, C.y, '#4ade80', 2);
+        drawArrowLine(ctx, C.x + 25, C.y, zero2.x - 15, zero2.y, '#555', 2);
+
+        // Draw nodes
+        ctx.font = '18px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#555';
+        ctx.fillText('0', zero1.x, zero1.y + 6);
+        ctx.fillText('0', zero2.x, zero2.y + 6);
+
+        drawNode(ctx, A.x, A.y, 'A', '#667eea');
+        drawNode(ctx, B.x, B.y, 'B', '#a78bfa');
+        drawNode(ctx, C.x, C.y, 'C', '#4ade80');
+
+        // Labels
+        ctx.font = '16px Georgia';
+        ctx.fillStyle = '#667eea';
+        ctx.fillText('f', 265, 155);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('g', 435, 155);
+
+        // State-specific drawings
+        if (exactState === 'inject') {
+            // Show f is injective: A embeds into B
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = '#667eea';
+            ctx.fillText('f ist injektiv (1-zu-1)', 265, 130);
+
+            // Draw small dots in A mapping to dots in B
+            const dotsA = [{ x: 165, y: 165 }, { x: 180, y: 185 }, { x: 195, y: 170 }];
+            const dotsB = [{ x: 330, y: 165 }, { x: 345, y: 185 }, { x: 360, y: 170 }];
+
+            dotsA.forEach((d, i) => {
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#667eea';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(dotsB[i].x, dotsB[i].y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#667eea';
+                ctx.fill();
+
+                // Connecting line
+                ctx.beginPath();
+                ctx.setLineDash([3, 3]);
+                ctx.moveTo(d.x + 5, d.y);
+                ctx.lineTo(dotsB[i].x - 5, dotsB[i].y);
+                ctx.strokeStyle = '#667eea55';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+
+            // Extra dots in B not hit by f
+            [{ x: 340, y: 195 }, { x: 355, y: 155 }].forEach(d => {
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#a78bfa55';
+                ctx.fill();
+            });
+        }
+
+        if (exactState === 'surject') {
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = '#4ade80';
+            ctx.fillText('g ist surjektiv (auf)', 435, 130);
+
+            // Dots in B mapping onto all dots in C
+            const dotsB2 = [
+                { x: 335, y: 165 }, { x: 350, y: 185 },
+                { x: 365, y: 170 }, { x: 340, y: 195 }, { x: 355, y: 155 }
+            ];
+            const dotsC = [{ x: 505, y: 165 }, { x: 520, y: 185 }, { x: 535, y: 170 }];
+
+            dotsB2.forEach((d, i) => {
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = i < 3 ? '#4ade80' : '#667eea';
+                ctx.fill();
+            });
+
+            dotsC.forEach((d, i) => {
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#4ade80';
+                ctx.fill();
+
+                // Lines from B to C
+                ctx.beginPath();
+                ctx.setLineDash([3, 3]);
+                ctx.moveTo(dotsB2[i].x + 5, dotsB2[i].y);
+                ctx.lineTo(d.x - 5, d.y);
+                ctx.strokeStyle = '#4ade8055';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+
+            // Show kernel dots (from A) go to 0 in C
+            ctx.font = '12px Georgia';
+            ctx.fillStyle = '#667eea';
+            ctx.fillText('ker(g) = im(f)', 350, 230);
+        }
+
+        if (exactState === 'kernel') {
+            // Highlight the exact part: im(f) = ker(g)
+            ctx.beginPath();
+            ctx.ellipse(350, 175, 30, 35, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+            ctx.fill();
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = 'bold 14px Georgia';
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText('im(f) = ker(g)', 350, 240);
+            ctx.font = '12px Georgia';
+            ctx.fillStyle = '#ccc';
+            ctx.fillText('Was von A kommt = Was g auf 0 schickt', 350, 260);
+            ctx.fillText('Kein Tropfen verloren, keiner doppelt!', 350, 280);
+        }
+
+        // Flow animation particles
+        if (exactState === 'flow') {
+            exactParticles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+        }
+    }
+
+    function animateExact(state) {
+        exactState = state;
+        if (exactAnimId) cancelAnimationFrame(exactAnimId);
+        exactParticles = [];
+
+        if (state === 'flow') {
+            // Create flowing particles
+            for (let i = 0; i < 8; i++) {
+                exactParticles.push({
+                    x: 180,
+                    y: 175 + (Math.random() - 0.5) * 20,
+                    t: i * 0.12,
+                    color: '#667eea',
+                    phase: 0
+                });
+            }
+
+            function animateFlow() {
+                exactParticles.forEach(p => {
+                    p.t += 0.006;
+                    if (p.phase === 0) {
+                        // A -> B
+                        p.x = 180 + (350 - 180) * p.t;
+                        if (p.t >= 1) {
+                            p.t = 0;
+                            p.phase = 1;
+                            p.color = '#4ade80';
+                        }
+                    } else if (p.phase === 1) {
+                        // B -> C
+                        p.x = 350 + (520 - 350) * p.t;
+                        if (p.t >= 1) {
+                            p.t = 0;
+                            p.phase = 0;
+                            p.x = 180;
+                            p.color = '#667eea';
+                        }
+                    }
+                });
+
+                drawExactBase();
+                exactAnimId = requestAnimationFrame(animateFlow);
+            }
+            animateFlow();
+        } else {
+            drawExactBase();
+        }
+    }
+
+    function resetExact() {
+        if (exactAnimId) cancelAnimationFrame(exactAnimId);
+        exactState = 'base';
+        exactParticles = [];
+        drawExactBase();
+    }
+
+    // ============================================
+    // SECTION 8: Étalé Space
+    // ============================================
+    let etaleState = 'base';
+    let etaleAnimProgress = 0;
+    let etaleAnimId = null;
+
+    function drawEtaleBase() {
+        const canvas = document.getElementById('etaleCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const baseY = 380;
+
+        // Draw base space X (a nice curve)
+        ctx.beginPath();
+        ctx.moveTo(50, baseY);
+        for (let x = 50; x <= 650; x++) {
+            const y = baseY + Math.sin((x - 50) / 100) * 10;
+            ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        ctx.font = '16px Georgia';
+        ctx.fillStyle = '#888';
+        ctx.textAlign = 'center';
+        ctx.fillText('Basisraum X', 350, baseY + 35);
+
+        // Draw stalks
+        if (etaleState === 'stalks' || etaleState === 'section' || etaleState === 'restrict' || etaleState === 'glue') {
+            const numStalks = 25;
+            for (let i = 0; i < numStalks; i++) {
+                const x = 70 + i * 24;
+                const baseYi = baseY + Math.sin((x - 50) / 100) * 10;
+
+                // Each stalk has several discrete points (fiber elements)
+                const fiberSize = 3 + Math.floor(Math.sin(i * 0.7) * 2 + 2);
+                const stalkGrowth = Math.min(1, etaleAnimProgress * 2);
+
+                for (let j = 0; j < fiberSize; j++) {
+                    const fiberY = baseYi - (40 + j * 30) * stalkGrowth;
+
+                    // Stalk line segment
+                    if (j === 0) {
+                        ctx.beginPath();
+                        ctx.moveTo(x, baseYi);
+                        ctx.lineTo(x, fiberY);
+                        ctx.strokeStyle = 'rgba(74, 222, 128, 0.2)';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+
+                    // Fiber point
+                    ctx.beginPath();
+                    ctx.arc(x, fiberY, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(74, 222, 128, ${0.3 + j * 0.15})`;
+                    ctx.fill();
+                }
+
+                // Top of stalk line
+                const topY = baseYi - (40 + (fiberSize - 1) * 30) * stalkGrowth;
+                ctx.beginPath();
+                ctx.moveTo(x, baseYi);
+                ctx.lineTo(x, topY);
+                ctx.strokeStyle = 'rgba(74, 222, 128, 0.15)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        // Draw section (a smooth curve picking one point from each fiber)
+        if (etaleState === 'section' || etaleState === 'restrict' || etaleState === 'glue') {
+            ctx.beginPath();
+            for (let x = 70; x <= 70 + 24 * 24; x += 2) {
+                const baseYi = baseY + Math.sin((x - 50) / 100) * 10;
+                const sectionY = baseYi - 100 - Math.sin(x / 80) * 40 - Math.cos(x / 50) * 20;
+                if (x === 70) ctx.moveTo(x, sectionY);
+                else ctx.lineTo(x, sectionY);
+            }
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = '#ffd700';
+            ctx.textAlign = 'left';
+            ctx.fillText('Schnitt s : X → Ét(ℱ)', 480, 80);
+        }
+
+        // Restrict to open set U
+        if (etaleState === 'restrict') {
+            // Highlight U
+            ctx.beginPath();
+            ctx.rect(200, 50, 200, baseY - 30);
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.1)';
+            ctx.fill();
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = '#667eea';
+            ctx.textAlign = 'center';
+            ctx.fillText('Offene Menge U', 300, 45);
+
+            // Highlight section within U
+            ctx.beginPath();
+            for (let x = 200; x <= 400; x += 2) {
+                const baseYi = baseY + Math.sin((x - 50) / 100) * 10;
+                const sectionY = baseYi - 100 - Math.sin(x / 80) * 40 - Math.cos(x / 50) * 20;
+                if (x === 200) ctx.moveTo(x, sectionY);
+                else ctx.lineTo(x, sectionY);
+            }
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            ctx.font = '13px Georgia';
+            ctx.fillStyle = '#fff';
+            ctx.fillText('s|_U (Einschränkung)', 300, 30);
+        }
+
+        // Gluing condition
+        if (etaleState === 'glue') {
+            // Two overlapping open sets
+            ctx.beginPath();
+            ctx.rect(120, 50, 220, baseY - 30);
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.08)';
+            ctx.fill();
+            ctx.strokeStyle = '#667eea88';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.beginPath();
+            ctx.rect(280, 50, 220, baseY - 30);
+            ctx.fillStyle = 'rgba(245, 87, 108, 0.08)';
+            ctx.fill();
+            ctx.strokeStyle = '#f5576c88';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Overlap region
+            ctx.beginPath();
+            ctx.rect(280, 50, 60, baseY - 30);
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+            ctx.fill();
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = '13px Georgia';
+            ctx.fillStyle = '#667eea';
+            ctx.textAlign = 'center';
+            ctx.fillText('U₁', 200, 45);
+            ctx.fillStyle = '#f5576c';
+            ctx.fillText('U₂', 420, 45);
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText('U₁ ∩ U₂', 310, 45);
+
+            // Section on U1 (blue)
+            ctx.beginPath();
+            for (let x = 120; x <= 340; x += 2) {
+                const baseYi = baseY + Math.sin((x - 50) / 100) * 10;
+                const sectionY = baseYi - 100 - Math.sin(x / 80) * 40 - Math.cos(x / 50) * 20;
+                if (x === 120) ctx.moveTo(x, sectionY);
+                else ctx.lineTo(x, sectionY);
+            }
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Section on U2 (red)
+            ctx.beginPath();
+            for (let x = 280; x <= 500; x += 2) {
+                const baseYi = baseY + Math.sin((x - 50) / 100) * 10;
+                const sectionY = baseYi - 100 - Math.sin(x / 80) * 40 - Math.cos(x / 50) * 20;
+                if (x === 280) ctx.moveTo(x, sectionY);
+                else ctx.lineTo(x, sectionY);
+            }
+            ctx.strokeStyle = '#f5576c';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Overlap section highlighted
+            ctx.beginPath();
+            for (let x = 280; x <= 340; x += 2) {
+                const baseYi = baseY + Math.sin((x - 50) / 100) * 10;
+                const sectionY = baseYi - 100 - Math.sin(x / 80) * 40 - Math.cos(x / 50) * 20;
+                if (x === 280) ctx.moveTo(x, sectionY);
+                else ctx.lineTo(x, sectionY);
+            }
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 5;
+            ctx.stroke();
+
+            ctx.font = 'bold 13px Georgia';
+            ctx.fillStyle = '#ffd700';
+            ctx.fillText('Stimmen überein! → Verkleben möglich!', 350, baseY + 55);
+        }
+
+        // Arrow π from étalé space to base
+        if (etaleState !== 'base') {
+            ctx.font = '14px Georgia';
+            ctx.fillStyle = '#4ade80';
+            ctx.textAlign = 'right';
+            ctx.fillText('Ét(ℱ)', 660, 100);
+
+            // π arrow
+            ctx.beginPath();
+            ctx.moveTo(660, 110);
+            ctx.lineTo(660, baseY - 20);
+            ctx.strokeStyle = '#4ade8088';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Arrowhead
+            ctx.beginPath();
+            ctx.moveTo(660, baseY - 20);
+            ctx.lineTo(655, baseY - 32);
+            ctx.lineTo(665, baseY - 32);
+            ctx.closePath();
+            ctx.fillStyle = '#4ade8088';
+            ctx.fill();
+
+            ctx.fillStyle = '#4ade80';
+            ctx.fillText('π', 675, 250);
+        }
+    }
+
+    function animateEtale(state) {
+        etaleState = state;
+        if (etaleAnimId) cancelAnimationFrame(etaleAnimId);
+
+        if (state === 'stalks') {
+            etaleAnimProgress = 0;
+            function growStalks() {
+                etaleAnimProgress += 0.015;
+                if (etaleAnimProgress > 1) etaleAnimProgress = 1;
+                drawEtaleBase();
+                if (etaleAnimProgress < 1) {
+                    etaleAnimId = requestAnimationFrame(growStalks);
+                }
+            }
+            growStalks();
+        } else {
+            etaleAnimProgress = 1;
+            drawEtaleBase();
+        }
+    }
+
+    function resetEtale() {
+        if (etaleAnimId) cancelAnimationFrame(etaleAnimId);
+        etaleState = 'base';
+        etaleAnimProgress = 0;
+        drawEtaleBase();
+    }
+
+    // ============================================
+    // Initialize all canvases on load
+    // ============================================
+    window.addEventListener('load', () => {
+        drawArrow();
+        drawTriangleBase();
+        drawSquareBase();
+        drawHomotopy(0);
+        drawPullbackBase();
+        drawGerms();
+        drawExactBase();
+        drawEtaleBase();
+
+        // Re-render MathJax
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    });
+
+    // Handle window resize for canvas clarity
+    window.addEventListener('resize', () => {
+        drawArrow();
+        drawTriangleBase();
+        drawSquareBase();
+        drawHomotopy(homotopyT);
+        drawPullbackBase();
+        drawGerms();
+        drawExactBase();
+        drawEtaleBase();
+    });
+    </script>
+</body>
+</html>
