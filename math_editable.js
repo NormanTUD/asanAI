@@ -287,51 +287,84 @@ function math_render_hybrid(container, tokens) {
 }
 
 /**
- * After Temml renders, find spans with color #53d8fb and replace their
- * content with clickable editable number spans.
+ * After Temml renders, find the top-level colored spans and replace them
+ * with clickable editable number spans.
+ * 
+ * KEY FIX: Match sequentially by DOM order, not by text content.
+ * Since we generate the LaTeX and the editables_in_order array in the
+ * same order, the Nth colored span corresponds to the Nth editable.
  */
 function _replace_colored_spans_with_editables(container, editables_in_order) {
-    // Find all elements that Temml colored with our marker color
+    if (!editables_in_order || editables_in_order.length === 0) return;
+
+    // Find all elements that Temml colored with our marker color.
+    // Temml renders \textcolor{#53d8fb}{...} as a span with style containing "color"
+    // We need the OUTERMOST colored spans only (not their children).
+    var allSpans = container.querySelectorAll('*');
     var coloredSpans = [];
-    
-    // Temml uses inline style: style="color:#53d8fb;"
-    var allSpans = container.querySelectorAll('span[style*="53d8fb"], span[style*="53D8FB"]');
-    
-    // Also check for Temml's class-based coloring
-    if (allSpans.length === 0) {
-        // Fallback: walk the DOM looking for our colored text
-        var walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, null, false);
-        while (walker.nextNode()) {
-            var node = walker.currentNode;
-            var cs = window.getComputedStyle(node);
-            if (cs.color === "rgb(83, 216, 251)") {
-                coloredSpans.push(node);
+
+    for (var i = 0; i < allSpans.length; i++) {
+        var span = allSpans[i];
+        var style = span.getAttribute("style") || "";
+        
+        // Check if this span has our marker color in its style
+        if (style.indexOf("53d8fb") !== -1 || style.indexOf("53D8FB") !== -1) {
+            // Make sure this isn't a child of another colored span we already found
+            var isChild = false;
+            for (var j = 0; j < coloredSpans.length; j++) {
+                if (coloredSpans[j].contains(span) && coloredSpans[j] !== span) {
+                    isChild = true;
+                    break;
+                }
+            }
+            if (!isChild) {
+                coloredSpans.push(span);
             }
         }
-    } else {
-        coloredSpans = Array.from(allSpans);
     }
 
-    // Match colored spans to editables in order
+    // If we couldn't find colored spans via inline style, try computed style
+    if (coloredSpans.length === 0) {
+        var walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, null, false);
+        var candidates = [];
+        while (walker.nextNode()) {
+            candidates.push(walker.currentNode);
+        }
+        
+        for (var i = 0; i < candidates.length; i++) {
+            var cs = window.getComputedStyle(candidates[i]);
+            // rgb(83, 216, 251) is #53d8fb
+            if (cs.color === "rgb(83, 216, 251)") {
+                // Check it's not a child of an already-found span
+                var isChild = false;
+                for (var j = 0; j < coloredSpans.length; j++) {
+                    if (coloredSpans[j].contains(candidates[i]) && coloredSpans[j] !== candidates[i]) {
+                        isChild = true;
+                        break;
+                    }
+                }
+                if (!isChild) {
+                    coloredSpans.push(candidates[i]);
+                }
+            }
+        }
+    }
+
+    // Now match sequentially: the Nth colored span = the Nth editable
+    // This works because we generate both in the same order (row by row, col by col)
     var edIdx = 0;
     for (var i = 0; i < coloredSpans.length && edIdx < editables_in_order.length; i++) {
         var span = coloredSpans[i];
         var edInfo = editables_in_order[edIdx];
-
-        // Check if this span contains our expected value text
-        var spanText = span.textContent.trim();
-        var expectedText = edInfo.value;
-
-        // Only match if the text content matches (to avoid false positives)
-        if (spanText === expectedText || spanText.replace(/[−]/g, '-') === expectedText) {
-            _convert_span_to_editable(span, edInfo);
-            edIdx++;
-        }
+        
+        _convert_span_to_editable(span, edInfo);
+        edIdx++;
     }
 
-    // If color-based matching failed, try a sequential approach on leaf text nodes
-    if (edIdx === 0 && editables_in_order.length > 0) {
-        _fallback_sequential_replace(container, editables_in_order);
+    if (edIdx < editables_in_order.length) {
+        console.warn("[_replace_colored_spans_with_editables] Only matched " + edIdx + 
+            " of " + editables_in_order.length + " editables. Found " + 
+            coloredSpans.length + " colored spans.");
     }
 }
 
@@ -342,18 +375,26 @@ function _convert_span_to_editable(span, edInfo) {
     var ed = math_find_editable(edInfo.eid);
     if (!ed) return;
 
+    var decimals = ed.decimals || 3;
+    var displayVal = ed.get().toFixed(decimals);
+
     // Clear the Temml-rendered content and replace with our interactive span
     span.innerHTML = "";
-    span.className = "math-ed-num";
+    span.textContent = displayVal;
+    span.className = (span.className || "") + " math-ed-num";
     span.setAttribute("data-math-eid", edInfo.eid);
-    span.textContent = ed.get().toFixed(ed.decimals || 3);
-    span.style.cssText = ""; // Remove Temml's inline color style, our CSS class handles it
+    
+    // Remove Temml's inline color style — our CSS class handles styling
+    span.style.color = "";
     span.style.cursor = "pointer";
 
-    span.addEventListener("click", function (e) {
-        e.stopPropagation();
-        math_open_popup(edInfo.eid, span.getBoundingClientRect());
-    });
+    // Use a closure to capture the correct eid and span reference
+    span.addEventListener("click", (function(eid, el) {
+        return function(e) {
+            e.stopPropagation();
+            math_open_popup(eid, el.getBoundingClientRect());
+        };
+    })(edInfo.eid, span));
 }
 
 /**
