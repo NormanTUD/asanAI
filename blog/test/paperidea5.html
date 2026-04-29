@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Transformers See the World — Interactive Visual Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+:root {
+  --bg: #06081a; --surface: #0e1230; --surface2: #161a42;
+  --accent1: #818cf8; --accent2: #34d399; --accent3: #f472b6;
+  --accent4: #fbbf24; --text: #e2e8f0; --dim: #64748b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+h1{font-size:clamp(1.6rem,4vw,2.6rem);text-align:center;margin:30px 0 8px;font-weight:800;background:linear-gradient(135deg,#818cf8,#34d399,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{text-align:center;color:var(--dim);max-width:700px;margin:0 auto 30px;font-size:.95rem}
+h2{font-size:1.35rem;margin:40px 0 10px;color:var(--accent1);border-bottom:2px solid #1a2040;padding-bottom:6px}
+p{color:#94a3b8;margin-bottom:12px;font-size:.93rem}
+.hl{color:var(--accent4);font-weight:700}
+.card{background:var(--surface);border:1px solid #1e2550;border-radius:16px;padding:22px;margin:20px 0;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent1),var(--accent2),var(--accent3))}
+canvas{display:block;border-radius:10px;background:#030618;border:1px solid #1a2040;width:100%;cursor:pointer}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin:12px 0}
+.ctrl label{font-size:.78rem;color:#94a3b8;display:flex;align-items:center;gap:5px}
+.ctrl input[type=range]{width:130px;accent-color:var(--accent1)}
+.ctrl select{background:#1a2040;color:#cbd5e1;border:1px solid #2a3560;border-radius:6px;padding:4px 10px;font-size:.8rem}
+button{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:.83rem;transition:all .15s}
+button:hover{transform:translateY(-1px);filter:brightness(1.15)}
+.bp{background:#6366f1;color:#fff}.bs{background:#334155;color:#cbd5e1}
+.ba{background:#f59e0b;color:#1e293b}.bg{background:#10b981;color:#fff}
+.met{background:#0a0e28;border-left:4px solid var(--accent1);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0;font-style:italic;color:#cbd5e1;font-size:.88rem}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:6px;margin:10px 0}
+.sc{background:#060a20;border:1px solid #1a2040;border-radius:8px;padding:8px;text-align:center}
+.sc .l{font-size:.6rem;color:var(--dim)}.sc .v{font-size:1.15rem;font-weight:700}
+.toc{background:var(--surface);border-radius:12px;padding:18px;margin:20px 0}
+.toc a{color:var(--accent1);text-decoration:none;display:block;padding:3px 0;font-size:.88rem}
+.toc a:hover{color:#c4b5fd}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.two{grid-template-columns:1fr}}
+.fade{opacity:0;transform:translateY(18px);transition:all .5s ease}
+.fade.vis{opacity:1;transform:translateY(0)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:10px 0;font-size:.8rem;color:#94a3b8}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:11px;height:11px;border-radius:50%}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>🔭 How a Transformer Sees the World</h1>
+<p class="hero-sub">
+An interactive visual guide to the idea that a language model's knowledge lives on a <strong>topological landscape</strong> — the embedding is the blurriest overview, each layer zooms into chosen regions, and hallucinations happen where the map runs out of detail.
+</p>
+
+<div class="toc">
+<strong style="color:var(--accent2)">📑 Sections</strong>
+<a href="#s1">1. The Blurry World Map — Embedding as Lowest Resolution</a>
+<a href="#s2">2. Zooming In — Layers as Progressive Resolution</a>
+<a href="#s3">3. Multiple Islands — Parallel Activation of Knowledge Regions</a>
+<a href="#s4">4. Parallel Transport — Moving Information Between Islands</a>
+<a href="#s5">5. Hallucinations — Where the Map Lies</a>
+<a href="#s6">6. The Full Pipeline — From Blur to Clarity</a>
+</div>
+
+<!-- ===== SECTION 1 ===== -->
+<h2 id="s1">1. The Blurry World Map — Embedding as Lowest Resolution</h2>
+<div class="card fade">
+<p>Imagine the model's entire knowledge as a <span class="hl">landscape of islands</span>. Each island is a topic — math, poetry, biology, programming. The <strong>embedding layer</strong> (layer 0) sees <em>all</em> of them at once, but everything is blurry. It's like looking at a world map from space: you can see continents, but no streets.</p>
+<div class="met">The embedding is the "global section" — the coarsest, lowest-resolution image of everything the model knows. Every dimension contributes to every concept, like a hologram where every piece contains the whole picture, just blurrier.</div>
+<div style="position:relative">
+  <canvas id="cMap" height="480"></canvas>
+</div>
+<div class="ctrl">
+  <label>Resolution (Layer): <input type="range" id="mapLayer" min="0" max="100" value="0"><span id="mapLayerV">0</span></label>
+  <button class="ba" onclick="MapMod.reset()">↺ Reset</button>
+  <button class="bp" onclick="MapMod.autoDrill()">▶ Auto Zoom</button>
+</div>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Click any island</strong> to focus attention on it. Click again to zoom deeper. The focused area sharpens while everything else stays blurry — that's the resolution–breadth tradeoff.</p>
+<div class="sg" id="mapStats"></div>
+</div>
+
+<!-- ===== SECTION 2 ===== -->
+<h2 id="s2">2. Zooming In — Layers as Progressive Resolution</h2>
+<div class="card fade">
+<p>Each transformer layer is like <span class="hl">adjusting the zoom on a microscope</span>. Early layers do coarse routing — "this sentence is about math, not poetry." Middle layers resolve finer detail — "this is about calculus, specifically integrals." Late layers produce the sharpest local picture.</p>
+<div class="met">The model doesn't move tokens through a fixed space — it <strong>morphs the space itself</strong>. Each layer warps the geometry so that relevant regions expand and irrelevant ones compress. The grid deformation below IS the computation.</div>
+<canvas id="cZoom" height="420"></canvas>
+<div class="ctrl">
+  <label>Layer Depth: <input type="range" id="zoomDepth" min="0" max="110" value="0"><span id="zoomDepthV">0.0</span></label>
+  <label><input type="checkbox" id="zoomGrid" checked> Show Grid</label>
+  <button class="ba" onclick="ZoomMod.animate()">▶ Animate Layers</button>
+  <button class="bs" onclick="ZoomMod.reset()">↺ Reset</button>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Routing (early)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c084fc"></div> Resolving (middle)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Gluing (late)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div> Expansion</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Contraction</div>
+</div>
+<div class="sg" id="zoomStats"></div>
+</div>
+
+<!-- ===== SECTION 3 ===== -->
+<h2 id="s3">3. Multiple Islands — Parallel Activation</h2>
+<div class="card fade">
+<p>When you ask a model to "write a Python function that computes Fibonacci numbers," it needs <span class="hl">multiple islands active simultaneously</span>: programming, mathematics, and language. Each gets zoomed into at its own resolution. The programming island is sharp, the math island is moderately detailed, and the biology island stays a distant blur.</p>
+<div class="met">Attention heads act as separate lenses — each one focuses on a different region. Where lenses overlap, resolution compounds. Where no lens looks, the landscape stays pixelated. The fixed dimension d limits how many islands can be sharp at once.</div>
+<canvas id="cIslands" height="460"></canvas>
+<div class="ctrl">
+  <label>Active Lenses: <select id="islandHeads"><option value="1">1 lens</option><option value="2">2 lenses</option><option value="3" selected>3 lenses</option><option value="4">4 lenses</option></select></label>
+  <label>Lens Width: <input type="range" id="islandWidth" min="10" max="100" value="35"><span id="islandWidthV">Narrow</span></label>
+  <label>Budget: <input type="range" id="islandBudget" min="10" max="100" value="70"><span id="islandBudgetV">70</span></label>
+</div>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Drag the colored circles</strong> to reposition attention lenses. Notice: making one area sharper forces others to blur — that's the finite-dimension tradeoff.</p>
+<div class="sg" id="islandStats"></div>
+</div>
+
+<!-- ===== SECTION 4 ===== -->
+<h2 id="s4">4. Parallel Transport — Moving Information Between Islands</h2>
+<div class="card fade">
+<p>The magic happens when information from one island <span class="hl">flows to another</span>. "Parallel transport" in the model means that patterns learned in one region (say, the structure of a for-loop) can be carried over to help resolve another region (say, mathematical recursion). The residual stream is the highway connecting all islands.</p>
+<div class="met">Each layer's residual connection h^(ℓ+1) = h^(ℓ) + Δ^(ℓ) is a communication channel. The attention sub-layer decides WHICH information to transport between islands. The feed-forward sub-layer decides HOW to use it locally. Together they let the model "virtually zoom further" by borrowing resolution from related regions.</div>
+<canvas id="cTransport" height="440"></canvas>
+<div class="ctrl">
+  <label>Transport Strength: <input type="range" id="transportStr" min="0" max="100" value="50"><span id="transportStrV">50%</span></label>
+  <label>Layer: <input type="range" id="transportLayer" min="0" max="100" value="30"><span id="transportLayerV">3.0</span></label>
+  <button class="bp" onclick="TransMod.animate()">▶ Animate Flow</button>
+  <button class="bs" onclick="TransMod.reset()">↺ Reset</button>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div> Math Island</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Code Island</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Language Island</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Transport Flow</div>
+</div>
+<div class="sg" id="transportStats"></div>
+</div>
+
+<!-- ===== SECTION 5 ===== -->
+<h2 id="s5">5. Hallucinations — Where the Map Lies</h2>
+<div class="card fade">
+<p>Hallucinations happen at the <span class="hl">edges of the map</span>. When the model zooms into a region where training data was sparse, it <strong>extrapolates</strong> — filling in the blank with patterns that are geometrically smooth and internally consistent, but factually wrong. The confidence stays high because the local geometry looks fine; it just doesn't correspond to reality.</p>
+<div class="met">Think of a satellite map with great data for Europe but sparse data for central Africa. Zoom in there and the system invents plausible terrain — rivers that don't exist. The model's "meaning field" is an approximation, and at the borders of well-learned patches, that approximation breaks down while still looking confident.</div>
+<canvas id="cHalluc" height="380"></canvas>
+<div class="ctrl">
+  <label>Training Coverage: <input type="range" id="halCov" min="10" max="100" value="65"><span id="halCovV">65%</span></label>
+</div>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)">Move your mouse into the <span style="color:#ef4444">red zones</span> — notice how confidence stays high even where knowledge is thin. That gap between confidence and coverage IS the hallucination.</p>
+<div class="sg" id="halStats"></div>
+</div>
+
+<!-- ===== SECTION 6 ===== -->
+<h2 id="s6">6. The Full Pipeline — From Blur to Clarity</h2>
+<div class="card fade">
+<div class="two" style="margin-bottom:14px">
+  <div class="met" style="border-color:#60a5fa"><strong style="color:#60a5fa">🔀 Early Layers: Routers</strong><br>Tear open space to determine WHERE to look. Connect words to words. "This sentence is about X."</div>
+  <div class="met" style="border-color:#c084fc"><strong style="color:#c084fc">🔬 Late Layers: Resolvers</strong><br>Connect concepts to concepts. Expand local geometry at increasing resolution. Build the actual answer.</div>
+</div>
+<canvas id="cPipeline" height="460"></canvas>
+<div class="ctrl">
+  <label>Layer: <input type="range" id="pipeLayer" min="0" max="110" value="0"><span id="pipeLayerV">0.0</span></label>
+  <label><input type="checkbox" id="pipeGrid" checked> Grid</label>
+  <button class="bp" onclick="PipeMod.animate()">▶ Full Pipeline</button>
+  <button class="bs" onclick="PipeMod.reset()">↺ Reset</button>
+</div>
+<div class="sg" id="pipeStats"></div>
+</div>
+
+<div style="text-align:center;padding:30px 0;color:#475569;font-size:.82rem">
+<p>Interactive visualization for <em>"Transformer Layers as Fibre Bundle Morphisms"</em></p>
+<p>The embedding is the blurriest view. Each layer zooms in. Multiple regions activate in parallel. Hallucinations live at the edges.</p>
+</div>
+</div>
+
+<script>
+// ================================================================
+// UTILITIES
+// ================================================================
+const U = (() => {
+  const TAU = Math.PI*2, dpr = window.devicePixelRatio||1;
+  const lerp = (a,b,t) => a+(b-a)*t;
+  const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
+  const dst = (x1,y1,x2,y2) => Math.hypot(x2-x1,y2-y1);
+  const ease = t => t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const hx = (hex,a) => {const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`};
+
+  function mkCanvas(id, forceH) {
+    const c = document.getElementById(id);
+    const W = c.parentElement.clientWidth;
+    const H = forceH || Math.round(Math.min(440, W*0.55));
+    c.style.width = W+'px'; c.style.height = H+'px';
+    c.width = W*dpr; c.height = H*dpr;
+    const ctx = c.getContext('2d'); ctx.scale(dpr,dpr);
+    return {c,ctx,W,H};
+  }
+
+  function drawGrid(ctx,W,H,warp,step,col,lw) {
+    ctx.strokeStyle = col||'rgba(100,116,139,0.1)'; ctx.lineWidth = lw||.6;
+    const sub=step/3;
+    for(let y=0;y<=H;y+=step){ctx.beginPath();for(let x=0;x<=W;x+=sub){const[wx,wy]=warp(x,y);x===0?ctx.moveTo(wx,wy):ctx.lineTo(wx,wy)}ctx.stroke()}
+    for(let x=0;x<=W;x+=step){ctx.beginPath();for(let y=0;y<=H;y+=sub){const[wx,wy]=warp(x,y);y===0?ctx.moveTo(wx,wy):ctx.lineTo(wx,wy)}ctx.stroke()}
+  }
+
+  return {TAU,dpr,lerp,clamp,dst,ease,hx,mkCanvas,drawGrid};
+})();
+
+// ================================================================
+// ISLAND DATA — shared knowledge regions
+// ================================================================
+const ISLANDS = [
+  {id:'math', label:'Mathematics', x:.18, y:.35, r:.13, hue:240, emoji:'🔢'},
+  {id:'code', label:'Programming', x:.5, y:.25, r:.14, hue:330, emoji:'💻'},
+  {id:'lang', label:'Language', x:.78, y:.4, r:.12, hue:160, emoji:'📝'},
+  {id:'bio',  label:'Biology', x:.3, y:.72, r:.11, hue:90, emoji:'🧬'},
+  {id:'hist', label:'History', x:.65, y:.7, r:.1, hue:30, emoji:'📜'},
+  {id:'music',label:'Music', x:.85, y:.72, r:.08, hue:280, emoji:'🎵'},
+];
+
+function drawIslandBase(ctx, W, H, islands, resolution, focusPoints) {
+  // Draw each island as a gaussian blob
+  const imgData = ctx.createImageData(W, H);
+  const d = imgData.data;
+  for (let py = 0; py < H; py++) {
+    for (let px = 0; px < W; px++) {
+      const nx = px/W, ny = py/H;
+      let maxVal = 0, bestHue = 0;
+      for (const isl of islands) {
+        const dist = U.dst(nx, ny, isl.x, isl.y);
+        const val = Math.exp(-dist*dist/(2*isl.r*isl.r));
+        if (val > maxVal) { maxVal = val; bestHue = isl.hue; }
+      }
+      // Focus sharpening
+      let focusMul = 0;
+      if (focusPoints) {
+        for (const fp of focusPoints) {
+          const fd = U.dst(nx, ny, fp.x, fp.y);
+          focusMul = Math.max(focusMul, Math.exp(-fd*fd/(2*fp.r*fp.r)) * fp.strength);
+        }
+      }
+      const clarity = U.clamp(0.15 + resolution*0.85 + focusMul*0.5, 0, 1);
+      const bright = maxVal * clarity;
+      const h = bestHue/360;
+      // HSL to RGB approximation
+      const s = 0.6, l = 0.08 + bright*0.45;
+      const c2 = (1-Math.abs(2*l-1))*s;
+      const x2 = c2*(1-Math.abs((h*6)%2-1));
+      const m = l-c2/2;
+      let r,g,b;
+      const hi = Math.floor(h*6)%6;
+      if(hi===0){r=c2;g=x2;b=0}else if(hi===1){r=x2;g=c2;b=0}else if(hi===2){r=0;g=c2;b=x2}
+      else if(hi===3){r=0;g=x2;b=c2}else if(hi===4){r=x2;g=0;b=c2}else{r=c2;g=0;b=x2}
+      const off = (py*W+px)*4;
+      d[off]   = U.clamp(Math.floor((r+m)*255),0,255);
+      d[off+1] = U.clamp(Math.floor((g+m)*255),0,255);
+      d[off+2] = U.clamp(Math.floor((b+m)*255),0,255);
+      d[off+3] = 255;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+
+// ================================================================
+// SECTION 1: WORLD MAP
+// ================================================================
+const MapMod = (() => {
+  let ctx, W, H, c;
+  let focusPoints = [];
+  let autoTimer = null;
+  let time = 0;
+
+  function init() {
+    ({c,ctx,W,H} = U.mkCanvas('cMap', 460));
+    c.addEventListener('click', e => {
+      const r = c.getBoundingClientRect();
+      const nx = (e.clientX-r.left)/r.width;
+      const ny = (e.clientY-r.top)/r.height;
+      let found = false;
+      for (const fp of focusPoints) {
+        if (U.dst(nx,ny,fp.x,fp.y) < 0.15) {
+          fp.strength = Math.min(fp.strength+0.3, 1);
+          fp.r = Math.max(fp.r*0.7, 0.04);
+          found = true; break;
+        }
+      }
+      if (!found) focusPoints.push({x:nx,y:ny,strength:0.4,r:0.18,time:performance.now()});
+      if (focusPoints.length > 5) focusPoints.shift();
+      render();
+    });
+    c.addEventListener('contextmenu', e => { e.preventDefault(); if(focusPoints.length)focusPoints.pop(); render(); });
+    document.getElementById('mapLayer').addEventListener('input', render);
+    render();
+    function tick(){time+=0.01;requestAnimationFrame(tick)}
+    tick();
+  }
+
+  function render() {
+    if(!ctx)return;
+    const layer = +document.getElementById('mapLayer').value/100;
+    document.getElementById('mapLayerV').textContent = (layer*11).toFixed(1);
+    const res = layer;
+
+    // Low-res pixelated background
+    const loW = 80, loH = Math.round(loW*H/W);
+    const loC = document.createElement('canvas'); loC.width=loW; loC.height=loH;
+    const loCtx = loC.getContext('2d');
+    drawIslandBase(loCtx, loW, loH, ISLANDS, res*0.3, null);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(loC, 0, 0, W, H);
+    ctx.imageSmoothingEnabled = true;
+
+    // High-res in focus regions
+    if (focusPoints.length > 0) {
+      const hiW = 256, hiH = Math.round(hiW*H/W);
+      const hiC = document.createElement('canvas'); hiC.width=hiW; hiC.height=hiH;
+      const hiCtx = hiC.getContext('2d');
+      drawIslandBase(hiCtx, hiW, hiH, ISLANDS, res*0.5+0.5, focusPoints);
+      for (const fp of focusPoints) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(fp.x*W, fp.y*H, fp.r*Math.min(W,H)*1.2, 0, U.TAU);
+        ctx.clip();
+        ctx.globalAlpha = fp.strength;
+        ctx.drawImage(hiC, 0, 0, W, H);
+        ctx.globalAlpha = 1;
+        ctx.restore();
+        // Ring
+        const pulse = 0.6+0.4*Math.sin((performance.now()-fp.time)/300);
+        ctx.beginPath();
+        ctx.arc(fp.x*W, fp.y*H, fp.r*Math.min(W,H), 0, U.TAU);
+        ctx.strokeStyle = `rgba(129,140,248,${0.3*pulse})`;
+        ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.font = 'bold 9px Inter';
+        ctx.fillStyle = `rgba(129,140,248,${0.6*pulse})`;
+        ctx.textAlign = 'center';
+        ctx.fillText(`${Math.round(fp.strength*100)}%`, fp.x*W, fp.y*H - fp.r*Math.min(W,H) - 6);
+      }
+    }
+
+    // Island labels
+    for (const isl of ISLANDS) {
+      const ix = isl.x*W, iy = isl.y*H;
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(isl.emoji, ix, iy-8);
+      ctx.font = 'bold 11px Inter';
+      ctx.fillStyle = `hsla(${isl.hue},70%,75%,${0.4+res*0.6})`;
+      ctx.fillText(isl.label, ix, iy+16);
+    }
+
+    // Phase label
+    ctx.font = 'bold 12px Inter'; ctx.textAlign = 'left';
+    const lv = layer*11;
+    let phaseCol, phaseTxt;
+    if(lv<0.5){phaseCol='#64748b';phaseTxt='🌍 Embedding: Everything visible, nothing sharp'}
+    else if(lv<=3){phaseCol='#60a5fa';phaseTxt=`🔀 Layer ${lv.toFixed(1)}: Routing — deciding where to look`}
+    else if(lv<=8){phaseCol='#c084fc';phaseTxt=`🔬 Layer ${lv.toFixed(1)}: Resolving — sharpening chosen regions`}
+    else{phaseCol='#34d399';phaseTxt=`🧩 Layer ${lv.toFixed(1)}: Gluing — assembling the answer`}
+    ctx.fillStyle = phaseCol;
+    ctx.fillText(phaseTxt, 10, 20);
+
+    if(focusPoints.length>0){
+      ctx.font='9px Inter';ctx.fillStyle='#fbbf24';ctx.textAlign='right';
+      ctx.fillText(`${focusPoints.length} focus point(s) | Right-click to remove`, W-10, 20);
+    }
+
+    const maxStr = focusPoints.length>0?Math.max(...focusPoints.map(f=>f.strength)):0;
+    document.getElementById('mapStats').innerHTML = `
+      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${lv.toFixed(1)}</div></div>
+      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${lv<0.5?'Embed':lv<=3?'Route':lv<=8?'Resolve':'Glue'}</div></div>
+      <div class="sc"><div class="l">FOCUS</div><div class="v" style="color:#fbbf24">${focusPoints.length}</div></div>
+      <div class="sc"><div class="l">MAX SHARP</div><div class="v" style="color:#34d399">${Math.round(maxStr*100)}%</div></div>
+    `;
+  }
+
+  function reset() { focusPoints=[]; document.getElementById('mapLayer').value=0; render(); }
+
+  function autoDrill() {
+    if(autoTimer)return;
+    reset();
+    const targets = [
+      {x:.5,y:.25,delay:500},{x:.5,y:.25,delay:800},{x:.5,y:.25,delay:1100},
+    ];
+    let step=0;
+    function next(){
+      if(step>=targets.length){autoTimer=null;return}
+            const t = targets[step];
+      let found = false;
+      for (const fp of focusPoints) {
+        if (U.dst(t.x, t.y, fp.x, fp.y) < 0.15) {
+          fp.strength = Math.min(fp.strength + 0.3, 1);
+          fp.r = Math.max(fp.r * 0.7, 0.04);
+          found = true; break;
+        }
+      }
+      if (!found) focusPoints.push({x:t.x,y:t.y,strength:0.4,r:0.18,time:performance.now()});
+      step++;
+      // Also advance the layer slider
+      document.getElementById('mapLayer').value = Math.min(100, step * 35);
+      render();
+      autoTimer = setTimeout(next, t.delay);
+    }
+    autoTimer = setTimeout(next, 300);
+  }
+
+  setTimeout(init, 50);
+  return { render, reset, autoDrill };
+})();
+
+// ================================================================
+// SECTION 2: ZOOM / LAYERS AS PROGRESSIVE RESOLUTION
+// ================================================================
+const ZoomMod = (() => {
+  let ctx, W, H, c;
+  let animTimer = null;
+
+  // Knowledge regions in normalized coords
+  const regions = [
+    {x:.2,y:.3,r:.12,label:'Math',hue:240,emoji:'🔢'},
+    {x:.5,y:.25,r:.13,label:'Code',hue:330,emoji:'💻'},
+    {x:.8,y:.35,r:.11,label:'Language',hue:160,emoji:'📝'},
+    {x:.35,y:.72,r:.1,label:'Biology',hue:90,emoji:'🧬'},
+    {x:.7,y:.7,r:.09,label:'History',hue:30,emoji:'📜'},
+  ];
+
+  function init() {
+    ({c,ctx,W,H} = U.mkCanvas('cZoom', 400));
+    document.getElementById('zoomDepth').addEventListener('input', render);
+    document.getElementById('zoomGrid').addEventListener('change', render);
+    render();
+  }
+
+  function render() {
+    if(!ctx) return;
+    const depth = +document.getElementById('zoomDepth').value / 10;
+    const showGrid = document.getElementById('zoomGrid').checked;
+    document.getElementById('zoomDepthV').textContent = depth.toFixed(1);
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#030618';
+    ctx.fillRect(0,0,W,H);
+
+    // Compute phase
+    const routing = U.clamp(1 - depth/4, 0, 1);
+    const resolving = U.clamp((depth-2)/5, 0, 1);
+    const gluing = U.clamp((depth-8)/3, 0, 1);
+    const deform = depth===0?0:(depth<=3?depth*0.08:(depth<=8?0.24+(depth-3)*0.04:0.44-(depth-8)*0.12));
+
+    // Warp function
+    function warp(x, y) {
+      if(depth < 0.1) return [x, y];
+      const nx = x/W*2-1, ny = y/H*2-1;
+      let wx = nx, wy = ny;
+
+      // Routing: global rotation
+      if(routing > 0) {
+        const d = Math.hypot(nx, ny);
+        const a = deform * routing * Math.exp(-d*d/0.8) * 1.8;
+        const cs = Math.cos(a), sn = Math.sin(a);
+        wx = nx*cs - ny*sn; wy = nx*sn + ny*cs;
+      }
+
+      // Resolving: expand around knowledge regions
+      if(resolving > 0) {
+        for(const rg of regions) {
+          const rnx = rg.x*2-1, rny = rg.y*2-1;
+          const dx = wx - rnx, dy = wy - rny;
+          const d = Math.hypot(dx, dy);
+          const inf = deform * resolving * Math.exp(-d*d/0.4) * 0.35;
+          wx += dx * inf;
+          wy += dy * inf;
+        }
+      }
+
+      // Gluing: morph back
+      if(gluing > 0) {
+        wx = U.lerp(wx, nx, gluing * 0.7);
+        wy = U.lerp(wy, ny, gluing * 0.7);
+      }
+
+      return [((wx+1)/2)*W, ((wy+1)/2)*H];
+    }
+
+    // Draw grid
+    if(showGrid) {
+      const step = 28;
+      // Color grid lines by strain
+      const sub = step/3;
+      for(let gy=0; gy<=H; gy+=step) {
+        ctx.beginPath();
+        for(let gx=0; gx<=W; gx+=sub) {
+          const [wx,wy] = warp(gx, gy);
+          gx===0 ? ctx.moveTo(wx,wy) : ctx.lineTo(wx,wy);
+        }
+        // Compute local strain for color
+        const midX = W/2;
+        const [w1x] = warp(midX, gy);
+        const [w2x] = warp(midX+1, gy);
+        const stretch = Math.abs(w2x - w1x);
+        if(stretch > 1.2) ctx.strokeStyle = `rgba(239,68,68,${Math.min(0.3, (stretch-1)*0.3)})`;
+        else if(stretch < 0.8) ctx.strokeStyle = `rgba(59,130,246,${Math.min(0.3, (1-stretch)*0.5)})`;
+        else ctx.strokeStyle = 'rgba(100,116,139,0.08)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+      for(let gx=0; gx<=W; gx+=step) {
+        ctx.beginPath();
+        for(let gy=0; gy<=H; gy+=sub) {
+          const [wx,wy] = warp(gx, gy);
+          gy===0 ? ctx.moveTo(wx,wy) : ctx.lineTo(wx,wy);
+        }
+        ctx.strokeStyle = 'rgba(100,116,139,0.06)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+
+    // Draw knowledge regions
+    for(const rg of regions) {
+      const [wx,wy] = warp(rg.x*W, rg.y*H);
+      // Compute local scale
+      const [wx2] = warp(rg.x*W+10, rg.y*H);
+      const localScale = Math.abs(wx2-wx)/10;
+      const visualR = rg.r * Math.min(W,H) * localScale;
+
+      const grad = ctx.createRadialGradient(wx,wy,0,wx,wy,visualR);
+      grad.addColorStop(0, `hsla(${rg.hue},60%,50%,${0.15+resolving*0.15})`);
+      grad.addColorStop(1, `hsla(${rg.hue},60%,50%,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(wx,wy,visualR,0,U.TAU);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(wx,wy,visualR*0.8,0,U.TAU);
+      ctx.strokeStyle = `hsla(${rg.hue},60%,60%,${0.15+resolving*0.2})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.font = '16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(rg.emoji, wx, wy-4);
+      ctx.font = `bold ${Math.max(8,Math.round(10*localScale))}px Inter`;
+      ctx.fillStyle = `hsla(${rg.hue},70%,75%,${0.4+depth/11*0.6})`;
+      ctx.fillText(rg.label, wx, wy+14);
+    }
+
+    // Phase label
+    ctx.font = 'bold 12px Inter'; ctx.textAlign = 'left';
+    let phaseCol, phaseTxt;
+    if(depth<0.5){phaseCol='#64748b';phaseTxt='🌍 Layer 0: Flat embedding space'}
+    else if(depth<=3){phaseCol='#60a5fa';phaseTxt=`🔀 Layer ${depth.toFixed(1)}: Routing — tearing open space`}
+    else if(depth<=8){phaseCol='#c084fc';phaseTxt=`🔬 Layer ${depth.toFixed(1)}: Resolving — expanding regions`}
+    else{phaseCol='#34d399';phaseTxt=`🧩 Layer ${depth.toFixed(1)}: Gluing — morphing back`}
+    ctx.fillStyle = phaseCol;
+    ctx.fillText(phaseTxt, 10, 18);
+
+    document.getElementById('zoomStats').innerHTML = `
+      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${depth.toFixed(1)}</div></div>
+      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${depth<0.5?'Embed':depth<=3?'Route':depth<=8?'Resolve':'Glue'}</div></div>
+      <div class="sc"><div class="l">DEFORMATION</div><div class="v" style="color:#fbbf24">${Math.round(deform*100)}%</div></div>
+      <div class="sc"><div class="l">REGIONS</div><div class="v" style="color:#34d399">${regions.length}</div></div>
+    `;
+  }
+
+  function animate() {
+    if(animTimer) return;
+    const slider = document.getElementById('zoomDepth');
+    slider.value = 0;
+    render();
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min((now-start)/5000, 1);
+      slider.value = Math.round(U.ease(t)*110);
+      render();
+      if(t<1) animTimer = requestAnimationFrame(step);
+      else animTimer = null;
+    }
+    animTimer = requestAnimationFrame(step);
+  }
+
+  function reset() {
+    if(animTimer){cancelAnimationFrame(animTimer);animTimer=null}
+    document.getElementById('zoomDepth').value = 0;
+    render();
+  }
+
+  setTimeout(init, 100);
+  return { render, animate, reset };
+})();
+
+// ================================================================
+// SECTION 3: MULTIPLE ISLANDS — PARALLEL ACTIVATION
+// ================================================================
+const IslandMod = (() => {
+  let ctx, W, H, c;
+  let lenses = [];
+  let dragIdx = -1;
+
+  const islands = [
+    {x:.15,y:.3,r:.11,label:'Math',hue:240,emoji:'🔢'},
+    {x:.42,y:.22,r:.12,label:'Code',hue:330,emoji:'💻'},
+    {x:.72,y:.3,r:.1,label:'Language',hue:160,emoji:'📝'},
+    {x:.28,y:.68,r:.09,label:'Biology',hue:90,emoji:'🧬'},
+    {x:.58,y:.65,r:.08,label:'History',hue:30,emoji:'📜'},
+    {x:.85,y:.65,r:.07,label:'Music',hue:280,emoji:'🎵'},
+  ];
+
+  const LENS_COLS = ['129,140,248','244,114,182','52,211,153','251,191,36','96,165,250','248,113,113'];
+
+  function init() {
+    ({c,ctx,W,H} = U.mkCanvas('cIslands', 440));
+    resetLenses();
+
+    c.addEventListener('mousedown', e => {
+      const r = c.getBoundingClientRect();
+      const mx = (e.clientX-r.left)/r.width*W;
+      const my = (e.clientY-r.top)/r.height*H;
+      for(let i=lenses.length-1;i>=0;i--) {
+        if(U.dst(mx,my,lenses[i].x,lenses[i].y) < lenses[i].r+12) { dragIdx=i; break; }
+      }
+    });
+    c.addEventListener('mousemove', e => {
+      if(dragIdx<0) return;
+      const r = c.getBoundingClientRect();
+      lenses[dragIdx].x = (e.clientX-r.left)/r.width*W;
+      lenses[dragIdx].y = (e.clientY-r.top)/r.height*H;
+      render();
+    });
+    c.addEventListener('mouseup', () => { dragIdx=-1; });
+    c.addEventListener('mouseleave', () => { dragIdx=-1; });
+
+    ['islandHeads','islandWidth','islandBudget'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => { resetLenses(); render(); });
+      document.getElementById(id).addEventListener('change', () => { resetLenses(); render(); });
+    });
+    render();
+  }
+
+  function resetLenses() {
+    const n = +document.getElementById('islandHeads').value;
+    const width = +document.getElementById('islandWidth').value;
+    document.getElementById('islandWidthV').textContent = width<30?'Narrow':width<70?'Medium':'Broad';
+    document.getElementById('islandBudgetV').textContent = document.getElementById('islandBudget').value;
+
+    if(lenses.length === n) return;
+    lenses = [];
+    const targets = [
+      {x:.42,y:.22},{x:.15,y:.3},{x:.72,y:.3},{x:.28,y:.68},{x:.58,y:.65},{x:.85,y:.65}
+    ];
+    for(let i=0;i<n;i++) {
+      const t = targets[i % targets.length];
+      lenses.push({
+        x: t.x*W, y: t.y*H,
+        r: U.lerp(30, 120, width/100),
+        col: LENS_COLS[i % LENS_COLS.length]
+      });
+    }
+  }
+
+  function render() {
+    if(!ctx) return;
+    const budget = +document.getElementById('islandBudget').value / 100;
+    const width = +document.getElementById('islandWidth').value;
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#030618';
+    ctx.fillRect(0,0,W,H);
+
+    // Update lens radii
+    for(const l of lenses) l.r = U.lerp(30, 120, width/100);
+
+    // Draw islands as blobs
+    const step = 4;
+    for(let py=0;py<H;py+=step) {
+      for(let px=0;px<W;px+=step) {
+        const nx = px/W, ny = py/H;
+        let maxVal = 0, bestHue = 0;
+        for(const isl of islands) {
+          const d = U.dst(nx,ny,isl.x,isl.y);
+          const val = Math.exp(-d*d/(2*isl.r*isl.r));
+          if(val > maxVal) { maxVal = val; bestHue = isl.hue; }
+        }
+
+        // Compute lens coverage at this point
+        let lensCov = 0;
+        for(const l of lenses) {
+          const d = U.dst(px,py,l.x,l.y);
+          lensCov = Math.max(lensCov, Math.exp(-d*d/(2*l.r*l.r)));
+        }
+
+        const perLensBudget = budget / Math.max(1, lenses.length);
+        const clarity = U.clamp(0.08 + lensCov * perLensBudget * 2, 0, 1);
+        const bright = maxVal * clarity;
+
+        if(bright > 0.01) {
+          const h = bestHue/360;
+          const s = 0.6, li = 0.05 + bright*0.45;
+          const c2 = (1-Math.abs(2*li-1))*s;
+          const x2 = c2*(1-Math.abs((h*6)%2-1));
+          const m = li-c2/2;
+          let r,g,b;
+          const hi = Math.floor(h*6)%6;
+          if(hi===0){r=c2;g=x2;b=0}else if(hi===1){r=x2;g=c2;b=0}else if(hi===2){r=0;g=c2;b=x2}
+          else if(hi===3){r=0;g=x2;b=c2}else if(hi===4){r=x2;g=0;b=c2}else{r=c2;g=0;b=x2}
+          ctx.fillStyle = `rgb(${Math.floor((r+m)*255)},${Math.floor((g+m)*255)},${Math.floor((b+m)*255)})`;
+          ctx.fillRect(px,py,step,step);
+        }
+      }
+    }
+
+    // Island labels
+    for(const isl of islands) {
+      const ix = isl.x*W, iy = isl.y*H;
+      ctx.font = '18px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(isl.emoji, ix, iy-6);
+      ctx.font = 'bold 10px Inter';
+      ctx.fillStyle = `hsla(${isl.hue},70%,75%,0.7)`;
+      ctx.fillText(isl.label, ix, iy+14);
+    }
+
+    // Draw lens rings
+    for(let i=0;i<lenses.length;i++) {
+      const l = lenses[i];
+      // Outer glow
+      const grad = ctx.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r*1.3);
+      grad.addColorStop(0, `rgba(${l.col},0.06)`);
+      grad.addColorStop(1, `rgba(${l.col},0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(l.x,l.y,l.r*1.3,0,U.TAU);
+      ctx.fill();
+
+      // Ring
+      ctx.beginPath();
+      ctx.arc(l.x,l.y,l.r,0,U.TAU);
+      ctx.strokeStyle = `rgba(${l.col},0.35)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Center dot
+      ctx.beginPath();
+      ctx.arc(l.x,l.y,6,0,U.TAU);
+      ctx.fillStyle = `rgba(${l.col},0.8)`;
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.font = 'bold 9px Inter';
+      ctx.fillStyle = `rgba(${l.col},0.9)`;
+      ctx.textAlign = 'center';
+      ctx.fillText(`Lens ${i}`, l.x, l.y - l.r - 6);
+    }
+
+    // Budget bar
+    const barW = 180, barH = 6, barX = W/2-barW/2, barY = H-14;
+    ctx.fillStyle = '#1a2040'; ctx.fillRect(barX,barY,barW,barH);
+    const usedBudget = Math.min(1, lenses.length * (budget/Math.max(1,lenses.length)));
+    ctx.fillStyle = usedBudget > 0.85 ? '#ef4444' : '#818cf8';
+    ctx.fillRect(barX,barY,barW*usedBudget,barH);
+    ctx.font = '8px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center';
+    ctx.fillText(`Resolution budget: ${Math.round(usedBudget*100)}% used`, W/2, barY-3);
+
+    const perLensBudget = budget / Math.max(1, lenses.length);
+    document.getElementById('islandStats').innerHTML = `
+      <div class="sc"><div class="l">LENSES</div><div class="v" style="color:#818cf8">${lenses.length}</div></div>
+      <div class="sc"><div class="l">BUDGET/LENS</div><div class="v" style="color:#fbbf24">${Math.round(perLensBudget*100)}%</div></div>
+      <div class="sc"><div class="l">TRADEOFF</div><div class="v" style="color:#f472b6">${lenses.length>3?'Spread thin':'Focused'}</div></div>
+      <div class="sc"><div class="l">ISLANDS</div><div class="v" style="color:#34d399">${islands.length}</div></div>
+    `;
+  }
+
+  setTimeout(init, 150);
+  return {};
+})();
+
+// ================================================================
+// SECTION 4: PARALLEL TRANSPORT
+// ================================================================
+const TransMod = (() => {
+  let ctx, W, H, c;
+  let animTimer = null;
+  let particles = [];
+  let time = 0;
+
+  const nodes = [
+    {x:.2,y:.35,r:.1,label:'Math',hue:240,col:'#818cf8',emoji:'🔢'},
+    {x:.5,y:.25,r:.11,label:'Code',hue:330,col:'#f472b6',emoji:'💻'},
+    {x:.8,y:.4,r:.09,label:'Language',hue:160,col:'#34d399',emoji:'📝'},
+    {x:.35,y:.72,r:.08,label:'Biology',hue:90,col:'#a3e635',emoji:'🧬'},
+    {x:.65,y:.7,r:.07,label:'History',hue:30,col:'#fbbf24',emoji:'📜'},
+  ];
+
+  // Connections (residual stream highways)
+  const links = [
+    {from:0,to:1,w:0.8},{from:1,to:2,w:0.7},{from:0,to:2,w:0.4},
+    {from:1,to:3,w:0.3},{from:2,to:4,w:0.5},{from:0,to:4,w:0.2},
+    {from:3,to:4,w:0.6},{from:1,to:4,w:0.35},
+  ];
+
+  function init() {
+    ({c,ctx,W,H} = U.mkCanvas('cTransport', 420));
+    ['transportStr','transportLayer'].forEach(id => {
+      document.getElementById(id).addEventListener('input', render);
+    });
+
+    function tick() {
+      time += 0.015;
+      // Update particles
+      for(let i=particles.length-1;i>=0;i--) {
+        const p = particles[i];
+        p.t += p.speed;
+        if(p.t > 1) { particles.splice(i,1); continue; }
+      }
+      render();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function render() {
+    if(!ctx) return;
+    const strength = +document.getElementById('transportStr').value / 100;
+    const layer = +document.getElementById('transportLayer').value / 10;
+    document.getElementById('transportStrV').textContent = Math.round(strength*100)+'%';
+    document.getElementById('transportLayerV').textContent = layer.toFixed(1);
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = '#030618';
+    ctx.fillRect(0,0,W,H);
+
+    // Draw connections
+    for(const link of links) {
+      const a = nodes[link.from], b = nodes[link.to];
+      const ax = a.x*W, ay = a.y*H, bx = b.x*W, by = b.y*H;
+      const alpha = link.w * strength * 0.4;
+
+      // Curved connection
+      const mx = (ax+bx)/2, my = (ay+by)/2 - 30*link.w;
+      ctx.beginPath();
+      ctx.moveTo(ax,ay);
+      ctx.quadraticCurveTo(mx,my,bx,by);
+      ctx.strokeStyle = `rgba(251,191,36,${alpha})`;
+      ctx.lineWidth = 1 + link.w * 2 * strength;
+      ctx.stroke();
+
+      // Animated flow dots along the connection
+      if(strength > 0.1) {
+        const nDots = Math.ceil(link.w * 3);
+        for(let d=0;d<nDots;d++) {
+          const t = ((time * 0.3 * (1+link.w) + d/nDots) % 1);
+          const ft = t;
+          const fx = (1-ft)*(1-ft)*ax + 2*(1-ft)*ft*mx + ft*ft*bx;
+          const fy = (1-ft)*(1-ft)*ay + 2*(1-ft)*ft*my + ft*ft*by;
+          ctx.beginPath();
+          ctx.arc(fx,fy, 2+link.w*2, 0, U.TAU);
+          ctx.fillStyle = `rgba(251,191,36,${0.3+link.w*0.4})`;
+          ctx.fill();
+        }
+      }
+    }
+
+    // Draw nodes
+    for(const nd of nodes) {
+      const nx = nd.x*W, ny = nd.y*H;
+      const nr = nd.r * Math.min(W,H);
+
+      // Glow based on how much transport is flowing through
+      let flowIn = 0;
+      for(const link of links) {
+        if(link.to === nodes.indexOf(nd) || link.from === nodes.indexOf(nd)) {
+          flowIn += link.w * strength;
+        }
+      }
+      const glowR = nr * (1 + flowIn * 0.3);
+
+      const grad = ctx.createRadialGradient(nx,ny,0,nx,ny,glowR);
+      grad.addColorStop(0, `hsla(${nd.hue},60%,50%,${0.15+flowIn*0.1})`);
+      grad.addColorStop(1, `hsla(${nd.hue},60%,50%,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(nx,ny,glowR,0,U.TAU);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(nx,ny,nr*0.7,0,U.TAU);
+      ctx.strokeStyle = `hsla(${nd.hue},60%,60%,0.3)`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(nd.emoji, nx, ny-4);
+      ctx.font = 'bold 10px Inter';
+      ctx.fillStyle = nd.col;
+      ctx.fillText(nd.label, nx, ny+16);
+
+      // Resolution indicator
+      const res = U.clamp(0.1 + flowIn * 0.3, 0, 1);
+      ctx.font = '8px Inter';
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(`${Math.round(res*100)}% res`, nx, ny+28);
+    }
+
+    // Labels
+    ctx.font = 'bold 11px Inter'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillText(`Parallel Transport — Layer ${layer.toFixed(1)} — ${Math.round(strength*100)}% flow`, W/2, 16);
+
+    ctx.font = '9px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center';
+    ctx.fillText('The residual stream carries patterns between islands, letting them "borrow" resolution from each other', W/2, H-8);
+
+    document.getElementById('transportStats').innerHTML = `
+      <div class="sc"><div class="l">FLOW</div><div class="v" style="color:#fbbf24">${Math.round(strength*100)}%</div></div>
+      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${layer.toFixed(1)}</div></div>
+      <div class="sc"><div class="l">CONNECTIONS</div><div class="v" style="color:#34d399">${links.length}</div></div>
+      <div class="sc"><div class="l">NODES</div><div class="v" style="color:#f472b6">${nodes.length}</div></div>
+    `;
+  }
+
+  function animate() {
+    if(animTimer) return;
+    const slider = document.getElementById('transportStr');
+    slider.value = 0;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min((now-start)/3000, 1);
+      slider.value = Math.round(U.ease(t)*100);
+      if(t<1) animTimer = requestAnimationFrame(step);
+      else animTimer = null;
+    }
+    animTimer = requestAnimationFrame(step);
+  }
+
+  function reset() {
+    if(animTimer){cancelAnimationFrame(animTimer);animTimer=null}
+    document.getElementById('transportStr').value = 50;
+    document.getElementById('transportLayer').value = 30;
+  }
+
+  setTimeout(init, 200);
+  return { animate, reset };
+})();
+
+// ================================================================
+// SECTION 5: HALLUCINATIONS
+// ================================================================
+const HalMod = (() => {
+  let ctx, W, H, c;
+  let qx = 0.75, qy = 0.3;
+
+  const regions = [
+    {x:.22,y:.45,r:.18,label:'Mathematics',hue:240},
+    {x:.48,y:.3,r:.15,label:'Programming',hue:330},
+    {x:.75,y:.5,r:.12,label:'Poetry',hue:160},
+    {x:.35,y:.72,r:.1,label:'Biology',hue:90},
+    {x:.62,y:.7,r:.09,label:'Music',hue:280},
+  ];
+
+  function init() {
+    ({c,ctx,W,H} = U.mkCanvas('cHalluc', 360));
+    document.getElementById('halCov').addEventListener('input', render);
+    c.addEventListener('mousemove', e => {
+      const r = c.getBoundingClientRect();
+      qx = (e.clientX-r.left)/r.width;
+      qy = (e.clientY-r.top)/r.height;
+      render();
+    });
+    render();
+  }
+
+  function render() {
+    if (!ctx) return;
+    const coverage = +document.getElementById('halCov').value / 100;
+    document.getElementById('halCovV').textContent = Math.round(coverage * 100) + '%';
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#030618';
+    ctx.fillRect(0, 0, W, H);
+
+    // Draw coverage heatmap
+    const step = 4;
+    for (let y = 0; y < H; y += step) {
+      for (let x = 0; x < W; x += step) {
+        const nx = x / W, ny = y / H;
+        let maxCov = 0;
+        for (const rg of regions) {
+          const d = U.dst(nx, ny, rg.x, rg.y);
+          maxCov = Math.max(maxCov, Math.exp(-d * d / (2 * rg.r * rg.r * coverage)));
+        }
+        if (maxCov > 0.05) {
+          ctx.fillStyle = `rgba(0,${Math.floor(maxCov * 180)},${Math.floor(maxCov * 80)},${maxCov * 0.3})`;
+        } else {
+          ctx.fillStyle = 'rgba(200,30,30,0.06)';
+        }
+        ctx.fillRect(x, y, step, step);
+      }
+    }
+
+    // Draw region boundaries
+    for (const rg of regions) {
+      const rx = rg.x * W, ry = rg.y * H;
+      const rr = rg.r * Math.min(W, H) * coverage;
+
+      ctx.beginPath();
+      ctx.arc(rx, ry, rr, 0, U.TAU);
+      ctx.strokeStyle = `hsla(${rg.hue},60%,50%,0.3)`;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Glow
+      const grad = ctx.createRadialGradient(rx, ry, 0, rx, ry, rr);
+      grad.addColorStop(0, `hsla(${rg.hue},60%,50%,0.08)`);
+      grad.addColorStop(1, `hsla(${rg.hue},60%,50%,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(rx, ry, rr, 0, U.TAU);
+      ctx.fill();
+
+      ctx.font = 'bold 10px Inter';
+      ctx.fillStyle = `hsla(${rg.hue},70%,70%,0.8)`;
+      ctx.textAlign = 'center';
+      ctx.fillText(rg.label, rx, ry + 4);
+    }
+
+    // Query point
+    let qCov = 0;
+    for (const rg of regions) {
+      const d = U.dst(qx, qy, rg.x, rg.y);
+      qCov = Math.max(qCov, Math.exp(-d * d / (2 * rg.r * rg.r * coverage)));
+    }
+
+    // Confidence stays high even in low-coverage areas
+    const confidence = 0.7 + qCov * 0.25;
+    const gap = confidence - qCov;
+    const isHallucinating = qCov < 0.3;
+
+    const qpx = qx * W, qpy = qy * H;
+
+    // Query glow
+    const qCol = isHallucinating ? '#ef4444' : qCov > 0.5 ? '#34d399' : '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(qpx, qpy, 18, 0, U.TAU);
+    ctx.fillStyle = U.hx(qCol, 0.15);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(qpx, qpy, 6, 0, U.TAU);
+    ctx.fillStyle = qCol;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.font = 'bold 9px Inter';
+    ctx.fillStyle = '#e2e8f0';
+    ctx.textAlign = 'center';
+    ctx.fillText('Query', qpx, qpy - 22);
+
+    // Confidence bar
+    const barW = 150, barH = 8;
+    const barX = W - barW - 14, barY = 14;
+
+    ctx.fillStyle = '#1a2040';
+    ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = '#818cf8';
+    ctx.fillRect(barX, barY, barW * confidence, barH);
+    ctx.font = '9px Inter';
+    ctx.fillStyle = '#e2e8f0';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Confidence: ${Math.round(confidence * 100)}%`, barX, barY - 3);
+
+    ctx.fillStyle = '#1a2040';
+    ctx.fillRect(barX, barY + 20, barW, barH);
+    ctx.fillStyle = qCov > 0.5 ? '#34d399' : qCov > 0.2 ? '#fbbf24' : '#ef4444';
+    ctx.fillRect(barX, barY + 20, barW * qCov, barH);
+    ctx.fillText(`Coverage: ${Math.round(qCov * 100)}%`, barX, barY + 17);
+
+    // Gap indicator
+    if (gap > 0.3) {
+      ctx.fillStyle = '#1a2040';
+      ctx.fillRect(barX, barY + 40, barW, barH);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(barX, barY + 40, barW * gap, barH);
+      ctx.fillText(`Gap: ${Math.round(gap * 100)}%`, barX, barY + 37);
+    }
+
+    // Hallucination warning
+    if (isHallucinating) {
+      const pulse = 0.6 + 0.4 * Math.sin(performance.now() / 200);
+      ctx.font = `bold 12px Inter`;
+      ctx.fillStyle = `rgba(239,68,68,${pulse})`;
+      ctx.textAlign = 'center';
+      ctx.fillText('⚠ HALLUCINATION ZONE: High confidence, low coverage!', W / 2, H - 12);
+
+      // Danger ring around query
+      ctx.beginPath();
+      ctx.arc(qpx, qpy, 24, 0, U.TAU);
+      ctx.strokeStyle = `rgba(239,68,68,${0.3 * pulse})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // Phase label
+    ctx.font = 'bold 11px Inter';
+    ctx.fillStyle = '#94a3b8';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Coverage: ${Math.round(coverage * 100)}% — Move mouse to query different regions`, 10, 16);
+
+    document.getElementById('halStats').innerHTML = `
+      <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:${qCol}">${Math.round(qCov * 100)}%</div></div>
+      <div class="sc"><div class="l">CONFIDENCE</div><div class="v" style="color:#818cf8">${Math.round(confidence * 100)}%</div></div>
+      <div class="sc"><div class="l">GAP</div><div class="v" style="color:${isHallucinating ? '#ef4444' : '#34d399'}">${Math.round(gap * 100)}%</div></div>
+      <div class="sc"><div class="l">STATUS</div><div class="v" style="color:${isHallucinating ? '#ef4444' : '#34d399'}">${isHallucinating ? '⚠ Hallucinating' : '✓ Grounded'}</div></div>
+    `;
+  }
+
+  setTimeout(init, 250);
+  return {};
+})();
+
+// ================================================================
+// SECTION 6: FULL PIPELINE
+// ================================================================
+const PipeMod = (() => {
+  let ctx, W, H, c;
+  let animTimer = null;
+
+  const regions = [
+    {x:.2,y:.3,r:.12,label:'Math',hue:240,emoji:'🔢'},
+    {x:.5,y:.25,r:.13,label:'Code',hue:330,emoji:'💻'},
+    {x:.8,y:.35,r:.11,label:'Language',hue:160,emoji:'📝'},
+    {x:.35,y:.72,r:.1,label:'Biology',hue:90,emoji:'🧬'},
+    {x:.7,y:.7,r:.09,label:'History',hue:30,emoji:'📜'},
+  ];
+
+  function init() {
+    ({c,ctx,W,H} = U.mkCanvas('cPipeline', 440));
+    document.getElementById('pipeLayer').addEventListener('input', render);
+    document.getElementById('pipeGrid').addEventListener('change', render);
+    render();
+  }
+
+  function render() {
+    if (!ctx) return;
+    const depth = +document.getElementById('pipeLayer').value / 10;
+    const showGrid = document.getElementById('pipeGrid').checked;
+    document.getElementById('pipeLayerV').textContent = depth.toFixed(1);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#030618';
+    ctx.fillRect(0, 0, W, H);
+
+    const routing = U.clamp(1 - depth / 4, 0, 1);
+    const resolving = U.clamp((depth - 2) / 5, 0, 1);
+    const gluing = U.clamp((depth - 8) / 3, 0, 1);
+    const deform = depth === 0 ? 0 : (depth <= 3 ? depth * 0.08 : (depth <= 8 ? 0.24 + (depth - 3) * 0.04 : 0.44 - (depth - 8) * 0.12));
+
+    function warp(x, y) {
+      if (depth < 0.1) return [x, y];
+      const nx = x / W * 2 - 1, ny = y / H * 2 - 1;
+      let wx = nx, wy = ny;
+
+      if (routing > 0) {
+        const d = Math.hypot(nx, ny);
+        const a = deform * routing * Math.exp(-d * d / 0.8) * 1.8;
+        const cs = Math.cos(a), sn = Math.sin(a);
+        wx = nx * cs - ny * sn;
+        wy = nx * sn + ny * cs;
+      }
+
+      if (resolving > 0) {
+        for (const rg of regions) {
+          const rnx = rg.x * 2 - 1, rny = rg.y * 2 - 1;
+          const dx = wx - rnx, dy = wy - rny;
+          const d = Math.hypot(dx, dy);
+          const inf = deform * resolving * Math.exp(-d * d / 0.4) * 0.35;
+          wx += dx * inf;
+          wy += dy * inf;
+        }
+      }
+
+      if (gluing > 0) {
+        wx = U.lerp(wx, nx, gluing * 0.7);
+        wy = U.lerp(wy, ny, gluing * 0.7);
+      }
+
+      return [((wx + 1) / 2) * W, ((wy + 1) / 2) * H];
+    }
+
+    // Draw pixelated background (low-res knowledge landscape)
+    const bgStep = 6;
+    for (let py = 0; py < H; py += bgStep) {
+      for (let px = 0; px < W; px += bgStep) {
+        const nx = px / W, ny = py / H;
+        let maxVal = 0, bestHue = 0;
+        for (const rg of regions) {
+          const d = U.dst(nx, ny, rg.x, rg.y);
+          const val = Math.exp(-d * d / (2 * rg.r * rg.r));
+          if (val > maxVal) { maxVal = val; bestHue = rg.hue; }
+        }
+        const clarity = U.clamp(0.1 + depth / 11 * 0.5, 0, 1);
+        const bright = maxVal * clarity;
+        if (bright > 0.01) {
+          const h = bestHue / 360;
+          const s = 0.5, l = 0.05 + bright * 0.3;
+          const c2 = (1 - Math.abs(2 * l - 1)) * s;
+          const x2 = c2 * (1 - Math.abs((h * 6) % 2 - 1));
+          const m = l - c2 / 2;
+          let r, g, b;
+          const hi = Math.floor(h * 6) % 6;
+          if (hi === 0) { r = c2; g = x2; b = 0; }
+          else if (hi === 1) { r = x2; g = c2; b = 0; }
+          else if (hi === 2) { r = 0; g = c2; b = x2; }
+          else if (hi === 3) { r = 0; g = x2; b = c2; }
+          else if (hi === 4) { r = x2; g = 0; b = c2; }
+          else { r = c2; g = 0; b = x2; }
+          ctx.fillStyle = `rgb(${Math.floor((r + m) * 255)},${Math.floor((g + m) * 255)},${Math.floor((b + m) * 255)})`;
+          ctx.fillRect(px, py, bgStep, bgStep);
+        }
+      }
+    }
+
+    // Draw grid
+    if (showGrid && depth > 0.1) {
+      const gridStep = 28;
+      const sub = gridStep / 3;
+      for (let gy = 0; gy <= H; gy += gridStep) {
+        ctx.beginPath();
+        for (let gx = 0; gx <= W; gx += sub) {
+          const [wx, wy] = warp(gx, gy);
+          gx === 0 ? ctx.moveTo(wx, wy) : ctx.lineTo(wx, wy);
+        }
+        ctx.strokeStyle = `rgba(100,116,139,${0.06 + deform * 0.12})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+      for (let gx = 0; gx <= W; gx += gridStep) {
+        ctx.beginPath();
+        for (let gy = 0; gy <= H; gy += sub) {
+          const [wx, wy] = warp(gx, gy);
+          gy === 0 ? ctx.moveTo(wx, wy) : ctx.lineTo(wx, wy);
+        }
+        ctx.strokeStyle = `rgba(100,116,139,${0.04 + deform * 0.08})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+
+    // Draw knowledge regions
+    for (const rg of regions) {
+      const [wx, wy] = warp(rg.x * W, rg.y * H);
+      const [wx2] = warp(rg.x * W + 10, rg.y * H);
+      const localScale = Math.abs(wx2 - wx) / 10;
+      const visualR = rg.r * Math.min(W, H) * localScale;
+
+      const grad = ctx.createRadialGradient(wx, wy, 0, wx, wy, visualR);
+      grad.addColorStop(0, `hsla(${rg.hue},60%,50%,${0.12 + resolving * 0.12})`);
+      grad.addColorStop(1, `hsla(${rg.hue},60%,50%,0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(wx, wy, visualR, 0, U.TAU);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(wx, wy, visualR * 0.8, 0, U.TAU);
+      ctx.strokeStyle = `hsla(${rg.hue},60%,60%,${0.12 + resolving * 0.15})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.font = '16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(rg.emoji, wx, wy - 4);
+      ctx.font = `bold ${Math.max(8, Math.round(10 * localScale))}px Inter`;
+      ctx.fillStyle = `hsla(${rg.hue},70%,75%,${0.4 + depth / 11 * 0.6})`;
+      ctx.fillText(rg.label, wx, wy + 14);
+    }
+
+    // Phase label
+    ctx.font = 'bold 12px Inter';
+    ctx.textAlign = 'center';
+    let phaseCol, phaseTxt;
+    if (depth < 0.5) { phaseCol = '#64748b'; phaseTxt = '🌍 Embedding: Everything visible, nothing sharp'; }
+    else if (depth <= 3) { phaseCol = '#60a5fa'; phaseTxt = `🔀 Layer ${depth.toFixed(1)}: Routing — words to words`; }
+    else if (depth <= 8) { phaseCol = '#c084fc'; phaseTxt = `🔬 Layer ${depth.toFixed(1)}: Resolving — concepts to concepts`; }
+    else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${depth.toFixed(1)}: Gluing — reassembling the answer`; }
+    ctx.fillStyle = phaseCol;
+    ctx.fillText(phaseTxt, W / 2, 18);
+
+    // Progress bar at bottom
+    const pbW = W - 40, pbH = 4, pbX = 20, pbY = H - 10;
+    ctx.fillStyle = '#1a2040';
+    ctx.fillRect(pbX, pbY, pbW, pbH);
+    const progress = depth / 11;
+    const pbGrad = ctx.createLinearGradient(pbX, 0, pbX + pbW, 0);
+    pbGrad.addColorStop(0, '#60a5fa');
+    pbGrad.addColorStop(0.35, '#c084fc');
+    pbGrad.addColorStop(0.75, '#c084fc');
+    pbGrad.addColorStop(1, '#34d399');
+    ctx.fillStyle = pbGrad;
+    ctx.fillRect(pbX, pbY, pbW * progress, pbH);
+
+    document.getElementById('pipeStats').innerHTML = `
+      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${depth.toFixed(1)}</div></div>
+      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${depth < 0.5 ? 'Embed' : depth <= 3 ? 'Route' : depth <= 8 ? 'Resolve' : 'Glue'}</div></div>
+      <div class="sc"><div class="l">DEFORMATION</div><div class="v" style="color:#fbbf24">${Math.round(deform * 100)}%</div></div>
+      <div class="sc"><div class="l">REGIONS</div><div class="v" style="color:#34d399">${regions.length}</div></div>
+    `;
+  }
+
+  function animate() {
+    if (animTimer) return;
+    const slider = document.getElementById('pipeLayer');
+    slider.value = 0;
+    render();
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min((now - start) / 6000, 1);
+      slider.value = Math.round(U.ease(t) * 110);
+      render();
+      if (t < 1) animTimer = requestAnimationFrame(step);
+      else animTimer = null;
+    }
+    animTimer = requestAnimationFrame(step);
+  }
+
+  function reset() {
+    if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
+    document.getElementById('pipeLayer').value = 0;
+    render();
+  }
+
+  setTimeout(init, 300);
+  return { animate, reset };
+})();
+
+// ================================================================
+// SCROLL FADE-IN
+// ================================================================
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade').forEach(el => fadeObs.observe(el));
+
+// ================================================================
+// RESIZE HANDLER
+// ================================================================
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    // Reinitialize canvases on resize
+    // For simplicity, just reload — in production you'd reinit each module
+  }, 500);
+});
+
+</script>
+</body>
+</html>
