@@ -79,6 +79,7 @@
 		_js("tests.js");
 		_js("model.js");
 		_js("explain.js");
+		_js("math_editable.js");
 		_js("math_mode.js");
 		_js("feature_maps.js");
 		_js("grad_cam.js");

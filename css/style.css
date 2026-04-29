@@ -1560,3 +1560,193 @@ input:focus, textarea:focus, select:focus {
         --plotly-font-color: #dfe6e9; /* Dark Mode */
     }
 }
+
+/* ============================================================
+   MATH EDITABLE VARIABLES - Popup & Inline Styles
+   ============================================================ */
+
+/* Inline editable number */
+.math-ed-wrap {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: baseline;
+    margin: 0 2px;
+}
+
+.math-ed-num {
+    display: inline-block;
+    cursor: pointer;
+    padding: 1px 5px;
+    border-radius: 4px;
+    transition: all 0.12s;
+    font-family: "Temml", KaTeX_Main, "Times New Roman", serif;
+    font-size: 1.05em;
+    color: #53d8fb;
+    vertical-align: baseline;
+    min-width: 2.2em;
+    text-align: center;
+}
+
+.math-ed-num:hover {
+    background: rgba(83, 216, 251, 0.15);
+    box-shadow: 0 0 8px rgba(83, 216, 251, 0.15);
+}
+
+.math-ed-num.math-ed-active {
+    background: rgba(233, 69, 96, 0.22);
+    box-shadow: 0 0 10px rgba(233, 69, 96, 0.25);
+    color: #e94560;
+}
+
+.math-ed-label {
+    font-size: 0.55em;
+    color: #667;
+    font-family: monospace;
+    line-height: 1;
+    margin-top: 1px;
+    white-space: nowrap;
+}
+
+/* Popup editor */
+.math-pop-ed {
+    position: fixed;
+    z-index: 99999;
+    background: #14142a;
+    border: 1px solid #53d8fb;
+    border-radius: 9px;
+    padding: 12px 14px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+    display: none;
+    min-width: 230px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.math-pop-ed.math-pop-visible {
+    display: block;
+}
+
+.math-pop-label {
+    font-size: 0.78em;
+    color: #889;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.math-pop-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.math-pop-row input[type=number] {
+    width: 90px;
+    background: #08080f;
+    border: 1px solid #2a2a4a;
+    color: #53d8fb;
+    padding: 5px 7px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.math-pop-range {
+    font-size: 0.65em;
+    color: #445;
+}
+
+.math-pop-ed input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 5px;
+    border-radius: 3px;
+    background: #2a2a4a;
+    outline: none;
+    margin: 6px 0;
+}
+
+.math-pop-ed input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #e94560;
+    cursor: pointer;
+    border: 2px solid #fff;
+}
+
+.math-pop-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.math-pop-btn {
+    padding: 3px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75em;
+}
+
+.math-pop-btn-reset {
+    background: #1a1a30;
+    color: #889;
+}
+
+.math-pop-btn-reset:hover {
+    background: #2a2a40;
+}
+
+.math-pop-btn-close {
+    background: #301414;
+    color: #e94560;
+}
+
+.math-pop-btn-close:hover {
+    background: #501a1a;
+}
+
+/* Hybrid formula rows */
+.math-hybrid-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0;
+    margin: 2px 0;
+    line-height: 2.6;
+}
+
+.math-hybrid-row.math-hybrid-indent {
+    padding-left: 20px;
+}
+
+.math-hybrid-tex {
+    display: inline-block;
+    vertical-align: baseline;
+}
+
+/* Light theme overrides */
+body:not(.darkmode) .math-ed-num {
+    color: #0066cc;
+}
+
+body:not(.darkmode) .math-ed-num:hover {
+    background: rgba(0, 102, 204, 0.1);
+}
+
+body:not(.darkmode) .math-pop-ed {
+    background: #ffffff;
+    border-color: #0066cc;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+body:not(.darkmode) .math-pop-row input[type=number] {
+    background: #f5f5f5;
+    border-color: #ddd;
+    color: #0066cc;
+}
