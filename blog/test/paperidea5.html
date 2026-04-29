@@ -3,14 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>How Transformers See the World — Lipschitz Lens Visualization</title>
+<title>Lipschitz Lenses & Scrambled Topology — Enhanced Visualization</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
-:root {
-  --bg: #06081a; --surface: #0e1230; --surface2: #161a42;
-  --accent1: #818cf8; --accent2: #34d399; --accent3: #f472b6;
-  --accent4: #fbbf24; --text: #e2e8f0; --dim: #64748b;
-}
+:root{--bg:#06081a;--surface:#0e1230;--surface2:#161a42;--accent1:#818cf8;--accent2:#34d399;--accent3:#f472b6;--accent4:#fbbf24;--text:#e2e8f0;--dim:#64748b}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden}
 .wrap{max-width:1200px;margin:0 auto;padding:20px}
@@ -37,12 +33,14 @@ button:hover{transform:translateY(-1px);filter:brightness(1.15)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:10px 0;font-size:.8rem;color:#94a3b8}
 .legend-item{display:flex;align-items:center;gap:5px}
 .legend-dot{width:11px;height:11px;border-radius:50%}
-.lens-indicator{position:absolute;pointer-events:none;border:2px solid rgba(129,140,248,0.6);border-radius:50%;box-shadow:0 0 20px rgba(129,140,248,0.3),inset 0 0 20px rgba(129,140,248,0.1)}
 .toc{background:var(--surface);border-radius:12px;padding:18px;margin:20px 0}
 .toc a{color:var(--accent1);text-decoration:none;display:block;padding:3px 0;font-size:.88rem}
 .toc a:hover{color:#c4b5fd}
 .fade{opacity:0;transform:translateY(18px);transition:all .5s ease}
 .fade.vis{opacity:1;transform:translateY(0)}
+.dual-view{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.dual-view canvas{width:100%}
+.dual-label{text-align:center;font-size:.75rem;color:var(--accent2);font-weight:700;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -50,7 +48,7 @@ button:hover{transform:translateY(-1px);filter:brightness(1.15)}
 
 <h1>🔭 Lipschitz Lenses & Scrambled Topology</h1>
 <p class="hero-sub">
-The model's knowledge lives on a <strong>topological landscape</strong>. Each island encodes a <strong>scrambled topological icon</strong> — torii, loop spaces, spirals — visible only through <strong>Lipschitz map lenses</strong>. Focus a lens to sharpen one region; the finite dimension budget forces others to blur. The Lipschitz maps <em>are</em> the lenses: they contain the scrambled information, and focusing reconstructs it.
+The model's knowledge lives on a <strong>topological landscape</strong>. Each island encodes a <strong>scrambled topological icon</strong> — torii, loop spaces, spirals — visible only through <strong>Lipschitz map lenses</strong>. The maps <em>are</em> the lenses: they contain the scrambled information holographically. Focusing reconstructs it wave by wave. A spiral IS a circle from a certain perspective — these structures share deep similarities.
 </p>
 
 <div class="toc">
@@ -61,68 +59,69 @@ The model's knowledge lives on a <strong>topological landscape</strong>. Each is
 <a href="#s4">4. Layer Depth — Progressive Deholographisation</a>
 </div>
 
-<!-- ===== SECTION 1: LIPSCHITZ LENSES ===== -->
+<!-- ===== SECTION 1 ===== -->
 <h2 id="s1">1. Lipschitz Lenses — The Maps ARE the Information</h2>
 <div class="card fade">
-<p>A <span class="hl">Lipschitz map</span> is a function that distorts space by at most a bounded factor. In our framework, each transformer layer applies such a map — and the <strong>distortion pattern itself</strong> encodes the model's knowledge. The lens metaphor is literal: the Lipschitz map <em>is</em> the lens through which scrambled topological information becomes visible. Move your mouse to position the lens and watch the scrambled topology resolve.</p>
-<div class="met">"The computational content of a transformer layer is more faithfully described as a deformation of the embedding space (a Lipschitz map Φ: ℝᵈ→ℝᵈ) than as a displacement of individual token vectors. The geometry of the map — its Jacobian field, eigenvalue spectrum, divergence, curl, and shear — provides indirect access to the model's reasoning." — Conjecture 1</div>
+<p>A <span class="hl">Lipschitz map</span> distorts space by at most a bounded factor. The <strong>distortion pattern itself</strong> encodes the model's knowledge holographically. Move your mouse to position the lens — watch scrambled topology resolve where you focus, while other regions stay scrambled. Add more lenses to see the budget tradeoff.</p>
+<div class="met">"The computational content of a transformer layer is more faithfully described as a deformation of the embedding space (a Lipschitz map Φ: ℝᵈ→ℝᵈ) than as a displacement of individual token vectors." — Conjecture 1</div>
 <canvas id="cLens" height="560"></canvas>
 <div class="ctrl">
   <label>Lens Strength: <input type="range" id="lensStr" min="5" max="100" value="60"><span id="lensStrV">60%</span></label>
-  <label>Lens Radius: <input type="range" id="lensRad" min="30" max="200" value="90"><span id="lensRadV">90</span></label>
-  <label>Scramble: <input type="range" id="scramble" min="0" max="100" value="70"><span id="scrambleV">70%</span></label>
+  <label>Lens Radius: <input type="range" id="lensRad" min="30" max="200" value="100"><span id="lensRadV">100</span></label>
+  <label>Scramble: <input type="range" id="scramble" min="0" max="100" value="75"><span id="scrambleV">75%</span></label>
   <button class="bp" onclick="LensMod.addLens()">+ Add Lens</button>
   <button class="bs" onclick="LensMod.reset()">⟲ Reset</button>
   <button class="ba" onclick="LensMod.toggleAnim()">▶ Animate</button>
 </div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div> Lipschitz Lens (map boundary)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Resolved topology</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div> Lipschitz Lens boundary</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Resolved (decoded)</div>
   <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Scrambled (holographic)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Jacobian field lines</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Jacobian field</div>
 </div>
-<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Move your mouse</strong> to position the primary lens. The Lipschitz map creates a "window" into the scrambled topology — outside the lens, information remains holographically distributed and unreadable.</p>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Move mouse</strong> to position primary lens. Outside the lens = holographically scrambled. Inside = progressively decoded.</p>
 <div class="sg" id="lensStats"></div>
 </div>
 
-<!-- ===== SECTION 2: SCRAMBLED TORII & LOOP SPACES ===== -->
+<!-- ===== SECTION 2 ===== -->
 <h2 id="s2">2. Scrambled Torii & Loop Spaces — Topology Under the Lens</h2>
 <div class="card fade">
-<p>Each knowledge island contains a <span class="hl">topological icon</span> — a torus for programming (representing cyclic structures like loops), a figure-eight/loop space for mathematics (Ω-spaces), a spiral for history. These are <strong>scrambled holographically</strong>: every piece contains the whole, just blurrier. The Lipschitz lens progressively unscrambles them by adding DCT frequency tiles — exactly like illuminating a hologram.</p>
-<div class="met">"The scrambled representations contain topological structures (e.g. persistent loops, helices, spirals) that perform the model's actual computations. These structures are hidden from naive inspection because of the holographic scrambling, but they can in principle be extracted and decoded." — Conjecture 3</div>
-<canvas id="cTopo" height="600"></canvas>
+<p>Each knowledge island contains a <span class="hl">topological icon</span>. These are <strong>scrambled holographically</strong>: every piece contains the whole, just blurrier. The top row shows the <strong>encoded (scrambled)</strong> version. The bottom row shows the <strong>decoded</strong> version that gets clearer as you add more "waves" (DCT coefficients). Note: a spiral looks like a circle from above — these structures are related by projection, just as the Lipschitz map relates scrambled to decoded.</p>
+<div class="met">"The scrambled representations contain topological structures (e.g. persistent loops, helices, spirals) that perform the model's actual computations. These structures are hidden from naive inspection because of the holographic scrambling." — Conjecture 3</div>
+<canvas id="cTopo" height="650"></canvas>
 <div class="ctrl">
   <label>Focus Island: <select id="topoFocus"><option value="all">All (blurry)</option><option value="torus">Torus (Code)</option><option value="loops">Loop Space Ω (Math)</option><option value="spiral">Spiral (History)</option><option value="tree">Tree (Biology)</option><option value="wave">Wave (Music)</option></select></label>
-  <label>Animation Speed: <input type="range" id="topoSpeed" min="1" max="20" value="8"><span id="topoSpeedV">8</span></label>
-  <label>Scramble Intensity: <input type="range" id="topoScramble" min="0" max="100" value="65"><span id="topoScrambleV">65%</span></label>
-  <button class="bg" onclick="TopoMod.toggleRotation()">🔄 Rotate 3D</button>
+  <label>Decode Waves: <input type="range" id="topoWaves" min="1" max="64" value="8"><span id="topoWavesV">8</span></label>
+  <label>Speed: <input type="range" id="topoSpeed" min="1" max="20" value="8"><span id="topoSpeedV">8</span></label>
+  <button class="bg" onclick="TopoMod.toggleRotation()">🔄 Rotate</button>
+  <button class="bp" onclick="TopoMod.autoWaves()">▶ Auto-Decode</button>
 </div>
-<p style="text-align:center;font-size:.82rem;color:var(--dim)">Select an island to focus the Lipschitz lens on it. Watch the topology animate — torii rotate, loops traverse, spirals unwind — all <strong>scrambled</strong> by the holographic encoding. The lens progressively reveals the structure.</p>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)">Top row = <strong>encoded/scrambled</strong> (holographic). Bottom row = <strong>decoded</strong> (waves added progressively). Select an island to focus the lens — others blur.</p>
 <div class="sg" id="topoStats"></div>
 </div>
 
-<!-- ===== SECTION 3: FOCUS-DEPENDENT RESOLUTION ===== -->
+<!-- ===== SECTION 3 ===== -->
 <h2 id="s3">3. Focus-Dependent Resolution — The Tradeoff in Action</h2>
 <div class="card fade">
-<p>The fixed dimension <span class="hl">d</span> limits how many islands can be sharp at once. This is the <strong>resolution–breadth tradeoff</strong>: focusing the Lipschitz lens on one region forces others to blur. Drag the lenses below and watch: sharpening Math blurs Code; sharpening Code blurs Language. The total "tile budget" is conserved — this IS the finite-dimension constraint made visible.</p>
+<p>The fixed dimension <span class="hl">d</span> limits how many islands can be sharp at once. <strong>Drag the lenses</strong> to reposition them. When you focus more lenses on one island, it gets dramatically more detailed (more DCT tiles allocated). Others lose resolution and become pixelated/jaggy. The total tile budget is conserved.</p>
 <div class="met">"Narrow attention (low entropy) yields a sharp view of few stalks; broad attention yields a blurred view of many — a resolution–breadth tradeoff enforced by the convex combination in fixed dimensionality d." — Conjecture 6</div>
-<canvas id="cTradeoff" height="550"></canvas>
+<canvas id="cTradeoff" height="580"></canvas>
 <div class="ctrl">
-  <label>Total Budget: <input type="range" id="tradeBudget" min="20" max="200" value="100"><span id="tradeBudgetV">100</span></label>
+  <label>Total Budget: <input type="range" id="tradeBudget" min="20" max="256" value="100"><span id="tradeBudgetV">100</span></label>
   <label>Lenses: <select id="tradeHeads"><option value="1">1 lens</option><option value="2">2 lenses</option><option value="3" selected>3 lenses</option><option value="4">4 lenses</option><option value="5">5 lenses</option></select></label>
-  <button class="bp" onclick="TradeoffMod.autoFocus()">▶ Auto-Focus Sequence</button>
+  <button class="bp" onclick="TradeoffMod.autoFocus()">▶ Auto-Focus</button>
   <button class="bs" onclick="TradeoffMod.reset()">⟲ Reset</button>
 </div>
-<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Drag the colored lens circles</strong> to reposition them. The bar chart at the bottom shows the tile allocation per island — notice the conservation law!</p>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Drag colored lens circles</strong> to reposition. Watch the bar chart — conservation law in action!</p>
 <div class="sg" id="tradeStats"></div>
 </div>
 
-<!-- ===== SECTION 4: LAYER DEPTH ===== -->
+<!-- ===== SECTION 4 ===== -->
 <h2 id="s4">4. Layer Depth — Progressive Deholographisation</h2>
 <div class="card fade">
-<p>As we go deeper through layers, the Lipschitz maps progressively <span class="hl">deholographise</span> the scrambled topology. Early layers route (deciding WHERE to look), middle layers resolve (sharpening the topology), late layers glue (reassembling for output). The scrambled torii and loop spaces become clearer with each layer — but only in the focused region.</p>
-<div class="met">"Layer ℓ does not merely deform the space — it generates the instructions for layer ℓ+1. This may enable per-layer deholographisation: instead of decoding the holographic signal globally, one computes the full local chart atlas at each layer and unwinds the scrambling one layer at a time." — Conjecture 6</div>
-<canvas id="cLayers" height="520"></canvas>
+<p>As we go deeper through layers, the Lipschitz maps progressively <span class="hl">deholographise</span> the scrambled topology. Early layers = fully scrambled (jaggy, pixelated, barely visible). Middle layers = resolving. Late layers = crisp and clear. Unfocused regions stay pixelated throughout. The focused region goes from blocky noise to smooth topology.</p>
+<div class="met">"Layer ℓ does not merely deform the space — it generates the instructions for layer ℓ+1. This may enable per-layer deholographisation." — Conjecture 6</div>
+<canvas id="cLayers" height="550"></canvas>
 <div class="ctrl">
   <label>Layer Depth: <input type="range" id="layerDepth" min="0" max="110" value="0"><span id="layerDepthV">0.0</span></label>
   <label>Focus Region: <select id="layerFocus"><option value="code">Code (Torus)</option><option value="math">Math (Ω-Space)</option><option value="lang">Language (Graph)</option></select></label>
@@ -153,7 +152,6 @@ const U = (() => {
   const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
   const dst = (x1,y1,x2,y2) => Math.hypot(x2-x1,y2-y1);
   const ease = t => t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-
   function mkCanvas(id, forceH) {
     const c = document.getElementById(id);
     const W = c.parentElement.clientWidth - 44;
@@ -163,108 +161,321 @@ const U = (() => {
     const ctx = c.getContext('2d'); ctx.scale(dpr,dpr);
     return {c,ctx,W,H};
   }
-
   return {TAU,dpr,lerp,clamp,dst,ease,mkCanvas};
 })();
 
 // ================================================================
-// 3D TORUS GENERATOR (wireframe points)
+// HOLOGRAPHIC DCT ENGINE
 // ================================================================
-function generateTorus(R, r, uSegs, vSegs, time, scramble) {
-  const points = [];
-  for(let i=0; i<=uSegs; i++) {
-    for(let j=0; j<=vSegs; j++) {
-      const u = (i/uSegs) * U.TAU;
-      const v = (j/vSegs) * U.TAU;
-      // Standard torus parametrization
-      let x = (R + r*Math.cos(v)) * Math.cos(u);
-      let y = (R + r*Math.cos(v)) * Math.sin(u);
-      let z = r * Math.sin(v);
-      // Add scrambling (holographic noise)
-      if(scramble > 0) {
-        const s = scramble;
-        x += s * Math.sin(u*3 + v*2 + time*0.7) * r * 0.4;
-        y += s * Math.cos(u*2 + v*3 - time*0.5) * r * 0.4;
-        z += s * Math.sin(u*4 - v + time*0.3) * r * 0.3;
+const HoloDCT = (() => {
+  const N = 16;
+  function makeIcons() {
+    const icons = {};
+    // TORUS for Code (ring shape)
+    icons.Code = new Float64Array(N*N);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const cx2=7.5,cy2=7.5,dx=x-cx2,dy=y-cy2;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d>=4.0&&d<=7.5) icons.Code[y*N+x]=Math.max(0,1-Math.abs(d-5.8)/1.8);
+      if(d>=1.5&&d<=3.5) icons.Code[y*N+x]=Math.max(icons.Code[y*N+x],0.5*(1-Math.abs(d-2.5)/1.5));
+    }
+    // LOOP SPACE for Math (figure-eight)
+    icons.Math = new Float64Array(N*N);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const d1=Math.sqrt((x-4.5)**2+(y-7.5)**2);
+      const d2=Math.sqrt((x-10.5)**2+(y-7.5)**2);
+      if(Math.abs(d1-3.2)<1.2) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d1-3.2)/1.2);
+      if(Math.abs(d2-3.2)<1.2) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d2-3.2)/1.2);
+      if(Math.sqrt((x-7.5)**2+(y-7.5)**2)<1.5) icons.Math[y*N+x]=1;
+    }
+    // GRAPH for Language
+    icons.Language = new Float64Array(N*N);
+    const lnodes=[[4,3],[11,2],[2,8],[8,7],[13,9],[6,13],[10,13]];
+    const ledges=[[0,1],[0,2],[0,3],[1,3],[1,4],[2,5],[3,4],[3,5],[3,6],[4,6],[5,6]];
+    for(const[a,b] of ledges){
+      const[ax,ay]=lnodes[a],[bx,by]=lnodes[b];
+      for(let t=0;t<=1;t+=0.015){
+        const px2=ax+(bx-ax)*t,py2=ay+(by-ay)*t;
+        const ix=Math.round(px2),iy=Math.round(py2);
+        if(ix>=0&&ix<N&&iy>=0&&iy<N) icons.Language[iy*N+ix]=Math.max(icons.Language[iy*N+ix],0.7);
       }
-      points.push({x, y, z, u: i, v: j});
+    }
+    for(const[cx2,cy2] of lnodes){
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const d=Math.sqrt((x-cx2)**2+(y-cy2)**2);
+        if(d<1.8) icons.Language[y*N+x]=Math.max(icons.Language[y*N+x],1-d/1.8);
+      }
+    }
+    // Biology (tree)
+    icons.Biology = new Float64Array(N*N);
+    for(let y=10;y<16;y++) for(let x=7;x<=8;x++) icons.Biology[y*N+x]=1;
+    const canopy=[[3,2],[5,1],[7,0],[9,1],[11,2],[4,4],[10,4],[7,3],[6,5],[8,5]];
+    for(const[cx2,cy2] of canopy){
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const d=Math.sqrt((x-cx2)**2+(y-cy2)**2);
+        if(d<2.2) icons.Biology[y*N+x]=Math.max(icons.Biology[y*N+x],1-d/2.2);
+      }
+    }
+    // History (spiral)
+    icons.History = new Float64Array(N*N);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const cx2=7.5,cy2=7.5,dx=x-cx2,dy=y-cy2;
+      const angle=Math.atan2(dy,dx);
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      for(let w=-1;w<=3;w++){
+        const targetR=1.0+(angle+Math.PI+w*2*Math.PI)*0.7;
+        if(Math.abs(dist-targetR)<0.9&&dist<7.5&&dist>0.5)
+          icons.History[y*N+x]=Math.max(icons.History[y*N+x],1-Math.abs(dist-targetR)/0.9);
+      }
+    }
+    // Music (wave)
+    icons.Music = new Float64Array(N*N);
+    for(let x=0;x<N;x++){
+      const y1=7.5+5*Math.sin(x/N*2*Math.PI);
+      const y2=7.5+3*Math.sin(x/N*4*Math.PI);
+      const y3=7.5+2*Math.cos(x/N*3*Math.PI);
+      for(let y=0;y<N;y++){
+        if(Math.abs(y-y1)<1.3) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],1-Math.abs(y-y1)/1.3);
+        if(Math.abs(y-y2)<1.0) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],0.7*(1-Math.abs(y-y2)/1.0));
+        if(Math.abs(y-y3)<0.8) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],0.5*(1-Math.abs(y-y3)/0.8));
+      }
+    }
+    return icons;
+  }
+
+  function dct2(img){
+    const out=new Float64Array(N*N);
+    for(let u=0;u<N;u++) for(let v=0;v<N;v++){
+      let sum=0;
+      const cu=u===0?Math.sqrt(1/N):Math.sqrt(2/N);
+      const cv=v===0?Math.sqrt(1/N):Math.sqrt(2/N);
+      for(let x=0;x<N;x++) for(let y=0;y<N;y++){
+        sum+=img[y*N+x]*Math.cos((2*x+1)*u*Math.PI/(2*N))*Math.cos((2*y+1)*v*Math.PI/(2*N));
+      }
+      out[v*N+u]=cu*cv*sum;
+    }
+    return out;
+  }
+  function idct2(coeff){
+    const out=new Float64Array(N*N);
+    for(let x=0;x<N;x++) for(let y=0;y<N;y++){
+      let sum=0;
+      for(let u=0;u<N;u++) for(let v=0;v<N;v++){
+        const cu=u===0?Math.sqrt(1/N):Math.sqrt(2/N);
+        const cv=v===0?Math.sqrt(1/N):Math.sqrt(2/N);
+        sum+=cu*cv*coeff[v*N+u]*Math.cos((2*x+1)*u*Math.PI/(2*N))*Math.cos((2*y+1)*v*Math.PI/(2*N));
+      }
+      out[y*N+x]=sum;
+    }
+    return out;
+  }
+  function zigzagOrder(n){
+    const order=[];
+    for(let s=0;s<2*n-1;s++){
+      if(s%2===0){for(let i=Math.min(s,n-1);i>=Math.max(0,s-n+1);i--)order.push([i,s-i])}
+      else{for(let i=Math.max(0,s-n+1);i<=Math.min(s,n-1);i++)order.push([i,s-i])}
+    }
+    return order;
+  }
+  function reconstruct(dctCoeffs,k){
+    const zz=zigzagOrder(N);
+    const masked=new Float64Array(N*N);
+    const kk=Math.min(Math.max(0,Math.round(k)),N*N);
+    for(let i=0;i<kk&&i<zz.length;i++){const[u,v]=zz[i];masked[v*N+u]=dctCoeffs[v*N+u]}
+    return idct2(masked);
+  }
+  // Draw with pixelation effect based on resolution level
+  function drawIcon(ctx,pixels,cx,cy,size,hue,alpha,resolution){
+    // resolution: 0=very pixelated, 1=full detail
+    const res = resolution !== undefined ? resolution : 1;
+    const blockSize = Math.max(1, Math.round((1-res)*4+1)); // 1 to 5 pixel blocks
+    const effectiveN = Math.ceil(N/blockSize);
+    const pxSize = size/effectiveN;
+    let mn=Infinity,mx=-Infinity;
+    for(let i=0;i<N*N;i++){if(pixels[i]<mn)mn=pixels[i];if(pixels[i]>mx)mx=pixels[i]}
+    const range=mx-mn||1;
+    for(let by=0;by<effectiveN;by++) for(let bx=0;bx<effectiveN;bx++){
+      // Average the block
+      let sum=0,count=0;
+      for(let dy=0;dy<blockSize;dy++) for(let dx=0;dx<blockSize;dx++){
+        const sy=by*blockSize+dy, sx=bx*blockSize+dx;
+        if(sy<N&&sx<N){sum+=pixels[sy*N+sx];count++}
+      }
+      const val=(sum/count-mn)/range;
+      if(val<0.03) continue;
+      const l=20+val*50;
+      const s=50+val*25;
+      const a=val*alpha;
+      ctx.fillStyle=`hsla(${hue},${s}%,${l}%,${a})`;
+      ctx.fillRect(cx-size/2+bx*pxSize,cy-size/2+by*pxSize,pxSize+0.5,pxSize+0.5);
     }
   }
-  return {points, uSegs, vSegs};
-}
+  // Draw scrambled version (the encoded holographic data)
+  function drawScrambled(ctx,dctCoeffs,cx,cy,size,hue,alpha){
+    const pxSize=size/N;
+    let mn=Infinity,mx=-Infinity;
+    for(let i=0;i<N*N;i++){if(Math.abs(dctCoeffs[i])<mn)mn=Math.abs(dctCoeffs[i]);if(Math.abs(dctCoeffs[i])>mx)mx=Math.abs(dctCoeffs[i])}
+    const range=mx||1;
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const val=Math.abs(dctCoeffs[y*N+x])/range;
+      if(val<0.02) continue;
+      const isPos=dctCoeffs[y*N+x]>=0;
+      const l=isPos?20+val*40:15+val*30;
+      const s=60+val*20;
+      const h=isPos?hue:(hue+180)%360;
+      const a=val*alpha*0.8;
+      ctx.fillStyle=`hsla(${h},${s}%,${l}%,${a})`;
+      ctx.fillRect(cx-size/2+x*pxSize,cy-size/2+y*pxSize,pxSize+0.5,pxSize+0.5);
+    }
+  }
+
+  const icons=makeIcons();
+  const dctCache={};
+  for(const[name,img] of Object.entries(icons)) dctCache[name]=dct2(img);
+  return {N,icons,dctCache,reconstruct,drawIcon,drawScrambled,zigzagOrder,idct2};
+})();
 
 // ================================================================
-// 3D LOOP SPACE (Ω figure-eight with animation)
+// 3D TOPOLOGY GENERATORS
 // ================================================================
-function generateLoopSpace(baseR, time, scramble, complexity) {
-  const points = [];
-  const numLoops = complexity || 3;
-  for(let k=0; k<numLoops; k++) {
-    const phase = (k/numLoops) * U.TAU + time * 0.3;
-    const loopR = baseR * (0.6 + 0.4 * Math.sin(phase));
-    for(let i=0; i<=60; i++) {
-      const t = i/60;
-      const theta = t * U.TAU;
-      // Figure-eight / lemniscate in 3D
-      const scale = Math.sin(t * Math.PI); // ensures loop returns to basepoint
-      let x = loopR * scale * Math.cos(theta * (1 + k*0.5) + phase);
-      let y = loopR * scale * Math.sin(theta * (1 + k*0.5) + phase);
-      let z = loopR * 0.3 * Math.sin(theta * 2 + phase) * scale;
-      // Scramble
-      if(scramble > 0) {
-        const s = scramble;
-        x += s * Math.sin(theta*5 + time + k) * baseR * 0.2;
-        y += s * Math.cos(theta*4 - time + k*2) * baseR * 0.2;
-        z += s * Math.sin(theta*3 + time*0.7 + k*3) * baseR * 0.15;
+function generateTorus(R,r,uSegs,vSegs,time,scramble){
+  const points=[];
+  for(let i=0;i<=uSegs;i++) for(let j=0;j<=vSegs;j++){
+    const u=(i/uSegs)*U.TAU, v=(j/vSegs)*U.TAU;
+    let x=(R+r*Math.cos(v))*Math.cos(u);
+    let y=(R+r*Math.cos(v))*Math.sin(u);
+    let z=r*Math.sin(v);
+    if(scramble>0){
+      x+=scramble*Math.sin(u*3+v*2+time*0.7)*r*0.5;
+      y+=scramble*Math.cos(u*2+v*3-time*0.5)*r*0.5;
+      z+=scramble*Math.sin(u*4-v+time*0.3)*r*0.4;
+    }
+    points.push({x,y,z,u:i,v:j});
+  }
+  return{points,uSegs,vSegs:vSegs};
+}
+
+function generateLoopSpace(baseR,time,scramble,complexity){
+  const points=[];
+  const numLoops=complexity||3;
+  for(let k=0;k<numLoops;k++){
+    const phase=(k/numLoops)*U.TAU+time*0.3;
+    const loopR=baseR*(0.6+0.4*Math.sin(phase));
+    for(let i=0;i<=60;i++){
+      const t=i/60;
+      const theta=t*U.TAU;
+      const scale2=Math.sin(t*Math.PI);
+      let x=loopR*scale2*Math.cos(theta*(1+k*0.5)+phase);
+      let y=loopR*scale2*Math.sin(theta*(1+k*0.5)+phase);
+      let z=loopR*0.3*Math.sin(theta*2+phase)*scale2;
+      if(scramble>0){
+        x+=scramble*Math.sin(theta*5+time+k)*baseR*0.25;
+        y+=scramble*Math.cos(theta*4-time+k*2)*baseR*0.25;
+        z+=scramble*Math.sin(theta*3+time*0.7+k*3)*baseR*0.18;
       }
-      points.push({x, y, z, loop: k, t});
+      points.push({x,y,z,loop:k,t});
     }
   }
   return points;
 }
 
-// ================================================================
-// 3D SPIRAL
-// ================================================================
-function generateSpiral(R, turns, time, scramble) {
+function generateSpiral(R,turns,time,scramble){
+  const points=[];
+  for(let i=0;i<=120;i++){
+    const t=i/120;
+    const angle=t*turns*U.TAU+time*0.2;
+    const r2=R*t;
+    let x=r2*Math.cos(angle);
+    let y=r2*Math.sin(angle);
+    let z=R*0.5*(t-0.5);
+    if(scramble>0){
+      x+=scramble*Math.sin(angle*3+time)*R*0.18;
+      y+=scramble*Math.cos(angle*2-time*0.8)*R*0.18;
+      z+=scramble*Math.sin(angle*4+time*0.5)*R*0.12;
+    }
+    points.push({x,y,z,t});
+  }
+  return points;
+}
+
+function generateTree(scramble, time) {
   const points = [];
-  for(let i=0; i<=120; i++) {
-    const t = i/120;
-    const angle = t * turns * U.TAU + time * 0.2;
-    const r = R * t;
-    let x = r * Math.cos(angle);
-    let y = r * Math.sin(angle);
-    let z = R * 0.5 * (t - 0.5);
+  const edges = [];
+  function branch(px, py, pz, angle, depth, maxD, parentIdx) {
+    if(depth > maxD) return;
+    const len = 0.55 * Math.pow(0.68, depth);
+    let nx = px + len * Math.cos(angle);
+    let ny = py - len;
+    let nz = pz + len * Math.sin(angle + depth) * 0.25;
     if(scramble > 0) {
-      const s = scramble;
-      x += s * Math.sin(angle*3 + time) * R * 0.15;
-      y += s * Math.cos(angle*2 - time*0.8) * R * 0.15;
-      z += s * Math.sin(angle*4 + time*0.5) * R * 0.1;
+      nx += scramble * Math.sin(time + depth*2.5) * 0.18;
+      ny += scramble * Math.cos(time*0.7 + depth*1.8) * 0.12;
+      nz += scramble * Math.sin(time*0.5 + depth*3.2) * 0.1;
     }
-    points.push({x, y, z, t});
+    const idx = points.length;
+    points.push({x: nx, y: ny, z: nz});
+    edges.push([parentIdx, idx]);
+    branch(nx, ny, nz, angle - 0.7 - Math.sin(time*0.3)*0.1, depth+1, maxD, idx);
+    branch(nx, ny, nz, angle + 0.7 + Math.cos(time*0.4)*0.1, depth+1, maxD, idx);
   }
-  return points;
+  points.push({x: 0, y: 0.8, z: 0});
+  branch(0, 0.8, 0, -Math.PI/2, 0, 4, 0);
+  return {points, edges};
 }
 
-// ================================================================
-// 3D PROJECTION with rotation
-// ================================================================
-function project3D(x, y, z, rotX, rotY, cx, cy, scale) {
-  // Rotate around Y
-  let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
-  let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
-  // Rotate around X
-  let y1 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
-  let z2 = y * Math.sin(rotX) + z1 * Math.cos(rotX);
-  // Perspective
-  const perspective = 400;
-  const pScale = perspective / (perspective + z2);
-  return {
-    px: cx + x1 * scale * pScale,
-    py: cy + y1 * scale * pScale,
-    depth: z2,
-    scale: pScale
-  };
+function generateWave(scramble, time) {
+  const points = [];
+  const edges = [];
+  // Multiple wave layers to make it visually rich
+  for(let layer = 0; layer < 3; layer++) {
+    const freq = 2 + layer * 1.5;
+    const amp = 0.7 - layer * 0.15;
+    const phaseOff = layer * Math.PI * 0.4 + time * (1 + layer * 0.3);
+    for(let i = 0; i <= 60; i++) {
+      const t = i / 60;
+      const x2 = (t - 0.5) * 3;
+      const y2 = amp * Math.sin(t * Math.PI * freq + phaseOff) * Math.sin(t * Math.PI);
+      const z2 = 0.3 * Math.cos(t * Math.PI * (freq-0.5) + phaseOff * 0.7) * Math.sin(t * Math.PI);
+      let fx = x2, fy = y2, fz = z2;
+      if(scramble > 0) {
+        fx += scramble * Math.sin(t*12 + time + layer) * 0.25;
+        fy += scramble * Math.cos(t*9 - time*0.8 + layer*2) * 0.2;
+        fz += scramble * Math.sin(t*15 + time*0.5 + layer*3) * 0.12;
+      }
+      const idx = points.length;
+      points.push({x: fx, y: fy, z: fz, layer});
+      if(i > 0 && points[idx-1].layer === layer) edges.push([idx-1, idx]);
+    }
+  }
+  return {points, edges};
+}
+
+function generateGraph(scramble, time) {
+  const points = [];
+  const gNodes = [
+    {x:0,y:0,z:0},{x:1,y:0.3,z:0.2},{x:-0.8,y:0.5,z:-0.3},
+    {x:0.5,y:-0.7,z:0.4},{x:-0.5,y:-0.5,z:-0.5},{x:0.2,y:0.8,z:0.6},
+    {x:-0.3,y:-0.2,z:0.8},{x:0.7,y:-0.3,z:-0.6}
+  ];
+  for(const gn of gNodes) {
+    points.push({
+      x: gn.x + scramble * Math.sin(time + gn.x*5) * 0.4,
+      y: gn.y + scramble * Math.cos(time*0.8 + gn.y*4) * 0.3,
+      z: gn.z + scramble * Math.sin(time*0.6 + gn.z*6) * 0.3
+    });
+  }
+  const edges = [[0,1],[0,2],[0,3],[1,3],[1,5],[2,4],[3,4],[3,6],[4,6],[5,6],[2,5],[5,7],[1,7],[3,7]];
+  return {points, edges};
+}
+
+function project3D(x,y,z,rotX2,rotY2,cx,cy,scale2){
+  let x1=x*Math.cos(rotY2)-z*Math.sin(rotY2);
+  let z1=x*Math.sin(rotY2)+z*Math.cos(rotY2);
+  let y1=y*Math.cos(rotX2)-z1*Math.sin(rotX2);
+  let z2=y*Math.sin(rotX2)+z1*Math.cos(rotX2);
+  const perspective=400;
+  const pScale=perspective/(perspective+z2);
+  return{px:cx+x1*scale2*pScale,py:cy+y1*scale2*pScale,depth:z2,scale:pScale};
 }
 
 // ================================================================
@@ -272,559 +483,397 @@ function project3D(x, y, z, rotX, rotY, cx, cy, scale) {
 // ================================================================
 const LensMod = (() => {
   let ctx, W, H, c;
-  let mouseX = 0, mouseY = 0;
-  let lenses = [];
-  let time = 0;
-  let animating = true;
-  let rotY = 0, rotX = 0.3;
+  let mouseX=0, mouseY=0;
+  let lenses=[];
+  let time=0;
+  let animating=true;
+  let rotY2=0, rotX2=0.3;
 
-  // Islands with topological types
-  const islands = [
-    {x:.2, y:.3, r:.12, label:'Math', hue:240, topoType:'loops', icon:'Ω'},
-    {x:.5, y:.22, r:.14, label:'Code', hue:330, topoType:'torus', icon:'T²'},
-    {x:.8, y:.35, r:.11, label:'Language', hue:160, topoType:'graph', icon:'G'},
-    {x:.3, y:.72, r:.1, label:'Biology', hue:90, topoType:'tree', icon:'🌳'},
-    {x:.65, y:.7, r:.09, label:'History', hue:30, topoType:'spiral', icon:'🌀'},
-    {x:.88, y:.7, r:.08, label:'Music', hue:280, topoType:'wave', icon:'∿'},
+  const islands=[
+    {x:.18,y:.3,r:.11,label:'Math',hue:240,topoType:'loops',icon:'Ω'},
+    {x:.48,y:.2,r:.13,label:'Code',hue:330,topoType:'torus',icon:'T²'},
+    {x:.78,y:.32,r:.1,label:'Language',hue:160,topoType:'graph',icon:'G'},
+    {x:.28,y:.72,r:.09,label:'Biology',hue:90,topoType:'tree',icon:'🌳'},
+    {x:.62,y:.72,r:.09,label:'History',hue:30,topoType:'spiral',icon:'🌀'},
+    {x:.88,y:.68,r:.08,label:'Music',hue:280,topoType:'wave',icon:'∿'},
   ];
 
-  function init() {
-    ({c,ctx,W,H} = U.mkCanvas('cLens', 540));
-    mouseX = W/2; mouseY = H/2;
-    lenses = [{x: W/2, y: H/2, r: 90, strength: 0.6}];
-
-    c.addEventListener('mousemove', e => {
-      const rect = c.getBoundingClientRect();
-      mouseX = (e.clientX - rect.left) / rect.width * W;
-      mouseY = (e.clientY - rect.top) / rect.height * H;
-      if(lenses.length > 0) {
-        lenses[0].x = mouseX;
-        lenses[0].y = mouseY;
-      }
+  function init(){
+    ({c,ctx,W,H}=U.mkCanvas('cLens',540));
+    mouseX=W/2;mouseY=H/2;
+    lenses=[{x:W/2,y:H/2,r:100,strength:0.6}];
+    c.addEventListener('mousemove',e=>{
+      const rect=c.getBoundingClientRect();
+      mouseX=(e.clientX-rect.left)/rect.width*W;
+      mouseY=(e.clientY-rect.top)/rect.height*H;
+      if(lenses.length>0){lenses[0].x=mouseX;lenses[0].y=mouseY}
     });
-
-    ['lensStr','lensRad','scramble'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => {});
-    });
-
-    function tick() {
-      if(animating) time += 0.016;
-      rotY += 0.003;
+    function tick(){
+      if(animating)time+=0.016;
+      rotY2+=0.003;
       render();
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
 
-  function render() {
-    if(!ctx) return;
-    const strength = +document.getElementById('lensStr').value / 100;
-    const radius = +document.getElementById('lensRad').value;
-    const scramble = +document.getElementById('scramble').value / 100;
-    document.getElementById('lensStrV').textContent = Math.round(strength*100)+'%';
-    document.getElementById('lensRadV').textContent = radius;
-    document.getElementById('scrambleV').textContent = Math.round(scramble*100)+'%';
-
-    if(lenses.length > 0) {
-      lenses[0].r = radius;
-      lenses[0].strength = strength;
-    }
+  function render(){
+    if(!ctx)return;
+    const strength=+document.getElementById('lensStr').value/100;
+    const radius=+document.getElementById('lensRad').value;
+    const scramble=+document.getElementById('scramble').value/100;
+    document.getElementById('lensStrV').textContent=Math.round(strength*100)+'%';
+    document.getElementById('lensRadV').textContent=radius;
+    document.getElementById('scrambleV').textContent=Math.round(scramble*100)+'%';
+    if(lenses.length>0){lenses[0].r=radius;lenses[0].strength=strength}
 
     ctx.clearRect(0,0,W,H);
-
-    // Dark background with subtle noise
-    ctx.fillStyle = '#030618';
+    ctx.fillStyle='#030618';
     ctx.fillRect(0,0,W,H);
 
-    // Draw Jacobian field lines (background texture showing the Lipschitz map)
-    drawJacobianField(ctx, W, H, lenses, time, scramble);
+    // Jacobian field
+    drawJacobianField(ctx,W,H,lenses,time,scramble);
 
-    // Draw islands with scrambled topology
-    for(const isl of islands) {
-      const ix = isl.x * W, iy = isl.y * H;
-      const islR = isl.r * Math.min(W,H);
-
-      // Compute lens coverage for this island
-      let coverage = 0;
-      for(const l of lenses) {
-        const d = U.dst(ix, iy, l.x, l.y);
-        const lensEffect = Math.exp(-d*d / (2 * l.r * l.r)) * l.strength;
-        coverage = Math.max(coverage, lensEffect);
+    // Islands
+    for(const isl of islands){
+      const ix=isl.x*W,iy=isl.y*H;
+      const islR=isl.r*Math.min(W,H);
+      let coverage=0;
+      for(const l of lenses){
+        const d=U.dst(ix,iy,l.x,l.y);
+        coverage=Math.max(coverage,Math.exp(-d*d/(2*l.r*l.r))*l.strength);
       }
-
-      // Draw the topological icon with scramble inversely proportional to coverage
-      const effectiveScramble = scramble * (1 - coverage);
-      drawTopologicalIsland(ctx, ix, iy, islR, isl, effectiveScramble, coverage, time);
+      const effectiveScramble=scramble*(1-coverage);
+      drawIsland3D(ctx,ix,iy,islR,isl,effectiveScramble,coverage,time,rotX2,rotY2);
     }
 
-    // Draw lens boundaries with glass effect
-    for(let i=0; i<lenses.length; i++) {
-      const l = lenses[i];
-      drawLensGlass(ctx, l.x, l.y, l.r, l.strength, i, time);
+    // Lens glass
+    for(let i=0;i<lenses.length;i++){
+      drawLensGlass(ctx,lenses[i],i,time);
     }
 
-    // Draw "outside lens = scrambled" indicator
-    ctx.font = 'bold 11px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#818cf8';
-    ctx.fillText('Lipschitz Map = Lens = Information Container', W/2, 18);
-    ctx.font = '9px Inter';
-    ctx.fillStyle = '#64748b';
-    ctx.fillText('The distortion pattern of the map IS the encoded topology — focus reveals it', W/2, 32);
+    // Title
+    ctx.font='bold 11px Inter';ctx.textAlign='center';ctx.fillStyle='#818cf8';
+    ctx.fillText('Lipschitz Map = Lens = Information Container',W/2,18);
+    ctx.font='9px Inter';ctx.fillStyle='#64748b';
+    ctx.fillText('Move mouse to focus. Outside lens = holographically scrambled. Inside = decoded.',W/2,32);
 
     // Stats
-    let maxCov = 0, maxIsland = '';
-    for(const isl of islands) {
-      let cov = 0;
-      for(const l of lenses) {
-        const d = U.dst(isl.x*W, isl.y*H, l.x, l.y);
-        cov = Math.max(cov, Math.exp(-d*d/(2*l.r*l.r)) * l.strength);
-      }
-      if(cov > maxCov) { maxCov = cov; maxIsland = isl.label; }
+    let maxCov=0,maxIsland='';
+    for(const isl of islands){
+      let cov=0;
+      for(const l of lenses){const d=U.dst(isl.x*W,isl.y*H,l.x,l.y);cov=Math.max(cov,Math.exp(-d*d/(2*l.r*l.r))*l.strength)}
+      if(cov>maxCov){maxCov=cov;maxIsland=isl.label}
     }
-
-    document.getElementById('lensStats').innerHTML = `
+    document.getElementById('lensStats').innerHTML=`
       <div class="sc"><div class="l">LENSES</div><div class="v" style="color:#818cf8">${lenses.length}</div></div>
       <div class="sc"><div class="l">FOCUSED ON</div><div class="v" style="color:#34d399">${maxIsland||'—'}</div></div>
       <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:#fbbf24">${Math.round(maxCov*100)}%</div></div>
       <div class="sc"><div class="l">SCRAMBLE</div><div class="v" style="color:#f472b6">${Math.round(scramble*100)}%</div></div>
-      <div class="sc"><div class="l">Lip. CONST</div><div class="v" style="color:#818cf8">${(1+strength*2).toFixed(1)}</div></div>
-    `;
+      <div class="sc"><div class="l">Lip. CONST</div><div class="v" style="color:#818cf8">${(1+strength*2).toFixed(1)}</div></div>`;
   }
 
-  function drawJacobianField(ctx, W, H, lenses, time, scramble) {
-    // Draw flowing field lines representing the Lipschitz map's Jacobian
-    const step = 30;
-    ctx.lineWidth = 0.5;
-    for(let y = step; y < H; y += step) {
-      for(let x = step; x < W; x += step) {
-        // Compute local "Jacobian" direction based on lens proximity
-        let fx = 0, fy = 0;
-        for(const l of lenses) {
-          const dx = x - l.x, dy = y - l.y;
-          const d = Math.sqrt(dx*dx + dy*dy);
-          const influence = l.strength * Math.exp(-d*d/(2*l.r*l.r));
-          // Curl-like rotation + divergence
-          fx += influence * (-dy/d * 0.5 + dx/d * 0.3) * 15;
-          fy += influence * (dx/d * 0.5 + dy/d * 0.3) * 15;
-        }
-        // Add scramble noise
-        fx += scramble * Math.sin(x*0.02 + time) * 8;
-        fy += scramble * Math.cos(y*0.02 - time*0.7) * 8;
-
-        const mag = Math.sqrt(fx*fx + fy*fy);
-        if(mag < 1) continue;
-
-        const alpha = U.clamp(mag / 20, 0.02, 0.15);
-        ctx.strokeStyle = `rgba(251,191,36,${alpha})`;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + fx*0.8, y + fy*0.8);
-        ctx.stroke();
+  function drawJacobianField(ctx,W,H,lenses,time,scramble){
+    const step=28;
+    ctx.lineWidth=0.6;
+    for(let y=step;y<H;y+=step)for(let x=step;x<W;x+=step){
+      let fx=0,fy=0;
+      for(const l of lenses){
+        const dx=x-l.x,dy=y-l.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+        const inf=l.strength*Math.exp(-d*d/(2*l.r*l.r));
+        fx+=inf*(-dy/d*0.5+dx/d*0.3)*15;
+        fy+=inf*(dx/d*0.5+dy/d*0.3)*15;
       }
+      fx+=scramble*Math.sin(x*0.02+time)*8;
+      fy+=scramble*Math.cos(y*0.02-time*0.7)*8;
+      const mag=Math.sqrt(fx*fx+fy*fy);
+      if(mag<1)continue;
+      const alpha=U.clamp(mag/20,0.02,0.15);
+      ctx.strokeStyle=`rgba(251,191,36,${alpha})`;
+      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+fx*0.8,y+fy*0.8);ctx.stroke();
     }
   }
 
-  function drawTopologicalIsland(ctx, cx, cy, radius, island, scramble, coverage, time) {
-    const rotY2 = rotY + island.hue * 0.01;
-    const rotX2 = rotX + Math.sin(time * 0.3 + island.hue) * 0.1;
-    const scale = radius * 0.6;
+  function drawIsland3D(ctx,cx,cy,radius,island,scramble,coverage,time,rX,rY){
+    const rY2=rY+island.hue*0.01;
+    const rX2=rX+Math.sin(time*0.3+island.hue)*0.1;
+    const scale2=radius*0.6;
+    let data;
+    if(island.topoType==='torus'){
+      const t=generateTorus(1.2,0.5,16,10,time,scramble);
+      const edges=[];
+      for(let u=0;u<=t.uSegs;u++)for(let v=0;v<=t.vSegs;v++){
+        const idx=u*(t.vSegs+1)+v;
+        if(v<t.vSegs)edges.push([idx,idx+1]);
+        if(u<t.uSegs)edges.push([idx,idx+t.vSegs+1]);
+      }
+      data={points:t.points,edges};
+    } else if(island.topoType==='loops'){
+      const pts=generateLoopSpace(1.5,time,scramble,4);
+      const edges=[];
+      for(let j=1;j<pts.length;j++)if(pts[j].loop===pts[j-1].loop)edges.push([j-1,j]);
+      data={points:pts,edges};
+    } else if(island.topoType==='spiral'){
+      const pts=generateSpiral(1.5,4,time,scramble);
+      const edges=[];for(let j=1;j<pts.length;j++)edges.push([j-1,j]);
+      data={points:pts,edges};
+    } else if(island.topoType==='tree'){
+      data=generateTree(scramble,time);
+    } else if(island.topoType==='wave'){
+      data=generateWave(scramble,time);
+    } else if(island.topoType==='graph'){
+      data=generateGraph(scramble,time);
+    }
+    if(!data||data.points.length===0)return;
 
-    // Choose topology type and generate points
-    let points3D = [];
-    let edges = [];
+    const projected=data.points.map(p=>project3D(p.x,p.y,p.z,rX2,rY2,cx,cy,scale2));
+    const baseAlpha=0.2+coverage*0.75;
+    const hue=island.hue;
 
-    if (island.topoType === 'torus') {
-      const torus = generateTorus(1.2, 0.5, 18, 12, time, scramble);
-      points3D = torus.points;
-      // Generate edges for wireframe
-      for (let i = 0; i <= torus.uSegs; i++) {
-        for (let j = 0; j <= torus.vSegs; j++) {
-          const idx = i * (torus.vSegs + 1) + j;
-          if (j < torus.vSegs) edges.push([idx, idx + 1]);
-          if (i < torus.uSegs) edges.push([idx, idx + torus.vSegs + 1]);
-        }
-      }
-    } else if (island.topoType === 'loops') {
-      points3D = generateLoopSpace(1.5, time, scramble, 4);
-      // Connect sequential points within each loop
-      let prevIdx = 0;
-      for (let i = 1; i < points3D.length; i++) {
-        if (points3D[i].loop === points3D[i-1].loop) {
-          edges.push([i-1, i]);
-        }
-      }
-    } else if (island.topoType === 'spiral') {
-      points3D = generateSpiral(1.5, 4, time, scramble);
-      for (let i = 1; i < points3D.length; i++) edges.push([i-1, i]);
-    } else if (island.topoType === 'tree') {
-      // Generate a 3D branching tree
-      points3D = [];
-      function branch(x, y, z, angle, depth, maxD) {
-        if (depth > maxD) return;
-        const len = 0.6 * Math.pow(0.7, depth);
-        const nx = x + len * Math.cos(angle) * Math.cos(depth * 0.5);
-        const ny = y - len;
-        const nz = z + len * Math.sin(angle) * 0.3;
-        const sn = scramble;
-        const sx = nx + sn * Math.sin(time + depth * 2) * 0.2;
-        const sy = ny + sn * Math.cos(time * 0.7 + depth) * 0.15;
-        const sz = nz + sn * Math.sin(time * 0.5 + depth * 3) * 0.1;
-        const pidx = points3D.length;
-        points3D.push({x: sx, y: sy, z: sz});
-        if (pidx > 0) edges.push([pidx - 1, pidx]);
-        branch(sx, sy, sz, angle - 0.6, depth + 1, maxD);
-        branch(sx, sy, sz, angle + 0.6, depth + 1, maxD);
-      }
-      points3D.push({x: 0, y: 0.8, z: 0});
-      branch(0, 0.8, 0, 0, 0, 4);
-    } else if (island.topoType === 'wave') {
-      // 3D standing wave
-      for (let i = 0; i <= 80; i++) {
-        const t = i / 80;
-        const x2 = (t - 0.5) * 3;
-        const y2 = 0.8 * Math.sin(t * Math.PI * 4 + time * 2) * Math.sin(t * Math.PI);
-        const z2 = 0.4 * Math.cos(t * Math.PI * 3 + time * 1.5) * Math.sin(t * Math.PI);
-        if (scramble > 0) {
-          const s = scramble;
-          points3D.push({
-            x: x2 + s * Math.sin(t * 10 + time) * 0.3,
-            y: y2 + s * Math.cos(t * 8 - time) * 0.2,
-            z: z2 + s * Math.sin(t * 12 + time * 0.5) * 0.15
-          });
-        } else {
-          points3D.push({x: x2, y: y2, z: z2});
-        }
-        if (i > 0) edges.push([i-1, i]);
-      }
-    } else if (island.topoType === 'graph') {
-      // 3D graph/network
-      const gNodes = [
-        {x:0,y:0,z:0},{x:1,y:0.3,z:0.2},{x:-0.8,y:0.5,z:-0.3},
-        {x:0.5,y:-0.7,z:0.4},{x:-0.5,y:-0.5,z:-0.5},{x:0.2,y:0.8,z:0.6},
-        {x:-0.3,y:-0.2,z:0.8}
-      ];
-      for (const gn of gNodes) {
-        if (scramble > 0) {
-          points3D.push({
-            x: gn.x + scramble * Math.sin(time + gn.x * 5) * 0.4,
-            y: gn.y + scramble * Math.cos(time * 0.8 + gn.y * 4) * 0.3,
-            z: gn.z + scramble * Math.sin(time * 0.6 + gn.z * 6) * 0.3
-          });
-        } else {
-          points3D.push({x: gn.x, y: gn.y, z: gn.z});
-        }
-      }
-      edges = [[0,1],[0,2],[0,3],[1,3],[1,5],[2,4],[3,4],[3,6],[4,6],[5,6],[2,5]];
+    // Sort and draw edges
+    const sorted=data.edges.map(([a,b])=>({a,b,depth:((projected[a]?.depth||0)+(projected[b]?.depth||0))/2})).sort((a,b)=>b.depth-a.depth);
+    for(const edge of sorted){
+      const pa=projected[edge.a],pb=projected[edge.b];
+      if(!pa||!pb)continue;
+      const ea=baseAlpha*((pa.scale+pb.scale)/2)*0.8;
+      const sat=45+coverage*35;
+      const lit=38+coverage*27;
+      ctx.beginPath();ctx.moveTo(pa.px,pa.py);ctx.lineTo(pb.px,pb.py);
+      ctx.strokeStyle=`hsla(${hue},${sat}%,${lit}%,${U.clamp(ea,0,0.9)})`;
+      ctx.lineWidth=0.5+coverage*1.8;ctx.stroke();
     }
 
-    // Project and draw
-    if (points3D.length === 0) return;
-
-    // Sort edges by average depth for painter's algorithm
-    const projected = points3D.map(p =>
-      project3D(p.x, p.y, p.z, rotX2, rotY2, cx, cy, scale)
-    );
-
-    // Draw edges
-    const baseAlpha = 0.15 + coverage * 0.7;
-    const hue = island.hue;
-
-    // Sort edges by depth (back to front)
-    const sortedEdges = edges.map(([a, b]) => ({
-      a, b,
-      depth: (projected[a] ? projected[a].depth : 0) + (projected[b] ? projected[b].depth : 0)
-    })).sort((a, b) => b.depth - a.depth);
-
-    for (const edge of sortedEdges) {
-      const pa = projected[edge.a];
-      const pb = projected[edge.b];
-      if (!pa || !pb) continue;
-
-      const edgeAlpha = baseAlpha * Math.min(1, (pa.scale + pb.scale) / 2);
-      const saturation = 50 + coverage * 30;
-      const lightness = 40 + coverage * 25;
-
-      ctx.beginPath();
-      ctx.moveTo(pa.px, pb.py);
-      ctx.lineTo(pb.px, pb.py);
-      ctx.strokeStyle = `hsla(${hue},${saturation}%,${lightness}%,${edgeAlpha * 0.6})`;
-      ctx.lineWidth = 0.5 + coverage * 1.5;
-      ctx.stroke();
-    }
-
-    // Draw vertices (only for graph/tree types or when coverage is high)
-    if (island.topoType === 'graph' || island.topoType === 'tree' || coverage > 0.5) {
-      for (const p of projected) {
-        if (!p) continue;
-        const dotAlpha = baseAlpha * p.scale;
-        const dotR = 1 + coverage * 2 * p.scale;
-        ctx.beginPath();
-        ctx.arc(p.px, p.py, dotR, 0, U.TAU);
-        ctx.fillStyle = `hsla(${hue},70%,65%,${dotAlpha})`;
-        ctx.fill();
+    // Vertices
+    if(coverage>0.3){
+      const step2=Math.max(1,Math.floor(projected.length/35));
+      for(let j=0;j<projected.length;j+=step2){
+        const p=projected[j];if(!p)continue;
+        ctx.beginPath();ctx.arc(p.px,p.py,1+coverage*2*p.scale,0,U.TAU);
+        ctx.fillStyle=`hsla(${hue},70%,65%,${coverage*0.6*p.scale})`;ctx.fill();
       }
     }
 
-    // Draw label
-    ctx.font = `bold ${10 + Math.round(coverage * 3)}px Inter`;
-    ctx.fillStyle = `hsla(${hue},70%,75%,${0.3 + coverage * 0.7})`;
-    ctx.textAlign = 'center';
-    ctx.fillText(island.label, cx, cy + radius + 16);
-
-    // Icon type indicator
-    ctx.font = '9px JetBrains Mono';
-    ctx.fillStyle = `hsla(${hue},50%,60%,${0.2 + coverage * 0.5})`;
-    ctx.fillText(`${island.icon} ${Math.round(coverage * 100)}%`, cx, cy + radius + 28);
+    // Label
+    ctx.font=`bold ${10+Math.round(coverage*3)}px Inter`;
+    ctx.fillStyle=`hsla(${hue},70%,75%,${0.3+coverage*0.7})`;
+    ctx.textAlign='center';
+    ctx.fillText(island.label,cx,cy+radius+14);
+    ctx.font='9px JetBrains Mono';
+    ctx.fillStyle=`hsla(${hue},50%,60%,${0.3+coverage*0.5})`;
+    ctx.fillText(`${island.icon} ${Math.round(coverage*100)}%`,cx,cy+radius+26);
   }
 
-  function drawLensGlass(ctx, x, y, r, strength, idx, time) {
-    // Outer glow
-    const grad = ctx.createRadialGradient(x, y, r * 0.8, x, y, r * 1.4);
-    grad.addColorStop(0, `rgba(129,140,248,${0.05 * strength})`);
-    grad.addColorStop(1, 'rgba(129,140,248,0)');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(x, y, r * 1.4, 0, U.TAU);
-    ctx.fill();
+  function drawLensGlass(ctx,l,idx,time){
+    const grad=ctx.createRadialGradient(l.x,l.y,l.r*0.7,l.x,l.y,l.r*1.3);
+    grad.addColorStop(0,`rgba(129,140,248,${0.04*l.strength})`);
+    grad.addColorStop(1,'rgba(129,140,248,0)');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(l.x,l.y,l.r*1.3,0,U.TAU);ctx.fill();
 
-    // Glass effect — concentric rings
-    for (let i = 3; i >= 0; i--) {
-      const ringR = r * (0.7 + i * 0.1);
-      const pulse = Math.sin(time * 2 + i * 0.5) * 0.1;
-      ctx.beginPath();
-      ctx.arc(x, y, ringR, 0, U.TAU);
-      ctx.strokeStyle = `rgba(129,140,248,${(0.08 + pulse) * strength * (1 - i * 0.2)})`;
-      ctx.lineWidth = 1.5 - i * 0.3;
-      ctx.stroke();
+    for(let i=3;i>=0;i--){
+      const ringR=l.r*(0.7+i*0.1);
+      ctx.beginPath();ctx.arc(l.x,l.y,ringR,0,U.TAU);
+      ctx.strokeStyle=`rgba(129,140,248,${(0.06+Math.sin(time*2+i*0.5)*0.05)*l.strength*(1-i*0.2)})`;
+      ctx.lineWidth=1.5-i*0.3;ctx.stroke();
     }
 
-    // Main lens boundary
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, U.TAU);
-    ctx.strokeStyle = `rgba(129,140,248,${0.4 + Math.sin(time * 3) * 0.1})`;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([4, 3]);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(l.x,l.y,l.r,0,U.TAU);
+    ctx.strokeStyle=`rgba(129,140,248,${0.4+Math.sin(time*3)*0.1})`;
+    ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
 
-    // Lens label
-    ctx.font = 'bold 10px Inter';
-    ctx.fillStyle = `rgba(129,140,248,${0.6 + strength * 0.4})`;
-    ctx.textAlign = 'center';
-    ctx.fillText(`Φ${idx} (K=${(1 + strength * 2).toFixed(1)})`, x, y - r - 8);
-
-    // Crosshair at center
-    const chSize = 5;
-    ctx.beginPath();
-    ctx.moveTo(x - chSize, y); ctx.lineTo(x + chSize, y);
-    ctx.moveTo(x, y - chSize); ctx.lineTo(x, y + chSize);
-    ctx.strokeStyle = `rgba(129,140,248,${0.3 * strength})`;
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    ctx.font='bold 10px Inter';ctx.fillStyle=`rgba(129,140,248,${0.6+l.strength*0.4})`;
+    ctx.textAlign='center';ctx.fillText(`Φ${idx} (K=${(1+l.strength*2).toFixed(1)})`,l.x,l.y-l.r-8);
   }
 
-  function addLens() {
-    if (lenses.length >= 5) return;
-    lenses.push({
-      x: W * (0.3 + Math.random() * 0.4),
-      y: H * (0.3 + Math.random() * 0.4),
-      r: 70 + Math.random() * 40,
-      strength: 0.5
-    });
-  }
-
-  function reset() {
-    lenses = [{x: W/2, y: H/2, r: 90, strength: 0.6}];
-  }
-
-  function toggleAnim() { animating = !animating; }
-
-  setTimeout(init, 50);
-  return { addLens, reset, toggleAnim };
+  function addLens(){if(lenses.length>=5)return;lenses.push({x:W*(0.3+Math.random()*0.4),y:H*(0.3+Math.random()*0.4),r:70+Math.random()*40,strength:0.5})}
+  function reset(){lenses=[{x:W/2,y:H/2,r:100,strength:0.6}]}
+  function toggleAnim(){animating=!animating}
+  setTimeout(init,50);
+  return{addLens,reset,toggleAnim};
 })();
 
 // ================================================================
-// SECTION 2: SCRAMBLED TORII & LOOP SPACES
+// SECTION 2: SCRAMBLED TORII & LOOP SPACES (with encoded/decoded split)
 // ================================================================
 const TopoMod = (() => {
-  let ctx, W, H, c;
-  let time = 0;
-  let rotating = true;
-  let rotY = 0, rotX = 0.4;
+  let ctx,W,H,c;
+  let time=0;
+  let rotating=true;
+  let rotY2=0,rotX2=0.35;
+  let autoWaveTimer=null;
 
-  const topoIslands = [
-    {id:'torus', label:'Torus T² (Code)', x:0.2, y:0.5, hue:330, R:1.3, r:0.5},
-    {id:'loops', label:'Loop Space Ω (Math)', x:0.5, y:0.5, hue:240, R:1.5, r:0.4},
-    {id:'spiral', label:'Spiral (History)', x:0.8, y:0.5, hue:30, R:1.5, r:0.4},
+  // All 5 topology types
+  const allTopos=[
+    {id:'torus',label:'Torus T² (Code)',hue:330},
+    {id:'loops',label:'Loop Space Ω (Math)',hue:240},
+    {id:'spiral',label:'Spiral (History)',hue:30},
+    {id:'tree',label:'Tree (Biology)',hue:90},
+    {id:'wave',label:'Wave (Music)',hue:280},
   ];
 
-  function init() {
-    ({c,ctx,W,H} = U.mkCanvas('cTopo', 580));
-    ['topoSpeed','topoScramble'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => {});
-    });
-    document.getElementById('topoFocus').addEventListener('change', () => {});
-
-    function tick() {
-      const speed = +document.getElementById('topoSpeed').value;
-      time += 0.016 * speed * 0.5;
-      if (rotating) { rotY += 0.008 * speed; }
+  function init(){
+    ({c,ctx,W,H}=U.mkCanvas('cTopo',630));
+    function tick(){
+      const speed=+document.getElementById('topoSpeed').value;
+      time+=0.016*speed*0.5;
+      if(rotating)rotY2+=0.006*speed;
       render();
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
 
-  function render() {
-    if (!ctx) return;
-    const scramble = +document.getElementById('topoScramble').value / 100;
-    const focus = document.getElementById('topoFocus').value;
-    document.getElementById('topoSpeedV').textContent = document.getElementById('topoSpeed').value;
-    document.getElementById('topoScrambleV').textContent = Math.round(scramble * 100) + '%';
+  function render(){
+    if(!ctx)return;
+    const scramble=+document.getElementById('topoScramble')?.value/100||0.65;
+    const focus=document.getElementById('topoFocus').value;
+    const waves=+document.getElementById('topoWaves').value;
+    document.getElementById('topoSpeedV').textContent=document.getElementById('topoSpeed').value;
+    document.getElementById('topoScrambleV')&&(document.getElementById('topoScrambleV').textContent=Math.round(scramble*100)+'%');
+    document.getElementById('topoWavesV').textContent=waves;
 
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#030618';
-    ctx.fillRect(0, 0, W, H);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#030618';
+    ctx.fillRect(0,0,W,H);
 
     // Title
-    ctx.font = 'bold 12px Inter';
-    ctx.fillStyle = '#818cf8';
-    ctx.textAlign = 'center';
-    ctx.fillText('Scrambled Topological Icons — Focus the Lipschitz Lens to Resolve', W/2, 18);
+    ctx.font='bold 11px Inter';ctx.fillStyle='#818cf8';ctx.textAlign='center';
+    ctx.fillText('TOP: Encoded (Scrambled Holographic) — BOTTOM: Decoded (Progressive Waves)',W/2,16);
 
-    // Draw each topological island
-    const sectionW = W / 3;
-    for (let i = 0; i < topoIslands.length; i++) {
-      const isl = topoIslands[i];
-      const cx = sectionW * (i + 0.5);
-      const cy = H * 0.48;
-      const isFocused = (focus === isl.id || focus === 'all');
-      const effectiveScramble = isFocused && focus !== 'all' ? scramble * 0.1 : scramble;
-      const coverage = isFocused && focus !== 'all' ? 0.95 : (focus === 'all' ? 0.3 : 0.1);
-      const scale = Math.min(sectionW, H) * 0.25;
+    // Subtitle showing structural similarity
+    ctx.font='9px Inter';ctx.fillStyle='#64748b';
+    ctx.fillText('Note: A spiral IS a circle from above. These structures share deep similarities — related by projection.',W/2,30);
 
-      // Background glow
-      const glowR = scale * 2;
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
-      grad.addColorStop(0, `hsla(${isl.hue},60%,30%,${0.05 + coverage * 0.1})`);
-      grad.addColorStop(1, `hsla(${isl.hue},60%,20%,0)`);
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, glowR, 0, U.TAU);
-      ctx.fill();
+    const numTopos = allTopos.length;
+    const sectionW = W / numTopos;
+    const topRowY = H * 0.28;
+    const botRowY = H * 0.7;
 
-      // Lens indicator if focused
-      if (isFocused && focus !== 'all') {
-        ctx.beginPath();
-        ctx.arc(cx, cy, scale * 1.8, 0, U.TAU);
-        ctx.strokeStyle = `rgba(129,140,248,${0.3 + Math.sin(time * 2) * 0.1})`;
-        ctx.lineWidth = 2;
-        ctx.setLineDash([6, 4]);
-        ctx.stroke();
-        ctx.setLineDash([]);
+    for(let i=0;i<numTopos;i++){
+      const topo=allTopos[i];
+      const cx=sectionW*(i+0.5);
+      const isFocused=(focus===topo.id);
+      const effectiveWaves=isFocused?waves:(focus==='all'?Math.max(4,Math.round(waves*0.4)):Math.max(2,Math.round(waves*0.15)));
+      const coverage=isFocused?0.95:(focus==='all'?0.35:0.12);
+      const effectiveScramble=isFocused?scramble*0.05:(focus==='all'?scramble*0.6:scramble);
+      const scale2=Math.min(sectionW*0.38,H*0.16);
 
-        ctx.font = '9px Inter';
-        ctx.fillStyle = '#818cf8';
-        ctx.textAlign = 'center';
-        ctx.fillText('LENS FOCUSED', cx, cy - scale * 1.8 - 8);
+      // --- TOP ROW: ENCODED (scrambled DCT coefficients) ---
+      ctx.save();
+      // Draw the scrambled holographic version using DCT coefficients
+      const iconKey = topo.id==='torus'?'Code':topo.id==='loops'?'Math':topo.id==='spiral'?'History':topo.id==='tree'?'Biology':'Music';
+      if(HoloDCT.dctCache[iconKey]){
+        HoloDCT.drawScrambled(ctx,HoloDCT.dctCache[iconKey],cx,topRowY,scale2*2,topo.hue,0.5+coverage*0.4);
+      }
+      // Overlay label
+      ctx.font='8px JetBrains Mono';ctx.fillStyle=`hsla(${topo.hue},60%,70%,0.7)`;ctx.textAlign='center';
+      ctx.fillText('ENCODED',cx,topRowY-scale2-4);
+      ctx.restore();
+
+      // --- BOTTOM ROW: DECODED (progressive reconstruction) ---
+      // Use DCT reconstruction with variable waves
+      if(HoloDCT.dctCache[iconKey]){
+        const pixels=HoloDCT.reconstruct(HoloDCT.dctCache[iconKey],effectiveWaves);
+        const resolution=U.clamp(effectiveWaves/64,0.05,1);
+        HoloDCT.drawIcon(ctx,pixels,cx,botRowY,scale2*2,topo.hue,0.5+coverage*0.5,resolution);
       }
 
-      // Generate and draw topology
-      let points3D = [];
-      let edges = [];
+      // Also draw the 3D wireframe overlay on decoded (faint when low coverage, strong when focused)
+      if(coverage>0.2){
+        let data;
+        if(topo.id==='torus'){
+          const t2=generateTorus(1.0,0.4,12,8,time,effectiveScramble);
+          const edges=[];
+          for(let u=0;u<=t2.uSegs;u++)for(let v=0;v<=t2.vSegs;v++){
+            const idx=u*(t2.vSegs+1)+v;
+            if(v<t2.vSegs)edges.push([idx,idx+1]);
+            if(u<t2.uSegs)edges.push([idx,idx+t2.vSegs+1]);
+          }
+          data={points:t2.points,edges};
+        } else if(topo.id==='loops'){
+          const pts=generateLoopSpace(1.2,time,effectiveScramble,3);
+          const edges=[];for(let j=1;j<pts.length;j++)if(pts[j].loop===pts[j-1].loop)edges.push([j-1,j]);
+          data={points:pts,edges};
+        } else if(topo.id==='spiral'){
+          const pts=generateSpiral(1.2,4,time,effectiveScramble);
+          const edges=[];for(let j=1;j<pts.length;j++)edges.push([j-1,j]);
+          data={points:pts,edges};
+        } else if(topo.id==='tree'){
+          data=generateTree(effectiveScramble,time);
+        } else if(topo.id==='wave'){
+          data=generateWave(effectiveScramble,time);
+        }
 
-      if (isl.id === 'torus') {
-        const torus = generateTorus(isl.R, isl.r, 22, 14, time, effectiveScramble);
-        points3D = torus.points;
-        for (let u = 0; u <= torus.uSegs; u++) {
-          for (let v = 0; v <= torus.vSegs; v++) {
-            const idx = u * (torus.vSegs + 1) + v;
-            if (v < torus.vSegs) edges.push([idx, idx + 1]);
-            if (u < torus.uSegs) edges.push([idx, idx + torus.vSegs + 1]);
+        if(data&&data.points.length>0){
+          const projected=data.points.map(p=>project3D(p.x,p.y,p.z,rotX2,rotY2+topo.hue*0.01,cx,botRowY,scale2*0.55));
+          const baseAlpha=coverage*0.6;
+          for(const[a,b] of data.edges){
+            const pa=projected[a],pb=projected[b];
+            if(!pa||!pb)continue;
+            ctx.beginPath();ctx.moveTo(pa.px,pa.py);ctx.lineTo(pb.px,pb.py);
+            ctx.strokeStyle=`hsla(${topo.hue},60%,60%,${baseAlpha*((pa.scale+pb.scale)/2)*0.7})`;
+            ctx.lineWidth=0.4+coverage*1.2;ctx.stroke();
           }
         }
-      } else if (isl.id === 'loops') {
-        points3D = generateLoopSpace(isl.R, time, effectiveScramble, 5);
-        for (let j = 1; j < points3D.length; j++) {
-          if (points3D[j].loop === points3D[j-1].loop) edges.push([j-1, j]);
-        }
-      } else if (isl.id === 'spiral') {
-        points3D = generateSpiral(isl.R, 5, time, effectiveScramble);
-        for (let j = 1; j < points3D.length; j++) edges.push([j-1, j]);
       }
 
-      // Project
-      const projected = points3D.map(p =>
-        project3D(p.x, p.y, p.z, rotX, rotY, cx, cy, scale)
-      );
+      // Decoded label
+      ctx.font='8px JetBrains Mono';ctx.fillStyle=`hsla(${topo.hue},60%,70%,0.7)`;ctx.textAlign='center';
+      ctx.fillText(`DECODED (${effectiveWaves} waves)`,cx,botRowY+scale2+10);
 
-      // Draw edges sorted by depth
-      const sortedEdges = edges.map(([a, b]) => ({
-        a, b,
-        depth: ((projected[a]?.depth || 0) + (projected[b]?.depth || 0)) / 2
-      })).sort((a, b) => b.depth - a.depth);
+      // Island label
+      ctx.font=`bold ${9+Math.round(coverage*2)}px Inter`;
+      ctx.fillStyle=`hsla(${topo.hue},70%,75%,${0.4+coverage*0.6})`;
+      ctx.fillText(topo.label,cx,botRowY+scale2+24);
 
-      const baseAlpha = 0.1 + coverage * 0.8;
-      for (const edge of sortedEdges) {
-        const pa = projected[edge.a];
-        const pb = projected[edge.b];
-        if (!pa || !pb) continue;
-
-        const edgeAlpha = baseAlpha * ((pa.scale + pb.scale) / 2) * 0.8;
-        const sat = 40 + coverage * 40;
-        const lit = 35 + coverage * 30;
-
-        ctx.beginPath();
-        ctx.moveTo(pa.px, pa.py);
-        ctx.lineTo(pb.px, pb.py);
-        ctx.strokeStyle = `hsla(${isl.hue},${sat}%,${lit}%,${U.clamp(edgeAlpha, 0, 0.9)})`;
-        ctx.lineWidth = 0.4 + coverage * 1.8;
-        ctx.stroke();
+      // Lens indicator
+      if(isFocused){
+        ctx.beginPath();ctx.arc(cx,botRowY,scale2*1.4,0,U.TAU);
+        ctx.strokeStyle=`rgba(129,140,248,${0.3+Math.sin(time*2)*0.1})`;
+        ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
       }
 
-      // Draw some vertices for emphasis
-      if (coverage > 0.4) {
-        const step = Math.max(1, Math.floor(projected.length / 40));
-        for (let j = 0; j < projected.length; j += step) {
-          const p = projected[j];
-          if (!p) continue;
-          const dotR = 1 + coverage * 1.5 * p.scale;
-          ctx.beginPath();
-          ctx.arc(p.px, p.py, dotR, 0, U.TAU);
-          ctx.fillStyle = `hsla(${isl.hue},70%,70%,${coverage * 0.6 * p.scale})`;
-          ctx.fill();
-        }
-      }
-
-      // Label
-      ctx.font = `bold ${11 + Math.round(coverage * 3)}px Inter`;
-      ctx.fillStyle = `hsla(${isl.hue},70%,75%,${0.4 + coverage * 0.6})`;
-      ctx.textAlign = 'center';
-      ctx.fillText(isl.label, cx, cy + scale * 2 + 20);
-
-      // Scramble indicator
-      ctx.font = '9px JetBrains Mono';
-      ctx.fillStyle = effectiveScramble > 0.3 ? '#ef4444' : effectiveScramble > 0.1 ? '#fbbf24' : '#34d399';
-      ctx.fillText(`scramble: ${Math.round(effectiveScramble * 100)}%`, cx, cy + scale * 2 + 34);
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillText(`coverage: ${Math.round(coverage * 100)}%`, cx, cy + scale * 2 + 46);
+      // Connecting arrow between rows
+      ctx.beginPath();
+      ctx.moveTo(cx,topRowY+scale2+6);
+      ctx.lineTo(cx,botRowY-scale2-10);
+      ctx.strokeStyle=`hsla(${topo.hue},40%,50%,${0.15+coverage*0.2})`;
+      ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.stroke();ctx.setLineDash([]);
+      // Arrow head
+      ctx.fillStyle=`hsla(${topo.hue},40%,50%,${0.15+coverage*0.2})`;
+      ctx.beginPath();
+      const ay = botRowY - scale2 - 10;
+      ctx.moveTo(cx - 3, ay);
+      ctx.lineTo(cx, ay + 6);
+      ctx.lineTo(cx + 3, ay);
+      ctx.fill();
     }
 
     // Stats
-    const focusLabel = focus === 'all' ? 'All (blurry)' : topoIslands.find(i => i.id === focus)?.label || focus;
+    const focusLabel = focus === 'all' ? 'All (blurry)' : allTopos.find(t => t.id === focus)?.label || focus;
     document.getElementById('topoStats').innerHTML = `
       <div class="sc"><div class="l">FOCUS</div><div class="v" style="color:#818cf8">${focusLabel}</div></div>
-      <div class="sc"><div class="l">SCRAMBLE</div><div class="v" style="color:#fbbf24">${Math.round(scramble*100)}%</div></div>
-      <div class="sc"><div class="l">ROTATION</div><div class="v" style="color:#34d399">${rotating?'ON':'OFF'}</div></div>
+      <div class="sc"><div class="l">WAVES</div><div class="v" style="color:#fbbf24">${waves}/64</div></div>
+      <div class="sc"><div class="l">ROTATION</div><div class="v" style="color:#34d399">${rotating ? 'ON' : 'OFF'}</div></div>
       <div class="sc"><div class="l">TIME</div><div class="v" style="color:#f472b6">${time.toFixed(1)}</div></div>
     `;
   }
 
   function toggleRotation() { rotating = !rotating; }
 
+  function autoWaves() {
+    const slider = document.getElementById('topoWaves');
+    slider.value = 1;
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min((now - start) / 4000, 1);
+      slider.value = Math.round(1 + U.ease(t) * 63);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   setTimeout(init, 100);
-  return { toggleRotation };
+  return { toggleRotation, autoWaves };
 })();
 
 // ================================================================
@@ -835,21 +884,20 @@ const TradeoffMod = (() => {
   let time = 0;
   let lenses = [];
   let dragIdx = -1;
-  let autoTimer = null;
 
   const islands = [
-    {id:'math', label:'Math', x:0.15, y:0.35, r:0.1, hue:240, iconKey:'Math'},
-    {id:'code', label:'Code', x:0.38, y:0.25, r:0.11, hue:330, iconKey:'Code'},
-    {id:'lang', label:'Language', x:0.62, y:0.3, r:0.09, hue:160, iconKey:'Language'},
-    {id:'bio', label:'Biology', x:0.25, y:0.65, r:0.08, hue:90, iconKey:'Biology'},
-    {id:'hist', label:'History', x:0.55, y:0.65, r:0.08, hue:30, iconKey:'History'},
-    {id:'music', label:'Music', x:0.82, y:0.5, r:0.07, hue:280, iconKey:'Music'},
+    {id:'math', label:'Math', x:0.15, y:0.3, r:0.1, hue:240, iconKey:'Math'},
+    {id:'code', label:'Code', x:0.38, y:0.22, r:0.11, hue:330, iconKey:'Code'},
+    {id:'lang', label:'Language', x:0.62, y:0.28, r:0.09, hue:160, iconKey:'Language'},
+    {id:'bio', label:'Biology', x:0.22, y:0.58, r:0.08, hue:90, iconKey:'Biology'},
+    {id:'hist', label:'History', x:0.52, y:0.6, r:0.08, hue:30, iconKey:'History'},
+    {id:'music', label:'Music', x:0.82, y:0.45, r:0.07, hue:280, iconKey:'Music'},
   ];
 
   const LENS_COLS = ['#818cf8','#f472b6','#34d399','#fbbf24','#60a5fa'];
 
   function init() {
-    ({c,ctx,W,H} = U.mkCanvas('cTradeoff', 530));
+    ({c, ctx, W, H} = U.mkCanvas('cTradeoff', 560));
     resetLenses();
 
     c.addEventListener('mousedown', e => {
@@ -857,7 +905,7 @@ const TradeoffMod = (() => {
       const mx = (e.clientX - r.left) / r.width * W;
       const my = (e.clientY - r.top) / r.height * H;
       for (let i = lenses.length - 1; i >= 0; i--) {
-        if (U.dst(mx, my, lenses[i].x, lenses[i].y) < 25) { dragIdx = i; break; }
+        if (U.dst(mx, my, lenses[i].x, lenses[i].y) < 30) { dragIdx = i; break; }
       }
     });
     c.addEventListener('mousemove', e => {
@@ -869,10 +917,7 @@ const TradeoffMod = (() => {
     c.addEventListener('mouseup', () => { dragIdx = -1; });
     c.addEventListener('mouseleave', () => { dragIdx = -1; });
 
-    ['tradeBudget','tradeHeads'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => { resetLenses(); });
-      document.getElementById(id).addEventListener('change', () => { resetLenses(); });
-    });
+    document.getElementById('tradeHeads').addEventListener('change', () => { resetLenses(); });
 
     function tick() {
       time += 0.016;
@@ -884,15 +929,14 @@ const TradeoffMod = (() => {
 
   function resetLenses() {
     const n = +document.getElementById('tradeHeads').value;
-    if (lenses.length === n) return;
     lenses = [];
     const positions = [
-      {x:0.38, y:0.25}, {x:0.15, y:0.35}, {x:0.62, y:0.3},
-      {x:0.25, y:0.65}, {x:0.82, y:0.5}
+      {x:0.38, y:0.22}, {x:0.15, y:0.3}, {x:0.62, y:0.28},
+      {x:0.22, y:0.58}, {x:0.82, y:0.45}
     ];
     for (let i = 0; i < n; i++) {
       const p = positions[i % positions.length];
-      lenses.push({x: p.x * W, y: p.y * H, col: LENS_COLS[i]});
+      lenses.push({x: p.x * W, y: p.y * H * 0.72, col: LENS_COLS[i]});
     }
   }
 
@@ -905,15 +949,14 @@ const TradeoffMod = (() => {
     ctx.fillStyle = '#030618';
     ctx.fillRect(0, 0, W, H);
 
-    // Compute tile allocation per island
-    const lensRadius = 80;
+    const lensRadius = 90;
     const allocations = [];
     let totalRaw = 0;
 
     for (const isl of islands) {
       let maxCov = 0;
       for (const l of lenses) {
-        const d = U.dst(isl.x * W, isl.y * H, l.x, l.y);
+        const d = U.dst(isl.x * W, isl.y * H * 0.72, l.x, l.y);
         const cov = Math.exp(-d * d / (2 * lensRadius * lensRadius));
         maxCov = Math.max(maxCov, cov);
       }
@@ -921,113 +964,119 @@ const TradeoffMod = (() => {
       totalRaw += maxCov;
     }
 
-    // Normalize to budget
     const finalTiles = allocations.map(cov => {
       const share = totalRaw > 0 ? cov / totalRaw : 1 / islands.length;
-      return Math.max(2, Math.min(64, Math.round(share * budget * 0.6)));
+      return Math.max(2, Math.min(budget, Math.round(share * budget * 0.7)));
     });
 
-    // Draw islands with topology
-    const mainAreaH = H * 0.7;
+    // Draw islands with DCT icons at variable resolution
+    const mainAreaH = H * 0.72;
     for (let i = 0; i < islands.length; i++) {
       const isl = islands[i];
       const ix = isl.x * W, iy = isl.y * mainAreaH;
       const tiles = finalTiles[i];
-      const coverage = tiles / 64;
-      const iconSize = isl.r * Math.min(W, mainAreaH) * 2.2;
+      const coverage = U.clamp(tiles / 64, 0, 1);
+      const iconSize = isl.r * Math.min(W, mainAreaH) * 2.5;
 
       // Background glow
       const grad = ctx.createRadialGradient(ix, iy, 0, ix, iy, iconSize);
-      grad.addColorStop(0, `hsla(${isl.hue},60%,40%,${0.05 + coverage * 0.1})`);
+      grad.addColorStop(0, `hsla(${isl.hue},60%,40%,${0.04 + coverage * 0.12})`);
       grad.addColorStop(1, `hsla(${isl.hue},60%,30%,0)`);
       ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(ix, iy, iconSize, 0, U.TAU);
       ctx.fill();
 
-      // DCT holographic icon
+      // DCT holographic icon with pixelation based on coverage
       if (HoloDCT.dctCache[isl.iconKey]) {
         const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[isl.iconKey], tiles);
-        HoloDCT.drawIcon(ctx, pixels, ix, iy, iconSize, isl.hue, 0.4 + coverage * 0.6);
+        const resolution = U.clamp(coverage, 0.05, 1);
+        HoloDCT.drawIcon(ctx, pixels, ix, iy, iconSize, isl.hue, 0.4 + coverage * 0.6, resolution);
       }
 
       // Label
-      ctx.font = 'bold 10px Inter';
+      ctx.font = `bold ${9 + Math.round(coverage * 3)}px Inter`;
       ctx.fillStyle = `hsla(${isl.hue},70%,75%,${0.5 + coverage * 0.5})`;
       ctx.textAlign = 'center';
-      ctx.fillText(isl.label, ix, iy + iconSize / 2 + 12);
+      ctx.fillText(isl.label, ix, iy + iconSize / 2 + 14);
 
-      // Tile count
+      // Tile count with color coding
       ctx.font = '8px JetBrains Mono';
-      ctx.fillStyle = tiles > 30 ? '#34d399' : tiles > 10 ? '#fbbf24' : '#ef4444';
-      ctx.fillText(`${tiles}/64`, ix, iy + iconSize / 2 + 22);
+      ctx.fillStyle = tiles > 40 ? '#34d399' : tiles > 15 ? '#fbbf24' : '#ef4444';
+      ctx.fillText(`${tiles}/${budget} tiles`, ix, iy + iconSize / 2 + 26);
     }
 
-    // Draw lenses
+    // Draw lenses (draggable)
     for (let i = 0; i < lenses.length; i++) {
       const l = lenses[i];
+      // Lens circle
       ctx.beginPath();
       ctx.arc(l.x, l.y, lensRadius, 0, U.TAU);
       ctx.strokeStyle = l.col;
-      ctx.globalAlpha = 0.3 + Math.sin(time * 2 + i) * 0.1;
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 3]);
+      ctx.globalAlpha = 0.35 + Math.sin(time * 2 + i) * 0.1;
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([6, 4]);
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.globalAlpha = 1;
 
-      // Center dot
+      // Inner glow
+      const lGrad = ctx.createRadialGradient(l.x, l.y, 0, l.x, l.y, lensRadius);
+      lGrad.addColorStop(0, l.col.replace(')', ',0.06)').replace('rgb', 'rgba'));
+      lGrad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = lGrad;
       ctx.beginPath();
-      ctx.arc(l.x, l.y, 7, 0, U.TAU);
+      ctx.arc(l.x, l.y, lensRadius, 0, U.TAU);
+      ctx.fill();
+
+      // Center handle
+      ctx.beginPath();
+      ctx.arc(l.x, l.y, 8, 0, U.TAU);
       ctx.fillStyle = l.col;
       ctx.fill();
       ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2;
       ctx.stroke();
 
       ctx.font = 'bold 9px Inter';
       ctx.fillStyle = l.col;
       ctx.textAlign = 'center';
-      ctx.fillText(`Lens ${i}`, l.x, l.y - 18);
+      ctx.fillText(`Lens ${i}`, l.x, l.y - 16);
     }
 
-    // Draw bar chart at bottom showing tile allocation
+    // Bar chart at bottom
     const barAreaY = H * 0.78;
-    const barAreaH = H * 0.18;
+    const barAreaH = H * 0.17;
     const barW2 = (W - 60) / islands.length;
 
     ctx.font = 'bold 9px Inter';
     ctx.fillStyle = '#64748b';
     ctx.textAlign = 'center';
-    ctx.fillText('Tile Allocation per Island (Conservation Law: total = budget)', W/2, barAreaY - 8);
+    ctx.fillText('Tile Allocation (Conservation Law: finite budget)', W / 2, barAreaY - 8);
 
-    const totalUsed = finalTiles.reduce((a,b) => a+b, 0);
+    const totalUsed = finalTiles.reduce((a, b) => a + b, 0);
 
     for (let i = 0; i < islands.length; i++) {
       const isl = islands[i];
       const bx = 30 + i * barW2;
       const tiles = finalTiles[i];
-      const barH = (tiles / 64) * barAreaH;
+      const barH = (tiles / budget) * barAreaH;
 
-      // Bar background
       ctx.fillStyle = '#0a0e28';
       ctx.fillRect(bx + 4, barAreaY, barW2 - 8, barAreaH);
 
-      // Bar fill
-      const barCol = tiles > 30 ? '#34d399' : tiles > 10 ? '#fbbf24' : '#ef4444';
+      const barCol = tiles > 40 ? '#34d399' : tiles > 15 ? '#fbbf24' : '#ef4444';
       ctx.fillStyle = barCol;
       ctx.fillRect(bx + 4, barAreaY + barAreaH - barH, barW2 - 8, barH);
 
-      // Label
       ctx.font = '8px Inter';
       ctx.fillStyle = `hsla(${isl.hue},70%,75%,0.9)`;
       ctx.textAlign = 'center';
-      ctx.fillText(isl.label, bx + barW2/2, barAreaY + barAreaH + 12);
+      ctx.fillText(isl.label, bx + barW2 / 2, barAreaY + barAreaH + 12);
       ctx.fillStyle = barCol;
-      ctx.fillText(`${tiles}`, bx + barW2/2, barAreaY + barAreaH - barH - 4);
+      ctx.fillText(`${tiles}`, bx + barW2 / 2, barAreaY + barAreaH - barH - 4);
     }
 
-    // Total budget indicator
     ctx.font = '9px JetBrains Mono';
     ctx.fillStyle = '#818cf8';
     ctx.textAlign = 'right';
@@ -1037,7 +1086,7 @@ const TradeoffMod = (() => {
     ctx.font = 'bold 11px Inter';
     ctx.fillStyle = '#818cf8';
     ctx.textAlign = 'center';
-    ctx.fillText('Focus-Dependent Resolution — Drag Lenses to See the Tradeoff', W/2, 16);
+    ctx.fillText('Focus-Dependent Resolution — Drag Lenses to See the Tradeoff', W / 2, 16);
 
     // Stats
     const maxTiles = Math.max(...finalTiles);
@@ -1050,28 +1099,24 @@ const TradeoffMod = (() => {
       <div class="sc"><div class="l">BUDGET</div><div class="v" style="color:#fbbf24">${budget}</div></div>
       <div class="sc"><div class="l">SHARPEST</div><div class="v" style="color:#34d399">${maxIsland.label}</div></div>
       <div class="sc"><div class="l">BLURRIEST</div><div class="v" style="color:#ef4444">${minIsland.label}</div></div>
-      <div class="sc"><div class="l">TOTAL USED</div><div class="v" style="color:#818cf8">${totalUsed}</div></div>
-    `;
+      <div class="sc"><div class="l">TOTAL USED</div><div class="v" style="color:#818cf8">${totalUsed}</div></div>`;
   }
 
   function autoFocus() {
-    // Animate lenses moving to different islands in sequence
     const sequence = [
-      [{x: 0.15, y: 0.35}],
-      [{x: 0.38, y: 0.25}],
-      [{x: 0.62, y: 0.3}],
-      [{x: 0.55, y: 0.65}],
-      [{x: 0.82, y: 0.5}],
+      {x: 0.15, y: 0.3}, {x: 0.38, y: 0.22}, {x: 0.62, y: 0.28},
+      {x: 0.52, y: 0.6}, {x: 0.82, y: 0.45}, {x: 0.22, y: 0.58}
     ];
     let step = 0;
     function nextStep() {
-      if (step >= sequence.length) { step = 0; }
-      const targets = sequence[step];
-      for (let i = 0; i < Math.min(lenses.length, targets.length); i++) {
-        animateLensTo(i, targets[i].x * W, targets[i].y * H * 0.7);
+      if (step >= sequence.length) step = 0;
+      const target = sequence[step];
+      for (let i = 0; i < lenses.length; i++) {
+        const t2 = sequence[(step + i) % sequence.length];
+        animateLensTo(i, t2.x * W, t2.y * H * 0.72);
       }
       step++;
-      setTimeout(nextStep, 1500);
+      setTimeout(nextStep, 1800);
     }
     nextStep();
   }
@@ -1081,7 +1126,7 @@ const TradeoffMod = (() => {
     if (!l) return;
     const sx = l.x, sy = l.y;
     const start = performance.now();
-    const dur = 800;
+    const dur = 900;
     function step(now) {
       const t = Math.min((now - start) / dur, 1);
       const et = U.ease(t);
@@ -1092,22 +1137,7 @@ const TradeoffMod = (() => {
     requestAnimationFrame(step);
   }
 
-  function reset() {
-    resetLenses();
-  }
-
-  function resetLenses() {
-    const n = +document.getElementById('tradeHeads').value;
-    lenses = [];
-    const positions = [
-      {x:0.38, y:0.25}, {x:0.15, y:0.35}, {x:0.62, y:0.3},
-      {x:0.25, y:0.65}, {x:0.82, y:0.5}
-    ];
-    for (let i = 0; i < n; i++) {
-      const p = positions[i % positions.length];
-      lenses.push({x: p.x * W, y: p.y * H * 0.7, col: LENS_COLS[i]});
-    }
-  }
+  function reset() { resetLenses(); }
 
   setTimeout(init, 200);
   return { autoFocus, reset };
@@ -1120,18 +1150,13 @@ const LayerMod = (() => {
   let ctx, W, H, c;
   let time = 0;
   let animTimer = null;
-  let rotY = 0, rotX = 0.35;
+  let rotY2 = 0, rotX2 = 0.35;
 
   function init() {
-    ({c,ctx,W,H} = U.mkCanvas('cLayers', 500));
-    ['layerDepth','layerFocus'].forEach(id => {
-      document.getElementById(id).addEventListener('input', () => {});
-      document.getElementById(id).addEventListener('change', () => {});
-    });
-
+    ({c, ctx, W, H} = U.mkCanvas('cLayers', 530));
     function tick() {
       time += 0.016;
-      rotY += 0.004;
+      rotY2 += 0.004;
       render();
       requestAnimationFrame(tick);
     }
@@ -1148,14 +1173,9 @@ const LayerMod = (() => {
     ctx.fillStyle = '#030618';
     ctx.fillRect(0, 0, W, H);
 
-    // Determine phase
-    const routing = U.clamp(1 - depth / 4, 0, 1);
-    const resolving = U.clamp((depth - 2) / 5, 0, 1);
-    const gluing = U.clamp((depth - 8) / 3, 0, 1);
-
-    // Phase color
+    // Phase info
     let phaseCol, phaseTxt;
-    if (depth < 0.5) { phaseCol = '#64748b'; phaseTxt = 'Embedding: Fully scrambled'; }
+    if (depth < 0.5) { phaseCol = '#64748b'; phaseTxt = 'Embedding: Fully scrambled (jaggy)'; }
     else if (depth <= 3) { phaseCol = '#60a5fa'; phaseTxt = `Layer ${depth.toFixed(1)}: Routing — deciding WHERE`; }
     else if (depth <= 8) { phaseCol = '#c084fc'; phaseTxt = `Layer ${depth.toFixed(1)}: Resolving — sharpening topology`; }
     else { phaseCol = '#34d399'; phaseTxt = `Layer ${depth.toFixed(1)}: Gluing — reassembling for output`; }
@@ -1163,13 +1183,12 @@ const LayerMod = (() => {
     ctx.font = 'bold 12px Inter';
     ctx.fillStyle = phaseCol;
     ctx.textAlign = 'center';
-    ctx.fillText(phaseTxt, W/2, 20);
+    ctx.fillText(phaseTxt, W / 2, 22);
 
-    // Draw three panels side by side showing the focused topology at current depth
     const topoTypes = [
-      {id:'code', label:'Code (Torus T²)', hue:330},
-      {id:'math', label:'Math (Ω-Space)', hue:240},
-      {id:'lang', label:'Language (Graph)', hue:160},
+      {id: 'code', label: 'Code (Torus T²)', hue: 330, iconKey: 'Code'},
+      {id: 'math', label: 'Math (Ω-Space)', hue: 240, iconKey: 'Math'},
+      {id: 'lang', label: 'Language (Graph)', hue: 160, iconKey: 'Language'},
     ];
 
     const panelW = W / 3;
@@ -1180,131 +1199,118 @@ const LayerMod = (() => {
       const cx = panelW * (i + 0.5);
       const cy = panelCY;
       const isFocused = (focus === topo.id);
-      const scale = Math.min(panelW, H) * 0.22;
+      const scale2 = Math.min(panelW, H) * 0.2;
 
-      // Compute effective scramble: decreases with depth for focused, stays high for unfocused
-      let effectiveScramble;
+      // Effective scramble and coverage
+      let effectiveScramble, coverage, waves;
       if (isFocused) {
-        effectiveScramble = U.clamp(1.0 - depth / 11, 0, 0.05);
+        effectiveScramble = U.clamp(1.0 - depth / 11, 0, 1);
+        coverage = U.clamp(depth / 9, 0.08, 1.0);
+        waves = Math.max(2, Math.round(coverage * 64));
       } else {
-        effectiveScramble = U.clamp(0.8 - depth / 20, 0.3, 0.9);
+        effectiveScramble = U.clamp(0.85 - depth / 25, 0.4, 0.9);
+        coverage = U.clamp(0.25 - depth / 40, 0.05, 0.25);
+        waves = Math.max(2, Math.round(coverage * 64));
       }
 
-      // Coverage (clarity)
-      const coverage = isFocused ? U.clamp(depth / 8, 0.1, 1.0) : U.clamp(0.3 - depth / 30, 0.05, 0.3);
+      // Resolution (pixelation): low at start, high when resolved
+      const resolution = U.clamp(coverage, 0.05, 1.0);
 
-      // Lens indicator for focused
+      // Draw DCT-based icon with pixelation
+      if (HoloDCT.dctCache[topo.iconKey]) {
+        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[topo.iconKey], waves);
+        // Brighter base alpha so it's visible even on dark background
+        const baseAlpha = isFocused ? (0.4 + coverage * 0.6) : (0.25 + coverage * 0.4);
+        HoloDCT.drawIcon(ctx, pixels, cx, cy, scale2 * 2.2, topo.hue, baseAlpha, resolution);
+      }
+
+      // Overlay 3D wireframe when coverage is decent
+      if (coverage > 0.15) {
+        let data;
+        if (topo.id === 'code') {
+          const segs = Math.max(6, Math.round(coverage * 16));
+          const t2 = generateTorus(1.1, 0.45, segs, Math.round(segs * 0.7), time, effectiveScramble);
+          const edges = [];
+          for (let u = 0; u <= t2.uSegs; u++) for (let v = 0; v <= t2.vSegs; v++) {
+            const idx = u * (t2.vSegs + 1) + v;
+            if (v < t2.vSegs) edges.push([idx, idx + 1]);
+            if (u < t2.uSegs) edges.push([idx, idx + t2.vSegs + 1]);
+          }
+          data = {points: t2.points, edges};
+        } else if (topo.id === 'math') {
+          const pts = generateLoopSpace(1.3, time, effectiveScramble, Math.max(2, Math.round(coverage * 4)));
+          const edges = [];
+          for (let j = 1; j < pts.length; j++) if (pts[j].loop === pts[j - 1].loop) edges.push([j - 1, j]);
+          data = {points: pts, edges};
+        } else {
+          data = generateGraph(effectiveScramble, time);
+        }
+
+        if (data && data.points.length > 0) {
+          const projected = data.points.map(p =>
+            project3D(p.x, p.y, p.z, rotX2, rotY2 + topo.hue * 0.01, cx, cy, scale2 * 0.6)
+          );
+          const baseA = coverage * 0.7;
+          const sorted = data.edges.map(([a, b]) => ({
+            a, b, depth: ((projected[a]?.depth || 0) + (projected[b]?.depth || 0)) / 2
+          })).sort((a, b) => b.depth - a.depth);
+
+          for (const edge of sorted) {
+            const pa = projected[edge.a], pb = projected[edge.b];
+            if (!pa || !pb) continue;
+            const ea = baseA * ((pa.scale + pb.scale) / 2) * 0.8;
+            ctx.beginPath();
+            ctx.moveTo(pa.px, pa.py);
+            ctx.lineTo(pb.px, pb.py);
+            ctx.strokeStyle = `hsla(${topo.hue},55%,55%,${U.clamp(ea, 0, 0.85)})`;
+            ctx.lineWidth = 0.4 + coverage * 1.5;
+            ctx.stroke();
+          }
+
+          if (coverage > 0.4) {
+            const step3 = Math.max(1, Math.floor(projected.length / 25));
+            for (let j = 0; j < projected.length; j += step3) {
+              const p = projected[j];
+              if (!p) continue;
+              ctx.beginPath();
+              ctx.arc(p.px, p.py, 1 + coverage * 1.5 * p.scale, 0, U.TAU);
+              ctx.fillStyle = `hsla(${topo.hue},70%,65%,${coverage * 0.5 * p.scale})`;
+              ctx.fill();
+            }
+          }
+        }
+      }
+
+      // Lens indicator
       if (isFocused) {
         ctx.beginPath();
-        ctx.arc(cx, cy, scale * 1.9, 0, U.TAU);
+        ctx.arc(cx, cy, scale2 * 1.8, 0, U.TAU);
         ctx.strokeStyle = `rgba(129,140,248,${0.25 + Math.sin(time * 2) * 0.1})`;
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 4]);
         ctx.stroke();
         ctx.setLineDash([]);
-
         ctx.font = '9px Inter';
         ctx.fillStyle = '#818cf8';
         ctx.textAlign = 'center';
-        ctx.fillText('LIPSCHITZ LENS FOCUSED', cx, cy - scale * 1.9 - 8);
+        ctx.fillText('LENS FOCUSED', cx, cy - scale2 * 1.8 - 8);
       }
 
-      // Generate topology
-      let points3D = [];
-      let edges = [];
-
-      if (topo.id === 'code') {
-        const torus = generateTorus(1.2, 0.5, 18, 12, time, effectiveScramble);
-        points3D = torus.points;
-        for (let u = 0; u <= torus.uSegs; u++) {
-          for (let v = 0; v <= torus.vSegs; v++) {
-            const idx = u * (torus.vSegs + 1) + v;
-            if (v < torus.vSegs) edges.push([idx, idx + 1]);
-            if (u < torus.uSegs) edges.push([idx, idx + torus.vSegs + 1]);
-          }
-        }
-      } else if (topo.id === 'math') {
-        points3D = generateLoopSpace(1.4, time, effectiveScramble, 4);
-        for (let j = 1; j < points3D.length; j++) {
-          if (points3D[j].loop === points3D[j-1].loop) edges.push([j-1, j]);
-        }
-      } else if (topo.id === 'lang') {
-        // Graph network
-        const gNodes = [
-          {x:0,y:0,z:0},{x:1,y:0.3,z:0.2},{x:-0.8,y:0.5,z:-0.3},
-          {x:0.5,y:-0.7,z:0.4},{x:-0.5,y:-0.5,z:-0.5},{x:0.2,y:0.8,z:0.6},
-          {x:-0.3,y:-0.2,z:0.8}
-        ];
-        for (const gn of gNodes) {
-          points3D.push({
-            x: gn.x + effectiveScramble * Math.sin(time + gn.x * 5) * 0.4,
-            y: gn.y + effectiveScramble * Math.cos(time * 0.8 + gn.y * 4) * 0.3,
-            z: gn.z + effectiveScramble * Math.sin(time * 0.6 + gn.z * 6) * 0.3
-          });
-        }
-        edges = [[0,1],[0,2],[0,3],[1,3],[1,5],[2,4],[3,4],[3,6],[4,6],[5,6],[2,5]];
-      }
-
-      // Project
-      const rotY2 = rotY + topo.hue * 0.01;
-      const projected = points3D.map(p =>
-        project3D(p.x, p.y, p.z, rotX, rotY2, cx, cy, scale)
-      );
-
-      // Draw edges
-      const baseAlpha = 0.1 + coverage * 0.8;
-      const sortedEdges = edges.map(([a, b]) => ({
-        a, b,
-        depth: ((projected[a]?.depth || 0) + (projected[b]?.depth || 0)) / 2
-      })).sort((a, b) => b.depth - a.depth);
-
-      for (const edge of sortedEdges) {
-        const pa = projected[edge.a];
-        const pb = projected[edge.b];
-        if (!pa || !pb) continue;
-
-        const edgeAlpha = baseAlpha * ((pa.scale + pb.scale) / 2) * 0.8;
-        const sat = 40 + coverage * 40;
-        const lit = 35 + coverage * 30;
-
-        ctx.beginPath();
-        ctx.moveTo(pa.px, pa.py);
-        ctx.lineTo(pb.px, pb.py);
-        ctx.strokeStyle = `hsla(${topo.hue},${sat}%,${lit}%,${U.clamp(edgeAlpha, 0, 0.9)})`;
-        ctx.lineWidth = 0.4 + coverage * 1.8;
-        ctx.stroke();
-      }
-
-      // Draw vertices when coverage is high
-      if (coverage > 0.4) {
-        const step2 = Math.max(1, Math.floor(projected.length / 30));
-        for (let j = 0; j < projected.length; j += step2) {
-          const p = projected[j];
-          if (!p) continue;
-          const dotR = 1 + coverage * 1.5 * p.scale;
-          ctx.beginPath();
-          ctx.arc(p.px, p.py, dotR, 0, U.TAU);
-          ctx.fillStyle = `hsla(${topo.hue},70%,70%,${coverage * 0.6 * p.scale})`;
-          ctx.fill();
-        }
-      }
-
-      // Label
+      // Labels
       ctx.font = `bold ${10 + Math.round(coverage * 3)}px Inter`;
       ctx.fillStyle = `hsla(${topo.hue},70%,75%,${0.4 + coverage * 0.6})`;
       ctx.textAlign = 'center';
-      ctx.fillText(topo.label, cx, cy + scale * 2.2);
+      ctx.fillText(topo.label, cx, cy + scale2 * 2.4);
 
-      // Scramble indicator
       ctx.font = '9px JetBrains Mono';
-      ctx.fillStyle = effectiveScramble > 0.3 ? '#ef4444' : effectiveScramble > 0.1 ? '#fbbf24' : '#34d399';
-      ctx.fillText(`scramble: ${Math.round(effectiveScramble * 100)}%`, cx, cy + scale * 2.2 + 14);
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillText(`clarity: ${Math.round(coverage * 100)}%`, cx, cy + scale * 2.2 + 26);
+      ctx.fillStyle = effectiveScramble > 0.5 ? '#ef4444' : effectiveScramble > 0.2 ? '#fbbf24' : '#34d399';
+      ctx.fillText(`scramble: ${Math.round(effectiveScramble * 100)}%`, cx, cy + scale2 * 2.4 + 14);
+      ctx.fillStyle = coverage > 0.6 ? '#34d399' : coverage > 0.2 ? '#fbbf24' : '#94a3b8';
+      ctx.fillText(`clarity: ${Math.round(coverage * 100)}% | ${waves} waves`, cx, cy + scale2 * 2.4 + 26);
     }
 
-    // Progress bar at bottom
-    const pbW = W - 60, pbH = 6, pbX = 30, pbY = H - 30;
+    // Progress bar
+    const pbW = W - 60, pbH = 8, pbX = 30, pbY = H - 35;
     ctx.fillStyle = '#1a2040';
     ctx.fillRect(pbX, pbY, pbW, pbH);
     const progress = depth / 11;
@@ -1316,24 +1322,23 @@ const LayerMod = (() => {
     ctx.fillStyle = pbGrad;
     ctx.fillRect(pbX, pbY, pbW * progress, pbH);
 
-    // Phase markers on progress bar
-    const phases = [{x:0, label:'Embed'},{x:0.27, label:'Route'},{x:0.55, label:'Resolve'},{x:0.82, label:'Glue'}];
+    // Phase markers
+    const phases = [{x: 0, label: 'Embed'}, {x: 0.27, label: 'Route'}, {x: 0.55, label: 'Resolve'}, {x: 0.82, label: 'Glue'}];
     for (const ph of phases) {
       const px = pbX + ph.x * pbW;
       ctx.fillStyle = '#475569';
-      ctx.font = '7px Inter';
+      ctx.font = '8px Inter';
       ctx.textAlign = 'center';
-      ctx.fillText(ph.label, px, pbY - 4);
+      ctx.fillText(ph.label, px, pbY - 5);
       ctx.fillRect(px, pbY - 2, 1, pbH + 4);
     }
 
     // Stats
     document.getElementById('layerStats').innerHTML = `
       <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${depth.toFixed(1)}</div></div>
-      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${depth<0.5?'Embed':depth<=3?'Route':depth<=8?'Resolve':'Glue'}</div></div>
+      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${depth < 0.5 ? 'Embed' : depth <= 3 ? 'Route' : depth <= 8 ? 'Resolve' : 'Glue'}</div></div>
       <div class="sc"><div class="l">FOCUS</div><div class="v" style="color:#f472b6">${focus}</div></div>
-      <div class="sc"><div class="l">DEHOLOGRAPH.</div><div class="v" style="color:#34d399">${Math.round(progress*100)}%</div></div>
-    `;
+      <div class="sc"><div class="l">DEHOLOGRAPH.</div><div class="v" style="color:#34d399">${Math.round(progress * 100)}%</div></div>`;
   }
 
   function animate() {
@@ -1360,193 +1365,12 @@ const LayerMod = (() => {
 })();
 
 // ================================================================
-// HOLOGRAPHIC DCT ENGINE (for TradeoffMod compatibility)
-// ================================================================
-const HoloDCT = (() => {
-  const N = 16;
-
-  function makeIcons() {
-    const icons = {};
-
-    // TORUS for Code
-    icons.Code = new Float64Array(N*N);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const cx2=7.5,cy2=7.5,dx=x-cx2,dy=y-cy2;
-      const d=Math.sqrt(dx*dx+dy*dy);
-      if(d>=4.5 && d<=7.2) icons.Code[y*N+x]=1;
-      if(d>=2.0 && d<=3.8 && dy<1) icons.Code[y*N+x]=0.7;
-      if(d<2.5) icons.Code[y*N+x]=0;
-    }
-
-    // LOOP SPACE for Math
-    icons.Math = new Float64Array(N*N);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const cx1=5,cy1=7,cx2=10,cy2=7;
-      const d1=Math.sqrt((x-cx1)**2+(y-cy1)**2);
-      const d2=Math.sqrt((x-cx2)**2+(y-cy2)**2);
-      if(Math.abs(d1-3.5)<1.0) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d1-3.5)/1.0);
-      if(Math.abs(d2-3.5)<1.0) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d2-3.5)/1.0);
-      if(Math.sqrt((x-7.5)**2+(y-7)**2)<1.2) icons.Math[y*N+x]=1;
-    }
-
-    // GRAPH for Language
-    icons.Language = new Float64Array(N*N);
-    const lnodes=[[4,3],[11,2],[2,8],[8,7],[13,9],[6,13],[10,13]];
-    const ledges=[[0,1],[0,2],[0,3],[1,3],[1,4],[2,5],[3,4],[3,5],[3,6],[4,6],[5,6]];
-    for(const[a,b] of ledges){
-      const[ax,ay]=lnodes[a],[bx,by]=lnodes[b];
-      for(let t=0;t<=1;t+=0.02){
-        const px2=ax+(bx-ax)*t, py2=ay+(by-ay)*t;
-        const ix=Math.round(px2),iy=Math.round(py2);
-        if(ix>=0&&ix<N&&iy>=0&&iy<N) icons.Language[iy*N+ix]=Math.max(icons.Language[iy*N+ix],0.6);
-      }
-    }
-    for(const[cx2,cy2] of lnodes){
-      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-        const d=Math.sqrt((x-cx2)**2+(y-cy2)**2);
-        if(d<1.5) icons.Language[y*N+x]=Math.max(icons.Language[y*N+x],1-d/1.5);
-      }
-    }
-
-    // Biology
-    icons.Biology = new Float64Array(N*N);
-    for(let y=10;y<16;y++) for(let x=7;x<=8;x++) icons.Biology[y*N+x]=1;
-    const canopy=[[3,2],[5,1],[7,0],[9,1],[11,2],[4,4],[10,4],[7,3]];
-    for(const[cx2,cy2] of canopy){
-      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-        const d=Math.sqrt((x-cx2)**2+(y-cy2)**2);
-        if(d<2) icons.Biology[y*N+x]=Math.max(icons.Biology[y*N+x],1-d/2);
-      }
-    }
-
-    // History (spiral)
-    icons.History = new Float64Array(N*N);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const cx2=7.5,cy2=7.5,dx=x-cx2,dy=y-cy2;
-      const angle=Math.atan2(dy,dx);
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      for(let w=-1;w<=3;w++){
-        const targetR = 1.0 + (angle+Math.PI+w*2*Math.PI)*0.7;
-        if(Math.abs(dist-targetR)<0.8 && dist<7.5 && dist>0.5)
-          icons.History[y*N+x]=Math.max(icons.History[y*N+x], 1-Math.abs(dist-targetR)/0.8);
-      }
-    }
-
-    // Music (wave)
-    icons.Music = new Float64Array(N*N);
-    for(let x=0;x<N;x++){
-      const y1=7.5+5*Math.sin(x/N*2*Math.PI);
-      const y2=7.5+3*Math.sin(x/N*4*Math.PI);
-      for(let y=0;y<N;y++){
-        if(Math.abs(y-y1)<1.2) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],1-Math.abs(y-y1)/1.2);
-        if(Math.abs(y-y2)<0.9) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],0.7*(1-Math.abs(y-y2)/0.9));
-      }
-    }
-
-    return icons;
-  }
-
-  function dct2(img) {
-    const out = new Float64Array(N*N);
-    for(let u=0;u<N;u++) for(let v=0;v<N;v++){
-      let sum=0;
-      const cu = u===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
-      const cv = v===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
-      for(let x=0;x<N;x++) for(let y=0;y<N;y++){
-        sum += img[y*N+x]
-          * Math.cos((2*x+1)*u*Math.PI/(2*N))
-          * Math.cos((2*y+1)*v*Math.PI/(2*N));
-      }
-      out[v*N+u] = cu*cv*sum;
-    }
-    return out;
-  }
-
-  function idct2(coeff) {
-    const out = new Float64Array(N*N);
-    for(let x=0;x<N;x++) for(let y=0;y<N;y++){
-      let sum=0;
-      for(let u=0;u<N;u++) for(let v=0;v<N;v++){
-        const cu = u===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
-        const cv = v===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
-        sum += cu*cv*coeff[v*N+u]
-          * Math.cos((2*x+1)*u*Math.PI/(2*N))
-          * Math.cos((2*y+1)*v*Math.PI/(2*N));
-      }
-      out[y*N+x] = sum;
-    }
-    return out;
-  }
-
-  function zigzagOrder(n) {
-    const order = [];
-    for(let s=0;s<2*n-1;s++){
-      if(s%2===0){
-        for(let i=Math.min(s,n-1);i>=Math.max(0,s-n+1);i--) order.push([i,s-i]);
-      } else {
-        for(let i=Math.max(0,s-n+1);i<=Math.min(s,n-1);i++) order.push([i,s-i]);
-      }
-    }
-    return order;
-  }
-
-  function reconstruct(dctCoeffs, k) {
-    const zz = zigzagOrder(N);
-    const masked = new Float64Array(N*N);
-    const kk = Math.min(Math.max(0, Math.round(k)), N*N);
-    for(let i=0; i<kk && i<zz.length; i++){
-      const [u,v] = zz[i];
-      masked[v*N+u] = dctCoeffs[v*N+u];
-    }
-    return idct2(masked);
-  }
-
-  function drawIcon(ctx, pixels, cx, cy, size, hue, alpha) {
-    const pxSize = size / N;
-    let mn = Infinity, mx = -Infinity;
-    for(let i=0;i<N*N;i++){
-      if(pixels[i]<mn) mn=pixels[i];
-      if(pixels[i]>mx) mx=pixels[i];
-    }
-    const range = mx-mn || 1;
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const val = (pixels[y*N+x]-mn)/range;
-      if(val < 0.05) continue;
-      const l = 15 + val*55;
-      const s = 50 + val*20;
-      const a = val * alpha;
-      ctx.fillStyle = `hsla(${hue},${s}%,${l}%,${a})`;
-      ctx.fillRect(cx - size/2 + x*pxSize, cy - size/2 + y*pxSize, pxSize+0.5, pxSize+0.5);
-    }
-  }
-
-  const icons = makeIcons();
-  const dctCache = {};
-  for(const [name, img] of Object.entries(icons)){
-    dctCache[name] = dct2(img);
-  }
-
-  return { N, icons, dctCache, reconstruct, drawIcon, zigzagOrder };
-})();
-
-// ================================================================
 // SCROLL FADE-IN
 // ================================================================
 const fadeObs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
-}, { threshold: 0.1 });
+}, {threshold: 0.1});
 document.querySelectorAll('.fade').forEach(el => fadeObs.observe(el));
-
-// ================================================================
-// RESIZE HANDLER
-// ================================================================
-let resizeTimer;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    // Modules auto-render via their animation loops
-  }, 500);
-});
 </script>
 </body>
 </html>
