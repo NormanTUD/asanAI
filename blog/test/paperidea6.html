@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lipschitz Lenses — Homotopic Focus Stack v2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+:root{--bg:#06081a;--surface:#0e1230;--accent1:#818cf8;--accent2:#34d399;--accent3:#f472b6;--accent4:#fbbf24;--text:#e2e8f0;--dim:#64748b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+.wrap{max-width:1400px;margin:0 auto;padding:16px}
+h1{font-size:clamp(1.5rem,3.5vw,2.4rem);text-align:center;margin:20px 0 6px;font-weight:800;background:linear-gradient(135deg,#818cf8,#34d399,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{text-align:center;color:var(--dim);max-width:850px;margin:0 auto 20px;font-size:.9rem}
+.card{background:var(--surface);border:1px solid #1e2550;border-radius:14px;padding:18px;margin:16px 0;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent1),var(--accent2),var(--accent3))}
+canvas{display:block;border-radius:8px;background:#020510;cursor:crosshair}
+.dual{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:center}
+.arrow-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.arrow-col svg{width:32px;height:32px}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:10px 0}
+.ctrl label{font-size:.75rem;color:#94a3b8;display:flex;align-items:center;gap:4px}
+.ctrl input[type=range]{width:110px;accent-color:var(--accent1)}
+button{padding:6px 14px;border:none;border-radius:7px;cursor:pointer;font-weight:700;font-size:.8rem;transition:all .12s}
+button:hover{transform:translateY(-1px);filter:brightness(1.15)}
+.bs{background:#334155;color:#cbd5e1}.ba{background:#f59e0b;color:#1e293b}
+.met{background:#0a0e28;border-left:3px solid var(--accent1);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0;font-style:italic;color:#cbd5e1;font-size:.82rem}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:5px;margin:8px 0}
+.sc{background:#060a20;border:1px solid #1a2040;border-radius:6px;padding:6px;text-align:center}
+.sc .l{font-size:.58rem;color:var(--dim)}.sc .v{font-size:1rem;font-weight:700}
+.lens-list{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:6px 0;min-height:24px}
+.lens-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:16px;font-size:.68rem;font-weight:700;cursor:pointer;transition:all .12s;border:1px solid rgba(255,255,255,.12)}
+.lens-tag:hover{filter:brightness(1.3);transform:scale(1.05)}
+.lens-tag .x{opacity:.4;margin-left:2px}.lens-tag .x:hover{opacity:1}
+.canvas-wrap{position:relative}
+.canvas-label{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--accent2);font-weight:700;letter-spacing:.4px;pointer-events:none;z-index:2;text-shadow:0 1px 3px #000}
+.perf{font-size:.65rem;color:#475569;text-align:center;margin:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>🔭 Lipschitz Lenses — Homotopic Focus Stack</h1>
+<p class="sub">
+<strong>Click to place lenses.</strong> Overlapping = accumulated focus = more zoom layers = less pixelation.
+Left: <strong>FFT-scrambled</strong> holographic encoding. Right: <strong>decoded</strong> — resolution scales with focus depth.
+Budget is finite and conserved. Smooth Gaussian falloff = homotopy-continuous transitions.
+</p>
+
+<div class="card">
+<div class="met">"Narrow attention (low entropy) yields a sharp view of few stalks; broad attention yields a blurred view of many — a resolution–breadth tradeoff enforced by the convex combination in fixed dimensionality d." — Conjecture 6</div>
+
+<div id="lensList" class="lens-list"></div>
+
+<div class="dual">
+  <div class="canvas-wrap">
+    <div class="canvas-label">FFT-SCRAMBLED (Holographic)</div>
+    <canvas id="cLeft"></canvas>
+  </div>
+  <div class="arrow-col">
+    <svg viewBox="0 0 32 32"><path d="M6 16 L22 16 M18 11 L24 16 L18 21" stroke="#34d399" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    <div style="font-size:.5rem;color:#64748b;text-align:center">Lipschitz<br>Decode</div>
+  </div>
+  <div class="canvas-wrap">
+    <div class="canvas-label">DECODED (Resolution ∝ Focus)</div>
+    <canvas id="cRight"></canvas>
+  </div>
+</div>
+
+<div class="ctrl">
+  <label>Radius: <input type="range" id="sRadius" min="30" max="220" value="90"><span id="sRadiusV">90</span></label>
+  <label>Budget: <input type="range" id="sBudget" min="10" max="200" value="100"><span id="sBudgetV">100</span></label>
+  <label>Scramble: <input type="range" id="sScram" min="0" max="100" value="80"><span id="sScramV">80%</span></label>
+  <label>Max Layers: <input type="range" id="sLayers" min="1" max="10" value="6"><span id="sLayersV">6</span></label>
+  <button class="bs" onclick="Main.clear()">✕ Clear</button>
+  <button class="ba" onclick="Main.undo()">↩ Undo</button>
+</div>
+<div class="perf" id="perfInfo"></div>
+<div class="sg" id="stats"></div>
+</div>
+
+</div>
+
+<script>
+// ================================================================
+// PERFORMANCE-OPTIMIZED LIPSCHITZ LENS VISUALIZATION
+// Uses pre-computed texture tiles + block rendering (not per-pixel)
+// FFT scrambling via 2D DCT phase randomization
+// ================================================================
+
+const TAU = Math.PI * 2;
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const gaussian = (d, sigma) => Math.exp(-(d * d) / (2 * sigma * sigma));
+
+// ================================================================
+// TEXTURE GENERATION — Pre-compute at multiple resolutions
+// ================================================================
+const TEX_SIZE = 128; // High-res texture size
+const COLORS = [
+  '#f472b6','#818cf8','#34d399','#fbbf24','#f87171',
+  '#a78bfa','#2dd4bf','#fb923c','#e879f9','#38bdf8'
+];
+
+// Generate rich topological textures as ImageData at TEX_SIZE
+function generateTextures() {
+  const textures = [];
+  const patterns = [
+    // Torus
+    (x, y) => {
+      const cx = 0.5, cy = 0.5, dx = x - cx, dy = y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const outer = 0.42, inner = 0.15, mid = (outer + inner) / 2, rw = (outer - inner) / 2;
+      if (dist >= inner && dist <= outer) {
+        const rd = Math.abs(dist - mid) / rw;
+        const angle = Math.atan2(dy, dx);
+        return clamp(Math.cos(rd * Math.PI * 0.5) * (1 - rd * 0.4) + 0.3 * Math.sin(angle * 8) * Math.sin((dist - inner) / (outer - inner) * Math.PI * 4) * 0.5, 0, 1);
+      }
+      return 0;
+    },
+    // Loop space (figure-8)
+    (x, y) => {
+      const d1 = Math.sqrt((x - 0.3) ** 2 + (y - 0.5) ** 2);
+      const d2 = Math.sqrt((x - 0.7) ** 2 + (y - 0.5) ** 2);
+      const r = 0.22, w = 0.06;
+      let v = 0;
+      if (Math.abs(d1 - r) < w) v = Math.max(v, 1 - Math.abs(d1 - r) / w);
+      if (Math.abs(d2 - r) < w) v = Math.max(v, 1 - Math.abs(d2 - r) / w);
+      const dc = Math.sqrt((x - 0.5) ** 2 + (y - 0.5) ** 2);
+      if (dc < 0.06) v = 1;
+      return v;
+    },
+    // Spiral
+    (x, y) => {
+      const cx = 0.5, cy = 0.5, dx = x - cx, dy = y - cy;
+      const angle = Math.atan2(dy, dx), dist = Math.sqrt(dx * dx + dy * dy);
+      let v = 0;
+      for (let w = -2; w <= 5; w++) {
+        const tR = 0.025 + (angle + Math.PI + w * TAU) * 0.048;
+        const lw = 0.03;
+        if (Math.abs(dist - tR) < lw && dist < 0.46 && dist > 0.03)
+          v = Math.max(v, 1 - Math.abs(dist - tR) / lw);
+      }
+      return v;
+    },
+    // Graph network
+    (x, y) => {
+      const nodes = [[0.25, 0.2], [0.7, 0.15], [0.12, 0.5], [0.5, 0.45], [0.85, 0.55], [0.35, 0.8], [0.65, 0.82]];
+      const edges = [[0,1],[0,2],[0,3],[1,3],[1,4],[2,5],[3,4],[3,5],[3,6],[4,6],[5,6]];
+      let v = 0;
+      for (const [a, b] of edges) {
+        const [ax, ay] = nodes[a], [bx, by] = nodes[b];
+        // Distance from point to line segment
+        const dx = bx - ax, dy = by - ay;
+        const len2 = dx * dx + dy * dy;
+        let t = len2 > 0 ? clamp(((x - ax) * dx + (y - ay) * dy) / len2, 0, 1) : 0;
+        const px = ax + t * dx, py = ay + t * dy;
+        const d = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+        if (d < 0.025) v = Math.max(v, 0.7 * (1 - d / 0.025));
+      }
+      for (const [nx, ny] of nodes) {
+        const d = Math.sqrt((x - nx) ** 2 + (y - ny) ** 2);
+        if (d < 0.04) v = Math.max(v, 1 - d / 0.04);
+      }
+      return v;
+    },
+    // Tree
+    (x, y) => {
+      let v = 0;
+      const segs = [
+        [0.5, 0.95, 0.5, 0.55, 0.025],
+        [0.5, 0.55, 0.25, 0.3, 0.02], [0.5, 0.55, 0.75, 0.3, 0.02],
+        [0.25, 0.3, 0.12, 0.12, 0.015], [0.25, 0.3, 0.35, 0.15, 0.015],
+        [0.75, 0.3, 0.65, 0.12, 0.015], [0.75, 0.3, 0.88, 0.15, 0.015]
+      ];
+      for (const [x0, y0, x1, y1, w] of segs) {
+        const dx = x1 - x0, dy = y1 - y0, len2 = dx * dx + dy * dy;
+        const t = len2 > 0 ? clamp(((x - x0) * dx + (y - y0) * dy) / len2, 0, 1) : 0;
+        const px = x0 + t * dx, py = y0 + t * dy;
+        const d = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
+        if (d < w) v = Math.max(v, 0.9 * (1 - d / w));
+      }
+      const leaves = [[0.12, 0.1], [0.35, 0.12], [0.65, 0.1], [0.88, 0.12], [0.5, 0.04]];
+      for (const [lx, ly] of leaves) {
+        const d = Math.sqrt((x - lx) ** 2 + (y - ly) ** 2);
+        if (d < 0.06) v = Math.max(v, 0.7 * (1 - d / 0.06));
+      }
+      return v;
+    },
+    // Wave interference
+    (x, y) => {
+      let v = 0;
+      const waves = [{f: 2, a: 0.35, p: 0}, {f: 4, a: 0.22, p: 1.2}, {f: 3, a: 0.15, p: 2.5}, {f: 6, a: 0.1, p: 0.8}];
+      for (const w of waves) {
+        const yc = 0.5 + w.a * Math.sin(x * Math.PI * w.f + w.p) * Math.sin(x * Math.PI);
+        const d = Math.abs(y - yc);
+        if (d < 0.04) v = Math.max(v, 0.8 * (1 - d / 0.04));
+      }
+      return v;
+    }
+  ];
+
+  const hues = [330, 240, 30, 160, 90, 280];
+
+  for (let p = 0; p < patterns.length; p++) {
+    const data = new Float32Array(TEX_SIZE * TEX_SIZE);
+    for (let y = 0; y < TEX_SIZE; y++) {
+      for (let x = 0; x < TEX_SIZE; x++) {
+        data[y * TEX_SIZE + x] = patterns[p](x / TEX_SIZE, y / TEX_SIZE);
+      }
+    }
+    textures.push({ data, hue: hues[p] });
+  }
+  return textures;
+}
+
+// ================================================================
+// 2D DCT-BASED FFT SCRAMBLING
+// Proper frequency-domain phase randomization
+// ================================================================
+function createDCTBasis(N) {
+  const basis = new Float32Array(N * N);
+  for (let k = 0; k < N; k++) {
+    const a = k === 0 ? Math.sqrt(1 / N) : Math.sqrt(2 / N);
+    for (let n = 0; n < N; n++) {
+      basis[k * N + n] = a * Math.cos(Math.PI * (2 * n + 1) * k / (2 * N));
+    }
+  }
+  return basis;
+}
+
+function dct1d(input, output, N, basis) {
+  for (let k = 0; k < N; k++) {
+    let sum = 0;
+    for (let n = 0; n < N; n++) sum += input[n] * basis[k * N + n];
+    output[k] = sum;
+  }
+}
+
+function idct1d(input, output, N, basis) {
+  for (let n = 0; n < N; n++) {
+    let sum = 0;
+    for (let k = 0; k < N; k++) sum += input[k] * basis[k * N + n];
+    output[n] = sum;
+  }
+}
+
+function scrambleTexture(srcData, N, strength, seed) {
+  // 2D DCT forward
+  const basis = createDCTBasis(N);
+  const temp = new Float32Array(N * N);
+  const freq = new Float32Array(N * N);
+  const row = new Float32Array(N);
+  const out = new Float32Array(N);
+
+  // Row-wise DCT
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) row[x] = srcData[y * N + x];
+    dct1d(row, out, N, basis);
+    for (let x = 0; x < N; x++) temp[y * N + x] = out[x];
+  }
+  // Column-wise DCT
+  const col = new Float32Array(N);
+  for (let x = 0; x < N; x++) {
+    for (let y = 0; y < N; y++) col[y] = temp[y * N + x];
+    dct1d(col, out, N, basis);
+    for (let y = 0; y < N; y++) freq[y * N + x] = out[y];
+  }
+
+  // Phase randomization in frequency domain
+  // Shuffle/permute frequency coefficients based on strength
+  const scrambled = new Float32Array(N * N);
+  const rng = mulberry32(seed);
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) {
+      const idx = y * N + x;
+      // Mix coefficient with a random offset position
+      const offsetX = Math.round((rng() - 0.5) * strength * N * 0.6);
+      const offsetY = Math.round((rng() - 0.5) * strength * N * 0.6);
+      const sx = ((x + offsetX) % N + N) % N;
+      const sy = ((y + offsetY) % N + N) % N;
+      // Blend between original and scrambled position
+      scrambled[idx] = lerp(freq[idx], freq[sy * N + sx], strength);
+      // Also add phase noise
+      scrambled[idx] *= (1 + (rng() - 0.5) * strength * 0.5);
+    }
+  }
+
+  // 2D IDCT
+  // Column-wise IDCT
+  for (let x = 0; x < N; x++) {
+    for (let y = 0; y < N; y++) col[y] = scrambled[y * N + x];
+    idct1d(col, out, N, basis);
+    for (let y = 0; y < N; y++) temp[y * N + x] = out[y];
+  }
+  // Row-wise IDCT
+  const result = new Float32Array(N * N);
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) row[x] = temp[y * N + x];
+    idct1d(row, out, N, basis);
+    for (let x = 0; x < N; x++) result[y * N + x] = clamp(out[x], 0, 1);
+  }
+
+  return result;
+}
+
+// Seeded RNG for reproducible scrambling
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// ================================================================
+// ISLAND LAYOUT
+// ================================================================
+const ISLANDS = [
+  { x: 0.15, y: 0.22, r: 0.12, tex: 0, label: 'Torus' },
+  { x: 0.42, y: 0.18, r: 0.13, tex: 1, label: 'Ω-Space' },
+  { x: 0.74, y: 0.20, r: 0.11, tex: 3, label: 'Graph' },
+  { x: 0.18, y: 0.65, r: 0.10, tex: 4, label: 'Tree' },
+  { x: 0.52, y: 0.70, r: 0.11, tex: 2, label: 'Spiral' },
+  { x: 0.82, y: 0.62, r: 0.09, tex: 5, label: 'Wave' },
+];
+
+// ================================================================
+// MAIN APPLICATION
+// ================================================================
+const Main = (() => {
+  let ctxL, ctxR, W, H, cL, cR;
+  let lenses = [];
+  let textures = [];
+  let scrambledTextures = []; // Pre-computed scrambled versions
+  let lastScramStr = -1;
+  let frameCount = 0;
+  let time = 0;
+  let lastFPS = 0, fpsAccum = 0, fpsCount = 0, lastFPSTime = 0;
+
+  // Pre-rendered tile caches at multiple resolutions
+  const BLOCK_LEVELS = [32, 16, 8, 4, 2, 1]; // pixelation levels
+  let tileCache = {}; // key: `${texIdx}_${blockSize}_${scrambled}` -> ImageData
+
+  function init() {
+    const dpr = window.devicePixelRatio || 1;
+    cL = document.getElementById('cLeft');
+    cR = document.getElementById('cRight');
+    const parent = cL.parentElement;
+    W = Math.floor((parent.parentElement.clientWidth - 60) / 2);
+    H = Math.round(Math.min(500, W * 0.7));
+
+    for (const c of [cL, cR]) {
+      c.style.width = W + 'px';
+      c.style.height = H + 'px';
+      c.width = W * dpr;
+      c.height = H * dpr;
+    }
+    ctxL = cL.getContext('2d');
+    ctxR = cR.getContext('2d');
+    ctxL.scale(dpr, dpr);
+    ctxR.scale(dpr, dpr);
+
+    cL.addEventListener('click', handleClick);
+    cR.addEventListener('click', handleClick);
+
+    // Generate textures
+    textures = generateTextures();
+
+    // Pre-compute scrambled textures
+    recomputeScrambled(0.8);
+
+    requestAnimationFrame(tick);
+  }
+
+  function recomputeScrambled(str) {
+    scrambledTextures = textures.map((tex, i) =>
+      scrambleTexture(tex.data, TEX_SIZE, str, 42 + i * 137)
+    );
+    lastScramStr = str;
+    tileCache = {}; // Invalidate cache
+  }
+
+  function handleClick(e) {
+    const rect = e.target.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / rect.width * W;
+    const my = (e.clientY - rect.top) / rect.height * H;
+    lenses.push({ x: mx, y: my, color: COLORS[lenses.length % COLORS.length] });
+    updateLensList();
+  }
+
+  function updateLensList() {
+    document.getElementById('lensList').innerHTML = lenses.map((l, i) =>
+      `<span class="lens-tag" style="background:${l.color}33;color:${l.color}" onclick="Main.remove(${i})">
+        L${i + 1} <span class="x">✕</span>
+      </span>`
+    ).join('');
+  }
+
+  function remove(i) { lenses.splice(i, 1); updateLensList(); }
+  function clear() { lenses = []; updateLensList(); }
+  function undo() { lenses.pop(); updateLensList(); }
+
+function tick(now) {
+    frameCount++;
+    time += 0.016;
+    fpsCount++;
+    if (now - lastFPSTime > 1000) {
+      lastFPS = Math.round(fpsCount * 1000 / (now - lastFPSTime));
+      fpsCount = 0;
+      lastFPSTime = now;
+    }
+
+    render();
+    requestAnimationFrame(tick);
+  }
+
+  function render() {
+    const radius = +document.getElementById('sRadius').value;
+    const budget = +document.getElementById('sBudget').value;
+    const scramStr = +document.getElementById('sScram').value / 100;
+    const maxLayers = +document.getElementById('sLayers').value;
+
+    document.getElementById('sRadiusV').textContent = radius;
+    document.getElementById('sBudgetV').textContent = budget;
+    document.getElementById('sScramV').textContent = Math.round(scramStr * 100) + '%';
+    document.getElementById('sLayersV').textContent = maxLayers;
+
+    // Recompute scrambled textures if scramble strength changed
+    if (Math.abs(scramStr - lastScramStr) > 0.02) {
+      recomputeScrambled(scramStr);
+    }
+
+    // Compute focus field at reduced resolution for speed
+    const FIELD_SCALE = 8; // compute field at 1/8 resolution
+    const fw = Math.ceil(W / FIELD_SCALE), fh = Math.ceil(H / FIELD_SCALE);
+    const field = new Float32Array(fw * fh);
+    const sigma = radius / 2.5;
+    const perLensBudget = lenses.length > 0 ? (budget / lenses.length) / budget : 0;
+
+    for (const lens of lenses) {
+      const lcx = lens.x / FIELD_SCALE, lcy = lens.y / FIELD_SCALE;
+      const sr = Math.ceil(radius * 1.5 / FIELD_SCALE);
+      const sy = Math.max(0, Math.floor(lcy - sr));
+      const ey = Math.min(fh, Math.ceil(lcy + sr));
+      const sx = Math.max(0, Math.floor(lcx - sr));
+      const ex = Math.min(fw, Math.ceil(lcx + sr));
+      for (let y = sy; y < ey; y++) {
+        for (let x = sx; x < ex; x++) {
+          const d = Math.sqrt((x - lcx) ** 2 + (y - lcy) ** 2) * FIELD_SCALE;
+          field[y * fw + x] += gaussian(d, sigma) * perLensBudget;
+        }
+      }
+    }
+
+    // Normalize and clamp
+    let maxF = 0;
+    for (let i = 0; i < field.length; i++) {
+      field[i] = Math.min(field[i], 1.0);
+      if (field[i] > maxF) maxF = field[i];
+    }
+    // Don't normalize — use absolute values so single lens at center = 1.0
+
+    // Render both canvases using block-based approach
+    renderSide(ctxL, W, H, field, fw, fh, FIELD_SCALE, maxLayers, true);
+    renderSide(ctxR, W, H, field, fw, fh, FIELD_SCALE, maxLayers, false);
+
+    // Draw lens overlays
+    for (const ctx of [ctxL, ctxR]) {
+      for (let i = 0; i < lenses.length; i++) {
+        const l = lenses[i];
+        ctx.beginPath();
+        ctx.arc(l.x, l.y, radius, 0, TAU);
+        ctx.strokeStyle = l.color + '55';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.arc(l.x, l.y, 4, 0, TAU);
+        ctx.fillStyle = l.color;
+        ctx.fill();
+        ctx.font = 'bold 8px Inter';
+        ctx.fillStyle = l.color;
+        ctx.textAlign = 'center';
+        ctx.fillText(`L${i + 1}`, l.x, l.y - 8);
+      }
+    }
+
+    // Labels
+    ctxL.font = 'bold 10px Inter';
+    ctxL.fillStyle = '#f472b6';
+    ctxL.textAlign = 'center';
+    ctxL.fillText('FFT-SCRAMBLED (Holographic)', W / 2, 14);
+
+    ctxR.font = 'bold 10px Inter';
+    ctxR.fillStyle = '#34d399';
+    ctxR.textAlign = 'center';
+    ctxR.fillText('DECODED — Resolution ∝ Focus Depth', W / 2, 14    );
+
+    if (lenses.length === 0) {
+      ctxR.font = '12px Inter';
+      ctxR.fillStyle = `rgba(251,191,36,${0.5 + Math.sin(time * 3) * 0.3})`;
+      ctxR.textAlign = 'center';
+      ctxR.fillText('👆 Click anywhere to place focus lenses', W / 2, H / 2);
+      ctxR.font = '10px Inter';
+      ctxR.fillStyle = '#64748b';
+      ctxR.fillText('More lenses stacked = more zoom layers = less pixelation', W / 2, H / 2 + 18);
+
+      ctxL.font = '12px Inter';
+      ctxL.fillStyle = `rgba(251,191,36,${0.5 + Math.sin(time * 3) * 0.3})`;
+      ctxL.textAlign = 'center';
+      ctxL.fillText('👆 Click anywhere to place focus lenses', W / 2, H / 2);
+    }
+
+    // Perf info
+    document.getElementById('perfInfo').textContent = `${lastFPS} FPS | ${lenses.length} lenses | field ${fw}×${fh}`;
+
+    // Stats
+    const el = document.getElementById('stats');
+    if (el) {
+      const perLensDisplay = lenses.length > 0 ? (budget / lenses.length).toFixed(1) : '—';
+      const maxOverlap = computeMaxOverlap(field, fw, fh);
+      const coverage = computeCoverage(field, fw, fh);
+      el.innerHTML = `
+        <div class="sc"><div class="l">LENSES</div><div class="v" style="color:#fbbf24">${lenses.length}</div></div>
+        <div class="sc"><div class="l">BUDGET/LENS</div><div class="v" style="color:#818cf8">${perLensDisplay}</div></div>
+        <div class="sc"><div class="l">MAX FOCUS</div><div class="v" style="color:#ef4444">${(maxF * 100).toFixed(0)}%</div></div>
+        <div class="sc"><div class="l">OVERLAP</div><div class="v" style="color:#a78bfa">${maxOverlap}</div></div>
+        <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:#34d399">${coverage}%</div></div>
+        <div class="sc"><div class="l">LAYERS</div><div class="v" style="color:#f472b6">${maxLayers}</div></div>`;
+    }
+  }
+
+  function computeMaxOverlap(field, fw, fh) {
+    const radius = +document.getElementById('sRadius').value;
+    let max = 0;
+    for (let y = 0; y < fh; y += 4) {
+      for (let x = 0; x < fw; x += 4) {
+        let count = 0;
+        for (const l of lenses) {
+          const d = Math.sqrt((x - l.x / 8) ** 2 + (y - l.y / 8) ** 2) * 8;
+          if (d < radius) count++;
+        }
+        if (count > max) max = count;
+      }
+    }
+    return max;
+  }
+
+  function computeCoverage(field, fw, fh) {
+    let covered = 0;
+    for (let i = 0; i < field.length; i++) if (field[i] > 0.05) covered++;
+    return Math.round(covered / field.length * 100);
+  }
+
+  function renderSide(ctx, W, H, field, fw, fh, FIELD_SCALE, maxLayers, isScrambled) {
+    // PERFORMANCE: Use block-based rendering instead of per-pixel
+    // Divide canvas into adaptive blocks based on local focus
+    const BLOCK_LEVELS = [32, 16, 8, 4, 2, 1];
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Render background
+    ctx.fillStyle = '#020510';
+    ctx.fillRect(0, 0, W, H);
+
+    // For each island, render at appropriate resolution based on local focus
+    for (const isl of ISLANDS) {
+      const ix = isl.x * W, iy = isl.y * H;
+      const ir = isl.r * Math.min(W, H);
+      const texIdx = isl.tex !== undefined ? isl.tex : 0;
+      const tex = textures[texIdx];
+      const scramTex = scrambledTextures[texIdx];
+      if (!tex) continue;
+
+      // Determine bounding box for this island
+      const x0 = Math.max(0, Math.floor(ix - ir * 1.3));
+      const y0 = Math.max(0, Math.floor(iy - ir * 1.3));
+      const x1 = Math.min(W, Math.ceil(ix + ir * 1.3));
+      const y1 = Math.min(H, Math.ceil(iy + ir * 1.3));
+
+      // Adaptive block rendering within island bounds
+      renderIslandAdaptive(ctx, tex, scramTex, isl, ix, iy, ir, x0, y0, x1, y1,
+        field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, W, H);
+    }
+  }
+
+  function renderIslandAdaptive(ctx, tex, scramTex, isl, ix, iy, ir, x0, y0, x1, y1,
+    field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, W, H) {
+
+    const BLOCK_LEVELS = [32, 20, 12, 8, 4, 2, 1];
+    const hue = tex.hue;
+
+    // Start with largest block size and refine where needed
+    const startBlock = BLOCK_LEVELS[0];
+
+    for (let by = y0; by < y1; by += startBlock) {
+      for (let bx = x0; bx < x1; bx += startBlock) {
+        renderBlock(ctx, tex, scramTex, isl, ix, iy, ir, bx, by, startBlock,
+          field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, BLOCK_LEVELS, 0, W, H);
+      }
+    }
+  }
+
+  function renderBlock(ctx, tex, scramTex, isl, ix, iy, ir, bx, by, blockSize,
+    field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, BLOCK_LEVELS, levelIdx, W, H) {
+
+    // Get focus at center of this block
+    const cx = bx + blockSize / 2, cy = by + blockSize / 2;
+    const fx = clamp(Math.floor(cx / FIELD_SCALE), 0, fw - 1);
+    const fy = clamp(Math.floor(cy / FIELD_SCALE), 0, fh - 1);
+    const focus = field[fy * fw + fx]; // 0..1
+
+    // Determine target block size from focus
+    const focusLevel = Math.floor(clamp(focus, 0, 0.99) * BLOCK_LEVELS.length);
+    const targetBlock = BLOCK_LEVELS[BLOCK_LEVELS.length - 1 - focusLevel];
+
+    if (blockSize <= targetBlock || blockSize <= 1) {
+      // Render this block as a solid color
+      const color = sampleIslandColor(tex, scramTex, isl, ix, iy, ir, cx, cy, isScrambled, focus, W, H);
+      if (color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(bx, by, blockSize, blockSize);
+      }
+    } else {
+      // Subdivide
+      const half = Math.floor(blockSize / 2);
+      if (half < 1) return;
+      const nextLevel = levelIdx + 1;
+      renderBlock(ctx, tex, scramTex, isl, ix, iy, ir, bx, by, half, field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, BLOCK_LEVELS, nextLevel, W, H);
+      renderBlock(ctx, tex, scramTex, isl, ix, iy, ir, bx + half, by, half, field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, BLOCK_LEVELS, nextLevel, W, H);
+      renderBlock(ctx, tex, scramTex, isl, ix, iy, ir, bx, by + half, half, field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, BLOCK_LEVELS, nextLevel, W, H);
+      renderBlock(ctx, tex, scramTex, isl, ix, iy, ir, bx + half, by + half, half, field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, BLOCK_LEVELS, nextLevel, W, H);
+    }
+  }
+
+  function sampleIslandColor(tex, scramTex, isl, ix, iy, ir, px, py, isScrambled, focus, W, H) {
+    const dist = Math.sqrt((px - ix) ** 2 + (py - iy) ** 2);
+    if (dist > ir * 1.3) return null;
+
+    const localX = (px - (ix - ir)) / (ir * 2);
+    const localY = (py - (iy - ir)) / (ir * 2);
+
+    if (localX < 0 || localX >= 1 || localY < 0 || localY >= 1) return null;
+
+    const tx = clamp(Math.floor(localX * TEX_SIZE), 0, TEX_SIZE - 1);
+    const ty = clamp(Math.floor(localY * TEX_SIZE), 0, TEX_SIZE - 1);
+
+    // Choose between scrambled and original based on isScrambled flag
+    // On the LEFT (scrambled): use FFT-scrambled texture, partially decoded by focus
+    // On the RIGHT (decoded): use original texture, with pixelation controlled by focus
+    let val;
+    if (isScrambled) {
+      // Blend between fully scrambled and original based on focus
+      const scramVal = scramTex[ty * TEX_SIZE + tx];
+      const origVal = tex.data[ty * TEX_SIZE + tx];
+      val = lerp(scramVal, origVal, focus); // more focus = more decoded
+    } else {
+      // Right side: always show original content, but resolution (block size) varies
+      val = tex.data[ty * TEX_SIZE + tx];
+    }
+
+    if (val < 0.01 && dist > ir) return null;
+
+    // Color from hue
+    const h = tex.hue / 360;
+    const s = 0.45 + val * 0.45;
+    const l = isScrambled ? (0.08 + val * 0.4 + focus * val * 0.15) : (0.08 + val * 0.55);
+    const rgb = hslToRgbFast(h, s, l);
+
+    // Blend with background based on distance
+    const blend = smoothstep(ir * 1.3, ir * 0.7, dist) * Math.max(val, 0.05);
+
+    const r = Math.round(lerp(2, rgb[0], blend));
+    const g = Math.round(lerp(5, rgb[1], blend));
+    const b = Math.round(lerp(16, rgb[2], blend));
+
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function smoothstep(e0, e1, x) {
+    const t = clamp((x - e0) / (e1 - e0), 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  function hslToRgbFast(h, s, l) {
+    let r, g, b;
+    if (s === 0) {
+      r = g = b = l;
+    } else {
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      const p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+  }
+
+  function hue2rgb(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  }
+
+  setTimeout(init, 50);
+  return { clear, undo, remove };
+})();
+
+// ================================================================
+// SCROLL FADE-IN
+// ================================================================
+const fadeObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade').forEach(el => fadeObs.observe(el));
+
+// ================================================================
+// RESPONSIVE RESIZE
+// ================================================================
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => location.reload(), 250);
+});
+</script>
+</body>
+</html>
