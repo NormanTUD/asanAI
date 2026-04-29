@@ -2428,17 +2428,7 @@ function _render_dense_layer_hybrid(container_id, layer_idx, layer_data, colors,
             (function(li, row, col) {
                 var eid = "L" + li + "_kernel_" + row + "_" + col;
                 if (!math_find_editable(eid)) {
-                    math_register_editable(
-                        eid,
-                        function() { return layer_data[li].kernel[row][col]; },
-                        function(v) {
-                            layer_data[li].kernel[row][col] = v;
-                            _math_apply_weight_change_from_layer_data(li, "kernel", layer_data[li].kernel);
-                        },
-                        -10, 10,
-                        "Layer " + li + " kernel[" + row + "][" + col + "]",
-                        { decimals: decimals }
-                    );
+                    math_register_editable(eid, function() { return layer_data[li].kernel[row][col]; }, function(v) { layer_data[li].kernel[row][col] = v; _math_apply_weight_change_from_layer_data(li, "kernel", layer_data[li].kernel); }, -10, 10, "Layer " + li + " kernel[" + row + "][" + col + "]", { decimals: decimals });
                 }
             })(layer_idx, i, j);
         }
@@ -2449,17 +2439,8 @@ function _render_dense_layer_hybrid(container_id, layer_idx, layer_data, colors,
             (function(li, idx) {
                 var eid = "L" + li + "_bias_" + idx;
                 if (!math_find_editable(eid)) {
-                    math_register_editable(
-                        eid,
-                        function() { return layer_data[li].bias[idx]; },
-                        function(v) {
-                            layer_data[li].bias[idx] = v;
-                            _math_apply_weight_change_from_layer_data(li, "bias", layer_data[li].bias);
-                        },
-                        -10, 10,
-                        "Layer " + li + " bias[" + idx + "]",
-                        { decimals: decimals }
-                    );
+                    math_register_editable(eid,
+function() { return layer_data[li].bias[idx]; }, function(v) { layer_data[li].bias[idx] = v; _math_apply_weight_change_from_layer_data(li, "bias", layer_data[li].bias); }, -10, 10, "Layer " + li + " bias[" + idx + "]", { decimals: decimals });
                 }
             })(layer_idx, b);
         }
