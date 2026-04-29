@@ -1750,3 +1750,76 @@ body:not(.darkmode) .math-pop-row input[type=number] {
     border-color: #ddd;
     color: #0066cc;
 }
+
+/* Dark mode (default for your app) */
+.math-pop-ed.math-pop-dark {
+    background: #14142a;
+    border: 1px solid #53d8fb;
+    color: #eee;
+}
+
+.math-pop-dark .math-pop-label {
+    color: #aab;
+}
+
+.math-pop-dark input[type=number] {
+    background: #08080f;
+    border: 1px solid #2a2a4a;
+    color: #53d8fb;
+}
+
+.math-pop-dark input[type=range]::-webkit-slider-runnable-track {
+    background: #2a2a4a;
+}
+
+.math-pop-dark .math-pop-btn-reset {
+    background: #1a1a30;
+    color: #889;
+}
+
+.math-pop-dark .math-pop-btn-close {
+    background: #301414;
+    color: #e94560;
+}
+
+/* Light mode */
+.math-pop-ed.math-pop-light {
+    background: #ffffff;
+    border: 1px solid #0066cc;
+    color: #333;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.math-pop-light .math-pop-label {
+    color: #555;
+}
+
+.math-pop-light input[type=number] {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    color: #0066cc;
+}
+
+.math-pop-light input[type=range]::-webkit-slider-runnable-track {
+    background: #ddd;
+}
+
+.math-pop-light .math-pop-btn-reset {
+    background: #f0f0f0;
+    color: #555;
+}
+
+.math-pop-light .math-pop-btn-close {
+    background: #fee;
+    color: #c00;
+}
+
+/* Editable number colors adapt to theme */
+.math-pop-dark ~ .math-ed-num,
+.math-ed-num {
+    color: #53d8fb;
+}
+
+.math-pop-light ~ .math-ed-num {
+    color: #0066cc;
+}

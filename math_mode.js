@@ -1403,57 +1403,71 @@ function unsupported_layer_type_equation (layer_idx, this_layer_type) {
 	return "\\text{(The equations for this layer are not yet defined)}";
 }
 
-function model_to_latex () {
-	var layers = model?.layers;
-	var input_shape = get_first_layer_input_shape();
-	if(!input_shape || !layers) { return ""; }
+function model_to_latex() {
+    var layers = model?.layers;
+    var input_shape = get_first_layer_input_shape();
+    if (!input_shape || !layers) { return ""; }
 
-	shown_activation_equations = [];
+    shown_activation_equations = [];
 
-	var output_shape = model.layers[model.layers.length - 1].outputShape;
-	var default_vars = get_default_vars();
-	var str = "";
-	var layer_data = get_layer_data();
-	var y_layer = get_y_output_shapes(output_shape);
+    var output_shape = model.layers[model.layers.length - 1].outputShape;
+    var default_vars = get_default_vars();
+    var str = "";
+    var layer_data = get_layer_data();
+    var y_layer = get_y_output_shapes(output_shape);
 
-	var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
+    var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
 
-	var input_layer = get_input_layer(input_shape);
+    var input_layer = get_input_layer(input_shape);
 
-	activation_string = "";
+    activation_string = "";
 
-	str += get_loss_equations_string();
+    str += get_loss_equations_string();
 
-	if(get_metric() != get_loss()) {
-		str += get_metric_equations_string();
-	}
+    if (get_metric() != get_loss()) {
+        str += get_metric_equations_string();
+    }
 
-	for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
-		var this_layer_type = $($(".layer_type")[layer_idx]).val();
-		var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
+    for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+        var this_layer_type = $($(".layer_type")[layer_idx]).val();
+        var layer_has_bias = Object.keys(model.layers[layer_idx]).includes("bias") && model.layers[layer_idx].bias !== null;
 
-		if(layer_idx == 0) {
-			str += "\n<h2>Layers:</h2>\n";
-		}
+        if (layer_idx == 0) {
+            str += "\n<h2>Layers:</h2>\n";
+        }
 
-		str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad ";
+        var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias);
 
-		str += single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias);
+        // Check if this layer returned an interactive placeholder
+        var interactive_marker = "%%INTERACTIVE_DENSE_" + layer_idx + "%%";
+        if (layer_str.indexOf(interactive_marker) !== -1) {
+            // Output the h = ... label as rendered LaTeX
+            var container_id = "math_hybrid_dense_L" + layer_idx;
+            str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
+            str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div><br>";
 
-		str += "</div><br>";
-	}
+            // Schedule the hybrid render after DOM update
+            (function(cid, li, ld, c, il) {
+                setTimeout(function() {
+                    _inject_hybrid_dense_direct(cid, li, ld, c, il);
+                }, 0);
+            })(container_id, layer_idx, layer_data, colors, input_layer);
+        } else {
+            str += "<div class='temml_me'> " + layer_str + " </div><br>";
+        }
+    }
 
-	str += get_optimizer_latex_equations();
+    str += get_optimizer_latex_equations();
 
-	prev_layer_data = layer_data;
+    prev_layer_data = layer_data;
 
-	str = `${latex_blocks()}\n${str}`;
+    str = latex_blocks() + "\n" + str;
 
-	if(activation_string && str) {
-		str = `<h2>${language[lang]["activation_functions"]}:</h2>${activation_string}${str}`;
-	}
+    if (activation_string && str) {
+        str = "<h2>" + language[lang]["activation_functions"] + ":</h2>" + activation_string + str;
+    }
 
-	return str;
+    return str;
 }
 
 function get_activation_layer_names() {
@@ -1467,8 +1481,13 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 
 	var layer_str = "";
 
-	if(this_layer_type == "dense") {
+	    if (this_layer_type == "dense") {
 		layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
+
+		// If interactive mode returned a placeholder, pass it through without wrapping
+		if (layer_str.indexOf("%%INTERACTIVE_DENSE_") !== -1) {
+		    return layer_str;
+		}
 	} else if (this_layer_type == "flatten") {
 		layer_str = get_flatten_string(layer_idx);
 	} else if (this_layer_type == "reshape") {
@@ -2003,29 +2022,16 @@ function wrap_with_activation_function (layer_idx, layer_str) {
 }
 
 function get_dense_latex(layer_idx, layer_data, colors, input_layer) {
-    // If interactive mode is off, use the original static rendering
     if (!_math_interactive_mode) {
         return _get_dense_latex_static(layer_idx, layer_data, colors, input_layer);
     }
 
-    // Interactive mode: return a placeholder div and schedule hybrid rendering
-    var container_id = "math_hybrid_dense_L" + layer_idx;
-    var placeholder = "\\htmlId{" + container_id + "}{}";
-
-    // We can't embed raw HTML inside a temml_me span easily,
-    // so we use a different strategy: return minimal LaTeX and
-    // inject the hybrid container after temml renders.
-    setTimeout(function () {
-        _inject_hybrid_dense(container_id, layer_idx, layer_data, colors, input_layer);
-    }, 50);
-
-    // Return a text placeholder that will be replaced
-    return "\\text{[Interactive: Layer " + layer_idx + "]}";
+    // Return a special marker that model_to_latex will detect
+    return "%%INTERACTIVE_DENSE_" + layer_idx + "%%";
 }
 
 // Rename the original to _get_dense_latex_static
 function _get_dense_latex_static(layer_idx, layer_data, colors, input_layer) {
-    var activation_function_equations = get_activation_functions_equations();
     var str = "";
     try {
         var this_layer_data_kernel = layer_data[layer_idx].kernel;
@@ -2046,7 +2052,7 @@ function _get_dense_latex_static(layer_idx, layer_data, colors, input_layer) {
             return "\\text{" + language[lang]["invalid_layer_settings_cannot_render"] + "}";
         }
     } catch (e) {
-        wrn(`Caught error ${e}`);
+        wrn("Caught error " + e);
         if (e && e.stack) {
             err("Full stack:\n" + e.stack);
         }
