@@ -205,18 +205,26 @@ function _math_apply_single_weight(layer_idx, weight_idx, new_array) {
         if (!weight || !weight.val || weight.val.isDisposed) return;
 
         var old_tensor = weight.val;
+        var expected_size = old_tensor.size; // total number of elements expected
 
         // Flatten correctly regardless of nesting depth
         var flat;
         if (Array.isArray(new_array) && Array.isArray(new_array[0])) {
             flat = new_array.flat(Infinity);
         } else if (Array.isArray(new_array)) {
-            flat = new_array;
+            flat = new_array.slice(); // copy
         } else {
             flat = [new_array];
         }
 
-        // Always use the original tensor's shape
+        // Validate: flat length must match tensor's expected size
+        if (flat.length !== expected_size) {
+            console.error("[_math_apply_single_weight] Shape mismatch: expected " + 
+                expected_size + " values but got " + flat.length + 
+                " for layer " + layer_idx + " weight " + weight_idx);
+            return;
+        }
+
         var new_tensor = tf.tensor(flat, old_tensor.shape);
         weight.val.assign(new_tensor);
         new_tensor.dispose();
