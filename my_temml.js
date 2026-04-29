@@ -116,9 +116,9 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 		}
 	}
 
-	// Register kernel editables
-	for (var i = 0; i < kernel.length; i++) {
-		for (var j = 0; j < kernel[i].length; j++) {
+	// Register kernel editables — ONLY for visible cells
+	for (var i = 0; i < max_rows; i++) {
+		for (var j = 0; j < max_cols; j++) {
 			(function(li, row, col, kwi) {
 				var eid = "L" + li + "_kernel_" + row + "_" + col;
 				if (!math_find_editable(eid)) {
@@ -139,6 +139,17 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 			})(layer_idx, i, j, kernel_weight_idx);
 		}
 	}
+
+	// Register bias editables — ONLY for visible cells
+	var max_bias = Math.min(bias ? bias.length : 0, get_max_nr_cols_rows());
+	if (bias && bias.length && bias_weight_idx !== -1) {
+		for (var b = 0; b < max_bias; b++) {
+			(function(li, idx, bwi) {
+				// ... same as before
+			})(layer_idx, b, bias_weight_idx);
+		}
+	}
+
 
 	// Register bias editables
 	if (bias && bias.length && bias_weight_idx !== -1) {
