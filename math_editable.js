@@ -82,7 +82,7 @@ function math_ensure_popup() {
         _math_active_ed.set(v);
         numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
         _math_on_variable_changed(_math_active_ed);
-	repredict();
+	repredict(); // await not possible
     });
 
     resetBtn.addEventListener("click", function () {
@@ -91,7 +91,7 @@ function math_ensure_popup() {
         numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
         slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), _math_active_ed.get()));
         _math_on_variable_changed(_math_active_ed);
-	repredict();
+	repredict(); // await not possible
     });
 
     closeBtn.addEventListener("click", math_close_popup);
@@ -102,7 +102,7 @@ function math_ensure_popup() {
         if (_math_pop_el.contains(e.target)) return;
         if (e.target.closest && e.target.closest(".math-ed-num")) return;
         math_close_popup();
-	repredict();
+	repredict(); // await not possible
     });
 
     return pop;
