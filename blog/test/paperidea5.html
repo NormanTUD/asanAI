@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lipschitz Lenses & Scrambled Topology — Enhanced Visualization</title>
+<title>Lipschitz Lenses & Scrambled Topology — Click-to-Focus</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
 :root{--bg:#06081a;--surface:#0e1230;--surface2:#161a42;--accent1:#818cf8;--accent2:#34d399;--accent3:#f472b6;--accent4:#fbbf24;--text:#e2e8f0;--dim:#64748b}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden}
-.wrap{max-width:1200px;margin:0 auto;padding:20px}
+.wrap{max-width:1400px;margin:0 auto;padding:20px}
 h1{font-size:clamp(1.6rem,4vw,2.6rem);text-align:center;margin:30px 0 8px;font-weight:800;background:linear-gradient(135deg,#818cf8,#34d399,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{text-align:center;color:var(--dim);max-width:750px;margin:0 auto 30px;font-size:.95rem}
+.hero-sub{text-align:center;color:var(--dim);max-width:850px;margin:0 auto 30px;font-size:.95rem}
 h2{font-size:1.35rem;margin:40px 0 10px;color:var(--accent1);border-bottom:2px solid #1a2040;padding-bottom:6px}
 p{color:#94a3b8;margin-bottom:12px;font-size:.93rem}
 .hl{color:var(--accent4);font-weight:700}
 .card{background:var(--surface);border:1px solid #1e2550;border-radius:16px;padding:22px;margin:20px 0;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent1),var(--accent2),var(--accent3))}
-canvas{display:block;border-radius:10px;background:#030618;border:1px solid #1a2040;width:100%;cursor:crosshair}
+canvas{display:block;border-radius:10px;background:#030618;border:1px solid #1a2040;cursor:crosshair}
 .ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin:12px 0}
 .ctrl label{font-size:.78rem;color:#94a3b8;display:flex;align-items:center;gap:5px}
 .ctrl input[type=range]{width:130px;accent-color:var(--accent1)}
-.ctrl select{background:#1a2040;color:#cbd5e1;border:1px solid #2a3560;border-radius:6px;padding:4px 10px;font-size:.8rem}
 button{padding:7px 18px;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:.83rem;transition:all .15s}
 button:hover{transform:translateY(-1px);filter:brightness(1.15)}
 .bp{background:#6366f1;color:#fff}.bs{background:#334155;color:#cbd5e1}
@@ -38,9 +37,13 @@ button:hover{transform:translateY(-1px);filter:brightness(1.15)}
 .toc a:hover{color:#c4b5fd}
 .fade{opacity:0;transform:translateY(18px);transition:all .5s ease}
 .fade.vis{opacity:1;transform:translateY(0)}
-.dual-view{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
-.dual-view canvas{width:100%}
-.dual-label{text-align:center;font-size:.75rem;color:var(--accent2);font-weight:700;margin-bottom:4px}
+.pipeline-row{display:flex;gap:0;align-items:stretch;margin:10px 0}
+.pipeline-col{flex:1;position:relative;min-width:0}
+.pipeline-arrow{width:60px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pipeline-arrow svg{width:40px;height:40px}
+.pipeline-label{text-align:center;font-size:.72rem;color:var(--accent2);font-weight:700;margin-bottom:4px;letter-spacing:.5px}
+.pipeline-sublabel{text-align:center;font-size:.65rem;color:var(--dim);margin-top:2px}
+.click-hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:.7rem;color:var(--accent4);opacity:.7;pointer-events:none;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -48,85 +51,80 @@ button:hover{transform:translateY(-1px);filter:brightness(1.15)}
 
 <h1>🔭 Lipschitz Lenses & Scrambled Topology</h1>
 <p class="hero-sub">
-The model's knowledge lives on a <strong>topological landscape</strong>. Each island encodes a <strong>scrambled topological icon</strong> — torii, loop spaces, spirals — visible only through <strong>Lipschitz map lenses</strong>. The maps <em>are</em> the lenses: they contain the scrambled information holographically. Focusing reconstructs it wave by wave. A spiral IS a circle from a certain perspective — these structures share deep similarities.
+<strong>Click directly on any topology</strong> to focus a Lipschitz lens on it. The model's knowledge lives on a <strong>topological landscape</strong>. Each island encodes a <strong>scrambled topological icon</strong> — torii, loop spaces, spirals — visible only through <strong>Lipschitz map lenses</strong>. Unfocused regions stay <strong>pixelated</strong>. The full high-res structure is computed internally but <strong>never shown</strong> — only the resolution-reduced versions are displayed.
 </p>
 
 <div class="toc">
 <strong style="color:var(--accent2)">📋 Sections</strong>
-<a href="#s1">1. Lipschitz Lenses — The Maps ARE the Information</a>
-<a href="#s2">2. Scrambled Torii & Loop Spaces — Topology Under the Lens</a>
-<a href="#s3">3. Focus-Dependent Resolution — The Tradeoff in Action</a>
-<a href="#s4">4. Layer Depth — Progressive Deholographisation</a>
+<a href="#s1">1. Click-to-Focus Pipeline — Scrambled → Unscrambled (Resolution-Dependent)</a>
+<a href="#s2">2. Layer Depth — Progressive Deholographisation</a>
+<a href="#s3">3. Focus Budget Tradeoff — Conservation Law</a>
 </div>
 
 <!-- ===== SECTION 1 ===== -->
-<h2 id="s1">1. Lipschitz Lenses — The Maps ARE the Information</h2>
+<h2 id="s1">1. Click-to-Focus Pipeline — The Full Data Flow</h2>
 <div class="card fade">
-<p>A <span class="hl">Lipschitz map</span> distorts space by at most a bounded factor. The <strong>distortion pattern itself</strong> encodes the model's knowledge holographically. Move your mouse to position the lens — watch scrambled topology resolve where you focus, while other regions stay scrambled. Add more lenses to see the budget tradeoff.</p>
+<p><strong>Click any island</strong> to focus the Lipschitz lens on it. The pipeline: <span class="hl">Hidden full-res</span> (64×64, never shown) → <span class="hl">Resolution-reduced</span> (based on focus/zoom) → <span class="hl">FFN-scrambled holographically</span> (LEFT) → <span class="hl">Unscrambled/decoded</span> (RIGHT). Unfocused islands are <strong>very pixelated</strong>. The scrambling depends on the data content AND the resolution via a simulated FFN transform.</p>
 <div class="met">"The computational content of a transformer layer is more faithfully described as a deformation of the embedding space (a Lipschitz map Φ: ℝᵈ→ℝᵈ) than as a displacement of individual token vectors." — Conjecture 1</div>
-<canvas id="cLens" height="560"></canvas>
+
+<div class="pipeline-row">
+  <div class="pipeline-col">
+    <div class="pipeline-label">SCRAMBLED (Holographic)</div>
+    <canvas id="cScrambled" height="520"></canvas>
+    <div class="pipeline-sublabel">FFN-dependent on data + resolution</div>
+  </div>
+  <div class="pipeline-arrow">
+    <svg viewBox="0 0 40 40"><defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#f472b6"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs><path d="M8 20 L28 20 M24 14 L30 20 L24 26" stroke="url(#ag)" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+    <div style="position:absolute;bottom:0;font-size:.6rem;color:#64748b;text-align:center;width:60px">Lipschitz<br>Decode</div>
+  </div>
+  <div class="pipeline-col">
+    <div class="pipeline-label">UNSCRAMBLED (Decoded Low-Res)</div>
+    <canvas id="cDecoded" height="520"></canvas>
+    <div class="pipeline-sublabel">Resolution matches zoom — high-res hidden</div>
+  </div>
+</div>
+
 <div class="ctrl">
-  <label>Lens Strength: <input type="range" id="lensStr" min="5" max="100" value="60"><span id="lensStrV">60%</span></label>
-  <label>Lens Radius: <input type="range" id="lensRad" min="30" max="200" value="100"><span id="lensRadV">100</span></label>
-  <label>Scramble: <input type="range" id="scramble" min="0" max="100" value="75"><span id="scrambleV">75%</span></label>
-  <button class="bp" onclick="LensMod.addLens()">+ Add Lens</button>
-  <button class="bs" onclick="LensMod.reset()">⟲ Reset</button>
-  <button class="ba" onclick="LensMod.toggleAnim()">▶ Animate</button>
+  <label>Zoom Level: <input type="range" id="zoomLevel" min="1" max="100" value="15"><span id="zoomLevelV">15%</span></label>
+  <label>FFN Scramble Strength: <input type="range" id="ffnStr" min="0" max="100" value="80"><span id="ffnStrV">80%</span></label>
+  <label>Speed: <input type="range" id="mainSpeed" min="1" max="20" value="6"><span id="mainSpeedV">6</span></label>
+  <button class="bs" onclick="MainMod.clearFocus()">✕ Clear Focus</button>
+  <button class="ba" onclick="MainMod.toggleAnim()">▶ Animate</button>
 </div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div> Lipschitz Lens boundary</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Resolved (decoded)</div>
   <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Scrambled (holographic)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Jacobian field</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Decoded (unscrambled)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Focused lens</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#64748b"></div> Pixelated (unfocused)</div>
 </div>
-<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Move mouse</strong> to position primary lens. Outside the lens = holographically scrambled. Inside = progressively decoded.</p>
-<div class="sg" id="lensStats"></div>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Click directly on an island</strong> to focus. No buttons needed. You are the lens.</p>
+<div class="sg" id="mainStats"></div>
 </div>
 
 <!-- ===== SECTION 2 ===== -->
-<h2 id="s2">2. Scrambled Torii & Loop Spaces — Topology Under the Lens</h2>
+<h2 id="s2">2. Layer Depth — Progressive Deholographisation</h2>
 <div class="card fade">
-<p>Each knowledge island contains a <span class="hl">topological icon</span>. These are <strong>scrambled holographically</strong>: every piece contains the whole, just blurrier. The top row shows the <strong>encoded (scrambled)</strong> version. The bottom row shows the <strong>decoded</strong> version that gets clearer as you add more "waves" (DCT coefficients). Note: a spiral looks like a circle from above — these structures are related by projection, just as the Lipschitz map relates scrambled to decoded.</p>
-<div class="met">"The scrambled representations contain topological structures (e.g. persistent loops, helices, spirals) that perform the model's actual computations. These structures are hidden from naive inspection because of the holographic scrambling." — Conjecture 3</div>
-<canvas id="cTopo" height="650"></canvas>
-<div class="ctrl">
-  <label>Focus Island: <select id="topoFocus"><option value="all">All (blurry)</option><option value="torus">Torus (Code)</option><option value="loops">Loop Space Ω (Math)</option><option value="spiral">Spiral (History)</option><option value="tree">Tree (Biology)</option><option value="wave">Wave (Music)</option></select></label>
-  <label>Decode Waves: <input type="range" id="topoWaves" min="1" max="64" value="8"><span id="topoWavesV">8</span></label>
-  <label>Speed: <input type="range" id="topoSpeed" min="1" max="20" value="8"><span id="topoSpeedV">8</span></label>
-  <button class="bg" onclick="TopoMod.toggleRotation()">🔄 Rotate</button>
-  <button class="bp" onclick="TopoMod.autoWaves()">▶ Auto-Decode</button>
-</div>
-<p style="text-align:center;font-size:.82rem;color:var(--dim)">Top row = <strong>encoded/scrambled</strong> (holographic). Bottom row = <strong>decoded</strong> (waves added progressively). Select an island to focus the lens — others blur.</p>
-<div class="sg" id="topoStats"></div>
-</div>
-
-<!-- ===== SECTION 3 ===== -->
-<h2 id="s3">3. Focus-Dependent Resolution — The Tradeoff in Action</h2>
-<div class="card fade">
-<p>The fixed dimension <span class="hl">d</span> limits how many islands can be sharp at once. <strong>Drag the lenses</strong> to reposition them. When you focus more lenses on one island, it gets dramatically more detailed (more DCT tiles allocated). Others lose resolution and become pixelated/jaggy. The total tile budget is conserved.</p>
-<div class="met">"Narrow attention (low entropy) yields a sharp view of few stalks; broad attention yields a blurred view of many — a resolution–breadth tradeoff enforced by the convex combination in fixed dimensionality d." — Conjecture 6</div>
-<canvas id="cTradeoff" height="580"></canvas>
-<div class="ctrl">
-  <label>Total Budget: <input type="range" id="tradeBudget" min="20" max="256" value="100"><span id="tradeBudgetV">100</span></label>
-  <label>Lenses: <select id="tradeHeads"><option value="1">1 lens</option><option value="2">2 lenses</option><option value="3" selected>3 lenses</option><option value="4">4 lenses</option><option value="5">5 lenses</option></select></label>
-  <button class="bp" onclick="TradeoffMod.autoFocus()">▶ Auto-Focus</button>
-  <button class="bs" onclick="TradeoffMod.reset()">⟲ Reset</button>
-</div>
-<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Drag colored lens circles</strong> to reposition. Watch the bar chart — conservation law in action!</p>
-<div class="sg" id="tradeStats"></div>
-</div>
-
-<!-- ===== SECTION 4 ===== -->
-<h2 id="s4">4. Layer Depth — Progressive Deholographisation</h2>
-<div class="card fade">
-<p>As we go deeper through layers, the Lipschitz maps progressively <span class="hl">deholographise</span> the scrambled topology. Early layers = fully scrambled (jaggy, pixelated, barely visible). Middle layers = resolving. Late layers = crisp and clear. Unfocused regions stay pixelated throughout. The focused region goes from blocky noise to smooth topology.</p>
+<p>As we go deeper through layers, the Lipschitz maps progressively <span class="hl">deholographise</span> the scrambled topology. <strong>Click on a topology</strong> to focus. Early layers = fully scrambled (very pixelated). Late layers = crisp. The pipeline is the same: hidden full-res → reduced → scrambled → decoded.</p>
 <div class="met">"Layer ℓ does not merely deform the space — it generates the instructions for layer ℓ+1. This may enable per-layer deholographisation." — Conjecture 6</div>
-<canvas id="cLayers" height="550"></canvas>
+
+<div class="pipeline-row">
+  <div class="pipeline-col">
+    <div class="pipeline-label">SCRAMBLED (Layer-Dependent)</div>
+    <canvas id="cLayerScram" height="450"></canvas>
+  </div>
+  <div class="pipeline-arrow">
+    <svg viewBox="0 0 40 40"><path d="M8 20 L28 20 M24 14 L30 20 L24 26" stroke="#818cf8" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+  <div class="pipeline-col">
+    <div class="pipeline-label">DECODED (Layer-Dependent)</div>
+    <canvas id="cLayerDec" height="450"></canvas>
+  </div>
+</div>
+
 <div class="ctrl">
   <label>Layer Depth: <input type="range" id="layerDepth" min="0" max="110" value="0"><span id="layerDepthV">0.0</span></label>
-  <label>Focus Region: <select id="layerFocus"><option value="code">Code (Torus)</option><option value="math">Math (Ω-Space)</option><option value="lang">Language (Graph)</option></select></label>
   <button class="ba" onclick="LayerMod.animate()">▶ Animate Layers</button>
-  <button class="bs" onclick="LayerMod.reset()">⟲ Reset</button>
+  <button class="bs" onclick="LayerMod.reset()">↺ Reset</button>
 </div>
 <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Routing (early)</div>
@@ -136,9 +134,36 @@ The model's knowledge lives on a <strong>topological landscape</strong>. Each is
 <div class="sg" id="layerStats"></div>
 </div>
 
+<!-- ===== SECTION 3 ===== -->
+<h2 id="s3">3. Focus Budget Tradeoff — Conservation Law</h2>
+<div class="card fade">
+<p>The fixed dimension <span class="hl">d</span> limits how many islands can be sharp at once. <strong>Click islands</strong> to add focus lenses (click again to remove). The total tile budget is conserved — focusing one island defocuses others.</p>
+<div class="met">"Narrow attention (low entropy) yields a sharp view of few stalks; broad attention yields a blurred view of many — a resolution–breadth tradeoff enforced by the convex combination in fixed dimensionality d." — Conjecture 6</div>
+
+<div class="pipeline-row">
+  <div class="pipeline-col">
+    <div class="pipeline-label">SCRAMBLED (Budget-Dependent)</div>
+    <canvas id="cTradeScram" height="480"></canvas>
+  </div>
+  <div class="pipeline-arrow">
+    <svg viewBox="0 0 40 40"><path d="M8 20 L28 20 M24 14 L30 20 L24 26" stroke="#fbbf24" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+  </div>
+  <div class="pipeline-col">
+    <div class="pipeline-label">DECODED (Budget-Dependent)</div>
+    <canvas id="cTradeDec" height="480"></canvas>
+  </div>
+</div>
+
+<div class="ctrl">
+  <label>Total Budget: <input type="range" id="tradeBudget" min="20" max="256" value="100"><span id="tradeBudgetV">100</span></label>
+  <button class="bs" onclick="TradeMod.clearAll()">✕ Clear All Lenses</button>
+</div>
+<div class="sg" id="tradeStats"></div>
+</div>
+
 <div style="text-align:center;padding:30px 0;color:#475569;font-size:.82rem">
 <p>Interactive visualization for <em>"Transformer Layers as Fibre Bundle Morphisms"</em></p>
-<p>The Lipschitz maps ARE the lenses. They contain the scrambled topological information. Focusing reconstructs it.</p>
+<p>Click to focus. The Lipschitz maps ARE the lenses. They contain the scrambled topological information. Focusing reconstructs it.</p>
 </div>
 </div>
 
@@ -154,7 +179,8 @@ const U = (() => {
   const ease = t => t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
   function mkCanvas(id, forceH) {
     const c = document.getElementById(id);
-    const W = c.parentElement.clientWidth - 44;
+    const parent = c.parentElement;
+    const W = parent.clientWidth - 4;
     const H = forceH || Math.round(Math.min(500, W*0.55));
     c.style.width = W+'px'; c.style.height = H+'px';
     c.width = W*dpr; c.height = H*dpr;
@@ -165,1210 +191,916 @@ const U = (() => {
 })();
 
 // ================================================================
-// HOLOGRAPHIC DCT ENGINE
+// HIGH-RES ICON ENGINE (64x64 ground truth, never shown directly)
 // ================================================================
-const HoloDCT = (() => {
-  const N = 16;
-  function makeIcons() {
+const IconEngine = (() => {
+  const N_HI = 64; // hidden high-res
+  const N_LO = 16; // base low-res
+
+  function makeHighRes() {
     const icons = {};
-    // TORUS for Code (ring shape)
-    icons.Code = new Float64Array(N*N);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const cx2=7.5,cy2=7.5,dx=x-cx2,dy=y-cy2;
-      const d=Math.sqrt(dx*dx+dy*dy);
-      if(d>=4.0&&d<=7.5) icons.Code[y*N+x]=Math.max(0,1-Math.abs(d-5.8)/1.8);
-      if(d>=1.5&&d<=3.5) icons.Code[y*N+x]=Math.max(icons.Code[y*N+x],0.5*(1-Math.abs(d-2.5)/1.5));
+
+    // TORUS for Code (concentric rings)
+    icons.Code = new Float64Array(N_HI*N_HI);
+    for(let y=0;y<N_HI;y++) for(let x=0;x<N_HI;x++){
+      const cx=N_HI/2-0.5, cy=N_HI/2-0.5;
+      const dx=x-cx, dy=y-cy, d=Math.sqrt(dx*dx+dy*dy);
+      const outerR=N_HI*0.42, innerR=N_HI*0.15, midR=(outerR+innerR)/2, ringW=(outerR-innerR)/2;
+      if(d>=innerR&&d<=outerR){
+        const ringDist=Math.abs(d-midR)/ringW;
+        icons.Code[y*N_HI+x]=Math.cos(ringDist*Math.PI*0.5)*Math.max(0,1-ringDist);
+        // Add cross-hatching for torus texture
+        const angle=Math.atan2(dy,dx);
+        const torusDetail=0.3*Math.sin(angle*8)*Math.sin((d-innerR)/(outerR-innerR)*Math.PI*4);
+        icons.Code[y*N_HI+x]=U.clamp(icons.Code[y*N_HI+x]+torusDetail*0.5,0,1);
+      }
     }
-    // LOOP SPACE for Math (figure-eight)
-    icons.Math = new Float64Array(N*N);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const d1=Math.sqrt((x-4.5)**2+(y-7.5)**2);
-      const d2=Math.sqrt((x-10.5)**2+(y-7.5)**2);
-      if(Math.abs(d1-3.2)<1.2) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d1-3.2)/1.2);
-      if(Math.abs(d2-3.2)<1.2) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d2-3.2)/1.2);
-      if(Math.sqrt((x-7.5)**2+(y-7.5)**2)<1.5) icons.Math[y*N+x]=1;
+
+    // LOOP SPACE for Math (figure-eight with detail)
+    icons.Math = new Float64Array(N_HI*N_HI);
+    for(let y=0;y<N_HI;y++) for(let x=0;x<N_HI;x++){
+      const s=N_HI;
+      const d1=Math.sqrt((x-s*0.3)**2+(y-s*0.5)**2);
+      const d2=Math.sqrt((x-s*0.7)**2+(y-s*0.5)**2);
+      const r1=s*0.22, r2=s*0.22;
+      const w=s*0.06;
+      if(Math.abs(d1-r1)<w) icons.Math[y*N_HI+x]=Math.max(icons.Math[y*N_HI+x],(1-Math.abs(d1-r1)/w));
+      if(Math.abs(d2-r2)<w) icons.Math[y*N_HI+x]=Math.max(icons.Math[y*N_HI+x],(1-Math.abs(d2-r2)/w));
+      // Intersection region
+      const dc=Math.sqrt((x-s*0.5)**2+(y-s*0.5)**2);
+      if(dc<s*0.08) icons.Math[y*N_HI+x]=1;
+      // Inner detail lines
+      if(Math.abs(d1-r1*0.6)<w*0.5) icons.Math[y*N_HI+x]=Math.max(icons.Math[y*N_HI+x],0.4*(1-Math.abs(d1-r1*0.6)/(w*0.5)));
+      if(Math.abs(d2-r2*0.6)<w*0.5) icons.Math[y*N_HI+x]=Math.max(icons.Math[y*N_HI+x],0.4*(1-Math.abs(d2-r2*0.6)/(w*0.5)));
     }
-    // GRAPH for Language
-    icons.Language = new Float64Array(N*N);
-    const lnodes=[[4,3],[11,2],[2,8],[8,7],[13,9],[6,13],[10,13]];
+
+    // GRAPH for Language (nodes and edges)
+    icons.Language = new Float64Array(N_HI*N_HI);
+    const s=N_HI;
+    const lnodes=[[0.25,0.2],[0.7,0.15],[0.12,0.5],[0.5,0.45],[0.85,0.55],[0.35,0.8],[0.65,0.82]].map(([a,b])=>[a*s,b*s]);
     const ledges=[[0,1],[0,2],[0,3],[1,3],[1,4],[2,5],[3,4],[3,5],[3,6],[4,6],[5,6]];
     for(const[a,b] of ledges){
       const[ax,ay]=lnodes[a],[bx,by]=lnodes[b];
-      for(let t=0;t<=1;t+=0.015){
-        const px2=ax+(bx-ax)*t,py2=ay+(by-ay)*t;
-        const ix=Math.round(px2),iy=Math.round(py2);
-        if(ix>=0&&ix<N&&iy>=0&&iy<N) icons.Language[iy*N+ix]=Math.max(icons.Language[iy*N+ix],0.7);
+      for(let t=0;t<=1;t+=0.003){
+        const px=ax+(bx-ax)*t, py=ay+(by-ay)*t;
+        for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+          const ix=Math.round(px)+dx, iy=Math.round(py)+dy;
+          if(ix>=0&&ix<N_HI&&iy>=0&&iy<N_HI){
+            const dd=Math.sqrt((ix-px)**2+(iy-py)**2);
+            if(dd<2) icons.Language[iy*N_HI+ix]=Math.max(icons.Language[iy*N_HI+ix],0.6*(1-dd/2));
+          }
+        }
       }
     }
     for(const[cx2,cy2] of lnodes){
-      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      for(let y=0;y<N_HI;y++) for(let x=0;x<N_HI;x++){
         const d=Math.sqrt((x-cx2)**2+(y-cy2)**2);
-        if(d<1.8) icons.Language[y*N+x]=Math.max(icons.Language[y*N+x],1-d/1.8);
+        if(d<s*0.04) icons.Language[y*N_HI+x]=Math.max(icons.Language[y*N_HI+x],1-d/(s*0.04));
       }
     }
-    // Biology (tree)
-    icons.Biology = new Float64Array(N*N);
-    for(let y=10;y<16;y++) for(let x=7;x<=8;x++) icons.Biology[y*N+x]=1;
-    const canopy=[[3,2],[5,1],[7,0],[9,1],[11,2],[4,4],[10,4],[7,3],[6,5],[8,5]];
-    for(const[cx2,cy2] of canopy){
-      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-        const d=Math.sqrt((x-cx2)**2+(y-cy2)**2);
-        if(d<2.2) icons.Biology[y*N+x]=Math.max(icons.Biology[y*N+x],1-d/2.2);
+
+    // TREE for Biology
+    icons.Biology = new Float64Array(N_HI*N_HI);
+    function drawLine(img,x0,y0,x1,y1,w,val){
+      const steps=Math.max(Math.abs(x1-x0),Math.abs(y1-y0))*3;
+      for(let i=0;i<=steps;i++){
+        const t=i/steps;
+        const px=x0+(x1-x0)*t, py=y0+(y1-y0)*t;
+        for(let dy=-Math.ceil(w);dy<=Math.ceil(w);dy++) for(let dx=-Math.ceil(w);dx<=Math.ceil(w);dx++){
+          const ix=Math.round(px)+dx, iy=Math.round(py)+dy;
+          if(ix>=0&&ix<N_HI&&iy>=0&&iy<N_HI){
+            const dd=Math.sqrt(dx*dx+dy*dy);
+            if(dd<=w) img[iy*N_HI+ix]=Math.max(img[iy*N_HI+ix],val*(1-dd/w*0.3));
+          }
+        }
       }
     }
-    // History (spiral)
-    icons.History = new Float64Array(N*N);
-    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const cx2=7.5,cy2=7.5,dx=x-cx2,dy=y-cy2;
+    // Trunk
+    drawLine(icons.Biology,s*0.5,s*0.95,s*0.5,s*0.55,3,1);
+    // Branches
+    drawLine(icons.Biology,s*0.5,s*0.55,s*0.25,s*0.3,2,0.9);
+    drawLine(icons.Biology,s*0.5,s*0.55,s*0.75,s*0.3,2,0.9);
+    drawLine(icons.Biology,s*0.25,s*0.3,s*0.12,s*0.12,1.5,0.8);
+    drawLine(icons.Biology,s*0.25,s*0.3,s*0.35,s*0.15,1.5,0.8);
+    drawLine(icons.Biology,s*0.75,s*0.3,s*0.65,s*0.12,1.5,0.8);
+    drawLine(icons.Biology,s*0.75,s*0.3,s*0.88,s*0.15,1.5,0.8);
+    drawLine(icons.Biology,s*0.5,s*0.65,s*0.35,s*0.45,1.5,0.7);
+    drawLine(icons.Biology,s*0.5,s*0.65,s*0.65,s*0.48,1.5,0.7);
+    // Leaf blobs
+    const leafCenters=[[0.12,0.1],[0.35,0.12],[0.65,0.1],[0.88,0.12],[0.25,0.25],[0.75,0.25],[0.5,0.08]];
+    for(const[lx,ly] of leafCenters){
+      for(let y=0;y<N_HI;y++) for(let x=0;x<N_HI;x++){
+        const d=Math.sqrt((x-lx*s)**2+(y-ly*s)**2);
+        if(d<s*0.07) icons.Biology[y*N_HI+x]=Math.max(icons.Biology[y*N_HI+x],0.7*(1-d/(s*0.07)));
+      }
+    }
+
+    // SPIRAL for History
+    icons.History = new Float64Array(N_HI*N_HI);
+    for(let y=0;y<N_HI;y++) for(let x=0;x<N_HI;x++){
+      const cx2=N_HI/2-0.5, cy2=N_HI/2-0.5;
+      const dx=x-cx2, dy=y-cy2;
       const angle=Math.atan2(dy,dx);
       const dist=Math.sqrt(dx*dx+dy*dy);
-      for(let w=-1;w<=3;w++){
-        const targetR=1.0+(angle+Math.PI+w*2*Math.PI)*0.7;
-        if(Math.abs(dist-targetR)<0.9&&dist<7.5&&dist>0.5)
-          icons.History[y*N+x]=Math.max(icons.History[y*N+x],1-Math.abs(dist-targetR)/0.9);
+      for(let w=-2;w<=4;w++){
+        const targetR=2.0+(angle+Math.PI+w*2*Math.PI)*N_HI*0.04;
+        const lineW=N_HI*0.025;
+        if(Math.abs(dist-targetR)<lineW&&dist<N_HI*0.46&&dist>N_HI*0.03)
+          icons.History[y*N_HI+x]=Math.max(icons.History[y*N_HI+x],1-Math.abs(dist-targetR)/lineW);
       }
     }
-    // Music (wave)
-    icons.Music = new Float64Array(N*N);
-    for(let x=0;x<N;x++){
-      const y1=7.5+5*Math.sin(x/N*2*Math.PI);
-      const y2=7.5+3*Math.sin(x/N*4*Math.PI);
-      const y3=7.5+2*Math.cos(x/N*3*Math.PI);
-      for(let y=0;y<N;y++){
-        if(Math.abs(y-y1)<1.3) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],1-Math.abs(y-y1)/1.3);
-        if(Math.abs(y-y2)<1.0) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],0.7*(1-Math.abs(y-y2)/1.0));
-        if(Math.abs(y-y3)<0.8) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],0.5*(1-Math.abs(y-y3)/0.8));
+
+    // WAVE for Music
+    icons.Music = new Float64Array(N_HI*N_HI);
+    for(let x=0;x<N_HI;x++){
+      const t=x/N_HI;
+      const waves=[
+        {freq:2, amp:0.35, phase:0},
+        {freq:4, amp:0.22, phase:1.2},
+        {freq:3, amp:0.15, phase:2.5},
+        {freq:6, amp:0.1, phase:0.8},
+      ];
+      for(const w of waves){
+        const yc=N_HI*(0.5+w.amp*Math.sin(t*Math.PI*w.freq+w.phase)*Math.sin(t*Math.PI));
+        for(let y=0;y<N_HI;y++){
+          const dd=Math.abs(y-yc);
+          const lineW=N_HI*0.035;
+          if(dd<lineW) icons.Music[y*N_HI+x]=Math.max(icons.Music[y*N_HI+x],(1-dd/lineW)*0.8);
+        }
       }
     }
+
     return icons;
   }
 
-  function dct2(img){
-    const out=new Float64Array(N*N);
-    for(let u=0;u<N;u++) for(let v=0;v<N;v++){
-      let sum=0;
-      const cu=u===0?Math.sqrt(1/N):Math.sqrt(2/N);
-      const cv=v===0?Math.sqrt(1/N):Math.sqrt(2/N);
-      for(let x=0;x<N;x++) for(let y=0;y<N;y++){
-        sum+=img[y*N+x]*Math.cos((2*x+1)*u*Math.PI/(2*N))*Math.cos((2*y+1)*v*Math.PI/(2*N));
+  // Downsample from N_HI to targetN
+  function downsample(hiRes, targetN){
+    const out = new Float64Array(targetN*targetN);
+    const ratio = N_HI/targetN;
+    for(let y=0;y<targetN;y++) for(let x=0;x<targetN;x++){
+      let sum=0, count=0;
+      const sy=Math.floor(y*ratio), ey=Math.min(N_HI,Math.ceil((y+1)*ratio));
+      const sx=Math.floor(x*ratio), ex=Math.min(N_HI,Math.ceil((x+1)*ratio));
+      for(let iy=sy;iy<ey;iy++) for(let ix=sx;ix<ex;ix++){
+        sum+=hiRes[iy*N_HI+ix]; count++;
       }
-      out[v*N+u]=cu*cv*sum;
+      out[y*targetN+x]=count>0?sum/count:0;
     }
     return out;
   }
-  function idct2(coeff){
-    const out=new Float64Array(N*N);
-    for(let x=0;x<N;x++) for(let y=0;y<N;y++){
-      let sum=0;
-      for(let u=0;u<N;u++) for(let v=0;v<N;v++){
-        const cu=u===0?Math.sqrt(1/N):Math.sqrt(2/N);
-        const cv=v===0?Math.sqrt(1/N):Math.sqrt(2/N);
-        sum+=cu*cv*coeff[v*N+u]*Math.cos((2*x+1)*u*Math.PI/(2*N))*Math.cos((2*y+1)*v*Math.PI/(2*N));
-      }
-      out[y*N+x]=sum;
-    }
-    return out;
-  }
-  function zigzagOrder(n){
-    const order=[];
-    for(let s=0;s<2*n-1;s++){
-      if(s%2===0){for(let i=Math.min(s,n-1);i>=Math.max(0,s-n+1);i--)order.push([i,s-i])}
-      else{for(let i=Math.max(0,s-n+1);i<=Math.min(s,n-1);i++)order.push([i,s-i])}
-    }
-    return order;
-  }
-  function reconstruct(dctCoeffs,k){
-    const zz=zigzagOrder(N);
-    const masked=new Float64Array(N*N);
-    const kk=Math.min(Math.max(0,Math.round(k)),N*N);
-    for(let i=0;i<kk&&i<zz.length;i++){const[u,v]=zz[i];masked[v*N+u]=dctCoeffs[v*N+u]}
-    return idct2(masked);
-  }
-  // Draw with pixelation effect based on resolution level
-  function drawIcon(ctx,pixels,cx,cy,size,hue,alpha,resolution){
-    // resolution: 0=very pixelated, 1=full detail
-    const res = resolution !== undefined ? resolution : 1;
-    const blockSize = Math.max(1, Math.round((1-res)*4+1)); // 1 to 5 pixel blocks
-    const effectiveN = Math.ceil(N/blockSize);
-    const pxSize = size/effectiveN;
-    let mn=Infinity,mx=-Infinity;
-    for(let i=0;i<N*N;i++){if(pixels[i]<mn)mn=pixels[i];if(pixels[i]>mx)mx=pixels[i]}
-    const range=mx-mn||1;
-    for(let by=0;by<effectiveN;by++) for(let bx=0;bx<effectiveN;bx++){
-      // Average the block
-      let sum=0,count=0;
-      for(let dy=0;dy<blockSize;dy++) for(let dx=0;dx<blockSize;dx++){
-        const sy=by*blockSize+dy, sx=bx*blockSize+dx;
-        if(sy<N&&sx<N){sum+=pixels[sy*N+sx];count++}
-      }
-      const val=(sum/count-mn)/range;
-      if(val<0.03) continue;
-      const l=20+val*50;
-      const s=50+val*25;
-      const a=val*alpha;
-      ctx.fillStyle=`hsla(${hue},${s}%,${l}%,${a})`;
-      ctx.fillRect(cx-size/2+bx*pxSize,cy-size/2+by*pxSize,pxSize+0.5,pxSize+0.5);
-    }
-  }
-  // Draw scrambled version (the encoded holographic data)
-  function drawScrambled(ctx,dctCoeffs,cx,cy,size,hue,alpha){
-    const pxSize=size/N;
-    let mn=Infinity,mx=-Infinity;
-    for(let i=0;i<N*N;i++){if(Math.abs(dctCoeffs[i])<mn)mn=Math.abs(dctCoeffs[i]);if(Math.abs(dctCoeffs[i])>mx)mx=Math.abs(dctCoeffs[i])}
-    const range=mx||1;
+
+  // FFN-dependent holographic scramble: depends on data content AND resolution
+  function ffnScramble(pixels, N, strength, time){
+    const out = new  Float64Array(N*N);
+    // FFN-like transform: use data statistics + resolution to create a content-dependent scramble
+    // This simulates how a feed-forward network would transform the data holographically
+    const mean = pixels.reduce((a,b)=>a+b,0)/(N*N);
+    const variance = pixels.reduce((a,b)=>a+(b-mean)**2,0)/(N*N);
+    const dataHash = mean*1000 + variance*500 + N*7.3; // data-dependent seed
+    
     for(let y=0;y<N;y++) for(let x=0;x<N;x++){
-      const val=Math.abs(dctCoeffs[y*N+x])/range;
-      if(val<0.02) continue;
-      const isPos=dctCoeffs[y*N+x]>=0;
-      const l=isPos?20+val*40:15+val*30;
-      const s=60+val*20;
-      const h=isPos?hue:(hue+180)%360;
-      const a=val*alpha*0.8;
-      ctx.fillStyle=`hsla(${h},${s}%,${l}%,${a})`;
-      ctx.fillRect(cx-size/2+x*pxSize,cy-size/2+y*pxSize,pxSize+0.5,pxSize+0.5);
-    }
-  }
-
-  const icons=makeIcons();
-  const dctCache={};
-  for(const[name,img] of Object.entries(icons)) dctCache[name]=dct2(img);
-  return {N,icons,dctCache,reconstruct,drawIcon,drawScrambled,zigzagOrder,idct2};
-})();
-
-// ================================================================
-// 3D TOPOLOGY GENERATORS
-// ================================================================
-function generateTorus(R,r,uSegs,vSegs,time,scramble){
-  const points=[];
-  for(let i=0;i<=uSegs;i++) for(let j=0;j<=vSegs;j++){
-    const u=(i/uSegs)*U.TAU, v=(j/vSegs)*U.TAU;
-    let x=(R+r*Math.cos(v))*Math.cos(u);
-    let y=(R+r*Math.cos(v))*Math.sin(u);
-    let z=r*Math.sin(v);
-    if(scramble>0){
-      x+=scramble*Math.sin(u*3+v*2+time*0.7)*r*0.5;
-      y+=scramble*Math.cos(u*2+v*3-time*0.5)*r*0.5;
-      z+=scramble*Math.sin(u*4-v+time*0.3)*r*0.4;
-    }
-    points.push({x,y,z,u:i,v:j});
-  }
-  return{points,uSegs,vSegs:vSegs};
-}
-
-function generateLoopSpace(baseR,time,scramble,complexity){
-  const points=[];
-  const numLoops=complexity||3;
-  for(let k=0;k<numLoops;k++){
-    const phase=(k/numLoops)*U.TAU+time*0.3;
-    const loopR=baseR*(0.6+0.4*Math.sin(phase));
-    for(let i=0;i<=60;i++){
-      const t=i/60;
-      const theta=t*U.TAU;
-      const scale2=Math.sin(t*Math.PI);
-      let x=loopR*scale2*Math.cos(theta*(1+k*0.5)+phase);
-      let y=loopR*scale2*Math.sin(theta*(1+k*0.5)+phase);
-      let z=loopR*0.3*Math.sin(theta*2+phase)*scale2;
-      if(scramble>0){
-        x+=scramble*Math.sin(theta*5+time+k)*baseR*0.25;
-        y+=scramble*Math.cos(theta*4-time+k*2)*baseR*0.25;
-        z+=scramble*Math.sin(theta*3+time*0.7+k*3)*baseR*0.18;
-      }
-      points.push({x,y,z,loop:k,t});
-    }
-  }
-  return points;
-}
-
-function generateSpiral(R,turns,time,scramble){
-  const points=[];
-  for(let i=0;i<=120;i++){
-    const t=i/120;
-    const angle=t*turns*U.TAU+time*0.2;
-    const r2=R*t;
-    let x=r2*Math.cos(angle);
-    let y=r2*Math.sin(angle);
-    let z=R*0.5*(t-0.5);
-    if(scramble>0){
-      x+=scramble*Math.sin(angle*3+time)*R*0.18;
-      y+=scramble*Math.cos(angle*2-time*0.8)*R*0.18;
-      z+=scramble*Math.sin(angle*4+time*0.5)*R*0.12;
-    }
-    points.push({x,y,z,t});
-  }
-  return points;
-}
-
-function generateTree(scramble, time) {
-  const points = [];
-  const edges = [];
-  function branch(px, py, pz, angle, depth, maxD, parentIdx) {
-    if(depth > maxD) return;
-    const len = 0.55 * Math.pow(0.68, depth);
-    let nx = px + len * Math.cos(angle);
-    let ny = py - len;
-    let nz = pz + len * Math.sin(angle + depth) * 0.25;
-    if(scramble > 0) {
-      nx += scramble * Math.sin(time + depth*2.5) * 0.18;
-      ny += scramble * Math.cos(time*0.7 + depth*1.8) * 0.12;
-      nz += scramble * Math.sin(time*0.5 + depth*3.2) * 0.1;
-    }
-    const idx = points.length;
-    points.push({x: nx, y: ny, z: nz});
-    edges.push([parentIdx, idx]);
-    branch(nx, ny, nz, angle - 0.7 - Math.sin(time*0.3)*0.1, depth+1, maxD, idx);
-    branch(nx, ny, nz, angle + 0.7 + Math.cos(time*0.4)*0.1, depth+1, maxD, idx);
-  }
-  points.push({x: 0, y: 0.8, z: 0});
-  branch(0, 0.8, 0, -Math.PI/2, 0, 4, 0);
-  return {points, edges};
-}
-
-function generateWave(scramble, time) {
-  const points = [];
-  const edges = [];
-  // Multiple wave layers to make it visually rich
-  for(let layer = 0; layer < 3; layer++) {
-    const freq = 2 + layer * 1.5;
-    const amp = 0.7 - layer * 0.15;
-    const phaseOff = layer * Math.PI * 0.4 + time * (1 + layer * 0.3);
-    for(let i = 0; i <= 60; i++) {
-      const t = i / 60;
-      const x2 = (t - 0.5) * 3;
-      const y2 = amp * Math.sin(t * Math.PI * freq + phaseOff) * Math.sin(t * Math.PI);
-      const z2 = 0.3 * Math.cos(t * Math.PI * (freq-0.5) + phaseOff * 0.7) * Math.sin(t * Math.PI);
-      let fx = x2, fy = y2, fz = z2;
-      if(scramble > 0) {
-        fx += scramble * Math.sin(t*12 + time + layer) * 0.25;
-        fy += scramble * Math.cos(t*9 - time*0.8 + layer*2) * 0.2;
-        fz += scramble * Math.sin(t*15 + time*0.5 + layer*3) * 0.12;
-      }
-      const idx = points.length;
-      points.push({x: fx, y: fy, z: fz, layer});
-      if(i > 0 && points[idx-1].layer === layer) edges.push([idx-1, idx]);
-    }
-  }
-  return {points, edges};
-}
-
-function generateGraph(scramble, time) {
-  const points = [];
-  const gNodes = [
-    {x:0,y:0,z:0},{x:1,y:0.3,z:0.2},{x:-0.8,y:0.5,z:-0.3},
-    {x:0.5,y:-0.7,z:0.4},{x:-0.5,y:-0.5,z:-0.5},{x:0.2,y:0.8,z:0.6},
-    {x:-0.3,y:-0.2,z:0.8},{x:0.7,y:-0.3,z:-0.6}
-  ];
-  for(const gn of gNodes) {
-    points.push({
-      x: gn.x + scramble * Math.sin(time + gn.x*5) * 0.4,
-      y: gn.y + scramble * Math.cos(time*0.8 + gn.y*4) * 0.3,
-      z: gn.z + scramble * Math.sin(time*0.6 + gn.z*6) * 0.3
-    });
-  }
-  const edges = [[0,1],[0,2],[0,3],[1,3],[1,5],[2,4],[3,4],[3,6],[4,6],[5,6],[2,5],[5,7],[1,7],[3,7]];
-  return {points, edges};
-}
-
-function project3D(x,y,z,rotX2,rotY2,cx,cy,scale2){
-  let x1=x*Math.cos(rotY2)-z*Math.sin(rotY2);
-  let z1=x*Math.sin(rotY2)+z*Math.cos(rotY2);
-  let y1=y*Math.cos(rotX2)-z1*Math.sin(rotX2);
-  let z2=y*Math.sin(rotX2)+z1*Math.cos(rotX2);
-  const perspective=400;
-  const pScale=perspective/(perspective+z2);
-  return{px:cx+x1*scale2*pScale,py:cy+y1*scale2*pScale,depth:z2,scale:pScale};
-}
-
-// ================================================================
-// SECTION 1: LIPSCHITZ LENS MODULE
-// ================================================================
-const LensMod = (() => {
-  let ctx, W, H, c;
-  let mouseX=0, mouseY=0;
-  let lenses=[];
-  let time=0;
-  let animating=true;
-  let rotY2=0, rotX2=0.3;
-
-  const islands=[
-    {x:.18,y:.3,r:.11,label:'Math',hue:240,topoType:'loops',icon:'Ω'},
-    {x:.48,y:.2,r:.13,label:'Code',hue:330,topoType:'torus',icon:'T²'},
-    {x:.78,y:.32,r:.1,label:'Language',hue:160,topoType:'graph',icon:'G'},
-    {x:.28,y:.72,r:.09,label:'Biology',hue:90,topoType:'tree',icon:'🌳'},
-    {x:.62,y:.72,r:.09,label:'History',hue:30,topoType:'spiral',icon:'🌀'},
-    {x:.88,y:.68,r:.08,label:'Music',hue:280,topoType:'wave',icon:'∿'},
-  ];
-
-  function init(){
-    ({c,ctx,W,H}=U.mkCanvas('cLens',540));
-    mouseX=W/2;mouseY=H/2;
-    lenses=[{x:W/2,y:H/2,r:100,strength:0.6}];
-    c.addEventListener('mousemove',e=>{
-      const rect=c.getBoundingClientRect();
-      mouseX=(e.clientX-rect.left)/rect.width*W;
-      mouseY=(e.clientY-rect.top)/rect.height*H;
-      if(lenses.length>0){lenses[0].x=mouseX;lenses[0].y=mouseY}
-    });
-    function tick(){
-      if(animating)time+=0.016;
-      rotY2+=0.003;
-      render();
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-
-  function render(){
-    if(!ctx)return;
-    const strength=+document.getElementById('lensStr').value/100;
-    const radius=+document.getElementById('lensRad').value;
-    const scramble=+document.getElementById('scramble').value/100;
-    document.getElementById('lensStrV').textContent=Math.round(strength*100)+'%';
-    document.getElementById('lensRadV').textContent=radius;
-    document.getElementById('scrambleV').textContent=Math.round(scramble*100)+'%';
-    if(lenses.length>0){lenses[0].r=radius;lenses[0].strength=strength}
-
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle='#030618';
-    ctx.fillRect(0,0,W,H);
-
-    // Jacobian field
-    drawJacobianField(ctx,W,H,lenses,time,scramble);
-
-    // Islands
-    for(const isl of islands){
-      const ix=isl.x*W,iy=isl.y*H;
-      const islR=isl.r*Math.min(W,H);
-      let coverage=0;
-      for(const l of lenses){
-        const d=U.dst(ix,iy,l.x,l.y);
-        coverage=Math.max(coverage,Math.exp(-d*d/(2*l.r*l.r))*l.strength);
-      }
-      const effectiveScramble=scramble*(1-coverage);
-      drawIsland3D(ctx,ix,iy,islR,isl,effectiveScramble,coverage,time,rotX2,rotY2);
-    }
-
-    // Lens glass
-    for(let i=0;i<lenses.length;i++){
-      drawLensGlass(ctx,lenses[i],i,time);
-    }
-
-    // Title
-    ctx.font='bold 11px Inter';ctx.textAlign='center';ctx.fillStyle='#818cf8';
-    ctx.fillText('Lipschitz Map = Lens = Information Container',W/2,18);
-    ctx.font='9px Inter';ctx.fillStyle='#64748b';
-    ctx.fillText('Move mouse to focus. Outside lens = holographically scrambled. Inside = decoded.',W/2,32);
-
-    // Stats
-    let maxCov=0,maxIsland='';
-    for(const isl of islands){
-      let cov=0;
-      for(const l of lenses){const d=U.dst(isl.x*W,isl.y*H,l.x,l.y);cov=Math.max(cov,Math.exp(-d*d/(2*l.r*l.r))*l.strength)}
-      if(cov>maxCov){maxCov=cov;maxIsland=isl.label}
-    }
-    document.getElementById('lensStats').innerHTML=`
-      <div class="sc"><div class="l">LENSES</div><div class="v" style="color:#818cf8">${lenses.length}</div></div>
-      <div class="sc"><div class="l">FOCUSED ON</div><div class="v" style="color:#34d399">${maxIsland||'—'}</div></div>
-      <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:#fbbf24">${Math.round(maxCov*100)}%</div></div>
-      <div class="sc"><div class="l">SCRAMBLE</div><div class="v" style="color:#f472b6">${Math.round(scramble*100)}%</div></div>
-      <div class="sc"><div class="l">Lip. CONST</div><div class="v" style="color:#818cf8">${(1+strength*2).toFixed(1)}</div></div>`;
-  }
-
-  function drawJacobianField(ctx,W,H,lenses,time,scramble){
-    const step=28;
-    ctx.lineWidth=0.6;
-    for(let y=step;y<H;y+=step)for(let x=step;x<W;x+=step){
-      let fx=0,fy=0;
-      for(const l of lenses){
-        const dx=x-l.x,dy=y-l.y,d=Math.sqrt(dx*dx+dy*dy)||1;
-        const inf=l.strength*Math.exp(-d*d/(2*l.r*l.r));
-        fx+=inf*(-dy/d*0.5+dx/d*0.3)*15;
-        fy+=inf*(dx/d*0.5+dy/d*0.3)*15;
-      }
-      fx+=scramble*Math.sin(x*0.02+time)*8;
-      fy+=scramble*Math.cos(y*0.02-time*0.7)*8;
-      const mag=Math.sqrt(fx*fx+fy*fy);
-      if(mag<1)continue;
-      const alpha=U.clamp(mag/20,0.02,0.15);
-      ctx.strokeStyle=`rgba(251,191,36,${alpha})`;
-      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+fx*0.8,y+fy*0.8);ctx.stroke();
-    }
-  }
-
-  function drawIsland3D(ctx,cx,cy,radius,island,scramble,coverage,time,rX,rY){
-    const rY2=rY+island.hue*0.01;
-    const rX2=rX+Math.sin(time*0.3+island.hue)*0.1;
-    const scale2=radius*0.6;
-    let data;
-    if(island.topoType==='torus'){
-      const t=generateTorus(1.2,0.5,16,10,time,scramble);
-      const edges=[];
-      for(let u=0;u<=t.uSegs;u++)for(let v=0;v<=t.vSegs;v++){
-        const idx=u*(t.vSegs+1)+v;
-        if(v<t.vSegs)edges.push([idx,idx+1]);
-        if(u<t.uSegs)edges.push([idx,idx+t.vSegs+1]);
-      }
-      data={points:t.points,edges};
-    } else if(island.topoType==='loops'){
-      const pts=generateLoopSpace(1.5,time,scramble,4);
-      const edges=[];
-      for(let j=1;j<pts.length;j++)if(pts[j].loop===pts[j-1].loop)edges.push([j-1,j]);
-      data={points:pts,edges};
-    } else if(island.topoType==='spiral'){
-      const pts=generateSpiral(1.5,4,time,scramble);
-      const edges=[];for(let j=1;j<pts.length;j++)edges.push([j-1,j]);
-      data={points:pts,edges};
-    } else if(island.topoType==='tree'){
-      data=generateTree(scramble,time);
-    } else if(island.topoType==='wave'){
-      data=generateWave(scramble,time);
-    } else if(island.topoType==='graph'){
-      data=generateGraph(scramble,time);
-    }
-    if(!data||data.points.length===0)return;
-
-    const projected=data.points.map(p=>project3D(p.x,p.y,p.z,rX2,rY2,cx,cy,scale2));
-    const baseAlpha=0.2+coverage*0.75;
-    const hue=island.hue;
-
-    // Sort and draw edges
-    const sorted=data.edges.map(([a,b])=>({a,b,depth:((projected[a]?.depth||0)+(projected[b]?.depth||0))/2})).sort((a,b)=>b.depth-a.depth);
-    for(const edge of sorted){
-      const pa=projected[edge.a],pb=projected[edge.b];
-      if(!pa||!pb)continue;
-      const ea=baseAlpha*((pa.scale+pb.scale)/2)*0.8;
-      const sat=45+coverage*35;
-      const lit=38+coverage*27;
-      ctx.beginPath();ctx.moveTo(pa.px,pa.py);ctx.lineTo(pb.px,pb.py);
-      ctx.strokeStyle=`hsla(${hue},${sat}%,${lit}%,${U.clamp(ea,0,0.9)})`;
-      ctx.lineWidth=0.5+coverage*1.8;ctx.stroke();
-    }
-
-    // Vertices
-    if(coverage>0.3){
-      const step2=Math.max(1,Math.floor(projected.length/35));
-      for(let j=0;j<projected.length;j+=step2){
-        const p=projected[j];if(!p)continue;
-        ctx.beginPath();ctx.arc(p.px,p.py,1+coverage*2*p.scale,0,U.TAU);
-        ctx.fillStyle=`hsla(${hue},70%,65%,${coverage*0.6*p.scale})`;ctx.fill();
-      }
-    }
-
-    // Label
-    ctx.font=`bold ${10+Math.round(coverage*3)}px Inter`;
-    ctx.fillStyle=`hsla(${hue},70%,75%,${0.3+coverage*0.7})`;
-    ctx.textAlign='center';
-    ctx.fillText(island.label,cx,cy+radius+14);
-    ctx.font='9px JetBrains Mono';
-    ctx.fillStyle=`hsla(${hue},50%,60%,${0.3+coverage*0.5})`;
-    ctx.fillText(`${island.icon} ${Math.round(coverage*100)}%`,cx,cy+radius+26);
-  }
-
-  function drawLensGlass(ctx,l,idx,time){
-    const grad=ctx.createRadialGradient(l.x,l.y,l.r*0.7,l.x,l.y,l.r*1.3);
-    grad.addColorStop(0,`rgba(129,140,248,${0.04*l.strength})`);
-    grad.addColorStop(1,'rgba(129,140,248,0)');
-    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(l.x,l.y,l.r*1.3,0,U.TAU);ctx.fill();
-
-    for(let i=3;i>=0;i--){
-      const ringR=l.r*(0.7+i*0.1);
-      ctx.beginPath();ctx.arc(l.x,l.y,ringR,0,U.TAU);
-      ctx.strokeStyle=`rgba(129,140,248,${(0.06+Math.sin(time*2+i*0.5)*0.05)*l.strength*(1-i*0.2)})`;
-      ctx.lineWidth=1.5-i*0.3;ctx.stroke();
-    }
-
-    ctx.beginPath();ctx.arc(l.x,l.y,l.r,0,U.TAU);
-    ctx.strokeStyle=`rgba(129,140,248,${0.4+Math.sin(time*3)*0.1})`;
-    ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
-
-    ctx.font='bold 10px Inter';ctx.fillStyle=`rgba(129,140,248,${0.6+l.strength*0.4})`;
-    ctx.textAlign='center';ctx.fillText(`Φ${idx} (K=${(1+l.strength*2).toFixed(1)})`,l.x,l.y-l.r-8);
-  }
-
-  function addLens(){if(lenses.length>=5)return;lenses.push({x:W*(0.3+Math.random()*0.4),y:H*(0.3+Math.random()*0.4),r:70+Math.random()*40,strength:0.5})}
-  function reset(){lenses=[{x:W/2,y:H/2,r:100,strength:0.6}]}
-  function toggleAnim(){animating=!animating}
-  setTimeout(init,50);
-  return{addLens,reset,toggleAnim};
-})();
-
-// ================================================================
-// SECTION 2: SCRAMBLED TORII & LOOP SPACES (with encoded/decoded split)
-// ================================================================
-const TopoMod = (() => {
-  let ctx,W,H,c;
-  let time=0;
-  let rotating=true;
-  let rotY2=0,rotX2=0.35;
-  let autoWaveTimer=null;
-
-  // All 5 topology types
-  const allTopos=[
-    {id:'torus',label:'Torus T² (Code)',hue:330},
-    {id:'loops',label:'Loop Space Ω (Math)',hue:240},
-    {id:'spiral',label:'Spiral (History)',hue:30},
-    {id:'tree',label:'Tree (Biology)',hue:90},
-    {id:'wave',label:'Wave (Music)',hue:280},
-  ];
-
-  function init(){
-    ({c,ctx,W,H}=U.mkCanvas('cTopo',630));
-    function tick(){
-      const speed=+document.getElementById('topoSpeed').value;
-      time+=0.016*speed*0.5;
-      if(rotating)rotY2+=0.006*speed;
-      render();
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-
-  function render(){
-    if(!ctx)return;
-    const scramble=+document.getElementById('topoScramble')?.value/100||0.65;
-    const focus=document.getElementById('topoFocus').value;
-    const waves=+document.getElementById('topoWaves').value;
-    document.getElementById('topoSpeedV').textContent=document.getElementById('topoSpeed').value;
-    document.getElementById('topoScrambleV')&&(document.getElementById('topoScrambleV').textContent=Math.round(scramble*100)+'%');
-    document.getElementById('topoWavesV').textContent=waves;
-
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle='#030618';
-    ctx.fillRect(0,0,W,H);
-
-    // Title
-    ctx.font='bold 11px Inter';ctx.fillStyle='#818cf8';ctx.textAlign='center';
-    ctx.fillText('TOP: Encoded (Scrambled Holographic) — BOTTOM: Decoded (Progressive Waves)',W/2,16);
-
-    // Subtitle showing structural similarity
-    ctx.font='9px Inter';ctx.fillStyle='#64748b';
-    ctx.fillText('Note: A spiral IS a circle from above. These structures share deep similarities — related by projection.',W/2,30);
-
-    const numTopos = allTopos.length;
-    const sectionW = W / numTopos;
-    const topRowY = H * 0.28;
-    const botRowY = H * 0.7;
-
-    for(let i=0;i<numTopos;i++){
-      const topo=allTopos[i];
-      const cx=sectionW*(i+0.5);
-      const isFocused=(focus===topo.id);
-      const effectiveWaves=isFocused?waves:(focus==='all'?Math.max(4,Math.round(waves*0.4)):Math.max(2,Math.round(waves*0.15)));
-      const coverage=isFocused?0.95:(focus==='all'?0.35:0.12);
-      const effectiveScramble=isFocused?scramble*0.05:(focus==='all'?scramble*0.6:scramble);
-      const scale2=Math.min(sectionW*0.38,H*0.16);
-
-      // --- TOP ROW: ENCODED (scrambled DCT coefficients) ---
-      ctx.save();
-      // Draw the scrambled holographic version using DCT coefficients
-      const iconKey = topo.id==='torus'?'Code':topo.id==='loops'?'Math':topo.id==='spiral'?'History':topo.id==='tree'?'Biology':'Music';
-      if(HoloDCT.dctCache[iconKey]){
-        HoloDCT.drawScrambled(ctx,HoloDCT.dctCache[iconKey],cx,topRowY,scale2*2,topo.hue,0.5+coverage*0.4);
-      }
-      // Overlay label
-      ctx.font='8px JetBrains Mono';ctx.fillStyle=`hsla(${topo.hue},60%,70%,0.7)`;ctx.textAlign='center';
-      ctx.fillText('ENCODED',cx,topRowY-scale2-4);
-      ctx.restore();
-
-      // --- BOTTOM ROW: DECODED (progressive reconstruction) ---
-      // Use DCT reconstruction with variable waves
-      if(HoloDCT.dctCache[iconKey]){
-        const pixels=HoloDCT.reconstruct(HoloDCT.dctCache[iconKey],effectiveWaves);
-        const resolution=U.clamp(effectiveWaves/64,0.05,1);
-        HoloDCT.drawIcon(ctx,pixels,cx,botRowY,scale2*2,topo.hue,0.5+coverage*0.5,resolution);
-      }
-
-      // Also draw the 3D wireframe overlay on decoded (faint when low coverage, strong when focused)
-      if(coverage>0.2){
-        let data;
-        if(topo.id==='torus'){
-          const t2=generateTorus(1.0,0.4,12,8,time,effectiveScramble);
-          const edges=[];
-          for(let u=0;u<=t2.uSegs;u++)for(let v=0;v<=t2.vSegs;v++){
-            const idx=u*(t2.vSegs+1)+v;
-            if(v<t2.vSegs)edges.push([idx,idx+1]);
-            if(u<t2.uSegs)edges.push([idx,idx+t2.vSegs+1]);
-          }
-          data={points:t2.points,edges};
-        } else if(topo.id==='loops'){
-          const pts=generateLoopSpace(1.2,time,effectiveScramble,3);
-          const edges=[];for(let j=1;j<pts.length;j++)if(pts[j].loop===pts[j-1].loop)edges.push([j-1,j]);
-          data={points:pts,edges};
-        } else if(topo.id==='spiral'){
-          const pts=generateSpiral(1.2,4,time,effectiveScramble);
-          const edges=[];for(let j=1;j<pts.length;j++)edges.push([j-1,j]);
-          data={points:pts,edges};
-        } else if(topo.id==='tree'){
-          data=generateTree(effectiveScramble,time);
-        } else if(topo.id==='wave'){
-          data=generateWave(effectiveScramble,time);
-        }
-
-        if(data&&data.points.length>0){
-          const projected=data.points.map(p=>project3D(p.x,p.y,p.z,rotX2,rotY2+topo.hue*0.01,cx,botRowY,scale2*0.55));
-          const baseAlpha=coverage*0.6;
-          for(const[a,b] of data.edges){
-            const pa=projected[a],pb=projected[b];
-            if(!pa||!pb)continue;
-            ctx.beginPath();ctx.moveTo(pa.px,pa.py);ctx.lineTo(pb.px,pb.py);
-            ctx.strokeStyle=`hsla(${topo.hue},60%,60%,${baseAlpha*((pa.scale+pb.scale)/2)*0.7})`;
-            ctx.lineWidth=0.4+coverage*1.2;ctx.stroke();
-          }
+      // FFN layer 1: linear transform with data-dependent weights
+      const w1 = Math.sin(dataHash + x*0.7 + y*1.3 + time*0.2);
+      const w2 = Math.cos(dataHash*0.8 + x*1.1 - y*0.9 + time*0.15);
+      const w3 = Math.sin(dataHash*1.2 + (x+y)*0.5 + time*0.1);
+      
+      // Gather from multiple positions (simulating FFN's global mixing)
+      let val = 0;
+      const spread = Math.max(1, Math.round(N * 0.3 * strength));
+      for(let dy=-spread;dy<=spread;dy+=Math.max(1,Math.floor(spread/2))){
+        for(let dx=-spread;dx<=spread;dx+=Math.max(1,Math.floor(spread/2))){
+          const sx = ((x+dx)%N+N)%N, sy = ((y+dy)%N+N)%N;
+          const weight = w1*Math.sin(dx*w2+dy*w3+dataHash) + w2*Math.cos(dx*w3+time*0.1);
+          val += pixels[sy*N+sx] * weight;
         }
       }
-
-      // Decoded label
-      ctx.font='8px JetBrains Mono';ctx.fillStyle=`hsla(${topo.hue},60%,70%,0.7)`;ctx.textAlign='center';
-      ctx.fillText(`DECODED (${effectiveWaves} waves)`,cx,botRowY+scale2+10);
-
-      // Island label
-      ctx.font=`bold ${9+Math.round(coverage*2)}px Inter`;
-      ctx.fillStyle=`hsla(${topo.hue},70%,75%,${0.4+coverage*0.6})`;
-      ctx.fillText(topo.label,cx,botRowY+scale2+24);
-
-      // Lens indicator
-      if(isFocused){
-        ctx.beginPath();ctx.arc(cx,botRowY,scale2*1.4,0,U.TAU);
-        ctx.strokeStyle=`rgba(129,140,248,${0.3+Math.sin(time*2)*0.1})`;
-        ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
-      }
-
-      // Connecting arrow between rows
-      ctx.beginPath();
-      ctx.moveTo(cx,topRowY+scale2+6);
-      ctx.lineTo(cx,botRowY-scale2-10);
-      ctx.strokeStyle=`hsla(${topo.hue},40%,50%,${0.15+coverage*0.2})`;
-      ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.stroke();ctx.setLineDash([]);
-      // Arrow head
-      ctx.fillStyle=`hsla(${topo.hue},40%,50%,${0.15+coverage*0.2})`;
-      ctx.beginPath();
-      const ay = botRowY - scale2 - 10;
-      ctx.moveTo(cx - 3, ay);
-      ctx.lineTo(cx, ay + 6);
-      ctx.lineTo(cx + 3, ay);
-      ctx.fill();
+      
+      // FFN layer 2: non-linearity (GELU approximation)
+      val = val * 0.5 * (1 + Math.tanh(Math.sqrt(2/Math.PI) * (val + 0.044715 * val*val*val)));
+      
+      // Mix with resolution-dependent phase rotation
+      const resPhase = N * 0.1 + time * 0.3;
+      const phaseX = Math.sin(x * resPhase / N + dataHash);
+      const phaseY = Math.cos(y * resPhase / N + dataHash * 0.7);
+      
+      // Final scrambled value: blend original with FFN-transformed
+      out[y*N+x] = U.lerp(pixels[y*N+x], 
+        Math.tanh(val * 0.3 + phaseX * phaseY * pixels[y*N+x] * 2), 
+        strength);
     }
-
-    // Stats
-    const focusLabel = focus === 'all' ? 'All (blurry)' : allTopos.find(t => t.id === focus)?.label || focus;
-    document.getElementById('topoStats').innerHTML = `
-      <div class="sc"><div class="l">FOCUS</div><div class="v" style="color:#818cf8">${focusLabel}</div></div>
-      <div class="sc"><div class="l">WAVES</div><div class="v" style="color:#fbbf24">${waves}/64</div></div>
-      <div class="sc"><div class="l">ROTATION</div><div class="v" style="color:#34d399">${rotating ? 'ON' : 'OFF'}</div></div>
-      <div class="sc"><div class="l">TIME</div><div class="v" style="color:#f472b6">${time.toFixed(1)}</div></div>
-    `;
+    return out;
   }
 
-  function toggleRotation() { rotating = !rotating; }
-
-  function autoWaves() {
-    const slider = document.getElementById('topoWaves');
-    slider.value = 1;
-    const start = performance.now();
-    function step(now) {
-      const t = Math.min((now - start) / 4000, 1);
-      slider.value = Math.round(1 + U.ease(t) * 63);
-      if (t < 1) requestAnimationFrame(step);
+  // Unscramble: approximate inverse of the FFN scramble (Lipschitz decode)
+  function ffnUnscramble(scrambled, original, N, strength){
+    // In practice, the Lipschitz lens "decodes" by knowing the map structure
+    // We simulate this by blending back toward the original based on decode strength
+    const out = new Float64Array(N*N);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      out[y*N+x] = U.lerp(scrambled[y*N+x], original[y*N+x], strength);
     }
-    requestAnimationFrame(step);
+    return out;
   }
 
-  setTimeout(init, 100);
-  return { toggleRotation, autoWaves };
+  const hiResIcons = makeHighRes();
+  return {N_HI, N_LO, hiResIcons, downsample, ffnScramble, ffnUnscramble};
 })();
 
 // ================================================================
-// SECTION 3: FOCUS-DEPENDENT RESOLUTION (TRADEOFF)
+// ISLAND DEFINITIONS (shared across modules)
 // ================================================================
-const TradeoffMod = (() => {
-  let ctx, W, H, c;
+const ISLANDS = [
+  {id:'code', label:'Code', x:0.18, y:0.25, r:0.11, hue:330, iconKey:'Code'},
+  {id:'math', label:'Math', x:0.48, y:0.2, r:0.12, hue:240, iconKey:'Math'},
+  {id:'lang', label:'Language', x:0.78, y:0.28, r:0.1, hue:160, iconKey:'Language'},
+  {id:'bio', label:'Biology', x:0.22, y:0.65, r:0.09, hue:90, iconKey:'Biology'},
+  {id:'hist', label:'History', x:0.55, y:0.68, r:0.09, hue:30, iconKey:'History'},
+  {id:'music', label:'Music', x:0.85, y:0.62, r:0.08, hue:280, iconKey:'Music'},
+];
+
+// ================================================================
+// RENDERING UTILITIES
+// ================================================================
+function drawPixelGrid(ctx, pixels, N, cx, cy, size, hue, alpha, pixelation){
+  // pixelation: 0 = full res, 1 = very blocky
+  const blockSize = Math.max(1, Math.round(1 + pixelation * (N/2 - 1)));
+  const effectiveN = Math.ceil(N/blockSize);
+  const pxSize = size/effectiveN;
+  
+  let mn=Infinity, mx=-Infinity;
+  for(let i=0;i<N*N;i++){if(pixels[i]<mn)mn=pixels[i];if(pixels[i]>mx)mx=pixels[i]}
+  const range = mx-mn||1;
+  
+  for(let by=0;by<effectiveN;by++) for(let bx=0;bx<effectiveN;bx++){
+    let sum=0, count=0;
+    for(let dy=0;dy<blockSize;dy++) for(let dx=0;dx<blockSize;dx++){
+      const sy=by*blockSize+dy, sx=bx*blockSize+dx;
+      if(sy<N&&sx<N){sum+=pixels[sy*N+sx];count++}
+    }
+    const val = (sum/count - mn)/range;
+    if(val<0.02) continue;
+    const l = 15 + val*55;
+    const s = 40 + val*35;
+    const a = val * alpha;
+    ctx.fillStyle = `hsla(${hue},${s}%,${l}%,${a})`;
+    ctx.fillRect(cx-size/2+bx*pxSize, cy-size/2+by*pxSize, pxSize+0.5, pxSize+0.5);
+  }
+}
+
+function drawConnectionLine(ctx, x1, y1, x2, y2, color, alpha){
+  const grad = ctx.createLinearGradient(x1,y1,x2,y2);
+  grad.addColorStop(0, color.replace('1)', `${alpha})`).replace('rgb','rgba'));
+  grad.addColorStop(0.5, color.replace('1)', `${alpha*1.5})`).replace('rgb','rgba'));
+  grad.addColorStop(1, color.replace('1)', `${alpha})`).replace('rgb','rgba'));
+  ctx.strokeStyle = `rgba(100,200,180,${alpha})`;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3,4]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ================================================================
+// SECTION 1: MAIN MODULE — Click-to-Focus Pipeline
+// ================================================================
+const MainMod = (() => {
+  let ctxS, ctxD, WS, HS, WD, HD, cS, cD;
   let time = 0;
-  let lenses = [];
-  let dragIdx = -1;
-
-  const islands = [
-    {id:'math', label:'Math', x:0.15, y:0.3, r:0.1, hue:240, iconKey:'Math'},
-    {id:'code', label:'Code', x:0.38, y:0.22, r:0.11, hue:330, iconKey:'Code'},
-    {id:'lang', label:'Language', x:0.62, y:0.28, r:0.09, hue:160, iconKey:'Language'},
-    {id:'bio', label:'Biology', x:0.22, y:0.58, r:0.08, hue:90, iconKey:'Biology'},
-    {id:'hist', label:'History', x:0.52, y:0.6, r:0.08, hue:30, iconKey:'History'},
-    {id:'music', label:'Music', x:0.82, y:0.45, r:0.07, hue:280, iconKey:'Music'},
-  ];
-
-  const LENS_COLS = ['#818cf8','#f472b6','#34d399','#fbbf24','#60a5fa'];
-
-  function init() {
-    ({c, ctx, W, H} = U.mkCanvas('cTradeoff', 560));
-    resetLenses();
-
-    c.addEventListener('mousedown', e => {
-      const r = c.getBoundingClientRect();
-      const mx = (e.clientX - r.left) / r.width * W;
-      const my = (e.clientY - r.top) / r.height * H;
-      for (let i = lenses.length - 1; i >= 0; i--) {
-        if (U.dst(mx, my, lenses[i].x, lenses[i].y) < 30) { dragIdx = i; break; }
-      }
-    });
-    c.addEventListener('mousemove', e => {
-      if (dragIdx < 0) return;
-      const r = c.getBoundingClientRect();
-      lenses[dragIdx].x = (e.clientX - r.left) / r.width * W;
-      lenses[dragIdx].y = (e.clientY - r.top) / r.height * H;
-    });
-    c.addEventListener('mouseup', () => { dragIdx = -1; });
-    c.addEventListener('mouseleave', () => { dragIdx = -1; });
-
-    document.getElementById('tradeHeads').addEventListener('change', () => { resetLenses(); });
-
-    function tick() {
-      time += 0.016;
-      render();
+  let animating = true;
+  let focusedIsland = null; // which island is clicked/focused
+  
+  // Internal state: full-res computed but never shown
+  const computedHiRes = {}; // cached high-res per island
+  const computedLoRes = {}; // resolution-reduced
+  const computedScrambled = {}; // FFN-scrambled
+  const computedDecoded = {}; // unscrambled/decoded
+  
+  function init(){
+    ({c:cS, ctx:ctxS, W:WS, H:HS} = U.mkCanvas('cScrambled', 500));
+    ({c:cD, ctx:ctxD, W:WD, H:HD} = U.mkCanvas('cDecoded', 500));
+    
+    // Click-to-focus on scrambled canvas
+    cS.addEventListener('click', handleClick);
+    cD.addEventListener('click', handleClick);
+    
+    function tick(){
+      if(animating) time += 0.016 * (+document.getElementById('mainSpeed').value * 0.15);
+      computeAll();
+      renderScrambled();
+      renderDecoded();
+      updateStats();
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
-
-  function resetLenses() {
-    const n = +document.getElementById('tradeHeads').value;
-    lenses = [];
-    const positions = [
-      {x:0.38, y:0.22}, {x:0.15, y:0.3}, {x:0.62, y:0.28},
-      {x:0.22, y:0.58}, {x:0.82, y:0.45}
-    ];
-    for (let i = 0; i < n; i++) {
-      const p = positions[i % positions.length];
-      lenses.push({x: p.x * W, y: p.y * H * 0.72, col: LENS_COLS[i]});
+  
+  function handleClick(e){
+    const rect = e.target.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / rect.width * WS;
+    const my = (e.clientY - rect.top) / rect.height * HS;
+    
+    // Find closest island
+    let closest = null, closestDist = Infinity;
+    for(const isl of ISLANDS){
+      const ix = isl.x * WS, iy = isl.y * HS;
+      const d = U.dst(mx, my, ix, iy);
+      const hitR = isl.r * Math.min(WS, HS) * 1.5;
+      if(d < hitR && d < closestDist){
+        closest = isl;
+        closestDist = d;
+      }
+    }
+    
+    if(closest){
+      if(focusedIsland && focusedIsland.id === closest.id){
+        focusedIsland = null; // toggle off
+      } else {
+        focusedIsland = closest;
+      }
+    } else {
+      focusedIsland = null;
     }
   }
-
-  function render() {
-    if (!ctx) return;
-    const budget = +document.getElementById('tradeBudget').value;
-    document.getElementById('tradeBudgetV').textContent = budget;
-
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#030618';
-    ctx.fillRect(0, 0, W, H);
-
-    const lensRadius = 90;
-    const allocations = [];
-    let totalRaw = 0;
-
-    for (const isl of islands) {
-      let maxCov = 0;
-      for (const l of lenses) {
-        const d = U.dst(isl.x * W, isl.y * H * 0.72, l.x, l.y);
-        const cov = Math.exp(-d * d / (2 * lensRadius * lensRadius));
-        maxCov = Math.max(maxCov, cov);
-      }
-      allocations.push(maxCov);
-      totalRaw += maxCov;
+  
+  function computeAll(){
+    const zoomLevel = +document.getElementById('zoomLevel').value / 100;
+    const ffnStr = +document.getElementById('ffnStr').value / 100;
+    
+    document.getElementById('zoomLevelV').textContent = Math.round(zoomLevel*100)+'%';
+    document.getElementById('ffnStrV').textContent = Math.round(ffnStr*100)+'%';
+    document.getElementById('mainSpeedV').textContent = document.getElementById('mainSpeed').value;
+    
+    for(const isl of ISLANDS){
+      const hiRes = IconEngine.hiResIcons[isl.iconKey];
+      if(!hiRes) continue;
+      
+      // Determine effective resolution based on focus
+      const isFocused = focusedIsland && focusedIsland.id === isl.id;
+      const effectiveZoom = isFocused ? Math.max(0.4, zoomLevel) : zoomLevel * 0.2;
+      
+      // Target resolution: 4 (very pixelated) to 32 (decent)
+      const targetN = Math.max(4, Math.min(32, Math.round(4 + effectiveZoom * 28)));
+      
+      // Step 1: Downsample from 64x64 to targetN (resolution reduction)
+      const loRes = IconEngine.downsample(hiRes, targetN);
+      computedLoRes[isl.id] = {pixels: loRes, N: targetN};
+      
+      // Step 2: FFN-scramble the low-res version (holographic encoding)
+      const scrambled = IconEngine.ffnScramble(loRes, targetN, ffnStr, time);
+      computedScrambled[isl.id] = {pixels: scrambled, N: targetN};
+      
+      // Step 3: Decode/unscramble (Lipschitz lens decode)
+      const decodeStrength = isFocused ? 0.85 : 0.15;
+      const decoded = IconEngine.ffnUnscramble(scrambled, loRes, targetN, decodeStrength);
+      computedDecoded[isl.id] = {pixels: decoded, N: targetN};
     }
-
-    const finalTiles = allocations.map(cov => {
-      const share = totalRaw > 0 ? cov / totalRaw : 1 / islands.length;
-      return Math.max(2, Math.min(budget, Math.round(share * budget * 0.7)));
-    });
-
-    // Draw islands with DCT icons at variable resolution
-    const mainAreaH = H * 0.72;
-    for (let i = 0; i < islands.length; i++) {
-      const isl = islands[i];
-      const ix = isl.x * W, iy = isl.y * mainAreaH;
-      const tiles = finalTiles[i];
-      const coverage = U.clamp(tiles / 64, 0, 1);
-      const iconSize = isl.r * Math.min(W, mainAreaH) * 2.5;
-
-      // Background glow
-      const grad = ctx.createRadialGradient(ix, iy, 0, ix, iy, iconSize);
-      grad.addColorStop(0, `hsla(${isl.hue},60%,40%,${0.04 + coverage * 0.12})`);
-      grad.addColorStop(1, `hsla(${isl.hue},60%,30%,0)`);
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(ix, iy, iconSize, 0, U.TAU);
-      ctx.fill();
-
-      // DCT holographic icon with pixelation based on coverage
-      if (HoloDCT.dctCache[isl.iconKey]) {
-        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[isl.iconKey], tiles);
-        const resolution = U.clamp(coverage, 0.05, 1);
-        HoloDCT.drawIcon(ctx, pixels, ix, iy, iconSize, isl.hue, 0.4 + coverage * 0.6, resolution);
-      }
-
-      // Label
-      ctx.font = `bold ${9 + Math.round(coverage * 3)}px Inter`;
-      ctx.fillStyle = `hsla(${isl.hue},70%,75%,${0.5 + coverage * 0.5})`;
-      ctx.textAlign = 'center';
-      ctx.fillText(isl.label, ix, iy + iconSize / 2 + 14);
-
-      // Tile count with color coding
-      ctx.font = '8px JetBrains Mono';
-      ctx.fillStyle = tiles > 40 ? '#34d399' : tiles > 15 ? '#fbbf24' : '#ef4444';
-      ctx.fillText(`${tiles}/${budget} tiles`, ix, iy + iconSize / 2 + 26);
-    }
-
-    // Draw lenses (draggable)
-    for (let i = 0; i < lenses.length; i++) {
-      const l = lenses[i];
-      // Lens circle
-      ctx.beginPath();
-      ctx.arc(l.x, l.y, lensRadius, 0, U.TAU);
-      ctx.strokeStyle = l.col;
-      ctx.globalAlpha = 0.35 + Math.sin(time * 2 + i) * 0.1;
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash([6, 4]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.globalAlpha = 1;
-
-      // Inner glow
-      const lGrad = ctx.createRadialGradient(l.x, l.y, 0, l.x, l.y, lensRadius);
-      lGrad.addColorStop(0, l.col.replace(')', ',0.06)').replace('rgb', 'rgba'));
-      lGrad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = lGrad;
-      ctx.beginPath();
-      ctx.arc(l.x, l.y, lensRadius, 0, U.TAU);
-      ctx.fill();
-
-      // Center handle
-      ctx.beginPath();
-      ctx.arc(l.x, l.y, 8, 0, U.TAU);
-      ctx.fillStyle = l.col;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.font = 'bold 9px Inter';
-      ctx.fillStyle = l.col;
-      ctx.textAlign = 'center';
-      ctx.fillText(`Lens ${i}`, l.x, l.y - 16);
-    }
-
-    // Bar chart at bottom
-    const barAreaY = H * 0.78;
-    const barAreaH = H * 0.17;
-    const barW2 = (W - 60) / islands.length;
-
-    ctx.font = 'bold 9px Inter';
-    ctx.fillStyle = '#64748b';
-    ctx.textAlign = 'center';
-    ctx.fillText('Tile Allocation (Conservation Law: finite budget)', W / 2, barAreaY - 8);
-
-    const totalUsed = finalTiles.reduce((a, b) => a + b, 0);
-
-    for (let i = 0; i < islands.length; i++) {
-      const isl = islands[i];
-      const bx = 30 + i * barW2;
-      const tiles = finalTiles[i];
-      const barH = (tiles / budget) * barAreaH;
-
-      ctx.fillStyle = '#0a0e28';
-      ctx.fillRect(bx + 4, barAreaY, barW2 - 8, barAreaH);
-
-      const barCol = tiles > 40 ? '#34d399' : tiles > 15 ? '#fbbf24' : '#ef4444';
-      ctx.fillStyle = barCol;
-      ctx.fillRect(bx + 4, barAreaY + barAreaH - barH, barW2 - 8, barH);
-
-      ctx.font = '8px Inter';
-      ctx.fillStyle = `hsla(${isl.hue},70%,75%,0.9)`;
-      ctx.textAlign = 'center';
-      ctx.fillText(isl.label, bx + barW2 / 2, barAreaY + barAreaH + 12);
-      ctx.fillStyle = barCol;
-      ctx.fillText(`${tiles}`, bx + barW2 / 2, barAreaY + barAreaH - barH - 4);
-    }
-
-    ctx.font = '9px JetBrains Mono';
-    ctx.fillStyle = '#818cf8';
-    ctx.textAlign = 'right';
-    ctx.fillText(`Total: ${totalUsed} / Budget: ${budget}`, W - 20, barAreaY - 8);
-
+  }
+  
+  function renderScrambled(){
+    if(!ctxS) return;
+    ctxS.clearRect(0,0,WS,HS);
+    ctxS.fillStyle = '#020510';
+    ctxS.fillRect(0,0,WS,HS);
+    
     // Title
-    ctx.font = 'bold 11px Inter';
-    ctx.fillStyle = '#818cf8';
-    ctx.textAlign = 'center';
-    ctx.fillText('Focus-Dependent Resolution — Drag Lenses to See the Tradeoff', W / 2, 16);
-
-    // Stats
-    const maxTiles = Math.max(...finalTiles);
-    const minTiles = Math.min(...finalTiles);
-    const maxIsland = islands[finalTiles.indexOf(maxTiles)];
-    const minIsland = islands[finalTiles.indexOf(minTiles)];
-
-    document.getElementById('tradeStats').innerHTML = `
-      <div class="sc"><div class="l">LENSES</div><div class="v" style="color:#818cf8">${lenses.length}</div></div>
-      <div class="sc"><div class="l">BUDGET</div><div class="v" style="color:#fbbf24">${budget}</div></div>
-      <div class="sc"><div class="l">SHARPEST</div><div class="v" style="color:#34d399">${maxIsland.label}</div></div>
-      <div class="sc"><div class="l">BLURRIEST</div><div class="v" style="color:#ef4444">${minIsland.label}</div></div>
-      <div class="sc"><div class="l">TOTAL USED</div><div class="v" style="color:#818cf8">${totalUsed}</div></div>`;
-  }
-
-  function autoFocus() {
-    const sequence = [
-      {x: 0.15, y: 0.3}, {x: 0.38, y: 0.22}, {x: 0.62, y: 0.28},
-      {x: 0.52, y: 0.6}, {x: 0.82, y: 0.45}, {x: 0.22, y: 0.58}
-    ];
-    let step = 0;
-    function nextStep() {
-      if (step >= sequence.length) step = 0;
-      const target = sequence[step];
-      for (let i = 0; i < lenses.length; i++) {
-        const t2 = sequence[(step + i) % sequence.length];
-        animateLensTo(i, t2.x * W, t2.y * H * 0.72);
+    ctxS.font = 'bold 10px Inter';
+    ctxS.fillStyle = '#f472b6';
+    ctxS.textAlign = 'center';
+    ctxS.fillText('FFN-Scrambled Holographic Data', WS/2, 14);
+    ctxS.font = '8px Inter';
+    ctxS.fillStyle = '#64748b';
+    ctxS.fillText('Click an island to focus the Lipschitz lens', WS/2, 26);
+    
+    for(const isl of ISLANDS){
+      const data = computedScrambled[isl.id];
+      if(!data) continue;
+      
+      const ix = isl.x * WS, iy = isl.y * HS;
+      const isFocused = focusedIsland && focusedIsland.id === isl.id;
+      const size = isl.r * Math.min(WS, HS) * 2.2;
+      
+      // Pixelation: unfocused = very pixelated
+      const pixelation = isFocused ? 0.1 : 0.85;
+      
+      // Draw scrambled data
+      drawPixelGrid(ctxS, data.pixels, data.N, ix, iy, size, 
+        (isl.hue + 180) % 360, // shifted hue for scrambled
+        isFocused ? 0.9 : 0.5, 
+        pixelation);
+      
+      // Glow for focused
+      if(isFocused){
+        ctxS.beginPath();
+        ctxS.arc(ix, iy, size*0.7, 0, U.TAU);
+        ctxS.strokeStyle = `rgba(244,114,182,${0.4+Math.sin(time*3)*0.15})`;
+        ctxS.lineWidth = 2;
+        ctxS.setLineDash([4,3]);
+        ctxS.stroke();
+        ctxS.setLineDash([]);
       }
-      step++;
-      setTimeout(nextStep, 1800);
+      
+      // Label
+      ctxS.font = `${isFocused?'bold ':''}${isFocused?10:8}px Inter`;
+      ctxS.fillStyle = `hsla(${isl.hue},60%,70%,${isFocused?0.9:0.5})`;
+      ctxS.textAlign = 'center';
+      ctxS.fillText(isl.label, ix, iy + size/2 + 12);
+      
+      // Resolution indicator
+      ctxS.font = '7px JetBrains Mono';
+      ctxS.fillStyle = '#64748b';
+      ctxS.fillText(`${data.N}×${data.N}`, ix, iy + size/2 + 22);
     }
-    nextStep();
-  }
-
-  function animateLensTo(idx, tx, ty) {
-    const l = lenses[idx];
-    if (!l) return;
-    const sx = l.x, sy = l.y;
-    const start = performance.now();
-    const dur = 900;
-    function step(now) {
-      const t = Math.min((now - start) / dur, 1);
-      const et = U.ease(t);
-      l.x = U.lerp(sx, tx, et);
-      l.y = U.lerp(sy, ty, et);
-      if (t < 1) requestAnimationFrame(step);
+    
+    // Click hint
+    if(!focusedIsland){
+      ctxS.font = '11px Inter';
+      ctxS.fillStyle = `rgba(251,191,36,${0.5+Math.sin(time*2)*0.3})`;
+      ctxS.textAlign = 'center';
+      ctxS.fillText('👆 Click an island to focus', WS/2, HS - 15);
     }
-    requestAnimationFrame(step);
   }
-
-  function reset() { resetLenses(); }
-
-  setTimeout(init, 200);
-  return { autoFocus, reset };
+  
+  function renderDecoded(){
+    if(!ctxD) return;
+    ctxD.clearRect(0,0,WD,HD);
+    ctxD.fillStyle = '#020510';
+    ctxD.fillRect(0,0,WD,HD);
+    
+    // Title
+    ctxD.font = 'bold 10px Inter';
+    ctxD.fillStyle = '#34d399';
+    ctxD.textAlign = 'center';
+    ctxD.fillText('Lipschitz-Decoded (Unscrambled Low-Res)', WD/2, 14);
+    ctxD.font = '8px Inter';
+    ctxD.fillStyle = '#64748b';
+    ctxD.fillText('High-res computed internally but never shown', WD/2, 26);
+    
+    for(const isl of ISLANDS){
+      const data = computedDecoded[isl.id];
+      if(!data) continue;
+      
+      const ix = isl.x * WD, iy = isl.y * HD;
+      const isFocused = focusedIsland && focusedIsland.id === isl.id;
+      const size = isl.r * Math.min(WD, HD) * 2.2;
+      
+      // Pixelation: unfocused = very pixelated, focused = clearer but still not full-res
+      const pixelation = isFocused ? 0.15 : 0.8;
+      
+      // Draw decoded data
+      drawPixelGrid(ctxD, data.pixels, data.N, ix, iy, size, 
+        isl.hue,
+        isFocused ? 0.95 : 0.4, 
+        pixelation);
+      
+      // Glow for focused
+      if(isFocused){
+        ctxD.beginPath();
+        ctxD.arc(ix, iy, size*0.7, 0, U.TAU);
+        ctxD.strokeStyle = `rgba(52,211,153,${0.4+Math.sin(time*3)*0.15})`;
+        ctxD.lineWidth = 2;
+        ctxD.setLineDash([4,3]);
+        ctxD.stroke();
+        ctxD.setLineDash([]);
+        
+        // Show "FOCUSED" badge
+        ctxD.font = 'bold 8px Inter';
+        ctxD.fillStyle = '#34d399';
+        ctxD.fillText('🔭 FOCUSED', ix, iy - size/2 - 8);
+      }
+      
+      // Label
+      ctxD.font = `${isFocused?'bold ':''}${isFocused?10:8}px Inter`;
+      ctxD.fillStyle = `hsla(${isl.hue},60%,70%,${isFocused?0.9:0.5})`;
+      ctxD.textAlign = 'center';
+      ctxD.fillText(isl.label, ix, iy + size/2 + 12);
+      
+      // Resolution indicator
+      ctxD.font = '7px JetBrains Mono';
+      ctxD.fillStyle = isFocused ? '#34d399' : '#64748b';
+      ctxD.fillText(`${data.N}×${data.N} (64×64 hidden)`, ix, iy + size/2 + 22);
+    }
+    
+    if(!focusedIsland){
+      ctxD.font = '11px Inter';
+      ctxD.fillStyle = `rgba(251,191,36,${0.5+Math.sin(time*2)*0.3})`;
+      ctxD.textAlign = 'center';
+      ctxD.fillText('👆 Click an island to focus', WD/2, HD - 15);
+    }
+  }
+  
+  function updateStats(){
+    const focused = focusedIsland ? focusedIsland.label : '—';
+    const zl = +document.getElementById('zoomLevel').value;
+    const ffn = +document.getElementById('ffnStr').value;
+    const el = document.getElementById('mainStats');
+    if(el) el.innerHTML = `
+      <div class="sc"><div class="l">FOCUSED</div><div class="v" style="color:#fbbf24">${focused}</div></div>
+      <div class="sc"><div class="l">ZOOM</div><div class="v" style="color:#818cf8">${zl}%</div></div>
+      <div class="sc"><div class="l">FFN STR</div><div class="v" style="color:#f472b6">${ffn}%</div></div>
+      <div class="sc"><div class="l">HIDDEN RES</div><div class="v" style="color:#34d399">64×64</div></div>
+      <div class="sc"><div class="l">SHOWN RES</div><div class="v" style="color:#64748b">${focusedIsland?computedLoRes[focusedIsland.id]?.N||'?':'—'}×</div></div>`;
+  }
+  
+  function clearFocus(){ focusedIsland = null; }
+  function toggleAnim(){ animating = !animating; }
+  
+  setTimeout(init, 50);
+  return {clearFocus, toggleAnim};
 })();
 
 // ================================================================
-// SECTION 4: LAYER DEPTH — PROGRESSIVE DEHOLOGRAPHISATION
+// SECTION 2: LAYER DEPTH — Progressive Deholographisation
 // ================================================================
 const LayerMod = (() => {
-  let ctx, W, H, c;
+  let ctxS, ctxD, WS, HS, WD, HD, cS, cD;
   let time = 0;
   let animTimer = null;
-  let rotY2 = 0, rotX2 = 0.35;
-
-  function init() {
-    ({c, ctx, W, H} = U.mkCanvas('cLayers', 530));
-    function tick() {
+  let focusedIsland = null;
+  
+  const layerIslands = [
+    {id:'code', label:'Code (Torus)', hue:330, iconKey:'Code'},
+    {id:'math', label:'Math (Ω-Space)', hue:240, iconKey:'Math'},
+    {id:'lang', label:'Language (Graph)', hue:160, iconKey:'Language'},
+    {id:'bio', label:'Biology (Tree)', hue:90, iconKey:'Biology'},
+  ];
+  
+  function init(){
+    ({c:cS, ctx:ctxS, W:WS, H:HS} = U.mkCanvas('cLayerScram', 430));
+    ({c:cD, ctx:ctxD, W:WD, H:HD} = U.mkCanvas('cLayerDec', 430));
+    
+    cS.addEventListener('click', handleClick);
+    cD.addEventListener('click', handleClick);
+    
+    function tick(){
       time += 0.016;
-      rotY2 += 0.004;
       render();
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   }
-
-  function render() {
-    if (!ctx) return;
+  
+  function handleClick(e){
+    const rect = e.target.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / rect.width * WS;
+    const my = (e.clientY - rect.top) / rect.height * HS;
+    
+    const panelW = WS / layerIslands.length;
+    const clickedIdx = Math.floor(mx / panelW);
+    if(clickedIdx >= 0 && clickedIdx < layerIslands.length){
+      const isl = layerIslands[clickedIdx];
+      if(focusedIsland && focusedIsland.id === isl.id){
+        focusedIsland = null;
+      } else {
+        focusedIsland = isl;
+      }
+    }
+  }
+  
+  function render(){
+    if(!ctxS || !ctxD) return;
     const depth = +document.getElementById('layerDepth').value / 10;
-    const focus = document.getElementById('layerFocus').value;
     document.getElementById('layerDepthV').textContent = depth.toFixed(1);
-
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#030618';
-    ctx.fillRect(0, 0, W, H);
-
+    
     // Phase info
     let phaseCol, phaseTxt;
-    if (depth < 0.5) { phaseCol = '#64748b'; phaseTxt = 'Embedding: Fully scrambled (jaggy)'; }
-    else if (depth <= 3) { phaseCol = '#60a5fa'; phaseTxt = `Layer ${depth.toFixed(1)}: Routing — deciding WHERE`; }
-    else if (depth <= 8) { phaseCol = '#c084fc'; phaseTxt = `Layer ${depth.toFixed(1)}: Resolving — sharpening topology`; }
-    else { phaseCol = '#34d399'; phaseTxt = `Layer ${depth.toFixed(1)}: Gluing — reassembling for output`; }
-
-    ctx.font = 'bold 12px Inter';
-    ctx.fillStyle = phaseCol;
-    ctx.textAlign = 'center';
-    ctx.fillText(phaseTxt, W / 2, 22);
-
-    const topoTypes = [
-      {id: 'code', label: 'Code (Torus T²)', hue: 330, iconKey: 'Code'},
-      {id: 'math', label: 'Math (Ω-Space)', hue: 240, iconKey: 'Math'},
-      {id: 'lang', label: 'Language (Graph)', hue: 160, iconKey: 'Language'},
-    ];
-
-    const panelW = W / 3;
-    const panelCY = H * 0.48;
-
-    for (let i = 0; i < topoTypes.length; i++) {
-      const topo = topoTypes[i];
+    if(depth < 0.5){ phaseCol='#64748b'; phaseTxt='Embedding: Fully scrambled'; }
+    else if(depth <= 3){ phaseCol='#60a5fa'; phaseTxt=`Layer ${depth.toFixed(1)}: Routing`; }
+    else if(depth <= 8){ phaseCol='#c084fc'; phaseTxt=`Layer ${depth.toFixed(1)}: Resolving`; }
+    else { phaseCol='#34d399'; phaseTxt=`Layer ${depth.toFixed(1)}: Gluing`; }
+    
+    // Clear both canvases
+    ctxS.clearRect(0,0,WS,HS);
+    ctxS.fillStyle='#020510';
+    ctxS.fillRect(0,0,WS,HS);
+    
+    ctxD.clearRect(0,0,WD,HD);
+    ctxD.fillStyle='#020510';
+    ctxD.fillRect(0,0,WD,HD);
+    
+    // Headers
+    ctxS.font='bold 10px Inter'; ctxS.fillStyle=phaseCol; ctxS.textAlign='center';
+    ctxS.fillText(phaseTxt + ' — Scrambled', WS/2, 14);
+    
+    ctxD.font='bold 10px Inter'; ctxD.fillStyle=phaseCol; ctxD.textAlign='center';
+    ctxD.fillText(phaseTxt + ' — Decoded', WD/2, 14);
+    
+    const panelW = WS / layerIslands.length;
+    
+    for(let i=0; i<layerIslands.length; i++){
+      const isl = layerIslands[i];
       const cx = panelW * (i + 0.5);
-      const cy = panelCY;
-      const isFocused = (focus === topo.id);
-      const scale2 = Math.min(panelW, H) * 0.2;
-
-      // Effective scramble and coverage
-      let effectiveScramble, coverage, waves;
-      if (isFocused) {
-        effectiveScramble = U.clamp(1.0 - depth / 11, 0, 1);
-        coverage = U.clamp(depth / 9, 0.08, 1.0);
-        waves = Math.max(2, Math.round(coverage * 64));
-      } else {
-        effectiveScramble = U.clamp(0.85 - depth / 25, 0.4, 0.9);
-        coverage = U.clamp(0.25 - depth / 40, 0.05, 0.25);
-        waves = Math.max(2, Math.round(coverage * 64));
-      }
-
-      // Resolution (pixelation): low at start, high when resolved
-      const resolution = U.clamp(coverage, 0.05, 1.0);
-
-      // Draw DCT-based icon with pixelation
-      if (HoloDCT.dctCache[topo.iconKey]) {
-        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[topo.iconKey], waves);
-        // Brighter base alpha so it's visible even on dark background
-        const baseAlpha = isFocused ? (0.4 + coverage * 0.6) : (0.25 + coverage * 0.4);
-        HoloDCT.drawIcon(ctx, pixels, cx, cy, scale2 * 2.2, topo.hue, baseAlpha, resolution);
-      }
-
-      // Overlay 3D wireframe when coverage is decent
-      if (coverage > 0.15) {
-        let data;
-        if (topo.id === 'code') {
-          const segs = Math.max(6, Math.round(coverage * 16));
-          const t2 = generateTorus(1.1, 0.45, segs, Math.round(segs * 0.7), time, effectiveScramble);
-          const edges = [];
-          for (let u = 0; u <= t2.uSegs; u++) for (let v = 0; v <= t2.vSegs; v++) {
-            const idx = u * (t2.vSegs + 1) + v;
-            if (v < t2.vSegs) edges.push([idx, idx + 1]);
-            if (u < t2.uSegs) edges.push([idx, idx + t2.vSegs + 1]);
-          }
-          data = {points: t2.points, edges};
-        } else if (topo.id === 'math') {
-          const pts = generateLoopSpace(1.3, time, effectiveScramble, Math.max(2, Math.round(coverage * 4)));
-          const edges = [];
-          for (let j = 1; j < pts.length; j++) if (pts[j].loop === pts[j - 1].loop) edges.push([j - 1, j]);
-          data = {points: pts, edges};
-        } else {
-          data = generateGraph(effectiveScramble, time);
-        }
-
-        if (data && data.points.length > 0) {
-          const projected = data.points.map(p =>
-            project3D(p.x, p.y, p.z, rotX2, rotY2 + topo.hue * 0.01, cx, cy, scale2 * 0.6)
-          );
-          const baseA = coverage * 0.7;
-          const sorted = data.edges.map(([a, b]) => ({
-            a, b, depth: ((projected[a]?.depth || 0) + (projected[b]?.depth || 0)) / 2
-          })).sort((a, b) => b.depth - a.depth);
-
-          for (const edge of sorted) {
-            const pa = projected[edge.a], pb = projected[edge.b];
-            if (!pa || !pb) continue;
-            const ea = baseA * ((pa.scale + pb.scale) / 2) * 0.8;
-            ctx.beginPath();
-            ctx.moveTo(pa.px, pa.py);
-            ctx.lineTo(pb.px, pb.py);
-            ctx.strokeStyle = `hsla(${topo.hue},55%,55%,${U.clamp(ea, 0, 0.85)})`;
-            ctx.lineWidth = 0.4 + coverage * 1.5;
-            ctx.stroke();
-          }
-
-          if (coverage > 0.4) {
-            const step3 = Math.max(1, Math.floor(projected.length / 25));
-            for (let j = 0; j < projected.length; j += step3) {
-              const p = projected[j];
-              if (!p) continue;
-              ctx.beginPath();
-              ctx.arc(p.px, p.py, 1 + coverage * 1.5 * p.scale, 0, U.TAU);
-              ctx.fillStyle = `hsla(${topo.hue},70%,65%,${coverage * 0.5 * p.scale})`;
-              ctx.fill();
-            }
-          }
+      const cy = HS * 0.5;
+      const isFocused = focusedIsland && focusedIsland.id === isl.id;
+      
+      const hiRes = IconEngine.hiResIcons[isl.iconKey];
+      if(!hiRes) continue;
+      
+      // Layer-dependent resolution and scramble
+      const layerProgress = U.clamp(depth / 11, 0, 1);
+      const effectiveRes = isFocused ? 
+        Math.max(6, Math.round(6 + layerProgress * 22)) :
+        Math.max(4, Math.round(4 + layerProgress * 8));
+      
+      const scrambleStr = isFocused ?
+        U.clamp(1.0 - layerProgress * 1.1, 0, 1) :
+        U.clamp(0.9 - layerProgress * 0.3, 0.5, 0.95);
+      
+      const decodeStr = isFocused ?
+        U.clamp(layerProgress * 1.1, 0, 1) :
+        U.clamp(layerProgress * 0.3, 0, 0.3);
+      
+      // Compute
+      const loRes = IconEngine.downsample(hiRes, effectiveRes);
+      const scrambled = IconEngine.ffnScramble(loRes, effectiveRes, scrambleStr, time);
+      const decoded = IconEngine.ffnUnscramble(scrambled, loRes, effectiveRes, decodeStr);
+      
+      const size = Math.min(panelW * 0.75, HS * 0.45);
+      const pixelation = isFocused ? U.clamp(1 - layerProgress, 0, 0.8) : 0.75;
+      
+      // Draw scrambled (left canvas)
+      drawPixelGrid(ctxS, scrambled, effectiveRes, cx, cy, size,
+        (isl.hue+180)%360, isFocused?0.85:0.4, pixelation);
+      
+      // Draw decoded (right canvas)
+      drawPixelGrid(ctxD, decoded, effectiveRes, cx, cy, size,
+        isl.hue, isFocused?0.9:0.35, pixelation);
+      
+      // Focus indicator
+      if(isFocused){
+        for(const ctx2 of [ctxS, ctxD]){
+          ctx2.beginPath();
+          ctx2.arc(cx, cy, size*0.6, 0, U.TAU);
+          ctx2.strokeStyle = `rgba(251,191,36,${0.4+Math.sin(time*3)*0.15})`;
+          ctx2.lineWidth = 2;
+          ctx2.setLineDash([4,3]);
+          ctx2.stroke();
+          ctx2.setLineDash([]);
         }
       }
-
-      // Lens indicator
-      if (isFocused) {
-        ctx.beginPath();
-        ctx.arc(cx, cy, scale2 * 1.8, 0, U.TAU);
-        ctx.strokeStyle = `rgba(129,140,248,${0.25 + Math.sin(time * 2) * 0.1})`;
-        ctx.lineWidth = 2;
-        ctx.setLineDash([5, 4]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.font = '9px Inter';
-        ctx.fillStyle = '#818cf8';
-        ctx.textAlign = 'center';
-        ctx.fillText('LENS FOCUSED', cx, cy - scale2 * 1.8 - 8);
+      
+      // Labels on both
+      for(const ctx2 of [ctxS, ctxD]){
+        ctx2.font = `${isFocused?'bold ':''}9px Inter`;
+        ctx2.fillStyle = `hsla(${isl.hue},60%,70%,${isFocused?0.9:0.5})`;
+        ctx2.textAlign = 'center';
+        ctx2.fillText(isl.label, cx, cy + size/2 + 14);
+        ctx2.font = '7px JetBrains Mono';
+        ctx2.fillStyle = '#64748b';
+        ctx2.fillText(`${effectiveRes}×${effectiveRes}`, cx, cy + size/2 + 24);
       }
-
-      // Labels
-      ctx.font = `bold ${10 + Math.round(coverage * 3)}px Inter`;
-      ctx.fillStyle = `hsla(${topo.hue},70%,75%,${0.4 + coverage * 0.6})`;
-      ctx.textAlign = 'center';
-      ctx.fillText(topo.label, cx, cy + scale2 * 2.4);
-
-      ctx.font = '9px JetBrains Mono';
-      ctx.fillStyle = effectiveScramble > 0.5 ? '#ef4444' : effectiveScramble > 0.2 ? '#fbbf24' : '#34d399';
-      ctx.fillText(`scramble: ${Math.round(effectiveScramble * 100)}%`, cx, cy + scale2 * 2.4 + 14);
-      ctx.fillStyle = coverage > 0.6 ? '#34d399' : coverage > 0.2 ? '#fbbf24' : '#94a3b8';
-      ctx.fillText(`clarity: ${Math.round(coverage * 100)}% | ${waves} waves`, cx, cy + scale2 * 2.4 + 26);
     }
-
-    // Progress bar
-    const pbW = W - 60, pbH = 8, pbX = 30, pbY = H - 35;
-    ctx.fillStyle = '#1a2040';
-    ctx.fillRect(pbX, pbY, pbW, pbH);
-    const progress = depth / 11;
-    const pbGrad = ctx.createLinearGradient(pbX, 0, pbX + pbW, 0);
-    pbGrad.addColorStop(0, '#60a5fa');
-    pbGrad.addColorStop(0.35, '#c084fc');
-    pbGrad.addColorStop(0.75, '#c084fc');
-    pbGrad.addColorStop(1, '#34d399');
-    ctx.fillStyle = pbGrad;
-    ctx.fillRect(pbX, pbY, pbW * progress, pbH);
-
-    // Phase markers
-    const phases = [{x: 0, label: 'Embed'}, {x: 0.27, label: 'Route'}, {x: 0.55, label: 'Resolve'}, {x: 0.82, label: 'Glue'}];
-    for (const ph of phases) {
-      const px = pbX + ph.x * pbW;
-      ctx.fillStyle = '#475569';
-      ctx.font = '8px Inter';
-      ctx.textAlign = 'center';
-      ctx.fillText(ph.label, px, pbY - 5);
-      ctx.fillRect(px, pbY - 2, 1, pbH + 4);
-    }
-
+    
+    // Click hint
+    ctxS.font='8px Inter'; ctxS.fillStyle='#fbbf24'; ctxS.textAlign='center';
+    ctxS.fillText('Click to focus a lens', WS/2, HS-8);
+    ctxD.font='8px Inter'; ctxD.fillStyle='#fbbf24'; ctxD.textAlign='center';
+    ctxD.fillText('Click to focus a lens', WD/2, HD-8);
+    
+    // Progress bar on decoded canvas
+    const pbW=WD-40, pbH=6, pbX=20, pbY=HS-25;
+    ctxD.fillStyle='#1a2040';
+    ctxD.fillRect(pbX,pbY,pbW,pbH);
+    const pbGrad=ctxD.createLinearGradient(pbX,0,pbX+pbW,0);
+    pbGrad.addColorStop(0,'#60a5fa');
+    pbGrad.addColorStop(0.4,'#c084fc');
+    pbGrad.addColorStop(1,'#34d399');
+    ctxD.fillStyle=pbGrad;
+    ctxD.fillRect(pbX,pbY,pbW*U.clamp(depth/11,0,1),pbH);
+    
     // Stats
-    document.getElementById('layerStats').innerHTML = `
-      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${depth.toFixed(1)}</div></div>
-      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${depth < 0.5 ? 'Embed' : depth <= 3 ? 'Route' : depth <= 8 ? 'Resolve' : 'Glue'}</div></div>
-      <div class="sc"><div class="l">FOCUS</div><div class="v" style="color:#f472b6">${focus}</div></div>
-      <div class="sc"><div class="l">DEHOLOGRAPH.</div><div class="v" style="color:#34d399">${Math.round(progress * 100)}%</div></div>`;
+    const el = document.getElementById('layerStats');
+    if(el) el.innerHTML = `
+      <div class="sc"><div class="l">LAYER</div><div class="v" style="color:${phaseCol}">${depth.toFixed(1)}</div></div>
+      <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${depth<0.5?'Embed':depth<=3?'Route':depth<=8?'Resolve':'Glue'}</div></div>
+      <div class="sc"><div class="l">FOCUSED</div><div class="v" style="color:#fbbf24">${focusedIsland?focusedIsland.label:'—'}</div></div>
+      <div class="sc"><div class="l">DEHOLOGRAPH.</div><div class="v" style="color:#34d399">${Math.round(U.clamp(depth/11,0,1)*100)}%</div></div>`;
   }
-
-  function animate() {
-    if (animTimer) return;
+  
+  function animate(){
+    if(animTimer) return;
     const slider = document.getElementById('layerDepth');
     slider.value = 0;
     const start = performance.now();
-    function step(now) {
-      const t = Math.min((now - start) / 6000, 1);
-      slider.value = Math.round(U.ease(t) * 110);
-      if (t < 1) animTimer = requestAnimationFrame(step);
+    function step(now){
+      const t = Math.min((now-start)/6000, 1);
+      slider.value = Math.round(U.ease(t)*110);
+      if(t<1) animTimer = requestAnimationFrame(step);
       else animTimer = null;
     }
     animTimer = requestAnimationFrame(step);
   }
-
-  function reset() {
-    if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
+  
+  function reset(){
+    if(animTimer){
+      cancelAnimationFrame(animTimer); animTimer = null;
+    }
     document.getElementById('layerDepth').value = 0;
+    focusedIsland = null;
   }
+  
+  setTimeout(init, 150);
+  return {animate, reset};
+})();
 
-  setTimeout(init, 250);
-  return { animate, reset };
+// ================================================================
+// SECTION 3: FOCUS BUDGET TRADEOFF — Conservation Law
+// ================================================================
+const TradeMod = (() => {
+  let ctxS, ctxD, WS, HS, WD, HD, cS, cD;
+  let time = 0;
+  let focusedIslands = new Set(); // multiple islands can be focused
+  
+  const tradeIslands = [
+    {id:'code', label:'Code', x:0.18, y:0.25, r:0.11, hue:330, iconKey:'Code'},
+    {id:'math', label:'Math', x:0.48, y:0.2, r:0.12, hue:240, iconKey:'Math'},
+    {id:'lang', label:'Language', x:0.78, y:0.28, r:0.1, hue:160, iconKey:'Language'},
+    {id:'bio', label:'Biology', x:0.22, y:0.65, r:0.09, hue:90, iconKey:'Biology'},
+    {id:'hist', label:'History', x:0.55, y:0.68, r:0.09, hue:30, iconKey:'History'},
+    {id:'music', label:'Music', x:0.85, y:0.62, r:0.08, hue:280, iconKey:'Music'},
+  ];
+  
+  function init(){
+    ({c:cS, ctx:ctxS, W:WS, H:HS} = U.mkCanvas('cTradeScram', 460));
+    ({c:cD, ctx:ctxD, W:WD, H:HD} = U.mkCanvas('cTradeDec', 460));
+    
+    cS.addEventListener('click', handleClick);
+    cD.addEventListener('click', handleClick);
+    
+    function tick(){
+      time += 0.016;
+      render();
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  
+  function handleClick(e){
+    const rect = e.target.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) / rect.width * WS;
+    const my = (e.clientY - rect.top) / rect.height * HS;
+    
+    let closest = null, closestDist = Infinity;
+    for(const isl of tradeIslands){
+      const ix = isl.x * WS, iy = isl.y * HS;
+      const d = U.dst(mx, my, ix, iy);
+      const hitR = isl.r * Math.min(WS, HS) * 1.5;
+      if(d < hitR && d < closestDist){
+        closest = isl;
+        closestDist = d;
+      }
+    }
+    
+    if(closest){
+      if(focusedIslands.has(closest.id)){
+        focusedIslands.delete(closest.id); // toggle off
+      } else {
+        focusedIslands.add(closest.id); // toggle on
+      }
+    }
+  }
+  
+  function render(){
+    if(!ctxS || !ctxD) return;
+    const budget = +document.getElementById('tradeBudget').value;
+    document.getElementById('tradeBudgetV').textContent = budget;
+    
+    // Compute allocations based on focus
+    const numFocused = focusedIslands.size || 0;
+    const allocations = {};
+    let totalAlloc = 0;
+    
+    for(const isl of tradeIslands){
+      const isFocused = focusedIslands.has(isl.id);
+      // Focused islands get more budget, unfocused get less
+      const rawAlloc = isFocused ? (budget / Math.max(1, numFocused)) : (numFocused > 0 ? budget * 0.05 : budget / tradeIslands.length);
+      allocations[isl.id] = rawAlloc;
+      totalAlloc += rawAlloc;
+    }
+    
+    // Normalize to budget
+    for(const isl of tradeIslands){
+      allocations[isl.id] = Math.max(4, Math.round(allocations[isl.id] / totalAlloc * budget));
+    }
+    
+    // Clear canvases
+    ctxS.clearRect(0,0,WS,HS);
+    ctxS.fillStyle='#020510';
+    ctxS.fillRect(0,0,WS,HS);
+    
+    ctxD.clearRect(0,0,WD,HD);
+    ctxD.fillStyle='#020510';
+    ctxD.fillRect(0,0,WD,HD);
+    
+    // Headers
+    ctxS.font='bold 10px Inter'; ctxS.fillStyle='#f472b6'; ctxS.textAlign='center';
+    ctxS.fillText('Scrambled — Budget-Dependent Resolution', WS/2, 14);
+    
+    ctxD.font='bold 10px Inter'; ctxD.fillStyle='#34d399'; ctxD.textAlign='center';
+    ctxD.fillText('Decoded — Budget-Dependent Resolution', WD/2, 14);
+    
+    for(const isl of tradeIslands){
+      const ix = isl.x * WS, iy = isl.y * HS;
+      const isFocused = focusedIslands.has(isl.id);
+      const tiles = allocations[isl.id];
+      const coverage = U.clamp(tiles / budget, 0, 1);
+      const size = isl.r * Math.min(WS, HS) * 2.2;
+      
+      // Compute resolution from allocation
+      const targetN = Math.max(4, Math.min(32, Math.round(4 + coverage * 28)));
+      
+      const hiRes = IconEngine.hiResIcons[isl.iconKey];
+      if(!hiRes) continue;
+      
+      // Downsample
+      const loRes = IconEngine.downsample(hiRes, targetN);
+      
+      // Scramble
+      const scrambled = IconEngine.ffnScramble(loRes, targetN, 0.75, time);
+      
+      // Decode
+      const decodeStr = isFocused ? 0.85 : 0.2;
+      const decoded = IconEngine.ffnUnscramble(scrambled, loRes, targetN, decodeStr);
+      
+      // Pixelation
+      const pixelation = isFocused ? 0.1 : 0.8;
+      
+      // Draw scrambled (left)
+      drawPixelGrid(ctxS, scrambled, targetN, ix, iy, size,
+        (isl.hue+180)%360, isFocused?0.85:0.4, pixelation);
+      
+      // Draw decoded (right)
+      drawPixelGrid(ctxD, decoded, targetN, ix, iy, size,
+        isl.hue, isFocused?0.9:0.35, pixelation);
+      
+      // Focus indicators
+      if(isFocused){
+        for(const ctx2 of [ctxS, ctxD]){
+          ctx2.beginPath();
+          ctx2.arc(ix, iy, size*0.65, 0, U.TAU);
+          ctx2.strokeStyle = `rgba(251,191,36,${0.4+Math.sin(time*3)*0.15})`;
+          ctx2.lineWidth = 2;
+          ctx2.setLineDash([4,3]);
+          ctx2.stroke();
+          ctx2.setLineDash([]);
+        }
+      }
+      
+      // Labels
+      for(const ctx2 of [ctxS, ctxD]){
+        ctx2.font = `${isFocused?'bold ':''}9px Inter`;
+        ctx2.fillStyle = `hsla(${isl.hue},60%,70%,${isFocused?0.9:0.5})`;
+        ctx2.textAlign = 'center';
+        ctx2.fillText(isl.label, ix, iy + size/2 + 12);
+        ctx2.font = '7px JetBrains Mono';
+        ctx2.fillStyle = tiles > 40 ? '#34d399' : tiles > 15 ? '#fbbf24' : '#ef4444';
+        ctx2.fillText(`${tiles}/${budget} tiles | ${targetN}×${targetN}`, ix, iy + size/2 + 22);
+      }
+    }
+    
+    // Click hints
+    const hintText = numFocused > 0 ? `${numFocused} focused — click to toggle` : '👆 Click islands to focus (toggle)';
+    ctxS.font='9px Inter'; ctxS.fillStyle='#fbbf24'; ctxS.textAlign='center';
+    ctxS.fillText(hintText, WS/2, HS-10);
+    ctxD.font='9px Inter'; ctxD.fillStyle='#fbbf24'; ctxD.textAlign='center';
+    ctxD.fillText(hintText, WD/2, HD-10);
+    
+    // Bar chart on decoded canvas (bottom area)
+    const barY = HD - 55, barH = 30;
+    const barW = (WD - 40) / tradeIslands.length;
+    ctxD.font='7px Inter'; ctxD.fillStyle='#64748b'; ctxD.textAlign='center';
+    ctxD.fillText('Budget Allocation (Conservation Law)', WD/2, barY - 5);
+    
+    for(let i=0; i<tradeIslands.length; i++){
+      const isl = tradeIslands[i];
+      const bx = 20 + i * barW;
+      const tiles = allocations[isl.id];
+      const h = (tiles / budget) * barH;
+      ctxD.fillStyle = '#0a0e28';
+      ctxD.fillRect(bx+2, barY, barW-4, barH);
+      const col = tiles > 40 ? '#34d399' : tiles > 15 ? '#fbbf24' : '#ef4444';
+      ctxD.fillStyle = col;
+      ctxD.fillRect(bx+2, barY + barH - h, barW-4, h);
+    }
+    
+    // Stats
+    const el = document.getElementById('tradeStats');
+    if(el) el.innerHTML = `
+      <div class="sc"><div class="l">FOCUSED</div><div class="v" style="color:#fbbf24">${numFocused}/${tradeIslands.length}</div></div>
+      <div class="sc"><div class="l">BUDGET</div><div class="v" style="color:#818cf8">${budget}</div></div>
+      <div class="sc"><div class="l">CONSERVATION</div><div class="v" style="color:#34d399">✓</div></div>
+      <div class="sc"><div class="l">HIDDEN RES</div><div class="v" style="color:#64748b">64×64</div></div>`;
+  }
+  
+  function clearAll(){ focusedIslands.clear(); }
+  
+  setTimeout(init, 200);
+  return {clearAll};
 })();
 
 // ================================================================
 // SCROLL FADE-IN
 // ================================================================
 const fadeObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
 }, {threshold: 0.1});
 document.querySelectorAll('.fade').forEach(el => fadeObs.observe(el));
 </script>
