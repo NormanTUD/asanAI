@@ -51,14 +51,14 @@
 				<td><input type='checkbox' id="save_math_history"></td>
 			</tr>
 		</table>
+		<button onclick="toggle_math_interactive_mode()" class="TRANSLATEME_toggle_editable_math_mode"></button>
+
 		<div class="typeset_me" id="math_history_slider"></div>
 		<div class="typeset_me" id="math_tab_code">
 			<div style="width: 100%; display: flex; justify-content: center; align-items: center; height: 100px;">
 				<div class="spinner"></div>
 			</div>
 		</div>
-
-		<button onclick="toggle_math_interactive_mode()" class="TRANSLATEME_toggle_editable_math_mode"></button>
 	</div>
 
 	<div id="weight_surfaces" class="tab" class="tab">
