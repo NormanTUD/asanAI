@@ -51,14 +51,14 @@ button:hover{transform:translateY(-1px);filter:brightness(1.15)}
 
 <h1>🔭 How a Transformer Sees the World</h1>
 <p class="hero-sub">
-An interactive visual guide to the idea that a language model's knowledge lives on a <strong>topological landscape</strong> — the embedding is the blurriest overview, each layer zooms into chosen regions, and hallucinations happen where the map runs out of detail.
+An interactive visual guide to the idea that a language model's knowledge lives on a <strong>topological landscape</strong> — the embedding is the blurriest overview, each layer zooms into chosen regions, and hallucinations happen where the map runs out of detail. Each island encodes a <strong>holographic topological icon</strong> via DCT — focusing attention sharpens it while blurring others.
 </p>
 
 <div class="toc">
-<strong style="color:var(--accent2)">📑 Sections</strong>
+<strong style="color:var(--accent2)">📋 Sections</strong>
 <a href="#s1">1. The Blurry World Map — Embedding as Lowest Resolution</a>
 <a href="#s2">2. Zooming In — Layers as Progressive Resolution</a>
-<a href="#s3">3. Multiple Islands — Parallel Activation of Knowledge Regions</a>
+<a href="#s3">3. Multiple Islands — Parallel Activation with Holographic Icons</a>
 <a href="#s4">4. Parallel Transport — Moving Information Between Islands</a>
 <a href="#s5">5. Hallucinations — Where the Map Lies</a>
 <a href="#s6">6. The Full Pipeline — From Blur to Clarity</a>
@@ -74,7 +74,7 @@ An interactive visual guide to the idea that a language model's knowledge lives 
 </div>
 <div class="ctrl">
   <label>Resolution (Layer): <input type="range" id="mapLayer" min="0" max="100" value="0"><span id="mapLayerV">0</span></label>
-  <button class="ba" onclick="MapMod.reset()">↺ Reset</button>
+  <button class="ba" onclick="MapMod.reset()">⟲ Reset</button>
   <button class="bp" onclick="MapMod.autoDrill()">▶ Auto Zoom</button>
 </div>
 <p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Click any island</strong> to focus attention on it. Click again to zoom deeper. The focused area sharpens while everything else stays blurry — that's the resolution–breadth tradeoff.</p>
@@ -91,7 +91,7 @@ An interactive visual guide to the idea that a language model's knowledge lives 
   <label>Layer Depth: <input type="range" id="zoomDepth" min="0" max="110" value="0"><span id="zoomDepthV">0.0</span></label>
   <label><input type="checkbox" id="zoomGrid" checked> Show Grid</label>
   <button class="ba" onclick="ZoomMod.animate()">▶ Animate Layers</button>
-  <button class="bs" onclick="ZoomMod.reset()">↺ Reset</button>
+  <button class="bs" onclick="ZoomMod.reset()">⟲ Reset</button>
 </div>
 <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div> Routing (early)</div>
@@ -104,17 +104,17 @@ An interactive visual guide to the idea that a language model's knowledge lives 
 </div>
 
 <!-- ===== SECTION 3 ===== -->
-<h2 id="s3">3. Multiple Islands — Parallel Activation</h2>
+<h2 id="s3">3. Multiple Islands — Parallel Activation with Holographic Icons</h2>
 <div class="card fade">
-<p>When you ask a model to "write a Python function that computes Fibonacci numbers," it needs <span class="hl">multiple islands active simultaneously</span>: programming, mathematics, and language. Each gets zoomed into at its own resolution. The programming island is sharp, the math island is moderately detailed, and the biology island stays a distant blur.</p>
-<div class="met">Attention heads act as separate lenses — each one focuses on a different region. Where lenses overlap, resolution compounds. Where no lens looks, the landscape stays pixelated. The fixed dimension d limits how many islands can be sharp at once.</div>
-<canvas id="cIslands" height="460"></canvas>
+<p>When you ask a model to "write a Python function that computes Fibonacci numbers," it needs <span class="hl">multiple islands active simultaneously</span>: programming, mathematics, and language. Each island encodes a <strong>topological icon</strong> — a torus for programming, a loop space for math, a spiral for history — decomposed via 2D DCT just like a hologram. Focusing lenses on an island adds more frequency tiles, sharpening its icon while the global budget forces others to blur.</p>
+<div class="met">Attention heads act as separate lenses — each one focuses on a different region. Where lenses overlap, resolution compounds. Where no lens looks, the landscape stays pixelated. The fixed dimension d limits how many islands can be sharp at once. Each icon is holographically encoded: every DCT tile contains the whole image, just blurrier — exactly like a real hologram.</div>
+<canvas id="cIslands" height="520"></canvas>
 <div class="ctrl">
   <label>Active Lenses: <select id="islandHeads"><option value="1">1 lens</option><option value="2">2 lenses</option><option value="3" selected>3 lenses</option><option value="4">4 lenses</option></select></label>
   <label>Lens Width: <input type="range" id="islandWidth" min="10" max="100" value="35"><span id="islandWidthV">Narrow</span></label>
   <label>Budget: <input type="range" id="islandBudget" min="10" max="100" value="70"><span id="islandBudgetV">70</span></label>
 </div>
-<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Drag the colored circles</strong> to reposition attention lenses. Notice: making one area sharper forces others to blur — that's the finite-dimension tradeoff.</p>
+<p style="text-align:center;font-size:.82rem;color:var(--dim)"><strong>Drag the colored circles</strong> to reposition attention lenses. Notice: making one area sharper forces others to blur — that's the finite-dimension tradeoff. Watch the topological icons sharpen and pixelate!</p>
 <div class="sg" id="islandStats"></div>
 </div>
 
@@ -122,13 +122,13 @@ An interactive visual guide to the idea that a language model's knowledge lives 
 <h2 id="s4">4. Parallel Transport — Moving Information Between Islands</h2>
 <div class="card fade">
 <p>The magic happens when information from one island <span class="hl">flows to another</span>. "Parallel transport" in the model means that patterns learned in one region (say, the structure of a for-loop) can be carried over to help resolve another region (say, mathematical recursion). The residual stream is the highway connecting all islands.</p>
-<div class="met">Each layer's residual connection h^(ℓ+1) = h^(ℓ) + Δ^(ℓ) is a communication channel. The attention sub-layer decides WHICH information to transport between islands. The feed-forward sub-layer decides HOW to use it locally. Together they let the model "virtually zoom further" by borrowing resolution from related regions.</div>
+<div class="met">Each layer's residual connection h^(ℓ+1) = h^(ℓ) + δ^(ℓ) is a communication channel. The attention sub-layer decides WHICH information to transport between islands. The feed-forward sub-layer decides HOW to use it locally. Together they let the model "virtually zoom further" by borrowing resolution from related regions.</div>
 <canvas id="cTransport" height="440"></canvas>
 <div class="ctrl">
   <label>Transport Strength: <input type="range" id="transportStr" min="0" max="100" value="50"><span id="transportStrV">50%</span></label>
   <label>Layer: <input type="range" id="transportLayer" min="0" max="100" value="30"><span id="transportLayerV">3.0</span></label>
   <button class="bp" onclick="TransMod.animate()">▶ Animate Flow</button>
-  <button class="bs" onclick="TransMod.reset()">↺ Reset</button>
+  <button class="bs" onclick="TransMod.reset()">⟲ Reset</button>
 </div>
 <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:#818cf8"></div> Math Island</div>
@@ -164,7 +164,7 @@ An interactive visual guide to the idea that a language model's knowledge lives 
   <label>Layer: <input type="range" id="pipeLayer" min="0" max="110" value="0"><span id="pipeLayerV">0.0</span></label>
   <label><input type="checkbox" id="pipeGrid" checked> Grid</label>
   <button class="bp" onclick="PipeMod.animate()">▶ Full Pipeline</button>
-  <button class="bs" onclick="PipeMod.reset()">↺ Reset</button>
+  <button class="bs" onclick="PipeMod.reset()">⟲ Reset</button>
 </div>
 <div class="sg" id="pipeStats"></div>
 </div>
@@ -172,6 +172,7 @@ An interactive visual guide to the idea that a language model's knowledge lives 
 <div style="text-align:center;padding:30px 0;color:#475569;font-size:.82rem">
 <p>Interactive visualization for <em>"Transformer Layers as Fibre Bundle Morphisms"</em></p>
 <p>The embedding is the blurriest view. Each layer zooms in. Multiple regions activate in parallel. Hallucinations live at the edges.</p>
+<p>Topological icons are holographically encoded via 2D DCT — every tile contains the whole shape, just blurrier.</p>
 </div>
 </div>
 
@@ -208,19 +209,226 @@ const U = (() => {
 })();
 
 // ================================================================
+// HOLOGRAPHIC DCT ENGINE — 2D DCT for topological icons
+// ================================================================
+const HoloDCT = (() => {
+  const N = 16; // icon resolution
+
+  // Define 16x16 topological icons as binary images
+  // Each is a flat array of N*N values (0 or 1)
+  function makeIcons() {
+    const icons = {};
+
+    // TORUS (donut cross-section) for Programming
+    icons.Code = new Float64Array(N*N);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const cx=7.5,cy=7.5,dx=x-cx,dy=y-cy;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      // Outer ring
+      if(d>=4.5 && d<=7.2) icons.Code[y*N+x]=1;
+      // Inner hole highlight
+      if(d>=2.0 && d<=3.8 && dy<1) icons.Code[y*N+x]=0.7;
+      // Top highlight for 3D effect
+      if(d>=4.5 && d<=7.2 && dy<-1) icons.Code[y*N+x]=0.5;
+      // Hole
+      if(d<2.5) icons.Code[y*N+x]=0;
+    }
+
+    // SPIRAL for History
+    icons.History = new Float64Array(N*N);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const cx=7.5,cy=7.5,dx=x-cx,dy=y-cy;
+      const angle=Math.atan2(dy,dx);
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      // Archimedean spiral: r = a + b*theta
+      for(let w=-1;w<=3;w++){
+        const targetR = 1.0 + (angle+Math.PI+w*2*Math.PI)*0.7;
+        if(Math.abs(dist-targetR)<0.8 && dist<7.5 && dist>0.5)
+          icons.History[y*N+x]=Math.max(icons.History[y*N+x], 1-Math.abs(dist-targetR)/0.8);
+      }
+    }
+
+    // LOOP SPACE (Ω figure-eight / based loop) for Math
+    icons.Math = new Float64Array(N*N);
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const cx1=5,cy1=7,cx2=10,cy2=7;
+      const d1=Math.sqrt((x-cx1)**2+(y-cy1)**2);
+      const d2=Math.sqrt((x-cx2)**2+(y-cy2)**2);
+      // Two loops
+      if(Math.abs(d1-3.5)<1.0) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d1-3.5)/1.0);
+      if(Math.abs(d2-3.5)<1.0) icons.Math[y*N+x]=Math.max(icons.Math[y*N+x],1-Math.abs(d2-3.5)/1.0);
+      // Basepoint dot at intersection
+      if(Math.sqrt((x-7.5)**2+(y-7)**2)<1.2) icons.Math[y*N+x]=1;
+      // Ω label area at top
+      if(y<3 && x>=6 && x<=9) icons.Math[y*N+x]=0.4;
+    }
+
+    // BRANCHING TREE for Biology
+    icons.Biology = new Float64Array(N*N);
+    // Trunk
+    for(let y=10;y<16;y++) for(let x=7;x<=8;x++) icons.Biology[y*N+x]=1;
+    // Main branches
+    for(let i=0;i<5;i++){
+      const bx=7.5+Math.cos(0.8)*i*1.2, by=10-i*1.2;
+      const bx2=7.5-Math.cos(0.8)*i*1.2;
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        if(Math.sqrt((x-bx)**2+(y-by)**2)<0.9) icons.Biology[y*N+x]=1;
+        if(Math.sqrt((x-bx2)**2+(y-by)**2)<0.9) icons.Biology[y*N+x]=1;
+      }
+    }
+    // Canopy blobs
+    const canopy=[[3,2],[5,1],[7,0],[9,1],[11,2],[4,4],[10,4],[7,3]];
+    for(const[cx,cy] of canopy){
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const d=Math.sqrt((x-cx)**2+(y-cy)**2);
+        if(d<2) icons.Biology[y*N+x]=Math.max(icons.Biology[y*N+x],1-d/2);
+      }
+    }
+
+    // STANDING WAVE for Music
+    icons.Music = new Float64Array(N*N);
+    for(let x=0;x<N;x++){
+      // Fundamental
+      const y1=7.5+5*Math.sin(x/N*2*Math.PI);
+      // Overtone
+      const y2=7.5+3*Math.sin(x/N*4*Math.PI);
+      // Third harmonic
+      const y3=7.5+1.5*Math.sin(x/N*6*Math.PI);
+      for(let y=0;y<N;y++){
+        if(Math.abs(y-y1)<1.2) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],1-Math.abs(y-y1)/1.2);
+        if(Math.abs(y-y2)<0.9) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],0.7*(1-Math.abs(y-y2)/0.9));
+        if(Math.abs(y-y3)<0.7) icons.Music[y*N+x]=Math.max(icons.Music[y*N+x],0.4*(1-Math.abs(y-y3)/0.7));
+      }
+    }
+
+    // GRAPH/NETWORK for Language
+    icons.Language = new Float64Array(N*N);
+    const lnodes=[[4,3],[11,2],[2,8],[8,7],[13,9],[6,13],[10,13]];
+    // Edges
+    const ledges=[[0,1],[0,2],[0,3],[1,3],[1,4],[2,5],[3,4],[3,5],[3,6],[4,6],[5,6]];
+    for(const[a,b] of ledges){
+      const[ax,ay]=lnodes[a],[bx,by]=lnodes[b];
+      for(let t=0;t<=1;t+=0.02){
+        const px=ax+(bx-ax)*t, py=ay+(by-ay)*t;
+        const ix=Math.round(px),iy=Math.round(py);
+        if(ix>=0&&ix<N&&iy>=0&&iy<N) icons.Language[iy*N+ix]=Math.max(icons.Language[iy*N+ix],0.6);
+      }
+    }
+    for(const[cx,cy] of lnodes){
+      for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        const d=Math.sqrt((x-cx)**2+(y-cy)**2);
+        if(d<1.5) icons.Language[y*N+x]=Math.max(icons.Language[y*N+x],1-d/1.5);
+      }
+    }
+
+    return icons;
+  }
+
+  // 2D DCT-II (forward)
+  function dct2(img) {
+    const out = new Float64Array(N*N);
+    for(let u=0;u<N;u++) for(let v=0;v<N;v++){
+      let sum=0;
+      const cu = u===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
+      const cv = v===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
+      for(let x=0;x<N;x++) for(let y=0;y<N;y++){
+        sum += img[y*N+x]
+          * Math.cos((2*x+1)*u*Math.PI/(2*N))
+          * Math.cos((2*y+1)*v*Math.PI/(2*N));
+      }
+      out[v*N+u] = cu*cv*sum;
+    }
+    return out;
+  }
+
+  // 2D IDCT-II (inverse)
+  function idct2(coeff) {
+    const out = new Float64Array(N*N);
+    for(let x=0;x<N;x++) for(let y=0;y<N;y++){
+      let sum=0;
+      for(let u=0;u<N;u++) for(let v=0;v<N;v++){
+        const cu = u===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
+        const cv = v===0 ? Math.sqrt(1/N) : Math.sqrt(2/N);
+        sum += cu*cv*coeff[v*N+u]
+          * Math.cos((2*x+1)*u*Math.PI/(2*N))
+          * Math.cos((2*y+1)*v*Math.PI/(2*N));
+      }
+      out[y*N+x] = sum;
+    }
+    return out;
+  }
+
+  // Zigzag order for progressive frequency inclusion
+  function zigzagOrder(n) {
+    const order = [];
+    for(let s=0;s<2*n-1;s++){
+      if(s%2===0){
+        for(let i=Math.min(s,n-1);i>=Math.max(0,s-n+1);i--) order.push([i,s-i]);
+      } else {
+        for(let i=Math.max(0,s-n+1);i<=Math.min(s,n-1);i++) order.push([i,s-i]);
+      }
+    }
+    return order;
+  }
+
+  // Reconstruct image using only first `k` zigzag coefficients out of N*N
+  function reconstruct(dctCoeffs, k) {
+    const zz = zigzagOrder(N);
+    const masked = new Float64Array(N*N);
+    const kk = Math.min(Math.max(0, Math.round(k)), N*N);
+    for(let i=0; i<kk && i<zz.length; i++){
+      const [u,v] = zz[i];
+      masked[v*N+u] = dctCoeffs[v*N+u];
+    }
+    return idct2(masked);
+  }
+
+  // Draw a reconstructed icon onto a canvas context at position (cx,cy) with given size
+  function drawIcon(ctx, pixels, cx, cy, size, hue, alpha) {
+    const pxSize = size / N;
+    // Find min/max for normalization
+    let mn = Infinity, mx = -Infinity;
+    for(let i=0;i<N*N;i++){
+      if(pixels[i]<mn) mn=pixels[i];
+      if(pixels[i]>mx) mx=pixels[i];
+    }
+    const range = mx-mn || 1;
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+      const val = (pixels[y*N+x]-mn)/range;
+      if(val < 0.05) continue;
+      const l = 15 + val*55;
+      const s = 50 + val*20;
+      const a = val * alpha;
+      ctx.fillStyle = `hsla(${hue},${s}%,${l}%,${a})`;
+      ctx.fillRect(cx - size/2 + x*pxSize, cy - size/2 + y*pxSize, pxSize+0.5, pxSize+0.5);
+    }
+  }
+
+  const icons = makeIcons();
+  const dctCache = {};
+  for(const [name, img] of Object.entries(icons)){
+    dctCache[name] = dct2(img);
+  }
+
+  return { N, icons, dctCache, reconstruct, drawIcon, zigzagOrder };
+})();
+
+// ================================================================
 // ISLAND DATA — shared knowledge regions
 // ================================================================
 const ISLANDS = [
-  {id:'math', label:'Mathematics', x:.18, y:.35, r:.13, hue:240, emoji:'🔢'},
-  {id:'code', label:'Programming', x:.5, y:.25, r:.14, hue:330, emoji:'💻'},
-  {id:'lang', label:'Language', x:.78, y:.4, r:.12, hue:160, emoji:'📝'},
-  {id:'bio',  label:'Biology', x:.3, y:.72, r:.11, hue:90, emoji:'🧬'},
-  {id:'hist', label:'History', x:.65, y:.7, r:.1, hue:30, emoji:'📜'},
-  {id:'music',label:'Music', x:.85, y:.72, r:.08, hue:280, emoji:'🎵'},
+  {id:'math', label:'Mathematics', shortLabel:'Math', x:.18, y:.35, r:.13, hue:240, emoji:'🔢', iconKey:'Math'},
+  {id:'code', label:'Programming', shortLabel:'Code', x:.5, y:.25, r:.14, hue:330, emoji:'💻', iconKey:'Code'},
+  {id:'lang', label:'Language', shortLabel:'Language', x:.78, y:.4, r:.12, hue:160, emoji:'📝', iconKey:'Language'},
+  {id:'bio',  label:'Biology', shortLabel:'Biology', x:.3, y:.72, r:.11, hue:90, emoji:'🧬', iconKey:'Biology'},
+  {id:'hist', label:'History', shortLabel:'History', x:.65, y:.7, r:.1, hue:30, emoji:'📚', iconKey:'History'},
+  {id:'music',label:'Music', shortLabel:'Music', x:.85, y:.72, r:.08, hue:280, emoji:'🎵', iconKey:'Music'},
 ];
 
+// ================================================================
+// SHARED: Draw island base with holographic icons
+// ================================================================
 function drawIslandBase(ctx, W, H, islands, resolution, focusPoints) {
-  // Draw each island as a gaussian blob
   const imgData = ctx.createImageData(W, H);
   const d = imgData.data;
   for (let py = 0; py < H; py++) {
@@ -232,7 +440,6 @@ function drawIslandBase(ctx, W, H, islands, resolution, focusPoints) {
         const val = Math.exp(-dist*dist/(2*isl.r*isl.r));
         if (val > maxVal) { maxVal = val; bestHue = isl.hue; }
       }
-      // Focus sharpening
       let focusMul = 0;
       if (focusPoints) {
         for (const fp of focusPoints) {
@@ -243,7 +450,6 @@ function drawIslandBase(ctx, W, H, islands, resolution, focusPoints) {
       const clarity = U.clamp(0.15 + resolution*0.85 + focusMul*0.5, 0, 1);
       const bright = maxVal * clarity;
       const h = bestHue/360;
-      // HSL to RGB approximation
       const s = 0.6, l = 0.08 + bright*0.45;
       const c2 = (1-Math.abs(2*l-1))*s;
       const x2 = c2*(1-Math.abs((h*6)%2-1));
@@ -260,6 +466,27 @@ function drawIslandBase(ctx, W, H, islands, resolution, focusPoints) {
     }
   }
   ctx.putImageData(imgData, 0, 0);
+}
+
+// Helper: compute how many DCT tiles an island gets based on focus/lenses
+function computeIslandTiles(island, lenses, budget, totalBudgetTiles) {
+  const N = HoloDCT.N;
+  const maxTiles = N * N; // 256 total possible
+  // We use 64 as the practical max for visible quality
+  const PRACTICAL_MAX = 64;
+  let coverage = 0;
+  if(lenses && lenses.length > 0) {
+    for(const l of lenses) {
+      const lnx = l.x / (l.W || 1), lny = l.y / (l.H || 1);
+      const d = U.dst(island.x, island.y, lnx, lny);
+      const lensR = (l.r / Math.min(l.W||400, l.H||400)) || 0.15;
+      coverage = Math.max(coverage, Math.exp(-d*d/(2*lensR*lensR)));
+    }
+  }
+  // Base tiles (always at least 2 for recognizability)
+  const baseTiles = 2;
+  const extraTiles = Math.round(coverage * budget * (PRACTICAL_MAX - baseTiles));
+  return Math.min(PRACTICAL_MAX, baseTiles + extraTiles);
 }
 
 // ================================================================
@@ -326,7 +553,6 @@ const MapMod = (() => {
         ctx.drawImage(hiC, 0, 0, W, H);
         ctx.globalAlpha = 1;
         ctx.restore();
-        // Ring
         const pulse = 0.6+0.4*Math.sin((performance.now()-fp.time)/300);
         ctx.beginPath();
         ctx.arc(fp.x*W, fp.y*H, fp.r*Math.min(W,H), 0, U.TAU);
@@ -339,15 +565,30 @@ const MapMod = (() => {
       }
     }
 
-    // Island labels
+    // Draw holographic DCT icons on each island
     for (const isl of ISLANDS) {
       const ix = isl.x*W, iy = isl.y*H;
-      ctx.font = '20px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(isl.emoji, ix, iy-8);
+      // Compute tiles based on focus proximity
+      let focusCov = 0.05 + res * 0.3; // base from layer depth
+      for(const fp of focusPoints) {
+        const fd = U.dst(isl.x, isl.y, fp.x, fp.y);
+        focusCov = Math.max(focusCov, Math.exp(-fd*fd/(2*0.12*0.12)) * fp.strength);
+      }
+      const tiles = Math.max(2, Math.min(64, Math.round(focusCov * 60)));
+      const iconSize = isl.r * Math.min(W,H) * 1.6;
+      const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[isl.iconKey], tiles);
+      HoloDCT.drawIcon(ctx, pixels, ix, iy, iconSize, isl.hue, 0.7 + focusCov*0.3);
+
+      // Label
       ctx.font = 'bold 11px Inter';
       ctx.fillStyle = `hsla(${isl.hue},70%,75%,${0.4+res*0.6})`;
-      ctx.fillText(isl.label, ix, iy+16);
+      ctx.textAlign = 'center';
+      ctx.fillText(isl.label, ix, iy + iconSize/2 + 14);
+
+      // Tile count indicator
+      ctx.font = '8px JetBrains Mono';
+      ctx.fillStyle = `hsla(${isl.hue},50%,65%,0.6)`;
+      ctx.fillText(`${tiles}/64 tiles`, ix, iy + iconSize/2 + 24);
     }
 
     // Phase label
@@ -386,7 +627,7 @@ const MapMod = (() => {
     let step=0;
     function next(){
       if(step>=targets.length){autoTimer=null;return}
-            const t = targets[step];
+      const t = targets[step];
       let found = false;
       for (const fp of focusPoints) {
         if (U.dst(t.x, t.y, fp.x, fp.y) < 0.15) {
@@ -397,7 +638,6 @@ const MapMod = (() => {
       }
       if (!found) focusPoints.push({x:t.x,y:t.y,strength:0.4,r:0.18,time:performance.now()});
       step++;
-      // Also advance the layer slider
       document.getElementById('mapLayer').value = Math.min(100, step * 35);
       render();
       autoTimer = setTimeout(next, t.delay);
@@ -416,13 +656,12 @@ const ZoomMod = (() => {
   let ctx, W, H, c;
   let animTimer = null;
 
-  // Knowledge regions in normalized coords
   const regions = [
-    {x:.2,y:.3,r:.12,label:'Math',hue:240,emoji:'🔢'},
-    {x:.5,y:.25,r:.13,label:'Code',hue:330,emoji:'💻'},
-    {x:.8,y:.35,r:.11,label:'Language',hue:160,emoji:'📝'},
-    {x:.35,y:.72,r:.1,label:'Biology',hue:90,emoji:'🧬'},
-    {x:.7,y:.7,r:.09,label:'History',hue:30,emoji:'📜'},
+    {x:.2,y:.3,r:.12,label:'Math',hue:240,emoji:'🔢',iconKey:'Math'},
+    {x:.5,y:.25,r:.13,label:'Code',hue:330,emoji:'💻',iconKey:'Code'},
+    {x:.8,y:.35,r:.11,label:'Language',hue:160,emoji:'📝',iconKey:'Language'},
+    {x:.35,y:.72,r:.1,label:'Biology',hue:90,emoji:'🧬',iconKey:'Biology'},
+    {x:.7,y:.7,r:.09,label:'History',hue:30,emoji:'📚',iconKey:'History'},
   ];
 
   function init() {
@@ -442,59 +681,46 @@ const ZoomMod = (() => {
     ctx.fillStyle = '#030618';
     ctx.fillRect(0,0,W,H);
 
-    // Compute phase
     const routing = U.clamp(1 - depth/4, 0, 1);
     const resolving = U.clamp((depth-2)/5, 0, 1);
     const gluing = U.clamp((depth-8)/3, 0, 1);
     const deform = depth===0?0:(depth<=3?depth*0.08:(depth<=8?0.24+(depth-3)*0.04:0.44-(depth-8)*0.12));
 
-    // Warp function
     function warp(x, y) {
       if(depth < 0.1) return [x, y];
       const nx = x/W*2-1, ny = y/H*2-1;
       let wx = nx, wy = ny;
-
-      // Routing: global rotation
       if(routing > 0) {
         const d = Math.hypot(nx, ny);
         const a = deform * routing * Math.exp(-d*d/0.8) * 1.8;
         const cs = Math.cos(a), sn = Math.sin(a);
         wx = nx*cs - ny*sn; wy = nx*sn + ny*cs;
       }
-
-      // Resolving: expand around knowledge regions
       if(resolving > 0) {
         for(const rg of regions) {
           const rnx = rg.x*2-1, rny = rg.y*2-1;
           const dx = wx - rnx, dy = wy - rny;
           const d = Math.hypot(dx, dy);
           const inf = deform * resolving * Math.exp(-d*d/0.4) * 0.35;
-          wx += dx * inf;
-          wy += dy * inf;
+          wx += dx * inf; wy += dy * inf;
         }
       }
-
-      // Gluing: morph back
       if(gluing > 0) {
         wx = U.lerp(wx, nx, gluing * 0.7);
         wy = U.lerp(wy, ny, gluing * 0.7);
       }
-
       return [((wx+1)/2)*W, ((wy+1)/2)*H];
     }
 
     // Draw grid
     if(showGrid) {
-      const step = 28;
-      // Color grid lines by strain
-      const sub = step/3;
+      const step = 28, sub = step/3;
       for(let gy=0; gy<=H; gy+=step) {
         ctx.beginPath();
         for(let gx=0; gx<=W; gx+=sub) {
           const [wx,wy] = warp(gx, gy);
           gx===0 ? ctx.moveTo(wx,wy) : ctx.lineTo(wx,wy);
         }
-        // Compute local strain for color
         const midX = W/2;
         const [w1x] = warp(midX, gy);
         const [w2x] = warp(midX+1, gy);
@@ -502,8 +728,7 @@ const ZoomMod = (() => {
         if(stretch > 1.2) ctx.strokeStyle = `rgba(239,68,68,${Math.min(0.3, (stretch-1)*0.3)})`;
         else if(stretch < 0.8) ctx.strokeStyle = `rgba(59,130,246,${Math.min(0.3, (1-stretch)*0.5)})`;
         else ctx.strokeStyle = 'rgba(100,116,139,0.08)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
+        ctx.lineWidth = 0.5; ctx.stroke();
       }
       for(let gx=0; gx<=W; gx+=step) {
         ctx.beginPath();
@@ -512,15 +737,13 @@ const ZoomMod = (() => {
           gy===0 ? ctx.moveTo(wx,wy) : ctx.lineTo(wx,wy);
         }
         ctx.strokeStyle = 'rgba(100,116,139,0.06)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
+        ctx.lineWidth = 0.5; ctx.stroke();
       }
     }
 
-    // Draw knowledge regions
+    // Draw knowledge regions with holographic icons
     for(const rg of regions) {
       const [wx,wy] = warp(rg.x*W, rg.y*H);
-      // Compute local scale
       const [wx2] = warp(rg.x*W+10, rg.y*H);
       const localScale = Math.abs(wx2-wx)/10;
       const visualR = rg.r * Math.min(W,H) * localScale;
@@ -529,22 +752,28 @@ const ZoomMod = (() => {
       grad.addColorStop(0, `hsla(${rg.hue},60%,50%,${0.15+resolving*0.15})`);
       grad.addColorStop(1, `hsla(${rg.hue},60%,50%,0)`);
       ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(wx,wy,visualR,0,U.TAU);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(wx,wy,visualR,0,U.TAU); ctx.fill();
 
-      ctx.beginPath();
-      ctx.arc(wx,wy,visualR*0.8,0,U.TAU);
+      // Holographic icon — tiles scale with depth
+      const tiles = Math.max(2, Math.min(64, Math.round((0.05 + depth/11 * 0.95) * 50)));
+      const iconSize = visualR * 1.4;
+      if(rg.iconKey && HoloDCT.dctCache[rg.iconKey]) {
+        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[rg.iconKey], tiles);
+        HoloDCT.drawIcon(ctx, pixels, wx, wy, iconSize, rg.hue, 0.5 + depth/11*0.5);
+      }
+
+      ctx.beginPath(); ctx.arc(wx,wy,visualR*0.8,0,U.TAU);
       ctx.strokeStyle = `hsla(${rg.hue},60%,60%,${0.15+resolving*0.2})`;
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      ctx.lineWidth = 1; ctx.stroke();
 
-      ctx.font = '16px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(rg.emoji, wx, wy-4);
       ctx.font = `bold ${Math.max(8,Math.round(10*localScale))}px Inter`;
       ctx.fillStyle = `hsla(${rg.hue},70%,75%,${0.4+depth/11*0.6})`;
-      ctx.fillText(rg.label, wx, wy+14);
+      ctx.textAlign = 'center';
+      ctx.fillText(rg.label, wx, wy + iconSize/2 + 12);
+
+      ctx.font = '7px JetBrains Mono';
+      ctx.fillStyle = `hsla(${rg.hue},40%,60%,0.5)`;
+      ctx.fillText(`${tiles} tiles`, wx, wy + iconSize/2 + 21);
     }
 
     // Phase label
@@ -568,8 +797,7 @@ const ZoomMod = (() => {
   function animate() {
     if(animTimer) return;
     const slider = document.getElementById('zoomDepth');
-    slider.value = 0;
-    render();
+    slider.value = 0; render();
     const start = performance.now();
     function step(now) {
       const t = Math.min((now-start)/5000, 1);
@@ -583,8 +811,7 @@ const ZoomMod = (() => {
 
   function reset() {
     if(animTimer){cancelAnimationFrame(animTimer);animTimer=null}
-    document.getElementById('zoomDepth').value = 0;
-    render();
+    document.getElementById('zoomDepth').value = 0; render();
   }
 
   setTimeout(init, 100);
@@ -592,7 +819,7 @@ const ZoomMod = (() => {
 })();
 
 // ================================================================
-// SECTION 3: MULTIPLE ISLANDS — PARALLEL ACTIVATION
+// SECTION 3: MULTIPLE ISLANDS — PARALLEL ACTIVATION WITH HOLO ICONS
 // ================================================================
 const IslandMod = (() => {
   let ctx, W, H, c;
@@ -600,18 +827,19 @@ const IslandMod = (() => {
   let dragIdx = -1;
 
   const islands = [
-    {x:.15,y:.3,r:.11,label:'Math',hue:240,emoji:'🔢'},
-    {x:.42,y:.22,r:.12,label:'Code',hue:330,emoji:'💻'},
-    {x:.72,y:.3,r:.1,label:'Language',hue:160,emoji:'📝'},
-    {x:.28,y:.68,r:.09,label:'Biology',hue:90,emoji:'🧬'},
-    {x:.58,y:.65,r:.08,label:'History',hue:30,emoji:'📜'},
-    {x:.85,y:.65,r:.07,label:'Music',hue:280,emoji:'🎵'},
+    {x:.15,y:.3,r:.11,label:'Math',hue:240,emoji:'🔢',iconKey:'Math'},
+    {x:.42,y:.22,r:.12,label:'Code',hue:330,emoji:'💻',iconKey:'Code'},
+    {x:.72,y:.3,r:.1,label:'Language',hue:160,emoji:'📝',iconKey:'Language'},
+    {x:.28,y:.68,r:.09,label:'Biology',hue:90,emoji:'🧬',iconKey:'Biology'},
+    {x:.58,y:.65,r:.08,label:'History',hue:30,emoji:'📚',iconKey:'History'},
+    {x:.85,y:.65,r:.07,label:'Music',hue:280,emoji:'🎵',iconKey:'Music'},
   ];
 
   const LENS_COLS = ['129,140,248','244,114,182','52,211,153','251,191,36','96,165,250','248,113,113'];
+  const TOTAL_TILE_BUDGET = 180; // total tiles distributed across all islands
 
   function init() {
-    ({c,ctx,W,H} = U.mkCanvas('cIslands', 440));
+    ({c,ctx,W,H} = U.mkCanvas('cIslands', 500));
     resetLenses();
 
     c.addEventListener('mousedown', e => {
@@ -632,9 +860,32 @@ const IslandMod = (() => {
     c.addEventListener('mouseup', () => { dragIdx=-1; });
     c.addEventListener('mouseleave', () => { dragIdx=-1; });
 
+    // Touch support
+    c.addEventListener('touchstart', e => {
+      e.preventDefault();
+      const r = c.getBoundingClientRect();
+      const t = e.touches[0];
+      const mx = (t.clientX-r.left)/r.width*W;
+      const my = (t.clientY-r.top)/r.height*H;
+      for(let i=lenses.length-1;i>=0;i--) {
+        if(U.dst(mx,my,lenses[i].x,lenses[i].y) < lenses[i].r+20) { dragIdx=i; break; }
+      }
+    }, {passive:false});
+    c.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if(dragIdx<0) return;
+      const r = c.getBoundingClientRect();
+      const t = e.touches[0];
+      lenses[dragIdx].x = (t.clientX-r.left)/r.width*W;
+      lenses[dragIdx].y = (t.clientY-r.top)/r.height*H;
+      render();
+    }, {passive:false});
+    c.addEventListener('touchend', () => { dragIdx=-1; });
+
     ['islandHeads','islandWidth','islandBudget'].forEach(id => {
       document.getElementById(id).addEventListener('input', () => { resetLenses(); render(); });
-      document.getElementById(id).addEventListener('change', () => { resetLenses(); render(); });
+      document.getElementById(id).addEventListener('change', () => { resetLenses(); render();
+      });
     });
     render();
   }
@@ -655,7 +906,8 @@ const IslandMod = (() => {
       lenses.push({
         x: t.x*W, y: t.y*H,
         r: U.lerp(30, 120, width/100),
-        col: LENS_COLS[i % LENS_COLS.length]
+        col: LENS_COLS[i % LENS_COLS.length],
+        W: W, H: H
       });
     }
   }
@@ -669,10 +921,35 @@ const IslandMod = (() => {
     ctx.fillStyle = '#030618';
     ctx.fillRect(0,0,W,H);
 
-    // Update lens radii
-    for(const l of lenses) l.r = U.lerp(30, 120, width/100);
+    // Update lens radii and dimensions
+    for(const l of lenses) { l.r = U.lerp(30, 120, width/100); l.W = W; l.H = H; }
 
-    // Draw islands as blobs
+    // Compute per-island tile allocation with global budget
+    const islandTiles = [];
+    let totalRawCoverage = 0;
+    for(const isl of islands) {
+      let maxCov = 0;
+      for(const l of lenses) {
+        const lnx = l.x / W, lny = l.y / H;
+        const d = U.dst(isl.x, isl.y, lnx, lny);
+        const lensR = l.r / Math.min(W, H);
+        const cov = Math.exp(-d*d/(2*lensR*lensR));
+        maxCov = Math.max(maxCov, cov);
+      }
+      islandTiles.push(maxCov);
+      totalRawCoverage += maxCov;
+    }
+
+    // Normalize: distribute TOTAL_TILE_BUDGET across islands proportionally
+    const effectiveBudget = Math.round(TOTAL_TILE_BUDGET * budget);
+    const finalTiles = [];
+    for(let i=0;i<islands.length;i++) {
+      const share = totalRawCoverage > 0 ? islandTiles[i] / totalRawCoverage : 1/islands.length;
+      const tiles = Math.max(2, Math.min(64, Math.round(share * effectiveBudget)));
+      finalTiles.push(tiles);
+    }
+
+    // Draw islands as blobs (background)
     const step = 4;
     for(let py=0;py<H;py+=step) {
       for(let px=0;px<W;px+=step) {
@@ -684,7 +961,6 @@ const IslandMod = (() => {
           if(val > maxVal) { maxVal = val; bestHue = isl.hue; }
         }
 
-        // Compute lens coverage at this point
         let lensCov = 0;
         for(const l of lenses) {
           const d = U.dst(px,py,l.x,l.y);
@@ -711,21 +987,41 @@ const IslandMod = (() => {
       }
     }
 
-    // Island labels
-    for(const isl of islands) {
+    // Draw holographic DCT icons on each island
+    for(let i=0;i<islands.length;i++) {
+      const isl = islands[i];
       const ix = isl.x*W, iy = isl.y*H;
-      ctx.font = '18px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(isl.emoji, ix, iy-6);
+      const tiles = finalTiles[i];
+      const iconSize = isl.r * Math.min(W,H) * 2.0;
+
+      if(isl.iconKey && HoloDCT.dctCache[isl.iconKey]) {
+        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[isl.iconKey], tiles);
+        HoloDCT.drawIcon(ctx, pixels, ix, iy, iconSize, isl.hue, 0.5 + (tiles/64)*0.5);
+      }
+
+      // Label
       ctx.font = 'bold 10px Inter';
-      ctx.fillStyle = `hsla(${isl.hue},70%,75%,0.7)`;
-      ctx.fillText(isl.label, ix, iy+14);
+      ctx.fillStyle = `hsla(${isl.hue},70%,75%,0.8)`;
+      ctx.textAlign = 'center';
+      ctx.fillText(isl.label, ix, iy + iconSize/2 + 12);
+
+      // Tile count
+      ctx.font = '8px JetBrains Mono';
+      ctx.fillStyle = `hsla(${isl.hue},50%,65%,0.7)`;
+      ctx.fillText(`${tiles}/64 tiles`, ix, iy + iconSize/2 + 22);
+
+      // Resolution bar under icon
+      const barW2 = iconSize * 0.6, barH2 = 3;
+      const barX2 = ix - barW2/2, barY2 = iy + iconSize/2 + 26;
+      ctx.fillStyle = '#1a2040';
+      ctx.fillRect(barX2, barY2, barW2, barH2);
+      ctx.fillStyle = tiles > 40 ? '#34d399' : tiles > 15 ? '#fbbf24' : '#ef4444';
+      ctx.fillRect(barX2, barY2, barW2 * (tiles/64), barH2);
     }
 
     // Draw lens rings
     for(let i=0;i<lenses.length;i++) {
       const l = lenses[i];
-      // Outer glow
       const grad = ctx.createRadialGradient(l.x,l.y,0,l.x,l.y,l.r*1.3);
       grad.addColorStop(0, `rgba(${l.col},0.06)`);
       grad.addColorStop(1, `rgba(${l.col},0)`);
@@ -734,14 +1030,12 @@ const IslandMod = (() => {
       ctx.arc(l.x,l.y,l.r*1.3,0,U.TAU);
       ctx.fill();
 
-      // Ring
       ctx.beginPath();
       ctx.arc(l.x,l.y,l.r,0,U.TAU);
       ctx.strokeStyle = `rgba(${l.col},0.35)`;
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Center dot
       ctx.beginPath();
       ctx.arc(l.x,l.y,6,0,U.TAU);
       ctx.fillStyle = `rgba(${l.col},0.8)`;
@@ -756,19 +1050,29 @@ const IslandMod = (() => {
       ctx.fillText(`Lens ${i}`, l.x, l.y - l.r - 6);
     }
 
-    // Budget bar
-    const barW = 180, barH = 6, barX = W/2-barW/2, barY = H-14;
+    // Global budget bar
+    const totalUsed = finalTiles.reduce((a,b)=>a+b,0);
+    const barW = 220, barH = 6, barX = W/2-barW/2, barY = H-16;
     ctx.fillStyle = '#1a2040'; ctx.fillRect(barX,barY,barW,barH);
-    const usedBudget = Math.min(1, lenses.length * (budget/Math.max(1,lenses.length)));
-    ctx.fillStyle = usedBudget > 0.85 ? '#ef4444' : '#818cf8';
-    ctx.fillRect(barX,barY,barW*usedBudget,barH);
+    const usedFrac = totalUsed / (64 * islands.length);
+    ctx.fillStyle = usedFrac > 0.7 ? '#ef4444' : usedFrac > 0.4 ? '#fbbf24' : '#818cf8';
+    ctx.fillRect(barX,barY,barW*Math.min(1,usedFrac),barH);
     ctx.font = '8px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center';
-    ctx.fillText(`Resolution budget: ${Math.round(usedBudget*100)}% used`, W/2, barY-3);
+    ctx.fillText(`Global tile budget: ${totalUsed}/${64*islands.length} — ${Math.round(usedFrac*100)}% used`, W/2, barY-3);
+
+    // Title
+    ctx.font = 'bold 11px Inter'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#818cf8';
+    ctx.fillText('Holographic DCT Icons — Drag lenses to redistribute resolution', W/2, 14);
 
     const perLensBudget = budget / Math.max(1, lenses.length);
+    const maxTileIsland = islands[finalTiles.indexOf(Math.max(...finalTiles))];
+    const minTileIsland = islands[finalTiles.indexOf(Math.min(...finalTiles))];
     document.getElementById('islandStats').innerHTML = `
       <div class="sc"><div class="l">LENSES</div><div class="v" style="color:#818cf8">${lenses.length}</div></div>
-      <div class="sc"><div class="l">BUDGET/LENS</div><div class="v" style="color:#fbbf24">${Math.round(perLensBudget*100)}%</div></div>
+      <div class="sc"><div class="l">BUDGET</div><div class="v" style="color:#fbbf24">${effectiveBudget} tiles</div></div>
+      <div class="sc"><div class="l">SHARPEST</div><div class="v" style="color:#34d399">${maxTileIsland?maxTileIsland.label:'-'}</div></div>
+      <div class="sc"><div class="l">BLURRIEST</div><div class="v" style="color:#ef4444">${minTileIsland?minTileIsland.label:'-'}</div></div>
       <div class="sc"><div class="l">TRADEOFF</div><div class="v" style="color:#f472b6">${lenses.length>3?'Spread thin':'Focused'}</div></div>
       <div class="sc"><div class="l">ISLANDS</div><div class="v" style="color:#34d399">${islands.length}</div></div>
     `;
@@ -788,14 +1092,13 @@ const TransMod = (() => {
   let time = 0;
 
   const nodes = [
-    {x:.2,y:.35,r:.1,label:'Math',hue:240,col:'#818cf8',emoji:'🔢'},
-    {x:.5,y:.25,r:.11,label:'Code',hue:330,col:'#f472b6',emoji:'💻'},
-    {x:.8,y:.4,r:.09,label:'Language',hue:160,col:'#34d399',emoji:'📝'},
-    {x:.35,y:.72,r:.08,label:'Biology',hue:90,col:'#a3e635',emoji:'🧬'},
-    {x:.65,y:.7,r:.07,label:'History',hue:30,col:'#fbbf24',emoji:'📜'},
+    {x:.2,y:.35,r:.1,label:'Math',hue:240,col:'#818cf8',emoji:'🔢',iconKey:'Math'},
+    {x:.5,y:.25,r:.11,label:'Code',hue:330,col:'#f472b6',emoji:'💻',iconKey:'Code'},
+    {x:.8,y:.4,r:.09,label:'Language',hue:160,col:'#34d399',emoji:'📝',iconKey:'Language'},
+    {x:.35,y:.72,r:.08,label:'Biology',hue:90,col:'#a3e635',emoji:'🧬',iconKey:'Biology'},
+    {x:.65,y:.7,r:.07,label:'History',hue:30,col:'#fbbf24',emoji:'📚',iconKey:'History'},
   ];
 
-  // Connections (residual stream highways)
   const links = [
     {from:0,to:1,w:0.8},{from:1,to:2,w:0.7},{from:0,to:2,w:0.4},
     {from:1,to:3,w:0.3},{from:2,to:4,w:0.5},{from:0,to:4,w:0.2},
@@ -810,7 +1113,6 @@ const TransMod = (() => {
 
     function tick() {
       time += 0.015;
-      // Update particles
       for(let i=particles.length-1;i>=0;i--) {
         const p = particles[i];
         p.t += p.speed;
@@ -839,7 +1141,6 @@ const TransMod = (() => {
       const ax = a.x*W, ay = a.y*H, bx = b.x*W, by = b.y*H;
       const alpha = link.w * strength * 0.4;
 
-      // Curved connection
       const mx = (ax+bx)/2, my = (ay+by)/2 - 30*link.w;
       ctx.beginPath();
       ctx.moveTo(ax,ay);
@@ -848,7 +1149,6 @@ const TransMod = (() => {
       ctx.lineWidth = 1 + link.w * 2 * strength;
       ctx.stroke();
 
-      // Animated flow dots along the connection
       if(strength > 0.1) {
         const nDots = Math.ceil(link.w * 3);
         for(let d=0;d<nDots;d++) {
@@ -864,12 +1164,11 @@ const TransMod = (() => {
       }
     }
 
-    // Draw nodes
+    // Draw nodes with holographic icons
     for(const nd of nodes) {
       const nx = nd.x*W, ny = nd.y*H;
       const nr = nd.r * Math.min(W,H);
 
-      // Glow based on how much transport is flowing through
       let flowIn = 0;
       for(const link of links) {
         if(link.to === nodes.indexOf(nd) || link.from === nodes.indexOf(nd)) {
@@ -886,24 +1185,34 @@ const TransMod = (() => {
       ctx.arc(nx,ny,glowR,0,U.TAU);
       ctx.fill();
 
+      // Holographic icon — tiles scale with transport flow
+      const baseTiles = 4;
+      const flowTiles = Math.round(flowIn * 15);
+      const layerTiles = Math.round((layer/10) * 20);
+      const tiles = Math.max(2, Math.min(64, baseTiles + flowTiles + layerTiles));
+      const iconSize = nr * 1.2;
+
+      if(nd.iconKey && HoloDCT.dctCache[nd.iconKey]) {
+        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[nd.iconKey], tiles);
+        HoloDCT.drawIcon(ctx, pixels, nx, ny, iconSize, nd.hue, 0.4 + flowIn*0.15 + layer/10*0.3);
+      }
+
       ctx.beginPath();
       ctx.arc(nx,ny,nr*0.7,0,U.TAU);
       ctx.strokeStyle = `hsla(${nd.hue},60%,60%,0.3)`;
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      ctx.font = '20px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(nd.emoji, nx, ny-4);
       ctx.font = 'bold 10px Inter';
       ctx.fillStyle = nd.col;
-      ctx.fillText(nd.label, nx, ny+16);
+      ctx.textAlign = 'center';
+      ctx.fillText(nd.label, nx, ny + iconSize/2 + 12);
 
-      // Resolution indicator
+      // Resolution indicator with tile count
       const res = U.clamp(0.1 + flowIn * 0.3, 0, 1);
-      ctx.font = '8px Inter';
+      ctx.font = '8px JetBrains Mono';
       ctx.fillStyle = '#94a3b8';
-      ctx.fillText(`${Math.round(res*100)}% res`, nx, ny+28);
+      ctx.fillText(`${tiles} tiles · ${Math.round(res*100)}% res`, nx, ny + iconSize/2 + 22);
     }
 
     // Labels
@@ -912,7 +1221,7 @@ const TransMod = (() => {
     ctx.fillText(`Parallel Transport — Layer ${layer.toFixed(1)} — ${Math.round(strength*100)}% flow`, W/2, 16);
 
     ctx.font = '9px Inter'; ctx.fillStyle = '#64748b'; ctx.textAlign = 'center';
-    ctx.fillText('The residual stream carries patterns between islands, letting them "borrow" resolution from each other', W/2, H-8);
+    ctx.fillText('Transport sharpens icons: more flow = more DCT tiles = clearer topology', W/2, H-8);
 
     document.getElementById('transportStats').innerHTML = `
       <div class="sc"><div class="l">FLOW</div><div class="v" style="color:#fbbf24">${Math.round(strength*100)}%</div></div>
@@ -954,11 +1263,11 @@ const HalMod = (() => {
   let qx = 0.75, qy = 0.3;
 
   const regions = [
-    {x:.22,y:.45,r:.18,label:'Mathematics',hue:240},
-    {x:.48,y:.3,r:.15,label:'Programming',hue:330},
-    {x:.75,y:.5,r:.12,label:'Poetry',hue:160},
-    {x:.35,y:.72,r:.1,label:'Biology',hue:90},
-    {x:.62,y:.7,r:.09,label:'Music',hue:280},
+    {x:.22,y:.45,r:.18,label:'Mathematics',hue:240,iconKey:'Math'},
+    {x:.48,y:.3,r:.15,label:'Programming',hue:330,iconKey:'Code'},
+    {x:.75,y:.5,r:.12,label:'Poetry',hue:160,iconKey:'Language'},
+    {x:.35,y:.72,r:.1,label:'Biology',hue:90,iconKey:'Biology'},
+    {x:.62,y:.7,r:.09,label:'Music',hue:280,iconKey:'Music'},
   ];
 
   function init() {
@@ -1001,7 +1310,7 @@ const HalMod = (() => {
       }
     }
 
-    // Draw region boundaries
+    // Draw region boundaries with holographic icons
     for (const rg of regions) {
       const rx = rg.x * W, ry = rg.y * H;
       const rr = rg.r * Math.min(W, H) * coverage;
@@ -1014,7 +1323,6 @@ const HalMod = (() => {
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Glow
       const grad = ctx.createRadialGradient(rx, ry, 0, rx, ry, rr);
       grad.addColorStop(0, `hsla(${rg.hue},60%,50%,0.08)`);
       grad.addColorStop(1, `hsla(${rg.hue},60%,50%,0)`);
@@ -1023,10 +1331,18 @@ const HalMod = (() => {
       ctx.arc(rx, ry, rr, 0, U.TAU);
       ctx.fill();
 
+      // Holographic icon — tiles scale with coverage
+      const tiles = Math.max(2, Math.min(48, Math.round(coverage * 45)));
+      const iconSize = rr * 0.9;
+      if(rg.iconKey && HoloDCT.dctCache[rg.iconKey] && iconSize > 8) {
+        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[rg.iconKey], tiles);
+        HoloDCT.drawIcon(ctx, pixels, rx, ry, iconSize, rg.hue, 0.3 + coverage*0.4);
+      }
+
       ctx.font = 'bold 10px Inter';
       ctx.fillStyle = `hsla(${rg.hue},70%,70%,0.8)`;
       ctx.textAlign = 'center';
-      ctx.fillText(rg.label, rx, ry + 4);
+      ctx.fillText(rg.label, rx, ry + iconSize/2 + 12);
     }
 
     // Query point
@@ -1036,14 +1352,12 @@ const HalMod = (() => {
       qCov = Math.max(qCov, Math.exp(-d * d / (2 * rg.r * rg.r * coverage)));
     }
 
-    // Confidence stays high even in low-coverage areas
     const confidence = 0.7 + qCov * 0.25;
     const gap = confidence - qCov;
     const isHallucinating = qCov < 0.3;
 
     const qpx = qx * W, qpy = qy * H;
 
-    // Query glow
     const qCol = isHallucinating ? '#ef4444' : qCov > 0.5 ? '#34d399' : '#fbbf24';
     ctx.beginPath();
     ctx.arc(qpx, qpy, 18, 0, U.TAU);
@@ -1082,7 +1396,6 @@ const HalMod = (() => {
     ctx.fillRect(barX, barY + 20, barW * qCov, barH);
     ctx.fillText(`Coverage: ${Math.round(qCov * 100)}%`, barX, barY + 17);
 
-    // Gap indicator
     if (gap > 0.3) {
       ctx.fillStyle = '#1a2040';
       ctx.fillRect(barX, barY + 40, barW, barH);
@@ -1091,7 +1404,6 @@ const HalMod = (() => {
       ctx.fillText(`Gap: ${Math.round(gap * 100)}%`, barX, barY + 37);
     }
 
-    // Hallucination warning
     if (isHallucinating) {
       const pulse = 0.6 + 0.4 * Math.sin(performance.now() / 200);
       ctx.font = `bold 12px Inter`;
@@ -1099,7 +1411,6 @@ const HalMod = (() => {
       ctx.textAlign = 'center';
       ctx.fillText('⚠ HALLUCINATION ZONE: High confidence, low coverage!', W / 2, H - 12);
 
-      // Danger ring around query
       ctx.beginPath();
       ctx.arc(qpx, qpy, 24, 0, U.TAU);
       ctx.strokeStyle = `rgba(239,68,68,${0.3 * pulse})`;
@@ -1107,7 +1418,6 @@ const HalMod = (() => {
       ctx.stroke();
     }
 
-    // Phase label
     ctx.font = 'bold 11px Inter';
     ctx.fillStyle = '#94a3b8';
     ctx.textAlign = 'left';
@@ -1126,18 +1436,18 @@ const HalMod = (() => {
 })();
 
 // ================================================================
-// SECTION 6: FULL PIPELINE
+// SECTION 6: FULL PIPELINE WITH HOLOGRAPHIC ICONS
 // ================================================================
 const PipeMod = (() => {
   let ctx, W, H, c;
   let animTimer = null;
 
   const regions = [
-    {x:.2,y:.3,r:.12,label:'Math',hue:240,emoji:'🔢'},
-    {x:.5,y:.25,r:.13,label:'Code',hue:330,emoji:'💻'},
-    {x:.8,y:.35,r:.11,label:'Language',hue:160,emoji:'📝'},
-    {x:.35,y:.72,r:.1,label:'Biology',hue:90,emoji:'🧬'},
-    {x:.7,y:.7,r:.09,label:'History',hue:30,emoji:'📜'},
+    {x:.2,y:.3,r:.12,label:'Math',hue:240,emoji:'🔢',iconKey:'Math'},
+    {x:.5,y:.25,r:.13,label:'Code',hue:330,emoji:'💻',iconKey:'Code'},
+    {x:.8,y:.35,r:.11,label:'Language',hue:160,emoji:'📝',iconKey:'Language'},
+    {x:.35,y:.72,r:.1,label:'Biology',hue:90,emoji:'🧬',iconKey:'Biology'},
+    {x:.7,y:.7,r:.09,label:'History',hue:30,emoji:'📚',iconKey:'History'},
   ];
 
   function init() {
@@ -1253,8 +1563,14 @@ const PipeMod = (() => {
       }
     }
 
-    // Draw knowledge regions
-    for (const rg of regions) {
+    // Compute tile budget for pipeline — focused region gets more tiles
+    // Simulate a "focus" on Code island that intensifies with depth
+    const focusIdx = 1; // Code island
+    const totalPipeBudget = 160;
+
+    // Draw knowledge regions with holographic icons
+    for (let i = 0; i < regions.length; i++) {
+      const rg = regions[i];
       const [wx, wy] = warp(rg.x * W, rg.y * H);
       const [wx2] = warp(rg.x * W + 10, rg.y * H);
       const localScale = Math.abs(wx2 - wx) / 10;
@@ -1274,12 +1590,41 @@ const PipeMod = (() => {
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      ctx.font = '16px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(rg.emoji, wx, wy - 4);
+      // Holographic icon — focused island gets more tiles as depth increases
+      const isFocused = (i === focusIdx);
+      const depthFrac = depth / 11;
+      let tiles;
+      if (isFocused) {
+        tiles = Math.max(2, Math.min(64, Math.round(3 + depthFrac * 58)));
+      } else {
+        // Other islands get fewer tiles as depth increases (budget tradeoff)
+        const baseTiles = 3 + Math.round((1 - depthFrac) * 25);
+        tiles = Math.max(2, Math.min(40, baseTiles));
+      }
+
+      const iconSize = visualR * 1.4;
+      if (rg.iconKey && HoloDCT.dctCache[rg.iconKey] && iconSize > 6) {
+        const pixels = HoloDCT.reconstruct(HoloDCT.dctCache[rg.iconKey], tiles);
+        HoloDCT.drawIcon(ctx, pixels, wx, wy, iconSize, rg.hue, 0.4 + depthFrac * 0.5);
+      }
+
       ctx.font = `bold ${Math.max(8, Math.round(10 * localScale))}px Inter`;
-      ctx.fillStyle = `hsla(${rg.hue},70%,75%,${0.4 + depth / 11 * 0.6})`;
-      ctx.fillText(rg.label, wx, wy + 14);
+      ctx.fillStyle = `hsla(${rg.hue},70%,75%,${0.4 + depthFrac * 0.6})`;
+      ctx.textAlign = 'center';
+      ctx.fillText(rg.label, wx, wy + iconSize / 2 + 12);
+
+      // Tile count
+      ctx.font = '7px JetBrains Mono';
+      ctx.fillStyle = `hsla(${rg.hue},40%,60%,0.5)`;
+      ctx.fillText(`${tiles} tiles${isFocused ? ' ★' : ''}`, wx, wy + iconSize / 2 + 21);
+
+      // Mini resolution bar
+      const mBarW = iconSize * 0.5, mBarH = 2;
+      const mBarX = wx - mBarW / 2, mBarY = wy + iconSize / 2 + 24;
+      ctx.fillStyle = '#1a2040';
+      ctx.fillRect(mBarX, mBarY, mBarW, mBarH);
+      ctx.fillStyle = tiles > 35 ? '#34d399' : tiles > 12 ? '#fbbf24' : '#ef4444';
+      ctx.fillRect(mBarX, mBarY, mBarW * (tiles / 64), mBarH);
     }
 
     // Phase label
@@ -1292,6 +1637,12 @@ const PipeMod = (() => {
     else { phaseCol = '#34d399'; phaseTxt = `🧩 Layer ${depth.toFixed(1)}: Gluing — reassembling the answer`; }
     ctx.fillStyle = phaseCol;
     ctx.fillText(phaseTxt, W / 2, 18);
+
+    // Focused island indicator
+    ctx.font = '9px Inter';
+    ctx.fillStyle = '#f472b6';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Focus: ${regions[focusIdx].label} — sharpens as layers deepen, others blur (budget tradeoff)`, W / 2, 34);
 
     // Progress bar at bottom
     const pbW = W - 40, pbH = 4, pbX = 20, pbY = H - 10;
@@ -1310,6 +1661,7 @@ const PipeMod = (() => {
       <div class="sc"><div class="l">LAYER</div><div class="v" style="color:#818cf8">${depth.toFixed(1)}</div></div>
       <div class="sc"><div class="l">PHASE</div><div class="v" style="color:${phaseCol}">${depth < 0.5 ? 'Embed' : depth <= 3 ? 'Route' : depth <= 8 ? 'Resolve' : 'Glue'}</div></div>
       <div class="sc"><div class="l">DEFORMATION</div><div class="v" style="color:#fbbf24">${Math.round(deform * 100)}%</div></div>
+      <div class="sc"><div class="l">FOCUS</div><div class="v" style="color:#f472b6">${regions[focusIdx].label}</div></div>
       <div class="sc"><div class="l">REGIONS</div><div class="v" style="color:#34d399">${regions.length}</div></div>
     `;
   }
@@ -1355,8 +1707,9 @@ let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
-    // Reinitialize canvases on resize
-    // For simplicity, just reload — in production you'd reinit each module
+    // Reinitialize all modules on resize
+    MapMod.render();
+    ZoomMod.render();
   }, 500);
 });
 
