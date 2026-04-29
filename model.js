@@ -279,6 +279,8 @@ async function compile_model(recursion_level=0) {
 			metrics: [global_model_data.metric]
 		});
 		model_config_hash = new_model_config_hash;
+
+		math_clear_editables();
 	} catch (e) {
 		var ret = await handle_model_compile_error(e, recursion_level);
 

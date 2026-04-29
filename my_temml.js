@@ -145,7 +145,22 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 	if (bias && bias.length && bias_weight_idx !== -1) {
 		for (var b = 0; b < max_bias; b++) {
 			(function(li, idx, bwi) {
-				// ... same as before
+				var eid = "L" + li + "_bias_" + idx;
+				if (!math_find_editable(eid)) {
+					math_register_editable(
+						eid,
+						function() { return layer_data[li].bias[idx]; },
+						function(v) {
+							layer_data[li].bias[idx] = v;
+							if (bwi >= 0) {
+								_math_apply_single_weight(li, bwi, layer_data[li].bias);
+							}
+						},
+						-10, 10,
+						"Layer " + li + " bias[" + idx + "]",
+						{ decimals: decimals }
+					);
+				}
 			})(layer_idx, b, bias_weight_idx);
 		}
 	}
