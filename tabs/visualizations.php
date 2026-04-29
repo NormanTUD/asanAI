@@ -57,6 +57,8 @@
 				<div class="spinner"></div>
 			</div>
 		</div>
+
+		<button onclick="toggle_math_interactive_mode()" class="TRANSLATEME_toggle_editable_math_mode"></button>
 	</div>
 
 	<div id="weight_surfaces" class="tab" class="tab">
