@@ -1891,5 +1891,5 @@ var _math_interactive_mode = false;
 
 function toggle_math_interactive_mode() {
 	_math_interactive_mode = !_math_interactive_mode;
-	write_model_to_latex_to_page(true, true);
+	write_model_to_latex_to_page();
 }
