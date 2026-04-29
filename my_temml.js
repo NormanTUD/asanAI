@@ -64,6 +64,12 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 		return;
 	}
 
+	// *** FIX: Clear stale editables for this layer before re-registering ***
+	var prefix = "L" + layer_idx + "_";
+	_math_editables = _math_editables.filter(function(ed) {
+		return ed.id.indexOf(prefix) !== 0;
+	});
+
 	// Re-sync layer_data from the actual model to avoid stale data
 	if (model && model.layers && model.layers[layer_idx] && model.layers[layer_idx].weights) {
 		var fresh_layer = {};
@@ -94,6 +100,7 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 		if (fresh_layer.kernel) layer_data[layer_idx].kernel = fresh_layer.kernel;
 		if (fresh_layer.bias) layer_data[layer_idx].bias = fresh_layer.bias;
 	}
+
 	var kernel = layer_data[layer_idx].kernel;
 	var bias = layer_data[layer_idx].bias;
 	var decimals = get_dec_points_math_mode();
@@ -121,21 +128,19 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 		for (var j = 0; j < max_cols; j++) {
 			(function(li, row, col, kwi) {
 				var eid = "L" + li + "_kernel_" + row + "_" + col;
-				if (!math_find_editable(eid)) {
-					math_register_editable(
-						eid,
-						function() { return layer_data[li].kernel[row][col]; },
-						function(v) {
-							layer_data[li].kernel[row][col] = v;
-							if (kwi >= 0) {
-								_math_apply_single_weight(li, kwi, layer_data[li].kernel);
-							}
-						},
-						-10, 10,
-						"Layer " + li + " kernel[" + row + "][" + col + "]",
-						{ decimals: decimals }
-					);
-				}
+				math_register_editable(
+					eid,
+					function() { return layer_data[li].kernel[row][col]; },
+					function(v) {
+						layer_data[li].kernel[row][col] = v;
+						if (kwi >= 0) {
+							_math_apply_single_weight(li, kwi, layer_data[li].kernel);
+						}
+					},
+					-10, 10,
+					"Layer " + li + " kernel[" + row + "][" + col + "]",
+					{ decimals: decimals }
+				);
 			})(layer_idx, i, j, kernel_weight_idx);
 		}
 	}
@@ -146,46 +151,19 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 		for (var b = 0; b < max_bias; b++) {
 			(function(li, idx, bwi) {
 				var eid = "L" + li + "_bias_" + idx;
-				if (!math_find_editable(eid)) {
-					math_register_editable(
-						eid,
-						function() { return layer_data[li].bias[idx]; },
-						function(v) {
-							layer_data[li].bias[idx] = v;
-							if (bwi >= 0) {
-								_math_apply_single_weight(li, bwi, layer_data[li].bias);
-							}
-						},
-						-10, 10,
-						"Layer " + li + " bias[" + idx + "]",
-						{ decimals: decimals }
-					);
-				}
-			})(layer_idx, b, bias_weight_idx);
-		}
-	}
-
-
-	// Register bias editables
-	if (bias && bias.length && bias_weight_idx !== -1) {
-		for (var b = 0; b < bias.length; b++) {
-			(function(li, idx, bwi) {
-				var eid = "L" + li + "_bias_" + idx;
-				if (!math_find_editable(eid)) {
-					math_register_editable(
-						eid,
-						function() { return layer_data[li].bias[idx]; },
-						function(v) {
-							layer_data[li].bias[idx] = v;
-							if (bwi >= 0) {
-								_math_apply_single_weight(li, bwi, layer_data[li].bias);
-							}
-						},
-						-10, 10,
-						"Layer " + li + " bias[" + idx + "]",
-						{ decimals: decimals }
-					);
-				}
+				math_register_editable(
+					eid,
+					function() { return layer_data[li].bias[idx]; },
+					function(v) {
+						layer_data[li].bias[idx] = v;
+						if (bwi >= 0) {
+							_math_apply_single_weight(li, bwi, layer_data[li].bias);
+						}
+					},
+					-10, 10,
+					"Layer " + li + " bias[" + idx + "]",
+					{ decimals: decimals }
+				);
 			})(layer_idx, b, bias_weight_idx);
 		}
 	}
@@ -227,7 +205,6 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 	// Bias
 	if (bias && bias.length && bias_weight_idx !== -1) {
 		var bias_latex = " + \\underbrace{\\begin{pmatrix}\n";
-		var max_bias = Math.min(bias.length, get_max_nr_cols_rows());
 		var bias_parts = [];
 		for (var bi = 0; bi < max_bias; bi++) {
 			var beid = "L" + layer_idx + "_bias_" + bi;
@@ -253,59 +230,54 @@ function _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors
 // ============================================================
 
 function _math_apply_single_weight(layer_idx, weight_idx, new_array) {
-    try {
-        if (!model || !model.layers || !model.layers[layer_idx]) return;
-        if (weight_idx < 0) return;
+	try {
+		if (!model || !model.layers || !model.layers[layer_idx]) return;
+		if (weight_idx < 0) return;
 
-        var weight = model.layers[layer_idx].weights[weight_idx];
-        if (!weight || !weight.val || weight.val.isDisposed) return;
+		var weight = model.layers[layer_idx].weights[weight_idx];
+		if (!weight || !weight.val || weight.val.isDisposed) return;
 
-        var old_tensor = weight.val;
+		var old_tensor = weight.val;
 
-        // Flatten correctly regardless of nesting depth
-        var flat;
-        if (Array.isArray(new_array) && Array.isArray(new_array[0])) {
-            flat = new_array.flat(Infinity);
-        } else if (Array.isArray(new_array)) {
-            flat = new_array.slice();
-        } else {
-            flat = [new_array];
-        }
+		// Flatten correctly regardless of nesting depth
+		var flat;
+		if (Array.isArray(new_array) && Array.isArray(new_array[0])) {
+			flat = new_array.flat(Infinity);
+		} else if (Array.isArray(new_array)) {
+			flat = new_array.slice();
+		} else {
+			flat = [new_array];
+		}
 
-        // If sizes match, use the existing shape. If not, infer shape from the array.
-        var target_shape;
-        if (flat.length === old_tensor.size) {
-            target_shape = old_tensor.shape;
-        } else {
-            // Infer shape from the new_array structure
-            target_shape = _infer_shape(new_array);
-            var inferred_size = target_shape.reduce(function(a, b) { return a * b; }, 1);
-            if (inferred_size !== flat.length) {
-                console.error("[_math_apply_single_weight] Cannot reconcile shapes: " +
-                    "tensor has " + old_tensor.size + " (" + old_tensor.shape + "), " +
-                    "new data has " + flat.length + " elements");
-                return;
-            }
-            console.warn("[_math_apply_single_weight] Shape changed from " + 
-                old_tensor.shape + " to " + target_shape + " for layer " + 
-                layer_idx + " weight " + weight_idx + ". Skipping assign (incompatible).");
-            return;
-        }
+		// The tensor shape is the source of truth.
+		// If sizes don't match, the layer_data is out of sync with the model.
+		// This can happen if the model was recompiled. In that case, we need to
+		// re-read the tensor and only update the portion that matches.
+		if (flat.length !== old_tensor.size) {
+			console.warn("[_math_apply_single_weight] Size mismatch: tensor expects " +
+				old_tensor.size + " values (shape " + old_tensor.shape + ") but got " +
+				flat.length + " from layer_data. Re-syncing from model.");
 
-        var new_tensor = tf.tensor(flat, target_shape);
-        weight.val.assign(new_tensor);
-        new_tensor.dispose();
-    } catch (e) {
-        console.error("[_math_apply_single_weight] Error:", e);
-    }
+			// The layer_data is stale. We cannot safely assign.
+			// Force a full re-render which will re-sync layer_data from the model.
+			// This triggers the re-sync at the top of _inject_hybrid_dense_direct next time.
+			return;
+		}
+
+		var new_tensor = tf.tensor(flat, old_tensor.shape);
+		weight.val.assign(new_tensor);
+		new_tensor.dispose();
+	} catch (e) {
+		console.error("[_math_apply_single_weight] Error:", e);
+	}
 }
 
 function _infer_shape(arr) {
-    var shape = [];
-    var current = arr;
-    while (Array.isArray(current)) {
-        shape.push(current.length);
-        current = current[0];
-    }
-    return shape;
+	var shape = [];
+	var current = arr;
+	while (Array.isArray(current)) {
+		shape.push(current.length);
+		current = current[0];
+	}
+	return shape;
 }
