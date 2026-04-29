@@ -1392,20 +1392,6 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	return await _finalize_ascent(generated_data, worked, useColorDecorrelation);
 }
 
-async function handle_input_gradient_descent_error(e, recursion, layer_idx, neuron, iterations, start_image) {
-	if (("" + e).includes("is already disposed")) {
-		await compile_model();
-		if (recursion < 20) {
-			await delay(recursion * 1000);
-			return await input_gradient_ascent(layer_idx, neuron, iterations, start_image, undefined, recursion + 1);
-		} else {
-			throw new Error("Too many retries for input_gradient_ascent");
-		}
-	} else {
-		throw new Error("Error 12: " + e);
-	}
-}
-
 // ============================================================================
 // deprocess_image — refactored into focused helpers
 // ============================================================================

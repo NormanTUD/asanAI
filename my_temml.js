@@ -276,13 +276,3 @@ function _math_apply_single_weight(layer_idx, weight_idx, new_array) {
 		console.error("[_math_apply_single_weight] Error:", e);
 	}
 }
-
-function _infer_shape(arr) {
-	var shape = [];
-	var current = arr;
-	while (Array.isArray(current)) {
-		shape.push(current.length);
-		current = current[0];
-	}
-	return shape;
-}

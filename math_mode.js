@@ -2383,35 +2383,6 @@ function latex_blocks() {
 	return str;
 }
 
-// Add this modified version of get_dense_latex that uses editables:
-
-function get_dense_latex_editable(layer_idx, layer_data, colors, input_layer) {
-    var str = "";
-    try {
-        var this_layer_data_kernel = layer_data[layer_idx].kernel;
-        if (!this_layer_data_kernel.length) {
-            return "\\text{" + language[lang]["invalid_layer_settings_cannot_render"] + "}";
-        }
-
-        // Build hybrid tokens instead of pure LaTeX
-        var container_id = "math_dense_hybrid_L" + layer_idx;
-
-        // Create a placeholder div that will be filled with hybrid content
-        str += '</span>'; // close the temml_me span temporarily
-        str += '<div id="' + container_id + '" class="math-hybrid-formula"></div>';
-        str += '<span class="temml_me">'; // reopen for the rest
-
-        // Schedule hybrid rendering after DOM update
-        setTimeout(function() {
-            _render_dense_layer_hybrid(container_id, layer_idx, layer_data, colors, input_layer);
-        }, 0);
-
-    } catch (e) {
-        wrn("Caught error " + e);
-    }
-    return str;
-}
-
 function _render_dense_layer_hybrid(container_id, layer_idx, layer_data, colors, input_layer) {
     var container = document.getElementById(container_id);
     if (!container) return;
