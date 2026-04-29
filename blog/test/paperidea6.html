@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lipschitz Lenses — Homotopic Focus Stack v2</title>
+<title>Lipschitz Lenses — Homotopic Focus Stack v3</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 :root{--bg:#06081a;--surface:#0e1230;--accent1:#818cf8;--accent2:#34d399;--accent3:#f472b6;--accent4:#fbbf24;--text:#e2e8f0;--dim:#64748b}
@@ -33,19 +33,21 @@ button:hover{transform:translateY(-1px);filter:brightness(1.15)}
 .lens-tag:hover{filter:brightness(1.3);transform:scale(1.05)}
 .lens-tag .x{opacity:.4;margin-left:2px}.lens-tag .x:hover{opacity:1}
 .canvas-wrap{position:relative}
-.canvas-label{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:.65rem;color:var(--accent2);font-weight:700;letter-spacing:.4px;pointer-events:none;z-index:2;text-shadow:0 1px 3px #000}
+.canvas-label{position:absolute;top:6px;left:50%;transform:translateX(-50%);font-size:.65rem;font-weight:700;letter-spacing:.4px;pointer-events:none;z-index:2;text-shadow:0 1px 3px #000}
+.canvas-label.left-label{color:var(--accent3)}
+.canvas-label.right-label{color:var(--accent2)}
 .perf{font-size:.65rem;color:#475569;text-align:center;margin:4px 0}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<h1>🔭 Lipschitz Lenses — Homotopic Focus Stack</h1>
+<h1>🔭 Lipschitz Lenses — FFT Focus Stack v3</h1>
 <p class="sub">
-<strong>Click to place lenses.</strong> Overlapping = accumulated focus = more zoom layers = less pixelation.
-Left: <strong>FFT-scrambled</strong> holographic encoding. Right: <strong>decoded</strong> — resolution scales with focus depth.
-Budget is finite and conserved. Smooth Gaussian falloff = homotopy-continuous transitions.
-<br><em>Without lenses, the decoded view is maximally blurry (LEGO pixels). Each lens sharpens its area but steals resolution from the rest.</em>
+<strong>Left:</strong> FFT (frequency-domain) of the image on the right — the encoded coefficients.<br>
+<strong>Right:</strong> The decoded/reconstructed image. Without lenses, only the lowest frequencies are used → maximally blurry LEGO pixels.<br>
+<strong>Click on the RIGHT to place lenses.</strong> Each lens locally includes more frequency coefficients → sharper local reconstruction.
+Overlapping lenses = even more coefficients = finer detail. Budget is finite and conserved.
 </p>
 
 <div class="card">
@@ -55,15 +57,17 @@ Budget is finite and conserved. Smooth Gaussian falloff = homotopy-continuous tr
 
 <div class="dual">
   <div class="canvas-wrap">
-    <div class="canvas-label">FFT-SCRAMBLED (Holographic)</div>
+    <div class="canvas-label left-label">FFT COEFFICIENTS (Frequency Domain)</div>
     <canvas id="cLeft"></canvas>
   </div>
   <div class="arrow-col">
+    <svg viewBox="0 0 32 32"><path d="M26 16 L10 16 M14 11 L8 16 L14 21" stroke="#f472b6" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    <div style="font-size:.5rem;color:#64748b;text-align:center">FFT<br>encode</div>
     <svg viewBox="0 0 32 32"><path d="M6 16 L22 16 M18 11 L24 16 L18 21" stroke="#34d399" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-    <div style="font-size:.5rem;color:#64748b;text-align:center">Lipschitz<br>Decode</div>
+    <div style="font-size:.5rem;color:#64748b;text-align:center">IFFT<br>decode</div>
   </div>
   <div class="canvas-wrap">
-    <div class="canvas-label">DECODED (Resolution ∝ Focus)</div>
+    <div class="canvas-label right-label">DECODED (Resolution ∝ Focus)</div>
     <canvas id="cRight"></canvas>
   </div>
 </div>
@@ -71,9 +75,8 @@ Budget is finite and conserved. Smooth Gaussian falloff = homotopy-continuous tr
 <div class="ctrl">
   <label>Radius: <input type="range" id="sRadius" min="30" max="220" value="90"><span id="sRadiusV">90</span></label>
   <label>Budget: <input type="range" id="sBudget" min="10" max="200" value="100"><span id="sBudgetV">100</span></label>
-  <label>Scramble: <input type="range" id="sScram" min="0" max="100" value="80"><span id="sScramV">80%</span></label>
-  <label>Max Layers: <input type="range" id="sLayers" min="1" max="10" value="6"><span id="sLayersV">6</span></label>
-  <label>Base Blur: <input type="range" id="sBaseBlur" min="24" max="64" value="40"><span id="sBaseBlurV">40</span></label>
+  <label>Max Freq %: <input type="range" id="sMaxFreq" min="5" max="100" value="95"><span id="sMaxFreqV">95%</span></label>
+  <label>Base Blur: <input type="range" id="sBaseBlur" min="16" max="64" value="40"><span id="sBaseBlurV">40</span></label>
   <button class="bs" onclick="Main.clear()">✕ Clear</button>
   <button class="ba" onclick="Main.undo()">↩ Undo</button>
 </div>
@@ -85,14 +88,15 @@ Budget is finite and conserved. Smooth Gaussian falloff = homotopy-continuous tr
 
 <script>
 // ================================================================
-// LIPSCHITZ LENS VISUALIZATION — ATTENTION-BUDGET MODEL
+// LIPSCHITZ LENS v3 — TRUE FFT ENCODE/DECODE MODEL
 //
-// KEY MECHANIC:
-//   - Right (decoded) side starts FULLY BLURRY (LEGO pixels)
-//   - Each lens focuses its area, increasing local resolution
-//   - Total attention budget is FIXED — focusing one area
-//     redistributes resolution away from unfocused areas
-//   - Resolution range: blockSize 40px (LEGO) → 1px (SVG-crisp)
+// LEFT  = FFT magnitude spectrum (frequency domain visualization)
+// RIGHT = IFFT reconstruction with frequency cutoff controlled by lenses
+//
+// Without lenses: only lowest N frequencies kept → max blur (LEGO)
+// Each lens locally increases the frequency cutoff → sharper patches
+// Overlapping lenses → even higher cutoff → finer detail
+// Budget is conserved: more lenses = less budget per lens
 // ================================================================
 
 const TAU = Math.PI * 2;
@@ -156,10 +160,10 @@ function generateTextures() {
       let v = 0;
       for (const [a, b] of edges) {
         const [ax, ay] = nodes[a], [bx, by] = nodes[b];
-        const dx = bx - ax, dy = by - ay;
-        const len2 = dx * dx + dy * dy;
-        let t = len2 > 0 ? clamp(((x - ax) * dx + (y - ay) * dy) / len2, 0, 1) : 0;
-        const px = ax + t * dx, py = ay + t * dy;
+        const ddx = bx - ax, ddy = by - ay;
+        const len2 = ddx * ddx + ddy * ddy;
+        let t = len2 > 0 ? clamp(((x - ax) * ddx + (y - ay) * ddy) / len2, 0, 1) : 0;
+        const px = ax + t * ddx, py = ay + t * ddy;
         const d = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
         if (d < 0.025) v = Math.max(v, 0.7 * (1 - d / 0.025));
       }
@@ -179,9 +183,9 @@ function generateTextures() {
         [0.75, 0.3, 0.65, 0.12, 0.015], [0.75, 0.3, 0.88, 0.15, 0.015]
       ];
       for (const [x0, y0, x1, y1, w] of segs) {
-        const dx = x1 - x0, dy = y1 - y0, len2 = dx * dx + dy * dy;
-        const t = len2 > 0 ? clamp(((x - x0) * dx + (y - y0) * dy) / len2, 0, 1) : 0;
-        const px = x0 + t * dx, py = y0 + t * dy;
+        const ddx = x1 - x0, ddy = y1 - y0, len2 = ddx * ddx + ddy * ddy;
+        const t = len2 > 0 ? clamp(((x - x0) * ddx + (y - y0) * ddy) / len2, 0, 1) : 0;
+        const px = x0 + t * ddx, py = y0 + t * ddy;
         const d = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
         if (d < w) v = Math.max(v, 0.9 * (1 - d / w));
       }
@@ -220,7 +224,7 @@ function generateTextures() {
 }
 
 // ================================================================
-// DCT-BASED FFT SCRAMBLING
+// DCT-BASED FFT
 // ================================================================
 function createDCTBasis(N) {
   const basis = new Float32Array(N * N);
@@ -233,77 +237,77 @@ function createDCTBasis(N) {
   return basis;
 }
 
-function dct1d(input, output, N, basis) {
-  for (let k = 0; k < N; k++) {
-    let sum = 0;
-    for (let n = 0; n < N; n++) sum += input[n] * basis[k * N + n];
-    output[k] = sum;
-  }
-}
-
-function idct1d(input, output, N, basis) {
-  for (let n = 0; n < N; n++) {
-    let sum = 0;
-    for (let k = 0; k < N; k++) sum += input[k] * basis[k * N + n];
-    output[n] = sum;
-  }
-}
-
-function scrambleTexture(srcData, N, strength, seed) {
-  const basis = createDCTBasis(N);
+function dct2d(srcData, N, basis) {
   const temp = new Float32Array(N * N);
   const freq = new Float32Array(N * N);
   const row = new Float32Array(N);
   const out = new Float32Array(N);
 
+  // DCT rows
   for (let y = 0; y < N; y++) {
     for (let x = 0; x < N; x++) row[x] = srcData[y * N + x];
-    dct1d(row, out, N, basis);
+    for (let k = 0; k < N; k++) {
+      let sum = 0;
+      for (let n = 0; n < N; n++) sum += row[n] * basis[k * N + n];
+      out[k] = sum;
+    }
     for (let x = 0; x < N; x++) temp[y * N + x] = out[x];
   }
+  // DCT cols
   const col = new Float32Array(N);
   for (let x = 0; x < N; x++) {
     for (let y = 0; y < N; y++) col[y] = temp[y * N + x];
-    dct1d(col, out, N, basis);
+    for (let k = 0; k < N; k++) {
+      let sum = 0;
+      for (let n = 0; n < N; n++) sum += col[n] * basis[k * N + n];
+      out[k] = sum;
+    }
     for (let y = 0; y < N; y++) freq[y * N + x] = out[y];
   }
+  return freq;
+}
 
-  const scrambled = new Float32Array(N * N);
-  const rng = mulberry32(seed);
-  for (let y = 0; y < N; y++) {
-    for (let x = 0; x < N; x++) {
-      const idx = y * N + x;
-      const offsetX = Math.round((rng() - 0.5) * strength * N * 0.6);
-      const offsetY = Math.round((rng() - 0.5) * strength * N * 0.6);
-      const sx = ((x + offsetX) % N + N) % N;
-      const sy = ((y + offsetY) % N + N) % N;
-      scrambled[idx] = lerp(freq[idx], freq[sy * N + sx], strength);
-      scrambled[idx] *= (1 + (rng() - 0.5) * strength * 0.5);
-    }
-  }
+function idct2d(freqData, N, basis, cutoffFraction) {
+  // Only use frequencies up to cutoffFraction of N
+  const maxK = Math.max(1, Math.round(cutoffFraction * N));
+  const temp = new Float32Array(N * N);
+  const result = new Float32Array(N * N);
+  const col = new Float32Array(N);
+  const out = new Float32Array(N);
 
+  // IDCT cols (only up to maxK frequencies)
   for (let x = 0; x < N; x++) {
-    for (let y = 0; y < N; y++) col[y] = scrambled[y * N + x];
-    idct1d(col, out, N, basis);
+    for (let y = 0; y < N; y++) col[y] = y < maxK ? freqData[y * N + x] : 0;
+    for (let n = 0; n < N; n++) {
+      let sum = 0;
+      for (let k = 0; k < maxK; k++) sum += col[k] * basis[k * N + n];
+      out[n] = sum;
+    }
     for (let y = 0; y < N; y++) temp[y * N + x] = out[y];
   }
-  const result = new Float32Array(N * N);
+  // IDCT rows
+  const row = new Float32Array(N);
   for (let y = 0; y < N; y++) {
-    for (let x = 0; x < N; x++) row[x] = temp[y * N + x];
-    idct1d(row, out, N, basis);
+    for (let x = 0; x < N; x++) row[x] = x < maxK ? temp[y * N + x] : 0;
+    for (let n = 0; n < N; n++) {
+      let sum = 0;
+      for (let k = 0; k < maxK; k++) sum += row[k] * basis[k * N + n];
+      out[n] = sum;
+    }
     for (let x = 0; x < N; x++) result[y * N + x] = clamp(out[x], 0, 1);
   }
-
   return result;
 }
 
-function mulberry32(a) {
-  return function() {
-    a |= 0; a = a + 0x6D2B79F5 | 0;
-    let t = Math.imul(a ^ a >>> 15, 1 | a);
-    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
+// Precompute multiple reconstruction levels for each texture
+function precomputeReconstructionLevels(texFreq, N, basis, numLevels) {
+  const levels = [];
+  for (let i = 0; i < numLevels; i++) {
+    // Level 0 = minimum freq (very blurry), level numLevels-1 = full freq (sharp)
+    const frac = (i + 1) / numLevels;
+    levels.push(idct2d(texFreq, N, basis, frac));
+  }
+  return levels;
 }
 
 // ================================================================
@@ -325,11 +329,14 @@ const Main = (() => {
   let ctxL, ctxR, W, H, cL, cR;
   let lenses = [];
   let textures = [];
-  let scrambledTextures = [];
-  let lastScramStr = -1;
-  let frameCount = 0;
+  let texFreqs = [];       // DCT coefficients for each texture
+  let texReconLevels = []; // precomputed reconstruction levels
+  let dctBasis;
   let time = 0;
-  let lastFPS = 0, fpsAccum = 0, fpsCount = 0, lastFPSTime = 0;
+  let lastFPS = 0, fpsCount = 0, lastFPSTime = 0;
+
+  const NUM_RECON_LEVELS = 16; // number of precomputed frequency cutoff levels
+  const BASE_LEVEL = 0;        // level used when no lenses (index 0 = lowest freq)
 
   function init() {
     const dpr = window.devicePixelRatio || 1;
@@ -350,26 +357,36 @@ const Main = (() => {
     ctxL.scale(dpr, dpr);
     ctxR.scale(dpr, dpr);
 
-    cL.addEventListener('click', handleClick);
+    // Only right canvas gets click for placing lenses
     cR.addEventListener('click', handleClick);
+    cL.addEventListener('click', handleClick);
 
     textures = generateTextures();
-    recomputeScrambled(0.8);
+    dctBasis = createDCTBasis(TEX_SIZE);
+
+    // Precompute DCT and reconstruction levels for each texture
+    for (let i = 0; i < textures.length; i++) {
+      const freq = dct2d(textures[i].data, TEX_SIZE, dctBasis);
+      texFreqs.push(freq);
+      texReconLevels.push(precomputeReconstructionLevels(freq, TEX_SIZE, dctBasis, NUM_RECON_LEVELS));
+    }
 
     requestAnimationFrame(tick);
   }
 
-  function recomputeScrambled(str) {
-    scrambledTextures = textures.map((tex, i) =>
-      scrambleTexture(tex.data, TEX_SIZE, str, 42 + i * 137)
-    );
-    lastScramStr = str;
-  }
-
   function handleClick(e) {
-    const rect = e.target.getBoundingClientRect();
-    const mx = (e.clientX - rect.left) / rect.width * W;
-    const my = (e.clientY - rect.top) / rect.height * H;
+    const rect = cR.getBoundingClientRect();
+    // Map click to right-canvas coordinates regardless of which canvas was clicked
+    let mx, my;
+    if (e.target === cR) {
+      mx = (e.clientX - rect.left) / rect.width * W;
+      my = (e.clientY - rect.top) / rect.height * H;
+    } else {
+      // Clicked on left canvas — mirror position to right
+      const rectL = cL.getBoundingClientRect();
+      mx = (e.clientX - rectL.left) / rectL.width * W;
+      my = (e.clientY - rectL.top) / rectL.height * H;
+    }
     lenses.push({ x: mx, y: my, color: COLORS[lenses.length % COLORS.length] });
     updateLensList();
   }
@@ -387,7 +404,6 @@ const Main = (() => {
   function undo() { lenses.pop(); updateLensList(); }
 
   function tick(now) {
-    frameCount++;
     time += 0.016;
     fpsCount++;
     if (now - lastFPSTime > 1000) {
@@ -395,7 +411,6 @@ const Main = (() => {
       fpsCount = 0;
       lastFPSTime = now;
     }
-
     render();
     requestAnimationFrame(tick);
   }
@@ -403,33 +418,22 @@ const Main = (() => {
   function render() {
     const radius = +document.getElementById('sRadius').value;
     const budget = +document.getElementById('sBudget').value;
-    const scramStr = +document.getElementById('sScram').value / 100;
-    const maxLayers = +document.getElementById('sLayers').value;
+    const maxFreqPct = +document.getElementById('sMaxFreq').value / 100;
     const baseBlur = +document.getElementById('sBaseBlur').value;
 
     document.getElementById('sRadiusV').textContent = radius;
     document.getElementById('sBudgetV').textContent = budget;
-    document.getElementById('sScramV').textContent = Math.round(scramStr * 100) + '%';
-    document.getElementById('sLayersV').textContent = maxLayers;
+    document.getElementById('sMaxFreqV').textContent = Math.round(maxFreqPct * 100) + '%';
     document.getElementById('sBaseBlurV').textContent = baseBlur;
 
-    if (Math.abs(scramStr - lastScramStr) > 0.02) {
-      recomputeScrambled(scramStr);
-    }
-
     // ============================================================
-    // ATTENTION-BUDGET FOCUS FIELD
-    // Key insight: total "attention" is conserved.
-    //   - With 0 lenses: everything gets baseline (= max blur)
-    //   - With lenses: focused areas gain resolution,
-    //     but the global baseline drops proportionally
+    // FOCUS FIELD — determines local frequency cutoff
     // ============================================================
     const FIELD_SCALE = 8;
     const fw = Math.ceil(W / FIELD_SCALE), fh = Math.ceil(H / FIELD_SCALE);
-    const rawField = new Float32Array(fw * fh); // raw lens contributions
+    const field = new Float32Array(fw * fh);
     const sigma = radius / 2.5;
 
-    // Each lens contributes a Gaussian bump
     for (const lens of lenses) {
       const lcx = lens.x / FIELD_SCALE, lcy = lens.y / FIELD_SCALE;
       const sr = Math.ceil(radius * 1.5 / FIELD_SCALE);
@@ -440,52 +444,49 @@ const Main = (() => {
       for (let y = sy; y < ey; y++) {
         for (let x = sx; x < ex; x++) {
           const d = Math.sqrt((x - lcx) ** 2 + (y - lcy) ** 2) * FIELD_SCALE;
-          rawField[y * fw + x] += gaussian(d, sigma);
+          field[y * fw + x] += gaussian(d, sigma);
         }
       }
     }
 
-    // Compute total attention used (integral of raw field)
-    let totalAttention = 0;
-    for (let i = 0; i < rawField.length; i++) totalAttention += rawField[i];
-
-    // Budget controls how much total attention is available
-    // attentionUsed / budget determines how much the baseline drops
-    const budgetNorm = budget * fw * fh * 0.001; // scale budget to field size
-    const usedFraction = lenses.length > 0 ? Math.min(totalAttention / budgetNorm, 0.95) : 0;
-
-    // Baseline resolution for unfocused areas:
-    //   - 0 lenses → baseline = 0 (max blur)
-    //   - more lenses → baseline drops further (attention stolen)
-    const baseline = 0; // unfocused areas always start at 0
-
-    // The "tax" on unfocused areas: the more attention used by lenses,
-    // the more the non-focused areas are suppressed
-    // (This creates the conservation effect)
-    const suppressionFactor = 1.0 - usedFraction * 0.6; // unfocused areas lose up to 60%
-
-    // Build final focus field: normalized lens contribution
-    // Focus = how much ABOVE baseline this pixel is
-    const field = new Float32Array(fw * fh);
+    // Budget scaling: more lenses = less per lens
+    const perLensScale = lenses.length > 0 ? Math.min(budget / (lenses.length * 50), 1.0) : 0;
     let maxF = 0;
-    for (let i = 0; i < rawField.length; i++) {
-      if (rawField[i] > 0.001) {
-        // Focused area: gets resolution proportional to lens strength
-        // but scaled by per-lens budget share
-        const perLensScale = lenses.length > 0 ? Math.min(budget / (lenses.length * 50), 1.0) : 0;
-        field[i] = clamp(rawField[i] * perLensScale, 0, 1);
-      } else {
-        // Unfocused area: gets suppressed baseline
-        field[i] = baseline * suppressionFactor;
-      }
+    for (let i = 0; i < field.length; i++) {
+      field[i] = clamp(field[i] * perLensScale, 0, 1);
       if (field[i] > maxF) maxF = field[i];
     }
 
-    // Render both canvases
-    renderSide(ctxL, W, H, field, fw, fh, FIELD_SCALE, maxLayers, true, baseBlur, lenses.length);
-    renderSide(ctxR, W, H, field, fw, fh, FIELD_SCALE, maxLayers, false,baseBlur, lenses.length);
+    // Cap by maxFreqPct
+    for (let i = 0; i < field.length; i++) {
+      field[i] *= maxFreqPct;
+    }
 
-    // Draw lens overlays
+    // ============================================================
+    // RENDER LEFT: FFT magnitude spectrum
+    // ============================================================
+    ctxL.clearRect(0, 0, W, H);
+    ctxL.fillStyle = '#020510';
+    ctxL.fillRect(0, 0, W, H);
+
+    for (const isl of ISLANDS) {
+      renderFFTSpectrum(ctxL, isl, W, H);
+    }
+
+    // ============================================================
+    // RENDER RIGHT: Decoded image with adaptive block resolution
+    // ============================================================
+    ctxR.clearRect(0, 0, W, H);
+    ctxR.fillStyle = '#020510';
+    ctxR.fillRect(0, 0, W, H);
+
+    for (const isl of ISLANDS) {
+      renderIslandDecoded(ctxR, isl, W, H, field, fw, fh, FIELD_SCALE, baseBlur);
+    }
+
+    // ============================================================
+    // DRAW LENS OVERLAYS ON BOTH CANVASES
+    // ============================================================
     for (const ctx of [ctxL, ctxR]) {
       for (let i = 0; i < lenses.length; i++) {
         const l = lenses[i];
@@ -507,33 +508,19 @@ const Main = (() => {
       }
     }
 
-    // Labels
-    ctxL.font = 'bold 10px Inter';
-    ctxL.fillStyle = '#f472b6';
-    ctxL.textAlign = 'center';
-    ctxL.fillText('FFT-SCRAMBLED (Holographic)', W / 2, 14);
-
-    ctxR.font = 'bold 10px Inter';
-    ctxR.fillStyle = '#34d399';
-    ctxR.textAlign = 'center';
-    ctxR.fillText('DECODED — Resolution ∝ Focus Depth', W / 2, 14);
-
+    // Hint text when no lenses
     if (lenses.length === 0) {
       ctxR.font = '12px Inter';
       ctxR.fillStyle = `rgba(251,191,36,${0.5 + Math.sin(time * 3) * 0.3})`;
       ctxR.textAlign = 'center';
-      ctxR.fillText('👆 Click anywhere to place focus lenses', W / 2, H / 2);
+      ctxR.fillText('👆 Click to place focus lenses', W / 2, H / 2);
       ctxR.font = '10px Inter';
       ctxR.fillStyle = '#64748b';
       ctxR.fillText('Without lenses everything is LEGO-blurred. Focus to sharpen!', W / 2, H / 2 + 18);
-
-      ctxL.font = '12px Inter';
-      ctxL.fillStyle = `rgba(251,191,36,${0.5 + Math.sin(time * 3) * 0.3})`;
-      ctxL.textAlign = 'center';
-      ctxL.fillText('👆 Click anywhere to place focus lenses', W / 2, H / 2);
     }
 
     // Perf info
+    const usedFraction = lenses.length > 0 ? clamp(maxF / maxFreqPct, 0, 1) : 0;
     document.getElementById('perfInfo').textContent =
       `${lastFPS} FPS | ${lenses.length} lenses | field ${fw}×${fh} | budget used: ${Math.round(usedFraction * 100)}%`;
 
@@ -541,159 +528,194 @@ const Main = (() => {
     const el = document.getElementById('stats');
     if (el) {
       const perLensDisplay = lenses.length > 0 ? (budget / lenses.length).toFixed(1) : '—';
-      const maxOverlap = computeMaxOverlap(field, fw, fh);
       const coverage = computeCoverage(field, fw, fh);
       el.innerHTML = `
         <div class="sc"><div class="l">LENSES</div><div class="v" style="color:#fbbf24">${lenses.length}</div></div>
         <div class="sc"><div class="l">BUDGET/LENS</div><div class="v" style="color:#818cf8">${perLensDisplay}</div></div>
         <div class="sc"><div class="l">MAX FOCUS</div><div class="v" style="color:#ef4444">${(maxF * 100).toFixed(0)}%</div></div>
-        <div class="sc"><div class="l">OVERLAP</div><div class="v" style="color:#a78bfa">${maxOverlap}</div></div>
         <div class="sc"><div class="l">COVERAGE</div><div class="v" style="color:#34d399">${coverage}%</div></div>
-        <div class="sc"><div class="l">BASE BLUR</div><div class="v" style="color:#f472b6">${baseBlur}px</div></div>`;
+        <div class="sc"><div class="l">BASE BLUR</div><div class="v" style="color:#f472b6">${baseBlur}px</div></div>
+        <div class="sc"><div class="l">FREQ LEVELS</div><div class="v" style="color:#a78bfa">${NUM_RECON_LEVELS}</div></div>`;
     }
-  }
-
-  function computeMaxOverlap(field, fw, fh) {
-    const radius = +document.getElementById('sRadius').value;
-    let max = 0;
-    for (let y = 0; y < fh; y += 4) {
-      for (let x = 0; x < fw; x += 4) {
-        let count = 0;
-        for (const l of lenses) {
-          const d = Math.sqrt((x - l.x / 8) ** 2 + (y - l.y / 8) ** 2) * 8;
-          if (d < radius) count++;
-        }
-        if (count > max) max = count;
-      }
-    }
-    return max;
   }
 
   function computeCoverage(field, fw, fh) {
     let covered = 0;
-    for (let i = 0; i < field.length; i++) if (field[i] > 0.05) covered++;
+    for (let i = 0; i < field.length; i++) if (field[i] > 0.02) covered++;
     return Math.round(covered / field.length * 100);
   }
 
   // ============================================================
-  // CORE RENDERING — BLOCK-BASED ADAPTIVE RESOLUTION
-  //
-  // KEY CHANGE: On the RIGHT (decoded) side:
-  //   - focus=0 → blockSize = baseBlur (LEGO pixels, e.g. 40px)
-  //   - focus=1 → blockSize = 1 (SVG-crisp, pixel-perfect)
-  //   - Intermediate focus → intermediate block sizes
-  //
-  // On the LEFT (scrambled) side:
-  //   - Always shows scrambled texture
-  //   - Focus partially un-scrambles (reveals structure)
+  // RENDER FFT SPECTRUM (LEFT CANVAS)
+  // Shows the DCT magnitude coefficients as a frequency-domain image
   // ============================================================
-  function renderSide(ctx, W, H, field, fw, fh, FIELD_SCALE, maxLayers, isScrambled,
-    baseBlur, numLenses) {
+  function renderFFTSpectrum(ctx, isl, W, H) {
+    const ix = isl.x * W, iy = isl.y * H;
+    const ir = isl.r * Math.min(W, H);
+    const texIdx = isl.tex !== undefined ? isl.tex : 0;
+    const tex = textures[texIdx];
+    const freq = texFreqs[texIdx];
+    if (!tex || !freq) return;
 
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = '#020510';
-    ctx.fillRect(0, 0, W, H);
+    const x0 = Math.max(0, Math.floor(ix - ir));
+    const y0 = Math.max(0, Math.floor(iy - ir));
+    const x1 = Math.min(W, Math.ceil(ix + ir));
+    const y1 = Math.min(H, Math.ceil(iy + ir));
 
-    for (const isl of ISLANDS) {
-      const ix = isl.x * W, iy = isl.y * H;
-      const ir = isl.r * Math.min(W, H);
-      const texIdx = isl.tex !== undefined ? isl.tex : 0;
-      const tex = textures[texIdx];
-      const scramTex = scrambledTextures[texIdx];
-      if (!tex) continue;
-
-      const x0 = Math.max(0, Math.floor(ix - ir * 1.3));
-      const y0 = Math.max(0, Math.floor(iy - ir * 1.3));
-      const x1 = Math.min(W, Math.ceil(ix + ir * 1.3));
-      const y1 = Math.min(H, Math.ceil(iy + ir * 1.3));
-
-      renderIslandAdaptive(ctx, tex, scramTex, isl, ix, iy, ir, x0, y0, x1, y1,
-        field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, W, H, baseBlur, numLenses);
+    // Find max magnitude for normalization
+    let maxMag = 0;
+    for (let i = 0; i < freq.length; i++) {
+      const m = Math.abs(freq[i]);
+      if (m > maxMag) maxMag = m;
     }
+    if (maxMag < 0.001) maxMag = 1;
+
+    const blockSize = 4; // render FFT at fixed block size
+    const hue = tex.hue;
+
+    for (let py = y0; py < y1; py += blockSize) {
+      for (let px = x0; px < x1; px += blockSize) {
+        const dist = Math.sqrt((px + blockSize/2 - ix) ** 2 + (py + blockSize/2 - iy) ** 2);
+        if (dist > ir * 1.1) continue;
+
+        // Map pixel position to frequency-domain coordinates
+        const localX = (px - (ix - ir)) / (ir * 2);
+        const localY = (py - (iy - ir)) / (ir * 2);
+        if (localX < 0 || localX >= 1 || localY < 0 || localY >= 1) continue;
+
+        const fx = clamp(Math.floor(localX * TEX_SIZE), 0, TEX_SIZE - 1);
+        const fy = clamp(Math.floor(localY * TEX_SIZE), 0, TEX_SIZE - 1);
+
+        // Get magnitude of DCT coefficient (log scale for visibility)
+        const coeff = freq[fy * TEX_SIZE + fx];
+        const mag = Math.log1p(Math.abs(coeff) * 10) / Math.log1p(maxMag * 10);
+
+        // Edge fade
+        const edgeFade = smoothstep(ir * 1.1, ir * 0.8, dist);
+
+        // Color: use hue with brightness = magnitude
+        const s = 0.6 + mag * 0.3;
+        const l = 0.02 + mag * 0.45;
+        const rgb = hslToRgbFast(hue / 360, s, l);
+
+        const alpha = edgeFade * (0.1 + mag * 0.9);
+        const r = Math.round(lerp(2, rgb[0], alpha));
+        const g = Math.round(lerp(5, rgb[1], alpha));
+        const b = Math.round(lerp(16, rgb[2], alpha));
+
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(px, py, blockSize, blockSize);
+      }
+    }
+
+    // Label
+    ctx.font = 'bold 8px Inter';
+    ctx.fillStyle = `hsl(${hue}, 70%, 70%)`;
+    ctx.textAlign = 'center';
+    ctx.fillText(isl.label, ix, iy + ir + 12);
   }
 
-  function renderIslandAdaptive(ctx, tex, scramTex, isl, ix, iy, ir, x0, y0, x1, y1,
-    field, fw, fh, FIELD_SCALE, maxLayers, isScrambled, W, H, baseBlur, numLenses) {
+  // ============================================================
+  // RENDER DECODED IMAGE (RIGHT CANVAS)
+  // Uses adaptive block size based on focus field.
+  // Focus determines which precomputed reconstruction level to use.
+  // More focus = more frequency coefficients = sharper.
+  // ============================================================
+  function renderIslandDecoded(ctx, isl, W, H, field, fw, fh, FIELD_SCALE, baseBlur) {
+    const ix = isl.x * W, iy = isl.y * H;
+    const ir = isl.r * Math.min(W, H);
+    const texIdx = isl.tex !== undefined ? isl.tex : 0;
+    const tex = textures[texIdx];
+    const levels = texReconLevels[texIdx];
+    if (!tex || !levels) return;
 
-    // Render using a grid approach — determine block size per region
-    // We tile the island bounding box with adaptive blocks
-    const minBlock = 1;  // SVG-crisp (highest resolution)
-    const maxBlock = baseBlur; // LEGO pixels (lowest resolution)
+    const x0 = Math.max(0, Math.floor(ix - ir));
+    const y0 = Math.max(0, Math.floor(iy - ir));
+    const x1 = Math.min(W, Math.ceil(ix + ir));
+    const y1 = Math.min(H, Math.ceil(iy + ir));
 
-    // Use a scanline approach with variable block sizes
+    const hue = tex.hue;
+    const minBlock = 1;
+    const maxBlock = baseBlur;
+
     let by = y0;
     while (by < y1) {
       let bx = x0;
+      // Sample focus for row height
+      const fyRow = clamp(Math.floor(by / FIELD_SCALE), 0, fh - 1);
+      const fxRow = clamp(Math.floor(x0 / FIELD_SCALE), 0, fw - 1);
+      const focusRow = field[fyRow * fw + fxRow];
+      let rowBlock = computeBlockSize(focusRow, minBlock, maxBlock, lenses.length);
+      rowBlock = snapBlockSize(rowBlock);
+
       while (bx < x1) {
-        // Sample focus at this position
-        const fx = clamp(Math.floor(bx / FIELD_SCALE), 0, fw - 1);
-        const fy = clamp(Math.floor(by / FIELD_SCALE), 0, fh - 1);
-        const focus = field[fy * fw + fx];
+        const fxp = clamp(Math.floor(bx / FIELD_SCALE), 0, fw - 1);
+        const fyp = clamp(Math.floor(by / FIELD_SCALE), 0, fh - 1);
+        const focus = field[fyp * fw + fxp];
 
-        // Determine block size from focus level
-        // focus=0 → maxBlock (LEGO), focus=1 → minBlock (SVG)
-        let blockSize;
-        if (isScrambled) {
-          // Left side: always render at medium resolution
-          // (scrambled data doesn't benefit much from high res)
-          blockSize = Math.max(4, Math.round(lerp(maxBlock * 0.6, 2, focus)));
-        } else {
-          // RIGHT SIDE: This is the key mechanic!
-          // No lenses → everything at maxBlock (LEGO)
-          // With lenses → focused areas get small blocks, unfocused stay large
-          if (numLenses === 0) {
-            blockSize = maxBlock; // Everything is LEGO without lenses
-          } else {
-            // Exponential mapping for more dramatic effect
-            // focus 0 → maxBlock, focus 1 → 1
-            const t = focus;
-            // Use power curve for more dramatic sharpening at high focus
-            const curve = Math.pow(t, 0.6);
-            blockSize = Math.max(minBlock, Math.round(lerp(maxBlock, minBlock, curve)));
-          }
-        }
-
-        // Snap block size to nice values for visual consistency
+        let blockSize = computeBlockSize(focus, minBlock, maxBlock, lenses.length);
         blockSize = snapBlockSize(blockSize);
 
-        // Ensure we don't exceed bounds
         const bw = Math.min(blockSize, x1 - bx);
-        const bh = Math.min(blockSize, y1 - by);
+        const bh = Math.min(rowBlock, y1 - by);
 
-        // Sample color at block center
+        // Sample at block center
         const cx = bx + bw / 2;
         const cy = by + bh / 2;
-        const color = sampleIslandColor(tex, scramTex, isl, ix, iy, ir,
-          cx, cy, isScrambled, focus, W, H);
 
-        if (color) {
-          ctx.fillStyle = color;
-          ctx.fillRect(bx, by, bw, bh);
+        const dist = Math.sqrt((cx - ix) ** 2 + (cy - iy) ** 2);
+        if (dist <= ir * 1.1) {
+          const localX = (cx - (ix - ir)) / (ir * 2);
+          const localY = (cy - (iy - ir)) / (ir * 2);
+
+          if (localX >= 0 && localX < 1 && localY >= 0 && localY < 1) {
+            const tx = clamp(Math.floor(localX * TEX_SIZE), 0, TEX_SIZE - 1);
+            const ty = clamp(Math.floor(localY * TEX_SIZE), 0, TEX_SIZE - 1);
+
+            // Pick reconstruction level based on focus
+            // focus 0 → level 0 (lowest freq, blurriest)
+            // focus 1 → level NUM_RECON_LEVELS-1 (all freq, sharpest)
+            const levelIdx = clamp(Math.floor(focus * NUM_RECON_LEVELS), 0, NUM_RECON_LEVELS - 1);
+            const reconData = levels[levelIdx];
+            const val = reconData[ty * TEX_SIZE + tx];
+
+            // Edge fade
+            const edgeFade = smoothstep(ir * 1.1, ir * 0.7, dist);
+
+            // Color
+            const s = 0.45 + val * 0.45;
+            const l_val = 0.06 + val * (0.3 + focus * 0.3);
+            const rgb = hslToRgbFast(hue / 360, s, l_val);
+
+            const blend = edgeFade * Math.max(val, 0.05);
+            const r = Math.round(lerp(2, rgb[0], blend));
+            const g = Math.round(lerp(5, rgb[1], blend));
+            const b = Math.round(lerp(16, rgb[2], blend));
+
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(bx, by, bw, bh);
+          }
         }
 
         bx += blockSize;
       }
-      // Determine row height from the block size at the start of the row
-      const fxRow = clamp(Math.floor(x0 / FIELD_SCALE), 0, fw - 1);
-      const fyRow = clamp(Math.floor(by / FIELD_SCALE), 0, fh - 1);
-      const focusRow = field[fyRow * fw + fxRow];
-      let rowBlock;
-      if (isScrambled) {
-        rowBlock = Math.max(4, Math.round(lerp(baseBlur * 0.6, 2, focusRow)));
-      } else {
-        if (numLenses === 0) {
-          rowBlock = baseBlur;
-        } else {
-          rowBlock = Math.max(1, Math.round(lerp(baseBlur, 1, Math.pow(focusRow, 0.6))));
-        }
-      }
-      rowBlock = snapBlockSize(rowBlock);
       by += rowBlock;
     }
+
+    // Label
+    ctx.font = 'bold 8px Inter';
+    ctx.fillStyle = `hsl(${hue}, 70%, 70%)`;
+    ctx.textAlign = 'center';
+    ctx.fillText(isl.label, ix, iy + ir + 12);
+  }
+
+  function computeBlockSize(focus, minBlock, maxBlock, numLenses) {
+    if (numLenses === 0) return maxBlock;
+    const t = Math.pow(focus, 0.6);
+    return Math.max(minBlock, Math.round(lerp(maxBlock, minBlock, t)));
   }
 
   function snapBlockSize(bs) {
-    // Snap to visually clean sizes
     if (bs >= 32) return 32;
     if (bs >= 24) return 24;
     if (bs >= 16) return 16;
@@ -706,54 +728,6 @@ const Main = (() => {
     return 1;
   }
 
-  function sampleIslandColor(tex, scramTex, isl, ix, iy, ir, px, py, isScrambled, focus, W, H) {
-    const dist = Math.sqrt((px - ix) ** 2 + (py - iy) ** 2);
-    if (dist > ir * 1.3) return null;
-
-    const localX = (px - (ix - ir)) / (ir * 2);
-    const localY = (py - (iy - ir)) / (ir * 2);
-
-    if (localX < 0 || localX >= 1 || localY < 0 || localY >= 1) return null;
-
-    const tx = clamp(Math.floor(localX * TEX_SIZE), 0, TEX_SIZE - 1);
-    const ty = clamp(Math.floor(localY * TEX_SIZE), 0, TEX_SIZE - 1);
-
-    let val;
-    if (isScrambled) {
-      // Left side: blend between scrambled and original based on focus
-      const scramVal = scramTex[ty * TEX_SIZE + tx];
-      const origVal = tex.data[ty * TEX_SIZE + tx];
-      val = lerp(scramVal, origVal, focus * 0.7);
-    } else {
-      // Right side: always show the TRUE content
-      // Resolution is controlled by block size, not by value manipulation
-      val = tex.data[ty * TEX_SIZE + tx];
-    }
-
-    if (val < 0.01 && dist > ir) return null;
-
-    // Color
-    const h = tex.hue / 360;
-    const s = 0.45 + val * 0.45;
-    let l;
-    if (isScrambled) {
-      l = 0.08 + val * 0.4 + focus * val * 0.15;
-    } else {
-      // Decoded side: brighter when focused, dimmer when blurry
-      l = 0.06 + val * (0.3 + focus * 0.3);
-    }
-    const rgb = hslToRgbFast(h, s, l);
-
-    // Edge blend
-    const blend = smoothstep(ir * 1.3, ir * 0.7, dist) * Math.max(val, 0.05);
-
-    const r = Math.round(lerp(2, rgb[0], blend));
-    const g = Math.round(lerp(5, rgb[1], blend));
-    const b = Math.round(lerp(16, rgb[2], blend));
-
-    return `rgb(${r},${g},${b})`;
-  }
-
   function smoothstep(e0, e1, x) {
     const t = clamp((x - e0) / (e1 - e0), 0, 1);
     return t * t * (3 - 2 * t);
@@ -761,9 +735,8 @@ const Main = (() => {
 
   function hslToRgbFast(h, s, l) {
     let r, g, b;
-    if (s === 0) {
-      r = g = b = l;
-    } else {
+    if (s === 0) { r = g = b = l; }
+    else {
       const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
       const p = 2 * l - q;
       r = hue2rgb(p, q, h + 1/3);
@@ -787,14 +760,6 @@ const Main = (() => {
 })();
 
 // ================================================================
-// SCROLL FADE-IN
-// ================================================================
-const fadeObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade').forEach(el => fadeObs.observe(el));
-
-// ================================================================
 // RESPONSIVE RESIZE
 // ================================================================
 let resizeTimer;
@@ -805,3 +770,4 @@ window.addEventListener('resize', () => {
 </script>
 </body>
 </html>
+
