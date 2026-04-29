@@ -161,17 +161,7 @@ function _register_kernel_editables(layer_idx, layer_data, max_rows, max_cols, d
 
 function _register_single_kernel_editable(layer_idx, layer_data, row, col, kwi, decimals) {
 	var eid = "L" + layer_idx + "_kernel_" + row + "_" + col;
-	math_register_editable(
-		eid,
-		function() { return layer_data[layer_idx].kernel[row][col]; },
-		function(v) {
-			layer_data[layer_idx].kernel[row][col] = v;
-			if (kwi >= 0) _math_apply_single_weight(layer_idx, kwi, layer_data[layer_idx].kernel);
-		},
-		-10, 10,
-		"Layer " + layer_idx + " kernel[" + row + "][" + col + "]",
-		{ decimals: decimals }
-	);
+	math_register_editable(eid, function() { return layer_data[layer_idx].kernel[row][col]; }, function(v) { layer_data[layer_idx].kernel[row][col] = v; if (kwi >= 0) _math_apply_single_weight(layer_idx, kwi, layer_data[layer_idx].kernel); }, -10, 10, "Layer " + layer_idx + " kernel[" + row + "][" + col + "]", { decimals: decimals });
 }
 
 function _register_bias_editables(layer_idx, layer_data, max_bias, decimals, bias_weight_idx) {
@@ -184,17 +174,7 @@ function _register_bias_editables(layer_idx, layer_data, max_bias, decimals, bia
 
 function _register_single_bias_editable(layer_idx, layer_data, idx, bwi, decimals) {
 	var eid = "L" + layer_idx + "_bias_" + idx;
-	math_register_editable(
-		eid,
-		function() { return layer_data[layer_idx].bias[idx]; },
-		function(v) {
-			layer_data[layer_idx].bias[idx] = v;
-			if (bwi >= 0) _math_apply_single_weight(layer_idx, bwi, layer_data[layer_idx].bias);
-		},
-		-10, 10,
-		"Layer " + layer_idx + " bias[" + idx + "]",
-		{ decimals: decimals }
-	);
+	math_register_editable(eid, function() { return layer_data[layer_idx].bias[idx]; }, function(v) { layer_data[layer_idx].bias[idx] = v; if (bwi >= 0) _math_apply_single_weight(layer_idx, bwi, layer_data[layer_idx].bias); }, -10, 10, "Layer " + layer_idx + " bias[" + idx + "]", { decimals: decimals });
 }
 
 function _build_kernel_latex(layer_idx, kernel, max_rows, max_cols, decimals, all_editables) {
