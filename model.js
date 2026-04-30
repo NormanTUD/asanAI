@@ -249,7 +249,7 @@ async function compile_model(recursion_level=0) {
 	// --- FIX: Save weights before potential model recreation ---
 	var saved_weights_json = null;
 	if (model && model.layers && model.layers.length) {
-		saved_weights_json = get_weights_as_json(model);
+		saved_weights_json = await get_weights_as_json(model);
 	}
 
 	await recreate_model_if_needed(new_model_config_hash);
@@ -257,12 +257,15 @@ async function compile_model(recursion_level=0) {
 	// --- FIX: If model was recreated, restore the saved weights ---
 	if (saved_weights_json && model && model.layers && model.layers.length) {
 		try {
-			var current_weights_json = get_weights_as_json(model);
+			var current_weights_json = await get_weights_as_json(model);
 			// Only restore if shapes match (model structure didn't change)
 			if (current_weights_json && saved_weights_json &&
-			    JSON.stringify(saved_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null)) ===
-			    JSON.stringify(current_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null))) {
+				JSON.stringify(saved_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null)) ===
+				JSON.stringify(current_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null))) {
 				await set_weights_from_json_object(saved_weights_json, true, true, model);
+			} else {
+				// Shapes DON'T match → model structure actually changed → clear editables
+				math_clear_editables();
 			}
 		} catch (e) {
 			dbg("[compile_model] Could not restore weights after recreation: " + e);
