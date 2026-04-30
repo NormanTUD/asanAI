@@ -457,15 +457,22 @@ function computeZoomedPatch(cellIndex, N) {
   const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
   const patchData = new Float64Array(N * N);
 
+  // Determine this cell's spatial region (1/9th of the image)
+  const cellRow = Math.floor(cellIndex / GRID);
+  const cellCol = cellIndex % GRID;
+  const x0 = cellCol / GRID;
+  const y0 = cellRow / GRID;
+  const cellSpan = 1 / GRID;
+
   if (isOverzoom) {
     const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
     const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
     for (let y = 0; y < N; y++) {
       for (let x = 0; x < N; x++) {
-        const nx = (x + 0.5) / N;
-        const ny = (y + 0.5) / N;
+        // Map to THIS CELL's region of the image
+        const nx = x0 + (x + 0.5) / N * cellSpan;
+        const ny = y0 + (y + 0.5) / N * cellSpan;
         const sincVal = sincInterpolate(nx, ny, baseBlocks);
-        // More ringing artifacts
         const ring = Math.sin(x * Math.PI / N * 12) * Math.sin(y * Math.PI / N * 12) * 0.08 * ovAmt;
         let val = sincVal + ring;
         val = Math.max(0, Math.min(1, val));
@@ -475,10 +482,13 @@ function computeZoomedPatch(cellIndex, N) {
   } else {
     for (let y = 0; y < N; y++) {
       for (let x = 0; x < N; x++) {
-        const blockX = Math.floor(x * blocksPerCell / N);
-        const blockY = Math.floor(y * blocksPerCell / N);
-        const sampleNx = (blockX + 0.5) / blocksPerCell;
-        const sampleNy = (blockY + 0.5) / blocksPerCell;
+        // Map to THIS CELL's region of the image
+        const nx = x0 + (x + 0.5) / N * cellSpan;
+        const ny = y0 + (y + 0.5) / N * cellSpan;
+        const blockX = Math.floor(nx * blocksPerCell);
+        const blockY = Math.floor(ny * blocksPerCell);
+        const sampleNx = (Math.min(blockX, blocksPerCell - 1) + 0.5) / blocksPerCell;
+        const sampleNy = (Math.min(blockY, blocksPerCell - 1) + 0.5) / blocksPerCell;
         patchData[y * N + x] = smileyAt(sampleNx, sampleNy);
       }
     }
@@ -822,7 +832,7 @@ function drawFFTCell(ci) {
 }
 
 // ============================================
-// DRAW single FFT SPECTRUM CELL
+// DRAW single FFT SPECTRUM CELL — always of the WHOLE image
 // ============================================
 function drawSpectrumCell(ci) {
   const canvas = spectrumCanvases[ci];
@@ -842,8 +852,36 @@ function drawSpectrumCell(ci) {
   // Cap DFT size for performance
   const N = Math.min(Math.max(4, Math.round(levelToBlocks(level))), 28);
 
-  const zoomedPatch = computeZoomedPatch(ci, N);
-  const mag = computeFFTMagnitude(zoomedPatch, N);
+  // === KEY CHANGE: Sample the WHOLE image, not just the cell's patch ===
+  const wholeImageData = new Float64Array(N * N);
+  const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
+
+  if (isOverzoom) {
+    const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const nx = (x + 0.5) / N;
+        const ny = (y + 0.5) / N;
+        let val = sincInterpolate(nx, ny, baseBlocks);
+        val = Math.max(0, Math.min(1, val));
+        wholeImageData[y * N + x] = val;
+      }
+    }
+  } else {
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const nx = (x + 0.5) / N;
+        const ny = (y + 0.5) / N;
+        const blockX = Math.floor(nx * blocksPerCell);
+        const blockY = Math.floor(ny * blocksPerCell);
+        const sampleNx = (Math.min(blockX, blocksPerCell - 1) + 0.5) / blocksPerCell;
+        const sampleNy = (Math.min(blockY, blocksPerCell - 1) + 0.5) / blocksPerCell;
+        wholeImageData[y * N + x] = smileyAt(sampleNx, sampleNy);
+      }
+    }
+  }
+
+  const mag = computeFFTMagnitude(wholeImageData, N);
 
   // Log scale for visualization
   const logMag = new Float64Array(N * N);
@@ -865,13 +903,10 @@ function drawSpectrumCell(ci) {
 
       let r, g, b;
       if (isOverzoom) {
-        // Cyan-tinted spectrum for overzoom
         const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
         r = Math.round(v * v * 150 * (1 - ovAmt * 0.5));
         g = Math.round(v * 180 + v * v * 75);
         b = Math.round(80 + v * 200 * (0.7 + ovAmt * 0.3));
-
-        // Hatch
         if (((px + py) % 8) < 1 && ovAmt > 0.2) {
           r = Math.max(0, r - 15);
           g = Math.max(0, g - 10);
@@ -905,7 +940,6 @@ function drawSpectrumCell(ci) {
   ctx.lineTo(CELL_CANVAS_SIZE, center);
   ctx.stroke();
 
-  // Overzoom warning on spectrum
   if (isOverzoom) {
     ctx.save();
     ctx.font = 'bold 7px system-ui';
