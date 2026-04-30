@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interactive Presentation</title>
+<title>How LLMs Really Work — A Geometric Intuition</title>
 
 <!-- Temml for LaTeX rendering -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Latin-Modern.css">
@@ -16,9 +16,6 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css">
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/javascript.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/python.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/css.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/languages/xml.min.js"></script>
 
 <style>
 :root {
@@ -76,33 +73,32 @@ html, body {
   transform: translateX(-60px) scale(0.97);
 }
 
-.slide-inner { max-width: 1000px; width: 100%; }
+.slide-inner { max-width: 1100px; width: 100%; }
 
 .slide h1 {
-  font-size: 3rem; font-weight: 800;
+  font-size: 2.8rem; font-weight: 800;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; margin-bottom: 0.5em; line-height: 1.2;
 }
 
 .slide h2 {
-  font-size: 2.2rem; font-weight: 700; color: var(--accent);
+  font-size: 2rem; font-weight: 700; color: var(--accent);
   margin-bottom: 0.5em; border-bottom: 2px solid var(--border); padding-bottom: 0.3em;
 }
 
-.slide h3 { font-size: 1.5rem; font-weight: 600; color: var(--accent2); margin-bottom: 0.4em; }
+.slide h3 { font-size: 1.4rem; font-weight: 600; color: var(--accent2); margin-bottom: 0.4em; }
 
-.slide p { font-size: 1.25rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 1em; }
+.slide p { font-size: 1.2rem; line-height: 1.8; color: var(--text-secondary); margin-bottom: 1em; }
 
 .slide ul, .slide ol {
-  font-size: 1.2rem; line-height: 2; color: var(--text-secondary);
+  font-size: 1.15rem; line-height: 2; color: var(--text-secondary);
   margin-left: 1.5em; margin-bottom: 1em;
 }
 
 .slide li::marker { color: var(--accent); }
 .slide strong { color: var(--text-primary); font-weight: 700; }
 .slide em { color: var(--accent2); font-style: italic; }
-.slide a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
 .slide blockquote {
   border-left: 4px solid var(--accent); padding: 0.8em 1.2em; margin: 1em 0;
@@ -111,56 +107,21 @@ html, body {
 }
 
 .slide code {
-  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  font-family: 'Fira Code', monospace;
   background: rgba(108, 99, 255, 0.1); padding: 0.15em 0.4em;
   border-radius: 4px; font-size: 0.9em; color: var(--accent2);
 }
 
-.slide pre {
-  background: #0d0d20; border: 1px solid var(--border);
-  border-radius: 12px; padding: 1.2em; margin: 1em 0; overflow-x: auto;
-}
-
-.slide pre code {
-  background: none; padding: 0; color: var(--text-primary); font-size: 0.95rem;
-}
-
 .math-block {
-  display: flex; justify-content: center; margin: 1.2em 0; padding: 1em;
+  display: flex; justify-content: center; margin: 1em 0; padding: 0.8em;
   background: rgba(0, 212, 170, 0.03); border-radius: 12px;
   border: 1px solid rgba(0, 212, 170, 0.1); overflow-x: auto;
-}
-
-.math-inline { display: inline; vertical-align: middle; }
-
-.slide img {
-  max-width: 100%; max-height: 55vh; border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4); margin: 1em auto; display: block;
-}
-
-.slide video, .slide iframe {
-  max-width: 100%; max-height: 55vh; border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4); margin: 1em auto; display: block;
 }
 
 .tool-container {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 16px; padding: 1.5em; margin: 1em 0;
   box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-}
-
-.tool-container label {
-  display: block; font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.5em;
-}
-
-.tool-container input[type="range"] {
-  -webkit-appearance: none; width: 100%; height: 6px;
-  border-radius: 3px; background: var(--bg-primary); outline: none; margin: 0.5em 0;
-}
-
-.tool-container input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--accent); cursor: pointer; box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .tool-container button {
@@ -173,18 +134,18 @@ html, body {
   transform: translateY(-2px); box-shadow: 0 4px 16px var(--accent-glow);
 }
 
+.tool-container button.active-btn {
+  background: linear-gradient(135deg, #00d4aa, #10b981);
+  box-shadow: 0 0 12px rgba(0, 212, 170, 0.4);
+}
+
 .tool-container canvas {
   border-radius: 8px; background: #080818; display: block; margin: 0.5em auto;
 }
 
 .tool-output {
-  font-family: 'Fira Code', monospace; font-size: 1.5rem; color: var(--accent2);
+  font-family: 'Fira Code', monospace; font-size: 1.3rem; color: var(--accent2);
   text-align: center; padding: 0.5em; min-height: 2em;
-}
-
-.tool-container input[type="number"], .tool-container input[type="text"] {
-  width: 70px; background: var(--bg-primary); color: var(--text-primary);
-  border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px; font-size: 1.1rem;
 }
 
 #progress-bar {
@@ -199,50 +160,12 @@ html, body {
   color: var(--text-muted); font-family: 'Fira Code', monospace; z-index: 1000; user-select: none;
 }
 
-#lang-toggle {
-  position: fixed; top: 16px; right: 30px; z-index: 1001;
-  display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);
-}
-
-#lang-toggle button {
-  background: var(--bg-card); color: var(--text-muted); border: none;
-  padding: 6px 14px; font-size: 0.85rem; cursor: pointer;
-  transition: all 0.3s; font-weight: 600;
-}
-
-#lang-toggle button.active { background: var(--accent); color: white; }
-
 #nav-hint {
   position: fixed; bottom: 20px; left: 30px; font-size: 0.8rem;
   color: var(--text-muted); z-index: 1000; user-select: none; opacity: 0.6;
 }
 
-#overview {
-  position: fixed; inset: 0; background: rgba(10, 10, 26, 0.97);
-  z-index: 2000; display: none; overflow-y: auto; padding: 40px;
-}
-
-#overview.visible {
-  display: flex; flex-wrap: wrap; gap: 20px;
-  justify-content: center; align-content: flex-start;
-}
-
-.overview-thumb {
-  width: 280px; height: 180px; background: var(--bg-slide);
-  border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem; color: var(--text-secondary); padding: 1em;
-  text-align: center; transition: all 0.3s; overflow: hidden;
-}
-
-.overview-thumb:hover {
-  border-color: var(--accent); transform: scale(1.05);
-  box-shadow: 0 4px 24px var(--accent-glow);
-}
-
-.overview-thumb.current {
-  border-color: var(--accent2); box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
-}
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; align-items: center; }
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
@@ -256,21 +179,37 @@ html, body {
 .slide.active .slide-inner > *:nth-child(4) { animation-delay: 0.26s; }
 .slide.active .slide-inner > *:nth-child(5) { animation-delay: 0.33s; }
 .slide.active .slide-inner > *:nth-child(6) { animation-delay: 0.40s; }
-.slide.active .slide-inner > *:nth-child(7) { animation-delay: 0.47s; }
-.slide.active .slide-inner > *:nth-child(8) { animation-delay: 0.54s; }
 
-.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 2em; align-items: start; }
+.highlight-box {
+  background: rgba(108, 99, 255, 0.08);
+  border: 1px solid rgba(108, 99, 255, 0.25);
+  border-radius: 12px; padding: 1.2em; margin: 1em 0;
+}
 
-.slide table { width: 100%; border-collapse: collapse; margin: 1em 0; }
-.slide th, .slide td { padding: 0.7em 1em; border: 1px solid var(--border); text-align: left; }
-.slide th { background: var(--bg-card); color: var(--accent); font-weight: 600; }
+.analogy-grid {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 1em; align-items: center;
+  margin: 1em 0;
+}
 
-#particles { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.analogy-arrow { font-size: 2em; color: var(--accent); text-align: center; }
+
+.img-figure {
+  text-align: center; margin: 1em 0;
+}
+
+.img-figure img {
+  max-width: 100%; max-height: 50vh; border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.img-figure figcaption {
+  font-size: 0.85em; color: var(--text-muted); margin-top: 0.5em;
+}
 
 @media (max-width: 768px) {
   .slide { padding: 30px 24px; }
   .slide h1 { font-size: 2rem; }
-  .slide h2 { font-size: 1.6rem; }
+  .slide h2 { font-size: 1.5rem; }
   .slide p, .slide li { font-size: 1rem; }
   .columns { grid-template-columns: 1fr; }
 }
@@ -278,254 +217,324 @@ html, body {
 </head>
 <body>
 
-<canvas id="particles"></canvas>
 <div id="progress-bar"></div>
 <div id="slide-counter"></div>
-<div id="nav-hint">← → arrows · scroll · [O]verview · [F]ullscreen</div>
-
-<div id="lang-toggle">
-  <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
-  <button id="btn-de" onclick="setLang('de')">DE</button>
-</div>
-
-<div id="overview"></div>
+<div id="nav-hint">← → arrows · scroll · [F]ullscreen</div>
 
 <div id="presentation">
 
-  <!-- ═══════════ SLIDE 1: Title ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h1>Welcome to Interactive Presentations 🚀</h1>
-        <p>A <strong>beautiful</strong>, markdown-powered slide system with LaTeX math, interactive tools, and bilingual support.</p>
-        <blockquote>Press <strong>→</strong> or scroll to begin your journey.</blockquote>
+<!-- ═══════════ SLIDE 1: Title ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h1>How LLMs Really Work:<br>Space-Bending Machines 🌀</h1>
+    <p>A visual, interactive journey into a geometric theory of how AI language models think.</p>
+    <blockquote>The AI doesn't move words through space. It <strong>bends space itself</strong> — and the information is stored in the bending.</blockquote>
+    <p style="font-size:1rem; color:var(--text-muted);">Press → or scroll to continue. Press [F] for fullscreen.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 2: What You Already Know ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Quick Recap: The Embedding Space 📍</h2>
+    <p>You already know that LLMs represent words as <strong>points in a high-dimensional space</strong> — the <em>embedding space</em>.</p>
+    <p>Words with similar meanings end up <strong>close together</strong>. "King" is near "Queen". "Cat" is near "Dog". "Banana" is far from "Monarchy".</p>
+    <div class="highlight-box">
+      <p style="text-align:center; font-size:1.3em;">Think of the embedding space as the <strong>lowest-resolution photograph</strong> of everything the AI has ever read.</p>
+      <p style="text-align:center;">It's blurry — all concepts compressed into one space — but it captures the <em>rough shape</em> of human knowledge.</p>
+    </div>
+    <p>The question is: <strong>what happens next?</strong> How does the AI go from this blurry map to generating precise, coherent text?</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 3: The Standard View ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>The Standard Story: Moving Points 🏓</h2>
+    <p>The usual explanation says: each word is a point (vector), and each layer of the neural network <strong>moves that point</strong> to a better position.</p>
+    <div class="img-figure">
+      <img src="figures/former_interpretation.png" alt="Standard transformer interpretation showing points moving through layers">
+      <figcaption>The standard picture: tokens as balls being pushed through a pipeline.</figcaption>
+    </div>
+    <p>This is <em>operationally correct</em> — but it hides a deeper story.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 4: The New Idea ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>The New Idea: Bending Space 🌊</h2>
+    <p>What if the AI doesn't move the points — it <strong>bends the space the points live in</strong>?</p>
+    <div class="analogy-grid">
+      <div class="highlight-box" style="text-align:center;">
+        <p><strong>🏓 Old View</strong></p>
+        <p>Push a ball across a flat table</p>
       </div>
-      <div class="lang-de" style="display:none;">
-        <h1>Willkommen bei Interaktiven Präsentationen 🚀</h1>
-        <p>Ein <strong>wunderschönes</strong>, Markdown-basiertes Foliensystem mit LaTeX-Mathematik, interaktiven Werkzeugen und zweisprachiger Unterstützung.</p>
-        <blockquote>Drücke <strong>→</strong> oder scrolle, um deine Reise zu beginnen.</blockquote>
+      <div class="analogy-arrow">→</div>
+      <div class="highlight-box" style="text-align:center;">
+        <p><strong>🌍 New View</strong></p>
+        <p>Warp the table — the ball rolls on its own</p>
       </div>
     </div>
+    <p>This is exactly what <strong>Einstein did with gravity</strong>: instead of "a force pulls objects", he said "mass bends space, and objects follow the curves."</p>
+    <blockquote>The AI's layers don't push tokens around. They <strong>deform the geometry of meaning-space</strong>, and the tokens follow the new shape.</blockquote>
   </div>
+</div>
 
-  <!-- ═══════════ SLIDE 2: Math ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h2>Beautiful Mathematics</h2>
-        <p>Inline math works seamlessly: the famous identity $e^{i\pi} + 1 = 0$ connects five fundamental constants.</p>
-        <p>The <strong>Gaussian integral</strong>:</p>
-        <div class="math-block">$$\int_{-\infty}^{\infty} e^{-x^2} \, dx = \sqrt{\pi}$$</div>
-        <p><strong>Maxwell's equations</strong> in differential form:</p>
-        <div class="math-block">$$\nabla \cdot \mathbf{E} = \frac{\rho}{\varepsilon_0}, \quad \nabla \times \mathbf{B} = \mu_0 \mathbf{J} + \mu_0 \varepsilon_0 \frac{\partial \mathbf{E}}{\partial t}$$</div>
-        <p>The <strong>Schrödinger equation</strong>:</p>
-        <div class="math-block">$$i\hbar \frac{\partial}{\partial t} \Psi(\mathbf{r}, t) = \hat{H} \Psi(\mathbf{r}, t)$$</div>
+<!-- ═══════════ SLIDE 5: What is Topology? ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>What is Topology? ☕ = 🍩</h2>
+    <p><strong>Topology</strong> is the branch of mathematics that studies shapes — but it <em>throws away distances</em>. It only cares about <strong>what's connected to what</strong>.</p>
+    <p>The famous example: a coffee mug and a donut (torus) are <strong>topologically the same</strong>, because you can smoothly deform one into the other without cutting or gluing.</p>
+    <div class="tool-container" id="torus-mug-tool">
+      <p style="text-align:center; color:var(--text-secondary); margin-bottom:0.5em;">Drag the slider to morph between a coffee mug and a donut:</p>
+      <div style="display:flex; align-items:center; gap:1em; justify-content:center; margin-bottom:1em;">
+        <span style="font-size:2em;">☕</span>
+        <input type="range" id="torus-morph" min="0" max="100" value="0" style="width:300px; accent-color: var(--accent);">
+        <span style="font-size:2em;">🍩</span>
       </div>
-      <div class="lang-de" style="display:none;">
-        <h2>Wunderschöne Mathematik</h2>
-        <p>Inline-Mathematik funktioniert nahtlos: die berühmte Identität $e^{i\pi} + 1 = 0$ verbindet fünf fundamentale Konstanten.</p>
-        <p>Das <strong>Gaußsche Integral</strong>:</p>
-        <div class="math-block">$$\int_{-\infty}^{\infty} e^{-x^2} \, dx = \sqrt{\pi}$$</div>
-        <p><strong>Maxwells Gleichungen</strong> in Differentialform:</p>
-        <div class="math-block">$$\nabla \cdot \mathbf{E} = \frac{\rho}{\varepsilon_0}, \quad \nabla \times \mathbf{B} = \mu_0 \mathbf{J} + \mu_0 \varepsilon_0 \frac{\partial \mathbf{E}}{\partial t}$$</div>
-        <p>Die <strong>Schrödinger-Gleichung</strong>:</p>
-        <div class="math-block">$$i\hbar \frac{\partial}{\partial t} \Psi(\mathbf{r}, t) = \hat{H} \Psi(\mathbf{r}, t)$$</div>
-      </div>
+      <canvas id="torus-canvas" width="700" height="350"></canvas>
+      <p style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:0.5em;">Both have exactly <strong>one hole</strong>. That's all topology cares about.</p>
     </div>
+    <p>Why does this matter for AI? Because the AI's computations are <strong>topological</strong> — they care about the <em>shape</em> of relationships, not exact distances.</p>
   </div>
+</div>
 
-  <!-- ═══════════ SLIDE 3: Code ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h2>Code That Shines ✨</h2>
-        <p>Here's a <strong>Python</strong> example:</p>
-        <pre><code class="language-python">import numpy as np
-
-def mandelbrot(c, max_iter=100):
-    z = 0
-    for n in range(max_iter):
-        if abs(z) > 2:
-            return n
-        z = z*z + c
-    return max_iter
-
-x = np.linspace(-2, 1, 800)
-y = np.linspace(-1.5, 1.5, 800)
-fractal = np.array([[mandelbrot(complex(a, b)) for a in x] for b in y])</code></pre>
-        <p>And some <strong>JavaScript</strong>:</p>
-        <pre><code class="language-javascript">const fibonacci = n =&gt;
-  Array.from({ length: n }, (_, i, a = [0, 1]) =&gt;
-    i &lt; 2 ? a[i] : (a.push(a[i-1] + a[i-2]), a[i])
-  );
-
-console.log(fibonacci(10));</code></pre>
-      </div>
-      <div class="lang-de" style="display:none;">
-        <h2>Code der glänzt ✨</h2>
-        <p>Hier ein <strong>Python</strong>-Beispiel:</p>
-        <pre><code class="language-python">import numpy as np
-
-def mandelbrot(c, max_iter=100):
-    z = 0
-    for n in range(max_iter):
-        if abs(z) > 2:
-            return n
-        z = z*z + c
-    return max_iter
-
-x = np.linspace(-2, 1, 800)
-y = np.linspace(-1.5, 1.5, 800)
-fraktal = np.array([[mandelbrot(complex(a, b)) for a in x] for b in y])</code></pre>
-        <p>Und etwas <strong>JavaScript</strong>:</p>
-        <pre><code class="language-javascript">const fibonacci = n =&gt;
-  Array.from({ length: n }, (_, i, a = [0, 1]) =&gt;
-    i &lt; 2 ? a[i] : (a.push(a[i-1] + a[i-2]), a[i])
-  );
-
-console.log(fibonacci(10));</code></pre>
-      </div>
+<!-- ═══════════ SLIDE 6: Continuous Deformation = Computation ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Deformation = Computation 🔄</h2>
+    <p>Here's the key insight: in the AI, <strong>each layer deforms space</strong>. And the <em>information is stored in the deformation itself</em>.</p>
+    <p>Imagine you have a flat rubber sheet with a grid drawn on it. Now stretch, compress, and twist different parts of it:</p>
+    <div class="img-figure">
+      <img src="figures/deformed_grid_2d.png" alt="2D deformed grid showing how a transformer layer warps space">
+      <figcaption>A regular grid, deformed by a transformer layer. Blue = compressed, Red = expanded. The warping IS the computation.</figcaption>
     </div>
+    <p>The <strong>blue regions</strong> are where the AI is "making a decision" — compressing multiple possibilities into one. The <strong>red regions</strong> are where it's "opening up options."</p>
   </div>
+</div>
 
-  <!-- ═══════════ SLIDE 4: Wave Interactive ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h2>Interactive: Wave Explorer 🌊</h2>
-        <p>Play with the parameters of $y = A \sin(f \cdot x + \varphi)$</p>
+<!-- ═══════════ SLIDE 7: Winding Numbers (Interactive) ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Winding Numbers: Counting Loops 🔢</h2>
+    <p>In topology, one of the simplest but most powerful ideas is the <strong>winding number</strong>: how many times does a path loop around a point?</p>
+    <p>A path that goes around <strong>once counterclockwise</strong> has winding number +1. Twice = +2. Clockwise = negative numbers. Not at all = 0.</p>
+    <div class="tool-container">
+      <p style="text-align:center; color:var(--text-secondary);">Click buttons to see different winding numbers on a circle:</p>
+      <canvas id="winding-canvas" width="700" height="400"></canvas>
+      <div style="display:flex; gap:8px; justify-content:center; margin-top:12px; flex-wrap:wrap;">
+        <button onclick="setWindingNum(-3)">n = -3</button>
+        <button onclick="setWindingNum(-2)">n = -2</button>
+        <button onclick="setWindingNum(-1)">n = -1</button>
+        <button onclick="setWindingNum(0)" class="active-btn" id="wbtn-0">n = 0</button>
+        <button onclick="setWindingNum(1)">n = 1</button>
+        <button onclick="setWindingNum(2)">n = 2</button>
+        <button onclick="setWindingNum(3)">n = 3</button>
       </div>
-      <div class="lang-de" style="display:none;">
-        <h2>Interaktiv: Wellen-Explorer 🌊</h2>
-        <p>Spiele mit den Parametern von $y = A \sin(f \cdot x + \varphi)$</p>
-      </div>
-      <div class="tool-container" id="wave-tool">
-        <label><span class="lang-en">Amplitude (A)</span><span class="lang-de" style="display:none;">Amplitude (A)</span>: <strong id="amp-val">1.0</strong></label>
-        <input type="range" id="amplitude" min="0.1" max="3" step="0.1" value="1">
-        <label><span class="lang-en">Frequency (f)</span><span class="lang-de" style="display:none;">Frequenz (f)</span>: <strong id="freq-val">1.0</strong></label>
-        <input type="range" id="frequency" min="0.1" max="5" step="0.1" value="1">
-        <label><span class="lang-en">Phase (φ)</span><span class="lang-de" style="display:none;">Phase (φ)</span>: <strong id="phase-val">0.0</strong></label>
-        <input type="range" id="phase" min="0" max="6.28" step="0.1" value="0">
-        <canvas id="wave-canvas" width="860" height="250"></canvas>
-      </div>
+      <p id="winding-info" style="text-align:center; margin-top:10px; color:var(--accent2); font-weight:bold;">n = 0: The constant loop (stay put)</p>
     </div>
+    <p>Why does this matter? Because in the AI, <strong>information is encoded in how paths wind through the deformed space</strong>. Different winding = different meaning.</p>
   </div>
+</div>
 
-  <!-- ═══════════ SLIDE 5: Matrix Interactive ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h2>Interactive: Matrix Determinant 🧮</h2>
-        <p>Compute the determinant of a $2 \times 2$ matrix:</p>
-        <div class="math-block">$$\det \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix} = ad - bc$$</div>
+<!-- ═══════════ SLIDE 8: Loop Spaces ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Loop Spaces: Paths That Return Home 🏠</h2>
+    <p>A <strong>loop</strong> is a path that starts and ends at the same point. The collection of <em>all possible loops</em> from a point is called the <strong>loop space</strong>.</p>
+    <div class="tool-container">
+      <p style="text-align:center; color:var(--text-secondary);">Click to add loops. Each loop is a different "thought" the AI could have:</p>
+      <canvas id="loops-canvas" width="700" height="400"></canvas>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        <button onclick="addLoopDemo()">+ Add Loop</button>
+        <button onclick="clearLoopsDemo()">Clear</button>
       </div>
-      <div class="lang-de" style="display:none;">
-        <h2>Interaktiv: Matrix-Determinante 🧮</h2>
-        <p>Berechne die Determinante einer $2 \times 2$ Matrix:</p>
-        <div class="math-block">$$\det \begin{pmatrix} a &amp; b \\ c &amp; d \end{pmatrix} = ad - bc$$</div>
-      </div>
-      <div class="tool-container">
-        <div class="columns">
-          <div>
-            <label>a: <input type="number" id="mat-a" value="3"></label><br>
-            <label>c: <input type="number" id="mat-c" value="1"></label>
-          </div>
-          <div>
-            <label>b: <input type="number" id="mat-b" value="7"></label><br>
-            <label>d: <input type="number" id="mat-d" value="2"></label>
-          </div>
+      <p style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:8px;">The pink dot is the "base point" — where every loop starts and ends. Each colored path is a different loop.</p>
+    </div>
+    <p>In the AI, these loops represent <strong>patterns of deformation</strong> that encode information. Two loops that can be smoothly deformed into each other carry the <em>same</em> information — they're "topologically equivalent."</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 9: Waves in Space ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Waves of Space-Bending 🌊</h2>
+    <p>As data flows through the AI's layers, each layer bends space a little more. The sequence of bendings is like a <strong>wave propagating through the network</strong>.</p>
+    <div class="img-figure">
+      <img src="figures/fibre_view.png" alt="Fibre view showing how token representations evolve across layers">
+      <figcaption>Each vertical strand is one word, tracked from bottom (input) to top (output). The sideways movement shows how space bends differently at each layer.</figcaption>
+    </div>
+    <p>The information isn't stored in any single layer — it's stored <strong>holographically in the wave pattern</strong> of all the deformations together.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 10: Holographic Storage ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Holographic Storage: Information Everywhere 🌐</h2>
+    <p>In a normal photograph, each pixel stores one spot. Scratch a corner → that corner is gone forever.</p>
+    <p>In a <strong>hologram</strong>, every piece stores the <em>whole image</em> as a wave pattern. Scratch a corner → the whole image gets slightly blurrier, but nothing disappears.</p>
+    <div class="tool-container" id="holo-demo">
+      <p style="text-align:center; color:var(--text-secondary); margin-bottom:1em;">Click tiles to "destroy" them. See the difference:</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div style="text-align:center;">
+          <h3 style="color:var(--accent3);">📷 Photograph (Localized)</h3>
+          <canvas id="holo-photo-grid" width="200" height="200"></canvas>
+          <p style="font-size:0.8em; color:var(--text-muted);">↓ Reconstructed ↓</p>
+          <canvas id="holo-photo-img" width="200" height="200"></canvas>
         </div>
-        <br>
-        <button onclick="calcDet()">
-          <span class="lang-en">Calculate</span><span class="lang-de" style="display:none;">Berechnen</span>
-        </button>
-        <div class="tool-output" id="det-output">det = ?</div>
+        <div style="text-align:center;">
+          <h3 style="color:var(--accent2);">🌐 Hologram (Distributed)</h3>
+          <canvas id="holo-holo-grid" width="200" height="200"></canvas>
+          <p style="font-size:0.8em; color:var(--text-muted);">↓ Reconstructed ↓</p>
+          <canvas id="holo-holo-img" width="200" height="200"></canvas>
+        </div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        <button onclick="holoReset()">🔄 Reset</button>
+        <button onclick="holoRandomDamage(0.25)" style="background:#ef4444;">💥 25% Damage</button>
+        <button onclick="holoRandomDamage(0.5)" style="background:#ef4444;">💥 50% Damage</button>
       </div>
     </div>
+    <p><strong>LLMs work like holograms.</strong> The concept "dog" isn't in neuron #42 — it's a wave pattern across <em>all</em> dimensions. Damage some → it gets fuzzier, but never fully disappears.</p>
   </div>
+</div>
 
-  <!-- ═══════════ SLIDE 6: Images & Media ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h2>Images &amp; Media 🎬</h2>
-        <p>Embed images easily:</p>
-        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80" alt="A beautiful nebula">
-        <p><em>Replace src with your own images, or use local paths!</em></p>
-      </div>
-      <div class="lang-de" style="display:none;">
-        <h2>Bilder &amp; Medien 🎬</h2>
-        <p>Bilder einfach einbetten:</p>
-        <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80" alt="Ein wunderschöner Nebel">
-        <p><em>Ersetze src mit deinen eigenen Bildern oder lokalen Pfaden!</em></p>
-      </div>
+<!-- ═══════════ SLIDE 11: Zooming In ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Zooming In: From Blurry to Sharp 🔍</h2>
+    <p>Remember: the embedding space is the "lowest resolution image" of all knowledge. So what happens when you give the AI a prompt?</p>
+    <div class="highlight-box">
+      <h3>The Zoom Analogy</h3>
+      <ul>
+        <li><strong>Your prompt</strong> = choosing where to point the magnifying glass</li>
+        <li><strong>Each layer</strong> = one more level of zoom, generating finer detail</li>
+        <li><strong>The detail at each zoom level</strong> = generated from patterns the AI learned, not from stored data</li>
+      </ul>
     </div>
+    <p>Each zoom stage produces something that <em>looks plausible</em>. If the AI saw similar things during training, the generated detail is <strong>accurate</strong>. If not, it might <strong>hallucinate</strong> — generate confident-looking nonsense.</p>
+    <blockquote>Hallucination = the AI zooms into a region of its map where it never had real data, and fills it in with "topologically plausible" patterns that happen to be wrong.</blockquote>
   </div>
+</div>
 
-  <!-- ═══════════ SLIDE 7: Drawing Pad ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h2>Interactive: Sketch Pad 🎨</h2>
-        <p>Draw anything! Great for live explanations.</p>
-      </div>
-      <div class="lang-de" style="display:none;">
-        <h2>Interaktiv: Zeichenblock 🎨</h2>
-        <p>Zeichne was du willst! Perfekt für Live-Erklärungen.</p>
-      </div>
-      <div class="tool-container">
-        <button onclick="clearCanvas()">
-          <span class="lang-en">Clear</span><span class="lang-de" style="display:none;">Löschen</span>
-        </button>
-        <button onclick="setDrawColor('#6c63ff')">🟣</button>
-        <button onclick="setDrawColor('#00d4aa')">🟢</button>
-        <button onclick="setDrawColor('#ff6b9d')">🔴</button>
-        <button onclick="setDrawColor('#ffffff')">⚪</button>
-        <button onclick="setDrawColor('#ffcc00')">🟡</button>
-        <canvas id="draw-canvas" width="860" height="350"></canvas>
-      </div>
+<!-- ═══════════ SLIDE 12: Diffeomorphisms and Singularities ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Smooth Maps vs. Singularities ⚡</h2>
+    <p>In math, a <strong>diffeomorphism</strong> is a perfectly smooth, reversible deformation. Like stretching a rubber sheet — every point maps to exactly one other point, and you can always undo it.</p>
+    <p>But neural networks use <strong>ReLU</strong>: $\text{ReLU}(x) = \max(0, x)$</p>
+    <div class="tool-container" id="relu-tool">
+      <p style="text-align:center; color:var(--text-secondary);">See the problem at x = 0:</p>
+      <canvas id="relu-canvas" width="700" height="300"></canvas>
+      <p style="text-align:center; margin-top:10px; color:var(--accent3); font-weight:bold;">The "kink" at x=0 is a <strong>singularity</strong> — a point where the function isn't smooth.</p>
     </div>
+    <p>At a singularity, <strong>multiple inputs map to the same output</strong> (everything negative → 0). This means you <em>can't reverse</em> the transformation. Information is lost.</p>
+    <p>So the AI's maps are NOT perfect diffeomorphisms. They're <strong>Lipschitz maps</strong> — "almost smooth, with controlled kinks."</p>
   </div>
+</div>
 
-  <!-- ═══════════ SLIDE 9: Finale ═══════════ -->
-  <div class="slide">
-    <div class="slide-inner">
-      <div class="lang-en">
-        <h2>That's It! 🎉</h2>
-        <p>You now have a fully interactive presentation system with:</p>
-        <ul>
-          <li><strong>LaTeX math</strong> via Temml (inline $x^2$ and display blocks)</li>
-          <li><strong>Syntax-highlighted code</strong> via highlight.js</li>
-          <li><strong>Interactive tools</strong> — sliders, canvases, calculators</li>
-          <li><strong>Bilingual support</strong> — EN/DE toggle</li>
-          <li><strong>External file loading</strong> — <code>data-load="file.html"</code></li>
-          <li><strong>Keyboard &amp; scroll navigation</strong></li>
-          <li><strong>Overview mode</strong> — press [O]</li>
-          <li><strong>Images &amp; video</strong> support</li>
-        </ul>
-        <blockquote>Press [O] for overview, [F] for fullscreen. Happy presenting!</blockquote>
+<!-- ═══════════ SLIDE 13: Singularity = Loss of Information ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Singularity = Many → One (Information Loss) 🕳️</h2>
+    <p>A <strong>singularity</strong> is where multiple different inputs produce the same output. This breaks <em>bijectivity</em> (one-to-one mapping).</p>
+    <div class="tool-container" id="singularity-tool">
+      <p style="text-align:center; color:var(--text-secondary);">Move the input points and watch them collapse:</p>
+      <canvas id="singularity-canvas" width="700" height="300"></canvas>
+      <div style="display:flex; gap:8px; justify-content:center; margin-top:10px; flex-wrap:wrap;">
+        <button onclick="singularitySetMode('bijective')">Bijective (smooth, reversible)</button>
+        <button onclick="singularitySetMode('relu')" class="active-btn">ReLU (singularity at 0)</button>
+        <button onclick="singularitySetMode('collapse')">Full collapse</button>
       </div>
-      <div class="lang-de" style="display:none;">
-        <h2>Das war's! 🎉</h2>
-        <p>Du hast jetzt ein voll interaktives Präsentationssystem mit:</p>
-        <ul>
-          <li><strong>LaTeX-Mathematik</strong> via Temml (inline $x^2$ und Display-Blöcke)</li>
-          <li><strong>Syntax-Highlighting</strong> via highlight.js</li>
-          <li><strong>Interaktive Werkzeuge</strong> — Slider, Canvas, Rechner</li>
-          <li><strong>Zweisprachig</strong> — EN/DE Umschaltung</li>
-          <li><strong>Externe Datei-Ladung</strong> — <code>data-load="datei.html"</code></li>
-          <li><strong>Tastatur- &amp; Scroll-Navigation</strong></li>
-          <li><strong>Übersichtsmodus</strong> — drücke [O]</li>
-          <li><strong>Bilder &amp; Video</strong>
-	  <li><strong>Unterstützung</li>
-        </ul>
-        <blockquote>Drücke [O] für Übersicht, [F] für Vollbild. Viel Spaß beim Präsentieren!</blockquote>
-      </div>
+      <p id="singularity-info" style="text-align:center; margin-top:10px; font-size:0.9em; color:var(--text-secondary);"></p>
+    </div>
+    <p>In the AI, these singularities are <em>deliberate</em>. They're how the network <strong>makes decisions</strong> — collapsing many possibilities into fewer ones. But they also mean the computation is fundamentally <strong>irreversible</strong>.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 14: Lipschitz Maps ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Lipschitz Maps: Controlled Stretching 📏</h2>
+    <p>A <strong>Lipschitz map</strong> is a function that can stretch space, but only by a <em>bounded amount</em>. There's a maximum "stretching factor" — it can't rip space apart.</p>
+    <div class="highlight-box">
+      <p style="text-align:center; font-size:1.2em;">$|f(x) - f(y)| \leq K \cdot |x - y|$</p>
+      <p style="text-align:center; color:var(--text-secondary);">No two points can get more than K times farther apart than they started.</p>
+    </div>
+    <p>The AI's layer maps are Lipschitz because:</p>
+    <ul>
+      <li>They can <strong>stretch</strong> (expand regions of meaning)</li>
+      <li>They can <strong>compress</strong> (collapse possibilities into fewer)</li>
+      <li>They can have <strong>kinks</strong> (singularities from ReLU)</li>
+      <li>But they <strong>can't rip</strong> — nearby points stay somewhat nearby</li>
+    </ul>
+    <p>This is the mathematical guarantee that the AI's computations are <em>stable</em>. Small changes in input → bounded changes in output. No infinite stretching allowed.</p>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 15: Putting It All Together ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Putting It All Together 🧩</h2>
+    <p>Here's the full picture of how an LLM works geometrically:</p>
+    <div class="highlight-box">
+      <ol style="font-size:1.1em; line-height:2.2;">
+        <li><strong>Embedding space</strong> = lowest-resolution photo of all knowledge</li>
+        <li><strong>Your prompt</strong> = choosing where to point the magnifying glass</li>
+        <li><strong>Each layer</strong> = one more zoom level, bending space to generate detail</li>
+        <li><strong>Attention</strong> = deciding which parts of the map to look at</li>
+        <li><strong>FFN</strong> = selecting which deformation patterns to apply</li>
+        <li><strong>Information</strong> = stored holographically in the wave patterns of deformation</li>
+        <li><strong>Winding numbers & loops</strong> = the topological "calculations" happening in bent space</li>
+        <li><strong>Output</strong> = reading off the final shape of the deformed space</li>
+      </ol>
     </div>
   </div>
+</div>
+
+<!-- ═══════════ SLIDE 16: Hallucinations Explained ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>Why AI Hallucinates 🌫️</h2>
+    <p>Now we can explain hallucinations geometrically:</p>
+    <div class="tool-container">
+      <canvas id="hallucination-canvas" width="700" height="350"></canvas>
+      <p style="text-align:center; margin-top:10px; font-size:0.9em; color:var(--text-secondary);">
+        <span style="color:#4ade80;">●</span> Green = regions with training data (reliable zoom) &nbsp;
+        <span style="color:#ef4444;">●</span> Red = regions without data (hallucination zone)
+      </p>
+    </div>
+    <p>The AI's deformation patterns are <em>smooth</em> — they naturally continue into regions where there was no training data. The generated detail <strong>looks plausible</strong> (topologically consistent) but may be <strong>completely wrong</strong>.</p>
+    <blockquote>Hallucination = zooming into a blank area of the map and filling it with "what looks right" based on nearby patterns.</blockquote>
+  </div>
+</div>
+
+<!-- ═══════════ SLIDE 17: Summary ═══════════ -->
+<div class="slide">
+  <div class="slide-inner">
+    <h2>The Key Takeaways 🎯</h2>
+    <ul style="font-size:1.15em; line-height:2.4;">
+      <li>LLMs don't just move words around — they <strong>bend the space words live in</strong></li>
+      <li>Information is stored <strong>holographically</strong> in the bending patterns (like a hologram, not a photograph)</li>
+      <li>The bending is done by <strong>Lipschitz maps</strong> — smooth-ish functions with controlled kinks</li>
+      <li>Topology (loops, winding numbers) captures the <strong>shape of reasoning</strong></li>
+      <li>Each layer <strong>zooms in</strong>, generating finer detail from coarse patterns</li>
+      <li>Hallucinations happen when the AI <strong>extrapolates into unmapped territory</strong></li>
+    </ul>
+    <div class="highlight-box" style="margin-top:1em;">
+      <p style="text-align:center; font-size:1.3em; color:var(--accent);">The geometry is there. We just need to learn to see it. 🔭</p>
+    </div>
+  </div>
+</div>
 
 </div><!-- end #presentation -->
 
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ══════════════════════════════════════════════════════════ -->
 <script>
 // ══════════════════════════════════════════════════════════
 // CORE ENGINE
@@ -533,733 +542,969 @@ console.log(fibonacci(10));</code></pre>
 
 let currentSlide = 0;
 let slides = [];
-let currentLang = 'en';
-let overviewOpen = false;
 let scrollCooldown = false;
 
-// ── Initialize ──
-document.addEventListener('DOMContentLoaded', async () => {
-  // Load external slides first
-  await loadExternalSlides();
-
+document.addEventListener('DOMContentLoaded', () => {
   slides = document.querySelectorAll('.slide');
-  renderAllSlides();
   goToSlide(0);
-  initParticles();
-  initDrawCanvas();
-  initWaveTool();
-  updateUI();
+  initTorusMorph();
+  initWindingDemo();
+  initLoopsDemo();
+  initReluDemo();
+  initSingularityDemo();
+  initHallucinationDemo();
+  renderAllLatex();
 
-  // Hide nav hint after 5 seconds
   setTimeout(() => {
-    document.getElementById('nav-hint').style.opacity = '0';
-    setTimeout(() => document.getElementById('nav-hint').style.display = 'none', 1000);
-  }, 5000);
+    const hint = document.getElementById('nav-hint');
+    if (hint) { hint.style.opacity = '0'; setTimeout(() => hint.style.display = 'none', 1000); }
+  }, 6000);
 });
-
-// ══════════════════════════════════════════════════════════
-// EXTERNAL FILE LOADING
-// ══════════════════════════════════════════════════════════
-
-async function loadExternalSlides() {
-  const externalSlides = document.querySelectorAll('.slide[data-load]');
-  for (const slide of externalSlides) {
-    const url = slide.getAttribute('data-load');
-    try {
-      const response = await fetch(url);
-      if (response.ok) {
-        const html = await response.text();
-        const inner = slide.querySelector('.slide-inner');
-        inner.innerHTML = html;
-        // Execute any script tags in the loaded content
-        const scripts = inner.querySelectorAll('script');
-        scripts.forEach(oldScript => {
-          const newScript = document.createElement('script');
-          if (oldScript.src) {
-            newScript.src = oldScript.src;
-          } else {
-            newScript.textContent = oldScript.textContent;
-          }
-          oldScript.parentNode.replaceChild(newScript, oldScript);
-        });
-      }
-    } catch (e) {
-      console.warn('Could not load external slide:', url, e);
-    }
-  }
-}
-
-// Global load function you can call from anywhere
-// Usage: load('slides/myslide.html') — appends a new slide from file
-async function load(url) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('HTTP ' + response.status);
-    const html = await response.text();
-
-    const newSlide = document.createElement('div');
-    newSlide.className = 'slide';
-    newSlide.innerHTML = '<div class="slide-inner">' + html + '</div>';
-
-    document.getElementById('presentation').appendChild(newSlide);
-
-    // Execute scripts
-    const scripts = newSlide.querySelectorAll('script');
-    scripts.forEach(oldScript => {
-      const newScript = document.createElement('script');
-      if (oldScript.src) {
-        newScript.src = oldScript.src;
-      } else {
-        newScript.textContent = oldScript.textContent;
-      }
-      oldScript.parentNode.replaceChild(newScript, oldScript);
-    });
-
-    // Re-index slides
-    slides = document.querySelectorAll('.slide');
-    renderSlide(newSlide);
-    updateUI();
-    return slides.length - 1; // return new slide index
-  } catch (e) {
-    console.error('Failed to load slide from:', url, e);
-    return -1;
-  }
-}
-
-// Load multiple files at once
-// Usage: loadAll(['slides/1.html', 'slides/2.html', 'slides/3.html'])
-async function loadAll(urls) {
-  for (const url of urls) {
-    await load(url);
-  }
-}
-
-// Insert a slide at a specific position
-async function loadAt(url, position) {
-  const idx = await load(url);
-  if (idx < 0) return -1;
-
-  const pres = document.getElementById('presentation');
-  const allSlides = pres.querySelectorAll('.slide');
-  const lastSlide = allSlides[allSlides.length - 1];
-
-  if (position < allSlides.length - 1) {
-    pres.insertBefore(lastSlide, allSlides[position]);
-    slides = document.querySelectorAll('.slide');
-    if (currentSlide >= position) {
-      currentSlide++;
-      goToSlide(currentSlide);
-    }
-  }
-  updateUI();
-  return position;
-}
-
-// ══════════════════════════════════════════════════════════
-// MARKDOWN + LATEX RENDERING
-// ══════════════════════════════════════════════════════════
-
-function renderAllSlides() {
-  slides.forEach(slide => renderSlide(slide));
-}
-
-function renderSlide(slide) {
-  // Find all lang divs and render markdown content if needed
-  const langDivs = slide.querySelectorAll('.lang-en, .lang-de');
-  langDivs.forEach(div => {
-    // Check if it has a data-md attribute (raw markdown source)
-    if (div.hasAttribute('data-md')) {
-      div.innerHTML = renderMarkdown(div.getAttribute('data-md'));
-    }
-  });
-
-  // Render LaTeX in the slide
-  renderLatex(slide);
-
-  // Highlight code blocks
-  slide.querySelectorAll('pre code').forEach(block => {
-    if (typeof hljs !== 'undefined') {
-      hljs.highlightElement(block);
-    }
-  });
-}
-
-function renderMarkdown(src) {
-  if (typeof marked === 'undefined') return src;
-  return marked.parse(src);
-}
-
-function renderLatex(container) {
-  if (typeof temml === 'undefined') return;
-
-  // Display math: $$...$$
-  const blockRegex = /\$\$([\s\S]*?)\$\$/g;
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
-  const textNodes = [];
-
-  while (walker.nextNode()) {
-    textNodes.push(walker.currentNode);
-  }
-
-  textNodes.forEach(node => {
-    const parent = node.parentNode;
-    if (parent.tagName === 'CODE' || parent.tagName === 'PRE') return;
-
-    let text = node.textContent;
-    if (!text.includes('$')) return;
-
-    // Replace display math
-    let hasMatch = false;
-    const fragment = document.createDocumentFragment();
-    let lastIndex = 0;
-
-    // Display math $$...$$
-    const combined = text;
-    const parts = [];
-    let remaining = combined;
-    let cursor = 0;
-
-    // Process display math first
-    const displayParts = remaining.split(/(\$\$[\s\S]*?\$\$)/);
-    displayParts.forEach(part => {
-      if (part.startsWith('$$') && part.endsWith('$$')) {
-        hasMatch = true;
-        const latex = part.slice(2, -2).trim();
-        const span = document.createElement('span');
-        span.className = 'math-block';
-        try {
-          temml.render(latex, span, { displayMode: true });
-        } catch (e) {
-          span.textContent = latex;
-          span.style.color = '#ff6b6b';
-        }
-        fragment.appendChild(span);
-      } else {
-        // Process inline math $...$
-        const inlineParts = part.split(/(\$[^$\n]+?\$)/);
-        inlineParts.forEach(iPart => {
-          if (iPart.startsWith('$') && iPart.endsWith('$') && iPart.length > 2) {
-            hasMatch = true;
-            const latex = iPart.slice(1, -1).trim();
-            const span = document.createElement('span');
-            span.className = 'math-inline';
-            try {
-              temml.render(latex, span, { displayMode: false });
-            } catch (e) {
-              span.textContent = latex;
-              span.style.color = '#ff6b6b';
-            }
-            fragment.appendChild(span);
-          } else if (iPart) {
-            fragment.appendChild(document.createTextNode(iPart));
-          }
-        });
-      }
-    });
-
-    if (hasMatch) {
-      parent.replaceChild(fragment, node);
-    }
-  });
-
-  // Also handle .math-block divs that have raw $$ content
-  container.querySelectorAll('.math-block').forEach(block => {
-    const text = block.textContent.trim();
-    if (text.startsWith('$$') && text.endsWith('$$')) {
-      const latex = text.slice(2, -2).trim();
-      block.textContent = '';
-      try {
-        temml.render(latex, block, { displayMode: true });
-      } catch (e) {
-        block.textContent = latex;
-        block.style.color = '#ff6b6b';
-      }
-    }
-  });
-}
-
-// ══════════════════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════════════════
 
 function goToSlide(index) {
   if (index < 0 || index >= slides.length) return;
-
   slides.forEach((slide, i) => {
     slide.classList.remove('active', 'exit-left');
     if (i < index) slide.classList.add('exit-left');
   });
-
   currentSlide = index;
   slides[currentSlide].classList.add('active');
-
-  // Scroll slide to top
   slides[currentSlide].scrollTop = 0;
-
   updateUI();
 }
 
-function nextSlide() {
-  if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1);
-}
-
-function prevSlide() {
-  if (currentSlide > 0) goToSlide(currentSlide - 1);
-}
+function nextSlide() { if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1); }
+function prevSlide() { if (currentSlide > 0) goToSlide(currentSlide - 1); }
 
 function updateUI() {
-  // Progress bar
   const progress = slides.length > 1 ? (currentSlide / (slides.length - 1)) * 100 : 100;
   document.getElementById('progress-bar').style.width = progress + '%';
-
-  // Counter
-  document.getElementById('slide-counter').textContent =
-    (currentSlide + 1) + ' / ' + slides.length;
+  document.getElementById('slide-counter').textContent = (currentSlide + 1) + ' / ' + slides.length;
 }
 
-// ── Keyboard ──
+// Keyboard
 document.addEventListener('keydown', (e) => {
-  // Don't capture if typing in an input
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
   switch (e.key) {
-    case 'ArrowRight':
-    case 'ArrowDown':
-    case ' ':
-    case 'PageDown':
-      e.preventDefault();
-      if (overviewOpen) return;
-      nextSlide();
-      break;
-    case 'ArrowLeft':
-    case 'ArrowUp':
-    case 'PageUp':
-      e.preventDefault();
-      if (overviewOpen) return;
-      prevSlide();
-      break;
-    case 'Home':
-      e.preventDefault();
-      goToSlide(0);
-      break;
-    case 'End':
-      e.preventDefault();
-      goToSlide(slides.length - 1);
-      break;
-    case 'o':
-    case 'O':
-      toggleOverview();
-      break;
-    case 'f':
-    case 'F':
-      toggleFullscreen();
-      break;
-    case 'Escape':
-      if (overviewOpen) toggleOverview();
-      break;
+    case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+      e.preventDefault(); nextSlide(); break;
+    case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+      e.preventDefault(); prevSlide(); break;
+    case 'Home': e.preventDefault(); goToSlide(0); break;
+    case 'End': e.preventDefault(); goToSlide(slides.length - 1); break;
+    case 'f': case 'F': toggleFullscreen(); break;
   }
 });
 
-// ── Scroll / Wheel ──
+// Scroll
 document.addEventListener('wheel', (e) => {
-  if (overviewOpen) return;
-
   const activeSlide = slides[currentSlide];
   const isScrollable = activeSlide.scrollHeight > activeSlide.clientHeight + 1;
-
   if (isScrollable) {
     const atTop = activeSlide.scrollTop <= 0;
     const atBottom = activeSlide.scrollTop + activeSlide.clientHeight >= activeSlide.scrollHeight - 2;
-
-    // If not at a boundary, just let the slide scroll naturally
     if (e.deltaY > 0 && !atBottom) return;
     if (e.deltaY < 0 && !atTop) return;
-
-    // At boundary — require a SECOND scroll event via cooldown reset
-    if (!scrollCooldown) {
-      // First wheel event at boundary: start cooldown but DON'T navigate yet
-      scrollCooldown = true;
-      setTimeout(() => scrollCooldown = false, 300);
-      return; // <-- absorb this first event
-    }
+    if (!scrollCooldown) { scrollCooldown = true; setTimeout(() => scrollCooldown = false, 300); return; }
   }
-
   if (scrollCooldown) return;
   scrollCooldown = true;
   setTimeout(() => scrollCooldown = false, 600);
-
-  if (e.deltaY > 0) nextSlide();
-  else if (e.deltaY < 0) prevSlide();
+  if (e.deltaY > 0) nextSlide(); else if (e.deltaY < 0) prevSlide();
 }, { passive: true });
 
-// ── Touch ──
+// Touch
 let touchStartX = 0;
-let touchStartY = 0;
-
-document.addEventListener('touchstart', (e) => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-});
-
+document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
 document.addEventListener('touchend', (e) => {
-  if (overviewOpen) return;
   const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-    if (dx < 0) nextSlide();
-    else prevSlide();
-  }
+  if (Math.abs(dx) > 50) { if (dx < 0) nextSlide(); else prevSlide(); }
 });
-
-// ══════════════════════════════════════════════════════════
-// LANGUAGE SWITCHING
-// ══════════════════════════════════════════════════════════
-
-function setLang(lang) {
-  currentLang = lang;
-
-  document.querySelectorAll('.lang-en').forEach(el => {
-    el.style.display = lang === 'en' ? '' : 'none';
-  });
-  document.querySelectorAll('.lang-de').forEach(el => {
-    el.style.display = lang === 'de' ? '' : 'none';
-  });
-
-  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-  document.getElementById('btn-de').classList.toggle('active', lang === 'de');
-  document.documentElement.lang = lang;
-}
-
-// ══════════════════════════════════════════════════════════
-// OVERVIEW MODE
-// ══════════════════════════════════════════════════════════
-
-function toggleOverview() {
-  const ov = document.getElementById('overview');
-  overviewOpen = !overviewOpen;
-
-  if (overviewOpen) {
-    ov.innerHTML = '';
-    slides.forEach((slide, i) => {
-      const thumb = document.createElement('div');
-      thumb.className = 'overview-thumb' + (i === currentSlide ? ' current' : '');
-      // Get first heading or text
-      const heading = slide.querySelector('h1, h2, h3');
-      const langSuffix = currentLang === 'de' ? '.lang-de' : '.lang-en';
-      const langDiv = slide.querySelector(langSuffix);
-      let label = 'Slide ' + (i + 1);
-      if (langDiv) {
-        const h = langDiv.querySelector('h1, h2, h3');
-        if (h) label = h.textContent;
-      } else if (heading) {
-        label = heading.textContent;
-      }
-      thumb.textContent = (i + 1) + '. ' + label;
-      thumb.onclick = () => {
-        goToSlide(i);
-        toggleOverview();
-      };
-      ov.appendChild(thumb);
-    });
-    ov.classList.add('visible');
-  } else {
-    ov.classList.remove('visible');
-  }
-}
-
-// ══════════════════════════════════════════════════════════
-// FULLSCREEN
-// ══════════════════════════════════════════════════════════
 
 function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  } else {
-    document.exitFullscreen();
-  }
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+  else document.exitFullscreen();
 }
 
 // ══════════════════════════════════════════════════════════
-// INTERACTIVE TOOLS
+// LATEX RENDERING
 // ══════════════════════════════════════════════════════════
 
-// ── Wave Explorer ──
-function initWaveTool() {
-  const ampSlider = document.getElementById('amplitude');
-  const freqSlider = document.getElementById('frequency');
-  const phaseSlider = document.getElementById('phase');
+function renderAllLatex() {
+  if (typeof temml === 'undefined') return;
+  document.querySelectorAll('.slide').forEach(slide => {
+    const walker = document.createTreeWalker(slide, NodeFilter.SHOW_TEXT, null, false);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
 
-  if (!ampSlider) return;
+    textNodes.forEach(node => {
+      const parent = node.parentNode;
+      if (parent.tagName === 'CODE' || parent.tagName === 'PRE' || parent.tagName === 'SCRIPT') return;
+      let text = node.textContent;
+      if (!text.includes('$')) return;
 
-  const draw = () => {
-    const A = parseFloat(ampSlider.value);
-    const f = parseFloat(freqSlider.value);
-    const phi = parseFloat(phaseSlider.value);
+      let hasMatch = false;
+      const fragment = document.createDocumentFragment();
+      const displayParts = text.split(/(\$\$[\s\S]*?\$\$)/);
 
-    document.getElementById('amp-val').textContent = A.toFixed(1);
-    document.getElementById('freq-val').textContent = f.toFixed(1);
-    document.getElementById('phase-val').textContent = phi.toFixed(1);
+      displayParts.forEach(part => {
+        if (part.startsWith('$$') && part.endsWith('$$')) {
+          hasMatch = true;
+          const latex = part.slice(2, -2).trim();
+          const span = document.createElement('span');
+          span.className = 'math-block';
+          try { temml.render(latex, span, { displayMode: true }); }
+          catch (e) { span.textContent = latex; span.style.color = '#ff6b6b'; }
+          fragment.appendChild(span);
+        } else {
+          const inlineParts = part.split(/(\$[^$\n]+?\$)/);
+          inlineParts.forEach(iPart => {
+            if (iPart.startsWith('$') && iPart.endsWith('$') && iPart.length > 2) {
+              hasMatch = true;
+              const latex = iPart.slice(1, -1).trim();
+              const span = document.createElement('span');
+              span.className = 'math-inline';
+              try { temml.render(latex, span, { displayMode: false }); }
+              catch (e) { span.textContent = latex; span.style.color = '#ff6b6b'; }
+              fragment.appendChild(span);
+            } else if (iPart) {
+              fragment.appendChild(document.createTextNode(iPart));
+            }
+          });
+        }
+      });
+      if (hasMatch) parent.replaceChild(fragment, node);
+    });
+  });
+}
 
-    const canvas = document.getElementById('wave-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width;
-    const h = canvas.height;
+// ══════════════════════════════════════════════════════════
+// TORUS ↔ MUG MORPH
+// ══════════════════════════════════════════════════════════
 
+function initTorusMorph() {
+  const canvas = document.getElementById('torus-canvas');
+  const slider = document.getElementById('torus-morph');
+  if (!canvas || !slider) return;
+  const ctx = canvas.getContext('2d');
+
+  function draw() {
+    const t = slider.value / 100; // 0 = mug, 1 = torus
+    const w = canvas.width, h = canvas.height;
     ctx.clearRect(0, 0, w, h);
 
-    // Grid
-    ctx.strokeStyle = 'rgba(108, 99, 255, 0.1)';
-    ctx.lineWidth = 1;
-    for (let y = 0; y <= h; y += h / 6) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-    }
-    for (let x = 0; x <= w; x += w / 12) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-    }
+    const cx = w / 2, cy = h / 2;
 
-    // Axis
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
-
-    // Wave
-    ctx.beginPath();
+    // Draw the morphing shape
     ctx.strokeStyle = '#6c63ff';
     ctx.lineWidth = 3;
     ctx.shadowColor = '#6c63ff';
     ctx.shadowBlur = 8;
 
-    for (let x = 0; x < w; x++) {
-      const xVal = (x / w) * 4 * Math.PI;
-      const y = h / 2 - A * (h / 2 - 20) / 3 * Math.sin(f * xVal + phi);
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    // Mug body (rectangle that becomes a torus)
+    const mugW = 180 * (1 - t) + 0 * t;
+    const mugH = 140 * (1 - t) + 0 * t;
+    const torusR = 100 * t;
+    const torusr = 35 * t + 20 * (1 - t);
+
+    // Outer shape: morph from rectangle to ellipse (torus cross-section)
+    ctx.beginPath();
+    const steps = 100;
+    for (let i = 0; i <= steps; i++) {
+      const angle = (i / steps) * Math.PI * 2;
+      // Mug shape (rounded rectangle)
+      const mugX = cx + Math.cos(angle) * (90 + 40 * Math.cos(angle * 2)) * (1 - t);
+      const mugY = cy + Math.sin(angle) * 70 * (1 - t);
+      // Torus shape
+      const torusX = cx + Math.cos(angle) * (torusR + torusr) * t;
+      const torusY = cy + Math.sin(angle) * torusr * t * 1.8;
+      const x = mugX + torusX - cx * t;
+      const y = mugY + torusY - cy * t;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
+    ctx.closePath();
+    ctx.stroke();
+
+    // The hole (handle → torus hole)
+    ctx.beginPath();
+    ctx.strokeStyle = '#00d4aa';
+    ctx.lineWidth = 2.5;
+    for (let i = 0; i <= steps; i++) {
+      const angle = (i / steps) * Math.PI * 2;
+      // Handle hole (small ellipse on the right side of mug)
+      const handleX = cx + 110 * (1 - t) + Math.cos(angle) * (15 + torusR * 0.4 * t);
+      const handleY = cy + Math.sin(angle) * (25 * (1 - t) + torusr * 0.6 * t);
+      if (i === 0) ctx.moveTo(handleX, handleY); else ctx.lineTo(handleX, handleY);
+    }
+    ctx.closePath();
     ctx.stroke();
     ctx.shadowBlur = 0;
-  };
 
-  ampSlider.addEventListener('input', draw);
-  freqSlider.addEventListener('input', draw);
-  phaseSlider.addEventListener('input', draw);
+    // Labels
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '14px system-ui';
+    ctx.textAlign = 'center';
+    if (t < 0.3) ctx.fillText('Coffee Mug', cx, h - 20);
+    else if (t > 0.7) ctx.fillText('Donut (Torus)', cx, h - 20);
+    else ctx.fillText('Morphing... (1 hole throughout!)', cx, h - 20);
+  }
+
+  slider.addEventListener('input', draw);
   draw();
 }
 
-// ── Matrix Determinant ──
-function calcDet() {
-  const a = parseFloat(document.getElementById('mat-a').value) || 0;
-  const b = parseFloat(document.getElementById('mat-b').value) || 0;
-  const c = parseFloat(document.getElementById('mat-c').value) || 0;
-  const d = parseFloat(document.getElementById('mat-d').value) || 0;
-  const det = a * d - b * c;
-  document.getElementById('det-output').textContent = 'det = ' + a + '·' + d + ' − ' + b + '·' + c + ' = ' + det;
+// ══════════════════════════════════════════════════════════
+// WINDING NUMBERS DEMO
+// ══════════════════════════════════════════════════════════
+
+let windingNum = 0;
+let windingAnimId = null;
+let windingTime = 0;
+
+function setWindingNum(n) {
+  windingNum = n;
+  windingTime = 0;
+  // Update button states
+  document.querySelectorAll('#wbtn-0').forEach(b => b.classList.remove('active-btn'));
+  const info = document.getElementById('winding-info');
+  if (info) {
+    const descriptions = {
+      '-3': 'n = -3: Three times clockwise',
+      '-2': 'n = -2: Twice clockwise',
+      '-1': 'n = -1: Once clockwise',
+      '0': 'n = 0: The constant loop (stay put)',
+      '1': 'n = 1: Once counterclockwise',
+      '2': 'n = 2: Twice counterclockwise',
+      '3': 'n = 3: Three times counterclockwise'
+    };
+    info.textContent = descriptions[n] || '';
+  }
 }
 
-// ── Drawing Canvas ──
-let drawCtx = null;
-let drawing = false;
-let drawColor = '#6c63ff';
-
-function initDrawCanvas() {
-  const canvas = document.getElementById('draw-canvas');
+function initWindingDemo() {
+  const canvas = document.getElementById('winding-canvas');
   if (!canvas) return;
-  drawCtx = canvas.getContext('2d');
-  drawCtx.lineCap = 'round';
-  drawCtx.lineJoin = 'round';
-  drawCtx.lineWidth = 3;
-
-  canvas.addEventListener('mousedown', (e) => {
-    drawing = true;
-    drawCtx.beginPath();
-    drawCtx.strokeStyle = drawColor;
-    const rect = canvas.getBoundingClientRect();
-    drawCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  canvas.addEventListener('mousemove', (e) => {
-    if (!drawing) return;
-    const rect = canvas.getBoundingClientRect();
-    drawCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-    drawCtx.stroke();
-  });
-
-  canvas.addEventListener('mouseup', () => drawing = false);
-  canvas.addEventListener('mouseleave', () => drawing = false);
-
-  // Touch support
-  canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    drawing = true;
-    drawCtx.beginPath();
-    drawCtx.strokeStyle = drawColor;
-    const rect = canvas.getBoundingClientRect();
-    drawCtx.moveTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
-  });
-
-  canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    if (!drawing) return;
-    const rect = canvas.getBoundingClientRect();
-    drawCtx.lineTo(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
-    drawCtx.stroke();
-  });
-
-  canvas.addEventListener('touchend', () => drawing = false);
-}
-
-function clearCanvas() {
-  const canvas = document.getElementById('draw-canvas');
-  if (canvas && drawCtx) drawCtx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function setDrawColor(color) {
-  drawColor = color;
-}
-
-// ══════════════════════════════════════════════════════════
-// BACKGROUND PARTICLES
-// ══════════════════════════════════════════════════════════
-
-function initParticles() {
-  const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
-  let particles = [];
-  let animId;
+  const w = canvas.width, h = canvas.height;
+  const cx = w / 2, cy = h / 2, R = 120;
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
 
-  resize();
-  window.addEventListener('resize', resize);
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(108, 99, 255, 0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
-  for (let i = 0; i < 60; i++) {
-    particles.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 2 + 0.5,
-      alpha: Math.random() * 0.3 + 0.1
-    });
-  }
+    ctx.fillStyle = 'rgba(108, 99, 255, 0.15)';
+    ctx.font = '14px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('S¹ (the circle)', cx, cy - R - 15);
 
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const n = windingNum;
 
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
+    if (n === 0) {
+      // Constant loop — just a dot
+      ctx.beginPath();
+      ctx.arc(cx + R, cy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#00d4aa';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#00d4aa';
+      ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Stays put (refl)', cx, cy + R + 35);
+    } else {
+      const absN = Math.abs(n);
+      const dir = Math.sign(n);
+      const totalAngle = dir * absN * Math.PI * 2;
 
-      if (p.x < 0) p.x = canvas.width;
-      if (p.x > canvas.width) p.x = 0;
-      if (p.y < 0) p.y = canvas.height;
-      if (p.y > canvas.height) p.y = 0;
+      // Draw the winding path
+      ctx.beginPath();
+      const hue = n > 0 ? 160 : 340;
+      ctx.strokeStyle = `hsl(${hue}, 80%, 60%)`;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = `hsl(${hue}, 80%, 60%)`;
+      ctx.shadowBlur = 6;
+
+      const steps = absN * 200;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const angle = t * totalAngle;
+        const spiralOffset = 8 * Math.sin(t * absN * Math.PI) * (1 + t * 0.3);
+        const r = R + spiralOffset;
+        const x = cx + r * Math.cos(angle);
+        const y = cy - r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Animated point
+      windingTime = (windingTime + 0.004) % 1;
+      const tPt = windingTime;
+      const anglePt = tPt * totalAngle;
+      const spiralPt = 8 * Math.sin(tPt * absN * Math.PI) * (1 + tPt * 0.3);
+      const rPt = R + spiralPt;
+      const px = cx + rPt * Math.cos(anglePt);
+      const py = cy - rPt * Math.sin(anglePt);
 
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(108, 99, 255, ' + p.alpha + ')';
+      ctx.arc(px, py, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
       ctx.fill();
-    });
+      ctx.strokeStyle = `hsl(${hue}, 80%, 60%)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
 
-    // Draw connections
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 120) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = 'rgba(108, 99, 255, ' + (0.08 * (1 - dist / 120)) + ')';
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
+      // Direction label
+      ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+      ctx.font = '13px sans-serif';
+      ctx.textAlign = 'center';
+      const dirLabel = n > 0 ? 'counterclockwise' : 'clockwise';
+      ctx.fillText(`${absN}× ${dirLabel}`, cx, cy + R + 35);
     }
 
-    animId = requestAnimationFrame(animate);
+    // Basepoint
+    ctx.beginPath();
+    ctx.arc(cx + R, cy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('start', cx + R + 10, cy - 10);
+
+    // Winding number display
+    ctx.fillStyle = '#6c63ff';
+    ctx.font = 'bold 22px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`n = ${n}`, 20, 30);
+
+    windingAnimId = requestAnimationFrame(draw);
   }
 
-  animate();
+  draw();
+}
 
-  // Pause particles when tab not visible
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) cancelAnimationFrame(animId);
-    else animate();
+// ══════════════════════════════════════════════════════════
+// LOOP SPACE DEMO
+// ══════════════════════════════════════════════════════════
+
+let loopsDemoData = [];
+const loopColors = ['#6c63ff', '#00d4aa', '#ff6b9d', '#ffcc00', '#38bdf8', '#a78bfa', '#f97316'];
+let loopsAnimId = null;
+let loopsTime = 0;
+
+function addLoopDemo() {
+  if (loopsDemoData.length >= 7) return;
+  const angle = Math.random() * Math.PI * 2;
+  const rx = 50 + Math.random() * 100;
+  const ry = 30 + Math.random() * 80;
+  const rotation = Math.random() * Math.PI * 2;
+  const lobes = Math.floor(Math.random() * 3) + 1;
+  const phase = Math.random() * Math.PI * 2;
+  loopsDemoData.push({ rx, ry, rotation, lobes, phase });
+}
+
+function clearLoopsDemo() { loopsDemoData = []; }
+
+// Start with 2 loops
+addLoopDemo(); addLoopDemo();
+
+function initLoopsDemo() {
+  const canvas = document.getElementById('loops-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const bx = w / 2, by = h / 2;
+
+  function getLoopPt(loop, t) {
+    const theta = t * Math.PI * 2 * loop.lobes;
+    const r = Math.sin(t * Math.PI);
+    const x = r * loop.rx * Math.cos(theta);
+    const y = r * loop.ry * Math.sin(theta);
+    const cos = Math.cos(loop.rotation);
+    const sin = Math.sin(loop.rotation);
+    return { x: bx + x * cos - y * sin, y: by + x * sin + y * cos };
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    loopsTime += 0.005;
+
+    // Draw loops
+    loopsDemoData.forEach((loop, idx) => {
+      ctx.beginPath();
+      ctx.strokeStyle = loopColors[idx % loopColors.length];
+      ctx.lineWidth = 2.5;
+      ctx.globalAlpha = 0.7;
+      for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const pt = getLoopPt(loop, t);
+        if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // Moving point
+      const tPoint = ((loopsTime + loop.phase) % 1);
+      const pt = getLoopPt(loop, tPoint);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.strokeStyle = loopColors[idx % loopColors.length];
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+
+    // Basepoint
+    ctx.beginPath();
+    ctx.arc(bx, by, 8, 0, Math.PI * 2);
+    ctx.fillStyle = '#ff6b9d';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('x₀', bx + 12, by + 5);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${loopsDemoData.length} loop(s) in Ω(X, x₀)`, 12, h - 12);
+
+    loopsAnimId = requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+// ══════════════════════════════════════════════════════════
+// RELU / SINGULARITY DEMO
+// ══════════════════════════════════════════════════════════
+
+function initReluDemo() {
+  const canvas = document.getElementById('relu-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
+
+  // Grid
+  ctx.strokeStyle = 'rgba(108, 99, 255, 0.08)';
+  for (let x = 0; x < w; x += 50) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += 50) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  // ReLU function
+  ctx.beginPath();
+  ctx.strokeStyle = '#6c63ff';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = '#6c63ff';
+  ctx.shadowBlur = 8;
+
+  const scale = 80;
+  for (let px = 0; px < w; px++) {
+    const x = (px - w / 2) / scale;
+    const y = Math.max(0, x);
+    const py = h / 2 - y * scale;
+    if (px === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Mark the singularity
+  ctx.beginPath();
+  ctx.arc(w / 2, h / 2, 8, 0, Math.PI * 2);
+  ctx.fillStyle = '#ff6b9d';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Arrow pointing to singularity
+  ctx.fillStyle = '#ff6b9d';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('← KINK (singularity)', w / 2 + 100, h / 2 + 25);
+  ctx.fillText('All negatives → 0', w / 4, h / 2 + 50);
+  ctx.fillText('(information lost!)', w / 4, h / 2 + 68);
+
+  // Labels
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '12px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('ReLU(x) = max(0, x)', w - 15, 20);
+
+  // Show the flat part (many inputs → one output = 0)
+  ctx.fillStyle = 'rgba(239, 68, 68, 0.15)';
+  ctx.fillRect(0, h / 2 - 2, w / 2, h / 2 + 2);
+  ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('x = -5, -3, -1, -0.001 → ALL map to 0', w / 4, h / 2 - 15);
+}
+
+// ══════════════════════════════════════════════════════════
+// SINGULARITY INTERACTIVE DEMO
+// ══════════════════════════════════════════════════════════
+
+let singularityMode = 'relu';
+
+function singularitySetMode(mode) {
+  singularityMode = mode;
+  drawSingularity();
+}
+
+function initSingularityDemo() {
+  drawSingularity();
+}
+
+function drawSingularity() {
+  const canvas = document.getElementById('singularity-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const leftX = 100, rightX = w - 100;
+  const inputY = h / 2;
+
+  // Input points
+  const inputs = [-3, -2, -1, -0.5, 0, 0.5, 1, 2, 3];
+  const spacing = 28;
+
+  // Compute outputs based on mode
+  let outputs;
+  switch (singularityMode) {
+    case 'bijective':
+      outputs = inputs.map(x => x * 0.8); // simple scaling, bijective
+      break;
+    case 'relu':
+      outputs = inputs.map(x => Math.max(0, x));
+      break;
+    case 'collapse':
+      outputs = inputs.map(x => 0); // everything maps to 0
+      break;
+  }
+
+  // Get unique outputs for positioning
+  const uniqueOutputs = [...new Set(outputs.map(o => o.toFixed(2)))].map(Number);
+
+  // Draw input side
+  ctx.fillStyle = 'rgba(108, 99, 255, 0.1)';
+  ctx.fillRect(20, 20, 180, h - 40);
+  ctx.fillStyle = '#6c63ff';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('INPUT', streamX + vecW / 2, this.topPad - 5);
+  ctx.fillText('Bijective', 30, 25);
+
+  // Draw input points
+  inputs.forEach((val, i) => {
+    const y = inputY - val * spacing;
+    const x = leftX;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = val < 0 ? '#ef4444' : '#6c63ff';
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(val.toFixed(1), x - 10, y + 4);
   });
+
+  // Draw output side
+  ctx.fillStyle = 'rgba(0, 212, 170, 0.1)';
+  ctx.fillRect(w - 200, 20, 180, h - 40);
+  ctx.fillStyle = '#00d4aa';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('OUTPUT', rightX, 25);
+
+  // Compute and draw outputs + connections
+  const outputPositions = {};
+  outputs.forEach((val, i) => {
+    const key = val.toFixed(2);
+    if (!outputPositions[key]) outputPositions[key] = [];
+    outputPositions[key].push(i);
+  });
+
+  inputs.forEach((val, i) => {
+    const inY = inputY - val * spacing;
+    const outVal = outputs[i];
+    const outY = inputY - outVal * spacing;
+
+    // Connection line
+    const isCollapsed = (singularityMode === 'relu' && val < 0) || singularityMode === 'collapse';
+    ctx.beginPath();
+    ctx.moveTo(leftX + 8, inY);
+    ctx.lineTo(rightX - 8, outY);
+    ctx.strokeStyle = isCollapsed ? 'rgba(239, 68, 68, 0.5)' : 'rgba(108, 99, 255, 0.4)';
+    ctx.lineWidth = isCollapsed ? 2 : 1.5;
+    ctx.stroke();
+
+    // Output point
+    ctx.beginPath();
+    ctx.arc(rightX, outY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = isCollapsed ? '#ef4444' : '#00d4aa';
+    ctx.fill();
+  });
+
+  // Draw output labels
+  Object.entries(outputPositions).forEach(([key, indices]) => {
+    const val = parseFloat(key);
+    const y = inputY - val * spacing;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(val.toFixed(1), rightX + 10, y + 4);
+
+    if (indices.length > 1) {
+      ctx.fillStyle = '#ff6b9d';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.fillText(`← ${indices.length} inputs!`, rightX + 35, y + 4);
+    }
+  });
+
+  // Info text
+  const info = document.getElementById('singularity-info');
+  if (info) {
+    switch (singularityMode) {
+      case 'bijective':
+        info.innerHTML = '<span style="color:#00d4aa;">✓ Every input maps to a unique output. Fully reversible. No information lost.</span>';
+        break;
+      case 'relu':
+        info.innerHTML = '<span style="color:#ff6b9d;">⚠ All negative inputs collapse to 0. Multiple inputs → one output. Information is LOST.</span>';
+        break;
+      case 'collapse':
+        info.innerHTML = '<span style="color:#ef4444;">✗ Everything maps to 0. Total information destruction. Maximum singularity.</span>';
+        break;
+    }
+  }
 }
 
 // ══════════════════════════════════════════════════════════
-// UTILITY: Add slide from markdown string
+// HALLUCINATION DEMO
 // ══════════════════════════════════════════════════════════
 
-// Usage: addSlide({ en: "# Hello\nSome content", de: "# Hallo\nEtwas Inhalt" })
-function addSlide(content) {
-  const slide = document.createElement('div');
-  slide.className = 'slide';
+function initHallucinationDemo() {
+  const canvas = document.getElementById('hallucination-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
 
-  let inner = '<div class="slide-inner">';
+  // Draw a 2D "knowledge map" with data-rich and data-poor regions
+  ctx.clearRect(0, 0, w, h);
 
-  if (typeof content === 'string') {
-    inner += '<div class="lang-en">' + marked.parse(content) + '</div>';
-    inner += '<div class="lang-de" style="display:' + (currentLang === 'de' ? '' : 'none') + ';">' + marked.parse(content) + '</div>';
-  } else {
-    inner += '<div class="lang-en" style="display:' + (currentLang === 'en' ? '' : 'none') + ';">' + marked.parse(content.en || '') + '</div>';
-    inner += '<div class="lang-de" style="display:' + (currentLang === 'de' ? '' : 'none') + ';">' + marked.parse(content.de || '') + '</div>';
+  // Background gradient
+  const bgGrad = ctx.createRadialGradient(w / 2, h / 2, 50, w / 2, h / 2, 350);
+  bgGrad.addColorStop(0, '#0a1628');
+  bgGrad.addColorStop(1, '#080818');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Data-rich regions (green clusters)
+  const clusters = [
+    { x: 150, y: 120, r: 80, label: 'History' },
+    { x: 380, y: 100, r: 70, label: 'Science' },
+    { x: 550, y: 150, r: 60, label: 'Code' },
+    { x: 250, y: 250, r: 90, label: 'Language' },
+    { x: 500, y: 280, r: 65, label: 'Math' },
+  ];
+
+  // Draw data-rich regions
+  clusters.forEach(c => {
+    const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
+    grad.addColorStop(0, 'rgba(74, 222, 128, 0.25)');
+    grad.addColorStop(0.7, 'rgba(74, 222, 128, 0.08)');
+    grad.addColorStop(1, 'rgba(74, 222, 128, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Scatter some "data points"
+    for (let i = 0; i < 20; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * c.r * 0.8;
+      const px = c.x + Math.cos(angle) * dist;
+      const py = c.y + Math.sin(angle) * dist;
+      ctx.beginPath();
+      ctx.arc(px, py, 2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(74, 222, 128, 0.5)';
+      ctx.fill();
+    }
+
+    // Label
+    ctx.fillStyle = 'rgba(74, 222, 128, 0.7)';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(c.label, c.x, c.y + c.r + 15);
+  });
+
+  // Hallucination zones (red, between clusters)
+  const halluZones = [
+    { x: 100, y: 300, r: 50 },
+    { x: 620, y: 80, r: 45 },
+    { x: 350, y: 320, r: 40 },
+    { x: 650, y: 300, r: 55 },
+  ];
+
+  halluZones.forEach(z => {
+    const grad = ctx.createRadialGradient(z.x, z.y, 0, z.x, z.y, z.r);
+    grad.addColorStop(0, 'rgba(239, 68, 68, 0.2)');
+    grad.addColorStop(0.7, 'rgba(239, 68, 68, 0.05)');
+    grad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(z.x, z.y, z.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Question marks
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('?', z.x, z.y + 5);
+  });
+
+  // Draw a "zoom" arrow showing the prompt pointing into a region
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(50, 50);
+  ctx.lineTo(150, 120);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Zoom label
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Your prompt', 20, 40);
+  ctx.fillText('"zooms in" here', 20, 55);
+
+  // Legend
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('Green = training data (reliable)', w - 15, h - 25);
+  ctx.fillText('Red = no data (hallucination risk)', w - 15, h - 10);
+}
+
+// ══════════════════════════════════════════════════════════
+// HOLOGRAPHIC STORAGE DEMO (simplified)
+// ══════════════════════════════════════════════════════════
+
+const HOLO_N = 8;
+const HOLO_TILE = 4;
+let holoPhotoScratched = new Array(4).fill(false);
+let holoHoloScratched = new Array(4).fill(false);
+
+// Simple 8x8 image (smiley)
+const HOLO_IMG = [
+  0,0,0,0,0,0,0,0,
+  0,0,1,0,0,1,0,0,
+  0,0,1,0,0,1,0,0,
+  0,0,0,0,0,0,0,0,
+  0,1,0,0,0,0,1,0,
+  0,0,1,1,1,1,0,0,
+  0,0,0,0,0,0,0,0,
+  0,0,0,0,0,0,0,0,
+];
+
+function holoReset() {
+  holoPhotoScratched = new Array(4).fill(false);
+  holoHoloScratched = new Array(4).fill(false);
+  holoRender();
+}
+
+function holoRandomDamage(frac) {
+  holoReset();
+  const indices = [0, 1, 2, 3];
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+  const k = Math.round(frac * 4);
+  for (let i = 0; i < k; i++) {
+    holoPhotoScratched[indices[i]] = true;
+    holoHoloScratched[indices[i]] = true;
+  }
+  holoRender();
+}
+
+function holoRender() {
+  // Photo grid
+  const pgCanvas = document.getElementById('holo-photo-grid');
+  const piCanvas = document.getElementById('holo-photo-img');
+  const hgCanvas = document.getElementById('holo-holo-grid');
+  const hiCanvas = document.getElementById('holo-holo-img');
+  if (!pgCanvas) return;
+
+  const size = 200;
+  const tileSize = size / 2;
+  const pixSize = size / HOLO_N;
+
+  // Draw photo grid
+  const pgCtx = pgCanvas.getContext('2d');
+  pgCtx.clearRect(0, 0, size, size);
+  for (let tr = 0; tr < 2; tr++) {
+    for (let tc = 0; tc < 2; tc++) {
+      const idx = tr * 2 + tc;
+      const x = tc * tileSize, y = tr * tileSize;
+      if (holoPhotoScratched[idx]) {
+        pgCtx.fillStyle = '#1a1a2e';
+        pgCtx.fillRect(x, y, tileSize, tileSize);
+        pgCtx.strokeStyle = '#ef4444';
+        pgCtx.lineWidth = 2;
+        pgCtx.beginPath();
+        pgCtx.moveTo(x + 10, y + 10); pgCtx.lineTo(x + tileSize - 10, y + tileSize - 10); pgCtx.stroke();
+        pgCtx.beginPath();
+        pgCtx.moveTo(x + tileSize - 10, y + 10); pgCtx.lineTo(x + 10, y + tileSize - 10); pgCtx.stroke();
+      } else {
+        // Draw the pixels in this quadrant
+        for (let i = 0; i < HOLO_TILE; i++) {
+          for (let j = 0; j < HOLO_TILE; j++) {
+            const gi = tr * HOLO_TILE + i;
+            const gj = tc * HOLO_TILE + j;
+            const v = HOLO_IMG[gi * HOLO_N + gj];
+            pgCtx.fillStyle = v ? '#4ade80' : '#1e293b';
+            pgCtx.fillRect(x + j * (tileSize / HOLO_TILE), y + i * (tileSize / HOLO_TILE),
+              tileSize / HOLO_TILE, tileSize / HOLO_TILE);
+          }
+        }
+      }
+      pgCtx.strokeStyle = '#334155';
+      pgCtx.lineWidth = 1;
+      pgCtx.strokeRect(x, y, tileSize, tileSize);
+    }
   }
 
-  inner += '</div>';
-  slide.innerHTML = inner;
+  // Reconstruct photo (just show surviving quadrants)
+  const piCtx = piCanvas.getContext('2d');
+  piCtx.clearRect(0, 0, size, size);
+  piCtx.fillStyle = '#0a0a1a';
+  piCtx.fillRect(0, 0, size, size);
+  for (let i = 0; i < HOLO_N; i++) {
+    for (let j = 0; j < HOLO_N; j++) {
+      const tr = Math.floor(i / HOLO_TILE);
+      const tc = Math.floor(j / HOLO_TILE);
+      const idx = tr * 2 + tc;
+      if (holoPhotoScratched[idx]) continue;
+      const v = HOLO_IMG[i * HOLO_N + j];
+      piCtx.fillStyle = v ? '#4ade80' : '#1e293b';
+      piCtx.fillRect(j * pixSize, i * pixSize, pixSize, pixSize);
+    }
+  }
 
-  document.getElementById('presentation').appendChild(slide);
-  slides = document.querySelectorAll('.slide');
-  renderSlide(slide);
-  updateUI();
-  return slides.length - 1;
+  // Hologram grid (show wave patterns)
+  const hgCtx = hgCanvas.getContext('2d');
+  hgCtx.clearRect(0, 0, size, size);
+  for (let tr = 0; tr < 2; tr++) {
+    for (let tc = 0; tc < 2; tc++) {
+      const idx = tr * 2 + tc;
+      const x = tc * tileSize, y = tr * tileSize;
+      if (holoHoloScratched[idx]) {
+        hgCtx.fillStyle = '#1a1a2e';
+        hgCtx.fillRect(x, y, tileSize, tileSize);
+        hgCtx.strokeStyle = '#ef4444';
+        hgCtx.lineWidth = 2;
+        hgCtx.beginPath();
+        hgCtx.moveTo(x + 10, y + 10); hgCtx.lineTo(x + tileSize - 10, y + tileSize - 10); hgCtx.stroke();
+        hgCtx.beginPath();
+        hgCtx.moveTo(x + tileSize - 10, y + 10); hgCtx.lineTo(x + 10, y + tileSize - 10); hgCtx.stroke();
+      } else {
+        // Draw a wave pattern for this frequency tile
+        for (let i = 0; i < HOLO_TILE; i++) {
+          for (let j = 0; j < HOLO_TILE; j++) {
+            const freq = (tr + 1) * (tc + 1);
+            const v = Math.sin((i + j) * freq * 0.8) * 0.5 + 0.5;
+            const r = Math.round(50 + v * 150);
+            const g = Math.round(30 + v * 80);
+            const b = Math.round(90 + v * 100);
+            hgCtx.fillStyle = `rgb(${r},${g},${b})`;
+            hgCtx.fillRect(x + j * (tileSize / HOLO_TILE), y + i * (tileSize / HOLO_TILE),
+              tileSize / HOLO_TILE + 1, tileSize / HOLO_TILE + 1);
+          }
+        }
+      }
+      hgCtx.strokeStyle = '#334155';
+      hgCtx.lineWidth = 1;
+      hgCtx.strokeRect(x, y, tileSize, tileSize);
+    }
+  }
+
+  // Reconstruct hologram (surviving tiles contribute to whole image, but blurrier)
+  const hiCtx = hiCanvas.getContext('2d');
+  hiCtx.clearRect(0, 0, size, size);
+  const survivingCount = holoHoloScratched.filter(x => !x).length;
+  const blurFactor = survivingCount / 4;
+
+  for (let i = 0; i < HOLO_N; i++) {
+    for (let j = 0; j < HOLO_N; j++) {
+      const v = HOLO_IMG[i * HOLO_N + j];
+      // Blend toward gray based on damage
+      const target = v ? 0.85 : 0.15;
+      const blended = 0.5 + (target - 0.5) * blurFactor;
+      const brightness = Math.round(blended * 255);
+      const g = v ? Math.round(blended * 200 + 55) : Math.round(blended * 60);
+      hiCtx.fillStyle = v ?
+        `rgb(${Math.round(blended * 100)}, ${g}, ${Math.round(blended * 80)})` :
+        `rgb(${Math.round(blended * 50)}, ${Math.round(blended * 60)}, ${Math.round(blended * 80)})`;
+      hiCtx.fillRect(j * pixSize, i * pixSize, pixSize, pixSize);
+    }
+  }
+
+  // Make grids clickable
+  pgCanvas.onclick = (e) => {
+    const rect = pgCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const tc = Math.floor(mx / tileSize), tr = Math.floor(my / tileSize);
+    if (tc >= 0 && tc < 2 && tr >= 0 && tr < 2) {
+      holoPhotoScratched[tr * 2 + tc] = !holoPhotoScratched[tr * 2 + tc];
+      holoHoloScratched[tr * 2 + tc] = holoPhotoScratched[tr * 2 + tc];
+      holoRender();
+    }
+  };
+
+  hgCanvas.onclick = (e) => {
+    const rect = hgCanvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const tc = Math.floor(mx / tileSize), tr = Math.floor(my / tileSize);
+    if (tc >= 0 && tc < 2 && tr >= 0 && tr < 2) {
+      holoHoloScratched[tr * 2 + tc] = !holoHoloScratched[tr * 2 + tc];
+      holoPhotoScratched[tr * 2 + tc] = holoHoloScratched[tr * 2 + tc];
+      holoRender();
+    }
+  };
 }
 
-// ══════════════════════════════════════════════════════════
-// UTILITY: Quick image/video slide
-// ══════════════════════════════════════════════════════════
-
-// Usage: addImageSlide("Title", "path/to/image.jpg", "Optional caption")
-function addImageSlide(title, src, caption) {
-  const cap = caption ? '<p><em>' + caption + '</em></p>' : '';
-  return addSlide('<h2>' + title + '</h2>\n\n![' + title + '](' + src + ')\n\n' + cap);
-}
-
-// Usage: addVideoSlide("Title", "path/to/video.mp4")
-function addVideoSlide(title, src, caption) {
-  const cap = caption ? '<p><em>' + caption + '</em></p>' : '';
-  const html = '<h2>' + title + '</h2><video controls style="width:100%;max-height:60vh;border-radius:12px;"><source src="' + src + '"></video>' + cap;
-  const slide = document.createElement('div');
-  slide.className = 'slide';
-  slide.innerHTML = '<div class="slide-inner"><div class="lang-en">' + html + '</div><div class="lang-de" style="display:' + (currentLang === 'de' ? '' : 'none') + ';">' + html + '</div></div>';
-  document.getElementById('presentation').appendChild(slide);
-  slides = document.querySelectorAll('.slide');
-  updateUI();
-  return slides.length - 1;
-}
-
-// Usage: addYouTubeSlide("Title", "VIDEO_ID")
-function addYouTubeSlide(title, videoId) {
-  const html = '<h2>' + title + '</h2><iframe width="800" height="450" src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allowfullscreen style="border-radius:12px;max-width:100%;"></iframe>';
-  const slide = document.createElement('div');
-  slide.className = 'slide';
-  slide.innerHTML = '<div class="slide-inner"><div class="lang-en">' + html + '</div><div class="lang-de" style="display:' + (currentLang === 'de' ? '' : 'none') + ';">' + html + '</div></div>';
-  document.getElementById('presentation').appendChild(slide);
-  slides = document.querySelectorAll('.slide');
-  updateUI();
-  return slides.length - 1;
-}
+// Initialize hologram demo
+setTimeout(() => { holoRender(); }, 100);
 
 </script>
-
 </body>
 </html>
-
