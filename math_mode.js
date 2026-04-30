@@ -1502,9 +1502,10 @@ function _dispatch_interactive_inject(type, container_id, layer_idx, layer_data,
         },
         "batchnorm": function() {
             _inject_hybrid_batchnorm_direct(container_id, layer_idx, layer_data, colors, y_layer);
+        },
+        "conv2d": function() {
+            _inject_hybrid_conv2d_direct(container_id, layer_idx, layer_data, colors, input_layer);
         }
-        // Future: "conv1d": function() { _inject_hybrid_conv1d_direct(...); }
-        // Future: "layernorm": function() { _inject_hybrid_layernorm_direct(...); }
     };
 
     if (handlers[type]) {
@@ -1521,79 +1522,79 @@ function get_activation_layer_names() {
 }
 
 function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias) {
-	var _af = get_layer_activation_function(layer_idx);
+    var _af = get_layer_activation_function(layer_idx);
 
-	var layer_str = "";
+    var layer_str = "";
 
-	if (this_layer_type == "dense") {
-		layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
-	} else if (this_layer_type == "flatten") {
-		layer_str = get_flatten_string(layer_idx);
-	} else if (this_layer_type == "reshape") {
-		layer_str = get_reshape_string(layer_idx);
-	} else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
-		layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data);
-	} else if (this_layer_type == "batchNormalization") {
-		layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
-	} else if (this_layer_type == "dropout") {
-		layer_str = get_dropout_latex(layer_idx);
-	} else if (this_layer_type == "MultiActivation") {
-		layer_str = get_multiactivation_layer_latex(layer_idx);
-	} else if (this_layer_type == "Snake") {
-		layer_str = get_snake_layer_latex(layer_idx);
-	} else if (this_layer_type == "DebugLayer") {
-		layer_str = get_debug_layer_latex();
-	} else if (this_layer_type == "gaussianDropout") {
-		layer_str = get_gaussian_dropout_latex(layer_idx);
-	} else if (this_layer_type == "alphaDropout") {
-		layer_str = get_alpha_dropout_latex(layer_idx);
-	} else if (this_layer_type == "gaussianNoise") {
-		layer_str = get_gaussian_noise_latex(layer_idx);
-	} else if (this_layer_type == "averagePooling1d") {
-		layer_str = get_average_pooling_1d_latex(layer_idx);
-	} else if (this_layer_type == "averagePooling2d") {
-		layer_str = get_average_pooling_2d_latex(layer_idx);
-	} else if (this_layer_type == "averagePooling3d") {
-		layer_str = get_average_pooling_3d_latex(layer_idx);
-	} else if (this_layer_type == "conv1d") {
-		layer_str = get_conv1d_latex(layer_idx, layer_has_bias);
-	} else if (this_layer_type == "conv2d") {
-		layer_str = get_conv2d_latex(layer_idx, _af, layer_has_bias);
-	} else if (this_layer_type == "conv3d") {
-		layer_str = get_conv3d_latex(layer_idx, _af, layer_has_bias);
-	} else if (this_layer_type == "maxPooling1d") {
-		layer_str = get_max_pooling_1d_latex(layer_idx);
-	} else if (this_layer_type == "maxPooling2d") {
-		layer_str = get_max_pooling_2d_latex(layer_idx);
-	} else if (this_layer_type == "maxPooling3d") {
-		layer_str = get_max_pooling_3d_latex(layer_idx);
-	} else if (this_layer_type == "upSampling2d") {
-		layer_str = get_upsampling2d_latex(layer_idx);
-	} else if (this_layer_type == "separableConv2d") {
-		layer_str = get_seperable_conv2d_latex(layer_idx);
-	} else if (this_layer_type == "depthwiseConv2d") {
-		layer_str = get_depthwise_conv2d_latex(layer_idx);
-	} else if (this_layer_type == "conv2dTranspose") {
-		layer_str = get_conv2d_transpose_latex(layer_idx);
-	} else if (this_layer_type == "layerNormalization") {
-		layer_str = get_layer_normalization_equation(layer_idx);
-	} else {
-		layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
-	}
+    if (this_layer_type == "dense") {
+        layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
+    } else if (this_layer_type == "flatten") {
+        layer_str = get_flatten_string(layer_idx);
+    } else if (this_layer_type == "reshape") {
+        layer_str = get_reshape_string(layer_idx);
+    } else if (get_activation_layer_names().includes(this_layer_type) && this_layer_type != "Snake") {
+        layer_str = get_activation_functions_latex(this_layer_type, input_layer, layer_idx, layer_data);
+    } else if (this_layer_type == "batchNormalization") {
+        layer_str = get_batch_normalization_latex(layer_data, y_layer, layer_idx);
+    } else if (this_layer_type == "dropout") {
+        layer_str = get_dropout_latex(layer_idx);
+    } else if (this_layer_type == "MultiActivation") {
+        layer_str = get_multiactivation_layer_latex(layer_idx);
+    } else if (this_layer_type == "Snake") {
+        layer_str = get_snake_layer_latex(layer_idx);
+    } else if (this_layer_type == "DebugLayer") {
+        layer_str = get_debug_layer_latex();
+    } else if (this_layer_type == "gaussianDropout") {
+        layer_str = get_gaussian_dropout_latex(layer_idx);
+    } else if (this_layer_type == "alphaDropout") {
+        layer_str = get_alpha_dropout_latex(layer_idx);
+    } else if (this_layer_type == "gaussianNoise") {
+        layer_str = get_gaussian_noise_latex(layer_idx);
+    } else if (this_layer_type == "averagePooling1d") {
+        layer_str = get_average_pooling_1d_latex(layer_idx);
+    } else if (this_layer_type == "averagePooling2d") {
+        layer_str = get_average_pooling_2d_latex(layer_idx);
+    } else if (this_layer_type == "averagePooling3d") {
+        layer_str = get_average_pooling_3d_latex(layer_idx);
+    } else if (this_layer_type == "conv1d") {
+        layer_str = get_conv1d_latex(layer_idx, layer_has_bias);
+    } else if (this_layer_type == "conv2d") {
+        layer_str = get_conv2d_latex(layer_idx, _af, layer_has_bias);
+    } else if (this_layer_type == "conv3d") {
+        layer_str = get_conv3d_latex(layer_idx, _af, layer_has_bias);
+    } else if (this_layer_type == "maxPooling1d") {
+        layer_str = get_max_pooling_1d_latex(layer_idx);
+    } else if (this_layer_type == "maxPooling2d") {
+        layer_str = get_max_pooling_2d_latex(layer_idx);
+    } else if (this_layer_type == "maxPooling3d") {
+        layer_str = get_max_pooling_3d_latex(layer_idx);
+    } else if (this_layer_type == "upSampling2d") {
+        layer_str = get_upsampling2d_latex(layer_idx);
+    } else if (this_layer_type == "separableConv2d") {
+        layer_str = get_seperable_conv2d_latex(layer_idx);
+    } else if (this_layer_type == "depthwiseConv2d") {
+        layer_str = get_depthwise_conv2d_latex(layer_idx);
+    } else if (this_layer_type == "conv2dTranspose") {
+        layer_str = get_conv2d_transpose_latex(layer_idx);
+    } else if (this_layer_type == "layerNormalization") {
+        layer_str = get_layer_normalization_equation(layer_idx);
+    } else {
+        layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
+    }
 
-	// If any layer returned an interactive placeholder marker, pass it through
-	// without wrapping with activation function or h = ... prefix
-	if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
-		return layer_str;
-	}
+    // If any layer returned an interactive placeholder marker, pass it through
+    // without wrapping with activation function or h = ... prefix
+    if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
+        return layer_str;
+    }
 
-	if (this_layer_type && !this_layer_type.startsWith("conv")) {
-		layer_str = wrap_with_activation_function(layer_idx, layer_str);
-	}
+    if (this_layer_type && !this_layer_type.startsWith("conv")) {
+        layer_str = wrap_with_activation_function(layer_idx, layer_str);
+    }
 
-	layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
+    layer_str = `${_get_h(layer_idx)} = ${layer_str}`;
 
-	return layer_str;
+    return layer_str;
 }
 
 function get_alpha_dropout_latex (layer_idx) {
@@ -1871,84 +1872,94 @@ function show_could_not_get_msg (name) {
 	dbg(`Could not get ${name}. It may have been disposed already.`);
 }
 
-function get_conv2d_latex (layer_idx, _af, layer_has_bias) {
-	var str = "";
-	str += "\\begin{matrix}";
-	str += add_activation_function_to_latex (_af, "begin");
-	str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
+function get_conv2d_latex(layer_idx, _af, layer_has_bias) {
+    if (!_math_interactive_mode) {
+        return _get_conv2d_latex_static(layer_idx, _af, layer_has_bias);
+    }
 
-	var layer_bias_string = "";
+    // Return a special marker that model_to_latex will detect
+    return "%%INTERACTIVE_CONV2D_" + layer_idx + "%%";
+}
 
-	if(layer_has_bias) {
-		str += " + \\text{bias}(k)";
-		var bias_val = "";
-		try {
-			bias_val = null;
+// Rename the original to _get_conv2d_latex_static
+function _get_conv2d_latex_static(layer_idx, _af, layer_has_bias) {
+    var str = "";
+    str += "\\begin{matrix}";
+    str += add_activation_function_to_latex(_af, "begin");
+    str += "\\sum_{i=1}^{N} \\sum_{j=1}^{M} \\left( \\sum_{p=1}^{K} \\sum_{q=1}^{L} " + _get_h(layer_idx) + "(x+i, y+j, c) \\times \\text{kernel}(p, q, c, k) \\right)";
 
-			if (
-				model &&
-				Array.isArray(model.layers) &&
-				model.layers[layer_idx] &&
-				model.layers[layer_idx].bias &&
-				typeof model.layers[layer_idx].bias.val !== "undefined" &&
-				!model.layers[layer_idx].bias.disposed
-			) {
-				bias_val = model.layers[layer_idx].bias.val;
-			}
+    var layer_bias_string = "";
 
-			if (bias_val) {
-				let synced_bias = tidy(() => { return array_sync(bias_val, true); });
-				if (synced_bias) {
-					var bias_shape = get_shape_from_array(synced_bias);
-					layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias);
-				}
-			} else {
-				show_could_not_get_msg("bias");
-			}
-		} catch (e) {
-			show_could_not_get_msg("bias");
-		}
-	}
+    if (layer_has_bias) {
+        str += " + \\text{bias}(k)";
+        var bias_val = "";
+        try {
+            bias_val = null;
 
-	str += add_activation_function_to_latex(_af, "end");
+            if (
+                model &&
+                Array.isArray(model.layers) &&
+                model.layers[layer_idx] &&
+                model.layers[layer_idx].bias &&
+                typeof model.layers[layer_idx].bias.val !== "undefined" &&
+                !model.layers[layer_idx].bias.disposed
+            ) {
+                bias_val = model.layers[layer_idx].bias.val;
+            }
 
-	str += " \\\\";
+            if (bias_val) {
+                let synced_bias = tidy(() => { return array_sync(bias_val, true); });
+                if (synced_bias) {
+                    var bias_shape = get_shape_from_array(synced_bias);
+                    layer_bias_string += `\\text{Bias}^{${bias_shape.join(", ")}} = ` + array_to_latex_matrix(synced_bias);
+                }
+            } else {
+                show_could_not_get_msg("bias");
+            }
+        } catch (e) {
+            show_could_not_get_msg("bias");
+        }
+    }
 
-	try {
-		var this_kernel_val = null;
-		if (
-			model &&
-			Array.isArray(model.layers) &&
-			model.layers[layer_idx] &&
-			model.layers[layer_idx].kernel &&
-			typeof model.layers[layer_idx].kernel.val !== "undefined" &&
-			!model.layers[layer_idx].kernel.disposed
-		) {
-			this_kernel_val = model.layers[layer_idx].kernel.val;
-		}
+    str += add_activation_function_to_latex(_af, "end");
 
-		if (this_kernel_val) {
-			let synced_kernel = array_sync(this_kernel_val, true);
-			if (synced_kernel) {
-				var kernel_shape = get_shape_from_array(synced_kernel);
-				str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_kernel);
-			} else {
-				show_could_not_get_msg("kernel");
-			}
-		} else {
-			show_could_not_get_msg("kernel");
-		}
-	} catch (e) {
-		show_could_not_get_msg("kernel");
-	}
+    str += " \\\\";
 
-	if (layer_bias_string) {
-		str += ` \\\\ \n${layer_bias_string}`;
-	}
+    try {
+        var this_kernel_val = null;
+        if (
+            model &&
+            Array.isArray(model.layers) &&
+            model.layers[layer_idx] &&
+            model.layers[layer_idx].kernel &&
+            typeof model.layers[layer_idx].kernel.val !== "undefined" &&
+            !model.layers[layer_idx].kernel.disposed
+        ) {
+            this_kernel_val = model.layers[layer_idx].kernel.val;
+        }
 
-	str += "\\end{matrix}";
+        if (this_kernel_val) {
+            let synced_kernel = array_sync(this_kernel_val, true);
+            if (synced_kernel) {
+                var kernel_shape = get_shape_from_array(synced_kernel);
+                str += `\\text{Kernel}^{${kernel_shape.join(", ")}} = ` + array_to_latex_matrix(synced_kernel);
+            } else {
+                show_could_not_get_msg("kernel");
+            }
+        } else {
+            show_could_not_get_msg("kernel");
+        }
+    } catch (e) {
+        show_could_not_get_msg("kernel");
+    }
 
-	return str;
+    if (layer_bias_string) {
+        str += ` \\\\ \n${layer_bias_string}`;
+    }
+
+    str += "\\end{matrix}";
+
+    return str;
 }
 
 function get_upsampling2d_latex(layer_idx) {
