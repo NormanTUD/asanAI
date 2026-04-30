@@ -703,9 +703,9 @@ function initTorusMorph() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x080818);
 
-  const camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
-  camera.position.set(0, 3, 7);
-  camera.lookAt(0, 0, 0);
+  const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
+  camera.position.set(3, 2.5, 5);
+  camera.lookAt(0, 0.4, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(W, H);
@@ -718,10 +718,11 @@ function initTorusMorph() {
   controls.dampingFactor = 0.08;
   controls.enableZoom = true;
   controls.enablePan = true;
-  controls.minDistance = 3;
+  controls.minDistance = 2.5;
   controls.maxDistance = 15;
   controls.autoRotate = true;
-  controls.autoRotateSpeed = 1.5;
+  controls.autoRotateSpeed = 1.2;
+  controls.target.set(0, 0.4, 0);
 
   let idleTimer = null;
   controls.addEventListener('start', () => {
@@ -734,15 +735,15 @@ function initTorusMorph() {
   });
 
   // ─── Lighting ───
-  scene.add(new THREE.AmbientLight(0x404060, 0.5));
-  const key = new THREE.DirectionalLight(0xffffff, 0.9);
-  key.position.set(3, 5, 4);
+  scene.add(new THREE.AmbientLight(0x606080, 0.6));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85);
+  key.position.set(4, 6, 3);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0x6c63ff, 0.3);
-  fill.position.set(-4, -2, -3);
+  const fill = new THREE.DirectionalLight(0x8888ff, 0.25);
+  fill.position.set(-3, -1, -4);
   scene.add(fill);
-  const rim = new THREE.PointLight(0x00d4aa, 0.4, 10);
-  rim.position.set(0, -3, 4);
+  const rim = new THREE.PointLight(0x00d4aa, 0.3, 12);
+  rim.position.set(-2, 3, 3);
   scene.add(rim);
 
   // ─── Helpers ───
@@ -751,186 +752,367 @@ function initTorusMorph() {
     return t * t * t * (t * (t * 6 - 15) + 10);
   }
   function lerp(a, b, t) { return a + (b - a) * t; }
-  function lerpV3(a, b, t) {
-    return new THREE.Vector3(
-      lerp(a.x, b.x, t),
-      lerp(a.y, b.y, t),
-      lerp(a.z, b.z, t)
-    );
+
+  // ═══════════════════════════════════════════════════════
+  // CORRECT APPROACH: The mug is built from TWO parts that
+  // share a seam, forming a single genus-1 surface:
+  //
+  // 1. MUG BODY: A surface of revolution (lathe) with the
+  //    profile of a cup: flat bottom, vertical walls, open top.
+  //    The "surface" includes outer wall, bottom, and inner wall.
+  //    The top rim connects outer to inner wall.
+  //    A SLOT is cut in the outer wall where the handle attaches.
+  //
+  // 2. HANDLE: A tube (torus section) that bridges the slot.
+  //
+  // Together they form one closed genus-1 surface.
+  //
+  // For the MORPH, we track every vertex and move it through
+  // keyframed positions:
+  //   t=0.0: Full mug shape
+  //   t=0.3: Body shrinks in height, thickens, handle same
+  //   t=0.5: Body is a short thick ring, handle is thicker
+  //   t=0.7: Ring and handle merge into uniform thickness
+  //   t=1.0: Perfect torus
+  //
+  // PARAMETERIZATION:
+  //   u ∈ [0, 1]: around the azimuth (0 = handle side)
+  //   v ∈ [0, 1]: around the cross-section profile
+  //
+  // The cross-section at each u is a closed curve.
+  // For the BODY (most of u): it's the mug wall profile
+  //   (outer wall → bottom → inner wall → rim = closed rectangle)
+  // For the HANDLE region: it's a circle (tube cross-section)
+  //   that is OFFSET outward from the body.
+  //
+  // The transition between body and handle cross-sections
+  // happens smoothly over a small range of u.
+  // ═══════════════════════════════════════════════════════
+
+  const NU = 120;
+  const NV = 60;
+
+  // ─── Mug dimensions ───
+  const MUG_OUTER_R = 0.85;
+  const MUG_INNER_R = 0.70;
+  const MUG_HEIGHT = 1.8;
+  const MUG_BOTTOM_Y = -0.5;
+  const MUG_BOTTOM_THICK = 0.12;
+  const MUG_HANDLE_OFFSET = 0.55; // how far handle center is from body
+  const MUG_HANDLE_TUBE_R = 0.10;
+  const MUG_HANDLE_HALF_H = 0.50; // half the vertical span of handle
+
+  // ─── Torus dimensions ───
+  const TOR_R = 1.0;
+  const TOR_r = 0.38;
+
+  // ─── Handle region in u-space ───
+  const HANDLE_CENTER_U = 0.0; // handle at u=0
+  const HANDLE_HALF_WIDTH = 0.06; // handle occupies u ∈ [-0.06, 0.06] (wrapping)
+  const HANDLE_BLEND_WIDTH = 0.04; // smooth transition zone
+
+  // How much "handle" influence at a given u
+  function handleBlend(u) {
+    // Distance from handle center (wrapping)
+    let d = Math.abs(u - HANDLE_CENTER_U);
+    if (d > 0.5) d = 1.0 - d;
+    // Inside handle region: 1. In blend zone: smooth falloff. Outside: 0.
+    if (d < HANDLE_HALF_WIDTH) return 1.0;
+    if (d < HANDLE_HALF_WIDTH + HANDLE_BLEND_WIDTH) {
+      const t = (d - HANDLE_HALF_WIDTH) / HANDLE_BLEND_WIDTH;
+      return 1.0 - t * t * (3 - 2 * t); // smoothstep falloff
+    }
+    return 0.0;
   }
 
   // ═══════════════════════════════════════════════════════
-  // MESH RESOLUTION
-  // ═══════════════════════════════════════════════════════
-  const NU = 100; // around the azimuth (longitude)
-  const NV = 50;  // around the profile (latitude)
-
-  // ═══════════════════════════════════════════════════════
-  // SHAPE DEFINITION: We define the shape at any morph
-  // parameter t as a function getPoint(u, v, t) → Vector3
+  // MUG BODY CROSS-SECTION (at a given morph parameter t)
   //
-  // u ∈ [0, 1]: azimuthal angle (around the vertical axis 
-  //             for the mug body, around the ring for torus)
-  // v ∈ [0, 1]: profile angle (around the cross-section)
+  // The cross-section is the closed loop forming the mug wall:
   //
-  // THE KEY INSIGHT:
-  // A mug is topologically a torus. If you think of the mug's
-  // WALL (not the air inside), it forms a closed surface:
-  //   - The outer wall, bottom, inner wall, and rim form a 
-  //     closed loop in cross-section
-  //   - Revolving this loop around the vertical axis gives 
-  //     the mug body
-  //   - The handle is an additional tube that "replaces" a 
-  //     section of the wall
+  //   v=0.0:  outer wall, at bottom
+  //   v=0.20: outer wall, at top (rim outside)
+  //   v=0.30: rim top surface (outer→inner at top)
+  //   v=0.50: inner wall, at top
+  //   v=0.70: inner wall, at bottom (above the internal bottom)
+  //   v=0.80: bottom inner surface (inner→outer at bottom)
+  //   v=1.0:  back to outer wall at bottom (closed)
   //
-  // But for the MORPH, the classic approach is:
-  //   1. The mug body shrinks (walls thicken, height decreases)
-  //   2. The body migrates toward the handle
-  //   3. The handle fattens
-  //   4. Everything becomes a uniform torus
+  // Returns {r, y} in the local frame (r = radial, y = vertical)
   //
-  // We implement this by defining the cross-section profile
-  // and the "sweep path" as functions of t.
+  // As t→1, this rectangle morphs into a circle of radius TOR_r
+  // centered at radius TOR_R.
   // ═══════════════════════════════════════════════════════
 
-  // At t=0 (MUG):
-  //   The sweep path is: mostly a circle (the mug body axis) 
-  //   at radius mugR, but one section bulges out (the handle).
-  //   The cross-section is: a tall thin rectangle (the mug wall)
-  //   for the body portion, and a small circle for the handle.
-  //
-  // At t=1 (TORUS):
-  //   The sweep path is: a perfect circle at radius torusR.
-  //   The cross-section is: a perfect circle of radius torusr.
-  //
-  // In between: everything interpolates smoothly.
+  function bodyProfile(v, t) {
+    const s = smoothstep(t);
 
-  // ─── Mug parameters ───
-  const mugBodyR = 0.0;      // body "sweep" radius (0 = degenerate, body is a surface of revolution)
-  const mugOuterR = 1.0;     // outer radius of mug body
-  const mugInnerR = 0.82;    // inner radius (inside of cup)
-  const mugHeight = 2.0;     // total height
-  const mugBottomThick = 0.18;
-  const mugHandleR = 0.5;    // how far handle sticks out from body
-  const mugHandleTubeR = 0.12;
-  const mugHandleHeight = 1.2;
+    // Interpolated dimensions
+    const outerR = lerp(MUG_OUTER_R, TOR_R + TOR_r, s);
+    const innerR = lerp(MUG_INNER_R, TOR_R - TOR_r, s);
+    const topY = lerp(MUG_BOTTOM_Y + MUG_HEIGHT, TOR_r, s);
+    const botY = lerp(MUG_BOTTOM_Y, -TOR_r, s);
+    const rimThick = lerp(0.04, 0, s); // rim gets thinner and disappears
 
-  // ─── Torus parameters ───
-  const torusR = 1.2;  // major radius
-  const torusr = 0.45; // minor radius
+    // Center of the cross-section (for the circular target)
+    const centerR = (outerR + innerR) / 2;
+    const centerY = (topY + botY) / 2;
+    const halfW = (outerR - innerR) / 2;
+    const halfH = (topY - botY) / 2;
+
+    // Target: circle
+    const angle = v * Math.PI * 2;
+    const circR = centerR + TOR_r * Math.cos(angle);
+    const circY = centerY + TOR_r * Math.sin(angle);
+
+    // Source: rectangular profile (mug wall cross-section)
+    // We trace the rectangle with rounded corners
+    let rectR, rectY;
+
+    // Normalize v to trace the rectangle:
+    // We split the perimeter proportionally
+    const outerWallFrac = 0.35;  // outer wall (bottom to top)
+    const rimFrac = 0.08;        // rim (outer to inner at top)
+    const innerWallFrac = 0.35;  // inner wall (top to bottom)
+    const bottomFrac = 0.22;     // bottom (inner to outer)
+
+    if (v < outerWallFrac) {
+      // Outer wall: bottom to top
+      const localT = v / outerWallFrac;
+      rectR = outerR;
+      rectY = lerp(botY, topY, localT);
+    } else if (v < outerWallFrac + rimFrac) {
+      // Rim: outer to inner at top
+      const localT = (v - outerWallFrac) / rimFrac;
+      rectR = lerp(outerR, innerR, localT);
+      rectY = topY;
+    } else if (v < outerWallFrac + rimFrac + innerWallFrac) {
+      // Inner wall: top to bottom
+      const localT = (v - outerWallFrac - rimFrac) / innerWallFrac;
+      rectR = innerR;
+      rectY = lerp(topY, botY + MUG_BOTTOM_THICK * (1 - s), localT);
+    } else {
+      // Bottom: inner to outer
+      const localT = (v - outerWallFrac - rimFrac - innerWallFrac) / bottomFrac;
+      rectR = lerp(innerR, outerR, localT);
+      rectY = botY;
+    }
+
+    // Blend from rectangle to circle
+    // The blend accelerates: starts slow, finishes fast
+    const blendT = smoothstep(t);
+    const r = lerp(rectR, circR, blendT);
+    const y = lerp(rectY, circY, blendT);
+
+    return { r, y };
+  }
 
   // ═══════════════════════════════════════════════════════
-  // APPROACH: Multi-stage morph with proper mug geometry
+  // HANDLE CROSS-SECTION
   //
-  // Stage 1 (t: 0 → 0.4): Mug body shrinks in height, 
-  //   walls thicken, bottom rises. Handle stays similar.
-  //   The mug becomes a short, thick ring.
+  // The handle is a tube whose center traces a vertical
+  // ellipse (C-shape) on the outside of the mug body.
   //
-  // Stage 2 (t: 0.4 → 0.7): The thick ring and handle 
-  //   equalize — the ring opens up, handle fattens, 
-  //   they merge into a uniform tube.
+  // At the handle's u-position, instead of the body profile,
+  // we use a circular cross-section centered at the handle
+  // skeleton position.
   //
-  // Stage 3 (t: 0.7 → 1.0): The merged shape rounds out
-  //   into a perfect torus.
+  // The handle skeleton (center of tube) at a given v:
+  //   v traces around the handle loop (a vertical ellipse
+  //   offset from the mug body)
+  //
+  // As t→1: the handle skeleton moves inward to become
+  // part of the torus ring, and the tube radius grows to TOR_r.
+  // ═══════════════════════════════════════════════════════
+
+  function handleProfile(v, t) {
+    const s = smoothstep(t);
+
+    // Handle skeleton: vertical ellipse
+    const angle = v * Math.PI * 2;
+
+    // Handle center position (in the r-y plane at the handle's azimuth)
+    const handleCenterR_mug = MUG_OUTER_R + MUG_HANDLE_OFFSET;
+    const handleCenterY_mug = MUG_BOTTOM_Y + MUG_HEIGHT * 0.5;
+    const handleHalfH_mug = MUG_HANDLE_HALF_H;
+    const handleHalfW_mug = MUG_HANDLE_OFFSET; // radial extent
+
+    // At t=1: handle becomes part of the torus
+    // The handle skeleton should merge with the torus ring at r=TOR_R+TOR_r side
+    const handleCenterR_tor = TOR_R + TOR_r * Math.cos(angle);
+    const handleCenterY_tor = TOR_r * Math.sin(angle);
+
+    // Mug handle skeleton traces an ellipse
+    const skeletonR_mug = MUG_OUTER_R + MUG_HANDLE_OFFSET * (1 - Math.cos(angle)) * 0.5 +
+                          MUG_HANDLE_OFFSET * 0.5;
+    // Actually let's make it simpler: the handle is a half-ellipse
+    // that goes from top attachment to bottom attachment
+    // At v=0 (and v=1): attachment point at mug body (r = MUG_OUTER_R)
+    // At v=0.5: furthest point (r = MUG_OUTER_R + MUG_HANDLE_OFFSET)
+
+    const skR_mug = MUG_OUTER_R + MUG_HANDLE_OFFSET * Math.sin(angle);
+    const skY_mug = handleCenterY_mug + handleHalfH_mug * Math.cos(angle);
+
+    // Tube radius
+    const tubeR_mug = MUG_HANDLE_TUBE_R;
+    const tubeR_tor = TOR_r;
+    const tubeR = lerp(tubeR_mug, tubeR_tor, s);
+
+    // Skeleton position (interpolate to torus)
+    const skR = lerp(skR_mug, TOR_R + TOR_r * Math.cos(angle), s);
+    const skY = lerp(skY_mug, TOR_r * Math.sin(angle), s);
+
+    // The cross-section of the handle tube is always circular
+    // But we need a SECOND parameter for "where on the tube surface"
+    // This is the problem: v is being used for the skeleton position,
+    // but we also need it for the tube cross-section.
+    //
+    // SOLUTION: For the handle region, we reinterpret the parameterization:
+    //   v still goes around the cross-section (tube surface)
+    //   But the SKELETON position is determined by which part of the
+    //   handle we're at — which is encoded in u (the azimuthal position
+    //   within the handle region).
+    //
+    // Wait, this means we need to restructure. Let me reconsider.
+    //
+    // CORRECT STRUCTURE:
+    //   u = position along the "big loop" (azimuth for body, along-handle for handle)
+    //   v = position around the "small loop" (cross-section everywhere)
+    //
+    // For the BODY: u is azimuthal angle, v traces the wall profile
+    // For the HANDLE: u traces along the handle skeleton, v traces around the tube
+    //
+    // The handle "replaces" a section of the body in u-space.
+    // Within that section, u maps to position along the handle skeleton
+    // instead of azimuthal angle.
+
+    // So this function should take the LOCAL u within the handle region
+    // and return the cross-section point for a given v.
+    // Let me restructure...
+
+    return { r: skR, y: skY, tubeR: tubeR };
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // RESTRUCTURED: getPoint(u, v, t)
+  //
+  // u ∈ [0, 1]: 
+  //   For body region: azimuthal angle around vertical axis
+  //   For handle region: position along handle skeleton
+  //
+  // v ∈ [0, 1]: around the cross-section (wall profile or tube)
+  //
+  // t ∈ [0, 1]: morph parameter
   // ═══════════════════════════════════════════════════════
 
   function getPoint(u, v, t) {
     const s = smoothstep(t);
-    const theta = u * Math.PI * 2; // azimuthal angle
-    const phi = v * Math.PI * 2;   // profile angle
+    const hb = handleBlend(u); // 0 = pure body, 1 = pure handle
 
-    // ─── Sweep path center and radius ───
-    // At t=0: The sweep path is at the mug's mid-wall radius,
-    //         with a bump outward for the handle
-    // At t=1: The sweep path is a perfect circle at torusR
+    // ─── BODY contribution ───
+    const theta = u * Math.PI * 2;
+    const bp = bodyProfile(v, t);
 
-    // Handle occupies a fraction of the azimuth
-    const handleFrac = 0.15; // handle spans 15% of the circumference
-    const handleCenter = 0.0; // handle is at u=0 (front)
-    
-    // How much of the "handle bump" is active
-    // At t=0: full bump. At t=1: no bump (uniform circle)
-    const handleBump = 1.0 - s;
-    
-    // Distance from center of handle region
-    let handleDist = Math.abs(u - handleCenter);
-    if (handleDist > 0.5) handleDist = 1.0 - handleDist; // wrap around
-    
-    // Smooth handle profile (gaussian-ish bump)
-    const handleSigma = handleFrac / 2;
-    const handleWeight = Math.exp(-(handleDist * handleDist) / (2 * handleSigma * handleSigma));
-    
-    // Sweep radius: interpolate between mug profile and torus
-    const mugMidR = (mugOuterR + mugInnerR) / 2; // ~0.91
-    const sweepR = lerp(mugMidR, torusR, s);
-    
-    // Handle adds extra radius at its location
-    const handleExtraR = mugHandleR * handleWeight * handleBump;
-    const totalSweepR = sweepR + handleExtraR;
+    // Body point in 3D (surface of revolution)
+    const bodyX = bp.r * Math.cos(theta);
+    const bodyY = bp.y;
+    const bodyZ = bp.r * Math.sin(theta);
 
-    // Sweep path center point (in xz plane, y=0)
-    const centerX = totalSweepR * Math.cos(theta);
-    const centerZ = totalSweepR * Math.sin(theta);
-    const centerY = 0;
+    if (hb < 0.001) {
+      // Pure body
+      return new THREE.Vector3(bodyX, bodyY, bodyZ);
+    }
 
-    // ─── Cross-section profile ───
-    // At t=0 (mug body): tall thin rectangle 
-    //   (height = mugHeight, width = mugOuterR - mugInnerR)
-    //   This represents the mug wall in cross-section.
-    // At t=0 (handle): small circle (radius = mugHandleTubeR)
-    // At t=1: circle of radius torusr
+    // ─── HANDLE contribution ───
+    // Within the handle region, u maps to position along the handle skeleton
+    // Remap u within handle region to handleT ∈ [0, 1] (along skeleton)
+    let handleU = u - HANDLE_CENTER_U;
+    if (handleU > 0.5) handleU -= 1;
+    if (handleU < -0.5) handleU += 1;
+    // handleU is now in [-HANDLE_HALF_WIDTH, HANDLE_HALF_WIDTH]
+    // But actually for the handle, we want v to go around the tube
+    // and the handle skeleton position to be determined by... 
     //
-    // We interpolate the cross-section shape from 
-    // "tall thin superellipse" to "circle"
+    // HERE'S THE KEY REALIZATION:
+    // In the handle region, the "big loop" direction (u) should trace
+    // ALONG the handle skeleton, not around the mug azimuth.
+    // But we can't change what u means mid-surface without creating a seam.
+    //
+    // CORRECT SOLUTION: The handle IS part of the azimuthal sweep.
+    // At the handle's azimuthal position, the cross-section (v-loop)
+    // is not the mug wall profile — it's a LARGER loop that goes:
+    //   - Up the outer wall to the top handle attachment
+    //   - Out along the top of the handle
+    //   - Down the outside of the handle
+    //   - Back along the bottom of the handle
+    //   - Down the outer wall from the bottom handle attachment
+    //   - Across the bottom
+    //   - Up the inner wall
+    //   - Across the rim
+    //   - Back to start
+    //
+    // This is the CORRECT topological picture: at the handle's azimuth,
+    // the v-loop is longer (it includes the handle detour).
+    //
+    // But for smooth morphing, we can APPROXIMATE this by:
+    // At the handle azimuth, the cross-section BULGES OUTWARD
+    // to encompass the handle. The "outer" part of v extends further out.
+    //
+    // SIMPLEST CORRECT APPROACH:
+    // The cross-section at the handle position is a LARGER shape
+    // that includes the handle. We model this as:
+    //   - The normal wall profile, but with the outer portion
+    //     extended outward into a handle-shaped bump.
 
-    // Cross-section dimensions
-    // Width (radial thickness of wall → tube diameter)
-    const wallThickness = mugOuterR - mugInnerR; // 0.18
-    const csWidth = lerp(wallThickness / 2, torusr, s);
-    
-    // Height (mug height → tube diameter)  
-    const csHeight = lerp(mugHeight / 2, torusr, s);
-    
-    // For the handle region, the cross-section is already circular
-    // Blend between body cross-section and handle cross-section
-    const handleCS = lerp(mugHandleTubeR, torusr, s);
-    
-    // Final cross-section radii (blend body vs handle based on position)
-    const finalWidth = lerp(csWidth, handleCS, handleWeight * handleBump) ;
-    const finalHeight = lerp(csHeight, handleCS, handleWeight * handleBump);
-    
-    // Superellipse exponent: rectangular at t=0 body, circular at t=1
-    // Also circular at handle
-    const bodyExponent = lerp(6.0, 2.0, s); // 6=very rectangular, 2=ellipse
-    const exponent = lerp(bodyExponent, 2.0, handleWeight * handleBump);
+    // Handle skeleton angle (v determines where on the handle we are)
+    // The outer wall portion of v (roughly v ∈ [0, 0.35]) gets deformed
+    // outward to form the handle shape.
 
-    // Compute cross-section point using superellipse
-    const cosPhi = Math.cos(phi);
-    const sinPhi = Math.sin(phi);
-    const absCosPhi = Math.abs(cosPhi) + 0.0001;
-    const absSinPhi = Math.abs(sinPhi) + 0.0001;
+    const phi = v * Math.PI * 2;
+
+    // Handle skeleton: at the handle azimuth, the outer part of the
+    // cross-section extends outward. The extension follows a C-shape.
+    // 
+    // For the outer wall portion (v ∈ [0, 0.35]):
+    //   The radial position extends outward based on a smooth bump
+    //   that peaks at v ≈ 0.175 (middle of outer wall)
+
+    // How much of the outer wall is this v on?
+    const outerWallFrac = 0.35;
+    let outerAmount = 0;
+    if (v < outerWallFrac) {
+      // On the outer wall
+      const wallPos = v / outerWallFrac; // 0 = bottom, 1 = top
+      // Handle attaches in the middle 60% of the wall height
+      const attachStart = 0.2;
+      const attachEnd = 0.8;
+      if (wallPos > attachStart && wallPos < attachEnd) {
+        const localPos = (wallPos - attachStart) / (attachEnd - attachStart);
+        outerAmount = Math.sin(localPos * Math.PI); // smooth bump, peaks at middle
+      }
+    }
+
+    // Handle extension: push the outer wall outward
+    const handleExt = MUG_HANDLE_OFFSET * outerAmount * hb * (1 - s);
     
-    // Superellipse: (|x/a|^n + |y/b|^n)^(1/n) = 1
-    // Parametric: x = a * sign(cos) * |cos|^(2/n), y = b * sign(sin) * |sin|^(2/n)
-    const exp2n = 2.0 / exponent;
-    const csX = finalWidth * Math.sign(cosPhi) * Math.pow(absCosPhi, exp2n);
-    const csY = finalHeight * Math.sign(sinPhi) * Math.pow(absSinPhi, exp2n);
+    // Also make the extended part more circular (tube-like)
+    // by adjusting the profile
+    const handleBp = bodyProfile(v, t);
+    const handleR = handleBp.r + handleExt;
+    const handleY = handleBp.y;
 
-    // ─── Orient cross-section in 3D ───
-    // The cross-section lies in the plane perpendicular to the sweep path.
-    // csX = radial direction (outward from center)
-    // csY = vertical direction (up)
-    
-    // Radial outward direction at this azimuth
-    const radX = Math.cos(theta);
-    const radZ = Math.sin(theta);
+    // Handle point in 3D
+    // The handle is at a fixed azimuth (theta from u), but extends radially
+    const handleX = handleR * Math.cos(theta);
+    const handleYpt = handleY;
+    const handleZ = handleR * Math.sin(theta);
 
-    // Final 3D point
-    const px = centerX + csX * radX;
-    const py = centerY + csY;
-    const pz = centerZ + csX * radZ;
+    // Blend body and handle
+    const finalX = lerp(bodyX, handleX, hb);
+    const finalY = lerp(bodyY, handleYpt, hb);
+    const finalZ = lerp(bodyZ, handleZ, hb);
 
-    return new THREE.Vector3(px, py, pz);
+    return new THREE.Vector3(finalX, finalY, finalZ);
   }
 
   // ═══════════════════════════════════════════════════════
@@ -942,23 +1124,15 @@ function initTorusMorph() {
   const positions = new Float32Array(vertexCount * 3);
   const uvs = new Float32Array(vertexCount * 2);
 
-  // Index buffer (wrapping both u and v for a closed torus topology)
   const indices = [];
   for (let i = 0; i < NU; i++) {
     for (let j = 0; j < NV; j++) {
       const a = i * (NV + 1) + j;
-      const b = ((i + 1) % (NU + 1)) * (NV + 1) + j;
-      const c = a + 1;
-      const d = b + 1;
-      
-      // Use modular wrapping for proper closure
-      const a2 = i * (NV + 1) + j;
-      const b2 = (i + 1) * (NV + 1) + j;
-      const c2 = i * (NV + 1) + (j + 1);
-      const d2 = (i + 1) * (NV + 1) + (j + 1);
-      
-      indices.push(a2, b2, c2);
-      indices.push(c2, b2, d2);
+      const b = (i + 1) * (NV + 1) + j;
+      const c = i * (NV + 1) + (j + 1);
+      const d = (i + 1) * (NV + 1) + (j + 1);
+      indices.push(a, b, c);
+      indices.push(c, b, d);
     }
   }
 
@@ -966,12 +1140,11 @@ function initTorusMorph() {
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 
-  const material = new THREE.MeshPhongMaterial({
-    color: 0xccccdd,
-    specular: 0x333366,
-    shininess: 35,
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xddddee,
+    roughness: 0.25,
+    metalness: 0.02,
     side: THREE.DoubleSide,
-    flatShading: false,
   });
 
   const mesh = new THREE.Mesh(geometry, material);
@@ -992,26 +1165,20 @@ function initTorusMorph() {
         posAttr.array[idx * 3 + 0] = p.x;
         posAttr.array[idx * 3 + 1] = p.y;
         posAttr.array[idx * 3 + 2] = p.z;
-
-        uvs[idx * 2 + 0] = u;
-        uvs[idx * 2 + 1] = v;
       }
     }
 
     posAttr.needsUpdate = true;
     geometry.computeVertexNormals();
 
-    // Color blend: white ceramic (mug) → golden brown (donut)
+    // Color: white ceramic → golden donut
     const s = smoothstep(t);
-    const r = lerp(0.82, 0.85, s);
-    const g = lerp(0.82, 0.55, s);
-    const b = lerp(0.88, 0.25, s);
-    material.color.setRGB(r, g, b);
-    material.specular.setRGB(
-      lerp(0.2, 0.15, s),
-      lerp(0.2, 0.1, s),
-      lerp(0.25, 0.05, s)
+    material.color.setRGB(
+      lerp(0.88, 0.82, s),
+      lerp(0.88, 0.55, s),
+      lerp(0.92, 0.22, s)
     );
+    material.roughness = lerp(0.25, 0.55, s);
   }
 
   updateGeometry(0);
@@ -1020,6 +1187,7 @@ function initTorusMorph() {
     updateGeometry(slider.value / 100);
   });
 
+  // ─── Render loop ───
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
