@@ -2080,12 +2080,13 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 	await delay(5000);
 
 	$("#csv_file").
-		click().
-		val("x1,x2\n1,1").
-		trigger("keyup").
-		trigger("change").
-		click()
+	    click().
+	    val("x1,y\n1,1").
+	    trigger("keyup").
+	    trigger("change").
+	    click()
 	;
+
 
 	await delay(3000);
 
