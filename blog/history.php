@@ -501,7 +501,7 @@ This relentless exponential growth meant that while algorithms remained largely 
 While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1976 master's thesis of \citeauthor{linnainmaa1976}. He developed the "automatic differentiation" method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the hochefficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
 
 ## The Mathematical Modeling of Loss
-In the study "Training Compute-Optimal Large Language Models," the researchers estimated optimal performance by decomposing the loss function $L$. They proposed that the loss of a language model can be described as a function of the number of parameters $N$ and the number of training tokens $D$:
+In the study \citetitle{hoffmann2022chinchilla}, the researchers estimated optimal performance by decomposing the loss function $L$. They proposed that the loss of a language model can be described as a function of the number of parameters $N$ and the number of training tokens $D$:
 
 $$L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}$$
 
