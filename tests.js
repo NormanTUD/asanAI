@@ -2089,6 +2089,10 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 
 	await delay(3000);
 
+	await wait_for_updated_page(3);
+
+	await delay(2000);
+
 	$(".layer_options_button").click();
 
 	await delay(1000);
@@ -2096,7 +2100,11 @@ async function get_single_layer_single_input_single_output_one_kernel_zero_bias 
 	$(".kernel_initializer").val("ones").trigger("change");
 	$(".bias_initializer").val("zeros").trigger("change");
 
-	await delay(1000);
+	await wait_for_updated_page(3);
+
+	await delay(2000);
+
+	await wait_for_updated_page(3);
 }
 
 async function test_if_plotter_is_shown () {
