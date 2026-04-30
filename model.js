@@ -246,7 +246,28 @@ async function compile_model(recursion_level=0) {
 		await create_model_or_throw();
 	}
 
+	// --- FIX: Save weights before potential model recreation ---
+	var saved_weights_json = null;
+	if (model && model.layers && model.layers.length) {
+		saved_weights_json = get_weights_as_json(model);
+	}
+
 	await recreate_model_if_needed(new_model_config_hash);
+
+	// --- FIX: If model was recreated, restore the saved weights ---
+	if (saved_weights_json && model && model.layers && model.layers.length) {
+		try {
+			var current_weights_json = get_weights_as_json(model);
+			// Only restore if shapes match (model structure didn't change)
+			if (current_weights_json && saved_weights_json &&
+			    JSON.stringify(saved_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null)) ===
+			    JSON.stringify(current_weights_json.map(w => Array.isArray(w) ? get_shape_from_array(w) : null))) {
+				await set_weights_from_json_object(saved_weights_json, true, true, model);
+			}
+		} catch (e) {
+			dbg("[compile_model] Could not restore weights after recreation: " + e);
+		}
+	}
 
 	if(!model) {
 		dbg(`[compile_model] ${language[lang]["no_model_to_compile"]}!`);
@@ -267,10 +288,6 @@ async function compile_model(recursion_level=0) {
 	}
 
 	try {
-		/*
-		model.compile(global_model_data);
-		*/
-
 		await get_model_data();
 
 		model.compile({
@@ -280,7 +297,8 @@ async function compile_model(recursion_level=0) {
 		});
 		model_config_hash = new_model_config_hash;
 
-		math_clear_editables();
+		// --- FIX: Do NOT clear editables here. Only clear if model structure actually changed. ---
+		// math_clear_editables();  // REMOVED
 	} catch (e) {
 		var ret = await handle_model_compile_error(e, recursion_level);
 
