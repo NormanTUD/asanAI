@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Holographic FFT Smiley — Local Lens Zoom with Edge Bleed</title>
+<title>Holographic FFT Smiley — All Cells Active + Overzoom Estimation</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;user-select:none}
 h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .subtitle{color:#64748b;font-size:0.85em;margin-bottom:20px;text-align:center}
-.instructions{background:#1e293b;border-radius:10px;padding:14px 20px;margin-bottom:20px;font-size:0.82em;color:#94a3b8;max-width:520px;text-align:center;border:1px solid #334155}
+.instructions{background:#1e293b;border-radius:10px;padding:14px 20px;margin-bottom:20px;font-size:0.82em;color:#94a3b8;max-width:560px;text-align:center;border:1px solid #334155}
 .instructions b{color:#93c5fd}
 .instructions .key{display:inline-block;background:#334155;border-radius:4px;padding:1px 6px;font-weight:bold;color:#e2e8f0;margin:0 2px}
 
@@ -21,6 +21,8 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .fft-cell canvas{width:100%;height:100%;display:block}
 .fft-cell .level-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#fbbf24;font-size:0.65em;padding:2px 5px;border-radius:4px;font-weight:bold}
 .fft-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
+.fft-cell .mode-badge{position:absolute;top:4px;left:4px;background:rgba(139,92,246,0.8);color:#fff;font-size:0.55em;padding:1px 4px;border-radius:3px;display:none}
+.fft-cell .mode-badge.active{display:block}
 
 .arrow-down{font-size:2em;color:#64748b;margin:12px 0;text-align:center}
 .arrow-down small{font-size:0.35em;display:block;color:#94a3b8}
@@ -40,13 +42,13 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 <body>
 
 <h1>🔮 Holographic FFT Smiley</h1>
-<p class="subtitle">Local lens zoom with edge bleed — each data cell encodes the whole image</p>
+<p class="subtitle">Every cell encodes the whole image · Overzoom shows sine-wave estimation</p>
 
 <div class="instructions">
-  <b>Left-click</b> a cell → <span class="key">+ resolution</span> (local zoom, bleeds to neighbors)<br>
+  <b>Left-click</b> a cell → <span class="key">+ resolution</span> (zoom in, past native = overzoom estimation)<br>
   <b>Right-click</b> a cell → <span class="key">− resolution</span><br>
-  3 cells hold the full image · 6 cells are empty (blue) · All always on<br>
-  Zooming is local but pixel size gradually bleeds into adjacent areas
+  All 9 cells are active and encode the full image (holographic principle)<br>
+  <b>Overzoom</b> (past L12): reconstructs using sine-wave patches to estimate detail
 </div>
 
 <div class="fft-section">
@@ -72,28 +74,15 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 // ============================================
 const GRID = 3;
 const IMG_SIZE = 396;
-const CELL_SIZE = IMG_SIZE / GRID; // 132px per cell
+const CELL_SIZE = IMG_SIZE / GRID;
 const MAX_LEVEL = 24;
-const MIN_BLOCKS_PER_CELL = 2;   // very chunky at level 0
-const MAX_BLOCKS_PER_CELL = 44;  // smooth at max (44 blocks per 132px cell = 3px pixels)
+const NATIVE_LEVEL = 12; // Beyond this = overzoom (sine estimation)
+const MIN_BLOCKS_PER_CELL = 2;
+const MAX_BLOCKS_PER_CELL = 44;
 const DPR = window.devicePixelRatio || 1;
 
-// Data mask: which cells contain image data
-// 1 0 0
-// 0 0 1
-// 0 1 0
-const DATA_MASK = [
-  1, 0, 0,
-  0, 0, 1,
-  0, 1, 0
-];
-
-// ALL cells have a zoom level (all are always "on")
-// Data cells start at level 1 (very low res), empty cells start at 0
-const cellLevels = Array(GRID * GRID).fill(0);
-for (let i = 0; i < GRID * GRID; i++) {
-  if (DATA_MASK[i]) cellLevels[i] = 1;
-}
+// ALL cells are active (holographic: every piece has the whole)
+const cellLevels = Array(GRID * GRID).fill(1);
 
 // ============================================
 // Smiley source function (normalized 0-1 coords)
@@ -141,6 +130,62 @@ for (let y = 0; y < IMG_SIZE; y++) {
 }
 
 // ============================================
+// Precompute a low-res version for overzoom base
+// ============================================
+const LOW_RES = 22; // native resolution blocks per cell
+const lowResImage = new Float64Array(LOW_RES * GRID * LOW_RES * GRID);
+for (let by = 0; by < LOW_RES * GRID; by++) {
+  for (let bx = 0; bx < LOW_RES * GRID; bx++) {
+    const sx = (bx + 0.5) / (LOW_RES * GRID);
+    const sy = (by + 0.5) / (LOW_RES * GRID);
+    lowResImage[by * LOW_RES * GRID + bx] = smileyAt(sx, sy);
+  }
+}
+
+// ============================================
+// Sinc-like interpolation for overzoom estimation
+// This creates the "sine wave patches" effect
+// ============================================
+function sincInterpolate(nx, ny, baseRes) {
+  // Sample from low-res grid with sinc interpolation
+  const gx = nx * baseRes - 0.5;
+  const gy = ny * baseRes - 0.5;
+  const ix = Math.floor(gx);
+  const iy = Math.floor(gy);
+  
+  let val = 0;
+  let weight = 0;
+  const radius = 3; // sinc kernel radius
+  
+  for (let dy = -radius; dy <= radius; dy++) {
+    for (let dx = -radius; dx <= radius; dx++) {
+      const sx = ix + dx;
+      const sy = iy + dy;
+      if (sx < 0 || sx >= baseRes || sy < 0 || sy >= baseRes) continue;
+      
+      const distX = gx - sx;
+      const distY = gy - sy;
+      
+      // Sinc function (creates the sine-wave ringing)
+      const wx = distX === 0 ? 1 : Math.sin(Math.PI * distX) / (Math.PI * distX);
+      const wy = distY === 0 ? 1 : Math.sin(Math.PI * distY) / (Math.PI * distY);
+      
+      // Lanczos window
+      const lx = distX === 0 ? 1 : Math.sin(Math.PI * distX / radius) / (Math.PI * distX / radius);
+      const ly = distY === 0 ? 1 : Math.sin(Math.PI * distY / radius) / (Math.PI * distY / radius);
+      
+      const w = wx * wy * lx * ly;
+      const sampleVal = srcImage[Math.min(sy * Math.round(IMG_SIZE/baseRes), IMG_SIZE-1) * IMG_SIZE + Math.min(sx * Math.round(IMG_SIZE/baseRes), IMG_SIZE-1)] || smileyAt((sx + 0.5) / baseRes, (sy + 0.5) / baseRes);
+      
+      val += sampleVal * w;
+      weight += Math.abs(w);
+    }
+  }
+  
+  return weight > 0 ? val / weight : smileyAt(nx, ny);
+}
+
+// ============================================
 // RENDERING SETUP
 // ============================================
 const smileyCanvas = document.getElementById('smileyCanvas');
@@ -176,6 +221,12 @@ for (let i = 0; i < GRID * GRID; i++) {
   canvas.style.height = CELL_CANVAS_SIZE + 'px';
   cell.appendChild(canvas);
 
+  const modeBadge = document.createElement('div');
+  modeBadge.className = 'mode-badge';
+  modeBadge.id = `mode-${i}`;
+  modeBadge.textContent = 'OVERZOOM';
+  cell.appendChild(modeBadge);
+
   const badge = document.createElement('div');
   badge.className = 'level-badge';
   badge.id = `badge-${i}`;
@@ -190,14 +241,12 @@ for (let i = 0; i < GRID * GRID; i++) {
   gridEl.appendChild(cell);
   cellCanvases.push(canvas);
 
-  // LEFT click = INCREASE resolution locally
   cell.addEventListener('click', (e) => {
     e.preventDefault();
     cellLevels[i] = Math.min(MAX_LEVEL, cellLevels[i] + 1);
     render();
   });
 
-  // RIGHT click = DECREASE resolution locally
   cell.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     cellLevels[i] = Math.max(0, cellLevels[i] - 1);
@@ -206,40 +255,23 @@ for (let i = 0; i < GRID * GRID; i++) {
 }
 
 // ============================================
-// Get effective block size at any pixel position
-// Each cell has its own resolution level. At edges, levels blend
-// into neighboring cells creating the "lens bleed" effect.
+// Level to blocks conversion
 // ============================================
-function getEffectiveBlockSize(px, py) {
-  // Which cell is this pixel in?
+function levelToBlocks(level) {
+  const t = level / MAX_LEVEL;
+  return MIN_BLOCKS_PER_CELL + (MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(t, 0.6);
+}
+
+// ============================================
+// Get effective block size with neighbor blending
+// ============================================
+function getEffectiveLevel(px, py) {
   const cellCol = Math.floor(px / CELL_SIZE);
   const cellRow = Math.floor(py / CELL_SIZE);
-  const cellIdx = cellRow * GRID + cellCol;
 
-  // Position within cell (0 to 1)
-  const localX = (px - cellCol * CELL_SIZE) / CELL_SIZE;
-  const localY = (py - cellRow * CELL_SIZE) / CELL_SIZE;
-
-  // Distance from center of cell (0 at center, 0.5 at edge)
-  const distFromCenterX = Math.abs(localX - 0.5);
-  const distFromCenterY = Math.abs(localY - 0.5);
-
-  // Bleed zone: outer 35% of each cell dimension
-  const bleedStart = 0.30; // start blending at 30% from center (i.e., 70% from edge)
-
-  // Get this cell's level
-  const thisLevel = cellLevels[cellIdx];
-
-  // If we're in the center, just use this cell's level
-  if (distFromCenterX <= bleedStart && distFromCenterY <= bleedStart) {
-    return levelToBlocks(thisLevel);
-  }
-
-  // Otherwise, blend with neighbors
   let totalWeight = 0;
   let weightedLevel = 0;
 
-  // Check influence from all 9 cells (self + 8 neighbors)
   for (let dr = -1; dr <= 1; dr++) {
     for (let dc = -1; dc <= 1; dc++) {
       const nr = cellRow + dr;
@@ -249,16 +281,13 @@ function getEffectiveBlockSize(px, py) {
       const nIdx = nr * GRID + nc;
       const nLevel = cellLevels[nIdx];
 
-      // Weight based on proximity to that cell's center
-      // The center of neighbor cell relative to our pixel
       const nCenterX = (nc + 0.5) * CELL_SIZE;
       const nCenterY = (nr + 0.5) * CELL_SIZE;
       const dx = (px - nCenterX) / CELL_SIZE;
       const dy = (py - nCenterY) / CELL_SIZE;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Gaussian-like falloff
-      const sigma = 0.6;
+      const sigma = 0.55;
       const w = Math.exp(-(dist * dist) / (2 * sigma * sigma));
 
       weightedLevel += nLevel * w;
@@ -266,17 +295,11 @@ function getEffectiveBlockSize(px, py) {
     }
   }
 
-  const blendedLevel = totalWeight > 0 ? weightedLevel / totalWeight : thisLevel;
-  return levelToBlocks(blendedLevel);
-}
-
-function levelToBlocks(level) {
-  const t = level / MAX_LEVEL;
-  return MIN_BLOCKS_PER_CELL + (MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(t, 0.6);
+  return totalWeight > 0 ? weightedLevel / totalWeight : cellLevels[Math.floor(py/CELL_SIZE) * GRID + Math.floor(px/CELL_SIZE)];
 }
 
 // ============================================
-// DRAW SMILEY with local zoom + edge bleed
+// DRAW SMILEY — all cells active, overzoom shows sine estimation
 // ============================================
 function drawSmiley() {
   smileyCtx.save();
@@ -287,44 +310,42 @@ function drawSmiley() {
 
   for (let py = 0; py < IMG_SIZE; py++) {
     for (let px = 0; px < IMG_SIZE; px++) {
-      // Get effective resolution at this pixel
-      const blocksPerCell = getEffectiveBlockSize(px, py);
-
-      // Convert to pixel block size in image pixels
+      const effectiveLevel = getEffectiveLevel(px, py);
+      const blocksPerCell = levelToBlocks(effectiveLevel);
       const blockPx = CELL_SIZE / blocksPerCell;
 
-      // Snap this pixel to its block center to get the pixelated value
-      const blockX = Math.floor(px / blockPx);
-      const blockY = Math.floor(py / blockPx);
-      const sampleX = Math.min(Math.floor((blockX + 0.5) * blockPx), IMG_SIZE - 1);
-      const sampleY = Math.min(Math.floor((blockY + 0.5) * blockPx), IMG_SIZE - 1);
+      let val;
 
-      const val = srcImage[sampleY * IMG_SIZE + sampleX];
-
-      // Check if this pixel is in a data cell or empty cell
-      const cellCol = Math.floor(px / CELL_SIZE);
-      const cellRow = Math.floor(py / CELL_SIZE);
-      const cellIdx = cellRow * GRID + cellCol;
-
-      let r, g, b;
-
-      // The image is encoded in the data cells. Empty cells show blue.
-      // But with bleed, the image can slightly bleed into empty cells at borders.
-      // We weight the image contribution by proximity to data cells.
-      const dataInfluence = getDataInfluence(px, py);
-
-      if (dataInfluence > 0.01) {
-        // Show image with warm tones, weighted by data influence
-        const v = Math.max(0, Math.min(1, val));
-        r = Math.round((30 + v * 225) * dataInfluence + 15 * (1 - dataInfluence));
-        g = Math.round((25 + v * 200) * dataInfluence + 25 * (1 - dataInfluence));
-        b = Math.round((5 + v * 50) * dataInfluence + 120 * (1 - dataInfluence));
+      if (effectiveLevel > NATIVE_LEVEL) {
+        // OVERZOOM: use sinc interpolation to create sine-wave estimation
+        // The base resolution is what we'd have at NATIVE_LEVEL
+        const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
+        const nx = (px + 0.5) / IMG_SIZE;
+        const ny = (py + 0.5) / IMG_SIZE;
+        
+        // Mix between pixelated base and sinc-interpolated overzoom
+        const overzoomAmount = (effectiveLevel - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+        const baseVal = getPixelatedValue(px, py, baseBlocks);
+        const sincVal = sincInterpolate(nx, ny, baseBlocks * GRID);
+        
+        // Overzoom creates ringing artifacts (Gibbs phenomenon) - this is the "sine wave patches" look
+        val = baseVal * (1 - overzoomAmount * 0.7) + sincVal * overzoomAmount * 0.7;
+        
+        // Add subtle ringing visualization
+        const ringFreq = overzoomAmount * 8;
+        const ring = Math.sin(px * ringFreq * 0.1) * Math.sin(py * ringFreq * 0.1) * 0.03 * overzoomAmount;
+        val += ring;
       } else {
-        // Pure blue for empty areas far from data
-        r = 15;
-        g = 25;
-        b = 120;
+        // Normal pixelation
+        val = getPixelatedValue(px, py, blocksPerCell);
       }
+
+      val = Math.max(0, Math.min(1, val));
+
+      // Warm color mapping for ALL cells (no more blue-only regions)
+      const r = Math.round(30 + val * 225);
+      const g = Math.round(25 + val * 200);
+      const b = Math.round(5 + val * 50);
 
       const pi = (py * IMG_SIZE + px) * 4;
       imgData.data[pi] = r;
@@ -335,19 +356,18 @@ function drawSmiley() {
   }
   smileyCtx.putImageData(imgData, 0, 0);
 
-  // Draw LEGO grid lines where blocks are large
-  // We'll draw per-cell block grids
+  // Draw block grid lines for low-res cells
   for (let cr = 0; cr < GRID; cr++) {
     for (let cc = 0; cc < GRID; cc++) {
       const ci = cr * GRID + cc;
       const level = cellLevels[ci];
-      if (level < MAX_LEVEL * 0.3) {
+      if (level < MAX_LEVEL * 0.4) {
         const blocksPerCell = levelToBlocks(level);
         const blockPx = CELL_SIZE / blocksPerCell;
         if (blockPx > 4) {
           const ox = cc * CELL_SIZE;
           const oy = cr * CELL_SIZE;
-          smileyCtx.strokeStyle = `rgba(0,0,0,${0.2 * (1 - level/MAX_LEVEL)})`;
+          smileyCtx.strokeStyle = `rgba(0,0,0,${0.25 * (1 - level/MAX_LEVEL)})`;
           smileyCtx.lineWidth = Math.max(0.3, 1.5 * (1 - level/MAX_LEVEL));
           for (let i = 1; i < blocksPerCell; i++) {
             const pos = Math.floor(i * blockPx);
@@ -362,12 +382,32 @@ function drawSmiley() {
           }
         }
       }
+      
+      // Overzoom: draw subtle sine-wave overlay
+      if (cellLevels[ci] > NATIVE_LEVEL) {
+        const ox = cc * CELL_SIZE;
+        const oy = cr * CELL_SIZE;
+        const ovAmt = (cellLevels[ci] - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+        smileyCtx.strokeStyle = `rgba(100, 200, 255, ${0.15 * ovAmt})`;
+        smileyCtx.lineWidth = 0.5;
+        const waveCount = 4 + Math.floor(ovAmt * 8);
+        for (let w = 0; w < waveCount; w++) {
+          smileyCtx.beginPath();
+          for (let x = 0; x <= CELL_SIZE; x += 2) {
+            const yOff = Math.sin((x + w * 20) * 0.08) * 3 * ovAmt;
+            const yPos = oy + (w + 1) * CELL_SIZE / (waveCount + 1) + yOff;
+            if (x === 0) smileyCtx.moveTo(ox + x, yPos);
+            else smileyCtx.lineTo(ox + x, yPos);
+          }
+          smileyCtx.stroke();
+        }
+      }
     }
   }
 
   smileyCtx.restore();
 
-  // Grid overlay showing cell boundaries
+  // Grid overlay
   overlayCtx.save();
   overlayCtx.scale(DPR, DPR);
   overlayCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
@@ -388,65 +428,20 @@ function drawSmiley() {
   overlayCtx.restore();
 }
 
-// ============================================
-// Data influence: how much "image" shows at a pixel
-// Based on proximity to data cells. In data cells = 1.0
-// At edges bleeding into empty cells = gradual falloff
-// ============================================
-function getDataInfluence(px, py) {
-  const cellCol = Math.floor(px / CELL_SIZE);
-  const cellRow = Math.floor(py / CELL_SIZE);
-  const cellIdx = cellRow * GRID + cellCol;
-
-  // If we're in a data cell, full influence
-  if (DATA_MASK[cellIdx]) return 1.0;
-
-  // Otherwise, check distance to nearest data cell center
-  // and bleed influence from it
-  let maxInfluence = 0;
-  const bleedRange = CELL_SIZE * 0.35; // how far the image bleeds into empty cells
-
-  for (let dr = -1; dr <= 1; dr++) {
-    for (let dc = -1; dc <= 1; dc++) {
-      const nr = cellRow + dr;
-      const nc = cellCol + dc;
-      if (nr < 0 || nr >= GRID || nc < 0 || nc >= GRID) continue;
-      const nIdx = nr * GRID + nc;
-      if (!DATA_MASK[nIdx]) continue;
-
-      // Distance from this pixel to the edge of the data cell
-      const dataCellLeft = nc * CELL_SIZE;
-      const dataCellRight = (nc + 1) * CELL_SIZE;
-      const dataCellTop = nr * CELL_SIZE;
-      const dataCellBottom = (nr + 1) * CELL_SIZE;
-
-      // Distance to nearest edge of that data cell
-      let distX = 0, distY = 0;
-      if (px < dataCellLeft) distX = dataCellLeft - px;
-      else if (px > dataCellRight) distX = px - dataCellRight;
-      if (py < dataCellTop) distY = dataCellTop - py;
-      else if (py > dataCellBottom) distY = py - dataCellBottom;
-
-      const dist = Math.sqrt(distX * distX + distY * distY);
-
-      if (dist < bleedRange) {
-        const t = 1 - dist / bleedRange;
-        // Smooth falloff
-        const influence = t * t * (3 - 2 * t);
-        maxInfluence = Math.max(maxInfluence, influence);
-      }
-    }
-  }
-
-  return maxInfluence;
+function getPixelatedValue(px, py, blocksPerCell) {
+  const blockPx = CELL_SIZE / blocksPerCell;
+  const blockX = Math.floor(px / blockPx);
+  const blockY = Math.floor(py / blockPx);
+  const sampleX = Math.min(Math.floor((blockX + 0.5) * blockPx), IMG_SIZE - 1);
+  const sampleY = Math.min(Math.floor((blockY + 0.5) * blockPx), IMG_SIZE - 1);
+  return srcImage[sampleY * IMG_SIZE + sampleX];
 }
 
 // ============================================
-// DRAW FFT CELLS
+// DRAW FFT CELLS — ALL cells show the smiley
 // ============================================
 function drawFFTCells() {
   for (let ci = 0; ci < GRID * GRID; ci++) {
-    const cr = Math.floor(ci / GRID), cc = ci % GRID;
     const canvas = cellCanvases[ci];
     const ctx = canvas.getContext('2d');
     ctx.save();
@@ -454,67 +449,86 @@ function drawFFTCells() {
     ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
 
     const level = cellLevels[ci];
+    const isOverzoom = level > NATIVE_LEVEL;
+    const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
+    const blockPx = CELL_CANVAS_SIZE / blocksPerCell;
 
-    if (!DATA_MASK[ci]) {
-      // Empty cell: blue, shows its level but no image data
-      const brightness = 0.3 + 0.7 * (level / MAX_LEVEL);
-      ctx.fillStyle = `rgb(${Math.round(10*brightness)}, ${Math.round(30*brightness)}, ${Math.round(130*brightness)})`;
-      ctx.fillRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
-
-      // Subtle noise/pattern to show it's alive
-      ctx.globalAlpha = 0.15;
-      for (let y = 0; y < CELL_CANVAS_SIZE; y += 8) {
-        for (let x = 0; x < CELL_CANVAS_SIZE; x += 8) {
-          const n = Math.sin(x * 0.3 + y * 0.7 + ci * 5) * 0.5 + 0.5;
-          ctx.fillStyle = `rgba(60, 100, 220, ${n * 0.5})`;
-          ctx.fillRect(x, y, 8, 8);
+    // ALL cells show the smiley at their resolution level
+    for (let by = 0; by < blocksPerCell; by++) {
+      for (let bx = 0; bx < blocksPerCell; bx++) {
+        const sx = (bx + 0.5) / blocksPerCell;
+        const sy = (by + 0.5) / blocksPerCell;
+        
+        let val;
+        if (isOverzoom) {
+          // Overzoom: sinc interpolation
+          const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
+          const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+          const baseVal = smileyAt(sx, sy);
+          const sincVal = sincInterpolate(sx, sy, baseBlocks);
+          val = baseVal * (1 - ovAmt * 0.5) + sincVal * ovAmt * 0.5;
+          
+          // Ringing
+          const ring = Math.sin(bx * 0.8) * Math.sin(by * 0.8) * 0.04 * ovAmt;
+          val = Math.max(0, Math.min(1, val + ring));
+        } else {
+          val = smileyAt(sx, sy);
         }
+
+        const v = Math.max(0, Math.min(1, val));
+        
+        // Color: warm tones with slight hue shift per cell for visual variety
+        const hueShift = ci * 0.02;
+        const r = Math.round(30 + v * 200);
+        const g = Math.round(20 + v * 160 + hueShift * 20);
+        const b = Math.round(60 + v * 100);
+
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(Math.floor(bx * blockPx), Math.floor(by * blockPx),
+                     Math.ceil(blockPx), Math.ceil(blockPx));
       }
-      ctx.globalAlpha = 1;
-
-      // Level bar
-      ctx.fillStyle = 'rgba(0,0,0,0.5)';
-      ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE, 6);
-      ctx.fillStyle = '#3b82f6';
-      ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE * (level / MAX_LEVEL), 6);
-
-    } else {
-      // Data cell: show a pixelated version of the smiley at this cell's resolution
-      const blocksPerCell = Math.round(levelToBlocks(level));
-      const blockPx = CELL_CANVAS_SIZE / blocksPerCell;
-
-      for (let by = 0; by < blocksPerCell; by++) {
-        for (let bx = 0; bx < blocksPerCell; bx++) {
-          // Sample from the full source image (this cell encodes the WHOLE image)
-          const sx = (bx + 0.5) / blocksPerCell;
-          const sy = (by + 0.5) / blocksPerCell;
-          const imgX = Math.floor(sx * IMG_SIZE);
-          const imgY = Math.floor(sy * IMG_SIZE);
-          const val = srcImage[Math.min(imgY, IMG_SIZE-1) * IMG_SIZE + Math.min(imgX, IMG_SIZE-1)];
-
-          const v = Math.max(0, Math.min(1, val));
-          const r = Math.round(30 + v * 200);
-          const g = Math.round(20 + v * 160);
-          const b = Math.round(60 + v * 100);
-
-          ctx.fillStyle = `rgb(${r},${g},${b})`;
-          ctx.fillRect(Math.floor(bx * blockPx), Math.floor(by * blockPx),
-                       Math.ceil(blockPx), Math.ceil(blockPx));
-        }
-      }
-
-      // Level bar
-      ctx.fillStyle = 'rgba(0,0,0,0.6)';
-      ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE, 6);
-      const pct = level / MAX_LEVEL;
-      ctx.fillStyle = pct > 0.5 ? '#4ade80' : pct > 0.2 ? '#fbbf24' : '#ef4444';
-      ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE * pct, 6);
     }
+
+    // Overzoom sine wave overlay on FFT cell
+    if (isOverzoom) {
+      const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+      ctx.strokeStyle = `rgba(100, 220, 255, ${0.3 * ovAmt})`;
+      ctx.lineWidth = 0.8;
+      const waves = 3 + Math.floor(ovAmt * 5);
+      for (let w = 0; w < waves; w++) {
+        ctx.beginPath();
+        for (let x = 0; x <= CELL_CANVAS_SIZE; x += 2) {
+          const yOff = Math.sin((x + w * 15) * 0.12) * 2.5 * ovAmt;
+          const yPos = (w + 1) * CELL_CANVAS_SIZE / (waves + 1) + yOff;
+          if (x === 0) ctx.moveTo(x, yPos);
+          else ctx.lineTo(x, yPos);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // Level bar
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE, 6);
+    const pct = level / MAX_LEVEL;
+    if (isOverzoom) {
+      ctx.fillStyle = '#38bdf8'; // cyan for overzoom
+    } else {
+      ctx.fillStyle = pct > 0.4 ? '#4ade80' : pct > 0.15 ? '#fbbf24' : '#ef4444';
+    }
+    ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE * pct, 6);
 
     ctx.restore();
 
-    // Update badge
+    // Update badges
     document.getElementById(`badge-${ci}`).textContent = `L${level}`;
+    const modeEl = document.getElementById(`mode-${ci}`);
+    if (isOverzoom) {
+      modeEl.classList.add('active');
+      modeEl.textContent = '~SINE';
+    } else {
+      modeEl.classList.remove('active');
+    }
   }
 }
 
@@ -523,20 +537,15 @@ function drawFFTCells() {
 // ============================================
 function updateStats() {
   const statsEl = document.getElementById('statsRow');
-  const dataLevels = [];
-  const emptyLevels = [];
-  for (let i = 0; i < GRID * GRID; i++) {
-    if (DATA_MASK[i]) dataLevels.push(cellLevels[i]);
-    else emptyLevels.push(cellLevels[i]);
-  }
-  const avgData = dataLevels.reduce((a,b) => a+b, 0) / dataLevels.length;
-  const avgEmpty = emptyLevels.reduce((a,b) => a+b, 0) / emptyLevels.length;
+  const levels = cellLevels.slice();
+  const avg = levels.reduce((a,b) => a+b, 0) / levels.length;
+  const overzoomCount = levels.filter(l => l > NATIVE_LEVEL).length;
 
   statsEl.innerHTML = `
-    <div class="stat"><div class="stat-label">Data Cells Avg</div><div class="stat-value">${Math.round(avgData/MAX_LEVEL*100)}%</div></div>
-    <div class="stat"><div class="stat-label">Empty Cells Avg</div><div class="stat-value" style="color:#3b82f6">${Math.round(avgEmpty/MAX_LEVEL*100)}%</div></div>
-    <div class="stat"><div class="stat-label">Data Cells</div><div class="stat-value">3 / 9</div></div>
-    <div class="stat"><div class="stat-label">Bleed Range</div><div class="stat-value">35%</div></div>
+    <div class="stat"><div class="stat-label">Avg Level</div><div class="stat-value">${Math.round(avg/MAX_LEVEL*100)}%</div></div>
+    <div class="stat"><div class="stat-label">Active Cells</div><div class="stat-value">9 / 9</div></div>
+    <div class="stat"><div class="stat-label">Overzoomed</div><div class="stat-value" style="color:#38bdf8">${overzoomCount}</div></div>
+    <div class="stat"><div class="stat-label">Native Res</div><div class="stat-value" style="color:#fbbf24">L${NATIVE_LEVEL}</div></div>
   `;
 }
 
