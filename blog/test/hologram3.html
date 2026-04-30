@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5-Layer Stacked Holographic FFT Smiley — Additive Focus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;padding:20px;min-height:100vh;user-select:none;overflow-x:hidden}
+h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
+.subtitle{color:#64748b;font-size:0.85em;margin-bottom:16px;text-align:center}
+.instructions{background:#1e293b;border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:0.8em;color:#94a3b8;max-width:800px;text-align:center;border:1px solid #334155}
+.instructions b{color:#93c5fd}
+.instructions .key{display:inline-block;background:#334155;border-radius:4px;padding:1px 6px;font-weight:bold;color:#e2e8f0;margin:0 2px}
+
+.layers-stack{display:flex;flex-direction:column-reverse;align-items:center;gap:0;position:relative}
+
+.layer{position:relative;display:flex;align-items:center;gap:12px;padding:14px 18px;border:1px solid #334155;border-radius:12px;background:rgba(15,15,35,0.9);margin-bottom:8px;transition:box-shadow 0.3s}
+.layer:hover{box-shadow:0 0 20px rgba(139,92,246,0.2)}
+.layer-label{position:absolute;top:-10px;left:14px;background:#1e293b;color:#8b5cf6;font-size:0.7em;padding:2px 8px;border-radius:4px;font-weight:bold;border:1px solid #334155}
+.layer-res-label{position:absolute;top:-10px;right:14px;background:#1e293b;color:#fbbf24;font-size:0.65em;padding:2px 8px;border-radius:4px;border:1px solid #334155}
+
+.layer-section{display:flex;flex-direction:column;align-items:center}
+.section-label{font-size:0.6em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+
+.smiley-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.smiley-grid-cell{width:40px;height:40px;border-radius:4px;overflow:hidden;cursor:pointer;border:1px solid #334155;transition:border-color 0.2s,transform 0.15s}
+.smiley-grid-cell:hover{border-color:#8b5cf6;transform:scale(1.1);z-index:10}
+.smiley-grid-cell.focused{border-color:#4ade80;box-shadow:0 0 8px rgba(74,222,128,0.4)}
+.smiley-grid-cell canvas{width:100%;height:100%;display:block}
+
+.fft-display{width:120px;height:120px;border-radius:8px;overflow:hidden;border:1px solid #1e3a5f;position:relative}
+.fft-display canvas{width:100%;height:100%;display:block}
+
+.tilted-smiley-wrapper{position:relative;width:130px;height:130px;display:flex;align-items:center;justify-content:center}
+.tilted-smiley{transform:perspective(400px) rotateY(-25deg) rotateX(5deg);border-radius:8px;overflow:hidden;border:2px solid #334155;box-shadow:4px 4px 16px rgba(0,0,0,0.5)}
+.tilted-smiley canvas{display:block}
+
+.lens-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.lens-lines svg{width:100%;height:100%;overflow:visible}
+
+.connector-svg{width:100%;height:40px;display:block;margin:0 auto}
+
+.stats-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.stat{background:#1e293b;border-radius:8px;padding:5px 12px;text-align:center;border:1px solid #334155}
+.stat-label{font-size:0.6em;color:#64748b}
+.stat-value{font-size:1em;font-weight:bold;color:#4ade80}
+</style>
+</head>
+<body>
+
+<h1>🔮 5-Layer Stacked Holographic FFT</h1>
+<p class="subtitle">Click cells to focus/depixelate — additive across layers above</p>
+<div class="instructions">
+  <b>Click</b> any small smiley cell → focuses that region in <b>all layers above</b><br>
+  Bottom layer = lowest resolution · Each layer above adds detail · Zoom is <b>additive</b> (never removed)<br>
+  Each layer shows: <span class="key">Small Smileys</span> | <span class="key">FFT Spectrum</span> | <span class="key">Tilted Smiley + Lens Lines</span>
+</div>
+
+<div class="layers-stack" id="layersStack"></div>
+
+<div class="stats-row" id="statsRow"></div>
+
+<script>
+// ============================================
+// CONFIG
+// ============================================
+const NUM_LAYERS = 5;
+const GRID = 3;
+const CELL_PX = 40;
+const FFT_SIZE = 120;
+const TILT_SIZE = 110;
+const BASE_RESOLUTION = [2, 5, 10, 18, 30]; // blocks per layer (base)
+const FOCUS_BOOST = [4, 6, 8, 12, 16]; // additional blocks when focused
+
+// Focus state: for each layer, each cell (3x3) has a focus level (additive)
+// focusState[layer][cellIndex] = number of times focused (0 = base)
+const focusState = [];
+for (let l = 0; l < NUM_LAYERS; l++) {
+  focusState.push(new Array(GRID * GRID).fill(0));
+}
+
+// ============================================
+// Smiley source function
+// ============================================
+function smileyAt(nx, ny) {
+  const cx = 0.5, cy = 0.5;
+  const dx = nx - cx, dy = ny - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const r = 0.42;
+
+  if (dist > r + 0.01) return 0;
+  if (dist > r - 0.01) return Math.max(0, 1 - (dist - r + 0.01) / 0.02) * 0.85;
+
+  let val = 0.85;
+
+  const leX = 0.35, leY = 0.37, eyeR = 0.05;
+  if (Math.sqrt((nx - leX) ** 2 + (ny - leY) ** 2) < eyeR) val = 0.08;
+
+  const reX = 0.65, reY = 0.37;
+  if (Math.sqrt((nx - reX) ** 2 + (ny - reY) ** 2) < eyeR) val = 0.08;
+
+  const smCY = 0.55, smR = 0.22, smThick = 0.035;
+  const smDist = Math.sqrt((nx - cx) ** 2 + (ny - smCY) ** 2);
+  if (ny > smCY && smDist > smR - smThick && smDist < smR + smThick) {
+    const t = 1 - Math.abs(smDist - smR) / smThick;
+    val = val * (1 - t) + 0.08 * t;
+  }
+
+  return val;
+}
+
+// ============================================
+// Get effective resolution for a pixel in a layer
+// ============================================
+function getEffectiveBlocks(layer, nx, ny) {
+  let blocks = BASE_RESOLUTION[layer];
+  
+  // Check which cell this pixel falls in
+  const cellCol = Math.min(Math.floor(nx * GRID), GRID - 1);
+  const cellRow = Math.min(Math.floor(ny * GRID), GRID - 1);
+  const cellIdx = cellRow * GRID + cellCol;
+  
+  // Add focus boost with neighbor blending
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      const nr = cellRow + dr;
+      const nc = cellCol + dc;
+      if (nr < 0 || nr >= GRID || nc < 0 || nc >= GRID) continue;
+      const nIdx = nr * GRID + nc;
+      const focus = focusState[layer][nIdx];
+      if (focus > 0) {
+        const nCenterX = (nc + 0.5) / GRID;
+        const nCenterY = (nr + 0.5) / GRID;
+        const ddx = (nx - nCenterX) * GRID;
+        const ddy = (ny - nCenterY) * GRID;
+        const dist = Math.sqrt(ddx * ddx + ddy * ddy);
+        const sigma = 0.7;
+        const w = Math.exp(-(dist * dist) / (2 * sigma * sigma));
+        blocks += FOCUS_BOOST[layer] * focus * w * 0.5;
+      }
+    }
+  }
+  
+  return Math.round(blocks);
+}
+
+// ============================================
+// Sample smiley at given resolution (blocky)
+// ============================================
+function sampleBlocky(nx, ny, blocks) {
+  const blockX = Math.floor(nx * blocks);
+  const blockY = Math.floor(ny * blocks);
+  const sampleNx = (Math.min(blockX, blocks - 1) + 0.5) / blocks;
+  const sampleNy = (Math.min(blockY, blocks - 1) + 0.5) / blocks;
+  return smileyAt(sampleNx, sampleNy);
+}
+
+// ============================================
+// Compute 2D DFT magnitude
+// ============================================
+function computeFFTMagnitude(data, N) {
+  const mag = new Float64Array(N * N);
+  for (let u = 0; u < N; u++) {
+    for (let v = 0; v < N; v++) {
+      let re = 0, im = 0;
+      for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+          const angle = -2 * Math.PI * (u * x + v * y) / N;
+          re += data[y * N + x] * Math.cos(angle);
+          im += data[y * N + x] * Math.sin(angle);
+        }
+      }
+      const su = (u + Math.floor(N / 2)) % N;
+      const sv = (v + Math.floor(N / 2)) % N;
+      mag[sv * N + su] = Math.sqrt(re * re + im * im);
+    }
+  }
+  return mag;
+}
+
+// ============================================
+// BUILD DOM
+// ============================================
+const stackEl = document.getElementById('layersStack');
+const layerElements = [];
+
+for (let l = 0; l < NUM_LAYERS; l++) {
+  const layerDiv = document.createElement('div');
+  layerDiv.className = 'layer';
+  layerDiv.id = `layer-${l}`;
+
+  const label = document.createElement('div');
+  label.className = 'layer-label';
+  label.textContent = `Layer ${l + 1}`;
+  layerDiv.appendChild(label);
+
+  const resLabel = document.createElement('div');
+  resLabel.className = 'layer-res-label';
+  resLabel.id = `res-label-${l}`;
+  resLabel.textContent = `Base: ${BASE_RESOLUTION[l]} blocks`;
+  layerDiv.appendChild(resLabel);
+
+  // Section 1: Small smiley grid
+  const sec1 = document.createElement('div');
+  sec1.className = 'layer-section';
+  const secLabel1 = document.createElement('div');
+  secLabel1.className = 'section-label';
+  secLabel1.textContent = 'Smiley Cells';
+  sec1.appendChild(secLabel1);
+
+  const smileyGrid = document.createElement('div');
+  smileyGrid.className = 'smiley-grid';
+  smileyGrid.id = `smiley-grid-${l}`;
+
+  for (let i = 0; i < GRID * GRID; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'smiley-grid-cell';
+    cell.id = `sg-${l}-${i}`;
+    const canvas = document.createElement('canvas');
+    canvas.width = CELL_PX;
+    canvas.height = CELL_PX;
+    canvas.id = `sg-canvas-${l}-${i}`;
+    cell.appendChild(canvas);
+    smileyGrid.appendChild(cell);
+
+    cell.addEventListener('click', () => handleCellClick(l, i));
+  }
+  sec1.appendChild(smileyGrid);
+  layerDiv.appendChild(sec1);
+
+  // Section 2: FFT spectrum
+  const sec2 = document.createElement('div');
+  sec2.className = 'layer-section';
+  const secLabel2 = document.createElement('div');
+  secLabel2.className = 'section-label';
+  secLabel2.textContent = 'FFT Spectrum';
+  sec2.appendChild(secLabel2);
+
+  const fftDiv = document.createElement('div');
+  fftDiv.className = 'fft-display';
+  const fftCanvas = document.createElement('canvas');
+  fftCanvas.width = FFT_SIZE;
+  fftCanvas.height = FFT_SIZE;
+  fftCanvas.id = `fft-canvas-${l}`;
+  fftDiv.appendChild(fftCanvas);
+  sec2.appendChild(fftDiv);
+  layerDiv.appendChild(sec2);
+
+  // Section 3: Tilted smiley with lens lines
+  const sec3 = document.createElement('div');
+  sec3.className = 'layer-section';
+  const secLabel3 = document.createElement('div');
+  secLabel3.className = 'section-label';
+  secLabel3.textContent = 'Reconstructed';
+  sec3.appendChild(secLabel3);
+
+  const tiltWrapper = document.createElement('div');
+  tiltWrapper.className = 'tilted-smiley-wrapper';
+  tiltWrapper.id = `tilt-wrapper-${l}`;
+
+  const tiltDiv = document.createElement('div');
+  tiltDiv.className = 'tilted-smiley';
+  const tiltCanvas = document.createElement('canvas');
+  tiltCanvas.width = TILT_SIZE;
+  tiltCanvas.height = TILT_SIZE;
+  tiltCanvas.id = `tilt-canvas-${l}`;
+  tiltDiv.appendChild(tiltCanvas);
+  tiltWrapper.appendChild(tiltDiv);
+  sec3.appendChild(tiltWrapper);
+  layerDiv.appendChild(sec3);
+
+  stackEl.appendChild(layerDiv);
+  layerElements.push(layerDiv);
+
+  // Add connector SVG between layers (lens lines)
+  if (l < NUM_LAYERS - 1) {
+    const connSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    connSvg.setAttribute('class', 'connector-svg');
+    connSvg.setAttribute('viewBox', '0 0 800 40');
+    connSvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    connSvg.id = `connector-${l}`;
+    connSvg.style.width = '100%';
+    connSvg.style.height = '40px';
+
+    // Draw lens lines from tilted smiley corners to next layer
+    const lines = [
+      {x1: 620, y1: 0, x2: 680, y2: 40},
+      {x1: 730, y1: 0, x2: 750, y2: 40},
+      {x1: 620, y1: 0, x2: 610, y2: 40},
+      {x1: 730, y1: 0, x2: 740, y2: 40},
+    ];
+    lines.forEach(ln => {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', ln.x1);
+      line.setAttribute('y1', ln.y1);
+      line.setAttribute('x2', ln.x2);
+      line.setAttribute('y2', ln.y2);
+      line.setAttribute('stroke', 'rgba(139,92,246,0.4)');
+      line.setAttribute('stroke-width', '1.5');
+      line.setAttribute('stroke-dasharray', '4,3');
+      connSvg.appendChild(line);
+    });
+
+    stackEl.appendChild(connSvg);
+  }
+}
+
+// ============================================
+// HANDLE CLICK — focus cell in this layer and ALL above
+// ============================================
+function handleCellClick(clickedLayer, cellIndex) {
+  // Additive: increase focus for this cell in clicked layer and all layers above
+  for (let l = clickedLayer; l < NUM_LAYERS; l++) {
+    focusState[l][cellIndex] = Math.min(focusState[l][cellIndex] + 1, 5);
+  }
+
+  // Mark cell as focused visually
+  const cellEl = document.getElementById(`sg-${clickedLayer}-${cellIndex}`);
+  cellEl.classList.add('focused');
+
+  // Re-render affected layers
+  for (let l = clickedLayer; l < NUM_LAYERS; l++) {
+    renderLayer(l);
+  }
+  updateStats();
+}
+
+// ============================================
+// RENDER A LAYER
+// ============================================
+function renderLayer(l) {
+  renderSmileyCells(l);
+  renderFFT(l);
+  renderTiltedSmiley(l);
+}
+
+// ============================================
+// RENDER SMILEY CELLS (3x3 grid)
+// ============================================
+function renderSmileyCells(l) {
+  for (let i = 0; i < GRID * GRID; i++) {
+    const canvas = document.getElementById(`sg-canvas-${l}-${i}`);
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.createImageData(CELL_PX, CELL_PX);
+
+    const cellRow = Math.floor(i / GRID);
+    const cellCol = i % GRID;
+    const x0 = cellCol / GRID;
+    const y0 = cellRow / GRID;
+    const span = 1 / GRID;
+
+    for (let py = 0; py < CELL_PX; py++) {
+      for (let px = 0; px < CELL_PX; px++) {
+        const nx = x0 + (px + 0.5) / CELL_PX * span;
+        const ny = y0 + (py + 0.5) / CELL_PX * span;
+
+        const blocks = getEffectiveBlocks(l, nx, ny);
+        const val = sampleBlocky(nx, ny, blocks);
+
+        const focus = focusState[l][i];
+        const pi = (py * CELL_PX + px) * 4;
+
+        // Color: gold for base, greener for focused
+        const greenShift = Math.min(focus * 0.15, 0.6);
+        imgData.data[pi] = Math.round(30 + val * 200 * (1 - greenShift));
+        imgData.data[pi + 1] = Math.round(25 + val * (160 + 80 * greenShift));
+        imgData.data[pi + 2] = Math.round(5 + val * (50 + 100 * greenShift));
+        imgData.data[pi + 3] = 255;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Update focused state
+    const cellEl = document.getElementById(`sg-${l}-${i}`);
+    if (focusState[l][i] > 0) {
+      cellEl.classList.add('focused');
+    }
+  }
+}
+
+// ============================================
+// RENDER FFT SPECTRUM
+// ============================================
+function renderFFT(l) {
+  const canvas = document.getElementById(`fft-canvas-${l}`);
+  const ctx = canvas.getContext('2d');
+
+  // Use a moderate DFT size
+  const N = Math.min(16, Math.max(4, BASE_RESOLUTION[l]));
+  const data = new Float64Array(N * N);
+
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) {
+      const nx = (x + 0.5) / N;
+      const ny = (y + 0.5) / N;
+      const blocks = getEffectiveBlocks(l, nx, ny);
+      data[y * N + x] = sampleBlocky(nx, ny, blocks);
+    }
+  }
+
+  const mag = computeFFTMagnitude(data, N);
+
+  // Log scale
+  const logMag = new Float64Array(N * N);
+  let logMax = 0;
+  for (let i = 0; i < mag.length; i++) {
+    logMag[i] = Math.log(1 + mag[i]);
+    if (logMag[i] > logMax) logMax = logMag[i];
+  }
+
+  const imgData = ctx.createImageData(FFT_SIZE, FFT_SIZE);
+  const blockPx = FFT_SIZE / N;
+
+  for (let py = 0; py < FFT_SIZE; py++) {
+    for (let px = 0; px < FFT_SIZE; px++) {
+      const bx = Math.min(Math.floor(px / blockPx), N - 1);
+      const by = Math.min(Math.floor(py / blockPx), N - 1);
+      const v = logMax > 0 ? logMag[by * N + bx] / logMax : 0;
+
+      const pi = (py * FFT_SIZE + px) * 4;
+      imgData.data[pi] = Math.round(v * v * 255);
+      imgData.data[pi + 1] = Math.round(v * 180 + v * v * 75);
+      imgData.data[pi + 2] = Math.round(60 + v * 195);
+      imgData.data[pi + 3] = 255;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // Crosshair
+  const center = FFT_SIZE / 2;
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(center, 0); ctx.lineTo(center, FFT_SIZE);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(0, center); ctx.lineTo(FFT_SIZE, center);
+  ctx.stroke();
+}
+
+// ============================================
+// RENDER TILTED SMILEY (full image at layer resolution)
+// ============================================
+function renderTiltedSmiley(l) {
+  const canvas = document.getElementById(`tilt-canvas-${l}`);
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.createImageData(TILT_SIZE, TILT_SIZE);
+
+  for (let py = 0; py < TILT_SIZE; py++) {
+    for (let px = 0; px < TILT_SIZE; px++) {
+      const nx = (px + 0.5) / TILT_SIZE;
+      const ny = (py + 0.5) / TILT_SIZE;
+
+      const blocks = getEffectiveBlocks(l, nx, ny);
+      const val = sampleBlocky(nx, ny, blocks);
+
+      const pi = (py * TILT_SIZE + px) * 4;
+      imgData.data[pi] = Math.round(30 + val * 225);
+      imgData.data[pi + 1] = Math.round(25 + val * 200);
+      imgData.data[pi + 2] = Math.round(5 + val * 50);
+      imgData.data[pi + 3] = 255;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  // Draw grid overlay
+  ctx.strokeStyle = 'rgba(139,92,246,0.3)';
+  ctx.lineWidth = 0.5;
+  ctx.setLineDash([3, 3]);
+  for (let i = 1; i < GRID; i++) {
+    const pos = (i / GRID) * TILT_SIZE;
+    ctx.beginPath(); ctx.moveTo(pos, 0); ctx.lineTo(pos, TILT_SIZE); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, pos); ctx.lineTo(TILT_SIZE, pos); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Highlight focused cells
+  for (let ci = 0; ci < GRID * GRID; ci++) {
+    if (focusState[l][ci] > 0) {
+      const cr = Math.floor(ci / GRID);
+      const cc = ci % GRID;
+      const ox = cc * TILT_SIZE / GRID;
+      const oy = cr * TILT_SIZE / GRID;
+      const sz = TILT_SIZE / GRID;
+      ctx.strokeStyle = `rgba(74,222,128,${Math.min(0.8, focusState[l][ci] * 0.2)})`;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(ox + 1, oy + 1, sz - 2, sz - 2);
+    }
+  }
+}
+
+// ============================================
+// STATS
+// ============================================
+function updateStats() {
+  const statsEl = document.getElementById('statsRow');
+  let totalFocused = 0;
+  for (let l = 0; l < NUM_LAYERS; l++) {
+    totalFocused += focusState[l].filter(f => f > 0).length;
+  }
+  const maxFocused = NUM_LAYERS * GRID * GRID;
+
+  statsEl.innerHTML = `
+    <div class="stat"><div class="stat-label">Layers</div><div class="stat-value">${NUM_LAYERS}</div></div>
+    <div class="stat"><div class="stat-label">Focused Cells</div><div class="stat-value">${totalFocused} / ${maxFocused}</div></div>
+    <div class="stat"><div class="stat-label">Grid</div><div class="stat-value">${GRID}×${GRID}</div></div>
+    <div class="stat"><div class="stat-label">Mode</div><div class="stat-value" style="color:#8b5cf6">Additive</div></div>
+  `;
+}
+
+// ============================================
+// INITIAL RENDER
+// ============================================
+function renderAll() {
+  for (let l = 0; l < NUM_LAYERS; l++) {
+    renderLayer(l);
+  }
+  updateStats();
+}
+
+renderAll();
+</script>
+</body>
+</html>
