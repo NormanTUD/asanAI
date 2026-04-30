@@ -15,6 +15,8 @@
 <!-- Highlight.js for code blocks (use cdnjs for reliable MIME types) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
 <style>
 :root {
@@ -286,22 +288,23 @@ html, body {
     <h2>What is Topology? ☕ = 🍩</h2>
     <p><strong>Topology</strong> is the branch of mathematics that studies shapes — but it <em>throws away distances</em>. It only cares about <strong>what's connected to what</strong>.</p>
     <p>The famous example: a coffee mug and a donut (torus) are <strong>topologically the same</strong>, because you can smoothly deform one into the other without cutting or gluing.</p>
-	<!-- Replace the tool-container content in Slide 5 -->
+
 	<div class="tool-container" id="torus-mug-tool">
 	  <p style="text-align:center; color:var(--text-secondary); margin-bottom:0.5em;">
-	    Drag the slider to smoothly deform a coffee mug into a donut.<br>
-	    <span style="color:var(--accent2);">Watch how the handle's hole becomes the donut's hole — it's never created or destroyed.</span>
+	    Drag the slider to smoothly deform a coffee mug into a donut. Click &amp; drag the shape to rotate it freely.<br>
+	    <span style="color:var(--accent2);">The surface is a single continuous 3D mesh — no cuts, no jumps.</span>
 	  </p>
 	  <div style="display:flex; align-items:center; gap:1em; justify-content:center; margin-bottom:1em;">
 	    <span style="font-size:2em;">☕</span>
-	    <input type="range" id="torus-morph" min="0" max="100" value="0" style="width:300px; accent-color: var(--accent);">
+	    <input type="range" id="torus-morph" min="0" max="100" value="0" step="1" style="width:300px; accent-color: var(--accent);">
 	    <span style="font-size:2em;">🍩</span>
 	  </div>
-	  <canvas id="torus-canvas" width="700" height="350"></canvas>
+	  <div id="torus-3d-container" style="width:700px; height:420px; margin:0 auto; border-radius:8px; overflow:hidden; background:#080818;"></div>
 	  <p style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:0.5em;">
-	    Both shapes have exactly <strong>one hole</strong> (genus 1). Topology ignores stretching and squishing — it only tracks holes, connections, and boundaries.
+	    Both shapes have exactly <strong>one hole</strong> (genus 1). The mesh deforms continuously — every intermediate shape is valid. Drag to rotate freely.
 	  </p>
 	</div>
+
 
     <p>Why does this matter for AI? Because the AI's computations are <strong>topological</strong> — they care about the <em>shape</em> of relationships, not exact distances.</p>
   </div>
@@ -685,171 +688,286 @@ function renderAllLatex() {
 }
 
 // ══════════════════════════════════════════════════════════
-// TORUS ↔ MUG MORPH (IMPROVED)
+// TORUS ↔ MUG MORPH — TRUE 3D SMOOTH PARAMETRIC SURFACE
+// Uses Three.js with OrbitControls for free rotation
 // ══════════════════════════════════════════════════════════
 
 function initTorusMorph() {
-  const canvas = document.getElementById('torus-canvas');
+  const container = document.getElementById('torus-3d-container');
   const slider = document.getElementById('torus-morph');
-  if (!canvas || !slider) return;
-  const ctx = canvas.getContext('2d');
+  if (!container || !slider) return;
 
-  function draw() {
-    const t = slider.value / 100; // 0 = mug, 1 = torus
-    const w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+  const W = 700, H = 420;
 
-    const cx = w / 2, cy = h / 2;
+  // ─── Three.js setup ───
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x080818);
 
-    // --- DRAW THE MUG (fades out as t increases) ---
-    // --- DRAW THE TORUS (fades in as t increases) ---
-    // We'll draw both and cross-fade, plus a mid-morph interpolation
+  const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
+  camera.position.set(3.5, 2.5, 4.5);
 
-    ctx.save();
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
 
-    if (t <= 0.5) {
-      // Phase 1: Mug shrinking body, handle growing
-      const localT = t / 0.5; // 0 to 1 within this phase
+  // ─── OrbitControls for free rotation ───
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.enableZoom = true;
+  controls.enablePan = false;
+  controls.minDistance = 2.5;
+  controls.maxDistance = 12;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 1.2;
 
-      // Mug body (trapezoid/rounded rect shape)
-      const bodyW = 120 * (1 - localT * 0.7);
-      const bodyH = 140 * (1 - localT * 0.5);
-      const bodyX = cx - bodyW / 2 - 30 * localT;
-      const bodyY = cy - bodyH / 2;
-      const bodyRadius = 10 + localT * 20;
+  // Stop auto-rotate on user interaction, resume after idle
+  let idleTimer = null;
+  controls.addEventListener('start', () => {
+    controls.autoRotate = false;
+    clearTimeout(idleTimer);
+  });
+  controls.addEventListener('end', () => {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => { controls.autoRotate = true; }, 4000);
+  });
 
-      ctx.beginPath();
-      ctx.strokeStyle = '#6c63ff';
-      ctx.lineWidth = 3;
-      ctx.shadowColor = '#6c63ff';
-      ctx.shadowBlur = 10;
+  // ─── Lighting ───
+  const ambientLight = new THREE.AmbientLight(0x404060, 0.6);
+  scene.add(ambientLight);
 
-      // Body as rounded rectangle
-      const bx = bodyX, by = bodyY, bw = bodyW, bh = bodyH, br = bodyRadius;
-      ctx.moveTo(bx + br, by);
-      ctx.lineTo(bx + bw - br, by);
-      ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + br);
-      ctx.lineTo(bx + bw, by + bh - br);
-      ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - br, by + bh);
-      ctx.lineTo(bx + br, by + bh);
-      ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - br);
-      ctx.lineTo(bx, by + br);
-      ctx.quadraticCurveTo(bx, by, bx + br, by);
-      ctx.closePath();
-      ctx.stroke();
+  const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight1.position.set(3, 5, 4);
+  scene.add(dirLight1);
 
-      // Handle (D-shape on the right side, hole highlighted)
-      const handleCx = bx + bw + 20 + localT * 30;
-      const handleCy = cy;
-      const handleRx = 25 + localT * 30; // grows
-      const handleRy = 40 * (1 - localT * 0.3);
+  const dirLight2 = new THREE.DirectionalLight(0x6c63ff, 0.3);
+  dirLight2.position.set(-3, -2, -2);
+  scene.add(dirLight2);
 
-      ctx.beginPath();
-      ctx.strokeStyle = '#6c63ff';
-      ctx.lineWidth = 3;
-      ctx.ellipse(handleCx, handleCy, handleRx, handleRy, 0, -Math.PI / 2, Math.PI / 2);
-      ctx.stroke();
+  const rimLight = new THREE.DirectionalLight(0x00d4aa, 0.2);
+  rimLight.position.set(0, -3, 5);
+  scene.add(rimLight);
 
-      // Connect handle to body
-      ctx.beginPath();
-      ctx.moveTo(bx + bw, cy - handleRy);
-      ctx.lineTo(handleCx, cy - handleRy);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(bx + bw, cy + handleRy);
-      ctx.lineTo(handleCx, cy + handleRy);
-      ctx.stroke();
+  // ─── Parametric surface resolution ───
+  const NU = 100; // segments around the ring (u direction)
+  const NV = 40;  // segments around the tube (v direction)
 
-      // Highlight the hole
-      ctx.beginPath();
-      ctx.strokeStyle = '#00d4aa';
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash([4, 4]);
-      ctx.ellipse(handleCx - 5, handleCy, handleRx * 0.5, handleRy * 0.55, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Label the hole
-      ctx.fillStyle = '#00d4aa';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('← THE HOLE', handleCx + handleRx + 45, handleCy + 4);
-
-      ctx.shadowBlur = 0;
-
-    } else {
-      // Phase 2: Morph into torus
-      const localT = (t - 0.5) / 0.5; // 0 to 1 within this phase
-
-      // Torus parameters (3D-ish top-down view)
-      const R = 80 + localT * 20; // major radius
-      const r = 30 + localT * 10; // minor radius (tube thickness)
-
-      ctx.strokeStyle = '#6c63ff';
-      ctx.lineWidth = 3;
-      ctx.shadowColor = '#6c63ff';
-      ctx.shadowBlur = 10;
-
-      // Outer ellipse of torus
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, R + r, (R + r) * 0.45, 0, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Inner ellipse of torus (the hole)
-      ctx.beginPath();
-      ctx.strokeStyle = '#6c63ff';
-      ctx.ellipse(cx, cy, R - r, (R - r) * 0.45, 0, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Connect top and bottom with slight curves to give 3D appearance
-      // Top connecting arc
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(108, 99, 255, 0.4)';
-      ctx.lineWidth = 1.5;
-      ctx.ellipse(cx, cy - (R) * 0.45 + r * 0.2, r, r * 0.5, 0, Math.PI, Math.PI * 2);
-      ctx.stroke();
-
-      // Highlight the hole
-      ctx.beginPath();
-      ctx.strokeStyle = '#00d4aa';
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash([4, 4]);
-      ctx.ellipse(cx, cy, (R - r) * 0.7, (R - r) * 0.3, 0, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Label the hole
-      ctx.fillStyle = '#00d4aa';
-      ctx.font = 'bold 13px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('THE HOLE', cx, cy + 5);
-
-      ctx.shadowBlur = 0;
-    }
-
-    ctx.restore();
-
-    // Bottom label
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.font = '14px system-ui';
-    ctx.textAlign = 'center';
-    if (t < 0.15) {
-      ctx.fillText('☕ Coffee Mug — one hole (the handle)', cx, h - 15);
-    } else if (t > 0.85) {
-      ctx.fillText('🍩 Donut (Torus) — one hole (the center)', cx, h - 15);
-    } else {
-      ctx.fillText('Smoothly deforming... the hole is preserved throughout!', cx, h - 15);
-    }
-
-    // Top-right: genus label
-    ctx.fillStyle = '#00d4aa';
-    ctx.font = 'bold 14px monospace';
-    ctx.textAlign = 'right';
-    ctx.fillText('genus = 1 (one hole) ✓', w - 20, 25);
+  // ─── Smooth interpolation helpers ───
+  function smoothstep(t) {
+    t = Math.max(0, Math.min(1, t));
+    return t * t * t * (t * (t * 6 - 15) + 10); // quintic smoothstep
   }
 
-  slider.addEventListener('input', draw);
-  draw();
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // ─── TORUS parameterization ───
+  // Standard torus: (R + r*cos(v)) * cos(u), (R + r*cos(v)) * sin(u), r*sin(v)
+  const torusR = 1.0;  // major radius
+  const torusr = 0.38; // minor radius
+
+  function torusPoint(u, v) {
+    // u, v in [0, 1]
+    const theta = u * Math.PI * 2; // around the ring
+    const phi = v * Math.PI * 2;   // around the tube
+    return new THREE.Vector3(
+      (torusR + torusr * Math.cos(phi)) * Math.cos(theta),
+      torusr * Math.sin(phi),
+      (torusR + torusr * Math.cos(phi)) * Math.sin(theta)
+    );
+  }
+
+  // ─── MUG parameterization ───
+  // The mug is parameterized on the same (u, v) ∈ [0,1]² domain.
+  // u traces the "skeleton" path: body perimeter + handle loop
+  // v traces the tube cross-section around that skeleton
+  //
+  // The skeleton is a closed curve in the xz-plane:
+  //   u ∈ [0, 0.6]: traces around the mug body (a rounded rectangle)
+  //   u ∈ [0.6, 1.0]: traces the handle (a D-shaped loop)
+  // Both connect smoothly at the junction points.
+
+  function mugSkeletonAndRadius(u) {
+    // Returns { center: Vector3, radius: number, normal: Vector3, binormal: Vector3 }
+    // for the Frenet frame at parameter u along the skeleton
+
+    const bodyFrac = 0.58;
+    let cx, cy, cz, tubeR;
+
+    if (u < bodyFrac) {
+      // Mug body: rounded rectangle in xz-plane
+      const localT = u / bodyFrac;
+      const angle = localT * Math.PI * 2;
+
+      // Superellipse for rounded-rectangle feel
+      const n = 3.5; // higher = more rectangular
+      const bodyW = 0.75;
+      const bodyH = 1.05;
+
+      const cosA = Math.cos(angle);
+      const sinA = Math.sin(angle);
+      const absCos = Math.abs(cosA);
+      const absSin = Math.abs(sinA);
+
+      // Superellipse formula
+      const r_se = Math.pow(
+        Math.pow(absCos / bodyW, n) + Math.pow(absSin / bodyH, n),
+        -1.0 / n
+      );
+
+      cx = r_se * cosA;
+      cy = 0;
+      cz = r_se * sinA;
+      tubeR = 0.22;
+
+    } else {
+      // Handle: D-shaped loop
+      const localT = (u - bodyFrac) / (1 - bodyFrac);
+      const angle = localT * Math.PI * 2;
+
+      const handleOffsetX = 1.05;
+      const handleW = 0.45;
+      const handleH = 0.55;
+
+      cx = handleOffsetX + handleW * Math.cos(angle);
+      cy = 0;
+      cz = handleH * Math.sin(angle);
+      tubeR = 0.14;
+    }
+
+    return { cx, cy, cz, tubeR };
+  }
+
+  function mugPoint(u, v) {
+    const sk = mugSkeletonAndRadius(u);
+    const phi = v * Math.PI * 2;
+
+    // Compute tangent numerically for proper frame
+    const eps = 0.001;
+    const sk2 = mugSkeletonAndRadius((u + eps) % 1.0);
+
+    const tx = sk2.cx - sk.cx;
+    const ty = sk2.cy - sk.cy;
+    const tz = sk2.cz - sk.cz;
+    const tLen = Math.sqrt(tx * tx + ty * ty + tz * tz) || 1;
+
+    // Tangent
+    const T = { x: tx / tLen, y: ty / tLen, z: tz / tLen };
+
+    // Choose an "up" vector that isn't parallel to tangent
+    let up = { x: 0, y: 1, z: 0 };
+    if (Math.abs(T.y) > 0.99) up = { x: 1, y: 0, z: 0 };
+
+    // Normal = up × T (normalized)
+    let Nx = up.y * T.z - up.z * T.y;
+    let Ny = up.z * T.x - up.x * T.z;
+    let Nz = up.x * T.y - up.y * T.x;
+    let nLen = Math.sqrt(Nx * Nx + Ny * Ny + Nz * Nz) || 1;
+    Nx /= nLen; Ny /= nLen; Nz /= nLen;
+
+    // Binormal = T × N
+    const Bx = T.y * Nz - T.z * Ny;
+    const By = T.z * Nx - T.x * Nz;
+    const Bz = T.x * Ny - T.y * Nx;
+
+    // Place tube cross-section
+    const r = sk.tubeR;
+    const px = sk.cx + r * (Math.cos(phi) * Nx + Math.sin(phi) * Bx);
+    const py = sk.cy + r * (Math.cos(phi) * Ny + Math.sin(phi) * By);
+    const pz = sk.cz + r * (Math.cos(phi) * Nz + Math.sin(phi) * Bz);
+
+    return new THREE.Vector3(px, py, pz);
+  }
+
+  // ─── Build the mesh geometry ───
+  const geometry = new THREE.BufferGeometry();
+  const vertexCount = (NU + 1) * (NV + 1);
+  const positions = new Float32Array(vertexCount * 3);
+  const normals = new Float32Array(vertexCount * 3);
+  const uvs = new Float32Array(vertexCount * 2);
+
+  // Index buffer for triangles
+  const indices = [];
+  for (let i = 0; i < NU; i++) {
+    for (let j = 0; j < NV; j++) {
+      const a = i * (NV + 1) + j;
+      const b = a + NV + 1;
+      const c = a + 1;
+      const d = b + 1;
+      indices.push(a, b, c);
+      indices.push(c, b, d);
+    }
+  }
+
+  geometry.setIndex(indices);
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+
+  // Material that blends color based on morph parameter
+  const material = new THREE.MeshPhongMaterial({
+    color: 0x6c63ff,
+    specular: 0x222244,
+    shininess: 40,
+    side: THREE.DoubleSide,
+    flatShading: false,
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  // ─── Update geometry for a given morph parameter t ───
+  function updateGeometry(t) {
+    const s = smoothstep(t);
+    const posAttr = geometry.attributes.position;
+    const normAttr = geometry.attributes.normal;
+
+    for (let i = 0; i <= NU; i++) {
+      for (let j = 0; j <= NV; j++) {
+        const u = i / NU;
+        const v = j / NV;
+
+        const mugP = mugPoint(u, v);
+        const torP = torusPoint(u, v);
+
+        const idx = i * (NV + 1) + j;
+
+        posAttr.array[idx * 3 + 0] = lerp(mugP.x, torP.x, s);
+        posAttr.array[idx * 3 + 1] = lerp(mugP.y, torP.y, s);
+        posAttr.array[idx * 3 + 2] = lerp(mugP.z, torP.z, s);
+
+        // UVs (for potential texturing)
+        uvs[idx * 2 + 0] = u;
+        uvs[idx * 2 + 1] = v;
+      }
+    }
+
+    posAttr.needsUpdate = true;
+    geometry.computeVertexNormals();
+
+    // Blend color: purple-blue (mug) → warm golden-brown (donut)
+    const r = Math.round(lerp(108, 210, s));
+    const g = Math.round(lerp(99, 150, s));
+    const b = Math.round(lerp(255, 50, s));
+    material.color.setRGB(r / 255, g / 255, b / 255);
+  }
+
+  // Initial build
+  updateGeometry(0);
+
+  // ─── Slider interaction ───
+  slider.addEventListener('input', () => {
+    updateGeometry(slider.value / 100);
+  });
+
+  // ─── Render loop ───
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  animate();
 }
 
 // ══════════════════════════════════════════════════════════
