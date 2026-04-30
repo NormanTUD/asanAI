@@ -1,4 +1,10 @@
 window.bibData = {
+	"hoffmann2022chinchilla": {
+		title: "Training Compute-Optimal Large Language Models",
+		author: "Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2203.15556"
+	},
 	"kapp1877grundlinien": {
 		title: "Grundlinien einer Philosophie der Technik",
 		author: "Ernst Kapp",

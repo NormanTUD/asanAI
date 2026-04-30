@@ -500,6 +500,17 @@ This relentless exponential growth meant that while algorithms remained largely 
 ## Automatic differentiation (1976)
 While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1976 master's thesis of \citeauthor{linnainmaa1976}. He developed the "automatic differentiation" method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the hochefficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
 
+## The Mathematical Modeling of Loss
+In the study "Training Compute-Optimal Large Language Models," the researchers estimated optimal performance by decomposing the loss function $L$. They proposed that the loss of a language model can be described as a function of the number of parameters $N$ and the number of training tokens $D$:
+
+$$L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}$$
+
+In this equation:
+* $E$: Represents the "irreducible loss" (the theoretical minimum error that remains even with infinite data and parameters).
+* $A, B, \alpha, \beta$: Are constants determined through empirical data fitting on over 400 models.
+
+By minimizing this function under the constraint of a fixed compute budget $C \approx 6ND$, the study concluded that for compute-optimal scaling, $N$ and $D$ must be increased in equal proportions \cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}.
+
 ## The Illusion of Empathy: The ELIZA-Effect
 
 <div class="smart-quote" data-cite="weizenbaum1976computer" data-page=7>
