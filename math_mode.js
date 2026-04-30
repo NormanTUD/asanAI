@@ -1438,20 +1438,20 @@ function model_to_latex() {
 
         var layer_str = single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y_layer, input_layer, layer_has_bias);
 
-        // Check if this layer returned an interactive placeholder
-        var interactive_marker = "%%INTERACTIVE_DENSE_" + layer_idx + "%%";
-        if (layer_str.indexOf(interactive_marker) !== -1) {
-            // Output the h = ... label as rendered LaTeX
-            var container_id = "math_hybrid_dense_L" + layer_idx;
+        // --- Generalized interactive marker handling ---
+        var interactive_info = _detect_interactive_marker(layer_str, layer_idx);
+
+        if (interactive_info) {
+            var container_id = "math_hybrid_" + interactive_info.type + "_L" + layer_idx;
             str += "<div class='temml_me'> \\text{Layer " + layer_idx + " (" + this_layer_type + "):} \\qquad " + _get_h(layer_idx) + " = </div>";
             str += "<div id='" + container_id + "' class='math-hybrid-formula' style='margin:8px 0;overflow-x:auto;'></div><br>";
 
             // Schedule the hybrid render after DOM update
-            (function(cid, li, ld, c, il) {
+            (function(cid, li, ld, c, il, yl, itype) {
                 setTimeout(function() {
-                    _inject_hybrid_dense_direct(cid, li, ld, c, il);
+                    _dispatch_interactive_inject(itype, cid, li, ld, c, il, yl);
                 }, 0);
-            })(container_id, layer_idx, layer_data, colors, input_layer);
+            })(container_id, layer_idx, layer_data, colors, input_layer, y_layer, interactive_info.type);
         } else {
             str += "<div class='temml_me'> " + layer_str + " </div><br>";
         }
@@ -1470,6 +1470,48 @@ function model_to_latex() {
     return str;
 }
 
+/**
+ * Detect if a layer_str contains an interactive marker like %%INTERACTIVE_DENSE_3%%
+ * Returns { type: "dense", layer_idx: 3 } or null if no marker found.
+ */
+function _detect_interactive_marker(layer_str, layer_idx) {
+    var marker_prefix = "%%INTERACTIVE_";
+    var marker_suffix = "_" + layer_idx + "%%";
+
+    var start = layer_str.indexOf(marker_prefix);
+    if (start === -1) return null;
+
+    var after_prefix = layer_str.substring(start + marker_prefix.length);
+    var end = after_prefix.indexOf(marker_suffix);
+    if (end === -1) return null;
+
+    var type_name = after_prefix.substring(0, end).toLowerCase();
+    return { type: type_name, layer_idx: layer_idx };
+}
+
+/**
+ * Dispatch to the correct _inject_hybrid_*_direct function based on type.
+ * Add new layer types here as they become interactive.
+ */
+function _dispatch_interactive_inject(type, container_id, layer_idx, layer_data, colors, input_layer, y_layer) {
+    var handlers = {
+        "dense": function() {
+            _inject_hybrid_dense_direct(container_id, layer_idx, layer_data, colors, input_layer);
+        },
+        "batchnorm": function() {
+            _inject_hybrid_batchnorm_direct(container_id, layer_idx, layer_data, colors, y_layer);
+        }
+        // Future: "conv1d": function() { _inject_hybrid_conv1d_direct(...); }
+        // Future: "layernorm": function() { _inject_hybrid_layernorm_direct(...); }
+    };
+
+    if (handlers[type]) {
+        handlers[type]();
+    } else {
+        console.warn("[_dispatch_interactive_inject] No handler for interactive type:", type);
+    }
+}
+
 function get_activation_layer_names() {
 	return Object.keys(layer_options).filter(function (key) {
 		return layer_options[key].category === "Activation";
@@ -1481,13 +1523,8 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 
 	var layer_str = "";
 
-	    if (this_layer_type == "dense") {
+	if (this_layer_type == "dense") {
 		layer_str = get_dense_latex(layer_idx, layer_data, colors, input_layer);
-
-		// If interactive mode returned a placeholder, pass it through without wrapping
-		if (layer_str.indexOf("%%INTERACTIVE_DENSE_") !== -1) {
-		    return layer_str;
-		}
 	} else if (this_layer_type == "flatten") {
 		layer_str = get_flatten_string(layer_idx);
 	} else if (this_layer_type == "reshape") {
@@ -1540,6 +1577,12 @@ function single_layer_to_latex(layer_idx, this_layer_type, layer_data, colors, y
 		layer_str = get_layer_normalization_equation(layer_idx);
 	} else {
 		layer_str = unsupported_layer_type_equation(layer_idx, this_layer_type);
+	}
+
+	// If any layer returned an interactive placeholder marker, pass it through
+	// without wrapping with activation function or h = ... prefix
+	if (layer_str.indexOf("%%INTERACTIVE_") !== -1) {
+		return layer_str;
 	}
 
 	if (this_layer_type && !this_layer_type.startsWith("conv")) {
@@ -2154,7 +2197,17 @@ function get_activation_functions_latex(this_layer_type, input_layer, layer_idx,
 	return str;
 }
 
-function get_batch_normalization_latex (layer_data, y_layer, layer_idx) {
+function get_batch_normalization_latex(layer_data, y_layer, layer_idx) {
+	if (!_math_interactive_mode) {
+		return _get_batch_normalization_latex_static(layer_data, y_layer, layer_idx);
+	}
+
+	// Return a special marker that model_to_latex will detect
+	return "%%INTERACTIVE_BATCHNORM_" + layer_idx + "%%";
+}
+
+// Rename the original static version
+function _get_batch_normalization_latex_static(layer_data, y_layer, layer_idx) {
 	var str = "";
 	var prev_layer_name = "";
 
