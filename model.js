@@ -208,14 +208,18 @@ async function create_model_or_throw () {
 }
 
 async function recreate_model_if_needed (new_model_config_hash) {
-	var recreate_model = await _get_recreate_model(new_model_config_hash);
-
-	if(recreate_model) {
-		model_is_trained = false;
-		reset_summary();
-		await _create_model();
-		await last_shape_layer_warning();
-	}
+    // Don't recreate model if training is in progress or about to start
+    if (started_training) {
+        return;
+    }
+    
+    var recreate_model = await _get_recreate_model(new_model_config_hash);
+    if(recreate_model) {
+        model_is_trained = false;
+        reset_summary();
+        await _create_model();
+        await last_shape_layer_warning();
+    }
 }
 
 async function compile_model(recursion_level=0) {

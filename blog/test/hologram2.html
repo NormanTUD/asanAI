@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Holographic FFT Smiley – Local Resolution Control</title>
+<title>Holographic FFT Smiley — Lens Bleed + Global Encoding</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;user-select:none}
@@ -18,6 +18,8 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .fft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
 .fft-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid #334155;transition:border-color 0.2s,box-shadow 0.2s}
 .fft-cell:hover{border-color:#8b5cf6;box-shadow:0 0 12px #8b5cf640}
+.fft-cell.active-cell{border-color:#fbbf24}
+.fft-cell.inactive-cell{border-color:#1e3a5f;opacity:0.7}
 .fft-cell canvas{width:100%;height:100%;display:block}
 .fft-cell .level-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#fbbf24;font-size:0.65em;padding:2px 5px;border-radius:4px;font-weight:bold}
 .fft-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
@@ -40,11 +42,12 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 <body>
 
 <h1>🔮 Holographic FFT Smiley</h1>
-<p class="subtitle">Local resolution control with holographic edge bleeding</p>
+<p class="subtitle">Lens-effect resolution control with global FFT encoding</p>
 
 <div class="instructions">
-  <b>Right-click</b> a grid cell → <span class="key">+ resolution</span> locally (detail increases in that region, bleeds to neighbors)<br>
-  <b>Left-click</b> a grid cell → <span class="key">− resolution</span> locally (that region becomes blockier)<br>
+  <b>Left-click</b> an active cell → <span class="key">+ resolution</span> (globally increases detail, lens bleeds at edges)<br>
+  <b>Right-click</b> an active cell → <span class="key">− resolution</span> (globally decreases detail)<br>
+  Inactive (blue) cells encode nothing · Active cells each encode the <em>whole</em> image<br>
   Min = LEGO blocks · Max = SVG-smooth
 </div>
 
@@ -70,46 +73,55 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 // CONFIG
 // ============================================
 const GRID = 3;
-const IMG_SIZE = 396; // divisible by 3
-const CELL_SIZE = IMG_SIZE / GRID; // 132px per cell in output
+const IMG_SIZE = 396;
+const CELL_SIZE = IMG_SIZE / GRID;
 const MAX_LEVEL = 24;
-const MIN_BLOCKS_PER_CELL = 2;  // at level 0: 2x2 blocks per cell region = LEGO
-const MAX_BLOCKS_PER_CELL = 44; // at max level: 44x44 per cell = SVG smooth
+const MIN_BLOCKS = 3;      // at level 0: 3x3 total blocks = very chunky LEGO
+const MAX_BLOCKS = 132;     // at max level: 132x132 = smooth (IMG_SIZE / 3)
 const DPR = window.devicePixelRatio || 1;
 
-// Each cell has a level from 0 to MAX_LEVEL
-const cellLevels = Array(GRID * GRID).fill(Math.floor(MAX_LEVEL * 0.15)); // start low-ish
+// Active mask: which FFT cells have content
+// 1 0 0
+// 0 0 1
+// 0 1 0
+const ACTIVE_MASK = [
+  1, 0, 0,
+  0, 0, 1,
+  0, 1, 0
+];
+
+// Each ACTIVE cell has a level from 0 to MAX_LEVEL
+// Start really low res
+const cellLevels = Array(GRID * GRID).fill(0);
+// Only active cells matter; start them at 1
+for (let i = 0; i < GRID * GRID; i++) {
+  if (ACTIVE_MASK[i]) cellLevels[i] = 1;
+}
 
 // ============================================
-// Generate high-res smiley source (continuous function)
+// Smiley source function
 // ============================================
-const SRC_RES = 512; // high res source for sampling
-
 function smileyAt(nx, ny) {
-  // nx, ny in [0,1] — returns brightness [0,1]
   const cx = 0.5, cy = 0.5;
   const dx = nx - cx, dy = ny - cy;
   const dist = Math.sqrt(dx * dx + dy * dy);
   const r = 0.42;
-  
+
   if (dist > r + 0.01) return 0;
   if (dist > r - 0.01) {
-    // smooth edge
     return Math.max(0, 1 - (dist - r + 0.01) / 0.02) * 0.85;
   }
-  
+
   let val = 0.85;
-  
+
   // Left eye
   const leX = 0.35, leY = 0.37, eyeR = 0.05;
-  const leDist = Math.sqrt((nx - leX) ** 2 + (ny - leY) ** 2);
-  if (leDist < eyeR) val = 0.08;
-  
+  if (Math.sqrt((nx - leX) ** 2 + (ny - leY) ** 2) < eyeR) val = 0.08;
+
   // Right eye
   const reX = 0.65, reY = 0.37;
-  const reDist = Math.sqrt((nx - reX) ** 2 + (ny - reY) ** 2);
-  if (reDist < eyeR) val = 0.08;
-  
+  if (Math.sqrt((nx - reX) ** 2 + (ny - reY) ** 2) < eyeR) val = 0.08;
+
   // Smile arc
   const smCY = 0.55, smR = 0.22, smThick = 0.035;
   const smDist = Math.sqrt((nx - cx) ** 2 + (ny - smCY) ** 2);
@@ -117,60 +129,24 @@ function smileyAt(nx, ny) {
     const t = 1 - Math.abs(smDist - smR) / smThick;
     val = val * (1 - t) + 0.08 * t;
   }
-  
+
   return val;
 }
 
 // ============================================
-// FFT of the smiley (computed at SRC_RES)
-// We'll use this for the FFT visualization
+// Build the full high-res source image
 // ============================================
-const FFT_VIS_N = 64; // resolution for FFT visualization
-
-// Compute a sampled version for FFT display
-const fftSampleData = new Float64Array(FFT_VIS_N * FFT_VIS_N);
-for (let y = 0; y < FFT_VIS_N; y++) {
-  for (let x = 0; x < FFT_VIS_N; x++) {
-    fftSampleData[y * FFT_VIS_N + x] = smileyAt((x + 0.5) / FFT_VIS_N, (y + 0.5) / FFT_VIS_N);
+const SRC = IMG_SIZE;
+const srcImage = new Float64Array(SRC * SRC);
+for (let y = 0; y < SRC; y++) {
+  for (let x = 0; x < SRC; x++) {
+    srcImage[y * SRC + x] = smileyAt((x + 0.5) / SRC, (y + 0.5) / SRC);
   }
 }
 
-// Simple DFT for visualization (we only need magnitude spectrum for display)
-// For the actual reconstruction we sample directly from smileyAt()
-function computeFFTMagnitude(data, N) {
-  // Compute 2D DFT magnitude (only for display purposes)
-  const mag = new Float64Array(N * N);
-  // Use rows-then-cols approach with radix-2 FFT
-  const reArr = new Float64Array(N * N);
-  const imArr = new Float64Array(N * N);
-  for (let i = 0; i < N * N; i++) { reArr[i] = data[i]; imArr[i] = 0; }
-  
-  // FFT rows
-  for (let y = 0; y < N; y++) {
-    const rowRe = new Float64Array(N), rowIm = new Float64Array(N);
-    for (let x = 0; x < N; x++) { rowRe[x] = reArr[y * N + x]; rowIm[x] = imArr[y * N + x]; }
-    fft1d(rowRe, rowIm, N, false);
-    for (let x = 0; x < N; x++) { reArr[y * N + x] = rowRe[x]; imArr[y * N + x] = rowIm[x]; }
-  }
-  // FFT cols
-  for (let x = 0; x < N; x++) {
-    const colRe = new Float64Array(N), colIm = new Float64Array(N);
-    for (let y = 0; y < N; y++) { colRe[y] = reArr[y * N + x]; colIm[y] = imArr[y * N + x]; }
-    fft1d(colRe, colIm, N, false);
-    for (let y = 0; y < N; y++) { reArr[y * N + x] = colRe[y]; imArr[y * N + x] = colIm[y]; }
-  }
-  
-  // Compute magnitude and shift
-  for (let y = 0; y < N; y++) {
-    for (let x = 0; x < N; x++) {
-      const sy = (y + N/2) % N, sx = (x + N/2) % N;
-      const idx = sy * N + sx;
-      mag[y * N + x] = Math.sqrt(reArr[idx] ** 2 + imArr[idx] ** 2);
-    }
-  }
-  return mag;
-}
-
+// ============================================
+// FFT utilities
+// ============================================
 function fft1d(re, im, N, inverse) {
   if (N <= 1) return;
   let j = 0;
@@ -201,7 +177,92 @@ function fft1d(re, im, N, inverse) {
   if (inverse) { for (let i = 0; i < N; i++) { re[i] /= N; im[i] /= N; } }
 }
 
-const fftMag = computeFFTMagnitude(fftSampleData, FFT_VIS_N);
+// Nearest power of 2
+function nextPow2(n) { let p = 1; while (p < n) p *= 2; return p; }
+
+// 2D FFT (forward)
+function fft2d(realData, N) {
+  const re = new Float64Array(N * N);
+  const im = new Float64Array(N * N);
+  for (let i = 0; i < N * N; i++) re[i] = realData[i];
+
+  // Rows
+  for (let y = 0; y < N; y++) {
+    const rowRe = re.subarray(y * N, y * N + N).slice();
+    const rowIm = im.subarray(y * N, y * N + N).slice();
+    fft1d(rowRe, rowIm, N, false);
+    re.set(rowRe, y * N);
+    im.set(rowIm, y * N);
+  }
+  // Cols
+  for (let x = 0; x < N; x++) {
+    const colRe = new Float64Array(N), colIm = new Float64Array(N);
+    for (let y = 0; y < N; y++) { colRe[y] = re[y * N + x]; colIm[y] = im[y * N + x]; }
+    fft1d(colRe, colIm, N, false);
+    for (let y = 0; y < N; y++) { re[y * N + x] = colRe[y]; im[y * N + x] = colIm[y]; }
+  }
+  return { re, im };
+}
+
+// 2D IFFT
+function ifft2d(re, im, N) {
+  const outRe = re.slice();
+  const outIm = im.slice();
+
+  // Rows
+  for (let y = 0; y < N; y++) {
+    const rowRe = outRe.subarray(y * N, y * N + N).slice();
+    const rowIm = outIm.subarray(y * N, y * N + N).slice();
+    fft1d(rowRe, rowIm, N, true);
+    outRe.set(rowRe, y * N);
+    outIm.set(rowIm, y * N);
+  }
+  // Cols
+  for (let x = 0; x < N; x++) {
+    const colRe = new Float64Array(N), colIm = new Float64Array(N);
+    for (let y = 0; y < N; y++) { colRe[y] = outRe[y * N + x]; colIm[y] = outIm[y * N + x]; }
+    fft1d(colRe, colIm, N, true);
+    for (let y = 0; y < N; y++) { outRe[y * N + x] = colRe[y]; }
+  }
+  return outRe;
+}
+
+// ============================================
+// Compute FFT of the full source image at a given resolution
+// Then extract per-cell FFT data for visualization
+// ============================================
+// We'll use a fixed FFT size for computation
+const FFT_N = nextPow2(IMG_SIZE); // 512
+
+// Compute the full FFT of the source image (padded to FFT_N)
+function computeFullFFT(blockSize) {
+  // First, build the pixelated version of the image at the given block resolution
+  const pixelated = new Float64Array(FFT_N * FFT_N);
+  const totalBlocks = blockSize;
+  const bpx = IMG_SIZE / totalBlocks;
+
+  for (let by = 0; by < totalBlocks; by++) {
+    for (let bx = 0; bx < totalBlocks; bx++) {
+      // Sample at block center from source
+      const sx = Math.floor((bx + 0.5) * bpx);
+      const sy = Math.floor((by + 0.5) * bpx);
+      const val = srcImage[Math.min(sy, SRC-1) * SRC + Math.min(sx, SRC-1)];
+
+      const startX = Math.floor(bx * bpx);
+      const startY = Math.floor(by * bpx);
+      const endX = Math.min(Math.floor((bx + 1) * bpx), IMG_SIZE);
+      const endY = Math.min(Math.floor((by + 1) * bpx), IMG_SIZE);
+
+      for (let py = startY; py < endY; py++) {
+        for (let px = startX; px < endX; px++) {
+          pixelated[py * FFT_N + px] = val;
+        }
+      }
+    }
+  }
+
+  return fft2d(pixelated, FFT_N);
+}
 
 // ============================================
 // RENDERING SETUP
@@ -230,242 +291,173 @@ const CELL_CANVAS_SIZE = 130;
 for (let i = 0; i < GRID * GRID; i++) {
   const row = Math.floor(i / GRID), col = i % GRID;
   const cell = document.createElement('div');
-  cell.className = 'fft-cell';
-  
+  cell.className = 'fft-cell ' + (ACTIVE_MASK[i] ? 'active-cell' : 'inactive-cell');
+
   const canvas = document.createElement('canvas');
   canvas.width = CELL_CANVAS_SIZE * DPR;
   canvas.height = CELL_CANVAS_SIZE * DPR;
   canvas.style.width = CELL_CANVAS_SIZE + 'px';
   canvas.style.height = CELL_CANVAS_SIZE + 'px';
   cell.appendChild(canvas);
-  
+
   const badge = document.createElement('div');
   badge.className = 'level-badge';
   badge.id = `badge-${i}`;
-  badge.textContent = `${Math.round(cellLevels[i] / MAX_LEVEL * 100)}%`;
+  badge.textContent = ACTIVE_MASK[i] ? `${Math.round(cellLevels[i] / MAX_LEVEL * 100)}%` : 'OFF';
   cell.appendChild(badge);
-  
+
   const coord = document.createElement('div');
   coord.className = 'coord-badge';
   coord.textContent = `[${row},${col}]`;
   cell.appendChild(coord);
-  
+
   gridEl.appendChild(cell);
   cellCanvases.push(canvas);
 
-  // Left click = DECREASE resolution (less detail)
+  // LEFT click = INCREASE resolution (swapped from original)
   cell.addEventListener('click', (e) => {
     e.preventDefault();
-    cellLevels[i] = Math.max(0, cellLevels[i] - 1);
-    render();
-  });
-
-  // Right click = INCREASE resolution (more detail)
-  cell.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
+    if (!ACTIVE_MASK[i]) return; // inactive cells do nothing
     cellLevels[i] = Math.min(MAX_LEVEL, cellLevels[i] + 1);
     render();
   });
+
+  // RIGHT click = DECREASE resolution (swapped from original)
+  cell.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    if (!ACTIVE_MASK[i]) return;
+    cellLevels[i] = Math.max(0, cellLevels[i] - 1);
+    render();
+  });
 }
 
 // ============================================
-// CORE: Compute effective resolution at each pixel
-// Each cell controls its LOCAL region, with Gaussian bleeding to neighbors
+// Compute global effective resolution from active cells
 // ============================================
-function getResolutionMap() {
-  // Returns a map of "effective blocks per cell" for each pixel position
-  // This determines how pixelated each area is
-  // Resolution is LOCAL: cell [0,0] controls top-left, etc.
-  // But with bleeding at edges
-  
-  const map = new Float64Array(IMG_SIZE * IMG_SIZE);
-  const bleedRadius = CELL_SIZE * 0.3; // how far the bleeding extends
-  
-  for (let py = 0; py < IMG_SIZE; py++) {
-    for (let px = 0; px < IMG_SIZE; px++) {
-      let totalLevel = 0;
-      let totalWeight = 0;
-      
-      for (let cr = 0; cr < GRID; cr++) {
-        for (let cc = 0; cc < GRID; cc++) {
-          const idx = cr * GRID + cc;
-          const level = cellLevels[idx] / MAX_LEVEL;
-          
-          // Center of this cell in pixel coords
-          const cellCX = (cc + 0.5) * CELL_SIZE;
-          const cellCY = (cr + 0.5) * CELL_SIZE;
-          
-          // Distance from pixel to cell center
-          const dx = px - cellCX;
-          const dy = py - cellCY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          
-          // Weight: strong within cell, falls off outside
-          // Use a smooth step that's 1.0 inside the cell and bleeds out
-          const halfCell = CELL_SIZE * 0.5;
-          let weight;
-          if (dist <= halfCell) {
-            weight = 1.0;
-          } else {
-            // Gaussian falloff outside the cell
-            const excess = dist - halfCell;
-            weight = Math.exp(-(excess * excess) / (2 * bleedRadius * bleedRadius));
-          }
-          
-          totalLevel += level * weight;
-          totalWeight += weight;
-        }
-      }
-      
-      map[py * IMG_SIZE + px] = totalWeight > 0 ? totalLevel / totalWeight : 0;
+function getGlobalBlockCount() {
+  let totalLevel = 0;
+  let count = 0;
+  for (let i = 0; i < GRID * GRID; i++) {
+    if (ACTIVE_MASK[i]) {
+      totalLevel += cellLevels[i];
+      count++;
     }
   }
-  return map;
+  const avgLevel = count > 0 ? totalLevel / count : 0;
+  const t = avgLevel / MAX_LEVEL;
+  return Math.round(MIN_BLOCKS + (MAX_BLOCKS - MIN_BLOCKS) * Math.pow(t, 0.7));
 }
 
 // ============================================
-// DRAW SMILEY with variable local resolution
+// DRAW SMILEY with lens-effect edge bleeding
 // ============================================
 function drawSmiley() {
   smileyCtx.save();
   smileyCtx.scale(DPR, DPR);
   smileyCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
-  
-  // For each cell region, determine its block size based on level
-  // Then render that region at that resolution
-  // With bleeding: we render slightly overlapping regions with alpha blending at borders
-  
-  // Strategy: render each cell's region at its own resolution,
-  // then blend at the borders
-  
-  // First pass: compute block size for each cell
-  const cellBlockSizes = [];
-  for (let i = 0; i < GRID * GRID; i++) {
-    const level = cellLevels[i] / MAX_LEVEL;
-    // At level 0: MIN_BLOCKS_PER_CELL (2 blocks across the cell = huge LEGO)
-    // At level 1: MAX_BLOCKS_PER_CELL (44 blocks = smooth)
-    const blocks = Math.round(MIN_BLOCKS_PER_CELL + (MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(level, 0.7));
-    cellBlockSizes.push(blocks);
-  }
-  
-  // Render each pixel by sampling from smileyAt() at the appropriate resolution
-  // determined by the local cell's block count, with bleeding
-  const bleedPx = CELL_SIZE * 0.25; // bleeding zone in pixels
-  
-  // For efficiency, render block by block per cell, then blend borders
-  // First: render each cell at its own resolution
-  const cellImages = [];
-  for (let ci = 0; ci < GRID * GRID; ci++) {
-    const cr = Math.floor(ci / GRID), cc = ci % GRID;
-    const blocks = cellBlockSizes[ci];
-    const blockPx = CELL_SIZE / blocks;
-    const cellImg = new Float64Array(CELL_SIZE * CELL_SIZE);
-    
-    for (let by = 0; by < blocks; by++) {
-      for (let bx = 0; bx < blocks; bx++) {
-        // Sample smiley at center of this block
-        const sampleX = (cc * CELL_SIZE + (bx + 0.5) * blockPx) / IMG_SIZE;
-        const sampleY = (cr * CELL_SIZE + (by + 0.5) * blockPx) / IMG_SIZE;
-        const val = smileyAt(sampleX, sampleY);
-        
-        // Fill the block
-        const startX = Math.floor(bx * blockPx);
-        const startY = Math.floor(by * blockPx);
-        const endX = Math.floor((bx + 1) * blockPx);
-        const endY = Math.floor((by + 1) * blockPx);
-        
-        for (let ly = startY; ly < Math.min(endY, CELL_SIZE); ly++) {
-          for (let lx = startX; lx < Math.min(endX, CELL_SIZE); lx++) {
-            cellImg[ly * CELL_SIZE + lx] = val;
-          }
+
+  const totalBlocks = getGlobalBlockCount();
+  const bpx = IMG_SIZE / totalBlocks;
+
+  // Build the base pixelated image
+  const pixelated = new Float64Array(IMG_SIZE * IMG_SIZE);
+  for (let by = 0; by < totalBlocks; by++) {
+    for (let bx = 0; bx < totalBlocks; bx++) {
+      const sx = Math.floor((bx + 0.5) * bpx);
+      const sy = Math.floor((by + 0.5) * bpx);
+      const val = srcImage[Math.min(sy, SRC-1) * SRC + Math.min(sx, SRC-1)];
+
+      const startX = Math.floor(bx * bpx);
+      const startY = Math.floor(by * bpx);
+      const endX = Math.min(Math.floor((bx + 1) * bpx), IMG_SIZE);
+      const endY = Math.min(Math.floor((by + 1) * bpx), IMG_SIZE);
+
+      for (let py = startY; py < endY; py++) {
+        for (let px = startX; px < endX; px++) {
+          pixelated[py * IMG_SIZE + px] = val;
         }
       }
     }
-    cellImages.push(cellImg);
   }
-  
-  // Now composite with bleeding
+
+  // Lens effect: at cell edges, pixel size "bleeds over"
+  // We create a resolution multiplier map that's higher at cell centers
+  // and gradually transitions at borders, creating a lens magnification feel
+  const lensMap = new Float64Array(IMG_SIZE * IMG_SIZE);
+  const bleedZone = CELL_SIZE * 0.3; // transition zone width
+
   for (let py = 0; py < IMG_SIZE; py++) {
     for (let px = 0; px < IMG_SIZE; px++) {
-      // Which cell does this pixel primarily belong to?
-      const cc = Math.min(GRID - 1, Math.floor(px / CELL_SIZE));
-      const cr = Math.min(GRID - 1, Math.floor(py / CELL_SIZE));
-      const primaryIdx = cr * GRID + cc;
-      
-      // Local coords within primary cell
-      const lx = px - cc * CELL_SIZE;
-      const ly = py - cr * CELL_SIZE;
-      
-      // Check if we're in a bleed zone (near border)
-      const distToLeft = lx;
-      const distToRight = CELL_SIZE - 1 - lx;
-      const distToTop = ly;
-      const distToBottom = CELL_SIZE - 1 - ly;
-      
-      let val = cellImages[primaryIdx][ly * CELL_SIZE + lx];
-      
-      // Blend with neighbors at borders
-      const blendNeighbor = (ncc, ncr, edgeDist) => {
-        if (ncc < 0 || ncc >= GRID || ncr < 0 || ncr >= GRID) return;
-        if (edgeDist >= bleedPx) return;
-        
-        const nIdx = ncr * GRID + ncc;
-        // Sample from neighbor's image at the corresponding position
-        const nlx = px - ncc * CELL_SIZE;
-        const nly = py - ncr * CELL_SIZE;
-        if (nlx < 0 || nlx >= CELL_SIZE || nly < 0 || nly >= CELL_SIZE) return;
-        
-        const nVal = cellImages[nIdx][nly * CELL_SIZE + nlx];
-        const t = 1 - edgeDist / bleedPx;
-        const blendFactor = t * 0.5; // max 50% blend at the very edge
-        val = val * (1 - blendFactor) + nVal * blendFactor;
-      };
-      
-      // Check all 4 directions for bleeding
-      if (cc > 0) blendNeighbor(cc - 1, cr, distToLeft);
-      if (cc < GRID - 1) blendNeighbor(cc + 1, cr, distToRight);
-      if (cr > 0) blendNeighbor(cc, cr - 1, distToTop);
-      if (cr < GRID - 1) blendNeighbor(cc, cr + 1, distToBottom);
-      
-      // Color: warm smiley yellow
-      const v = Math.max(0, Math.min(1, val));
+      // Distance to nearest cell border
+      const cellX = px % CELL_SIZE;
+      const cellY = py % CELL_SIZE;
+      const distToEdgeX = Math.min(cellX, CELL_SIZE - cellX);
+      const distToEdgeY = Math.min(cellY, CELL_SIZE - cellY);
+      const distToEdge = Math.min(distToEdgeX, distToEdgeY);
+
+      if (distToEdge >= bleedZone) {
+        lensMap[py * IMG_SIZE + px] = 1.0; // fully pixelated version
+      } else {
+        // Smooth blend: near edge, blend toward the hi-res source
+        // This creates the "lens magnification" feel at borders
+        const t = distToEdge / bleedZone; // 0 at edge, 1 at bleedZone
+        // Smooth hermite interpolation
+        const s = t * t * (3 - 2 * t);
+        lensMap[py * IMG_SIZE + px] = s;
+      }
+    }
+  }
+
+  // Render: blend between pixelated and source based on lens map
+  // At edges, we see a bit more of the hi-res source (lens magnification)
+  // At centers, we see the pixelated version
+  const imgData = smileyCtx.createImageData(IMG_SIZE, IMG_SIZE);
+  for (let py = 0; py < IMG_SIZE; py++) {
+    for (let px = 0; px < IMG_SIZE; px++) {
+      const idx = py * IMG_SIZE + px;
+      const lens = lensMap[idx];
+      const pixVal = pixelated[idx];
+      const srcVal = srcImage[py * SRC + px];
+
+      // Blend: lens=1 means full pixelated, lens=0 means blend toward source
+      // But we don't want full source at edges, just a slight magnification
+      // So the "source" at edges is a slightly higher-res version
+      const blendedVal = pixVal * lens + srcVal * (1 - lens) * 0.4 + pixVal * (1 - lens) * 0.6;
+
+      const v = Math.max(0, Math.min(1, blendedVal));
       const r = Math.round(30 + v * 225);
       const g = Math.round(25 + v * 200);
       const b = Math.round(5 + v * 50);
-      
-      smileyCtx.fillStyle = `rgb(${r},${g},${b})`;
-      smileyCtx.fillRect(px, py, 1, 1);
+
+      const pi = (py * IMG_SIZE + px) * 4;
+      imgData.data[pi] = r;
+      imgData.data[pi + 1] = g;
+      imgData.data[pi + 2] = b;
+      imgData.data[pi + 3] = 255;
     }
   }
-  
-  // Draw block grid lines for cells that are low-res (to show LEGO effect)
-  for (let ci = 0; ci < GRID * GRID; ci++) {
-    const cr = Math.floor(ci / GRID), cc = ci % GRID;
-    const blocks = cellBlockSizes[ci];
-    if (blocks > 20) continue; // don't draw grid for high-res cells
-    
-    const blockPx = CELL_SIZE / blocks;
-    const offsetX = cc * CELL_SIZE;
-    const offsetY = cr * CELL_SIZE;
-    
-    smileyCtx.strokeStyle = `rgba(0,0,0,${0.3 * (1 - blocks/20)})`;
-    smileyCtx.lineWidth = Math.max(0.5, 2 * (1 - blocks/20));
-    
-    for (let i = 1; i < blocks; i++) {
+  smileyCtx.putImageData(imgData, 0, 0);
+
+  // Draw block grid lines for low-res effect (LEGO lines)
+  if (totalBlocks < 40) {
+    smileyCtx.strokeStyle = `rgba(0,0,0,${0.3 * (1 - totalBlocks/40)})`;
+    smileyCtx.lineWidth = Math.max(0.5, 2 * (1 - totalBlocks/40));
+    for (let i = 1; i < totalBlocks; i++) {
+      const pos = Math.floor(i * bpx);
       smileyCtx.beginPath();
-      smileyCtx.moveTo(offsetX + i * blockPx, offsetY);
-      smileyCtx.lineTo(offsetX + i * blockPx, offsetY + CELL_SIZE);
+      smileyCtx.moveTo(pos, 0);
+      smileyCtx.lineTo(pos, IMG_SIZE);
       smileyCtx.stroke();
       smileyCtx.beginPath();
-      smileyCtx.moveTo(offsetX, offsetY + i * blockPx);
-      smileyCtx.lineTo(offsetX + CELL_SIZE, offsetY + i * blockPx);
+      smileyCtx.moveTo(0, pos);
+      smileyCtx.lineTo(IMG_SIZE, pos);
       smileyCtx.stroke();
     }
   }
-  
+
   smileyCtx.restore();
-  
-  // Draw grid overlay showing cell boundaries
+
+  // Grid overlay
   overlayCtx.save();
   overlayCtx.scale(DPR, DPR);
   overlayCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
@@ -487,11 +479,57 @@ function drawSmiley() {
 }
 
 // ============================================
-// DRAW FFT CELLS
+// DRAW FFT CELLS — derived from the globally constructed image
 // ============================================
+// Cache for FFT magnitude
+let cachedFFTMag = null;
+let cachedBlockCount = -1;
+
+function getFFTMagnitude() {
+  const blocks = getGlobalBlockCount();
+  if (blocks === cachedBlockCount && cachedFFTMag) return cachedFFTMag;
+
+  // Build pixelated image at current resolution
+  const bpx = IMG_SIZE / blocks;
+  const padded = new Float64Array(FFT_N * FFT_N);
+  for (let by = 0; by < blocks; by++) {
+    for (let bx = 0; bx < blocks; bx++) {
+      const sx = Math.floor((bx + 0.5) * bpx);
+      const sy = Math.floor((by + 0.5) * bpx);
+      const val = srcImage[Math.min(sy, SRC-1) * SRC + Math.min(sx, SRC-1)];
+      const startX = Math.floor(bx * bpx);
+      const startY = Math.floor(by * bpx);
+      const endX = Math.min(Math.floor((bx + 1) * bpx), IMG_SIZE);
+      const endY = Math.min(Math.floor((by + 1) * bpx), IMG_SIZE);
+      for (let py = startY; py < endY; py++) {
+        for (let px = startX; px < endX; px++) {
+          padded[py * FFT_N + px] = val;
+        }
+      }
+    }
+  }
+
+  const { re, im } = fft2d(padded, FFT_N);
+
+  // Compute magnitude with DC-center shift
+  const mag = new Float64Array(FFT_N * FFT_N);
+  for (let y = 0; y < FFT_N; y++) {
+    for (let x = 0; x < FFT_N; x++) {
+      const sy = (y + FFT_N/2) % FFT_N, sx = (x + FFT_N/2) % FFT_N;
+      const idx = sy * FFT_N + sx;
+      mag[y * FFT_N + x] = Math.sqrt(re[idx] ** 2 + im[idx] ** 2);
+    }
+  }
+
+  cachedFFTMag = mag;
+  cachedBlockCount = blocks;
+  return mag;
+}
+
 function drawFFTCells() {
-  const cellFreqSize = FFT_VIS_N / GRID;
-  
+  const mag = getFFTMagnitude();
+  const cellFreqSize = Math.floor(FFT_N / GRID);
+
   for (let ci = 0; ci < GRID * GRID; ci++) {
     const cr = Math.floor(ci / GRID), cc = ci % GRID;
     const canvas = cellCanvases[ci];
@@ -499,48 +537,73 @@ function drawFFTCells() {
     ctx.save();
     ctx.scale(DPR, DPR);
     ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
-    
+
+    if (!ACTIVE_MASK[ci]) {
+      // Inactive cell: solid blue
+      ctx.fillStyle = '#0c2d6b';
+      ctx.fillRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
+
+      // Subtle grid pattern
+      ctx.strokeStyle = 'rgba(30, 80, 180, 0.3)';
+      ctx.lineWidth = 0.5;
+      const step = CELL_CANVAS_SIZE / 8;
+      for (let g = 1; g < 8; g++) {
+        ctx.beginPath(); ctx.moveTo(g * step, 0); ctx.lineTo(g * step, CELL_CANVAS_SIZE); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, g * step); ctx.lineTo(CELL_CANVAS_SIZE, g * step); ctx.stroke();
+      }
+
+      // "OFF" label
+      ctx.fillStyle = 'rgba(100, 150, 255, 0.4)';
+      ctx.font = 'bold 14px system-ui';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('INACTIVE', CELL_CANVAS_SIZE/2, CELL_CANVAS_SIZE/2);
+
+      ctx.restore();
+      document.getElementById(`badge-${ci}`).textContent = 'OFF';
+      continue;
+    }
+
+    // Active cell: show FFT magnitude for this cell's frequency region
     const level = cellLevels[ci] / MAX_LEVEL;
     const startFX = cc * cellFreqSize;
     const startFY = cr * cellFreqSize;
     const pixSize = CELL_CANVAS_SIZE / cellFreqSize;
-    
+
     // Find max magnitude in this cell for normalization
     let maxMag = 0;
     for (let fy = 0; fy < cellFreqSize; fy++) {
       for (let fx = 0; fx < cellFreqSize; fx++) {
-        const mag = fftMag[(startFY + fy) * FFT_VIS_N + (startFX + fx)];
-        if (mag > maxMag) maxMag = mag;
+        const m = mag[(startFY + fy) * FFT_N + (startFX + fx)];
+        if (m > maxMag) maxMag = m;
       }
     }
-    
+
     for (let fy = 0; fy < cellFreqSize; fy++) {
       for (let fx = 0; fx < cellFreqSize; fx++) {
-        const mag = fftMag[(startFY + fy) * FFT_VIS_N + (startFX + fx)];
-        const normMag = maxMag > 0 ? Math.log(1 + mag) / Math.log(1 + maxMag) : 0;
-        
-        // Color: brightness shows magnitude, saturation shows level (how active)
+        const m = mag[(startFY + fy) * FFT_N + (startFX + fx)];
+        const normMag = maxMag > 0 ? Math.log(1 + m) / Math.log(1 + maxMag) : 0;
+
         const brightness = normMag;
         const active = level;
-        
-        // Active = vibrant purple/blue, inactive = dim gray
+
         const r = Math.round(brightness * active * 160 + brightness * 30 + 15);
         const g = Math.round(brightness * active * 80 + brightness * 20 + 10);
         const b = Math.round(brightness * active * 255 + brightness * 60 + 25);
-        
+
         ctx.fillStyle = `rgb(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,b)})`;
         ctx.fillRect(fx * pixSize, fy * pixSize, pixSize + 1, pixSize + 1);
       }
     }
-    
+
     // Level indicator bar at bottom
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(0, CELL_CANVAS_SIZE - 8, CELL_CANVAS_SIZE, 8);
     ctx.fillStyle = level > 0.5 ? '#4ade80' : level > 0.2 ? '#fbbf24' : '#ef4444';
-    ctx.fillRect(0, CELL_CANVAS_SIZE - 8, CELL_CANVAS_SIZE * level, CELL_CANVAS_SIZE - 8, 8);
-    
+    ctx.fillRect(0, CELL_CANVAS_SIZE - 8, CELL_CANVAS_SIZE * level, 8);
+
     ctx.restore();
-    
+
     // Update badge
     document.getElementById(`badge-${ci}`).textContent = `${Math.round(level * 100)}%`;
   }
@@ -551,31 +614,30 @@ function drawFFTCells() {
 // ============================================
 function updateStats() {
   const statsEl = document.getElementById('statsRow');
-  let minLevel = MAX_LEVEL, maxLevel = 0, sum = 0;
+  let activeCount = 0, sum = 0;
   for (let i = 0; i < GRID * GRID; i++) {
-    if (cellLevels[i] < minLevel) minLevel = cellLevels[i];
-    if (cellLevels[i] > maxLevel) maxLevel = cellLevels[i];
-    sum += cellLevels[i];
+    if (ACTIVE_MASK[i]) {
+      sum += cellLevels[i];
+      activeCount++;
+    }
   }
-  const avg = sum / (GRID * GRID);
+  const avg = activeCount > 0 ? sum / activeCount : 0;
   const avgPct = Math.round(avg / MAX_LEVEL * 100);
-  
-  // Compute effective block range
-  const minBlocks = MIN_BLOCKS_PER_CELL + Math.round((MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(minLevel / MAX_LEVEL, 0.7));
-  const maxBlocks = MIN_BLOCKS_PER_CELL + Math.round((MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(maxLevel / MAX_LEVEL, 0.7));
-  
+  const totalBlocks = getGlobalBlockCount();
+
   statsEl.innerHTML = `
     <div class="stat"><div class="stat-label">Avg Resolution</div><div class="stat-value">${avgPct}%</div></div>
-    <div class="stat"><div class="stat-label">Min Cell</div><div class="stat-value">${Math.round(minLevel/MAX_LEVEL*100)}%</div></div>
-    <div class="stat"><div class="stat-label">Max Cell</div><div class="stat-value">${Math.round(maxLevel/MAX_LEVEL*100)}%</div></div>
-    <div class="stat"><div class="stat-label">Block Range</div><div class="stat-value">${minBlocks}–${maxBlocks}</div></div>
+    <div class="stat"><div class="stat-label">Global Blocks</div><div class="stat-value">${totalBlocks}×${totalBlocks}</div></div>
+    <div class="stat"><div class="stat-label">Active Cells</div><div class="stat-value">${activeCount} / ${GRID*GRID}</div></div>
+    <div class="stat"><div class="stat-label">Pixel Size</div><div class="stat-value">${(IMG_SIZE / totalBlocks).toFixed(1)}px</div></div>
   `;
 }
 
 // ============================================
-// MAIN RENDER LOOP
+// MAIN RENDER
 // ============================================
 function render() {
+  cachedBlockCount = -1; // invalidate FFT cache
   drawSmiley();
   drawFFTCells();
   updateStats();
