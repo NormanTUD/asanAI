@@ -12,9 +12,13 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .instructions{background:#1e293b;border-radius:10px;padding:14px 20px;margin-bottom:20px;font-size:0.82em;color:#94a3b8;max-width:560px;text-align:center;border:1px solid #334155}
 .instructions b{color:#93c5fd}
 .instructions .key{display:inline-block;background:#334155;border-radius:4px;padding:1px 6px;font-weight:bold;color:#e2e8f0;margin:0 2px}
-.fft-section{text-align:center;margin-bottom:6px}
-.fft-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.fft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
+
+/* NEW: side-by-side layout for the two small grids */
+.dual-grid-row{display:flex;gap:24px;align-items:flex-start;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.grid-column{text-align:center}
+
+.fft-label,.fft-spectrum-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.fft-grid,.fft-spectrum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
 .fft-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid #334155;transition:border-color 0.2s,box-shadow 0.2s}
 .fft-cell:hover{border-color:#8b5cf6;box-shadow:0 0 12px #8b5cf640}
 .fft-cell canvas{width:100%;height:100%;display:block}
@@ -22,6 +26,11 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .fft-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
 .fft-cell .mode-badge{position:absolute;top:4px;left:4px;background:rgba(139,92,246,0.8);color:#fff;font-size:0.55em;padding:1px 4px;border-radius:3px;display:none}
 .fft-cell .mode-badge.active{display:block}
+.fft-spectrum-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid #1e3a5f;transition:border-color 0.2s,box-shadow 0.2s}
+.fft-spectrum-cell:hover{border-color:#38bdf8;box-shadow:0 0 12px #38bdf840}
+.fft-spectrum-cell canvas{width:100%;height:100%;display:block}
+.fft-spectrum-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
+.fft-spectrum-cell .level-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#38bdf8;font-size:0.65em;padding:2px 5px;border-radius:4px;font-weight:bold}
 .arrow-down{font-size:2em;color:#64748b;margin:12px 0;text-align:center}
 .arrow-down small{font-size:0.35em;display:block;color:#94a3b8}
 .smiley-section{text-align:center}
@@ -33,14 +42,6 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .stat{background:#1e293b;border-radius:8px;padding:6px 14px;text-align:center;border:1px solid #334155}
 .stat-label{font-size:0.65em;color:#64748b}
 .stat-value{font-size:1.1em;font-weight:bold;color:#4ade80}
-.fft-spectrum-section{text-align:center;margin-top:6px;margin-bottom:6px}
-.fft-spectrum-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.fft-spectrum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
-.fft-spectrum-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid #1e3a5f;transition:border-color 0.2s,box-shadow 0.2s}
-.fft-spectrum-cell:hover{border-color:#38bdf8;box-shadow:0 0 12px #38bdf840}
-.fft-spectrum-cell canvas{width:100%;height:100%;display:block}
-.fft-spectrum-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
-.fft-spectrum-cell .level-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#38bdf8;font-size:0.65em;padding:2px 5px;border-radius:4px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -56,16 +57,16 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
   <b>Pipeline:</b> Zoom level → Zoomed image → FFT spectrum from zoomed image
 </div>
 
-<div class="fft-section">
-  <div class="fft-label">FFT Frequency Domain (3×3 regions) — click to zoom</div>
-  <div class="fft-grid" id="fftGrid"></div>
-</div>
-
-<div class="arrow-down">↓<small>FFT magnitude spectrum per zoomed patch</small></div>
-
-<div class="fft-spectrum-section">
-  <div class="fft-spectrum-label">FFT Pattern Visualization (magnitude spectrum per cell) — click to zoom</div>
-  <div class="fft-spectrum-grid" id="fftSpectrumGrid"></div>
+<!-- NEW: Both grids side by side -->
+<div class="dual-grid-row">
+  <div class="grid-column">
+    <div class="fft-label">FFT Frequency Domain (3×3) — click to zoom</div>
+    <div class="fft-grid" id="fftGrid"></div>
+  </div>
+  <div class="grid-column">
+    <div class="fft-spectrum-label">FFT Magnitude Spectrum — click to zoom</div>
+    <div class="fft-spectrum-grid" id="fftSpectrumGrid"></div>
+  </div>
 </div>
 
 <div class="arrow-down">↓<small>inverse FFT → spatial domain</small></div>
@@ -86,7 +87,7 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 // ============================================
 const GRID = 3;
 const IMG_SIZE = 396;
-const CELL_SIZE = IMG_SIZE / GRID; // 132
+const CELL_SIZE = IMG_SIZE / GRID;
 const MAX_LEVEL = 24;
 const NATIVE_LEVEL = 12;
 const MIN_BLOCKS_PER_CELL = 2;
@@ -166,7 +167,7 @@ function sincInterpolate(nx, ny, baseRes) {
 }
 
 // ============================================
-// Level to blocks conversion (blocks across FULL image)
+// Level to blocks conversion
 // ============================================
 function levelToBlocks(level) {
   const t = level / MAX_LEVEL;
@@ -174,7 +175,7 @@ function levelToBlocks(level) {
 }
 
 // ============================================
-// RENDERING SETUP — no DPR scaling to avoid putImageData issues
+// RENDERING SETUP
 // ============================================
 const smileyCanvas = document.getElementById('smileyCanvas');
 smileyCanvas.width = IMG_SIZE;
@@ -230,18 +231,20 @@ for (let i = 0; i < GRID * GRID; i++) {
   cell.addEventListener('click', (e) => {
     e.preventDefault();
     cellLevels[i] = Math.min(MAX_LEVEL, cellLevels[i] + 1);
-    render();
+    renderCell(i);
+    renderSmileyDebounced();
   });
 
   cell.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     cellLevels[i] = Math.max(0, cellLevels[i] - 1);
-    render();
+    renderCell(i);
+    renderSmileyDebounced();
   });
 }
 
 // ============================================
-// FFT SPECTRUM GRID — also clickable
+// FFT SPECTRUM GRID
 // ============================================
 const spectrumGridEl = document.getElementById('fftSpectrumGrid');
 const spectrumCanvases = [];
@@ -273,36 +276,79 @@ for (let i = 0; i < GRID * GRID; i++) {
   cell.addEventListener('click', (e) => {
     e.preventDefault();
     cellLevels[i] = Math.min(MAX_LEVEL, cellLevels[i] + 1);
-    render();
+    renderCell(i);
+    renderSmileyDebounced();
   });
 
   cell.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     cellLevels[i] = Math.max(0, cellLevels[i] - 1);
-    render();
+    renderCell(i);
+    renderSmileyDebounced();
   });
 }
 
 // ============================================
-// Simple 2D DFT
+// PRECOMPUTE twiddle factors for DFT (key perf fix)
+// ============================================
+const twiddleCache = {};
+
+function getTwiddles(N) {
+  if (twiddleCache[N]) return twiddleCache[N];
+  const cos = new Float64Array(N * N);
+  const sin = new Float64Array(N * N);
+  for (let k = 0; k < N; k++) {
+    for (let n = 0; n < N; n++) {
+      const angle = -2 * Math.PI * k * n / N;
+      cos[k * N + n] = Math.cos(angle);
+      sin[k * N + n] = Math.sin(angle);
+    }
+  }
+  twiddleCache[N] = { cos, sin };
+  return twiddleCache[N];
+}
+
+// ============================================
+// Optimized 2D DFT using separable 1D transforms + precomputed twiddles
 // ============================================
 function computeFFTMagnitude(patchData, N) {
+  const tw = getTwiddles(N);
   const mag = new Float64Array(N * N);
 
-  for (let v = 0; v < N; v++) {
+  // Separable: row transform then column transform
+  const realRows = new Float64Array(N * N);
+  const imagRows = new Float64Array(N * N);
+
+  // Row-wise DFT
+  for (let y = 0; y < N; y++) {
     for (let u = 0; u < N; u++) {
-      let realSum = 0;
-      let imagSum = 0;
-      for (let y = 0; y < N; y++) {
-        for (let x = 0; x < N; x++) {
-          const angle = -2 * Math.PI * ((u * x / N) + (v * y / N));
-          realSum += patchData[y * N + x] * Math.cos(angle);
-          imagSum += patchData[y * N + x] * Math.sin(angle);
-        }
+      let re = 0, im = 0;
+      for (let x = 0; x < N; x++) {
+        const val = patchData[y * N + x];
+        re += val * tw.cos[u * N + x];
+        im += val * tw.sin[u * N + x];
       }
+      realRows[y * N + u] = re;
+      imagRows[y * N + u] = im;
+    }
+  }
+
+  // Column-wise DFT on the row-transformed data
+  for (let u = 0; u < N; u++) {
+    for (let v = 0; v < N; v++) {
+      let re = 0, im = 0;
+      for (let y = 0; y < N; y++) {
+        const rowRe = realRows[y * N + u];
+        const rowIm = imagRows[y * N + u];
+        const c = tw.cos[v * N + y];
+        const s = tw.sin[v * N + y];
+        re += rowRe * c - rowIm * s;
+        im += rowRe * s + rowIm * c;
+      }
+      // Shift DC to center
       const su = (u + Math.floor(N / 2)) % N;
       const sv = (v + Math.floor(N / 2)) % N;
-      mag[sv * N + su] = Math.sqrt(realSum * realSum + imagSum * imagSum);
+      mag[sv * N + su] = Math.sqrt(re * re + im * im);
     }
   }
   return mag;
@@ -345,8 +391,7 @@ function getEffectiveLevel(px, py) {
 }
 
 // ============================================
-// Compute zoomed patch for a cell (holographic: full smiley at cell's resolution)
-// Returns NxN Float64Array
+// Compute zoomed patch for a cell
 // ============================================
 function computeZoomedPatch(cellIndex, N) {
   const level = cellLevels[cellIndex];
@@ -372,7 +417,6 @@ function computeZoomedPatch(cellIndex, N) {
   } else {
     for (let y = 0; y < N; y++) {
       for (let x = 0; x < N; x++) {
-        // Map pixel to block, then sample center of that block
         const blockX = Math.floor(x * blocksPerCell / N);
         const blockY = Math.floor(y * blocksPerCell / N);
         const sampleNx = (blockX + 0.5) / blocksPerCell;
@@ -386,14 +430,13 @@ function computeZoomedPatch(cellIndex, N) {
 }
 
 // ============================================
-// DRAW SMILEY — FIX: use normalized coords across full image
+// DRAW SMILEY
 // ============================================
 function drawSmiley() {
   const imgData = smileyCtx.createImageData(IMG_SIZE, IMG_SIZE);
 
   for (let py = 0; py < IMG_SIZE; py++) {
     for (let px = 0; px < IMG_SIZE; px++) {
-      // Normalized position across the FULL image [0,1]
       const nx = (px + 0.5) / IMG_SIZE;
       const ny = (py + 0.5) / IMG_SIZE;
 
@@ -415,7 +458,6 @@ function drawSmiley() {
         const ring = Math.sin(px * ringFreq * 0.1) * Math.sin(py * ringFreq * 0.1) * 0.03 * overzoomAmount;
         val += ring;
       } else {
-        // FIX: pixelate using normalized coords across full image
         const blockX = Math.floor(nx * blocksPerCell);
         const blockY = Math.floor(ny * blocksPerCell);
         const sampleNx = (Math.min(blockX, Math.ceil(blocksPerCell) - 1) + 0.5) / blocksPerCell;
@@ -508,29 +550,28 @@ function drawSmiley() {
 }
 
 // ============================================
-// DRAW FFT CELLS (zoomed smiley patches)
+// DRAW single FFT CELL (zoomed smiley patch)
 // ============================================
-function drawFFTCells() {
-  for (let ci = 0; ci < GRID * GRID; ci++) {
-    const canvas = cellCanvases[ci];
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
+function drawFFTCell(ci) {
+  const canvas = cellCanvases[ci];
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
 
-    const level = cellLevels[ci];
-    const isOverzoom = level > NATIVE_LEVEL;
+  const level = cellLevels[ci];
+  const isOverzoom = level > NATIVE_LEVEL;
 
-    const patchData = computeZoomedPatch(ci, CELL_CANVAS_SIZE);
-    const imgData = ctx.createImageData(CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
+  const patchData = computeZoomedPatch(ci, CELL_CANVAS_SIZE);
+  const imgData = ctx.createImageData(CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
 
-    for (let y = 0; y < CELL_CANVAS_SIZE; y++) {
-      for (let x = 0; x < CELL_CANVAS_SIZE; x++) {
-        const v = patchData[y * CELL_CANVAS_SIZE + x];
-        const hueShift = ci * 0.02;
-        const r = Math.round(30 + v * 200);
-        const g = Math.round(20 + v * 160 + hueShift * 20);
-        const b = Math.round(60 + v * 100);
+  for (let y = 0; y < CELL_CANVAS_SIZE; y++) {
+    for (let x = 0; x < CELL_CANVAS_SIZE; x++) {
+      const v = patchData[y * CELL_CANVAS_SIZE + x];
+      const hueShift = ci * 0.02;
+      const r = Math.round(30 + v * 200);
+      const g = Math.round(20 + v * 160 + hueShift * 20);
+      const b = Math.round(60 + v * 100);
 
-        const pi = (y * CELL_CANVAS_SIZE + x) * 4;
+	            const pi = (y * CELL_CANVAS_SIZE + x) * 4;
         imgData.data[pi] = r;
         imgData.data[pi + 1] = g;
         imgData.data[pi + 2] = b;
@@ -578,27 +619,21 @@ function drawFFTCells() {
       modeEl.classList.remove('active');
     }
   }
-}
 
-// ============================================
-// DRAW FFT SPECTRUM CELLS
-// Computes FFT from the ZOOMED image at each cell's level
-// ============================================
-function drawFFTSpectrumCells() {
-  for (let ci = 0; ci < GRID * GRID; ci++) {
+  // ============================================
+  // DRAW single FFT SPECTRUM CELL
+  // ============================================
+  function drawSpectrumCell(ci) {
     const canvas = spectrumCanvases[ci];
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
 
     const level = cellLevels[ci];
 
-    // Cap DFT size for performance (DFT is O(N^4))
+    // Cap DFT size for performance
     const N = Math.min(Math.max(4, Math.round(levelToBlocks(level))), 28);
 
-    // First compute the zoomed patch, THEN derive FFT from it
     const zoomedPatch = computeZoomedPatch(ci, N);
-
-    // Compute FFT magnitude spectrum from the zoomed patch
     const mag = computeFFTMagnitude(zoomedPatch, N);
 
     // Log scale for visualization
@@ -619,7 +654,6 @@ function drawFFTSpectrumCells() {
         const by = Math.min(Math.floor(py / blockPx), N - 1);
         const v = logMax > 0 ? logMag[by * N + bx] / logMax : 0;
 
-        // Blue-cyan-white color map
         const r = Math.round(v * v * 255);
         const g = Math.round(v * 180 + v * v * 75);
         const b = Math.round(60 + v * 195);
@@ -646,44 +680,60 @@ function drawFFTSpectrumCells() {
     ctx.lineTo(CELL_CANVAS_SIZE, center);
     ctx.stroke();
 
-    // Update badge
     document.getElementById(`spectrum-badge-${ci}`).textContent = `L${level}`;
   }
-}
 
-// ============================================
-// STATS
-// ============================================
-function updateStats() {
-  const statsEl = document.getElementById('statsRow');
-  const levels = cellLevels.slice();
-  const avg = levels.reduce((a, b) => a + b, 0) / levels.length;
-  const overzoomCount = levels.filter(l => l > NATIVE_LEVEL).length;
+  // ============================================
+  // Render only the clicked cell + debounced smiley
+  // ============================================
+  function renderCell(i) {
+    drawFFTCell(i);
+    drawSpectrumCell(i);
+    updateStats();
+  }
 
-  statsEl.innerHTML = `
-    <div class="stat"><div class="stat-label">Avg Level</div><div class="stat-value">${Math.round(avg / MAX_LEVEL * 100)}%</div></div>
-    <div class="stat"><div class="stat-label">Active Cells</div><div class="stat-value">9 / 9</div></div>
-    <div class="stat"><div class="stat-label">Overzoomed</div><div class="stat-value" style="color:#38bdf8">${overzoomCount}</div></div>
-    <div class="stat"><div class="stat-label">Native Res</div><div class="stat-value" style="color:#fbbf24">L${NATIVE_LEVEL}</div></div>
-  `;
-}
+  let smileyTimer = null;
+  function renderSmileyDebounced() {
+    if (smileyTimer) cancelAnimationFrame(smileyTimer);
+    smileyTimer = requestAnimationFrame(() => {
+      drawSmiley();
+    });
+  }
 
-// ============================================
-// MAIN RENDER
-// ============================================
-function render() {
-  drawFFTCells();
-  drawFFTSpectrumCells();
-  drawSmiley();
-  updateStats();
-}
+  // ============================================
+  // STATS
+  // ============================================
+  function updateStats() {
+    const statsEl = document.getElementById('statsRow');
+    const levels = cellLevels.slice();
+    const avg = levels.reduce((a, b) => a + b, 0) / levels.length;
+    const overzoomCount = levels.filter(l => l > NATIVE_LEVEL).length;
 
-// Initial render
-render();
+    statsEl.innerHTML = `
+      <div class="stat"><div class="stat-label">Avg Level</div><div class="stat-value">${Math.round(avg / MAX_LEVEL * 100)}%</div></div>
+      <div class="stat"><div class="stat-label">Active Cells</div><div class="stat-value">9 / 9</div></div>
+      <div class="stat"><div class="stat-label">Overzoomed</div><div class="stat-value" style="color:#38bdf8">${overzoomCount}</div></div>
+      <div class="stat"><div class="stat-label">Native Res</div><div class="stat-value" style="color:#fbbf24">L${NATIVE_LEVEL}</div></div>
+    `;
+  }
 
-// Prevent context menu on grids
-document.getElementById('fftGrid').addEventListener('contextmenu', e => e.preventDefault());
-document.getElementById('fftSpectrumGrid').addEventListener('contextmenu', e => e.preventDefault());
+  // ============================================
+  // INITIAL FULL RENDER
+  // ============================================
+  function renderAll() {
+    for (let i = 0; i < GRID * GRID; i++) {
+      drawFFTCell(i);
+      drawSpectrumCell(i);
+    }
+    drawSmiley();
+    updateStats();
+  }
+
+  renderAll();
+
+  // Prevent context menu on grids
+  document.getElementById('fftGrid').addEventListener('contextmenu', e => e.preventDefault());
+  document.getElementById('fftSpectrumGrid').addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
 </html>
