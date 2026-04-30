@@ -246,15 +246,19 @@ async function compile_model(recursion_level=0) {
 		await create_model_or_throw();
 	}
 
-	// --- FIX: Save weights before potential model recreation ---
+	// --- FIX: Only save/restore weights if the config hash has NOT changed ---
+	// If the config hash changed, the user intentionally changed something (e.g., initializer),
+	// so we should NOT restore old weights — let the new initializer take effect.
+	var config_changed = (model_config_hash != new_model_config_hash);
+
 	var saved_weights_json = null;
-	if (model && model.layers && model.layers.length) {
+	if (!config_changed && model && model.layers && model.layers.length) {
 		saved_weights_json = await get_weights_as_json(model);
 	}
 
 	await recreate_model_if_needed(new_model_config_hash);
 
-	// --- FIX: If model was recreated, restore the saved weights ---
+	// --- FIX: Only restore weights if config did NOT change ---
 	if (saved_weights_json && model && model.layers && model.layers.length) {
 		try {
 			var current_weights_json = await get_weights_as_json(model);
@@ -270,6 +274,11 @@ async function compile_model(recursion_level=0) {
 		} catch (e) {
 			dbg("[compile_model] Could not restore weights after recreation: " + e);
 		}
+	}
+
+	if (config_changed) {
+		// Config changed → new initializers applied → clear editables so they re-sync
+		math_clear_editables();
 	}
 
 	if(!model) {
