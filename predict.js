@@ -700,7 +700,7 @@ async function handle_predict_error (e, predict_data) {
 
 async function get_predict_data_or_warn_in_case_of_error(predict_data) {
     try {
-        predict_data = await tidy(async () => {
+        predict_data = await tidy(() => {
             var raw_input = get_predict_input_value();
 
             // Guard: if model expects image input but raw_input is not a valid pixels source, bail out

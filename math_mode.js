@@ -487,7 +487,7 @@ function get_values_for_optimizer_array_from_array(values, _val, _key) {
 			var variable_val = _val[j].variable;
 			if (typeof variable_val !== 'undefined' && variable_val !== null && !variable_val.isDisposedInternal) {
 				try {
-					var _this_res = tidy(() => { tf.engine().startScope(); const data = array_sync(raw_val, true); tf.engine().endScope(); return data; });
+					var _this_res = tidy(() => { return array_sync(raw_val, true); });
 
 					values[_key][j] = _this_res;
 				} catch (_err) {
