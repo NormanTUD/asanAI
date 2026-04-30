@@ -2750,6 +2750,8 @@ async function run_tests (quick=0) {
 		test_equal("test_loss_landscape()", await test_loss_landscape(), true);
 		test_equal("test_if_plotter_is_shown()", await test_if_plotter_is_shown(), true);
 
+		test_equal("test_math_editable_system()", await test_math_editable_system(), true);
+
 		test_no_new_errors_or_warnings();
 
 		await run_quick_start_stop_training_test();
