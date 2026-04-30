@@ -534,19 +534,7 @@ function _register_1d_param_editables(layer_idx, layer_data, param_name, max_cou
 
 function _register_single_1d_editable(layer_idx, layer_data, param_name, idx, weight_idx, decimals) {
 	var eid = "L" + layer_idx + "_" + param_name + "_" + idx;
-	math_register_editable(
-		eid,
-		function() { return layer_data[layer_idx][param_name][idx]; },
-		function(v) {
-			layer_data[layer_idx][param_name][idx] = v;
-			if (weight_idx >= 0) {
-				_math_apply_single_weight(layer_idx, weight_idx, layer_data[layer_idx][param_name]);
-			}
-		},
-		-10, 10,
-		"Layer " + layer_idx + " " + param_name + "[" + idx + "]",
-		{ decimals: decimals }
-	);
+	math_register_editable(eid, function() { return layer_data[layer_idx][param_name][idx]; }, function(v) { layer_data[layer_idx][param_name][idx] = v; if (weight_idx >= 0) { _math_apply_single_weight(layer_idx, weight_idx, layer_data[layer_idx][param_name]); } }, -10, 10, "Layer " + layer_idx + " " + param_name + "[" + idx + "]", { decimals: decimals });
 }
 
 /**
