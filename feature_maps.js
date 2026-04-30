@@ -629,7 +629,33 @@ async function predict_maximally_activated(item, force_category) {
 	dbg("Getting results");
 	var results;
 	try {
-		results = await predict(item);
+		// Build tensor directly from the canvas element
+		var tensor_img = await _get_tensor_img(item);
+		if (!tensor_img) {
+			err("predict_maximally_activated: could not create tensor from item");
+			return;
+		}
+
+		var predictions_tensor = await __predict(tensor_img);
+		await dispose(tensor_img);
+
+		if (!predictions_tensor) {
+			err(language[lang]["results_is_empty_in"] + " predict_maximally_activated");
+			return;
+		}
+
+		// Format results as HTML table (same as predict() does)
+		if (model.outputShape.length == 4) {
+			// image output - not typical for maximally activated predictions
+			results = "";
+		} else {
+			var desc = $("<span></span>");
+			await _predict_table(predictions_tensor, desc);
+			results = desc.html();
+		}
+
+		await dispose(predictions_tensor);
+
 		dbg("Got results");
 	} catch (e) {
 		err(e && e.message ? e.message : e);
