@@ -290,22 +290,7 @@ html, body {
     <p><strong>Topology</strong> is the branch of mathematics that studies shapes — but it <em>throws away distances</em>. It only cares about <strong>what's connected to what</strong>.</p>
     <p>The famous example: a coffee mug and a donut (torus) are <strong>topologically the same</strong>, because you can smoothly deform one into the other without cutting or gluing.</p>
 
-	<!-- Tool container for Slide 5 -->
-	<div class="tool-container" id="torus-mug-tool">
-	  <p style="text-align:center; color:var(--text-secondary); margin-bottom:0.5em;">
-	    Drag the slider to smoothly deform a coffee mug into a donut. Click &amp; drag to rotate freely.
-	  </p>
-	  <div style="display:flex; align-items:center; gap:1em; justify-content:center; margin-bottom:0.5em;">
-	    <span style="font-size:1.8em;">☕</span>
-	    <input type="range" id="torus-morph" min="0" max="100" value="0" step="1" style="width:300px; accent-color: var(--accent);">
-	    <span style="font-size:1.8em;">🍩</span>
-	  </div>
-	  <div id="torus-3d-container" style="width:700px; height:440px; margin:0 auto; border-radius:8px; overflow:hidden; background:#080818; cursor:grab;"></div>
-	  <p id="morph-label" style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:0.5em;">
-	    ☕ Coffee Mug — genus 1 (one hole: the handle)
-	  </p>
-	</div>
-
+      <img src="figures/output.gif" alt="A Coffee Mug can smoothly be transformed into a Torus, without cutting or glueing">
 
     <p>Why does this matter for AI? Because the AI's computations are <strong>topological</strong> — they care about the <em>shape</em> of relationships, not exact distances.</p>
   </div>
