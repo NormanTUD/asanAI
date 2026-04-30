@@ -286,16 +286,23 @@ html, body {
     <h2>What is Topology? ☕ = 🍩</h2>
     <p><strong>Topology</strong> is the branch of mathematics that studies shapes — but it <em>throws away distances</em>. It only cares about <strong>what's connected to what</strong>.</p>
     <p>The famous example: a coffee mug and a donut (torus) are <strong>topologically the same</strong>, because you can smoothly deform one into the other without cutting or gluing.</p>
-    <div class="tool-container" id="torus-mug-tool">
-      <p style="text-align:center; color:var(--text-secondary); margin-bottom:0.5em;">Drag the slider to morph between a coffee mug and a donut:</p>
-      <div style="display:flex; align-items:center; gap:1em; justify-content:center; margin-bottom:1em;">
-        <span style="font-size:2em;">☕</span>
-        <input type="range" id="torus-morph" min="0" max="100" value="0" style="width:300px; accent-color: var(--accent);">
-        <span style="font-size:2em;">🍩</span>
-      </div>
-      <canvas id="torus-canvas" width="700" height="350"></canvas>
-      <p style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:0.5em;">Both have exactly <strong>one hole</strong>. That's all topology cares about.</p>
-    </div>
+	<!-- Replace the tool-container content in Slide 5 -->
+	<div class="tool-container" id="torus-mug-tool">
+	  <p style="text-align:center; color:var(--text-secondary); margin-bottom:0.5em;">
+	    Drag the slider to smoothly deform a coffee mug into a donut.<br>
+	    <span style="color:var(--accent2);">Watch how the handle's hole becomes the donut's hole — it's never created or destroyed.</span>
+	  </p>
+	  <div style="display:flex; align-items:center; gap:1em; justify-content:center; margin-bottom:1em;">
+	    <span style="font-size:2em;">☕</span>
+	    <input type="range" id="torus-morph" min="0" max="100" value="0" style="width:300px; accent-color: var(--accent);">
+	    <span style="font-size:2em;">🍩</span>
+	  </div>
+	  <canvas id="torus-canvas" width="700" height="350"></canvas>
+	  <p style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:0.5em;">
+	    Both shapes have exactly <strong>one hole</strong> (genus 1). Topology ignores stretching and squishing — it only tracks holes, connections, and boundaries.
+	  </p>
+	</div>
+
     <p>Why does this matter for AI? Because the AI's computations are <strong>topological</strong> — they care about the <em>shape</em> of relationships, not exact distances.</p>
   </div>
 </div>
@@ -678,7 +685,7 @@ function renderAllLatex() {
 }
 
 // ══════════════════════════════════════════════════════════
-// TORUS ↔ MUG MORPH
+// TORUS ↔ MUG MORPH (IMPROVED)
 // ══════════════════════════════════════════════════════════
 
 function initTorusMorph() {
@@ -694,58 +701,151 @@ function initTorusMorph() {
 
     const cx = w / 2, cy = h / 2;
 
-    // Draw the morphing shape
-    ctx.strokeStyle = '#6c63ff';
-    ctx.lineWidth = 3;
-    ctx.shadowColor = '#6c63ff';
-    ctx.shadowBlur = 8;
+    // --- DRAW THE MUG (fades out as t increases) ---
+    // --- DRAW THE TORUS (fades in as t increases) ---
+    // We'll draw both and cross-fade, plus a mid-morph interpolation
 
-    // Mug body (rectangle that becomes a torus)
-    const mugW = 180 * (1 - t) + 0 * t;
-    const mugH = 140 * (1 - t) + 0 * t;
-    const torusR = 100 * t;
-    const torusr = 35 * t + 20 * (1 - t);
+    ctx.save();
 
-    // Outer shape: morph from rectangle to ellipse (torus cross-section)
-    ctx.beginPath();
-    const steps = 100;
-    for (let i = 0; i <= steps; i++) {
-      const angle = (i / steps) * Math.PI * 2;
-      // Mug shape (rounded rectangle)
-      const mugX = cx + Math.cos(angle) * (90 + 40 * Math.cos(angle * 2)) * (1 - t);
-      const mugY = cy + Math.sin(angle) * 70 * (1 - t);
-      // Torus shape
-      const torusX = cx + Math.cos(angle) * (torusR + torusr) * t;
-      const torusY = cy + Math.sin(angle) * torusr * t * 1.8;
-      const x = mugX + torusX - cx * t;
-      const y = mugY + torusY - cy * t;
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    if (t <= 0.5) {
+      // Phase 1: Mug shrinking body, handle growing
+      const localT = t / 0.5; // 0 to 1 within this phase
+
+      // Mug body (trapezoid/rounded rect shape)
+      const bodyW = 120 * (1 - localT * 0.7);
+      const bodyH = 140 * (1 - localT * 0.5);
+      const bodyX = cx - bodyW / 2 - 30 * localT;
+      const bodyY = cy - bodyH / 2;
+      const bodyRadius = 10 + localT * 20;
+
+      ctx.beginPath();
+      ctx.strokeStyle = '#6c63ff';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#6c63ff';
+      ctx.shadowBlur = 10;
+
+      // Body as rounded rectangle
+      const bx = bodyX, by = bodyY, bw = bodyW, bh = bodyH, br = bodyRadius;
+      ctx.moveTo(bx + br, by);
+      ctx.lineTo(bx + bw - br, by);
+      ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + br);
+      ctx.lineTo(bx + bw, by + bh - br);
+      ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - br, by + bh);
+      ctx.lineTo(bx + br, by + bh);
+      ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - br);
+      ctx.lineTo(bx, by + br);
+      ctx.quadraticCurveTo(bx, by, bx + br, by);
+      ctx.closePath();
+      ctx.stroke();
+
+      // Handle (D-shape on the right side, hole highlighted)
+      const handleCx = bx + bw + 20 + localT * 30;
+      const handleCy = cy;
+      const handleRx = 25 + localT * 30; // grows
+      const handleRy = 40 * (1 - localT * 0.3);
+
+      ctx.beginPath();
+      ctx.strokeStyle = '#6c63ff';
+      ctx.lineWidth = 3;
+      ctx.ellipse(handleCx, handleCy, handleRx, handleRy, 0, -Math.PI / 2, Math.PI / 2);
+      ctx.stroke();
+
+      // Connect handle to body
+      ctx.beginPath();
+      ctx.moveTo(bx + bw, cy - handleRy);
+      ctx.lineTo(handleCx, cy - handleRy);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(bx + bw, cy + handleRy);
+      ctx.lineTo(handleCx, cy + handleRy);
+      ctx.stroke();
+
+      // Highlight the hole
+      ctx.beginPath();
+      ctx.strokeStyle = '#00d4aa';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([4, 4]);
+      ctx.ellipse(handleCx - 5, handleCy, handleRx * 0.5, handleRy * 0.55, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Label the hole
+      ctx.fillStyle = '#00d4aa';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('← THE HOLE', handleCx + handleRx + 45, handleCy + 4);
+
+      ctx.shadowBlur = 0;
+
+    } else {
+      // Phase 2: Morph into torus
+      const localT = (t - 0.5) / 0.5; // 0 to 1 within this phase
+
+      // Torus parameters (3D-ish top-down view)
+      const R = 80 + localT * 20; // major radius
+      const r = 30 + localT * 10; // minor radius (tube thickness)
+
+      ctx.strokeStyle = '#6c63ff';
+      ctx.lineWidth = 3;
+      ctx.shadowColor = '#6c63ff';
+      ctx.shadowBlur = 10;
+
+      // Outer ellipse of torus
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, R + r, (R + r) * 0.45, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Inner ellipse of torus (the hole)
+      ctx.beginPath();
+      ctx.strokeStyle = '#6c63ff';
+      ctx.ellipse(cx, cy, R - r, (R - r) * 0.45, 0, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Connect top and bottom with slight curves to give 3D appearance
+      // Top connecting arc
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(108, 99, 255, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.ellipse(cx, cy - (R) * 0.45 + r * 0.2, r, r * 0.5, 0, Math.PI, Math.PI * 2);
+      ctx.stroke();
+
+      // Highlight the hole
+      ctx.beginPath();
+      ctx.strokeStyle = '#00d4aa';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([4, 4]);
+      ctx.ellipse(cx, cy, (R - r) * 0.7, (R - r) * 0.3, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Label the hole
+      ctx.fillStyle = '#00d4aa';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('THE HOLE', cx, cy + 5);
+
+      ctx.shadowBlur = 0;
     }
-    ctx.closePath();
-    ctx.stroke();
 
-    // The hole (handle → torus hole)
-    ctx.beginPath();
-    ctx.strokeStyle = '#00d4aa';
-    ctx.lineWidth = 2.5;
-    for (let i = 0; i <= steps; i++) {
-      const angle = (i / steps) * Math.PI * 2;
-      // Handle hole (small ellipse on the right side of mug)
-      const handleX = cx + 110 * (1 - t) + Math.cos(angle) * (15 + torusR * 0.4 * t);
-      const handleY = cy + Math.sin(angle) * (25 * (1 - t) + torusr * 0.6 * t);
-      if (i === 0) ctx.moveTo(handleX, handleY); else ctx.lineTo(handleX, handleY);
-    }
-    ctx.closePath();
-    ctx.stroke();
-    ctx.shadowBlur = 0;
+    ctx.restore();
 
-    // Labels
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    // Bottom label
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
     ctx.font = '14px system-ui';
     ctx.textAlign = 'center';
-    if (t < 0.3) ctx.fillText('Coffee Mug', cx, h - 20);
-    else if (t > 0.7) ctx.fillText('Donut (Torus)', cx, h - 20);
-    else ctx.fillText('Morphing... (1 hole throughout!)', cx, h - 20);
+    if (t < 0.15) {
+      ctx.fillText('☕ Coffee Mug — one hole (the handle)', cx, h - 15);
+    } else if (t > 0.85) {
+      ctx.fillText('🍩 Donut (Torus) — one hole (the center)', cx, h - 15);
+    } else {
+      ctx.fillText('Smoothly deforming... the hole is preserved throughout!', cx, h - 15);
+    }
+
+    // Top-right: genus label
+    ctx.fillStyle = '#00d4aa';
+    ctx.font = 'bold 14px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('genus = 1 (one hole) ✓', w - 20, 25);
   }
 
   slider.addEventListener('input', draw);
