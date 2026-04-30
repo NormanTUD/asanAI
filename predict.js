@@ -698,9 +698,7 @@ async function handle_predict_error (e, predict_data) {
 	}
 }
 
-async function get_predict_data_or_warn_in_case_of_error() {
-    var predict_data = null;
-
+async function get_predict_data_or_warn_in_case_of_error(predict_data) {
     try {
         predict_data = await tidy(async () => {
             var raw_input = get_predict_input_value();
@@ -720,7 +718,7 @@ async function get_predict_data_or_warn_in_case_of_error() {
             return divided;
         });
     } catch (e) {
-        handle_predict_error(e);
+        handle_predict_error(e, predict_data);
         console.trace();
         return null;
     }
@@ -770,7 +768,7 @@ function get_non_image_prediction_data (predict_data, item) {
 
 async function get_predict_data (is_image_prediction, predict_data, item) {
 	if(is_image_prediction) {
-		predict_data = await get_predict_data_or_warn_in_case_of_error(predict_data, item);
+		predict_data = await get_predict_data_or_warn_in_case_of_error(predict_data);
 	} else {
 		predict_data = await get_non_image_prediction_data(predict_data, item);
 	}

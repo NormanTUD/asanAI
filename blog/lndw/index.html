@@ -289,19 +289,19 @@ html, body {
     <p><strong>Topology</strong> is the branch of mathematics that studies shapes — but it <em>throws away distances</em>. It only cares about <strong>what's connected to what</strong>.</p>
     <p>The famous example: a coffee mug and a donut (torus) are <strong>topologically the same</strong>, because you can smoothly deform one into the other without cutting or gluing.</p>
 
+	<!-- Tool container for Slide 5 -->
 	<div class="tool-container" id="torus-mug-tool">
 	  <p style="text-align:center; color:var(--text-secondary); margin-bottom:0.5em;">
-	    Drag the slider to smoothly deform a coffee mug into a donut. Click &amp; drag the shape to rotate it freely.<br>
-	    <span style="color:var(--accent2);">The surface is a single continuous 3D mesh — no cuts, no jumps.</span>
+	    Drag the slider to smoothly deform a coffee mug into a donut. Click &amp; drag to rotate freely.
 	  </p>
-	  <div style="display:flex; align-items:center; gap:1em; justify-content:center; margin-bottom:1em;">
-	    <span style="font-size:2em;">☕</span>
+	  <div style="display:flex; align-items:center; gap:1em; justify-content:center; margin-bottom:0.5em;">
+	    <span style="font-size:1.8em;">☕</span>
 	    <input type="range" id="torus-morph" min="0" max="100" value="0" step="1" style="width:300px; accent-color: var(--accent);">
-	    <span style="font-size:2em;">🍩</span>
+	    <span style="font-size:1.8em;">🍩</span>
 	  </div>
-	  <div id="torus-3d-container" style="width:700px; height:420px; margin:0 auto; border-radius:8px; overflow:hidden; background:#080818;"></div>
-	  <p style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:0.5em;">
-	    Both shapes have exactly <strong>one hole</strong> (genus 1). The mesh deforms continuously — every intermediate shape is valid. Drag to rotate freely.
+	  <div id="torus-3d-container" style="width:700px; height:440px; margin:0 auto; border-radius:8px; overflow:hidden; background:#080818; cursor:grab;"></div>
+	  <p id="morph-label" style="text-align:center; font-size:0.85em; color:var(--text-muted); margin-top:0.5em;">
+	    ☕ Coffee Mug — genus 1 (one hole: the handle)
 	  </p>
 	</div>
 
@@ -695,32 +695,38 @@ function renderAllLatex() {
 function initTorusMorph() {
   const container = document.getElementById('torus-3d-container');
   const slider = document.getElementById('torus-morph');
+  const label = document.getElementById('morph-label');
   if (!container || !slider) return;
 
-  const W = 700, H = 420;
+  const W = 700, H = 440;
+
+  // ═══════════════════════════════════════════════════════
+  // THREE.JS SETUP
+  // ═══════════════════════════════════════════════════════
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x080818);
+  scene.background = new THREE.Color(0x0a0a1a);
 
-  const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100);
-  camera.position.set(3.5, 2.5, 5);
-  camera.lookAt(0, 0.5, 0);
+  const camera = new THREE.PerspectiveCamera(35, W / H, 0.1, 100);
+  camera.position.set(4, 3, 5);
+  camera.lookAt(0, 0.4, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(W, H);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   container.appendChild(renderer.domElement);
 
+  // OrbitControls — attached to renderer.domElement (Fix #10)
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.enableZoom = true;
-  controls.enablePan = true;
-  controls.minDistance = 2.5;
-  controls.maxDistance = 15;
+  controls.enablePan = false;
+  controls.minDistance = 3;
+  controls.maxDistance = 12;
   controls.autoRotate = true;
-  controls.autoRotateSpeed = 1.2;
-  controls.target.set(0, 0.5, 0);
+  controls.autoRotateSpeed = 1.0;
+  controls.target.set(0, 0.4, 0);
 
   let idleTimer = null;
   controls.addEventListener('start', () => {
@@ -729,502 +735,418 @@ function initTorusMorph() {
   });
   controls.addEventListener('end', () => {
     clearTimeout(idleTimer);
-    idleTimer = setTimeout(() => { controls.autoRotate = true; }, 5000);
+    idleTimer = setTimeout(() => { controls.autoRotate = true; }, 4000);
   });
 
-  // Lighting
-  scene.add(new THREE.AmbientLight(0x606080, 0.6));
-  const keyLight = new THREE.DirectionalLight(0xffffff, 0.85);
-  keyLight.position.set(4, 6, 3);
-  scene.add(keyLight);
-  const fillLight = new THREE.DirectionalLight(0x8888ff, 0.25);
-  fillLight.position.set(-3, -1, -4);
-  scene.add(fillLight);
-  const rimLight = new THREE.PointLight(0x00d4aa, 0.3, 12);
-  rimLight.position.set(-2, 3, 3);
-  scene.add(rimLight);
+  // Prevent slider from triggering orbit controls (Fix #10)
+  slider.addEventListener('pointerdown', e => e.stopPropagation());
 
-  // Helpers
+  // Lighting (Fix #6 — good lighting makes normals visible)
+  scene.add(new THREE.AmbientLight(0x404060, 0.7));
+  const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+  keyLight.position.set(5, 8, 4);
+  scene.add(keyLight);
+  const fillLight = new THREE.DirectionalLight(0x6688cc, 0.3);
+  fillLight.position.set(-4, -2, -3);
+  scene.add(fillLight);
+  const backLight = new THREE.DirectionalLight(0x00d4aa, 0.2);
+  backLight.position.set(0, -4, -5);
+  scene.add(backLight);
+
+  // ═══════════════════════════════════════════════════════
+  // HELPERS
+  // ═══════════════════════════════════════════════════════
+
   function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
   function smoothstep(t) {
-    t = Math.max(0, Math.min(1, t));
+    t = clamp(t, 0, 1);
     return t * t * t * (t * (t * 6 - 15) + 10);
   }
-  function clamp(x, lo, hi) { return Math.max(lo, Math.min(hi, x)); }
 
-  // ═══════════════════════════════════════════════════════════════
-  // STRATEGY: Build a genus-1 mesh with (NU x NV) quad topology.
+  // ═══════════════════════════════════════════════════════
+  // MUG GEOMETRY BUILDER (Fix #1, #2, #3, #7)
   //
-  // For EACH vertex (i, j), we compute its 3D position at 5 keyframes:
-  //   K0 (t=0.00): Coffee mug
-  //   K1 (t=0.25): Mug with shrinking body
-  //   K2 (t=0.50): Body collapsed into thick ring around handle
-  //   K3 (t=0.75): Uniform thick ring (almost torus)
-  //   K4 (t=1.00): Perfect torus
+  // We build the mug as a structured grid of vertices:
   //
-  // At runtime, we interpolate between adjacent keyframes using
-  // Catmull-Rom spline for smooth motion.
+  // The mug is divided into RINGS (horizontal slices).
+  // Each ring is a circle of vertices at a specific (radius, height).
   //
-  // THE MUG MESH:
-  // We build the mug as a surface of revolution with a handle cutout.
-  // The mesh has torus topology (NU around azimuth, NV around profile).
+  // Ring layout (bottom to top):
+  //   Rings 0-1: Bottom (outer edge to inner edge at y=bottom)
+  //   Rings 2-N: Outer wall (bottom to top, at r=outerR)
+  //   Rings N+1-N+2: Rim (outer to inner at y=top)
+  //   Rings N+3-2N: Inner wall (top to bottom, at r=innerR)
+  //   Ring 2N+1: Inner bottom (connects to ring 1)
   //
-  // The "profile" at each azimuthal slice is:
-  //   - For slices AWAY from handle: the mug wall cross-section
-  //     (a closed loop: outer wall → rim → inner wall → bottom)
-  //   - For slices AT the handle: the profile detours outward
-  //     through the handle before continuing
+  // This creates a closed surface (the mug body shell).
   //
-  // This gives a proper genus-1 surface that LOOKS like a mug:
-  //   - You see the cylindrical body (outer wall)
-  //   - You see the interior (inner wall)
-  //   - You see the bottom
-  //   - You see the handle sticking out
-  //   - The hole is the handle hole
-  // ═══════════════════════════════════════════════════════════════
+  // The HANDLE is integrated by modifying vertices in a
+  // specific angular range: instead of following the body
+  // cylinder, those vertices follow the handle C-curve.
+  //
+  // CRITICAL INSIGHT: We DON'T build handle as separate geometry.
+  // Instead, we use a TORUS-TOPOLOGY grid (NRings × NSegments)
+  // where:
+  //   - NSegments = vertices around the azimuth (like torus u)
+  //   - NRings = vertices around the profile (like torus v)
+  //
+  // For the MUG, the "profile" at each azimuthal position is:
+  //   - Away from handle: the mug wall cross-section
+  //   - At handle: the profile detours through the handle
+  //
+  // For the TORUS, the profile is always a circle.
+  //
+  // Same topology → same index buffer → smooth morph!
+  // ═══════════════════════════════════════════════════════
 
-  const NU = 100; // slices around azimuth
-  const NV = 48;  // points around each profile
+  // Grid resolution
+  const N_SEG = 80;  // around azimuth (u direction)
+  const N_RING = 60; // around profile (v direction)
 
   // Mug dimensions
-  const mugOuterR = 0.85;
-  const mugInnerR = 0.68;
-  const mugTopY = 1.6;
-  const mugBotY = -0.2;
-  const mugBotThick = 0.14;
-  const handleExtent = 0.55;   // how far handle sticks out
-  const handleHalfH = 0.45;   // half vertical span of handle
-  const handleCenterY = 0.75; // vertical center of handle
-  const handleTubeR = 0.09;   // handle tube radius
+  const MUG = {
+    outerR: 0.82,
+    innerR: 0.66,
+    height: 1.7,
+    bottomY: -0.3,
+    bottomThick: 0.13,
+    rimThick: 0.04,
+    // Handle
+    handleR: 0.52,       // how far handle center extends from body
+    handleHalfH: 0.48,   // half vertical span
+    handleCenterY: 0.55, // vertical center of handle
+    handleTubeR: 0.085,  // tube radius
+  };
 
   // Torus dimensions
-  const torR = 1.0;  // major radius
-  const torr = 0.38; // minor radius
+  const TOR = {
+    R: 1.05,  // major radius
+    r: 0.36,  // minor radius
+  };
 
-  // Handle occupies this angular range (in u-space, 0 to 1)
-  const handleStartU = 0.92; // handle starts here
-  const handleEndU = 0.08;   // handle ends here (wraps around u=0)
-  // So handle is at u ∈ [0.92, 1.0] ∪ [0.0, 0.08]
-  // Total handle fraction: 0.16 of the circumference
+  // Handle angular region (in segment-space)
+  // Handle occupies segments in a range around segment 0
+  const HANDLE_SEG_COUNT = 10; // number of segments dedicated to handle
+  const HANDLE_BLEND_SEGS = 3; // transition segments on each side
 
-  function isInHandle(u) {
-    return u >= handleStartU || u <= handleEndU;
-  }
-
-  // Smooth blend: 1 inside handle, 0 outside, smooth transition
-  function handleFactor(u) {
-    const blendW = 0.03;
-    if (u >= handleStartU) {
-      const d = u - handleStartU;
-      if (d < blendW) return smoothstep(d / blendW);
-      return 1.0;
-    }
-    if (u <= handleEndU) {
-      const d = handleEndU - u;
-      if (d < blendW) return smoothstep(d / blendW);
-      return 1.0;
-    }
-    // Check proximity to boundaries
-    const dStart = handleStartU - u;
-    const dEnd = u - handleEndU;
-    if (dStart >= 0 && dStart < blendW) return smoothstep(1 - dStart / blendW);
-    if (dEnd >= 0 && dEnd < blendW) return smoothstep(1 - dEnd / blendW);
-    return 0.0;
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // MUG PROFILE (for body slices, away from handle)
+  // ═══════════════════════════════════════════════════════
+  // PROFILE DEFINITIONS
   //
-  // v ∈ [0, 1] traces the closed cross-section of the mug wall:
+  // The "profile" is the closed curve traced by v (ring index)
+  // at a given azimuthal position u (segment index).
   //
-  //   v=0.00 → 0.40: Outer wall (bottom to top)
-  //   v=0.40 → 0.50: Rim (outer to inner, at top)
-  //   v=0.50 → 0.90: Inner wall (top to bottom)
-  //   v=0.90 → 1.00: Bottom (inner to outer)
+  // BODY PROFILE (away from handle):
+  //   Traces the mug wall cross-section. This is a tall thin
+  //   closed loop:
+  //     - Outer wall (going up)
+  //     - Rim (going inward)
+  //     - Inner wall (going down)
+  //     - Bottom (going outward)
   //
-  // Returns {r, y} (radial distance from axis, height)
-  // ═══════════════════════════════════════════════════════════════
+  // HANDLE PROFILE (at handle position):
+  //   Traces around the handle tube cross-section, with the
+  //   tube center following the handle's C-curve skeleton.
+  //
+  // The profile is parameterized by ringT ∈ [0, 1).
+  // ═══════════════════════════════════════════════════════
 
-  function mugBodyProfile(v) {
+  // Body profile: returns {r, y} for a given ringT
+  function bodyProfile(ringT) {
+    // ringT ∈ [0, 1) traces the closed mug wall cross-section
+    //
+    // Layout:
+    //   [0.00, 0.35): Outer wall, bottom to top
+    //   [0.35, 0.42): Rim, outer to inner at top
+    //   [0.42, 0.77): Inner wall, top to bottom
+    //   [0.77, 0.85): Bottom inner surface (inner to center-ish)
+    //   [0.85, 1.00): Bottom outer surface (center-ish to outer)
+
+    const t = ringT;
     let r, y;
 
-    if (v < 0.40) {
+    if (t < 0.35) {
       // Outer wall: bottom to top
-      const t = v / 0.40;
-      r = mugOuterR;
-      y = lerp(mugBotY, mugTopY, t);
-    } else if (v < 0.50) {
+      const lt = t / 0.35;
+      r = MUG.outerR;
+      y = lerp(MUG.bottomY, MUG.bottomY + MUG.height, lt);
+    } else if (t < 0.42) {
       // Rim: outer to inner at top
-      const t = (v - 0.40) / 0.10;
-      r = lerp(mugOuterR, mugInnerR, t);
-      y = mugTopY;
-    } else if (v < 0.90) {
-      // Inner wall: top to bottom (stops above bottom thickness)
-      const t = (v - 0.50) / 0.40;
-      r = mugInnerR;
-      y = lerp(mugTopY, mugBotY + mugBotThick, t);
+      const lt = (t - 0.35) / 0.07;
+      r = lerp(MUG.outerR, MUG.innerR, lt);
+      y = MUG.bottomY + MUG.height;
+      // Slight downward curve on rim inner edge
+      y -= MUG.rimThick * Math.sin(lt * Math.PI);
+    } else if (t < 0.77) {
+      // Inner wall: top to bottom
+      const lt = (t - 0.42) / 0.35;
+      r = MUG.innerR;
+      y = lerp(MUG.bottomY + MUG.height - MUG.rimThick, MUG.bottomY + MUG.bottomThick, lt);
+    } else if (t < 0.88) {
+      // Bottom: inner to outer (flat bottom inside)
+      const lt = (t - 0.77) / 0.11;
+      r = lerp(MUG.innerR, MUG.outerR, lt);
+      y = MUG.bottomY + MUG.bottomThick * (1 - lt);
+      // Slight curve
+      y = MUG.bottomY + MUG.bottomThick * 0.5 * (1 - Math.cos(lt * Math.PI));
     } else {
-      // Bottom: inner to outer
-      const t = (v - 0.90) / 0.10;
-      r = lerp(mugInnerR, mugOuterR, t);
-      y = mugBotY + mugBotThick * (1 - t); // slight curve at bottom
-      // Actually make it flat:
-      y = mugBotY;
+      // Bottom outer edge: connect back to outer wall bottom
+      const lt = (t - 0.88) / 0.12;
+      r = MUG.outerR;
+      y = lerp(MUG.bottomY + MUG.bottomThick * 0.02, MUG.bottomY, lt);
     }
 
     return { r, y };
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // HANDLE PROFILE
-  //
-  // For slices in the handle region, the profile detours outward.
-  // The handle is a tube (circular cross-section) whose center
-  // traces a C-shaped path from the upper attachment point to
-  // the lower attachment point.
-  //
-  // Within the handle region, u determines WHERE along the handle
-  // skeleton we are (top attachment → outermost → bottom attachment).
-  //
-  // v still goes around the cross-section, but now it's a circle
-  // (the handle tube cross-section).
-  //
-  // At the TRANSITION between body and handle (the blend zone),
-  // we interpolate between the body profile and the handle profile.
-  // ═══════════════════════════════════════════════════════════════
-
-  function handleSkeletonPoint(handleT) {
-    // handleT ∈ [0, 1]: position along the handle skeleton
-    // 0 = top attachment, 0.5 = outermost point, 1 = bottom attachment
-    const angle = handleT * Math.PI; // 0 to π (half circle, C-shape)
-
-    // C-shaped path in the (r, y) plane
-    const r = mugOuterR + handleExtent * Math.sin(angle);
-    const y = handleCenterY + handleHalfH * Math.cos(angle);
-
+  // Handle skeleton: C-curve path for the handle center
+  // handleT ∈ [0, 1]: position along the handle (0=top attach, 1=bottom attach)
+  function handleSkeleton(handleT) {
+    const angle = handleT * Math.PI; // 0 to π (C-shape)
+    const r = MUG.outerR + MUG.handleR * Math.sin(angle);
+    const y = MUG.handleCenterY + MUG.handleHalfH * Math.cos(angle);
     return { r, y };
   }
 
-  function handleProfile(handleT, v) {
-    // Get skeleton center
-    const sk = handleSkeletonPoint(handleT);
+  // Handle tangent (for orienting the tube cross-section)
+  function handleTangent(handleT) {
+    const angle = handleT * Math.PI;
+    const dr = MUG.handleR * Math.PI * Math.cos(angle);
+    const dy = -MUG.handleHalfH * Math.PI * Math.sin(angle);
+    const len = Math.sqrt(dr * dr + dy * dy) || 1;
+    return { dr: dr / len, dy: dy / len };
+  }
 
-    // Tube cross-section (circle of radius handleTubeR)
-    const phi = v * Math.PI * 2;
+  // Handle profile: for a given position along the handle (handleT)
+  // and ring position (ringT), return {r, y}
+  function handleProfile(handleT, ringT) {
+    const sk = handleSkeleton(handleT);
+    const tan = handleTangent(handleT);
 
-    // Need tangent direction for proper orientation
-    const eps = 0.01;
-    const sk2 = handleSkeletonPoint(Math.min(1, handleT + eps));
-    let tr = sk2.r - sk.r;
-    let ty = sk2.y - sk.y;
-    const tLen = Math.sqrt(tr * tr + ty * ty) || 1;
-    tr /= tLen;
-    ty /= tLen;
+    // Normal perpendicular to tangent in the r-y plane
+    const nr = -tan.dy;
+    const ny = tan.dr;
 
-    // Normal (perpendicular to tangent in the r-y plane)
-    const nr = -ty;
-    const ny = tr;
-
-    // The tube cross-section: one axis is (nr, ny) in the r-y plane,
-    // the other axis is the azimuthal direction (out of the r-y plane)
-    const r = sk.r + handleTubeR * Math.cos(phi) * nr;
-    const y = sk.y + handleTubeR * Math.cos(phi) * ny;
-    // The azimuthal component will be handled when we place this in 3D
-    const azOffset = handleTubeR * Math.sin(phi);
+    // Tube cross-section
+    const phi = ringT * Math.PI * 2;
+    const r = sk.r + MUG.handleTubeR * (Math.cos(phi) * nr);
+    const y = sk.y + MUG.handleTubeR * (Math.cos(phi) * ny);
+    // azimuthal offset (out of the r-y plane)
+    const azOffset = MUG.handleTubeR * Math.sin(phi);
 
     return { r, y, azOffset };
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // COMPUTE MUG VERTEX POSITION
-  // ═══════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════
+  // COMPUTE VERTEX POSITIONS FOR EACH KEYFRAME
+  // ═══════════════════════════════════════════════════════
 
-  function mugPoint(u, v) {
-    const theta = u * Math.PI * 2; // azimuthal angle
-    const hf = handleFactor(u);
+  const vertexCount = N_SEG * N_RING;
+  const NUM_KEYFRAMES = 5;
 
-    if (hf < 0.001) {
-      // Pure body slice
-      const prof = mugBodyProfile(v);
-      return new THREE.Vector3(
-        prof.r * Math.cos(theta),
-        prof.y,
-        prof.r * Math.sin(theta)
-      );
-    }
-
-    // In or near handle region
-    // Map u within handle region to handleT ∈ [0, 1]
-    let handleU;
-    if (u >= handleStartU) {
-      handleU = (u - handleStartU) / (1.0 - handleStartU + handleEndU);
-    } else {
-      handleU = (1.0 - handleStartU + u) / (1.0 - handleStartU + handleEndU);
-    }
-    const handleT = handleU; // 0 at start, 1 at end
-
-    // Get handle profile
-    const hp = handleProfile(handleT, v);
-
-    // Handle point in 3D (handle is at a fixed azimuth direction)
-    // The handle sticks out in the +X direction (theta = 0)
-    const handleTheta = 0; // handle azimuth
-    const hx = hp.r * Math.cos(handleTheta) - hp.azOffset * Math.sin(handleTheta);
-    const hy = hp.y;
-    const hz = hp.r * Math.sin(handleTheta) + hp.azOffset * Math.cos(handleTheta);
-
-    if (hf >= 0.999) {
-      // Pure handle
-      return new THREE.Vector3(hx, hy, hz);
-    }
-
-    // Blend zone: interpolate between body and handle
-    const prof = mugBodyProfile(v);
-    const bx = prof.r * Math.cos(theta);
-    const by = prof.y;
-    const bz = prof.r * Math.sin(theta);
-
-    return new THREE.Vector3(
-      lerp(bx, hx, hf),
-      lerp(by, hy, hf),
-      lerp(bz, hz, hf)
-    );
+  // Pre-allocate keyframe arrays (Fix #9 — precompute everything)
+  const keyframePositions = [];
+  for (let k = 0; k < NUM_KEYFRAMES; k++) {
+    keyframePositions.push(new Float32Array(vertexCount * 3));
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // COMPUTE TORUS VERTEX POSITION
-  // ═══════════════════════════════════════════════════════════════
+  // ─── KEYFRAME 0: Full mug ───
+  function computeMugPositions(out) {
+    for (let seg = 0; seg < N_SEG; seg++) {
+      const segT = seg / N_SEG; // 0 to 1 (azimuthal position)
+      const theta = segT * Math.PI * 2;
 
-  function torusPoint(u, v) {
-    const theta = u * Math.PI * 2;
-    const phi = v * Math.PI * 2;
-    return new THREE.Vector3(
-      (torR + torr * Math.cos(phi)) * Math.cos(theta),
-      torr * Math.sin(phi),
-      (torR + torr * Math.cos(phi)) * Math.sin(theta)
-    );
-  }
+      // Determine if this segment is in the handle region
+      // Handle is centered at seg=0 (segT=0 and segT≈1)
+      const handleHalfFrac = (HANDLE_SEG_COUNT / 2) / N_SEG;
+      const blendFrac = HANDLE_BLEND_SEGS / N_SEG;
 
-  // ═══════════════════════════════════════════════════════════════
-  // INTERMEDIATE KEYFRAMES
-  //
-  // Direct lerp between mug and torus looks terrible because the
-  // vertex correspondence is poor. Instead we define intermediate
-  // shapes that guide the deformation through the classic stages:
-  //
-  // Stage 1: Body shrinks in height, walls thicken
-  // Stage 2: Body collapses into a thick ring near the handle
-  // Stage 3: Ring and handle equalize into a torus
-  //
-  // We compute intermediate positions by modifying the mug parameters.
-  // ═══════════════════════════════════════════════════════════════
+      let segDist = segT; // distance from handle center (at 0)
+      if (segDist > 0.5) segDist = 1.0 - segDist;
 
-  function intermediatePoint(u, v, stage) {
-    // stage 1 (t≈0.3): Mug shrinks. Height decreases, walls thicken.
-    // stage 2 (t≈0.6): Body is a short fat ring. Handle thickens.
+      let handleFactor = 0;
+      if (segDist < handleHalfFrac) {
+        handleFactor = 1.0;
+      } else if (segDist < handleHalfFrac + blendFrac) {
+        handleFactor = 1.0 - smoothstep((segDist - handleHalfFrac) / blendFrac);
+      }
 
-    const theta = u * Math.PI * 2;
-    const hf = handleFactor(u);
-
-    if (stage === 1) {
-      // Shrinking mug: height = 60% of original, walls 2x thicker
-      const shrinkH = 0.6;
-      const thickenW = 2.0;
-      const newOuterR = mugOuterR + (mugOuterR - mugInnerR) * (thickenW - 1) * 0.5;
-      const newInnerR = mugInnerR - (mugOuterR - mugInnerR) * (thickenW - 1) * 0.5;
-      const newTopY = mugBotY + (mugTopY - mugBotY) * shrinkH;
-      const newBotY = mugBotY;
-
-      if (hf < 0.001) {
-        // Body
-        let r, y;
-        if (v < 0.40) {
-          r = newOuterR;
-          y = lerp(newBotY, newTopY, v / 0.40);
-        } else if (v < 0.50) {
-          const t = (v - 0.40) / 0.10;
-          r = lerp(newOuterR, newInnerR, t);
-          y = newTopY;
-        } else if (v < 0.90) {
-          r = newInnerR;
-          y = lerp(newTopY, newBotY + mugBotThick, (v - 0.50) / 0.40);
+      // Map segment position within handle to handleT
+      let handleT = 0.5; // default middle
+      if (handleFactor > 0) {
+        // Map: seg at handle start → handleT=0, seg at handle end → handleT=1
+        let handleLocalT;
+        if (segT <= 0.5) {
+          // segT in [0, handleHalfFrac]
+          handleLocalT = 0.5 + (segT / handleHalfFrac) * 0.5;
         } else {
-          const t = (v - 0.90) / 0.10;
-          r = lerp(newInnerR, newOuterR, t);
-          y = newBotY;
+          // segT in [1-handleHalfFrac, 1]
+          handleLocalT = ((segT - (1.0 - handleHalfFrac)) / handleHalfFrac) * 0.5;
         }
-        return new THREE.Vector3(r * Math.cos(theta), y, r * Math.sin(theta));
+        handleT = clamp(handleLocalT, 0, 1);
       }
 
-      // Handle (slightly thicker)
-      let handleU;
-      if (u >= handleStartU) {
-        handleU = (u - handleStartU) / (1.0 - handleStartU + handleEndU);
-      } else {
-        handleU = (1.0 - handleStartU + u) / (1.0 - handleStartU + handleEndU);
-      }
-      const angle = handleU * Math.PI;
-      const skR = newOuterR + handleExtent * 0.9 * Math.sin(angle);
-      const skY = lerp(handleCenterY * shrinkH, handleCenterY, 0.5) +
-                  handleHalfH * shrinkH * Math.cos(angle);
-      const phi = v * Math.PI * 2;
-      const tubR = handleTubeR * 1.5;
+      for (let ring = 0; ring < N_RING; ring++) {
+        const ringT = ring / N_RING; // 0 to 1 (profile position)
+        const idx = (seg * N_RING + ring) * 3;
 
-      const sk2Angle = Math.min(Math.PI, (handleU + 0.01) * Math.PI);
-      const skR2 = newOuterR + handleExtent * 0.9 * Math.sin(sk2Angle);
-      const skY2 = lerp(handleCenterY * shrinkH, handleCenterY, 0.5) +
-                   handleHalfH * shrinkH * Math.cos(sk2Angle);
-      let tr = skR2 - skR, ty = skY2 - skY;
-      const tl = Math.sqrt(tr*tr + ty*ty) || 1;
-      tr /= tl; ty /= tl;
-      const nr = -ty, ny = tr;
-
-      const hr = skR + tubR * Math.cos(phi) * nr;
-      const hy = skY + tubR * Math.cos(phi) * ny;
-      const haz = tubR * Math.sin(phi);
-
-      const hx = hr * Math.cos(0) - haz * Math.sin(0);
-      const hz2 = hr * Math.sin(0) + haz * Math.cos(0);
-
-      if (hf >= 0.999) return new THREE.Vector3(hx, hy, hz2);
-
-      const bx = (v < 0.40 ? newOuterR : v < 0.50 ? lerp(newOuterR, newInnerR, (v-0.40)/0.10) : v < 0.90 ? newInnerR : lerp(newInnerR, newOuterR, (v-0.90)/0.10)) * Math.cos(theta);
-      const by = v < 0.40 ? lerp(newBotY, newTopY, v/0.40) : v < 0.50 ? newTopY : v < 0.90 ? lerp(newTopY, newBotY+mugBotThick, (v-0.50)/0.40) : newBotY;
-      const bz = (v < 0.40 ? newOuterR : v < 0.50 ? lerp(newOuterR, newInnerR, (v-0.40)/0.10) : v < 0.90 ? newInnerR : lerp(newInnerR, newOuterR, (v-0.90)/0.10)) * Math.sin(theta);
-
-      return new THREE.Vector3(lerp(bx, hx, hf), lerp(by, hy, hf), lerp(bz, hz2, hf));
-    }
-
-    if (stage === 2) {
-      // Collapsed: body is now a fat ring, handle is thick
-      // Everything is becoming more torus-like
-      const ringR = lerp(mugOuterR, torR, 0.5);
-      const ringr = lerp((mugOuterR - mugInnerR) * 2, torr, 0.3);
-      const ringH = lerp(0.4, 0, 0.3); // slight remaining height
-
-      const phi = v * Math.PI * 2;
-
-      if (hf < 0.001) {
-        // Body: fat ring (superellipse cross-section, slightly tall)
-        const halfW = ringr;
-        const halfH = ringr + ringH;
-        const exp = 2.5; // slightly rectangular still
-        const exp2n = 2.0 / exp;
-        const csR = halfW * Math.sign(Math.cos(phi)) * Math.pow(Math.abs(Math.cos(phi)) + 0.001, exp2n);
-        const csY = halfH * Math.sign(Math.sin(phi)) * Math.pow(Math.abs(Math.sin(phi)) + 0.001, exp2n);
-
-        return new THREE.Vector3(
-          (ringR + csR) * Math.cos(theta),
-          csY,
-          (ringR + csR) * Math.sin(theta)
-        );
-      }
-
-      // Handle: thicker tube, less protruding
-      let handleU2;
-      if (u >= handleStartU) {
-        handleU2 = (u - handleStartU) / (1.0 - handleStartU + handleEndU);
-      } else {
-        handleU2 = (1.0 - handleStartU + u) / (1.0 - handleStartU + handleEndU);
-      }
-      const angle = handleU2 * Math.PI;
-      const hExt = handleExtent * 0.5; // handle retracting
-      const hHH = handleHalfH * 0.5;   // handle shorter
-      const skR = ringR + hExt * Math.sin(angle);
-      const skY = hHH * Math.cos(angle);
-      const tubR = lerp(handleTubeR * 3, torr, 0.3);
-
-      const sk2A = Math.min(Math.PI, (handleU2 + 0.01) * Math.PI);
-      const skR2 = ringR + hExt * Math.sin(sk2A);
-      const skY2 = hHH * Math.cos(sk2A);
-      let tr = skR2 - skR, ty = skY2 - skY;
-      const tl = Math.sqrt(tr*tr + ty*ty) || 1;
-      tr /= tl; ty /= tl;
-      const nr = -ty, ny = tr;
-
-      const hr = skR + tubR * Math.cos(phi) * nr;
-      const hy = skY + tubR * Math.cos(phi) * ny;
-      const haz = tubR * Math.sin(phi);
-
-      const hx = hr * Math.cos(0) - haz * Math.sin(0);
-      const hz2 = hr * Math.sin(0) + haz * Math.cos(0);
-
-      if (hf >= 0.999) return new THREE.Vector3(hx, hy, hz2);
-
-      // Blend
-      const csR = ringr * Math.sign(Math.cos(phi)) * Math.pow(Math.abs(Math.cos(phi)) + 0.001, 0.8);
-      const csY = (ringr + ringH) * Math.sign(Math.sin(phi)) * Math.pow(Math.abs(Math.sin(phi)) + 0.001, 0.8);
-      const bx = (ringR + csR) * Math.cos(theta);
-      const by = csY;
-      const bz = (ringR + csR) * Math.sin(theta);
-
-      return new THREE.Vector3(lerp(bx, hx, hf), lerp(by, hy, hf), lerp(bz, hz2, hf));
-    }
-
-    return torusPoint(u, v); // fallback
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // COMPUTE VERTEX POSITIONS AT EACH KEYFRAME
-  // ═══════════════════════════════════════════════════════════════
-
-  const keyframes = []; // Array of Float32Arrays, one per keyframe
-  const numKeyframes = 5;
-  const keyframeTimes = [0, 0.25, 0.5, 0.75, 1.0];
-
-  for (let kf = 0; kf < numKeyframes; kf++) {
-    const positions = new Float32Array((NU + 1) * (NV + 1) * 3);
-
-    for (let i = 0; i <= NU; i++) {
-      for (let j = 0; j <= NV; j++) {
-        const u = i / NU;
-        const v = j / NV;
-        const idx = (i * (NV + 1) + j) * 3;
-
-        let p;
-        if (kf === 0) {
-          p = mugPoint(u, v);
-        } else if (kf === 1) {
-          p = intermediatePoint(u, v, 1);
-        } else if (kf === 2) {
-          p = intermediatePoint(u, v, 2);
-        } else if (kf === 3) {
-          // Almost torus: lerp between stage2 and torus
-          const p2 = intermediatePoint(u, v, 2);
-          const pt = torusPoint(u, v);
-          p = new THREE.Vector3(
-            lerp(p2.x, pt.x, 0.6),
-            lerp(p2.y, pt.y, 0.6),
-            lerp(p2.z, pt.z, 0.6)
-          );
+        if (handleFactor < 0.001) {
+          // Pure body
+          const prof = bodyProfile(ringT);
+          out[idx + 0] = prof.r * Math.cos(theta);
+          out[idx + 1] = prof.y;
+          out[idx + 2] = prof.r * Math.sin(theta);
+        } else if (handleFactor > 0.999) {
+          // Pure handle
+          const hp = handleProfile(handleT, ringT);
+          // Handle is at theta=0 direction, with azimuthal offset
+          const handleTheta = 0;
+          out[idx + 0] = hp.r * Math.cos(handleTheta) - hp.azOffset * Math.sin(handleTheta);
+          out[idx + 1] = hp.y;
+          out[idx + 2] = hp.r * Math.sin(handleTheta) + hp.azOffset * Math.cos(handleTheta);
         } else {
-          p = torusPoint(u, v);
-        }
+          // Blend zone (Fix #7 — smooth transition, no seam)
+          const bp = bodyProfile(ringT);
+          const bx = bp.r * Math.cos(theta);
+          const by = bp.y;
+          const bz = bp.r * Math.sin(theta);
 
-        positions[idx + 0] = p.x;
-        positions[idx + 1] = p.y;
-        positions[idx + 2] = p.z;
+          const hp = handleProfile(handleT, ringT);
+          const handleTheta = 0;
+          const hx = hp.r * Math.cos(handleTheta) - hp.azOffset * Math.sin(handleTheta);
+          const hy = hp.y;
+          const hz = hp.r * Math.sin(handleTheta) + hp.azOffset * Math.cos(handleTheta);
+
+          out[idx + 0] = lerp(bx, hx, handleFactor);
+          out[idx + 1] = lerp(by, hy, handleFactor);
+          out[idx + 2] = lerp(bz, hz, handleFactor);
+        }
       }
     }
-
-    keyframes.push(positions);
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  // BUILD MESH
-  // ═══════════════════════════════════════════════════════════════
+  // ─── KEYFRAME 4: Perfect torus ───
+  function computeTorusPositions(out) {
+    for (let seg = 0; seg < N_SEG; seg++) {
+      const theta = (seg / N_SEG) * Math.PI * 2;
+      for (let ring = 0; ring < N_RING; ring++) {
+        const phi = (ring / N_RING) * Math.PI * 2;
+        const idx = (seg * N_RING + ring) * 3;
+
+        out[idx + 0] = (TOR.R + TOR.r * Math.cos(phi)) * Math.cos(theta);
+        out[idx + 1] = TOR.r * Math.sin(phi);
+        out[idx + 2] = (TOR.R + TOR.r * Math.cos(phi)) * Math.sin(theta);
+      }
+    }
+  }
+
+  // ─── KEYFRAME 1: Mug shrinking (height 60%, walls 1.5x thicker) ───
+  function computeShrinkPositions(out) {
+    const shrinkH = 0.55;
+    const thicken = 1.8;
+
+    const savedOuter = MUG.outerR;
+    const savedInner = MUG.innerR;
+    const savedHeight = MUG.height;
+    const savedHandleHH = MUG.handleHalfH;
+    const savedHandleCY = MUG.handleCenterY;
+    const savedHandleTR = MUG.handleTubeR;
+
+    // Temporarily modify mug params
+    const wallThick = savedOuter - savedInner;
+    MUG.outerR = savedOuter + wallThick * (thicken - 1) * 0.3;
+    MUG.innerR = savedInner - wallThick * (thicken - 1) * 0.7;
+    MUG.height = savedHeight * shrinkH;
+    MUG.handleHalfH = savedHandleHH * shrinkH * 0.9;
+    MUG.handleCenterY = savedHandleCY * shrinkH * 0.7;
+    MUG.handleTubeR = savedHandleTR * 1.4;
+
+    computeMugPositions(out);
+
+    // Restore
+    MUG.outerR = savedOuter;
+    MUG.innerR = savedInner;
+    MUG.height = savedHeight;
+    MUG.handleHalfH = savedHandleHH;
+    MUG.handleCenterY = savedHandleCY;
+    MUG.handleTubeR = savedHandleTR;
+  }
+
+  // ─── KEYFRAME 2: Collapsed to thick ring + thick handle ───
+  function computeCollapsedPositions(out) {
+    const ringR = lerp(MUG.outerR, TOR.R, 0.4);
+    const ringr = lerp((MUG.outerR - MUG.innerR) * 2.5, TOR.r, 0.3);
+    const remainH = 0.15; // slight remaining height
+
+    const savedOuter = MUG.outerR;
+    const savedInner = MUG.innerR;
+    const savedHeight = MUG.height;
+    const savedBottomY = MUG.bottomY;
+    const savedHandleR = MUG.handleR;
+    const savedHandleHH = MUG.handleHalfH;
+    const savedHandleCY = MUG.handleCenterY;
+    const savedHandleTR = MUG.handleTubeR;
+
+    MUG.outerR = ringR + ringr;
+    MUG.innerR = ringR - ringr;
+    MUG.height = ringr * 2 + remainH;
+    MUG.bottomY = -(ringr + remainH * 0.5);
+    MUG.handleR = MUG.handleR * 0.6;
+    MUG.handleHalfH = MUG.handleHalfH * 0.4;
+    MUG.handleCenterY = 0;
+    MUG.handleTubeR = ringr * 0.7;
+
+    computeMugPositions(out);
+
+    MUG.outerR = savedOuter;
+    MUG.innerR = savedInner;
+    MUG.height = savedHeight;
+    MUG.bottomY = savedBottomY;
+    MUG.handleR = savedHandleR;
+    MUG.handleHalfH = savedHandleHH;
+    MUG.handleCenterY = savedHandleCY;
+    MUG.handleTubeR = savedHandleTR;
+  }
+
+  // ─── KEYFRAME 3: Almost torus (blend collapsed → torus) ───
+  function computeAlmostTorusPositions(out) {
+    const collapsed = new Float32Array(vertexCount * 3);
+    const torus = new Float32Array(vertexCount * 3);
+    computeCollapsedPositions(collapsed);
+    computeTorusPositions(torus);
+
+    for (let i = 0; i < vertexCount * 3; i++) {
+      out[i] = lerp(collapsed[i], torus[i], 0.65);
+    }
+  }
+
+  // Compute all keyframes (Fix #9 — done once at init)
+  computeMugPositions(keyframePositions[0]);
+  computeShrinkPositions(keyframePositions[1]);
+  computeCollapsedPositions(keyframePositions[2]);
+  computeAlmostTorusPositions(keyframePositions[3]);
+  computeTorusPositions(keyframePositions[4]);
+
+  // ═══════════════════════════════════════════════════════
+  // BUILD MESH (Fix #8 — proper closed topology)
+  // ═══════════════════════════════════════════════════════
 
   const geometry = new THREE.BufferGeometry();
-  const vertexCount = (NU + 1) * (NV + 1);
   const positions = new Float32Array(vertexCount * 3);
 
+  // Index buffer: connect adjacent segments and rings in a torus topology
+  // Both u and v wrap around (closed in both directions)
   const indices = [];
-  for (let i = 0; i < NU; i++) {
-    for (let j = 0; j < NV; j++) {
-      const a = i * (NV + 1) + j;
-      const b = (i + 1) * (NV + 1) + j;
-      const c = i * (NV + 1) + (j + 1);
-      const d = (i + 1) * (NV + 1) + (j + 1);
+  for (let seg = 0; seg < N_SEG; seg++) {
+    const nextSeg = (seg + 1) % N_SEG; // wraps! (Fix #8)
+    for (let ring = 0; ring < N_RING; ring++) {
+      const nextRing = (ring + 1) % N_RING; // wraps! (Fix #8)
+
+      const a = seg * N_RING + ring;
+      const b = nextSeg * N_RING + ring;
+      const c = seg * N_RING + nextRing;
+      const d = nextSeg * N_RING + nextRing;
+
       indices.push(a, b, c);
       indices.push(c, b, d);
     }
@@ -1233,9 +1155,10 @@ function initTorusMorph() {
   geometry.setIndex(indices);
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
+  // Material (Fix #6 — DoubleSide as safety, good normals via computeVertexNormals)
   const material = new THREE.MeshStandardMaterial({
     color: 0xddddee,
-    roughness: 0.25,
+    roughness: 0.28,
     metalness: 0.02,
     side: THREE.DoubleSide,
   });
@@ -1243,10 +1166,11 @@ function initTorusMorph() {
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
 
-  // ═══════════════════════════════════════════════════════════════
-  // INTERPOLATE BETWEEN KEYFRAMES
-  // Uses Catmull-Rom for smooth motion between keyframes
-  // ═══════════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════
+  // INTERPOLATION (Fix #5 — Catmull-Rom for smooth motion)
+  // ═══════════════════════════════════════════════════════
+
+  const keyframeTimes = [0, 0.25, 0.50, 0.75, 1.0];
 
   function catmullRom(p0, p1, p2, p3, t) {
     const t2 = t * t;
@@ -1265,56 +1189,71 @@ function initTorusMorph() {
 
     // Find which keyframe segment we're in
     let segIdx = 0;
-    for (let i = 0; i < numKeyframes - 1; i++) {
+    for (let i = 0; i < NUM_KEYFRAMES - 1; i++) {
       if (t >= keyframeTimes[i] && t <= keyframeTimes[i + 1]) {
         segIdx = i;
         break;
       }
     }
-    if (t >= 1) segIdx = numKeyframes - 2;
+    if (t >= 1.0) segIdx = NUM_KEYFRAMES - 2;
 
     const segStart = keyframeTimes[segIdx];
     const segEnd = keyframeTimes[segIdx + 1];
     const localT = clamp((t - segStart) / (segEnd - segStart), 0, 1);
-    const smoothT = smoothstep(localT);
+    const st = smoothstep(localT);
 
     // Get 4 keyframes for Catmull-Rom (clamp at boundaries)
     const k0 = Math.max(0, segIdx - 1);
     const k1 = segIdx;
-    const k2 = segIdx + 1;
-    const k3 = Math.min(numKeyframes - 1, segIdx + 2);
+    const k2 = Math.min(NUM_KEYFRAMES - 1, segIdx + 1);
+    const k3 = Math.min(NUM_KEYFRAMES - 1, segIdx + 2);
 
-    const kf0 = keyframes[k0];
-    const kf1 = keyframes[k1];
-    const kf2 = keyframes[k2];
-    const kf3 = keyframes[k3];
+    const kf0 = keyframePositions[k0];
+    const kf1 = keyframePositions[k1];
+    const kf2 = keyframePositions[k2];
+    const kf3 = keyframePositions[k3];
 
-    for (let idx = 0; idx < vertexCount * 3; idx++) {
-      posAttr.array[idx] = catmullRom(kf0[idx], kf1[idx], kf2[idx], kf3[idx], smoothT);
+    // Interpolate all vertex positions (Fix #9 — simple per-vertex math)
+    for (let i = 0; i < vertexCount * 3; i++) {
+      posAttr.array[i] = catmullRom(kf0[i], kf1[i], kf2[i], kf3[i], st);
     }
 
     posAttr.needsUpdate = true;
-    geometry.computeVertexNormals();
+    geometry.computeVertexNormals(); // Fix #6 — recompute normals every frame
 
-    // Color: white ceramic → golden donut
-    const s = smoothstep(t);
+    // Color: white ceramic → golden brown donut
+    const colorT = smoothstep(t);
     material.color.setRGB(
-      lerp(0.88, 0.82, s),
-      lerp(0.88, 0.55, s),
-      lerp(0.92, 0.22, s)
+      lerp(0.88, 0.82, colorT),
+      lerp(0.88, 0.52, colorT),
+      lerp(0.93, 0.18, colorT)
     );
-    material.roughness = lerp(0.25, 0.55, s);
+    material.roughness = lerp(0.28, 0.6, colorT);
+
+    // Update label
+    if (label) {
+      if (t < 0.05) {
+        label.textContent = '☕ Coffee Mug — genus 1 (one hole: the handle)';
+      } else if (t > 0.95) {
+        label.textContent = '🍩 Donut (Torus) — genus 1 (one hole: the center)';
+      } else {
+        label.textContent = `Smooth deformation (${Math.round(t * 100)}%) — genus 1 preserved throughout`;
+      }
+    }
   }
 
-  // Initial state
+  // Set initial state
   updateGeometry(0);
 
-  // Slider interaction
+  // Slider interaction (Fix #10 — stopPropagation already handled above)
   slider.addEventListener('input', () => {
     updateGeometry(slider.value / 100);
   });
 
-  // Render loop
+  // ═══════════════════════════════════════════════════════
+  // RENDER LOOP
+  // ═══════════════════════════════════════════════════════
+
   function animate() {
     requestAnimationFrame(animate);
     controls.update();
