@@ -644,7 +644,6 @@ async function predict_maximally_activated(item, force_category) {
 			return;
 		}
 
-		// Format results as HTML table (same as predict() does)
 		if (model.outputShape.length == 4) {
 			// image output - not typical for maximally activated predictions
 			results = "";
