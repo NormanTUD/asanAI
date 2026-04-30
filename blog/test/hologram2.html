@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holographic FFT Smiley – Local Resolution Control</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;user-select:none}
+h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
+.subtitle{color:#64748b;font-size:0.85em;margin-bottom:20px;text-align:center}
+.instructions{background:#1e293b;border-radius:10px;padding:14px 20px;margin-bottom:20px;font-size:0.82em;color:#94a3b8;max-width:520px;text-align:center;border:1px solid #334155}
+.instructions b{color:#93c5fd}
+.instructions .key{display:inline-block;background:#334155;border-radius:4px;padding:1px 6px;font-weight:bold;color:#e2e8f0;margin:0 2px}
+
+.fft-section{text-align:center;margin-bottom:6px}
+.fft-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.fft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
+.fft-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid #334155;transition:border-color 0.2s,box-shadow 0.2s}
+.fft-cell:hover{border-color:#8b5cf6;box-shadow:0 0 12px #8b5cf640}
+.fft-cell canvas{width:100%;height:100%;display:block}
+.fft-cell .level-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#fbbf24;font-size:0.65em;padding:2px 5px;border-radius:4px;font-weight:bold}
+.fft-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
+
+.arrow-down{font-size:2em;color:#64748b;margin:12px 0;text-align:center}
+.arrow-down small{font-size:0.35em;display:block;color:#94a3b8}
+
+.smiley-section{text-align:center}
+.smiley-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.smiley-container{position:relative;border-radius:12px;overflow:hidden;border:2px solid #334155;background:#000;display:inline-block}
+.smiley-container canvas{display:block}
+.grid-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+
+.stats-row{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.stat{background:#1e293b;border-radius:8px;padding:6px 14px;text-align:center;border:1px solid #334155}
+.stat-label{font-size:0.65em;color:#64748b}
+.stat-value{font-size:1.1em;font-weight:bold;color:#4ade80}
+</style>
+</head>
+<body>
+
+<h1>🔮 Holographic FFT Smiley</h1>
+<p class="subtitle">Local resolution control with holographic edge bleeding</p>
+
+<div class="instructions">
+  <b>Right-click</b> a grid cell → <span class="key">+ resolution</span> locally (detail increases in that region, bleeds to neighbors)<br>
+  <b>Left-click</b> a grid cell → <span class="key">− resolution</span> locally (that region becomes blockier)<br>
+  Min = LEGO blocks · Max = SVG-smooth
+</div>
+
+<div class="fft-section">
+  <div class="fft-label">FFT Frequency Domain (3×3 regions)</div>
+  <div class="fft-grid" id="fftGrid"></div>
+</div>
+
+<div class="arrow-down">↓<small>inverse FFT → spatial domain</small></div>
+
+<div class="smiley-section">
+  <div class="smiley-label">Reconstructed Smiley</div>
+  <div class="smiley-container">
+    <canvas id="smileyCanvas"></canvas>
+    <canvas id="gridOverlay" class="grid-overlay"></canvas>
+  </div>
+</div>
+
+<div class="stats-row" id="statsRow"></div>
+
+<script>
+// ============================================
+// CONFIG
+// ============================================
+const GRID = 3;
+const IMG_SIZE = 396; // divisible by 3
+const CELL_SIZE = IMG_SIZE / GRID; // 132px per cell in output
+const MAX_LEVEL = 24;
+const MIN_BLOCKS_PER_CELL = 2;  // at level 0: 2x2 blocks per cell region = LEGO
+const MAX_BLOCKS_PER_CELL = 44; // at max level: 44x44 per cell = SVG smooth
+const DPR = window.devicePixelRatio || 1;
+
+// Each cell has a level from 0 to MAX_LEVEL
+const cellLevels = Array(GRID * GRID).fill(Math.floor(MAX_LEVEL * 0.15)); // start low-ish
+
+// ============================================
+// Generate high-res smiley source (continuous function)
+// ============================================
+const SRC_RES = 512; // high res source for sampling
+
+function smileyAt(nx, ny) {
+  // nx, ny in [0,1] — returns brightness [0,1]
+  const cx = 0.5, cy = 0.5;
+  const dx = nx - cx, dy = ny - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const r = 0.42;
+  
+  if (dist > r + 0.01) return 0;
+  if (dist > r - 0.01) {
+    // smooth edge
+    return Math.max(0, 1 - (dist - r + 0.01) / 0.02) * 0.85;
+  }
+  
+  let val = 0.85;
+  
+  // Left eye
+  const leX = 0.35, leY = 0.37, eyeR = 0.05;
+  const leDist = Math.sqrt((nx - leX) ** 2 + (ny - leY) ** 2);
+  if (leDist < eyeR) val = 0.08;
+  
+  // Right eye
+  const reX = 0.65, reY = 0.37;
+  const reDist = Math.sqrt((nx - reX) ** 2 + (ny - reY) ** 2);
+  if (reDist < eyeR) val = 0.08;
+  
+  // Smile arc
+  const smCY = 0.55, smR = 0.22, smThick = 0.035;
+  const smDist = Math.sqrt((nx - cx) ** 2 + (ny - smCY) ** 2);
+  if (ny > smCY && smDist > smR - smThick && smDist < smR + smThick) {
+    const t = 1 - Math.abs(smDist - smR) / smThick;
+    val = val * (1 - t) + 0.08 * t;
+  }
+  
+  return val;
+}
+
+// ============================================
+// FFT of the smiley (computed at SRC_RES)
+// We'll use this for the FFT visualization
+// ============================================
+const FFT_VIS_N = 64; // resolution for FFT visualization
+
+// Compute a sampled version for FFT display
+const fftSampleData = new Float64Array(FFT_VIS_N * FFT_VIS_N);
+for (let y = 0; y < FFT_VIS_N; y++) {
+  for (let x = 0; x < FFT_VIS_N; x++) {
+    fftSampleData[y * FFT_VIS_N + x] = smileyAt((x + 0.5) / FFT_VIS_N, (y + 0.5) / FFT_VIS_N);
+  }
+}
+
+// Simple DFT for visualization (we only need magnitude spectrum for display)
+// For the actual reconstruction we sample directly from smileyAt()
+function computeFFTMagnitude(data, N) {
+  // Compute 2D DFT magnitude (only for display purposes)
+  const mag = new Float64Array(N * N);
+  // Use rows-then-cols approach with radix-2 FFT
+  const reArr = new Float64Array(N * N);
+  const imArr = new Float64Array(N * N);
+  for (let i = 0; i < N * N; i++) { reArr[i] = data[i]; imArr[i] = 0; }
+  
+  // FFT rows
+  for (let y = 0; y < N; y++) {
+    const rowRe = new Float64Array(N), rowIm = new Float64Array(N);
+    for (let x = 0; x < N; x++) { rowRe[x] = reArr[y * N + x]; rowIm[x] = imArr[y * N + x]; }
+    fft1d(rowRe, rowIm, N, false);
+    for (let x = 0; x < N; x++) { reArr[y * N + x] = rowRe[x]; imArr[y * N + x] = rowIm[x]; }
+  }
+  // FFT cols
+  for (let x = 0; x < N; x++) {
+    const colRe = new Float64Array(N), colIm = new Float64Array(N);
+    for (let y = 0; y < N; y++) { colRe[y] = reArr[y * N + x]; colIm[y] = imArr[y * N + x]; }
+    fft1d(colRe, colIm, N, false);
+    for (let y = 0; y < N; y++) { reArr[y * N + x] = colRe[y]; imArr[y * N + x] = colIm[y]; }
+  }
+  
+  // Compute magnitude and shift
+  for (let y = 0; y < N; y++) {
+    for (let x = 0; x < N; x++) {
+      const sy = (y + N/2) % N, sx = (x + N/2) % N;
+      const idx = sy * N + sx;
+      mag[y * N + x] = Math.sqrt(reArr[idx] ** 2 + imArr[idx] ** 2);
+    }
+  }
+  return mag;
+}
+
+function fft1d(re, im, N, inverse) {
+  if (N <= 1) return;
+  let j = 0;
+  for (let i = 1; i < N; i++) {
+    let bit = N >> 1;
+    while (j & bit) { j ^= bit; bit >>= 1; }
+    j ^= bit;
+    if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; }
+  }
+  for (let len = 2; len <= N; len *= 2) {
+    const ang = 2 * Math.PI / len * (inverse ? -1 : 1);
+    const wRe = Math.cos(ang), wIm = Math.sin(ang);
+    for (let i = 0; i < N; i += len) {
+      let curRe = 1, curIm = 0;
+      for (let k = 0; k < len / 2; k++) {
+        const tRe = curRe * re[i + k + len/2] - curIm * im[i + k + len/2];
+        const tIm = curRe * im[i + k + len/2] + curIm * re[i + k + len/2];
+        re[i + k + len/2] = re[i + k] - tRe;
+        im[i + k + len/2] = im[i + k] - tIm;
+        re[i + k] += tRe;
+        im[i + k] += tIm;
+        const newCurRe = curRe * wRe - curIm * wIm;
+        curIm = curRe * wIm + curIm * wRe;
+        curRe = newCurRe;
+      }
+    }
+  }
+  if (inverse) { for (let i = 0; i < N; i++) { re[i] /= N; im[i] /= N; } }
+}
+
+const fftMag = computeFFTMagnitude(fftSampleData, FFT_VIS_N);
+
+// ============================================
+// RENDERING SETUP
+// ============================================
+const smileyCanvas = document.getElementById('smileyCanvas');
+smileyCanvas.width = IMG_SIZE * DPR;
+smileyCanvas.height = IMG_SIZE * DPR;
+smileyCanvas.style.width = IMG_SIZE + 'px';
+smileyCanvas.style.height = IMG_SIZE + 'px';
+const smileyCtx = smileyCanvas.getContext('2d');
+
+const gridOverlay = document.getElementById('gridOverlay');
+gridOverlay.width = IMG_SIZE * DPR;
+gridOverlay.height = IMG_SIZE * DPR;
+gridOverlay.style.width = IMG_SIZE + 'px';
+gridOverlay.style.height = IMG_SIZE + 'px';
+const overlayCtx = gridOverlay.getContext('2d');
+
+// ============================================
+// FFT GRID CELLS
+// ============================================
+const gridEl = document.getElementById('fftGrid');
+const cellCanvases = [];
+const CELL_CANVAS_SIZE = 130;
+
+for (let i = 0; i < GRID * GRID; i++) {
+  const row = Math.floor(i / GRID), col = i % GRID;
+  const cell = document.createElement('div');
+  cell.className = 'fft-cell';
+  
+  const canvas = document.createElement('canvas');
+  canvas.width = CELL_CANVAS_SIZE * DPR;
+  canvas.height = CELL_CANVAS_SIZE * DPR;
+  canvas.style.width = CELL_CANVAS_SIZE + 'px';
+  canvas.style.height = CELL_CANVAS_SIZE + 'px';
+  cell.appendChild(canvas);
+  
+  const badge = document.createElement('div');
+  badge.className = 'level-badge';
+  badge.id = `badge-${i}`;
+  badge.textContent = `${Math.round(cellLevels[i] / MAX_LEVEL * 100)}%`;
+  cell.appendChild(badge);
+  
+  const coord = document.createElement('div');
+  coord.className = 'coord-badge';
+  coord.textContent = `[${row},${col}]`;
+  cell.appendChild(coord);
+  
+  gridEl.appendChild(cell);
+  cellCanvases.push(canvas);
+
+  // Left click = DECREASE resolution (less detail)
+  cell.addEventListener('click', (e) => {
+    e.preventDefault();
+    cellLevels[i] = Math.max(0, cellLevels[i] - 1);
+    render();
+  });
+
+  // Right click = INCREASE resolution (more detail)
+  cell.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    cellLevels[i] = Math.min(MAX_LEVEL, cellLevels[i] + 1);
+    render();
+  });
+}
+
+// ============================================
+// CORE: Compute effective resolution at each pixel
+// Each cell controls its LOCAL region, with Gaussian bleeding to neighbors
+// ============================================
+function getResolutionMap() {
+  // Returns a map of "effective blocks per cell" for each pixel position
+  // This determines how pixelated each area is
+  // Resolution is LOCAL: cell [0,0] controls top-left, etc.
+  // But with bleeding at edges
+  
+  const map = new Float64Array(IMG_SIZE * IMG_SIZE);
+  const bleedRadius = CELL_SIZE * 0.3; // how far the bleeding extends
+  
+  for (let py = 0; py < IMG_SIZE; py++) {
+    for (let px = 0; px < IMG_SIZE; px++) {
+      let totalLevel = 0;
+      let totalWeight = 0;
+      
+      for (let cr = 0; cr < GRID; cr++) {
+        for (let cc = 0; cc < GRID; cc++) {
+          const idx = cr * GRID + cc;
+          const level = cellLevels[idx] / MAX_LEVEL;
+          
+          // Center of this cell in pixel coords
+          const cellCX = (cc + 0.5) * CELL_SIZE;
+          const cellCY = (cr + 0.5) * CELL_SIZE;
+          
+          // Distance from pixel to cell center
+          const dx = px - cellCX;
+          const dy = py - cellCY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          // Weight: strong within cell, falls off outside
+          // Use a smooth step that's 1.0 inside the cell and bleeds out
+          const halfCell = CELL_SIZE * 0.5;
+          let weight;
+          if (dist <= halfCell) {
+            weight = 1.0;
+          } else {
+            // Gaussian falloff outside the cell
+            const excess = dist - halfCell;
+            weight = Math.exp(-(excess * excess) / (2 * bleedRadius * bleedRadius));
+          }
+          
+          totalLevel += level * weight;
+          totalWeight += weight;
+        }
+      }
+      
+      map[py * IMG_SIZE + px] = totalWeight > 0 ? totalLevel / totalWeight : 0;
+    }
+  }
+  return map;
+}
+
+// ============================================
+// DRAW SMILEY with variable local resolution
+// ============================================
+function drawSmiley() {
+  smileyCtx.save();
+  smileyCtx.scale(DPR, DPR);
+  smileyCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
+  
+  // For each cell region, determine its block size based on level
+  // Then render that region at that resolution
+  // With bleeding: we render slightly overlapping regions with alpha blending at borders
+  
+  // Strategy: render each cell's region at its own resolution,
+  // then blend at the borders
+  
+  // First pass: compute block size for each cell
+  const cellBlockSizes = [];
+  for (let i = 0; i < GRID * GRID; i++) {
+    const level = cellLevels[i] / MAX_LEVEL;
+    // At level 0: MIN_BLOCKS_PER_CELL (2 blocks across the cell = huge LEGO)
+    // At level 1: MAX_BLOCKS_PER_CELL (44 blocks = smooth)
+    const blocks = Math.round(MIN_BLOCKS_PER_CELL + (MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(level, 0.7));
+    cellBlockSizes.push(blocks);
+  }
+  
+  // Render each pixel by sampling from smileyAt() at the appropriate resolution
+  // determined by the local cell's block count, with bleeding
+  const bleedPx = CELL_SIZE * 0.25; // bleeding zone in pixels
+  
+  // For efficiency, render block by block per cell, then blend borders
+  // First: render each cell at its own resolution
+  const cellImages = [];
+  for (let ci = 0; ci < GRID * GRID; ci++) {
+    const cr = Math.floor(ci / GRID), cc = ci % GRID;
+    const blocks = cellBlockSizes[ci];
+    const blockPx = CELL_SIZE / blocks;
+    const cellImg = new Float64Array(CELL_SIZE * CELL_SIZE);
+    
+    for (let by = 0; by < blocks; by++) {
+      for (let bx = 0; bx < blocks; bx++) {
+        // Sample smiley at center of this block
+        const sampleX = (cc * CELL_SIZE + (bx + 0.5) * blockPx) / IMG_SIZE;
+        const sampleY = (cr * CELL_SIZE + (by + 0.5) * blockPx) / IMG_SIZE;
+        const val = smileyAt(sampleX, sampleY);
+        
+        // Fill the block
+        const startX = Math.floor(bx * blockPx);
+        const startY = Math.floor(by * blockPx);
+        const endX = Math.floor((bx + 1) * blockPx);
+        const endY = Math.floor((by + 1) * blockPx);
+        
+        for (let ly = startY; ly < Math.min(endY, CELL_SIZE); ly++) {
+          for (let lx = startX; lx < Math.min(endX, CELL_SIZE); lx++) {
+            cellImg[ly * CELL_SIZE + lx] = val;
+          }
+        }
+      }
+    }
+    cellImages.push(cellImg);
+  }
+  
+  // Now composite with bleeding
+  for (let py = 0; py < IMG_SIZE; py++) {
+    for (let px = 0; px < IMG_SIZE; px++) {
+      // Which cell does this pixel primarily belong to?
+      const cc = Math.min(GRID - 1, Math.floor(px / CELL_SIZE));
+      const cr = Math.min(GRID - 1, Math.floor(py / CELL_SIZE));
+      const primaryIdx = cr * GRID + cc;
+      
+      // Local coords within primary cell
+      const lx = px - cc * CELL_SIZE;
+      const ly = py - cr * CELL_SIZE;
+      
+      // Check if we're in a bleed zone (near border)
+      const distToLeft = lx;
+      const distToRight = CELL_SIZE - 1 - lx;
+      const distToTop = ly;
+      const distToBottom = CELL_SIZE - 1 - ly;
+      
+      let val = cellImages[primaryIdx][ly * CELL_SIZE + lx];
+      
+      // Blend with neighbors at borders
+      const blendNeighbor = (ncc, ncr, edgeDist) => {
+        if (ncc < 0 || ncc >= GRID || ncr < 0 || ncr >= GRID) return;
+        if (edgeDist >= bleedPx) return;
+        
+        const nIdx = ncr * GRID + ncc;
+        // Sample from neighbor's image at the corresponding position
+        const nlx = px - ncc * CELL_SIZE;
+        const nly = py - ncr * CELL_SIZE;
+        if (nlx < 0 || nlx >= CELL_SIZE || nly < 0 || nly >= CELL_SIZE) return;
+        
+        const nVal = cellImages[nIdx][nly * CELL_SIZE + nlx];
+        const t = 1 - edgeDist / bleedPx;
+        const blendFactor = t * 0.5; // max 50% blend at the very edge
+        val = val * (1 - blendFactor) + nVal * blendFactor;
+      };
+      
+      // Check all 4 directions for bleeding
+      if (cc > 0) blendNeighbor(cc - 1, cr, distToLeft);
+      if (cc < GRID - 1) blendNeighbor(cc + 1, cr, distToRight);
+      if (cr > 0) blendNeighbor(cc, cr - 1, distToTop);
+      if (cr < GRID - 1) blendNeighbor(cc, cr + 1, distToBottom);
+      
+      // Color: warm smiley yellow
+      const v = Math.max(0, Math.min(1, val));
+      const r = Math.round(30 + v * 225);
+      const g = Math.round(25 + v * 200);
+      const b = Math.round(5 + v * 50);
+      
+      smileyCtx.fillStyle = `rgb(${r},${g},${b})`;
+      smileyCtx.fillRect(px, py, 1, 1);
+    }
+  }
+  
+  // Draw block grid lines for cells that are low-res (to show LEGO effect)
+  for (let ci = 0; ci < GRID * GRID; ci++) {
+    const cr = Math.floor(ci / GRID), cc = ci % GRID;
+    const blocks = cellBlockSizes[ci];
+    if (blocks > 20) continue; // don't draw grid for high-res cells
+    
+    const blockPx = CELL_SIZE / blocks;
+    const offsetX = cc * CELL_SIZE;
+    const offsetY = cr * CELL_SIZE;
+    
+    smileyCtx.strokeStyle = `rgba(0,0,0,${0.3 * (1 - blocks/20)})`;
+    smileyCtx.lineWidth = Math.max(0.5, 2 * (1 - blocks/20));
+    
+    for (let i = 1; i < blocks; i++) {
+      smileyCtx.beginPath();
+      smileyCtx.moveTo(offsetX + i * blockPx, offsetY);
+      smileyCtx.lineTo(offsetX + i * blockPx, offsetY + CELL_SIZE);
+      smileyCtx.stroke();
+      smileyCtx.beginPath();
+      smileyCtx.moveTo(offsetX, offsetY + i * blockPx);
+      smileyCtx.lineTo(offsetX + CELL_SIZE, offsetY + i * blockPx);
+      smileyCtx.stroke();
+    }
+  }
+  
+  smileyCtx.restore();
+  
+  // Draw grid overlay showing cell boundaries
+  overlayCtx.save();
+  overlayCtx.scale(DPR, DPR);
+  overlayCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
+  overlayCtx.strokeStyle = 'rgba(139, 92, 246, 0.4)';
+  overlayCtx.lineWidth = 1.5;
+  overlayCtx.setLineDash([6, 4]);
+  for (let i = 1; i < GRID; i++) {
+    overlayCtx.beginPath();
+    overlayCtx.moveTo(i * CELL_SIZE, 0);
+    overlayCtx.lineTo(i * CELL_SIZE, IMG_SIZE);
+    overlayCtx.stroke();
+    overlayCtx.beginPath();
+    overlayCtx.moveTo(0, i * CELL_SIZE);
+    overlayCtx.lineTo(IMG_SIZE, i * CELL_SIZE);
+    overlayCtx.stroke();
+  }
+  overlayCtx.setLineDash([]);
+  overlayCtx.restore();
+}
+
+// ============================================
+// DRAW FFT CELLS
+// ============================================
+function drawFFTCells() {
+  const cellFreqSize = FFT_VIS_N / GRID;
+  
+  for (let ci = 0; ci < GRID * GRID; ci++) {
+    const cr = Math.floor(ci / GRID), cc = ci % GRID;
+    const canvas = cellCanvases[ci];
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.scale(DPR, DPR);
+    ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
+    
+    const level = cellLevels[ci] / MAX_LEVEL;
+    const startFX = cc * cellFreqSize;
+    const startFY = cr * cellFreqSize;
+    const pixSize = CELL_CANVAS_SIZE / cellFreqSize;
+    
+    // Find max magnitude in this cell for normalization
+    let maxMag = 0;
+    for (let fy = 0; fy < cellFreqSize; fy++) {
+      for (let fx = 0; fx < cellFreqSize; fx++) {
+        const mag = fftMag[(startFY + fy) * FFT_VIS_N + (startFX + fx)];
+        if (mag > maxMag) maxMag = mag;
+      }
+    }
+    
+    for (let fy = 0; fy < cellFreqSize; fy++) {
+      for (let fx = 0; fx < cellFreqSize; fx++) {
+        const mag = fftMag[(startFY + fy) * FFT_VIS_N + (startFX + fx)];
+        const normMag = maxMag > 0 ? Math.log(1 + mag) / Math.log(1 + maxMag) : 0;
+        
+        // Color: brightness shows magnitude, saturation shows level (how active)
+        const brightness = normMag;
+        const active = level;
+        
+        // Active = vibrant purple/blue, inactive = dim gray
+        const r = Math.round(brightness * active * 160 + brightness * 30 + 15);
+        const g = Math.round(brightness * active * 80 + brightness * 20 + 10);
+        const b = Math.round(brightness * active * 255 + brightness * 60 + 25);
+        
+        ctx.fillStyle = `rgb(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,b)})`;
+        ctx.fillRect(fx * pixSize, fy * pixSize, pixSize + 1, pixSize + 1);
+      }
+    }
+    
+    // Level indicator bar at bottom
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(0, CELL_CANVAS_SIZE - 8, CELL_CANVAS_SIZE, 8);
+    ctx.fillStyle = level > 0.5 ? '#4ade80' : level > 0.2 ? '#fbbf24' : '#ef4444';
+    ctx.fillRect(0, CELL_CANVAS_SIZE - 8, CELL_CANVAS_SIZE * level, CELL_CANVAS_SIZE - 8, 8);
+    
+    ctx.restore();
+    
+    // Update badge
+    document.getElementById(`badge-${ci}`).textContent = `${Math.round(level * 100)}%`;
+  }
+}
+
+// ============================================
+// STATS
+// ============================================
+function updateStats() {
+  const statsEl = document.getElementById('statsRow');
+  let minLevel = MAX_LEVEL, maxLevel = 0, sum = 0;
+  for (let i = 0; i < GRID * GRID; i++) {
+    if (cellLevels[i] < minLevel) minLevel = cellLevels[i];
+    if (cellLevels[i] > maxLevel) maxLevel = cellLevels[i];
+    sum += cellLevels[i];
+  }
+  const avg = sum / (GRID * GRID);
+  const avgPct = Math.round(avg / MAX_LEVEL * 100);
+  
+  // Compute effective block range
+  const minBlocks = MIN_BLOCKS_PER_CELL + Math.round((MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(minLevel / MAX_LEVEL, 0.7));
+  const maxBlocks = MIN_BLOCKS_PER_CELL + Math.round((MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(maxLevel / MAX_LEVEL, 0.7));
+  
+  statsEl.innerHTML = `
+    <div class="stat"><div class="stat-label">Avg Resolution</div><div class="stat-value">${avgPct}%</div></div>
+    <div class="stat"><div class="stat-label">Min Cell</div><div class="stat-value">${Math.round(minLevel/MAX_LEVEL*100)}%</div></div>
+    <div class="stat"><div class="stat-label">Max Cell</div><div class="stat-value">${Math.round(maxLevel/MAX_LEVEL*100)}%</div></div>
+    <div class="stat"><div class="stat-label">Block Range</div><div class="stat-value">${minBlocks}–${maxBlocks}</div></div>
+  `;
+}
+
+// ============================================
+// MAIN RENDER LOOP
+// ============================================
+function render() {
+  drawSmiley();
+  drawFFTCells();
+  updateStats();
+}
+
+// Initial render
+render();
+
+// Prevent context menu globally on the grid
+document.getElementById('fftGrid').addEventListener('contextmenu', e => e.preventDefault());
+</script>
+</body>
+</html>
