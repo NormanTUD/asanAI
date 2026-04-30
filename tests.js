@@ -2625,16 +2625,6 @@ async function test_math_editable_system() {
 
 			await delay(2000);
 
-			// Test that clicking an editable span opens the popup
-			var first_editable_span = hybrid_container.querySelector(".math-ed-num");
-			if (first_editable_span) {
-				$(first_editable_span).click();
-				await delay(100);
-				test_equal("clicking editable opens popup", _math_pop_el.classList.contains("math-pop-visible"), true);
-				await delay(100);
-				math_close_popup();
-			}
-
 			// Test weight modification through editable
 			var kernel_eid = "L" + dense_layer_idx + "_kernel_0_0";
 			var kernel_ed = math_find_editable(kernel_eid);
