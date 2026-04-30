@@ -313,6 +313,12 @@ async function get_fit_data () {
 	var callbacks = {};
 
 	callbacks["onTrainBegin"] = async function () {
+		_math_interactive_mode_before = _math_interactive_mode;
+
+		if(_math_interactive_mode) {
+			toggle_math_interactive_mode();
+		}
+
 		confusion_matrix_and_grid_cache = {};
 		current_epoch = 0;
 		this_training_start_time = Date.now();
@@ -526,6 +532,12 @@ async function get_fit_data () {
 		confusion_matrix_to_page(); // async not possible
 
 		confusion_matrix_and_grid_cache = {};
+
+		_math_interactive_mode = _math_interactive_mode_before;
+
+		if(_math_interactive_mode) {
+			toggle_math_interactive_mode();
+		}
 	};
 
 	var fit_data = {

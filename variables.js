@@ -1888,6 +1888,7 @@ var shown_activation_equations = [];
 var activation_string = "";
 
 var _math_interactive_mode = false;
+var _math_interactive_mode_before = false;
 
 function toggle_math_interactive_mode() {
 	_math_interactive_mode = !_math_interactive_mode;
