@@ -194,24 +194,30 @@ function _replace_colored_spans_with_editables(container, editables_in_order) {
         var el = allElements[i];
         var style = el.getAttribute("style") || "";
 
-        if (style.indexOf("53d8fb") !== -1 || style.indexOf("53D8FB") !== -1 ||
-            style.indexOf("rgb(83, 216, 251)") !== -1) {
+        if (style.indexOf("53d8fb") === -1 && style.indexOf("53D8FB") === -1 &&
+            style.indexOf("rgb(83, 216, 251)") === -1) {
+            continue;
+        }
 
-            var ancestor = el.parentElement;
-            var ancestorHasColor = false;
-            while (ancestor && ancestor !== container) {
-                var aStyle = ancestor.getAttribute("style") || "";
-                if (aStyle.indexOf("53d8fb") !== -1 || aStyle.indexOf("53D8FB") !== -1 ||
-                    aStyle.indexOf("rgb(83, 216, 251)") !== -1) {
-                    ancestorHasColor = true;
-                    break;
-                }
-                ancestor = ancestor.parentElement;
+        // Only consider elements that directly contain text (leaf-level colored spans)
+        // This avoids double-counting wrapper spans vs. inner spans
+        var hasColoredChildElement = false;
+        for (var c = 0; c < el.children.length; c++) {
+            var childStyle = el.children[c].getAttribute("style") || "";
+            if (childStyle.indexOf("53d8fb") !== -1 || childStyle.indexOf("53D8FB") !== -1 ||
+                childStyle.indexOf("rgb(83, 216, 251)") !== -1) {
+                hasColoredChildElement = true;
+                break;
             }
+        }
 
-            if (!ancestorHasColor) {
-                coloredSpans.push(el);
-            }
+        // If this element has colored children, skip it (we'll process the children instead)
+        if (hasColoredChildElement) continue;
+
+        // Check that this element has meaningful text content (a number)
+        var text = el.textContent.trim();
+        if (text && (text.match(/^-?\d/) || text === "0")) {
+            coloredSpans.push(el);
         }
     }
 
