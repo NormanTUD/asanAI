@@ -7832,27 +7832,29 @@ function clear_attrament (idname) {
 }
 
 function invert_elements_in_dark_mode () {
-	is_dark_mode = $("#theme_choser").val() == "darkmode" ? true : false;
+        is_dark_mode = $("#theme_choser").val() == "darkmode" ? true : false;
 
-	if(is_dark_mode != is_already_inverted_in_dark_mode) {
-		var el = $(".invert_in_dark_mode");
+        if(is_dark_mode != is_already_inverted_in_dark_mode) {
+                var el = $(".invert_in_dark_mode");
 
-		el.removeClass("dark_mode_inverted");
+                el.removeClass("dark_mode_inverted");
 
-		if(is_dark_mode) {
-			el.addClass("dark_mode_inverted");
-		}
+                if(is_dark_mode) {
+                        el.addClass("dark_mode_inverted");
+                }
 
-		if(is_dark_mode) {
-			$("#asanai_main_logo").attr("src", "_gui/logo_small_dark.png");
-		} else {
-			$("#asanai_main_logo").attr("src", "_gui/logo_small.png");
-		}
+                if(is_dark_mode) {
+                        $("#asanai_main_logo").attr("src", "_gui/logo_small_dark.png");
+                        $("body").addClass("darkmode");
+                } else {
+                        $("#asanai_main_logo").attr("src", "_gui/logo_small.png");
+                        $("body").removeClass("darkmode");
+                }
 
-		is_already_inverted_in_dark_mode = is_dark_mode;
+                is_already_inverted_in_dark_mode = is_dark_mode;
 
-		create_weight_surfaces(1);
-	}
+                create_weight_surfaces(1);
+        }
 }
 
 function green_marker (element) {
