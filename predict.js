@@ -718,7 +718,7 @@ async function get_predict_data_or_warn_in_case_of_error(predict_data) {
             return divided;
         });
     } catch (e) {
-        handle_predict_error(e, predict_data);
+        await handle_predict_error(e, predict_data);
         console.trace();
         return null;
     }
