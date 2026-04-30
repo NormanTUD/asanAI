@@ -688,7 +688,9 @@ function number_of_elements_in_tensor_shape (shape) {
 async function handle_predict_error (e, predict_data) {
 	e = extract_error_message(e);
 
-	await dispose(predict_data);
+	if(predict_data) {
+		await dispose(predict_data);
+	}
 
 	if(("" + e).includes("Expected input shape")) {
 		dbg("" + e);
@@ -699,36 +701,36 @@ async function handle_predict_error (e, predict_data) {
 }
 
 async function get_predict_data_or_warn_in_case_of_error(predict_data) {
-    try {
-        predict_data = await tidy(() => {
-            var raw_input = get_predict_input_value();
+	try {
+		predict_data = await tidy(() => {
+			var raw_input = get_predict_input_value();
 
-            // Guard: if model expects image input but raw_input is not a valid pixels source, bail out
-            if (typeof input_shape_is_image === "function" && input_shape_is_image()) {
-                if (!_is_valid_pixels_source(raw_input)) {
-                    dbg("[get_predict_data_or_warn_in_case_of_error] Cannot call fromPixels: input is not a valid image source (got " + typeof raw_input + ")");
-                    return null;
-                }
-            }
+			// Guard: if model expects image input but raw_input is not a valid pixels source, bail out
+			if (typeof input_shape_is_image === "function" && input_shape_is_image()) {
+				if (!_is_valid_pixels_source(raw_input)) {
+					dbg("[get_predict_data_or_warn_in_case_of_error] Cannot call fromPixels: input is not a valid image source (got " + typeof raw_input + ")");
+					return null;
+				}
+			}
 
-            var img_tensor = fromPixels(raw_input);
-            var resized = resize_image(img_tensor, [height, width]);
-            var expanded = expand_dims(resized);
-            var divided = divNoNan(expanded, parse_float($("#divide_by").val()));
-            return divided;
-        });
-    } catch (e) {
-        await handle_predict_error(e, predict_data);
-        console.trace();
-        return null;
-    }
+			var img_tensor = fromPixels(raw_input);
+			var resized = resize_image(img_tensor, [height, width]);
+			var expanded = expand_dims(resized);
+			var divided = divNoNan(expanded, parse_float($("#divide_by").val()));
+			return divided;
+		});
+	} catch (e) {
+		await handle_predict_error(e, predict_data);
+		console.trace();
+		return null;
+	}
 
-    if (!predict_data || predict_data.isDisposed) {
-        dbg("[should_abort_predict] [predict] predict_data is null or undefined");
-        return null;
-    }
+	if (!predict_data || predict_data.isDisposed) {
+		dbg("[should_abort_predict] [predict] predict_data is null or undefined");
+		return null;
+	}
 
-    return predict_data;
+	return predict_data;
 }
 
 function divide_predict_data_by_divide_by (predict_data) {
