@@ -768,10 +768,7 @@ function _register_conv2d_kernel_editables(layer_idx, layer_data, kernel_flat, k
         for (var ic = 0; ic < max_inC; ic++) {
             for (var h = 0; h < kH; h++) {
                 for (var w = 0; w < kW; w++) {
-                    _register_single_conv2d_kernel_editable(
-                        layer_idx, layer_data, h, w, ic, oc,
-                        kW, inC, outC, kernel_weight_idx, decimals
-                    );
+                    _register_single_conv2d_kernel_editable(layer_idx, layer_data, h, w, ic, oc, kW, inC, outC, kernel_weight_idx, decimals);
                 }
             }
         }
@@ -784,21 +781,7 @@ function _register_single_conv2d_kernel_editable(layer_idx, layer_data, h, w, ic
 
     // Each function call creates its own scope, so flat_idx, h, w, ic, oc
     // are correctly captured as unique values per editable.
-    math_register_editable(
-        eid,
-        function() {
-            return layer_data[layer_idx].kernel[flat_idx];
-        },
-        function(v) {
-            layer_data[layer_idx].kernel[flat_idx] = v;
-            if (kwi >= 0) {
-                _math_apply_single_weight(layer_idx, kwi, layer_data[layer_idx].kernel);
-            }
-        },
-        -10, 10,
-        "Layer " + layer_idx + " kernel[" + h + "][" + w + "][" + ic + "][" + oc + "]",
-        { decimals: decimals }
-    );
+    math_register_editable(eid, function() { return layer_data[layer_idx].kernel[flat_idx]; }, function(v) { layer_data[layer_idx].kernel[flat_idx] = v; if (kwi >= 0) { _math_apply_single_weight(layer_idx, kwi, layer_data[layer_idx].kernel); } }, -10, 10, "Layer " + layer_idx + " kernel[" + h + "][" + w + "][" + ic + "][" + oc + "]", { decimals: decimals });
 }
 
 /**
