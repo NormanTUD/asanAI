@@ -853,47 +853,53 @@ function initTorusMorph() {
 
   // Body profile: returns {r, y} for a given ringT
   function bodyProfile(ringT) {
-    // ringT ∈ [0, 1) traces the closed mug wall cross-section
-    //
-    // Layout:
-    //   [0.00, 0.35): Outer wall, bottom to top
-    //   [0.35, 0.42): Rim, outer to inner at top
-    //   [0.42, 0.77): Inner wall, top to bottom
-    //   [0.77, 0.85): Bottom inner surface (inner to center-ish)
-    //   [0.85, 1.00): Bottom outer surface (center-ish to outer)
-
     const t = ringT;
     let r, y;
 
-    if (t < 0.35) {
+    // The profile traces a closed path that forms the mug cross-section:
+    //
+    //   Outer wall (up) → Rim (inward) → Inner wall (down) → 
+    //   Inner bottom (inward to center) → Outer bottom (outward from center) → 
+    //   Back to outer wall start
+    //
+    // Going through r=0 at the bottom creates a SOLID DISC (the mug's base).
+
+    if (t < 0.28) {
       // Outer wall: bottom to top
-      const lt = t / 0.35;
+      const lt = t / 0.28;
       r = MUG.outerR;
       y = lerp(MUG.bottomY, MUG.bottomY + MUG.height, lt);
-    } else if (t < 0.42) {
+    } else if (t < 0.34) {
       // Rim: outer to inner at top
-      const lt = (t - 0.35) / 0.07;
+      const lt = (t - 0.28) / 0.06;
       r = lerp(MUG.outerR, MUG.innerR, lt);
-      y = MUG.bottomY + MUG.height;
-      // Slight downward curve on rim inner edge
-      y -= MUG.rimThick * Math.sin(lt * Math.PI);
-    } else if (t < 0.77) {
+      y = MUG.bottomY + MUG.height - MUG.rimThick * Math.sin(lt * Math.PI);
+    } else if (t < 0.62) {
       // Inner wall: top to bottom
-      const lt = (t - 0.42) / 0.35;
+      const lt = (t - 0.34) / 0.28;
       r = MUG.innerR;
       y = lerp(MUG.bottomY + MUG.height - MUG.rimThick, MUG.bottomY + MUG.bottomThick, lt);
-    } else if (t < 0.88) {
-      // Bottom: inner to outer (flat bottom inside)
-      const lt = (t - 0.77) / 0.11;
-      r = lerp(MUG.innerR, MUG.outerR, lt);
-      y = MUG.bottomY + MUG.bottomThick * (1 - lt);
-      // Slight curve
-      y = MUG.bottomY + MUG.bottomThick * 0.5 * (1 - Math.cos(lt * Math.PI));
+    } else if (t < 0.78) {
+      // Bottom inner surface: from inner wall down to center at bottom
+      // This sweeps inward across the bottom, creating the inside of the base
+      const lt = (t - 0.62) / 0.16;
+      r = lerp(MUG.innerR, 0.0, lt);
+      y = lerp(MUG.bottomY + MUG.bottomThick, MUG.bottomY + MUG.bottomThick, lt);
+      // Slight sag toward center for realism:
+      y = MUG.bottomY + MUG.bottomThick * (1.0 - 0.15 * Math.sin(lt * Math.PI));
+    } else if (t < 0.94) {
+      // Bottom outer surface: from center outward at the very bottom
+      // This creates the underside of the mug
+      const lt = (t - 0.78) / 0.16;
+      r = lerp(0.0, MUG.outerR, lt);
+      y = MUG.bottomY;
     } else {
-      // Bottom outer edge: connect back to outer wall bottom
-      const lt = (t - 0.88) / 0.12;
+      // Close the loop: outer edge of bottom back up to outer wall start
+      // This is the thickness of the base at the outer edge
+      const lt = (t - 0.94) / 0.06;
       r = MUG.outerR;
-      y = lerp(MUG.bottomY + MUG.bottomThick * 0.02, MUG.bottomY, lt);
+      y = lerp(MUG.bottomY, MUG.bottomY, lt);
+      // They're at the same point (outer wall starts at bottomY), so this is just a seam
     }
 
     return { r, y };
@@ -999,23 +1005,23 @@ function initTorusMorph() {
         } else if (handleFactor > 0.999) {
           // Pure handle
           const hp = handleProfile(handleT, ringT);
-          // Handle is at theta=0 direction, with azimuthal offset
-          const handleTheta = 0;
-          out[idx + 0] = hp.r * Math.cos(handleTheta) - hp.azOffset * Math.sin(handleTheta);
+          // USE THE SAME THETA as this segment's azimuthal position
+          // The handle extends radially outward from the body at this theta
+          out[idx + 0] = hp.r * Math.cos(theta) - hp.azOffset * Math.sin(theta);
           out[idx + 1] = hp.y;
-          out[idx + 2] = hp.r * Math.sin(handleTheta) + hp.azOffset * Math.cos(handleTheta);
+          out[idx + 2] = hp.r * Math.sin(theta) + hp.azOffset * Math.cos(theta);
         } else {
-          // Blend zone (Fix #7 — smooth transition, no seam)
+          // Blend zone
           const bp = bodyProfile(ringT);
           const bx = bp.r * Math.cos(theta);
           const by = bp.y;
           const bz = bp.r * Math.sin(theta);
 
           const hp = handleProfile(handleT, ringT);
-          const handleTheta = 0;
-          const hx = hp.r * Math.cos(handleTheta) - hp.azOffset * Math.sin(handleTheta);
+          // ALSO use theta here, not a fixed handleTheta
+          const hx = hp.r * Math.cos(theta) - hp.azOffset * Math.sin(theta);
           const hy = hp.y;
-          const hz = hp.r * Math.sin(handleTheta) + hp.azOffset * Math.cos(handleTheta);
+          const hz = hp.r * Math.sin(theta) + hp.azOffset * Math.cos(theta);
 
           out[idx + 0] = lerp(bx, hx, handleFactor);
           out[idx + 1] = lerp(by, hy, handleFactor);
