@@ -864,15 +864,24 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('wheel', (e) => {
   if (overviewOpen) return;
 
-  // Check if the slide itself is scrollable and not at boundary
   const activeSlide = slides[currentSlide];
-  const atTop = activeSlide.scrollTop <= 0;
-  const atBottom = activeSlide.scrollTop + activeSlide.clientHeight >= activeSlide.scrollHeight - 5;
+  const isScrollable = activeSlide.scrollHeight > activeSlide.clientHeight + 1;
 
-  // If slide has scrollable content and we're not at boundary, let it scroll
-  if (activeSlide.scrollHeight > activeSlide.clientHeight) {
+  if (isScrollable) {
+    const atTop = activeSlide.scrollTop <= 0;
+    const atBottom = activeSlide.scrollTop + activeSlide.clientHeight >= activeSlide.scrollHeight - 2;
+
+    // If not at a boundary, just let the slide scroll naturally
     if (e.deltaY > 0 && !atBottom) return;
     if (e.deltaY < 0 && !atTop) return;
+
+    // At boundary — require a SECOND scroll event via cooldown reset
+    if (!scrollCooldown) {
+      // First wheel event at boundary: start cooldown but DON'T navigate yet
+      scrollCooldown = true;
+      setTimeout(() => scrollCooldown = false, 300);
+      return; // <-- absorb this first event
+    }
   }
 
   if (scrollCooldown) return;
