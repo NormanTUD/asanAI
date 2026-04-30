@@ -2468,207 +2468,202 @@ async function test_layer_settings() {
 // Add this to tests.js
 
 async function test_math_editable_system() {
-    log_test("Test Math Editable System");
+	log_test("Test Math Editable System");
 
-    // 1. Setup: ensure we have a simple model with a dense layer
-    await set_dataset_and_wait("and_xor");
-    await delay(2000);
+	// 1. Setup: ensure we have a simple model with a dense layer
+	await set_dataset_and_wait("and_xor");
+	await delay(2000);
 
-    // 2. Enable interactive mode
-    var prev_interactive = _math_interactive_mode;
-    _math_interactive_mode = true;
+	// 2. Enable interactive mode
+	var prev_interactive = _math_interactive_mode;
+	_math_interactive_mode = true;
 
-    // 3. Clear any existing editables
-    math_clear_editables();
-    test_equal("math_clear_editables clears all", _math_editables.length, 0);
+	// 3. Clear any existing editables
+	math_clear_editables();
+	test_equal("math_clear_editables clears all", _math_editables.length, 0);
 
-    // 4. Test registration
-    var test_val = 0.5;
-    math_register_editable("test_ed_1",
-        function() { return test_val; },
-        function(v) { test_val = v; },
-        -10, 10, "Test Param 1",
-        { step: 0.01, decimals: 3 }
-    );
+	// 4. Test registration
+	var test_val = 0.5;
+	math_register_editable("test_ed_1",
+		function() { return test_val; },
+		function(v) { test_val = v; },
+		-10, 10, "Test Param 1",
+		{ step: 0.01, decimals: 3 }
+	);
 
-    test_equal("math_register_editable adds one", _math_editables.length, 1);
-    test_equal("math_find_editable finds it", math_find_editable("test_ed_1") !== null, true);
-    test_equal("math_find_editable returns null for missing", math_find_editable("nonexistent_xyz") === null, true);
+	test_equal("math_register_editable adds one", _math_editables.length, 1);
+	test_equal("math_find_editable finds it", math_find_editable("test_ed_1") !== null, true);
+	test_equal("math_find_editable returns null for missing", math_find_editable("nonexistent_xyz") === null, true);
 
-    // 5. Test getter
-    var ed = math_find_editable("test_ed_1");
-    test_equal("editable get() returns correct value", ed.get(), 0.5);
+	// 5. Test getter
+	var ed = math_find_editable("test_ed_1");
+	test_equal("editable get() returns correct value", ed.get(), 0.5);
 
-    // 6. Test setter (when not training)
-    var old_started_training = started_training;
-    started_training = false;
-    ed.set(1.23);
-    test_equal("editable set() updates value", test_val, 1.23);
-    test_equal("editable get() reflects new value", ed.get(), 1.23);
+	// 6. Test setter (when not training)
+	var old_started_training = started_training;
+	started_training = false;
+	ed.set(1.23);
+	test_equal("editable set() updates value", test_val, 1.23);
+	test_equal("editable get() reflects new value", ed.get(), 1.23);
 
-    // 7. Test setter blocked during training
-    started_training = true;
-    ed.set(9.99);
-    test_equal("editable set() blocked during training", test_val, 1.23); // unchanged
-    started_training = false;
+	// 7. Test setter blocked during training
+	started_training = true;
+	ed.set(9.99);
+	test_equal("editable set() blocked during training", test_val, 1.23); // unchanged
+	started_training = false;
 
-    // 8. Test duplicate registration updates existing
-    math_register_editable("test_ed_1",
-        function() { return test_val; },
-        function(v) { test_val = v; },
-        -5, 5, "Test Param 1 Updated",
-        { step: 0.1, decimals: 2 }
-    );
-    test_equal("duplicate registration doesn't add new entry", _math_editables.length, 1);
-    test_equal("duplicate registration updates label", math_find_editable("test_ed_1").label, "Test Param 1 Updated");
-    test_equal("duplicate registration updates min", math_find_editable("test_ed_1").min, -5);
+	// 8. Test duplicate registration updates existing
+	math_register_editable("test_ed_1",
+		function() { return test_val; },
+		function(v) { test_val = v; },
+		-5, 5, "Test Param 1 Updated",
+		{ step: 0.1, decimals: 2 }
+	);
+	test_equal("duplicate registration doesn't add new entry", _math_editables.length, 1);
+	test_equal("duplicate registration updates label", math_find_editable("test_ed_1").label, "Test Param 1 Updated");
+	test_equal("duplicate registration updates min", math_find_editable("test_ed_1").min, -5);
 
-    // 9. Test popup creation
-    var popup = math_ensure_popup();
-    test_equal("math_ensure_popup creates element", popup !== null, true);
-    test_equal("popup element exists in DOM", document.getElementById("math_var_popup") !== null, true);
+	// 9. Test popup creation
+	var popup = math_ensure_popup();
+	test_equal("math_ensure_popup creates element", popup !== null, true);
+	test_equal("popup element exists in DOM", document.getElementById("math_var_popup") !== null, true);
 
-    // 10. Test popup open (blocked during training)
-    started_training = true;
-    math_open_popup("test_ed_1", { left: 100, top: 100, width: 50, bottom: 150 });
-    test_equal("popup blocked during training", _math_active_ed, null);
-    started_training = false;
+	// 10. Test popup open (blocked during training)
+	started_training = true;
+	math_open_popup("test_ed_1", { left: 100, top: 100, width: 50, bottom: 150 });
+	test_equal("popup blocked during training", _math_active_ed, null);
+	started_training = false;
 
-    // 11. Test popup open (allowed when not training)
-    math_open_popup("test_ed_1", { left: 100, top: 100, width: 50, bottom: 150 });
-    test_equal("popup opens when not training", _math_active_ed !== null, true);
-    test_equal("popup active ed is correct", _math_active_ed.id, "test_ed_1");
-    test_equal("popup has visible class", _math_pop_el.classList.contains("math-pop-visible"), true);
+	// 11. Test popup open (allowed when not training)
+	math_open_popup("test_ed_1", { left: 100, top: 100, width: 50, bottom: 150 });
+	test_equal("popup opens when not training", _math_active_ed !== null, true);
+	test_equal("popup active ed is correct", _math_active_ed.id, "test_ed_1");
+	test_equal("popup has visible class", _math_pop_el.classList.contains("math-pop-visible"), true);
 
-    // 12. Test popup close
-    math_close_popup();
-    test_equal("math_close_popup clears active ed", _math_active_ed, null);
-    test_equal("popup loses visible class", _math_pop_el.classList.contains("math-pop-visible"), false);
+	// 12. Test popup close
+	math_close_popup();
+	test_equal("math_close_popup clears active ed", _math_active_ed, null);
+	test_equal("popup loses visible class", _math_pop_el.classList.contains("math-pop-visible"), false);
 
-    // 13. Test _replace_colored_spans_with_editables
-    var test_container = document.createElement("div");
-    test_container.innerHTML = '<span style="color: rgb(83, 216, 251);">0.500</span>';
-    document.body.appendChild(test_container);
+	// 13. Test _replace_colored_spans_with_editables
+	var test_container = document.createElement("div");
+	test_container.innerHTML = '<span style="color: rgb(83, 216, 251);">0.500</span>';
+	document.body.appendChild(test_container);
 
-    math_register_editable("test_ed_span",
-        function() { return 0.5; },
-        function(v) {},
-        -10, 10, "Span Test",
-        { decimals: 3 }
-    );
+	math_register_editable("test_ed_span",
+		function() { return 0.5; },
+		function(v) {},
+		-10, 10, "Span Test",
+		{ decimals: 3 }
+	);
 
-    _replace_colored_spans_with_editables(test_container, [{ eid: "test_ed_span" }]);
+	_replace_colored_spans_with_editables(test_container, [{ eid: "test_ed_span" }]);
 
-    var editable_span = test_container.querySelector('[data-math-eid="test_ed_span"]');
-    test_equal("colored span converted to editable", editable_span !== null, true);
-    test_equal("editable span has correct class", editable_span.classList.contains("math-ed-num"), true);
-    test_equal("editable span shows value", editable_span.textContent, "0.500");
+	var editable_span = test_container.querySelector('[data-math-eid="test_ed_span"]');
+	test_equal("colored span converted to editable", editable_span !== null, true);
+	test_equal("editable span has correct class", editable_span.classList.contains("math-ed-num"), true);
+	test_equal("editable span shows value", editable_span.textContent, "0.500");
 
-    test_container.remove();
+	test_container.remove();
 
-    // 14. Test el_render_single_latex_with_editables
-    var render_container = document.createElement("div");
-    document.body.appendChild(render_container);
+	// 14. Test el_render_single_latex_with_editables
+	var render_container = document.createElement("div");
+	document.body.appendChild(render_container);
 
-    math_register_editable("test_render_ed",
-        function() { return 2.718; },
-        function(v) {},
-        -10, 10, "Render Test",
-        { decimals: 3 }
-    );
+	math_register_editable("test_render_ed",
+		function() { return 2.718; },
+		function(v) {},
+		-10, 10, "Render Test",
+		{ decimals: 3 }
+	);
 
-    var test_latex = "\\textcolor{#53d8fb}{2.718} + x";
-    el_render_single_latex_with_editables(render_container, test_latex, [{ eid: "test_render_ed" }]);
+	var test_latex = "\\textcolor{#53d8fb}{2.718} + x";
+	el_render_single_latex_with_editables(render_container, test_latex, [{ eid: "test_render_ed" }]);
 
-    test_equal("render container has content", render_container.innerHTML.length > 0, true);
-    test_equal("render container has math-hybrid-rendered", render_container.querySelector(".math-hybrid-rendered") !== null, true);
+	test_equal("render container has content", render_container.innerHTML.length > 0, true);
+	test_equal("render container has math-hybrid-rendered", render_container.querySelector(".math-hybrid-rendered") !== null, true);
 
-    render_container.remove();
+	render_container.remove();
 
-    // 15. Test _math_on_variable_changed fires event
-    var event_fired = false;
-    var event_handler = function(e) {
-        if (e.detail.id === "test_ed_1") event_fired = true;
-    };
-    document.addEventListener("math_variable_changed", event_handler);
+	// 15. Test _math_on_variable_changed fires event
+	var event_fired = false;
+	var event_handler = function(e) {
+		if (e.detail.id === "test_ed_1") event_fired = true;
+	};
+	document.addEventListener("math_variable_changed", event_handler);
 
-    _math_on_variable_changed(math_find_editable("test_ed_1"));
-    test_equal("math_variable_changed event fires", event_fired, true);
+	_math_on_variable_changed(math_find_editable("test_ed_1"));
+	test_equal("math_variable_changed event fires", event_fired, true);
 
-    document.removeEventListener("math_variable_changed", event_handler);
+	document.removeEventListener("math_variable_changed", event_handler);
 
-    // 16. Test with actual model (hybrid dense render)
-    if (model && model.layers && model.layers.length > 0) {
-        var layer_data = get_layer_data();
-        var colors = get_colors_from_old_and_new_layer_data([], layer_data);
-        var input_layer = get_input_layer(get_first_layer_input_shape());
+	// 16. Test with actual model (hybrid dense render)
+	if (model && model.layers && model.layers.length > 0) {
+		var layer_data = get_layer_data();
+		var colors = get_colors_from_old_and_new_layer_data([], layer_data);
+		var input_layer = get_input_layer(get_first_layer_input_shape());
 
-        // Find first dense layer
-        var dense_layer_idx = -1;
-        for (var li = 0; li < model.layers.length; li++) {
-            if ($($(".layer_type")[li]).val() === "dense") {
-                dense_layer_idx = li;
-                break;
-            }
-        }
+		// Find first dense layer
+		var dense_layer_idx = -1;
+		for (var li = 0; li < model.layers.length; li++) {
+			if ($($(".layer_type")[li]).val() === "dense") {
+				dense_layer_idx = li;
+				break;
+			}
+		}
 
-        if (dense_layer_idx >= 0) {
-            var hybrid_container = document.createElement("div");
-            hybrid_container.id = "test_math_hybrid_dense";
-            document.body.appendChild(hybrid_container);
+		if (dense_layer_idx >= 0) {
+			var hybrid_container = document.createElement("div");
+			hybrid_container.id = "test_math_hybrid_dense";
+			document.body.appendChild(hybrid_container);
 
-            math_clear_editables();
-            _inject_hybrid_dense_direct("test_math_hybrid_dense", dense_layer_idx, layer_data, colors, input_layer);
+			math_clear_editables();
+			_inject_hybrid_dense_direct("test_math_hybrid_dense", dense_layer_idx, layer_data, colors, input_layer);
 
-            test_equal("hybrid dense renders content", hybrid_container.innerHTML.length > 0, true);
-            test_equal("hybrid dense has editable spans", hybrid_container.querySelectorAll(".math-ed-num").length > 0, true);
+			test_equal("hybrid dense renders content", hybrid_container.innerHTML.length > 0, true);
+			test_equal("hybrid dense has editable spans", hybrid_container.querySelectorAll(".math-ed-num").length > 0, true);
 
-		$("#visualization_tab_label").click()
+			await delay(2000);
 
-		await delay(2000);
+			// Test that clicking an editable span opens the popup
+			var first_editable_span = hybrid_container.querySelector(".math-ed-num");
+			if (first_editable_span) {
+				$(first_editable_span).click();
+				await delay(100);
+				test_equal("clicking editable opens popup", _math_pop_el.classList.contains("math-pop-visible"), true);
+				await delay(100);
+				math_close_popup();
+			}
 
-		$("#math_tab_label").click();
+			// Test weight modification through editable
+			var kernel_eid = "L" + dense_layer_idx + "_kernel_0_0";
+			var kernel_ed = math_find_editable(kernel_eid);
+			if (kernel_ed) {
+				var original_val = kernel_ed.get();
+				var new_val = original_val + 0.1;
+				kernel_ed.set(new_val);
+				await delay(200);
 
-		await delay(2000);
+				// Verify the model weight actually changed
+				var updated_weights = array_sync(model.layers[dense_layer_idx].weights[0].val, true);
+				var flat_updated = Array.isArray(updated_weights[0]) ? updated_weights[0][0] : updated_weights[0];
+				test_equal("weight change applied to model", Math.abs(flat_updated - new_val) < 1e-5, true);
 
-            // Test that clicking an editable span opens the popup
-            var first_editable_span = hybrid_container.querySelector(".math-ed-num");
-            if (first_editable_span) {
-                $(first_editable_span).click();
-                await delay(100);
-                test_equal("clicking editable opens popup", _math_pop_el.classList.contains("math-pop-visible"), true);
-                math_close_popup();
-            }
+				// Reset
+				kernel_ed.set(original_val);
+				await delay(100);
+			}
 
-            // Test weight modification through editable
-            var kernel_eid = "L" + dense_layer_idx + "_kernel_0_0";
-            var kernel_ed = math_find_editable(kernel_eid);
-            if (kernel_ed) {
-                var original_val = kernel_ed.get();
-                var new_val = original_val + 0.1;
-                kernel_ed.set(new_val);
-                await delay(200);
+			hybrid_container.remove();
+		}
+	}
 
-                // Verify the model weight actually changed
-                var updated_weights = array_sync(model.layers[dense_layer_idx].weights[0].val, true);
-                var flat_updated = Array.isArray(updated_weights[0]) ? updated_weights[0][0] : updated_weights[0];
-                test_equal("weight change applied to model", Math.abs(flat_updated - new_val) < 1e-5, true);
+	// Cleanup
+	math_clear_editables();
+	_math_interactive_mode = prev_interactive;
+	started_training = old_started_training;
 
-                // Reset
-                kernel_ed.set(original_val);
-                await delay(100);
-            }
-
-            hybrid_container.remove();
-        }
-    }
-
-    // Cleanup
-    math_clear_editables();
-    _math_interactive_mode = prev_interactive;
-    started_training = old_started_training;
-
-    return true;
+	return true;
 }
 
 async function run_tests (quick=0) {
