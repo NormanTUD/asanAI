@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lens Focus Explorer — Image on Ground</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;padding:20px;min-height:100vh;user-select:none;overflow:hidden}
+h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
+.subtitle{color:#64748b;font-size:0.85em;margin-bottom:12px;text-align:center}
+.instructions{background:#1e293b;border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:0.8em;color:#94a3b8;max-width:900px;text-align:center;border:1px solid #334155}
+.instructions b{color:#93c5fd}
+.instructions .warn{color:#f87171;font-weight:bold}
+
+.scene{position:relative;width:900px;height:600px;perspective:900px;display:flex;align-items:center;justify-content:center;margin-top:10px}
+
+.ground-plane{
+  position:relative;
+  transform:rotateX(55deg) rotateZ(-5deg);
+  transform-style:preserve-3d;
+  box-shadow:0 30px 60px rgba(0,0,0,0.7);
+  border-radius:8px;
+  overflow:visible;
+}
+
+.ground-plane canvas{display:block;border-radius:8px;}
+
+.lens-overlay{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:grid;
+  pointer-events:all;
+  border-radius:8px;
+  overflow:hidden;
+}
+
+.lens-cell{
+  position:relative;
+  border:1px solid rgba(139,92,246,0.2);
+  cursor:pointer;
+  transition:border-color 0.2s, box-shadow 0.2s;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.lens-cell:hover{border-color:rgba(139,92,246,0.6);box-shadow:inset 0 0 20px rgba(139,92,246,0.15)}
+.lens-cell .lens-icon{
+  width:30px;height:30px;border-radius:50%;
+  border:2px solid rgba(200,200,255,0.4);
+  background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);
+  pointer-events:none;
+  transition:transform 0.2s,border-color 0.2s;
+}
+.lens-cell:hover .lens-icon{transform:scale(1.2);border-color:rgba(200,200,255,0.7)}
+.lens-cell.hallucinating{border-color:rgba(248,113,113,0.6);box-shadow:inset 0 0 20px rgba(248,113,113,0.2)}
+.lens-cell.hallucinating .lens-icon{border-color:rgba(248,113,113,0.8)}
+
+.focus-indicator{
+  position:absolute;bottom:2px;right:2px;
+  font-size:0.55em;color:#4ade80;background:rgba(0,0,0,0.7);
+  padding:1px 4px;border-radius:3px;pointer-events:none;
+}
+.focus-indicator.over{color:#f87171}
+
+.hallucination-badge{
+  position:absolute;top:2px;left:2px;
+  font-size:0.5em;color:#f87171;background:rgba(0,0,0,0.8);
+  padding:1px 4px;border-radius:3px;pointer-events:none;
+  display:none;
+  font-weight:bold;
+  letter-spacing:0.5px;
+}
+.lens-cell.hallucinating .hallucination-badge{display:block}
+
+.stats-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+.stat{background:#1e293b;border-radius:8px;padding:5px 12px;text-align:center;border:1px solid #334155}
+.stat-label{font-size:0.6em;color:#64748b}
+.stat-value{font-size:1em;font-weight:bold;color:#4ade80}
+.stat-value.warn{color:#f87171}
+
+.load-section{margin-bottom:16px;display:flex;gap:10px;align-items:center}
+.load-section input{background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:6px 12px;border-radius:6px;font-size:0.85em}
+.load-section button{background:#6d28d9;color:white;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.85em}
+.load-section button:hover{background:#7c3aed}
+</style>
+</head>
+<body>
+
+<h1>🔍 Lens Focus Explorer</h1>
+<p class="subtitle">Image lying on the ground — hover lenses to see regions, click to focus, right-click to defocus</p>
+<div class="instructions">
+  <b>Left-click</b> a lens → increase focus (sharpen that region seamlessly)<br>
+  <b>Right-click</b> a lens → decrease focus (blur it back)<br>
+  <b>Scroll wheel</b> over a lens → fine-tune focus level continuously<br>
+  Focus beyond native resolution → <span class="warn">⚠ HALLUCINATION</span> (interpolated beyond real data)<br>
+  Load any image from the same folder by entering its filename below.
+</div>
+
+<div class="load-section">
+  <input type="text" id="imageInput" value="example.jpg" placeholder="filename e.g. example.jpg">
+  <button onclick="loadImage()">Load Image</button>
+  <span id="loadStatus" style="font-size:0.75em;color:#64748b"></span>
+</div>
+
+<div class="scene">
+  <div class="ground-plane" id="groundPlane">
+    <canvas id="mainCanvas"></canvas>
+    <div class="lens-overlay" id="lensOverlay"></div>
+  </div>
+</div>
+
+<div class="stats-row" id="statsRow"></div>
+
+<script>
+// ============================================
+// CONFIG
+// ============================================
+const GRID_COLS = 6;
+const GRID_ROWS = 5;
+const DISPLAY_WIDTH = 540;
+const DISPLAY_HEIGHT = 450;
+const MAX_FOCUS = 10; // 0 = very blurry, 10 = max zoom
+const NATIVE_THRESHOLD = 7; // focus levels above this = hallucination
+
+let sourceImage = null;
+let sourceWidth = 0;
+let sourceHeight = 0;
+let sourceData = null;
+
+// Focus state per cell
+const focusState = new Array(GRID_COLS * GRID_ROWS).fill(2); // start at low focus
+
+// ============================================
+// LOAD IMAGE
+// ============================================
+function loadImage() {
+  const filename = document.getElementById('imageInput').value.trim();
+  if (!filename) return;
+  
+  const status = document.getElementById('loadStatus');
+  status.textContent = 'Loading...';
+  status.style.color = '#fbbf24';
+  
+  const img = new Image();
+  img.onload = function() {
+    sourceWidth = img.naturalWidth;
+    sourceHeight = img.naturalHeight;
+    
+    // Draw to offscreen canvas to get pixel data
+    const offscreen = document.createElement('canvas');
+    offscreen.width = sourceWidth;
+    offscreen.height = sourceHeight;
+    const octx = offscreen.getContext('2d');
+    octx.drawImage(img, 0, 0);
+    sourceData = octx.getImageData(0, 0, sourceWidth, sourceHeight);
+    sourceImage = img;
+    
+    status.textContent = `✓ Loaded ${filename} (${sourceWidth}×${sourceHeight})`;
+    status.style.color = '#4ade80';
+    
+    setupScene();
+    renderAll();
+  };
+  img.onerror = function() {
+    status.textContent = `✗ Failed to load "${filename}" — make sure it's in the same folder`;
+    status.style.color = '#f87171';
+    // Fall back to generated pattern
+    generateFallbackImage();
+    setupScene();
+    renderAll();
+  };
+  img.src = filename;
+}
+
+// ============================================
+// FALLBACK: Generate a colorful test pattern
+// ============================================
+function generateFallbackImage() {
+  sourceWidth = 256;
+  sourceHeight = 256;
+  const offscreen = document.createElement('canvas');
+  offscreen.width = sourceWidth;
+  offscreen.height = sourceHeight;
+  const ctx = offscreen.getContext('2d');
+  
+  // Draw a smiley as fallback
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath();
+  ctx.arc(128, 128, 100, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Eyes
+  ctx.fillStyle = '#1a1a2e';
+  ctx.beginPath();
+  ctx.arc(90, 100, 15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(166, 100, 15, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Mouth
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.arc(128, 135, 50, 0.2, Math.PI - 0.2);
+  ctx.stroke();
+  
+  // Background gradient
+  const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 180);
+  grad.addColorStop(0, 'rgba(99,102,241,0.0)');
+  grad.addColorStop(1, 'rgba(99,102,241,0.3)');
+  ctx.globalCompositeOperation = 'destination-over';
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 256, 256);
+  ctx.fillStyle = '#1e1b4b';
+  ctx.fillRect(0, 0, 256, 256);
+  ctx.globalCompositeOperation = 'source-over';
+  
+  sourceData = ctx.getImageData(0, 0, sourceWidth, sourceHeight);
+  
+  document.getElementById('loadStatus').textContent = '⚠ Using fallback pattern (place example.jpg in same folder)';
+  document.getElementById('loadStatus').style.color = '#fbbf24';
+}
+
+// ============================================
+// BILINEAR SAMPLE from source
+// ============================================
+function sampleSource(nx, ny) {
+  // nx, ny in [0,1]
+  const fx = nx * (sourceWidth - 1);
+  const fy = ny * (sourceHeight - 1);
+  const x0 = Math.floor(fx);
+  const y0 = Math.floor(fy);
+  const x1 = Math.min(x0 + 1, sourceWidth - 1);
+  const y1 = Math.min(y0 + 1, sourceHeight - 1);
+  const dx = fx - x0;
+  const dy = fy - y0;
+  
+  const idx00 = (y0 * sourceWidth + x0) * 4;
+  const idx10 = (y0 * sourceWidth + x1) * 4;
+  const idx01 = (y1 * sourceWidth + x0) * 4;
+  const idx11 = (y1 * sourceWidth + x1) * 4;
+  
+  const r = (1-dx)*(1-dy)*sourceData.data[idx00] + dx*(1-dy)*sourceData.data[idx10] + (1-dx)*dy*sourceData.data[idx01] + dx*dy*sourceData.data[idx11];
+  const g = (1-dx)*(1-dy)*sourceData.data[idx00+1] + dx*(1-dy)*sourceData.data[idx10+1] + (1-dx)*dy*sourceData.data[idx01+1] + dx*dy*sourceData.data[idx11+1];
+  const b = (1-dx)*(1-dy)*sourceData.data[idx00+2] + dx*(1-dy)*sourceData.data[idx10+2] + (1-dx)*dy*sourceData.data[idx01+2] + dx*dy*sourceData.data[idx11+2];
+  
+  return [r, g, b];
+}
+
+// ============================================
+// SAMPLE with variable blur (block averaging)
+// ============================================
+function sampleWithFocus(nx, ny, focusLevel) {
+  // focusLevel 0 = very blurry (large blocks), MAX_FOCUS = pixel-perfect or beyond
+  // Map focus to effective sample blocks
+  const minBlocks = 3;
+  const maxBlocks = Math.max(sourceWidth, sourceHeight);
+  
+  // Exponential mapping for smooth feel
+  const t = focusLevel / MAX_FOCUS;
+  const effectiveBlocks = Math.round(minBlocks * Math.pow(maxBlocks / minBlocks, t));
+  
+  // If effectiveBlocks > source resolution, we're overzooming (hallucinating)
+  const isOverzoom = effectiveBlocks > Math.min(sourceWidth, sourceHeight);
+  
+  if (effectiveBlocks >= Math.min(sourceWidth, sourceHeight)) {
+    // At or beyond native: use bilinear interpolation
+    const [r, g, b] = sampleSource(nx, ny);
+    return { r, g, b, hallucinating: isOverzoom };
+  }
+  
+  // Block-average for blur effect
+  const blockW = 1.0 / effectiveBlocks;
+  const blockX = Math.floor(nx / blockW);
+  const blockY = Math.floor(ny / blockW);
+  const centerNx = (blockX + 0.5) * blockW;
+  const centerNy = (blockY + 0.5) * blockW;
+  
+  // Blend between block center and actual position based on sub-block position
+  // This creates smooth transitions between focus levels
+  const subT = Math.min(1, (effectiveBlocks - minBlocks) / (maxBlocks * 0.3));
+  const sampleNx = centerNx * (1 - subT) + nx * subT;
+  const sampleNy = centerNy * (1 - subT) + ny * subT;
+  
+  const [r, g, b] = sampleSource(
+    Math.max(0, Math.min(1, sampleNx)),
+    Math.max(0, Math.min(1, sampleNy))
+  );
+  
+  return { r, g, b, hallucinating: false };
+}
+
+// ============================================
+// SETUP SCENE
+// ============================================
+function setupScene() {
+  const canvas = document.getElementById('mainCanvas');
+  canvas.width = DISPLAY_WIDTH;
+  canvas.height = DISPLAY_HEIGHT;
+  
+  const groundPlane = document.getElementById('groundPlane');
+  groundPlane.style.width = DISPLAY_WIDTH + 'px';
+  groundPlane.style.height = DISPLAY_HEIGHT + 'px';
+  
+  // Setup lens overlay grid
+  const overlay = document.getElementById('lensOverlay');
+  overlay.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
+  overlay.style.gridTemplateRows = `repeat(${GRID_ROWS}, 1fr)`;
+  overlay.innerHTML = '';
+  
+  for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'lens-cell';
+    cell.id = `lens-${i}`;
+    
+    const icon = document.createElement('div');
+    icon.className = 'lens-icon';
+    cell.appendChild(icon);
+    
+    const indicator = document.createElement('div');
+    indicator.className = 'focus-indicator';
+    indicator.id = `focus-ind-${i}`;
+    indicator.textContent = `${focusState[i]}`;
+    cell.appendChild(indicator);
+    
+    const badge = document.createElement('div');
+    badge.className = 'hallucination-badge';
+    badge.textContent = '⚠ HALLUC';
+    cell.appendChild(badge);
+    
+    // Left click: increase focus
+    cell.addEventListener('click', (e) => {
+      e.preventDefault();
+      focusState[i] = Math.min(focusState[i] + 1, MAX_FOCUS);
+      renderAll();
+    });
+    
+    // Right click: decrease focus
+    cell.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      focusState[i] = Math.max(focusState[i] - 1, 0);
+      renderAll();
+    });
+    
+    // Scroll: fine control
+    cell.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.5 : 0.5;
+      focusState[i] = Math.max(0, Math.min(MAX_FOCUS, focusState[i] + delta));
+      renderAll();
+    }, { passive: false });
+    
+    overlay.appendChild(cell);
+  }
+}
+
+// ============================================
+// RENDER ALL
+// ============================================
+function renderAll() {
+  if (!sourceData) return;
+  
+  const canvas = document.getElementById('mainCanvas');
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.createImageData(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+  
+  const cellW = DISPLAY_WIDTH / GRID_COLS;
+  const cellH = DISPLAY_HEIGHT / GRID_ROWS;
+  
+  let hallucinatingCells = 0;
+  
+  for (let py = 0; py < DISPLAY_HEIGHT; py++) {
+    for (let px = 0; px < DISPLAY_WIDTH; px++) {
+      const nx = (px + 0.5) / DISPLAY_WIDTH;
+      const ny = (py + 0.5) / DISPLAY_HEIGHT;
+      
+      // Determine which cell and get focus with smooth blending
+      const cellCol = Math.min(Math.floor(px / cellW), GRID_COLS - 1);
+      const cellRow = Math.min(Math.floor(py / cellH), GRID_ROWS - 1);
+      
+      // Smooth focus blending from neighboring cells (Gaussian-weighted)
+      let totalWeight = 0;
+      let blendedFocus = 0;
+      
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          const nr = cellRow + dr;
+          const nc = cellCol + dc;
+          if (nr < 0 || nr >= GRID_ROWS || nc < 0 || nc >= GRID_COLS) continue;
+          const nIdx = nr * GRID_COLS + nc;
+          
+          const nCenterX = (nc + 0.5) * cellW;
+          const nCenterY = (nr + 0.5) * cellH;
+          const ddx = (px - nCenterX) / cellW;
+          const ddy = (py - nCenterY) / cellH;
+          const dist = Math.sqrt(ddx * ddx + ddy * ddy);
+          const sigma = 0.6;
+          const w = Math.exp(-(dist * dist) / (2 * sigma * sigma));
+          
+          blendedFocus += focusState[nIdx] * w;
+          totalWeight += w;
+        }
+      }
+      
+      blendedFocus = totalWeight > 0 ? blendedFocus / totalWeight : focusState[cellRow * GRID_COLS + cellCol];
+      
+      const { r, g, b, hallucinating } = sampleWithFocus(nx, ny, blendedFocus);
+      
+      const pi = (py * DISPLAY_WIDTH + px) * 4;
+      
+      if (hallucinating) {
+        // Tint slightly red/magenta to indicate hallucination
+        const halTint = 0.15;
+        imgData.data[pi] = Math.min(255, Math.round(r * (1 + halTint)));
+        imgData.data[pi + 1] = Math.round(g * (1 - halTint * 0.5));
+        imgData.data[pi + 2] = Math.min(255, Math.round(b * (1 + halTint * 0.3)));
+      } else {
+        imgData.data[pi] = Math.round(r);
+        imgData.data[pi + 1] = Math.round(g);
+        imgData.data[pi + 2] = Math.round(b);
+      }
+      imgData.data[pi + 3] = 255;
+    }
+  }
+  
+  ctx.putImageData(imgData, 0, 0);
+  
+  // Draw lens grid lines on canvas
+  ctx.strokeStyle = 'rgba(139,92,246,0.15)';
+  ctx.lineWidth = 1;
+  for (let c = 1; c < GRID_COLS; c++) {
+    ctx.beginPath();
+    ctx.moveTo(c * cellW, 0);
+    ctx.lineTo(c * cellW, DISPLAY_HEIGHT);
+    ctx.stroke();
+  }
+  for (let r = 1; r < GRID_ROWS; r++) {
+    ctx.beginPath();
+    ctx.moveTo(0, r * cellH);
+    ctx.lineTo(DISPLAY_WIDTH, r * cellH);
+    ctx.stroke();
+  }
+  
+  // Update lens cell states
+  for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
+    const cell = document.getElementById(`lens-${i}`);
+    const ind = document.getElementById(`focus-ind-${i}`);
+    const focus = focusState[i];
+    const isHalluc = focus > NATIVE_THRESHOLD;
+    
+    ind.textContent = focus % 1 === 0 ? focus : focus.toFixed(1);
+    
+    if (isHalluc) {
+      cell.classList.add('hallucinating');
+      ind.classList.add('over');
+      hallucinatingCells++;
+    } else {
+      cell.classList.remove('hallucinating');
+      ind.classList.remove('over');
+    }
+  }
+  
+  updateStats(hallucinatingCells);
+}
+
+// ============================================
+// STATS
+// ============================================
+function updateStats(hallucinatingCells) {
+  const statsEl = document.getElementById('statsRow');
+  const totalCells = GRID_COLS * GRID_ROWS;
+  const avgFocus = (focusState.reduce((a, b) => a + b, 0) / totalCells).toFixed(1);
+  
+  statsEl.innerHTML = `
+    <div class="stat"><div class="stat-label">Source</div><div class="stat-value">${sourceWidth}×${sourceHeight}</div></div>
+    <div class="stat"><div class="stat-label">Grid</div><div class="stat-value">${GRID_COLS}×${GRID_ROWS}</div></div>
+    <div class="stat"><div class="stat-label">Avg Focus</div><div class="stat-value">${avgFocus} / ${MAX_FOCUS}</div></div>
+    <div class="stat"><div class="stat-label">Hallucinating</div><div class="stat-value ${hallucinatingCells > 0 ? 'warn' : ''}">${hallucinatingCells} cells</div></div>
+    <div class="stat"><div class="stat-label">Native Limit</div><div class="stat-value">${NATIVE_THRESHOLD}</div></div>
+  `;
+}
+
+// ============================================
+// INIT
+// ============================================
+loadImage();
+</script>
+</body>
+</html>

@@ -3,108 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lens Focus Explorer — Image on Ground</title>
+<title>Holographic FFT Smiley — All Cells Active + Overzoom Estimation</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;padding:20px;min-height:100vh;user-select:none;overflow:hidden}
+body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a1a;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;user-select:none}
 h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
-.subtitle{color:#64748b;font-size:0.85em;margin-bottom:12px;text-align:center}
-.instructions{background:#1e293b;border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:0.8em;color:#94a3b8;max-width:900px;text-align:center;border:1px solid #334155}
+.subtitle{color:#64748b;font-size:0.85em;margin-bottom:20px;text-align:center}
+.instructions{background:#1e293b;border-radius:10px;padding:14px 20px;margin-bottom:20px;font-size:0.82em;color:#94a3b8;max-width:560px;text-align:center;border:1px solid #334155}
 .instructions b{color:#93c5fd}
-.instructions .warn{color:#f87171;font-weight:bold}
+.instructions .key{display:inline-block;background:#334155;border-radius:4px;padding:1px 6px;font-weight:bold;color:#e2e8f0;margin:0 2px}
 
-.scene{position:relative;width:900px;height:600px;perspective:900px;display:flex;align-items:center;justify-content:center;margin-top:10px}
+.fft-section{text-align:center;margin-bottom:6px}
+.fft-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.fft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
+.fft-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid #334155;transition:border-color 0.2s,box-shadow 0.2s}
+.fft-cell:hover{border-color:#8b5cf6;box-shadow:0 0 12px #8b5cf640}
+.fft-cell canvas{width:100%;height:100%;display:block}
+.fft-cell .level-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#fbbf24;font-size:0.65em;padding:2px 5px;border-radius:4px;font-weight:bold}
+.fft-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
+.fft-cell .mode-badge{position:absolute;top:4px;left:4px;background:rgba(139,92,246,0.8);color:#fff;font-size:0.55em;padding:1px 4px;border-radius:3px;display:none}
+.fft-cell .mode-badge.active{display:block}
 
-.ground-plane{
-  position:relative;
-  transform:rotateX(55deg) rotateZ(-5deg);
-  transform-style:preserve-3d;
-  box-shadow:0 30px 60px rgba(0,0,0,0.7);
-  border-radius:8px;
-  overflow:visible;
-}
+.arrow-down{font-size:2em;color:#64748b;margin:12px 0;text-align:center}
+.arrow-down small{font-size:0.35em;display:block;color:#94a3b8}
 
-.ground-plane canvas{display:block;border-radius:8px;}
+.smiley-section{text-align:center}
+.smiley-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.smiley-container{position:relative;border-radius:12px;overflow:hidden;border:2px solid #334155;background:#000;display:inline-block}
+.smiley-container canvas{display:block}
+.grid-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
 
-.lens-overlay{
-  position:absolute;top:0;left:0;width:100%;height:100%;
-  display:grid;
-  pointer-events:all;
-  border-radius:8px;
-  overflow:hidden;
-}
+.stats-row{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.stat{background:#1e293b;border-radius:8px;padding:6px 14px;text-align:center;border:1px solid #334155}
+.stat-label{font-size:0.65em;color:#64748b}
+.stat-value{font-size:1.1em;font-weight:bold;color:#4ade80}
 
-.lens-cell{
-  position:relative;
-  border:1px solid rgba(139,92,246,0.2);
-  cursor:pointer;
-  transition:border-color 0.2s, box-shadow 0.2s;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.lens-cell:hover{border-color:rgba(139,92,246,0.6);box-shadow:inset 0 0 20px rgba(139,92,246,0.15)}
-.lens-cell .lens-icon{
-  width:30px;height:30px;border-radius:50%;
-  border:2px solid rgba(200,200,255,0.4);
-  background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);
-  pointer-events:none;
-  transition:transform 0.2s,border-color 0.2s;
-}
-.lens-cell:hover .lens-icon{transform:scale(1.2);border-color:rgba(200,200,255,0.7)}
-.lens-cell.hallucinating{border-color:rgba(248,113,113,0.6);box-shadow:inset 0 0 20px rgba(248,113,113,0.2)}
-.lens-cell.hallucinating .lens-icon{border-color:rgba(248,113,113,0.8)}
-
-.focus-indicator{
-  position:absolute;bottom:2px;right:2px;
-  font-size:0.55em;color:#4ade80;background:rgba(0,0,0,0.7);
-  padding:1px 4px;border-radius:3px;pointer-events:none;
-}
-.focus-indicator.over{color:#f87171}
-
-.hallucination-badge{
-  position:absolute;top:2px;left:2px;
-  font-size:0.5em;color:#f87171;background:rgba(0,0,0,0.8);
-  padding:1px 4px;border-radius:3px;pointer-events:none;
-  display:none;
-  font-weight:bold;
-  letter-spacing:0.5px;
-}
-.lens-cell.hallucinating .hallucination-badge{display:block}
-
-.stats-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center}
-.stat{background:#1e293b;border-radius:8px;padding:5px 12px;text-align:center;border:1px solid #334155}
-.stat-label{font-size:0.6em;color:#64748b}
-.stat-value{font-size:1em;font-weight:bold;color:#4ade80}
-.stat-value.warn{color:#f87171}
-
-.load-section{margin-bottom:16px;display:flex;gap:10px;align-items:center}
-.load-section input{background:#1e293b;border:1px solid #334155;color:#e2e8f0;padding:6px 12px;border-radius:6px;font-size:0.85em}
-.load-section button{background:#6d28d9;color:white;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.85em}
-.load-section button:hover{background:#7c3aed}
+.fft-spectrum-section{text-align:center;margin-top:6px;margin-bottom:6px}
+.fft-spectrum-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.fft-spectrum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
+.fft-spectrum-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;border:2px solid #1e3a5f;transition:border-color 0.2s,box-shadow 0.2s}
+.fft-spectrum-cell:hover{border-color:#38bdf8;box-shadow:0 0 12px #38bdf840}
+.fft-spectrum-cell canvas{width:100%;height:100%;display:block}
+.fft-spectrum-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
 </style>
 </head>
 <body>
 
-<h1>🔍 Lens Focus Explorer</h1>
-<p class="subtitle">Image lying on the ground — hover lenses to see regions, click to focus, right-click to defocus</p>
+<h1>🔮 Holographic FFT Smiley</h1>
+<p class="subtitle">Every cell encodes the whole image · Overzoom shows sine-wave estimation</p>
+
 <div class="instructions">
-  <b>Left-click</b> a lens → increase focus (sharpen that region seamlessly)<br>
-  <b>Right-click</b> a lens → decrease focus (blur it back)<br>
-  <b>Scroll wheel</b> over a lens → fine-tune focus level continuously<br>
-  Focus beyond native resolution → <span class="warn">⚠ HALLUCINATION</span> (interpolated beyond real data)<br>
-  Load any image from the same folder by entering its filename below.
+  <b>Left-click</b> a cell → <span class="key">+ resolution</span> (zoom in, past native = overzoom estimation)<br>
+  <b>Right-click</b> a cell → <span class="key">− resolution</span><br>
+  All 9 cells are active and encode the full image (holographic principle)<br>
+  <b>Overzoom</b> (past L12): reconstructs using sine-wave patches to estimate detail
 </div>
 
-<div class="load-section">
-  <input type="text" id="imageInput" value="example.jpg" placeholder="filename e.g. example.jpg">
-  <button onclick="loadImage()">Load Image</button>
-  <span id="loadStatus" style="font-size:0.75em;color:#64748b"></span>
+<div class="fft-section">
+  <div class="fft-label">FFT Frequency Domain (3×3 regions)</div>
+  <div class="fft-grid" id="fftGrid"></div>
 </div>
 
-<div class="scene">
-  <div class="ground-plane" id="groundPlane">
-    <canvas id="mainCanvas"></canvas>
-    <div class="lens-overlay" id="lensOverlay"></div>
+<div class="arrow-down">↓<small>FFT magnitude spectrum per patch</small></div>
+
+<div class="fft-spectrum-section">
+  <div class="fft-spectrum-label">FFT Pattern Visualization (magnitude spectrum per cell)</div>
+  <div class="fft-spectrum-grid" id="fftSpectrumGrid"></div>
+</div>
+
+<div class="arrow-down">↓<small>inverse FFT → spatial domain</small></div>
+
+<div class="smiley-section">
+  <div class="smiley-label">Reconstructed Smiley</div>
+  <div class="smiley-container">
+    <canvas id="smileyCanvas"></canvas>
+    <canvas id="gridOverlay" class="grid-overlay"></canvas>
   </div>
 </div>
 
@@ -114,376 +87,593 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 // ============================================
 // CONFIG
 // ============================================
-const GRID_COLS = 6;
-const GRID_ROWS = 5;
-const DISPLAY_WIDTH = 540;
-const DISPLAY_HEIGHT = 450;
-const MAX_FOCUS = 10; // 0 = very blurry, 10 = max zoom
-const NATIVE_THRESHOLD = 7; // focus levels above this = hallucination
+const GRID = 3;
+const IMG_SIZE = 396;
+const CELL_SIZE = IMG_SIZE / GRID;
+const MAX_LEVEL = 24;
+const NATIVE_LEVEL = 12;
+const MIN_BLOCKS_PER_CELL = 2;
+const MAX_BLOCKS_PER_CELL = 44;
+const DPR = window.devicePixelRatio || 1;
 
-let sourceImage = null;
-let sourceWidth = 0;
-let sourceHeight = 0;
-let sourceData = null;
-
-// Focus state per cell
-const focusState = new Array(GRID_COLS * GRID_ROWS).fill(2); // start at low focus
+const cellLevels = Array(GRID * GRID).fill(1);
 
 // ============================================
-// LOAD IMAGE
+// Smiley source function (normalized 0-1 coords)
 // ============================================
-function loadImage() {
-  const filename = document.getElementById('imageInput').value.trim();
-  if (!filename) return;
-  
-  const status = document.getElementById('loadStatus');
-  status.textContent = 'Loading...';
-  status.style.color = '#fbbf24';
-  
-  const img = new Image();
-  img.onload = function() {
-    sourceWidth = img.naturalWidth;
-    sourceHeight = img.naturalHeight;
-    
-    // Draw to offscreen canvas to get pixel data
-    const offscreen = document.createElement('canvas');
-    offscreen.width = sourceWidth;
-    offscreen.height = sourceHeight;
-    const octx = offscreen.getContext('2d');
-    octx.drawImage(img, 0, 0);
-    sourceData = octx.getImageData(0, 0, sourceWidth, sourceHeight);
-    sourceImage = img;
-    
-    status.textContent = `✓ Loaded ${filename} (${sourceWidth}×${sourceHeight})`;
-    status.style.color = '#4ade80';
-    
-    setupScene();
-    renderAll();
-  };
-  img.onerror = function() {
-    status.textContent = `✗ Failed to load "${filename}" — make sure it's in the same folder`;
-    status.style.color = '#f87171';
-    // Fall back to generated pattern
-    generateFallbackImage();
-    setupScene();
-    renderAll();
-  };
-  img.src = filename;
-}
+function smileyAt(nx, ny) {
+  const cx = 0.5, cy = 0.5;
+  const dx = nx - cx, dy = ny - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const r = 0.42;
 
-// ============================================
-// FALLBACK: Generate a colorful test pattern
-// ============================================
-function generateFallbackImage() {
-  sourceWidth = 256;
-  sourceHeight = 256;
-  const offscreen = document.createElement('canvas');
-  offscreen.width = sourceWidth;
-  offscreen.height = sourceHeight;
-  const ctx = offscreen.getContext('2d');
-  
-  // Draw a smiley as fallback
-  ctx.fillStyle = '#fbbf24';
-  ctx.beginPath();
-  ctx.arc(128, 128, 100, 0, Math.PI * 2);
-  ctx.fill();
-  
-  // Eyes
-  ctx.fillStyle = '#1a1a2e';
-  ctx.beginPath();
-  ctx.arc(90, 100, 15, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(166, 100, 15, 0, Math.PI * 2);
-  ctx.fill();
-  
-  // Mouth
-  ctx.strokeStyle = '#1a1a2e';
-  ctx.lineWidth = 8;
-  ctx.beginPath();
-  ctx.arc(128, 135, 50, 0.2, Math.PI - 0.2);
-  ctx.stroke();
-  
-  // Background gradient
-  const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 180);
-  grad.addColorStop(0, 'rgba(99,102,241,0.0)');
-  grad.addColorStop(1, 'rgba(99,102,241,0.3)');
-  ctx.globalCompositeOperation = 'destination-over';
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 256, 256);
-  ctx.fillStyle = '#1e1b4b';
-  ctx.fillRect(0, 0, 256, 256);
-  ctx.globalCompositeOperation = 'source-over';
-  
-  sourceData = ctx.getImageData(0, 0, sourceWidth, sourceHeight);
-  
-  document.getElementById('loadStatus').textContent = '⚠ Using fallback pattern (place example.jpg in same folder)';
-  document.getElementById('loadStatus').style.color = '#fbbf24';
-}
-
-// ============================================
-// BILINEAR SAMPLE from source
-// ============================================
-function sampleSource(nx, ny) {
-  // nx, ny in [0,1]
-  const fx = nx * (sourceWidth - 1);
-  const fy = ny * (sourceHeight - 1);
-  const x0 = Math.floor(fx);
-  const y0 = Math.floor(fy);
-  const x1 = Math.min(x0 + 1, sourceWidth - 1);
-  const y1 = Math.min(y0 + 1, sourceHeight - 1);
-  const dx = fx - x0;
-  const dy = fy - y0;
-  
-  const idx00 = (y0 * sourceWidth + x0) * 4;
-  const idx10 = (y0 * sourceWidth + x1) * 4;
-  const idx01 = (y1 * sourceWidth + x0) * 4;
-  const idx11 = (y1 * sourceWidth + x1) * 4;
-  
-  const r = (1-dx)*(1-dy)*sourceData.data[idx00] + dx*(1-dy)*sourceData.data[idx10] + (1-dx)*dy*sourceData.data[idx01] + dx*dy*sourceData.data[idx11];
-  const g = (1-dx)*(1-dy)*sourceData.data[idx00+1] + dx*(1-dy)*sourceData.data[idx10+1] + (1-dx)*dy*sourceData.data[idx01+1] + dx*dy*sourceData.data[idx11+1];
-  const b = (1-dx)*(1-dy)*sourceData.data[idx00+2] + dx*(1-dy)*sourceData.data[idx10+2] + (1-dx)*dy*sourceData.data[idx01+2] + dx*dy*sourceData.data[idx11+2];
-  
-  return [r, g, b];
-}
-
-// ============================================
-// SAMPLE with variable blur (block averaging)
-// ============================================
-function sampleWithFocus(nx, ny, focusLevel) {
-  // focusLevel 0 = very blurry (large blocks), MAX_FOCUS = pixel-perfect or beyond
-  // Map focus to effective sample blocks
-  const minBlocks = 3;
-  const maxBlocks = Math.max(sourceWidth, sourceHeight);
-  
-  // Exponential mapping for smooth feel
-  const t = focusLevel / MAX_FOCUS;
-  const effectiveBlocks = Math.round(minBlocks * Math.pow(maxBlocks / minBlocks, t));
-  
-  // If effectiveBlocks > source resolution, we're overzooming (hallucinating)
-  const isOverzoom = effectiveBlocks > Math.min(sourceWidth, sourceHeight);
-  
-  if (effectiveBlocks >= Math.min(sourceWidth, sourceHeight)) {
-    // At or beyond native: use bilinear interpolation
-    const [r, g, b] = sampleSource(nx, ny);
-    return { r, g, b, hallucinating: isOverzoom };
+  if (dist > r + 0.01) return 0;
+  if (dist > r - 0.01) {
+    return Math.max(0, 1 - (dist - r + 0.01) / 0.02) * 0.85;
   }
-  
-  // Block-average for blur effect
-  const blockW = 1.0 / effectiveBlocks;
-  const blockX = Math.floor(nx / blockW);
-  const blockY = Math.floor(ny / blockW);
-  const centerNx = (blockX + 0.5) * blockW;
-  const centerNy = (blockY + 0.5) * blockW;
-  
-  // Blend between block center and actual position based on sub-block position
-  // This creates smooth transitions between focus levels
-  const subT = Math.min(1, (effectiveBlocks - minBlocks) / (maxBlocks * 0.3));
-  const sampleNx = centerNx * (1 - subT) + nx * subT;
-  const sampleNy = centerNy * (1 - subT) + ny * subT;
-  
-  const [r, g, b] = sampleSource(
-    Math.max(0, Math.min(1, sampleNx)),
-    Math.max(0, Math.min(1, sampleNy))
-  );
-  
-  return { r, g, b, hallucinating: false };
+
+  let val = 0.85;
+
+  const leX = 0.35, leY = 0.37, eyeR = 0.05;
+  if (Math.sqrt((nx - leX) ** 2 + (ny - leY) ** 2) < eyeR) val = 0.08;
+
+  const reX = 0.65, reY = 0.37;
+  if (Math.sqrt((nx - reX) ** 2 + (ny - reY) ** 2) < eyeR) val = 0.08;
+
+  const smCY = 0.55, smR = 0.22, smThick = 0.035;
+  const smDist = Math.sqrt((nx - cx) ** 2 + (ny - smCY) ** 2);
+  if (ny > smCY && smDist > smR - smThick && smDist < smR + smThick) {
+    const t = 1 - Math.abs(smDist - smR) / smThick;
+    val = val * (1 - t) + 0.08 * t;
+  }
+
+  return val;
 }
 
 // ============================================
-// SETUP SCENE
+// Build the full high-res source image
 // ============================================
-function setupScene() {
-  const canvas = document.getElementById('mainCanvas');
-  canvas.width = DISPLAY_WIDTH;
-  canvas.height = DISPLAY_HEIGHT;
-  
-  const groundPlane = document.getElementById('groundPlane');
-  groundPlane.style.width = DISPLAY_WIDTH + 'px';
-  groundPlane.style.height = DISPLAY_HEIGHT + 'px';
-  
-  // Setup lens overlay grid
-  const overlay = document.getElementById('lensOverlay');
-  overlay.style.gridTemplateColumns = `repeat(${GRID_COLS}, 1fr)`;
-  overlay.style.gridTemplateRows = `repeat(${GRID_ROWS}, 1fr)`;
-  overlay.innerHTML = '';
-  
-  for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'lens-cell';
-    cell.id = `lens-${i}`;
-    
-    const icon = document.createElement('div');
-    icon.className = 'lens-icon';
-    cell.appendChild(icon);
-    
-    const indicator = document.createElement('div');
-    indicator.className = 'focus-indicator';
-    indicator.id = `focus-ind-${i}`;
-    indicator.textContent = `${focusState[i]}`;
-    cell.appendChild(indicator);
-    
-    const badge = document.createElement('div');
-    badge.className = 'hallucination-badge';
-    badge.textContent = '⚠ HALLUC';
-    cell.appendChild(badge);
-    
-    // Left click: increase focus
-    cell.addEventListener('click', (e) => {
-      e.preventDefault();
-      focusState[i] = Math.min(focusState[i] + 1, MAX_FOCUS);
-      renderAll();
-    });
-    
-    // Right click: decrease focus
-    cell.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      focusState[i] = Math.max(focusState[i] - 1, 0);
-      renderAll();
-    });
-    
-    // Scroll: fine control
-    cell.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.5 : 0.5;
-      focusState[i] = Math.max(0, Math.min(MAX_FOCUS, focusState[i] + delta));
-      renderAll();
-    }, { passive: false });
-    
-    overlay.appendChild(cell);
+const srcImage = new Float64Array(IMG_SIZE * IMG_SIZE);
+for (let y = 0; y < IMG_SIZE; y++) {
+  for (let x = 0; x < IMG_SIZE; x++) {
+    srcImage[y * IMG_SIZE + x] = smileyAt((x + 0.5) / IMG_SIZE, (y + 0.5) / IMG_SIZE);
   }
 }
 
 // ============================================
-// RENDER ALL
+// Sinc interpolation for overzoom
 // ============================================
-function renderAll() {
-  if (!sourceData) return;
+function sincInterpolate(nx, ny, baseRes) {
+  const gx = nx * baseRes - 0.5;
+  const gy = ny * baseRes - 0.5;
+  const ix = Math.floor(gx);
+  const iy = Math.floor(gy);
   
-  const canvas = document.getElementById('mainCanvas');
-  const ctx = canvas.getContext('2d');
-  const imgData = ctx.createImageData(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+  let val = 0;
+  let weight = 0;
+  const radius = 3;
   
-  const cellW = DISPLAY_WIDTH / GRID_COLS;
-  const cellH = DISPLAY_HEIGHT / GRID_ROWS;
-  
-  let hallucinatingCells = 0;
-  
-  for (let py = 0; py < DISPLAY_HEIGHT; py++) {
-    for (let px = 0; px < DISPLAY_WIDTH; px++) {
-      const nx = (px + 0.5) / DISPLAY_WIDTH;
-      const ny = (py + 0.5) / DISPLAY_HEIGHT;
+  for (let dy = -radius; dy <= radius; dy++) {
+    for (let dx = -radius; dx <= radius; dx++) {
+      const sx = ix + dx;
+      const sy = iy + dy;
+      if (sx < 0 || sx >= baseRes || sy < 0 || sy >= baseRes) continue;
       
-      // Determine which cell and get focus with smooth blending
-      const cellCol = Math.min(Math.floor(px / cellW), GRID_COLS - 1);
-      const cellRow = Math.min(Math.floor(py / cellH), GRID_ROWS - 1);
+      const distX = gx - sx;
+      const distY = gy - sy;
       
-      // Smooth focus blending from neighboring cells (Gaussian-weighted)
-      let totalWeight = 0;
-      let blendedFocus = 0;
+      const wx = distX === 0 ? 1 : Math.sin(Math.PI * distX) / (Math.PI * distX);
+      const wy = distY === 0 ? 1 : Math.sin(Math.PI * distY) / (Math.PI * distY);
       
-      for (let dr = -1; dr <= 1; dr++) {
-        for (let dc = -1; dc <= 1; dc++) {
-          const nr = cellRow + dr;
-          const nc = cellCol + dc;
-          if (nr < 0 || nr >= GRID_ROWS || nc < 0 || nc >= GRID_COLS) continue;
-          const nIdx = nr * GRID_COLS + nc;
-          
-          const nCenterX = (nc + 0.5) * cellW;
-          const nCenterY = (nr + 0.5) * cellH;
-          const ddx = (px - nCenterX) / cellW;
-          const ddy = (py - nCenterY) / cellH;
-          const dist = Math.sqrt(ddx * ddx + ddy * ddy);
-          const sigma = 0.6;
-          const w = Math.exp(-(dist * dist) / (2 * sigma * sigma));
-          
-          blendedFocus += focusState[nIdx] * w;
-          totalWeight += w;
+      const lx = distX === 0 ? 1 : Math.sin(Math.PI * distX / radius) / (Math.PI * distX / radius);
+      const ly = distY === 0 ? 1 : Math.sin(Math.PI * distY / radius) / (Math.PI * distY / radius);
+      
+      const w = wx * wy * lx * ly;
+      const sampleVal = smileyAt((sx + 0.5) / baseRes, (sy + 0.5) / baseRes);
+      
+      val += sampleVal * w;
+      weight += Math.abs(w);
+    }
+  }
+  
+  return weight > 0 ? val / weight : smileyAt(nx, ny);
+}
+
+// ============================================
+// RENDERING SETUP
+// ============================================
+const smileyCanvas = document.getElementById('smileyCanvas');
+smileyCanvas.width = IMG_SIZE * DPR;
+smileyCanvas.height = IMG_SIZE * DPR;
+smileyCanvas.style.width = IMG_SIZE + 'px';
+smileyCanvas.style.height = IMG_SIZE + 'px';
+const smileyCtx = smileyCanvas.getContext('2d');
+
+const gridOverlay = document.getElementById('gridOverlay');
+gridOverlay.width = IMG_SIZE * DPR;
+gridOverlay.height = IMG_SIZE * DPR;
+gridOverlay.style.width = IMG_SIZE + 'px';
+gridOverlay.style.height = IMG_SIZE + 'px';
+const overlayCtx = gridOverlay.getContext('2d');
+
+// ============================================
+// FFT GRID CELLS (smiley patches - original)
+// ============================================
+const gridEl = document.getElementById('fftGrid');
+const cellCanvases = [];
+const CELL_CANVAS_SIZE = 130;
+
+for (let i = 0; i < GRID * GRID; i++) {
+  const row = Math.floor(i / GRID), col = i % GRID;
+  const cell = document.createElement('div');
+  cell.className = 'fft-cell';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = CELL_CANVAS_SIZE * DPR;
+  canvas.height = CELL_CANVAS_SIZE * DPR;
+  canvas.style.width = CELL_CANVAS_SIZE + 'px';
+  canvas.style.height = CELL_CANVAS_SIZE + 'px';
+  cell.appendChild(canvas);
+
+  const modeBadge = document.createElement('div');
+  modeBadge.className = 'mode-badge';
+  modeBadge.id = `mode-${i}`;
+  modeBadge.textContent = 'OVERZOOM';
+  cell.appendChild(modeBadge);
+
+  const badge = document.createElement('div');
+  badge.className = 'level-badge';
+  badge.id = `badge-${i}`;
+  badge.textContent = `L${cellLevels[i]}`;
+  cell.appendChild(badge);
+
+  const coord = document.createElement('div');
+  coord.className = 'coord-badge';
+  coord.textContent = `[${row},${col}]`;
+  cell.appendChild(coord);
+
+  gridEl.appendChild(cell);
+  cellCanvases.push(canvas);
+
+  cell.addEventListener('click', (e) => {
+    e.preventDefault();
+    cellLevels[i] = Math.min(MAX_LEVEL, cellLevels[i] + 1);
+    render();
+  });
+
+  cell.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    cellLevels[i] = Math.max(0, cellLevels[i] - 1);
+    render();
+  });
+}
+
+// ============================================
+// FFT SPECTRUM GRID (2nd plot - FFT pattern per patch)
+// ============================================
+const spectrumGridEl = document.getElementById('fftSpectrumGrid');
+const spectrumCanvases = [];
+
+for (let i = 0; i < GRID * GRID; i++) {
+  const row = Math.floor(i / GRID), col = i % GRID;
+  const cell = document.createElement('div');
+  cell.className = 'fft-spectrum-cell';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = CELL_CANVAS_SIZE * DPR;
+  canvas.height = CELL_CANVAS_SIZE * DPR;
+  canvas.style.width = CELL_CANVAS_SIZE + 'px';
+  canvas.style.height = CELL_CANVAS_SIZE + 'px';
+  cell.appendChild(canvas);
+
+  const coord = document.createElement('div');
+  coord.className = 'coord-badge';
+  coord.textContent = `[${row},${col}]`;
+  cell.appendChild(coord);
+
+  spectrumGridEl.appendChild(cell);
+  spectrumCanvases.push(canvas);
+}
+
+// ============================================
+// Simple 2D DFT for small patch sizes (for spectrum visualization)
+// ============================================
+function computeFFTMagnitude(patchData, N) {
+  // patchData is NxN array of real values
+  // Returns NxN magnitude spectrum (log scaled, shifted so DC is center)
+  const mag = new Float64Array(N * N);
+  
+  for (let v = 0; v < N; v++) {
+    for (let u = 0; u < N; u++) {
+      let realSum = 0;
+      let imagSum = 0;
+      for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+          const angle = -2 * Math.PI * ((u * x / N) + (v * y / N));
+          realSum += patchData[y * N + x] * Math.cos(angle);
+          imagSum += patchData[y * N + x] * Math.sin(angle);
         }
       }
-      
-      blendedFocus = totalWeight > 0 ? blendedFocus / totalWeight : focusState[cellRow * GRID_COLS + cellCol];
-      
-      const { r, g, b, hallucinating } = sampleWithFocus(nx, ny, blendedFocus);
-      
-      const pi = (py * DISPLAY_WIDTH + px) * 4;
-      
-      if (hallucinating) {
-        // Tint slightly red/magenta to indicate hallucination
-        const halTint = 0.15;
-        imgData.data[pi] = Math.min(255, Math.round(r * (1 + halTint)));
-        imgData.data[pi + 1] = Math.round(g * (1 - halTint * 0.5));
-        imgData.data[pi + 2] = Math.min(255, Math.round(b * (1 + halTint * 0.3)));
+      // Shift: put DC in center
+      const su = (u + Math.floor(N/2)) % N;
+      const sv = (v + Math.floor(N/2)) % N;
+      mag[sv * N + su] = Math.sqrt(realSum * realSum + imagSum * imagSum);
+    }
+  }
+  return mag;
+}
+
+// ============================================
+// Level to blocks conversion
+// ============================================
+function levelToBlocks(level) {
+  const t = level / MAX_LEVEL;
+  return MIN_BLOCKS_PER_CELL + (MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(t, 0.6);
+}
+
+// ============================================
+// Get effective level with neighbor blending
+// ============================================
+function getEffectiveLevel(px, py) {
+  const cellCol = Math.floor(px / CELL_SIZE);
+  const cellRow = Math.floor(py / CELL_SIZE);
+
+  let totalWeight = 0;
+  let weightedLevel = 0;
+
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      const nr = cellRow + dr;
+      const nc = cellCol + dc;
+      if (nr < 0 || nr >= GRID || nc < 0 || nc >= GRID) continue;
+
+      const nIdx = nr * GRID + nc;
+      const nLevel = cellLevels[nIdx];
+
+      const nCenterX = (nc + 0.5) * CELL_SIZE;
+      const nCenterY = (nr + 0.5) * CELL_SIZE;
+      const dx = (px - nCenterX) / CELL_SIZE;
+      const dy = (py - nCenterY) / CELL_SIZE;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      const sigma = 0.55;
+      const w = Math.exp(-(dist * dist) / (2 * sigma * sigma));
+
+      weightedLevel += nLevel * w;
+      totalWeight += w;
+    }
+  }
+
+  return totalWeight > 0 ? weightedLevel / totalWeight : cellLevels[Math.floor(py/CELL_SIZE) * GRID + Math.floor(px/CELL_SIZE)];
+}
+
+// ============================================
+// DRAW SMILEY
+// ============================================
+function drawSmiley() {
+  smileyCtx.save();
+  smileyCtx.scale(DPR, DPR);
+  smileyCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
+
+  const imgData = smileyCtx.createImageData(IMG_SIZE, IMG_SIZE);
+
+  for (let py = 0; py < IMG_SIZE; py++) {
+    for (let px = 0; px < IMG_SIZE; px++) {
+      const effectiveLevel = getEffectiveLevel(px, py);
+      const blocksPerCell = levelToBlocks(effectiveLevel);
+      const blockPx = CELL_SIZE / blocksPerCell;
+
+      let val;
+
+      if (effectiveLevel > NATIVE_LEVEL) {
+        const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
+        const nx = (px + 0.5) / IMG_SIZE;
+        const ny = (py + 0.5) / IMG_SIZE;
+        
+        const overzoomAmount = (effectiveLevel - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+        const baseVal = getPixelatedValue(px, py, baseBlocks);
+        const sincVal = sincInterpolate(nx, ny, baseBlocks * GRID);
+        
+        val = baseVal * (1 - overzoomAmount * 0.7) + sincVal * overzoomAmount * 0.7;
+        
+        const ringFreq = overzoomAmount * 8;
+        const ring = Math.sin(px * ringFreq * 0.1) * Math.sin(py * ringFreq * 0.1) * 0.03 * overzoomAmount;
+        val += ring;
       } else {
-        imgData.data[pi] = Math.round(r);
-        imgData.data[pi + 1] = Math.round(g);
-        imgData.data[pi + 2] = Math.round(b);
+        val = getPixelatedValue(px, py, blocksPerCell);
       }
+
+      val = Math.max(0, Math.min(1, val));
+
+      const r = Math.round(30 + val * 225);
+      const g = Math.round(25 + val * 200);
+      const b = Math.round(5 + val * 50);
+
+      const pi = (py * IMG_SIZE + px) * 4;
+      imgData.data[pi] = r;
+      imgData.data[pi + 1] = g;
+      imgData.data[pi + 2] = b;
       imgData.data[pi + 3] = 255;
     }
   }
-  
-  ctx.putImageData(imgData, 0, 0);
-  
-  // Draw lens grid lines on canvas
-  ctx.strokeStyle = 'rgba(139,92,246,0.15)';
-  ctx.lineWidth = 1;
-  for (let c = 1; c < GRID_COLS; c++) {
-    ctx.beginPath();
-    ctx.moveTo(c * cellW, 0);
-    ctx.lineTo(c * cellW, DISPLAY_HEIGHT);
-    ctx.stroke();
-  }
-  for (let r = 1; r < GRID_ROWS; r++) {
-    ctx.beginPath();
-    ctx.moveTo(0, r * cellH);
-    ctx.lineTo(DISPLAY_WIDTH, r * cellH);
-    ctx.stroke();
-  }
-  
-  // Update lens cell states
-  for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
-    const cell = document.getElementById(`lens-${i}`);
-    const ind = document.getElementById(`focus-ind-${i}`);
-    const focus = focusState[i];
-    const isHalluc = focus > NATIVE_THRESHOLD;
-    
-    ind.textContent = focus % 1 === 0 ? focus : focus.toFixed(1);
-    
-    if (isHalluc) {
-      cell.classList.add('hallucinating');
-      ind.classList.add('over');
-      hallucinatingCells++;
-    } else {
-      cell.classList.remove('hallucinating');
-      ind.classList.remove('over');
+  smileyCtx.putImageData(imgData, 0, 0);
+
+  for (let cr = 0; cr < GRID; cr++) {
+    for (let cc = 0; cc < GRID; cc++) {
+      const ci = cr * GRID + cc;
+      const level = cellLevels[ci];
+      if (level < MAX_LEVEL * 0.4) {
+        const blocksPerCell = levelToBlocks(level);
+        const blockPx = CELL_SIZE / blocksPerCell;
+        if (blockPx > 4) {
+          const ox = cc * CELL_SIZE;
+          const oy = cr * CELL_SIZE;
+          smileyCtx.strokeStyle = `rgba(0,0,0,${0.25 * (1 - level/MAX_LEVEL)})`;
+          smileyCtx.lineWidth = Math.max(0.3, 1.5 * (1 - level/MAX_LEVEL));
+          for (let i = 1; i < blocksPerCell; i++) {
+            const pos = Math.floor(i * blockPx);
+            smileyCtx.beginPath();
+            smileyCtx.moveTo(ox + pos, oy);
+            smileyCtx.lineTo(ox + pos, oy + CELL_SIZE);
+            smileyCtx.stroke();
+            smileyCtx.beginPath();
+            smileyCtx.moveTo(ox, oy + pos);
+            smileyCtx.lineTo(ox + CELL_SIZE, oy + pos);
+            smileyCtx.stroke();
+          }
+        }
+      }
+      
+      if (cellLevels[ci] > NATIVE_LEVEL) {
+        const ox = cc * CELL_SIZE;
+        const oy = cr * CELL_SIZE;
+        const ovAmt = (cellLevels[ci] - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+        smileyCtx.strokeStyle = `rgba(100, 200, 255, ${0.15 * ovAmt})`;
+        smileyCtx.lineWidth = 0.5;
+        const waveCount = 4 + Math.floor(ovAmt * 8);
+        for (let w = 0; w < waveCount; w++) {
+          smileyCtx.beginPath();
+          for (let x = 0; x <= CELL_SIZE; x += 2) {
+            const yOff = Math.sin((x + w * 20) * 0.08) * 3 * ovAmt;
+            const yPos = oy + (w + 1) * CELL_SIZE / (waveCount + 1) + yOff;
+            if (x === 0) smileyCtx.moveTo(ox + x, yPos);
+            else smileyCtx.lineTo(ox + x, yPos);
+          }
+          smileyCtx.stroke();
+        }
+      }
     }
   }
-  
-  updateStats(hallucinatingCells);
+
+  smileyCtx.restore();
+
+  overlayCtx.save();
+  overlayCtx.scale(DPR, DPR);
+  overlayCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
+  overlayCtx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+  overlayCtx.lineWidth = 1.5;
+  overlayCtx.setLineDash([6, 4]);
+  for (let i = 1; i < GRID; i++) {
+    overlayCtx.beginPath();
+    overlayCtx.moveTo(i * CELL_SIZE, 0);
+    overlayCtx.lineTo(i * CELL_SIZE, IMG_SIZE);
+    overlayCtx.stroke();
+    overlayCtx.beginPath();
+    overlayCtx.moveTo(0, i * CELL_SIZE);
+    overlayCtx.lineTo(IMG_SIZE, i * CELL_SIZE);
+    overlayCtx.stroke();
+  }
+  overlayCtx.setLineDash([]);
+  overlayCtx.restore();
+}
+
+function getPixelatedValue(px, py, blocksPerCell) {
+  const blockPx = CELL_SIZE / blocksPerCell;
+  const blockX = Math.floor(px / blockPx);
+  const blockY = Math.floor(py / blockPx);
+  const sampleX = Math.min(Math.floor((blockX + 0.5) * blockPx), IMG_SIZE - 1);
+  const sampleY = Math.min(Math.floor((blockY + 0.5) * blockPx), IMG_SIZE - 1);
+  return srcImage[sampleY * IMG_SIZE + sampleX];
+}
+
+// ============================================
+// DRAW FFT CELLS (smiley patches - original)
+// ============================================
+function drawFFTCells() {
+  for (let ci = 0; ci < GRID * GRID; ci++) {
+    const canvas = cellCanvases[ci];
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.scale(DPR, DPR);
+    ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
+
+    const level = cellLevels[ci];
+    const isOverzoom = level > NATIVE_LEVEL;
+    const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
+    const blockPx = CELL_CANVAS_SIZE / blocksPerCell;
+
+    for (let by = 0; by < blocksPerCell; by++) {
+      for (let bx = 0; bx < blocksPerCell; bx++) {
+        const sx = (bx + 0.5) / blocksPerCell;
+        const sy = (by + 0.5) / blocksPerCell;
+        
+        let val;
+        if (isOverzoom) {
+          const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
+          const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+          const baseVal = smileyAt(sx, sy);
+          const sincVal = sincInterpolate(sx, sy, baseBlocks);
+          val = baseVal * (1 - ovAmt * 0.5) + sincVal * ovAmt * 0.5;
+          
+          const ring = Math.sin(bx * 0.8) * Math.sin(by * 0.8) * 0.04 * ovAmt;
+          val = Math.max(0, Math.min(1, val + ring));
+        } else {
+          val = smileyAt(sx, sy);
+        }
+
+        const v = Math.max(0, Math.min(1, val));
+        
+        const hueShift = ci * 0.02;
+        const r = Math.round(30 + v * 200);
+        const g = Math.round(20 + v * 160 + hueShift * 20);
+        const b = Math.round(60 + v * 100);
+
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(Math.floor(bx * blockPx), Math.floor(by * blockPx),
+                     Math.ceil(blockPx), Math.ceil(blockPx));
+      }
+    }
+
+    if (isOverzoom) {
+      const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+      ctx.strokeStyle = `rgba(100, 220, 255, ${0.3 * ovAmt})`;
+      ctx.lineWidth = 0.8;
+      const waves = 3 + Math.floor(ovAmt * 5);
+      for (let w = 0; w < waves; w++) {
+        ctx.beginPath();
+        for (let x = 0; x <= CELL_CANVAS_SIZE; x += 2) {
+          const yOff = Math.sin((x + w * 15) * 0.12) * 2.5 * ovAmt;
+          const yPos = (w + 1) * CELL_CANVAS_SIZE / (waves + 1) + yOff;
+          if (x === 0) ctx.moveTo(x, yPos);
+          else ctx.lineTo(x, yPos);
+        }
+        ctx.stroke();
+      }
+    }
+
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE, 6);
+    const pct = level / MAX_LEVEL;
+    if (isOverzoom) {
+      ctx.fillStyle = '#38bdf8';
+    } else {
+      ctx.fillStyle = pct > 0.4 ? '#4ade80' : pct > 0.15 ? '#fbbf24' : '#ef4444';
+    }
+    ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE * pct, 6);
+
+    ctx.restore();
+
+    document.getElementById(`badge-${ci}`).textContent = `L${level}`;
+    const modeEl = document.getElementById(`mode-${ci}`);
+    if (isOverzoom) {
+      modeEl.classList.add('active');
+      modeEl.textContent = '~SINE';
+    } else {
+      modeEl.classList.remove('active');
+    }
+  }
+}
+
+// ============================================
+// DRAW FFT SPECTRUM CELLS (2nd plot - FFT pattern per patch)
+// ============================================
+function drawFFTSpectrumCells() {
+  for (let ci = 0; ci < GRID * GRID; ci++) {
+    const canvas = spectrumCanvases[ci];
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.scale(DPR, DPR);
+    ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
+
+    const level = cellLevels[ci];
+    const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
+
+    // Sample the patch data at the current resolution
+    const N = Math.min(blocksPerCell, 32); // Cap DFT size for performance
+    const patchData = new Float64Array(N * N);
+
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const sx = (x + 0.5) / N;
+        const sy = (y + 0.5) / N;
+        patchData[y * N + x] = smileyAt(sx, sy);
+      }
+    }
+
+    // Compute FFT magnitude spectrum
+    const mag = computeFFTMagnitude(patchData, N);
+
+    // Find max for normalization (skip DC if desired)
+    let maxMag = 0;
+    for (let i = 0; i < mag.length; i++) {
+      if (mag[i] > maxMag) maxMag = mag[i];
+    }
+
+    // Log scale the magnitude for better visualization
+    const logMag = new Float64Array(N * N);
+    let logMax = 0;
+    for (let i = 0; i < mag.length; i++) {
+      logMag[i] = Math.log(1 + mag[i]);
+      if (logMag[i] > logMax) logMax = logMag[i];
+    }
+
+    // Render the spectrum as an image
+    const blockPx = CELL_CANVAS_SIZE / N;
+
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const v = logMax > 0 ? logMag[y * N + x] / logMax : 0;
+
+        // Cool blue-cyan-white color map for FFT spectrum
+        const r = Math.round(v * v * 255);
+        const g = Math.round(v * 200 + v * v * 55);
+        const b = Math.round(80 + v * 175);
+
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(Math.floor(x * blockPx), Math.floor(y * blockPx),
+                     Math.ceil(blockPx), Math.ceil(blockPx));
+      }
+    }
+
+    // Draw crosshair at DC center
+    const center = CELL_CANVAS_SIZE / 2;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(center, 0);
+    ctx.lineTo(center, CELL_CANVAS_SIZE);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, center);
+    ctx.lineTo(CELL_CANVAS_SIZE, center);
+    ctx.stroke();
+
+    ctx.restore();
+  }
 }
 
 // ============================================
 // STATS
 // ============================================
-function updateStats(hallucinatingCells) {
+function updateStats() {
   const statsEl = document.getElementById('statsRow');
-  const totalCells = GRID_COLS * GRID_ROWS;
-  const avgFocus = (focusState.reduce((a, b) => a + b, 0) / totalCells).toFixed(1);
-  
+  const levels = cellLevels.slice();
+  const avg = levels.reduce((a,b) => a+b, 0) / levels.length;
+  const overzoomCount = levels.filter(l => l > NATIVE_LEVEL).length;
+
   statsEl.innerHTML = `
-    <div class="stat"><div class="stat-label">Source</div><div class="stat-value">${sourceWidth}×${sourceHeight}</div></div>
-    <div class="stat"><div class="stat-label">Grid</div><div class="stat-value">${GRID_COLS}×${GRID_ROWS}</div></div>
-    <div class="stat"><div class="stat-label">Avg Focus</div><div class="stat-value">${avgFocus} / ${MAX_FOCUS}</div></div>
-    <div class="stat"><div class="stat-label">Hallucinating</div><div class="stat-value ${hallucinatingCells > 0 ? 'warn' : ''}">${hallucinatingCells} cells</div></div>
-    <div class="stat"><div class="stat-label">Native Limit</div><div class="stat-value">${NATIVE_THRESHOLD}</div></div>
+    <div class="stat"><div class="stat-label">Avg Level</div><div class="stat-value">${Math.round(avg/MAX_LEVEL*100)}%</div></div>
+    <div class="stat"><div class="stat-label">Active Cells</div><div class="stat-value">9 / 9</div></div>
+    <div class="stat"><div class="stat-label">Overzoomed</div><div class="stat-value" style="color:#38bdf8">${overzoomCount}</div></div>
+    <div class="stat"><div class="stat-label">Native Res</div><div class="stat-value" style="color:#fbbf24">L${NATIVE_LEVEL}</div></div>
   `;
 }
 
 // ============================================
-// INIT
+// MAIN RENDER
 // ============================================
-loadImage();
+function render() {
+  drawSmiley();
+  drawFFTCells();
+  drawFFTSpectrumCells();
+  updateStats();
+}
+
+// Initial render
+render();
+
+// Prevent context menu globally on the grid
+document.getElementById('fftGrid').addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
 </html>
