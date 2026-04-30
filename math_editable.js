@@ -375,3 +375,25 @@ async function _safe_predict_own_data_and_repredict() {
         console.warn("[_safe_predict_own_data_and_repredict] Error during prediction:", e);
     }
 }
+
+function _math_update_popup_position() {
+	if (!_math_pop_el || !_math_pop_el.classList.contains("math-pop-visible")) return;
+	if (!_math_active_ed) return;
+
+	var activeEl = document.querySelector('[data-math-eid="' + _math_active_ed.id + '"]');
+	if (!activeEl) return;
+
+	var anchorRect = activeEl.getBoundingClientRect();
+	var left = anchorRect.left + anchorRect.width / 2 - 115;
+	var top = anchorRect.bottom + 8;
+
+	if (left < 5) left = 5;
+	if (left > window.innerWidth - 240) left = window.innerWidth - 240;
+	if (top > window.innerHeight - 120) top = anchorRect.top - 110;
+
+	_math_pop_el.style.left = left + "px";
+	_math_pop_el.style.top = top + "px";
+}
+
+// Register the scroll listener (do this once, e.g., inside math_ensure_popup):
+window.addEventListener("scroll", _math_update_popup_position, true);

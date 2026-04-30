@@ -1823,3 +1823,8 @@ body:not(.darkmode) .math-pop-row input[type=number] {
 .math-pop-light ~ .math-ed-num {
     color: #0066cc;
 }
+
+.math-pop-ed {
+    position: fixed;
+    z-index: 9999;
+}
