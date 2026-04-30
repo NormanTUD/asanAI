@@ -1416,6 +1416,8 @@ function model_to_latex() {
     var layer_data = get_layer_data();
     var y_layer = get_y_output_shapes(output_shape);
 
+    // When started_training is true, pass prev_layer_data for color diff (red/green).
+    // When false, pass empty array (no color diff — editables are active instead).
     var colors = get_colors_from_old_and_new_layer_data(started_training ? prev_layer_data : [], layer_data);
 
     var input_layer = get_input_layer(input_shape);
@@ -2558,23 +2560,52 @@ function el_render_single_latex_with_editables(container, latex, editables) {
     _replace_colored_spans_with_editables(wrapper, editables);
 }
 
-function _math_apply_weight_change_from_layer_data(layer_idx, weight_type, new_array) {
-    try {
-        if (!model || !model.layers || !model.layers[layer_idx]) return;
-
-        var weights = model.layers[layer_idx].weights;
-        for (var i = 0; i < weights.length; i++) {
-            var name = get_weight_name_by_layer_and_weight_index(layer_idx, i);
-            if (name === weight_type) {
-                var old_tensor = weights[i].val;
-                var flat = Array.isArray(new_array[0]) ? new_array.flat() : new_array;
-                var new_tensor = tf.tensor(flat, old_tensor.shape);
-                weights[i].val.assign(new_tensor);
-                new_tensor.dispose();
-                break;
-            }
-        }
-    } catch (e) {
-        console.error("[_math_apply_weight_change_from_layer_data]", e);
+async function draw_heatmap (predictions_tensor, predict_data, is_from_webcam=0) {
+    if(!(
+        input_shape_is_image(is_from_webcam) &&
+        $("#show_grad_cam").is(":checked") &&
+        !started_training &&
+        (await output_size_at_layer(get_output_size_at_layer(0), get_number_of_layers())).length == 2)
+    ) {
+        return;
     }
+
+    warn_if_tensor_is_disposed(predictions_tensor);
+    var strongest_category = get_index_of_highest_category(predictions_tensor);
+
+    var original_disable_layer_debuggers = disable_layer_debuggers;
+    disable_layer_debuggers = 1;
+    var heatmap = await grad_class_activation_map(model, predict_data, strongest_category);
+    disable_layer_debuggers = original_disable_layer_debuggers;
+
+    if(heatmap) {
+        var canvas = $("#grad_cam_heatmap")[0];
+        var img = array_sync(heatmap)[0];
+
+        var max_height_width = Math.max(150, Math.min(width, Math.floor(window.innerWidth / 5)));
+
+        var shape = get_shape_from_array(img);
+        if(shape.length != 3) {
+            $("#grad_cam_heatmap").hide();
+        } else {
+            var _height = shape[0];
+            var _width = shape[1];
+
+            var largest = Math.max(_height, _width);
+
+            var pxsz = 1;
+
+            while ((pxsz * largest) < max_height_width) {
+                pxsz += 1;
+            }
+
+            scaleNestedArray(img);
+            var res = draw_grid(canvas, pxsz, img, 1, 0, null, null, null);
+            $("#grad_cam_heatmap").show();
+        }
+    } else {
+        $("#grad_cam_heatmap").hide();
+    }
+
+    await dispose(heatmap);
 }

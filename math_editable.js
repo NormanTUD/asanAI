@@ -13,7 +13,13 @@ function math_register_editable(id, get, set, min, max, label, opts) {
     _math_editables.push({
         id: id,
         get: get,
-        set: set,
+        set: function(v) {
+            if (started_training) {
+                console.warn("[math_register_editable] Cannot edit variable '" + id + "' while training is in progress.");
+                return;
+            }
+            set(v);
+        },
         min: min,
         max: max,
         label: label,
@@ -69,6 +75,10 @@ function math_ensure_popup() {
 
     numInput.addEventListener("input", function () {
         if (!_math_active_ed) return;
+        if (started_training) {
+            console.warn("[math_popup] Cannot edit variables while training is in progress.");
+            return;
+        }
         var v = parseFloat(numInput.value);
         if (isNaN(v)) return;
         _math_active_ed.set(v);
@@ -78,20 +88,28 @@ function math_ensure_popup() {
 
     slider.addEventListener("input", function () {
         if (!_math_active_ed) return;
+        if (started_training) {
+            console.warn("[math_popup] Cannot edit variables while training is in progress.");
+            return;
+        }
         var v = parseFloat(slider.value);
         _math_active_ed.set(v);
         numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
         _math_on_variable_changed(_math_active_ed);
-	predict_own_data_and_repredict(); // await not possible
+        predict_own_data_and_repredict(); // await not possible
     });
 
     resetBtn.addEventListener("click", function () {
         if (!_math_active_ed || _math_active_ed._initial === undefined) return;
+        if (started_training) {
+            console.warn("[math_popup] Cannot reset variables while training is in progress.");
+            return;
+        }
         _math_active_ed.set(_math_active_ed._initial);
         numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
         slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), _math_active_ed.get()));
         _math_on_variable_changed(_math_active_ed);
-	predict_own_data_and_repredict(); // await not possible
+        predict_own_data_and_repredict(); // await not possible
     });
 
     closeBtn.addEventListener("click", math_close_popup);
@@ -102,7 +120,7 @@ function math_ensure_popup() {
         if (_math_pop_el.contains(e.target)) return;
         if (e.target.closest && e.target.closest(".math-ed-num")) return;
         math_close_popup();
-	predict_own_data_and_repredict(); // await not possible
+        predict_own_data_and_repredict(); // await not possible
     });
 
     return pop;
@@ -111,6 +129,12 @@ function math_ensure_popup() {
 function math_open_popup(id, anchorRect) {
     var ed = math_find_editable(id);
     if (!ed) return;
+
+    // Block opening the popup if training is active
+    if (started_training) {
+        console.warn("[math_open_popup] Cannot edit variables while training is in progress.");
+        return;
+    }
 
     if (ed._initial === undefined) {
         ed._initial = ed.get();
@@ -246,11 +270,15 @@ function _convert_span_to_editable(span, edInfo) {
     span.className = (span.className || "") + " math-ed-num";
     span.setAttribute("data-math-eid", edInfo.eid);
     span.style.color = "";
-    span.style.cursor = "pointer";
+    span.style.cursor = started_training ? "not-allowed" : "pointer";
 
     span.addEventListener("click", (function(eid, el) {
         return function(e) {
             e.stopPropagation();
+            if (started_training) {
+                console.warn("[_convert_span_to_editable] Cannot edit variables while training is in progress.");
+                return;
+            }
             math_open_popup(eid, el.getBoundingClientRect());
         };
     })(edInfo.eid, span));

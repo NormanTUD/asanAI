@@ -235,46 +235,44 @@ function _build_bias_latex(layer_idx, bias, max_bias, decimals, all_editables) {
 // ============================================================
 
 function _math_apply_single_weight(layer_idx, weight_idx, new_array) {
-	try {
-		if (!model || !model.layers || !model.layers[layer_idx]) return;
-		if (weight_idx < 0) return;
+    try {
+        if (started_training) {
+            console.warn("[_math_apply_single_weight] Cannot apply weight changes while training is in progress.");
+            return;
+        }
 
-		var weight = model.layers[layer_idx].weights[weight_idx];
-		if (!weight || !weight.val || weight.val.isDisposed) return;
+        if (!model || !model.layers || !model.layers[layer_idx]) return;
+        if (weight_idx < 0) return;
 
-		var old_tensor = weight.val;
+        var weight = model.layers[layer_idx].weights[weight_idx];
+        if (!weight || !weight.val || weight.val.isDisposed) return;
 
-		// Flatten correctly regardless of nesting depth
-		var flat;
-		if (Array.isArray(new_array) && Array.isArray(new_array[0])) {
-			flat = new_array.flat(Infinity);
-		} else if (Array.isArray(new_array)) {
-			flat = new_array.slice();
-		} else {
-			flat = [new_array];
-		}
+        var old_tensor = weight.val;
 
-		// The tensor shape is the source of truth.
-		// If sizes don't match, the layer_data is out of sync with the model.
-		// This can happen if the model was recompiled. In that case, we need to
-		// re-read the tensor and only update the portion that matches.
-		if (flat.length !== old_tensor.size) {
-			console.warn("[_math_apply_single_weight] Size mismatch: tensor expects " +
-				old_tensor.size + " values (shape " + old_tensor.shape + ") but got " +
-				flat.length + " from layer_data. Re-syncing from model.");
+        // Flatten correctly regardless of nesting depth
+        var flat;
+        if (Array.isArray(new_array) && Array.isArray(new_array[0])) {
+            flat = new_array.flat(Infinity);
+        } else if (Array.isArray(new_array)) {
+            flat = new_array.slice();
+        } else {
+            flat = [new_array];
+        }
 
-			// The layer_data is stale. We cannot safely assign.
-			// Force a full re-render which will re-sync layer_data from the model.
-			// This triggers the re-sync at the top of _inject_hybrid_dense_direct next time.
-			return;
-		}
+        // The tensor shape is the source of truth.
+        if (flat.length !== old_tensor.size) {
+            console.warn("[_math_apply_single_weight] Size mismatch: tensor expects " +
+                old_tensor.size + " values (shape " + old_tensor.shape + ") but got " +
+                flat.length + " from layer_data. Re-syncing from model.");
+            return;
+        }
 
-		var new_tensor = tf.tensor(flat, old_tensor.shape);
-		weight.val.assign(new_tensor);
-		new_tensor.dispose();
-	} catch (e) {
-		console.error("[_math_apply_single_weight] Error:", e);
-	}
+        var new_tensor = tf.tensor(flat, old_tensor.shape);
+        weight.val.assign(new_tensor);
+        new_tensor.dispose();
+    } catch (e) {
+        console.error("[_math_apply_single_weight] Error:", e);
+    }
 }
 
 // ============================================================
