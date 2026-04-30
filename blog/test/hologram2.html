@@ -37,6 +37,14 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .stat{background:#1e293b;border-radius:8px;padding:6px 14px;text-align:center;border:1px solid #334155}
 .stat-label{font-size:0.65em;color:#64748b}
 .stat-value{font-size:1.1em;font-weight:bold;color:#4ade80}
+
+.fft-spectrum-section{text-align:center;margin-top:6px;margin-bottom:6px}
+.fft-spectrum-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.fft-spectrum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
+.fft-spectrum-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;border:2px solid #1e3a5f;transition:border-color 0.2s,box-shadow 0.2s}
+.fft-spectrum-cell:hover{border-color:#38bdf8;box-shadow:0 0 12px #38bdf840}
+.fft-spectrum-cell canvas{width:100%;height:100%;display:block}
+.fft-spectrum-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
 </style>
 </head>
 <body>
@@ -54,6 +62,13 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 <div class="fft-section">
   <div class="fft-label">FFT Frequency Domain (3×3 regions)</div>
   <div class="fft-grid" id="fftGrid"></div>
+</div>
+
+<div class="arrow-down">↓<small>FFT magnitude spectrum per patch</small></div>
+
+<div class="fft-spectrum-section">
+  <div class="fft-spectrum-label">FFT Pattern Visualization (magnitude spectrum per cell)</div>
+  <div class="fft-spectrum-grid" id="fftSpectrumGrid"></div>
 </div>
 
 <div class="arrow-down">↓<small>inverse FFT → spatial domain</small></div>
@@ -76,12 +91,11 @@ const GRID = 3;
 const IMG_SIZE = 396;
 const CELL_SIZE = IMG_SIZE / GRID;
 const MAX_LEVEL = 24;
-const NATIVE_LEVEL = 12; // Beyond this = overzoom (sine estimation)
+const NATIVE_LEVEL = 12;
 const MIN_BLOCKS_PER_CELL = 2;
 const MAX_BLOCKS_PER_CELL = 44;
 const DPR = window.devicePixelRatio || 1;
 
-// ALL cells are active (holographic: every piece has the whole)
 const cellLevels = Array(GRID * GRID).fill(1);
 
 // ============================================
@@ -100,15 +114,12 @@ function smileyAt(nx, ny) {
 
   let val = 0.85;
 
-  // Left eye
   const leX = 0.35, leY = 0.37, eyeR = 0.05;
   if (Math.sqrt((nx - leX) ** 2 + (ny - leY) ** 2) < eyeR) val = 0.08;
 
-  // Right eye
   const reX = 0.65, reY = 0.37;
   if (Math.sqrt((nx - reX) ** 2 + (ny - reY) ** 2) < eyeR) val = 0.08;
 
-  // Smile arc
   const smCY = 0.55, smR = 0.22, smThick = 0.035;
   const smDist = Math.sqrt((nx - cx) ** 2 + (ny - smCY) ** 2);
   if (ny > smCY && smDist > smR - smThick && smDist < smR + smThick) {
@@ -130,24 +141,9 @@ for (let y = 0; y < IMG_SIZE; y++) {
 }
 
 // ============================================
-// Precompute a low-res version for overzoom base
-// ============================================
-const LOW_RES = 22; // native resolution blocks per cell
-const lowResImage = new Float64Array(LOW_RES * GRID * LOW_RES * GRID);
-for (let by = 0; by < LOW_RES * GRID; by++) {
-  for (let bx = 0; bx < LOW_RES * GRID; bx++) {
-    const sx = (bx + 0.5) / (LOW_RES * GRID);
-    const sy = (by + 0.5) / (LOW_RES * GRID);
-    lowResImage[by * LOW_RES * GRID + bx] = smileyAt(sx, sy);
-  }
-}
-
-// ============================================
-// Sinc-like interpolation for overzoom estimation
-// This creates the "sine wave patches" effect
+// Sinc interpolation for overzoom
 // ============================================
 function sincInterpolate(nx, ny, baseRes) {
-  // Sample from low-res grid with sinc interpolation
   const gx = nx * baseRes - 0.5;
   const gy = ny * baseRes - 0.5;
   const ix = Math.floor(gx);
@@ -155,7 +151,7 @@ function sincInterpolate(nx, ny, baseRes) {
   
   let val = 0;
   let weight = 0;
-  const radius = 3; // sinc kernel radius
+  const radius = 3;
   
   for (let dy = -radius; dy <= radius; dy++) {
     for (let dx = -radius; dx <= radius; dx++) {
@@ -166,16 +162,14 @@ function sincInterpolate(nx, ny, baseRes) {
       const distX = gx - sx;
       const distY = gy - sy;
       
-      // Sinc function (creates the sine-wave ringing)
       const wx = distX === 0 ? 1 : Math.sin(Math.PI * distX) / (Math.PI * distX);
       const wy = distY === 0 ? 1 : Math.sin(Math.PI * distY) / (Math.PI * distY);
       
-      // Lanczos window
       const lx = distX === 0 ? 1 : Math.sin(Math.PI * distX / radius) / (Math.PI * distX / radius);
       const ly = distY === 0 ? 1 : Math.sin(Math.PI * distY / radius) / (Math.PI * distY / radius);
       
       const w = wx * wy * lx * ly;
-      const sampleVal = srcImage[Math.min(sy * Math.round(IMG_SIZE/baseRes), IMG_SIZE-1) * IMG_SIZE + Math.min(sx * Math.round(IMG_SIZE/baseRes), IMG_SIZE-1)] || smileyAt((sx + 0.5) / baseRes, (sy + 0.5) / baseRes);
+      const sampleVal = smileyAt((sx + 0.5) / baseRes, (sy + 0.5) / baseRes);
       
       val += sampleVal * w;
       weight += Math.abs(w);
@@ -203,7 +197,7 @@ gridOverlay.style.height = IMG_SIZE + 'px';
 const overlayCtx = gridOverlay.getContext('2d');
 
 // ============================================
-// FFT GRID CELLS
+// FFT GRID CELLS (smiley patches - original)
 // ============================================
 const gridEl = document.getElementById('fftGrid');
 const cellCanvases = [];
@@ -255,6 +249,61 @@ for (let i = 0; i < GRID * GRID; i++) {
 }
 
 // ============================================
+// FFT SPECTRUM GRID (2nd plot - FFT pattern per patch)
+// ============================================
+const spectrumGridEl = document.getElementById('fftSpectrumGrid');
+const spectrumCanvases = [];
+
+for (let i = 0; i < GRID * GRID; i++) {
+  const row = Math.floor(i / GRID), col = i % GRID;
+  const cell = document.createElement('div');
+  cell.className = 'fft-spectrum-cell';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = CELL_CANVAS_SIZE * DPR;
+  canvas.height = CELL_CANVAS_SIZE * DPR;
+  canvas.style.width = CELL_CANVAS_SIZE + 'px';
+  canvas.style.height = CELL_CANVAS_SIZE + 'px';
+  cell.appendChild(canvas);
+
+  const coord = document.createElement('div');
+  coord.className = 'coord-badge';
+  coord.textContent = `[${row},${col}]`;
+  cell.appendChild(coord);
+
+  spectrumGridEl.appendChild(cell);
+  spectrumCanvases.push(canvas);
+}
+
+// ============================================
+// Simple 2D DFT for small patch sizes (for spectrum visualization)
+// ============================================
+function computeFFTMagnitude(patchData, N) {
+  // patchData is NxN array of real values
+  // Returns NxN magnitude spectrum (log scaled, shifted so DC is center)
+  const mag = new Float64Array(N * N);
+  
+  for (let v = 0; v < N; v++) {
+    for (let u = 0; u < N; u++) {
+      let realSum = 0;
+      let imagSum = 0;
+      for (let y = 0; y < N; y++) {
+        for (let x = 0; x < N; x++) {
+          const angle = -2 * Math.PI * ((u * x / N) + (v * y / N));
+          realSum += patchData[y * N + x] * Math.cos(angle);
+          imagSum += patchData[y * N + x] * Math.sin(angle);
+        }
+      }
+      // Shift: put DC in center
+      const su = (u + Math.floor(N/2)) % N;
+      const sv = (v + Math.floor(N/2)) % N;
+      mag[sv * N + su] = Math.sqrt(realSum * realSum + imagSum * imagSum);
+    }
+  }
+  return mag;
+}
+
+// ============================================
 // Level to blocks conversion
 // ============================================
 function levelToBlocks(level) {
@@ -263,7 +312,7 @@ function levelToBlocks(level) {
 }
 
 // ============================================
-// Get effective block size with neighbor blending
+// Get effective level with neighbor blending
 // ============================================
 function getEffectiveLevel(px, py) {
   const cellCol = Math.floor(px / CELL_SIZE);
@@ -299,7 +348,7 @@ function getEffectiveLevel(px, py) {
 }
 
 // ============================================
-// DRAW SMILEY — all cells active, overzoom shows sine estimation
+// DRAW SMILEY
 // ============================================
 function drawSmiley() {
   smileyCtx.save();
@@ -317,32 +366,25 @@ function drawSmiley() {
       let val;
 
       if (effectiveLevel > NATIVE_LEVEL) {
-        // OVERZOOM: use sinc interpolation to create sine-wave estimation
-        // The base resolution is what we'd have at NATIVE_LEVEL
         const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
         const nx = (px + 0.5) / IMG_SIZE;
         const ny = (py + 0.5) / IMG_SIZE;
         
-        // Mix between pixelated base and sinc-interpolated overzoom
         const overzoomAmount = (effectiveLevel - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
         const baseVal = getPixelatedValue(px, py, baseBlocks);
         const sincVal = sincInterpolate(nx, ny, baseBlocks * GRID);
         
-        // Overzoom creates ringing artifacts (Gibbs phenomenon) - this is the "sine wave patches" look
         val = baseVal * (1 - overzoomAmount * 0.7) + sincVal * overzoomAmount * 0.7;
         
-        // Add subtle ringing visualization
         const ringFreq = overzoomAmount * 8;
         const ring = Math.sin(px * ringFreq * 0.1) * Math.sin(py * ringFreq * 0.1) * 0.03 * overzoomAmount;
         val += ring;
       } else {
-        // Normal pixelation
         val = getPixelatedValue(px, py, blocksPerCell);
       }
 
       val = Math.max(0, Math.min(1, val));
 
-      // Warm color mapping for ALL cells (no more blue-only regions)
       const r = Math.round(30 + val * 225);
       const g = Math.round(25 + val * 200);
       const b = Math.round(5 + val * 50);
@@ -356,7 +398,6 @@ function drawSmiley() {
   }
   smileyCtx.putImageData(imgData, 0, 0);
 
-  // Draw block grid lines for low-res cells
   for (let cr = 0; cr < GRID; cr++) {
     for (let cc = 0; cc < GRID; cc++) {
       const ci = cr * GRID + cc;
@@ -383,7 +424,6 @@ function drawSmiley() {
         }
       }
       
-      // Overzoom: draw subtle sine-wave overlay
       if (cellLevels[ci] > NATIVE_LEVEL) {
         const ox = cc * CELL_SIZE;
         const oy = cr * CELL_SIZE;
@@ -407,7 +447,6 @@ function drawSmiley() {
 
   smileyCtx.restore();
 
-  // Grid overlay
   overlayCtx.save();
   overlayCtx.scale(DPR, DPR);
   overlayCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
@@ -438,7 +477,7 @@ function getPixelatedValue(px, py, blocksPerCell) {
 }
 
 // ============================================
-// DRAW FFT CELLS — ALL cells show the smiley
+// DRAW FFT CELLS (smiley patches - original)
 // ============================================
 function drawFFTCells() {
   for (let ci = 0; ci < GRID * GRID; ci++) {
@@ -453,7 +492,6 @@ function drawFFTCells() {
     const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
     const blockPx = CELL_CANVAS_SIZE / blocksPerCell;
 
-    // ALL cells show the smiley at their resolution level
     for (let by = 0; by < blocksPerCell; by++) {
       for (let bx = 0; bx < blocksPerCell; bx++) {
         const sx = (bx + 0.5) / blocksPerCell;
@@ -461,14 +499,12 @@ function drawFFTCells() {
         
         let val;
         if (isOverzoom) {
-          // Overzoom: sinc interpolation
           const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
           const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
           const baseVal = smileyAt(sx, sy);
           const sincVal = sincInterpolate(sx, sy, baseBlocks);
           val = baseVal * (1 - ovAmt * 0.5) + sincVal * ovAmt * 0.5;
           
-          // Ringing
           const ring = Math.sin(bx * 0.8) * Math.sin(by * 0.8) * 0.04 * ovAmt;
           val = Math.max(0, Math.min(1, val + ring));
         } else {
@@ -477,7 +513,6 @@ function drawFFTCells() {
 
         const v = Math.max(0, Math.min(1, val));
         
-        // Color: warm tones with slight hue shift per cell for visual variety
         const hueShift = ci * 0.02;
         const r = Math.round(30 + v * 200);
         const g = Math.round(20 + v * 160 + hueShift * 20);
@@ -489,7 +524,6 @@ function drawFFTCells() {
       }
     }
 
-    // Overzoom sine wave overlay on FFT cell
     if (isOverzoom) {
       const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
       ctx.strokeStyle = `rgba(100, 220, 255, ${0.3 * ovAmt})`;
@@ -507,12 +541,11 @@ function drawFFTCells() {
       }
     }
 
-    // Level bar
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE, 6);
     const pct = level / MAX_LEVEL;
     if (isOverzoom) {
-      ctx.fillStyle = '#38bdf8'; // cyan for overzoom
+      ctx.fillStyle = '#38bdf8';
     } else {
       ctx.fillStyle = pct > 0.4 ? '#4ade80' : pct > 0.15 ? '#fbbf24' : '#ef4444';
     }
@@ -520,7 +553,6 @@ function drawFFTCells() {
 
     ctx.restore();
 
-    // Update badges
     document.getElementById(`badge-${ci}`).textContent = `L${level}`;
     const modeEl = document.getElementById(`mode-${ci}`);
     if (isOverzoom) {
@@ -529,6 +561,84 @@ function drawFFTCells() {
     } else {
       modeEl.classList.remove('active');
     }
+  }
+}
+
+// ============================================
+// DRAW FFT SPECTRUM CELLS (2nd plot - FFT pattern per patch)
+// ============================================
+function drawFFTSpectrumCells() {
+  for (let ci = 0; ci < GRID * GRID; ci++) {
+    const canvas = spectrumCanvases[ci];
+    const ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.scale(DPR, DPR);
+    ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
+
+    const level = cellLevels[ci];
+    const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
+
+    // Sample the patch data at the current resolution
+    const N = Math.min(blocksPerCell, 32); // Cap DFT size for performance
+    const patchData = new Float64Array(N * N);
+
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const sx = (x + 0.5) / N;
+        const sy = (y + 0.5) / N;
+        patchData[y * N + x] = smileyAt(sx, sy);
+      }
+    }
+
+    // Compute FFT magnitude spectrum
+    const mag = computeFFTMagnitude(patchData, N);
+
+    // Find max for normalization (skip DC if desired)
+    let maxMag = 0;
+    for (let i = 0; i < mag.length; i++) {
+      if (mag[i] > maxMag) maxMag = mag[i];
+    }
+
+    // Log scale the magnitude for better visualization
+    const logMag = new Float64Array(N * N);
+    let logMax = 0;
+    for (let i = 0; i < mag.length; i++) {
+      logMag[i] = Math.log(1 + mag[i]);
+      if (logMag[i] > logMax) logMax = logMag[i];
+    }
+
+    // Render the spectrum as an image
+    const blockPx = CELL_CANVAS_SIZE / N;
+
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const v = logMax > 0 ? logMag[y * N + x] / logMax : 0;
+
+        // Cool blue-cyan-white color map for FFT spectrum
+        const r = Math.round(v * v * 255);
+        const g = Math.round(v * 200 + v * v * 55);
+        const b = Math.round(80 + v * 175);
+
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(Math.floor(x * blockPx), Math.floor(y * blockPx),
+                     Math.ceil(blockPx), Math.ceil(blockPx));
+      }
+    }
+
+    // Draw crosshair at DC center
+    const center = CELL_CANVAS_SIZE / 2;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(center, 0);
+    ctx.lineTo(center, CELL_CANVAS_SIZE);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, center);
+    ctx.lineTo(CELL_CANVAS_SIZE, center);
+    ctx.stroke();
+
+    ctx.restore();
   }
 }
 
@@ -555,6 +665,7 @@ function updateStats() {
 function render() {
   drawSmiley();
   drawFFTCells();
+  drawFFTSpectrumCells();
   updateStats();
 }
 
