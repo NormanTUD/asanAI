@@ -615,3 +615,258 @@ function _build_batchnorm_full_latex(layer_idx, layer_data, gamma, beta, max_gam
 
 	return str;
 }
+
+// ============================================================
+// HYBRID CONV2D INJECTION (called after DOM is ready)
+// ============================================================
+
+function _inject_hybrid_conv2d_direct(container_id, layer_idx, layer_data, colors, input_layer) {
+    var container = document.getElementById(container_id);
+    if (!container) {
+        console.warn("[_inject_hybrid_conv2d_direct] Container not found:", container_id);
+        return;
+    }
+
+    _purge_stale_editables(layer_idx);
+    _resync_conv2d_layer_data(layer_idx, layer_data);
+
+    var kernel = layer_data[layer_idx].kernel;   // shape: [kH, kW, inC, outC] flattened or nested
+    var bias   = layer_data[layer_idx].bias;     // shape: [outC] or null
+    var decimals = get_dec_points_math_mode();
+
+    // Resolve weight indices (kernel, bias) — same pattern as Dense
+    var weight_indices = _resolve_weight_indices(layer_idx);
+    var kernel_weight_idx = weight_indices.kernel;
+    var bias_weight_idx   = weight_indices.bias;
+
+    // Get the kernel shape from the actual model tensor (source of truth)
+    var kernel_shape = _get_conv2d_kernel_shape(layer_idx);
+    if (!kernel_shape || kernel_shape.length !== 4) {
+        console.warn("[_inject_hybrid_conv2d_direct] Could not determine 4D kernel shape for layer", layer_idx);
+        return;
+    }
+
+    var kH   = kernel_shape[0];
+    var kW   = kernel_shape[1];
+    var inC  = kernel_shape[2];
+    var outC = kernel_shape[3];
+
+    // Flatten kernel to 1D for indexing (model stores it flat internally)
+    var kernel_flat = Array.isArray(kernel) ? (Array.isArray(kernel[0]) ? kernel.flat(Infinity) : kernel.slice()) : [];
+
+    // Limit display to max_nr_cols_rows for each dimension
+    var max_filters_display = Math.min(outC, get_max_nr_cols_rows());
+    var max_inC_display     = Math.min(inC, get_max_nr_cols_rows());
+    var max_bias            = Math.min(bias ? bias.length : 0, get_max_nr_cols_rows());
+
+    // Register all editables for kernel values
+    _register_conv2d_kernel_editables(layer_idx, layer_data, kernel_flat, kernel_shape, decimals, kernel_weight_idx);
+
+    // Register bias editables (reuse existing Dense pattern)
+    _register_bias_editables(layer_idx, layer_data, max_bias, decimals, bias_weight_idx);
+
+    var all_editables = [];
+
+    // Build the full LaTeX
+    var full_latex = _build_conv2d_full_latex(
+        layer_idx, layer_data, kernel_flat, kernel_shape,
+        kH, kW, inC, outC,
+        max_filters_display, max_inC_display,
+        decimals, all_editables, input_layer
+    );
+
+    // Add bias if present
+    if (bias && bias.length && bias_weight_idx !== -1) {
+        full_latex += _build_bias_latex(layer_idx, bias, max_bias, decimals, all_editables);
+    }
+
+    el_render_single_latex_with_editables(container, full_latex, all_editables);
+}
+
+// --- Conv2D Helpers ---
+
+/**
+ * Get the 4D kernel shape [kH, kW, inC, outC] from the live model.
+ */
+function _get_conv2d_kernel_shape(layer_idx) {
+    if (!model || !model.layers || !model.layers[layer_idx] || !model.layers[layer_idx].weights) return null;
+
+    for (var wi = 0; wi < model.layers[layer_idx].weights.length; wi++) {
+        var wname = get_weight_name_by_layer_and_weight_index(layer_idx, wi);
+        if (wname === "kernel") {
+            var wval = model.layers[layer_idx].weights[wi].val;
+            if (wval && !wval.isDisposed && wval.shape.length === 4) {
+                return wval.shape.slice(); // [kH, kW, inC, outC]
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * Re-sync conv2d layer data from the live model.
+ * Conv2D kernels are 4D tensors — we store them flat in layer_data
+ * and keep the shape as the source of truth from the model tensor.
+ */
+function _resync_conv2d_layer_data(layer_idx, layer_data) {
+    if (!model || !model.layers || !model.layers[layer_idx] || !model.layers[layer_idx].weights) return;
+
+    var possible_weight_names = ["kernel", "bias"];
+
+    for (var wi = 0; wi < model.layers[layer_idx].weights.length; wi++) {
+        var wname = get_weight_name_by_layer_and_weight_index(layer_idx, wi);
+        if (possible_weight_names.indexOf(wname) === -1) continue;
+
+        var wval = model.layers[layer_idx].weights[wi].val;
+        if (!wval || wval.isDisposed) continue;
+
+        var data = Array.from(wval.dataSync());
+
+        if (wname === "kernel") {
+            // Store flat — the shape comes from the tensor itself
+            layer_data[layer_idx].kernel = data;
+        } else if (wname === "bias") {
+            layer_data[layer_idx].bias = data;
+        }
+    }
+}
+
+/**
+ * Compute flat index into a 4D kernel stored in row-major order [kH, kW, inC, outC].
+ */
+function _conv2d_flat_index(h, w, ic, oc, kW, inC, outC) {
+    return ((h * kW + w) * inC + ic) * outC + oc;
+}
+
+/**
+ * Register editables for every displayed conv2d kernel value.
+ * Each editable modifies the flat kernel array and pushes it back to the model.
+ */
+function _register_conv2d_kernel_editables(layer_idx, layer_data, kernel_flat, kernel_shape, decimals, kernel_weight_idx) {
+    var kH   = kernel_shape[0];
+    var kW   = kernel_shape[1];
+    var inC  = kernel_shape[2];
+    var outC = kernel_shape[3];
+
+    var max_filters = Math.min(outC, get_max_nr_cols_rows());
+    var max_inC     = Math.min(inC, get_max_nr_cols_rows());
+
+    for (var oc = 0; oc < max_filters; oc++) {
+        for (var ic = 0; ic < max_inC; ic++) {
+            for (var h = 0; h < kH; h++) {
+                for (var w = 0; w < kW; w++) {
+                    _register_single_conv2d_kernel_editable(
+                        layer_idx, layer_data, h, w, ic, oc,
+                        kW, inC, outC, kernel_weight_idx, decimals
+                    );
+                }
+            }
+        }
+    }
+}
+
+function _register_single_conv2d_kernel_editable(layer_idx, layer_data, h, w, ic, oc, kW, inC, outC, kwi, decimals) {
+    var eid = "L" + layer_idx + "_kernel_" + h + "_" + w + "_" + ic + "_" + oc;
+    var flat_idx = _conv2d_flat_index(h, w, ic, oc, kW, inC, outC);
+
+    math_register_editable(
+        eid,
+        function() {
+            return layer_data[layer_idx].kernel[flat_idx];
+        },
+        function(v) {
+            layer_data[layer_idx].kernel[flat_idx] = v;
+            if (kwi >= 0) {
+                _math_apply_single_weight(layer_idx, kwi, layer_data[layer_idx].kernel);
+            }
+        },
+        -10, 10,
+        "Layer " + layer_idx + " kernel[" + h + "][" + w + "][" + ic + "][" + oc + "]",
+        { decimals: decimals }
+    );
+}
+
+/**
+ * Build the full Conv2D LaTeX equation.
+ *
+ * For each output filter, we show:
+ *   Filter_oc = sum over input channels of (kernel_slice * input_slice) + bias[oc]
+ *
+ * Each kernel slice for (ic, oc) is a kH x kW matrix shown as a pmatrix.
+ * We display up to max_filters_display filters and max_inC_display input channels,
+ * with \cdots / \vdots for truncation.
+ */
+function _build_conv2d_full_latex(
+    layer_idx, layer_data, kernel_flat, kernel_shape,
+    kH, kW, inC, outC,
+    max_filters_display, max_inC_display,
+    decimals, all_editables, input_layer
+) {
+    var latex = "\\begin{array}{c}\n";
+
+    // Show convolution operation symbol and dimensions
+    latex += "\\text{Conv2D: kernel } " + kH + "\\times" + kW +
+             "\\times" + inC + "\\times" + outC + "\\\\[6pt]\n";
+
+    for (var oc = 0; oc < max_filters_display; oc++) {
+        latex += "\\displaystyle \\text{Filter}_{" + oc + "} = ";
+
+        var channel_parts = [];
+        for (var ic = 0; ic < max_inC_display; ic++) {
+            // Build the kH x kW kernel matrix for this (ic, oc) pair
+            var matrix_latex = _build_conv2d_kernel_matrix_latex(
+                layer_idx, kernel_flat, kernel_shape,
+                kH, kW, inC, outC, ic, oc,
+                decimals, all_editables
+            );
+            channel_parts.push(matrix_latex + " * X_{" + ic + "}");
+        }
+
+        if (inC > max_inC_display) {
+            channel_parts.push("\\cdots");
+        }
+
+        latex += channel_parts.join(" + ");
+
+        if (oc < max_filters_display - 1) {
+            latex += " \\\\[8pt]\n";
+        }
+    }
+
+    if (outC > max_filters_display) {
+        latex += " \\\\[4pt] \\vdots\n";
+    }
+
+    latex += "\\end{array}\n";
+
+    return latex;
+}
+
+/**
+ * Build a single kH x kW pmatrix for a given (input_channel, output_filter) pair.
+ * Values are colored with #53d8fb so they become clickable editables.
+ */
+function _build_conv2d_kernel_matrix_latex(
+    layer_idx, kernel_flat, kernel_shape,
+    kH, kW, inC, outC, ic, oc,
+    decimals, all_editables
+) {
+    var latex = "\\begin{pmatrix}\n";
+
+    for (var h = 0; h < kH; h++) {
+        var row_parts = [];
+        for (var w = 0; w < kW; w++) {
+            var eid = "L" + layer_idx + "_kernel_" + h + "_" + w + "_" + ic + "_" + oc;
+            var ed = math_find_editable(eid);
+            var flat_idx = _conv2d_flat_index(h, w, ic, oc, kW, inC, outC);
+            var val = ed ? ed.get().toFixed(decimals) : (kernel_flat[flat_idx] !== undefined ? kernel_flat[flat_idx].toFixed(decimals) : "0");
+            row_parts.push("\\textcolor{#53d8fb}{" + val + "}");
+            all_editables.push({ eid: eid, value: val });
+        }
+        latex += row_parts.join(" & ");
+        if (h < kH - 1) latex += " \\\\\n";
+    }
+
+    latex += "\n\\end{pmatrix}";
+    return latex;
+}

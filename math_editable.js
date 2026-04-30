@@ -10,6 +10,28 @@ var _math_pop_el = null;
 
 function math_register_editable(id, get, set, min, max, label, opts) {
     opts = opts || {};
+
+    // Prevent duplicate registration — update existing if found
+    for (var i = 0; i < _math_editables.length; i++) {
+        if (_math_editables[i].id === id) {
+            _math_editables[i].get = get;
+            _math_editables[i].set = function(v) {
+                if (started_training) {
+                    console.warn("[math_register_editable] Cannot edit variable '" + id + "' while training is in progress.");
+                    return;
+                }
+                set(v);
+            };
+            _math_editables[i].min = min;
+            _math_editables[i].max = max;
+            _math_editables[i].label = label;
+            _math_editables[i].step = opts.step || 0.01;
+            _math_editables[i].decimals = opts.decimals || 3;
+            _math_editables[i].onChange = opts.onChange || null;
+            return;
+        }
+    }
+
     _math_editables.push({
         id: id,
         get: get,
@@ -46,83 +68,83 @@ function math_find_editable(id) {
 // ============================================================
 
 function math_ensure_popup() {
-	if (_math_pop_el) return _math_pop_el;
+    if (_math_pop_el) return _math_pop_el;
 
-	var is_dark = (typeof get_cookie === "function") && (get_cookie("theme") === "darkmode");
+    var is_dark = (typeof get_cookie === "function") && (get_cookie("theme") === "darkmode");
 
-	var pop = document.createElement("div");
-	pop.id = "math_var_popup";
-	pop.className = "math-pop-ed" + (is_dark ? " math-pop-dark" : " math-pop-light");
-	pop.innerHTML = [
-		'<label class="math-pop-label" id="math_pop_lbl">Parameter</label>',
-		'<div class="math-pop-row">',
-		'  <input type="number" id="math_pop_num" step="any">',
-		'</div>',
-		'<input type="range" id="math_pop_slider" min="-10" max="10" step="0.01">',
-		'<div class="math-pop-actions">',
-		'  <button class="math-pop-btn math-pop-btn-reset" id="math_pop_reset">Reset</button>',
-		'  <button class="math-pop-btn math-pop-btn-close" id="math_pop_close">\u2715</button>',
-		'</div>'
-	].join("\n");
+    var pop = document.createElement("div");
+    pop.id = "math_var_popup";
+    pop.className = "math-pop-ed" + (is_dark ? " math-pop-dark" : " math-pop-light");
+    pop.innerHTML = [
+        '<label class="math-pop-label" id="math_pop_lbl">Parameter</label>',
+        '<div class="math-pop-row">',
+        '  <input type="number" id="math_pop_num" step="any">',
+        '</div>',
+        '<input type="range" id="math_pop_slider" min="-10" max="10" step="0.01">',
+        '<div class="math-pop-actions">',
+        '  <button class="math-pop-btn math-pop-btn-reset" id="math_pop_reset">Reset</button>',
+        '  <button class="math-pop-btn math-pop-btn-close" id="math_pop_close">\u2715</button>',
+        '</div>'
+    ].join("\n");
 
-	document.body.appendChild(pop);
-	_math_pop_el = pop;
+    document.body.appendChild(pop);
+    _math_pop_el = pop;
 
-	var numInput = document.getElementById("math_pop_num");
-	var slider = document.getElementById("math_pop_slider");
-	var resetBtn = document.getElementById("math_pop_reset");
-	var closeBtn = document.getElementById("math_pop_close");
+    var numInput = document.getElementById("math_pop_num");
+    var slider = document.getElementById("math_pop_slider");
+    var resetBtn = document.getElementById("math_pop_reset");
+    var closeBtn = document.getElementById("math_pop_close");
 
-	numInput.addEventListener("input", function () {
-		if (!_math_active_ed) return;
-		if (started_training) {
-			console.warn("[math_popup] Cannot edit variables while training is in progress.");
-			return;
-		}
-		var v = parseFloat(numInput.value);
-		if (isNaN(v)) return;
-		_math_active_ed.set(v);
-		slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
-		_math_on_variable_changed(_math_active_ed);
-	});
+    numInput.addEventListener("input", function () {
+        if (!_math_active_ed) return;
+        if (started_training) {
+            console.warn("[math_popup] Cannot edit variables while training is in progress.");
+            return;
+        }
+        var v = parseFloat(numInput.value);
+        if (isNaN(v)) return;
+        _math_active_ed.set(v);
+        slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
+        _math_on_variable_changed(_math_active_ed);
+    });
 
-	slider.addEventListener("input", function () {
-		if (!_math_active_ed) return;
-		if (started_training) {
-			console.warn("[math_popup] Cannot edit variables while training is in progress.");
-			return;
-		}
-		var v = parseFloat(slider.value);
-		_math_active_ed.set(v);
-		numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
-		_math_on_variable_changed(_math_active_ed);
-		_safe_predict_own_data_and_repredict();
-	});
+    slider.addEventListener("input", function () {
+        if (!_math_active_ed) return;
+        if (started_training) {
+            console.warn("[math_popup] Cannot edit variables while training is in progress.");
+            return;
+        }
+        var v = parseFloat(slider.value);
+        _math_active_ed.set(v);
+        numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
+        _math_on_variable_changed(_math_active_ed);
+        _safe_predict_own_data_and_repredict();
+    });
 
-	resetBtn.addEventListener("click", function () {
-		if (!_math_active_ed || _math_active_ed._initial === undefined) return;
-		if (started_training) {
-			console.warn("[math_popup] Cannot reset variables while training is in progress.");
-			return;
-		}
-		_math_active_ed.set(_math_active_ed._initial);
-		numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
-		slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), _math_active_ed.get()));
-		_math_on_variable_changed(_math_active_ed);
-		_safe_predict_own_data_and_repredict();
-	});
+    resetBtn.addEventListener("click", function () {
+        if (!_math_active_ed || _math_active_ed._initial === undefined) return;
+        if (started_training) {
+            console.warn("[math_popup] Cannot reset variables while training is in progress.");
+            return;
+        }
+        _math_active_ed.set(_math_active_ed._initial);
+        numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
+        slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), _math_active_ed.get()));
+        _math_on_variable_changed(_math_active_ed);
+        _safe_predict_own_data_and_repredict();
+    });
 
-	closeBtn.addEventListener("click", math_close_popup);
+    closeBtn.addEventListener("click", math_close_popup);
 
-	document.addEventListener("mousedown", function (e) {
-		if (!_math_pop_el) return;
-		if (!_math_pop_el.classList.contains("math-pop-visible")) return;
-		if (_math_pop_el.contains(e.target)) return;
-		if (e.target.closest && e.target.closest(".math-ed-num")) return;
-		math_close_popup();
-		_safe_predict_own_data_and_repredict();
-	});
-	return pop;
+    document.addEventListener("mousedown", function (e) {
+        if (!_math_pop_el) return;
+        if (!_math_pop_el.classList.contains("math-pop-visible")) return;
+        if (_math_pop_el.contains(e.target)) return;
+        if (e.target.closest && e.target.closest(".math-ed-num")) return;
+        math_close_popup();
+        _safe_predict_own_data_and_repredict();
+    });
+    return pop;
 }
 
 function math_open_popup(id, anchorRect) {
@@ -223,7 +245,6 @@ function _replace_colored_spans_with_editables(container, editables_in_order) {
         }
 
         // Only consider elements that directly contain text (leaf-level colored spans)
-        // This avoids double-counting wrapper spans vs. inner spans
         var hasColoredChildElement = false;
         for (var c = 0; c < el.children.length; c++) {
             var childStyle = el.children[c].getAttribute("style") || "";
@@ -354,4 +375,3 @@ function _safe_predict_own_data_and_repredict() {
         console.warn("[_safe_predict_own_data_and_repredict] Error during prediction:", e);
     }
 }
-
