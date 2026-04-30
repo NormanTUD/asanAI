@@ -46,84 +46,83 @@ function math_find_editable(id) {
 // ============================================================
 
 function math_ensure_popup() {
-    if (_math_pop_el) return _math_pop_el;
+	if (_math_pop_el) return _math_pop_el;
 
-    var is_dark = (typeof get_cookie === "function") && (get_cookie("theme") === "darkmode");
+	var is_dark = (typeof get_cookie === "function") && (get_cookie("theme") === "darkmode");
 
-    var pop = document.createElement("div");
-    pop.id = "math_var_popup";
-    pop.className = "math-pop-ed" + (is_dark ? " math-pop-dark" : " math-pop-light");
-    pop.innerHTML = [
-        '<label class="math-pop-label" id="math_pop_lbl">Parameter</label>',
-        '<div class="math-pop-row">',
-        '  <input type="number" id="math_pop_num" step="any">',
-        '</div>',
-        '<input type="range" id="math_pop_slider" min="-10" max="10" step="0.01">',
-        '<div class="math-pop-actions">',
-        '  <button class="math-pop-btn math-pop-btn-reset" id="math_pop_reset">Reset</button>',
-        '  <button class="math-pop-btn math-pop-btn-close" id="math_pop_close">\u2715</button>',
-        '</div>'
-    ].join("\n");
+	var pop = document.createElement("div");
+	pop.id = "math_var_popup";
+	pop.className = "math-pop-ed" + (is_dark ? " math-pop-dark" : " math-pop-light");
+	pop.innerHTML = [
+		'<label class="math-pop-label" id="math_pop_lbl">Parameter</label>',
+		'<div class="math-pop-row">',
+		'  <input type="number" id="math_pop_num" step="any">',
+		'</div>',
+		'<input type="range" id="math_pop_slider" min="-10" max="10" step="0.01">',
+		'<div class="math-pop-actions">',
+		'  <button class="math-pop-btn math-pop-btn-reset" id="math_pop_reset">Reset</button>',
+		'  <button class="math-pop-btn math-pop-btn-close" id="math_pop_close">\u2715</button>',
+		'</div>'
+	].join("\n");
 
-    document.body.appendChild(pop);
-    _math_pop_el = pop;
+	document.body.appendChild(pop);
+	_math_pop_el = pop;
 
-    var numInput = document.getElementById("math_pop_num");
-    var slider = document.getElementById("math_pop_slider");
-    var resetBtn = document.getElementById("math_pop_reset");
-    var closeBtn = document.getElementById("math_pop_close");
+	var numInput = document.getElementById("math_pop_num");
+	var slider = document.getElementById("math_pop_slider");
+	var resetBtn = document.getElementById("math_pop_reset");
+	var closeBtn = document.getElementById("math_pop_close");
 
-    numInput.addEventListener("input", function () {
-        if (!_math_active_ed) return;
-        if (started_training) {
-            console.warn("[math_popup] Cannot edit variables while training is in progress.");
-            return;
-        }
-        var v = parseFloat(numInput.value);
-        if (isNaN(v)) return;
-        _math_active_ed.set(v);
-        slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
-        _math_on_variable_changed(_math_active_ed);
-    });
+	numInput.addEventListener("input", function () {
+		if (!_math_active_ed) return;
+		if (started_training) {
+			console.warn("[math_popup] Cannot edit variables while training is in progress.");
+			return;
+		}
+		var v = parseFloat(numInput.value);
+		if (isNaN(v)) return;
+		_math_active_ed.set(v);
+		slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
+		_math_on_variable_changed(_math_active_ed);
+	});
 
-    slider.addEventListener("input", function () {
-        if (!_math_active_ed) return;
-        if (started_training) {
-            console.warn("[math_popup] Cannot edit variables while training is in progress.");
-            return;
-        }
-        var v = parseFloat(slider.value);
-        _math_active_ed.set(v);
-        numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
-        _math_on_variable_changed(_math_active_ed);
-        predict_own_data_and_repredict(); // await not possible
-    });
+	slider.addEventListener("input", function () {
+		if (!_math_active_ed) return;
+		if (started_training) {
+			console.warn("[math_popup] Cannot edit variables while training is in progress.");
+			return;
+		}
+		var v = parseFloat(slider.value);
+		_math_active_ed.set(v);
+		numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
+		_math_on_variable_changed(_math_active_ed);
+		_safe_predict_own_data_and_repredict();
+	});
 
-    resetBtn.addEventListener("click", function () {
-        if (!_math_active_ed || _math_active_ed._initial === undefined) return;
-        if (started_training) {
-            console.warn("[math_popup] Cannot reset variables while training is in progress.");
-            return;
-        }
-        _math_active_ed.set(_math_active_ed._initial);
-        numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
-        slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), _math_active_ed.get()));
-        _math_on_variable_changed(_math_active_ed);
-        predict_own_data_and_repredict(); // await not possible
-    });
+	resetBtn.addEventListener("click", function () {
+		if (!_math_active_ed || _math_active_ed._initial === undefined) return;
+		if (started_training) {
+			console.warn("[math_popup] Cannot reset variables while training is in progress.");
+			return;
+		}
+		_math_active_ed.set(_math_active_ed._initial);
+		numInput.value = _math_active_ed.get().toFixed(_math_active_ed.decimals);
+		slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), _math_active_ed.get()));
+		_math_on_variable_changed(_math_active_ed);
+		_safe_predict_own_data_and_repredict();
+	});
 
-    closeBtn.addEventListener("click", math_close_popup);
+	closeBtn.addEventListener("click", math_close_popup);
 
-    document.addEventListener("mousedown", function (e) {
-        if (!_math_pop_el) return;
-        if (!_math_pop_el.classList.contains("math-pop-visible")) return;
-        if (_math_pop_el.contains(e.target)) return;
-        if (e.target.closest && e.target.closest(".math-ed-num")) return;
-        math_close_popup();
-        predict_own_data_and_repredict(); // await not possible
-    });
-
-    return pop;
+	document.addEventListener("mousedown", function (e) {
+		if (!_math_pop_el) return;
+		if (!_math_pop_el.classList.contains("math-pop-visible")) return;
+		if (_math_pop_el.contains(e.target)) return;
+		if (e.target.closest && e.target.closest(".math-ed-num")) return;
+		math_close_popup();
+		_safe_predict_own_data_and_repredict();
+	});
+	return pop;
 }
 
 function math_open_popup(id, anchorRect) {
@@ -307,5 +306,52 @@ function el_render_single_latex_with_editables(container, latex, editables) {
 
     container.appendChild(wrapper);
     _replace_colored_spans_with_editables(wrapper, editables);
+}
+
+// ============================================================
+// SAFE PREDICT WRAPPER (avoids fromPixels errors for conv models)
+// ============================================================
+
+function _safe_predict_own_data_and_repredict() {
+    try {
+        // If the model requires image input (has convolutions), we need
+        // to verify that valid image data is available before predicting.
+        if (typeof input_shape_is_image === "function" && input_shape_is_image()) {
+            // For image-based models, check if there's a valid image element
+            // or canvas to predict from, not just a text string.
+            var predict_input = document.getElementById("predict_own_data");
+            if (predict_input) {
+                var val = predict_input.value;
+                // If the value is a plain string (not a data URL or valid image source),
+                // skip prediction to avoid the fromPixels error.
+                if (typeof val === "string" && val.length > 0 &&
+                    !val.startsWith("data:image") &&
+                    !val.startsWith("http") &&
+                    !val.startsWith("blob:")) {
+                    // Check if there's an image element in the predict container
+                    var predict_img = document.querySelector("#predict_container img, #predict_container canvas, #predictcontainer img, #predictcontainer canvas");
+                    if (!predict_img) {
+                        dbg("[_safe_predict_own_data_and_repredict] Skipping prediction: model requires image input but no valid image element found.");
+                        return;
+                    }
+                }
+            }
+
+            // Also check if there's a valid canvas/image for webcam or uploaded image
+            var own_image_el = document.querySelector("#own_image, #predict_image, .predict_own_image");
+            if (!own_image_el) {
+                // Try to find any suitable image element for prediction
+                var any_predict_canvas = document.querySelector("#predict_canvas, .predict_canvas");
+                if (!any_predict_canvas) {
+                    dbg("[_safe_predict_own_data_and_repredict] Skipping prediction: no valid image/canvas element available for convolutional model.");
+                    return;
+                }
+            }
+        }
+
+        predict_own_data_and_repredict();
+    } catch (e) {
+        console.warn("[_safe_predict_own_data_and_repredict] Error during prediction:", e);
+    }
 }
 

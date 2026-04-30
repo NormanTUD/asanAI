@@ -698,23 +698,39 @@ async function handle_predict_error (e, predict_data) {
 	}
 }
 
-async function get_predict_data_or_warn_in_case_of_error(predict_data, item) {
-	try {
-		predict_data = tf.tidy(() => {
-			const img_tensor = fromPixels(item);
-			const resized_img = resize_image(img_tensor, [height, width]);
-			const expanded_img = expand_dims(resized_img);
-			const float_img = tf_to_float(expanded_img);
+async function get_predict_data_or_warn_in_case_of_error() {
+    var predict_data = null;
 
-			return float_img;
-		});
+    try {
+        predict_data = await tidy(async () => {
+            var raw_input = get_predict_input_value();
 
-	} catch (e) {
-		await handle_predict_error(e, predict_data);
-		return null;
-	}
+            // Guard: if model expects image input but raw_input is not a valid pixels source, bail out
+            if (typeof input_shape_is_image === "function" && input_shape_is_image()) {
+                if (!_is_valid_pixels_source(raw_input)) {
+                    dbg("[get_predict_data_or_warn_in_case_of_error] Cannot call fromPixels: input is not a valid image source (got " + typeof raw_input + ")");
+                    return null;
+                }
+            }
 
-	return predict_data;
+            var img_tensor = fromPixels(raw_input);
+            var resized = resize_image(img_tensor, [height, width]);
+            var expanded = expand_dims(resized);
+            var divided = divNoNan(expanded, parse_float($("#divide_by").val()));
+            return divided;
+        });
+    } catch (e) {
+        handle_predict_error(e);
+        console.trace();
+        return null;
+    }
+
+    if (!predict_data || predict_data.isDisposed) {
+        dbg("[should_abort_predict] [predict] predict_data is null or undefined");
+        return null;
+    }
+
+    return predict_data;
 }
 
 function divide_predict_data_by_divide_by (predict_data) {
@@ -2281,4 +2297,30 @@ function remove_predict_data_img () {
 	$(".predict_data_img").remove();
 
 	$("#remove_predict_data_img_predictions").hide();
+}
+
+/**
+ * Check if a value is a valid source for tf.browser.fromPixels().
+ * Valid sources: HTMLImageElement, HTMLCanvasElement, HTMLVideoElement,
+ * ImageData, OffscreenCanvas, or {data: Uint32Array, width, height}.
+ * Returns false for strings, null, undefined, numbers, etc.
+ */
+function _is_valid_pixels_source(input) {
+    if (!input) return false;
+    if (typeof input === "string") return false;
+    if (typeof input === "number") return false;
+
+    // Check for DOM element types
+    if (typeof HTMLImageElement !== "undefined" && input instanceof HTMLImageElement) return true;
+    if (typeof HTMLCanvasElement !== "undefined" && input instanceof HTMLCanvasElement) return true;
+    if (typeof HTMLVideoElement !== "undefined" && input instanceof HTMLVideoElement) return true;
+    if (typeof ImageData !== "undefined" && input instanceof ImageData) return true;
+    if (typeof OffscreenCanvas !== "undefined" && input instanceof OffscreenCanvas) return true;
+
+    // Check for the {data, width, height} format
+    if (typeof input === "object" && input.data && typeof input.width === "number" && typeof input.height === "number") {
+        return true;
+    }
+
+    return false;
 }
