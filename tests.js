@@ -2484,12 +2484,7 @@ async function test_math_editable_system() {
 
 	// 4. Test registration
 	var test_val = 0.5;
-	math_register_editable("test_ed_1",
-		function() { return test_val; },
-		function(v) { test_val = v; },
-		-10, 10, "Test Param 1",
-		{ step: 0.01, decimals: 3 }
-	);
+	math_register_editable("test_ed_1", function() { return test_val; }, function(v) { test_val = v; }, -10, 10, "Test Param 1", { step: 0.01, decimals: 3 });
 
 	test_equal("math_register_editable adds one", _math_editables.length, 1);
 	test_equal("math_find_editable finds it", math_find_editable("test_ed_1") !== null, true);
@@ -2513,12 +2508,7 @@ async function test_math_editable_system() {
 	started_training = false;
 
 	// 8. Test duplicate registration updates existing
-	math_register_editable("test_ed_1",
-		function() { return test_val; },
-		function(v) { test_val = v; },
-		-5, 5, "Test Param 1 Updated",
-		{ step: 0.1, decimals: 2 }
-	);
+	math_register_editable("test_ed_1", function() { return test_val; }, function(v) { test_val = v; }, -5, 5, "Test Param 1 Updated", { step: 0.1, decimals: 2 });
 	test_equal("duplicate registration doesn't add new entry", _math_editables.length, 1);
 	test_equal("duplicate registration updates label", math_find_editable("test_ed_1").label, "Test Param 1 Updated");
 	test_equal("duplicate registration updates min", math_find_editable("test_ed_1").min, -5);
@@ -2550,12 +2540,7 @@ async function test_math_editable_system() {
 	test_container.innerHTML = '<span style="color: rgb(83, 216, 251);">0.500</span>';
 	document.body.appendChild(test_container);
 
-	math_register_editable("test_ed_span",
-		function() { return 0.5; },
-		function(v) {},
-		-10, 10, "Span Test",
-		{ decimals: 3 }
-	);
+	math_register_editable("test_ed_span", function() { return 0.5; }, function(v) {}, -10, 10, "Span Test", { decimals: 3 });
 
 	_replace_colored_spans_with_editables(test_container, [{ eid: "test_ed_span" }]);
 
@@ -2570,12 +2555,7 @@ async function test_math_editable_system() {
 	var render_container = document.createElement("div");
 	document.body.appendChild(render_container);
 
-	math_register_editable("test_render_ed",
-		function() { return 2.718; },
-		function(v) {},
-		-10, 10, "Render Test",
-		{ decimals: 3 }
-	);
+	math_register_editable("test_render_ed", function() { return 2.718; }, function(v) {}, -10, 10, "Render Test", { decimals: 3 });
 
 	var test_latex = "\\textcolor{#53d8fb}{2.718} + x";
 	el_render_single_latex_with_editables(render_container, test_latex, [{ eid: "test_render_ed" }]);
