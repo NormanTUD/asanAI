@@ -12,7 +12,6 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .instructions{background:#1e293b;border-radius:10px;padding:14px 20px;margin-bottom:20px;font-size:0.82em;color:#94a3b8;max-width:560px;text-align:center;border:1px solid #334155}
 .instructions b{color:#93c5fd}
 .instructions .key{display:inline-block;background:#334155;border-radius:4px;padding:1px 6px;font-weight:bold;color:#e2e8f0;margin:0 2px}
-
 .fft-section{text-align:center;margin-bottom:6px}
 .fft-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .fft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
@@ -23,28 +22,25 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 .fft-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
 .fft-cell .mode-badge{position:absolute;top:4px;left:4px;background:rgba(139,92,246,0.8);color:#fff;font-size:0.55em;padding:1px 4px;border-radius:3px;display:none}
 .fft-cell .mode-badge.active{display:block}
-
 .arrow-down{font-size:2em;color:#64748b;margin:12px 0;text-align:center}
 .arrow-down small{font-size:0.35em;display:block;color:#94a3b8}
-
 .smiley-section{text-align:center}
 .smiley-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .smiley-container{position:relative;border-radius:12px;overflow:hidden;border:2px solid #334155;background:#000;display:inline-block}
 .smiley-container canvas{display:block}
 .grid-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-
 .stats-row{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;justify-content:center}
 .stat{background:#1e293b;border-radius:8px;padding:6px 14px;text-align:center;border:1px solid #334155}
 .stat-label{font-size:0.65em;color:#64748b}
 .stat-value{font-size:1.1em;font-weight:bold;color:#4ade80}
-
 .fft-spectrum-section{text-align:center;margin-top:6px;margin-bottom:6px}
 .fft-spectrum-label{font-size:0.75em;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .fft-spectrum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0 auto;width:fit-content}
-.fft-spectrum-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;border:2px solid #1e3a5f;transition:border-color 0.2s,box-shadow 0.2s}
+.fft-spectrum-cell{position:relative;width:130px;height:130px;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid #1e3a5f;transition:border-color 0.2s,box-shadow 0.2s}
 .fft-spectrum-cell:hover{border-color:#38bdf8;box-shadow:0 0 12px #38bdf840}
 .fft-spectrum-cell canvas{width:100%;height:100%;display:block}
 .fft-spectrum-cell .coord-badge{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.6);color:#94a3b8;font-size:0.6em;padding:1px 4px;border-radius:3px}
+.fft-spectrum-cell .level-badge{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.8);color:#38bdf8;font-size:0.65em;padding:2px 5px;border-radius:4px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -53,21 +49,22 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 <p class="subtitle">Every cell encodes the whole image · Overzoom shows sine-wave estimation</p>
 
 <div class="instructions">
-  <b>Left-click</b> a cell → <span class="key">+ resolution</span> (zoom in, past native = overzoom estimation)<br>
-  <b>Right-click</b> a cell → <span class="key">− resolution</span><br>
+  <b>Left-click</b> any cell (top or middle grid) → <span class="key">+ resolution</span> (zoom in, past native = overzoom estimation)<br>
+  <b>Right-click</b> any cell → <span class="key">− resolution</span><br>
   All 9 cells are active and encode the full image (holographic principle)<br>
-  <b>Overzoom</b> (past L12): reconstructs using sine-wave patches to estimate detail
+  <b>Overzoom</b> (past L12): reconstructs using sine-wave patches to estimate detail<br>
+  <b>Pipeline:</b> Zoom level → Zoomed image → FFT spectrum from zoomed image
 </div>
 
 <div class="fft-section">
-  <div class="fft-label">FFT Frequency Domain (3×3 regions)</div>
+  <div class="fft-label">FFT Frequency Domain (3×3 regions) — click to zoom</div>
   <div class="fft-grid" id="fftGrid"></div>
 </div>
 
-<div class="arrow-down">↓<small>FFT magnitude spectrum per patch</small></div>
+<div class="arrow-down">↓<small>FFT magnitude spectrum per zoomed patch</small></div>
 
 <div class="fft-spectrum-section">
-  <div class="fft-spectrum-label">FFT Pattern Visualization (magnitude spectrum per cell)</div>
+  <div class="fft-spectrum-label">FFT Pattern Visualization (magnitude spectrum per cell) — click to zoom</div>
   <div class="fft-spectrum-grid" id="fftSpectrumGrid"></div>
 </div>
 
@@ -89,12 +86,11 @@ h1{font-size:1.4em;margin-bottom:6px;color:#f8fafc}
 // ============================================
 const GRID = 3;
 const IMG_SIZE = 396;
-const CELL_SIZE = IMG_SIZE / GRID;
+const CELL_SIZE = IMG_SIZE / GRID; // 132
 const MAX_LEVEL = 24;
 const NATIVE_LEVEL = 12;
 const MIN_BLOCKS_PER_CELL = 2;
 const MAX_BLOCKS_PER_CELL = 44;
-const DPR = window.devicePixelRatio || 1;
 
 const cellLevels = Array(GRID * GRID).fill(1);
 
@@ -131,16 +127,6 @@ function smileyAt(nx, ny) {
 }
 
 // ============================================
-// Build the full high-res source image
-// ============================================
-const srcImage = new Float64Array(IMG_SIZE * IMG_SIZE);
-for (let y = 0; y < IMG_SIZE; y++) {
-  for (let x = 0; x < IMG_SIZE; x++) {
-    srcImage[y * IMG_SIZE + x] = smileyAt((x + 0.5) / IMG_SIZE, (y + 0.5) / IMG_SIZE);
-  }
-}
-
-// ============================================
 // Sinc interpolation for overzoom
 // ============================================
 function sincInterpolate(nx, ny, baseRes) {
@@ -148,56 +134,64 @@ function sincInterpolate(nx, ny, baseRes) {
   const gy = ny * baseRes - 0.5;
   const ix = Math.floor(gx);
   const iy = Math.floor(gy);
-  
+
   let val = 0;
   let weight = 0;
   const radius = 3;
-  
+
   for (let dy = -radius; dy <= radius; dy++) {
     for (let dx = -radius; dx <= radius; dx++) {
       const sx = ix + dx;
       const sy = iy + dy;
       if (sx < 0 || sx >= baseRes || sy < 0 || sy >= baseRes) continue;
-      
+
       const distX = gx - sx;
       const distY = gy - sy;
-      
+
       const wx = distX === 0 ? 1 : Math.sin(Math.PI * distX) / (Math.PI * distX);
       const wy = distY === 0 ? 1 : Math.sin(Math.PI * distY) / (Math.PI * distY);
-      
+
       const lx = distX === 0 ? 1 : Math.sin(Math.PI * distX / radius) / (Math.PI * distX / radius);
       const ly = distY === 0 ? 1 : Math.sin(Math.PI * distY / radius) / (Math.PI * distY / radius);
-      
+
       const w = wx * wy * lx * ly;
       const sampleVal = smileyAt((sx + 0.5) / baseRes, (sy + 0.5) / baseRes);
-      
+
       val += sampleVal * w;
       weight += Math.abs(w);
     }
   }
-  
+
   return weight > 0 ? val / weight : smileyAt(nx, ny);
 }
 
 // ============================================
-// RENDERING SETUP
+// Level to blocks conversion (blocks across FULL image)
+// ============================================
+function levelToBlocks(level) {
+  const t = level / MAX_LEVEL;
+  return MIN_BLOCKS_PER_CELL + (MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(t, 0.6);
+}
+
+// ============================================
+// RENDERING SETUP — no DPR scaling to avoid putImageData issues
 // ============================================
 const smileyCanvas = document.getElementById('smileyCanvas');
-smileyCanvas.width = IMG_SIZE * DPR;
-smileyCanvas.height = IMG_SIZE * DPR;
+smileyCanvas.width = IMG_SIZE;
+smileyCanvas.height = IMG_SIZE;
 smileyCanvas.style.width = IMG_SIZE + 'px';
 smileyCanvas.style.height = IMG_SIZE + 'px';
 const smileyCtx = smileyCanvas.getContext('2d');
 
 const gridOverlay = document.getElementById('gridOverlay');
-gridOverlay.width = IMG_SIZE * DPR;
-gridOverlay.height = IMG_SIZE * DPR;
+gridOverlay.width = IMG_SIZE;
+gridOverlay.height = IMG_SIZE;
 gridOverlay.style.width = IMG_SIZE + 'px';
 gridOverlay.style.height = IMG_SIZE + 'px';
 const overlayCtx = gridOverlay.getContext('2d');
 
 // ============================================
-// FFT GRID CELLS (smiley patches - original)
+// FFT GRID CELLS
 // ============================================
 const gridEl = document.getElementById('fftGrid');
 const cellCanvases = [];
@@ -209,10 +203,8 @@ for (let i = 0; i < GRID * GRID; i++) {
   cell.className = 'fft-cell';
 
   const canvas = document.createElement('canvas');
-  canvas.width = CELL_CANVAS_SIZE * DPR;
-  canvas.height = CELL_CANVAS_SIZE * DPR;
-  canvas.style.width = CELL_CANVAS_SIZE + 'px';
-  canvas.style.height = CELL_CANVAS_SIZE + 'px';
+  canvas.width = CELL_CANVAS_SIZE;
+  canvas.height = CELL_CANVAS_SIZE;
   cell.appendChild(canvas);
 
   const modeBadge = document.createElement('div');
@@ -249,7 +241,7 @@ for (let i = 0; i < GRID * GRID; i++) {
 }
 
 // ============================================
-// FFT SPECTRUM GRID (2nd plot - FFT pattern per patch)
+// FFT SPECTRUM GRID — also clickable
 // ============================================
 const spectrumGridEl = document.getElementById('fftSpectrumGrid');
 const spectrumCanvases = [];
@@ -260,11 +252,15 @@ for (let i = 0; i < GRID * GRID; i++) {
   cell.className = 'fft-spectrum-cell';
 
   const canvas = document.createElement('canvas');
-  canvas.width = CELL_CANVAS_SIZE * DPR;
-  canvas.height = CELL_CANVAS_SIZE * DPR;
-  canvas.style.width = CELL_CANVAS_SIZE + 'px';
-  canvas.style.height = CELL_CANVAS_SIZE + 'px';
+  canvas.width = CELL_CANVAS_SIZE;
+  canvas.height = CELL_CANVAS_SIZE;
   cell.appendChild(canvas);
+
+  const badge = document.createElement('div');
+  badge.className = 'level-badge';
+  badge.id = `spectrum-badge-${i}`;
+  badge.textContent = `L${cellLevels[i]}`;
+  cell.appendChild(badge);
 
   const coord = document.createElement('div');
   coord.className = 'coord-badge';
@@ -273,16 +269,26 @@ for (let i = 0; i < GRID * GRID; i++) {
 
   spectrumGridEl.appendChild(cell);
   spectrumCanvases.push(canvas);
+
+  cell.addEventListener('click', (e) => {
+    e.preventDefault();
+    cellLevels[i] = Math.min(MAX_LEVEL, cellLevels[i] + 1);
+    render();
+  });
+
+  cell.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    cellLevels[i] = Math.max(0, cellLevels[i] - 1);
+    render();
+  });
 }
 
 // ============================================
-// Simple 2D DFT for small patch sizes (for spectrum visualization)
+// Simple 2D DFT
 // ============================================
 function computeFFTMagnitude(patchData, N) {
-  // patchData is NxN array of real values
-  // Returns NxN magnitude spectrum (log scaled, shifted so DC is center)
   const mag = new Float64Array(N * N);
-  
+
   for (let v = 0; v < N; v++) {
     for (let u = 0; u < N; u++) {
       let realSum = 0;
@@ -294,9 +300,8 @@ function computeFFTMagnitude(patchData, N) {
           imagSum += patchData[y * N + x] * Math.sin(angle);
         }
       }
-      // Shift: put DC in center
-      const su = (u + Math.floor(N/2)) % N;
-      const sv = (v + Math.floor(N/2)) % N;
+      const su = (u + Math.floor(N / 2)) % N;
+      const sv = (v + Math.floor(N / 2)) % N;
       mag[sv * N + su] = Math.sqrt(realSum * realSum + imagSum * imagSum);
     }
   }
@@ -304,19 +309,11 @@ function computeFFTMagnitude(patchData, N) {
 }
 
 // ============================================
-// Level to blocks conversion
-// ============================================
-function levelToBlocks(level) {
-  const t = level / MAX_LEVEL;
-  return MIN_BLOCKS_PER_CELL + (MAX_BLOCKS_PER_CELL - MIN_BLOCKS_PER_CELL) * Math.pow(t, 0.6);
-}
-
-// ============================================
 // Get effective level with neighbor blending
 // ============================================
 function getEffectiveLevel(px, py) {
-  const cellCol = Math.floor(px / CELL_SIZE);
-  const cellRow = Math.floor(py / CELL_SIZE);
+  const cellCol = Math.min(Math.floor(px / CELL_SIZE), GRID - 1);
+  const cellRow = Math.min(Math.floor(py / CELL_SIZE), GRID - 1);
 
   let totalWeight = 0;
   let weightedLevel = 0;
@@ -332,9 +329,9 @@ function getEffectiveLevel(px, py) {
 
       const nCenterX = (nc + 0.5) * CELL_SIZE;
       const nCenterY = (nr + 0.5) * CELL_SIZE;
-      const dx = (px - nCenterX) / CELL_SIZE;
-      const dy = (py - nCenterY) / CELL_SIZE;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      const ddx = (px - nCenterX) / CELL_SIZE;
+      const ddy = (py - nCenterY) / CELL_SIZE;
+      const dist = Math.sqrt(ddx * ddx + ddy * ddy);
 
       const sigma = 0.55;
       const w = Math.exp(-(dist * dist) / (2 * sigma * sigma));
@@ -344,43 +341,86 @@ function getEffectiveLevel(px, py) {
     }
   }
 
-  return totalWeight > 0 ? weightedLevel / totalWeight : cellLevels[Math.floor(py/CELL_SIZE) * GRID + Math.floor(px/CELL_SIZE)];
+  return totalWeight > 0 ? weightedLevel / totalWeight : cellLevels[cellRow * GRID + cellCol];
 }
 
 // ============================================
-// DRAW SMILEY
+// Compute zoomed patch for a cell (holographic: full smiley at cell's resolution)
+// Returns NxN Float64Array
+// ============================================
+function computeZoomedPatch(cellIndex, N) {
+  const level = cellLevels[cellIndex];
+  const isOverzoom = level > NATIVE_LEVEL;
+  const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
+  const patchData = new Float64Array(N * N);
+
+  if (isOverzoom) {
+    const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
+    const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        const nx = (x + 0.5) / N;
+        const ny = (y + 0.5) / N;
+        const baseVal = smileyAt(nx, ny);
+        const sincVal = sincInterpolate(nx, ny, baseBlocks);
+        let val = baseVal * (1 - ovAmt * 0.5) + sincVal * ovAmt * 0.5;
+        const ring = Math.sin(x * Math.PI / N * 8) * Math.sin(y * Math.PI / N * 8) * 0.03 * ovAmt;
+        val = Math.max(0, Math.min(1, val + ring));
+        patchData[y * N + x] = val;
+      }
+    }
+  } else {
+    for (let y = 0; y < N; y++) {
+      for (let x = 0; x < N; x++) {
+        // Map pixel to block, then sample center of that block
+        const blockX = Math.floor(x * blocksPerCell / N);
+        const blockY = Math.floor(y * blocksPerCell / N);
+        const sampleNx = (blockX + 0.5) / blocksPerCell;
+        const sampleNy = (blockY + 0.5) / blocksPerCell;
+        patchData[y * N + x] = smileyAt(sampleNx, sampleNy);
+      }
+    }
+  }
+
+  return patchData;
+}
+
+// ============================================
+// DRAW SMILEY — FIX: use normalized coords across full image
 // ============================================
 function drawSmiley() {
-  smileyCtx.save();
-  smileyCtx.scale(DPR, DPR);
-  smileyCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
-
   const imgData = smileyCtx.createImageData(IMG_SIZE, IMG_SIZE);
 
   for (let py = 0; py < IMG_SIZE; py++) {
     for (let px = 0; px < IMG_SIZE; px++) {
+      // Normalized position across the FULL image [0,1]
+      const nx = (px + 0.5) / IMG_SIZE;
+      const ny = (py + 0.5) / IMG_SIZE;
+
       const effectiveLevel = getEffectiveLevel(px, py);
-      const blocksPerCell = levelToBlocks(effectiveLevel);
-      const blockPx = CELL_SIZE / blocksPerCell;
+      const blocksPerCell = Math.max(2, levelToBlocks(effectiveLevel));
 
       let val;
 
       if (effectiveLevel > NATIVE_LEVEL) {
         const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
-        const nx = (px + 0.5) / IMG_SIZE;
-        const ny = (py + 0.5) / IMG_SIZE;
-        
         const overzoomAmount = (effectiveLevel - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
-        const baseVal = getPixelatedValue(px, py, baseBlocks);
-        const sincVal = sincInterpolate(nx, ny, baseBlocks * GRID);
-        
+
+        const baseVal = smileyAt(nx, ny);
+        const sincVal = sincInterpolate(nx, ny, baseBlocks);
+
         val = baseVal * (1 - overzoomAmount * 0.7) + sincVal * overzoomAmount * 0.7;
-        
+
         const ringFreq = overzoomAmount * 8;
         const ring = Math.sin(px * ringFreq * 0.1) * Math.sin(py * ringFreq * 0.1) * 0.03 * overzoomAmount;
         val += ring;
       } else {
-        val = getPixelatedValue(px, py, blocksPerCell);
+        // FIX: pixelate using normalized coords across full image
+        const blockX = Math.floor(nx * blocksPerCell);
+        const blockY = Math.floor(ny * blocksPerCell);
+        const sampleNx = (Math.min(blockX, Math.ceil(blocksPerCell) - 1) + 0.5) / blocksPerCell;
+        const sampleNy = (Math.min(blockY, Math.ceil(blocksPerCell) - 1) + 0.5) / blocksPerCell;
+        val = smileyAt(sampleNx, sampleNy);
       }
 
       val = Math.max(0, Math.min(1, val));
@@ -398,20 +438,24 @@ function drawSmiley() {
   }
   smileyCtx.putImageData(imgData, 0, 0);
 
+  // Draw block grid lines per cell
   for (let cr = 0; cr < GRID; cr++) {
     for (let cc = 0; cc < GRID; cc++) {
       const ci = cr * GRID + cc;
       const level = cellLevels[ci];
+      const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
+
       if (level < MAX_LEVEL * 0.4) {
-        const blocksPerCell = levelToBlocks(level);
-        const blockPx = CELL_SIZE / blocksPerCell;
-        if (blockPx > 4) {
+        const blocksInCell = blocksPerCell / GRID;
+        const blockPxSize = CELL_SIZE / blocksInCell;
+        if (blockPxSize > 4 && blocksInCell < 30) {
           const ox = cc * CELL_SIZE;
           const oy = cr * CELL_SIZE;
-          smileyCtx.strokeStyle = `rgba(0,0,0,${0.25 * (1 - level/MAX_LEVEL)})`;
-          smileyCtx.lineWidth = Math.max(0.3, 1.5 * (1 - level/MAX_LEVEL));
-          for (let i = 1; i < blocksPerCell; i++) {
-            const pos = Math.floor(i * blockPx);
+          smileyCtx.strokeStyle = `rgba(0,0,0,${0.25 * (1 - level / MAX_LEVEL)})`;
+          smileyCtx.lineWidth = Math.max(0.3, 1.5 * (1 - level / MAX_LEVEL));
+          for (let i = 1; i < Math.ceil(blocksInCell); i++) {
+            const pos = Math.floor(i * blockPxSize);
+            if (pos >= CELL_SIZE) break;
             smileyCtx.beginPath();
             smileyCtx.moveTo(ox + pos, oy);
             smileyCtx.lineTo(ox + pos, oy + CELL_SIZE);
@@ -423,11 +467,11 @@ function drawSmiley() {
           }
         }
       }
-      
-      if (cellLevels[ci] > NATIVE_LEVEL) {
+
+      if (level > NATIVE_LEVEL) {
         const ox = cc * CELL_SIZE;
         const oy = cr * CELL_SIZE;
-        const ovAmt = (cellLevels[ci] - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
+        const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
         smileyCtx.strokeStyle = `rgba(100, 200, 255, ${0.15 * ovAmt})`;
         smileyCtx.lineWidth = 0.5;
         const waveCount = 4 + Math.floor(ovAmt * 8);
@@ -445,10 +489,7 @@ function drawSmiley() {
     }
   }
 
-  smileyCtx.restore();
-
-  overlayCtx.save();
-  overlayCtx.scale(DPR, DPR);
+  // Grid overlay
   overlayCtx.clearRect(0, 0, IMG_SIZE, IMG_SIZE);
   overlayCtx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
   overlayCtx.lineWidth = 1.5;
@@ -464,66 +505,41 @@ function drawSmiley() {
     overlayCtx.stroke();
   }
   overlayCtx.setLineDash([]);
-  overlayCtx.restore();
-}
-
-function getPixelatedValue(px, py, blocksPerCell) {
-  const blockPx = CELL_SIZE / blocksPerCell;
-  const blockX = Math.floor(px / blockPx);
-  const blockY = Math.floor(py / blockPx);
-  const sampleX = Math.min(Math.floor((blockX + 0.5) * blockPx), IMG_SIZE - 1);
-  const sampleY = Math.min(Math.floor((blockY + 0.5) * blockPx), IMG_SIZE - 1);
-  return srcImage[sampleY * IMG_SIZE + sampleX];
 }
 
 // ============================================
-// DRAW FFT CELLS (smiley patches - original)
+// DRAW FFT CELLS (zoomed smiley patches)
 // ============================================
 function drawFFTCells() {
   for (let ci = 0; ci < GRID * GRID; ci++) {
     const canvas = cellCanvases[ci];
     const ctx = canvas.getContext('2d');
-    ctx.save();
-    ctx.scale(DPR, DPR);
     ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
 
     const level = cellLevels[ci];
     const isOverzoom = level > NATIVE_LEVEL;
-    const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
-    const blockPx = CELL_CANVAS_SIZE / blocksPerCell;
 
-    for (let by = 0; by < blocksPerCell; by++) {
-      for (let bx = 0; bx < blocksPerCell; bx++) {
-        const sx = (bx + 0.5) / blocksPerCell;
-        const sy = (by + 0.5) / blocksPerCell;
-        
-        let val;
-        if (isOverzoom) {
-          const baseBlocks = Math.round(levelToBlocks(NATIVE_LEVEL));
-          const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
-          const baseVal = smileyAt(sx, sy);
-          const sincVal = sincInterpolate(sx, sy, baseBlocks);
-          val = baseVal * (1 - ovAmt * 0.5) + sincVal * ovAmt * 0.5;
-          
-          const ring = Math.sin(bx * 0.8) * Math.sin(by * 0.8) * 0.04 * ovAmt;
-          val = Math.max(0, Math.min(1, val + ring));
-        } else {
-          val = smileyAt(sx, sy);
-        }
+    const patchData = computeZoomedPatch(ci, CELL_CANVAS_SIZE);
+    const imgData = ctx.createImageData(CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
 
-        const v = Math.max(0, Math.min(1, val));
-        
+    for (let y = 0; y < CELL_CANVAS_SIZE; y++) {
+      for (let x = 0; x < CELL_CANVAS_SIZE; x++) {
+        const v = patchData[y * CELL_CANVAS_SIZE + x];
         const hueShift = ci * 0.02;
         const r = Math.round(30 + v * 200);
         const g = Math.round(20 + v * 160 + hueShift * 20);
         const b = Math.round(60 + v * 100);
 
-        ctx.fillStyle = `rgb(${r},${g},${b})`;
-        ctx.fillRect(Math.floor(bx * blockPx), Math.floor(by * blockPx),
-                     Math.ceil(blockPx), Math.ceil(blockPx));
+        const pi = (y * CELL_CANVAS_SIZE + x) * 4;
+        imgData.data[pi] = r;
+        imgData.data[pi + 1] = g;
+        imgData.data[pi + 2] = b;
+        imgData.data[pi + 3] = 255;
       }
     }
+    ctx.putImageData(imgData, 0, 0);
 
+    // Overzoom wave overlay
     if (isOverzoom) {
       const ovAmt = (level - NATIVE_LEVEL) / (MAX_LEVEL - NATIVE_LEVEL);
       ctx.strokeStyle = `rgba(100, 220, 255, ${0.3 * ovAmt})`;
@@ -541,6 +557,7 @@ function drawFFTCells() {
       }
     }
 
+    // Progress bar at bottom
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE, 6);
     const pct = level / MAX_LEVEL;
@@ -551,8 +568,7 @@ function drawFFTCells() {
     }
     ctx.fillRect(0, CELL_CANVAS_SIZE - 6, CELL_CANVAS_SIZE * pct, 6);
 
-    ctx.restore();
-
+    // Update badges
     document.getElementById(`badge-${ci}`).textContent = `L${level}`;
     const modeEl = document.getElementById(`mode-${ci}`);
     if (isOverzoom) {
@@ -565,41 +581,27 @@ function drawFFTCells() {
 }
 
 // ============================================
-// DRAW FFT SPECTRUM CELLS (2nd plot - FFT pattern per patch)
+// DRAW FFT SPECTRUM CELLS
+// Computes FFT from the ZOOMED image at each cell's level
 // ============================================
 function drawFFTSpectrumCells() {
   for (let ci = 0; ci < GRID * GRID; ci++) {
     const canvas = spectrumCanvases[ci];
     const ctx = canvas.getContext('2d');
-    ctx.save();
-    ctx.scale(DPR, DPR);
     ctx.clearRect(0, 0, CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
 
     const level = cellLevels[ci];
-    const blocksPerCell = Math.max(2, Math.round(levelToBlocks(level)));
 
-    // Sample the patch data at the current resolution
-    const N = Math.min(blocksPerCell, 32); // Cap DFT size for performance
-    const patchData = new Float64Array(N * N);
+    // Cap DFT size for performance (DFT is O(N^4))
+    const N = Math.min(Math.max(4, Math.round(levelToBlocks(level))), 28);
 
-    for (let y = 0; y < N; y++) {
-      for (let x = 0; x < N; x++) {
-        const sx = (x + 0.5) / N;
-        const sy = (y + 0.5) / N;
-        patchData[y * N + x] = smileyAt(sx, sy);
-      }
-    }
+    // First compute the zoomed patch, THEN derive FFT from it
+    const zoomedPatch = computeZoomedPatch(ci, N);
 
-    // Compute FFT magnitude spectrum
-    const mag = computeFFTMagnitude(patchData, N);
+    // Compute FFT magnitude spectrum from the zoomed patch
+    const mag = computeFFTMagnitude(zoomedPatch, N);
 
-    // Find max for normalization (skip DC if desired)
-    let maxMag = 0;
-    for (let i = 0; i < mag.length; i++) {
-      if (mag[i] > maxMag) maxMag = mag[i];
-    }
-
-    // Log scale the magnitude for better visualization
+    // Log scale for visualization
     const logMag = new Float64Array(N * N);
     let logMax = 0;
     for (let i = 0; i < mag.length; i++) {
@@ -607,23 +609,29 @@ function drawFFTSpectrumCells() {
       if (logMag[i] > logMax) logMax = logMag[i];
     }
 
-    // Render the spectrum as an image
+    // Render spectrum
+    const imgData = ctx.createImageData(CELL_CANVAS_SIZE, CELL_CANVAS_SIZE);
     const blockPx = CELL_CANVAS_SIZE / N;
 
-    for (let y = 0; y < N; y++) {
-      for (let x = 0; x < N; x++) {
-        const v = logMax > 0 ? logMag[y * N + x] / logMax : 0;
+    for (let py = 0; py < CELL_CANVAS_SIZE; py++) {
+      for (let px = 0; px < CELL_CANVAS_SIZE; px++) {
+        const bx = Math.min(Math.floor(px / blockPx), N - 1);
+        const by = Math.min(Math.floor(py / blockPx), N - 1);
+        const v = logMax > 0 ? logMag[by * N + bx] / logMax : 0;
 
-        // Cool blue-cyan-white color map for FFT spectrum
+        // Blue-cyan-white color map
         const r = Math.round(v * v * 255);
-        const g = Math.round(v * 200 + v * v * 55);
-        const b = Math.round(80 + v * 175);
+        const g = Math.round(v * 180 + v * v * 75);
+        const b = Math.round(60 + v * 195);
 
-        ctx.fillStyle = `rgb(${r},${g},${b})`;
-        ctx.fillRect(Math.floor(x * blockPx), Math.floor(y * blockPx),
-                     Math.ceil(blockPx), Math.ceil(blockPx));
+        const pi = (py * CELL_CANVAS_SIZE + px) * 4;
+        imgData.data[pi] = r;
+        imgData.data[pi + 1] = g;
+        imgData.data[pi + 2] = b;
+        imgData.data[pi + 3] = 255;
       }
     }
+    ctx.putImageData(imgData, 0, 0);
 
     // Draw crosshair at DC center
     const center = CELL_CANVAS_SIZE / 2;
@@ -638,7 +646,8 @@ function drawFFTSpectrumCells() {
     ctx.lineTo(CELL_CANVAS_SIZE, center);
     ctx.stroke();
 
-    ctx.restore();
+    // Update badge
+    document.getElementById(`spectrum-badge-${ci}`).textContent = `L${level}`;
   }
 }
 
@@ -648,11 +657,11 @@ function drawFFTSpectrumCells() {
 function updateStats() {
   const statsEl = document.getElementById('statsRow');
   const levels = cellLevels.slice();
-  const avg = levels.reduce((a,b) => a+b, 0) / levels.length;
+  const avg = levels.reduce((a, b) => a + b, 0) / levels.length;
   const overzoomCount = levels.filter(l => l > NATIVE_LEVEL).length;
 
   statsEl.innerHTML = `
-    <div class="stat"><div class="stat-label">Avg Level</div><div class="stat-value">${Math.round(avg/MAX_LEVEL*100)}%</div></div>
+    <div class="stat"><div class="stat-label">Avg Level</div><div class="stat-value">${Math.round(avg / MAX_LEVEL * 100)}%</div></div>
     <div class="stat"><div class="stat-label">Active Cells</div><div class="stat-value">9 / 9</div></div>
     <div class="stat"><div class="stat-label">Overzoomed</div><div class="stat-value" style="color:#38bdf8">${overzoomCount}</div></div>
     <div class="stat"><div class="stat-label">Native Res</div><div class="stat-value" style="color:#fbbf24">L${NATIVE_LEVEL}</div></div>
@@ -663,17 +672,18 @@ function updateStats() {
 // MAIN RENDER
 // ============================================
 function render() {
-  drawSmiley();
   drawFFTCells();
   drawFFTSpectrumCells();
+  drawSmiley();
   updateStats();
 }
 
 // Initial render
 render();
 
-// Prevent context menu globally on the grid
+// Prevent context menu on grids
 document.getElementById('fftGrid').addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('fftSpectrumGrid').addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
 </html>
