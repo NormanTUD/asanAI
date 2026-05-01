@@ -3,3 +3,6 @@ presentation.fdb_latexmk
 presentation.fls
 presentation.log
 presentation.out
+presentation.nav
+presentation.snm
+presentation.toc
