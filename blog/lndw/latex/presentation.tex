@@ -419,11 +419,17 @@
       \draw[stream] (0,0) -- (12,0);
       \node[below, font=\small\color{dunkel}] at (6,-0.4) {Residual Stream};
 
-      % Experten-Gruppen
-      \foreach \x/\label in {1.5/L1, 4/L2, 6.5/L3, 9/\ldots, 10.5/L$_N$} {
-        \node[expert] (e\x) at (\x, 1.2) {\label};
-        \draw[arr] (\x, 0.15) -- (e\x.south);
-        \draw[arr] (e\x.south) ++(0.3,0) -- ++(0,-0.95);
+      % Experten-Gruppen (feste Positionen, keine Dezimalen in Namen)
+      \node[expert] (eA) at (1.5, 1.2) {L1};
+      \node[expert] (eB) at (4, 1.2)   {L2};
+      \node[expert] (eC) at (6.5, 1.2) {L3};
+      \node[expert] (eD) at (9, 1.2)   {$\ldots$};
+      \node[expert] (eE) at (10.5, 1.2){L$_N$};
+
+      % Pfeile hoch und runter
+      \foreach \n/\x in {eA/1.5, eB/4, eC/6.5, eD/9, eE/10.5} {
+        \draw[arr] (\x, 0.15) -- (\n.south);
+        \draw[arr] ([xshift=3mm]\n.south) -- ++(0,-0.95);
       }
 
       \node[left, font=\small] at (0,0) {Input};
@@ -433,8 +439,8 @@
 
   \begin{itemize}
     \stich{Ursprünglich erfunden: tiefe Netze besser trainierbar machen (ResNets)}
-    \stich{Hier: \textbf{globales Workbook} – jede Schicht liest und schreibt darauf}
-    \stich{Wie ein Text, der einer Reihe von Experten gegeben wird –
+    \stich{Hier: \textbf{globales Workbook} -- jede Schicht liest und schreibt darauf}
+    \stich{Wie ein Text, der einer Reihe von Experten gegeben wird --
            jeder kritzelt seine Notizen drauf}
     \stich{Hunderte Schichten, hunderte Experten-Runden}
   \end{itemize}
