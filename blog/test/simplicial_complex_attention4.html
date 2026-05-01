@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attention = Simplicial Sheaf</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --panel: #161b22;
+            --border: #30363d;
+            --accent: #58a6ff;
+            --gold: #f0c040;
+            --red: #f85149;
+            --green: #3fb950;
+            --text: #c9d1d9;
+            --dim: #8b949e;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .app { max-width: 1440px; margin: 0 auto; padding: 24px; }
+        header { text-align: center; margin-bottom: 32px; }
+        header h1 { font-size: 1.8em; color: #fff; margin-bottom: 8px; }
+        header p { color: var(--dim); max-width: 700px; margin: 0 auto; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .full { grid-column: 1 / -1; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .card h2 { font-size: 1.1em; color: var(--accent); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .card h3 { font-size: 0.95em; color: var(--gold); margin: 16px 0 8px; }
+        .eq { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin: 8px 0; overflow-x: auto; }
+        .eq-note { color: var(--gold); font-size: 0.85em; margin-top: 6px; font-style: italic; }
+        .plot-box { width: 100%; border-radius: 8px; overflow: hidden; }
+        #mainPlot { height: 560px; }
+        #heatmap { height: 340px; }
+        #sheafPlot { height: 380px; }
+        .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 12px 0; }
+        .ctrl { display: flex; align-items: center; gap: 6px; }
+        .ctrl label { font-size: 0.82em; color: var(--dim); white-space: nowrap; }
+        .ctrl input[type="range"] { width: 100px; accent-color: var(--accent); }
+        .ctrl input[type="number"] { width: 56px; background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 3px 6px; border-radius: 4px; font-size: 0.85em; }
+        .ctrl select { background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 4px 8px; border-radius: 4px; }
+        .ctrl input[type="checkbox"] { accent-color: var(--accent); }
+        button { background: var(--accent); color: #000; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85em; }
+        button:hover { opacity: 0.85; }
+        .sentences { display: flex; flex-wrap: wrap; gap: 8px; }
+        .sent-btn { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85em; transition: all 0.2s; }
+        .sent-btn:hover { border-color: var(--accent); }
+        .sent-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.82em; }
+        th { background: var(--bg); color: var(--accent); padding: 6px 8px; text-align: center; border: 1px solid var(--border); }
+        td { padding: 4px 6px; text-align: center; border: 1px solid var(--border); }
+        td input { width: 50px; background: var(--bg); border: 1px solid var(--border); color: #fff; text-align: center; padding: 2px; border-radius: 3px; font-size: 0.9em; }
+        .insight { background: rgba(88,166,255,0.08); border-left: 3px solid var(--accent); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; font-size: 0.9em; }
+        .simplex-list { font-size: 0.82em; max-height: 200px; overflow-y: auto; }
+        .simplex-list .s0 { color: var(--accent); }
+        .simplex-list .s1 { color: var(--green); }
+        .simplex-list .s2 { color: var(--gold); }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; margin: 0 2px; }
+        .tag-boundary { background: rgba(248,81,73,0.2); color: var(--red); }
+        .tag-sheaf { background: rgba(63,185,80,0.2); color: var(--green); }
+        @media (max-width: 900px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <header>
+        <h1>Attention = Nerve + Sheaf</h1>
+        <p>Self-attention has two roles: <span class="tag tag-boundary">Boundary</span> determines the simplicial skeleton (Q·K), and <span class="tag tag-sheaf">Sheaf</span> transports meaning along it (V). This is the topology of thought.</p>
+    </header>
+
+    <!-- SENTENCE SELECTOR -->
+    <div class="card full" style="margin-bottom:16px;">
+        <h2>Choose a Sentence</h2>
+        <div class="sentences" id="sentBtns"></div>
+    </div>
+
+    <!-- MAIN 3D VISUALIZATION -->
+    <div class="card full">
+        <h2>Semantic 3-Space & Simplicial Complex</h2>
+        <div class="controls">
+            <div class="ctrl"><label>Temperature τ</label><input type="range" id="tau" min="0.1" max="4" step="0.05" value="0.8"><span id="tau-v">0.80</span></div>
+            <div class="ctrl"><label>Threshold ε</label><input type="range" id="eps" min="0.02" max="0.4" step="0.01" value="0.08"><span id="eps-v">0.08</span></div>
+            <div class="ctrl"><label>RoPE</label><input type="checkbox" id="useRope" checked></div>
+            <div class="ctrl"><label>Triangles</label><input type="checkbox" id="showTri" checked></div>
+            <div class="ctrl"><label>Edges</label><input type="checkbox" id="showEdge" checked></div>
+            <div class="ctrl"><label>Sheaf flow</label><input type="checkbox" id="showSheaf" checked></div>
+            <button onclick="compute()">Recompute</button>
+        </div>
+        <div class="plot-box" id="mainPlot"></div>
+    </div>
+
+    <div class="grid-2">
+        <!-- MATH PANEL -->
+        <div class="card">
+            <h2>The Two Operations of Attention</h2>
+
+            <h3>① Boundary Operator → Simplicial Skeleton</h3>
+            <div class="insight">The inner product Q·Kᵀ defines a <b>weighted nerve</b>: it decides which tokens form simplices (vertices, edges, triangles). This is purely combinatorial/topological.</div>
+            <div class="eq">
+                \[\alpha_{ij} = \text{softmax}_j\!\left(\frac{\langle R_m q_i,\; R_n k_j \rangle}{\sqrt{d}}\right)\]
+                \[\sigma^1 = \{i,j\} \in \mathcal{K} \iff \min(\alpha_{ij}, \alpha_{ji}) > \varepsilon\]
+                \[\sigma^2 = \{i,j,k\} \in \mathcal{K} \iff \text{all faces} \in \mathcal{K}\]
+                <p class="eq-note">The nerve condition: a k-simplex exists iff all its (k−1)-faces exist. This is the "downward closure" axiom of simplicial complexes.</p>
+            </div>
+
+            <h3>② Sheaf → Value Transport</h3>
+            <div class="insight">Once the skeleton exists, V assigns a <b>section</b> (vector) to each vertex, and attention weights define the <b>restriction maps</b> that transport data along edges. The output is a <b>global section</b> of this sheaf.</div>
+            <div class="eq">
+                \[\mathcal{F}(\sigma^0_i) = v_i = W^V x_i \quad \text{(stalk at vertex } i\text{)}\]
+                \[\text{res}_{i \leftarrow j} = \alpha_{ij} \cdot v_j \quad \text{(restriction map)}\]
+                \[s_i = \sum_{j:\{i,j\}\in\mathcal{K}} \alpha_{ij}\, v_j \quad \text{(local section / output)}\]
+                <p class="eq-note">The attention output is literally a weighted average of sheaf stalks — a "smoothed global section" over the simplicial complex.</p>
+            </div>
+
+            <h3>③ RoPE as Parallel Transport</h3>
+            <div class="eq">
+                \[R_m = \begin{pmatrix}\cos m\theta & -\sin m\theta & 0\\ \sin m\theta & \cos m\theta & 0\\ 0 & 0 & 1\end{pmatrix}, \quad \theta = b^{-2/d}\]
+                \[\langle R_m q, R_n k\rangle = q^\top R_{m-n}\, k\]
+                <p class="eq-note">RoPE is a connection on the vector bundle: it defines how to parallel-transport vectors between positions. Only relative position (m−n) matters — this is gauge invariance.</p>
+            </div>
+
+            <h3>④ Why Two Things, Not Three?</h3>
+            <div class="eq" style="border-color: var(--gold);">
+                <p style="color:var(--gold);">Q and K are not separate objects — they are two halves of a single bilinear form:</p>
+                \[B(x_i, x_j) = (W^Q x_i)^\top (W^K x_j) = x_i^\top \underbrace{(W^Q)^\top W^K}_{=:\,G} x_j\]
+                <p class="eq-note">G is a learned metric tensor on the embedding space. Q·K is just one thing: a (possibly asymmetric) inner product that defines the topology. V is the second thing: the content that lives on that topology.</p>
+            </div>
+        </div>
+
+        <!-- DATA & CONTROLS -->
+        <div class="card">
+            <h2>Embeddings & Matrices</h2>
+            <p style="color:var(--dim); font-size:0.82em; margin-bottom:8px;">
+                <b>X</b> = Gender (−1 male, +1 female) &nbsp;|&nbsp; <b>Y</b> = Being (−1 animal, 0 human, +1 divine) &nbsp;|&nbsp; <b>Z</b> = Power (0→1)
+            </p>
+            <div style="overflow-x:auto; max-height:260px; overflow-y:auto;">
+                <table id="embTable"><thead><tr><th>Token</th><th>X</th><th>Y</th><th>Z</th><th>pos</th></tr></thead><tbody></tbody></table>
+            </div>
+
+            <h3>Metric Tensor G = (W_Q)ᵀ W_K</h3>
+            <p style="color:var(--dim); font-size:0.8em;">Edit the combined metric directly. This single matrix defines the boundary operator.</p>
+            <table id="gTable"><tbody></tbody></table>
+
+            <h3>Sheaf Assignment W_V</h3>
+            <table id="vTable"><tbody></tbody></table>
+
+            <h3>RoPE</h3>
+            <div class="controls">
+                <div class="ctrl"><label>Base b</label><input type="number" id="ropeBase" value="10000" min="10" max="100000" step="100"></div>
+            </div>
+            <div id="ropeInfo" style="font-size:0.8em; color:var(--dim);"></div>
+
+            <button onclick="compute()" style="margin-top:12px; width:100%;">Apply & Recompute</button>
+        </div>
+    </div>
+
+    <!-- HEATMAP + SIMPLEX INFO -->
+    <div class="grid-2" style="margin-top:16px;">
+        <div class="card">
+            <h2>Attention Matrix (Boundary Weights)</h2>
+            <div class="plot-box" id="heatmap"></div>
+        </div>
+        <div class="card">
+            <h2>Simplicial Complex K</h2>
+            <div class="controls">
+                <div class="ctrl"><label>Betti numbers:</label><span id="betti" style="color:var(--gold);"></span></div>
+            </div>
+            <div class="simplex-list" id="simplexInfo"></div>
+            <div class="plot-box" id="sheafPlot"></div>
+        </div>
+    </div>
+
+    <!-- INTERPRETATION -->
+    <div class="card full" style="margin-top:16px;">
+        <h2>Reading Guide</h2>
+        <div class="grid-3">
+            <div>
+                <h3 style="color:var(--accent);">Points = Stalks</h3>
+                <p style="font-size:0.85em;">Each token is a point in 3D semantic space. Its position encodes meaning along three interpretable axes. The V-projection assigns a "stalk" (local data) to each point.</p>
+            </div>
+            <div>
+                <h3 style="color:var(--green);">Edges = Restriction Maps</h3>
+                <p style="font-size:0.85em;">Green lines connect tokens with mutual attention > ε. These are the 1-simplices. Meaning flows along them via the sheaf's restriction maps (attention weights).</p>
+            </div>
+            <div>
+                <h3 style="color:var(--gold);">Triangles = Composed Meaning</h3>
+                <p style="font-size:0.85em;">Gold triangles are 2-simplices: three tokens jointly composing meaning. This is where attention "focuses locally" — creating a coherent semantic region from multiple tokens.</p>
+            </div>
+        </div>
+        <div class="insight" style="margin-top:16px;">
+            <b>The key insight:</b> Attention is not just "soft lookup." It constructs a simplicial complex (the nerve of semantic overlap) and then solves a sheaf-consistency problem over it. The output at each token is the best "global section" — a coherent assignment of meaning that respects all the local constraints imposed by the attention edges. Triangles represent places where three meanings are being <em>jointly</em> reconciled, not just pairwise.
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const DATA = [
+    {
+        text: "The king commanded his lion with divine power",
+        tokens: ["The","king","commanded","his","lion","with","divine","power"],
+        emb: [[0,.0,.1],[-.8,.1,.85],[-.2,.0,.6],[-.7,.0,.1],[-.3,-.9,.5],[0,0,.1],[0,.9,.9],[0,.2,.95]]
+    },
+    {
+        text: "The goddess transformed into a fierce wolf",
+        tokens: ["The","goddess","transformed","into","a","fierce","wolf"],
+        emb: [[0,0,.1],[.9,.95,.85],[0,.3,.5],[0,0,.1],[0,0,.1],[-.2,0,.7],[-.4,-.95,.6]]
+    },
+    {
+        text: "A queen ruled eagles with celestial authority",
+        tokens: ["A","queen","ruled","eagles","with","celestial","authority"],
+        emb: [[0,0,.1],[.9,.1,.8],[.1,.1,.7],[-.1,-.85,.4],[0,0,.1],[.1,.95,.8],[-.1,.2,.9]]
+    },
+    {
+        text: "The boy befriended a gentle deer in sacred woods",
+        tokens: ["The","boy","befriended","a","gentle","deer","in","sacred","woods"],
+        emb: [[0,0,.1],[-.8,0,.2],[0,.1,.2],[0,0,.1],[.2,0,.1],[.1,-.9,.15],[0,0,.1],[0,.8,.5],[0,-.5,.2]]
+    },
+    {
+        text: "An ancient god summoned serpents of dominion",
+        tokens: ["An","ancient","god","summoned","serpents","of","dominion"],
+        emb: [[0,0,.1],[0,.3,.4],[-.6,1,.95],[-.2,.5,.7],[-.3,-.8,.5],[0,0,.1],[-.3,.3,.9]]
+    }
+];
+
+// Metric tensor G = Q^T K (single bilinear form for boundary)
+let G = [[0.7,0.1,0.05],[0.1,0.8,0.05],[0.05,0.1,0.85]];
+// Sheaf assignment
+let WV = [[1,0,0],[0,1,0],[0,0,1]];
+
+let sel = 0;
+let attnW = [];
+
+// ============================================================
+// MATH
+// ============================================================
+const dot = (a,b) => a.reduce((s,v,i)=>s+v*b[i],0);
+const mv = (M,v) => M.map(r=>dot(r,v));
+const softmax = (a,tau) => { const mx=Math.max(...a), e=a.map(x=>Math.exp((x-mx)/tau)), s=e.reduce((a,b)=>a+b); return e.map(x=>x/s); };
+
+function ropeMatrix(pos, base) {
+    const th = Math.pow(base, -2/3);
+    const a = pos * th;
+    return [[Math.cos(a),-Math.sin(a),0],[Math.sin(a),Math.cos(a),0],[0,0,1]];
+}
+
+function compute() {
+    const d = DATA[sel];
+    const n = d.tokens.length;
+    const tau = parseFloat(document.getElementById('tau').value);
+    const eps = parseFloat(document.getElementById('eps').value);
+    const useRope = document.getElementById('useRope').checked;
+    const base = parseFloat(document.getElementById('ropeBase').value);
+
+    document.getElementById('tau-v').textContent = tau.toFixed(2);
+    document.getElementById('eps-v').textContent = eps.toFixed(2);
+
+    // Compute bilinear scores with RoPE
+    // score(i,j) = (R_i * x_i)^T G (R_j * x_j) / sqrt(d)
+    const vecs = d.emb.map((e,i) => useRope ? mv(ropeMatrix(i,base), e) : [...e]);
+    
+    const scores = Array.from({length:n}, ()=>Array(n).fill(0));
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++) {
+        scores[i][j] = dot(vecs[i], mv(G, vecs[j])) / Math.sqrt(3);
+    }
+    attnW = scores.map(row => softmax(row, tau));
+
+    // Simplicial complex
+    const edges=[], tris=[];
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) {
+        const w = Math.min(attnW[i][j], attnW[j][i]);
+        if(w>eps) edges.push([i,j,w]);
+    }
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) for(let k=j+1;k<n;k++) {
+        const ij=Math.min(attnW[i][j],attnW[j][i]);
+        const jk=Math.min(attnW[j][k],attnW[k][j]);
+        const ik=Math.min(attnW[i][k],attnW[k][i]);
+        if(ij>eps&&jk>eps&&ik>eps) tris.push([i,j,k,Math.min(ij,jk,ik)]);
+    }
+
+    // Sheaf output (value transport)
+    const vals = d.emb.map(e => mv(WV, e));
+    const output = Array.from({length:n},()=>[0,0,0]);
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++) for(let dd=0;dd<3;dd++) output[i][dd]+=attnW[i][j]*vals[j][dd];
+
+    // --- RENDER ---
+    render3D(d, edges, tris, output, vecs);
+    renderHeatmap(d.tokens);
+    renderSimplexInfo(d.tokens, edges, tris, n);
+    renderSheafPlot(d, output);
+    renderRopeInfo(n, base);
+}
+
+// ============================================================
+// 3D PLOT
+// ============================================================
+function render3D(d, edges, tris, output, ropeVecs) {
+    const emb = d.emb, tok = d.tokens, n=tok.length;
+    const showTri = document.getElementById('showTri').checked;
+    const showEdge = document.getElementById('showEdge').checked;
+    const showSheaf = document.getElementById('showSheaf').checked;
+    const useRope = document.getElementById('useRope').checked;
+    const traces = [];
+
+    // Color tokens by ontology
+    const col = emb.map(e => e[1]<-0.3?'#3fb950':e[1]>0.3?'#f0c040':'#58a6ff');
+
+    // Triangles (mesh)
+    if(showTri) for(const [i,j,k,w] of tris) {
+        traces.push({type:'mesh3d',
+            x:[emb[i][0],emb[j][0],emb[k][0]],
+            y:[emb[i][1],emb[j][1],emb[k][1]],
+            z:[emb[i][2],emb[j][2],emb[k][2]],
+            i:[0],j:[1],k:[2],
+            opacity:0.22, color:'#f0c040', flatshading:true,
+            hovertemplate:`△ ${tok[i]}, ${tok[j]}, ${tok[k]}<br>strength: ${w.toFixed(3)}<extra></extra>`,
+            showlegend:false
+        });
+    }
+
+    // Edges
+    if(showEdge) for(const [i,j,w] of edges) {
+        traces.push({type:'scatter3d',mode:'lines',
+            x:[emb[i][0],emb[j][0]],y:[emb[i][1],emb[j][1]],z:[emb[i][2],emb[j][2]],
+            line:{color:`rgba(63,185,80,${Math.min(w*4,0.9)})`,width:Math.max(2,w*14)},
+            showlegend:false, hoverinfo:'skip'
+        });
+    }
+
+    // Sheaf flow arrows (from each token to its output)
+    if(showSheaf) for(let i=0;i<n;i++) {
+        if(Math.abs(emb[i][0]-output[i][0])+Math.abs(emb[i][1]-output[i][1])+Math.abs(emb[i][2]-output[i][2])>0.05) {
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[emb[i][0],output[i][0]],y:[emb[i][1],output[i][1]],z:[emb[i][2],output[i][2]],
+                line:{color:'rgba(248,81,73,0.6)',width:3,dash:'dot'},
+                showlegend:false, hoverinfo:'skip'
+            });
+        }
+    }
+    // Sheaf output points
+    if(showSheaf) {
+        traces.push({type:'scatter3d',mode:'markers',
+            x:output.map(o=>o[0]),y:output.map(o=>o[1]),z:output.map(o=>o[2]),
+            marker:{size:4,color:'#f85149',opacity:0.7,symbol:'diamond'},
+            name:'Sheaf output', hovertemplate:'Output<br>%{x:.2f}, %{y:.2f}, %{z:.2f}<extra></extra>'
+        });
+    }
+
+    // RoPE vectors
+    if(useRope) {
+        traces.push({type:'scatter3d',mode:'markers',
+            x:ropeVecs.map(v=>v[0]),y:ropeVecs.map(v=>v[1]),z:ropeVecs.map(v=>v[2]),
+            marker:{size:3,color:'#a371f7',opacity:0.6},
+            name:'RoPE-rotated', hovertemplate:'RoPE<br>%{x:.2f}, %{y:.2f}, %{z:.2f}<extra></extra>'
+        });
+    }
+
+    // Token points (on top)
+    traces.push({type:'scatter3d',mode:'markers+text',
+        x:emb.map(e=>e[0]),y:emb.map(e=>e[1]),z:emb.map(e=>e[2]),
+        text:tok, textposition:'top center', textfont:{size:11,color:'#fff'},
+        marker:{size:7,color:col,opacity:1,line:{width:1,color:'#fff'}},
+        name:'Tokens',
+        hovertemplate:'%{text}<br>Gender:%{x:.2f} Being:%{y:.2f} Power:%{z:.2f}<extra></extra>'
+    });
+
+    Plotly.react('mainPlot', traces, {
+        scene:{
+            xaxis:{title:'← Male · Female →',range:[-1.3,1.3],gridcolor:'#21262d',zerolinecolor:'#30363d',color:'#8b949e'},
+            yaxis:{title:'← Animal · Human · Divine →',range:[-1.3,1.3],gridcolor:'#21262d',zerolinecolor:'#30363d',color:'#8b949e'},
+            zaxis:{title:'← Weak · Strong →',range:[-0.1,1.2],gridcolor:'#21262d',zerolinecolor:'#30363d',color:'#8b949e'},
+            bgcolor:'#0d1117',
+            camera:{eye:{x:1.6,y:1.4,z:1.0}}
+        },
+        paper_bgcolor:'#161b22', font:{color:'#c9d1d9'},
+        margin:{l:0,r:0,t:10,b:0}, showlegend:true,
+        legend:{x:0.01,y:0.99,bgcolor:'rgba(22,27,34,0.85)',bordercolor:'#30363d',borderwidth:1}
+    }, {responsive:true});
+}
+
+// ============================================================
+// HEATMAP
+// ============================================================
+function renderHeatmap(tokens) {
+    Plotly.react('heatmap', [{
+        type:'heatmap', z:attnW, x:tokens, y:tokens,
+        colorscale:[[0,'#0d1117'],[0.3,'#1f3a5f'],[0.6,'#58a6ff'],[0.85,'#f0c040'],[1,'#f85149']],
+        hovertemplate:'%{y} → %{x}<br>α = %{z:.4f}<extra></extra>'
+    }], {
+        paper_bgcolor:'#161b22', plot_bgcolor:'#0d1117', font:{color:'#c9d1d9'},
+        margin:{l:70,r:10,t:10,b:70},
+        xaxis:{tickangle:-45,color:'#8b949e'},
+        yaxis:{autorange:'reversed',color:'#8b949e'}
+    }, {responsive:true});
+}
+
+// ============================================================
+// SIMPLEX INFO
+// ============================================================
+function renderSimplexInfo(tokens, edges, tris, n) {
+    // Betti numbers
+    const parent=Array.from({length:n},(_,i)=>i);
+    const find=x=>parent[x]===x?x:(parent[x]=find(parent[x]));
+    for(const[i,j] of edges) { parent[find(i)]=find(j); }
+    const roots=new Set(); for(let i=0;i<n;i++) roots.add(find(i));
+    const b0=roots.size;
+    const b1=Math.max(0, edges.length - (n - b0) - tris.length);
+
+    document.getElementById('betti').textContent = `β₀=${b0} (components)  β₁=${b1} (loops)  |K|=${n}v + ${edges.length}e + ${tris.length}t`;
+
+    let html='';
+    html+=`<p class="s0"><b>0-simplices (${n}):</b> ${tokens.map((t,i)=>`{${t}}`).join(', ')}</p>`;
+    html+=`<p class="s1" style="margin-top:8px;"><b>1-simplices (${edges.length}):</b></p>`;
+    if(edges.length===0) html+='<p style="color:var(--dim);">None — lower ε or τ</p>';
+    else for(const[i,j,w] of edges) html+=`<p class="s1">&nbsp; {${tokens[i]}, ${tokens[j]}} — α=${w.toFixed(4)}</p>`;
+    html+=`<p class="s2" style="margin-top:8px;"><b>2-simplices (${tris.length}):</b></p>`;
+    if(tris.length===0) html+='<p style="color:var(--dim);">None — lower ε or τ</p>';
+    else for(const[i,j,k,w] of tris) html+=`<p class="s2">&nbsp; △{${tokens[i]}, ${tokens[j]}, ${tokens[k]}} — min α=${w.toFixed(4)}</p>`;
+
+    document.getElementById('simplexInfo').innerHTML=html;
+}
+
+// ============================================================
+// SHEAF PLOT (2D: shows value transport)
+// ============================================================
+function renderSheafPlot(d, output) {
+    const emb=d.emb, tok=d.tokens, n=tok.length;
+    const traces=[];
+
+    // Arrows from embedding to output (sheaf transport)
+    for(let i=0;i<n;i++){
+        traces.push({type:'scatter',mode:'lines+markers',
+            x:[emb[i][0],output[i][0]], y:[emb[i][2],output[i][2]],
+            line:{color:'rgba(248,81,73,0.5)',width:2,dash:'dot'},
+            marker:{size:[8,5],color:['#58a6ff','#f85149'],symbol:['circle','diamond']},
+            showlegend:false,
+            hovertemplate:`${tok[i]}<br>Input: (${emb[i][0].toFixed(2)}, ${emb[i][2].toFixed(2)})<br>Output: (${output[i][0].toFixed(2)}, ${output[i][2].toFixed(2)})<extra></extra>`
+        });
+    }
+
+    // Labels
+    traces.push({type:'scatter',mode:'text',
+        x:emb.map(e=>e[0]), y:emb.map(e=>e[2]),
+        text:tok, textposition:'top center', textfont:{size:10,color:'#fff'},
+        showlegend:false, hoverinfo:'skip'
+    });
+
+    Plotly.react('sheafPlot', traces, {
+        paper_bgcolor:'#161b22', plot_bgcolor:'#0d1117', font:{color:'#c9d1d9'},
+        margin:{l:50,r:10,t:10,b:50},
+        xaxis:{title:'Gender',gridcolor:'#21262d',zerolinecolor:'#30363d',color:'#8b949e'},
+        yaxis:{title:'Power',gridcolor:'#21262d',zerolinecolor:'#30363d',color:'#8b949e'},
+        showlegend:false
+    }, {responsive:true});
+}
+
+// ============================================================
+// ROPE INFO
+// ============================================================
+function renderRopeInfo(n, base) {
+    const th=Math.pow(base,-2/3);
+    let html=`<p>θ = b<sup>−2/d</sup> = ${base}<sup>−2/3</sup> = ${th.toFixed(6)}</p><p>`;
+    for(let i=0;i<Math.min(n,8);i++){
+        const a=i*th;
+        html+=`pos${i}: mθ=${a.toFixed(4)}, cos=${Math.cos(a).toFixed(4)}, sin=${Math.sin(a).toFixed(4)} &nbsp;|&nbsp; `;
+    }
+    html+='</p>';
+    document.getElementById('ropeInfo').innerHTML=html;
+}
+
+// ============================================================
+// TABLE RENDERING
+// ============================================================
+function renderTables() {
+    const d=DATA[sel];
+    // Embedding table
+    const tbody=document.querySelector('#embTable tbody');
+    let h='';
+    for(let i=0;i<d.tokens.length;i++){
+        const e=d.emb[i];
+        h+=`<tr><td style="color:var(--accent);font-weight:600;">${d.tokens[i]}</td>`;
+        for(let j=0;j<3;j++) h+=`<td><input type="number" step="0.05" value="${e[j].toFixed(2)}" onchange="DATA[${sel}].emb[${i}][${j}]=+this.value"></td>`;
+        h+=`<td style="color:var(--dim);">${i}</td></tr>`;
+    }
+    tbody.innerHTML=h;
+
+    // G matrix
+    const gt=document.querySelector('#gTable tbody');
+    h='';
+    const labels=['X(Gender)','Y(Being)','Z(Power)'];
+    h+='<tr><th></th>'+labels.map(l=>`<th>${l}</th>`).join('')+'</tr>';
+    for(let i=0;i<3;i++){
+        h+=`<tr><th>${labels[i]}</th>`;
+        for(let j=0;j<3;j++) h+=`<td><input type="number" step="0.05" value="${G[i][j].toFixed(2)}" onchange="G[${i}][${j}]=+this.value"></td>`;
+        h+='</tr>';
+    }
+    gt.innerHTML=h;
+
+    // WV matrix
+    const vt=document.querySelector('#vTable tbody');
+    h='';
+    h+='<tr><th></th>'+labels.map(l=>`<th>${l}</th>`).join('')+'</tr>';
+    for(let i=0;i<3;i++){
+        h+=`<tr><th>${labels[i]}</th>`;
+        for(let j=0;j<3;j++) h+=`<td><input type="number" step="0.05" value="${WV[i][j].toFixed(2)}" onchange="WV[${i}][${j}]=+this.value"></td>`;
+        h+='</tr>';
+    }
+    vt.innerHTML=h;
+}
+
+// ============================================================
+// SENTENCE BUTTONS
+// ============================================================
+function renderSentBtns() {
+    const div=document.getElementById('sentBtns');
+    div.innerHTML=DATA.map((d,i)=>`<div class="sent-btn${i===sel?' active':''}" onclick="selectSent(${i})">"${d.text}"</div>`).join('');
+}
+
+function selectSent(i) {
+    sel=i;
+    renderSentBtns();
+    renderTables();
+    compute();
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.getElementById('tau').addEventListener('input', function(){ document.getElementById('tau-v').textContent=parseFloat(this.value).toFixed(2); });
+document.getElementById('eps').addEventListener('input', function(){ document.getElementById('eps-v').textContent=parseFloat(this.value).toFixed(2); });
+
+// Live update on slider release
+['tau','eps'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', compute);
+});
+['useRope','showTri','showEdge','showSheaf'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', compute);
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderSentBtns();
+renderTables();
+compute();
+</script>
+</body>
+</html>
