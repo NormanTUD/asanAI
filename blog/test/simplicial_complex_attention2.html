@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simplicial Complexes — Visual Explorer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+background: #0a0a1a;
+color: #e0e0f0;
+font-family: 'Segoe UI', system-ui, sans-serif;
+overflow-x: hidden;
+}
+header {
+text-align: center;
+padding: 30px 20px 10px;
+}
+header h1 {
+font-size: 2.2em;
+background: linear-gradient(135deg, #6ef, #c8f, #f8a);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+header p {
+color: #889;
+margin-top: 8px;
+font-size: 1.05em;
+}
+.tabs {
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+gap: 8px;
+margin: 25px auto 10px;
+max-width: 900px;
+}
+.tab-btn {
+background: rgba(255,255,255,0.06);
+border: 1px solid rgba(255,255,255,0.1);
+color: #aab;
+padding: 10px 22px;
+border-radius: 30px;
+cursor: pointer;
+font-size: 0.95em;
+transition: all 0.3s;
+}
+.tab-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.tab-btn.active {
+background: linear-gradient(135deg, rgba(100,200,255,0.25), rgba(180,120,255,0.25));
+border-color: rgba(100,200,255,0.5);
+color: #fff;
+}
+.scene-container {
+max-width: 1000px;
+margin: 20px auto;
+padding: 0 20px;
+}
+.canvas-wrap {
+position: relative;
+background: rgba(255,255,255,0.03);
+border: 1px solid rgba(255,255,255,0.08);
+border-radius: 16px;
+overflow: hidden;
+}
+canvas {
+display: block;
+width: 100%;
+cursor: grab;
+}
+canvas:active { cursor: grabbing; }
+.info-panel {
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(255,255,255,0.08);
+border-radius: 16px;
+padding: 24px 28px;
+margin-top: 16px;
+line-height: 1.7;
+font-size: 0.98em;
+}
+.info-panel h3 {
+font-size: 1.2em;
+margin-bottom: 10px;
+color: #8cf;
+}
+.info-panel .dim-label {
+display: inline-block;
+padding: 2px 10px;
+border-radius: 12px;
+font-size: 0.85em;
+font-weight: 600;
+margin: 0 3px;
+}
+.d0 { background: rgba(100,230,255,0.2); color: #6ef; }
+.d1 { background: rgba(100,200,100,0.2); color: #8e8; }
+.d2 { background: rgba(255,180,80,0.2); color: #fb6; }
+.d3 { background: rgba(220,100,255,0.2); color: #d8f; }
+.d4 { background: rgba(255,100,120,0.2); color: #f88; }
+.controls {
+display: flex;
+gap: 12px;
+margin-top: 14px;
+flex-wrap: wrap;
+align-items: center;
+}
+.controls label {
+color: #889;
+font-size: 0.9em;
+}
+.controls input[type=range] {
+-webkit-appearance: none;
+background: rgba(255,255,255,0.1);
+height: 6px;
+border-radius: 3px;
+outline: none;
+width: 140px;
+}
+.controls input[type=range]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 16px; height: 16px;
+background: #6ef;
+border-radius: 50%;
+cursor: pointer;
+}
+.legend {
+display: flex;
+flex-wrap: wrap;
+gap: 14px;
+margin-top: 12px;
+}
+.legend-item {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 0.88em;
+color: #aab;
+}
+.legend-dot {
+width: 12px; height: 12px;
+border-radius: 50%;
+}
+.build-indicator {
+position: absolute;
+top: 14px;
+left: 14px;
+padding: 6px 14px;
+background: rgba(0,0,0,0.6);
+border-radius: 20px;
+font-size: 0.85em;
+color: #8cf;
+pointer-events: none;
+}
+.attention-flow {
+position: absolute;
+bottom: 14px;
+right: 14px;
+padding: 6px 14px;
+background: rgba(0,0,0,0.6);
+border-radius: 20px;
+font-size: 0.82em;
+color: #fb6;
+pointer-events: none;
+}
+footer {
+text-align: center;
+padding: 30px;
+color: #556;
+font-size: 0.85em;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Simplicial Complexes — Visual Explorer</h1>
+<p>Click tabs to explore each dimension. Drag to rotate. Scroll to zoom.</p>
+</header>
+
+<div class="tabs" id="tabs">
+<button class="tab-btn active" data-tab="0">0-Simplex<br><small>Vertex</small></button>
+<button class="tab-btn" data-tab="1">1-Simplex<br><small>Edge</small></button>
+<button class="tab-btn" data-tab="2">2-Simplex<br><small>Triangle</small></button>
+<button class="tab-btn" data-tab="3">3-Simplex<br><small>Tetrahedron</small></button>
+<button class="tab-btn" data-tab="4">4-Simplex<br><small>Pentachoron</small></button>
+<button class="tab-btn" data-tab="5">Complex<br><small>Build Up</small></button>
+<button class="tab-btn" data-tab="6">Attention<br><small>AI Use</small></button>
+</div>
+
+<div class="scene-container">
+<div class="canvas-wrap">
+<canvas id="mainCanvas" width="960" height="600"></canvas>
+<div class="build-indicator" id="buildLabel"></div>
+<div class="attention-flow" id="attnLabel" style="display:none"></div>
+</div>
+
+<div class="controls" id="controlsArea">
+<label>Rotation Speed</label>
+<input type="range" id="rotSpeed" min="0" max="100" value="30">
+<label style="margin-left:16px">Explode</label>
+<input type="range" id="explode" min="0" max="100" value="0">
+<label style="margin-left:16px">Build</label>
+<input type="range" id="buildSlider" min="0" max="100" value="100">
+</div>
+
+<div class="legend" id="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#6ef"></div> 0-simplex (vertex)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#8e8"></div> 1-simplex (edge)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#fb6"></div> 2-simplex (face)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#d8f"></div> 3-simplex (volume)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#f88"></div> 4-simplex (hyper)</div>
+</div>
+
+<div class="info-panel" id="infoPanel"></div>
+</div>
+
+<footer>Simplicial Complex Explorer — Interactive Visualization</footer>
+
+<script>
+// ============ CORE ENGINE ============
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+const rect = canvas.parentElement.getBoundingClientRect();
+W = canvas.width = rect.width * devicePixelRatio;
+H = canvas.height = 600 * devicePixelRatio;
+canvas.style.height = '600px';
+ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const CW = () => W / devicePixelRatio;
+const CH = () => H / devicePixelRatio;
+
+// ============ INTERACTION ============
+let dragX = 0, dragY = 0, isDragging = false, lastMX = 0, lastMY = 0;
+let angleX = 0.3, angleY = 0.5, zoom = 1;
+
+canvas.addEventListener('mousedown', e => { isDragging = true; lastMX = e.clientX; lastMY = e.clientY; });
+canvas.addEventListener('mousemove', e => {
+if (!isDragging) return;
+angleY += (e.clientX - lastMX) * 0.008;
+angleX += (e.clientY - lastMY) * 0.008;
+lastMX = e.clientX; lastMY = e.clientY;
+});
+canvas.addEventListener('mouseup', () => isDragging = false);
+canvas.addEventListener('mouseleave', () => isDragging = false);
+canvas.addEventListener('wheel', e => {
+e.preventDefault();
+zoom *= e.deltaY > 0 ? 0.93 : 1.07;
+zoom = Math.max(0.3, Math.min(3, zoom));
+}, { passive: false });
+
+// Touch support
+canvas.addEventListener('touchstart', e => {
+e.preventDefault();
+isDragging = true;
+lastMX = e.touches[0].clientX;
+lastMY = e.touches[0].clientY;
+}, { passive: false });
+canvas.addEventListener('touchmove', e => {
+e.preventDefault();
+if (!isDragging) return;
+angleY += (e.touches[0].clientX - lastMX) * 0.008;
+angleX += (e.touches[0].clientY - lastMY) * 0.008;
+lastMX = e.touches[0].clientX;
+lastMY = e.touches[0].clientY;
+}, { passive: false });
+canvas.addEventListener('touchend', () => isDragging = false);
+
+// ============ 3D MATH ============
+function rotateX(p, a) {
+const c = Math.cos(a), s = Math.sin(a);
+return [p[0], p[1]*c - p[2]*s, p[1]*s + p[2]*c];
+}
+function rotateY(p, a) {
+const c = Math.cos(a), s = Math.sin(a);
+return [p[0]*c + p[2]*s, p[1], -p[0]*s + p[2]*c];
+}
+function project(p3) {
+const scale = 200 * zoom;
+const d = 5;
+const z = p3[2] + d;
+const f = d / Math.max(z, 0.1);
+return [CW()/2 + p3[0] * scale * f, CH()/2 + p3[1] * scale * f, z];
+}
+function transform(p) {
+let r = rotateX(p, angleX);
+r = rotateY(r, angleY);
+return project(r);
+}
+
+// ============ SIMPLEX GEOMETRY ============
+function getSimplexVertices(dim) {
+// Regular simplex vertices in n-dimensions projected to 3D
+if (dim === 0) return [[0, 0, 0]];
+if (dim === 1) return [[-0.5, 0, 0], [0.5, 0, 0]];
+if (dim === 2) {
+const r = 0.6;
+return [
+[r * Math.cos(Math.PI/2), r * Math.sin(Math.PI/2), 0],
+[r * Math.cos(Math.PI/2 + 2*Math.PI/3), r * Math.sin(Math.PI/2 + 2*Math.PI/3), 0],
+[r * Math.cos(Math.PI/2 + 4*Math.PI/3), r * Math.sin(Math.PI/2 + 4*Math.PI/3), 0]
+];
+}
+if (dim === 3) {
+const s = 0.55;
+return [
+[s, s, s], [s, -s, -s], [-s, s, -s], [-s, -s, s]
+];
+}
+if (dim >= 4) {
+// 5-cell (pentachoron) projected to 3D with rotation in 4D
+const verts4D = [];
+for (let i = 0; i < 5; i++) {
+let v = [0, 0, 0, 0];
+if (i < 4) {
+v[i] = 1;
+} else {
+for (let j = 0; j < 4; j++) v[j] = (1 + 4) / 4;
+// Normalized: place 5th vertex
+v = [-0.25, -0.25, -0.25, -0.25];
+}
+verts4D.push(v);
+}
+// Center them
+const center = [0,0,0,0];
+verts4D.forEach(v => v.forEach((x,i) => center[i] += x));
+center.forEach((x,i) => center[i] /= 5);
+verts4D.forEach(v => v.forEach((x,i) => v[i] -= center[i]));
+// Normalize scale
+const maxR = Math.max(...verts4D.map(v => Math.sqrt(v.reduce((s,x)=>s+x*x,0))));
+const sc = 0.7 / maxR;
+return verts4D.map(v => {
+const w = v[3] * sc;
+const perspective4 = 1 / (1.5 - w * 0.5);
+return [v[0]*sc*perspective4, v[1]*sc*perspective4, v[2]*sc*perspective4];
+});
+}
+}
+
+function getEdges(n) {
+const edges = [];
+for (let i = 0; i < n; i++)
+for (let j = i+1; j < n; j++)
+edges.push([i, j]);
+return edges;
+}
+
+function getFaces(n) {
+const faces = [];
+for (let i = 0; i < n; i++)
+for (let j = i+1; j < n; j++)
+for (let k = j+1; k < n; k++)
+faces.push([i, j, k]);
+return faces;
+}
+
+function getTets(n) {
+const tets = [];
+for (let i = 0; i < n; i++)
+for (let j = i+1; j < n; j++)
+for (let k = j+1; k < n; k++)
+for (let l = k+1; l < n; l++)
+tets.push([i, j, k, l]);
+return tets;
+}
+
+// ============ COLORS ============
+const COLORS = {
+vertex: '#6ef',
+edge: '#8e8',
+face: '#fb6',
+tet: '#d8f',
+hyper: '#f88',
+vertexGlow: 'rgba(100,238,255,0.3)',
+edgeGlow: 'rgba(100,200,100,0.15)',
+faceGlow: 'rgba(255,180,80,0.12)',
+tetGlow: 'rgba(200,100,255,0.08)',
+};
+
+// ============ DRAWING ============
+function drawVertex(x, y, r, color, glow, pulse) {
+const pr = r + Math.sin(pulse) * 2;
+ctx.beginPath();
+const grad = ctx.createRadialGradient(x, y, 0, x, y, pr * 3);
+grad.addColorStop(0, glow);
+grad.addColorStop(1, 'transparent');
+ctx.fillStyle = grad;
+ctx.arc(x, y, pr * 3, 0, Math.PI * 2);
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(x, y, pr, 0, Math.PI * 2);
+ctx.fillStyle = color;
+ctx.fill();
+}
+
+function drawEdge(x1, y1, x2, y2, color, alpha) {
+ctx.beginPath();
+ctx.moveTo(x1, y1);
+ctx.lineTo(x2, y2);
+ctx.strokeStyle = color;
+ctx.globalAlpha = alpha;
+ctx.lineWidth = 2.5;
+ctx.stroke();
+ctx.globalAlpha = 1;
+}
+
+function drawFace(pts, color, alpha) {
+if (pts.length < 3) return;
+ctx.beginPath();
+ctx.moveTo(pts[0][0], pts[0][1]);
+for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+ctx.closePath();
+ctx.fillStyle = color;
+ctx.globalAlpha = alpha;
+ctx.fill();
+ctx.globalAlpha = 1;
+}
+
+function drawLabel(x, y, text, color) {
+ctx.font = '13px "Segoe UI", sans-serif';
+ctx.fillStyle = color;
+ctx.textAlign = 'center';
+ctx.fillText(text, x, y - 16);
+}
+
+// ============ STATE ============
+let currentTab = 0;
+let time = 0;
+const rotSpeedEl = document.getElementById('rotSpeed');
+const explodeEl = document.getElementById('explode');
+const buildSliderEl = document.getElementById('buildSlider');
+const buildLabel = document.getElementById('buildLabel');
+const attnLabel = document.getElementById('attnLabel');
+const infoPanel = document.getElementById('infoPanel');
+
+const INFO = [
+`<h3><span class="dim-label d0">0-Simplex</span> — The Vertex (Point)</h3>
+A single point. The most fundamental building block. In AI, each vertex can represent a <b>token</b>, a <b>feature</b>, or a <b>data point</b>. It has no connections yet — just pure existence in a space.<br><br>
+<b>In attention:</b> Each token in a transformer starts as an isolated point (embedding vector) before attention connects them.`,
+
+`<h3><span class="dim-label d1">1-Simplex</span> — The Edge (Line Segment)</h3>
+Two vertices connected by a line. This is a <b>pairwise relationship</b>. In AI, this is exactly what <b>standard attention</b> computes — a weight between every pair of tokens.<br><br>
+<b>In attention:</b> The attention score <i>softmax(QKᵀ/√d)</i> gives a weight to each edge. The graph of all pairwise attention scores forms a 1-dimensional simplicial complex.`,
+
+`<h3><span class="dim-label d2">2-Simplex</span> — The Triangle (Filled Face)</h3>
+Three vertices, three edges, and a <b>filled interior</b>. This captures a <b>three-way relationship</b> that can't be reduced to pairs. The filled face means all three things are <em>simultaneously</em> related.<br><br>
+<b>In attention:</b> Simplicial attention (e.g., SAN — Simplicial Attention Networks) explicitly models these higher-order interactions. Three tokens interacting together carry information that pairwise attention misses.`,
+
+`<h3><span class="dim-label d3">3-Simplex</span> — The Tetrahedron (Solid Volume)</h3>
+Four vertices, six edges, four triangular faces, and a <b>filled volume</b>. This is a <b>four-way simultaneous relationship</b>. Drag to rotate and see all four faces.<br><br>
+<b>In attention:</b> Higher-order attention mechanisms and topological deep learning use these to capture complex multi-body interactions — like four tokens whose combined meaning is more than any subset reveals.`,
+
+`<h3><span class="dim-label d4">4-Simplex</span> — The Pentachoron (5-Cell)</h3>
+Five vertices, ten edges, ten triangles, five tetrahedra — a <b>4-dimensional simplex</b> projected into 3D. You're seeing its "shadow." Each subset of 4 vertices forms a tetrahedron.<br><br>
+<b>In AI:</b> Topological data analysis (TDA) pipelines build these from data to detect high-dimensional "shapes" in feature spaces. Persistent homology tracks which simplices survive across scales — revealing robust structure in data.`,
+
+`<h3>Building a Simplicial Complex</h3>
+Use the <b>Build</b> slider to watch a complex grow. We start with isolated vertices (0-simplices), then connect nearby ones with edges (1-simplices), fill in triangles (2-simplices), and so on.<br><br>
+<b>Key rule:</b> A simplicial complex must include <em>all faces</em> of every simplex. If a triangle [A,B,C] is in the complex, then edges [A,B], [A,C], [B,C] and vertices [A], [B], [C] must also be included. This is the <b>closure property</b>.<br><br>
+<b>In AI:</b> The Vietoris-Rips complex builds simplices from a distance threshold — as the threshold grows, higher-dimensional simplices appear, revealing the topology of data.`,
+
+`<h3>Simplicial Attention in Transformers</h3>
+Watch the <b>attention flow</b>. Standard attention (pairwise) only captures edges. Simplicial attention captures <em>higher-order</em> interactions.<br><br>
+<b>Standard Attention:</b> Token A attends to Token B — a 1-simplex (edge).<br>
+<b>Simplicial Attention:</b> Tokens A, B, C interact as a <em>group</em> — a 2-simplex (triangle). The interaction isn't decomposable into pairs.<br><br>
+<b>Why it matters:</b> Language has multi-way dependencies. "The cat sat on the mat" — the meaning of "on" depends simultaneously on "cat," "sat," and "mat" together, not just pairs. Simplicial attention captures this directly.<br><br>
+<b>Architectures:</b> Simplicial Transformers, SAN (Simplicial Attention Networks), and topological message passing all leverage this idea.`
+];
+
+// ============ TAB SWITCHING ============
+document.querySelectorAll('.tab-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+currentTab = parseInt(btn.dataset.tab);
+infoPanel.innerHTML = INFO[currentTab];
+attnLabel.style.display = currentTab === 6 ? 'block' : 'none';
+buildSliderEl.value = 100;
+});
+});
+infoPanel.innerHTML = INFO[0];
+
+// ============ SCENE: SINGLE SIMPLEX ============
+function drawSimplex(dim, t, buildPct) {
+const verts3D = getSimplexVertices(dim);
+const n = verts3D.length;
+const explodeAmt = explodeEl.value / 100 * 0.4;
+
+// Apply explode: push vertices away from center
+const center = [0,0,0];
+verts3D.forEach(v => { center[0]+=v[0]; center[1]+=v[1]; center[2]+=v[2]; });
+center[0]/=n; center[1]/=n; center[2]/=n;
+
+const exploded = verts3D.map(v => [
+v[0] + (v[0]-center[0]) * explodeAmt,
+v[1] + (v[1]-center[1]) * explodeAmt,
+v[2] + (v[2]-center[2]) * explodeAmt
+]);
+
+// Transform to 2D
+const pts = exploded.map(v => transform(v));
+
+// Determine what to show based on build
+const edgePct = Math.min(1, buildPct * 3);
+const facePct = Math.max(0, Math.min(1, (buildPct - 0.33) * 3));
+const tetPct = Math.max(0, Math.min(1, (buildPct - 0.66) * 3));
+
+// Draw tetrahedra fills (dim >= 3)
+if (dim >= 3 && tetPct > 0) {
+const tets = getTets(n);
+const showTets = Math.ceil(tets.length * tetPct);
+for (let i = 0; i < showTets; i++) {
+const tet = tets[i];
+// Draw each face of the tet
+for (let f = 0; f < tet.length; f++) {
+const face = tet.filter((_, idx) => idx !== f);
+const fpts = face.map(vi => [pts[vi][0], pts[vi][1]]);
+drawFace(fpts, COLORS.tetGlow, 0.15 * tetPct);
+}
+}
+}
+
+// Draw triangle fills (dim >= 2)
+if (dim >= 2 && facePct > 0) {
+const faces = getFaces(n);
+const showFaces = Math.ceil(faces.length * facePct);
+for (let i = 0; i < showFaces; i++) {
+const face = faces[i];
+const fpts = face.map(vi => [pts[vi][0], pts[vi][1]]);
+const pulse = Math.sin(t * 2 + i) * 0.03 + 0.18;
+drawFace(fpts, COLORS.face, pulse * facePct);
+}
+}
+
+// Draw edges
+if (dim >= 1 && edgePct > 0) {
+const edges = getEdges(n);
+const showEdges = Math.ceil(edges.length * edgePct);
+for (let i = 0; i < showEdges; i++) {
+const [a, b] = edges[i];
+const alpha = 0.7 * edgePct;
+drawEdge(pts[a][0], pts[a][1], pts[b][0], pts[b][1], COLORS.edge, alpha);
+
+// Animated particle along edge
+if (buildPct > 0.3) {
+const param = (t * 0.8 + i * 0.3) % 1;
+const px = pts[a][0] + (pts[b][0] - pts[a][0]) * param;
+const py = pts[a][1] + (pts[b][1] - pts[a][1]) * param;
+ctx.beginPath();
+ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+ctx.fillStyle = 'rgba(100,238,100,0.6)';
+ctx.fill();
+}
+}
+}
+
+// Draw vertices
+for (let i = 0; i < n; i++) {
+drawVertex(pts[i][0], pts[i][1], 6, COLORS.vertex, COLORS.vertexGlow, t * 3 + i);
+if (dim <= 4) {
+drawLabel(pts[i][0], pts[i][1], dim <= 1 ? ['A','B'][i] : String.fromCharCode(65+i), '#6ef');
+}
+}
+
+// Dimension label
+const dimNames = ['0-Simplex (Point)', '1-Simplex (Edge)', '2-Simplex (Triangle)', '3-Simplex (Tetrahedron)', '4-Simplex (Pentachoron)'];
+buildLabel.textContent = dimNames[dim] || '';
+}
+
+// ============ SCENE: COMPLEX BUILD ============
+function drawComplexBuild(t, buildPct) {
+// Place several points, connect them progressively
+const baseVerts = [
+[-0.9, -0.4, 0], [-0.4, 0.5, 0.1], [0.1, -0.3, -0.2],
+[0.5, 0.4, 0.15], [0.85, -0.2, -0.1], [-0.2, -0.7, 0.2],
+[0.3, 0.8, -0.1], [-0.7, 0.1, -0.3], [0.7, 0.6, 0.2]
+];
+const n = baseVerts.length;
+const pts = baseVerts.map(v => transform(v));
+
+// Distance threshold grows with build
+const maxDist = 0.4 + buildPct * 1.2;
+
+// Compute distances
+function dist3(a, b) {
+return Math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2 + (a[2]-b[2])**2);
+}
+
+// Edges within threshold
+const edges = [];
+for (let i = 0; i < n; i++)
+for (let j = i+1; j < n; j++)
+if (dist3(baseVerts[i], baseVerts[j]) < maxDist)
+edges.push([i, j]);
+
+// Triangles: all 3 edges present
+const edgeSet = new Set(edges.map(e => e[0]+','+e[1]));
+function hasEdge(a, b) {
+const lo = Math.min(a,b), hi = Math.max(a,b);
+return edgeSet.has(lo+','+hi);
+}
+const tris = [];
+for (let i = 0; i < n; i++)
+for (let j = i+1; j < n; j++)
+for (let k = j+1; k < n; k++)
+if (hasEdge(i,j) && hasEdge(i,k) && hasEdge(j,k))
+tris.push([i,j,k]);
+
+// Tetrahedra
+const tets = [];
+for (let i = 0; i < n; i++)
+for (let j = i+1; j < n; j++)
+for (let k = j+1; k < n; k++)
+for (let l = k+1; l < n; l++)
+if (hasEdge(i,j) && hasEdge(i,k) && hasEdge(i,l) && hasEdge(j,k) && hasEdge(j,l) && hasEdge(k,l))
+tets.push([i,j,k,l]);
+
+// Draw tets
+tets.forEach((tet, idx) => {
+for (let f = 0; f < 4; f++) {
+const face = tet.filter((_,i) => i !== f);
+const fpts = face.map(vi => [pts[vi][0], pts[vi][1]]);
+drawFace(fpts, '#d8f', 0.1);
+}
+});
+
+// Draw triangles
+tris.forEach((tri, idx) => {
+const fpts = tri.map(vi => [pts[vi][0], pts[vi][1]]);
+drawFace(fpts, COLORS.face, 0.15 + Math.sin(t*2+idx)*0.05);
+});
+
+// Draw edges
+edges.forEach(([a, b]) => {
+drawEdge(pts[a][0], pts[a][1], pts[b][0], pts[b][1], COLORS.edge, 0.6);
+});
+
+// Draw vertices
+for (let i = 0; i < n; i++) {
+drawVertex(pts[i][0], pts[i][1], 5, COLORS.vertex, COLORS.vertexGlow, t * 3 + i);
+}
+
+// Build label
+const stats = `Threshold: ${maxDist.toFixed(2)} | V:${n} E:${edges.length} F:${tris.length} T:${tets.length}`;
+buildLabel.textContent = stats;
+
+// Draw threshold circle indicator
+ctx.beginPath();
+ctx.arc(CW() - 80, 50, 20, 0, Math.PI * 2);
+ctx.strokeStyle = 'rgba(100,238,255,0.3)';
+ctx.lineWidth = 1;
+ctx.stroke();
+ctx.beginPath();
+ctx.arc(CW() - 80, 50, 20 * buildPct, 0, Math.PI * 2);
+ctx.fillStyle = 'rgba(100,238,255,0.15)';
+ctx.fill();
+}
+
+// ============ SCENE: ATTENTION ============
+function drawAttentionScene(t, buildPct) {
+// Tokens as vertices
+const tokenLabels = ['The', 'cat', 'sat', 'on', 'the', 'mat'];
+const n = tokenLabels.length;
+const radius = 0.7;
+
+// Arrange in a circle in 3D
+const verts = tokenLabels.map((_, i) => {
+const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+return [radius * Math.cos(angle), radius * Math.sin(angle), Math.sin(angle * 2) * 0.15];
+});
+
+const pts = verts.map(v => transform(v));
+
+// Attention weights (simulated) — pairwise
+const attnWeights = [];
+for (let i = 0; i < n; i++) {
+attnWeights[i] = [];
+for (let j = 0; j < n; j++) {
+// Simulate meaningful attention patterns
+let w = 0.05;
+if (i === 3 && (j === 1 || j === 2 || j === 5)) w = 0.7; // "on" attends to "cat", "sat", "mat"
+if (i === 2 && (j === 1 || j === 3)) w = 0.5; // "sat" attends to "cat", "on"
+if (i === 5 && j === 3) w = 0.6; // "mat" attends to "on"
+if (i === 1 && j === 0) w = 0.5; // "cat" attends to "The"
+attnWeights[i][j] = w;
+}
+}
+
+// Higher-order interactions (simplicial)
+const simplicialTris = [
+[1, 2, 3], // cat-sat-on
+[1, 3, 5], // cat-on-mat
+[2, 3, 5], // sat-on-mat
+];
+
+const simplicialTet = [1, 2, 3, 5]; // cat-sat-on-mat
+
+// Phase: show pairwise first, then simplicial
+const phase = buildPct;
+
+// Draw pairwise attention (edges with varying thickness)
+if (phase > 0) {
+for (let i = 0; i < n; i++) {
+for (let j = i + 1; j < n; j++) {
+const w = Math.max(attnWeights[i][j], attnWeights[j][i]);
+if (w > 0.1) {
+ctx.beginPath();
+ctx.moveTo(pts[i][0], pts[i][1]);
+ctx.lineTo(pts[j][0], pts[j][1]);
+ctx.strokeStyle = COLORS.edge;
+ctx.globalAlpha = w * Math.min(1, phase * 3);
+ctx.lineWidth = w * 5;
+ctx.stroke();
+ctx.globalAlpha = 1;
+
+// Animated attention flow particle
+const speed = 0.5 + w;
+const param = (t * speed + i * 0.2 + j * 0.3) % 1;
+const px = pts[i][0] + (pts[j][0] - pts[i][0]) * param;
+const py = pts[i][1] + (pts[j][1] - pts[i][1]) * param;
+ctx.beginPath();
+ctx.arc(px, py, 2 + w * 3, 0, Math.PI * 2);
+ctx.fillStyle = `rgba(100,238,100,${w * 0.8})`;
+ctx.fill();
+}
+}
+}
+}
+
+// Draw simplicial triangles (higher-order)
+if (phase > 0.4) {
+const triAlpha = (phase - 0.4) / 0.6;
+simplicialTris.forEach((tri, idx) => {
+const fpts = tri.map(vi => [pts[vi][0], pts[vi][1]]);
+const pulse = Math.sin(t * 2.5 + idx) * 0.05 + 0.2;
+drawFace(fpts, COLORS.face, pulse * triAlpha);
+
+// Rotating highlight around triangle
+const param = (t * 0.7 + idx * 0.33) % 1;
+const ei = Math.floor(param * 3);
+const ep = (param * 3) % 1;
+const a = tri[ei], b = tri[(ei + 1) % 3];
+const hx = pts[a][0] + (pts[b][0] - pts[a][0]) * ep;
+const hy = pts[a][1] + (pts[b][1] - pts[a][1]) * ep;
+ctx.beginPath();
+ctx.arc(hx, hy, 4, 0, Math.PI * 2);
+ctx.fillStyle = `rgba(255,180,80,${0.7 * triAlpha})`;
+ctx.fill();
+});
+}
+
+// Draw simplicial tetrahedron (4-way interaction)
+if (phase > 0.7) {
+const tetAlpha = (phase - 0.7) / 0.3;
+const tet = simplicialTet;
+// Draw each face
+for (let f = 0; f < 4; f++) {
+const face = tet.filter((_, i) => i !== f);
+const fpts = face.map(vi => [pts[vi][0], pts[vi][1]]);
+drawFace(fpts, '#d8f', 0.08 * tetAlpha * (1 + Math.sin(t * 3 + f) * 0.3));
+}
+}
+
+// Draw vertices (tokens)
+for (let i = 0; i < n; i++) {
+const isHighlight = [1, 2, 3, 5].includes(i);
+const r = isHighlight ? 8 : 6;
+const color = isHighlight ? '#fff' : COLORS.vertex;
+drawVertex(pts[i][0], pts[i][1], r, color, COLORS.vertexGlow, t * 3 + i);
+
+// Token label
+ctx.font = 'bold 14px "Segoe UI", sans-serif';
+ctx.fillStyle = isHighlight ? '#fff' : '#8cf';
+ctx.textAlign = 'center';
+ctx.fillText(tokenLabels[i], pts[i][0], pts[i][1] + 24);
+}
+
+// Phase indicator
+const phaseText = phase < 0.4 ? '⟶ Pairwise Attention (1-simplices)' :
+phase < 0.7 ? '⟶ 3-way Interactions (2-simplices)' :
+'⟶ 4-way Interactions (3-simplices)';
+attnLabel.textContent = phaseText;
+buildLabel.textContent = 'Simplicial Attention on: "The cat sat on the mat"';
+}
+
+// ============ MAIN LOOP ============
+function animate() {
+const rotSpeed = rotSpeedEl.value / 100 * 0.02;
+if (!isDragging) {
+angleY += rotSpeed;
+}
+time += 0.016;
+
+// Clear
+ctx.clearRect(0, 0, CW(), CH());
+
+// Draw grid background
+ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+ctx.lineWidth = 1;
+for (let x = 0; x < CW(); x += 40) {
+ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CH()); ctx.stroke();
+}
+for (let y = 0; y < CH(); y += 40) {
+ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CW(), y); ctx.stroke();
+}
+
+const buildPct = buildSliderEl.value / 100;
+
+if (currentTab <= 4) {
+drawSimplex(currentTab, time, buildPct);
+} else if (currentTab === 5) {
+drawComplexBuild(time, buildPct);
+} else if (currentTab === 6) {
+drawAttentionScene(time, buildPct);
+}
+
+requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
