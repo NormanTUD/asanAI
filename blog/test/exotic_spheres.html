@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exotic Spheres - Visual Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .intro {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+            color: #aaa;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .section {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .section p {
+            line-height: 1.7;
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border-radius: 12px;
+            background: #080818;
+            border: 1px solid #2a2a4a;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .controls button.active {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+            transform: scale(1.05);
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .slider-container label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 6px;
+            border-radius: 3px;
+            background: #2a2a4a;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .analogy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .analogy-card {
+            background: #1a1a3a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #3a3a5a;
+            transition: all 0.3s;
+        }
+
+        .analogy-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .analogy-card h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #2a2a4a;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .explanation-box {
+            background: #1a1a3a;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #morphCanvas {
+            cursor: grab;
+        }
+
+        #morphCanvas:active {
+            cursor: grabbing;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: #1a1a3a;
+            border: 1px solid #3a3a5a;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85em;
+            color: #aaa;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+
+        .dimension-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            font-size: 0.8em;
+            color: #667eea;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .analogy-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            canvas {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Exotic Spheres</h1>
+        <p class="intro">
+            A visual, interactive guide to one of mathematics' most surprising discoveries: 
+            spheres that are <em>topologically</em> identical to the ones we know, but 
+            <em>smoothly</em> different. No equations needed — just play and explore.
+        </p>
+
+        <!-- Section 1: What is a sphere? -->
+        <div class="section">
+            <h2>1. First, What IS a Sphere?</h2>
+            <p>
+                A sphere is any shape you can <span class="highlight">continuously deform</span> 
+                (stretch, squish, bend — no tearing or gluing) into a round ball. 
+                All these shapes below are "topologically" the same sphere:
+            </p>
+            <canvas id="topoCanvas" width="700" height="300"></canvas>
+            <div class="controls">
+                <button id="btnRound" class="active" onclick="setTopoShape('round')">Round Sphere</button>
+                <button id="btnSquished" onclick="setTopoShape('squished')">Squished</button>
+                <button id="btnBlobby" onclick="setTopoShape('blobby')">Blobby</button>
+                <button id="btnSpiky" onclick="setTopoShape('spiky')">Spiky</button>
+            </div>
+            <div class="explanation-box">
+                💡 <strong>Key insight:</strong> Topology only cares about connectivity — whether something has holes or not. 
+                All these shapes are "the same" topologically because none have holes.
+            </div>
+        </div>
+
+        <!-- Section 2: Smooth structure -->
+        <div class="section">
+            <h2>2. But Smoothness is Different</h2>
+            <p>
+                Now imagine you're an ant living ON the sphere. You want to do calculus — 
+                measure speeds, accelerations, draw smooth curves. For that, you need a 
+                <span class="highlight">smooth structure</span>: a way to lay down coordinate grids 
+                (like maps in an atlas) that fit together smoothly.
+            </p>
+            <canvas id="atlasCanvas" width="700" height="350"></canvas>
+            <div class="controls">
+                <button class="active" id="btnAtlas1" onclick="setAtlasMode('standard')">Standard Atlas</button>
+                <button id="btnAtlas2" onclick="setAtlasMode('exotic')">Exotic Atlas</button>
+            </div>
+            <div class="slider-container">
+                <label>Rotation:</label>
+                <input type="range" id="atlasRotation" min="0" max="360" value="0" oninput="updateAtlasRotation(this.value)">
+            </div>
+            <div class="explanation-box" id="atlasExplanation">
+                💡 <strong>Standard atlas:</strong> The coordinate patches overlap smoothly — 
+                transitioning between maps feels perfectly natural. This is the sphere you know.
+            </div>
+        </div>
+
+        <!-- Section 3: The Twist -->
+        <div class="section">
+            <h2>3. The Exotic Twist</h2>
+            <p>
+                An <span class="highlight">exotic sphere</span> is topologically a sphere (no holes, same connectivity) 
+                but its smooth structure is "twisted" in a way that <em>cannot</em> be smoothed out. 
+                Think of it like this:
+            </p>
+            <canvas id="twistCanvas" width="700" height="400"></canvas>
+            <div class="controls">
+                <button class="active" id="btnTwist0" onclick="setTwist(0)">No Twist (Standard)</button>
+                <button id="btnTwist1" onclick="setTwist(1)">Mild Exotic Twist</button>
+                <button id="btnTwist2" onclick="setTwist(2)">Strong Exotic Twist</button>
+            </div>
+            <div class="slider-container">
+                <label>Animate twist:</label>
+                <input type="range" id="twistAmount" min="0" max="100" value="0" oninput="updateTwistAmount(this.value)">
+            </div>
+            <div class="explanation-box">
+                💡 <strong>The key:</strong> Imagine gluing two hemispheres together. Normally you glue them straight. 
+                But you could twist one before gluing — the result LOOKS like a sphere, IS topologically a sphere, 
+                but the twist is "baked in" to its smooth structure forever. No smooth deformation can undo it.
+            </div>
+        </div>
+
+        <!-- Section 4: The Milnor Discovery -->
+        <div class="section">
+            <h2>4. The Famous Discovery (Dimension 7)</h2>
+            <p>
+                In 1956, John Milnor shocked the math world: he found that in <span class="highlight">7 dimensions</span>, 
+                there are exactly <strong>28</strong> different smooth structures on the sphere. 
+                One is the standard one. The other 27 are "exotic."
+            </p>
+            <canvas id="dimensionCanvas" width="700" height="300"></canvas>
+            <div class="tab-container" id="dimTabs">
+                <div class="tab" onclick="setDimension(1)">Dim 1</div>
+                <div class="tab" onclick="setDimension(2)">Dim 2</div>
+                <div class="tab" onclick="setDimension(3)">Dim 3</div>
+                <div class="tab active" onclick="setDimension(4)">Dim 4</div>
+                <div class="tab" onclick="setDimension(5)">Dim 5</div>
+                <div class="tab" onclick="setDimension(6)">Dim 6</div>
+                <div class="tab" onclick="setDimension(7)">Dim 7</div>
+                <div class="tab" onclick="setDimension(8)">Dim 8</div>
+                <div class="tab" onclick="setDimension(11)">Dim 11</div>
+                <div class="tab" onclick="setDimension(15)">Dim 15</div>
+                <div class="tab" onclick="setDimension(31)">Dim 31</div>
+            </div>
+            <div class="explanation-box" id="dimExplanation">
+                💡 <strong>Dimension 4:</strong> This is the mysterious one! We still don't know if exotic 4-spheres exist. 
+                It's one of the biggest open problems in mathematics (the Smooth Poincaré Conjecture in dimension 4).
+            </div>
+        </div>
+
+        <!-- Section 5: Gluing Analogy -->
+        <div class="section">
+            <h2>5. The Gluing Analogy</h2>
+            <p>
+                The best way to understand exotic spheres: imagine building a sphere by gluing two bowls together along their rims.
+            </p>
+            <canvas id="glueCanvas" width="700" height="400"></canvas>
+            <div class="controls">
+                <button class="active" id="btnGlueStep0" onclick="setGlueStep(0)">Two Halves</button>
+                <button id="btnGlueStep1" onclick="setGlueStep(1)">Standard Gluing</button>
+                <button id="btnGlueStep2" onclick="setGlueStep(2)">Exotic Gluing (Twisted)</button>
+                <button id="btnGlueStep3" onclick="setGlueStep(3)">Compare Results</button>
+            </div>
+            <div class="explanation-box" id="glueExplanation">
+                💡 <strong>Step 1:</strong> Start with two hemispheres (bowls). Their edges (equators) need to be identified — glued together.
+            </div>
+        </div>
+
+        <!-- Section 6: Why it matters -->
+        <div class="section">
+            <h2>6. Intuitive Analogies</h2>
+            <div class="analogy-grid">
+                <div class="analogy-card">
+                    <h3>🧤 The Glove Analogy</h3>
+                    <p>A right-hand glove and left-hand glove are made of the same material, same shape — 
+                    but one can never smoothly become the other. Exotic spheres are like this, but subtler.</p>
+                </div>
+                <div class="analogy-card">
+                    <h3>🎵 The Music Analogy</h3>
+                    <p>Two songs with the same notes in the same order, but played with different "feel" — 
+                    one swings, one is straight. Same topology, different smooth structure.</p>
+                </div>
+                <div class="analogy-card">
+                    <h3>🌍 The Map Analogy</h3>
+                    <p>Two atlases of Earth with different map projections. Both describe the same planet, 
+                    but you can't smoothly convert one atlas system into the other everywhere at once.</p>
+                </div>
+                <div class="analogy-card">
+                    <h3>🔮 The Crystal Analogy</h3>
+                    <p>Two crystals with the same external shape but different internal lattice structures. 
+                    Same outside, fundamentally different inside.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 7: Interactive Morphing -->
+        <div class="section">
+            <h2>7. Interactive Explorer</h2>
+            <p>
+                Drag to rotate. Watch how the "exotic twist" manifests as an impossibility: 
+                you can deform the shape all you want, but you can never smooth away the twist.
+            </p>
+            <canvas id="morphCanvas" width="700" height="450"></canvas>
+            <div class="slider-container">
+                <label>Exotic parameter (τ):</label>
+                <input type="range" id="morphParam" min="0" max="100" value="0" oninput="updateMorph(this.value)">
+                <span id="morphValue" style="color:#667eea; min-width:40px;">0</span>
+            </div>
+            <div class="slider-container">
+                <label>Visualization mode:</label>
+                <button onclick="setVizMode('surface')" style="padding:5px 12px;background:#1a1a3a;border:1px solid #3a3a5a;color:#aaa;border-radius:6px;cursor:pointer;">Surface</button>
+                <button onclick="setVizMode('flow')" style="padding:5px 12px;background:#1a1a3a;border:1px solid #3a3a5a;color:#aaa;border-radius:6px;cursor:pointer;">Flow Lines</button>
+                <button onclick="setVizMode('patches')" style="padding:5px 12px;background:#1a1a3a;border:1px solid #3a3a5a;color:#aaa;border-radius:6px;cursor:pointer;">Coord Patches</button>
+            </div>
+            <div class="explanation-box">
+                💡 As you increase τ, watch how the flow lines / coordinate patches develop an irremovable twist. 
+                The shape stays a sphere, but its "smooth personality" changes.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ SECTION 1: Topological Sphere ============
+        const topoCanvas = document.getElementById('topoCanvas');
+        const topoCtx = topoCanvas.getContext('2d');
+        let topoShape = 'round';
+        let topoTime = 0;
+
+        function setTopoShape(shape) {
+            topoShape = shape;
+            document.querySelectorAll('#btnRound,#btnSquished,#btnBlobby,#btnSpiky').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn' + shape.charAt(0).toUpperCase() + shape.slice(1)).classList.add('active');
+        }
+
+        function drawTopoSphere() {
+            const ctx = topoCtx;
+            const w = topoCanvas.width;
+            const h = topoCanvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const baseR = 100;
+            topoTime += 0.02;
+
+            const numPoints = 100;
+            const points = [];
+
+            for (let i = 0; i <= numPoints; i++) {
+                const angle = (i / numPoints) * Math.PI * 2;
+                let r = baseR;
+
+                switch(topoShape) {
+                    case 'round':
+                        r = baseR + Math.sin(topoTime) * 3;
+                        break;
+                    case 'squished':
+                        r = baseR * (0.7 + 0.5 * Math.abs(Math.cos(angle)));
+                        r += Math.sin(topoTime + angle) * 5;
+                        break;
+                    case 'blobby':
+                        r = baseR + 30 * Math.sin(3 * angle + topoTime) + 15 * Math.cos(5 * angle - topoTime * 0.7);
+                        break;
+                    case 'spiky':
+                        r = baseR + 25 * Math.pow(Math.abs(Math.sin(7 * angle + topoTime * 0.5)), 3) * Math.sign(Math.sin(7 * angle + topoTime * 0.5));
+                        r += 10 * Math.sin(3 * angle - topoTime);
+                        break;
+                }
+
+                points.push({
+                    x: cx + r * Math.cos(angle),
+                    y: cy + r * Math.sin(angle)
+                });
+            }
+
+            // Draw filled shape with gradient
+            const grad = ctx.createRadialGradient(cx - 30, cy - 30, 10, cx, cy, baseR + 40);
+            grad.addColorStop(0, 'rgba(102, 126, 234, 0.6)');
+            grad.addColorStop(0.7, 'rgba(118, 75, 162, 0.4)');
+            grad.addColorStop(1, 'rgba(118, 75, 162, 0.1)');
+
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                const prev = points[i - 1];
+                const curr = points[i];
+                const cpx = (prev.x + curr.x) / 2;
+                const cpy = (prev.y + curr.y) / 2;
+                ctx.quadraticCurveTo(prev.x, prev.y, cpx, cpy);
+            }
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(102, 126, 234, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw grid lines on surface to show it's a sphere
+            ctx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+            ctx.lineWidth = 1;
+            for (let lat = -3; lat <= 3; lat++) {
+                ctx.beginPath();
+                for (let i = 0; i <= numPoints; i++) {
+                    const angle = (i / numPoints) * Math.PI * 2;
+                    let r = baseR;
+                    switch(topoShape) {
+                        case 'round': r = baseR + Math.sin(topoTime) * 3; break;
+                        case 'squished': r = baseR * (0.7 + 0.5 * Math.abs(Math.cos(angle))); r += Math.sin(topoTime + angle) * 5; break;
+                        case 'blobby': r = baseR + 30 * Math.sin(3 * angle + topoTime) + 15 * Math.cos(5 * angle - topoTime * 0.7); break;
+                        case 'spiky': r = baseR + 25 * Math.pow(Math.abs(Math.sin(7 * angle + topoTime * 0.5)), 3) * Math.sign(Math.sin(7 * angle + topoTime * 0.5)); r += 10 * Math.sin(3 * angle - topoTime); break;
+                    }
+                    const scale = 0.3 + (lat + 3) / 6 * 0.7;
+                    const x = cx + r * scale * Math.cos(angle);
+                    const y = cy + r * 0.15 * Math.sin(angle) + (lat * 20);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // Label
+            ctx.fillStyle = '#667eea';
+            ctx.font = '14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Shape: ${topoShape} — Still topologically a sphere!`, cx, h - 20);
+
+            requestAnimationFrame(drawTopoSphere);
+        }
+
+        // ============ SECTION 2: Atlas / Smooth Structure ============
+        const atlasCanvas = document.getElementById('atlasCanvas');
+        const atlasCtx = atlasCanvas.getContext('2d');
+        let atlasMode = 'standard';
+        let atlasRotation = 0;
+        let atlasTime = 0;
+
+        function setAtlasMode(mode) {
+            atlasMode = mode;
+            document.getElementById('btnAtlas1').classList.toggle('active', mode === 'standard');
+            document.getElementById('btnAtlas2').classList.toggle('active', mode === 'exotic');
+            document.getElementById('atlasExplanation').innerHTML = mode === 'standard' 
+                ? '💡 <strong>Standard atlas:</strong> The coordinate patches overlap smoothly — transitioning between maps feels perfectly natural. This is the sphere you know.'
+                : '💡 <strong>Exotic atlas:</strong> The coordinate patches overlap with a TWIST. Locally everything looks fine, but globally the transition maps have an irremovable twist. Same sphere, different calculus!';
+        }
+
+        function updateAtlasRotation(val) {
+            atlasRotation = val * Math.PI / 180;
+        }
+
+        function drawAtlas() {
+            const ctx = atlasCtx;
+            const w = atlasCanvas.width;
+            const h = atlasCanvas.height;
+            ctx.clearRect(0, 0, w, h);
+            atlasTime += 0.015;
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const R = 120;
+
+            // Draw sphere outline
+            ctx.beginPath();
+            ctx.arc(cx, cy, R, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(102, 126, 234, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw coordinate patches
+            const numPatches = 6;
+            const colors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4ecdc4', '#667eea', '#764ba2'];
+
+            for (let p = 0; p < numPatches; p++) {
+                const baseAngle = (p / numPatches) * Math.PI * 2 + atlasRotation;
+                const patchCenterX = cx + R * 0.6 * Math.cos(baseAngle);
+                const patchCenterY = cy + R * 0.6 * Math.sin(baseAngle);
+
+                // Draw grid in each patch
+                ctx.save();
+                ctx.translate(patchCenterX, patchCenterY);
+
+                let rotation = baseAngle;
+                if (atlasMode === 'exotic') {
+                    // Add a twist that depends on position
+                    rotation += Math.sin(baseAngle * 2 + atlasTime) * 0.5 + p * 0.3;
+                }
+                ctx.rotate(rotation);
+
+                ctx.strokeStyle = colors[p] + '80';
+                ctx.lineWidth = 1;
+
+                const gridSize = 35;
+                const gridLines = 4;
+
+                // Draw patch boundary
+                ctx.beginPath();
+                ctx.rect(-gridSize, -gridSize, gridSize * 2, gridSize * 2);
+                ctx.strokeStyle = colors[p] + 'aa';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = colors[p] + '15';
+                ctx.fill();
+
+                // Draw grid
+                ctx.strokeStyle = colors[p] + '60';
+                ctx.lineWidth = 1;
+                for (let i = -gridLines; i <= gridLines; i++) {
+                    const offset = (i / gridLines) * gridSize;
+
+                    if (atlasMode === 'exotic') {
+                        // Curved grid lines for exotic
+                        ctx.beginPath();
+                        for (let t = -gridSize; t <= gridSize; t += 5) {
+                            const twist = Math.sin(t * 0.05 + atlasTime) * 8 * (Math.abs(i) / gridLines);
+                            ctx.lineTo(t, offset + twist);
+                        }
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        for (let t = -gridSize; t <= gridSize; t += 5) {
+                            const twist = Math.cos(t * 0.05 + atlasTime) * 8 * (Math.abs(i) / gridLines);
+                            ctx.lineTo(offset + twist, t);
+                        }
+                        ctx.stroke();
+                    } else {
+                        ctx.beginPath();
+                        ctx.moveTo(-gridSize, offset);
+                        ctx.lineTo(gridSize, offset);
+                        ctx.stroke();
+
+                        ctx.beginPath();
+                        ctx.moveTo(offset, -gridSize);
+                        ctx.lineTo(offset, gridSize);
+                        ctx.stroke();
+                    }
+                }
+
+                ctx.restore();
+            }
+
+            // Draw overlap regions with transition indicators
+            for (let p = 0; p < numPatches; p++) {
+                const angle1 = (p / numPatches) * Math.PI * 2 + atlasRotation;
+                const angle2 = ((p + 1) / numPatches) * Math.PI * 2 + atlasRotation;
+                const midAngle = (angle1 + angle2) / 2;
+
+                const ox = cx + R * 0.85 * Math.cos(midAngle);
+                const oy = cy + R * 0.85 * Math.sin(midAngle);
+
+                if (atlasMode === 'exotic') {
+                    // Draw twist arrow
+                    ctx.save();
+                    ctx.translate(ox, oy);
+                    ctx.rotate(midAngle + Math.PI / 2);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 8, 0, Math.PI * 1.5);
+                    ctx.strokeStyle = '#ff6b6b';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // Arrow head
+                    ctx.beginPath();
+                    ctx.moveTo(8, -2);
+                    ctx.lineTo(5, -8);
+                    ctx.lineTo(11, -5);
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.fill();
+                    ctx.restore();
+                } else {
+                    // Draw smooth transition indicator
+                    ctx.beginPath();
+                    ctx.arc(ox, oy, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#6bcf7f80';
+                    ctx.fill();
+                }
+            }
+
+            // Labels
+            ctx.fillStyle = '#888';
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(atlasMode === 'standard' ? '✓ Smooth transitions between patches' : '⟳ Twisted transitions — cannot be straightened!', cx, h - 15);
+
+            requestAnimationFrame(drawAtlas);
+        }
+
+        // ============ SECTION 3: The Twist ============
+        const twistCanvas = document.getElementById('twistCanvas');
+        const twistCtx = twistCanvas.getContext('2d');
+        let twistLevel = 0;
+        let twistTime = 0;
+        let twistAmountSlider = 0;
+
+        function setTwist(level) {
+            twistLevel = level;
+            document.querySelectorAll('#btnTwist0,#btnTwist1,#btnTwist2').forEach(b => b.classList.remove('active'));
+            document.getElementById('btnTwist' + level).classList.add('active');
+            document.getElementById('twistAmount').value = level * 50;
+            twistAmountSlider = level * 50;
+        }
+
+        function updateTwistAmount(val) {
+            twistAmountSlider = parseInt(val);
+        }
+
+        function drawTwist() {
+            const ctx = twistCtx;
+            const w = twistCanvas.width;
+            const h = twistCanvas.height;
+            ctx.clearRect(0, 0, w, h);
+            twistTime += 0.02;
+
+            const cx = w / 2;
+            const cy = h / 2;
+
+            const twistFactor = twistAmountSlider / 100;
+
+            // Draw the two hemispheres being glued
+            const R = 130;
+
+            // Draw equator line
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(cx - R - 20, cy);
+            ctx.lineTo(cx + R + 20, cy);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw flow lines on the sphere showing the twist
+            const numFlowLines = 24;
+            for (let i = 0; i < numFlowLines; i++) {
+                const startAngle = (i / numFlowLines) * Math.PI * 2;
+
+                ctx.beginPath();
+                const hue = (i / numFlowLines) * 360;
+
+                for (let t = 0; t <= 1; t += 0.01) {
+                    const phi = startAngle;
+                    const theta = t * Math.PI; // from north to south pole
+
+                    // Apply twist at the equator
+                    let twistOffset = 0;
+                    if (twistFactor > 0) {
+                        // Twist concentrated near equator (theta = PI/2)
+                        const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 3, 2));
+                        twistOffset = twistFactor * Math.PI * 2 * equatorProximity;
+                    }
+
+                    const adjustedPhi = phi + twistOffset + twistTime * 0.3;
+
+                    // Project 3D sphere to 2D
+                    const x3d = R * Math.sin(theta) * Math.cos(adjustedPhi);
+                    const y3d = R * Math.cos(theta);
+                    const z3d = R * Math.sin(theta) * Math.sin(adjustedPhi);
+
+                    // Simple rotation for 3D effect
+                    const rotAngle = twistTime * 0.2;
+                    const xr = x3d * Math.cos(rotAngle) - z3d * Math.sin(rotAngle);
+                    const zr = x3d * Math.sin(rotAngle) + z3d * Math.cos(rotAngle);
+
+                    const perspective = 1 / (1 - zr / 500);
+                    const sx = cx + xr * perspective;
+                    const sy = cy + y3d * perspective;
+
+                    if (t === 0) ctx.moveTo(sx, sy);
+                    else ctx.lineTo(sx, sy);
+                }
+
+                ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${0.4 + twistFactor * 0.3})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            // Draw sphere outline
+            ctx.beginPath();
+            ctx.arc(cx, cy, R, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(102, 126, 234, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw equator with twist indicator
+            ctx.beginPath();
+            for (let a = 0; a < Math.PI * 2; a += 0.05) {
+                const x3d = R * Math.cos(a);
+                const z3d = R * Math.sin(a);
+                const rotAngle = twistTime * 0.2;
+                const xr = x3d * Math.cos(rotAngle) - z3d * Math.sin(rotAngle);
+                const zr = x3d * Math.sin(rotAngle) + z3d * Math.cos(rotAngle);
+                const perspective = 1 / (1 - zr / 500);
+                const sx = cx + xr * perspective;
+                const sy = cy;
+                if (a === 0) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.strokeStyle = twistFactor > 0 ? `rgba(255, 107, 107, ${0.5 + twistFactor * 0.5})` : 'rgba(107, 207, 127, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#888';
+            ctx.font = '13px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('North hemisphere', cx, 30);
+            ctx.fillText('South hemisphere', cx, h - 15);
+            ctx.fillStyle = twistFactor > 0 ? '#ff6b6b' : '#6bcf7f';
+            ctx.fillText(twistFactor > 0 ? `Equator: twisted by ${(twistFactor * 360).toFixed(0)}°` : 'Equator: standard gluing', cx, cy + R + 25);
+
+            requestAnimationFrame(drawTwist);
+        }
+
+        // ============ SECTION 4: Dimension Explorer ============
+        const dimCanvas = document.getElementById('dimensionCanvas');
+        const dimCtx = dimCanvas.getContext('2d');
+        let currentDim = 4;
+        let dimTime = 0;
+
+        const exoticCounts = {
+            1: 1, 2: 1, 3: 1, 4: '?',
+            5: 1, 6: 1, 7: 28, 8: 2,
+            9: 8, 10: 6, 11: 992, 12: 1,
+            13: 3, 14: 2, 15: 16256, 16: 2,
+            31: 16931177
+        };
+
+        const dimDescriptions = {
+            1: "Dimension 1: The circle. Only one smooth structure — nothing exotic here.",
+            2: "Dimension 2: The ordinary sphere surface. Only one smooth structure. Still no exotics.",
+            3: "Dimension 3: Our familiar 3-sphere. Proved to have only one smooth structure (related to the Poincaré conjecture, proved by Perelman in 2003).",
+            4: "Dimension 4: THE mystery! We don't know if exotic 4-spheres exist. This is the famous unsolved Smooth Poincaré Conjecture in dimension 4.",
+            5: "Dimension 5: Only the standard smooth structure. Exotic spheres skip this dimension!",
+            6: "Dimension 6: Again, only one smooth structure. The exotics are hiding...",
+            7: "Dimension 7: BOOM! 28 different smooth structures! This is where Milnor made his shocking 1956 discovery.",
+            8: "Dimension 8: Just 2 smooth structures — the standard one and one exotic.",
+            11: "Dimension 11: A whopping 992 exotic spheres! The numbers grow wildly.",
+            15: "Dimension 15: 16,256 exotic spheres! Dimensions of the form 4k-1 tend to have many.",
+            31: "Dimension 31: Over 16 MILLION exotic spheres! The numbers become astronomical."
+        };
+
+        function setDimension(dim) {
+            currentDim = dim;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => {
+                if (t.textContent.includes(dim)) t.classList.add('active');
+            });
+            const desc = dimDescriptions[dim] || `Dimension ${dim}: ${exoticCounts[dim] || '?'} smooth structure(s).`;
+            document.getElementById('dimExplanation').innerHTML = `💡 <strong>${desc}</strong>`;
+        }
+
+        function drawDimension() {
+            const ctx = dimCtx;
+            const w = dimCanvas.width;
+            const h = dimCanvas.height;
+            ctx.clearRect(0, 0, w, h);
+            dimTime += 0.02;
+
+            const count = exoticCounts[currentDim];
+            const isUnknown = count === '?';
+            const numericCount = isUnknown ? 0 : count;
+
+            // Draw visualization based on count
+            if (isUnknown) {
+                // Draw question mark animation for dim 4
+                ctx.save();
+                ctx.translate(w / 2, h / 2);
+
+                // Pulsing question mark
+                const pulse = 1 + 0.1 * Math.sin(dimTime * 2);
+                ctx.scale(pulse, pulse);
+
+                ctx.font = 'bold 120px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                const grad = ctx.createLinearGradient(-60, -60, 60, 60);
+                grad.addColorStop(0, '#ff6b6b');
+                grad.addColorStop(0.5, '#ffd93d');
+                grad.addColorStop(1, '#ff6b6b');
+                ctx.fillStyle = grad;
+                ctx.fillText('?', 0, 0);
+
+                // Orbiting spheres
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2 + dimTime;
+                    const orbitR = 100;
+                    const x = orbitR * Math.cos(angle);
+                    const y = orbitR * Math.sin(angle) * 0.5;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${i * 45}, 70%, 60%, 0.6)`;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            } else if (numericCount <= 28) {
+                // Draw individual spheres
+                const cols = Math.min(numericCount, 7);
+                const rows = Math.ceil(numericCount / cols);
+                const spacingX = Math.min(80, (w - 100) / cols);
+                const spacingY = Math.min(60, (h - 80) / rows);
+                const sphereR = Math.min(20, spacingX * 0.35, spacingY * 0.35);
+
+                const startX = w / 2 - (cols - 1) * spacingX / 2;
+                const startY = h / 2 - (rows - 1) * spacingY / 2;
+
+                for (let i = 0; i < numericCount; i++) {
+                    const col = i % cols;
+                    const row = Math.floor(i / cols);
+                    const x = startX + col * spacingX;
+                    const y = startY + row * spacingY;
+
+                    const isStandard = i === 0;
+
+                    // Draw sphere
+                    ctx.beginPath();
+                    ctx.arc(x, y, sphereR, 0, Math.PI * 2);
+
+                    if (isStandard) {
+                        const grad = ctx.createRadialGradient(x - 5, y - 5, 2, x, y, sphereR);
+                        grad.addColorStop(0, '#6bcf7f');
+                        grad.addColorStop(1, '#2a7a3a');
+                        ctx.fillStyle = grad;
+                    } else {
+                        const hue = 200 + (i / numericCount) * 160;
+                        const wobble = Math.sin(dimTime + i) * 3;
+                        const grad = ctx.createRadialGradient(x - 3 + wobble, y - 3, 2, x, y, sphereR);
+                        grad.addColorStop(0, `hsl(${hue}, 70%, 65%)`);
+                        grad.addColorStop(1, `hsl(${hue}, 70%, 30%)`);
+                        ctx.fillStyle = grad;
+                    }
+                    ctx.fill();
+
+                    // Draw twist lines on exotic spheres
+                    if (!isStandard) {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.arc(x, y, sphereR, 0, Math.PI * 2);
+                        ctx.clip();
+
+                        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                        ctx.lineWidth = 0.5;
+                        for (let l = 0; l < 3; l++) {
+                            ctx.beginPath();
+                            for (let t = -sphereR; t <= sphereR; t += 2) {
+                                const twist = Math.sin(t * 0.2 + dimTime + i + l) * 5;
+                                ctx.lineTo(x + t, y + twist + (l - 1) * 8);
+                            }
+                            ctx.stroke();
+                        }
+                        ctx.restore();
+                    }
+                }
+
+                // Legend
+                ctx.fillStyle = '#6bcf7f';
+                ctx.font = '12px Segoe UI';
+                ctx.textAlign = 'left';
+                ctx.fillText('● Standard', 20, h - 15);
+                ctx.fillStyle = '#667eea';
+                ctx.fillText('● Exotic', 110, h - 15);
+                ctx.fillStyle = '#888';
+                ctx.textAlign = 'right';
+                ctx.fillText(`Total: ${numericCount} smooth structure${numericCount > 1 ? 's' : ''}`, w - 20, h - 15);
+
+            } else {
+                // Too many to draw individually — show particle cloud
+                ctx.save();
+                ctx.translate(w / 2, h / 2);
+
+                const displayCount = Math.min(numericCount, 500);
+                for (let i = 0; i < displayCount; i++) {
+                    const seed = i * 137.508;
+                    const r = Math.sqrt(i / displayCount) * 120;
+                    const angle = seed + dimTime * 0.5;
+                    const x = r * Math.cos(angle);
+                    const y = r * Math.sin(angle) * 0.7;
+
+                    const hue = (seed * 0.5) % 360;
+                    const size = 1.5 + Math.sin(dimTime + i) * 0.5;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.7)`;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+
+                // Count label
+                ctx.fillStyle = '#667eea';
+                ctx.font = 'bold 18px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${numericCount.toLocaleString()} exotic spheres!`, w / 2, h - 20);
+            }
+
+            requestAnimationFrame(drawDimension);
+        }
+
+        // ============ SECTION 5: Gluing Analogy ============
+        const glueCanvas = document.getElementById('glueCanvas');
+        const glueCtx = glueCanvas.getContext('2d');
+        let glueStep = 0;
+        let glueTime = 0;
+
+        function setGlueStep(step) {
+            glueStep = step;
+            document.querySelectorAll('#btnGlueStep0,#btnGlueStep1,#btnGlueStep2,#btnGlueStep3').forEach(b => b.classList.remove('active'));
+            document.getElementById('btnGlueStep' + step).classList.add('active');
+
+            const explanations = [
+                '💡 <strong>Step 1:</strong> Start with two hemispheres (bowls). Their edges (equators) need to be identified — glued together.',
+                '💡 <strong>Standard Gluing:</strong> Glue the edges straight — point A on top matches point A on bottom. The result is the standard smooth sphere we all know.',
+                '💡 <strong>Exotic Gluing:</strong> Before gluing, TWIST one hemisphere. Now point A on top matches a ROTATED point on the bottom. The result is still topologically a sphere, but smoothly different!',
+                '💡 <strong>Comparison:</strong> Both results look like spheres. Both ARE spheres topologically. But the twisted one has a fundamentally different smooth structure that no amount of smooth deformation can fix.'
+            ];
+            document.getElementById('glueExplanation').innerHTML = explanations[step];
+        }
+
+        function drawGlue() {
+            const ctx = glueCtx;
+            const w = glueCanvas.width;
+            const h = glueCanvas.height;
+            ctx.clearRect(0, 0, w, h);
+            glueTime += 0.02;
+
+            if (glueStep === 0) {
+                // Two separate hemispheres
+                drawHemisphere(ctx, w / 2, h / 2 - 70, 100, 'top', false);
+                drawHemisphere(ctx, w / 2, h / 2 + 70, 100, 'bottom', false);
+
+                // Arrows showing they need to come together
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(w / 2 - 120, h / 2 - 10);
+                ctx.lineTo(w / 2 - 120, h / 2 + 10);
+                ctx.stroke();
+                ctx.moveTo(w / 2 + 120, h / 2 - 10);
+                ctx.lineTo(w / 2 + 120, h / 2 + 10);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Colored dots on equators to show matching
+                const numDots = 12;
+                for (let i = 0; i < numDots; i++) {
+                    const angle = (i / numDots) * Math.PI * 2;
+                    const hue = (i / numDots) * 360;
+                    const x = w / 2 + 100 * Math.cos(angle) * 0.9;
+
+                    // Top hemisphere equator
+                    ctx.beginPath();
+                    ctx.arc(x, h / 2 - 70 + 8, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.fill();
+
+                    // Bottom hemisphere equator
+                    ctx.beginPath();
+                    ctx.arc(x, h / 2 + 70 - 8, 5, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = '#aaa';
+                ctx.font = '13px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Colored dots show matching points on each equator', w / 2, h - 20);
+
+            } else if (glueStep === 1) {
+                // Standard gluing — coming together
+                const separation = 5 + 15 * Math.abs(Math.sin(glueTime * 0.5));
+                drawHemisphere(ctx, w / 2, h / 2 - separation, 100, 'top', false);
+                drawHemisphere(ctx, w / 2, h / 2 + separation, 100, 'bottom', false);
+
+                // Matching dots
+                const numDots = 12;
+                for (let i = 0; i < numDots; i++) {
+                    const angle = (i / numDots) * Math.PI * 2;
+                    const hue = (i / numDots) * 360;
+                    const x = w / 2 + 100 * Math.cos(angle) * 0.9;
+
+                    // Draw connecting line
+                    ctx.beginPath();
+                    ctx.moveTo(x, h / 2 - separation + 5);
+                    ctx.lineTo(x, h / 2 + separation - 5);
+                    ctx.strokeStyle = `hsla(${hue}, 80%, 60%, 0.4)`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(x, h / 2 - separation + 5, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(x, h / 2 + separation - 5, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.fill();
+                }
+
+                ctx.fillStyle = '#6bcf7f';
+                ctx.font = '13px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('✓ Straight gluing: each colored dot matches its twin directly', w / 2, h - 20);
+
+            } else if (glueStep === 2) {
+                // Exotic gluing — twisted
+                const separation = 5 + 15 * Math.abs(Math.sin(glueTime * 0.5));
+                drawHemisphere(ctx, w / 2, h / 2 - separation, 100, 'top', false);
+                drawHemisphere(ctx, w / 2, h / 2 + separation, 100, 'bottom', true);
+
+                const numDots = 12;
+                const twistAngle = Math.PI / 3 + Math.sin(glueTime) * 0.2; // ~60 degree twist
+
+                for (let i = 0; i < numDots; i++) {
+                    const angle = (i / numDots) * Math.PI * 2;
+                    const hue = (i / numDots) * 360;
+                    const topX = w / 2 + 100 * Math.cos(angle) * 0.9;
+
+                    // Bottom dot is twisted
+                    const twistedAngle = angle + twistAngle;
+                    const botX = w / 2 + 100 * Math.cos(twistedAngle) * 0.9;
+
+                    // Draw connecting line (now diagonal!)
+                    ctx.beginPath();
+                    ctx.moveTo(topX, h / 2 - separation + 5);
+                    ctx.lineTo(botX, h / 2 + separation - 5);
+                    ctx.strokeStyle = `hsla(${hue}, 80%, 60%, 0.5)`;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.arc(topX, h / 2 - separation + 5, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(botX, h / 2 + separation - 5, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${hue}, 80%, 60%)`;
+                    ctx.fill();
+                }
+
+                // Twist arrow
+                ctx.save();
+                ctx.translate(w / 2 + 140, h / 2 + separation);
+                ctx.beginPath();
+                ctx.arc(0, 0, 15, -Math.PI / 2, Math.PI);
+                ctx.strokeStyle = '#ff6b6b';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(-15, 2);
+                ctx.lineTo(-20, -5);
+                ctx.lineTo(-10, -3);
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fill();
+                ctx.restore();
+
+                ctx.fillStyle = '#ff6b6b';
+                ctx.font = '13px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('⟳ Twisted gluing: dots connect diagonally — this twist cannot be smoothed away!', w / 2, h - 20);
+
+            } else if (glueStep === 3) {
+                // Side by side comparison
+                const leftCx = w / 3;
+                const rightCx = 2 * w / 3;
+                const cy = h / 2;
+
+                // Standard sphere
+                ctx.beginPath();
+                ctx.arc(leftCx, cy, 90, 0, Math.PI * 2);
+                const grad1 = ctx.createRadialGradient(leftCx - 20, cy - 20, 10, leftCx, cy, 90);
+                grad1.addColorStop(0, 'rgba(107, 207, 127, 0.6)');
+                grad1.addColorStop(1, 'rgba(42, 122, 58, 0.3)');
+                ctx.fillStyle = grad1;
+                ctx.fill();
+                ctx.strokeStyle = '#6bcf7f';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw smooth grid on standard
+                ctx.strokeStyle = 'rgba(107, 207, 127, 0.3)';
+                ctx.lineWidth = 1;
+                for (let i = -3; i <= 3; i++) {
+                    ctx.beginPath();
+                    const yOff = i * 20;
+                    const rAtY = Math.sqrt(Math.max(0, 90 * 90 - yOff * yOff));
+                    ctx.ellipse(leftCx, cy + yOff, rAtY, 8, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Exotic sphere
+                ctx.beginPath();
+                ctx.arc(rightCx, cy, 90, 0, Math.PI * 2);
+                const grad2 = ctx.createRadialGradient(rightCx - 20, cy - 20, 10, rightCx, cy, 90);
+                grad2.addColorStop(0, 'rgba(118, 75, 162, 0.6)');
+                grad2.addColorStop(1, 'rgba(102, 126, 234, 0.3)');
+                ctx.fillStyle = grad2;
+                ctx.fill();
+                ctx.strokeStyle = '#764ba2';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw twisted grid on exotic
+                ctx.strokeStyle = 'rgba(118, 75, 162, 0.4)';
+                ctx.lineWidth = 1;
+                for (let i = -3; i <= 3; i++) {
+                    ctx.beginPath();
+                    const yOff = i * 20;
+                    const rAtY = Math.sqrt(Math.max(0, 90 * 90 - yOff * yOff));
+                    for (let a = 0; a <= Math.PI * 2; a += 0.05) {
+                        const twist = Math.sin(a * 3 + glueTime + i) * 5 * (1 - Math.abs(yOff) / 90);
+                        const x = rightCx + rAtY * Math.cos(a);
+                        const y = cy + yOff + 8 * Math.sin(a) + twist;
+                        if (a === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
+
+                // Labels
+                ctx.fillStyle = '#6bcf7f';
+                ctx.font = 'bold 14px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Standard Sphere', leftCx, cy + 120);
+                ctx.fillStyle = '#764ba2';
+                ctx.fillText('Exotic Sphere', rightCx, cy + 120);
+
+                ctx.fillStyle = '#888';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('Smooth grid lines', leftCx, cy + 140);
+                ctx.fillText('Twisted grid lines', rightCx, cy + 140);
+
+                // "≅ but ≠" in the middle
+                ctx.fillStyle = '#ffd93d';
+                ctx.font = 'bold 20px Segoe UI';
+                ctx.fillText('≅ᵗᵒᵖ', w / 2, cy - 10);
+                ctx.fillText('≠ˢᵐᵒᵒᵗʰ', w / 2, cy + 15);
+            }
+
+            requestAnimationFrame(drawGlue);
+        }
+
+        function drawHemisphere(ctx, cx, cy, r, half, twisted) {
+            ctx.beginPath();
+            if (half === 'top') {
+                ctx.arc(cx, cy, r, Math.PI, 0);
+                ctx.ellipse(cx, cy, r, 10, 0, 0, Math.PI);
+            } else {
+                ctx.ellipse(cx, cy, r, 10, 0, Math.PI, 0);
+                ctx.arc(cx, cy, r, 0, Math.PI);
+            }
+            ctx.closePath();
+
+            const grad = ctx.createRadialGradient(cx - 20, cy - 20, 10, cx, cy, r);
+            if (twisted) {
+                grad.addColorStop(0, 'rgba(118, 75, 162, 0.5)');
+                grad.addColorStop(1, 'rgba(118, 75, 162, 0.15)');
+                ctx.strokeStyle = 'rgba(118, 75, 162, 0.6)';
+            } else {
+                grad.addColorStop(0, 'rgba(102, 126, 234, 0.5)');
+                grad.addColorStop(1, 'rgba(102, 126, 234, 0.15)');
+                ctx.strokeStyle = 'rgba(102, 126, 234, 0.6)';
+            }
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Grid lines
+            ctx.strokeStyle = twisted ? 'rgba(118, 75, 162, 0.3)' : 'rgba(102, 126, 234, 0.3)';
+            ctx.lineWidth =  1;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                const yOff = (half === 'top') ? -(i + 1) * 20 : (i + 1) * 20;
+                const rAtY = Math.sqrt(Math.max(0, r * r - yOff * yOff));
+
+                if (twisted) {
+                    for (let a = 0; a <= Math.PI * 2; a += 0.05) {
+                        const twist = Math.sin(a * 3 + glueTime + i) * 4;
+                        const x = cx + rAtY * Math.cos(a);
+                        const y = cy + yOff * 0.3 + 6 * Math.sin(a) + twist;
+                        if (a === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                } else {
+                    ctx.ellipse(cx, cy + yOff * 0.3, rAtY, 6, 0, 0, Math.PI * 2);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // ============ SECTION 7: Interactive Morph Explorer ============
+        const morphCanvas = document.getElementById('morphCanvas');
+        const morphCtx = morphCanvas.getContext('2d');
+        let morphParam = 0;
+        let morphTime = 0;
+        let vizMode = 'surface';
+        let mouseDown = false;
+        let mouseX = 0, mouseY = 0;
+        let rotX = 0.3, rotY = 0;
+        let lastMouseX = 0, lastMouseY = 0;
+
+        morphCanvas.addEventListener('mousedown', (e) => {
+            mouseDown = true;
+            lastMouseX = e.offsetX;
+            lastMouseY = e.offsetY;
+        });
+        morphCanvas.addEventListener('mousemove', (e) => {
+            if (mouseDown) {
+                rotY += (e.offsetX - lastMouseX) * 0.01;
+                rotX += (e.offsetY - lastMouseY) * 0.01;
+                rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotX));
+                lastMouseX = e.offsetX;
+                lastMouseY = e.offsetY;
+            }
+        });
+        morphCanvas.addEventListener('mouseup', () => mouseDown = false);
+        morphCanvas.addEventListener('mouseleave', () => mouseDown = false);
+
+        // Touch support
+        morphCanvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            mouseDown = true;
+            const rect = morphCanvas.getBoundingClientRect();
+            lastMouseX = e.touches[0].clientX - rect.left;
+            lastMouseY = e.touches[0].clientY - rect.top;
+        });
+        morphCanvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (mouseDown) {
+                const rect = morphCanvas.getBoundingClientRect();
+                const tx = e.touches[0].clientX - rect.left;
+                const ty = e.touches[0].clientY - rect.top;
+                rotY += (tx - lastMouseX) * 0.01;
+                rotX += (ty - lastMouseY) * 0.01;
+                rotX = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotX));
+                lastMouseX = tx;
+                lastMouseY = ty;
+            }
+        });
+        morphCanvas.addEventListener('touchend', () => mouseDown = false);
+
+        function updateMorph(val) {
+            morphParam = parseInt(val) / 100;
+            document.getElementById('morphValue').textContent = val;
+        }
+
+        function setVizMode(mode) {
+            vizMode = mode;
+        }
+
+        function project3D(x, y, z) {
+            // Rotate around X axis
+            const y1 = y * Math.cos(rotX) - z * Math.sin(rotX);
+            const z1 = y * Math.sin(rotX) + z * Math.cos(rotX);
+            // Rotate around Y axis
+            const x2 = x * Math.cos(rotY) - z1 * Math.sin(rotY);
+            const z2 = x * Math.sin(rotY) + z1 * Math.cos(rotY);
+
+            const perspective = 400 / (400 + z2);
+            return {
+                x: x2 * perspective,
+                y: y1 * perspective,
+                z: z2,
+                perspective: perspective
+            };
+        }
+
+        function drawMorph() {
+            const ctx = morphCtx;
+            const w = morphCanvas.width;
+            const h = morphCanvas.height;
+            ctx.clearRect(0, 0, w, h);
+            morphTime += 0.015;
+
+            if (!mouseDown) {
+                rotY += 0.003;
+            }
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const R = 150;
+
+            if (vizMode === 'surface') {
+                drawSurfaceMode(ctx, cx, cy, R);
+            } else if (vizMode === 'flow') {
+                drawFlowMode(ctx, cx, cy, R);
+            } else if (vizMode === 'patches') {
+                drawPatchMode(ctx, cx, cy, R);
+            }
+
+            // Draw parameter indicator
+            ctx.fillStyle = '#333';
+            ctx.fillRect(20, h - 40, w - 40, 6);
+            const barWidth = (w - 40) * morphParam;
+            const barGrad = ctx.createLinearGradient(20, 0, 20 + barWidth, 0);
+            barGrad.addColorStop(0, '#6bcf7f');
+            barGrad.addColorStop(1, morphParam > 0.5 ? '#ff6b6b' : '#667eea');
+            ctx.fillStyle = barGrad;
+            ctx.fillRect(20, h - 40, barWidth, 6);
+
+            ctx.fillStyle = '#888';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText('Standard', 20, h - 10);
+            ctx.textAlign = 'right';
+            ctx.fillText('Exotic', w - 20, h - 10);
+            ctx.textAlign = 'center';
+            ctx.fillText(`τ = ${morphParam.toFixed(2)}`, cx, h - 10);
+
+            requestAnimationFrame(drawMorph);
+        }
+
+        function drawSurfaceMode(ctx, cx, cy, R) {
+            const latSteps = 20;
+            const lonSteps = 30;
+
+            // Collect all quads with depth for sorting
+            const quads = [];
+
+            for (let i = 0; i < latSteps; i++) {
+                for (let j = 0; j < lonSteps; j++) {
+                    const theta1 = (i / latSteps) * Math.PI;
+                    const theta2 = ((i + 1) / latSteps) * Math.PI;
+                    const phi1 = (j / lonSteps) * Math.PI * 2;
+                    const phi2 = ((j + 1) / lonSteps) * Math.PI * 2;
+
+                    const corners = [
+                        spherePoint(R, theta1, phi1),
+                        spherePoint(R, theta1, phi2),
+                        spherePoint(R, theta2, phi2),
+                        spherePoint(R, theta2, phi1)
+                    ];
+
+                    const projected = corners.map(c => project3D(c.x, c.y, c.z));
+                    const avgZ = projected.reduce((s, p) => s + p.z, 0) / 4;
+
+                    // Color based on twist
+                    const midTheta = (theta1 + theta2) / 2;
+                    const midPhi = (phi1 + phi2) / 2;
+                    const equatorDist = Math.abs(midTheta - Math.PI / 2);
+                    const twistIntensity = morphParam * Math.exp(-equatorDist * 3);
+
+                    const hue = ((midPhi / (Math.PI * 2)) * 360 + twistIntensity * 120) % 360;
+                    const lightness = 30 + projected[0].perspective * 25;
+
+                    quads.push({
+                        projected,
+                        avgZ,
+                        hue,
+                        lightness,
+                        twistIntensity
+                    });
+                }
+            }
+
+            // Sort back to front
+            quads.sort((a, b) => b.avgZ - a.avgZ);
+
+            for (const quad of quads) {
+                ctx.beginPath();
+                ctx.moveTo(cx + quad.projected[0].x, cy + quad.projected[0].y);
+                for (let k = 1; k < 4; k++) {
+                    ctx.lineTo(cx + quad.projected[k].x, cy + quad.projected[k].y);
+                }
+                ctx.closePath();
+
+                const alpha = 0.6 + quad.twistIntensity * 0.3;
+                ctx.fillStyle = `hsla(${quad.hue}, 60%, ${quad.lightness}%, ${alpha})`;
+                ctx.fill();
+                ctx.strokeStyle = `hsla(${quad.hue}, 60%, ${quad.lightness + 10}%, 0.3)`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        }
+
+        function drawFlowMode(ctx, cx, cy, R) {
+            const numLines = 30;
+
+            for (let i = 0; i < numLines; i++) {
+                const startPhi = (i / numLines) * Math.PI * 2;
+                const hue = (i / numLines) * 360;
+
+                ctx.beginPath();
+                let firstPoint = true;
+
+                for (let t = 0; t <= 1; t += 0.008) {
+                    const theta = t * Math.PI;
+                    let phi = startPhi;
+
+                    // Apply exotic twist
+                    const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 2.5, 2));
+                    phi += morphParam * Math.PI * 2 * equatorProximity;
+
+                    // Add gentle animation
+                    phi += Math.sin(morphTime + t * 3) * 0.05;
+
+                    const pt = spherePoint(R, theta, phi);
+                    const proj = project3D(pt.x, pt.y, pt.z);
+
+                    if (firstPoint) {
+                        ctx.moveTo(cx + proj.x, cy + proj.y);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(cx + proj.x, cy + proj.y);
+                    }
+                }
+
+                const alpha = 0.4 + morphParam * 0.4;
+                ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${alpha})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            // Draw equator highlight
+            ctx.beginPath();
+            for (let j = 0; j <= 60; j++) {
+                const phi = (j / 60) * Math.PI * 2;
+                const pt = spherePoint(R, Math.PI / 2, phi);
+                const proj = project3D(pt.x, pt.y, pt.z);
+                if (j === 0) ctx.moveTo(cx + proj.x, cy + proj.y);
+                else ctx.lineTo(cx + proj.x, cy + proj.y);
+            }
+            ctx.strokeStyle = morphParam > 0 ? `rgba(255, 107, 107, ${0.5 + morphParam * 0.5})` : 'rgba(107, 207, 127, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function drawPatchMode(ctx, cx, cy, R) {
+            const patchColors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4ecdc4', '#667eea', '#764ba2'];
+            const numPatches = 6;
+
+            for (let p = 0; p < numPatches; p++) {
+                const basePhi = (p / numPatches) * Math.PI * 2;
+                const color = patchColors[p];
+
+                // Draw patch grid
+                const gridRes = 8;
+                const patchWidth = Math.PI * 2 / numPatches;
+                const patchPadding = patchWidth * 0.05;
+
+                // Latitude lines
+                for (let i = 1; i < gridRes; i++) {
+                    ctx.beginPath();
+                    const theta = (i / gridRes) * Math.PI;
+                    let firstPoint = true;
+
+                    for (let j = 0; j <= gridRes; j++) {
+                        let phi = basePhi + patchPadding + (j / gridRes) * (patchWidth - 2 * patchPadding);
+
+                        // Apply exotic twist
+                        const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 2.5, 2));
+                        const twist = morphParam * Math.PI * 0.5 * equatorProximity;
+                        phi += twist;
+
+                        const pt = spherePoint(R * 0.98, theta, phi);
+                        const proj = project3D(pt.x, pt.y, pt.z);
+
+                        if (firstPoint) {
+                            ctx.moveTo(cx + proj.x, cy + proj.y);
+                            firstPoint = false;
+                        } else {
+                            ctx.lineTo(cx + proj.x, cy + proj.y);
+                        }
+                    }
+                    ctx.strokeStyle = color + '80';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                // Longitude lines
+                for (let j = 0; j <= gridRes; j++) {
+                    ctx.beginPath();
+                    let phi = basePhi + patchPadding + (j / gridRes) * (patchWidth - 2 * patchPadding);
+                    let firstPoint = true;
+
+                    for (let i = 0; i <= gridRes * 2; i++) {
+                        const theta = (i / (gridRes * 2)) * Math.PI;
+
+                        let adjustedPhi = phi;
+                        const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 2.5, 2));
+                        adjustedPhi += morphParam * Math.PI * 0.5 * equatorProximity;
+
+                        const pt = spherePoint(R * 0.98, theta, adjustedPhi);
+                        const proj = project3D(pt.x, pt.y, pt.z);
+
+                        if (firstPoint) {
+                            ctx.moveTo(cx + proj.x, cy + proj.y);
+                            firstPoint = false;
+                        } else {
+                            ctx.lineTo(cx + proj.x, cy + proj.y);
+                        }
+                    }
+                    ctx.strokeStyle = color + '80';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+
+                // Patch border
+                ctx.beginPath();
+                let firstPoint = true;
+                // Top edge
+                for (let j = 0; j <= gridRes; j++) {
+                    let phi = basePhi + patchPadding + (j / gridRes) * (patchWidth - 2 * patchPadding);
+                    const theta = 0.1;
+                    const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 2.5, 2));
+                    phi += morphParam * Math.PI * 0.5 * equatorProximity;
+                    const pt = spherePoint(R * 0.98, theta, phi);
+                    const proj = project3D(pt.x, pt.y, pt.z);
+                    if (firstPoint) { ctx.moveTo(cx + proj.x, cy + proj.y); firstPoint = false; }
+                    else ctx.lineTo(cx + proj.x, cy + proj.y);
+                }
+                // Right edge
+                for (let i = 0; i <= gridRes * 2; i++) {
+                    const theta = 0.1 + (i / (gridRes * 2)) * (Math.PI - 0.2);
+                    let phi = basePhi + patchWidth - patchPadding;
+                    const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 2.5, 2));
+                    phi += morphParam * Math.PI * 0.5 * equatorProximity;
+                    const pt = spherePoint(R * 0.98, theta, phi);
+                    const proj = project3D(pt.x, pt.y, pt.z);
+                    ctx.lineTo(cx + proj.x, cy + proj.y);
+                }
+                // Bottom edge
+                for (let j = gridRes; j >= 0; j--) {
+                    let phi = basePhi + patchPadding + (j / gridRes) * (patchWidth - 2 * patchPadding);
+                    const theta = Math.PI - 0.1;
+                    const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 2.5, 2));
+                    phi += morphParam * Math.PI * 0.5 * equatorProximity;
+                    const pt = spherePoint(R * 0.98, theta, phi);
+                    const proj = project3D(pt.x, pt.y, pt.z);
+                    ctx.lineTo(cx + proj.x, cy + proj.y);
+                }
+                // Left edge
+                for (let i = gridRes * 2; i >= 0; i--) {
+                    const theta = 0.1 + (i / (gridRes * 2)) * (Math.PI - 0.2);
+                    let phi = basePhi + patchPadding;
+                    const equatorProximity = Math.exp(-Math.pow((theta - Math.PI / 2) * 2.5, 2));
+                    phi += morphParam * Math.PI * 0.5 * equatorProximity;
+                    const pt = spherePoint(R * 0.98, theta, phi);
+                    const proj = project3D(pt.x, pt.y, pt.z);
+                    ctx.lineTo(cx + proj.x, cy + proj.y);
+                }
+                ctx.closePath();
+                ctx.strokeStyle = color + 'cc';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = color + '15';
+                ctx.fill();
+            }
+        }
+
+        function spherePoint(R, theta, phi) {
+            return {
+                x: R * Math.sin(theta) * Math.cos(phi),
+                y: R * Math.cos(theta),
+                z: R * Math.sin(theta) * Math.sin(phi)
+            };
+        }
+
+        // ============ START ALL ANIMATIONS ============
+        function init() {
+            // Handle canvas sizing for high-DPI displays
+            const canvases = document.querySelectorAll('canvas');
+            canvases.forEach(canvas => {
+                const rect = canvas.getBoundingClientRect();
+                if (rect.width < canvas.width) {
+                    canvas.style.width = '100%';
+                    canvas.style.height = 'auto';
+                }
+            });
+
+            drawTopoSphere();
+            drawAtlas();
+            drawTwist();
+            drawDimension();
+            drawGlue();
+            drawMorph();
+        }
+
+        init();
+    </script>
+</body>
+</html>
