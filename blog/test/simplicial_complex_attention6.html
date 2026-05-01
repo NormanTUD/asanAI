@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Q·K → Simplex, V → Meaning Flow</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, sans-serif; background: #0d1117; color: #e0e0e0; padding: 16px; }
+        .app { max-width: 1400px; margin: 0 auto; }
+        h1 { text-align: center; color: #fff; font-size: 1.4em; margin-bottom: 4px; }
+        .sub { text-align: center; color: #8b949e; font-size: 0.85em; margin-bottom: 16px; }
+        .input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .input-row input { flex:1; padding: 12px 16px; font-size: 1em; background: #161b22; border: 2px solid #30363d; border-radius: 8px; color: #fff; outline: none; }
+        .input-row input:focus { border-color: #58a6ff; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .full { grid-column: 1/-1; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 14px; }
+        .card h2 { font-size: 0.95em; margin-bottom: 8px; }
+        .card h2.q { color: #f97583; }
+        .card h2.k { color: #79c0ff; }
+        .card h2.v { color: #56d364; }
+        .card h2.simplex { color: #f0c040; }
+        #plotMain { height: 520px; width: 100%; }
+        #plotQK { height: 360px; width: 100%; }
+        #plotV { height: 360px; width: 100%; }
+        .slider-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+        .slider-row label { font-size: 0.8em; color: #8b949e; min-width: 70px; }
+        .slider-row input[type="range"] { flex:1; accent-color: #58a6ff; }
+        .slider-row span { font-size: 0.8em; color: #58a6ff; min-width: 32px; }
+        .info { font-size: 0.8em; line-height: 1.7; max-height: 300px; overflow-y: auto; }
+        .s1 { color: #3fb950; }
+        .s2 { color: #f0c040; }
+        .explain { background: #1c2128; border-left: 3px solid #58a6ff; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 0.85em; margin: 8px 0; line-height: 1.6; }
+        .matrix-display { font-family: monospace; font-size: 0.75em; background: #0d1117; padding: 8px; border-radius: 6px; margin: 6px 0; overflow-x: auto; }
+        .matrix-edit { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; margin: 6px 0; }
+        .matrix-edit input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #fff; padding: 4px; border-radius: 4px; text-align: center; font-size: 0.8em; }
+        .legend { display: flex; gap: 14px; justify-content: center; font-size: 0.78em; margin: 8px 0; flex-wrap: wrap; }
+        .legend span { display: flex; align-items: center; gap: 4px; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; }
+        .step-box { display: flex; gap: 8px; align-items: stretch; margin: 10px 0; }
+        .step { flex:1; background: #1c2128; border-radius: 8px; padding: 10px; text-align: center; border: 1px solid #30363d; }
+        .step .num { font-size: 1.4em; font-weight: bold; }
+        .step .lbl { font-size: 0.75em; color: #8b949e; margin-top: 4px; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <h1>How Attention Builds Simplicial Complexes</h1>
+    <p class="sub">Type a sentence. See Q, K, V vectors. Watch how Q·K creates the simplicial structure, and V provides the meaning that flows through it.</p>
+
+    <div class="input-row">
+        <input type="text" id="sentence" value="The king commanded his lion with divine power" placeholder="Type any sentence...">
+    </div>
+
+    <!-- PIPELINE VISUALIZATION -->
+    <div class="card full" style="margin-bottom:12px;">
+        <div class="step-box">
+            <div class="step">
+                <div class="num" style="color:#58a6ff;">X</div>
+                <div class="lbl">Embedding<br>(position in 3D meaning-space)</div>
+            </div>
+            <div class="step" style="font-size:1.5em; display:flex; align-items:center; justify-content:center; background:none; border:none;">→</div>
+            <div class="step">
+                <div class="num" style="color:#f97583;">Q = X·W<sub>Q</sub></div>
+                <div class="lbl">"What am I looking for?"<br>Each word's question</div>
+            </div>
+            <div class="step">
+                <div class="num" style="color:#79c0ff;">K = X·W<sub>K</sub></div>
+                <div class="lbl">"What do I offer?"<br>Each word's label</div>
+            </div>
+            <div class="step" style="font-size:1.5em; display:flex; align-items:center; justify-content:center; background:none; border:none;">→</div>
+            <div class="step">
+                <div class="num" style="color:#f0c040;">Q·K<sup>T</sup></div>
+                <div class="lbl">Attention scores<br>→ Simplicial skeleton</div>
+            </div>
+            <div class="step" style="font-size:1.5em; display:flex; align-items:center; justify-content:center; background:none; border:none;">→</div>
+            <div class="step">
+                <div class="num" style="color:#56d364;">V flows</div>
+                <div class="lbl">Meaning transported<br>along simplices</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN 3D PLOT -->
+    <div class="card full">
+        <h2 class="simplex">3D Semantic Space — Simplicial Complex from Attention</h2>
+        <div class="legend">
+            <span><span class="dot" style="background:#58a6ff;"></span> Embedding X (word position)</span>
+            <span><span class="dot" style="background:#f97583;"></span> Q vector (query)</span>
+            <span><span class="dot" style="background:#79c0ff;"></span> K vector (key)</span>
+            <span><span class="dot" style="background:#3fb950;border-radius:0;width:16px;height:3px;"></span> Edge (1-simplex from Q·K)</span>
+            <span><span class="dot" style="background:#f0c040;border-radius:2px;"></span> Triangle (2-simplex)</span>
+        </div>
+        <div class="slider-row">
+            <label>Threshold ε</label>
+            <input type="range" id="eps" min="0.01" max="0.35" step="0.005" value="0.09">
+            <span id="eps-v">0.09</span>
+        </div>
+        <div class="slider-row">
+            <label>Sharpness</label>
+            <input type="range" id="sharp" min="0.3" max="4" step="0.05" value="1.0">
+            <span id="sharp-v">1.00</span>
+        </div>
+        <div class="slider-row">
+            <label>Show</label>
+            <label><input type="checkbox" id="showQ" checked> Q</label>
+            <label><input type="checkbox" id="showK" checked> K</label>
+            <label><input type="checkbox" id="showV"> V output</label>
+            <label><input type="checkbox" id="showLines" checked> Q→K lines</label>
+        </div>
+        <div id="plotMain"></div>
+    </div>
+
+    <div class="grid">
+        <!-- W_Q and W_K matrices -->
+        <div class="card">
+            <h2 class="q">W<sub>Q</sub> — Query Projection</h2>
+            <div class="explain">Transforms each embedding into a "question vector." Words with similar Q vectors are looking for the same things.</div>
+            <div class="matrix-edit" id="wq-edit"></div>
+            <h2 class="k" style="margin-top:12px;">W<sub>K</sub> — Key Projection</h2>
+            <div class="explain">Transforms each embedding into a "label vector." When Q<sub>i</sub> · K<sub>j</sub> is large, word i attends to word j — they form an edge.</div>
+            <div class="matrix-edit" id="wk-edit"></div>
+            <h2 class="v" style="margin-top:12px;">W<sub>V</sub> — Value Projection</h2>
+            <div class="explain">The actual content that gets sent along edges. After Q·K determines the structure (which simplices exist), V determines what meaning flows through that structure.</div>
+            <div class="matrix-edit" id="wv-edit"></div>
+        </div>
+
+        <!-- Simplex info -->
+        <div class="card">
+            <h2 class="simplex">Simplicial Complex K</h2>
+            <div class="explain">
+                <b>How it works:</b><br>
+                1. Compute Q<sub>i</sub> · K<sub>j</sub> for all pairs → attention score<br>
+                2. Softmax → attention weight α<sub>ij</sub><br>
+                3. If min(α<sub>ij</sub>, α<sub>ji</sub>) > ε → edge {i,j} exists<br>
+                4. If all 3 edges of a triangle exist → 2-simplex {i,j,k} exists<br>
+                5. V vectors flow along these connections → output meaning
+            </div>
+            <div class="info" id="simplexInfo"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// LEXICON
+// ============================================================
+const LEX = {
+    king:[-0.9,0.1,0.9], he:[-0.8,0,0.2], his:[-0.7,0,0.15], boy:[-0.8,0,0.2],
+    man:[-0.8,0,0.4], father:[-0.8,0.1,0.6], prince:[-0.85,0.1,0.7], lord:[-0.7,0.3,0.85],
+    god:[-0.5,1.0,0.95], warrior:[-0.6,0,0.75], hero:[-0.5,0.05,0.7],
+    queen:[0.9,0.1,0.85], she:[0.8,0,0.2], her:[0.7,0,0.15], girl:[0.8,0,0.2],
+    woman:[0.8,0,0.4], mother:[0.8,0.1,0.6], princess:[0.85,0.1,0.6],
+    goddess:[0.9,0.95,0.9], witch:[0.6,0.4,0.6],
+    lion:[-0.3,-0.9,0.6], wolf:[-0.4,-0.9,0.55], eagle:[-0.1,-0.85,0.5],
+    eagles:[-0.1,-0.85,0.5], serpent:[-0.2,-0.8,0.45], serpents:[-0.2,-0.8,0.45],
+    deer:[0.2,-0.9,0.15], dove:[0.3,-0.85,0.1], bear:[-0.4,-0.9,0.6],
+    horse:[-0.2,-0.8,0.4], cat:[0.2,-0.85,0.2], dog:[-0.2,-0.85,0.3],
+    dragon:[-0.3,-0.6,0.9], phoenix:[0.1,-0.5,0.8], raven:[-0.1,-0.85,0.3],
+    owl:[0.0,-0.8,0.35], tiger:[-0.3,-0.9,0.65],
+    divine:[0.0,0.9,0.85], sacred:[0.0,0.8,0.6], holy:[0.0,0.85,0.6],
+    celestial:[0.1,0.95,0.75], eternal:[0.0,0.7,0.7], heaven:[0.1,0.95,0.5],
+    angel:[0.2,0.9,0.6], demon:[-0.3,0.6,0.7], spirit:[0.0,0.7,0.4],
+    ancient:[0.0,0.3,0.45], cosmic:[0.0,0.85,0.7], infinite:[0.0,0.6,0.9],
+    power:[0.0,0.2,0.95], strength:[-0.2,0.1,0.85], authority:[-0.1,0.2,0.88],
+    dominion:[-0.2,0.3,0.9], force:[-0.2,0,0.8], might:[-0.3,0.1,0.85],
+    command:[-0.2,0.1,0.7], commanded:[-0.3,0.1,0.7], rule:[0.0,0.15,0.75],
+    ruled:[0.0,0.15,0.75], summoned:[-0.1,0.4,0.65], conquered:[-0.4,0,0.8],
+    gentle:[0.3,0,0.1], soft:[0.3,0,0.05], kind:[0.2,0.1,0.2],
+    small:[0.0,0,0.05], weak:[0.0,0,0.02], quiet:[0.1,0,0.05],
+    forest:[0.0,-0.4,0.2], woods:[0.0,-0.4,0.2], mountain:[-0.1,-0.3,0.5],
+    river:[0.1,-0.3,0.2], ocean:[0.0,-0.3,0.6], sky:[0.0,0.2,0.3],
+    fire:[-0.1,0,0.6], water:[0.1,-0.1,0.2], earth:[0.0,-0.2,0.3],
+    transformed:[0.0,0.3,0.55], befriended:[0.1,0.1,0.2], fought:[-0.4,0,0.6],
+    loved:[0.3,0.1,0.3], created:[0.0,0.3,0.6], destroyed:[-0.3,0,0.8],
+    sang:[0.2,0,0.2], flew:[0.0,-0.3,0.3], hunted:[-0.4,-0.3,0.5],
+    the:[0,0,0.05], a:[0,0,0.05], an:[0,0,0.05], of:[0,0,0.05],
+    with:[0,0,0.08], in:[0,0,0.05], into:[0,0,0.08], and:[0,0,0.05],
+    to:[0,0,0.05], from:[0,0,0.05], by:[0,0,0.05], for:[0,0,0.05],
+    on:[0,0,0.05], at:[0,0,0.05], is:[0,0,0.08], was:[0,0,0.08],
+    great:[0.0,0.1,0.7], fierce:[-0.2,0,0.65],
+};
+
+function embed(word) {
+    const w = word.toLowerCase().replace(/[^a-z]/g,'');
+    if(LEX[w]) return [...LEX[w]];
+    let h=0; for(let i=0;i<w.length;i++) h=(h*31+w.charCodeAt(i))&0xffff;
+    return [((h%100)-50)/80, (((h>>4)%100)-50)/80, (h%60)/80];
+}
+
+// ============================================================
+// WEIGHT MATRICES (editable)
+// ============================================================
+// W_Q: emphasizes power and ontology for queries ("what am I looking for?")
+let WQ = [[0.6, 0.2, 0.3], [0.1, 0.8, 0.2], [0.2, 0.3, 0.9]];
+// W_K: emphasizes gender and ontology for keys ("what do I offer?")
+let WK = [[0.8, 0.1, 0.1], [0.2, 0.9, 0.1], [0.1, 0.2, 0.7]];
+// W_V: identity-ish, passes meaning through
+let WV = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
+
+// ============================================================
+// MATH
+// ============================================================
+const dot3 = (a,b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const mv3 = (M,v) => [dot3(M[0],v), dot3(M[1],v), dot3(M[2],v)];
+
+function computeAll(tokens, embeddings, sharpness, eps) {
+    const n = tokens.length;
+    const Q = embeddings.map(e => mv3(WQ, e));
+    const K = embeddings.map(e => mv3(WK, e));
+    const V = embeddings.map(e => mv3(WV, e));
+
+    // Attention scores: Q_i · K_j / sqrt(d)
+    const scores = Array.from({length:n}, ()=>Array(n).fill(0));
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++) {
+        scores[i][j] = dot3(Q[i], K[j]) / Math.sqrt(3);
+    }
+
+    // Softmax
+    const attn = scores.map(row => {
+        const mx = Math.max(...row);
+        const e = row.map(x => Math.exp((x-mx)*sharpness));
+        const s = e.reduce((a,b)=>a+b);
+        return e.map(x=>x/s);
+    });
+
+    // Output: weighted sum of V
+    const output = Array.from({length:n}, ()=>[0,0,0]);
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++) for(let d=0;d<3;d++) output[i][d]+=attn[i][j]*V[j][d];
+
+    // Simplicial complex
+    const edges=[], tris=[];
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) {
+        const w = Math.min(attn[i][j], attn[j][i]);
+        if(w>eps) edges.push([i,j,w]);
+    }
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) for(let k=j+1;k<n;k++) {
+        const ij=Math.min(attn[i][j],attn[j][i]);
+        const jk=Math.min(attn[j][k],attn[k][j]);
+        const ik=Math.min(attn[i][k],attn[k][i]);
+        if(ij>eps&&jk>eps&&ik>eps) tris.push([i,j,k,Math.min(ij,jk,ik)]);
+    }
+
+    return {Q, K, V, attn, output, edges, tris};
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+    const text = document.getElementById('sentence').value.trim();
+    if(!text) return;
+    const tokens = text.split(/\s+/);
+    const embeddings = tokens.map(t => embed(t));
+    const sharpness = parseFloat(document.getElementById('sharp').value);
+    const eps = parseFloat(document.getElementById('eps').value);
+
+    const {Q, K, V, attn, output, edges, tris} = computeAll(tokens, embeddings, sharpness, eps);
+    const n = tokens.length;
+
+    const showQ = document.getElementById('showQ').checked;
+    const showK = document.getElementById('showK').checked;
+    const showVout = document.getElementById('showV').checked;
+    const showLines = document.getElementById('showLines').checked;
+
+    const traces = [];
+
+    // --- Triangles (2-simplices) ---
+    for(const [i,j,k,w] of tris) {
+        traces.push({type:'mesh3d',
+            x:[embeddings[i][0],embeddings[j][0],embeddings[k][0]],
+            y:[embeddings[i][1],embeddings[j][1],embeddings[k][1]],
+            z:[embeddings[i][2],embeddings[j][2],embeddings[k][2]],
+            i:[0],j:[1],k:[2],
+            opacity:0.18+w*0.4, color:'#f0c040', flatshading:true,
+            hovertemplate:`△ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}}<br>min α = ${w.toFixed(3)}<extra></extra>`,
+            showlegend:false
+        });
+    }
+
+    // --- Edges (1-simplices) ---
+    for(const [i,j,w] of edges) {
+        traces.push({type:'scatter3d',mode:'lines',
+            x:[embeddings[i][0],embeddings[j][0]],
+            y:[embeddings[i][1],embeddings[j][1]],
+            z:[embeddings[i][2],embeddings[j][2]],
+            line:{color:`rgba(63,185,80,${Math.min(w*5,0.9)})`, width:Math.max(2,w*14)},
+            showlegend:false,
+            hovertemplate:`{${tokens[i]}, ${tokens[j]}}<br>α = ${w.toFixed(3)}<extra></extra>`
+        });
+    }
+
+    // --- Q→K lines for strongest connections ---
+    if(showLines) {
+        for(let i=0;i<n;i++) {
+            // Find top-2 attention targets (excluding self)
+            const sorted = attn[i].map((a,j)=>({a,j})).filter(x=>x.j!==i).sort((a,b)=>b.a-a.a).slice(0,2);
+            for(const {a,j} of sorted) {
+                if(a > eps*0.5) {
+                    traces.push({type:'scatter3d',mode:'lines',
+                        x:[Q[i][0], K[j][0]],
+                        y:[Q[i][1], K[j][1]],
+                        z:[Q[i][2], K[j][2]],
+                        line:{color:`rgba(255,200,100,${Math.min(a*2,0.5)})`, width:1, dash:'dot'},
+                        showlegend:false, hoverinfo:'skip'
+                    });
+                }
+            }
+        }
+    }
+
+    // --- Q vectors ---
+    if(showQ) {
+        traces.push({type:'scatter3d', mode:'markers+text',
+            x:Q.map(q=>q[0]), y:Q.map(q=>q[1]), z:Q.map(q=>q[2]),
+            text:tokens.map(t=>t+'(Q)'), textposition:'bottom center', textfont:{size:8,color:'#f97583'},
+            marker:{size:4, color:'#f97583', symbol:'diamond', opacity:0.7},
+            name:'Q vectors',
+            hovertemplate:'%{text}<br>Q: (%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>'
+        });
+        // Lines from X to Q
+        for(let i=0;i<n;i++) {
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[embeddings[i][0],Q[i][0]], y:[embeddings[i][1],Q[i][1]], z:[embeddings[i][2],Q[i][2]],
+                line:{color:'rgba(249,117,131,0.3)', width:1},
+                showlegend:false, hoverinfo:'skip'
+            });
+        }
+    }
+
+    // --- K vectors ---
+    if(showK) {
+        traces.push({type:'scatter3d', mode:'markers+text',
+            x:K.map(k=>k[0]), y:K.map(k=>k[1]), z:K.map(k=>k[2]),
+            text:tokens.map(t=>t+'(K)'), textposition:'bottom center', textfont:{size:8,color:'#79c0ff'},
+            marker:{size:4, color:'#79c0ff', symbol:'square', opacity:0.7},
+            name:'K vectors',
+            hovertemplate:'%{text}<br>K: (%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>'
+        });
+        // Lines from X to K
+        for(let i=0;i<n;i++) {
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[embeddings[i][0],K[i][0]], y:[embeddings[i][1],K[i][1]], z:[embeddings[i][2],K[i][2]],
+                line:{color:'rgba(121,192,255,0.3)', width:1},
+                showlegend:false, hoverinfo:'skip'
+            });
+        }
+    }
+
+    // --- V output (where meaning ends up after flowing through simplices) ---
+    if(showVout) {
+        traces.push({type:'scatter3d', mode:'markers+text',
+            x:output.map(o=>o[0]), y:output.map(o=>o[1]), z:output.map(o=>o[2]),
+            text:tokens.map(t=>t+'(out)'), textposition:'bottom center', textfont:{size:8,color:'#56d364'},
+            marker:{size:5, color:'#56d364', symbol:'cross', opacity:0.8},
+            name:'V output',
+            hovertemplate:'%{text}<br>Output: (%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>'
+        });
+        // Lines from X to output
+        for(let i=0;i<n;i++) {
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[embeddings[i][0],output[i][0]], y:[embeddings[i][1],output[i][1]], z:[embeddings[i][2],output[i][2]],
+                line:{color:'rgba(86,211,100,0.3)', width:1.5, dash:'dot'},
+                showlegend:false, hoverinfo:'skip'
+            });
+        }
+    }
+
+    // --- Embedding points (main, on top) ---
+    const colors = embeddings.map(e => e[1]<-0.3?'#3fb950':e[1]>0.3?'#f0c040':'#58a6ff');
+    traces.push({type:'scatter3d', mode:'markers+text',
+        x:embeddings.map(e=>e[0]), y:embeddings.map(e=>e[1]), z:embeddings.map(e=>e[2]),
+        text:tokens, textposition:'top center', textfont:{size:11,color:'#fff'},
+        marker:{size:7, color:colors, line:{width:1,color:'#fff'}},
+        name:'X (embedding)',
+        hovertemplate:'%{text}<br>Gender:%{x:.2f} Being:%{y:.2f} Power:%{z:.2f}<extra></extra>'
+    });
+
+    Plotly.react('plotMain', traces, {
+        scene:{
+            xaxis:{title:'← Male | Female →',range:[-1.3,1.3],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            yaxis:{title:'← Animal | Human | Divine →',range:[-1.3,1.3],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            zaxis:{title:'← Weak | Strong →',range:[-0.2,1.2],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            bgcolor:'#0d1117',
+            camera:{eye:{x:1.7,y:1.3,z:0.9}}
+        },
+        paper_bgcolor:'#161b22', margin:{l:0,r:0,t:0,b:0}, showlegend:true,
+        legend:{x:0.01,y:0.99,bgcolor:'rgba(22,27,34,0.9)',bordercolor:'#30363d',font:{size:10}}
+    }, {responsive:true});
+
+    // --- SIMPLEX INFO ---
+    let info = '';
+    info += `<p style="color:#58a6ff;"><b>Vertices (0-simplices): ${n}</b> — each word is a point</p>`;
+    info += `<p style="color:#8b949e;margin:4px 0 8px;">${tokens.map((t,i)=>{
+        const e=embeddings[i];
+        return `<span style="color:${colors[i]}">${t}</span>(${e[0].toFixed(1)},${e[1].toFixed(1)},${e[2].toFixed(1)})`;
+    }).join(' &nbsp; ')}</p>`;
+
+    info += `<p class="s1"><b>Edges (1-simplices): ${edges.length}</b> — Q·K score above ε for both directions</p>`;
+    if(edges.length===0) info+='<p style="color:#8b949e;">None yet — lower ε or raise sharpness</p>';
+    for(const[i,j,w] of edges) {
+        info+=`<p class="s1">&nbsp; {${tokens[i]}, ${tokens[j]}} — min(α<sub>${i}→${j}</sub>, α<sub>${j}→${i}</sub>) = ${w.toFixed(4)}</p>`;
+        info+=`<p style="color:#8b949e;margin-left:16px;font-size:0.9em;">Q<sub>${tokens[i]}</sub>·K<sub>${tokens[j]}</sub> = ${dot3(Q[i],K[j]).toFixed(3)} &nbsp;|&nbsp; Q<sub>${tokens[j]}</sub>·K<sub>${tokens[i]}</sub> = ${dot3(Q[j],K[i]).toFixed(3)}</p>`;
+    }
+
+    info += `<p class="s2" style="margin-top:10px;"><b>Triangles (2-simplices): ${tris.length}</b> — three words jointly attending</p>`;
+    if(tris.length===0) info+='<p style="color:#8b949e;">No triangles — these form when 3 words all mutually attend above ε</p>';
+    for(const[i,j,k,w] of tris) {
+        info+=`<p class="s2">&nbsp; △ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}} — min α = ${w.toFixed(4)}</p>`;
+        info+=`<p style="color:#8b949e;margin-left:16px;font-size:0.9em;">These three words form a coherent semantic unit — attention composes them together.</p>`;
+    }
+
+    // Betti numbers
+    const parent=Array.from({length:n},(_,i)=>i);
+    const find=x=>parent[x]===x?x:(parent[x]=find(parent[x]));
+    for(const[i,j] of edges) parent[find(i)]=find(j);
+    const roots=new Set(); for(let i=0;i<n;i++) roots.add(find(i));
+    const b0=roots.size, b1=Math.max(0,edges.length-(n-b0)-tris.length);
+    info+=`<p style="margin-top:12px;color:#8b949e;"><b>β₀=${b0}</b> (connected components) &nbsp; <b>β₁=${b1}</b> (loops)</p>`;
+
+    // Show what V does
+    if(showVout) {
+        info+=`<p style="margin-top:12px;color:#56d364;"><b>V output:</b> Each word's new position = weighted average of all V vectors, weighted by attention.</p>`;
+        for(let i=0;i<n;i++) {
+            const top = attn[i].map((a,j)=>({a,j})).sort((a,b)=>b.a-a.a).slice(0,3);
+            info+=`<p style="color:#56d364;font-size:0.9em;">&nbsp; ${tokens[i]} → mostly from ${top.map(({a,j})=>`${tokens[j]}(${(a*100).toFixed(0)}%)`).join(' + ')}</p>`;
+        }
+    }
+
+    document.getElementById('simplexInfo').innerHTML = info;
+}
+
+// ============================================================
+// MATRIX EDITORS
+// ============================================================
+function renderMatrixEditors() {
+    ['wq','wk','wv'].forEach(id => {
+        const M = id==='wq'?WQ:id==='wk'?WK:WV;
+        const div = document.getElementById(id+'-edit');
+        let html='';
+        for(let i=0;i<3;i++) for(let j=0;j<3;j++) {
+            html+=`<input type="number" step="0.1" value="${M[i][j].toFixed(1)}" 
+                data-m="${id}" data-i="${i}" data-j="${j}" 
+                onchange="updateMat(this)">`;
+        }
+        div.innerHTML=html;
+    });
+}
+
+function updateMat(el) {
+    const m=el.dataset.m, i=+el.dataset.i, j=+el.dataset.j, v=+el.value;
+    if(m==='wq') WQ[i][j]=v;
+    else if(m==='wk') WK[i][j]=v;
+    else WV[i][j]=v;
+    render();
+}
+
+// ============================================================
+// EVENT LISTENERS — everything is live, no buttons needed
+// ============================================================
+let debounce;
+document.getElementById('sentence').addEventListener('input', ()=>{ clearTimeout(debounce); debounce=setTimeout(render,200); });
+document.getElementById('eps').addEventListener('input', function(){ document.getElementById('eps-v').textContent=parseFloat(this.value).toFixed(2); render(); });
+document.getElementById('sharp').addEventListener('input', function(){ document.getElementById('sharp-v').textContent=parseFloat(this.value).toFixed(2); render(); });
+['showQ','showK','showV','showLines'].forEach(id=>{ document.getElementById(id).addEventListener('change', render); });
+
+// ============================================================
+// INIT
+// ============================================================
+renderMatrixEditors();
+render();
+</script>
+</body>
+</html>
