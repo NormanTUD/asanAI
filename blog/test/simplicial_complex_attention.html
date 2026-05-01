@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplicial Complexes & Attention Mechanisms</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1628 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #64ffda, #bb86fc, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            color: #8892b0;
+            margin-bottom: 60px;
+            font-style: italic;
+        }
+
+        .section {
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #64ffda;
+            border-left: 4px solid #bb86fc;
+            padding-left: 15px;
+        }
+
+        .section-text {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #b0b0c0;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            background: rgba(10, 10, 30, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(100, 255, 218, 0.15);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(187, 134, 252, 0.5);
+            background: rgba(187, 134, 252, 0.1);
+            color: #bb86fc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(187, 134, 252, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(187, 134, 252, 0.2);
+        }
+
+        .btn.active {
+            background: rgba(187, 134, 252, 0.4);
+            border-color: #bb86fc;
+        }
+
+        .parallel-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .parallel-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .parallel-box {
+            background: rgba(15, 15, 40, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+
+        .parallel-box h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: #ff6b9d;
+        }
+
+        .parallel-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .parallel-box ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-left: 20px;
+            position: relative;
+            color: #9090a0;
+        }
+
+        .parallel-box ul li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: #64ffda;
+            font-size: 0.6em;
+            top: 12px;
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.05), rgba(187, 134, 252, 0.05));
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .insight-box h4 {
+            color: #64ffda;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-node {
+            background: rgba(187, 134, 252, 0.15);
+            border: 1px solid rgba(187, 134, 252, 0.4);
+            border-radius: 10px;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #d0c0f0;
+            min-width: 120px;
+        }
+
+        .flow-arrow {
+            color: #64ffda;
+            font-size: 1.5em;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+            color: #8892b0;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(10, 10, 30, 0.95);
+            border: 1px solid #64ffda;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.85em;
+            color: #e0e0e0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 250px;
+            z-index: 100;
+        }
+
+        .math {
+            font-family: 'Courier New', monospace;
+            background: rgba(100, 255, 218, 0.08);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #64ffda;
+            font-size: 0.95em;
+        }
+
+        .math-block {
+            font-family: 'Courier New', monospace;
+            background: rgba(100, 255, 218, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            color: #64ffda;
+            font-size: 1em;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            line-height: 2;
+        }
+
+        #particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #64ffda, #bb86fc, #ff6b9d);
+            z-index: 1000;
+            transition: width 0.1s;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <canvas id="particles-bg"></canvas>
+
+    <div class="container">
+        <h1>Simplicial Complexes & The Attention Mechanism</h1>
+        <p class="subtitle">A topological lens on how transformers see relationships</p>
+
+        <!-- Section 1: What are Simplicial Complexes? -->
+        <div class="section" id="sec1">
+            <h2 class="section-title">1. What is a Simplicial Complex?</h2>
+            <p class="section-text">
+                A <strong>simplicial complex</strong> is a combinatorial structure built from simple pieces called <em>simplices</em>. 
+                A 0-simplex is a point (vertex), a 1-simplex is an edge, a 2-simplex is a filled triangle, and so on. 
+                The key rule: any face of a simplex in the complex must also be in the complex. This captures 
+                <em>multi-way relationships</em> — not just pairwise connections, but higher-order interactions.
+            </p>
+            <div class="controls">
+                <button class="btn active" onclick="setSimplexDim(0)">0-Simplices (Vertices)</button>
+                <button class="btn" onclick="setSimplexDim(1)">1-Simplices (Edges)</button>
+                <button class="btn" onclick="setSimplexDim(2)">2-Simplices (Faces)</button>
+                <button class="btn" onclick="setSimplexDim(3)">Full Complex</button>
+            </div>
+            <div class="canvas-container">
+                <canvas id="simplicialCanvas"></canvas>
+                <div class="tooltip" id="tooltip1"></div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background: #64ffda;"></div> Vertices (tokens)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #bb86fc;"></div> Edges (pairwise attention)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: rgba(255,107,157,0.5);"></div> Faces (higher-order attention)</div>
+            </div>
+        </div>
+
+        <!-- Section 2: The Attention Mechanism -->
+        <div class="section" id="sec2">
+            <h2 class="section-title">2. The Attention Mechanism as a Weighted Graph</h2>
+            <p class="section-text">
+                Standard self-attention computes pairwise compatibility scores between all tokens. Given queries <span class="math">Q</span>, 
+                keys <span class="math">K</span>, and values <span class="math">V</span>:
+            </p>
+            <div class="math-block">
+                Attention(Q, K, V) = softmax(Q·Kᵀ / √d_k) · V
+            </div>
+            <p class="section-text">
+                This creates a <em>complete weighted graph</em> over tokens — every token attends to every other. 
+                But the attention weights define which edges are "strong." This is already a 1-skeleton of a simplicial complex!
+            </p>
+            <div class="controls">
+                <button class="btn active" onclick="setAttentionMode('full')">Full Attention</button>
+                <button class="btn" onclick="setAttentionMode('sparse')">Sparse Attention</button>
+                <button class="btn" onclick="setAttentionMode('threshold')">Thresholded</button>
+            </div>
+            <div class="canvas-container">
+                <canvas id="attentionCanvas"></canvas>
+                <div class="tooltip" id="tooltip2"></div>
+            </div>
+            <p class="section-text" style="font-size: 0.9em; color: #6a6a8a; margin-top: 10px;">
+                ↑ Click on a token node to see its attention distribution. Hover edges to see weights.
+            </p>
+        </div>
+
+        <!-- Section 3: The Bridge -->
+        <div class="section" id="sec3">
+            <h2 class="section-title">3. The Bridge: From Pairwise to Higher-Order</h2>
+            <p class="section-text">
+                Here's the key insight: attention weights define a <strong>filtered simplicial complex</strong>. 
+                When multiple tokens mutually attend to each other strongly, they form a <em>clique</em> — 
+                and cliques correspond to higher-dimensional simplices. A triangle of mutually-attending tokens 
+                is a 2-simplex. A group of four is a 3-simplex (tetrahedron).
+            </p>
+
+            <div class="flow-diagram">
+                <div class="flow-node">Attention<br>Weights</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">Threshold<br>ε-filter</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">Clique<br>Complex</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">Simplicial<br>Homology</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-node">Topological<br>Features</div>
+            </div>
+
+            <div class="controls">
+                <button class="btn active" onclick="setBridgeThreshold(0.8)">High Threshold (ε=0.8)</button>
+                <button class="btn" onclick="setBridgeThreshold(0.5)">Medium (ε=0.5)</button>
+                <button class="btn" onclick="setBridgeThreshold(0.2)">Low (ε=0.2)</button>
+                <button class="btn" onclick="animateFiltration()">▶ Animate Filtration</button>
+            </div>
+            <div class="canvas-container">
+                <canvas id="bridgeCanvas"></canvas>
+            </div>
+            <div class="insight-box">
+                <h4>💡 Key Insight: Persistent Homology of Attention</h4>
+                <p style="color: #9090a0; line-height: 1.7;">
+                    By varying the threshold ε from 1→0, we get a <strong>filtration</strong> — a nested sequence of simplicial complexes.
+                    Persistent homology tracks which topological features (connected components, loops, voids) appear and disappear.
+                    Features that <em>persist</em> across many thresholds represent robust multi-token relationships that 
+                    the attention mechanism has learned. This reveals structure invisible to pairwise analysis alone.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 4: Multi-Head as Multi-Complex -->
+        <div class="section" id="sec4">
+            <h2 class="section-title">4. Multi-Head Attention = Multiple Simplicial Complexes</h2>
+            <p class="section-text">
+                Each attention head learns different relationships. Topologically, each head defines a 
+                <em>different simplicial complex</em> over the same vertex set (tokens). The heads capture 
+                different "aspects" of structure — some might create complexes with many connected components 
+                (local attention), others with rich higher-dimensional structure (global semantic groupings).
+            </p>
+            <div class="controls">
+                <button class="btn active" onclick="setHead(0)">Head 1: Syntactic</button>
+                <button class="btn" onclick="setHead(1)">Head 2: Semantic</button>
+                <button class="btn" onclick="setHead(2)">Head 3: Positional</button>
+                <button class="btn" onclick="setHead(3)">All Heads Overlay</button>
+            </div>
+            <div class="canvas-container">
+                <canvas id="multiheadCanvas"></canvas>
+            </div>
+
+            <div class="parallel-container">
+                <div class="parallel-box">
+                    <h3>Simplicial Complex Vocabulary</h3>
+                    <ul>
+                        <li><strong>k-simplex:</strong> A set of (k+1) mutually related elements</li>
+                        <li><strong>Face:</strong> A sub-simplex (subset of a relationship)</li>
+                        <li><strong>Star:</strong> All simplices containing a given vertex</li>
+                        <li><strong>Betti numbers:</strong> Count of k-dimensional "holes"</li>
+                        <li><strong>Chain complex:</strong> Algebraic structure encoding boundaries</li>
+                        <li><strong>Filtration:</strong> Nested sequence of complexes</li>
+                    </ul>
+                </div>
+                <div class="parallel-box">
+                    <h3>Attention Mechanism Vocabulary</h3>
+                    <ul>
+                        <li><strong>k-simplex ↔</strong> Group of (k+1) mutually-attending tokens</li>
+                        <li><strong>Face ↔</strong> Sub-group still attending to each other</li>
+                        <li><strong>Star ↔</strong> All groups a token participates in</li>
+                        <li><strong>Betti numbers ↔</strong> Structural "holes" in attention patterns</li>
+                        <li><strong>Chain complex ↔</strong> How information flows across scales</li>
+                        <li><strong>Filtration ↔</strong> Attention at varying confidence thresholds</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Why This Matters -->
+        <div class="section" id="sec5">
+            <h2 class="section-title">5. Why This Matters: Topological Interpretability</h2>
+            <p class="section-text">
+                Understanding attention through simplicial complexes gives us:
+            </p>
+
+            <div class="canvas-container" style="height: 350px;">
+                <canvas id="summaryCanvas"></canvas>
+            </div>
+
+            <div class="insight-box">
+                <h4>🔬 Research Directions</h4>
+                <p style="color: #9090a0; line-height: 1.7;">
+                    <strong>1. Topological regularization:</strong> Penalize attention patterns with undesirable topological features (e.g., too many disconnected components).<br>
+                    <strong>2. Simplicial attention:</strong> Directly compute attention over simplices (not just pairs) — this is <em>simplicial transformers</em>.<br>
+                    <strong>3. Persistent diagrams as features:</strong> Use persistence diagrams of attention as input to downstream tasks for interpretability.<br>
+                    <strong>4. Sheaves on attention complexes:</strong> Assign vector spaces (value vectors) to simplices, recovering attention as a sheaf-theoretic operation.
+                </p>
+            </div>
+
+            <div class="math-block" style="margin-top: 30px; text-align: left; padding: 25px;">
+                <span style="color: #ff6b9d;">// The Simplicial Attention Analogy</span><br><br>
+                Standard Attention: &nbsp; α(i,j) = softmax(q_i · k_j / √d)<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;→ Defines weighted 1-skeleton (graph)<br><br>
+                Simplicial Attention: α(σ) = softmax(f(q_σ₀, ..., q_σₖ, k_σ₀, ..., k_σₖ))<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;→ Defines weighted simplicial complex<br><br>
+                <span style="color: #bb86fc;">Homology of attention reveals:</span><br>
+                &nbsp;&nbsp;β₀ = # of disconnected "attention clusters"<br>
+                &nbsp;&nbsp;β₁ = # of "attention loops" (cyclic dependencies)<br>
+                &nbsp;&nbsp;β₂ = # of "attention voids" (missing higher-order relations)
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ PARTICLE BACKGROUND ============
+        const bgCanvas = document.getElementById('particles-bg');
+        const bgCtx = bgCanvas.getContext('2d');
+
+        function resizeBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        resizeBg();
+        window.addEventListener('resize', resizeBg);
+
+        const particles = [];
+        for (let i = 0; i < 60; i++) {
+            particles.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.5) * 0.3,
+                r: Math.random() * 2 + 1
+            });
+        }
+
+        function drawBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+
+                bgCtx.beginPath();
+                bgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                bgCtx.fillStyle = 'rgba(100, 255, 218, 0.3)';
+                bgCtx.fill();
+            });
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        bgCtx.beginPath();
+                        bgCtx.moveTo(particles[i].x, particles[i].y);
+                        bgCtx.lineTo(particles[j].x, particles[j].y);
+                        bgCtx.strokeStyle = `rgba(187, 134, 252, ${0.1 * (1 - dist / 150)})`;
+                        bgCtx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(drawBg);
+        }
+        drawBg();
+
+        // ============ SCROLL ANIMATIONS ============
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        const sections = document.querySelectorAll('.section');
+
+        function onScroll() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            scrollIndicator.style.width = (scrollTop / docHeight * 100) + '%';
+
+            sections.forEach(sec => {
+                const rect = sec.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.8) {
+                    sec.classList.add('visible');
+                }
+            });
+        }
+        window.addEventListener('scroll', onScroll);
+        onScroll();
+
+        // ============ SECTION 1: SIMPLICIAL COMPLEX ============
+        const simpCanvas = document.getElementById('simplicialCanvas');
+        const simpCtx = simpCanvas.getContext('2d');
+        let currentDim = 0;
+
+        const simpVertices = [
+            { x: 0.2, y: 0.3, label: 'The' },
+            { x: 0.4, y: 0.15, label: 'cat' },
+            { x: 0.6, y: 0.25, label: 'sat' },
+            { x: 0.8, y: 0.3, label: 'on' },
+            { x: 0.35, y: 0.55, label: 'the' },
+            { x: 0.55, y: 0.65, label: 'mat' },
+            { x: 0.75, y: 0.6, label: 'quietly' },
+            { x: 0.15, y: 0.7, label: 'warm' }
+        ];
+
+        const simpEdges = [
+            [0, 1], [1, 2], [2, 3], [1, 4], [4, 5],
+            [2, 5], [3, 6], [5, 6], [2, 6], [0, 4], [4, 7]
+        ];
+
+        const simpFaces = [
+            [1, 2, 5], [2, 5, 6], [2, 3, 6], [0, 1, 4]
+        ];
+
+        function resizeCanvas(canvas) {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        function drawSimplicialComplex() {
+            resizeCanvas(simpCanvas);
+            const w = simpCanvas.width;
+            const h = simpCanvas.height;
+            simpCtx.clearRect(0, 0, w, h);
+
+            const verts = simpVertices.map(v => ({ x: v.x * w, y: v.y * h, label: v.label }));
+
+            // Draw faces (2-simplices)
+            if (currentDim >= 2) {
+                simpFaces.forEach((face, idx) => {
+                    simpCtx.beginPath();
+                    simpCtx.moveTo(verts[face[0]].x, verts[face[0]].y);
+                    simpCtx.lineTo(verts[face[1]].x, verts[face[1]].y);
+                    simpCtx.lineTo(verts[face[2]].x, verts[face[2]].y);
+                    simpCtx.closePath();
+                    const alpha = 0.15 + 0.05 * Math.sin(Date.now() * 0.002 + idx);
+                    simpCtx.fillStyle = `rgba(255, 107, 157, ${alpha})`;
+                    simpCtx.fill();
+                    simpCtx.strokeStyle = 'rgba(255, 107, 157, 0.4)';
+                    simpCtx.lineWidth = 1;
+                    simpCtx.stroke();
+                });
+            }
+
+            // Draw edges (1-simplices)
+            if (currentDim >= 1) {
+                simpEdges.forEach(([i, j]) => {
+                    simpCtx.beginPath();
+                    simpCtx.moveTo(verts[i].x, verts[i].y);
+                    simpCtx.lineTo(verts[j].x, verts[j].y);
+                    simpCtx.strokeStyle = 'rgba(187, 134, 252, 0.6)';
+                    simpCtx.lineWidth = 2;
+                    simpCtx.stroke();
+                });
+            }
+
+            // Draw vertices (0-simplices)
+            verts.forEach((v, i) => {
+                const pulse = 1 + 0.1 * Math.sin(Date.now() * 0.003 + i);
+                const r = 8 * pulse;
+
+                simpCtx.beginPath();
+                simpCtx.arc(v.x, v.y, r + 4, 0, Math.PI * 2);
+                simpCtx.fillStyle = 'rgba(100, 255, 218, 0.1)';
+                simpCtx.fill();
+
+                simpCtx.beginPath();
+                simpCtx.arc(v.x, v.y, r, 0, Math.PI * 2);
+                simpCtx.fillStyle = '#64ffda';
+                simpCtx.fill();
+
+                simpCtx.font = '13px Georgia';
+                simpCtx.fillStyle = '#e0e0e0';
+                simpCtx.textAlign = 'center';
+                simpCtx.fillText(v.label, v.x, v.y - 18);
+            });
+
+            // Dimension label
+            const dimLabels = ['0-simplices: Vertices (tokens)', '1-simplices: Edges (pairwise relations)', '2-simplices: Filled triangles (3-way relations)', 'Full simplicial complex'];
+            simpCtx.font = '14px Georgia';
+            simpCtx.fillStyle = '#64ffda';
+            simpCtx.textAlign = 'left';
+            simpCtx.fillText(dimLabels[currentDim], 15, 30);
+
+            requestAnimationFrame(drawSimplicialComplex);
+        }
+
+        function setSimplexDim(d) {
+            currentDim = d;
+            document.querySelectorAll('#sec1 .btn').forEach((b, i) => b.classList.toggle('active', i === d));
+            if (d === 3) currentDim = 2; // Show all for "Full Complex"
+            if (d === 3) currentDim = 3;
+        }
+
+        // Treat dim 3 as showing everything
+        const origDraw = drawSimplicialComplex;
+
+        drawSimplicialComplex();
+
+        // ============ SECTION 2: ATTENTION MECHANISM ============
+        const attCanvas = document.getElementById('attentionCanvas');
+        const attCtx = attCanvas.getContext('2d');
+        let attMode = 'full';
+        let selectedToken = -1;
+
+        const tokens = ['The', 'cat', 'sat', 'on', 'the', 'mat'];
+        const attentionMatrix = [
+            [0.1, 0.3, 0.15, 0.05, 0.25, 0.15],
+            [0.15, 0.2, 0.35, 0.05, 0.1, 0.15],
+            [0.1, 0.3, 0.1, 0.2, 0.05, 0.25],
+            [0.05, 0.1, 0.3, 0.1, 0.15, 0.3],
+            [0.3, 0.1, 0.05, 0.1, 0.15, 0.3],
+            [0.05, 0.15, 0.25, 0.25, 0.2, 0.1]
+        ];
+
+        function drawAttention() {
+            resizeCanvas(attCanvas);
+            const w = attCanvas.width;
+            const h = attCanvas.height;
+            attCtx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const radius = Math.min(w, h) * 0.35;
+
+            const tokenPositions = tokens.map((t, i) => {
+                const angle = (i / tokens.length) * Math.PI * 2 - Math.PI / 2;
+                return {
+                    x: cx + radius * Math.cos(angle),
+                    y: cy + radius * Math.sin(angle),
+                    label: t
+                };
+            });
+
+            // Draw attention edges
+            for (let i = 0; i < tokens.length; i++) {
+                for (let j = 0; j < tokens.length; j++) {
+                    if (i === j) continue;
+                    let weight = attentionMatrix[i][j];
+
+                    if (attMode === 'sparse' && !(j === i - 1 || j === i + 1 || j === i - 2 || j === i + 2)) continue;
+                    if (attMode === 'threshold' && weight < 0.2) continue;
+
+                    if (selectedToken >= 0 && selectedToken !== i) continue;
+
+                    const alpha = weight * 1.5;
+                    const lineWidth = weight * 8;
+
+                    attCtx.beginPath();
+                    attCtx.moveTo(tokenPositions[i].x, tokenPositions[i].y);
+                    attCtx.lineTo(tokenPositions[j].x, tokenPositions[j].y);
+                    attCtx.strokeStyle = `rgba(187, 134, 252, ${alpha})`;
+                    attCtx.lineWidth = lineWidth;
+                    attCtx.stroke();
+
+                    // Draw arrow
+                    const dx = tokenPositions[j].x - tokenPositions[i].x;
+                    const dy = tokenPositions[j].y - tokenPositions[i].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    const arrowX = tokenPositions[j].x - nx * 20;
+                    const arrowY = tokenPositions[j].y - ny * 20;
+
+                    if (weight > 0.15) {
+                        attCtx.beginPath();
+                        attCtx.moveTo(arrowX, arrowY);
+                        attCtx.lineTo(arrowX - nx * 8 + ny * 4, arrowY - ny * 8 - nx * 4);
+                        attCtx.lineTo(arrowX - nx * 8 - ny * 4, arrowY - ny * 8 + nx * 4);
+                        attCtx.closePath();
+                        attCtx.fillStyle = `rgba(187, 134, 252, ${alpha})`;
+                        attCtx.fill();
+                    }
+                }
+            }
+
+            // Draw token nodes
+            tokenPositions.forEach((tp, i) => {
+                const isSelected = selectedToken === i;
+                const pulse = 1 + 0.08 * Math.sin(Date.now() * 0.004 + i);
+                const r = (isSelected ? 22 : 16) * pulse;
+
+                attCtx.beginPath();
+                attCtx.arc(tp.x, tp.y, r + 6, 0, Math.PI * 2);
+                attCtx.fillStyle = isSelected ? 'rgba(100, 255, 218, 0.2)' : 'rgba(100, 255, 218, 0.08)';
+                attCtx.fill();
+
+                attCtx.beginPath();
+                attCtx.arc(tp.x, tp.y, r, 0, Math.PI * 2);
+                attCtx.fillStyle = isSelected ? '#64ffda' : '#2a9d8f';
+                attCtx.fill();
+
+                attCtx.font = 'bold 13px Georgia';
+                attCtx.fillStyle = '#0a0a1a';
+                attCtx.textAlign = 'center';
+                attCtx.textBaseline = 'middle';
+                attCtx.fillText(tp.label, tp.x, tp.y);
+
+                // Label outside
+                const labelDist = r + 22;
+                const angle = (i / tokens.length) * Math.PI * 2 - Math.PI / 2;
+                attCtx.font = '11px Georgia';
+                attCtx.fillStyle = '#8892b0';
+                attCtx.fillText(`token[${i}]`, tp.x + Math.cos(angle) * labelDist * 0.5, tp.y + Math.sin(angle) * labelDist + 15);
+            });
+
+            // Mode label
+            const modeLabels = { full: 'Full Attention (dense graph)', sparse: 'Sparse Attention (local window)', threshold: 'Thresholded (weight > 0.2)' };
+            attCtx.font = '14px Georgia';
+            attCtx.fillStyle = '#64ffda';
+            attCtx.textAlign = 'left';
+            attCtx.fillText(modeLabels[attMode], 15, 30);
+
+            requestAnimationFrame(drawAttention);
+        }
+
+        attCanvas.addEventListener('click', (e) => {
+            resizeCanvas(attCanvas);
+            const rect = attCanvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            const w = attCanvas.width;
+            const h = attCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const radius = Math.min(w, h) * 0.35;
+
+            const tokenPositions = tokens.map((t, i) => {
+                const angle = (i / tokens.length) * Math.PI * 2 - Math.PI / 2;
+                return { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) };
+            });
+
+            let clicked = -1;
+            tokenPositions.forEach((tp, i) => {
+                const dx = mx - tp.x;
+                const dy = my - tp.y;
+                if (Math.sqrt(dx * dx + dy * dy) < 25) clicked = i;
+            });
+
+            selectedToken = (clicked === selectedToken) ? -1 : clicked;
+        });
+
+        function setAttentionMode(mode) {
+            attMode = mode;
+            selectedToken = -1;
+            document.querySelectorAll('#sec2 .btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        drawAttention();
+
+        // ============ SECTION 3: THE BRIDGE ============
+        const bridgeCanvas = document.getElementById('bridgeCanvas');
+        const bridgeCtx = bridgeCanvas.getContext('2d');
+        let bridgeThreshold = 0.8;
+        let animating = false;
+
+        const bridgeTokens = ['I', 'love', 'deep', 'learning', 'models', 'today'];
+        const bridgeWeights = [
+            [1.0, 0.7, 0.2, 0.3, 0.1, 0.05],
+            [0.7, 1.0, 0.4, 0.8, 0.6, 0.1],
+            [0.2, 0.4, 1.0, 0.9, 0.3, 0.05],
+            [0.3, 0.8, 0.9, 1.0, 0.7, 0.15],
+            [0.1, 0.6, 0.3, 0.7, 1.0, 0.2],
+            [0.05, 0.1, 0.05, 0.15, 0.2, 1.0]
+        ];
+
+        function drawBridge() {
+            resizeCanvas(bridgeCanvas);
+            const w = bridgeCanvas.width;
+            const h = bridgeCanvas.height;
+            bridgeCtx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const radius = Math.min(w, h) * 0.33;
+
+            const positions = bridgeTokens.map((t, i) => {
+                const angle = (i / bridgeTokens.length) * Math.PI * 2 - Math.PI / 2;
+                return { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle), label: t };
+            });
+
+            // Find cliques (2-simplices) above threshold
+            const activeEdges = [];
+            for (let i = 0; i < bridgeTokens.length; i++) {
+                for (let j = i + 1; j < bridgeTokens.length; j++) {
+                    if (bridgeWeights[i][j] >= bridgeThreshold) {
+                        activeEdges.push([i, j]);
+                    }
+                }
+            }
+
+            // Find triangles (all three edges present)
+            const triangles = [];
+            for (let i = 0; i < bridgeTokens.length; i++) {
+                for (let j = i + 1; j < bridgeTokens.length; j++) {
+                    for (let k = j + 1; k < bridgeTokens.length; k++) {
+                        if (bridgeWeights[i][j] >= bridgeThreshold &&
+                            bridgeWeights[i][k] >= bridgeThreshold &&
+                            bridgeWeights[j][k] >= bridgeThreshold) {
+                            triangles.push([i, j, k]);
+                        }
+                    }
+                }
+            }
+
+            // Draw triangles
+            triangles.forEach((tri, idx) => {
+                bridgeCtx.beginPath();
+                bridgeCtx.moveTo(positions[tri[0]].x, positions[tri[0]].y);
+                bridgeCtx.lineTo(positions[tri[1]].x, positions[tri[1]].y);
+                bridgeCtx.lineTo(positions[tri[2]].x, positions[tri[2]].y);
+                bridgeCtx.closePath();
+                const alpha = 0.2 + 0.05 * Math.sin(Date.now() * 0.002 + idx);
+                bridgeCtx.fillStyle = `rgba(255, 107, 157, ${alpha})`;
+                bridgeCtx.fill();
+            });
+
+            // Draw edges
+            activeEdges.forEach(([i, j]) => {
+                const weight = bridgeWeights[i][j];
+                bridgeCtx.beginPath();
+                bridgeCtx.moveTo(positions[i].x, positions[i].y);
+                bridgeCtx.lineTo(positions[j].x, positions[j].y);
+                bridgeCtx.strokeStyle = `rgba(187, 134, 252, ${weight})`;
+                bridgeCtx.lineWidth = weight * 4;
+                bridgeCtx.stroke();
+            });
+
+            // Draw nodes
+            positions.forEach((p, i) => {
+                const hasEdge = activeEdges.some(([a, b]) => a === i || b === i);
+                const r = hasEdge ? 14 : 10;
+
+                bridgeCtx.beginPath();
+                bridgeCtx.arc(p.x, p.y, r, 0, Math.PI * 2);
+                bridgeCtx.fillStyle = hasEdge ? '#64ffda' : '#2a5a50';
+                bridgeCtx.fill();
+
+                bridgeCtx.font = 'bold 12px Georgia';
+                bridgeCtx.fillStyle = '#e0e0e0';
+                bridgeCtx.textAlign = 'center';
+                bridgeCtx.fillText(p.label, p.x, p.y - r - 8);
+            });
+
+            // Info
+            bridgeCtx.font = '14px Georgia';
+            bridgeCtx.fillStyle = '#64ffda';
+            bridgeCtx.textAlign = 'left';
+            bridgeCtx.fillText(`Threshold ε = ${bridgeThreshold.toFixed(2)}`, 15, 30);
+            bridgeCtx.fillStyle = '#8892b0';
+            bridgeCtx.fillText(`Edges: ${activeEdges.length} | Triangles (2-simplices): ${triangles.length}`, 15, 55);
+
+            // Betti number estimate
+            const components = countComponents(bridgeTokens.length, activeEdges);
+            bridgeCtx.fillText(`β₀ (components): ${components} | β₁ (loops): ${activeEdges.length - (bridgeTokens.length - components) - triangles.length > 0 ? activeEdges.length - (bridgeTokens.length - components) - triangles.length : 0}`, 15, 80);
+
+            requestAnimationFrame(drawBridge);
+        }
+
+        function countComponents(n, edges) {
+            const parent = Array.from({ length: n }, (_, i) => i);
+            function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+            function union(a, b) { parent[find(a)] = find(b); }
+            edges.forEach(([a, b]) => union(a, b));
+            const roots = new Set();
+            for (let i = 0; i < n; i++) roots.add(find(i));
+            return roots.size;
+        }
+
+        function setBridgeThreshold(t) {
+            bridgeThreshold = t;
+            animating = false;
+            document.querySelectorAll('#sec3 .btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function animateFiltration() {
+            animating = true;
+            bridgeThreshold = 1.0;
+            document.querySelectorAll('#sec3 .btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            function step() {
+                if (!animating) return;
+                bridgeThreshold -= 0.005;
+                if (bridgeThreshold <= 0.05) {
+                    bridgeThreshold = 1.0;
+                }
+                setTimeout(step, 50);
+            }
+            step();
+        }
+
+        drawBridge();
+
+        // ============ SECTION 4: MULTI-HEAD ============
+        const mhCanvas = document.getElementById('multiheadCanvas');
+        const mhCtx = mhCanvas.getContext('2d');
+        let currentHead = 0;
+
+        const headColors = [
+            { edge: 'rgba(100, 255, 218, 0.6)', face: 'rgba(100, 255, 218, 0.15)', node: '#64ffda' },
+            { edge: 'rgba(187, 134, 252, 0.6)', face: 'rgba(187, 134, 252, 0.15)', node: '#bb86fc' },
+            { edge: 'rgba(255, 107, 157, 0.6)', face: 'rgba(255, 107, 157, 0.15)', node: '#ff6b9d' },
+            { edge: 'rgba(255, 200, 100, 0.6)', face: 'rgba(255, 200, 100, 0.15)', node: '#ffc864' }
+        ];
+
+        // Different attention patterns per head
+        const headPatterns = [
+            // Head 1: Syntactic (adjacent tokens)
+            { edges: [[0,1],[1,2],[2,3],[3,4],[4,5]], faces: [[0,1,2],[3,4,5]] },
+            // Head 2: Semantic (meaning clusters)
+            { edges: [[0,3],[1,4],[2,5],[0,5],[1,2],[3,4]], faces: [[1,2,5],[0,3,5]] },
+            // Head 3: Positional (periodic)
+            { edges: [[0,2],[2,4],[1,3],[3,5],[0,4]], faces: [[0,2,4]] },
+            // Head 4: All overlay
+            { edges: [], faces: [] }
+        ];
+
+        const mhTokens = ['She', 'wrote', 'beautiful', 'code', 'every', 'day'];
+
+        function drawMultihead() {
+            resizeCanvas(mhCanvas);
+            const w = mhCanvas.width;
+            const h = mhCanvas.height;
+            mhCtx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const radius = Math.min(w, h) * 0.33;
+
+            const positions = mhTokens.map((t, i) => {
+                const angle = (i / mhTokens.length) * Math.PI * 2 - Math.PI / 2;
+                return { x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle), label: t };
+            });
+
+            function drawHead(headIdx, alpha = 1.0) {
+                const pattern = headPatterns[headIdx];
+                const colors = headColors[headIdx];
+
+                // Faces
+                pattern.faces.forEach((face, idx) => {
+                    mhCtx.beginPath();
+                    mhCtx.moveTo(positions[face[0]].x, positions[face[0]].y);
+                    mhCtx.lineTo(positions[face[1]].x, positions[face[1]].y);
+                    mhCtx.lineTo(positions[face[2]].x, positions[face[2]].y);
+                    mhCtx.closePath();
+                    mhCtx.fillStyle = colors.face.replace(/[\d.]+\)$/, (alpha * 0.15) + ')');
+                    mhCtx.fill();
+                    mhCtx.strokeStyle = colors.edge.replace(/[\d.]+\)$/, (alpha * 0.3) + ')');
+                    mhCtx.lineWidth = 1;
+                    mhCtx.stroke();
+                });
+
+                // Edges
+                pattern.edges.forEach(([i, j]) => {
+                    mhCtx.beginPath();
+                    mhCtx.moveTo(positions[i].x, positions[i].y);
+                    mhCtx.lineTo(positions[j].x, positions[j].y);
+                    mhCtx.strokeStyle = colors.edge.replace(/[\d.]+\)$/, alpha + ')');
+                    mhCtx.lineWidth = 2.5 * alpha;
+                    mhCtx.stroke();
+                });
+            }
+
+            if (currentHead === 3) {
+                // Draw all heads overlaid
+                drawHead(0, 0.6);
+                drawHead(1, 0.6);
+                drawHead(2, 0.6);
+            } else {
+                drawHead(currentHead, 1.0);
+            }
+
+            // Draw nodes
+            positions.forEach((p, i) => {
+                const pulse = 1 + 0.06 * Math.sin(Date.now() * 0.003 + i * 0.7);
+                const r = 14 * pulse;
+
+                mhCtx.beginPath();
+                mhCtx.arc(p.x, p.y, r, 0, Math.PI * 2);
+                mhCtx.fillStyle = currentHead === 3 ? '#ffffff' : headColors[currentHead].node;
+                mhCtx.fill();
+
+                mhCtx.font = 'bold 11px Georgia';
+                mhCtx.fillStyle = '#0a0a1a';
+                mhCtx.textAlign = 'center';
+                mhCtx.textBaseline = 'middle';
+                mhCtx.fillText(p.label, p.x, p.y);
+            });
+
+            // Head label
+            const headNames = ['Head 1: Syntactic (adjacent)', 'Head 2: Semantic (meaning)', 'Head 3: Positional (periodic)', 'All Heads Overlaid'];
+            mhCtx.font = '14px Georgia';
+            mhCtx.fillStyle = currentHead === 3 ? '#ffc864' : headColors[currentHead].node;
+            mhCtx.textAlign = 'left';
+            mhCtx.fillText(headNames[currentHead], 15, 30);
+
+            if (currentHead < 3) {
+                const pattern = headPatterns[currentHead];
+                mhCtx.fillStyle = '#8892b0';
+                mhCtx.fillText(`Edges: ${pattern.edges.length} | 2-Simplices: ${pattern.faces.length}`, 15, 55);
+            }
+
+            requestAnimationFrame(drawMultihead);
+        }
+
+        function setHead(h) {
+            currentHead = h;
+            document.querySelectorAll('#sec4 .btn').forEach((b, i) => b.classList.toggle('active', i === h));
+        }
+
+        drawMultihead();
+
+        // ============ SECTION 5: SUMMARY VISUALIZATION ============
+        const sumCanvas = document.getElementById('summaryCanvas');
+        const sumCtx = sumCanvas.getContext('2d');
+
+        const benefits = [
+            { label: 'Multi-scale\nAnalysis', icon: '🔍', desc: 'See relationships at different granularities' },
+            { label: 'Topological\nInvariants', icon: '🧬', desc: 'Betti numbers characterize attention structure' },
+            { label: 'Robustness\nMetrics', icon: '🛡️', desc: 'Persistent features = robust attention' },
+            { label: 'Higher-Order\nInteractions', icon: '🔗', desc: 'Beyond pairwise: group relationships' },
+            { label: 'Interpretability\nTools', icon: '🧠', desc: 'Visualize what attention truly captures' }
+        ];
+
+        function drawSummary() {
+            resizeCanvas(sumCanvas);
+            const w = sumCanvas.width;
+            const h = sumCanvas.height;
+            sumCtx.clearRect(0, 0, w, h);
+
+            const spacing = w / (benefits.length + 1);
+
+            benefits.forEach((b, i) => {
+                const x = spacing * (i + 1);
+                const y = h / 2;
+                const pulse = 1 + 0.05 * Math.sin(Date.now() * 0.002 + i * 1.2);
+                const r = 40 * pulse;
+
+                // Glow
+                const gradient = sumCtx.createRadialGradient(x, y, 0, x, y, r + 20);
+                gradient.addColorStop(0, 'rgba(100, 255, 218, 0.1)');
+                gradient.addColorStop(1, 'rgba(100, 255, 218, 0)');
+                sumCtx.beginPath();
+                sumCtx.arc(x, y, r + 20, 0, Math.PI * 2);
+                sumCtx.fillStyle = gradient;
+                sumCtx.fill();
+
+                // Circle
+                sumCtx.beginPath();
+                sumCtx.arc(x, y, r, 0, Math.PI * 2);
+                sumCtx.fillStyle = 'rgba(15, 15, 40, 0.8)';
+                sumCtx.fill();
+                sumCtx.strokeStyle = 'rgba(100, 255, 218, 0.5)';
+                sumCtx.lineWidth = 2;
+                sumCtx.stroke();
+
+                // Icon
+                sumCtx.font = '24px serif';
+                sumCtx.textAlign = 'center';
+                sumCtx.textBaseline = 'middle';
+                sumCtx.fillText(b.icon, x, y - 5);
+
+                // Label
+                sumCtx.font = '11px Georgia';
+                sumCtx.fillStyle = '#e0e0e0';
+                const lines = b.label.split('\n');
+                lines.forEach((line, li) => {
+                    sumCtx.fillText(line, x, y + r + 18 + li * 15);
+                });
+
+                // Connecting lines
+                if (i < benefits.length - 1) {
+                    const nextX = spacing * (i + 2);
+                    sumCtx.beginPath();
+                    sumCtx.moveTo(x + r + 5, y);
+                    sumCtx.lineTo(nextX - r - 5, y);
+                    sumCtx.strokeStyle = 'rgba(187, 134, 252, 0.3)';
+                    sumCtx.lineWidth = 1.5;
+                    sumCtx.setLineDash([5, 5]);
+                    sumCtx.stroke();
+                    sumCtx.setLineDash([]);
+                }
+            });
+
+            // Title
+            sumCtx.font = '13px Georgia';
+            sumCtx.fillStyle = '#bb86fc';
+            sumCtx.textAlign = 'center';
+            sumCtx.fillText('What Simplicial Topology Reveals About Attention', w / 2, 25);
+
+            requestAnimationFrame(drawSummary);
+        }
+
+        drawSummary();
+
+        // ============ HANDLE RESIZE ============
+        window.addEventListener('resize', () => {
+            resizeBg();
+        });
+    </script>
+</body>
+</html>
