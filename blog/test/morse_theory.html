@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morse Theory — Interactive Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #64b5f6, #ce93d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 50px;
+            font-style: italic;
+        }
+
+        h2 {
+            color: #64b5f6;
+            margin: 40px 0 20px;
+            font-size: 1.6em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #ce93d8;
+            margin: 25px 0 15px;
+            font-size: 1.2em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .highlight {
+            background: #1a1a3a;
+            border-left: 4px solid #64b5f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight.important {
+            border-left-color: #ce93d8;
+        }
+
+        /* Interactive Sections */
+        .interactive-section {
+            background: #111128;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .interactive-section h3 {
+            margin-top: 0;
+        }
+
+        canvas {
+            display: block;
+            margin: 15px auto;
+            border-radius: 8px;
+            background: #0d0d20;
+            border: 1px solid #2a2a4a;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #0d0d20;
+            border-radius: 8px;
+        }
+
+        .controls label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .controls input[type="range"] {
+            width: 200px;
+            accent-color: #64b5f6;
+        }
+
+        .controls select, .controls button {
+            background: #1a1a3a;
+            color: #e0e0e0;
+            border: 1px solid #3a3a5a;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .controls button:hover {
+            background: #2a2a5a;
+        }
+
+        .controls button.active {
+            background: #64b5f6;
+            color: #000;
+        }
+
+        .value-display {
+            color: #64b5f6;
+            font-family: monospace;
+            font-size: 1.1em;
+            min-width: 50px;
+        }
+
+        .info-box {
+            background: #0d0d20;
+            border: 1px solid #3a3a5a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+        }
+
+        .info-box .critical-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .critical-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .badge-min { background: #1b5e20; color: #a5d6a7; }
+        .badge-saddle { background: #e65100; color: #ffcc80; }
+        .badge-max { background: #b71c1c; color: #ef9a9a; }
+
+        .topology-display {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+            padding: 15px;
+            background: #0d0d20;
+            border-radius: 8px;
+        }
+
+        .topo-item {
+            text-align: center;
+        }
+
+        .topo-item .label {
+            font-size: 0.8em;
+            color: #888;
+        }
+
+        .topo-item .value {
+            font-size: 1.4em;
+            color: #ce93d8;
+            font-weight: bold;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: #1a1a3a;
+            border: 1px solid #3a3a5a;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .tab.active {
+            background: #2a2a5a;
+            color: #64b5f6;
+            border-bottom-color: #2a2a5a;
+        }
+
+        .explanation {
+            color: #aaa;
+            font-size: 0.9em;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .controls input[type="range"] {
+                width: 100%;
+            }
+            canvas {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Morse Theory</h1>
+        <p class="subtitle">An Interactive Visual Exploration</p>
+
+        <p>Morse theory reveals a profound connection: the shape (topology) of a space can be completely understood by studying a single smooth function on it — specifically, by examining its <strong>critical points</strong> (peaks, valleys, and saddles).</p>
+
+        <div class="highlight">
+            <strong>The Core Idea:</strong> As you raise a "water level" across a landscape, the topology of the submerged region changes <em>only</em> when the water reaches a critical point. Between critical points, nothing topologically interesting happens.
+        </div>
+
+        <!-- ============ DEMO 1: 1D Morse Function ============ -->
+        <h2>1. Critical Points of a Function</h2>
+        <p>Let's start simple. Below is a smooth function <em>f(x)</em>. The critical points are where the derivative is zero — the peaks and valleys. Drag the water level to see how the "submerged" region (where f(x) ≤ t) changes.</p>
+
+        <div class="interactive-section">
+            <h3>🔬 Experiment: 1D Function & Level Sets</h3>
+            <canvas id="canvas1d" width="700" height="300"></canvas>
+            <div class="controls">
+                <label>Water Level (t):</label>
+                <input type="range" id="level1d" min="0" max="100" value="50">
+                <span class="value-display" id="level1d-val">0.00</span>
+                <label style="margin-left:20px;">Function:</label>
+                <select id="func1d-select">
+                    <option value="wave">Wavy (3 critical pts)</option>
+                    <option value="double">Double Well</option>
+                    <option value="cubic">Cubic-like</option>
+                </select>
+            </div>
+            <div class="info-box">
+                <strong>Observation:</strong> <span id="obs1d">Move the slider to explore.</span>
+                <div class="critical-info" id="critical-info-1d"></div>
+            </div>
+            <p class="explanation">Notice: the number of separate "submerged intervals" only changes at critical values. Between critical values, the intervals just grow smoothly.</p>
+        </div>
+
+        <!-- ============ DEMO 2: 2D Surface with height ============ -->
+        <h2>2. Surfaces & Height Functions</h2>
+        <p>Now let's move to 2D. Below you see a surface viewed from above (as a contour/height map). The "level set" at height <em>t</em> consists of all points at exactly that height — these are the contour lines. Watch how the topology of the sublevel set {f ≤ t} evolves.</p>
+
+        <div class="interactive-section">
+            <h3>🏔️ Experiment: 2D Height Function</h3>
+            <canvas id="canvas2d" width="700" height="400"></canvas>
+            <div class="controls">
+                <label>Water Level (t):</label>
+                <input type="range" id="level2d" min="0" max="100" value="20">
+                <span class="value-display" id="level2d-val">0.00</span>
+                <label style="margin-left:20px;">Surface:</label>
+                <select id="func2d-select">
+                    <option value="twopeaks">Two Peaks + Saddle</option>
+                    <option value="volcano">Volcano (Ring)</option>
+                    <option value="monkey">Monkey Saddle</option>
+                </select>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#1b5e20;"></div> Minimum (index 0)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#ff9800;"></div> Saddle (index 1)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#d32f2f;"></div> Maximum (index 2)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:rgba(100,181,246,0.3);"></div> Submerged region (f ≤ t)</div>
+            </div>
+            <div class="info-box">
+                <strong>Topology of submerged region:</strong>
+                <div class="topology-display">
+                    <div class="topo-item"><div class="value" id="topo-components">0</div><div class="label">Components (b₀)</div></div>
+                    <div class="topo-item"><div class="value" id="topo-loops">0</div><div class="label">Loops/Holes (b₁)</div></div>
+                    <div class="topo-item"><div class="value" id="topo-euler">0</div><div class="label">Euler char. χ</div></div>
+                </div>
+                <span id="obs2d" style="color:#aaa; font-size:0.9em;"></span>
+            </div>
+        </div>
+
+        <!-- ============ DEMO 3: The Torus ============ -->
+        <h2>3. The Classic Example: Slicing a Torus</h2>
+        <p>The most famous example in Morse theory: stand a donut (torus) upright and slice it with a rising horizontal plane. The height function has exactly 4 critical points. Watch the sublevel set evolve from nothing → disk → cylinder → torus-minus-cap → full torus.</p>
+
+        <div class="interactive-section">
+            <h3>🍩 Experiment: The Torus</h3>
+            <canvas id="canvasTorus" width="700" height="400"></canvas>
+            <div class="controls">
+                <label>Height (t):</label>
+                <input type="range" id="levelTorus" min="0" max="100" value="0">
+                <span class="value-display" id="levelTorus-val">0.00</span>
+                <button id="torusAnimate">▶ Animate</button>
+                <button id="torusReset">Reset</button>
+            </div>
+            <div class="info-box">
+                <strong>Critical points passed:</strong>
+                <div class="critical-info" id="torus-critical-info">
+                    <span class="critical-badge badge-min">● Min (t=0)</span>
+                    <span class="critical-badge badge-saddle" style="opacity:0.3">● Saddle₁ (t=0.25)</span>
+                    <span class="critical-badge badge-saddle" style="opacity:0.3">● Saddle₂ (t=0.75)</span>
+                    <span class="critical-badge badge-max" style="opacity:0.3">● Max (t=1)</span>
+                </div>
+                <p style="margin-top:10px; font-size:0.9em;" id="torus-obs">Raise the water level to begin.</p>
+            </div>
+            <div class="topology-display">
+                <div class="topo-item"><div class="value" id="torus-b0">0</div><div class="label">b₀ (components)</div></div>
+                <div class="topo-item"><div class="value" id="torus-b1">0</div><div class="label">b₁ (loops)</div></div>
+                <div class="topo-item"><div class="value" id="torus-genus">—</div><div class="label">Shape</div></div>
+            </div>
+        </div>
+
+        <!-- ============ DEMO 4: Cell Attachment ============ -->
+        <h2>4. Building Topology: Cell Attachment</h2>
+        <p>Morse theory says: passing through a critical point of index <em>k</em> is equivalent to "attaching a k-cell" (a k-dimensional disk) to the existing space. This is how the manifold is built up piece by piece.</p>
+
+        <div class="interactive-section">
+            <h3>🧱 Experiment: Building a Surface Cell by Cell</h3>
+            <canvas id="canvasCells" width="700" height="350"></canvas>
+            <div class="controls">
+                <label>Step:</label>
+                <button class="cell-step" data-step="0">Start</button>
+                <button class="cell-step" data-step="1">+ 0-cell (min)</button>
+                <button class="cell-step" data-step="2">+ 1-cell (saddle)</button>
+                <button class="cell-step" data-step="3">+ 1-cell (saddle)</button>
+                <button class="cell-step" data-step="4">+ 2-cell (max)</button>
+            </div>
+            <div class="info-box" id="cell-info">
+                Click the buttons in order to see how attaching cells builds up a torus.
+            </div>
+        </div>
+
+        <!-- ============ DEMO 5: Morse Inequalities ============ -->
+        <h2>5. The Morse Inequalities</h2>
+        <p>The number of critical points of each index is constrained by the topology. Specifically, <em>c<sub>k</sub> ≥ b<sub>k</sub></em> (the number of index-k critical points is at least the k-th Betti number). Experiment below:</p>
+
+        <div class="interactive-section">
+            <h3>📊 Experiment: Morse Inequalities Calculator</h3>
+            <div class="controls">
+                <label>Surface type:</label>
+                <select id="morse-surface">
+                    <option value="sphere">Sphere (genus 0)</option>
+                    <option value="torus">Torus (genus 1)</option>
+                    <option value="genus2">Double torus (genus 2)</option>
+                    <option value="genus3">Triple torus (genus 3)</option>
+                </select>
+            </div>
+            <canvas id="canvasMorse" width="700" height="250"></canvas>
+            <div class="info-box" id="morse-info"></div>
+        </div>
+
+        <!-- ============ DEMO 6: Degenerate vs Non-degenerate ============ -->
+        <h2>6. Morse vs. Non-Morse Functions</h2>
+        <p>A Morse function requires all critical points to be <strong>non-degenerate</strong> (the Hessian has no zero eigenvalues). See what happens with degenerate critical points and how a small perturbation fixes them:</p>
+
+        <div class="interactive-section">
+            <h3>⚡ Experiment: Perturbation</h3>
+            <canvas id="canvasPerturb" width="700" height="280"></canvas>
+            <div class="controls">
+                <label>Perturbation ε:</label>
+                <input type="range" id="perturb-eps" min="0" max="100" value="0">
+                <span class="value-display" id="perturb-val">ε = 0.00</span>
+            </div>
+            <div class="info-box" id="perturb-info">
+                <strong>f(x) = x⁴</strong> has a degenerate critical point at x=0 (flat, not a clean min/max). Add a perturbation εx² to split it into non-degenerate critical points.
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <h2>Summary</h2>
+        <div class="highlight important">
+            <strong>Morse Theory in one sentence:</strong> The topology of a smooth manifold is completely determined by the critical points (and their indices) of any generic smooth function on it.
+        </div>
+
+        <p style="text-align:center; color:#666; margin-top:50px; font-size:0.85em;">
+            Interactive Morse Theory Explorer — Built for visual intuition<br>
+            Inspired by Milnor's "Morse Theory" (1963)
+        </p>
+    </div>
+
+    <script>
+    // =====================================================
+    // DEMO 1: 1D Function & Level Sets
+    // =====================================================
+    (function() {
+        const canvas = document.getElementById('canvas1d');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('level1d');
+        const valDisplay = document.getElementById('level1d-val');
+        const obsDisplay = document.getElementById('obs1d');
+        const funcSelect = document.getElementById('func1d-select');
+        const critInfoDiv = document.getElementById('critical-info-1d');
+
+        const W = canvas.width, H = canvas.height;
+        const pad = 50;
+
+        const functions = {
+            wave: {
+                f: (x) => 0.3*Math.sin(3*Math.PI*x) + 0.5 + 0.15*Math.cos(5*Math.PI*x),
+                criticals: [{x:0.17, type:'max'}, {x:0.38, type:'min'}, {x:0.55, type:'max'}, {x:0.72, type:'min'}, {x:0.88, type:'max'}]
+            },
+            double: {
+                f: (x) => 2*(x-0.5)*(x-0.5)*(x-0.5)*(x-0.5) - 1.5*(x-0.5)*(x-0.5) + 0.6,
+                criticals: [{x:0.07, type:'max'}, {x:0.5, type:'max'}, {x:0.28, type:'min'}, {x:0.72, type:'min'}, {x:0.93, type:'max'}]
+            },
+            cubic: {
+                f: (x) => 0.8*x*x*x - 1.2*x*x + 0.5*x + 0.4,
+                criticals: [{x:0.24, type:'max'}, {x:0.7, type:'min'}]
+            }
+        };
+
+        // Recompute criticals numerically
+        function findCriticals(f, n=500) {
+            const crits = [];
+            const dx = 1/n;
+            for (let i = 1; i < n-1; i++) {
+                const x = i/n;
+                const df = (f(x+dx) - f(x-dx)) / (2*dx);
+                const df_prev = (f(x-dx+dx) - f(x-dx-dx)) / (2*dx);
+                const df_next = (f(x+dx+dx) - f(x+dx-dx)) / (2*dx);
+                // zero crossing of derivative
+                const d1 = (f(x+dx) - f(x-dx))/(2*dx);
+                const d2 = (f(x+2*dx) - f(x))/(2*dx);
+                if (i > 1) {
+                    const d0 = (f(x) - f(x-2*dx))/(2*dx);
+                    if (d0 * d1 < 0) {
+                        const ddf = (f(x+dx) - 2*f(x) + f(x-dx))/(dx*dx);
+                        crits.push({x: x, y: f(x), type: ddf > 0 ? 'min' : 'max'});
+                    }
+                }
+            }
+            return crits;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            const funcKey = funcSelect.value;
+            let f;
+            if (funcKey === 'wave') {
+                f = (x) => 0.3*Math.sin(3*Math.PI*x) + 0.5 + 0.15*Math.cos(5*Math.PI*x);
+            } else if (funcKey === 'double') {
+                f = (x) => 4*(x-0.3)*(x-0.3)*(x-0.7)*(x-0.7) + 0.1;
+            } else {
+                f = (x) => -0.5*Math.cos(2*Math.PI*x) * (1 - 0.5*x) + 0.5;
+            }
+
+            const crits = findCriticals(f, 1000);
+            
+            // Compute value range
+            let fmin = Infinity, fmax = -Infinity;
+            for (let i = 0; i <= 200; i++) {
+                const v = f(i/200);
+                if (v < fmin) fmin = v;
+                if (v > fmax) fmax = v;
+            }
+            const frange = fmax - fmin || 1;
+
+            const t_normalized = slider.value / 100;
+            const t = fmin + t_normalized * frange;
+            valDisplay.textContent = t.toFixed(3);
+
+            // Map coordinates
+            const mapX = (x) => pad + x * (W - 2*pad);
+            const mapY = (y) => H - pad - ((y - fmin) / frange) * (H - 2*pad);
+
+            // Draw submerged region
+            ctx.fillStyle = 'rgba(100, 181, 246, 0.15)';
+            ctx.beginPath();
+            ctx.moveTo(pad, mapY(t));
+            ctx.lineTo(W - pad, mapY(t));
+            ctx.lineTo(W - pad, H - pad);
+            ctx.lineTo(pad, H - pad);
+            ctx.closePath();
+            ctx.fill();
+
+            // Highlight submerged parts of curve
+            ctx.strokeStyle = 'rgba(100, 181, 246, 0.8)';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            let started = false;
+            for (let i = 0; i <= 300; i++) {
+                const x = i / 300;
+                const y = f(x);
+                if (y <= t) {
+                    if (!started) { ctx.moveTo(mapX(x), mapY(y)); started = true; }
+                    else ctx.lineTo(mapX(x), mapY(y));
+                } else {
+                    started = false;
+                }
+            }
+            ctx.stroke();
+
+            // Draw function curve
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i <= 300; i++) {
+                const x = i / 300;
+                const y = f(x);
+                if (i === 0) ctx.moveTo(mapX(x), mapY(y));
+                else ctx.lineTo(mapX(x), mapY(y));
+            }
+            ctx.stroke();
+
+            // Draw level line
+            ctx.strokeStyle = '#64b5f6';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(pad, mapY(t));
+            ctx.lineTo(W - pad, mapY(t));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw critical points
+            crits.forEach(c => {
+                const cx = mapX(c.x);
+                const cy = mapY(c.y);
+                ctx.beginPath();
+                ctx.arc(cx, cy, 7, 0, 2*Math.PI);
+                if (c.type === 'min') {
+                    ctx.fillStyle = c.y <= t ? '#4caf50' : '#1b5e20';
+                } else {
+                    ctx.fillStyle = c.y <= t ? '#f44336' : '#b71c1c';
+                }
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            });
+
+            // Label axis
+            ctx.fillStyle = '#666';
+            ctx.font = '12px monospace';
+            ctx.fillText('x →', W - pad + 5, H - pad + 5);
+            ctx.fillText('f(x) ↑', pad - 5, pad - 10);
+            ctx.fillStyle = '#64b5f6';
+            ctx.fillText('t = ' + t.toFixed(2), W - pad - 60, mapY(t) - 8);
+
+            // Count submerged intervals
+            let intervals = 0;
+            let inInterval = false;
+            for (let i = 0; i <= 500; i++) {
+                const x = i / 500;
+                if (f(x) <= t) {
+                    if (!inInterval) { intervals++; inInterval = true; }
+                } else {
+                    inInterval = false;
+                }
+            }
+
+            // Observation
+            const passedCrits = crits.filter(c => c.y <= t);
+            const mins = passedCrits.filter(c => c.type === 'min').length;
+            const maxs = passedCrits.filter(c => c.type === 'max').length;
+            obsDisplay.textContent = `Submerged intervals: ${intervals} | Critical points below water: ${passedCrits.length} (${mins} min, ${maxs} max)`;
+
+            // Critical info badges
+            critInfoDiv.innerHTML = crits.map(c => {
+                const passed = c.y <= t;
+                const cls = c.type === 'min' ? 'badge-min' : 'badge-max';
+                return `<span class="critical-badge ${cls}" style="opacity:${passed ? 1 : 0.3}">${c.type === 'min' ? '▽' : '△'} ${c.type} (${c.y.toFixed(2)})</span>`;
+            }).join('');
+        }
+
+        slider.addEventListener('input', draw);
+        funcSelect.addEventListener('change', draw);
+        draw();
+    })();
+
+    // =====================================================
+    // DEMO 2: 2D Height Function
+    // =====================================================
+    (function() {
+        const canvas = document.getElementById('canvas2d');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('level2d');
+        const valDisplay = document.getElementById('level2d-val');
+        const funcSelect = document.getElementById('func2d-select');
+        const obsDisplay = document.getElementById('obs2d');
+
+        const W = canvas.width, H = canvas.height;
+
+        const functions2d = {
+            twopeaks: {
+                f: (x, y) => {
+                    const g1 = Math.exp(-((x-0.3)**2 + (y-0.5)**2)*20);
+                    const g2 = Math.exp(-((x-0.7)**2 + (y-0.5)**2)*20);
+                    return g1 + g2;
+                },
+                desc: "Two Gaussian peaks with a saddle between them"
+            },
+            volcano: {
+                f: (x, y) => {
+                    const r = Math.sqrt((x-0.5)**2 + (y-0.5)**2);
+                    return Math.exp(-((r-0.25)**2)*80) * 0.8 + 0.1;
+                },
+                desc: "Ring-shaped peak (volcano rim)"
+            },
+            monkey: {
+                f: (x, y) => {
+                    const cx = x - 0.5, cy = y - 0.5;
+                    return cx*cx*cx - 3*cx*cy*cy + 0.5 + 0.3*(cx*cx + cy*cy);
+                },
+                desc: "Monkey saddle: a degenerate critical point (3 valleys meet)"
+            }
+        };
+
+        function getFunc() {
+            return functions2d[funcSelect.value].f;
+        }
+
+        function draw() {
+            const f = getFunc();
+            const res = 140;
+            
+            // Compute range
+            let fmin = Infinity, fmax = -Infinity;
+            const grid = [];
+            for (let j = 0; j < res; j++) {
+                grid[j] = [];
+                for (let i = 0; i < res; i++) {
+                    const x = i / (res-1);
+                    const y = j / (res-1);
+                    const v = f(x, y);
+                    grid[j][i] = v;
+                    if (v < fmin) fmin = v;
+                    if (v > fmax) fmax = v;
+                }
+            }
+            const frange = fmax - fmin || 1;
+
+            const t_normalized = slider.value / 100;
+            const t = fmin + t_normalized * frange;
+            valDisplay.textContent = t.toFixed(3);
+
+            // Draw height map
+            const cellW = W / res;
+            const cellH = H / res;
+            const imageData = ctx.createImageData(W, H);
+
+            for (let py = 0; py < H; py++) {
+                for (let px = 0; px < W; px++) {
+                    const x = px / W;
+                    const y = py / H;
+                    const v = f(x, y);
+                    const norm = (v - fmin) / frange;
+                    const idx = (py * W + px) * 4;
+
+                    if (v <= t) {
+                        // Submerged: blue tint
+                        imageData.data[idx] = Math.floor(30 + norm * 60);
+                        imageData.data[idx+1] = Math.floor(80 + norm * 100);
+                        imageData.data[idx+2] = Math.floor(180 + norm * 75);
+                        imageData.data[idx+3] = 255;
+                    } else {
+                        // Above water: terrain colors
+                        imageData.data[idx] = Math.floor(20 + norm * 180);
+                        imageData.data[idx+1] = Math.floor(15 + norm * 80);
+                        imageData.data[idx+2] = Math.floor(30 + norm * 40);
+                        imageData.data[idx+3] = 255;
+                    }
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+
+            // Draw contour lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 0.5;
+            const numContours = 15;
+            for (let c = 0; c < numContours; c++) {
+                const level = fmin + (c / numContours) * frange;
+                // March through grid for contour
+                for (let j = 0; j < res-1; j++) {
+                    for (let i = 0; i < res-1; i++) {
+                        const v00 = grid[j][i], v10 = grid[j][i+1];
+                        const v01 = grid[j+1][i], v11 = grid[j+1][i+1];
+                        // Simple contour: check if level crosses this cell
+                        const above = [(v00>level)?1:0, (v10>level)?1:0, (v01>level)?1:0, (v11>level)?1:0];
+                        const sum = above[0]+above[1]+above[2]+above[3];
+                        if (sum > 0 && sum < 4) {
+                            const cx = (i + 0.5) / res * W;
+                            const cy = (j + 0.5) / res * H;
+                            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+                            ctx.fillRect(cx, cy, cellW, cellH);
+                        }
+                    }
+                }
+            }
+
+            // Draw the level set contour (current t) more prominently
+            ctx.strokeStyle = '#64b5f6';
+            ctx.lineWidth = 1.5;
+            for (let j = 0; j < res-1; j++) {
+                for (let i = 0; i < res-1; i++) {
+                    const v00 = grid[j][i], v10 = grid[j][i+1];
+                    const v01 = grid[j+1][i], v11 = grid[j+1][i+1];
+                    const above = [(v00>t)?1:0, (v10>t)?1:0, (v01>t)?1:0, (v11>t)?1:0];
+                    const sum = above[0]+above[1]+above[2]+above[3];
+                    if (sum > 0 && sum < 4) {
+                        const cx = (i + 0.5) / res * W;
+                        const cy = (j + 0.5) / res * H;
+                        ctx.fillStyle = 'rgba(100, 181, 246, 0.5)';
+                        ctx.fillRect(cx, cy, cellW+1, cellH+1);
+                    }
+                }
+            }
+
+            // Find and draw critical points numerically
+            const criticals2d = [];
+            const step = 1/(res-1);
+            for (let j = 2; j < res-2; j++) {
+                for (let i = 2; i < res-2; i++) {
+                    const v = grid[j][i];
+                    const vl = grid[j][i-1], vr = grid[j][i+1];
+                    const vu = grid[j-1][i], vd = grid[j+1][i];
+                    const dx = (vr - vl) / (2*step);
+                    const dy = (vd - vu) / (2*step);
+                    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+                        // Check Hessian
+                        const dxx = (vr - 2*v + vl) / (step*step);
+                        const dyy = (vd - 2*v + vu) / (step*step);
+                        const vul = grid[j-1][i-1], vur = grid[j-1][i+1];
+                        const vdl = grid[j+1][i-1], vdr = grid[j+1][i+1];
+                        const dxy = (vdr - vdl - vur + vul) / (4*step*step);
+                        const det = dxx*dyy - dxy*dxy;
+                        const trace = dxx + dyy;
+                        
+                        // Stricter gradient check
+                        const gradMag = Math.sqrt(dx*dx + dy*dy);
+                        if (gradMag < 0.2) {
+                            let type;
+                            if (det > 0 && trace > 0) type = 'min';
+                            else if (det > 0 && trace < 0) type = 'max';
+                            else if (det < 0) type = 'saddle';
+                            else continue;
+                            
+                            // Avoid duplicates
+                            const px = i / res * W;
+                            const py = j / res * H;
+                            let duplicate = false;
+                            for (const c of criticals2d) {
+                                if (Math.abs(c.px - px) < 20 && Math.abs(c.py - py) < 20) {
+                                    duplicate = true; break;
+                                }
+                            }
+                            if (!duplicate) {
+                                criticals2d.push({px, py, type, value: v});
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Draw critical points
+            criticals2d.forEach(c => {
+                ctx.beginPath();
+                ctx.arc(c.px, c.py, 8, 0, 2*Math.PI);
+                const passed = c.value <= t;
+                if (c.type === 'min') ctx.fillStyle = passed ? '#4caf50' : 'rgba(76,175,80,0.4)';
+                else if (c.type === 'saddle') ctx.fillStyle = passed ? '#ff9800' : 'rgba(255,152,0,0.4)';
+                else ctx.fillStyle = passed ? '#f44336' : 'rgba(244,67,54,0.4)';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px monospace';
+                const label = c.type === 'min' ? 'min' : c.type === 'max' ? 'max' : 'saddle';
+                ctx.fillText(label, c.px - 12, c.py - 12);
+            });
+
+            // Estimate topology (connected components via flood fill approximation)
+            const binaryGrid = [];
+            const bres = 70;
+            for (let j = 0; j < bres; j++) {
+                binaryGrid[j] = [];
+                for (let i = 0; i < bres; i++) {
+                    const x = i/(bres-1), y = j/(bres-1);
+                    binaryGrid[j][i] = f(x,y) <= t ? 1 : 0;
+                }
+            }
+
+            // Count components
+            const visited = Array.from({length: bres}, () => Array(bres).fill(false));
+            let components = 0;
+            let totalSubmerged = 0;
+            let boundaryPixels = 0;
+
+            function floodFill(si, sj) {
+                const stack = [[si, sj]];
+                while (stack.length > 0) {
+                    const [ci, cj] = stack.pop();
+                    if (ci < 0 || ci >= bres || cj < 0 || cj >= bres) continue;
+                    if (visited[cj][ci] || binaryGrid[cj][ci] === 0) continue;
+                    visited[cj][ci] = true;
+                    totalSubmerged++;
+                    // Check if boundary
+                    const neighbors = [[ci-1,cj],[ci+1,cj],[ci,cj-1],[ci,cj+1]];
+                    let isBoundary = false;
+                    for (const [ni, nj] of neighbors) {
+                        if (ni < 0 || ni >= bres || nj < 0 || nj >= bres || binaryGrid[nj][ni] === 0) {
+                            isBoundary = true;
+                        }
+                        if (ni >= 0 && ni < bres && nj >= 0 && nj < bres && !visited[nj][ni] && binaryGrid[nj][ni] === 1) {
+                            stack.push([ni, nj]);
+                        }
+                    }
+                    if (isBoundary) boundaryPixels++;
+                }
+            }
+
+            for (let j = 0; j < bres; j++) {
+                for (let i = 0; i < bres; i++) {
+                    if (!visited[j][i] && binaryGrid[j][i] === 1) {
+                        floodFill(i, j);
+                        components++;
+                    }
+                }
+            }
+
+            // Estimate loops (holes in submerged region) - count components of complement that don't touch boundary
+            const visitedComp = Array.from({length: bres}, () => Array(bres).fill(false));
+            let holes = 0;
+            function floodFillComp(si, sj) {
+                const stack = [[si, sj]];
+                let touchesBorder = false;
+                while (stack.length > 0) {
+                    const [ci, cj] = stack.pop();
+                    if (ci < 0 || ci >= bres || cj < 0 || cj >= bres) { touchesBorder = true; continue; }
+                    if (visitedComp[cj][ci] || binaryGrid[cj][ci] === 1) continue;
+                    visitedComp[cj][ci] = true;
+                    if (ci === 0 || ci === bres-1 || cj === 0 || cj === bres-1) touchesBorder = true;
+                    const neighbors = [[ci-1,cj],[ci+1,cj],[ci,cj-1],[ci,cj+1]];
+                    for (const [ni, nj] of neighbors) {
+                        stack.push([ni, nj]);
+                    }
+                }
+                return touchesBorder;
+            }
+
+            for (let j = 0; j < bres; j++) {
+                for (let i = 0; i < bres; i++) {
+                    if (!visitedComp[j][i] && binaryGrid[j][i] === 0) {
+                        const touchesBorder = floodFillComp(i, j);
+                        if (!touchesBorder) holes++;
+                    }
+                }
+            }
+
+            document.getElementById('topo-components').textContent = components;
+            document.getElementById('topo-loops').textContent = holes;
+            document.getElementById('topo-euler').textContent = components - holes;
+
+            // Observation text
+            const passedCrits = criticals2d.filter(c => c.value <= t);
+            obsDisplay.textContent = `${functions2d[funcSelect.value].desc}. Critical points submerged: ${passedCrits.length}/${criticals2d.length}`;
+        }
+
+        slider.addEventListener('input', draw);
+        funcSelect.addEventListener('change', draw);
+        draw();
+    })();
+
+    // =====================================================
+    // DEMO 3: Torus
+    // =====================================================
+    (function() {
+        const canvas = document.getElementById('canvasTorus');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('levelTorus');
+        const valDisplay = document.getElementById('levelTorus-val');
+        const animBtn = document.getElementById('torusAnimate');
+        const resetBtn = document.getElementById('torusReset');
+
+        const W = canvas.width, H = canvas.height;
+        let animating = false;
+        let animFrame = null;
+
+        // Torus parameters
+        const R = 1.0; // major radius
+        const r = 0.4; // minor radius
+
+        function draw() {
+            const t = slider.value / 100; // 0 to 1
+            valDisplay.textContent = t.toFixed(3);
+
+            ctx.clearRect(0, 0, W, H);
+
+            // Draw torus cross-section (side view) on the left
+            const leftW = W * 0.45;
+            const rightX = W * 0.5;
+
+            // Side view of torus: two circles
+            const centerY = H / 2;
+            const scale = H * 0.35;
+
+            // The torus height ranges from -(R+r) to (R+r)
+            const hMin = -(R + r);
+            const hMax = (R + r);
+            const hRange = hMax - hMin;
+            const currentH = hMin + t * hRange;
+
+            // Draw torus outline (side view - two circles representing the tube cross-section)
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 2;
+
+            // Left circle (left side of torus cross-section)
+            const cx1 = leftW * 0.35;
+            const cx2 = leftW * 0.75;
+            const cy = centerY;
+            const circR = r * scale;
+            const bigR = R * scale * 0.3;
+
+            // Actually draw a proper side-view of torus
+            // Side view: outer ellipse and inner region
+            const torusDrawScale = 120;
+            const tcx = leftW / 2;
+            const tcy = centerY;
+
+            // Draw the torus profile (a circle of radius r centered at distance R from center)
+            // Side view shows two circles
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 1.5;
+
+            // Left tube circle
+            ctx.beginPath();
+            ctx.ellipse(tcx - R*torusDrawScale*0.5, tcy, r*torusDrawScale, r*torusDrawScale, 0, 0, 2*Math.PI);
+            ctx.stroke();
+
+            // Right tube circle
+            ctx.beginPath();
+            ctx.ellipse(tcx + R*torusDrawScale*0.5, tcy, r*torusDrawScale, r*torusDrawScale, 0, 0, 2*Math.PI);
+            ctx.stroke();
+
+            // Outer boundary
+            ctx.strokeStyle = '#444';
+            ctx.beginPath();
+            ctx.ellipse(tcx, tcy, (R+r)*torusDrawScale*0.5 + r*torusDrawScale*0.5, (r)*torusDrawScale, 0, 0, 2*Math.PI);
+            ctx.stroke();
+
+            // Draw water level line
+            const waterY = tcy - (currentH / (R+r)) * r * torusDrawScale;
+            ctx.strokeStyle = '#64b5f6';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]);
+            ctx.beginPath();
+            ctx.moveTo(10, waterY);
+            ctx.lineTo(leftW - 10, waterY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Fill submerged part of torus
+            ctx.fillStyle = 'rgba(100, 181, 246, 0.2)';
+            ctx.fillRect(10, waterY, leftW - 20, H - waterY - 10);
+
+            // Shade the submerged parts of the tube circles
+            ctx.save();
+            ctx.fillStyle = 'rgba(100, 181, 246, 0.4)';
+            // Left tube
+            ctx.beginPath();
+            ctx.ellipse(tcx - R*torusDrawScale*0.5, tcy, r*torusDrawScale, r*torusDrawScale, 0, 0, 2*Math.PI);
+            ctx.clip();
+            ctx.fillRect(0, waterY, leftW, H);
+            ctx.restore();
+
+            ctx.save();
+            ctx.fillStyle = 'rgba(100, 181, 246, 0.4)';
+            ctx.beginPath();
+            ctx.ellipse(tcx + R*torusDrawScale*0.5, tcy, r*torusDrawScale, r*torusDrawScale, 0, 0, 2*Math.PI);
+            ctx.clip();
+            ctx.fillRect(0, waterY, leftW, H);
+            ctx.restore();
+
+            // Draw critical points on the torus
+            const critPoints = [
+                {h: -1, label: 'min', color: '#4caf50', normT: 0},
+                {h: -(R-r)/(R+r), label: 'saddle₁', color: '#ff9800', normT: (R-r+R+r)/(2*(R+r))},
+                {h: (R-r)/(R+r), label: 'saddle₂', color: '#ff9800', normT: (R+r+R-r)/(2*(R+r))},
+                {h: 1, label: 'max', color: '#f44336', normT: 1}
+            ];
+
+            // Recalculate proper critical t values
+            // Height on torus: h = r*sin(phi), critical at phi = -pi/2 (min), phi=pi/2 (max)
+            // and where the "inner" circle top/bottom are
+            // For upright torus: height = R*cos(theta) + ... no
+            // Standard: torus parameterized, height = (R + r*cos(phi))*sin(theta)... 
+            // Simpler model: height function on torus standing upright
+            // h ranges from -(R+r) to (R+r)
+            // Critical points at h = -(R+r) [min], h = -(R-r) [saddle], h = (R-r) [saddle], h = (R+r) [max]
+            const critTs = [0, (r)/(R+r)*0.5, 1 - (r)/(R+r)*0.5, 1];
+            // More accurate:
+            const critHeights = [-(R+r), -(R-r), (R-r), (R+r)];
+            const critNormTs = critHeights.map(h => (h - hMin) / hRange);
+
+            critPoints[0].normT = critNormTs[0];
+            critPoints[1].normT = critNormTs[1];
+            critPoints[2].normT = critNormTs[2];
+            critPoints[3].normT = critNormTs[3];
+
+            critPoints.forEach(cp => {
+                const cpY = tcy - (cp.h || (cp.normT * hRange + hMin) / (R+r)) * r * torusDrawScale;
+                // Recalculate
+                const cpH = hMin + cp.normT * hRange;
+                const cpYpos = tcy - (cpH / (R+r)) * r * torusDrawScale;
+                ctx.beginPath();
+                ctx.arc(tcx, cpYpos, 6, 0, 2*Math.PI);
+                ctx.fillStyle = t >= cp.normT ? cp.color : 'rgba(100,100,100,0.5)';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.fillStyle = '#ccc';
+                ctx.font = '11px monospace';
+                ctx.fillText(cp.label, tcx + 10, cpYpos + 4);
+            });
+
+            // RIGHT SIDE: Show the sublevel set topology
+            const rCenterX = rightX + (W - rightX) / 2;
+            const rCenterY = centerY;
+
+            ctx.fillStyle = '#ccc';
+            ctx.font = '14px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText('Sublevel set topology:', rCenterX, 30);
+
+            // Draw what the sublevel set looks like
+            if (t < critNormTs[0] + 0.01) {
+                // Nothing yet
+                ctx.fillStyle = '#666';
+                ctx.font = '13px Georgia';
+                ctx.fillText('∅ (empty)', rCenterX, rCenterY);
+            } else if (t < critNormTs[1]) {
+                // After min: a disk (point that grows)
+                const size = (t - critNormTs[0]) / (critNormTs[1] - critNormTs[0]);
+                ctx.fillStyle = 'rgba(100, 181, 246, 0.5)';
+                ctx.strokeStyle = '#64b5f6';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(rCenterX, rCenterY, 20 + size * 40, 15 + size * 25, 0, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Georgia';
+                ctx.fillText('Disk (contractible)', rCenterX, rCenterY + 60);
+            } else if (t < critNormTs[2]) {
+                // After first saddle: cylinder (has one loop)
+                const size = (t - critNormTs[1]) / (critNormTs[2] - critNormTs[1]);
+                ctx.fillStyle = 'rgba(100, 181, 246, 0.3)';
+                ctx.strokeStyle = '#64b5f6';
+                ctx.lineWidth = 2;
+                // Draw cylinder as rectangle with rounded ends
+                const cw = 60 + size * 30;
+                const ch = 40 + size * 20;
+                ctx.beginPath();
+                ctx.ellipse(rCenterX, rCenterY, cw, ch, 0, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                // Draw hole indication
+                ctx.strokeStyle = 'rgba(206, 147, 216, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.ellipse(rCenterX, rCenterY, cw * 0.4, ch * 0.3, 0, 0, 2*Math.PI);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // Arrow showing the loop
+                ctx.fillStyle = '#ce93d8';
+                ctx.font = '11px Georgia';
+                ctx.fillText('↺ one loop (b₁ = 1)', rCenterX, rCenterY + 70);
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Georgia';
+                ctx.fillText('Cylinder', rCenterX, rCenterY + 90);
+            } else if (t < critNormTs[3]) {
+                // After second saddle: torus minus a disk (has two loops)
+                const size = (t - critNormTs[2]) / (critNormTs[3] - critNormTs[2]);
+                ctx.fillStyle = 'rgba(100, 181, 246, 0.3)';
+                ctx.strokeStyle = '#64b5f6';
+                ctx.lineWidth = 2;
+                const cw = 80;
+                const ch = 55;
+                ctx.beginPath();
+                ctx.ellipse(rCenterX, rCenterY, cw, ch, 0, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                // Draw torus hole
+                ctx.fillStyle = '#0d0d20';
+                ctx.strokeStyle = '#ce93d8';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(rCenterX, rCenterY, 25, 15, 0, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                // Second loop indicator
+                ctx.strokeStyle = 'rgba(206, 147, 216, 0.6)';
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(rCenterX, rCenterY - ch);
+                ctx.quadraticCurveTo(rCenterX + cw + 10, rCenterY, rCenterX, rCenterY + ch);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#ce93d8';
+                ctx.font = '11px Georgia';
+                ctx.fillText('↺↺ two loops (b₁ = 2)', rCenterX, rCenterY + 75);
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Georgia';
+                ctx.fillText('Torus minus disk', rCenterX, rCenterY + 95);
+            } else {
+                // Full torus
+                ctx.fillStyle = 'rgba(100, 181, 246, 0.4)';
+                ctx.strokeStyle = '#64b5f6';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.ellipse(rCenterX, rCenterY, 80, 55, 0, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#0d0d20';
+                ctx.strokeStyle = '#64b5f6';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.ellipse(rCenterX, rCenterY, 25, 15, 0, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#4caf50';
+                ctx.font = '12px Georgia';
+                ctx.fillText('✓ Complete Torus!', rCenterX, rCenterY + 80);
+                ctx.fillStyle = '#ce93d8';
+                ctx.font = '11px Georgia';
+                ctx.fillText('b₀=1, b₁=2, b₂=1, χ=0', rCenterX, rCenterY + 100);
+            }
+            ctx.textAlign = 'left';
+
+            // Update critical badges
+            const badges = document.querySelectorAll('#torus-critical-info .critical-badge');
+            badges.forEach((badge, i) => {
+                badge.style.opacity = t >= critNormTs[i] ? '1' : '0.3';
+            });
+
+            // Update topology numbers
+            let b0 = 0, b1 = 0;
+            let shape = '—';
+            if (t >= critNormTs[0] + 0.01) { b0 = 1; shape = 'Point/Disk'; }
+            if (t >= critNormTs[1]) { b1 = 1; shape = 'Cylinder'; }
+            if (t >= critNormTs[2]) { b1 = 2; shape = 'Torus \\ disk'; }
+            if (t >= critNormTs[3]) { shape = 'Torus'; }
+            if (t < critNormTs[0] + 0.01) { b0 = 0; shape = 'Empty'; }
+
+            document.getElementById('torus-b0').textContent = b0;
+            document.getElementById('torus-b1').textContent = b1;
+            document.getElementById('torus-genus').textContent = shape;
+
+            // Observation
+            const obsEl = document.getElementById('torus-obs');
+            if (t < critNormTs[0] + 0.01) obsEl.textContent = 'Water hasn\'t reached the torus yet.';
+            else if (t < critNormTs[1]) obsEl.textContent = 'Passed the MINIMUM: a disk appears (like a small island). Topology: contractible disk.';
+            else if (t < critNormTs[2]) obsEl.textContent = 'Passed SADDLE₁: the disk wraps around and connects to itself → cylinder! One non-trivial loop appears.';
+            else if (t < critNormTs[3]) obsEl.textContent = 'Passed SADDLE₂: another handle attached → second loop appears. We have a torus with the top cap missing.';
+            else obsEl.textContent = 'Passed the MAXIMUM: the top cap is sealed. Complete torus! Euler characteristic: 1-2+1 = 0 ✓';
+        }
+
+        slider.addEventListener('input', draw);
+
+        animBtn.addEventListener('click', () => {
+            if (animating) {
+                animating = false;
+                animBtn.textContent = '▶ Animate';
+                cancelAnimationFrame(animFrame);
+                return;
+            }
+            animating = true;
+            animBtn.textContent = '⏸ Pause';
+            slider.value = 0;
+            function step() {
+                if (!animating) return;
+                let v = parseInt(slider.value);
+                v += 0.3;
+                if (v > 100) { v = 100; animating = false; animBtn.textContent = '▶ Animate'; }
+                slider.value = v;
+                draw();
+                if (animating) animFrame = requestAnimationFrame(step);
+            }
+            step();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            animating = false;
+            animBtn.textContent = '▶ Animate';
+            cancelAnimationFrame(animFrame);
+            slider.value = 0;
+            draw();
+        });
+
+        draw();
+    })();
+
+    // =====================================================
+    // DEMO 4: Cell Attachment
+    // =====================================================
+    (function() {
+        const canvas = document.getElementById('canvasCells');
+        const ctx = canvas.getContext('2d');
+        const infoBox = document.getElementById('cell-info');
+        const buttons = document.querySelectorAll('.cell-step');
+        const W = canvas.width, H = canvas.height;
+        let currentStep = 0;
+
+        const descriptions = [
+            'We start with nothing. The manifold will be built step by step as we pass each critical point.',
+            '<strong>Index 0 (minimum):</strong> Attach a 0-cell = a point. This creates a new connected component. Think of it as a tiny island appearing. Topologically: a disk.',
+            '<strong>Index 1 (first saddle):</strong> Attach a 1-cell = a line segment (with endpoints glued to existing boundary). This connects two sides of the disk, creating a cylinder. A non-trivial loop is born!',
+            '<strong>Index 1 (second saddle):</strong> Attach another 1-cell. This creates a second loop. Now we have a torus with a hole (missing the top cap).',
+            '<strong>Index 2 (maximum):</strong> Attach a 2-cell = a disk that caps off the remaining boundary. The torus is complete! No boundary remains.'
+        ];
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            const cx = W / 2;
+            const cy = H / 2;
+
+            ctx.fillStyle = '#1a1a3a';
+            ctx.fillRect(0, 0, W, H);
+
+            // Draw step indicator
+            ctx.fillStyle = '#666';
+            ctx.font = '12px monospace';
+            ctx.fillText(`Step ${currentStep}/4`, 20, 25);
+
+            switch(currentStep) {
+                case 0:
+                    // Empty
+                    ctx.fillStyle = '#444';
+                    ctx.font = '16px Georgia';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('∅', cx, cy);
+                    ctx.fillText('Empty space — nothing built yet', cx, cy + 30);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 1:
+                    // 0-cell: a disk
+                    ctx.fillStyle = 'rgba(76, 175, 80, 0.4)';
+                    ctx.strokeStyle = '#4caf50';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 60, 45, 0, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Label
+                    ctx.fillStyle = '#4caf50';
+                    ctx.font = '13px Georgia';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('0-cell attached → Disk', cx, cy + 80);
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = '11px Georgia';
+                    ctx.fillText('b₀ = 1, b₁ = 0 | χ = 1', cx, cy + 100);
+                    ctx.textAlign = 'left';
+
+                    // Highlight the point at center
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 5, 0, 2*Math.PI);
+                    ctx.fillStyle = '#4caf50';
+                    ctx.fill();
+                    break;
+
+                case 2:
+                    // 1-cell: cylinder
+                    ctx.fillStyle = 'rgba(100, 181, 246, 0.3)';
+                    ctx.strokeStyle = '#64b5f6';
+                    ctx.lineWidth = 2;
+
+                    // Draw cylinder shape
+                    const cylW = 100, cylH = 120;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy - cylH/2, cylW, 20, 0, 0, 2*Math.PI);
+                    ctx.stroke();
+
+                    ctx.fillStyle = 'rgba(100, 181, 246, 0.2)';
+                    ctx.beginPath();
+                    ctx.moveTo(cx - cylW, cy - cylH/2);
+                    ctx.lineTo(cx - cylW, cy + cylH/2);
+                    ctx.ellipse(cx, cy + cylH/2, cylW, 20, 0, Math.PI, 0, true);
+                    ctx.lineTo(cx + cylW, cy - cylH/2);
+                    ctx.ellipse(cx, cy - cylH/2, cylW, 20, 0, 0, Math.PI, true);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy + cylH/2, cylW, 20, 0, 0, 2*Math.PI);
+                    ctx.strokeStyle = '#64b5f6';
+                    ctx.stroke();
+
+                    // Show the 1-cell being attached (highlighted band)
+                    ctx.strokeStyle = '#ff9800';
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([5, 3]);
+                    ctx.beginPath();
+                    ctx.moveTo(cx - cylW, cy);
+                    ctx.lineTo(cx + cylW, cy);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Loop arrow
+                    ctx.strokeStyle = '#ce93d8';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 15, cylH/2 - 10, 0, -Math.PI/2, Math.PI * 1.3);
+                    ctx.stroke();
+                    // Arrowhead
+                    ctx.fillStyle = '#ce93d8';
+                    ctx.beginPath();
+                    ctx.moveTo(cx + 10, cy - cylH/2 + 15);
+                    ctx.lineTo(cx + 20, cy - cylH/2 + 10);
+                    ctx.lineTo(cx + 12, cy - cylH/2 + 25);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ff9800';
+                    ctx.font = '13px Georgia';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('1-cell attached → Cylinder', cx, cy + cylH/2 + 50);
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = '11px Georgia';
+                    ctx.fillText('b₀ = 1, b₁ = 1 | χ = 0', cx, cy + cylH/2 + 70);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 3:
+                    // Second 1-cell: torus minus disk
+                    ctx.fillStyle = 'rgba(100, 181, 246, 0.3)';
+                    ctx.strokeStyle = '#64b5f6';
+                    ctx.lineWidth = 2;
+
+                    // Draw torus-like shape with a gap
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 110, 70, 0, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Hole in middle
+                    ctx.fillStyle = '#1a1a3a';
+                    ctx.strokeStyle = '#ce93d8';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 35, 20, 0, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Gap at top (missing 2-cell)
+                    ctx.fillStyle = '#1a1a3a';
+                    ctx.beginPath();
+                    ctx.ellipse(cx + 70, cy - 40, 20, 15, 0.3, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.strokeStyle = '#ff9800';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([4, 3]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Second loop indicator
+                    ctx.strokeStyle = '#ce93d8';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(cx + 70, cy, 8, 50, 0.1, 0, 2*Math.PI);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ff9800';
+                    ctx.font = '13px Georgia';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('2nd 1-cell attached → Torus minus disk (has boundary)', cx, cy + 100);
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = '11px Georgia';
+                    ctx.fillText('b₀ = 1, b₁ = 2 | χ = -1 (has boundary!)', cx, cy + 120);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 4:
+                    // 2-cell: complete torus
+                    ctx.fillStyle = 'rgba(100, 181, 246, 0.4)';
+                    ctx.strokeStyle = '#64b5f6';
+                    ctx.lineWidth = 2.5;
+
+                    // Draw complete torus
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 110, 70, 0, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Hole in middle
+                    ctx.fillStyle = '#1a1a3a';
+                    ctx.strokeStyle = '#64b5f6';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 35, 20, 0, 0, 2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // 3D shading hint
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, 110, 30, 0, 0, Math.PI);
+                    ctx.stroke();
+
+                    // Celebration
+                    ctx.fillStyle = '#4caf50';
+                    ctx.font = '15px Georgia';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('✓ 2-cell caps it off → Complete Torus!', cx, cy + 100);
+                    ctx.fillStyle = '#ce93d8';
+                    ctx.font = '12px Georgia';
+                    ctx.fillText('b₀ = 1, b₁ = 2, b₂ = 1 | χ = 1 - 2 + 1 = 0', cx, cy + 125);
+                    ctx.fillStyle = '#aaa';
+                    ctx.font = '11px Georgia';
+                    ctx.fillText('Built from: 1 zero-cell + 2 one-cells + 1 two-cell', cx, cy + 148);
+                    ctx.textAlign = 'left';
+
+                    // Draw small checkmarks on the formula
+                    break;
+            }
+
+            // Update buttons
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('active', i === currentStep);
+            });
+        }
+
+        buttons.forEach((btn, i) => {
+            btn.addEventListener('click', () => {
+                currentStep = parseInt(btn.dataset.step);
+                infoBox.innerHTML = descriptions[currentStep];
+                draw();
+            });
+        });
+
+        infoBox.innerHTML = descriptions[0];
+        draw();
+    })();
+
+    // =====================================================
+    // DEMO 5: Morse Inequalities
+    // =====================================================
+    (function() {
+        const canvas = document.getElementById('canvasMorse');
+        const ctx = canvas.getContext('2d');
+        const select = document.getElementById('morse-surface');
+        const infoBox = document.getElementById('morse-info');
+        const W = canvas.width, H = canvas.height;
+
+        const surfaces = {
+            sphere: { genus: 0, name: 'Sphere', b: [1, 0, 1] },
+            torus: { genus: 1, name: 'Torus', b: [1, 2, 1] },
+            genus2: { genus: 2, name: 'Double Torus', b: [1, 4, 1] },
+            genus3: { genus: 3, name: 'Triple Torus', b: [1, 6, 1] }
+        };
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            const surf = surfaces[select.value];
+            const b = surf.b;
+            const euler = b[0] - b[1] + b[2];
+
+            // Minimum critical points
+            const c = [b[0], b[1], b[2]]; // minimum possible (tight inequalities for surfaces)
+
+            const barWidth = 60;
+            const gap = 30;
+            const groupGap = 80;
+            const maxVal = Math.max(...b, ...c) + 1;
+            const barMaxH = H - 80;
+            const baseY = H - 40;
+
+            const startX = (W - (6 * barWidth + 5 * gap + groupGap)) / 2;
+
+            // Draw bars
+            const items = [
+                { label: 'c₀ (minima)', val: c[0], color: '#4caf50', x: 0 },
+                { label: 'b₀ (components)', val: b[0], color: '#81c784', x: 1 },
+                { label: 'c₁ (saddles)', val: c[1], color: '#ff9800', x: 2.5 },
+                { label: 'b₁ (loops)', val: b[1], color: '#ffb74d', x: 3.5 },
+                { label: 'c₂ (maxima)', val: c[2], color: '#f44336', x: 5 },
+                { label: 'b₂ (cavities)', val: b[2], color: '#ef5350', x: 6 },
+            ];
+
+            items.forEach(item => {
+                const x = startX + item.x * (barWidth + gap);
+                const barH = (item.val / maxVal) * barMaxH;
+                const y = baseY - barH;
+
+                // Bar
+                ctx.fillStyle = item.color;
+                ctx.fillRect(x, y, barWidth, barH);
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, barWidth, barH);
+
+                // Value on top
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 16px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.val, x + barWidth/2, y - 8);
+
+                // Label below
+                ctx.fillStyle = '#aaa';
+                ctx.font = '10px monospace';
+                ctx.fillText(item.label, x + barWidth/2, baseY + 15);
+            });
+
+            // Draw inequality arrows
+            ctx.fillStyle = '#64b5f6';
+            ctx.font = '18px monospace';
+            const arrowPositions = [
+                { x: startX + 1 * (barWidth + gap) - gap/2, label: '≥' },
+                { x: startX + 3.5 * (barWidth + gap) - gap/2 - 15, label: '≥' },
+                { x: startX + 6 * (barWidth + gap) - gap/2, label: '≥' },
+            ];
+            // Between c0 and b0
+            ctx.textAlign = 'center';
+            ctx.fillText('≥', startX + 0.5*(barWidth+gap) + barWidth/2, baseY - barMaxH/2);
+            ctx.fillText('≥', startX + 3*(barWidth+gap) + barWidth/2, baseY - barMaxH/2);
+            ctx.fillText('≥', startX + 5.5*(barWidth+gap) + barWidth/2, baseY - barMaxH/2);
+
+            ctx.textAlign = 'left';
+
+            // Title
+            ctx.fillStyle = '#ccc';
+            ctx.font = '14px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${surf.name} (genus ${surf.genus})`, W/2, 25);
+            ctx.textAlign = 'left';
+
+            // Info box
+            infoBox.innerHTML = `
+                <strong>${surf.name}</strong> (genus ${surf.genus})<br>
+                Betti numbers: b₀=${b[0]}, b₁=${b[1]}, b₂=${b[2]}<br>
+                Euler characteristic: χ = ${b[0]} - ${b[1]} + ${b[2]} = <strong>${euler}</strong><br>
+                Minimum critical points needed: ${c[0]} min + ${c[1]} saddles + ${c[2]} max = <strong>${c[0]+c[1]+c[2]} total</strong><br>
+                <span style="color:#64b5f6;">Morse inequalities: c₀≥b₀, c₁≥b₁, c₂≥b₂ — all satisfied ✓</span>
+            `;
+        }
+
+        select.addEventListener('change', draw);
+        draw();
+    })();
+
+    // =====================================================
+    // DEMO 6: Perturbation (Degenerate vs Non-degenerate)
+    // =====================================================
+    (function() {
+        const canvas = document.getElementById('canvasPerturb');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('perturb-eps');
+        const valDisplay = document.getElementById('perturb-val');
+        const infoBox = document.getElementById('perturb-info');
+        const W = canvas.width, H = canvas.height;
+        const pad = 60;
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            const eps = (slider.value / 100) * 2; // 0 to 2
+            valDisplay.textContent = `ε = ${eps.toFixed(2)}`;
+
+            // f(x) = x^4 - eps * x^2
+            const f = (x) => x*x*x*x - eps * x*x;
+
+            // Derivative: 4x^3 - 2*eps*x = x(4x^2 - 2*eps)
+            // Critical points: x=0, x = ±sqrt(eps/2)
+
+            // Plot range
+            const xMin = -1.8, xMax = 1.8;
+            const xRange = xMax - xMin;
+
+            // Compute y range
+            let yMin = Infinity, yMax = -Infinity;
+            for (let i = 0; i <= 200; i++) {
+                const x = xMin + (i/200) * xRange;
+                const y = f(x);
+                if (y < yMin) yMin = y;
+                if (y > yMax) yMax = y;
+            }
+            // Add padding
+            const yPad = (yMax - yMin) * 0.15 || 0.5;
+            yMin -= yPad;
+            yMax += yPad;
+            const yRange = yMax - yMin;
+
+            const mapX = (x) => pad + ((x - xMin) / xRange) * (W - 2*pad);
+            const mapY = (y) => (H - pad) - ((y - yMin) / yRange) * (H - 2*pad);
+
+            // Grid lines
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 1;
+            // x-axis
+            if (yMin <= 0 && yMax >= 0) {
+                ctx.beginPath();
+                ctx.moveTo(pad, mapY(0));
+                ctx.lineTo(W - pad, mapY(0));
+                ctx.stroke();
+            }
+            // y-axis
+            if (xMin <= 0 && xMax >= 0) {
+                ctx.beginPath();
+                ctx.moveTo(mapX(0), pad);
+                ctx.lineTo(mapX(0), H - pad);
+                ctx.stroke();
+            }
+
+            // Draw the function
+            ctx.strokeStyle = eps === 0 ? '#ff9800' : '#64b5f6';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let i = 0; i <= 400; i++) {
+                const x = xMin + (i/400) * xRange;
+                const y = f(x);
+                const px = mapX(x), py = mapY(y);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // Draw critical points
+            const crits = [];
+            crits.push({ x: 0, y: f(0), type: eps === 0 ? 'degenerate' : (eps > 0 ? 'max' : 'min') });
+            if (eps > 0.01) {
+                const xc = Math.sqrt(eps / 2);
+                crits.push({ x: xc, y: f(xc), type: 'min' });
+                crits.push({ x: -xc, y: f(-xc), type: 'min' });
+            }
+
+            crits.forEach(c => {
+                const px = mapX(c.x), py = mapY(c.y);
+                ctx.beginPath();
+                ctx.arc(px, py, 8, 0, 2*Math.PI);
+                if (c.type === 'degenerate') {
+                    ctx.fillStyle = '#ff9800';
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // Warning symbol
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 10px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('!', px, py + 4);
+                } else if (c.type === 'min') {
+                    ctx.fillStyle = '#4caf50';
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                } else if (c.type === 'max') {
+                    ctx.fillStyle = '#f44336';
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                // Label
+                ctx.fillStyle = '#ccc';
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(c.type, px, py - 14);
+                ctx.textAlign = 'left';
+            });
+
+            // Function label
+            ctx.fillStyle = '#ccc';
+            ctx.font = '13px monospace';
+            ctx.textAlign = 'center';
+            if (eps < 0.01) {
+                ctx.fillText('f(x) = x⁴  (degenerate: flat at origin)', W/2, 25);
+            } else {
+                ctx.fillText(`f(x) = x⁴ - ${eps.toFixed(2)}x²  (Morse function: non-degenerate critical points)`, W/2, 25);
+            }
+            ctx.textAlign = 'left';
+
+            // Axis labels
+            ctx.fillStyle = '#666';
+            ctx.font = '11px monospace';
+            ctx.fillText('x', W - pad + 5, mapY(0) + 4);
+            ctx.fillText('f(x)', mapX(0) + 5, pad - 5);
+
+            // Info
+            if (eps < 0.01) {
+                infoBox.innerHTML = `<strong>f(x) = x⁴</strong> — This is <span style="color:#ff9800;">NOT a Morse function</span>. The critical point at x=0 is <strong>degenerate</strong>: the second derivative f''(0) = 0. The Hessian is zero, so we can't classify it as a clean min or max. Morse theory doesn't apply directly.`;
+            } else {
+                const xc = Math.sqrt(eps/2);
+                infoBox.innerHTML = `<strong>f(x) = x⁴ - ${eps.toFixed(2)}x²</strong> — This <span style="color:#4caf50;">IS a Morse function</span>. The degenerate point has split into <strong>3 non-degenerate critical points</strong>:<br>
+                • Two minima at x = ±${xc.toFixed(3)} (f'' > 0)<br>
+                • One local maximum at x = 0 (f'' = -${(2*eps).toFixed(2)} < 0)<br>
+                <br><em>This illustrates a key fact: any degenerate critical point can be "perturbed away" by an arbitrarily small change to the function. Morse functions are generic!</em>`;
+            }
+        }
+
+        slider.addEventListener('input', draw);
+        draw();
+    })();
+
+    </script>
+</body>
+</html>
