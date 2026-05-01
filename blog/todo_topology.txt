@@ -1,0 +1,1 @@
+idee: embedding space zeigen, rotieren und verzerren, relationen zueinander bleiben gleich, gleiche sachen sind noch nachbarn, die inseln bleiben gleich usw. -> entfernung wegabstrahiert -> topologie
