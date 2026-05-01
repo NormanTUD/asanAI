@@ -984,7 +984,9 @@ function initMapper() {
       case 'radial': return dist(p, { x: PW / 2, y: PH / 2 });
       case 'density':
         let d = 0;
-        for (const q of points) d += Math.exp(-dist(p, q) ** 2 / 5000);
+		    for (const q of points) {
+			    d += Math.exp(-(dist(p, q) ** 2) / 5000);
+		    }
         return d;
       default: return p.x;
     }
