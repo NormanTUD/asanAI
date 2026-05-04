@@ -1,0 +1,205 @@
+\documentclass[border=10pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, decorations.markings, backgrounds, fadings}
+\usepackage{amsmath}
+
+\begin{document}
+\begin{tikzpicture}[
+    every node/.style={font=\small},
+    dim label/.style={font=\tiny, fill=white, inner sep=1pt, rounded corners},
+    rotation arrow/.style={-{Stealth[length=2mm]}, thick, 
+                           decorate, decoration={markings, 
+                           mark=at position 0.6 with {\arrow{Stealth[length=2mm]}}}},
+  ]
+
+  % ══════════════════════════════════════════════════════════
+  %  ZENTRUM: Das Wort
+  % ══════════════════════════════════════════════════════════
+  \node[draw, thick, rounded corners=4pt, fill=black!85, text=white,
+        minimum width=2cm, minimum height=0.8cm, font=\large\bfseries]
+    (wort) at (0,0) {Katze};
+
+  % ══════════════════════════════════════════════════════════
+  %  KONZENTRISCHE KREISE = Dimensionspaare (d_0/d_1, d_2/d_3, ...)
+  %  Jedes Paar hat eine ANDERE Rotationsfrequenz
+  % ══════════════════════════════════════════════════════════
+
+  % Farben für verschiedene Dimensionspaare
+  \definecolor{dim1}{HTML}{E8590C}   % orange-rot
+  \definecolor{dim2}{HTML}{0F3460}   % dunkelblau
+  \definecolor{dim3}{HTML}{E94560}   % pink
+  \definecolor{dim4}{HTML}{1A8F3C}   % grün
+  \definecolor{dim5}{HTML}{7B2D8B}   % violett
+  \definecolor{dim6}{HTML}{D4A017}   % gold
+
+  % Radien der Kreise
+  \def\rA{1.4}
+  \def\rB{2.2}
+  \def\rC{3.0}
+  \def\rD{3.8}
+  \def\rE{4.6}
+  \def\rF{5.4}
+
+  % --- Kreis 1: Dimensionspaar (d_0, d_1) – schnellste Rotation ---
+  \draw[dim1, thick, opacity=0.6] (0,0) circle (\rA);
+  \node[dim label, text=dim1] at (95:\rA) {$(d_0, d_1)$};
+  % Rotationswinkel für Position pos (hier: pos=3 als Beispiel)
+  % θ_0 = pos / 10000^(0/d) → schnelle Rotation
+  \def\angleA{108}  % großer Winkel = schnelle Frequenz
+  \fill[dim1] (\angleA:\rA) circle (4pt);
+  \draw[dim1, thick, -{Stealth[length=3mm]}] 
+    (0:\rA) arc (0:\angleA-5:\rA);
+  \node[dim label, text=dim1] at (\angleA:\rA+0.35) {\tiny$\theta_0 \cdot \text{pos}$};
+
+  % --- Kreis 2: Dimensionspaar (d_2, d_3) ---
+  \draw[dim2, thick, opacity=0.6] (0,0) circle (\rB);
+  \node[dim label, text=dim2] at (92:\rB) {$(d_2, d_3)$};
+  \def\angleB{72}
+  \fill[dim2] (\angleB:\rB) circle (4pt);
+  \draw[dim2, thick, -{Stealth[length=3mm]}] 
+    (0:\rB) arc (0:\angleB-5:\rB);
+  \node[dim label, text=dim2] at (\angleB:\rB+0.35) {\tiny$\theta_1 \cdot \text{pos}$};
+
+  % --- Kreis 3: Dimensionspaar (d_4, d_5) ---
+  \draw[dim3, thick, opacity=0.6] (0,0) circle (\rC);
+  \node[dim label, text=dim3] at (88:\rC) {$(d_4, d_5)$};
+  \def\angleC{45}
+  \fill[dim3] (\angleC:\rC) circle (4pt);
+  \draw[dim3, thick, -{Stealth[length=3mm]}] 
+    (0:\rC) arc (0:\angleC-5:\rC);
+  \node[dim label, text=dim3] at (\angleC:\rC+0.35) {\tiny$\theta_2 \cdot \text{pos}$};
+
+  % --- Kreis 4: Dimensionspaar (d_6, d_7) ---
+  \draw[dim4, thick, opacity=0.6] (0,0) circle (\rD);
+  \node[dim label, text=dim4] at (85:\rD) {$(d_6, d_7)$};
+  \def\angleD{27}
+  \fill[dim4] (\angleD:\rD) circle (4pt);
+  \draw[dim4, thick, -{Stealth[length=3mm]}] 
+    (0:\rD) arc (0:\angleD-5:\rD);
+  \node[dim label, text=dim4] at (\angleD:\rD+0.4) {\tiny$\theta_3 \cdot \text{pos}$};
+
+  % --- Kreis 5: Dimensionspaar (d_8, d_9) ---
+  \draw[dim5, thick, opacity=0.6] (0,0) circle (\rE);
+  \node[dim label, text=dim5] at (82:\rE) {$(d_8, d_9)$};
+  \def\angleE{15}
+  \fill[dim5] (\angleE:\rE) circle (4pt);
+  \draw[dim5, thick, -{Stealth[length=3mm]}] 
+    (0:\rE) arc (0:\angleE-4:\rE);
+
+  % --- Kreis 6: Dimensionspaar (d_{d-2}, d_{d-1}) – langsamste ---
+  \draw[dim6, thick, opacity=0.6] (0,0) circle (\rF);
+  \node[dim label, text=dim6] at (80:\rF) {$(d_{d\text{-}2}, d_{d\text{-}1})$};
+  \def\angleF{7}
+  \fill[dim6] (\angleF:\rF) circle (4pt);
+  \draw[dim6, thick, -{Stealth[length=2.5mm]}] 
+    (0:\rF) arc (0:\angleF-2:\rF);
+  \node[dim label, text=dim6] at (3:\rF+0.5) {\tiny langsamste};
+
+  % ══════════════════════════════════════════════════════════
+  %  STARTPUNKTE auf der 0°-Achse (= Position 0)
+  % ══════════════════════════════════════════════════════════
+  \foreach \r in {\rA, \rB, \rC, \rD, \rE, \rF} {
+    \draw[gray, thin] (0:\r) circle (2pt);
+  }
+  \node[font=\tiny, gray, anchor=west] at (0:\rF+0.2) {pos=0};
+
+  % ══════════════════════════════════════════════════════════
+  %  ANNOTATION: Frequenz-Erklärung
+  % ══════════════════════════════════════════════════════════
+
+  % Formel oben
+  \node[anchor=south, font=\normalsize, text width=9cm, align=center]
+    at (0, \rF+1.2) {%
+      \textbf{RoPE: Rotary Position Embedding}\\[4pt]
+      $\displaystyle \theta_i = \frac{1}{10000^{\,2i/d}}$
+      \qquad
+      Rotation um $\theta_i \cdot \text{pos}$ im Paar $(d_{2i},\, d_{2i+1})$
+    };
+
+  % ══════════════════════════════════════════════════════════
+  %  RECHTS: Erklärung der Idee
+  % ══════════════════════════════════════════════════════════
+  \node[anchor=north west, text width=5.5cm, font=\scriptsize,
+        draw=gray!50, rounded corners, fill=white, inner sep=6pt]
+    at (\rF+1.0, 4.5) {%
+      \textbf{Was passiert hier?}\\[3pt]
+      \begin{itemize}\setlength{\itemsep}{2pt}
+        \item Das \textbf{Wort} (Embedding-Vektor) steht im Zentrum
+        \item Jeder \textbf{Kreis} = ein 2D-Dimensionspaar
+        \item Die \textbf{Rotation} kodiert die Position
+        \item Innere Kreise: \textbf{schnelle} Frequenz\\
+              (ändert sich stark pro Position)
+        \item Äußere Kreise: \textbf{langsame} Frequenz\\
+              (ändert sich kaum pro Position)
+        \item[$\Rightarrow$] Zusammen: \textbf{eindeutiger Fingerabdruck}
+              für jede Position
+        \item[$\Rightarrow$] Das Wort ist keine Punkt mehr,\\
+              sondern eine \textbf{Gegend} im Raum
+      \end{itemize}
+    };
+
+  % ══════════════════════════════════════════════════════════
+  %  LINKS UNTEN: Vergleich zweier Positionen
+  % ══════════════════════════════════════════════════════════
+  \node[anchor=north east, text width=5cm, font=\scriptsize,
+        draw=gray!50, rounded corners, fill=white, inner sep=6pt]
+    at (-\rF-0.8, -2.5) {%
+      \textbf{Relative Position:}\\[3pt]
+      Dot-Product zweier rotierter Vektoren\\
+      hängt nur von $\Delta\text{pos} = |p_i - p_j|$ ab:\\[4pt]
+      $\langle R_{\theta}^{p_i} x,\; R_{\theta}^{p_j} y \rangle 
+       = \langle R_{\theta}^{p_i - p_j} x,\; y \rangle$\\[6pt]
+      $\Rightarrow$ \textbf{Relative Abstände} sind\\
+      automatisch in der Geometrie kodiert!
+    };
+
+  % ══════════════════════════════════════════════════════════
+  %  UNTEN: Mehrere Positionen desselben Wortes
+  % ══════════════════════════════════════════════════════════
+  \begin{scope}[yshift=-8.5cm]
+    \node[font=\normalsize\bfseries, anchor=north] at (0, 1) 
+      {Dasselbe Wort an verschiedenen Positionen:};
+
+    % Drei Mini-Diagramme nebeneinander
+    \foreach \pos/\label/\xoff/\aA/\aB/\aC in {
+      0/{pos=0}/-4.5/0/0/0,
+      3/{pos=3}/0/108/72/45,
+      7/{pos=7}/4.5/252/168/105%
+    } {
+      \begin{scope}[xshift=\xoff cm]
+        % Mini-Kreise
+        \draw[dim1, thick, opacity=0.5] (0,0) circle (0.7);
+        \draw[dim2, thick, opacity=0.5] (0,0) circle (1.1);
+        \draw[dim3, thick, opacity=0.5] (0,0) circle (1.5);
+        
+        % Punkte
+        \fill[dim1] (\aA:0.7) circle (3pt);
+        \fill[dim2] (\aB:1.1) circle (3pt);
+        \fill[dim3] (\aC:1.5) circle (3pt);
+        
+        % Wort
+        \node[fill=black!85, text=white, rounded corners=2pt, 
+              font=\tiny\bfseries, inner sep=2pt] at (0,0) {Katze};
+        
+        % Label
+        \node[font=\scriptsize\bfseries, below] at (0,-1.8) {\label};
+      \end{scope}
+    }
+
+    % Verbindungspfeile
+    \draw[-{Stealth}, thick, gray, dashed] (-3.0, -0.5) -- (-1.8, -0.5)
+      node[midway, above, font=\tiny] {Rotation};
+    \draw[-{Stealth}, thick, gray, dashed] (1.8, -0.5) -- (3.0, -0.5)
+      node[midway, above, font=\tiny] {Rotation};
+
+    \node[font=\scriptsize, text width=10cm, align=center, gray] at (0, -2.5) {
+      Gleicher Embedding-Vektor, aber durch unterschiedliche Rotationen\\
+      an verschiedenen Stellen im hochdimensionalen Raum platziert.\\
+      \textbf{→ Das Wort wird zu einer Gegend, verteilt über alle Dimensionen.}
+    };
+  \end{scope}
+
+\end{tikzpicture}
+\end{document}
