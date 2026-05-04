@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topology You Can See</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #ffffff;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #1a1a2e;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+        .header h1 {
+            font-size: 2.4em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.1em;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .demo-section {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            background: #fafafa;
+        }
+        .demo-section h2 {
+            font-size: 1.6em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .demo-section .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        .demo-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fff;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.85em;
+            color: #888;
+        }
+        .controls kbd {
+            background: #eee;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+        }
+        .insight {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #f0e6ff, #e6f0ff);
+            border-left: 4px solid #764ba2;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.92em;
+            line-height: 1.5;
+        }
+        .insight strong { color: #4a2d7a; }
+        .tab-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px auto;
+            max-width: 900px;
+            padding: 0 20px;
+        }
+        .tab-btn {
+            padding: 10px 18px;
+            border: 2px solid #764ba2;
+            border-radius: 25px;
+            background: white;
+            color: #764ba2;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover, .tab-btn.active {
+            background: #764ba2;
+            color: white;
+        }
+        .demo-section { display: none; }
+        .demo-section.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Topology You Can See</h1>
+        <p>Five interactive examples showing how the <em>shape</em> of a space changes everything — no formulas needed, just your eyes and arrow keys.</p>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="showDemo(0)">1. Pac-Man's Torus</button>
+        <button class="tab-btn" onclick="showDemo(1)">2. Möbius Music</button>
+        <button class="tab-btn" onclick="showDemo(2)">3. Coffee Mug = Donut</button>
+        <button class="tab-btn" onclick="showDemo(3)">4. Earth Navigation</button>
+        <button class="tab-btn" onclick="showDemo(4)">5. Klein Bottle Maze</button>
+    </div>
+
+    <!-- DEMO 1: Pac-Man Torus -->
+    <div class="demo-section active" id="demo0">
+        <h2>1. Pac-Man Lives on a Torus</h2>
+        <p class="subtitle">In classic arcade games, going off the right edge brings you back on the left; going off the top brings you back at the bottom. This wrapping means the flat screen is actually a <strong>torus</strong> (donut shape)! Move the dot with arrow keys and watch it on both views simultaneously.</p>
+        <div class="demo-container">
+            <div>
+                <canvas id="torus-flat" width="400" height="400"></canvas>
+                <div class="controls">Flat "screen" view — <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> to move</div>
+            </div>
+            <div>
+                <canvas id="torus-3d" width="400" height="400"></canvas>
+                <div class="controls">Same world on a torus — drag to rotate</div>
+            </div>
+        </div>
+        <div class="insight">
+            <strong>Why this matters:</strong> Realizing the game world is a torus explains why there's no "edge" — the shortest path between two points might go through the wall! Speedrunners exploit this topology to find shorter routes that seem impossible on a flat map.
+        </div>
+    </div>
+
+    <!-- DEMO 2: Möbius Strip -->
+    <div class="demo-section" id="demo1">
+        <h2>2. Möbius Strip: One-Sided Music Loop</h2>
+        <p class="subtitle">A Möbius strip has only ONE side. An ant walking along it will visit "both sides" without ever crossing an edge. This is how some conveyor belts work (they wear evenly!) and how Bach's "Crab Canon" works — the melody plays forward AND backward simultaneously on the same strip.</p>
+        <div class="demo-container">
+            <div>
+                <canvas id="mobius-flat" width="400" height="300"></canvas>
+                <div class="controls">Flat strip — watch the note travel — <kbd>←</kbd><kbd>→</kbd> speed</div>
+            </div>
+            <div>
+                <canvas id="mobius-3d" width="400" height="300"></canvas>
+                <div class="controls">Same strip twisted into Möbius — drag to rotate</div>
+            </div>
+        </div>
+        <div class="insight">
+            <strong>Why this matters:</strong> Conveyor belts made as Möbius strips last twice as long because they use "both sides" (which are really one side). The topology gives you a practical engineering advantage — double the wear surface from the same material!
+        </div>
+    </div>
+
+    <!-- DEMO 3: Coffee Mug = Donut -->
+    <div class="demo-section" id="demo2">
+        <h2>3. A Coffee Mug IS a Donut</h2>
+        <p class="subtitle">Topologically, a coffee mug and a donut are the same — both have exactly one hole. You can continuously deform one into the other without cutting or gluing. Use the slider to watch the transformation happen smoothly.</p>
+        <div class="demo-container">
+            <div>
+                <canvas id="morph-canvas" width="500" height="400"></canvas>
+                <div class="controls">
+                    <input type="range" id="morph-slider" min="0" max="100" value="0" style="width:300px;">
+                    <br>Mug ← slide → Donut | <kbd>←</kbd><kbd>→</kbd> also work
+                </div>
+            </div>
+        </div>
+        <div class="insight">
+            <strong>Why this matters:</strong> Topologists classify shapes by properties that survive stretching — like the number of holes. This is why topology is called "rubber sheet geometry." It helps in data analysis: if your dataset has a "hole" in it, that hole persists no matter how you stretch or compress the data, revealing hidden structure.
+        </div>
+    </div>
+
+    <!-- DEMO 4: Sphere Navigation -->
+    <div class="demo-section" id="demo3">
+        <h2>4. You Can't Comb a Hairy Ball (Wind on Earth)</h2>
+        <p class="subtitle">The "Hairy Ball Theorem" says you can't comb a hairy sphere flat without creating at least one cowlick (a point where the hair swirls or vanishes). This is why Earth ALWAYS has at least one cyclone! Move the wind field and see why a calm everywhere is topologically impossible on a sphere.</p>
+        <div class="demo-container">
+            <div>
+                <canvas id="sphere-canvas" width="500" height="450"></canvas>
+                <div class="controls"><kbd>←</kbd><kbd>→</kbd> rotate globe | <kbd>↑</kbd><kbd>↓</kbd> tilt | Click to add wind direction</div>
+            </div>
+        </div>
+        <div class="insight">
+            <strong>Why this matters:</strong> This theorem guarantees that at any moment, somewhere on Earth the wind speed is exactly zero (the "eye" of a storm). It's not weather — it's pure topology! The same principle means every continuous vector field on a sphere has a zero. GPS satellites use this insight in their coverage algorithms.
+        </div>
+    </div>
+
+    <!-- DEMO 5: Klein Bottle -->
+    <div class="demo-section" id="demo4">
+        <h2>5. Klein Bottle Maze: No Inside or Outside</h2>
+        <p class="subtitle">A Klein bottle has no inside or outside — like a Möbius strip but closed. In this maze, what seems like a wall from one "side" is open from the "other" — but there's only one side! Navigate and discover paths that seem impossible in normal space.</p>
+        <div class="demo-container">
+            <div>
+                <canvas id="klein-flat" width="400" height="400"></canvas>
+                <div class="controls">Flat view (arrows identify) — <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> to move</div>
+            </div>
+            <div>
+                <canvas id="klein-3d" width="400" height="400"></canvas>
+                <div class="controls">Klein bottle view — drag to rotate</div>
+            </div>
+        </div>
+        <div class="insight">
+            <strong>Why this matters:</strong> Klein bottle topology appears in advanced robotics — when a robot arm can rotate fully AND flip, its configuration space is a Klein bottle. Understanding this prevents the robot from getting "stuck" in impossible configurations. It also appears in certain crystal structures in chemistry.
+        </div>
+    </div>
+
+    <script>
+    // ============ GLOBAL STATE ============
+    let activeDemo = 0;
+    const keys = {};
+
+    function showDemo(idx) {
+        document.querySelectorAll('.demo-section').forEach((s, i) => {
+            s.classList.toggle('active', i === idx);
+        });
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+            b.classList.toggle('active', i === idx);
+        });
+        activeDemo = idx;
+    }
+
+    document.addEventListener('keydown', e => { keys[e.key] = true; });
+    document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+    // ============ DEMO 1: PAC-MAN TORUS ============
+    (() => {
+        const flatCanvas = document.getElementById('torus-flat');
+        const tdCanvas = document.getElementById('torus-3d');
+        const fctx = flatCanvas.getContext('2d');
+        const tctx = tdCanvas.getContext('2d');
+
+        let px = 0.5, py = 0.5; // normalized position
+        let trail = [];
+        let rotX = 0.5, rotY = 0.3;
+        let dragging = false, dragStart = {};
+
+        tdCanvas.addEventListener('mousedown', e => { dragging = true; dragStart = {x: e.offsetX, y: e.offsetY, rx: rotX, ry: rotY}; });
+        tdCanvas.addEventListener('mousemove', e => {
+            if (dragging) {
+                rotX = dragStart.rx + (e.offsetX - dragStart.x) * 0.01;
+                rotY = dragStart.ry + (e.offsetY - dragStart.y) * 0.01;
+            }
+        });
+        tdCanvas.addEventListener('mouseup', () => dragging = false);
+        tdCanvas.addEventListener('mouseleave', () => dragging = false);
+
+        function torusPoint(u, v, R, r) {
+            const x = (R + r * Math.cos(v)) * Math.cos(u);
+            const y = (R + r * Math.cos(v)) * Math.sin(u);
+            const z = r * Math.sin(v);
+            return [x, y, z];
+        }
+
+        function rotate3D(p, ax, ay) {
+            let [x, y, z] = p;
+            // Rotate around Y
+            let x1 = x * Math.cos(ay) - z * Math.sin(ay);
+            let z1 = x * Math.sin(ay) + z * Math.cos(ay);
+            // Rotate around X
+            let y1 = y * Math.cos(ax) - z1 * Math.sin(ax);
+            let z2 = y * Math.sin(ax) + z1 * Math.cos(ax);
+            return [x1, y1, z2];
+        }
+
+        function project(p) {
+            const scale = 120;
+            const dist = 5;
+            const [x, y, z] = p;
+            const factor = dist / (dist + z);
+            return [200 + x * scale * factor, 200 + y * scale * factor, z];
+        }
+
+        function drawFlat() {
+            fctx.clearRect(0, 0, 400, 400);
+            // Grid
+            fctx.strokeStyle = '#e0e0e0';
+            fctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                fctx.beginPath(); fctx.moveTo(i*40, 0); fctx.lineTo(i*40, 400); fctx.stroke();
+                fctx.beginPath(); fctx.moveTo(0, i*40); fctx.lineTo(400, i*40); fctx.stroke();
+            }
+            // Edge arrows showing identification
+            fctx.strokeStyle = '#764ba2';
+            fctx.lineWidth = 3;
+            // Top/bottom arrows (same direction = torus)
+            for (let i = 1; i < 4; i++) {
+                drawArrow(fctx, i*100, 5, i*100+1, 5, '#e74c3c');
+                drawArrow(fctx, i*100, 395, i*100+1, 395, '#e74c3c');
+            }
+            // Left/right arrows
+            for (let i = 1; i < 4; i++) {
+                drawArrow(fctx, 5, i*100, 5, i*100+1, '#3498db');
+                drawArrow(fctx, 395, i*100, 395, i*100+1, '#3498db');
+            }
+            // Trail
+            fctx.strokeStyle = 'rgba(118, 75, 162, 0.3)';
+            fctx.lineWidth = 2;
+            for (let i = 1; i < trail.length; i++) {
+                const dx = Math.abs(trail[i][0] - trail[i-1][0]);
+                const dy = Math.abs(trail[i][1] - trail[i-1][1]);
+                if (dx < 0.5 && dy < 0.5) {
+                    fctx.beginPath();
+                    fctx.moveTo(trail[i-1][0]*400, trail[i-1][1]*400);
+                    fctx.lineTo(trail[i][0]*400, trail[i][1]*400);
+                    fctx.stroke();
+                }
+            }
+            // Player
+            fctx.fillStyle = '#f39c12';
+            fctx.beginPath();
+            fctx.arc(px * 400, py * 400, 12, 0, Math.PI * 2);
+            fctx.fill();
+            fctx.fillStyle = '#fff';
+            fctx.beginPath();
+            fctx.arc(px * 400 + 4, py * 400 - 3, 3, 0, Math.PI * 2);
+            fctx.fill();
+            // Ghost
+            fctx.fillStyle = '#e74c3c';
+            fctx.font = '20px sans-serif';
+            fctx.fillText('👻', 150, 150);
+        }
+
+        function drawArrow(ctx, x1, y1, x2, y2, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x1-5, y1-8);
+            ctx.lineTo(x1+5, y1-8);
+            ctx.lineTo(x1+5, y1+8);
+            ctx.lineTo(x1+10, y1+8);
+            ctx.lineTo(x1, y1+15);
+            ctx.lineTo(x1-10, y1+8);
+            ctx.lineTo(x1-5, y1+8);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function draw3D() {
+            tctx.clearRect(0, 0, 400, 400);
+            const R = 1.5, r = 0.7;
+            const steps = 30;
+
+            // Draw torus wireframe
+            tctx.strokeStyle = 'rgba(100, 100, 200, 0.15)';
+            tctx.lineWidth = 0.5;
+            for (let i = 0; i <= steps; i++) {
+                tctx.beginPath();
+                for (let j = 0; j <= steps; j++) {
+                    const u = (i / steps) * Math.PI * 2;
+                    const v = (j / steps) * Math.PI * 2;
+                    const pt = torusPoint(u, v, R, r);
+                    const rot = rotate3D(pt, rotY, rotX);
+                    const [sx, sy] = project(rot);
+                    if (j === 0) tctx.moveTo(sx, sy);
+                    else tctx.lineTo(sx, sy);
+                }
+                tctx.stroke();
+            }
+            for (let j = 0; j <= steps; j++) {
+                tctx.beginPath();
+                for (let i = 0; i <= steps; i++) {
+                    const u = (i / steps) * Math.PI * 2;
+                    const v = (j / steps) * Math.PI * 2;
+                    const pt = torusPoint(u, v, R, r);
+                    const rot = rotate3D(pt, rotY, rotX);
+                    const [sx, sy] = project(rot);
+                    if (i === 0) tctx.moveTo(sx, sy);
+                    else tctx.lineTo(sx, sy);
+                }
+                tctx.stroke();
+            }
+
+            // Draw trail on torus
+            tctx.strokeStyle = 'rgba(118, 75, 162, 0.5)';
+            tctx.lineWidth = 2;
+            for (let i = 1; i < trail.length; i++) {
+                const u1 = trail[i-1][0] * Math.PI * 2;
+                const v1 = trail[i-1][1] * Math.PI * 2;
+                const u2 = trail[i][0] * Math.PI * 2;
+                const v2 = trail[i][1] * Math.PI * 2;
+                if (Math.abs(trail[i][0]-trail[i-1][0]) < 0.5 && Math.abs(trail[i][1]-trail[i-1][1]) < 0.5) {
+                    const pt1 = rotate3D(torusPoint(u1, v1, R, r), rotY, rotX);
+                    const pt2 = rotate3D(torusPoint(u2, v2, R, r), rotY, rotX);
+                    const [sx1, sy1] = project(pt1);
+                    const [sx2, sy2] = project(pt2);
+                    tctx.beginPath();
+                    tctx.moveTo(sx1, sy1);
+                    tctx.lineTo(sx2, sy2);
+                    tctx.stroke();
+                }
+            }
+
+            // Player on torus
+            const pu = px * Math.PI * 2;
+            const pv = py * Math.PI * 2;
+            const ppt = rotate3D(torusPoint(pu, pv, R, r), rotY, rotX);
+            const [psx, psy] = project(ppt);
+            tctx.fillStyle = '#f39c12';
+            tctx.beginPath();
+            tctx.arc(psx, psy, 8, 0, Math.PI * 2);
+            tctx.fill();
+        }
+
+        function updateTorus() {
+            if (activeDemo !== 0) { requestAnimationFrame(updateTorus); return; }
+            const speed = 0.005;
+            if (keys['ArrowLeft']) px -= speed;
+            if (keys['ArrowRight']) px += speed;
+            if (keys['ArrowUp']) py -= speed;
+            if (keys['ArrowDown']) py += speed;
+            // Wrap around (this IS the torus topology!)
+            px = ((px % 1) + 1) % 1;
+            py = ((py % 1) + 1) % 1;
+            trail.push([px, py]);
+            if (trail.length > 500) trail.shift();
+            drawFlat();
+            draw3D();
+            requestAnimationFrame(updateTorus);
+        }
+        updateTorus();
+    })();
+
+    // ============ DEMO 2: MÖBIUS STRIP ============
+    (() => {
+        const flatCanvas = document.getElementById('mobius-flat');
+        const tdCanvas = document.getElementById('mobius-3d');
+        const fctx = flatCanvas.getContext('2d');
+        const tctx = tdCanvas.getContext('2d');
+
+        let notePos = 0; // 0 to 2 (goes around twice to return to start)
+        let speed = 0.003;
+        let rotAngle = 0;
+        let dragging = false, dragStart = {};
+
+        tdCanvas.addEventListener('mousedown', e => { dragging = true; dragStart = {x: e.offsetX, a: rotAngle}; });
+        tdCanvas.addEventListener('mousemove', e => {
+            if (dragging) rotAngle = dragStart.a + (e.offsetX - dragStart.x) * 0.01;
+        });
+        tdCanvas.addEventListener('mouseup', () => dragging = false);
+        tdCanvas.addEventListener('mouseleave', () => dragging = false);
+
+        function drawMobiusFlat() {
+            fctx.clearRect(0, 0, 400, 300);
+            // Draw strip
+            fctx.fillStyle = '#f0e6ff';
+            fctx.fillRect(20, 80, 360, 140);
+            fctx.strokeStyle = '#764ba2';
+            fctx.lineWidth = 2;
+            fctx.strokeRect(20, 80, 360, 140);
+
+            // Show identification arrows (opposite direction = Möbius)
+            fctx.fillStyle = '#e74c3c';
+            // Left side: arrow pointing up
+            fctx.beginPath();
+            fctx.moveTo(15, 160); fctx.lineTo(5, 160); fctx.lineTo(10, 80); fctx.lineTo(15, 80);
+            fctx.closePath(); fctx.fill();
+            fctx.font = '16px sans-serif';
+            fctx.fillText('▲', 5, 130);
+
+            // Right side: arrow pointing down
+            fctx.fillText('▼', 383, 165);
+            fctx.beginPath();
+
+            // Color gradient to show the twist
+            const grad = fctx.createLinearGradient(20, 80, 20, 220);
+            grad.addColorStop(0, 'rgba(52, 152, 219, 0.3)');
+            grad.addColorStop(1, 'rgba(231, 76, 60, 0.3)');
+            fctx.fillStyle = grad;
+            fctx.fillRect(20, 80, 360, 140);
+
+            // Musical notes along the strip
+            fctx.font = '14px monospace';
+            fctx.fillStyle = '#333';
+            const notes = ['C','D','E','F','G','A','B','C','B','A','G','F','E','D'];
+            for (let i = 0; i < notes.length; i++) {
+                const x = 30 + i * 25;
+                const side = notePos > 1 ? 1 : 0;
+                fctx.fillText(notes[i], x, side === 0 ? 140 : 170);
+            }
+
+            // Traveling note
+            const nx = 20 + (notePos % 1) * 360;
+            const ny = notePos < 1 ? 130 : 180;
+            fctx.fillStyle = '#f39c12';
+            fctx.beginPath();
+            fctx.arc(nx, ny, 10, 0, Math.PI * 2);
+            fctx.fill();
+            fctx.fillStyle = '#fff';
+            fctx.font = '12px sans-serif';
+            fctx.fillText('♪', nx-5, ny+4);
+
+            // Label
+            fctx.fillStyle = '#666';
+            fctx.font = '12px sans-serif';
+            fctx.fillText(`Side: ${notePos < 1 ? 'A' : 'B (flipped!)'} — Trip: ${(notePos*50).toFixed(0)}%`, 20, 270);
+            fctx.fillText('Arrows show edges are glued with a FLIP (Möbius!)', 20, 290);
+        }
+
+        function mobiusPoint(u, v, R) {
+            const halfU = u / 2;
+            const x = (R + v * Math.cos(halfU)) * Math.cos(u);
+            const y = (R + v * Math.cos(halfU)) * Math.sin(u);
+            const z = v * Math.sin(halfU);
+            return [x, y, z];
+        }
+
+        function drawMobius3D() {
+            tctx.clearRect(0, 0, 400, 300);
+            const R = 1.2;
+            const strips = 20;
+            const segs = 60;
+
+            for (let i = 0; i < segs; i++) {
+                const u1 = (i / segs) * Math.PI * 2;
+                const u2 = ((i + 1) / segs) * Math.PI * 2;
+                for (let j = -2; j <= 2; j++) {
+                    const v = j * 0.15;
+                    const p1 = mobiusPoint(u1, v, R);
+                    const p2 = mobiusPoint(u2, v, R);
+                    const r1 = rotate3DM(p1, rotAngle);
+                    const r2 = rotate3DM(p2, rotAngle);
+                    const [sx1, sy1] = projectM(r1);
+                    const [sx2, sy2] = projectM(r2);
+
+                    const hue = (i / segs) * 360;
+                    tctx.strokeStyle = `hsla(${hue}, 60%, 50%, 0.4)`;
+                    tctx.lineWidth = 1;
+                    tctx.beginPath();
+                    tctx.moveTo(sx1, sy1);
+                    tctx.lineTo(sx2, sy2);
+                    tctx.stroke();
+                }
+            }
+
+            // Note on Möbius
+            const noteU = notePos * Math.PI; // goes 0 to 2π over full trip
+            const noteV = 0;
+            const np = mobiusPoint(noteU * 2, noteV, R);
+            const nr = rotate3DM(np, rotAngle);
+            const [nsx, nsy] = projectM(nr);
+            tctx.fillStyle = '#f39c12';
+            tctx.beginPath();
+            tctx.arc(nsx, nsy, 8, 0, Math.PI * 2);
+            tctx.fill();
+        }
+
+        function rotate3DM(p, angle) {
+            const [x, y, z] = p;
+            const x1 = x * Math.cos(angle) - z * Math.sin(angle);
+            const z1 = x * Math.sin(angle) + z * Math.cos(angle);
+            return [x1, y, z1];
+        }
+
+        function projectM(p) {
+            const scale = 90;
+            const dist = 4;
+            const [x, y, z] = p;
+            const factor = dist / (dist + z);
+            return [200 + x * scale * factor, 150 + y * scale * factor];
+        }
+
+        function updateMobius() {
+            if (activeDemo !== 1) { requestAnimationFrame(updateMobius); return; }
+            if (keys['ArrowRight']) speed = Math.min(0.01, speed + 0.001);
+            if (keys['ArrowLeft']) speed = Math.max(0.001, speed - 0.001);
+            notePos += speed;
+            if (notePos >= 2) notePos = 0;
+            drawMobiusFlat();
+            drawMobius3D();
+            requestAnimationFrame(updateMobius);
+        }
+        updateMobius();
+    })();
+
+    // ============ DEMO 3: MUG = DONUT ============
+    (() => {
+        const canvas = document.getElementById('morph-canvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('morph-slider');
+        let morphT = 0;
+
+        slider.addEventListener('input', e => { morphT = e.target.value / 100; });
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+
+        function drawMorph() {
+            if (activeDemo !== 2) { requestAnimationFrame(drawMorph); return; }
+
+            if (keys['ArrowRight']) { morphT = Math.min(1, morphT + 0.01); slider.value = morphT * 100; }
+            if (keys['ArrowLeft']) { morphT = Math.max(0, morphT - 0.01); slider.value = morphT * 100; }
+
+            ctx.clearRect(0, 0, 500, 400);
+
+            // Draw the morphing shape
+            ctx.save();
+            ctx.translate(250, 200);
+
+            const t = morphT;
+
+            // Draw the object as a series of curves that morph between mug and donut
+            ctx.fillStyle = '#f0e6ff';
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 2.5;
+
+            if (t < 0.5) {
+                // Mug morphing: body shrinks, handle grows
+                const mt = t * 2; // 0 to 1 for first half
+                const bodyW = lerp(60, 40, mt);
+                const bodyH = lerp(80, 40, mt);
+                const handleW = lerp(25, 40, mt);
+                const handleH = lerp(40, 40, mt);
+                const bodyX = lerp(0, 0, mt);
+                const bodyY = lerp(0, 0, mt);
+                const rimW = lerp(65, 42, mt);
+                const rimY = lerp(-80, -40, mt);
+
+                // Body
+                ctx.beginPath();
+                ctx.ellipse(bodyX, bodyY, bodyW, bodyH, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Hole (handle opening) - grows
+                const holeX = lerp(80, 50, mt);
+                const holeW = lerp(12, 25, mt);
+                const holeH = lerp(20, 30, mt);
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.ellipse(holeX, 0, holeW, holeH, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#764ba2';
+                ctx.stroke();
+
+                // Handle outline
+                ctx.fillStyle = '#f0e6ff';
+                ctx.strokeStyle = '#764ba2';
+                ctx.beginPath();
+                ctx.ellipse(lerp(75, 50, mt), 0, handleW, handleH, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Rim of mug (fades)
+                ctx.globalAlpha = 1 - mt;
+                ctx.beginPath();
+                ctx.ellipse(bodyX, rimY, rimW, 12, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+
+            } else {
+                // Donut forming: everything becomes symmetric torus cross-section
+                const mt = (t - 0.5) * 2; // 0 to 1 for second half
+                const R = lerp(50, 70, mt); // major radius
+                const r = lerp(30, 25, mt); // minor radius
+
+                // Draw torus as a 2D cross-section view (like looking at a donut from the side)
+                ctx.beginPath();
+                // Outer ellipse
+                ctx.ellipse(0, 0, R + r, lerp(50, r * 0.6, mt), 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // Inner hole
+                const holeR = lerp(25, R - r, mt);
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, holeR, lerp(25, holeR * 0.6, mt), 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+            // Labels
+            ctx.fillStyle = '#333';
+            ctx.font = '16px sans-serif';
+            ctx.textAlign = 'center';
+            if (t < 0.1) ctx.fillText('☕ Coffee Mug (1 hole: the handle)', 250, 370);
+            else if (t > 0.9) ctx.fillText('🍩 Donut / Torus (1 hole)', 250, 370);
+            else ctx.fillText(`Morphing... ${(t*100).toFixed(0)}% — same topology throughout!`, 250, 370);
+
+            ctx.fillStyle = '#666';
+            ctx.font = '13px sans-serif';
+            ctx.fillText('Both have genus 1 (one hole) — they are topologically identical', 250, 390);
+
+            // Genus counter
+            ctx.fillStyle = '#764ba2';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Holes: 1', 20, 30);
+            ctx.font = '13px sans-serif';
+            ctx.fillStyle = '#666';
+            ctx.fillText('(unchanged throughout!)', 20, 50);
+
+            requestAnimationFrame(drawMorph);
+        }
+        drawMorph();
+    })();
+
+    // ============ DEMO 4: HAIRY BALL / WIND ON SPHERE ============
+    (() => {
+        const canvas = document.getElementById('sphere-canvas');
+        const ctx = canvas.getContext('2d');
+        let rotX = 0, rotY = 0;
+        let windField = [];
+        let time = 0;
+
+        // Initialize wind field on sphere
+        function initWind() {
+            windField = [];
+            const n = 200;
+            for (let i = 0; i < n; i++) {
+                // Random points on sphere
+                const theta = Math.random() * Math.PI;
+                const phi = Math.random() * Math.PI * 2;
+                windField.push({ theta, phi, life: Math.random() * 100 });
+            }
+        }
+        initWind();
+
+        // Wind direction at a point - designed to have a vortex (unavoidable by hairy ball theorem)
+        function windDir(theta, phi) {
+            // Create a field with two poles (vortices) - this is the simplest valid field
+            // Tangent vector in phi direction with sin(theta) factor creates poles at top/bottom
+            const vTheta = Math.cos(phi + time * 0.5) * Math.sin(theta) * 0.02;
+            const vPhi = (Math.sin(theta) + 0.3 * Math.cos(2 * theta)) * 0.02;
+            return { vTheta, vPhi };
+        }
+
+        function sphereToScreen(theta, phi, radius) {
+            const x = radius * Math.sin(theta) * Math.cos(phi);
+            const y = radius * Math.sin(theta) * Math.sin(phi);
+            const z = radius * Math.cos(theta);
+
+            // Rotate
+            const x1 = x * Math.cos(rotX) - z * Math.sin(rotX);
+            const z1 = x * Math.sin(rotX) + z * Math.cos(rotX);
+            const y1 = y * Math.cos(rotY) - z1 * Math.sin(rotY);
+            const z2 = y * Math.sin(rotY) + z1 * Math.cos(rotY);
+
+            return { sx: 250 + x1, sy: 225 + y1, z: z2 };
+        }
+
+        function drawSphere() {
+            if (activeDemo !== 3) { requestAnimationFrame(drawSphere); return; }
+
+            if (keys['ArrowLeft']) rotX -= 0.03;
+            if (keys['ArrowRight']) rotX += 0.03;
+            if (keys['ArrowUp']) rotY -= 0.03;
+            if (keys['ArrowDown']) rotY += 0.03;
+
+            time += 0.016;
+            ctx.clearRect(0, 0, 500, 450);
+
+            const radius = 150;
+
+            // Draw sphere outline
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(250, 225, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Draw latitude/longitude lines
+            ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)';
+            for (let lat = 1; lat < 6; lat++) {
+                ctx.beginPath();
+                for (let i = 0; i <= 40; i++) {
+                    const phi = (i / 40) * Math.PI * 2;
+                    const theta = (lat / 6) * Math.PI;
+                    const p = sphereToScreen(theta, phi, radius);
+                    if (i === 0) ctx.moveTo(p.sx, p.sy);
+                    else ctx.lineTo(p.sx, p.sy);
+                }
+                ctx.stroke();
+            }
+            for (let lon = 0; lon < 8; lon++) {
+                ctx.beginPath();
+                for (let i = 0; i <= 20; i++) {
+                    const theta = (i / 20) * Math.PI;
+                    const phi = (lon / 8) * Math.PI * 2;
+                    const p = sphereToScreen(theta, phi, radius);
+                    if (i === 0) ctx.moveTo(p.sx, p.sy);
+                    else ctx.lineTo(p.sx, p.sy);
+                }
+                ctx.stroke();
+            }
+
+            // Update and draw wind particles
+            let vortexPoints = [];
+            for (let i = 0; i < windField.length; i++) {
+                const w = windField[i];
+                const dir = windDir(w.theta, w.phi);
+                w.theta += dir.vTheta;
+                w.phi += dir.vPhi;
+                w.life--;
+
+                // Keep in bounds
+                if (w.theta < 0.05 || w.theta > Math.PI - 0.05 || w.life <= 0) {
+                    w.theta = 0.1 + Math.random() * (Math.PI - 0.2);
+                    w.phi = Math.random() * Math.PI * 2;
+                    w.life = 50 + Math.random() * 100;
+                }
+                w.phi = ((w.phi % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+
+                const p = sphereToScreen(w.theta, w.phi, radius);
+                if (p.z > -radius * 0.3) { // Only draw front-facing
+                    const speed = Math.sqrt(dir.vTheta * dir.vTheta + dir.vPhi * dir.vPhi);
+                    const alpha = Math.min(1, p.z / radius + 0.5);
+
+                    // Color by speed - slow = red (near vortex), fast = blue
+                    const hue = speed < 0.01 ? 0 : 200;
+                    ctx.fillStyle = `hsla(${hue}, 70%, 50%, ${alpha * 0.8})`;
+                    ctx.beginPath();
+                    ctx.arc(p.sx, p.sy, lerp(2, 4, speed * 30), 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Draw direction tail
+                    const tailTheta = w.theta - dir.vTheta * 5;
+                    const tailPhi = w.phi - dir.vPhi * 5;
+                    const tp = sphereToScreen(tailTheta, tailPhi, radius);
+                    ctx.strokeStyle = `hsla(${hue}, 70%, 50%, ${alpha * 0.4})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(p.sx, p.sy);
+                    ctx.lineTo(tp.sx, tp.sy);
+                    ctx.stroke();
+
+                    if (speed < 0.005) vortexPoints.push(p);
+                }
+            }
+
+            // Mark vortex areas
+            if (vortexPoints.length > 3) {
+                ctx.strokeStyle = 'rgba(231, 76, 60, 0.6)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
+                const vx = vortexPoints.reduce((s, p) => s + p.sx, 0) / vortexPoints.length;
+                const vy = vortexPoints.reduce((s, p) => s + p.sy, 0) / vortexPoints.length;
+                ctx.beginPath();
+                ctx.arc(vx, vy, 20, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#e74c3c';
+                ctx.font = '11px sans-serif';
+                ctx.fillText('← vortex (unavoidable!)', vx + 22, vy);
+            }
+
+            // North pole marker
+            const np = sphereToScreen(0.01, 0, radius);
+            if (np.z > 0) {
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(np.sx, np.sy, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#c0392b';
+                ctx.font = '11px sans-serif';
+                ctx.fillText('N (zero point)', np.sx + 8, np.sy);
+            }
+
+            // South pole marker
+            const sp = sphereToScreen(Math.PI - 0.01, 0, radius);
+            if (sp.z > 0) {
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(sp.sx, sp.sy, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#c0392b';
+                ctx.font = '11px sans-serif';
+                ctx.fillText('S (zero point)', sp.sx + 8, sp.sy);
+            }
+
+            // Info text
+            ctx.fillStyle = '#333';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Wind on a sphere MUST have at least one point with zero wind', 250, 430);
+            ctx.fillStyle = '#e74c3c';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Red dots = slow/zero wind (the "cowlicks" topology guarantees)', 250, 448);
+            ctx.textAlign = 'left';
+
+            requestAnimationFrame(drawSphere);
+        }
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+        drawSphere();
+    })();
+
+    // ============ DEMO 5: KLEIN BOTTLE MAZE ============
+    (() => {
+        const flatCanvas = document.getElementById('klein-flat');
+        const tdCanvas = document.getElementById('klein-3d');
+        const fctx = flatCanvas.getContext('2d');
+        const tctx = tdCanvas.getContext('2d');
+
+        let px = 2, py = 2; // grid position
+        let rotAngle = 0.5;
+        let rotY = 0.3;
+        let dragging = false, dragStart = {};
+        let moveTimer = 0;
+
+        // Klein bottle: top-bottom identified normally, left-right identified with FLIP
+        // This creates a non-orientable surface
+        const gridW = 7, gridH = 7;
+
+        // Maze walls: 0 = open, 1 = wall
+        // Horizontal walls (between rows)
+        const hWalls = [
+            [1,1,1,1,1,1,1],
+            [0,1,0,1,0,0,1],
+            [1,0,1,0,1,0,0],
+            [0,0,1,0,0,1,0],
+            [1,0,0,1,0,0,1],
+            [0,1,0,0,1,0,0],
+            [0,0,1,0,0,1,0],
+            [1,1,1,1,1,1,1],
+        ];
+        // Vertical walls (between columns)
+        const vWalls = [
+            [1,0,1,0,0,1,0,1],
+            [1,0,0,1,0,1,0,1],
+            [1,1,0,0,1,0,0,1],
+            [1,0,1,0,0,0,1,1],
+            [1,0,0,1,0,1,0,1],
+            [1,1,0,0,0,1,0,1],
+            [1,0,0,1,0,0,1,1],
+        ];
+
+        tdCanvas.addEventListener('mousedown', e => { dragging = true; dragStart = {x: e.offsetX, y: e.offsetY, a: rotAngle, ry: rotY}; });
+        tdCanvas.addEventListener('mousemove', e => {
+            if (dragging) {
+                rotAngle = dragStart.a + (e.offsetX - dragStart.x) * 0.01;
+                rotY = dragStart.ry + (e.offsetY - dragStart.y) * 0.01;
+            }
+        });
+        tdCanvas.addEventListener('mouseup', () => dragging = false);
+        tdCanvas.addEventListener('mouseleave', () => dragging = false);
+
+        function canMove(x, y, dx, dy) {
+            let nx = x + dx;
+            let ny = y + dy;
+            let flipped = false;
+
+            // Klein bottle identification:
+            // Top/bottom: normal identification (like torus)
+            if (ny < 0) ny = gridH - 1;
+            if (ny >= gridH) ny = 0;
+
+            // Left/right: identification with FLIP (Klein bottle!)
+            if (nx < 0) { nx = gridW - 1; ny = gridH - 1 - ny; flipped = true; }
+            if (nx >= gridW) { nx = 0; ny = gridH - 1 - ny; flipped = true; }
+
+            // Check wall
+            if (dx === 1) { // moving right
+                if (x === gridW - 1) return { can: true, nx, ny }; // wraps (Klein)
+                return { can: vWalls[y][x + 1] === 0, nx: x + 1, ny: y };
+            }
+            if (dx === -1) { // moving left
+                if (x === 0) return { can: true, nx, ny }; // wraps (Klein)
+                return { can: vWalls[y][x] === 0, nx: x - 1, ny: y };
+            }
+            if (dy === 1) { // moving down
+                if (y === gridH - 1) return { can: true, nx: x, ny: 0 }; // wraps (torus-like)
+                return { can: hWalls[y + 1][x] === 0, nx: x, ny: y + 1 };
+            }
+            if (dy === -1) { // moving up
+                if (y === 0) return { can: true, nx: x, ny: gridH - 1 }; // wraps
+                return { can: hWalls[y][x] === 0, nx: x, ny: y - 1 };
+            }
+            return { can: false, nx: x, ny: y };
+        }
+
+        function drawKleinFlat() {
+            fctx.clearRect(0, 0, 400, 400);
+            const cellSize = 400 / gridW;
+
+            // Background
+            fctx.fillStyle = '#f8f8ff';
+            fctx.fillRect(0, 0, 400, 400);
+
+            // Draw edge identifications
+            // Top/bottom: same direction (arrows pointing right)
+            fctx.fillStyle = '#3498db';
+            fctx.font = '16px sans-serif';
+            for (let i = 0; i < 3; i++) {
+                fctx.fillText('→', 80 + i * 120, 15);
+                fctx.fillText('→', 80 + i * 120, 395);
+            }
+            // Left/right: OPPOSITE direction (Klein bottle!)
+            fctx.fillStyle = '#e74c3c';
+            for (let i = 0; i < 3; i++) {
+                fctx.fillText('↓', 3, 80 + i * 120);
+                fctx.fillText('↑', 387, 80 + i * 120); // OPPOSITE!
+            }
+
+            // Draw walls
+            fctx.strokeStyle = '#333';
+            fctx.lineWidth = 2;
+
+            // Horizontal walls
+            for (let y = 0; y <= gridH; y++) {
+                for (let x = 0; x < gridW; x++) {
+                    if (y > 0 && y < gridH && hWalls[y][x] === 1) {
+                        fctx.beginPath();
+                        fctx.moveTo(x * cellSize, y * cellSize);
+                        fctx.lineTo((x + 1) * cellSize, y * cellSize);
+                        fctx.stroke();
+                    }
+                }
+            }
+
+            // Vertical walls
+            for (let y = 0; y < gridH; y++) {
+                for (let x = 0; x <= gridW; x++) {
+                    if (x > 0 && x < gridW && vWalls[y][x] === 1) {
+                        fctx.beginPath();
+                        fctx.moveTo(x * cellSize, y * cellSize);
+                        fctx.lineTo(x * cellSize, (y + 1) * cellSize);
+                        fctx.stroke();
+                    }
+                }
+            }
+
+            // Border with color coding
+            fctx.lineWidth = 4;
+            fctx.strokeStyle = '#3498db';
+            fctx.beginPath(); fctx.moveTo(0, 0); fctx.lineTo(400, 0); fctx.stroke(); // top
+            fctx.beginPath(); fctx.moveTo(0, 400); fctx.lineTo(400, 400); fctx.stroke(); // bottom
+
+            fctx.strokeStyle = '#e74c3c';
+            fctx.beginPath(); fctx.moveTo(0, 0); fctx.lineTo(0, 400); fctx.stroke(); // left
+            fctx.beginPath(); fctx.moveTo(400, 0); fctx.lineTo(400, 400); fctx.stroke(); // right
+
+            // Player
+            fctx.fillStyle = '#f39c12';
+            fctx.beginPath();
+            fctx.arc((px + 0.5) * cellSize, (py + 0.5) * cellSize, cellSize * 0.3, 0, Math.PI * 2);
+            fctx.fill();
+
+            // Goal
+            fctx.fillStyle = '#2ecc71';
+            fctx.beginPath();
+            fctx.arc((5 + 0.5) * cellSize, (5 + 0.5) * cellSize, cellSize * 0.25, 0, Math.PI * 2);
+            fctx.fill();
+            fctx.fillStyle = '#fff';
+            fctx.font = '14px sans-serif';
+            fctx.textAlign = 'center';
+            fctx.fillText('★', (5 + 0.5) * cellSize, (5 + 0.5) * cellSize + 5);
+            fctx.textAlign = 'left';
+
+            // Legend
+            fctx.fillStyle = '#666';
+            fctx.font = '11px sans-serif';
+            fctx.fillText('Blue edges: normal gluing (like torus)', 10, 395);
+            fctx.fillText('Red edges: FLIPPED gluing (Klein bottle!)', 10, 385);
+        }
+
+        function kleinPoint(u, v) {
+            // Klein bottle immersion in 3D (figure-8 version)
+            const a = 2.5;
+            const cosU = Math.cos(u), sinU = Math.sin(u);
+            const cosV = Math.cos(v), sinV = Math.sin(v);
+
+            let x, y, z;
+            if (u < Math.PI) {
+                x = 3 * cosU * (1 + sinU) + 2 * (1 - cosU / 2) * cosV;
+                y = 8 * sinU + 2 * (1 - cosU / 2) * sinV;
+                z = 2 * (1 - cosU / 2) * cosV * Math.sin(u);
+            } else {
+                x = 3 * cosU * (1 + sinU) + 2 * (1 - cosU / 2) * Math.cos(v + Math.PI);
+                y = 8 * sinU;
+                z = 2 * (1 - cosU / 2) * sinV;
+            }
+
+            return [x * 0.12, y * 0.08, z * 0.12];
+        }
+
+        function drawKlein3D() {
+            tctx.clearRect(0, 0, 400, 400);
+
+            // Draw Klein bottle wireframe
+            const steps = 30;
+            tctx.strokeStyle = 'rgba(100, 100, 200, 0.2)';
+            tctx.lineWidth = 0.5;
+
+            for (let i = 0; i <= steps; i++) {
+                tctx.beginPath();
+                for (let j = 0; j <= steps; j++) {
+                    const u = (i / steps) * Math.PI * 2;
+                    const v = (j / steps) * Math.PI * 2;
+                    const pt = kleinPoint(u, v);
+                    const rot = rotateKlein(pt);
+                    const [sx, sy] = projectKlein(rot);
+                    if (j === 0) tctx.moveTo(sx, sy);
+                    else tctx.lineTo(sx, sy);
+                }
+                tctx.stroke();
+            }
+            for (let j = 0; j <= steps; j++) {
+                tctx.beginPath();
+                for (let i = 0; i <= steps; i++) {
+                    const u = (i / steps) * Math.PI * 2;
+                    const v = (j / steps) * Math.PI * 2;
+                    const pt = kleinPoint(u, v);
+                    const rot = rotateKlein(pt);
+                    const [sx, sy] = projectKlein(rot);
+                    if (i === 0) tctx.moveTo(sx, sy);
+                    else tctx.lineTo(sx, sy);
+                }
+                tctx.stroke();
+            }
+
+            // Player on Klein bottle
+            const pu = (px / gridW) * Math.PI * 2;
+            const pv = (py / gridH) * Math.PI * 2;
+            const ppt = kleinPoint(pu, pv);
+            const prot = rotateKlein(ppt);
+            const [psx, psy] = projectKlein(prot);
+            tctx.fillStyle = '#f39c12';
+            tctx.beginPath();
+            tctx.arc(psx, psy, 6, 0, Math.PI * 2);
+            tctx.fill();
+        }
+
+        function rotateKlein(p) {
+            let [x, y, z] = p;
+            const ca = Math.cos(rotAngle), sa = Math.sin(rotAngle);
+            const cb = Math.cos(rotY), sb = Math.sin(rotY);
+            const x1 = x * ca - z * sa;
+            const z1 = x * sa + z * ca;
+            const y1 = y * cb - z1 * sb;
+            const z2 = y * sb + z1 * cb;
+            return [x1, y1, z2];
+        }
+
+        function projectKlein(p) {
+            const scale = 100;
+            const dist = 5;
+            const [x, y, z] = p;
+            const factor = dist / (dist + z);
+            return [200 + x * scale * factor, 200 + y * scale * factor];
+        }
+
+        function updateKlein() {
+            if (activeDemo !== 4) { requestAnimationFrame(updateKlein); return; }
+
+            moveTimer++;
+            if (moveTimer > 10) {
+                moveTimer = 0;
+                let dx = 0, dy = 0;
+                if (keys['ArrowRight']) dx = 1;
+                else if (keys['ArrowLeft']) dx = -1;
+                else if (keys['ArrowDown']) dy = 1;
+                else if (keys['ArrowUp']) dy = -1;
+
+                if (dx !== 0 || dy !== 0) {
+                    const result = canMove(px, py, dx, dy);
+                    if (result.can) {
+                        px = result.nx;
+                        py = result.ny;
+                    }
+                }
+            }
+
+            drawKleinFlat();
+            drawKlein3D();
+            requestAnimationFrame(updateKlein);
+        }
+        updateKlein();
+    })();
+
+    </script>
+</body>
+</html>
