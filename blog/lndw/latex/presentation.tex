@@ -181,6 +181,86 @@
   \end{columns}
 \end{frame}
 
+% ── Neue Folie: Universelle Approximation durch ReLU-Knicke ──
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+        neuron/.style={thick},
+      ]
+
+      % ── Achsen ──
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % ── Zielfunktion (glatte Kurve) ──
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.35]
+        plot (\x, {0.4*sin(60*\x) + 0.08*\x*\x - 0.15*\x + 1.2})
+        node[right, opacity=1] {Zielfunktion $f(x)$};
+
+      % ── Einzelne ReLU-Neuronen (verschoben & skaliert) ──
+      %  Neuron i:  w_i * max(0, x - c_i)
+      %  Jedes Stück wird einzeln gezeichnet und beschriftet
+
+      % Neuron 1: startet bei x=0, Steigung +0.8
+      \draw[neuron, akzent, dashed]
+        (0,0) -- (1.5, 1.2)  -- (7, 1.2);
+      \node[akzent, above] at (0.8, 0.7) {$h_1$};
+
+      % Neuron 2: startet bei x=1.5, Steigung -1.0
+      \draw[neuron, hell, dashed]
+        (0,0) -- (1.5, 0) -- (3.5, -2) -- (7,-2);
+      % Clip für Sichtbarkeit: nur den relevanten Teil zeigen
+      \begin{scope}
+        \clip (0,-1.5) rectangle (7.5,4.2);
+        \draw[neuron, hell, dashed]
+          (0,0) -- (1.5,0) -- (3.5, -2);
+      \end{scope}
+      \node[hell, below] at (2.5, -0.8) {$h_2$};
+
+      % Neuron 3: startet bei x=3.5, Steigung +0.6
+      \draw[neuron, highlight, dashed]
+        (0,0) -- (3.5, 0) -- (5.5, 1.2) -- (7, 1.2);
+      \node[highlight, above] at (4.5, 0.7) {$h_3$};
+
+      % Neuron 4: startet bei x=5.5, Steigung -0.5
+      \draw[neuron, violet, dashed]
+        (0,0) -- (5.5, 0) -- (7, -0.75);
+      \node[violet, below] at (6.3, -0.5) {$h_4$};
+
+      % ── Summe = stückweise lineare Approximation ──
+      % Manuell berechnet:
+      %   [0, 1.5]:    Steigung +0.8, Start bei y=1.0 (Bias)
+      %   [1.5, 3.5]:  +0.8 -1.0 = -0.2
+      %   [3.5, 5.5]:  -0.2 +0.6 = +0.4
+      %   [5.5, 7]:    +0.4 -0.5 = -0.1
+      \draw[line width=2.5pt, akzent]
+        (0, 1.0) -- (1.5, 2.2) -- (3.5, 1.8) -- (5.5, 2.6) -- (7, 2.45);
+
+      % Knicke markieren
+      \foreach \kx/\ky in {1.5/2.2, 3.5/1.8, 5.5/2.6} {
+        \fill[akzent] (\kx, \ky) circle (3pt);
+      }
+
+      % Beschriftung Summe
+      \node[akzent, right, font=\small\bfseries] at (7, 2.45)
+        {$\hat{f}(x) = \sum_i h_i(x)$};
+
+      % ── Legende unten ──
+      \node[anchor=north west, text width=7cm, font=\scriptsize,
+            inner sep=4pt, fill=white, draw=gray!40, rounded corners]
+        at (0, -1.8) {%
+          Jedes Neuron $h_i(x) = a_i\,\max(0,\; x - c_i)$ liefert
+          einen \textbf{Knick} an Position $c_i$.\\[2pt]
+          \textbf{4 Neuronen → 3 Knicke} → grobe Approximation.\\
+          \textbf{100 Neuronen → 99 Knicke} → fast beliebig genau.
+        };
+
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
 % ── Black Box ──────────────────────────────────────────────
 \begin{frame}{Black Box – wir sehen nur Input \& Output}
   \begin{center}
