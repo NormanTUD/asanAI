@@ -255,6 +255,7 @@
           einen \textbf{Knick} an Position $c_i$.\\[2pt]
           \textbf{4 Neuronen → 3 Knicke} → grobe Approximation.\\
           \textbf{100 Neuronen → 99 Knicke} → fast beliebig genau.
+          \textbf{Negative Steigung} entsteht durch die zwei Dense-Schicht. die wieder negative Gewichte haben kann
         };
 
     \end{tikzpicture}
@@ -424,8 +425,6 @@
 
 % ── Temperatur ─────────────────────────────────────────────
 \begin{frame}{Temperatur – Kreativität vs.\ Sachlichkeit}
-  \formelbox{p_i = \frac{e^{z_i / T}}{\sum_j e^{z_j / T}}}
-
   \begin{columns}[T]
     \column{0.55\textwidth}
     \begin{itemize}
