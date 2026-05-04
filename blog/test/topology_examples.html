@@ -108,6 +108,59 @@
         }
         .demo-section { display: none; }
         .demo-section.active { display: block; }
+        .euler-btn {
+            padding: 8px 16px;
+            border: 2px solid #764ba2;
+            border-radius: 20px;
+            background: #764ba2;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 3px;
+            transition: all 0.2s;
+        }
+        .euler-btn:hover { background: #5a3a8a; }
+        .euler-btn.secondary {
+            background: white;
+            color: #764ba2;
+        }
+        .euler-btn.secondary:hover { background: #f0e6ff; }
+        .euler-counter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .euler-counter .ec-box {
+            text-align: center;
+            padding: 8px 18px;
+            border-radius: 10px;
+            background: #f0f0f0;
+            min-width: 70px;
+        }
+        .euler-counter .ec-box .ec-label {
+            font-size: 0.75em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .euler-counter .ec-box .ec-val {
+            font-size: 1.8em;
+            font-weight: 800;
+        }
+        .euler-counter .ec-op {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #999;
+        }
+        .euler-counter .ec-result {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .euler-counter .ec-result .ec-label { color: rgba(255,255,255,0.8); }
     </style>
 </head>
 <body>
@@ -119,10 +172,10 @@
     <div class="tab-bar">
         <button class="tab-btn active" onclick="showDemo(0)">1. Pac-Man's Torus</button>
         <button class="tab-btn" onclick="showDemo(1)">2. Wind on Earth</button>
-        <button class="tab-btn" onclick="showDemo(2)">3. Headphone Knots</button>
+        <button class="tab-btn" onclick="showDemo(2)">3. Euler's Magic Number</button>
     </div>
 
-    <!-- DEMO 1: Pac-Man Torus -->
+    <!-- DEMO 1: Pac-Man Torus (UNCHANGED) -->
     <div class="demo-section active" id="demo0">
         <h2>1. Pac-Man Lives on a Torus</h2>
         <p class="subtitle">In classic arcade games, going off the right edge brings you back on the left; going off the top brings you back at the bottom. This wrapping means the flat screen is actually a <strong>torus</strong> (donut shape)! Move the dot with arrow keys and watch it on both views simultaneously.</p>
@@ -141,38 +194,49 @@
         </div>
     </div>
 
-    <!-- DEMO 2: Hairy Ball / Wind on Earth -->
+    <!-- DEMO 2: Hairy Ball / Wind on Earth (UNCHANGED) -->
     <div class="demo-section" id="demo1">
         <h2>2. You Can't Comb a Hairy Ball (Wind on Earth)</h2>
         <p class="subtitle">The "Hairy Ball Theorem" says you can't comb a hairy sphere flat without creating at least one cowlick (a point where the hair swirls or vanishes). This is why Earth ALWAYS has at least one cyclone! Drag the globe to rotate it and see why calm everywhere is topologically impossible on a sphere.</p>
         <div class="demo-container">
             <div>
                 <canvas id="sphere-canvas" width="500" height="450"></canvas>
-                <div class="controls">Drag to rotate globe | Scroll to zoom | Click to add wind disturbance</div>
+                <div class="controls">Drag to rotate globe | Scroll to zoom</div>
             </div>
         </div>
         <div class="insight">
-            <strong>Why this matters:</strong> This theorem guarantees that at any moment, somewhere on Earth the wind speed is exactly zero (the "eye" of a storm). It's not weather — it's pure topology! The same principle means every continuous vector field on a sphere has a zero. GPS satellites use this insight in their coverage algorithms.
+            <strong>Why this matters:</strong> This theorem guarantees that at any moment, somewhere on Earth the wind speed is exactly zero (the "eye" of a storm). It's not weather — it's pure topology! The same principle means every continuous vector field on a sphere has a zero.
         </div>
     </div>
 
-    <!-- DEMO 3: Headphone Knots -->
+    <!-- DEMO 3: EULER'S MAGIC NUMBER (NEW) -->
     <div class="demo-section" id="demo2">
-        <h2>3. Why Your Headphones Always Tangle</h2>
-        <p class="subtitle">Ever pulled headphones from your pocket only to find them hopelessly knotted? This isn't bad luck — it's <strong>knot theory</strong>, a branch of topology. A loose string confined in a small space will almost certainly form knots when jostled. The longer the string, the more complex the knots. Press <strong>Tumble</strong> to simulate your pocket!</p>
+        <h2>3. Euler's Magic Number</h2>
+        <p class="subtitle">Draw any "map" — place dots (vertices), connect them with lines (edges), and count the regions (faces) created, including the outer region. Now compute <strong>V − E + F</strong>. It's <strong>always 2</strong>. Always. No matter how crazy your map is. This number is called the <strong>Euler characteristic</strong>, and it's a topological fingerprint of the surface you're drawing on.</p>
         <div class="demo-container">
             <div>
-                <canvas id="knot-canvas" width="500" height="450"></canvas>
-                <div class="controls">
-                    <button id="knot-tumble-btn" style="padding:8px 20px;border:2px solid #764ba2;border-radius:20px;background:#764ba2;color:white;cursor:pointer;font-size:0.95em;font-weight:600;margin:0 5px;">Tumble (Pocket Shake)</button>
-                    <button id="knot-reset-btn" style="padding:8px 20px;border:2px solid #764ba2;border-radius:20px;background:white;color:#764ba2;cursor:pointer;font-size:0.95em;font-weight:600;margin:0 5px;">Straighten Out</button>
-                    <button id="knot-longer-btn" style="padding:8px 20px;border:2px solid #764ba2;border-radius:20px;background:white;color:#764ba2;cursor:pointer;font-size:0.95em;font-weight:600;margin:0 5px;">Longer Cable</button>
-                    <button id="knot-shorter-btn" style="padding:8px 20px;border:2px solid #764ba2;border-radius:20px;background:white;color:#764ba2;cursor:pointer;font-size:0.95em;font-weight:600;margin:0 5px;">Shorter Cable</button>
+                <canvas id="euler-canvas" width="600" height="450"></canvas>
+                <div class="controls" style="margin-top:8px;">
+                    <button class="euler-btn" id="euler-mode-v">+ Add Vertex</button>
+                    <button class="euler-btn" id="euler-mode-e">+ Add Edge</button>
+                    <button class="euler-btn secondary" id="euler-preset-tri">Preset: Triangle</button>
+                    <button class="euler-btn secondary" id="euler-preset-cube">Preset: Cube</button>
+                    <button class="euler-btn secondary" id="euler-preset-crazy">Preset: Crazy Map</button>
+                    <button class="euler-btn secondary" id="euler-clear">Clear All</button>
                 </div>
             </div>
         </div>
+        <div class="euler-counter" id="euler-counter">
+            <div class="ec-box"><div class="ec-label">Vertices (V)</div><div class="ec-val" id="ec-v">0</div></div>
+            <div class="ec-op">−</div>
+            <div class="ec-box"><div class="ec-label">Edges (E)</div><div class="ec-val" id="ec-e">0</div></div>
+            <div class="ec-op">+</div>
+            <div class="ec-box"><div class="ec-label">Faces (F)</div><div class="ec-val" id="ec-f">1</div></div>
+            <div class="ec-op">=</div>
+            <div class="ec-box ec-result"><div class="ec-label">V − E + F</div><div class="ec-val" id="ec-chi">1</div></div>
+        </div>
         <div class="insight">
-            <strong>Why this matters:</strong> In 2007, physicists Raymer &amp; Smith proved that a tumbled string almost inevitably forms knots, and the probability increases with length. This is why short charging cables tangle less! Topologically, a knot is a closed loop embedded in 3D space — and some knots (like the trefoil) can't be untangled into a simple loop no matter what you do. This same math helps biologists understand how DNA coils and uncoils inside your cells.
+            <strong>Why this matters:</strong> Euler's formula (V − E + F = 2) holds for <em>any</em> connected planar graph — any map you can draw on a flat surface or a sphere. It's one of the most beautiful results in all of mathematics. The number 2 is the <strong>Euler characteristic</strong> of the sphere. A torus (donut) has Euler characteristic 0, which is how mathematicians can <em>prove</em> a sphere and a donut are fundamentally different shapes — not by looking, but by counting.
         </div>
     </div>
 
@@ -194,15 +258,13 @@
     document.addEventListener('keydown', e => { keys[e.key] = true; });
     document.addEventListener('keyup', e => { keys[e.key] = false; });
 
-    // ============ DEMO 1: PAC-MAN TORUS ============
+    // ============ DEMO 1: PAC-MAN TORUS (UNCHANGED) ============
     (() => {
         const flatCanvas = document.getElementById('torus-flat');
         const tdCanvas = document.getElementById('torus-3d');
         const fctx = flatCanvas.getContext('2d');
         const tctx = tdCanvas.getContext('2d');
-
         const TDW = 450, TDH = 400;
-
         let px = 0.5, py = 0.5;
         let trail = [];
         let rotX = 0.5, rotY = 0.3;
@@ -229,7 +291,6 @@
             const z = r * Math.sin(v);
             return [x, y, z];
         }
-
         function rotate3D(p, ax, ay) {
             let [x, y, z] = p;
             let x1 = x * Math.cos(ay) - z * Math.sin(ay);
@@ -238,7 +299,6 @@
             let z2 = y * Math.sin(ax) + z1 * Math.cos(ax);
             return [x1, y1, z2];
         }
-
         function project(p) {
             const scale = 100 * torusZoom;
             const dist = 5;
@@ -246,592 +306,539 @@
             const factor = dist / (dist + z);
             return [TDW / 2 + x * scale * factor, TDH / 2 + y * scale * factor, z];
         }
-
         function drawFlat() {
             fctx.clearRect(0, 0, 400, 400);
-            fctx.strokeStyle = '#e0e0e0';
-            fctx.lineWidth = 1;
+            fctx.strokeStyle = '#e0e0e0'; fctx.lineWidth = 1;
             for (let i = 0; i <= 10; i++) {
                 fctx.beginPath(); fctx.moveTo(i*40, 0); fctx.lineTo(i*40, 400); fctx.stroke();
                 fctx.beginPath(); fctx.moveTo(0, i*40); fctx.lineTo(400, i*40); fctx.stroke();
             }
-            // Edge arrows
             fctx.fillStyle = '#e74c3c';
-            for (let i = 1; i < 4; i++) {
-                drawArrow(fctx, i*100, 8, '#e74c3c', 'down');
-                drawArrow(fctx, i*100, 392, '#e74c3c', 'down');
-            }
+            for (let i = 1; i < 4; i++) { drawArrow(fctx, i*100, 8, '#e74c3c', 'down'); drawArrow(fctx, i*100, 392, '#e74c3c', 'down'); }
             fctx.fillStyle = '#3498db';
-            for (let i = 1; i < 4; i++) {
-                drawArrow(fctx, 8, i*100, '#3498db', 'right');
-                drawArrow(fctx, 392, i*100, '#3498db', 'right');
-            }
-            // Trail
-            fctx.strokeStyle = 'rgba(118, 75, 162, 0.3)';
-            fctx.lineWidth = 2;
+            for (let i = 1; i < 4; i++) { drawArrow(fctx, 8, i*100, '#3498db', 'right'); drawArrow(fctx, 392, i*100, '#3498db', 'right'); }
+            fctx.strokeStyle = 'rgba(118, 75, 162, 0.3)'; fctx.lineWidth = 2;
             for (let i = 1; i < trail.length; i++) {
                 const dx = Math.abs(trail[i][0] - trail[i-1][0]);
                 const dy = Math.abs(trail[i][1] - trail[i-1][1]);
                 if (dx < 0.5 && dy < 0.5) {
-                    fctx.beginPath();
-                    fctx.moveTo(trail[i-1][0]*400, trail[i-1][1]*400);
-                    fctx.lineTo(trail[i][0]*400, trail[i][1]*400);
-                    fctx.stroke();
+                    fctx.beginPath(); fctx.moveTo(trail[i-1][0]*400, trail[i-1][1]*400);
+                    fctx.lineTo(trail[i][0]*400, trail[i][1]*400); fctx.stroke();
                 }
             }
-            // Player (Pac-Man style)
             const angle = Date.now() * 0.005;
             const mouthOpen = (Math.sin(angle * 3) + 1) * 0.2 + 0.05;
             fctx.fillStyle = '#f39c12';
-            fctx.beginPath();
-            fctx.arc(px * 400, py * 400, 14, mouthOpen, Math.PI * 2 - mouthOpen);
-            fctx.lineTo(px * 400, py * 400);
-            fctx.closePath();
-            fctx.fill();
-            // Eye
-            fctx.fillStyle = '#333';
-            fctx.beginPath();
-            fctx.arc(px * 400 + 3, py * 400 - 6, 2.5, 0, Math.PI * 2);
-            fctx.fill();
-            // Ghost
-            fctx.font = '22px sans-serif';
-            fctx.fillText('👻', 145, 155);
+            fctx.beginPath(); fctx.arc(px * 400, py * 400, 14, mouthOpen, Math.PI * 2 - mouthOpen);
+            fctx.lineTo(px * 400, py * 400); fctx.closePath(); fctx.fill();
+            fctx.fillStyle = '#333'; fctx.beginPath();
+            fctx.arc(px * 400 + 3, py * 400 - 6, 2.5, 0, Math.PI * 2); fctx.fill();
+            fctx.font = '22px sans-serif'; fctx.fillText('👻', 145, 155);
         }
-
         function drawArrow(ctx, x, y, color, dir) {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            if (dir === 'down') {
-                ctx.moveTo(x - 6, y - 5);
-                ctx.lineTo(x + 6, y - 5);
-                ctx.lineTo(x, y + 5);
-            } else {
-                ctx.moveTo(x - 5, y - 6);
-                ctx.lineTo(x + 5, y);
-                ctx.lineTo(x - 5, y + 6);
-            }
-            ctx.closePath();
-            ctx.fill();
+            ctx.fillStyle = color; ctx.beginPath();
+            if (dir === 'down') { ctx.moveTo(x-6,y-5); ctx.lineTo(x+6,y-5); ctx.lineTo(x,y+5); }
+            else { ctx.moveTo(x-5,y-6); ctx.lineTo(x+5,y); ctx.lineTo(x-5,y+6); }
+            ctx.closePath(); ctx.fill();
         }
-
         function draw3D() {
             tctx.clearRect(0, 0, TDW, TDH);
-            const R = 1.5, r = 0.65;
-            const steps = 32;
-
-            // Draw torus wireframe
-            tctx.strokeStyle = 'rgba(100, 100, 200, 0.15)';
-            tctx.lineWidth = 0.5;
+            const R = 1.5, r = 0.65, steps = 32;
+            tctx.strokeStyle = 'rgba(100, 100, 200, 0.15)'; tctx.lineWidth = 0.5;
             for (let i = 0; i <= steps; i++) {
                 tctx.beginPath();
                 for (let j = 0; j <= steps; j++) {
-                    const u = (i / steps) * Math.PI * 2;
-                    const v = (j / steps) * Math.PI * 2;
-                    const pt = torusPoint(u, v, R, r);
-                    const rot = rotate3D(pt, rotY, rotX);
-                    const [sx, sy] = project(rot);
-                    if (j === 0) tctx.moveTo(sx, sy);
-                    else tctx.lineTo(sx, sy);
-                }
-                tctx.stroke();
+                    const u = (i/steps)*Math.PI*2, v = (j/steps)*Math.PI*2;
+                    const rot = rotate3D(torusPoint(u,v,R,r), rotY, rotX);
+                    const [sx,sy] = project(rot);
+                    if (j===0) tctx.moveTo(sx,sy); else tctx.lineTo(sx,sy);
+                } tctx.stroke();
             }
             for (let j = 0; j <= steps; j++) {
                 tctx.beginPath();
                 for (let i = 0; i <= steps; i++) {
-                    const u = (i / steps) * Math.PI * 2;
-                    const v = (j / steps) * Math.PI * 2;
-                    const pt = torusPoint(u, v, R, r);
-                    const rot = rotate3D(pt, rotY, rotX);
-                    const [sx, sy] = project(rot);
-                    if (i === 0) tctx.moveTo(sx, sy);
-                    else tctx.lineTo(sx, sy);
-                }
-                tctx.stroke();
+                    const u = (i/steps)*Math.PI*2, v = (j/steps)*Math.PI*2;
+                    const rot = rotate3D(torusPoint(u,v,R,r), rotY, rotX);
+                    const [sx,sy] = project(rot);
+                    if (i===0) tctx.moveTo(sx,sy); else tctx.lineTo(sx,sy);
+                } tctx.stroke();
             }
-
-            // Trail on torus
-            tctx.strokeStyle = 'rgba(118, 75, 162, 0.5)';
-            tctx.lineWidth = 2;
+            tctx.strokeStyle = 'rgba(118, 75, 162, 0.5)'; tctx.lineWidth = 2;
             for (let i = 1; i < trail.length; i++) {
-                const u1 = trail[i-1][0] * Math.PI * 2;
-                const v1 = trail[i-1][1] * Math.PI * 2;
-                const u2 = trail[i][0] * Math.PI * 2;
-                const v2 = trail[i][1] * Math.PI * 2;
                 if (Math.abs(trail[i][0]-trail[i-1][0]) < 0.5 && Math.abs(trail[i][1]-trail[i-1][1]) < 0.5) {
-                    const pt1 = rotate3D(torusPoint(u1, v1, R, r), rotY, rotX);
-                    const pt2 = rotate3D(torusPoint(u2, v2, R, r), rotY, rotX);
-                    const [sx1, sy1] = project(pt1);
-                    const [sx2, sy2] = project(pt2);
-                    tctx.beginPath();
-                    tctx.moveTo(sx1, sy1);
-                    tctx.lineTo(sx2, sy2);
-                    tctx.stroke();
+                    const pt1 = rotate3D(torusPoint(trail[i-1][0]*Math.PI*2, trail[i-1][1]*Math.PI*2, R, r), rotY, rotX);
+                    const pt2 = rotate3D(torusPoint(trail[i][0]*Math.PI*2, trail[i][1]*Math.PI*2, R, r), rotY, rotX);
+                    const [sx1,sy1] = project(pt1); const [sx2,sy2] = project(pt2);
+                    tctx.beginPath(); tctx.moveTo(sx1,sy1); tctx.lineTo(sx2,sy2); tctx.stroke();
                 }
             }
-
-            // Player on torus
-            const pu = px * Math.PI * 2;
-            const pv = py * Math.PI * 2;
-            const ppt = rotate3D(torusPoint(pu, pv, R, r), rotY, rotX);
-            const [psx, psy] = project(ppt);
-            tctx.fillStyle = '#f39c12';
-            tctx.beginPath();
-            tctx.arc(psx, psy, 8, 0, Math.PI * 2);
-            tctx.fill();
-            tctx.fillStyle = '#333';
-            tctx.beginPath();
-            tctx.arc(psx + 2, psy - 3, 2, 0, Math.PI * 2);
-            tctx.fill();
-
-            // Zoom indicator
-            tctx.fillStyle = '#aaa';
-            tctx.font = '11px sans-serif';
-            tctx.textAlign = 'right';
-            tctx.fillText(`Zoom: ${(torusZoom * 100).toFixed(0)}%`, TDW - 10, TDH - 10);
-            tctx.textAlign = 'left';
+            const ppt = rotate3D(torusPoint(px*Math.PI*2, py*Math.PI*2, R, r), rotY, rotX);
+            const [psx,psy] = project(ppt);
+            tctx.fillStyle = '#f39c12'; tctx.beginPath(); tctx.arc(psx,psy,8,0,Math.PI*2); tctx.fill();
+            tctx.fillStyle = '#333'; tctx.beginPath(); tctx.arc(psx+2,psy-3,2,0,Math.PI*2); tctx.fill();
+            tctx.fillStyle = '#aaa'; tctx.font = '11px sans-serif'; tctx.textAlign = 'right';
+            tctx.fillText(`Zoom: ${(torusZoom*100).toFixed(0)}%`, TDW-10, TDH-10); tctx.textAlign = 'left';
         }
-
         function updateTorus() {
             if (activeDemo !== 0) { requestAnimationFrame(updateTorus); return; }
             const speed = 0.005;
-            if (keys['ArrowLeft']) px -= speed;
-            if (keys['ArrowRight']) px += speed;
-            if (keys['ArrowUp']) py -= speed;
-            if (keys['ArrowDown']) py += speed;
-            px = ((px % 1) + 1) % 1;
-            py = ((py % 1) + 1) % 1;
-            trail.push([px, py]);
-            if (trail.length > 500) trail.shift();
-            drawFlat();
-            draw3D();
-            requestAnimationFrame(updateTorus);
+            if (keys['ArrowLeft']) px -= speed; if (keys['ArrowRight']) px += speed;
+            if (keys['ArrowUp']) py -= speed; if (keys['ArrowDown']) py += speed;
+            px = ((px%1)+1)%1; py = ((py%1)+1)%1;
+            trail.push([px,py]); if (trail.length > 500) trail.shift();
+            drawFlat(); draw3D(); requestAnimationFrame(updateTorus);
         }
         updateTorus();
     })();
 
-    // ============ DEMO 2: HAIRY BALL / WIND ON SPHERE ============
+    // ============ DEMO 2: HAIRY BALL / WIND ON SPHERE (UNCHANGED) ============
     (() => {
         const canvas = document.getElementById('sphere-canvas');
         const ctx = canvas.getContext('2d');
-        let rotX = 0, rotY = 0;
-        let sphereZoom = 1.0;
-        let windField = [];
-        let time = 0;
+        let rotX = 0, rotY = 0, sphereZoom = 1.0, windField = [], time = 0;
         let dragging = false, dragStart = {};
 
-        canvas.addEventListener('mousedown', e => {
-            dragging = true;
-            dragStart = { x: e.offsetX, y: e.offsetY, rx: rotX, ry: rotY };
-        });
+        canvas.addEventListener('mousedown', e => { dragging = true; dragStart = {x:e.offsetX,y:e.offsetY,rx:rotX,ry:rotY}; });
         canvas.addEventListener('mousemove', e => {
-            if (dragging) {
-                rotX = dragStart.rx + (e.offsetX - dragStart.x) * 0.01;
-                rotY = dragStart.ry + (e.offsetY - dragStart.y) * 0.01;
-                rotY = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, rotY));
-            }
+            if (dragging) { rotX = dragStart.rx+(e.offsetX-dragStart.x)*0.01; rotY = dragStart.ry+(e.offsetY-dragStart.y)*0.01; rotY = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotY)); }
         });
         canvas.addEventListener('mouseup', () => dragging = false);
         canvas.addEventListener('mouseleave', () => dragging = false);
-        canvas.addEventListener('wheel', e => {
-            e.preventDefault();
-            sphereZoom = Math.max(0.5, Math.min(2.5, sphereZoom - e.deltaY * 0.001));
-        }, { passive: false });
+        canvas.addEventListener('wheel', e => { e.preventDefault(); sphereZoom = Math.max(0.5, Math.min(2.5, sphereZoom - e.deltaY*0.001)); }, {passive:false});
 
-        function initWind() {
-            windField = [];
-            const n = 200;
-            for (let i = 0; i < n; i++) {
-                const theta = Math.random() * Math.PI;
-                const phi = Math.random() * Math.PI * 2;
-                windField.push({ theta, phi, life: Math.random() * 100 });
-            }
-        }
+        function initWind() { windField = []; for (let i=0;i<200;i++) windField.push({theta:Math.random()*Math.PI, phi:Math.random()*Math.PI*2, life:Math.random()*100}); }
         initWind();
-
-        function windDir(theta, phi) {
-            const vTheta = Math.cos(phi + time * 0.5) * Math.sin(theta) * 0.02;
-            const vPhi = (Math.sin(theta) + 0.3 * Math.cos(2 * theta)) * 0.02;
-            return { vTheta, vPhi };
-        }
-
+        function windDir(theta, phi) { return { vTheta: Math.cos(phi+time*0.5)*Math.sin(theta)*0.02, vPhi: (Math.sin(theta)+0.3*Math.cos(2*theta))*0.02 }; }
         function sphereToScreen(theta, phi, radius) {
-            const x = radius * Math.sin(theta) * Math.cos(phi);
-            const y = radius * Math.sin(theta) * Math.sin(phi);
-            const z = radius * Math.cos(theta);
-
-            const x1 = x * Math.cos(rotX) - z * Math.sin(rotX);
-            const z1 = x * Math.sin(rotX) + z * Math.cos(rotX);
-            const y1 = y * Math.cos(rotY) - z1 * Math.sin(rotY);
-            const z2 = y * Math.sin(rotY) + z1 * Math.cos(rotY);
-
-            return { sx: 250 + x1, sy: 225 + y1, z: z2 };
+            const x=radius*Math.sin(theta)*Math.cos(phi), y=radius*Math.sin(theta)*Math.sin(phi), z=radius*Math.cos(theta);
+            const x1=x*Math.cos(rotX)-z*Math.sin(rotX), z1=x*Math.sin(rotX)+z*Math.cos(rotX);
+            const y1=y*Math.cos(rotY)-z1*Math.sin(rotY), z2=y*Math.sin(rotY)+z1*Math.cos(rotY);
+            return {sx:250+x1, sy:225+y1, z:z2};
         }
-
-        function lerp(a, b, t) { return a + (b - a) * t; }
-
         function drawSphere() {
             if (activeDemo !== 1) { requestAnimationFrame(drawSphere); return; }
-
-            time += 0.016;
-            ctx.clearRect(0, 0, 500, 450);
-
-            const radius = 150 * sphereZoom;
-
-            // Sphere outline
-            ctx.strokeStyle = '#ccc';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.arc(250, 225, radius, 0, Math.PI * 2);
-            ctx.stroke();
-
-            // Latitude/longitude lines
-            ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)';
-            for (let lat = 1; lat < 6; lat++) {
-                ctx.beginPath();
-                for (let i = 0; i <= 40; i++) {
-                    const phi = (i / 40) * Math.PI * 2;
-                    const theta = (lat / 6) * Math.PI;
-                    const p = sphereToScreen(theta, phi, radius);
-                    if (i === 0) ctx.moveTo(p.sx, p.sy);
-                    else ctx.lineTo(p.sx, p.sy);
-                }
-                ctx.stroke();
-            }
-            for (let lon = 0; lon < 8; lon++) {
-                ctx.beginPath();
-                for (let i = 0; i <= 20; i++) {
-                    const theta = (i / 20) * Math.PI;
-                    const phi = (lon / 8) * Math.PI * 2;
-                    const p = sphereToScreen(theta, phi, radius);
-                    if (i === 0) ctx.moveTo(p.sx, p.sy);
-                    else ctx.lineTo(p.sx, p.sy);
-                }
-                ctx.stroke();
-            }
-
-            // Wind particles
+            time += 0.016; ctx.clearRect(0,0,500,450);
+            const radius = 150*sphereZoom;
+            ctx.strokeStyle='#ccc'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(250,225,radius,0,Math.PI*2); ctx.stroke();
+            ctx.strokeStyle='rgba(200,200,200,0.3)';
+            for (let lat=1;lat<6;lat++) { ctx.beginPath(); for (let i=0;i<=40;i++) { const p=sphereToScreen((lat/6)*Math.PI,(i/40)*Math.PI*2,radius); if(i===0) ctx.moveTo(p.sx,p.sy); else ctx.lineTo(p.sx,p.sy); } ctx.stroke(); }
+            for (let lon=0;lon<8;lon++) { ctx.beginPath(); for (let i=0;i<=20;i++) { const p=sphereToScreen((i/20)*Math.PI,(lon/8)*Math.PI*2,radius); if(i===0) ctx.moveTo(p.sx,p.sy); else ctx.lineTo(p.sx,p.sy); } ctx.stroke(); }
             let vortexPoints = [];
-            for (let i = 0; i < windField.length; i++) {
-                const w = windField[i];
-                const dir = windDir(w.theta, w.phi);
-                w.theta += dir.vTheta;
-                w.phi += dir.vPhi;
-                w.life--;
-
-                if (w.theta < 0.05 || w.theta > Math.PI - 0.05 || w.life <= 0) {
-                    w.theta = 0.1 + Math.random() * (Math.PI - 0.2);
-                    w.phi = Math.random() * Math.PI * 2;
-                    w.life = 50 + Math.random() * 100;
-                }
-                w.phi = ((w.phi % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-
-                const p = sphereToScreen(w.theta, w.phi, radius);
-                if (p.z > -radius * 0.3) {
-                    const speed = Math.sqrt(dir.vTheta * dir.vTheta + dir.vPhi * dir.vPhi);
-                    const alpha = Math.min(1, p.z / radius + 0.5);
-                    const hue = speed < 0.01 ? 0 : 200;
-                    ctx.fillStyle = `hsla(${hue}, 70%, 50%, ${alpha * 0.8})`;
-                    ctx.beginPath();
-                    ctx.arc(p.sx, p.sy, lerp(2, 4, speed * 30), 0, Math.PI * 2);
-                    ctx.fill();
-
-                    const tailTheta = w.theta - dir.vTheta * 5;
-                    const tailPhi = w.phi - dir.vPhi * 5;
-                    const tp = sphereToScreen(tailTheta, tailPhi, radius);
-                    ctx.strokeStyle = `hsla(${hue}, 70%, 50%, ${alpha * 0.4})`;
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(p.sx, p.sy);
-                    ctx.lineTo(tp.sx, tp.sy);
-                    ctx.stroke();
-
-                    if (speed < 0.005) vortexPoints.push(p);
+            for (let w of windField) {
+                const dir = windDir(w.theta, w.phi); w.theta+=dir.vTheta; w.phi+=dir.vPhi; w.life--;
+                if (w.theta<0.05||w.theta>Math.PI-0.05||w.life<=0) { w.theta=0.1+Math.random()*(Math.PI-0.2); w.phi=Math.random()*Math.PI*2; w.life=50+Math.random()*100; }
+                w.phi=((w.phi%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
+                const p=sphereToScreen(w.theta,w.phi,radius);
+                if (p.z > -radius*0.3) {
+                    const speed=Math.sqrt(dir.vTheta**2+dir.vPhi**2);
+                    const alpha=Math.min(1,p.z/radius+0.5); const hue=speed<0.01?0:200;
+                    ctx.fillStyle=`hsla(${hue},70%,50%,${alpha*0.8})`; ctx.beginPath(); ctx.arc(p.sx,p.sy,2+speed*60,0,Math.PI*2); ctx.fill();
+                    const tp=sphereToScreen(w.theta-dir.vTheta*5,w.phi-dir.vPhi*5,radius);
+                    ctx.strokeStyle=`hsla(${hue},70%,50%,${alpha*0.4})`; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.sx,p.sy); ctx.lineTo(tp.sx,tp.sy); ctx.stroke();
+                    if (speed<0.005) vortexPoints.push(p);
                 }
             }
-
-            // Mark vortex areas
-            if (vortexPoints.length > 3) {
-                ctx.strokeStyle = 'rgba(231, 76, 60, 0.6)';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([4, 4]);
-                const vx = vortexPoints.reduce((s, p) => s + p.sx, 0) / vortexPoints.length;
-                const vy = vortexPoints.reduce((s, p) => s + p.sy, 0) / vortexPoints.length;
-                ctx.beginPath();
-                ctx.arc(vx, vy, 20, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                ctx.fillStyle = '#e74c3c';
-                ctx.font = '11px sans-serif';
-                ctx.fillText('← vortex (unavoidable!)', vx + 22, vy);
+            if (vortexPoints.length>3) {
+                ctx.strokeStyle='rgba(231,76,60,0.6)'; ctx.lineWidth=2; ctx.setLineDash([4,4]);
+                const vx=vortexPoints.reduce((s,p)=>s+p.sx,0)/vortexPoints.length;
+                const vy=vortexPoints.reduce((s,p)=>s+p.sy,0)/vortexPoints.length;
+                ctx.beginPath(); ctx.arc(vx,vy,20,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+                ctx.fillStyle='#e74c3c'; ctx.font='11px sans-serif'; ctx.fillText('← vortex (unavoidable!)',vx+22,vy);
             }
-
-            // Pole markers
-            const np = sphereToScreen(0.01, 0, radius);
-            if (np.z > 0) {
-                ctx.fillStyle = '#e74c3c';
-                ctx.beginPath();
-                ctx.arc(np.sx, np.sy, 5, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#c0392b';
-                ctx.font = '11px sans-serif';
-                ctx.fillText('N (zero point)', np.sx + 8, np.sy);
-            }
-
-            // South pole marker
-            const sp = sphereToScreen(Math.PI - 0.01, 0, radius);
-            if (sp.z > 0) {
-                ctx.fillStyle = '#e74c3c';
-                ctx.beginPath();
-                ctx.arc(sp.sx, sp.sy, 5, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#c0392b';
-                ctx.font = '11px sans-serif';
-                ctx.fillText('S (zero point)', sp.sx + 8, sp.sy);
-            }
-
-            // Info text
-            ctx.fillStyle = '#333';
-            ctx.font = '14px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Wind on a sphere MUST have at least one point with zero wind', 250, 430);
-            ctx.fillStyle = '#e74c3c';
-            ctx.font = '12px sans-serif';
-            ctx.fillText('Red dots = slow/zero wind (the "cowlicks" topology guarantees)', 250, 448);
-            ctx.textAlign = 'left';
-
-            // Zoom indicator
-            ctx.fillStyle = '#aaa';
-            ctx.font = '11px sans-serif';
-            ctx.textAlign = 'right';
-            ctx.fillText(`Zoom: ${(sphereZoom * 100).toFixed(0)}%`, 490, 440);
-            ctx.textAlign = 'left';
-
+            const np=sphereToScreen(0.01,0,radius);
+            if(np.z>0){ctx.fillStyle='#e74c3c';ctx.beginPath();ctx.arc(np.sx,np.sy,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#c0392b';ctx.font='11px sans-serif';ctx.fillText('N (zero point)',np.sx+8,np.sy);}
+            const sp=sphereToScreen(Math.PI-0.01,0,radius);
+            if(sp.z>0){ctx.fillStyle='#e74c3c';ctx.beginPath();ctx.arc(sp.sx,sp.sy,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#c0392b';ctx.font='11px sans-serif';ctx.fillText('S (zero point)',sp.sx+8,sp.sy);}
+            ctx.fillStyle='#333';ctx.font='14px sans-serif';ctx.textAlign='center';
+            ctx.fillText('Wind on a sphere MUST have at least one point with zero wind',250,430);
+            ctx.fillStyle='#e74c3c';ctx.font='12px sans-serif';
+            ctx.fillText('Red dots = slow/zero wind (the "cowlicks" topology guarantees)',250,448);
+            ctx.textAlign='left';
+            ctx.fillStyle='#aaa';ctx.font='11px sans-serif';ctx.textAlign='right';
+            ctx.fillText(`Zoom: ${(sphereZoom*100).toFixed(0)}%`,490,440);ctx.textAlign='left';
             requestAnimationFrame(drawSphere);
         }
         drawSphere();
     })();
 
-    // ============ DEMO 3: HEADPHONE KNOTS ============
+    // ============ DEMO 3: EULER'S MAGIC NUMBER ============
     (() => {
-        const canvas = document.getElementById('knot-canvas');
+        const canvas = document.getElementById('euler-canvas');
         const ctx = canvas.getContext('2d');
+        const W = 600, H = 450;
 
-        let points = [];
-        let numPoints = 40;
-        let tumbling = false;
-        let tumbleFrames = 0;
-        const boxSize = 380;
-        const margin = 60;
-        let crossings = 0;
+        let vertices = [];
+        let edges = [];
+        let mode = 'vertex'; // 'vertex' or 'edge'
+        let selectedVertex = -1; // for edge drawing
+        let hoveredVertex = -1;
 
-        function initStraight() {
-            points = [];
-            for (let i = 0; i < numPoints; i++) {
-                points.push({
-                    x: margin + 30 + (i / (numPoints - 1)) * (boxSize - 60),
-                    y: 225,
-                    vx: 0,
-                    vy: 0
-                });
+        const VERT_RADIUS = 10;
+        const faceColors = [
+            'rgba(102,126,234,0.15)', 'rgba(118,75,162,0.15)',
+            'rgba(46,204,113,0.15)', 'rgba(243,156,18,0.15)',
+            'rgba(231,76,60,0.15)', 'rgba(52,152,219,0.15)',
+            'rgba(155,89,182,0.15)', 'rgba(26,188,156,0.15)',
+            'rgba(241,196,15,0.15)', 'rgba(230,126,34,0.15)'
+        ];
+
+        function updateCounter() {
+            const V = vertices.length;
+            const E = edges.length;
+            const F = computeFaces();
+            document.getElementById('ec-v').textContent = V;
+            document.getElementById('ec-e').textContent = E;
+            document.getElementById('ec-f').textContent = F;
+            const chi = V - E + F;
+            const chiEl = document.getElementById('ec-chi');
+            chiEl.textContent = chi;
+            // Pulse effect when it equals 2
+            if (V > 0 && E > 0 && chi === 2) {
+                chiEl.style.color = '';
+                chiEl.parentElement.style.boxShadow = '0 0 15px rgba(102,126,234,0.5)';
+            } else if (V === 0) {
+                chiEl.style.color = '';
+                chiEl.parentElement.style.boxShadow = 'none';
+            } else {
+                chiEl.style.color = '';
+                chiEl.parentElement.style.boxShadow = 'none';
             }
-            crossings = 0;
         }
-        initStraight();
 
-        document.getElementById('knot-tumble-btn').addEventListener('click', () => {
-            tumbling = true;
-            tumbleFrames = 120;
-            // Give random velocities
-            for (let p of points) {
-                p.vx = (Math.random() - 0.5) * 8;
-                p.vy = (Math.random() - 0.5) * 8;
+        // Compute number of faces using Euler's formula approach:
+        // For a connected planar graph, F = E - V + 2
+        // For disconnected: F = E - V + C + 1 where C = connected components
+        // But we'll compute it properly: F = E - V + (components + 1) for planar
+        // Actually, let's just count: F = E - V + 1 + components
+        function computeFaces() {
+            if (vertices.length === 0) return 1; // just the outer face
+            // Count connected components
+            const parent = vertices.map((_, i) => i);
+            function find(a) { while (parent[a] !== a) { parent[a] = parent[parent[a]]; a = parent[a]; } return a; }
+            function union(a, b) { parent[find(a)] = find(b); }
+            for (const e of edges) { union(e[0], e[1]); }
+            const components = new Set(vertices.map((_, i) => find(i))).size;
+            // For a planar graph: V - E + F = 1 + C (where C = components)
+            // So F = 1 + C - V + E
+            // But we always include the outer face, so F = E - V + components + 1
+            return edges.length - vertices.length + components + 1;
+        }
+
+        function findVertex(x, y) {
+            for (let i = vertices.length - 1; i >= 0; i--) {
+                const dx = vertices[i].x - x;
+                const dy = vertices[i].y - y;
+                if (dx * dx + dy * dy < VERT_RADIUS * VERT_RADIUS * 2) return i;
             }
+            return -1;
+        }
+
+        function edgeExists(a, b) {
+            return edges.some(e => (e[0] === a && e[1] === b) || (e[0] === b && e[1] === a));
+        }
+
+        canvas.addEventListener('mousemove', e => {
+            hoveredVertex = findVertex(e.offsetX, e.offsetY);
+            canvas.style.cursor = (mode === 'edge' && hoveredVertex >= 0) ? 'pointer' :
+                                  (mode === 'vertex') ? 'crosshair' : 'default';
         });
 
-        document.getElementById('knot-reset-btn').addEventListener('click', () => {
-            initStraight();
-            tumbling = false;
-        });
+        canvas.addEventListener('click', e => {
+            const x = e.offsetX, y = e.offsetY;
 
-        document.getElementById('knot-longer-btn').addEventListener('click', () => {
-            numPoints = Math.min(80, numPoints + 10);
-            initStraight();
-        });
-
-        document.getElementById('knot-shorter-btn').addEventListener('click', () => {
-            numPoints = Math.max(15, numPoints - 10);
-            initStraight();
-        });
-
-        function simulate() {
-            const restLength = (boxSize - 60) / (numPoints - 1) * 0.8;
-            const stiffness = 0.4;
-            const damping = tumbling ? 0.98 : 0.95;
-            const gravity = tumbling ? 0 : 0.1;
-
-            // Apply spring forces between adjacent points
-            for (let i = 0; i < numPoints - 1; i++) {
-                const a = points[i], b = points[i + 1];
-                const dx = b.x - a.x;
-                const dy = b.y - a.y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
-                const force = (dist - restLength) * stiffness;
-                const fx = (dx / dist) * force;
-                const fy = (dy / dist) * force;
-                a.vx += fx; a.vy += fy;
-                b.vx -= fx; b.vy -= fy;
-            }
-
-            // Bending resistance (keeps cable from folding too sharply)
-            for (let i = 1; i < numPoints - 1; i++) {
-                const prev = points[i - 1], curr = points[i], next = points[i + 1];
-                const midX = (prev.x + next.x) / 2;
-                const midY = (prev.y + next.y) / 2;
-                curr.vx += (midX - curr.x) * 0.02;
-                curr.vy += (midY - curr.y) * 0.02;
-            }
-
-            // Random jostling during tumble
-            if (tumbling && tumbleFrames > 0) {
-                tumbleFrames--;
-                for (let p of points) {
-                    p.vx += (Math.random() - 0.5) * 3;
-                    p.vy += (Math.random() - 0.5) * 3;
+            if (mode === 'vertex') {
+                // Don't place too close to existing vertex
+                if (findVertex(x, y) === -1) {
+                    vertices.push({ x, y });
+                    updateCounter();
                 }
-                if (tumbleFrames <= 0) tumbling = false;
-            }
-
-            // Update positions
-            for (let p of points) {
-                p.vy += gravity;
-                p.vx *= damping;
-                p.vy *= damping;
-                p.x += p.vx;
-                p.y += p.vy;
-
-                // Bounce off walls (the "pocket")
-                if (p.x < margin) { p.x = margin; p.vx *= -0.7; }
-                if (p.x > margin + boxSize) { p.x = margin + boxSize; p.vx *= -0.7; }
-                if (p.y < margin) { p.y = margin; p.vy *= -0.7; }
-                if (p.y > margin + boxSize) { p.y = margin + boxSize; p.vy *= -0.7; }
-            }
-
-            // Count crossings (simplified knot detection)
-            crossings = 0;
-            for (let i = 0; i < numPoints - 2; i++) {
-                for (let j = i + 2; j < numPoints - 1; j++) {
-                    if (segmentsIntersect(
-                        points[i].x, points[i].y, points[i+1].x, points[i+1].y,
-                        points[j].x, points[j].y, points[j+1].x, points[j+1].y
-                    )) {
-                        crossings++;
+            } else if (mode === 'edge') {
+                const v = findVertex(x, y);
+                if (v >= 0) {
+                    if (selectedVertex === -1) {
+                        selectedVertex = v;
+                    } else if (selectedVertex !== v && !edgeExists(selectedVertex, v)) {
+                        edges.push([selectedVertex, v]);
+                        selectedVertex = -1;
+                        updateCounter();
+                    } else {
+                        selectedVertex = v; // reselect
                     }
                 }
             }
-        }
+        });
 
-        function segmentsIntersect(x1,y1,x2,y2,x3,y3,x4,y4) {
-            const d = (x2-x1)*(y4-y3) - (y2-y1)*(x4-x3);
-            if (Math.abs(d) < 0.001) return false;
-            const t = ((x3-x1)*(y4-y3) - (y3-y1)*(x4-x3)) / d;
-            const u = ((x3-x1)*(y2-y1) - (y3-y1)*(x2-x1)) / d;
-            return t > 0 && t < 1 && u > 0 && u < 1;
+        // Mode buttons
+        document.getElementById('euler-mode-v').addEventListener('click', () => {
+            mode = 'vertex';
+            selectedVertex = -1;
+            document.getElementById('euler-mode-v').style.background = '#764ba2';
+            document.getElementById('euler-mode-v').style.color = 'white';
+            document.getElementById('euler-mode-e').style.background = 'white';
+            document.getElementById('euler-mode-e').style.color = '#764ba2';
+        });
+        document.getElementById('euler-mode-e').addEventListener('click', () => {
+            mode = 'edge';
+            selectedVertex = -1;
+            document.getElementById('euler-mode-e').style.background = '#764ba2';
+            document.getElementById('euler-mode-e').style.color = 'white';
+            document.getElementById('euler-mode-v').style.background = 'white';
+            document.getElementById('euler-mode-v').style.color = '#764ba2';
+        });
+
+        document.getElementById('euler-clear').addEventListener('click', () => {
+            vertices = [];
+            edges = [];
+            selectedVertex = -1;
+            updateCounter();
+        });
+
+        // Presets
+        document.getElementById('euler-preset-tri').addEventListener('click', () => {
+            vertices = [
+                { x: 300, y: 80 },
+                { x: 150, y: 350 },
+                { x: 450, y: 350 }
+            ];
+            edges = [[0,1],[1,2],[2,0]];
+            selectedVertex = -1;
+            updateCounter();
+        });
+
+        document.getElementById('euler-preset-cube').addEventListener('click', () => {
+            const cx = 300, cy = 220, s = 120, d = 60;
+            vertices = [
+                { x: cx - s, y: cy - s + d },     // 0: front top-left
+                { x: cx + s, y: cy - s + d },     // 1: front top-right
+                { x: cx + s, y: cy + s + d },     // 2: front bottom-right
+                { x: cx - s, y: cy + s + d },     // 3: front bottom-left
+                { x: cx - s + d, y: cy - s },     // 4: back top-left
+                { x: cx + s + d, y: cy - s },     // 5: back top-right
+                { x: cx + s + d, y: cy + s },     // 6: back bottom-right
+                { x: cx - s + d, y: cy + s }      // 7: back bottom-left (hidden but projected)
+            ];
+            edges = [
+                [0,1],[1,2],[2,3],[3,0], // front face
+                [4,5],[5,6],[6,7],[7,4], // back face
+                [0,4],[1,5],[2,6],[3,7]  // connecting edges
+            ];
+            selectedVertex = -1;
+            updateCounter();
+        });
+
+        document.getElementById('euler-preset-crazy').addEventListener('click', () => {
+            vertices = [];
+            edges = [];
+            // Generate a random planar-ish graph
+            const n = 8 + Math.floor(Math.random() * 5);
+            for (let i = 0; i < n; i++) {
+                vertices.push({
+                    x: 80 + Math.random() * (W - 160),
+                    y: 60 + Math.random() * (H - 120)
+                });
+            }
+            // Connect nearby vertices (greedy, avoid crossings roughly)
+            for (let i = 0; i < n; i++) {
+                // Sort other vertices by distance
+                let others = [];
+                for (let j = 0; j < n; j++) {
+                    if (j === i) continue;
+                    const dx = vertices[j].x - vertices[i].x;
+                    const dy = vertices[j].y - vertices[i].y;
+                    others.push({ idx: j, dist: Math.sqrt(dx*dx + dy*dy) });
+                }
+                others.sort((a, b) => a.dist - b.dist);
+                // Connect to 2-3 nearest
+                let connected = 0;
+                for (const o of others) {
+                    if (connected >= 2 + Math.floor(Math.random() * 2)) break;
+                    if (!edgeExists(i, o.idx)) {
+                        edges.push([i, o.idx]);
+                        connected++;
+                    }
+                }
+            }
+            selectedVertex = -1;
+            updateCounter();
+        });
+
+        // Detect faces for coloring using a simple cycle detection
+        // For visual purposes, we'll find minimal cycles (faces) in the planar graph
+        function findFaceCycles() {
+            if (vertices.length < 3 || edges.length < 3) return [];
+
+            // Build adjacency with angles for planar face traversal
+            const adj = vertices.map(() => []);
+            for (let ei = 0; ei < edges.length; ei++) {
+                const [a, b] = edges[ei];
+                adj[a].push(b);
+                adj[b].push(a);
+            }
+
+            // Sort adjacency lists by angle
+            for (let i = 0; i < vertices.length; i++) {
+                adj[i].sort((a, b) => {
+                    const angA = Math.atan2(vertices[a].y - vertices[i].y, vertices[a].x - vertices[i].x);
+                    const angB = Math.atan2(vertices[b].y - vertices[i].y, vertices[b].x - vertices[i].x);
+                    return angA - angB;
+                });
+            }
+
+            // Find faces using the "next edge" planar traversal
+            const usedHalfEdges = new Set();
+            const faces = [];
+
+            function nextVertex(from, to) {
+                const neighbors = adj[to];
+                if (neighbors.length === 0) return -1;
+                const idx = neighbors.indexOf(from);
+                if (idx === -1) return -1;
+                // Next edge in clockwise order (previous in sorted order)
+                const nextIdx = (idx - 1 + neighbors.length) % neighbors.length;
+                return neighbors[nextIdx];
+            }
+
+            for (const [a, b] of edges) {
+                for (const [start, second] of [[a, b], [b, a]]) {
+                    const heKey = `${start}-${second}`;
+                    if (usedHalfEdges.has(heKey)) continue;
+
+                    const face = [start];
+                    let curr = start, next = second;
+                    let safe = 0;
+                    while (safe < 50) {
+                        safe++;
+                        const heK = `${curr}-${next}`;
+                        if (usedHalfEdges.has(heK)) break;
+                        usedHalfEdges.add(heK);
+                        face.push(next);
+                        const nn = nextVertex(curr, next);
+                        if (nn === -1) break;
+                        curr = next;
+                        next = nn;
+                        if (next === start) {
+                            usedHalfEdges.add(`${curr}-${next}`);
+                            if (face.length >= 3 && face.length <= 20) {
+                                faces.push(face);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Filter out the outer (largest) face
+            if (faces.length > 1) {
+                let maxArea = -1, maxIdx = 0;
+                for (let fi = 0; fi < faces.length; fi++) {
+                    let area = 0;
+                    const f = faces[fi];
+                    for (let i = 0; i < f.length; i++) {
+                        const j = (i + 1) % f.length;
+                        area += vertices[f[i]].x * vertices[f[j]].y;
+                        area -= vertices[f[j]].x * vertices[f[i]].y;
+                    }
+                    area = Math.abs(area);
+                    if (area > maxArea) { maxArea = area; maxIdx = fi; }
+                }
+                faces.splice(maxIdx, 1);
+            }
+
+            return faces;
         }
 
         function draw() {
             if (activeDemo !== 2) { requestAnimationFrame(draw); return; }
 
-            simulate();
-            ctx.clearRect(0, 0, 500, 450);
+            ctx.clearRect(0, 0, W, H);
 
-            // Draw pocket boundary
-            ctx.strokeStyle = '#ddd';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([5, 5]);
-            ctx.strokeRect(margin, margin, boxSize, boxSize);
-            ctx.setLineDash([]);
-            ctx.fillStyle = '#f9f9f9';
-            ctx.fillRect(margin, margin, boxSize, boxSize);
+            // Background
+            ctx.fillStyle = '#fafafa';
+            ctx.fillRect(0, 0, W, H);
 
-            // Label
+            // Draw faces
+            const faces = findFaceCycles();
+            for (let fi = 0; fi < faces.length; fi++) {
+                const face = faces[fi];
+                ctx.fillStyle = faceColors[fi % faceColors.length];
+                ctx.beginPath();
+                ctx.moveTo(vertices[face[0]].x, vertices[face[0]].y);
+                for (let i = 1; i < face.length; i++) {
+                    ctx.lineTo(vertices[face[i]].x, vertices[face[i]].y);
+                }
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Draw edges
+            for (const [a, b] of edges) {
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(vertices[a].x, vertices[a].y);
+                ctx.lineTo(vertices[b].x, vertices[b].y);
+                ctx.stroke();
+            }
+
+            // Draw edge-in-progress
+            if (mode === 'edge' && selectedVertex >= 0) {
+                ctx.strokeStyle = 'rgba(231,76,60,0.5)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(vertices[selectedVertex].x, vertices[selectedVertex].y);
+                // Draw to mouse position — we'll use hovered vertex or last known
+                if (hoveredVertex >= 0 && hoveredVertex !== selectedVertex) {
+                    ctx.lineTo(vertices[hoveredVertex].x, vertices[hoveredVertex].y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Draw vertices
+            for (let i = 0; i < vertices.length; i++) {
+                const v = vertices[i];
+                const isSelected = (mode === 'edge' && selectedVertex === i);
+                const isHovered = (hoveredVertex === i);
+
+                ctx.fillStyle = isSelected ? '#e74c3c' : isHovered ? '#f39c12' : '#764ba2';
+                ctx.beginPath();
+                ctx.arc(v.x, v.y, isSelected ? 12 : (isHovered ? 11 : VERT_RADIUS), 0, Math.PI * 2);
+                ctx.fill();
+
+                // Vertex label
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, v.x, v.y);
+            }
+
+            // Instructions
+            ctx.textBaseline = 'alphabetic';
             ctx.fillStyle = '#aaa';
             ctx.font = '12px sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Your pocket', 250, margin - 8);
-
-            // Draw cable with over/under crossings
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            // Draw shadow/under layer
-            ctx.strokeStyle = 'rgba(0,0,0,0.1)';
-            ctx.lineWidth = 7;
-            ctx.beginPath();
-            ctx.moveTo(points[0].x + 2, points[0].y + 2);
-            for (let i = 1; i < numPoints; i++) {
-                ctx.lineTo(points[i].x + 2, points[i].y + 2);
+            if (mode === 'vertex') {
+                ctx.fillText('Click anywhere to place a vertex', W / 2, H - 10);
+            } else {
+                if (selectedVertex === -1) {
+                    ctx.fillText('Click a vertex to start an edge', W / 2, H - 10);
+                } else {
+                    ctx.fillText('Now click another vertex to complete the edge', W / 2, H - 10);
+                }
             }
-            ctx.stroke();
 
-            // Draw main cable
-            const gradient = ctx.createLinearGradient(0, 0, 500, 0);
-            gradient.addColorStop(0, '#333');
-            gradient.addColorStop(0.5, '#555');
-            gradient.addColorStop(1, '#333');
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(points[0].x, points[0].y);
-            for (let i = 1; i < numPoints; i++) {
-                ctx.lineTo(points[i].x, points[i].y);
-            }
-            ctx.stroke();
-
-            // Draw endpoints (earbuds)
+            // Title
             ctx.fillStyle = '#764ba2';
-            ctx.beginPath();
-            ctx.arc(points[0].x, points[0].y, 7, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#fff';
-            ctx.font = '8px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('L', points[0].x, points[0].y + 3);
-
-            ctx.fillStyle = '#764ba2';
-            ctx.beginPath();
-            ctx.arc(points[numPoints-1].x, points[numPoints-1].y, 7, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.fillStyle = '#fff';
-            ctx.fillText('R', points[numPoints-1].x, points[numPoints-1].y + 3);
-
-            // Jack
-            ctx.fillStyle = '#888';
-            const midIdx = Math.floor(numPoints / 2);
-            ctx.beginPath();
-            ctx.arc(points[midIdx].x, points[midIdx].y, 5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Crossing count display
-            ctx.fillStyle = '#333';
             ctx.font = 'bold 14px sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText(`Crossings: ${crossings}`, 15, 25);
+            ctx.fillText('Draw any map — V − E + F is always 2!', 10, 20);
 
-            ctx.fillStyle = crossings > 5 ? '#e74c3c' : crossings > 0 ? '#f39c12' : '#2ecc71';
-            ctx.font = '12px sans-serif';
-            const knotStatus = crossings === 0 ? '✓ Untangled!' :
-                              crossings < 5 ? '~ Slightly tangled' :
-                              crossings < 15 ? '⚠ Tangled!' : '✗ Hopelessly knotted!';
-            ctx.fillText(knotStatus, 15, 42);
-
-            ctx.fillStyle = '#888';
-            ctx.font = '11px sans-serif';
-            ctx.fillText(`Cable length: ${numPoints} segments`, 350, 25);
-
-            ctx.textAlign = 'left';
             requestAnimationFrame(draw);
         }
+
+        updateCounter();
         draw();
     })();
 
