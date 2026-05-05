@@ -151,6 +151,8 @@
 
 % ── Manifold animation: content defined once, spread across slides ──
 
+% ── Manifold animation: content defined once, spread across slides ──
+
 % Define the text content ONCE here (edit in one place):
 \newcommand{\manifoldtitle}{Mannigfaltigkeiten – Übersetzung als Geometrie}
 \newcommand{\manifolditems}{%
@@ -179,6 +181,9 @@
   \end{center}
 }
 
+% Total number of frames (edit here if you add/remove images):
+\newcommand{\manifoldtotalframes}{33}
+
 % Now generate one Beamer frame per image file (33 slides):
 \foreach \n in {1,...,33} {%
   \begingroup
@@ -190,7 +195,7 @@
       \def\paddednum{0\the\numexpr\n\relax}%
     \fi
   \fi
-  \begin{frame}{\manifoldtitle}
+  \begin{frame}[noframenumbering]{\manifoldtitle}
     \begin{columns}[T]
       \column{0.55\textwidth}
       \manifolditems
@@ -199,6 +204,26 @@
       \begin{center}
         \includegraphics[width=\textwidth]{frames/frames_\paddednum.png}\\[0.3em]
         \manifoldcaption
+
+        % ── Progress bar ──
+        \vspace{0.4em}
+        \begin{tikzpicture}
+          \pgfmathsetmacro{\progress}{\n / \manifoldtotalframes}
+          \def\barwidth{3.2}  % cm total width
+          \def\barheight{0.18} % cm height
+
+          % Background (gray track)
+          \fill[gray!25, rounded corners=1.5pt]
+            (0,0) rectangle (\barwidth, \barheight);
+
+          % Filled portion (accent color)
+          \fill[akzent, rounded corners=1.5pt]
+            (0,0) rectangle (\progress*\barwidth, \barheight);
+
+          % Frame counter text
+          \node[font=\tiny\color{gray}, anchor=west] at (\barwidth + 0.15, \barheight/2)
+            {\n/\manifoldtotalframes};
+        \end{tikzpicture}
       \end{center}
     \end{columns}
 
