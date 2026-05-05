@@ -8134,44 +8134,6 @@ async function create_and_download_zip () {
 	return res;
 }
 
-async function change_last_responsible_layer_for_image_output () {
-	if(is_classification) {
-		return;
-	}
-
-	var current_layer_status_hash = await get_current_layer_container_status_hash();
-
-	if(last_image_output_shape_hash == current_layer_status_hash) {
-		return;
-	}
-
-	last_image_output_shape_hash = current_layer_status_hash;
-
-	var layer_types = get_layer_type_array();
-
-	var last_layer_nr = null;
-
-	for (var layer_type_idx = layer_types.length; layer_type_idx >= 0; layer_type_idx--) {
-		if(last_layer_nr === null && ["dense", "conv2d"].includes(layer_types[layer_type_idx])) {
-			last_layer_nr = layer_type_idx;
-		}
-	}
-
-	if(last_layer_nr) {
-		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
-			l(sprintf(language[lang]["setting_neurons_or_filters_of_layer_n_to_3"], last_layer_nr));
-			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change");
-		}
-
-		if($($(".layer_setting")[last_layer_nr]).find(".activation").val() != "linear") {
-			l(sprintf(language[lang]["setting_activation_function_of_layer_n_to_linear"], last_layer_nr));
-			$($(".layer_setting")[last_layer_nr]).find(".activation").val("linear").trigger("change");
-		}
-	} else {
-		wrn("[change_last_responsible_layer_for_image_output] Last layer number could not be found. Do you have any Dense or Conv2d layers?");
-	}
-}
-
 function show_bars_instead_of_numbers () {
 	if(get_last_layer_activation_function() == "softmax") {
 		if($("#show_bars_instead_of_numbers").is(":checked")) {
