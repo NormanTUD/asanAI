@@ -1107,7 +1107,16 @@ function get_maps_from_image_element (x, y, maps, image_element, label_nr) {
 	if(!id.endsWith("_layer")) {
 		[x, y] = load_and_resize_image_and_add_to_x_and_class(x, y, image_element, label_nr);
 
-		var maps_or_false = load_maps_from_image_element(image_element, maps);
+		// Find the corresponding drawing layer canvas
+		var layer_id = id + "_layer";
+		var layer_element = document.getElementById(layer_id);
+		
+		if(layer_element) {
+			var maps_or_false = load_maps_from_image_element(layer_element, maps);
+		} else {
+			// Fallback to original image if no layer exists
+			var maps_or_false = load_maps_from_image_element(image_element, maps);
+		}
 
 		if (maps_or_false === false) {
 			return false;

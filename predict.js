@@ -486,12 +486,8 @@ async function _predict_result(predictions_tensor, nr, _dispose = 1) {
 
 async function _predict_image (predictions_tensor, desc) {
 	try {
-		var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
-		var predictions = array_sync(predictions_tensor_transposed);
-
 		var pxsz = 1;
-
-		var largest = Math.max(predictions_tensor_transposed.shape[1], predictions_tensor_transposed.shape[2]);
+		var largest = Math.max(predictions_tensor.shape[1], predictions_tensor.shape[2]);
 		assert(typeof(largest) == "number", "_predict_image: largest is not a number");
 
 		var max_height_width = Math.min(100, Math.floor(window.innerWidth / 5));
@@ -501,20 +497,33 @@ async function _predict_image (predictions_tensor, desc) {
 			pxsz += 1;
 		}
 
-		scaleNestedArray(predictions);
+		if (predictions_tensor.shape[3] == 3) {
+			// Draw as single RGB image
+			var predictions = array_sync(predictions_tensor);
+			scaleNestedArray(predictions);
 
-		for (var predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
 			var canvas = $("<canvas/>", {class: "layer_image"}).prop({
 				width: pxsz * predictions_tensor.shape[2],
 				height: pxsz * predictions_tensor.shape[1],
 			});
-
 			desc.append(canvas);
+			draw_grid(canvas, pxsz, predictions[0], 1, 0, null, null, null);
+		} else {
+			// Original multi-channel grayscale behavior
+			var predictions_tensor_transposed = tf_transpose(predictions_tensor, [3, 1, 2, 0]);
+			var predictions = array_sync(predictions_tensor_transposed);
+			scaleNestedArray(predictions);
 
-			var res = draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1, null, null, null);
+			for (var predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+				var canvas = $("<canvas/>", {class: "layer_image"}).prop({
+					width: pxsz * predictions_tensor.shape[2],
+					height: pxsz * predictions_tensor.shape[1],
+				});
+				desc.append(canvas);
+				draw_grid(canvas, pxsz, predictions[predictions_idx], 1, 1, null, null, null);
+			}
+			await dispose(predictions_tensor_transposed);
 		}
-
-		await dispose(predictions_tensor_transposed);
 	} catch (e) {
 		assert(false, extract_error_message(e));
 	}
@@ -1767,6 +1776,9 @@ function draw_rgb (predictions_tensor, predictions, pxsz, webcam_prediction) {
 		});
 
 		webcam_prediction.append(canvas);
+
+		// Scale predictions to 0-255 range before drawing
+		scaleNestedArray(predictions);
 
 		draw_grid(canvas, pxsz, predictions[0], 1, 0, null, null, null);
 	} catch (e) {
