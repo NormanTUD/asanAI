@@ -149,33 +149,26 @@
   \quelle{Gurnee, Tegmark. arXiv:2310.02207 (2023)}
 \end{frame}
 
-\begin{frame}{Mannigfaltigkeiten – Übersetzung als Geometrie}
-  \begin{columns}[T]
-    \column{0.55\textwidth}
-    \begin{itemize}
-      \stich{Sprachen bilden \textbf{Mannigfaltigkeiten} im Embedding-Raum}
-      \stich{Japanisch \& Englisch: ähnliche \textbf{Form}, aber verschoben \& gedreht}
-      \stich{\textbf{Translation + Rotation} = Übersetzung zwischen Sprachen}
-      \stich{Geometrische Transformation statt Wort-für-Wort-Zuordnung}
-      \stich{Evidenz: lineare Abbildungen zwischen Sprachräumen
-             funktionieren erstaunlich gut\\
-             {\small (Mikolov et al.\ 2013)}}
-    \end{itemize}
+% ── Manifold animation: content defined once, spread across slides ──
 
-    \column{0.4\textwidth}
-    \begin{center}
-      % GIF-Einbindung: in Beamer als Animation nur mit speziellen Viewern,
-      % alternativ als statisches Bild oder mit \animategraphics
-      \animategraphics[autoplay,loop,width=\textwidth]{10}{frames/frames_}{001}{033}
-      % Falls animategraphics nicht funktioniert, Fallback:
-      % \includegraphics[width=\linewidth, keepaspectratio]{manifolds.gif}
-      \\[0.3em]
-      {\scriptsize\color{gray}Animation: Japanische \& englische Wort-Mannigfaltigkeiten,\\
-       verbunden durch Translation + Rotation}
-    \end{center}
-  \end{columns}
-
-  \medskip
+% Define the text content ONCE here (edit in one place):
+\newcommand{\manifoldtitle}{Mannigfaltigkeiten – Übersetzung als Geometrie}
+\newcommand{\manifolditems}{%
+  \begin{itemize}
+    \stich{Sprachen bilden \textbf{Mannigfaltigkeiten} im Embedding-Raum}
+    \stich{Japanisch \& Englisch: ähnliche \textbf{Form}, aber verschoben \& gedreht}
+    \stich{\textbf{Translation + Rotation} = Übersetzung zwischen Sprachen}
+    \stich{Geometrische Transformation statt Wort-für-Wort-Zuordnung}
+    \stich{Evidenz: lineare Abbildungen zwischen Sprachräumen
+           funktionieren erstaunlich gut\\
+           {\small (Mikolov et al.\ 2013)}}
+  \end{itemize}
+}
+\newcommand{\manifoldcaption}{%
+  {\scriptsize\color{gray}Animation: Japanische \& englische Wort-Mannigfaltigkeiten,\\
+   verbunden durch Translation + Rotation}%
+}
+\newcommand{\manifoldbox}{%
   \begin{center}
     \colorbox{dunkel!10}{%
       \parbox{0.85\textwidth}{\centering\small
@@ -184,7 +177,36 @@
       }%
     }
   \end{center}
-\end{frame}
+}
+
+% Now generate one Beamer frame per image file (33 slides):
+\foreach \n in {1,...,33} {%
+  \begingroup
+  % Zero-pad the number to 3 digits
+  \ifnum\n<10
+    \def\paddednum{00\the\numexpr\n\relax}%
+  \else
+    \ifnum\n<100
+      \def\paddednum{0\the\numexpr\n\relax}%
+    \fi
+  \fi
+  \begin{frame}{\manifoldtitle}
+    \begin{columns}[T]
+      \column{0.55\textwidth}
+      \manifolditems
+
+      \column{0.4\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]{frames/frames_\paddednum.png}\\[0.3em]
+        \manifoldcaption
+      \end{center}
+    \end{columns}
+
+    \medskip
+    \manifoldbox
+  \end{frame}
+  \endgroup
+}
 
 % ============================================================
 \section{Dense Layer – die Grundbausteine}
