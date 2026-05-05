@@ -124,7 +124,7 @@ async function change_last_responsible_layer_for_image_output () {
 		}
 	}
 
-	if(last_layer_nr) {
+	if(typeof(last_layer_nr) == "number" && last_layer_nr >= 0) {
 		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
 			l(sprintf(language[lang]["setting_neurons_or_filters_of_layer_n_to_3"], last_layer_nr));
 			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change");
