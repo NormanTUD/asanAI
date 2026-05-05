@@ -194,7 +194,7 @@ When we observe a modern Transformer model calculating the relationship between 
 
 Of course, Llull could not foresee modern AI systems. He was just the first one to explicitly work on symbolic combinatorics, which later, after many more inventions, innovations and discoveries, got us to our modern AI systems.
 
-A complete guide on how to use the Llullian **Volvette** as intended by Llull can be found \cite[here]{artandlogicofllull}.
+A complete guide on how to use the Llullian **Volvelle** as intended by Llull can be found \cite[here]{artandlogicofllull}.
 
 Medieval scholar Ramon Llull had quite an interesting life, and has done many things. The first novel in medieval Europe after antiquity, \citetitle{blanquerna}, was by him: it was about the rise of a monk to the ranks of the pope. He was also the only person to ever damned as heretic by one pope (Gregor XI.), \cite[yet blessed by a later one]{arsmagnavolvelle} (Pius IX.).
 
