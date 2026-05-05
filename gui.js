@@ -6064,10 +6064,28 @@ function human_readable_time(seconds, start="", end="") {
 }
 
 function delete_own_image(elem) {
-	$(elem).parent().next().remove();
-	$(elem).parent().remove();
+    // Remove the associated segmentation layer controls if they exist
+    var $span = $(elem).parent();
+    var img_or_canvas = $span.find("img,canvas").not("[id$='_layer']").first();
+    if (img_or_canvas.length && img_or_canvas[0].id) {
+        var layer_id = img_or_canvas[0].id + "_layer";
+        $("#" + layer_id).remove();
+        $("#" + layer_id + "_controls").remove();
+        if (atrament_data[layer_id]) {
+            delete atrament_data[layer_id];
+        }
+    }
 
-	enable_train_if_has_custom_images();
+    // Remove the <br> after the span if it exists
+    var $next = $span.next();
+    if ($next.is("br")) {
+        $next.remove();
+    }
+
+    // Remove only this specific image's span
+    $span.remove();
+
+    enable_train_if_has_custom_images();
 }
 
 async function get_layers_container_md5() {

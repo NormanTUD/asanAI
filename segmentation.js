@@ -5,16 +5,11 @@ function delete_custom_drawing_layer() {
         for (var j = 0; j < imgs.length; j++) {
             try {
                 var this_canvas_id = imgs[j].id;
-                if ($("#" + this_canvas_id + "_layer").length) {
+                if (this_canvas_id && $("#" + this_canvas_id + "_layer").length) {
                     l(language[lang]["deleting_layer_for_custom_image"] + " " + this_canvas_id);
                     $("#" + this_canvas_id + "_layer").remove();
-                    $("#" + this_canvas_id + "_layer_colorpicker").remove();
-                    $("#" + this_canvas_id + "_layer_slider").remove();
-                    // Also remove any associated br, label text, and pen size elements
-                    $("#" + this_canvas_id + "_layer_transparency_label").remove();
-                    $("#" + this_canvas_id + "_layer_pensize").remove();
-                    $("#" + this_canvas_id + "_layer_pensize_label").remove();
-                    delete(atrament_data[this_canvas_id]);
+                    $("#" + this_canvas_id + "_layer_controls").remove();
+                    delete(atrament_data[this_canvas_id + "_layer"]);
                 }
             } catch (e) {
                 //log(e);
@@ -29,16 +24,6 @@ async function ensure_custom_image_layers() {
         var this_span = $(all_current_custom_images[all_current_custom_images_idx]);
         var canvasses = this_span.find("img,canvas");
 
-        // Ensure the own_image_span has position:relative so absolutely-positioned
-        // children are positioned relative to it, not a distant ancestor.
-        if (this_span.css("position") === "static" || this_span.css("position") === "") {
-            this_span.css("position", "relative");
-        }
-        // Also ensure it's displayed as a block/inline-block so it has dimensions
-        if (this_span.css("display") === "inline") {
-            this_span.css("display", "inline-block");
-        }
-
         for (var j = 0; j < canvasses.length; j++) {
             var canvas_element = canvasses[j];
             var this_canvas_id = canvas_element.id;
@@ -49,162 +34,195 @@ async function ensure_custom_image_layers() {
                 canvas_element.id = this_canvas_id;
             }
 
-            if (!this_canvas_id.endsWith("_layer")) {
-                // Check if a layer already exists for this specific element
-                if ($("#" + this_canvas_id + "_layer").length > 0) {
-                    // Layer already exists, update its position in case the image moved
-                    _update_layer_position(canvas_element);
-                    continue;
-                }
-
-                // Generate a unique base_id from the element's xpath
-                var base_id = btoa(await md5(get_element_xpath(canvas_element))).replaceAll("=", "");
-                var new_canvas_id = base_id + "_layer";
-
-                // Double-check: if a layer with this generated ID already exists but
-                // the element's own ID-based layer doesn't, there's a collision.
-                // Use the element's own ID as the base instead.
-                if ($("#" + new_canvas_id).length > 0) {
-                    // Collision detected - use the element's own ID as base
-                    base_id = this_canvas_id;
-                    new_canvas_id = base_id + "_layer";
-                    if ($("#" + new_canvas_id).length > 0) {
-                        // Already exists with this ID too, just update position
-                        _update_layer_position(canvas_element);
-                        continue;
-                    }
-                }
-
-                add_canvas_layer(canvas_element, 0.5, base_id);
+            // Skip elements that ARE layers themselves
+            if (this_canvas_id.endsWith("_layer")) {
+                continue;
             }
+
+            // Check if a layer already exists for this specific element
+            var layer_id = this_canvas_id + "_layer";
+            if ($("#" + layer_id).length > 0) {
+                // Layer already exists, update its position in case the image moved/resized
+                _update_layer_position(canvas_element);
+                continue;
+            }
+
+            add_canvas_layer(canvas_element, 0.5);
         }
     }
 }
 
 function _update_layer_position(canvas_element) {
-    // Update the position of an existing layer to match its source element
     var layer_id = canvas_element.id + "_layer";
     var $layer = $("#" + layer_id);
     if ($layer.length) {
+        var el_width = canvas_element.width || $(canvas_element).width() || 150;
+        var el_height = canvas_element.height || $(canvas_element).height() || 150;
+
+        // Update CSS position
         $layer.css({
             left: canvas_element.offsetLeft + "px",
             top: canvas_element.offsetTop + "px",
-            width: canvas_element.width + "px",
-            height: canvas_element.height + "px"
+            width: el_width + "px",
+            height: el_height + "px"
         });
-        $layer[0].width = canvas_element.width;
-        $layer[0].height = canvas_element.height;
+
+        // Update actual canvas dimensions if they changed
+        if ($layer[0].width !== el_width || $layer[0].height !== el_height) {
+            $layer[0].width = el_width;
+            $layer[0].height = el_height;
+
+            // Re-initialize atrament since canvas size changed
+            if (atrament_data[layer_id]) {
+                atrament_data[layer_id]["atrament"] = new Atrament($layer[0], {
+                    width: el_width,
+                    height: el_height
+                });
+                atrament_data[layer_id]["atrament"].adaptiveStroke = false;
+                atrament_data[layer_id]["atrament"].weight = 20;
+                clear_attrament(layer_id);
+            }
+        }
     }
 }
 
-function add_canvas_layer(canvas, transparency, base_id) {
-    assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
-    assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
-    assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas_, transparency, base_id): transparency is not a number");
+function add_canvas_layer(canvas, transparency) {
+    assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency): canvas is not an object");
+    assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas, transparency): transparency is not a number");
 
-    // Ensure the parent span has position:relative for proper absolute positioning
+    var canvas_id = canvas.id;
+    var layer_id = canvas_id + "_layer";
+
+    // Get the parent own_image_span
     var $parent = $(canvas).closest(".own_image_span");
     if (!$parent.length) {
         $parent = $(canvas).parent();
     }
-    
-    if ($parent.css("position") === "static" || $parent.css("position") === "") {
-        $parent.css("position", "relative");
-    }
-    if ($parent.css("display") === "inline") {
-        $parent.css("display", "inline-block");
-    }
 
-    // Store the original ID of the canvas element before potentially changing it
-    var original_canvas_id = canvas.id;
-    
-    // Set the canvas ID to base_id so we can reference it
-    canvas.id = base_id;
+    // Ensure the parent has position:relative so absolute children position correctly
+    $parent.css({
+        "position": "relative",
+        "display": "inline-block"
+    });
 
-    // Create a new canvas element for the layer
+    // Get the actual rendered dimensions of the source image/canvas
+    var el_width = canvas.width || $(canvas).width() || 150;
+    var el_height = canvas.height || $(canvas).height() || 150;
+
+    // Create a new canvas element for the drawing layer
     var layer = document.createElement("canvas");
-    layer.id = `${base_id}_layer`;
-    layer.width = canvas.width || $(canvas).width() || 150;
-    layer.height = canvas.height || $(canvas).height() || 150;
+    layer.id = layer_id;
+    // Set the actual canvas buffer size to match the image exactly
+    layer.width = el_width;
+    layer.height = el_height;
+    // Position it exactly over the source image
     layer.style.position = "absolute";
     layer.style.left = canvas.offsetLeft + "px";
     layer.style.top = canvas.offsetTop + "px";
+    // CSS display size must match the buffer size for correct drawing coordinates
+    layer.style.width = el_width + "px";
+    layer.style.height = el_height + "px";
     layer.style.backgroundColor = "white";
     layer.style.opacity = transparency;
-    layer.style.zIndex = "10"; // Ensure it's above the image
+    layer.style.zIndex = "10";
+    layer.style.cursor = "crosshair";
 
-    // Append the layer canvas directly after the source canvas, inside the same parent
+    // Insert the layer canvas directly after the source image, inside the same parent
     $(canvas).after(layer);
 
     // Create a new Atrament instance for the layer
-    atrament_data[layer.id] = {};
-    atrament_data[layer.id]["atrament"] = new Atrament(layer);
+    // IMPORTANT: pass explicit width/height matching the canvas buffer size
+    atrament_data[layer_id] = {};
+    atrament_data[layer_id]["atrament"] = new Atrament(layer, {
+        width: el_width,
+        height: el_height
+    });
 
-    clear_attrament(layer.id);
+    // Disable adaptive stroke - this causes the "line" instead of "circle" issue
+    atrament_data[layer_id]["atrament"].adaptiveStroke = false;
+    atrament_data[layer_id]["atrament"].weight = 20;
+    atrament_data[layer_id]["atrament"].mode = "draw";
 
-    // Create a controls container for this specific layer
+    clear_attrament(layer_id);
+
+    // Create a controls container OUTSIDE the positioned parent
+    // so it doesn't affect the parent's width or overlap positioning
     var controls_container = document.createElement("div");
-    controls_container.id = `${layer.id}_controls`;
+    controls_container.id = `${layer_id}_controls`;
     controls_container.className = "segmentation_layer_controls";
+    controls_container.style.display = "block";
+    controls_container.style.clear = "both";
     controls_container.style.marginTop = "4px";
     controls_container.style.marginBottom = "8px";
+    controls_container.style.maxWidth = el_width + "px";
 
-    // Create a color picker for this layer
-    var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" style="width: 50px;" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;" />`;
+    // Color picker
+    var color_picker_code = `<input type="text" name="value" id='${layer_id}_colorpicker' class="show_data jscolor" style="width: 50px;" value="#000000" onchange="atrament_data['${layer_id}']['atrament'].color='#'+this.value;" />`;
     $(controls_container).append(color_picker_code);
 
-    // Create a transparency slider for this layer
+    // Transparency slider
+    var transparency_label = document.createElement("span");
+    transparency_label.textContent = " Opacity: ";
+    transparency_label.style.fontSize = "11px";
+    $(controls_container).append(transparency_label);
+
     var transparency_slider = document.createElement("input");
-    transparency_slider.id = layer.id + "_slider";
+    transparency_slider.id = layer_id + "_slider";
     transparency_slider.type = "range";
     transparency_slider.min = 0;
     transparency_slider.max = 1;
     transparency_slider.step = 0.01;
     transparency_slider.value = transparency;
-    transparency_slider.style.width = "100px";
+    transparency_slider.style.width = "60px";
     transparency_slider.style.verticalAlign = "middle";
-
-    // Update the opacity of the layer when the slider value changes
     transparency_slider.addEventListener("input", function() {
         layer.style.opacity = this.value;
     });
-
-    var transparency_label = document.createElement("span");
-    transparency_label.id = `${layer.id}_transparency_label`;
-    transparency_label.textContent = " Transparency: ";
-    transparency_label.style.fontSize = "12px";
-
-    $(controls_container).append(transparency_label);
     $(controls_container).append(transparency_slider);
 
-    // Create a pen size slider for this layer
+    // Pen size slider
     var pensize_label = document.createElement("span");
-    pensize_label.id = `${layer.id}_pensize_label`;
-    pensize_label.textContent = " Pen size: ";
-    pensize_label.style.fontSize = "12px";
+    pensize_label.textContent = " Pen: ";
+    pensize_label.style.fontSize = "11px";
+    $(controls_container).append(pensize_label);
 
     var pensize_slider = document.createElement("input");
-    pensize_slider.id = `${layer.id}_pensize`;
+    pensize_slider.id = `${layer_id}_pensize`;
     pensize_slider.className = "show_data";
     pensize_slider.type = "range";
     pensize_slider.min = 1;
     pensize_slider.max = 100;
     pensize_slider.step = 1;
     pensize_slider.value = 20;
-    pensize_slider.style.width = "80px";
+    pensize_slider.style.width = "60px";
     pensize_slider.style.verticalAlign = "middle";
     pensize_slider.addEventListener("input", function() {
-        atrament_data[layer.id]['atrament'].weight = parse_float(this.value);
+        atrament_data[layer_id]['atrament'].weight = parse_float(this.value);
     });
-
-    $(controls_container).append(pensize_label);
     $(controls_container).append(pensize_slider);
 
-    // Insert the controls container after the layer canvas (still inside the parent span)
-    $(layer).after(controls_container);
+    // Clear button for this layer
+    var clear_btn = document.createElement("button");
+    clear_btn.textContent = "Clear";
+    clear_btn.style.fontSize = "11px";
+    clear_btn.style.marginLeft = "4px";
+    clear_btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        clear_attrament(layer_id);
+    });
+    $(controls_container).append(clear_btn);
+
+    // Insert controls AFTER the parent span (not inside it)
+    // This prevents the controls from making the span wider
+    $parent.after(controls_container);
 
     // Initialize jscolor for this specific color picker
-    atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format: "rgb"});
+    try {
+        atrament_data[layer_id]["colorpicker"] = new jscolor($("#" + layer_id + "_colorpicker")[0], {format: "rgb"});
+    } catch(e) {
+        // jscolor may not be available
+        wrn("[add_canvas_layer] Could not initialize jscolor: " + e);
+    }
 }
 
 async function change_last_responsible_layer_for_image_output() {
