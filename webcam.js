@@ -780,7 +780,8 @@ async function take_image_from_webcam_n_times(elem) {
 		await delay(delaybetween);
 	}
 
-	await last_shape_layer_warning();
 	enable_train();
 	l(sprintf(language[lang]["done_taking_n_images"], number));
+
+	await last_shape_layer_warning();
 }

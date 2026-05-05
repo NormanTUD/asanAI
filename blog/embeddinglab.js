@@ -624,7 +624,67 @@ function renderSpace(key, highlightPos = null, steps = []) {
 }
 
 let _calcEvoTimers = {};
-let _calcEvoObservers = {};
+let _calcEvoFocusState = {};
+
+// ══════════════════════════════════════════════════════════════
+// NUCLEAR FOCUS PROTECTION
+// This uses a focusin/focusout pair + a flag to BLOCK all
+// focus-stealing during rendering. No blur can succeed while
+// the flag is set.
+// ══════════════════════════════════════════════════════════════
+
+let _renderingInProgress = {};
+
+['1d', '2d', '3d'].forEach(key => {
+    const inputEl = document.getElementById(`input-${key}`);
+    if (!inputEl) return;
+
+    // Track cursor position continuously so we always have a fresh value
+    inputEl.addEventListener('keydown', function() {
+        _calcEvoFocusState[key] = {
+            selStart: this.selectionStart,
+            selEnd: this.selectionEnd
+        };
+    });
+    inputEl.addEventListener('keyup', function() {
+        _calcEvoFocusState[key] = {
+            selStart: this.selectionStart,
+            selEnd: this.selectionEnd
+        };
+    });
+    inputEl.addEventListener('input', function() {
+        _calcEvoFocusState[key] = {
+            selStart: this.selectionStart,
+            selEnd: this.selectionEnd
+        };
+    });
+
+    // The NUCLEAR blur handler: if rendering is in progress, ALWAYS refocus
+    inputEl.addEventListener('blur', function(e) {
+        if (_renderingInProgress[key]) {
+            // Rendering caused this blur — block it unconditionally
+            const state = _calcEvoFocusState[key] || { selStart: this.value.length, selEnd: this.value.length };
+            const self = this;
+            setTimeout(function() {
+                self.focus();
+                self.setSelectionRange(state.selStart, state.selEnd);
+            }, 0);
+            return;
+        }
+        // Not rendering — check if focus went to null (DOM mutation steal)
+        if (!e.relatedTarget || e.relatedTarget.tagName === 'svg' || 
+            e.relatedTarget.tagName === 'rect' || e.relatedTarget.tagName === 'path' ||
+            e.relatedTarget.tagName === 'CANVAS' ||
+            (e.relatedTarget.closest && e.relatedTarget.closest('.js-plotly-plot'))) {
+            const state = _calcEvoFocusState[key] || { selStart: this.value.length, selEnd: this.value.length };
+            const self = this;
+            setTimeout(function() {
+                self.focus();
+                self.setSelectionRange(state.selStart, state.selEnd);
+            }, 0);
+        }
+    });
+});
 
 function calcEvo(key) {
     const inputEl = document.getElementById(`input-${key}`);
@@ -632,31 +692,15 @@ function calcEvo(key) {
     const space = evoSpaces[key];
     const resDiv = document.getElementById(`res-${key}`);
 
-    // Save cursor state IMMEDIATELY
+    // Save cursor state IMMEDIATELY — this is the ground truth
     const selStart = inputEl.selectionStart;
     const selEnd = inputEl.selectionEnd;
+    _calcEvoFocusState[key] = { selStart, selEnd };
 
-    // ── Set up a MutationObserver that catches ANY focus-stealing DOM mutation ──
-    // This is the nuclear option: if anything modifies an ancestor of the input
-    // (like temml adding data-math-rendered="true"), we immediately refocus.
-    if (!_calcEvoObservers[key]) {
-        const container = inputEl.closest('[data-math-rendered]') || inputEl.parentElement;
-        const observer = new MutationObserver(() => {
-            // If the input lost focus due to a DOM mutation, restore it
-            if (document.activeElement !== inputEl) {
-                inputEl.focus();
-                inputEl.setSelectionRange(selStart, selEnd);
-            }
-        });
-        observer.observe(container, { 
-            attributes: true, 
-            attributeFilter: ['data-math-rendered'],
-            subtree: false 
-        });
-        _calcEvoObservers[key] = observer;
-    }
+    // SET THE RENDERING FLAG — this tells the blur handler to block ALL blurs
+    _renderingInProgress[key] = true;
 
-    // Debounce plot render
+    // Debounce plot render only
     if (_calcEvoTimers[key]) {
         clearTimeout(_calcEvoTimers[key]);
     }
@@ -668,7 +712,10 @@ function calcEvo(key) {
     }, {});
 
     const tokens = inputVal.match(/[a-zA-Z\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
-    if (!tokens) return;
+    if (!tokens) {
+        _renderingInProgress[key] = false;
+        return;
+    }
 
     let pos = 0;
     let steps = [];
@@ -776,37 +823,47 @@ function calcEvo(key) {
             </div>
         `;
 
-        // Render math — this is what adds data-math-rendered="true" and steals focus
+        // Render math — this is what steals focus
         render_temml();
 
-        // IMMEDIATELY restore focus after temml's synchronous DOM manipulation
+        // Force focus back IMMEDIATELY after temml
         inputEl.focus();
         inputEl.setSelectionRange(selStart, selEnd);
 
-        // Debounce the expensive plot render
+        // CLEAR the rendering flag after a microtask
+        // (temml is synchronous, so by now it's done)
+        Promise.resolve().then(() => {
+            _renderingInProgress[key] = false;
+        });
+
+        // Debounce the plot render (150ms)
         const capturedResult = [...result.val];
         const capturedSteps = steps;
         _calcEvoTimers[key] = setTimeout(() => {
-            // Save focus state again right before plot render
-            const stillFocused = document.activeElement === inputEl;
-            const curStart = stillFocused ? inputEl.selectionStart : selStart;
-            const curEnd = stillFocused ? inputEl.selectionEnd : selEnd;
-
+            // Re-set the flag for the plot render phase
+            _renderingInProgress[key] = true;
+            
             renderSpace(key, capturedResult, capturedSteps);
-
-            // Restore after plot render (handles both Plotly async and ECharts sync)
-            if (stillFocused) {
-                // Use setTimeout(0) to run after Plotly's .then() resolves
-                setTimeout(() => {
-                    inputEl.focus();
-                    inputEl.setSelectionRange(curStart, curEnd);
-                }, 0);
-            }
+            
+            // Clear the flag after plot render completes
+            // For Plotly (async), we need to wait a bit
+            setTimeout(() => {
+                _renderingInProgress[key] = false;
+                // Final focus restoration as safety net
+                if (document.activeElement !== inputEl) {
+                    const state = _calcEvoFocusState[key];
+                    if (state) {
+                        inputEl.focus();
+                        inputEl.setSelectionRange(state.selStart, state.selEnd);
+                    }
+                }
+            }, 50);
         }, 150);
 
     } catch(e) { 
         console.error(e);
-        resDiv.innerText = "Syntax Error"; 
+        resDiv.innerText = "Syntax Error";
+        _renderingInProgress[key] = false;
     }
 }
 
