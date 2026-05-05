@@ -5271,65 +5271,6 @@ function enable_train_if_has_custom_images() {
 	}
 }
 
-function add_canvas_layer(canvas, transparency, base_id) {
-	assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
-	assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
-	assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas_, transparency, base_id): transparency is not a number");
-	// Get the canvas element
-
-	// Create a new canvas element for the layer
-	var layer = document.createElement("canvas");
-	canvas.id = base_id;
-	layer.id = `${base_id}_layer`;
-	layer.width = canvas.width;
-	layer.height = canvas.height;
-	layer.style.position = "absolute";
-	layer.style.left = canvas.offsetLeft + "px";
-	layer.style.top = canvas.offsetTop + "px";
-	layer.style.backgroundColor = "white";
-	layer.style.opacity = transparency;
-
-	// Add the new canvas element to the document
-	$(canvas).parent().append(layer);
-
-	// Create a new Atrament instance for the layer
-	atrament_data[layer.id] = {};
-	atrament_data[layer.id]["atrament"] = new Atrament(layer);
-
-	clear_attrament(layer.id);
-
-	// Create a transparency slider
-	var transparency_slider = document.createElement("input");
-	transparency_slider.id = layer.id + "_slider";
-	transparency_slider.type = "range";
-	transparency_slider.min = 0;
-	transparency_slider.max = 1;
-	transparency_slider.step = 0.01;
-	transparency_slider.value = transparency;
-	transparency_slider.style.position = "absolute";
-	transparency_slider.style.left = canvas.offsetLeft + canvas.width + "px";
-	transparency_slider.style.top = canvas.offsetTop + "px";
-	transparency_slider.style.width = "100px";
-
-	// Update the opacity of the layer when the slider value changes
-	transparency_slider.addEventListener("input", function() {
-		layer.style.opacity = this.value;
-	});
-
-	// Add the transparency slider to the document
-
-	$(canvas).parent().append("<br>");
-	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
-	$(canvas).parent().append(color_picker_code);
-	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:"rgb"});
-
-	$(canvas).parent().append("<br>Transparency:");
-	$(canvas).parent().append(transparency_slider);
-
-	$(canvas).parent().append("<br>Pen size:");
-	$(canvas).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
-}
-
 async function rename_labels(do_not_reset_labels=0) {
 	if(!do_not_reset_labels) {
 		await reset_labels();
