@@ -625,7 +625,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
 
 let _calcEvoTimers = {};
 let _calcEvoFocusState = {};
-let _renderingInProgress = {};
 let _focusProtectionInstalled = false;
 
 function installFocusProtection() {
