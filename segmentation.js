@@ -21,22 +21,25 @@ function delete_custom_drawing_layer () {
 }
 
 async function ensure_custom_image_layers () {
-	var all_current_custom_images = $(".own_image_span");
-	for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
-		var canvasses = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
+    var all_current_custom_images = $(".own_image_span");
+    for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
+        var canvasses = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
 
-		for (var j = 0; j < canvasses.length; j++) {
-			var this_canvas_id = canvasses[j].id;
-			if(!this_canvas_id.endsWith("_layer")) {
-				var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
-				var new_canvas_id = base_id + "_layer";
-				if($("#" + new_canvas_id).length == 0) {
-					add_canvas_layer(canvasses[j], 0.5, base_id);
-				}
-			}
-		}
-	}
-
+        for (var j = 0; j < canvasses.length; j++) {
+            var this_canvas_id = canvasses[j].id;
+            if(!this_canvas_id.endsWith("_layer")) {
+                // If the canvas already has a base_id assigned, reuse it
+                if(this_canvas_id && $("#" + this_canvas_id + "_layer").length > 0) {
+                    continue; // layer already exists for this canvas
+                }
+                var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
+                var new_canvas_id = base_id + "_layer";
+                if($("#" + new_canvas_id).length == 0) {
+                    add_canvas_layer(canvasses[j], 0.5, base_id);
+                }
+            }
+        }
+    }
 }
 
 function add_canvas_layer(canvas, transparency, base_id) {

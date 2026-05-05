@@ -488,7 +488,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
 
         const series = [];
 
-        // Vocabulary scatter points with labels
         series.push({
             type: 'scatter3D',
             name: 'Vocabulary',
@@ -510,7 +509,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
             }
         });
 
-        // Calculation step lines + arrowhead markers
         steps.forEach(step => {
             series.push({
                 type: 'line3D',
@@ -528,7 +526,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
             });
         });
 
-        // Result highlight diamond
         if (highlightPos) {
             series.push({
                 type: 'scatter3D',
@@ -568,7 +565,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
         return;
     }
 
-    // ═══════ 1D / 2D → Plotly (unchanged) ═══════
+    // ═══════ 1D / 2D → Plotly ═══════
     let traces = [];
     let annotations = [];
 
@@ -626,140 +623,191 @@ function renderSpace(key, highlightPos = null, steps = []) {
     });
 }
 
+let _calcEvoTimers = {};
+let _calcEvoObservers = {};
+
 function calcEvo(key) {
-	const inputVal = document.getElementById(`input-${key}`).value;
-	const space = evoSpaces[key];
-	const resDiv = document.getElementById(`res-${key}`);
+    const inputEl = document.getElementById(`input-${key}`);
+    const inputVal = inputEl.value;
+    const space = evoSpaces[key];
+    const resDiv = document.getElementById(`res-${key}`);
 
-	// Create a lowercase map for lookups
-	const lowerVocab = Object.keys(space.vocab).reduce((acc, word) => {
-		acc[word.toLowerCase()] = { vec: space.vocab[word], original: word };
-		return acc;
-	}, {});
+    // Save cursor state IMMEDIATELY
+    const selStart = inputEl.selectionStart;
+    const selEnd = inputEl.selectionEnd;
 
-	const tokens = inputVal.match(/[a-zA-Z\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
-	if (!tokens) return;
+    // ── Set up a MutationObserver that catches ANY focus-stealing DOM mutation ──
+    // This is the nuclear option: if anything modifies an ancestor of the input
+    // (like temml adding data-math-rendered="true"), we immediately refocus.
+    if (!_calcEvoObservers[key]) {
+        const container = inputEl.closest('[data-math-rendered]') || inputEl.parentElement;
+        const observer = new MutationObserver(() => {
+            // If the input lost focus due to a DOM mutation, restore it
+            if (document.activeElement !== inputEl) {
+                inputEl.focus();
+                inputEl.setSelectionRange(selStart, selEnd);
+            }
+        });
+        observer.observe(container, { 
+            attributes: true, 
+            attributeFilter: ['data-math-rendered'],
+            subtree: false 
+        });
+        _calcEvoObservers[key] = observer;
+    }
 
-	let pos = 0;
-	let steps = [];
+    // Debounce plot render
+    if (_calcEvoTimers[key]) {
+        clearTimeout(_calcEvoTimers[key]);
+    }
 
-	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
+    // Create a lowercase map for lookups
+    const lowerVocab = Object.keys(space.vocab).reduce((acc, word) => {
+        acc[word.toLowerCase()] = { vec: space.vocab[word], original: word };
+        return acc;
+    }, {});
 
-	function peek() { return tokens[pos]; }
-	function consume() { return tokens[pos++]; }
+    const tokens = inputVal.match(/[a-zA-Z\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+    if (!tokens) return;
 
-	function parseFactor() {
-		let token = consume();
-		if (token === '(') {
-			let res = parseExpression();
-			consume(); 
-			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
-		}
-		if (token === '-') {
-			let res = parseFactor();
-			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
-		}
-		if (!isNaN(token)) {
-			const s = parseFloat(token);
-			return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
-		}
+    let pos = 0;
+    let steps = [];
 
-		// Perform case-insensitive lookup
-		const entry = lowerVocab[token.toLowerCase()];
-		const vec = [...(entry ? entry.vec : [0, 0, 0])];
-		const displayName = entry ? entry.original : token;
+    const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
 
-		return { 
-			val: vec, 
-			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
-			isScalar: false,
-			label: displayName
-		};
-	}
+    function peek() { return tokens[pos]; }
+    function consume() { return tokens[pos++]; }
 
-	function parseTerm() {
-		let left = parseFactor();
-		while (peek() === '*' || peek() === '/') {
-			let op = consume();
-			let right = parseFactor();
-			let opTex = op === '*' ? '\\cdot' : '\\div';
+    function parseFactor() {
+        let token = consume();
+        if (token === '(') {
+            let res = parseExpression();
+            consume(); 
+            return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
+        }
+        if (token === '-') {
+            let res = parseFactor();
+            return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
+        }
+        if (!isNaN(token)) {
+            const s = parseFloat(token);
+            return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
+        }
 
-			if (op === '*') {
-				if (left.isScalar) {
-					left.val = right.val.map(v => left.val[0] * v);
-					left.isScalar = right.isScalar;
-				} else if (right.isScalar) {
-					left.val = left.val.map(v => v * right.val[0]);
-				}
-			} else if (op === '/') {
-				left.val = left.val.map(v => v / (right.val[0] || 1));
-			}
+        const entry = lowerVocab[token.toLowerCase()];
+        const vec = [...(entry ? entry.vec : [0, 0, 0])];
+        const displayName = entry ? entry.original : token;
 
-			// Do NOT push a step here — multiplication/division computes
-			// an intermediate vector value, not a spatial movement on the plot.
-			// Only +/- in parseExpression should generate arrows.
+        return { 
+            val: vec, 
+            tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
+            isScalar: false,
+            label: displayName
+        };
+    }
 
-			left.tex = `${left.tex} ${opTex} ${right.tex}`;
-			left.label = `${left.label}${op}${right.label}`;
-		}
-		return left;
-	}
+    function parseTerm() {
+        let left = parseFactor();
+        while (peek() === '*' || peek() === '/') {
+            let op = consume();
+            let right = parseFactor();
+            let opTex = op === '*' ? '\\cdot' : '\\div';
 
-	function parseExpression() {
-		let left = parseTerm();
-		while (peek() === '+' || peek() === '-') {
-			let op = consume();
-			let right = parseTerm();
-			let prev = [...left.val];
+            if (op === '*') {
+                if (left.isScalar) {
+                    left.val = right.val.map(v => left.val[0] * v);
+                    left.isScalar = right.isScalar;
+                } else if (right.isScalar) {
+                    left.val = left.val.map(v => v * right.val[0]);
+                }
+            } else if (op === '/') {
+                left.val = left.val.map(v => v / (right.val[0] || 1));
+            }
 
-			if (op === '+') {
-				left.val = left.val.map((v, i) => v + right.val[i]);
-			} else if (op === '-') {
-				left.val = left.val.map((v, i) => v - right.val[i]);
-			}
+            left.tex = `${left.tex} ${opTex} ${right.tex}`;
+            left.label = `${left.label}${op}${right.label}`;
+        }
+        return left;
+    }
 
-			steps.push({ from: prev, to: [...left.val], label: `${op}${right.label}` });
-			left.tex = `${left.tex} ${op} ${right.tex}`;
-			left.label = `${left.label}${op}${right.label}`;
-		}
-		return left;
-	}
+    function parseExpression() {
+        let left = parseTerm();
+        while (peek() === '+' || peek() === '-') {
+            let op = consume();
+            let right = parseTerm();
+            let prev = [...left.val];
 
-	try {
-		const result = parseExpression();
-		let nearest = "None";
-		let nearestVec = [0, 0, 0];
-		let minDist = Infinity;
+            if (op === '+') {
+                left.val = left.val.map((v, i) => v + right.val[i]);
+            } else if (op === '-') {
+                left.val = left.val.map((v, i) => v - right.val[i]);
+            }
 
-		Object.keys(space.vocab).forEach(w => {
-			const v = space.vocab[w];
-			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
-			if (d < minDist) { 
-				minDist = d; 
-				nearest = w; 
-				nearestVec = v;
-			}
-		});
+            steps.push({ from: prev, to: [...left.val], label: `${op}${right.label}` });
+            left.tex = `${left.tex} ${op} ${right.tex}`;
+            left.label = `${left.label}${op}${right.label}`;
+        }
+        return left;
+    }
 
-		// Logic to determine if it is an exact match or an approximation
-		const isExact = minDist < 0.01;
-		const symbol = isExact ? "=" : "\\approx";
+    try {
+        const result = parseExpression();
+        let nearest = "None";
+        let nearestVec = [0, 0, 0];
+        let minDist = Infinity;
 
-		// The resultTex now includes the symbol inside the substack next to the name
-		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
+        Object.keys(space.vocab).forEach(w => {
+            const v = space.vocab[w];
+            const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
+            if (d < minDist) { 
+                minDist = d; 
+                nearest = w; 
+                nearestVec = v;
+            }
+        });
 
-		resDiv.innerHTML = `
-		    <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
-			$$ ${result.tex} = ${resultTex} $$
-		    </div>
-		`;
+        const isExact = minDist < 0.01;
+        const symbol = isExact ? "=" : "\\approx";
+        const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
 
-		render_temml();
-		renderSpace(key, result.val, steps);
-	} catch(e) { 
-		console.error(e);
-		resDiv.innerText = "Syntax Error"; 
-	}
+        resDiv.innerHTML = `
+            <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
+            $$ ${result.tex} = ${resultTex} $$
+            </div>
+        `;
+
+        // Render math — this is what adds data-math-rendered="true" and steals focus
+        render_temml();
+
+        // IMMEDIATELY restore focus after temml's synchronous DOM manipulation
+        inputEl.focus();
+        inputEl.setSelectionRange(selStart, selEnd);
+
+        // Debounce the expensive plot render
+        const capturedResult = [...result.val];
+        const capturedSteps = steps;
+        _calcEvoTimers[key] = setTimeout(() => {
+            // Save focus state again right before plot render
+            const stillFocused = document.activeElement === inputEl;
+            const curStart = stillFocused ? inputEl.selectionStart : selStart;
+            const curEnd = stillFocused ? inputEl.selectionEnd : selEnd;
+
+            renderSpace(key, capturedResult, capturedSteps);
+
+            // Restore after plot render (handles both Plotly async and ECharts sync)
+            if (stillFocused) {
+                // Use setTimeout(0) to run after Plotly's .then() resolves
+                setTimeout(() => {
+                    inputEl.focus();
+                    inputEl.setSelectionRange(curStart, curEnd);
+                }, 0);
+            }
+        }, 150);
+
+    } catch(e) { 
+        console.error(e);
+        resDiv.innerText = "Syntax Error"; 
+    }
 }
 
 function renderComparison3D(config) {
@@ -8812,6 +8860,28 @@ function updateGrammarRotInfo() {
         </div>
     `;
 }
+
+// Prevent temml/math renderers from stealing focus by blocking
+// attribute mutations on containers that hold input elements
+document.querySelectorAll('input[id^="input-"]').forEach(input => {
+    const parent = input.parentElement;
+    // Remove the attribute immediately if it gets set
+    new MutationObserver((mutations) => {
+        mutations.forEach(m => {
+            if (m.type === 'attributes' && m.attributeName === 'data-math-rendered') {
+                if (document.activeElement === input) {
+                    // The attribute change stole focus — restore it
+                    const s = input.selectionStart;
+                    const e = input.selectionEnd;
+                    requestAnimationFrame(() => {
+                        input.focus();
+                        input.setSelectionRange(s, e);
+                    });
+                }
+            }
+        });
+    }).observe(parent, { attributes: true, attributeFilter: ['data-math-rendered'] });
+});
 
 function loadEmbeddingModule() {
     const fastConfig = {
