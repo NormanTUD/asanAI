@@ -2,7 +2,7 @@ function delete_custom_drawing_layer () {
 	var all_current_custom_images = $(".own_image_span");
 	for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
 		var imgs = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
-		for (var j = 0; j < all_current_custom_images.length; j++) {
+		for (var j = 0; j < imgs.length; j++) {
 			try {
 				var this_canvas_id = imgs[j].id;
 				if($("#" + this_canvas_id + "_layer").length) {
@@ -30,7 +30,7 @@ async function ensure_custom_image_layers () {
 			if(!this_canvas_id.endsWith("_layer")) {
 				var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
 				var new_canvas_id = base_id + "_layer";
-				if($(new_canvas_id).length == 0) {
+				if($("#" + new_canvas_id).length == 0) {
 					add_canvas_layer(canvasses[j], 0.5, base_id);
 				}
 			}
