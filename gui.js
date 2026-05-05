@@ -5096,6 +5096,8 @@ async function last_shape_layer_warning() {
 				set_loss_and_metric_if_not_already_set("meanSquaredError");
 
 				await change_last_responsible_layer_for_image_output();
+
+				$("#validationSplit").val(0);
 			}
 		}
 	} else {
