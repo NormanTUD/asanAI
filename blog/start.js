@@ -250,7 +250,7 @@ const _temmlObserver = new IntersectionObserver((entries) => {
     rootMargin: rootMargin
 });
 
-function render_temml() {
+function render_temml(specificRoot) {
 
 	/* ═══════════════════════════════════════════════════════════════
 	   ONE-TIME POPUP BOOTSTRAP
@@ -451,10 +451,6 @@ function render_temml() {
 			});
 		}
 
-		/* ── Content update — two modes ── */
-
-		// Animated swap: fades out old → swaps → fades in new
-		// Used when user right-clicks a DIFFERENT equation
 		function _animatedSwap(overlay, latex, isDisplay, mathEl) {
 			render_temml._mathEl       = mathEl;
 			render_temml._currentLatex = latex;
@@ -470,29 +466,23 @@ function render_temml() {
 				_resetCopyBtn(overlay);
 
 				requestAnimationFrame(() => box.classList.remove('lp-swap'));
-			}, 180); // matches the CSS transition duration
+			}, 180);
 		}
 
-		// Instant swap + subtle pulse: no opacity change, just swaps content
-		// Used when the SAME equation re-renders (live update)
 		function _liveSwap(overlay, latex, isDisplay, mathEl) {
 			render_temml._mathEl       = mathEl;
 			render_temml._currentLatex = latex;
 
-			// Swap content instantly — no flicker
 			overlay.querySelector('.lp-preview').innerHTML = '';
 			overlay.querySelector('.lp-preview').appendChild(mathEl.cloneNode(true));
 			overlay.querySelector('.lp-code').textContent = latex;
 			_setBadge(overlay, isDisplay);
 
-			// Gentle inset glow to signal the update
 			const box = overlay.querySelector('.lp-box');
 			box.classList.remove('lp-live-pulse');
-			// Force reflow so animation restarts if triggered rapidly
 			void box.offsetWidth;
 			box.classList.add('lp-live-pulse');
 
-			// Clean up class after animation ends
 			const onEnd = () => { box.classList.remove('lp-live-pulse'); box.removeEventListener('animationend', onEnd); };
 			box.addEventListener('animationend', onEnd);
 		}
@@ -501,14 +491,12 @@ function render_temml() {
 			const container = _findContainer(mathEl);
 			const mathIndex = container ? _getMathIndex(container, mathEl) : -1;
 
-			// Same equation, same content → no-op
 			if (render_temml._overlay &&
 				render_temml._mathEl === mathEl &&
 				render_temml._currentLatex === latex) {
 				return;
 			}
 
-			// Popup already open → animated swap to new equation
 			if (render_temml._overlay) {
 				render_temml._containerEl = container;
 				render_temml._mathIndex   = mathIndex;
@@ -516,7 +504,6 @@ function render_temml() {
 				return;
 			}
 
-			// ── Create new popup ──
 			const overlay = document.createElement('div');
 			overlay.className = 'lp-overlay';
 			overlay.innerHTML = `
@@ -556,7 +543,6 @@ function render_temml() {
 			render_temml._mathIndex    = mathIndex;
 		}
 
-		/* ── Live-update hook — called at end of every render pass ── */
 		render_temml._liveUpdate = function() {
 			if (!render_temml._overlay || !render_temml._containerEl) return;
 
@@ -568,22 +554,18 @@ function render_temml() {
 			const newLatex = _extractLatex(newMath);
 			if (!newLatex) return;
 
-			// Always keep the DOM reference fresh (Temml replaces nodes)
 			render_temml._mathEl = newMath;
 
-			// Content actually changed → smooth live swap
 			if (newLatex !== render_temml._currentLatex) {
 				const isDisplay = newMath.getAttribute('display') === 'block';
 				_liveSwap(render_temml._overlay, newLatex, isDisplay, newMath);
 			}
 		};
 
-		/* ── Global listeners (once) ── */
 		document.addEventListener('contextmenu', function(e) {
 			const mathEl = e.target.closest('math');
 			if (!mathEl) return;
 
-			// Ignore math clones inside the popup preview
 			if (mathEl.closest('.lp-overlay')) return;
 
 			const latex = _extractLatex(mathEl);
@@ -605,13 +587,27 @@ function render_temml() {
 	/* ═══════════════════════════════════════════════════════════════
 	   NORMAL RENDERING PASS
 	   ═══════════════════════════════════════════════════════════ */
-	const elements = document.querySelectorAll(
+	
+	// If a specific root was passed, only process within that root
+	const searchRoot = specificRoot || document;
+	
+	const elements = searchRoot.querySelectorAll(
 		'p:not([data-math-rendered]), span:not([data-math-rendered]), ' +
 		'div:not([data-math-rendered]), li:not([data-math-rendered])'
 	);
 
 	elements.forEach(el => {
 		if (!el.textContent.includes('$')) return;
+		
+		// ═══════════════════════════════════════════════════════════
+		// THE FIX: Skip any element that contains an input, textarea,
+		// or select. This prevents render_temml from ever calling
+		// el.innerHTML = ... on a container that holds a focused input.
+		// ═══════════════════════════════════════════════════════════
+		if (el.querySelector('input, textarea, select')) return;
+		
+		// Also skip if this element IS an input/textarea
+		if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') return;
 
 		// Versuche zuerst unseren Fix (rendert direkt via temml.renderToString)
 		const fixed = _fixMathInElement(el);
