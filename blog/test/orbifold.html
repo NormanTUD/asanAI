@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifolds & Orbifolds — A Visual Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 70%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: #aaa;
+            margin-top: 1rem;
+            z-index: 2;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 80px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #999;
+            max-width: 700px;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+            background: #111;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .interactive-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-start;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .demo-card {
+            background: linear-gradient(145deg, #1a1a3e, #12122a);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-card h3 {
+            font-size: 1.4rem;
+            color: #f093fb;
+            margin-bottom: 1rem;
+        }
+
+        .demo-card p {
+            color: #aaa;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .demo-canvas {
+            width: 280px;
+            height: 280px;
+            margin: 20px auto;
+            border-radius: 15px;
+            background: #0a0a1a;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn:hover, .btn.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+            color: #fff;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .slider-container label {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 150px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .comparison-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-section {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        .comparison-box {
+            background: linear-gradient(145deg, #1a1a3e, #12122a);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .comparison-box h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .manifold-color { color: #667eea; }
+        .orbifold-color { color: #f093fb; }
+
+        .key-idea {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 20px 25px;
+            border-radius: 0 12px 12px 0;
+            margin: 30px 0;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .key-idea.orbifold {
+            border-left-color: #f093fb;
+            background: rgba(240, 147, 251, 0.1);
+        }
+
+        .key-idea p {
+            line-height: 1.8;
+            color: #ccc;
+        }
+
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .flow-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-indicator {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+            border: 1px solid #555;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .annotation {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #ccc;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .glue-animation {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            position: relative;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+
+<canvas class="particle-bg" id="particleBg"></canvas>
+
+<div class="step-indicator" id="stepIndicator"></div>
+
+<!-- HERO -->
+<section class="hero">
+    <h1>Manifolds & Orbifolds</h1>
+    <p>A visual, interactive exploration of shape and symmetry</p>
+    <div class="scroll-hint">↓ scroll to explore</div>
+</section>
+
+<!-- SECTION 1: What is a Manifold? -->
+<section class="flow-section" id="sec1">
+    <h2 class="section-title">What is a Manifold?</h2>
+    <p class="section-subtitle">
+        A manifold is a shape that <em>locally</em> looks like flat space — even if globally it's curved or twisted. 
+        Zoom into any small patch, and it looks like ordinary flat paper.
+    </p>
+    <div class="canvas-container">
+        <canvas id="manifoldIntro"></canvas>
+    </div>
+    <p style="color:#888; margin-top:15px; font-size:0.9rem;">🖱️ Move your mouse over the surface — notice how every small patch looks flat</p>
+</section>
+
+<!-- SECTION 2: Examples of Manifolds -->
+<section class="flow-section" id="sec2">
+    <h2 class="section-title">Manifold Examples</h2>
+    <p class="section-subtitle">
+        Every smooth surface you know is a manifold. A sphere, a torus (donut), even a flat plane. 
+        Click each to see it in action.
+    </p>
+    <div class="interactive-demo">
+        <div class="demo-card">
+            <h3>Circle (1D Manifold)</h3>
+            <canvas class="demo-canvas" id="circleCanvas"></canvas>
+            <p>A circle is a 1D manifold: zoom into any point and it looks like a straight line.</p>
+        </div>
+        <div class="demo-card">
+            <h3>Sphere (2D Manifold)</h3>
+            <canvas class="demo-canvas" id="sphereCanvas"></canvas>
+            <p>Earth's surface is a 2D manifold: locally flat (that's why old maps work!), globally curved.</p>
+        </div>
+        <div class="demo-card">
+            <h3>Torus (2D Manifold)</h3>
+            <canvas class="demo-canvas" id="torusCanvas"></canvas>
+            <p>A donut surface is also a manifold — every patch is locally flat, but the topology is different from a sphere.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: Building a Manifold by Gluing -->
+<section class="flow-section" id="sec3">
+    <h2 class="section-title">Building Manifolds by Gluing</h2>
+    <p class="section-subtitle">
+        You can build manifolds by taking flat pieces and gluing edges together. 
+        A flat square with opposite edges identified becomes a torus!
+    </p>
+    <div class="canvas-container">
+        <canvas id="gluingCanvas"></canvas>
+    </div>
+    <div class="controls">
+        <button class="btn active" onclick="setGlueMode('flat')">Flat Square</button>
+        <button class="btn" onclick="setGlueMode('cylinder')">Glue Top/Bottom → Cylinder</button>
+        <button class="btn" onclick="setGlueMode('torus')">Glue Both → Torus</button>
+    </div>
+</section>
+
+<!-- SECTION 4: Now... What is an Orbifold? -->
+<section class="flow-section" id="sec4">
+    <h2 class="section-title">Now... What is an Orbifold?</h2>
+    <p class="section-subtitle">
+        An orbifold is like a manifold, but it's allowed to have <em>special singular points</em> — 
+        places where the space has a symmetry "defect." Think of it as a manifold that's been 
+        <strong>folded</strong> by a symmetry.
+    </p>
+    <div class="key-idea orbifold">
+        <p><strong>Key Insight:</strong> Take a manifold and fold it using a symmetry (like folding a piece of paper). 
+        The fold lines and corners create "singular points" — the resulting shape is an orbifold.</p>
+    </div>
+    <div class="canvas-container">
+        <canvas id="orbifoldIntro"></canvas>
+    </div>
+    <div class="controls">
+        <div class="slider-container">
+            <label>Fold Symmetry:</label>
+            <input type="range" id="foldSlider" min="2" max="8" value="2" step="1">
+            <span id="foldValue" style="color:#f093fb;">2-fold</span>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 5: Cone Points -->
+<section class="flow-section" id="sec5">
+    <h2 class="section-title">Cone Points: The Heart of Orbifolds</h2>
+    <p class="section-subtitle">
+        When you fold a manifold around a point with n-fold symmetry, that point becomes a <em>cone point</em>. 
+        Around a cone point of order n, there's only 360°/n of angle instead of the full 360°.
+    </p>
+    <div class="canvas-container">
+        <canvas id="coneCanvas"></canvas>
+    </div>
+    <div class="controls">
+        <button class="btn active" onclick="setConeOrder(2)">Order 2 (180°)</button>
+        <button class="btn" onclick="setConeOrder(3)">Order 3 (120°)</button>
+        <button class="btn" onclick="setConeOrder(4)">Order 4 (90°)</button>
+        <button class="btn" onclick="setConeOrder(6)">Order 6 (60°)</button>
+    </div>
+    <p style="color:#888; margin-top:15px; font-size:0.9rem;">A cone point of order n means only 1/n of the full neighborhood exists</p>
+</section>
+
+<!-- SECTION 6: Comparison -->
+<section class="flow-section" id="sec6">
+    <h2 class="section-title">Manifold vs. Orbifold</h2>
+    <p class="section-subtitle">
+        Side by side: see the difference between a smooth manifold and an orbifold with singular points.
+    </p>
+    <div class="comparison-section">
+        <div class="comparison-box">
+            <h3 class="manifold-color">Manifold</h3>
+            <canvas class="demo-canvas" id="compareManifold" width="280" height="280"></canvas>
+            <p style="color:#aaa; margin-top:10px; font-size:0.9rem;">Every point has a full, smooth neighborhood. No special points.</p>
+        </div>
+        <div class="comparison-box">
+            <h3 class="orbifold-color">Orbifold</h3>
+            <canvas class="demo-canvas" id="compareOrbifold" width="280" height="280"></canvas>
+            <p style="color:#aaa; margin-top:10px; font-size:0.9rem;">Some points are "cone points" with reduced angle — created by symmetry folding.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 7: Real-World Orbifold Example -->
+<section class="flow-section" id="sec7">
+    <h2 class="section-title">A Classic Orbifold: The Teardrop</h2>
+    <p class="section-subtitle">
+        Take a sphere and add one cone point. You get a "teardrop" orbifold — smooth everywhere except at one special point. 
+        Or fold a sphere in half to get a "pillow" orbifold with corner points.
+    </p>
+    <div class="canvas-container">
+        <canvas id="teardropCanvas"></canvas>
+    </div>
+    <div class="controls">
+        <button class="btn active" onclick="setOrbifoldType('teardrop')">Teardrop (1 cone point)</button>
+        <button class="btn" onclick="setOrbifoldType('football')">Football (2 cone points)</button>
+        <button class="btn" onclick="setOrbifoldType('pillow')">Pillow (4 corners)</button>
+    </div>
+</section>
+
+<!-- SECTION 8: Tiling / Symmetry Visualization -->
+<section class="flow-section" id="sec8">
+    <h2 class="section-title">Orbifolds from Wallpaper Symmetry</h2>
+    <p class="section-subtitle">
+        Every wallpaper pattern (repeating 2D pattern) corresponds to an orbifold! 
+        The fundamental domain — the smallest piece that tiles the plane — is the orbifold.
+    </p>
+    <div class="canvas-container">
+        <canvas id="tilingCanvas"></canvas>
+    </div>
+    <div class="controls">
+        <button class="btn active" onclick="setTiling('p1')">No Symmetry (Manifold)</button>
+        <button class="btn" onclick="setTiling('p2')">2-fold Rotation</button>
+        <button class="btn" onclick="setTiling('p3')">3-fold Rotation</button>
+        <button class="btn" onclick="setTiling('p4')">4-fold Rotation</button>
+        <button class="btn" onclick="setTiling('p6')">6-fold Rotation</button>
+    </div>
+    <p style="color:#888; margin-top:15px; font-size:0.9rem;">The highlighted region is the orbifold — the rest is generated by symmetry</p>
+</section>
+
+<!-- SECTION 9: Summary -->
+<section class="flow-section" id="sec9">
+    <h2 class="section-title">Summary</h2>
+    <div class="key-idea">
+        <p><strong>Manifold:</strong> A space that looks like flat ℝⁿ everywhere you zoom in. Smooth, no special points. 
+        Examples: sphere, torus, the surface of any smooth object.</p>
+    </div>
+    <div class="key-idea orbifold">
+        <p><strong>Orbifold:</strong> A space that is <em>almost</em> a manifold, but has isolated singular points where the space 
+        has been "folded" by a symmetry. These cone points, mirror edges, and corner reflectors make orbifolds 
+        the natural language for describing symmetry in geometry.</p>
+    </div>
+    <p style="color:#888; margin-top:30px; font-size:1rem; text-align:center; max-width:600px; line-height:1.8;">
+        Orbifolds generalize manifolds the same way rational numbers generalize integers — 
+        by allowing "fractional" local structure at special points.
+    </p>
+</section>
+
+<script>
+// ============ PARTICLE BACKGROUND ============
+const particleBg = document.getElementById('particleBg');
+const pCtx = particleBg.getContext('2d');
+let particles = [];
+
+function resizeParticleBg() {
+    particleBg.width = window.innerWidth;
+    particleBg.height = window.innerHeight;
+}
+resizeParticleBg();
+window.addEventListener('resize', resizeParticleBg);
+
+for (let i = 0; i < 80; i++) {
+    particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.3 + 0.1
+    });
+}
+
+function animateParticles() {
+    pCtx.clearRect(0, 0, particleBg.width, particleBg.height);
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = particleBg.width;
+        if (p.x > particleBg.width) p.x = 0;
+        if (p.y < 0) p.y = particleBg.height;
+        if (p.y > particleBg.height) p.y = 0;
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        pCtx.fillStyle = `rgba(102, 126, 234, ${p.alpha})`;
+        pCtx.fill();
+    });
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ============ STEP INDICATOR ============
+const sections = document.querySelectorAll('.flow-section');
+const stepIndicator = document.getElementById('stepIndicator');
+sections.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'step-dot';
+    stepIndicator.appendChild(dot);
+});
+
+window.addEventListener('scroll', () => {
+    const dots = document.querySelectorAll('.step-dot');
+    sections.forEach((sec, i) => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+            dots.forEach(d => d.classList.remove('active'));
+            dots[i].classList.add('active');
+        }
+    });
+});
+
+// ============ MANIFOLD INTRO CANVAS ============
+const manifoldCanvas = document.getElementById('manifoldIntro');
+const mCtx = manifoldCanvas.getContext('2d');
+let mouseX = 0, mouseY = 0;
+let manifoldHover = false;
+
+function resizeCanvas(canvas) {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+}
+resizeCanvas(manifoldCanvas);
+window.addEventListener('resize', () => resizeCanvas(manifoldCanvas));
+
+manifoldCanvas.addEventListener('mousemove', (e) => {
+    const rect = manifoldCanvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+    manifoldHover = true;
+});
+manifoldCanvas.addEventListener('mouseleave', () => { manifoldHover = false; });
+
+function drawManifoldIntro(time) {
+    const w = manifoldCanvas.width;
+    const h = manifoldCanvas.height;
+    mCtx.clearRect(0, 0, w, h);
+
+    // Draw a wavy surface
+    const points = [];
+    const rows = 30;
+    const cols = 50;
+    for (let j = 0; j < rows; j++) {
+        points[j] = [];
+        for (let i = 0; i < cols; i++) {
+            const x = (i / (cols - 1)) * w;
+            const baseY = h * 0.3 + j * (h * 0.5 / rows);
+            const wave = Math.sin(i * 0.2 + time * 0.002) * 20 + Math.cos(j * 0.3 + time * 0.001) * 15;
+            const perspective = 0.5 + j / rows * 0.5;
+            points[j][i] = { x: x, y: baseY + wave * perspective };
+        }
+    }
+
+    // Draw grid lines
+    mCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+    mCtx.lineWidth = 1;
+    for (let j = 0; j < rows; j++) {
+        mCtx.beginPath();
+        for (let i = 0; i < cols; i++) {
+            if (i === 0) mCtx.moveTo(points[j][i].x, points[j][i].y);
+            else mCtx.lineTo(points[j][i].x, points[j][i].y);
+        }
+        mCtx.stroke();
+    }
+    for (let i = 0; i < cols; i += 2) {
+        mCtx.beginPath();
+        for (let j = 0; j < rows; j++) {
+            if (j === 0) mCtx.moveTo(points[j][i].x, points[j][i].y);
+            else mCtx.lineTo(points[j][i].x, points[j][i].y);
+        }
+        mCtx.stroke();
+    }
+
+    // If hovering, show the "flat patch"
+    if (manifoldHover) {
+        const patchSize = 80;
+        // Draw zoom circle
+        mCtx.save();
+        mCtx.beginPath();
+        mCtx.arc(mouseX, mouseY, patchSize, 0, Math.PI * 2);
+        mCtx.strokeStyle = 'rgba(240, 147, 251, 0.8)';
+        mCtx.lineWidth = 2;
+        mCtx.stroke();
+        mCtx.fillStyle = 'rgba(240, 147, 251, 0.05)';
+        mCtx.fill();
+
+        // Draw flat grid inside the circle
+        mCtx.beginPath();
+        mCtx.arc(mouseX, mouseY, patchSize - 5, 0, Math.PI * 2);
+        mCtx.clip();
+
+        mCtx.strokeStyle = 'rgba(240, 147, 251, 0.5)';
+        mCtx.lineWidth = 1;
+        const gridSize = 15;
+        for (let gx = mouseX - patchSize; gx < mouseX + patchSize; gx += gridSize) {
+            mCtx.beginPath();
+            mCtx.moveTo(gx, mouseY - patchSize);
+            mCtx.lineTo(gx, mouseY + patchSize);
+            mCtx.stroke();
+        }
+        for (let gy = mouseY - patchSize; gy < mouseY + patchSize; gy += gridSize) {
+            mCtx.beginPath();
+            mCtx.moveTo(mouseX - patchSize, gy);
+            mCtx.lineTo(mouseX + patchSize, gy);
+            mCtx.stroke();
+        }
+        mCtx.restore();
+
+        // Label
+        mCtx.fillStyle = '#f093fb';
+        mCtx.font = '14px Georgia';
+        mCtx.fillText('Locally flat! (looks like ℝ²)', mouseX - 80, mouseY - patchSize - 15);
+    }
+
+    // Title annotation
+    mCtx.fillStyle = 'rgba(255,255,255,0.6)';
+    mCtx.font = '16px Georgia';
+    mCtx.fillText('A curved 2D surface (manifold)', 20, 30);
+
+    requestAnimationFrame(() => drawManifoldIntro(performance.now()));
+}
+drawManifoldIntro(0);
+
+// ============ CIRCLE CANVAS ============
+const circleCanvas = document.getElementById('circleCanvas');
+const cCtx = circleCanvas.getContext('2d');
+circleCanvas.width = 280;
+circleCanvas.height = 280;
+
+let circleAngle = 0;
+function drawCircle() {
+    const w = 280, h = 280;
+    cCtx.clearRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2, r = 90;
+
+    // Draw circle
+    cCtx.beginPath();
+    cCtx.arc(cx, cy, r, 0, Math.PI * 2);
+    cCtx.strokeStyle = '#667eea';
+    cCtx.lineWidth = 3;
+    cCtx.stroke();
+
+    // Moving point
+    circleAngle += 0.01;
+    const px = cx + r * Math.cos(circleAngle);
+    const py = cy + r * Math.sin(circleAngle);
+
+    // Tangent line (shows locally looks like a line)
+    const tangentLen = 50;
+    const tx = -Math.sin(circleAngle);
+    const ty = Math.cos(circleAngle);
+
+    cCtx.beginPath();
+    cCtx.moveTo(px - tx * tangentLen, py - ty * tangentLen);
+    cCtx.lineTo(px + tx * tangentLen, py + ty * tangentLen);
+    cCtx.strokeStyle = '#f093fb';
+    cCtx.lineWidth = 2;
+    cCtx.stroke();
+
+    // Point
+    cCtx.beginPath();
+    cCtx.arc(px, py, 6, 0, Math.PI * 2);
+    cCtx.fillStyle = '#fff';
+    cCtx.fill();
+
+    // Label
+    cCtx.fillStyle = '#f093fb';
+    cCtx.font = '11px Georgia';
+    cCtx.fillText('Locally looks like ℝ¹', px + 10, py - 10);
+
+    requestAnimationFrame(drawCircle);
+}
+drawCircle();
+
+// ============ SPHERE CANVAS ============
+const sphereCanvas = document.getElementById('sphereCanvas');
+const sCtx = sphereCanvas.getContext('2d');
+sphereCanvas.width = 280;
+sphereCanvas.height = 280;
+
+let sphereRot = 0;
+function drawSphere() {
+    const w = 280, h = 280;
+    sCtx.clearRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2, r = 90;
+    sphereRot += 0.008;
+
+    // Draw sphere wireframe
+    sCtx.strokeStyle = 'rgba(102, 126, 234, 0.4)';
+    sCtx.lineWidth = 1;
+
+    // Latitude lines
+    for (let  lat = -80; lat <= 80; lat += 20) {
+        const latRad = lat * Math.PI / 180;
+        const lr = r * Math.cos(latRad);
+        const ly = cy + r * Math.sin(latRad) * 0.8;
+        sCtx.beginPath();
+        sCtx.ellipse(cx, ly, lr, lr * 0.3, 0, 0, Math.PI * 2);
+        sCtx.stroke();
+    }
+
+    // Longitude lines
+    for (let lon = 0; lon < 180; lon += 30) {
+        const lonRad = (lon + sphereRot * 50) * Math.PI / 180;
+        sCtx.beginPath();
+        for (let lat = -90; lat <= 90; lat += 5) {
+            const latRad = lat * Math.PI / 180;
+            const x = cx + r * Math.cos(latRad) * Math.sin(lonRad);
+            const y = cy + r * Math.sin(latRad) * 0.8;
+            if (lat === -90) sCtx.moveTo(x, y);
+            else sCtx.lineTo(x, y);
+        }
+        sCtx.stroke();
+    }
+
+    // Highlight patch
+    const patchLat = 30 * Math.PI / 180;
+    const patchLon = sphereRot * 2;
+    const ppx = cx + r * Math.cos(patchLat) * Math.sin(patchLon);
+    const ppy = cy + r * Math.sin(patchLat) * 0.8;
+
+    sCtx.beginPath();
+    sCtx.arc(ppx, ppy, 20, 0, Math.PI * 2);
+    sCtx.strokeStyle = '#f093fb';
+    sCtx.lineWidth = 2;
+    sCtx.stroke();
+    sCtx.fillStyle = 'rgba(240, 147, 251, 0.1)';
+    sCtx.fill();
+
+    sCtx.fillStyle = '#f093fb';
+    sCtx.font = '10px Georgia';
+    sCtx.fillText('≈ ℝ²', ppx + 22, ppy + 4);
+
+    requestAnimationFrame(drawSphere);
+}
+drawSphere();
+
+// ============ TORUS CANVAS ============
+const torusCanvasEl = document.getElementById('torusCanvas');
+const tCtx = torusCanvasEl.getContext('2d');
+torusCanvasEl.width = 280;
+torusCanvasEl.height = 280;
+
+let torusRot = 0;
+function drawTorus() {
+    const w = 280, h = 280;
+    tCtx.clearRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2;
+    const R = 70, rr = 30;
+    torusRot += 0.005;
+
+    // Draw torus wireframe
+    tCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+    tCtx.lineWidth = 1;
+
+    // Draw circles along the torus
+    for (let i = 0; i < 24; i++) {
+        const theta = (i / 24) * Math.PI * 2 + torusRot;
+        const centerX = cx + R * Math.cos(theta);
+        const centerY = cy + R * Math.sin(theta) * 0.4;
+
+        tCtx.beginPath();
+        for (let j = 0; j <= 20; j++) {
+            const phi = (j / 20) * Math.PI * 2;
+            const x = centerX + rr * Math.cos(phi) * Math.cos(theta);
+            const y = centerY + rr * Math.sin(phi);
+            if (j === 0) tCtx.moveTo(x, y);
+            else tCtx.lineTo(x, y);
+        }
+        tCtx.stroke();
+    }
+
+    // Draw rings
+    for (let j = 0; j < 12; j++) {
+        const phi = (j / 12) * Math.PI * 2;
+        tCtx.beginPath();
+        for (let i = 0; i <= 48; i++) {
+            const theta = (i / 48) * Math.PI * 2 + torusRot;
+            const tubeCenterX = cx + R * Math.cos(theta);
+            const tubeCenterY = cy + R * Math.sin(theta) * 0.4;
+            const x = tubeCenterX + rr * Math.cos(phi) * Math.cos(theta);
+            const y = tubeCenterY + rr * Math.sin(phi);
+            if (i === 0) tCtx.moveTo(x, y);
+            else tCtx.lineTo(x, y);
+        }
+        tCtx.stroke();
+    }
+
+    // Label
+    tCtx.fillStyle = 'rgba(255,255,255,0.5)';
+    tCtx.font = '11px Georgia';
+    tCtx.fillText('T² = S¹ × S¹', cx - 30, h - 20);
+
+    requestAnimationFrame(drawTorus);
+}
+drawTorus();
+
+// ============ GLUING CANVAS ============
+const gluingCanvas = document.getElementById('gluingCanvas');
+const gCtx = gluingCanvas.getContext('2d');
+resizeCanvas(gluingCanvas);
+window.addEventListener('resize', () => resizeCanvas(gluingCanvas));
+
+let glueMode = 'flat';
+let glueAnim = 0;
+
+function setGlueMode(mode) {
+    glueMode = mode;
+    document.querySelectorAll('#sec3 .btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function drawGluing(time) {
+    const w = gluingCanvas.width;
+    const h = gluingCanvas.height;
+    gCtx.clearRect(0, 0, w, h);
+    glueAnim += 0.02;
+
+    const cx = w / 2, cy = h / 2;
+
+    if (glueMode === 'flat') {
+        // Draw flat square with colored edges
+        const size = 180;
+        const x0 = cx - size / 2, y0 = cy - size / 2;
+
+        // Fill
+        gCtx.fillStyle = 'rgba(102, 126, 234, 0.05)';
+        gCtx.fillRect(x0, y0, size, size);
+
+        // Grid
+        gCtx.strokeStyle = 'rgba(102, 126, 234, 0.2)';
+        gCtx.lineWidth = 1;
+        for (let i = 0; i <= 8; i++) {
+            gCtx.beginPath();
+            gCtx.moveTo(x0 + i * size / 8, y0);
+            gCtx.lineTo(x0 + i * size / 8, y0 + size);
+            gCtx.stroke();
+            gCtx.beginPath();
+            gCtx.moveTo(x0, y0 + i * size / 8);
+            gCtx.lineTo(x0 + size, y0 + i * size / 8);
+            gCtx.stroke();
+        }
+
+        // Top/Bottom edges (red with arrows)
+        gCtx.strokeStyle = '#ff6b6b';
+        gCtx.lineWidth = 4;
+        gCtx.beginPath();
+        gCtx.moveTo(x0, y0);
+        gCtx.lineTo(x0 + size, y0);
+        gCtx.stroke();
+        gCtx.beginPath();
+        gCtx.moveTo(x0, y0 + size);
+        gCtx.lineTo(x0 + size, y0 + size);
+        gCtx.stroke();
+
+        // Arrows on top/bottom
+        drawArrow(gCtx, x0 + size / 2 - 10, y0, x0 + size / 2 + 10, y0, '#ff6b6b');
+        drawArrow(gCtx, x0 + size / 2 - 10, y0 + size, x0 + size / 2 + 10, y0 + size, '#ff6b6b');
+
+        // Left/Right edges (blue with arrows)
+        gCtx.strokeStyle = '#4ecdc4';
+        gCtx.lineWidth = 4;
+        gCtx.beginPath();
+        gCtx.moveTo(x0, y0);
+        gCtx.lineTo(x0, y0 + size);
+        gCtx.stroke();
+        gCtx.beginPath();
+        gCtx.moveTo(x0 + size, y0);
+        gCtx.lineTo(x0 + size, y0 + size);
+        gCtx.stroke();
+
+        drawArrow(gCtx, x0, y0 + size / 2 - 10, x0, y0 + size / 2 + 10, '#4ecdc4');
+        drawArrow(gCtx, x0 + size, y0 + size / 2 - 10, x0 + size, y0 + size / 2 + 10, '#4ecdc4');
+
+        // Labels
+        gCtx.fillStyle = '#ff6b6b';
+        gCtx.font = '13px Georgia';
+        gCtx.fillText('identify (glue)', cx - 35, y0 - 15);
+        gCtx.fillStyle = '#4ecdc4';
+        gCtx.fillText('identify', x0 - 60, cy + 5);
+
+    } else if (glueMode === 'cylinder') {
+        // Draw cylinder
+        const rCyl = 70;
+        const hCyl = 180;
+        const topY = cy - hCyl / 2;
+        const botY = cy + hCyl / 2;
+
+        // Body lines
+        gCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+        gCtx.lineWidth = 1;
+        for (let i = 0; i < 16; i++) {
+            const angle = (i / 16) * Math.PI * 2 + glueAnim;
+            const x = cx + rCyl * Math.cos(angle);
+            const xScale = Math.cos(angle);
+            if (xScale > -0.2) {
+                gCtx.beginPath();
+                gCtx.moveTo(x, topY);
+                gCtx.lineTo(x, botY);
+                gCtx.stroke();
+            }
+        }
+
+        // Top ellipse
+        gCtx.beginPath();
+        gCtx.ellipse(cx, topY, rCyl, 20, 0, 0, Math.PI * 2);
+        gCtx.strokeStyle = '#4ecdc4';
+        gCtx.lineWidth = 3;
+        gCtx.stroke();
+
+        // Bottom ellipse
+        gCtx.beginPath();
+        gCtx.ellipse(cx, botY, rCyl, 20, 0, 0, Math.PI * 2);
+        gCtx.strokeStyle = '#ff6b6b';
+        gCtx.lineWidth = 3;
+        gCtx.stroke();
+
+        // Side lines
+        gCtx.strokeStyle = 'rgba(102, 126, 234, 0.5)';
+        gCtx.lineWidth = 2;
+        gCtx.beginPath();
+        gCtx.moveTo(cx - rCyl, topY);
+        gCtx.lineTo(cx - rCyl, botY);
+        gCtx.stroke();
+        gCtx.beginPath();
+        gCtx.moveTo(cx + rCyl, topY);
+        gCtx.lineTo(cx + rCyl, botY);
+        gCtx.stroke();
+
+        gCtx.fillStyle = '#ff6b6b';
+        gCtx.font = '13px Georgia';
+        gCtx.fillText('Red edges glued! → Cylinder', cx - 90, botY + 50);
+        gCtx.fillStyle = '#4ecdc4';
+        gCtx.fillText('Green edges still free', cx - 70, topY - 30);
+
+    } else if (glueMode === 'torus') {
+        // Draw torus
+        const R = 80, r = 35;
+
+        gCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+        gCtx.lineWidth = 1;
+
+        for (let i = 0; i < 20; i++) {
+            const theta = (i / 20) * Math.PI * 2 + glueAnim;
+            const tcx = cx + R * Math.cos(theta);
+            const tcy = cy + R * Math.sin(theta) * 0.4;
+            gCtx.beginPath();
+            for (let j = 0; j <= 20; j++) {
+                const phi = (j / 20) * Math.PI * 2;
+                const x = tcx + r * Math.cos(phi) * Math.cos(theta);
+                const y = tcy + r * Math.sin(phi);
+                if (j === 0) gCtx.moveTo(x, y);
+                else gCtx.lineTo(x, y);
+            }
+            gCtx.stroke();
+        }
+
+        for (let j = 0; j < 10; j++) {
+            const phi = (j / 10) * Math.PI * 2;
+            gCtx.beginPath();
+            for (let i = 0; i <= 40; i++) {
+                const theta = (i / 40) * Math.PI * 2 + glueAnim;
+                const tcx = cx + R * Math.cos(theta);
+                const tcy = cy + R * Math.sin(theta) * 0.4;
+                const x = tcx + r * Math.cos(phi) * Math.cos(theta);
+                const y = tcy + r * Math.sin(phi);
+                if (i === 0) gCtx.moveTo(x, y);
+                else gCtx.lineTo(x, y);
+            }
+            gCtx.stroke();
+        }
+
+        gCtx.fillStyle = '#f093fb';
+        gCtx.font = '14px Georgia';
+        gCtx.fillText('All edges glued → Torus!', cx - 80, h - 40);
+    }
+
+    requestAnimationFrame(() => drawGluing(performance.now()));
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color) {
+    const headLen = 10;
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(angle - 0.5), y2 - headLen * Math.sin(angle - 0.5));
+    ctx.lineTo(x2 - headLen * Math.cos(angle + 0.5), y2 - headLen * Math.sin(angle + 0.5));
+    ctx.closePath();
+    ctx.fill();
+}
+
+drawGluing(0);
+
+// ============ ORBIFOLD INTRO CANVAS ============
+const orbifoldCanvas = document.getElementById('orbifoldIntro');
+const oCtx = orbifoldCanvas.getContext('2d');
+resizeCanvas(orbifoldCanvas);
+window.addEventListener('resize', () => resizeCanvas(orbifoldCanvas));
+
+const foldSlider = document.getElementById('foldSlider');
+const foldValue = document.getElementById('foldValue');
+foldSlider.addEventListener('input', () => {
+    foldValue.textContent = foldSlider.value + '-fold';
+});
+
+function drawOrbifoldIntro(time) {
+    const w = orbifoldCanvas.width;
+    const h = orbifoldCanvas.height;
+    oCtx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const n = parseInt(foldSlider.value);
+    const radius = 180;
+    const animAngle = time * 0.001;
+
+    // Draw the full circle faintly
+    oCtx.beginPath();
+    oCtx.arc(cx, cy, radius, 0, Math.PI * 2);
+    oCtx.strokeStyle = 'rgba(102, 126, 234, 0.2)';
+    oCtx.lineWidth = 1;
+    oCtx.stroke();
+
+    // Draw all sectors faintly
+    for (let i = 0; i < n; i++) {
+        const angle = (i / n) * Math.PI * 2;
+        oCtx.beginPath();
+        oCtx.moveTo(cx, cy);
+        oCtx.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+        oCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+        oCtx.lineWidth = 1;
+        oCtx.stroke();
+    }
+
+    // Fill the fundamental domain (one sector)
+    oCtx.beginPath();
+    oCtx.moveTo(cx, cy);
+    oCtx.arc(cx, cy, radius, 0, Math.PI * 2 / n);
+    oCtx.closePath();
+    oCtx.fillStyle = 'rgba(240, 147, 251, 0.2)';
+    oCtx.fill();
+    oCtx.strokeStyle = '#f093fb';
+    oCtx.lineWidth = 3;
+    oCtx.stroke();
+
+    // Draw pattern in each sector
+    for (let i = 0; i < n; i++) {
+        const angle = (i / n) * Math.PI * 2;
+        oCtx.save();
+        oCtx.translate(cx, cy);
+        oCtx.rotate(angle);
+
+        // Draw a small decorative shape in each sector
+        const midAngle = Math.PI / n;
+        const dist = radius * 0.5;
+        const sx = dist * Math.cos(midAngle);
+        const sy = dist * Math.sin(midAngle);
+
+        oCtx.beginPath();
+        oCtx.arc(sx, sy, 12, 0, Math.PI * 2);
+        oCtx.fillStyle = i === 0 ? 'rgba(240, 147, 251, 0.6)' : 'rgba(102, 126, 234, 0.3)';
+        oCtx.fill();
+
+        // Small star
+        const starR = 8;
+        oCtx.beginPath();
+        for (let s = 0; s < 5; s++) {
+            const sa = (s / 5) * Math.PI * 2 - Math.PI / 2 + animAngle;
+            const sr = s % 2 === 0 ? starR : starR / 2;
+            const stx = sx + sr * Math.cos(sa);
+            const sty = sy + sr * Math.sin(sa);
+            if (s === 0) oCtx.moveTo(stx, sty);
+            else oCtx.lineTo(stx, sty);
+        }
+        oCtx.closePath();
+        oCtx.strokeStyle = i === 0 ? '#f093fb' : 'rgba(102, 126, 234, 0.5)';
+        oCtx.lineWidth = 1.5;
+        oCtx.stroke();
+
+        oCtx.restore();
+    }
+
+    // Center point (cone point)
+    oCtx.beginPath();
+    oCtx.arc(cx, cy, 8, 0, Math.PI * 2);
+    oCtx.fillStyle = '#ff6b6b';
+    oCtx.fill();
+    oCtx.beginPath();
+    oCtx.arc(cx, cy, 12, 0, Math.PI * 2);
+    oCtx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
+    oCtx.lineWidth = 2;
+    oCtx.stroke();
+
+    // Labels
+    oCtx.fillStyle = '#f093fb';
+    oCtx.font = '14px Georgia';
+    oCtx.fillText(`Fundamental domain (1/${n} of full space)`, 20, 30);
+    oCtx.fillStyle = '#ff6b6b';
+    oCtx.fillText('● Cone point (singular!)', 20, 55);
+    oCtx.fillStyle = 'rgba(102, 126, 234, 0.7)';
+    oCtx.fillText(`The ${n} copies are identified by ${n}-fold rotation`, 20, h - 20);
+
+    requestAnimationFrame(() => drawOrbifoldIntro(performance.now()));
+}
+drawOrbifoldIntro(0);
+
+// ============ CONE POINT CANVAS ============
+const coneCanvas = document.getElementById('coneCanvas');
+const coneCtx = coneCanvas.getContext('2d');
+resizeCanvas(coneCanvas);
+window.addEventListener('resize', () => resizeCanvas(coneCanvas));
+
+let coneOrder = 2;
+function setConeOrder(n) {
+    coneOrder = n;
+    document.querySelectorAll('#sec5 .btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function drawCone(time) {
+    const w = coneCanvas.width;
+    const h = coneCanvas.height;
+    coneCtx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const radius = 180;
+    const sectorAngle = (Math.PI * 2) / coneOrder;
+    const animPhase = time * 0.001;
+
+    // Left side: flat sector
+    const leftCx = w * 0.3;
+
+    // Draw the full circle outline faintly
+    coneCtx.beginPath();
+    coneCtx.arc(leftCx, cy, radius * 0.7, 0, Math.PI * 2);
+    coneCtx.strokeStyle = 'rgba(255,255,255,0.1)';
+    coneCtx.lineWidth = 1;
+    coneCtx.setLineDash([5, 5]);
+    coneCtx.stroke();
+    coneCtx.setLineDash([]);
+
+    // Draw the sector that remains
+    coneCtx.beginPath();
+    coneCtx.moveTo(leftCx, cy);
+    coneCtx.arc(leftCx, cy, radius * 0.7, -sectorAngle / 2, sectorAngle / 2);
+    coneCtx.closePath();
+    coneCtx.fillStyle = 'rgba(240, 147, 251, 0.15)';
+    coneCtx.fill();
+    coneCtx.strokeStyle = '#f093fb';
+    coneCtx.lineWidth = 2;
+    coneCtx.stroke();
+
+    // Angle arc
+    coneCtx.beginPath();
+    coneCtx.arc(leftCx, cy, 40, -sectorAngle / 2, sectorAngle / 2);
+    coneCtx.strokeStyle = '#ff6b6b';
+    coneCtx.lineWidth = 2;
+    coneCtx.stroke();
+
+    // Angle label
+    const degrees = Math.round(360 / coneOrder);
+    coneCtx.fillStyle = '#ff6b6b';
+    coneCtx.font = '14px Georgia';
+    coneCtx.fillText(`${degrees}°`, leftCx + 45, cy + 5);
+
+    // Center point
+    coneCtx.beginPath();
+    coneCtx.arc(leftCx, cy, 6, 0, Math.PI * 2);
+    coneCtx.fillStyle = '#ff6b6b';
+    coneCtx.fill();
+
+    // Right side: the cone formed by gluing edges
+    const rightCx = w * 0.72;
+    const coneHeight = 120;
+    const coneRadius = 80;
+
+    // Draw cone shape
+    const tipY = cy - coneHeight / 2;
+    const baseY = cy + coneHeight / 2;
+
+    // Cone body
+    coneCtx.beginPath();
+    coneCtx.moveTo(rightCx, tipY);
+    coneCtx.lineTo(rightCx - coneRadius, baseY);
+    coneCtx.stroke();
+    coneCtx.beginPath();
+    coneCtx.moveTo(rightCx, tipY);
+    coneCtx.lineTo(rightCx + coneRadius, baseY);
+    coneCtx.strokeStyle = '#667eea';
+    coneCtx.lineWidth = 2;
+    coneCtx.stroke();
+
+    // Base ellipse
+    coneCtx.beginPath();
+    coneCtx.ellipse(rightCx, baseY, coneRadius, 20, 0, 0, Math.PI * 2);
+    coneCtx.strokeStyle = 'rgba(102, 126, 234, 0.5)';
+    coneCtx.lineWidth = 1.5;
+    coneCtx.stroke();
+
+    // Rings on cone
+    for (let i = 1; i <= 4; i++) {
+        const t = i / 5;
+        const ringY = tipY + (baseY - tipY) * t;
+        const ringR = coneRadius * t;
+        coneCtx.beginPath();
+        coneCtx.ellipse(rightCx, ringY, ringR, ringR * 0.25, 0, 0, Math.PI * 2);
+        coneCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+        coneCtx.lineWidth = 1;
+        coneCtx.stroke();
+    }
+
+    // Cone tip (singular point)
+    coneCtx.beginPath();
+    coneCtx.arc(rightCx, tipY, 8, 0, Math.PI * 2);
+    coneCtx.fillStyle = '#ff6b6b';
+    coneCtx.fill();
+    coneCtx.beginPath();
+    coneCtx.arc(rightCx, tipY, 14, 0, Math.PI * 2);
+    coneCtx.strokeStyle = 'rgba(255, 107, 107, 0.4)';
+    coneCtx.lineWidth = 2;
+    coneCtx.stroke();
+
+    // Arrow between
+    coneCtx.beginPath();
+    coneCtx.moveTo(w * 0.47, cy);
+    coneCtx.lineTo(w * 0.53, cy);
+    coneCtx.strokeStyle = '#fff';
+    coneCtx.lineWidth = 2;
+    coneCtx.stroke();
+    drawArrow(coneCtx, w * 0.50, cy, w * 0.53, cy, '#fff');
+
+    // Labels
+    coneCtx.fillStyle = '#f093fb';
+    coneCtx.font = '13px Georgia';
+    coneCtx.fillText('Flat sector', leftCx - 30, h - 30);
+    coneCtx.fillStyle = '#667eea';
+    coneCtx.fillText('Glue edges → Cone', rightCx - 55, h - 30);
+    coneCtx.fillStyle = '#ff6b6b';
+    coneCtx.font = '12px Georgia';
+    coneCtx.fillText('Cone point!', rightCx + 15, tipY - 5);
+    coneCtx.fillText(`(order ${coneOrder})`, rightCx + 15, tipY + 12);
+
+    // Top label
+    coneCtx.fillStyle = 'rgba(255,255,255,0.6)';
+    coneCtx.font = '14px Georgia';
+    coneCtx.fillText(`Only ${degrees}° around this point (instead of 360°)`, w / 2 - 150, 30);
+
+    requestAnimationFrame(() => drawCone(performance.now()));
+}
+drawCone(0);
+
+// ============ COMPARISON CANVASES ============
+const compareManifold = document.getElementById('compareManifold');
+const cmCtx = compareManifold.getContext('2d');
+compareManifold.width = 280;
+compareManifold.height = 280;
+
+const compareOrbifold = document.getElementById('compareOrbifold');
+const coCtx = compareOrbifold.getContext('2d');
+compareOrbifold.width = 280;
+compareOrbifold.height = 280;
+
+function drawComparison(time) {
+    const w = 280, h = 280;
+
+    // Manifold side - smooth sphere
+    cmCtx.clearRect(0, 0, w, h);
+    const cx1 = w / 2, cy1 = h / 2, r1 = 100;
+
+    // Gradient sphere
+    const grad = cmCtx.createRadialGradient(cx1 - 30, cy1 - 30, 10, cx1, cy1, r1);
+    grad.addColorStop(0, 'rgba(102, 126, 234, 0.6)');
+    grad.addColorStop(1, 'rgba(102, 126, 234, 0.1)');
+    cmCtx.beginPath();
+    cmCtx.arc(cx1, cy1, r1, 0, Math.PI * 2);
+    cmCtx.fillStyle = grad;
+    cmCtx.fill();
+    cmCtx.strokeStyle = '#667eea';
+    cmCtx.lineWidth = 2;
+    cmCtx.stroke();
+
+    // Grid on sphere
+    cmCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+    cmCtx.lineWidth = 1;
+    for (let lat = -60; lat <= 60; lat += 30) {
+        const latR = r1 * Math.cos(lat * Math.PI / 180);
+        const latY = cy1 + r1 * Math.sin(lat * Math.PI / 180) * 0.5;
+        cmCtx.beginPath();
+        cmCtx.ellipse(cx1, latY, latR, latR * 0.2, 0, 0, Math.PI * 2);
+        cmCtx.stroke();
+    }
+
+    // Multiple neighborhood circles - all smooth
+    const spots = [[cx1 - 40, cy1 - 30], [cx1 + 30, cy1 + 20], [cx1 - 10, cy1 + 50]];
+    spots.forEach(([sx, sy]) => {
+        cmCtx.beginPath();
+        cmCtx.arc(sx, sy, 20, 0, Math.PI * 2);
+        cmCtx.strokeStyle = 'rgba(78, 205, 196, 0.6)';
+        cmCtx.lineWidth = 1.5;
+        cmCtx.stroke();
+        cmCtx.fillStyle = '#4ecdc4';
+        cmCtx.font = '9px Georgia';
+        cmCtx.fillText('≈ℝ²', sx - 10, sy + 3);
+    });
+
+    cmCtx.fillStyle = '#667eea';
+    cmCtx.font = '12px Georgia';
+    cmCtx.fillText('Every point: smooth neighborhood', 20, h - 15);
+
+    // Orbifold side - sphere with cone points
+    coCtx.clearRect(0, 0, w, h);
+    const cx2 = w / 2, cy2 = h / 2, r2 = 100;
+
+    // Gradient sphere
+    const grad2 = coCtx.createRadialGradient(cx2 - 30, cy2 - 30, 10, cx2, cy2, r2);
+    grad2.addColorStop(0, 'rgba(240, 147, 251, 0.5)');
+    grad2.addColorStop(1, 'rgba(240, 147, 251, 0.05)');
+    coCtx.beginPath();
+    coCtx.arc(cx2, cy2, r2, 0, Math.PI * 2);
+    coCtx.fillStyle = grad2;
+    coCtx.fill();
+    coCtx.strokeStyle = '#f093fb';
+    coCtx.lineWidth = 2;
+    coCtx.stroke();
+
+    // Grid on orbifold sphere
+    coCtx.strokeStyle = 'rgba(240, 147, 251, 0.2)';
+    coCtx.lineWidth = 1;
+    for (let lat = -60; lat <= 60; lat += 30) {
+        const latR = r2 * Math.cos(lat * Math.PI / 180);
+        const latY = cy2 + r2 * Math.sin(lat * Math.PI / 180) * 0.5;
+        coCtx.beginPath();
+        coCtx.ellipse(cx2, latY, latR, latR * 0.2, 0, 0, Math.PI * 2);
+        coCtx.stroke();
+    }
+
+    // Cone points (singular points)
+    const conePoints = [
+        { x: cx2, y: cy2 - r2 + 10, label: 'order 3' },
+        { x: cx2, y: cy2 + r2 - 10, label: 'order 3' }
+    ];
+
+    conePoints.forEach(cp => {
+        // Pulsing glow
+        const pulse = Math.sin(time * 0.005) * 0.3 + 0.7;
+
+        coCtx.beginPath();
+        coCtx.arc(cp.x, cp.y, 18 * pulse, 0, Math.PI * 2);
+        coCtx.fillStyle = `rgba(255, 107, 107, ${0.2 * pulse})`;
+        coCtx.fill();
+
+        coCtx.beginPath();
+        coCtx.arc(cp.x, cp.y, 8, 0, Math.PI * 2);
+        coCtx.fillStyle = '#ff6b6b';
+        coCtx.fill();
+
+        coCtx.beginPath();
+        coCtx.arc(cp.x, cp.y, 12, 0, Math.PI * 2);
+        coCtx.strokeStyle = 'rgba(255, 107, 107, 0.6)';
+        coCtx.lineWidth = 2;
+        coCtx.stroke();
+
+        coCtx.fillStyle = '#ff6b6b';
+        coCtx.font = '9px Georgia';
+        coCtx.fillText(cp.label, cp.x + 15, cp.y + 4);
+    });
+
+    // Normal points
+    const normalSpots = [[cx2 - 35, cy2], [cx2 + 40, cy2 + 15]];
+    normalSpots.forEach(([sx, sy]) => {
+        coCtx.beginPath();
+        coCtx.arc(sx, sy, 18, 0, Math.PI * 2);
+        coCtx.strokeStyle = 'rgba(78, 205, 196, 0.5)';
+        coCtx.lineWidth = 1.5;
+        coCtx.stroke();
+        coCtx.fillStyle = '#4ecdc4';
+        coCtx.font = '9px Georgia';
+        coCtx.fillText('≈ℝ²', sx - 10, sy + 3);
+    });
+
+    coCtx.fillStyle = '#f093fb';
+    coCtx.font = '12px Georgia';
+    coCtx.fillText('Cone points: NOT smooth!', 30, h - 15);
+
+    requestAnimationFrame(() => drawComparison(performance.now()));
+}
+drawComparison(0);
+
+// ============ TEARDROP / FOOTBALL / PILLOW CANVAS ============
+const teardropCanvas = document.getElementById('teardropCanvas');
+const tdCtx = teardropCanvas.getContext('2d');
+resizeCanvas(teardropCanvas);
+window.addEventListener('resize', () => resizeCanvas(teardropCanvas));
+
+let orbifoldType = 'teardrop';
+function setOrbifoldType(type) {
+    orbifoldType = type;
+    document.querySelectorAll('#sec7 .btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function drawTeardrop(time) {
+    const w = teardropCanvas.width;
+    const h = teardropCanvas.height;
+    tdCtx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+    const pulse = Math.sin(time * 0.003) * 0.3 + 0.7;
+
+    if (orbifoldType === 'teardrop') {
+        // Draw teardrop shape
+        const r = 120;
+
+        // Teardrop body
+        tdCtx.beginPath();
+        tdCtx.moveTo(cx, cy - r - 40);
+        tdCtx.bezierCurveTo(cx + r * 1.2, cy - r * 0.3, cx + r, cy + r * 0.8, cx, cy + r);
+        tdCtx.bezierCurveTo(cx - r, cy + r * 0.8, cx - r * 1.2, cy - r * 0.3, cx, cy - r - 40);
+        tdCtx.fillStyle = 'rgba(240, 147, 251, 0.1)';
+        tdCtx.fill();
+        tdCtx.strokeStyle = '#f093fb';
+        tdCtx.lineWidth = 2;
+        tdCtx.stroke();
+
+        // Grid lines on surface
+        tdCtx.strokeStyle = 'rgba(240, 147, 251, 0.2)';
+        tdCtx.lineWidth = 1;
+        for (let i = 0; i < 8; i++) {
+            const t = (i + 1) / 9;
+            const gy = (cy - r - 40) + t * (r + 40 + r);
+            const widthAtY = Math.sin(t * Math.PI) * r * 0.9;
+            tdCtx.beginPath();
+            tdCtx.ellipse(cx, gy, widthAtY, widthAtY * 0.15, 0, 0, Math.PI * 2);
+            tdCtx.stroke();
+        }
+
+        // Cone point at top (singular)
+        tdCtx.beginPath();
+        tdCtx.arc(cx, cy - r - 40, 18 * pulse, 0, Math.PI * 2);
+        tdCtx.fillStyle = `rgba(255, 107, 107, ${0.2 * pulse})`;
+        tdCtx.fill();
+        tdCtx.beginPath();
+        tdCtx.arc(cx, cy - r - 40, 8, 0, Math.PI * 2);
+        tdCtx.fillStyle = '#ff6b6b';
+        tdCtx.fill();
+
+        // Smooth point at bottom
+        tdCtx.beginPath();
+        tdCtx.arc(cx, cy + r, 5, 0, Math.PI * 2);
+        tdCtx.fillStyle = '#4ecdc4';
+        tdCtx.fill();
+
+        // Labels
+        tdCtx.fillStyle = '#ff6b6b';
+        tdCtx.font = '13px Georgia';
+        tdCtx.fillText('Cone point (singular)', cx + 20, cy - r - 50);
+        tdCtx.fillStyle = '#4ecdc4';
+        tdCtx.fillText('Smooth point', cx + 15, cy + r + 20);
+        tdCtx.fillStyle = 'rgba(255,255,255,0.6)';
+        tdCtx.font = '14px Georgia';
+        tdCtx.fillText('Teardrop orbifold: sphere + 1 cone point', w / 2 - 160, 30);
+
+    } else if (orbifoldType === 'football') {
+        // Football (spindle) - two cone points
+        const r = 100;
+        const stretch = 1.5;
+
+        tdCtx.beginPath();
+        tdCtx.ellipse(cx, cy, r * 0.7, r * stretch, 0, 0, Math.PI * 2);
+        tdCtx.fillStyle = 'rgba(240, 147, 251, 0.1)';
+        tdCtx.fill();
+        tdCtx.strokeStyle = '#f093fb';
+        tdCtx.lineWidth = 2;
+        tdCtx.stroke();
+
+        // Grid
+        tdCtx.strokeStyle = 'rgba(240, 147, 251, 0.2)';
+        tdCtx.lineWidth = 1;
+        for (let i = 1; i < 8; i++) {
+            const t = i / 8;
+            const gy = cy - r * stretch + t * 2 * r * stretch;
+            const widthAtY = Math.sin(t * Math.PI) * r * 0.7;
+            tdCtx.beginPath();
+            tdCtx.ellipse(cx, gy, widthAtY, widthAtY * 0.15, 0, 0, Math.PI * 2);
+            tdCtx.stroke();
+        }
+
+        // Longitude lines
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI;
+            tdCtx.beginPath();
+            for (let j = 0; j <= 30; j++) {
+                const t = j / 30;
+                const lat = (t - 0.5) * Math.PI;
+                const x = cx + r * 0.7 * Math.cos(lat) * Math.cos(angle);
+                const y = cy + r * stretch * Math.sin(lat);
+                if (j === 0) tdCtx.moveTo(x, y);
+                else tdCtx.lineTo(x, y);
+            }
+            tdCtx.stroke();
+        }
+
+        // Two cone points
+        const topY = cy - r * stretch;
+        const botY = cy + r * stretch;
+
+        [topY, botY].forEach(py => {
+            tdCtx.beginPath();
+            tdCtx.arc(cx, py, 18 * pulse, 0, Math.PI * 2);
+            tdCtx.fillStyle = `rgba(255, 107, 107, ${0.2 * pulse})`;
+            tdCtx.fill();
+            tdCtx.beginPath();
+            tdCtx.arc(cx, py, 8, 0, Math.PI * 2);
+            tdCtx.fillStyle = '#ff6b6b';
+            tdCtx.fill();
+        });
+
+        tdCtx.fillStyle = '#ff6b6b';
+        tdCtx.font = '13px Georgia';
+        tdCtx.fillText('Cone point', cx + 20, topY);
+        tdCtx.fillText('Cone point', cx + 20, botY);
+        tdCtx.fillStyle = 'rgba(255,255,255,0.6)';
+        tdCtx.font = '14px Georgia';
+        tdCtx.fillText('Football orbifold: sphere + 2 cone points', w / 2 - 165, 30);
+
+    } else if (orbifoldType === 'pillow') {
+        // Pillow - rectangle with 4 corner reflectors
+        const pw = 220, ph = 150;
+        const x0 = cx - pw / 2, y0 = cy - ph / 2;
+
+        // Rounded rectangle (pillow shape)
+        const cornerR = 20;
+        tdCtx.beginPath();
+        tdCtx.moveTo(x0 + cornerR, y0);
+        tdCtx.lineTo(x0 + pw - cornerR, y0);
+        tdCtx.quadraticCurveTo(x0 + pw, y0, x0 + pw, y0 + cornerR);
+        tdCtx.lineTo(x0 + pw, y0 + ph - cornerR);
+        tdCtx.quadraticCurveTo(x0 + pw, y0 + ph, x0 + pw - cornerR, y0 + ph);
+        tdCtx.lineTo(x0 + cornerR, y0 + ph);
+        tdCtx.quadraticCurveTo(x0, y0 + ph, x0, y0 + ph - cornerR);
+        tdCtx.lineTo(x0, y0 + cornerR);
+        tdCtx.quadraticCurveTo(x0, y0, x0 + cornerR, y0);
+        tdCtx.closePath();
+        tdCtx.fillStyle = 'rgba(240, 147, 251, 0.1)';
+        tdCtx.fill();
+        tdCtx.strokeStyle = '#f093fb';
+        tdCtx.lineWidth = 2;
+        tdCtx.stroke();
+
+        // Grid inside
+        tdCtx.strokeStyle = 'rgba(240, 147, 251, 0.15)';
+        tdCtx.lineWidth = 1;
+        for (let i = 1; i < 8; i++) {
+            tdCtx.beginPath();
+            tdCtx.moveTo(x0 + i * pw / 8, y0);
+            tdCtx.lineTo(x0 + i * pw / 8, y0 + ph);
+            tdCtx.stroke();
+        }
+        for (let i = 1; i < 5; i++) {
+            tdCtx.beginPath();
+            tdCtx.moveTo(x0, y0 + i * ph / 5);
+            tdCtx.lineTo(x0 + pw, y0 + i * ph / 5);
+            tdCtx.stroke();
+        }
+
+        // Corner points (singular)
+        const corners = [
+            [x0, y0], [x0 + pw, y0],
+            [x0, y0 + ph], [x0 + pw, y0 + ph]
+        ];
+
+        corners.forEach(([cpx, cpy]) => {
+            tdCtx.beginPath();
+            tdCtx.arc(cpx, cpy, 16 * pulse, 0, Math.PI * 2);
+            tdCtx.fillStyle = `rgba(255, 107, 107, ${0.15 * pulse})`;
+            tdCtx.fill();
+            tdCtx.beginPath();
+            tdCtx.arc(cpx, cpy, 7, 0, Math.PI * 2);
+            tdCtx.fillStyle = '#ff6b6b';
+            tdCtx.fill();
+        });
+
+        // Mirror edges
+        tdCtx.strokeStyle = 'rgba(78, 205, 196, 0.7)';
+        tdCtx.lineWidth = 3;
+        tdCtx.setLineDash([8, 4]);
+        tdCtx.strokeRect(x0, y0, pw, ph);
+        tdCtx.setLineDash([]);
+
+        tdCtx.fillStyle = '#ff6b6b';
+        tdCtx.font = '12px Georgia';
+        tdCtx.fillText('Corner reflectors', cx + pw / 2 + 10, y0 + 5);
+        tdCtx.fillStyle = '#4ecdc4';
+        tdCtx.fillText('Mirror edges', cx + pw / 2 + 10, y0 + 25);
+        tdCtx.fillStyle = 'rgba(255,255,255,0.6)';
+        tdCtx.font = '14px Georgia';
+        tdCtx.fillText('Pillow orbifold: 4 corner reflectors + mirror edges', w / 2 - 195, 30);
+    }
+
+    requestAnimationFrame(() => drawTeardrop(performance.now()));
+}
+drawTeardrop(0);
+
+// ============ TILING / WALLPAPER CANVAS ============
+const tilingCanvas = document.getElementById('tilingCanvas');
+const tilCtx = tilingCanvas.getContext('2d');
+resizeCanvas(tilingCanvas);
+window.addEventListener('resize', () => resizeCanvas(tilingCanvas));
+
+let tilingType = 'p1';
+function setTiling(type) {
+    tilingType = type;
+    document.querySelectorAll('#sec8 .btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function drawTiling(time) {
+    const w = tilingCanvas.width;
+    const h = tilingCanvas.height;
+    tilCtx.clearRect(0, 0, w, h);
+
+    const animOffset = time * 0.0003;
+
+    if (tilingType === 'p1') {
+        // Simple translational tiling (manifold - torus)
+        const cellW = 80, cellH = 80;
+        const cols = Math.ceil(w / cellW) + 1;
+        const rows = Math.ceil(h / cellH) + 1;
+        const offsetX = (time * 0.02) % cellW;
+
+        for (let row = -1; row < rows; row++) {
+            for (let col = -1; col < cols; col++) {
+                const x = col * cellW + offsetX;
+                const y = row * cellH;
+                const isHighlight = (col === Math.floor(cols / 2) && row === Math.floor(rows / 2));
+
+                tilCtx.strokeStyle = isHighlight ? '#667eea' : 'rgba(102, 126, 234, 0.2)';
+                tilCtx.lineWidth = isHighlight ? 2 : 1;
+                tilCtx.strokeRect(x, y, cellW, cellH);
+
+                if (isHighlight) {
+                    tilCtx.fillStyle = 'rgba(102, 126, 234, 0.15)';
+                    tilCtx.fillRect(x, y, cellW, cellH);
+                }
+
+                // Draw a simple motif
+                tilCtx.fillStyle = isHighlight ? '#667eea' : 'rgba(102, 126, 234, 0.4)';
+                tilCtx.beginPath();
+                tilCtx.arc(x + cellW * 0.3, y + cellH * 0.4, 8, 0, Math.PI * 2);
+                tilCtx.fill();
+
+                tilCtx.beginPath();
+                tilCtx.moveTo(x + cellW * 0.5, y + cellH * 0.2);
+                tilCtx.lineTo(x + cellW * 0.7, y + cellH * 0.6);
+                tilCtx.lineTo(x + cellW * 0.4, y + cellH * 0.7);
+                tilCtx.closePath();
+                tilCtx.strokeStyle = isHighlight ? '#667eea' : 'rgba(102, 126, 234, 0.3)';
+                tilCtx.lineWidth = 1.5;
+                tilCtx.stroke();
+            }
+        }
+
+        tilCtx.fillStyle = 'rgba(255,255,255,0.7)';
+        tilCtx.font = '14px Georgia';
+        tilCtx.fillText('Translation only → fundamental domain is a torus (manifold)', 20, 30);
+
+    } else if (tilingType === 'p2') {
+        // 2-fold rotational symmetry
+        const cellW = 100, cellH = 80;
+        const cols = Math.ceil(w / cellW) + 1;
+        const rows = Math.ceil(h / cellH) + 1;
+
+        for (let row = -1; row < rows; row++) {
+            for (let col = -1; col < cols; col++) {
+                const x = col * cellW;
+                const y = row * cellH;
+                const isHighlight = (col === Math.floor(cols / 2) && row === Math.floor(rows / 2));
+
+                tilCtx.strokeStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.15)';
+                tilCtx.lineWidth = isHighlight ? 2 : 0.5;
+                tilCtx.strokeRect(x, y, cellW, cellH);
+
+                if (isHighlight) {
+                    tilCtx.fillStyle = 'rgba(240, 147, 251, 0.15)';
+                    tilCtx.fillRect(x, y, cellW, cellH);
+                }
+
+                // Draw motif with 2-fold symmetry
+                for (let rot = 0; rot < 2; rot++) {
+                    tilCtx.save();
+                    tilCtx.translate(x + cellW / 2, y + cellH / 2);
+                    tilCtx.rotate(rot * Math.PI);
+
+                    tilCtx.fillStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.3)';
+                    tilCtx.beginPath();
+                    tilCtx.moveTo(-15, -20);
+                    tilCtx.lineTo(10, -25);
+                    tilCtx.lineTo(20, -5);
+                    tilCtx.lineTo(5, 5);
+                    tilCtx.closePath();
+                    tilCtx.fill();
+
+                    tilCtx.restore();
+                }
+
+                // Mark rotation centers
+                if (isHighlight) {
+                    const centers = [[x + cellW / 2, y + cellH / 2], [x, y], [x + cellW, y], [x, y + cellH], [x + cellW, y + cellH]];
+                    centers.forEach(([rx, ry]) => {
+                        tilCtx.beginPath();
+                        tilCtx.arc(rx, ry, 5, 0, Math.PI * 2);
+                        tilCtx.fillStyle = '#ff6b6b';
+                        tilCtx.fill();
+                    });
+                }
+            }
+        }
+
+        tilCtx.fillStyle = '#ff6b6b';
+        tilCtx.font = '14px Georgia';
+        tilCtx.fillText('● = 2-fold rotation center (cone point on the orbifold)', 20, 30);
+        tilCtx.fillStyle = 'rgba(255,255,255,0.5)';
+        tilCtx.fillText('Orbifold has 4 cone points of order 2', 20, 55);
+
+    } else if (tilingType === 'p3') {
+        // 3-fold rotational symmetry (triangular)
+        const size = 80;
+        const h3 = size * Math.sqrt(3) / 2;
+
+        for (let row = -2; row < Math.ceil(h / h3) + 2; row++) {
+            for (let col = -2; col < Math.ceil(w / size) + 2; col++) {
+                const x = col * size + (row % 2) * size / 2;
+                const y = row * h3;
+                const isHighlight = (col === Math.floor(w / size / 2) && row === Math.floor(h / h3 / 2));
+
+                // Draw triangle
+                tilCtx.beginPath();
+                tilCtx.moveTo(x, y);
+                tilCtx.lineTo(x + size, y);
+                tilCtx.lineTo(x + size / 2, y + h3);
+                tilCtx.closePath();
+                tilCtx.strokeStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.15)';
+                tilCtx.lineWidth = isHighlight ? 2 : 0.5;
+                tilCtx.stroke();
+
+                if (isHighlight) {
+                    tilCtx.fillStyle = 'rgba(240, 147, 251, 0.2)';
+                    tilCtx.fill();
+                }
+
+                // 3-fold motif
+                const tcx = x + size / 2;
+                const tcy = y + h3 / 3;
+                for (let rot = 0; rot < 3; rot++) {
+                    tilCtx.save();
+                    tilCtx.translate(tcx, tcy);
+                    tilCtx.rotate(rot * Math.PI * 2 / 3);
+                    tilCtx.beginPath();
+                    tilCtx.arc(12, 0, 4, 0, Math.PI * 2);
+                    tilCtx.fillStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.3)';
+                    tilCtx.fill();
+                    tilCtx.restore();
+                }
+
+                // Rotation center
+                if (isHighlight) {
+                    tilCtx.beginPath();
+                    tilCtx.arc(tcx, tcy, 5, 0, Math.PI * 2);
+                    tilCtx.fillStyle = '#ff6b6b';
+                    tilCtx.fill();
+                }
+            }
+        }
+
+        tilCtx.fillStyle = '#ff6b6b';
+        tilCtx.font = '14px Georgia';
+        tilCtx.fillText('● = 3-fold rotation center (order-3 cone point)', 20, 30);
+        tilCtx.fillStyle = 'rgba(255,255,255,0.5)';
+        tilCtx.fillText('Only 120° of neighborhood at each cone point', 20, 55);
+
+    } else if (tilingType === 'p4') {
+        // 4-fold rotational symmetry
+        const cellSize = 90;
+        const cols = Math.ceil(w / cellSize) + 1;
+        const rows = Math.ceil(h / cellSize) + 1;
+
+        for (let row = -1; row < rows; row++) {
+            for (let col = -1; col < cols; col++) {
+                const x = col * cellSize;
+                const y = row * cellSize;
+                const isHighlight = (col === Math.floor(cols / 2) && row === Math.floor(rows / 2));
+
+                tilCtx.strokeStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.15)';
+                tilCtx.lineWidth = isHighlight ? 2 : 0.5;
+                tilCtx.strokeRect(x, y, cellSize, cellSize);
+
+                if (isHighlight) {
+                    tilCtx.fillStyle = 'rgba(240, 147, 251, 0.15)';
+                    tilCtx.fillRect(x, y, cellSize, cellSize);
+                }
+
+                // 4-fold motif
+                const scx = x + cellSize / 2;
+                const scy = y + cellSize / 2;
+                for (let rot = 0; rot < 4; rot++) {
+                    tilCtx.save();
+                    tilCtx.translate(scx, scy);
+                    tilCtx.rotate(rot * Math.PI / 2);
+                    tilCtx.beginPath();
+                    tilCtx.moveTo(5, -5);
+                    tilCtx.lineTo(25, -15);
+                    tilCtx.lineTo(20, 5);
+                    tilCtx.closePath();
+                    tilCtx.fillStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.25)';
+                    tilCtx.fill();
+                    tilCtx.restore();
+                }
+
+                // Rotation center
+                if (isHighlight) {
+                    tilCtx.beginPath();
+                    tilCtx.arc(scx, scy, 6, 0, Math.PI * 2);
+                    tilCtx.fillStyle = '#ff6b6b';
+                    tilCtx.fill();
+
+                    // Draw the 90° indicator
+                    tilCtx.beginPath();
+                    tilCtx.arc(scx, scy, 15, 0, Math.PI / 2);
+                    tilCtx.strokeStyle = '#ff6b6b';
+                    tilCtx.lineWidth = 2;
+                    tilCtx.stroke();
+                }
+            }
+        }
+
+        tilCtx.fillStyle = '#ff6b6b';
+        tilCtx.font = '14px Georgia';
+        tilCtx.fillText('● = 4-fold rotation center (order-4 cone point, 90°)', 20, 30);
+        tilCtx.fillStyle = 'rgba(255,255,255,0.5)';
+        tilCtx.fillText('The orbifold is a sphere with special points', 20, 55);
+
+    } else if (tilingType === 'p6') {
+        // 6-fold rotational symmetry (hexagonal)
+        const size = 50;
+        const h6 = size * Math.sqrt(3);
+
+        for (let row = -2; row < Math.ceil(h / h6) + 2; row++) {
+            for (let col = -2; col < Math.ceil(w / (size * 1.5)) + 2; col++) {
+                const x = col * size * 1.5;
+                const y = row * h6 + (col % 2) * h6 / 2;
+                const isHighlight = (col === Math.floor(w / (size * 1.5) / 2) && row === Math.floor(h / h6 / 2));
+
+                // Draw hexagon
+                tilCtx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    const angle = i * Math.PI / 3;
+                    const hx = x + size * Math.cos(angle);
+                    const hy = y + size * Math.sin(angle);
+                    if (i === 0) tilCtx.moveTo(hx, hy);
+                    else tilCtx.lineTo(hx, hy);
+                }
+                tilCtx.closePath();
+                tilCtx.strokeStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.2)';
+                tilCtx.lineWidth = isHighlight ? 2 : 0.5;
+                tilCtx.stroke();
+
+                if (isHighlight) {
+                    tilCtx.fillStyle = 'rgba(240, 147, 251, 0.15)';
+                    tilCtx.fill();
+                }
+
+                // 6-fold motif
+                for (let rot = 0; rot < 6; rot++) {
+                    tilCtx.save();
+                    tilCtx.translate(x, y);
+                    tilCtx.rotate(rot * Math.PI / 3);
+                    tilCtx.beginPath();
+                    tilCtx.arc(size * 0.4, 0, 4, 0, Math.PI * 2);
+                    tilCtx.fillStyle = isHighlight ? '#f093fb' : 'rgba(240, 147, 251, 0.3)';
+                    tilCtx.fill();
+                    tilCtx.restore();
+                }
+
+                // Center
+                if (isHighlight) {
+                    tilCtx.beginPath();
+                    tilCtx.arc(x, y, 7, 0, Math.PI * 2);
+                    tilCtx.fillStyle = '#ff6b6b';
+                    tilCtx.fill();
+
+                    // 60° arc
+                    tilCtx.beginPath();
+                    tilCtx.arc(x, y, 18, 0, Math.PI / 3);
+                    tilCtx.strokeStyle = '#ff6b6b';
+                    tilCtx.lineWidth = 2;
+                    tilCtx.stroke();
+                }
+            }
+        }
+
+        tilCtx.fillStyle = '#ff6b6b';
+        tilCtx.font = '14px Georgia';
+        tilCtx.fillText('● = 6-fold rotation center (order-6 cone point, 60°)', 20, 30);
+        tilCtx.fillStyle = 'rgba(255,255,255,0.5)';
+        tilCtx.fillText('Hexagonal symmetry → orbifold with order-6 cone points', 20, 55);
+    }
+
+    requestAnimationFrame(() => drawTiling(performance.now()));
+}
+drawTiling(0);
+
+// ============ SMOOTH SCROLL FOR NAVIGATION ============
+document.querySelectorAll('.scroll-hint').forEach(el => {
+    el.addEventListener('click', () => {
+        document.getElementById('sec1').scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// ============ RESIZE HANDLER FOR ALL CANVASES ============
+window.addEventListener('resize', () => {
+    const canvasContainers = document.querySelectorAll('.canvas-container canvas');
+    canvasContainers.forEach(canvas => {
+        if (canvas.className !== 'demo-canvas') {
+            resizeCanvas(canvas);
+        }
+    });
+});
+
+// ============ INTERSECTION OBSERVER FOR FADE-IN ============
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.flow-section').forEach(section => {
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(30px)';
+    section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    fadeObserver.observe(section);
+});
+
+// Make hero always visible
+document.querySelector('.hero').style.opacity = '1';
+document.querySelector('.hero').style.transform = 'none';
+
+</script>
+</body>
+</html>

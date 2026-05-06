@@ -5056,28 +5056,6 @@ function get_category_nr(elem) {
 	return nr;
 }
 
-function delete_custom_drawing_layer () {
-	var all_current_custom_images = $(".own_image_span");
-	for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
-		var imgs = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
-		for (var j = 0; j < all_current_custom_images.length; j++) {
-			try {
-				var this_canvas_id = imgs[j].id;
-				if($("#" + this_canvas_id + "_layer").length) {
-					l(language[lang]["deleting_layer_for_custom_image"] + " " + this_canvas_id);
-					$("#" + this_canvas_id + "_layer").remove();
-					$("#" + this_canvas_id + "_layer_colorpicker").remove();
-					$("#" + this_canvas_id + "_layer_slider").remove();
-					delete(atrament_data[this_canvas_id]);
-				}
-			} catch (e) {
-				//log(e);
-			}
-		}
-	}
-
-}
-
 function set_loss_and_metric_if_not_already_set(val) {
 	if(get_loss() != val) {
 		set_loss(val, 1);
@@ -5086,25 +5064,6 @@ function set_loss_and_metric_if_not_already_set(val) {
 	if(get_metric() != val) {
 		set_metric(val, 1);
 	}
-}
-
-async function ensure_custom_image_layers () {
-	var all_current_custom_images = $(".own_image_span");
-	for (var all_current_custom_images_idx = 0; all_current_custom_images_idx < all_current_custom_images.length; all_current_custom_images_idx++) {
-		var canvasses = $(all_current_custom_images[all_current_custom_images_idx]).find("img,canvas");
-
-		for (var j = 0; j < canvasses.length; j++) {
-			var this_canvas_id = canvasses[j].id;
-			if(!this_canvas_id.endsWith("_layer")) {
-				var base_id = btoa(await md5(get_element_xpath(canvasses[j]))).replaceAll("=", "");
-				var new_canvas_id = base_id + "_layer";
-				if($(new_canvas_id).length == 0) {
-					add_canvas_layer(canvasses[j], 0.5, base_id);
-				}
-			}
-		}
-	}
-
 }
 
 function set_is_classification () {
@@ -5137,6 +5096,8 @@ async function last_shape_layer_warning() {
 				set_loss_and_metric_if_not_already_set("meanSquaredError");
 
 				await change_last_responsible_layer_for_image_output();
+
+				$("#validationSplit").val(0);
 			}
 		}
 	} else {
@@ -5310,65 +5271,6 @@ function enable_train_if_has_custom_images() {
 			disable_train();
 		}
 	}
-}
-
-function add_canvas_layer(canvas, transparency, base_id) {
-	assert(typeof(canvas) == "object", "add_canvas_layer(canvas, transparency, base_id): canvas is not an object");
-	assert(typeof(base_id) == "string", "add_canvas_layer(canvas, transparency, base_id): base_id is not a string");
-	assert(is_numeric(transparency) || typeof(transparency) == "number", "add_canvas_layer(canvas_, transparency, base_id): transparency is not a number");
-	// Get the canvas element
-
-	// Create a new canvas element for the layer
-	var layer = document.createElement("canvas");
-	canvas.id = base_id;
-	layer.id = `${base_id}_layer`;
-	layer.width = canvas.width;
-	layer.height = canvas.height;
-	layer.style.position = "absolute";
-	layer.style.left = canvas.offsetLeft + "px";
-	layer.style.top = canvas.offsetTop + "px";
-	layer.style.backgroundColor = "white";
-	layer.style.opacity = transparency;
-
-	// Add the new canvas element to the document
-	$(canvas).parent().append(layer);
-
-	// Create a new Atrament instance for the layer
-	atrament_data[layer.id] = {};
-	atrament_data[layer.id]["atrament"] = new Atrament(layer);
-
-	clear_attrament(layer.id);
-
-	// Create a transparency slider
-	var transparency_slider = document.createElement("input");
-	transparency_slider.id = layer.id + "_slider";
-	transparency_slider.type = "range";
-	transparency_slider.min = 0;
-	transparency_slider.max = 1;
-	transparency_slider.step = 0.01;
-	transparency_slider.value = transparency;
-	transparency_slider.style.position = "absolute";
-	transparency_slider.style.left = canvas.offsetLeft + canvas.width + "px";
-	transparency_slider.style.top = canvas.offsetTop + "px";
-	transparency_slider.style.width = "100px";
-
-	// Update the opacity of the layer when the slider value changes
-	transparency_slider.addEventListener("input", function() {
-		layer.style.opacity = this.value;
-	});
-
-	// Add the transparency slider to the document
-
-	$(canvas).parent().append("<br>");
-	var color_picker_code = `<input type="text" name="value" id='${layer.id}_colorpicker' class="show_data jscolor" value="#000000" onchange="atrament_data['${layer.id}']['atrament'].color='#'+this.value;"  /><br>`;
-	$(canvas).parent().append(color_picker_code);
-	atrament_data[layer.id]["colorpicker"] = new jscolor($("#" + layer.id + "_colorpicker")[0], {format:"rgb"});
-
-	$(canvas).parent().append("<br>Transparency:");
-	$(canvas).parent().append(transparency_slider);
-
-	$(canvas).parent().append("<br>Pen size:");
-	$(canvas).parent().append($(`<input class="show_data" type="range" min="1" oninput="atrament_data['${layer.id}']['atrament'].weight=parse_float(event.target.value);" value="20" step="1" max="100" autocomplete="off">`));
 }
 
 async function rename_labels(do_not_reset_labels=0) {
@@ -6164,10 +6066,28 @@ function human_readable_time(seconds, start="", end="") {
 }
 
 function delete_own_image(elem) {
-	$(elem).parent().next().remove();
-	$(elem).parent().remove();
+    // Remove the associated segmentation layer controls if they exist
+    var $span = $(elem).parent();
+    var img_or_canvas = $span.find("img,canvas").not("[id$='_layer']").first();
+    if (img_or_canvas.length && img_or_canvas[0].id) {
+        var layer_id = img_or_canvas[0].id + "_layer";
+        $("#" + layer_id).remove();
+        $("#" + layer_id + "_controls").remove();
+        if (atrament_data[layer_id]) {
+            delete atrament_data[layer_id];
+        }
+    }
 
-	enable_train_if_has_custom_images();
+    // Remove the <br> after the span if it exists
+    var $next = $span.next();
+    if ($next.is("br")) {
+        $next.remove();
+    }
+
+    // Remove only this specific image's span
+    $span.remove();
+
+    enable_train_if_has_custom_images();
 }
 
 async function get_layers_container_md5() {
@@ -8232,44 +8152,6 @@ async function create_and_download_zip () {
 	var res = await create_zip_with_custom_images().then(save_custom_images_file);
 
 	return res;
-}
-
-async function change_last_responsible_layer_for_image_output () {
-	if(is_classification) {
-		return;
-	}
-
-	var current_layer_status_hash = await get_current_layer_container_status_hash();
-
-	if(last_image_output_shape_hash == current_layer_status_hash) {
-		return;
-	}
-
-	last_image_output_shape_hash = current_layer_status_hash;
-
-	var layer_types = get_layer_type_array();
-
-	var last_layer_nr = null;
-
-	for (var layer_type_idx = layer_types.length; layer_type_idx >= 0; layer_type_idx--) {
-		if(last_layer_nr === null && ["dense", "conv2d"].includes(layer_types[layer_type_idx])) {
-			last_layer_nr = layer_type_idx;
-		}
-	}
-
-	if(last_layer_nr) {
-		if($($(".layer_setting")[last_layer_nr]).find(".units,.filters").val() != 3) {
-			l(sprintf(language[lang]["setting_neurons_or_filters_of_layer_n_to_3"], last_layer_nr));
-			$($(".layer_setting")[last_layer_nr]).find(".units,.filters").val(3).trigger("change");
-		}
-
-		if($($(".layer_setting")[last_layer_nr]).find(".activation").val() != "linear") {
-			l(sprintf(language[lang]["setting_activation_function_of_layer_n_to_linear"], last_layer_nr));
-			$($(".layer_setting")[last_layer_nr]).find(".activation").val("linear").trigger("change");
-		}
-	} else {
-		wrn("[change_last_responsible_layer_for_image_output] Last layer number could not be found. Do you have any Dense or Conv2d layers?");
-	}
 }
 
 function show_bars_instead_of_numbers () {

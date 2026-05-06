@@ -488,7 +488,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
 
         const series = [];
 
-        // Vocabulary scatter points with labels
         series.push({
             type: 'scatter3D',
             name: 'Vocabulary',
@@ -510,7 +509,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
             }
         });
 
-        // Calculation step lines + arrowhead markers
         steps.forEach(step => {
             series.push({
                 type: 'line3D',
@@ -528,7 +526,6 @@ function renderSpace(key, highlightPos = null, steps = []) {
             });
         });
 
-        // Result highlight diamond
         if (highlightPos) {
             series.push({
                 type: 'scatter3D',
@@ -568,7 +565,7 @@ function renderSpace(key, highlightPos = null, steps = []) {
         return;
     }
 
-    // ═══════ 1D / 2D → Plotly (unchanged) ═══════
+    // ═══════ 1D / 2D → Plotly ═══════
     let traces = [];
     let annotations = [];
 
@@ -626,141 +623,254 @@ function renderSpace(key, highlightPos = null, steps = []) {
     });
 }
 
+let _calcEvoFocusState = {};
+
+let _calcEvoTimers = {};
+
 function calcEvo(key) {
-	const inputVal = document.getElementById(`input-${key}`).value;
-	const space = evoSpaces[key];
-	const resDiv = document.getElementById(`res-${key}`);
+    const inputEl = document.getElementById(`input-${key}`);
+    const inputVal = inputEl.value;
+    const space = evoSpaces[key];
+    const resDiv = document.getElementById(`res-${key}`);
 
-	// Create a lowercase map for lookups
-	const lowerVocab = Object.keys(space.vocab).reduce((acc, word) => {
-		acc[word.toLowerCase()] = { vec: space.vocab[word], original: word };
-		return acc;
-	}, {});
+    // Save cursor state IMMEDIATELY
+    const selStart = inputEl.selectionStart;
+    const selEnd = inputEl.selectionEnd;
 
-	const tokens = inputVal.match(/[a-zA-Z\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
-	if (!tokens) return;
+    // Debounce plot render only
+    if (_calcEvoTimers[key]) {
+        clearTimeout(_calcEvoTimers[key]);
+    }
 
-	let pos = 0;
-	let steps = [];
+    // Create a lowercase map for lookups
+    const lowerVocab = Object.keys(space.vocab).reduce((acc, word) => {
+        acc[word.toLowerCase()] = { vec: space.vocab[word], original: word };
+        return acc;
+    }, {});
 
-	const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
+    const tokens = inputVal.match(/[a-zA-Z\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc]+|\d*\.\d+|\d+|[\+\-\*\/\(\)]/g);
+    if (!tokens) return;
 
-	function peek() { return tokens[pos]; }
-	function consume() { return tokens[pos++]; }
+    let pos = 0;
+    let steps = [];
 
-	function parseFactor() {
-		let token = consume();
-		if (token === '(') {
-			let res = parseExpression();
-			consume(); 
-			return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
-		}
-		if (token === '-') {
-			let res = parseFactor();
-			return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
-		}
-		if (!isNaN(token)) {
-			const s = parseFloat(token);
-			return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
-		}
+    const toVecTex = (arr) => `\\begin{pmatrix} ${arr.slice(0, space.dims).map(v => v.toFixed(1)).join(' \\\\ ')} \\end{pmatrix}`;
 
-		// Perform case-insensitive lookup
-		const entry = lowerVocab[token.toLowerCase()];
-		const vec = [...(entry ? entry.vec : [0, 0, 0])];
-		const displayName = entry ? entry.original : token;
+    function peek() { return tokens[pos]; }
+    function consume() { return tokens[pos++]; }
 
-		return { 
-			val: vec, 
-			tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
-			isScalar: false,
-			label: displayName
-		};
-	}
+    function parseFactor() {
+        let token = consume();
+        if (token === '(') {
+            let res = parseExpression();
+            consume();
+            return { val: res.val, tex: `\\left( ${res.tex} \\right)`, isScalar: res.isScalar, label: res.label };
+        }
+        if (token === '-') {
+            let res = parseFactor();
+            return { val: res.val.map(v => -v), tex: `-${res.tex}`, isScalar: res.isScalar, label: `-${res.label}` };
+        }
+        if (!isNaN(token)) {
+            const s = parseFloat(token);
+            return { val: [s, 0, 0], tex: `${s}`, isScalar: true, label: `${s}` };
+        }
 
-	function parseTerm() {
-		let left = parseFactor();
-		while (peek() === '*' || peek() === '/') {
-			let op = consume();
-			let right = parseFactor();
-			let opTex = op === '*' ? '\\cdot' : '\\div';
+        const entry = lowerVocab[token.toLowerCase()];
+        const vec = [...(entry ? entry.vec : [0, 0, 0])];
+        const displayName = entry ? entry.original : token;
 
-			if (op === '*') {
-				if (left.isScalar) {
-					left.val = right.val.map(v => left.val[0] * v);
-					left.isScalar = right.isScalar;
-				} else if (right.isScalar) {
-					left.val = left.val.map(v => v * right.val[0]);
-				}
-			} else if (op === '/') {
-				left.val = left.val.map(v => v / (right.val[0] || 1));
-			}
+        return {
+            val: vec,
+            tex: `\\underbrace{${toVecTex(vec)}}_{\\text{${displayName}}}`,
+            isScalar: false,
+            label: displayName
+        };
+    }
 
-			// Do NOT push a step here — multiplication/division computes
-			// an intermediate vector value, not a spatial movement on the plot.
-			// Only +/- in parseExpression should generate arrows.
+    function parseTerm() {
+        let left = parseFactor();
+        while (peek() === '*' || peek() === '/') {
+            let op = consume();
+            let right = parseFactor();
+            let opTex = op === '*' ? '\\cdot' : '\\div';
 
-			left.tex = `${left.tex} ${opTex} ${right.tex}`;
-			left.label = `${left.label}${op}${right.label}`;
-		}
-		return left;
-	}
+            if (op === '*') {
+                if (left.isScalar) {
+                    left.val = right.val.map(v => left.val[0] * v);
+                    left.isScalar = right.isScalar;
+                } else if (right.isScalar) {
+                    left.val = left.val.map(v => v * right.val[0]);
+                }
+            } else if (op === '/') {
+                left.val = left.val.map(v => v / (right.val[0] || 1));
+            }
 
-	function parseExpression() {
-		let left = parseTerm();
-		while (peek() === '+' || peek() === '-') {
-			let op = consume();
-			let right = parseTerm();
-			let prev = [...left.val];
+            left.tex = `${left.tex} ${opTex} ${right.tex}`;
+            left.label = `${left.label}${op}${right.label}`;
+        }
+        return left;
+    }
 
-			if (op === '+') {
-				left.val = left.val.map((v, i) => v + right.val[i]);
-			} else if (op === '-') {
-				left.val = left.val.map((v, i) => v - right.val[i]);
-			}
+    function parseExpression() {
+        let left = parseTerm();
+        while (peek() === '+' || peek() === '-') {
+            let op = consume();
+            let right = parseTerm();
+            let prev = [...left.val];
 
-			steps.push({ from: prev, to: [...left.val], label: `${op}${right.label}` });
-			left.tex = `${left.tex} ${op} ${right.tex}`;
-			left.label = `${left.label}${op}${right.label}`;
-		}
-		return left;
-	}
+            if (op === '+') {
+                left.val = left.val.map((v, i) => v + right.val[i]);
+            } else if (op === '-') {
+                left.val = left.val.map((v, i) => v - right.val[i]);
+            }
 
-	try {
-		const result = parseExpression();
-		let nearest = "None";
-		let nearestVec = [0, 0, 0];
-		let minDist = Infinity;
+            steps.push({ from: prev, to: [...left.val], label: `${op}${right.label}` });
+            left.tex = `${left.tex} ${op} ${right.tex}`;
+            left.label = `${left.label}${op}${right.label}`;
+        }
+        return left;
+    }
 
-		Object.keys(space.vocab).forEach(w => {
-			const v = space.vocab[w];
-			const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
-			if (d < minDist) { 
-				minDist = d; 
-				nearest = w; 
-				nearestVec = v;
-			}
-		});
+    try {
+        const result = parseExpression();
+        let nearest = "None";
+        let nearestVec = [0, 0, 0];
+        let minDist = Infinity;
 
-		// Logic to determine if it is an exact match or an approximation
-		const isExact = minDist < 0.01;
-		const symbol = isExact ? "=" : "\\approx";
+        Object.keys(space.vocab).forEach(w => {
+            const v = space.vocab[w];
+            const d = Math.sqrt(v.reduce((s, val, i) => s + Math.pow(val - result.val[i], 2), 0));
+            if (d < minDist) {
+                minDist = d;
+                nearest = w;
+                nearestVec = v;
+            }
+        });
 
-		// The resultTex now includes the symbol inside the substack next to the name
-		const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
+        const isExact = minDist < 0.01;
+        const symbol = isExact ? "=" : "\\approx";
+        const resultTex = `\\underbrace{${toVecTex(result.val)}}_{\\substack{ ${symbol} \\text{ ${nearest}} \\\\ ${toVecTex(nearestVec)} }}`;
 
-		resDiv.innerHTML = `
-		    <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
-			$$ ${result.tex} = ${resultTex} $$
-		    </div>
-		`;
+        // ═══════════════════════════════════════════════════════════
+        // THE FIX: Render math into a DETACHED fragment first,
+        // then swap it in. This prevents render_temml() from ever
+        // touching the live DOM tree that contains the input.
+        // ═══════════════════════════════════════════════════════════
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = `
+            <div style="overflow-x: auto; padding: 15px 0; font-size: 1.1em;">
+            $$ ${result.tex} = ${resultTex} $$
+            </div>
+        `;
 
-		render_temml();
-		renderSpace(key, result.val, steps);
-	} catch(e) { 
-		console.error(e);
-		resDiv.innerText = "Syntax Error"; 
-	}
+        // Render math on the DETACHED element (not in the DOM yet)
+        // This means render_temml cannot walk up to the input's parent
+        if (typeof temml !== 'undefined' && temml.renderMathInElement) {
+            temml.renderMathInElement(tempDiv, { throwOnError: false });
+        } else if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(tempDiv, { throwOnError: false });
+        } else {
+            // Fallback: use the global render_temml but only on our temp div
+            // We need to temporarily add it to DOM for render_temml to find it
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '-9999px';
+            document.body.appendChild(tempDiv);
+            render_temml(tempDiv);
+            document.body.removeChild(tempDiv);
+        }
+
+        // Now swap the pre-rendered content into the actual resDiv
+        // Mark it so render_temml won't re-process it
+        tempDiv.setAttribute('data-math-rendered', 'true');
+        resDiv.innerHTML = '';
+        resDiv.appendChild(tempDiv.firstElementChild || tempDiv);
+        resDiv.setAttribute('data-math-rendered', 'true');
+
+        // Focus is NEVER lost because we never called render_temml()
+        // on a live DOM tree containing the input
+
+        // Debounce the plot render (150ms)
+        const capturedResult = [...result.val];
+        const capturedSteps = steps;
+        _calcEvoTimers[key] = setTimeout(() => {
+            renderSpace(key, capturedResult, capturedSteps);
+            // Restore focus after Plotly/ECharts (safety net)
+            setTimeout(() => {
+                if (document.activeElement !== inputEl) {
+                    inputEl.focus();
+                    inputEl.setSelectionRange(selStart, selEnd);
+                }
+            }, 0);
+        }, 150);
+
+    } catch(e) {
+        console.error(e);
+        resDiv.innerText = "Syntax Error";
+    }
 }
+
+// ══════════════════════════════════════════════════════════════
+// NUCLEAR FOCUS PROTECTION
+// This uses a focusin/focusout pair + a flag to BLOCK all
+// focus-stealing during rendering. No blur can succeed while
+// the flag is set.
+// ══════════════════════════════════════════════════════════════
+
+let _renderingInProgress = {};
+
+['1d', '2d', '3d'].forEach(key => {
+    const inputEl = document.getElementById(`input-${key}`);
+    if (!inputEl) return;
+
+    // Track cursor position continuously so we always have a fresh value
+    inputEl.addEventListener('keydown', function() {
+        _calcEvoFocusState[key] = {
+            selStart: this.selectionStart,
+            selEnd: this.selectionEnd
+        };
+    });
+    inputEl.addEventListener('keyup', function() {
+        _calcEvoFocusState[key] = {
+            selStart: this.selectionStart,
+            selEnd: this.selectionEnd
+        };
+    });
+    inputEl.addEventListener('input', function() {
+        _calcEvoFocusState[key] = {
+            selStart: this.selectionStart,
+            selEnd: this.selectionEnd
+        };
+    });
+
+    // The NUCLEAR blur handler: if rendering is in progress, ALWAYS refocus
+    inputEl.addEventListener('blur', function(e) {
+        if (_renderingInProgress[key]) {
+            // Rendering caused this blur — block it unconditionally
+            const state = _calcEvoFocusState[key] || { selStart: this.value.length, selEnd: this.value.length };
+            const self = this;
+            setTimeout(function() {
+                self.focus();
+                self.setSelectionRange(state.selStart, state.selEnd);
+            }, 0);
+            return;
+        }
+        // Not rendering — check if focus went to null (DOM mutation steal)
+        if (!e.relatedTarget || e.relatedTarget.tagName === 'svg' || 
+            e.relatedTarget.tagName === 'rect' || e.relatedTarget.tagName === 'path' ||
+            e.relatedTarget.tagName === 'CANVAS' ||
+            (e.relatedTarget.closest && e.relatedTarget.closest('.js-plotly-plot'))) {
+            const state = _calcEvoFocusState[key] || { selStart: this.value.length, selEnd: this.value.length };
+            const self = this;
+            setTimeout(function() {
+                self.focus();
+                self.setSelectionRange(state.selStart, state.selEnd);
+            }, 0);
+        }
+    });
+});
+
+
 
 function renderComparison3D(config) {
     const divId = 'plot-comparison-3d';
@@ -8812,6 +8922,28 @@ function updateGrammarRotInfo() {
         </div>
     `;
 }
+
+// Prevent temml/math renderers from stealing focus by blocking
+// attribute mutations on containers that hold input elements
+document.querySelectorAll('input[id^="input-"]').forEach(input => {
+    const parent = input.parentElement;
+    // Remove the attribute immediately if it gets set
+    new MutationObserver((mutations) => {
+        mutations.forEach(m => {
+            if (m.type === 'attributes' && m.attributeName === 'data-math-rendered') {
+                if (document.activeElement === input) {
+                    // The attribute change stole focus — restore it
+                    const s = input.selectionStart;
+                    const e = input.selectionEnd;
+                    requestAnimationFrame(() => {
+                        input.focus();
+                        input.setSelectionRange(s, e);
+                    });
+                }
+            }
+        });
+    }).observe(parent, { attributes: true, attributeFilter: ['data-math-rendered'] });
+});
 
 function loadEmbeddingModule() {
     const fastConfig = {

@@ -423,4 +423,10 @@ if(!server_php_self_ends_with_index_php()) {
 <?php
 		print_dynamic_title("h1");
 }
+
+
+function hide_email($email) {
+	$character_set = '&#' . implode(';&#', array_map('ord', str_split($email))) . ';';
+	return $character_set;
+}
 ?>

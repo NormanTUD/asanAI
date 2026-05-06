@@ -537,6 +537,14 @@ function set_check_number_vales_interval() {
 
 }
 
+function set_last_layer_shape_test_interval() {
+	try {
+		setInterval(last_shape_layer_warning, 1000);
+	} catch (e) {
+		wrn("[document.ready] Function write_model_summary_wait not found: " + e);
+	}
+}
+
 function set_write_model_summary_interval () {
 	try {
 		setInterval(write_model_summary_wait, 1000);
@@ -548,6 +556,7 @@ function set_write_model_summary_interval () {
 function set_auto_intervals () {
 	set_check_number_vales_interval();
 	set_write_model_summary_interval();
+	set_last_layer_shape_test_interval();
 
 	setInterval(model_is_ok, 300);
 	setInterval(label_debugger_icon_ok, 300);

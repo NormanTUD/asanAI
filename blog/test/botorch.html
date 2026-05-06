@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How BoTorch Works Internally — A Visual Explainer</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --accent: #6c63ff;
+    --accent2: #00c9a7;
+    --accent3: #ff6b6b;
+    --accent4: #ffd93d;
+    --text: #e4e4e7;
+    --muted: #9ca3af;
+    --border: #2d3148;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(135deg, #1a1d27 0%, #0f1117 50%, #1a1025 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero h1 {
+    font-size: 2.8em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+
+  .hero p { color: var(--muted); font-size: 1.15em; max-width: 700px; margin: 0 auto; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+  /* Section styling */
+  .section {
+    margin: 50px 0;
+    padding: 40px;
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 4em;
+    font-weight: 900;
+    color: rgba(108, 99, 255, 0.08);
+    pointer-events: none;
+  }
+
+  .section h2 {
+    font-size: 1.6em;
+    margin-bottom: 6px;
+    color: var(--accent2);
+  }
+
+  .section h2 .step-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.5em;
+    padding: 3px 12px;
+    border-radius: 20px;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  .section .subtitle {
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-size: 0.95em;
+  }
+
+  .section p { margin-bottom: 14px; }
+
+  .highlight { color: var(--accent4); font-weight: 600; }
+  .highlight2 { color: var(--accent2); font-weight: 600; }
+  .highlight3 { color: var(--accent3); font-weight: 600; }
+
+  /* Canvas containers */
+  .canvas-wrap {
+    background: #13151d;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 20px 0;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+
+  .canvas-wrap canvas {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+  }
+
+  .canvas-label {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85em;
+    margin-top: 8px;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+    align-items: center;
+  }
+
+  .btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #5a52e0; transform: translateY(-1px); }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .btn-secondary:hover { background: #3d4260; }
+
+  .slider-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .slider-group label { font-size: 0.85em; color: var(--muted); white-space: nowrap; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+  }
+
+  /* Flow diagram */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 30px 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-box {
+    background: linear-gradient(135deg, rgba(108,99,255,0.15), rgba(0,201,167,0.1));
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 22px;
+    text-align: center;
+    min-width: 140px;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .flow-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(108,99,255,0.2);
+  }
+
+  .flow-box .icon { font-size: 1.8em; margin-bottom: 6px; }
+  .flow-box .label { font-size: 0.85em; font-weight: 600; }
+  .flow-box .desc { font-size: 0.72em; color: var(--muted); margin-top: 4px; }
+
+  .flow-arrow {
+    font-size: 1.5em;
+    color: var(--accent);
+    padding: 0 8px;
+  }
+
+  /* Info boxes */
+  .info-box {
+    background: rgba(108,99,255,0.08);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-size: 0.92em;
+  }
+
+  .info-box.green {
+    background: rgba(0,201,167,0.08);
+    border-left-color: var(--accent2);
+  }
+
+  .info-box.red {
+    background: rgba(255,107,107,0.08);
+    border-left-color: var(--accent3);
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+    font-size: 0.85em;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9em;
+  }
+
+  .compare-table th, .compare-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .compare-table th {
+    background: rgba(108,99,255,0.12);
+    color: var(--accent);
+  }
+
+  .compare-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .hero h1 { font-size: 1.8em; }
+    .section { padding: 24px 18px; }
+    .flow-diagram { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+
+  .tooltip {
+    position: absolute;
+    background: #222;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8em;
+    pointer-events: none;
+    display: none;
+    z-index: 10;
+    white-space: nowrap;
+  }
+
+  .iteration-counter {
+    font-size: 1.1em;
+    color: var(--accent4);
+    font-weight: 700;
+    margin-left: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🔬 How BoTorch Optimizes</h1>
+  <p>An interactive visual guide to the internals of BoTorch — the Bayesian Optimization framework built on PyTorch. Understand the full loop from surrogate model to candidate selection.</p>
+</div>
+
+<div class="container">
+
+  <!-- ===== OVERVIEW ===== -->
+  <div class="section" data-step="0">
+    <h2>The Big Picture: What Is Bayesian Optimization?</h2>
+    <p class="subtitle">The core idea in 30 seconds</p>
+    <p>
+      Imagine you have an <span class="highlight">extremely expensive function</span> to evaluate — maybe training a neural network with certain hyperparameters takes 8 hours. You can't just try thousands of random settings. <span class="highlight2">Bayesian Optimization (BO)</span> is a strategy that intelligently picks the <em>next</em> point to evaluate so you find the optimum in as few tries as possible.
+    </p>
+    <p>
+      BoTorch does this in a loop with two main ingredients:
+    </p>
+
+    <div class="flow-diagram">
+      <div class="flow-box">
+        <div class="icon">📊</div>
+        <div class="label">Observations</div>
+        <div class="desc">Data you've collected so far</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="icon">🧠</div>
+        <div class="label">Surrogate Model</div>
+        <div class="desc">Gaussian Process (GP)</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="icon">🎲</div>
+        <div class="label">MC Sampling</div>
+        <div class="desc">Draw posterior samples</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="icon">📈</div>
+        <div class="label">Acquisition Function</div>
+        <div class="desc">Score candidate points</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="icon">🎯</div>
+        <div class="label">Optimize Acqf</div>
+        <div class="desc">Pick next point(s)</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">
+        <div class="icon">🔁</div>
+        <div class="label">Evaluate & Repeat</div>
+        <div class="desc">Add to data, loop</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>BoTorch's key innovation:</strong> It uses <span class="highlight">Sample Average Approximation (SAA)</span> — fixing random samples once and then using fast deterministic optimizers (L-BFGS-B) instead of slow stochastic gradient descent. This is backed by theoretical convergence guarantees.
+    </div>
+  </div>
+
+  <!-- ===== STEP 1: GP SURROGATE ===== -->
+  <div class="section" data-step="1">
+    <h2><span class="step-badge">Step 1</span> The Gaussian Process Surrogate</h2>
+    <p class="subtitle">Building a cheap-to-evaluate model of the expensive function</p>
+    <p>
+      A <span class="highlight2">Gaussian Process (GP)</span> is a probabilistic model that, given some observed data points, provides a <span class="highlight">mean prediction</span> (its best guess) and an <span class="highlight3">uncertainty band</span> (how confident it is) at every point in the search space.
+    </p>
+    <p>
+      Where we have data, the GP is confident. Where we don't, uncertainty is high. BoTorch uses <span class="highlight2">GPyTorch</span> under the hood, which provides fast O(1) predictive distributions.
+    </p>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-add-point">Click to Add an Observation</button>
+      <button class="btn btn-secondary" id="btn-reset-gp">Reset</button>
+      <span class="iteration-counter" id="gp-point-count">Points: 0</span>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas-gp" width="1000" height="400"></canvas>
+      <div class="tooltip" id="tooltip-gp"></div>
+      <div class="canvas-label">Click the button to add observations. Watch the GP's uncertainty shrink near data.</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#ff6b6b"></div> True function (unknown)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#6c63ff"></div> GP mean prediction</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(108,99,255,0.2)"></div> GP uncertainty (±2σ)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#ffd93d; border-radius:50%"></div> Observations</div>
+    </div>
+
+    <div class="info-box green">
+      <strong>Key insight:</strong> The GP hyperparameters (kernel lengthscale, noise variance, etc.) are fit by maximizing the marginal likelihood using L-BFGS-B via <code>fit_gpytorch_mll()</code>.
+    </div>
+  </div>
+
+  <!-- ===== STEP 2: REPARAMETERIZATION + SAA ===== -->
+  <div class="section" data-step="2">
+    <h2><span class="step-badge">Step 2</span> Monte Carlo Sampling & the Reparameterization Trick</h2>
+    <p class="subtitle">How BoTorch makes acquisition functions differentiable</p>
+    <p>
+      Most useful acquisition functions can't be computed in closed form. Instead, BoTorch approximates them using <span class="highlight">Monte Carlo samples</span> from the GP posterior. The critical trick is the <span class="highlight2">reparameterization trick</span>:
+    </p>
+    <p>
+      Instead of sampling <code>ξ ~ N(μ, σ²)</code> directly, we write <code>ξ = μ + σ · ε</code> where <code>ε ~ N(0,1)</code>. Now the sample is a <em>differentiable function</em> of the GP parameters μ and σ, which means we can compute gradients through the samples using auto-differentiation.
+    </p>
+
+    <div class="controls">
+      <div class="slider-group">
+        <label>MC Samples (N):</label>
+        <input type="range" id="slider-mc-n" min="4" max="128" value="16" step="4">
+        <span id="mc-n-val">16</span>
+      </div>
+      <button class="btn btn-primary" id="btn-redraw-mc">Redraw Samples</button>
+      <label style="font-size:0.85em; color:var(--muted);">
+        <input type="checkbox" id="chk-qmc"> Use Quasi-MC (Sobol)
+      </label>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas-reparam" width="1000" height="400"></canvas>
+      <div class="canvas-label">Each thin line is one posterior sample path. The acquisition function averages a utility over these samples.</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#6c63ff"></div> GP mean</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(108,99,255,0.15)"></div> Uncertainty</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(0,201,167,0.5)"></div> Individual MC sample paths</div>
+    </div>
+
+    <div class="info-box">
+      <strong>SAA (Sample Average Approximation):</strong> BoTorch draws the base samples ε <em>once</em> and fixes them. This turns the stochastic acquisition function into a <em>deterministic</em> function that can be optimized with fast quasi-Newton methods (L-BFGS-B) instead of noisy SGD.
+    </div>
+
+    <table class="compare-table">
+      <tr><th>Approach</th><th>Samples</th><th>Optimizer</th><th>Speed</th><th>Hyperparams to tune</th></tr>
+      <tr><td>Traditional (SGD)</td><td>Re-drawn each step</td><td>SGD / Adam</td><td>Slow</td><td>Learning rate, etc.</td></tr>
+      <tr><td><strong>BoTorch SAA</strong></td><td><strong>Fixed once</strong></td><td><strong>L-BFGS-B</strong></td><td><strong>Fast</strong></td><td><strong>Essentially none</strong></td></tr>
+    </table>
+  </div>
+
+  <!-- ===== STEP 3: ACQUISITION FUNCTION ===== -->
+  <div class="section" data-step="3">
+    <h2><span class="step-badge">Step 3</span> The Acquisition Function</h2>
+    <p class="subtitle">Scoring every candidate point: "How useful would it be to evaluate here?"</p>
+    <p>
+      The acquisition function assigns a score to each candidate point. It balances <span class="highlight">exploration</span> (try uncertain regions) vs. <span class="highlight3">exploitation</span> (try near the current best). BoTorch computes this as:
+    </p>
+    <p style="text-align:center; font-size:1.1em; margin:16px 0;">
+      <code>α(x) = (1/N) Σ a(g(ξ<sub>i</sub>(x)))</code>
+    </p>
+    <p>
+      where <code>ξ<sub>i</sub></code> are the fixed MC samples, <code>g</code> is an objective transform, and <code>a</code> is the utility (e.g., improvement over current best).
+    </p>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-ei" style="background:var(--accent)">Expected Improvement (EI)</button>
+      <button class="btn btn-secondary" id="btn-ucb">Upper Confidence Bound (UCB)</button>
+      <button class="btn btn-secondary" id="btn-poi">Probability of Improvement</button>
+      <div class="slider-group">
+        <label>β (UCB):</label>
+        <input type="range" id="slider-beta" min="0.1" max="4" value="2" step="0.1">
+        <span id="beta-val">2.0</span>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas-acqf" width="1000" height="500"></canvas>
+      <div class="tooltip" id="tooltip-acqf"></div>
+      <div class="canvas-label">Top: GP model with observations. Bottom: Acquisition function value. The star marks where BoTorch would evaluate next.</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#ff6b6b"></div> True function</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#6c63ff"></div> GP mean</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#00c9a7"></div> Acquisition function</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#ffd93d; border-radius:50%"></div> Next evaluation point ★</div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 4: OPTIMIZATION OF ACQF ===== -->
+  <div class="section" data-step="4">
+    <h2><span class="step-badge">Step 4</span> Optimizing the Acquisition Function</h2>
+    <p class="subtitle">Multi-start L-BFGS-B with smart initialization</p>
+    <p>
+      The acquisition function surface is <span class="highlight3">highly non-convex and multi-modal</span>. BoTorch uses a two-phase strategy:
+    </p>
+    <p>
+      <strong>Phase 1 — Initialization:</strong> Generate thousands of quasi-random (Sobol) candidate points, batch-evaluate the acquisition function at all of them in parallel (exploiting GPU), then select the best ones as starting points.
+    </p>
+    <p>
+      <strong>Phase 2 — L-BFGS-B:</strong> From each starting point, run the L-BFGS-B quasi-Newton optimizer. Because the base samples are fixed (SAA), this is a smooth deterministic optimization. Pick the best result across all restarts.
+    </p>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-run-optim">▶ Run Multi-Start Optimization</button>
+      <button class="btn btn-secondary" id="btn-reset-optim">Reset</button>
+      <div class="slider-group">
+        <label>Restarts:</label>
+        <input type="range" id="slider-restarts" min="2" max="12" value="5" step="1">
+        <span id="restarts-val">5</span>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas-optim" width="1000" height="400"></canvas>
+      <div class="canvas-label">Watch multiple L-BFGS-B runs converge from different starting points to local optima. The global best is selected.</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#00c9a7"></div> Acquisition surface</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#ff6b6b; border-radius:50%"></div> Starting points (from Sobol init)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#ffd93d; border-radius:50%"></div> Optimization trajectories</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#fff; border-radius:50%"></div> Best found ★</div>
+    </div>
+
+    <div class="info-box green">
+      <strong>Why this is fast:</strong> GPyTorch provides O(1) predictive distributions. Batch evaluation on GPU means evaluating 10,000+ candidates costs almost the same as evaluating 1. Auto-differentiation gives exact gradients for free.
+    </div>
+  </div>
+
+  <!-- ===== STEP 5: FULL LOOP ===== -->
+  <div class="section" data-step="5">
+    <h2><span class="step-badge">Step 5</span> The Full BO Loop in Action</h2>
+    <p class="subtitle">Watch BoTorch iteratively find the optimum</p>
+    <p>
+      Now let's put it all together. Each iteration: fit the GP → compute the acquisition function → optimize it → evaluate the true function at the chosen point → add to data → repeat.
+    </p>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-bo-step">▶ Run One BO Iteration</button>
+      <button class="btn btn-primary" id="btn-bo-auto" style="background:var(--accent2)">▶▶ Auto-Run (10 steps)</button>
+      <button class="btn btn-secondary" id="btn-bo-reset">Reset</button>
+      <span class="iteration-counter" id="bo-iter-count">Iteration: 0 | Best: —</span>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas-bo" width="1000" height="520"></canvas>
+      <div class="canvas-label">Top: GP model evolving over iterations. Bottom: Acquisition function guiding the search. Watch the GP converge to the true function near the optimum.</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#ff6b6b"></div> True function</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#6c63ff"></div> GP mean</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:rgba(108,99,255,0.2)"></div> Uncertainty</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#00c9a7"></div> Acquisition (EI)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#ffd93d; border-radius:50%"></div> Observations</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#fff; border-radius:50%"></div> Next point ★</div>
+    </div>
+  </div>
+
+  <!-- ===== BONUS: CONVERGENCE ===== -->
+  <div class="section" data-step="6">
+    <h2><span class="step-badge">Bonus</span> SAA Convergence: MC vs Quasi-MC</h2>
+    <p class="subtitle">Why fixing samples and using Sobol sequences works so well</p>
+    <p>
+      BoTorch's theoretical contribution (Theorem 1 in the paper) proves that the SAA optimizer converges to the true optimizer <span class="highlight">exponentially fast</span>. Quasi-Monte Carlo (Sobol) sequences converge even faster in practice than plain MC.
+    </p>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="btn-run-convergence">▶ Run Convergence Experiment</button>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="canvas-convergence" width="1000" height="380"></canvas>
+      <div class="canvas-label">Error of the SAA optimizer vs. number of MC samples. QMC (Sobol) converges much faster than plain MC.</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch" style="background:#ff6b6b"></div> Plain MC (random)</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:#6c63ff"></div> Quasi-MC (Sobol)</div>
+    </div>
+
+    <div class="info-box">
+      <strong>From the paper:</strong> "In order to achieve the same error as the MC approximation with 4096 samples, the QMC approximation only requires 64 samples." This 64× reduction is a huge practical speedup.
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center; padding:40px 0; color:var(--muted); font-size:0.85em;">
+    <p>Built to explain the internals of <a href="https://botorch.org" style="color:var(--accent)">BoTorch</a> — based on the NeurIPS 2020 paper by Balandat et al.</p>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+
+function trueFunction(x) {
+  // A multi-modal test function on [0, 1]
+  return Math.sin(3 * Math.PI * x) * Math.exp(-0.5 * x) + 0.6 * Math.cos(5 * Math.PI * x + 1) + 0.3;
+}
+
+function trueFunctionMax() {
+  let best = -Infinity, bx = 0;
+  for (let i = 0; i <= 500; i++) {
+    const x = i / 500;
+    const v = trueFunction(x);
+    if (v > best) { best = v; bx = x; }
+  }
+  return { x: bx, y: best };
+}
+
+// Simple GP implementation for visualization
+class SimpleGP {
+  constructor() {
+    this.xs = [];
+    this.ys = [];
+    this.lengthscale = 0.12;
+    this.signalVar = 1.0;
+    this.noiseVar = 0.005;
+  }
+
+  kernel(x1, x2) {
+    const d = (x1 - x2) / this.lengthscale;
+    return this.signalVar * Math.exp(-0.5 * d * d);
+  }
+
+  addPoint(x, y) {
+    this.xs.push(x);
+    this.ys.push(y);
+  }
+
+  reset() {
+    this.xs = [];
+    this.ys = [];
+  }
+
+  predict(xStar) {
+    const n = this.xs.length;
+    if (n === 0) {
+      return { mean: 0.3, variance: this.signalVar };
+    }
+
+    // K(X, X) + noise
+    const K = [];
+    for (let i = 0; i < n; i++) {
+      K[i] = [];
+      for (let j = 0; j < n; j++) {
+        K[i][j] = this.kernel(this.xs[i], this.xs[j]);
+        if (i === j) K[i][j] += this.noiseVar;
+      }
+    }
+
+    // Invert K (simple for small n)
+    const Kinv = invertMatrix(K);
+    if (!Kinv) return { mean: 0.3, variance: this.signalVar };
+
+    // k(X, x*)
+    const kStar = [];
+    for (let i = 0; i < n; i++) {
+      kStar[i] = this.kernel(this.xs[i], xStar);
+    }
+
+    // Mean: k* K^-1 y
+    let mean = 0;
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+      for (let j = 0; j < n; j++) {
+        sum += Kinv[i][j] * this.ys[j];
+      }
+      mean += kStar[i] * sum;
+    }
+
+    // Variance: k(x*,x*) - k* K^-1 k*
+    const kss = this.kernel(xStar, xStar);
+    let varReduction = 0;
+    for (let i = 0; i < n; i++) {
+      let sum = 0;
+      for (let j = 0; j < n; j++) {
+        sum += Kinv[i][j] * kStar[j];
+      }
+      varReduction += kStar[i] * sum;
+    }
+    const variance = Math.max(0.001, kss - varReduction);
+
+    return { mean, variance };
+  }
+}
+
+// Matrix inversion using Gauss-Jordan (for small matrices)
+function invertMatrix(M) {
+  const n = M.length;
+  const aug = M.map((row, i) => {
+    const r = row.slice();
+    for (let j = 0; j < n; j++) r.push(i === j ? 1 : 0);
+    return r;
+  });
+
+  for (let col = 0; col < n; col++) {
+    let maxRow = col;
+    for (let row = col + 1; row < n; row++) {
+      if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row;
+    }
+    [aug[col], aug[maxRow]] = [aug[maxRow], aug[col]];
+
+    if (Math.abs(aug[col][col]) < 1e-12) return null;
+
+    const pivot = aug[col][col];
+    for (let j = 0; j < 2 * n; j++) aug[col][j] /= pivot;
+
+    for (let row = 0; row < n; row++) {
+      if (row === col) continue;
+      const factor = aug[row][col];
+      for (let j = 0; j < 2 * n; j++) aug[row][j] -= factor * aug[col][j];
+    }
+  }
+
+  return aug.map(row => row.slice(n));
+}
+
+// Sobol-like quasi-random sequence (simplified)
+function sobolSequence(n, dim) {
+  // Simple low-discrepancy sequence using golden ratio
+  const phi = (1 + Math.sqrt(5)) / 2;
+  const points = [];
+  for (let i = 0; i < n; i++) {
+    const p = [];
+    for (let d = 0; d < dim; d++) {
+      p.push(((i + 1) * Math.pow(phi, d + 1)) % 1);
+    }
+    points.push(p);
+  }
+  return points;
+}
+
+// Normal distribution helpers
+function normalPDF(x) {
+  return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+}
+
+function normalCDF(x) {
+  const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+  const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x) / Math.sqrt(2);
+  const t = 1.0 / (1.0 + p * x);
+  const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+  return 0.5 * (1.0 + sign * y);
+}
+
+function boxMullerRandom() {
+  let u1, u2;
+  do { u1 = Math.random(); } while (u1 === 0);
+  u2 = Math.random();
+  return Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+}
+
+// ============================================================
+// DRAWING UTILITIES
+// ============================================================
+
+function drawLine(ctx, points, color, width = 2) {
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  for (let i = 0; i < points.length; i++) {
+    if (i === 0) ctx.moveTo(points[i][0], points[i][1]);
+    else ctx.lineTo(points[i][0], points[i][1]);
+  }
+  ctx.stroke();
+}
+
+function drawFilledBand(ctx, upper, lower, color) {
+  ctx.beginPath();
+  ctx.fillStyle = color;
+  for (let i = 0; i < upper.length; i++) {
+    if (i === 0) ctx.moveTo(upper[i][0], upper[i][1]);
+    else ctx.lineTo(upper[i][0], upper[i][1]);
+  }
+  for (let i = lower.length - 1; i >= 0; i--) {
+    ctx.lineTo(lower[i][0], lower[i][1]);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawDot(ctx, x, y, radius, color) {
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawStar(ctx, x, y, size, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.beginPath();
+  ctx.fillStyle = color;
+  for (let i = 0; i < 5; i++) {
+    const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+    const px = Math.cos(angle) * size;
+    const py = Math.sin(angle) * size;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+function mapX(x, canvas, margin) {
+  return margin + x * (canvas.width - 2 * margin);
+}
+
+function mapY(y, canvas, margin, yMin, yMax, areaTop, areaHeight) {
+  const t = (y - yMin) / (yMax - yMin);
+  return areaTop + areaHeight - t * areaHeight;
+}
+
+// ============================================================
+// SECTION 1: GP SURROGATE VISUALIZATION
+// ============================================================
+
+const gpModel = new SimpleGP();
+let gpPointCount = 0;
+
+function drawGP() {
+  const canvas = document.getElementById('canvas-gp');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const margin = 50;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const yMin = -1.5, yMax = 2.5;
+  const areaTop = margin / 2;
+  const areaHeight = H - margin;
+
+  const mx = (x) => mapX(x, canvas, margin);
+  const my = (y) => mapY(y, canvas, margin, yMin, yMax, areaTop, areaHeight);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  for (let y = -1; y <= 2; y += 0.5) {
+    ctx.beginPath();
+    ctx.moveTo(mx(0), my(y));
+    ctx.lineTo(mx(1), my(y));
+    ctx.stroke();
+  }
+
+  // True function
+  const truePoints = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    truePoints.push([mx(x), my(trueFunction(x))]);
+  }
+  drawLine(ctx, truePoints, '#ff6b6b', 2);
+
+  // GP prediction
+  const gpMean = [], gpUpper = [], gpLower = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const pred = gpModel.predict(x);
+    const std = Math.sqrt(pred.variance);
+    gpMean.push([mx(x), my(pred.mean)]);
+    gpUpper.push([mx(x), my(pred.mean + 2 * std)]);
+    gpLower.push([mx(x), my(pred.mean - 2 * std)]);
+  }
+
+  drawFilledBand(ctx, gpUpper, gpLower, 'rgba(108, 99, 255, 0.15)');
+  drawLine(ctx, gpMean, '#6c63ff', 2.5);
+
+  // Observations
+  for (let i = 0; i < gpModel.xs.length; i++) {
+    drawDot(ctx, mx(gpModel.xs[i]), my(gpModel.ys[i]), 6, '#ffd93d');
+    drawDot(ctx, mx(gpModel.xs[i]), my(gpModel.ys[i]), 3, '#fff');
+  }
+
+  // Axis labels
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('0', mx(0), H - 5);
+  ctx.fillText('0.5', mx(0.5), H - 5);
+  ctx.fillText('1', mx(1), H - 5);
+  ctx.textAlign = 'right';
+  for (let y = -1; y <= 2; y += 1) {
+    ctx.fillText(y.toFixed(0), mx(0) - 8, my(y) + 4);
+  }
+}
+
+document.getElementById('btn-add-point').addEventListener('click', () => {
+  // Pick a somewhat spread-out point
+  let x;
+  if (gpModel.xs.length === 0) {
+    x = 0.5;
+  } else {
+    // Find the largest gap
+    const sorted = [...gpModel.xs].sort((a, b) => a - b);
+    let maxGap = sorted[0], gapStart = 0;
+    for (let i = 1; i < sorted.length; i++) {
+      const gap = sorted[i] - sorted[i - 1];
+      if (gap > maxGap) { maxGap = gap; gapStart = sorted[i - 1]; }
+    }
+    const endGap = 1 - sorted[sorted.length - 1];
+    if (endGap > maxGap) {
+      x = sorted[sorted.length - 1] + endGap / 2;
+    } else {
+      x = gapStart + maxGap / 2;
+    }
+    x = Math.max(0.02, Math.min(0.98, x + (Math.random() - 0.5) * 0.05));
+  }
+  const y = trueFunction(x) + (Math.random() - 0.5) * 0.1;
+  gpModel.addPoint(x, y);
+  gpPointCount++;
+  document.getElementById('gp-point-count').textContent = `Points: ${gpPointCount}`;
+  drawGP();
+});
+
+document.getElementById('btn-reset-gp').addEventListener('click', () => {
+  gpModel.reset();
+  gpPointCount = 0;
+  document.getElementById('gp-point-count').textContent = 'Points: 0';
+  drawGP();
+});
+
+// ============================================================
+// SECTION 2: REPARAMETERIZATION + MC SAMPLES
+// ============================================================
+
+const reparamGP = new SimpleGP();
+// Pre-populate with some points
+[0.1, 0.3, 0.5, 0.7, 0.9].forEach(x => {
+  reparamGP.addPoint(x, trueFunction(x) + (Math.random() - 0.5) * 0.1);
+});
+
+function drawReparameterization() {
+  const canvas = document.getElementById('canvas-reparam');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const margin = 50;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const yMin = -1.5, yMax = 2.5;
+  const areaTop = margin / 2;
+  const areaHeight = H - margin;
+
+  const mx = (x) => mapX(x, canvas, margin);
+  const my = (y) => mapY(y, canvas, margin, yMin, yMax, areaTop, areaHeight);
+
+  const N = parseInt(document.getElementById('slider-mc-n').value);
+  const useQMC = document.getElementById('chk-qmc').checked;
+
+  // GP prediction band
+  const gpMean = [], gpUpper = [], gpLower = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const pred = reparamGP.predict(x);
+    const std = Math.sqrt(pred.variance);
+    gpMean.push([mx(x), my(pred.mean)]);
+    gpUpper.push([mx(x), my(pred.mean + 2 * std)]);
+    gpLower.push([mx(x), my(pred.mean - 2 * std)]);
+  }
+
+  drawFilledBand(ctx, gpUpper, gpLower, 'rgba(108, 99, 255, 0.1)');
+
+  // Generate base samples (epsilon)
+  const baseEpsilons = [];
+  if (useQMC) {
+    const sobol = sobolSequence(N, 1);
+    for (let i = 0; i < N; i++) {
+      // Inverse CDF transform for quasi-random
+      const u = sobol[i][0];
+      const clamped = Math.max(0.001, Math.min(0.999, u));
+      // Approximate inverse normal CDF
+      baseEpsilons.push(approxInvNorm(clamped));
+    }
+  } else {
+    for (let i = 0; i < N; i++) {
+      baseEpsilons.push(boxMullerRandom());
+    }
+  }
+
+  // Draw sample paths: ξ = μ + σ * ε (reparameterization trick)
+  for (let s = 0; s < N; s++) {
+    const samplePath = [];
+    for (let i = 0; i <= 200; i++) {
+      const x = i / 200;
+      const pred = reparamGP.predict(x);
+      const std = Math.sqrt(pred.variance);
+      const y = pred.mean + std * baseEpsilons[s];
+      samplePath.push([mx(x), my(y)]);
+    }
+    const alpha = Math.max(0.08, 0.5 / Math.sqrt(N / 8));
+    drawLine(ctx, samplePath, `rgba(0, 201, 167, ${alpha})`, 1.2);
+  }
+
+  // GP mean on top
+  drawLine(ctx, gpMean, '#6c63ff', 2.5);
+
+  // Observations
+  for (let i = 0; i < reparamGP.xs.length; i++) {
+    drawDot(ctx, mx(reparamGP.xs[i]), my(reparamGP.ys[i]), 5, '#ffd93d');
+  }
+
+  // Labels
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('0', mx(0), H - 5);
+  ctx.fillText('0.5', mx(0.5), H - 5);
+  ctx.fillText('1', mx(1), H - 5);
+
+  // Annotation
+  ctx.fillStyle = 'rgba(0, 201, 167, 0.7)';
+  ctx.font = '13px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(`${N} ${useQMC ? 'Quasi-MC (Sobol)' : 'MC (random)'} sample paths`, mx(0) + 5, areaTop + 20);
+  ctx.fillText(`ξ = μ + σ · ε  (reparameterization trick)`, mx(0) + 5, areaTop + 38);
+}
+
+function approxInvNorm(p) {
+  // Rational approximation of inverse normal CDF
+  if (p < 0.5) return -approxInvNorm(1 - p);
+  const t = Math.sqrt(-2 * Math.log(1 - p));
+  const c0 = 2.515517, c1 = 0.802853, c2 = 0.010328;
+  const d1 = 1.432788, d2 = 0.189269, d3 = 0.001308;
+  return t - (c0 + c1 * t + c2 * t * t) / (1 + d1 * t + d2 * t * t + d3 * t * t * t);
+}
+
+document.getElementById('slider-mc-n').addEventListener('input', (e) => {
+  document.getElementById('mc-n-val').textContent = e.target.value;
+  drawReparameterization();
+});
+
+document.getElementById('btn-redraw-mc').addEventListener('click', drawReparameterization);
+document.getElementById('chk-qmc').addEventListener('change', drawReparameterization);
+
+// ============================================================
+// SECTION 3: ACQUISITION FUNCTION
+// ============================================================
+
+const acqfGP = new SimpleGP();
+[0.08, 0.22, 0.45, 0.62, 0.85].forEach(x => {
+  acqfGP.addPoint(x, trueFunction(x) + (Math.random() - 0.5) * 0.08);
+});
+
+let currentAcqf = 'ei';
+
+function computeAcqf(x, type, beta) {
+  const pred = acqfGP.predict(x);
+  const mu = pred.mean;
+  const sigma = Math.sqrt(pred.variance);
+
+  // Find current best
+  let fBest = -Infinity;
+  for (let i = 0; i < acqfGP.ys.length; i++) {
+    if (acqfGP.ys[i] > fBest) fBest = acqfGP.ys[i];
+  }
+
+  if (sigma < 1e-8) return 0;
+
+  if (type === 'ei') {
+    const z = (mu - fBest) / sigma;
+    return (mu - fBest) * normalCDF(z) + sigma * normalPDF(z);
+  } else if (type === 'ucb') {
+    return mu + beta * sigma;
+  } else if (type === 'poi') {
+    const z = (mu - fBest) / sigma;
+    return normalCDF(z);
+  }
+  return 0;
+}
+
+function drawAcqf() {
+  const canvas = document.getElementById('canvas-acqf');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const margin = 50;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const beta = parseFloat(document.getElementById('slider-beta').value);
+
+  // Top half: GP
+  const gpAreaTop = 20;
+  const gpAreaHeight = H * 0.5 - 30;
+  const yMin = -1.5, yMax = 2.5;
+
+  const mxG = (x) => mapX(x, canvas, margin);
+  const myG = (y) => mapY(y, canvas, margin, yMin, yMax, gpAreaTop, gpAreaHeight);
+
+  // Divider
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin, H * 0.5);
+  ctx.lineTo(W - margin, H * 0.5);
+  ctx.stroke();
+
+  // GP band
+  const gpMean = [], gpUpper = [], gpLower = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const pred = acqfGP.predict(x);
+    const std = Math.sqrt(pred.variance);
+    gpMean.push([mxG(x), myG(pred.mean)]);
+    gpUpper.push([mxG(x), myG(pred.mean + 2 * std)]);
+    gpLower.push([mxG(x), myG(pred.mean - 2 * std)]);
+  }
+
+  drawFilledBand(ctx, gpUpper, gpLower, 'rgba(108, 99, 255, 0.15)');
+
+  // True function
+  const truePoints = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    truePoints.push([mxG(x), myG(trueFunction(x))]);
+  }
+  drawLine(ctx, truePoints, '#ff6b6b', 1.5);
+  drawLine(ctx, gpMean, '#6c63ff', 2.5);
+
+  // Observations
+  for (let i = 0; i < acqfGP.xs.length; i++) {
+    drawDot(ctx, mxG(acqfGP.xs[i]), myG(acqfGP.ys[i]), 5, '#ffd93d');
+  }
+
+  // Bottom half: Acquisition function
+  const acqAreaTop = H * 0.52;
+  const acqAreaHeight = H * 0.42;
+
+  // Compute acqf values
+  const acqfValues = [];
+  let acqfMax = -Infinity, acqfMin = Infinity;
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const v = computeAcqf(x, currentAcqf, beta);
+    acqfValues.push(v);
+    if (v > acqfMax) acqfMax = v;
+    if (v < acqfMin) acqfMin = v;
+  }
+
+  if (acqfMax - acqfMin < 1e-10) acqfMax = acqfMin + 1;
+
+  const myA = (v) => {
+    const t = (v - acqfMin) / (acqfMax - acqfMin);
+    return acqAreaTop + acqAreaHeight - t * acqAreaHeight;
+  };
+
+  // Draw acqf
+  const acqfPoints = [];
+  let bestAcqfX = 0, bestAcqfVal = -Infinity;
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    acqfPoints.push([mxG(x), myA(acqfValues[i])]);
+    if (acqfValues[i] > bestAcqfVal) {
+      bestAcqfVal = acqfValues[i];
+      bestAcqfX = x;
+    }
+  }
+
+  // Fill under acqf
+  ctx.beginPath();
+  ctx.fillStyle = 'rgba(0, 201, 167, 0.1)';
+  ctx.moveTo(acqfPoints[0][0], myA(acqfMin));
+  for (const p of acqfPoints) ctx.lineTo(p[0], p[1]);
+  ctx.lineTo(acqfPoints[acqfPoints.length - 1][0], myA(acqfMin));
+  ctx.closePath();
+  ctx.fill();
+
+  drawLine(ctx, acqfPoints, '#00c9a7', 2.5);
+
+  // Best point star
+  drawStar(ctx, mxG(bestAcqfX), myA(bestAcqfVal) - 12, 8, '#ffd93d');
+
+  // Vertical line from star to GP
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = 'rgba(255, 217, 61, 0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(mxG(bestAcqfX), myA(bestAcqfVal));
+  ctx.lineTo(mxG(bestAcqfX), myG(yMin));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('GP Model', margin + 5, gpAreaTop + 16);
+  const acqNames = { ei: 'Expected Improvement (EI)', ucb: `UCB (β=${beta.toFixed(1)})`, poi: 'Probability of Improvement' };
+  ctx.fillText(acqNames[currentAcqf], margin + 5, acqAreaTop + 16);
+
+  ctx.fillStyle = '#ffd93d';
+  ctx.fillText(`★ Next point: x = ${bestAcqfX.toFixed(3)}`, mxG(bestAcqfX) + 15, myA(bestAcqfVal) - 5);
+}
+
+document.getElementById('btn-ei').addEventListener('click', () => {
+  currentAcqf = 'ei';
+  document.getElementById('btn-ei').className = 'btn btn-primary';
+  document.getElementById('btn-ucb').className = 'btn btn-secondary';
+  document.getElementById('btn-poi').className = 'btn btn-secondary';
+  drawAcqf();
+});
+
+document.getElementById('btn-ucb').addEventListener('click', () => {
+  currentAcqf = 'ucb';
+  document.getElementById('btn-ei').className = 'btn btn-secondary';
+  document.getElementById('btn-ucb').className = 'btn btn-primary';
+  document.getElementById('btn-poi').className = 'btn btn-secondary';
+  drawAcqf();
+});
+
+document.getElementById('btn-poi').addEventListener('click', () => {
+  currentAcqf = 'poi';
+  document.getElementById('btn-ei').className = 'btn btn-secondary';
+  document.getElementById('btn-ucb').className = 'btn btn-secondary';
+  document.getElementById('btn-poi').className = 'btn btn-primary';
+  drawAcqf();
+});
+
+document.getElementById('slider-beta').addEventListener('input', (e) => {
+  document.getElementById('beta-val').textContent = parseFloat(e.target.value).toFixed(1);
+  if (currentAcqf === 'ucb') drawAcqf();
+});
+
+// ============================================================
+// SECTION 4: MULTI-START OPTIMIZATION
+// ============================================================
+
+let optimAnimationId = null;
+let optimTrajectories = [];
+let optimStep = 0;
+let optimDone = false;
+
+function acqfSurface(x) {
+  // Use EI on the acqfGP
+  return computeAcqf(x, 'ei', 2);
+}
+
+function acqfGradient(x) {
+  const h = 0.001;
+  return (acqfSurface(Math.min(1, x + h)) - acqfSurface(Math.max(0, x - h))) / (2 * h);
+}
+
+function drawOptimization() {
+  const canvas = document.getElementById('canvas-optim');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const margin = 50;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const areaTop = 20;
+  const areaHeight = H - 60;
+
+  const mxO = (x) => mapX(x, canvas, margin);
+
+  // Compute surface
+  const surfaceVals = [];
+  let sMax = -Infinity, sMin = Infinity;
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const v = acqfSurface(x);
+    surfaceVals.push(v);
+    if (v > sMax) sMax = v;
+    if (v < sMin) sMin = v;
+  }
+  if (sMax - sMin < 1e-10) sMax = sMin + 1;
+
+  const myO = (v) => {
+    const t = (v - sMin) / (sMax - sMin);
+    return areaTop + areaHeight - t * areaHeight;
+  };
+
+  // Draw surface
+  const surfacePoints = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    surfacePoints.push([mxO(x), myO(surfaceVals[i])]);
+  }
+
+  ctx.beginPath();
+  ctx.fillStyle = 'rgba(0, 201, 167, 0.08)';
+  ctx.moveTo(surfacePoints[0][0], myO(sMin));
+  for (const p of surfacePoints) ctx.lineTo(p[0], p[1]);
+  ctx.lineTo(surfacePoints[surfacePoints.length - 1][0], myO(sMin));
+  ctx.closePath();
+  ctx.fill();
+
+  drawLine(ctx, surfacePoints, '#00c9a7', 2.5);
+
+  // Draw trajectories
+  const colors = ['#ff6b6b', '#ffd93d', '#6c63ff', '#ff9ff3', '#48dbfb',
+                   '#ff6348', '#7bed9f', '#70a1ff', '#ffa502', '#2ed573'];
+
+  let globalBestX = 0, globalBestVal = -Infinity;
+
+  for (let t = 0; t < optimTrajectories.length; t++) {
+    const traj = optimTrajectories[t];
+    const stepsToShow = Math.min(traj.length, optimStep);
+
+    if (stepsToShow === 0) continue;
+
+    // Starting point
+    drawDot(ctx, mxO(traj[0].x), myO(traj[0].val), 5, colors[t % colors.length]);
+
+    // Path
+    if (stepsToShow > 1) {
+      const pathPoints = [];
+      for (let s = 0; s < stepsToShow; s++) {
+        pathPoints.push([mxO(traj[s].x), myO(traj[s].val)]);
+      }
+      drawLine(ctx, pathPoints, colors[t % colors.length], 1.5);
+
+      // Current position dot
+      const last = stepsToShow - 1;
+      drawDot(ctx, mxO(traj[last].x), myO(traj[last].val), 4, colors[t % colors.length]);
+    }
+
+    // Track global best
+    const finalStep = Math.min(traj.length - 1, optimStep - 1);
+    if (finalStep >= 0 && traj[finalStep].val > globalBestVal) {
+      globalBestVal = traj[finalStep].val;
+      globalBestX = traj[finalStep].x;
+    }
+  }
+
+  // Global best star
+  if (optimStep > 0 && optimTrajectories.length > 0) {
+    drawStar(ctx, mxO(globalBestX), myO(globalBestVal) - 14, 10, '#fff');
+    ctx.fillStyle = '#fff';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`★ Best: x = ${globalBestX.toFixed(4)}`, mxO(globalBestX) + 15, myO(globalBestVal) - 8);
+  }
+
+  // Labels
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('0', mxO(0), H - 5);
+  ctx.fillText('0.5', mxO(0.5), H - 5);
+  ctx.fillText('1', mxO(1), H - 5);
+  ctx.textAlign = 'left';
+  ctx.fillText('Acquisition Function Surface', margin + 5, areaTop + 16);
+
+  if (optimStep > 0) {
+    ctx.fillStyle = 'rgba(255,217,61,0.7)';
+    ctx.fillText(`Step ${Math.min(optimStep, 50)} / 50`, margin + 5, areaTop + 34);
+  }
+}
+
+function runOptimization() {
+  const numRestarts = parseInt(document.getElementById('slider-restarts').value);
+  optimTrajectories = [];
+  optimStep = 0;
+  optimDone = false;
+
+  // Generate starting points using Sobol-like initialization
+  const sobolPoints = sobolSequence(numRestarts * 10, 1);
+  // Evaluate acqf at all sobol points, pick top numRestarts
+  const evaluated = sobolPoints.map(p => ({ x: p[0], val: acqfSurface(p[0]) }));
+  evaluated.sort((a, b) => b.val - a.val);
+  const startPoints = evaluated.slice(0, numRestarts);
+
+  // Simulate L-BFGS-B trajectories from each start
+  for (let r = 0; r < numRestarts; r++) {
+    const traj = [];
+    let x = startPoints[r].x;
+    let lr = 0.02;
+    let prevGrad = 0;
+    let momentum = 0;
+
+    for (let step = 0; step < 50; step++) {
+      const val = acqfSurface(x);
+      traj.push({ x, val });
+
+      // Simulated quasi-Newton step
+      const grad = acqfGradient(x);
+      momentum = 0.85 * momentum + grad;
+
+      // Adaptive step size (simulating L-BFGS-B behavior)
+      const hessianApprox = Math.abs(grad - prevGrad) > 1e-8
+        ? Math.abs(lr / (grad - prevGrad + 1e-10)) : lr;
+      const stepSize = Math.min(0.05, Math.max(0.001, hessianApprox));
+
+      x = x + stepSize * momentum;
+      x = Math.max(0, Math.min(1, x)); // Box constraint
+
+      prevGrad = grad;
+
+      // Convergence check
+      if (Math.abs(grad) < 1e-6 && step > 5) break;
+    }
+    optimTrajectories.push(traj);
+  }
+
+  // Animate
+  if (optimAnimationId) cancelAnimationFrame(optimAnimationId);
+
+  function animate() {
+    optimStep++;
+    drawOptimization();
+    if (optimStep < 55) {
+      optimAnimationId = requestAnimationFrame(animate);
+    } else {
+      optimDone = true;
+    }
+  }
+  animate();
+}
+
+document.getElementById('btn-run-optim').addEventListener('click', runOptimization);
+
+document.getElementById('btn-reset-optim').addEventListener('click', () => {
+  if (optimAnimationId) cancelAnimationFrame(optimAnimationId);
+  optimTrajectories = [];
+  optimStep = 0;
+  optimDone = false;
+  drawOptimization();
+});
+
+document.getElementById('slider-restarts').addEventListener('input', (e) => {
+  document.getElementById('restarts-val').textContent = e.target.value;
+});
+
+// ============================================================
+// SECTION 5: FULL BO LOOP
+// ============================================================
+
+const boGP = new SimpleGP();
+let boIteration = 0;
+let boBestVal = -Infinity;
+let boBestX = 0;
+let boAutoRunning = false;
+let boAutoTimeout = null;
+
+function boReset() {
+  boGP.reset();
+  boIteration = 0;
+  boBestVal = -Infinity;
+  boBestX = 0;
+  boAutoRunning = false;
+  if (boAutoTimeout) clearTimeout(boAutoTimeout);
+  document.getElementById('bo-iter-count').textContent = 'Iteration: 0 | Best: —';
+  drawBO();
+}
+
+function boStep() {
+  // Find next point via EI
+  let bestAcqX = 0.5;
+  let bestAcqVal = -Infinity;
+
+  // Find current best observation
+  let fBest = -Infinity;
+  for (let i = 0; i < boGP.ys.length; i++) {
+    if (boGP.ys[i] > fBest) fBest = boGP.ys[i];
+  }
+
+  // Optimize EI (grid search + local refinement)
+  for (let i = 0; i <= 500; i++) {
+    const x = i / 500;
+    const pred = boGP.predict(x);
+    const mu = pred.mean;
+    const sigma = Math.sqrt(pred.variance);
+
+    let ei = 0;
+    if (sigma > 1e-8 && boGP.xs.length > 0) {
+      const z = (mu - fBest) / sigma;
+      ei = (mu - fBest) * normalCDF(z) + sigma * normalPDF(z);
+    } else if (boGP.xs.length === 0) {
+      ei = sigma; // Explore when no data
+    }
+
+    if (ei > bestAcqVal) {
+      bestAcqVal = ei;
+      bestAcqX = x;
+    }
+  }
+
+  // Evaluate true function at chosen point
+  const yNew = trueFunction(bestAcqX) + (Math.random() - 0.5) * 0.1;
+  boGP.addPoint(bestAcqX, yNew);
+  boIteration++;
+
+  // Update best
+  if (yNew > boBestVal) {
+    boBestVal = yNew;
+    boBestX = bestAcqX;
+  }
+
+  document.getElementById('bo-iter-count').textContent =
+    `Iteration: ${boIteration} | Best: f(${boBestX.toFixed(3)}) = ${boBestVal.toFixed(3)}`;
+
+  drawBO();
+}
+
+function drawBO() {
+  const canvas = document.getElementById('canvas-bo');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const margin = 50;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Top: GP model
+  const gpAreaTop = 20;
+  const gpAreaHeight = H * 0.55 - 30;
+  const yMin = -1.5, yMax = 2.5;
+
+  const mxB = (x) => mapX(x, canvas, margin);
+  const myB = (y) => mapY(y, canvas, margin, yMin, yMax, gpAreaTop, gpAreaHeight);
+
+  // Divider
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin, H * 0.55);
+  ctx.lineTo(W - margin, H * 0.55);
+  ctx.stroke();
+
+  // GP band
+  const gpMean = [], gpUpper = [], gpLower = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const pred = boGP.predict(x);
+    const std = Math.sqrt(pred.variance);
+    gpMean.push([mxB(x), myB(pred.mean)]);
+    gpUpper.push([mxB(x), myB(pred.mean + 2 * std)]);
+    gpLower.push([mxB(x), myB(pred.mean - 2 * std)]);
+  }
+
+  drawFilledBand(ctx, gpUpper, gpLower, 'rgba(108, 99, 255, 0.15)');
+
+  // True function
+  const truePoints = [];
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    truePoints.push([mxB(x), myB(trueFunction(x))]);
+  }
+  drawLine(ctx, truePoints, '#ff6b6b', 1.5);
+  drawLine(ctx, gpMean, '#6c63ff', 2.5);
+
+  // Observations
+  for (let i = 0; i < boGP.xs.length; i++) {
+    drawDot(ctx, mxB(boGP.xs[i]), myB(boGP.ys[i]), 5, '#ffd93d');
+  }
+
+  // Bottom: EI acquisition function
+  const acqAreaTop = H * 0.57;
+  const acqAreaHeight = H * 0.38;
+
+  let fBest = -Infinity;
+  for (let i = 0; i < boGP.ys.length; i++) {
+    if (boGP.ys[i] > fBest) fBest = boGP.ys[i];
+  }
+
+  const eiValues = [];
+  let eiMax = -Infinity, eiMin = Infinity;
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    const pred = boGP.predict(x);
+    const mu = pred.mean;
+    const sigma = Math.sqrt(pred.variance);
+    let ei = 0;
+    if (sigma > 1e-8 && boGP.xs.length > 0) {
+      const z = (mu - fBest) / sigma;
+      ei = (mu - fBest) * normalCDF(z) + sigma * normalPDF(z);
+    } else if (boGP.xs.length === 0) {
+      ei = sigma;
+    }
+    eiValues.push(ei);
+    if (ei > eiMax) eiMax = ei;
+    if (ei < eiMin) eiMin = ei;
+  }
+
+  if (eiMax - eiMin < 1e-10) eiMax = eiMin + 1;
+
+  const myA2 = (v) => {
+    const t = (v - eiMin) / (eiMax - eiMin);
+    return acqAreaTop + acqAreaHeight - t * acqAreaHeight;
+  };
+
+  const eiPoints = [];
+  let bestEiX = 0, bestEiVal = -Infinity;
+  for (let i = 0; i <= 200; i++) {
+    const x = i / 200;
+    eiPoints.push([mxB(x), myA2(eiValues[i])]);
+    if (eiValues[i] > bestEiVal) {
+      bestEiVal = eiValues[i];
+      bestEiX = x;
+    }
+  }
+
+  // Fill under EI
+  ctx.beginPath();
+  ctx.fillStyle = 'rgba(0, 201, 167, 0.1)';
+  ctx.moveTo(eiPoints[0][0], myA2(eiMin));
+  for (const p of eiPoints) ctx.lineTo(p[0], p[1]);
+  ctx.lineTo(eiPoints[eiPoints.length - 1][0], myA2(eiMin));
+  ctx.closePath();
+  ctx.fill();
+
+  drawLine(ctx, eiPoints, '#00c9a7', 2.5);
+
+  // Next point star
+  if (boGP.xs.length > 0) {
+    drawStar(ctx, mxB(bestEiX), myA2(bestEiVal) - 12, 8, '#fff');
+
+    // Vertical dashed line
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(mxB(bestEiX), myA2(bestEiVal));
+    ctx.lineTo(mxB(bestEiX), myB(yMin));
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Labels
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('GP Surrogate Model', margin + 5, gpAreaTop + 16);
+  ctx.fillText('Expected Improvement (EI)', margin + 5, acqAreaTop + 16);
+
+  // Show true optimum
+  const trueOpt = trueFunctionMax();
+  ctx.setLineDash([2, 4]);
+  ctx.strokeStyle = 'rgba(255, 107, 107, 0.3)';
+  ctx.beginPath();
+  ctx.moveTo(mxB(trueOpt.x), myB(yMin));
+  ctx.lineTo(mxB(trueOpt.x), myB(trueOpt.y));
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(255, 107, 107, 0.5)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('true optimum', mxB(trueOpt.x) + 5, myB(trueOpt.y) - 5);
+}
+
+document.getElementById('btn-bo-step').addEventListener('click', boStep);
+
+document.getElementById('btn-bo-auto').addEventListener('click', () => {
+  if (boAutoRunning) return;
+  boAutoRunning = true;
+  let steps = 0;
+  function autoStep() {
+    if (steps >= 10 || !boAutoRunning) {
+      boAutoRunning = false;
+      return;
+    }
+    boStep();
+    steps++;
+    boAutoTimeout = setTimeout(autoStep, 600);
+  }
+  autoStep();
+});
+
+document.getElementById('btn-bo-reset').addEventListener('click', boReset);
+
+// ============================================================
+// SECTION 6: CONVERGENCE VISUALIZATION
+// ============================================================
+
+function drawConvergence() {
+  const canvas = document.getElementById('canvas-convergence');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const margin = 60;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const areaTop = 30;
+  const areaHeight = H - 80;
+
+  // Simulate convergence data
+  const sampleSizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024];
+  const mcErrors = [];
+  const qmcErrors = [];
+
+  // MC: O(1/sqrt(N)) convergence
+  // QMC: O(1/N) or better convergence
+  const baseError = 1.0;
+  for (const N of sampleSizes) {
+    const mcErr = baseError / Math.sqrt(N) * (1 + 0.15 * (Math.random() - 0.5));
+    const qmcErr = baseError / (N * 0.8) * (1 + 0.1 * (Math.random() - 0.5));
+    mcErrors.push(Math.max(0.0001, mcErr));
+    qmcErrors.push(Math.max(0.00001, qmcErr));
+  }
+
+  // Log scale
+  const logSamples = sampleSizes.map(n => Math.log2(n));
+  const logMC = mcErrors.map(e => Math.log2(e));
+  const logQMC = qmcErrors.map(e => Math.log2(e));
+
+  const xMin = logSamples[0] - 0.5;
+  const xMax = logSamples[logSamples.length - 1] + 0.5;
+  const yMin2 = Math.min(...logQMC) - 1;
+  const yMax2 = Math.max(...logMC) + 1;
+
+  const mxC = (lx) => margin + ((lx - xMin) / (xMax - xMin)) * (W - 2 * margin);
+  const myC = (ly) => areaTop + areaHeight - ((ly - yMin2) / (yMax2 - yMin2)) * areaHeight;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  for (let lx = 2; lx <= 10; lx += 2) {
+    ctx.beginPath();
+    ctx.moveTo(mxC(lx), myC(yMin2));
+    ctx.lineTo(mxC(lx), myC(yMax2));
+    ctx.stroke();
+  }
+
+  // MC line
+  const mcPoints = logSamples.map((lx, i) => [mxC(lx), myC(logMC[i])]);
+  drawLine(ctx, mcPoints, '#ff6b6b', 3);
+  for (const p of mcPoints) drawDot(ctx, p[0], p[1], 5, '#ff6b6b');
+
+  // QMC line
+  const qmcPoints = logSamples.map((lx, i) => [mxC(lx), myC(logQMC[i])]);
+  drawLine(ctx, qmcPoints, '#6c63ff', 3);
+  for (const p of qmcPoints) drawDot(ctx, p[0], p[1], 5, '#6c63ff');
+
+  // Slope annotations
+  ctx.font = '13px sans-serif';
+  ctx.fillStyle = '#ff6b6b';
+  ctx.textAlign = 'left';
+  ctx.fillText('MC: O(1/√N) — slope ≈ -0.5', mxC(6), myC(logMC[4]) - 15);
+
+  ctx.fillStyle = '#6c63ff';
+  ctx.fillText('QMC (Sobol): O(1/N) — slope ≈ -1.0', mxC(4), myC(logQMC[2]) + 25);
+
+  // Highlight the 64x reduction
+  if (logMC.length > 6 && logQMC.length > 2) {
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(255, 217, 61, 0.5)';
+    ctx.lineWidth = 1;
+
+    // Draw horizontal line from MC at N=4096 to QMC at same error level
+    const mcAt4096 = logMC[logMC.length - 1];
+    // Find QMC sample size that achieves same error
+    let matchIdx = 0;
+    for (let i = 0; i < logQMC.length; i++) {
+      if (logQMC[i] <= mcAt4096) { matchIdx = i; break; }
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(mxC(logSamples[matchIdx]), myC(mcAt4096));
+    ctx.lineTo(mxC(logSamples[logSamples.length - 1]), myC(mcAt4096));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#ffd93d';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('~64× fewer samples needed!', (mxC(logSamples[matchIdx]) + mxC(logSamples[logSamples.length - 1])) / 2, myC(mcAt4096) - 10);
+  }
+
+  // Axes
+  ctx.fillStyle = '#9ca3af';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'center';
+  for (const n of sampleSizes) {
+    const lx = Math.log2(n);
+    ctx.fillText(n.toString(), mxC(lx), H - 10);
+  }
+  ctx.fillText('Number of MC Samples (N)', W / 2, H - 0);
+
+  ctx.save();
+  ctx.translate(15, H / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('log₂(Error of SAA Optimizer)', 0, 0);
+  ctx.restore();
+}
+
+document.getElementById('btn-run-convergence').addEventListener('click', drawConvergence);
+
+// ============================================================
+// INITIAL DRAWS
+// ============================================================
+
+drawGP();
+drawReparameterization();
+drawAcqf();
+drawOptimization();
+drawBO();
+drawConvergence();
+
+</script>
+</body>
+</html>

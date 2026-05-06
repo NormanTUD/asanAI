@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Adjoint Functors – Interactive Explorer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+  
+  .header { text-align: center; padding: 24px; background: #1e293b; border-bottom: 2px solid #334155; }
+  .header h1 { font-size: 1.6em; color: #38bdf8; }
+  .header p { color: #94a3b8; margin-top: 8px; font-size: 0.95em; max-width: 700px; margin-left: auto; margin-right: auto; }
+  
+  .main { display: flex; flex-wrap: wrap; gap: 16px; padding: 20px; max-width: 1400px; margin: auto; }
+  
+  .panel { background: #1e293b; border-radius: 12px; border: 1px solid #334155; padding: 20px; flex: 1; min-width: 300px; }
+  .panel h2 { color: #38bdf8; font-size: 1.1em; margin-bottom: 12px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+  
+  .category-box { display: flex; gap: 40px; justify-content: center; align-items: flex-start; flex-wrap: wrap; margin: 16px 0; }
+  .cat { text-align: center; }
+  .cat-label { font-size: 1.3em; font-weight: bold; margin-bottom: 8px; }
+  .cat-label.c-label { color: #4ade80; }
+  .cat-label.d-label { color: #f472b6; }
+  
+  .obj-list { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .obj { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+         font-weight: bold; font-size: 1.1em; cursor: pointer; transition: all 0.2s; border: 3px solid transparent; }
+  .obj:hover { transform: scale(1.15); }
+  .obj.c-obj { background: #166534; color: #bbf7d0; }
+  .obj.c-obj.selected { border-color: #4ade80; box-shadow: 0 0 16px #4ade8066; }
+  .obj.d-obj { background: #831843; color: #fbcfe8; }
+  .obj.d-obj.selected { border-color: #f472b6; box-shadow: 0 0 16px #f472b666; }
+  
+  .functor-arrows { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-width: 100px; }
+  .functor-arrows .arrow-label { font-size: 1.1em; font-weight: bold; }
+  .functor-arrows .l-arrow { color: #facc15; }
+  .functor-arrows .r-arrow { color: #a78bfa; }
+  
+  svg.diagram { width: 100%; height: 320px; }
+  
+  .hom-set-display { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+  .hom-box { background: #0f172a; border-radius: 8px; padding: 14px; min-width: 220px; text-align: center; border: 2px solid #334155; transition: border-color 0.3s; }
+  .hom-box.highlight { border-color: #facc15; }
+  .hom-box h3 { font-size: 0.95em; margin-bottom: 8px; }
+  .hom-box .morphisms { display: flex; flex-direction: column; gap: 4px; }
+  .morph { background: #334155; border-radius: 4px; padding: 4px 10px; font-family: monospace; font-size: 0.9em; cursor: pointer; transition: all 0.2s; }
+  .morph:hover { background: #475569; }
+  .morph.active { background: #854d0e; color: #fef08a; }
+  .morph.adjunct { background: #4c1d95; color: #ddd6fe; }
+  
+  .bijection-arrow { text-align: center; font-size: 2em; color: #facc15; padding: 0 8px; display: flex; align-items: center; }
+  
+  .info-box { background: #0f172a; border-radius: 8px; padding: 14px; margin-top: 12px; border-left: 4px solid #38bdf8; font-size: 0.9em; line-height: 1.6; }
+  .info-box code { background: #334155; padding: 2px 6px; border-radius: 3px; color: #fbbf24; }
+  
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+  .btn { padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.9em; font-weight: 600; transition: all 0.2s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: #2563eb; color: white; }
+  .btn-secondary { background: #475569; color: #e2e8f0; }
+  .btn-accent { background: #d97706; color: white; }
+  
+  .unit-counit { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+  .uc-box { background: #0f172a; border-radius: 8px; padding: 14px; text-align: center; min-width: 200px; }
+  .uc-box h3 { font-size: 0.9em; color: #94a3b8; margin-bottom: 6px; }
+  .uc-box .formula { font-family: monospace; font-size: 1.05em; color: #fbbf24; }
+  
+  .triangle-id { margin-top: 16px; padding: 14px; background: #0f172a; border-radius: 8px; text-align: center; }
+  .triangle-id h3 { color: #f472b6; margin-bottom: 8px; }
+  .triangle-id .eq { font-family: monospace; font-size: 1em; color: #e2e8f0; margin: 4px 0; }
+  .triangle-id .check { color: #4ade80; font-weight: bold; }
+  
+  .tab-bar { display: flex; gap: 4px; margin-bottom: 12px; }
+  .tab { padding: 6px 14px; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 0.85em; background: #334155; color: #94a3b8; border: 1px solid #334155; border-bottom: none; }
+  .tab.active { background: #1e293b; color: #38bdf8; border-color: #38bdf8; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  
+  .example-select { padding: 6px 12px; border-radius: 6px; background: #334155; color: #e2e8f0; border: 1px solid #475569; font-size: 0.9em; }
+  
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .pulsing { animation: pulse 1.5s infinite; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⊣ Adjoint Functors — Interactive Explorer</h1>
+  <p>Pick objects in categories 𝒞 and 𝒟, see how L and R map them, and watch the hom-set bijection in action. Click morphisms to see their adjuncts.</p>
+</div>
+
+<div class="main">
+  <!-- Left panel: Categories & Functors -->
+  <div class="panel" style="flex: 2;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <h2>Categories & Functors</h2>
+      <div>
+        <label style="color:#94a3b8; font-size:0.85em;">Example: </label>
+        <select class="example-select" id="exampleSelect" onchange="loadExample(this.value)">
+          <option value="free-forget">Free ⊣ Forgetful (Sets ↔ Groups)</option>
+          <option value="discrete-forget">Discrete ⊣ Forgetful (Sets ↔ Top)</option>
+          <option value="simple">Simple (3 objects each)</option>
+        </select>
+      </div>
+    </div>
+    
+    <svg class="diagram" id="mainDiagram"></svg>
+    
+    <div style="text-align:center; margin-top:8px;">
+      <span style="color:#94a3b8; font-size:0.85em;">Click objects to select c ∈ 𝒞 and d ∈ 𝒟</span>
+    </div>
+  </div>
+  
+  <!-- Right panel: Hom-set bijection -->
+  <div class="panel" style="flex: 1.5;">
+    <h2>Hom-Set Bijection</h2>
+    <div id="homDisplay">
+      <div class="info-box">
+        Select an object <code>c ∈ 𝒞</code> and <code>d ∈ 𝒟</code> to see the bijection:<br><br>
+        <center style="font-size:1.1em;">Hom<sub>𝒟</sub>(L(c), d) &nbsp;≅&nbsp; Hom<sub>𝒞</sub>(c, R(d))</center>
+      </div>
+    </div>
+    
+    <div id="adjunctInfo" style="display:none; margin-top: 12px;">
+      <div class="info-box" id="adjunctDetail"></div>
+    </div>
+  </div>
+</div>
+
+<div class="main" style="padding-top:0;">
+  <!-- Unit & Counit -->
+  <div class="panel" style="flex:1;">
+    <h2>Unit η & Counit ε</h2>
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('unit')">Unit η</div>
+      <div class="tab" onclick="switchTab('counit')">Counit ε</div>
+      <div class="tab" onclick="switchTab('triangle')">Triangle Identities</div>
+    </div>
+    
+    <div class="tab-content active" id="tab-unit">
+      <div class="info-box">
+        The <strong>unit</strong> η<sub>c</sub> : c → R(L(c)) is the adjunct of id<sub>L(c)</sub>.<br>
+        It's the "best approximation" of c inside R's image.
+      </div>
+      <div class="unit-counit" id="unitDisplay"></div>
+    </div>
+    
+    <div class="tab-content" id="tab-counit">
+      <div class="info-box">
+        The <strong>counit</strong> ε<sub>d</sub> : L(R(d)) → d is the adjunct of id<sub>R(d)</sub>.<br>
+        It's the "best approximation" of d from L's image.
+      </div>
+      <div class="unit-counit" id="counitDisplay"></div>
+    </div>
+    
+    <div class="tab-content" id="tab-triangle">
+      <div class="info-box">
+        The <strong>triangle identities</strong> (zig-zag identities) say:<br>
+        <code>ε<sub>L(c)</sub> ∘ L(η<sub>c</sub>) = id<sub>L(c)</sub></code><br>
+        <code>R(ε<sub>d</sub>) ∘ η<sub>R(d)</sub> = id<sub>R(d)</sub></code>
+      </div>
+      <div class="triangle-id" id="triangleDisplay"></div>
+    </div>
+  </div>
+  
+  <!-- Intuition -->
+  <div class="panel" style="flex:1;">
+    <h2>What's Happening?</h2>
+    <div class="info-box" id="intuitionBox">
+      <p><strong>Adjoint functors</strong> are pairs of functors L : 𝒞 → 𝒟 and R : 𝒟 → 𝒞 where morphisms L(c) → d in 𝒟 correspond bijectively to morphisms c → R(d) in 𝒞.</p>
+      <br>
+      <p>Think of it as: <strong>L</strong> (left adjoint) is the "free" or "best approximation" functor, and <strong>R</strong> (right adjoint) is the "forgetful" or "underlying" functor.</p>
+      <br>
+      <p>🔵 Click objects in the diagram above<br>
+         🟡 Click morphisms to see adjuncts<br>
+         🟢 Watch the unit/counit update live</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ DATA MODELS ============
+
+const examples = {
+  'free-forget': {
+    name: 'Free ⊣ Forgetful',
+    catC: { name: '𝒞 (Sets)', objects: ['{∅}', '{a}', '{a,b}'] },
+    catD: { name: '𝒟 (Grps)', objects: ['⟨e⟩', '⟨g⟩', '⟨g,h⟩'] },
+    L: { '{∅}': '⟨e⟩', '{a}': '⟨g⟩', '{a,b}': '⟨g,h⟩' },  // Free group
+    R: { '⟨e⟩': '{∅}', '⟨g⟩': '{a}', '⟨g,h⟩': '{a,b}' },  // Underlying set
+    // Morphisms in D from L(c)->d
+    homD: function(lc, d) {
+      const idx_lc = this.catD.objects.indexOf(lc);
+      const idx_d = this.catD.objects.indexOf(d);
+      if (idx_lc < 0 || idx_d < 0) return [];
+      const morphs = [];
+      if (idx_lc === 0) { morphs.push(`!_${d}`); } // unique from trivial
+      else if (idx_lc === idx_d) { morphs.push(`id_${d}`); if(idx_lc > 0) morphs.push(`inv_${d}`); }
+      else if (idx_lc < idx_d) { morphs.push(`ι_${lc}→${d}`); if(idx_lc > 0) morphs.push(`ι'_${lc}→${d}`); }
+      else if (idx_lc === 1 && idx_d === 0) { morphs.push(`triv_${lc}→${d}`); }
+      else { morphs.push(`π_${lc}→${d}`); morphs.push(`π'_${lc}→${d}`); }
+      return morphs;
+    },
+    // Corresponding morphisms in C from c->R(d)
+    homC: function(c, rd) {
+      const idx_c = this.catC.objects.indexOf(c);
+      const idx_rd = this.catC.objects.indexOf(rd);
+      if (idx_c < 0 || idx_rd < 0) return [];
+      const morphs = [];
+      if (idx_c === 0) { morphs.push(`!_${rd}`); }
+      else if (idx_c === idx_rd) { morphs.push(`id_${rd}`); if(idx_c > 0) morphs.push(`swap_${rd}`); }
+      else if (idx_c < idx_rd) { morphs.push(`ι_${c}→${rd}`); if(idx_c > 0) morphs.push(`ι'_${c}→${rd}`); }
+      else if (idx_c === 1 && idx_rd === 0) { morphs.push(`!_${c}→${rd}`); }
+      else { morphs.push(`π_${c}→${rd}`); morphs.push(`π'_${c}→${rd}`); }
+      return morphs;
+    }
+  },
+  'discrete-forget': {
+    name: 'Discrete ⊣ Forgetful',
+    catC: { name: '𝒞 (Sets)', objects: ['∅', '{x}', '{x,y}'] },
+    catD: { name: '𝒟 (Top)', objects: ['∅ₜ', '{x}ₜ', '{x,y}ₜ'] },
+    L: { '∅': '∅ₜ', '{x}': '{x}ₜ', '{x,y}': '{x,y}ₜ' },
+    R: { '∅ₜ': '∅', '{x}ₜ': '{x}', '{x,y}ₜ': '{x,y}' },
+    homD: function(lc, d) {
+      const idx_lc = this.catD.objects.indexOf(lc);
+      const idx_d = this.catD.objects.indexOf(d);
+      if (idx_lc < 0 || idx_d < 0) return [];
+      if (idx_lc === 0) return [`!_${d}`];
+      if (idx_lc === idx_d) return [`id_${d}`];
+      if (idx_lc === 1 && idx_d === 2) return [`ι₁`, `ι₂`];
+      if (idx_lc === 2 && idx_d === 1) return [`π₁`, `π₂`];
+      if (idx_lc === 2 && idx_d === 0) return [];
+      return [`f_${lc}→${d}`];
+    },
+    homC: function(c, rd) {
+      const idx_c = this.catC.objects.indexOf(c);
+      const idx_rd = this.catC.objects.indexOf(rd);
+      if (idx_c < 0 || idx_rd < 0) return [];
+      if (idx_c === 0) return [`!_${rd}`];
+      if (idx_c === idx_rd) return [`id_${rd}`];
+      if (idx_c === 1 && idx_rd === 2) return [`ι₁`, `ι₂`];
+      if (idx_c === 2 && idx_rd === 1) return [`π₁`, `π₂`];
+      if (idx_c === 2 && idx_rd === 0) return [];
+      return [`f_${c}→${rd}`];
+    }
+  },
+  'simple': {
+    name: 'Simple Example',
+    catC: { name: '𝒞', objects: ['a', 'b', 'c'] },
+    catD: { name: '𝒟', objects: ['x', 'y', 'z'] },
+    L: { 'a': 'x', 'b': 'y', 'c': 'z' },
+    R: { 'x': 'a', 'y': 'b', 'z': 'c' },
+    homD: function(lc, d) {
+      const idx_lc = this.catD.objects.indexOf(lc);
+      const idx_d = this.catD.objects.indexOf(d);
+      if (idx_lc < 0 || idx_d < 0) return [];
+      if (idx_lc === idx_d) return [`id_${d}`];
+      if (idx_lc < idx_d) return [`f_${lc}→${d}`];
+      return [];
+    },
+    homC: function(c, rd) {
+      const idx_c = this.catC.objects.indexOf(c);
+      const idx_rd = this.catC.objects.indexOf(rd);
+      if (idx_c < 0 || idx_rd < 0) return [];
+      if (idx_c === idx_rd) return [`id_${rd}`];
+      if (idx_c < idx_rd) return [`g_${c}→${rd}`];
+      return [];
+    }
+  }
+};
+
+let currentExample = examples['free-forget'];
+let selectedC = null;
+let selectedD = null;
+let selectedMorphIdx = -1;
+let selectedSide = null; // 'left' or 'right'
+
+// ============ SVG DIAGRAM ============
+
+function drawDiagram() {
+  const svg = document.getElementById('mainDiagram');
+  const W = svg.clientWidth || 700;
+  const H = 320;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  
+  const catC = currentExample.catC;
+  const catD = currentExample.catD;
+  const cX = W * 0.2;
+  const dX = W * 0.8;
+  const startY = 60;
+  const gap = 75;
+  
+  let html = '';
+  
+  // Category labels
+  html += `<text x="${cX}" y="30" text-anchor="middle" fill="#4ade80" font-size="18" font-weight="bold">${catC.name}</text>`;
+  html += `<text x="${dX}" y="30" text-anchor="middle" fill="#f472b6" font-size="18" font-weight="bold">${catD.name}</text>`;
+  
+  // Category boxes
+  const boxPad = 30;
+  const boxH = catC.objects.length * gap + 20;
+  html += `<rect x="${cX-60}" y="${startY-25}" width="120" height="${boxH}" rx="12" fill="none" stroke="#4ade8044" stroke-width="2" stroke-dasharray="6,4"/>`;
+  html += `<rect x="${dX-60}" y="${startY-25}" width="120" height="${boxH}" rx="12" fill="none" stroke="#f472b644" stroke-width="2" stroke-dasharray="6,4"/>`;
+  
+  // Functor arrows (L going right on top, R going left on bottom)
+  const midY_top = startY + 10;
+  const midY_bot = startY + boxH - 35;
+  const arrowStartX = cX + 65;
+  const arrowEndX = dX - 65;
+  const midX = (arrowStartX + arrowEndX) / 2;
+  
+  // L arrow (top, yellow)
+  html += `<defs><marker id="arrowY" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#facc15"/></marker>`;
+  html += `<marker id="arrowP" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/></marker>`;
+  html += `<marker id="arrowG" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#4ade80"/></marker>`;
+  html += `<marker id="arrowPk" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#f472b6"/></marker></defs>`;
+  
+  html += `<path d="M ${arrowStartX} ${midY_top} Q ${midX} ${midY_top - 30} ${arrowEndX} ${midY_top}" fill="none" stroke="#facc15" stroke-width="2.5" marker-end="url(#arrowY)"/>`;
+  html += `<text x="${midX}" y="${midY_top - 22}" text-anchor="middle" fill="#facc15" font-size="16" font-weight="bold">L</text>`;
+  
+  // R arrow (bottom, purple, going left)
+  html += `<path d="M ${arrowEndX} ${midY_bot} Q ${midX} ${midY_bot + 30} ${arrowStartX} ${midY_bot}" fill="none" stroke="#a78bfa" stroke-width="2.5" marker-end="url(#arrowP)"/>`;
+  html += `<text x="${midX}" y="${midY_bot + 38}" text-anchor="middle" fill="#a78bfa" font-size="16" font-weight="bold">R</text>`;
+  
+  // ⊣ symbol
+  html += `<text x="${midX}" y="${(midY_top + midY_bot)/2 + 5}" text-anchor="middle" fill="#e2e8f0" font-size="22" font-weight="bold">⊣</text>`;
+  
+  // Objects in C
+  catC.objects.forEach((obj, i) => {
+    const y = startY + i * gap;
+    const isSel = selectedC === obj;
+    const fill = isSel ? '#22c55e' : '#166534';
+    const stroke = isSel ? '#4ade80' : 'transparent';
+    const r = isSel ? 26 : 22;
+    html += `<circle cx="${cX}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="3" 
+              style="cursor:pointer; filter: ${isSel ? 'drop-shadow(0 0 8px #4ade80)' : 'none'};" 
+              onclick="selectObj('c', ${i})"/>`;
+    html += `<text x="${cX}" y="${y+5}" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="bold" 
+              style="pointer-events:none;">${obj}</text>`;
+    
+    // Draw L mapping line
+    const targetD = currentExample.L[obj];
+    const targetIdx = catD.objects.indexOf(targetD);
+    if (targetIdx >= 0 && isSel) {
+      const ty = startY + targetIdx * gap;
+      html += `<line x1="${cX+28}" y1="${y}" x2="${dX-28}" y2="${ty}" stroke="#facc1566" stroke-width="1.5" stroke-dasharray="5,5"/>`;
+      html += `<text x="${(cX+dX)/2}" y="${(y+ty)/2 - 6}" text-anchor="middle" fill="#facc15" font-size="11">L(${obj})=${targetD}</text>`;
+    }
+  });
+  
+  // Objects in D
+  catD.objects.forEach((obj, i) => {
+    const y = startY + i * gap;
+    const isSel = selectedD === obj;
+    const fill = isSel ? '#db2777' : '#831843';
+    const stroke = isSel ? '#f472b6' : 'transparent';
+    const r = isSel ? 26 : 22;
+    html += `<circle cx="${dX}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="3" 
+              style="cursor:pointer; filter: ${isSel ? 'drop-shadow(0 0 8px #f472b6)' : 'none'};" 
+              onclick="selectObj('d', ${i})"/>`;
+    html += `<text x="${dX}" y="${y+5}" text-anchor="middle" fill="#fbcfe8" font-size="13" font-weight="bold" 
+              style="pointer-events:none;">${obj}</text>`;
+    
+    // Draw R mapping line
+    const targetC = currentExample.R[obj];
+    const targetIdx = catC.objects.indexOf(targetC);
+    if (targetIdx >= 0 && isSel) {
+      const ty = startY + targetIdx * gap;
+      html += `<line x1="${dX-28}" y1="${y}" x2="${cX+28}" y2="${ty}" stroke="#a78bfa66" stroke-width="1.5" stroke-dasharray="5,5"/>`;
+      html += `<text x="${(cX+dX)/2}" y="${(y+ty)/2 + 16}" text-anchor="middle" fill="#a78bfa" font-size="11">R(${obj})=${targetC}</text>`;
+    }
+  });
+  
+  svg.innerHTML = html;
+}
+
+// ============ SELECTION ============
+
+function selectObj(cat, idx) {
+  if (cat === 'c') {
+    selectedC = currentExample.catC.objects[idx];
+  } else {
+    selectedD = currentExample.catD.objects[idx];
+  }
+  selectedMorphIdx = -1;
+  selectedSide = null;
+  update();
+}
+
+// ============ HOM-SET DISPLAY ============
+
+function updateHomDisplay() {
+  const container = document.getElementById('homDisplay');
+  const adjunctInfo = document.getElementById('adjunctInfo');
+  
+  if (!selectedC || !selectedD) {
+    container.innerHTML = `<div class="info-box">
+      Select an object <code>c ∈ 𝒞</code> and <code>d ∈ 𝒟</code> to see the bijection:<br><br>
+      <center style="font-size:1.1em;">Hom<sub>𝒟</sub>(L(c), d) &nbsp;≅&nbsp; Hom<sub>𝒞</sub>(c, R(d))</center>
+    </div>`;
+    adjunctInfo.style.display = 'none';
+    return;
+  }
+  
+  const c = selectedC;
+  const d = selectedD;
+  const lc = currentExample.L[c];
+  const rd = currentExample.R[d];
+  
+  const morphsD = currentExample.homD(lc, d);
+  const morphsC = currentExample.homC(c, rd);
+  
+  let html = `<div style="text-align:center;margin-bottom:8px; color:#94a3b8; font-size:0.85em;">
+    Selecting: <code>c = ${c}</code>, <code>d = ${d}</code> &nbsp;|&nbsp; 
+    <code>L(${c}) = ${lc}</code>, <code>R(${d}) = ${rd}</code>
+  </div>`;
+  
+  html += `<div class="hom-set-display">`;
+  
+  // Left hom-set: Hom_D(L(c), d)
+  html += `<div class="hom-box" id="homBoxLeft">
+    <h3 style="color:#facc15;">Hom<sub>𝒟</sub>(L(${c}), ${d})</h3>
+    <h3 style="color:#facc15; font-size:0.85em;">= Hom<sub>𝒟</sub>(${lc}, ${d})</h3>
+    <div class="morphisms">`;
+  
+  if (morphsD.length === 0) {
+    html += `<div class="morph" style="color:#64748b;">∅ (empty)</div>`;
+  } else {
+    morphsD.forEach((m, i) => {
+      const isActive = selectedSide === 'left' && selectedMorphIdx === i;
+      html += `<div class="morph ${isActive ? 'active' : ''}" onclick="selectMorph('left', ${i})">${m}</div>`;
+    });
+  }
+  html += `</div></div>`;
+  
+  // Bijection arrow
+  html += `<div class="bijection-arrow">≅</div>`;
+  
+  // Right hom-set: Hom_C(c, R(d))
+  html += `<div class="hom-box" id="homBoxRight">
+    <h3 style="color:#a78bfa;">Hom<sub>𝒞</sub>(${c}, R(${d}))</h3>
+    <h3 style="color:#a78bfa; font-size:0.85em;">= Hom<sub>𝒞</sub>(${c}, ${rd})</h3>
+    <div class="morphisms">`;
+  
+  if (morphsC.length === 0) {
+    html += `<div class="morph" style="color:#64748b;">∅ (empty)</div>`;
+  } else {
+    morphsC.forEach((m, i) => {
+      const isActive = selectedSide === 'right' && selectedMorphIdx === i;
+      html += `<div class="morph ${isActive ? 'adjunct' : ''}" onclick="selectMorph('right', ${i})">${m}</div>`;
+    });
+  }
+  html += `</div></div>`;
+  html += `</div>`;
+  
+  // Cardinality info
+  html += `<div style="text-align:center; margin-top:8px; color:#94a3b8; font-size:0.8em;">
+    |Hom<sub>𝒟</sub>(${lc}, ${d})| = ${morphsD.length} &nbsp;=&nbsp; |Hom<sub>𝒞</sub>(${c}, ${rd})| = ${morphsC.length}
+    &nbsp; ✓ bijection
+  </div>`;
+  
+  container.innerHTML = html;
+  
+  // Show adjunct info if a morphism is selected
+  if (selectedMorphIdx >= 0 && selectedSide) {
+    const detail = document.getElementById('adjunctInfo');
+    detail.style.display = 'block';
+    let adjunctHtml = '';
+    if (selectedSide === 'left') {
+      const f = morphsD[selectedMorphIdx] || '?';
+      const ft = morphsC[selectedMorphIdx] || '?';
+      adjunctHtml = `<strong>Adjunct mapping:</strong><br>
+        <code style="color:#facc15;">${f} : L(${c})=${lc} → ${d}</code><br>
+        &nbsp;&nbsp;↦&nbsp;&nbsp;<br>
+        <code style="color:#a78bfa;">${ft} : ${c} → R(${d})=${rd}</code><br><br>
+        <em>Formula:</em> f̃ = R(f) ∘ η<sub>${c}</sub>`;
+    } else {
+      const ft = morphsC[selectedMorphIdx] || '?';
+      const f = morphsD[selectedMorphIdx] || '?';
+      adjunctHtml = `<strong>Adjunct mapping:</strong><br>
+        <code style="color:#a78bfa;">${ft} : ${c} → R(${d})=${rd}</code><br>
+        &nbsp;&nbsp;↦&nbsp;&nbsp;<br>
+        <code style="color:#facc15;">${f} : L(${c})=${lc} → ${d}</code><br><br>
+        <em>Formula:</em> f = ε<sub>${d}</sub> ∘ L(f̃)`;
+    }
+    document.getElementById('adjunctDetail').innerHTML = adjunctHtml;
+  } else {
+    document.getElementById('adjunctInfo').style.display = 'none';
+  }
+}
+
+// ============ MORPHISM SELECTION ============
+
+function selectMorph(side, idx) {
+  selectedSide = side;
+  selectedMorphIdx = idx;
+  update();
+}
+
+// ============ UNIT/COUNIT DISPLAY ============
+
+function updateUnitCounit() {
+  const unitDiv = document.getElementById('unitDisplay');
+  const counitDiv = document.getElementById('counitDisplay');
+  const triangleDiv = document.getElementById('triangleDisplay');
+  
+  let unitHtml = '';
+  let counitHtml = '';
+  
+  currentExample.catC.objects.forEach(c => {
+    const lc = currentExample.L[c];
+    const rlc = currentExample.R[lc];
+    const highlight = (selectedC === c) ? 'style="border:2px solid #4ade80;"' : '';
+    unitHtml += `<div class="uc-box" ${highlight}>
+      <h3>η<sub>${c}</sub></h3>
+      <div class="formula">${c} → R(L(${c})) = ${rlc}</div>
+    </div>`;
+  });
+  
+  currentExample.catD.objects.forEach(d => {
+    const rd = currentExample.R[d];
+    const lrd = currentExample.L[rd];
+    const highlight = (selectedD === d) ? 'style="border:2px solid #f472b6;"' : '';
+    counitHtml += `<div class="uc-box" ${highlight}>
+      <h3>ε<sub>${d}</sub></h3>
+      <div class="formula">L(R(${d})) = ${lrd} → ${d}</div>
+    </div>`;
+  });
+  
+  unitDiv.innerHTML = unitHtml;
+  counitDiv.innerHTML = counitHtml;
+  
+  // Triangle identities
+  let triHtml = '<div style="display:flex; flex-direction:column; gap:8px;">';
+  currentExample.catC.objects.forEach(c => {
+    const lc = currentExample.L[c];
+    triHtml += `<div class="eq">
+      ε<sub>${lc}</sub> ∘ L(η<sub>${c}</sub>) = id<sub>${lc}</sub> 
+      <span class="check">✓</span>
+    </div>`;
+  });
+  currentExample.catD.objects.forEach(d => {
+    const rd = currentExample.R[d];
+    triHtml += `<div class="eq">
+      R(ε<sub>${d}</sub>) ∘ η<sub>${rd}</sub> = id<sub>${rd}</sub> 
+      <span class="check">✓</span>
+    </div>`;
+  });
+  triHtml += '</div>';
+  triangleDiv.innerHTML = triHtml;
+}
+
+// ============ TABS ============
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ============ EXAMPLE LOADING ============
+
+function loadExample(name) {
+  currentExample = examples[name];
+  selectedC = null;
+  selectedD = null;
+  selectedMorphIdx = -1;
+  selectedSide = null;
+  update();
+}
+
+// ============ MAIN UPDATE ============
+
+function update() {
+  drawDiagram();
+  updateHomDisplay();
+  updateUnitCounit();
+}
+
+// ============ INIT ============
+window.addEventListener('load', () => {
+  update();
+});
+window.addEventListener('resize', () => {
+  drawDiagram();
+});
+</script>
+
+</body>
+</html>

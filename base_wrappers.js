@@ -386,21 +386,17 @@ function removeTimestampAndLines(inputString) {
 }
 
 var get_stack_trace = function(force=0) {
-	var s = "";
-	if(!debug && force == 0) {
-		return "Use debug to enable tensor debugging.";
-	}
+    var s = "";
+    if(!debug && force == 0) {
+        return "Use debug to enable tensor debugging.";
+    }
 
-	try {
-		var a = {};
-		a.debug();
-	} catch(ex) {
-		s = "" + ex.stack;
-	}
+    var e = new Error();
+    s = "" + (e.stack || "");
 
-	s = removeTimestampAndLines(s);
+    s = removeTimestampAndLines(s);
 
-	return s;
+    return s;
 };
 
 async function nextFrame(...args) {

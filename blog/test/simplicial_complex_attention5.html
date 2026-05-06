@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attention → Simplicial Complexes</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, sans-serif; background: #0d1117; color: #e0e0e0; padding: 20px; }
+        .app { max-width: 1200px; margin: 0 auto; }
+        h1 { text-align: center; color: #fff; margin-bottom: 6px; font-size: 1.5em; }
+        .subtitle { text-align: center; color: #8b949e; margin-bottom: 20px; font-size: 0.9em; }
+        .input-area { margin-bottom: 16px; }
+        .input-area input {
+            width: 100%; padding: 14px 18px; font-size: 1.1em;
+            background: #161b22; border: 2px solid #30363d; border-radius: 10px;
+            color: #fff; outline: none; transition: border-color 0.2s;
+        }
+        .input-area input:focus { border-color: #58a6ff; }
+        .axes-label { text-align: center; color: #8b949e; font-size: 0.8em; margin-bottom: 8px; }
+        #plot { width: 100%; height: 580px; border-radius: 10px; overflow: hidden; }
+        .bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 16px; }
+        .card h2 { font-size: 1em; color: #58a6ff; margin-bottom: 10px; }
+        .slider-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+        .slider-row label { font-size: 0.82em; color: #8b949e; min-width: 80px; }
+        .slider-row input[type="range"] { flex: 1; accent-color: #58a6ff; }
+        .slider-row span { font-size: 0.82em; color: #58a6ff; min-width: 36px; }
+        .simplex-info { font-size: 0.82em; line-height: 1.8; max-height: 260px; overflow-y: auto; }
+        .s0 { color: #58a6ff; }
+        .s1 { color: #3fb950; }
+        .s2 { color: #f0c040; }
+        .legend { display: flex; gap: 16px; justify-content: center; margin: 10px 0; font-size: 0.8em; }
+        .legend span { display: flex; align-items: center; gap: 4px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .embed-table { width: 100%; font-size: 0.78em; border-collapse: collapse; }
+        .embed-table th { color: #58a6ff; padding: 4px 6px; border-bottom: 1px solid #30363d; text-align: left; }
+        .embed-table td { padding: 3px 6px; color: #c9d1d9; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <h1>Attention Creates Simplicial Complexes</h1>
+    <p class="subtitle">Type a sentence. Each word gets a 3D embedding. Attention scores determine which words connect (edges) and which form triangles (2-simplices). This is how meaning focuses locally.</p>
+
+    <div class="input-area">
+        <input type="text" id="sentence" value="The king commanded his lion with divine power" placeholder="Type any sentence...">
+    </div>
+
+    <div class="axes-label"><b>X:</b> Male ←→ Female &nbsp;&nbsp;|&nbsp;&nbsp; <b>Y:</b> Animal ←→ Human ←→ Divine &nbsp;&nbsp;|&nbsp;&nbsp; <b>Z:</b> Weak ←→ Powerful</div>
+
+    <div class="legend">
+        <span><span class="dot" style="background:#58a6ff;"></span> Token (0-simplex)</span>
+        <span><span class="dot" style="background:#3fb950;"></span> Edge (1-simplex): mutual attention > ε</span>
+        <span><span class="dot" style="background:#f0c040;"></span> Triangle (2-simplex): 3 tokens all connected</span>
+    </div>
+
+    <div id="plot"></div>
+
+    <div class="bottom">
+        <div class="card">
+            <h2>Controls</h2>
+            <div class="slider-row">
+                <label>Threshold ε</label>
+                <input type="range" id="eps" min="0.01" max="0.35" step="0.005" value="0.09">
+                <span id="eps-v">0.09</span>
+            </div>
+            <div class="slider-row">
+                <label>Sharpness</label>
+                <input type="range" id="sharp" min="0.2" max="3" step="0.05" value="0.7">
+                <span id="sharp-v">0.70</span>
+            </div>
+            <h2 style="margin-top:14px;">Token Embeddings</h2>
+            <div style="max-height:180px; overflow-y:auto;">
+                <table class="embed-table" id="embedTable"></table>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Simplicial Complex K</h2>
+            <div class="simplex-info" id="simplexInfo"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// SEMANTIC EMBEDDING: simple rule-based for interpretability
+// Each word → [gender, ontology, power] in [-1,1] x [-1,1] x [0,1]
+// ============================================================
+const LEXICON = {
+    // Male-coded
+    king:[-0.9,0.1,0.9], he:[-0.8,0.0,0.2], his:[-0.7,0.0,0.15], boy:[-0.8,0.0,0.2],
+    man:[-0.8,0.0,0.4], father:[-0.8,0.1,0.6], prince:[-0.85,0.1,0.7], lord:[-0.7,0.3,0.85],
+    god:[-0.5,1.0,0.95], warrior:[-0.6,0.0,0.75], hero:[-0.5,0.05,0.7], brother:[-0.7,0.0,0.3],
+    husband:[-0.8,0.0,0.4], son:[-0.8,0.0,0.25], monk:[-0.6,0.4,0.3],
+    // Female-coded
+    queen:[0.9,0.1,0.85], she:[0.8,0.0,0.2], her:[0.7,0.0,0.15], girl:[0.8,0.0,0.2],
+    woman:[0.8,0.0,0.4], mother:[0.8,0.1,0.6], princess:[0.85,0.1,0.6], lady:[0.7,0.1,0.5],
+    goddess:[0.9,0.95,0.9], witch:[0.6,0.4,0.6], sister:[0.7,0.0,0.3], wife:[0.8,0.0,0.4],
+    daughter:[0.8,0.0,0.25], priestess:[0.7,0.6,0.6], maiden:[0.85,0.0,0.2],
+    // Animals
+    lion:[-0.3,-0.9,0.6], wolf:[-0.4,-0.9,0.55], eagle:[-0.1,-0.85,0.5],
+    eagles:[-0.1,-0.85,0.5], serpent:[-0.2,-0.8,0.45], serpents:[-0.2,-0.8,0.45],
+    deer:[0.2,-0.9,0.15], dove:[0.3,-0.85,0.1], bear:[-0.4,-0.9,0.6],
+    horse:[-0.2,-0.8,0.4], cat:[0.2,-0.85,0.2], dog:[-0.2,-0.85,0.3],
+    dragon:[-0.3,-0.6,0.9], phoenix:[0.1,-0.5,0.8], raven:[-0.1,-0.85,0.3],
+    owl:[0.0,-0.8,0.35], tiger:[-0.3,-0.9,0.65], shark:[-0.3,-0.95,0.55],
+    whale:[0.0,-0.9,0.5], spider:[-0.1,-0.9,0.3], butterfly:[0.3,-0.85,0.05],
+    // Divine/cosmic
+    divine:[0.0,0.9,0.85], sacred:[0.0,0.8,0.6], holy:[0.0,0.85,0.6],
+    celestial:[0.1,0.95,0.75], eternal:[0.0,0.7,0.7], heaven:[0.1,0.95,0.5],
+    angel:[0.2,0.9,0.6], demon:[-0.3,0.6,0.7], spirit:[0.0,0.7,0.4],
+    ancient:[0.0,0.3,0.45], cosmic:[0.0,0.85,0.7], infinite:[0.0,0.6,0.9],
+    // Power words
+    power:[0.0,0.2,0.95], strength:[-0.2,0.1,0.85], authority:[-0.1,0.2,0.88],
+    dominion:[-0.2,0.3,0.9], force:[-0.2,0.0,0.8], might:[-0.3,0.1,0.85],
+    command:[-0.2,0.1,0.7], commanded:[-0.3,0.1,0.7], rule:[0.0,0.15,0.75],
+    ruled:[0.0,0.15,0.75], summoned:[-0.1,0.4,0.65], conquered:[-0.4,0.0,0.8],
+    // Gentle/weak
+    gentle:[0.3,0.0,0.1], soft:[0.3,0.0,0.05], kind:[0.2,0.1,0.2],
+    small:[0.0,0.0,0.05], weak:[0.0,0.0,0.02], quiet:[0.1,0.0,0.05],
+    // Nature
+    forest:[0.0,-0.4,0.2], woods:[0.0,-0.4,0.2], mountain:[-0.1,-0.3,0.5],
+    river:[0.1,-0.3,0.2], ocean:[0.0,-0.3,0.6], sky:[0.0,0.2,0.3],
+    fire:[-0.1,0.0,0.6], water:[0.1,-0.1,0.2], earth:[0.0,-0.2,0.3],
+    // Actions
+    transformed:[0.0,0.3,0.55], befriended:[0.1,0.1,0.2], fought:[-0.4,0.0,0.6],
+    loved:[0.3,0.1,0.3], created:[0.0,0.3,0.6], destroyed:[-0.3,0.0,0.8],
+    sang:[0.2,0.0,0.2], flew:[0.0,-0.3,0.3], hunted:[-0.4,-0.3,0.5],
+    // Function words (near origin, low power)
+    the:[0,0,0.05], a:[0,0,0.05], an:[0,0,0.05], of:[0,0,0.05],
+    with:[0,0,0.08], in:[0,0,0.05], into:[0,0,0.08], and:[0,0,0.05],
+    to:[0,0,0.05], from:[0,0,0.05], by:[0,0,0.05], for:[0,0,0.05],
+    on:[0,0,0.05], at:[0,0,0.05], is:[0,0,0.08], was:[0,0,0.08],
+    are:[0,0,0.08], were:[0,0,0.08], that:[0,0,0.06], this:[0,0,0.06],
+    great:[0.0,0.1,0.7], fierce:[-0.2,0.0,0.65],
+};
+
+function embed(word) {
+    const w = word.toLowerCase().replace(/[^a-z]/g,'');
+    if(LEXICON[w]) return [...LEXICON[w]];
+    // Unknown word: hash to a position
+    let h=0; for(let i=0;i<w.length;i++) h=(h*31+w.charCodeAt(i))&0xffff;
+    return [((h%100)-50)/80, (((h>>4)%100)-50)/80, (h%60)/80];
+}
+
+// ============================================================
+// ATTENTION (simplified single-head, no learned weights for clarity)
+// The "metric" is just cosine-like similarity in embedding space
+// ============================================================
+function computeAttention(embeddings, sharpness) {
+    const n = embeddings.length;
+    const scores = Array.from({length:n}, ()=>Array(n).fill(0));
+    // Score = dot product (bilinear form with identity = cosine structure)
+    for(let i=0;i<n;i++) for(let j=0;j<n;j++) {
+        let s=0;
+        for(let d=0;d<3;d++) s += embeddings[i][d]*embeddings[j][d];
+        scores[i][j] = s;
+    }
+    // Softmax each row with sharpness (inverse temperature)
+    const attn = scores.map(row => {
+        const mx = Math.max(...row);
+        const e = row.map(x => Math.exp((x-mx)*sharpness));
+        const sum = e.reduce((a,b)=>a+b);
+        return e.map(x=>x/sum);
+    });
+    return attn;
+}
+
+function buildComplex(attn, eps) {
+    const n = attn.length;
+    const edges=[], tris=[];
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) {
+        const w = Math.min(attn[i][j], attn[j][i]);
+        if(w>eps) edges.push([i,j,w]);
+    }
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) for(let k=j+1;k<n;k++) {
+        const ij=Math.min(attn[i][j],attn[j][i]);
+        const jk=Math.min(attn[j][k],attn[k][j]);
+        const ik=Math.min(attn[i][k],attn[k][i]);
+        if(ij>eps&&jk>eps&&ik>eps) tris.push([i,j,k,Math.min(ij,jk,ik)]);
+    }
+    return {edges, tris};
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+function render() {
+    const text = document.getElementById('sentence').value.trim();
+    if(!text) return;
+    const tokens = text.split(/\s+/);
+    const embeddings = tokens.map(t => embed(t));
+    const sharpness = parseFloat(document.getElementById('sharp').value);
+    const eps = parseFloat(document.getElementById('eps').value);
+
+    const attn = computeAttention(embeddings, sharpness);
+    const {edges, tris} = buildComplex(attn, eps);
+    const n = tokens.length;
+
+    // --- 3D Plot ---
+    const traces = [];
+
+    // Triangles
+    for(const [i,j,k,w] of tris) {
+        traces.push({type:'mesh3d',
+            x:[embeddings[i][0],embeddings[j][0],embeddings[k][0]],
+            y:[embeddings[i][1],embeddings[j][1],embeddings[k][1]],
+            z:[embeddings[i][2],embeddings[j][2],embeddings[k][2]],
+            i:[0],j:[1],k:[2],
+            opacity:0.2+w*0.5, color:'#f0c040', flatshading:true,
+            hovertemplate:`△ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}}<br>strength: ${w.toFixed(3)}<extra></extra>`,
+            showlegend:false
+        });
+    }
+
+    // Edges
+    for(const [i,j,w] of edges) {
+        traces.push({type:'scatter3d',mode:'lines',
+            x:[embeddings[i][0],embeddings[j][0]],
+            y:[embeddings[i][1],embeddings[j][1]],
+            z:[embeddings[i][2],embeddings[j][2]],
+            line:{color:`rgba(63,185,80,${Math.min(w*5,0.95)})`, width:Math.max(2,w*16)},
+            showlegend:false,
+            hovertemplate:`{${tokens[i]}, ${tokens[j]}}<br>α=${w.toFixed(3)}<extra></extra>`
+        });
+    }
+
+    // Points
+    const colors = embeddings.map(e => e[1]<-0.3?'#3fb950':e[1]>0.3?'#f0c040':'#58a6ff');
+    traces.push({type:'scatter3d', mode:'markers+text',
+        x:embeddings.map(e=>e[0]), y:embeddings.map(e=>e[1]), z:embeddings.map(e=>e[2]),
+        text:tokens, textposition:'top center', textfont:{size:11,color:'#fff'},
+        marker:{size:7, color:colors, line:{width:1,color:'#fff'}},
+        hovertemplate:'%{text}<br>Gender: %{x:.2f}<br>Being: %{y:.2f}<br>Power: %{z:.2f}<extra></extra>',
+        showlegend:false
+    });
+
+    Plotly.react('plot', traces, {
+        scene:{
+            xaxis:{title:'← Male | Female →',range:[-1.2,1.2],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            yaxis:{title:'← Animal | Human | Divine →',range:[-1.2,1.2],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            zaxis:{title:'← Weak | Strong →',range:[-0.1,1.1],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            bgcolor:'#0d1117',
+            camera:{eye:{x:1.8,y:1.3,z:0.9}}
+        },
+        paper_bgcolor:'#0d1117', margin:{l:0,r:0,t:0,b:0}
+    }, {responsive:true});
+
+    // --- Embedding table ---
+    let tbl='<tr><th>Word</th><th>Gender</th><th>Being</th><th>Power</th></tr>';
+    for(let i=0;i<n;i++){
+        const e=embeddings[i];
+        const c=colors[i];
+        tbl+=`<tr><td style="color:${c};font-weight:600;">${tokens[i]}</td><td>${e[0].toFixed(2)}</td><td>${e[1].toFixed(2)}</td><td>${e[2].toFixed(2)}</td></tr>`;
+    }
+    document.getElementById('embedTable').innerHTML=tbl;
+
+    // --- Simplex info ---
+    let info=`<p class="s0"><b>Vertices (0-simplices): ${n}</b></p>`;
+    info+=`<p style="color:#8b949e;margin:4px 0;">${tokens.map(t=>`{${t}}`).join('  ')}</p>`;
+    info+=`<p class="s1" style="margin-top:10px;"><b>Edges (1-simplices): ${edges.length}</b></p>`;
+    for(const[i,j,w] of edges) info+=`<p class="s1">&nbsp;{${tokens[i]}, ${tokens[j]}} — α = ${w.toFixed(4)}</p>`;
+    info+=`<p class="s2" style="margin-top:10px;"><b>Triangles (2-simplices): ${tris.length}</b></p>`;
+    for(const[i,j,k,w] of tris) info+=`<p class="s2">&nbsp;△ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}} — min α = ${w.toFixed(4)}</p>`;
+
+    // Betti numbers
+    const parent=Array.from({length:n},(_,i)=>i);
+    const find=x=>parent[x]===x?x:(parent[x]=find(parent[x]));
+    for(const[i,j] of edges) parent[find(i)]=find(j);
+    const roots=new Set(); for(let i=0;i<n;i++) roots.add(find(i));
+    const b0=roots.size, b1=Math.max(0,edges.length-(n-b0)-tris.length);
+    info+=`<p style="margin-top:12px;color:#8b949e;"><b>Betti numbers:</b> β₀=${b0} (components), β₁=${b1} (loops)</p>`;
+
+    // Meaning interpretation
+    if(tris.length>0){
+        info+=`<p style="margin-top:10px;color:#f0c040;"><b>Meaning:</b> The triangles show where attention jointly composes three tokens into a single semantic focus — these words are being "thought about together."</p>`;
+    }
+    if(edges.length>0 && tris.length===0){
+        info+=`<p style="margin-top:10px;color:#3fb950;"><b>Meaning:</b> Pairwise connections exist but no full triangles yet. Lower ε or increase sharpness to see higher-order composition.</p>`;
+    }
+
+    document.getElementById('simplexInfo').innerHTML=info;
+}
+
+// ============================================================
+// LIVE INTERACTION (no button needed)
+// ============================================================
+let debounce;
+document.getElementById('sentence').addEventListener('input', ()=>{ clearTimeout(debounce); debounce=setTimeout(render,150); });
+document.getElementById('eps').addEventListener('input', function(){ document.getElementById('eps-v').textContent=parseFloat(this.value).toFixed(2); render(); });
+document.getElementById('sharp').addEventListener('input', function(){ document.getElementById('sharp-v').textContent=parseFloat(this.value).toFixed(2); render(); });
+
+// Initial render
+render();
+</script>
+</body>
+</html>

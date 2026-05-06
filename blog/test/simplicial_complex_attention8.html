@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attention: Q, K, V — Geometrisch erklärt</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:-apple-system,sans-serif;background:#0d1117;color:#e0e0e0;padding:16px}
+        .app{max-width:1300px;margin:0 auto}
+        h1{text-align:center;color:#fff;font-size:1.4em;margin-bottom:4px}
+        .sub{text-align:center;color:#8b949e;font-size:0.88em;margin-bottom:16px;line-height:1.5}
+        .input-row{margin-bottom:12px}
+        .input-row input{width:100%;padding:12px 16px;font-size:1em;background:#161b22;border:2px solid #30363d;border-radius:8px;color:#fff;outline:none}
+        .input-row input:focus{border-color:#58a6ff}
+        #plot{width:100%;height:600px;border-radius:10px;background:#161b22}
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+        .card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px}
+        .card h2{font-size:0.95em;color:#f0c040;margin-bottom:10px}
+        .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:8px 0}
+        .ctrl{display:flex;align-items:center;gap:5px}
+        .ctrl label{font-size:0.8em;color:#8b949e}
+        .ctrl input[type="range"]{width:100px;accent-color:#58a6ff}
+        .ctrl span{font-size:0.8em;color:#58a6ff;min-width:28px}
+        .ctrl input[type="checkbox"]{accent-color:#58a6ff}
+        .info{font-size:0.82em;line-height:1.8;max-height:400px;overflow-y:auto}
+        .explain{background:#1c2128;border-left:3px solid #58a6ff;padding:12px;border-radius:0 8px 8px 0;font-size:0.85em;line-height:1.7;margin:8px 0}
+        .legend-box{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;font-size:0.8em}
+        .legend-box span{display:flex;align-items:center;gap:4px}
+        .ldot{width:10px;height:10px;border-radius:50%;display:inline-block}
+        .lline{width:16px;height:3px;display:inline-block;border-radius:2px}
+        .s1{color:#3fb950}.s2{color:#f0c040}
+        .qcol{color:#f97583}.kcol{color:#79c0ff}.vcol{color:#56d364}.outcol{color:#d2a8ff}
+    </style>
+</head>
+<body>
+<div class="app">
+    <h1>Was tut Attention? Q, K, V geometrisch.</h1>
+    <p class="sub">
+        Jedes Wort hat eine Position (Embedding). Daraus werden <span class="qcol">Q (Scheinwerfer)</span>, <span class="kcol">K (Schild)</span> und <span class="vcol">V (Inhalt)</span> berechnet.<br>
+        Wo ein <span class="qcol">Q</span> in die gleiche Richtung zeigt wie ein <span class="kcol">K</span> → Verbindung. Die <span class="outcol">Outputs</span> sind Mischungen der <span class="vcol">V</span>-Vektoren entlang dieser Verbindungen.
+    </p>
+
+    <div class="input-row">
+        <input type="text" id="sentence" value="king lion power" placeholder="Tippe Wörter ein (z.B. king lion power goddess deer)...">
+    </div>
+
+    <div class="legend-box">
+        <span><span class="ldot" style="background:#58a6ff"></span> Wort-Embedding (X)</span>
+        <span><span class="ldot" style="background:#f97583"></span> Q = Scheinwerfer-Richtung</span>
+        <span><span class="ldot" style="background:#79c0ff"></span> K = Schild-Position</span>
+        <span><span class="lline" style="background:#f97583"></span> X → Q (Projektion)</span>
+        <span><span class="lline" style="background:#79c0ff"></span> X → K (Projektion)</span>
+        <span><span class="lline" style="background:#ffc83d"></span> Q·K Verbindung (Attention)</span>
+        <span><span class="ldot" style="background:#d2a8ff"></span> Output = Mischung der V's</span>
+        <span><span class="lline" style="background:#3fb950;height:6px"></span> 1-Simplex (Kante)</span>
+        <span style="color:#f0c040">▲ 2-Simplex (Dreieck)</span>
+    </div>
+
+    <div class="controls">
+        <div class="ctrl"><label>Threshold ε:</label><input type="range" id="eps" min="0.02" max="0.35" step="0.005" value="0.1"><span id="eps-v">0.10</span></div>
+        <div class="ctrl"><label>Schärfe:</label><input type="range" id="sharp" min="0.5" max="5" step="0.1" value="1.5"><span id="sharp-v">1.50</span></div>
+        <div class="ctrl"><label><input type="checkbox" id="showQ" checked> Q</label></div>
+        <div class="ctrl"><label><input type="checkbox" id="showK" checked> K</label></div>
+        <div class="ctrl"><label><input type="checkbox" id="showQK"> Q·K Linien</label></div>
+        <div class="ctrl"><label><input type="checkbox" id="showOut" checked> Output</label></div>
+        <div class="ctrl"><label><input type="checkbox" id="showTri" checked> Dreiecke</label></div>
+    </div>
+
+    <div id="plot"></div>
+
+    <div class="row">
+        <div class="card">
+            <h2>Was passiert hier — Schritt für Schritt</h2>
+            <div class="explain">
+                <b>1. Embedding X:</b> Jedes Wort hat eine feste Position im 3D-Raum.<br>
+                → <code>king = [-0.9, 0.1, 0.9]</code> (männlich, menschlich, mächtig)<br><br>
+
+                <b>2. Q = W<sub>Q</sub> · X</b> — Die Matrix W<sub>Q</sub> verzerrt den Punkt in einen neuen Raum. Das ist die "Frage" des Wortes: <em>"Wen suche ich?"</em><br>
+                → Geometrisch: eine Drehung/Streckung des Punktes.<br><br>
+
+                <b>3. K = W<sub>K</sub> · X</b> — Eine andere Verzerrung. Das ist das "Angebot" des Wortes: <em>"Das bin ich, findet mich!"</em><br><br>
+
+                <b>4. Score = Q<sub>i</sub> · K<sub>j</sub></b> — Skalarprodukt. Wenn Q von Wort i in die gleiche Richtung zeigt wie K von Wort j → hoher Score → starke Verbindung.<br>
+                → <b>Geometrisch: Wie parallel sind die beiden Vektoren?</b><br><br>
+
+                <b>5. Softmax → Gewichte α</b> — Scores werden zu Wahrscheinlichkeiten normiert.<br><br>
+
+                <b>6. Output = Σ α<sub>ij</sub> · V<sub>j</sub></b> — Jedes Wort bekommt einen neuen Punkt, der die gewichtete Mischung aller V-Vektoren ist.<br>
+                → <b>Der Output-Punkt liegt geometrisch "zwischen" den V-Punkten der Wörter, zu denen es starke Verbindungen gibt.</b><br><br>
+
+                <b>7. Simplizialkomplex:</b> Wenn zwei Wörter sich <em>gegenseitig</em> stark beachten (α<sub>ij</sub> UND α<sub>ji</sub> > ε), bilden sie eine <b>Kante</b>. Drei Wörter die alle paarweise verbunden sind → <b>Dreieck</b> (2-Simplex). Das ist ein "Bedeutungsklumpen".
+            </div>
+        </div>
+        <div class="card">
+            <h2>Simplizes & Verbindungen</h2>
+            <div class="info" id="info"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// LEXICON
+// ============================================================
+const LEX={
+    king:[-0.9,0.1,0.9],he:[-0.8,0,0.2],his:[-0.7,0,0.15],boy:[-0.8,0,0.2],
+    man:[-0.8,0,0.4],father:[-0.8,0.1,0.6],prince:[-0.85,0.1,0.7],lord:[-0.7,0.3,0.85],
+    god:[-0.5,1.0,0.95],warrior:[-0.6,0,0.75],hero:[-0.5,0.05,0.7],
+    queen:[0.9,0.1,0.85],she:[0.8,0,0.2],her:[0.7,0,0.15],girl:[0.8,0,0.2],
+    woman:[0.8,0,0.4],mother:[0.8,0.1,0.6],princess:[0.85,0.1,0.6],
+    goddess:[0.9,0.95,0.9],witch:[0.6,0.4,0.6],
+    lion:[-0.3,-0.9,0.6],wolf:[-0.4,-0.9,0.55],eagle:[-0.1,-0.85,0.5],
+    serpent:[-0.2,-0.8,0.45],deer:[0.2,-0.9,0.15],dove:[0.3,-0.85,0.1],
+    bear:[-0.4,-0.9,0.6],horse:[-0.2,-0.8,0.4],cat:[0.2,-0.85,0.2],
+    dog:[-0.2,-0.85,0.3],dragon:[-0.3,-0.6,0.9],phoenix:[0.1,-0.5,0.8],
+    divine:[0.0,0.9,0.85],sacred:[0.0,0.8,0.6],holy:[0.0,0.85,0.6],
+    celestial:[0.1,0.95,0.75],eternal:[0.0,0.7,0.7],
+    angel:[0.2,0.9,0.6],demon:[-0.3,0.6,0.7],spirit:[0.0,0.7,0.4],
+    ancient:[0.0,0.3,0.45],cosmic:[0.0,0.85,0.7],infinite:[0.0,0.6,0.9],
+    power:[0.0,0.2,0.95],strength:[-0.2,0.1,0.85],authority:[-0.1,0.2,0.88],
+    dominion:[-0.2,0.3,0.9],force:[-0.2,0,0.8],might:[-0.3,0.1,0.85],
+    commanded:[-0.3,0.1,0.7],ruled:[0.0,0.15,0.75],summoned:[-0.1,0.4,0.65],
+    gentle:[0.3,0,0.1],soft:[0.3,0,0.05],kind:[0.2,0.1,0.2],
+    small:[0.0,0,0.05],weak:[0.0,0,0.02],
+    forest:[0.0,-0.4,0.2],mountain:[-0.1,-0.3,0.5],ocean:[0.0,-0.3,0.6],
+    fire:[-0.1,0,0.6],water:[0.1,-0.1,0.2],dark:[-0.1,0.1,0.4],
+    light:[0.2,0.3,0.4],love:[0.4,0.1,0.3],death:[-0.2,0.2,0.7],
+    life:[0.2,0.2,0.5],sun:[-0.1,0.4,0.6],moon:[0.3,0.3,0.3],
+    the:[0,0,0.05],a:[0,0,0.05],an:[0,0,0.05],of:[0,0,0.05],
+    with:[0,0,0.08],in:[0,0,0.05],and:[0,0,0.05],
+    to:[0,0,0.05],from:[0,0,0.05],by:[0,0,0.05],
+    great:[0.0,0.1,0.7],fierce:[-0.2,0,0.65],
+};
+
+function getEmb(word){
+    const w=word.toLowerCase().replace(/[^a-z]/g,'');
+    if(LEX[w]) return [...LEX[w]];
+    let h=0;for(let i=0;i<w.length;i++) h=(h*31+w.charCodeAt(i))&0xffff;
+    return[((h%100)-50)/80,(((h>>4)%100)-50)/80,(h%60)/80];
+}
+
+// ============================================================
+// WEIGHT MATRICES
+// W_Q: rotates toward "what I'm looking for" — emphasizes power+ontology
+// W_K: rotates toward "what I advertise" — emphasizes gender+ontology
+// W_V: passes through mostly unchanged
+// ============================================================
+const WQ=[[0.5,0.2,0.4],[0.1,0.9,0.2],[0.3,0.2,0.8]];
+const WK=[[0.9,0.1,0.1],[0.2,0.8,0.2],[0.1,0.1,0.6]];
+const WV=[[0.9,0.0,0.1],[0.0,0.9,0.1],[0.1,0.1,0.9]];
+
+const dot3=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const mv3=(M,v)=>[dot3(M[0],v),dot3(M[1],v),dot3(M[2],v)];
+
+// ============================================================
+// MAIN COMPUTATION
+// ============================================================
+function compute(tokens,embeddings,sharpness,eps){
+    const n=tokens.length;
+    const Q=embeddings.map(e=>mv3(WQ,e));
+    const K=embeddings.map(e=>mv3(WK,e));
+    const V=embeddings.map(e=>mv3(WV,e));
+
+    // Scores: Q_i · K_j / sqrt(3)
+    const scores=Array.from({length:n},()=>Array(n).fill(0));
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++) scores[i][j]=dot3(Q[i],K[j])/Math.sqrt(3);
+
+    // Softmax
+    const attn=scores.map(row=>{
+        const mx=Math.max(...row);
+        const e=row.map(x=>Math.exp((x-mx)*sharpness));
+        const s=e.reduce((a,b)=>a+b);
+        return e.map(x=>x/s);
+    });
+
+    // Output = weighted sum of V
+    const out=Array.from({length:n},()=>[0,0,0]);
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++)for(let d=0;d<3;d++) out[i][d]+=attn[i][j]*V[j][d];
+
+    // Simplicial complex
+    const edges=[],tris=[];
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+        const w=Math.min(attn[i][j],attn[j][i]);
+        if(w>eps) edges.push([i,j,w]);
+    }
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)for(let k=j+1;k<n;k++){
+        const ij=Math.min(attn[i][j],attn[j][i]);
+        const jk=Math.min(attn[j][k],attn[k][j]);
+        const ik=Math.min(attn[i][k],attn[k][i]);
+        if(ij>eps&&jk>eps&&ik>eps) tris.push([i,j,k,Math.min(ij,jk,ik)]);
+    }
+
+    return{Q,K,V,attn,out,edges,tris};
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function render(){
+    const text=document.getElementById('sentence').value.trim();
+    if(!text)return;
+    const tokens=text.split(/\s+/).filter(t=>t.length>0);
+    const embeddings=tokens.map(getEmb);
+    const sharpness=parseFloat(document.getElementById('sharp').value);
+    const eps=parseFloat(document.getElementById('eps').value);
+
+    const{Q,K,V,attn,out,edges,tris}=compute(tokens,embeddings,sharpness,eps);
+    const n=tokens.length;
+
+    const showQ=document.getElementById('showQ').checked;
+    const showK=document.getElementById('showK').checked;
+    const showQK=document.getElementById('showQK').checked;
+    const showOut=document.getElementById('showOut').checked;
+    const showTri=document.getElementById('showTri').checked;
+
+    const traces=[];
+
+    // --- 2-Simplices (Dreiecke) ---
+    if(showTri) for(const[i,j,k,w] of tris){
+        // Draw on embedding positions
+        traces.push({type:'mesh3d',
+            x:[embeddings[i][0],embeddings[j][0],embeddings[k][0]],
+            y:[embeddings[i][1],embeddings[j][1],embeddings[k][1]],
+            z:[embeddings[i][2],embeddings[j][2],embeddings[k][2]],
+            i:[0],j:[1],k:[2],
+            opacity:0.25,color:'#f0c040',flatshading:true,
+            hovertemplate:`△ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}}<br>Stärke: ${w.toFixed(3)}<extra></extra>`,
+            showlegend:false
+        });
+    }
+
+    // --- 1-Simplices (Kanten) ---
+    for(const[i,j,w] of edges){
+        traces.push({type:'scatter3d',mode:'lines',
+            x:[embeddings[i][0],embeddings[j][0]],
+            y:[embeddings[i][1],embeddings[j][1]],
+            z:[embeddings[i][2],embeddings[j][2]],
+            line:{color:`rgba(63,185,80,${Math.min(w*5,0.95)})`,width:Math.max(3,w*16)},
+            showlegend:false,hovertemplate:`{${tokens[i]}, ${tokens[j]}} α=${w.toFixed(3)}<extra></extra>`
+        });
+    }
+
+    // --- Q vectors + lines from X to Q ---
+    if(showQ){
+        for(let i=0;i<n;i++){
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[embeddings[i][0],Q[i][0]],y:[embeddings[i][1],Q[i][1]],z:[embeddings[i][2],Q[i][2]],
+                line:{color:'rgba(249,117,131,0.5)',width:2},
+                showlegend:false,hoverinfo:'skip'
+            });
+        }
+        traces.push({type:'scatter3d',mode:'markers+text',
+            x:Q.map(q=>q[0]),y:Q.map(q=>q[1]),z:Q.map(q=>q[2]),
+            text:tokens.map(t=>'Q:'+t),textposition:'bottom left',textfont:{size:8,color:'#f97583'},
+            marker:{size:4,color:'#f97583',symbol:'diamond',opacity:0.8},
+            name:'Q (Scheinwerfer)',
+            hovertemplate:'Q: %{text}<br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>'
+        });
+    }
+
+    // --- K vectors + lines from X to K ---
+    if(showK){
+        for(let i=0;i<n;i++){
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[embeddings[i][0],K[i][0]],y:[embeddings[i][1],K[i][1]],z:[embeddings[i][2],K[i][2]],
+                line:{color:'rgba(121,192,255,0.5)',width:2},
+                showlegend:false,hoverinfo:'skip'
+            });
+        }
+        traces.push({type:'scatter3d',mode:'markers+text',
+            x:K.map(k=>k[0]),y:K.map(k=>k[1]),z:K.map(k=>k[2]),
+            text:tokens.map(t=>'K:'+t),textposition:'bottom right',textfont:{size:8,color:'#79c0ff'},
+            marker:{size:4,color:'#79c0ff',symbol:'square',opacity:0.8},
+            name:'K (Schild)',
+            hovertemplate:'K: %{text}<br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>'
+        });
+    }
+
+    // --- Q·K connection lines (which Q points at which K) ---
+    if(showQK){
+        for(let i=0;i<n;i++){
+            // Top 2 attention targets
+            const sorted=attn[i].map((a,j)=>({a,j})).filter(x=>x.j!==i).sort((a,b)=>b.a-a.a).slice(0,2);
+            for(const{a,j} of sorted){
+                if(a>0.1){
+                    traces.push({type:'scatter3d',mode:'lines',
+                        x:[Q[i][0],K[j][0]],y:[Q[i][1],K[j][1]],z:[Q[i][2],K[j][2]],
+                        line:{color:`rgba(255,200,60,${Math.min(a,0.7)})`,width:Math.max(1,a*5),dash:'dot'},
+                        showlegend:false,
+                        hovertemplate:`${tokens[i]} → ${tokens[j]}: α=${a.toFixed(3)}<extra></extra>`
+                    });
+                }
+            }
+        }
+    }
+
+    // --- Output points + lines from X to Output ---
+    if(showOut){
+        for(let i=0;i<n;i++){
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[embeddings[i][0],out[i][0]],y:[embeddings[i][1],out[i][1]],z:[embeddings[i][2],out[i][2]],
+                line:{color:'rgba(210,168,255,0.4)',width:2,dash:'dot'},
+                showlegend:false,hoverinfo:'skip'
+            });
+        }
+        traces.push({type:'scatter3d',mode:'markers+text',
+            x:out.map(o=>o[0]),y:out.map(o=>o[1]),z:out.map(o=>o[2]),
+            text:tokens.map(t=>'→'+t),textposition:'top right',textfont:{size:8,color:'#d2a8ff'},
+            marker:{size:5,color:'#d2a8ff',symbol:'cross',opacity:0.9},
+            name:'Output (neuer Punkt)',
+            hovertemplate:'Output %{text}<br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>'
+        });
+    }
+
+    // --- Embedding points (Hauptpunkte, oben drauf) ---
+    const colors=embeddings.map(e=>e[1]<-0.3?'#3fb950':e[1]>0.3?'#f0c040':'#58a6ff');
+    traces.push({type:'scatter3d',mode:'markers+text',
+        x:embeddings.map(e=>e[0]),y:embeddings.map(e=>e[1]),z:embeddings.map(e=>e[2]),
+        text:tokens,textposition:'top center',textfont:{size:12,color:'#fff',family:'Arial Black'},
+        marker:{size:9,color:colors,line:{width:1.5,color:'#fff'},opacity:1},
+        name:'X (Wort-Embedding)',
+        hovertemplate:'%{text}<br>Gender:%{x:.2f} Being:%{y:.2f} Power:%{z:.2f}<extra></extra>'
+    });
+
+    Plotly.react('plot',traces,{
+        scene:{
+            xaxis:{title:'← Männlich | Weiblich →',range:[-1.3,1.3],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            yaxis:{title:'← Tier | Mensch | Göttlich →',range:[-1.3,1.3],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            zaxis:{title:'← Schwach | Stark →',range:[-0.1,1.2],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+            bgcolor:'#0d1117',
+            camera:{eye:{x:1.8,y:1.2,z:0.9}}
+        },
+        paper_bgcolor:'#0d1117',margin:{l:0,r:0,t:0,b:0},showlegend:true,
+        legend:{x:0.01,y:0.99,bgcolor:'rgba(13,17,23,0.9)',bordercolor:'#30363d',font:{size:10,color:'#e0e0e0'}}
+    },{responsive:true});
+
+    // --- INFO PANEL ---
+    let info='';
+
+    // Show embeddings
+    info+=`<p style="color:#58a6ff;margin-bottom:6px;"><b>Embeddings X (Startpositionen):</b></p>`;
+    for(let i=0;i<n;i++){
+        const e=embeddings[i];
+        info+=`<p style="color:${colors[i]}">&nbsp; ${tokens[i]} = [${e[0].toFixed(2)}, ${e[1].toFixed(2)}, ${e[2].toFixed(2)}]</p>`;
+    }
+
+    // Show Q and K
+    info+=`<p class="qcol" style="margin-top:10px;"><b>Q = W<sub>Q</sub>·X (Scheinwerfer):</b></p>`;
+    for(let i=0;i<n;i++) info+=`<p class="qcol">&nbsp; Q(${tokens[i]}) = [${Q[i][0].toFixed(2)}, ${Q[i][1].toFixed(2)}, ${Q[i][2].toFixed(2)}]</p>`;
+
+    info+=`<p class="kcol" style="margin-top:10px;"><b>K = W<sub>K</sub>·X (Schild):</b></p>`;
+    for(let i=0;i<n;i++) info+=`<p class="kcol">&nbsp; K(${tokens[i]}) = [${K[i][0].toFixed(2)}, ${K[i][1].toFixed(2)}, ${K[i][2].toFixed(2)}]</p>`;
+
+    // Show attention weights
+    info+=`<p style="margin-top:10px;color:#ffc83d;"><b>Attention-Gewichte (Q·K → softmax):</b></p>`;
+    for(let i=0;i<n;i++){
+        const top=attn[i].map((a,j)=>({a,j})).sort((a,b)=>b.a-a.a).slice(0,3);
+        info+=`<p style="color:#ffc83d;">&nbsp; ${tokens[i]} achtet auf: ${top.map(({a,j})=>`<b>${tokens[j]}</b>(${(a*100).toFixed(0)}%)`).join(', ')}</p>`;
+    }
+
+    // Simplices
+    info+=`<p class="s1" style="margin-top:10px;"><b>Kanten (1-Simplizes): ${edges.length}</b></p>`;
+    for(const[i,j,w] of edges){
+        info+=`<p class="s1">&nbsp; {${tokens[i]}, ${tokens[j]}} — gegenseitige Attention: ${(w*100).toFixed(1)}%</p>`;
+    }
+
+    info+=`<p class="s2" style="margin-top:10px;"><b>Dreiecke (2-Simplizes): ${tris.length}</b></p>`;
+    for(const[i,j,k,w] of tris){
+        info+=`<p class="s2">&nbsp; △ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}} — min: ${(w*100).toFixed(1)}%</p>`;
+    }
+
+    // Output explanation
+    if(showOut){
+        info+=`<p class="outcol" style="margin-top:10px;"><b>Output (neue Punkte = Mischung der V's):</b></p>`;
+        for(let i=0;i<n;i++){
+            const top=attn[i].map((a,j)=>({a,j})).sort((a,b)=>b.a-a.a).slice(0,3);
+            info+=`<p class="outcol">&nbsp; →${tokens[i]} = ${top.map(({a,j})=>`${(a*100).toFixed(0)}%·V(${tokens[j]})`).join(' + ')}</p>`;
+            info+=`<p style="color:#8b949e;margin-left:16px;">= [${out[i][0].toFixed(2)}, ${out[i][1].toFixed(2)}, ${out[i][2].toFixed(2)}]</p>`;
+        }
+    }
+
+    // Interpretation
+    if(tris.length>0){
+        info+=`<p style="margin-top:12px;color:#f0c040;"><b>Interpretation:</b> Die Dreiecke zeigen Wort-Gruppen, die sich <em>gegenseitig</em> relevant finden. Ihre Bedeutungen werden im Output zusammengemischt — sie bilden ein gemeinsames Konzept.</p>`;
+    } else if(edges.length>0){
+        info+=`<p style="margin-top:12px;color:#3fb950;"><b>Interpretation:</b> Es gibt paarweise Verbindungen, aber noch keine Dreiecke. Senke ε oder erhöhe die Schärfe.</p>`;
+    } else {
+        info+=`<p style="margin-top:12px;color:#8b949e;">Keine Verbindungen. Senke ε deutlich oder erhöhe die Schärfe.</p>`;
+    }
+
+    document.getElementById('info').innerHTML=info;
+}
+
+// ============================================================
+// LIVE EVENTS — alles reagiert sofort
+// ============================================================
+let debounce;
+document.getElementById('sentence').addEventListener('input',()=>{clearTimeout(debounce);debounce=setTimeout(render,200);});
+document.getElementById('eps').addEventListener('input',function(){document.getElementById('eps-v').textContent=(+this.value).toFixed(2);render();});
+document.getElementById('sharp').addEventListener('input',function(){document.getElementById('sharp-v').textContent=(+this.value).toFixed(2);render();});
+['showQ','showK','showQK','showOut','showTri'].forEach(id=>{document.getElementById(id).addEventListener('change',render);});
+
+// Start
+render();
+</script>
+</body>
+</html>

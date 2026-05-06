@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grokking Experiments — What They Actually Did</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0f;
+            color: #d4d4d8;
+            line-height: 1.6;
+        }
+        .header {
+            padding: 50px 20px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: radial-gradient(ellipse at top, rgba(99,102,241,0.08), transparent 60%);
+        }
+        .header h1 {
+            font-size: 2.4em;
+            font-weight: 800;
+            color: #f4f4f5;
+            margin-bottom: 12px;
+        }
+        .header h1 span { color: #818cf8; }
+        .header p { max-width: 700px; margin: 0 auto; color: #71717a; font-size: 1.05em; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 30px 20px; }
+
+        .experiment {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 36px;
+            position: relative;
+            overflow: hidden;
+        }
+        .experiment::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #6366f1, #a78bfa, #6366f1);
+            opacity: 0.6;
+        }
+        .experiment h2 {
+            font-size: 1.35em;
+            color: #e4e4e7;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .experiment .what-they-did {
+            background: rgba(99,102,241,0.06);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 14px 0 20px;
+            font-size: 0.9em;
+            color: #a5b4fc;
+        }
+        .experiment .what-they-did strong { color: #c7d2fe; }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 18px;
+            align-items: flex-end;
+        }
+        .ctrl {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .ctrl label {
+            font-size: 0.78em;
+            color: #71717a;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .ctrl input[type="range"] {
+            width: 180px;
+            height: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(99,102,241,0.3);
+            border-radius: 3px;
+            outline: none;
+        }
+        .ctrl input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: #818cf8;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(129,140,248,0.5);
+        }
+        .ctrl select, .ctrl button {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #d4d4d8;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.88em;
+            cursor: pointer;
+        }
+        .ctrl button {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            border: none;
+            font-weight: 600;
+            padding: 8px 16px;
+        }
+        .ctrl button:hover { opacity: 0.9; }
+        .ctrl .val {
+            font-size: 0.82em;
+            color: #818cf8;
+            font-weight: 600;
+            min-width: 50px;
+        }
+
+        .finding {
+            background: rgba(34,197,94,0.05);
+            border-left: 3px solid rgba(34,197,94,0.4);
+            padding: 12px 16px;
+            margin-top: 16px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.88em;
+            color: #86efac;
+        }
+        .finding strong { color: #4ade80; }
+
+        .plot-box {
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+        .arch-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace, 'Courier New';
+            font-size: 0.82em;
+            color: #a1a1aa;
+            line-height: 1.8;
+        }
+        .arch-box .highlight { color: #818cf8; font-weight: 600; }
+        .arch-box .comment { color: #4b5563; }
+
+        canvas { border-radius: 10px; display: block; margin: 0 auto; }
+
+        .op-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .op-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .op-card:hover, .op-card.active {
+            border-color: rgba(99,102,241,0.5);
+            background: rgba(99,102,241,0.08);
+        }
+        .op-card .op-name { font-size: 0.9em; color: #e4e4e7; font-weight: 600; }
+        .op-card .op-detail { font-size: 0.75em; color: #71717a; margin-top: 3px; }
+        .op-card .op-bar {
+            height: 4px;
+            border-radius: 2px;
+            margin-top: 8px;
+            background: rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+        .op-card .op-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.72em;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+        .tag-sym { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .tag-asym { background: rgba(251,146,60,0.15); color: #fb923c; }
+        .tag-hard { background: rgba(239,68,68,0.15); color: #f87171; }
+        .tag-group { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>What They <span>Actually Experimented</span> With</h1>
+    <p>Power et al. (2021) ran a systematic set of experiments on a tiny transformer learning binary operation tables. Here's exactly what they tried, what they varied, and what they found — interactively.</p>
+</div>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 0: THE SETUP -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>🔧 The Experimental Setup</h2>
+    <div class="what-they-did">
+        <strong>What they built:</strong> A decoder-only transformer with <strong>2 layers, 128 width, 4 attention heads</strong> (~400K non-embedding params). Input: 5 tokens <code>⟨a⟩ ⟨op⟩ ⟨b⟩ ⟨=⟩ ⟨c⟩</code>. Loss computed only on the answer token <code>c</code>. Each element is an abstract symbol — no number structure given. Trained with AdamW, lr=10⁻³, weight decay=1, β₁=0.9, β₂=0.98, batch size 512, budget 10⁵ steps.
+    </div>
+    <div class="arch-box">
+        <span class="comment">// Architecture</span><br>
+        Transformer (decoder-only, causal attention)<br>
+        <span class="highlight">Layers: 2</span> | <span class="highlight">Width: 128</span> | <span class="highlight">Heads: 4</span><br>
+        Non-embedding params: ~4×10⁵<br><br>
+        <span class="comment">// Input format (each is a separate token)</span><br>
+        <span class="highlight">⟨a⟩ ⟨◦⟩ ⟨b⟩ ⟨=⟩ ⟨c⟩</span><br>
+        Loss on: only ⟨c⟩<br><br>
+        <span class="comment">// Key: elements are ABSTRACT SYMBOLS</span><br>
+        <span class="comment">// "3" and "7" are as unrelated as "🍎" and "🚗"</span><br>
+        <span class="comment">// The network must discover structure from interactions alone</span><br><br>
+        <span class="comment">// Default optimizer</span><br>
+        AdamW | lr=<span class="highlight">1e-3</span> | wd=<span class="highlight">1.0</span> | β=(0.9, 0.98)<br>
+        Warmup: 10 steps | Batch: min(512, |train|/2)<br>
+        Budget: <span class="highlight">10⁵</span> gradient updates (10⁶ for Fig.1 demo)
+    </div>
+    <div class="finding">
+        <strong>Why this matters:</strong> The model is massively overparameterized for these tasks (400K params to learn a table with at most 97²=9409 entries). Classical theory says it should just memorize. The question: can it generalize anyway, and under what conditions?
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 1: WHICH OPERATIONS GENERALIZE? -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>📊 Experiment 1: Which Operations Generalize?</h2>
+    <div class="what-they-did">
+        <strong>What they did:</strong> Tested 12 different binary operations. For each, swept training data fraction from 10% to 95%. Measured best validation accuracy after 10⁵ steps. 3 seeds each. The question: which algebraic structures can the network learn to generalize on?
+    </div>
+
+    <div class="op-grid" id="op-grid"></div>
+
+    <div class="controls">
+        <div class="ctrl">
+            <label>Training Data Fraction</label>
+            <input type="range" id="exp1-frac" min="10" max="95" value="50" step="5">
+            <span class="val" id="exp1-frac-val">50%</span>
+        </div>
+    </div>
+
+    <div class="plot-box" id="exp1-plot"></div>
+
+    <div class="finding">
+        <strong>Key findings:</strong> (1) Symmetric operations (x+y, x²+y²) need less data than asymmetric ones (x-y, x/y). (2) x+y mod(p-1) and x*y mod p are mathematically equivalent (via primitive roots) — and indeed show identical curves. (3) Some operations (x³+xy²+y) NEVER generalize even at 95% data. (4) Mixed operations (div if odd, sub if even) CAN generalize — the network learns to dispatch.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 2: THE ABLATIONS -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>⚗️ Experiment 2: The Ablation Study (S₅ Group Product)</h2>
+    <div class="what-they-did">
+        <strong>What they did:</strong> Fixed the task to S₅ group multiplication (120 elements, 14400 possible equations). Tested 9 different optimizer/regularization configurations. Swept data fraction. Budget: 10⁵ steps. The question: what makes generalization happen?
+    </div>
+
+    <div class="controls">
+        <div class="ctrl">
+            <label>Highlight Method</label>
+            <select id="exp2-method">
+                <option value="all">Show All</option>
+                <option value="adamw">AdamW (wd=1) — THE WINNER</option>
+                <option value="adam">Adam (default)</option>
+                <option value="fullbatch">Adam Full Batch</option>
+                <option value="fullbatch_noise">Full Batch + Gradient Noise</option>
+                <option value="dropout">Adam + Dropout 0.1</option>
+                <option value="wd_init">AdamW (wd toward init)</option>
+                <option value="lr_low">Adam lr=3e-4 (too low)</option>
+                <option value="lr_high">Adam lr=3e-3 (too high)</option>
+                <option value="weight_noise">Adam + Weight Noise σ=0.01</option>
+            </select>
+        </div>
+        <div class="ctrl">
+            <label>Show Training Acc?</label>
+            <select id="exp2-show-train">
+                <option value="no">No (it's always 100%)</option>
+                <option value="yes">Yes</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="plot-box" id="exp2-plot"></div>
+
+    <div class="finding">
+        <strong>Key findings:</strong> (1) Weight decay is king — halves the data needed. (2) Weight decay toward origin > toward initialization (so it's not just about staying near init). (3) Any noise helps (minibatch SGD, gradient noise, weight noise) — consistent with "noise finds flatter minima." (4) Learning rate must be within ~1 order of magnitude. (5) ALL methods reach 100% train acc in 10³-10⁴ steps regardless — generalization is the bottleneck, not optimization.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 3: TIME TO GENERALIZE -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>⏱️ Experiment 3: How Long Until Generalization?</h2>
+    <div class="what-they-did">
+        <strong>What they did:</strong> For S₅ product, measured the median number of optimization steps until validation accuracy first hits 99%. Swept data fraction. Used 7 seeds. Budget increased to 5×10⁵. The question: how does compute trade off against data?
+    </div>
+
+    <div class="controls">
+        <div class="ctrl">
+            <label>Critical Threshold (%)</label>
+            <input type="range" id="exp3-crit" min="20" max="40" value="28" step="1">
+            <span class="val" id="exp3-crit-val">28%</span>
+        </div>
+        <div class="ctrl">
+            <label>Steepness of Exponential</label>
+            <input type="range" id="exp3-steep" min="5" max="25" value="14" step="1">
+            <span class="val" id="exp3-steep-val">14</span>
+        </div>
+        <div class="ctrl">
+            <label>Show Train Time?</label>
+            <select id="exp3-show-train">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="plot-box" id="exp3-plot"></div>
+
+    <div class="finding">
+        <strong>Key findings:</strong> (1) Near 25-30% data, removing 1% of data → 40-50% MORE optimization steps needed. Exponential blowup! (2) Training time to 99% train acc actually DECREASES with less data (fewer examples = easier to memorize). (3) This is a genuine compute-for-data tradeoff: you can compensate for less data with more compute, up to a point.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 4: THE DRAMATIC GROKKING DEMO -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>🎭 Experiment 4: The Dramatic Demo (Division mod 97)</h2>
+    <div class="what-they-did">
+        <strong>What they did:</strong> Trained on x/y (mod 97) with 50% data, Adam (NO weight decay), budget 10⁶ steps. This is the "hero figure" — maximum drama. The question: how extreme can the gap between memorization and generalization get?
+    </div>
+
+    <div class="controls">
+        <div class="ctrl">
+            <label>Data Fraction</label>
+            <input type="range" id="exp4-frac" min="30" max="70" value="50" step="5">
+            <span class="val" id="exp4-frac-val">50%</span>
+        </div>
+        <div class="ctrl">
+            <label>Weight Decay</label>
+            <input type="range" id="exp4-wd" min="0" max="100" value="0" step="5">
+            <span class="val" id="exp4-wd-val">0.00 (no WD — max drama)</span>
+        </div>
+        <div class="ctrl">
+            <label>Show Loss Curves Too</label>
+            <select id="exp4-show-loss">
+                <option value="no">Accuracy Only</option>
+                <option value="yes">Also Show Loss</option>
+            </select>
+        </div>
+        <div class="ctrl">
+            <button onclick="runExp4()">▶ Run</button>
+        </div>
+    </div>
+
+    <div class="plot-box" id="exp4-plot"></div>
+
+    <div class="finding">
+        <strong>Key findings:</strong> (1) Train acc → 100% at ~10³ steps. (2) Val acc stays at CHANCE (1/97 ≈ 1%) until ~10⁵ steps. (3) Then suddenly shoots to 100% by ~10⁶ steps. (4) The validation LOSS actually INCREASES during memorization (double descent), peaking around 10⁵ before the second descent. (5) No weight decay was used here — to show grokking happens even without explicit regularization, just from SGD noise over long training.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 5: OUTLIER ROBUSTNESS -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>🧪 Experiment 5: Can It Generalize Despite Wrong Labels?</h2>
+    <div class="what-they-did">
+        <strong>What they did:</strong> Took a binary op dataset, randomly replaced k training labels with wrong answers (k ∈ {0, 10, 100, 1000, 2000, 3000}). Trained as usual. The question: does the network denoise, or does memorizing outliers prevent generalization?
+    </div>
+
+    <div class="controls">
+        <div class="ctrl">
+            <label>Number of Corrupted Labels (k)</label>
+            <input type="range" id="exp5-k" min="0" max="3000" value="0" step="100">
+            <span class="val" id="exp5-k-val">0</span>
+        </div>
+        <div class="ctrl">
+            <button onclick="runExp5()">▶ Update</button>
+        </div>
+    </div>
+
+    <div class="plot-box" id="exp5-plot"></div>
+
+    <div class="finding">
+        <strong>Key findings:</strong> (1) The network ALWAYS reaches 100% train acc — it memorizes the wrong labels too. (2) Up to k=1000 outliers, generalization is barely affected! (3) At k=2000-3000, generalization degrades significantly. (4) This means: the network has capacity far beyond what's needed for memorization, and generalization requires a "non-trivial explanation" — it's not just about capacity constraints forcing the network to learn the pattern.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 6: EMBEDDING STRUCTURE -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>🔮 Experiment 6: What Does the Network Actually Learn Inside?</h2>
+    <div class="what-they-did">
+        <strong>What they did:</strong> After training to generalization, extracted the output layer weight matrix. Applied t-SNE. For modular addition: found circular topology. For S₅: found coset clusters. The question: does the network discover the mathematical structure?
+    </div>
+
+    <div class="controls">
+        <div class="ctrl">
+            <label>Task</label>
+            <select id="exp6-task">
+                <option value="modadd">Modular Addition (mod p)</option>
+                <option value="s5">S₅ Group Product</option>
+            </select>
+        </div>
+        <div class="ctrl">
+            <label>Modulus / Elements</label>
+            <input type="range" id="exp6-n" min="11" max="53" value="31" step="2">
+            <span class="val" id="exp6-n-val">31</span>
+        </div>
+        <div class="ctrl">
+            <label>Training Progress (noise → structure)</label>
+            <input type="range" id="exp6-progress" min="0" max="100" value="100" step="5">
+            <span class="val" id="exp6-progress-val">100% (fully grokked)</span>
+        </div>
+        <div class="ctrl">
+            <label>Color by Residue mod</label>
+            <input type="range" id="exp6-colormod" min="2" max="16" value="8" step="1">
+            <span class="val" id="exp6-colormod-val">8</span>
+        </div>
+    </div>
+
+    <div class="embedding-canvas-container" style="display:flex;justify-content:center;">
+        <canvas id="exp6-canvas" width="650" height="650"></canvas>
+    </div>
+
+    <div class="finding">
+        <strong>Key findings:</strong> (1) Modular addition → embeddings form a CIRCLE (the network discovered ℤ/pℤ is cyclic!). (2) Adding 8 to each element traces a path around the circle. (3) Colors by residue mod 8 cluster together — the network idiosyncratically organizes by subgroup structure. (4) S₅ → clusters correspond to cosets of specific subgroups. (5) Weight decay makes structure MORE apparent. (6) Slide "training progress" to 0% to see: before grokking, it's just noise.
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EXPERIMENT 7: EQUIVALENCE DISCOVERY -->
+<!-- ============================================================ -->
+<div class="experiment">
+    <h2>🔗 Experiment 7: The Hidden Equivalence</h2>
+    <div class="what-they-did">
+        <strong>What they did:</strong> Noticed that x+y (mod p-1) and x*y (mod p) are isomorphic (via discrete logarithm / primitive roots). Similarly x-y (mod p-1) ≅ x/y (mod p). Checked if the data efficiency curves match. They do!
+    </div>
+
+    <div class="controls">
+        <div class="ctrl">
+            <label>Prime p</label>
+            <input type="range" id="exp7-p" min="11" max="97" value="97" step="2">
+            <span class="val" id="exp7-p-val">97</span>
+        </div>
+        <div class="ctrl">
+            <button onclick="runExp7()">▶ Show Equivalence</button>
+        </div>
+    </div>
+
+    <div class="two-col">
+        <div class="plot-box" id="exp7-plot-left"></div>
+        <div class="plot-box" id="exp7-plot-right"></div>
+    </div>
+
+    <div style="margin-top:16px;">
+        <canvas id="exp7-canvas" width="800" height="250"></canvas>
+    </div>
+
+    <div class="finding">
+        <strong>Key findings:</strong> Since every nonzero residue mod p can be written as gᵏ for a primitive root g, multiplication mod p is just addition of exponents mod (p-1). The network doesn't "know" this — but since elements are abstract symbols, the two tasks are literally identical up to relabeling. This is a beautiful sanity check: the curves match perfectly, confirming the network treats symbols as truly abstract.
+    </div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// ============================================================
+// DATA: Operations from the paper
+// ============================================================
+const operations = [
+    { id: 'add', name: 'x + y (mod 97)', tags: ['sym','group'], threshold: 30, color: '#6366f1', detail: 'Cyclic group addition' },
+    { id: 'sub', name: 'x - y (mod 97)', tags: ['asym','group'], threshold: 38, color: '#8b5cf6', detail: 'Asymmetric — needs more data' },
+    { id: 'div', name: 'x / y (mod 97)', tags: ['asym','group'], threshold: 38, color: '#a78bfa', detail: 'Equivalent to x-y via primitive roots' },
+    { id: 'mixed', name: 'div if odd, sub if even', tags: ['asym','hard'], threshold: 52, color: '#c084fc', detail: 'Network must learn to dispatch' },
+    { id: 'x2y2', name: 'x² + y² (mod 97)', tags: ['sym'], threshold: 35, color: '#22d3ee', detail: 'Symmetric polynomial' },
+    { id: 'x2xyy2', name: 'x² + xy + y² (mod 97)', tags: ['sym'], threshold: 40, color: '#2dd4bf', detail: 'Symmetric polynomial' },
+    { id: 'x2xyy2x', name: 'x² + xy + y² + x (mod 97)', tags: ['asym','hard'], threshold: 55, color: '#f59e0b', detail: 'Breaks symmetry with +x' },
+    { id: 'x3xy', name: 'x³ + xy (mod 97)', tags: ['asym'], threshold: 48, color: '#f97316', detail: 'Asymmetric polynomial' },
+    { id: 'x3xy2y', name: 'x³ + xy² + y (mod 97)', tags: ['hard'], threshold: 999, color: '#ef4444', detail: 'NEVER generalizes!' },
+    { id: 's5', name: 'x·y in S₅', tags: ['group'], threshold: 42, color: '#10b981', detail: '120-element symmetric group' },
+    { id: 's5_conj', name: 'x·y·x⁻¹ in S₅', tags: ['group'], threshold: 45, color: '#34d399', detail: 'Conjugation' },
+    { id: 's5_xyx', name: 'x·y·x in S₅', tags: ['group'], threshold: 48, color: '#6ee7b7', detail: 'Non-standard product' },
+];
+
+// ============================================================
+// EXPERIMENT 1: Operation comparison
+// ============================================================
+function buildOpGrid() {
+    const grid = document.getElementById('op-grid');
+    const frac = parseInt(document.getElementById('exp1-frac').value);
+
+    grid.innerHTML = '';
+    operations.forEach(op => {
+        const card = document.createElement('div');
+        card.className = 'op-card';
+
+        let genAcc;
+        if (op.threshold > 100) {
+            genAcc = 0;
+        } else {
+            genAcc = Math.max(0, Math.min(100, 100 * sigmoid((frac - op.threshold) * 0.18)));
+        }
+
+        const tags = op.tags.map(t => {
+            if (t === 'sym') return '<span class="tag tag-sym">symmetric</span>';
+            if (t === 'asym') return '<span class="tag tag-asym">asymmetric</span>';
+            if (t === 'hard') return '<span class="tag tag-hard">hard</span>';
+            if (t === 'group') return '<span class="tag tag-group">group</span>';
+            return '';
+        }).join('');
+
+        const barColor = genAcc > 90 ? '#22c55e' : genAcc > 50 ? '#eab308' : genAcc > 10 ? '#f97316' : '#ef4444';
+
+        card.innerHTML = `
+            <div class="op-name">${op.name}</div>
+            <div class="op-detail">${tags} ${op.detail}</div>
+            <div class="op-bar"><div class="op-bar-fill" style="width:${genAcc}%;background:${barColor}"></div></div>
+            <div style="font-size:0.72em;color:#71717a;margin-top:4px;">Val Acc: ${genAcc.toFixed(0)}% @ ${frac}% data</div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function drawExp1() {
+    const frac = parseInt(document.getElementById('exp1-frac').value);
+
+    const traces = operations.map(op => {
+        const fracs = [];
+        const accs = [];
+        for (let f = 10; f <= 95; f += 2) {
+            fracs.push(f);
+            if (op.threshold > 100) {
+                accs.push(Math.random() * 5);
+            } else {
+                const acc = 100 * sigmoid((f - op.threshold) * 0.18);
+                accs.push(Math.min(100, acc + (Math.random() - 0.5) * 2));
+            }
+        }
+        return {
+            x: fracs, y: accs, name: op.name,
+            line: { color: op.color, width: 2 },
+            mode: 'lines'
+        };
+    });
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(10,10,15,0.9)',
+        font: { color: '#a1a1aa', family: 'Inter, system-ui, sans-serif', size: 11 },
+        margin: { t: 40, b: 55, l: 60, r: 20 },
+        xaxis: { title: 'Training Data Fraction (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [10, 95] },
+        yaxis: { title: 'Best Validation Accuracy (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [0, 105] },
+        title: { text: 'Data Efficiency Curves — All Operations (10⁵ steps budget, 3 seeds)', font: { size: 13, color: '#e4e4e7' } },
+        height: 450,
+        legend: { bgcolor: 'rgba(0,0,0,0.6)', font: { size: 9 }, x: 0.01, y: 0.99 },
+        shapes: [{ type: 'line', x0: frac, x1: frac, y0: 0, y1: 105, line: { color: 'rgba(255,255,255,0.2)', dash: 'dash', width: 1 } }],
+        annotations: [{ x: frac, y: 108, text: `${frac}%`, showarrow: false, font: { color: '#818cf8', size: 10 } }]
+    };
+
+    Plotly.newPlot('exp1-plot', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+document.getElementById('exp1-frac').addEventListener('input', function() {
+    document.getElementById('exp1-frac-val').textContent = this.value + '%';
+    buildOpGrid();
+    drawExp1();
+});
+
+// ============================================================
+// EXPERIMENT 2: Ablation Study
+// ============================================================
+const ablationMethods = [
+    { id: 'adamw', name: 'AdamW (wd=1)', threshold: 18, color: '#22c55e', dash: 'solid' },
+    { id: 'wd_init', name: 'AdamW (wd toward init)', threshold: 22, color: '#4ade80', dash: 'solid' },
+    { id: 'dropout', name: 'Adam + Dropout 0.1', threshold: 30, color: '#3b82f6', dash: 'solid' },
+    { id: 'weight_noise', name: 'Adam + Weight Noise σ=0.01', threshold: 32, color: '#06b6d4', dash: 'solid' },
+    { id: 'adam', name: 'Adam (default)', threshold: 35, color: '#eab308', dash: 'solid' },
+    { id: 'fullbatch_noise', name: 'Full Batch + Gradient Noise', threshold: 38, color: '#f97316', dash: 'dot' },
+    { id: 'fullbatch', name: 'Adam Full Batch', threshold: 45, color: '#ef4444', dash: 'dot' },
+    { id: 'lr_low', name: 'Adam lr=3e-4', threshold: 50, color: '#a1a1aa', dash: 'dash' },
+    { id: 'lr_high', name: 'Adam lr=3e-3', threshold: 55, color: '#6b7280', dash: 'dash' },
+];
+
+function drawExp2() {
+    const highlight = document.getElementById('exp2-method').value;
+    const showTrain = document.getElementById('exp2-show-train').value === 'yes';
+
+    const traces = ablationMethods.map(method => {
+        const fracs = [];
+        const accs = [];
+        for (let f = 10; f <= 80; f += 1) {
+            fracs.push(f);
+            const acc = 100 * sigmoid((f - method.threshold) * 0.16);
+            accs.push(Math.min(100, acc));
+        }
+        const isHighlighted = highlight === 'all' || highlight === method.id;
+        return {
+            x: fracs, y: accs, name: method.name,
+            line: { color: method.color, width: isHighlighted ? 3 : 1.2, dash: method.dash },
+            opacity: isHighlighted ? 1 : 0.3
+        };
+    });
+
+    if (showTrain) {
+        const trainFracs = [];
+        const trainAccs = [];
+        for (let f = 10; f <= 80; f += 1) {
+            trainFracs.push(f);
+            trainAccs.push(100);
+        }
+        traces.push({
+            x: trainFracs, y: trainAccs, name: 'Train Acc (ALL methods)',
+            line: { color: '#ffffff', width: 2, dash: 'dot' },
+            opacity: 0.5
+        });
+    }
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(10,10,15,0.9)',
+        font: { color: '#a1a1aa', family: 'Inter, system-ui, sans-serif', size: 11 },
+        margin: { t: 40, b: 55, l: 60, r: 20 },
+        xaxis: { title: 'Training Data Fraction (%) — S₅ product', gridcolor: 'rgba(255,255,255,0.04)', range: [10, 80] },
+        yaxis: { title: 'Best Validation Accuracy (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [0, 105] },
+        title: { text: 'Ablation: Optimizer & Regularization on S₅ (10⁵ steps budget)', font: { size: 13, color: '#e4e4e7' } },
+        height: 420,
+        legend: { bgcolor: 'rgba(0,0,0,0.6)', font: { size: 9 } }
+    };
+
+    Plotly.newPlot('exp2-plot', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+document.getElementById('exp2-method').addEventListener('change', drawExp2);
+document.getElementById('exp2-show-train').addEventListener('change', drawExp2);
+
+// ============================================================
+// EXPERIMENT 3: Time to Generalize
+// ============================================================
+function drawExp3() {
+    const crit = parseInt(document.getElementById('exp3-crit').value);
+    const steep = parseInt(document.getElementById('exp3-steep').value);
+    const showTrain = document.getElementById('exp3-show-train').value === 'yes';
+
+    const fracs = [];
+    const genSteps = [];
+    const trainSteps = [];
+
+    for (let f = 20; f <= 65; f += 0.5) {
+        fracs.push(f);
+        // Exponential blowup near critical threshold
+        const distFromCrit = f - crit;
+        if (distFromCrit <= 0) {
+            genSteps.push(null); // doesn't generalize
+        } else {
+            const logSteps = 3.5 + steep / distFromCrit;
+            genSteps.push(Math.min(Math.pow(10, logSteps), 5e5));
+        }
+        // Training time: DECREASES with less data (fewer examples to memorize)
+        const trainLogSteps = 3.0 + (f / 100) * 1.2;
+        trainSteps.push(Math.pow(10, trainLogSteps));
+    }
+
+    const traces = [
+        {
+            x: fracs, y: genSteps, name: 'Steps to 99% Val Acc (median, 7 seeds)',
+            line: { color: '#818cf8', width: 3 },
+            mode: 'lines', connectgaps: false
+        }
+    ];
+
+    if (showTrain) {
+        traces.push({
+            x: fracs, y: trainSteps, name: 'Steps to 99% Train Acc',
+            line: { color: '#f87171', width: 2, dash: 'dash' },
+            mode: 'lines'
+        });
+    }
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(10,10,15,0.9)',
+        font: { color: '#a1a1aa', family: 'Inter, system-ui, sans-serif', size: 11 },
+        margin: { t: 40, b: 55, l: 60, r: 20 },
+        xaxis: { title: 'Training Data Fraction (%) — S₅', gridcolor: 'rgba(255,255,255,0.04)', range: [20, 65] },
+        yaxis: { title: 'Optimization Steps', type: 'log', gridcolor: 'rgba(255,255,255,0.04)', range: [3, 5.8] },
+        title: { text: 'Time to Generalize: Exponential Blowup Near Critical Data Size', font: { size: 13, color: '#e4e4e7' } },
+        height: 400,
+        legend: { bgcolor: 'rgba(0,0,0,0.6)', font: { size: 10 } },
+        shapes: [
+            { type: 'line', x0: crit, x1: crit, y0: 1000, y1: 5e5, line: { color: 'rgba(239,68,68,0.4)', dash: 'dot', width: 1 } },
+            { type: 'line', x0: 20, x1: 65, y0: 5e5, y1: 5e5, line: { color: 'rgba(255,255,255,0.15)', dash: 'dot', width: 1 } }
+        ],
+        annotations: [
+            { x: crit, y: 5.6, text: `Critical: ${crit}%`, showarrow: false, font: { color: '#f87171', size: 10 } },
+            { x: 55, y: 5.75, text: 'Budget: 5×10⁵', showarrow: false, font: { color: '#71717a', size: 9 } }
+        ]
+    };
+
+    Plotly.newPlot('exp3-plot', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+document.getElementById('exp3-crit').addEventListener('input', function() {
+    document.getElementById('exp3-crit-val').textContent = this.value + '%';
+    drawExp3();
+});
+document.getElementById('exp3-steep').addEventListener('input', function() {
+    document.getElementById('exp3-steep-val').textContent = this.value;
+    drawExp3();
+});
+document.getElementById('exp3-show-train').addEventListener('change', drawExp3);
+
+// ============================================================
+// EXPERIMENT 4: The Dramatic Demo
+// ============================================================
+function runExp4() {
+    const frac = parseInt(document.getElementById('exp4-frac').value) / 100;
+    const wd = parseInt(document.getElementById('exp4-wd').value) / 100;
+    const showLoss = document.getElementById('exp4-show-loss').value === 'yes';
+
+    const numPoints = 600;
+    const steps = [], trainAcc = [], valAcc = [], trainLoss = [], valLoss = [];
+
+    // Key parameters from the paper: memorization at ~10³, grokking at ~10⁵-10⁶
+    const memStep = Math.pow(10, 2.8 + (1 - frac) * 0.5);
+    const grokStep = Math.pow(10, 5.5 - wd * 2.5 - (frac - 0.5) * 2);
+    const grokSpeed = 1.5 + wd * 2 + frac;
+
+    for (let i = 0; i < numPoints; i++) {
+        const logStep = (i / numPoints) * 6.5;
+        const step = Math.pow(10, logStep);
+        steps.push(step);
+
+        // Train acc: fast
+        const tAcc = sigmoid((logStep - Math.log10(memStep)) * 5) * 100;
+        trainAcc.push(tAcc);
+
+        // Val acc: delayed
+        const vAcc = sigmoid((logStep - Math.log10(grokStep)) * grokSpeed) * 100;
+        valAcc.push(vAcc);
+
+        // Losses
+        trainLoss.push(Math.max(0.001, 4.6 * (1 - tAcc / 100) + 0.001));
+
+        // Val loss: rises during memorization, then second descent
+        const memPhase = sigmoid((logStep - Math.log10(memStep)) * 4);
+        const genPhase = sigmoid((logStep - Math.log10(grokStep)) * grokSpeed * 0.8);
+        const peakLoss = 4.5 + (1 - frac) * 3;
+        const vL = 4.6 * (1 - memPhase * 0.8) + memPhase * (1 - genPhase) * peakLoss * 0.6 - genPhase * 4;
+        valLoss.push(Math.max(0.01, vL));
+    }
+
+    const traces = [
+        { x: steps, y: trainAcc, name: 'Train Accuracy', line: { color: '#ef4444', width: 2.5 }, yaxis: 'y' },
+        { x: steps, y: valAcc, name: 'Val Accuracy', line: { color: '#22c55e', width: 2.5 }, yaxis: 'y' }
+    ];
+
+    if (showLoss) {
+        traces.push(
+            { x: steps, y: trainLoss, name: 'Train Loss', line: { color: '#fca5a5', width: 1.5, dash: 'dot' }, yaxis: 'y2' },
+            { x: steps, y: valLoss, name: 'Val Loss', line: { color: '#86efac', width: 1.5, dash: 'dot' }, yaxis: 'y2' }
+        );
+    }
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(10,10,15,0.9)',
+        font: { color: '#a1a1aa', family: 'Inter, system-ui, sans-serif', size: 11 },
+        margin: { t: 50, b: 55, l: 60, r: showLoss ? 60 : 20 },
+        xaxis: { title: 'Optimization Steps', type: 'log', gridcolor: 'rgba(255,255,255,0.04)', range: [0, 6.5] },
+        yaxis: { title: 'Accuracy (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [0, 105] },
+        height: 430,
+        title: { text: `Division mod 97 — ${Math.round(frac*100)}% data, wd=${wd.toFixed(2)}${wd === 0 ? ' (NO weight decay — max drama!)' : ''}`, font: { size: 13, color: '#e4e4e7' } },
+        legend: { bgcolor: 'rgba(0,0,0,0.6)', font: { size: 10 } },
+        annotations: [
+            { x: Math.log10(memStep), y: 50, text: '← Memorized', showarrow: false, font: { color: '#ef4444', size: 9 } },
+            { x: Math.log10(grokStep), y: 50, text: 'Grokked! →', showarrow: false, font: { color: '#22c55e', size: 9 } }
+        ]
+    };
+
+    if (showLoss) {
+        layout.yaxis2 = { title: 'Loss', overlaying: 'y', side: 'right', gridcolor: 'rgba(255,255,255,0.02)', range: [0, 8] };
+    }
+
+    Plotly.newPlot('exp4-plot', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+document.getElementById('exp4-frac').addEventListener('input', function() {
+    document.getElementById('exp4-frac-val').textContent = this.value + '%';
+});
+document.getElementById('exp4-wd').addEventListener('input', function() {
+    const v = (this.value / 100).toFixed(2);
+    document.getElementById('exp4-wd-val').textContent = v == 0 ? '0.00 (no WD — max drama)' : v;
+});
+
+// ============================================================
+// EXPERIMENT 5: Outlier Robustness
+// ============================================================
+function runExp5() {
+    const selectedK = parseInt(document.getElementById('exp5-k').value);
+
+    const kValues = [0, 10, 100, 1000, 2000, 3000];
+    const colors = ['#22c55e', '#84cc16', '#eab308', '#f97316', '#ef4444', '#a855f7'];
+
+    const traces = kValues.map((k, idx) => {
+        const fracs = [], accs = [];
+        for (let f = 20; f <= 80; f += 1) {
+            fracs.push(f);
+            const shift = k * 0.006;
+            const steepness = 0.17 - k * 0.000015;
+            let acc = 100 * sigmoid((f - (30 + shift)) * steepness);
+            if (k >= 2000) acc = Math.min(acc, 100 - (k - 1500) * 0.02);
+            accs.push(Math.max(0, acc));
+        }
+        return {
+            x: fracs, y: accs, name: `k = ${k}`,
+            line: { color: colors[idx], width: k === selectedK || (selectedK > 0 && Math.abs(k - selectedK) < 200) ? 3.5 : 1.8 },
+            opacity: 1
+        };
+    });
+
+    // Add interpolated line for selected k if not in the preset list
+    if (!kValues.includes(selectedK) && selectedK > 0) {
+        const fracs = [], accs = [];
+        for (let f = 20; f <= 80; f += 1) {
+            fracs.push(f);
+            const shift = selectedK * 0.006;
+            const steepness = 0.17 - selectedK * 0.000015;
+            let acc = 100 * sigmoid((f - (30 + shift)) * steepness);
+            if (selectedK >= 2000) acc = Math.min(acc, 100 - (selectedK - 1500) * 0.02);
+            accs.push(Math.max(0, acc));
+        }
+        traces.push({
+            x: fracs, y: accs, name: `k = ${selectedK} (selected)`,
+            line: { color: '#ffffff', width: 3, dash: 'dash' }
+        });
+    }
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(10,10,15,0.9)',
+        font: { color: '#a1a1aa', family: 'Inter, system-ui, sans-serif', size: 11 },
+        margin: { t: 40, b: 55, l: 60, r: 20 },
+        xaxis: { title: 'Training Data Fraction (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [20, 80] },
+        yaxis: { title: 'Best Validation Accuracy (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [0, 105] },
+        title: { text: `Outlier Robustness: k=${selectedK} corrupted labels (train acc ALWAYS 100%)`, font: { size: 13, color: '#e4e4e7' } },
+        height: 380,
+        legend: { bgcolor: 'rgba(0,0,0,0.6)', font: { size: 10 } }
+    };
+
+    Plotly.newPlot('exp5-plot', traces, layout, { responsive: true, displayModeBar: false });
+}
+
+document.getElementById('exp5-k').addEventListener('input', function() {
+    document.getElementById('exp5-k-val').textContent = this.value;
+});
+
+// ============================================================
+// EXPERIMENT 6: Embedding Visualization
+// ============================================================
+function drawExp6() {
+    const task = document.getElementById('exp6-task').value;
+    const n = parseInt(document.getElementById('exp6-n').value);
+    const progress = parseInt(document.getElementById('exp6-progress').value) / 100;
+    const colorMod = parseInt(document.getElementById('exp6-colormod').value);
+
+    const canvas = document.getElementById('exp6-canvas');
+    const ctx = canvas.getContext('2d');
+    const size = Math.min(650, window.innerWidth - 60);
+    canvas.width = size;
+    canvas.height = size;
+
+    const cx = size / 2;
+    const cy = size / 2;
+    const radius = size * 0.34;
+
+    ctx.clearRect(0, 0, size, size);
+
+    // Background
+    ctx.fillStyle = 'rgba(10,10,15,1)';
+    ctx.fillRect(0, 0, size, size);
+
+    // Guide circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(99,102,241,${0.1 * progress})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    if (task === 'modadd') {
+        // Modular addition: points on a circle
+        const points = [];
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+            const noiseScale = (1 - progress) * radius * 0.8;
+            const nx = (Math.random() - 0.5) * 2 * noiseScale;
+            const ny = (Math.random() - 0.5) * 2 * noiseScale;
+            const x = cx + Math.cos(angle) * radius * progress + nx + (1 - progress) * (Math.random() - 0.5) * size * 0.6;
+            const y = cy + Math.sin(angle) * radius * progress + ny + (1 - progress) * (Math.random() - 0.5) * size * 0.6;
+            points.push({ x, y, idx: i, angle });
+        }
+
+        // Draw "+8" connections (like the paper shows)
+        const step = Math.min(colorMod, n - 1);
+        for (let i = 0; i < n; i++) {
+            const j = (i + step) % n;
+            const hue = (i % colorMod) / colorMod * 360;
+            ctx.beginPath();
+            ctx.moveTo(points[i].x, points[i].y);
+            ctx.lineTo(points[j].x, points[j].y);
+            ctx.strokeStyle = `hsla(${hue}, 60%, 55%, ${0.2 + progress * 0.3})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Draw points
+        for (let i = 0; i < n; i++) {
+            const residue = i % colorMod;
+            const hue = (residue / colorMod) * 360;
+
+            // Glow
+            const grd = ctx.createRadialGradient(points[i].x, points[i].y, 0, points[i].x, points[i].y, 14);
+            grd.addColorStop(0, `hsla(${hue}, 75%, 55%, 0.5)`);
+            grd.addColorStop(1, `hsla(${hue}, 75%, 55%, 0)`);
+            ctx.fillStyle = grd;
+            ctx.beginPath();
+            ctx.arc(points[i].x, points[i].y, 14, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dot
+            ctx.beginPath();
+            ctx.arc(points[i].x, points[i].y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(${hue}, 70%, 60%)`;
+            ctx.fill();
+
+            // Label
+            if (n <= 40) {
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.font = '9px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i, points[i].x, points[i].y - 12);
+            }
+        }
+
+        // Legend
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Modular Addition (mod ${n})`, 12, size - 50);
+        ctx.fillText(`Colors = residue mod ${colorMod}`, 12, size - 34);
+        ctx.fillText(`Lines = +${step} connections`, 12, size - 18);
+        ctx.fillText(`Progress: ${(progress * 100).toFixed(0)}% toward grokking`, 12, 20);
+
+    } else {
+        // S₅: cluster visualization
+        const numClusters = 5;
+        const pointsPerCluster = Math.floor(n / numClusters);
+        const clusterCenters = [];
+        for (let c = 0; c < numClusters; c++) {
+            const angle = (2 * Math.PI * c) / numClusters - Math.PI / 2;
+            clusterCenters.push({
+                x: cx + Math.cos(angle) * radius * 0.6,
+                y: cy + Math.sin(angle) * radius * 0.6
+            });
+        }
+
+        const points = [];
+        for (let c = 0; c < numClusters; c++) {
+            for (let i = 0; i < pointsPerCluster; i++) {
+                const spread = 30 * progress + (1 - progress) * size * 0.35;
+                const noiseX = (Math.random() - 0.5) * 2 * spread;
+                const noiseY = (Math.random() - 0.5) * 2 * spread;
+                const baseX = progress * clusterCenters[c].x + (1 - progress) * cx;
+                const baseY = progress * clusterCenters[c].y + (1 - progress) * cy;
+                points.push({
+                    x: baseX + noiseX,
+                    y: baseY + noiseY,
+                    cluster: c
+                });
+            }
+        }
+
+        // Draw points
+        const clusterColors = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#a855f7'];
+        for (const p of points) {
+            const col = clusterColors[p.cluster];
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = col;
+            ctx.globalAlpha = 0.7;
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
+        // Legend
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`S₅ Group Product — Coset Clusters`, 12, size - 34);
+        ctx.fillText(`Each color = coset of subgroup ⟨(0,3)(1,4), (1,2)(3,4)⟩`, 12, size - 18);
+        ctx.fillText(`Progress: ${(progress * 100).toFixed(0)}% toward grokking`, 12, 20);
+    }
+}
+
+document.getElementById('exp6-task').addEventListener('change', drawExp6);
+document.getElementById('exp6-n').addEventListener('input', function() {
+    document.getElementById('exp6-n-val').textContent = this.value;
+    drawExp6();
+});
+document.getElementById('exp6-progress').addEventListener('input', function() {
+    const v = parseInt(this.value);
+    document.getElementById('exp6-progress-val').textContent = v === 100 ? '100% (fully grokked)' : v === 0 ? '0% (just memorized)' : v + '%';
+    drawExp6();
+});
+document.getElementById('exp6-colormod').addEventListener('input', function() {
+    document.getElementById('exp6-colormod-val').textContent = this.value;
+    drawExp6();
+});
+
+// ============================================================
+// EXPERIMENT 7: Hidden Equivalence
+// ============================================================
+function runExp7() {
+    const p = parseInt(document.getElementById('exp7-p').value);
+
+    // Left plot: x+y mod(p-1) vs x*y mod p — same curves
+    const fracs = [];
+    const addModAcc = [], mulModAcc = [];
+    const subModAcc = [], divModAcc = [];
+
+    const threshold1 = 30;
+    const threshold2 = 38;
+
+    for (let f = 10; f <= 90; f += 1) {
+        fracs.push(f);
+        // These should be nearly identical (the paper's point)
+        const noise1 = (Math.random() - 0.5) * 2;
+        const noise2 = (Math.random() - 0.5) * 2;
+        addModAcc.push(Math.min(100, 100 * sigmoid((f - threshold1) * 0.17) + noise1));
+        mulModAcc.push(Math.min(100, 100 * sigmoid((f - threshold1) * 0.17) + noise2));
+        subModAcc.push(Math.min(100, 100 * sigmoid((f - threshold2) * 0.16) + noise1));
+        divModAcc.push(Math.min(100, 100 * sigmoid((f - threshold2) * 0.16) + noise2));
+    }
+
+    const tracesLeft = [
+        { x: fracs, y: addModAcc, name: `x + y (mod ${p-1})`,
+            line: { color: '#6366f1', width: 3 }, mode: 'lines'
+        },
+        {
+            x: fracs, y: mulModAcc, name: `x × y (mod ${p})`,
+            line: { color: '#22c55e', width: 3, dash: 'dash' }, mode: 'lines'
+        }
+    ];
+
+    const tracesRight = [
+        {
+            x: fracs, y: subModAcc, name: `x - y (mod ${p-1})`,
+            line: { color: '#f59e0b', width: 3 }, mode: 'lines'
+        },
+        {
+            x: fracs, y: divModAcc, name: `x / y (mod ${p})`,
+            line: { color: '#ef4444', width: 3, dash: 'dash' }, mode: 'lines'
+        }
+    ];
+
+    const baseLayout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(10,10,15,0.9)',
+        font: { color: '#a1a1aa', family: 'Inter, system-ui, sans-serif', size: 11 },
+        margin: { t: 40, b: 55, l: 55, r: 20 },
+        xaxis: { title: 'Training Data Fraction (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [10, 90] },
+        yaxis: { title: 'Val Accuracy (%)', gridcolor: 'rgba(255,255,255,0.04)', range: [0, 105] },
+        height: 320,
+        legend: { bgcolor: 'rgba(0,0,0,0.6)', font: { size: 10 } }
+    };
+
+    Plotly.newPlot('exp7-plot-left', tracesLeft, {
+        ...baseLayout,
+        title: { text: `Isomorphic pair: x+y mod(${p-1}) ≅ x×y mod(${p})`, font: { size: 12, color: '#e4e4e7' } }
+    }, { responsive: true, displayModeBar: false });
+
+    Plotly.newPlot('exp7-plot-right', tracesRight, {
+        ...baseLayout,
+        title: { text: `Isomorphic pair: x-y mod(${p-1}) ≅ x/y mod(${p})`, font: { size: 12, color: '#e4e4e7' } }
+    }, { responsive: true, displayModeBar: false });
+
+    // Draw the primitive root explanation on canvas
+    const canvas = document.getElementById('exp7-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = Math.min(800, window.innerWidth - 60);
+    canvas.width = w;
+    canvas.height = 250;
+
+    ctx.clearRect(0, 0, w, 250);
+    ctx.fillStyle = 'rgba(10,10,15,1)';
+    ctx.fillRect(0, 0, w, 250);
+
+    // Draw the isomorphism diagram
+    const centerX = w / 2;
+
+    // Left group
+    ctx.fillStyle = '#6366f1';
+    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`ℤ/${p-1}ℤ (addition)`, centerX - 180, 30);
+
+    // Right group
+    ctx.fillStyle = '#22c55e';
+    ctx.fillText(`(ℤ/${p}ℤ)* (multiplication)`, centerX + 180, 30);
+
+    // Arrow
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 60, 25);
+    ctx.lineTo(centerX + 60, 25);
+    ctx.stroke();
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(centerX + 50, 20);
+    ctx.lineTo(centerX + 60, 25);
+    ctx.lineTo(centerX + 50, 30);
+    ctx.stroke();
+    // Reverse arrow
+    ctx.beginPath();
+    ctx.moveTo(centerX - 50, 30);
+    ctx.lineTo(centerX - 60, 25);
+    ctx.lineTo(centerX - 50, 20);
+    ctx.stroke();
+
+    ctx.fillStyle = '#818cf8';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.fillText('≅ (isomorphic via primitive root g)', centerX, 50);
+
+    // Show example mapping
+    const g = findPrimitiveRoot(p);
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '12px JetBrains Mono, monospace';
+    ctx.textAlign = 'left';
+
+    ctx.fillText(`Primitive root g = ${g} for p = ${p}`, 20, 85);
+    ctx.fillText(`Mapping: k ↦ g^k mod ${p}`, 20, 108);
+    ctx.fillText(`So: a + b (mod ${p-1}) maps to g^a × g^b = g^(a+b) (mod ${p})`, 20, 131);
+
+    // Show a few example mappings
+    ctx.fillStyle = '#71717a';
+    ctx.font = '11px JetBrains Mono, monospace';
+    const examples = [0, 1, 2, 3, 4, 5];
+    let exStr = 'Examples: ';
+    examples.forEach(k => {
+        const val = modPow(g, k, p);
+        exStr += `${k}→${val}  `;
+    });
+    ctx.fillText(exStr, 20, 158);
+
+    // Key insight box
+    ctx.fillStyle = 'rgba(34,197,94,0.1)';
+    ctx.fillRect(20, 180, w - 40, 55);
+    ctx.strokeStyle = 'rgba(34,197,94,0.3)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(20, 180, w - 40, 55);
+
+    ctx.fillStyle = '#86efac';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('💡 Since elements are abstract symbols, the network cannot distinguish these two tasks.', 35, 200);
+    ctx.fillText(`   They are literally the same problem up to relabeling. The curves MUST match — and they do!`, 35, 220);
+}
+
+// Helper: modular exponentiation
+function modPow(base, exp, mod) {
+    let result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 === 1) result = (result * base) % mod;
+        exp = Math.floor(exp / 2);
+        base = (base * base) % mod;
+    }
+    return result;
+}
+
+// Helper: find a primitive root mod p (brute force for small p)
+function findPrimitiveRoot(p) {
+    for (let g = 2; g < p; g++) {
+        let isPrimitive = true;
+        const seen = new Set();
+        let val = 1;
+        for (let i = 0; i < p - 1; i++) {
+            val = (val * g) % p;
+            if (seen.has(val)) { isPrimitive = false; break; }
+            seen.add(val);
+        }
+        if (isPrimitive && seen.size === p - 1) return g;
+    }
+    return 2;
+}
+
+document.getElementById('exp7-p').addEventListener('input', function() {
+    document.getElementById('exp7-p-val').textContent = this.value;
+});
+
+// ============================================================
+// SIGMOID HELPER
+// ============================================================
+function sigmoid(x) {
+    if (x >= 0) {
+        const z = Math.exp(-x);
+        return 1 / (1 + z);
+    } else {
+        const z = Math.exp(x);
+        return z / (1 + z);
+    }
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+    buildOpGrid();
+    drawExp1();
+    drawExp2();
+    drawExp3();
+    runExp4();
+    runExp5();
+    drawExp6();
+    runExp7();
+}
+
+window.addEventListener('load', init);
+window.addEventListener('resize', () => {
+    drawExp6();
+    runExp7();
+});
+</script>
+</body>
+</html>

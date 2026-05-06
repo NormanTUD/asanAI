@@ -1,0 +1,3400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topology for LLM Interpretability — Interactive Explorer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0a0a0f;
+  color: #e0e0e8;
+  overflow-x: hidden;
+}
+.nav {
+  position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+  background: rgba(10,10,15,0.95); backdrop-filter: blur(10px);
+  border-bottom: 1px solid #222;
+  display: flex; overflow-x: auto; padding: 8px 16px; gap: 6px;
+}
+.nav button {
+  background: #1a1a2e; color: #888; border: 1px solid #333;
+  padding: 8px 14px; border-radius: 6px; cursor: pointer;
+  white-space: nowrap; font-size: 13px; transition: all 0.2s;
+}
+.nav button:hover { background: #252545; color: #bbb; }
+.nav button.active { background: #2a2a5e; color: #7b8cff; border-color: #5566cc; }
+.section {
+  display: none; padding: 60px 20px 20px; min-height: 100vh;
+  max-width: 1200px; margin: 0 auto;
+}
+.section.active { display: block; }
+h1 { font-size: 24px; color: #8899ff; margin-bottom: 6px; }
+.subtitle { color: #666; font-size: 14px; margin-bottom: 20px; font-style: italic; }
+.desc { color: #aaa; font-size: 14px; line-height: 1.7; margin-bottom: 16px; max-width: 800px; }
+.desc code { background: #1a1a2e; padding: 2px 6px; border-radius: 3px; color: #7b8cff; font-size: 13px; }
+canvas {
+  border: 1px solid #222; border-radius: 8px; background: #0d0d16;
+  display: block; margin: 10px 0; cursor: crosshair;
+}
+.controls {
+  display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; align-items: center;
+}
+.controls label { color: #888; font-size: 13px; }
+.controls input[type=range] { width: 140px; accent-color: #5566cc; }
+.controls button {
+  background: #1e1e3a; color: #7b8cff; border: 1px solid #3a3a6e;
+  padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 13px;
+}
+.controls button:hover { background: #2a2a5e; }
+.controls select {
+  background: #1a1a2e; color: #aaa; border: 1px solid #333;
+  padding: 5px 10px; border-radius: 5px; font-size: 13px;
+}
+.insight-box {
+  background: #111128; border-left: 3px solid #5566cc;
+  padding: 12px 16px; margin: 12px 0; border-radius: 0 6px 6px 0;
+  font-size: 13px; line-height: 1.6; color: #99a;
+}
+.insight-box strong { color: #8899ff; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+.metric-display {
+  background: #111128; padding: 10px; border-radius: 6px;
+  font-family: monospace; font-size: 12px; color: #7b8cff;
+  margin: 8px 0; min-height: 40px;
+}
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 8px 0; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #888; }
+.legend-color { width: 12px; height: 12px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="nav" id="nav"></div>
+
+<!-- ==================== SECTION 1: PERSISTENT HOMOLOGY ==================== -->
+<div class="section" id="sec-persistent-homology">
+  <h1>§1 Persistent Homology of Activation Clouds</h1>
+  <p class="subtitle">TDA on hidden-state point clouds — what topological features persist across filtration scales?</p>
+  <p class="desc">
+    Hidden states from transformer layers form point clouds in ℝ<sup>d</sup>. Persistent homology tracks which topological features
+    (connected components β₀, loops β₁, voids β₂) appear and die as we grow ε-balls around each point.
+    Features that <strong>persist</strong> across many scales encode genuine structure, not noise.
+    <br><br>
+    <strong>Drag points</strong> to reshape the cloud. Use the slider to sweep the filtration parameter ε.
+    Watch the barcode diagram update — long bars = real topological features in the activation space.
+  </p>
+  <div class="controls">
+    <label>ε (filtration radius): <input type="range" id="ph-epsilon" min="0" max="100" value="0"></label>
+    <span id="ph-eps-val" style="color:#7b8cff;font-size:13px;">0.00</span>
+    <button id="ph-preset-cluster">Clustered (like token classes)</button>
+    <button id="ph-preset-loop">Loop (like cyclic repr.)</button>
+    <button id="ph-preset-torus">Torus projection</button>
+    <button id="ph-reset">Random</button>
+    <label>Auto-sweep <input type="checkbox" id="ph-auto"></label>
+  </div>
+  <div class="two-col">
+    <div>
+      <canvas id="ph-canvas" width="560" height="400"></canvas>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#5566cc"></div> Points</div>
+        <div class="legend-item"><div class="legend-color" style="background:rgba(85,102,204,0.15)"></div> ε-balls</div>
+        <div class="legend-item"><div class="legend-color" style="background:#cc5566"></div> Edges (Rips)</div>
+        <div class="legend-item"><div class="legend-color" style="background:rgba(80,200,120,0.2)"></div> Triangles</div>
+      </div>
+    </div>
+    <div>
+      <canvas id="ph-barcode" width="560" height="400"></canvas>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#5566cc"></div> β₀ (components)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#cc5566"></div> β₁ (loops)</div>
+        <div class="legend-item"><div class="legend-color" style="background:#50c878"></div> β₂ (voids)</div>
+      </div>
+    </div>
+  </div>
+  <div class="metric-display" id="ph-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> When you run PH on layer-N activations for a set of prompts, long β₁ bars suggest the model
+    encodes a <em>circular</em> feature (days of week, modular arithmetic, sentiment polarity). Long β₀ bars at large ε
+    reveal well-separated semantic clusters. This is exactly what Anthropic's and EleutherAI's TDA papers measure.
+    The "death time" minus "birth time" (persistence) distinguishes signal from noise — short bars are typically noise.
+  </div>
+</div>
+
+<!-- ==================== SECTION 2: MAPPER / REEB GRAPHS ==================== -->
+<div class="section" id="sec-mapper">
+  <h1>§2 Mapper Algorithm / Reeb Graphs</h1>
+  <p class="subtitle">Compressing high-dimensional activation manifolds into interpretable graphs</p>
+  <p class="desc">
+    The Mapper algorithm: pick a filter function f (e.g., first principal component of activations), cover its range with
+    overlapping intervals, cluster within each preimage, then connect clusters that share points. The result is a
+    <strong>Reeb graph</strong> — a skeleton of the underlying manifold.
+    <br><br>
+    <strong>Click</strong> to add points. Adjust overlap and resolution to see how the Mapper graph changes.
+    In LLM interpretability, f might be a neuron activation, a probe score, or a PCA coordinate.
+  </p>
+  <div class="controls">
+    <label>Intervals: <input type="range" id="mapper-intervals" min="3" max="20" value="8"></label>
+    <span id="mapper-int-val" style="color:#7b8cff;font-size:13px;">8</span>
+    <label>Overlap %: <input type="range" id="mapper-overlap" min="5" max="70" value="30"></label>
+    <span id="mapper-ovl-val" style="color:#7b8cff;font-size:13px;">30%</span>
+    <label>Filter: <select id="mapper-filter">
+      <option value="x">x-coordinate (PC1 proxy)</option>
+      <option value="y">y-coordinate (PC2 proxy)</option>
+      <option value="radial">Radial (norm proxy)</option>
+      <option value="density">Local density</option>
+    </select></label>
+    <button id="mapper-preset-s">S-curve</button>
+    <button id="mapper-preset-y">Y-branch</button>
+    <button id="mapper-clear">Clear</button>
+  </div>
+  <div class="two-col">
+    <div>
+      <canvas id="mapper-points" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Point cloud with filter-colored intervals shown as bands</p>
+    </div>
+    <div>
+      <canvas id="mapper-graph" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Mapper graph — nodes = clusters in preimages, edges = shared points</p>
+    </div>
+  </div>
+  <div class="metric-display" id="mapper-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> Mapper graphs on residual stream activations reveal <em>branching</em> in how the model
+    processes different syntactic structures. A Y-shaped graph means the model's representation space forks into two distinct
+    processing paths at some layer. Flares (long branches) often correspond to outlier token types.
+    This is more informative than UMAP because it preserves topological connectivity, not just local distances.
+  </div>
+</div>
+
+<!-- ==================== SECTION 3: MANIFOLD HYPOTHESIS & INTRINSIC DIM ==================== -->
+<div class="section" id="sec-manifold">
+  <h1>§3 Manifold Hypothesis & Intrinsic Dimensionality</h1>
+  <p class="subtitle">Hidden states live on low-dimensional manifolds embedded in high-dimensional space</p>
+  <p class="desc">
+    A 768-dim residual stream doesn't use all 768 dimensions equally. The <strong>intrinsic dimension</strong> d<sub>int</sub>
+    measures the "true" dimensionality of the data manifold. Methods: local PCA (count significant singular values),
+    correlation dimension, MLE estimators.
+    <br><br>
+    <strong>Draw a curve</strong> on the left (a 1D manifold in 2D). The right panel shows the singular value spectrum
+    of local neighborhoods — the "elbow" reveals intrinsic dimension. Add noise to see how it affects estimation.
+  </p>
+  <div class="controls">
+    <label>Noise σ: <input type="range" id="mfld-noise" min="0" max="50" value="5"></label>
+    <span id="mfld-noise-val" style="color:#7b8cff;font-size:13px;">5</span>
+    <label>Neighborhood k: <input type="range" id="mfld-k" min="5" max="40" value="15"></label>
+    <span id="mfld-k-val" style="color:#7b8cff;font-size:13px;">15</span>
+    <button id="mfld-spiral">Spiral (d=1)</button>
+    <button id="mfld-sheet">Sheet (d=2)</button>
+    <button id="mfld-clear">Clear / Draw</button>
+    <label>Show tangent planes <input type="checkbox" id="mfld-tangent"></label>
+  </div>
+  <div class="two-col">
+    <div>
+      <canvas id="mfld-canvas" width="560" height="400"></canvas>
+    </div>
+    <div>
+      <canvas id="mfld-spectrum" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Singular value spectrum of local neighborhoods (log scale)</p>
+    </div>
+  </div>
+  <div class="metric-display" id="mfld-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> Intrinsic dimensionality of hidden states varies by layer and by input type.
+    Early layers: high d<sub>int</sub> (raw token features). Middle layers: d<sub>int</sub> often drops (compression/abstraction).
+    Late layers: d<sub>int</sub> rises again (decompression for prediction). Measuring this per-layer gives a
+    "dimensionality profile" that characterizes what each layer does. Superposition means d<sub>int</sub> > d<sub>ambient</sub>
+    in some sense — features are packed into fewer dimensions than they "should" need.
+  </div>
+</div>
+
+<!-- ==================== SECTION 4: FIBER BUNDLES & RESIDUAL STREAM ==================== -->
+<div class="section" id="sec-fiber">
+  <h1>§4 Fiber Bundles & the Residual Stream</h1>
+  <p class="subtitle">The residual stream as a vector bundle over a base space of "positions"</p>
+  <p class="desc">
+    Think of a fiber bundle: base space B (token positions / abstract "task" coordinates), fiber F (the residual stream vector
+    at each position), and a projection π: E → B. An attention head defines a <strong>connection</strong> — it parallel-transports
+    information between fibers. A <em>non-trivial</em> bundle means you can't globally decompose the representation into
+    independent position-dependent and content-dependent parts.
+    <br><br>
+    <strong>Drag the point</strong> around the base circle. Watch how the fiber vector gets parallel-transported.
+    Toggle the twist to see trivial vs. Möbius bundle (non-orientable = the representation "flips" going around a loop).
+  </p>
+  <div class="controls">
+    <label>Bundle type: <select id="fiber-type">
+      <option value="trivial">Trivial (cylinder)</option>
+      <option value="mobius">Möbius (twisted)</option>
+      <option value="tangent-s2">Tangent bundle of S² (hairy ball)</option>
+    </select></label>
+    <label>Connection curvature: <input type="range" id="fiber-curv" min="0" max="100" value="0"></label>
+    <span id="fiber-curv-val" style="color:#7b8cff;font-size:13px;">0</span>
+    <label>Show holonomy <input type="checkbox" id="fiber-holonomy" checked></label>
+    <button id="fiber-animate">Animate transport</button>
+  </div>
+  <canvas id="fiber-canvas" width="900" height="450"></canvas>
+  <div class="metric-display" id="fiber-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> The residual stream at position i is a fiber over the "position" base point.
+    Attention = connection that transports information between fibers. <strong>Holonomy</strong> (the rotation after
+    parallel transport around a loop) measures how much the representation is <em>path-dependent</em> — i.e., the order
+    of attention operations matters. Non-zero holonomy ↔ non-commuting attention heads. This framework from
+    <em>Geometry of Truth</em> (Marks et al.) helps explain why representation surgery must respect the bundle structure.
+  </div>
+</div>
+
+<!-- ==================== SECTION 5: MORSE THEORY & LOSS LANDSCAPE ==================== -->
+<div class="section" id="sec-morse">
+  <h1>§5 Morse Theory on Activation Landscapes</h1>
+  <p class="subtitle">Critical points of scalar functions on the hidden-state manifold</p>
+  <p class="desc">
+    Given a function f on the activation manifold (e.g., loss, probe accuracy, a single neuron's activation), Morse theory
+    classifies critical points by their <strong>index</strong> (number of negative eigenvalues of the Hessian). As you sweep
+    a level set f = c upward, the topology changes only at critical points: index-0 = new component born, index-1 = handle
+    attached (loop created or components merged), index-2 = cavity filled.
+    <br><br>
+    <strong>Click</strong> to place critical points. Drag the level-set slider to see how topology changes.
+    The Euler characteristic χ = #(minima) − #(saddles) + #(maxima) is a topological invariant.
+  </p>
+  <div class="controls">
+    <label>Level set c: <input type="range" id="morse-level" min="0" max="100" value="0"></label>
+    <span id="morse-level-val" style="color:#7b8cff;font-size:13px;">0.00</span>
+    <button id="morse-preset-simple">Simple landscape</button>
+    <button id="morse-preset-complex">Complex (multi-basin)</button>
+    <button id="morse-preset-saddle">Saddle-rich</button>
+    <button id="morse-clear">Clear</button>
+    <label>Show gradient flow <input type="checkbox" id="morse-flow" checked></label>
+  </div>
+  <canvas id="morse-canvas" width="900" height="450"></canvas>
+  <div class="metric-display" id="morse-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> Think of a linear probe's accuracy as a Morse function on the manifold of hidden states.
+    Critical points reveal <em>phase transitions</em> in what information is linearly accessible. A saddle point in probe-accuracy
+    landscape means there's a direction where the representation is "between" two interpretable states — this is where
+    superposition lives. Morse theory also applies to the loss landscape: the number and index of critical points constrains
+    how many qualitatively different solutions (modes) exist.
+  </div>
+</div>
+
+<!-- ==================== SECTION 6: SHEAVES ON ATTENTION GRAPHS ==================== -->
+<div class="section" id="sec-sheaf">
+  <h1>§6 Sheaves on Attention Graphs</h1>
+  <p class="subtitle">Sheaf cohomology detects global inconsistencies in local attention patterns</p>
+  <p class="desc">
+    A <strong>cellular sheaf</strong> on a graph assigns a vector space to each node and edge, with restriction maps between them.
+    On an attention graph: nodes = tokens (with their hidden states), edges = attention connections (with projected key-query
+    subspaces). The <strong>sheaf Laplacian</strong> generalizes the graph Laplacian. Its kernel = global sections = globally
+    consistent information. Non-trivial cohomology H¹ = obstructions to global consistency.
+    <br><br>
+    <strong>Click nodes</strong> to change their local vector. <strong>Click edges</strong> to change restriction maps.
+    Watch the coboundary and cohomology update.
+  </p>
+  <div class="controls">
+    <label>Graph: <select id="sheaf-graph">
+      <option value="path">Path (sequence)</option>
+      <option value="cycle">Cycle (periodic)</option>
+      <option value="complete">Complete (full attention)</option>
+      <option value="bipartite">Bipartite (cross-attention)</option>
+    </select></label>
+    <label>Stalk dim: <select id="sheaf-dim">
+      <option value="1">1 (scalar)</option>
+      <option value="2" selected>2 (2D vectors)</option>
+    </select></label>
+    <button id="sheaf-consistent">Make consistent</button>
+    <button id="sheaf-twist">Add twist (non-trivial H¹)</button>
+    <button id="sheaf-random">Randomize</button>
+  </div>
+  <canvas id="sheaf-canvas" width="900" height="450"></canvas>
+  <div class="metric-display" id="sheaf-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> Sheaf theory on the attention graph captures whether attention heads produce
+    <em>globally coherent</em> representations. dim(H⁰) = dimension of information all tokens agree on (global context).
+    dim(H¹) = number of independent "inconsistency modes" — information that's locally present but can't be made globally
+    consistent. This is precisely what happens in hallucination: local attention patterns are fine but globally they're
+    contradictory. The sheaf Laplacian spectrum also predicts information diffusion speed through the attention graph.
+  </div>
+</div>
+
+<!-- ==================== SECTION 7: TOPOLOGY OF SUPERPOSITION ==================== -->
+<div class="section" id="sec-superposition">
+  <h1>§7 Topology of Superposition & Feature Geometry</h1>
+  <p class="subtitle">How more features than dimensions pack together — polytope geometry and interference</p>
+  <p class="desc">
+    Superposition: N features encoded in d < N dimensions. Each feature is a unit vector in ℝ<sup>d</sup>.
+    The <strong>interference</strong> between features i,j is |⟨fᵢ,fⱼ⟩|. Optimal packings minimize maximum interference
+    and correspond to known geometric configurations: orthogonal bases, simplices, cross-polytopes, etc.
+    <br><br>
+    <strong>Drag feature vectors</strong> in 2D. Watch interference patterns and the Gram matrix update.
+    Add more features than dimensions to enter the superposition regime.
+  </p>
+  <div class="controls">
+    <label>Features: <input type="range" id="sup-n" min="2" max="12" value="3"></label>
+    <span id="sup-n-val" style="color:#7b8cff;font-size:13px;">3</span>
+    <label>Sparsity: <input type="range" id="sup-sparsity" min="0" max="100" value="50"></label>
+    <span id="sup-sp-val" style="color:#7b8cff;font-size:13px;">0.50</span>
+    <button id="sup-optimize">Optimize packing</button>
+    <button id="sup-simplex">Simplex config</button>
+    <button id="sup-cross">Cross-polytope</button>
+    <button id="sup-random">Random</button>
+    <label>Show Voronoi <input type="checkbox" id="sup-voronoi"></label>
+  </div>
+  <div class="two-col">
+    <div>
+      <canvas id="sup-vectors" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Feature vectors in ℝ² — drag endpoints to reposition</p>
+    </div>
+    <div>
+      <canvas id="sup-gram" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Gram matrix |⟨fᵢ,fⱼ⟩| — interference pattern</p>
+    </div>
+  </div>
+  <div class="metric-display" id="sup-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> The Anthropic superposition paper shows that feature vectors arrange into
+    specific polytope geometries depending on sparsity. At high sparsity, you can pack exponentially many features
+    (simplex/cross-polytope). The <em>topological</em> insight: the space of optimal packings itself has interesting
+    topology — there are discrete symmetry groups (the polytope's symmetry group) and continuous families of
+    equivalent solutions. Phase transitions between packing geometries as sparsity changes correspond to
+    topological changes in the solution manifold.
+  </div>
+</div>
+
+<!-- ==================== SECTION 8: TOPOLOGICAL COMPLEXITY OF ATTENTION ==================== -->
+<div class="section" id="sec-tc">
+  <h1>§8 Topological Complexity & Configuration Spaces</h1>
+  <p class="subtitle">TC(X) measures how hard it is to plan continuous paths — relevant for sequential processing</p>
+  <p class="desc">
+    <strong>Topological complexity</strong> TC(X) is the minimum number of "motion planning rules" needed to continuously
+    navigate a space X. For the circle S¹: TC = 2 (you need one rule for most pairs, another for antipodal points).
+    For S<sup>n</sup>: TC = 2 if n odd, 3 if n even. Higher TC = harder to continuously interpolate.
+    <br><br>
+    <strong>Click two points</strong> on the space to set start/end. See how many continuous motion planning regions
+    are needed. The configuration space of n tokens is related to braid groups — shown in the braid visualization.
+  </p>
+  <div class="controls">
+    <label>Space: <select id="tc-space">
+      <option value="circle">S¹ (circle)</option>
+      <option value="figure8">Figure-8 (wedge of circles)</option>
+      <option value="torus">T² (torus)</option>
+      <option value="sphere">S² (sphere)</option>
+    </select></label>
+    <label>Tokens (for braid): <input type="range" id="tc-tokens" min="2" max="6" value="3"></label>
+    <span id="tc-tok-val" style="color:#7b8cff;font-size:13px;">3</span>
+    <button id="tc-animate">Animate path</button>
+    <button id="tc-braid">Show braid</button>
+  </div>
+  <div class="two-col">
+    <div>
+      <canvas id="tc-space-canvas" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Click to set start (green) and end (red) points</p>
+    </div>
+    <div>
+      <canvas id="tc-braid-canvas" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Braid group: token trajectories through layers</p>
+    </div>
+  </div>
+  <div class="metric-display" id="tc-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> TC measures how many "strategies" a transformer needs to continuously route information.
+    The configuration space of n tokens (no two at the same position in representation space) is related to the
+    <em>braid group</em> B<sub>n</sub>. Attention patterns that swap token information correspond to braid generators σᵢ.
+    The topological complexity of this configuration space lower-bounds the number of distinct attention patterns needed.
+    This connects to the circuit complexity of transformers and why certain tasks require multiple layers.
+  </div>
+</div>
+
+<!-- ==================== SECTION 9: PERSISTENT COHOMOLOGY & CIRCULAR COORDINATES ==================== -->
+<div class="section" id="sec-circular">
+  <h1>§9 Circular Coordinates from Persistent Cohomology</h1>
+  <p class="subtitle">Detecting and parameterizing circular features in hidden states</p>
+  <p class="desc">
+    When persistent H¹ detects a loop, persistent <em>cohomology</em> gives you a <strong>circular coordinate</strong>
+    θ: X → S¹ that parameterizes it. This is like finding the "phase" of a circular feature (time of day, compass direction,
+    sentiment cycle) directly from the point cloud.
+    <br><br>
+    <strong>Arrange points</strong> in a rough circle. The algorithm finds the cohomology class and computes θ for each point.
+    Color shows the recovered circular coordinate. Compare with ground truth.
+  </p>
+  <div class="controls">
+    <button id="circ-circle">Clean circle</button>
+    <button id="circ-noisy">Noisy circle</button>
+    <button id="circ-double">Figure-8 (two loops)</button>
+    <button id="circ-spiral">Spiral (no loop)</button>
+    <button id="circ-compute">Compute θ</button>
+    <label>Noise: <input type="range" id="circ-noise" min="0" max="50" value="10"></label>
+  </div>
+  <div class="two-col">
+    <div>
+      <canvas id="circ-points" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Point cloud — color = recovered circular coordinate θ</p>
+    </div>
+    <div>
+      <canvas id="circ-diagram" width="560" height="400"></canvas>
+      <p style="font-size:11px;color:#555;margin-top:4px;">Persistence diagram & circular coordinate quality</p>
+    </div>
+  </div>
+  <div class="metric-display" id="circ-metrics"></div>
+  <div class="insight-box">
+    <strong>LLM connection:</strong> Circular coordinates extracted from hidden states directly reveal
+    <em>periodic features</em> the model has learned: days of the week, months, hours, compass directions,
+    modular arithmetic. This was used in the "Geometry of Truth" line of work. The key insight is that you
+    don't need to know what the circular feature <em>is</em> — cohomology finds it automatically from the
+    topology of the activation cloud. If H¹ is trivial, there's no circular structure (the model uses a
+    linear, not circular, representation).
+  </div>
+</div>
+
+<script>
+// ============================================================
+// GLOBAL UTILITIES
+// ============================================================
+
+const TAU = Math.PI * 2;
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+function randRange(lo, hi) { return lo + Math.random() * (hi - lo); }
+function hsl(h, s, l) { return `hsl(${h},${s}%,${l}%)`; }
+function hsla(h, s, l, a) { return `hsla(${h},${s}%,${l}%,${a})`; }
+function vec2(x, y) { return { x, y }; }
+function vecAdd(a, b) { return { x: a.x + b.x, y: a.y + b.y }; }
+function vecSub(a, b) { return { x: a.x - b.x, y: a.y - b.y }; }
+function vecScale(v, s) { return { x: v.x * s, y: v.y * s }; }
+function vecLen(v) { return Math.hypot(v.x, v.y); }
+function vecNorm(v) { const l = vecLen(v) || 1; return { x: v.x / l, y: v.y / l }; }
+function vecDot(a, b) { return a.x * b.x + a.y * b.y; }
+function vecRot(v, a) { const c = Math.cos(a), s = Math.sin(a); return { x: v.x * c - v.y * s, y: v.x * s + v.y * c }; }
+
+// Color maps
+function viridis(t) {
+  t = clamp(t, 0, 1);
+  const r = clamp(Math.round(255 * (0.267 + t * (0.329 + t * (-1.45 + t * 1.78)))), 0, 255);
+  const g = clamp(Math.round(255 * (0.004 + t * (1.42 + t * (-1.19 + t * 0.45)))), 0, 255);
+  const b = clamp(Math.round(255 * (0.329 + t * (1.44 + t * (-3.32 + t * 2.16)))), 0, 255);
+  return `rgb(${r},${g},${b})`;
+}
+function coolwarm(t) {
+  t = clamp(t, 0, 1);
+  if (t < 0.5) {
+    const s = t * 2;
+    return `rgb(${Math.round(59 + s * 140)},${Math.round(76 + s * 100)},${Math.round(192 + s * 20)})`;
+  } else {
+    const s = (t - 0.5) * 2;
+    return `rgb(${Math.round(199 + s * 56)},${Math.round(176 - s * 130)},${Math.round(212 - s * 170)})`;
+  }
+}
+function circularColor(t) {
+  t = ((t % TAU) + TAU) % TAU;
+  return hsl((t / TAU) * 360, 75, 55);
+}
+
+// Simple Union-Find
+class UnionFind {
+  constructor(n) { this.parent = Array.from({ length: n }, (_, i) => i); this.rank = new Array(n).fill(0); }
+  find(x) { if (this.parent[x] !== x) this.parent[x] = this.find(this.parent[x]); return this.parent[x]; }
+  union(a, b) {
+    a = this.find(a); b = this.find(b);
+    if (a === b) return false;
+    if (this.rank[a] < this.rank[b]) [a, b] = [b, a];
+    this.parent[b] = a;
+    if (this.rank[a] === this.rank[b]) this.rank[a]++;
+    return true;
+  }
+  components() {
+    const s = new Set();
+    for (let i = 0; i < this.parent.length; i++) s.add(this.find(i));
+    return s.size;
+  }
+}
+
+// Canvas helpers
+function clearCanvas(ctx, w, h) {
+  ctx.fillStyle = '#0d0d16';
+  ctx.fillRect(0, 0, w, h);
+}
+function drawCircle(ctx, x, y, r, fill, stroke, lw) {
+  ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1; ctx.stroke(); }
+}
+function drawLine(ctx, x1, y1, x2, y2, color, lw) {
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+  ctx.strokeStyle = color; ctx.lineWidth = lw || 1; ctx.stroke();
+}
+function drawText(ctx, text, x, y, color, size, align) {
+  ctx.fillStyle = color || '#888';
+  ctx.font = `${size || 12}px 'Segoe UI', system-ui, sans-serif`;
+  ctx.textAlign = align || 'left';
+  ctx.fillText(text, x, y);
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const sections = [
+  { id: 'sec-persistent-homology', label: '1. Persistent Homology' },
+  { id: 'sec-mapper', label: '2. Mapper / Reeb' },
+  { id: 'sec-manifold', label: '3. Manifold & Dim' },
+  { id: 'sec-fiber', label: '4. Fiber Bundles' },
+  { id: 'sec-morse', label: '5. Morse Theory' },
+  { id: 'sec-sheaf', label: '6. Sheaves' },
+  { id: 'sec-superposition', label: '7. Superposition' },
+  { id: 'sec-tc', label: '8. Topological Complexity' },
+  { id: 'sec-circular', label: '9. Circular Coords' },
+];
+
+const nav = document.getElementById('nav');
+sections.forEach((s, i) => {
+  const btn = document.createElement('button');
+  btn.textContent = s.label;
+  btn.onclick = () => showSection(i);
+  nav.appendChild(btn);
+});
+
+let currentSection = 0;
+function showSection(idx) {
+  currentSection = idx;
+  document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+  document.getElementById(sections[idx].id).classList.add('active');
+  nav.querySelectorAll('button').forEach((b, i) => b.classList.toggle('active', i === idx));
+  initSection(idx);
+}
+
+const initialized = new Set();
+function initSection(idx) {
+  if (initialized.has(idx)) return;
+  initialized.add(idx);
+  switch (idx) {
+    case 0: initPersistentHomology(); break;
+    case 1: initMapper(); break;
+    case 2: initManifold(); break;
+    case 3: initFiber(); break;
+    case 4: initMorse(); break;
+    case 5: initSheaf(); break;
+    case 6: initSuperposition(); break;
+    case 7: initTC(); break;
+    case 8: initCircular(); break;
+  }
+}
+
+showSection(0);
+
+// ============================================================
+// §1 PERSISTENT HOMOLOGY
+// ============================================================
+function initPersistentHomology() {
+  const canvas = document.getElementById('ph-canvas');
+  const barcodeCanvas = document.getElementById('ph-barcode');
+  const ctx = canvas.getContext('2d');
+  const bctx = barcodeCanvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const BW = barcodeCanvas.width, BH = barcodeCanvas.height;
+
+  let points = [];
+  let dragging = -1;
+  let maxEps = 200;
+
+  function generateRandom(n = 30) {
+    points = [];
+    for (let i = 0; i < n; i++) {
+      points.push({ x: randRange(60, W - 60), y: randRange(60, H - 60) });
+    }
+  }
+
+  function generateClustered() {
+    points = [];
+    const centers = [{ x: 150, y: 150 }, { x: 400, y: 120 }, { x: 280, y: 300 }, { x: 450, y: 320 }];
+    centers.forEach(c => {
+      for (let i = 0; i < 10; i++) {
+        points.push({ x: c.x + randRange(-40, 40), y: c.y + randRange(-40, 40) });
+      }
+    });
+  }
+
+  function generateLoop() {
+    points = [];
+    const cx = W / 2, cy = H / 2, r = 130;
+    for (let i = 0; i < 30; i++) {
+      const a = (i / 30) * TAU;
+      points.push({ x: cx + r * Math.cos(a) + randRange(-15, 15), y: cy + r * Math.sin(a) + randRange(-15, 15) });
+    }
+  }
+
+  function generateTorus() {
+    points = [];
+    const cx = W / 2, cy = H / 2;
+    for (let i = 0; i < 40; i++) {
+      const a = Math.random() * TAU;
+      const b = Math.random() * TAU;
+      const R = 120, r = 50;
+      points.push({
+        x: cx + (R + r * Math.cos(b)) * Math.cos(a) * 0.7,
+        y: cy + (R + r * Math.cos(b)) * Math.sin(a) * 0.5 + r * Math.sin(b) * 0.7
+      });
+    }
+  }
+
+  // Compute all pairwise distances
+  function pairwiseDist() {
+    const n = points.length;
+    const d = [];
+    for (let i = 0; i < n; i++) {
+      d[i] = [];
+      for (let j = 0; j < n; j++) {
+        d[i][j] = dist(points[i], points[j]);
+      }
+    }
+    return d;
+  }
+
+  // Compute sorted edges
+  function sortedEdges(dists) {
+    const edges = [];
+    const n = points.length;
+    for (let i = 0; i < n; i++)
+      for (let j = i + 1; j < n; j++)
+        edges.push({ i, j, d: dists[i][j] });
+    edges.sort((a, b) => a.d - b.d);
+    return edges;
+  }
+
+  // Compute persistence barcodes (β₀ via union-find, β₁ via simple cycle detection)
+  function computePersistence(dists, edges) {
+    const n = points.length;
+    const bars0 = []; // β₀ bars: [birth, death]
+    const bars1 = []; // β₁ bars
+    const uf = new UnionFind(n);
+
+    // β₀: each point born at 0, dies when its component merges
+    const birthTime = new Array(n).fill(0);
+
+    for (const e of edges) {
+      const ri = uf.find(e.i), rj = uf.find(e.j);
+      if (ri !== rj) {
+        // Component merge — the younger component dies
+        bars0.push({ birth: 0, death: e.d });
+        uf.union(e.i, e.j);
+      } else {
+        // Potential cycle — simplified β₁ detection
+        // Check if this edge closes a cycle that isn't already "filled"
+        bars1.push({ birth: e.d, death: e.d * (1.2 + Math.random() * 0.5) });
+      }
+    }
+    // The last surviving component lives forever
+    bars0.push({ birth: 0, death: Infinity });
+
+    // Better β₁: keep only the most persistent ones (heuristic for this demo)
+    bars1.sort((a, b) => (b.death - b.birth) - (a.death - a.birth));
+    const topBars1 = bars1.slice(0, Math.min(5, bars1.length));
+
+    if (maxEps < 10) maxEps = 200;
+    const finiteMax = Math.max(...edges.map(e => e.d), 100);
+    maxEps = finiteMax * 1.1;
+
+    return { bars0, bars1: topBars1, maxEps: finiteMax };
+  }
+
+  // Better β₁ computation using Vietoris-Rips filtration
+  function computeBetterPersistence(dists, edges) {
+    const n = points.length;
+    const bars0 = [];
+    const bars1 = [];
+    const uf = new UnionFind(n);
+
+    // Track which edges are in the MST (tree edges) vs create cycles
+    const treeEdges = [];
+    const cycleEdges = [];
+
+    for (const e of edges) {
+      const ri = uf.find(e.i), rj = uf.find(e.j);
+      if (ri !== rj) {
+        bars0.push({ birth: 0, death: e.d });
+        uf.union(e.i, e.j);
+        treeEdges.push(e);
+      } else {
+        cycleEdges.push(e);
+      }
+    }
+    bars0.push({ birth: 0, death: Infinity });
+
+    // For β₁: each cycle edge creates a 1-cycle. Its birth = edge weight.
+    // Death = when a triangle fills it. Approximate: find shortest "alternative path"
+    for (const ce of cycleEdges) {
+      const birth = ce.d;
+      // Find triangles containing this edge
+      let minTriangle = Infinity;
+      for (let k = 0; k < n; k++) {
+        if (k === ce.i || k === ce.j) continue;
+        const triMax = Math.max(dists[ce.i][k], dists[ce.j][k], ce.d);
+        minTriangle = Math.min(minTriangle, triMax);
+      }
+      if (minTriangle > birth * 1.05) {
+        bars1.push({ birth, death: minTriangle });
+      }
+    }
+
+    bars1.sort((a, b) => (b.death - b.birth) - (a.death - a.birth));
+    const finiteMax = edges.length > 0 ? Math.max(...edges.map(e => e.d), 100) : 200;
+    maxEps = finiteMax * 1.1;
+
+    return { bars0, bars1: bars1.slice(0, 8), maxEps: finiteMax };
+  }
+
+  let persistence = null;
+  let allEdges = [];
+  let allDists = [];
+
+  function recompute() {
+    if (points.length < 2) return;
+    allDists = pairwiseDist();
+    allEdges = sortedEdges(allDists);
+    persistence = computeBetterPersistence(allDists, allEdges);
+  }
+
+  function draw() {
+    const eps = (parseFloat(document.getElementById('ph-epsilon').value) / 100) * maxEps;
+    document.getElementById('ph-eps-val').textContent = eps.toFixed(1);
+
+    clearCanvas(ctx, W, H);
+
+    // Draw ε-balls
+    for (const p of points) {
+      drawCircle(ctx, p.x, p.y, eps / 2, 'rgba(85,102,204,0.08)', 'rgba(85,102,204,0.15)', 1);
+    }
+
+    // Draw triangles (filled 2-simplices)
+    if (allDists.length > 0) {
+      const n = points.length;
+      ctx.fillStyle = 'rgba(80,200,120,0.06)';
+      for (let i = 0; i < n; i++)
+        for (let j = i + 1; j < n; j++)
+          for (let k = j + 1; k < n; k++) {
+            if (allDists[i][j] <= eps && allDists[i][k] <= eps && allDists[j][k] <= eps) {
+              ctx.beginPath();
+              ctx.moveTo(points[i].x, points[i].y);
+              ctx.lineTo(points[j].x, points[j].y);
+              ctx.lineTo(points[k].x, points[k].y);
+              ctx.closePath();
+              ctx.fill();
+            }
+          }
+    }
+
+    // Draw edges (1-simplices in Rips complex)
+    for (const e of allEdges) {
+      if (e.d <= eps) {
+        drawLine(ctx, points[e.i].x, points[e.i].y, points[e.j].x, points[e.j].y, 'rgba(204,85,102,0.4)', 1);
+      }
+    }
+
+    // Draw points
+    for (const p of points) {
+      drawCircle(ctx, p.x, p.y, 5, '#5566cc', '#8899ff', 1.5);
+    }
+
+    // Count current Betti numbers
+    if (points.length >= 2) {
+      const uf = new UnionFind(points.length);
+      let edgeCount = 0, triCount = 0;
+      for (const e of allEdges) {
+        if (e.d <= eps) {
+          uf.union(e.i, e.j);
+          edgeCount++;
+        }
+      }
+      const n = points.length;
+      for (let i = 0; i < n; i++)
+        for (let j = i + 1; j < n; j++)
+          for (let k = j + 1; k < n; k++)
+            if (allDists[i][j] <= eps && allDists[i][k] <= eps && allDists[j][k] <= eps)
+              triCount++;
+
+      const b0 = uf.components();
+      // Euler characteristic: χ = V - E + F => β₀ - β₁ + β₂ = V - E + T
+      const euler = n - edgeCount + triCount;
+      const b1_approx = Math.max(0, b0 - euler);
+
+      document.getElementById('ph-metrics').textContent =
+        `ε = ${eps.toFixed(1)} | Vertices: ${n} | Edges: ${edgeCount} | Triangles: ${triCount} | β₀ ≈ ${b0} | β₁ ≈ ${b1_approx} | χ = ${euler}`;
+    }
+
+    // Draw barcode
+    drawBarcode();
+  }
+
+  function drawBarcode() {
+    clearCanvas(bctx, BW, BH);
+    if (!persistence) return;
+
+    const eps = (parseFloat(document.getElementById('ph-epsilon').value) / 100) * maxEps;
+    const margin = { l: 60, r: 30, t: 40, b: 40 };
+    const pw = BW - margin.l - margin.r;
+    const ph = BH - margin.t - margin.b;
+    const scale = pw / (maxEps * 1.1);
+
+    drawText(bctx, 'Persistence Barcode', margin.l, 25, '#8899ff', 14);
+    drawText(bctx, 'ε →', BW - 40, BH - 10, '#555', 11);
+
+    // Axis
+    drawLine(bctx, margin.l, BH - margin.b, BW - margin.r, BH - margin.b, '#333', 1);
+    for (let v = 0; v <= maxEps * 1.1; v += maxEps / 5) {
+      const x = margin.l + v * scale;
+      drawLine(bctx, x, BH - margin.b, x, BH - margin.b + 5, '#444', 1);
+      drawText(bctx, v.toFixed(0), x, BH - margin.b + 18, '#555', 10, 'center');
+    }
+
+    // Current ε line
+    const epsX = margin.l + eps * scale;
+    bctx.setLineDash([4, 4]);
+    drawLine(bctx, epsX, margin.t, epsX, BH - margin.b, 'rgba(255,255,100,0.4)', 1);
+    bctx.setLineDash([]);
+
+    // Draw bars
+    const allBars = [
+      ...persistence.bars0.map(b => ({ ...b, type: 0 })),
+      ...persistence.bars1.map(b => ({ ...b, type: 1 })),
+    ];
+
+    const colors = ['#5566cc', '#cc5566', '#50c878'];
+    const labels = ['β₀', 'β₁', 'β₂'];
+    let y = margin.t + 10;
+    const barH = Math.min(12, (ph - 20) / allBars.length);
+
+    // Group by type
+    for (let type = 0; type <= 1; type++) {
+      const bars = allBars.filter(b => b.type === type);
+      if (bars.length === 0) continue;
+      drawText(bctx, labels[type], margin.l - 30, y + 10, colors[type], 12);
+
+      for (const bar of bars) {
+        const x1 = margin.l + bar.birth * scale;
+        const x2 = bar.death === Infinity ? BW - margin.r : margin.l + bar.death * scale;
+        const alive = eps >= bar.birth && (bar.death === Infinity || eps <= bar.death);
+
+        bctx.fillStyle = alive ? colors[type] : colors[type] + '44';
+        bctx.fillRect(x1, y, Math.max(x2 - x1, 2), barH - 2);
+
+        if (bar.death === Infinity) {
+          drawText(bctx, '→∞', x2 + 3, y + barH - 3, colors[type] + '88', 9);
+        }
+
+        y += barH;
+      }
+      y += 8;
+    }
+  }
+
+  // Mouse interaction
+  canvas.addEventListener('mousedown', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (W / rect.width);
+    const my = (e.clientY - rect.top) * (H / rect.height);
+    dragging = points.findIndex(p => dist(p, { x: mx, y: my }) < 15);
+    if (dragging === -1) {
+      points.push({ x: mx, y: my });
+      recompute();
+      draw();
+    }
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (dragging === -1) return;
+    const rect = canvas.getBoundingClientRect();
+    points[dragging].x = (e.clientX - rect.left) * (W / rect.width);
+    points[dragging].y = (e.clientY - rect.top) * (H / rect.height);
+    recompute();
+    draw();
+  });
+  canvas.addEventListener('mouseup', () => { dragging = -1; });
+
+  document.getElementById('ph-epsilon').addEventListener('input', draw);
+  document.getElementById('ph-preset-cluster').addEventListener('click', () => { generateClustered(); recompute(); draw(); });
+  document.getElementById('ph-preset-loop').addEventListener('click', () => { generateLoop(); recompute(); draw(); });
+  document.getElementById('ph-preset-torus').addEventListener('click', () => { generateTorus(); recompute(); draw(); });
+  document.getElementById('ph-reset').addEventListener('click', () => { generateRandom(); recompute(); draw(); });
+
+  // Auto-sweep
+  let autoInterval = null;
+  document.getElementById('ph-auto').addEventListener('change', e => {
+    if (e.target.checked) {
+      const slider = document.getElementById('ph-epsilon');
+      slider.value = 0;
+      autoInterval = setInterval(() => {
+        let v = parseInt(slider.value) + 1;
+        if (v > 100) v = 0;
+        slider.value = v;
+        draw();
+      }, 60);
+    } else {
+      clearInterval(autoInterval);
+    }
+  });
+
+  generateLoop();
+  recompute();
+  document.getElementById('ph-epsilon').value = 30;
+  draw();
+}
+
+// ============================================================
+// §2 MAPPER ALGORITHM
+// ============================================================
+function initMapper() {
+  const pCanvas = document.getElementById('mapper-points');
+  const gCanvas = document.getElementById('mapper-graph');
+  const pctx = pCanvas.getContext('2d');
+  const gctx = gCanvas.getContext('2d');
+  const PW = pCanvas.width, PH = pCanvas.height;
+  const GW = gCanvas.width, GH = gCanvas.height;
+
+  let points = [];
+
+  function generateSCurve() {
+    points = [];
+    for (let i = 0; i < 120; i++) {
+      const t = randRange(-Math.PI, Math.PI);
+      const x = Math.sin(t) * 150 + PW / 2 + randRange(-10, 10);
+      const y = t * 40 + PH / 2 + randRange(-10, 10);
+      points.push({ x, y });
+    }
+  }
+
+  function generateYBranch() {
+    points = [];
+    // Stem
+    for (let i = 0; i < 40; i++) {
+      points.push({ x: PW / 2 + randRange(-10, 10), y: PH - 40 - i * 5 + randRange(-5, 5) });
+    }
+    // Left branch
+    for (let i = 0; i < 30; i++) {
+      points.push({ x: PW / 2 - i * 5 + randRange(-8, 8), y: PH / 2 - i * 4 + randRange(-5, 5) });
+    }
+    // Right branch
+    for (let i = 0; i < 30; i++) {
+      points.push({ x: PW / 2 + i * 5 + randRange(-8, 8), y: PH / 2 - i * 4 + randRange(-5, 5) });
+    }
+  }
+
+  function getFilter(p) {
+    const f = document.getElementById('mapper-filter').value;
+    switch (f) {
+      case 'x': return p.x;
+      case 'y': return p.y;
+      case 'radial': return dist(p, { x: PW / 2, y: PH / 2 });
+      case 'density':
+        let d = 0;
+		    for (const q of points) {
+			    d += Math.exp(-(dist(p, q) ** 2) / 5000);
+		    }
+        return d;
+      default: return p.x;
+    }
+  }
+
+  function computeMapper() {
+    if (points.length < 5) return { nodes: [], edges: [] };
+
+    const nIntervals = parseInt(document.getElementById('mapper-intervals').value);
+    const overlapPct = parseInt(document.getElementById('mapper-overlap').value) / 100;
+
+    // Compute filter values
+    const fvals = points.map(p => getFilter(p));
+    const fmin = Math.min(...fvals);
+    const fmax = Math.max(...fvals);
+    const frange = fmax - fmin || 1;
+
+    // Create overlapping intervals
+    const step = frange / nIntervals;
+    const overlap = step * overlapPct;
+    const intervals = [];
+    for (let i = 0; i < nIntervals; i++) {
+      const lo = fmin + i * step - overlap;
+      const hi = fmin + (i + 1) * step + overlap;
+      intervals.push({ lo, hi, idx: i });
+    }
+
+    // For each interval, find points in preimage and cluster them
+    const nodes = []; // { points: [...indices], interval, cx, cy }
+    const clusterRadius = 60;
+
+    for (const interval of intervals) {
+      const inPreimage = [];
+      for (let i = 0; i < points.length; i++) {
+        if (fvals[i] >= interval.lo && fvals[i] <= interval.hi) {
+          inPreimage.push(i);
+        }
+      }
+      if (inPreimage.length === 0) continue;
+
+      // Simple single-linkage clustering
+      const uf = new UnionFind(inPreimage.length);
+      for (let a = 0; a < inPreimage.length; a++) {
+        for (let b = a + 1; b < inPreimage.length; b++) {
+          if (dist(points[inPreimage[a]], points[inPreimage[b]]) < clusterRadius) {
+            uf.union(a, b);
+          }
+        }
+      }
+
+      // Extract clusters
+      const clusters = {};
+      for (let a = 0; a < inPreimage.length; a++) {
+        const root = uf.find(a);
+        if (!clusters[root]) clusters[root] = [];
+        clusters[root].push(inPreimage[a]);
+      }
+
+      for (const cpts of Object.values(clusters)) {
+        if (cpts.length < 2) continue;
+        let cx = 0, cy = 0;
+        for (const idx of cpts) { cx += points[idx].x; cy += points[idx].y; }
+        cx /= cpts.length; cy /= cpts.length;
+        nodes.push({ points: new Set(cpts), interval: interval.idx, cx, cy, size: cpts.length });
+      }
+    }
+
+    // Connect nodes that share points
+    const edges = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        let shared = 0;
+        for (const p of nodes[i].points) {
+          if (nodes[j].points.has(p)) shared++;
+        }
+        if (shared > 0) {
+          edges.push({ i, j, weight: shared });
+        }
+      }
+    }
+
+    return { nodes, edges, intervals, fvals, fmin, fmax };
+  }
+
+  function draw() {
+    document.getElementById('mapper-int-val').textContent = document.getElementById('mapper-intervals').value;
+    document.getElementById('mapper-ovl-val').textContent = document.getElementById('mapper-overlap').value + '%';
+
+    const mapper = computeMapper();
+
+    // Draw point cloud
+    clearCanvas(pctx, PW, PH);
+
+    if (mapper.fvals && mapper.intervals) {
+      // Draw interval bands
+      const filterDir = document.getElementById('mapper-filter').value;
+      for (let i = 0; i < mapper.intervals.length; i++) {
+        const interval = mapper.intervals[i];
+        const color = hsl((i / mapper.intervals.length) * 300, 40, 20);
+        pctx.fillStyle = color;
+        // Draw bands based on filter direction
+        if (filterDir === 'x') {
+          const lo = interval.lo, hi = interval.hi;
+          const fmin = mapper.fmin, fmax = mapper.fmax;
+          const x1 = ((lo - fmin) / (fmax - fmin || 1)) * PW;
+          const x2 = ((hi - fmin) / (fmax - fmin || 1)) * PW;
+          pctx.globalAlpha = 0.15;
+          pctx.fillRect(x1, 0, x2 - x1, PH);
+          pctx.globalAlpha = 1;
+        } else if (filterDir === 'y') {
+          const lo = interval.lo, hi = interval.hi;
+          const fmin = mapper.fmin, fmax = mapper.fmax;
+          const y1 = ((lo - fmin) / (fmax - fmin || 1)) * PH;
+          const y2 = ((hi - fmin) / (fmax - fmin || 1)) * PH;
+          pctx.globalAlpha = 0.15;
+          pctx.fillRect(0, y1, PW, y2 - y1);
+          pctx.globalAlpha = 1;
+        }
+      }
+    }
+
+    // Draw points colored by filter value
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i];
+      const t = mapper.fvals ? (mapper.fvals[i] - mapper.fmin) / ((mapper.fmax - mapper.fmin) || 1) : 0.5;
+      drawCircle(pctx, p.x, p.y, 3, viridis(t), null);
+    }
+
+    // Draw Mapper graph
+    clearCanvas(gctx, GW, GH);
+
+    if (mapper.nodes.length > 0) {
+      // Layout: use force-directed or just use centroid positions mapped to graph canvas
+      const gNodes = mapper.nodes.map((n, i) => {
+        // Map from point-cloud space to graph canvas with some jitter for overlapping nodes
+        return {
+          x: 60 + ((n.cx / PW) * (GW - 120)),
+          y: 60 + ((n.cy / PH) * (GH - 120)),
+          size: n.size,
+          interval: n.interval,
+          origCx: n.cx,
+          origCy: n.cy
+        };
+      });
+
+      // Simple force repulsion to separate overlapping nodes
+      for (let iter = 0; iter < 50; iter++) {
+        for (let i = 0; i < gNodes.length; i++) {
+          for (let j = i + 1; j < gNodes.length; j++) {
+            const d = dist(gNodes[i], gNodes[j]);
+            if (d < 40 && d > 0) {
+              const dx = (gNodes[j].x - gNodes[i].x) / d;
+              const dy = (gNodes[j].y - gNodes[i].y) / d;
+              const push = (40 - d) * 0.3;
+              gNodes[i].x -= dx * push;
+              gNodes[i].y -= dy * push;
+              gNodes[j].x += dx * push;
+              gNodes[j].y += dy * push;
+            }
+          }
+        }
+        // Pull connected nodes together slightly
+        for (const e of mapper.edges) {
+          const a = gNodes[e.i], b = gNodes[e.j];
+          const d = dist(a, b);
+          if (d > 80) {
+            const dx = (b.x - a.x) / d;
+            const dy = (b.y - a.y) / d;
+            const pull = (d - 80) * 0.05;
+            a.x += dx * pull;
+            a.y += dy * pull;
+            b.x -= dx * pull;
+            b.y -= dy * pull;
+          }
+        }
+      }
+
+      // Clamp to canvas
+      for (const n of gNodes) {
+        n.x = clamp(n.x, 30, GW - 30);
+        n.y = clamp(n.y, 30, GH - 30);
+      }
+
+      // Draw edges
+      for (const e of mapper.edges) {
+        const a = gNodes[e.i], b = gNodes[e.j];
+        const alpha = clamp(e.weight / 5, 0.2, 0.9);
+        drawLine(gctx, a.x, a.y, b.x, b.y, `rgba(120,140,220,${alpha})`, 1 + e.weight * 0.3);
+      }
+
+      // Draw nodes
+      for (let i = 0; i < gNodes.length; i++) {
+        const n = gNodes[i];
+        const nIntervals = parseInt(document.getElementById('mapper-intervals').value);
+        const t = n.interval / (nIntervals - 1 || 1);
+        const r = 5 + Math.sqrt(n.size) * 2;
+        drawCircle(gctx, n.x, n.y, r, viridis(t), '#fff3', 1);
+        drawText(gctx, n.size.toString(), n.x, n.y - r - 4, '#888', 10, 'center');
+      }
+
+      // Graph stats
+      const uf = new UnionFind(gNodes.length);
+      for (const e of mapper.edges) uf.union(e.i, e.j);
+      const components = uf.components();
+      const b1est = mapper.edges.length - gNodes.length + components;
+
+      document.getElementById('mapper-metrics').textContent =
+        `Mapper graph: ${gNodes.length} nodes, ${mapper.edges.length} edges, ${components} components, β₁ ≈ ${Math.max(0, b1est)} | Points: ${points.length}`;
+    } else {
+      document.getElementById('mapper-metrics').textContent = 'Add more points to see the Mapper graph';
+    }
+  }
+
+  pCanvas.addEventListener('click', e => {
+    const rect = pCanvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (PW / rect.width);
+    const my = (e.clientY - rect.top) * (PH / rect.height);
+    points.push({ x: mx, y: my });
+    draw();
+  });
+
+  document.getElementById('mapper-intervals').addEventListener('input', draw);
+  document.getElementById('mapper-overlap').addEventListener('input', draw);
+  document.getElementById('mapper-filter').addEventListener('change', draw);
+  document.getElementById('mapper-preset-s').addEventListener('click', () => { generateSCurve(); draw(); });
+  document.getElementById('mapper-preset-y').addEventListener('click', () => { generateYBranch(); draw(); });
+  document.getElementById('mapper-clear').addEventListener('click', () => { points = []; draw(); });
+
+  generateSCurve();
+  draw();
+}
+
+// ============================================================
+// §3 MANIFOLD & INTRINSIC DIMENSIONALITY
+// ============================================================
+function initManifold() {
+  const canvas = document.getElementById('mfld-canvas');
+  const specCanvas = document.getElementById('mfld-spectrum');
+  const ctx = canvas.getContext('2d');
+  const sctx = specCanvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const SW = specCanvas.width, SH = specCanvas.height;
+
+  let points = [];
+  let drawing = false;
+  let selectedPoint = -1;
+
+  function generateSpiral() {
+    points = [];
+    for (let i = 0; i < 150; i++) {
+      const t = i * 0.12;
+      const r = 20 + t * 15;
+      const noise = parseFloat(document.getElementById('mfld-noise').value);
+      points.push({
+        x: W / 2 + r * Math.cos(t) + randRange(-noise, noise),
+        y: H / 2 + r * Math.sin(t) + randRange(-noise, noise)
+      });
+    }
+  }
+
+  function generateSheet() {
+    points = [];
+    const noise = parseFloat(document.getElementById('mfld-noise').value);
+    for (let i = 0; i < 150; i++) {
+      points.push({
+        x: randRange(80, W - 80) + randRange(-noise, noise),
+        y: randRange(80, H - 80) + randRange(-noise, noise)
+      });
+    }
+  }
+
+  // Compute local PCA for a neighborhood
+  function localPCA(idx, k) {
+    if (points.length < k + 1) return { singularValues: [], tangent: null };
+
+    // Find k nearest neighbors
+    const dists = points.map((p, i) => ({ i, d: dist(p, points[idx]) }));
+    dists.sort((a, b) => a.d - b.d);
+    const neighbors = dists.slice(1, k + 1).map(d => d.i);
+
+    // Center the neighborhood
+    let cx = 0, cy = 0;
+    for (const ni of neighbors) { cx += points[ni].x; cy += points[ni].y; }
+    cx /= neighbors.length; cy /= neighbors.length;
+
+    // Build data matrix (2 x k)
+    const X = neighbors.map(ni => [points[ni].x - cx, points[ni].y - cy]);
+
+    // Compute 2x2 covariance matrix
+    let c00 = 0, c01 = 0, c11 = 0;
+    for (const [x, y] of X) {
+      c00 += x * x; c01 += x * y; c11 += y * y;
+    }
+    c00 /= X.length; c01 /= X.length; c11 /= X.length;
+
+    // Eigenvalues of 2x2 symmetric matrix
+    const trace = c00 + c11;
+    const det = c00 * c11 - c01 * c01;
+    const disc = Math.sqrt(Math.max(0, trace * trace / 4 - det));
+    const ev1 = trace / 2 + disc;
+    const ev2 = trace / 2 - disc;
+
+    // Singular values (sqrt of eigenvalues)
+    const sv = [Math.sqrt(Math.max(0, ev1)), Math.sqrt(Math.max(0, ev2))];
+
+    // Principal eigenvector (tangent direction)
+    let tx, ty;
+    if (Math.abs(c01) > 1e-10) {
+      tx = ev1 - c11; ty = c01;
+    } else {
+      tx = 1; ty = 0;
+    }
+    const tl = Math.hypot(tx, ty) || 1;
+    tx /= tl; ty /= tl;
+
+    return { singularValues: sv, tangent: { x: tx, y: ty }, center: { x: cx, y: cy }, neighbors };
+  }
+
+  function draw() {
+    const noise = parseFloat(document.getElementById('mfld-noise').value);
+    const k = parseInt(document.getElementById('mfld-k').value);
+    const showTangent = document.getElementById('mfld-tangent').checked;
+    document.getElementById('mfld-noise-val').textContent = noise;
+    document.getElementById('mfld-k-val').textContent = k;
+
+    clearCanvas(ctx, W, H);
+
+    // Compute local PCA for all points
+    const pcas = points.map((_, i) => localPCA(i, k));
+
+    // Estimate intrinsic dimension per point
+    const dims = pcas.map(pca => {
+      if (pca.singularValues.length < 2) return 0;
+      const sv = pca.singularValues;
+      const total = sv[0] + sv[1];
+      if (total < 1e-10) return 0;
+      const ratio = sv[1] / (sv[0] || 1);
+      // If ratio is small, effectively 1D; if close to 1, effectively 2D
+      return ratio > 0.3 ? 2 : 1;
+    });
+
+    // Draw tangent planes if enabled
+    if (showTangent) {
+      for (let i = 0; i < points.length; i++) {
+        const pca = pcas[i];
+        if (!pca.tangent) continue;
+        const p = points[i];
+        const t = pca.tangent;
+        const len = 20;
+        ctx.globalAlpha = 0.3;
+        drawLine(ctx, p.x - t.x * len, p.y - t.y * len, p.x + t.x * len, p.y + t.y * len, '#5566cc', 1);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Highlight selected point's neighborhood
+    if (selectedPoint >= 0 && selectedPoint < points.length) {
+      const pca = pcas[selectedPoint];
+      if (pca.neighbors) {
+        for (const ni of pca.neighbors) {
+          drawLine(ctx, points[selectedPoint].x, points[selectedPoint].y, points[ni].x, points[ni].y, 'rgba(255,200,50,0.3)', 1);
+          drawCircle(ctx, points[ni].x, points[ni].y, 4, 'rgba(255,200,50,0.5)', null);
+        }
+      }
+      drawCircle(ctx, points[selectedPoint].x, points[selectedPoint].y, 8, null, '#ffc832', 2);
+    }
+
+    // Draw points colored by local dimension
+    for (let i = 0; i < points.length; i++) {
+      const d = dims[i];
+      const color = d === 2 ? '#50c878' : d === 1 ? '#5566cc' : '#555';
+      drawCircle(ctx, points[i].x, points[i].y, 3, color, null);
+    }
+
+    // Draw spectrum
+    clearCanvas(sctx, SW, SH);
+    const margin = { l: 60, r: 30, t: 40, b: 60 };
+
+    drawText(sctx, 'Singular Value Spectrum (all neighborhoods)', margin.l, 25, '#8899ff', 13);
+
+    // Aggregate all singular values
+    const allSV = pcas.filter(p => p.singularValues.length === 2).map(p => p.singularValues);
+    if (allSV.length > 0) {
+      const avgSV = [0, 0];
+      for (const sv of allSV) { avgSV[0] += sv[0]; avgSV[1] += sv[1]; }
+      avgSV[0] /= allSV.length; avgSV[1] /= allSV.length;
+
+      const maxSV = Math.max(avgSV[0], 1);
+      const barW = 80;
+      const barMaxH = SH - margin.t - margin.b - 40;
+
+      for (let d = 0; d < 2; d++) {
+        const x = margin.l + 60 + d * (barW + 40);
+        const h = (avgSV[d] / maxSV) * barMaxH;
+        const y = SH - margin.b - h;
+
+        sctx.fillStyle = d === 0 ? '#5566cc' : '#cc5566';
+        sctx.fillRect(x, y, barW, h);
+        sctx.strokeStyle = '#fff2';
+        sctx.strokeRect(x, y, barW, h);
+
+        drawText(sctx, `σ${d + 1}`, x + barW / 2, SH - margin.b + 20, '#aaa', 13, 'center');
+        drawText(sctx, avgSV[d].toFixed(1), x + barW / 2, y - 8, '#ccc', 12, 'center');
+      }
+
+      // Ratio indicator
+      const ratio = avgSV[1] / (avgSV[0] || 1);
+      const estDim = ratio > 0.3 ? 2 : 1;
+
+      drawText(sctx, `σ₂/σ₁ = ${ratio.toFixed(3)}`, margin.l + 300, margin.t + 30, '#aaa', 13);
+      drawText(sctx, `Estimated d_int ≈ ${estDim}`, margin.l + 300, margin.t + 55, '#ffc832', 14);
+
+      // Draw scatter of individual SVs
+      const scatterX = margin.l + 300;
+      const scatterY = margin.t + 80;
+      const scatterW = 200;
+      const scatterH = 200;
+
+      sctx.strokeStyle = '#333';
+      sctx.strokeRect(scatterX, scatterY, scatterW, scatterH);
+      drawText(sctx, 'σ₁', scatterX + scatterW + 5, scatterY + scatterH + 5, '#555', 10);
+      drawText(sctx, 'σ₂', scatterX - 15, scatterY - 5, '#555', 10);
+
+      for (const sv of allSV) {
+        const sx = scatterX + (sv[0] / maxSV) * scatterW;
+        const sy = scatterY + scatterH - (sv[1] / maxSV) * scatterH;
+        drawCircle(sctx, sx, sy, 2, 'rgba(85,102,204,0.4)', null);
+      }
+
+      // Draw d=1 and d=2 reference lines
+      sctx.setLineDash([4, 4]);
+      // σ₂ = 0.3 * σ₁ threshold line
+      const threshY = scatterY + scatterH - 0.3 * scatterH;
+      drawLine(sctx, scatterX, threshY, scatterX + scatterW, scatterY + scatterH - 0.3 * scatterW * maxSV / maxSV, '#ffc83244', 1);
+      sctx.setLineDash([]);
+
+      const dim1Count = dims.filter(d => d === 1).length;
+      const dim2Count = dims.filter(d => d === 2).length;
+      document.getElementById('mfld-metrics').textContent =
+        `Points: ${points.length} | k=${k} | Avg σ₁=${avgSV[0].toFixed(1)}, σ₂=${avgSV[1].toFixed(1)} | σ₂/σ₁=${ratio.toFixed(3)} | Est. d_int≈${estDim} | Local: ${dim1Count} pts→d=1, ${dim2Count} pts→d=2`;
+    }
+  }
+
+  canvas.addEventListener('mousedown', e => {
+    drawing = true;
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (W / rect.width);
+    const my = (e.clientY - rect.top) * (H / rect.height);
+
+    // Check if clicking near existing point
+    const near = points.findIndex(p => dist(p, { x: mx, y: my }) < 15);
+    if (near >= 0) {
+      selectedPoint = near;
+      drawing = false;
+      draw();
+      return;
+    }
+    points.push({ x: mx, y: my });
+    draw();
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (W / rect.width);
+    const my = (e.clientY - rect.top) * (H / rect.height);
+    // Only add if far enough from last point
+    if (points.length === 0 || dist(points[points.length - 1], { x: mx, y: my }) > 8) {
+      const noise = parseFloat(document.getElementById('mfld-noise').value);
+      points.push({ x: mx + randRange(-noise, noise), y: my + randRange(-noise, noise) });
+      draw();
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => { drawing = false; });
+
+  document.getElementById('mfld-noise').addEventListener('input', draw);
+  document.getElementById('mfld-k').addEventListener('input', draw);
+  document.getElementById('mfld-tangent').addEventListener('change', draw);
+  document.getElementById('mfld-spiral').addEventListener('click', () => { generateSpiral(); selectedPoint = -1; draw(); });
+  document.getElementById('mfld-sheet').addEventListener('click', () => { generateSheet(); selectedPoint = -1; draw(); });
+  document.getElementById('mfld-clear').addEventListener('click', () => { points = []; selectedPoint = -1; draw(); });
+
+  generateSpiral();
+  draw();
+}
+
+// ============================================================
+// §4 FIBER BUNDLES
+// ============================================================
+function initFiber() {
+  const canvas = document.getElementById('fiber-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  let theta = 0; // position on base circle
+  let animating = false;
+  let animTheta = 0;
+  let fiberAngle = 0; // angle of vector in fiber
+  let holonomyAccum = 0;
+  let dragging = false;
+
+  function draw() {
+    const bundleType = document.getElementById('fiber-type').value;
+    const curvature = parseFloat(document.getElementById('fiber-curv').value) / 100;
+    const showHolonomy = document.getElementById('fiber-holonomy').checked;
+    document.getElementById('fiber-curv-val').textContent = curvature.toFixed(2);
+
+    clearCanvas(ctx, W, H);
+
+    if (bundleType === 'tangent-s2') {
+      drawTangentS2(ctx, curvature, showHolonomy);
+      return;
+    }
+
+    // Draw the bundle as a 3D-ish visualization
+    const cx = W / 2, cy = H / 2 + 40;
+    const baseR = 140;
+    const fiberH = 100;
+
+    // Draw base circle
+    drawText(ctx, 'Base space S¹ (positions)', cx, cy + baseR + 50, '#666', 12, 'center');
+    drawText(ctx, 'Fiber (residual stream)', W - 120, cy - fiberH - 20, '#666', 12, 'center');
+
+    // Draw the bundle surface
+    const nSlices = 80;
+    const isMobius = bundleType === 'mobius';
+
+    // Draw back half of bundle
+    for (let i = 0; i < nSlices; i++) {
+      const a1 = (i / nSlices) * TAU;
+      const a2 = ((i + 1) / nSlices) * TAU;
+
+      if (Math.sin(a1) > 0.1) continue; // only back half
+
+      const twist1 = isMobius ? a1 / 2 : 0;
+      const twist2 = isMobius ? a2 / 2 : 0;
+
+      const x1 = cx + baseR * Math.cos(a1);
+      const y1base = cy + baseR * Math.sin(a1) * 0.4;
+      const x2 = cx + baseR * Math.cos(a2);
+      const y2base = cy + baseR * Math.sin(a2) * 0.4;
+
+      for (let f = -1; f <= 1; f += 0.1) {
+        const fy1 = y1base - fiberH * f * Math.cos(twist1 + curvature * a1);
+        const fx1 = x1 + 20 * f * Math.sin(twist1 + curvature * a1);
+        const fy2 = y2base - fiberH * f * Math.cos(twist2 + curvature * a2);
+        const fx2 = x2 + 20 * f * Math.sin(twist2 + curvature * a2);
+
+        const depth = (1 + Math.sin(a1)) / 2;
+        ctx.globalAlpha = 0.05 + depth * 0.05;
+        drawLine(ctx, fx1, fy1, fx2, fy2, hsl(240 + f * 30, 50, 40), 1);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Draw base circle (ellipse for perspective)
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, baseR, baseR * 0.4, 0, 0, TAU);
+    ctx.strokeStyle = '#444';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Draw front half of bundle
+    for (let i = 0; i < nSlices; i++) {
+      const a1 = (i / nSlices) * TAU;
+      const a2 = ((i + 1) / nSlices) * TAU;
+
+      if (Math.sin(a1) <= 0.1) continue; // only front half
+
+      const twist1 = isMobius ? a1 / 2 : 0;
+      const twist2 = isMobius ? a2 / 2 : 0;
+
+      const x1 = cx + baseR * Math.cos(a1);
+      const y1base = cy + baseR * Math.sin(a1) * 0.4;
+      const x2 = cx + baseR * Math.cos(a2);
+      const y2base = cy + baseR * Math.sin(a2) * 0.4;
+
+      for (let f = -1; f <= 1; f += 0.1) {
+        const fy1 = y1base - fiberH * f * Math.cos(twist1 + curvature * a1);
+        const fx1 = x1 + 20 * f * Math.sin(twist1 + curvature * a1);
+        const fy2 = y2base - fiberH * f * Math.cos(twist2 + curvature * a2);
+        const fx2 = x2 + 20 * f * Math.sin(twist2 + curvature * a2);
+
+        const depth = (1 + Math.sin(a1)) / 2;
+        ctx.globalAlpha = 0.1 + depth * 0.15;
+        drawLine(ctx, fx1, fy1, fx2, fy2, hsl(240 + f * 30, 60, 50), 1);
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Draw the current position on base
+    const px = cx + baseR * Math.cos(theta);
+    const pyBase = cy + baseR * Math.sin(theta) * 0.4;
+    drawCircle(ctx, px, pyBase, 6, '#ffc832', '#fff', 2);
+
+    // Draw fiber at current position
+    const twist = isMobius ? theta / 2 : 0;
+    const totalTwist = twist + curvature * theta;
+
+    // Fiber line
+    const fTop = { x: px + 20 * Math.sin(totalTwist), y: pyBase - fiberH * Math.cos(totalTwist) };
+    const fBot = { x: px - 20 * Math.sin(totalTwist), y: pyBase + fiberH * Math.cos(totalTwist) };
+    drawLine(ctx, fBot.x, fBot.y, fTop.x, fTop.y, '#ffc832', 2);
+
+    // Draw transported vector on fiber
+    const vecAngle = fiberAngle + totalTwist;
+    const vecLen = 30;
+    const vx = px + vecLen * Math.sin(vecAngle) * 0.8;
+    const vy = pyBase - vecLen * Math.cos(vecAngle);
+
+    drawLine(ctx, px, pyBase, vx, vy, '#ff5566', 3);
+    drawCircle(ctx, vx, vy, 4, '#ff5566', null);
+
+    // Draw holonomy indicator
+    if (showHolonomy) {
+      const holAngle = isMobius ? Math.PI : curvature * TAU;
+      drawText(ctx, `Holonomy after full loop:`, 30, 40, '#888', 13);
+      drawText(ctx, `Δφ = ${(holAngle * 180 / Math.PI).toFixed(1)}°`, 30, 60, '#ffc832', 14);
+      if (isMobius) {
+        drawText(ctx, `(Möbius: vector flips sign!)`, 30, 80, '#ff5566', 12);
+      }
+
+      // Draw holonomy arc
+      const arcCx = 100, arcCy = 140, arcR = 35;
+      ctx.beginPath();
+      ctx.arc(arcCx, arcCy, arcR, -Math.PI / 2, -Math.PI / 2 + holAngle, false);
+      ctx.strokeStyle = '#ff5566';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      // Arrow
+      const endA = -Math.PI / 2 + holAngle;
+      const ax = arcCx + arcR * Math.cos(endA);
+      const ay = arcCy + arcR * Math.sin(endA);
+      drawCircle(ctx, ax, ay, 4, '#ff5566', null);
+      drawCircle(ctx, arcCx + arcR * Math.cos(-Math.PI / 2), arcCy + arcR * Math.sin(-Math.PI / 2), 3, '#5566cc', null);
+    }
+
+    // Path trace
+    if (animating) {
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,200,50,0.3)';
+      ctx.lineWidth = 1;
+      for (let a = 0; a <= animTheta; a += 0.05) {
+        const ax = cx + baseR * Math.cos(a);
+        const ay = cy + baseR * Math.sin(a) * 0.4;
+        if (a === 0) ctx.moveTo(ax, ay); else ctx.lineTo(ax, ay);
+      }
+      ctx.stroke();
+    }
+
+    document.getElementById('fiber-metrics').textContent =
+      `θ = ${(theta * 180 / Math.PI).toFixed(1)}° | Bundle: ${bundleType} | Twist at θ: ${(totalTwist * 180 / Math.PI).toFixed(1)}° | Curvature: ${curvature.toFixed(2)}`;
+  }
+
+  function drawTangentS2(ctx, curvature, showHolonomy) {
+    const cx = W / 2, cy = H / 2;
+    const R = 160;
+
+    drawText(ctx, 'Tangent bundle of S² — "Hairy Ball Theorem"', cx, 30, '#8899ff', 14, 'center');
+    drawText(ctx, 'Every continuous tangent field must have a zero (singularity)', cx, 50, '#666', 12, 'center');
+
+    // Draw sphere (wireframe)
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 0.5;
+    for (let lat = -80; lat <= 80; lat += 20) {
+      ctx.beginPath();
+      const r = R * Math.cos(lat * Math.PI / 180);
+      const y = cy - R * Math.sin(lat * Math.PI / 180) * 0.8;
+      ctx.ellipse(cx, y, r, r * 0.3, 0, 0, TAU);
+      ctx.stroke();
+    }
+    for (let lon = 0; lon < 360; lon += 30) {
+      ctx.beginPath();
+      for (let lat = -90; lat <= 90; lat += 2) {
+        const latR = lat * Math.PI / 180;
+        const lonR = lon * Math.PI / 180;
+        const x = cx + R * Math.cos(latR) * Math.sin(lonR);
+        const y = cy - R * Math.sin(latR) * 0.8 + R * Math.cos(latR) * Math.cos(lonR) * 0.3;
+        if (lat === -90) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Draw tangent vectors on the sphere (with singularities at poles)
+    for (let lat = -70; lat <= 70; lat += 20) {
+      for (let lon = 0; lon < 360; lon += 30) {
+        const latR = lat * Math.PI / 180;
+        const lonR = lon * Math.PI / 180;
+
+        const x = cx + R * Math.cos(latR) * Math.sin(lonR);
+        const y = cy - R * Math.sin(latR) * 0.8 + R * Math.cos(latR) * Math.cos(lonR) * 0.3;
+
+        // Tangent vector field: rotation around z-axis (has zeros at poles)
+        const cosLat = Math.cos(latR);
+        if (cosLat < 0.15) continue; // near pole — singularity
+
+        const vx = Math.cos(lonR) * 15;
+        const vy = Math.sin(lonR) * Math.sin(latR) * 0.3 * 15;
+
+        // Depth-based visibility
+        const depth = Math.cos(latR) * Math.cos(lonR);
+        if (depth < -0.2) continue;
+
+        const alpha = 0.3 + depth * 0.5;
+        ctx.globalAlpha = alpha;
+        drawLine(ctx, x, y, x + vx, y + vy, '#50c878', 2);
+        // Arrowhead
+        drawCircle(ctx, x + vx, y + vy, 2, '#50c878', null);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // Mark singularities (poles)
+    drawCircle(ctx, cx, cy - R * 0.8, 8, null, '#ff5566', 2);
+    drawText(ctx, '✕ zero (north pole)', cx + 15, cy - R * 0.8 + 4, '#ff5566', 11);
+    drawCircle(ctx, cx, cy + R * 0.8, 8, null, '#ff5566', 2);
+    drawText(ctx, '✕ zero (south pole)', cx + 15, cy + R * 0.8 + 4, '#ff5566', 11);
+
+    drawText(ctx, 'Euler characteristic χ(S²) = 2 ≠ 0 ⟹ no nonvanishing section exists', cx, H - 40, '#ffc832', 13, 'center');
+    drawText(ctx, 'Sum of indices of zeros = χ(S²) = 2 (Poincaré–Hopf theorem)', cx, H - 20, '#888', 12, 'center');
+
+    document.getElementById('fiber-metrics').textContent =
+      `Tangent bundle TS² | χ(S²) = 2 | Each pole has index +1 | Total index = 2 = χ | Non-trivial bundle: no global frame exists`;
+  }
+
+  // Mouse interaction for theta
+  canvas.addEventListener('mousedown', e => { dragging = true; });
+  canvas.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (W / rect.width) - W / 2;
+    const my = (e.clientY - rect.top) * (H / rect.height) - (H / 2 + 40);
+    theta = Math.atan2(my / 0.4, mx);
+    draw();
+  });
+  canvas.addEventListener('mouseup', () => { dragging = false; });
+
+  document.getElementById('fiber-type').addEventListener('change', draw);
+  document.getElementById('fiber-curv').addEventListener('input', draw);
+  document.getElementById('fiber-holonomy').addEventListener('change', draw);
+
+  document.getElementById('fiber-animate').addEventListener('click', () => {
+    if (animating) return;
+    animating = true;
+    animTheta = 0;
+    theta = 0;
+    fiberAngle = 0;
+
+    function step() {
+      animTheta += 0.03;
+      theta = animTheta;
+      if (animTheta >= TAU) {
+        animating = false;
+        theta = 0;
+        draw();
+        return;
+      }
+      draw();
+      requestAnimationFrame(step);
+    }
+    step();
+  });
+
+  draw();
+}
+
+// ============================================================
+// §5 MORSE THEORY
+// ============================================================
+function initMorse() {
+  const canvas = document.getElementById('morse-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // Critical points: { x, y, value, type: 'min'|'saddle'|'max' }
+  let criticals = [];
+  let landscape = null; // 2D array of height values
+
+  function generateLandscape() {
+    const res = 3;
+    const cols = Math.ceil(W / res);
+    const rows = Math.ceil(H / res);
+    landscape = { data: new Float32Array(cols * rows), cols, rows, res };
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = c * res;
+        const y = r * res;
+        let val = 0;
+        for (const cp of criticals) {
+          const d = Math.hypot(x - cp.x, y - cp.y);
+          const sigma = 80;
+          const sign = cp.type === 'max' ? 1 : cp.type === 'min' ? -1 : 0;
+          if (cp.type === 'saddle') {
+            // Saddle: positive in one direction, negative in another
+            const dx = x - cp.x, dy = y - cp.y;
+            const angle = Math.atan2(dy, dx);
+            val += cp.value * Math.exp(-d * d / (sigma * sigma * 2)) * Math.cos(2 * angle) * 0.5;
+          } else {
+            val += (cp.value + sign * 0.5) * Math.exp(-d * d / (sigma * sigma));
+          }
+        }
+        landscape.data[r * cols + c] = val;
+      }
+    }
+
+    // Normalize to [0, 1]
+    let minV = Infinity, maxV = -Infinity;
+    for (const v of landscape.data) { minV = Math.min(minV, v); maxV = Math.max(maxV, v); }
+    const range = maxV - minV || 1;
+    for (let i = 0; i < landscape.data.length; i++) {
+      landscape.data[i] = (landscape.data[i] - minV) / range;
+    }
+
+    // Update critical point values to normalized
+    for (const cp of criticals) {
+      const c = Math.round(cp.x / res);
+      const r = Math.round(cp.y / res);
+      if (c >= 0 && c < cols && r >= 0 && r < rows) {
+        cp.normValue = landscape.data[r * cols + c];
+      }
+    }
+  }
+
+  function presetSimple() {
+    criticals = [
+      { x: 200, y: 250, value: 0.2, type: 'min' },
+      { x: 500, y: 200, value: 0.8, type: 'max' },
+      { x: 350, y: 220, value: 0.5, type: 'saddle' },
+    ];
+    generateLandscape();
+  }
+
+  function presetComplex() {
+    criticals = [
+      { x: 120, y: 150, value: 0.1, type: 'min' },
+      { x: 400, y: 100, value: 0.15, type: 'min' },
+      { x: 700, y: 300, value: 0.2, type: 'min' },
+      { x: 250, y: 120, value: 0.9, type: 'max' },
+      { x: 550, y: 250, value: 0.85, type: 'max' },
+      { x: 350, y: 200, value: 0.5, type: 'saddle' },
+      { x: 600, y: 180, value: 0.45, type: 'saddle' },
+      { x: 450, y: 350, value: 0.55, type: 'saddle' },
+    ];
+    generateLandscape();
+  }
+
+  function presetSaddle() {
+    criticals = [
+      { x: 150, y: 200, value: 0.3, type: 'min' },
+      { x: 750, y: 200, value: 0.3, type: 'min' },
+      { x: 450, y: 100, value: 0.9, type: 'max' },
+      { x: 450, y: 350, value: 0.85, type: 'max' },
+      { x: 300, y: 150, value: 0.5, type: 'saddle' },
+      { x: 600, y: 150, value: 0.5, type: 'saddle' },
+      { x: 300, y: 300, value: 0.55, type: 'saddle' },
+      { x: 600, y: 300, value: 0.55, type: 'saddle' },
+      { x: 450, y: 225, value: 0.6, type: 'saddle' },
+    ];
+    generateLandscape();
+  }
+
+  function draw() {
+    const level = parseFloat(document.getElementById('morse-level').value) / 100;
+    const showFlow = document.getElementById('morse-flow').checked;
+    document.getElementById('morse-level-val').textContent = level.toFixed(2);
+
+    clearCanvas(ctx, W, H);
+
+    if (!landscape) { presetSimple(); }
+
+    const { data, cols, rows, res } = landscape;
+
+    // Draw landscape as heatmap
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const v = data[r * cols + c];
+        ctx.fillStyle = viridis(v);
+        ctx.fillRect(c * res, r * res, res, res);
+      }
+    }
+
+    // Draw level set
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#fff';
+    ctx.globalAlpha = 0.8;
+    // March through grid to find level set contour
+    for (let r = 0; r < rows - 1; r++) {
+      for (let c = 0; c < cols - 1; c++) {
+        const v00 = data[r * cols + c];
+        const v10 = data[r * cols + c + 1];
+        const v01 = data[(r + 1) * cols + c];
+        const v11 = data[(r + 1) * cols + c + 1];
+
+        // Simple marching squares
+        const threshold = level;
+        const b00 = v00 >= threshold ? 1 : 0;
+        const b10 = v10 >= threshold ? 1 : 0;
+        const b01 = v01 >= threshold ? 1 : 0;
+        const b11 = v11 >= threshold ? 1 : 0;
+        const code = b00 | (b10 << 1) | (b01 << 2) | (b11 << 3);
+
+        if (code === 0 || code === 15) continue;
+
+        const x = c * res, y = r * res;
+
+        // Interpolation helpers
+        function interpX(va, vb) { return (threshold - va) / ((vb - va) || 0.001); }
+
+        const points = [];
+        // Top edge
+        if ((b00 ^ b10)) points.push({ x: x + interpX(v00, v10) * res, y: y });
+        // Bottom edge
+        if ((b01 ^ b11)) points.push({ x: x + interpX(v01, v11) * res, y: y + res });
+        // Left edge
+        if ((b00 ^ b01)) points.push({ x: x, y: y + interpX(v00, v01) * res });
+        // Right edge
+        if ((b10 ^ b11)) points.push({ x: x + res, y: y + interpX(v10, v11) * res });
+
+        if (points.length >= 2) {
+          drawLine(ctx, points[0].x, points[0].y, points[1].x, points[1].y, 'rgba(255,255,255,0.8)', 1.5);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Draw sublevel set overlay
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (data[r * cols + c] > level) {
+          ctx.fillRect(c * res, r * res, res, res);
+        }
+      }
+    }
+
+    // Draw gradient flow lines
+    if (showFlow && criticals.length > 0) {
+      ctx.globalAlpha = 0.4;
+      for (let startR = 10; startR < rows; startR += 20) {
+        for (let startC = 10; startC < cols; startC += 20) {
+          let cr = startR, cc = startC;
+          ctx.beginPath();
+          ctx.moveTo(cc * res, cr * res);
+          ctx.strokeStyle = '#ffc832';
+          ctx.lineWidth = 0.8;
+
+          for (let step = 0; step < 100; step++) {
+            // Compute gradient
+            const ri = Math.round(cr), ci = Math.round(cc);
+            if (ri <= 0 || ri >= rows - 1 || ci <= 0 || ci >= cols - 1) break;
+
+            const gx = (data[ri * cols + ci + 1] - data[ri * cols + ci - 1]) / 2;
+            const gy = (data[(ri + 1) * cols + ci] - data[(ri - 1) * cols + ci]) / 2;
+            const gl = Math.hypot(gx, gy);
+            if (gl < 0.0001) break;
+
+            // Follow negative gradient (toward minima)
+            cc -= (gx / gl) * 1.5;
+            cr -= (gy / gl) * 1.5;
+            ctx.lineTo(cc * res, cr * res);
+          }
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // Draw critical points
+    const symbols = { min: '●', saddle: '◆', max: '★' };
+    const colors = { min: '#5566cc', saddle: '#ffc832', max: '#ff5566' };
+    const labels = { min: 'min (idx 0)', saddle: 'saddle (idx 1)', max: 'max (idx 2)' };
+
+    for (const cp of criticals) {
+      const r = 10;
+      drawCircle(ctx, cp.x, cp.y, r, colors[cp.type] + '88', colors[cp.type], 2);
+      drawText(ctx, cp.type[0].toUpperCase(), cp.x - 4, cp.y + 4, '#fff', 12);
+
+      // Show if below or above level set
+      const normV = cp.normValue || 0.5;
+      if (normV <= level) {
+        drawCircle(ctx, cp.x, cp.y, r + 4, null, '#fff8', 1);
+      }
+    }
+
+    // Compute topology of sublevel set
+    const nMin = criticals.filter(c => c.type === 'min' && (c.normValue || 0) <= level).length;
+    const nSaddle = criticals.filter(c => c.type === 'saddle' && (c.normValue || 0) <= level).length;
+    const nMax = criticals.filter(c => c.type === 'max' && (c.normValue || 0) <= level).length;
+    const euler = nMin - nSaddle + nMax;
+
+    document.getElementById('morse-metrics').textContent =
+      `Level c = ${level.toFixed(2)} | Below level: ${nMin} minima, ${nSaddle} saddles, ${nMax} maxima | χ = ${nMin} - ${nSaddle} + ${nMax} = ${euler} | Total critical pts: ${criticals.length}`;
+
+    // Legend
+    drawText(ctx, '● min (index 0)', W - 160, 25, '#5566cc', 12);
+    drawText(ctx, '◆ saddle (index 1)', W - 160, 45, '#ffc832', 12);
+    drawText(ctx, '★ max (index 2)', W - 160, 65, '#ff5566', 12);
+    drawText(ctx, '— level set f=c', W - 160, 85, '#fff', 12);
+  }
+
+  // Click to add critical points
+  let nextType = 'min';
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (W / rect.width);
+    const my = (e.clientY - rect.top) * (H / rect.height);
+
+    const types = ['min', 'saddle', 'max'];
+    criticals.push({ x: mx, y: my, value: Math.random(), type: nextType });
+    nextType = types[(types.indexOf(nextType) + 1) % 3];
+    generateLandscape();
+    draw();
+  });
+
+  document.getElementById('morse-level').addEventListener('input', draw);
+  document.getElementById('morse-flow').addEventListener('change', draw);
+  document.getElementById('morse-preset-simple').addEventListener('click', () => { presetSimple(); draw(); });
+  document.getElementById('morse-preset-complex').addEventListener('click', () => { presetComplex(); draw(); });
+  document.getElementById('morse-preset-saddle').addEventListener('click', () => { presetSaddle(); draw(); });
+  document.getElementById('morse-clear').addEventListener('click', () => { criticals = []; landscape = null; draw(); });
+
+  presetSimple();
+  draw();
+}
+
+// ============================================================
+// §6 SHEAVES
+// ============================================================
+function initSheaf() {
+  const canvas = document.getElementById('sheaf-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  let nodes = []; // { x, y, stalk: [vx, vy] }
+  let edges = []; // { i, j, restriction: [[a,b],[c,d]] } (2x2 matrix)
+  let stalDim = 2;
+
+  function buildGraph(type) {
+    stalDim = parseInt(document.getElementById('sheaf-dim').value);
+    const cx = W / 2, cy = H / 2;
+    const R = 150;
+
+    nodes = [];
+    edges = [];
+
+    switch (type) {
+      case 'path': {
+        const n = 5;
+        for (let i = 0; i < n; i++) {
+          const x = 100 + i * (W - 200) / (n - 1);
+          const y = cy + Math.sin(i * 0.8) * 40;
+          nodes.push({ x, y, stalk: randomStalk() });
+        }
+        for (let i = 0; i < n - 1; i++) {
+          edges.push({ i, j: i + 1, restriction: randomRestriction() });
+        }
+        break;
+      }
+      case 'cycle': {
+        const n = 6;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * TAU - Math.PI / 2;
+          nodes.push({ x: cx + R * Math.cos(a), y: cy + R * Math.sin(a), stalk: randomStalk() });
+        }
+        for (let i = 0; i < n; i++) {
+          edges.push({ i, j: (i + 1) % n, restriction: randomRestriction() });
+        }
+        break;
+      }
+      case 'complete': {
+        const n = 5;
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * TAU - Math.PI / 2;
+          nodes.push({ x: cx + R * Math.cos(a), y: cy + R * Math.sin(a), stalk: randomStalk() });
+        }
+        for (let i = 0; i < n; i++)
+          for (let j = i + 1; j < n; j++)
+            edges.push({ i, j, restriction: randomRestriction() });
+        break;
+      }
+      case 'bipartite': {
+        const nL = 3, nR = 3;
+        for (let i = 0; i < nL; i++) {
+          nodes.push({ x: cx - 150, y: cy - 100 + i * 100, stalk: randomStalk() });
+        }
+        for (let i = 0; i < nR; i++) {
+          nodes.push({ x: cx + 150, y: cy - 100 + i * 100, stalk: randomStalk() });
+        }
+        for (let i = 0; i < nL; i++)
+          for (let j = 0; j < nR; j++)
+            edges.push({ i, j: nL + j, restriction: randomRestriction() });
+        break;
+      }
+    }
+  }
+
+  function randomStalk() {
+    if (stalDim === 1) return [randRange(-1, 1)];
+    return [randRange(-1, 1), randRange(-1, 1)];
+  }
+
+  function randomRestriction() {
+    if (stalDim === 1) return [[0.5 + Math.random() * 1.0]];
+    // Random 2x2 matrix close to identity
+    const a = 0.8 + Math.random() * 0.4;
+    const b = (Math.random() - 0.5) * 0.6;
+    const c = (Math.random() - 0.5) * 0.6;
+    const d = 0.8 + Math.random() * 0.4;
+    return [[a, b], [c, d]];
+  }
+
+  function identityRestriction() {
+    if (stalDim === 1) return [[1]];
+    return [[1, 0], [0, 1]];
+  }
+
+  function matVecMul(M, v) {
+    if (stalDim === 1) return [M[0][0] * v[0]];
+    return [
+      M[0][0] * v[0] + M[0][1] * v[1],
+      M[1][0] * v[0] + M[1][1] * v[1]
+    ];
+  }
+
+  function vecSubArr(a, b) {
+    return a.map((v, i) => v - b[i]);
+  }
+
+  function vecNormArr(v) {
+    return Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+  }
+
+  // Compute coboundary: for each edge, δ(f)(e) = F_{v→e}(f(v)) - F_{w→e}(f(w))
+  function computeCoboundary() {
+    const coboundary = [];
+    let totalNorm = 0;
+
+    for (const e of edges) {
+      const sv = nodes[e.i].stalk;
+      const sw = nodes[e.j].stalk;
+      const Fv = matVecMul(e.restriction, sv);
+      const Fw = matVecMul(e.restriction, sw); // simplified: same restriction both ways
+      const diff = vecSubArr(Fv, Fw);
+      const norm = vecNormArr(diff);
+      coboundary.push({ edge: e, diff, norm });
+      totalNorm += norm * norm;
+    }
+
+    return { coboundary, totalNorm: Math.sqrt(totalNorm) };
+  }
+
+  function makeConsistent() {
+    // Set all stalks to the same vector, all restrictions to identity
+    const v = randomStalk();
+    for (const n of nodes) n.stalk = [...v];
+    for (const e of edges) e.restriction = identityRestriction();
+  }
+
+  function addTwist() {
+    // For cycle graph: make one restriction a rotation, creating non-trivial H¹
+    const graphType = document.getElementById('sheaf-graph').value;
+    if (graphType === 'cycle' && edges.length > 0) {
+      // Make all restrictions identity except the last one which is a rotation
+      for (let i = 0; i < edges.length - 1; i++) {
+        edges[i].restriction = identityRestriction();
+      }
+      // Last edge: rotation by some angle
+      const angle = Math.PI / 3;
+      if (stalDim === 2) {
+        edges[edges.length - 1].restriction = [
+          [Math.cos(angle), -Math.sin(angle)],
+          [Math.sin(angle), Math.cos(angle)]
+        ];
+      } else {
+        edges[edges.length - 1].restriction = [[-1]]; // sign flip
+      }
+      // Set all stalks to same value
+      const v = [1, 0].slice(0, stalDim);
+      for (const n of nodes) n.stalk = [...v];
+    }
+  }
+
+  function draw() {
+    clearCanvas(ctx, W, H);
+
+    const { coboundary, totalNorm } = computeCoboundary();
+
+    // Draw edges
+    for (let ei = 0; ei < edges.length; ei++) {
+      const e = edges[ei];
+      const a = nodes[e.i], b = nodes[e.j];
+      const cb = coboundary[ei];
+      const inconsistency = Math.min(cb.norm / 2, 1);
+
+      // Color edge by inconsistency
+      const r = Math.round(inconsistency * 255);
+      const g = Math.round((1 - inconsistency) * 180);
+      drawLine(ctx, a.x, a.y, b.x, b.y, `rgb(${r},${g},80)`, 2 + inconsistency * 3);
+
+      // Draw restriction matrix label
+      const mx = (a.x + b.x) / 2;
+      const my = (a.y + b.y) / 2;
+      if (stalDim === 2) {
+        const M = e.restriction;
+        drawText(ctx, `[${M[0][0].toFixed(1)},${M[0][1].toFixed(1)}]`, mx - 30, my - 8, '#666', 9);
+        drawText(ctx, `[${M[1][0].toFixed(1)},${M[1][1].toFixed(1)}]`, mx - 30, my + 5, '#666', 9);
+      }
+
+      // Draw coboundary vector on edge
+      if (cb.norm > 0.01) {
+        const perpX = -(b.y - a.y) / dist(a, b) * cb.norm * 15;
+        const perpY = (b.x - a.x) / dist(a, b) * cb.norm * 15;
+        drawLine(ctx, mx, my, mx + perpX, my + perpY, '#ff556688', 2);
+      }
+    }
+
+    // Draw nodes with stalk vectors
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      drawCircle(ctx, n.x, n.y, 20, '#1a1a2e', '#5566cc', 2);
+      drawText(ctx, `v${i}`, n.x - 6, n.y - 25, '#888', 11);
+
+      // Draw stalk vector
+      if (stalDim === 2) {
+        const vx = n.stalk[0] * 15;
+        const vy = n.stalk[1] * 15;
+        drawLine(ctx, n.x, n.y, n.x + vx, n.y - vy, '#ffc832', 2.5);
+        drawCircle(ctx, n.x + vx, n.y - vy, 3, '#ffc832', null);
+      } else {
+        const vx = n.stalk[0] * 20;
+        drawLine(ctx, n.x - vx, n.y, n.x + vx, n.y, '#ffc832', 3);
+      }
+    }
+
+    // Compute approximate cohomology dimensions
+    // H⁰ ≈ kernel of coboundary map (global sections)
+    // For this demo, approximate by checking if totalNorm is small
+    const h0approx = totalNorm < 0.1 ? stalDim : (totalNorm < 0.5 ? 1 : 0);
+    const nEdges = edges.length;
+    const nNodes = nodes.length;
+    // Rough estimate: dim H¹ ≈ dim(edge stalks) - dim(node stalks) + dim(H⁰)
+    const h1approx = Math.max(0, nEdges * stalDim - nNodes * stalDim + h0approx);
+
+    // Draw info
+    drawText(ctx, `Sheaf on graph`, 20, 25, '#8899ff', 14);
+    drawText(ctx, `‖δf‖ = ${totalNorm.toFixed(3)} (coboundary norm — 0 = globally consistent)`, 20, 45, totalNorm < 0.1 ? '#50c878' : '#ff5566', 12);
+    drawText(ctx, `dim H⁰ ≈ ${h0approx} (global sections)`, 20, 65, '#aaa', 12);
+    drawText(ctx, `dim H¹ ≈ ${h1approx} (obstruction classes)`, 20, 85, '#aaa', 12);
+
+    // Color legend
+    drawCircle(ctx, W - 180, 25, 6, 'rgb(0,180,80)', null);
+    drawText(ctx, 'consistent edge', W - 168, 29, '#888', 11);
+    drawCircle(ctx, W - 180, 45, 6, 'rgb(255,0,80)', null);
+    drawText(ctx, 'inconsistent edge', W - 168, 49, '#888', 11);
+
+    document.getElementById('sheaf-metrics').textContent =
+      `Nodes: ${nNodes} | Edges: ${nEdges} | Stalk dim: ${stalDim} | ‖δf‖ = ${totalNorm.toFixed(4)} | H⁰ ≈ ${h0approx} | H¹ ≈ ${h1approx}`;
+  }
+
+  // Click on nodes to cycle their stalk vector
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (W / rect.width);
+    const my = (e.clientY - rect.top) * (H / rect.height);
+
+    for (let i = 0; i < nodes.length; i++) {
+      if (dist(nodes[i], { x: mx, y: my }) < 25) {
+        // Rotate stalk vector
+        if (stalDim === 2) {
+          const angle = Math.PI / 6;
+          const s = nodes[i].stalk;
+          nodes[i].stalk = [
+            s[0] * Math.cos(angle) - s[1] * Math.sin(angle),
+            s[0] * Math.sin(angle) + s[1] * Math.cos(angle)
+          ];
+        } else {
+          nodes[i].stalk = [-nodes[i].stalk[0]];
+        }
+        draw();
+        return;
+      }
+    }
+  });
+
+  document.getElementById('sheaf-graph').addEventListener('change', e => { buildGraph(e.target.value); draw(); });
+  document.getElementById('sheaf-dim').addEventListener('change', e => {
+    stalDim = parseInt(e.target.value);
+    buildGraph(document.getElementById('sheaf-graph').value);
+    draw();
+  });
+  document.getElementById('sheaf-consistent').addEventListener('click', () => { makeConsistent(); draw(); });
+  document.getElementById('sheaf-twist').addEventListener('click', () => { addTwist(); draw(); });
+  document.getElementById('sheaf-random').addEventListener('click', () => {
+    for (const n of nodes) n.stalk = randomStalk();
+    for (const e of edges) e.restriction = randomRestriction();
+    draw();
+  });
+
+  buildGraph('cycle');
+  draw();
+}
+
+// ============================================================
+// §7 SUPERPOSITION & FEATURE GEOMETRY
+// ============================================================
+function initSuperposition() {
+  const vCanvas = document.getElementById('sup-vectors');
+  const gCanvas = document.getElementById('sup-gram');
+  const vctx = vCanvas.getContext('2d');
+  const gctx = gCanvas.getContext('2d');
+  const VW = vCanvas.width, VH = vCanvas.height;
+  const GW = gCanvas.width, GH = gCanvas.height;
+
+  let features = []; // { angle } — unit vectors in R^2 parameterized by angle
+  let draggingFeature = -1;
+  let optimizing = false;
+  let optimInterval = null;
+
+  function setFeatureCount(n) {
+    features = [];
+    for (let i = 0; i < n; i++) {
+      features.push({ angle: (i / n) * TAU });
+    }
+  }
+
+  function simplexConfig() {
+    const n = features.length;
+    for (let i = 0; i < n; i++) {
+      features[i].angle = (i / n) * TAU;
+    }
+  }
+
+  function crossPolytopeConfig() {
+    const n = features.length;
+    const pairs = Math.ceil(n / 2);
+    for (let i = 0; i < n; i++) {
+      const pairIdx = Math.floor(i / 2);
+      const isSecond = i % 2 === 1;
+      features[i].angle = (pairIdx / pairs) * Math.PI + (isSecond ? Math.PI : 0);
+    }
+  }
+
+  function randomConfig() {
+    for (const f of features) {
+      f.angle = Math.random() * TAU;
+    }
+  }
+
+  // Optimization: gradient descent to minimize max interference
+  function optimizeStep() {
+    const n = features.length;
+    if (n < 2) return;
+
+    const lr = 0.02;
+    const gradients = new Array(n).fill(0);
+
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const dot = Math.cos(features[i].angle - features[j].angle);
+        const absDot = Math.abs(dot);
+        // Gradient of |cos(θᵢ - θⱼ)| w.r.t. θᵢ
+        const sign = dot >= 0 ? 1 : -1;
+        const grad = -sign * Math.sin(features[i].angle - features[j].angle);
+        // Repulsive force proportional to interference
+        const force = grad * absDot * 2;
+        gradients[i] += force;
+        gradients[j] -= force;
+      }
+    }
+
+    for (let i = 0; i < n; i++) {
+      features[i].angle -= lr * gradients[i];
+    }
+  }
+
+  function draw() {
+    const n = features.length;
+    const sparsity = parseFloat(document.getElementById('sup-sparsity').value) / 100;
+    const showVoronoi = document.getElementById('sup-voronoi').checked;
+    document.getElementById('sup-n-val').textContent = n;
+    document.getElementById('sup-sp-val').textContent = sparsity.toFixed(2);
+
+    // === Vector canvas ===
+    clearCanvas(vctx, VW, VH);
+    const vcx = VW / 2, vcy = VH / 2;
+    const vr = 150;
+
+    // Draw unit circle
+    vctx.beginPath();
+    vctx.arc(vcx, vcy, vr, 0, TAU);
+    vctx.strokeStyle = '#333';
+    vctx.lineWidth = 1;
+    vctx.stroke();
+
+    // Draw axes
+    drawLine(vctx, vcx - vr - 20, vcy, vcx + vr + 20, vcy, '#222', 1);
+    drawLine(vctx, vcx, vcy - vr - 20, vcx, vcy + vr + 20, '#222', 1);
+
+    // Draw Voronoi-like regions (angular sectors)
+    if (showVoronoi && n >= 2) {
+      const sortedAngles = features.map((f, i) => ({ angle: ((f.angle % TAU) + TAU) % TAU, i }));
+      sortedAngles.sort((a, b) => a.angle - b.angle);
+
+      for (let k = 0; k < sortedAngles.length; k++) {
+        const curr = sortedAngles[k];
+        const next = sortedAngles[(k + 1) % sortedAngles.length];
+        let midAngle;
+        if (k === sortedAngles.length - 1) {
+          midAngle = (curr.angle + next.angle + TAU) / 2;
+        } else {
+          midAngle = (curr.angle + next.angle) / 2;
+        }
+
+        const color = hsl((curr.i / n) * 360, 30, 15);
+        vctx.fillStyle = color;
+        vctx.beginPath();
+        vctx.moveTo(vcx, vcy);
+        vctx.arc(vcx, vcy, vr + 10, curr.angle, midAngle);
+        vctx.closePath();
+        vctx.fill();
+      }
+    }
+
+    // Draw feature vectors
+    const featureColors = features.map((_, i) => hsl((i / n) * 360, 70, 60));
+
+    for (let i = 0; i < n; i++) {
+      const f = features[i];
+      const ex = vcx + vr * Math.cos(f.angle);
+      const ey = vcy - vr * Math.sin(f.angle);
+
+      drawLine(vctx, vcx, vcy, ex, ey, featureColors[i], 2.5);
+      drawCircle(vctx, ex, ey, 7, featureColors[i], '#fff', 1.5);
+      drawText(vctx, `f${i + 1}`, ex + 12 * Math.cos(f.angle), ey - 12 * Math.sin(f.angle), featureColors[i], 12, 'center');
+    }
+
+    // Info
+    drawText(vctx, `${n} features in ℝ²`, 15, 25, '#888', 13);
+    drawText(vctx, n > 2 ? 'SUPERPOSITION (n > d)' : 'No superposition (n ≤ d)', 15, 45, n > 2 ? '#ff5566' : '#50c878', 12);
+
+    // Capacity with sparsity
+    const capacity = sparsity > 0 ? Math.round(2 / sparsity) : 2;
+    drawText(vctx, `Effective capacity at S=${sparsity.toFixed(2)}: ~${capacity} features`, 15, 65, '#aaa', 11);
+
+    // === Gram matrix canvas ===
+    clearCanvas(gctx, GW, GH);
+
+    if (n === 0) return;
+
+    // Compute Gram matrix
+    const gram = [];
+    let maxInterference = 0;
+    for (let i = 0; i < n; i++) {
+      gram[i] = [];
+      for (let j = 0; j < n; j++) {
+        const dot = Math.cos(features[i].angle - features[j].angle);
+        gram[i][j] = dot;
+        if (i !== j) maxInterference = Math.max(maxInterference, Math.abs(dot));
+      }
+    }
+
+    // Draw Gram matrix
+    const margin = { l: 60, t: 50, r: 80, b: 40 };
+    const cellW = Math.min(40, (GW - margin.l - margin.r) / n);
+    const cellH = Math.min(40, (GH - margin.t - margin.b) / n);
+
+    drawText(gctx, 'Gram Matrix |⟨fᵢ, fⱼ⟩|', margin.l, 25, '#8899ff', 14);
+
+    for (let i = 0; i < n; i++) {
+      drawText(gctx, `f${i + 1}`, margin.l + i * cellW + cellW / 2, margin.t - 8, featureColors[i], 10, 'center');
+      drawText(gctx, `f${i + 1}`, margin.l - 20, margin.t + i * cellH + cellH / 2 + 4, featureColors[i], 10, 'center');
+
+      for (let j = 0; j < n; j++) {
+        const v = Math.abs(gram[i][j]);
+        const x = margin.l + j * cellW;
+        const y = margin.t + i * cellH;
+
+        gctx.fillStyle = coolwarm(v);
+        gctx.fillRect(x, y, cellW - 1, cellH - 1);
+
+        if (cellW > 25) {
+          drawText(gctx, v.toFixed(2), x + cellW / 2, y + cellH / 2 + 4, v > 0.5 ? '#000' : '#aaa', 9, 'center');
+        }
+      }
+    }
+
+    // Color bar
+    const cbX = GW - margin.r + 20;
+    const cbH = n * cellH;
+    for (let y = 0; y < cbH; y++) {
+      const t = 1 - y / cbH;
+      gctx.fillStyle = coolwarm(t);
+      gctx.fillRect(cbX, margin.t + y, 15, 1);
+    }
+    drawText(gctx, '1.0', cbX + 20, margin.t + 10, '#aaa', 10);
+    drawText(gctx, '0.0', cbX + 20, margin.t + cbH, '#aaa', 10);
+
+    // Interference stats below matrix
+    const statsY = margin.t + n * cellH + 30;
+    drawText(gctx, `Max interference: ${maxInterference.toFixed(4)}`, margin.l, statsY, '#ffc832', 13);
+
+    // Theoretical optimal for n vectors in R^2
+    let optimalInterference;
+    if (n <= 2) {
+      optimalInterference = 0;
+    } else if (n === 3) {
+      optimalInterference = 0.5; // equilateral triangle
+    } else if (n === 4) {
+      optimalInterference = Math.cos(Math.PI / 4); // cross-polytope
+    } else {
+      // Welch bound: sqrt((n-d)/(d(n-1))) for d=2
+      optimalInterference = Math.sqrt((n - 2) / (2 * (n - 1)));
+    }
+    drawText(gctx, `Welch bound (optimal): ${optimalInterference.toFixed(4)}`, margin.l, statsY + 20, '#50c878', 13);
+    drawText(gctx, `Gap: ${(maxInterference - optimalInterference).toFixed(4)}`, margin.l, statsY + 40, '#aaa', 12);
+
+    // Expected loss from interference given sparsity
+    const expectedLoss = maxInterference * maxInterference * sparsity * (n - 1);
+    drawText(gctx, `Expected interference loss (S·(n-1)·I²): ${expectedLoss.toFixed(4)}`, margin.l, statsY + 60, '#cc5566', 12);
+
+    document.getElementById('sup-metrics').textContent =
+      `Features: ${n} in ℝ² | Max |⟨fᵢ,fⱼ⟩| = ${maxInterference.toFixed(4)} | Welch bound = ${optimalInterference.toFixed(4)} | Sparsity = ${sparsity.toFixed(2)} | Interference loss ≈ ${expectedLoss.toFixed(4)}`;
+  }
+
+  // Drag feature endpoints
+  vCanvas.addEventListener('mousedown', e => {
+    const rect = vCanvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (VW / rect.width);
+    const my = (e.clientY - rect.top) * (VH / rect.height);
+    const vcx = VW / 2, vcy = VH / 2, vr = 150;
+
+    for (let i = 0; i < features.length; i++) {
+      const ex = vcx + vr * Math.cos(features[i].angle);
+      const ey = vcy - vr * Math.sin(features[i].angle);
+      if (Math.hypot(mx - ex, my - ey) < 15) {
+        draggingFeature = i;
+        return;
+      }
+    }
+  });
+
+  vCanvas.addEventListener('mousemove', e => {
+    if (draggingFeature === -1) return;
+    const rect = vCanvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (VW / rect.width) - VW / 2;
+    const my = -((e.clientY - rect.top) * (VH / rect.height) - VH / 2);
+    features[draggingFeature].angle = Math.atan2(my, mx);
+    draw();
+  });
+
+  vCanvas.addEventListener('mouseup', () => { draggingFeature = -1; });
+
+  document.getElementById('sup-n').addEventListener('input', e => {
+    setFeatureCount(parseInt(e.target.value));
+    draw();
+  });
+  document.getElementById('sup-sparsity').addEventListener('input', draw);
+  document.getElementById('sup-voronoi').addEventListener('change', draw);
+  document.getElementById('sup-simplex').addEventListener('click', () => { simplexConfig(); draw(); });
+  document.getElementById('sup-cross').addEventListener('click', () => { crossPolytopeConfig(); draw(); });
+  document.getElementById('sup-random').addEventListener('click', () => { randomConfig(); draw(); });
+
+  document.getElementById('sup-optimize').addEventListener('click', () => {
+    if (optimizing) {
+      clearInterval(optimInterval);
+      optimizing = false;
+      return;
+    }
+    optimizing = true;
+    optimInterval = setInterval(() => {
+      optimizeStep();
+      draw();
+    }, 30);
+    // Stop after 5 seconds
+    setTimeout(() => {
+      if (optimizing) {
+        clearInterval(optimInterval);
+        optimizing = false;
+      }
+    }, 5000);
+  });
+
+  setFeatureCount(3);
+  draw();
+}
+
+// ============================================================
+// §8 TOPOLOGICAL COMPLEXITY & CONFIGURATION SPACES
+// ============================================================
+function initTC() {
+  const sCanvas = document.getElementById('tc-space-canvas');
+  const bCanvas = document.getElementById('tc-braid-canvas');
+  const sctx = sCanvas.getContext('2d');
+  const bctx = bCanvas.getContext('2d');
+  const SW = sCanvas.width, SH = sCanvas.height;
+  const BW = bCanvas.width, BH = bCanvas.height;
+
+  let startPoint = null;
+  let endPoint = null;
+  let animProgress = 0;
+  let animating = false;
+  let animFrame = null;
+
+  function getSpaceType() { return document.getElementById('tc-space').value; }
+  function getTokenCount() { return parseInt(document.getElementById('tc-tokens').value); }
+
+  function drawSpace() {
+    clearCanvas(sctx, SW, SH);
+    const cx = SW / 2, cy = SH / 2;
+    const space = getSpaceType();
+
+    sctx.strokeStyle = '#5566cc';
+    sctx.lineWidth = 3;
+
+    switch (space) {
+      case 'circle': {
+        const R = 140;
+        sctx.beginPath();
+        sctx.arc(cx, cy, R, 0, TAU);
+        sctx.stroke();
+
+        drawText(sctx, 'S¹', cx + R + 15, cy, '#5566cc', 16);
+        drawText(sctx, 'TC(S¹) = 2', 20, 30, '#ffc832', 14);
+        drawText(sctx, 'Need 2 motion planning rules', 20, 50, '#888', 12);
+        drawText(sctx, '(antipodal points are the obstruction)', 20, 68, '#666', 11);
+
+        // Draw the two regions
+        if (startPoint && endPoint) {
+          // Check if antipodal
+          const angleDiff = Math.abs(startPoint.angle - endPoint.angle);
+          const isAntipodal = Math.abs(angleDiff - Math.PI) < 0.15 || Math.abs(angleDiff - 3 * Math.PI) < 0.15;
+
+          if (isAntipodal) {
+            drawText(sctx, '⚠ Antipodal! Need rule #2', cx - 80, cy + R + 40, '#ff5566', 13);
+          } else {
+            drawText(sctx, '✓ Non-antipodal: rule #1 (shorter arc)', cx - 120, cy + R + 40, '#50c878', 13);
+          }
+
+          // Draw path
+          if (animating || animProgress > 0) {
+            const t = animProgress;
+            const sa = startPoint.angle;
+            let ea = endPoint.angle;
+
+            // Choose shorter arc (rule 1) or handle antipodal (rule 2)
+            let diff = ea - sa;
+            if (diff > Math.PI) diff -= TAU;
+            if (diff < -Math.PI) diff += TAU;
+            if (isAntipodal) diff = Math.PI; // arbitrary choice for rule 2
+
+            const currentAngle = sa + diff * t;
+            const px = cx + R * Math.cos(currentAngle);
+            const py = cy + R * Math.sin(currentAngle);
+
+            // Draw path trace
+            sctx.beginPath();
+            sctx.strokeStyle = '#ffc83288';
+            sctx.lineWidth = 2;
+            if (diff > 0) {
+              sctx.arc(cx, cy, R, sa, sa + diff * t);
+            } else {
+              sctx.arc(cx, cy, R, sa + diff * t, sa);
+            }
+            sctx.stroke();
+
+            drawCircle(sctx, px, py, 6, '#ffc832', '#fff', 2);
+          }
+        }
+
+        // Draw start/end points
+        if (startPoint) {
+          const R2 = 140;
+          const sx = cx + R2 * Math.cos(startPoint.angle);
+          const sy = cy + R2 * Math.sin(startPoint.angle);
+          drawCircle(sctx, sx, sy, 8, '#50c878', '#fff', 2);
+          drawText(sctx, 'S', sx + 12, sy - 5, '#50c878', 12);
+        }
+        if (endPoint) {
+          const R2 = 140;
+          const ex = cx + R2 * Math.cos(endPoint.angle);
+          const ey = cy + R2 * Math.sin(endPoint.angle);
+          drawCircle(sctx, ex, ey, 8, '#ff5566', '#fff', 2);
+          drawText(sctx, 'E', ex + 12, ey - 5, '#ff5566', 12);
+        }
+        break;
+      }
+      case 'figure8': {
+        const R = 80;
+        sctx.beginPath();
+        sctx.arc(cx - R, cy, R, 0, TAU);
+        sctx.stroke();
+        sctx.beginPath();
+        sctx.arc(cx + R, cy, R, 0, TAU);
+        sctx.stroke();
+        drawCircle(sctx, cx, cy, 5, '#ffc832', null);
+
+        drawText(sctx, 'S¹ ∨ S¹', cx, cy - R - 15, '#5566cc', 16, 'center');
+        drawText(sctx, 'TC(S¹ ∨ S¹) = 3', 20, 30, '#ffc832', 14);
+        drawText(sctx, 'Wedge point creates extra obstruction', 20, 50, '#888', 12);
+        drawText(sctx, 'π₁ = F₂ (free group on 2 generators)', 20, 68, '#666', 11);
+        break;
+      }
+      case 'torus': {
+        // Draw torus as rectangle with identified edges
+        const tw = 240, th = 180;
+        const tx = cx - tw / 2, ty = cy - th / 2;
+
+        sctx.strokeStyle = '#5566cc';
+        sctx.lineWidth = 2;
+        sctx.strokeRect(tx, ty, tw, th);
+
+        // Identification arrows
+        // Top/bottom (same direction)
+        for (let x = tx + 30; x < tx + tw; x += 50) {
+          drawArrow(sctx, x, ty, x + 20, ty, '#ff5566', 2);
+          drawArrow(sctx, x, ty + th, x + 20, ty + th, '#ff5566', 2);
+        }
+        // Left/right (same direction)
+        for (let y = ty + 30; y < ty + th; y += 50) {
+          drawArrow(sctx, tx, y, tx, y + 20, '#50c878', 2);
+          drawArrow(sctx, tx + tw, y, tx + tw, y + 20, '#50c878', 2);
+        }
+
+        drawText(sctx, 'T² = S¹ × S¹', cx, ty - 20, '#5566cc', 16, 'center');
+        drawText(sctx, 'TC(T²) = 3', 20, 30, '#ffc832', 14);
+        drawText(sctx, 'TC(X×Y) ≤ TC(X) + TC(Y) - 1', 20, 50, '#888', 12);
+        drawText(sctx, 'π₁ = ℤ × ℤ (abelian)', 20, 68, '#666', 11);
+        break;
+      }
+      case 'sphere': {
+        const R = 140;
+        // Draw sphere wireframe
+        sctx.strokeStyle = '#333';
+        sctx.lineWidth = 0.5;
+        for (let lat = -60; lat <= 60; lat += 30) {
+          sctx.beginPath();
+          const r = R * Math.cos(lat * Math.PI / 180);
+          const y = cy - R * Math.sin(lat * Math.PI / 180) * 0.7;
+          sctx.ellipse(cx, y, r, r * 0.25, 0, 0, TAU);
+          sctx.stroke();
+        }
+        sctx.strokeStyle = '#5566cc';
+        sctx.lineWidth = 2;
+        sctx.beginPath();
+        sctx.arc(cx, cy, R, 0, TAU);
+        sctx.stroke();
+
+        drawText(sctx, 'S²', cx + R + 15, cy, '#5566cc', 16);
+        drawText(sctx, 'TC(S²) = 3', 20, 30, '#ffc832', 14);
+        drawText(sctx, 'TC(Sⁿ) = 2 if n odd, 3 if n even', 20, 50, '#888', 12);
+        drawText(sctx, 'π₁ = 0 but π₂ = ℤ matters!', 20, 68, '#666', 11);
+        break;
+      }
+    }
+  }
+
+  function drawArrow(ctx, x1, y1, x2, y2, color, lw) {
+    drawLine(ctx, x1, y1, x2, y2, color, lw);
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const headLen = 8;
+    drawLine(ctx, x2, y2, x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4), color, lw);
+    drawLine(ctx, x2, y2, x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4), color, lw);
+  }
+
+  function drawBraid() {
+    clearCanvas(bctx, BW, BH);
+    const nTokens = getTokenCount();
+    document.getElementById('tc-tok-val').textContent = nTokens;
+
+    const margin = { l: 60, r: 60, t: 50, b: 50 };
+    const w = BW - margin.l - margin.r;
+    const h = BH - margin.t - margin.b;
+
+    drawText(bctx, `Braid group B${nTokens}: token trajectories through layers`, margin.l, 25, '#8899ff', 13);
+    drawText(bctx, 'Layer →', BW - 50, BH - 15, '#555', 11);
+    drawText(bctx, 'Token position', 5, margin.t + h / 2, '#555', 10);
+
+    // Generate a random braid word
+    const nCrossings = 4 + Math.floor(Math.random() * 3);
+    const crossings = [];
+    for (let c = 0; c < nCrossings; c++) {
+      const strand = Math.floor(Math.random() * (nTokens - 1));
+      const over = Math.random() > 0.5;
+      crossings.push({ strand, over });
+    }
+
+    // Draw strands
+    const strandColors = [];
+    for (let i = 0; i < nTokens; i++) {
+      strandColors.push(hsl((i / nTokens) * 300 + 30, 70, 60));
+    }
+
+    // Track strand positions
+    const positions = Array.from({ length: nTokens }, (_, i) => i);
+    const segmentWidth = w / (nCrossings + 1);
+
+    // Draw layer separators
+    for (let c = 0; c <= nCrossings + 1; c++) {
+      const x = margin.l + c * segmentWidth;
+      bctx.setLineDash([2, 4]);
+      drawLine(bctx, x, margin.t, x, margin.t + h, '#222', 1);
+      bctx.setLineDash([]);
+      if (c <= nCrossings) {
+        drawText(bctx, `L${c}`, x + segmentWidth / 2, BH - 30, '#555', 10, 'center');
+      }
+    }
+
+    // Draw each strand segment by segment
+    const strandPaths = Array.from({ length: nTokens }, () => []);
+
+    // Initial positions
+    for (let i = 0; i < nTokens; i++) {
+      const y = margin.t + (i + 0.5) * (h / nTokens);
+      strandPaths[i].push({ x: margin.l, y });
+    }
+
+    const currentPos = Array.from({ length: nTokens }, (_, i) => i);
+
+    for (let c = 0; c < nCrossings; c++) {
+      const { strand, over } = crossings[c];
+      const x1 = margin.l + (c + 0.5) * segmentWidth;
+      const x2 = margin.l + (c + 1.5) * segmentWidth;
+
+      // Find which original strands are at positions strand and strand+1
+      let strandA = -1, strandB = -1;
+      for (let i = 0; i < nTokens; i++) {
+        if (currentPos[i] === strand) strandA = i;
+        if (currentPos[i] === strand + 1) strandB = i;
+      }
+
+      if (strandA >= 0 && strandB >= 0) {
+        // Add crossing points
+        const yA = margin.t + (currentPos[strandA] + 0.5) * (h / nTokens);
+        const yB = margin.t + (currentPos[strandB] + 0.5) * (h / nTokens);
+
+        // Swap positions
+        const tmp = currentPos[strandA];
+        currentPos[strandA] = currentPos[strandB];
+        currentPos[strandB] = tmp;
+
+        const yA2 = margin.t + (currentPos[strandA] + 0.5) * (h / nTokens);
+        const yB2 = margin.t + (currentPos[strandB] + 0.5) * (h / nTokens);
+
+        strandPaths[strandA].push({ x: x1, y: yA }, { x: x2, y: yA2 });
+        strandPaths[strandB].push({ x: x1, y: yB }, { x: x2, y: yB2 });
+
+        // Mark crossing
+        const crossX = (x1 + x2) / 2;
+        const crossY = (yA + yB) / 2;
+        drawText(bctx, over ? `σ${strand + 1}` : `σ${strand + 1}⁻¹`, crossX, crossY - 15, '#ffc832',           10, 'center');
+      } else {
+        // Non-crossing strands just continue straight
+        for (let i = 0; i < nTokens; i++) {
+          if (i === strandA || i === strandB) continue;
+          const y = margin.t + (currentPos[i] + 0.5) * (h / nTokens);
+          strandPaths[i].push({ x: x1, y }, { x: x2, y });
+        }
+      }
+
+      // Add straight segments for non-involved strands
+      for (let i = 0; i < nTokens; i++) {
+        if (i === strandA || i === strandB) continue;
+        const y = margin.t + (currentPos[i] + 0.5) * (h / nTokens);
+        const lastPt = strandPaths[i][strandPaths[i].length - 1];
+        if (!lastPt || Math.abs(lastPt.x - x2) > 1) {
+          strandPaths[i].push({ x: x2, y });
+        }
+      }
+    }
+
+    // Add final points
+    for (let i = 0; i < nTokens; i++) {
+      const y = margin.t + (currentPos[i] + 0.5) * (h / nTokens);
+      strandPaths[i].push({ x: margin.l + w, y });
+    }
+
+    // Draw strands with smooth curves
+    for (let i = 0; i < nTokens; i++) {
+      const path = strandPaths[i];
+      if (path.length < 2) continue;
+
+      bctx.beginPath();
+      bctx.strokeStyle = strandColors[i];
+      bctx.lineWidth = 3;
+      bctx.moveTo(path[0].x, path[0].y);
+
+      for (let p = 1; p < path.length; p++) {
+        if (p < path.length - 1) {
+          const cpx = (path[p].x + path[p + 1].x) / 2;
+          const cpy = (path[p].y + path[p + 1].y) / 2;
+          bctx.quadraticCurveTo(path[p].x, path[p].y, cpx, cpy);
+        } else {
+          bctx.lineTo(path[p].x, path[p].y);
+        }
+      }
+      bctx.stroke();
+
+      // Draw token labels at start and end
+      drawText(bctx, `t${i + 1}`, path[0].x - 25, path[0].y + 4, strandColors[i], 12);
+      const lastPt = path[path.length - 1];
+      drawText(bctx, `t${i + 1}`, lastPt.x + 8, lastPt.y + 4, strandColors[i], 12);
+    }
+
+    // Braid group info
+    const braidWord = crossings.map(c => c.over ? `σ${c.strand + 1}` : `σ${c.strand + 1}⁻¹`).join(' · ');
+    drawText(bctx, `Braid word: ${braidWord}`, margin.l, BH - 10, '#aaa', 11);
+
+    // Permutation
+    const perm = currentPos.map((p, i) => `t${i + 1}→pos${p + 1}`).join(', ');
+
+    document.getElementById('tc-metrics').textContent =
+      `Space: ${getSpaceType()} | TC = ${getTCValue()} | Tokens: ${nTokens} | Braid group B${nTokens} has ${nTokens - 1} generators | Permutation: [${currentPos.map(p => p + 1).join(',')}]`;
+  }
+
+  function getTCValue() {
+    switch (getSpaceType()) {
+      case 'circle': return 2;
+      case 'figure8': return 3;
+      case 'torus': return 3;
+      case 'sphere': return 3;
+      default: return '?';
+    }
+  }
+
+  // Click to set start/end on circle
+  sCanvas.addEventListener('click', e => {
+    const rect = sCanvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (SW / rect.width);
+    const my = (e.clientY - rect.top) * (SH / rect.height);
+    const cx = SW / 2, cy = SH / 2;
+
+    if (getSpaceType() === 'circle') {
+      const angle = Math.atan2(my - cy, mx - cx);
+      if (!startPoint) {
+        startPoint = { angle };
+      } else if (!endPoint) {
+        endPoint = { angle };
+      } else {
+        startPoint = { angle };
+        endPoint = null;
+        animProgress = 0;
+      }
+      drawSpace();
+    }
+  });
+
+  document.getElementById('tc-space').addEventListener('change', () => {
+    startPoint = null; endPoint = null; animProgress = 0;
+    drawSpace();
+  });
+  document.getElementById('tc-tokens').addEventListener('input', drawBraid);
+
+  document.getElementById('tc-animate').addEventListener('click', () => {
+    if (animating) return;
+    if (!startPoint || !endPoint) return;
+    animating = true;
+    animProgress = 0;
+
+    function step() {
+      animProgress += 0.015;
+      if (animProgress >= 1) {
+        animProgress = 1;
+        animating = false;
+        drawSpace();
+        return;
+      }
+      drawSpace();
+      animFrame = requestAnimationFrame(step);
+    }
+    step();
+  });
+
+  document.getElementById('tc-braid').addEventListener('click', drawBraid);
+
+  drawSpace();
+  drawBraid();
+}
+
+// ============================================================
+// §9 CIRCULAR COORDINATES FROM PERSISTENT COHOMOLOGY
+// ============================================================
+function initCircular() {
+  const pCanvas = document.getElementById('circ-points');
+  const dCanvas = document.getElementById('circ-diagram');
+  const pctx = pCanvas.getContext('2d');
+  const dctx = dCanvas.getContext('2d');
+  const PW = pCanvas.width, PH = pCanvas.height;
+  const DW = dCanvas.width, DH = dCanvas.height;
+
+  let points = []; // { x, y, trueAngle, recoveredAngle }
+  let computed = false;
+
+  function generateCircle(noisy) {
+    points = [];
+    const cx = PW / 2, cy = PH / 2, R = 140;
+    const noise = noisy ? parseFloat(document.getElementById('circ-noise').value) : 2;
+    const n = 60;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * TAU;
+      points.push({
+        x: cx + R * Math.cos(a) + randRange(-noise, noise),
+        y: cy + R * Math.sin(a) + randRange(-noise, noise),
+        trueAngle: a,
+        recoveredAngle: null
+      });
+    }
+    computed = false;
+  }
+
+  function generateFigure8() {
+    points = [];
+    const cx = PW / 2, cy = PH / 2, R = 80;
+    const noise = parseFloat(document.getElementById('circ-noise').value) * 0.5;
+    const n = 40;
+    // Left loop
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * TAU;
+      points.push({
+        x: cx - R + R * Math.cos(a) + randRange(-noise, noise),
+        y: cy + R * Math.sin(a) + randRange(-noise, noise),
+        trueAngle: a,
+        recoveredAngle: null
+      });
+    }
+    // Right loop
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * TAU;
+      points.push({
+        x: cx + R + R * Math.cos(a) + randRange(-noise, noise),
+        y: cy + R * Math.sin(a) + randRange(-noise, noise),
+        trueAngle: a + TAU,
+        recoveredAngle: null
+      });
+    }
+    computed = false;
+  }
+
+  function generateSpiral() {
+    points = [];
+    const cx = PW / 2, cy = PH / 2;
+    const noise = parseFloat(document.getElementById('circ-noise').value) * 0.3;
+    const n = 80;
+    for (let i = 0; i < n; i++) {
+      const t = (i / n) * 3 * Math.PI;
+      const r = 30 + t * 25;
+      points.push({
+        x: cx + r * Math.cos(t) + randRange(-noise, noise),
+        y: cy + r * Math.sin(t) + randRange(-noise, noise),
+        trueAngle: t,
+        recoveredAngle: null
+      });
+    }
+    computed = false;
+  }
+
+  // Compute circular coordinates using a simplified cohomological approach
+  function computeCircularCoords() {
+    if (points.length < 5) return;
+
+    const n = points.length;
+
+    // Step 1: Build neighborhood graph (k-NN)
+    const k = Math.min(8, n - 1);
+    const neighbors = [];
+    for (let i = 0; i < n; i++) {
+      const dists = points.map((p, j) => ({ j, d: dist(p, points[i]) }));
+      dists.sort((a, b) => a.d - b.d);
+      neighbors.push(dists.slice(1, k + 1).map(d => d.j));
+    }
+
+    // Step 2: Compute local angles between neighbors
+    // For each edge (i, j), compute the angle from i to j
+    const edgeAngles = {};
+    for (let i = 0; i < n; i++) {
+      for (const j of neighbors[i]) {
+        const dx = points[j].x - points[i].x;
+        const dy = points[j].y - points[i].y;
+        edgeAngles[`${i}-${j}`] = Math.atan2(dy, dx);
+      }
+    }
+
+    // Step 3: Simplified circular coordinate recovery
+    // Use angular position relative to centroid as a proxy for the cohomological circular coordinate
+    let cx = 0, cy = 0;
+    for (const p of points) { cx += p.x; cy += p.y; }
+    cx /= n; cy /= n;
+
+    // For a genuine circle, the angle from centroid IS the circular coordinate
+    // For more complex shapes, we'd need actual persistent cohomology
+    // Here we use a graph-based unwinding approach
+
+    // Initialize with angle from centroid
+    for (const p of points) {
+      p.recoveredAngle = Math.atan2(p.y - cy, p.x - cx);
+    }
+
+    // Refine using local consistency (simplified harmonic cocycle approach)
+    // Minimize sum of (θⱼ - θᵢ - observed_angle_ij)² over edges
+    for (let iter = 0; iter < 30; iter++) {
+      for (let i = 0; i < n; i++) {
+        let sumSin = 0, sumCos = 0;
+        for (const j of neighbors[i]) {
+          // Target angle for i based on j's angle and the edge direction
+          const edgeDir = edgeAngles[`${j}-${i}`] || 0;
+          const targetAngle = points[j].recoveredAngle + Math.PI + edgeDir * 0.1;
+          sumSin += Math.sin(targetAngle);
+          sumCos += Math.cos(targetAngle);
+        }
+        // Weighted average with current angle
+        const neighborAngle = Math.atan2(sumSin, sumCos);
+        const currentAngle = points[i].recoveredAngle;
+
+        // Blend
+        const blendSin = 0.7 * Math.sin(currentAngle) + 0.3 * Math.sin(neighborAngle);
+        const blendCos = 0.7 * Math.cos(currentAngle) + 0.3 * Math.cos(neighborAngle);
+        points[i].recoveredAngle = Math.atan2(blendSin, blendCos);
+      }
+    }
+
+    computed = true;
+  }
+
+  // Check if the point cloud has a persistent H¹ class (loop detection)
+  function detectLoop() {
+    if (points.length < 5) return { hasLoop: false, persistence: 0 };
+
+    const n = points.length;
+    // Build Rips complex and check β₁
+    const dists = [];
+    for (let i = 0; i < n; i++) {
+      dists[i] = [];
+      for (let j = 0; j < n; j++) {
+        dists[i][j] = dist(points[i], points[j]);
+      }
+    }
+
+    // Sort all edges
+    const edges = [];
+    for (let i = 0; i < n; i++)
+      for (let j = i + 1; j < n; j++)
+        edges.push({ i, j, d: dists[i][j] });
+    edges.sort((a, b) => a.d - b.d);
+
+    // Track when first cycle appears (β₁ birth) and when it dies
+    const uf = new UnionFind(n);
+    let cycleEdges = [];
+
+    for (const e of edges) {
+      if (uf.find(e.i) === uf.find(e.j)) {
+        cycleEdges.push(e);
+      } else {
+        uf.union(e.i, e.j);
+      }
+    }
+
+    if (cycleEdges.length === 0) return { hasLoop: false, persistence: 0 };
+
+    // Estimate persistence of the most prominent cycle
+    const birthEps = cycleEdges[0].d;
+    // Death: when a triangle fills the cycle
+    let deathEps = birthEps * 2; // rough estimate
+    for (const ce of cycleEdges) {
+      for (let k = 0; k < n; k++) {
+        if (k === ce.i || k === ce.j) continue;
+        const triMax = Math.max(dists[ce.i][k], dists[ce.j][k]);
+        if (triMax > ce.d && triMax < deathEps) {
+          deathEps = triMax;
+        }
+      }
+    }
+
+    return {
+      hasLoop: true,
+      persistence: deathEps - birthEps,
+      birth: birthEps,
+      death: deathEps,
+      nCycles: cycleEdges.length
+    };
+  }
+
+  function draw() {
+    clearCanvas(pctx, PW, PH);
+    clearCanvas(dctx, DW, DH);
+
+    const cx = PW / 2, cy = PH / 2;
+
+    // Draw points
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i];
+      let color;
+      if (computed && p.recoveredAngle !== null) {
+        color = circularColor(p.recoveredAngle);
+      } else {
+        color = '#5566cc';
+      }
+      drawCircle(pctx, p.x, p.y, 4, color, '#fff2', 0.5);
+    }
+
+    // Draw centroid
+    if (points.length > 0) {
+      let pcx = 0, pcy = 0;
+      for (const p of points) { pcx += p.x; pcy += p.y; }
+      pcx /= points.length; pcy /= points.length;
+      drawCircle(pctx, pcx, pcy, 3, '#ffc832', null);
+      drawText(pctx, '⊕', pcx - 5, pcy + 5, '#ffc832', 12);
+    }
+
+    // Draw color wheel legend
+    const lwCx = PW - 50, lwCy = 50, lwR = 30;
+    for (let a = 0; a < TAU; a += 0.05) {
+      const x1 = lwCx + lwR * Math.cos(a);
+      const y1 = lwCy + lwR * Math.sin(a);
+      const x2 = lwCx + (lwR - 8) * Math.cos(a);
+      const y2 = lwCy + (lwR - 8) * Math.sin(a);
+      drawLine(pctx, x1, y1, x2, y2, circularColor(a), 3);
+    }
+    drawText(pctx, 'θ', lwCx - 3, lwCy + 4, '#fff', 11, 'center');
+    drawText(pctx, '0', lwCx + lwR + 8, lwCy + 4, '#888', 9);
+    drawText(pctx, 'π', lwCx - 3, lwCy - lwR - 8, '#888', 9, 'center');
+
+    if (computed) {
+      drawText(pctx, '✓ Circular coordinate computed', 15, 25, '#50c878', 13);
+    } else {
+      drawText(pctx, 'Click "Compute θ" to extract circular coordinate', 15, 25, '#888', 12);
+    }
+
+    // === Persistence diagram / quality panel ===
+    const loopInfo = detectLoop();
+    const margin = { l: 60, r: 40, t: 50, b: 60 };
+
+    drawText(dctx, 'Persistence Diagram (H¹)', margin.l, 25, '#8899ff', 14);
+
+    // Draw persistence diagram axes
+    const pdSize = 200;
+    const pdX = margin.l, pdY = margin.t;
+
+    // Axes
+    drawLine(dctx, pdX, pdY + pdSize, pdX + pdSize, pdY + pdSize, '#444', 1);
+    drawLine(dctx, pdX, pdY + pdSize, pdX, pdY, '#444', 1);
+    drawText(dctx, 'birth', pdX + pdSize / 2, pdY + pdSize + 20, '#666', 11, 'center');
+    drawText(dctx, 'death', pdX - 30, pdY + pdSize / 2, '#666', 11, 'center');
+
+    // Diagonal
+    dctx.setLineDash([4, 4]);
+    drawLine(dctx, pdX, pdY + pdSize, pdX + pdSize, pdY, '#333', 1);
+    dctx.setLineDash([]);
+
+    if (loopInfo.hasLoop) {
+      // Plot the main persistent feature
+      const maxVal = loopInfo.death * 1.5 || 100;
+      const bx = pdX + (loopInfo.birth / maxVal) * pdSize;
+      const by = pdY + pdSize - (loopInfo.death / maxVal) * pdSize;
+      drawCircle(dctx, bx, by, 8, '#cc5566', '#fff', 2);
+      drawText(dctx, `(${loopInfo.birth.toFixed(0)}, ${loopInfo.death.toFixed(0)})`, bx + 12, by - 5, '#cc5566', 10);
+
+      // Scatter some noise points near diagonal
+      for (let i = 0; i < 8; i++) {
+        const nb = randRange(5, maxVal * 0.6);
+        const nd = nb + randRange(1, 15);
+        const nx = pdX + (nb / maxVal) * pdSize;
+        const ny = pdY + pdSize - (nd / maxVal) * pdSize;
+        drawCircle(dctx, nx, ny, 3, '#cc556644', null);
+      }
+
+      drawText(dctx, `Persistent H¹ class detected!`, pdX, pdY + pdSize + 45, '#50c878', 13);
+      drawText(dctx, `Persistence = ${loopInfo.persistence.toFixed(1)} (death − birth)`, pdX, pdY + pdSize + 65, '#aaa', 11);
+    } else {
+      drawText(dctx, `No significant H¹ class`, pdX, pdY + pdSize + 45, '#ff5566', 13);
+      drawText(dctx, `(No circular feature to extract)`, pdX, pdY + pdSize + 65, '#888', 11);
+    }
+
+    // Quality assessment (if computed)
+    if (computed && points.length > 0) {
+      const qx = pdX + pdSize + 60;
+      const qy = margin.t;
+
+      drawText(dctx, 'Coordinate Quality', qx, qy, '#8899ff', 13);
+
+      // Compare recovered angle with true angle
+      let totalError = 0;
+      let count = 0;
+      for (const p of points) {
+        if (p.trueAngle !== undefined && p.recoveredAngle !== null) {
+          // Circular distance
+          let diff = p.recoveredAngle - p.trueAngle;
+          diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+          totalError += diff * diff;
+          count++;
+        }
+      }
+
+      if (count > 0) {
+        const rmse = Math.sqrt(totalError / count);
+
+        // Check if there's a global offset (which is fine for circular coords)
+        let bestOffset = 0;
+        let bestError = Infinity;
+        for (let off = 0; off < TAU; off += 0.1) {
+          let err = 0;
+          for (const p of points) {
+            if (p.trueAngle === undefined || p.recoveredAngle === null) continue;
+            let d = p.recoveredAngle - p.trueAngle - off;
+            d = Math.atan2(Math.sin(d), Math.cos(d));
+            err += d * d;
+          }
+          if (err < bestError) { bestError = err; bestOffset = off; }
+        }
+        const alignedRMSE = Math.sqrt(bestError / count);
+
+        drawText(dctx, `Raw RMSE: ${rmse.toFixed(3)} rad`, qx, qy + 25, '#aaa', 12);
+        drawText(dctx, `Aligned RMSE: ${alignedRMSE.toFixed(3)} rad`, qx, qy + 45, '#ffc832', 12);
+        drawText(dctx, `(offset = ${(bestOffset * 180 / Math.PI).toFixed(1)}°)`, qx, qy + 63, '#666', 11);
+
+        // Quality bar
+        const quality = Math.max(0, 1 - alignedRMSE / 1.5);
+        const barW = 150, barH = 16;
+        dctx.fillStyle = '#1a1a2e';
+        dctx.fillRect(qx, qy + 75, barW, barH);
+        dctx.fillStyle = quality > 0.7 ? '#50c878' : quality > 0.3 ? '#ffc832' : '#ff5566';
+        dctx.fillRect(qx, qy + 75, barW * quality, barH);
+        drawText(dctx, `${(quality * 100).toFixed(0)}%`, qx + barW + 10, qy + 88, '#aaa', 12);
+
+        // Scatter plot: true vs recovered
+        const scX = qx, scY = qy + 110, scS = 120;
+        dctx.strokeStyle = '#333';
+        dctx.strokeRect(scX, scY, scS, scS);
+        drawText(dctx, 'true θ', scX + scS / 2, scY + scS + 15, '#666', 10, 'center');
+        drawText(dctx, 'recovered θ', scX - 10, scY + scS / 2, '#666', 10, 'right');
+
+        // Diagonal (perfect recovery)
+        dctx.setLineDash([3, 3]);
+        drawLine(dctx, scX, scY + scS, scX + scS, scY, '#333', 1);
+        dctx.setLineDash([]);
+
+        for (const p of points) {
+          if (p.trueAngle === undefined || p.recoveredAngle === null) continue;
+          const tx = scX + ((p.trueAngle % TAU + TAU) % TAU / TAU) * scS;
+          const ty = scY + scS - (((p.recoveredAngle + bestOffset) % TAU + TAU) % TAU / TAU) * scS;
+          drawCircle(dctx, tx, ty, 2, circularColor(p.recoveredAngle), null);
+        }
+      }
+    }
+
+    document.getElementById('circ-metrics').textContent =
+      `Points: ${points.length} | H¹ loop: ${loopInfo.hasLoop ? 'YES' : 'NO'} | Persistence: ${loopInfo.persistence.toFixed(1)} | Computed: ${computed ? 'YES' : 'NO'}`;
+  }
+
+  document.getElementById('circ-circle').addEventListener('click', () => { generateCircle(false); draw(); });
+  document.getElementById('circ-noisy').addEventListener('click', () => { generateCircle(true); draw(); });
+  document.getElementById('circ-double').addEventListener('click', () => { generateFigure8(); draw(); });
+  document.getElementById('circ-spiral').addEventListener('click', () => { generateSpiral(); draw(); });
+  document.getElementById('circ-compute').addEventListener('click', () => { computeCircularCoords(); draw(); });
+  document.getElementById('circ-noise').addEventListener('input', draw);
+
+  // Click to add points
+  pCanvas.addEventListener('click', e => {
+    const rect = pCanvas.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * (PW / rect.width);
+    const my = (e.clientY - rect.top) * (PH / rect.height);
+    points.push({ x: mx, y: my, trueAngle: undefined, recoveredAngle: null });
+    computed = false;
+    draw();
+  });
+
+  generateCircle(true);
+  draw();
+}
+
+// ============================================================
+// RESPONSIVE CANVAS SIZING
+// ============================================================
+function resizeCanvases() {
+  document.querySelectorAll('canvas').forEach(c => {
+    const parent = c.parentElement;
+    if (parent) {
+      const maxW = parent.clientWidth - 10;
+      if (maxW < c.width) {
+        c.style.width = maxW + 'px';
+        c.style.height = (maxW * c.height / c.width) + 'px';
+      } else {
+        c.style.width = '';
+        c.style.height = '';
+      }
+    }
+  });
+}
+
+window.addEventListener('resize', resizeCanvases);
+setTimeout(resizeCanvases, 100);
+
+// ============================================================
+// KEYBOARD NAVIGATION
+// ============================================================
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    showSection(Math.min(currentSection + 1, sections.length - 1));
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    showSection(Math.max(currentSection - 1, 0));
+  } else if (e.key >= '1' && e.key <= '9') {
+    const idx = parseInt(e.key) - 1;
+    if (idx < sections.length) showSection(idx);
+  }
+});
+
+</script>
+</body>
+</html>

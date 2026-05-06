@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Bordism Explorer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a2e;
+    color: #e0e0ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+  }
+  header {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #1a1a4e, #2a1a5e);
+    border-bottom: 2px solid #5533aa;
+  }
+  header h1 { font-size: 2em; color: #bb99ff; }
+  header p { font-size: 1em; color: #9988cc; margin-top: 5px; }
+
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .panel {
+    background: #12123a;
+    border: 1px solid #3322aa;
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 300px;
+    flex: 1;
+    max-width: 500px;
+  }
+  .panel h2 {
+    color: #aa88ff;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    border-bottom: 1px solid #332266;
+    padding-bottom: 8px;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+    cursor: grab;
+    background: #08081e;
+  }
+  canvas:active { cursor: grabbing; }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+  }
+  .control-group label {
+    display: block;
+    color: #9988cc;
+    font-size: 0.85em;
+    margin-bottom: 4px;
+  }
+  .control-group input[type="range"] {
+    width: 100%;
+    accent-color: #7755dd;
+  }
+  .control-group select, .control-group button {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #4433aa;
+    border-radius: 6px;
+    background: #1a1a50;
+    color: #ccbbff;
+    font-size: 0.95em;
+    cursor: pointer;
+  }
+  .control-group button:hover {
+    background: #2a2a70;
+    border-color: #6655cc;
+  }
+  .control-group button.active {
+    background: #4433aa;
+    color: #fff;
+  }
+
+  .hint-box {
+    background: #1a1a4e;
+    border-left: 4px solid #7755dd;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 0.88em;
+    line-height: 1.5;
+    color: #bbaadd;
+  }
+  .hint-box strong { color: #ddccff; }
+
+  .example-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8em;
+    color: #9988cc;
+  }
+  .legend-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  #tooltip {
+    position: fixed;
+    background: #2a2a6e;
+    color: #ddccff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    max-width: 280px;
+    border: 1px solid #5544aa;
+    z-index: 100;
+    line-height: 1.4;
+  }
+
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .tab-bar button {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #3322aa;
+    background: #12123a;
+    color: #8877bb;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-size: 0.85em;
+  }
+  .tab-bar button.active {
+    background: #2a2a6e;
+    color: #ddccff;
+    border-bottom-color: #2a2a6e;
+  }
+
+  @media (max-width: 700px) {
+    .panel { min-width: 90vw; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌀 Interactive Bordism Explorer</h1>
+  <p>Drag, twist, and play — understand bordisms visually!</p>
+</header>
+
+<div class="container">
+  <!-- Main Canvas Panel -->
+  <div class="panel" style="flex: 2; max-width: 700px;">
+    <h2>🎨 Bordism Visualization</h2>
+    <canvas id="mainCanvas" width="660" height="500"></canvas>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6688;"></div> Left boundary (M₁)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#66aaff;"></div> Right boundary (M₂)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(140,100,255,0.5);"></div> Bordism (W)</div>
+    </div>
+  </div>
+
+  <!-- Controls Panel -->
+  <div class="panel">
+    <h2>🎛️ Controls</h2>
+
+    <div class="tab-bar">
+      <button class="active" onclick="switchTab('examples')">Examples</button>
+      <button onclick="switchTab('customize')">Customize</button>
+      <button onclick="switchTab('learn')">Learn</button>
+    </div>
+
+    <!-- Examples Tab -->
+    <div id="tab-examples">
+      <div class="hint-box">
+        <strong>Pick an example</strong> to see different types of bordisms. Each shows how manifolds on the left and right boundaries are connected.
+      </div>
+      <div class="controls">
+        <div class="example-buttons">
+          <div class="control-group"><button onclick="setExample('cylinder')">🔵 Cylinder<br><small>Circle → Circle</small></button></div>
+          <div class="control-group"><button onclick="setExample('pair-of-pants')">👖 Pair of Pants<br><small>1 Circle → 2 Circles</small></button></div>
+          <div class="control-group"><button onclick="setExample('cap')">🧢 Cap (Disk)<br><small>Circle → ∅</small></button></div>
+          <div class="control-group"><button onclick="setExample('birth')">🥚 Birth<br><small>∅ → Circle</small></button></div>
+          <div class="control-group"><button onclick="setExample('merge')">🔀 Merge<br><small>2 Circles → 1 Circle</small></button></div>
+          <div class="control-group"><button onclick="setExample('genus')">🍩 Genus Change<br><small>Circle → Circle (with handle)</small></button></div>
+          <div class="control-group"><button onclick="setExample('identity')">🟰 Identity<br><small>2 Circles → 2 Circles</small></button></div>
+          <div class="control-group"><button onclick="setExample('annihilation')">💥 Annihilation<br><small>2 Circles → ∅</small></button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customize Tab -->
+    <div id="tab-customize" style="display:none;">
+      <div class="controls">
+        <div class="control-group">
+          <label>⏱️ Animation Speed: <span id="speedVal">1.0</span>x</label>
+          <input type="range" id="speed" min="0" max="3" step="0.1" value="1" oninput="updateSpeed(this.value)">
+        </div>
+        <div class="control-group">
+          <label>🔄 Rotation (drag canvas too!)</label>
+          <input type="range" id="rotY" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="rotationY=parseFloat(this.value)">
+        </div>
+        <div class="control-group">
+          <label>📐 Tilt</label>
+          <input type="range" id="rotX" min="-1.2" max="1.2" step="0.01" value="0.3" oninput="rotationX=parseFloat(this.value)">
+        </div>
+        <div class="control-group">
+          <label>🔍 Zoom: <span id="zoomVal">1.0</span>x</label>
+          <input type="range" id="zoom" min="0.3" max="2.5" step="0.05" value="1" oninput="zoomLevel=parseFloat(this.value);document.getElementById('zoomVal').textContent=this.value">
+        </div>
+        <div class="control-group">
+          <label>🌈 Color Scheme</label>
+          <select id="colorScheme" onchange="setColorScheme(this.value)">
+            <option value="default">Purple Haze</option>
+            <option value="fire">Fire</option>
+            <option value="ocean">Ocean</option>
+            <option value="neon">Neon</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>🕸️ Wireframe Density: <span id="densityVal">30</span></label>
+          <input type="range" id="density" min="10" max="60" step="2" value="30" oninput="meshDensity=parseInt(this.value);document.getElementById('densityVal').textContent=this.value">
+        </div>
+        <div class="control-group">
+          <button onclick="showWireframe=!showWireframe; this.textContent=showWireframe?'🕸️ Wireframe: ON':'🕸️ Wireframe: OFF'" class="active">🕸️ Wireframe: ON</button>
+        </div>
+        <div class="control-group">
+          <button onclick="showSurface=!showSurface; this.textContent=showSurface?'🎨 Surface: ON':'🎨 Surface: OFF'" class="active">🎨 Surface: ON</button>
+        </div>
+        <div class="control-group">
+          <button onclick="animateCrossSection=!animateCrossSection; this.textContent=animateCrossSection?'✂️ Cross-Section Sweep: ON':'✂️ Cross-Section Sweep: OFF'">✂️ Cross-Section Sweep: OFF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Learn Tab -->
+    <div id="tab-learn" style="display:none;">
+      <div class="hint-box" style="margin-top:0;">
+        <strong>What is a Bordism?</strong><br><br>
+        A <strong>bordism</strong> (or cobordism) between two manifolds M₁ and M₂ is a manifold W whose <strong>boundary</strong> is the disjoint union of M₁ and M₂.<br><br>
+        Think of it as: <strong>M₁ and M₂ are the "ends" and W is the "stuff in between"</strong> connecting them.<br><br>
+        🔵 <strong>Cylinder:</strong> A circle bordant to itself — the simplest case. Nothing changes.<br><br>
+        👖 <strong>Pair of Pants:</strong> One circle splits into two. This is like multiplication in a TQFT.<br><br>
+        🧢 <strong>Cap:</strong> A circle bounds a disk — it's bordant to the empty set ∅. The circle "dies."<br><br>
+        🥚 <strong>Birth:</strong> The reverse — a circle appears from nothing.<br><br>
+        💡 <strong>Key Insight:</strong> Two manifolds are <em>bordant</em> if together they form the boundary of some higher-dimensional manifold. Bordism is an <strong>equivalence relation</strong>!<br><br>
+        🧮 <strong>Bordism groups:</strong> The set of manifolds modulo bordism forms an abelian group under disjoint union. The pair-of-pants gives a ring structure!
+      </div>
+      <div class="hint-box">
+        <strong>🎮 How to explore:</strong><br>
+        • <strong>Drag</strong> the canvas to rotate<br>
+        • Try each <strong>example</strong> to see different bordisms<br>
+        • Turn on <strong>cross-section sweep</strong> to see how the boundary changes as you "slice" through W<br>
+        • Adjust <strong>wireframe density</strong> to see the mesh structure
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+// ============ SETUP ============
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+let rotationX = 0.3, rotationY = 0.5;
+let zoomLevel = 1.0;
+let animTime = 0;
+let animSpeed = 1.0;
+let meshDensity = 30;
+let showWireframe = true;
+let showSurface = true;
+let animateCrossSection = false;
+let crossSectionT = 0;
+
+let currentExample = 'cylinder';
+let dragging = false, lastMX = 0, lastMY = 0;
+
+let colors = {
+  left: '#ff6688',
+  right: '#66aaff',
+  surface: 'rgba(140,100,255,0.18)',
+  wire: 'rgba(140,100,255,0.35)',
+  crossSection: '#ffdd44',
+  highlight: '#ffffff'
+};
+
+function setColorScheme(scheme) {
+  switch(scheme) {
+    case 'fire':
+      colors = { left:'#ff4422', right:'#ffaa00', surface:'rgba(255,80,20,0.15)', wire:'rgba(255,120,40,0.35)', crossSection:'#ffee55', highlight:'#ffffff' };
+      break;
+    case 'ocean':
+      colors = { left:'#00ccaa', right:'#0066ff', surface:'rgba(0,120,180,0.18)', wire:'rgba(0,150,200,0.35)', crossSection:'#44ffdd', highlight:'#ffffff' };
+      break;
+    case 'neon':
+      colors = { left:'#ff00ff', right:'#00ffff', surface:'rgba(100,0,255,0.18)', wire:'rgba(200,0,255,0.35)', crossSection:'#ffff00', highlight:'#ffffff' };
+      break;
+    default:
+      colors = { left:'#ff6688', right:'#66aaff', surface:'rgba(140,100,255,0.18)', wire:'rgba(140,100,255,0.35)', crossSection:'#ffdd44', highlight:'#ffffff' };
+  }
+}
+
+// ============ 3D HELPERS ============
+function project(x, y, z) {
+  // Rotate around X
+  let cosX = Math.cos(rotationX), sinX = Math.sin(rotationX);
+  let y1 = y * cosX - z * sinX;
+  let z1 = y * sinX + z * cosX;
+  // Rotate around Y
+  let cosY = Math.cos(rotationY), sinY = Math.sin(rotationY);
+  let x1 = x * cosY + z1 * sinY;
+  let z2 = -x * sinY + z1 * cosY;
+
+  let scale = 200 * zoomLevel;
+  let perspective = 600 / (600 + z2);
+  return {
+    px: canvas.width/2 + x1 * scale * perspective,
+    py: canvas.height/2 - y1 * scale * perspective,
+    depth: z2
+  };
+}
+
+function lerpColor(c1, c2, t) {
+  // Simple hex lerp
+  let r1 = parseInt(c1.slice(1,3),16), g1 = parseInt(c1.slice(3,5),16), b1 = parseInt(c1.slice(5,7),16);
+  let r2 = parseInt(c2.slice(1,3),16), g2 = parseInt(c2.slice(3,5),16), b2 = parseInt(c2.slice(5,7),16);
+  let r = Math.round(r1 + (r2-r1)*t), g = Math.round(g1 + (g2-g1)*t), b = Math.round(b1 + (b2-b1)*t);
+  return `rgb(${r},${g},${b})`;
+}
+
+// ============ BORDISM SHAPE FUNCTIONS ============
+// Each returns {x, y, z} for parameters (u, v)
+// u ∈ [0, 1] goes along the bordism (left to right)
+// v ∈ [0, 2π] goes around the circle
+
+function cylinderShape(u, v) {
+  let x = u * 2 - 1; // -1 to 1
+  let r = 0.5;
+  return { x: x, y: r * Math.cos(v), z: r * Math.sin(v) };
+}
+
+function pairOfPantsShape(u, v) {
+  let x = u * 2 - 1;
+  if (u < 0.45) {
+    // Single tube
+    let r = 0.5;
+    return { x: x, y: r * Math.cos(v), z: r * Math.sin(v) };
+  } else {
+    // Split into two tubes
+    let splitProgress = (u - 0.45) / 0.55;
+    let separation = splitProgress * 0.55;
+    let r = 0.5 - splitProgress * 0.2;
+    // Two circles
+    let centerY;
+    if (v < Math.PI) {
+      centerY = separation;
+    } else {
+      centerY = -separation;
+    }
+    let localV = v < Math.PI ? v * 2 : (v - Math.PI) * 2;
+    return {
+      x: x,
+      y: centerY + r * Math.cos(localV),
+      z: r * Math.sin(localV)
+    };
+  }
+}
+
+function capShape(u, v) {
+  // Circle on left, closes to a point on right
+  let x = u * 2 - 1;
+  let r = 0.5 * (1 - u * u); // Shrinks to 0
+  return { x: x, y: r * Math.cos(v), z: r * Math.sin(v) };
+}
+
+function birthShape(u, v) {
+  // Point on left, opens to circle on right
+  let x = u * 2 - 1;
+  let r = 0.5 * (1 - (1-u) * (1-u));
+  return { x: x, y: r * Math.cos(v), z: r * Math.sin(v) };
+}
+
+function mergeShape(u, v) {
+  // Two circles on left, merge into one on right
+  let x = u * 2 - 1;
+  if (u > 0.55) {
+    // Single tube
+    let r = 0.5;
+    return { x: x, y: r * Math.cos(v), z: r * Math.sin(v) };
+  } else {
+    let splitProgress = 1 - u / 0.55;
+    let separation = splitProgress * 0.55;
+    let r = 0.5 - splitProgress * 0.2;
+    let centerY;
+    if (v < Math.PI) {
+      centerY = separation;
+    } else {
+      centerY = -separation;
+    }
+    let localV = v < Math.PI ? v * 2 : (v - Math.PI) * 2;
+    return {
+      x: x,
+      y: centerY + r * Math.cos(localV),
+      z: r * Math.sin(localV)
+    };
+  }
+}
+
+function genusShape(u, v) {
+  // Cylinder with a handle (bump) in the middle
+  let x = u * 2 - 1;
+  let r = 0.5;
+  // Add a bump in the middle
+  let bumpStrength = 0.25 * Math.exp(-((u-0.5)*(u-0.5))*30);
+  let bump = bumpStrength * (1 + Math.cos(v * 2)) * 0.5;
+  r += bump;
+  // Also add a slight inward pinch to suggest genus
+  let pinch = 0.15 * Math.exp(-((u-0.5)*(u-0.5))*40) * (1 - Math.cos(v * 2)) * 0.5;
+  r -= pinch;
+  return { x: x, y: r * Math.cos(v), z: r * Math.sin(v) };
+}
+
+function identityShape(u, v) {
+  // Two parallel cylinders
+  let x = u * 2 - 1;
+  let r = 0.28;
+  let centerY;
+  if (v < Math.PI) {
+    centerY = 0.4;
+    let localV = v * 2;
+    return { x: x, y: centerY + r * Math.cos(localV), z: r * Math.sin(localV) };
+  } else {
+    centerY = -0.4;
+    let localV = (v - Math.PI) * 2;
+    return { x: x, y: centerY + r * Math.cos(localV), z: r * Math.sin(localV) };
+  }
+}
+
+function annihilationShape(u, v) {
+  // Two circles on left, both close off
+  let x = u * 2 - 1;
+  let shrink = (1 - u * u);
+  let r = 0.28 * shrink;
+  let separation = 0.4 * shrink;
+  let centerY;
+  if (v < Math.PI) {
+    centerY = separation;
+    let localV = v * 2;
+    return { x: x, y: centerY + r * Math.cos(localV), z: r * Math.sin(localV) };
+  } else {
+    centerY = -separation;
+    let localV = (v - Math.PI) * 2;
+    return { x: x, y: centerY + r * Math.cos(localV), z: r * Math.sin(localV) };
+  }
+}
+
+function getShape(u, v) {
+  // Add gentle animation
+  let anim = Math.sin(animTime * 0.5) * 0.03;
+  let result;
+  switch(currentExample) {
+    case 'cylinder': result = cylinderShape(u, v); break;
+    case 'pair-of-pants': result = pairOfPantsShape(u, v); break;
+    case 'cap': result = capShape(u, v); break;
+    case 'birth': result = birthShape(u, v); break;
+    case 'merge': result = mergeShape(u, v); break;
+    case 'genus': result = genusShape(u, v); break;
+    case 'identity': result = identityShape(u, v); break;
+    case 'annihilation': result = annihilationShape(u, v); break;
+    default: result = cylinderShape(u, v);
+  }
+  // Breathing animation
+  result.y *= (1 + anim);
+  result.z *= (1 + anim);
+  return result;
+}
+
+// ============ RENDERING ============
+function drawBordism() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background gradient
+  let grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 50, canvas.width/2, canvas.height/2, 400);
+  grad.addColorStop(0, '#12124a');
+  grad.addColorStop(1, '#08081e');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  let nu = meshDensity;
+  let nv = meshDensity;
+
+  // Collect all line segments with depth for painter's algorithm
+  let segments = [];
+
+  for (let i = 0; i <= nu; i++) {
+    let u = i / nu;
+    for (let j = 0; j <= nv; j++) {
+      let v = (j / nv) * Math.PI * 2;
+
+      if (animateCrossSection) {
+        crossSectionT = (Math.sin(animTime * 0.3) + 1) / 2;
+      }
+
+      let p = getShape(u, v);
+      let proj = project(p.x, p.y, p.z);
+
+      // Horizontal lines (along u)
+      if (i < nu) {
+        let u2 = (i+1)/nu;
+        let p2 = getShape(u2, v);
+        let proj2 = project(p2.x, p2.y, p2.z);
+        let avgDepth = (proj.depth + proj2.depth) / 2;
+        let t = (u + u2) / 2;
+        segments.push({
+          x1: proj.px, y1: proj.py, x2: proj2.px, y2: proj2.py,
+          depth: avgDepth, type: 'wire', t: t
+        });
+      }
+
+      // Vertical lines (along v)
+      if (j < nv) {
+        let v2 = ((j+1)/nv) * Math.PI * 2;
+        let p2 = getShape(u, v2);
+        let proj2 = project(p2.x, p2.y, p2.z);
+        let avgDepth = (proj.depth + proj2.depth) / 2;
+        segments.push({
+          x1: proj.px, y1: proj.py, x2: proj2.px, y2: proj2.py,
+          depth: avgDepth, type: 'wire', t: u
+        });
+      }
+    }
+  }
+
+  // Sort by depth (far first)
+  segments.sort((a, b) => b.depth - a.depth);
+
+  // Draw surface patches if enabled
+  if (showSurface) {
+    for (let i = 0; i < nu; i++) {
+      for (let j = 0; j < nv; j++) {
+        let u1 = i/nu, u2 = (i+1)/nu;
+        let v1 = (j/nv)*Math.PI*2, v2 = ((j+1)/nv)*Math.PI*2;
+
+        let pa = getShape(u1,v1), pb = getShape(u2,v1);
+        let pc = getShape(u2,v2), pd = getShape(u1,v2);
+
+        let pra = project(pa.x,pa.y,pa.z);
+        let prb = project(pb.x,pb.y,pb.z);
+        let prc = project(pc.x,pc.y,pc.z);
+        let prd = project(pd.x,pd.y,pd.z);
+
+        let avgD = (pra.depth+prb.depth+prc.depth+prd.depth)/4;
+        let brightness = Math.max(0.05, Math.min(1, 0.5 - avgD * 0.3));
+
+        let t = (u1+u2)/2;
+        let baseColor = lerpColor(colors.left, colors.right, t);
+        let r = parseInt(baseColor.slice(4), 10) || 140;
+        let g = parseInt(baseColor.split(',')[1]) || 100;
+        let b = parseInt(baseColor.split(',')[2]) || 255;
+
+        ctx.beginPath();
+        ctx.moveTo(pra.px, pra.py);
+        ctx.lineTo(prb.px, prb.py);
+        ctx.lineTo(prc.px, prc.py);
+        ctx.lineTo(prd.px, prd.py);
+        ctx.closePath();
+        ctx.fillStyle = `rgba(${Math.round(r*brightness)},${Math.round(g*brightness)},${Math.round(b*brightness)},0.15)`;
+        ctx.fill();
+      }
+    }
+  }
+
+  // Draw wireframe
+  if (showWireframe) {
+    for (let seg of segments) {
+      let alpha = Math.max(0.08, Math.min(0.6, 0.4 - seg.depth * 0.15));
+      let col = lerpColor(colors.left, colors.right, seg.t);
+      ctx.beginPath();
+      ctx.moveTo(seg.x1, seg.y1);
+      ctx.lineTo(seg.x2, seg.y2);
+      ctx.strokeStyle = col;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // Draw boundary circles (left and right)
+  drawBoundaryCircle(0, colors.left, 'M₁ (left boundary)');
+  drawBoundaryCircle(1, colors.right, 'M₂ (right boundary)');
+
+  // Draw cross-section if enabled
+  if (animateCrossSection) {
+    drawCrossSection(crossSectionT);
+  }
+
+  // Draw labels
+  drawLabels();
+}
+
+function drawBoundaryCircle(u, color, label) {
+  let points = [];
+  let nv = 80;
+  for (let j = 0; j <= nv; j++) {
+    let v = (j/nv) * Math.PI * 2;
+    let p = getShape(u, v);
+    let proj = project(p.x, p.y, p.z);
+    points.push(proj);
+  }
+
+  ctx.beginPath();
+  for (let i = 0; i < points.length; i++) {
+    if (i === 0) ctx.moveTo(points[i].px, points[i].py);
+    else ctx.lineTo(points[i].px, points[i].py);
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 3;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 15;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Glow effect
+  ctx.beginPath();
+  for (let i = 0; i < points.length; i++) {
+    if (i === 0) ctx.moveTo(points[i].px, points[i].py);
+    else ctx.lineTo(points[i].px, points[i].py);
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.5;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+}
+
+function drawCrossSection(t) {
+  let points = [];
+  let nv = 80;
+  for (let j = 0; j <= nv; j++) {
+    let v = (j / nv) * Math.PI * 2;
+    let p = getShape(t, v);
+    let proj = project(p.x, p.y, p.z);
+    points.push(proj);
+  }
+
+  ctx.beginPath();
+  for (let i = 0; i < points.length; i++) {
+    if (i === 0) ctx.moveTo(points[i].px, points[i].py);
+    else ctx.lineTo(points[i].px, points[i].py);
+  }
+  ctx.strokeStyle = colors.crossSection;
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = colors.crossSection;
+  ctx.shadowBlur = 12;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Label the cross section
+  let midP = getShape(t, 0);
+  let midProj = project(midP.x, midP.y + 0.7, midP.z);
+  ctx.fillStyle = colors.crossSection;
+  ctx.font = '13px "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`slice at t=${t.toFixed(2)}`, midProj.px, midProj.py);
+}
+
+function drawLabels() {
+  // Left boundary label
+  let leftP = project(-1, 0.75, 0);
+  ctx.fillStyle = colors.left;
+  ctx.font = 'bold 14px "Segoe UI", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('M₁', leftP.px, leftP.py);
+
+  // Right boundary label
+  let rightP = project(1, 0.75, 0);
+  ctx.fillStyle = colors.right;
+  ctx.fillText('M₂', rightP.px, rightP.py);
+
+  // Center label
+  let centerP = project(0, -0.85, 0);
+  ctx.fillStyle = 'rgba(200,180,255,0.7)';
+  ctx.font = '13px "Segoe UI", sans-serif';
+  ctx.fillText('W (bordism)', centerP.px, centerP.py);
+
+  // Example name
+  ctx.fillStyle = 'rgba(200,180,255,0.5)';
+  ctx.font = '12px "Segoe UI", sans-serif';
+  ctx.textAlign = 'left';
+
+  let descriptions = {
+    'cylinder': '∂W = S¹ ⊔ S¹  — Circle is bordant to circle',
+    'pair-of-pants': '∂W = S¹ ⊔ (S¹ ⊔ S¹)  — One circle splits into two',
+    'cap': '∂W = S¹ ⊔ ∅  — Circle bounds a disk (bordant to empty)',
+    'birth': '∂W = ∅ ⊔ S¹  — Circle born from nothing',
+    'merge': '∂W = (S¹ ⊔ S¹) ⊔ S¹  — Two circles merge into one',
+    'genus': '∂W = S¹ ⊔ S¹  — Cylinder with a handle (genus change)',
+    'identity': '∂W = (S¹ ⊔ S¹) ⊔ (S¹ ⊔ S¹)  — Two parallel cylinders',
+    'annihilation': '∂W = (S¹ ⊔ S¹) ⊔ ∅  — Two circles annihilate'
+  };
+  ctx.fillText(descriptions[currentExample] || '', 15, canvas.height - 15);
+}
+
+// ============ INTERACTION ============
+canvas.addEventListener('mousedown', (e) => {
+  dragging = true;
+  lastMX = e.clientX;
+  lastMY = e.clientY;
+});
+
+canvas.addEventListener('mousemove', (e) => {
+  if (dragging) {
+    let dx = e.clientX - lastMX;
+    let dy = e.clientY - lastMY;
+    rotationY += dx * 0.008;
+    rotationX += dy * 0.008;
+    rotationX = Math.max(-1.5, Math.min(1.5, rotationX));
+    lastMX = e.clientX;
+    lastMY = e.clientY;
+
+    // Update sliders
+    document.getElementById('rotY').value = rotationY;
+    document.getElementById('rotX').value = rotationX;
+  }
+});
+
+canvas.addEventListener('mouseup', () => { dragging = false; });
+canvas.addEventListener('mouseleave', () => { dragging = false; });
+
+// Touch support
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  dragging = true;
+  lastMX = e.touches[0].clientX;
+  lastMY = e.touches[0].clientY;
+}, { passive: false });
+
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (dragging) {
+    let dx = e.touches[0].clientX - lastMX;
+    let dy = e.touches[0].clientY - lastMY;
+    rotationY += dx * 0.008;
+    rotationX += dy * 0.008;
+    rotationX = Math.max(-1.5, Math.min(1.5, rotationX));
+    lastMX = e.touches[0].clientX;
+    lastMY = e.touches[0].clientY;
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => { dragging = false; });
+
+// Mouse wheel zoom
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  zoomLevel -= e.deltaY * 0.001;
+  zoomLevel = Math.max(0.3, Math.min(2.5, zoomLevel));
+  document.getElementById('zoom').value = zoomLevel;
+  document.getElementById('zoomVal').textContent = zoomLevel.toFixed(1);
+}, { passive: false });
+
+// ============ UI FUNCTIONS ============
+function setExample(name) {
+  currentExample = name;
+  // Reset view slightly for each example
+  animTime = 0;
+}
+
+function updateSpeed(val) {
+  animSpeed = parseFloat(val);
+  document.getElementById('speedVal').textContent = parseFloat(val).toFixed(1);
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-examples').style.display = tab === 'examples' ? 'block' : 'none';
+  document.getElementById('tab-customize').style.display = tab === 'customize' ? 'block' : 'none';
+  document.getElementById('tab-learn').style.display = tab === 'learn' ? 'block' : 'none';
+
+  // Update tab buttons
+  let buttons = document.querySelectorAll('.tab-bar button');
+  buttons.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.textContent.toLowerCase().includes(tab)) btn.classList.add('active');
+  });
+}
+
+// ============ ANIMATION LOOP ============
+let lastTime = 0;
+function animate(timestamp) {
+  let dt = (timestamp - lastTime) / 1000;
+  if (dt > 0.1) dt = 0.016; // Cap delta time
+  lastTime = timestamp;
+
+  animTime += dt * animSpeed;
+
+  drawBordism();
+  requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
+</script>
+
+</body>
+</html>

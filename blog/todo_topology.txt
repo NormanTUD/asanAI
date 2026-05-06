@@ -1,1 +1,3 @@
 idee: embedding space zeigen, rotieren und verzerren, relationen zueinander bleiben gleich, gleiche sachen sind noch nachbarn, die inseln bleiben gleich usw. -> entfernung wegabstrahiert -> topologie
+
+garten ki als beispiel für pattern erkennung, ohne dass wirklich bewusst pattern erkannt weil was sie sie sind wieß die ki nicht nur dass (schnecken nachts wässern)

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attention = Points Pulling Each Other</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family: -apple-system, sans-serif; background:#0d1117; color:#e0e0e0; padding:20px; }
+        .app { max-width:1100px; margin:0 auto; }
+        h1 { text-align:center; color:#fff; font-size:1.5em; }
+        .insight { text-align:center; color:#8b949e; margin:8px 0 20px; font-size:0.95em; max-width:700px; margin-left:auto; margin-right:auto; line-height:1.6; }
+        .insight b { color:#58a6ff; }
+        .input-row { margin-bottom:14px; }
+        .input-row input { width:100%; padding:12px 16px; font-size:1.05em; background:#161b22; border:2px solid #30363d; border-radius:8px; color:#fff; outline:none; }
+        .input-row input:focus { border-color:#58a6ff; }
+        #plot { width:100%; height:560px; border-radius:10px; }
+        .controls { display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin:10px 0; }
+        .ctrl { display:flex; align-items:center; gap:6px; }
+        .ctrl label { font-size:0.82em; color:#8b949e; }
+        .ctrl input[type="range"] { width:110px; accent-color:#58a6ff; }
+        .ctrl span { font-size:0.82em; color:#58a6ff; min-width:30px; }
+        .bottom { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+        .card { background:#161b22; border:1px solid #30363d; border-radius:10px; padding:16px; }
+        .card h2 { font-size:0.95em; color:#f0c040; margin-bottom:8px; }
+        .analogy { background:#1c2128; border-radius:8px; padding:14px; margin:10px 0; font-size:0.88em; line-height:1.7; border-left:3px solid #f0c040; }
+        .analogy b { color:#f0c040; }
+        .step { margin:8px 0; padding:10px; background:#0d1117; border-radius:6px; font-size:0.85em; line-height:1.6; }
+        .step .label { color:#58a6ff; font-weight:600; }
+        .step .formula { font-family:monospace; color:#f97583; margin:4px 0; }
+        .simplex-info { font-size:0.82em; line-height:1.8; max-height:250px; overflow-y:auto; }
+        .s1{color:#3fb950;} .s2{color:#f0c040;}
+    </style>
+</head>
+<body>
+<div class="app">
+    <h1>Attention = Points That Pull Each Other Closer</h1>
+    <div class="insight">
+        Every word is a point in space. Attention makes each point <b>move toward the points it finds relevant</b>.
+        The simplicial complex shows you <b>which points clump together</b> — that's the "meaning" attention creates.
+    </div>
+
+    <div class="input-row">
+        <input type="text" id="sentence" value="The king commanded his lion with divine power" placeholder="Type a sentence...">
+    </div>
+
+    <div class="controls">
+        <div class="ctrl"><label>How picky (sharpness):</label><input type="range" id="sharp" min="0.3" max="4" step="0.05" value="1.2"><span id="sharp-v">1.20</span></div>
+        <div class="ctrl"><label>Connection threshold ε:</label><input type="range" id="eps" min="0.01" max="0.3" step="0.005" value="0.08"><span id="eps-v">0.08</span></div>
+        <div class="ctrl"><label>Animate:</label><input type="checkbox" id="animate" checked></div>
+    </div>
+
+    <div id="plot"></div>
+
+    <div class="bottom">
+        <div class="card">
+            <h2>What You're Seeing</h2>
+            <div class="analogy">
+                <b>The analogy:</b> Imagine words are people at a party. Each person looks around (Q) and sees name-tags (K). If your "looking" matches someone's "tag," you walk toward them. After one round, everyone has moved to the average position of the people they found interesting.<br><br>
+                <b>Simplicial complex =</b> the friend-groups that form. An edge means "these two found each other interesting." A triangle means "these three all found each other interesting" — they formed a tight group.
+            </div>
+
+            <div class="step">
+                <span class="label">Step 1:</span> Each word starts at a position (its meaning).<br>
+                <span class="formula">x = [gender, being, power]</span>
+            </div>
+            <div class="step">
+                <span class="label">Step 2:</span> Measure "relevance" between all pairs.<br>
+                <span class="formula">score(i,j) = how much word i cares about word j</span><br>
+                This is Q·K — just a (possibly biased) way to measure similarity.
+            </div>
+            <div class="step">
+                <span class="label">Step 3:</span> Each word moves to the weighted center of all words, weighted by relevance.<br>
+                <span class="formula">new position of word i = Σ (relevance to j) × (position of j)</span><br>
+                This is the V part — the actual movement.
+            </div>
+            <div class="step">
+                <span class="label">Result:</span> Words that are "relevant" to each other <b>end up near each other</b>. That cluster = a simplex = composed meaning.
+            </div>
+        </div>
+        <div class="card">
+            <h2>Simplices = Clusters of Meaning</h2>
+            <div class="simplex-info" id="info"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// LEXICON — each word's "true position" in meaning-space
+// ============================================================
+const LEX = {
+    king:[-0.9,0.1,0.9], he:[-0.8,0,0.2], his:[-0.7,0,0.15], boy:[-0.8,0,0.2],
+    man:[-0.8,0,0.4], father:[-0.8,0.1,0.6], prince:[-0.85,0.1,0.7], lord:[-0.7,0.3,0.85],
+    god:[-0.5,1.0,0.95], warrior:[-0.6,0,0.75], hero:[-0.5,0.05,0.7],
+    queen:[0.9,0.1,0.85], she:[0.8,0,0.2], her:[0.7,0,0.15], girl:[0.8,0,0.2],
+    woman:[0.8,0,0.4], mother:[0.8,0.1,0.6], princess:[0.85,0.1,0.6],
+    goddess:[0.9,0.95,0.9], witch:[0.6,0.4,0.6],
+    lion:[-0.3,-0.9,0.6], wolf:[-0.4,-0.9,0.55], eagle:[-0.1,-0.85,0.5],
+    eagles:[-0.1,-0.85,0.5], serpent:[-0.2,-0.8,0.45], serpents:[-0.2,-0.8,0.45],
+    deer:[0.2,-0.9,0.15], dove:[0.3,-0.85,0.1], bear:[-0.4,-0.9,0.6],
+    horse:[-0.2,-0.8,0.4], cat:[0.2,-0.85,0.2], dog:[-0.2,-0.85,0.3],
+    dragon:[-0.3,-0.6,0.9], phoenix:[0.1,-0.5,0.8],
+    divine:[0.0,0.9,0.85], sacred:[0.0,0.8,0.6], holy:[0.0,0.85,0.6],
+    celestial:[0.1,0.95,0.75], eternal:[0.0,0.7,0.7],
+    angel:[0.2,0.9,0.6], demon:[-0.3,0.6,0.7], spirit:[0.0,0.7,0.4],
+    ancient:[0.0,0.3,0.45], cosmic:[0.0,0.85,0.7], infinite:[0.0,0.6,0.9],
+    power:[0.0,0.2,0.95], strength:[-0.2,0.1,0.85], authority:[-0.1,0.2,0.88],
+    dominion:[-0.2,0.3,0.9], force:[-0.2,0,0.8], might:[-0.3,0.1,0.85],
+    commanded:[-0.3,0.1,0.7], ruled:[0.0,0.15,0.75], summoned:[-0.1,0.4,0.65],
+    conquered:[-0.4,0,0.8], destroyed:[-0.3,0,0.8], created:[0.0,0.3,0.6],
+    gentle:[0.3,0,0.1], soft:[0.3,0,0.05], kind:[0.2,0.1,0.2],
+    small:[0.0,0,0.05], weak:[0.0,0,0.02],
+    forest:[0.0,-0.4,0.2], mountain:[-0.1,-0.3,0.5], ocean:[0.0,-0.3,0.6],
+    fire:[-0.1,0,0.6], water:[0.1,-0.1,0.2],
+    transformed:[0.0,0.3,0.55], befriended:[0.1,0.1,0.2], fought:[-0.4,0,0.6],
+    loved:[0.3,0.1,0.3], sang:[0.2,0,0.2], flew:[0.0,-0.3,0.3],
+    fierce:[-0.2,0,0.65], great:[0.0,0.1,0.7], dark:[-0.1,0.1,0.4],
+    bright:[0.2,0.3,0.4], beautiful:[0.4,0.1,0.3],
+    the:[0,0,0.05], a:[0,0,0.05], an:[0,0,0.05], of:[0,0,0.05],
+    with:[0,0,0.08], in:[0,0,0.05], into:[0,0,0.08], and:[0,0,0.05],
+    to:[0,0,0.05], from:[0,0,0.05], by:[0,0,0.05], for:[0,0,0.05],
+    on:[0,0,0.05], at:[0,0,0.05], is:[0,0,0.08], was:[0,0,0.08],
+};
+
+function embed(word) {
+    const w = word.toLowerCase().replace(/[^a-z]/g,'');
+    if(LEX[w]) return [...LEX[w]];
+    let h=0; for(let i=0;i<w.length;i++) h=(h*31+w.charCodeAt(i))&0xffff;
+    return [((h%100)-50)/80, (((h>>4)%100)-50)/80, (h%60)/80];
+}
+
+// ============================================================
+// CORE: Attention = measure similarity, then move toward similar
+// ============================================================
+function attention(embeddings, sharpness) {
+    const n = embeddings.length;
+    // Step 1: Score = how similar are these two points?
+    // (This IS the Q·K part — here using dot product as simplest metric)
+    const scores = [];
+    for(let i=0;i<n;i++) {
+        scores[i] = [];
+        for(let j=0;j<n;j++) {
+            scores[i][j] = embeddings[i][0]*embeddings[j][0] + 
+                           embeddings[i][1]*embeddings[j][1] + 
+                           embeddings[i][2]*embeddings[j][2];
+        }
+    }
+    // Step 2: Softmax = turn scores into weights that sum to 1
+    const weights = scores.map(row => {
+        const mx = Math.max(...row);
+        const e = row.map(x => Math.exp((x-mx)*sharpness));
+        const s = e.reduce((a,b)=>a+b);
+        return e.map(x => x/s);
+    });
+    // Step 3: Move each point to weighted average of all points
+    const output = [];
+    for(let i=0;i<n;i++) {
+        output[i] = [0,0,0];
+        for(let j=0;j<n;j++) {
+            output[i][0] += weights[i][j] * embeddings[j][0];
+            output[i][1] += weights[i][j] * embeddings[j][1];
+            output[i][2] += weights[i][j] * embeddings[j][2];
+        }
+    }
+    return { weights, output };
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+let animFrame = null;
+let animT = 0;
+
+function render() {
+    const text = document.getElementById('sentence').value.trim();
+    if(!text) return;
+    const tokens = text.split(/\s+/);
+    const embeddings = tokens.map(embed);
+    const sharpness = parseFloat(document.getElementById('sharp').value);
+    const eps = parseFloat(document.getElementById('eps').value);
+    const shouldAnimate = document.getElementById('animate').checked;
+
+    const {weights, output} = attention(embeddings, sharpness);
+    const n = tokens.length;
+
+    // Build simplicial complex on the OUTPUT (where points end up)
+    const edges=[], tris=[];
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) {
+        const w = Math.min(weights[i][j], weights[j][i]);
+        if(w>eps) edges.push([i,j,w]);
+    }
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) for(let k=j+1;k<n;k++) {
+        const ij=Math.min(weights[i][j],weights[j][i]);
+        const jk=Math.min(weights[j][k],weights[k][j]);
+        const ik=Math.min(weights[i][k],weights[k][i]);
+        if(ij>eps&&jk>eps&&ik>eps) tris.push([i,j,k,Math.min(ij,jk,ik)]);
+    }
+
+    // Animate: interpolate between start and end
+    function drawFrame(t) {
+        const pos = embeddings.map((e,i) => [
+            e[0]*(1-t) + output[i][0]*t,
+            e[1]*(1-t) + output[i][1]*t,
+            e[2]*(1-t) + output[i][2]*t,
+        ]);
+
+        const traces = [];
+
+        // Triangles at current position
+        for(const [i,j,k,w] of tris) {
+            traces.push({type:'mesh3d',
+                x:[pos[i][0],pos[j][0],pos[k][0]],
+                y:[pos[i][1],pos[j][1],pos[k][1]],
+                z:[pos[i][2],pos[j][2],pos[k][2]],
+                i:[0],j:[1],k:[2],
+                opacity:0.2+w*0.4, color:'#f0c040', flatshading:true,
+                hovertemplate:`△ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}}<extra></extra>`,
+                showlegend:false
+            });
+        }
+
+        // Edges at current position
+        for(const [i,j,w] of edges) {
+            traces.push({type:'scatter3d',mode:'lines',
+                x:[pos[i][0],pos[j][0]], y:[pos[i][1],pos[j][1]], z:[pos[i][2],pos[j][2]],
+                line:{color:`rgba(63,185,80,${Math.min(w*5,0.9)})`,width:Math.max(2,w*14)},
+                showlegend:false, hoverinfo:'skip'
+            });
+        }
+
+        // Ghost of original positions
+        if(t > 0.05) {
+            traces.push({type:'scatter3d',mode:'markers',
+                x:embeddings.map(e=>e[0]), y:embeddings.map(e=>e[1]), z:embeddings.map(e=>e[2]),
+                marker:{size:4, color:'rgba(88,166,255,0.3)', line:{width:0}},
+                name:'Before (original)', showlegend: t>0.3,
+                hovertemplate:'Original position<extra></extra>'
+            });
+            // Dotted lines from original to current
+            for(let i=0;i<n;i++) {
+                traces.push({type:'scatter3d',mode:'lines',
+                    x:[embeddings[i][0],pos[i][0]], y:[embeddings[i][1],pos[i][1]], z:[embeddings[i][2],pos[i][2]],
+                    line:{color:'rgba(88,166,255,0.2)',width:1,dash:'dot'},
+                    showlegend:false, hoverinfo:'skip'
+                });
+            }
+        }
+
+        // Current positions (main points)
+        const colors = embeddings.map(e => e[1]<-0.3?'#3fb950':e[1]>0.3?'#f0c040':'#58a6ff');
+        traces.push({type:'scatter3d',mode:'markers+text',
+            x:pos.map(p=>p[0]), y:pos.map(p=>p[1]), z:pos.map(p=>p[2]),
+            text:tokens, textposition:'top center', textfont:{size:11,color:'#fff'},
+            marker:{size:7,color:colors,line:{width:1,color:'#fff'}},
+            name: t<0.05?'Words (before attention)':'Words (after attention)',
+            hovertemplate:'%{text}<br>(%{x:.2f}, %{y:.2f}, %{z:.2f})<extra></extra>'
+        });
+
+        Plotly.react('plot', traces, {
+            scene:{
+                xaxis:{title:'← Male | Female →',range:[-1.3,1.3],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+                yaxis:{title:'← Animal | Human | Divine →',range:[-1.3,1.3],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+                zaxis:{title:'← Weak | Strong →',range:[-0.1,1.2],gridcolor:'#1c2128',zerolinecolor:'#30363d',color:'#8b949e',tickfont:{size:9}},
+                bgcolor:'#0d1117',
+                camera:{eye:{x:1.7,y:1.3,z:0.9}}
+            },
+            paper_bgcolor:'#0d1117', margin:{l:0,r:0,t:0,b:0}, showlegend:true,
+            legend:{x:0.01,y:0.99,bgcolor:'rgba(13,17,23,0.9)',font:{size:10}}
+        }, {responsive:true});
+    }
+
+    // Animation
+    if(animFrame) cancelAnimationFrame(animFrame);
+    if(shouldAnimate) {
+        animT = 0;
+        function step() {
+            animT += 0.015;
+            if(animT > 1) animT = 1;
+            const eased = animT < 0.5 ? 2*animT*animT : 1-Math.pow(-2*animT+2,2)/2; // ease in-out
+            drawFrame(eased);
+            if(animT < 1) animFrame = requestAnimationFrame(step);
+        }
+        step();
+    } else {
+        drawFrame(1);
+    }
+
+    // --- INFO ---
+    let info = `<p style="margin-bottom:8px;"><b style="color:#58a6ff;">Before:</b> Each word at its own meaning-position.</p>`;
+    info += `<p style="margin-bottom:12px;"><b style="color:#f0c040;">After:</b> Words that attend to each other have <em>moved closer together</em>.</p>`;
+
+    info += `<p class="s1"><b>Edges (${edges.length}):</b> pairs that pulled toward each other</p>`;
+    for(const[i,j,w] of edges) {
+        info+=`<p class="s1">&nbsp; {${tokens[i]}, ${tokens[j]}} — strength ${(w*100).toFixed(1)}%</p>`;
+    }
+    info += `<p class="s2" style="margin-top:8px;"><b>Triangles (${tris.length}):</b> groups of three that formed a cluster</p>`;
+    for(const[i,j,k,w] of tris) {
+        info+=`<p class="s2">&nbsp; △ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}}</p>`;
+    }
+
+    if(tris.length>0) {
+        info+=`<p style="margin-top:10px;color:#f0c040;">↑ These triangles are where meaning gets <em>composed</em>. Three words pulled together into one region = one combined concept.</p>`;
+    }
+
+    // Show the biggest movement
+    let maxMove=0, maxI=0;
+    for(let i=0;i<n;i++){
+        const d=Math.sqrt((output[i][0]-embeddings[i][0])**2+(output[i][1]-embeddings[i][1])**2+(output[i][2]-embeddings[i][2])**2);
+        if(d>maxMove){maxMove=d;maxI=i;}
+    }
+    info+=`<p style="margin-top:10px;color:#8b949e;">Biggest move: <b>"${tokens[maxI]}"</b> shifted ${maxMove.toFixed(3)} — it was most influenced by its neighbors.</p>`;
+
+    document.getElementById('info').innerHTML = info;
+}
+
+// ============================================================
+// LIVE EVENTS
+// ============================================================
+let debounce;
+document.getElementById('sentence').addEventListener('input', ()=>{ clearTimeout(debounce); debounce=setTimeout(render,250); });
+document.getElementById('eps').addEventListener('input', function(){ document.getElementById('eps-v').textContent=(+this.value).toFixed(2); render(); });
+document.getElementById('sharp').addEventListener('input', function(){ document.getElementById('sharp-v').textContent=(+this.value).toFixed(2); render(); });
+document.getElementById('animate').addEventListener('change', render);
+
+render();
+</script>
+</body>
+</html>

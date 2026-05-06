@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attention as Simplicial Complexes in 3D Semantic Space</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        h1 { text-align: center; color: #00d4ff; margin-bottom: 10px; }
+        h2 { color: #ff6b6b; margin: 15px 0 10px; }
+        h3 { color: #feca57; margin: 10px 0 5px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .panel {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #0f3460;
+        }
+        .full-width { grid-column: 1 / -1; }
+        #plot3d { width: 100%; height: 600px; }
+        #simplicial-plot { width: 100%; height: 500px; }
+        #attention-heatmap { width: 100%; height: 400px; }
+        .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 10px 0; }
+        .controls label { font-size: 0.9em; color: #a0a0a0; }
+        .controls input[type="range"] { width: 120px; }
+        .controls input[type="number"] { width: 70px; background: #0f3460; border: 1px solid #00d4ff; color: #fff; padding: 4px; border-radius: 4px; }
+        .controls select { background: #0f3460; border: 1px solid #00d4ff; color: #fff; padding: 4px 8px; border-radius: 4px; }
+        button {
+            background: #00d4ff;
+            color: #1a1a2e;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        button:hover { background: #00a8cc; }
+        .equation-box {
+            background: #0f3460;
+            border-left: 4px solid #00d4ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            overflow-x: auto;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #0f3460;
+            padding: 6px 10px;
+            text-align: center;
+        }
+        .data-table th { background: #0f3460; color: #00d4ff; }
+        .data-table td { background: #16213e; }
+        .data-table input {
+            width: 60px;
+            background: #1a1a2e;
+            border: 1px solid #00d4ff;
+            color: #fff;
+            text-align: center;
+            padding: 2px;
+            border-radius: 3px;
+        }
+        .explanation {
+            background: #1a1a2e;
+            border: 1px dashed #feca57;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        .sentence-list { list-style: none; padding: 0; }
+        .sentence-list li {
+            padding: 8px 12px;
+            margin: 4px 0;
+            background: #0f3460;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .sentence-list li:hover, .sentence-list li.active { background: #00d4ff; color: #1a1a2e; }
+        .tab-container { display: flex; gap: 5px; margin-bottom: 10px; }
+        .tab {
+            padding: 8px 16px;
+            background: #0f3460;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            border: 1px solid #0f3460;
+        }
+        .tab.active { background: #00d4ff; color: #1a1a2e; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .highlight { color: #00d4ff; font-weight: bold; }
+        .rope-viz { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+        .rope-block {
+            background: #0f3460;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧠 Attention Mechanism as Simplicial Complexes in 3D Semantic Space</h1>
+    <p style="text-align:center; color:#a0a0a0; margin-bottom:20px;">
+        Interactive visualization of how self-attention creates meaning through geometric structures (simplicial complexes) in a 3D embedding space with RoPE positional encoding.
+    </p>
+
+    <!-- SENTENCE SELECTION -->
+    <div class="panel full-width">
+        <h2>📝 Select a Sentence to Analyze</h2>
+        <p style="color:#a0a0a0; margin-bottom:10px;">Each word is embedded in a 3D space where axes represent semantic dimensions:</p>
+        <ul class="sentence-list" id="sentence-list">
+            <li class="active" data-idx="0">"The <b>king</b> commanded his <b>lion</b> with divine <b>power</b>."</li>
+            <li data-idx="1">"The <b>goddess</b> transformed into a <b>wolf</b> of great <b>strength</b>."</li>
+            <li data-idx="2">"A <b>queen</b> ruled the <b>eagles</b> with celestial <b>authority</b>."</li>
+            <li data-idx="3">"The <b>boy</b> befriended a gentle <b>deer</b> in the sacred <b>forest</b>."</li>
+            <li data-idx="4">"An ancient <b>god</b> summoned <b>serpents</b> of infinite <b>dominion</b>."</li>
+        </ul>
+    </div>
+
+    <div class="grid">
+        <!-- 3D PLOT -->
+        <div class="panel full-width">
+            <h2>🌐 3D Semantic Embedding Space</h2>
+            <p style="color:#a0a0a0;">
+                <b>X-axis:</b> Gender (Male ← → Female) | 
+                <b>Y-axis:</b> Ontology (Animal ← → Human ← → Divine) | 
+                <b>Z-axis:</b> Power (Weak ← → Strong)
+            </p>
+            <div id="plot3d"></div>
+            <div class="controls">
+                <label>d_model: <input type="number" id="d_model" value="3" min="3" max="3" disabled></label>
+                <label>Temperature: <input type="range" id="temperature" min="0.1" max="5" step="0.1" value="1"><span id="temp-val">1.0</span></label>
+                <label>Show Simplices: <input type="checkbox" id="show-simplices" checked></label>
+                <label>Show Attention Edges: <input type="checkbox" id="show-attention" checked></label>
+                <label>Show RoPE Effect: <input type="checkbox" id="show-rope" checked></label>
+                <button onclick="recompute()">Recompute Attention</button>
+            </div>
+        </div>
+
+        <!-- EQUATIONS -->
+        <div class="panel">
+            <h2>📐 Core Equations</h2>
+            
+            <h3>1. Scaled Dot-Product Attention</h3>
+            <div class="equation-box">
+                \[ \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V \]
+            </div>
+
+            <h3>2. Query, Key, Value Projections</h3>
+            <div class="equation-box">
+                \[ Q = XW^Q, \quad K = XW^K, \quad V = XW^V \]
+                \[ W^Q, W^K, W^V \in \mathbb{R}^{d_{model} \times d_k} \]
+            </div>
+
+            <h3>3. RoPE Positional Embedding</h3>
+            <div class="equation-box">
+                \[ R_{\Theta,m} = \begin{pmatrix} \cos(m\theta_1) & -\sin(m\theta_1) & 0 \\ \sin(m\theta_1) & \cos(m\theta_1) & 0 \\ 0 & 0 & 1 \end{pmatrix} \]
+                \[ \theta_i = 10000^{-2i/d} \]
+                \[ \tilde{q}_m = R_{\Theta,m} \cdot q_m, \quad \tilde{k}_n = R_{\Theta,n} \cdot k_n \]
+            </div>
+
+            <h3>4. Attention Score with RoPE</h3>
+            <div class="equation-box">
+                \[ a_{mn} = \frac{\tilde{q}_m^T \tilde{k}_n}{\sqrt{d_k}} = \frac{(R_{\Theta,m} q_m)^T (R_{\Theta,n} k_n)}{\sqrt{d_k}} \]
+                \[ = \frac{q_m^T R_{\Theta,m-n} k_n}{\sqrt{d_k}} \]
+                <p style="color:#feca57; margin-top:8px;">↑ RoPE encodes <em>relative</em> position (m−n) into the attention score!</p>
+            </div>
+
+            <h3>5. Simplicial Complex from Attention</h3>
+            <div class="equation-box">
+                \[ \text{0-simplex (vertex):} \quad \sigma_0 = \{v_i\} \quad \text{(each token embedding)} \]
+                \[ \text{1-simplex (edge):} \quad \sigma_1 = \{v_i, v_j\} \quad \text{if } \alpha_{ij} > \epsilon \]
+                \[ \text{2-simplex (triangle):} \quad \sigma_2 = \{v_i, v_j, v_k\} \quad \text{if } \alpha_{ij}, \alpha_{jk}, \alpha_{ik} > \epsilon \]
+                <p style="color:#feca57; margin-top:8px;">The simplicial complex \(\mathcal{K}\) captures how attention "focuses meaning locally" — tokens that mutually attend form higher-dimensional simplices representing composed meaning.</p>
+            </div>
+        </div>
+
+        <!-- DATA POINTS & EMBEDDINGS -->
+        <div class="panel">
+            <h2>📊 Token Embeddings (Editable)</h2>
+            <p style="color:#a0a0a0; font-size:0.85em;">Edit values to see how attention changes. Axes: X=Gender(-1=M,+1=F), Y=Ontology(-1=Animal,0=Human,+1=Divine), Z=Power(0→1)</p>
+            <div style="overflow-x:auto;">
+                <table class="data-table" id="embedding-table">
+                    <thead>
+                        <tr><th>Token</th><th>X (Gender)</th><th>Y (Ontology)</th><th>Z (Power)</th><th>Position</th></tr>
+                    </thead>
+                    <tbody id="embedding-tbody"></tbody>
+                </table>
+            </div>
+            <button onclick="recompute()" style="margin-top:10px;">Update Visualization</button>
+
+            <h3 style="margin-top:20px;">Weight Matrices (Editable)</h3>
+            <p style="color:#a0a0a0; font-size:0.85em;">W_Q, W_K, W_V ∈ ℝ³ˣ³</p>
+            <div class="controls">
+                <label>Matrix: <select id="matrix-select" onchange="showMatrix()">
+                    <option value="wq">W_Q</option>
+                    <option value="wk">W_K</option>
+                    <option value="wv">W_V</option>
+                </select></label>
+            </div>
+            <table class="data-table" id="matrix-table">
+                <tbody id="matrix-tbody"></tbody>
+            </table>
+            <button onclick="recompute()" style="margin-top:10px;">Apply Matrix Changes</button>
+
+            <h3 style="margin-top:20px;">RoPE Parameters</h3>
+            <div class="controls">
+                <label>Base θ: <input type="number" id="rope-base" value="10000" min="1" max="100000" step="100"></label>
+                <label>Enabled: <input type="checkbox" id="rope-enabled" checked></label>
+            </div>
+            <div class="rope-viz" id="rope-viz"></div>
+        </div>
+
+        <!-- ATTENTION HEATMAP -->
+        <div class="panel full-width">
+            <h2>🔥 Attention Weights Heatmap</h2>
+            <div id="attention-heatmap"></div>
+        </div>
+
+        <!-- SIMPLICIAL COMPLEX DETAILS -->
+        <div class="panel full-width">
+            <h2>🔺 Simplicial Complex Structure</h2>
+            <div class="controls">
+                <label>Edge threshold ε: <input type="range" id="epsilon" min="0.01" max="0.5" step="0.01" value="0.1"><span id="eps-val">0.10</span></label>
+                <button onclick="recompute()">Update</button>
+            </div>
+            <div class="grid" style="grid-template-columns: 1fr 1fr;">
+                <div>
+                    <h3>Detected Simplices</h3>
+                    <div id="simplex-list" style="font-size:0.85em; max-height:300px; overflow-y:auto;"></div>
+                </div>
+                <div>
+                    <h3>Interpretation</h3>
+                    <div id="simplex-interpretation" class="explanation"></div>
+                </div>
+            </div>
+            <div id="simplicial-plot"></div>
+        </div>
+
+        <!-- EXPLANATION -->
+        <div class="panel full-width">
+            <h2>💡 How to Read This Visualization</h2>
+            <div class="explanation">
+                <p><b>What you're seeing:</b></p>
+                <ul style="margin-left:20px; line-height:2;">
+                    <li><b>Points (0-simplices):</b> Each token's embedding in 3D semantic space. The position encodes meaning along three axes.</li>
+                    <li><b>Edges (1-simplices):</b> Drawn between tokens where mutual attention weight exceeds threshold ε. Thicker = stronger attention.</li>
+                    <li><b>Triangles (2-simplices):</b> Formed when three tokens all mutually attend to each other above ε. These represent <em>composed meaning</em> — a local semantic "focus region."</li>
+                    <li><b>RoPE rotation:</b> Shown as arrows from original to rotated positions. Nearby tokens rotate similarly, preserving relative geometry.</li>
+                    <li><b>Attention heatmap:</b> Shows the full attention matrix α_{ij} after softmax.</li>
+                </ul>
+                <p style="margin-top:10px;"><b>Key insight:</b> Attention doesn't just "look at" other tokens — it creates a <em>simplicial complex</em> that defines a local topological structure of meaning. A 2-simplex (triangle) between "king", "lion", "power" means these three concepts are being <em>jointly composed</em> by the attention mechanism into a unified semantic region.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// DATA: Sentences and their token embeddings in 3D semantic space
+// Axes: X = Gender (-1=Male, +1=Female), Y = Ontology (-1=Animal, 0=Human, +1=Divine), Z = Power (0 to 1)
+// ============================================================
+
+const sentences = [
+    {
+        text: "The king commanded his lion with divine power.",
+        tokens: ["The", "king", "commanded", "his", "lion", "with", "divine", "power"],
+        embeddings: [
+            [0.0, 0.0, 0.1],   // The (neutral)
+            [-0.8, 0.1, 0.8],  // king (male, human, high power)
+            [-0.2, 0.0, 0.6],  // commanded (slightly male, neutral, medium-high power)
+            [-0.7, 0.0, 0.1],  // his (male, neutral, low power)
+            [-0.3, -0.9, 0.5], // lion (slightly male, animal, medium power)
+            [0.0, 0.0, 0.1],   // with (neutral)
+            [0.0, 0.9, 0.9],   // divine (neutral gender, divine, high power)
+            [0.0, 0.2, 0.95],  // power (neutral, slightly above human, very high power)
+        ]
+    },
+    {
+        text: "The goddess transformed into a wolf of great strength.",
+        tokens: ["The", "goddess", "transformed", "into", "a", "wolf", "of", "great", "strength"],
+        embeddings: [
+            [0.0, 0.0, 0.1],
+            [0.9, 0.95, 0.85],  // goddess (female, divine, high power)
+            [0.0, 0.3, 0.5],    // transformed (neutral, slightly divine, medium)
+            [0.0, 0.0, 0.1],
+            [0.0, 0.0, 0.1],
+            [-0.4, -0.95, 0.6], // wolf (slightly male, animal, medium-high)
+            [0.0, 0.0, 0.1],
+            [0.0, 0.0, 0.7],   // great (neutral, neutral, high power)
+            [-0.2, 0.1, 0.9],  // strength (slightly male, human, very high power)
+        ]
+    },
+    {
+        text: "A queen ruled the eagles with celestial authority.",
+        tokens: ["A", "queen", "ruled", "the", "eagles", "with", "celestial", "authority"],
+        embeddings: [
+            [0.0, 0.0, 0.1],
+            [0.9, 0.1, 0.8],   // queen (female, human, high power)
+            [0.1, 0.1, 0.7],   // ruled (slightly female, human, high power)
+            [0.0, 0.0, 0.1],
+            [-0.1, -0.85, 0.4], // eagles (neutral, animal, medium)
+            [0.0, 0.0, 0.1],
+            [0.1, 0.95, 0.8],  // celestial (neutral, divine, high power)
+            [-0.1, 0.2, 0.9],  // authority (neutral, human, very high power)
+        ]
+    },
+    {
+        text: "The boy befriended a gentle deer in the sacred forest.",
+        tokens: ["The", "boy", "befriended", "a", "gentle", "deer", "in", "the", "sacred", "forest"],
+        embeddings: [
+            [0.0, 0.0, 0.1],
+            [-0.8, 0.0, 0.2],  // boy (male, human, low power)
+            [0.0, 0.1, 0.2],   // befriended (neutral, human, low power)
+            [0.0, 0.0, 0.1],
+            [0.2, 0.0, 0.1],   // gentle (slightly female, neutral, low power)
+            [0.1, -0.9, 0.15], // deer (neutral, animal, low power)
+            [0.0, 0.0, 0.1],
+            [0.0, 0.0, 0.1],
+            [0.0, 0.8, 0.5],   // sacred (neutral, divine, medium power)
+            [0.0, -0.5, 0.2],  // forest (neutral, between animal/human, low power)
+        ]
+    },
+    {
+        text: "An ancient god summoned serpents of infinite dominion.",
+        tokens: ["An", "ancient", "god", "summoned", "serpents", "of", "infinite", "dominion"],
+        embeddings: [
+            [0.0, 0.0, 0.1],
+            [0.0, 0.3, 0.4],    // ancient (neutral, slightly divine, medium)
+            [-0.6, 1.0, 0.95],  // god (male, divine, max power)
+            [-0.2, 0.5, 0.7],   // summoned (slightly male, divine-ish, high)
+            [-0.3, -0.8, 0.5],  // serpents (slightly male, animal, medium)
+            [0.0, 0.0, 0.1],
+            [0.0, 0.5, 0.95],   // infinite (neutral, divine, max power)
+            [-0.3, 0.3, 0.9],   // dominion (slightly male, slightly divine, very high power)
+        ]
+    }
+];
+
+// Weight matrices (3x3) - initialized to meaningful projections
+let W_Q = [[0.8, 0.1, 0.1], [0.1, 0.9, 0.0], [0.0, 0.1, 0.8]];
+let W_K = [[0.7, 0.2, 0.1], [0.1, 0.8, 0.1], [0.1, 0.1, 0.9]];
+let W_V = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
+
+let currentSentenceIdx = 0;
+let attentionWeights = [];
+let ropeEmbeddings = [];
+
+// ============================================================
+// MATH UTILITIES
+// ============================================================
+
+function matMul(A, B) {
+    // A: mxn, B: nxp -> result: mxp
+    const m = A.length, n = A[0].length, p = B[0].length;
+    const result = Array.from({length: m}, () => Array(p).fill(0));
+    for (let i = 0; i < m; i++)
+        for (let j = 0; j < p; j++)
+            for (let k = 0; k < n; k++)
+                result[i][j] += A[i][k] * B[k][j];
+    return result;
+}
+
+function matVecMul(M, v) {
+    return M.map(row => row.reduce((sum, val, i) => sum + val * v[i], 0));
+}
+
+function dot(a, b) {
+    return a.reduce((sum, val, i) => sum + val * b[i], 0);
+}
+
+function transpose(M) {
+    return M[0].map((_, i) => M.map(row => row[i]));
+}
+
+function softmax(arr, temperature = 1.0) {
+    const scaled = arr.map(x => x / temperature);
+    const max = Math.max(...scaled);
+    const exps = scaled.map(x => Math.exp(x - max));
+    const sum = exps.reduce((a, b) => a + b, 0);
+    return exps.map(x => x / sum);
+}
+
+// RoPE rotation matrix for position m
+function ropeRotationMatrix(m, base = 10000, d = 3) {
+    const theta = Math.pow(base, -2.0 / d); // θ₁ for first pair of dimensions
+    const cos_val = Math.cos(m * theta);
+    const sin_val = Math.sin(m * theta);
+    // For 3D: rotate first 2 dims, leave 3rd unchanged
+    return [
+        [cos_val, -sin_val, 0],
+        [sin_val,  cos_val, 0],
+        [0,        0,       1]
+    ];
+}
+
+function applyRoPE(vec, position, base = 10000) {
+    const R = ropeRotationMatrix(position, base);
+    return matVecMul(R, vec);
+}
+
+// ============================================================
+// ATTENTION COMPUTATION
+// ============================================================
+
+function computeAttention() {
+    const sentence = sentences[currentSentenceIdx];
+    const embeddings = sentence.embeddings;
+    const n = embeddings.length;
+    const d_k = 3;
+    const temperature = parseFloat(document.getElementById('temperature').value);
+    const ropeBase = parseFloat(document.getElementById('rope-base').value);
+    const ropeEnabled = document.getElementById('rope-enabled').checked;
+
+    // Compute Q, K, V
+    const Q = embeddings.map(e => matVecMul(W_Q, e));
+    const K = embeddings.map(e => matVecMul(W_K, e));
+    const V = embeddings.map(e => matVecMul(W_V, e));
+
+    // Apply RoPE
+    const Q_rope = Q.map((q, i) => ropeEnabled ? applyRoPE(q, i, ropeBase) : q);
+    const K_rope = K.map((k, i) => ropeEnabled ? applyRoPE(k, i, ropeBase) : k);
+
+    // Store for visualization
+    ropeEmbeddings = embeddings.map((e, i) => {
+        const q = matVecMul(W_Q, e);
+        const q_rope = ropeEnabled ? applyRoPE(q, i, ropeBase) : q;
+        return q_rope;
+    });
+
+    // Compute attention scores
+    const scores = Array.from({length: n}, () => Array(n).fill(0));
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            scores[i][j] = dot(Q_rope[i], K_rope[j]) / Math.sqrt(d_k);
+        }
+    }
+
+    // Apply softmax row-wise
+    attentionWeights = scores.map(row => softmax(row, temperature));
+
+    // Compute output
+    const output = Array.from({length: n}, () => [0, 0, 0]);
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            for (let d = 0; d < 3; d++) {
+                output[i][d] += attentionWeights[i][j] * V[j][d];
+            }
+        }
+    }
+
+    return { Q: Q_rope, K: K_rope, V, output, scores };
+}
+
+// ============================================================
+// SIMPLICIAL COMPLEX COMPUTATION
+// ============================================================
+
+function computeSimplicialComplex() {
+    const epsilon = parseFloat(document.getElementById('epsilon').value);
+    const n = attentionWeights.length;
+    
+    const vertices = []; // 0-simplices
+    const edges = [];    // 1-simplices
+    const triangles = []; // 2-simplices
+
+    // 0-simplices: all tokens
+    for (let i = 0; i < n; i++) vertices.push([i]);
+
+    // 1-simplices: edges where mutual attention > epsilon
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            const mutual = Math.min(attentionWeights[i][j], attentionWeights[j][i]);
+            if (mutual > epsilon) {
+                edges.push([i, j, mutual]);
+            }
+        }
+    }
+
+    // 2-simplices: triangles where all three pairs have edges
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            for (let k = j + 1; k < n; k++) {
+                const ij = Math.min(attentionWeights[i][j], attentionWeights[j][i]);
+                const jk = Math.min(attentionWeights[j][k], attentionWeights[k][j]);
+                const ik = Math.min(attentionWeights[i][k], attentionWeights[k][i]);
+                if (ij > epsilon && jk > epsilon && ik > epsilon) {
+                    triangles.push([i, j, k, Math.min(ij, jk, ik)]);
+                }
+            }
+        }
+    }
+
+    return { vertices, edges, triangles };
+}
+
+// ============================================================
+// VISUALIZATION
+// ============================================================
+
+function plotAll() {
+    const sentence = sentences[currentSentenceIdx];
+    const embeddings = sentence.embeddings;
+    const tokens = sentence.tokens;
+    const n = tokens.length;
+    const showSimplices = document.getElementById('show-simplices').checked;
+    const showAttention = document.getElementById('show-attention').checked;
+    const showRope = document.getElementById('show-rope').checked;
+
+    const { Q, K, V, output } = computeAttention();
+    const complex = computeSimplicialComplex();
+
+    // --- 
+    // --- 3D PLOT ---
+    const traces = [];
+
+    // Token embeddings as scatter points
+    const colors = tokens.map((t, i) => {
+        // Color by ontology (Y-axis): animal=green, human=blue, divine=gold
+        const y = embeddings[i][1];
+        if (y < -0.3) return '#00ff88'; // animal
+        if (y > 0.3) return '#ffd700';  // divine
+        return '#00d4ff'; // human
+    });
+
+    traces.push({
+        type: 'scatter3d',
+        mode: 'markers+text',
+        x: embeddings.map(e => e[0]),
+        y: embeddings.map(e => e[1]),
+        z: embeddings.map(e => e[2]),
+        text: tokens,
+        textposition: 'top center',
+        textfont: { size: 11, color: '#ffffff' },
+        marker: {
+            size: 8,
+            color: colors,
+            opacity: 0.9,
+            line: { width: 1, color: '#ffffff' }
+        },
+        name: 'Token Embeddings',
+        hovertemplate: '%{text}<br>Gender: %{x:.2f}<br>Ontology: %{y:.2f}<br>Power: %{z:.2f}<extra></extra>'
+    });
+
+    // RoPE-rotated positions (shown as smaller points with arrows)
+    if (showRope) {
+        traces.push({
+            type: 'scatter3d',
+            mode: 'markers',
+            x: ropeEmbeddings.map(e => e[0]),
+            y: ropeEmbeddings.map(e => e[1]),
+            z: ropeEmbeddings.map(e => e[2]),
+            marker: {
+                size: 5,
+                color: '#ff6b6b',
+                symbol: 'diamond',
+                opacity: 0.7
+            },
+            name: 'RoPE Q vectors',
+            hovertemplate: 'RoPE Q<br>x: %{x:.2f}<br>y: %{y:.2f}<br>z: %{z:.2f}<extra></extra>'
+        });
+
+        // Lines from original to RoPE-rotated
+        for (let i = 0; i < n; i++) {
+            traces.push({
+                type: 'scatter3d',
+                mode: 'lines',
+                x: [embeddings[i][0], ropeEmbeddings[i][0]],
+                y: [embeddings[i][1], ropeEmbeddings[i][1]],
+                z: [embeddings[i][2], ropeEmbeddings[i][2]],
+                line: { color: '#ff6b6b', width: 2, dash: 'dot' },
+                showlegend: false,
+                hoverinfo: 'skip'
+            });
+        }
+    }
+
+    // Attention edges (1-simplices)
+    if (showAttention && complex.edges.length > 0) {
+        for (const [i, j, weight] of complex.edges) {
+            traces.push({
+                type: 'scatter3d',
+                mode: 'lines',
+                x: [embeddings[i][0], embeddings[j][0]],
+                y: [embeddings[i][1], embeddings[j][1]],
+                z: [embeddings[i][2], embeddings[j][2]],
+                line: { 
+                    color: `rgba(0, 212, 255, ${Math.min(weight * 3, 1)})`, 
+                    width: Math.max(2, weight * 15) 
+                },
+                showlegend: false,
+                hovertemplate: `${tokens[i]} ↔ ${tokens[j]}<br>weight: ${weight.toFixed(3)}<extra></extra>`
+            });
+        }
+    }
+
+    // Triangles (2-simplices)
+    if (showSimplices && complex.triangles.length > 0) {
+        for (const [i, j, k, weight] of complex.triangles) {
+            traces.push({
+                type: 'mesh3d',
+                x: [embeddings[i][0], embeddings[j][0], embeddings[k][0]],
+                y: [embeddings[i][1], embeddings[j][1], embeddings[k][1]],
+                z: [embeddings[i][2], embeddings[j][2], embeddings[k][2]],
+                i: [0], j: [1], k: [2],
+                opacity: 0.25,
+                color: '#feca57',
+                name: `△ ${tokens[i]}-${tokens[j]}-${tokens[k]}`,
+                hovertemplate: `Triangle: ${tokens[i]}, ${tokens[j]}, ${tokens[k]}<br>min weight: ${weight.toFixed(3)}<extra></extra>`
+            });
+        }
+    }
+
+    const layout3d = {
+        scene: {
+            xaxis: { title: '← Male | Female →', range: [-1.5, 1.5], gridcolor: '#0f3460', color: '#a0a0a0' },
+            yaxis: { title: '← Animal | Human | Divine →', range: [-1.5, 1.5], gridcolor: '#0f3460', color: '#a0a0a0' },
+            zaxis: { title: '← Weak | Strong →', range: [-0.2, 1.5], gridcolor: '#0f3460', color: '#a0a0a0' },
+            bgcolor: '#1a1a2e',
+            camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+        },
+        paper_bgcolor: '#16213e',
+        plot_bgcolor: '#16213e',
+        font: { color: '#e0e0e0' },
+        margin: { l: 0, r: 0, t: 30, b: 0 },
+        title: { text: `"${sentence.text}"`, font: { size: 14, color: '#feca57' } },
+        showlegend: true,
+        legend: { x: 0, y: 1, bgcolor: 'rgba(15,52,96,0.8)' }
+    };
+
+    Plotly.newPlot('plot3d', traces, layout3d, { responsive: true });
+
+    // --- ATTENTION HEATMAP ---
+    const heatmapTrace = {
+        type: 'heatmap',
+        z: attentionWeights,
+        x: tokens,
+        y: tokens,
+        colorscale: [
+            [0, '#1a1a2e'],
+            [0.25, '#0f3460'],
+            [0.5, '#00d4ff'],
+            [0.75, '#feca57'],
+            [1, '#ff6b6b']
+        ],
+        hovertemplate: 'From: %{y}<br>To: %{x}<br>Weight: %{z:.4f}<extra></extra>'
+    };
+
+    const heatmapLayout = {
+        title: { text: 'Attention Weights α_ij (row i attends to column j)', font: { size: 13, color: '#feca57' } },
+        paper_bgcolor: '#16213e',
+        plot_bgcolor: '#16213e',
+        font: { color: '#e0e0e0' },
+        margin: { l: 80, r: 20, t: 40, b: 80 },
+        xaxis: { title: 'Key (attended to)', tickangle: -45 },
+        yaxis: { title: 'Query (attending)', autorange: 'reversed' }
+    };
+
+    Plotly.newPlot('attention-heatmap', [heatmapTrace], heatmapLayout, { responsive: true });
+
+    // --- SIMPLICIAL COMPLEX DETAILS ---
+    updateSimplexList(complex, tokens);
+
+    // --- SIMPLICIAL PLOT (2D projection for clarity) ---
+    plotSimplicialComplex(complex, embeddings, tokens);
+}
+
+function plotSimplicialComplex(complex, embeddings, tokens) {
+    const traces = [];
+    const n = tokens.length;
+
+    // Project to 2D using X and Z axes for this view
+    const px = embeddings.map(e => e[0]); // Gender
+    const pz = embeddings.map(e => e[2]); // Power
+
+    // Draw triangles first (behind)
+    for (const [i, j, k, weight] of complex.triangles) {
+        traces.push({
+            type: 'scatter',
+            mode: 'none',
+            x: [px[i], px[j], px[k], px[i]],
+            y: [pz[i], pz[j], pz[k], pz[i]],
+            fill: 'toself',
+            fillcolor: `rgba(254, 202, 87, ${Math.min(weight * 2, 0.4)})`,
+            line: { color: 'rgba(254, 202, 87, 0.6)' },
+            showlegend: false,
+            hoverinfo: 'skip'
+        });
+    }
+
+    // Draw edges
+    for (const [i, j, weight] of complex.edges) {
+        traces.push({
+            type: 'scatter',
+            mode: 'lines',
+            x: [px[i], px[j]],
+            y: [pz[i], pz[j]],
+            line: { color: `rgba(0, 212, 255, ${Math.min(weight * 3, 0.9)})`, width: Math.max(1, weight * 10) },
+            showlegend: false,
+            hovertemplate: `${tokens[i]} ↔ ${tokens[j]}: ${weight.toFixed(3)}<extra></extra>`
+        });
+    }
+
+    // Draw vertices
+    traces.push({
+        type: 'scatter',
+        mode: 'markers+text',
+        x: px,
+        y: pz,
+        text: tokens,
+        textposition: 'top center',
+        textfont: { size: 10, color: '#ffffff' },
+        marker: { size: 10, color: '#00d4ff', line: { width: 1, color: '#fff' } },
+        name: 'Tokens',
+        hovertemplate: '%{text}<br>Gender: %{x:.2f}<br>Power: %{y:.2f}<extra></extra>'
+    });
+
+    const layout = {
+        title: { text: 'Simplicial Complex (Gender vs Power projection)', font: { size: 12, color: '#feca57' } },
+        paper_bgcolor: '#16213e',
+        plot_bgcolor: '#1a1a2e',
+        font: { color: '#e0e0e0' },
+        xaxis: { title: '← Male | Female →', gridcolor: '#0f3460', zeroline: true, zerolinecolor: '#333' },
+        yaxis: { title: '← Weak | Strong →', gridcolor: '#0f3460', zeroline: true, zerolinecolor: '#333' },
+        margin: { l: 60, r: 20, t: 40, b: 60 },
+        showlegend: false
+    };
+
+    Plotly.newPlot('simplicial-plot', traces, layout, { responsive: true });
+}
+
+function updateSimplexList(complex, tokens) {
+    const listDiv = document.getElementById('simplex-list');
+    const interpDiv = document.getElementById('simplex-interpretation');
+
+    let html = '<h4 style="color:#00d4ff;">0-Simplices (Vertices): ' + complex.vertices.length + '</h4>';
+    html += '<p>' + tokens.map((t, i) => `<span style="color:#00d4ff;">${t}</span>(pos ${i})`).join(', ') + '</p>';
+
+    html += '<h4 style="color:#00ff88; margin-top:10px;">1-Simplices (Edges): ' + complex.edges.length + '</h4>';
+    if (complex.edges.length === 0) {
+        html += '<p style="color:#666;">No edges above threshold ε</p>';
+    } else {
+        html += '<ul style="margin-left:15px;">';
+        for (const [i, j, w] of complex.edges) {
+            html += `<li>{${tokens[i]}, ${tokens[j]}} — weight: ${w.toFixed(4)}</li>`;
+        }
+        html += '</ul>';
+    }
+
+    html += '<h4 style="color:#feca57; margin-top:10px;">2-Simplices (Triangles): ' + complex.triangles.length + '</h4>';
+    if (complex.triangles.length === 0) {
+        html += '<p style="color:#666;">No triangles above threshold ε</p>';
+    } else {
+        html += '<ul style="margin-left:15px;">';
+        for (const [i, j, k, w] of complex.triangles) {
+            html += `<li>{${tokens[i]}, ${tokens[j]}, ${tokens[k]}} — min weight: ${w.toFixed(4)}</li>`;
+        }
+        html += '</ul>';
+    }
+
+    listDiv.innerHTML = html;
+
+    // Interpretation
+    let interp = '<p><b>Topological Summary:</b></p>';
+    interp += `<p>β₀ (connected components) ≈ ${estimateBetti0(complex, tokens.length)}</p>`;
+    interp += `<p>β₁ (loops/holes) ≈ ${estimateBetti1(complex, tokens.length)}</p>`;
+    interp += '<p style="margin-top:10px;"><b>Semantic Interpretation:</b></p>';
+
+    if (complex.triangles.length > 0) {
+        interp += '<p>The 2-simplices represent <em>jointly composed meaning</em>: tokens that all mutually attend to each other form a "semantic simplex" — a local region where meaning is being actively constructed by the attention mechanism.</p>';
+        for (const [i, j, k, w] of complex.triangles) {
+            interp += `<p style="color:#feca57;">△ {${tokens[i]}, ${tokens[j]}, ${tokens[k]}}: These three tokens form a coherent semantic unit. The attention mechanism is composing their meanings together.</p>`;
+        }
+    } else {
+        interp += '<p>No 2-simplices detected. Try lowering ε or changing the temperature to see how tokens group into higher-order structures.</p>';
+    }
+
+    if (complex.edges.length > 0) {
+        interp += '<p style="margin-top:10px;">The 1-simplices (edges) show pairwise attention relationships — tokens that "see" each other significantly.</p>';
+    }
+
+    interpDiv.innerHTML = interp;
+}
+
+// Rough Betti number estimates
+function estimateBetti0(complex, n) {
+    // Connected components via union-find
+    const parent = Array.from({length: n}, (_, i) => i);
+    function find(x) { return parent[x] === x ? x : (parent[x] = find(parent[x])); }
+    function union(a, b) { parent[find(a)] = find(b); }
+    for (const [i, j] of complex.edges) union(i, j);
+    const roots = new Set();
+    for (let i = 0; i < n; i++) roots.add(find(i));
+    return roots.size;
+}
+
+function estimateBetti1(complex, n) {
+    // Euler characteristic: χ = V - E + F, β₁ = E - V + β₀ - F (for simplicial complex)
+    const V = complex.vertices.length;
+    const E = complex.edges.length;
+    const F = complex.triangles.length;
+    const b0 = estimateBetti0(complex, n);
+    return Math.max(0, E - V + b0 - F);
+}
+
+// ============================================================
+// UI INTERACTIONS
+// ============================================================
+
+function populateEmbeddingTable() {
+    const sentence = sentences[currentSentenceIdx];
+    const tbody = document.getElementById('embedding-tbody');
+    let html = '';
+    for (let i = 0; i < sentence.tokens.length; i++) {
+        const e = sentence.embeddings[i];
+        html += `<tr>
+            <td style="color:#00d4ff; font-weight:bold;">${sentence.tokens[i]}</td>
+            <td><input type="number" step="0.1" min="-1.5" max="1.5" value="${e[0].toFixed(2)}" data-i="${i}" data-d="0" onchange="updateEmbedding(this)"></td>
+            <td><input type="number" step="0.1" min="-1.5" max="1.5" value="${e[1].toFixed(2)}" data-i="${i}" data-d="1" onchange="updateEmbedding(this)"></td>
+            <td><input type="number" step="0.1" min="-0.2" max="1.5" value="${e[2].toFixed(2)}" data-i="${i}" data-d="2" onchange="updateEmbedding(this)"></td>
+            <td style="color:#a0a0a0;">${i}</td>
+        </tr>`;
+    }
+    tbody.innerHTML = html;
+}
+
+function updateEmbedding(input) {
+    const i = parseInt(input.dataset.i);
+    const d = parseInt(input.dataset.d);
+    sentences[currentSentenceIdx].embeddings[i][d] = parseFloat(input.value);
+}
+
+function showMatrix() {
+    const which = document.getElementById('matrix-select').value;
+    let M;
+    if (which === 'wq') M = W_Q;
+    else if (which === 'wk') M = W_K;
+    else M = W_V;
+
+    const tbody = document.getElementById('matrix-tbody');
+    let html = '';
+    for (let i = 0; i < 3; i++) {
+        html += '<tr>';
+        for (let j = 0; j < 3; j++) {
+            html += `<td><input type="number" step="0.1" value="${M[i][j].toFixed(2)}" data-matrix="${which}" data-i="${i}" data-j="${j}" onchange="updateMatrix(this)"></td>`;
+        }
+        html += '</tr>';
+    }
+    tbody.innerHTML = html;
+}
+
+function updateMatrix(input) {
+    const which = input.dataset.matrix;
+    const i = parseInt(input.dataset.i);
+    const j = parseInt(input.dataset.j);
+    const val = parseFloat(input.value);
+    if (which === 'wq') W_Q[i][j] = val;
+    else if (which === 'wk') W_K[i][j] = val;
+    else W_V[i][j] = val;
+}
+
+function updateRoPEViz() {
+    const ropeBase = parseFloat(document.getElementById('rope-base').value);
+    const div = document.getElementById('rope-viz');
+    const sentence = sentences[currentSentenceIdx];
+    let html = '';
+    for (let pos = 0; pos < Math.min(sentence.tokens.length, 8); pos++) {
+        const theta = Math.pow(ropeBase, -2.0 / 3);
+        const angle = pos * theta;
+        html += `<div class="rope-block">
+            <div style="color:#ff6b6b;">pos=${pos}</div>
+            <div>θ=${theta.toFixed(4)}</div>
+            <div>mθ=${angle.toFixed(4)}</div>
+            <div>cos=${Math.cos(angle).toFixed(3)}</div>
+            <div>sin=${Math.sin(angle).toFixed(3)}</div>
+        </div>`;
+    }
+    div.innerHTML = html;
+}
+
+function recompute() {
+    computeAttention();
+    plotAll();
+    updateRoPEViz();
+}
+
+// Event listeners
+document.getElementById('temperature').addEventListener('input', function() {
+    document.getElementById('temp-val').textContent = parseFloat(this.value).toFixed(1);
+});
+
+document.getElementById('epsilon').addEventListener('input', function() {
+    document.getElementById('eps-val').textContent = parseFloat(this.value).toFixed(2);
+});
+
+document.querySelectorAll('#sentence-list li').forEach(li => {
+    li.addEventListener('click', function() {
+        document.querySelectorAll('#sentence-list li').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        currentSentenceIdx = parseInt(this.dataset.idx);
+        populateEmbeddingTable();
+        recompute();
+    });
+});
+
+// Initialize
+populateEmbeddingTable();
+showMatrix();
+recompute();
+</script>
+</body>
+</html>

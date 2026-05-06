@@ -1,0 +1,3229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shor's Algorithm & Post-Quantum Cryptography - Interactive Visual Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2e;
+            color: #e0e0ff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin: 40px 0 20px;
+            color: #00d4ff;
+            border-bottom: 2px solid #7b2ff7;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+            color: #b388ff;
+        }
+
+        .section {
+            background: #12123a;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid #2a2a6a;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .visual-box {
+            background: #0d0d2b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #3a3a7a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            margin: 10px auto;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #7b2ff7, #00d4ff);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(123, 47, 247, 0.4);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #2a2a6a, #4a4a9a);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 6px;
+            background: #3a3a7a;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #00d4ff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="number"] {
+            background: #1a1a4a;
+            border: 1px solid #4a4a9a;
+            color: #e0e0ff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            width: 80px;
+            font-size: 14px;
+        }
+
+        select {
+            background: #1a1a4a;
+            border: 1px solid #4a4a9a;
+            color: #e0e0ff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .info-text {
+            color: #a0a0d0;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .highlight {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .safe {
+            color: #69db7c;
+            font-weight: bold;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #3a3a7a;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background: #00d4ff;
+            box-shadow: 0 0 10px #00d4ff;
+        }
+
+        .step-dot.completed {
+            background: #69db7c;
+        }
+
+        .grid-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .grid-card {
+            background: #1a1a4a;
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #3a3a7a;
+            text-align: center;
+        }
+
+        .grid-card h4 {
+            color: #b388ff;
+            margin-bottom: 8px;
+        }
+
+        .comparison-bar {
+            height: 30px;
+            border-radius: 15px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-size: 12px;
+            font-weight: bold;
+            transition: width 1s ease;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1a1a4a;
+            border: 1px solid #3a3a7a;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #7b2ff7;
+            border-color: #7b2ff7;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .lattice-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #7b2ff7;
+            border-radius: 50%;
+            transition: all 0.5s;
+        }
+
+        .qubit-visual {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 3px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #2a2a6a;
+            color: #e0e0ff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 100;
+            white-space: nowrap;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes wave {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .flow-box {
+            background: #1a1a4a;
+            border: 2px solid #4a4a9a;
+            border-radius: 10px;
+            padding: 12px 18px;
+            text-align: center;
+            font-size: 13px;
+            min-width: 120px;
+            transition: all 0.3s;
+        }
+
+        .flow-box.active {
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .flow-arrow {
+            font-size: 20px;
+            color: #7b2ff7;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #1a1a4a;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        #nav {
+            position: sticky;
+            top: 0;
+            background: #0a0a2e;
+            padding: 10px 0;
+            z-index: 1000;
+            border-bottom: 1px solid #2a2a6a;
+        }
+
+        #nav ul {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        #nav a {
+            color: #a0a0d0;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        #nav a:hover {
+            color: #00d4ff;
+        }
+
+        .matrix-display {
+            font-family: 'Courier New', monospace;
+            background: #0a0a2e;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+
+        .number-line {
+            position: relative;
+            height: 60px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="nav">
+        <ul>
+            <li><a href="#rsa-section">RSA Basics</a></li>
+            <li><a href="#shor-section">Shor's Algorithm</a></li>
+            <li><a href="#threat-section">Quantum Threat</a></li>
+            <li><a href="#pqc-section">Post-Quantum Crypto</a></li>
+            <li><a href="#lattice-section">Lattice-Based</a></li>
+            <li><a href="#comparison-section">Comparison</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <h1>🔐 Shor's Algorithm & Post-Quantum Cryptography</h1>
+        <p class="info-text" style="text-align:center; font-size:16px;">
+            An interactive visual journey from how RSA works, to how quantum computers break it, to how we defend against it.
+        </p>
+
+        <!-- SECTION 1: RSA BASICS -->
+        <div class="section" id="rsa-section">
+            <h2>1. How RSA Encryption Works (The Lock Quantum Computers Break)</h2>
+            <p class="info-text">RSA security relies on one simple fact: <span class="highlight">multiplying two large primes is easy, but factoring their product is astronomically hard</span> for classical computers.</p>
+
+            <div class="visual-box">
+                <h3>🔢 Interactive: Multiply vs Factor</h3>
+                <p class="info-text">Try it yourself — multiplying is instant, but factoring gets hard FAST.</p>
+                <div class="controls">
+                    <label>Prime p: <input type="number" id="prime-p" value="17" min="2" max="997"></label>
+                    <label>Prime q: <input type="number" id="prime-q" value="23" min="2" max="997"></label>
+                    <button onclick="multiplyPrimes()">Multiply (Easy!) →</button>
+                    <span id="multiply-result" style="font-size:18px; color:#69db7c;"></span>
+                </div>
+                <div class="controls">
+                    <label>Number to factor: <input type="number" id="factor-input" value="391" min="4" max="999999"></label>
+                    <button onclick="factorNumber()">Factor (Hard!) →</button>
+                    <span id="factor-result" style="font-size:18px; color:#ff6b6b;"></span>
+                </div>
+                <div id="factor-steps" class="info-text" style="margin-top:10px;"></div>
+                <canvas id="complexity-canvas" width="700" height="200"></canvas>
+                <p class="info-text" style="text-align:center;">↑ This graph shows how factoring time explodes as numbers get bigger</p>
+            </div>
+
+            <div class="visual-box">
+                <h3>🔑 RSA Key Generation - Visual Flow</h3>
+                <div class="controls">
+                    <button onclick="generateRSAKeys()">Generate RSA Keys</button>
+                    <button class="secondary" onclick="resetRSA()">Reset</button>
+                </div>
+                <div class="flow-diagram" id="rsa-flow">
+                    <div class="flow-box" id="rsa-step1">Pick prime p<br><span id="rsa-p">?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" id="rsa-step2">Pick prime q<br><span id="rsa-q">?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" id="rsa-step3">N = p × q<br><span id="rsa-n">?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" id="rsa-step4">φ(N) = (p-1)(q-1)<br><span id="rsa-phi">?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" id="rsa-step5">Public key (e, N)<br><span id="rsa-pub">?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box" id="rsa-step6">Private key (d, N)<br><span id="rsa-priv">?</span></div>
+                </div>
+                <div id="rsa-explanation" class="info-text"></div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: SHOR'S ALGORITHM -->
+        <div class="section" id="shor-section">
+            <h2>2. Shor's Algorithm — How Quantum Computers Break RSA</h2>
+            <p class="info-text">Shor's algorithm converts the factoring problem into a <span class="highlight">period-finding problem</span>, which quantum computers solve exponentially faster using the Quantum Fourier Transform.</p>
+
+            <div class="visual-box">
+                <h3>🎯 The Core Insight: Factoring → Period Finding</h3>
+                <p class="info-text">For N = p × q, pick random a < N. Compute a^x mod N for x = 0, 1, 2, 3... The result is <span class="highlight">periodic</span>! Finding that period r lets us factor N.</p>
+                <div class="controls">
+                    <label>N (to factor): <select id="shor-n">
+                        <option value="15">15 (3×5)</option>
+                        <option value="21">21 (3×7)</option>
+                        <option value="35">35 (5×7)</option>
+                        <option value="33">33 (3×11)</option>
+                        <option value="55">55 (5×11)</option>
+                    </select></label>
+                    <label>a (random base): <input type="number" id="shor-a" value="7" min="2" max="50"></label>
+                    <button onclick="runPeriodFinding()">Find Period of a^x mod N</button>
+                </div>
+                <canvas id="period-canvas" width="700" height="250"></canvas>
+                <div id="period-result" class="info-text" style="text-align:center; font-size:16px;"></div>
+            </div>
+
+            <div class="visual-box">
+                <h3>⚛️ Full Shor's Algorithm - Step by Step</h3>
+                <div class="step-indicator" id="shor-steps">
+                    <div class="step-dot" id="shor-dot-0"></div>
+                    <div class="step-dot" id="shor-dot-1"></div>
+                    <div class="step-dot" id="shor-dot-2"></div>
+                    <div class="step-dot" id="shor-dot-3"></div>
+                    <div class="step-dot" id="shor-dot-4"></div>
+                    <div class="step-dot" id="shor-dot-5"></div>
+                    <div class="step-dot" id="shor-dot-6"></div>
+                </div>
+                <div class="controls">
+                    <label>Factor N = <input type="number" id="shor-full-n" value="15" min="4" max="100"></label>
+                    <button onclick="runShorStep()">Next Step →</button>
+                    <button class="secondary" onclick="resetShor()">Reset</button>
+                    <button class="secondary" onclick="autoRunShor()">Auto-Run ▶</button>
+                </div>
+                <canvas id="shor-canvas" width="700" height="300"></canvas>
+                <div id="shor-explanation" class="info-text" style="font-size:15px; min-height:80px;"></div>
+            </div>
+
+            <div class="visual-box">
+                <h3>🌊 Quantum Fourier Transform Visualization</h3>
+                <p class="info-text">The QFT converts quantum states into frequency domain, revealing the hidden period. Watch how superposition states interfere to amplify the correct period.</p>
+                <div class="controls">
+                    <label>Period to find: <input type="range" id="qft-period" min="2" max="8" value="4"></label>
+                    <span id="qft-period-val">4</span>
+                    <button onclick="animateQFT()">Animate QFT</button>
+                </div>
+                <canvas id="qft-canvas" width="700" height="300"></canvas>
+                <div id="qft-explanation" class="info-text" style="text-align:center;"></div>
+            </div>
+
+            <div class="visual-box">
+                <h3>🔄 Quantum Circuit Diagram</h3>
+                <p class="info-text">This shows the quantum circuit used in Shor's algorithm with two registers.</p>
+                <canvas id="circuit-canvas" width="700" height="250"></canvas>
+                <div class="controls">
+                    <button onclick="animateCircuit()">Animate Circuit</button>
+                    <button class="secondary" onclick="drawCircuit()">Reset Circuit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: THE THREAT -->
+        <div class="section" id="threat-section">
+            <h2>3. The Quantum Threat — Why This Matters</h2>
+
+            <div class="visual-box">
+                <h3>⏱️ Classical vs Quantum Factoring Time</h3>
+                <p class="info-text">Drag the slider to see how factoring time scales with key size.</p>
+                <div class="controls">
+                    <label>RSA Key Size (bits): <input type="range" id="keysize-slider" min="8" max="4096" value="512" step="8"></label>
+                    <span id="keysize-val">512</span> bits
+                </div>
+                <div class="grid-display">
+                    <div class="grid-card">
+                        <h4>🖥️ Classical Computer</h4>
+                        <div id="classical-time" style="font-size:24px; color:#ff6b6b;">—</div>
+                        <div class="progress-bar"><div id="classical-bar" class="progress-fill" style="background: linear-gradient(90deg, #ff6b6b, #ff0000); width:0%"></div></div>
+                    </div>
+                    <div class="grid-card">
+                        <h4>⚛️ Quantum Computer (Shor's)</h4>
+                        <div id="quantum-time" style="font-size:24px; color:#69db7c;">—</div>
+                        <div class="progress-bar"><div id="quantum-bar" class="progress-fill" style="background: linear-gradient(90deg, #69db7c, #00ff00); width:0%"></div></div>
+                    </div>
+                </div>
+                <canvas id="scaling-canvas" width="700" height="200"></canvas>
+            </div>
+
+            <div class="visual-box">
+                <h3>🎯 What's at Risk?</h3>
+                <div class="grid-display">
+                    <div class="grid-card" style="border-color:#ff6b6b;">
+                        <h4 class="warning">❌ Broken by Quantum</h4>
+                        <p>RSA (all key sizes)</p>
+                        <p>ECC / ECDSA</p>
+                        <p>Diffie-Hellman</p>
+                        <p>DSA</p>
+                    </div>
+                    <div class="grid-card" style="border-color:#ffd93d;">
+                        <h4 style="color:#ffd93d;">⚠️ Weakened</h4>
+                        <p>AES-128 → 64-bit security</p>
+                        <p>AES-256 → 128-bit security</p>
+                        <p>SHA-256 → 128-bit security</p>
+                        <p>(Grover's algorithm)</p>
+                    </div>
+                    <div class="grid-card" style="border-color:#69db7c;">
+                        <h4 class="safe">✅ Quantum-Safe</h4>
+                        <p>Lattice-based crypto</p>
+                        <p>Hash-based signatures</p>
+                        <p>Code-based crypto</p>
+                        <p>Multivariate crypto</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: POST-QUANTUM CRYPTOGRAPHY -->
+        <div class="section" id="pqc-section">
+            <h2>4. Post-Quantum Cryptography — The Defense</h2>
+            <p class="info-text">Post-quantum cryptography uses mathematical problems that <span class="highlight">even quantum computers can't solve efficiently</span>. These are based on entirely different hard problems than factoring.</p>
+
+            <div class="tab-container">
+                <div class="tab active" onclick="switchPQCTab('lattice')">Lattice-Based</div>
+                <div class="tab" onclick="switchPQCTab('hash')">Hash-Based</div>
+                <div class="tab" onclick="switchPQCTab('code')">Code-Based</div>
+                <div class="tab" onclick="switchPQCTab('multivariate')">Multivariate</div>
+            </div>
+
+            <div class="tab-content active" id="tab-lattice">
+                <div class="visual-box">
+                    <h3>📐 Lattice-Based Cryptography (CRYSTALS-Kyber / ML-KEM)</h3>
+                    <p class="info-text">The hardest problem: Given a "noisy" point near a lattice, find the closest lattice point. This is the <span class="highlight">Learning With Errors (LWE)</span> problem.</p>
+                    <canvas id="lattice-canvas" width="700" height="400"></canvas>
+                    <div class="controls">
+                        <label>Lattice dimension: <input type="range" id="lattice-dim" min="2" max="8" value="3"></label>
+                        <span id="lattice-dim-val">3</span>
+                        <label>Error amount: <input type="range" id="lattice-error" min="1" max="20" value="8"></label>
+                        <span id="lattice-error-val">8</span>
+                        <button onclick="drawLattice()">Regenerate Lattice</button>
+                        <button onclick="animateLWE()">Show LWE Problem</button>
+                    </div>
+                    <div id="lattice-explanation" class="info-text" style="text-align:center;"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-hash">
+                <div class="visual-box">
+                    <h3>🌳 Hash-Based Signatures (SPHINCS+)</h3>
+                    <p class="info-text">Security based purely on hash function properties. Uses Merkle trees — a tree of hashes where the root authenticates all leaves.</p>
+                    <canvas id="hash-tree-canvas" width="700" height="350"></canvas>
+                    <div class="controls">
+                        <label>Tree height: <input type="range" id="tree-height" min="2" max="5" value="3"></label>
+                        <span id="tree-height-val">3</span>
+                        <button onclick="drawMerkleTree()">Draw Tree</button>
+                        <button onclick="animateSignature()">Sign Message</button>
+                        <button onclick="animateVerify()">Verify Signature</button>
+                    </div>
+                    <div id="hash-explanation" class="info-text" style="text-align:center;"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-code">
+                <div class="visual-box">
+                    <h3>📡 Code-Based Cryptography (Classic McEliece)</h3>
+                    <p class="info-text">Based on error-correcting codes. The hard problem: decoding a random linear code (finding the original message from a noisy codeword).</p>
+                    <canvas id="code-canvas" width="700" height="300"></canvas>
+                    <div class="controls">
+                        <label>Code length: <input type="range" id="code-length" min="4" max="12" value="7"></label>
+                        <span id="code-length-val">7</span>
+                        <label>Errors: <input type="range" id="code-errors" min="1" max="4" value="2"></label>
+                        <span id="code-errors-val">2</span>
+                        <button onclick="drawCodeBased()">Generate Code</button>
+                        <button onclick="animateEncodeCode()">Encrypt (Add Errors)</button>
+                        <button onclick="animateDecodeCode()">Decrypt (Correct Errors)</button>
+                    </div>
+                    <div id="code-explanation" class="info-text" style="text-align:center;"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-multivariate">
+                <div class="visual-box">
+                    <h3>🧮 Multivariate Polynomial Cryptography</h3>
+                    <p class="info-text">Based on solving systems of multivariate quadratic equations — proven NP-hard in general.</p>
+                    <canvas id="multi-canvas" width="700" height="300"></canvas>
+                    <div class="controls">
+                        <label>Variables: <input type="range" id="multi-vars" min="2" max="5" value="3"></label>
+                        <span id="multi-vars-val">3</span>
+                        <button onclick="drawMultivariate()">Generate System</button>
+                        <button onclick="animateMultiSolve()">Try to Solve</button>
+                    </div>
+                    <div id="multi-explanation" class="info-text" style="text-align:center;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: LATTICE DEEP DIVE -->
+        <div class="section" id="lattice-section">
+            <h2>5. Deep Dive: How Lattice Encryption Actually Works</h2>
+
+            <div class="visual-box">
+                <h3>🔐 ML-KEM (Kyber) Key Exchange — Visual Walkthrough</h3>
+                <div class="step-indicator" id="kyber-steps">
+                    <div class="step-dot" id="kyber-dot-0"></div>
+                    <div class="step-dot" id="kyber-dot-1"></div>
+                    <div class="step-dot" id="kyber-dot-2"></div>
+                    <div class="step-dot" id="kyber-dot-3"></div>
+                    <div class="step-dot" id="kyber-dot-4"></div>
+                </div>
+                <div class="controls">
+                    <button onclick="runKyberStep()">Next Step →</button>
+                    <button class="secondary" onclick="resetKyber()">Reset</button>
+                </div>
+                <canvas id="kyber-canvas" width="700" height="300"></canvas>
+                <div id="kyber-explanation" class="info-text" style="font-size:15px; min-height:60px;"></div>
+            </div>
+
+            <div class="visual-box">
+                <h3>🎯 Why Lattice Problems Are Hard (Even for Quantum Computers)</h3>
+                <p class="info-text">Try to find the shortest vector in this lattice. In 2D it's easy to see — but in 500+ dimensions, even quantum computers struggle!</p>
+                <canvas id="svp-canvas" width="700" height="350"></canvas>
+                <div class="controls">
+                    <label>Dimensions (simulated): <input type="range" id="svp-dim" min="2" max="20" value="2"></label>
+                    <span id="svp-dim-val">2</span>
+                    <button onclick="drawSVP()">Generate Lattice</button>
+                    <button onclick="trySolveSVP()">Try to Find Shortest Vector</button>
+                </div>
+                <div id="svp-explanation" class="info-text" style="text-align:center;"></div>
+                <div class="grid-display" style="margin-top:15px;">
+                    <div class="grid-card">
+                        <h4>Classical Best Algorithm</h4>
+                        <div id="svp-classical">2<sup>0.298n</sup> time</div>
+                    </div>
+                    <div class="grid-card">
+                        <h4>Quantum Best Algorithm</h4>
+                        <div id="svp-quantum">2<sup>0.268n</sup> time</div>
+                    </div>
+                    <div class="grid-card">
+                        <h4>Speedup</h4>
+                        <div id="svp-speedup">Only ~11% faster!</div>
+                    </div>
+                </div>
+                <p class="info-text" style="text-align:center; margin-top:10px;">Unlike factoring (exponential → polynomial speedup), quantum computers give only a <span class="highlight">small constant speedup</span> for lattice problems. That's why they're quantum-safe!</p>
+            </div>
+        </div>
+
+        <!-- SECTION 6: COMPARISON -->
+        <div class="section" id="comparison-section">
+            <h2>6. Comparing Post-Quantum Algorithms</h2>
+
+            <div class="visual-box">
+                <h3>📊 Key Sizes & Performance Comparison</h3>
+                <p class="info-text">See how PQC algorithms compare to classical ones in key size, signature size, and speed.</p>
+                <canvas id="comparison-canvas" width="700" height="400"></canvas>
+                <div class="controls">
+                    <select id="compare-metric" onchange="drawComparison()">
+                        <option value="keysize">Public Key Size</option>
+                        <option value="sigsize">Signature / Ciphertext Size</option>
+                        <option value="speed">Operations per Second</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="visual-box">
+                <h3>🛡️ NIST Standardized Algorithms (2024)</h3>
+                <div class="grid-display">
+                    <div class="grid-card" style="border-color:#00d4ff;">
+                        <h4 style="color:#00d4ff;">ML-KEM (Kyber)</h4>
+                        <p><strong>Type:</strong> Key Encapsulation</p>
+                        <p><strong>Based on:</strong> Module-LWE</p>
+                        <p><strong>Key Size:</strong> ~1.5 KB</p>
+                        <p><strong>Speed:</strong> Very Fast</p>
+                        <p style="color:#69db7c;">✅ FIPS 203</p>
+                    </div>
+                    <div class="grid-card" style="border-color:#7b2ff7;">
+                        <h4 style="color:#7b2ff7;">ML-DSA (Dilithium)</h4>
+                        <p><strong>Type:</strong> Digital Signature</p>
+                        <p><strong>Based on:</strong> Module-LWE/SIS</p>
+                        <p><strong>Key Size:</strong> ~2.5 KB</p>
+                        <p><strong>Speed:</strong> Fast</p>
+                        <p style="color:#69db7c;">✅ FIPS 204</p>
+                    </div>
+                    <div class="grid-card" style="border-color:#ffd93d;">
+                        <h4 style="color:#ffd93d;">SLH-DSA (SPHINCS+)</h4>
+                        <p><strong>Type:</strong> Digital Signature</p>
+                        <p><strong>Based on:</strong> Hash functions</p>
+                        <p><strong>Key Size:</strong> ~64 bytes</p>
+                        <p><strong>Sig Size:</strong> ~17-50 KB</p>
+                        <p style="color:#69db7c;">✅ FIPS 205</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-box">
+                <h3>⏰ Timeline: Harvest Now, Decrypt Later</h3>
+                <p class="info-text">Adversaries can <span class="warning">store encrypted data today</span> and decrypt it once quantum computers arrive. This is why we need PQC <span class="highlight">NOW</span>.</p>
+                <canvas id="timeline-canvas" width="700" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎓 Key Takeaways</h2>
+            <div class="grid-display">
+                <div class="grid-card">
+                    <h4>1. RSA is Doomed</h4>
+                    <p class="info-text">Shor's algorithm turns exponential factoring into polynomial time on quantum computers.</p>
+                </div>
+                <div class="grid-card">
+                    <h4>2. Period Finding is Key</h4>
+                    <p class="info-text">Shor's converts factoring → period finding, solved by Quantum Fourier Transform.</p>
+                </div>
+                <div class="grid-card">
+                    <h4>3. Lattices Save Us</h4>
+                    <p class="info-text">Lattice problems (SVP, LWE) resist quantum attacks — only small speedups possible.</p>
+                </div>
+                <div class="grid-card">
+                    <h4>4. Migrate Now</h4>
+                    <p class="info-text">"Harvest now, decrypt later" means sensitive data needs PQC protection today.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== UTILITY FUNCTIONS ====================
+        function gcd(a, b) {
+            while (b) { [a, b] = [b, a % b]; }
+            return a;
+        }
+
+        function modPow(base, exp, mod) {
+            let result = 1n;
+            base = BigInt(base) % BigInt(mod);
+            exp = BigInt(exp);
+            mod = BigInt(mod);
+            while (exp > 0n) {
+                if (exp % 2n === 1n) result = (result * base) % mod;
+                exp = exp / 2n;
+                base = (base * base) % mod;
+            }
+            return Number(result);
+        }
+
+        function isPrime(n) {
+            if (n < 2) return false;
+            if (n < 4) return true;
+            if (n % 2 === 0 || n % 3 === 0) return false;
+            for (let i = 5; i * i <= n; i += 6) {
+                if (n % i === 0 || n % (i + 2) === 0) return false;
+            }
+            return true;
+        }
+
+        function modInverse(a, m) {
+            let [old_r, r] = [a, m];
+            let [old_s, s] = [1, 0];
+            while (r !== 0) {
+                let q = Math.floor(old_r / r);
+                [old_r, r] = [r, old_r - q * r];
+                [old_s, s] = [s, old_s - q * s];
+            }
+            return ((old_s % m) + m) % m;
+        }
+
+        function getRandomPrime(min, max) {
+            let p;
+            do { p = Math.floor(Math.random() * (max - min)) + min; } while (!isPrime(p));
+            return p;
+        }
+
+        // ==================== RSA SECTION ====================
+        function multiplyPrimes() {
+            const p = parseInt(document.getElementById('prime-p').value);
+            const q = parseInt(document.getElementById('prime-q').value);
+            const result = p * q;
+            document.getElementById('multiply-result').innerHTML = `${p} × ${q} = <strong>${result}</strong> ✓ (instant!)`;
+            drawComplexityGraph();
+        }
+
+        function factorNumber() {
+            const n = parseInt(document.getElementById('factor-input').value);
+            const startTime = performance.now();
+            let steps = 0;
+            let factors = [];
+            let stepsLog = [];
+
+            for (let i = 2; i <= Math.sqrt(n); i++) {
+                steps++;
+                stepsLog.push(i);
+                if (n % i === 0) {
+                    factors = [i, n / i];
+                    break;
+                }
+            }
+
+            const elapsed = performance.now() - startTime;
+            if (factors.length > 0) {
+                document.getElementById('factor-result').innerHTML = `${n} = ${factors[0]} × ${factors[1]} (took ${steps} trial divisions)`;
+            } else {
+                document.getElementById('factor-result').innerHTML = `${n} is prime! (checked ${steps} divisors)`;
+            }
+            document.getElementById('factor-steps').innerHTML = `Tried: ${stepsLog.slice(0, 20).join(', ')}${stepsLog.length > 20 ? '...' : ''} — <span class="highlight">${steps} steps needed</span>`;
+            drawComplexityGraph();
+        }
+
+        function drawComplexityGraph() {
+            const canvas = document.getElementById('complexity-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Background
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Axes
+            ctx.strokeStyle = '#4a4a9a';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(60, 20);
+            ctx.lineTo(60, 170);
+            ctx.lineTo(680, 170);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('Time', 10, 20);
+            ctx.fillText('Number size (bits)', 350, 195);
+
+            // Classical factoring curve (exponential)
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = 0; x < 600; x++) {
+                const bits = (x / 600) * 100;
+                const y = Math.exp(bits * 0.05) - 1;
+                const py = 170 - Math.min(y, 150);
+                if (x === 0) ctx.moveTo(60 + x, py);
+                else ctx.lineTo(60 + x, py);
+            }
+            ctx.stroke();
+
+            // Quantum factoring curve (polynomial)
+            ctx.strokeStyle = '#69db7c';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let x = 0; x < 600; x++) {
+                const bits = (x / 600) * 100;
+                const y = Math.pow(bits, 2) * 0.005;
+                const py = 170 - Math.min(y, 150);
+                if (x === 0) ctx.moveTo(60 + x, py);
+                else ctx.lineTo(60 + x, py);
+            }
+            ctx.stroke();
+
+            // Legend
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(500, 30, 20, 3);
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillText('Classical (exponential)', 525, 35);
+
+            ctx.fillStyle = '#69db7c';
+            ctx.fillRect(500, 50, 20, 3);
+            ctx.fillStyle = '#69db7c';
+            ctx.fillText('Quantum/Shor (polynomial)', 525, 55);
+        }
+
+        function generateRSAKeys() {
+            const primes = [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47];
+            const p = primes[Math.floor(Math.random() * primes.length)];
+            let q;
+            do { q = primes[Math.floor(Math.random() * primes.length)]; } while (q === p);
+
+            const n = p * q;
+            const phi = (p - 1) * (q - 1);
+
+            // Find e coprime to phi
+            let e = 3;
+            while (gcd(e, phi) !== 1) e += 2;
+
+            const d = modInverse(e, phi);
+
+            // Animate steps
+            const steps = ['rsa-step1', 'rsa-step2', 'rsa-step3', 'rsa-step4', 'rsa-step5', 'rsa-step6'];
+            const values = [p, q, n, phi, `(${e}, ${n})`, `(${d}, ${n})`];
+            const ids = ['rsa-p', 'rsa-q', 'rsa-n', 'rsa-phi', 'rsa-pub', 'rsa-priv'];
+
+            steps.forEach((step, i) => {
+                setTimeout(() => {
+                    document.getElementById(step).classList.add('active');
+                    document.getElementById(ids[i]).textContent = values[i];
+                }, i * 500);
+            });
+
+            setTimeout(() => {
+                document.getElementById('rsa-explanation').innerHTML = `
+                    <strong>How it works:</strong> Anyone can encrypt with public key (e=${e}, N=${n}), 
+                    but only the private key holder (d=${d}) can decrypt.<br>
+                    <strong>Security:</strong> To find d, you need φ(N), which requires knowing p=${p} and q=${q}. 
+                    Finding p and q from N=${n} is the factoring problem!<br>
+                    <strong>Encrypt:</strong> ciphertext = message<sup>${e}</sup> mod ${n}<br>
+                    <strong>Decrypt:</strong> message = ciphertext<sup>${d}</sup> mod ${n}
+                `;
+            }, 3500);
+        }
+
+        function resetRSA() {
+            ['rsa-step1','rsa-step2','rsa-step3','rsa-step4','rsa-step5','rsa-step6'].forEach(id => {
+                document.getElementById(id).classList.remove('active');
+            });
+            ['rsa-p','rsa-q','rsa-n','rsa-phi','rsa-pub','rsa-priv'].forEach(id => {
+                document.getElementById(id).textContent = '?';
+            });
+            document.getElementById('rsa-explanation').innerHTML = '';
+        }
+
+        // ==================== SHOR'S ALGORITHM ====================
+        function runPeriodFinding() {
+            const N = parseInt(document.getElementById('shor-n').value);
+            const a = parseInt(document.getElementById('shor-a').value);
+
+            if (gcd(a, N) !== 1) {
+                document.getElementById('period-result').innerHTML = `<span class="safe">Lucky! gcd(${a}, ${N}) = ${gcd(a, N)} — we found a factor without quantum computing!</span>`;
+                return;
+            }
+
+            const canvas = document.getElementById('period-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Compute a^x mod N
+            let values = [];
+            let period = 0;
+            for (let x = 0; x < 40; x++) {
+                values.push(modPow(a, x, N));
+                if (x > 0 && values[x] === 1 && period === 0) {
+                    period = x;
+                }
+            }
+
+            // Draw axes
+            ctx.strokeStyle = '#4a4a9a';
+            ctx.beginPath();
+            ctx.moveTo(50, 20);
+            ctx.lineTo(50, 200);
+            ctx.lineTo(680, 200);
+            ctx.stroke();
+
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText(`${a}^x mod ${N}`, 5, 15);
+            ctx.fillText('x', 670, 215);
+
+            // Draw bars with animation
+            const barWidth = Math.min(15, 600 / values.length);
+            values.forEach((val, i) => {
+                setTimeout(() => {
+                    const x = 55 + i * barWidth;
+                    const height = (val / N) * 160;
+
+                    // Color by period
+                    if (period > 0 && i % period === 0) {
+                        ctx.fillStyle = '#ff6b6b';
+                    } else {
+                        ctx.fillStyle = `hsl(${(i * 9) % 360}, 70%, 60%)`;
+                    }
+
+                    ctx.fillRect(x, 200 - height, barWidth - 2, height);
+
+                    // Value label
+                    ctx.fillStyle = '#e0e0ff';
+                    ctx.font = '9px monospace';
+                    ctx.save();
+                    ctx.translate(x + barWidth/2, 200 - height - 5);
+                    ctx.fillText(val, -5, 0);
+                    ctx.restore();
+
+                    // X label
+                    if (i % 2 === 0) {
+                        ctx.fillStyle = '#a0a0d0';
+                        ctx.fillText(i, x, 215);
+                    }
+                }, i * 50);
+            });
+
+            // Draw period markers
+            setTimeout(() => {
+                if (period > 0) {
+                    ctx.strokeStyle = '#00d4ff';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    for (let i = 0; i < 40; i += period) {
+                        const x = 55 + i * barWidth;
+                        ctx.beginPath();
+                        ctx.moveTo(x, 20);
+                        ctx.lineTo(x, 200);
+                        ctx.stroke();
+                    }
+                    ctx.setLineDash([]);
+
+                    // Show period
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.font = 'bold 14px Segoe UI';
+                    ctx.fillText(`Period r = ${period}`, 55 + period * barWidth / 2 - 30, 235);
+
+                    // Factor
+                    const factor1 = gcd(Math.pow(a, period/2) - 1, N);
+                    const factor2 = gcd(Math.pow(a, period/2) + 1, N);
+
+                    let resultHTML = `<span class="highlight">Period r = ${period}</span> | `;
+                    if (period % 2 === 0) {
+                        resultHTML += `gcd(${a}^(${period}/2) - 1, ${N}) = gcd(${Math.pow(a, period/2) - 1}, ${N}) = <span class="safe">${factor1}</span> | `;
+                        resultHTML += `gcd(${a}^(${period}/2) + 1, ${N}) = gcd(${Math.pow(a, period/2) + 1}, ${N}) = <span class="safe">${factor2}</span>`;
+                        if (factor1 > 1 && factor1 < N) {
+                            resultHTML += `<br>🎉 <span class="safe">Factors of ${N}: ${factor1} × ${N/factor1} = ${N}</span>`;
+                        }
+                    } else {
+                        resultHTML += `<span class="warning">Period is odd — need to try different 'a'</span>`;
+                    }
+                    document.getElementById('period-result').innerHTML = resultHTML;
+                } else {
+                    document.getElementById('period-result').innerHTML = `<span class="warning">No period found in range. Try a different 'a' value.</span>`;
+                }
+            }, 40 * 50 + 200);
+        }
+
+        // Shor's full algorithm step-by-step
+        let shorState = { step: -1, N: 15, a: 0, period: 0 };
+
+        function resetShor() {
+            shorState = { step: -1, N: parseInt(document.getElementById('shor-full-n').value), a: 0, period: 0 };
+            for (let i = 0; i < 7; i++) {
+                document.getElementById(`shor-dot-${i}`).className = 'step-dot';
+            }
+            const ctx = document.getElementById('shor-canvas').getContext('2d');
+            ctx.clearRect(0, 0, 700, 300);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, 700, 300);
+            document.getElementById('shor-explanation').innerHTML = 'Click "Next Step" to begin Shor\'s Algorithm.';
+        }
+
+        function runShorStep() {
+            shorState.step++;
+            const step = shorState.step;
+            const N = shorState.N;
+            const canvas = document.getElementById('shor-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Update dots
+            for (let i = 0; i < 7; i++) {
+                const dot = document.getElementById(`shor-dot-${i}`);
+                if (i < step) dot.className = 'step-dot completed';
+                else if (i === step) dot.className = 'step-dot active';
+                else dot.className = 'step-dot';
+            }
+
+            ctx.clearRect(0, 0, 700, 300);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, 700, 300);
+
+            switch(step) {
+                case 0: // Choose N
+                    document.getElementById('shor-explanation').innerHTML = `<strong>Step 1:</strong> We want to factor <span class="highlight">N = ${N}</span>. First, check it's not even and not a prime power.`;
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.font = 'bold 48px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`N = ${N}`, 350, 160);
+                    ctx.font = '16px Segoe UI';
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.fillText('Goal: Find p and q such that p × q = N', 350, 200);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 1: // Pick random a
+                    shorState.a = 2 + Math.floor(Math.random() * (N - 3));
+                    while (gcd(shorState.a, N) !== 1) {
+                        shorState.a = 2 + Math.floor(Math.random() * (N - 3));
+                    }
+                    document.getElementById('shor-explanation').innerHTML = `<strong>Step 2:</strong> Pick random <span class="highlight">a = ${shorState.a}</span> (where 1 < a < N and gcd(a, N) = 1). If gcd(a,N) ≠ 1, we already found a factor!`;
+
+                    // Draw random selection visual
+                    ctx.textAlign = 'center';
+                    ctx.font = '14px Segoe UI';
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.fillText('Randomly selecting a...', 350, 40);
+
+                    for (let i = 2; i < N; i++) {
+                        const x = 50 + ((i - 2) / (N - 3)) * 600;
+                        const isChosen = i === shorState.a;
+                        ctx.fillStyle = isChosen ? '#00d4ff' : '#3a3a7a';
+                        ctx.beginPath();
+                        ctx.arc(x, 150, isChosen ? 20 : 8, 0, Math.PI * 2);
+                        ctx.fill();
+                        if (isChosen) {
+                            ctx.fillStyle = '#fff';
+                            ctx.font = 'bold 14px Segoe UI';
+                            ctx.fillText(i, x, 155);
+                            ctx.fillText('← chosen!', x, 190);
+                        }
+                    }
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 2: // Create superposition
+                    document.getElementById('shor-explanation').innerHTML = `<strong>Step 3 (Quantum!):</strong> Create a superposition of all x values: |0⟩ + |1⟩ + |2⟩ + ... This is where quantum parallelism kicks in — we evaluate a^x mod N for ALL x simultaneously!`;
+
+                    // Draw qubits in superposition
+                    ctx.textAlign = 'center';
+                    ctx.font = '14px Segoe UI';
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.fillText('Quantum Register in Superposition', 350, 30);
+
+                    for (let i = 0; i < 16; i++) {
+                        const x = 80 + i * 35;
+                        const hue = (i * 22) % 360;
+                        ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.8)`;
+                        ctx.beginPath();
+                        ctx.arc(x, 100, 12, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '10px monospace';
+                        ctx.fillText(`|${i}⟩`, x, 104);
+                    }
+
+                    // Arrow down
+                    ctx.strokeStyle = '#7b2ff7';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(350, 130);
+                    ctx.lineTo(350, 170);
+                    ctx.lineTo(345, 165);
+                    ctx.moveTo(350, 170);
+                    ctx.lineTo(355, 165);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#b388ff';
+                    ctx.font = '13px Segoe UI';
+                    ctx.fillText(`Compute ${shorState.a}^x mod ${N} for all x simultaneously`, 350, 190);
+
+                    // Results
+                    for (let i = 0; i < 16; i++) {
+                        const x = 80 + i * 35;
+                        const val = modPow(shorState.a, i, N);
+                        ctx.fillStyle = `hsl(${(val * 30) % 360}, 70%, 50%)`;
+                        ctx.beginPath();
+                        ctx.arc(x, 240, 12, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '10px monospace';
+                        ctx.fillText(val, x, 244);
+                    }
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.fillText('Results (entangled with inputs)', 350, 280);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 3: // QFT
+                    document.getElementById('shor-explanation').innerHTML = `<strong>Step 4 (Quantum Fourier Transform):</strong> Apply QFT to the first register. This converts the periodic pattern into frequency peaks. The peaks reveal the period!`;
+
+                    // Draw wave interference
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.font = '14px Segoe UI';
+                    ctx.fillText('Quantum Fourier Transform — Waves Interfere', 350, 25);
+
+                    // Draw multiple waves
+                    for (let w = 0; w < 5; w++) {
+                        ctx.strokeStyle = `hsla(${w * 60}, 70%, 60%, 0.4)`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        for (let x = 0; x < 650; x++) {
+                            const y = 100 + Math.sin((x + w * 30) * 0.05 * (w + 1)) * 30;
+                            if (x === 0) ctx.moveTo(30 + x, y);
+                            else ctx.lineTo(30 + x, y);
+                        }
+                        ctx.stroke();
+                    }
+
+                    // Constructive interference peaks
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('↓ Constructive interference at period multiples ↓', 350, 160);
+
+                    // Find actual period
+                    let period = 1;
+                    for (let r = 1; r < N; r++) {
+                        if (modPow(shorState.a, r, N) === 1) { period = r; break; }
+                    }
+                    shorState.period = period;
+
+                    // Draw peaks
+                    const numPeaks = Math.floor(16 / period);
+                    for (let i = 0; i <= numPeaks; i++) {
+                        const x = 50 + (i * period / 16) * 600;
+                        ctx.fillStyle = '#00d4ff';
+                        ctx.fillRect(x - 3, 180, 6, 80);
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '10px monospace';
+                        ctx.fillText(`${i}/${period}`, x, 275);
+                    }
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 14px Segoe UI';
+                    ctx.fillText(`Peaks at multiples of 1/${period} → Period = ${period}`, 350, 295);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 4: // Measure
+                    document.getElementById('shor-explanation').innerHTML = `<strong>Step 5:</strong> Measure the quantum register. We get a value close to a multiple of N/r. Using continued fractions, we extract <span class="highlight">r = ${shorState.period}</span>.`;
+
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#7b2ff7';
+                    ctx.font = 'bold 60px Segoe UI';
+                    ctx.fillText(`r = ${shorState.period}`, 350, 120);
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.font = '16px Segoe UI';
+                    ctx.fillText(`The period of ${shorState.a}^x mod ${N} is ${shorState.period}`, 350, 170);
+                    ctx.fillText(`This means ${shorState.a}^${shorState.period} ≡ 1 (mod ${N})`, 350, 200);
+
+                    // Verification
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = '14px Segoe UI';
+                    ctx.fillText(`Verify: ${shorState.a}^${shorState.period} mod ${N} = ${modPow(shorState.a, shorState.period, N)} ✓`, 350, 240);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 5: // Extract factors
+                    const r = shorState.period;
+                    const a = shorState.a;
+                    let f1 = 0, f2 = 0;
+                    let explanation = '';
+
+                    if (r % 2 !== 0) {
+                        explanation = `<span class="warning">Period r=${r} is odd. In a real run, we'd try a different 'a'. Let's pretend we got an even period.</span>`;
+                        // Force a working example
+                        shorState.period = 4;
+                    }
+
+                    const halfPow = Math.pow(a, r / 2);
+                    f1 = gcd(halfPow - 1, N);
+                    f2 = gcd(halfPow + 1, N);
+
+                    if (f1 === 1 || f1 === N) {
+                        // Try to find working factors for display
+                        for (let tryA = 2; tryA < N; tryA++) {
+                            if (gcd(tryA, N) !== 1) continue;
+                            let tryR = 1;
+                            for (let rr = 1; rr < N; rr++) {
+                                if (modPow(tryA, rr, N) === 1) { tryR = rr; break; }
+                            }
+                            if (tryR % 2 === 0) {
+                                const hp = Math.pow(tryA, tryR / 2);
+                                const tf1 = gcd(hp - 1, N);
+                                const tf2 = gcd(hp + 1, N);
+                                if (tf1 > 1 && tf1 < N) {
+                                    f1 = tf1; f2 = N / tf1;
+                                    shorState.a = tryA;
+                                    shorState.period = tryR;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    document.getElementById('shor-explanation').innerHTML = `<strong>Step 6:</strong> Since r=${shorState.period} is even, compute gcd(${shorState.a}^(${shorState.period}/2) ± 1, ${N}). This gives us the factors!` + explanation;
+
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.font = '14px Segoe UI';
+                    ctx.fillText(`r = ${shorState.period} (even ✓)`, 350, 40);
+                    ctx.fillText(`Compute: a^(r/2) = ${shorState.a}^${shorState.period/2} = ${Math.pow(shorState.a, shorState.period/2)}`, 350, 70);
+
+                    // Draw the two GCD computations
+                    ctx.fillStyle = '#1a1a4a';
+                    ctx.fillRect(100, 100, 200, 80);
+                    ctx.fillRect(400, 100, 200, 80);
+                    ctx.strokeStyle = '#7b2ff7';
+                    ctx.strokeRect(100, 100, 200, 80);
+                    ctx.strokeRect(400, 100, 200, 80);
+
+                    ctx.fillStyle = '#e0e0ff';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText(`gcd(${Math.pow(shorState.a, shorState.period/2)} - 1, ${N})`, 200, 130);
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 24px Segoe UI';
+                    ctx.fillText(`${f1}`, 200, 165);
+
+                    ctx.fillStyle = '#e0e0ff';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText(`gcd(${Math.pow(shorState.a, shorState.period/2)} + 1, ${N})`, 500, 130);
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 24px Segoe UI';
+                    ctx.fillText(`${f2}`, 500, 165);
+
+                    // Final result
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.font = 'bold 20px Segoe UI';
+                    ctx.fillText(`${N} = ${f1} × ${f2}`, 350, 240);
+                    ctx.textAlign = 'left';
+                    break;
+
+                case 6: // Summary
+                    document.getElementById('shor-explanation').innerHTML = `<strong>🎉 Done!</strong> Shor's algorithm factored ${N} in <span class="highlight">polynomial time</span> using quantum superposition and the QFT. A classical computer would need exponential time for large numbers!`;
+
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 30px Segoe UI';
+                    ctx.fillText('🎉 RSA BROKEN! 🎉', 350, 80);
+
+                    ctx.fillStyle = '#e0e0ff';
+                    ctx.font = '16px Segoe UI';
+                    ctx.fillText('Shor\'s Algorithm Summary:', 350, 130);
+
+                    const steps = [
+                        '1. Pick random a, check gcd(a,N)=1',
+                        '2. Quantum: superpose all |x⟩',
+                        '3. Quantum: compute a^x mod N',
+                        '4. Quantum Fourier Transform → find period r',
+                        '5. Classical: gcd(a^(r/2) ± 1, N) → factors!'
+                    ];
+                    ctx.font = '13px Segoe UI';
+                    ctx.fillStyle = '#a0a0d0';
+                    steps.forEach((s, i) => {
+                        ctx.fillText(s, 350, 160 + i * 25);
+                    });
+
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = '14px Segoe UI';
+                    ctx.fillText('Time complexity: O((log N)³) vs classical O(exp((log N)^(1/3)))', 350, 295);
+                    ctx.textAlign = 'left';
+                    break;
+
+                default:
+                    shorState.step = 6;
+            }
+        }
+
+        function autoRunShor() {
+            resetShor();
+            let i = 0;
+            const interval = setInterval(() => {
+                runShorStep();
+                i++;
+                if (i >= 7) clearInterval(interval);
+            }, 2000);
+        }
+
+        // ==================== QFT VISUALIZATION ====================
+        function animateQFT() {
+            const canvas = document.getElementById('qft-canvas');
+            const ctx = canvas.getContext('2d');
+            const period = parseInt(document.getElementById('qft-period').value);
+            document.getElementById('qft-period-val').textContent = period;
+
+            ctx.clearRect(0, 0, 700, 300);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, 700, 300);
+
+            const N = 32; // Number of states
+
+            // Before QFT - periodic input
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('BEFORE QFT: Input state (periodic with period ' + period + ')', 350, 20);
+
+            for (let i = 0; i < N; i++) {
+                const x = 30 + (i / N) * 640;
+                const amplitude = (i % period === 0) ? 1 : 0;
+                const height = amplitude * 60;
+                ctx.fillStyle = amplitude > 0 ? '#7b2ff7' : '#2a2a4a';
+                ctx.fillRect(x, 80 - height, 15, height);
+                if (i < 20) {
+                    ctx.fillStyle = '#666';
+                    ctx.font = '8px monospace';
+                    ctx.fillText(i, x + 7, 92);
+                }
+            }
+
+            // Animate transition
+            let frame = 0;
+            const maxFrames = 60;
+
+            function animate() {
+                frame++;
+                const progress = frame / maxFrames;
+
+                // Clear bottom half
+                ctx.fillStyle = '#0a0a2e';
+                ctx.fillRect(0, 100, 700, 200);
+
+                // Transition arrow
+                ctx.fillStyle = '#00d4ff';
+                ctx.font = '14px Segoe UI';
+                ctx.fillText(`QFT Transform (${Math.round(progress * 100)}%)`, 350, 120);
+
+                // Draw interference waves
+                ctx.strokeStyle = `rgba(123, 47, 247, ${0.3 * progress})`;
+                ctx.lineWidth = 1;
+                for (let w = 0; w < N; w++) {
+                    if (w % period !== 0) continue;
+                    ctx.beginPath();
+                    for (let x = 0; x < 640; x++) {
+                        const freq = w / N;
+                        const y = 200 + Math.sin(x * freq * Math.PI * 2 / 20) * 30 * progress * (1 - progress);
+                        if (x === 0) ctx.moveTo(30 + x, y);
+                        else ctx.lineTo(30 + x, y);
+                    }
+                    ctx.stroke();
+                }
+
+                // After QFT - frequency peaks
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('AFTER QFT: Output state (peaks at multiples of N/period = ' + (N/period) + ')', 350, 160);
+
+                for (let i = 0; i < N; i++) {
+                    const x = 30 + (i / N) * 640;
+                    const isPeak = (i % (N / period) === 0);
+                    const targetHeight = isPeak ? 60 : 0;
+                    const height = targetHeight * progress;
+
+                    ctx.fillStyle = isPeak ? '#00d4ff' : '#1a1a3a';
+                    ctx.fillRect(x, 260 - height, 15, height);
+
+                    if (isPeak && progress > 0.5) {
+                        ctx.fillStyle = '#69db7c';
+                        ctx.font = '9px monospace';
+                        ctx.fillText(i, x + 7, 272);
+                    }
+                }
+
+                if (progress >= 1) {
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 14px Segoe UI';
+                    ctx.fillText(`✓ Peaks every ${N/period} positions → Period = ${period}`, 350, 295);
+                    document.getElementById('qft-explanation').innerHTML = `The QFT converts a periodic signal with period <span class="highlight">${period}</span> into peaks spaced <span class="highlight">${N/period}</span> apart. From the spacing, we recover the period!`;
+                    ctx.textAlign = 'left';
+                    return;
+                }
+
+                requestAnimationFrame(animate);
+            }
+            animate();
+            ctx.textAlign = 'left';
+        }
+
+        // ==================== QUANTUM CIRCUIT ====================
+        function drawCircuit() {
+            const canvas = document.getElementById('circuit-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 700, 250);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, 700, 250);
+
+            const wireY = [50, 80, 110, 160, 190, 220];
+            const labels = ['|0⟩', '|0⟩', '|0⟩', '|0⟩', '|0⟩', '|0⟩'];
+            const regLabels = ['Input Register', 'Output Register'];
+
+            // Draw wires
+            ctx.strokeStyle = '#4a4a9a';
+            ctx.lineWidth = 1;
+            wireY.forEach((y, i) => {
+                ctx.beginPath();
+                ctx.moveTo(80, y);
+                ctx.lineTo(650, y);
+                ctx.stroke();
+
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '12px monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText(labels[i], 70, y + 4);
+            });
+
+            // Register labels
+            ctx.fillStyle = '#7b2ff7';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText(regLabels[0], 5, 80);
+            ctx.fillText(regLabels[1], 5, 190);
+
+            // Hadamard gates
+            ctx.textAlign = 'center';
+            for (let i = 0; i < 3; i++) {
+                const x = 130;
+                const y = wireY[i];
+                ctx.fillStyle = '#1a4a1a';
+                ctx.fillRect(x - 15, y - 15, 30, 30);
+                ctx.strokeStyle = '#69db7c';
+                ctx.strokeRect(x - 15, y - 15, 30, 30);
+                ctx.fillStyle = '#69db7c';
+                ctx.font = 'bold 14px Segoe UI';
+                ctx.fillText('H', x, y + 5);
+            }
+
+            // Modular exponentiation
+            ctx.fillStyle = '#1a1a4a';
+            ctx.fillRect(200, 35, 150, 200);
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(200, 35, 150, 200);
+            ctx.fillStyle = '#00d4ff';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('Modular', 275, 110);
+            ctx.fillText('Exponentiation', 275, 130);
+            ctx.fillText('a^x mod N', 275, 155);
+
+            // QFT
+            ctx.fillStyle = '#2a1a4a';
+            ctx.fillRect(420, 35, 120, 90);
+            ctx.strokeStyle = '#b388ff';
+            ctx.strokeRect(420, 35, 120, 90);
+            ctx.fillStyle = '#b388ff';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('Quantum', 480, 70);
+            ctx.fillText('Fourier', 480, 88);
+            ctx.fillText('Transform', 480, 106);
+
+            // Measurement
+            for (let i = 0; i < 3; i++) {
+                const x = 600;
+                const y = wireY[i];
+                ctx.beginPath();
+                ctx.arc(x, y, 12, 0, Math.PI * 2);
+                ctx.strokeStyle = '#ffd93d';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + 8, y - 10);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Measure', 600, 30);
+
+            // Output label
+            ctx.fillStyle = '#69db7c';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('→ Period r', 660, 80);
+
+            ctx.textAlign = 'left';
+            ctx.lineWidth = 1;
+        }
+
+        let circuitAnimFrame = 0;
+        function animateCircuit() {
+            drawCircuit();
+            const canvas = document.getElementById('circuit-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let pos = 80;
+            const speed = 3;
+            let animId;
+
+            function step() {
+                drawCircuit();
+
+                // Draw moving quantum state
+                ctx.fillStyle = 'rgba(0, 212, 255, 0.6)';
+                ctx.beginPath();
+                ctx.arc(pos, 80, 8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Glow effect
+                ctx.shadowColor = '#00d4ff';
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(pos, 80, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Label current stage
+                ctx.fillStyle = '#ffd93d';
+                ctx.font = 'bold 12px Segoe UI';
+                ctx.textAlign = 'center';
+                if (pos < 130) ctx.fillText('Initialize |0⟩', pos, 20);
+                else if (pos < 200) ctx.fillText('Superposition', pos, 20);
+                else if (pos < 400) ctx.fillText('Entangle registers', pos, 20);
+                else if (pos < 550) ctx.fillText('QFT extracts period', pos, 20);
+                else ctx.fillText('Measure!', pos, 20);
+                ctx.textAlign = 'left';
+
+                pos += speed;
+                if (pos < 650) {
+                    animId = requestAnimationFrame(step);
+                }
+            }
+            step();
+        }
+
+        // ==================== QUANTUM THREAT SECTION ====================
+        document.getElementById('keysize-slider').addEventListener('input', function() {
+            const bits = parseInt(this.value);
+            document.getElementById('keysize-val').textContent = bits;
+            updateThreatDisplay(bits);
+        });
+
+        function updateThreatDisplay(bits) {
+            // Classical: GNFS is exp((64/9)^(1/3) * (ln n)^(1/3) * (ln ln n)^(2/3))
+            // Simplified: roughly 2^(1.9 * bits^(1/3) * (log2(bits))^(2/3))
+            const classicalLog = 1.9 * Math.pow(bits, 1/3) * Math.pow(Math.log2(bits), 2/3);
+            const quantumLog = Math.pow(Math.log2(bits), 3) * 0.01; // O((log N)^3)
+
+            let classicalTimeStr, quantumTimeStr;
+
+            if (classicalLog < 10) classicalTimeStr = '< 1 second';
+            else if (classicalLog < 20) classicalTimeStr = '~seconds';
+            else if (classicalLog < 30) classicalTimeStr = '~minutes';
+            else if (classicalLog < 40) classicalTimeStr = '~hours';
+            else if (classicalLog < 50) classicalTimeStr = '~days';
+            else if (classicalLog < 60) classicalTimeStr = '~years';
+            else if (classicalLog < 80) classicalTimeStr = '~thousands of years';
+            else if (classicalLog < 100) classicalTimeStr = '~millions of years';
+            else classicalTimeStr = '~age of universe+';
+
+            if (quantumLog < 5) quantumTimeStr = '< 1 second';
+            else if (quantumLog < 10) quantumTimeStr = '~seconds';
+            else if (quantumLog < 15) quantumTimeStr = '~minutes';
+            else quantumTimeStr = '~hours';
+
+            document.getElementById('classical-time').textContent = classicalTimeStr;
+            document.getElementById('quantum-time').textContent = quantumTimeStr;
+
+            const classicalPct = Math.min(100, (classicalLog / 120) * 100);
+            const quantumPct = Math.min(100, (quantumLog / 120) * 100);
+            document.getElementById('classical-bar').style.width = classicalPct + '%';
+            document.getElementById('quantum-bar').style.width = quantumPct + '%';
+
+            drawScalingGraph(bits);
+        }
+
+        function drawScalingGraph(currentBits) {
+            const canvas = document.getElementById('scaling-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, 700, 200);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, 700, 200);
+
+            // Axes
+            ctx.strokeStyle = '#4a4a9a';
+            ctx.beginPath();
+            ctx.moveTo(60, 10);
+            ctx.lineTo(60, 170);
+            ctx.lineTo(680, 170);
+            ctx.stroke();
+
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '10px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Key size (bits)', 370, 190);
+            ctx.textAlign = 'right';
+            ctx.fillText('log(time)', 55, 15);
+
+            // Classical curve
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 0; x < 600; x++) {
+                const bits = (x / 600) * 4096;
+                const y = 1.9 * Math.pow(Math.max(bits, 1), 1/3) * Math.pow(Math.max(Math.log2(Math.max(bits, 2)), 1), 2/3);
+                const py = 170 - Math.min((y / 120) * 160, 160);
+                if (x === 0) ctx.moveTo(60 + x, py);
+                else ctx.lineTo(60 + x, py);
+            }
+            ctx.stroke();
+
+            // Quantum curve
+            ctx.strokeStyle = '#69db7c';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let x = 0; x < 600; x++) {
+                const bits = (x / 600) * 4096;
+                const y = Math.pow(Math.max(Math.log2(Math.max(bits, 2)), 1), 3) * 0.01;
+                const py = 170 - Math.min((y / 120) * 160, 160);
+                if (x === 0) ctx.moveTo(60 + x, py);
+                else ctx.lineTo(60 + x, py);
+            }
+            ctx.stroke();
+
+            // Current position marker
+            const markerX = 60 + (currentBits / 4096) * 600;
+            ctx.strokeStyle = '#ffd93d';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(markerX, 10);
+            ctx.lineTo(markerX, 170);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ffd93d';
+            ctx.textAlign = 'center';
+            ctx.font = '10px Segoe UI';
+            ctx.fillText(`${currentBits} bits`, markerX, 182);
+
+            // Legend
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(550, 20, 15, 3);
+            ctx.fillText('Classical', 570, 25);
+            ctx.fillStyle = '#69db7c';
+            ctx.fillRect(550, 35, 15, 3);
+            ctx.fillText('Quantum', 570, 40);
+        }
+
+        // ==================== POST-QUANTUM TABS ====================
+        function switchPQCTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            // Initialize the visualization
+            switch(tabName) {
+                case 'lattice': drawLattice(); break;
+                case 'hash': drawMerkleTree(); break;
+                case 'code': drawCodeBased(); break;
+                case 'multivariate': drawMultivariate(); break;
+            }
+        }
+
+        // ==================== LATTICE VISUALIZATION ====================
+        let latticeState = { points: [], errorPoint: null, closestPoint: null };
+
+        function drawLattice() {
+            const canvas = document.getElementById('lattice-canvas');
+            const ctx = canvas.getContext('2d');
+            const dim = parseInt(document.getElementById('lattice-dim').value);
+            const errorAmt = parseInt(document.getElementById('lattice-error').value);
+            document.getElementById('lattice-dim-val').textContent = dim;
+            document.getElementById('lattice-error-val').textContent = errorAmt;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Generate 2D lattice basis (we project higher dims to 2D)
+            const basisX = [40 + Math.random() * 20, 10 + Math.random() * 10];
+            const basisY = [5 + Math.random() * 10, 35 + Math.random() * 20];
+
+            // Scale based on dimension (higher dim = denser looking)
+            const scale = 1.0 / Math.sqrt(dim);
+
+            latticeState.points = [];
+
+            // Draw lattice points
+            const range = Math.ceil(10 / scale);
+            for (let i = -range; i <= range; i++) {
+                for (let j = -range; j <= range; j++) {
+                    const px = 350 + (i * basisX[0] + j * basisY[0]) * scale;
+                    const py = 200 + (i * basisX[1] + j * basisY[1]) * scale;
+
+                    if (px > 10 && px < 690 && py > 10 && py < 390) {
+                        latticeState.points.push({ x: px, y: py, i, j });
+
+                        ctx.fillStyle = 'rgba(123, 47, 247, 0.6)';
+                        ctx.beginPath();
+                        ctx.arc(px, py, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Draw basis vectors
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(350, 200);
+            ctx.lineTo(350 + basisX[0] * scale, 200 + basisX[1] * scale);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#69db7c';
+            ctx.beginPath();
+            ctx.moveTo(350, 200);
+            ctx.lineTo(350 + basisY[0] * scale, 200 + basisY[1] * scale);
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#00d4ff';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('basis v₁', 350 + basisX[0] * scale + 5, 200 + basisX[1] * scale);
+            ctx.fillStyle = '#69db7c';
+            ctx.fillText('basis v₂', 350 + basisY[0] * scale + 5, 200 + basisY[1] * scale);
+
+            // Title
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '13px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${dim}D Lattice (projected to 2D) — ${latticeState.points.length} visible points`, 350, 20);
+            ctx.fillText('Purple dots = lattice points. The secret is a specific lattice point.', 350, 385);
+            ctx.textAlign = 'left';
+
+            document.getElementById('lattice-explanation').innerHTML = `Lattice with basis vectors shown. In real crypto, this is a <span class="highlight">${dim * 100}+ dimensional</span> space!`;
+        }
+
+        function animateLWE() {
+            const canvas = document.getElementById('lattice-canvas');
+            const ctx = canvas.getContext('2d');
+            const errorAmt = parseInt(document.getElementById('lattice-error').value);
+
+            if (latticeState.points.length === 0) { drawLattice(); return; }
+
+            // Pick a random lattice point as the "secret"
+            const secretIdx = Math.floor(Math.random() * latticeState.points.length);
+            const secret = latticeState.points[secretIdx];
+
+            // Add error to create the "noisy" point
+            const errorX = (Math.random() - 0.5) * errorAmt * 2;
+            const errorY = (Math.random() - 0.5) * errorAmt * 2;
+            const noisyX = secret.x + errorX;
+            const noisyY = secret.y + errorY;
+
+            // Redraw lattice
+            drawLattice();
+
+            // Highlight the secret point
+            ctx.fillStyle = '#69db7c';
+            ctx.beginPath();
+            ctx.arc(secret.x, secret.y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('secret', secret.x, secret.y - 12);
+
+            // Draw the noisy point
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(noisyX, noisyY, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.fillText('public (noisy)', noisyX, noisyY - 12);
+
+            // Draw error vector
+            ctx.strokeStyle = '#ffd93d';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(secret.x, secret.y);
+            ctx.lineTo(noisyX, noisyY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Error circle
+            ctx.strokeStyle = 'rgba(255, 107, 107, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(noisyX, noisyY, errorAmt * 2, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#ffd93d';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText(`Error magnitude: ${errorAmt}`, 20, 370);
+
+            document.getElementById('lattice-explanation').innerHTML = `
+                <span class="highlight">LWE Problem:</span> Given the <span class="warning">red noisy point</span>, find the <span class="safe">green secret lattice point</span>. 
+                The error (yellow dashed line) makes this exponentially hard in high dimensions! 
+                This is what protects ML-KEM/Kyber encryption.
+            `;
+        }
+
+        // ==================== HASH-BASED (MERKLE TREE) ==
+        // ==================== HASH-BASED (MERKLE TREE) ====================
+        let merkleState = { nodes: [], height: 3, signPath: [], verifyStep: 0 };
+
+        function drawMerkleTree() {
+            const canvas = document.getElementById('hash-tree-canvas');
+            const ctx = canvas.getContext('2d');
+            const height = parseInt(document.getElementById('tree-height').value);
+            document.getElementById('tree-height-val').textContent = height;
+            merkleState.height = height;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const leaves = Math.pow(2, height);
+            merkleState.nodes = [];
+
+            // Generate tree nodes
+            function generateHash() {
+                return Math.random().toString(16).substr(2, 6);
+            }
+
+            // Build tree bottom-up
+            let levels = [];
+            // Leaves
+            let leafLevel = [];
+            for (let i = 0; i < leaves; i++) {
+                leafLevel.push({ hash: generateHash(), label: `SK${i}` });
+            }
+            levels.push(leafLevel);
+
+            // Internal nodes
+            for (let l = 1; l <= height; l++) {
+                let level = [];
+                const prev = levels[l - 1];
+                for (let i = 0; i < prev.length; i += 2) {
+                    level.push({ hash: generateHash(), label: `H(${prev[i].hash}||${prev[i+1].hash})`.substr(0, 15) });
+                }
+                levels.push(level);
+            }
+
+            merkleState.levels = levels;
+
+            // Draw the tree
+            const levelHeight = (canvas.height - 60) / (height + 1);
+
+            for (let l = 0; l <= height; l++) {
+                const level = levels[l];
+                const y = canvas.height - 40 - l * levelHeight;
+                const nodeSpacing = (canvas.width - 40) / (level.length + 1);
+
+                for (let i = 0; i < level.length; i++) {
+                    const x = 20 + nodeSpacing * (i + 1);
+                    level[i].x = x;
+                    level[i].y = y;
+
+                    // Draw connections to children
+                    if (l > 0) {
+                        const children = levels[l - 1];
+                        const childIdx = i * 2;
+                        ctx.strokeStyle = '#3a3a7a';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y + 10);
+                        ctx.lineTo(children[childIdx].x, children[childIdx].y - 10);
+                        ctx.stroke();
+                        ctx.beginPath();
+                        ctx.moveTo(x, y + 10);
+                        ctx.lineTo(children[childIdx + 1].x, children[childIdx + 1].y - 10);
+                        ctx.stroke();
+                    }
+
+                    // Draw node
+                    const isRoot = l === height;
+                    const isLeaf = l === 0;
+                    ctx.fillStyle = isRoot ? '#00d4ff' : (isLeaf ? '#7b2ff7' : '#4a4a9a');
+                    ctx.beginPath();
+                    ctx.arc(x, y, isRoot ? 18 : 12, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Label
+                    ctx.fillStyle = '#e0e0ff';
+                    ctx.font = '8px monospace';
+                    ctx.textAlign = 'center';
+                    if (isRoot) {
+                        ctx.font = 'bold 9px monospace';
+                        ctx.fillText('ROOT', x, y + 3);
+                        ctx.fillText(level[i].hash, x, y + 30);
+                    } else if (isLeaf) {
+                        ctx.fillText(level[i].label, x, y + 20);
+                    } else {
+                        ctx.fillText(level[i].hash.substr(0, 4), x, y + 3);
+                    }
+                }
+            }
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('🟣 Leaves = Secret Keys (one-time signatures)', 20, 20);
+            ctx.fillText('⚪ Internal = Hash of children', 250, 20);
+            ctx.fillText('🔵 Root = Public Key (published)', 480, 20);
+
+            document.getElementById('hash-explanation').innerHTML = `Merkle tree with <span class="highlight">${leaves} leaves</span> (one-time signature keys). The root hash is the public key. To sign, reveal one leaf + the authentication path.`;
+        }
+
+        function animateSignature() {
+            const canvas = document.getElementById('hash-tree-canvas');
+            const ctx = canvas.getContext('2d');
+            const height = merkleState.height;
+            const levels = merkleState.levels;
+
+            if (!levels || levels.length === 0) { drawMerkleTree(); return; }
+
+            // Pick a random leaf to sign with
+            const leafIdx = Math.floor(Math.random() * levels[0].length);
+
+            // Redraw tree
+            drawMerkleTree();
+
+            // Highlight the signing path
+            let currentIdx = leafIdx;
+            let pathNodes = [];
+
+            for (let l = 0; l <= height; l++) {
+                const node = levels[l][currentIdx];
+                pathNodes.push({ level: l, idx: currentIdx, node });
+
+                // Highlight the sibling (authentication path)
+                const siblingIdx = currentIdx % 2 === 0 ? currentIdx + 1 : currentIdx - 1;
+                if (siblingIdx >= 0 && siblingIdx < levels[l].length) {
+                    const sibling = levels[l][siblingIdx];
+
+                    // Draw sibling highlight with delay
+                    setTimeout(((s, l_copy) => () => {
+                        ctx.strokeStyle = '#ffd93d';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(s.x, s.y, 16, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.fillStyle = '#ffd93d';
+                        ctx.font = '9px Segoe UI';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('auth path', s.x, s.y - 20);
+                        ctx.textAlign = 'left';
+                    })(sibling, l), l * 400);
+                }
+
+                // Highlight current node on path
+                setTimeout(((n) => () => {
+                    ctx.strokeStyle = '#69db7c';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(n.x, n.y, 16, 0, Math.PI * 2);
+                    ctx.stroke();
+                })(node), l * 400);
+
+                currentIdx = Math.floor(currentIdx / 2);
+            }
+
+            setTimeout(() => {
+                document.getElementById('hash-explanation').innerHTML = `
+                    <span class="safe">Signature created!</span> Using leaf <span class="highlight">#${leafIdx}</span>. 
+                    The signature includes: the one-time signature + <span class="highlight">${height} sibling hashes</span> (yellow circles = authentication path). 
+                    Verifier hashes up the tree to check it matches the root (public key).
+                `;
+            }, height * 400 + 200);
+        }
+
+        function animateVerify() {
+            const canvas = document.getElementById('hash-tree-canvas');
+            const ctx = canvas.getContext('2d');
+            const height = merkleState.height;
+            const levels = merkleState.levels;
+
+            if (!levels || levels.length === 0) { drawMerkleTree(); return; }
+
+            drawMerkleTree();
+
+            const leafIdx = Math.floor(Math.random() * levels[0].length);
+            let currentIdx = leafIdx;
+
+            // Animate verification going UP the tree
+            for (let l = 0; l <= height; l++) {
+                setTimeout(((l_copy, idx) => () => {
+                    const node = levels[l_copy][idx];
+
+                    // Green glow for verified node
+                    ctx.fillStyle = 'rgba(105, 219, 124, 0.3)';
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, 20, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.strokeStyle = '#69db7c';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, 15, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 9px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('✓', node.x, node.y + 4);
+                    ctx.textAlign = 'left';
+
+                    if (l_copy === height) {
+                        document.getElementById('hash-explanation').innerHTML = `<span class="safe">✓ Signature VERIFIED!</span> Hashed from leaf #${leafIdx} up to root — matches the public key! Each step: hash(sibling || current) = parent.`;
+                    }
+                })(l, currentIdx), l * 600);
+
+                currentIdx = Math.floor(currentIdx / 2);
+            }
+        }
+
+        // ==================== CODE-BASED CRYPTO ====================
+        let codeState = { original: [], encoded: [], withErrors: [], corrected: [] };
+
+        function drawCodeBased() {
+            const canvas = document.getElementById('code-canvas');
+            const ctx = canvas.getContext('2d');
+            const codeLen = parseInt(document.getElementById('code-length').value);
+            const numErrors = parseInt(document.getElementById('code-errors').value);
+            document.getElementById('code-length-val').textContent = codeLen;
+            document.getElementById('code-errors-val').textContent = numErrors;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Generate random message (half the code length)
+            const msgLen = Math.floor(codeLen / 2);
+            codeState.original = [];
+            for (let i = 0; i < msgLen; i++) {
+                codeState.original.push(Math.round(Math.random()));
+            }
+
+            // Simple encoding (repeat + parity for visualization)
+            codeState.encoded = [];
+            for (let i = 0; i < codeLen; i++) {
+                if (i < msgLen) codeState.encoded.push(codeState.original[i]);
+                else codeState.encoded.push(codeState.original[i - msgLen] ^ (i % 2 === 0 ? 0 : codeState.original[(i - msgLen + 1) % msgLen]));
+            }
+
+            // Draw original message
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '13px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Original Message', 350, 25);
+
+            const bitWidth = Math.min(50, 600 / codeLen);
+            const startX = 350 - (msgLen * bitWidth) / 2;
+
+            for (let i = 0; i < msgLen; i++) {
+                const x = startX + i * bitWidth;
+                ctx.fillStyle = codeState.original[i] ? '#00d4ff' : '#2a2a6a';
+                ctx.strokeStyle = '#4a4a9a';
+                ctx.fillRect(x, 40, bitWidth - 4, 35);
+                ctx.strokeRect(x, 40, bitWidth - 4, 35);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 16px monospace';
+                ctx.fillText(codeState.original[i], x + bitWidth / 2 - 2, 63);
+            }
+
+            // Draw encoded codeword
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '13px Segoe UI';
+            ctx.fillText('Encoded Codeword (with redundancy)', 350, 105);
+
+            const startX2 = 350 - (codeLen * bitWidth) / 2;
+            for (let i = 0; i < codeLen; i++) {
+                const x = startX2 + i * bitWidth;
+                const isRedundant = i >= msgLen;
+                ctx.fillStyle = codeState.encoded[i] ? (isRedundant ? '#7b2ff7' : '#00d4ff') : (isRedundant ? '#2a1a4a' : '#2a2a6a');
+                ctx.strokeStyle = isRedundant ? '#7b2ff7' : '#4a4a9a';
+                ctx.fillRect(x, 120, bitWidth - 4, 35);
+                ctx.strokeRect(x, 120, bitWidth - 4, 35);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 16px monospace';
+                ctx.fillText(codeState.encoded[i], x + bitWidth / 2 - 2, 143);
+            }
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('🔵 = data bits', 20, 175);
+            ctx.fillText('🟣 = redundancy (error correction)', 150, 175);
+
+            document.getElementById('code-explanation').innerHTML = `Message of <span class="highlight">${msgLen} bits</span> encoded into <span class="highlight">${codeLen} bit</span> codeword. The extra bits allow correcting up to <span class="highlight">${numErrors} errors</span>.`;
+        }
+
+        function animateEncodeCode() {
+            const canvas = document.getElementById('code-canvas');
+            const ctx = canvas.getContext('2d');
+            const codeLen = parseInt(document.getElementById('code-length').value);
+            const numErrors = parseInt(document.getElementById('code-errors').value);
+
+            if (codeState.encoded.length === 0) { drawCodeBased(); return; }
+
+            // Add errors
+            codeState.withErrors = [...codeState.encoded];
+            let errorPositions = [];
+            let available = Array.from({ length: codeLen }, (_, i) => i);
+
+            for (let i = 0; i < numErrors && available.length > 0; i++) {
+                const idx = Math.floor(Math.random() * available.length);
+                const pos = available.splice(idx, 1)[0];
+                errorPositions.push(pos);
+                codeState.withErrors[pos] ^= 1; // Flip bit
+            }
+
+            // Redraw
+            drawCodeBased();
+
+            // Draw corrupted codeword
+            const bitWidth = Math.min(50, 600 / codeLen);
+            const startX = 350 - (codeLen * bitWidth) / 2;
+
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '13px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚡ After transmission (with errors = encryption!)', 350, 200);
+
+            for (let i = 0; i < codeLen; i++) {
+                setTimeout(((i_copy) => () => {
+                    const x = startX + i_copy * bitWidth;
+                    const hasError = errorPositions.includes(i_copy);
+                    ctx.fillStyle = hasError ? '#ff6b6b' : (codeState.withErrors[i_copy] ? '#4a6a4a' : '#1a2a1a');
+                    ctx.strokeStyle = hasError ? '#ff6b6b' : '#3a5a3a';
+                    ctx.lineWidth = hasError ? 2 : 1;
+                    ctx.fillRect(x, 215, bitWidth - 4, 35);
+                    ctx.strokeRect(x, 215, bitWidth - 4, 35);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 16px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(codeState.withErrors[i_copy], x + bitWidth / 2 - 2, 238);
+
+                    if (hasError) {
+                        ctx.fillStyle = '#ff6b6b';
+                        ctx.font = '10px Segoe UI';
+                        ctx.fillText('⚡', x + bitWidth / 2 - 2, 260);
+                    }
+                    ctx.lineWidth = 1;
+                })(i), i * 100);
+            }
+
+            setTimeout(() => {
+                document.getElementById('code-explanation').innerHTML = `<span class="warning">Errors added at positions: [${errorPositions.join(', ')}]</span>. In McEliece, adding errors IS the encryption! Only someone with the secret decoder (structured code) can remove them.`;
+            }, codeLen * 100 + 100);
+        }
+
+        function animateDecodeCode() {
+            const canvas = document.getElementById('code-canvas');
+            const ctx = canvas.getContext('2d');
+            const codeLen = parseInt(document.getElementById('code-length').value);
+
+            if (codeState.withErrors.length === 0) { animateEncodeCode(); return; }
+
+            const bitWidth = Math.min(50, 600 / codeLen);
+            const startX = 350 - (codeLen * bitWidth) / 2;
+
+            // Show "decoding" animation
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '13px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('🔓 Decoding (error correction with secret key)...', 350, 275);
+
+            // Animate correction
+            for (let i = 0; i < codeLen; i++) {
+                setTimeout(((i_copy) => () => {
+                    const x = startX + i_copy * bitWidth;
+                    const wasWrong = codeState.withErrors[i_copy] !== codeState.encoded[i_copy];
+
+                    ctx.fillStyle = wasWrong ? '#69db7c' : '#1a3a1a';
+                    ctx.strokeStyle = wasWrong ? '#69db7c' : '#3a5a3a';
+                    ctx.lineWidth = wasWrong ? 2 : 1;
+                    ctx.fillRect(x, 285, bitWidth - 4, 35);
+                    ctx.strokeRect(x, 285, bitWidth - 4, 35);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 16px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(codeState.encoded[i_copy], x + bitWidth / 2 - 2, 308);
+
+                    if (wasWrong) {
+                        ctx.fillStyle = '#69db7c';
+                        ctx.font = '10px Segoe UI';
+                        ctx.fillText('✓ fixed', x + bitWidth / 2 - 2, 330);
+                    }
+                    ctx.lineWidth = 1;
+                })(i), i * 150);
+            }
+
+            setTimeout(() => {
+                document.getElementById('code-explanation').innerHTML = `<span class="safe">✓ Decrypted!</span> The secret structured code allows efficient error correction. Without the secret, you'd need to try all possible error patterns — that's <span class="highlight">exponentially many</span> possibilities!`;
+            }, codeLen * 150 + 200);
+        }
+
+        // ==================== MULTIVARIATE CRYPTO ====================
+        function drawMultivariate() {
+            const canvas = document.getElementById('multi-canvas');
+            const ctx = canvas.getContext('2d');
+            const numVars = parseInt(document.getElementById('multi-vars').value);
+            document.getElementById('multi-vars-val').textContent = numVars;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Generate random quadratic equations
+            const varNames = ['x', 'y', 'z', 'w', 'v'];
+            const numEqs = numVars;
+            let equations = [];
+
+            for (let eq = 0; eq < numEqs; eq++) {
+                let terms = [];
+                // Quadratic terms
+                for (let i = 0; i < numVars; i++) {
+                    for (let j = i; j < numVars; j++) {
+                        if (Math.random() > 0.4) {
+                            const coeff = Math.floor(Math.random() * 9) + 1;
+                            if (i === j) terms.push(`${coeff}${varNames[i]}²`);
+                            else terms.push(`${coeff}${varNames[i]}${varNames[j]}`);
+                        }
+                    }
+                }
+                // Linear terms
+                for (let i = 0; i < numVars; i++) {
+                    if (Math.random() > 0.5) {
+                        const coeff = Math.floor(Math.random() * 9) + 1;
+                        terms.push(`${coeff}${varNames[i]}`);
+                    }
+                }
+                const rhs = Math.floor(Math.random() * 50);
+                equations.push({ terms, rhs });
+            }
+
+            // Draw equations
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(`System of ${numEqs} Multivariate Quadratic Equations in ${numVars} variables`, 350, 25);
+            ctx.fillText('(Solving this system is NP-hard in general!)', 350, 45);
+
+            ctx.textAlign = 'left';
+            ctx.font = '13px Courier New';
+            equations.forEach((eq, i) => {
+                const y = 75 + i * 40;
+                const eqStr = eq.terms.slice(0, 6).join(' + ') + ` = ${eq.rhs}`;
+                ctx.fillStyle = `hsl(${i * 60}, 70%, 70%)`;
+                ctx.fillText(`Eq${i + 1}: ${eqStr}`, 40, y);
+            });
+
+            // Draw variable space visualization
+            if (numVars <= 3) {
+                const centerX = 550;
+                const centerY = 180;
+
+                // Draw intersecting surfaces (simplified as curves)
+                for (let eq = 0; eq < numEqs; eq++) {
+                    ctx.strokeStyle = `hsla(${eq * 60}, 70%, 60%, 0.7)`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    for (let t = 0; t < 100; t++) {
+                        const angle = (t / 100) * Math.PI * 2;
+                        const r = 50 + 20 * Math.sin(angle * (eq + 2));
+                        const x = centerX + r * Math.cos(angle + eq * 0.5);
+                        const y = centerY + r * Math.sin(angle + eq * 0.5) * 0.7;
+                        if (t === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                }
+
+                // Solution point (intersection)
+                ctx.fillStyle = '#ff6b6b';
+                ctx.beginPath();
+                ctx.arc(centerX + 15, centerY - 10, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#ff6b6b';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Solution?', centerX + 15, centerY - 22);
+                ctx.fillText('(intersection of all curves)', centerX, centerY + 80);
+            }
+
+            ctx.textAlign = 'left';
+            document.getElementById('multi-explanation').innerHTML = `${numEqs} equations with ${numVars} variables. Finding the intersection (solution) is <span class="highlight">NP-hard</span> — no known quantum speedup beyond Grover's (quadratic, not exponential).`;
+        }
+
+        function animateMultiSolve() {
+            const canvas = document.getElementById('multi-canvas');
+            const ctx = canvas.getContext('2d');
+            const numVars = parseInt(document.getElementById('multi-vars').value);
+
+            // Show brute force attempts
+            const totalCombinations = Math.pow(10, numVars);
+            let attempts = 0;
+            const maxAttempts = 50;
+
+            const varNames = ['x', 'y', 'z', 'w', 'v'];
+
+            function tryNext() {
+                attempts++;
+                const values = [];
+                for (let i = 0; i < numVars; i++) {
+                    values.push(Math.floor(Math.random() * 20));
+                }
+
+                // Draw attempt
+                ctx.fillStyle = '#0a0a2e';
+                ctx.fillRect(0, 260, 400, 40);
+                ctx.fillStyle = attempts < maxAttempts ? '#ffd93d' : '#ff6b6b';
+                ctx.font = '12px Courier New';
+                ctx.textAlign = 'left';
+                const tryStr = values.map((v, i) => `${varNames[i]}=${v}`).join(', ');
+                ctx.fillText(`Attempt ${attempts}: (${tryStr}) — ❌ Not a solution`, 20, 280);
+
+                // Progress
+                ctx.fillStyle = '#1a1a4a';
+                ctx.fillRect(20, 290, 360, 8);
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fillRect(20, 290, (attempts / maxAttempts) * 360, 8);
+
+                if (attempts < maxAttempts) {
+                    setTimeout(tryNext, 80);
+                } else {
+                    document.getElementById('multi-explanation').innerHTML = `<span class="warning">Failed after ${maxAttempts} attempts!</span> Total search space: ~${totalCombinations.toLocaleString()} combinations. In real crypto with 100+ variables over large fields, this is <span class="highlight">completely infeasible</span>.`;
+                }
+            }
+            tryNext();
+        }
+
+        // ==================== KYBER (ML-KEM) WALKTHROUGH ====================
+        let kyberState = { step: -1 };
+
+        function resetKyber() {
+            kyberState = { step: -1 };
+            for (let i = 0; i < 5; i++) {
+                document.getElementById(`kyber-dot-${i}`).className = 'step-dot';
+            }
+            const ctx = document.getElementById('kyber-canvas').getContext('2d');
+            ctx.clearRect(0, 0, 700, 300);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, 700, 300);
+            document.getElementById('kyber-explanation').innerHTML = 'Click "Next Step" to see how ML-KEM (Kyber) key exchange works.';
+        }
+
+        function runKyberStep() {
+            kyberState.step++;
+            const step = kyberState.step;
+            const canvas = document.getElementById('kyber-canvas');
+            const ctx = canvas.getContext('2d');
+
+            for (let i = 0; i < 5; i++) {
+                const dot = document.getElementById(`kyber-dot-${i}`);
+                if (i < step) dot.className = 'step-dot completed';
+                else if (i === step) dot.className = 'step-dot active';
+                else dot.className = 'step-dot';
+            }
+
+            ctx.clearRect(0, 0, 700, 300);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, 700, 300);
+
+            // Draw Alice and Bob
+            ctx.fillStyle = '#00d4ff';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('👩 Alice', 100, 25);
+            ctx.fillText('👨 Bob', 600, 25);
+
+            // Dividing line
+            ctx.strokeStyle = '#2a2a6a';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(350, 30);
+            ctx.lineTo(350, 290);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            switch(step) {
+                case 0: // Key Generation
+                    document.getElementById('kyber-explanation').innerHTML = `<strong>Step 1 - Key Generation (Alice):</strong> Alice generates a random matrix <span class="highlight">A</span>, a secret vector <span class="highlight">s</span>, and computes <span class="highlight">b = A·s + e</span> (where e is small random error). Public key = (A, b). Secret key = s.`;
+
+                    // Draw matrix A
+                    ctx.fillStyle = '#7b2ff7';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('Matrix A (public, random)', 100, 60);
+                    ctx.fillStyle = '#1a1a4a';
+                    ctx.fillRect(40, 70, 120, 60);
+                    ctx.strokeStyle = '#7b2ff7';
+                    ctx.strokeRect(40, 70, 120, 60);
+                    ctx.fillStyle = '#7b2ff7';
+                    ctx.font = '10px monospace';
+                    ctx.fillText('[3 7 2 5]', 100, 88);
+                    ctx.fillText('[1 4 8 3]', 100, 102);
+                    ctx.fillText('[6 2 5 7]', 100, 116);
+
+                    // Secret s
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('Secret s (small!)', 100, 155);
+                    ctx.fillText('[1, 0, -1, 1]', 100, 175);
+
+                    // Error e
+                    ctx.fillStyle = '#ffd93d';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('Error e (tiny!)', 100, 200);
+                    ctx.fillText('[0, 1, -1, 0]', 100, 220);
+
+                    // Result b
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('b = A·s + e (public)', 100, 255);
+                    ctx.font = 'bold 13px monospace';
+                    ctx.fillText('[6, 3, 8]', 100, 275);
+
+                    // Arrow showing public key sent
+                    ctx.strokeStyle = '#00d4ff';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([]);
+                    ctx.beginPath();
+                    ctx.moveTo(200, 100);
+                    ctx.lineTo(500, 100);
+                    ctx.lineTo(490, 95);
+                    ctx.moveTo(500, 100);
+                    ctx.lineTo(490, 105);
+                    ctx.stroke();
+                    ctx.fillStyle = '#00d4ff';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('Send public key (A, b) →', 350, 90);
+                    break;
+
+                case 1: // Encapsulation
+                    document.getElementById('kyber-explanation').innerHTML = `<strong>Step 2 - Encapsulation (Bob):</strong> Bob picks his own secret <span class="highlight">r</span> and error vectors. Computes <span class="highlight">u = Aᵀ·r + e₁</span> and <span class="highlight">v = bᵀ·r + e₂ + ⌈q/2⌋·m</span> where m is the shared secret bit.`;
+
+                    // Bob's side
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText("Bob's secret r (small)", 600, 60);
+                    ctx.fillText('[0, 1, -1, 0]', 600, 80);
+
+                    ctx.fillStyle = '#ffd93d';
+                    ctx.fillText('Errors e₁, e₂ (tiny)', 600, 110);
+                    ctx.fillText('[1, 0, -1] , [1]', 600, 130);
+
+                    ctx.fillStyle = '#b388ff';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('Shared secret m = 1', 600, 165);
+                    ctx.font = 'bold 24px Segoe UI';
+                    ctx.fillText('🔑', 600, 195);
+
+                    // Compute u and v
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('u = Aᵀ·r + e₁', 600, 225);
+                    ctx.fillText('v = bᵀ·r + e₂ + ⌈q/2⌋·m', 600, 245);
+
+                    // Arrow sending ciphertext
+                    ctx.strokeStyle = '#ff6b6b';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(500, 235);
+                    ctx.lineTo(200, 235);
+                    ctx.lineTo(210, 230);
+                    ctx.moveTo(200, 235);
+                    ctx.lineTo(210, 240);
+                    ctx.stroke();
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('← Send ciphertext (u, v)', 350, 225);
+                    break;
+
+                case 2: // Decapsulation
+                    document.getElementById('kyber-explanation').innerHTML = `<strong>Step 3 - Decapsulation (Alice):</strong> Alice computes <span class="highlight">v - sᵀ·u ≈ ⌈q/2⌋·m</span>. The errors are small enough that she can round to recover m! Without knowing s, the errors make recovery impossible.`;
+
+                    // Alice's computation
+                    ctx.fillStyle = '#e0e0ff';
+                    ctx.font = '13px Segoe UI';
+                    ctx.fillText('Alice computes:', 100, 60);
+
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.font = '12px Courier New';
+                    ctx.fillText('v - sᵀ·u', 100, 90);
+                    ctx.fillText('= bᵀr + e₂ + ⌈q/2⌋m - sᵀ(Aᵀr + e₁)', 100, 115);
+                    ctx.fillText('= sᵀAr + eᵀr + e₂ + ⌈q/2⌋m - sᵀAᵀr - sᵀe₁', 100, 140);
+                    ctx.fillStyle = '#69db7c';
+                    ctx.fillText('≈ ⌈q/2⌋·m + (small noise)', 100, 170);
+
+                    // Visual: number line showing rounding
+                    ctx.strokeStyle = '#4a4a9a';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(40, 220);
+                    ctx.lineTo(310, 220);
+                    ctx.stroke();
+
+                    // 0 and q/2 markers
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('0', 50, 240);
+                    ctx.fillText('q/2', 270, 240);
+
+                    // Decision boundary
+                    ctx.strokeStyle = '#ffd93d';
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.moveTo(160, 205);
+                    ctx.lineTo(160, 235);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = '#ffd93d';
+                    ctx.fillText('q/4', 155, 250);
+
+                    // Actual value (near q/2 because m=1)
+                    const valX = 255 + Math.random() * 20 - 10;
+                    ctx.fillStyle = '#69db7c';
+                    ctx.beginPath();
+                    ctx.arc(valX, 220, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillText('result ≈ q/2 → m=1 ✓', valX - 30, 265);
+
+                    // Right side: recovered key
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 16px Segoe UI';
+                    ctx.fillText('🔑 m = 1', 600, 150);
+                    ctx.font = '12px Segoe UI';
+                    ctx.fillText('Shared secret recovered!', 600, 175);
+                    break;
+
+                case 3: // Why it's secure
+                    document.getElementById('kyber-explanation').innerHTML = `<strong>Step 4 - Why it's secure:</strong> An attacker sees (A, b, u, v) but cannot find s because <span class="highlight">b = A·s + e</span> — this is the LWE problem! The error e hides s, and no quantum algorithm can efficiently solve this.`;
+
+                    // Attacker's view
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = 'bold 14px Segoe UI';
+                    ctx.fillText('🕵️ Attacker sees:', 350, 50);
+
+                    ctx.fillStyle = '#1a1a4a';
+                    ctx.fillRect(150, 60, 400, 100);
+                    ctx.strokeStyle = '#ff6b6b';
+                    ctx.strokeRect(150, 60, 400, 100);
+
+                    ctx.fillStyle = '#a0a0d0';
+                    ctx.font = '12px Courier New';
+                    ctx.fillText('A = [random matrix]  ✓ known', 350, 85);
+                    ctx.fillText('b = A·s + e          ✓ known (but noisy!)', 350, 105);
+                    ctx.fillText('u = Aᵀ·r + e₁       ✓ known (but noisy!)', 350, 125);
+                    ctx.fillText('v = bᵀ·r + e₂ + ⌈q/2⌋·m  ✓ known', 350, 145);
+
+                    // What they need
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = '13px Segoe UI';
+                    ctx.fillText('Need to find s or r — but LWE is HARD!', 350, 185);
+
+                    // Difficulty visualization
+                    ctx.fillStyle = '#2a2a6a';
+                    ctx.fillRect(150, 200, 400, 60);
+                    ctx.fillStyle = '#ff6b6b';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText('Classical attack: 2^150+ operations', 350, 220);
+                    ctx.fillText('Quantum attack: 2^140+ operations (barely helps!)', 350, 240);
+                    ctx.fillStyle = '#69db7c';
+                    ctx.fillText('→ SECURE against quantum computers ✓', 350, 258);
+                    break;
+
+                case 4: // Summary
+                    document.getElementById('kyber-explanation').innerHTML = `<strong>Summary:</strong> ML-KEM uses the hardness of LWE to create a key exchange that's fast, has small keys (~1.5KB), and resists both classical and quantum attacks. It's now standardized as <span class="highlight">FIPS 203</span>!`;
+
+                    ctx.fillStyle = '#69db7c';
+                    ctx.font = 'bold 20px Segoe UI';
+                    ctx.fillText('✅ ML-KEM (Kyber) — Quantum-Safe Key Exchange', 350, 50);
+
+                    const summaryItems = [
+                        { label: 'Hard Problem', value: 'Module Learning With Errors (MLWE)', color: '#7b2ff7' },
+                        { label: 'Public Key', value: '~1,568 bytes (Kyber-768)', color: '#00d4ff' },
+                        { label: 'Ciphertext', value: '~1,088 bytes', color: '#b388ff' },
+                        { label: 'Shared Secret', value: '32 bytes', color: '#69db7c' },
+                        { label: 'Security Level', value: '~AES-192 equivalent', color: '#ffd93d' },
+                        { label: 'Speed', value: '~50,000 key exchanges/sec', color: '#00d4ff' },
+                    ];
+
+                    summaryItems.forEach((item, i) => {
+                        const y = 80 + i * 35;
+                        ctx.fillStyle = item.color;
+                        ctx.font = 'bold 12px Segoe UI';
+                        ctx.textAlign = 'right';
+                        ctx.fillText(item.label + ':', 280, y);
+                        ctx.textAlign = 'left';
+                        ctx.font = '12px Segoe UI';
+                        ctx.fillText(item.value, 290, y);
+                    });
+
+                    ctx.textAlign = 'center';
+                    break;
+
+                default:
+                    kyberState.step = 4;
+            }
+            ctx.textAlign = 'left';
+        }
+
+        // ==================== SVP VISUALIZATION ====================
+        function drawSVP() {
+            const canvas = document.getElementById('svp-canvas');
+            const ctx = canvas.getContext('2d');
+            const dim = parseInt(document.getElementById('svp-dim').value);
+            document.getElementById('svp-dim-val').textContent = dim;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Generate random 2D lattice basis
+            const b1x = 30 + Math.random() * 40;
+            const b1y = -20 + Math.random() * 40;
+            const b2x = -10 + Math.random() * 30;
+            const b2y = 30 + Math.random() * 30;
+
+            const centerX = 350;
+            const centerY = 175;
+
+            // Draw lattice points
+            let points = [];
+            for (let i = -8; i <= 8; i++) {
+                for (let j = -8; j <= 8; j++) {
+                    if (i === 0 && j === 0) continue;
+                    const px = centerX + i * b1x + j * b2x;
+                    const py = centerY + i * b1y + j * b2y;
+                    if (px > 20 && px < 680 && py > 20 && py < 330) {
+                        points.push({ x: px, y: py, dist: Math.sqrt(Math.pow(px - centerX, 2) + Math.pow(py - centerY, 2)), i, j });
+                    }
+                }
+            }
+
+            // Sort by distance to find shortest
+            points.sort((a, b) => a.dist - b.dist);
+
+            // Draw grid lines (faint)
+            ctx.strokeStyle = 'rgba(74, 74, 154, 0.2)';
+            ctx.lineWidth = 0.5;
+            for (let i = -8; i <= 8; i++) {
+                ctx.beginPath();
+                ctx.moveTo(centerX + i * b1x - 8 * b2x, centerY + i * b1y - 8 * b2y);
+                ctx.lineTo(centerX + i * b1x + 8 * b2x, centerY + i * b1y + 8 * b2y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(centerX - 8 * b1x + i * b2x, centerY - 8 * b1y + i * b2y);
+                ctx.lineTo(centerX + 8 * b1x + i * b2x, centerY + 8 * b1y + i * b2y);
+                ctx.stroke();
+            }
+
+            // Draw points
+            points.forEach((p, idx) => {
+                ctx.fillStyle = idx === 0 ? '#69db7c' : 'rgba(123, 47, 247, 0.6)';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, idx === 0 ? 6 : 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Origin
+            ctx.fillStyle = '#ff6b6b';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Origin', centerX, centerY + 18);
+
+            // Shortest vector
+            if (points.length > 0) {
+                ctx.strokeStyle = '#69db7c';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(points[0].x, points[0].y);
+                ctx.stroke();
+
+                ctx.fillStyle = '#69db7c';
+                ctx.fillText('Shortest vector', points[0].x, points[0].y - 12);
+                ctx.fillText(`length ≈ ${points[0].dist.toFixed(1)}`, points[0].x, points[0].y + 18);
+            }
+
+            // Dimension difficulty indicator
+            ctx.fillStyle = '#a0a0d0';
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Simulating ${dim}D (shown in 2D projection)`, 20, 20);
+
+            // Difficulty bar
+            const difficulty = Math.pow(2, 0.298 * dim);
+            const maxDiff = Math.pow(2, 0.298 * 20);
+            ctx.fillStyle = '#1a1a4a';
+            ctx.fillRect(20, 330, 300, 12);
+            ctx.fillStyle = dim <= 5 ? '#69db7c' : (dim <= 12 ? '#ffd93d' : '#ff6b6b');
+            ctx.fillRect(20, 330, Math.min(300, (Math.log2(difficulty) / Math.log2(maxDiff)) * 300), 12);
+            ctx.fillStyle = '#e0e0ff';
+            ctx.font = '10px Segoe UI';
+            ctx.fillText(`Difficulty: 2^${(0.298 * dim).toFixed(1)} operations (dim=${dim})`, 20, 355);
+
+            // In real crypto
+            ctx.fillStyle = '#7b2ff7';
+            ctx.fillText(`Real Kyber uses dimension ~768. Difficulty: 2^${(0.298 * 768).toFixed(0)} ≈ impossible!`, 350, 355);
+
+            ctx.textAlign = 'left';
+
+            // Update info cards
+            document.getElementById('svp-classical').innerHTML = `2<sup>${(0.298 * dim).toFixed(2)}</sup> ≈ ${difficulty.toFixed(0)} ops`;
+            document.getElementById('svp-quantum').innerHTML = `2<sup>${(0.268 * dim).toFixed(2)}</sup> ≈ ${Math.pow(2, 0.268 * dim).toFixed(0)} ops`;
+            const speedup = ((0.298 - 0.268) / 0.298 * 100).toFixed(1);
+            document.getElementById('svp-speedup').innerHTML = `Only ~${speedup}% faster!<br><small>(vs exponential for factoring)</small>`;
+
+            document.getElementById('svp-explanation').innerHTML = dim <= 3 ?
+                `In ${dim}D, finding the shortest vector is <span class="safe">easy</span> — you can almost see it!` :
+                `In ${dim}D, finding the shortest vector takes ~2<sup>${(0.298*dim).toFixed(1)}</sup> operations. At dimension 768 (real Kyber), this is <span class="highlight">completely infeasible</span> even for quantum computers.`;
+        }
+
+        function trySolveSVP() {
+            const canvas = document.getElementById('svp-canvas');
+            const ctx = canvas.getContext('2d');
+            const dim = parseInt(document.getElementById('svp-dim').value);
+
+            // Animate "searching" for shortest vector
+            let attempts = 0;
+            const maxAttempts = Math.min(30, Math.pow(2, dim * 0.3));
+
+            function searchStep() {
+                attempts++;
+
+                // Draw random vector being tested
+                const angle = Math.random() * Math.PI * 2;
+                const len = 30 + Math.random() * 100;
+                const endX = 350 + Math.cos(angle) * len;
+                const endY = 175 + Math.sin(angle) * len;
+
+                ctx.strokeStyle = `rgba(255, 217, 61, ${0.5 - attempts/maxAttempts * 0.4})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(350, 175);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+
+                // Status
+                ctx.fillStyle = '#0a0a2e';
+                ctx.fillRect(400, 320, 300, 30);
+                ctx.fillStyle = '#ffd93d';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Searching... attempt ${attempts}/${Math.ceil(maxAttempts)}`, 400, 338);
+
+                if (attempts < maxAttempts) {
+                    setTimeout(searchStep, 100);
+                } else {
+                    ctx.fillStyle = '#0a0a2e';
+                    ctx.fillRect(400, 320, 300, 30);
+                    ctx.fillStyle = dim <= 5 ? '#69db7c' : '#ff6b6b';
+                    ctx.fillText(dim <= 5 ? `Found it! (easy in ${dim}D)` : `Still searching... (hard in ${dim}D!)`, 400, 338);
+
+                    document.getElementById('svp-explanation').innerHTML = dim <= 5 ?
+                        `<span class="safe">Found the shortest vector</span> after ${attempts} attempts. Low dimensions are tractable.` :
+                        `<span class="warning">Couldn't find it efficiently!</span> In ${dim}D, we'd need ~2<sup>${(0.298*dim).toFixed(1)}</sup> attempts. Real crypto uses dim=768 → 2<sup>229</sup> attempts needed!`;
+                }
+            }
+            searchStep();
+        }
+
+        // ==================== COMPARISON CHART ====================
+        function drawComparison() {
+            const canvas = document.getElementById('comparison-canvas');
+            const ctx = canvas.getContext('2d');
+            const metric = document.getElementById('compare-metric').value;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let data;
+            let title;
+            let unit;
+
+            switch(metric) {
+                case 'keysize':
+                    title = 'Public Key Size Comparison';
+                    unit = 'bytes';
+                    data = [
+                        { name: 'RSA-2048', value: 256, color: '#ff6b6b', category: 'classical' },
+                        { name: 'ECC P-256', value: 64, color: '#ff6b6b', category: 'classical' },
+                        { name: 'ML-KEM-768\n(Kyber)', value: 1184, color: '#00d4ff', category: 'pqc' },
+                        { name: 'ML-DSA-65\n(Dilithium)', value: 1952, color: '#7b2ff7', category: 'pqc' },
+                        { name: 'SLH-DSA\n(SPHINCS+)', value: 64, color: '#ffd93d', category: 'pqc' },
+                        { name: 'McEliece', value: 261120, color: '#69db7c', category: 'pqc' },
+                    ];
+                    break;
+                case 'sigsize':
+                    title = 'Signature / Ciphertext Size';
+                    unit = 'bytes';
+                    data = [
+                        { name: 'RSA-2048\nsig', value: 256, color: '#ff6b6b', category: 'classical' },
+                        { name: 'ECDSA\nsig', value: 64, color: '#ff6b6b', category: 'classical' },
+                        { name: 'ML-KEM-768\nciphertext', value: 1088, color: '#00d4ff', category: 'pqc' },
+                        { name: 'ML-DSA-65\nsig', value: 3293, color: '#7b2ff7', category: 'pqc' },
+                        { name: 'SLH-DSA-256f\nsig', value: 49856, color: '#ffd93d', category: 'pqc' },
+                        { name: 'McEliece\nciphertext', value: 128, color: '#69db7c', category: 'pqc' },
+                    ];
+                    break;
+                case 'speed':
+                    title = 'Operations per Second (higher = better)';
+                    unit = 'ops/sec';
+                    data = [
+                        { name: 'RSA-2048\nsign', value: 1000, color: '#ff6b6b', category: 'classical' },
+                        { name: 'ECDSA\nsign', value: 20000, color: '#ff6b6b', category: 'classical' },
+                        { name: 'ML-KEM-768\nencaps', value: 50000, color: '#00d4ff', category: 'pqc' },
+                        { name: 'ML-DSA-65\nsign', value: 15000, color: '#7b2ff7', category: 'pqc' },
+                        { name: 'SLH-DSA\nsign', value: 100, color: '#ffd93d', category: 'pqc' },
+                        { name: 'McEliece\nencaps', value: 200000, color: '#69db7c', category: 'pqc' },
+                    ];
+                    break;
+            }
+
+            // Title
+            ctx.fillStyle = '#e0e0ff';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, 350, 25);
+
+            // Draw bars
+            const maxVal = Math.max(...data.map(d => d.value));
+            const barHeight = 40;
+            const gap = 10;
+            const startY = 50;
+            const maxBarWidth = 450;
+
+            data.forEach((item, i) => {
+                const y = startY + i * (barHeight + gap);
+                const barWidth = (item.value / maxVal) * maxBarWidth;
+
+                // Label
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'right';
+                const lines = item.name.split('\n');
+                lines.forEach((line, li) => {
+                    ctx.fillText(line, 120, y + 15 + li * 13);
+                });
+
+                // Bar
+                ctx.fillStyle = item.color;
+                ctx.globalAlpha = 0.8;
+                ctx.fillRect(130, y + 5, barWidth, barHeight - 10);
+                ctx.globalAlpha = 1;
+
+                // Value
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 11px Segoe UI';
+                ctx.textAlign = 'left';
+                const valStr = item.value >= 1000 ? (item.value / 1000).toFixed(1) + 'K' : item.value.toString();
+                ctx.fillText(`${valStr} ${unit}`, 135 + barWidth, y + 22);
+
+                // Category indicator
+                ctx.fillStyle = item.category === 'classical' ? 'rgba(255,107,107,0.2)' : 'rgba(0,212,255,0.1)';
+                ctx.fillRect(125, y, maxBarWidth + 100, barHeight);
+            });
+
+            // Legend
+            ctx.textAlign = 'left';
+            ctx.font = '11px Segoe UI';
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(20, 370, 12, 12);
+            ctx.fillText('Classical (quantum-vulnerable)', 37, 381);
+            ctx.fillStyle = '#00d4ff';
+            ctx.fillRect(250, 370, 12, 12);
+            ctx.fillText('Post-Quantum (quantum-safe)', 267, 381);
+
+            ctx.textAlign = 'left';
+        }
+
+        // ==================== TIMELINE ====================
+        function drawTimeline() {
+            const canvas = document.getElementById('timeline-canvas');
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0a0a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const years = [2020, 2024, 2026, 2030, 2035, 2040];
+            const lineY = 100;
+
+            // Main timeline
+            ctx.strokeStyle = '#4a4a9a';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(50, lineY);
+            ctx.lineTo(650, lineY);
+            ctx.stroke();
+
+            // Year markers
+            years.forEach((year, i) => {
+                const x = 50 + (i / (years.length - 1)) * 600;
+
+                ctx.strokeStyle = '#4a4a9a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x, lineY - 10);
+                ctx.lineTo(x, lineY + 10);
+                ctx.stroke();
+
+                ctx.fillStyle = '#a0a0d0';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(year, x, lineY + 25);
+            });
+
+            // Events
+            const events = [
+                { year: 2020, text: '🕵️ Harvest Now', y: -30, color: '#ff6b6b' },
+                { year: 2024, text: '📋 NIST Standards', y: -30, color: '#69db7c' },
+                { year: 2026, text: '📍 We are here', y: -50, color: '#ffd93d' },
+                { year: 2030, text: '🔄 Migration deadline?', y: -30, color: '#00d4ff' },
+                { year: 2035, text: '⚛️ Crypto-relevant QC?', y: -30, color: '#ff6b6b' },
+                { year: 2040, text: '💀 Decrypt Later', y: -50, color: '#ff6b6b' },
+            ];
+
+            events.forEach(event => {
+                const x = 50 + ((event.year - 2020) / 20) * 600;
+                ctx.fillStyle = event.color;
+                ctx.font = 'bold 11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(event.text, x, lineY + event.y);
+
+                // Dot
+                ctx.beginPath();
+                ctx.arc(x, lineY, 6, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // "Harvest now, decrypt later" arrow
+            ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(50, lineY + 50);
+            ctx.lineTo(650, lineY + 50);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('← Data stolen today can be decrypted when quantum computers arrive →', 350, lineY + 70);
+
+            // Current position highlight
+            const nowX = 50 + ((2026 - 2020) / 20) * 600;
+            ctx.strokeStyle = '#ffd93d';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(nowX, lineY - 60);
+            ctx.lineTo(nowX, lineY + 45);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.textAlign = 'left';
+        }
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            drawComplexityGraph();
+            drawCircuit();
+            drawLattice();
+            drawMerkleTree();
+            drawCodeBased();
+            drawMultivariate();
+            drawSVP();
+            drawComparison();
+            drawTimeline();
+            updateThreatDisplay(512);
+            resetShor();
+            resetKyber();
+
+            // Update range display values
+            document.getElementById('qft-period').addEventListener('input', function() {
+                document.getElementById('qft-period-val').textContent = this.value;
+            });
+
+            document.getElementById('lattice-dim').addEventListener('input', function() {
+                document.getElementById('lattice-dim-val').textContent = this.value;
+            });
+
+            document.getElementById('lattice-error').addEventListener('input', function() {
+                document.getElementById('lattice-error-val').textContent = this.value;
+            });
+
+            document.getElementById('tree-height').addEventListener('input', function() {
+                document.getElementById('tree-height-val').textContent = this.value;
+            });
+
+            document.getElementById('code-length').addEventListener('input', function() {
+                document.getElementById('code-length-val').textContent = this.value;
+            });
+
+            document.getElementById('code-errors').addEventListener('input', function() {
+                document.getElementById('code-errors-val').textContent = this.value;
+            });
+
+            document.getElementById('multi-vars').addEventListener('input', function() {
+                document.getElementById('multi-vars-val').textContent = this.value;
+            });
+
+            document.getElementById('svp-dim').addEventListener('input', function() {
+                document.getElementById('svp-dim-val').textContent = this.value;
+            });
+
+            // Make canvases responsive
+            window.addEventListener('resize', debounce(function() {
+                const canvases = document.querySelectorAll('canvas');
+                canvases.forEach(c => {
+                    const parent = c.parentElement;
+                    if (parent.offsetWidth < c.width) {
+                        c.style.width = '100%';
+                        c.style.height = 'auto';
+                    }
+                });
+            }, 250));
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Interactive canvas click handlers for lattice
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+
+            // Make lattice canvas interactive - click to guess closest point
+            const latticeCanvas = document.getElementById('lattice-canvas');
+            latticeCanvas.addEventListener('click', function(e) {
+                const rect = latticeCanvas.getBoundingClientRect();
+                const scaleX = latticeCanvas.width / rect.width;
+                const scaleY = latticeCanvas.height / rect.height;
+                const clickX = (e.clientX - rect.left) * scaleX;
+                const clickY = (e.clientY - rect.top) * scaleY;
+
+                // Find closest lattice point to click
+                let minDist = Infinity;
+                let closest = null;
+                latticeState.points.forEach(p => {
+                    const dist = Math.sqrt(Math.pow(p.x - clickX, 2) + Math.pow(p.y - clickY, 2));
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closest = p;
+                    }
+                });
+
+                if (closest && minDist < 30) {
+                    const ctx = latticeCanvas.getContext('2d');
+                    ctx.strokeStyle = '#ffd93d';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(closest.x, closest.y, 10, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.fillStyle = '#ffd93d';
+                    ctx.font = '10px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`(${closest.i},${closest.j})`, closest.x, closest.y + 20);
+                    ctx.textAlign = 'left';
+                }
+            });
+
+            // SVP canvas click to try finding shortest vector
+            const svpCanvas = document.getElementById('svp-canvas');
+            svpCanvas.addEventListener('click', function(e) {
+                const rect = svpCanvas.getBoundingClientRect();
+                const scaleX = svpCanvas.width / rect.width;
+                const scaleY = svpCanvas.height / rect.height;
+                const clickX = (e.clientX - rect.left) * scaleX;
+                const clickY = (e.clientY - rect.top) * scaleY;
+
+                const ctx = svpCanvas.getContext('2d');
+                // Draw user's guess vector
+                ctx.strokeStyle = 'rgba(255, 217, 61, 0.7)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(350, 175);
+                ctx.lineTo(clickX, clickY);
+                ctx.stroke();
+
+                const dist = Math.sqrt(Math.pow(clickX - 350, 2) + Math.pow(clickY - 175, 2));
+                ctx.fillStyle = '#ffd93d';
+                ctx.font = '10px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(`len=${dist.toFixed(1)}`, (350 + clickX) / 2, (175 + clickY) / 2 - 8);
+                ctx.textAlign = 'left';
+            });
+        });
+    </script>
+</body>
+</html>

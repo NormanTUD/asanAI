@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topological Quantum Field Theory - Visual Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a2e;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #2a1a5e 100%);
+            border-bottom: 2px solid #4a3aff;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #00d4ff, #7b2fff, #ff2d95);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #aab;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: #0d0d35;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border: 2px solid #4a3aff;
+            border-radius: 30px;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: linear-gradient(135deg, #4a3aff, #7b2fff);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(123, 47, 255, 0.4);
+        }
+
+        .section {
+            display: none;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 80vh;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        canvas {
+            border-radius: 15px;
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #333;
+            background: #050520;
+        }
+
+        .canvas-container {
+            position: relative;
+            text-align: center;
+        }
+
+        .instructions {
+            background: rgba(74, 58, 255, 0.1);
+            border: 1px solid #4a3aff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-size: 0.95em;
+            color: #ccd;
+        }
+
+        .instructions strong {
+            color: #00d4ff;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a3aff, #7b2fff);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff2d95, #cc0066);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00cc88, #009966);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .score-display {
+            text-align: center;
+            font-size: 1.3em;
+            margin: 10px 0;
+            color: #00d4ff;
+        }
+
+        .concept-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .concept-card h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #1a1a4e;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #7b2fff);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid #4a3aff;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.85em;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 250px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .slider-container input[type="range"] {
+            width: 200px;
+            accent-color: #7b2fff;
+        }
+
+        .achievement {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4a3aff, #7b2fff);
+            border-radius: 12px;
+            padding: 15px 25px;
+            animation: slideIn 0.5s ease, slideOut 0.5s ease 2.5s forwards;
+            z-index: 10000;
+            box-shadow: 0 10px 30px rgba(123, 47, 255, 0.5);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Topological Quantum Field Theory</h1>
+        <p>Explore the beautiful mathematics where shapes, spaces, and quantum physics meet. No equations needed — just play, drag, and discover!</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('intro')">🌀 What is TQFT?</button>
+        <button class="nav-tab" onclick="showSection('topology')">🍩 Topology Play</button>
+        <button class="nav-tab" onclick="showSection('cobordism')">🔗 Cobordisms</button>
+        <button class="nav-tab" onclick="showSection('invariants')">🎯 Invariants Game</button>
+        <button class="nav-tab" onclick="showSection('knots')">🪢 Knot Lab</button>
+        <button class="nav-tab" onclick="showSection('functor')">⚡ The Functor</button>
+    </div>
+
+    <!-- Section 1: Introduction -->
+    <div class="section active" id="intro">
+        <div class="concept-card">
+            <h3>🌀 The Big Idea</h3>
+            <p>A TQFT is a bridge between <strong style="color:#00d4ff">shapes (topology)</strong> and <strong style="color:#ff2d95">numbers (quantum physics)</strong>. It assigns numbers to spaces in a way that only cares about the overall "shape" — not sizes, angles, or distances.</p>
+        </div>
+        <div class="instructions">
+            <strong>🎮 Interactive Demo:</strong> Watch how different shapes get assigned quantum values. Hover over shapes to see their invariants. Click to morph them!
+        </div>
+        <div class="canvas-container">
+            <canvas id="introCanvas" width="800" height="500"></canvas>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" onclick="introAddShape()">Add Shape</button>
+            <button class="btn btn-secondary" onclick="introMorph()">Morph All</button>
+            <button class="btn btn-danger" onclick="introClear()">Clear</button>
+        </div>
+        <div class="concept-card">
+            <h3>Key Insight</h3>
+            <p>A coffee mug and a donut are "the same" in topology (both have one hole). TQFT assigns them the <em>same</em> quantum number. This is what makes it <strong style="color:#7b2fff">topological</strong> — it ignores geometry and only sees connectivity.</p>
+        </div>
+    </div>
+
+    <!-- Section 2: Topology Playground -->
+    <div class="section" id="topology">
+        <div class="concept-card">
+            <h3>🍩 Topology Playground</h3>
+            <p>In topology, we classify surfaces by their <strong style="color:#00d4ff">genus</strong> (number of holes). Drag to deform shapes — notice the genus never changes!</p>
+        </div>
+        <div class="instructions">
+            <strong>🎮 Drag</strong> on the surface to deform it. <strong>Use the slider</strong> to change the genus. The quantum dimension changes with genus!
+        </div>
+        <div class="slider-container">
+            <span>Genus: </span>
+            <input type="range" id="genusSlider" min="0" max="5" value="1" oninput="updateGenus(this.value)">
+            <span id="genusValue">1</span>
+            <span style="margin-left:20px; color:#ff2d95" id="quantumDim">Quantum Dim: 1</span>
+        </div>
+        <div class="canvas-container">
+            <canvas id="topologyCanvas" width="800" height="500"></canvas>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#00d4ff"></div> Surface</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ff2d95"></div> Holes (Genus)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#00cc88"></div> Quantum State Space</div>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" onclick="topologyAnimate()">Animate Deformation</button>
+            <button class="btn btn-success" onclick="topologyReset()">Reset Shape</button>
+        </div>
+    </div>
+
+    <!-- Section 3: Cobordisms -->
+    <div class="section" id="cobordism">
+        <div class="concept-card">
+            <h3>🔗 Cobordisms — The Morphisms of TQFT</h3>
+            <p>A <strong style="color:#00d4ff">cobordism</strong> is a surface that connects two boundaries. Think of it as a "process" that transforms one set of circles into another. In TQFT, cobordisms become <strong style="color:#ff2d95">linear maps</strong> between vector spaces.</p>
+        </div>
+        <div class="instructions">
+            <strong>🎮 Click</strong> to place input circles (left) and output circles (right). Then click <strong>"Connect"</strong> to generate a cobordism between them. Try different configurations!
+        </div>
+        <div class="canvas-container">
+            <canvas id="cobordismCanvas" width="800" height="500"></canvas>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" onclick="cobordismAddInput()">+ Input Circle</button>
+            <button class="btn btn-secondary" onclick="cobordismAddOutput()">+ Output Circle</button>
+            <button class="btn btn-success" onclick="cobordismConnect()">Connect!</button>
+            <button class="btn btn-danger" onclick="cobordismClear()">Clear</button>
+        </div>
+        <div class="score-display" id="cobordismInfo">Build a cobordism to see its properties!</div>
+        <div class="grid-2">
+            <div class="concept-card">
+                <h3>🧪 Pair of Pants</h3>
+                <p>The most famous cobordism: 1 circle → 2 circles. This represents <strong style="color:#00d4ff">multiplication</strong> in the quantum algebra!</p>
+            </div>
+            <div class="concept-card">
+                <h3>🧢 Cap & Cup</h3>
+                <p>A cap (0→1) creates a state. A cup (1→0) evaluates it. Together they form the <strong style="color:#ff2d95">trace</strong>!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Invariants Game -->
+    <div class="section" id="invariants">
+        <div class="concept-card">
+            <h3>🎯 Topological Invariants Game</h3>
+            <p>Can you identify which shapes are "the same" topologically? TQFT assigns equal values to topologically equivalent spaces. Test your intuition!</p>
+        </div>
+        <div class="instructions">
+            <strong>🎮 Game:</strong> Two shapes appear. Decide if they're topologically equivalent (same TQFT value) or not. Score points for correct answers!
+        </div>
+        <div class="score-display">Score: <span id="gameScore">0</span> / <span id="gameTotal">0</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="gameProgress" style="width:0%"></div></div>
+        <div class="canvas-container">
+            <canvas id="invariantsCanvas" width="800" height="400"></canvas>
+        </div>
+        <div class="controls">
+            <button class="btn btn-success" onclick="invariantAnswer(true)">✓ Same (Equivalent)</button>
+            <button class="btn btn-danger" onclick="invariantAnswer(false)">✗ Different</button>
+            <button class="btn btn-primary" onclick="invariantNext()">Next Pair →</button>
+        </div>
+        <div id="invariantFeedback" class="concept-card" style="display:none;"></div>
+    </div>
+
+    <!-- Section 5: Knot Lab -->
+    <div class="section" id="knots">
+        <div class="concept-card">
+            <h3>🪢 Knot Invariants Lab</h3>
+            <p>TQFT gives us powerful <strong style="color:#00d4ff">knot invariants</strong> — numbers that distinguish different knots. The Jones polynomial comes from a TQFT! Draw knots and see their invariants computed.</p>
+        </div>
+        <div class="instructions">
+            <strong>🎮 Click</strong> on a preset knot or <strong>draw your own</strong> crossings. Watch the TQFT machinery compute invariants in real-time!
+        </div>
+        <div class="canvas-container">
+            <canvas id="knotCanvas" width="800" height="500"></canvas>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" onclick="knotPreset('unknot')">Unknot ○</button>
+            <button class="btn btn-secondary" onclick="knotPreset('trefoil')">Trefoil ☘</button>
+            <button class="btn btn-success" onclick="knotPreset('figure8')">Figure-8 ∞</button>
+            <button class="btn btn-danger" onclick="knotPreset('hopf')">Hopf Link 🔗</button>
+            <button class="btn btn-primary" onclick="knotAnimate()">Animate</button>
+        </div>
+        <div class="score-display" id="knotInvariant">Select a knot to see its invariant</div>
+    </div>
+
+    <!-- Section 6: The Functor -->
+    <div class="section" id="functor">
+        <div class="concept-card">
+            <h3>⚡ The TQFT Functor — Putting It All Together</h3>
+            <p>A TQFT is formally a <strong style="color:#00d4ff">functor</strong> Z: <em>Cob</em> → <em>Vect</em>. It maps:</p>
+            <ul style="margin:10px 0 0 20px; line-height:2">
+                <li><strong style="color:#ff2d95">Closed (n-1)-manifolds</strong> → Vector spaces</li>
+                <li><strong style="color:#7b2fff">Cobordisms (n-manifolds with boundary)</strong> → Linear maps</li>
+                <li><strong style="color:#00cc88">Gluing of cobordisms</strong> → Composition of maps</li>
+            </ul>
+        </div>
+        <div class="instructions">
+            <strong>🎮 Drag</strong> objects from the topology side to see their image under the functor on the algebra side. Build compositions!
+        </div>
+        <div class="canvas-container">
+            <canvas id="functorCanvas" width="800" height="550"></canvas>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" onclick="functorDemo('circle')">Map: Circle → V</button>
+            <button class="btn btn-secondary" onclick="functorDemo('pants')">Map: Pants → μ</button>
+            <button class="btn btn-success" onclick="functorDemo('cap')">Map: Cap → η</button>
+            <button class="btn btn-danger" onclick="functorDemo('compose')">Compose!</button>
+        </div>
+        <div class="score-display" id="functorInfo">Click buttons to see the functor in action!</div>
+        <div class="concept-card">
+            <h3>🏆 The Axioms (Visually!)</h3>
+            <div class="grid-2">
+                <div>
+                    <p><strong style="color:#00d4ff">Functoriality:</strong> Gluing cobordisms = composing maps</p>
+                    <p style="margin-top:5px; color:#aab">Z(M₁ ∘ M₂) = Z(M₁) ∘ Z(M₂)</p>
+                </div>
+                <div>
+                    <p><strong style="color:#ff2d95">Monoidality:</strong> Disjoint union = tensor product</p>
+                    <p style="margin-top:5px; color:#aab">Z(Σ₁ ⊔ Σ₂) = Z(Σ₁) ⊗ Z(Σ₂)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ NAVIGATION ============
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showAchievement(text) {
+            const div = document.createElement('div');
+            div.className = 'achievement';
+            div.innerHTML = `🏆 ${text}`;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        // ============ SECTION 1: INTRO ============
+        const introCanvas = document.getElementById('introCanvas');
+        const introCtx = introCanvas.getContext('2d');
+        let introShapes = [];
+        let introTime = 0;
+
+        class IntroShape {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.genus = Math.floor(Math.random() * 4);
+                this.size = 40 + Math.random() * 30;
+                this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                this.phase = Math.random() * Math.PI * 2;
+                this.quantumValue = Math.pow(2, this.genus);
+                this.morphing = false;
+                this.morphPhase = 0;
+            }
+
+            draw(ctx, time) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                const wobble = this.morphing ? Math.sin(this.morphPhase) * 15 : Math.sin(time + this.phase) * 3;
+
+                // Draw the surface
+                ctx.beginPath();
+                const points = 60;
+                for (let i = 0; i <= points; i++) {
+                    const angle = (i / points) * Math.PI * 2;
+                    const r = this.size + wobble * Math.sin(angle * (this.genus + 1) * 2);
+                    const px = Math.cos(angle) * r;
+                    const py = Math.sin(angle) * r * 0.6;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.fillStyle = this.color + '44';
+                ctx.fill();
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw holes
+                for (let h = 0; h < this.genus; h++) {
+                    const hx = (h - (this.genus - 1) / 2) * (this.size * 0.6);
+                    ctx.beginPath();
+                    ctx.ellipse(hx, 0, this.size * 0.15, this.size * 0.1, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = '#050520';
+                    ctx.fill();
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                // Quantum value label
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Z = ${this.quantumValue}`, 0, this.size + 25);
+                ctx.font = '11px monospace';
+                ctx.fillStyle = '#aab';
+                ctx.fillText(`genus ${this.genus}`, 0, this.size + 40);
+
+                ctx.restore();
+
+                if (this.morphing) {
+                    this.morphPhase += 0.1;
+                    if (this.morphPhase > Math.PI * 4) this.morphing = false;
+                }
+            }
+        }
+
+        function introAddShape() {
+            const x = 100 + Math.random() * 600;
+            const y = 100 + Math.random() * 300;
+            introShapes.push(new IntroShape(x, y));
+            if (introShapes.length === 5) showAchievement('Shape Collector! 5 shapes created');
+        }
+
+        function introMorph() {
+            introShapes.forEach(s => {
+                s.morphing = true;
+                s.morphPhase = 0;
+            });
+        }
+
+        function introClear() {
+            introShapes = [];
+        }
+
+        // Add initial shapes
+        introShapes.push(new IntroShape(200, 250));
+        introShapes.push(new IntroShape(400, 200));
+        introShapes.push(new IntroShape(600, 300));
+
+        function animateIntro() {
+            introCtx.clearRect(0, 0, 800, 500);
+
+            // Background grid
+            introCtx.strokeStyle = '#1a1a4e';
+            introCtx.lineWidth = 0.5;
+            for (let i = 0; i < 800; i += 40) {
+                introCtx.beginPath();
+                introCtx.moveTo(i, 0);
+                introCtx.lineTo(i, 500);
+                introCtx.stroke();
+            }
+            for (let i = 0; i < 500; i += 40) {
+                introCtx.beginPath();
+                introCtx.moveTo(0, i);
+                introCtx.lineTo(800, i);
+                introCtx.stroke();
+            }
+
+            // Draw arrow showing TQFT mapping
+            introCtx.save();
+            introCtx.strokeStyle = '#4a3aff44';
+            introCtx.lineWidth = 2;
+            introCtx.setLineDash([5, 5]);
+            introCtx.beginPath();
+            introCtx.moveTo(400, 50);
+            introCtx.lineTo(400, 450);
+            introCtx.stroke();
+            introCtx.setLineDash([]);
+            introCtx.fillStyle = '#4a3aff88';
+            introCtx.font = '14px monospace';
+            introCtx.textAlign = 'center';
+            introCtx.fillText('TQFT assigns quantum numbers to shapes', 400, 480);
+            introCtx.restore();
+
+            introTime += 0.02;
+            introShapes.forEach(s => s.draw(introCtx, introTime));
+
+            requestAnimationFrame(animateIntro);
+        }
+        animateIntro();
+
+        // ============ SECTION 2: TOPOLOGY ============
+        const topCanvas = document.getElementById('topologyCanvas');
+        const topCtx = topCanvas.getContext('2d');
+        let currentGenus = 1;
+        let topTime = 0;
+        let topDeformations = [];
+        let topAnimating = false;
+        let topMouseDown = false;
+        let topMousePos = { x: 0, y: 0 };
+
+        topCanvas.addEventListener('mousedown', (e) => {
+            topMouseDown = true;
+            const rect = topCanvas.getBoundingClientRect();
+            topMousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        });
+        topCanvas.addEventListener('mousemove', (e) => {
+            if (topMouseDown) {
+                const rect = topCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                topDeformations.push({ x, y, strength: 20, decay: 1 });
+                topMousePos = { x, y };
+            }
+        });
+        topCanvas.addEventListener('mouseup', () => topMouseDown = false);
+        topCanvas.addEventListener('mouseleave', () => topMouseDown = false);
+
+        function updateGenus(val) {
+            currentGenus = parseInt(val);
+            document.getElementById('genusValue').textContent = val;
+            const dim = Math.pow(2, currentGenus);
+            document.getElementById('quantumDim').textContent = `Quantum Dim: ${dim}`;
+        }
+
+        function topologyAnimate() {
+            topAnimating = !topAnimating;
+        }
+
+        function topologyReset() {
+            topDeformations = [];
+        }
+
+        function drawTopologySurface(ctx, time) {
+            ctx.clearRect(0, 0, 800, 500);
+
+            // Background
+            ctx.fillStyle = '#050520';
+            ctx.fillRect(0, 0, 800, 500);
+
+            const cx = 400, cy = 220;
+            const baseWidth = 250, baseHeight = 100;
+
+            // Draw the surface with deformations
+            ctx.beginPath();
+            const pts = 200;
+            let path = [];
+            for (let i = 0; i <= pts; i++) {
+                const angle = (i / pts) * Math.PI * 2;
+                let r = baseWidth;
+                let ry = baseHeight;
+
+                // Apply wobble
+                if (topAnimating) {
+                    r += Math.sin(angle * 3 + time * 2) * 15;
+                    ry += Math.cos(angle * 2 + time * 1.5) * 10;
+                }
+
+                // Apply mouse deformations
+                const px = cx + Math.cos(angle) * r;
+                const py = cy + Math.sin(angle) * ry;
+                let dx = 0, dy = 0;
+                topDeformations.forEach(d => {
+                    const dist = Math.sqrt((px - d.x) ** 2 + (py - d.y) ** 2);
+                    if (dist < 80) {
+                        const force = (1 - dist / 80) * d.strength * d.decay;
+                        dx += (px - d.x) / dist * force * 0.3;
+                        dy += (py - d.y) / dist * force * 0.3;
+                    }
+                });
+
+                path.push({ x: px + dx, y: py + dy });
+            }
+
+            // Draw filled surface
+            ctx.beginPath();
+            ctx.moveTo(path[0].x, path[0].y);
+            for (let i = 1; i < path.length; i++) {
+                ctx.lineTo(path[i].x, path[i].y);
+            }
+            ctx.closePath();
+            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseWidth);
+            grad.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
+            grad.addColorStop(0.7, 'rgba(123, 47, 255, 0.15)');
+            grad.addColorStop(1, 'rgba(123, 47, 255, 0.05)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Draw holes (genus)
+            for (let h = 0; h < currentGenus; h++) {
+                const hx = cx + (h - (currentGenus - 1) / 2) * (baseWidth * 0.4);
+                const hy = cy;
+                const holeW = 30 + (topAnimating ? Math.sin(time * 2 + h) * 5 : 0);
+                const holeH = 15 + (topAnimating ? Math.cos(time * 1.5 + h) * 3 : 0);
+
+                ctx.beginPath();
+                ctx.ellipse(hx, hy, holeW, holeH, 0, 0, Math.PI * 2);
+                ctx.fillStyle = '#050520';
+                ctx.fill();
+                ctx.strokeStyle = '#ff2d95';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Glow around holes
+                ctx.beginPath();
+                ctx.ellipse(hx, hy, holeW + 5, holeH + 5, 0, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 45, 149, 0.3)';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            }
+
+            // Draw quantum state space visualization below
+            const dim = Math.pow(2, currentGenus);
+            const stateY = 400;
+            ctx.fillStyle = '#00cc88';
+            ctx.font = 'bold 16px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Quantum State Space: V  (dim = ${dim})`, cx, stateY - 20);
+
+            // Draw basis vectors as glowing dots
+            for (let i = 0; i < dim && i < 32; i++) {
+                const angle = (i / dim) * Math.PI * 2;
+                const r = 40 + dim * 3;
+                const bx = cx + Math.cos(angle + time * 0.5) * r;
+                const by = stateY + 40 + Math.sin(angle + time * 0.5) * 25;
+
+                ctx.beginPath();
+                ctx.arc(bx, by, 6, 0, Math.PI * 2);
+                ctx.fillStyle = `hsl(${(i / dim) * 120 + 120}, 80%, 60%)`;
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(bx, by, 10, 0, Math.PI * 2);
+                ctx.strokeStyle = `hsla(${(i / dim) * 120 + 120}, 80%, 60%, 0.3)`;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Decay deformations
+            topDeformations.forEach(d => d.decay *= 0.995);
+            topDeformations = topDeformations.filter(d => d.decay > 0.01);
+
+            // Label
+            ctx.fillStyle = '#aab';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('Drag on the surface to deform it — the genus (# of holes) never changes!', cx, 490);
+        }
+
+        function animateTopology() {
+            topTime += 0.02;
+            drawTopologySurface(topCtx, topTime);
+            requestAnimationFrame(animateTopology);
+        }
+        animateTopology();
+
+        // ============ SECTION 3: COBORDISMS ============
+        const cobCanvas = document.getElementById('cobordismCanvas');
+        const cobCtx = cobCanvas.getContext('2d');
+        let cobInputs = [];
+        let cobOutputs = [];
+        let cobConnected = false;
+        let cobTime = 0;
+        let cobAnimPhase = 0;
+
+        function cobordismAddInput() {
+            if (cobInputs.length < 4) {
+                const y = 150 + cobInputs.length * 80;
+                cobInputs.push({ x: 100, y, r: 25 });
+                cobConnected = false;
+            }
+        }
+
+        function cobordismAddOutput() {
+            if (cobOutputs.length < 4) {
+                const y = 150 + cobOutputs.length * 80;
+                cobOutputs.push({ x: 700, y, r: 25 });
+                cobConnected = false;
+            }
+        }
+
+        function cobordismConnect() {
+            if (cobInputs.length === 0 && cobOutputs.length === 0) return;
+            cobConnected = true;
+            cobAnimPhase = 0;
+
+            // Determine cobordism type
+            const inCount = cobInputs.length;
+            const outCount = cobOutputs.length;
+            let info = `Cobordism: ${inCount} → ${outCount} | `;
+
+            if (inCount === 0 && outCount === 1) info += 'This is a CAP (unit/creation) — maps ℂ → V';
+            else if (inCount === 1 && outCount === 0) info += 'This is a CUP (counit/evaluation) — maps V → ℂ';
+            else if (inCount === 1 && outCount === 2) info += 'This is PANTS (multiplication) — maps V → V⊗V';
+            else if (inCount === 2 && outCount === 1) info += 'This is COPANTS (comultiplication) — maps V⊗V → V';
+            else if (inCount === 1 && outCount === 1) info += 'This is a CYLINDER (identity) — maps V → V';
+            else info += `General cobordism — a linear map between tensor products`;
+
+            document.getElementById('cobordismInfo').textContent = info;
+
+            if (inCount === 1 && outCount === 2) showAchievement('Pair of Pants discovered!');
+            if (inCount === 0 && outCount === 1) showAchievement('Creation operator found!');
+        }
+
+        function cobordismClear() {
+            cobInputs = [];
+            cobOutputs = [];
+            cobConnected = false;
+            document.getElementById('cobordismInfo').textContent = 'Build a cobordism to see its properties!';
+        }
+
+        function drawCobordism() {
+            cobCtx.clearRect(0, 0, 800, 500);
+
+            // Background
+            cobCtx.fillStyle = '#050520';
+            cobCtx.fillRect(0, 0, 800, 500);
+
+            // Grid
+            cobCtx.strokeStyle = '#1a1a4e';
+            cobCtx.lineWidth = 0.5;
+            for (let i = 0; i < 800; i += 40) {
+                cobCtx.beginPath();
+                cobCtx.moveTo(i, 0);
+                cobCtx.lineTo(i, 500);
+                cobCtx.stroke();
+            }
+
+            // Labels
+            cobCtx.fillStyle = '#4a3aff';
+            cobCtx.font = 'bold 14px monospace';
+            cobCtx.textAlign = 'center';
+            cobCtx.fillText('INPUT (Σ_in)', 100, 40);
+            cobCtx.fillText('OUTPUT (Σ_out)', 700, 40);
+
+            // Draw input circles
+            cobInputs.forEach((c, i) => {
+                cobCtx.beginPath();
+                cobCtx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+                cobCtx.strokeStyle = '#00d4ff';
+                cobCtx.lineWidth = 3;
+                cobCtx.stroke();
+                cobCtx.beginPath();
+                cobCtx.arc(c.x, c.y, c.r + 5, 0, Math.PI * 2);
+                cobCtx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
+                cobCtx.lineWidth = 6;
+                cobCtx.stroke();
+            });
+
+            // Draw output circles
+            cobOutputs.forEach((c, i) => {
+                cobCtx.beginPath();
+                cobCtx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+                cobCtx.strokeStyle = '#ff2d95';
+                cobCtx.lineWidth = 3;
+                cobCtx.stroke();
+                cobCtx.beginPath();
+                cobCtx.arc(c.x, c.y, c.r + 5, 0, Math.PI * 2);
+                cobCtx.strokeStyle = 'rgba(255, 45, 149, 0.2)';
+                cobCtx.lineWidth = 6;
+                cobCtx.stroke();
+            });
+
+            // Draw cobordism surface if connected
+            if (cobConnected) {
+                cobAnimPhase = Math.min(cobAnimPhase + 0.02, 1);
+                const progress = cobAnimPhase;
+
+                cobCtx.save();
+                cobCtx.globalAlpha = progress;
+
+                // Compute all boundary points
+                const allInputY = cobInputs.map(c => c.y);
+                const allOutputY = cobOutputs.map(c => c.y);
+
+                if (cobInputs.length === 0 && cobOutputs.length > 0) {
+                    // Cap: point to circles
+                    cobOutputs.forEach(c => {
+                        drawTube(cobCtx, 300, 250, 0, c.x, c.y, c.r, cobTime);
+                    });
+                } else if (cobInputs.length > 0 && cobOutputs.length === 0) {
+                    // Cup: circles to point
+                    cobInputs.forEach(c => {
+                        drawTube(cobCtx, c.x, c.y, c.r, 500, 250, 0, cobTime);
+                    });
+                } else {
+                    // General: connect each input to the merge point, then to outputs
+                    const mergeX = 400;
+                    const mergeY = 250;
+
+                    // Draw the surface as a smooth blob
+                    cobCtx.beginPath();
+                    const allPts = [...cobInputs, ...cobOutputs];
+                    if (allPts.length > 0) {
+                        // Top edge
+                        const topY = Math.min(...allPts.map(p => p.y - p.r)) - 20;
+                        const botY = Math.max(...allPts.map(p => p.y + p.r)) + 20;
+
+                        // Draw smooth cobordism surface
+                        cobInputs.forEach(c => {
+                            drawTube(cobCtx, c.x, c.y, c.r, mergeX, mergeY, 15, cobTime);
+                        });
+                        cobOutputs.forEach(c => {
+                            drawTube(cobCtx, mergeX, mergeY, 15, c.x, c.y, c.r, cobTime);
+                        });
+                    }
+                }
+
+                // Flowing particles along the cobordism
+                const numParticles = 20;
+                for (let i = 0; i < numParticles; i++) {
+                    const t = ((cobTime * 0.5 + i / numParticles) % 1);
+                    const px = 100 + t * 600;
+                    const py = 250 + Math.sin(t * Math.PI * 2 + i) * 50;
+                    cobCtx.beginPath();
+                    cobCtx.arc(px, py, 3, 0, Math.PI * 2);
+                    cobCtx.fillStyle = `hsla(${t * 360}, 80%, 70%, ${0.5 * progress})`;
+                    cobCtx.fill();
+                }
+
+                cobCtx.restore();
+            }
+
+            cobTime += 0.02;
+        }
+
+        function drawTube(ctx, x1, y1, r1, x2, y2, r2, time) {
+            const steps = 30;
+            ctx.beginPath();
+
+            // Top edge
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const x = x1 + (x2 - x1) * t;
+                const y = y1 + (y2 - y1) * t;
+                const r = r1 + (r2 - r1) * t;
+                const bulge = Math.sin(t * Math.PI) * 20;
+                const wave = Math.sin(t * Math.PI * 4 + time * 2) * 3;
+                const py = y - r - bulge + wave;
+                if (i === 0) ctx.moveTo(x, py);
+                else ctx.lineTo(x, py);
+            }
+
+            // Bottom edge (reverse)
+            for (let i = steps; i >= 0; i--) {
+                const t = i / steps;
+                const x = x1 + (x2 - x1) * t;
+                const y = y1 + (y2 - y1) * t;
+                const r = r1 + (r2 - r1) * t;
+                const bulge = Math.sin(t * Math.PI) * 20;
+                const wave = Math.sin(t * Math.PI * 4 + time * 2) * 3;
+                const py = y + r + bulge - wave;
+                ctx.lineTo(x, py);
+            }
+
+            ctx.closePath();
+            const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+            grad.addColorStop(0, 'rgba(0, 212, 255, 0.25)');
+            grad.addColorStop(0.5, 'rgba(123, 47, 255, 0.2)');
+            grad.addColorStop(1, 'rgba(255, 45, 149, 0.25)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(123, 47, 255, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        function animateCobordism() {
+            drawCobordism();
+            requestAnimationFrame(animateCobordism);
+        }
+        animateCobordism();
+
+        // ============ SECTION 4: INVARIANTS GAME ============
+        const invCanvas = document.getElementById('invariantsCanvas');
+        const invCtx = invCanvas.getContext('2d');
+        let gameScore = 0;
+        let gameTotal = 0;
+        let currentPair = null;
+        let answered = false;
+
+        const shapePairs = [
+            {
+                left: { type: 'sphere', genus: 0, label: 'Sphere' },
+                right: { type: 'ellipsoid', genus: 0, label: 'Ellipsoid' },
+                same: true,
+                explanation: 'A sphere and an ellipsoid are topologically the same — both have genus 0. You can smoothly deform one into the other!'
+            },
+            {
+                left: { type: 'torus', genus: 1, label: 'Torus (Donut)' },
+                right: { type: 'mug', genus: 1, label: 'Coffee Mug' },
+                same: true,
+                explanation: 'The classic example! A donut and a coffee mug both have exactly one hole (genus 1). TQFT assigns them the same value.'
+            },
+            {
+                left: { type: 'sphere', genus: 0, label: 'Sphere' },
+                right: { type: 'torus', genus: 1, label: 'Torus' },
+                same: false,
+                explanation: 'A sphere (genus 0) and a torus (genus 1) are topologically different. No smooth deformation can create or destroy a hole!'
+            },
+            {
+                left: { type: 'double_torus', genus: 2, label: 'Double Torus' },
+                right: { type: 'pretzel', genus: 2, label: 'Pretzel' },
+                same: true,
+                explanation: 'Both have genus 2 (two holes). Despite looking different geometrically, they are topologically equivalent!'
+            },
+            {
+                left: { type: 'torus', genus: 1, label: 'Torus' },
+                right: { type: 'double_torus', genus: 2, label: 'Double Torus' },
+                same: false,
+                explanation: 'Different genus means different topology! Genus 1 ≠ Genus 2. TQFT assigns different vector spaces to these.'
+            },
+            {
+                left: { type: 'sphere', genus: 0, label: 'Cube-like' },
+                right: { type: 'sphere', genus: 0, label: 'Tetrahedron-like' },
+                same: true,
+                explanation: 'A cube and a tetrahedron are both topologically spheres (genus 0). Corners and edges don\'t matter in topology!'
+            }
+        ];
+
+        function invariantNext() {
+            answered = false;
+            document.getElementById('invariantFeedback').style.display = 'none';
+            currentPair = shapePairs[Math.floor(Math.random() * shapePairs.length)];
+        }
+
+        function invariantAnswer(playerSays) {
+            if (!currentPair || answered) return;
+            answered = true;
+            gameTotal++;
+
+            const correct = playerSays === currentPair.same;
+            if (correct) gameScore++;
+
+            document.getElementById('gameScore').textContent = gameScore;
+            document.getElementById('gameTotal').textContent = gameTotal;
+            document.getElementById('gameProgress').style.width = `${(gameScore / Math.max(gameTotal, 1)) * 100}%`;
+
+            const fb = document.getElementById('invariantFeedback');
+            fb.style.display = 'block';
+            fb.innerHTML = `<h3>${correct ? '✅ Correct!' : '❌ Not quite!'}</h3><p>${currentPair.explanation}</p>
+                <p style="margin-top:10px;color:#aab">Left genus: ${currentPair.left.genus} | Right genus: ${currentPair.right.genus} | Z values: ${correct && currentPair.same ? 'EQUAL' : correct ? 'DIFFERENT' : playerSays ? 'Actually DIFFERENT' : 'Actually EQUAL'}</p>`;
+
+            if (gameScore === 5) showAchievement('Topology Master! 5 correct answers!');
+            if (gameScore === 10) showAchievement('TQFT Expert! 10 correct answers!');
+        }
+
+        invariantNext();
+
+        function drawInvariantShape(ctx, x, y, shape, time) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            const wobble = Math.sin(time * 1.5) * 5;
+
+            switch (shape.type) {
+                case 'sphere':
+                case 'ellipsoid': {
+                    const rx = shape.type === 'ellipsoid' ? 70 : 55;
+                    const ry = shape.type === 'ellipsoid' ? 40 : 55;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, rx + wobble, ry + wobble * 0.5, 0, 0, Math.PI * 2);
+                    const g = ctx.createRadialGradient(-15, -15, 5, 0, 0, rx);
+                    g.addColorStop(0, 'rgba(0, 212, 255, 0.6)');
+                    g.addColorStop(1, 'rgba(0, 100, 200, 0.2)');
+                    ctx.fillStyle = g;
+                    ctx.fill();
+                    ctx.strokeStyle = '#00d4ff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    break;
+                }
+                case 'torus': {
+                    // Draw torus as a donut shape
+                    const R = 50 + wobble;
+                    const r = 20;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, R, R * 0.4, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(123, 47, 255, 0.3)';
+                    ctx.fill();
+                    ctx.strokeStyle = '#7b2fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // Hole
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, R * 0.4, R * 0.15, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = '#050520';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ff2d95';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    break;
+                }
+                case 'mug': {
+                    // Draw a mug shape
+                    ctx.beginPath();
+                    ctx.roundRect(-35, -40 + wobble * 0.3, 60, 80, 5);
+                    ctx.fillStyle = 'rgba(123, 47, 255, 0.3)';
+                    ctx.fill();
+                    ctx.strokeStyle = '#7b2fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // Handle (the hole!)
+                    ctx.beginPath();
+                    ctx.ellipse(35, 0, 20, 25 + wobble * 0.3, 0, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#7b2fff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    // Handle hole
+                    ctx.beginPath();
+                    ctx.ellipse(35, 0, 10, 15, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = '#050520';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ff2d95';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    break;
+                }
+                case 'double_torus':
+                case 'pretzel': {
+                    const spread = shape.type === 'pretzel' ? 35 : 45;
+                    // Two connected tori
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, 70 + wobble, 35, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 204, 136, 0.3)';
+                    ctx.fill();
+                    ctx.strokeStyle = '#00cc88';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    // Two holes
+                    ctx.beginPath();
+                    ctx.ellipse(-spread, 0, 15, 8, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = '#050520';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ff2d95';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.ellipse(spread, 0, 15, 8, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = '#050520';
+                    ctx.fill();
+                    ctx.strokeStyle = '#ff2d95';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    break;
+                }
+            }
+
+            // Label
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(shape.label, 0, 85);
+            ctx.fillStyle = '#aab';
+            ctx.font = '11px monospace';
+            ctx.fillText(`genus = ${shape.genus}`, 0, 100);
+
+            ctx.restore();
+        }
+
+        let invTime = 0;
+        function animateInvariants() {
+            invCtx.clearRect(0, 0, 800, 400);
+            invCtx.fillStyle = '#050520';
+            invCtx.fillRect(0, 0, 800, 400);
+
+            invTime += 0.02;
+
+            if (currentPair) {
+                // Draw VS
+                invCtx.fillStyle = '#4a3aff';
+                invCtx.font = 'bold 40px sans-serif';
+                invCtx.textAlign = 'center';
+                invCtx.fillText('VS', 400, 200);
+
+                // Draw divider
+                invCtx.strokeStyle = '#333';
+                invCtx.lineWidth = 1;
+                invCtx.setLineDash([5, 5]);
+                invCtx.beginPath();
+                invCtx.moveTo(400, 30);
+                invCtx.lineTo(400, 370);
+                invCtx.stroke();
+                invCtx.setLineDash([]);
+
+                drawInvariantShape(invCtx, 200, 180, currentPair.left, invTime);
+                drawInvariantShape(invCtx, 600, 180, currentPair.right, invTime + 1);
+
+                // Question
+                invCtx.fillStyle = '#fff';
+                invCtx.font = '16px sans-serif';
+                invCtx.textAlign = 'center';
+                invCtx.fillText('Are these topologically equivalent?', 400, 380);
+
+                if (answered) {
+                    const same = currentPair.same;
+                    invCtx.fillStyle = same ? '#00cc88' : '#ff2d95';
+                    invCtx.font = 'bold 18px sans-serif';
+                    invCtx.fillText(same ? '= SAME TQFT VALUE =' : '≠ DIFFERENT TQFT VALUES ≠', 400, 30);
+                }
+            }
+
+            requestAnimationFrame(animateInvariants);
+        }
+        animateInvariants();
+
+        // ============ SECTION 5: KNOT LAB ============
+        const knotCanvas = document.getElementById('knotCanvas');
+        const knotCtx = knotCanvas.getContext('2d');
+        let currentKnot = null;
+        let knotTime = 0;
+        let knotAnimating = false;
+
+        const knotPresets = {
+            unknot: {
+                name: 'Unknot',
+                crossings: 0,
+                jones: '1',
+                color: '#00d4ff',
+                draw: function(ctx, t, time) {
+                    const cx = 400, cy = 230;
+                    const r = 80 + Math.sin(time) * 5;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 6;
+                    ctx.stroke();
+
+                    // Glow
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(0, 212, 255, 0.2)';
+                    ctx.lineWidth = 15;
+                    ctx.stroke();
+
+                    // Flowing particle
+                    const angle = time * 2;
+                    const px = cx + Math.cos(angle) * r;
+                    const py = cy + Math.sin(angle) * r;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.fill();
+                }
+            },
+            trefoil: {
+                name: 'Trefoil Knot',
+                crossings: 3,
+                jones: '-t⁻⁴ + t⁻³ + t⁻¹',
+                color: '#7b2fff',
+                draw: function(ctx, t, time) {
+                    const cx = 400, cy = 230;
+                    const R = 90;
+                    const r = 40;
+
+                    ctx.beginPath();
+                    ctx.lineWidth = 6;
+                    ctx.strokeStyle = this.color;
+
+                    const pts = [];
+                    const numPts = 300;
+                    for (let i = 0; i < numPts; i++) {
+                        const angle = (i / numPts) * Math.PI * 2;
+                        const px = cx + Math.cos(angle * 2) * R + Math.cos(angle * 3 + time * 0.5) * r;
+                        const py = cy + Math.sin(angle * 2) * R * 0.6 + Math.sin(angle * 3 + time * 0.5) * r * 0.6;
+                        pts.push({ x: px, y: py });
+                    }
+
+                    // Draw with crossing information
+                    for (let seg = 0; seg < 3; seg++) {
+                        ctx.beginPath();
+                        const start = Math.floor(seg * numPts / 3);
+                        const end = Math.floor((seg + 1) * numPts / 3);
+                        for (let i = start; i <= end; i++) {
+                            const p = pts[i % numPts];
+                            if (i === start) ctx.moveTo(p.x, p.y);
+                            else ctx.lineTo(p.x, p.y);
+                        }
+                        ctx.strokeStyle = `hsl(${260 + seg * 30}, 80%, 60%)`;
+                        ctx.lineWidth = 5;
+                        ctx.stroke();
+                    }
+
+                    // Glow
+                    ctx.beginPath();
+                    for (let i = 0; i < numPts; i++) {
+                        const p = pts[i];
+                        if (i === 0) ctx.moveTo(p.x, p.y);
+                        else ctx.lineTo(p.x, p.y);
+                    }
+                    ctx.closePath();
+                    ctx.strokeStyle = 'rgba(123, 47, 255, 0.15)';
+                    ctx.lineWidth = 15;
+                    ctx.stroke();
+
+                    // Crossing markers
+                    for (let i = 0; i < 3; i++) {
+                        const angle = (i / 3) * Math.PI * 2 + time * 0.3;
+                        const mx = cx + Math.cos(angle) * 50;
+                        const my = cy + Math.sin(angle) * 30;
+                        ctx.beginPath();
+                        ctx.arc(mx, my, 8, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255, 45, 149, 0.5)';
+                        ctx.fill();
+                        ctx.strokeStyle = '#ff2d95';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                }
+            },
+            figure8: {
+                name: 'Figure-Eight Knot',
+                crossings: 4,
+                jones: 't² - t + 1 - t⁻¹ + t⁻²',
+                color: '#00cc88',
+                draw: function(ctx, t, time) {
+                    const cx = 400, cy = 230;
+
+                    ctx.beginPath();
+                    const numPts = 400;
+                    const pts = [];
+                    for (let i = 0; i < numPts; i++) {
+                        const angle = (i / numPts) * Math.PI * 2;
+                        const r1 = 80 + Math.sin(angle * 2 + time * 0.5) * 40;
+                        const r2 = 60 + Math.cos(angle * 3 + time * 0.3) * 30;
+                        const px = cx + Math.cos(angle) * r1;
+                        const py = cy + Math.sin(angle) * r2 * 0.7;
+                        pts.push({ x: px, y: py });
+                    }
+
+                    for (let seg = 0; seg < 4; seg++) {
+                        ctx.beginPath();
+                        const start = Math.floor(seg * numPts / 4);
+                        const end = Math.floor((seg + 1) * numPts / 4);
+                        for (let i = start; i <= end; i++) {
+                            const p = pts[i % numPts];
+                            if (i === start) ctx.moveTo(p.x, p.y);
+                            else ctx.lineTo(p.x, p.y);
+                        }
+                        ctx.strokeStyle = `hsl(${150 + seg * 20}, 70%, 55%)`;
+                        ctx.lineWidth = 5;
+                        ctx.stroke();
+                    }
+
+                    // Glow
+                    ctx.beginPath();
+                    for (let i = 0; i < numPts; i++) {
+                        if (i === 0) ctx.moveTo(pts[i].x, pts[i].y);
+                        else ctx.lineTo(pts[i].x, pts[i].y);
+                    }
+                    ctx.closePath();
+                    ctx.strokeStyle = 'rgba(0, 204, 136, 0.15)';
+                    ctx.lineWidth = 14;
+                    ctx.stroke();
+
+                    // Crossing markers
+                    for (let i = 0; i < 4; i++) {
+                        const angle = (i / 4) * Math.PI * 2 + time * 0.25;
+                        const mx = cx + Math.cos(angle) * 55;
+                        const my = cy + Math.sin(angle) * 35;
+                        ctx.beginPath();
+                        ctx.arc(mx, my, 8, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255, 45, 149, 0.5)';
+                        ctx.fill();
+                        ctx.strokeStyle = '#ff2d95';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                }
+            },
+            hopf: {
+                name: 'Hopf Link',
+                crossings: 2,
+                jones: '-t⁻½ - t⁻⁵⸍²',
+                color: '#ff9500',
+                draw: function(ctx, t, time) {
+                    const cx = 400, cy = 230;
+
+                    // First ring
+                    ctx.beginPath();
+                    ctx.ellipse(cx - 30, cy, 60 + Math.sin(time) * 3, 40, 0.3 + Math.sin(time * 0.5) * 0.1, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#ff9500';
+                    ctx.lineWidth = 6;
+                    ctx.stroke();
+                    ctx.strokeStyle = 'rgba(255, 149, 0, 0.15)';
+                    ctx.lineWidth = 14;
+                    ctx.stroke();
+
+                    // Second ring
+                    ctx.beginPath();
+                    ctx.ellipse(cx + 30, cy, 60 + Math.cos(time) * 3, 40, -0.3 + Math.cos(time * 0.5) * 0.1, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#ff2d95';
+                    ctx.lineWidth = 6;
+                    ctx.stroke();
+                    ctx.strokeStyle = 'rgba(255, 45, 149, 0.15)';
+                    ctx.lineWidth = 14;
+                    ctx.stroke();
+
+                    // Crossing markers
+                    for (let i = 0; i < 2; i++) {
+                        const mx = cx + (i === 0 ? -5 : 5);
+                        const my = cy + (i === 0 ? -25 : 25) + Math.sin(time + i) * 5;
+                        ctx.beginPath();
+                        ctx.arc(mx, my, 8, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(123, 47, 255, 0.5)';
+                        ctx.fill();
+                        ctx.strokeStyle = '#7b2fff';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        };
+
+        function knotPreset(type) {
+            currentKnot = knotPresets[type];
+            knotAnimating = true;
+            const inv = document.getElementById('knotInvariant');
+            inv.innerHTML = `<strong>${currentKnot.name}</strong> | Crossings: ${currentKnot.crossings} | Jones Polynomial: <span style="color:#ff2d95">${currentKnot.jones}</span>`;
+
+            if (type === 'trefoil') showAchievement('Trefoil unlocked! The simplest non-trivial knot.');
+            if (type === 'hopf') showAchievement('Hopf Link! Two linked rings.');
+        }
+
+        function knotAnimate() {
+            knotAnimating = !knotAnimating;
+        }
+
+        function animateKnots() {
+            knotCtx.clearRect(0, 0, 800, 500);
+            knotCtx.fillStyle = '#050520';
+            knotCtx.fillRect(0, 0, 800, 500);
+
+            if (knotAnimating) knotTime += 0.02;
+
+            if (currentKnot) {
+                currentKnot.draw(knotCtx, 1, knotTime);
+
+                // Draw invariant computation visualization
+                const barY = 420;
+                knotCtx.fillStyle = '#1a1a4e';
+                knotCtx.fillRect(100, barY, 600, 60);
+                knotCtx.strokeStyle = '#333';
+                knotCtx.lineWidth = 1;
+                knotCtx.strokeRect(100, barY, 600, 60);
+
+                // Animated computation bar
+                const progress = (Math.sin(knotTime * 1.5) + 1) / 2;
+                const barGrad = knotCtx.createLinearGradient(100, 0, 700, 0);
+                barGrad.addColorStop(0, 'rgba(0, 212, 255, 0.3)');
+                barGrad.addColorStop(progress, 'rgba(123, 47, 255, 0.5)');
+                barGrad.addColorStop(1, 'rgba(255, 45, 149, 0.3)');
+                knotCtx.fillStyle = barGrad;
+                knotCtx.fillRect(102, barY + 2, 596, 56);
+
+                knotCtx.fillStyle = '#fff';
+                knotCtx.font = 'bold 14px monospace';
+                knotCtx.textAlign = 'center';
+                knotCtx.fillText(`TQFT Invariant: Jones Polynomial = ${currentKnot.jones}`, 400, barY + 25);
+                knotCtx.fillStyle = '#aab';
+                knotCtx.font = '11px monospace';
+                knotCtx.fillText(`Crossings: ${currentKnot.crossings} | This polynomial distinguishes this knot from others`, 400, barY + 45);
+
+                // Draw Skein relation hint
+                knotCtx.fillStyle = '#4a3aff88';
+                knotCtx.font = '12px monospace';
+                knotCtx.textAlign = 'center';
+                knotCtx.fillText('TQFT computes knot invariants via the Skein relation at each crossing', 400, 80);
+
+                // Crossing count display
+                for (let i = 0; i < currentKnot.crossings; i++) {
+                    const dotX = 350 + i * 30;
+                    knotCtx.beginPath();
+                    knotCtx.arc(dotX, 100, 8, 0, Math.PI * 2);
+                    const pulse = Math.sin(knotTime * 3 + i * 0.5) * 0.3 + 0.7;
+                    knotCtx.fillStyle = `rgba(255, 45, 149, ${pulse})`;
+                    knotCtx.fill();
+                    knotCtx.strokeStyle = '#ff2d95';
+                    knotCtx.lineWidth = 1;
+                    knotCtx.stroke();
+                }
+            } else {
+                knotCtx.fillStyle = '#aab';
+                knotCtx.font = '18px sans-serif';
+                knotCtx.textAlign = 'center';
+                knotCtx.fillText('Select a knot preset above to explore!', 400, 250);
+            }
+
+            requestAnimationFrame(animateKnots);
+        }
+        animateKnots();
+
+        // ============ SECTION 6: THE FUNCTOR ============
+        const funcCanvas = document.getElementById('functorCanvas');
+        const funcCtx = funcCanvas.getContext('2d');
+        let funcTime = 0;
+        let funcDemo = null;
+        let funcAnimPhase = 0;
+        let funcParticles = [];
+
+        function functorDemo(type) {
+            funcDemo = type;
+            funcAnimPhase = 0;
+            funcParticles = [];
+
+            const info = document.getElementById('functorInfo');
+            switch (type) {
+                case 'circle':
+                    info.innerHTML = 'Z(S¹) = V — A circle maps to a <strong style="color:#00d4ff">vector space</strong> V';
+                    break;
+                case 'pants':
+                    info.innerHTML = 'Z(Pants) = μ: V⊗V → V — Pair of pants maps to <strong style="color:#7b2fff">multiplication</strong>';
+                    break;
+                case 'cap':
+                    info.innerHTML = 'Z(Cap) = η: ℂ → V — A cap maps to the <strong style="color:#00cc88">unit map</strong>';
+                    break;
+                case 'compose':
+                    info.innerHTML = 'Z(M₁ ∘ M₂) = Z(M₁) ∘ Z(M₂) — <strong style="color:#ff2d95">Gluing = Composition!</strong> This is functoriality!';
+                    showAchievement('Functoriality! The heart of TQFT!');
+                    break;
+            }
+        }
+
+        function drawFunctorArrow(ctx, x1, y1, x2, y2, progress, color) {
+            const dx = (x2 - x1) * progress;
+            const dy = (y2 - y1) * progress;
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x1 + dx, y1 + dy);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Arrowhead
+            if (progress > 0.9) {
+                const angle = Math.atan2(dy, dx);
+                ctx.beginPath();
+                ctx.moveTo(x1 + dx, y1 + dy);
+                ctx.lineTo(x1 + dx - 12 * Math.cos(angle - 0.3), y1 + dy - 12 * Math.sin(angle - 0.3));
+                ctx.lineTo(x1 + dx - 12 * Math.cos(angle + 0.3), y1 + dy - 12 * Math.sin(angle + 0.3));
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+        }
+
+        function animateFunctor() {
+            funcCtx.clearRect(0, 0, 800, 550);
+            funcCtx.fillStyle = '#050520';
+            funcCtx.fillRect(0, 0, 800, 550);
+
+            funcTime += 0.02;
+            if (funcDemo) funcAnimPhase = Math.min(funcAnimPhase + 0.015, 1);
+
+            // Draw two sides
+            // Left: Topology (Cob category)
+            funcCtx.fillStyle = 'rgba(0, 212, 255, 0.05)';
+            funcCtx.fillRect(0, 0, 380, 550);
+            funcCtx.fillStyle = '#00d4ff';
+            funcCtx.font = 'bold 18px monospace';
+            funcCtx.textAlign = 'center';
+            funcCtx.fillText('Topology (Cob)', 190, 35);
+            funcCtx.fillStyle = '#aab';
+            funcCtx.font = '12px monospace';
+            funcCtx.fillText('Shapes & Cobordisms', 190, 55);
+
+            // Right: Algebra (Vect category)
+            funcCtx.fillStyle = 'rgba(255, 45, 149, 0.05)';
+            funcCtx.fillRect(420, 0, 380, 550);
+            funcCtx.fillStyle = '#ff2d95';
+            funcCtx.font = 'bold 18px monospace';
+            funcCtx.textAlign = 'center';
+            funcCtx.fillText('Algebra (Vect)', 610, 35);
+            funcCtx.fillStyle = '#aab';
+            funcCtx.font = '12px monospace';
+            funcCtx.fillText('Vector Spaces & Maps', 610, 55);
+
+            // Center: Functor Z
+            funcCtx.fillStyle = '#7b2fff';
+            funcCtx.font = 'bold 24px monospace';
+            funcCtx.textAlign = 'center';
+            funcCtx.fillText('Z', 400, 280);
+            funcCtx.font = '12px monospace';
+            funcCtx.fillStyle = '#aab';
+            funcCtx.fillText('TQFT Functor', 400, 300);
+
+            // Animated arrow
+            const arrowPulse = Math.sin(funcTime * 2) * 5;
+            funcCtx.beginPath();
+            funcCtx.moveTo(360, 275);
+            funcCtx.lineTo(380 + arrowPulse, 275);
+            funcCtx.strokeStyle = '#7b2fff';
+            funcCtx.lineWidth = 3;
+            funcCtx.stroke();
+            funcCtx.beginPath();
+            funcCtx.moveTo(420 - arrowPulse, 275);
+            funcCtx.lineTo(440, 275);
+            funcCtx.strokeStyle = '#7b2fff';
+            funcCtx.lineWidth = 3;
+            funcCtx.stroke();
+
+            // Draw specific demo
+            if (funcDemo === 'circle' || !funcDemo) {
+                // Left: Circle
+                funcCtx.beginPath();
+                funcCtx.arc(190, 150, 40 + Math.sin(funcTime) * 3, 0, Math.PI * 2);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 3;
+                funcCtx.stroke();
+                funcCtx.fillStyle = '#00d4ff';
+                funcCtx.font = '14px monospace';
+                funcCtx.textAlign = 'center';
+                funcCtx.fillText('S¹', 190, 210);
+
+                if (funcDemo === 'circle') {
+                    // Arrow
+                    drawFunctorArrow(funcCtx, 260, 150, 530, 150, funcAnimPhase, '#7b2fff');
+
+                    // Right: Vector space V
+                    if (funcAnimPhase > 0.5) {
+                        const alpha = (funcAnimPhase - 0.5) * 2;
+                        funcCtx.globalAlpha = alpha;
+
+                        // Draw V as a plane
+                        funcCtx.beginPath();
+                        funcCtx.moveTo(560, 100);
+                        funcCtx.lineTo(660, 120);
+                        funcCtx.lineTo(660, 200);
+                        funcCtx.lineTo(560, 180);
+                        funcCtx.closePath();
+                        funcCtx.fillStyle = 'rgba(255, 45, 149, 0.2)';
+                        funcCtx.fill();
+                        funcCtx.strokeStyle = '#ff2d95';
+                        funcCtx.lineWidth = 2;
+                        funcCtx.stroke();
+
+                        // Basis vectors
+                        funcCtx.beginPath();
+                        funcCtx.moveTo(580, 170);
+                        funcCtx.lineTo(580, 120);
+                        funcCtx.strokeStyle = '#00cc88';
+                        funcCtx.lineWidth = 2;
+                        funcCtx.stroke();
+                        funcCtx.beginPath();
+                        funcCtx.moveTo(580, 170);
+                        funcCtx.lineTo(640, 155);
+                        funcCtx.strokeStyle = '#00cc88';
+                        funcCtx.lineWidth = 2;
+                        funcCtx.stroke();
+
+                        funcCtx.fillStyle = '#ff2d95';
+                        funcCtx.font = 'bold 16px monospace';
+                        funcCtx.textAlign = 'center';
+                        funcCtx.fillText('V', 610, 215);
+
+                        funcCtx.globalAlpha = 1;
+                    }
+                }
+            }
+
+            if (funcDemo === 'pants') {
+                // Left: Pair of pants
+                funcCtx.save();
+                funcCtx.translate(190, 180);
+
+                // Draw pants cobordism
+                funcCtx.beginPath();
+                funcCtx.moveTo(-50, -60);
+                funcCtx.bezierCurveTo(-50, 0, -30, 20, -30, 60);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 3;
+                funcCtx.stroke();
+
+                funcCtx.beginPath();
+                funcCtx.moveTo(50, -60);
+                funcCtx.bezierCurveTo(50, 0, 30, 20, 30, 60);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 3;
+                funcCtx.stroke();
+
+                funcCtx.beginPath();
+                funcCtx.moveTo(-30, 60);
+                funcCtx.bezierCurveTo(-30, 80, -10, 80, 0, 60);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 3;
+                funcCtx.stroke();
+
+                funcCtx.beginPath();
+                funcCtx.moveTo(30, 60);
+                funcCtx.bezierCurveTo(30, 80, 10, 80, 0, 60);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 3;
+                funcCtx.stroke();
+
+                // Top circle
+                funcCtx.beginPath();
+                funcCtx.ellipse(0, -60, 50, 12, 0, 0, Math.PI * 2);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 2;
+                funcCtx.stroke();
+
+                // Bottom circles
+                funcCtx.beginPath();
+                funcCtx.ellipse(-30, 60, 20, 8, 0, 0, Math.PI * 2);
+                funcCtx.strokeStyle = '#ff2d95';
+                funcCtx.lineWidth = 2;
+                funcCtx.stroke();
+                funcCtx.beginPath();
+                funcCtx.ellipse(30, 60, 20, 8, 0, 0, Math.PI * 2);
+                funcCtx.strokeStyle = '#ff2d95';
+                funcCtx.lineWidth = 2;
+                funcCtx.stroke();
+
+                // Fill
+                funcCtx.beginPath();
+                funcCtx.moveTo(-50, -60);
+                funcCtx.bezierCurveTo(-50, 0, -30, 20, -30, 60);
+                funcCtx.bezierCurveTo(-30, 80, -10, 80, 0, 60);
+                funcCtx.bezierCurveTo(10, 80, 30, 80, 30, 60);
+                funcCtx.bezierCurveTo(30, 20, 50, 0, 50, -60);
+                funcCtx.closePath();
+                funcCtx.fillStyle = 'rgba(123, 47, 255, 0.1)';
+                funcCtx.fill();
+
+                funcCtx.restore();
+
+                funcCtx.fillStyle = '#00d4ff';
+                funcCtx.font = '12px monospace';
+                funcCtx.textAlign = 'center';
+                funcCtx.fillText('Pair of Pants', 190, 280);
+
+                // Arrow
+                drawFunctorArrow(funcCtx, 270, 180, 520, 180, funcAnimPhase, '#7b2fff');
+
+                // Right: Multiplication map
+                if (funcAnimPhase > 0.5) {
+                    const alpha = (funcAnimPhase - 0.5) * 2;
+                    funcCtx.globalAlpha = alpha;
+
+                    funcCtx.fillStyle = '#ff2d95';
+                    funcCtx.font = 'bold 20px monospace';
+                    funcCtx.textAlign = 'center';
+                    funcCtx.fillText('μ: V⊗V → V', 610, 160);
+
+                    funcCtx.font = '14px monospace';
+                    funcCtx.fillStyle = '#aab';
+                    funcCtx.fillText('Multiplication!', 610, 185);
+
+                    // Visual: two arrows merging into one
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(560, 220);
+                    funcCtx.lineTo(610, 260);
+                    funcCtx.strokeStyle = '#00cc88';
+                    funcCtx.lineWidth = 3;
+                    funcCtx.stroke();
+
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(660, 220);
+                    funcCtx.lineTo(610, 260);
+                    funcCtx.strokeStyle = '#00cc88';
+                    funcCtx.lineWidth = 3;
+                    funcCtx.stroke();
+
+                    funcCtx.beginPath();
+                    funcCtx.arc(610, 260, 6, 0, Math.PI * 2);
+                    funcCtx.fillStyle = '#00cc88';
+                    funcCtx.fill();
+
+                    funcCtx.fillStyle = '#aab';
+                    funcCtx.font = '11px monospace';
+                    funcCtx.fillText('v₁', 555, 215);
+                    funcCtx.fillText('v₂', 665, 215);
+                    funcCtx.fillText('v₁·v₂', 610, 285);
+
+                    funcCtx.globalAlpha = 1;
+                }
+            }
+
+            if (funcDemo === 'cap') {
+                // Left: Cap (disk)
+                funcCtx.save();
+                funcCtx.translate(190, 180);
+
+                funcCtx.beginPath();
+                funcCtx.ellipse(0, 30, 40, 12, 0, 0, Math.PI * 2);
+                funcCtx.strokeStyle = '#ff2d95';
+                funcCtx.lineWidth = 2;
+                funcCtx.stroke();
+
+                funcCtx.beginPath();
+                funcCtx.ellipse(0, 30, 40, 12, 0, Math.PI, Math.PI * 2);
+                funcCtx.bezierCurveTo(40, -30, -40, -30, -40, 30 - 12 * Math.sin(0));
+                funcCtx.fillStyle = 'rgba(0, 204, 136, 0.15)';
+                funcCtx.fill();
+                funcCtx.strokeStyle = '#00cc88';
+                funcCtx.lineWidth = 2;
+                funcCtx.stroke();
+
+                funcCtx.restore();
+
+                funcCtx.fillStyle = '#00cc88';
+                funcCtx.font = '12px monospace';
+                funcCtx.textAlign = 'center';
+                funcCtx.fillText('Cap (Disk)', 190, 250);
+
+                // Arrow
+                drawFunctorArrow(funcCtx, 270, 180, 520, 180, funcAnimPhase, '#7b2fff');
+
+                // Right: Unit map
+                if (funcAnimPhase > 0.5) {
+                    const alpha = (funcAnimPhase - 0.5) * 2;
+                    funcCtx.globalAlpha = alpha;
+
+                    funcCtx.fillStyle = '#00cc88';
+                    funcCtx.font = 'bold 20px monospace';
+                    funcCtx.textAlign = 'center';
+                    funcCtx.fillText('η: ℂ → V', 610, 160);
+
+                    funcCtx.font = '14px monospace';
+                    funcCtx.fillStyle = '#aab';
+                    funcCtx.fillText('Unit (creation)!', 610, 185);
+
+                    // Visual: point becoming a vector
+                    const pulse = Math.sin(funcTime * 3) * 5;
+                    funcCtx.beginPath();
+                    funcCtx.arc(570, 230, 5 + pulse, 0, Math.PI * 2);
+                    funcCtx.fillStyle = '#fff';
+                    funcCtx.fill();
+
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(590, 230);
+                    funcCtx.lineTo(650, 230);
+                    funcCtx.strokeStyle = '#00cc88';
+                    funcCtx.lineWidth = 3;
+                    funcCtx.stroke();
+
+                    // Arrowhead
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(650, 230);
+                    funcCtx.lineTo(642, 224);
+                    funcCtx.lineTo(642, 236);
+                    funcCtx.closePath();
+                    funcCtx.fillStyle = '#00cc88';
+                    funcCtx.fill();
+
+                    funcCtx.fillStyle = '#aab';
+                    funcCtx.font = '11px monospace';
+                    funcCtx.fillText('1 ∈ ℂ', 570, 260);
+                    funcCtx.fillText('η(1) ∈ V', 650, 260);
+
+                    funcCtx.globalAlpha = 1;
+                }
+            }
+
+            if (funcDemo === 'compose') {
+                // Show composition: gluing = composing
+                const phase1 = Math.min(funcAnimPhase * 2, 1);
+                const phase2 = Math.max((funcAnimPhase - 0.5) * 2, 0);
+
+                // Left side: Two cobordisms being glued
+                funcCtx.save();
+                funcCtx.translate(190, 120);
+
+                // First cobordism (cylinder-ish)
+                funcCtx.beginPath();
+                funcCtx.ellipse(0, 0, 35, 10, 0, 0, Math.PI * 2);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 2;
+                funcCtx.stroke();
+
+                funcCtx.fillStyle = 'rgba(0, 212, 255, 0.1)';
+                funcCtx.fillRect(-35, 0, 70, 60 * phase1);
+                funcCtx.strokeStyle = '#00d4ff';
+                funcCtx.lineWidth = 1.5;
+                funcCtx.beginPath();
+                funcCtx.moveTo(-35, 0);
+                funcCtx.lineTo(-35, 60 * phase1);
+                funcCtx.stroke();
+                funcCtx.beginPath();
+                funcCtx.moveTo(35, 0);
+                funcCtx.lineTo(35, 60 * phase1);
+                funcCtx.stroke();
+
+                if (phase1 >= 1) {
+                    funcCtx.beginPath();
+                    funcCtx.ellipse(0, 60, 35, 10, 0, 0, Math.PI * 2);
+                    funcCtx.strokeStyle = '#ff2d95';
+                    funcCtx.lineWidth = 2;
+                    funcCtx.stroke();
+
+                    // Glue symbol
+                    funcCtx.fillStyle = '#ff2d95';
+                    funcCtx.font = 'bold 16px monospace';
+                    funcCtx.textAlign = 'center';
+                    funcCtx.fillText('⊕ GLUE', 0, 80);
+
+                    // Second cobordism
+                    funcCtx.fillStyle = 'rgba(255, 45, 149, 0.1)';
+                    funcCtx.fillRect(-35, 90, 70, 60 * phase2);
+                    funcCtx.strokeStyle = '#ff2d95';
+                    funcCtx.lineWidth = 1.5;
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(-35, 90);
+                    funcCtx.lineTo(-35, 90 + 60 * phase2);
+                    funcCtx.stroke();
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(35, 90);
+                    funcCtx.lineTo(35, 90 + 60 * phase2);
+                    funcCtx.stroke();
+
+                    funcCtx.beginPath();
+                    funcCtx.ellipse(0, 90, 35, 10, 0, 0, Math.PI * 2);
+                    funcCtx.strokeStyle = '#ff2d95';
+                    funcCtx.lineWidth = 2;
+                    funcCtx.stroke();
+
+                    if (phase2 >= 1) {
+                        funcCtx.beginPath();
+                        funcCtx.ellipse(0, 150, 35, 10, 0, 0, Math.PI * 2);
+                        funcCtx.strokeStyle = '#00cc88';
+                        funcCtx.lineWidth = 2;
+                        funcCtx.stroke();
+                    }
+                }
+
+                funcCtx.restore();
+
+                funcCtx.fillStyle = '#aab';
+                funcCtx.font = '11px monospace';
+                funcCtx.textAlign = 'center';
+                funcCtx.fillText('M₁ ∘ M₂', 190, 310);
+
+                // Big functor arrow
+                drawFunctorArrow(funcCtx, 270, 200, 520, 200, funcAnimPhase, '#7b2fff');
+
+                // Right side: Composition of linear maps
+                if (funcAnimPhase > 0.3) {
+                    const alpha = Math.min((funcAnimPhase - 0.3) * 2, 1);
+                    funcCtx.globalAlpha = alpha;
+
+                    funcCtx.fillStyle = '#ff2d95';
+                    funcCtx.font = 'bold 16px monospace';
+                    funcCtx.textAlign = 'center';
+                    funcCtx.fillText('Z(M₁) ∘ Z(M₂)', 610, 130);
+
+                    // Draw composition diagram
+                    // V1 -> V2 -> V3
+                    funcCtx.fillStyle = '#00d4ff';
+                    funcCtx.font = 'bold 18px monospace';
+                    funcCtx.fillText('V₁', 540, 200);
+                    funcCtx.fillText('V₂', 610, 200);
+                    funcCtx.fillText('V₃', 680, 200);
+
+                    // Arrows between them
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(555, 195);
+                    funcCtx.lineTo(595, 195);
+                    funcCtx.strokeStyle = '#00cc88';
+                    funcCtx.lineWidth = 2;
+                    funcCtx.stroke();
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(595, 195);
+                    funcCtx.lineTo(589, 190);
+                    funcCtx.lineTo(589, 200);
+                    funcCtx.closePath();
+                    funcCtx.fillStyle = '#00cc88';
+                    funcCtx.fill();
+
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(625, 195);
+                    funcCtx.lineTo(665, 195);
+                    funcCtx.strokeStyle = '#00cc88';
+                    funcCtx.lineWidth = 2;
+                    funcCtx.stroke();
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(665, 195);
+                    funcCtx.lineTo(659, 190);
+                    funcCtx.lineTo(659, 200);
+                    funcCtx.closePath();
+                    funcCtx.fillStyle = '#00cc88';
+                    funcCtx.fill();
+
+                    // Labels on arrows
+                    funcCtx.fillStyle = '#aab';
+                    funcCtx.font = '11px monospace';
+                    funcCtx.fillText('Z(M₁)', 575, 185);
+                    funcCtx.fillText('Z(M₂)', 645, 185);
+
+                    // Equals sign
+                    funcCtx.fillStyle = '#7b2fff';
+                    funcCtx.font = 'bold 20px monospace';
+                    funcCtx.fillText('=', 610, 260);
+
+                    // Combined arrow
+                    funcCtx.fillStyle = '#00d4ff';
+                    funcCtx.font = 'bold 18px monospace';
+                    funcCtx.fillText('V₁', 550, 300);
+                    funcCtx.fillText('V₃', 670, 300);
+
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(570, 295);
+                    funcCtx.lineTo(650, 295);
+                    funcCtx.strokeStyle = '#ff2d95';
+                    funcCtx.lineWidth = 3;
+                    funcCtx.stroke();
+                    funcCtx.beginPath();
+                    funcCtx.moveTo(650, 295);
+                    funcCtx.lineTo(644, 289);
+                    funcCtx.lineTo(644, 301);
+                    funcCtx.closePath();
+                    funcCtx.fillStyle = '#ff2d95';
+                    funcCtx.fill();
+
+                    funcCtx.fillStyle = '#ff2d95';
+                    funcCtx.font = '12px monospace';
+                    funcCtx.fillText('Z(M₁∘M₂) = Z(M₁)∘Z(M₂)', 610, 330);
+
+                    funcCtx.globalAlpha = 1;
+                }
+            }
+
+            // Floating particles for ambiance
+            if (Math.random() < 0.05) {
+                funcParticles.push({
+                    x: Math.random() * 800,
+                    y: 550,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: -1 - Math.random() * 2,
+                    life: 1,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`
+                });
+            }
+
+            funcParticles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.008;
+                if (p.life > 0) {
+                    funcCtx.beginPath();
+                    funcCtx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                    funcCtx.fillStyle = p.color;
+                    funcCtx.globalAlpha = p.life * 0.5;
+                    funcCtx.fill();
+                    funcCtx.globalAlpha = 1;
+                }
+            });
+            funcParticles = funcParticles.filter(p => p.life > 0);
+
+            // Draw the three axiom reminders at the bottom
+            const axY = 480;
+            funcCtx.fillStyle = 'rgba(255,255,255,0.05)';
+            funcCtx.fillRect(50, axY - 10, 220, 50);
+            funcCtx.fillRect(290, axY - 10, 220, 50);
+            funcCtx.fillRect(530, axY - 10, 220, 50);
+
+            funcCtx.font = '11px monospace';
+            funcCtx.textAlign = 'center';
+
+            funcCtx.fillStyle = '#00d4ff';
+            funcCtx.fillText('① Functoriality', 160, axY + 5);
+            funcCtx.fillStyle = '#aab';
+            funcCtx.fillText('Glue → Compose', 160, axY + 22);
+
+            funcCtx.fillStyle = '#7b2fff';
+            funcCtx.fillText('② Monoidality', 400, axY + 5);
+            funcCtx.fillStyle = '#aab';
+            funcCtx.fillText('Disjoint ⊔ → Tensor ⊗', 400, axY + 22);
+
+            funcCtx.fillStyle = '#ff2d95';
+            funcCtx.fillText('③ Normalization', 640, axY + 5);
+            funcCtx.fillStyle = '#aab';
+            funcCtx.fillText('Z(∅) = ℂ', 640, axY + 22);
+
+            requestAnimationFrame(animateFunctor);
+        }
+        animateFunctor();
+
+        // ============ GLOBAL: Responsive canvas sizing ============
+        function resizeCanvases() {
+            const canvases = document.querySelectorAll('canvas');
+            canvases.forEach(canvas => {
+                const container = canvas.parentElement;
+                const maxWidth = Math.min(container.clientWidth - 40, 800);
+                if (maxWidth < 800) {
+                    const scale = maxWidth / 800;
+                    canvas.style.width = maxWidth + 'px';
+                    canvas.style.height = (canvas.height * scale) + 'px';
+                }
+            });
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+        resizeCanvases();
+
+        // ============ INITIAL SETUP ============
+        // Pre-select first knot for visual appeal
+        setTimeout(() => {
+            knotPreset('trefoil');
+        }, 500);
+
+        // Add initial cobordism elements for demo
+        setTimeout(() => {
+            cobordismAddInput();
+            cobordismAddOutput();
+            cobordismAddOutput();
+        }, 300);
+
+        console.log('🌀 TQFT Visual Explorer loaded! Explore topology, cobordisms, knots, and functors.');
+    </script>
+</body>
+</html>
