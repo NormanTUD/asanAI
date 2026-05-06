@@ -1,4 +1,10 @@
 window.bibData = {
+	"turingimage": {
+		url: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg"
+		title: "Alan Turing",
+		year: 1930,
+		author: "Unknown author"
+	},
 	"hoffmann2022chinchilla": {
 		title: "Training Compute-Optimal Large Language Models",
 		author: "Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, et al.",
