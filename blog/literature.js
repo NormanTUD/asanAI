@@ -1,6 +1,6 @@
 window.bibData = {
 	"turingimage": {
-		url: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg"
+		url: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg",
 		title: "Alan Turing",
 		year: 1930,
 		author: "Unknown author"
