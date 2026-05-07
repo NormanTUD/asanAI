@@ -403,7 +403,7 @@ These early neural networks were extremely limited by today's standards, but the
 
 #### The Hype (1958)
 
-When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. All of Rosenblatts predictions were astoundly accurate.
+When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. All of Rosenblatts predictions were astoundingly accurate.
 
 Between the invention of the Perceptron in 1958 and the release of chatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
