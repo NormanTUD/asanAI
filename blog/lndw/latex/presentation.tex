@@ -672,36 +672,63 @@
 \begin{frame}{Verschachtelte Layer = Abstraktion}
   \begin{center}
     \begin{tikzpicture}[
-        layer/.style={draw, thick, rounded corners, minimum width=2.5cm, 
-                     minimum height=0.7cm, font=\small\bfseries},
+        layer/.style={draw, thick, rounded corners, minimum width=2.2cm, 
+                     minimum height=0.8cm, font=\small\bfseries},
         arr/.style={-{Stealth}, thick},
-        node distance=0.3cm
+        note/.style={font=\scriptsize, text=gray, anchor=north},
+        node distance=0.6cm
       ]
-      % Nodes von oben nach unten
-      \node (in) at (0,0) {\footnotesize Bewässerungsdaten};
+      % Nodes von links nach rechts
+      \node (in) {\footnotesize $\mathbf{x}$};
       
-      % Layer 1: f(x) + Aktivierung
-      \node[layer, fill=hell!20, below=of in]    (l1) {$f(\mathbf{x})$};
-      \node[layer, fill=akzent!20, below=of l1]  (s1) {$\sigma$};
+      \node[layer, fill=hell!20, right=of in]    (l1) {$f$};
+      \node[right=0.3cm of l1] (z1) {\footnotesize $z_1$};
       
-      % Layer 2: g(.) -> Direkter Output
-      \node[layer, fill=hell!20, below=of s1]    (l2) {$g(\cdot)$};
+      \node[layer, fill=akzent!20, right=0.3cm of z1]  (s1) {$\sigma$};
+      \node[right=0.3cm of s1] (z2) {\footnotesize $z_2$};
       
-      % Output Prognose
-      \node[below=of l2] (out) {\footnotesize Ernteprognose (kg)};
+      \node[layer, fill=hell!20, right=0.3cm of z2]    (l2) {$g$};
+      \node[right=of l2] (out) {\footnotesize $\hat{y}$};
 
-      % Verbindungen
+      % Pfeile
       \draw[arr] (in) -- (l1);
-      \draw[arr] (l1) -- (s1);
-      \draw[arr] (s1) -- (l2);
+      \draw[arr] (l1) -- (z1);
+      \draw[arr] (z1) -- (s1);
+      \draw[arr] (s1) -- (z2);
+      \draw[arr] (z2) -- (l2);
       \draw[arr] (l2) -- (out);
+
+      % Beschriftungen unten
+      \node[note] at (l1.south) [below=0.1cm] {Dense Layer 1};
+      \node[note] at (s1.south) [below=0.1cm] {ReLU};
+      \node[note] at (l2.south) [below=0.1cm] {Dense Layer 2};
     \end{tikzpicture}
   \end{center}
 
-  \vspace{0.4cm}
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+      \textbf{Eingabe:}\\[0.1cm]
+      \small
+      $x_1$ = Temperatur\\
+      $x_2$ = Uhrzeit\\
+      $x_3$ = Windgeschwindigkeit\\
+      $\vdots$
+    \end{column}
+    \begin{column}{0.55\textwidth}
+      \textbf{Vorwärtsdurchlauf:}\\[0.1cm]
+      \small
+      $z_1 = f(\mathbf{x}) = A\mathbf{x} + \mathbf{b}$\\
+      $z_2 = \sigma(z_1)$\\
+      $\hat{y} = g(z_2) = C\,z_2 + \mathbf{d}$
+    \end{column}
+  \end{columns}
 
-  \centering
-	\formelbox{\text{jetzt Bewässern ja/nein} = g\bigl(\sigma\bigl(f(\mathbf{[\text{Temperatur, aktuelle Uhrzeit, Windgeschwindigkeit}, \dots]})\bigr)\bigr)}
+  \vspace{0.3cm}
+  \begin{itemize}
+    \stich{Ohne $\sigma$: alles kollabiert zu \emph{einer} linearen Abbildung}
+    \stich{Mit $\sigma$: jede Schicht lernt \textbf{abstraktere Merkmale}}
+  \end{itemize}
 \end{frame}
 
 \section{Positional Encoding}
