@@ -429,4 +429,12 @@ function hide_email($email) {
 	$character_set = '&#' . implode(';&#', array_map('ord', str_split($email))) . ';';
 	return $character_set;
 }
+
+function isCli(): bool
+{
+    if (strpos(php_sapi_name(), 'cli') !== false) {
+        return true;
+    }
+    return false;
+}
 ?>
