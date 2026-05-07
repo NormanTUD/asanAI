@@ -843,16 +843,17 @@
 \begin{frame}{Wie ein Sprachmodell Text generiert}
   \begin{center}
     \begin{tikzpicture}[
-        box/.style={draw, thick, rounded corners, minimum width=2.5cm,
-                     minimum height=1cm, font=\small\bfseries},
+        box/.style={draw, thick, rounded corners, minimum width=2.2cm,
+                     minimum height=0.9cm, font=\scriptsize\bfseries,
+                     text width=2.0cm, align=center},
         arr/.style={-{Stealth}, thick, akzent},
-        node distance=0.8cm
+        node distance=0.4cm
       ]
       \node[box, fill=hell!15]      (tok) {Tokenisierung};
       \node[box, fill=hell!15, right=of tok] (pe)  {+ Pos.\ Encoding};
       \node[box, fill=dunkel!15, right=of pe]  (layers) {Layer $\times N$};
-      \node[box, fill=highlight!15, right=of layers] (winkel) {Winkelvergleich};
-      \node[box, fill=akzent!15, right=of winkel] (topk) {Top-$k$ + Temp.};
+      \node[box, fill=highlight!15, right=of layers] (winkel) {Winkel-\\vergleich};
+      \node[box, fill=akzent!15, right=of winkel] (topk) {Top-$k$\\+ Temp.};
 
       \draw[arr] (tok) -- (pe);
       \draw[arr] (pe) -- (layers);
