@@ -1471,32 +1471,49 @@
 \begin{frame}{Der Fluss – von Tokens zu Topologie}
   \begin{center}
     \begin{tikzpicture}[
-        box/.style={draw, thick, rounded corners, minimum width=3cm,
-                     minimum height=0.8cm, font=\scriptsize\bfseries},
+        box/.style={draw, thick, rounded corners, minimum width=2.6cm,
+                     minimum height=0.65cm, font=\tiny\bfseries},
+        layer/.style={draw, thick, rounded corners, minimum width=2.6cm,
+                     minimum height=0.65cm, font=\tiny\bfseries,
+                     fill=dunkel!15, text=white},
         arr/.style={-{Stealth}, thick, gray},
-        node distance=0.6cm
+        note/.style={font=\tiny, text width=2.6cm, align=center},
+        node distance=0.3cm and 0.4cm
       ]
-      \node[box, fill=hell!15]      (s1) {1. Dense Layer};
-      \node[box, fill=hell!15, below=of s1] (s2) {2. Positional Encoding};
-      \node[box, fill=dunkel!15, text=white, below=of s2] (s3) {3. Attention + FFN};
-      \node[box, fill=dunkel!15, text=white, below=of s3] (s3b) {3b. Residual Stream};
-      \node[box, fill=akzent!15, below=of s3b] (s4) {4. Raumkrümmung};
-      \node[box, fill=highlight!15, below=of s4] (s5) {5. Topologie};
-      \node[box, fill=highlight!15, below=of s5] (s6) {6. Holografische Kodierung};
-      \node[box, fill=highlight!20, below=of s6] (s7) {7. Garbentheorie};
+      % ── Zeile 1: Eingang ──
+      \node[box, fill=hell!15]                             (tok) {Tokenizer};
+      \node[box, fill=hell!15, right=of tok]               (emb) {Embedding};
+      \node[box, fill=hell!25, right=of emb]               (pos) {+ Pos.\ Encoding};
+      \node[layer, right=of pos]                           (res) {Residual Stream};
 
-      \foreach \a/\b in {s1/s2, s2/s3, s3/s3b, s3b/s4, s4/s5, s5/s6, s6/s7}
+      \foreach \a/\b in {tok/emb, emb/pos, pos/res}
         \draw[arr] (\a) -- (\b);
 
-      % Annotations rechts
-      \node[right=1cm of s1, font=\scriptsize, text width=4cm]
-        {Grundbaustein, universeller Approximator};
-      \node[right=1cm of s3, font=\scriptsize, text width=4cm]
-        {Beziehungen + Transformation};
-      \node[right=1cm of s4, font=\scriptsize, text width=4cm]
-        {Information in der Geometrie};
-      \node[right=1cm of s7, font=\scriptsize, text width=4cm]
-        {Lokale Daten → (Prä-)Garbe};
+      % ── Zeile 2: Transformer-Block (×N) ──
+      \node[layer, below=1.0cm of tok]                     (attn){Attention};
+      \node[layer, right=of attn]                          (ffn) {FFN};
+      \node[box, fill=akzent!20, right=of ffn]             (curv){Raumkrümmung};
+      \node[box, fill=highlight!20, right=of curv]         (out) {Topologie / Garbe};
+
+      \foreach \a/\b in {attn/ffn, ffn/curv, curv/out}
+        \draw[arr] (\a) -- (\b);
+
+      % ── Verbindung Zeile 1 → Zeile 2 ──
+      \draw[arr, rounded corners=5pt]
+        (res.south) -- ++(0,-0.4) -| (attn.north);
+
+      % ── Rückschreiben auf Residual Stream (Loop) ──
+      \draw[arr, rounded corners=5pt, dashed]
+        (ffn.south) -- ++(0,-0.4) -- ++(-4.2,0)
+        node[midway, below, font=\tiny]{$+$ zurück auf Residual Stream ($\times N$ Layer)}
+        -- ++(0,0.4) -- (attn.south west);
+
+      % ── Annotationen ──
+      \node[note, above=0.2cm of tok]  {Text → IDs};
+      \node[note, above=0.2cm of pos]  {Sequenz-\\information};
+      \node[note, above=0.2cm of res]  {Informations-\\autobahn};
+      \node[note, below=0.2cm of curv] {Jeder Layer\\krümmt den Raum};
+      \node[note, below=0.2cm of out]  {Holograf.\ kodiert,\\immer schärfere\\Garben-Approx.};
     \end{tikzpicture}
   \end{center}
 \end{frame}
