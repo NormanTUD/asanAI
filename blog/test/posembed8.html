@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Positional Embedding Helices</title>
+    <title>3D Positional Embedding Helices — Separated</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -62,7 +62,7 @@
         }
         #plot-container {
             width: 100%;
-            height: 700px;
+            height: 720px;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
             overflow: hidden;
@@ -99,46 +99,50 @@ Embedding an Position p = e(word) + PE(p)
         <input type="range" id="ctrl-dims" min="4" max="12" step="2" value="6">
         <span class="val" id="val-dims">6</span>
     </label>
+    <label>Separation:
+        <input type="range" id="ctrl-sep" min="2" max="12" step="1" value="6">
+        <span class="val" id="val-sep">6</span>
+    </label>
     <label>Projektion (X):
-        <select id="proj-x"><option value="0">Dim 0 (sin, fast)</option></select>
+        <select id="proj-x"></select>
     </label>
     <label>Projektion (Y):
-        <select id="proj-y"><option value="1">Dim 1 (cos, fast)</option></select>
+        <select id="proj-y"></select>
     </label>
     <label>Projektion (Z):
-        <select id="proj-z"><option value="2">Dim 2 (sin, med)</option></select>
+        <select id="proj-z"></select>
     </label>
 </div>
 
 <div id="plot-container"></div>
 
 <p class="legend-info">
-    ◆ = Rohes Wort-Embedding (ohne PE) &nbsp;|&nbsp; Spirale = Wort + PE(pos) für jede Position &nbsp;|&nbsp; Farbe = Positionsnummer
+    ◆ = Rohes Wort-Embedding (ohne PE) &nbsp;|&nbsp; Spirale = Wort + PE(pos) für jede Position &nbsp;|&nbsp; Farbe = Positionsnummer<br>
+    Separation-Slider steuert den Abstand der Basis-Embeddings zueinander.
 </p>
 
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <script>
 (function() {
 
-    // === Wort-Embeddings (simuliert, feste Vektoren im d-dimensionalen Raum) ===
-    const WORDS = {
-        "king":  { base: [ 1.5, -0.4,  0.8, -0.2,  0.5, -0.3,  0.1,  0.2,  0.05, -0.1, 0.3, 0.15], color: '#2563eb', name: 'king' },
-        "queen": { base: [-0.5,  1.2,  0.3,  0.7, -0.4,  0.6, -0.3,  0.1,  0.15, -0.05, -0.2, 0.4], color: '#dc2626', name: 'queen' },
-        "the":   { base: [ 0.1,  0.05, -0.6,  0.4,  0.2, -0.1,  0.0, -0.3,  0.1,   0.05, 0.0, -0.1], color: '#16a34a', name: 'the' }
+    // === Wort-Embeddings: Richtungsvektoren (werden mit Separation skaliert) ===
+    // Die Richtungen sind bewusst orthogonal-ähnlich gewählt, damit sie sich im Raum gut trennen
+    const WORD_DIRECTIONS = {
+        "king":  { dir: [ 1.0, -0.3,  0.7, -0.2,  0.4, -0.1,  0.3,  0.1,  0.05, -0.1, 0.2, 0.1], color: '#2563eb', name: 'king' },
+        "queen": { dir: [-0.4,  1.0,  0.2,  0.8, -0.3,  0.5, -0.2,  0.1,  0.1,  -0.05, -0.15, 0.3], color: '#dc2626', name: 'queen' },
+        "the":   { dir: [ 0.1, -0.2, -1.0,  0.3,  0.8, -0.4,  0.0, -0.5,  0.2,   0.1, 0.0, -0.3], color: '#16a34a', name: 'the' }
     };
 
     const BASE_FREQ = 10000;
 
-    // === Positional Encoding Berechnung ===
-    // PE(pos, 2i)   = sin(pos / 10000^(2i/d))
-    // PE(pos, 2i+1) = cos(pos / 10000^(2i/d))
+    // === Positional Encoding ===
     function positionalEncoding(pos, d) {
         const vec = [];
         for (let i = 0; i < d; i += 2) {
             const freq = 1.0 / Math.pow(BASE_FREQ, i / d);
-            vec.push(Math.sin(pos * freq));   // Dim 2i
+            vec.push(Math.sin(pos * freq));
             if (i + 1 < d) {
-                vec.push(Math.cos(pos * freq)); // Dim 2i+1
+                vec.push(Math.cos(pos * freq));
             }
         }
         return vec;
@@ -148,51 +152,50 @@ Embedding an Position p = e(word) + PE(p)
     function dimLabel(idx, d) {
         const pairIdx = Math.floor(idx / 2);
         const type = idx % 2 === 0 ? 'sin' : 'cos';
-        const freqVal = (1.0 / Math.pow(BASE_FREQ, (pairIdx * 2) / d)).toExponential(2);
         const speed = pairIdx === 0 ? 'schnell' : (pairIdx === 1 ? 'mittel' : 'langsam');
-        return `Dim ${idx} (${type}, ω=${freqVal}, ${speed})`;
+        return `Dim ${idx} (${type}, ${speed})`;
     }
 
     // === Dropdowns aktualisieren ===
     function updateDropdowns(d) {
+        const defaults = [0, 1, 2];
         ['proj-x', 'proj-y', 'proj-z'].forEach(function(id, selIdx) {
             const sel = document.getElementById(id);
-            const prev = parseInt(sel.value) || selIdx;
+            const prev = parseInt(sel.value);
+            const usePrev = !isNaN(prev) && prev < d;
             sel.innerHTML = '';
             for (let i = 0; i < d; i++) {
                 const opt = document.createElement('option');
                 opt.value = i;
                 opt.textContent = dimLabel(i, d);
-                if (i === Math.min(prev, d - 1)) opt.selected = true;
                 sel.appendChild(opt);
             }
-            // Defaults: X=0, Y=1, Z=2
-            if (prev >= d) sel.value = Math.min(selIdx, d - 1);
+            sel.value = usePrev ? prev : Math.min(defaults[selIdx], d - 1);
         });
     }
 
-    // === Hauptplot bauen ===
+    // === Hauptplot ===
     function buildPlot() {
         const nPos = parseInt(document.getElementById('ctrl-npos').value);
         const dims = parseInt(document.getElementById('ctrl-dims').value);
+        const sep = parseInt(document.getElementById('ctrl-sep').value);
         const pX = parseInt(document.getElementById('proj-x').value);
         const pY = parseInt(document.getElementById('proj-y').value);
         const pZ = parseInt(document.getElementById('proj-z').value);
 
         const traces = [];
 
-        Object.keys(WORDS).forEach(function(key) {
-            const word = WORDS[key];
-            const base = word.base.slice(0, dims);
+        Object.keys(WORD_DIRECTIONS).forEach(function(key) {
+            const word = WORD_DIRECTIONS[key];
+            // Skaliere Richtungsvektor mit Separation
+            const base = word.dir.slice(0, dims).map(function(v) { return v * sep; });
 
-            // Helix-Punkte berechnen: embedding + PE für jede Position
             const xs = [], ys = [], zs = [];
             const hoverTexts = [];
             const posColors = [];
 
             for (let p = 0; p < nPos; p++) {
                 const pe = positionalEncoding(p, dims);
-                // Kombination: e(word) + PE(pos)
                 const combined = base.map(function(val, idx) {
                     return val + (pe[idx] || 0);
                 });
@@ -208,14 +211,14 @@ Embedding an Position p = e(word) + PE(p)
                 type: 'scatter3d',
                 x: xs, y: ys, z: zs,
                 mode: 'lines',
-                line: { color: word.color, width: 3 },
-                opacity: 0.5,
+                line: { color: word.color, width: 3.5 },
+                opacity: 0.6,
                 name: `"${key}" Helix`,
                 hoverinfo: 'skip',
                 showlegend: true
             });
 
-            // Positionsmarker mit Farbverlauf
+            // Positionsmarker
             traces.push({
                 type: 'scatter3d',
                 x: xs, y: ys, z: zs,
@@ -224,14 +227,14 @@ Embedding an Position p = e(word) + PE(p)
                     size: 2.5,
                     color: posColors,
                     colorscale: [
-                        [0, word.color + '33'],
+                        [0, word.color + '44'],
                         [1, word.color]
                     ],
-                    opacity: 0.8
+                    opacity: 0.85
                 },
                 text: hoverTexts,
                 hoverinfo: 'text',
-                name: `"${key}" Positionen`,
+                name: `"${key}" Pos`,
                 showlegend: false
             });
 
@@ -243,18 +246,30 @@ Embedding an Position p = e(word) + PE(p)
                 z: [base[pZ] || 0],
                 mode: 'markers+text',
                 marker: {
-                    size: 10,
+                    size: 11,
                     color: word.color,
                     symbol: 'diamond',
                     line: { width: 2, color: '#1e293b' }
                 },
                 text: [`"${key}"`],
                 textposition: 'top center',
-                textfont: { size: 12, color: word.color, family: 'monospace' },
+                textfont: { size: 13, color: word.color, family: 'monospace' },
                 name: `"${key}" Embedding`,
                 hoverinfo: 'text',
                 showlegend: true
             });
+        });
+
+        // Ursprung markieren
+        traces.push({
+            type: 'scatter3d',
+            x: [0], y: [0], z: [0],
+            mode: 'markers',
+            marker: { size: 5, color: '#94a3b8', symbol: 'cross', line: { width: 1, color: '#64748b' } },
+            name: 'Ursprung',
+            hoverinfo: 'text',
+            text: ['Origin (0,0,0)'],
+            showlegend: false
         });
 
         const layout = {
@@ -284,14 +299,14 @@ Embedding an Position p = e(word) + PE(p)
                     backgroundcolor: '#ffffff'
                 },
                 bgcolor: '#ffffff',
-                camera: { eye: { x: 1.6, y: 1.4, z: 1.0 } },
+                camera: { eye: { x: 1.8, y: 1.5, z: 1.1 } },
                 aspectmode: 'data'
             },
             margin: { t: 20, b: 10, l: 10, r: 10 },
             showlegend: true,
             legend: {
                 x: 0.01, y: 0.99,
-                bgcolor: 'rgba(255,255,255,0.9)',
+                bgcolor: 'rgba(255,255,255,0.95)',
                 bordercolor: '#e2e8f0',
                 borderwidth: 1,
                 font: { size: 11 }
@@ -301,30 +316,31 @@ Embedding an Position p = e(word) + PE(p)
         Plotly.react('plot-container', traces, layout, { responsive: true });
     }
 
-    // === Initialisierung ===
+    // === Init ===
     function init() {
         const dims = parseInt(document.getElementById('ctrl-dims').value);
         updateDropdowns(dims);
         buildPlot();
     }
 
-    // === Event Listener ===
+    // === Events ===
     document.getElementById('ctrl-npos').addEventListener('input', function() {
         document.getElementById('val-npos').textContent = this.value;
         buildPlot();
     });
-
     document.getElementById('ctrl-dims').addEventListener('input', function() {
         document.getElementById('val-dims').textContent = this.value;
         updateDropdowns(parseInt(this.value));
         buildPlot();
     });
-
+    document.getElementById('ctrl-sep').addEventListener('input', function() {
+        document.getElementById('val-sep').textContent = this.value;
+        buildPlot();
+    });
     document.getElementById('proj-x').addEventListener('change', buildPlot);
     document.getElementById('proj-y').addEventListener('change', buildPlot);
     document.getElementById('proj-z').addEventListener('change', buildPlot);
 
-    // Start
     init();
 
 })();
