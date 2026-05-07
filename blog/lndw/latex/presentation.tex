@@ -228,14 +228,23 @@
 
 % ── Was ist ein Dense Layer? ───────────────────────────────
 \begin{frame}{Dense Layer – Grundidee}
-  \formelbox{f(\mathbf{x}) = A\,\mathbf{x} + \mathbf{b}}
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.5\textwidth}{%
+        \centering
+        $\displaystyle f(\mathbf{x}) = A\,\mathbf{x} + \mathbf{b}$%
+      }%
+    }
+  \end{center}
   \begin{itemize}
     \stich{$A$ = Gewichtsmatrix (Tensor), $\mathbf{b}$ = Bias-Vektor}
     \stich{Jeder Eingang mit jedem Ausgang verbunden}
     \stich{Lineare Transformation: Drehen, Strecken, Verschieben}
   \end{itemize}
 
-  \placeholder[0.35\textwidth]{Bild: Dense Layer – Knoten voll verbunden}
+  \begin{center}
+    \includegraphics[width=0.35\textwidth]{dense.png}
+  \end{center}
 \end{frame}
 
 % ── Verschachtelung ────────────────────────────────────────
