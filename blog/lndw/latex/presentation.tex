@@ -299,83 +299,296 @@
 \end{frame}
 
 % ── Neue Folie: Universelle Approximation durch ReLU-Knicke ──
+% ══════════════════════════════════════════════════════════════
+% Approximation – schrittweiser Aufbau (6 Folien)
+% ══════════════════════════════════════════════════════════════
+
+% Hilfsmakro für einheitliche Achsen und Clip
+\newcommand{\approxaxes}{%
+  \clip (-0.7,-1.8) rectangle (7.8,4.5);
+  \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+  \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+}
+% Zielfunktion (Makro für Konsistenz)
+\newcommand{\targetfn}[1][1]{%
+  \draw[thick, dunkel, domain=0:7, samples=100, opacity=#1]
+    plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+}
+
+% ══════════════════════════════════════════════════════════════
+% BESSER: Komplett saubere Version mit konkreten Werten
+% ══════════════════════════════════════════════════════════════
+
+% ── Folie 1: Nur die Zielfunktion ──────────────────────────
 \begin{frame}{Wie approximiert ein Netz eine Funktion?}
   \begin{center}
     \begin{tikzpicture}[
         scale=0.85,
         every node/.style={font=\scriptsize},
-        neuron/.style={thick},
       ]
-
-      % ── Achsen ──
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
       \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
       \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
 
-      % ── Zielfunktion (glatte Kurve) ──
-      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.35]
-        plot (\x, {0.4*sin(60*\x) + 0.08*\x*\x - 0.15*\x + 1.2})
-        node[right, opacity=1] {Zielfunktion $f(x)$};
-
-      % ── Einzelne ReLU-Neuronen (verschoben & skaliert) ──
-      %  Neuron i:  w_i * max(0, x - c_i)
-      %  Jedes Stück wird einzeln gezeichnet und beschriftet
-
-      % Neuron 1: startet bei x=0, Steigung +0.8
-      \draw[neuron, akzent, dashed]
-        (0,0) -- (1.5, 1.2)  -- (7, 1.2);
-      \node[akzent, above] at (0.8, 0.7) {$h_1$};
-
-      % Neuron 2: startet bei x=1.5, Steigung -1.0
-      \draw[neuron, hell, dashed]
-        (0,0) -- (1.5, 0) -- (3.5, -2) -- (7,-2);
-      % Clip für Sichtbarkeit: nur den relevanten Teil zeigen
-      \begin{scope}
-        \clip (0,-1.5) rectangle (7.5,4.2);
-        \draw[neuron, hell, dashed]
-          (0,0) -- (1.5,0) -- (3.5, -2);
-      \end{scope}
-      \node[hell, below] at (2.5, -0.8) {$h_2$};
-
-      % Neuron 3: startet bei x=3.5, Steigung +0.6
-      \draw[neuron, highlight, dashed]
-        (0,0) -- (3.5, 0) -- (5.5, 1.2) -- (7, 1.2);
-      \node[highlight, above] at (4.5, 0.7) {$h_3$};
-
-      % Neuron 4: startet bei x=5.5, Steigung -0.5
-      \draw[neuron, violet, dashed]
-        (0,0) -- (5.5, 0) -- (7, -0.75);
-      \node[violet, below] at (6.3, -0.5) {$h_4$};
-
-      % ── Summe = stückweise lineare Approximation ──
-      % Manuell berechnet:
-      %   [0, 1.5]:    Steigung +0.8, Start bei y=1.0 (Bias)
-      %   [1.5, 3.5]:  +0.8 -1.0 = -0.2
-      %   [3.5, 5.5]:  -0.2 +0.6 = +0.4
-      %   [5.5, 7]:    +0.4 -0.5 = -0.1
-      \draw[line width=2.5pt, akzent]
-        (0, 1.0) -- (1.5, 2.2) -- (3.5, 1.8) -- (5.5, 2.6) -- (7, 2.45);
-
-      % Knicke markieren
-      \foreach \kx/\ky in {1.5/2.2, 3.5/1.8, 5.5/2.6} {
-        \fill[akzent] (\kx, \ky) circle (3pt);
-      }
-
-      % Beschriftung Summe
-      \node[akzent, right, font=\small\bfseries] at (7, 2.45)
-        {$\hat{f}(x) = \sum_i h_i(x)$};
-
-      % ── Legende unten ──
-      \node[anchor=north west, text width=12cm, font=\scriptsize,
-            inner sep=4pt, fill=white, draw=gray!40, rounded corners]
-        at (0, -1.8) {%
-          Jedes Neuron $h_i(x) = a_i\,\max(0,\; x - c_i)$ liefert
-          einen \textbf{Knick} an Position $c_i$.\\[2pt]
-          \textbf{4 Neuronen → 3 Knicke} → grobe Approximation.\\
-          \textbf{100 Neuronen → 99 Knicke} → fast beliebig genau. \\
-          \textbf{Negative Steigung} entsteht durch die zwei Dense-Schicht. die wieder negative Gewichte haben kann
-        };
-
+      % Zielfunktion
+      \draw[thick, dunkel, domain=0:7, samples=100]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8})
+        node[right] {$f(x)$};
     \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.75\textwidth}{\centering\small
+        Gegeben: eine beliebige stetige Funktion.\\[3pt]
+        \textbf{Ziel:} mit einfachen Bausteinen annähern.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 2: Erstes Neuron h₁ ─────────────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (blass)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.2]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+
+      % h₁: ReLU ab x=0, Steigung +0.9
+      % h₁(x) = 0.9 · ReLU(x - 0) = 0.9x für x>0
+      \draw[thick, akzent]
+        (-0.5, 0) -- (0, 0);
+      \draw[thick, akzent]
+        (0, 0) -- (7, 3.15);
+      \fill[akzent] (0, 0) circle (3pt);
+      \node[akzent, above left, font=\small\bfseries] at (1.5, 0.7) {$h_1$};
+
+      % Summe = h₁ + Bias (0.8)
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (7, 3.95);
+      \node[akzent!70!black, right, font=\small\bfseries] at (7, 3.95) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Ein Neuron:} \;
+        $h_1(x) = a_1 \cdot \operatorname{ReLU}(x - c_1)$\\[4pt]
+        Links vom Knick $c_1$: Ausgabe $= 0$.\\
+        Rechts vom Knick: lineare Steigung $a_1$.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 3: Zweites Neuron h₂ ────────────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (blass)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.2]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+
+      % h₁ (blass)
+      \draw[thick, akzent, dashed, opacity=0.3]
+        (0, 0) -- (7, 3.15);
+      \node[akzent, opacity=0.4, above left] at (1.5, 0.7) {$h_1$};
+
+      % h₂: ReLU ab x=1.5, Steigung -1.5
+      % h₂(x) = -1.5 · ReLU(x - 1.5)
+      \draw[thick, hell]
+        (-0.5, 0) -- (1.5, 0);
+      \draw[thick, hell]
+        (1.5, 0) -- (7, -8.25);  % wird geclippt
+      \fill[hell] (1.5, 0) circle (3pt);
+      \node[hell, below right, font=\small\bfseries] at (2.0, -0.5) {$h_2$};
+
+      % Summe: bias + h₁ + h₂
+      % x<0: 0.8, 0<x<1.5: 0.8 + 0.9x, x>1.5: 0.8 + 0.9x - 1.5(x-1.5)
+      % x>1.5: 0.8 + 0.9x - 1.5x + 2.25 = 3.05 - 0.6x
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (1.5, 2.15) -- (7, -1.15);
+      % Clip rettet uns – nur sichtbarer Teil
+      \foreach \kx/\ky in {1.5/2.15} {
+        \fill[akzent!70!black] (\kx, \ky) circle (3pt);
+      }
+      \node[akzent!70!black, above right, font=\small\bfseries] at (0.3, 1.5) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Zweites Neuron} $h_2$ mit \textbf{negativem} Gewicht.\\[4pt]
+        Die Summe knickt jetzt ab – die Steigung ändert sich.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 4: Drittes Neuron h₃ ────────────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (blass)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.2]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+
+      % h₁, h₂ (blass)
+      \draw[thick, akzent, dashed, opacity=0.2]
+        (0, 0) -- (7, 3.15);
+      \draw[thick, hell, dashed, opacity=0.2]
+        (1.5, 0) -- (7, -8.25);
+
+      % h₃: ReLU ab x=3.0, Steigung +1.2
+      \draw[thick, highlight]
+        (-0.5, 0) -- (3.0, 0);
+      \draw[thick, highlight]
+        (3.0, 0) -- (7, 4.8);
+      \fill[highlight] (3.0, 0) circle (3pt);
+      \node[highlight, above left, font=\small\bfseries] at (4.5, 1.5) {$h_3$};
+
+      % Summe: bias + h₁ + h₂ + h₃
+      % x in [0,1.5]: 0.8 + 0.9x
+      % x in [1.5,3.0]: 3.05 - 0.6x
+      % x in [3.0,7]: 3.05 - 0.6x + 1.2(x-3.0) = -0.55 + 0.6x
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (7, 3.65);
+      \foreach \kx/\ky in {1.5/2.15, 3.0/1.25} {
+        \fill[akzent!70!black] (\kx, \ky) circle (3pt);
+      }
+      \node[akzent!70!black, right, font=\small\bfseries] at (7, 3.65) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Drittes Neuron} $h_3$ – Steigung wird wieder positiv.\\[4pt]
+        Zwei Knicke – die Summe folgt der Kurve besser.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 5: Viertes Neuron h₄ ────────────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (etwas kräftiger)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.35]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+      \node[dunkel, right, opacity=0.7] at (7, 3.5) {$f(x)$};
+
+      % h₁, h₂, h₃ (blass)
+      \draw[thick, akzent, dashed, opacity=0.15]  (0, 0) -- (7, 3.15);
+      \draw[thick, hell, dashed, opacity=0.15]    (1.5, 0) -- (7, -8.25);
+      \draw[thick, highlight, dashed, opacity=0.15] (3.0, 0) -- (7, 4.8);
+
+      % h₄: ReLU ab x=5.0, Steigung -0.8
+      \draw[thick, violet]
+        (-0.5, 0) -- (5.0, 0);
+      \draw[thick, violet]
+        (5.0, 0) -- (7, -1.6);
+      \fill[violet] (5.0, 0) circle (3pt);
+      \node[violet, below right, font=\small\bfseries] at (5.5, -0.5) {$h_4$};
+
+      % Summe: bias + h₁ + h₂ + h₃ + h₄
+      % x in [0,1.5]: 0.8 + 0.9x
+      % x in [1.5,3.0]: 3.05 - 0.6x
+      % x in [3.0,5.0]: -0.55 + 0.6x
+      % x in [5.0,7]: -0.55 + 0.6x - 0.8(x-5.0) = 3.45 - 0.2x
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 2.05);
+      \foreach \kx/\ky in {1.5/2.15, 3.0/1.25, 5.0/2.45} {
+        \fill[akzent!70!black] (\kx, \ky) circle (3pt);
+      }
+      \node[akzent!70!black, right, font=\small\bfseries] at (7, 2.05) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Viertes Neuron} $h_4$ – bremst die Steigung am Ende.\\[4pt]
+        Drei Knicke, vier Segmente – die Form stimmt schon grob.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 6: Fazit – viele Neuronen ───────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion
+      \draw[thick, dunkel, domain=0:7, samples=100]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8})
+        node[right] {$f(x)$};
+
+      % Grobe Approximation (4 Neuronen, blass)
+      \draw[line width=1.5pt, akzent!70!black, opacity=0.35]
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 2.05);
+      \node[akzent!70!black, opacity=0.5, font=\tiny, above] at (1.0, 2.3) {4 Neuronen};
+
+      % Feine Approximation (simuliert mit vielen Samples)
+      \draw[line width=2pt, highlight, domain=0:7, samples=25]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+      \node[highlight, font=\tiny, above] at (5.5, 3.8) {viele Neuronen};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.82\textwidth}{\centering
+        \textbf{Jedes Neuron} = ein Knick = eine Richtungsänderung.\\[5pt]
+        Mehr Neuronen $\;\longrightarrow\;$ mehr Knicke $\;\longrightarrow\;$ beliebig genaue Annäherung.\\[5pt]
+        {\small Das ist der Kern des \textbf{universellen Approximationssatzes}.}
+      }%
+    }
   \end{center}
 \end{frame}
 
