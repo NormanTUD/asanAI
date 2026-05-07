@@ -498,7 +498,7 @@
   \end{center}
 \end{frame}
 
-% ── Folie 5: Viertes Neuron h₄ ────────────────────────────
+% ── Folie 5: Viertes Neuron h₄ (korrigiert – geht nach oben) ──
 \begin{frame}{Wie approximiert ein Netz eine Funktion?}
   \begin{center}
     \begin{tikzpicture}[
@@ -519,25 +519,27 @@
       \draw[thick, hell, dashed, opacity=0.15]    (1.5, 0) -- (7, -8.25);
       \draw[thick, highlight, dashed, opacity=0.15] (3.0, 0) -- (7, 4.8);
 
-      % h₄: ReLU ab x=5.0, Steigung -0.8
+      % h₄: ReLU ab x=5.0, Steigung +0.6 (positiv! → geht nach oben)
       \draw[thick, violet]
         (-0.5, 0) -- (5.0, 0);
       \draw[thick, violet]
-        (5.0, 0) -- (7, -1.6);
+        (5.0, 0) -- (7, 1.2);
       \fill[violet] (5.0, 0) circle (3pt);
-      \node[violet, below right, font=\small\bfseries] at (5.5, -0.5) {$h_4$};
+      \node[violet, above right, font=\small\bfseries] at (5.5, 0.5) {$h_4$};
 
       % Summe: bias + h₁ + h₂ + h₃ + h₄
       % x in [0,1.5]: 0.8 + 0.9x
       % x in [1.5,3.0]: 3.05 - 0.6x
       % x in [3.0,5.0]: -0.55 + 0.6x
-      % x in [5.0,7]: -0.55 + 0.6x - 0.8(x-5.0) = 3.45 - 0.2x
+      % x in [5.0,7]: -0.55 + 0.6x + 0.6(x-5.0) = -3.55 + 1.2x
+      %   bei x=5.0: -3.55 + 6.0 = 2.45
+      %   bei x=7.0: -3.55 + 8.4 = 4.85 → wird geclippt, aber passt zur steigenden fkt
       \draw[line width=2.5pt, akzent!70!black]
-        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 2.05);
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 4.85);
       \foreach \kx/\ky in {1.5/2.15, 3.0/1.25, 5.0/2.45} {
         \fill[akzent!70!black] (\kx, \ky) circle (3pt);
       }
-      \node[akzent!70!black, right, font=\small\bfseries] at (7, 2.05) {$\hat{f}$};
+      \node[akzent!70!black, right, font=\small\bfseries] at (7, 4.2) {$\hat{f}$};
     \end{tikzpicture}
   \end{center}
 
@@ -545,14 +547,14 @@
   \begin{center}
     \colorbox{dunkel!10}{%
       \parbox{0.78\textwidth}{\centering\small
-        \textbf{Viertes Neuron} $h_4$ – bremst die Steigung am Ende.\\[4pt]
+        \textbf{Viertes Neuron} $h_4$ – verstärkt die Steigung am Ende.\\[4pt]
         Drei Knicke, vier Segmente – die Form stimmt schon grob.
       }%
     }
   \end{center}
 \end{frame}
 
-% ── Folie 6: Fazit – viele Neuronen ───────────────────────
+% ── Folie 6: Fazit – viele Neuronen (korrigiert) ───────────────────────
 \begin{frame}{Wie approximiert ein Netz eine Funktion?}
   \begin{center}
     \begin{tikzpicture}[
@@ -568,9 +570,9 @@
         plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8})
         node[right] {$f(x)$};
 
-      % Grobe Approximation (4 Neuronen, blass)
+      % Grobe Approximation (4 Neuronen – jetzt passend zu Folie 5)
       \draw[line width=1.5pt, akzent!70!black, opacity=0.35]
-        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 2.05);
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 4.85);
       \node[akzent!70!black, opacity=0.5, font=\tiny, above] at (1.0, 2.3) {4 Neuronen};
 
       % Feine Approximation (simuliert mit vielen Samples)
