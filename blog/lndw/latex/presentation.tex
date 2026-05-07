@@ -865,35 +865,17 @@
   \begin{columns}[T]
     \column{0.55\textwidth}
     \begin{itemize}
-      \stich{Jedes Wort ist \textbf{kein isolierter Punkt} im Raum}
-      \stich{Durch das Positional Encoding entsteht ein
-             \textbf{spiralartiger Bereich} um jedes Wort}
-      \stich{Dieser Bereich = die ``Gegend'' des Wortes,
-             in der seine Positionsinformation kodiert ist}
-      \stich{Benachbarte Positionen → überlappende Spiralen
-             → \textbf{relative Abstände} bleiben erhalten}
-      \stich{Hochdimensional: viele Frequenzen überlagert
-             → einzigartiger Fingerabdruck pro Position}
+      \stich{Wörter werden nicht zu isolierten Punkten, sondern zu \textbf{Regionen} im Raum}
+      \stich{Überlagerung verschieden schneller Rotationen → spiralartiger \textbf{Fingerabdruck} pro Position}
+      \stich{Benachbarte Positionen → überlappende Spiralen → \textbf{relative Abstände} bleiben erhalten}
     \end{itemize}
 
     \column{0.4\textwidth}
     \begin{center}
       \includegraphics[width=\linewidth, keepaspectratio]{posembed.png}\\[0.3em]
-      {\scriptsize\color{gray}Visualisierung: Jedes Wort umgeben von einem
-       spiralförmigen Bereich – die ``Gegend'' seiner Position im Embedding-Raum}
+      {\scriptsize\color{gray}Jedes Wort umgeben von einer spiralförmigen Region – seinem positionalen Fingerabdruck}
     \end{center}
   \end{columns}
-
-  \medskip
-  \begin{center}
-    \colorbox{dunkel!10}{%
-      \parbox{0.85\textwidth}{\centering\small
-        \textbf{Intuition:} Ein Wort an Position $k$ wird nicht zu einem Punkt,
-        sondern zu einer \textbf{Region} – definiert durch die Überlagerung
-        verschieden schneller Rotationen (Sinus/Cosinus bei verschiedenen Frequenzen).
-      }%
-    }
-  \end{center}
 \end{frame}
 
 % ============================================================
