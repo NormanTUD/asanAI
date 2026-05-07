@@ -462,18 +462,18 @@
         arr/.style={-{Stealth}, thick},
         node distance=0.3cm
       ]
-      % Nodes von unten nach oben
+      % Nodes von oben nach unten
       \node (in) at (0,0) {\footnotesize Bewässerungsdaten};
       
       % Layer 1: f(x) + Aktivierung
-      \node[layer, fill=hell!20, above=of in]    (l1) {$f(\mathbf{x})$};
-      \node[layer, fill=akzent!20, above=of l1]  (s1) {$\sigma$};
+      \node[layer, fill=hell!20, below=of in]    (l1) {$f(\mathbf{x})$};
+      \node[layer, fill=akzent!20, below=of l1]  (s1) {$\sigma$};
       
       % Layer 2: g(.) -> Direkter Output
-      \node[layer, fill=hell!20, above=of s1]    (l2) {$g(\cdot)$};
+      \node[layer, fill=hell!20, below=of s1]    (l2) {$g(\cdot)$};
       
       % Output Prognose
-      \node[above=of l2] (out) {\footnotesize Ernteprognose (kg)};
+      \node[below=of l2] (out) {\footnotesize Ernteprognose (kg)};
 
       % Verbindungen
       \draw[arr] (in) -- (l1);
