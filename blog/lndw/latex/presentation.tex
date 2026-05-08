@@ -219,6 +219,58 @@
   \end{frame}
   \endgroup
 }
+% ══════════════════════════════════════════════════════════════
+% Frame 1: Isosurfaces 1–6 (Vollbild, durchklickbar)
+% ══════════════════════════════════════════════════════════════
+
+\definecolor{isobg}{HTML}{121B2E}
+
+{
+\setbeamercolor{background canvas}{bg=isobg}
+\foreach \n in {1,...,6} {%
+  \begin{frame}[plain]
+    \begin{tikzpicture}[remember picture, overlay]
+      \node at (current page.center) {%
+        \includegraphics[width=\paperwidth, height=\paperheight, keepaspectratio]{isosurfaces/\n.png}%
+      };
+    \end{tikzpicture}
+  \end{frame}
+}
+}
+
+% ══════════════════════════════════════════════════════════════
+% Frame 2: Temperatur-Erklärung (Text auf dunklem Hintergrund)
+% ══════════════════════════════════════════════════════════════
+
+{
+\setbeamercolor{background canvas}{bg=isobg}
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\Huge\color{white}\textbf{Temperatur}}\\[1.5em]
+    {\Large\color{white!80}Was passiert, wenn $T$ steigt?}\\[1.5em]
+    {\large\color{white!60}Die Isosurface wird \textbf{aufgebläht} –\\[0.4em]
+    mehr Tokens erhalten ähnliche Wahrscheinlichkeit.\\[0.4em]
+    Der Pfad der Wahl wird \textbf{diffuser}.}
+  \end{center}
+  \vfill
+\end{frame}
+}
+
+% ══════════════════════════════════════════════════════════════
+% Frame 3: France High Temp (Vollbild)
+% ══════════════════════════════════════════════════════════════
+
+{
+\setbeamercolor{background canvas}{bg=isobg}
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    \node at (current page.center) {%
+      \includegraphics[width=\paperwidth, height=\paperheight, keepaspectratio]{isosurfaces/france_high_temp.png}%
+    };
+  \end{tikzpicture}
+\end{frame}
+}
 
 % ============================================================
 \section{Dense Layer – die Grundbausteine}
