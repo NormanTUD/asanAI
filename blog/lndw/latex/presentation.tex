@@ -41,19 +41,12 @@
 % ============================================================
 
 % Platzhalter-Bild (leicht entfernbar: einfach \placeholder{...} löschen)
-% Wenn echtes Bild vorhanden: \echtesBild{datei}{breite}{caption}
 \newcommand{\placeholder}[2][0.5\textwidth]{%
   \begin{center}
     \fcolorbox{akzent}{white!95!black}{%
       \parbox{#1}{\centering\vspace{1.2cm}%
         {\color{akzent}\faImage\quad\textit{#2}}%
         \vspace{1.2cm}}}
-  \end{center}
-}
-\newcommand{\echtesBild}[3][0.6\textwidth]{%
-  \begin{center}
-    \includegraphics[width=#1]{#2}\\
-    {\scriptsize\color{gray}#3}
   \end{center}
 }
 
