@@ -279,6 +279,35 @@
 \end{frame}
 }
 
+% ── Interpretierbare vs. nicht-interpretierbare Dimensionen ─
+\begin{frame}{Dimensionen des Embedding-Raums}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.8]
+      % Achsen
+      \draw[-{Stealth}, thick] (-3,0) -- (3,0)
+        node[right, font=\small] {jung $\longleftrightarrow$ alt};
+      \draw[-{Stealth}, thick] (0,-2.5) -- (0,2.5)
+        node[above, font=\small] {männlich $\longleftrightarrow$ weiblich};
+
+      % Punkte
+      \fill[akzent] (-1.5, 1.5) circle (3pt) node[above right, font=\scriptsize] {Mädchen};
+      \fill[akzent] (1.5, 1.5)  circle (3pt) node[above right, font=\scriptsize] {Frau};
+      \fill[hell]   (-1.5,-1.5) circle (3pt) node[below right, font=\scriptsize] {Junge};
+      \fill[hell]   (1.5,-1.5)  circle (3pt) node[below right, font=\scriptsize] {Mann};
+
+      % Pfeile
+      \draw[-{Stealth}, dashed, gray] (-1.5,1.5) -- (1.5,1.5);
+      \draw[-{Stealth}, dashed, gray] (-1.5,-1.5) -- (1.5,-1.5);
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \stich{Manche Dimensionen: \textbf{interpretierbar} (Alter, Geschlecht, Größe …)}
+    \stich{Andere: \textbf{keine menschliche Bezeichnung} – abstrakte Muster}
+    \stich{Modell hat $d = 4096+$ Dimensionen → die meisten nicht greifbar}
+  \end{itemize}
+\end{frame}
+
 % ============================================================
 \section{Dense Layer – die Grundbausteine}
 % ============================================================
@@ -1310,35 +1339,6 @@
         Großer Winkel = \textbf{schwache} Beziehung
     }
   \end{columns}
-\end{frame}
-
-% ── Interpretierbare vs. nicht-interpretierbare Dimensionen ─
-\begin{frame}{Dimensionen des Embedding-Raums}
-  \begin{center}
-    \begin{tikzpicture}[scale=0.8]
-      % Achsen
-      \draw[-{Stealth}, thick] (-3,0) -- (3,0)
-        node[right, font=\small] {jung $\longleftrightarrow$ alt};
-      \draw[-{Stealth}, thick] (0,-2.5) -- (0,2.5)
-        node[above, font=\small] {männlich $\longleftrightarrow$ weiblich};
-
-      % Punkte
-      \fill[akzent] (-1.5, 1.5) circle (3pt) node[above right, font=\scriptsize] {Mädchen};
-      \fill[akzent] (1.5, 1.5)  circle (3pt) node[above right, font=\scriptsize] {Frau};
-      \fill[hell]   (-1.5,-1.5) circle (3pt) node[below right, font=\scriptsize] {Junge};
-      \fill[hell]   (1.5,-1.5)  circle (3pt) node[below right, font=\scriptsize] {Mann};
-
-      % Pfeile
-      \draw[-{Stealth}, dashed, gray] (-1.5,1.5) -- (1.5,1.5);
-      \draw[-{Stealth}, dashed, gray] (-1.5,-1.5) -- (1.5,-1.5);
-    \end{tikzpicture}
-  \end{center}
-
-  \begin{itemize}
-    \stich{Manche Dimensionen: \textbf{interpretierbar} (Alter, Geschlecht, Größe …)}
-    \stich{Andere: \textbf{keine menschliche Bezeichnung} – abstrakte Muster}
-    \stich{Modell hat $d = 4096+$ Dimensionen → die meisten nicht greifbar}
-  \end{itemize}
 \end{frame}
 
 % ── Aber was machen die inneren Layer wirklich? ────────────
