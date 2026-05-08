@@ -258,15 +258,22 @@
 }
 
 % ══════════════════════════════════════════════════════════════
-% Frame 3: France High Temp (Vollbild)
+% Frame: Isosurface 4 vs. France High Temp (nebeneinander)
 % ══════════════════════════════════════════════════════════════
+
+\definecolor{isobg}{HTML}{121B2E}
 
 {
 \setbeamercolor{background canvas}{bg=isobg}
 \begin{frame}[plain]
   \begin{tikzpicture}[remember picture, overlay]
-    \node at (current page.center) {%
-      \includegraphics[width=\paperwidth, height=\paperheight, keepaspectratio]{isosurfaces/france_high_temp.png}%
+    % Bild links: Isosurface 4
+    \node[anchor=east] at ([xshift=-0.3cm]current page.center) {%
+      \includegraphics[height=0.85\paperheight, keepaspectratio]{isosurfaces/4.png}%
+    };
+    % Bild rechts: France High Temp
+    \node[anchor=west] at ([xshift=0.3cm]current page.center) {%
+      \includegraphics[height=0.85\paperheight, keepaspectratio]{isosurfaces/france_high_temp.png}%
     };
   \end{tikzpicture}
 \end{frame}
