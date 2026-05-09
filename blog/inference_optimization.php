@@ -5,7 +5,7 @@ Training a model costs millions of dollars — but **serving** it costs millions
 
 ### Quantization
 
-Reduce the precision of model weights from 32-bit floats to 8-bit or 4-bit integers. The model gets smaller and faster with minimal quality loss \cite[Dettmers et al., 2022]{dettmers2022llmint8}.
+Reduce the precision of model weights from 32-bit floats to 8-bit or 4-bit integers. The model gets smaller and faster with minimal quality loss (\cite[Dettmers et al., 2022]{dettmers2022llmint8}).
 
 $$
 W_{\text{float32}} \;\xrightarrow{\text{quantize}}\; W_{\text{int8}} \quad \Rightarrow \quad 4\times \text{ smaller}, \;\sim 2\text{–}3\times \text{ faster}
