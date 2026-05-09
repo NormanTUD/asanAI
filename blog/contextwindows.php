@@ -386,15 +386,6 @@ Research is pushing toward effectively unlimited context through several approac
 | **Memory-augmented Transformers** | Research | Learnable external memory banks |
 | **State-space hybrids** | Production (Jamba, etc.) | SSM layers for long-range + attention for precision |
 
-The trend is clear: the boundary between "context window" and "external memory" is blurring. Future models may seamlessly combine:
-- A moderate attention window (32K–128K) for precise reasoning
-- Compressed representations of earlier context
-- External retrieval for unlimited knowledge
-
-$$
-\text{Future LLM} = \underbrace{\text{Attention (precise, local)}}_{\text{working memory}} + \underbrace{\text{SSM (efficient, long-range)}}_{\text{gist memory}} + \underbrace{\text{RAG (unlimited, external)}}_{\text{long-term memory}}
-$$
-
 ## Summary
 
 | Question | Answer |
