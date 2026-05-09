@@ -1,4 +1,82 @@
 window.bibData = {
+	// ═══════════════════════════════════════════════
+	// Security & Adversarial Attacks
+	// ═══════════════════════════════════════════════
+
+	"greshake2023injection": {
+		title: "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection",
+		author: "Kai Greshake, Sahar Abdelnabi, Shailesh Mishra, Christoph Endres, Thorsten Holz, Mario Fritz",
+		year: 2023,
+		url: "https://arxiv.org/abs/2302.12173"
+	},
+	"liu2024formalizing": {
+		title: "Formalizing and Benchmarking Prompt Injection Attacks and Defenses",
+		author: "Yupei Liu, Yuqi Jia, Runpeng Geng, Jinyuan Jia, Neil Zhenqiang Gong",
+		year: 2024,
+		url: "https://arxiv.org/abs/2310.12815"
+	},
+	"wei2024jailbroken": {
+		title: "Jailbroken: How Does LLM Safety Training Fail?",
+		author: "Alexander Wei, Nika Haghtalab, Jacob Steinhardt",
+		year: 2024,
+		url: "https://arxiv.org/abs/2307.02483"
+	},
+	"jain2023baseline": {
+		title: "Baseline Defenses for Adversarial Attacks Against Aligned Language Models",
+		author: "Neel Jain, Avi Schwarzschild, Yuxin Wen, Gowthami Somepalli, John Kirchenbauer, Ping-yeh Chiang, Micah Goldblum, Aniruddha Saha, Jonas Geiping, Tom Goldstein",
+		year: 2023,
+		url: "https://arxiv.org/abs/2309.00614"
+	},
+	"wallace2024hierarchy": {
+		title: "The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions",
+		author: "Eric Wallace, Kai Xiao, Reimar Leber, Lilian Weng, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.13208"
+	},
+	"mazeika2024harmbench": {
+		title: "HarmBench: A Standardized Evaluation Framework for Automated Red Teaming and Robust Refusal",
+		author: "Mantas Mazeika, Long Phan, Xuwang Yin, Andy Zou, Zifan Wang, Norman Mu, Elham Sakhaee, Nathaniel Li, Steven Basart, Bo Li, David Forsyth, Dan Hendrycks",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.04249"
+	},
+	"chen2024ibprotector": {
+		title: "IBProtector: An Information Bottleneck Approach to Defend Against Prompt Injection Attacks",
+		author: "Zichuan Chen, Zhibo Wang, Zhaolong Zhang, Feng Ma",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.02156"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Inference Optimization
+	// ═══════════════════════════════════════════════
+
+	"dettmers2022llmint8": {
+		title: "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+		author: "Tim Dettmers, Mike Lewis, Younes Belkada, Luke Zettlemoyer",
+		year: 2022,
+		url: "https://arxiv.org/abs/2208.07339"
+	},
+	"pope2023efficiently": {
+		title: "Efficiently Scaling Transformer Inference",
+		author: "Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, Jeff Dean",
+		year: 2023,
+		url: "https://arxiv.org/abs/2211.05102"
+	},
+	"leviathan2023speculative": {
+		title: "Fast Inference from Transformers via Speculative Decoding",
+		author: "Yaniv Leviathan, Matan Kalman, Yossi Matias",
+		year: 2023,
+		url: "https://arxiv.org/abs/2211.17192"
+	},
+	"hinton2015distilling": {
+		title: "Distilling the Knowledge in a Neural Network",
+		author: "Geoffrey Hinton, Oriol Vinyals, Jeff Dean",
+		year: 2015,
+		url: "https://arxiv.org/abs/1503.02531"
+	},
+
+	/* OLD */
+
 	"alankayfuture": {
 		url: "https://www.youtube.com/watch?v=BZLpfZ9wPVY",
 		author: "Alan Kay",
