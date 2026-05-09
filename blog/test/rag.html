@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Systems: An Interactive Explainer</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0;
+    --text: #1e293b; --muted: #64748b; --accent: #3b82f6;
+    --accent2: #8b5cf6; --green: #10b981; --red: #ef4444;
+    --orange: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 20px; max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 1.8em; margin: 30px 0 10px; }
+  h2 { font-size: 1.35em; margin: 30px 0 10px; color: var(--accent); }
+  h3 { font-size: 1.1em; margin: 20px 0 8px; color: var(--accent2); }
+  p, li { margin-bottom: 10px; }
+  ul { padding-left: 1.4em; }
+  code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px; margin: 18px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-green  { border-left: 4px solid var(--green); }
+  .card-orange { border-left: 4px solid var(--orange); }
+  .card-red    { border-left: 4px solid var(--red); }
+  .card-purple { border-left: 4px solid var(--accent2); }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 0.75em; font-weight: 700; letter-spacing: 0.04em; }
+  .tag-blue   { background: #dbeafe; color: #1d4ed8; }
+  .tag-green  { background: #d1fae5; color: #065f46; }
+  .tag-orange { background: #fef3c7; color: #92400e; }
+  .tag-red    { background: #fee2e2; color: #991b1b; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 640px) { .compare-grid { grid-template-columns: 1fr; } }
+  .step-num { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 0.85em; margin-right: 8px; flex-shrink: 0; }
+  .step-row { display: flex; align-items: flex-start; margin-bottom: 14px; }
+  .interactive { background: linear-gradient(135deg, #f0f9ff, #eff6ff); border: 1px solid #bfdbfe; border-radius: 14px; padding: 20px; margin: 20px 0; }
+  .interactive h3 { margin-top: 0; }
+  button.demo-btn { background: var(--accent); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9em; transition: 0.2s; }
+  button.demo-btn:hover { filter: brightness(1.1); }
+  input[type=text] { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 1em; margin-bottom: 10px; }
+  .sim-bar-track { height: 18px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin: 4px 0; }
+  .sim-bar-fill { height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+  .doc-result { padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--border); background: #fff; }
+  .doc-result .score { font-family: monospace; font-weight: 700; font-size: 0.95em; }
+  .diagram { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 18px 0; font-size: 0.9em; }
+  .diagram .box { padding: 10px 16px; border-radius: 10px; font-weight: 700; text-align: center; min-width: 90px; }
+  .diagram .arrow { font-size: 1.4em; color: var(--muted); }
+  .toc { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 16px 22px; margin: 20px 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .toc li { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<h1>🗄️ RAG: Retrieval-Augmented Generation</h1>
+<p style="color:var(--muted); font-size:0.95em;">An interactive explainer — how LLMs get a searchable memory without retraining.</p>
+
+<nav class="toc">
+<strong>Contents</strong>
+<ul>
+  <li><a href="#what">What is RAG?</a></li>
+  <li><a href="#why">Why not just use a bigger context window?</a></li>
+  <li><a href="#pipeline">The RAG Pipeline (step by step)</a></li>
+  <li><a href="#vectordb">How data is stored: Vector Databases</a></li>
+  <li><a href="#demo">Interactive: Similarity Search</a></li>
+  <li><a href="#icl">RAG vs. In-Context Learning</a></li>
+  <li><a href="#context">RAG and long context windows</a></li>
+  <li><a href="#limits">Limitations & failure modes</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ul>
+</nav>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="what">What is RAG?</h2>
+
+<p>A standard LLM can only use what it memorised during training. If you ask it about a document it never saw, it either hallucinates or says "I don't know."</p>
+
+<p><strong>Retrieval-Augmented Generation (RAG)</strong> gives the LLM an external, searchable memory. Before the model generates an answer, a <em>retriever</em> finds the most relevant passages from a document store and injects them into the prompt. The LLM then answers <em>grounded in those passages</em>.</p>
+
+<div class="diagram">
+  <div class="box" style="background:#dbeafe; color:#1e40af;">User Query</div>
+  <div class="arrow">→</div>
+  <div class="box" style="background:#fef3c7; color:#92400e;">Retriever<br><small>vector search</small></div>
+  <div class="arrow">→</div>
+  <div class="box" style="background:#d1fae5; color:#065f46;">Top-K Docs</div>
+  <div class="arrow">→</div>
+  <div class="box" style="background:#ede9fe; color:#5b21b6;">LLM<br><small>generates answer</small></div>
+  <div class="arrow">→</div>
+  <div class="box" style="background:#fee2e2; color:#991b1b;">Grounded Answer</div>
+</div>
+
+<p><strong>Key insight:</strong> The LLM's weights are <em>never changed</em>. RAG is purely an input-enrichment strategy.</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="why">Why not just put everything in the prompt?</h2>
+
+<p>You <em>could</em> paste an entire book into the context window. But:</p>
+
+<div class="compare-grid">
+  <div class="card card-green">
+    <span class="tag tag-green">RAG</span>
+    <ul style="margin-top:10px;">
+      <li>Searches millions of documents in <strong>milliseconds</strong></li>
+      <li>Costs almost nothing per query (only the relevant chunks use tokens)</li>
+      <li>Can be updated instantly — add or delete documents without retraining</li>
+    </ul>
+  </div>
+  <div class="card card-orange">
+    <span class="tag tag-orange">Full-context stuffing</span>
+    <ul style="margin-top:10px;">
+      <li>Limited by context window (e.g. 128K tokens ≈ one long book)</li>
+      <li><strong>Expensive</strong> — you pay per token, every query</li>
+      <li>LLMs struggle to attend to info in the <em>middle</em> of very long contexts ("lost in the middle" effect)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="pipeline">The RAG Pipeline — Step by Step</h2>
+
+<h3>Phase 1: Indexing (offline, done once)</h3>
+
+<div class="card card-accent">
+<div class="step-row"><span class="step-num">1</span><div><strong>Chunk the documents.</strong> Split each source (PDF, webpage, database row) into small, overlapping passages — typically 200–500 tokens each. Overlap ensures no information falls between the cracks.</div></div>
+<div class="step-row"><span class="step-num">2</span><div><strong>Embed each chunk.</strong> Pass every chunk through an <em>embedding model</em> (e.g. OpenAI's <code>text-embedding-3-small</code> or open-source <code>bge-base</code>). This converts text into a dense vector — a list of, say, 768 floating-point numbers that encodes the <em>meaning</em> of the passage.</div></div>
+<div class="step-row"><span class="step-num">3</span><div><strong>Store in a vector database.</strong> Save every <code>(vector, chunk_text, metadata)</code> triple in a specialised database optimised for nearest-neighbour search (e.g. FAISS, Pinecone, Weaviate, Chroma, Qdrant).</div></div>
+</div>
+
+<h3>Phase 2: Retrieval + Generation (online, every query)</h3>
+
+<div class="card card-purple">
+<div class="step-row"><span class="step-num">4</span><div><strong>Embed the query.</strong> The user's question is passed through the <em>same</em> embedding model, producing a query vector in the same space.</div></div>
+<div class="step-row"><span class="step-num">5</span><div><strong>Similarity search.</strong> The vector DB finds the <em>K</em> stored chunks whose vectors are closest to the query vector (usually via cosine similarity or dot product). This is blazingly fast — approximate nearest-neighbour algorithms like HNSW handle billions of vectors in <strong>&lt;50ms</strong>.</div></div>
+<div class="step-row"><span class="step-num">6</span><div><strong>Augment the prompt.</strong> The retrieved chunks are prepended to the user's question as context:
+<pre style="background:#f1f5f9; padding:12px; border-radius:8px; font-size:0.85em; margin-top:8px; overflow-x:auto;">
+System: Answer based ONLY on the following context.
+
+Context:
+[Chunk 1 text here]
+[Chunk 2 text here]
+[Chunk 3 text here]
+
+User: What is the capital of Assyria?
+</pre>
+</div></div>
+<div class="step-row"><span class="step-num">7</span><div><strong>Generate.</strong> The LLM reads the enriched prompt and produces a grounded answer. Because the relevant facts are <em>right there</em> in the context, hallucination is dramatically reduced.</div></div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="vectordb">How Data Is Stored: Vector Databases</h2>
+
+<p>A vector database is <strong>not</strong> a traditional SQL database. It doesn't search by keyword matching. Instead, it indexes high-dimensional vectors so that <em>semantic similarity</em> queries are fast.</p>
+
+<div class="card">
+<h3 style="margin-top:0;">What's actually stored?</h3>
+<p>Each entry (called a "point" or "document") consists of:</p>
+<table style="width:100%; border-collapse:collapse; font-size:0.9em; margin-top:10px;">
+<tr style="border-bottom:2px solid var(--border);">
+  <th style="text-align:left; padding:8px;">Field</th>
+  <th style="text-align:left; padding:8px;">Example</th>
+  <th style="text-align:left; padding:8px;">Purpose</th>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9;">
+  <td style="padding:8px;"><code>id</code></td>
+  <td style="padding:8px; font-family:monospace;">doc_0042</td>
+  <td style="padding:8px;">Unique identifier</td>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9;">
+  <td style="padding:8px;"><code>vector</code></td>
+  <td style="padding:8px; font-family:monospace;">[0.023, -0.841, 0.117, …]</td>
+  <td style="padding:8px;">768-dim embedding — the searchable "meaning"</td>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9;">
+  <td style="padding:8px;"><code>text</code></td>
+  <td style="padding:8px;">"The Transformer architecture was introduced in 2017…"</td>
+  <td style="padding:8px;">Original chunk, returned to the LLM</td>
+</tr>
+<tr>
+  <td style="padding:8px;"><code>metadata</code></td>
+  <td style="padding:8px; font-family:monospace;">{source: "vaswani2017", page: 3}</td>
+  <td style="padding:8px;">Filtering, citations</td>
+</tr>
+</table>
+</div>
+
+<div class="card card-accent">
+<h3 style="margin-top:0;">How is search so fast?</h3>
+<p>Brute-force comparison against millions of vectors would be too slow. Vector DBs use <strong>Approximate Nearest Neighbour (ANN)</strong> algorithms:</p>
+<ul>
+  <li><strong>HNSW</strong> (Hierarchical Navigable Small World): builds a multi-layer graph where each node is a vector. Searching "hops" through the graph, narrowing in on the target region — like navigating a city by jumping between landmarks. <em>Most popular in production.</em></li>
+  <li><strong>IVF</strong> (Inverted File Index): clusters vectors into Voronoi cells at index time. At query time, only a few nearby cells are searched.</li>
+  <li><strong>Product Quantization</strong>: compresses vectors into compact codes, trading a tiny bit of accuracy for massive memory savings.</li>
+</ul>
+<p>Result: querying <strong>1 billion vectors in ~50ms</strong> on a single machine.</p>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="demo">🔍 Interactive: Similarity Search</h2>
+
+<div class="interactive">
+<h3>Try it: Type a query, see which "documents" match</h3>
+<p style="color:var(--muted); font-size:0.88em;">This is a toy demo using cosine similarity on tiny 3-dimensional vectors. Real systems use 768+ dimensions, but the principle is identical.</p>
+
+<input type="text" id="rag-query" placeholder='Try: "How do neural networks learn?"' value="How do neural networks learn?">
+<button class="demo-btn" onclick="runRAGDemo()">🔎 Search</button>
+
+<div id="rag-results" style="margin-top:16px;"></div>
+
+<details style="margin-top:14px; font-size:0.88em; color:var(--muted);">
+<summary style="cursor:pointer; font-weight:600;">How does this demo work?</summary>
+<p style="margin-top:8px;">Each "document" and your query are mapped to a tiny 3D vector using keyword heuristics (a stand-in for a real embedding model). The system computes cosine similarity between your query vector and every document vector, then ranks them. In production, the embedding model is a neural network (like BERT or a specialised retriever) and the vectors have hundreds of dimensions.</p>
+</details>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="icl">RAG vs. In-Context Learning</h2>
+
+<p><strong>In-Context Learning (ICL)</strong> is when you put examples or instructions directly in the prompt and the LLM "learns" the task on the fly — no weight updates, just pattern-matching over the provided tokens.</p>
+
+<p>RAG and ICL are <em>complementary</em>, not competing. In fact, <strong>RAG feeds into ICL</strong>: the retrieved documents become the in-context examples the model reasons over.</p>
+
+<div class="compare-grid">
+  <div class="card card-accent">
+    <span class="tag tag-blue">In-Context Learning</span>
+    <ul style="margin-top:10px;">
+      <li>The model reads examples/instructions in the prompt</li>
+      <li>Limited to what fits in the context window</li>
+      <li>The <strong>human</strong> (or a program) decides what to include</li>
+      <li>Works for any task: translation, code, reasoning…</li>
+    </ul>
+  </div>
+  <div class="card card-green">
+    <span class="tag tag-green">RAG</span>
+    <ul style="margin-top:10px;">
+      <li>An <strong>automated retriever</strong> selects what to put in the prompt</li>
+      <li>Can search over <strong>millions of documents</strong> — far beyond any context window</li>
+      <li>Specialised for knowledge-grounded Q&A</li>
+      <li>The LLM still uses ICL to reason over the retrieved chunks</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card card-orange">
+<strong>Why do they seem different?</strong>
+<p>ICL relies on whatever the user manually puts in the prompt. RAG <em>automates the selection</em> using vector search. The LLM itself doesn't know the difference — it just sees tokens in its context window either way. The magic of RAG is in the retrieval step <em>before</em> the LLM runs.</p>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="context">RAG and Long Context Windows</h2>
+
+<p>Modern LLMs have ever-growing context windows: 128K tokens (GPT-4), 200K (Claude), even 1M+ (Gemini). So why bother with RAG?</p>
+
+<div class="card">
+<h3 style="margin-top:0;">RAG can search <em>far</em> more than any context window</h3>
+<table style="width:100%; border-collapse:collapse; font-size:0.9em;">
+<tr style="border-bottom:2px solid var(--border);">
+  <th style="text-align:left; padding:8px;">Approach</th>
+  <th style="text-align:right; padding:8px;">Searchable data</th>
+  <th style="text-align:right; padding:8px;">Cost per query</th>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9;">
+  <td style="padding:8px;">128K context window</td>
+  <td style="padding:8px; text-align:right;">~1 book</td>
+  <td style="padding:8px; text-align:right;">$$$ (pay for all 128K tokens)</td>
+</tr>
+<tr style="border-bottom:1px solid #f1f5f9;">
+  <td style="padding:8px;">1M context window</td>
+  <td style="padding:8px; text-align:right;">~8 books</td>
+  <td style="padding:8px; text-align:right;">$$$$ (massive token bill)</td>
+</tr>
+<tr>
+  <td style="padding:8px; font-weight:700;">RAG (vector DB)</td>
+  <td style="padding:8px; text-align:right; font-weight:700;">Millions of documents</td>
+  <td style="padding:8px; text-align:right; font-weight:700;">$ (only retrieved chunks use tokens)</td>
+</tr>
+</table>
+</div>
+
+<div class="card card-red">
+<h3 style="margin-top:0;">The "Lost in the Middle" Problem</h3>
+<p>Research shows that LLMs pay the most attention to the <strong>beginning</strong> and <strong>end</strong> of long contexts, often ignoring information buried in the middle. Even if a 200K-token window <em>can</em> hold your data, the model may fail to <em>use</em> it. RAG sidesteps this by only injecting the 3–5 most relevant chunks — keeping them front-and-center where attention is strongest.</p>
+</div>
+
+<p>In practice, <strong>RAG + long context</strong> work together: RAG retrieves the top 10–20 chunks, and the long context window gives the model room to reason over all of them at once.</p>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="limits">Limitations & Failure Modes</h2>
+
+<div class="card card-red">
+<ul>
+  <li><strong>Garbage in, garbage out.</strong> If the document store contains wrong information, RAG will confidently retrieve and present it.</li>
+  <li><strong>Chunking matters.</strong> If a critical fact is split across two chunks and neither chunk is retrieved, the answer will be incomplete.</li>
+  <li><strong>Embedding blind spots.</strong> Embedding models can misjudge similarity — a query about "Python" (the snake) might retrieve docs about "Python" (the language).</li>
+  <li><strong>No reasoning over absence.</strong> RAG can't tell you "this information doesn't exist in the database." It will retrieve the <em>closest</em> thing, which may be irrelevant.</li>
+  <li><strong>Latency.</strong> The retrieval step adds ~50–200ms per query. For real-time applications, this matters.</li>
+</ul>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<h2 id="summary">Summary</h2>
+
+<div class="card" style="background: linear-gradient(135deg, #eff6ff, #f5f3ff); border: 1px solid #c7d2fe;">
+
+<table style="width:100%; border-collapse:collapse; font-size:0.9em;">
+<tr style="border-bottom:2px solid #a5b4fc;">
+  <th style="text-align:left; padding:10px;">Question</th>
+  <th style="text-align:left; padding:10px;">Answer</th>
+</tr>
+<tr style="border-bottom:1px solid #e0e7ff;">
+  <td style="padding:10px; font-weight:600;">What is RAG?</td>
+  <td style="padding:10px;">Fetch relevant docs → inject into prompt → LLM answers grounded in evidence.</td>
+</tr>
+<tr style="border-bottom:1px solid #e0e7ff;">
+  <td style="padding:10px; font-weight:600;">How is data stored?</td>
+  <td style="padding:10px;">As dense vectors in a vector DB (FAISS, Pinecone, etc.), indexed with ANN algorithms like HNSW.</td>
+</tr>
+<tr style="border-bottom:1px solid #e0e7ff;">
+  <td style="padding:10px; font-weight:600;">How is data found?</td>
+  <td style="padding:10px;">Cosine similarity between query embedding and stored embeddings. Top-K results are returned.</td>
+</tr>
+<tr style="border-bottom:1px solid #e0e7ff;">
+  <td style="padding:10px; font-weight:600;">RAG vs. ICL?</td>
+  <td style="padding:10px;">ICL = manual prompt engineering. RAG = automated retrieval that <em>feeds</em> ICL. They're complementary.</td>
+</tr>
+<tr style="border-bottom:1px solid #e0e7ff;">
+  <td style="padding:10px; font-weight:600;">RAG vs. long context?</td>
+  <td style="padding:10px;">RAG searches millions of docs cheaply. Long context holds ~1 book expensively. Best used together.</td>
+</tr>
+<tr>
+  <td style="padding:10px; font-weight:600;">Are the LLM's weights changed?</td>
+  <td style="padding:10px;"><strong>No.</strong> RAG only changes the <em>input</em>. The model itself is untouched.</td>
+</tr>
+</table>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- INTERACTIVE DEMO SCRIPT -->
+<script>
+const DOCS = [
+  { text: "Backpropagation allows neural networks to learn by sending error signals backward through layers, adjusting weights via gradient descent.", tags: ["neural", "network", "learn", "backpropagation", "gradient", "weight"] },
+  { text: "The Transformer architecture, introduced in 2017, uses self-attention to process sequences in parallel rather than sequentially.", tags: ["transformer", "attention", "architecture", "parallel", "sequence"] },
+  { text: "Tokenization splits text into subword units using algorithms like Byte-Pair Encoding (BPE), balancing vocabulary size and coverage.", tags: ["tokenization", "text", "bpe", "subword", "vocabulary"] },
+  { text: "Vector databases like FAISS and Pinecone store high-dimensional embeddings and support fast approximate nearest-neighbour search.", tags: ["vector", "database", "embedding", "search", "faiss", "store"] },
+  { text: "The French Revolution began in 1789 and led to the end of the monarchy and the rise of Napoleon Bonaparte.", tags: ["french", "revolution", "history", "napoleon", "monarchy"] },
+  { text: "Photosynthesis converts sunlight, water, and CO₂ into glucose and oxygen in the chloroplasts of plant cells.", tags: ["photosynthesis", "plant", "sunlight", "biology", "cell"] },
+  { text: "Cosine similarity measures the angle between two vectors, making it ideal for comparing semantic embeddings regardless of magnitude.", tags: ["cosine", "similarity", "vector", "embedding", "semantic", "compare"] },
+  { text: "Retrieval-Augmented Generation (RAG) fetches relevant documents from a vector store and injects them into the LLM's prompt.", tags: ["rag", "retrieval", "document", "vector", "prompt", "llm"] },
+];
+
+function cosineSim(a, b) {
+  let dot = 0, ma = 0, mb = 0;
+  for (let i = 0; i < a.length; i++) { dot += a[i]*b[i]; ma += a[i]*a[i]; mb += b[i]*b[i]; }
+  return (ma && mb) ? dot / (Math.sqrt(ma) * Math.sqrt(mb)) : 0;
+}
+
+function embed(text, allTags) {
+  const words = text.toLowerCase().replace(/[^a-z0-9\s]/g, '').split(/\s+/);
+  return allTags.map(t => words.filter(w => w.includes(t) || t.includes(w)).length);
+}
+
+function runRAGDemo() {
+  const query = document.getElementById('rag-query').value.trim();
+  if (!query) return;
+  const allTags = [...new Set(DOCS.flatMap(d => d.tags))];
+  const qVec = embed(query, allTags);
+  const results = DOCS.map((d, i) => {
+    const dVec = embed(d.text + ' ' + d.tags.join(' '), allTags);
+    return { idx: i, text: d.text, score: cosineSim(qVec, dVec) };
+  }).sort((a, b) => b.score - a.score);
+
+  const container = document.getElementById('rag-results');
+  const maxScore = Math.max(results[0].score, 0.001);
+  container.innerHTML = '<p style="font-weight:700; margin-bottom:10px;">Results (ranked by cosine similarity):</p>' +
+    results.slice(0, 5).map((r, i) => {
+      const pct = Math.round((r.score / maxScore) * 100);
+      const color = i === 0 ? 'var(--green)' : i < 3 ? 'var(--accent)' : '#94a3b8';
+      return `<div class="doc-result" style="border-left:4px solid ${color};">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="score" style="color:${color};">#${i+1} — similarity: ${r.score.toFixed(3)}</span>
+          ${i < 3 ? '<span class="tag tag-green">Retrieved ✓</span>' : '<span class="tag tag-red">Not used</span>'}
+        </div>
+        <div class="sim-bar-track"><div class="sim-bar-fill" style="width:${pct}%; background:${color};"></div></div>
+        <p style="margin:6px 0 0; font-size:0.9em; color:#334155;">${r.text}</p>
+      </div>`;
+    }).join('');
+}
+
+// Run on load
+runRAGDemo();
+</script>
+
+</body>
+</html>
