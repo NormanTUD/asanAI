@@ -385,19 +385,6 @@ Research is pushing toward effectively unlimited context through several approac
 | **Retrieval-augmented generation** | Production | External memory via vector search |
 | **Memory-augmented Transformers** | Research | Learnable external memory banks |
 | **State-space hybrids** | Production (Jamba, etc.) | SSM layers for long-range + attention for precision |
-
-## Summary
-
-| Question | Answer |
-|----------|--------|
-| What is a context window? | The maximum tokens an LLM can process in one forward pass — its entire "awareness" |
-| Why does it exist? | Self-attention is $O(n^2)$; memory and compute grow with sequence length |
-| What is the KV cache? | Stored Key/Value vectors from all previous tokens, enabling efficient generation |
-| What is Flash Attention? | An algorithm that computes exact attention with $O(n)$ memory instead of $O(n^2)$ |
-| What is "lost in the middle"? | LLMs attend more to the beginning and end of context, missing information in the middle |
-| How do LLMs "remember" across chats? | They don't — external systems inject stored memories into the context window |
-| Context window vs. RAG? | Context window holds everything at once (expensive). RAG retrieves only what's relevant (cheap, scalable) |
-| Why do longer conversations cost more? | More tokens = more KV cache memory = more compute = higher API cost |
 </div>
 
 <div class="md">
