@@ -51,6 +51,7 @@
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
+	incl("How LLMs Search the Web: Behind the Scenes", "websearch");
 	incl("Topology and the Geometry of Thought", "topology");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
