@@ -8,7 +8,7 @@ Training a model costs millions of dollars — but **serving** it costs millions
 Reduce the precision of model weights from 32-bit floats to 8-bit or 4-bit integers. The model gets smaller and faster with minimal quality loss (\cite[Dettmers et al., 2022]{dettmers2022llmint8}).
 
 $$
-W_{\text{float32}} \;\xrightarrow{\text{quantize}}\; W_{\text{int8}} \quad \Rightarrow \quad 4\times \text{ smaller}, \;\sim 2\text{–}3\times \text{ faster}
+W_{\text{float32}} \overset{\text{quantize}}{\longrightarrow} W_{\text{int8}} \quad \Rightarrow \quad 4\times \text{ smaller}, \sim 2\text{--}3\times \text{ faster}
 $$
 
 | Precision | Bits/weight | Model size (7B params) | Quality loss |
@@ -33,7 +33,7 @@ The tradeoff: the cache grows linearly with sequence length and consumes GPU mem
 Use a small, fast **draft model** to generate $k$ candidate tokens, then verify them in parallel with the large model. If the large model agrees, you get $k$ tokens for the cost of ~1 forward pass \cite[Leviathan et al., 2023]{leviathan2023speculative}.
 
 $$
-\underbrace{\text{Draft model (1B)}}_{\text{fast, imprecise}} \;\xrightarrow{k \text{ tokens}}\; \underbrace{\text{Main model (70B)}}_{\text{slow, precise, verifies in parallel}} \;\rightarrow\; 2\text{–}3\times \text{ speedup}
+\underbrace{\text{Draft model 1B}}_{\text{fast, imprecise}} \overset{k \text{ tokens}}{\longrightarrow} \underbrace{\text{Main model 70B}}_{\text{slow, precise, verifies in parallel}} \rightarrow 2\text{--}3\times \text{ speedup}
 $$
 
 ### Distillation
@@ -41,7 +41,7 @@ $$
 Train a small **student** model to mimic the outputs of a large **teacher** model. The student learns the teacher's "dark knowledge" — the full probability distribution over tokens, not just the top-1 answer (\cite[Hinton et al., 2015]{hinton2015distilling}).
 
 $$
-\mathcal{L}_{\text{distill}} = \text{KL}\!\left(\; p_{\text{teacher}}(\cdot | x) \;\|\; p_{\text{student}}(\cdot | x) \;\right)
+\mathcal{L}_{\text{distill}} = \text{KL}\bigl(\, p_{\text{teacher}}(\cdot \mid x) \,\Vert\, p_{\text{student}}(\cdot \mid x) \,\bigr)
 $$
 
 | Technique | What it saves | Tradeoff |

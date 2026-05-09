@@ -56,7 +56,7 @@
 	incl("Context Windows & Memory: What LLMs Can Hold in Mind", "contextwindows");
 	incl("Security & Adversarial Attacks", "security_inference");
 	incl("Inference Optimization", "inference_optimization");
-	incl("Topology and the Geometry of Thought", "topology");
+	#incl("Topology and the Geometry of Thought", "topology");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
 	incl("Appendix", "appendix");

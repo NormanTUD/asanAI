@@ -109,12 +109,12 @@ const CRSim = (() => {
     const r = rounds[currentRound];
 
     // Show room, hide reveal
-    $('cr-room').style.display = '';
-    $('cr-reveal').style.display = 'none';
+    $('#cr-room').style.display = '';
+    $('#cr-reveal').style.display = 'none';
 
     // Round number
-    $('cr-round-num').textContent = currentRound + 1;
-    $('cr-total-rounds').textContent = rounds.length;
+    $('#cr-round-num').textContent = currentRound + 1;
+    $('#cr-total-rounds').textContent = rounds.length;
 
     // Incoming message with slide-in animation
     const msgEl = $('cr-incoming-msg');
