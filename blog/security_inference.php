@@ -42,5 +42,3 @@ $$
 </div>
 
 <div id="seclab-injection-demo"></div>
-
-

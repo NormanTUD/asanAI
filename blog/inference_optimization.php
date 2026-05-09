@@ -1,3 +1,5 @@
+<?php include_once("functions.php"); ?>
+
 <div class="md">
 ## Inference Optimization
 
