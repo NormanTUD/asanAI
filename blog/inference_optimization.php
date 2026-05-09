@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## Inference Optimization
-
 Training a model costs millions of dollars — but **serving** it costs millions *per day*. Inference optimization makes LLMs practical to deploy.
 
 ### Quantization
