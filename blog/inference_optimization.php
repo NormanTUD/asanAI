@@ -20,7 +20,7 @@ $$
 
 ### KV-Cache
 
-During autoregressive generation, the model recomputes attention over all previous tokens at each step. The **KV-cache** stores the Key and Value matrices from previous tokens so they don't need to be recomputed \cite[Pope et al., 2023]{pope2023efficiently}:
+During autoregressive generation, the model recomputes attention over all previous tokens at each step. The **KV-cache** stores the Key and Value matrices from previous tokens so they don't need to be recomputed (\cite[Pope et al., 2023]{pope2023efficiently}):
 
 $$
 \text{Without cache: } O(n^2) \text{ per token} \qquad \text{With cache: } O(n) \text{ per token}
@@ -38,7 +38,7 @@ $$
 
 ### Distillation
 
-Train a small **student** model to mimic the outputs of a large **teacher** model. The student learns the teacher's "dark knowledge" — the full probability distribution over tokens, not just the top-1 answer \cite[Hinton et al., 2015]{hinton2015distilling}.
+Train a small **student** model to mimic the outputs of a large **teacher** model. The student learns the teacher's "dark knowledge" — the full probability distribution over tokens, not just the top-1 answer (\cite[Hinton et al., 2015]{hinton2015distilling}).
 
 $$
 \mathcal{L}_{\text{distill}} = \text{KL}\!\left(\; p_{\text{teacher}}(\cdot | x) \;\|\; p_{\text{student}}(\cdot | x) \;\right)
