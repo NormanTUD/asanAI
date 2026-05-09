@@ -54,6 +54,7 @@
 	incl("How LLMs Search the Web: Behind the Scenes", "websearch");
 	incl("Semantic Search & Vector Databases: Finding Needles in Haystacks", "vectorsearch");
 	incl("Context Windows & Memory: What LLMs Can Hold in Mind", "contextwindows");
+	incl("Security & Adversarial Attacks", "security_inference");
 	incl("Topology and the Geometry of Thought", "topology");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
