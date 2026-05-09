@@ -52,6 +52,8 @@
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
 	incl("How LLMs Search the Web: Behind the Scenes", "websearch");
+	incl("Semantic Search & Vector Databases: Finding Needles in Haystacks", "vectorsearch");
+	incl("Context Windows & Memory: What LLMs Can Hold in Mind", "contextwindows");
 	incl("Topology and the Geometry of Thought", "topology");
 	incl("Prompt Engineering: How to talk to LLMs", "promptengineering");
 	incl("Philosophical and societal implications, ethical usage of AI", "philosophy");
