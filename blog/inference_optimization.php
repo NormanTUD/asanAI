@@ -53,19 +53,3 @@ $$
 </div>
 
 <div id="seclab-quant-demo"></div>
-
-<div class="md">
-## Summary
-
-| Question | Answer |
-|----------|--------|
-| What is prompt injection? | Attacker hides instructions in data that override the system prompt |
-| Direct vs. indirect? | Direct = user types it. Indirect = hidden in retrieved content (web, email) |
-| What is jailbreaking? | Tricking the model into ignoring safety training via role-play, encoding, etc. |
-| What is data poisoning? | Injecting backdoor triggers into training data |
-| Best defense? | Defense in depth: input filtering + instruction hierarchy + output filtering + adversarial training |
-| What is quantization? | Reducing weight precision (FP32 → INT4) for smaller, faster models |
-| What is KV-cache? | Storing past attention keys/values to avoid recomputation |
-| What is speculative decoding? | Draft model proposes tokens; main model verifies in parallel |
-| What is distillation? | Small model trained to mimic large model's output distribution |
-</div>
