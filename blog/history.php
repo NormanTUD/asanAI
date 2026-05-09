@@ -782,6 +782,68 @@ This is the direct, causal link to modern AI. A large language model learns by i
 As noted elsewhere in this history, the \cite[Bitter Lesson]{sutton2019bitter} teaches that scale and data ultimately outperform hand-crafted rules. But scale requires *something to scale on*. The World Wide Web provided exactly that: a self-assembling, ever-growing corpus of human thought, freely accessible and machine-readable. ARPANET gave machines the ability to talk to each other. TCP/IP gave them a common language. The World Wide Web gave humanity a reason to pour its collective knowledge into the network. And that collective knowledge became the raw material from which a language model learns to speak.
 </div>
 
+<div class="optional md" data-headline="The Neolithic Revolution: Sedentarization as a Prerequisite for Abstraction">
+The entire trajectory from stone tools to silicon chips presupposes a
+transformation so fundamental that it is easily overlooked: the
+**Neolithic Revolution**, the transition from nomadic
+hunter-gatherer societies to settled agricultural communities,
+beginning roughly 10,000–12,000 years ago in the Fertile Crescent.
+
+Without **sedentarization** (*Sesshaftwerdung*), none of the
+intellectual and material prerequisites described in this history
+could have emerged. Permanent settlements enabled:
+
+* **Surplus and Specialization:** Agriculture produced food surpluses
+  that freed individuals from constant subsistence labor. For the
+  first time, a society could sustain specialists: potters,
+  metalworkers, scribes, priests, and, eventually, mathematicians and
+  philosophers. Without surplus, there is no leisure for abstract
+  thought; without abstract thought, there is no Aristotle, no
+  Leibniz, no Turing.
+
+* **Writing and Record-Keeping:** The earliest writing systems,
+  Sumerian cuneiform and Egyptian hieroglyphs, emerged not from
+  literary ambition but from the bureaucratic need to track grain
+  stores, land ownership, and trade debts in settled communities. The
+  very act of *encoding information on a physical medium*, the
+  conceptual ancestor of every punch card, magnetic tape, and SSD,
+  was born from agricultural bookkeeping.
+
+* **Accumulation of Knowledge Across Generations:** Nomadic groups
+  carry only what they can remember or transport. Settled societies
+  accumulate **libraries**, observational records spanning centuries
+  (essential for astronomy and mathematics), and physical
+  infrastructure like workshops and forges. The Antikythera Mechanism
+  could not have been conceived, let alone built, by a society without
+  permanent workshops, multi-generational craft traditions, and
+  written astronomical tables accumulated over hundreds of years.
+
+* **Dense Social Networks:** Permanent settlements concentrated
+  populations, enabling the rapid exchange of ideas, the division of
+  intellectual labor, and the institutional structures (academies,
+  universities, guilds) that preserved and transmitted knowledge.
+
+This list is far from exhaustive. Countless other "invisible
+prerequisites" underpin the history of computation and AI that remain
+unmentioned here: the domestication of animals (enabling transport
+and communication networks), the invention of metallurgy (without
+which no gear, no wire, no chip), the development of glass-making
+(without which no lenses, no microscopes, no fiber optics), the
+social invention of currency and markets (which drove the need for
+arithmetic and accounting), and the political emergence of
+institutions capable of funding long-term research with no immediate
+practical return. Each of these, like sedentarization itself,
+represents a **displaced prerequisite**: a transformation made for
+reasons entirely unrelated to computation, yet without which the
+entire edifice of artificial intelligence would be inconceivable.
+
+The history of AI is not merely a history of algorithms and
+architectures. It is the visible tip of an iceberg whose submerged
+mass is the entire cumulative infrastructure of human civilization,
+built layer upon layer over millennia by people who could never have
+imagined what their contributions would eventually make possible.
+</div>
+
 <div class="optional md" data-headline="Scaling Abstraction: From Bits to Frameworks">
 As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of "Software." To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction.
 
