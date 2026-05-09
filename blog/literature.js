@@ -1,4 +1,10 @@
 window.bibData = {
+	"alankayfuture": {
+		url: "https://www.youtube.com/watch?v=BZLpfZ9wPVY",
+		author: "Alan Kay",
+		title: "The Best Way to Predict the Future is to Invent It",
+		year: 2016
+	},
 	"turingimage": {
 		url: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg",
 		title: "Alan Turing",
