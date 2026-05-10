@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophy — The Deep Dive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+        :root {
+            --bg: #050508;
+            --surface: #0f0f14;
+            --surface2: #16161d;
+            --border: #1f1f2e;
+            --text: #e8e8ed;
+            --muted: #7a7a8e;
+            --accent1: #a78bfa;
+            --accent2: #60a5fa;
+            --accent3: #34d399;
+            --accent4: #f472b6;
+            --accent5: #fbbf24;
+            --glow1: rgba(167,139,250,.12);
+            --glow2: rgba(96,165,250,.12);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family:'Inter',sans-serif;
+            background:var(--bg);
+            color:var(--text);
+            line-height:1.6;
+            overflow-x:hidden;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width:6px; }
+        ::-webkit-scrollbar-track { background:var(--bg); }
+        ::-webkit-scrollbar-thumb { background:#2a2a3e; border-radius:3px; }
+
+        /* ===== CANVAS BG ===== */
+        #bgCanvas {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            z-index:0; pointer-events:none; opacity:.4;
+        }
+
+        /* ===== NAV ===== */
+        .nav {
+            position:fixed; top:0; left:0; right:0; z-index:100;
+            background:rgba(5,5,8,.85); backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--border);
+            padding:.8rem 2rem;
+            display:flex; align-items:center; justify-content:space-between;
+            transition:transform .3s;
+        }
+        .nav.hidden { transform:translateY(-100%); }
+        .nav-logo { font-weight:800; font-size:1.05rem; color:var(--accent1); }
+        .nav-links { display:flex; gap:1.5rem; }
+        .nav-links a {
+            color:var(--muted); text-decoration:none; font-size:.82rem;
+            font-weight:500; transition:color .2s; cursor:pointer;
+        }
+        .nav-links a:hover { color:var(--text); }
+        .progress-bar {
+            position:fixed; top:0; left:0; height:3px; z-index:101;
+            background:linear-gradient(90deg,var(--accent1),var(--accent2),var(--accent3));
+            width:0%; transition:width .15s;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            position:relative; z-index:1;
+            min-height:100vh;
+            display:flex; flex-direction:column;
+            align-items:center; justify-content:center;
+            text-align:center; padding:2rem;
+        }
+        .hero-badge {
+            display:inline-flex; align-items:center; gap:.5rem;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:100px; padding:.4rem 1rem; font-size:.78rem;
+            color:var(--muted); margin-bottom:1.5rem;
+        }
+        .hero-badge .dot { width:6px; height:6px; border-radius:50%; background:var(--accent3); animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.3;} }
+        .hero h1 {
+            font-family:'Playfair Display',serif;
+            font-size:clamp(2.8rem,7vw,6rem);
+            font-weight:700; line-height:1.1;
+            background:linear-gradient(135deg,#a78bfa 0%,#60a5fa 40%,#34d399 70%,#fbbf24 100%);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            margin-bottom:1.2rem;
+        }
+        .hero-sub {
+            font-size:clamp(1rem,2.2vw,1.3rem);
+            color:var(--muted); max-width:600px; font-weight:300;
+        }
+        .hero-cta {
+            margin-top:2.5rem; display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;
+        }
+        .btn {
+            display:inline-flex; align-items:center; gap:.5rem;
+            padding:.8rem 1.8rem; border-radius:14px; font-size:.92rem;
+            font-weight:600; cursor:pointer; transition:all .25s;
+            text-decoration:none; font-family:inherit; border:none;
+        }
+        .btn-primary {
+            background:linear-gradient(135deg,var(--accent1),var(--accent2));
+            color:#fff; box-shadow:0 4px 25px rgba(167,139,250,.3);
+        }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 35px rgba(167,139,250,.4); }
+        .btn-ghost {
+            background:transparent; border:1px solid var(--border); color:var(--muted);
+        }
+        .btn-ghost:hover { border-color:var(--accent1); color:var(--text); }
+
+        .scroll-indicator {
+            position:absolute; bottom:2rem;
+            display:flex; flex-direction:column; align-items:center; gap:.5rem;
+        }
+        .scroll-indicator span { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:2px; }
+        .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,var(--accent1),transparent); animation:scrollDown 2s infinite; }
+        @keyframes scrollDown { 0%{opacity:1;transform:scaleY(1);}100%{opacity:0;transform:scaleY(0);transform-origin:top;} }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            position:relative; z-index:1;
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+            gap:1px; background:var(--border);
+            border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+        }
+        .stat-item {
+            background:var(--surface); padding:2rem; text-align:center;
+        }
+        .stat-num {
+            font-size:2rem; font-weight:800;
+            background:linear-gradient(135deg,var(--accent1),var(--accent3));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        }
+        .stat-label { font-size:.78rem; color:var(--muted); margin-top:.3rem; text-transform:uppercase; letter-spacing:1px; }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            position:relative; z-index:1;
+            max-width:1100px; margin:0 auto;
+            padding:6rem 2rem;
+        }
+        .section-header {
+            text-align:center; margin-bottom:3rem;
+        }
+        .section-tag {
+            display:inline-block;
+            font-size:.72rem; font-weight:600;
+            text-transform:uppercase; letter-spacing:2px;
+            color:var(--accent1); margin-bottom:.8rem;
+        }
+        .section-title {
+            font-family:'Playfair Display',serif;
+            font-size:clamp(1.8rem,4vw,2.8rem);
+            font-weight:700; margin-bottom:.8rem;
+        }
+        .section-desc {
+            color:var(--muted); max-width:600px; margin:0 auto; font-size:.95rem;
+        }
+
+        /* ===== PHILOSOPHY WHEEL ===== */
+        .wheel-container {
+            display:flex; flex-wrap:wrap; gap:3rem;
+            align-items:center; justify-content:center;
+        }
+        .wheel-visual {
+            position:relative; width:340px; height:340px; flex-shrink:0;
+        }
+        .wheel-center {
+            position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+            width:90px; height:90px; border-radius:50%;
+            background:var(--surface2); border:2px solid var(--border);
+            display:flex; align-items:center; justify-content:center;
+            font-size:.7rem; font-weight:700; color:var(--muted);
+            text-transform:uppercase; letter-spacing:1px;
+            z-index:2;
+        }
+        .wheel-node {
+            position:absolute; width:80px; height:80px;
+            border-radius:50%; display:flex; align-items:center; justify-content:center;
+            flex-direction:column; gap:2px;
+            background:var(--surface2); border:2px solid var(--border);
+            cursor:pointer; transition:all .3s; z-index:2;
+            font-size:1.5rem;
+        }
+        .wheel-node span { font-size:.55rem; font-weight:600; color:var(--muted); }
+        .wheel-node:hover, .wheel-node.active {
+            transform:scale(1.15);
+            border-color:var(--accent1);
+            box-shadow:0 0 30px var(--glow1);
+        }
+        .wheel-line {
+            position:absolute; top:50%; left:50%;
+            height:2px; transform-origin:left center;
+            background:var(--border); z-index:1;
+        }
+        .wheel-info {
+            flex:1; min-width:280px; max-width:480px;
+        }
+        .wheel-info-card {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:20px; padding:2rem; min-height:320px;
+            transition:all .3s;
+        }
+        .wheel-info-card h3 {
+            font-size:1.4rem; font-weight:700; margin-bottom:.3rem;
+        }
+        .wheel-info-card .tag {
+            font-size:.72rem; color:var(--accent1); font-weight:600;
+            text-transform:uppercase; letter-spacing:1px; margin-bottom:1rem; display:block;
+        }
+        .wheel-info-card p {
+            color:var(--muted); font-size:.92rem; line-height:1.7; margin-bottom:1rem;
+        }
+        .wisdom-box {
+            background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(96,165,250,.08));
+            border:1px solid rgba(167,139,250,.2);
+            border-radius:12px; padding:1rem 1.2rem;
+            margin-top:1rem;
+        }
+        .wisdom-box .label {
+            font-size:.68rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent5); margin-bottom:.4rem;
+        }
+        .wisdom-box p {
+            font-family:'Playfair Display',serif;
+            font-style:italic; color:var(--text); font-size:.95rem;
+            margin:0;
+        }
+        .daily-use {
+            margin-top:1rem;
+        }
+        .daily-use .label {
+            font-size:.68rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent3); margin-bottom:.5rem;
+        }
+        .daily-use ul {
+            list-style:none; padding:0;
+        }
+        .daily-use li {
+            font-size:.85rem; color:var(--muted); padding:.3rem 0;
+            padding-left:1.2rem; position:relative;
+        }
+        .daily-use li::before {
+            content:'→'; position:absolute; left:0; color:var(--accent3);
+        }
+
+        /* ===== THOUGHT EXPERIMENTS ===== */
+        .experiment-cards {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:1.2rem;
+        }
+        .exp-card {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:20px; overflow:hidden; cursor:pointer;
+            transition:all .3s;
+        }
+        .exp-card:hover {
+            border-color:var(--accent1);
+            transform:translateY(-4px);
+            box-shadow:0 12px 40px rgba(0,0,0,.4);
+        }
+        .exp-card-img {
+            height:160px; display:flex; align-items:center; justify-content:center;
+            font-size:4rem; position:relative; overflow:hidden;
+        }
+        .exp-card-img::before {
+            content:''; position:absolute; inset:0;
+            opacity:.15;
+        }
+        .exp-card-body { padding:1.5rem; }
+        .exp-card-body h3 { font-size:1.1rem; font-weight:700; margin-bottom:.4rem; }
+        .exp-card-body .origin { font-size:.72rem; color:var(--accent1); margin-bottom:.6rem; }
+        .exp-card-body p { font-size:.85rem; color:var(--muted); line-height:1.6; }
+        .exp-card .exp-detail {
+            max-height:0; overflow:hidden; transition:max-height .5s ease;
+            padding:0 1.5rem;
+        }
+        .exp-card.open .exp-detail {
+            max-height:800px; padding:0 1.5rem 1.5rem;
+        }
+        .exp-detail .scenario {
+            background:var(--surface2); border-radius:12px; padding:1.2rem;
+            margin-bottom:1rem; border-left:3px solid var(--accent4);
+        }
+        .exp-detail .scenario p { color:var(--text); font-size:.88rem; }
+        .exp-choices { display:flex; flex-direction:column; gap:.6rem; }
+        .exp-choice-btn {
+            background:var(--surface2); border:1px solid var(--border);
+            border-radius:12px; padding:.8rem 1rem; text-align:left;
+            cursor:pointer; transition:all .2s; font-family:inherit;
+            color:var(--text); font-size:.88rem;
+        }
+        .exp-choice-btn:hover { border-color:var(--accent2); background:#12122a; }
+        .exp-choice-btn.chosen { border-color:var(--accent1); background:rgba(167,139,250,.1); }
+        .exp-result {
+            margin-top:1rem; padding:1rem; border-radius:12px;
+            background:rgba(52,211,153,.05); border:1px solid rgba(52,211,153,.2);
+            font-size:.85rem; color:#a7f3d0; line-height:1.6;
+            display:none;
+        }
+        .exp-result.show { display:block; animation:fadeUp .4s; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
+
+        /* ===== WISDOM JOURNAL ===== */
+        .journal-container {
+            display:grid; grid-template-columns:1fr 1fr; gap:2rem;
+        }
+        @media(max-width:768px){ .journal-container{grid-template-columns:1fr;} }
+        .journal-prompts {
+            display:flex; flex-direction:column; gap:1rem;
+        }
+        .journal-prompt {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:16px; padding:1.3rem; cursor:pointer;
+            transition:all .25s;
+        }
+        .journal-prompt:hover { border-color:var(--accent1); }
+        .journal-prompt.active { border-color:var(--accent1); background:rgba(167,139,250,.05); }
+        .journal-prompt h4 { font-size:.95rem; margin-bottom:.3rem; }
+        .journal-prompt p { font-size:.8rem; color:var(--muted); }
+        .journal-write {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:20px; padding:1.5rem; display:flex; flex-direction:column;
+        }
+        .journal-write h3 { font-size:1.1rem; margin-bottom:.3rem; }
+        .journal-write .prompt-text {
+            font-family:'Playfair Display',serif; font-style:italic;
+            color:var(--accent1); font-size:1rem; margin-bottom:1rem;
+        }
+        .journal-write textarea {
+            flex:1; min-height:150px; background:var(--surface2);
+            border:1px solid var(--border); border-radius:12px;
+            padding:1rem; color:var(--text); font-family:inherit;
+            font-size:.9rem; resize:vertical; line-height:1.6;
+        }
+        .journal-write textarea:focus { outline:none; border-color:var(--accent1); }
+        .journal-write textarea::placeholder { color:#3a3a4e; }
+        .journal-actions {
+            display:flex; gap:.8rem; margin-top:1rem; align-items:center;
+        }
+        .journal-actions .btn { padding:.6rem 1.2rem; font-size:.82rem; }
+        .journal-saved {
+            font-size:.78rem; color:var(--accent3); opacity:0; transition:opacity .3s;
+        }
+        .journal-saved.show { opacity:1; }
+        .journal-entries {
+            margin-top:1rem; max-height:200px; overflow-y:auto;
+        }
+        .journal-entry {
+            background:var(--surface2); border-radius:10px; padding:.8rem;
+            margin-bottom:.5rem; font-size:.8rem; color:var(--muted);
+        }
+        .journal-entry .entry-date { font-size:.68rem; color:var(--accent1); }
+
+        /* ===== MENTAL MODELS ===== */
+        .models-grid {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+            gap:1.2rem;
+        }
+        .model-card {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:18px; padding:1.5rem;
+            transition:all .3s; cursor:pointer; position:relative; overflow:hidden;
+        }
+        .model-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:3px;
+            background:linear-gradient(90deg,var(--accent1),var(--accent2));
+            opacity:0; transition:opacity .3s;
+        }
+        .model-card:hover::before { opacity:1; }
+        .model-card:hover { transform:translateY(-3px); box-shadow:0 10px 35px rgba(0,0,0,.3); }
+        .model-icon { font-size:2rem; margin-bottom:.8rem; }
+        .model-card h3 { font-size:1.05rem; font-weight:700; margin-bottom:.3rem; }
+        .model-card .philosopher { font-size:.72rem; color:var(--accent1); margin-bottom:.6rem; }
+        .model-card p { font-size:.85rem; color:var(--muted); line-height:1.6; }
+        .model-card .practical {
+            margin-top:.8rem; padding-top:.8rem; border-top:1px solid var(--border);
+        }
+        .model-card .practical .label {
+            font-size:.65rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent3); margin-bottom:.3rem;
+        }
+        .model-card .practical p { font-size:.82rem; color:var(--accent3); }
+
+        /* ===== LIFE SIMULATOR ===== */
+        .sim-container {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:24px; overflow:hidden;
+        }
+        .sim-header {
+            background:linear-gradient(135deg,rgba(167,139,250,.1),rgba(96,165,250,.1));
+            padding:2rem; border-bottom:1px solid var(--border);
+            display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+        }
+        .sim-header h3 { font-size:1.3rem; font-weight:700; }
+        .sim-stats { display:flex; gap:1.5rem; }
+        .sim-stat { text-align:center; }
+        .sim-stat .val { font-size:1.3rem; font-weight:800; color:var(--accent1); }
+        .sim-stat .lbl { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+        .sim-body { padding:2rem; }
+        .sim-scenario {
+            background:var(--surface2); border-radius:16px; padding:1.5rem;
+            margin-bottom:1.5rem; border-left:4px solid var(--accent4);
+        }
+        .sim-scenario .context {
+            font-size:.75rem; color:var(--accent4); font-weight:600;
+            text-transform:uppercase; letter-spacing:1px; margin-bottom:.5rem;
+        }
+        .sim-scenario p { font-size:1rem; color:var(--text); line-height:1.7; }
+        .sim-options { display:flex; flex-direction:column; gap:.8rem; }
+        .sim-option {
+            background:var(--surface2); border:1px solid var(--border);
+            border-radius:14px; padding:1.2rem; cursor:pointer;
+            transition:all .25s; font-family:inherit; text-align:left;
+            color:var(--text); display:flex; gap:1rem; align-items:flex-start;
+        }
+        .sim-option:hover { border-color:var(--accent2); transform:translateX(4px); }
+        .sim-option .letter {
+            width:32px; height:32px; border-radius:8px; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            font-weight:700; font-size:.85rem;
+            background:rgba(167,139,250,.1); color:var(--accent1);
+        }
+        .sim-option .opt-text h4 { font-size:.92rem; margin-bottom:.2rem; }
+        .sim-option .opt-text p { font-size:.8rem; color:var(--muted); margin:0; }
+        .sim-outcome {
+            margin-top:1.5rem; padding:1.5rem; border-radius:16px;
+            display:none; animation:fadeUp .4s;
+        }
+        .sim-outcome.show { display:block; }
+        .sim-outcome h4 { font-size:1rem; margin-bottom:.5rem; }
+        .sim-outcome p { font-size:.88rem; line-height:1.7; }
+        .sim-outcome .philosophy-note {
+            margin-top:1rem; padding:1rem; border-radius:10px;
+            background:rgba(167,139,250,.08); border:1px solid rgba(167,139,250,.2);
+        }
+        .sim-outcome .philosophy-note .label {
+            font-size:.65rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent5); margin-bottom:.3rem;
+        }
+        .sim-outcome .philosophy-note p { color:var(--accent1); font-size:.85rem; }
+        .sim-next {
+            margin-top:1rem;
+        }
+        .trait-badges { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+        .trait-badge {
+            padding:.3rem .8rem; border-radius:100px; font-size:.7rem; font-weight:600;
+            background:rgba(167,139,250,.1); color:var(--accent1); border:1px solid rgba(167,139,250,.2);
+        }
+
+        /* ===== QUOTE GENERATOR ===== */
+        .quote-machine {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:24px; padding:3rem 2rem; text-align:center;
+            position:relative; overflow:hidden;
+        }
+        .quote-machine::before {
+            content:'❝'; position:absolute; top:-20px; left:20px;
+            font-size:8rem; color:rgba(167,139,250,.06);
+        }
+        .quote-text {
+            font-family:'Playfair Display',serif;
+            font-size:clamp(1.2rem,3vw,1.8rem);
+            font-style:italic; line-height:1.5;
+            max-width:700px; margin:0 auto 1rem;
+            min-height:80px;
+        }
+        .quote-author { color:var(--accent1); font-weight:600; font-size:.9rem; margin-bottom:.3rem; }
+        .quote-context { color:var(--muted); font-size:.8rem; margin-bottom:1.5rem; }
+        .quote-explain {
+            background:var(--surface2); border-radius:14px; padding:1.2rem;
+            max-width:600px; margin:0 auto 1.5rem;
+            font-size:.88rem; color:var(--muted); line-height:1.6;
+            text-align:left;
+        }
+        .quote-explain .label {
+            font-size:.65rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent3); margin-bottom:.4rem;
+        }
+        .quote-actions { display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; }
+
+        /* ===== DEBATE ARENA ===== */
+        .debate-container {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:24px; overflow:hidden;
+        }
+        .debate-header {
+            padding:2rem; text-align:center;
+            background:linear-gradient(135deg,rgba(244,114,182,.08),rgba(251,191,36,.08));
+            border-bottom:1px solid var(--border);
+        }
+        .debate-header h3 { font-size:1.3rem; margin-bottom:.5rem; }
+        .debate-topic {
+            font-family:'Playfair Display',serif; font-style:italic;
+            font-size:1.2rem; color:var(--accent5);
+        }
+        .debate-body { padding:2rem; }
+        .debate-sides {
+            display:grid; grid-template-columns:1fr auto 1fr; gap:1.5rem;
+            align-items:start;
+        }
+        @media(max-width:700px){ .debate-sides{grid-template-columns:1fr; } .debate-vs{transform:none !important;} }
+        .debate-side {
+            background:var(--surface2); border-radius:16px; padding:1.5rem;
+            border:2px solid transparent; cursor:pointer; transition:all .3s;
+        }
+        .debate-side:hover { transform:translateY(-3px); }
+        .debate-side.side-a:hover, .debate-side.side-a.picked { border-color:var(--accent1); }
+        .debate-side.side-b:hover, .debate-side.side-b.picked { border-color:var(--accent4); }
+        .debate-side h4 { font-size:1rem; margin-bottom:.2rem; }
+        .debate-side .thinker { font-size:.75rem; color:var(--accent1); margin-bottom:.6rem; }
+        .debate-side p { font-size:.85rem; color:var(--muted); line-height:1.6; }
+        .debate-side .points { margin-top:.8rem; }
+        .debate-side .points li {
+            font-size:.82rem; color:var(--muted); padding:.2rem 0 .2rem 1rem;
+            position:relative; list-style:none;
+        }
+        .debate-side .points li::before { content:'•'; position:absolute; left:0; color:var(--accent1); }
+        .debate-vs {
+            display:flex; align-items:center; justify-content:center;
+            font-weight:900; font-size:1.2rem; color:var(--muted);
+            transform:translateY(60px);
+        }
+        .debate-response {
+            margin-top:1.5rem; padding:1.5rem; border-radius:14px;
+            background:rgba(251,191,36,.05); border:1px solid rgba(251,191,36,.2);
+            display:none;
+        }
+        .debate-response.show { display:block; animation:fadeUp .4s; }
+        .debate-response h4 { color:var(--accent5); font-size:.95rem; margin-bottom:.5rem; }
+        .debate-response p { font-size:.88rem; color:var(--muted); line-height:1.7; }
+        .debate-nav { display:flex; gap:.8rem; justify-content:center; margin-top:1.5rem; }
+
+        /* ===== PERSONAL PHILOSOPHY BUILDER ===== */
+        .builder-container {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:24px; padding:2rem;
+        }
+        .builder-step { display:none; }
+        .builder-step.active { display:block; animation:fadeUp .4s; }
+        .builder-progress {
+            display:flex; gap:.5rem; margin-bottom:2rem; justify-content:center;
+        }
+        .builder-dot {
+            width:10px; height:10px; border-radius:50%;
+            background:var(--border); transition:background .3s;
+        }
+        .builder-dot.done { background:var(--accent3); }
+        
+        .builder-dot.active { background:var(--accent1); }
+        .builder-question {
+            font-family:'Playfair Display',serif;
+            font-size:1.4rem; margin-bottom:1.5rem; text-align:center;
+        }
+        .builder-options {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:.8rem; margin-bottom:1.5rem;
+        }
+        .builder-opt {
+            background:var(--surface2); border:1px solid var(--border);
+            border-radius:14px; padding:1.2rem; cursor:pointer;
+            transition:all .25s; font-family:inherit; color:var(--text);
+            text-align:left; font-size:.9rem;
+        }
+        .builder-opt:hover { border-color:var(--accent2); }
+        .builder-opt.selected { border-color:var(--accent1); background:rgba(167,139,250,.1); }
+        .builder-opt h4 { font-size:.92rem; margin-bottom:.3rem; }
+        .builder-opt p { font-size:.78rem; color:var(--muted); margin:0; }
+        .builder-result {
+            background:linear-gradient(135deg,rgba(167,139,250,.05),rgba(52,211,153,.05));
+            border:1px solid var(--border); border-radius:20px;
+            padding:2rem; text-align:center;
+        }
+        .builder-result h3 {
+            font-family:'Playfair Display',serif;
+            font-size:1.6rem; margin-bottom:.5rem;
+        }
+        .builder-result .philosophy-type {
+            font-size:1rem; color:var(--accent1); font-weight:600; margin-bottom:1rem;
+        }
+        .builder-result p { color:var(--muted); font-size:.9rem; line-height:1.7; max-width:550px; margin:0 auto; }
+        .builder-result .reading-list {
+            margin-top:1.5rem; text-align:left; max-width:400px; margin-left:auto; margin-right:auto;
+        }
+        .builder-result .reading-list h4 {
+            font-size:.75rem; text-transform:uppercase; letter-spacing:1px;
+            color:var(--accent3); margin-bottom:.5rem;
+        }
+        .builder-result .reading-list li {
+            list-style:none; font-size:.85rem; color:var(--muted); padding:.3rem 0;
+            padding-left:1.2rem; position:relative;
+        }
+        .builder-result .reading-list li::before { content:'📖'; position:absolute; left:0; font-size:.7rem; }
+
+        /* ===== DAILY PRACTICE ===== */
+        .practice-grid {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:1.2rem;
+        }
+        .practice-card {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:18px; padding:1.5rem; transition:all .3s;
+            position:relative; overflow:hidden;
+        }
+        .practice-card:hover { border-color:var(--accent3); transform:translateY(-3px); }
+        .practice-card .time-tag {
+            font-size:.65rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent5); margin-bottom:.8rem;
+        }
+        .practice-card h3 { font-size:1rem; margin-bottom:.4rem; }
+        .practice-card p { font-size:.83rem; color:var(--muted); line-height:1.6; }
+        .practice-card .steps {
+            margin-top:.8rem; padding-top:.8rem; border-top:1px solid var(--border);
+        }
+        .practice-card .steps li {
+            list-style:none; font-size:.8rem; color:var(--muted);
+            padding:.25rem 0 .25rem 1.5rem; position:relative;
+        }
+        .practice-card .steps li::before {
+            content:attr(data-step); position:absolute; left:0;
+            color:var(--accent1); font-weight:700; font-size:.7rem;
+        }
+
+        /* ===== MOOD PHILOSOPHY ===== */
+        .mood-selector {
+            display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;
+            margin-bottom:2rem;
+        }
+        .mood-btn {
+            width:70px; height:70px; border-radius:50%;
+            background:var(--surface); border:2px solid var(--border);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.8rem; cursor:pointer; transition:all .3s;
+            position:relative;
+        }
+        .mood-btn:hover { transform:scale(1.15); border-color:var(--accent1); }
+        .mood-btn.active { border-color:var(--accent1); box-shadow:0 0 25px var(--glow1); transform:scale(1.1); }
+        .mood-btn .mood-label {
+            position:absolute; bottom:-20px; font-size:.6rem;
+            color:var(--muted); white-space:nowrap;
+        }
+        .mood-result {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:20px; padding:2rem; min-height:200px;
+            transition:all .3s;
+        }
+        .mood-result h3 { font-size:1.2rem; margin-bottom:.5rem; }
+        .mood-result .mood-quote {
+            font-family:'Playfair Display',serif; font-style:italic;
+            font-size:1.1rem; color:var(--accent1); margin-bottom:1rem;
+            padding:1rem; background:rgba(167,139,250,.05); border-radius:12px;
+        }
+        .mood-result .mood-advice { font-size:.9rem; color:var(--muted); line-height:1.7; }
+        .mood-result .mood-exercise {
+            margin-top:1rem; padding:1rem; border-radius:12px;
+            background:var(--surface2); border-left:3px solid var(--accent3);
+        }
+        .mood-result .mood-exercise .label {
+            font-size:.65rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent3); margin-bottom:.3rem;
+        }
+        .mood-result .mood-exercise p { font-size:.85rem; color:var(--text); }
+
+        /* ===== VISUALIZATION: PHILOSOPHY MAP ===== */
+        .map-container {
+            position:relative; width:100%; height:500px;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:24px; overflow:hidden;
+        }
+        #philosophyMap { width:100%; height:100%; }
+        .map-tooltip {
+            position:absolute; background:var(--surface2);
+            border:1px solid var(--accent1); border-radius:12px;
+            padding:1rem; max-width:250px; pointer-events:none;
+            opacity:0; transition:opacity .2s; z-index:10;
+            font-size:.82rem; color:var(--text);
+        }
+        .map-tooltip.show { opacity:1; }
+        .map-tooltip h4 { color:var(--accent1); margin-bottom:.3rem; font-size:.9rem; }
+        .map-tooltip p { color:var(--muted); line-height:1.5; }
+
+        /* ===== PARADOX EXPLORER ===== */
+        .paradox-carousel {
+            position:relative; overflow:hidden;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:24px;
+        }
+        .paradox-slide {
+            display:none; padding:3rem 2rem; text-align:center;
+            min-height:400px; flex-direction:column;
+            align-items:center; justify-content:center;
+        }
+        .paradox-slide.active { display:flex; animation:fadeUp .4s; }
+        .paradox-icon { font-size:3.5rem; margin-bottom:1rem; }
+        .paradox-slide h3 { font-size:1.4rem; margin-bottom:.5rem; }
+        .paradox-slide .origin { font-size:.78rem; color:var(--accent1); margin-bottom:1rem; }
+        .paradox-slide .description {
+            max-width:550px; font-size:.95rem; color:var(--muted); line-height:1.7; margin-bottom:1.5rem;
+        }
+        .paradox-slide .mind-blow {
+            background:rgba(244,114,182,.08); border:1px solid rgba(244,114,182,.2);
+            border-radius:14px; padding:1.2rem; max-width:500px;
+        }
+        .paradox-slide .mind-blow .label {
+            font-size:.65rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:var(--accent4); margin-bottom:.4rem;
+        }
+        .paradox-slide .mind-blow p { font-size:.88rem; color:#f9a8d4; line-height:1.6; }
+        .paradox-nav {
+            display:flex; justify-content:center; gap:1rem;
+            padding:0 2rem 2rem;
+        }
+        .paradox-dots {
+            display:flex; gap:.4rem; align-items:center;
+            position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%);
+        }
+        .paradox-dot {
+            width:8px; height:8px; border-radius:50%;
+            background:var(--border); transition:all .3s; cursor:pointer;
+        }
+        .paradox-dot.active { background:var(--accent4); transform:scale(1.3); }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            position:relative; z-index:1;
+            text-align:center; padding:4rem 2rem;
+            border-top:1px solid var(--border);
+        }
+        .footer p { color:var(--muted); font-size:.85rem; }
+        .footer .footer-quote {
+            font-family:'Playfair Display',serif; font-style:italic;
+            font-size:1.1rem; color:var(--text); margin-bottom:.5rem;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        .reveal { opacity:0; transform:translateY(30px); transition:all .6s ease; }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+    <div class="nav-logo">φ Philosophy</div>
+    <div class="nav-links">
+        <a onclick="scrollToSection('branches')">Branches</a>
+        <a onclick="scrollToSection('experiments')">Experiments</a>
+        <a onclick="scrollToSection('simulator')">Life Sim</a>
+        <a onclick="scrollToSection('models')">Mental Models</a>
+        <a onclick="scrollToSection('mood')">Mood Rx</a>
+        <a onclick="scrollToSection('builder')">Build Yours</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge"><span class="dot"></span> Interactive Philosophy Experience</div>
+    <h1>The Unexamined Life<br>Is Not Worth Living</h1>
+    <p class="hero-sub">Philosophy isn't dusty books — it's the operating system for your mind. Explore it through games, dilemmas, and self-discovery.</p>
+    <div class="hero-cta">
+        <button class="btn btn-primary" onclick="scrollToSection('branches')">Start Exploring ↓</button>
+        <button class="btn btn-ghost" onclick="scrollToSection('mood')">Get Wisdom for My Mood</button>
+    </div>
+    <div class="scroll-indicator">
+        <span>Scroll to begin</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+    <div class="stat-item"><div class="stat-num" data-target="2600">0</div><div class="stat-label">Years of Wisdom</div></div>
+    <div class="stat-item"><div class="stat-num" data-target="12">0</div><div class="stat-label">Interactive Modules</div></div>
+    <div class="stat-item"><div class="stat-num" data-target="50">0</div><div class="stat-label">Life-Changing Ideas</div></div>
+    <div class="stat-item"><div class="stat-num" data-target="0">∞</div><div class="stat-label">Questions to Ask</div></div>
+</div>
+
+<!-- ===== BRANCHES ===== -->
+<section class="section" id="branches">
+    <div class="section-header reveal">
+        <div class="section-tag">The Foundation</div>
+        <h2 class="section-title">The Architecture of Thought</h2>
+        <p class="section-desc">Philosophy has 5 major branches. Each one gives you a different superpower for navigating life. Click any node to explore.</p>
+    </div>
+    <div class="wheel-container reveal">
+        <div class="wheel-visual" id="wheelVisual"></div>
+        <div class="wheel-info">
+            <div class="wheel-info-card" id="wheelInfo">
+                <span class="tag">Select a branch</span>
+                <h3>Click a node to begin</h3>
+                <p>Each branch of philosophy addresses a fundamental question about existence. Together, they form a complete toolkit for understanding reality, knowledge, morality, reasoning, and beauty.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== THOUGHT EXPERIMENTS ===== -->
+<section class="section" id="experiments">
+    <div class="section-header reveal">
+        <div class="section-tag">Mind Benders</div>
+        <h2 class="section-title">Thought Experiments</h2>
+        <p class="section-desc">Philosophers use imaginary scenarios to stress-test ideas. These will change how you see the world.</p>
+    </div>
+    <div class="experiment-cards reveal" id="expCards"></div>
+</section>
+
+<!-- ===== PARADOX EXPLORER ===== -->
+<section class="section" id="paradoxes">
+    <div class="section-header reveal">
+        <div class="section-tag">Brain Melters</div>
+        <h2 class="section-title">Paradoxes That Break Logic</h2>
+        <p class="section-desc">These puzzles have haunted thinkers for millennia. Can you wrap your head around them?</p>
+    </div>
+    <div class="paradox-carousel reveal" id="paradoxCarousel"></div>
+</section>
+
+<!-- ===== LIFE SIMULATOR ===== -->
+<section class="section" id="simulator">
+    <div class="section-header reveal">
+        <div class="section-tag">Choose Your Path</div>
+        <h2 class="section-title">The Life Philosophy Simulator</h2>
+        <p class="section-desc">Face real-life dilemmas. Your choices reveal which philosophical tradition guides your instincts.</p>
+    </div>
+    <div class="sim-container reveal" id="simContainer"></div>
+</section>
+
+<!-- ===== MENTAL MODELS ===== -->
+<section class="section" id="models">
+    <div class="section-header reveal">
+        <div class="section-tag">Practical Wisdom</div>
+        <h2 class="section-title">Mental Models from Philosophy</h2>
+        <p class="section-desc">Ancient wisdom repackaged as thinking tools you can use today — at work, in relationships, and in life decisions.</p>
+    </div>
+    <div class="models-grid reveal" id="modelsGrid"></div>
+</section>
+
+<!-- ===== MOOD PHILOSOPHY ===== -->
+<section class="section" id="mood">
+    <div class="section-header reveal">
+        <div class="section-tag">Wisdom Prescription</div>
+        <h2 class="section-title">Philosophy for How You Feel Right Now</h2>
+        <p class="section-desc">Select your current mood and receive tailored philosophical wisdom, a quote, and a practical exercise.</p>
+    </div>
+    <div class="reveal">
+        <div class="mood-selector" id="moodSelector"></div>
+        <div class="mood-result" id="moodResult">
+            <p style="color:var(--muted);text-align:center;">← Select a mood above to receive your philosophical prescription</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== QUOTE MACHINE ===== -->
+<section class="section" id="quotes">
+    <div class="section-header reveal">
+        <div class="section-tag">Timeless Words</div>
+        <h2 class="section-title">The Wisdom Machine</h2>
+        <p class="section-desc">Each quote comes with context and a practical takeaway you can apply today.</p>
+    </div>
+    <div class="quote-machine reveal" id="quoteMachine"></div>
+</section>
+
+<!-- ===== DEBATE ARENA ===== -->
+<section class="section" id="debate">
+    <div class="section-header reveal">
+        <div class="section-tag">Battle of Ideas</div>
+        <h2 class="section-title">The Great Debates</h2>
+        <p class="section-desc">History's biggest intellectual clashes. Pick a side and see the strongest arguments.</p>
+    </div>
+    <div class="debate-container reveal" id="debateContainer"></div>
+</section>
+
+<!-- ===== DAILY PRACTICE ===== -->
+<section class="section" id="practice">
+    <div class="section-header reveal">
+        <div class="section-tag">Make It Real</div>
+        <h2 class="section-title">Daily Philosophical Practices</h2>
+        <p class="section-desc">Philosophy isn't just thinking — it's a way of living. Here are rituals used by history's wisest people.</p>
+    </div>
+    <div class="practice-grid reveal" id="practiceGrid"></div>
+</section>
+
+<!-- ===== PERSONAL PHILOSOPHY BUILDER ===== -->
+<section class="section" id="builder">
+    <div class="section-header reveal">
+        <div class="section-tag">Self-Discovery</div>
+        <h2 class="section-title">Build Your Personal Philosophy</h2>
+        <p class="section-desc">Answer 7 questions and discover which philosophical tradition matches your worldview.</p>
+    </div>
+    <div class="builder-container reveal" id="builderContainer"></div>
+</section>
+
+<!-- ===== JOURNAL ===== -->
+<section class="section" id="journal">
+    <div class="section-header reveal">
+        <div class="section-tag">Reflect</div>
+        <h2 class="section-title">Your Philosophical Journal</h2>
+        <p class="section-desc">The Stoics journaled daily. Use these prompts to examine your own life.</p>
+    </div>
+    <div class="journal-container reveal" id="journalContainer"></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p class="footer-quote">"Wonder is the beginning of wisdom." — Socrates</p>
+    <p>Built for curious minds · Philosophy Made Alive</p>
+</footer>
+
+<script>
+/* ============================================================
+   BACKGROUND CANVAS — Floating connected particles
+============================================================ */
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.radius = Math.random() * 2 + 0.5;
+        this.color = ['#a78bfa','#60a5fa','#34d399','#f472b6'][Math.floor(Math.random()*4)];
+    }
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if(this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if(this.y < 0 || this.y > canvas.height) this.vy *= -1;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = 0.6;
+        ctx.fill();
+    }
+}
+
+for(let i=0; i<60; i++) particles.push(new Particle());
+
+function animateParticles() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    // Draw connections
+    for(let i=0; i<particles.length; i++) {
+        for(let j=i+1; j<particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < 120) {
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = particles[i].color;
+                ctx.globalAlpha = (1 - dist/120) * 0.15;
+                ctx.stroke();
+            }
+        }
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* ============================================================
+   NAV & PROGRESS
+============================================================ */
+let lastScroll = 0;
+const nav = document.getElementById('mainNav');
+const progressBar = document.getElementById('progressBar');
+
+window.addEventListener('scroll', () => {
+    const st = window.scrollY;
+    nav.classList.toggle('hidden', st > lastScroll && st > 100);
+    lastScroll = st;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (st/docHeight*100) + '%';
+});
+
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+/* ============================================================
+   REVEAL ON SCROLL
+============================================================ */
+const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* ============================================================
+   STAT COUNTER ANIMATION
+============================================================ */
+const statObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if(e.isIntersecting) {
+            const target = parseInt(e.target.dataset.target);
+            if(isNaN(target)) return;
+            let current = 0;
+            const increment = target / 60;
+            const timer = setInterval(() => {
+                current += increment;
+                if(current >= target) { current = target; clearInterval(timer); }
+                e.target.textContent = Math.floor(current).toLocaleString();
+            }, 20);
+            statObserver.unobserve(e.target);
+        }
+    });
+}, {threshold:0.5});
+document.querySelectorAll('.stat-num[data-target]').forEach(el => statObserver.observe(el));
+
+/* ============================================================
+   DATA — BRANCHES
+============================================================ */
+const branchData = [
+    {
+        name:"Metaphysics", emoji:"🌌", angle:90,
+        tag:"The Nature of Reality",
+        desc:"Metaphysics asks: What IS there? What is the fundamental nature of reality? Is the universe made of matter, mind, or something else entirely?",
+        wisdom:"\"We are not human beings having a spiritual experience. We are spiritual beings having a human experience.\" — Pierre Teilhard de Chardin",
+        daily:[
+            "Question your assumptions about what's 'real' vs. what's constructed",
+            "Notice how your beliefs about reality shape your daily decisions",
+            "Ask: 'Is this situation fixed, or is it my interpretation?'"
+        ]
+    },
+    {
+        name:"Epistemology", emoji:"🔍", angle:162,
+        tag:"The Study of Knowledge",
+        desc:"How do you KNOW what you know? Can you trust your senses? Your memory? The news? Epistemology gives you tools to evaluate truth claims and avoid being fooled.",
+        wisdom:"\"The only true wisdom is in knowing you know nothing.\" — Socrates",
+        daily:[
+            "Before sharing info, ask: 'How do I know this is true?'",
+            "Distinguish between belief, opinion, and knowledge",
+            "Practice intellectual humility — update your views with new evidence"
+        ]
+    },
+    {
+        name:"Ethics", emoji:"⚖️", angle:234,
+        tag:"Right Action & Moral Life",
+        desc:"What should you DO? Ethics isn't about rules imposed on you — it's about building a framework for decisions when life gets complicated. Every choice is an ethical choice.",
+        wisdom:"\"Between stimulus and response there is a space. In that space is our power to choose our response.\" — Viktor Frankl",
+        daily:[
+            "Before a tough decision, ask: 'Would I be okay if everyone did this?'",
+            "Consider who is affected by your choices beyond yourself",
+            "Practice the 'front page test': would you be proud if this was public?"
+        ]
+    },
+    {
+        name:"Logic", emoji:"🧩", angle:306,
+        tag:"The Art of Reasoning",
+        desc:"Logic is your BS detector. It teaches you to identify valid arguments, spot fallacies, and think clearly even when emotions run high. It's the grammar of thought.",
+        wisdom:"\"It is the mark of an educated mind to be able to entertain a thought without accepting it.\" — Aristotle",
+        daily:[
+            "Spot logical fallacies in ads, politics, and social media",
+            "Separate 'this feels true' from 'this IS true'",
+            "When arguing, ask: 'Does my conclusion actually follow from my premises?'"
+        ]
+    },
+    {
+        name:"Aesthetics", emoji:"✨", angle:18,
+        tag:"Beauty, Art & Meaning",
+        desc:"Why does music give you chills? Why do some spaces feel sacred? Aesthetics explores how beauty and art create meaning, and why humans need more than just survival.",
+        wisdom:"\"Art is not what you see, but what you make others see.\" — Edgar Degas",
+        daily:[
+            "Notice what moves you today — a color, a song, a face — and ask why",
+            "Create something, anything, without judging its quality",
+            "Seek beauty in unexpected places: a well-crafted email, a clean room"
+        ]
+    }
+];
+
+/* ============================================================
+   PHILOSOPHY WHEEL
+============================================================ */
+const wheelVisual = document.getElementById('wheelVisual');
+const wheelInfo = document.getElementById('wheelInfo');
+
+function buildWheel() {
+    wheelVisual.innerHTML = '<div class="wheel-center">PHILOSOPHY</div>';
+    const cx = 170, cy = 170, r = 120;
+    branchData.forEach((b, i) => {
+        const angle = (b.angle - 90) * Math.PI / 180;
+        const x = cx + r * Math.cos(angle) - 40;
+        const y = cy + r * Math.sin(angle) - 40;
+
+        // Line
+        const line = document.createElement('div');
+        line.className = 'wheel-line';
+        const lineAngle = Math.atan2(y+40-cy, x+40-cx) * 180/Math.PI;
+        const lineLen = r - 45;
+        line.style.cssText = `width:${lineLen}px;transform:rotate(${lineAngle}deg);`;
+        wheelVisual.appendChild(line);
+
+        // Node
+        const node = document.createElement('div');
+        node.className = 'wheel-node';
+        node.style.cssText = `left:${x}px;top:${y}px;`;
+        node.innerHTML = `${b.emoji}<span>${b.name}</span>`;
+        node.addEventListener('click', () => {
+            document.querySelectorAll('.wheel-node').forEach(n => n.classList.remove('active'));
+            node.classList.add('active');
+            showBranchInfo(i);
+        });
+        wheelVisual.appendChild(node);
+    });
+}
+
+function showBranchInfo(i) {
+    const b = branchData[i];
+    wheelInfo.innerHTML = `
+        <span class="tag">${b.tag}</span>
+        <h3>${b.emoji} ${b.name}</h3>
+        <p>${b.desc}</p>
+        <div class="wisdom-box">
+            <div class="label">💡 Core Wisdom</div>
+            <p>${b.wisdom}</p>
+        </div>
+        <div class="daily-use">
+            <div class="label">🛠️ Use It Today</div>
+            <ul>${b.daily.map(d => `<li>${d}</li>`).join('')}</ul>
+        </div>
+    `;
+}
+buildWheel();
+
+/* ============================================================
+   THOUGHT EXPERIMENTS
+============================================================ */
+const experiments = [
+    {
+        emoji:"🚃", title:"The Trolley Problem", origin:"Philippa Foot, 1967",
+        short:"A runaway trolley will kill 5 people. You can divert it to kill 1 instead. Do you pull the lever?",
+        scenario:"A trolley is barreling toward 5 workers on the track. You're standing next to a lever that can divert it to a side track — but there's 1 person on that track. They will die if you pull the lever. Do nothing, and 5 die.",
+        choices:[
+            {text:"Pull the lever — save 5, sacrifice 1", response:"You're thinking like a <strong>utilitarian</strong>. The math is clear: 5 lives > 1 life. But here's the twist — what if the 1 person is your child? Utilitarianism says it shouldn't matter. Can you live with that? This reveals that most of us aren't pure utilitarians — we have moral intuitions that resist cold calculation."},
+            {text:"Don't pull — I won't actively kill someone", response:"You're thinking like a <strong>deontologist</strong> (Kant's tradition). There's a moral difference between killing and letting die. By pulling the lever, YOU become the cause of death. Inaction feels different from action — even if the outcome is worse. This is why doctors distinguish between 'doing harm' and 'allowing natural death.'"},
+            {text:"It depends on who the people are", response:"You're thinking like a <strong>virtue ethicist</strong> or <strong>care ethicist</strong>. Context matters. Relationships matter. A mother saving her child isn't selfish — it's human. This view says morality can't be reduced to abstract rules or math. The 'right' thing depends on the web of relationships and circumstances you're embedded in."}
+        ],
+        color:"#f87171"
+    },
+    {
+        emoji:"🧠", title:"The Experience Machine", origin:"Robert Nozick, 1974",
+        short:"Would you plug into a machine that gives you a perfect, fake life — forever?",
+        scenario:"Scientists have built a machine that can simulate any experience perfectly. You'd feel genuine joy, love, achievement — all indistinguishable from reality. You'd never know it's fake. Once plugged in, you forget it's a simulation. Would you plug in permanently?",
+        choices:[
+            {text:"Yes — happiness is all that matters", response:"You're aligned with <strong>hedonism</strong> — the view that pleasure/happiness is the ultimate good. But Nozick designed this thought experiment to challenge exactly this. If you said yes, ask yourself: would you want your children plugged in at birth? Most people hesitate. That hesitation reveals we value something beyond just feeling good."},
+            {text:"No — I want real experiences", response:"You agree with <strong>Nozick's point</strong>: we value authenticity, genuine achievement, and real connection — not just the feeling of them. This is why people respect earned success over inherited wealth, and why 'fake it till you make it' feels hollow. You believe reality has intrinsic value, even when it's painful."},
+            {text:"I'd try it temporarily", response:"You're a <strong>pragmatist</strong>. You see value in both experience and reality. This is actually how many people approach escapism already — movies, games, vacations. The philosophical insight: there's a spectrum between full reality and full simulation, and we're already on it. Social media, for instance, is a partial experience machine."}
+        ],
+        color:"#a78bfa"
+    },
+    {
+        emoji:"🚢", title:"The Ship of Theseus", origin:"Plutarch, ~1st Century CE",
+        short:"If you replace every plank of a ship, is it still the same ship?",
+        scenario:"The legendary ship of Theseus is preserved in a museum. Over centuries, each rotting plank is replaced with new wood. Eventually, every single piece has been swapped. Meanwhile, someone collects all the old planks and rebuilds the original. Which is the 'real' Ship of Theseus?",
+        choices:[
+            {text:"The museum ship — continuity matters", response:"You value <strong>continuity of form</strong>. Even though every atom changed, the ship maintained its identity through a continuous process — just like your body replaces most cells every 7-10 years, yet you're still 'you.' This is the <strong>four-dimensionalist</strong> view: identity persists through time like a river — always changing, always the same."},
+            {text:"The rebuilt one — original material matters", response:"You value <strong>material identity</strong>. The 'real' thing is made of the real stuff. This view has profound implications: if we could teleport you by scanning, destroying, and rebuilding you atom-by-atom on Mars, would the Mars-you be YOU? Or a copy? If material matters, teleportation is murder + cloning."},
+            {text:"Neither — or both — identity is an illusion", response:"You're thinking like a <strong>Buddhist philosopher</strong>. Identity is a convenient label we put on constantly changing things. There is no fixed 'self' in the ship or in you. This is the doctrine of <strong>anattā</strong> (non-self). It's liberating: if there's no fixed self, you're free to grow, change, and let go of who you 'were.'"}
+        ],
+        color:"#60a5fa"
+    },
+    {
+        emoji:"🦇", title:"What Is It Like to Be a Bat?", origin:"Thomas Nagel, 1974",
+        short:"Can you ever truly understand another being's conscious experience?",
+        scenario:"Bats perceive the world through echolocation — a sense humans don't have. You can study bat neuroscience, simulate sonar, even hang upside down. But can you ever know what it FEELS LIKE to be a bat from the inside? Can science fully explain consciousness?",
+        choices:[
+            {text:"Yes — science will eventually explain it", response:"You're a <strong>physicalist</strong>. You believe consciousness is ultimately a physical process, and with enough neuroscience, we'll crack it. This is the dominant view in science. But Nagel's challenge remains: even if you map every neuron, you've described the mechanism, not the experience. Knowing the wavelength of red doesn't tell you what red LOOKS like."},
+            {text:"No — subjective experience is irreducible", response:"You agree with <strong>Nagel</strong> and the 'hard problem of consciousness.' There's an explanatory gap between brain activity and felt experience. This has huge implications: if consciousness can't be reduced to physics, then AI might process information perfectly without ever being conscious. Your phone might never 'feel' anything, no matter how smart it gets."},
+            {text:"The question itself is confused", response:"You're thinking like a <strong>Wittgensteinian</strong> or a <strong>pragmatist</strong>. Maybe 'what it's like' is a linguistic trap. We can't step outside our own consciousness to compare, so the question may be meaningless. Daniel Dennett argues that once you explain all the functions, there's nothing left to explain. The 'mystery' is an illusion created by language."}
+        ],
+        color:"#34d399"
+    },
+    {
+        emoji:"📦", title:"Schrödinger's Ethics", origin:"Modern synthesis",
+        short:"If you don't know the consequences, can your action be moral or immoral?",
+        scenario:"You donate $1000 to a charity. Unknown to you, the charity is a front for something harmful. You acted with pure intentions and did reasonable research. Are you morally responsible for the harm that results? Does morality live in your intentions, your actions, or their consequences?",
+        choices:[
+            {text:"I'm not responsible — my intentions were good", response:"You're a <strong>Kantian</strong>. Kant argued the only truly good thing is a 'good will.' If you acted from duty and good intentions with reasonable diligence, you're moral regardless of outcome. This protects us from moral luck — the disturbing idea that your moral status depends on factors outside your control. A drunk driver who gets home safely isn't more moral than one who hits someone."},
+            {text:"I bear some responsibility for the outcome", response:"You're a <strong>consequentialist</strong>. What matters is what actually happens in the world. Good intentions pave the road to hell. This view demands more of us: research deeper, question harder, follow up. It's uncomfortable but powerful — it pushes us toward actual impact rather than feeling good about ourselves."},
+            {text:"It's complicated — both matter", response:"You're thinking like <strong>W.D. Ross</strong> and his 'prima facie duties.' Morality involves multiple factors: intentions, actions, consequences, relationships. Sometimes they conflict. Wisdom isn't picking one framework — it's knowing which to weight in each situation. This is moral maturity: holding complexity without collapsing into relativism."}
+        ],
+        color:"#fbbf24"
+    },
+    {
+        emoji:"🌍", title:"The Veil of Ignorance", origin:"John Rawls, 1971",
+        short:"If you didn't know your place in society, what rules would you create?",
+        scenario:"You're designing the rules for a new society. The catch: you don't know what position you'll occupy. You might be rich or poor, healthy or disabled, majority or minority. Behind this 'veil of ignorance,' what kind of society would you build?",
+        choices:[
+            {text:"Maximum equality — protect the worst off", response:"You agree with <strong>Rawls' Difference Principle</strong>: inequalities are only justified if they benefit the least advantaged. Behind the veil, rational self-interest becomes empathy — because YOU might be the one who's worst off. This is why Rawls' thought experiment is so powerful: it turns selfishness into justice. Most people, when they might be anyone, build safety nets."},
+            {text:"Maximum freedom — let people compete", response:"You're thinking like <strong>Robert Nozick</strong>, Rawls' great rival. Freedom and property rights come first. A free society might be unequal, but forced redistribution violates individual rights. The risk: behind the veil, you might be born into poverty with no ladder up. Nozick accepts this — freedom means accepting unequal outcomes."},
+            {text:"Balance both — freedom with a safety net", response:"You're a <strong>social democrat</strong> in philosophical terms. Most modern democracies attempt this balance. The insight: pure equality kills innovation; pure freedom kills compassion. The veil of ignorance reveals that most rational people want both opportunity AND protection. This is why this thought experiment is used in policy schools worldwide."}
+        ],
+        color:"#f472b6"
+    }
+];
+
+const expCards = document.getElementById('expCards');
+experiments.forEach((exp, idx) => {
+    const card = document.createElement('div');
+    card.className = 'exp-card';
+    card.innerHTML = `
+        <div class="exp-card-img" style="background:linear-gradient(135deg,${exp.color}22,${exp.color}08);">${exp.emoji}</div>
+        <div class="exp-card-body">
+            <h3>${exp.title}</h3>
+            <div class="origin">${exp.origin}</div>
+            <p>${exp.short}</p>
+        </div>
+        <div class="exp-detail">
+            <div class="scenario"><p>${exp.scenario}</p></div>
+            <div class="exp-choices" id="expChoices${idx}">
+                ${exp.choices.map((c,ci) => `<button class="exp-choice-btn" data-exp="${idx}" data-choice="${ci}">${c.text}</button>`).join('')}
+            </div>
+            <div class="exp-result" id="expResult${idx}"></div>
+        </div>
+    `;
+    card.addEventListener('click', (e) => {
+        if(e.target.classList.contains('exp-choice-btn')) return;
+        card.classList.toggle('open');
+    });
+    expCards.appendChild(card);
+});
+
+document.addEventListener('click', (e) => {
+    if(e.target.classList.contains('exp-choice-btn')) {
+        const expIdx = e.target.dataset.exp;
+        const choiceIdx = e.target.dataset.choice;
+        const container = document.getElementById(`expChoices${expIdx}`);
+        container.querySelectorAll('.exp-choice-btn').forEach(b => b.classList.remove('chosen'));
+        e.target.classList.add('chosen');
+        const result = document.getElementById(`expResult${expIdx}`);
+        result.innerHTML = experiments[expIdx].choices[choiceIdx].response;
+        result.classList.add('show');
+    }
+});
+
+/* ============================================================
+   PARADOXES
+============================================================ */
+const paradoxes = [
+    {
+        icon:"♾️", title:"Zeno's Dichotomy", origin:"Zeno of Elea, ~450 BCE",
+        desc:"To walk across a room, you must first cross half the distance. Then half of what remains. Then half again. There are infinite halves to cross. So how do you ever arrive? Motion seems logically impossible — yet you move every day.",
+        blow:"This paradox wasn't fully resolved until calculus was invented 2,000 years later. Infinite series CAN have finite sums (1/2 + 1/4 + 1/8... = 1). Your daily walk is a living proof of infinite mathematics. Every step you take solves an ancient paradox."
+    },
+    {
+        icon:"🤥", title:"The Liar's Paradox", origin:"Epimenides, ~600 BCE",
+        desc:"Consider the sentence: 'This statement is false.' If it's true, then it's false. If it's false, then it's true. It flips forever, never landing. A simple sentence that breaks logic itself.",
+        blow:"This isn't just a party trick. Kurt Gödel used a version of this to prove that mathematics will ALWAYS contain truths it cannot prove — the Incompleteness Theorems. Your brain, logic, and even math have built-in limits. Certainty is an illusion, even in pure mathematics."
+    },
+    {
+        icon:"🎭", title:"The Paradox of Tolerance", origin:"Karl Popper, 1945",
+        desc:"If a society is tolerant of everything, it must tolerate intolerance. But intolerant groups will eventually destroy tolerance. So to maintain tolerance, you must be intolerant of intolerance. Tolerance requires intolerance.",
+        blow:"This is one of the most relevant paradoxes today. Every social media platform, every democracy, every community faces this. Unlimited free speech can be used to silence others. Popper concluded: tolerance is a social CONTRACT, not a suicide pact. You can revoke it from those who would destroy it."
+    },
+    {
+        icon:"⏰", title:"The Grandfather Paradox", origin:"René Barjavel, 1943",
+        desc:"If you travel back in time and prevent your grandparents from meeting, you'd never be born. But if you were never born, you couldn't travel back in time. So they DO meet, and you ARE born, and you DO travel back...",
+        blow:"Physicists take this seriously. It's why many-worlds interpretation exists: maybe time travel creates a branch, not a loop. Philosopher David Lewis argued time travel is logically consistent — you CAN go back, but you'll find you simply CAN'T change things. Free will and determinism collide in the most literal way possible."
+    },
+    {
+        icon:"🚀", title:"The Fermi Paradox", origin:"Enrico Fermi, 1950",
+        desc:"The universe is unimaginably vast and old. There should be millions of advanced civilizations. So... where is everyone? The silence of the cosmos is deafening. Are we alone, or is something filtering civilizations out?",
+        blow:"This is philosophy disguised as astronomy. It forces questions about consciousness, civilization, and meaning. If we're alone, we carry an incomprehensible responsibility. If we're not, why the silence? The 'Great Filter' theory suggests most civilizations destroy themselves — making philosophy, ethics, and wisdom literal survival tools for our species."
+    },
+    {
+        icon:"🧠", title:"The Hard Problem of Consciousness", origin:"David Chalmers, 1995",
+        desc:"We can explain how the brain processes information. But WHY does processing feel like something? Why isn't it all 'dark inside'? A thermostat processes temperature without feeling hot. Why do YOU feel anything at all?",
+        blow:"This might be the deepest unsolved problem in all of philosophy and science. It suggests consciousness might be fundamental to the universe — like gravity or electromagnetism. Some physicists (like Roger Penrose) think quantum mechanics is involved. Others think it's an illusion. Nobody knows. YOU are the mystery."
+    }
+];
+
+const paradoxCarousel = document.getElementById('paradoxCarousel');
+paradoxes.forEach((p, i) => {
+    const slide = document.createElement('div');
+    slide.className = `paradox-slide ${i===0?'active':''}`;
+    slide.innerHTML = `
+        <div class="paradox-icon">${p.icon}</div>
+        <h3>${p.title}</h3>
+        <div class="origin">${p.origin}</div>
+        <div class="description">${p.desc}</div>
+        <div class="mind-blow">
+            <div class="label">🤯 Why This Matters</div>
+            <p>${p.blow}</p>
+        </div>
+    `;
+    paradoxCarousel.appendChild(slide);
+});
+
+// Nav buttons
+const pNav = document.createElement('div');
+pNav.className = 'paradox-nav';
+pNav.innerHTML = `<button class="btn btn-ghost" id="paradoxPrev">← Previous</button><button class="btn btn-ghost" id="paradoxNext">Next →</button>`;
+paradoxCarousel.appendChild(pNav);
+
+// Dots
+const pDots = document.createElement('div');
+pDots.className = 'paradox-dots';
+paradoxes.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = `paradox-dot ${i===0?'active':''}`;
+    dot.addEventListener('click', () => showParadox(i));
+    pDots.appendChild(dot);
+});
+paradoxCarousel.appendChild(pDots);
+
+let currentParadox = 0;
+function showParadox(idx) {
+    currentParadox = idx;
+    paradoxCarousel.querySelectorAll('.paradox-slide').forEach((s,i) => s.classList.toggle('active', i===idx));
+    pDots.querySelectorAll('.paradox-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+}
+document.getElementById('paradoxPrev').addEventListener('click', () => showParadox((currentParadox-1+paradoxes.length)%paradoxes.length));
+document.getElementById('paradoxNext').addEventListener('click', () => showParadox((currentParadox+1)%paradoxes.length));
+
+/* ============================================================
+   LIFE SIMULATOR
+============================================================ */
+const simScenarios = [
+    {
+        context:"Career Crossroads",
+        scenario:"You have a stable, well-paying job that bores you. A friend offers you a role at their risky startup doing work you're passionate about — for 40% less pay. Your partner is nervous. Your parents think you're crazy. What do you do?",
+        options:[
+            {letter:"A", title:"Stay safe", desc:"Keep the stable job. Passion is overrated — security matters.", philosophy:"Epicureanism", note:"Epicurus argued that the good life is about minimizing anxiety and pain, not chasing excitement. Security IS a form of happiness. But he also warned: don't confuse comfort with contentment. If the boredom becomes suffering, the 'safe' choice isn't safe at all."},
+            {letter:"B", title:"Take the leap", desc:"Follow your passion. Life is too short for golden handcuffs.", philosophy:"Existentialism", note:"Sartre would say you're exercising radical freedom. Kierkegaard called this a 'leap of faith.' The anxiety you feel IS freedom — it means the choice is real and meaningful. Existentialists warn: not choosing is also a choice, and it's usually the one you'll regret."},
+            {letter:"C", title:"Negotiate a middle path", desc:"Ask for part-time, freelance, or a trial period.", philosophy:"Aristotle's Golden Mean", note:"Aristotle believed virtue lies between extremes. Courage is between recklessness and cowardice. A middle path isn't weakness — it's wisdom. The practical philosopher finds creative solutions that honor multiple values simultaneously."},
+            {letter:"D", title:"Ask: what would I regret at 80?", desc:"Use the long view to decide.", philosophy:"Stoicism (Memento Mori)", note:"The Stoics meditated on death daily — not to be morbid, but to clarify what matters. Marcus Aurelius wrote: 'It is not death that a man should fear, but rather he should fear never beginning to live.' The deathbed test cuts through noise."}
+        ]
+    },
+    {
+        context:"The Loyalty Test",
+        scenario:"Your best friend confides they're cheating on their partner — someone you're also close to. They beg you to keep it secret. The partner asks you directly: 'Is something going on?' What do you say?",
+        options:[
+            {letter:"A", title:"Keep the secret", desc:"Loyalty to your friend comes first. It's not your relationship.", philosophy:"Confucian Ethics", note:"In Confucian thought, relationships have hierarchies of loyalty. Your bond with your friend carries obligations. But Confucius also valued 'ren' (benevolence) — and enabling harm isn't benevolent. This tension reveals that loyalty without morality becomes complicity."},
+            {letter:"B", title:"Tell the truth", desc:"Honesty matters more than any one friendship.", philosophy:"Kantian Ethics", note:"Kant argued you should never lie, period. The categorical imperative: act only according to rules you'd want to be universal. If everyone lied to protect friends, trust would collapse. Painful truth respects the partner's autonomy — their right to make informed decisions about their own life."},
+            {letter:"C", title:"Push your friend to confess", desc:"Give them a deadline, then act.", philosophy:"Virtue Ethics", note:"Aristotle would ask: what would a person of good character do? A virtuous friend doesn't enable vice — they hold you accountable. Giving a deadline balances compassion with justice. You're being a true friend to BOTH people by creating space for honesty."},
+            {letter:"D", title:"Deflect — 'Ask them, not me'", desc:"Redirect without lying or betraying.", philosophy:"Pragmatism", note:"William James and the pragmatists judge ideas by their practical consequences. This response avoids direct harm while signaling something is wrong. It's not perfectly honest, but it minimizes damage. Pragmatism says: sometimes the 'cleanest' philosophical answer isn't the wisest human one."}
+        ]
+    },
+    {
+        context:"The Success Paradox",
+        scenario:"You've achieved everything you thought you wanted — good career, nice home, relationship. But you feel empty. Nothing is wrong, yet nothing feels right. Sunday nights fill you with dread. What's happening, and what do you do?",
+        options:[
+            {letter:"A", title:"You're chasing society's goals, not yours", desc:"Redefine success on your own terms.", philosophy:"Existentialism (Authenticity)", note:"Heidegger called this 'das Man' — living as 'the They.' You've been following a script written by culture, parents, and social media. The emptiness is your authentic self knocking. Kierkegaard said anxiety is 'the dizziness of freedom' — it means you're waking up to the possibility of a life that's truly yours."},
+            {letter:"B", title:"Gratitude practice — reframe your perspective", desc:"You have what billions dream of. Adjust your lens.", philosophy:"Stoicism", note:"Epictetus taught: 'It's not what happens to you, but how you react.' Marcus Aurelius journaled gratitude daily while ruling an empire. The Stoics didn't deny feelings — they trained perception. Your 'emptiness' might be a failure of attention, not a failure of life. Try: each morning, name 3 things you'd miss if they vanished."},
+            {letter:"C", title:"Serve others — meaning comes from contribution", desc:"Volunteer, mentor, give back.", philosophy:"Ubuntu Philosophy", note:"The African concept of Ubuntu says: 'I am because we are.' Meaning doesn't come from accumulation but from connection and contribution. Viktor Frankl, surviving the Holocaust, concluded: meaning comes from what you GIVE to the world, not what you take. Your emptiness might be a surplus of self-focus."},
+            {letter:"D", title:"Embrace the void — sit with the discomfort", desc:"Stop trying to fix it. Just feel it.", philosophy:"Buddhism / Zen", note:"The Buddha taught that suffering comes from attachment — including attachment to happiness. Zen masters say: 'Don't just do something, sit there.' The emptiness isn't a problem to solve; it's a doorway. Meditation traditions teach that sitting with discomfort, without fleeing into activity, reveals a deeper peace beneath the restlessness."}
+        ]
+    },
+    {
+        context:"Digital Dilemma",
+        scenario:"You discover an AI can write better emails, code, and even poetry than you. It could do 70% of your job. You could use it secretly and coast, or be transparent and risk being seen as replaceable. Meanwhile, your colleague is secretly using it and getting promoted.",
+        options:[
+            {letter:"A", title:"Use it openly — adapt or die", desc:"Technology is a tool. Refusing it is like refusing electricity.", philosophy:"Pragmatism / Transhumanism", note:"Humans have always been cyborgs — glasses, books, calculators extend our minds. The pragmatist asks: does it work? Does it produce better outcomes? Resisting tools out of pride is vanity, not virtue. But transparency matters: claiming AI work as purely yours is a form of deception."},
+            {letter:"B", title:"Resist — preserve human craft", desc:"What's the point of doing things if machines do them better?", philosophy:"Existentialism / Phenomenology", note:"Heidegger warned about technology reducing everything to 'standing reserve' — resources to be optimized. There's value in struggle, craft, and the human touch that efficiency can't capture. A hand-written letter means more than a perfect AI one. The question isn't capability — it's meaning."},
+            {letter:"C", title:"Use it as a collaborator, not a replacement", desc:"Let AI handle the mundane; focus on what only humans can do.", philosophy:"Aristotle's Ergon (Function)", note:"Aristotle said everything has an 'ergon' — a unique function. A knife's ergon is cutting. What's a human's? Reason, creativity, empathy, moral judgment. If AI handles routine work, you're freed to do what only humans can: build relationships, make ethical choices, create novel ideas, find meaning."},
+            {letter:"D", title:"Blow the whistle on your colleague", desc:"If it's wrong, it's wrong for everyone.", philosophy:"Kantian Universalizability", note:"Kant's test: could this be a universal law? If everyone secretly used AI while claiming credit, the entire system of merit collapses. Your colleague isn't just cheating — they're undermining the social contract. But ask yourself: are you motivated by justice, or jealousy? Kant says the motive matters as much as the action."}
+        ]
+    }
+];
+
+let simIdx = 0;
+let simTraits = {};
+const simContainer = document.getElementById('simContainer');
+
+function buildSim() {
+    const s = simScenarios[simIdx];
+    simContainer.innerHTML = `
+        <div class="sim-header">
+            <div>
+                <h3>Scenario ${simIdx+1} of ${simScenarios.length}</h3>
+                <p style="color:var(--muted);font-size:.85rem;">Your choices reveal your philosophical instincts</p>
+            </div>
+            <div class="sim-stats">
+                <div class="sim-stat"><div class="val">${simIdx+1}</div><div class="lbl">Scenario</div></div>
+                <div class="sim-stat"><div class="val">${Object.keys(simTraits).length}</div><div class="lbl">Traits Found</div></div>
+            </div>
+        </div>
+        <div class="sim-body">
+            <div class="sim-scenario">
+                <div class="context">${s.context}</div>
+                <p>${s.scenario}</p>
+            </div>
+            <div class="sim-options" id="simOptions">
+                ${s.options.map((o,i) => `
+                    <button class="sim-option" data-idx="${i}">
+                        <div class="letter">${o.letter}</div>
+                        <div class="opt-text"><h4>${o.title}</h4><p>${o.desc}</p></div>
+                    </button>
+                `).join('')}
+            </div>
+            <div class="sim-outcome" id="simOutcome"></div>
+            <div class="trait-badges" id="simTraits">${Object.entries(simTraits).map(([k,v])=>`<span class="trait-badge">${k} ×${v}</span>`).join('')}</div>
+        </div>
+    `;
+
+    document.querySelectorAll('#simOptions .sim-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx);
+            const opt = s.options[idx];
+            simTraits[opt.philosophy] = (simTraits[opt.philosophy]||0) + 1;
+
+            const outcome = document.getElementById('simOutcome');
+            outcome.innerHTML = `
+                <h4>Your instinct: ${opt.philosophy}</h4>
+                <p>${opt.note}</p>
+                <div class="philosophy-note">
+                    <div class="label">💡 The Deeper Lesson</div>
+                    <p>There's no 'wrong' answer. Each response reflects a legitimate philosophical tradition developed by brilliant minds over centuries. The goal isn't to pick the 'right' philosophy — it's to understand WHY you instinctively lean a certain way.</p>
+                </div>
+                ${simIdx < simScenarios.length-1 ? `<button class="btn btn-primary sim-next" style="margin-top:1rem;" onclick="nextSim()">Next Scenario →</button>` : `<button class="btn btn-primary sim-next" style="margin-top:1rem;" onclick="showSimResults()">See My Philosophical Profile →</button>`}
+            `;
+            outcome.classList.add('show');
+            document.getElementById('simTraits').innerHTML = Object.entries(simTraits).map(([k,v])=>`<span class="trait-badge">${k} ×${v}</span>`).join('');
+
+            document.querySelectorAll('#simOptions .sim-option').forEach(b => {
+                b.style.pointerEvents = 'none';
+                b.style.opacity = b === btn ? '1' : '0.4';
+            });
+        });
+    });
+}
+
+function nextSim() {
+    simIdx++;
+    buildSim();
+    document.getElementById('simContainer').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function showSimResults() {
+    const sorted = Object.entries(simTraits).sort((a,b) => b[1]-a[1]);
+    const top = sorted[0];
+    const philosophyDescriptions = {
+        "Epicureanism":"You seek tranquility and the reduction of suffering. You value security, close friendships, and simple pleasures over ambition and excess.",
+        "Existentialism":"You believe in radical freedom and personal responsibility. You'd rather face anxiety than live inauthentically.",
+        "Existentialism (Authenticity)":"You crave a life that's genuinely yours, not a script written by society. Authenticity is your north star.",
+        "Aristotle's Golden Mean":"You seek balance and moderation. You believe wisdom lies between extremes.",
+        "Stoicism (Memento Mori)":"You use mortality as a compass. The awareness of death sharpens your focus on what truly matters.",
+        "Stoicism":"You believe you can't control events, only your response. Inner peace comes from mastering perception.",
+        "Confucian Ethics":"You value loyalty, relationships, and social harmony. You navigate life through your bonds with others.",
+        "Kantian Ethics":"You believe in universal moral rules. Honesty and duty guide you, even when it's painful.",
+        "Virtue Ethics":"You focus on character over rules. You ask 'What would a good person do?' rather than following formulas.",
+        "Pragmatism":"You judge ideas by their practical results. You're flexible, adaptive, and focused on what works.",
+        "Pragmatism / Transhumanism":"You embrace tools and technology as extensions of human capability. Progress is your philosophy.",
+        "Ubuntu Philosophy":"You find meaning in connection and community. 'I am because we are' resonates with your soul.",
+        "Buddhism / Zen":"You seek peace through acceptance and mindfulness. You know that resistance to 'what is' creates suffering.",
+        "Existentialism / Phenomenology":"You value direct experience and human craft. You resist reducing life to mere efficiency.",
+        "Aristotle's Ergon (Function)":"You believe in finding and fulfilling your unique human purpose — what only YOU can contribute.",
+        "Kantian Universalizability":"You test your actions by asking: 'What if everyone did this?' Consistency and fairness drive your moral compass."
+    };
+
+    simContainer.innerHTML = `
+        <div class="sim-header">
+            <div>
+                <h3>Your Philosophical Profile</h3>
+                <p style="color:var(--muted);font-size:.85rem;">Based on your instinctive responses</p>
+            </div>
+        </div>
+        <div class="sim-body" style="text-align:center;">
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;margin-bottom:.5rem;">Your Dominant Philosophy:</h2>
+            <div style="font-size:1.3rem;color:var(--accent1);font-weight:700;margin-bottom:1rem;">${top[0]}</div>
+            <p style="color:var(--muted);max-width:550px;margin:0 auto 1.5rem;line-height:1.7;">${philosophyDescriptions[top[0]] || 'You have a unique philosophical blend that defies easy categorization — which is itself a philosophical position!'}</p>
+            <div style="text-align:left;max-width:500px;margin:0 auto;">
+                <h4 style="font-size:.9rem;margin-bottom:.8rem;color:var(--accent3);">Your Full Trait Map:</h4>
+                ${sorted.map(([k,v]) => `
+                    <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.6rem;">
+                        <div style="flex:1;font-size:.82rem;color:var(--muted);">${k}</div>
+                        <div style="width:120px;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+                            <div style="height:100%;width:${(v/sorted[0][1])*100}%;background:linear-gradient(90deg,var(--accent1),var(--accent3));border-radius:4px;"></div>
+                        </div>
+                        <div style="font-size:.75rem;color:var(--accent1);width:20px;">${v}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <button class="btn btn-ghost" style="margin-top:1.5rem;" onclick="simIdx=0;simTraits={};buildSim();">Retake Quiz ↺</button>
+        </div>
+    `;
+}
+buildSim();
+
+/* ============================================================
+   MENTAL MODELS
+============================================================ */
+const mentalModels = [
+    {
+        icon:"🪞", name:"The Socratic Method", philosopher:"Socrates",
+        desc:"Instead of asserting answers, ask questions that expose contradictions in thinking. Keep asking 'Why?' and 'How do you know?' until you reach bedrock truth.",
+        practical:"In your next disagreement, ask 3 genuine questions before stating your opinion. You'll often find the other person talks themselves to a better answer — and you learn something."
+    },
+    {
+        icon:"🔨", name:"Occam's Razor", philosopher:"William of Ockham",
+        desc:"When you have competing explanations, prefer the simplest one that accounts for all the evidence. Don't multiply assumptions unnecessarily.",
+        practical:"When anxious about someone's behavior ('They hate me, they're plotting against me'), apply the razor: the simplest explanation is usually correct ('They're busy/tired/distracted')."
+    },
+    {
+        icon:"🎭", name:"The Veil of Ignorance", philosopher:"John Rawls",
+        desc:"When making rules or decisions that affect others, imagine you don't know which position you'll occupy. Design systems as if you might be anyone.",
+        practical:"Before making a policy at work, ask: 'Would I think this is fair if I were the newest, lowest-paid person on the team?' This instantly reveals hidden biases."
+    },
+    {
+        icon:"⚓", name:"Amor Fati (Love Your Fate)", philosopher:"Nietzsche / Stoics",
+        desc:"Don't just accept what happens — love it. Every setback, every failure, every pain is material for growth. Wish for nothing to be different.",
+        practical:"Next time something goes wrong, instead of 'Why me?', try 'What does this make possible?' Lost your job? Now you can pivot. Got rejected? Now you're free. Reframe obstacles as redirections."
+    },
+    {
+        icon:"🌊", name:"Impermanence (Anicca)", philosopher:"The Buddha",
+        desc:"Everything changes. Your pain will pass. Your joy will pass. Your life will pass. This isn't depressing — it's liberating. Nothing needs to be clung to or feared.",
+        practical:"When you're suffering: 'This too shall pass.' When you're happy: savor it fully, knowing it's fleeting. This dual awareness prevents both despair and complacency."
+    },
+    {
+        icon:"🏛️", name:"The Categorical Imperative", philosopher:"Immanuel Kant",
+        desc:"Before any action, ask: 'What if everyone did this?' If the world would collapse (everyone lying, stealing, freeloading), then it's wrong — even if you'd benefit.",
+        practical:"Tempted to cut in line, ghost someone, or take credit? Ask: 'What if this were universal behavior?' If society couldn't function, you've found your answer."
+    },
+    {
+        icon:"🎯", name:"Eudaimonia (Flourishing)", philosopher:"Aristotle",
+        desc:"Happiness isn't pleasure — it's flourishing through excellence. Find what you're uniquely good at, develop it with discipline, and use it in service of something larger.",
+        practical:"Instead of asking 'What makes me happy?', ask 'What makes me come alive AND contributes to others?' The intersection is your purpose. Happiness is a byproduct, not a goal."
+    },
+    {
+        icon:"🔄", name:"Eternal Recurrence", philosopher:"Friedrich Nietzsche",
+        desc:"Imagine you must live this exact life — every joy, every pain — infinite times. Would you say yes? If not, what would you change? Live so that you'd choose this life again.",
+        practical:"Use this as a decision filter: 'Would I be willing to make this choice infinite times?' If yes, proceed with confidence. If the thought horrifies you, that's your signal to change course."
+    },
+    {
+        icon:"🕳️", name:"The Absurd", philosopher:"Albert Camus",
+        desc:"Life has no inherent meaning, yet we desperately seek meaning. This gap is 'the absurd.' Camus says: don't deny it, don't escape it — rebel against it by living fully anyway.",
+        practical:"When life feels meaningless, don't panic. Camus says: 'One must imagine Sisyphus happy.' Create meaning through engagement, rebellion, and passionate living — not because the universe demands it, but because YOU choose it."
+    }
+];
+
+const modelsGrid = document.getElementById('modelsGrid');
+mentalModels.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'model-card';
+    card.innerHTML = `
+        <div class="model-icon">${m.icon}</div>
+        <h3>${m.name}</h3>
+        <div class="philosopher">${m.philosopher}</div>
+        <p>${m.desc}</p>
+        <div class="practical">
+            <div class="label">🛠️ Use It Today</div>
+            <p>${m.practical}</p>
+        </div>
+    `;
+    modelsGrid.appendChild(card);
+});
+
+/* ============================================================
+   MOOD PHILOSOPHY
+============================================================ */
+const moods = [
+    {
+        emoji:"😰", label:"Anxious",
+        title:"Philosophy for Anxiety",
+        quote:"\"We suffer more in imagination than in reality.\" — Seneca",
+        advice:"The Stoics understood anxiety 2,000 years ago. It's not events that disturb you — it's your judgments about events. Most of what you fear will never happen. And what does happen, you'll handle — because you always have.",
+        exercise:"The Stoic Premeditatio Malorum: Spend 5 minutes imagining the worst case scenario in vivid detail. Then ask: 'Could I survive this? Could I find meaning even in this?' Usually, the answer is yes. The fear of the thing is worse than the thing itself."
+    },
+    {
+        emoji:"😢", label:"Sad",
+        title:"Philosophy for Sadness",
+        quote:"\"The wound is the place where the Light enters you.\" — Rumi",
+        advice:"Buddhism teaches that suffering (dukkha) is not a bug — it's a feature of conscious existence. Sadness means you loved something. It means you're alive and connected. Don't rush to 'fix' it. Grief is love with nowhere to go.",
+        exercise:"Sit with your sadness for 10 minutes without trying to change it. Name it: 'I notice sadness.' Don't identify WITH it ('I AM sad') — observe it ('There IS sadness'). Watch how it shifts, moves, and eventually transforms when you stop fighting it."
+    },
+    {
+        emoji:"😤", label:"Angry",
+        title:"Philosophy for Anger",
+        quote:"\"How much more grievous are the consequences of anger than the causes of it.\" — Marcus Aurelius",
+        advice:"Aristotle said anger isn't always wrong — it's wrong when it's disproportionate, misdirected, or prolonged. The question isn't 'Should I be angry?' but 'Is my anger serving justice or destroying me?' Seneca called anger 'temporary madness.'",
+        exercise:"The Stoic Pause: When anger flares, count to 10 (Seneca's advice, literally). Then ask three questions: (1) Will this matter in 5 years? (2) Is my anger proportionate? (3) What would the wisest person I know do right now? Act from that answer, not from the heat."
+    },
+    {
+        emoji:"😐", label:"Numb",
+        title:"Philosophy for Numbness",
+        quote:"\"The only way out is through.\" — Robert Frost (echoing Kierkegaard)",
+        advice:"Existentialists recognized numbness as a signal — you've been living inauthentically, disconnected from what matters. Kierkegaard called it 'the sickness unto death' — not physical death, but the death of the self through avoidance. Numbness is your soul asking for attention.",
+        exercise:"Do ONE thing today that scares you slightly — speak a truth, make art, reach out to someone, go somewhere new. Kierkegaard said: 'Anxiety is the dizziness of freedom.' If you feel nothing, you need to risk something. Feeling returns through engagement, not waiting."
+    },
+    {
+        emoji:"🤔", label:"Confused",
+        title:"Philosophy for Confusion",
+        quote:"\"I know that I know nothing.\" — Socrates",
+        advice:"Confusion is the beginning of wisdom, not its absence. Socrates was declared the wisest man in Athens precisely because he acknowledged his ignorance. Every philosopher started exactly where you are: confused, curious, and brave enough to sit with not-knowing.",
+        exercise:"Write down what you're confused about. Then separate it into: (1) Things I can investigate (→ research them), (2) Things I must decide without full information (→ use your values as a compass), (3) Things that are genuinely unknowable (→ make peace with uncertainty). Most confusion is category confusion."
+    },
+    {
+        emoji:"😊", label:"Content",
+        title:"Philosophy for Contentment",
+        quote:"\"He who is not contented with what he has, would not be contented with what he would like to have.\" — Socrates",
+        advice:"Epicurus taught that contentment is the highest pleasure — not excitement, not ecstasy, but the quiet satisfaction of enough. You've achieved what most people chase. The philosophical move now: deepen it. Don't let the hedonic treadmill steal this moment.",
+        exercise:"Practice 'negative visualization' (Stoic technique): Spend 2 minutes imagining your life WITHOUT the things you currently have. Your health, your relationships, your home. Feel the loss. Then open your eyes to what IS. Contentment deepens when you realize how much you'd miss what you already have."
+    },
+    {
+        emoji:"🔥", label:"Motivated",
+        title:"Philosophy for Motivation",
+        quote:"\"He who has a why to live can bear almost any how.\" — Nietzsche",
+        advice:"Aristotle said motivation without direction is just restlessness. Channel this energy through the lens of eudaimonia — don't just DO more, do what develops your excellence and serves others. Nietzsche's Übermensch doesn't just act — they create values and live by them.",
+        exercise:"While your energy is high, answer this: 'If I could only accomplish ONE thing this year that would make everything else easier or unnecessary, what would it be?' Write it down. Make it specific. Then identify the very next physical action. Motivation fades — systems persist."
+    },
+    {
+        emoji:"😴", label:"Exhausted",
+        title:"Philosophy for Exhaustion",
+        quote:"\"Nature does not hurry, yet everything is accomplished.\" — Lao Tzu",
+        advice:"Taoism teaches 'wu wei' — effortless action, going with the flow rather than forcing. Your exhaustion might be a sign you're swimming against the current. The Western obsession with productivity is not wisdom — it's a cultural sickness. Rest is not laziness; it's restoration.",
+        exercise:"Practice philosophical rest: Do nothing for 20 minutes. Not scrolling, not planning, not 'meditating productively.' Just... nothing. Blaise Pascal said: 'All of humanity's problems stem from man's inability to sit quietly in a room alone.' Can you sit with yourself without reaching for stimulation?"
+    }
+];
+
+const moodSelector = document.getElementById('moodSelector');
+const moodResult = document.getElementById('moodResult');
+
+moods.forEach((m, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'mood-btn';
+    btn.innerHTML = `${m.emoji}<span class="mood-label">${m.label}</span>`;
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showMoodResult(i);
+    });
+    moodSelector.appendChild(btn);
+});
+
+function showMoodResult(i) {
+    const m = moods[i];
+    moodResult.innerHTML = `
+        <h3>${m.title}</h3>
+        <div class="mood-quote">${m.quote}</div>
+        <div class="mood-advice">${m.advice}</div>
+        <div class="mood-exercise">
+            <div class="label">🧘 Try This Now</div>
+            <p>${m.exercise}</p>
+        </div>
+    `;
+}
+
+/* ============================================================
+   QUOTE MACHINE
+============================================================ */
+const quotes = [
+    {text:"The unexamined life is not worth living.", author:"Socrates", context:"Said at his trial before being sentenced to death, 399 BCE", explain:"Socrates chose death over silence. He believed that going through life on autopilot — never questioning your beliefs, values, or choices — is barely living at all. The takeaway: schedule regular 'life audits.' Ask yourself hard questions. Are you living YOUR life, or someone else's script?"},
+    {text:"He who thinks great thoughts, often makes great errors.", author:"Martin Heidegger", context:"From 'What Is Called Thinking?', 1954", explain:"Playing it safe intellectually means never being wrong — but also never discovering anything new. Every breakthrough in human history came from someone willing to be spectacularly wrong. The takeaway: if you haven't been wrong about something important recently, you're probably not thinking hard enough."},
+    {text:"Man is condemned to be free.", author:"Jean-Paul Sartre", context:"From 'Existentialism Is a Humanism', 1946", explain:"Freedom sounds great until you realize it means YOU are responsible for everything you become. No god, no fate, no 'human nature' to blame. Every moment is a choice. The takeaway: stop saying 'I had no choice.' You always have a choice — you just might not like the alternatives."},
+    {text:"The happiness of your life depends upon the quality of your thoughts.", author:"Marcus Aurelius", context:"From 'Meditations', ~170 CE — his private journal, never meant for publication", explain:"A Roman Emperor, one of the most powerful men in history, journaling to himself that external power means nothing without internal mastery. The takeaway: you can't control what happens, but you can train how you interpret it. Your thoughts are the lens — clean the lens."},
+    {text:"To live is to suffer, to survive is to find some meaning in the suffering.", author:"Friedrich Nietzsche", context:"Paraphrased from multiple works, 1880s", explain:"Nietzsche wasn't being pessimistic — he was being honest. Pain is guaranteed. But humans are unique: we can TRANSFORM suffering into meaning, art, growth, and wisdom. The takeaway: don't ask 'Why is this happening TO me?' Ask 'What is this making OF me?'"},
+    {text:"The mind is everything. What you think, you become.", author:"The Buddha", context:"From the Dhammapada, ~3rd century BCE", explain:"2,500 years before neuroscience confirmed neuroplasticity, the Buddha understood that repeated thoughts literally reshape your brain. Habitual anger makes you an angry person. Habitual compassion makes you compassionate. The takeaway: guard your mental diet as carefully as your physical diet."},
+    {text:"I cannot teach anybody anything. I can only make them think.", author:"Socrates", context:"Attributed, via Plato's dialogues", explain:"True learning isn't information transfer — it's igniting curiosity. Socrates never lectured; he asked questions until people discovered answers themselves. The takeaway: when helping others (or yourself), ask better questions instead of giving answers. Discovery sticks; instruction fades."},
+    {text:"No man ever steps in the same river twice, for it's not the same river and he's not the same man.", author:"Heraclitus", context:"Fragment, ~500 BCE", explain:"Everything flows (panta rhei). You are not who you were yesterday. The situation you fear has already changed by the time you face it. The takeaway: stop trying to freeze life in place. Stop clinging to who you were. You're allowed to change your mind, your identity, your direction — because you already have."},
+    {text:"The only thing I know is that I know nothing.", author:"Socrates", context:"Plato's Apology, 399 BCE", explain:"This isn't false modesty — it's the most powerful intellectual position possible. When you admit ignorance, you become teachable. When you think you know, you stop learning. The takeaway: in every conversation, assume the other person knows something you don't. You'll be right more often than you think."},
+    {text:"Life must be understood backwards; but it must be lived forwards.", author:"Søren Kierkegaard", context:"From his journals, 1843", explain:"You can only connect the dots looking back — but you must make decisions looking forward into uncertainty. This is the human condition: forced to act without full understanding. The takeaway: stop waiting for clarity before acting. Clarity comes FROM action, not before it."}
+];
+
+let quoteIdx = 0;
+const quoteMachine = document.getElementById('quoteMachine');
+
+function showQuote() {
+    const q = quotes[quoteIdx];
+    quoteMachine.innerHTML = `
+        <div class="quote-text">"${q.text}"</div>
+        <div class="quote-author">— ${q.author}</div>
+        <div class="quote-context">${q.context}</div>
+        <div class="quote-explain">
+            <div class="label">💡 What This Means For Your Life</div>
+            <p>${q.explain}</p>
+        </div>
+        <div class="quote-actions">
+            <button class="btn btn-ghost" onclick="prevQuote()">← Previous</button>
+            <button class="btn btn-primary" onclick="nextQuote()">Next Wisdom →</button>
+            <button class="btn btn-ghost" onclick="randomQuote()">🎲 Random</button>
+        </div>
+    `;
+}
+function nextQuote() { quoteIdx = (quoteIdx+1)%quotes.length; showQuote(); }
+function prevQuote() { quoteIdx = (quoteIdx-1+quotes.length)%quotes.length; showQuote(); }
+function randomQuote() { quoteIdx = Math.floor(Math.random()*quotes.length); showQuote(); }
+showQuote();
+
+/* ============================================================
+   DEBATE ARENA
+============================================================ */
+const debates = [
+    {
+        topic:"Free Will vs. Determinism",
+        sideA:{title:"Free Will Exists", thinker:"Jean-Paul Sartre, William James", argument:"You are the author of your choices. Determinism is an excuse to avoid responsibility. The felt experience of choosing is real — and that's what matters.", points:["You deliberate before decisions — that IS freedom","Moral responsibility requires free will","Quantum indeterminacy breaks the causal chain","We punish criminals because they CHOSE to act"]},
+        sideB:{title:"Everything Is Determined", thinker:"Baruch Spinoza, Sam Harris", argument:"Every thought you have is caused by prior brain states, which were caused by genetics and environment. 'Choice' is a convincing illusion created by a brain that can't see its own machinery.", points:["Neuroscience shows decisions are made before you're aware of them","You didn't choose your genes, upbringing, or brain chemistry","If you rewound time exactly, you'd make the same choice every time","Feeling free doesn't mean being free — illusions feel real"]},
+        synthesis:"Most modern philosophers are <strong>compatibilists</strong>: free will and determinism can coexist. You're 'free' when you act according to your own desires without external coercion — even if those desires were shaped by causes. It's not about being uncaused; it's about being uncoerced. This is the view of Hume, Frankfurt, and Dennett."
+    },
+    {
+        topic:"Is Morality Objective or Subjective?",
+        sideA:{title:"Morality Is Objective", thinker:"Plato, Kant, Sam Harris", argument:"Some things are REALLY wrong — not just unpopular. Torturing babies for fun is wrong in every culture, every era, every universe. Moral truths exist independently of human opinion.", points:["Moral progress is real (abolishing slavery = discovering a truth)","If morality is subjective, you can't condemn any atrocity","Mathematical truths are objective and non-physical — moral truths can be too","Cross-cultural moral convergence suggests underlying reality"]},
+        sideB:{title:"Morality Is Subjective/Constructed", thinker:"Nietzsche, Mackie, Harman", argument:"Moral 'truths' are projections of human emotions and cultural conditioning. There's no moral fabric of the universe. We INVENTED right and wrong to enable cooperation.", points:["Moral beliefs vary wildly across cultures and eras","There's no way to 'observe' a moral fact","Evolution explains moral intuitions without needing moral reality","Disagreement persists even among rational, informed people"]},
+        synthesis:"A middle path: <strong>moral constructivism</strong> (Rawls, Scanlon). Morality isn't 'out there' like a planet, but it's not arbitrary either. It's constructed by rational beings who need to live together. Like language — invented, but not random. The rules of chess aren't 'objective truths,' but within the game, some moves are genuinely better than others."
+    },
+    {
+        topic:"Does God Exist?",
+        sideA:{title:"Yes — God Exists", thinker:"Aquinas, Leibniz, Plantinga", argument:"Something caused the universe. That something must be uncaused, necessary, and transcendent. The fine-tuning of physical constants, the existence of consciousness, and the universality of religious experience all point beyond materialism.", points:["Why is there something rather than nothing?","The universe's fine-tuning is astronomically improbable by chance","Consciousness is inexplicable in purely material terms","Billions of humans across all cultures report transcendent experiences"]},
+        sideB:{title:"No — God Doesn't Exist", thinker:"Russell, Mackie, Dawkins", argument:"There's no evidence for God that couldn't be explained naturally. The universe doesn't need a creator — it might be self-causing or eternal. Religious experience is neurological, not supernatural.", points:["The burden of proof is on the claimant — absence of evidence matters","'God' just pushes the question back: who created God?","Evolution explains design without a designer","The problem of evil: an all-good, all-powerful God is incompatible with suffering"]},
+        synthesis:"Many philosophers land on <strong>agnosticism</strong> — not as intellectual cowardice, but as honest humility. Kant argued God can't be proven OR disproven by reason alone. The question might be beyond human cognitive capacity — like asking a fish to understand fire. What matters practically: how does your answer change how you LIVE?"
+    }
+];
+
+let debateIdx = 0;
+const debateContainer = document.getElementById('debateContainer');
+
+function buildDebate() {
+    const d = debates[debateIdx];
+    debateContainer.innerHTML = `
+        <div class="debate-header">
+            <h3>The Great Debate</h3>
+            <div class="debate-topic">"${d.topic}"</div>
+        </div>
+        <div class="debate-body">
+            <div class="debate-sides">
+                <div class="debate-side side-a" id="sideA">
+                    <h4>${d.sideA.title}</h4>
+                    <div class="thinker">${d.sideA.thinker}</div>
+                    <p>${d.sideA.argument}</p>
+                    <ul class="points">${d.sideA.points.map(p=>`<li>${p}</li>`).join('')}</ul>
+                </div>
+                <div class="debate-vs">VS</div>
+                <div class="debate-side side-b" id="sideB">
+                    <h4>${d.sideB.title}</h4>
+                    <div class="thinker">${d.sideB.thinker}</div>
+                    <p>${d.sideB.argument}</p>
+                    <ul class="points">${d.sideB.points.map(p=>`<li>${p}</li>`).join('')}</ul>
+                </div>
+            </div>
+            <div class="debate-response" id="debateResponse"></div>
+            <div class="debate-nav">
+                <button class="btn btn-ghost" onclick="prevDebate()">← Previous</button>
+                <span style="color:var(--muted);font-size:.8rem;align-self:center;">${debateIdx+1} / ${debates.length}</span>
+                <button class="btn btn-ghost" onclick="nextDebate()">Next →</button>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('sideA').addEventListener('click', () => pickSide('A'));
+    document.getElementById('sideB').addEventListener('click', () => pickSide('B'));
+}
+
+function pickSide(side) {
+    const d = debates[debateIdx];
+    document.getElementById('sideA').classList.toggle('picked', side==='A');
+    document.getElementById('sideB').classList.toggle('picked', side==='B');
+    const resp = document.getElementById('debateResponse');
+    resp.innerHTML = `
+        <h4>🤝 The Philosophical Synthesis</h4>
+        <p>${d.synthesis}</p>
+    `;
+    resp.classList.add('show');
+}
+
+function nextDebate() { debateIdx = (debateIdx+1)%debates.length; buildDebate(); }
+function prevDebate() { debateIdx = (debateIdx-1+debates.length)%debates.length; buildDebate(); }
+buildDebate();
+
+/* ============================================================
+   DAILY PRACTICES
+============================================================ */
+const practices = [
+    {
+        time:"Morning · 5 min", title:"The Stoic Morning Reflection",
+        desc:"Marcus Aurelius began each day preparing for difficulty. This isn't pessimism — it's armor.",
+        steps:["Ask: 'What is in my control today? What isn't?'","Identify one potential challenge and pre-decide your response","Set one intention: 'Today I will practice [patience/courage/honesty]'","Remind yourself: 'I could leave life right now. Let that determine what I do and say.'"]
+    },
+    {
+        time:"Anytime · 2 min", title:"The Socratic Pause",
+        desc:"Before reacting to anything emotionally charged, insert a philosophical pause.",
+        steps:["Notice the trigger (email, comment, news)","Ask: 'Is my reaction based on fact or assumption?'","Ask: 'What would the wisest person I know do here?'","Respond from wisdom, not impulse"]
+    },
+    {
+        time:"Evening · 10 min", title:"The Seneca Evening Review",
+        desc:"Seneca reviewed his entire day each night — not with guilt, but with curiosity.",
+        steps:["'What bad habit did I correct today?'","'What temptation did I resist?'","'In what way am I better than yesterday?'","'Where did I fall short, and what will I do differently?'"]
+    },
+    {
+        time:"Weekly · 20 min", title:"The Existential Audit",
+        desc:"Kierkegaard and Sartre both emphasized regular self-examination to avoid 'bad faith.'",
+        steps:["'Am I living authentically or performing for others?'","'What am I avoiding that I know I should face?'","'If I died next week, what would I regret not doing?'","'What story am I telling myself that might not be true?'"]
+    },
+    {
+        time:"During conflict · 1 min", title:"The Kantian Test",
+        desc:"Before any morally questionable action, run Kant's universalizability test.",
+        steps:["State what you're about to do clearly","Ask: 'What if EVERYONE did this?'","If society would collapse, don't do it","If it passes, ask: 'Am I treating anyone merely as a means?'"]
+    },
+    {
+        time:"When stuck · 5 min", title:"The Taoist Non-Action",
+        desc:"Wu wei — sometimes the wisest action is non-action. Stop forcing.",
+        steps:["Recognize you're pushing against resistance","Ask: 'Am I forcing this because of ego or genuine need?'","Step back completely for a defined period","Trust that clarity often comes from space, not effort"]
+    }
+];
+
+const practiceGrid = document.getElementById('practiceGrid');
+practices.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'practice-card';
+    card.innerHTML = `
+        <div class="time-tag">${p.time}</div>
+        <h3>${p.title}</h3>
+        <p>${p.desc}</p>
+        <ul class="steps">${p.steps.map((s,i) => `<li data-step="${i+1}.">${s}</li>`).join('')}</ul>
+    `;
+    practiceGrid.appendChild(card);
+});
+
+/* ============================================================
+   PERSONAL PHILOSOPHY BUILDER
+============================================================ */
+const builderQuestions = [
+    {
+        q:"What matters most in a good life?",
+        opts:[
+            {text:"Happiness and pleasure", val:"hedonist"},
+            {text:"Virtue and character", val:"virtue"},
+            {text:"Freedom and authenticity", val:"existentialist"},
+            {text:"Duty and moral law", val:"deontologist"},
+            {text:"Harmony with nature/universe", val:"taoist"},
+            {text:"Reducing suffering for all", val:"utilitarian"}
+        ]
+    },
+    {
+        q:"When facing a tough decision, you instinctively...",
+        opts:[
+            {text:"Calculate the best outcome for everyone", val:"utilitarian"},
+            {text:"Ask what a person of good character would do", val:"virtue"},
+            {text:"Follow the rule, regardless of consequences", val:"deontologist"},
+            {text:"Trust my gut and take responsibility", val:"existentialist"},
+            {text:"Go with the flow and see what emerges", val:"taoist"},
+            {text:"Choose whatever brings peace of mind", val:"hedonist"}
+        ]
+    },
+    {
+        q:"What's your relationship with suffering?",
+        opts:[
+            {text:"Avoid it — life should be pleasant", val:"hedonist"},
+            {text:"Endure it — it builds character", val:"virtue"},
+            {text:"Transform it — find meaning in it", val:"existentialist"},
+            {text:"Accept it — it's part of the flow", val:"taoist"},
+            {text:"Minimize it — for myself and others", val:"utilitarian"},
+            {text:"Transcend it — through discipline and duty", val:"deontologist"}
+        ]
+    },
+    {
+        q:"What do you think about rules and authority?",
+        opts:[
+            {text:"Good rules create good societies", val:"deontologist"},
+            {text:"Rules should maximize overall wellbeing", val:"utilitarian"},
+            {text:"I make my own rules", val:"existentialist"},
+            {text:"Rules should cultivate virtue", val:"virtue"},
+            {text:"The best rules are no rules — flow naturally", val:"taoist"},
+            {text:"Rules should protect individual pleasure/freedom", val:"hedonist"}
+        ]
+    },
+    {
+        q:"How do you find meaning?",
+        opts:[
+            {text:"Through relationships and community", val:"virtue"},
+            {text:"Through personal creation and choice", val:"existentialist"},
+            {text:"Through service and reducing harm", val:"utilitarian"},
+            {text:"Through connection with something larger", val:"taoist"},
+            {text:"Through enjoyment and savoring life", val:"hedonist"},
+            {text:"Through fulfilling my duty", val:"deontologist"}
+        ]
+    },
+    {
+        q:"What's your view on other people?",
+        opts:[
+            {text:"Others are essential — we flourish together", val:"virtue"},
+            {text:"Others are free beings I must respect", val:"existentialist"},
+            {text:"Others' wellbeing is my responsibility", val:"utilitarian"},
+            {text:"Others are part of the same whole", val:"taoist"},
+            {text:"Others should be treated as ends, never means", val:"deontologist"},
+            {text:"Others are companions in the pursuit of joy", val:"hedonist"}
+        ]
+    },
+    {
+        q:"What happens when you die?",
+        opts:[
+            {text:"Nothing — so live fully now", val:"existentialist"},
+            {text:"Your character and legacy live on", val:"virtue"},
+            {text:"You return to the whole", val:"taoist"},
+            {text:"It doesn't matter — focus on living well", val:"hedonist"},
+            {text:"Your impact on others' lives continues", val:"utilitarian"},
+            {text:"The moral law transcends death", val:"deontologist"}
+        ]
+    }
+];
+
+const builderResults = {
+    existentialist: {
+        name:"Existentialist",
+        desc:"You believe life has no pre-given meaning — and that's liberating, not terrifying. You value authenticity, personal freedom, and the courage to create your own path. You'd rather face anxiety than live someone else's life.",
+        books:["'Being and Nothingness' — Jean-Paul Sartre","'The Myth of Sisyphus' — Albert Camus","'Man's Search for Meaning' — Viktor Frankl","'The Courage to Be' — Paul Tillich"]
+    },
+    virtue: {
+        name:"Virtue Ethicist",
+        desc:"You believe the good life is about developing excellent character traits — courage, wisdom, justice, temperance — through practice and community. You focus on WHO you're becoming, not just what you're doing.",
+        books:["'Nicomachean Ethics' — Aristotle","'After Virtue' — Alasdair MacIntyre","'The Road to Character' — David Brooks","'Meditations' — Marcus Aurelius"]
+    },
+    utilitarian: {
+        name:"Utilitarian / Effective Altruist",
+        desc:"You believe the right action is whatever produces the most wellbeing for the most beings. You're driven by impact, evidence, and the radical idea that every life matters equally.",
+        books:["'The Life You Can Save' — Peter Singer","'Utilitarianism' — John Stuart Mill","'Doing Good Better' — William MacAskill","'The Expanding Circle' — Peter Singer"]
+    },
+    taoist: {
+        name:"Taoist / Eastern Philosopher",
+        desc:"You seek harmony with the natural flow of things. You value simplicity, acceptance, and the wisdom of non-forcing. You trust that the universe has its own intelligence.",
+        books:["'Tao Te Ching' — Lao Tzu","'The Book of Chuang Tzu'","'Zen Mind, Beginner's Mind' — Shunryu Suzuki","'The Tao of Pooh' — Benjamin Hoff"]
+    },
+    deontologist: {
+        name:"Deontologist / Kantian",
+        desc:"You believe in moral absolutes — some things are right or wrong regardless of consequences. You value duty, consistency, and treating every person as inherently worthy of respect.",
+        books:["'Groundwork of the Metaphysics of Morals' — Kant","'What We Owe to Each Other' — T.M. Scanlon","'Justice' — Michael Sandel","'The Moral Law' — Kant (Paton translation)"]
+    },
+    hedonist: {
+        name:"Epicurean / Hedonist",
+        desc:"You believe the good life centers on pleasure, tranquility, and the absence of pain. Not wild excess — but savoring simple joys, deep friendships, and freedom from anxiety. Epicurus would be proud.",
+        books:["'Letter to Menoeceus' — Epicurus","'On the Nature of Things' — Lucretius","'How to Be an Epicurean' — Catherine Wilson","'The Swerve' — Stephen Greenblatt"]
+    }
+};
+
+let builderStep = 0;
+let builderAnswers = {};
+const builderContainer = document.getElementById('builderContainer');
+
+function buildBuilder() {
+    if(builderStep < builderQuestions.length) {
+        const bq = builderQuestions[builderStep];
+        builderContainer.innerHTML = `
+            <div class="builder-progress">
+                ${builderQuestions.map((_,i) => `<div class="builder-dot ${i < builderStep ? 'done' : ''} ${i === builderStep ? 'active' : ''}"></div>`).join('')}
+            </div>
+            <div class="builder-step active">
+                <div class="builder-question">${bq.q}</div>
+                <div class="builder-options">
+                    ${bq.opts.map((o,i) => `
+                        <button class="builder-opt" data-val="${o.val}">
+                            <h4>${o.text}</h4>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        document.querySelectorAll('.builder-opt').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const val = btn.dataset.val;
+                builderAnswers[val] = (builderAnswers[val]||0) + 1;
+                builderStep++;
+                buildBuilder();
+            });
+        });
+    } else {
+        // Show results
+        const sorted = Object.entries(builderAnswers).sort((a,b) => b[1]-a[1]);
+        const topKey = sorted[0][0];
+        const result = builderResults[topKey];
+        builderContainer.innerHTML = `
+            <div class="builder-progress">
+                ${builderQuestions.map((_,i) => `<div class="builder-dot done"></div>`).join('')}
+            </div>
+            <div class="builder-result">
+                <h3>Your Personal Philosophy:</h3>
+                <div class="philosophy-type">${result.name}</div>
+                <p>${result.desc}</p>
+                <div style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;">
+                    ${sorted.map(([k,v]) => `<span class="trait-badge" style="opacity:${v/sorted[0][1]}">${builderResults[k]?.name || k}: ${Math.round(v/Object.values(builderAnswers).reduce((a,b)=>a+b,0)*100)}%</span>`).join('')}
+                </div>
+                <div class="reading-list">
+                    <h4>📚 Recommended Reading</h4>
+                    <ul>${result.books.map(b => `<li>${b}</li>`).join('')}</ul>
+                </div>
+                <button class="btn btn-ghost" style="margin-top:1.5rem;" onclick="builderStep=0;builderAnswers={};buildBuilder();">Retake Quiz ↺</button>
+            </div>
+        `;
+    }
+}
+buildBuilder();
+
+/* ============================================================
+   PHILOSOPHICAL JOURNAL
+============================================================ */
+const journalPrompts = [
+    {title:"The Socratic Examination", prompt:"What belief do I hold that I've never seriously questioned? Why do I hold it?"},
+    {title:"The Stoic Reflection", prompt:"What happened today that was outside my control? How did I respond — and how do I wish I had responded?"},
+    {title:"The Existential Check-in", prompt:"Am I living authentically right now, or am I performing a role? What would I do differently if no one was watching?"},
+    {title:"The Utilitarian Audit", prompt:"Who did my actions help today? Who did they harm? How could I create more net good tomorrow?"},
+    {title:"The Taoist Inquiry", prompt:"Where am I forcing things that want to flow naturally? What would happen if I let go?"},
+    {title:"The Nietzschean Test", prompt:"If I had to live this exact day on infinite repeat, would I say yes to it? What would I change?"},
+    {title:"The Buddhist Observation", prompt:"What am I clinging to right now? What am I avoiding? What would acceptance look like?"},
+    {title:"The Aristotelian Question", prompt:"What virtue did I practice today? What virtue did I neglect? What would my 'best self' version look like tomorrow?"}
+];
+
+let activePrompt = 0;
+const journalContainer = document.getElementById('journalContainer');
+
+function buildJournal() {
+    journalContainer.innerHTML = `
+        <div class="journal-prompts">
+            ${journalPrompts.map((jp, i) => `
+                <div class="journal-prompt ${i===activePrompt?'active':''}" data-idx="${i}">
+                    <h4>${jp.title}</h4>
+                    <p>${jp.prompt}</p>
+                </div>
+            `).join('')}
+        </div>
+        <div class="journal-write">
+            <h3>Your Reflection</h3>
+            <div class="prompt-text" id="journalActivePrompt">"${journalPrompts[activePrompt].prompt}"</div>
+            <textarea id="journalTextarea" placeholder="Write your thoughts here... This is your private philosophical space. Nothing is saved to any server — only to your browser's local storage."></textarea>
+            <div class="journal-actions">
+                <button class="btn btn-primary" onclick="saveJournalEntry()">Save Entry</button>
+                <span class="journal-saved" id="journalSaved">✓ Saved to local storage</span>
+            </div>
+            <div class="journal-entries" id="journalEntries"></div>
+        </div>
+    `;
+
+    // Load saved entries
+    loadJournalEntries();
+
+    // Prompt click handlers
+    document.querySelectorAll('.journal-prompt').forEach(el => {
+        el.addEventListener('click', () => {
+            activePrompt = parseInt(el.dataset.idx);
+            document.querySelectorAll('.journal-prompt').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('journalActivePrompt').textContent = `"${journalPrompts[activePrompt].prompt}"`;
+        });
+    });
+
+    // Load any draft
+    const draft = localStorage.getItem('philJournalDraft');
+    if(draft) document.getElementById('journalTextarea').value = draft;
+
+    // Auto-save draft
+    document.getElementById('journalTextarea')?.addEventListener('input', (e) => {
+        localStorage.setItem('philJournalDraft', e.target.value);
+    });
+}
+
+function saveJournalEntry() {
+    const textarea = document.getElementById('journalTextarea');
+    const text = textarea.value.trim();
+    if(!text) return;
+
+    const entries = JSON.parse(localStorage.getItem('philJournalEntries') || '[]');
+    entries.unshift({
+        date: new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}),
+        prompt: journalPrompts[activePrompt].title,
+        text: text
+    });
+    localStorage.setItem('philJournalEntries', JSON.stringify(entries.slice(0, 50)));
+    localStorage.removeItem('philJournalDraft');
+    textarea.value = '';
+
+    const saved = document.getElementById('journalSaved');
+    saved.classList.add('show');
+    setTimeout(() => saved.classList.remove('show'), 2000);
+
+    loadJournalEntries();
+}
+
+function loadJournalEntries() {
+    const entries = JSON.parse(localStorage.getItem('philJournalEntries') || '[]');
+    const container = document.getElementById('journalEntries');
+    if(!container) return;
+    if(entries.length === 0) {
+        container.innerHTML = '<p style="font-size:.8rem;color:var(--muted);padding:.5rem;">No entries yet. Start writing above!</p>';
+        return;
+    }
+    container.innerHTML = entries.slice(0, 5).map(e => `
+        <div class="journal-entry">
+            <div class="entry-date">${e.date} · ${e.prompt}</div>
+            ${e.text.substring(0, 150)}${e.text.length > 150 ? '...' : ''}
+        </div>
+    `).join('');
+}
+buildJournal();
+
+/* ============================================================
+   PHILOSOPHY CONNECTION MAP (Canvas-based)
+============================================================ */
+const mapContainer = document.querySelector('.map-container');
+// We'll skip the complex map for performance and use the other interactive elements
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+============================================================ */
+document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowRight' && document.activeElement.tagName !== 'TEXTAREA') {
+        nextQuote();
+    }
+    if(e.key === 'ArrowLeft' && document.activeElement.tagName !== 'TEXTAREA') {
+        prevQuote();
+    }
+});
+
+/* ============================================================
+   SMOOTH SCROLL OFFSET FOR NAV
+============================================================ */
+function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if(el) {
+        const offset = 80;
+        const top = el.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({top, behavior:'smooth'});
+    }
+}
+
+/* ============================================================
+   EASTER EGG — Konami Code
+============================================================ */
+let konamiProgress = 0;
+const konamiCode = [38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown', (e) => {
+    if(e.keyCode === konamiCode[konamiProgress]) {
+        konamiProgress++;
+        if(konamiProgress === konamiCode.length) {
+            konamiProgress = 0;
+            document.body.style.transition = 'filter 1s';
+            document.body.style.filter = 'hue-rotate(180deg)';
+            setTimeout(() => { document.body.style.filter = ''; }, 3000);
+            alert('🎉 You found the philosopher\'s stone! Nietzsche says: "And those who were seen dancing were thought to be insane by those who could not hear the music."');
+        }
+    } else {
+        konamiProgress = 0;
+    }
+});
+
+console.log('%c🏛️ Philosophy Made Alive', 'font-size:20px;font-weight:bold;color:#a78bfa;');
+console.log('%c"The beginning of wisdom is the definition of terms." — Socrates', 'font-size:12px;color:#60a5fa;');
+console.log('%cTip: Try the Konami Code (↑↑↓↓←→←→BA) for a surprise!', 'font-size:11px;color:#34d399;');
+
+</script>
+</body>
+</html>
