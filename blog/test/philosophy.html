@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophy — Made Simple</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d0d0d;
+            color: #f0f0f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ——— Hero ——— */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: clamp(2.4rem, 6vw, 5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: #aaa;
+            max-width: 520px;
+            line-height: 1.6;
+        }
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 1.6rem;
+            color: #555;
+        }
+        @keyframes bounce {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* ——— Section ——— */
+        .section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        .section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: #e0e0e0;
+        }
+
+        /* ——— One-liner cards ——— */
+        .oneliner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .oneliner-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: transform .25s, border-color .25s, box-shadow .25s;
+            position: relative;
+            overflow: hidden;
+        }
+        .oneliner-card:hover {
+            transform: translateY(-4px);
+            border-color: #a78bfa;
+            box-shadow: 0 8px 30px rgba(167,139,250,.15);
+        }
+        .oneliner-card .emoji {
+            font-size: 2rem;
+            margin-bottom: .6rem;
+        }
+        .oneliner-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: .4rem;
+        }
+        .oneliner-card .short {
+            font-size: .92rem;
+            color: #999;
+            line-height: 1.5;
+        }
+        .oneliner-card .detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .4s ease, margin-top .4s ease;
+            font-size: .88rem;
+            color: #bbb;
+            line-height: 1.55;
+        }
+        .oneliner-card.open .detail {
+            max-height: 300px;
+            margin-top: .8rem;
+        }
+
+        /* ——— Interactive "Think About It" ——— */
+        .think-box {
+            background: linear-gradient(135deg, #1e1b4b, #1a1a2e);
+            border: 1px solid #312e81;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .think-box .question {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            min-height: 2.8rem;
+        }
+        .think-box .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .8rem;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+        }
+        .think-box .options button {
+            background: #2d2a5e;
+            color: #c4b5fd;
+            border: 1px solid #4c3fad;
+            border-radius: 12px;
+            padding: .7rem 1.3rem;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: background .2s, transform .15s;
+            font-family: inherit;
+        }
+        .think-box .options button:hover {
+            background: #3b35a0;
+            transform: scale(1.05);
+        }
+        .think-box .options button.selected {
+            background: #6d28d9;
+            border-color: #7c3aed;
+            color: #fff;
+        }
+        .think-box .response {
+            font-size: .95rem;
+            color: #a5b4fc;
+            line-height: 1.6;
+            min-height: 1.5rem;
+            transition: opacity .3s;
+        }
+        .next-btn {
+            margin-top: 1rem;
+            background: none;
+            border: 1px solid #4c3fad;
+            color: #a5b4fc;
+            padding: .55rem 1.4rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: .9rem;
+            transition: background .2s;
+        }
+        .next-btn:hover { background: #2d2a5e; }
+
+        /* ——— Timeline ——— */
+        .timeline {
+            position: relative;
+            margin-top: 2rem;
+            padding-left: 2.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #a78bfa, #34d399);
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity .5s, transform .5s;
+        }
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #a78bfa;
+            border: 3px solid #0d0d0d;
+        }
+        .timeline-item h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #c4b5fd;
+        }
+        .timeline-item p {
+            font-size: .9rem;
+            color: #999;
+            line-height: 1.5;
+            margin-top: .3rem;
+        }
+
+        /* ——— Drag-match game ——— */
+        .match-game {
+            margin-top: 2rem;
+        }
+        .match-columns {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .match-col {
+            display: flex;
+            flex-direction: column;
+            gap: .7rem;
+        }
+        .match-item {
+            background: #1a1a1a;
+            border: 2px solid #2a2a2a;
+            border-radius: 12px;
+            padding: .8rem 1.2rem;
+            font-size: .92rem;
+            cursor: pointer;
+            transition: border-color .2s, background .2s;
+            user-select: none;
+            min-width: 160px;
+            text-align: center;
+        }
+        .match-item:hover { border-color: #60a5fa; }
+        .match-item.selected-left { border-color: #a78bfa; background: #1e1b4b; }
+        .match-item.correct { border-color: #34d399; background: #064e3b; color: #6ee7b7; }
+        .match-item.wrong { border-color: #f87171; background: #450a0a; animation: shake .4s; }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .match-score {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: .95rem;
+            color: #34d399;
+            min-height: 1.4rem;
+        }
+
+        /* ——— Footer ——— */
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #444;
+            font-size: .85rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ====== HERO ====== -->
+<div class="hero">
+    <h1>What is Philosophy?</h1>
+    <p>No walls of text. Just tap, think, and explore the biggest questions humans have ever asked.</p>
+    <div class="scroll-hint">↓</div>
+</div>
+
+<!-- ====== ONE-LINER BRANCHES ====== -->
+<div class="section">
+    <h2>🌿 The 5 Big Branches</h2>
+    <p style="color:#888;margin-bottom:.5rem;">Tap any card to learn more.</p>
+    <div class="oneliner-grid" id="branchGrid"></div>
+</div>
+
+<!-- ====== THINK ABOUT IT ====== -->
+<div class="section">
+    <h2>💭 Think About It</h2>
+    <p style="color:#888;">Classic philosophy questions — pick an answer and see what thinkers said.</p>
+    <div class="think-box" id="thinkBox">
+        <div class="question" id="tbQuestion"></div>
+        <div class="options" id="tbOptions"></div>
+        <div class="response" id="tbResponse"></div>
+        <button class="next-btn" id="tbNext" style="display:none;">Next Question →</button>
+    </div>
+</div>
+
+<!-- ====== MINI TIMELINE ====== -->
+<div class="section">
+    <h2>⏳ Philosophy Through Time</h2>
+    <p style="color:#888;">Scroll to reveal milestones.</p>
+    <div class="timeline" id="timeline"></div>
+</div>
+
+<!-- ====== MATCH GAME ====== -->
+<div class="section">
+    <h2>🎯 Match the Philosopher</h2>
+    <p style="color:#888;">Click a philosopher on the left, then their idea on the right.</p>
+    <div class="match-game">
+        <div class="match-columns" id="matchColumns"></div>
+        <div class="match-score" id="matchScore"></div>
+    </div>
+</div>
+
+<footer>Built for curious minds · Philosophy Made Simple</footer>
+
+<script>
+/* ========================================
+   DATA
+======================================== */
+const branches = [
+    { emoji:"🤔", name:"Metaphysics", short:"What is reality?", detail:"Asks whether the world is real, if time exists, if there's a soul, and what 'being' even means. Think: Are you in a simulation?" },
+    { emoji:"🧠", name:"Epistemology", short:"What can we know?", detail:"Studies knowledge itself. How do you know what you know? Can you trust your senses? This is where 'I think, therefore I am' lives." },
+    { emoji:"⚖️", name:"Ethics", short:"What's right & wrong?", detail:"Should you lie to protect someone? Is stealing bread to feed your family okay? Ethics builds frameworks for moral decisions." },
+    { emoji:"💬", name:"Logic", short:"How should we reason?", detail:"The toolkit of clear thinking. Identifies valid arguments, fallacies, and how to prove things step by step." },
+    { emoji:"🎨", name:"Aesthetics", short:"What is beauty?", detail:"Why does a sunset move you? Is art subjective? Explores beauty, taste, and the meaning of creative expression." }
+];
+
+const thinkData = [
+    {
+        q: "If a tree falls in a forest and nobody hears it, does it make a sound?",
+        options: ["Yes, obviously","No sound without a listener","It depends on what 'sound' means"],
+        responses: [
+            "Materialists agree — sound waves exist regardless of ears.",
+            "George Berkeley argued that to exist is to be perceived. No listener, no sound.",
+            "Bingo — most philosophers say this is really a question about definitions, not physics."
+        ]
+    },
+    {
+        q: "Is it okay to steal medicine to save someone's life?",
+        options: ["Yes — life comes first","No — rules are rules","It's complicated"],
+        responses: [
+            "A utilitarian would agree: the greatest good for the greatest number.",
+            "Kant might say this — moral rules must be universal, no exceptions.",
+            "Lawrence Kohlberg used exactly this dilemma to study moral development. Most ethicists land here."
+        ]
+    },
+    {
+        q: "Do you have free will, or is everything predetermined?",
+        options: ["I have free will","It's all determined","A mix of both"],
+        responses: [
+            "Libertarians (philosophically) agree — you're the author of your choices.",
+            "Hard determinists like Spinoza say every event, including your thoughts, was inevitable.",
+            "This is called compatibilism — thinkers like Hume said free will and determinism can coexist."
+        ]
+    },
+    {
+        q: "Can a machine ever truly 'think'?",
+        options: ["Yes, why not?","No, it just simulates","We can't know yet"],
+        responses: [
+            "Alan Turing proposed: if it acts like it thinks, that's enough.",
+            "John Searle's Chinese Room argument says processing symbols isn't understanding.",
+            "This is the 'hard problem of consciousness' — philosopher David Chalmers says we're far from solving it."
+        ]
+    },
+    {
+        q: "Does life have an inherent meaning?",
+        options: ["Yes — there's a purpose","No — we create meaning","Meaning is an illusion"],
+        responses: [
+            "Many religious and teleological philosophers agree — purpose is built into existence.",
+            "Existentialists like Sartre said we're 'condemned to be free' — meaning is our project.",
+            "Nihilists like Nietzsche (early readings) suggested we must confront the void honestly."
+        ]
+    }
+];
+
+const timelineData = [
+    { era:"~600 BCE", title:"Pre-Socratics", desc:"Thales, Heraclitus & friends asked: 'What is everything made of?' — kickstarting Western philosophy." },
+    { era:"469–399 BCE", title:"Socrates", desc:"'I know that I know nothing.' He questioned everything and was sentenced to death for it." },
+    { era:"~380 BCE", title:"Plato's Republic", desc:"Imagined a perfect society and introduced the world of ideal Forms behind our reality." },
+    { era:"~350 BCE", title:"Aristotle", desc:"Classified logic, biology, ethics, politics — basically invented being a scientist-philosopher." },
+    { era:"~300 CE", title:"Eastern Flourishing", desc:"Confucius, Laozi, and Buddha's ideas matured into rich philosophical traditions across Asia." },
+    { era:"1641", title:"Descartes' Meditations", desc:"'I think, therefore I am' — doubted everything until he found one certainty." },
+    { era:"1781", title:"Kant's Critique", desc:"Argued our minds shape reality as much as reality shapes our minds." },
+    { era:"1844–1900", title:"Nietzsche", desc:"'God is dead' — challenged morality, truth, and meaning with a hammer." },
+    { era:"1943", title:"Sartre & Existentialism", desc:"'Existence precedes essence' — you're born blank and must define yourself." },
+    { era:"Today", title:"AI & Philosophy", desc:"Can machines think? What are digital rights? Philosophy meets the future." }
+];
+
+const matchData = [
+    { philosopher:"Socrates", idea:"Know thyself" },
+    { philosopher:"Descartes", idea:"I think, therefore I am" },
+    { philosopher:"Nietzsche", idea:"God is dead" },
+    { philosopher:"Sartre", idea:"Existence precedes essence" },
+    { philosopher:"Aristotle", idea:"Virtue is a habit" }
+];
+
+/* ========================================
+   BRANCHES
+======================================== */
+const branchGrid = document.getElementById('branchGrid');
+branches.forEach(b => {
+    const card = document.createElement('div');
+    card.className = 'oneliner-card';
+    card.innerHTML = `<div class="emoji">${b.emoji}</div><h3>${b.name}</h3><div class="short">${b.short}</div><div class="detail">${b.detail}</div>`;
+    card.addEventListener('click', () => card.classList.toggle('open'));
+    branchGrid.appendChild(card);
+});
+
+/* ========================================
+   THINK ABOUT IT
+======================================== */
+let thinkIdx = 0;
+const tbQuestion = document.getElementById('tbQuestion');
+const tbOptions  = document.getElementById('tbOptions');
+const tbResponse = document.getElementById('tbResponse');
+const tbNext     = document.getElementById('tbNext');
+
+function loadThink() {
+    const d = thinkData[thinkIdx];
+    tbQuestion.textContent = d.q;
+    tbOptions.innerHTML = '';
+    tbResponse.textContent = '';
+    tbNext.style.display = 'none';
+    d.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.addEventListener('click', () => {
+            tbOptions.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            tbResponse.textContent = d.responses[i];
+            tbNext.style.display = 'inline-block';
+        });
+        tbOptions.appendChild(btn);
+    });
+}
+tbNext.addEventListener('click', () => {
+    thinkIdx = (thinkIdx + 1) % thinkData.length;
+    loadThink();
+});
+loadThink();
+
+/* ========================================
+   TIMELINE — scroll reveal
+======================================== */
+const timeline = document.getElementById('timeline');
+timelineData.forEach(t => {
+    const item = document.createElement('div');
+    item.className = 'timeline-item';
+    item.innerHTML = `<h3>${t.era} — ${t.title}</h3><p>${t.desc}</p>`;
+    timeline.appendChild(item);
+});
+
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.3 });
+document.querySelectorAll('.timeline-item').forEach(el => observer.observe(el));
+
+/* ========================================
+   MATCH GAME
+======================================== */
+const matchColumns = document.getElementById('matchColumns');
+const matchScore   = document.getElementById('matchScore');
+let selectedLeft = null;
+let matchedCount = 0;
+
+// Shuffle helper
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function buildMatch() {
+    matchColumns.innerHTML = '';
+    matchedCount = 0;
+    matchScore.textContent = '';
+    selectedLeft = null;
+
+    const leftCol = document.createElement('div');
+    leftCol.className = 'match-col';
+    const rightCol = document.createElement('div');
+    rightCol.className = 'match-col';
+
+    const shuffledRight = shuffle(matchData);
+
+    matchData.forEach((m, i) => {
+        const lItem = document.createElement('div');
+        lItem.className = 'match-item';
+        lItem.textContent = m.philosopher;
+        lItem.dataset.key = m.philosopher;
+        lItem.addEventListener('click', () => {
+            if (lItem.classList.contains('correct')) return;
+            document.querySelectorAll('.match-item.selected-left').forEach(el => el.classList.remove('selected-left'));
+            lItem.classList.add('selected-left');
+            selectedLeft = m.philosopher;
+        });
+        leftCol.appendChild(lItem);
+    });
+
+    shuffledRight.forEach(m => {
+        const rItem = document.createElement('div');
+        rItem.className = 'match-item';
+        rItem.textContent = m.idea;
+        rItem.dataset.key = m.philosopher;
+        rItem.addEventListener('click', () => {
+            if (!selectedLeft || rItem.classList.contains('correct')) return;
+            if (selectedLeft === rItem.dataset.key) {
+                rItem.classList.add('correct');
+                const lMatch = leftCol.querySelector(`[data-key="${selectedLeft}"]`);
+                if (lMatch) lMatch.classList.add('correct');
+                matchedCount++;
+                if (matchedCount === matchData.length) matchScore.textContent = "🎉 Perfect! You matched them all!";
+            } else {
+                rItem.classList.add('wrong');
+                setTimeout(() => rItem.classList.remove('wrong'), 500);
+            }
+            document.querySelectorAll('.match-item.selected-left').forEach(el => el.classList.remove('selected-left'));
+            selectedLeft = null;
+        });
+        rightCol.appendChild(rItem);
+    });
+
+    matchColumns.appendChild(leftCol);
+    matchColumns.appendChild(rightCol);
+}
+buildMatch();
+</script>
+
+</body>
+</html>
