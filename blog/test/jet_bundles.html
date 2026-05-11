@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jet Bundles — Interactive Explorer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+background: #0a0a1a;
+color: #e0e0f0;
+overflow-x: hidden;
+}
+header {
+text-align: center;
+padding: 30px 20px 10px;
+background: linear-gradient(180deg, #12123a 0%, #0a0a1a 100%);
+}
+header h1 {
+font-size: 2.4em;
+background: linear-gradient(90deg, #7eb4ff, #c084fc, #f472b6);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+margin-bottom: 8px;
+}
+header p {
+color: #8888aa;
+font-size: 1.05em;
+max-width: 700px;
+margin: 0 auto;
+}
+.tabs {
+display: flex;
+justify-content: center;
+gap: 6px;
+padding: 20px 10px;
+flex-wrap: wrap;
+}
+.tab-btn {
+padding: 10px 22px;
+border: 1px solid #333;
+background: #15152a;
+color: #aaa;
+border-radius: 25px;
+cursor: pointer;
+font-size: 0.95em;
+transition: all 0.3s;
+}
+.tab-btn:hover { border-color: #7eb4ff; color: #ccc; }
+.tab-btn.active {
+background: linear-gradient(135deg, #2a2a5a, #1a1a3a);
+border-color: #7eb4ff;
+color: #fff;
+box-shadow: 0 0 15px rgba(126,180,255,0.2);
+}
+.panel {
+display: none;
+max-width: 960px;
+margin: 0 auto;
+padding: 10px 20px 40px;
+}
+.panel.active { display: block; }
+.panel h2 {
+font-size: 1.5em;
+color: #c084fc;
+margin: 20px 0 10px;
+}
+.panel p, .panel li {
+line-height: 1.7;
+color: #bbb;
+margin-bottom: 10px;
+}
+.panel ul { padding-left: 24px; }
+.canvas-wrap {
+position: relative;
+background: #0d0d22;
+border: 1px solid #222;
+border-radius: 12px;
+margin: 20px auto;
+overflow: hidden;
+}
+canvas { display: block; }
+.controls {
+display: flex;
+flex-wrap: wrap;
+gap: 14px;
+align-items: center;
+justify-content: center;
+padding: 14px;
+background: #111130;
+border-radius: 10px;
+margin: 12px 0;
+}
+.controls label {
+color: #999;
+font-size: 0.9em;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.controls input[type="range"] {
+width: 140px;
+accent-color: #7eb4ff;
+}
+.controls select, .controls button {
+padding: 6px 14px;
+border-radius: 8px;
+border: 1px solid #333;
+background: #1a1a3a;
+color: #ccc;
+font-size: 0.9em;
+cursor: pointer;
+}
+.controls button:hover { border-color: #7eb4ff; }
+.info-box {
+background: #111130;
+border-left: 3px solid #c084fc;
+padding: 14px 18px;
+border-radius: 0 8px 8px 0;
+margin: 16px 0;
+font-size: 0.95em;
+color: #aaa;
+}
+.info-box strong { color: #e0e0f0; }
+.math {
+font-family: 'Times New Roman', serif;
+font-style: italic;
+color: #f0c0ff;
+}
+.legend {
+display: flex;
+flex-wrap: wrap;
+gap: 16px;
+justify-content: center;
+padding: 10px;
+font-size: 0.85em;
+}
+.legend-item {
+display: flex;
+align-items: center;
+gap: 5px;
+}
+.legend-dot {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+}
+.highlight { color: #7eb4ff; }
+.highlight2 { color: #f472b6; }
+.highlight3 { color: #34d399; }
+#tooltip {
+position: fixed;
+background: #1a1a3aee;
+border: 1px solid #555;
+padding: 8px 12px;
+border-radius: 8px;
+font-size: 0.85em;
+color: #ddd;
+pointer-events: none;
+display: none;
+z-index: 100;
+max-width: 280px;
+}
+</style>
+</head>
+<body>
+
+<div id="tooltip"></div>
+
+<header>
+<h1>✨ Jet Bundles Explorer</h1>
+<p>You know fibre bundles. Now discover <strong>jet bundles</strong> — the geometry of derivatives — through interactive visualizations.</p>
+</header>
+
+<div class="tabs">
+<button class="tab-btn active" data-tab="recap">0. Fibre Bundle Recap</button>
+<button class="tab-btn" data-tab="idea">1. The Core Idea</button>
+<button class="tab-btn" data-tab="first">2. First Jet Bundle</button>
+<button class="tab-btn" data-tab="second">3. Higher Jets</button>
+<button class="tab-btn" data-tab="equiv">4. Equivalence Classes</button>
+<button class="tab-btn" data-tab="sandbox">5. Sandbox</button>
+</div>
+
+<!-- ==================== TAB 0: RECAP ==================== -->
+<div class="panel active" id="panel-recap">
+<h2>Quick Fibre Bundle Recap</h2>
+<p>Since you already know fibre bundles, here's a quick visual refresher. Drag the point along the base to see the fibre above it.</p>
+<div class="canvas-wrap">
+<canvas id="c0" width="900" height="400"></canvas>
+</div>
+<div class="controls">
+<label>Drag the <span class="highlight">blue point</span> along the base space</label>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#7eb4ff"></div> Base point x</div>
+<div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Fibre π⁻¹(x)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Section σ(x)</div>
+</div>
+<div class="info-box">
+<strong>Reminder:</strong> A fibre bundle <span class="math">E →π B</span> assigns to each point <span class="math">x ∈ B</span> a fibre <span class="math">F</span>. A <strong>section</strong> <span class="math">σ: B → E</span> picks one point in each fibre. <br><br>
+<strong>Key question:</strong> What if we care not just about the <em>value</em> of a section at a point, but also about its <em>derivative</em> (and higher derivatives)? That's exactly what jet bundles capture!
+</div>
+</div>
+
+<!-- ==================== TAB 1: IDEA ==================== -->
+<div class="panel" id="panel-idea">
+<h2>The Core Idea of Jet Bundles</h2>
+<p>Imagine multiple sections passing through the same point. Some just touch (same value), some are tangent (same value AND derivative), and some agree even more closely (same higher derivatives).</p>
+<div class="canvas-wrap">
+<canvas id="c1" width="900" height="450"></canvas>
+</div>
+<div class="controls">
+<label>Point x₀: <input type="range" id="idea-x" min="100" max="800" value="450"></label>
+<button id="idea-shuffle">🔀 New Sections</button>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Section A</div>
+<div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Section B</div>
+<div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> Section C</div>
+<div class="legend-item"><div class="legend-dot" style="background:#7eb4ff"></div> Base point x₀</div>
+</div>
+<div class="info-box">
+<strong>Jet = Taylor data.</strong> The <span class="math">k</span>-jet of a section <span class="math">σ</span> at <span class="math">x</span> is the equivalence class of all sections that agree with <span class="math">σ</span> up to order <span class="math">k</span> at <span class="math">x</span>.<br><br>
+• <strong>0-jet:</strong> same value → <span class="math">σ₁(x) = σ₂(x)</span><br>
+• <strong>1-jet:</strong> same value + same first derivative → <span class="math">σ₁(x) = σ₂(x)</span> and <span class="math">σ₁'(x) = σ₂'(x)</span><br>
+• <strong>k-jet:</strong> agreement up to all derivatives of order ≤ k<br><br>
+The <strong>jet bundle</strong> <span class="math">J<sup>k</sup>E</span> is the bundle whose fibre over <span class="math">x</span> consists of all possible <span class="math">k</span>-jets at <span class="math">x</span>.
+</div>
+</div>
+
+<!-- ==================== TAB 2: FIRST JET ==================== -->
+<div class="panel" id="panel-first">
+<h2>The First Jet Bundle <span class="math">J¹E</span></h2>
+<p>For a bundle <span class="math">E → ℝ</span> with fibre <span class="math">ℝ</span>, a 1-jet at <span class="math">x</span> is a pair <span class="math">(σ(x), σ'(x))</span> — a value and a slope. Drag the point and the tangent line to explore the fibre of <span class="math">J¹E</span>.</p>
+<div class="canvas-wrap">
+<canvas id="c2" width="900" height="500"></canvas>
+</div>
+<div class="controls">
+<label>Base point: <input type="range" id="jet1-x" min="80" max="820" value="450"></label>
+<label>Value σ(x): <input type="range" id="jet1-val" min="-150" max="150" value="0"></label>
+<label>Slope σ'(x): <input type="range" id="jet1-slope" min="-300" max="300" value="50"></label>
+</div>
+<div class="info-box">
+<strong>What you're seeing:</strong><br>
+• The <span class="highlight">blue dot</span> on the base is <span class="math">x</span>.<br>
+• The <span class="highlight2">pink dot</span> above it is the value <span class="math">σ(x)</span> — this lives in the original fibre.<br>
+• The <span class="highlight3">green tangent line</span> represents the slope <span class="math">σ'(x)</span>.<br>
+• Together, <span class="math">(x, σ(x), σ'(x))</span> is one point in <span class="math">J¹E</span>.<br><br>
+<strong>Fibre dimension:</strong> Original fibre is 1D (the value). The 1-jet fibre is <strong>2D</strong> (value + slope). In general, <span class="math">dim(J¹E) = dim(B) + dim(F) + dim(B)·dim(F)</span>.
+</div>
+</div>
+
+<!-- ==================== TAB 3: HIGHER ==================== -->
+<div class="panel" id="panel-second">
+<h2>Higher Jet Bundles <span class="math">J<sup>k</sup>E</span></h2>
+<p>As we go to higher orders, each jet carries more Taylor data. Watch how curves that share more derivatives stay closer together near the base point.</p>
+<div class="canvas-wrap">
+<canvas id="c3" width="900" height="480"></canvas>
+</div>
+<div class="controls">
+<label>Jet order k: <input type="range" id="jet-order" min="0" max="4" value="1" step="1"><span id="jet-order-val" style="color:#c084fc;min-width:20px;display:inline-block;">1</span></label>
+<label>Zoom: <input type="range" id="jet-zoom" min="1" max="5" value="1" step="0.5"></label>
+<button id="higher-shuffle">🔀 New Curves</button>
+</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Reference section</div>
+<div class="legend-item"><div class="legend-dot" style="background:#555"></div> Different k-jet</div>
+<div class="legend-item"><div class="legend-dot" style="background:#34d399"></div> Same k-jet (equivalent!)</div>
+</div>
+<div class="info-box">
+<strong>The pattern:</strong><br>
+• <span class="math">J⁰E</span>: fibre records <strong>(value)</strong> — 1 number<br>
+• <span class="math">J¹E</span>: fibre records <strong>(value, 1st derivative)</strong> — 2 numbers<br>
+• <span class="math">J²E</span>: fibre records <strong>(value, 1st deriv, 2nd deriv)</strong> — 3 numbers<br>
+• <span class="math">J<sup>k</sup>E</span>: fibre records <strong>k+1 numbers</strong> (for 1D base, 1D fibre)<br><br>
+In general for <span class="math">dim B = n, dim F = m</span>: <span class="math">dim J<sup>k</sup>F = n + m · C(n+k, k)</span><br><br>
+There's a natural tower: <span class="math">… → J²E → J¹E → J⁰E ≅ E → B</span> where each projection forgets the highest derivative.
+</div>
+</div>
+
+<!-- ==================== TAB 4: EQUIVALENCE ==================== -->
+<div class="panel" id="panel-equiv">
+<h2>Equivalence Classes — What "Same Jet" Means</h2>
+<p>Two sections have the same <span class="math">k</span>-jet at <span class="math">x₀</span> if they're indistinguishable up to order <span class="math">k</span>. Click to place sections and see which ones are equivalent.</p>
+<div class="canvas-wrap">
+<canvas id="c4" width="900" height="480"></canvas>
+</div>
+<div class="controls">
+<label>Order k: <input type="range" id="eq-order" min="0" max="3" value="1" step="1"><span id="eq-order-val" style="color:#c084fc;min-width:20px;display:inline-block;">1</span></label>
+<label>Spread: <input type="range" id="eq-spread" min="1" max="10" value="5"></label>
+<button id="eq-reset">🔄 Reset</button>
+<button id="eq-generate">✨ Generate Family</button>
+</div>
+<div class="info-box">
+<strong>Formally:</strong> Two local sections <span class="math">σ₁, σ₂</span> of <span class="math">E → B</span> have the same <span class="math">k</span>-jet at <span class="math">x₀</span> iff in any (hence every) local coordinate system:<br>
+<span class="math" style="display:block;text-align:center;margin:8px 0;font-size:1.1em;">∂<sup>|α|</sup>σ₁/∂x<sup>α</sup>(x₀) = ∂<sup>|α|</sup>σ₂/∂x<sup>α</sup>(x₀) for all |α| ≤ k</span>
+This is coordinate-independent! The equivalence class <span class="math">j<sup>k</sup><sub>x₀</sub>σ</span> is the <strong>k-jet</strong> of <span class="math">σ</span> at <span class="math">x₀</span>.<br><br>
+<strong>Why it matters:</strong> PDEs can be formulated as submanifolds of jet bundles. A PDE of order <span class="math">k</span> is a subset <span class="math">R ⊂ J<sup>k</sup>E</span>, and solutions are sections whose jet prolongation lands in <span class="math">R</span>.
+</div>
+</div>
+
+<!-- ==================== TAB 5: SANDBOX ==================== -->
+<div class="panel" id="panel-sandbox">
+<h2>🎮 Jet Bundle Sandbox</h2>
+<p>Draw your own section by clicking/dragging on the canvas. The jet data is computed and displayed in real time.</p>
+<div class="canvas-wrap">
+<canvas id="c5" width="900" height="520"></canvas>
+</div>
+<div class="controls">
+<label>Show jet order: <input type="range" id="sb-order" min="0" max="3" value="1" step="1"><span id="sb-order-val" style="color:#c084fc;min-width:20px;display:inline-block;">1</span></label>
+<label>Probe x: <input type="range" id="sb-probe" min="50" max="850" value="450"></label>
+<button id="sb-clear">🗑️ Clear</button>
+<button id="sb-preset1">📈 Sine Wave</button>
+<button id="sb-preset2">📐 Polynomial</button>
+<button id="sb-preset3">🌊 Gaussian Bump</button>
+</div>
+<div id="sb-data" class="info-box" style="font-family: monospace; font-style: normal;">
+Draw a section or pick a preset to begin!
+</div>
+<div class="info-box">
+<strong>What's displayed:</strong> The <span class="highlight3">green overlay</span> is the Taylor polynomial of order <span class="math">k</span> at the probe point — it's the "best local approximation" encoded by the <span class="math">k</span>-jet. The jet bundle fibre at this point contains ALL such possible Taylor data.
+</div>
+</div>
+
+<script>
+// ===== UTILITIES =====
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const TAU = Math.PI * 2;
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// Tab switching
+$$('.tab-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+$$('.tab-btn').forEach(b => b.classList.remove('active'));
+$$('.panel').forEach(p => p.classList.remove('active'));
+btn.classList.add('active');
+$(`#panel-${btn.dataset.tab}`).classList.add('active');
+});
+});
+
+// ===== PANEL 0: FIBRE BUNDLE RECAP =====
+(() => {
+const canvas = $('#c0');
+const ctx = canvas.getContext('2d');
+let baseX = 450;
+let dragging = false;
+let sectionFunc = x => 80 * Math.sin((x - 100) * 0.008) + 30 * Math.cos((x - 100) * 0.02);
+
+function draw() {
+const W = canvas.width, H = canvas.height;
+ctx.clearRect(0, 0, W, H);
+
+const baseY = H - 60;
+const topY = 40;
+
+// Grid
+ctx.strokeStyle = '#1a1a3a';
+ctx.lineWidth = 1;
+for (let y = topY; y <= baseY; y += 40) {
+ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(W - 40, y); ctx.stroke();
+}
+
+// Base space
+ctx.strokeStyle = '#555';
+ctx.lineWidth = 3;
+ctx.beginPath();
+ctx.moveTo(60, baseY);
+ctx.lineTo(W - 60, baseY);
+ctx.stroke();
+ctx.fillStyle = '#666';
+ctx.font = '14px sans-serif';
+ctx.fillText('Base space B', W / 2 - 40, baseY + 30);
+
+// Fibre at baseX
+ctx.strokeStyle = '#f472b644';
+ctx.lineWidth = 2;
+ctx.setLineDash([6, 4]);
+ctx.beginPath();
+ctx.moveTo(baseX, baseY);
+ctx.lineTo(baseX, topY);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Fibre highlight
+ctx.strokeStyle = '#f472b6';
+ctx.lineWidth = 3;
+ctx.beginPath();
+ctx.moveTo(baseX, baseY - 10);
+ctx.lineTo(baseX, topY + 10);
+ctx.stroke();
+ctx.fillStyle = '#f472b6';
+ctx.font = '13px sans-serif';
+ctx.fillText('Fibre π⁻¹(x)', baseX + 8, topY + 20);
+
+// Section curve
+ctx.strokeStyle = '#34d39988';
+ctx.lineWidth = 2;
+ctx.beginPath();
+for (let x = 60; x <= W - 60; x++) {
+const y = baseY - 120 + sectionFunc(x);
+if (x === 60) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+}
+ctx.stroke();
+ctx.fillStyle = '#34d399';
+ctx.font = '13px sans-serif';
+ctx.fillText('Section σ', W - 110, baseY - 120 + sectionFunc(W - 100) - 10);
+
+// Section point
+const sy = baseY - 120 + sectionFunc(baseX);
+ctx.beginPath();
+ctx.arc(baseX, sy, 7, 0, TAU);
+ctx.fillStyle = '#34d399';
+ctx.fill();
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 2;
+ctx.stroke();
+ctx.fillStyle = '#34d399';
+ctx.fillText(`σ(x) = ${((baseY - 120 - sy) * 0.01).toFixed(2)}`, baseX + 12, sy - 5);
+
+// Base point
+ctx.beginPath();
+ctx.arc(baseX, baseY, 8, 0, TAU);
+ctx.fillStyle = '#7eb4ff';
+ctx.fill();
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 2;
+ctx.stroke();
+ctx.fillStyle = '#7eb4ff';
+ctx.fillText('x', baseX - 4, baseY + 26);
+
+// Total space label
+ctx.fillStyle = '#444';
+ctx.font = '13px sans-serif';
+ctx.fillText('Total space E', 65, topY + 10);
+
+// Arrow showing projection
+ctx.strokeStyle = '#666';
+ctx.lineWidth = 1;
+ctx.setLineDash([3, 3]);
+ctx.beginPath();
+ctx.moveTo(baseX, sy);
+ctx.lineTo(baseX, baseY);
+ctx.stroke();
+ctx.setLineDash([]);
+ctx.fillStyle = '#888';
+ctx.fillText('π', baseX + 12, (sy + baseY) / 2);
+}
+
+canvas.addEventListener('mousedown', e => {
+const rect = canvas.getBoundingClientRect();
+const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+const baseY = canvas.height - 60;
+if (Math.abs(my - baseY) < 30 && Math.abs(mx - baseX) < 30) dragging = true;
+});
+canvas.addEventListener('mousemove', e => {
+if (!dragging) return;
+const rect = canvas.getBoundingClientRect();
+baseX = clamp((e.clientX - rect.left) * (canvas.width / rect.width), 80, canvas.width - 80);
+draw();
+});
+canvas.addEventListener('mouseup', () => dragging = false);
+canvas.addEventListener('mouseleave', () => dragging = false);
+
+// Touch
+canvas.addEventListener('touchstart', e => { e.preventDefault(); dragging = true; }, { passive: false });
+canvas.addEventListener('touchmove', e => {
+e.preventDefault();
+if (!dragging) return;
+const rect = canvas.getBoundingClientRect();
+const t = e.touches[0];
+baseX = clamp((t.clientX - rect.left) * (canvas.width / rect.width), 80, canvas.width - 80);
+draw();
+}, { passive: false });
+canvas.addEventListener('touchend', () => dragging = false);
+
+draw();
+})();
+
+// ===== PANEL 1: CORE IDEA =====
+(() => {
+const canvas = $('#c1');
+const ctx = canvas.getContext('2d');
+const xSlider = $('#idea-x');
+
+let coeffsA = [0, 0.5, -0.001, 0.000003];
+let coeffsB = [0, 0.5, 0.002, -0.000005];
+let coeffsC = [30, -0.3, 0.001, 0.000002];
+
+function polyEval(coeffs, x, x0) {
+const dx = x - x0;
+return coeffs[0] + coeffs[1] * dx + coeffs[2] * dx * dx + coeffs[3] * dx * dx * dx;
+}
+
+function randomCoeffs(x0, matchA, order) {
+const c = [...coeffsA];
+for (let i = order + 1; i <= 3; i++) {
+c[i] = (Math.random() - 0.5) * (i === 1 ? 1.5 : i === 2 ? 0.008 : 0.00003);
+}
+if (order < 0) {
+for (let i = 0; i <= 3; i++) {
+c[i] = (Math.random() - 0.5) * (i === 0 ? 80 : i === 1 ? 1.5 : i === 2 ? 0.008 : 0.00003);
+}
+}
+return c;
+}
+
+function shuffleSections() {
+const x0 = parseFloat(xSlider.value);
+coeffsA = [(Math.random() - 0.5) * 40, (Math.random() - 0.5) * 1.2, (Math.random() - 0.5) * 0.006, (Math.random() - 0.5) * 0.00002];
+// B: same 0-jet (same value) but different derivative
+coeffsB = [coeffsA[0], (Math.random() - 0.5) * 1.2, (Math.random() - 0.5) * 0.006, (Math.random() - 0.5) * 0.00002];
+// C: same 1-jet (same value AND derivative) but different 2nd deriv
+coeffsC = [coeffsA[0], coeffsA[1], (Math.random() - 0.5) * 0.006, (Math.random() - 0.5) * 0.00002];
+draw();
+}
+
+$('#idea-shuffle').addEventListener('click', shuffleSections);
+xSlider.addEventListener('input', draw);
+
+function draw() {
+const W = canvas.width, H = canvas.height;
+ctx.clearRect(0, 0, W, H);
+const baseY = H - 60;
+const midY = H / 2 + 30;
+const x0 = parseFloat(xSlider.value);
+
+// Base
+ctx.strokeStyle = '#555';
+ctx.lineWidth = 2;
+ctx.beginPath();
+ctx.moveTo(40, baseY);
+ctx.lineTo(W - 40, baseY);
+ctx.stroke();
+
+// Sections
+const colors = ['#f472b6', '#34d399', '#fbbf24'];
+const coeffSets = [coeffsA, coeffsB, coeffsC];
+const names = ['A', 'B', 'C'];
+
+coeffSets.forEach((c, idx) => {
+ctx.strokeStyle = colors[idx];
+ctx.lineWidth = 2.5;
+ctx.beginPath();
+for (let x = 50; x <= W - 50; x++) {
+const y = midY - polyEval(c, x, x0);
+if (x === 50) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+}
+ctx.stroke();
+
+// Label
+const lx = W - 90 + idx * 0;
+const ly = midY - polyEval(c, W - 70, x0);
+ctx.fillStyle = colors[idx];
+ctx.font = 'bold 14px sans-serif';
+ctx.fillText(names[idx], W - 50, ly);
+});
+
+// Vertical line at x0
+ctx.strokeStyle = '#7eb4ff44';
+ctx.lineWidth = 1;
+ctx.setLineDash([4, 4]);
+ctx.beginPath();
+ctx.moveTo(x0, baseY);
+ctx.lineTo(x0, 20);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Points at x0
+coeffSets.forEach((c, idx) => {
+const y = midY - polyEval(c, x0, x0);
+ctx.beginPath();
+ctx.arc(x0, y, 6, 0, TAU);
+ctx.fillStyle = colors[idx];
+ctx.fill();
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 1.5;
+ctx.stroke();
+});
+
+// Base point
+ctx.beginPath();
+ctx.arc(x0, baseY, 7, 0, TAU);
+ctx.fillStyle = '#7eb4ff';
+ctx.fill();
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 2;
+ctx.stroke();
+ctx.fillStyle = '#7eb4ff';
+ctx.font = '13px sans-serif';
+ctx.fillText('x₀', x0 - 6, baseY + 24);
+
+// Info text
+const valA = coeffsA[0].toFixed(2);
+        const slopeA = coeffsA[1].toFixed(3);
+        const valB = coeffsB[0].toFixed(2);
+        const slopeB = coeffsB[1].toFixed(3);
+        const valC = coeffsC[0].toFixed(2);
+        const slopeC = coeffsC[1].toFixed(3);
+
+        ctx.fillStyle = '#888';
+        ctx.font = '12px monospace';
+        const infoY = 25;
+        ctx.fillStyle = '#f472b6';
+        ctx.fillText(`A: val=${valA}, slope=${slopeA}`, 50, infoY);
+        ctx.fillStyle = '#34d399';
+        ctx.fillText(`B: val=${valB}, slope=${slopeB}`, 300, infoY);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText(`C: val=${valC}, slope=${slopeC}`, 560, infoY);
+
+        // Annotations
+        ctx.fillStyle = '#888';
+        ctx.font = '12px sans-serif';
+        const sameVal = Math.abs(coeffsA[0] - coeffsB[0]) < 0.01;
+        const sameSlope = Math.abs(coeffsA[1] - coeffsC[1]) < 0.001;
+        if (sameVal) {
+            ctx.fillStyle = '#7eb4ff';
+            ctx.fillText('A & B: same 0-jet (same value)', 50, H - 20);
+        }
+        if (sameSlope) {
+            ctx.fillStyle = '#c084fc';
+            ctx.fillText('A & C: same 1-jet (same value + slope)', 400, H - 20);
+        }
+    }
+
+    shuffleSections();
+})();
+
+// ===== PANEL 2: FIRST JET BUNDLE =====
+(() => {
+    const canvas = $('#c2');
+    const ctx = canvas.getContext('2d');
+    const xSlider = $('#jet1-x');
+    const valSlider = $('#jet1-val');
+    const slopeSlider = $('#jet1-slope');
+
+    function draw() {
+        const W = canvas.width, H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const baseY = H - 70;
+        const x0 = parseFloat(xSlider.value);
+        const val = parseFloat(valSlider.value);
+        const slope = parseFloat(slopeSlider.value) / 100;
+
+        // Grid
+        ctx.strokeStyle = '#1a1a3a';
+        ctx.lineWidth = 1;
+        for (let y = 40; y < baseY; y += 50) {
+            ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(W - 40, y); ctx.stroke();
+        }
+
+        // Base space
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(50, baseY);
+        ctx.lineTo(W - 50, baseY);
+        ctx.stroke();
+        ctx.fillStyle = '#666';
+        ctx.font = '13px sans-serif';
+        ctx.fillText('Base B (ℝ)', W / 2 - 30, baseY + 28);
+
+        // Fibre at x0
+        const fibreTop = 50;
+        ctx.strokeStyle = '#f472b644';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x0, baseY);
+        ctx.lineTo(x0, fibreTop);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // The section value point
+        const midFibre = baseY - 180;
+        const pointY = midFibre - val;
+
+        // Tangent line (representing the slope)
+        const tangentLen = 120;
+        ctx.strokeStyle = '#34d399';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x0 - tangentLen, pointY + slope * tangentLen);
+        ctx.lineTo(x0 + tangentLen, pointY - slope * tangentLen);
+        ctx.stroke();
+
+        // Slope arrow indicator
+        ctx.fillStyle = '#34d399';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`slope = ${slope.toFixed(2)}`, x0 + tangentLen - 60, pointY - slope * tangentLen - 10);
+
+        // Value point
+        ctx.beginPath();
+        ctx.arc(x0, pointY, 8, 0, TAU);
+        ctx.fillStyle = '#f472b6';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Value label
+        ctx.fillStyle = '#f472b6';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`σ(x) = ${(val / 50).toFixed(2)}`, x0 + 14, pointY - 2);
+
+        // Base point
+        ctx.beginPath();
+        ctx.arc(x0, baseY, 8, 0, TAU);
+        ctx.fillStyle = '#7eb4ff';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#7eb4ff';
+        ctx.font = '13px sans-serif';
+        ctx.fillText('x', x0 - 4, baseY + 26);
+
+        // Jet coordinate display
+        ctx.fillStyle = '#c084fc';
+        ctx.font = 'bold 14px monospace';
+        ctx.fillText(`1-jet: j¹σ(x) = (x, σ(x), σ'(x)) = (${((x0 - 450) / 100).toFixed(2)}, ${(val / 50).toFixed(2)}, ${slope.toFixed(2)})`, 50, 35);
+
+        // Visual: show the "jet space" as a small 2D diagram in corner
+        const boxX = W - 200, boxY = 60, boxW = 160, boxH = 160;
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(boxX, boxY, boxW, boxH);
+        ctx.fillStyle = '#0d0d22';
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+
+        // Axes in jet space
+        const cx = boxX + boxW / 2, cy = boxY + boxH / 2;
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(boxX + 10, cy); ctx.lineTo(boxX + boxW - 10, cy);
+        ctx.moveTo(cx, boxY + 10); ctx.lineTo(cx, boxY + boxH - 10);
+        ctx.stroke();
+
+        ctx.fillStyle = '#666';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('σ(x)', boxX + boxW - 30, cy - 5);
+        ctx.fillText("σ'(x)", cx + 4, boxY + 16);
+        ctx.fillText('Fibre of J¹E at x', boxX + 20, boxY + boxH + 16);
+
+        // Point in jet space
+        const jx = cx + (val / 150) * (boxW / 2 - 10);
+        const jy = cy - (slope) * (boxH / 2 - 10);
+        ctx.beginPath();
+        ctx.arc(clamp(jx, boxX + 5, boxX + boxW - 5), clamp(jy, boxY + 5, boxY + boxH - 5), 5, 0, TAU);
+        ctx.fillStyle = '#c084fc';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+    }
+
+    xSlider.addEventListener('input', draw);
+    valSlider.addEventListener('input', draw);
+    slopeSlider.addEventListener('input', draw);
+    draw();
+})();
+
+// ===== PANEL 3: HIGHER JETS =====
+(() => {
+    const canvas = $('#c3');
+    const ctx = canvas.getContext('2d');
+    const orderSlider = $('#jet-order');
+    const orderVal = $('#jet-order-val');
+    const zoomSlider = $('#jet-zoom');
+
+    // Reference section: polynomial coefficients
+    let refCoeffs = [0, 0.8, -0.003, 0.00001, -0.00000003];
+    let otherSections = [];
+
+    function generateSections() {
+        otherSections = [];
+        for (let i = 0; i < 12; i++) {
+            const c = [...refCoeffs];
+            // Randomly change some coefficients
+            const changeFrom = Math.floor(Math.random() * 5);
+            for (let j = changeFrom; j < 5; j++) {
+                const scale = j === 0 ? 60 : j === 1 ? 1.5 : j === 2 ? 0.01 : j === 3 ? 0.00005 : 0.0000002;
+                c[j] = refCoeffs[j] + (Math.random() - 0.5) * scale;
+            }
+            otherSections.push({ coeffs: c, matchOrder: changeFrom - 1 });
+        }
+        draw();
+    }
+
+    function evalPoly(coeffs, x, x0) {
+        let val = 0;
+        let dx = 1;
+        for (let i = 0; i < coeffs.length; i++) {
+            val += coeffs[i] * dx;
+            dx *= (x - x0);
+        }
+        return val;
+    }
+
+    function draw() {
+        const W = canvas.width, H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const baseY = H - 60;
+        const midY = H / 2 + 20;
+        const x0 = W / 2;
+        const k = parseInt(orderSlider.value);
+        const zoom = parseFloat(zoomSlider.value);
+        orderVal.textContent = k;
+
+        // Base
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(30, baseY);
+        ctx.lineTo(W - 30, baseY);
+        ctx.stroke();
+
+        // Draw other sections
+        otherSections.forEach(sec => {
+            const matches = sec.matchOrder >= k;
+            ctx.strokeStyle = matches ? '#34d399' : '#44445566';
+            ctx.lineWidth = matches ? 2.5 : 1.5;
+            ctx.beginPath();
+            for (let x = 40; x <= W - 40; x++) {
+                const px = (x - x0) / zoom;
+                const y = midY - evalPoly(sec.coeffs, px, 0) * zoom;
+                if (x === 40) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        });
+
+        // Reference section
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (let x = 40; x <= W - 40; x++) {
+            const px = (x - x0) / zoom;
+            const y = midY - evalPoly(refCoeffs, px, 0) * zoom;
+            if (x === 40) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Vertical at x0
+        ctx.strokeStyle = '#7eb4ff33';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x0, baseY);
+        ctx.lineTo(x0, 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Point on reference
+        const refY = midY - evalPoly(refCoeffs, 0, 0) * zoom;
+        ctx.beginPath();
+        ctx.arc(x0, refY, 6, 0, TAU);
+        ctx.fillStyle = '#f472b6';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Base point
+        ctx.beginPath();
+        ctx.arc(x0, baseY, 7, 0, TAU);
+        ctx.fillStyle = '#7eb4ff';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Count matches
+        const matchCount = otherSections.filter(s => s.matchOrder >= k).length;
+        ctx.fillStyle = '#888';
+        ctx.font = '13px sans-serif';
+        ctx.fillText(`Order k = ${k}: ${matchCount} sections share the same ${k}-jet (green)`, 50, 30);
+        ctx.fillStyle = '#555';
+        ctx.fillText(`Higher k → fewer equivalent sections → finer equivalence classes`, 50, 50);
+    }
+
+    orderSlider.addEventListener('input', draw);
+    zoomSlider.addEventListener('input', draw);
+    $('#higher-shuffle').addEventListener('click', () => {
+        refCoeffs = [
+            (Math.random() - 0.5) * 30,
+            (Math.random() - 0.5) * 1.2,
+            (Math.random() - 0.5) * 0.006,
+            (Math.random() - 0.5) * 0.00003,
+            (Math.random() - 0.5) * 0.0000001
+        ];
+        generateSections();
+    });
+
+    generateSections();
+})();
+
+// ===== PANEL 4: EQUIVALENCE CLASSES =====
+(() => {
+    const canvas = $('#c4');
+    const ctx = canvas.getContext('2d');
+    const orderSlider = $('#eq-order');
+    const orderVal = $('#eq-order-val');
+    const spreadSlider = $('#eq-spread');
+
+    let sections = [];
+    const x0 = 450;
+
+    function generateFamily() {
+        sections = [];
+        const baseVal = (Math.random() - 0.5) * 80;
+        const baseSlope = (Math.random() - 0.5) * 1.5;
+        const baseCurv = (Math.random() - 0.5) * 0.008;
+        const baseThird = (Math.random() - 0.5) * 0.00004;
+
+        for (let i = 0; i < 20; i++) {
+            const spread = parseFloat(spreadSlider.value);
+            const matchUpTo = Math.floor(Math.random() * 4);
+            const c = [baseVal, baseSlope, baseCurv, baseThird];
+
+            for (let j = matchUpTo + 1; j < 4; j++) {
+                const scale = j === 0 ? 40 * spread : j === 1 ? 0.8 * spread : j === 2 ? 0.004 * spread : 0.00002 * spread;
+                c[j] += (Math.random() - 0.5) * scale;
+            }
+            // Some that don't match at all
+            if (Math.random() < 0.3) {
+                c[0] += (Math.random() - 0.5) * 30 * spread;
+            }
+
+            sections.push({ coeffs: c, matchUpTo });
+        }
+        draw();
+    }
+
+    function evalPoly(coeffs, x) {
+        const dx = x - x0;
+        return coeffs[0] + coeffs[1] * dx + coeffs[2] * dx * dx + coeffs[3] * dx * dx * dx;
+    }
+
+    function sameJet(c1, c2, k) {
+        const tol = [0.5, 0.01, 0.0001, 0.000001];
+        for (let i = 0; i <= k; i++) {
+            if (Math.abs(c1[i] - c2[i]) > tol[i]) return false;
+        }
+        return true;
+    }
+
+    function draw() {
+        const W = canvas.width, H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const baseY = H - 60;
+        const midY = H / 2 + 20;
+        const k = parseInt(orderSlider.value);
+        orderVal.textContent = k;
+
+        // Base
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(30, baseY);
+        ctx.lineTo(W - 30, baseY);
+        ctx.stroke();
+
+        if (sections.length === 0) {
+            ctx.fillStyle = '#666';
+            ctx.font = '16px sans-serif';
+            ctx.fillText('Click "Generate Family" to start!', W / 2 - 120, H / 2);
+            return;
+        }
+
+        // Use first section as reference
+        const ref = sections[0].coeffs;
+
+        // Draw sections
+        let eqCount = 0;
+        sections.forEach((sec, idx) => {
+            const matches = sameJet(ref, sec.coeffs, k);
+            if (matches) eqCount++;
+
+            ctx.strokeStyle = idx === 0 ? '#f472b6' : matches ? '#34d399' : '#ffffff22';
+            ctx.lineWidth = idx === 0 ? 3 : matches ? 2.5 : 1;
+            ctx.beginPath();
+            for (let x = 40; x <= W - 40; x++) {
+                const y = midY - evalPoly(sec.coeffs, x);
+                if (x === 40) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        });
+
+        // Vertical at x0
+        ctx.strokeStyle = '#7eb4ff33';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x0, baseY);
+        ctx.lineTo(x0, 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Base point
+        ctx.beginPath();
+        ctx.arc(x0, baseY, 7, 0, TAU);
+        ctx.fillStyle = '#7eb4ff';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Info
+        ctx.fillStyle = '#c084fc';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText(`k = ${k}: ${eqCount}/${sections.length} sections share the same ${k}-jet as reference (green)`, 50, 30);
+
+        // Show jet data
+        ctx.fillStyle = '#888';
+        ctx.font = '12px monospace';
+        let jetStr = 'Reference jet: (';
+        for (let i = 0; i <= k; i++) {
+            jetStr += ref[i].toFixed(4);
+            if (i < k) jetStr += ', ';
+        }
+        jetStr += ')';
+        ctx.fillText(jetStr, 50, 52);
+    }
+
+    orderSlider.addEventListener('input', draw);
+    spreadSlider.addEventListener('input', () => { generateFamily(); });
+    $('#eq-reset').addEventListener('click', () => { sections = []; draw(); });
+    $('#eq-generate').addEventListener('click', generateFamily);
+
+    draw();
+})();
+
+// ===== PANEL 5: SANDBOX =====
+(() => {
+    const canvas = $('#c5');
+    const ctx = canvas.getContext('2d');
+    const orderSlider = $('#sb-order');
+    const orderVal = $('#sb-order-val');
+    const probeSlider = $('#sb-probe');
+    const dataBox = $('#sb-data');
+
+    let points = [];
+    let drawing = false;
+    let splineFunc = null;
+
+    function buildSpline() {
+        if (points.length < 2) { splineFunc = null; return; }
+        // Sort by x
+        points.sort((a, b) => a.x - b.x);
+        // Remove duplicates
+        const unique = [points[0]];
+        for (let i = 1; i < points.length; i++) {
+            if (points[i].x !== unique[unique.length - 1].x) unique.push(points[i]);
+        }
+        points = unique;
+        if (points.length < 2) { splineFunc = null; return; }
+
+        // Simple cubic spline interpolation (natural)
+        splineFunc = (x) => {
+            if (x <= points[0].x) return points[0].y;
+            if (x >= points[points.length - 1].x) return points[points.length - 1].y;
+            // Find segment
+            let i = 0;
+            while (i < points.length - 1 && points[i + 1].x < x) i++;
+            const t = (x - points[i].x) / (points[i + 1].x - points[i].x);
+            return lerp(points[i].y, points[i + 1].y, t);
+        };
+    }
+
+    function setPreset(fn) {
+        points = [];
+        for (let x = 50; x <= 850; x += 5) {
+            points.push({ x, y: fn(x) });
+        }
+        buildSpline();
+        draw();
+    }
+
+    $('#sb-clear').addEventListener('click', () => {
+        points = [];
+        splineFunc = null;
+        dataBox.textContent = 'Draw a section or pick a preset to begin!';
+        draw();
+    });
+
+    $('#sb-preset1').addEventListener('click', () => {
+        setPreset(x => 250 + 100 * Math.sin((x - 450) * 0.015));
+    });
+
+    $('#sb-preset2').addEventListener('click', () => {
+        setPreset(x => {
+            const t = (x - 450) / 200;
+            return 260 - 80 * t * t + 20 * t * t * t;
+        });
+    });
+
+    $('#sb-preset3').addEventListener('click', () => {
+        setPreset(x => {
+            const t = (x - 450) / 100;
+            return 260 + 120 * Math.exp(-t * t);
+        });
+    });
+
+    canvas.addEventListener('mousedown', e => {
+        drawing = true;
+        addPoint(e);
+    });
+    canvas.addEventListener('mousemove', e => {
+        if (!drawing) return;
+        addPoint(e);
+    });
+    canvas.addEventListener('mouseup', () => { drawing = false; buildSpline(); draw(); });
+    canvas.addEventListener('mouseleave', () => { drawing = false; buildSpline(); draw(); });
+
+    // Touch support
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; addPointTouch(e); }, { passive: false });
+    canvas.addEventListener('touchmove', e => { e.preventDefault(); if (drawing) addPointTouch(e); }, { passive: false });
+    canvas.addEventListener('touchend', () => { drawing = false; buildSpline(); draw(); });
+
+    function addPoint(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+        if (y < 60 || y > canvas.height - 60) return;
+        points.push({ x, y });
+        buildSpline();
+        draw();
+    }
+
+    function addPointTouch(e) {
+        const rect = canvas.getBoundingClientRect();
+        const t = e.touches[0];
+        const x = (t.clientX - rect.left) * (canvas.width / rect.width);
+        const y = (t.clientY - rect.top) * (canvas.height / rect.height);
+        if (y < 60 || y > canvas.height - 60) return;
+        points.push({ x, y });
+        buildSpline();
+        draw();
+    }
+
+    orderSlider.addEventListener('input', draw);
+    probeSlider.addEventListener('input', draw);
+
+    function numericalDerivatives(x0, order) {
+        if (!splineFunc) return [];
+        const h = 2;
+        const derivs = [splineFunc(x0)];
+        if (order >= 1) {
+            derivs.push((splineFunc(x0 + h) - splineFunc(x0 - h)) / (2 * h));
+        }
+        if (order >= 2) {
+            derivs.push((splineFunc(x0 + h) - 2 * splineFunc(x0) + splineFunc(x0 - h)) / (h * h));
+        }
+        if (order >= 3) {
+            derivs.push((splineFunc(x0 + 2 * h) - 2 * splineFunc(x0 + h) + 2 * splineFunc(x0 - h) - splineFunc(x0 - 2 * h)) / (2 * h * h * h));
+        }
+        return derivs;
+    }
+
+    function taylorPoly(derivs, x, x0) {
+        let val = 0;
+        let factorial = 1;
+        for (let i = 0; i < derivs.length; i++) {
+            if (i > 0) factorial *= i;
+            val += derivs[i] * Math.pow(x - x0, i) / factorial;
+        }
+        return val;
+    }
+
+    function draw() {
+        const W = canvas.width, H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+
+        const baseY = H - 50;
+        const k = parseInt(orderSlider.value);
+        const probeX = parseFloat(probeSlider.value);
+        orderVal.textContent = k;
+
+        // Background grid
+        ctx.strokeStyle = '#1a1a3a';
+        ctx.lineWidth = 1;
+        for (let y = 60; y < baseY; y += 50) {
+            ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(W - 30, y); ctx.stroke();
+        }
+
+        // Base
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(30, baseY);
+        ctx.lineTo(W - 30, baseY);
+        ctx.stroke();
+
+        if (!splineFunc || points.length < 2) {
+            ctx.fillStyle = '#666';
+            ctx.font = '16px sans-serif';
+            ctx.fillText('🖱️ Draw on the canvas or pick a preset below!', W / 2 - 180, H / 2);
+            return;
+        }
+
+        // Draw the section
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let x = 50; x <= W - 50; x++) {
+            const y = splineFunc(x);
+            if (y === undefined) continue;
+            if (x === 50) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Compute derivatives at probe
+        const derivs = numericalDerivatives(probeX, k);
+
+        // Draw Taylor polynomial
+        if (derivs.length > 0) {
+            ctx.strokeStyle = '#34d399';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([6, 3]);
+            ctx.beginPath();
+            let started = false;
+            for (let x = Math.max(30, probeX - 250); x <= Math.min(W - 30, probeX + 250); x++) {
+                const y = taylorPoly(derivs, x, probeX);
+                if (y < -100 || y > H + 100) { started = false; continue; }
+                if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Probe vertical line
+        ctx.strokeStyle = '#7eb4ff44';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(probeX, baseY);
+        ctx.lineTo(probeX, 40);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Probe point on section
+        const probeY = splineFunc(probeX);
+        ctx.beginPath();
+        ctx.arc(probeX, probeY, 7, 0, TAU);
+        ctx.fillStyle = '#7eb4ff';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Probe on base
+        ctx.beginPath();
+        ctx.arc(probeX, baseY, 6, 0, TAU);
+        ctx.fillStyle = '#7eb4ff';
+        ctx.fill();
+
+        // Update data display
+        const baseYCoord = (260 - probeY) / 100;
+        let html = `<strong style="color:#c084fc">Jet data at x = ${((probeX - 450) / 100).toFixed(2)}:</strong>\n`;
+        html += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        const labels = ['σ(x)  [value]     ', "σ'(x) [1st deriv] ", "σ''(x)[2nd deriv] ", "σ'''(x)[3rd deriv]"];
+        for (let i = 0; i <= k && i < derivs.length; i++) {
+            const scaledVal = (260 - derivs[i]) / (i === 0 ? 100 : 100);
+            html += `${labels[i]} = ${derivs[i].toFixed(4)}\n`;
+        }
+        html += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+        html += `<span style="color:#34d399">Green dashed line</span> = Taylor polynomial of order ${k}\n`;
+        html += `This polynomial IS the ${k}-jet — it encodes all the local info up to order ${k}.`;
+        dataBox.innerHTML = html;
+
+        // Title
+        ctx.fillStyle = '#c084fc';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText(`Showing ${k}-jet: Taylor polynomial of order ${k} at probe point`, 50, 30);
+    }
+
+    draw();
+})();
+
+</script>
+</body>
+</html>
