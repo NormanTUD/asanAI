@@ -2870,59 +2870,6 @@ async function new_tiny_tests() {
 	// --- data.js: requires_auto_one_hot ---
 	test_equal("requires_auto_one_hot null xy_data", requires_auto_one_hot(false, null), false);
 	test_equal("requires_auto_one_hot has_custom_data", requires_auto_one_hot(true, {y: [1,2]}), false);
-
-	// ============================================================
-	// STANDALONE TEST FUNCTIONS TO ADD
-	// ============================================================
-
-	async function test_error_handling_null_model() {
-		log_test("Test error handling with null model");
-
-		var old_model = model;
-		model = null;
-
-		// Test that predict handles null model gracefully
-		var result = await __predict(tensor([1,2]), null);
-		test_equal("__predict with null model returns undefined", result, undefined);
-
-		// Test that identify_layers handles null model
-		await identify_layers(); // should not throw
-
-		// Test that get_layer_identification handles null model
-		var ident = get_layer_identification(0);
-		test_equal("get_layer_identification with null model", ident, "");
-
-		model = old_model;
-		return true;
-	}
-
-	async function test_csv_edge_cases() {
-		log_test("Test CSV edge cases");
-
-		// Empty CSV
-		var result1 = parse_csv_file("");
-		test_equal("parse_csv_file empty string head", result1.head.length, 0);
-		test_equal("parse_csv_file empty string data", result1.data.length, 0);
-
-		// CSV with only header
-		var result2 = parse_csv_file("col1,col2,col3\n");
-		test_equal("parse_csv_file header only", result2.head.length, 3);
-		test_equal("parse_csv_file header only data", result2.data.length, 0);
-
-		// CSV with trailing separators
-		var result3 = parse_csv_file("a,b\n1,2\n3,4\n");
-		test_equal("parse_csv_file trailing newline", result3.data.length, 2);
-
-		// CSV with whitespace-only lines
-		var result4 = parse_csv_file("a,b\n1,2\n   \n3,4\n");
-		test_equal("parse_csv_file whitespace lines ignored", result4.data.length, 2);
-
-		// CSV with duplicate headers
-		var result5 = parse_csv_file("a,a,b\n1,2,3\n");
-		test_equal("parse_csv_file duplicate headers detected", result5.head.length, 3);
-
-		return true;
-	}
 }
 
 async function run_tests (quick=0) {
