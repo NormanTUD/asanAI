@@ -712,7 +712,7 @@ var initializers = {
 	"leCunUniform": "leCunUniform",
 	"ones": "ones",
 	"randomNormal": "randomNormal",
-	"randomUniform": " randomUniform",
+	"randomUniform": "randomUniform",
 	"truncatedNormal": "truncatedNormal",
 	"varianceScaling": "varianceScaling",
 	"zeros": "zeros"
