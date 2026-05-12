@@ -382,9 +382,6 @@ async function handle_model_compile_error (e, recursion_level) {
 			set_layer_background(layer_idx, "red");
 			has_missing_values = true;
 		}
-	} else if (("" + e).includes("model is empty")) {
-		err("[compile_model] " + e);
-		return true;
 	} else if (("" + e).includes("e is null")) {
 		err("[compile_model] " + e);
 		await delay(1000);
