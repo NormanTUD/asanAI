@@ -826,6 +826,17 @@ var layer_options_defaults = {
 	"activation": null,
 	"recurrent_activation": null,
 
+	"bias_regularizer": null,
+	"kernel_regularizer": null,
+	"beta_regularizer": null,
+	"gamma_regularizer": null,
+	"depthwise_regularizer": null,
+	"pointwise_regularizer": null,
+
+	"dtype": "float",
+	"seed": 1234,
+	"visualize": null,
+
 	"padding": "valid",
 	"interpolation": "nearest",
 	"dilation_rate": "",
