@@ -93,7 +93,7 @@ async function _create_model () {
 			e = e.message;
 		}
 
-		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
+		create_model_queue = create_model_queue.filter(function(ee) { return ee !== _create_model_uuid; });
 
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
@@ -152,7 +152,7 @@ async function _create_model () {
 		}
 	}
 
-	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
+	create_model_queue = create_model_queue.filter(function(ee) { return ee !== _create_model_uuid; });
 
 	await add_layer_debugger_if_model();
 
