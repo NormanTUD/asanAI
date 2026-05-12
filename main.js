@@ -662,16 +662,17 @@ function temml_or_catch() {
 function show_long_loading_time_message () {
 	var end_loading_time = Date.now();
 
-	var __loading_time = human_readable_time(Math.abs(start_loading_time - end_loading_time) / 1000);
+	var __loading_time_seconds = Math.abs(start_loading_time - end_loading_time) / 1000;
+	var __loading_time_display = human_readable_time(__loading_time_seconds);
 	var __max_loading_time__ = 10;
 
-	if(__loading_time > __max_loading_time__) {
+	if(__loading_time_seconds > __max_loading_time__) {
 		err(sprintf(language[lang]["loading_time_took_more_than_n_seconds_which_is_too_slow"], __max_loading_time__));
 	} else {
-		dbg(`Loading took ${__loading_time} seconds`);
+		dbg(`Loading took ${__loading_time_display} seconds`);
 	}
 
-	return __loading_time;
+	return __loading_time_display;
 }
 
 function autoset_dark_theme_if_user_prefers_it () {
