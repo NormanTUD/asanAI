@@ -2476,8 +2476,6 @@ async function test_layer_settings() {
 	return true;
 }
 
-// Add this to tests.js
-
 async function test_math_editable_system() {
 	log_test("Test Math Editable System");
 
@@ -2647,6 +2645,286 @@ async function test_math_editable_system() {
 	return true;
 }
 
+async function new_tiny_tests() {
+	// ============================================================
+	// MISSING TESTS - Add these to the run_super_quick_tests function
+	// and/or as standalone test functions
+	// ============================================================
+
+	// --- data.js: parse_csv_file ---
+	test_equal("parse_csv_file basic", JSON.stringify(parse_csv_file("a,b,c\n1,2,3\n4,5,6\n").data), '[[1,2,3],[4,5,6]]');
+	test_equal("parse_csv_file header", JSON.stringify(parse_csv_file("a,b,c\n1,2,3\n").head), '["a","b","c"]');
+	test_equal("parse_csv_file empty", JSON.stringify(parse_csv_file("a,b\n").data), '[]');
+	test_equal("parse_csv_file duplicate lines ignored", parse_csv_file("a,b\n1,2\n1,2\n").data.length, 1);
+	test_equal("parse_csv_file mismatched columns excluded", parse_csv_file("a,b\n1,2\n1,2,3\n").data.length, 1);
+	test_equal("parse_csv_file with tab separator", JSON.stringify(parse_csv_file("a\tb\n1\t2\n").head), '["a\\tb"]');
+
+	// --- data.js: parse_line ---
+	test_equal("parse_line basic comma", JSON.stringify(parse_line("1,2,3", ",")), '[1,2,3]');
+	test_equal("parse_line with strings", JSON.stringify(parse_line("hello,world", ",")), '["hello","world"]');
+	test_equal("parse_line empty string", JSON.stringify(parse_line("", ",")), '[]');
+	test_equal("parse_line single value", JSON.stringify(parse_line("42", ",")), '[42]');
+	test_equal("parse_line float values", JSON.stringify(parse_line("1.5,2.7", ",")), '[1.5,2.7]');
+	test_equal("parse_line negative values", JSON.stringify(parse_line("-1,-2.5", ",")), '[-1,-2.5]');
+
+	// --- data.js: parse_dtype ---
+	test_equal("parse_dtype integer", parse_dtype("42"), 42);
+	test_equal("parse_dtype negative integer", parse_dtype("-5"), -5);
+	test_equal("parse_dtype float", parse_dtype("3.14"), 3.14);
+	test_equal("parse_dtype string", parse_dtype("hello"), "hello");
+
+	// --- data.js: degrees_to_radians ---
+	test_equal("degrees_to_radians(0)", degrees_to_radians(0), 0);
+	test_equal("degrees_to_radians(180)", Math.abs(degrees_to_radians(180) - Math.PI) < 1e-10, true);
+	test_equal("degrees_to_radians(90)", Math.abs(degrees_to_radians(90) - Math.PI/2) < 1e-10, true);
+	test_equal("degrees_to_radians(360)", Math.abs(degrees_to_radians(360) - 2*Math.PI) < 1e-10, true);
+
+	// --- data.js: shuffle ---
+	test_equal("shuffle preserves length", shuffle([1,2,3,4,5]).length, 5);
+	test_equal("shuffle preserves elements", shuffle([1,2,3]).sort().join(","), "1,2,3");
+
+	// --- data.js: findDuplicates ---
+	test_equal("findDuplicates no dupes", JSON.stringify(findDuplicates([1,2,3])), '[]');
+	test_equal("findDuplicates with dupes", JSON.stringify(findDuplicates([1,2,2,3])), '[2]');
+	test_equal("findDuplicates multiple dupes", findDuplicates([1,1,2,2,3]).length, 2);
+	test_equal("findDuplicates empty", JSON.stringify(findDuplicates([])), '[]');
+
+	// --- data.js: onlyUnique ---
+	test_equal("onlyUnique filters", [1,2,2,3,3,3].filter(onlyUnique).length, 3);
+
+	// --- data.js: median ---
+	test_equal("median odd array", median([5,1,3]), 3);
+	test_equal("median even array", median([1,2,3,4]), 2.5);
+	test_equal("median single element", median([7]), 7);
+
+	// --- data.js: decille edge cases ---
+	test_equal("decille empty array", decille([], 0.5), 0);
+	test_equal("decille NaN percentage", decille([1,2,3], NaN), 0);
+	test_equal("decille null percentage", decille([1,2,3], null), 0);
+	test_equal("decille 0 percentage", decille([1,2,3,4,5], 0), 1);
+
+	// --- data.js: x_y_warning ---
+	test_equal("x_y_warning null input", x_y_warning(null).length > 0, true);
+	test_equal("x_y_warning missing x", x_y_warning({y: [1]}).includes("X-data"), true);
+	test_equal("x_y_warning missing y", x_y_warning({x: [1]}).includes("Y-data"), true);
+	test_equal("x_y_warning null x", x_y_warning({x: null, y: [1]}).includes("null"), true);
+	test_equal("x_y_warning null y", x_y_warning({x: [1], y: null}).includes("null"), true);
+
+	// --- data.js: isolateEval ---
+	test_equal("isolateEval basic math", isolateEval("2 + 2"), 4);
+	test_equal("isolateEval string", isolateEval("'hello'"), "hello");
+	test_equal("isolateEval array", JSON.stringify(isolateEval("[1,2,3]")), "[1,2,3]");
+
+	// --- data.js: flatten ---
+	test_equal("flatten nested", JSON.stringify(flatten([1,[2,[3,[4]]]])), "[1,2,3,4]");
+	test_equal("flatten already flat", JSON.stringify(flatten([1,2,3])), "[1,2,3]");
+	test_equal("flatten empty", JSON.stringify(flatten([])), "[]");
+	test_equal("flatten deep nesting", JSON.stringify(flatten([[[[1]]]])), "[1]");
+
+	// --- explain.js: normalize_to_rgb_min_max ---
+	test_equal("normalize_to_rgb_min_max middle", normalize_to_rgb_min_max(5, 0, 10), 127);
+	test_equal("normalize_to_rgb_min_max min", normalize_to_rgb_min_max(0, 0, 10), 0);
+	test_equal("normalize_to_rgb_min_max max", normalize_to_rgb_min_max(10, 0, 10), 255);
+	test_equal("normalize_to_rgb_min_max same min max", normalize_to_rgb_min_max(5, 5, 5), 0);
+	test_equal("normalize_to_rgb_min_max non-number max", normalize_to_rgb_min_max(5, "a", "b"), 5);
+
+	// --- explain.js: get_dim ---
+	test_equal("get_dim null", get_dim(null), 0);
+	test_equal("get_dim 1d", JSON.stringify(get_dim([1,2,3])), "[3]");
+	test_equal("get_dim 2d", JSON.stringify(get_dim([[1,2],[3,4]])), "[2,2]");
+	test_equal("get_dim 3d", JSON.stringify(get_dim([[[1,2],[3,4]]])), "[1,2,2]");
+
+	// --- explain.js: shape_looks_like_image_data ---
+	test_equal("shape_looks_like_image_data [28,28,3]", shape_looks_like_image_data([28,28,3]), "simple");
+	test_equal("shape_looks_like_image_data [28,28,32]", shape_looks_like_image_data([28,28,32]), "filter");
+	test_equal("shape_looks_like_image_data [3,3,3,32]", shape_looks_like_image_data([3,3,3,32]), "kernel");
+	test_equal("shape_looks_like_image_data [100]", shape_looks_like_image_data([100]), "unknown");
+	test_equal("shape_looks_like_image_data null", shape_looks_like_image_data(null), "unknown");
+
+	// --- explain.js: explain_error_msg ---
+	test_equal("explain_error_msg null", explain_error_msg(null), "");
+	test_equal("explain_error_msg empty string", explain_error_msg(""), "");
+
+	// --- explain.js: array_to_html ---
+	test_equal("array_to_html simple", array_to_html([1,2,3]), "1<br>2<br>3<br>");
+	test_equal("array_to_html nested", array_to_html([[1,2],[3,4]]).includes("1 2"), true);
+
+	// --- model.js: get_key_name_camel_case ---
+	test_equal("get_key_name_camel_case simple", get_key_name_camel_case("kernel_initializer"), "kernelInitializer");
+	test_equal("get_key_name_camel_case no underscore", get_key_name_camel_case("kernel"), "kernel");
+	test_equal("get_key_name_camel_case multiple", get_key_name_camel_case("a_b_c"), "aBC");
+	test_equal("get_key_name_camel_case empty", get_key_name_camel_case(""), "");
+
+	// --- model.js: isCommaSeparatedIntegers ---
+	test_equal("isCommaSeparatedIntegers valid", isCommaSeparatedIntegers("1,2,3"), true);
+	test_equal("isCommaSeparatedIntegers single", isCommaSeparatedIntegers("5"), true);
+	test_equal("isCommaSeparatedIntegers with spaces", isCommaSeparatedIntegers("1, 2, 3"), true);
+	test_equal("isCommaSeparatedIntegers invalid", isCommaSeparatedIntegers("1,a,3"), false);
+	test_equal("isCommaSeparatedIntegers empty", isCommaSeparatedIntegers(""), false);
+	test_equal("isCommaSeparatedIntegers non-string", isCommaSeparatedIntegers(123), false);
+	test_equal("isCommaSeparatedIntegers float", isCommaSeparatedIntegers("1.5,2"), false);
+
+	// --- model.js: is_number_array ---
+	test_equal("is_number_array valid", is_number_array([1,2,3]), true);
+	test_equal("is_number_array with string", is_number_array([1,"a",3]), false);
+	test_equal("is_number_array empty", is_number_array([]), true);
+	test_equal("is_number_array non-array", is_number_array("hello"), false);
+
+	// --- model.js: remove_empty ---
+	test_equal("remove_empty removes nulls", JSON.stringify(remove_empty({a: 1, b: null, c: 3})), '{"a":1,"c":3}');
+	test_equal("remove_empty keeps zeros", JSON.stringify(remove_empty({a: 0, b: 1})), '{"a":0,"b":1}');
+
+	// --- math_mode.js: replaceNaNsRecursive ---
+	test_equal("replaceNaNsRecursive with NaN", replaceNaNsRecursive(NaN), "\\text{NaN}");
+	test_equal("replaceNaNsRecursive normal", replaceNaNsRecursive(5), 5);
+	test_equal("replaceNaNsRecursive nested", JSON.stringify(replaceNaNsRecursive([1, NaN, 3])), '[1,"\\\\text{NaN}",3]');
+
+	// --- math_mode.js: replaceInfinityRecursive ---
+	test_equal("replaceInfinityRecursive pos", replaceInfinityRecursive(Infinity), "\\infty");
+	test_equal("replaceInfinityRecursive neg", replaceInfinityRecursive(-Infinity), "-\\infty");
+	test_equal("replaceInfinityRecursive normal", replaceInfinityRecursive(5), 5);
+
+	// --- math_mode.js: replaceScientificNotationRecursive ---
+	test_equal("replaceScientificNotationRecursive normal", replaceScientificNotationRecursive(5), 5);
+	test_equal("replaceScientificNotationRecursive sci notation", typeof replaceScientificNotationRecursive(1e-7), "string");
+
+	// --- math_mode.js: array_to_fixed ---
+	test_equal("array_to_fixed 0 decimals", JSON.stringify(array_to_fixed([1.5, 2.7], 0)), '[1.5,2.7]');
+
+	// --- math_mode.js: a_times_b ---
+	test_equal("a_times_b", a_times_b("A", "B"), "A \\times B");
+
+	// --- functions.php related: contains_null_values (conceptual test) ---
+	// These would be PHP tests but demonstrate the pattern:
+
+	// --- base_wrappers.js: is_tensor ---
+	test_equal("is_tensor null", is_tensor(null), false);
+	test_equal("is_tensor undefined", is_tensor(undefined), false);
+	test_equal("is_tensor array", is_tensor([1,2,3]), false);
+	test_equal("is_tensor string", is_tensor("hello"), false);
+	var test_t = tensor([1,2,3]);
+	test_equal("is_tensor real tensor", is_tensor(test_t), true);
+	await dispose(test_t);
+
+	// --- base_wrappers.js: tensor_is_disposed ---
+	var test_t2 = tensor([1,2]);
+	test_equal("tensor_is_disposed live tensor", tensor_is_disposed(test_t2), false);
+	await dispose(test_t2);
+
+	// --- base_wrappers.js: array_sync_if_tensor ---
+	test_equal("array_sync_if_tensor array passthrough", JSON.stringify(array_sync_if_tensor([1,2,3])), "[1,2,3]");
+	var test_t3 = tensor([4,5,6]);
+	test_equal("array_sync_if_tensor tensor", JSON.stringify(array_sync_if_tensor(test_t3)), "[4,5,6]");
+	await dispose(test_t3);
+
+	// --- base_wrappers.js: convert_to_tensor_if_not ---
+	var test_t4 = tensor([1]);
+	test_equal("convert_to_tensor_if_not tensor passthrough", is_tensor(convert_to_tensor_if_not(test_t4)), true);
+	await dispose(test_t4);
+	var test_t5 = convert_to_tensor_if_not([7,8,9]);
+	test_equal("convert_to_tensor_if_not array converts", is_tensor(test_t5), true);
+	test_equal("convert_to_tensor_if_not array values", JSON.stringify(array_sync(test_t5)), "[7,8,9]");
+	await dispose(test_t5);
+
+	// --- predict.js: extract_error_message ---
+	test_equal("extract_error_message with message", extract_error_message({message: "test"}), "test");
+	test_equal("extract_error_message string", extract_error_message("raw error"), "raw error");
+	test_equal("extract_error_message number", extract_error_message(42), "42");
+
+	// --- predict.js: _prepare_data ---
+	test_equal("_prepare_data basic numbers", JSON.stringify(_prepare_data("1 2 3", "1 2 3")), "[[1,2,3]]");
+	test_equal("_prepare_data with true/false", JSON.stringify(_prepare_data("true false", "true false")), "[[1,0]]");
+	test_equal("_prepare_data no numbers", _prepare_data("abc", "abc"), false);
+	test_equal("_prepare_data negative", JSON.stringify(_prepare_data("-1 -2", "-1 -2")), "[[-1,-2]]");
+
+	// --- predict.js: scaleNestedArray edge cases ---
+	var arr_single = [[42]];
+	scaleNestedArray(arr_single);
+	// When min==max, result is NaN (already tested above, but good to confirm)
+	test_equal("scaleNestedArray single value NaN", isNaN(arr_single[0][0]), true);
+
+	// --- gui.js: is_numeric ---
+	test_equal("is_numeric '3.14'", is_numeric("3.14"), true);
+	test_equal("is_numeric '0'", is_numeric("0"), true);
+	test_equal("is_numeric '-5'", is_numeric("-5"), true);
+	test_equal("is_numeric 'abc'", is_numeric("abc"), false);
+	test_equal("is_numeric ''", is_numeric(""), false);
+	test_equal("is_numeric number type", is_numeric(5), false); // only strings
+
+	// --- gui.js: get_python_name / get_js_name round-trip ---
+	test_equal("get_js_name('kernel_size')", get_js_name("kernel_size"), "kernelSize");
+	test_equal("get_python_name('kernelSize')", get_python_name("kernelSize"), "kernel_size");
+	test_equal("get_js_name boolean true", get_js_name(true), "true");
+	test_equal("get_js_name boolean false", get_js_name(false), "false");
+	test_equal("get_python_name boolean true", get_python_name(true), "True");
+
+	// --- data.js: get_or_insert_label ---
+	var old_labels_backup = JSON.parse(JSON.stringify(labels));
+	labels = ["cat", "dog"];
+	test_equal("get_or_insert_label existing", get_or_insert_label("cat"), 0);
+	test_equal("get_or_insert_label existing 2", get_or_insert_label("dog"), 1);
+	test_equal("get_or_insert_label new", get_or_insert_label("bird"), 2);
+	test_equal("get_or_insert_label new added", labels.includes("bird"), true);
+	labels = old_labels_backup;
+
+	// --- data.js: requires_auto_one_hot ---
+	test_equal("requires_auto_one_hot null xy_data", requires_auto_one_hot(false, null), false);
+	test_equal("requires_auto_one_hot has_custom_data", requires_auto_one_hot(true, {y: [1,2]}), false);
+
+	// ============================================================
+	// STANDALONE TEST FUNCTIONS TO ADD
+	// ============================================================
+
+	async function test_error_handling_null_model() {
+		log_test("Test error handling with null model");
+
+		var old_model = model;
+		model = null;
+
+		// Test that predict handles null model gracefully
+		var result = await __predict(tensor([1,2]), null);
+		test_equal("__predict with null model returns undefined", result, undefined);
+
+		// Test that identify_layers handles null model
+		await identify_layers(); // should not throw
+
+		// Test that get_layer_identification handles null model
+		var ident = get_layer_identification(0);
+		test_equal("get_layer_identification with null model", ident, "");
+
+		model = old_model;
+		return true;
+	}
+
+	async function test_csv_edge_cases() {
+		log_test("Test CSV edge cases");
+
+		// Empty CSV
+		var result1 = parse_csv_file("");
+		test_equal("parse_csv_file empty string head", result1.head.length, 0);
+		test_equal("parse_csv_file empty string data", result1.data.length, 0);
+
+		// CSV with only header
+		var result2 = parse_csv_file("col1,col2,col3\n");
+		test_equal("parse_csv_file header only", result2.head.length, 3);
+		test_equal("parse_csv_file header only data", result2.data.length, 0);
+
+		// CSV with trailing separators
+		var result3 = parse_csv_file("a,b\n1,2\n3,4\n");
+		test_equal("parse_csv_file trailing newline", result3.data.length, 2);
+
+		// CSV with whitespace-only lines
+		var result4 = parse_csv_file("a,b\n1,2\n   \n3,4\n");
+		test_equal("parse_csv_file whitespace lines ignored", result4.data.length, 2);
+
+		// CSV with duplicate headers
+		var result5 = parse_csv_file("a,a,b\n1,2,3\n");
+		test_equal("parse_csv_file duplicate headers detected", result5.head.length, 3);
+
+		return true;
+	}
+}
+
 async function run_tests (quick=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -2677,6 +2955,8 @@ async function run_tests (quick=0) {
 
 		return num_tests_failed;
 	}
+
+	test_equal("new_tiny_tests", await new_tiny_tests(), true);
 
 	tf.engine().startScope();
 
