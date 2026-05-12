@@ -89,7 +89,10 @@ async function train_neural_network () {
 
 	tf.engine().startScope();
 	var ret = await _train_neural_network();
-	tf.engine().endScope();
+	// Guard against scope already being closed by gui_not_in_training()
+	if (tf.engine().state.activeScope !== null) {
+		tf.engine().endScope();
+	}
 
 	return ret;
 }
