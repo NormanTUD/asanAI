@@ -631,7 +631,7 @@ function add_seed_option (type, nr) {
 }
 
 function add_visualize_option(type, nr) {
-	assert(typeof(type) == "string", "type is not a number");
+	assert(typeof(type) == "string", "type is not a string");
 	assert(typeof(nr) == "number", "nr is not a number");
 
 	var style = "";
