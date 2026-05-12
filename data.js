@@ -1392,10 +1392,8 @@ function x_y_warning(x_and_y) {
 
 	if (!("x" in x_and_y)) {
 		error_messages.push("X-data is missing. Make sure your input includes features or images under 'x'.");
-	} else if (x_and_y["x"] === undefined) {
-		error_messages.push("y-data is null.");
-	} else if (x_and_y["x"] === null) {
-		error_messages.push("y-data is null.");
+	} else if (x_and_y["x"] === undefined || x_and_y["x"] === null) {
+		error_messages.push("x-data is null.");
 	} else {
 		tf.engine().startScope();
 		var x_data = array_sync(x_and_y["x"]);
