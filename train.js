@@ -851,7 +851,7 @@ async function duplicate_last_layer () {
 	dbg(language[lang]["clicking_on_this_item_for_layer_duplication"], $last_layer);
 	$last_layer.click();
 
-	while (model?.layers?.length - (start_layers) > 0) {
+	while (model?.layers?.length - start_layers <= 0) {
 		dbg(sprintf(language[lang]["waiting_until_model_layers_length_m_minus_start_layers_n_is_greater_than_zero"], model?.layers?.length, start_layers));
 		await delay(200);
 	}
