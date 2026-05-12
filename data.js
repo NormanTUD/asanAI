@@ -931,6 +931,8 @@ function check_xy_for_x_and_y(xy_data) {
 			ok = 0;
 		}
 	});
+
+	return ok;
 }
 
 async function get_x_and_y () {
@@ -959,7 +961,9 @@ async function get_x_and_y () {
 		xy_data = await get_xy_data_for_noncustom_data();
 	}
 
-	check_xy_for_x_and_y(xy_data);
+	if(!check_xy_for_x_and_y(xy_data)) {
+		wrn(`check_xy_for_x_and_y failed`);
+	}
 
 	dbg(language[lang]["got_data_creating_tensors"]);
 
