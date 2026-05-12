@@ -173,7 +173,7 @@ async function _get_urls_and_keys () {
 	return [urls, keys, data];
 }
 
-async function _get_set_percentage_text (percentage, url_idx, urls_length, percentage_div, old_percentage, times) {
+async function _get_set_percentage_text(percentage, url_idx, urls_length, percentage_div, old_percentage, times) {
 	var percentage_text = percentage + "%";
 
 	var eta;
@@ -181,17 +181,19 @@ async function _get_set_percentage_text (percentage, url_idx, urls_length, perce
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%");
 
-	if(finished_loading) {
+	if (finished_loading) {
 		set_document_title(language[lang]["loading_data"] + " " + (url_idx + 1) + " " + language[lang]["of"] + " " + urls_length + " (" + percentage_text + ") - asanAI");
 
-		if(percentage > 20) {
+		if (percentage > 20 && times.length > 0) {
 			var remaining_items = urls_length - url_idx;
 			var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
-			eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
-			old_percentage = percentage;
+			if (time_per_image !== 0 && !isNaN(time_per_image) && time_per_image !== null && time_per_image !== undefined) {
+				eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
+				old_percentage = percentage;
 
-			percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
+				percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
+			}
 		}
 	}
 
@@ -1557,7 +1559,11 @@ function median(values) {
 function decille(arr, percentage) {
 	typeassert(arr, array, "arr");
 
-	if (arr.length === 0) return undefined;
+	if (arr.length === 0) return 0;
+
+	if (isNaN(percentage) || percentage === null || percentage === undefined) {
+		return 0;
+	}
 
 	// Clone the array to avoid mutating the original
 	var sorted = arr.slice().sort(function (a, b) {
