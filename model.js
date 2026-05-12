@@ -585,7 +585,6 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 }
 
 async function get_model_structure(is_fake_model = 0) {
-	var new_current_status_hash = "";
 	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
 
