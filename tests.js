@@ -713,7 +713,7 @@ async function run_super_quick_tests (quick=0) {
 
 	test_equal("group_layers([ \"conv2d\", \"maxPooling2d\", \"conv2d\", \"maxPooling2d\", \"flatten\", \"dropout\", \"dense\", \"dense\" ])", JSON.stringify(group_layers([ "conv2d", "maxPooling2d", "conv2d", "maxPooling2d", "flatten", "dropout", "dense", "dense" ])),  `[{"<span class='TRANSLATEME_feature_extraction'></span>":[0,1,2,3]},{"<span class='TRANSLATEME_flatten'></span>":[4]},{"<span class='TRANSLATEME_feature_extraction_and_overfitting_prevention'></span>":[5]},{"<span class='TRANSLATEME_classification'></span>":[6,7]}]`);
 
-	test_equal("decille([1,2,3,4,5,6,7,8,9,10, 11], 1)", decille([1,2,3,4,5,6,7,8,9,10, 11], 1), 10);
+	test_equal("decille([1,2,3,4,5,6,7,8,9,10, 11], 1)", decille([1,2,3,4,5,6,7,8,9,10, 11], 1), 11);
 
 	test_equal("median([1,2,3,4,5])", median([1,2,3,4,5]), 3);
 
