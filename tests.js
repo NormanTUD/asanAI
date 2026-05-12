@@ -2870,6 +2870,8 @@ async function new_tiny_tests() {
 	// --- data.js: requires_auto_one_hot ---
 	test_equal("requires_auto_one_hot null xy_data", requires_auto_one_hot(false, null), false);
 	test_equal("requires_auto_one_hot has_custom_data", requires_auto_one_hot(true, {y: [1,2]}), false);
+
+	return true;
 }
 
 async function run_tests (quick=0) {
