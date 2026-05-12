@@ -1,4 +1,5 @@
 RedirectMatch 404 /\.git
+RedirectMatch 404 /tests
 RedirectMatch 404 docker.sh
 RedirectMatch 404 install.sh
 RedirectMatch 404 static_code_analysis.sh
