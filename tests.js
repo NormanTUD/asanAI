@@ -410,39 +410,49 @@ async function test_if_and_xor_examples_are_shown_after_switching_from_signs() {
 }
 
 async function test_custom_tensor() {
-        const wanted_epochs = 2;
+	const wanted_epochs = 2;
 
 	await set_dataset_and_wait("and_xor");
 
 	await set_data_origin_and_wait("tensordata");
 
-        x_file = get_fake_x_custom_tensor_data();
+	// Ensure TF.js backend is fully initialized before proceeding
+	await tf.ready();
 
-        y_file = get_fake_y_custom_tensor_data();
+	x_file = get_fake_x_custom_tensor_data();
+	y_file = get_fake_y_custom_tensor_data();
 
-        debug_custom_tensor_x = x_file;
+	debug_custom_tensor_x = x_file;
+	debug_custom_tensor_y = y_file;
 
-        debug_custom_tensor_y = y_file;
+	set_x_file(x_file);
+	set_y_file(y_file);
 
-        set_x_file(x_file);
+	await set_same_loss_and_metric("meanSquaredError");
 
-        set_y_file(y_file);
-
-        await set_same_loss_and_metric("meanSquaredError");
-
-        set_epochs(wanted_epochs);
+	set_epochs(wanted_epochs);
 
 	await wait_for_updated_page(3);
 
-        const ret = await train_neural_network();
+	// Force model recompilation so it picks up the new input/output shapes
+	// from the custom tensor data before training begins
+	try {
+		await compile_model();
+	} catch (e) {
+		console.warn("[test_custom_tensor] compile_model warning:", e);
+	}
+
+	await wait_for_updated_page(3);
+
+	const ret = await train_neural_network();
 
 	reset_global_x_y_to_null();
 
-	if(!is_valid_ret_object(ret, wanted_epochs)) {
+	if (!is_valid_ret_object(ret, wanted_epochs)) {
 		return false;
 	}
 
-        return true;
+	return true;
 }
 
 function reset_global_x_y_to_null() {

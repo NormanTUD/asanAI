@@ -15,21 +15,17 @@ async function gui_in_training (set_started_training=1) {
 	}
 }
 
-async function gui_not_in_training (set_started_training=1) {
-	if(set_started_training) {
+async function gui_not_in_training(set_started_training = 1) {
+	if (set_started_training) {
 		started_training = false;
 	}
 	reset_start_stop_training_buttons();
 	await update_translations();
 	favicon_default();
 
-	try {
-		if (tf.engine().state.activeScope !== null) {
-			tf.engine().endScope();
-		}
-	} catch (e) {
-		log("[gui_not_in_training] " + e);
-	}
+	// Do NOT end the TF scope here — let the caller (train_neural_network)
+	// manage scope lifecycle to avoid premature backend invalidation.
+	// The scope will be cleaned up in train_neural_network's finally block.
 
 	await enable_everything();
 	$(".show_after_training").show();
@@ -77,24 +73,42 @@ function get_empty_plotly(name) {
 	return obj;
 }
 
-async function train_neural_network () {
+async function train_neural_network() {
 	reset_math_history();
 
-	if($($(".train_neural_network_button")[0]).prop("disabled")) {
+	if ($($(".train_neural_network_button")[0]).prop("disabled")) {
 		err('Cannot train: train_neural_network is disabled.');
 		return null;
 	}
 
 	$("#canvas_grid_visualization").html("");
 
-	tf.engine().startScope();
-	var ret = await _train_neural_network();
-	// Guard against scope already being closed by gui_not_in_training()
-	if (tf.engine().state.activeScope !== null) {
-		tf.engine().endScope();
-	}
+	// Ensure backend is ready before starting any scoped operations
+	await tf.ready();
 
-	return ret;
+	let scopeStarted = false;
+	try {
+		tf.engine().startScope();
+		scopeStarted = true;
+
+		var ret = await _train_neural_network();
+
+		return ret;
+	} catch (e) {
+		err("[train_neural_network] Unexpected error:", e);
+		return null;
+	} finally {
+		// Only end scope if we started it and it's still active
+		if (scopeStarted) {
+			try {
+				if (tf.engine().state.activeScope !== null) {
+					tf.engine().endScope();
+				}
+			} catch (e) {
+				console.warn("[train_neural_network] Error ending scope:", e);
+			}
+		}
+	}
 }
 
 async function _train_neural_network () {
@@ -1122,7 +1136,17 @@ function warn_if_not_tensors(x, y) {
 async function fit_model(x_and_y) {
 	try {
 		const fit_data = await _get_fit_data(x_and_y);
+
+		// Ensure TF.js backend is ready before compilation and training
+		await tf.ready();
+
 		await compile_model();
+
+		// Verify model is valid after compilation
+		if (!model || !model.optimizer) {
+			throw new Error("[fit_model] Model or optimizer is null/undefined after compile_model(). Backend may not be initialized.");
+		}
+
 		l(language[lang]["started_training"]);
 
 		let x = x_and_y["x"];
@@ -1130,12 +1154,21 @@ async function fit_model(x_and_y) {
 
 		warn_if_not_tensors(x, y);
 
+		// Convert to tensors if they aren't already, ensuring they are
+		// bound to the current active backend
+		if (!is_tensor(x)) {
+			x = tf.tensor(Array.isArray(x) ? x : array_sync(x));
+		}
+		if (!is_tensor(y)) {
+			y = tf.tensor(Array.isArray(y) ? y : array_sync(y));
+		}
+
 		const x_shape = get_shape_from_array_or_tensor(x);
 		const y_shape = get_shape_from_array_or_tensor(y);
 
 		dbg(`Starting model-fit. Shapes: [${x_shape.join(", ")}] -> [${y_shape.join(", ")}]`);
 
-		validate_model_io_shapes(get_shape_from_array_or_tensor(x), get_shape_from_array_or_tensor(y));
+		validate_model_io_shapes(x_shape, y_shape);
 
 		await wait_for_updated_page(2);
 
