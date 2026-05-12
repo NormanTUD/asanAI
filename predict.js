@@ -551,7 +551,7 @@ function scaleNestedArray(arr) {
 
 	// Scale the values
 	function scaleValue(value) {
-		if (max === min) return 0;
+		if (max === min) return;
 		return (value - min) * (255 / (max - min));
 	}
 
