@@ -24,7 +24,7 @@ async function gui_not_in_training (set_started_training=1) {
 	favicon_default();
 
 	try {
-		if (!tf.engine().state.activeScope === null) {
+		if (tf.engine().state.activeScope !== null) {
 			tf.engine().endScope();
 		}
 	} catch (e) {
