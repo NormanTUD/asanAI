@@ -246,7 +246,7 @@ async function get_model_data () {
 	}
 
 	if(looks_like_number(validationSplit)) {
-		validationSplit = parse_int(validationSplit);
+		validationSplit = parse_float(validationSplit);
 	} else {
 		finished_loading && wrn("#validation_split doesnt look like a number");
 	}
