@@ -246,6 +246,8 @@ async function test_maximally_activated_last_layer() {
 
 	var lt = get_layer_type_array();
 
+	$("#max_activation_iterations").val(5)
+
 	("Drawing maximally activated last layer");
 	var canvasses = await draw_maximally_activated_layer(lt.length - 1, lt[lt.length - 1]);
 
