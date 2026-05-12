@@ -299,7 +299,7 @@ function draw_kernel(canvasElement, rescaleFactor, pixels) {
 		for (let i = 0; i < n; i++) {
 			for (let j = 0; j < m; j++) {
 				var [r, g, b] = pixels[i][j]; // Assuming channels are [red, green, blue]
-				context.fillStyle = `rgb(${r}, ${g}, ${b}`;
+				context.fillStyle = `rgb(${r}, ${g}, ${b})`;
 				context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
 			}
 		}
@@ -311,7 +311,7 @@ function draw_kernel(canvasElement, rescaleFactor, pixels) {
 		for (let i = 0; i < n; i++) {
 			for (let j = 0; j < m; j++) {
 				const grayscaleValue = pixels[i][j][0]; // Assuming the first channel is grayscale
-				context.fillStyle = `rgb(${grayscaleValue}, ${grayscaleValue}, ${grayscaleValue}`;
+				context.fillStyle = `rgb(${grayscaleValue}, ${grayscaleValue}, ${grayscaleValue})`;
 				context.fillRect(j * rescaleFactor, i * rescaleFactor, rescaleFactor, rescaleFactor);
 			}
 		}
