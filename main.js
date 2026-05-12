@@ -74,27 +74,33 @@ async function on_resize () {
 	await restart_fcnn();
 }
 
-function layer_types_that_dont_have_default_options () {
+function layer_types_that_dont_have_default_options() {
 	var no_options = [];
-
 	var all_options = [];
-
 	var keys = Object.keys(layer_options);
 
+	// 1. Collect all unique option keys from all layer types
 	for (var key_idx = 0; key_idx < keys.length; key_idx++) {
 		var layer_name = keys[key_idx];
-		for (var j = 0; j < layer_options[layer_name]["options"].length; j++) {
-			var this_option = layer_options[layer_name]["options"][j];
-			if(!all_options.includes(this_option)) {
+		var options_list = layer_options[layer_name]["options"];
+
+		for (var j = 0; j < options_list.length; j++) {
+			var this_option = options_list[j];
+			if (!all_options.includes(this_option)) {
 				all_options.push(this_option);
 			}
 		}
 	}
 
+	// 2. Check each unique option against the defaults object
 	for (var option_idx = 0; option_idx < all_options.length; option_idx++) {
 		var key = all_options[option_idx];
-		if(!(key in layer_options_defaults)) {
+
+		if (!(key in layer_options_defaults)) {
 			no_options.push(key);
+
+			// Trigger the error reporting for the missing key
+			err("Missing default value for option: " + key);
 		}
 	}
 
