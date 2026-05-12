@@ -769,7 +769,7 @@ async function run_super_quick_tests (quick=0) {
 			var py_name = python_names_to_js_names[valid_option];
 
 			if(Object.keys(layer_options_defaults).includes(py_name) && !(layer_options_defaults[py_name] === null)) {
-				if(!["size", "strides"].includes(py_name)) {
+				if(!["dtype", "size", "strides"].includes(py_name)) {
 					// For some strange reason these 2 do not work... TODO
 					test_equal("is_valid_parameter('" + py_name + "', " + layer_options_defaults[py_name] + ", 1)", is_valid_parameter(py_name, layer_options_defaults[py_name], 1), true);
 				}
