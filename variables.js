@@ -1885,7 +1885,6 @@ var history_of_weights_for_loss_landscape = [];
 
 var disable_webcam_test = false;
 var shown_activation_equations = [];
-var activation_string = "";
 
 var _math_interactive_mode = false;
 var _math_interactive_mode_before = false;
