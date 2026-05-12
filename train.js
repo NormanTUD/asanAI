@@ -445,7 +445,7 @@ async function get_fit_data () {
 					"x": [],
 					"y": [],
 					"type": get_scatter_type(),
-					"mode": get_plotly_layout(),
+					"mode": get_plotly_type(),
 					"name": "Loss"
 				};
 			}
