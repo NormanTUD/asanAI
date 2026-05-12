@@ -61,7 +61,6 @@ function disable_gradcam_during_training_if_internal_states() {
 function set_model_stop_training() {
 	if(model.isTraining) {
 		model.stopTraining = true;
-		model.stopTraining = true;
 	}
 }
 
