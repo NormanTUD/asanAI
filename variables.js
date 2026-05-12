@@ -1431,10 +1431,10 @@ var general_options = {
 	"beta_regularizer_l2": `"l2", "beta_regularizer_l2", "number", { "value": 0.01 }, nr, "beta_regularizer_tr", null, 0, 1`,
 	"gamma_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
 	"gamma_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"pointwise_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"pointwise_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"depthwise_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"depthwise_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`
+	"pointwise_regularizer_l1": `"l1", "pointwise_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"pointwise_regularizer_l2": `"l2", "pointwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"depthwise_regularizer_l1": `"l1", "depthwise_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"depthwise_regularizer_l2": `"l2", "depthwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`
 
 };
 
