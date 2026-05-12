@@ -81,7 +81,7 @@ async function train_neural_network () {
 	reset_math_history();
 
 	if($($(".train_neural_network_button")[0]).prop("disabled")) {
-		err('Cannot trained: train_neural_network is disabled.');
+		err('Cannot train: train_neural_network is disabled.');
 		return null;
 	}
 
