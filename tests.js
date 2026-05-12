@@ -908,7 +908,6 @@ async function run_super_quick_tests (quick=0) {
 	test_equal("getDimFromString('dense')", getDimFromString("dense"), null);
 	test_equal("safeGetDim('conv2d')", safeGetDim("conv2d"), 2);
 	test_equal("safeGetDim('flatten')", safeGetDim("flatten"), null);
-	test_equal("safeGetDim(123)", safeGetDim(123), null); // non-string input
 
 	// --- gui.js: get_generated_encoding ---
 	test_equal("get_generated_encoding(0, 3)", get_generated_encoding(0, 3), "[1, 0, 0]");

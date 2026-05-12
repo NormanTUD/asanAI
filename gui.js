@@ -6195,7 +6195,7 @@ function show_tab_label(label, click=0) {
 
 function getDimFromString(input) {
 	if (typeof input !== "string") {
-		throw new TypeError("getDimFromString erwartet einen String als Eingabe.");
+		throw new TypeError("getDimFromString expects a string.");
 	}
 
 	var regex = /(\d+)[dD]/g;
@@ -6204,7 +6204,7 @@ function getDimFromString(input) {
 	if (match && match[1] !== undefined) {
 		var parsed = parseInt(match[1], 10);
 		if (Number.isNaN(parsed)) {
-			throw new Error("Fehler beim Parsen der gefundenen Zahl.");
+			throw new Error("Error at parsing the input number.");
 		}
 		return parsed;
 	}
@@ -6217,7 +6217,7 @@ function safeGetDim(input) {
 		return getDimFromString(input);
 	} catch (err) {
 		if (typeof console !== "undefined" && typeof console.error === "function") {
-			console.error("safeGetDim: Eingabefehler:", err && err.message ? err.message : err);
+			console.error("safeGetDim: error:", err && err.message ? err.message : err);
 		}
 		return null;
 	}
