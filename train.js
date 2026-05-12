@@ -1144,7 +1144,7 @@ async function fit_model(x_and_y) {
 
 		// Verify model is valid after compilation
 		if (!model || !model.optimizer) {
-			throw new Error("[fit_model] Model or optimizer is null/undefined after compile_model(). Backend may not be initialized.");
+			throw new Error("[fit_model] Model or optimizer is null/undefined after await compile_model(). Backend may not be initialized.");
 		}
 
 		l(language[lang]["started_training"]);
