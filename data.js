@@ -1554,14 +1554,25 @@ function median(values) {
 	return (values[half - 1] + values[half]) / 2.0;
 }
 
-function decille (arr, percentage) {
+function decille(arr, percentage) {
 	typeassert(arr, array, "arr");
 
-	arr.sort();
-	var len = arr.length;
-	var per = Math.floor(len*percentage) - 1;
+	if (arr.length === 0) return undefined;
 
-	return per;
+	// Clone the array to avoid mutating the original
+	var sorted = arr.slice().sort(function (a, b) {
+		return a - b;
+	});
+
+	var len = sorted.length;
+	var index = Math.floor(len * percentage) - 1;
+
+	// Clamp the index to valid bounds
+	if (index < 0) index = 0;
+	if (index >= len) index = len - 1;
+
+	// Return the value at the computed index, not the index itself
+	return sorted[index];
 }
 
 async function reset_data () {
