@@ -1030,7 +1030,7 @@ async function get_default_data() {
 		x_or_y_empty_or_null = true;
 	}
 
-	if (y === null | y === undefined) {
+	if (y === null || y === undefined) {
 		wrn(`get_default_data: y was null`);
 		x_or_y_empty_or_null = true;
 	}
