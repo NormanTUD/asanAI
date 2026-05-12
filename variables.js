@@ -748,7 +748,7 @@ function get_name_case_independent (name, from_hash) {
 function get_initializer_name (name) {
 	var res = get_name_case_independent(name, initializers);
 
-	if(!name) {
+	if(!res) {
 		wrn("[get_initializer_name] Cannot determine the kernel initializer name of " + name);
 		return null;
 	} else {
