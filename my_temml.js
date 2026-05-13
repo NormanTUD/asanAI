@@ -117,8 +117,23 @@ function _resync_layer_data(layer_idx, layer_data) {
 
 		fresh_layer[wname] = Array.from(wval.dataSync());
 
-		if (wname === "kernel" && wval.shape.length === 2) {
-			fresh_layer[wname] = _reshape_flat_to_matrix(fresh_layer[wname], wval.shape);
+		if (wname === "kernel") {
+			if (wval.shape.length === 2) {
+				// Dense layer: reshape flat array into a 2D matrix
+				fresh_layer[wname] = _reshape_flat_to_matrix(fresh_layer[wname], wval.shape);
+			} else if (wval.shape.length === 4) {
+				// Conv2D layer: store flat — shape is the source of truth from the tensor
+				// (consistent with _resync_conv2d_layer_data behavior)
+				// fresh_layer[wname] stays as a flat array
+			} else if (wval.shape.length === 1) {
+				// 1D kernel (e.g., depthwise or pointwise): keep as flat array
+				// fresh_layer[wname] stays as a flat array
+			} else if (wval.shape.length === 3) {
+				// Conv1D kernel [kW, inC, outC]: store flat — shape from tensor
+				// fresh_layer[wname] stays as a flat array
+			}
+			// For any unrecognized rank, leave as flat array rather than
+			// silently storing it in a form that _build_kernel_latex can't handle
 		}
 	}
 
