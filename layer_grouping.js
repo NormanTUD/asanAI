@@ -18,7 +18,7 @@ async function plot_training_data_to_neurons(div_name="#layer_input_groups", max
 	dbg("Collected "+image_samples.length+" image samples");
 
 	const layers_sorted = sort_layers_by_filters(layers_data);
-	const prepared = prepare_canvases_data(layers_sorted, image_samples, /*k=*/5, max_neurons);
+	const prepared = prepare_canvases_data(layers_sorted, image_samples);
 
 	render_prepared(prepared, target, max_neurons);
 	dbg("Rendering finished");
