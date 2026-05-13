@@ -275,39 +275,6 @@ function _math_apply_single_weight(layer_idx, weight_idx, new_array) {
     }
 }
 
-// ============================================================
-// HYBRID BATCHNORM INJECTION (called after DOM is ready)
-// ============================================================
-
-function _inject_hybrid_batchnorm_direct(container_id, layer_idx, layer_data, colors, y_layer) {
-	var container = document.getElementById(container_id);
-	if (!container) {
-		console.warn("[_inject_hybrid_batchnorm_direct] Container not found:", container_id);
-		return;
-	}
-
-	_purge_stale_editables(layer_idx);
-	_resync_batchnorm_layer_data(layer_idx, layer_data);
-
-	var gamma = layer_data[layer_idx].gamma;
-	var beta = layer_data[layer_idx].beta;
-	var decimals = get_dec_points_math_mode();
-	var max_gamma = Math.min(gamma ? gamma.length : 0, get_max_nr_cols_rows());
-	var max_beta = Math.min(beta ? beta.length : 0, get_max_nr_cols_rows());
-
-	var weight_indices = _resolve_batchnorm_weight_indices(layer_idx);
-	var gamma_weight_idx = weight_indices.gamma;
-	var beta_weight_idx = weight_indices.beta;
-
-	_register_gamma_editables(layer_idx, layer_data, max_gamma, decimals, gamma_weight_idx);
-	_register_beta_editables(layer_idx, layer_data, max_beta, decimals, beta_weight_idx);
-
-	var all_editables = [];
-	var full_latex = _build_batchnorm_full_latex(layer_idx, layer_data, gamma, beta, max_gamma, max_beta, decimals, all_editables, y_layer);
-
-	el_render_single_latex_with_editables(container, full_latex, all_editables);
-}
-
 // --- BatchNorm Helpers ---
 
 function _resync_batchnorm_layer_data(layer_idx, layer_data) {
@@ -372,51 +339,6 @@ function _register_beta_editables(layer_idx, layer_data, max_beta, decimals, bet
 function _register_single_beta_editable(layer_idx, layer_data, idx, bwi, decimals) {
 	var eid = "L" + layer_idx + "_beta_" + idx;
 	math_register_editable(eid, function() { return layer_data[layer_idx].beta[idx]; }, function(v) { layer_data[layer_idx].beta[idx] = v; if (bwi >= 0) _math_apply_single_weight(layer_idx, bwi, layer_data[layer_idx].beta); }, -10, 10, "Layer " + layer_idx + " beta[" + idx + "]", { decimals: decimals });
-}
-
-function _build_batchnorm_full_latex(layer_idx, layer_data, gamma, beta, max_gamma, max_beta, decimals, all_editables, y_layer) {
-	var _epsilon = model?.layers[layer_idx]?.epsilon;
-
-	// --- Mini-batch mean ---
-	var mini_batch_mean = "\\underbrace{\\mu_\\mathcal{B} = \\frac{1}{n} \\sum_{i=1}^n x_i}_{\\text{Batch mean}}";
-
-	// --- Mini-batch variance ---
-	var mini_batch_variance = "\\underbrace{\\sigma_\\mathcal{B}^2 = \\frac{1}{n} \\sum_{i = 1}^n \\left(x_i - \\mu_\\mathcal{B}\\right)^2}_{\\text{Batch variance}}";
-
-	// --- Normalize equation ---
-	var x_equation = '\\epsilon \\text{ could not be determined}';
-	if (_epsilon !== undefined) {
-		x_equation = "\\overline{x_i} \\longrightarrow \\underbrace{\\frac{x_i - \\mu_\\mathcal{B}}{\\sqrt{\\sigma_\\mathcal{B}^2 + \\epsilon \\left( = " + _epsilon + "\\right)}}}_\\text{Normalize}";
-	}
-
-	// --- Gamma (colored + editable) ---
-	var gamma_latex = _build_batchnorm_param_latex(layer_idx, "gamma", gamma, max_gamma, decimals, all_editables);
-
-	// --- Beta (colored + editable) ---
-	var beta_latex = _build_batchnorm_param_latex(layer_idx, "beta", beta, max_beta, decimals, all_editables);
-
-	// --- Output name ---
-	var outname = "";
-	if (layer_idx == layer_data.length - 1) {
-		outname = array_to_latex(y_layer, "Output") + " \\longrightarrow ";
-	} else {
-		outname += _get_h(layer_idx) + " \\longrightarrow ";
-	}
-
-	// --- y equation with interactive gamma and beta ---
-	var y_equation = "y_i = \\underbrace{\\underbrace{\\gamma}_{" + gamma_latex + "}\\overline{x_i} + \\underbrace{\\beta}_{" + beta_latex + "}}_{\\text{Scaling\\&shifting}}";
-
-	var between_equations = ",\\qquad ";
-	var skip_between_equations = ",\\\\[10pt]\\\\\n";
-
-	var str = "\\begin{array}{c}\n";
-	str += "\\displaystyle " + mini_batch_mean + between_equations;
-	str += "\\displaystyle " + mini_batch_variance + between_equations;
-	str += "\\displaystyle " + x_equation + skip_between_equations;
-	str += "\\displaystyle " + outname + y_equation;
-	str += "\\end{array}\n";
-
-	return str;
 }
 
 function _build_batchnorm_param_latex(layer_idx, param_name, param_array, max_count, decimals, all_editables) {
