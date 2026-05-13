@@ -1,4 +1,11 @@
 window.bibData = {
+	"williamstube": {
+		title: "A Storage System for Use with Binary-Digital Computing Machines",
+		author: "Frederic Calland Williams, Tom Kilburn",
+		year: 1948,
+		url: "https://lampes-et-tubes.info/sc/WillamsKilburn1949.pdf"
+	},
+
 	"eniac1946": {
 		title: "Electronic Numerical Integrator and Computer",
 		author: "John Presper Eckert, John W. Mauchly",
