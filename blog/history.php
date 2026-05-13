@@ -869,7 +869,7 @@ The motherboard physically and electrically connects all components. The modern 
 The digital networking revolution began with **packet switching**, independently conceived by \cite[Paul Baran]{baran1964} (1964) and Donald Davies (1965). This was realized in \cite[ARPANET]{rfc1} (1969) and universalized through \cite[TCP/IP]{cerfkahn} (1974). Key milestones for AI include:
 
 * **Ethernet** (1973, \cite[Robert Metcalfe]{metcalfe1976}): now operating at 800 Gbps in data centers.
-* **InfiniBand** (1999): the backbone of most GPU training clusters, offering latencies under 1 μs and bandwidths exceeding 400 Gbps.
+* **InfiniBand** (\cite[first specified in 2000]{infiniband2000}): the backbone of most GPU training clusters, offering latencies under 1 μs and bandwidths exceeding 400 Gbps.
 * **RDMA**: allowing one machine to read another's memory without involving either CPU, critical for gradient synchronization in distributed training frameworks like \cite[Horovod]{horovod2018}.
 
 Training a frontier LLM may involve thousands of GPUs synchronizing gradients every few hundred milliseconds. The collective communication patterns (all-reduce, ring-allreduce) are as much "hardware" as the chips themselves.

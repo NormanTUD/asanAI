@@ -1,4 +1,11 @@
 window.bibData = {
+	"infiniband2000": {
+		title: "InfiniBand Architecture Specification Volume 1, Release 1.0",
+		author: "InfiniBand Trade Association",
+		year: 2000,
+		url: "https://searchworks.stanford.edu/view/4654860"
+	},
+
 	"williamstube": {
 		title: "A Storage System for Use with Binary-Digital Computing Machines",
 		author: "Frederic Calland Williams, Tom Kilburn",
