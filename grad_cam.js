@@ -19,7 +19,18 @@ function apply_color_map(x) {
 		for (let i = 0; i < h; ++i) {
 			for (let j = 0; j < w; ++j) {
 				const pixelValue = xNormData[i * w + j];
-				const row = Math.floor(pixelValue * colorMapSize);
+
+				// Guard against NaN/Infinity and clamp to [0, 1]
+				let clampedValue = pixelValue;
+				if (!isFinite(clampedValue) || isNaN(clampedValue)) {
+					clampedValue = 0;
+				}
+				clampedValue = Math.max(0, Math.min(1, clampedValue));
+
+				// Clamp row index to valid colormap bounds
+				let row = Math.floor(clampedValue * (colorMapSize - 1));
+				row = Math.max(0, Math.min(colorMapSize - 1, row));
+
 				_buffer.set(RGB_COLORMAP[3 * row], 0, i, j, 0);
 				_buffer.set(RGB_COLORMAP[3 * row + 1], 0, i, j, 1);
 				_buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
@@ -272,6 +283,8 @@ function _grad_cam_build_models_safe(_model, last_conv_layer_index) {
 }
 
 function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, overlay_factor) {
+	const EPSILON = 1e-7;
+
 	function conv_output_to_class_output(input_tensor) {
 		return sub_model2
 			.apply(input_tensor, { training: true })
@@ -285,19 +298,36 @@ function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, 
 	const scaled_conv_output = tf_mul(conv_output, pooled_grads);
 	let heat_map = tf_mean(scaled_conv_output, -1);
 
-	heat_map = tf_relu(heat_map);
-	heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
+	// Apply ReLU and check if everything got zeroed out
+	const heat_map_relu = tf_relu(heat_map);
+	const max_after_relu = tf_max(heat_map_relu);
+	const max_val = max_after_relu.dataSync()[0];
 
-	if (!heat_map) {
-		log(`grad_class_activation_map: heat_map could not be generated.`);
-		return null;
+	if (max_val < EPSILON) {
+		// All gradients were negative/zero after ReLU — fallback:
+		// Use tf.abs() directly since there's no tf_abs wrapper.
+		// This preserves spatial structure even when contributions are negative.
+		heat_map = tf.abs(heat_map);
+		const max_abs = tf_max(heat_map);
+		const max_abs_val = max_abs.dataSync()[0];
+
+		if (max_abs_val < EPSILON) {
+			// Truly zero everywhere — nothing to visualize
+			log(`grad_class_activation_map: heat_map is entirely zero, cannot generate.`);
+			return null;
+		}
+
+		heat_map = expand_dims(tf_div(heat_map, tf_add(max_abs, EPSILON)), -1);
+	} else {
+		heat_map = heat_map_relu;
+		heat_map = expand_dims(tf_div(heat_map, tf_add(max_after_relu, EPSILON)), -1);
 	}
 
 	heat_map = resize_image(heat_map, [x.shape[1], x.shape[2]]);
 	heat_map = apply_color_map(heat_map);
 
 	const overlay = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
-	const result = tf_div(overlay, tf_mul(tf_max(overlay), 255));
+	const result = tf_div(overlay, tf_add(tf_max(overlay), EPSILON));
 
 	return result;
 }
