@@ -1,4 +1,17 @@
 window.bibData = {
+	"jacquard1804": {
+		title: "Métier à tisser (Loom with Punched Card Mechanism)",
+		author: "Joseph Marie Jacquard",
+		year: 1804,
+		url: "https://www.computerhistory.org/storageengine/punched-cards-control-jacquard-loom/"
+	},
+	"hollerith1890": {
+		title: "An Electric Tabulating System (The Quarterly, Columbia University School of Mines, Vol. X, No. 16)",
+		author: "Herman Hollerith",
+		year: 1889,
+		url: "https://www.columbia.edu/cu/computinghistory/hollerith.html"
+	},
+
 	"via1998": {
 		title: "The Virtual Interface Architecture",
 		author: "David Dunning, Greg Regnier, Gary McAlpine, Don Cameron, Bill Shubert, Frank Berry, Anne Marie Merritt, Ed Gronke, Chris Dodd",

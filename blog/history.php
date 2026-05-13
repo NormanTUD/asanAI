@@ -876,7 +876,7 @@ Training a frontier LLM may involve thousands of GPUs synchronizing gradients ev
 
 ### Storage
 
-* **Punched Cards** (Jacquard, 1804; Hollerith, 1890): the first machine-readable medium.
+* **Punched Cards** (\cite[Jacquard, 1804]{jacquard1804}; \cite[Hollerith, 1890]{hollerith1890}): the first machine-readable medium.
 * **Magnetic Tape** (1951, UNIVAC I): sequential-access, still used for archival.
 * **Hard Disk Drives** (1956, \cite[IBM 305 RAMAC]{ibmramac}): the first random-access magnetic storage, originally 5 MB across fifty 24-inch platters; by 2025, individual HDDs exceed 30 TB.
 * **Solid-State Drives** (commercially viable ~2008): NVMe PCIe 5.0 SSDs offer 7+ GB/s reads, enabling the rapid random access needed to feed GPU pipelines.
