@@ -1,4 +1,11 @@
 window.bibData = {
+	"via1998": {
+		title: "The Virtual Interface Architecture",
+		author: "David Dunning, Greg Regnier, Gary McAlpine, Don Cameron, Bill Shubert, Frank Berry, Anne Marie Merritt, Ed Gronke, Chris Dodd",
+		year: 1998,
+		url: "https://ieeexplore.ieee.org/document/671404"
+	},
+
 	"infiniband2000": {
 		title: "InfiniBand Architecture Specification Volume 1, Release 1.0",
 		author: "InfiniBand Trade Association",

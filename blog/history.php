@@ -870,7 +870,7 @@ The digital networking revolution began with **packet switching**, independently
 
 * **Ethernet** (1973, \cite[Robert Metcalfe]{metcalfe1976}): now operating at 800 Gbps in data centers.
 * **InfiniBand** (\cite[first specified in 2000]{infiniband2000}): the backbone of most GPU training clusters, offering latencies under 1 μs and bandwidths exceeding 400 Gbps.
-* **RDMA**: allowing one machine to read another's memory without involving either CPU, critical for gradient synchronization in distributed training frameworks like \cite[Horovod]{horovod2018}.
+* **RDMA (Remote Direct Memory Access)**, formalized in the \cite[Virtual Interface Architecture]{via1998} and built natively into InfiniBand: allowing one machine to read another's memory without involving either CPU, critical for gradient synchronization in distributed training frameworks like \cite[Horovod]{horovod2018}.
 
 Training a frontier LLM may involve thousands of GPUs synchronizing gradients every few hundred milliseconds. The collective communication patterns (all-reduce, ring-allreduce) are as much "hardware" as the chips themselves.
 
