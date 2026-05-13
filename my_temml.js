@@ -235,44 +235,47 @@ function _build_bias_latex(layer_idx, bias, max_bias, decimals, all_editables) {
 // ============================================================
 
 function _math_apply_single_weight(layer_idx, weight_idx, new_array) {
-    try {
-        if (started_training) {
-            console.warn("[_math_apply_single_weight] Cannot apply weight changes while training is in progress.");
-            return;
-        }
+	try {
+		if (started_training) {
+			console.warn("[_math_apply_single_weight] Cannot apply weight changes while training is in progress.");
+			return;
+		}
 
-        if (!model || !model.layers || !model.layers[layer_idx]) return;
-        if (weight_idx < 0) return;
+		if (!model || !model.layers || !model.layers[layer_idx]) return;
+		if (weight_idx < 0) return;
 
-        var weight = model.layers[layer_idx].weights[weight_idx];
-        if (!weight || !weight.val || weight.val.isDisposed) return;
+		var weight = model.layers[layer_idx].weights[weight_idx];
+		if (!weight || !weight.val || weight.val.isDisposed) return;
 
-        var old_tensor = weight.val;
+		var old_tensor = weight.val;
 
-        // Flatten correctly regardless of nesting depth
-        var flat;
-        if (Array.isArray(new_array) && Array.isArray(new_array[0])) {
-            flat = new_array.flat(Infinity);
-        } else if (Array.isArray(new_array)) {
-            flat = new_array.slice();
-        } else {
-            flat = [new_array];
-        }
+		// Flatten correctly regardless of nesting depth
+		var flat;
+		if (Array.isArray(new_array) && Array.isArray(new_array[0])) {
+			flat = new_array.flat(Infinity);
+		} else if (Array.isArray(new_array)) {
+			flat = new_array.slice();
+		} else {
+			flat = [new_array];
+		}
 
-        // The tensor shape is the source of truth.
-        if (flat.length !== old_tensor.size) {
-            console.warn("[_math_apply_single_weight] Size mismatch: tensor expects " +
-                old_tensor.size + " values (shape " + old_tensor.shape + ") but got " +
-                flat.length + " from layer_data. Re-syncing from model.");
-            return;
-        }
+		// The tensor shape is the source of truth.
+		if (flat.length !== old_tensor.size) {
+			console.warn("[_math_apply_single_weight] Size mismatch: tensor expects " +
+				old_tensor.size + " values (shape " + old_tensor.shape + ") but got " +
+				flat.length + " from layer_data. Re-syncing from model.");
+			return;
+		}
 
-        var new_tensor = tf.tensor(flat, old_tensor.shape);
-        weight.val.assign(new_tensor);
-        new_tensor.dispose();
-    } catch (e) {
-        console.error("[_math_apply_single_weight] Error:", e);
-    }
+		var new_tensor = tf.tensor(flat, old_tensor.shape);
+		try {
+			weight.val.assign(new_tensor);
+		} finally {
+			new_tensor.dispose();
+		}
+	} catch (e) {
+		console.error("[_math_apply_single_weight] Error:", e);
+	}
 }
 
 // --- BatchNorm Helpers ---
