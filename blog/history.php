@@ -879,7 +879,7 @@ Training a frontier LLM may involve thousands of GPUs synchronizing gradients ev
 * **Punched Cards** (\cite[Jacquard, 1804]{jacquard1804}; \cite[Hollerith, 1890]{hollerith1890}): the first machine-readable medium.
 * **Magnetic Tape** (1951, \cite[UNIVAC I]{univac1951}): sequential-access, still used for archival.
 * **Hard Disk Drives** (1956, \cite[IBM 305 RAMAC]{ibmramac}): the first random-access magnetic storage, originally 5 MB across fifty 24-inch platters; by 2025, individual HDDs exceed 30 TB.
-* **Solid-State Drives** (commercially viable ~2008): NVMe PCIe 5.0 SSDs offer 7+ GB/s reads, enabling the rapid random access needed to feed GPU pipelines.
+* **Solid-State Drives** (commercially viable ~2008, based on \cite[NAND flash memory]{masuoka1987}): NVMe PCIe 5.0 SSDs offer 14+ GB/s reads, enabling the rapid random access needed to feed GPU pipelines.
 
 For large-scale training, data is stored in distributed file systems (Lustre, GPFS) or object storage (S3), striping petabytes across thousands of drives at aggregate bandwidths of hundreds of GB/s.
 

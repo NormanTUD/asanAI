@@ -1,4 +1,11 @@
 window.bibData = {
+	"masuoka1987": {
+		title: "New Ultra High Density EPROM and Flash EEPROM with NAND Structure",
+		author: "Fujio Masuoka, Masamichi Asano, Hidemi Iwahashi, Tetsuo Komuro, Susumu Tanaka",
+		year: 1987,
+		url: "https://ieeexplore.ieee.org/document/1487443"
+	},
+
 	"univac1951": {
 		title: "The UNIVAC System",
 		author: "John Presper Eckert, John W. Mauchly",
