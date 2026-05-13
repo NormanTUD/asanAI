@@ -9,7 +9,7 @@
 		<input class="show_data" type="checkbox" value="1" onclick="enable_disable_grad_cam();add_layer_debuggers()" id="show_grad_cam"><br>
 	</span>
 
-	<canvas id="grad_cam_heatmap" style="position: fixed; right: 50px; display: none"></canvas>
+	<canvas id="grad_cam_heatmap" style="position: fixed; left: 10px; bottom: 50px; display: none"></canvas>
 
 	<div class="container" id="predictcontainer">
 		<span id="predict_error" style="overflow: scroll; display: none"></span><br>
