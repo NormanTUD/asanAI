@@ -756,8 +756,6 @@ async function take_image_from_webcam_n_times(elem) {
 
 	dbg(`take_image_from_webcam_n_times: n=${number}, delay=${delaybetween}`);
 
-	let timerInterval;
-
 	const modal_params = {
 		title: language[lang]["soon_a_photo_series_will_start"],
 		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
