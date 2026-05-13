@@ -844,6 +844,69 @@ built layer upon layer over millennia by people who could never have
 imagined what their contributions would eventually make possible.
 </div>
 
+<div class="optional md" data-headline="The Physical Substrate: A History of Computer Hardware">
+
+Every weight update in a modern neural network is an electrical signal propagating through silicon, coordinated by a clock, stored in volatile memory, and communicated across copper traces on a printed circuit board. None of these components was invented for artificial intelligence. The CPU descends from wartime code-breaking. RAM evolved from radar. The GPU was forged by video games. Networking grew from military resilience planning. Storage was driven by census-taking. Yet together, they form the physical body in which neural networks are incarnated.
+
+### The Central Processing Unit (CPU)
+
+The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1945), which used 17,468 tubes to achieve speeds thousands of times faster than relays \cite[see]{eniac1946}. The \cite[transistor]{semiconductor} (1947) made miniaturization possible, and the **integrated circuit**, independently conceived by \cite[Jack Kilby]{kilbyic} (1958) and \cite[Robert Noyce]{noyceic} (1959), placed multiple transistors on a single die.
+
+The leap to the **microprocessor** arrived in 1971 with the \cite[Intel 4004]{intel4004}, containing 2,300 transistors at 740 kHz. The relentless growth described by \citealternativetitle{mooreslaw} drove counts from thousands to billions. Key architectural innovations included **pipelining** (IBM System/360, 1964), **out-of-order execution** \cite[first in the IBM System/360 Model 91]{tomasulo1967}, **superscalar architectures** (1990s), and **multi-core processors** (IBM POWER4, 2001), acknowledging that frequency scaling had hit thermal limits. For AI, the CPU served as the sole training platform until the mid-2000s, but its sequential MIMD architecture proved poorly suited to the massively parallel matrix operations of deep learning.
+
+### Random Access Memory (RAM)
+
+The earliest electronic computers used **delay-line memory**, first implemented in the \cite[EDSAC]{edsac1949} (1949). The breakthrough came with **magnetic-core memory**, developed by \cite[An Wang]{wangcore} (1949) and Jay Forrester at MIT, which dominated from the 1950s through the early 1970s.
+
+The modern era began when \cite[Robert Dennard]{dennard1968} at IBM invented **DRAM** (1966), storing each bit as a charge in a capacitor. The \cite[Intel 1103]{intel1103} (1970), holding 1 kilobit, rapidly displaced core memory. DRAM capacity has followed its own exponential trajectory: 1 Kb (1970), 1 Mb (1986), 1 Gb (early 2000s), to modern DDR5 modules offering 64 GB per DIMM at bandwidths exceeding 50 GB/s. For AI workloads, memory bandwidth is often the binding constraint: **High Bandwidth Memory (HBM)**, developed by \cite[AMD and SK Hynix]{hbm2013}, provides the necessary throughput for GPU-based training.
+
+### The Motherboard
+
+The motherboard physically and electrically connects all components. The modern form traces to the **IBM PC** (1981), which established standardized expansion slots. The evolution of bus architectures, from ISA (1981) to PCI (1992) to \cite[PCI Express]{pciespec} (2003), reflects ever-increasing bandwidth demands. For AI training, motherboard design determines how many GPUs can communicate and at what speed; proprietary interconnects like \cite[NVLink]{nvlink} provide up to 900 GB/s between GPUs, far exceeding PCIe alone.
+
+### Networking
+
+The digital networking revolution began with **packet switching**, independently conceived by \cite[Paul Baran]{baran1964} (1964) and Donald Davies (1965). This was realized in \cite[ARPANET]{rfc1} (1969) and universalized through \cite[TCP/IP]{cerfkahn} (1974). Key milestones for AI include:
+
+* **Ethernet** (1973, \cite[Robert Metcalfe]{metcalfe1976}): now operating at 800 Gbps in data centers.
+* **InfiniBand** (1999): the backbone of most GPU training clusters, offering latencies under 1 μs and bandwidths exceeding 400 Gbps.
+* **RDMA**: allowing one machine to read another's memory without involving either CPU, critical for gradient synchronization in distributed training frameworks like \cite[Horovod]{horovod2018}.
+
+Training a frontier LLM may involve thousands of GPUs synchronizing gradients every few hundred milliseconds. The collective communication patterns (all-reduce, ring-allreduce) are as much "hardware" as the chips themselves.
+
+### Storage
+
+* **Punched Cards** (Jacquard, 1804; Hollerith, 1890): the first machine-readable medium.
+* **Magnetic Tape** (1951, UNIVAC I): sequential-access, still used for archival.
+* **Hard Disk Drives** (1956, \cite[IBM 305 RAMAC]{ibmramac}): the first random-access magnetic storage, originally 5 MB across fifty 24-inch platters; by 2025, individual HDDs exceed 30 TB.
+* **Solid-State Drives** (commercially viable ~2008): NVMe PCIe 5.0 SSDs offer 7+ GB/s reads, enabling the rapid random access needed to feed GPU pipelines.
+
+For large-scale training, data is stored in distributed file systems (Lustre, GPFS) or object storage (S3), striping petabytes across thousands of drives at aggregate bandwidths of hundreds of GB/s.
+
+### The Graphics Processing Unit (GPU)
+
+The first dedicated graphics chips (e.g., the \cite[IBM Professional Graphics Controller]{ibmpgc}, 1984) were fixed-function pipelines. Programmable shaders (NVIDIA GeForce 3, 2001) made GPUs flexible, and \cite[CUDA]{cuda} (2006) provided the software bridge. Key milestones for AI:
+
+* **NVIDIA Tesla (2007)**: first GPU marketed for general-purpose computing.
+* **NVIDIA Volta / V100 (2017)**: introduced **Tensor Cores** for mixed-precision matrix operations.
+* **NVIDIA A100 (2020)**: third-generation Tensor Cores, sparsity-aware computation, Multi-Instance GPU.
+* **NVIDIA H100 (2022)** and **B200 (2024)**: Transformer Engine, FP8 support, NVLink 4.0.
+
+Google's **TPUs**, custom ASICs for neural network workloads \cite[first deployed in 2015]{jouppi2017tpu}, offer an alternative architecture, and the competition between general-purpose GPUs and specialized accelerators continues to shape AI hardware.
+
+### The Power Supply
+
+Modern GPUs alone draw over 700 W; a full training node may consume 5–10 kW. The evolution from linear regulators to high-efficiency **switched-mode power supplies** (1960s–70s) made dense computing viable. The 80 PLUS certification program (2004) drove PSU efficiency above 90%, a seemingly mundane achievement that determines the economic viability of large-scale training.
+
+### The Clock
+
+Every digital computer operates to the rhythm of a **crystal oscillator**. The quartz crystal oscillator, developed by \cite[Walter Cady]{cady1922} in 1921 for radio, was adopted for computing to ensure billions of transistors switch in lockstep. Modern CPUs tick at 3–6 GHz. Without this temporal coordination, the parallel operations within a CPU or GPU would dissolve into chaos.
+
+### Convergence
+
+None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the "displaced prerequisite": a convergence of solutions to unrelated problems that proved inseparable once they met.
+</div>
+
 <div class="optional md" data-headline="Scaling Abstraction: From Bits to Frameworks">
 As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of "Software." To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction.
 

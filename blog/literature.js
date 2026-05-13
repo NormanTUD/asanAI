@@ -1,4 +1,120 @@
 window.bibData = {
+	"eniac1946": {
+		title: "Electronic Numerical Integrator and Computer",
+		author: "John Presper Eckert, John W. Mauchly",
+		year: 1945,
+		url: "https://fi.edu/sites/default/files/2016-04/EckertAndMauchly_CaseFilesReport_TheFranklinInstitute.pdf"
+	},
+	"kilbyic": {
+		title: "Miniaturized Electronic Circuits (U.S. Patent 3,138,743)",
+		author: "Jack St. Clair Kilby",
+		year: 1958,
+		url: "https://patents.google.com/patent/US3138743A/en"
+	},
+	"noyceic": {
+		title: "Semiconductor Device-and-Lead Structure (U.S. Patent 2,981,877)",
+		author: "Robert Norton Noyce",
+		year: 1959,
+		url: "https://patents.google.com/patent/US2981877A/en"
+	},
+	"intel4004": {
+		title: "A New Era of Integrated Electronics: The Intel 4004 Microprocessor",
+		author: "Federico Faggin, Marcian E. Hoff, Stanley Mazor, Masatoshi Shima",
+		year: 1971,
+		url: "https://www.intel.com/content/www/us/en/history/museum-story-of-intel-4004.html"
+	},
+	"tomasulo1967": {
+		title: "An Efficient Algorithm for Exploiting Multiple Arithmetic Units",
+		author: "Robert Marco Tomasulo",
+		year: 1967,
+		url: "https://ieeexplore.ieee.org/document/5392028"
+	},
+	"edsac1949": {
+		title: "The EDSAC: An Electronic Calculating Machine",
+		author: "Maurice Vincent Wilkes, William Renwick",
+		year: 1949,
+		url: "https://www.cl.cam.ac.uk/events/EDSAC99/"
+	},
+	"wangcore": {
+		title: "Pulse Transfer Controlling Devices (U.S. Patent 2,708,722)",
+		author: "An Wang",
+		year: 1949,
+		url: "https://patents.google.com/patent/US2708722A/en"
+	},
+	"dennard1968": {
+		title: "Field-Effect Transistor Memory (U.S. Patent 3,387,286)",
+		author: "Robert Heath Dennard",
+		year: 1968,
+		url: "https://patents.google.com/patent/US3387286A/en"
+	},
+	"intel1103": {
+		title: "The Intel 1103: First Commercially Available DRAM Chip",
+		author: "Intel Corporation",
+		year: 1971,
+		url: "https://www.allaboutcircuits.com/news/intel-1103-the-dram-chip-that-dethroned-magnetic-core-memory/"
+	},
+	"hbm2013": {
+		title: "High Bandwidth Memory (HBM) DRAM (JESD235)",
+		author: "AMD, SK Hynix, JEDEC",
+		year: 2013,
+		url: "https://www.jedec.org/standards-documents/docs/jesd235a"
+	},
+	"pciespec": {
+		title: "PCI Express Base Specification Revision 1.0",
+		author: "PCI-SIG",
+		year: 2002,
+		url: "https://0x04.net/~mwk/doc/pci/PCI%20Express%20Base%20Specification%20v1.0%20-%202002.pdf"
+	},
+	"nvlink": {
+		title: "NVIDIA NVLink High-Speed GPU Interconnect",
+		author: "NVIDIA Corporation",
+		year: 2016,
+		url: "https://www.nvidia.com/en-us/data-center/nvlink/"
+	},
+	"baran1964": {
+		title: "On Distributed Communications Networks",
+		author: "Paul Baran",
+		year: 1964,
+		url: "https://www.rand.org/pubs/research_memoranda/RM3420.html"
+	},
+	"metcalfe1976": {
+		title: "Ethernet: Distributed Packet Switching for Local Computer Networks",
+		author: "Robert Melancton Metcalfe, David R. Boggs",
+		year: 1976,
+		url: "https://www.cl.cam.ac.uk/teaching/2425/CompNet/files/p395-metcalfe.pdf"
+	},
+	"horovod2018": {
+		title: "Horovod: fast and easy distributed deep learning in TensorFlow",
+		author: "Alexander Sergeev, Mike Del Balso",
+		year: 2018,
+		url: "https://arxiv.org/abs/1802.05799"
+	},
+	"ibmramac": {
+		title: "The IBM 305 RAMAC",
+		author: "IBM Corporation",
+		year: 1956,
+		url: "https://www.ibm.com/history/ramac"
+	},
+	"ibmpgc": {
+		title: "IBM Professional Graphics Controller",
+		author: "IBM Corporation",
+		year: 1984,
+		url: "https://www.seasip.info/VintagePC/pgc.html"
+	},
+	"jouppi2017tpu": {
+		title: "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+		author: "Norman P. Jouppi, Cliff Young, Nishant Patil, David Patterson, et al.",
+		year: 2017,
+		url: "https://arxiv.org/abs/1704.04760"
+	},
+	"cady1922": {
+		title: "The Piezo-Electric Resonator",
+		author: "Walter Guyton Cady",
+		year: 1922,
+		url: "https://ieeexplore.ieee.org/document/1666707?reload=true&tp=&arnumber=1666707&queryText%3Dwalter%20cady="
+	},
+
+
 	// ═══════════════════════════════════════════════
 	// Security & Adversarial Attacks
 	// ═══════════════════════════════════════════════
