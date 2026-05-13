@@ -1,4 +1,11 @@
 window.bibData = {
+	"univac1951": {
+		title: "The UNIVAC System",
+		author: "John Presper Eckert, John W. Mauchly",
+		year: 1951,
+		url: "https://archive.computerhistory.org/resources/access/text/2010/08/102722064-05-01-acc.pdf"
+	},
+
 	"jacquard1804": {
 		title: "Métier à tisser (Loom with Punched Card Mechanism)",
 		author: "Joseph Marie Jacquard",
