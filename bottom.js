@@ -154,7 +154,7 @@ if(window.location.href.indexOf("run_tests") > -1) {
 
 install_memory_debugger();
 
-load_time = Date().toLocaleString();
+load_time = new Date().toLocaleString();
 
 $(document).ready(function() {
 	if(force_cpu_backend) {

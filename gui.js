@@ -6947,10 +6947,10 @@ function l(msg) {
 
 	try {
 		if(last_l != msg) {
-			var load_time = Date().toLocaleString();
-			load_time = load_time.replace(/ GMT.*/, "");
+			var _load_time = new Date().toLocaleString();
+			_load_time = _load_time.replace(/ GMT.*/, "");
 			msg = ("" + msg).replace(/^(Error:\s*)+/, "Error: ");
-			$("#log").prepend(load_time + ": " + msg + "\n");
+			$("#log").prepend(_load_time + ": " + msg + "\n");
 			last_l = msg;
 			if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
 				err(msg);
