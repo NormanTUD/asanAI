@@ -104,13 +104,16 @@ function grad_cam_internal_create_aux_model(_model, last_conv_layer_index) {
 }
 
 function grad_cam_internal_create_sub_model2(_model, start_index) {
-	const layer_output = _model.getLayer(null, start_index).getInputAt(0);
-	const new_input = input({ shape: layer_output.shape.slice(1) });
+	// Get the OUTPUT of the conv layer (not the input)
+	const conv_output = _model.getLayer(null, start_index).getOutputAt(0);
+	const new_input = input({ shape: conv_output.shape.slice(1) });
 	let y = new_input;
+
+	// Start from the layer AFTER the conv layer
+	start_index = start_index + 1;
 
 	while (start_index < _model.layers.length) {
 		const layer = _model.layers[start_index];
-		console.log("y:", y, "layer:", layer);
 		if (Object.keys(layer).includes("original_apply_real")) {
 			y = layer.original_apply_real(y);
 		} else {
