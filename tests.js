@@ -1170,6 +1170,8 @@ async function test_augmented_training_images () {
 async function test_training_images () {
 	const wanted_epochs = 2;
 
+	$("#show_grad_cam").click();
+
 	log_test("Test Training images");
 
 	await set_dataset_and_wait("signs");
@@ -1201,6 +1203,8 @@ async function test_training_images () {
 		err(`test_training_images: #canvas_grid_visualization was not visible`);
 		return false;
 	}
+
+	$("#show_grad_cam").click();
 
 	return true;
 }
