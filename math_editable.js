@@ -106,6 +106,7 @@ function math_ensure_popup() {
         _math_active_ed.set(v);
         slider.value = Math.min(parseFloat(slider.max), Math.max(parseFloat(slider.min), v));
         _math_on_variable_changed(_math_active_ed);
+        _safe_predict_own_data_and_repredict(); // await not possible
     });
 
     slider.addEventListener("input", function () {
