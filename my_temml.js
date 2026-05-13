@@ -519,7 +519,7 @@ function _build_batchnorm_full_latex(layer_idx, layer_data, gamma, beta, max_gam
 
 	// --- Output name ---
 	var outname = "";
-	if (layer_idx == layer_data.length - 1) {
+	if (layer_idx === layer_data.length - 1) {
 		outname = array_to_latex(y_layer, "Output") + " \\longrightarrow ";
 	} else {
 		outname += _get_h(layer_idx) + " \\longrightarrow ";
