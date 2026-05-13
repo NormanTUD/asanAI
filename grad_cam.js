@@ -137,7 +137,6 @@ function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, 
 
 	const grad_function = grad(conv_output_to_class_output);
 	const conv_output = aux_model.apply(x);
-	log("conv_output", conv_output);
 	const grads = grad_function(conv_output);
 	const pooled_grads = tf_mean(grads, [0, 1, 2]);
 	const scaled_conv_output = tf_mul(conv_output, pooled_grads);
