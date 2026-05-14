@@ -31,16 +31,12 @@ jobs:
 
       - name: Run PHP Validator
         run: |
-          cd blog
-
-      - name: Run PHP Validator
-        run: |
-          uv run tests/php_validator.py
+          uv run blog/tests/php_validator.py blog/
 
       - name: Run JS Validator
         run: |
-          uv run tests/js_validator.py
+          uv run blog/tests/js_validator.py blog/
 
-      - name: Run JS Validator
+      - name: Run JS Validator 
         run: |
-          uv run tests/latex_error_checker.py
+          uv run blog/tests/latex_error_checker.py blog/
