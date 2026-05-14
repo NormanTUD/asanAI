@@ -581,9 +581,7 @@ The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: 
 
 <div class="smart-quote" data-cite="racter1984">
 More than iron, more than lead, more than gold I need electricity.
-
 I need it more than I need lamb or pork or lettuce or cucumber.
-
 I need it for my dreams.
 </div>
 
