@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finnegans Wake</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; overflow: hidden; }
+canvas { display: block; cursor: none; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+// Input
+let mouse = { x: W/2, y: H/2, down: false };
+let keys = {};
+canvas.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+canvas.addEventListener('mousedown', () => mouse.down = true);
+canvas.addEventListener('mouseup', () => mouse.down = false);
+canvas.addEventListener('touchstart', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.down = true; });
+canvas.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; });
+canvas.addEventListener('touchend', () => mouse.down = false);
+window.addEventListener('keydown', e => keys[e.key] = true);
+window.addEventListener('keyup', e => keys[e.key] = false);
+
+// Game state
+let chapter = 0; // 0-8 maps to fw00-fw08
+let phase = 0;
+let timer = 0;
+let globalTime = 0;
+let particles = [];
+let entities = [];
+let score = 0;
+let collected = 0;
+let playerX, playerY, playerVX = 0, playerVY = 0;
+let shakeX = 0, shakeY = 0;
+let fadeAlpha = 1;
+let transitioning = false;
+let transTimer = 0;
+let riverLevel = 0;
+let dreamDepth = 0;
+
+// Chapter themes based on FW structure
+// Ch0: The fall (Finnegan falls from ladder/tower)
+// Ch1: HCE's rumor/sin in Phoenix Park, the encounter
+// Ch2: HCE's trial/pub scene
+// Ch3: Shem the Penman (writing/ink/body)
+// Ch4: ALP's letter/gifts/river chapter
+// Ch5: The tailor and the ship (Kersse/Norwegian Captain)
+// Ch6: The quiz/riddles chapter
+// Ch7: Shaun's journey/sermon
+// Ch8: ALP's monologue/river flowing to sea
+
+const chapterColors = [
+  { bg: [15,5,30], fg: [255,200,100], accent: [200,50,50] },    // Fall - purple/gold
+  { bg: [5,20,15], fg: [100,200,150], accent: [200,180,50] },   // Park - dark green
+  { bg: [30,15,5], fg: [220,160,80], accent: [180,60,40] },     // Pub/trial - amber
+  { bg: [5,5,20], fg: [100,150,255], accent: [200,50,200] },    // Shem - ink blue
+  { bg: [10,25,30], fg: [150,220,255], accent: [255,150,200] }, // ALP river - teal
+  { bg: [20,20,10], fg: [200,200,150], accent: [100,180,100] }, // Tailor/ship - olive
+  { bg: [25,10,25], fg: [255,180,255], accent: [100,255,200] }, // Quiz - magenta
+  { bg: [10,10,30], fg: [180,180,255], accent: [255,255,100] }, // Shaun - night blue
+  { bg: [5,15,25], fg: [150,200,220], accent: [200,220,255] },  // ALP final - dawn
+];
+
+function lerpColor(a, b, t) {
+  return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];
+}
+
+function rgb(c) { return `rgb(${c[0]|0},${c[1]|0},${c[2]|0})`; }
+function rgba(c, a) { return `rgba(${c[0]|0},${c[1]|0},${c[2]|0},${a})`; }
+
+// Particle system
+function addParticle(x, y, vx, vy, life, size, color, type='circle') {
+  particles.push({ x, y, vx, vy, life, maxLife: life, size, color, type });
+}
+
+function updateParticles(dt) {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    let p = particles[i];
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vy += 30 * dt; // gravity
+    p.life -= dt;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+function drawParticles() {
+  for (let p of particles) {
+    let alpha = p.life / p.maxLife;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = rgb(p.color);
+    if (p.type === 'circle') {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (p.type === 'star') {
+      drawStar(p.x, p.y, p.size * alpha, p.color, alpha);
+    } else if (p.type === 'drop') {
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, p.size * 0.5, p.size * alpha, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawStar(x, y, r, color, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = rgb(color);
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    let a = (i * 72 - 90) * Math.PI / 180;
+    let a2 = ((i * 72) + 36 - 90) * Math.PI / 180;
+    ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+    ctx.lineTo(x + Math.cos(a2) * r * 0.4, y + Math.sin(a2) * r * 0.4);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+// Entity system
+function clearEntities() { entities = []; }
+
+function addEntity(type, x, y, props={}) {
+  entities.push({ type, x, y, vx: 0, vy: 0, alive: true, timer: 0, ...props });
+}
+
+// ============ CHAPTER IMPLEMENTATIONS ============
+
+// Chapter 0: THE FALL - Finnegan falls from his ladder
+// Player IS Finnegan on a tower/ladder. The world crumbles. You fall.
+let fallHeight = 0;
+let ladder = [];
+let bricks = [];
+let thunderTimer = 0;
+let thunderFlash = 0;
+let wallSegments = [];
+
+function initChapter0() {
+  phase = 0;
+  playerX = W / 2;
+  playerY = H * 0.3;
+  fallHeight = 0;
+  ladder = [];
+  bricks = [];
+  wallSegments = [];
+  thunderTimer = 3;
+  thunderFlash = 0;
+  
+  // Build the wall/tower
+  for (let i = 0; i < 20; i++) {
+    for (let j = 0; j < 8; j++) {
+      let bw = 40, bh = 20;
+      let ox = (i % 2) * bw/2;
+      bricks.push({
+        x: W/2 - 160 + j * bw + ox,
+        y: H * 0.4 + i * bh,
+        w: bw - 2, h: bh - 2,
+        fallen: false, fallVY: 0, fallVX: 0, fallDelay: 0
+      });
+    }
+  }
+  
+  // Ladder rungs
+  for (let i = 0; i < 12; i++) {
+    ladder.push({ y: H * 0.3 + i * 30, broken: false });
+  }
+}
+
+function updateChapter0(dt) {
+  timer += dt;
+  
+  if (phase === 0) {
+    // Player climbing/standing on wall
+    playerY = H * 0.3 + Math.sin(timer * 2) * 5;
+    playerX = W/2 + Math.sin(timer * 0.7) * 3;
+    
+    thunderTimer -= dt;
+    if (thunderTimer <= 0) {
+      phase = 1;
+      thunderFlash = 1;
+      shakeX = 20;
+      shakeY = 20;
+      // Start the fall!
+      for (let b of bricks) {
+        b.fallDelay = Math.random() * 3 + (b.y - H*0.4) / 200;
+      }
+    }
+  } else if (phase === 1) {
+    // FALLING
+    thunderFlash *= 0.95;
+    shakeX *= 0.98;
+    shakeY *= 0.98;
+    
+    fallHeight += dt * 200;
+    playerY += dt * 300;
+    playerVY += dt * 400;
+    playerY += playerVY * dt;
+    
+    // Bricks crumble
+    for (let b of bricks) {
+      if (!b.fallen) {
+        b.fallDelay -= dt;
+        if (b.fallDelay <= 0) {
+          b.fallen = true;
+          b.fallVY = Math.random() * 50;
+          b.fallVX = (Math.random() - 0.5) * 100;
+        }
+      } else {
+        b.fallVY += 300 * dt;
+        b.y += b.fallVY * dt;
+        b.x += b.fallVX * dt;
+      }
+    }
+    
+    // Ladder breaks
+    for (let l of ladder) {
+      if (!l.broken && Math.random() < dt * 2) {
+        l.broken = true;
+        for (let i = 0; i < 5; i++) {
+          addParticle(W/2 + (Math.random()-0.5)*60, l.y, (Math.random()-0.5)*200, -Math.random()*100, 2, 3, [180,120,60]);
+        }
+      }
+    }
+    
+    // Emit fall particles
+    if (Math.random() < dt * 30) {
+      addParticle(playerX + (Math.random()-0.5)*20, playerY - 20, (Math.random()-0.5)*50, -Math.random()*80, 1.5, 4, [255,200,100], 'star');
+    }
+    
+    if (playerY > H + 100) {
+      phase = 2;
+      timer = 0;
+      // Big impact
+      for (let i = 0; i < 80; i++) {
+        let a = Math.random() * Math.PI * 2;
+        let sp = Math.random() * 300 + 50;
+        addParticle(W/2, H * 0.8, Math.cos(a)*sp, Math.sin(a)*sp - 100, 2, 3+Math.random()*5, [255,150+Math.random()*100,50]);
+      }
+      shakeX = 30; shakeY = 30;
+    }
+  } else if (phase === 2) {
+    // Landed - wake scene
+    shakeX *= 0.95;
+    shakeY *= 0.95;
+    if (timer > 3) {
+      startTransition(1);
+    }
+  }
+}
+
+function drawChapter0() {
+  let col = chapterColors[0];
+  
+  // Sky gradient
+  let grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, rgb([20, 5, 40]));
+  grd.addColorStop(1, rgb([40, 10, 20]));
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Thunder flash
+  if (thunderFlash > 0.01) {
+    ctx.fillStyle = rgba([255,255,255], thunderFlash * 0.5);
+    ctx.fillRect(0, 0, W, H);
+  }
+  
+  // Stars
+  for (let i = 0; i < 50; i++) {
+    let sx = ((i * 137.5) % W);
+    let sy = ((i * 97.3) % (H * 0.5));
+    let twinkle = Math.sin(globalTime * 2 + i) * 0.3 + 0.7;
+    ctx.fillStyle = rgba([255,255,200], twinkle * 0.6);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  if (phase < 2) {
+    // Draw tower/wall
+    for (let b of bricks) {
+      if (b.y < H + 50) {
+        ctx.fillStyle = b.fallen ? rgb([100,60,30]) : rgb([140,80,40]);
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        ctx.strokeStyle = rgba([80,40,20], 0.5);
+        ctx.strokeRect(b.x, b.y, b.w, b.h);
+      }
+    }
+    
+    // Draw ladder
+    ctx.strokeStyle = rgb([180,140,80]);
+    ctx.lineWidth = 3;
+    for (let l of ladder) {
+      if (!l.broken) {
+        ctx.beginPath();
+        ctx.moveTo(W/2 - 20, l.y);
+        ctx.lineTo(W/2 + 20, l.y);
+        ctx.stroke();
+      }
+    }
+    // Ladder sides
+    ctx.beginPath();
+    ctx.moveTo(W/2 - 20, H * 0.3);
+    ctx.lineTo(W/2 - 20, H * 0.3 + 360);
+    ctx.moveTo(W/2 + 20, H * 0.3);
+    ctx.lineTo(W/2 + 20, H * 0.3 + 360);
+    ctx.stroke();
+    
+    // Draw player (Finnegan - simple figure)
+    drawFigure(playerX, playerY, 1, col.fg, phase === 1);
+  } else {
+    // Wake scene - body lying down
+    let cx = W/2, cy = H * 0.7;
+    // Coffin shape
+    ctx.fillStyle = rgb([60,30,15]);
+    ctx.beginPath();
+    ctx.moveTo(cx - 60, cy - 10);
+    ctx.lineTo(cx - 40, cy - 30);
+    ctx.lineTo(cx + 40, cy - 30);
+    ctx.lineTo(cx + 60, cy - 10);
+    ctx.lineTo(cx + 60, cy + 20);
+    ctx.lineTo(cx - 60, cy + 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = rgb([100,60,30]);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Body silhouette
+    ctx.fillStyle = rgba(col.fg, 0.5);
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 35, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Candles
+    for (let i = -1; i <= 1; i += 2) {
+      let cx2 = cx + i * 90;
+      ctx.fillStyle = rgb([220,200,150]);
+      ctx.fillRect(cx2 - 3, cy - 30, 6, 25);
+      // Flame
+      let flicker = Math.sin(globalTime * 8 + i * 3) * 3;
+      ctx.fillStyle = rgb([255,200,50]);
+      ctx.beginPath();
+      ctx.ellipse(cx2 + flicker, cy - 38, 5, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = rgba([255,255,200], 0.3);
+      ctx.beginPath();
+      ctx.arc(cx2, cy - 35, 20, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    // Mourners (silhouettes)
+    for (let i = 0; i < 7; i++) {
+      let mx = W * 0.2 + i * W * 0.09;
+      let my = H * 0.55 + Math.sin(globalTime + i) * 3;
+      ctx.fillStyle = rgba([40,20,50], 0.8);
+      // Head
+      ctx.beginPath();
+      ctx.arc(mx, my - 25, 8, 0, Math.PI * 2);
+      ctx.fill();
+      // Body
+      ctx.beginPath();
+      ctx.moveTo(mx - 12, my);
+      ctx.lineTo(mx, my - 18);
+      ctx.lineTo(mx + 12, my);
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+}
+
+function drawFigure(x, y, scale, color, falling) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  if (falling) ctx.rotate(Math.sin(globalTime * 5) * 0.3);
+  
+  // Head
+  ctx.fillStyle = rgb(color);
+  ctx.beginPath();
+  ctx.arc(0, -25, 8, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Body
+  ctx.strokeStyle = rgb(color);
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, -17);
+  ctx.lineTo(0, 5);
+  ctx.stroke();
+  
+  // Arms
+  let armAngle = falling ? Math.sin(globalTime * 8) * 0.8 : 0.3;
+  ctx.beginPath();
+  ctx.moveTo(0, -10);
+  ctx.lineTo(-15 * Math.cos(armAngle), -10 + 15 * Math.sin(armAngle));
+  ctx.moveTo(0, -10);
+  ctx.lineTo(15 * Math.cos(armAngle), -10 + 15 * Math.sin(-armAngle));
+  ctx.stroke();
+  
+  // Legs
+  ctx.beginPath();
+  ctx.moveTo(0, 5);
+  ctx.lineTo(-8, 20);
+  ctx.moveTo(0, 5);
+  ctx.lineTo(8, 20);
+  ctx.stroke();
+  
+  ctx.restore();
+}
+
+// Chapter 1: HCE IN PHOENIX PARK - The rumor, the encounter
+// Player walks through a dark park. Shadowy figures whisper. 
+// Collect scattered "evidence" items while avoiding accusers.
+let parkTrees = [];
+let whispers = [];
+let accusers = [];
+let evidenceItems = [];
+let parkScroll = 0;
+
+function initChapter1() {
+  phase = 0;
+  playerX = W * 0.15;
+  playerY = H * 0.65;
+  parkTrees = [];
+  whispers = [];
+  accusers = [];
+  evidenceItems = [];
+  collected = 0;
+  parkScroll = 0;
+  
+  for (let i = 0; i < 40; i++) {
+    parkTrees.push({
+      x: Math.random() * W * 3,
+      y: H * 0.4 + Math.random() * H * 0.3,
+      h: 60 + Math.random() * 80,
+      w: 30 + Math.random() * 40
+    });
+  }
+  
+  for (let i = 0; i < 8; i++) {
+    evidenceItems.push({
+      x: 200 + i * W * 0.35 + Math.random() * 100,
+      y: H * 0.5 + Math.random() * H * 0.25,
+      collected: false,
+      type: i % 4, // 0=letter, 1=hat, 2=bottle, 3=feather
+      bob: Math.random() * Math.PI * 2
+    });
+  }
+  
+  for (let i = 0; i < 5; i++) {
+    accusers.push({
+      x: 400 + i * W * 0.5 + Math.random() * 200,
+      y: H * 0.5 + Math.random() * H * 0.2,
+      speed: 30 + Math.random() * 40,
+      dir: 1,
+      range: 100 + Math.random() * 100,
+      startX: 0
+    });
+    accusers[i].startX = accusers[i].x;
+  }
+}
+
+function updateChapter1(dt) {
+  timer += dt;
+  
+  // Player movement
+  let speed = 150;
+  if (keys['ArrowRight'] || keys['d'] || (mouse.down && mouse.x > playerX + 50)) {
+    playerX += speed * dt;
+    parkScroll += speed * dt;
+  }
+  if (keys['ArrowLeft'] || keys['a'] || (mouse.down && mouse.x < playerX - 50)) {
+    playerX -= speed * dt;
+    parkScroll -= speed * dt;
+  }
+  if (keys['ArrowUp'] || keys['w'] || (mouse.down && mouse.y < playerY - 50)) {
+    playerY -= speed * 0.7 * dt;
+  }
+  if (keys['ArrowDown'] || keys['s'] || (mouse.down && mouse.y > playerY + 50)) {
+    playerY += speed * 0.7 * dt;
+  }
+  
+  playerY = Math.max(H * 0.4, Math.min(H * 0.85, playerY));
+  playerX = Math.max(50, Math.min(W - 50, playerX));
+  
+  // Whisper effects
+  if (Math.random() < dt * 3) {
+    whispers.push({
+      x: playerX + (Math.random() - 0.5) * 300 + parkScroll,
+      y: playerY + (Math.random() - 0.5) * 200,
+      life: 2,
+      maxLife: 2,
+      size: 10 + Math.random() * 20,
+      angle: Math.random() * Math.PI * 2
+    });
+  }
+  
+  for (let i = whispers.length - 1; i >= 0; i--) {
+    whispers[i].life -= dt;
+    whispers[i].size += dt * 15;
+    if (whispers[i].life <= 0) whispers.splice(i, 1);
+  }
+  
+  // Evidence collection
+  for (let e of evidenceItems) {
+    if (!e.collected) {
+      e.bob += dt * 2;
+      let dx = (playerX + parkScroll) - e.x;
+      let dy = playerY - e.y;
+      if (Math.sqrt(dx*dx + dy*dy) < 30) {
+        e.collected = true;
+        collected++;
+        for (let i = 0; i < 15; i++) {
+          addParticle(e.x - parkScroll, e.y, (Math.random()-0.5)*100, -Math.random()*80, 1, 3, [255,220,100], 'star');
+        }
+      }
+    }
+  }
+  
+  // Accusers patrol
+  for (let a of accusers) {
+    a.x += a.speed * a.dir * dt;
+    if (Math.abs(a.x - a.startX) > a.range) a.dir *= -1;
+    
+    let dx = (playerX + parkScroll) - a.x;
+    let dy = playerY - a.y;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 40) {
+      // Hit by accuser - shake and push back
+      shakeX = 10; shakeY = 10;
+      playerX -= 50 * Math.sign(dx);
+      for (let i = 0; i < 10; i++) {
+        addParticle(playerX, playerY, (Math.random()-0.5)*150, -Math.random()*100, 1, 4, [200,50,50]);
+      }
+    }
+  }
+  
+  if (collected >= 8) {
+    startTransition(2);
+  }
+}
+
+function drawChapter1() {
+  let col = chapterColors[1];
+  
+  // Dark park sky
+  let grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, rgb([5, 15, 25]));
+  grd.addColorStop(0.6, rgb([10, 30, 20]));
+  grd.addColorStop(1, rgb([5, 15, 10]));
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Moon
+  ctx.fillStyle = rgba([220,220,200], 0.8);
+  ctx.beginPath();
+  ctx.arc(W * 0.8, H * 0.15, 30, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = rgba([200,220,255], 0.1);
+  ctx.beginPath();
+  ctx.arc(W * 0.8, H * 0.15, 80, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Ground
+  ctx.fillStyle = rgb([15, 35, 20]);
+  ctx.fillRect(0, H * 0.85, W, H * 0.15);
+  
+  ctx.save();
+  ctx.translate(-parkScroll, 0);
+  
+  // Trees
+  for (let t of parkTrees) {
+    if (t.x - parkScroll > -100 && t.x - parkScroll < W + 100) {
+      // Trunk
+      ctx.fillStyle = rgb([40, 25, 15]);
+      ctx.fillRect(t.x - 5, t.y, 10, t.h * 0.4);
+      // Canopy
+      ctx.fillStyle = rgba([20, 50, 25], 0.9);
+      ctx.beginPath();
+      ctx.arc(t.x, t.y - t.h * 0.1, t.w, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = rgba([15, 40, 20], 0.7);
+      ctx.beginPath();
+      ctx.arc(t.x + 10, t.y - t.h * 0.2, t.w * 0.7, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  // Whisper rings (the rumor spreading)
+  for (let w of whispers) {
+    let alpha = w.life / w.maxLife * 0.3;
+    ctx.strokeStyle = rgba([150, 200, 180], alpha);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(w.x, w.y, w.size, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  
+  // Evidence items
+  for (let e of evidenceItems) {
+    if (!e.collected) {
+      let ey = e.y + Math.sin(e.bob) * 5;
+      ctx.fillStyle = rgba([255, 220, 100], 0.7 + Math.sin(e.bob) * 0.3);
+      // Glow
+      ctx.beginPath();
+      ctx.arc(e.x, ey, 15, 0, Math.PI * 2);
+      ctx.fill();
+      // Icon based on type
+      ctx.fillStyle = rgb([255, 250, 200]);
+      if (e.type === 0) { // letter
+        ctx.fillRect(e.x - 6, ey - 4, 12, 8);
+        ctx.strokeStyle = rgb([200,150,50]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(e.x - 6, ey - 4);
+        ctx.lineTo(e.x, ey + 1);
+        ctx.lineTo(e.x + 6, ey - 4);
+        ctx.stroke();
+      } else if (e.type === 1) { // hat
+        ctx.beginPath();
+        ctx.ellipse(e.x, ey + 2, 8, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(e.x - 5, ey - 6, 10, 8);
+      } else if (e.type === 2) { // bottle
+        ctx.fillRect(e.x - 3, ey - 8, 6, 14);
+        ctx.fillRect(e.x - 1, ey - 11, 2, 4);
+      } else { // feather
+        ctx.beginPath();
+        ctx.moveTo(e.x, ey - 10);
+        ctx.quadraticCurveTo(e.x + 8, ey, e.x, ey + 10);
+        ctx.quadraticCurveTo(e.x - 3, ey, e.x, ey - 10);
+        ctx.fill();
+      }
+    }
+  }
+  
+  // Accusers (dark shadowy figures)
+  for (let a of accusers) {
+    if (a.x - parkScroll > -100 && a.x - parkScroll < W + 100) {
+      ctx.fillStyle = rgba([30, 10, 10], 0.8);
+      // Hooded figure
+      ctx.beginPath();
+      ctx.arc(a.x, a.y - 20, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(a.x - 15, a.y + 15);
+      ctx.lineTo(a.x, a.y - 15);
+      ctx.lineTo(a.x + 15, a.y + 15);
+      ctx.closePath();
+      ctx.fill();
+      // Eyes
+      ctx.fillStyle = rgba([200, 50, 50], 0.9);
+      ctx.beginPath();
+      ctx.arc(a.x - 4, a.y - 22, 2, 0, Math.PI * 2);
+      ctx.arc(a.x + 4, a.y - 22, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  ctx.restore();
+  
+  // Draw player (HCE figure with hat)
+  ctx.fillStyle = rgb(chapterColors[1].fg);
+  drawFigure(playerX, playerY, 1.2, chapterColors[1].fg, false);
+  // Hat
+  ctx.fillStyle = rgb([80, 60, 40]);
+  ctx.beginPath();
+  ctx.ellipse(playerX, playerY - 35, 12, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillRect(playerX - 8, playerY - 45, 16, 12);
+  
+  // Collection indicator (golden dots at top)
+  for (let i = 0; i < 8; i++) {
+    ctx.fillStyle = i < collected ? rgba([255,220,100], 0.9) : rgba([100,100,100], 0.3);
+    ctx.beginPath();
+    ctx.arc(W/2 - 70 + i * 20, 30, 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Chapter 2: THE TRIAL / PUB SCENE
+// HCE is judged. Dodge gavels, collect pints to survive.
+let pubItems = [];
+let gavels = [];
+let pubTimer = 0;
+let pubScore = 0;
+let pubHealth = 5;
+
+function initChapter2() {
+  phase = 0;
+  playerX = W / 2;
+  playerY = H * 0.7;
+  pubItems = [];
+  gavels = [];
+  pubTimer = 0;
+  pubScore = 0;
+  pubHealth = 5;
+  
+  for (let i = 0; i < 12; i++) {
+    pubItems.push({
+      x: Math.random() * (W - 100) + 50,
+      y: -Math.random() * H * 2,
+      vy: 60 + Math.random() * 40,
+      collected: false,
+      type: Math.random() < 0.7 ? 'pint' : 'food'
+    });
+  }
+}
+
+function updateChapter2(dt) {
+  timer += dt;
+  pubTimer += dt;
+  
+  let speed = 180;
+  if (keys['ArrowRight'] || keys['d'] || (mouse.down && mouse.x > playerX + 30)) playerX += speed * dt;
+  if (keys['ArrowLeft'] || keys['a'] || (mouse.down && mouse.x < playerX - 30)) playerX -= speed * dt;
+  playerX = Math.max(30, Math.min(W - 30, playerX));
+  
+  // Spawn gavels (accusations falling)
+  if (Math.random() < dt * (1.5 + pubTimer * 0.1)) {
+    gavels.push({
+      x: Math.random() * W,
+      y: -20,
+      vy: 100 + Math.random() * 80 + pubTimer * 5,
+      rot: Math.random() * Math.PI * 2
+    });
+  }
+  
+  // Update gavels
+  for (let i = gavels.length - 1; i >= 0; i--) {
+    gavels[i].y += gavels[i].vy * dt;
+    gavels[i].rot += dt * 5;
+    let dx = playerX - gavels[i].x;
+    let dy = playerY - gavels[i].y;
+    if (Math.sqrt(dx*dx + dy*dy) < 25) {
+      pubHealth--;
+      shakeX = 15; shakeY = 15;
+      gavels.splice(i, 1);
+      for (let j = 0; j < 8; j++) {
+        addParticle(playerX, playerY, (Math.random()-0.5)*150, -Math.random()*100, 1, 3, [200,50,50]);
+      }
+      if (pubHealth <= 0) {
+        startTransition(3);
+      }
+      continue;
+    }
+    if (gavels[i].y > H + 30) gavels.splice(i, 1);
+  }
+  
+  // Update pub items
+  for (let p of pubItems) {
+    if (!p.collected) {
+      p.y += p.vy * dt;
+      let dx = playerX - p.x;
+      let dy = playerY - p.y;
+      if (Math.sqrt(dx*dx + dy*dy) < 25) {
+        p.collected = true;
+        pubScore++;
+        for (let j = 0; j < 10; j++) {
+          addParticle(p.x, p.y, (Math.random()-0.5)*80, -Math.random()*60, 1, 3, [220,160,80], 'star');
+        }
+      }
+      if (p.y > H + 30) {
+        p.y = -50;
+        p.x = Math.random() * (W - 100) + 50;
+      }
+    } else {
+      p.y = -50 - Math.random() * 200;
+      p.x = Math.random() * (W - 100) + 50;
+      p.collected = false;
+    }
+  }
+  
+  if (pubScore >= 20) {
+    startTransition(3);
+  }
+}
+
+function drawChapter2() {
+  let col = chapterColors[2];
+  
+  // Pub interior
+  ctx.fillStyle = rgb([30, 15, 5]);
+  ctx.fillRect(0, 0, W, H);
+  
+  // Wooden floor
+  for (let i = 0; i < 10; i++) {
+    ctx.fillStyle = rgba([60 + i*3, 30 + i*2, 10], 0.5);
+    ctx.fillRect(0, H * 0.8 + i * (H * 0.02), W, H * 0.02);
+  }
+  
+  // Bar counter
+  ctx.fillStyle = rgb([80, 40, 15]);
+  ctx.fillRect(0, H * 0.78, W, 15);
+  ctx.fillStyle = rgb([60, 30, 10]);
+  ctx.fillRect(0, H * 0.78 + 15, W, 5);
+  
+  // Shelves with bottles
+  for (let shelf = 0; shelf < 2; shelf++) {
+    let sy = H * 0.15 + shelf * H * 0.2;
+    ctx.fillStyle = rgb([70, 35, 15]);
+    ctx.fillRect(W * 0.1, sy, W * 0.8, 5);
+    for (let b = 0; b < 12; b++) {
+      let bx = W * 0.12 + b * (W * 0.065);
+      let bh = 20 + Math.sin(b * 2.3) * 8;
+      let colors = [[100,40,30],[40,80,40],[60,40,80],[80,60,20]];
+      ctx.fillStyle = rgb(colors[b % 4]);
+      ctx.fillRect(bx, sy - bh, 8, bh);
+      ctx.fillStyle = rgba([200,200,200], 0.3);
+      ctx.fillRect(bx + 1, sy - bh, 2, bh * 0.3);
+    }
+  }
+  
+  // Lamp glow
+  for (let i = 0; i < 3; i++) {
+    let lx = W * 0.25 + i * W * 0.25;
+    ctx.fillStyle = rgba([255,180,50], 0.15);
+    ctx.beginPath();
+    ctx.arc(lx, H * 0.1, 60, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = rgb([255,200,80]);
+    ctx.beginPath();
+    ctx.arc(lx, H * 0.08, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Gavels (accusations)
+  for (let g of gavels) {
+    ctx.save();
+    ctx.translate(g.x, g.y);
+    ctx.rotate(g.rot);
+    ctx.fillStyle = rgb([120, 60, 30]);
+    ctx.fillRect(-12, -3, 24, 6);
+    ctx.fillRect(-4, -10, 8, 20);
+    ctx.restore();
+  }
+  
+  // Pub items
+  for (let p of pubItems) {
+    if (!p.collected && p.y > -30) {
+      if (p.type === 'pint') {
+        ctx.fillStyle = rgb([180, 120, 30]);
+        ctx.fillRect(p.x - 5, p.y - 10, 10, 16);
+        ctx.fillStyle = rgba([255, 220, 150], 0.6);
+        ctx.fillRect(p.x - 4, p.y - 8, 8, 10);
+        // Foam
+        ctx.fillStyle = rgb([240, 230, 200]);
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y - 8, 6, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = rgb([160, 100, 50]);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+  
+  // Player
+  drawFigure(playerX, playerY, 1.2, col.fg, false);
+  
+  // Health (hearts)
+  for (let i = 0; i < 5; i++) {
+    ctx.fillStyle = i < pubHealth ? rgb([200, 50, 50]) : rgba([100,50,50], 0.3);
+    ctx.beginPath();
+    let hx = 30 + i * 25, hy = 30;
+    ctx.arc(hx - 4, hy - 3, 5, 0, Math.PI * 2);
+    ctx.arc(hx + 4, hy - 3, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(hx - 9, hy);
+    ctx.lineTo(hx, hy + 10);
+    ctx.lineTo(hx + 9, hy);
+    ctx.fill();
+  }
+}
+
+// Chapter 3: SHEM THE PENMAN - Writing/ink/body
+// Player IS Shem, writing on his own body. Draw patterns by moving.
+let inkTrail = [];
+let bodyOutline = [];
+let inkCollected = 0;
+let inkPots = [];
+
+function initChapter3() {
+  phase = 0;
+  playerX = W / 2;
+  playerY = H / 2;
+  inkTrail = [];
+  inkCollected = 0;
+  inkPots = [];
+  bodyOutline = [];
+  
+  // Create body outline (large figure)
+  let cx = W/2, cy = H/2;
+  for (let a = 0; a < Math.PI * 2; a += 0.1) {
+    let r = 100 + Math.sin(a * 3) * 20 + Math.cos(a * 5) * 10;
+    bodyOutline.push({ x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r * 1.3 });
+  }
+  
+  for (let i = 0; i < 10; i++) {
+    inkPots.push({
+      x: W * 0.1 + Math.random() * W * 0.8,
+      y: H * 0.1 + Math.random() * H * 0.8,
+      collected: false,
+      pulse: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function updateChapter3(dt) {
+  timer += dt;
+  
+  let speed = 120;
+  let moved = false;
+  if (keys['ArrowRight'] || keys['d']) { playerX += speed * dt; moved = true; }
+  if (keys['ArrowLeft'] || keys['a']) { playerX -= speed * dt; moved = true; }
+  if (keys['ArrowUp'] || keys['w']) { playerY -= speed * dt; moved = true; }
+  if (keys['ArrowDown'] || keys['s']) { playerY += speed * dt; moved = true; }
+  
+  if (mouse.down) {
+    let dx = mouse.x - playerX;
+    let dy = mouse.y - playerY;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist > 10) {
+      playerX += (dx / dist) * speed * dt;
+      playerY += (dy / dist) * speed * dt;
+      moved = true;
+    }
+  }
+  
+  playerX = Math.max(20, Math.min(W - 20, playerX));
+  playerY = Math.max(20, Math.min(H - 20, playerY));
+  
+  if (moved) {
+    inkTrail.push({ x: playerX, y: playerY, life: 8 });
+    if (inkTrail.length > 2000) inkTrail.shift();
+  }
+  
+  for (let p of inkPots) {
+    if (!p.collected) {
+      p.pulse += dt * 3;
+      let dx = playerX - p.x;
+      let dy = playerY - p.y;
+      if (Math.sqrt(dx*dx + dy*dy) < 20) {
+        p.collected = true;
+        inkCollected++;
+        for (let i = 0; i < 20; i++) {
+          addParticle(p.x, p.y, (Math.random()-0.5)*100, (Math.random()-0.5)*100, 2, 4, [50,50,200], 'drop');
+        }
+      }
+    }
+  }
+  
+  if (inkCollected >= 10) {
+    startTransition(4);
+  }
+}
+
+function drawChapter3() {
+  let col = chapterColors[3];
+  
+  ctx.fillStyle = rgb(col.bg);
+  ctx.fillRect(0, 0, W, H);
+  
+  // Body outline (faint)
+  ctx.strokeStyle = rgba(col.fg, 0.15);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < bodyOutline.length; i++) {
+    let p = bodyOutline[i];
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  
+  // Head
+  ctx.beginPath();
+  ctx.arc(W/2, H/2 - 120, 40, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Ink trail (the writing on the body)
+  if (inkTrail.length > 1) {
+    for (let i = 1; i < inkTrail.length; i++) {
+      let t = inkTrail[i];
+      let alpha = Math.min(1, t.life / 4) * 0.7;
+      ctx.strokeStyle = rgba([80, 80, 255], alpha);
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(inkTrail[i-1].x, inkTrail[i-1].y);
+      ctx.lineTo(t.x, t.y);
+      ctx.stroke();
+    }
+  }
+  
+  // Ink pots
+  for (let p of inkPots) {
+    if (!p.collected) {
+      let glow = Math.sin(p.pulse) * 0.3 + 0.7;
+      ctx.fillStyle = rgba([50, 50, 200], glow);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 10 + Math.sin(p.pulse) * 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = rgba([100, 100, 255], glow * 0.3);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 20, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  // Player (pen nib)
+  ctx.fillStyle = rgb([200, 180, 255]);
+  ctx.beginPath();
+  ctx.moveTo(playerX, playerY + 10);
+  ctx.lineTo(playerX - 5, playerY - 8);
+  ctx.lineTo(playerX + 5, playerY - 8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = rgb([100, 80, 180]);
+  ctx.fillRect(playerX - 2, playerY - 20, 4, 14);
+  
+  // Ink collected indicator
+  for (let i = 0; i < 10; i++) {
+    ctx.fillStyle = i < inkCollected ? rgba([100,100,255], 0.9) : rgba([50,50,100], 0.3);
+    ctx.beginPath();
+    ctx.arc(30 + i * 20, 30, 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Chapter 4: ALP'S LETTER / RIVER
+// The river flows. Guide ALP's letter downstream, collecting gifts.
+let riverSegments = [];
+let letterX, letterY;
+let gifts = [];
+let riverSpeed = 0;
+
+function initChapter4() {
+  phase = 0;
+  letterX = W / 2;
+  letterY = H * 0.2;
+  riverSegments = [];
+  gifts = [];
+  collected = 0;
+  riverSpeed = 80;
+  
+  for (let i = 0; i < 50; i++) {
+    riverSegments.push({
+      y: i * 40,
+      cx: W/2 + Math.sin(i * 0.3) * 150,
+      width: 200 + Math.sin(i * 0.2) * 80
+    });
+  }
+  
+  for (let i = 0; i < 15; i++) {
+    let seg = riverSegments[Math.floor(Math.random() * 40) + 5];
+    gifts.push({
+      x: seg.cx + (Math.random() - 0.5) * seg.width * 0.6,
+      y: seg.y,
+      collected: false,
+      type: Math.floor(Math.random() * 4)
+    });
+  }
+}
+
+function updateChapter4(dt) {
+  timer += dt;
+  
+  // Move letter left/right
+  let speed = 200;
+  if (keys['ArrowRight'] || keys['d'] || (mouse.down && mouse.x > letterX + 20)) letterX += speed * dt;
+  if (keys['ArrowLeft'] || keys['a'] || (mouse.down && mouse.x < letterX - 20)) letterX -= speed * dt;
+  
+  // Scroll river
+  let scroll = riverSpeed * dt;
+  letterY += scroll * 0.1;
+  
+  for (let s of riverSegments) {
+    s.y -= scroll;
+  }
+  for (let g of gifts) {
+    g.y -= scroll;
+  }
+  
+  // Recycle segments
+  let maxY = Math.max(...riverSegments.map(s => s.y));
+  for (let s of riverSegments) {
+    if (s.y < -40) {
+      s.y = maxY + 40;
+      s.cx = W/2 + Math.sin(s.y * 0.008) * 150;
+      maxY = s.y;
+    }
+  }
+  
+  letterX = Math.max(50, Math.min(W - 50, letterX));
+  letterY = Math.max(H * 0.15, Math.min(H * 0.25, letterY));
+  
+  // Collect gifts
+  for (let g of gifts) {
+    if (!g.collected && g.y > 0 && g.y < H) {
+      let dx = letterX - g.x;
+      let dy = letterY - g.y;
+      if (Math.sqrt(dx*dx + dy*dy) < 25) {
+        g.collected = true;
+        collected++;
+        for (let i = 0; i < 12; i++) {
+          addParticle(g.x, g.y, (Math.random()-0.5)*80, -Math.random()*60, 1.5, 3, [150,220,255], 'star');
+        }
+      }
+    }
+    if (g.y < -50) {
+      g.y += 2000;
+      g.x = W/2 + (Math.random()-0.5) * 300;
+      g.collected = false;
+    }
+  }
+  
+  if (collected >= 15) {
+    startTransition(5);
+  }
+}
+
+function drawChapter4() {
+  let col = chapterColors[4];
+  
+  // Sky
+  let grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, rgb([15, 30, 45]));
+  grd.addColorStop(1, rgb([10, 40, 50]));
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+  
+  // River
+  ctx.fillStyle = rgba([30, 80, 100], 0.6);
+  riverSegments.sort((a,b) => a.y - b.y);
+  for (let i = 1; i < riverSegments.length; i++) {
+    let s0 = riverSegments[i-1];
+    let s1 = riverSegments[i];
+    if (s0.y > H + 40 || s1.y < -40) continue;
+    
+    ctx.beginPath();
+    ctx.moveTo(s0.cx - s0.width/2, s0.y);
+    ctx.lineTo(s1.cx - s1.width/2, s1.y);
+    ctx.lineTo(s1.cx + s1.width/2, s1.y);
+    ctx.lineTo(s0.cx + s0.width/2, s0.y);
+    ctx.closePath();
+    ctx.fillStyle = rgba([30, 80 + Math.sin(s0.y*0.01+timer)*20, 120], 0.5);
+    ctx.fill();
+  }
+  
+  // River sparkles
+  for (let i = 0; i < 30; i++) {
+    let sx = W/2 + Math.sin(timer * 0.5 + i * 1.7) * 200;
+    let sy = (i * 37 + timer * 50) % H;
+    ctx.fillStyle = rgba([200, 240, 255], Math.sin(timer * 3 + i) * 0.2 + 0.2);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Gifts
+  for (let g of gifts) {
+    if (!g.collected && g.y > -20 && g.y < H + 20) {
+      ctx.fillStyle = rgba([255, 200, 250], 0.8);
+      ctx.beginPath();
+      ctx.arc(g.x, g.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+      // Glow
+      ctx.fillStyle = rgba([255, 200, 250], 0.2);
+      ctx.beginPath();
+      ctx.arc(g.x, g.y, 15, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  // Letter (ALP's letter)
+  ctx.fillStyle = rgb([240, 230, 200]);
+  ctx.fillRect(letterX - 10, letterY - 7, 20, 14);
+  ctx.strokeStyle = rgb([180, 150, 100]);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(letterX - 10, letterY - 7, 20, 14);
+  // Seal
+  ctx.fillStyle = rgb([200, 50, 50]);
+  ctx.beginPath();
+  ctx.arc(letterX, letterY + 3, 3, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Banks (green)
+  for (let side = -1; side <= 1; side += 2) {
+    for (let y = 0; y < H; y += 5) {
+      let segIdx = Math.floor(y / 40);
+      if (segIdx >= 0 && segIdx < riverSegments.length) {
+        let s = riverSegments[segIdx];
+        let bankX = s.cx + side * s.width / 2;
+        ctx.fillStyle = rgba([20, 60, 30], 0.8);
+        if (side < 0) ctx.fillRect(0, y, Math.max(0, bankX), 6);
+        else ctx.fillRect(bankX, y, W - bankX, 6);
+      }
+    }
+  }
+  
+  // Collection
+  for (let i = 0; i < 15; i++) {
+    ctx.fillStyle = i < collected ? rgba([255,200,250], 0.9) : rgba([100,80,100], 0.3);
+    ctx.beginPath();
+    ctx.arc(20 + i * 16, 25, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Chapter 5: THE SHIP / TAILOR (Norwegian Captain)
+// Navigate a ship through obstacles
+let shipX, shipY;
+let obstacles = [];
+let shipDist = 0;
+
+function initChapter5() {
+  phase = 0;
+  shipX = W / 2;
+  shipY = H * 0.7;
+  obstacles = [];
+  shipDist = 0;
+  
+  for (let i = 0; i < 30; i++) {
+    obstacles.push({
+      x: Math.random() * W,
+      y: -i * 150 - 200,
+      w: 30 + Math.random() * 60,
+      h: 20 + Math.random() * 30,
+      type: Math.random() < 0.5 ? 'rock' : 'ice'
+    });
+  }
+}
+
+function updateChapter5(dt) {
+  timer += dt;
+  shipDist += dt * 100;
+  
+  let speed = 200;
+  if (keys['ArrowRight'] || keys['d'] || (mouse.down && mouse.x > shipX + 20)) shipX += speed * dt;
+  if (keys['ArrowLeft'] || keys['a'] || (mouse.down && mouse.x < shipX - 20)) shipX -= speed * dt;
+  shipX = Math.max(30, Math.min(W - 30, shipX));
+  
+  let scrollSpeed = 120 + timer * 2;
+  for (let o of obstacles) {
+    o.y += scrollSpeed * dt;
+    if (o.y > H + 50) {
+      o.y = -100 - Math.random() * 200;
+      o.x = Math.random() * W;
+    }
+  }
+  
+  if (shipDist > 8000) {
+    startTransition(6);
+  }
+}
+
+function drawChapter5() {
+  let col = chapterColors[5];
+  
+  // Ocean
+  let grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, rgb([10, 30, 50]));
+  grd.addColorStop(1, rgb([20, 50, 70]));
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Waves
+  for (let w = 0; w < 20; w++) {
+    let wy = w * 40 + (timer * 30) % 40;
+    ctx.strokeStyle = rgba([40, 80, 120], 0.3);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x < W; x += 10) {
+      let y = wy + Math.sin(x * 0.02 + timer * 2 + w) * 5;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  
+  // Obstacles
+  for (let o of obstacles) {
+    if (o.y > -50 && o.y < H + 50) {
+      if (o.type === 'rock') {
+        ctx.fillStyle = rgb([80, 70, 60]);
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, o.w/2, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = rgba([180, 220, 240], 0.7);
+        ctx.fillRect(o.x - o.w/2, o.y - o.h/2, o.w, o.h);
+      }
+    }
+  }
+  
+  // Ship
+  ctx.fillStyle = rgb([120, 80, 40]);
+  ctx.beginPath();
+  ctx.moveTo(shipX - 15, shipY + 10);
+  ctx.lineTo(shipX + 15, shipY + 10);
+  ctx.lineTo(shipX + 20, shipY);
+  ctx.lineTo(shipX - 20, shipY);
+  ctx.closePath();
+  ctx.fill();
+  // Mast
+  ctx.strokeStyle = rgb([100, 70, 30]);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(shipX, shipY);
+  ctx.lineTo(shipX, shipY - 30);
+  ctx.stroke();
+  // Sail
+  ctx.fillStyle = rgba([220, 200, 170], 0.8);
+  ctx.beginPath();
+  ctx.moveTo(shipX, shipY - 28);
+  ctx.lineTo(shipX + 15, shipY - 10);
+  ctx.lineTo(shipX, shipY - 5);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Progress bar
+  let prog = Math.min(1, shipDist / 8000);
+  ctx.fillStyle = rgba([100,100,100], 0.3);
+  ctx.fillRect(W/2 - 100, 20, 200, 8);
+  ctx.fillStyle = rgba([200,200,200], 0.9);
+  ctx.fillRect(W/2 - 100, 20, 200 * prog, 8);
+}
+
+// Chapter 6: THE QUIZ / RIDDLES
+// Answer riddles by catching correct symbols, avoid wrong ones
+let quizSymbols = [];
+let quizScore = 0;
+let quizTarget = 0;
+let quizTargets = ['circle','triangle','square','diamond'];
+
+function initChapter6() {
+  phase = 0;
+  playerX = W / 2;
+  playerY = H * 0.85;
+  quizSymbols = [];
+  quizScore = 0;
+  quizTarget = 0;
+  timer = 0;
+}
+
+function updateChapter6(dt) {
+  timer += dt;
+  
+  let speed = 200;
+  if (keys['ArrowRight'] || keys['d'] || (mouse.down && mouse.x > playerX + 20)) playerX += speed * dt;
+  if (keys['ArrowLeft'] || keys['a'] || (mouse.down && mouse.x < playerX - 20)) playerX -= speed * dt;
+  playerX = Math.max(30, Math.min(W - 30, playerX));
+  
+  // Change target every few seconds
+  if (Math.floor(timer / 5) > quizTarget) {
+    quizTarget = Math.floor(timer / 5);
+  }
+  let currentTarget = quizTargets[quizTarget % 4];
+  
+  // Spawn symbols
+  if (Math.random() < dt * 3) {
+    quizSymbols.push({
+      x: Math.random() * (W - 60) + 30,
+      y: -20,
+      vy: 80 + Math.random() * 60,
+      type: quizTargets[Math.floor(Math.random() * 4)],
+      alive: true
+    });
+  }
+  
+  for (let i = quizSymbols.length - 1; i >= 0; i--) {
+    let s = quizSymbols[i];
+    s.y += s.vy * dt;
+    
+    let dx = playerX - s.x;
+    let dy = playerY - s.y;
+    if (Math.sqrt(dx*dx + dy*dy) < 25 && s.alive) {
+      s.alive = false;
+      if (s.type === currentTarget) {
+        quizScore++;
+        for (let j = 0; j < 10; j++) {
+          addParticle(s.x, s.y, (Math.random()-0.5)*80, -Math.random()*60, 1, 3, [100,255,200], 'star');
+        }
+      } else {
+        shakeX = 8; shakeY = 8;
+        for (let j = 0; j < 6; j++) {
+          addParticle(s.x, s.y, (Math.random()-0.5)*80, -Math.random()*60, 1, 3, [255,80,80]);
+        }
+      }
+    }
+    
+    if (s.y > H + 30) quizSymbols.splice(i, 1);
+  }
+  
+  if (quizScore >= 20) {
+    startTransition(7);
+  }
+}
+
+function drawChapter6() {
+  let col = chapterColors[6];
+  
+  ctx.fillStyle = rgb(col.bg);
+  ctx.fillRect(0, 0, W, H);
+  
+  // Mystical background pattern
+  for (let i = 0; i < 12; i++) {
+    let a = (i / 12) * Math.PI * 2 + timer * 0.2;
+    let r = 100 + Math.sin(timer + i) * 30;
+    ctx.strokeStyle = rgba(col.fg, 0.1);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(W/2 + Math.cos(a) * r, H/2 + Math.sin(a) * r, 30 + Math.sin(timer * 2 + i) * 10, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  
+  // Current target indicator (large, pulsing at top center)
+  let currentTarget = quizTargets[quizTarget % 4];
+  let pulse = Math.sin(timer * 4) * 0.2 + 0.8;
+  ctx.strokeStyle = rgba([255,255,100], pulse);
+  ctx.lineWidth = 3;
+  drawSymbolShape(W/2, 50, 20, currentTarget);
+  ctx.stroke();
+  
+  // Glow around target
+  ctx.strokeStyle = rgba([255,255,100], pulse * 0.3);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(W/2, 50, 30, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Falling symbols
+  for (let s of quizSymbols) {
+    if (s.alive && s.y > -20 && s.y < H + 20) {
+      let isTarget = s.type === currentTarget;
+      ctx.fillStyle = isTarget ? rgba([100,255,200], 0.8) : rgba([200,100,200], 0.6);
+      ctx.strokeStyle = isTarget ? rgb([100,255,200]) : rgb([200,100,200]);
+      ctx.lineWidth = 2;
+      drawSymbolShape(s.x, s.y, 10, s.type);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+  
+  // Player (question mark shaped catcher)
+  ctx.fillStyle = rgb(col.fg);
+  ctx.beginPath();
+  ctx.arc(playerX, playerY, 12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = rgb(col.fg);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(playerX, playerY - 5, 15, Math.PI * 1.2, Math.PI * 0.3);
+  ctx.stroke();
+  
+  // Score
+  for (let i = 0; i < 20; i++) {
+    ctx.fillStyle = i < quizScore ? rgba([100,255,200], 0.9) : rgba([60,60,60], 0.3);
+    ctx.beginPath();
+    ctx.arc(15 + i * 14, 25, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawSymbolShape(x, y, r, type) {
+  ctx.beginPath();
+  if (type === 'circle') {
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+  } else if (type === 'triangle') {
+    ctx.moveTo(x, y - r);
+    ctx.lineTo(x - r, y + r * 0.7);
+    ctx.lineTo(x + r, y + r * 0.7);
+    ctx.closePath();
+  } else if (type === 'square') {
+    ctx.rect(x - r * 0.7, y - r * 0.7, r * 1.4, r * 1.4);
+  } else if (type === 'diamond') {
+    ctx.moveTo(x, y - r);
+    ctx.lineTo(x + r, y);
+    ctx.lineTo(x, y + r);
+    ctx.lineTo(x - r, y);
+    ctx.closePath();
+  }
+}
+
+// Chapter 7: SHAUN'S JOURNEY / SERMON
+// Shaun rolls downriver as a barrel. Collect sermon scrolls.
+let barrelAngle = 0;
+let sermonScrolls = [];
+let shaunDist = 0;
+
+function initChapter7() {
+  phase = 0;
+  playerX = W / 2;
+  playerY = H * 0.5;
+  barrelAngle = 0;
+  sermonScrolls = [];
+  shaunDist = 0;
+  collected = 0;
+  
+  for (let i = 0; i < 20; i++) {
+    sermonScrolls.push({
+      x: Math.random() * (W - 100) + 50,
+      y: -i * 200 - 100,
+      collected: false,
+      glow: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function updateChapter7(dt) {
+  timer += dt;
+  shaunDist += dt * 80;
+  
+  let speed = 180;
+  if (keys['ArrowRight'] || keys['d'] || (mouse.down && mouse.x > playerX + 20)) playerX += speed * dt;
+  if (keys['ArrowLeft'] || keys['a'] || (mouse.down && mouse.x < playerX - 20)) playerX -= speed * dt;
+  playerX = Math.max(30, Math.min(W - 30, playerX));
+  
+  barrelAngle += dt * 3;
+  
+  let scrollSpeed = 100;
+  for (let s of sermonScrolls) {
+    s.y += scrollSpeed * dt;
+    s.glow += dt * 3;
+    
+    if (!s.collected) {
+      let dx = playerX - s.x;
+      let dy = playerY - s.y;
+      if (Math.sqrt(dx*dx + dy*dy) < 25) {
+        s.collected = true;
+        collected++;
+        for (let j = 0; j < 12; j++) {
+          addParticle(s.x, s.y, (Math.random()-0.5)*80, -Math.random()*60, 1.5, 3, [255,255,100], 'star');
+        }
+      }
+    }
+    
+    if (s.y > H + 50) {
+      s.y = -100 - Math.random() * 200;
+      s.x = Math.random() * (W - 100) + 50;
+      s.collected = false;
+    }
+  }
+  
+  if (collected >= 20) {
+    startTransition(8);
+  }
+}
+
+function drawChapter7() {
+  let col = chapterColors[7];
+  
+  // Night sky
+  let grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, rgb([5, 5, 30]));
+  grd.addColorStop(1, rgb([15, 15, 40]));
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Stars
+  for (let i = 0; i < 80; i++) {
+    let sx = (i * 173.7) % W;
+    let sy = (i * 89.3) % H;
+    let tw = Math.sin(globalTime * 1.5 + i * 0.7) * 0.3 + 0.7;
+    ctx.fillStyle = rgba([200,200,255], tw * 0.5);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // River (horizontal bands flowing)
+  for (let y = 0; y < H; y += 8) {
+    let wave = Math.sin(y * 0.03 + timer * 2) * 20;
+    ctx.fillStyle = rgba([20, 30, 60 + Math.sin(y * 0.01 + timer) * 10], 0.3);
+    ctx.fillRect(wave, y, W, 8);
+  }
+  
+  // Sermon scrolls
+  for (let s of sermonScrolls) {
+    if (!s.collected && s.y > -20 && s.y < H + 20) {
+      let glow = Math.sin(s.glow) * 0.3 + 0.7;
+      ctx.fillStyle = rgba([255,255,100], glow * 0.2);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, 18, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.fillStyle = rgba([240,220,150], glow);
+      ctx.fillRect(s.x - 6, s.y - 8, 12, 16);
+      ctx.fillStyle = rgba([200,180,100], glow);
+      ctx.beginPath();
+      ctx.arc(s.x - 6, s.y - 8, 3, 0, Math.PI * 2);
+      ctx.arc(s.x + 6, s.y - 8, 3, 0, Math.PI * 2);
+      ctx.arc(s.x - 6, s.y + 8, 3, 0, Math.PI * 2);
+      ctx.arc(s.x + 6, s.y + 8, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  
+  // Shaun as barrel
+  ctx.save();
+  ctx.translate(playerX, playerY);
+  ctx.rotate(barrelAngle);
+  ctx.fillStyle = rgb([120, 80, 40]);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 15, 12, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = rgb([80, 50, 20]);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 15, 12, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  // Barrel bands
+  ctx.strokeStyle = rgb([60, 40, 15]);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(-15, -3); ctx.lineTo(15, -3);
+  ctx.moveTo(-15, 3); ctx.lineTo(15, 3);
+  ctx.stroke();
+  ctx.restore();
+  
+  // Collection
+  for (let i = 0; i < 20; i++) {
+    ctx.fillStyle = i < collected ? rgba([255,255,100], 0.9) : rgba([60,60,60], 0.3);
+    ctx.beginPath();
+    ctx.arc(15 + i * 14, 25, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Chapter 8: ALP'S FINAL MONOLOGUE - River to Sea
+// The river flows to the ocean. Everything dissolves. Cycle restarts.
+let alpParticles = [];
+let seaLevel = 0;
+let dissolveTimer = 0;
+
+function initChapter8() {
+  phase = 0;
+  playerX = W * 0.3;
+  playerY = H * 0.5;
+  alpParticles = [];
+  seaLevel = H;
+  dissolveTimer = 0;
+  timer = 0;
+  
+  for (let i = 0; i < 200; i++) {
+    alpParticles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: Math.random() * 30 + 10,
+      vy: (Math.random() - 0.5) * 20,
+      size: 1 + Math.random() * 3,
+      alpha: Math.random() * 0.5 + 0.2,
+      color: [150 + Math.random()*50, 200 + Math.random()*55, 220 + Math.random()*35]
+    });
+  }
+}
+
+function updateChapter8(dt) {
+  timer += dt;
+  
+  // River flows rightward, everything dissolves
+  for (let p of alpParticles) {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt + Math.sin(timer + p.x * 0.01) * dt * 5;
+    if (p.x > W + 20) p.x = -20;
+    if (p.y < 0) p.y = H;
+    if (p.y > H) p.y = 0;
+  }
+  
+  // Sea rises slowly
+  seaLevel = H - timer * 15;
+  if (seaLevel < 0) seaLevel = 0;
+  
+  // Player drifts
+  playerX += dt * 40;
+  playerY += Math.sin(timer * 0.5) * dt * 20;
+  if (playerX > W + 50) playerX = -50;
+  
+  dissolveTimer = Math.min(1, timer / 30);
+  
+  if (timer > 35) {
+    // Cycle back to beginning
+    startTransition(0);
+  }
+}
+
+function drawChapter8() {
+  let col = chapterColors[8];
+  
+  // Dawn sky
+  let t = Math.min(1, timer / 25);
+  let skyTop = lerpColor([5, 15, 35], [80, 120, 180], t);
+  let skyBot = lerpColor([10, 25, 40], [200, 150, 100], t);
+  let grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, rgb(skyTop));
+  grd.addColorStop(0.6, rgb(skyBot));
+  grd.addColorStop(1, rgb([30, 60, 80]));
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, W, H);
+  
+  // Sun rising
+  if (t > 0.3) {
+    let sunY = H * 0.5 - (t - 0.3) * H * 0.5;
+    let sunAlpha = Math.min(1, (t - 0.3) * 2);
+    ctx.fillStyle = rgba([255, 200, 80], sunAlpha * 0.3);
+    ctx.beginPath();
+    ctx.arc(W * 0.8, sunY, 60, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = rgba([255, 220, 120], sunAlpha * 0.8);
+    ctx.beginPath();
+    ctx.arc(W * 0.8, sunY, 25, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Water particles (the river becoming sea)
+  for (let p of alpParticles) {
+    ctx.fillStyle = rgba(p.color, p.alpha * (1 - dissolveTimer * 0.5));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Sea
+  ctx.fillStyle = rgba([20, 50, 80], 0.4);
+  for (let x = 0; x < W; x += 3) {
+    let waveY = seaLevel + Math.sin(x * 0.02 + timer * 1.5) * 8;
+    ctx.fillRect(x, waveY, 3, H - waveY);
+  }
+  
+  // ALP figure (dissolving woman shape becoming river)
+  let alpAlpha = Math.max(0, 1 - dissolveTimer);
+  if (alpAlpha > 0) {
+    ctx.globalAlpha = alpAlpha;
+    ctx.fillStyle = rgba([200, 220, 255], 0.6);
+    // Flowing figure
+    ctx.beginPath();
+    ctx.arc(playerX, playerY - 15, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = rgba([200, 220, 255], 0.6);
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(playerX, playerY - 7);
+    // Body flows into water
+    ctx.quadraticCurveTo(playerX + 10, playerY + 5, playerX + 30, playerY + 10);
+    ctx.quadraticCurveTo(playerX + 50, playerY + 15, playerX + 80, playerY + 10 + Math.sin(timer) * 5);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  
+  // Leaves drifting (her leaves have drifted from her)
+  for (let i = 0; i < 15; i++) {
+    let lx = ((i * 97 + timer * 30) % (W + 40)) - 20;
+    let ly = H * 0.3 + Math.sin(timer * 0.5 + i * 2) * 50 + i * 20;
+    let la = Math.sin(timer + i) * 0.3;
+    ctx.save();
+    ctx.translate(lx, ly);
+    ctx.rotate(la + timer * 0.3 + i);
+    ctx.fillStyle = rgba([100, 150, 80], 0.4 * (1 - dissolveTimer * 0.7));
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 5, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
+  // Fade to white at the very end (the cycle)
+  if (timer > 30) {
+    let endFade = (timer - 30) / 5;
+    ctx.fillStyle = rgba([255,255,255], Math.min(1, endFade));
+    ctx.fillRect(0, 0, W, H);
+  }
+}
+
+// ============ TRANSITION SYSTEM ============
+
+function startTransition(nextChapter) {
+  if (transitioning) return;
+  transitioning = true;
+  transTimer = 0;
+  chapter = nextChapter;
+}
+
+function updateTransition(dt) {
+  transTimer += dt;
+  if (transTimer < 1) {
+    fadeAlpha = transTimer;
+  } else if (transTimer < 1.5) {
+    if (transTimer - dt < 1) {
+      initCurrentChapter();
+    }
+    fadeAlpha = 1;
+  } else if (transTimer < 2.5) {
+    fadeAlpha = 1 - (transTimer - 1.5);
+  } else {
+    fadeAlpha = 0;
+    transitioning = false;
+  }
+}
+
+function initCurrentChapter() {
+  timer = 0;
+  particles = [];
+  entities = [];
+  shakeX = 0; shakeY = 0;
+  
+  switch(chapter) {
+    case 0: initChapter0(); break;
+    case 1: initChapter1(); break;
+    case 2: initChapter2(); break;
+    case 3: initChapter3(); break;
+    case 4: initChapter4(); break;
+    case 5: initChapter5(); break;
+    case 6: initChapter6(); break;
+    case 7: initChapter7(); break;
+    case 8: initChapter8(); break;
+  }
+}
+
+// ============ MAIN LOOP ============
+
+function update(dt) {
+  globalTime += dt;
+  
+  if (transitioning) {
+    updateTransition(dt);
+    return;
+  }
+  
+  switch(chapter) {
+    case 0: updateChapter0(dt); break;
+    case 1: updateChapter1(dt); break;
+    case 2: updateChapter2(dt); break;
+    case 3: updateChapter3(dt); break;
+    case 4: updateChapter4(dt); break;
+    case 5: updateChapter5(dt); break;
+    case 6: updateChapter6(dt); break;
+    case 7: updateChapter7(dt); break;
+    case 8: updateChapter8(dt); break;
+  }
+  
+  updateParticles(dt);
+  shakeX *= 0.9;
+  shakeY *= 0.9;
+}
+
+function draw() {
+  ctx.save();
+  ctx.translate((Math.random()-0.5) * shakeX, (Math.random()-0.5) * shakeY);
+  
+  switch(chapter) {
+    case 0: drawChapter0(); break;
+    case 1: drawChapter1(); break;
+    case 2: drawChapter2(); break;
+    case 3: drawChapter3(); break;
+    case 4: drawChapter4(); break;
+    case 5: drawChapter5(); break;
+    case 6: drawChapter6(); break;
+    case 7: drawChapter7(); break;
+    case 8: drawChapter8(); break;
+  }
+  
+  drawParticles();
+  
+  ctx.restore();
+  
+  // Transition fade
+  if (fadeAlpha > 0.01) {
+    ctx.fillStyle = rgba([0,0,0], fadeAlpha);
+    ctx.fillRect(0, 0, W, H);
+  }
+  
+  // Custom cursor
+  ctx.fillStyle = rgba([255,255,255], 0.6);
+  ctx.beginPath();
+  ctx.arc(mouse.x, mouse.y, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+let lastTime = 0;
+function gameLoop(timestamp) {
+  let dt = Math.min(0.05, (timestamp - lastTime) / 1000);
+  lastTime = timestamp;
+  
+  update(dt);
+  draw();
+  
+  requestAnimationFrame(gameLoop);
+}
+
+// Start
+initCurrentChapter();
+requestAnimationFrame(gameLoop);
+
+</script>
+</body>
+</html>
