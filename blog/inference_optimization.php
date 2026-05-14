@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-Training a model costs millions of dollars — but **serving** it costs millions *per day*. Inference optimization makes LLMs practical to deploy.
+Training a model costs millions of dollars, but **serving** it costs millions *per day*. Inference optimization makes LLMs practical to deploy.
 
 ## Quantization
 
@@ -38,7 +38,7 @@ $$
 
 ### Distillation
 
-Train a small **student** model to mimic the outputs of a large **teacher** model. The student learns the teacher's "dark knowledge" — the full probability distribution over tokens, not just the top-1 answer (\cite[Hinton et al., 2015]{hinton2015distilling}).
+Train a small **student** model to mimic the outputs of a large **teacher** model. The student learns the teacher's "dark knowledge", the full probability distribution over tokens, not just the top-1 answer (\cite[Hinton et al., 2015]{hinton2015distilling}).
 
 $$
 \mathcal{L}_{\text{distill}} = \text{KL}\bigl(\, p_{\text{teacher}}(\cdot \mid x) \,\Vert\, p_{\text{student}}(\cdot \mid x) \,\bigr)
