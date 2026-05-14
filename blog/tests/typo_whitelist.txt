@@ -93,3 +93,8 @@ unembedding
 tech
 homeomorphic
 barcode
+orientable
+stiefel
+sequitur
+submanifolds
+vietoris
