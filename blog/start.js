@@ -166,61 +166,82 @@ const _temmlOpts = {
 };
 
 function _fixMathInElement(el) {
-    // ===== ANTI-FLICKER: Bereits verarbeitete Elemente überspringen =====
+    // ===== Skip already-rendered elements =====
     if (el.hasAttribute('data-math-rendered')) return false;
-    if (el.querySelector('math')) return false; // Enthält bereits gerendertes MathML
+    if (el.querySelector('math')) return false;
 
-    // ===== SKIP elements that are or contain code blocks =====
+    // ===== Skip elements that ARE code blocks or are INSIDE code blocks =====
     if (el.tagName === 'PRE' || el.tagName === 'CODE') return false;
-    if (el.querySelector('pre, code')) return false;
     if (el.closest('pre, code')) return false;
+
+    // ===== Check if element contains code blocks =====
+    // If it does, we need to mark code blocks so Temml skips them,
+    // then let Temml handle it natively
+    const codeBlocks = el.querySelectorAll('pre, code');
+    if (codeBlocks.length > 0) {
+        // Temporarily add a class that prevents Temml from processing these
+        codeBlocks.forEach(cb => cb.setAttribute('data-temml-skip', 'true'));
+
+        // Use Temml's native renderMathInElement but with a custom filter
+        // that skips code blocks
+        _renderMathSkippingCode(el);
+        el.setAttribute('data-math-rendered', 'true');
+
+        // Clean up
+        codeBlocks.forEach(cb => cb.removeAttribute('data-temml-skip'));
+        return true;
+    }
+
+    // ===== For elements WITHOUT code blocks, fix the em/strong issue =====
+    // The problem: markdown renderers turn _x_ into <em>x</em> inside math
+    // We need to undo this ONLY inside $...$ delimiters
 
     let html = el.innerHTML;
     if (!html.includes('$')) return false;
 
+    // Check if there are <em> or <strong> tags inside math delimiters
+    // If not, no need for our fix — let Temml handle it natively
+    const hasMathWithMarkup = /\$[^$]*<\/?(?:em|strong)[^>]*>[^$]*\$/i.test(html);
+    if (!hasMathWithMarkup) return false;
+
+    // ===== Only fix the specific problem: <em>/<strong> inside math =====
     let changed = false;
 
-    // Block math: $$ ... $$ (mit kaputtem HTML drin)
+    // Block math: $$ ... $$
     html = html.replace(/\$\$([\s\S]*?)\$\$/g, (match, inner) => {
-        changed = true;
-        const clean = inner
-            .replace(/<\/?em>/gi, '_')
-            .replace(/<\/?strong>/gi, '__')
-            .replace(/<br\s*\/?>/gi, ' ')
-            .replace(/<\/?p>/gi, '')
-            .replace(/<\/?[^>]+>/g, '')
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&nbsp;/g, ' ')
-            .trim();
+        if (!/<\/?(?:em|strong)/i.test(inner)) return match;
+
+        const clean = _cleanMathContent(inner);
+        if (!clean) return match;
+
         try {
-            return temml.renderToString(clean, { displayMode: true });
+            const rendered = temml.renderToString(clean, { displayMode: true });
+            changed = true;
+            return rendered;
         } catch (e) {
-            console.error('Temml block error:', clean, e);
+            console.warn('Temml block error:', clean, e);
             return match;
         }
     });
 
     // Inline math: $ ... $
-    html = html.replace(/(?<!\$)\$(?!\$)([\s\S]*?)(?<!\$)\$(?!\$)/g, (match, inner) => {
-        if (inner.includes('<math') || inner.includes('</math>')) return match;
+    // Use a more conservative regex that won't match across lines
+    html = html.replace(/(?<!\$)\$(?!\$)([^$\n]*?)(?<!\$)\$(?!\$)/g, (match, inner) => {
         if (!inner.trim()) return match;
+        if (inner.includes('<math') || inner.includes('</math>')) return match;
 
-        changed = true;
-        const clean = inner
-            .replace(/<\/?em>/gi, '_')
-            .replace(/<\/?strong>/gi, '__')
-            .replace(/<\/?[^>]+>/g, '')
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&nbsp;/g, ' ')
-            .trim();
+        // Only intervene if there's HTML markup inside the math
+        if (!/</.test(inner)) return match;
+
+        const clean = _cleanMathContent(inner);
+        if (!clean) return match;
+
         try {
-            return temml.renderToString(clean, { displayMode: false });
+            const rendered = temml.renderToString(clean, { displayMode: false });
+            changed = true;
+            return rendered;
         } catch (e) {
-            console.error('Temml inline error:', clean, e);
+            console.warn('Temml inline error:', clean, e);
             return match;
         }
     });
@@ -230,6 +251,51 @@ function _fixMathInElement(el) {
         el.setAttribute('data-math-rendered', 'true');
     }
     return changed;
+}
+
+function _cleanMathContent(inner) {
+    return inner
+        .replace(/<\/?em>/gi, '_')
+        .replace(/<\/?strong>/gi, '')
+        .replace(/<br\s*\/?>/gi, ' ')
+        .replace(/<\/?p>/gi, '')
+        .replace(/<\/?span[^>]*>/gi, '')
+        .replace(/<\/?[^>]+>/g, '')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&nbsp;/g, ' ')
+        .trim();
+}
+
+function _renderMathSkippingCode(el) {
+    // Walk through child nodes, only render math in non-code sections
+    const children = Array.from(el.childNodes);
+
+    for (const child of children) {
+        if (child.nodeType === Node.ELEMENT_NODE) {
+            // Skip code blocks entirely
+            if (child.tagName === 'PRE' || child.tagName === 'CODE' ||
+                child.hasAttribute('data-temml-skip')) {
+                continue;
+            }
+            // Recurse into child elements
+            if (child.textContent.includes('$')) {
+                // Check if this child itself has code blocks
+                if (child.querySelector('[data-temml-skip]')) {
+                    _renderMathSkippingCode(child);
+                } else {
+                    // Safe to render math in this subtree
+                    const hasMathWithMarkup = /\$[^$]*<\/?(?:em|strong)[^>]*>[^$]*\$/i.test(child.innerHTML);
+                    if (hasMathWithMarkup) {
+                        _fixMathInElement(child);
+                    } else {
+                        temml.renderMathInElement(child, _temmlOpts);
+                    }
+                }
+            }
+        }
+    }
 }
 
 const _temmlObserver = new IntersectionObserver((entries) => {
@@ -618,15 +684,14 @@ function render_temml() {
 	elements.forEach(el => {
 		if (!el.textContent.includes('$')) return;
 
-		// Skip elements containing or inside code blocks
+		// Skip elements that ARE code blocks or are INSIDE code blocks
 		if (el.tagName === 'PRE' || el.tagName === 'CODE') return;
-		if (el.querySelector('pre, code')) return;
 		if (el.closest('pre, code')) return;
 
-		// Versuche zuerst unseren Fix (rendert direkt via temml.renderToString)
+		// Try our fix first (only intervenes when there's HTML markup inside math)
 		const fixed = _fixMathInElement(el);
 
-		// Falls unser Fix nichts gefunden hat, Temml normal laufen lassen
+		// If our fix didn't intervene, let Temml run normally
 		if (!fixed) {
 			const rect = el.getBoundingClientRect();
 
@@ -644,6 +709,7 @@ function render_temml() {
 			}
 		}
 	});
+
 
 	/* ═══════════════════════════════════════════════════════════════
 	   LIVE UPDATE CHECK  (every render pass)
