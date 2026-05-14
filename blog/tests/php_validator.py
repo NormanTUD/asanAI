@@ -56,7 +56,6 @@ ensure_safe_env()
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
-from rich.text import Text
 from rich import box
 from rich.rule import Rule
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, MofNCompleteColumn
@@ -68,6 +67,13 @@ console = Console()
 SKIP_DIRS = {
     ".git", "node_modules", "vendor", ".svn", "__pycache__",
     ".idea", ".vscode", "storage", "cache",
+}
+
+# Files where HTML tag balance checking should be skipped.
+# These are typically pure-PHP logic files (e.g. WordPress theme functions)
+# that contain HTML only inside PHP strings, causing false positives.
+SKIP_TAG_CHECK_FILENAMES = {
+    "functions.php",
 }
 
 
@@ -184,8 +190,8 @@ TRACKED_TAGS = {
 
 def strip_php_blocks(content: str) -> str:
     """
-    Remove PHP code blocks but preserve line structure (replace with
-    equivalent newlines) so line numbers stay accurate.
+    Remove PHP code blocks but preserve newlines so line numbers stay accurate.
+    Keeps the HTML template parts outside <?php ... ?> blocks.
     """
     result = []
     i = 0
@@ -218,27 +224,27 @@ def _line_number_at(text: str, pos: int) -> int:
     return text.count("\n", 0, pos) + 1
 
 
+def _replace_keep_newlines(m: re.Match) -> str:
+    """Replace a regex match with equivalent newlines to preserve line numbering."""
+    return "\n" * m.group(0).count("\n")
+
+
 def check_tag_balance(content: str, filepath: Path) -> list[dict]:
     """
     Check that opened HTML tags are properly closed.
-    Works on the FULL content (not line-by-line) so multi-line tags are handled.
+    Works on the FULL content at once so multi-line tags are handled correctly.
     """
     issues = []
 
     html_content = strip_php_blocks(content)
 
-    # Remove HTML comments (preserve newlines for line counting)
-    def _replace_keep_newlines(m):
-        return "\n" * m.group(0).count("\n")
-
+    # Remove HTML comments, <script>, <style> — preserve newlines for line counting
     html_content = re.sub(r"<!--.*?-->", _replace_keep_newlines, html_content, flags=re.DOTALL)
     html_content = re.sub(r"<script[^>]*>.*?</script>", _replace_keep_newlines, html_content, flags=re.DOTALL | re.IGNORECASE)
     html_content = re.sub(r"<style[^>]*>.*?</style>", _replace_keep_newlines, html_content, flags=re.DOTALL | re.IGNORECASE)
 
-    # Match tags across multiple lines — the key fix:
-    # [^>]* is greedy across newlines by default, but we need re.DOTALL
-    # for . to match \n inside attribute values. Using [^>]* is fine since
-    # > terminates the tag.
+    # Match tags across multiple lines.
+    # [^>]* handles attributes spanning lines; re.DOTALL not needed since [^>] already excludes >
     tag_pattern = re.compile(r"<(/?)(\w+)([^>]*?)(/?)>", re.IGNORECASE | re.DOTALL)
 
     stack = []  # (tag_name, line_number)
@@ -246,7 +252,6 @@ def check_tag_balance(content: str, filepath: Path) -> list[dict]:
     for match in tag_pattern.finditer(html_content):
         is_closing = match.group(1) == "/"
         tag_name = match.group(2).lower()
-        attrs = match.group(3)
         is_self_closing = match.group(4) == "/"
 
         if tag_name in VOID_ELEMENTS:
@@ -271,7 +276,6 @@ def check_tag_balance(content: str, filepath: Path) -> list[dict]:
             elif stack[-1][0] == tag_name:
                 stack.pop()
             else:
-                # Search stack for a matching opener
                 found = False
                 for idx in range(len(stack) - 1, -1, -1):
                     if stack[idx][0] == tag_name:
@@ -546,7 +550,8 @@ def main():
         "  [bold]php_validator.py src/[/]                     [dim]# single folder[/]\n"
         "  [bold]php_validator.py index.php lib/[/]           [dim]# file + folder[/]\n"
         "  [bold]php_validator.py src/ templates/ *.php[/]    [dim]# multiple mixed[/]\n"
-        '  [bold]php_validator.py "src/**/*.php"[/]           [dim]# glob pattern[/]',
+        '  [bold]php_validator.py "src/**/*.php"[/]           [dim]# glob pattern[/]\n\n'
+        f"[dim]HTML tag checks skipped for:[/] [bold yellow]{', '.join(sorted(SKIP_TAG_CHECK_FILENAMES))}[/]",
         title="[bold bright_white]PHP Validator[/]",
         border_style="bright_cyan",
         padding=(1, 3),
@@ -579,6 +584,7 @@ def main():
 
     # Process files
     results = []
+    skipped_tag_check = []
 
     with Progress(
         SpinnerColumn(),
@@ -599,8 +605,17 @@ def main():
                 progress.advance(task)
                 continue
 
+            # PHP syntax — always check
             syntax_ok, syntax_msg = check_php_syntax(filepath)
-            tag_issues = check_tag_balance(content, filepath)
+
+            # HTML tag balance — skip for pure-PHP logic files like functions.php
+            if filepath.name in SKIP_TAG_CHECK_FILENAMES:
+                tag_issues = []
+                skipped_tag_check.append(filepath)
+            else:
+                tag_issues = check_tag_balance(content, filepath)
+
+            # Brackets and common issues — always check
             bracket_issues = check_bracket_balance(content)
             common_issues = check_common_issues(content, filepath)
 
@@ -659,6 +674,15 @@ def main():
 
             console.print(tree)
             console.print()
+
+    # Note about skipped tag checks
+    if skipped_tag_check:
+        skipped_names = ", ".join(
+            str(f.relative_to(common_base)) if f.is_relative_to(common_base) else f.name
+            for f in skipped_tag_check
+        )
+        console.print(f"  [dim]ℹ️  HTML tag check skipped for:[/] [bold yellow]{skipped_names}[/] [dim](pure PHP logic)[/]")
+        console.print()
 
     # Summary table
     console.print(Rule(title="[bold bright_cyan]Summary[/]", style="bright_blue"))
