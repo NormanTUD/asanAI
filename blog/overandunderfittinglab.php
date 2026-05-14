@@ -274,7 +274,7 @@ The curve's behaviour outside the blue box mirrors a core challenge of modern AI
 * The root cause is identical, the model has no concept of the underlying "periodicity" or universal truth; it only sees the local trend of its training window.
 
 **Technical mitigation:**
-* **Regularisation** (L1 / L2) penalises overly complex internal representations, keeping the model's "curve" smoother in uncharted territory.
+* **Regularisation** (L1 / L2) penalizes overly complex internal representations, keeping the model's "curve" smoother in uncharted territory.
 * **Dropout** prevents co-adaptation of features, improving robustness to distribution shift.
 * Together, they ensure the model does not "chase the noise" (high variance), which is precisely what makes high-degree polynomials, and over-parameterised neural networks, so erratic at the edges.
 

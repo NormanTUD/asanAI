@@ -129,3 +129,13 @@ presheaf
 roko
 moravec
 vietoris
+backticks
+schneier
+radionuclides
+kronprinz
+moravec
+gofai
+searle
+werbos
+hadamard
+srivastava
