@@ -26,3 +26,10 @@ isn
 repurposed
 subword
 interpretability
+gottfried
+mlp
+learnable
+lookup
+perceptron
+hasn
+xor
