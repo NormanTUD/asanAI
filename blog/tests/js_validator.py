@@ -539,53 +539,6 @@ def check_duplicate_declarations(content: str) -> list[dict]:
 
 
 # ============================================================
-# CHECK: Suspicious equality (== instead of ===)
-# ============================================================
-
-def check_loose_equality(content: str) -> list[dict]:
-    issues = []
-    code = get_code_only(content)
-
-    # Match == or != but NOT === or !==
-    pattern = re.compile(r"(?<!=)(?<!!)(==|!=)(?!=)")
-
-    for i, line in enumerate(code.split("\n"), 1):
-        for m in pattern.finditer(line):
-            op = m.group(1)
-            strict = "===" if op == "==" else "!=="
-            # Skip if comparing to null (common pattern: x == null checks both null and undefined)
-            context = line[max(0, m.start()-20):m.end()+20]
-            if "null" in context:
-                continue
-            issues.append({
-                "type": "loose_equality",
-                "line": i,
-                "message": f"Loose '{op}' on line {i} — consider using strict '{strict}'",
-            })
-
-    return issues
-
-
-# ============================================================
-# CHECK: var usage (prefer let/const)
-# ============================================================
-
-def check_var_usage(content: str) -> list[dict]:
-    issues = []
-    code = get_code_only(content)
-
-    for i, line in enumerate(code.split("\n"), 1):
-        if re.search(r"\bvar\s+\w+", line.strip()):
-            issues.append({
-                "type": "var_usage",
-                "line": i,
-                "message": f"'var' used on line {i} — prefer 'let' or 'const' for block scoping",
-            })
-
-    return issues
-
-
-# ============================================================
 # CHECK: Trailing commas in function calls (IE compat)
 # ============================================================
 
@@ -1121,8 +1074,6 @@ def main():
         ("debugger",        lambda c, f: check_debugger_statements(c)),
         ("alert()",         lambda c, f: check_alert_calls(c)),
         ("eval()",          lambda c, f: check_eval_usage(c)),
-        ("Loose ==",        lambda c, f: check_loose_equality(c)),
-        ("var usage",       lambda c, f: check_var_usage(c)),
         ("Duplicates",      lambda c, f: check_duplicate_declarations(c)),
         ("Dup keys",        lambda c, f: check_duplicate_object_keys(c)),
         ("Assign in cond",  lambda c, f: check_assignment_in_condition(c)),
