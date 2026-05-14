@@ -292,7 +292,7 @@ User memories:
 # "internal" awareness that these are from previous sessions.</code></pre>
 
 <div class="md">
-The key insight: **memory is always external**. The LLM itself is stateless — it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation [[1]](https://medium.com/@jay-chung/how-does-chatgpts-memory-feature-work-57ae9733a3f0). In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored [[2]](https://openai.com/index/memory-and-new-controls-for-chatgpt/). Four layers working together create the illusion that ChatGPT knows you personally [[3]](https://llmrefs.com/blog/reverse-engineering-chatgpt-memory).
+The key insight: **memory is always external**. The LLM itself is stateless — it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation. In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored. Four layers working together create the illusion that ChatGPT knows you personally.
 
 ### Strategy 3: Compaction (Summarize and Continue)
 
