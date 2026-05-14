@@ -36,3 +36,6 @@ xor
 wasn
 lebombo
 combinatorics
+pdf
+bce
+rlhf
