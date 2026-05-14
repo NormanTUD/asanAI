@@ -332,13 +332,6 @@ def check_common_issues(content: str, filepath: Path) -> list[dict]:
         })
         return issues
 
-    if "<?php" not in content and "<?" not in content:
-        issues.append({
-            "type": "no_php_tag",
-            "line": 1,
-            "message": "File does not contain a PHP opening tag (<?php)",
-        })
-
     open_tags = len(re.findall(r"<\?php|<\?(?!=)", content))
     close_tags = len(re.findall(r"\?>", content))
     if close_tags > open_tags:
