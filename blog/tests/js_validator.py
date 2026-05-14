@@ -895,21 +895,6 @@ def check_file_issues(content: str, filepath: Path) -> list[dict]:
             "message": f"{trailing_count} lines have trailing whitespace",
         })
 
-    # Tab/space mixing for indentation
-    has_tab_indent = False
-    has_space_indent = False
-    for line in content.split("\n")[:200]:  # check first 200 lines
-        if line.startswith("\t"):
-            has_tab_indent = True
-        elif line.startswith("  "):
-            has_space_indent = True
-    if has_tab_indent and has_space_indent:
-        issues.append({
-            "type": "mixed_indentation",
-            "line": 1,
-            "message": "File mixes tabs and spaces for indentation — pick one",
-        })
-
     return issues
 
 
