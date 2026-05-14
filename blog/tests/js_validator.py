@@ -74,6 +74,7 @@ SKIP_DIRS = {
 # Files to completely ignore — vendored / minified third-party libraries
 IGNORE_FILENAMES = {
     "tf.min.js",
+    "three.min.js",
     "echarts.min.js",
     "tf.js",
     "echarts-gl.min.js",
