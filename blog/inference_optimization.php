@@ -3,7 +3,7 @@
 <div class="md">
 Training a model costs millions of dollars — but **serving** it costs millions *per day*. Inference optimization makes LLMs practical to deploy.
 
-### Quantization
+## Quantization
 
 Reduce the precision of model weights from 32-bit floats to 8-bit or 4-bit integers. The model gets smaller and faster with minimal quality loss (\cite[Dettmers et al., 2022]{dettmers2022llmint8}).
 
