@@ -3,13 +3,13 @@
 <div class="md">
 In the RAG chapter, we saw that a user's query is embedded into a vector and compared against stored document vectors using cosine similarity. In the web search chapter, we saw that retrieved pages are chunked and re-ranked before being fed to the LLM. But we glossed over a critical question: **how do you search through millions or billions of vectors in under 50 milliseconds?**
 
-The answer is **vector databases** — specialized systems built from the ground up for high-dimensional similarity search. They are the invisible engine behind every RAG pipeline, every semantic search bar, and every recommendation system you've ever used.
+The answer is **vector databases**, specialized systems built from the ground up for high-dimensional similarity search. They are the invisible engine behind every RAG pipeline, every semantic search bar, and every recommendation system you've ever used.
 
 $$
 \text{Query} \;\xrightarrow{\text{embed}}\; \vec{q} \in \mathbb{R}^{768} \;\xrightarrow{\text{ANN search}}\; \text{Top-}K\text{ nearest vectors} \;\xrightarrow{\text{return docs}}\; \text{Relevant passages}
 $$
 
-**Key insight:** Vector databases don't find the *exact* nearest neighbors. They find *approximate* nearest neighbors — trading a tiny amount of accuracy for enormous speed gains. This is the engineering trick that makes RAG possible at scale.
+**Key insight:** Vector databases don't find the *exact* nearest neighbors. They find *approximate* nearest neighbors, trading a tiny amount of accuracy for enormous speed gains. This is the engineering trick that makes RAG possible at scale.
 </div>
 
 <div id="vslab-pipeline-diagram"></div>
@@ -49,7 +49,7 @@ $$
 
 **Strengths:** Understands synonyms, paraphrases, and conceptual similarity. "Car" matches "automobile," "vehicle," and even "Tesla Model 3."
 
-**Weaknesses:** Can miss exact keyword matches. Searching for a specific product code like "XJ-4200" may return semantically similar but wrong products. Also, embedding models have blind spots — they can confuse "Python" (snake) with "Python" (language).
+**Weaknesses:** Can miss exact keyword matches. Searching for a specific product code like "XJ-4200" may return semantically similar but wrong products. Also, embedding models have blind spots, they can confuse "Python" (snake) with "Python" (language).
 
 ### 3. Hybrid Search
 
@@ -94,7 +94,7 @@ $$
 \text{sim}(\vec{q}, \vec{v}_i) \quad \forall \; i \in \{1, \ldots, N\}
 $$
 
-That's $O(N \cdot d)$ operations per query. For 1 billion vectors at 768 dimensions, that's **768 billion floating-point operations per query**. At even 1 TFLOP/s, that's nearly a second — far too slow for real-time applications.
+That's $O(N \cdot d)$ operations per query. For 1 billion vectors at 768 dimensions, that's **768 billion floating-point operations per query**. At even 1 TFLOP/s, that's nearly a second, far too slow for real-time applications.
 
 The solution: **Approximate Nearest Neighbor (ANN)** algorithms that sacrifice a tiny amount of recall (typically 95-99%) for dramatic speed improvements (1000x or more).
 
@@ -161,7 +161,7 @@ PQ compresses each vector by:
 2. Within each subspace, learning a codebook of 256 centroids via k-means
 3. Replacing each sub-vector with its nearest centroid's **1-byte ID**
 
-Compressed size: $10^9 \times 96 \times 1 \text{ byte} = 96 \text{ GB}$ — a **32x compression**.
+Compressed size: $10^9 \times 96 \times 1 \text{ byte} = 96 \text{ GB}$, a **32x compression**.
 
 Distance computation uses precomputed lookup tables, making it extremely fast despite the compression.
 
@@ -281,7 +281,7 @@ How you split documents into chunks has a **massive** impact on retrieval qualit
 
 ### Overlap
 
-Most systems use **overlapping chunks** — each chunk shares 50-100 tokens with its neighbors. This ensures that information at chunk boundaries isn't lost:
+Most systems use **overlapping chunks**, each chunk shares 50-100 tokens with its neighbors. This ensures that information at chunk boundaries isn't lost:
 
 $$
 \text{Chunk}_1: \text{tokens } [0, 400] \quad \text{Chunk}_2: \text{tokens } [350, 750] \quad \text{Chunk}_3: \text{tokens } [700, 1100]
@@ -316,7 +316,7 @@ Vector search retrieves candidates quickly but approximately. A **re-ranker** th
 | **Retrieval** (vector search) | ~10ms for millions of docs | Good (approximate) | Bi-encoder (separate embeddings) |
 | **Re-ranking** | ~50-200ms for top 20-50 | Excellent | Cross-encoder (joint query-doc scoring) |
 
-A **bi-encoder** embeds query and document separately — fast but can miss subtle interactions. A **cross-encoder** reads query and document *together* as a single input — slow but much more accurate.
+A **bi-encoder** embeds query and document separately, fast but can miss subtle interactions. A **cross-encoder** reads query and document *together* as a single input, slow but much more accurate.
 
 $$
 \underbrace{\text{Vector DB: } 1M \rightarrow 50}_{\text{fast, approximate}} \;\xrightarrow{\text{re-ranker}}\; \underbrace{50 \rightarrow 5}_{\text{slow, precise}} \;\rightarrow\; \text{LLM prompt}
@@ -344,9 +344,9 @@ The core operation is always the same: embed → store → search → retrieve.
 - **Embedding quality ceiling:** If the embedding model doesn't capture a distinction, the vector DB can't find it
 - **Curse of dimensionality:** In very high dimensions, distances between all points converge, making search harder
 - **Index staleness:** Adding new documents requires re-indexing or incremental updates
-- **Cold start:** An empty vector DB has nothing to search — you need documents first
+- **Cold start:** An empty vector DB has nothing to search, you need documents first
 - **Multilingual gaps:** Embedding models may perform unevenly across languages
-- **No reasoning:** Vector search finds *similar* content, not *correct* answers — that's the LLM's job
+- **No reasoning:** Vector search finds *similar* content, not *correct* answers, that's the LLM's job
 
 ## Summary
 
