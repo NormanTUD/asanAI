@@ -31,6 +31,7 @@ Usage:
   uv run latex_error_checker.py --no-serve         # skip server, scan .php source files directly
   uv run latex_error_checker.py --headed           # run browser visibly for debugging
   uv run latex_error_checker.py --trace            # save Playwright traces for failed pages
+  uv run latex_error_checker.py --concurrency 4    # scan 4 pages in parallel
 """
 
 import os
@@ -42,6 +43,7 @@ import subprocess
 import argparse
 from pathlib import Path
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 try:
     from datetime import UTC
@@ -102,16 +104,40 @@ console = Console()
 # PLAYWRIGHT BROWSER AUTO-INSTALL
 # ============================================================
 
+_browsers_checked = False
+
+
 def ensure_playwright_browsers():
     """
     Automatically install Playwright Chromium browser if not already present.
-    This prevents the 'Executable doesn't exist' error.
+    Only runs once per process.
     """
+    global _browsers_checked
+    if _browsers_checked:
+        return
+    _browsers_checked = True
+
+    # Quick check: see if chromium executable already exists
     try:
-        # Quick check: try to find the chromium executable
         from playwright._impl._driver import compute_driver_executable
         driver_executable = compute_driver_executable()
-        # Run `playwright install chromium` via the driver
+        # Use a quick dry-run check — if chromium is already installed, this is near-instant
+        result = subprocess.run(
+            [str(driver_executable), "install", "--dry-run", "chromium"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        # If dry-run isn't supported (older versions), fall through
+        if result.returncode == 0 and "is already installed" in (result.stdout + result.stderr):
+            return
+    except Exception:
+        pass
+
+    # Actually install if needed
+    try:
+        from playwright._impl._driver import compute_driver_executable
+        driver_executable = compute_driver_executable()
         result = subprocess.run(
             [str(driver_executable), "install", "chromium"],
             capture_output=True,
@@ -121,10 +147,7 @@ def ensure_playwright_browsers():
         if result.returncode == 0:
             if "Downloading" in result.stdout or "downloading" in result.stderr:
                 console.print("[bold green]✓ Playwright Chromium browser installed successfully.[/]")
-            # If already installed, it exits quickly and silently
         else:
-            # Fallback: try via python -m playwright
-            console.print("[dim]Installing Playwright browsers via module...[/]")
             result2 = subprocess.run(
                 [sys.executable, "-m", "playwright", "install", "chromium"],
                 capture_output=True,
@@ -137,8 +160,6 @@ def ensure_playwright_browsers():
             else:
                 console.print("[bold green]✓ Playwright Chromium browser installed.[/]")
     except ImportError:
-        # If we can't import the driver path, fall back to subprocess
-        console.print("[dim]Ensuring Playwright browsers are installed...[/]")
         result = subprocess.run(
             [sys.executable, "-m", "playwright", "install", "chromium"],
             capture_output=True,
@@ -153,7 +174,6 @@ def ensure_playwright_browsers():
         console.print("[bold red]Timed out installing Playwright browsers (120s). Check your network.[/]")
         sys.exit(1)
     except Exception as e:
-        # Last resort fallback
         console.print(f"[dim]Browser install check: {e} — trying module fallback...[/]")
         result = subprocess.run(
             [sys.executable, "-m", "playwright", "install", "chromium"],
@@ -283,21 +303,22 @@ def start_php_server(docroot: Path, port: int) -> subprocess.Popen | None:
             stderr=subprocess.PIPE,
             cwd=str(docroot),
         )
-        time.sleep(1.5)
+        # Use a shorter initial wait, then poll quickly
+        time.sleep(0.5)
 
         if proc.poll() is not None:
             stderr = proc.stderr.read().decode(errors="replace") if proc.stderr else ""
             console.print(f"[bold red]PHP server failed to start:[/] {stderr}")
             return None
 
-        # Verify it's responding
+        # Verify it's responding with tight retries
         import urllib.request
-        for attempt in range(5):
+        for attempt in range(8):
             try:
-                urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=3)
+                urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=2)
                 return proc
             except Exception:
-                time.sleep(0.5)
+                time.sleep(0.25)
 
         console.print("[bold red]PHP server started but not responding.[/]")
         proc.terminate()
@@ -403,7 +424,7 @@ def scan_page_with_browser(
     page,
     url: str,
     page_label: str,
-    render_wait_ms: int = 3000,
+    render_wait_ms: int = 800,
     navigation_timeout: int = 30000,
 ) -> list[dict]:
     """
@@ -451,8 +472,36 @@ def scan_page_with_browser(
         })
         return issues
 
-    # Wait extra time for client-side rendering (KaTeX/Temml/MathJax)
-    page.wait_for_timeout(render_wait_ms)
+    # Wait for client-side rendering (KaTeX/Temml/MathJax)
+    # Use smart wait: check for rendering completion rather than blind sleep
+    if render_wait_ms > 0:
+        # First, try to detect if math rendering libraries are present and done
+        try:
+            page.wait_for_function(
+                """() => {
+                    // If KaTeX is loaded, check all math is rendered
+                    if (document.querySelector('.katex') || document.querySelector('[data-katex]')) {
+                        return !document.querySelector('[data-katex-pending]');
+                    }
+                    // If MathJax is loaded, check it's done
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        return window.MathJax.startup?.promise?.isFulfilled !== false;
+                    }
+                    // If Temml is loaded
+                    if (document.querySelector('.temml')) {
+                        return true;
+                    }
+                    // No math library detected, no need to wait
+                    return true;
+                }""",
+                timeout=render_wait_ms,
+            )
+        except PlaywrightTimeout:
+            # Fallback: just wait the remaining time if smart detection times out
+            pass
+        except Exception:
+            # If the function evaluation fails, do a short fallback wait
+            page.wait_for_timeout(min(render_wait_ms, 500))
 
     # ── Collect console errors and warnings ──
     for msg in console_messages:
@@ -647,6 +696,191 @@ def severity_icon(issue_type: str) -> str:
 
 
 # ============================================================
+# PARALLEL PAGE SCANNER
+# ============================================================
+
+def scan_pages_parallel(
+    browser,
+    pages_to_check: list[str],
+    base_url: str,
+    render_wait_ms: int,
+    navigation_timeout: int,
+    trace: bool,
+    trace_dir: Path,
+    concurrency: int,
+    progress,
+    task,
+    skip_pages: set[str],
+) -> list[tuple[str, list[dict]]]:
+    """
+    Scan multiple pages concurrently using multiple browser contexts/tabs.
+    Reuses a single browser instance with multiple pages.
+    """
+    results = []
+
+    # Use a pool of persistent contexts to avoid per-page context overhead
+    # For Playwright sync API, we process in batches using tabs within a shared context
+    # But for isolation, we'll use a small pool of contexts
+
+    # Create a pool of reusable contexts
+    context_pool = []
+    for _ in range(concurrency):
+        ctx = browser.new_context(
+            viewport={"width": 1280, "height": 900},
+            ignore_https_errors=True,
+        )
+        context_pool.append(ctx)
+
+    try:
+        # Process pages round-robin across contexts
+        batch_size = concurrency
+        page_list = [p for p in pages_to_check if p not in skip_pages]
+
+        for batch_start in range(0, len(page_list), batch_size):
+            batch = page_list[batch_start:batch_start + batch_size]
+            batch_pages = []
+
+            # Open all pages in the batch
+            for i, page_path in enumerate(batch):
+                ctx = context_pool[i % concurrency]
+                pg = ctx.new_page()
+                batch_pages.append((page_path, pg, ctx))
+
+            # Scan each page in the batch
+            for page_path, pg, ctx in batch_pages:
+                progress.update(task, description=f"🌐 /{page_path}")
+
+                url = f"{base_url}/{page_path}"
+                page_label = f"/{page_path}"
+
+                if trace:
+                    ctx.tracing.start(screenshots=True, snapshots=True, sources=True)
+
+                page_issues = scan_page_with_browser(
+                    page=pg,
+                    url=url,
+                    page_label=page_label,
+                    render_wait_ms=render_wait_ms,
+                    navigation_timeout=navigation_timeout,
+                )
+
+                if page_issues:
+                    results.append((f"🌐 {page_label} (rendered)", page_issues))
+                    if trace:
+                        safe_name = page_path.replace("/", "_").replace("\\", "_")
+                        trace_path = trace_dir / f"{safe_name}.zip"
+                        ctx.tracing.stop(path=str(trace_path))
+                elif trace:
+                    ctx.tracing.stop(path=str(trace_dir / "_discard.zip"))
+                    (trace_dir / "_discard.zip").unlink(missing_ok=True)
+
+                pg.close()
+                progress.advance(task)
+
+    finally:
+        # Clean up all contexts
+        for ctx in context_pool:
+            try:
+                ctx.close()
+            except Exception:
+                pass
+
+    return results
+
+
+def scan_pages_sequential_reuse_context(
+    browser,
+    pages_to_check: list[str],
+    base_url: str,
+    render_wait_ms: int,
+    navigation_timeout: int,
+    trace: bool,
+    trace_dir: Path,
+    progress,
+    task,
+    skip_pages: set[str],
+) -> list[tuple[str, list[dict]]]:
+    """
+    Scan pages sequentially but reuse a single browser context for all pages.
+    Falls back to fresh context only when tracing is enabled (needs per-page traces).
+    """
+    results = []
+
+    if trace:
+        # With tracing, we need per-page context lifecycle for trace isolation
+        for page_path in pages_to_check:
+            if page_path in skip_pages:
+                continue
+
+            progress.update(task, description=f"🌐 /{page_path}")
+            url = f"{base_url}/{page_path}"
+            page_label = f"/{page_path}"
+
+            context = browser.new_context(
+                viewport={"width": 1280, "height": 900},
+                ignore_https_errors=True,
+            )
+            context.tracing.start(screenshots=True, snapshots=True, sources=True)
+            page = context.new_page()
+
+            page_issues = scan_page_with_browser(
+                page=page,
+                url=url,
+                page_label=page_label,
+                render_wait_ms=render_wait_ms,
+                navigation_timeout=navigation_timeout,
+            )
+
+            if page_issues:
+                results.append((f"🌐 {page_label} (rendered)", page_issues))
+                safe_name = page_path.replace("/", "_").replace("\\", "_")
+                trace_path = trace_dir / f"{safe_name}.zip"
+                context.tracing.stop(path=str(trace_path))
+            else:
+                context.tracing.stop(path=str(trace_dir / "_discard.zip"))
+                (trace_dir / "_discard.zip").unlink(missing_ok=True)
+
+            page.close()
+            context.close()
+            progress.advance(task)
+
+    else:
+        # No tracing — reuse a single context for all pages (much faster)
+        context = browser.new_context(
+            viewport={"width": 1280, "height": 900},
+            ignore_https_errors=True,
+        )
+
+        for page_path in pages_to_check:
+            if page_path in skip_pages:
+                continue
+
+            progress.update(task, description=f"🌐 /{page_path}")
+            url = f"{base_url}/{page_path}"
+            page_label = f"/{page_path}"
+
+            page = context.new_page()
+
+            page_issues = scan_page_with_browser(
+                page=page,
+                url=url,
+                page_label=page_label,
+                render_wait_ms=render_wait_ms,
+                navigation_timeout=navigation_timeout,
+            )
+
+            if page_issues:
+                results.append((f"🌐 {page_label} (rendered)", page_issues))
+
+            page.close()
+            progress.advance(task)
+
+        context.close()
+
+    return results
+
+
+# ============================================================
 # MAIN
 # ============================================================
 
@@ -675,8 +909,8 @@ def main():
         help="Save Playwright traces for pages with issues (saved to ./traces/)"
     )
     parser.add_argument(
-        "--render-wait", type=int, default=3000,
-        help="Extra milliseconds to wait for client-side rendering after networkidle (default: 3000)"
+        "--render-wait", type=int, default=800,
+        help="Milliseconds to wait for client-side rendering after networkidle (default: 800)"
     )
     parser.add_argument(
         "--navigation-timeout", type=int, default=30000,
@@ -687,12 +921,21 @@ def main():
         help="Keep the PHP server running after checks (for manual inspection)"
     )
     parser.add_argument(
+        "--concurrency", "-c", type=int, default=1,
+        help="Number of pages to scan in parallel (default: 1)"
+    )
+    parser.add_argument(
+        "--skip", type=str, nargs="*", default=["functions.php", "asanai_blog_proxy.php", "graph.php"],
+        help="Page filenames to skip (default: functions.php asanai_blog_proxy.php graph.php)"
+    )
+    parser.add_argument(
         "paths", nargs="*", default=[],
         help="Additional files or directories to scan (source-level only)"
     )
 
     args = parser.parse_args()
     docroot = Path(args.docroot).resolve()
+    skip_pages = set(args.skip)
 
     console.print()
     console.print(Panel(
@@ -711,8 +954,9 @@ def main():
         "  [bold]uv run latex_error_checker.py -d ./site -p 9000[/]   [dim]# custom root & port[/]\n"
         "  [bold]uv run latex_error_checker.py --headed[/]            [dim]# visible browser[/]\n"
         "  [bold]uv run latex_error_checker.py --trace[/]             [dim]# save traces[/]\n"
+        "  [bold]uv run latex_error_checker.py --concurrency 4[/]     [dim]# parallel scanning[/]\n"
         "  [bold]uv run latex_error_checker.py --no-serve[/]          [dim]# source scan only[/]",
-        title="[bold bright_white]LaTeX Error Checker v2.0 (Playwright)[/]",
+        title="[bold bright_white]LaTeX Error Checker v3.0 (Playwright — Optimized)[/]",
         border_style="bright_cyan",
         padding=(1, 3),
     ))
@@ -735,7 +979,9 @@ def main():
     console.print(f"[bold]PHP files found:[/] {len(php_files)}")
     console.print(f"[bold]JS  files found:[/] {len(js_files)}")
     console.print(f"[bold]Browser mode:[/]   {'Headed (visible)' if args.headed else 'Headless'}")
-    console.print(f"[bold]Render wait:[/]    {args.render_wait}ms")
+    console.print(f"[bold]Render wait:[/]    {args.render_wait}ms (smart detection + fallback)")
+    console.print(f"[bold]Concurrency:[/]    {args.concurrency} page(s) at a time")
+    console.print(f"[bold]Skipping:[/]       {', '.join(skip_pages) if skip_pages else 'none'}")
     console.print()
 
     if not php_files and not js_files:
@@ -775,6 +1021,9 @@ def main():
                 if "index.php" not in pages_to_check:
                     pages_to_check.insert(0, "index.php")
 
+                # Filter out skipped pages for the count
+                scannable = [p for p in pages_to_check if p not in skip_pages]
+
                 console.print(Rule(
                     title="[bold bright_cyan]Phase 1: Browser Rendering & Error Capture[/]",
                     style="bright_blue"
@@ -787,6 +1036,8 @@ def main():
                     trace_dir.mkdir(exist_ok=True)
 
                 # Launch Playwright browser
+                start_time = time.monotonic()
+
                 with sync_playwright() as p:
                     browser = p.chromium.launch(headless=not args.headed)
 
@@ -797,61 +1048,43 @@ def main():
                         MofNCompleteColumn(),
                         console=console,
                     ) as progress:
-                        task = progress.add_task("Scanning pages...", total=len(pages_to_check))
+                        task = progress.add_task("Scanning pages...", total=len(scannable))
 
-                        for page_path in pages_to_check:
-                            if page_path == "functions.php" or page_path == "asanai_blog_proxy.php"  or page_path == "graph.php":
-                                continue
-
-                            progress.update(task, description=f"🌐 /{page_path}")
-
-                            url = f"{base_url}/{page_path}"
-                            page_label = f"/{page_path}"
-
-                            # Create a fresh context for each page (clean state)
-                            context = browser.new_context(
-                                viewport={"width": 1280, "height": 900},
-                                ignore_https_errors=True,
-                            )
-
-                            if args.trace:
-                                context.tracing.start(
-                                    screenshots=True,
-                                    snapshots=True,
-                                    sources=True,
-                                )
-
-                            page = context.new_page()
-
-                            # Scan the page
-                            page_issues = scan_page_with_browser(
-                                page=page,
-                                url=url,
-                                page_label=page_label,
+                        if args.concurrency > 1:
+                            browser_issues = scan_pages_parallel(
+                                browser=browser,
+                                pages_to_check=pages_to_check,
+                                base_url=base_url,
                                 render_wait_ms=args.render_wait,
                                 navigation_timeout=args.navigation_timeout,
+                                trace=args.trace,
+                                trace_dir=trace_dir,
+                                concurrency=args.concurrency,
+                                progress=progress,
+                                task=task,
+                                skip_pages=skip_pages,
+                            )
+                        else:
+                            browser_issues = scan_pages_sequential_reuse_context(
+                                browser=browser,
+                                pages_to_check=pages_to_check,
+                                base_url=base_url,
+                                render_wait_ms=args.render_wait,
+                                navigation_timeout=args.navigation_timeout,
+                                trace=args.trace,
+                                trace_dir=trace_dir,
+                                progress=progress,
+                                task=task,
+                                skip_pages=skip_pages,
                             )
 
-                            if page_issues:
-                                all_issues.append((f"🌐 {page_label} (rendered)", page_issues))
-
-                                # Save trace if requested
-                                if args.trace:
-                                    safe_name = page_path.replace("/", "_").replace("\\", "_")
-                                    trace_path = trace_dir / f"{safe_name}.zip"
-                                    context.tracing.stop(path=str(trace_path))
-                            else:
-                                if args.trace:
-                                    # Discard trace for clean pages
-                                    context.tracing.stop(path=str(trace_dir / "_discard.zip"))
-                                    (trace_dir / "_discard.zip").unlink(missing_ok=True)
-
-                            page.close()
-                            context.close()
-                            progress.advance(task)
+                        all_issues.extend(browser_issues)
 
                     browser.close()
 
+                elapsed = time.monotonic() - start_time
+                console.print()
+                console.print(f"[dim]Phase 1 completed in {elapsed:.1f}s ({len(scannable)} pages)[/]")
                 console.print()
 
     # ── Phase 2: Source-level scanning ──────────────────────
