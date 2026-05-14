@@ -75,6 +75,7 @@ SKIP_DIRS = {
 IGNORE_FILENAMES = {
     "tf.min.js",
     "tf.js",
+    "echarts-gl.min.js",
     "jquery.js",
     "jquery-3.7.1.min.js",
     "plotly-2.24.1.min.js",
