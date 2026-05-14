@@ -608,41 +608,6 @@ def check_trailing_commas(content: str) -> list[dict]:
 
 
 # ============================================================
-# CHECK: Unused variables (heuristic)
-# ============================================================
-
-def check_unused_variables(content: str) -> list[dict]:
-    issues = []
-    code = get_code_only(content)
-
-    # Find const/let declarations
-    decl_pattern = re.compile(r"\b(?:const|let)\s+(\w+)\s*=")
-
-    for m in decl_pattern.finditer(code):
-        var_name = m.group(1)
-        decl_pos = m.end()
-
-        # Skip common patterns: destructuring, exports, etc.
-        if var_name in ("_", "__", "exports", "module"):
-            continue
-
-        # Count occurrences of the variable name in code after declaration
-        rest = code[decl_pos:]
-        # Use word boundary to avoid partial matches
-        occurrences = len(re.findall(r"\b" + re.escape(var_name) + r"\b", rest))
-
-        if occurrences == 0:
-            line = code[:m.start()].count("\n") + 1
-            issues.append({
-                "type": "unused_variable",
-                "line": line,
-                "message": f"Variable '{var_name}' declared on line {line} appears unused",
-            })
-
-    return issues
-
-
-# ============================================================
 # CHECK: Suspicious assignments in conditions
 # ============================================================
 
@@ -1195,7 +1160,6 @@ def main():
         ("Assign in cond",  lambda c, f: check_assignment_in_condition(c)),
         ("Typos",           lambda c, f: check_common_mistakes(c)),
         ("TODOs",           lambda c, f: check_todo_comments(c)),
-        ("Unused vars",     lambda c, f: check_unused_variables(c)),
         ("Long lines",      lambda c, f: check_long_lines(c)),
         ("File issues",     lambda c, f: check_file_issues(c, f)),
     ]
