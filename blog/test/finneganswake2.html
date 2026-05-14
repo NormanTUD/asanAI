@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finnegans Wake — A Visual Journey</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --river: #1a5276;
+    --night: #0b0c10;
+    --dream: #1b1464;
+    --dawn: #f39c12;
+    --anna: #2ecc71;
+    --hce: #8b4513;
+    --shem: #c0392b;
+    --shaun: #2980b9;
+    --issy: #e91e63;
+    --cycle: #9b59b6;
+  }
+
+  body {
+    background: var(--night);
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* OPENING RIVER ANIMATION */
+  #river-opening {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, #0a1628, #1a3a5c, #0d2137);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: opacity 1.5s ease;
+  }
+
+  #river-opening.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #river-opening h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: #d4e6f1;
+    text-align: center;
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  #river-opening p {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: #7fb3d8;
+    animation: fadeInUp 2s ease 1s both;
+  }
+
+  #river-opening .start-btn {
+    margin-top: 2rem;
+    padding: 12px 40px;
+    background: transparent;
+    border: 1px solid #7fb3d8;
+    color: #7fb3d8;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: all 0.3s;
+    animation: fadeInUp 2s ease 1.5s both;
+  }
+
+  #river-opening .start-btn:hover {
+    background: #7fb3d8;
+    color: #0a1628;
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* NAVIGATION */
+  #nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    background: rgba(11,12,16,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: none;
+  }
+
+  #nav.visible { display: block; }
+
+  #nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  #nav h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #7fb3d8;
+  }
+
+  #nav-tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .nav-tab {
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #999;
+    font-size: 0.75rem;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .nav-tab:hover, .nav-tab.active {
+    border-color: #7fb3d8;
+    color: #7fb3d8;
+    background: rgba(127,179,216,0.1);
+  }
+
+  /* MAIN CONTENT */
+  #main {
+    display: none;
+    padding-top: 70px;
+  }
+
+  #main.visible { display: block; }
+
+  /* SECTIONS */
+  .chapter {
+    display: none;
+    min-height: 100vh;
+    padding: 60px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .chapter.active { display: block; animation: fadeIn 0.8s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .chapter-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .chapter-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #d4e6f1, #7fb3d8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .chapter-header .subtitle {
+    font-size: 1rem;
+    color: #888;
+    font-style: italic;
+  }
+
+  /* STORY CARDS */
+  .story-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .story-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .story-card .accent-bar {
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .story-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: #d4e6f1;
+  }
+
+  .story-card p {
+    line-height: 1.8;
+    color: #bbb;
+    font-size: 0.95rem;
+  }
+
+  .story-card .quote {
+    margin: 15px 0;
+    padding: 15px 20px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid #7fb3d8;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #a0c4e0;
+    font-size: 0.95rem;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* CHARACTER MAP */
+  .character-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .char-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .char-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+
+  .char-card .char-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+
+  .char-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+
+  .char-card p {
+    font-size: 0.82rem;
+    color: #999;
+    line-height: 1.5;
+  }
+
+  .char-card .char-detail {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.8rem;
+    color: #aaa;
+    line-height: 1.6;
+    text-align: left;
+  }
+
+  .char-card.expanded .char-detail { display: block; }
+
+  /* CYCLE DIAGRAM */
+  #cycle-container {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+  }
+
+  #cycle-svg {
+    max-width: 500px;
+    width: 100%;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+    margin: 30px 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--river), var(--cycle), var(--anna));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -33px;
+    top: 24px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #7fb3d8;
+    background: var(--night);
+  }
+
+  .timeline-item h4 {
+    font-family: 'Playfair Display', serif;
+    color: #d4e6f1;
+    margin-bottom: 8px;
+  }
+
+  .timeline-item p {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.7;
+  }
+
+  /* RIVER ANIMATION CANVAS */
+  #river-canvas {
+    width: 100%;
+    height: 200px;
+    margin: 30px 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #0d2137, #1a3a5c);
+  }
+
+  /* THEME TAGS */
+  .theme-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    margin: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .theme-tag.fall { background: rgba(231,76,60,0.15); color: #e74c3c; }
+  .theme-tag.resurrection { background: rgba(46,204,113,0.15); color: #2ecc71; }
+  .theme-tag.river { background: rgba(41,128,185,0.15); color: #2980b9; }
+  .theme-tag.dream { background: rgba(155,89,182,0.15); color: #9b59b6; }
+  .theme-tag.identity { background: rgba(243,156,18,0.15); color: #f39c12; }
+  .theme-tag.sin { background: rgba(192,57,43,0.15); color: #c0392b; }
+  .theme-tag.cycle { background: rgba(26,188,156,0.15); color: #1abc9c; }
+  .theme-tag.letter { background: rgba(230,126,34,0.15); color: #e67e22; }
+
+  /* INTERACTIVE WORD CLOUD */
+  #wordcloud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 30px 0;
+    padding: 30px;
+  }
+
+  .cloud-word {
+    padding: 6px 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .cloud-word:hover {
+    background: rgba(127,179,216,0.15);
+    border-color: #7fb3d8;
+    transform: scale(1.1);
+  }
+
+  /* FOOTER */
+  #footer {
+    text-align: center;
+    padding: 60px 20px;
+    color: #555;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    margin-top: 60px;
+  }
+
+  #footer span {
+    font-family: 'Playfair Display', serif;
+    color: #7fb3d8;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    #river-opening h1 { font-size: 2rem; }
+    .chapter-header h2 { font-size: 1.8rem; }
+    .character-map { grid-template-columns: 1fr; }
+    #nav-tabs { gap: 2px; }
+    .nav-tab { font-size: 0.65rem; padding: 4px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- OPENING SCREEN -->
+<div id="river-opening">
+  <h1>Finnegans Wake</h1>
+  <p>James Joyce · A Visual Journey Through the Night</p>
+  <button class="start-btn" onclick="startJourney()">riverrun →</button>
+</div>
+
+<!-- NAVIGATION -->
+<div id="nav">
+  <div id="nav-inner">
+    <h2>Finnegans Wake</h2>
+    <div id="nav-tabs">
+      <button class="nav-tab active" onclick="showChapter('overview')">The Cycle</button>
+      <button class="nav-tab" onclick="showChapter('characters')">Characters</button>
+      <button class="nav-tab" onclick="showChapter('fall')">The Fall</button>
+      <button class="nav-tab" onclick="showChapter('hce')">HCE's Crime</button>
+      <button class="nav-tab" onclick="showChapter('ballad')">The Ballad</button>
+      <button class="nav-tab" onclick="showChapter('letter')">The Letter</button>
+      <button class="nav-tab" onclick="showChapter('shem')">Shem</button>
+      <button class="nav-tab" onclick="showChapter('anna')">Anna Livia</button>
+      <button class="nav-tab" onclick="showChapter('themes')">Themes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+
+  <!-- OVERVIEW / THE CYCLE -->
+  <div class="chapter active" id="ch-overview">
+    <div class="chapter-header">
+      <h2>The Vico Cycle</h2>
+      <p class="subtitle">"riverrun, past Eve and Adam's… brings us by a commodius vicus of recirculation back to Howth Castle and Environs"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--cycle);"></div>
+      <h3>A Book That Flows Like a River</h3>
+      <p>Finnegans Wake is not a conventional novel. It is a dream — the dream of a single night, told in a language that fuses dozens of tongues into a shimmering, punning, endlessly layered prose. The book's famous first word, "riverrun," begins mid-sentence, completing the book's final, unfinished sentence. The entire work is a circle, a cycle of fall and resurrection, sleep and waking, death and rebirth.</p>
+      <br>
+      <p>Inspired by Giambattista Vico's cyclical theory of history, Joyce structures the Wake around four recurring ages: the divine/theocratic, the heroic/aristocratic, the human/democratic, and the ricorso (return/chaos). These ages repeat endlessly, just as the River Liffey flows to the sea and returns as rain.</p>
+    </div>
+
+    <div id="cycle-container">
+      <svg id="cycle-svg" viewBox="0 0 500 500">
+        <!-- Cycle ring -->
+        <circle cx="250" cy="250" r="180" fill="none" stroke="rgba(127,179,216,0.2)" stroke-width="2"/>
+        <circle cx="250" cy="250" r="180" fill="none" stroke="#7fb3d8" stroke-width="2" stroke-dasharray="283 850" stroke-dashoffset="0">
+          <animateTransform attributeName="transform" type="rotate" from="0 250 250" to="360 250 250" dur="20s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Age markers -->
+        <circle cx="250" cy="70" r="30" fill="rgba(243,156,18,0.15)" stroke="#f39c12" stroke-width="1.5"/>
+        <text x="250" y="66" text-anchor="middle" fill="#f39c12" font-size="10" font-family="Inter">DIVINE</text>
+        <text x="250" y="80" text-anchor="middle" fill="#f39c12" font-size="8" font-family="Inter">Thunder</text>
+
+        <circle cx="430" cy="250" r="30" fill="rgba(231,76,60,0.15)" stroke="#e74c3c" stroke-width="1.5"/>
+        <text x="430" y="246" text-anchor="middle" fill="#e74c3c" font-size="10" font-family="Inter">HEROIC</text>
+        <text x="430" y="260" text-anchor="middle" fill="#e74c3c" font-size="8" font-family="Inter">Battle</text>
+
+        <circle cx="250" cy="430" r="30" fill="rgba(46,204,113,0.15)" stroke="#2ecc71" stroke-width="1.5"/>
+        <text x="250" y="426" text-anchor="middle" fill="#2ecc71" font-size="10" font-family="Inter">HUMAN</text>
+        <text x="250" y="440" text-anchor="middle" fill="#2ecc71" font-size="8" font-family="Inter">Democracy</text>
+
+        <circle cx="70" cy="250" r="30" fill="rgba(155,89,182,0.15)" stroke="#9b59b6" stroke-width="1.5"/>
+        <text x="70" y="246" text-anchor="middle" fill="#9b59b6" font-size="10" font-family="Inter">RICORSO</text>
+        <text x="70" y="260" text-anchor="middle" fill="#9b59b6" font-size="8" font-family="Inter">Return</text>
+
+        <!-- Center -->
+        <text x="250" y="240" text-anchor="middle" fill="#d4e6f1" font-size="14" font-family="Playfair Display">FINNEGANS</text>
+        <text x="250" y="262" text-anchor="middle" fill="#7fb3d8" font-size="14" font-family="Playfair Display">WAKE</text>
+
+        <!-- Arrows -->
+        <path d="M290 78 Q360 100 420 210" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" marker-end="url(#arrowhead)"/>
+        <path d="M420 290 Q380 380 290 420" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <path d="M210 420 Q130 380 80 290" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <path d="M80 210 Q120 120 210 78" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--dream);"></div>
+      <h3>The Dreamer and the Dream</h3>
+      <p>The entire book takes place during a single night's sleep. The dreamer — often identified with HCE (Humphrey Chimpden Earwicker), a Dublin publican — lies sleeping beside his wife, ALP (Anna Livia Plurabelle). In his dream, all of human history, myth, and language swirl together. Characters merge and split. Tim Finnegan the hod-carrier becomes Finn MacCool the giant becomes HCE the innkeeper. Every figure is every other figure. Every word contains multitudes.</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--river);"></div>
+      <h3>The Structure</h3>
+      <p>The Wake is divided into four books. <strong>Book I</strong> (covered in the uploaded text) introduces the sleeping giant/fallen father figure, his mysterious sin, the spreading of rumors about him, the letter from the midden heap, and the river-woman Anna Livia. <strong>Book II</strong> follows the children at play and study. <strong>Book III</strong> is Shaun's journey. <strong>Book IV</strong> is the dawn, the ricorso, where Anna Livia's final monologue dissolves back into the opening word.</p>
+    </div>
+  </div>
+
+  <!-- CHARACTERS -->
+  <div class="chapter" id="ch-characters">
+    <div class="chapter-header">
+      <h2>The Dreamers & The Dreamed</h2>
+      <p class="subtitle">Click each character to learn more</p>
+    </div>
+
+    <div class="character-map">
+      <div class="char-card" onclick="toggleChar(this)">
+        <div class="char-icon" style="background: rgba(139,69,19,0.2); color: var(--hce);">⛰️</div>
+        <h4 style="color: var(--hce);">HCE</h4>
+        <p>Humphrey Chimpden Earwicker</p>
+        <div class="char-detail">
+          The father figure. A Dublin publican who is also every fallen patriarch in history: Adam, Humpty Dumpty, Finn MacCool, the Duke of Wellington, Tim Finnegan. His initials appear everywhere — "Here Comes Everybody," "Howth Castle and Environs," "Haveth Childers Everywhere." He has committed some mysterious sin in Phoenix Park, and the entire first book circles around the rumor, accusation, trial, and burial of this transgression. He is the sleeping giant whose body IS the landscape of Dublin.
+        </div>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <div class="char-icon" style="background: rgba(46,204,113,0.2); color: var(--anna);">🌊</div>
+        <h4 style="color: var(--anna);">ALP</h4>
+        <p>Anna Livia Plurabelle</p>
+        <div class="char-detail">
+          The mother figure, the River Liffey personified. She is every river, every wife, every mother. She gathers gifts for all her children, she defends her husband, she writes (or carries) the mysterious letter. The famous "Anna Livia Plurabelle" chapter (I.8) is told as gossip between two washerwomen on the banks of the Liffey, who gradually transform into a tree and a stone as night falls. Her final monologue closes the book, flowing out to sea.
+        </div>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <div class="char-icon" style="background: rgba(192,57,43,0.2); color: var(--shem);">✍️</div>
+        <h4 style="color: var(--shem);">Shem</h4>
+        <p>Shem the Penman</p>
+        <div class="char-detail">
+          One of the twin sons. The artist, the writer, the introvert, the exile — a self-portrait of Joyce himself. He is despised by his brother and by society. He is described as a forger, a fraud, a coward who hides in his "inkbattle house." He makes ink from his own bodily waste and writes upon his own body. He represents the creative, transgressive, inward-turning principle. He is Cain to Shaun's Abel, Jacob to his Esau.
+        </div>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <div class="char-icon" style="background: rgba(41,128,185,0.2); color: var(--shaun);">📮</div>
+        <h4 style="color: var(--shaun);">Shaun</h4>
+        <p>Shaun the Post</p>
+        <div class="char-detail">
+          The other twin. The postman, the extrovert, the man of action, the conformist. He delivers the letter but cannot understand it. He is popular, handsome, well-fed — everything Shem is not. He represents the worldly, conventional, outward-turning principle. In the Mookse and Gripes fable, he is the Mookse (Pope/space) while Shem is the Gripes (heretic/time). The brothers are locked in eternal opposition and yet are aspects of one being.
+        </div>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <div class="char-icon" style="background: rgba(233,30,99,0.2); color: var(--issy);">🪞</div>
+        <h4 style="color: var(--issy);">Issy</h4>
+        <p>Isolde / Isabel</p>
+        <div class="char-detail">
+          The daughter. A young girl fascinated by her own reflection in the mirror. She is Isolde, she is the temptress, she is the split feminine — always doubled, always whispering footnotes to herself. She is the object of desire that sets the brothers against each other. In the Mime of Mick, Nick and the Maggies, she is the prize the boys compete for. Her voice appears in the long footnote-monologue of Question 10 in the quiz chapter — flirtatious, narcissistic, endlessly self-regarding.
+        </div>
+      </div>
+
+      <div class="char-card" onclick="toggleChar(this)">
+        <div class="char-icon" style="background: rgba(155,89,182,0.2); color: var(--cycle);">👴👴👴👴</div>
+        <h4 style="color: var(--cycle);">The Four</h4>
+        <p>Mamalujo / The Four Masters</p>
+        <div class="char-detail">
+          Four old men who serve as judges, witnesses, historians, and evangelists. They are Matthew, Mark, Luke, and John; they are the Four Masters of Irish annals; they are the four bedposts; they are the four compass points. They constantly retell and misremember the story, gossiping endlessly about HCE and ALP. They represent the aged, failing memory that tries to reconstruct the past.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE FALL -->
+  <div class="chapter" id="ch-fall">
+    <div class="chapter-header">
+      <h2>The Fall</h2>
+      <p class="subtitle">"The fall of a once wallstrait oldparr is retaled early in bed and later on life down through all christian minstrelsy"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: #e74c3c;"></div>
+      <h3>The Thunderword</h3>
+      <p>The book opens with a thunderclap — a 100-letter word that crashes across the page:</p>
+      <div class="quote">"bababadalgharaghtakamminarronnkonnbronntonnerronntuonnthunntrovarrhounawnskawntoohoohoordenenthurnuk!"</div>
+      <p>This is the sound of the Fall — of Adam, of Humpty Dumpty, of Tim Finnegan falling from his ladder, of Lucifer cast from heaven, of all falls that have ever been. In Vico's theory, thunder is the voice of God that terrifies primitive humans into forming society. Throughout the Wake, ten thunderwords punctuate the narrative, each marking a new phase of the cycle.</p>
+      <div style="margin-top: 12px;">
+        <span class="theme-tag fall">Fall</span>
+        <span class="theme-tag resurrection">Resurrection</span>
+        <span class="theme-tag cycle">Cycle</span>
+      </div>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: #f39c12;"></div>
+      <h3>Tim Finnegan / Finn MacCool</h3>
+      <p>The title alludes to the Irish-American ballad "Finnegan's Wake" (no apostrophe in Joyce's title), in which Tim Finnegan, a hod-carrier, falls from a ladder, is thought dead, and is laid out at his wake — only to be revived when whiskey splashes on his face. Whiskey splashed on him at his wake and he sprang back to life.</p>
+      <p>But Tim Finnegan must "lie still" — he is told to stay dead, to stay asleep — because a new figure has arrived to take his place. The sleeping giant Finn MacCool, whose body IS the landscape of Dublin (his head at Howth, his feet at Phoenix Park), merges with HCE, the modern publican. Fall and resurrection, death and rebirth — the cycle turns.</p>
+      <div class="quote">"Phall if you but will, rise you must: and none so soon either shall the pharce for the nunce come to a setdown secular phoenish."</div>
+      <div style="margin-top: 12px;">
+        <span class="theme-tag fall">Fall</span>
+        <span class="theme-tag resurrection">Resurrection</span>
+        <span class="theme-tag identity">Identity</span>
+      </div>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--hce);"></div>
+      <h3>The Sleeping Giant</h3>
+      <p>The opening pages establish the giant figure lying in the landscape. His body stretches across Dublin — "from Shopalist to Bailywick or from ashtun to baronoath." He is asleep, dreaming, and the entire book is his dream. The washerwomen, the four old men, the warring sons, the tempting daughter — all emerge from his sleeping consciousness.</p>
+      <p>A guided tour of the "Willingdone Museyroom" (Wellington Museum in Phoenix Park) follows — a comic retelling of the Battle of Waterloo that is also every battle, every conflict between invader and native, told in a child's voice: "This is the Willingdone on his same white harse... This is the big Sraughter Willingdone..."</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--anna);"></div>
+      <h3>The Prankquean</h3>
+      <p>One of the book's most beloved passages: the tale of the Prankquean who comes three times to Jarl van Hoother's castle, each time asking a riddle, each time stealing one of his children. On her third visit, the Jarl finally rises in fury and slams the door with a thunderword. This is the pattern of all stories: the threefold challenge, the final confrontation, the establishment of order.</p>
+      <div class="quote">"And the prankquean went for her forty years' walk in Tourlemonde and she washed the blessings of the lovespots off the jiminy..."</div>
+    </div>
+  </div>
+
+  <!-- HCE'S CRIME -->
+  <div class="chapter" id="ch-hce">
+    <div class="chapter-header">
+      <h2>HCE's Crime</h2>
+      <p class="subtitle">"he was at his thinker's aunts to give the presence of a curpse"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--shem);"></div>
+      <h3>The Sin in the Park</h3>
+      <p>What did HCE do in Phoenix Park? The book never tells us clearly. The crime shifts and changes with every retelling. Perhaps he exposed himself to two girls. Perhaps he was spying on them. Perhaps he was accosted by a soldier. Perhaps nothing happened at all. The point is that EVERYONE is talking about it, and the rumor spreads and mutates like a virus through Dublin.</p>
+      <p>The encounter with "a cad with a pipe" is the seed of the scandal. The cad merely asks HCE the time, but HCE's guilty, over-elaborate response — protesting his innocence before he's even accused — betrays him. His very defensiveness becomes evidence of guilt.</p>
+      <div class="quote">"Shsh shake, co-comeraid! Me only, them five ones, he is equal combat. I have won straight."</div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <h4>The Encounter</h4>
+        <p>HCE meets a cad in Phoenix Park who asks the time. HCE over-explains, protests his innocence unprompted, and reveals his guilt through his very defensiveness.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>The Cad's Wife</h4>
+        <p>The cad tells his wife. She tells a priest (Father Browne). The priest tells someone at the races. The rumor begins its unstoppable spread through Dublin.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>The Scandal Spreads</h4>
+        <p>Two lowlifes, Treacle Tom and Frisky Shorty, overhear a version of the story. A ballad is composed. The whole city buzzes with gossip, opinion, and judgment.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Public Opinion</h4>
+        <p>Everyone in Dublin has a view: barmaids, soldiers, detectives, old women, young men. Each retelling distorts the story further. HCE retreats behind his pub's walls, compiling a list of all the abusive names he's been called.</p>
+      </div>
+      <div class="timeline-item">
+        <h4>Retreat and Burial</h4>
+        <p>HCE locks himself in, is "buried" (falls asleep), and the narrative descends into the dream-world proper. His body becomes the landscape; his consciousness becomes the book itself.</p>
+      </div>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: #e67e22;"></div>
+      <h3>The List of Names</h3>
+      <p>In one of the book's great comic passages, HCE compiles a list of all the abusive names Dublin has called him — a torrent of insults that is also a portrait of the city's inventive cruelty:</p>
+      <div class="quote">"Firstnighter, Informer, Old Fruit, Yellow Whigger... Hoary Hairy Hoax, Midnight Sunburst, Remove that Bible... Dirt, Miching Daddy, Born Burst Feet Foremost..."</div>
+      <p>The list goes on for pages — a virtuoso catalogue of Dublin wit turned against the fallen father.</p>
+    </div>
+  </div>
+
+  <!-- THE BALLAD -->
+  <div class="chapter" id="ch-ballad">
+    <div class="chapter-header">
+      <h2>The Ballad of Persse O'Reilly</h2>
+      <p class="subtitle">"Hosty made the rann, the king of all ranns"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: #c0392b;"></div>
+      <h3>The Song of Accusation</h3>
+      <p>A group of drunken Dubliners — led by the mysterious Hosty — compose a scurrilous ballad about HCE, here called "Persse O'Reilly" (from the French <em>perce-oreille</em>, meaning "earwig" — Earwicker). The ballad is sung at a public gathering and spreads through the city like wildfire.</p>
+      <p>The ballad recounts HCE's fall in mocking verse, comparing him to Humpty Dumpty, accusing him of various crimes, and calling for his burial "down in Oxmanstown / Along with the devil and Danes." It is the public's revenge on the fallen father — the ritual humiliation that precedes resurrection.</p>
+    </div>
+
+    <div class="story-card" style="background: rgba(192,57,43,0.05);">
+      <div class="accent-bar" style="background: #c0392b;"></div>
+      <h3>Selected Verses</h3>
+      <div class="quote">
+        "Have you heard of one Humpty Dumpty<br>
+        How he fell with a roll and a rumble<br>
+        And curled up like Lord Olofa Crumple<br>
+        By the butt of the Magazine Wall"
+      </div>
+      <br>
+      <div class="quote">
+        "He was one time our King of the Castle<br>
+        Now he's kicked about like a rotten old parsnip.<br>
+        And from Green street he'll be sent by order of His Worship<br>
+        To the penal jail of Mountjoy"
+      </div>
+      <br>
+      <div class="quote">
+        "So snug he was in his hotel premises sumptuous<br>
+        But soon we'll bonfire all his trash, tricks and trumpery<br>
+        And 'tis short till sheriff Clancy'll be winding up his unlimited company<br>
+        With the bailiff's bom at the door"
+      </div>
+      <p style="margin-top: 15px;">The ballad ends with the assertion that nothing can resurrect him — "For there's no true spell in Connacht or hell / That's able to raise a Cain." But of course, the entire book IS his resurrection.</p>
+    </div>
+  </div>
+
+  <!-- THE LETTER -->
+  <div class="chapter" id="ch-letter">
+    <div class="chapter-header">
+      <h2>The Letter from the Litter</h2>
+      <p class="subtitle">"a huge chain envelope, written in seven divers stages of ink"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: #e67e22;"></div>
+      <h3>The Hen and the Midden Heap</h3>
+      <p>A hen named Biddy Doran, scratching in a rubbish heap (midden) in Phoenix Park, uncovers a letter. This letter — damaged, stained, nearly illegible — is the central mystery of the Wake. It is written by ALP in defense of HCE, or perhaps it IS the book itself, or perhaps it is every letter ever written. It has been "folded with cunning, sealed with crime, uptied by a harlot, undone by a child."</p>
+      <div class="quote">"The elm that whimpers at the top told the stone that moans when stricken. Wind broke it. Wave bore it. Reed wrote of it. Syce ran with it. Hand tore it and wild went war. Hen trieved it and plight pledged peace."</div>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: #f39c12;"></div>
+      <h3>The Manifesta</h3>
+      <p>Chapter 5 (I.5) is devoted to analyzing this letter — its physical properties, its handwriting, its possible meanings. Joyce parodies academic criticism, textual analysis, and forensic investigation. The letter has had many titles over the ages — a hilarious list of possible names is given, each one a distorted echo of the Wake's own themes.</p>
+      <p>The chapter asks: Who wrote it? When? Where? In what language? The answer is that EVERYONE wrote it, at ALL times, in ALL languages. It is "the proteiform graph itself... a polyhedron of scripture." The letter is the book. The book is the letter. Both are the dreamer's attempt to explain himself.</p>
+      <div class="quote">"every person, place and thing in the chaosmos of Alle anyway connected with the gobblydumped turkery was moving and changing every part of the time"</div>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--cycle);"></div>
+      <h3>The Quiz Chapter</h3>
+      <p>Chapter 6 (I.6) takes the form of a quiz show or catechism — twelve questions and answers about the characters and themes. The first question's answer is a massive, page-long description of HCE in all his manifestations, ending with: "Answer: Finn MacCool!" The chapter includes the famous fable of "The Mookse and the Gripes" (the Pope and the heretic, space and time, Shaun and Shem) and the parable of "Burrus and Caseous" (butter and cheese, the twins again).</p>
+    </div>
+  </div>
+
+  <!-- SHEM -->
+  <div class="chapter" id="ch-shem">
+    <div class="chapter-header">
+      <h2>Shem the Penman</h2>
+      <p class="subtitle">"he was avoopf aware of no other shaggspick, other Shakhisbeard"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--shem);"></div>
+      <h3>Portrait of the Artist as a Fraud</h3>
+      <p>Chapter 7 (I.7) is Joyce's savage, hilarious self-portrait. Shem is described by his brother Shaun (here called "Justius") as a coward, a fraud, a forger, a drunkard, and a disgrace. He is "a sham and a low sham." He refuses to eat proper food, preferring tinned salmon. He refuses to fight. He hides in his "inkbattle house" during times of trouble.</p>
+      <p>His body is grotesque: "an adze of a skull, an eight of a larkseye, the whoel of a nose, one numb arm up a sleeve, fortytwo hairs off his uncrown..." He is everything respectable Dublin despises.</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--dream);"></div>
+      <h3>The Ink of the Body</h3>
+      <p>In the chapter's climactic passage — written in mock-liturgical Latin — Shem makes ink from his own bodily waste and writes upon his own body. This is Joyce's most extreme metaphor for the artist: one who transforms the base matter of lived experience into art, who writes the "mystery of himsel in furniture," whose body becomes the text.</p>
+      <div class="quote">"through the bowels of his misery, flashly, faithly, nastily, appropriately, this Esuan Menschavik and the first till last alshemist wrote over every square inch of the only foolscap available, his own body"</div>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--anna);"></div>
+      <h3>Mercius and the Mother</h3>
+      <p>The chapter ends with a sudden shift. Shaun's voice of accusation ("Justius") gives way to a voice of mercy ("Mercius") — and this voice announces the coming of the mother, Anna Livia, "babbling, bubbling, chattering to herself... gossipaceous Anna Livia." The lifewand is raised. The dumb speak. The river chapter begins.</p>
+      <div class="quote">"He lifts the lifewand and the dumb speak.<br>— Quoiquoiquoiquoiquoiquoiquoiq!"</div>
+    </div>
+  </div>
+
+  <!-- ANNA LIVIA -->
+  <div class="chapter" id="ch-anna">
+    <div class="chapter-header">
+      <h2>Anna Livia Plurabelle</h2>
+      <p class="subtitle">"O tell me all about Anna Livia! I want to hear all about Anna Livia."</p>
+    </div>
+
+    <canvas id="river-canvas"></canvas>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--anna);"></div>
+      <h3>Two Washerwomen on the Liffey</h3>
+      <p>Chapter 8 (I.8) — the most famous and beloved chapter of the Wake — is told as gossip between two washerwomen scrubbing clothes on opposite banks of the River Liffey. They talk about Anna Livia: her youth, her marriage to HCE, her gifts to her children, her defense of her husband. The language is saturated with the names of hundreds of rivers from around the world.</p>
+      <div class="quote">"Well, you know Anna Livia? Yes, of course, we all know Anna Livia. Tell me all. Tell me now. You'll die when you hear."</div>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: #2ecc71;"></div>
+      <h3>Anna's Story</h3>
+      <p>The washerwomen tell how Anna Livia, seeing her husband sunk in gloom after his disgrace, resolved to help him. She washed and adorned herself, gathered gifts for all her children (a magnificent catalogue of presents), and went out to distribute them. She is the river bringing life to the city, the mother nourishing all, the wife defending her fallen husband.</p>
+      <p>Her youth is recalled — how she was "just a young thin pale soft shy slim slip of a thing then" when she first met her "heavy trudging lurching lieabroad of a Curraghman." Their courtship, their union, their life together — all told in the rushing, musical language of flowing water.</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--dream);"></div>
+      <h3>Night Falls</h3>
+      <p>As the chapter ends, darkness falls. The washerwomen can no longer see or hear each other across the widening river. One is turning into a tree, the other into a stone. Their voices fade into the sounds of the night:</p>
+      <div class="quote">"Can't hear with the waters of. The chittering waters of. Flittering bats, fieldmice bawk talk. Ho! Are you not gone ahome?... My ho head halls. I feel as heavy as yonder stone. Tell me of John or Shaun? Who were Shem and Shaun the living sons or daughters of? Night now! Tell me, tell me, tell me, elm! Night night! Telmetale of stem or stone. Beside the rivering waters of, hitherandthithering waters of. Night!"</div>
+      <p>This is one of the most beautiful passages in all of literature — the dissolution of identity, the merging of human into nature, the coming of sleep and dream.</p>
+    </div>
+  </div>
+
+  <!-- THEMES -->
+  <div class="chapter" id="ch-themes">
+    <div class="chapter-header">
+      <h2>Themes & Patterns</h2>
+      <p class="subtitle">"the same returns"</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--cycle);"></div>
+      <h3>Key Themes</h3>
+      <div style="margin: 20px 0;">
+        <span class="theme-tag fall">The Fall</span>
+        <span class="theme-tag resurrection">Resurrection</span>
+        <span class="theme-tag river">The River</span>
+        <span class="theme-tag dream">Dream</span>
+        <span class="theme-tag identity">Identity</span>
+        <span class="theme-tag sin">Sin & Guilt</span>
+        <span class="theme-tag cycle">Cyclical History</span>
+        <span class="theme-tag letter">The Letter</span>
+      </div>
+      <p>Finnegans Wake weaves together a dense tapestry of recurring motifs. Every event echoes every other event. Every character contains every other character. The book is built on the principle that all of human experience — all myth, all history, all language — is ONE story, endlessly retold.</p>
+    </div>
+
+    <div id="wordcloud">
+      <span class="cloud-word" style="font-size: 1.4rem; color: var(--river);">riverrun</span>
+      <span class="cloud-word" style="font-size: 1.1rem; color: var(--hce);">Earwicker</span>
+      <span class="cloud-word" style="font-size: 1.3rem; color: var(--anna);">Anna Livia</span>
+      <span class="cloud-word" style="font-size: 0.9rem; color: var(--shem);">Shem</span>
+      <span class="cloud-word" style="font-size: 0.9rem; color: var(--shaun);">Shaun</span>
+      <span class="cloud-word" style="font-size: 1.2rem; color: var(--dawn);">Phoenix</span>
+      <span class="cloud-word" style="font-size: 1rem; color: var(--cycle);">Vico</span>
+      <span class="cloud-word" style="font-size: 1.1rem; color: #e74c3c;">thunder</span>
+      <span class="cloud-word" style="font-size: 0.85rem; color: var(--issy);">Issy</span>
+      <span class="cloud-word" style="font-size: 1rem; color: var(--dream);">dream</span>
+      <span class="cloud-word" style="font-size: 1.2rem; color: #f39c12;">Howth</span>
+      <span class="cloud-word" style="font-size: 0.9rem; color: #1abc9c;">Liffey</span>
+      <span class="cloud-word" style="font-size: 1rem; color: var(--hce);">Humpty</span>
+      <span class="cloud-word" style="font-size: 0.85rem; color: #e67e22;">letter</span>
+      <span class="cloud-word" style="font-size: 1.1rem; color: var(--cycle);">recirculation</span>
+      <span class="cloud-word" style="font-size: 0.9rem; color: #2ecc71;">tree</span>
+      <span class="cloud-word" style="font-size: 0.9rem; color: #7f8c8d;">stone</span>
+      <span class="cloud-word" style="font-size: 1rem; color: var(--shem);">ink</span>
+      <span class="cloud-word" style="font-size: 1.1rem; color: var(--dawn);">wake</span>
+      <span class="cloud-word" style="font-size: 0.85rem; color: var(--issy);">mirror</span>
+      <span class="cloud-word" style="font-size: 1rem; color: #e74c3c;">fall</span>
+      <span class="cloud-word" style="font-size: 0.9rem; color: var(--anna);">wash</span>
+      <span class="cloud-word" style="font-size: 1rem; color: var(--cycle);">night</span>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--river);"></div>
+      <h3>The Language Itself</h3>
+      <p>The Wake's language is its deepest meaning. Joyce fused English with dozens of other languages — Irish, French, Latin, Norwegian, Hindi, Japanese — creating a prose that works on multiple levels simultaneously. Every word is a pun, a portmanteau, a palimpsest. "Riverrun" is river + run + French <em>rêve</em> (dream). "Commodius vicus" is both a commodious (spacious) road and Giambattista Vico. The language IS the dream — fluid, associative, multilayered, resistant to single meaning.</p>
+    </div>
+
+    <div class="story-card">
+      <div class="accent-bar" style="background: var(--dawn);"></div>
+      <h3>The Endless Return</h3>
+      <p>The book's final words — Anna Livia's monologue as she flows out to sea, remembering her life, accepting death — trail off into: "A way a lone a last a loved a long the" — which connects directly to the opening word "riverrun." The end IS the beginning. The river reaches the sea, evaporates, becomes rain, falls on the mountains, and flows back to the sea. The dreamer wakes only to sleep again. The cycle never ends.</p>
+      <div class="quote">"Phall if you but will, rise you must."</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="footer">
+    <p><span>Finnegans Wake</span> by James Joyce (1939)</p>
+    <p style="margin-top: 8px;">A visual journey through the night of language</p>
+    <p style="margin-top: 8px; font-size: 0.75rem; color: #444;">riverrun, past Eve and Adam's...</p>
+  </div>
+
+</div>
+
+<script>
+// Start journey
+function startJourney() {
+  document.getElementById('river-opening').classList.add('hidden');
+  document.getElementById('nav').classList.add('visible');
+  document.getElementById('main').classList.add('visible');
+  setTimeout(() => {
+    document.getElementById('river-opening').style.display = 'none';
+  }, 1500);
+}
+
+// Chapter navigation
+function showChapter(id) {
+  // Hide all chapters
+  document.querySelectorAll('.chapter').forEach(ch => ch.classList.remove('active'));
+  // Show selected
+  document.getElementById('ch-' + id).classList.add('active');
+  // Update nav tabs
+  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  event.target.classList.add('active');
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Character card toggle
+function toggleChar(el) {
+  el.classList.toggle('expanded');
+}
+
+// River canvas animation
+function initRiver() {
+  const canvas = document.getElementById('river-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * 2;
+  canvas.height = canvas.offsetHeight * 2;
+  ctx.scale(2, 2);
+
+  let time = 0;
+  const width = canvas.offsetWidth;
+  const height = canvas.offsetHeight;
+
+  function drawRiver() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Draw flowing lines
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(127, 179, 216, ${0.1 + i * 0.05})`;
+      ctx.lineWidth = 1 + i * 0.5;
+
+      for (let x = 0; x < width; x += 2) {
+        const y = height / 2 +
+          Math.sin((x + time * (1 + i * 0.3)) * 0.02) * (15 + i * 5) +
+          Math.sin((x + time * 0.5) * 0.01) * 10;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Floating words
+    ctx.font = '11px "Playfair Display", serif';
+    ctx.fillStyle = 'rgba(127, 179, 216, 0.3)';
+    const words = ['riverrun', 'Anna', 'Livia', 'Plurabelle', 'Liffey', 'waters'];
+    words.forEach((word, i) => {
+      const x = ((time * 0.5 + i * 150) % (width + 100)) - 50;
+      const y = height / 2 + Math.sin((x + time) * 0.015) * 20 + (i - 2.5) * 15;
+      ctx.fillText(word, x, y);
+    });
+
+    time += 1;
+    requestAnimationFrame(drawRiver);
+  }
+
+  drawRiver();
+}
+
+// Initialize on load
+window.addEventListener('load', () => {
+  setTimeout(initRiver, 2000);
+});
+
+// Resize handler for river canvas
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('river-canvas');
+  if (canvas) {
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = canvas.offsetHeight * 2;
+  }
+});
+</script>
+
+</body>
+</html>
