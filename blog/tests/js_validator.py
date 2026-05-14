@@ -84,6 +84,7 @@ IGNORE_FILENAMES = {
     "prism.min.js",
     "prism-python.min.js",
     "temml.min.js",
+    "marked.min.js",
 }
 
 
