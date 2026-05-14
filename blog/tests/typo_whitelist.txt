@@ -1,0 +1,17 @@
+# ============================================================
+# Typo Checker Whitelist
+# ============================================================
+# Add one word per line (case-insensitive).
+# Lines starting with # are comments.
+# This file suppresses false-positive typo detections.
+#
+# Examples:
+#   autoregressive
+#   softmax
+#   embeddings
+#   tokenizer
+#
+# You can also put multiple words on one line separated by spaces:
+#   pytorch tensorflow numpy
+# ============================================================
+reddit
