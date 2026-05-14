@@ -649,17 +649,25 @@ def check_unused_variables(content: str) -> list[dict]:
 def check_assignment_in_condition(content: str) -> list[dict]:
     issues = []
     code = get_code_only(content)
-
-    # if (...=...) or while (...=...) — single = inside condition
     pattern = re.compile(r"\b(if|while)\s*\(")
 
     for i, line in enumerate(code.split("\n"), 1):
         for m in pattern.finditer(line):
-            # Extract the condition part (simplified — just the rest of the line)
+            # Extract only the condition inside the parens
             rest = line[m.end():]
-            # Look for single = that's not ==, ===, !=, !==, <=, >=, =>
-            if re.search(r"(?<!=)(?<!!)(?<!<)(?<!>)=(?!=)(?!>)", rest):
-                # Skip if it's clearly intentional (e.g. while (line = reader.read()))
+            depth = 1
+            condition = []
+            for ch in rest:
+                if ch == '(':
+                    depth += 1
+                elif ch == ')':
+                    depth -= 1
+                    if depth == 0:
+                        break
+                condition.append(ch)
+            condition_str = ''.join(condition)
+
+            if re.search(r"(?<!=)(?<!!)(?<!<)(?<!>)=(?!=)(?!>)", condition_str):
                 issues.append({
                     "type": "assignment_in_condition",
                     "line": i,
@@ -667,7 +675,6 @@ def check_assignment_in_condition(content: str) -> list[dict]:
                 })
 
     return issues
-
 
 # ============================================================
 # CHECK: Missing semicolons (heuristic)
