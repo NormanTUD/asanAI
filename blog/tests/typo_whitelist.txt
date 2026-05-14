@@ -57,3 +57,14 @@ rosenblatt
 rechenmaschine
 rosenblatts
 connectionism
+morphisms
+zipf
+covariate
+versa
+generalises
+generalise
+linnainmaa
+vol
+tokenize
+von
+pos
