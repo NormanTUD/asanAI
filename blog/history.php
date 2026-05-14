@@ -595,7 +595,7 @@ than lead, more than gold I need electricity" became iconic examples of early ma
 creativity.
 
 However, Racter was not the first instance of computer-generated text. Earlier examples
-include **Christopher Strachey's love letter generator** (1952), which ran on the
+include **Christopher Strachey's** \citetitle{strachey1952} (\citeyear{strachey1952}), which ran on the
 Manchester Mark I computer and used templates to produce randomized romantic letters,
 arguably the earliest known computer-generated literary text \cite[see]{strachey1952}.
 Theo Lutz's **"Stochastische Texte"** (1959) used a Zuse Z22 computer to recombine
