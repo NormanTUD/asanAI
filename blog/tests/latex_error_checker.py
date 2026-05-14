@@ -800,6 +800,9 @@ def main():
                         task = progress.add_task("Scanning pages...", total=len(pages_to_check))
 
                         for page_path in pages_to_check:
+                            if page_path == "/functions.php":
+                                continue
+
                             progress.update(task, description=f"🌐 /{page_path}")
 
                             url = f"{base_url}/{page_path}"
