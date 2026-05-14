@@ -170,6 +170,11 @@ function _fixMathInElement(el) {
     if (el.hasAttribute('data-math-rendered')) return false;
     if (el.querySelector('math')) return false; // Enthält bereits gerendertes MathML
 
+    // ===== SKIP elements that are or contain code blocks =====
+    if (el.tagName === 'PRE' || el.tagName === 'CODE') return false;
+    if (el.querySelector('pre, code')) return false;
+    if (el.closest('pre, code')) return false;
+
     let html = el.innerHTML;
     if (!html.includes('$')) return false;
 
@@ -612,6 +617,11 @@ function render_temml() {
 
 	elements.forEach(el => {
 		if (!el.textContent.includes('$')) return;
+
+		// Skip elements containing or inside code blocks
+		if (el.tagName === 'PRE' || el.tagName === 'CODE') return;
+		if (el.querySelector('pre, code')) return;
+		if (el.closest('pre, code')) return;
 
 		// Versuche zuerst unseren Fix (rendert direkt via temml.renderToString)
 		const fixed = _fixMathInElement(el);
