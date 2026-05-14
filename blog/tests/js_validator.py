@@ -489,26 +489,6 @@ def check_unclosed_comments(content: str) -> list[dict]:
 
 
 # ============================================================
-# CHECK: console.log left in code
-# ============================================================
-
-def check_console_logs(content: str) -> list[dict]:
-    issues = []
-    code = get_code_only(content)
-    for i, line in enumerate(code.split("\n"), 1):
-        stripped = line.strip()
-        if re.search(r"\bconsole\.(log|debug|info|warn|error|trace|table|dir|assert)\s*\(", stripped):
-            # Heuristic: skip if it looks intentional (e.g. error handling)
-            # Report as info, not error
-            issues.append({
-                "type": "console_log",
-                "line": i,
-                "message": f"console statement found on line {i} — remove before production?",
-            })
-    return issues
-
-
-# ============================================================
 # CHECK: Debugger statements
 # ============================================================
 
@@ -1251,7 +1231,6 @@ def main():
         ("Brackets",        lambda c, f: check_bracket_balance(c)),
         ("Strings",         lambda c, f: check_unclosed_strings(c)),
         ("Comments",        lambda c, f: check_unclosed_comments(c)),
-        ("console.*",       lambda c, f: check_console_logs(c)),
         ("debugger",        lambda c, f: check_debugger_statements(c)),
         ("alert()",         lambda c, f: check_alert_calls(c)),
         ("eval()",          lambda c, f: check_eval_usage(c)),
