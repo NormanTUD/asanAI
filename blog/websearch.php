@@ -9,13 +9,13 @@ $$
 \text{User Query} \;\xrightarrow{\text{intent detection}}\; \text{Search API call} \;\xrightarrow{\text{fetch URLs}}\; \text{Extract text} \;\xrightarrow{\text{chunk \& rank}}\; \text{Augmented Prompt} \;\rightarrow\; \text{LLM Answer}
 $$
 
-**Key insight:** The LLM itself cannot "see" the internet. It relies on **external tools** — search APIs, web scrapers, and content parsers — that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*.
+**Key insight:** The LLM itself cannot "see" the internet. It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*.
 </div>
 
 <div id="wslab-pipeline-diagram"></div>
 
 <div class="md">
-## Step 1: Intent Detection — Does This Query Need a Search?
+## Step 1: Intent Detection, Does This Query Need a Search?
 
 Not every question requires a web search. The system (or the LLM itself) first determines whether the query can be answered from training data alone or needs fresh information.
 
@@ -53,13 +53,13 @@ Once the LLM decides to search, it doesn't just forward the user's raw question 
 | "Did that company go bankrupt?" | `"[company name from context] bankruptcy filing 2026"` |
 | "How much does it cost now?" | `"[product name] current price 2026"` |
 
-This is called **query transformation** — the LLM uses conversational context to produce a precise, keyword-rich search string. Some systems generate **multiple queries** to cover different angles of the question.
+This is called **query transformation**, the LLM uses conversational context to produce a precise, keyword-rich search string. Some systems generate **multiple queries** to cover different angles of the question.
 
 $$
 \text{Conversational question} \;\xrightarrow{\text{LLM rewrite}}\; \text{Search-optimized query}
 $$
 
-## Step 3: The Search Engine — What's Actually Used?
+## Step 3: The Search Engine, What's Actually Used?
 
 This is the question everyone asks: *"What search engine does ChatGPT use?"*
 
@@ -106,9 +106,9 @@ The search API returns **structured JSON**, not rendered web pages:
 }</code></pre>
 
 <div class="md">
-The LLM receives **titles, snippets, and URLs** — not full page content (at least not from the search step alone). This is similar to what you see on a Google results page before clicking any link.
+The LLM receives **titles, snippets, and URLs**, not full page content (at least not from the search step alone). This is similar to what you see on a Google results page before clicking any link.
 
-## Step 4: Content Fetching — Loading the Actual Web Pages
+## Step 4: Content Fetching, Loading the Actual Web Pages
 
 Snippets from search results are often too short to answer complex questions. So the system **fetches full page content** from the top-ranked URLs. This is where it gets interesting.
 
@@ -121,7 +121,7 @@ Snippets from search results are often too short to answer complex questions. So
 ### The technical pipeline:
 
 **1. HTTP Fetch**
-A server-side process makes an HTTP GET request to the URL. This is *not* a browser — it's a headless HTTP client (like `curl`, Python's `requests`, or Node's `fetch`).
+A server-side process makes an HTTP GET request to the URL. This is *not* a browser, it's a headless HTTP client (like `curl`, Python's `requests`, or Node's `fetch`).
 
 **2. HTML Parsing &amp; Cleaning**
 Raw HTML is full of navigation bars, ads, scripts, and boilerplate. The system uses content extraction tools:
@@ -130,8 +130,8 @@ Raw HTML is full of navigation bars, ads, scripts, and boilerplate. The system u
 |------|--------------|
 | **Readability.js** (Mozilla) | Extracts the "main content" from a page (like Reader Mode) |
 | **Trafilatura** (Python) | Extracts and cleans article text from HTML |
-| **BeautifulSoup** | General HTML parser — extract specific elements |
-| **Playwright / Puppeteer** | Full headless browser — handles JavaScript-rendered pages |
+| **BeautifulSoup** | General HTML parser, extract specific elements |
+| **Playwright / Puppeteer** | Full headless browser, handles JavaScript-rendered pages |
 | **Jina Reader API** | Converts any URL to clean markdown via API call |
 
 **3. JavaScript-Rendered Pages (SPAs)**
@@ -142,7 +142,7 @@ Many modern websites render content with JavaScript. A simple HTTP GET returns a
 - Then extracts the final DOM
 
 **4. Output: Clean Text or Markdown**
-The extracted content is converted to plain text or markdown — stripping all HTML tags, scripts, styles, and navigation elements. This clean text is what gets fed to the LLM.
+The extracted content is converted to plain text or markdown, stripping all HTML tags, scripts, styles, and navigation elements. This clean text is what gets fed to the LLM.
 
 $$
 \text{HTML (50KB)} \;\xrightarrow{\text{extract}}\; \text{Clean text (3KB)} \;\xrightarrow{\text{chunk}}\; \text{Relevant passages}
@@ -154,7 +154,7 @@ $$
 <div class="md">
 ## Step 5: Chunking &amp; Ranking Retrieved Content
 
-A single web page might contain 5,000+ tokens of text — too much to include for every result. The system:
+A single web page might contain 5,000+ tokens of text, too much to include for every result. The system:
 
 1. **Chunks** the extracted text into passages (200–500 tokens each)
 2. **Re-ranks** chunks by relevance to the original query using either:
@@ -176,7 +176,7 @@ Generation space:    ~2,000 tokens
 Remaining unused:  ~119,500 tokens</code></pre>
 
 <div class="md">
-The system is conservative — it doesn't fill the entire context window with search results. It selects only the most relevant passages to keep the LLM focused.
+The system is conservative, it doesn't fill the entire context window with search results. It selects only the most relevant passages to keep the LLM focused.
 
 ## Step 6: Prompt Assembly &amp; Generation
 
@@ -204,7 +204,7 @@ complexity from O(n²) to O(n) while maintaining 97% of standard..."
 User: What are the latest advances in transformer architecture?</code></pre>
 
 <div class="md">
-The LLM then generates an answer **grounded in these sources**, citing them inline — exactly like what you're reading right now.
+The LLM then generates an answer **grounded in these sources**, citing them inline, exactly like what you're reading right now.
 
 ## The Full Architecture Diagram
 </div>
@@ -334,7 +334,7 @@ The LLM doesn't have "built-in" web access. Instead, it uses a protocol called *
    - Generates a final answer, or
    - Makes another tool call (e.g., `fetch_page` for more detail)
 
-This loop can repeat multiple times — the LLM might search, read a page, search again with refined terms, then finally answer.
+This loop can repeat multiple times, the LLM might search, read a page, search again with refined terms, then finally answer.
 
 ## Custom Sites vs. Open Web Browsing
 
@@ -407,7 +407,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 </div>
 
 <div id="wslab-demo-container">
-    <p class="wslab-demo-subtitle">Simulate how an LLM processes a web search query. Type a question and see the pipeline in action — from intent detection through search results to final answer assembly.</p>
+    <p class="wslab-demo-subtitle">Simulate how an LLM processes a web search query. Type a question and see the pipeline in action, from intent detection through search results to final answer assembly.</p>
     <input type="text" id="wslab-query-input" placeholder="Try: &quot;What is the latest version of Python?&quot;" value="What is the latest version of Python?" />
     <button id="wslab-search-btn">🌐 Simulate Search</button>
     <div id="wslab-results"></div>
