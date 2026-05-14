@@ -800,7 +800,7 @@ def main():
                         task = progress.add_task("Scanning pages...", total=len(pages_to_check))
 
                         for page_path in pages_to_check:
-                            if page_path == "functions.php":
+                            if page_path == "functions.php" or page_path == "asanai_blog_proxy.php":
                                 continue
 
                             progress.update(task, description=f"🌐 /{page_path}")
