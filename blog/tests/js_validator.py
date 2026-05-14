@@ -586,37 +586,6 @@ def check_var_usage(content: str) -> list[dict]:
 
 
 # ============================================================
-# CHECK: Unreachable code after return/throw/break/continue
-# ============================================================
-
-def check_unreachable_code(content: str) -> list[dict]:
-    issues = []
-    code = get_code_only(content)
-    lines = code.split("\n")
-
-    for i, line in enumerate(lines, 1):
-        stripped = line.strip()
-        # Check if line is a return/throw/break/continue statement
-        if re.match(r"^(return|throw|break|continue)\b", stripped):
-            # Check if next non-empty, non-comment line is code (not } or case or else)
-            for j in range(i, min(i + 5, len(lines))):
-                next_line = lines[j].strip()
-                if not next_line:
-                    continue
-                if next_line.startswith("}") or next_line.startswith("case ") or next_line.startswith("default:") or next_line.startswith("//") or next_line.startswith("/*"):
-                    break
-                # Found code after return/throw/break/continue
-                issues.append({
-                    "type": "unreachable_code",
-                    "line": j + 1,
-                    "message": f"Potentially unreachable code on line {j + 1} after '{stripped.split()[0]}' on line {i}",
-                })
-                break
-
-    return issues
-
-
-# ============================================================
 # CHECK: Trailing commas in function calls (IE compat)
 # ============================================================
 
@@ -1214,7 +1183,6 @@ def main():
         ("eval()",          lambda c, f: check_eval_usage(c)),
         ("Loose ==",        lambda c, f: check_loose_equality(c)),
         ("var usage",       lambda c, f: check_var_usage(c)),
-        ("Unreachable",     lambda c, f: check_unreachable_code(c)),
         ("Duplicates",      lambda c, f: check_duplicate_declarations(c)),
         ("Dup keys",        lambda c, f: check_duplicate_object_keys(c)),
         ("Assign in cond",  lambda c, f: check_assignment_in_condition(c)),
