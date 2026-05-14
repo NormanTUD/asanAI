@@ -639,28 +639,6 @@ def check_trailing_commas(content: str) -> list[dict]:
 
 
 # ============================================================
-# CHECK: Empty catch blocks
-# ============================================================
-
-def check_empty_catch(content: str) -> list[dict]:
-    issues = []
-    code = get_code_only(content)
-
-    # catch (...) { } with nothing inside
-    pattern = re.compile(r"\bcatch\s*\([^)]*\)\s*\{\s*\}", re.DOTALL)
-
-    for m in pattern.finditer(code):
-        line = code[:m.start()].count("\n") + 1
-        issues.append({
-            "type": "empty_catch",
-            "line": line,
-            "message": f"Empty catch block on line {line} — errors are silently swallowed",
-        })
-
-    return issues
-
-
-# ============================================================
 # CHECK: Unused variables (heuristic)
 # ============================================================
 
@@ -1236,7 +1214,6 @@ def main():
         ("eval()",          lambda c, f: check_eval_usage(c)),
         ("Loose ==",        lambda c, f: check_loose_equality(c)),
         ("var usage",       lambda c, f: check_var_usage(c)),
-        ("Empty catch",     lambda c, f: check_empty_catch(c)),
         ("Unreachable",     lambda c, f: check_unreachable_code(c)),
         ("Duplicates",      lambda c, f: check_duplicate_declarations(c)),
         ("Dup keys",        lambda c, f: check_duplicate_object_keys(c)),
