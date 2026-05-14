@@ -3,35 +3,40 @@
 # requires-python = ">=3.10"
 # dependencies = [
 #   "rich",
-#   "requests",
+#   "playwright",
 # ]
 # ///
 
 """
-latex_error_checker.py — Self-bootstrapping uv script
+latex_error_checker.py — Playwright-based LaTeX & rendering error scanner
 
-Starts a real PHP built-in web server, fetches every .php page through it,
-and scans the rendered HTML output for LaTeX / KaTeX / Temml ParseError
-patterns such as:
+Starts a real PHP built-in web server, opens every .php page in a headless
+Chromium browser (via Playwright), waits for client-side rendering (KaTeX,
+Temml, MathJax), and captures:
 
-  ParseError: Can't use function '...'
-  ParseError: Expected 'EOF', got '#' at position ...
-  ParseError: Expected 'EOF', got '̲' at position ...
-  Can't use function '...' in math mode at position ...
+  ❌ Console errors (console.error)
+  ❌ Console warnings (console.warn)
+  ❌ Uncaught JS exceptions (pageerror)
+  ❌ Failed network requests (404s, timeouts, etc.)
+  ❌ LaTeX/KaTeX/Temml/MathJax error elements in the rendered DOM
+  ❌ Raw LaTeX commands leaking into rendered output
+  ⚠️  Source patterns likely to cause parse errors
+
+ALL of the above are treated as failures (exit code 1), not just LaTeX errors.
 
 Usage:
   uv run latex_error_checker.py                    # serve current dir on port 8089
   uv run latex_error_checker.py --port 9000        # custom port
   uv run latex_error_checker.py --docroot ./site   # custom document root
   uv run latex_error_checker.py --no-serve         # skip server, scan .php source files directly
+  uv run latex_error_checker.py --headed           # run browser visibly for debugging
+  uv run latex_error_checker.py --trace            # save Playwright traces for failed pages
 """
 
 import os
 import sys
 import re
-import glob
 import time
-import signal
 import socket
 import subprocess
 import argparse
@@ -81,7 +86,7 @@ ensure_safe_env()
 # Now safe to import everything
 # ============================================================
 
-import requests
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -89,9 +94,77 @@ from rich import box
 from rich.rule import Rule
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, MofNCompleteColumn
 from rich.tree import Tree
-from rich.syntax import Syntax
 
 console = Console()
+
+
+# ============================================================
+# PLAYWRIGHT BROWSER AUTO-INSTALL
+# ============================================================
+
+def ensure_playwright_browsers():
+    """
+    Automatically install Playwright Chromium browser if not already present.
+    This prevents the 'Executable doesn't exist' error.
+    """
+    try:
+        # Quick check: try to find the chromium executable
+        from playwright._impl._driver import compute_driver_executable
+        driver_executable = compute_driver_executable()
+        # Run `playwright install chromium` via the driver
+        result = subprocess.run(
+            [str(driver_executable), "install", "chromium"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if result.returncode == 0:
+            if "Downloading" in result.stdout or "downloading" in result.stderr:
+                console.print("[bold green]✓ Playwright Chromium browser installed successfully.[/]")
+            # If already installed, it exits quickly and silently
+        else:
+            # Fallback: try via python -m playwright
+            console.print("[dim]Installing Playwright browsers via module...[/]")
+            result2 = subprocess.run(
+                [sys.executable, "-m", "playwright", "install", "chromium"],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            if result2.returncode != 0:
+                console.print(f"[bold red]Failed to install Playwright browsers:[/]\n{result2.stderr}")
+                sys.exit(1)
+            else:
+                console.print("[bold green]✓ Playwright Chromium browser installed.[/]")
+    except ImportError:
+        # If we can't import the driver path, fall back to subprocess
+        console.print("[dim]Ensuring Playwright browsers are installed...[/]")
+        result = subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if result.returncode != 0:
+            console.print(f"[bold red]Failed to install Playwright browsers:[/]\n{result.stderr}")
+            sys.exit(1)
+        console.print("[bold green]✓ Playwright Chromium browser installed.[/]")
+    except subprocess.TimeoutExpired:
+        console.print("[bold red]Timed out installing Playwright browsers (120s). Check your network.[/]")
+        sys.exit(1)
+    except Exception as e:
+        # Last resort fallback
+        console.print(f"[dim]Browser install check: {e} — trying module fallback...[/]")
+        result = subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if result.returncode != 0:
+            console.print(f"[bold red]Failed to install Playwright browsers:[/]\n{result.stderr}")
+            sys.exit(1)
+
 
 # ============================================================
 # CONFIGURATION
@@ -102,7 +175,6 @@ SKIP_DIRS = {
     ".idea", ".vscode", "storage", "cache", "dist", "build",
 }
 
-# JS files to ignore (vendored / minified)
 IGNORE_JS_FILENAMES = {
     "tf.min.js", "three.min.js", "echarts.min.js", "tf.js",
     "echarts-gl.min.js", "jquery.js", "jquery-3.7.1.min.js",
@@ -111,18 +183,10 @@ IGNORE_JS_FILENAMES = {
 }
 
 # ============================================================
-# LATEX PARSE ERROR PATTERNS
+# LATEX PARSE ERROR PATTERNS (for rendered DOM scanning)
 # ============================================================
 
-# These patterns match the exact errors shown in the issue:
-#   ParseError: Can't use function '...'
-#   ParseError: Expected 'EOF', got '#' at position 292: …
-#   Can't use function '...' in math mode at position 9: ...
-#   ParseError: Expected 'EOF', got '̲' at position 1: ...
-#   KaTeX parse error / Temml parse error variants
-
 LATEX_ERROR_PATTERNS = [
-    # Core ParseError patterns (KaTeX / Temml)
     re.compile(
         r"ParseError:\s*Can(?:&#x27;|'|')t\s+use\s+function\s+(?:&#x27;|'|')([^'\"<>]+?)(?:&#x27;|'|')",
         re.IGNORECASE,
@@ -135,65 +199,54 @@ LATEX_ERROR_PATTERNS = [
         r"ParseError:\s*(?:KaTeX|Temml)?\s*[Pp]arse\s*[Ee]rror:\s*(.*?)(?:<|$)",
         re.IGNORECASE,
     ),
-    # "Can't use function '...' in math mode at position ..."
     re.compile(
         r"Can(?:&#x27;|'|')t\s+use\s+function\s+(?:&#x27;|'|')([^'\"<>]+?)(?:&#x27;|'|')\s+in\s+math\s+mode\s+at\s+position\s+(\d+)",
         re.IGNORECASE,
     ),
-    # Generic "ParseError:" catch-all for any remaining variants
     re.compile(
         r"ParseError:\s*(.{10,120})",
         re.IGNORECASE,
     ),
-    # KaTeX specific error class in rendered HTML
     re.compile(
         r'class="katex-error"[^>]*title="([^"]+)"',
         re.IGNORECASE,
     ),
-    # Temml error span
     re.compile(
         r'class="temml-error"[^>]*>([^<]+)<',
         re.IGNORECASE,
     ),
-    # MathJax error
     re.compile(
         r'class="[^"]*mjx-error[^"]*"[^>]*>([^<]+)<',
         re.IGNORECASE,
     ),
-    # Bare "Expected 'EOF'" without ParseError prefix (truncated renders)
     re.compile(
         r"Expected\s+(?:&#x27;|')EOF(?:&#x27;|'),\s*got\s+(?:&#x27;|')(.+?)(?:&#x27;|')\s+at\s+position\s+(\d+)",
         re.IGNORECASE,
     ),
-    # The set {M_k ... pattern — unescaped LaTeX leaking into text
-    re.compile(
-        r"(?:The\s+set\s+)?\{[A-Z]_[a-z]\s*:\s*[a-z]\s*\\in\s*\\",
-        re.IGNORECASE,
-    ),
-    # Raw \text{...} or \frac{...} appearing in rendered output (LaTeX not parsed)
     re.compile(
         r"\\(?:text|frac|sum|prod|int|lim|cos|sin|tan|log|ln|exp|sqrt|vec|hat|bar|dot|ddot|mathbb|mathcal|mathrm|operatorname)\s*\{[^}]+\}",
     ),
-    # Raw \left( or \right) appearing in rendered output
     re.compile(
         r"\\(?:left|right)\s*[(\[{|)\]}|\\]",
     ),
-    # Raw \approx, \cdot, \in, \phi, etc. appearing as text
     re.compile(
         r"\\(?:approx|cdot|in|phi|theta|alpha|beta|gamma|delta|epsilon|lambda|mu|sigma|omega|pi|infty|partial|nabla|forall|exists|rightarrow|leftarrow|Rightarrow|Leftarrow|xrightarrow|xleftarrow|geq|leq|neq|sim|equiv|subset|supset|cup|cap|times|otimes|oplus|circ)\b",
     ),
 ]
 
-# Patterns to detect in SOURCE files (before rendering) that commonly cause parse errors
+# Patterns to detect in SOURCE files that commonly cause parse errors
 SOURCE_LATEX_RISK_PATTERNS = [
-    # $$ blocks containing # (common cause of "Expected 'EOF', got '#'")
     re.compile(r"\$\$[^$]*#[^$]*\$\$", re.DOTALL),
-    # Markdown headers inside $$ blocks
     re.compile(r"\$\$[^$]*\n\s*##?\s+[^$]*\$\$", re.DOTALL),
-    # \text{} containing unescaped special chars
     re.compile(r"\\text\{[^}]*[#_&%$][^}]*\}"),
-    # Nested \text{} with function calls
     re.compile(r"\\text\{[^}]*\\(?:text|mathrm|mathbf)\{[^}]*\}[^}]*\}"),
+]
+
+# Console message patterns to IGNORE (noisy but harmless)
+CONSOLE_IGNORE_PATTERNS = [
+    re.compile(r"Download the React DevTools", re.IGNORECASE),
+    re.compile(r"Third-party cookie will be blocked", re.IGNORECASE),
+    re.compile(r"DevTools failed to load", re.IGNORECASE),
 ]
 
 
@@ -202,7 +255,6 @@ SOURCE_LATEX_RISK_PATTERNS = [
 # ============================================================
 
 def find_free_port(preferred: int = 8089) -> int:
-    """Try the preferred port, fall back to OS-assigned."""
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind(("127.0.0.1", preferred))
@@ -214,7 +266,6 @@ def find_free_port(preferred: int = 8089) -> int:
 
 
 def check_php_available() -> bool:
-    """Check if PHP CLI is available."""
     try:
         result = subprocess.run(
             ["php", "-v"], capture_output=True, text=True, timeout=10
@@ -225,7 +276,6 @@ def check_php_available() -> bool:
 
 
 def start_php_server(docroot: Path, port: int) -> subprocess.Popen | None:
-    """Start PHP's built-in web server and return the Popen handle."""
     try:
         proc = subprocess.Popen(
             ["php", "-S", f"127.0.0.1:{port}", "-t", str(docroot)],
@@ -233,8 +283,7 @@ def start_php_server(docroot: Path, port: int) -> subprocess.Popen | None:
             stderr=subprocess.PIPE,
             cwd=str(docroot),
         )
-        # Give it a moment to start
-        time.sleep(1.0)
+        time.sleep(1.5)
 
         if proc.poll() is not None:
             stderr = proc.stderr.read().decode(errors="replace") if proc.stderr else ""
@@ -242,11 +291,12 @@ def start_php_server(docroot: Path, port: int) -> subprocess.Popen | None:
             return None
 
         # Verify it's responding
+        import urllib.request
         for attempt in range(5):
             try:
-                resp = requests.get(f"http://127.0.0.1:{port}/", timeout=3)
+                urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=3)
                 return proc
-            except requests.ConnectionError:
+            except Exception:
                 time.sleep(0.5)
 
         console.print("[bold red]PHP server started but not responding.[/]")
@@ -262,7 +312,6 @@ def start_php_server(docroot: Path, port: int) -> subprocess.Popen | None:
 
 
 def stop_php_server(proc: subprocess.Popen):
-    """Gracefully stop the PHP server."""
     if proc and proc.poll() is None:
         proc.terminate()
         try:
@@ -277,7 +326,6 @@ def stop_php_server(proc: subprocess.Popen):
 # ============================================================
 
 def find_php_files(docroot: Path) -> list[Path]:
-    """Find all .php files under docroot."""
     php_files: set[Path] = set()
     for root, dirs, files in os.walk(docroot):
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
@@ -288,7 +336,6 @@ def find_php_files(docroot: Path) -> list[Path]:
 
 
 def find_js_files(docroot: Path) -> list[Path]:
-    """Find all .js files under docroot (excluding vendored)."""
     js_files: set[Path] = set()
     for root, dirs, files in os.walk(docroot):
         dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
@@ -299,18 +346,8 @@ def find_js_files(docroot: Path) -> list[Path]:
 
 
 # ============================================================
-# RENDERED HTML SCANNING (via PHP server)
+# RENDERED HTML SCANNING (regex on fully-rendered DOM)
 # ============================================================
-
-def fetch_rendered_page(base_url: str, rel_path: str, timeout: int = 15) -> tuple[int, str]:
-    """Fetch a rendered page from the PHP server. Returns (status_code, body)."""
-    url = f"{base_url}/{rel_path}"
-    try:
-        resp = requests.get(url, timeout=timeout)
-        return resp.status_code, resp.text
-    except requests.RequestException as e:
-        return 0, f"CONNECTION_ERROR: {e}"
-
 
 def scan_html_for_latex_errors(html: str, source_label: str) -> list[dict]:
     """Scan rendered HTML for LaTeX ParseError patterns."""
@@ -321,7 +358,6 @@ def scan_html_for_latex_errors(html: str, source_label: str) -> list[dict]:
         for match in pattern.finditer(html):
             full_match = match.group(0).strip()
 
-            # Clean up HTML entities for display
             display_msg = full_match
             display_msg = display_msg.replace("&#x27;", "'")
             display_msg = display_msg.replace("&amp;", "&")
@@ -329,17 +365,14 @@ def scan_html_for_latex_errors(html: str, source_label: str) -> list[dict]:
             display_msg = display_msg.replace("&gt;", ">")
             display_msg = display_msg.replace("&quot;", '"')
 
-            # Truncate very long matches
             if len(display_msg) > 200:
                 display_msg = display_msg[:197] + "..."
 
-            # Deduplicate
             dedup_key = display_msg[:80]
             if dedup_key in seen_messages:
                 continue
             seen_messages.add(dedup_key)
 
-            # Try to find approximate line number in HTML
             pos = match.start()
             line_num = html.count("\n", 0, pos) + 1
 
@@ -355,7 +388,156 @@ def scan_html_for_latex_errors(html: str, source_label: str) -> list[dict]:
 
 
 # ============================================================
-# SOURCE FILE SCANNING (fallback / additional)
+# PLAYWRIGHT BROWSER SCANNING
+# ============================================================
+
+def should_ignore_console_message(text: str) -> bool:
+    """Check if a console message should be ignored (noisy/harmless)."""
+    for pattern in CONSOLE_IGNORE_PATTERNS:
+        if pattern.search(text):
+            return True
+    return False
+
+
+def scan_page_with_browser(
+    page,
+    url: str,
+    page_label: str,
+    render_wait_ms: int = 3000,
+    navigation_timeout: int = 30000,
+) -> list[dict]:
+    """
+    Navigate to a URL in a real Chromium browser, wait for JS rendering,
+    and capture ALL errors: console errors/warnings, JS exceptions,
+    failed network requests, and LaTeX error elements in the DOM.
+    """
+    issues = []
+
+    # Collectors
+    console_messages = []
+    page_errors = []
+    failed_requests = []
+
+    # Attach event listeners
+    def on_console(msg):
+        console_messages.append(msg)
+
+    def on_pageerror(err):
+        page_errors.append(err)
+
+    def on_requestfailed(req):
+        failed_requests.append(req)
+
+    page.on("console", on_console)
+    page.on("pageerror", on_pageerror)
+    page.on("requestfailed", on_requestfailed)
+
+    # Navigate
+    try:
+        page.goto(url, wait_until="networkidle", timeout=navigation_timeout)
+    except PlaywrightTimeout:
+        issues.append({
+            "type": "navigation_timeout",
+            "line": 0,
+            "message": f"Page load timed out after {navigation_timeout}ms: {url}",
+            "source": page_label,
+        })
+    except Exception as e:
+        issues.append({
+            "type": "navigation_error",
+            "line": 0,
+            "message": f"Navigation failed: {e}",
+            "source": page_label,
+        })
+        return issues
+
+    # Wait extra time for client-side rendering (KaTeX/Temml/MathJax)
+    page.wait_for_timeout(render_wait_ms)
+
+    # ── Collect console errors and warnings ──
+    for msg in console_messages:
+        text = msg.text
+        if should_ignore_console_message(text):
+            continue
+
+        if msg.type == "error":
+            issues.append({
+                "type": "console_error",
+                "line": 0,
+                "message": f"[console.error] {text[:300]}",
+                "source": page_label,
+            })
+        elif msg.type == "warning":
+            issues.append({
+                "type": "console_warning",
+                "line": 0,
+                "message": f"[console.warn] {text[:300]}",
+                "source": page_label,
+            })
+
+    # ── Collect uncaught JS exceptions ──
+    for err in page_errors:
+        issues.append({
+            "type": "js_exception",
+            "line": 0,
+            "message": f"[Uncaught Exception] {str(err)[:300]}",
+            "source": page_label,
+        })
+
+    # ── Collect failed network requests ──
+    for req in failed_requests:
+        failure_text = req.failure or "unknown failure"
+        issues.append({
+            "type": "network_failure",
+            "line": 0,
+            "message": f"[Network Failure] {failure_text} — {req.url[:200]}",
+            "source": page_label,
+        })
+
+    # ── Query the live DOM for error elements ──
+    error_selectors = [
+        (".katex-error", "KaTeX error"),
+        (".temml-error", "Temml error"),
+        (".mjx-error", "MathJax error"),
+        (".MathJax_Error", "MathJax error (legacy)"),
+    ]
+
+    for selector, label in error_selectors:
+        try:
+            error_elements = page.query_selector_all(selector)
+            for el in error_elements:
+                text_content = el.text_content() or ""
+                title_attr = el.get_attribute("title") or ""
+                display = title_attr if title_attr else text_content
+                if len(display) > 200:
+                    display = display[:197] + "..."
+                issues.append({
+                    "type": "latex_dom_error",
+                    "line": 0,
+                    "message": f"[{label}] {display}",
+                    "source": page_label,
+                })
+        except Exception:
+            pass
+
+    # ── Also scan the fully-rendered HTML with regex patterns ──
+    try:
+        rendered_html = page.content()
+        regex_issues = scan_html_for_latex_errors(rendered_html, page_label)
+        issues.extend(regex_issues)
+    except Exception:
+        pass
+
+    # Remove event listeners to avoid leaks
+    page.remove_listener("console", on_console)
+    page.remove_listener("pageerror", on_pageerror)
+    page.remove_listener("requestfailed", on_requestfailed)
+
+    return issues
+
+
+# ============================================================
+# SOURCE FILE SCANNING (additional static analysis)
 # ============================================================
 
 def scan_source_for_latex_risks(content: str, filepath: Path) -> list[dict]:
@@ -392,8 +574,6 @@ def scan_js_for_latex_strings(content: str, filepath: Path) -> list[dict]:
     issues = []
     seen = set()
 
-    # Look for strings containing LaTeX that have risky patterns
-    # e.g., template literals with $$ ... $$ or \\text{} etc.
     latex_in_js = re.compile(
         r'["`]([^"`]*(?:\\\\(?:text|frac|sum|cos|sin|approx|cdot|vec|left|right)\s*\{[^}]*\})[^"`]*)["`]'
     )
@@ -411,7 +591,6 @@ def scan_js_for_latex_strings(content: str, filepath: Path) -> list[dict]:
         pos = match.start()
         line_num = content.count("\n", 0, pos) + 1
 
-        # Check if this LaTeX string has risky patterns
         risky = False
         if "#" in snippet and ("$$" in snippet or "\\(" in snippet):
             risky = True
@@ -433,13 +612,26 @@ def scan_js_for_latex_strings(content: str, filepath: Path) -> list[dict]:
 # SEVERITY HELPERS
 # ============================================================
 
-CRITICAL_TYPES = {"latex_parse_error"}
+# ALL of these are treated as FAILURES (exit code 1)
+FAILURE_TYPES = {
+    "latex_parse_error",
+    "latex_dom_error",
+    "console_error",
+    "console_warning",
+    "js_exception",
+    "network_failure",
+    "navigation_timeout",
+    "navigation_error",
+}
+
+# These are warnings — still reported but don't fail the build
 WARNING_TYPES = {"latex_source_risk", "latex_js_risk"}
+
 INFO_TYPES = {"latex_info", "server_error"}
 
 
 def severity_style(issue_type: str) -> str:
-    if issue_type in CRITICAL_TYPES:
+    if issue_type in FAILURE_TYPES:
         return "bold red"
     elif issue_type in WARNING_TYPES:
         return "bold yellow"
@@ -447,7 +639,7 @@ def severity_style(issue_type: str) -> str:
 
 
 def severity_icon(issue_type: str) -> str:
-    if issue_type in CRITICAL_TYPES:
+    if issue_type in FAILURE_TYPES:
         return "❌"
     elif issue_type in WARNING_TYPES:
         return "⚠️"
@@ -460,7 +652,7 @@ def severity_icon(issue_type: str) -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Scan PHP-served pages for LaTeX/KaTeX/Temml ParseError patterns"
+        description="Scan PHP-served pages in a real browser for LaTeX errors, console errors, JS exceptions, and network failures"
     )
     parser.add_argument(
         "--docroot", "-d", type=str, default=".",
@@ -475,8 +667,20 @@ def main():
         help="Skip starting a PHP server; only scan source files for risky patterns"
     )
     parser.add_argument(
-        "--timeout", "-t", type=int, default=15,
-        help="HTTP request timeout in seconds (default: 15)"
+        "--headed", action="store_true",
+        help="Run browser in headed mode (visible window) for debugging"
+    )
+    parser.add_argument(
+        "--trace", action="store_true",
+        help="Save Playwright traces for pages with issues (saved to ./traces/)"
+    )
+    parser.add_argument(
+        "--render-wait", type=int, default=3000,
+        help="Extra milliseconds to wait for client-side rendering after networkidle (default: 3000)"
+    )
+    parser.add_argument(
+        "--navigation-timeout", type=int, default=30000,
+        help="Navigation timeout in milliseconds (default: 30000)"
     )
     parser.add_argument(
         "--keep-server", "-k", action="store_true",
@@ -492,21 +696,23 @@ def main():
 
     console.print()
     console.print(Panel(
-        "[bold bright_cyan]🔬 LaTeX ParseError Scanner[/]\n\n"
-        "[dim]Starts a real PHP built-in web server, fetches every .php page,\n"
-        "and scans the rendered HTML for LaTeX/KaTeX/Temml parse errors.[/]\n\n"
-        "[dim]Detects:[/]\n"
-        "  [bold red]❌[/] ParseError: Can't use function '...' in math mode\n"
-        "  [bold red]❌[/] ParseError: Expected 'EOF', got '#' at position ...\n"
+        "[bold bright_cyan]🔬 LaTeX & Rendering Error Scanner (Playwright)[/]\n\n"
+        "[dim]Starts a PHP server, opens every page in a real Chromium browser,\n"
+        "waits for client-side JS rendering, and captures ALL issues:[/]\n\n"
+        "  [bold red]❌[/] Console errors (console.error)\n"
+        "  [bold red]❌[/] Console warnings (console.warn)\n"
+        "  [bold red]❌[/] Uncaught JS exceptions\n"
+        "  [bold red]❌[/] Failed network requests (404s, timeouts)\n"
+        "  [bold red]❌[/] LaTeX/KaTeX/Temml/MathJax error elements in DOM\n"
         "  [bold red]❌[/] Raw LaTeX commands leaking into rendered output\n"
-        "  [bold red]❌[/] KaTeX / Temml / MathJax error elements in HTML\n"
         "  [bold yellow]⚠️[/]  Source patterns likely to cause parse errors\n\n"
         "[dim]Usage:[/]\n"
         "  [bold]uv run latex_error_checker.py[/]                     [dim]# serve . on :8089[/]\n"
         "  [bold]uv run latex_error_checker.py -d ./site -p 9000[/]   [dim]# custom root & port[/]\n"
-        "  [bold]uv run latex_error_checker.py --no-serve[/]          [dim]# source scan only[/]\n"
-        "  [bold]uv run latex_error_checker.py --keep-server[/]       [dim]# leave server up[/]",
-        title="[bold bright_white]LaTeX Error Checker[/]",
+        "  [bold]uv run latex_error_checker.py --headed[/]            [dim]# visible browser[/]\n"
+        "  [bold]uv run latex_error_checker.py --trace[/]             [dim]# save traces[/]\n"
+        "  [bold]uv run latex_error_checker.py --no-serve[/]          [dim]# source scan only[/]",
+        title="[bold bright_white]LaTeX Error Checker v2.0 (Playwright)[/]",
         border_style="bright_cyan",
         padding=(1, 3),
     ))
@@ -516,6 +722,11 @@ def main():
         console.print(f"[bold red]Document root not found:[/] {docroot}")
         sys.exit(1)
 
+    # ── Ensure Playwright browsers are installed ────────────
+    console.print("[dim]Checking Playwright browser installation...[/]")
+    ensure_playwright_browsers()
+    console.print()
+
     # ── Discover files ──────────────────────────────────────
     php_files = find_php_files(docroot)
     js_files = find_js_files(docroot)
@@ -523,6 +734,8 @@ def main():
     console.print(f"[bold]Document root:[/] {docroot}")
     console.print(f"[bold]PHP files found:[/] {len(php_files)}")
     console.print(f"[bold]JS  files found:[/] {len(js_files)}")
+    console.print(f"[bold]Browser mode:[/]   {'Headed (visible)' if args.headed else 'Headless'}")
+    console.print(f"[bold]Render wait:[/]    {args.render_wait}ms")
     console.print()
 
     if not php_files and not js_files:
@@ -533,7 +746,7 @@ def main():
     php_server_proc = None
     server_started = False
 
-    # ── Phase 1: Start PHP server and scan rendered output ──
+    # ── Phase 1: Start PHP server and scan with Playwright ──
     if not args.no_serve and php_files:
         if not check_php_available():
             console.print("[bold yellow]⚠️  PHP CLI not found — skipping server mode, falling back to source scan.[/]")
@@ -551,7 +764,6 @@ def main():
                 console.print()
 
                 # Build list of pages to fetch
-                # We fetch each .php file relative to docroot
                 pages_to_check = []
                 for pf in php_files:
                     try:
@@ -560,54 +772,82 @@ def main():
                     except ValueError:
                         pass
 
-                # Always check index.php / root
                 if "index.php" not in pages_to_check:
                     pages_to_check.insert(0, "index.php")
 
                 console.print(Rule(
-                    title="[bold bright_cyan]Phase 1: Scanning Rendered HTML[/]",
+                    title="[bold bright_cyan]Phase 1: Browser Rendering & Error Capture[/]",
                     style="bright_blue"
                 ))
                 console.print()
 
-                with Progress(
-                    SpinnerColumn(),
-                    TextColumn("[progress.description]{task.description}"),
-                    BarColumn(),
-                    MofNCompleteColumn(),
-                    console=console,
-                ) as progress:
-                    task = progress.add_task("Fetching pages...", total=len(pages_to_check))
+                # Create trace directory if needed
+                trace_dir = Path("./traces")
+                if args.trace:
+                    trace_dir.mkdir(exist_ok=True)
 
-                    for page_path in pages_to_check:
-                        progress.update(task, description=f"GET /{page_path}")
+                # Launch Playwright browser
+                with sync_playwright() as p:
+                    browser = p.chromium.launch(headless=not args.headed)
 
-                        status, body = fetch_rendered_page(base_url, page_path, args.timeout)
+                    with Progress(
+                        SpinnerColumn(),
+                        TextColumn("[progress.description]{task.description}"),
+                        BarColumn(),
+                        MofNCompleteColumn(),
+                        console=console,
+                    ) as progress:
+                        task = progress.add_task("Scanning pages...", total=len(pages_to_check))
 
-                        page_issues = []
+                        for page_path in pages_to_check:
+                            progress.update(task, description=f"🌐 /{page_path}")
 
-                        if status == 0:
-                            page_issues.append({
-                                "type": "server_error",
-                                "line": 0,
-                                "message": f"Connection error: {body}",
-                                "source": page_path,
-                            })
-                        elif status >= 400:
-                            page_issues.append({
-                                "type": "server_error",
-                                "line": 0,
-                                "message": f"HTTP {status} response",
-                                "source": page_path,
-                            })
-                        else:
-                            # Scan the rendered HTML for LaTeX errors
-                            page_issues = scan_html_for_latex_errors(body, page_path)
+                            url = f"{base_url}/{page_path}"
+                            page_label = f"/{page_path}"
 
-                        if page_issues:
-                            all_issues.append((f"🌐 /{page_path} (rendered)", page_issues))
+                            # Create a fresh context for each page (clean state)
+                            context = browser.new_context(
+                                viewport={"width": 1280, "height": 900},
+                                ignore_https_errors=True,
+                            )
 
-                        progress.advance(task)
+                            if args.trace:
+                                context.tracing.start(
+                                    screenshots=True,
+                                    snapshots=True,
+                                    sources=True,
+                                )
+
+                            page = context.new_page()
+
+                            # Scan the page
+                            page_issues = scan_page_with_browser(
+                                page=page,
+                                url=url,
+                                page_label=page_label,
+                                render_wait_ms=args.render_wait,
+                                navigation_timeout=args.navigation_timeout,
+                            )
+
+                            if page_issues:
+                                all_issues.append((f"🌐 {page_label} (rendered)", page_issues))
+
+                                # Save trace if requested
+                                if args.trace:
+                                    safe_name = page_path.replace("/", "_").replace("\\", "_")
+                                    trace_path = trace_dir / f"{safe_name}.zip"
+                                    context.tracing.stop(path=str(trace_path))
+                            else:
+                                if args.trace:
+                                    # Discard trace for clean pages
+                                    context.tracing.stop(path=str(trace_dir / "_discard.zip"))
+                                    (trace_dir / "_discard.zip").unlink(missing_ok=True)
+
+                            page.close()
+                            context.close()
+                            progress.advance(task)
+
+                    browser.close()
 
                 console.print()
 
@@ -625,7 +865,6 @@ def main():
         MofNCompleteColumn(),
         console=console,
     ) as progress:
-        # Scan PHP sources
         total = len(php_files) + len(js_files)
         task = progress.add_task("Scanning sources...", total=total)
 
@@ -655,8 +894,6 @@ def main():
             try:
                 content = filepath.read_text(encoding="utf-8", errors="replace")
                 js_issues = scan_js_for_latex_strings(content, filepath)
-                # Also check for raw LaTeX error patterns in JS (e.g., error messages)
-                js_issues += scan_html_for_latex_errors(content, str(filepath.name))
                 if js_issues:
                     try:
                         rel = filepath.relative_to(docroot)
@@ -680,7 +917,7 @@ def main():
 
     if not all_issues:
         console.print(Panel(
-            "[bold bright_green]No LaTeX ParseError patterns found! 🎉[/]",
+            "[bold bright_green]No rendering errors or warnings found! 🎉[/]",
             border_style="green",
             padding=(0, 2),
         ))
@@ -699,7 +936,7 @@ def main():
                 line_info = f"[dim]~line {issue['line']}:[/] " if issue.get("line", 0) > 0 else ""
                 tree.add(f"{icon} {line_info}[{style}]{issue['message']}[/]")
 
-                if itype in CRITICAL_TYPES:
+                if itype in FAILURE_TYPES:
                     total_errors += 1
                 elif itype in WARNING_TYPES:
                     total_warnings += 1
@@ -730,20 +967,32 @@ def main():
     summary.add_row("JS  files scanned", str(len(js_files)), "📜")
     summary.add_row(
         "Server mode",
-        "Yes" if server_started else "No",
+        "Yes (Playwright)" if server_started else "No",
         "[green]✓[/]" if server_started else "[dim]—[/]",
     )
     summary.add_row("", "", "")
 
     if total_errors > 0:
-        summary.add_row("❌ LaTeX ParseErrors", f"[bold red]{total_errors}[/]", "[bold red]must fix[/]")
+        summary.add_row(
+            "❌ Failures (errors/warnings/exceptions)",
+            f"[bold red]{total_errors}[/]",
+            "[bold red]FAIL[/]",
+        )
     else:
-        summary.add_row("❌ LaTeX ParseErrors", "0", "[green]✓[/]")
+        summary.add_row(
+            "❌ Failures (errors/warnings/exceptions)",
+            "0",
+            "[green]✓[/]",
+        )
 
     if total_warnings > 0:
-        summary.add_row("⚠️  Risky patterns", f"[bold yellow]{total_warnings}[/]", "[bold yellow]review[/]")
+        summary.add_row(
+            "⚠️  Risky source patterns",
+            f"[bold yellow]{total_warnings}[/]",
+            "[bold yellow]review[/]",
+        )
     else:
-        summary.add_row("⚠️  Risky patterns", "0", "[green]✓[/]")
+        summary.add_row("⚠️  Risky source patterns", "0", "[green]✓[/]")
 
     if total_info > 0:
         summary.add_row("ℹ️  Info", f"[bold blue]{total_info}[/]", "[bold blue]note[/]")
@@ -754,7 +1003,7 @@ def main():
     summary.add_row(
         "[bold]Total issues[/]",
         f"[bold]{total_all}[/]",
-        "[bold green]🎉 PASS[/]" if total_all == 0 else f"[bold red]🚨 {total_all} issue(s)[/]",
+        "[bold green]🎉 PASS[/]" if total_errors == 0 else f"[bold red]🚨 {total_errors} failure(s)[/]",
     )
 
     console.print(summary)
@@ -765,14 +1014,26 @@ def main():
         console.print(f"  [dim]{clean_files} file(s) passed all checks without issues.[/]")
         console.print()
 
+    # ── Trace info ──────────────────────────────────────────
+    if args.trace and total_errors > 0:
+        trace_dir = Path("./traces")
+        trace_files = list(trace_dir.glob("*.zip")) if trace_dir.exists() else []
+        trace_files = [f for f in trace_files if f.name != "_discard.zip"]
+        if trace_files:
+            console.print(Panel(
+                f"[bold bright_cyan]📁 Playwright traces saved to ./traces/[/]\n\n"
+                f"[dim]View with:[/]  [bold]npx playwright show-trace ./traces/<file>.zip[/]\n"
+                f"[dim]Traces saved:[/] {len(trace_files)}",
+                border_style="cyan",
+                padding=(0, 2),
+            ))
+            console.print()
+
     # ── Keep server or shut down ────────────────────────────
     if php_server_proc:
         if args.keep_server:
-            port = find_free_port(args.port)
-            # Port was already resolved above; re-derive base_url
-            base_url = f"http://127.0.0.1:{port}"
             console.print(Panel(
-                f"[bold bright_green]PHP server still running at {base_url}[/]\n"
+                f"[bold bright_green]PHP server still running[/]\n"
                 f"[dim]PID {php_server_proc.pid} — press Ctrl+C to stop[/]",
                 border_style="green",
                 padding=(0, 2),
@@ -791,14 +1052,16 @@ def main():
     # ── Final verdict ───────────────────────────────────────
     if total_errors > 0:
         console.print(Panel(
-            f"[bold red]🚨 {total_errors} LaTeX ParseError(s) found — these are visible to users![/]",
+            f"[bold red]🚨 {total_errors} failure(s) detected![/]\n"
+            f"[dim]Console errors, warnings, JS exceptions, network failures,\n"
+            f"and LaTeX parse errors are all treated as failures.[/]",
             border_style="red",
             padding=(0, 2),
         ))
         sys.exit(1)
     elif total_warnings > 0:
         console.print(Panel(
-            f"[bold bright_yellow]⚠️  No rendered errors, but {total_warnings} risky source pattern(s) found.[/]",
+            f"[bold bright_yellow]⚠️  No rendered failures, but {total_warnings} risky source pattern(s) found.[/]",
             border_style="yellow",
             padding=(0, 2),
         ))
@@ -806,7 +1069,9 @@ def main():
     else:
         if total_all == 0:
             console.print(Panel(
-                "[bold bright_green]All files passed LaTeX error checks! 🎉[/]",
+                "[bold bright_green]All pages passed rendering checks! 🎉[/]\n"
+                "[dim]No console errors, no JS exceptions, no network failures,\n"
+                "no LaTeX parse errors detected.[/]",
                 border_style="green",
                 padding=(0, 2),
             ))
