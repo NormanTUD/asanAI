@@ -10,6 +10,7 @@ import os
 import sys
 import re
 import subprocess
+import glob
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -63,6 +64,72 @@ from rich.tree import Tree
 
 console = Console()
 
+# Directories to skip when recursing
+SKIP_DIRS = {
+    ".git", "node_modules", "vendor", ".svn", "__pycache__",
+    ".idea", ".vscode", "storage", "cache",
+}
+
+
+# ============================================================
+# INPUT RESOLUTION — files, folders, globs, mixed
+# ============================================================
+
+def resolve_inputs(args: list[str]) -> list[Path]:
+    """
+    Accept any mix of:
+      - single .php files
+      - directories (recursed for .php)
+      - glob patterns (e.g. 'src/**/*.php', '*.php')
+      - multiple of the above
+      - nothing → defaults to current directory
+    Returns a deduplicated, sorted list of .php file paths.
+    """
+    if not args:
+        args = ["."]
+
+    php_files: set[Path] = set()
+
+    for arg in args:
+        p = Path(arg)
+
+        # 1) It's an existing file
+        if p.is_file():
+            if p.suffix == ".php":
+                php_files.add(p.resolve())
+            else:
+                console.print(f"[bold yellow]Skipping non-PHP file:[/] {p}")
+            continue
+
+        # 2) It's an existing directory
+        if p.is_dir():
+            for root, dirs, files in os.walk(p):
+                dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+                for f in files:
+                    if f.endswith(".php"):
+                        php_files.add((Path(root) / f).resolve())
+            continue
+
+        # 3) Try as a glob pattern
+        matches = glob.glob(arg, recursive=True)
+        if matches:
+            for m in matches:
+                mp = Path(m)
+                if mp.is_file() and mp.suffix == ".php":
+                    php_files.add(mp.resolve())
+                elif mp.is_dir():
+                    for root, dirs, files in os.walk(mp):
+                        dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+                        for f in files:
+                            if f.endswith(".php"):
+                                php_files.add((Path(root) / f).resolve())
+            continue
+
+        # 4) Nothing matched
+        console.print(f"[bold red]Not found:[/] '{arg}' is not a file, directory, or matching glob pattern.")
+
+    return sorted(php_files)
+
 
 # ============================================================
 # PHP SYNTAX CHECK (using php -l)
@@ -83,9 +150,7 @@ def check_php_syntax(filepath: Path) -> tuple[bool, str]:
         if result.returncode == 0:
             return True, "No syntax errors detected"
         else:
-            # Extract the error message
             error_msg = result.stdout.strip() or result.stderr.strip()
-            # Clean up the message
             error_msg = error_msg.replace("Errors parsing " + str(filepath), "").strip()
             if not error_msg:
                 error_msg = "Unknown syntax error"
@@ -102,13 +167,11 @@ def check_php_syntax(filepath: Path) -> tuple[bool, str]:
 # HTML TAG BALANCE CHECK
 # ============================================================
 
-# Self-closing / void HTML elements that don't need closing tags
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input",
     "link", "meta", "param", "source", "track", "wbr",
 }
 
-# Tags we want to check for balance
 TRACKED_TAGS = {
     "div", "span", "p", "a", "ul", "ol", "li", "table", "tr", "td", "th",
     "thead", "tbody", "tfoot", "form", "section", "article", "header",
@@ -121,18 +184,14 @@ TRACKED_TAGS = {
 
 def strip_php_blocks(content: str) -> str:
     """
-    Remove PHP code blocks to avoid false positives from HTML inside strings/comments.
-    We keep the HTML output parts.
+    Remove PHP code blocks but preserve line structure (replace with
+    equivalent newlines) so line numbers stay accurate.
     """
-    # Remove PHP blocks but keep inline echo/print HTML
-    # This is a simplified approach — remove <?php ... ?> blocks
-    # but keep the parts outside PHP tags
     result = []
     i = 0
     in_php = False
     while i < len(content):
         if not in_php:
-            # Look for PHP open tag
             if content[i:i+5] == "<?php":
                 in_php = True
                 i += 5
@@ -143,95 +202,98 @@ def strip_php_blocks(content: str) -> str:
                 result.append(content[i])
                 i += 1
         else:
-            # Look for PHP close tag
             if content[i:i+2] == "?>":
                 in_php = False
                 i += 2
             else:
+                # Preserve newlines so line numbers stay correct
+                if content[i] == "\n":
+                    result.append("\n")
                 i += 1
     return "".join(result)
+
+
+def _line_number_at(text: str, pos: int) -> int:
+    """Return 1-based line number for a character position in text."""
+    return text.count("\n", 0, pos) + 1
 
 
 def check_tag_balance(content: str, filepath: Path) -> list[dict]:
     """
     Check that opened HTML tags are properly closed.
-    Returns a list of issues found.
+    Works on the FULL content (not line-by-line) so multi-line tags are handled.
     """
     issues = []
 
-    # Strip PHP blocks to get just the HTML template parts
     html_content = strip_php_blocks(content)
 
-    # Remove HTML comments
-    html_content = re.sub(r"<!--.*?-->", "", html_content, flags=re.DOTALL)
+    # Remove HTML comments (preserve newlines for line counting)
+    def _replace_keep_newlines(m):
+        return "\n" * m.group(0).count("\n")
 
-    # Remove content inside <script> and <style> tags (they may contain < > chars)
-    html_content = re.sub(r"<script[^>]*>.*?</script>", "", html_content, flags=re.DOTALL | re.IGNORECASE)
-    html_content = re.sub(r"<style[^>]*>.*?</style>", "", html_content, flags=re.DOTALL | re.IGNORECASE)
+    html_content = re.sub(r"<!--.*?-->", _replace_keep_newlines, html_content, flags=re.DOTALL)
+    html_content = re.sub(r"<script[^>]*>.*?</script>", _replace_keep_newlines, html_content, flags=re.DOTALL | re.IGNORECASE)
+    html_content = re.sub(r"<style[^>]*>.*?</style>", _replace_keep_newlines, html_content, flags=re.DOTALL | re.IGNORECASE)
 
-    # Find all opening and closing tags
-    tag_pattern = re.compile(r"<(/?)(\w+)([^>]*?)(/?)>", re.IGNORECASE)
+    # Match tags across multiple lines — the key fix:
+    # [^>]* is greedy across newlines by default, but we need re.DOTALL
+    # for . to match \n inside attribute values. Using [^>]* is fine since
+    # > terminates the tag.
+    tag_pattern = re.compile(r"<(/?)(\w+)([^>]*?)(/?)>", re.IGNORECASE | re.DOTALL)
 
-    stack = []  # Stack of (tag_name, line_number)
+    stack = []  # (tag_name, line_number)
 
-    # Track line numbers
-    lines = html_content.split("\n")
-    pos = 0
+    for match in tag_pattern.finditer(html_content):
+        is_closing = match.group(1) == "/"
+        tag_name = match.group(2).lower()
+        attrs = match.group(3)
+        is_self_closing = match.group(4) == "/"
 
-    for line_num, line in enumerate(lines, 1):
-        for match in tag_pattern.finditer(line):
-            is_closing = match.group(1) == "/"
-            tag_name = match.group(2).lower()
-            is_self_closing = match.group(4) == "/"
+        if tag_name in VOID_ELEMENTS:
+            continue
+        if tag_name not in TRACKED_TAGS:
+            continue
+        if is_self_closing:
+            continue
 
-            # Skip void elements and non-tracked tags
-            if tag_name in VOID_ELEMENTS:
-                continue
-            if tag_name not in TRACKED_TAGS:
-                continue
-            if is_self_closing:
-                continue
+        line_num = _line_number_at(html_content, match.start())
 
-            if not is_closing:
-                # Opening tag
-                stack.append((tag_name, line_num))
+        if not is_closing:
+            stack.append((tag_name, line_num))
+        else:
+            if not stack:
+                issues.append({
+                    "type": "unexpected_close",
+                    "tag": tag_name,
+                    "line": line_num,
+                    "message": f"Closing </{tag_name}> without matching opening tag",
+                })
+            elif stack[-1][0] == tag_name:
+                stack.pop()
             else:
-                # Closing tag
-                if not stack:
+                # Search stack for a matching opener
+                found = False
+                for idx in range(len(stack) - 1, -1, -1):
+                    if stack[idx][0] == tag_name:
+                        unclosed = stack[idx + 1:]
+                        for utag, uline in unclosed:
+                            issues.append({
+                                "type": "unclosed",
+                                "tag": utag,
+                                "line": uline,
+                                "message": f"<{utag}> opened on line {uline} is never closed (or misnested)",
+                            })
+                        stack = stack[:idx]
+                        found = True
+                        break
+                if not found:
                     issues.append({
                         "type": "unexpected_close",
                         "tag": tag_name,
                         "line": line_num,
                         "message": f"Closing </{tag_name}> without matching opening tag",
                     })
-                elif stack[-1][0] == tag_name:
-                    stack.pop()
-                else:
-                    # Try to find a matching open tag further up the stack
-                    found = False
-                    for idx in range(len(stack) - 1, -1, -1):
-                        if stack[idx][0] == tag_name:
-                            # Everything between is unclosed
-                            unclosed = stack[idx + 1:]
-                            for utag, uline in unclosed:
-                                issues.append({
-                                    "type": "unclosed",
-                                    "tag": utag,
-                                    "line": uline,
-                                    "message": f"<{utag}> opened on line {uline} is never closed (or misnested)",
-                                })
-                            stack = stack[:idx]
-                            found = True
-                            break
-                    if not found:
-                        issues.append({
-                            "type": "unexpected_close",
-                            "tag": tag_name,
-                            "line": line_num,
-                            "message": f"Closing </{tag_name}> without matching opening tag",
-                        })
 
-    # Anything left on the stack is unclosed
     for tag_name, line_num in stack:
         issues.append({
             "type": "unclosed",
@@ -244,7 +306,7 @@ def check_tag_balance(content: str, filepath: Path) -> list[dict]:
 
 
 # ============================================================
-# BRACKET / BRACE BALANCE CHECK (in PHP code)
+# BRACKET / BRACE BALANCE CHECK
 # ============================================================
 
 def check_bracket_balance(content: str) -> list[dict]:
@@ -253,11 +315,9 @@ def check_bracket_balance(content: str) -> list[dict]:
     Skips content inside strings and comments.
     """
     issues = []
-
-    # Simple state machine to skip strings and comments
     i = 0
     length = len(content)
-    stack = []  # (char, line_num)
+    stack = []
     line_num = 1
 
     in_single_quote = False
@@ -270,13 +330,11 @@ def check_bracket_balance(content: str) -> list[dict]:
     while i < length:
         ch = content[i]
 
-        # Track line numbers
         if ch == "\n":
             line_num += 1
             if in_line_comment:
                 in_line_comment = False
             if in_heredoc and i + 1 < length:
-                # Check if next line starts with heredoc end tag
                 rest = content[i+1:]
                 if rest.startswith(heredoc_tag + ";") or rest.startswith(heredoc_tag + "\n"):
                     in_heredoc = False
@@ -285,7 +343,6 @@ def check_bracket_balance(content: str) -> list[dict]:
             i += 1
             continue
 
-        # Skip block comments
         if in_block_comment:
             if ch == "*" and i + 1 < length and content[i + 1] == "/":
                 in_block_comment = False
@@ -294,15 +351,13 @@ def check_bracket_balance(content: str) -> list[dict]:
                 i += 1
             continue
 
-        # Skip line comments
         if in_line_comment:
             i += 1
             continue
 
-        # Skip strings
         if in_single_quote:
             if ch == "\\" and i + 1 < length:
-                i += 2  # skip escaped char
+                i += 2
             elif ch == "'":
                 in_single_quote = False
                 i += 1
@@ -324,7 +379,6 @@ def check_bracket_balance(content: str) -> list[dict]:
             i += 1
             continue
 
-        # Detect start of comments
         if ch == "/" and i + 1 < length:
             if content[i + 1] == "/":
                 in_line_comment = True
@@ -335,13 +389,11 @@ def check_bracket_balance(content: str) -> list[dict]:
                 i += 2
                 continue
 
-        # Detect start of line comment with #
         if ch == "#":
             in_line_comment = True
             i += 1
             continue
 
-        # Detect strings
         if ch == "'":
             in_single_quote = True
             i += 1
@@ -351,21 +403,22 @@ def check_bracket_balance(content: str) -> list[dict]:
             i += 1
             continue
 
-        # Detect heredoc/nowdoc
         if ch == "<" and content[i:i+3] == "<<<":
-            rest_of_line = content[i+3:content.index("\n", i) if "\n" in content[i:] else length]
+            nl_pos = content.find("\n", i)
+            if nl_pos == -1:
+                nl_pos = length
+            rest_of_line = content[i+3:nl_pos]
             heredoc_match = re.match(r"\s*['\"]?(\w+)['\"]?", rest_of_line)
             if heredoc_match:
                 heredoc_tag = heredoc_match.group(1)
                 in_heredoc = True
-                i += 3 + len(rest_of_line)
+                i = nl_pos
                 continue
 
-        # Now check brackets
         if ch in "({[":
             stack.append((ch, line_num))
         elif ch in ")}]":
-            matching = {")" : "(", "}" : "{", "]" : "["}
+            matching = {")": "(", "}": "{", "]": "["}
             if not stack:
                 issues.append({
                     "type": "unexpected_bracket",
@@ -386,7 +439,6 @@ def check_bracket_balance(content: str) -> list[dict]:
 
         i += 1
 
-    # Anything left on stack is unclosed
     for ch, ln in stack:
         closing = {"(": ")", "{": "}", "[": "]"}
         issues.append({
@@ -404,16 +456,8 @@ def check_bracket_balance(content: str) -> list[dict]:
 # ============================================================
 
 def check_common_issues(content: str, filepath: Path) -> list[dict]:
-    """
-    Check for common PHP issues:
-    - Missing semicolons (heuristic)
-    - Unclosed PHP tags
-    - Empty files
-    - BOM markers
-    """
     issues = []
 
-    # Check for BOM
     if content.startswith("\ufeff") or content.encode("utf-8").startswith(b"\xef\xbb\xbf"):
         issues.append({
             "type": "bom",
@@ -421,7 +465,6 @@ def check_common_issues(content: str, filepath: Path) -> list[dict]:
             "message": "File contains a UTF-8 BOM marker (can cause 'headers already sent' errors)",
         })
 
-    # Check for empty file
     stripped = content.strip()
     if not stripped:
         issues.append({
@@ -431,7 +474,6 @@ def check_common_issues(content: str, filepath: Path) -> list[dict]:
         })
         return issues
 
-    # Check if file has PHP opening tag
     if "<?php" not in content and "<?" not in content:
         issues.append({
             "type": "no_php_tag",
@@ -439,11 +481,8 @@ def check_common_issues(content: str, filepath: Path) -> list[dict]:
             "message": "File does not contain a PHP opening tag (<?php)",
         })
 
-    # Check for unclosed PHP tags (more opens than closes)
     open_tags = len(re.findall(r"<\?php|<\?(?!=)", content))
     close_tags = len(re.findall(r"\?>", content))
-    # It's valid to not close the last PHP tag (actually recommended for pure PHP files)
-    # But if there are more closes than opens, that's an issue
     if close_tags > open_tags:
         issues.append({
             "type": "extra_close_tag",
@@ -451,7 +490,6 @@ def check_common_issues(content: str, filepath: Path) -> list[dict]:
             "message": f"More PHP closing tags (?>) [{close_tags}] than opening tags (<?php) [{open_tags}]",
         })
 
-    # Check for trailing whitespace after closing ?>
     if content.rstrip().endswith("?>"):
         after_close = content[content.rindex("?>") + 2:]
         if after_close.strip():
@@ -465,34 +503,12 @@ def check_common_issues(content: str, filepath: Path) -> list[dict]:
 
 
 # ============================================================
-# FILE SCANNER
-# ============================================================
-
-def scan_php_files(folder: Path) -> list[Path]:
-    """Recursively find all PHP files in a folder."""
-    php_files = []
-    for root, dirs, files in os.walk(folder):
-        # Skip common non-project directories
-        dirs[:] = [d for d in dirs if d not in {
-            ".git", "node_modules", "vendor", ".svn", "__pycache__",
-            ".idea", ".vscode", "storage", "cache",
-        }]
-        for f in files:
-            if f.endswith(".php"):
-                php_files.append(Path(root) / f)
-    return sorted(php_files)
-
-
-# ============================================================
 # RESULT DISPLAY
 # ============================================================
 
 def severity_style(issue_type: str) -> str:
-    """Get color style based on issue severity."""
     critical = {"syntax_error", "unclosed_bracket", "mismatched_bracket", "unexpected_bracket"}
     warning = {"unclosed", "unexpected_close", "bom", "extra_close_tag", "content_after_close"}
-    info = {"no_php_tag", "empty"}
-
     if issue_type in critical:
         return "bold red"
     elif issue_type in warning:
@@ -504,7 +520,6 @@ def severity_style(issue_type: str) -> str:
 def severity_icon(issue_type: str) -> str:
     critical = {"syntax_error", "unclosed_bracket", "mismatched_bracket", "unexpected_bracket"}
     warning = {"unclosed", "unexpected_close", "bom", "extra_close_tag", "content_after_close"}
-
     if issue_type in critical:
         return "❌"
     elif issue_type in warning:
@@ -525,41 +540,45 @@ def main():
         "  [bold green]✓[/] PHP syntax errors (via php -l)\n"
         "  [bold green]✓[/] Unclosed/mismatched HTML tags (div, span, etc.)\n"
         "  [bold green]✓[/] Unbalanced brackets (), {}, []\n"
-        "  [bold green]✓[/] Common issues (BOM, missing tags, etc.)",
+        "  [bold green]✓[/] Common issues (BOM, missing tags, etc.)\n\n"
+        "[dim]Usage:[/]\n"
+        "  [bold]php_validator.py[/]                          [dim]# current directory[/]\n"
+        "  [bold]php_validator.py src/[/]                     [dim]# single folder[/]\n"
+        "  [bold]php_validator.py index.php lib/[/]           [dim]# file + folder[/]\n"
+        "  [bold]php_validator.py src/ templates/ *.php[/]    [dim]# multiple mixed[/]\n"
+        '  [bold]php_validator.py "src/**/*.php"[/]           [dim]# glob pattern[/]',
         title="[bold bright_white]PHP Validator[/]",
         border_style="bright_cyan",
         padding=(1, 3),
     ))
     console.print()
 
-    # Get folder from command line argument
-    if len(sys.argv) < 2:
-        console.print("[bold red]Usage:[/] python php_validator.py <folder_path>")
-        console.print("[dim]  Example: python php_validator.py ./src[/]")
-        sys.exit(1)
+    # Resolve all inputs — files, folders, globs, or default to cwd
+    targets = sys.argv[1:]
+    php_files = resolve_inputs(targets)
 
-    folder = Path(sys.argv[1])
-    if not folder.exists():
-        console.print(f"[bold red]Error:[/] Folder '{folder}' does not exist.")
-        sys.exit(1)
-    if not folder.is_dir():
-        console.print(f"[bold red]Error:[/] '{folder}' is not a directory.")
-        sys.exit(1)
-
-    # Scan for PHP files
-    console.print(f"[bold]Scanning:[/] {folder.resolve()}")
+    if not targets:
+        console.print(f"[bold]Scanning:[/] {Path('.').resolve()} [dim](no arguments — using current directory)[/]")
+    else:
+        console.print(f"[bold]Targets:[/] {', '.join(targets)}")
     console.print()
 
-    php_files = scan_php_files(folder)
-
     if not php_files:
-        console.print("[bold yellow]No PHP files found in the specified directory.[/]")
+        console.print("[bold yellow]No PHP files found for the given input(s).[/]")
         sys.exit(0)
 
     console.print(f"[bold]Found:[/] {len(php_files)} PHP file(s)\n")
 
+    # Find a common base for relative path display
+    try:
+        common_base = Path(os.path.commonpath(php_files))
+        if common_base.is_file():
+            common_base = common_base.parent
+    except ValueError:
+        common_base = Path(".")
+
     # Process files
-    results = []  # (filepath, syntax_ok, syntax_msg, tag_issues, bracket_issues, common_issues)
+    results = []
 
     with Progress(
         SpinnerColumn(),
@@ -573,7 +592,6 @@ def main():
         for filepath in php_files:
             progress.update(task, description=f"Checking {filepath.name}...")
 
-            # Read file content
             try:
                 content = filepath.read_text(encoding="utf-8", errors="replace")
             except Exception as e:
@@ -581,7 +599,6 @@ def main():
                 progress.advance(task)
                 continue
 
-            # Run checks
             syntax_ok, syntax_msg = check_php_syntax(filepath)
             tag_issues = check_tag_balance(content, filepath)
             bracket_issues = check_bracket_balance(content)
@@ -595,7 +612,6 @@ def main():
     console.print(Rule(title="[bold bright_cyan]Results[/]", style="bright_blue"))
     console.print()
 
-    # Summary counters
     total_files = len(results)
     files_with_errors = 0
     total_issues = 0
@@ -604,7 +620,6 @@ def main():
     bracket_issues_count = 0
     common_issues_count = 0
 
-    # Detailed results for files with issues
     for filepath, syntax_ok, syntax_msg, tag_issues, bracket_issues, common_issues in results:
         all_issues = []
 
@@ -629,8 +644,11 @@ def main():
         if all_issues:
             files_with_errors += 1
 
-            # Show file with issues
-            rel_path = filepath.relative_to(folder) if filepath.is_relative_to(folder) else filepath
+            try:
+                rel_path = filepath.relative_to(common_base)
+            except ValueError:
+                rel_path = filepath
+
             tree = Tree(f"[bold bright_white]📄 {rel_path}[/]")
 
             for issue_type, line, message in all_issues:
@@ -657,14 +675,8 @@ def main():
     summary_table.add_column("Count", justify="right")
     summary_table.add_column("Status", justify="center")
 
-    # Files scanned
-    summary_table.add_row(
-        "Files scanned",
-        str(total_files),
-        "📁",
-    )
+    summary_table.add_row("Files scanned", str(total_files), "📁")
 
-    # Files with issues
     if files_with_errors == 0:
         summary_table.add_row("Files with issues", "0", "[bold green]✅ All clean![/]")
     else:
@@ -674,25 +686,21 @@ def main():
             f"[bold red]⚠️  {files_with_errors}/{total_files}[/]",
         )
 
-    # Syntax errors
     if syntax_errors > 0:
         summary_table.add_row("PHP syntax errors", f"[bold red]{syntax_errors}[/]", "❌")
     else:
         summary_table.add_row("PHP syntax errors", "0", "[green]✓[/]")
 
-    # Tag issues
     if tag_issues_count > 0:
         summary_table.add_row("HTML tag issues", f"[bold yellow]{tag_issues_count}[/]", "⚠️")
     else:
         summary_table.add_row("HTML tag issues", "0", "[green]✓[/]")
 
-    # Bracket issues
     if bracket_issues_count > 0:
         summary_table.add_row("Bracket issues", f"[bold red]{bracket_issues_count}[/]", "❌")
     else:
         summary_table.add_row("Bracket issues", "0", "[green]✓[/]")
 
-    # Common issues
     if common_issues_count > 0:
         summary_table.add_row("Other issues", f"[bold blue]{common_issues_count}[/]", "ℹ️")
     else:
@@ -708,13 +716,11 @@ def main():
     console.print(summary_table)
     console.print()
 
-    # Show clean files count
     clean_files = total_files - files_with_errors
     if clean_files > 0 and files_with_errors > 0:
         console.print(f"  [dim]{clean_files} file(s) passed all checks without issues.[/]")
         console.print()
 
-    # Exit code
     if total_issues > 0:
         sys.exit(1)
     else:
