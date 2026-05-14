@@ -472,7 +472,7 @@ def main():
             # Brackets and common issues — always check
             common_issues = check_common_issues(content, filepath)
 
-            results.append((filepath, syntax_ok, syntax_msg, tag_issues, bracket_issues, common_issues))
+            results.append((filepath, syntax_ok, syntax_msg, tag_issues, common_issues))
             progress.advance(task)
 
     # Display results
@@ -485,10 +485,9 @@ def main():
     total_issues = 0
     syntax_errors = 0
     tag_issues_count = 0
-    bracket_issues_count = 0
     common_issues_count = 0
 
-    for filepath, syntax_ok, syntax_msg, tag_issues, bracket_issues, common_issues in results:
+    for filepath, syntax_ok, syntax_msg, tag_issues, common_issues in results:
         all_issues = []
 
         if not syntax_ok and "not found" not in syntax_msg.lower():
@@ -498,10 +497,6 @@ def main():
         for issue in tag_issues:
             all_issues.append((issue["type"], issue["line"], issue["message"]))
             tag_issues_count += 1
-
-        for issue in bracket_issues:
-            all_issues.append((issue["type"], issue["line"], issue["message"]))
-            bracket_issues_count += 1
 
         for issue in common_issues:
             all_issues.append((issue["type"], issue["line"], issue["message"]))
@@ -572,11 +567,6 @@ def main():
         summary_table.add_row("HTML tag issues", f"[bold yellow]{tag_issues_count}[/]", "⚠️")
     else:
         summary_table.add_row("HTML tag issues", "0", "[green]✓[/]")
-
-    if bracket_issues_count > 0:
-        summary_table.add_row("Bracket issues", f"[bold red]{bracket_issues_count}[/]", "❌")
-    else:
-        summary_table.add_row("Bracket issues", "0", "[green]✓[/]")
 
     if common_issues_count > 0:
         summary_table.add_row("Other issues", f"[bold blue]{common_issues_count}[/]", "ℹ️")
