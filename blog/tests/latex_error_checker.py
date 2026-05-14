@@ -925,7 +925,7 @@ def main():
         help="Number of pages to scan in parallel (default: 1)"
     )
     parser.add_argument(
-        "--skip", type=str, nargs="*", default=["functions.php", "asanai_blog_proxy.php", "graph.php", "inference_optimization.php", "intro.php"],
+        "--skip", type=str, nargs="*", default=["functions.php", "asanai_blog_proxy.php", "graph.php", "inference_optimization.php", "intro.php", "intuition.php"],
         help="Page filenames to skip (default: functions.php asanai_blog_proxy.php graph.php)"
     )
     parser.add_argument(
