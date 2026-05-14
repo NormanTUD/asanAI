@@ -32,4 +32,7 @@ jobs:
       - name: Run PHP Validator
         run: |
           uv run blog/tests/php_validator.py blog/
+
+      - name: Run JS Validator
+        run: |
           uv run blog/tests/js_validator.py
