@@ -44,3 +44,16 @@ heatmap
 neocognitron
 rumelhart
 perceptrons
+grokking
+todo
+sigmoidal
+chatbot
+sqrt
+habilitationsvortrag
+nietzsches
+mannigfaltigkeit
+roleplay
+rosenblatt
+rechenmaschine
+rosenblatts
+connectionism
