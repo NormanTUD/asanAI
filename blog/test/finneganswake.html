@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finnegans Wake: The Dreaming</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a12;
+            color: #c8b89a;
+            font-family: 'Crimson Text', Georgia, serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #river-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        .river-wave {
+            position: absolute;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4a7a8a, #6aafbf, #4a7a8a, transparent);
+            animation: riverflow linear infinite;
+        }
+
+        @keyframes riverflow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        #game-container {
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #title-screen {
+            text-align: center;
+            padding: 60px 0;
+            animation: fadeIn 2s ease;
+        }
+
+        #title-screen h1 {
+            font-family: 'IM Fell English', serif;
+            font-size: 2.8em;
+            color: #e8d5b5;
+            text-shadow: 0 0 30px rgba(106, 175, 191, 0.3);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        #title-screen h2 {
+            font-family: 'IM Fell English', serif;
+            font-size: 1.3em;
+            color: #6aafbf;
+            font-style: italic;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        #title-screen p {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #9a8a7a;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        #cycle-counter {
+            position: fixed;
+            top: 16px;
+            right: 20px;
+            font-family: 'IM Fell English', serif;
+            font-size: 0.85em;
+            color: #4a7a8a;
+            z-index: 10;
+        }
+
+        #scene-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #location-bar {
+            font-family: 'IM Fell English', serif;
+            font-size: 0.8em;
+            color: #4a6a5a;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #1a2a2a;
+        }
+
+        #story-text {
+            font-size: 1.15em;
+            line-height: 1.9;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease;
+        }
+
+        #story-text .joyce-voice {
+            font-style: italic;
+            color: #8aafbf;
+            display: block;
+            margin: 16px 0;
+            padding-left: 20px;
+            border-left: 2px solid #2a4a5a;
+        }
+
+        #choices {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .choice-btn {
+            display: block;
+            width: 100%;
+            padding: 16px 24px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #12161e, #1a2028);
+            border: 1px solid #2a3a4a;
+            border-radius: 6px;
+            color: #c8b89a;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 1.05em;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1.5;
+        }
+
+        .choice-btn:hover {
+            background: linear-gradient(135deg, #1a2028, #223040);
+            border-color: #4a7a8a;
+            color: #e8d5b5;
+            transform: translateX(6px);
+            box-shadow: 0 0 20px rgba(106, 175, 191, 0.1);
+        }
+
+        .choice-btn .choice-symbol {
+            color: #6aafbf;
+            margin-right: 10px;
+            font-family: 'IM Fell English', serif;
+        }
+
+        #inventory-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(0deg, #0a0a12 60%, transparent);
+            padding: 20px 24px 16px;
+            z-index: 5;
+            text-align: center;
+        }
+
+        #inventory-bar span {
+            display: inline-block;
+            font-size: 0.8em;
+            color: #4a6a5a;
+            margin: 0 8px;
+            font-family: 'IM Fell English', serif;
+        }
+
+        .item-collected {
+            color: #8aafbf !important;
+        }
+
+        #dream-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #0a0a12;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.5s ease;
+            pointer-events: none;
+        }
+
+        #dream-overlay.hidden {
+            opacity: 0;
+        }
+
+        #dream-overlay p {
+            font-family: 'IM Fell English', serif;
+            font-size: 1.4em;
+            color: #4a7a8a;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease;
+        }
+
+        #ending-screen {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        #ending-screen h2 {
+            font-family: 'IM Fell English', serif;
+            font-size: 2em;
+            color: #6aafbf;
+            margin-bottom: 20px;
+        }
+
+        #ending-screen p {
+            line-height: 1.9;
+            max-width: 500px;
+            margin: 0 auto 16px;
+        }
+
+        .stats {
+            color: #4a7a8a;
+            font-size: 0.9em;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            #title-screen h1 { font-size: 2em; }
+            #story-text { font-size: 1.05em; }
+            #game-container { padding: 24px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="river-bg"></div>
+
+<div id="dream-overlay" class="hidden">
+    <p>riverrun...</p>
+</div>
+
+<div id="cycle-counter"></div>
+
+<div id="game-container">
+    <div id="title-screen">
+        <h1>Finnegans Wake</h1>
+        <h2>The Dreaming</h2>
+        <p>
+            A cyclical text adventure through the dreamworld of Dublin,
+            where a fallen publican sleeps by the River Liffey and all of
+            history swirls in the night.
+        </p>
+        <p style="font-size:0.9em; color:#5a6a5a;">
+            Collect fragments of the Letter. Witness the Fall and the Rise.
+            The dream always returns to the river.
+        </p>
+        <div id="choices">
+            <button class="choice-btn" onclick="startGame()">
+                <span class="choice-symbol">☽</span> Enter the dream...
+            </button>
+        </div>
+    </div>
+
+    <div id="scene-container" style="display:none;">
+        <div id="location-bar"></div>
+        <div id="story-text"></div>
+        <div id="choices-game"></div>
+    </div>
+</div>
+
+<div id="inventory-bar" style="display:none;">
+    <span id="inv-letter" title="Letter Fragment">✉ Letter</span>
+    <span id="inv-key" title="Pub Key">🗝 Key</span>
+    <span id="inv-salmon" title="Salmon of Wisdom">🐟 Salmon</span>
+    <span id="inv-stone" title="Blarney Stone">🪨 Stone</span>
+</div>
+
+<script>
+// ============ GAME STATE ============
+const state = {
+    cycle: 0,
+    scene: '',
+    inventory: [],
+    visited: new Set(),
+    hceReputation: 0, // -5 to 5, guilt vs innocence
+    choices: [],
+    dreaming: true
+};
+
+// ============ SCENES ============
+const scenes = {
+
+    // --- ACT I: THE FALL ---
+    riverrun: {
+        location: "The River Liffey · Howth Castle and Environs",
+        text: `
+            <p>You are dreaming. Or perhaps you are the dream itself.</p>
+            <p>A great thunderclap echoes across Dublin — the sound of a fall. A man, a builder, a giant, has tumbled from his ladder. Or was it a wall? The details shift like water.</p>
+            <span class="joyce-voice">riverrun, past Eve and Adam's, from swerve of shore to bend of bay, brings us by a commodius vicus of recirculation back to Howth Castle and Environs.</span>
+            <p>The River Liffey murmurs beneath you. Somewhere in the dark, a wake is being held. Somewhere, a letter lies buried in a midden heap. Somewhere, a publican sleeps uneasily in his bed above the tavern.</p>
+            <p>Where does the dream carry you?</p>
+        `,
+        choices: [
+            { text: "Follow the sound of the thunderclap to the site of the Fall", next: "the_fall" },
+            { text: "Drift toward the lights of Earwicker's pub", next: "pub_exterior" },
+            { text: "Follow the river downstream, listening to the washerwomen", next: "washerwomen" }
+        ]
+    },
+
+    the_fall: {
+        location: "The Magazine Wall · Phoenix Park",
+        text: `
+            <p>You stand at the foot of the Magazine Wall in Phoenix Park. The night air smells of gunpowder and wet grass.</p>
+            <p>Here is where it happened — or where it is always happening. <strong>Finnegan</strong>, the master builder, has fallen from his scaffold. His body lies enormous across the landscape, his head at Howth, his feet at the Magazine, the whole of Dublin draped across him like a blanket.</p>
+            <span class="joyce-voice">The fall of a once wallstrait oldparr is retaled early in bed and later on life down through all christian minstrelsy.</span>
+            <p>Mourners gather. Whiskey is poured. Someone is singing a ballad. But wait — is the corpse stirring? They splash whiskey on his lips and...</p>
+        `,
+        choices: [
+            { text: "Let Finnegan rise! Splash more whiskey!", next: "finnegan_rises" },
+            { text: "Hush him back down — HCE is the new master now", next: "hce_takes_over" },
+            { text: "Examine the wall where he fell — there are marks, a message", next: "wall_message" }
+        ]
+    },
+
+    finnegan_rises: {
+        location: "The Wake · Mullingar Inn",
+        text: `
+            <p>The whiskey hits the dead man's lips and his eyes fly open! The mourners shriek. Finnegan sits bolt upright in his coffin, scattering plates of cold salmon and soda bread.</p>
+            <span class="joyce-voice">Hohohoho, Mister Finn, you're going to be Mister Finnagain! Comeday morm and, O, you're vine! Sendday's eve and, ah, you're vinegar!</span>
+            <p>But the mourners push him back down. "Lie still, old man! Your time is done. There's a new master now — Humphrey Chimpden Earwicker, Here Comes Everybody." Finnegan subsides, grumbling, back into the landscape.</p>
+            <p>You pocket a <strong>salmon bone</strong> from the funeral feast. It hums with ancient knowledge.</p>
+        `,
+        onEnter: () => { addItem('salmon'); },
+        choices: [
+            { text: "Go to meet this HCE at his public house", next: "pub_exterior" },
+            { text: "Wander into the park — something happened here, a crime...", next: "phoenix_park_crime" }
+        ]
+    },
+
+    hce_takes_over: {
+        location: "The Wake · Transition",
+        text: `
+            <p>The old giant settles back into the earth. Dublin itself is his body now — the hills his shoulders, the river his blood. He will sleep until the world turns round again.</p>
+            <p>In his place rises a new figure: <strong>Humphrey Chimpden Earwicker</strong>, publican, father, citizen. A man of imposing stature with a stutter and a guilty conscience. They call him HCE — "Here Comes Everybody."</p>
+            <p>But already the whispers begin. Something happened in the park. Something with two girls and three soldiers. Or was it the other way around?</p>
+        `,
+        choices: [
+            { text: "Visit HCE's pub to hear the gossip", next: "pub_exterior" },
+            { text: "Investigate the scene of the alleged crime", next: "phoenix_park_crime" }
+        ]
+    },
+
+    wall_message: {
+        location: "The Magazine Wall · Inscriptions",
+        text: `
+            <p>You press your hands against the cold stone. Letters appear beneath your fingers — scratched, ancient, half-legible. A message from... whom? To whom?</p>
+            <span class="joyce-voice">Can you rede its world? It is the same told of all. Many. Miscegenations on miscegenations.</span>
+            <p>The writing shifts between languages — English, Irish, Latin, something older. You can make out fragments: a woman's name, a plea, a shopping list, a love letter, a confession. It is THE LETTER — or a piece of it.</p>
+            <p>You carefully peel a <strong>fragment of the Letter</strong> from the wall.</p>
+        `,
+        onEnter: () => { addItem('letter'); },
+        choices: [
+            { text: "Take the letter fragment to Earwicker's pub for examination", next: "pub_exterior" },
+            { text: "Search the midden heap nearby for more fragments", next: "midden_heap" }
+        ]
+    },
+
+    // --- ACT II: THE PUB & THE CRIME ---
+    pub_exterior: {
+        location: "Outside the Bristol Tavern · Chapelizod",
+        text: `
+            <p>The pub stands solid and warm against the Dublin night. A sign swings: <strong>H.C. EARWICKER, LICENSED VINTNER</strong>. Light spills from the windows. Inside, you can hear the murmur of drinkers and the clink of glasses.</p>
+            <p>A cat watches you from the doorstep. From upstairs, the sound of children — twins quarreling, a girl humming at her mirror.</p>
+            <span class="joyce-voice">Everything's going on the same or so it appeals to all of us, in the old holmsted here.</span>
+            <p>The door is ajar. But there's also a side passage leading to the back garden, and beyond that, the dark mass of Phoenix Park.</p>
+        `,
+        choices: [
+            { text: "Enter the pub and meet HCE", next: "inside_pub" },
+            { text: "Sneak around to the back — the family quarters", next: "family_quarters" },
+            { text: "Head into Phoenix Park to investigate the rumored crime", next: "phoenix_park_crime" }
+        ]
+    },
+
+    inside_pub: {
+        location: "The Bristol Tavern · Main Bar",
+        text: `
+            <p>The pub is thick with smoke and talk. Behind the bar stands <strong>HCE</strong> himself — a big man, ruddy-faced, with a walrus moustache and nervous eyes. He stutters slightly as he pulls pints.</p>
+            <p>The regulars are deep in argument. Four old men in the corner — <strong>Matthew, Mark, Luke, and John</strong> (or are they Mamalujo?) — drone on endlessly about the old days. A radio crackles with news.</p>
+            <p>HCE catches your eye. He seems to want to tell you something — to explain, to defend himself. His hands shake as he polishes a glass.</p>
+            <span class="joyce-voice">"Shsh shake, co-comeraid! Me only, them five ones, he is equal combat. I have won straight."</span>
+        `,
+        choices: [
+            { text: "Ask HCE directly: What happened in the park?", next: "hce_confession" },
+            { text: "Listen to the four old men's gossip", next: "four_old_men" },
+            { text: "Ask for the pub key — explore upstairs", next: "upstairs", condition: () => !state.inventory.includes('key') },
+            { text: "Slip out the back to find Anna Livia", next: "anna_livia" }
+        ]
+    },
+
+    hce_confession: {
+        location: "The Bristol Tavern · Behind the Bar",
+        text: `
+            <p>HCE leans close. His breath smells of porter and sardines. His eyes dart to the door, the window, the four old men.</p>
+            <p>"I am not guilty," he whispers fiercely. "Whatever they say. It was nothing — a misunderstanding in the park. I was only catching earwigs! The king himself asked me, and I answered honestly. Twelve o'clock it was, by my Waterbury watch."</p>
+            <p>But his story keeps changing. First it was two girls. Then three soldiers. Then a cad with a pipe who asked him the time. The more he explains, the less clear it becomes.</p>
+            <span class="joyce-voice">There is not one tittle of truth, allow me to tell you, in that purest of fibfib fabrications.</span>
+            <p>Do you believe him?</p>
+        `,
+        choices: [
+            { text: "Believe HCE — he is innocent, a victim of gossip", next: "hce_innocent", onChoose: () => { state.hceReputation += 2; } },
+            { text: "He's clearly hiding something — press harder", next: "hce_guilty", onChoose: () => { state.hceReputation -= 2; } },
+            { text: "It doesn't matter — in dreams, guilt and innocence are the same", next: "dream_logic" }
+        ]
+    },
+
+    hce_innocent: {
+        location: "The Bristol Tavern · A Moment of Peace",
+        text: `
+            <p>You nod, and something in HCE's face relaxes. For a moment he looks almost noble — the great citizen, the builder, the father of the city.</p>
+            <p>"Here Comes Everybody," you think. He is all of us. Every man who ever stumbled, every father who ever failed, every dreamer who ever woke ashamed.</p>
+            <p>He presses something into your hand — the <strong>key to the pub</strong>. "Mind the house for me," he says. "I'm very tired."</p>
+        `,
+        onEnter: () => { addItem('key'); },
+        choices: [
+            { text: "Go upstairs to check on the family", next: "upstairs" },
+            { text: "Step outside — the river is calling", next: "anna_livia" }
+        ]
+    },
+
+    hce_guilty: {
+        location: "The Bristol Tavern · Accusation",
+        text: `
+            <p>You press him and HCE crumbles. His stutter worsens. The glass slips from his hand and shatters. The four old men look up like vultures.</p>
+            <p>The pub fills with accusers — the cad with the pipe, the two girls, the three soldiers, the washerwomen, the twelve citizens. They chant the <strong>Ballad of Persse O'Reilly</strong>:</p>
+            <span class="joyce-voice">Have you heard of one Humpty Dumpty / How he fell with a roll and a rumble / And curled up like Lord Olofa Crumple / By the butt of the Magazine Wall...</span>
+            <p>HCE shrinks behind his bar. The pub key falls from his pocket.</p>
+        `,
+        onEnter: () => { addItem('key'); },
+        choices: [
+            { text: "Pick up the key and explore upstairs while he's distracted", next: "upstairs" },
+            { text: "Defend him — enough! Leave the poor man alone!", next: "dream_logic" },
+            { text: "Follow the accusers out into the night", next: "phoenix_park_crime" }
+        ]
+    },
+
+    dream_logic: {
+        location: "Between · The Dream Shifts",
+        text: `
+            <p>The pub dissolves. The walls become water. You are neither here nor there but everywhere at once — this is the logic of the dream, where every question contains its own answer and every answer spawns new questions.</p>
+            <span class="joyce-voice">The unfacts, did we possess them, are too imprecisely few to warrant our certitude.</span>
+            <p>In the dream, HCE is both guilty and innocent. He is the sinner and the saint, the builder and the ruin, the father and the child. The crime in the park is the original sin, endlessly repeated, endlessly forgiven.</p>
+            <p>The river whispers. Anna Livia is near.</p>
+        `,
+        choices: [
+            { text: "Follow the river to Anna Livia", next: "anna_livia" },
+            { text: "Descend into the dream — find Shem in his exile", next: "shem_den" },
+            { text: "Rise toward waking — find Shaun on his rounds", next: "shaun_post" }
+        ]
+    },
+
+    four_old_men: {
+        location: "The Bristol Tavern · The Snug",
+        text: `
+            <p>The four old men huddle in their corner like ancient monuments. They are the four evangelists, the four provinces of Ireland, the four compass points, the four waves. They remember everything and understand nothing.</p>
+            <p>"Do you remember," says one, "the old days when Daddy Pantaloons..." "I do," says another, "the gush off the mon like Ballybock manure works on a tradewinds day." "And the O'Moyly gracies chaffing him bluchface..."</p>
+            <p>They talk in circles, endlessly, about HCE's rise and fall, about Anna Livia's youth, about the twins' rivalry. They are the chorus of history, the memory of the race.</p>
+            <p>One of them drops a <strong>stone</strong> — smooth, ancient, inscribed with ogham marks.</p>
+        `,
+        onEnter: () => { addItem('stone'); },
+        choices: [
+            { text: "Ask them about the Letter", next: "letter_discussion" },
+            { text: "Ask them about Anna Livia", next: "anna_livia" },
+            { text: "Leave them to their memories — go upstairs", next: "upstairs" }
+        ]
+    },
+
+    letter_discussion: {
+        location: "The Bristol Tavern · The Snug",
+        text: `
+            <p>At the mention of the Letter, all four old men lean forward. Their eyes gleam.</p>
+            <p>"The letter! The litter!" they cry. "Scratched up from the midden by a hen! Written by ALP herself, or maybe by Shem, or maybe by nobody at all!"</p>
+            <p>They argue about what it says. One claims it's a defense of HCE. Another says it's a love letter. A third insists it's a grocery list. The fourth says it's the entire history of the world written on a single page.</p>
+            <span class="joyce-voice">The proteiform graph itself is a polyhedron of scripture.</span>
+            <p>They press a <strong>letter fragment</strong> into your hands — or is it just a tea-stained scrap?</p>
+        `,
+        onEnter: () => { addItem('letter'); },
+        choices: [
+            { text: "Try to read the letter fragment", next: "read_letter" },
+            { text: "Take it to Anna Livia — she wrote it, after all", next: "anna_livia" }
+        ]
+    },
+
+    read_letter: {
+        location: "Somewhere · The Letter",
+        text: `
+            <p>You hold the fragment up to the light. The words swim and shift. You can make out:</p>
+            <span class="joyce-voice">"...Dear whom it proceded to mention Maggy well & allathome's health well only the hate turned the mild on the van Houtens and the general's elections with a lovely face of some born gentleman..."</span>
+            <p>It's maddening. Every time you think you've grasped the meaning, it slips away. The letter is about everything and nothing. It is the human condition compressed into illegible scrawl.</p>
+            <p>But holding it, you feel closer to the truth of this dream — whatever that truth might be.</p>
+        `,
+        choices: [
+            { text: "Seek out Anna Livia, the letter's author", next: "anna_livia" },
+            { text: "Bring it to Shem — he can decode anything", next: "shem_den" },
+            { text: "Return to the pub", next: "inside_pub" }
+        ]
+    },
+
+    // --- ACT III: THE FAMILY ---
+    upstairs: {
+        location: "Above the Pub · The Earwicker Residence",
+        text: `
+            <p>The stairs creak beneath you. Upstairs, the family sleeps — or pretends to.</p>
+            <p>In one room, the <strong>twins</strong> lie in their beds. <strong>Shem</strong> (the writer, the outcast, the left hand) mutters in his sleep, composing. <strong>Shaun</strong> (the postman, the favorite, the right hand) snores righteously, a satchel of undelivered letters at his side.</p>
+            <p>In another room, <strong>Issy</strong> sits at her mirror, talking to her reflection. She is every girl who ever lived — temptress and innocent, Isolde and Iseult, the split image of desire.</p>
+            <p>And in the master bedroom, HCE and ALP lie side by side, the whole world between them.</p>
+        `,
+        choices: [
+            { text: "Visit the twins' room — witness their eternal rivalry", next: "twins_room" },
+            { text: "Approach Issy at her mirror", next: "issy_mirror" },
+            { text: "Enter the master bedroom — the dreamer's chamber", next: "master_bedroom" }
+        ]
+        },
+
+    family_quarters: {
+        location: "Behind the Pub · The Garden",
+        text: `
+            <p>The back garden is wild and overgrown. Moonlight catches on broken glass and old bottles. Beyond the garden wall, Phoenix Park stretches dark and vast.</p>
+            <p>You can hear the family through the lit windows above — the murmur of children's voices, a woman humming. The domestic sounds of the Earwicker household, so ordinary, so fragile against the weight of rumor and history.</p>
+            <p>A hen scratches in the midden heap near the back wall. Something glints beneath her claws — paper? A letter?</p>
+        `,
+        choices: [
+            { text: "Investigate what the hen has found", next: "midden_heap" },
+            { text: "Go inside through the back door", next: "inside_pub" },
+            { text: "Climb the garden wall into Phoenix Park", next: "phoenix_park_crime" }
+        ]
+    },
+
+    midden_heap: {
+        location: "The Midden Heap · Behind the Pub",
+        text: `
+            <p>The hen — Biddy Doran is her name, you somehow know — scratches and pecks at the refuse heap. Potato peelings, broken crockery, old newspapers, the detritus of domestic life piled up over years.</p>
+            <p>And there, beneath her claws: a <strong>fragment of the Letter</strong>. Tea-stained, mud-smeared, barely legible. But real. The mamafesta itself, Anna Livia's testament, scratched up from the earth like truth from time.</p>
+            <span class="joyce-voice">Lead, kindly fowl! They always did: ask the ages. What bird has done yesterday man may do next year.</span>
+            <p>You take the fragment carefully. The hen regards you with one bright eye, then returns to her scratching.</p>
+        `,
+        onEnter: () => { addItem('letter'); },
+        choices: [
+            { text: "Try to read the letter fragment", next: "read_letter" },
+            { text: "Go inside the pub", next: "inside_pub" },
+            { text: "Bring it to Anna Livia by the river", next: "anna_livia" }
+        ]
+    },
+
+    phoenix_park_crime: {
+        location: "Phoenix Park · The Scene",
+        text: `
+            <p>The park at night. Vast, dark, ancient. The Magazine Wall looms. The Wellington Monument points at the stars like an accusation.</p>
+            <p>Here is where it happened — or didn't happen — or is always happening. The crime. The sin. The fall. You can feel it in the air like static before lightning.</p>
+            <p>Shadows move. Were those two girls? Three soldiers? A cad with a pipe? The scene shifts and reforms like a dream. Every time you try to fix it, it changes.</p>
+            <span class="joyce-voice">Hay, hay, hay! Hoq, hoq, hoq! Faun and Flora on the lea love that little old joq.</span>
+            <p>What did HCE do here? What does anyone do in the dark of the park?</p>
+        `,
+        choices: [
+            { text: "Accept the mystery — the crime is unknowable", next: "dream_logic" },
+            { text: "Follow the two girls deeper into the park", next: "two_girls" },
+            { text: "Confront the three soldiers", next: "three_soldiers" }
+        ]
+    },
+
+    two_girls: {
+        location: "Phoenix Park · Deeper",
+        text: `
+            <p>Two figures flit between the trees — young women, laughing, their skirts catching on brambles. Are they temptresses? Innocents? Witnesses? Victims?</p>
+            <p>They turn and you see — they have Issy's face. Both of them. The same girl, split in two, reflected in herself like a mirror facing a mirror.</p>
+            <span class="joyce-voice">O, my shining stars and body! How hath fanespanned most high heaven the skysign of soft advertisement!</span>
+            <p>They dissolve into the dark. You are alone with the trees and the ancient guilt of the world.</p>
+        `,
+        choices: [
+            { text: "Return to the pub — enough of this park", next: "pub_exterior" },
+            { text: "Surrender to the dream", next: "dream_logic" },
+            { text: "Seek Anna Livia by the river", next: "anna_livia" }
+        ]
+    },
+
+    three_soldiers: {
+        location: "Phoenix Park · The Magazine Wall",
+        text: `
+            <p>Three soldiers materialize from the gloom — redcoats, or are they modern? Their uniforms shift between centuries. They are witnesses, accusers, judges.</p>
+            <p>"We saw him," they say in unison. "We saw what he did." But when you ask what, exactly, they cannot agree. One says exposure. One says voyeurism. One says nothing at all, just points at the Magazine Wall.</p>
+            <span class="joyce-voice">Tap and pat and tapatagain, three tommix, soldiers free, cockaleak and cappapee.</span>
+            <p>They march away into the dark, leaving you with nothing but the echo of accusation.</p>
+        `,
+        onEnter: () => { state.hceReputation -= 1; },
+        choices: [
+            { text: "Return to the pub to confront HCE", next: "hce_confession" },
+            { text: "Let it go — follow the river instead", next: "anna_livia" },
+            { text: "Accept the unknowable", next: "dream_logic" }
+        ]
+    },
+
+    // --- ACT IV: THE RIVER & THE FAMILY ---
+    anna_livia: {
+        location: "The River Liffey · The Washerwomen",
+        text: `
+            <p>You come to the river. Two women kneel on opposite banks, washing clothes in the dark water, gossiping. Their voices carry across the stream like music.</p>
+            <p>"Tell me all about Anna Livia! I want to hear all about Anna Livia."</p>
+            <p>They speak of <strong>ALP</strong> — Anna Livia Plurabelle — wife, mother, river. How she gathered gifts for all her children. How she defended her husband. How she IS the river, flowing through Dublin, through time, through everything.</p>
+            <span class="joyce-voice">Well, you know Anna Livia? Yes, of course, we all know Anna Livia. Tell me all. Tell me now.</span>
+            <p>As you listen, the light fades. The washerwomen's voices grow distant. One is becoming a tree. The other, a stone.</p>
+        `,
+        choices: [
+            { text: "Call out to them before they transform", next: "washerwomen_call" },
+            { text: "Follow the river downstream toward the sea", next: "river_mouth" },
+            { text: "Go find Shem, the writer-son", next: "shem_den" }
+        ]
+    },
+
+    washerwomen_call: {
+        location: "The River Liffey · Twilight",
+        text: `
+            <p>You call out, but it's too late. One washerwoman has rooted herself into the bank — an elm tree, her arms become branches. The other has settled, grey and silent — a stone on the riverbed.</p>
+            <span class="joyce-voice">Can't hear with the waters of. The chittering waters of. Flittering bats, fieldmice bawk talk. Ho! Are you not gone ahome?</span>
+            <p>Night falls completely. The river murmurs Anna Livia's name. Somewhere, a bell rings. The dream is deepening.</p>
+            <p>But in the last light, you see something caught in the elm's roots — a <strong>fragment of the Letter</strong>, washed downstream from who knows where.</p>
+        `,
+        onEnter: () => { addItem('letter'); },
+        choices: [
+            { text: "Follow the river to the sea — the dream is ending", next: "river_mouth" },
+            { text: "Go back to the pub — the night is not over", next: "inside_pub" },
+            { text: "Descend into deeper dream — find Shem", next: "shem_den" }
+        ]
+    },
+
+    twins_room: {
+        location: "The Twins' Room · Above the Pub",
+        text: `
+            <p>The twins lie in their beds, mirror images of each other and yet utterly opposed.</p>
+            <p><strong>Shem</strong> — the left one, the sinister one — mutters in his sleep, his fingers twitching as if writing. His sheets are stained with ink. He is the artist, the exile, the shame of the family.</p>
+            <p><strong>Shaun</strong> — the right one, the dexter one — sleeps soundly, a postman's bag at his side full of letters he'll never deliver. He is the favorite, the conformist, the hollow man.</p>
+            <span class="joyce-voice">Shem is as short for Shemus as Jem is joky for Jacob.</span>
+            <p>Between them on the floor: a children's riddle book, open to the question: "When is a man not a man?"</p>
+        `,
+        choices: [
+            { text: "Wake Shem — ask him about the Letter", next: "shem_den" },
+            { text: "Take a letter from Shaun's bag", next: "shaun_post" },
+            { text: "Answer the riddle yourself", next: "riddle_answer" }
+        ]
+    },
+
+    riddle_answer: {
+        location: "The Twins' Room · The Riddle",
+        text: `
+            <p>When is a man not a man? You think on it. The answer, Shem's answer, the answer that won him the bitter crab-apple prize:</p>
+            <p><strong>When he is a Sham.</strong></p>
+            <span class="joyce-voice">Shem was a sham and a low sham and his lowness creeped out first via foodstuffs.</span>
+            <p>The room shivers. The twins stir but do not wake. You understand something now — about masks, about doubles, about the self divided against itself. HCE and his sons. The father's sin repeated in the children's war.</p>
+        `,
+        choices: [
+            { text: "Go to Shem's den — the writer's lair", next: "shem_den" },
+            { text: "Follow Shaun on his postal rounds", next: "shaun_post" },
+            { text: "Return downstairs", next: "inside_pub" }
+        ]
+    },
+
+    issy_mirror: {
+        location: "Issy's Room · The Mirror",
+        text: `
+            <p><strong>Issy</strong> sits at her vanity, talking to her reflection. But her reflection talks back — a slightly different Issy, darker, bolder, the shadow-self.</p>
+            <p>"Do you like my whisping?" she asks the mirror. "Is it not divinely deluscious?"</p>
+            <p>She is every girl, every temptress, every daughter. She is Isolde and Iseult, the split image of desire. Her room smells of perfume and secrets.</p>
+            <span class="joyce-voice">I know, pepette, of course, dear, but listen, precious!</span>
+            <p>She notices you in the mirror and smiles — or is it her reflection that smiles?</p>
+        `,
+        choices: [
+            { text: "Ask Issy about her father's crime", next: "issy_secret" },
+            { text: "Leave her to her mirror — go to the master bedroom", next: "master_bedroom" },
+            { text: "Go back downstairs", next: "inside_pub" }
+        ]
+    },
+
+    issy_secret: {
+        location: "Issy's Room · Confession",
+        text: `
+            <p>Issy turns from her mirror, and for a moment she is not a girl but something older, something that has seen everything.</p>
+            <p>"Daddy?" she says. "Oh, Daddy is everybody's daddy. He fell, you know. They all fall. And we pick them up again, don't we? Or we don't. It depends on the weather."</p>
+            <p>She returns to her mirror, humming. Her reflection winks at you independently.</p>
+            <span class="joyce-voice">Sh sh! Longears is flying. No, sweetissest, why would that ennoy me?</span>
+        `,
+        choices: [
+            { text: "Go to the master bedroom", next: "master_bedroom" },
+            { text: "Return downstairs to the pub", next: "inside_pub" },
+            { text: "Follow the river — it's time", next: "river_mouth" }
+        ]
+    },
+
+    master_bedroom: {
+        location: "The Master Bedroom · The Dreamer's Chamber",
+        text: `
+            <p>Here lies the dreamer. <strong>HCE</strong> in his bed, vast as a landscape, his wife <strong>ALP</strong> beside him. The whole book — the whole dream — emanates from this room, from this sleeping giant.</p>
+            <p>His breath rises and falls like tides. In his sleep, he IS Dublin. His body is the city — head at Howth, feet at the Magazine Wall, the Liffey running through him like blood.</p>
+            <span class="joyce-voice">Humph is in his doge. Words weigh no more to him than raindrips to Rethfernhim.</span>
+            <p>ALP stirs beside him. In her sleep, she reaches for his hand. Even now, even after everything, she defends him. She IS the defense. The Letter is her letter.</p>
+            <p>Dawn is approaching. The dream is thinning.</p>
+        `,
+        choices: [
+            { text: "Let them sleep — go to the river. It's time to end.", next: "river_mouth" },
+            { text: "Wake HCE — break the cycle!", next: "wake_hce" },
+            { text: "Lie down beside them — become part of the dream", next: "become_dream" }
+        ]
+    },
+
+    // --- ACT V: SHEM & SHAUN ---
+    shem_den: {
+        location: "Shem's Den · The Haunted Inkbottle",
+        text: `
+            <p>You descend into Shem's lair — a stinking, ink-splattered hovel. The walls are covered in writing — every surface scrawled with words in a hundred languages. The smell is indescribable.</p>
+            <p><strong>Shem the Penman</strong> crouches over his work, writing with ink made from his own body's waste upon his own skin. He is Joyce's self-portrait as a young disgrace.</p>
+            <span class="joyce-voice">He scrabbled and scratched and scriobbled and skrevened nameless shamelessness about everybody ever he met.</span>
+            <p>He looks up at you with red-rimmed eyes. "You want to know the truth? The truth is the writing. The writing is the truth. Everything else is Shaun's lie."</p>
+        `,
+        choices: [
+            { text: "Ask Shem to decode the Letter", next: "shem_decodes" },
+            { text: "Ask him about his father's crime", next: "shem_on_hce" },
+            { text: "Leave this place — find Shaun instead", next: "shaun_post" }
+        ]
+    },
+
+    shem_decodes: {
+        location: "Shem's Den · The Decoding",
+        text: `
+            <p>Shem snatches the letter fragment from you, holds it up to his guttering candle. His lips move. His eyes widen.</p>
+            <p>"It says everything," he whispers. "It says nothing. It's a love letter and a grocery list and a confession and a prayer. It's mother defending father. It's the world defending itself against meaning."</p>
+            <span class="joyce-voice">The proteiform graph itself is a polyhedron of scripture.</span>
+            <p>"You want a simple answer? There ARE no simple answers. That's the whole point. The letter is life. Life is the letter. Now get out of my house."</p>
+            <p>He returns to his writing. You have learned something, though you cannot say what.</p>
+        `,
+        choices: [
+            { text: "Go find Shaun — the other half of the truth", next: "shaun_post" },
+            { text: "Return to the river — dawn approaches", next: "river_mouth" },
+            { text: "Go back to the pub one last time", next: "inside_pub" }
+        ]
+    },
+
+    shem_on_hce: {
+        location: "Shem's Den · On the Father",
+        text: `
+            <p>Shem laughs — a bitter, knowing laugh. "The old man? His crime? Let me tell you about crime. The crime is being alive. The crime is being a father. The crime is being HERE, in this city, in this body, wanting things."</p>
+            <p>"He fell. We all fall. Humpty Dumpty, Finnegan, Adam, Lucifer, HCE. The fall is the beginning. Without the fall, no story. Without the sin, no forgiveness. Without the death, no wake."</p>
+            <span class="joyce-voice">Phall if you but will, rise you must: and none so soon either shall the pharce for the nunce come to a setdown secular phoenish.</span>
+        `,
+        choices: [
+            { text: "Accept this wisdom — go to the river", next: "river_mouth" },
+            { text: "Seek Shaun's simpler truth", next: "shaun_post" },
+            { text: "Return to the dreamer's bedroom", next: "master_bedroom" }
+        ]
+    },
+
+    shaun_post: {
+        location: "The Streets of Dublin · Shaun's Round",
+        text: `
+            <p><strong>Shaun the Post</strong> strides through the sleeping streets, his mailbag heavy with undelivered letters. He is handsome, well-fed, popular — everything his brother is not.</p>
+            <p>But his bag... you notice it never gets lighter. He delivers nothing. He carries the words but never releases them. He is the vessel without the wine.</p>
+            <span class="joyce-voice">Shaun, the brother, the messenger boy, the postman, the letter carrier.</span>
+            <p>"Grand evening!" he calls to you. "Fine night for a constitutional! Nothing to report! All's well! Move along!"</p>
+            <p>He is lying, of course. The letters in his bag are burning.</p>
+        `,
+        choices: [
+            { text: "Demand he deliver the Letter", next: "shaun_delivers" },
+            { text: "Let him pass — follow the river instead", next: "river_mouth" },
+            { text: "Ask him about his father", next: "shaun_on_hce" }
+        ]
+    },
+
+    shaun_delivers: {
+        location: "The Streets · The Undelivered",
+        text: `
+            <p>You block his path. "Deliver the letter," you say. Shaun's handsome face crumples.</p>
+            <p>"I can't," he admits. "I don't know who it's for. I don't know who it's from. I don't know what it says. I just carry it. That's my job. Carrying things I don't understand from people I don't know to people who don't exist."</p>
+            <p>He opens his bag. Inside: hundreds of copies of the same letter, all slightly different, all illegible, all addressed to everyone and no one.</p>
+            <p>He hands you one. Another <strong>fragment of the Letter</strong>.</p>
+        `,
+        onEnter: () => { addItem('letter'); },
+        choices: [
+            { text: "Thank him and go to the river — it's almost dawn", next: "river_mouth" },
+            { text: "Return to the pub for one last drink", next: "inside_pub" }
+        ]
+    },
+
+    shaun_on_hce: {
+        location: "The Streets · Shaun Speaks",
+        text: `
+            <p>"Father?" Shaun puffs up proudly. "A great man. A GREAT man. Builder, publican, citizen. Here Comes Everybody! Whatever they say about him — lies, all lies. Gossip and slander."</p>
+            <p>But his eyes shift. He walks faster. He doesn't want to talk about it.</p>
+            <p>"The past is the past," he says firmly. "I deliver the future. Forward, always forward. No looking back. That's Shem's disease — always looking back, always digging in the midden."</p>
+        `,
+        onEnter: () => { state.hceReputation += 1; },
+        choices: [
+            { text: "Follow the river to the sea", next: "river_mouth" },
+            { text: "Go back to Shem for the other side", next: "shem_den" },
+            { text: "Return to the pub", next: "inside_pub" }
+        ]
+    },
+
+    // --- ACT VI: ENDINGS ---
+    wake_hce: {
+        location: "The Master Bedroom · Waking",
+        text: `
+            <p>You reach out and shake HCE's shoulder. The giant stirs. His eyes open — and they are the eyes of the city, of history, of every man who ever lived and failed and tried again.</p>
+            <p>"Usqueadbaugham!" he cries — the word that woke Finnegan at his wake. Whiskey! The water of life!</p>
+            <p>But as he rises, the dream collapses. The walls dissolve. The pub, the family, the park, the river — all rushing away like water down a drain.</p>
+            <span class="joyce-voice">Soft morning, city! Lsp! I am leafy speafing.</span>
+            <p>Dawn breaks. The cycle begins again.</p>
+        `,
+        choices: [
+            { text: "Let the river carry you back to the beginning", next: "cycle_end" }
+        ]
+    },
+
+    become_dream: {
+        location: "The Dream · Dissolution",
+        text: `
+            <p>You lie down in the space between HCE and ALP, between father and mother, between river and city. You become part of the dream.</p>
+            <p>You ARE the dream now. You are Dublin sleeping. You are the letter unread. You are the crime uncommitted. You are the fall and the rise, the wake and the sleep, the river running to the sea and the sea becoming rain and the rain becoming river again.</p>
+            <span class="joyce-voice">A way a lone a last a loved a long the riverrun, past Eve and Adam's...</span>
+            <p>The cycle turns. Everything begins again.</p>
+        `,
+        choices: [
+            { text: "Return to the river...", next: "cycle_end" }
+        ]
+    },
+
+    river_mouth: {
+        location: "Dublin Bay · Where River Meets Sea",
+        text: `
+            <p>The Liffey widens, slows, spreads herself into the bay. Dawn is breaking over Dublin. The dream is ending — or beginning again.</p>
+            <p>Anna Livia speaks her final monologue, the most beautiful passage in all of literature, as she flows out to sea, out to her father, the ocean:</p>
+            <span class="joyce-voice">Soft morning, city! Lsp! I am leafy speafing... Carry me along, taddy, like you done through the toy fair... Yes, I made it! My leaves have drifted from me. All. But one clings still. I'll bear it on me. To remind me of. Lff!</span>
+            <p>She is old now, Anna Livia. She remembers everything. She forgives everything. She flows into the sea, which is death, which is also the beginning of rain, which will fall again on the mountains, which will become the river again.</p>
+            <p>The last word of the book flows into the first: "the" becomes "riverrun"...</p>
+        `,
+        choices: [
+            { text: "...riverrun, past Eve and Adam's...", next: "cycle_end" }
+        ]
+    },
+
+    cycle_end: {
+        location: "The Cycle Turns",
+        text: `<p></p>`,
+        onEnter: () => { endCycle(); },
+        choices: []
+    }
+};
+
+// ============ GAME LOGIC ============
+
+function addItem(item) {
+    if (!state.inventory.includes(item)) {
+        state.inventory.push(item);
+        updateInventory();
+    }
+}
+
+function updateInventory() {
+    const bar = document.getElementById('inventory-bar');
+    bar.style.display = 'block';
+    state.inventory.forEach(item => {
+        const el = document.getElementById('inv-' + item);
+        if (el) el.classList.add('item-collected');
+    });
+}
+
+function updateCycleCounter() {
+    const el = document.getElementById('cycle-counter');
+    if (state.cycle > 0) {
+        el.textContent = `Cycle ${state.cycle} · Vico's Recirculation`;
+    }
+}
+
+function showScene(sceneId) {
+    state.scene = sceneId;
+    state.visited.add(sceneId);
+
+    const scene = scenes[sceneId];
+    if (!scene) return;
+
+    if (scene.onEnter) scene.onEnter();
+
+    const container = document.getElementById('scene-container');
+    container.style.display = 'flex';
+    document.getElementById('title-screen').style.display = 'none';
+
+    document.getElementById('location-bar').textContent = scene.location;
+
+    const storyEl = document.getElementById('story-text');
+    storyEl.innerHTML = scene.text;
+    storyEl.className = 'fade-in';
+
+    const choicesEl = document.getElementById('choices-game');
+    choicesEl.innerHTML = '';
+
+    scene.choices.forEach((choice, i) => {
+        if (choice.condition && !choice.condition()) return;
+
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn fade-in';
+        btn.style.animationDelay = (0.2 + i * 0.1) + 's';
+        btn.innerHTML = `<span class="choice-symbol">◈</span> ${choice.text}`;
+        btn.onclick = () => {
+            if (choice.onChoose) choice.onChoose();
+            state.choices.push(choice.text);
+            showScene(choice.next);
+        };
+        choicesEl.appendChild(btn);
+    });
+}
+
+function endCycle() {
+    state.cycle++;
+    updateCycleCounter();
+
+    const container = document.getElementById('scene-container');
+    container.style.display = 'none';
+    document.getElementById('inventory-bar').style.display = 'none';
+
+    const gameContainer = document.getElementById('game-container');
+    gameContainer.innerHTML = `
+        <div id="ending-screen" class="fade-in">
+            <h2>...riverrun...</h2>
+            <p>The cycle completes. Anna Livia flows to the sea. The sea becomes cloud. The cloud becomes rain. The rain becomes river.</p>
+            <p><span class="joyce-voice">A way a lone a last a loved a long the</span></p>
+            <p>And so it begins again. As it always has. As it always will.</p>
+            <p style="color: #6aafbf; margin-top: 20px;">Vico's wheel turns. Birth, marriage, death, resurrection.</p>
+            <div class="stats">
+                <p>Cycle ${state.cycle} complete</p>
+                <p>Places visited: ${state.visited.size}</p>
+                <p>Items gathered: ${state.inventory.length}/4</p>
+                <p>HCE's fate: ${state.hceReputation > 0 ? 'Defended' : state.hceReputation < 0 ? 'Condemned' : 'Unknowable'}</p>
+                <p style="margin-top: 16px; color: #4a6a5a; font-style: italic;">
+                    ${state.inventory.length >= 4 ? '"The letter! The litter! And the soother the bitther!" — You found all fragments.' : 
+                      state.inventory.length >= 2 ? '"Can you rede its world?" — Some fragments remain hidden.' :
+                      '"Somewhere, parently, in the ginnandgo gap..." — The Letter eludes you still.'}
+                </p>
+            </div>
+            <div id="choices" style="margin-top: 40px;">
+                <button class="choice-btn" onclick="restartGame()">
+                    <span class="choice-symbol">∞</span> Begin the cycle again...
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function startGame() {
+    state.cycle = state.cycle || 0;
+    state.inventory = [];
+    state.visited = new Set();
+    state.hceReputation = 0;
+    state.choices = [];
+
+    if (state.cycle === 0) state.cycle = 1;
+
+    updateCycleCounter();
+
+    // Show dream overlay briefly
+    const overlay = document.getElementById('dream-overlay');
+    overlay.classList.remove('hidden');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        showScene('riverrun');
+    }, 1500);
+}
+
+function restartGame() {
+    // Rebuild the game container
+    document.getElementById('game-container').innerHTML = `
+        <div id="scene-container" style="display:none;">
+            <div id="location-bar"></div>
+            <div id="story-text"></div>
+            <div id="choices-game"></div>
+        </div>
+    `;
+
+    // Rebuild inventory bar
+    document.getElementById('inventory-bar').innerHTML = `
+        <span id="inv-letter" title="Letter Fragment">✉ Letter</span>
+        <span id="inv-key" title="Pub Key">🗝 Key</span>
+        <span id="inv-salmon" title="Salmon of Wisdom">🐟 Salmon</span>
+        <span id="inv-stone" title="Blarney Stone">🪨 Stone</span>
+    `;
+
+    startGame();
+}
+
+// Generate river background
+function createRiver() {
+    const river = document.getElementById('river-bg');
+    for (let i = 0; i < 20; i++) {
+        const wave = document.createElement('div');
+        wave.className = 'river-wave';
+        wave.style.top = (5 + i * 5) + '%';
+        wave.style.animationDuration = (15 + Math.random() * 20) + 's';
+        wave.style.animationDelay = (-Math.random() * 20) + 's';
+        wave.style.opacity = 0.3 + Math.random() * 0.7;
+        river.appendChild(wave);
+    }
+}
+
+createRiver();
+</script>
+
+</body>
+</html>
