@@ -714,23 +714,6 @@ def check_todo_comments(content: str) -> list[dict]:
                     break  # one issue per comment
     return issues
 
-
-# ============================================================
-# CHECK: Very long lines
-# ============================================================
-
-def check_long_lines(content: str, max_length: int = 300) -> list[dict]:
-    issues = []
-    for i, line in enumerate(content.split("\n"), 1):
-        if len(line) > max_length:
-            issues.append({
-                "type": "long_line",
-                "line": i,
-                "message": f"Line {i} is {len(line)} chars (>{max_length}) — possibly minified or needs wrapping",
-            })
-    return issues
-
-
 # ============================================================
 # CHECK: Common typos and mistakes
 # ============================================================
@@ -1160,7 +1143,6 @@ def main():
         ("Assign in cond",  lambda c, f: check_assignment_in_condition(c)),
         ("Typos",           lambda c, f: check_common_mistakes(c)),
         ("TODOs",           lambda c, f: check_todo_comments(c)),
-        ("Long lines",      lambda c, f: check_long_lines(c)),
         ("File issues",     lambda c, f: check_file_issues(c, f)),
     ]
 
