@@ -488,7 +488,6 @@ The "Migration Map" prints the entire flattened matrix because it wants to show 
 $$h_{\text{last}} = H[n-1]$$
 
 Remember that the $n$ is the number of tokens in the **Inference**-sequence, not in the training sequence, even though the $h_\text{after}$ may be from the training data.
-</span>
 
 This single row $h_{\text{last}}$ is a vector in $d_{\text{model}}$ space. When the model is, for example, $d_{\text{model}}=3$, it is always exactly 3 numbers (but in general, it's always $d_\text{model}$). These 3 numbers are a "compressed summary" of the entire sequence's context, which is why the previous tokens can be "ignored" at this specific final stage, their influence is already baked into that last vector.
 </div>
