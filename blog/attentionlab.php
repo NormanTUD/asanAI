@@ -339,5 +339,5 @@ $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
 <div class="md">
 The diamond you see in the plot is the result of this physics, a word finding its true north by listening to its neighbors.
 
-TODO: Attention doesnt only do it for words that mean different things, it does it for all words and all kinds of relationships.
+TODO: Attention doesn't only do it for words that mean different things, it does it for all words and all kinds of relationships.
 </div>

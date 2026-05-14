@@ -97,4 +97,8 @@ orientable
 stiefel
 sequitur
 submanifolds
+isosurfaces
+isosurface
+gps
+coreference
 vietoris
