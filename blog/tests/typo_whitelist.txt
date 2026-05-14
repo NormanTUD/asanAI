@@ -343,3 +343,7 @@ wwii
 micromorphological
 subpart
 ntm
+jamba
+hypernymy
+visualised
+cyrtostachys

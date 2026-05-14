@@ -113,7 +113,7 @@ Ultimately, the Ishango bone represents the most significant archaeological indi
 <div class="image-row">
 	<figure>
 		<img src="salamic_table.jpg" alt="The Salamis Tablet" />
-		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known surving counting board</figcaption>
+		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known surviving counting board</figcaption>
 	</figure>
 	<figure>
 		<img src="abacus.jpg" alt="The earliest depiction of an Abacus" />

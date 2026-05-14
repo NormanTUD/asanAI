@@ -36,7 +36,7 @@ $$
 $$
 
 **Step 3, Store in a vector database.**
-Save every $(\vec{v}_i,\; \text{chunk\_text}_i,\; \text{metadata}_i)$ triple in a specialised database optimised for nearest-neighbour search (FAISS, Pinecone, Weaviate, Chroma, Qdrant).
+Save every $(\vec{v}_i,\; \text{chunk\_text}_i,\; \text{metadata}_i)$ triple in a specialised database optimised for nearest-neighbor search (FAISS, Pinecone, Weaviate, Chroma, Qdrant).
 
 ### Phase 2: Retrieval + Generation (online, every query)
 
@@ -50,7 +50,7 @@ $$
 \text{sim}(\vec{q}, \vec{v}_i) = \frac{\vec{q} \cdot \vec{v}_i}{\|\vec{q}\| \; \|\vec{v}_i\|}
 $$
 
-Approximate nearest-neighbour algorithms like **HNSW** handle billions of vectors in **&lt; 50 ms**.
+Approximate nearest-neighbor algorithms like **HNSW** handle billions of vectors in **&lt; 50 ms**.
 
 **Step 6, Augment the prompt.**
 The retrieved chunks are prepended to the user's question:
@@ -86,7 +86,7 @@ A vector database is **not** a traditional SQL database. It doesn't search by ke
 
 ### How is search so fast?
 
-Brute-force comparison against millions of vectors would be $O(n \cdot d)$ per query, too slow. Vector DBs use **Approximate Nearest Neighbour (ANN)** algorithms:
+Brute-force comparison against millions of vectors would be $O(n \cdot d)$ per query, too slow. Vector DBs use **Approximate Nearest Neighbor (ANN)** algorithms:
 
 - **HNSW** (Hierarchical Navigable Small World): builds a multi-layer graph. Searching "hops" through the graph, narrowing in on the target region, like navigating a city by jumping between landmarks. *Most popular in production.*
 - **IVF** (Inverted File Index): clusters vectors into Voronoi cells at index time. At query time, only a few nearby cells are searched.
