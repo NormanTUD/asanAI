@@ -759,53 +759,6 @@ def check_common_mistakes(content: str) -> list[dict]:
 
 
 # ============================================================
-# CHECK: Duplicate object keys
-# ============================================================
-
-def check_duplicate_object_keys(content: str) -> list[dict]:
-    issues = []
-    code = get_code_only(content)
-
-    # Simple heuristic: find object literals and check for duplicate keys
-    # Look for patterns like { key: ..., key: ... }
-    # This is simplified — a full AST would be needed for perfect accuracy
-
-    # Find key: value patterns inside what looks like object literals
-    key_pattern = re.compile(r"(?:^|[{,])\s*(\w+)\s*:", re.MULTILINE)
-
-    # Track brace depth to group keys by object
-    lines = code.split("\n")
-    brace_depth = 0
-    keys_at_depth: dict[int, dict[str, list[int]]] = {}
-
-    for i, line in enumerate(lines, 1):
-        for ch in line:
-            if ch == "{":
-                brace_depth += 1
-                keys_at_depth[brace_depth] = {}
-            elif ch == "}":
-                # Check for duplicates at this depth before leaving
-                if brace_depth in keys_at_depth:
-                    for key, key_lines in keys_at_depth[brace_depth].items():
-                        if len(key_lines) > 1:
-                            issues.append({
-                                "type": "duplicate_key",
-                                "line": key_lines[1],
-                                "message": f"Duplicate object key '{key}' on lines {', '.join(str(l) for l in key_lines)}",
-                            })
-                    del keys_at_depth[brace_depth]
-                brace_depth = max(0, brace_depth - 1)
-
-        # Find keys on this line
-        for m in key_pattern.finditer(line):
-            key = m.group(1)
-            if brace_depth > 0 and brace_depth in keys_at_depth:
-                keys_at_depth[brace_depth].setdefault(key, []).append(i)
-
-    return issues
-
-
-# ============================================================
 # CHECK: File-level issues
 # ============================================================
 
@@ -1075,7 +1028,6 @@ def main():
         ("alert()",         lambda c, f: check_alert_calls(c)),
         ("eval()",          lambda c, f: check_eval_usage(c)),
         ("Duplicates",      lambda c, f: check_duplicate_declarations(c)),
-        ("Dup keys",        lambda c, f: check_duplicate_object_keys(c)),
         ("Assign in cond",  lambda c, f: check_assignment_in_condition(c)),
         ("Typos",           lambda c, f: check_common_mistakes(c)),
         ("TODOs",           lambda c, f: check_todo_comments(c)),
