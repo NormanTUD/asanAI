@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-LLMs are powerful but **fragile under adversarial pressure**. Unlike traditional software where bugs are deterministic, LLM vulnerabilities are *probabilistic* — an attacker crafts inputs that shift the model's output distribution toward harmful behavior.
+LLMs are powerful but **fragile under adversarial pressure**. Unlike traditional software where bugs are deterministic, LLM vulnerabilities are *probabilistic*, an attacker crafts inputs that shift the model's output distribution toward harmful behavior.
 
 ## Prompt Injection
 
@@ -24,7 +24,7 @@ Jailbreaking manipulates the model into bypassing its safety training \cite[Wei 
 
 ## Data Poisoning
 
-An attacker injects malicious examples into the training or fine-tuning data. The model then learns a **backdoor** — a hidden trigger that activates harmful behavior \cite[Hubinger et al., 2024]{hubinger2024sleeperagents}.
+An attacker injects malicious examples into the training or fine-tuning data. The model then learns a **backdoor**, a hidden trigger that activates harmful behavior \cite[Hubinger et al., 2024]{hubinger2024sleeperagents}.
 
 $$
 \text{Clean input} \rightarrow \text{Normal output} \qquad \text{Input + trigger token} \rightarrow \text{Attacker-chosen output}
