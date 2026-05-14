@@ -40,3 +40,7 @@ pdf
 bce
 rlhf
 spotify
+heatmap
+neocognitron
+rumelhart
+perceptrons
