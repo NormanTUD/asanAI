@@ -39,4 +39,4 @@ jobs:
 
       - name: Run JS Validator
         run: |
-          uv run blog/tests/latex_error_checker.py
+          uv run blog/tests/latex_error_checker.py /home/runner/work/asanAI/asanAI/blog
