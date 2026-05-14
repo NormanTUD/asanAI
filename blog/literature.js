@@ -1,4 +1,23 @@
 window.bibData = {
+	"racter1984": {
+		title: "The Policeman's Beard Is Half Constructed: Computer Prose and Poetry by Racter",
+		author: "Racter (William Chamberlain, Thomas Etter)",
+		year: 1984,
+		url: "https://f17webadvanced.teachinginter.net/contents/pdfs/RACTER_Policemans-Beard.pdf"
+	},
+	"strachey1952": {
+		title: "Love Letter Generator (Manchester Mark I)",
+		author: "Christopher Strachey",
+		year: 1952,
+		url: "https://grandtextauto.soe.ucsc.edu/2005/08/01/christopher-strachey-first-digital-artist/"
+	},
+	"lutz1959": {
+		title: "Stochastische Texte",
+		author: "Theo Lutz",
+		year: 1959,
+		url: "http://www.stuttgarter-schule.de/lutz_schule_en.htm"
+	},
+
 	"masuoka1987": {
 		title: "New Ultra High Density EPROM and Flash EEPROM with NAND Structure",
 		author: "Fujio Masuoka, Masamichi Asano, Hidemi Iwahashi, Tetsuo Komuro, Susumu Tanaka",
