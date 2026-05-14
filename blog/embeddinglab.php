@@ -664,7 +664,7 @@ Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\|
 
 Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary. Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.
 
-\citeauthorlastnameand{poincareembeddings} have shown that, by chosing a Poincaré Embedding Space, the number of dimensions required could be drastically removed in some instances.
+\citeauthorlastnameand{poincareembeddings} have shown that, by choosing a Poincaré Embedding Space, the number of dimensions required could be drastically removed in some instances.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
