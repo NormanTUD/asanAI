@@ -399,6 +399,13 @@ def check_bracket_balance(content: str) -> list[dict]:
             continue
 
         if ch == "'":
+            # In PHP, a single-quoted string never starts immediately after
+            # an alphanumeric character.  An apostrophe preceded by a letter
+            # or digit (e.g. "master's", "don't", "it's") is natural-language
+            # punctuation, not a PHP string delimiter — skip it.
+            if i > 0 and content[i - 1].isalnum():
+                i += 1
+                continue
             in_single_quote = True
             i += 1
             continue
@@ -453,7 +460,6 @@ def check_bracket_balance(content: str) -> list[dict]:
         })
 
     return issues
-
 
 # ============================================================
 # ADDITIONAL CHECKS
