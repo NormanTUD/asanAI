@@ -33,3 +33,6 @@ lookup
 perceptron
 hasn
 xor
+wasn
+lebombo
+combinatorics
