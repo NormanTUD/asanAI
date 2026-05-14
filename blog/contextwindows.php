@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-Every time you send a message to an LLM, the model doesn't "remember" your previous conversations from some internal database. It doesn't have a persistent memory like a human brain. Instead, it reads **everything** — the system prompt, the conversation history, any retrieved documents — as a single, flat sequence of tokens. This sequence is the **context window**, and it is the LLM's entire universe of awareness for that single inference.
+Every time you send a message to an LLM, the model doesn't "remember" your previous conversations from some internal database. It doesn't have a persistent memory like a human brain. Instead, it reads **everything**, the system prompt, the conversation history, any retrieved documents, as a single, flat sequence of tokens. This sequence is the **context window**, and it is the LLM's entire universe of awareness for that single inference.
 
 $$
 \text{Context Window} = [\underbrace{\text{System Prompt}}_{\sim 500 \text{ tokens}} \;|\; \underbrace{\text{Conversation History}}_{\text{variable}} \;|\; \underbrace{\text{Retrieved Docs (RAG)}}_{\text{variable}} \;|\; \underbrace{\text{Current Query}}_{\text{variable}}]
@@ -31,7 +31,7 @@ A context window (also called "context length") is the **maximum number of token
 | Claude Opus 4 (2025) | 200,000 tokens | ~150K words |
 | GPT-4.1 (2025) | 1,000,000 tokens | ~750K words |
 
-The growth has been exponential: from 1K tokens in 2019 to 1M+ tokens in 2025 — a **1000x increase** in just 6 years.
+The growth has been exponential: from 1K tokens in 2019 to 1M+ tokens in 2025, a **1000x increase** in just 6 years.
 
 ### Tokens ≠ Words
 
@@ -46,7 +46,7 @@ $$
 
 ## Why Does the Context Window Exist?
 
-The context window isn't an arbitrary limitation — it emerges from the **architecture** of the Transformer itself.
+The context window isn't an arbitrary limitation, it emerges from the **architecture** of the Transformer itself.
 
 ### The Self-Attention Bottleneck
 
@@ -58,8 +58,8 @@ $$
 
 The $QK^T$ matrix has dimensions $n \times n$. This means:
 
-- **Compute:** $O(n^2 \cdot d)$ — quadratic in sequence length
-- **Memory:** $O(n^2)$ — the attention matrix must be stored for backpropagation
+- **Compute:** $O(n^2 \cdot d)$, quadratic in sequence length
+- **Memory:** $O(n^2)$, the attention matrix must be stored for backpropagation
 
 | Context Length | Attention Matrix Size | Memory (float16) |
 |---------------|----------------------|------------------|
@@ -69,7 +69,7 @@ The $QK^T$ matrix has dimensions $n \times n$. This means:
 | 128,000 | 16B entries | ~32 GB |
 | 1,000,000 | 1T entries | ~2 TB |
 
-At 1 million tokens, the naive attention matrix would require **2 terabytes** of memory — clearly impossible. So how do modern models handle it?
+At 1 million tokens, the naive attention matrix would require **2 terabytes** of memory, clearly impossible. So how do modern models handle it?
 
 ## How Models Achieve Long Context
 
@@ -81,7 +81,7 @@ $$
 \text{For token } t: \quad K_t = [K_1, K_2, \ldots, K_{t-1}, K_t], \quad V_t = [V_1, V_2, \ldots, V_{t-1}, V_t]
 $$
 
-Each new token only computes its own $Q_t$ and attends to the cached $K$ and $V$ from all previous tokens. This reduces generation from $O(n^2)$ to $O(n)$ per token — but the cache itself grows linearly with sequence length.
+Each new token only computes its own $Q_t$ and attends to the cached $K$ and $V$ from all previous tokens. This reduces generation from $O(n^2)$ to $O(n)$ per token, but the cache itself grows linearly with sequence length.
 
 **KV Cache Memory:**
 
@@ -94,11 +94,11 @@ $$
 2 \times 80 \times 64 \times 128 \times 128{,}000 \times 2 \text{ bytes} \approx 167 \text{ GB}
 $$
 
-This is why long-context inference requires enormous GPU memory — the KV cache alone can exceed the model weights.
+This is why long-context inference requires enormous GPU memory, the KV cache alone can exceed the model weights.
 
 ### 2. Flash Attention: Taming the Quadratic Beast
 
-**Flash Attention** (Tri Dao, 2022) doesn't change the *math* of attention — it changes the *memory access pattern*. Instead of materializing the full $n \times n$ attention matrix in GPU high-bandwidth memory (HBM), it:
+**Flash Attention** (Tri Dao, 2022) doesn't change the *math* of attention, it changes the *memory access pattern*. Instead of materializing the full $n \times n$ attention matrix in GPU high-bandwidth memory (HBM), it:
 
 1. Splits $Q$, $K$, $V$ into small blocks that fit in fast SRAM
 2. Computes attention block-by-block
@@ -118,7 +118,7 @@ $$
 \text{Attention}_i = \text{softmax}\left(\frac{Q_i \cdot K_{[i-w:i]}^T}{\sqrt{d_k}}\right) V_{[i-w:i]}
 $$
 
-With a window of $w = 4096$, a 128K-token sequence uses $O(n \cdot w)$ instead of $O(n^2)$ — a massive reduction.
+With a window of $w = 4096$, a 128K-token sequence uses $O(n \cdot w)$ instead of $O(n^2)$, a massive reduction.
 
 **But doesn't this lose long-range information?** In deep networks, information propagates across layers. If layer 1 sees tokens $[0, 4096]$ and layer 2 sees the *output* of layer 1 (which already encodes information from $[0, 4096]$), then layer 2 effectively has indirect access to a much wider range. After $L$ layers with window $w$, the effective receptive field is $L \times w$.
 
@@ -132,7 +132,7 @@ Standard multi-head attention uses separate $K$ and $V$ projections for each hea
 | Grouped-Query (GQA) | 8 | 64 | 12.5% |
 | Multi-Query (MQA) | 1 | 64 | 1.6% |
 
-GQA reduces KV cache memory by 8x with minimal quality loss — essential for serving long-context models.
+GQA reduces KV cache memory by 8x with minimal quality loss, essential for serving long-context models.
 
 ### 5. Ring Attention / Sequence Parallelism
 
@@ -180,11 +180,11 @@ This is one of the most important practical decisions in building LLM applicatio
         <span class="cwlab-tag cwlab-tag-blue">Long Context ("Stuff it all in")</span>
         <ul>
             <li>Put all documents directly into the prompt</li>
-            <li>Simple — no retrieval infrastructure needed</li>
+            <li>Simple, no retrieval infrastructure needed</li>
             <li>Model sees everything, can find unexpected connections</li>
             <li><strong>Cost:</strong> Pay for all tokens, even irrelevant ones</li>
             <li><strong>Limit:</strong> Still bounded by max context length</li>
-            <li><strong>Risk:</strong> "Lost in the middle" — may miss buried facts</li>
+            <li><strong>Risk:</strong> "Lost in the middle", may miss buried facts</li>
         </ul>
     </div>
     <div class="cwlab-compare-card cwlab-card-green">
@@ -205,13 +205,13 @@ This is one of the most important practical decisions in building LLM applicatio
 
 | Situation | Best Approach |
 |-----------|--------------|
-| Small document set (< 50 pages) | Long context — just put it all in |
-| Large corpus (1000+ documents) | RAG — can't fit everything |
-| Need to find unexpected connections | Long context — model sees everything |
-| Need precise, targeted answers | RAG — retrieves exactly what's relevant |
-| Cost-sensitive application | RAG — uses fewer tokens per query |
-| Simple Q&A over a single PDF | Long context — no infrastructure needed |
-| Production system with many users | RAG — amortized indexing cost |
+| Small document set (< 50 pages) | Long context, just put it all in |
+| Large corpus (1000+ documents) | RAG, can't fit everything |
+| Need to find unexpected connections | Long context, model sees everything |
+| Need precise, targeted answers | RAG, retrieves exactly what's relevant |
+| Cost-sensitive application | RAG, uses fewer tokens per query |
+| Simple Q&A over a single PDF | Long context, no infrastructure needed |
+| Production system with many users | RAG, amortized indexing cost |
 
 ### The Best of Both Worlds
 
@@ -225,7 +225,7 @@ RAG handles the *discovery* problem (finding needles in haystacks), while long c
 
 ## How LLMs "Remember" Across Conversations
 
-LLMs have **no built-in persistent memory**. Each API call is stateless — the model has no idea what you asked it yesterday. So how do systems like ChatGPT seem to "remember" you?
+LLMs have **no built-in persistent memory**. Each API call is stateless, the model has no idea what you asked it yesterday. So how do systems like ChatGPT seem to "remember" you?
 
 ### Strategy 1: Conversation History in Context
 
@@ -288,11 +288,11 @@ User memories:
 - User is working on a RAG system for legal documents
 """
 
-# The LLM sees these memories as part of its context — it has no
+# The LLM sees these memories as part of its context, it has no
 # "internal" awareness that these are from previous sessions.</code></pre>
 
 <div class="md">
-The key insight: **memory is always external**. The LLM itself is stateless — it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation. In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored. Four layers working together create the illusion that ChatGPT knows you personally.
+The key insight: **memory is always external**. The LLM itself is stateless, it's the surrounding system that creates the illusion of continuity by carefully managing what goes into the context window at the start of each interaction. ChatGPT's memory works through a combination of detection of memory-worthy information, storing of such information, and retrieval-augmented generation. In addition to saved memories, it now references all past conversations to deliver responses that feel more relevant and tailored. Four layers working together create the illusion that ChatGPT knows you personally.
 
 ### Strategy 3: Compaction (Summarize and Continue)
 
@@ -302,7 +302,7 @@ $$
 \underbrace{[S, M_1, M_2, \ldots, M_{100}]}_{\text{Full history (approaching limit)}} \;\xrightarrow{\text{compaction}}\; \underbrace{[S, \text{Summary}, M_{99}, M_{100}]}_{\text{Compressed (fits again)}}
 $$
 
-This is lossy — details are inevitably lost in summarization. But combined with external memory files, critical information can persist across compaction boundaries.
+This is lossy, details are inevitably lost in summarization. But combined with external memory files, critical information can persist across compaction boundaries.
 
 ### The Memory Hierarchy
 
@@ -321,7 +321,7 @@ $$
 
 ## The KV Cache: The Hidden Memory Tax
 
-Every token the model has ever seen in the current session lives in the **KV cache** — and this cache consumes GPU memory that grows linearly with context length.
+Every token the model has ever seen in the current session lives in the **KV cache**, and this cache consumes GPU memory that grows linearly with context length.
 
 ### Why this matters for users:
 
@@ -332,7 +332,7 @@ Every token the model has ever seen in the current session lives in the **KV cac
 | 128K tokens | ~167 GB | Expensive, slower |
 | 1M tokens | ~1.3 TB | Requires multi-GPU, very expensive |
 
-This is why **longer conversations cost more** — both in money (API pricing is per-token) and in latency (more KV cache = slower generation). It's also why providers set context limits: the memory cost is real and physical.
+This is why **longer conversations cost more**, both in money (API pricing is per-token) and in latency (more KV cache = slower generation). It's also why providers set context limits: the memory cost is real and physical.
 
 ### KV Cache Optimization Techniques
 
@@ -411,6 +411,6 @@ Research is pushing toward effectively unlimited context through several approac
     <div id="cwlab-stats"></div>
     <details class="cwlab-details">
         <summary>What does this show?</summary>
-        <p>The bar represents the model's context window. The system prompt (always present) is shown in blue. Each message you add consumes space. When the window fills up, the system must either truncate old messages (red) or summarize them (yellow). RAG chunks are shown in green — notice how they consume context budget but provide targeted information. In production, the system carefully manages this budget to maximize useful information while staying within limits.</p>
+        <p>The bar represents the model's context window. The system prompt (always present) is shown in blue. Each message you add consumes space. When the window fills up, the system must either truncate old messages (red) or summarize them (yellow). RAG chunks are shown in green, notice how they consume context budget but provide targeted information. In production, the system carefully manages this budget to maximize useful information while staying within limits.</p>
     </details>
 </div>
