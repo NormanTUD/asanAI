@@ -58,6 +58,9 @@ rechenmaschine
 rosenblatts
 connectionism
 morphisms
+sms
+behavioural
+kapp
 zipf
 covariate
 versa
