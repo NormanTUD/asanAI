@@ -1,4 +1,22 @@
 window.bibData = {
+	"leibniz1714monadology": {
+		title: "Monadologie",
+		author: "Gottfried Wilhelm Leibniz",
+		year: 1714,
+		url: "https://www.plato-philosophy.org/wp-content/uploads/2016/07/The-Monadology-1714-by-Gottfried-Wilhelm-LEIBNIZ-1646-1716.pdf"
+	},
+	"heidegger1935metaphysics": {
+		title: "Einführung in die Metaphysik",
+		author: "Martin Heidegger",
+		year: 1935,
+		url: "https://archive.org/details/einfhrungindieme0000heid"
+	},
+	"joaxian_nothing": {
+		title: "Why There Is Something Rather Than Nothing: The Instability of Nothingness",
+		author: "Joaxian",
+		year: 2020,
+		url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html"
+	},
 	"brain2012otavia": {
 		title: "The First Animals: ca. 760-Million-Year-Old Sponge-Like Fossils from Namibia",
 		author: "Courtney K. Brain, Anthony R. Prave, Karl-Heinz Hoffmann, Anthony E. Fallick, Andre Botha, Donald A. Herd, Craig Sturrock, Iain Young, Daniel J. Condon, Stuart G. Allison",
