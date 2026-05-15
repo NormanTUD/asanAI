@@ -6,7 +6,17 @@
 When you ask ChatGPT, Claude, or Gemini a question that requires up-to-date information, the model doesn't "browse the internet" the way you do. Instead, a **tool-use pipeline** orchestrates a series of API calls, content fetches, and text extractions *before* the LLM ever generates a single token of its answer.
 
 $$
-\text{User Query} \;\xrightarrow{\text{intent detection}}\; \text{Search API call} \;\xrightarrow{\text{fetch URLs}}\; \text{Extract text} \;\xrightarrow{\text{chunk \& rank}}\; \text{Augmented Prompt} \;\rightarrow\; \text{LLM Answer}
+\begin{gathered}
+\text{User Query} \\
+\downarrow \hspace{5pt} \text{\scriptsize intent detection} \\
+\text{Search API call} \\
+\downarrow \hspace{5pt} \text{\scriptsize fetch URLs} \\
+\text{Extract text} \\
+\downarrow \hspace{5pt} \text{\scriptsize chunk \& rank} \\
+\text{Augmented Prompt} \\
+\downarrow \\
+\text{LLM Answer}
+\end{gathered}
 $$
 
 **Key insight:** The LLM itself cannot "see" the internet. It relies on **external tools**, search APIs, web scrapers, and content parsers, that are orchestrated by a surrounding system. The LLM's role is to *decide when to search*, *formulate the query*, and *synthesize the results*.
