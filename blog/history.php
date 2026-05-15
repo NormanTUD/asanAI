@@ -58,7 +58,7 @@ invertebrates made visible by burning landscapes, as described by
 \citeauthorlastnameand{controlleduseoffire}.
 
 Over time, these simple interactions
-were stretched in space and time, pushing toward a division of labour
+were stretched in space and time, pushing toward a division of labor
 in which slow-burning materials had to be selected and guarded while
 other subsistence activities continued.
 
