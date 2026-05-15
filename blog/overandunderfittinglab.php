@@ -52,7 +52,7 @@ $$
 w_i \;\leftarrow\; w_i \;-\; \eta \,\frac{\partial\,\text{MSE}}{\partial\, w_i}
 $$
 
-The scalar $\eta$ is the **learning rate**, it controls how large each step is. Too large and the model overshoots; too small and training takes forever. We use the **Adam** optimiser (a popular variant of gradient descent that adapts the learning rate automatically) with $\eta = 0.01$.
+The scalar $\eta$ is the **learning rate**, it controls how large each step is. Too large and the model overshoots; too small and training takes forever. We use the **Adam** optimizer (a popular variant of gradient descent that adapts the learning rate automatically) with $\eta = 0.01$.
 
 One complete pass through the entire training dataset is called an **epoch**. The epoch counter in the control panel shows how many full passes the model has completed.
 
@@ -88,7 +88,7 @@ In practice, we never know the true function (here we do, it's $\sin(x)$). Inste
 1. **Underfitting (High Bias):** Set the **Degree** to **1** or **2** and train. The red line is too rigid to follow the wave, even inside the training window.
 2. **Overfitting (High Variance):** Set the **Degree** to **10**, crank the **Noise** up, and train. Watch the red line contort itself to touch every noisy dot.
 3. **The Extrapolation Trap:** No matter how good the fit looks *inside* the blue box, observe what happens *outside* it. The red line almost always rockets toward $\pm\infty$.
-4. **Regularisation:** Toggle **L2 Regularisation** on and repeat experiment 2. Notice how the curve becomes smoother and the weights stay smaller, even at high degree.
+4. **Regularization:** Toggle **L2 Regularization** on and repeat experiment 2. Notice how the curve becomes smoother and the weights stay smaller, even at high degree.
 
 </div>
 
@@ -115,7 +115,7 @@ In practice, we never know the true function (here we do, it's $\sin(x)$). Inste
                    style="width:100%; margin-bottom:18px;">
 
             <label style="display:block; margin-bottom:6px;">
-                <strong>L2 Regularisation (λ):</strong>
+                <strong>L2 Regularization (λ):</strong>
                 <span id="label-lambda" style="font-weight:bold; color:#22c55e;">0.000</span>
             </label>
             <input type="range" id="slider-lambda" min="0" max="0.1" step="0.001" value="0"
@@ -217,13 +217,13 @@ $$
 on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of nodes increases, the interpolating polynomial converges at the centre but diverges wildly near $x = \pm 1$. The maximum error actually *grows* without bound.
 </div>
 
-## Taming the "Wiggle": Regularisation & Dropout
+## Taming the "Wiggle": Regularization & Dropout
 
 To prevent a model from chasing noise or exhibiting \citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorisation.
 
-### L1 & L2 Regularisation (Weight Penalties)
+### L1 & L2 Regularization (Weight Penalties)
 
-Without constraints, the weight vector $\mathbf{w}$ can explode to enormous values just to force the curve through every noisy dot. Regularisation adds a **penalty term** to the loss:
+Without constraints, the weight vector $\mathbf{w}$ can explode to enormous values just to force the curve through every noisy dot. Regularization adds a **penalty term** to the loss:
 
 | Method | Penalty | Effect |
 |--------|---------|--------|
@@ -240,11 +240,11 @@ $$
 $$
 
 <div class="md">
-**Try it now:** Use the **L2 Regularisation (λ)** slider above. Set the degree to 10, add noise, train, then gradually increase $\lambda$. Watch the red curve smooth out and the test MSE drop, even as training MSE rises slightly. That's the tradeoff: you sacrifice a little training accuracy for much better generalisation.
+**Try it now:** Use the **L2 Regularization (λ)** slider above. Set the degree to 10, add noise, train, then gradually increase $\lambda$. Watch the red curve smooth out and the test MSE drop, even as training MSE rises slightly. That's the tradeoff: you sacrifice a little training accuracy for much better generalisation.
 
-<div class="optional md" data-headline="The History of Regularisation">
+<div class="optional md" data-headline="The History of Regularization">
 
-The idea of penalising solution complexity predates machine learning by decades. **\citeauthor{earlyl2}** (\citeyear{earlyl2}) independently developed what we now call L2 regularisation in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output. In statistics, \citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \citeyear{hoerl1970ridge} as **Ridge Regression**. \citeauthor{tibshirani1996lasso}'s **LASSO** (\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.
+The idea of penalising solution complexity predates machine learning by decades. **\citeauthor{earlyl2}** (\citeyear{earlyl2}) independently developed what we now call L2 regularization in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output. In statistics, \citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \citeyear{hoerl1970ridge} as **Ridge Regression**. \citeauthor{tibshirani1996lasso}'s **LASSO** (\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.
 
 </div>
 
@@ -274,7 +274,7 @@ The curve's behaviour outside the blue box mirrors a core challenge of modern AI
 * The root cause is identical, the model has no concept of the underlying "periodicity" or universal truth; it only sees the local trend of its training window.
 
 **Technical mitigation:**
-* **Regularisation** (L1 / L2) penalizes overly complex internal representations, keeping the model's "curve" smoother in uncharted territory.
+* **regularization** (L1 / L2) penalizes overly complex internal representations, keeping the model's "curve" smoother in uncharted territory.
 * **Dropout** prevents co-adaptation of features, improving robustness to distribution shift.
 * Together, they ensure the model does not "chase the noise" (high variance), which is precisely what makes high-degree polynomials, and over-parameterised neural networks, so erratic at the edges.
 
@@ -286,7 +286,7 @@ When models become *extremely* overparameterised, far past the point where they 
 
 The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the "simplest" one (in a minimum-norm sense), which generalises well. This challenges the simple "more parameters = more overfitting" narrative and is an active area of research.
 
-Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterised, provided they are trained with enough data and appropriate regularisation.
+Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterised, provided they are trained with enough data and appropriate regularization.
 
 </div>
 
