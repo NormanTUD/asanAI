@@ -647,7 +647,7 @@ def main():
 
     if not php_files:
         console.print("[bold yellow]No PHP files found for the given input(s).[/]")
-        sys.exit(0)
+        sys.exit(255)
 
     console.print(f"[bold]Found:[/] {len(php_files)} PHP file(s)\n")
 
@@ -850,7 +850,7 @@ def main():
         ))
 
     # Exit code: 0 always (typos are advisory, not blocking)
-    sys.exit(0)
+    sys.exit(1 if total_typos > 0 else 0)
 
 
 if __name__ == "__main__":
