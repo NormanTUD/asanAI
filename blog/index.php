@@ -21,7 +21,6 @@
 <div id="contents" style="display: none">
 <?php
 	#incl('Derivatives: How AI "Learns" to get better', "derivativelab");
-	#incl("Topology and the Geometry of Thought", "topology");
 
 	incl("From Stone Age Tools to ChatGPT: Beyond the Black Box", "intro");
 	incl("An Intuition of how Large Language Models (LLMs) work", "intuition");
@@ -48,6 +47,7 @@
 	incl("Positional Embeddings", "positionalembeddingslab");
 	incl("Temperature & Sampling", "samplinglab");
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
+	incl("Topology and the Geometry of Thought", "topology");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
 	incl("Retrieval-Augmented Generation: Giving LLMs a Search Engine", "rag");
