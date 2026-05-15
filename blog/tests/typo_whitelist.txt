@@ -406,6 +406,18 @@ vec
 bot
 tri
 sholes
+hol
+parameterized
+overparameterized
+unstandardized
+ini
+amari
+etter
+schr
+rad
+usd
+gau
+lya
 berners
 cern
 pcie
@@ -475,3 +487,5 @@ counterposition
 jiba
 jabr
 jayb
+mayim
+bayt

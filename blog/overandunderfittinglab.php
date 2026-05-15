@@ -276,17 +276,17 @@ The curve's behaviour outside the blue box mirrors a core challenge of modern AI
 **Technical mitigation:**
 * **regularization** (L1 / L2) penalizes overly complex internal representations, keeping the model's "curve" smoother in uncharted territory.
 * **Dropout** prevents co-adaptation of features, improving robustness to distribution shift.
-* Together, they ensure the model does not "chase the noise" (high variance), which is precisely what makes high-degree polynomials, and over-parameterised neural networks, so erratic at the edges.
+* Together, they ensure the model does not "chase the noise" (high variance), which is precisely what makes high-degree polynomials, and over-parameterized neural networks, so erratic at the edges.
 
 <div class="optional md" data-headline="Double Descent: When More Parameters Help Again">
 
 The classical bias–variance tradeoff predicts a clean U-shaped test-error curve: error falls as complexity increases, hits a minimum, then rises as the model overfits. But recent research has revealed a surprising twist called **double descent**.
 
-When models become *extremely* overparameterised, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*. This has been observed in deep neural networks, random forests, and even simple linear models.
+When models become *extremely* overparameterized, far past the point where they can perfectly interpolate the training data, test error can start *decreasing again*. This has been observed in deep neural networks, random forests, and even simple linear models.
 
 The intuition: once a model has vastly more parameters than data points, there are many possible perfect-fit solutions, and gradient descent tends to find the "simplest" one (in a minimum-norm sense), which generalises well. This challenges the simple "more parameters = more overfitting" narrative and is an active area of research.
 
-Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterised, provided they are trained with enough data and appropriate regularization.
+Here, double descent is not visible because our polynomial degrees stay low. But it explains why modern LLMs with billions of parameters can generalise well despite being massively overparameterized, provided they are trained with enough data and appropriate regularization.
 
 </div>
 
