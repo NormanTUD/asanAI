@@ -973,7 +973,7 @@ window.bibData = {
 		year: 2019,
 		author: "Mikhail Belkin, Daniel Hsu, Siyuan Ma, Soumik Mandal"
 	},
-	"caleygroups": {
+	"cayleygroups": {
 		url: "https://www.jstor.org/stable/2369415",
 		title: "On the Theory of Groups",
 		year: 1889,
