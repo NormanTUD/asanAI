@@ -39,7 +39,7 @@ The "Knowledge Argument" or \citealternativetitle{jackson1982epiphenomenal} posi
 
 If so, the world cannot be physical alone. There must be something else, that is, *subjective experience*. Philosophers call this *Qualia*, which means the subjective experience of things from the subjective perspective. This qualia may or may not be result from the physical world, but it isn't simply the same, therefore, there must be more than the purely physical world, the thought-experiment suggests.
 
-In the context of AI, this suggests that an LLM could be the world's greatest "Mary." It can define "red" using every linguistic and physical parameter available in its training data and all the occurences it has seen it in:
+In the context of AI, this suggests that an LLM could be the world's greatest "Mary." It can define "red" using every linguistic and physical parameter available in its training data and all the occurrences it has seen it in:
 * **LLM Knowledge:** "Red is the perception of light with a wavelength of approximately $700\text{ nm}$", "an apple is red", "red is 'rot' in German and 'rouge' in French", "the stem of the Cyrtostachys-Renda-Palm is red", and so on and so forth, but:
 * **The Missing Piece:** The subjective *experience* (Qualia).
 
