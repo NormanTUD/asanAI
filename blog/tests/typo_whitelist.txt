@@ -394,3 +394,17 @@ vgg
 cayley
 deriv
 cas
+vec
+bot
+tri
+sholes
+berners
+cern
+pcie
+pci
+hdds
+allreduce
+shaders
+nvlink
+keras
+rajat
