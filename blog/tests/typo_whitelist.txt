@@ -382,6 +382,8 @@ khadim
 givest
 goodhart
 farnsworth
+mmlu
+eval
 xng
 dbs
 vgg
