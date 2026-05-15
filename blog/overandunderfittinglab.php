@@ -204,7 +204,7 @@ Large Language Models (LLMs) are neural networks with billions of parameters, po
 
 ### Runge's Phenomenon
 
-When you use high-degree polynomials to fit data, you often see violent oscillations near the edges of the training interval. This is known as \citealternativetitle{rungesphenomenon} (pp. 224–243). Even when the fit is excellent in the centre, the tails of the polynomial whip around unpredictably, rendering the model useless for prediction beyond its training window.
+When you use high-degree polynomials to fit data, you often see violent oscillations near the edges of the training interval. This is known as \citealternativetitle{rungesphenomenon} (pp. 224–243). Even when the fit is excellent in the center, the tails of the polynomial whip around unpredictably, rendering the model useless for prediction beyond its training window.
 
 <div class="optional md" data-headline="Runge's Original Example (1901)">
 
@@ -214,12 +214,12 @@ $$
 f(x) = \frac{1}{1 + 25x^2}
 $$
 
-on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of nodes increases, the interpolating polynomial converges at the centre but diverges wildly near $x = \pm 1$. The maximum error actually *grows* without bound.
+on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of nodes increases, the interpolating polynomial converges at the center but diverges wildly near $x = \pm 1$. The maximum error actually *grows* without bound.
 </div>
 
 ## Taming the "Wiggle": Regularization & Dropout
 
-To prevent a model from chasing noise or exhibiting \citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorisation.
+To prevent a model from chasing noise or exhibiting \citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.
 
 ### L1 & L2 Regularization (Weight Penalties)
 
@@ -230,7 +230,7 @@ Without constraints, the weight vector $\mathbf{w}$ can explode to enormous valu
 | **L1, Lasso** (\citeauthor{tibshirani1996lasso}, \citeyear{tibshirani1996lasso}) | $\lambda \sum_{j} \| w_j \|$ | Drives unimportant weights to **exactly zero** → automatic feature selection. |
 | **L2, Ridge** (first described by \citeauthor{hoerl1970ridge} in \citeyear{hoerl1970ridge}) | $\lambda \displaystyle\sum_{j} w_j^{2}$ | Shrinks all weights toward zero → produces a **smoother** curve. |
 
-The regularised losses therefore become:
+The regularized losses therefore become:
 </div>
 
 $$
@@ -240,11 +240,11 @@ $$
 $$
 
 <div class="md">
-**Try it now:** Use the **L2 Regularization (λ)** slider above. Set the degree to 10, add noise, train, then gradually increase $\lambda$. Watch the red curve smooth out and the test MSE drop, even as training MSE rises slightly. That's the tradeoff: you sacrifice a little training accuracy for much better generalisation.
+**Try it now:** Use the **L2 Regularization (λ)** slider above. Set the degree to 10, add noise, train, then gradually increase $\lambda$. Watch the red curve smooth out and the test MSE drop, even as training MSE rises slightly. That's the tradeoff: you sacrifice a little training accuracy for much better generalization.
 
 <div class="optional md" data-headline="The History of Regularization">
 
-The idea of penalising solution complexity predates machine learning by decades. **\citeauthor{earlyl2}** (\citeyear{earlyl2}) independently developed what we now call L2 regularization in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output. In statistics, \citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \citeyear{hoerl1970ridge} as **Ridge Regression**. \citeauthor{tibshirani1996lasso}'s **LASSO** (\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.
+The idea of penalizing solution complexity predates machine learning by decades. **\citeauthor{earlyl2}** (\citeyear{earlyl2}) independently developed what we now call L2 regularization in the context of solving ill-posed integral equations, problems where small perturbations in the input cause enormous changes in the output. In statistics, \citeauthor{hoerl1970ridge} and Kennard reintroduced the technique in \citeyear{hoerl1970ridge} as **Ridge Regression**. \citeauthor{tibshirani1996lasso}'s **LASSO** (\citeyear{tibshirani1996lasso}) added the L1 variant, whose key innovation was producing *sparse* solutions, models that automatically ignore irrelevant features by setting their weights to exactly zero.
 
 </div>
 
