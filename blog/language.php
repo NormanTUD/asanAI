@@ -113,7 +113,7 @@ Over time, the picture was stripped of its meaning and retained only the first p
 </div>
 
 <div class="optional md" data-headline="The Principle of Duality of Patterning">
-First descirbed by \citeauthor{dualitypattern} in \citeyear{dualitypattern}, human language operates on two levels:
+First described by \citeauthor{dualitypattern} in \citeyear{dualitypattern}, human language operates on two levels:
 
 - First articulation: Meaningful units (morphemes/words) combine into sentences. ("un" + "believe" + "able")
 - Second articulation: Meaningless units (phonemes/letters) combine into meaningful units. (b + e + l + i + e + f → "belief")
