@@ -1,1 +1,9 @@
 history of ai https://ar5iv.labs.arxiv.org/html/2109.01517
+
+2. Das „Liber Abaci“ von Fibonacci (1202)
+
+Du beginnst dein Buch in der Steinzeit. Ein entscheidender, oft übersehener Klebepunkt in deiner historischen Garbe ist das Jahr 1202.
+
+    Der Kern: Leonardo Fibonacci brachte die hindu-arabischen Ziffern (einschließlich der Null) nach Europa.
+
+    Warum es obskur-abstrakt ist: Ohne die Null gibt es kein Binärsystem und keine Positionsnotation. Die Null ist das ultimative „Nichts“, das als Platzhalter für „Etwas“ dient – die radikalste Abstraktion der Menschheitsgeschichte. Sie ermöglichte es erst, Logik von der Materie zu trennen und in reine Symbole zu gießen, die wir heute in 512-dimensionale Vektorräume übersetzen.
