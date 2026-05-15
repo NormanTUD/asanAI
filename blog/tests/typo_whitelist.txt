@@ -449,3 +449,11 @@ forrester
 gbps
 natively
 poroi
+rdma
+typebars
+cire
+polyphase
+monro
+hanzi
+yury
+unum
