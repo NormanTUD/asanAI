@@ -47,7 +47,7 @@ the earliest secure evidence for burning in an archaeological context.
 The angularity of bone fragments and the
 exceptional preservation of ashed plant material indicate that these
 components were combusted and accumulated locally, approximately 30
-metres inside the cave, ruling out transport by wind or water as well
+meters inside the cave, ruling out transport by wind or water as well
 as spontaneous guano combustion.
 
 Fire awareness among hominins, however, almost certainly predates such

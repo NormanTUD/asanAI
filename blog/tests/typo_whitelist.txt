@@ -61,6 +61,8 @@ morphisms
 sms
 behavioural
 kapp
+serp
+tdd
 zipf
 covariate
 versa
