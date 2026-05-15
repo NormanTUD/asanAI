@@ -102,7 +102,7 @@ WHITELIST_FILENAME = "typo_whitelist.txt"
 MIN_WORD_LENGTH = 3
 
 # Maximum typos to report per file (avoid flooding)
-MAX_TYPOS_PER_FILE = 60
+MAX_TYPOS_PER_FILE = 99999
 
 
 # ============================================================
