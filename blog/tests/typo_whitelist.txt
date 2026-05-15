@@ -384,6 +384,10 @@ goodhart
 farnsworth
 mmlu
 eval
+multicategory
+nns
+sackett
+linde
 xng
 dbs
 vgg
