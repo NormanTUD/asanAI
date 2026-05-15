@@ -408,3 +408,7 @@ shaders
 nvlink
 keras
 rajat
+outcompete
+gtx
+iso
+rpgs

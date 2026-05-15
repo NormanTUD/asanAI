@@ -64,7 +64,7 @@ function _execute_themeriver_render(d_model) {
 	if (!collected) {
 		container.innerHTML =
 			'<div style="padding:40px;text-align:center;color:#94a3b8;">' +
-			'Need at least 2 processing stages. Try chosing another word.</div>';
+			'Need at least 2 processing stages. Try choosing another word.</div>';
 		return;
 	}
 
