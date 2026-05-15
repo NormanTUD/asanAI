@@ -112,7 +112,7 @@ We can also use other functions, like $\sin$ (the sine) in our functions, and we
 <div id="desc-5" class="md"></div>
 <div style="margin-bottom: 10px;">
     Amplitude: <input type="range" id="slider-5-amp" min="0.5" max="5.0" step="0.1" value="1.0">
-    Frequence: <input type="range" id="slider-5-freq" min="0.1" max="2.0" step="0.1" value="0.5"> 
+    Frequency: <input type="range" id="slider-5-freq" min="0.1" max="2.0" step="0.1" value="0.5"> 
 </div>
 <div id="formula-5" style="font-size: 1.2em; margin-bottom: 10px; min-height: 1.5em;">$$f(x, y) = 1.0 \cdot (\sin(0.5x) + \sin(0.5y))$$</div>
 
@@ -138,7 +138,7 @@ We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\ma
 <div class="md">
 ## Classical programming vs. AI
 
-In classical programm, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.
+In classical programming, you would specify each step by hand to define a function, but for some functions, this is barely possible since the problem is ill-defined or way too complex.
 
 For example, imagine you need a program to tell images of cats and dogs apart. Where do you start? You cannot simply write a function that checks for every single pixel value, because then you'd need to know every single possible image of a cat or a dog, which is an infinite amount.
 
