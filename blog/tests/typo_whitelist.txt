@@ -382,3 +382,6 @@ khadim
 givest
 goodhart
 farnsworth
+xng
+dbs
+vgg
