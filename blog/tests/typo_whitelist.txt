@@ -380,3 +380,5 @@ astronomie
 ashtadhyayi
 khadim
 givest
+goodhart
+farnsworth
