@@ -46,11 +46,11 @@ The question received its most famous formulation from **Gottfried Wilhelm Leibn
 
 **Heidegger: The Fundamental Question**
 
-**Martin Heidegger** radicalized Leibniz's question, calling *"Why are there beings at all, and not rather nothing?"* the fundamental question of philosophy itself. But where Leibniz sought an answer, Heidegger insisted the question must be *held open*, our absorption in particular things makes us forget the sheer wonder that anything exists at all.
+\citeauthor{heidegger1935metaphysics} radicalized Leibniz's question, calling *"Why are there beings at all, and not rather nothing?"* the fundamental question of philosophy itself. But where Leibniz sought an answer, Heidegger insisted the question must be *held open*, our absorption in particular things makes us forget the sheer wonder that anything exists at all.
 
 **Jocaxian: Nothing Has No Rules**
 
-A more unconventional argument, associated with the thinker **Jocaxian**, inverts the puzzle:
+A more unconventional argument, associated with the thinker \citeauthor{jocaxiannothing}, inverts the puzzle:
 
 1. Suppose absolutely **nothing** exists, no matter, no laws, no logic.
 2. Then there are **no rules preventing** something from arising, because rules are themselves *something*.

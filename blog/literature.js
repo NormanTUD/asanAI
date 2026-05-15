@@ -11,9 +11,9 @@ window.bibData = {
 		year: 1935,
 		url: "https://archive.org/details/einfhrungindieme0000heid"
 	},
-	"joaxian_nothing": {
+	"jocaxiannothing": {
 		title: "Why There Is Something Rather Than Nothing: The Instability of Nothingness",
-		author: "Joaxian",
+		author: "Joao Carlos Holland de Barcellos ",
 		year: 2020,
 		url: "https://medcraveonline.com/AAOAJ/the-jocaxianrsquos-nothingness.html"
 	},
