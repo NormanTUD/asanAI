@@ -459,3 +459,9 @@ yury
 unum
 maths
 tavily
+hafting
+glidden
+crocker
+vint
+kao
+socher
