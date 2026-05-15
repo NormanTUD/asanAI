@@ -27,11 +27,12 @@ function is_tensor (t) {
 		return false;
 	}
 
-	["dtype", "dataId", "id", "isDisposedInternal", "kept", "rankType", "shape", "size", "strides"].forEach(key => {
+	var requiredKeys = ["dtype", "dataId", "id", "isDisposedInternal", "kept", "rankType", "shape", "size", "strides"];
+	for (var key of requiredKeys) {
 		if(!Object.keys(t).includes(key)) {
 			return false;
 		}
-	});
+	}
 
 	if(Array.isArray(t)) {
 		return false;
@@ -295,7 +296,7 @@ function tf_add (...args) {
 		console.trace();
 	}
 	var second_arg = args[1];
-	var res = first_tensor.add(second_arg, ...args);
+	var res = first_tensor.add(second_arg);
 
 	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
@@ -1004,7 +1005,7 @@ function tensor (...args) {
 	try {
 		var res = tf.tensor(...args);
 
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; });
+		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -1127,7 +1128,7 @@ function parse_float (...args) {
 	var res = parseFloat(...args);
 
 	if(isNaN(res)) {
-		wrn("[parse_float] NaN detected in parse_int, args: " + JSON.stringify(args));
+		wrn("[parse_float] NaN detected in parse_float, args: " + JSON.stringify(args));
 		console.trace();
 	}
 

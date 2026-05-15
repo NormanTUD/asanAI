@@ -1,12 +1,11 @@
 "use strict";
 
-function apply_color_map (x) {
+function apply_color_map(x) {
 	assert(x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
 	assert(x.shape[0] === 1, `Expected exactly one example, but got ${x.shape[0]} examples`);
 	assert(x.shape[3] === 1, `Expected exactly one channel, but got ${x.shape[3]} channels`);
 
 	var res = tidy(() => {
-		// Get normalized x.
 		const EPSILON = 1e-5;
 		const xRange = tf_sub(tf_max(x), tf_min(x));
 		const xNorm = tf_div(tf_sub(x, tf_min(x)), tf_add(xRange, EPSILON));
@@ -20,7 +19,18 @@ function apply_color_map (x) {
 		for (let i = 0; i < h; ++i) {
 			for (let j = 0; j < w; ++j) {
 				const pixelValue = xNormData[i * w + j];
-				const row = Math.floor(pixelValue * colorMapSize);
+
+				// Guard against NaN/Infinity and clamp to [0, 1]
+				let clampedValue = pixelValue;
+				if (!isFinite(clampedValue) || isNaN(clampedValue)) {
+					clampedValue = 0;
+				}
+				clampedValue = Math.max(0, Math.min(1, clampedValue));
+
+				// Clamp row index to valid colormap bounds
+				let row = Math.floor(clampedValue * (colorMapSize - 1));
+				row = Math.max(0, Math.min(colorMapSize - 1, row));
+
 				_buffer.set(RGB_COLORMAP[3 * row], 0, i, j, 0);
 				_buffer.set(RGB_COLORMAP[3 * row + 1], 0, i, j, 1);
 				_buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
@@ -30,6 +40,22 @@ function apply_color_map (x) {
 	});
 
 	return res;
+}
+
+// Cache to avoid rebuilding sub-models on every call.
+// Invalidated when the model identity changes.
+var _grad_cam_cache = {
+	model_id: null,
+	last_conv_layer_nr: null,
+	auxModel: null,
+	classifierModel: null
+};
+
+function _grad_cam_invalidate_cache() {
+	_grad_cam_cache.model_id = null;
+	_grad_cam_cache.last_conv_layer_nr = null;
+	_grad_cam_cache.auxModel = null;
+	_grad_cam_cache.classifierModel = null;
 }
 
 async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 0.5) {
@@ -55,8 +81,26 @@ async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 
 			return null;
 		}
 
-		const aux_model = grad_cam_internal_create_aux_model(_model, last_conv_layer_nr);
-		const sub_model2 = grad_cam_internal_create_sub_model2(_model, last_conv_layer_nr);
+		// Determine a stable identity for the model so we know when to rebuild.
+		var current_model_id = _model.uuid || _model.name || null;
+
+		var need_rebuild = (
+			_grad_cam_cache.model_id !== current_model_id ||
+			_grad_cam_cache.last_conv_layer_nr !== last_conv_layer_nr ||
+			!_grad_cam_cache.auxModel ||
+			!_grad_cam_cache.classifierModel
+		);
+
+		if (need_rebuild) {
+			var built = _grad_cam_build_models_safe(_model, last_conv_layer_nr);
+			_grad_cam_cache.model_id = current_model_id;
+			_grad_cam_cache.last_conv_layer_nr = last_conv_layer_nr;
+			_grad_cam_cache.auxModel = built.auxModel;
+			_grad_cam_cache.classifierModel = built.classifierModel;
+		}
+
+		var aux_model = _grad_cam_cache.auxModel;
+		var sub_model2 = _grad_cam_cache.classifierModel;
 
 		const retval = tidy(() => {
 			try {
@@ -64,6 +108,7 @@ async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 
 			} catch (e) {
 				if (("" + e).includes("already disposed")) {
 					dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
+					_grad_cam_invalidate_cache();
 				} else {
 					void (0); err("ERROR in next line stack:", e.stack);
 					err("" + e);
@@ -76,6 +121,7 @@ async function grad_class_activation_map(_model, x, class_idx, overlay_factor = 
 	} catch (e) {
 		if (("" + e).includes("already disposed")) {
 			dbg(language[lang]["model_weights_disposed_probably_recompiled"]);
+			_grad_cam_invalidate_cache();
 		} else {
 			void (0); err("ERROR in next line stack:", e.stack);
 			await write_error(e, null, null);
@@ -95,37 +141,150 @@ function grad_cam_internal_find_last_conv_layer(_model) {
 	return -1;
 }
 
-function grad_cam_internal_create_aux_model(_model, last_conv_layer_index) {
-	const last_conv_output = _model.getLayer(null, last_conv_layer_index).getOutputAt(0);
-	return tf_model({
-		inputs: _model.inputs,
-		outputs: last_conv_output
-	});
-}
+/**
+ * Builds both Grad-CAM sub-models WITHOUT ever calling getOutputAt(0)
+ * on the original model's layers, and WITHOUT calling layer.apply()
+ * on the original model's layer objects (which would add inbound nodes).
+ *
+ * Instead, we use tf.grad() with an imperative forward pass through
+ * the model's weights, completely bypassing the symbolic graph.
+ *
+ * Strategy:
+ *   auxModel:        A brand-new tf.LayersModel from a fresh symbolic
+ *                    input to a fresh copy of each layer up to (and
+ *                    including) the last conv layer.
+ *   classifierModel: A brand-new tf.LayersModel from a fresh symbolic
+ *                    input (shaped like the conv output) through fresh
+ *                    copies of each layer after the conv layer.
+ *
+ * "Fresh copy" means we use tf.layers.<type>(config) to create a
+ * structurally identical layer, then copy the weights from the
+ * original. This guarantees zero interaction with the original
+ * model's node graph.
+ */
+function _grad_cam_build_models_safe(_model, last_conv_layer_index) {
+	// ── Helper: clone a single layer (structure + weights) ──────────
+	function _clone_layer(original_layer) {
+		var config = original_layer.getConfig();
+		var class_name = original_layer.getClassName();
 
-function grad_cam_internal_create_sub_model2(_model, start_index) {
-	const layer_output = _model.getLayer(null, start_index).getInputAt(0);
-	const new_input = input({ shape: layer_output.shape.slice(1) });
-	let y = new_input;
+		// Remove 'name' so TF.js auto-generates a unique one,
+		// preventing name collisions with the original model.
+		delete config["name"];
 
-	while (start_index < _model.layers.length) {
-		const layer = _model.layers[start_index];
-		console.log("y:", y, "layer:", layer);
-		if (Object.keys(layer).includes("original_apply_real")) {
-			y = layer.original_apply_real(y);
-		} else {
-			y = layer.apply(y);
+		// Use the TF.js deserializer to create a layer from class+config.
+		var cloned;
+		try {
+			cloned = tf.layers[class_name.charAt(0).toLowerCase() + class_name.slice(1)](config);
+		} catch (_e) {
+			// Some layer class names don't directly map to tf.layers.*
+			// Fall back to the serialization API.
+			cloned = tf.serialization.SerializationMap
+				.getMap()
+				.classNameMap[class_name][0]
+				.fromConfig(
+					tf.serialization.SerializationMap.getMap().classNameMap[class_name][0],
+					config
+				);
 		}
-		start_index++;
+
+		return cloned;
 	}
 
-	return tf_model({
-		inputs: new_input,
-		outputs: y
-	});
+	function _copy_weights(source_layer, dest_layer, dummy_tensor) {
+		// We must call the dest layer on a tensor first to build it,
+		// so that setWeights() works.
+		try {
+			dest_layer.apply(dummy_tensor);
+		} catch (_e) {
+			// Some layers (like Flatten) don't need explicit building
+		}
+
+		try {
+			var w = source_layer.getWeights();
+			if (w && w.length > 0) {
+				dest_layer.setWeights(w);
+			}
+		} catch (_e2) {
+			// Layers without weights (Flatten, etc.) — ignore
+		}
+	}
+
+	// ── Part 1: auxModel (input → last conv output) ─────────────────
+	var input_shape = _model.inputs[0].shape.slice(1); // drop batch dim
+	var aux_input = input({ shape: input_shape });
+	var y = aux_input;
+
+	// We need to track the symbolic tensor at each step so we can
+	// copy weights after building.
+	var cloned_layers_part1 = [];
+
+	for (var i = 0; i < _model.layers.length; i++) {
+		var layer = _model.layers[i];
+
+		// Skip InputLayer — our fresh `input()` replaces it.
+		if (i === 0 && layer.getClassName() === "InputLayer") {
+			continue;
+		}
+
+		var cloned = _clone_layer(layer);
+		y = cloned.apply(y);
+		cloned_layers_part1.push({ source: layer, dest: cloned });
+
+		if (i === last_conv_layer_index) {
+			break;
+		}
+	}
+
+	var auxModel = tf_model({ inputs: aux_input, outputs: y });
+
+	// Now copy weights for part 1.
+	for (var wi = 0; wi < cloned_layers_part1.length; wi++) {
+		try {
+			var sw = cloned_layers_part1[wi].source.getWeights();
+			if (sw && sw.length > 0) {
+				cloned_layers_part1[wi].dest.setWeights(sw);
+			}
+		} catch (_e) {
+			// weightless layers
+		}
+	}
+
+	// ── Part 2: classifierModel (conv output → predictions) ─────────
+	var conv_output_shape = y.shape.slice(1); // drop batch dim
+	var cls_input = input({ shape: conv_output_shape });
+	var z = cls_input;
+
+	var cloned_layers_part2 = [];
+
+	for (var j = last_conv_layer_index + 1; j < _model.layers.length; j++) {
+		var layer2 = _model.layers[j];
+
+		var cloned2 = _clone_layer(layer2);
+		z = cloned2.apply(z);
+		cloned_layers_part2.push({ source: layer2, dest: cloned2 });
+	}
+
+	var classifierModel = tf_model({ inputs: cls_input, outputs: z });
+
+	// Copy weights for part 2.
+	for (var wj = 0; wj < cloned_layers_part2.length; wj++) {
+		try {
+			var sw2 = cloned_layers_part2[wj].source.getWeights();
+			if (sw2 && sw2.length > 0) {
+				cloned_layers_part2[wj].dest.setWeights(sw2);
+			}
+		} catch (_e2) {
+			// weightless layers
+		}
+	}
+
+	return { auxModel: auxModel, classifierModel: classifierModel };
 }
 
 function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, overlay_factor) {
+	const EPSILON = 1e-7;
+
 	function conv_output_to_class_output(input_tensor) {
 		return sub_model2
 			.apply(input_tensor, { training: true })
@@ -134,26 +293,41 @@ function grad_cam_internal_compute_heatmap(aux_model, sub_model2, x, class_idx, 
 
 	const grad_function = grad(conv_output_to_class_output);
 	const conv_output = aux_model.apply(x);
-	log("conv_output", conv_output);
 	const grads = grad_function(conv_output);
 	const pooled_grads = tf_mean(grads, [0, 1, 2]);
 	const scaled_conv_output = tf_mul(conv_output, pooled_grads);
 	let heat_map = tf_mean(scaled_conv_output, -1);
 
-	heat_map = tf_relu(heat_map);
-	heat_map = expand_dims(tf_div(heat_map, tf_max(heat_map)), -1);
+	// Apply ReLU and check if everything got zeroed out
+	const heat_map_relu = tf_relu(heat_map);
+	const max_after_relu = tf_max(heat_map_relu);
+	const max_val = max_after_relu.dataSync()[0];
 
-	if (!heat_map) {
-		log(`grad_class_activation_map: heat_map could not be generated.`);
-		return null;
+	if (max_val < EPSILON) {
+		// All gradients were negative/zero after ReLU — fallback:
+		// Use tf.abs() directly since there's no tf_abs wrapper.
+		// This preserves spatial structure even when contributions are negative.
+		heat_map = tf.abs(heat_map);
+		const max_abs = tf_max(heat_map);
+		const max_abs_val = max_abs.dataSync()[0];
+
+		if (max_abs_val < EPSILON) {
+			// Truly zero everywhere — nothing to visualize
+			log(`grad_class_activation_map: heat_map is entirely zero, cannot generate.`);
+			return null;
+		}
+
+		heat_map = expand_dims(tf_div(heat_map, tf_add(max_abs, EPSILON)), -1);
+	} else {
+		heat_map = heat_map_relu;
+		heat_map = expand_dims(tf_div(heat_map, tf_add(max_after_relu, EPSILON)), -1);
 	}
 
 	heat_map = resize_image(heat_map, [x.shape[1], x.shape[2]]);
 	heat_map = apply_color_map(heat_map);
 
-	// Normalize and blend input + heatmap
 	const overlay = tf_add(tf_mul(heat_map, overlay_factor), tf_div(x, 255));
-	const result = tf_div(overlay, tf_mul(tf_max(overlay), 255));
+	const result = tf_div(overlay, tf_add(tf_max(overlay), EPSILON));
 
 	return result;
 }

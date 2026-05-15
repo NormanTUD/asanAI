@@ -712,7 +712,7 @@ var initializers = {
 	"leCunUniform": "leCunUniform",
 	"ones": "ones",
 	"randomNormal": "randomNormal",
-	"randomUniform": " randomUniform",
+	"randomUniform": "randomUniform",
 	"truncatedNormal": "truncatedNormal",
 	"varianceScaling": "varianceScaling",
 	"zeros": "zeros"
@@ -748,7 +748,7 @@ function get_name_case_independent (name, from_hash) {
 function get_initializer_name (name) {
 	var res = get_name_case_independent(name, initializers);
 
-	if(!name) {
+	if(!res) {
 		wrn("[get_initializer_name] Cannot determine the kernel initializer name of " + name);
 		return null;
 	} else {
@@ -825,6 +825,17 @@ var layer_options_defaults = {
 
 	"activation": null,
 	"recurrent_activation": null,
+
+	"bias_regularizer": null,
+	"kernel_regularizer": null,
+	"beta_regularizer": null,
+	"gamma_regularizer": null,
+	"depthwise_regularizer": null,
+	"pointwise_regularizer": null,
+
+	"dtype": "float",
+	"seed": 1234,
+	"visualize": null,
 
 	"padding": "valid",
 	"interpolation": "nearest",
@@ -1431,10 +1442,10 @@ var general_options = {
 	"beta_regularizer_l2": `"l2", "beta_regularizer_l2", "number", { "value": 0.01 }, nr, "beta_regularizer_tr", null, 0, 1`,
 	"gamma_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
 	"gamma_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"pointwise_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"pointwise_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"depthwise_regularizer_l1": `"l1", "gamma_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
-	"depthwise_regularizer_l2": `"l2", "gamma_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`
+	"pointwise_regularizer_l1": `"l1", "pointwise_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"pointwise_regularizer_l2": `"l2", "pointwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"depthwise_regularizer_l1": `"l1", "depthwise_regularizer_l1", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`,
+	"depthwise_regularizer_l2": `"l2", "depthwise_regularizer_l2", "number", { "value": 0.01 }, nr, "gamma_regularizer_tr", null, 0, 1`
 
 };
 
@@ -1885,7 +1896,6 @@ var history_of_weights_for_loss_landscape = [];
 
 var disable_webcam_test = false;
 var shown_activation_equations = [];
-var activation_string = "";
 
 var _math_interactive_mode = false;
 var _math_interactive_mode_before = false;

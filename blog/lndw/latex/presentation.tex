@@ -1,9 +1,3 @@
-% ============================================================
-%  KI-Präsentation – LaTeX Beamer
-%  Kompilieren mit: pdflatex → biber → pdflatex (×2)
-%  Alle Bilder sind als \placeholder markiert und leicht entfernbar.
-% ============================================================
-
 % TODO: that geometry is not a dead discipline, finalized in ancient times, but a living and vibrant topic
 
 \documentclass[aspectratio=169, 12pt]{beamer}
@@ -24,7 +18,7 @@
 \usepackage{multimedia}   % für gifs / videos falls gewünscht
 \usepackage{listings}
 \usepackage{animate}  % für \animategraphics
-
+\usepackage{comment}
 
 % ── Theme ───────────────────────────────────────────────────
 \usetheme{metropolis}
@@ -47,19 +41,12 @@
 % ============================================================
 
 % Platzhalter-Bild (leicht entfernbar: einfach \placeholder{...} löschen)
-% Wenn echtes Bild vorhanden: \echtesBild{datei}{breite}{caption}
 \newcommand{\placeholder}[2][0.5\textwidth]{%
   \begin{center}
     \fcolorbox{akzent}{white!95!black}{%
       \parbox{#1}{\centering\vspace{1.2cm}%
         {\color{akzent}\faImage\quad\textit{#2}}%
         \vspace{1.2cm}}}
-  \end{center}
-}
-\newcommand{\echtesBild}[3][0.6\textwidth]{%
-  \begin{center}
-    \includegraphics[width=#1]{#2}\\
-    {\scriptsize\color{gray}#3}
   \end{center}
 }
 
@@ -112,13 +99,6 @@
 % ────────────────────────────────────────────────────────────
 \begin{frame}[plain]
   \maketitle
-\end{frame}
-
-% ────────────────────────────────────────────────────────────
-%  INHALTSÜBERSICHT
-% ────────────────────────────────────────────────────────────
-\begin{frame}{Überblick}
-  \tableofcontents
 \end{frame}
 
 \section{Embedding Spaces}
@@ -182,10 +162,10 @@
 }
 
 % Total number of frames (edit here if you add/remove images):
-\newcommand{\manifoldtotalframes}{33}
+\newcommand{\manifoldtotalframes}{8}
 
-% Now generate one Beamer frame per image file (33 slides):
-\foreach \n in {1,...,33} {%
+% Now generate one Beamer frame per image file (8 slides):
+\foreach \n in {1,...,8} {%
   \begingroup
   % Zero-pad the number to 3 digits
   \ifnum\n<10
@@ -232,6 +212,94 @@
   \end{frame}
   \endgroup
 }
+% ══════════════════════════════════════════════════════════════
+% Frame 1: Isosurfaces 1–6 (Vollbild, durchklickbar)
+% ══════════════════════════════════════════════════════════════
+
+\definecolor{isobg}{HTML}{121B2E}
+
+{
+\setbeamercolor{background canvas}{bg=isobg}
+\foreach \n in {1,...,6} {%
+  \begin{frame}[plain]
+    \begin{tikzpicture}[remember picture, overlay]
+      \node at (current page.center) {%
+        \includegraphics[width=\paperwidth, height=\paperheight, keepaspectratio]{isosurfaces/\n.png}%
+      };
+    \end{tikzpicture}
+  \end{frame}
+}
+}
+
+% ══════════════════════════════════════════════════════════════
+% Frame 2: Temperatur-Erklärung (Text auf dunklem Hintergrund)
+% ══════════════════════════════════════════════════════════════
+
+{
+\setbeamercolor{background canvas}{bg=isobg}
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\Huge\color{white}\textbf{Temperatur}}\\[1.5em]
+    {\Large\color{white!80}Was passiert, wenn $T$ steigt?}\\[1.5em]
+    {\large\color{white!60}Die Isosurface wird \textbf{aufgebläht} –\\[0.4em]
+    mehr Tokens erhalten ähnliche Wahrscheinlichkeit.\\[0.4em]
+    Der Pfad der Wahl wird \textbf{diffuser}.}
+  \end{center}
+  \vfill
+\end{frame}
+}
+
+% ══════════════════════════════════════════════════════════════
+% Frame: Isosurface 4 vs. France High Temp (nebeneinander)
+% ══════════════════════════════════════════════════════════════
+
+\definecolor{isobg}{HTML}{121B2E}
+
+{
+\setbeamercolor{background canvas}{bg=isobg}
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    % Bild links: Isosurface 4
+    \node[anchor=east] at ([xshift=-0.3cm]current page.center) {%
+      \includegraphics[height=0.85\paperheight, keepaspectratio]{isosurfaces/4.png}%
+    };
+    % Bild rechts: France High Temp
+    \node[anchor=west] at ([xshift=0.3cm]current page.center) {%
+      \includegraphics[height=0.85\paperheight, keepaspectratio]{isosurfaces/france_high_temp.png}%
+    };
+  \end{tikzpicture}
+\end{frame}
+}
+
+% ── Interpretierbare vs. nicht-interpretierbare Dimensionen ─
+\begin{frame}{Dimensionen des Embedding-Raums}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.8]
+      % Achsen
+      \draw[-{Stealth}, thick] (-3,0) -- (3,0)
+        node[right, font=\small] {jung $\longleftrightarrow$ alt};
+      \draw[-{Stealth}, thick] (0,-2.5) -- (0,2.5)
+        node[above, font=\small] {männlich $\longleftrightarrow$ weiblich};
+
+      % Punkte
+      \fill[akzent] (-1.5, 1.5) circle (3pt) node[above right, font=\scriptsize] {Mädchen};
+      \fill[akzent] (1.5, 1.5)  circle (3pt) node[above right, font=\scriptsize] {Frau};
+      \fill[hell]   (-1.5,-1.5) circle (3pt) node[below right, font=\scriptsize] {Junge};
+      \fill[hell]   (1.5,-1.5)  circle (3pt) node[below right, font=\scriptsize] {Mann};
+
+      % Pfeile
+      \draw[-{Stealth}, dashed, gray] (-1.5,1.5) -- (1.5,1.5);
+      \draw[-{Stealth}, dashed, gray] (-1.5,-1.5) -- (1.5,-1.5);
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \stich{Manche Dimensionen: \textbf{interpretierbar} (Alter, Geschlecht, Größe …)}
+    \stich{Andere: \textbf{keine menschliche Bezeichnung} – abstrakte Muster}
+    \stich{Modell hat $d = 4096+$ Dimensionen → die meisten nicht greifbar}
+  \end{itemize}
+\end{frame}
 
 % ============================================================
 \section{Dense Layer – die Grundbausteine}
@@ -241,14 +309,23 @@
 
 % ── Was ist ein Dense Layer? ───────────────────────────────
 \begin{frame}{Dense Layer – Grundidee}
-  \formelbox{f(\mathbf{x}) = A\,\mathbf{x} + \mathbf{b}}
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.5\textwidth}{%
+        \centering
+        $\displaystyle f(\mathbf{x}) = A\,\mathbf{x} + \mathbf{b}$%
+      }%
+    }
+  \end{center}
   \begin{itemize}
     \stich{$A$ = Gewichtsmatrix (Tensor), $\mathbf{b}$ = Bias-Vektor}
     \stich{Jeder Eingang mit jedem Ausgang verbunden}
     \stich{Lineare Transformation: Drehen, Strecken, Verschieben}
   \end{itemize}
 
-  \placeholder[0.35\textwidth]{Bild: Dense Layer – Knoten voll verbunden}
+  \begin{center}
+    \includegraphics[width=0.35\textwidth]{dense.png}
+  \end{center}
 \end{frame}
 
 % ── Verschachtelung ────────────────────────────────────────
@@ -303,83 +380,298 @@
 \end{frame}
 
 % ── Neue Folie: Universelle Approximation durch ReLU-Knicke ──
+% ══════════════════════════════════════════════════════════════
+% Approximation – schrittweiser Aufbau (6 Folien)
+% ══════════════════════════════════════════════════════════════
+
+% Hilfsmakro für einheitliche Achsen und Clip
+\newcommand{\approxaxes}{%
+  \clip (-0.7,-1.8) rectangle (7.8,4.5);
+  \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+  \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+}
+% Zielfunktion (Makro für Konsistenz)
+\newcommand{\targetfn}[1][1]{%
+  \draw[thick, dunkel, domain=0:7, samples=100, opacity=#1]
+    plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+}
+
+% ══════════════════════════════════════════════════════════════
+% BESSER: Komplett saubere Version mit konkreten Werten
+% ══════════════════════════════════════════════════════════════
+
+% ── Folie 1: Nur die Zielfunktion ──────────────────────────
 \begin{frame}{Wie approximiert ein Netz eine Funktion?}
   \begin{center}
     \begin{tikzpicture}[
         scale=0.85,
         every node/.style={font=\scriptsize},
-        neuron/.style={thick},
       ]
-
-      % ── Achsen ──
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
       \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
       \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
 
-      % ── Zielfunktion (glatte Kurve) ──
-      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.35]
-        plot (\x, {0.4*sin(60*\x) + 0.08*\x*\x - 0.15*\x + 1.2})
-        node[right, opacity=1] {Zielfunktion $f(x)$};
-
-      % ── Einzelne ReLU-Neuronen (verschoben & skaliert) ──
-      %  Neuron i:  w_i * max(0, x - c_i)
-      %  Jedes Stück wird einzeln gezeichnet und beschriftet
-
-      % Neuron 1: startet bei x=0, Steigung +0.8
-      \draw[neuron, akzent, dashed]
-        (0,0) -- (1.5, 1.2)  -- (7, 1.2);
-      \node[akzent, above] at (0.8, 0.7) {$h_1$};
-
-      % Neuron 2: startet bei x=1.5, Steigung -1.0
-      \draw[neuron, hell, dashed]
-        (0,0) -- (1.5, 0) -- (3.5, -2) -- (7,-2);
-      % Clip für Sichtbarkeit: nur den relevanten Teil zeigen
-      \begin{scope}
-        \clip (0,-1.5) rectangle (7.5,4.2);
-        \draw[neuron, hell, dashed]
-          (0,0) -- (1.5,0) -- (3.5, -2);
-      \end{scope}
-      \node[hell, below] at (2.5, -0.8) {$h_2$};
-
-      % Neuron 3: startet bei x=3.5, Steigung +0.6
-      \draw[neuron, highlight, dashed]
-        (0,0) -- (3.5, 0) -- (5.5, 1.2) -- (7, 1.2);
-      \node[highlight, above] at (4.5, 0.7) {$h_3$};
-
-      % Neuron 4: startet bei x=5.5, Steigung -0.5
-      \draw[neuron, violet, dashed]
-        (0,0) -- (5.5, 0) -- (7, -0.75);
-      \node[violet, below] at (6.3, -0.5) {$h_4$};
-
-      % ── Summe = stückweise lineare Approximation ──
-      % Manuell berechnet:
-      %   [0, 1.5]:    Steigung +0.8, Start bei y=1.0 (Bias)
-      %   [1.5, 3.5]:  +0.8 -1.0 = -0.2
-      %   [3.5, 5.5]:  -0.2 +0.6 = +0.4
-      %   [5.5, 7]:    +0.4 -0.5 = -0.1
-      \draw[line width=2.5pt, akzent]
-        (0, 1.0) -- (1.5, 2.2) -- (3.5, 1.8) -- (5.5, 2.6) -- (7, 2.45);
-
-      % Knicke markieren
-      \foreach \kx/\ky in {1.5/2.2, 3.5/1.8, 5.5/2.6} {
-        \fill[akzent] (\kx, \ky) circle (3pt);
-      }
-
-      % Beschriftung Summe
-      \node[akzent, right, font=\small\bfseries] at (7, 2.45)
-        {$\hat{f}(x) = \sum_i h_i(x)$};
-
-      % ── Legende unten ──
-      \node[anchor=north west, text width=12cm, font=\scriptsize,
-            inner sep=4pt, fill=white, draw=gray!40, rounded corners]
-        at (0, -1.8) {%
-          Jedes Neuron $h_i(x) = a_i\,\max(0,\; x - c_i)$ liefert
-          einen \textbf{Knick} an Position $c_i$.\\[2pt]
-          \textbf{4 Neuronen → 3 Knicke} → grobe Approximation.\\
-          \textbf{100 Neuronen → 99 Knicke} → fast beliebig genau. \\
-          \textbf{Negative Steigung} entsteht durch die zwei Dense-Schicht. die wieder negative Gewichte haben kann
-        };
-
+      % Zielfunktion
+      \draw[thick, dunkel, domain=0:7, samples=100]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8})
+        node[right] {$f(x)$};
     \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.75\textwidth}{\centering\small
+        Gegeben: eine beliebige stetige Funktion.\\[3pt]
+        \textbf{Ziel:} mit einfachen Bausteinen annähern.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 2: Erstes Neuron h₁ ─────────────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (blass)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.2]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+
+      % h₁: ReLU ab x=0, Steigung +0.9
+      % h₁(x) = 0.9 · ReLU(x - 0) = 0.9x für x>0
+      \draw[thick, akzent]
+        (-0.5, 0) -- (0, 0);
+      \draw[thick, akzent]
+        (0, 0) -- (7, 3.15);
+      \fill[akzent] (0, 0) circle (3pt);
+      \node[akzent, above left, font=\small\bfseries] at (1.5, 0.7) {$h_1$};
+
+      % Summe = h₁ + Bias (0.8)
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (7, 3.95);
+      \node[akzent!70!black, right, font=\small\bfseries] at (7, 3.95) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Ein Neuron:} \;
+        $h_1(x) = a_1 \cdot \operatorname{ReLU}(x - c_1)$\\[4pt]
+        Links vom Knick $c_1$: Ausgabe $= 0$.\\
+        Rechts vom Knick: lineare Steigung $a_1$.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 3: Zweites Neuron h₂ ────────────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (blass)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.2]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+
+      % h₁ (blass)
+      \draw[thick, akzent, dashed, opacity=0.3]
+        (0, 0) -- (7, 3.15);
+      \node[akzent, opacity=0.4, above left] at (1.5, 0.7) {$h_1$};
+
+      % h₂: ReLU ab x=1.5, Steigung -1.5
+      % h₂(x) = -1.5 · ReLU(x - 1.5)
+      \draw[thick, hell]
+        (-0.5, 0) -- (1.5, 0);
+      \draw[thick, hell]
+        (1.5, 0) -- (7, -8.25);  % wird geclippt
+      \fill[hell] (1.5, 0) circle (3pt);
+      \node[hell, below right, font=\small\bfseries] at (2.0, -0.5) {$h_2$};
+
+      % Summe: bias + h₁ + h₂
+      % x<0: 0.8, 0<x<1.5: 0.8 + 0.9x, x>1.5: 0.8 + 0.9x - 1.5(x-1.5)
+      % x>1.5: 0.8 + 0.9x - 1.5x + 2.25 = 3.05 - 0.6x
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (1.5, 2.15) -- (7, -1.15);
+      % Clip rettet uns – nur sichtbarer Teil
+      \foreach \kx/\ky in {1.5/2.15} {
+        \fill[akzent!70!black] (\kx, \ky) circle (3pt);
+      }
+      \node[akzent!70!black, above right, font=\small\bfseries] at (0.3, 1.5) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Zweites Neuron} $h_2$ mit \textbf{negativem} Gewicht.\\[4pt]
+        Die Summe knickt jetzt ab – die Steigung ändert sich.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 4: Drittes Neuron h₃ ────────────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (blass)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.2]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+
+      % h₁, h₂ (blass)
+      \draw[thick, akzent, dashed, opacity=0.2]
+        (0, 0) -- (7, 3.15);
+      \draw[thick, hell, dashed, opacity=0.2]
+        (1.5, 0) -- (7, -8.25);
+
+      % h₃: ReLU ab x=3.0, Steigung +1.2
+      \draw[thick, highlight]
+        (-0.5, 0) -- (3.0, 0);
+      \draw[thick, highlight]
+        (3.0, 0) -- (7, 4.8);
+      \fill[highlight] (3.0, 0) circle (3pt);
+      \node[highlight, above left, font=\small\bfseries] at (4.5, 1.5) {$h_3$};
+
+      % Summe: bias + h₁ + h₂ + h₃
+      % x in [0,1.5]: 0.8 + 0.9x
+      % x in [1.5,3.0]: 3.05 - 0.6x
+      % x in [3.0,7]: 3.05 - 0.6x + 1.2(x-3.0) = -0.55 + 0.6x
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (7, 3.65);
+      \foreach \kx/\ky in {1.5/2.15, 3.0/1.25} {
+        \fill[akzent!70!black] (\kx, \ky) circle (3pt);
+      }
+      \node[akzent!70!black, right, font=\small\bfseries] at (7, 3.65) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Drittes Neuron} $h_3$ – Steigung wird wieder positiv.\\[4pt]
+        Zwei Knicke – die Summe folgt der Kurve besser.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 5: Viertes Neuron h₄ (korrigiert – geht nach oben) ──
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion (etwas kräftiger)
+      \draw[thick, dunkel, domain=0:7, samples=100, opacity=0.35]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+      \node[dunkel, right, opacity=0.7] at (7, 3.5) {$f(x)$};
+
+      % h₁, h₂, h₃ (blass)
+      \draw[thick, akzent, dashed, opacity=0.15]  (0, 0) -- (7, 3.15);
+      \draw[thick, hell, dashed, opacity=0.15]    (1.5, 0) -- (7, -8.25);
+      \draw[thick, highlight, dashed, opacity=0.15] (3.0, 0) -- (7, 4.8);
+
+      % h₄: ReLU ab x=5.0, Steigung +0.6 (positiv! → geht nach oben)
+      \draw[thick, violet]
+        (-0.5, 0) -- (5.0, 0);
+      \draw[thick, violet]
+        (5.0, 0) -- (7, 1.2);
+      \fill[violet] (5.0, 0) circle (3pt);
+      \node[violet, above right, font=\small\bfseries] at (5.5, 0.5) {$h_4$};
+
+      % Summe: bias + h₁ + h₂ + h₃ + h₄
+      % x in [0,1.5]: 0.8 + 0.9x
+      % x in [1.5,3.0]: 3.05 - 0.6x
+      % x in [3.0,5.0]: -0.55 + 0.6x
+      % x in [5.0,7]: -0.55 + 0.6x + 0.6(x-5.0) = -3.55 + 1.2x
+      %   bei x=5.0: -3.55 + 6.0 = 2.45
+      %   bei x=7.0: -3.55 + 8.4 = 4.85 → wird geclippt, aber passt zur steigenden fkt
+      \draw[line width=2.5pt, akzent!70!black]
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 4.85);
+      \foreach \kx/\ky in {1.5/2.15, 3.0/1.25, 5.0/2.45} {
+        \fill[akzent!70!black] (\kx, \ky) circle (3pt);
+      }
+      \node[akzent!70!black, right, font=\small\bfseries] at (7, 4.2) {$\hat{f}$};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.78\textwidth}{\centering\small
+        \textbf{Viertes Neuron} $h_4$ – verstärkt die Steigung am Ende.\\[4pt]
+        Drei Knicke, vier Segmente – die Form stimmt schon grob.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ── Folie 6: Fazit – viele Neuronen (korrigiert) ───────────────────────
+\begin{frame}{Wie approximiert ein Netz eine Funktion?}
+  \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85,
+        every node/.style={font=\scriptsize},
+      ]
+      \clip (-0.7,-1.8) rectangle (7.8,4.5);
+      \draw[-{Stealth}] (-0.5,0) -- (7.5,0) node[right]{$x$};
+      \draw[-{Stealth}] (0,-1.5) -- (0,4.2) node[above]{$y$};
+
+      % Zielfunktion
+      \draw[thick, dunkel, domain=0:7, samples=100]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8})
+        node[right] {$f(x)$};
+
+      % Grobe Approximation (4 Neuronen – jetzt passend zu Folie 5)
+      \draw[line width=1.5pt, akzent!70!black, opacity=0.35]
+        (0, 0.8) -- (1.5, 2.15) -- (3.0, 1.25) -- (5.0, 2.45) -- (7, 4.85);
+      \node[akzent!70!black, opacity=0.5, font=\tiny, above] at (1.0, 2.3) {4 Neuronen};
+
+      % Feine Approximation (simuliert mit vielen Samples)
+      \draw[line width=2pt, highlight, domain=0:7, samples=25]
+        plot (\x, {0.5*sin(70*\x) + 0.06*\x*\x + 0.8});
+      \node[highlight, font=\tiny, above] at (5.5, 3.8) {viele Neuronen};
+    \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.82\textwidth}{\centering
+        \textbf{Jedes Neuron} = ein Knick = eine Richtungsänderung.\\[5pt]
+        Mehr Neuronen $\;\longrightarrow\;$ mehr Knicke $\;\longrightarrow\;$ beliebig genaue Annäherung.\\[5pt]
+        {\small Das ist der Kern des \textbf{universellen Approximationssatzes}.}
+      }%
+    }
   \end{center}
 \end{frame}
 
@@ -440,17 +732,20 @@
       \stich{\textbf{Nachts wässern?}\\
              Schnecken aktiver bei Nässe → fressen Ernte ab}
       \stich{\textbf{Wind egal?}\\
-             Mehr Wind → mehr Verdunstung, schlechtere Aufnahme}
+             Mehr Wind → mehr Verdunstung}
       \stich{\textbf{Mittags wässern?}\\
              Wassertropfen = Linsen → Sonnenbrand auf Blättern}
     \end{itemize}
 
     \medskip
-    \color{akzent}\textbf{→ KI lernt: ``nachts = schlechter Ertrag''}\\
-    \color{gray}\textit{Weiß aber nicht, dass Schnecken der Grund sind.}
+    \color{akzent}\textbf{→ KI lernt: ``nachts/mittag/... = schlechter Ertrag''}\\
+    \color{gray}\textit{Weiß aber nicht, dass Schnecken/Wind/Wassertropfenlinsen der Grund sind.}
 
     \column{0.4\textwidth}
-    \placeholder[0.9\linewidth]{Bild: Garten + Schnecke}
+        \includegraphics[width=\textwidth]{snails.png}
+
+        \vspace{0.5em}
+        \includegraphics[width=\textwidth]{water_droplet.jpg}
   \end{columns}
 \end{frame}
 
@@ -458,36 +753,63 @@
 \begin{frame}{Verschachtelte Layer = Abstraktion}
   \begin{center}
     \begin{tikzpicture}[
-        layer/.style={draw, thick, rounded corners, minimum width=2.5cm, 
-                     minimum height=0.7cm, font=\small\bfseries},
+        layer/.style={draw, thick, rounded corners, minimum width=2.2cm, 
+                     minimum height=0.8cm, font=\small\bfseries},
         arr/.style={-{Stealth}, thick},
-        node distance=0.3cm
+        note/.style={font=\scriptsize, text=gray, anchor=north},
+        node distance=0.6cm
       ]
-      % Nodes von unten nach oben
-      \node (in) at (0,0) {\footnotesize Bewässerungsdaten};
+      % Nodes von links nach rechts
+      \node (in) {\footnotesize $\mathbf{x}$};
       
-      % Layer 1: f(x) + Aktivierung
-      \node[layer, fill=hell!20, above=of in]    (l1) {$f(\mathbf{x})$};
-      \node[layer, fill=akzent!20, above=of l1]  (s1) {$\sigma$};
+      \node[layer, fill=hell!20, right=of in]    (l1) {$f$};
+      \node[right=0.3cm of l1] (z1) {\footnotesize $z_1$};
       
-      % Layer 2: g(.) -> Direkter Output
-      \node[layer, fill=hell!20, above=of s1]    (l2) {$g(\cdot)$};
+      \node[layer, fill=akzent!20, right=0.3cm of z1]  (s1) {$\sigma$};
+      \node[right=0.3cm of s1] (z2) {\footnotesize $z_2$};
       
-      % Output Prognose
-      \node[above=of l2] (out) {\footnotesize Ernteprognose (kg)};
+      \node[layer, fill=hell!20, right=0.3cm of z2]    (l2) {$g$};
+      \node[right=of l2] (out) {\footnotesize $\hat{y}$};
 
-      % Verbindungen
+      % Pfeile
       \draw[arr] (in) -- (l1);
-      \draw[arr] (l1) -- (s1);
-      \draw[arr] (s1) -- (l2);
+      \draw[arr] (l1) -- (z1);
+      \draw[arr] (z1) -- (s1);
+      \draw[arr] (s1) -- (z2);
+      \draw[arr] (z2) -- (l2);
       \draw[arr] (l2) -- (out);
+
+      % Beschriftungen unten
+      \node[note] at (l1.south) [below=0.1cm] {Dense Layer 1};
+      \node[note] at (s1.south) [below=0.1cm] {ReLU};
+      \node[note] at (l2.south) [below=0.1cm] {Dense Layer 2};
     \end{tikzpicture}
   \end{center}
 
-  \vspace{0.4cm}
+  \vspace{0.3cm}
+  \begin{columns}[T]
+    \begin{column}{0.45\textwidth}
+      \textbf{Eingabe:}\\[0.1cm]
+      \small
+      $x_1$ = Temperatur\\
+      $x_2$ = Uhrzeit\\
+      $x_3$ = Windgeschwindigkeit\\
+      $\vdots$
+    \end{column}
+    \begin{column}{0.55\textwidth}
+      \textbf{Vorwärtsdurchlauf:}\\[0.1cm]
+      \small
+      $z_1 = f(\mathbf{x}) = A\mathbf{x} + \mathbf{b}$\\
+      $z_2 = \sigma(z_1)$\\
+      $\hat{y} = g(z_2) = C\,z_2 + \mathbf{d}$
+    \end{column}
+  \end{columns}
 
-  \centering
-	\formelbox{\text{jetzt Bewässern ja/nein} = g\bigl(\sigma\bigl(f(\mathbf{[\text{Temperatur, aktuelle Uhrzeit, Windgeschwindigkeit}, \dots]})\bigr)\bigr)}
+  \vspace{0.3cm}
+  \begin{itemize}
+    \stich{Ohne $\sigma$: alles kollabiert zu \emph{einer} linearen Abbildung}
+    \stich{Mit $\sigma$: jede Schicht lernt \textbf{abstraktere Merkmale}}
+  \end{itemize}
 \end{frame}
 
 \section{Positional Encoding}
@@ -518,7 +840,7 @@
   \definecolor{dim6}{HTML}{D4A017}
 
   \centering
-  \foreach \pos in {0,1,...,19} {%
+  \foreach \pos in {0,1,...,9} {%
     \only<\the\numexpr\pos+1\relax>{%
       \begin{tikzpicture}
         \useasboundingbox (-5.2,-5.5) rectangle (5.2,5.2);
@@ -620,6 +942,23 @@
   }%
 \end{frame}
 
+\begin{frame}{Positional Encoding – Spiralförmige Nachbarschaft}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+    \begin{itemize}
+      \stich{Wörter werden nicht zu isolierten Punkten, sondern zu \textbf{Regionen} im Raum}
+      \stich{Überlagerung verschieden schneller Rotationen → spiralartiger \textbf{Fingerabdruck} pro Position}
+      \stich{Benachbarte Positionen → überlappende Spiralen → \textbf{relative Abstände} bleiben erhalten}
+    \end{itemize}
+
+    \column{0.4\textwidth}
+    \begin{center}
+      \includegraphics[width=\linewidth, keepaspectratio]{posembed.png}\\[0.3em]
+      {\scriptsize\color{gray}Jedes Wort umgeben von einer spiralförmigen Region – seinem positionalen Fingerabdruck}
+    \end{center}
+  \end{columns}
+\end{frame}
+
 % ============================================================
 \section{Der große Überblick – Token-Vorhersage}
 % ============================================================
@@ -629,16 +968,17 @@
 \begin{frame}{Wie ein Sprachmodell Text generiert}
   \begin{center}
     \begin{tikzpicture}[
-        box/.style={draw, thick, rounded corners, minimum width=2.5cm,
-                     minimum height=1cm, font=\small\bfseries},
+        box/.style={draw, thick, rounded corners, minimum width=2.2cm,
+                     minimum height=0.9cm, font=\scriptsize\bfseries,
+                     text width=2.0cm, align=center},
         arr/.style={-{Stealth}, thick, akzent},
-        node distance=0.8cm
+        node distance=0.4cm
       ]
       \node[box, fill=hell!15]      (tok) {Tokenisierung};
       \node[box, fill=hell!15, right=of tok] (pe)  {+ Pos.\ Encoding};
       \node[box, fill=dunkel!15, right=of pe]  (layers) {Layer $\times N$};
-      \node[box, fill=highlight!15, right=of layers] (winkel) {Winkelvergleich};
-      \node[box, fill=akzent!15, right=of winkel] (topk) {Top-$k$ + Temp.};
+      \node[box, fill=highlight!15, right=of layers] (winkel) {Winkel-\\vergleich};
+      \node[box, fill=akzent!15, right=of winkel] (topk) {Top-$k$\\+ Temp.};
 
       \draw[arr] (tok) -- (pe);
       \draw[arr] (pe) -- (layers);
@@ -994,35 +1334,6 @@
   \end{columns}
 \end{frame}
 
-% ── Interpretierbare vs. nicht-interpretierbare Dimensionen ─
-\begin{frame}{Dimensionen des Embedding-Raums}
-  \begin{center}
-    \begin{tikzpicture}[scale=0.8]
-      % Achsen
-      \draw[-{Stealth}, thick] (-3,0) -- (3,0)
-        node[right, font=\small] {jung $\longleftrightarrow$ alt};
-      \draw[-{Stealth}, thick] (0,-2.5) -- (0,2.5)
-        node[above, font=\small] {männlich $\longleftrightarrow$ weiblich};
-
-      % Punkte
-      \fill[akzent] (-1.5, 1.5) circle (3pt) node[above right, font=\scriptsize] {Mädchen};
-      \fill[akzent] (1.5, 1.5)  circle (3pt) node[above right, font=\scriptsize] {Frau};
-      \fill[hell]   (-1.5,-1.5) circle (3pt) node[below right, font=\scriptsize] {Junge};
-      \fill[hell]   (1.5,-1.5)  circle (3pt) node[below right, font=\scriptsize] {Mann};
-
-      % Pfeile
-      \draw[-{Stealth}, dashed, gray] (-1.5,1.5) -- (1.5,1.5);
-      \draw[-{Stealth}, dashed, gray] (-1.5,-1.5) -- (1.5,-1.5);
-    \end{tikzpicture}
-  \end{center}
-
-  \begin{itemize}
-    \stich{Manche Dimensionen: \textbf{interpretierbar} (Alter, Geschlecht, Größe …)}
-    \stich{Andere: \textbf{keine menschliche Bezeichnung} – abstrakte Muster}
-    \stich{Modell hat $d = 4096+$ Dimensionen → die meisten nicht greifbar}
-  \end{itemize}
-\end{frame}
-
 % ── Aber was machen die inneren Layer wirklich? ────────────
 
 \begin{frame}[plain]
@@ -1250,12 +1561,60 @@
     \end{itemize}
 
     \column{0.45\textwidth}
-    \placeholder[0.9\linewidth]{Bild: Pigeonhole-Prinzip}
-
-    \vspace{0.5em}
-    \placeholder[0.9\linewidth]{Bild: Hologramm –
-                                 Smiley links, Hologramm-Muster rechts}
+    \begin{center}
+      \includegraphics[width=0.9\linewidth]{pidgeonhole_principle.jpg}\\
+      {\scriptsize\color{gray}Pigeonhole-Prinzip: mehr Tauben als Löcher}
+    \end{center}
   \end{columns}
+\end{frame}
+
+\begin{frame}{Holografische Kodierung}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{center}
+      \includegraphics[width=0.9\linewidth, height=0.4\textheight, keepaspectratio]{hologram1.png}\\
+      {\scriptsize\color{gray}Originalbild (z.\,B.\ Smiley)}
+    \end{center}
+
+    \column{0.48\textwidth}
+    \begin{center}
+      \includegraphics[width=0.9\linewidth, height=0.4\textheight, keepaspectratio]{hologram2.png}\\
+      {\scriptsize\color{gray}Holografisches Interferenzmuster}
+    \end{center}
+  \end{columns}
+
+  \medskip
+  \begin{itemize}
+    \stich{Links: das gespeicherte \textbf{Konzept} (lokalisiert, klar)}
+    \stich{Rechts: die \textbf{verteilte Kodierung} im Netz (jedes Fragment enthält Information über das Ganze)}
+    \stich{Zerstört man einen Teil des Hologramms → Bild wird \emph{unschärfer}, aber nicht gelöscht}
+    \stich{Analog: einzelne Neuronen entfernen → Modell degradiert \emph{graduell}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Holografische Kodierung}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{center}
+      \includegraphics[width=0.85\linewidth, height=0.35\textheight, keepaspectratio]{hologram1_1.png}\\[0.3em]
+      {\scriptsize\color{gray}Ein Stück herausgeschnitten\\→ Information \textbf{unwiederbringlich weg}}
+    \end{center}
+
+    \column{0.48\textwidth}
+    \begin{center}
+      \includegraphics[width=0.85\linewidth, height=0.35\textheight, keepaspectratio]{hologram2_2.png}\\[0.3em]
+      {\scriptsize\color{gray}Ein Stück herausgeschnitten\\→ Bild wird \textbf{unschärfer}, aber bleibt ganz}
+    \end{center}
+  \end{columns}
+
+  \medskip
+  \begin{itemize}
+    \stich{\textbf{Links:} Lokale Speicherung – jeder Pixel trägt nur \emph{seine eigene} Information. Teil weg = Loch im Bild.}
+    \stich{\textbf{Rechts:} Verteilte Speicherung – jedes Fragment enthält Information über das \emph{gesamte} Bild. Teil weg = alles etwas unschärfer.}
+    \stich{Neuronale Netze speichern wie \textbf{Hologramme}: einzelne Neuronen entfernen → gradueller Qualitätsverlust, kein katastrophales Vergessen}
+  \end{itemize}
+
+  \quelle{Vgl.\ Holografie: jeder Teil des Hologramms rekonstruiert das ganze Bild}
 \end{frame}
 
 \begin{frame}{Raumkrümmung + Holografie = Berechnung?}
@@ -1341,12 +1700,11 @@
     \end{itemize}
 
     \medskip
-    {\small Wie beim Handy-Panorama: Bilder werden an den
+    {\small Wie beim Handy-Panorama: Bilder werden an den 
      Überlappungen zusammengefügt.}
 
     \column{0.4\textwidth}
-    \placeholder[0.9\linewidth]{Bild: Handy-Panorama mit sichtbarer
-                                 Überlappung der Einzelbilder}
+    \includegraphics[width=0.9\linewidth]{panorama_overlap.jpg}
   \end{columns}
 \end{frame}
 
@@ -1412,27 +1770,6 @@
   \end{center}
 \end{frame}
 
-% ── Tegmark: Space & Time ──────────────────────────────────
-\begin{frame}{Evidenz: Modelle lernen Geografie}
-  \begin{columns}[T]
-    \column{0.55\textwidth}
-    \begin{itemize}
-      \stich{Gurnee \& Tegmark (2023):\\
-             \emph{``Language Models Represent Space and Time''}}
-      \stich{Abstände zwischen Städten (New York, Berlin, …)
-             in einer Dimension \textbf{realistisch} abgebildet}
-      \stich{Nicht explizit trainiert – emergiert als
-             \textbf{beste Repräsentation} der Daten}
-    \end{itemize}
-
-    \column{0.4\textwidth}
-    \placeholder[0.9\linewidth]{Bild: Tegmark – interne Geografie-Karte
-                                 des Sprachmodells}
-  \end{columns}
-
-  \quelle{Gurnee, Tegmark. arXiv:2310.02207 (2023)}
-\end{frame}
-
 \begin{frame}{Warum lernt das Modell Geografie?}
   \formelbox{\text{Strukturelle Kompression} \gg \text{Einzelverbindungen}}
 
@@ -1474,32 +1811,49 @@
 \begin{frame}{Der Fluss – von Tokens zu Topologie}
   \begin{center}
     \begin{tikzpicture}[
-        box/.style={draw, thick, rounded corners, minimum width=3cm,
-                     minimum height=0.8cm, font=\scriptsize\bfseries},
+        box/.style={draw, thick, rounded corners, minimum width=2.6cm,
+                     minimum height=0.65cm, font=\tiny\bfseries},
+        layer/.style={draw, thick, rounded corners, minimum width=2.6cm,
+                     minimum height=0.65cm, font=\tiny\bfseries,
+                     fill=dunkel!15, text=black},
         arr/.style={-{Stealth}, thick, gray},
-        node distance=0.6cm
+        note/.style={font=\tiny, text width=2.6cm, align=center},
+        node distance=0.3cm and 0.4cm
       ]
-      \node[box, fill=hell!15]      (s1) {1. Dense Layer};
-      \node[box, fill=hell!15, below=of s1] (s2) {2. Positional Encoding};
-      \node[box, fill=dunkel!15, text=white, below=of s2] (s3) {3. Attention + FFN};
-      \node[box, fill=dunkel!15, text=white, below=of s3] (s3b) {3b. Residual Stream};
-      \node[box, fill=akzent!15, below=of s3b] (s4) {4. Raumkrümmung};
-      \node[box, fill=highlight!15, below=of s4] (s5) {5. Topologie};
-      \node[box, fill=highlight!15, below=of s5] (s6) {6. Holografische Kodierung};
-      \node[box, fill=highlight!20, below=of s6] (s7) {7. Garbentheorie};
+      % ── Zeile 1: Eingang ──
+      \node[box, fill=hell!15]                             (tok) {Tokenizer};
+      \node[box, fill=hell!15, right=of tok]               (emb) {Embedding};
+      \node[box, fill=hell!25, right=of emb]               (pos) {+ Pos.\ Encoding};
+      \node[layer, right=of pos]                           (res) {Residual Stream};
 
-      \foreach \a/\b in {s1/s2, s2/s3, s3/s3b, s3b/s4, s4/s5, s5/s6, s6/s7}
+      \foreach \a/\b in {tok/emb, emb/pos, pos/res}
         \draw[arr] (\a) -- (\b);
 
-      % Annotations rechts
-      \node[right=1cm of s1, font=\scriptsize, text width=4cm]
-        {Grundbaustein, universeller Approximator};
-      \node[right=1cm of s3, font=\scriptsize, text width=4cm]
-        {Beziehungen + Transformation};
-      \node[right=1cm of s4, font=\scriptsize, text width=4cm]
-        {Information in der Geometrie};
-      \node[right=1cm of s7, font=\scriptsize, text width=4cm]
-        {Lokale Daten → (Prä-)Garbe};
+      % ── Zeile 2: Transformer-Block (×N) ──
+      \node[layer, below=1.0cm of tok]                     (attn){Attention};
+      \node[layer, right=of attn]                          (ffn) {FFN};
+      \node[box, fill=akzent!20, right=of ffn]             (curv){Raumkrümmung};
+      \node[box, fill=highlight!20, right=of curv]         (out) {Topologie / Garbe};
+
+      \foreach \a/\b in {attn/ffn, ffn/curv, curv/out}
+        \draw[arr] (\a) -- (\b);
+
+      % ── Verbindung Zeile 1 → Zeile 2 ──
+      \draw[arr, rounded corners=5pt]
+        (res.south) -- ++(0,-0.4) -| (attn.north);
+
+      % ── Rückschreiben auf Residual Stream (Loop) ──
+      \draw[arr, rounded corners=5pt, dashed]
+        (ffn.south) -- ++(0,-0.4) -- ++(-4.2,0)
+        node[midway, below, font=\tiny]{$+$ zurück auf Residual Stream ($\times N$ Layer)}
+        -- ++(0,0.4) -- (attn.south west);
+
+      % ── Annotationen ──
+      \node[note, above=0.2cm of tok]  {Text → IDs};
+      \node[note, above=0.2cm of pos]  {Sequenz-\\information};
+      \node[note, above=0.2cm of res]  {Informations-\\autobahn};
+      \node[note, below=0.2cm of curv] {Jeder Layer\\krümmt den Raum};
+      \node[note, below=0.2cm of out]  {Holograf.\ kodiert,\\immer schärfere\\Garben-Approx.};
     \end{tikzpicture}
   \end{center}
 \end{frame}
@@ -1508,7 +1862,6 @@
   \begin{itemize}
     \stich{Können wir mit \textbf{Jacobi-Feldern} die interne Geometrie vermessen?}
     \stich{Gibt es nachweisbare \textbf{Loop Spaces} in trainierten Netzen?}
-    \stich{Wie weit reicht die \textbf{Prä-Garbe} – wo bricht sie zusammen?}
     \stich{Ist die holografische Kodierung der Schlüssel zum
            \textbf{mechanistischen Verständnis}?}
   \end{itemize}

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is Wisdom?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.7;
+            margin-bottom: 40px;
+        }
+
+        .wisdom-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .wisdom-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .wisdom-card:hover {
+            border-color: rgba(246, 211, 101, 0.3);
+            box-shadow: 0 0 30px rgba(246, 211, 101, 0.05);
+        }
+
+        .emoji-big {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            color: #fda085;
+            margin-bottom: 15px;
+        }
+
+        .card-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            opacity: 0.85;
+        }
+
+        .interactive-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .slider-container {
+            margin: 30px 0;
+        }
+
+        .slider-container label {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #f6d365;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            cursor: pointer;
+        }
+
+        .slider-result {
+            margin-top: 15px;
+            font-size: 1.2em;
+            min-height: 60px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .scenario-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .choice-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 8px;
+            border: 1px solid rgba(246, 211, 101, 0.4);
+            border-radius: 30px;
+            background: transparent;
+            color: #e0e0e0;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+        }
+
+        .choice-btn:hover {
+            background: rgba(246, 211, 101, 0.15);
+            border-color: #f6d365;
+            transform: scale(1.05);
+        }
+
+        .choice-btn.selected {
+            background: rgba(246, 211, 101, 0.2);
+            border-color: #f6d365;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.05em;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .feedback.wise {
+            background: rgba(76, 175, 80, 0.15);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .feedback.learning {
+            background: rgba(255, 152, 0, 0.15);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 40px 0 20px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #f6d365, #fda085);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+
+        .reveal-btn {
+            padding: 15px 40px;
+            border: 2px solid #f6d365;
+            border-radius: 30px;
+            background: transparent;
+            color: #f6d365;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            margin: 20px 0;
+        }
+
+        .reveal-btn:hover {
+            background: rgba(246, 211, 101, 0.15);
+            transform: scale(1.05);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .comp-item {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .comp-item.left {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.2);
+        }
+
+        .comp-item.right {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .comp-item:hover {
+            transform: scale(1.03);
+        }
+
+        .comp-item .comp-emoji {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .final-insight {
+            font-size: 1.3em;
+            line-height: 1.7;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(246, 211, 101, 0.1), rgba(253, 160, 133, 0.1));
+            border-radius: 20px;
+            border: 1px solid rgba(246, 211, 101, 0.2);
+            margin-top: 30px;
+            display: none;
+        }
+
+        .final-insight.show {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-divider {
+            margin: 50px 0;
+            text-align: center;
+            opacity: 0.3;
+            font-size: 1.5em;
+            letter-spacing: 10px;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .wisdom-card { padding: 25px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ What is Wisdom?</h1>
+        <p class="subtitle">An interactive exploration — click, slide, and discover</p>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <!-- Card 1: The Core Idea -->
+        <div class="wisdom-card" id="card1">
+            <span class="emoji-big">🧠➡️❤️</span>
+            <div class="card-title">Wisdom ≠ Knowledge</div>
+            <div class="card-text">
+                Knowledge is knowing fire is hot.<br>
+                Wisdom is knowing <em>when</em> to use fire and <em>when</em> to walk away.
+            </div>
+        </div>
+
+        <!-- Interactive: The Slider -->
+        <div class="wisdom-card" id="card2">
+            <span class="emoji-big">⚖️</span>
+            <div class="card-title">Wisdom Lives in Balance</div>
+            <div class="slider-container">
+                <label>Slide to see what wisdom does with opposites:</label>
+                <input type="range" id="balanceSlider" min="0" max="100" value="50">
+                <div class="slider-result" id="sliderResult">
+                    🎯 Right here. Wisdom holds the tension between extremes.
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider">· · ·</div>
+
+        <!-- Card 3: Comparison -->
+        <div class="wisdom-card" id="card3">
+            <span class="emoji-big">🔍</span>
+            <div class="card-title">Spot the Wisdom</div>
+            <p class="card-text" style="margin-bottom: 20px;">Tap the response that feels wiser:</p>
+
+            <div class="scenario-box">
+                <p style="margin-bottom: 15px; opacity: 0.7;">Someone insults you publicly...</p>
+                <button class="choice-btn" onclick="checkChoice(this, 'learning', 'Reacting immediately feels powerful, but it gives your peace away to someone who didn\'t earn it.')">
+                    🔥 Fire back immediately
+                </button>
+                <button class="choice-btn" onclick="checkChoice(this, 'wise', 'Yes. Pausing isn\'t weakness — it\'s choosing which battles deserve your energy.')">
+                    🌊 Pause. Respond later if needed.
+                </button>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+        </div>
+
+        <!-- Card 4: The 5 Pillars -->
+        <div class="wisdom-card" id="card4">
+            <span class="emoji-big">🏛️</span>
+            <div class="card-title">5 Pillars of Wisdom</div>
+            <p class="card-text" style="margin-bottom: 20px;">Click each to reveal:</p>
+
+            <div id="pillars">
+                <button class="reveal-btn" onclick="revealPillar(0)">1. 🪞 Self-Awareness</button>
+                <div class="pillar-text" id="pillar0" style="display:none; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                    Knowing your own biases, fears, and patterns. The wise person asks: "Am I seeing clearly, or am I seeing what I want to see?"
+                </div>
+
+                <button class="reveal-btn" onclick="revealPillar(1)">2. 🕰️ Long-term Thinking</button>
+                <div class="pillar-text" id="pillar1" style="display:none; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                    Choosing what's right over what's easy. The marshmallow test of life — every day.
+                </div>
+
+                <button class="reveal-btn" onclick="revealPillar(2)">3. 🤝 Empathy</button>
+                <div class="pillar-text" id="pillar2" style="display:none; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                    Understanding that everyone is fighting a battle you can't see. Wisdom treats people as whole, not as roles.
+                </div>
+
+                <button class="reveal-btn" onclick="revealPillar(3)">4. 🌀 Comfort with Uncertainty</button>
+                <div class="pillar-text" id="pillar3" style="display:none; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                    Saying "I don't know" without panic. The wise hold questions open longer than the anxious.
+                </div>
+
+                <button class="reveal-btn" onclick="revealPillar(4)">5. 🔄 Learning from Pain</button>
+                <div class="pillar-text" id="pillar4" style="display:none; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                    Suffering doesn't automatically create wisdom. Reflection on suffering does. The scar becomes a teacher only if you listen.
+                </div>
+            </div>
+        </div>
+
+        <div class="section-divider">· · ·</div>
+
+        <!-- Card 5: Not-Wisdom vs Wisdom -->
+        <div class="wisdom-card" id="card5">
+            <span class="emoji-big">🪄</span>
+            <div class="card-title">What Wisdom Looks Like vs. Doesn't</div>
+            <div class="comparison-grid">
+                <div class="comp-item left">
+                    <span class="comp-emoji">📢</span>
+                    Speaking to prove you're smart
+                </div>
+                <div class="comp-item right">
+                    <span class="comp-emoji">👂</span>
+                    Listening to actually understand
+                </div>
+                <div class="comp-item left">
+                    <span class="comp-emoji">⚡</span>
+                    Reacting from emotion
+                </div>
+                <div class="comp-item right">
+                    <span class="comp-emoji">🌱</span>
+                    Responding from clarity
+                </div>
+                <div class="comp-item left">
+                    <span class="comp-emoji">🏆</span>
+                    Needing to be right
+                </div>
+                <div class="comp-item right">
+                    <span class="comp-emoji">🔓</span>
+                    Wanting to understand
+                </div>
+                <div class="comp-item left">
+                    <span class="comp-emoji">🎭</span>
+                    Collecting advice you never use
+                </div>
+                <div class="comp-item right">
+                    <span class="comp-emoji">🚶</span>
+                    Living one truth deeply
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 6: Your Wisdom Moment -->
+        <div class="wisdom-card" id="card6">
+            <span class="emoji-big">💭</span>
+            <div class="card-title">A Question for You</div>
+            <div class="scenario-box">
+                <p style="font-size: 1.2em; line-height: 1.6;">
+                    Think of a mistake you made that you'd never repeat.<br><br>
+                    <em>That's wisdom. You already have some.</em>
+                </p>
+                <button class="reveal-btn" onclick="showFinalInsight()" style="margin-top: 20px;">
+                    Show me the summary ✨
+                </button>
+            </div>
+        </div>
+
+        <!-- Final Insight -->
+        <div class="final-insight" id="finalInsight">
+            <strong style="color: #f6d365;">Wisdom in one breath:</strong><br><br>
+            It's the quiet voice that says <em>"wait"</em> when everything screams <em>"go."</em><br><br>
+            It's knowing that being kind is harder — and more powerful — than being clever.<br><br>
+            It's not a destination. It's a practice.<br><br>
+            <span style="opacity: 0.6;">— And the fact that you're curious about it? That's already the beginning.</span>
+        </div>
+
+        <div style="margin-top: 60px; opacity: 0.4; font-size: 0.9em;">
+            ✦ Scroll back up and try the interactions you missed ✦
+        </div>
+    </div>
+
+    <script>
+        // Animate cards on scroll
+        const cards = document.querySelectorAll('.wisdom-card');
+        let revealedSections = 0;
+        const totalSections = 8; // cards + pillars + final
+
+        function updateProgress() {
+            revealedSections++;
+            const pct = Math.min((revealedSections / totalSections) * 100, 100);
+            document.getElementById('progressFill').style.width = pct + '%';
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    updateProgress();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        cards.forEach(card => observer.observe(card));
+
+        // Slider interaction
+        const slider = document.getElementById('balanceSlider');
+        const sliderResult = document.getElementById('sliderResult');
+
+        const sliderMessages = [
+            { range: [0, 15], text: "😤 All caution, no action. Fear disguised as prudence." },
+            { range: [16, 35], text: "🤔 Leaning cautious. Safe, but you might miss life waiting for certainty." },
+            { range: [36, 65], text: "🎯 The sweet spot. Wisdom holds both courage AND caution without choosing sides." },
+            { range: [66, 85], text: "⚡ Leaning bold. Exciting, but are you listening or just charging ahead?" },
+            { range: [86, 100], text: "🔥 All impulse, no reflection. Confidence without awareness is recklessness." }
+        ];
+
+        slider.addEventListener('input', function () {
+            const val = parseInt(this.value);
+            for (let msg of sliderMessages) {
+                if (val >= msg.range[0] && val <= msg.range[1]) {
+                    sliderResult.textContent = msg.text;
+                    break;
+                }
+            }
+        });
+
+        // Choice interaction
+        function checkChoice(btn, type, message) {
+            const feedback = document.getElementById('feedback1');
+            feedback.className = 'feedback show ' + type;
+            feedback.textContent = message;
+
+            // Highlight selected
+            const buttons = btn.parentElement.querySelectorAll('.choice-btn');
+            buttons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            updateProgress();
+        }
+
+        // Pillar reveals
+        function revealPillar(index) {
+            const el = document.getElementById('pillar' + index);
+            if (el.style.display === 'none') {
+                el.style.display = 'block';
+                el.style.animation = 'fadeIn 0.5s ease';
+                updateProgress();
+            } else {
+                el.style.display = 'none';
+            }
+        }
+
+        // Final insight
+        function showFinalInsight() {
+            document.getElementById('finalInsight').classList.add('show');
+            document.getElementById('progressFill').style.width = '100%';
+        }
+
+        // Trigger first card immediately
+        setTimeout(() => {
+            document.getElementById('card1').classList.add('visible');
+            updateProgress();
+        }, 300);
+    </script>
+</body>
+</html>

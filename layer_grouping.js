@@ -18,7 +18,7 @@ async function plot_training_data_to_neurons(div_name="#layer_input_groups", max
 	dbg("Collected "+image_samples.length+" image samples");
 
 	const layers_sorted = sort_layers_by_filters(layers_data);
-	const prepared = prepare_canvases_data(layers_sorted, image_samples, /*k=*/5, max_neurons);
+	const prepared = prepare_canvases_data(layers_sorted, image_samples);
 
 	render_prepared(prepared, target, max_neurons);
 	dbg("Rendering finished");
@@ -196,8 +196,8 @@ function create_image_from_rows(rows_root, w, h, channels){
 		return null;
 	}
 
-	const minv = Math.min(...flat);
-	const maxv = Math.max(...flat);
+	const minv = array_min(flat);
+	const maxv = array_max(flat);
 	dbg(`create_image_from_rows: pixel min=${minv}, max=${maxv}, channels=${channels}`);
 
 	let i=0;
@@ -298,12 +298,32 @@ function prepare_single_layer(layer, images_per_sample, representative_images, f
 	return { layer_idx: idx, num_filters: nf, grouped_images: grouped, too_many: false };
 }
 
+function array_min(a, b) {
+	if (arguments.length === 2) return a < b ? a : b;
+	// a is an array
+	let min = Infinity;
+	for (let i = 0; i < a.length; i++) {
+		if (a[i] < min) min = a[i];
+	}
+	return min;
+}
+
+function array_max(a, b) {
+	if (arguments.length === 2) return a > b ? a : b;
+	// a is an array
+	let max = -Infinity;
+	for (let i = 0; i < a.length; i++) {
+		if (a[i] > max) max = a[i];
+	}
+	return max;
+}
+
 function group_images_by_max_activation(per_sample, images_per_sample, representative_images, nf){
 	const grouped = Array.from({length:nf}, ()=>[]);
 	for(let s=0; s<per_sample.length; s++){
 		const activations = per_sample[s];
 		if(!activations) continue;
-		const max_val = Math.max(...activations);
+		const max_val = array_max(activations);
 
 		activations.forEach((val,f)=>{
 			if(val === max_val){
@@ -352,7 +372,7 @@ function norm_pixel(v, minv, maxv){
 	if(typeof v!=="number" || Number.isNaN(v)) v=0;
 	if(maxv===minv) return 128; // fallback für konstante Pixel
 	let n = Math.round((v - minv)/(maxv - minv)*255);
-	return Math.max(0, Math.min(255, n));
+	return array_max(0, array_min(255, n));
 }
 
 function create_layer_box(layer, max_neurons=32){
@@ -388,16 +408,16 @@ function create_layer_box(layer, max_neurons=32){
 
 	let max_stack = 0;
 	for(let f=0; f<layer.grouped_images.length; f++){
-		max_stack = Math.max(max_stack, (layer.grouped_images[f] || []).length);
+		max_stack = array_max(max_stack, (layer.grouped_images[f] || []).length);
 	}
 	if(max_stack === 0) max_stack = 1;
 
-	const width  = Math.max(300, 100 + col_count * (sample_w + spacing));
+	const width  = array_max(300, 100 + col_count * (sample_w + spacing));
 	const height = 30 + max_stack * (sample_h + 6) + 40;
 
 	const canvas = document.createElement("canvas");
-	canvas.width = Math.min(width, 4000);
-	canvas.height = Math.min(height, 3000);
+	canvas.width = array_min(width, 4000);
+	canvas.height = array_min(height, 3000);
 	canvas.style.width = canvas.width+"px";
 	canvas.style.height = canvas.height+"px";
 	holder.appendChild(canvas);

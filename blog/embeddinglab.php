@@ -153,7 +153,7 @@ The **red arc** below visualizes the **Cosine Distance**, the "conceptual shift"
 </section>
 
 <div class="md">
-### Similiarity
+### Similarity
 To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together. In general, the equation is:
 </div>
 
@@ -371,7 +371,7 @@ This would explain why cross-lingual alignment works (as we saw above): not just
 
 Below, three independently trained models, a **Language model** (●), a **Vision model** (◆), and an **Audio model** (■), have each learned to embed the same real-world concepts. Each model lives in its own rotated coordinate frame. But the **internal geometry**, which concepts are near which, what clusters form, what distances separate them, is identical across all three. Click **Align** to watch all three modalities converge onto a single shared structure, revealing the "platonic" geometry underneath.
 
-This hypothesis allows so-called **Brain-Swapping**: since models learn similiar representation when trained on data about the same real world, their embedding spaces have similiar manifolds in them, and can be changed after being rotated without too big of an impact on the validity of the results.
+This hypothesis allows so-called **Brain-Swapping**: since models learn similar representation when trained on data about the same real world, their embedding spaces have similar manifolds in them, and can be changed after being rotated without too big of an impact on the validity of the results.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
@@ -664,7 +664,7 @@ Notice the denominator: as either point approaches the boundary ($\|\mathbf{u}\|
 
 Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chain** traces Entity → Animal → Mammal → Dog → Poodle from center to boundary. Drag the **curvature slider** from Euclidean (flat, uniformly spaced depth rings, straight edges) to Hyperbolic (exponentially compressed rings, inward-curving geodesics) and watch the geometry transform, a stark contrast to the flat Euclidean grids explored above.
 
-\citeauthorlastnameand{poincareembeddings} have shown that, by chosing a Poincaré Embedding Space, the number of dimensions required could be drastically removed in some instances.
+\citeauthorlastnameand{poincareembeddings} have shown that, by choosing a Poincaré Embedding Space, the number of dimensions required could be drastically removed in some instances.
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">

@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eigenvectors — See the Unseen Axes of Transformation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-hover: #1a1a2e;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-warm: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-emerald: #10b981;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --glow-primary: rgba(99, 102, 241, 0.3);
+            --glow-warm: rgba(245, 158, 11, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 3px; }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 50%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+            animation: drift 20s ease-in-out infinite;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-2%, 1%) rotate(1deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #f1f5f9 0%, #6366f1 50%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            animation: bob 2s ease-in-out infinite;
+        }
+
+        @keyframes bob {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        .scroll-hint svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-muted);
+        }
+
+        /* Sections */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Interactive Canvas Cards */
+        .canvas-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .canvas-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.08);
+        }
+
+        .canvas-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .canvas-card .description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        canvas {
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            cursor: crosshair;
+            max-width: 100%;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .control-group label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 140px;
+            height: 4px;
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--glow-primary);
+        }
+
+        .btn {
+            padding: 0.6rem 1.4rem;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-primary);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+        }
+
+        .btn.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Matrix Display */
+        .matrix-display {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            font-family: 'Inter', monospace;
+            font-size: 1.1rem;
+            gap: 0.3rem;
+        }
+
+        .matrix-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .matrix-val {
+            min-width: 3ch;
+            text-align: center;
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        /* Insight boxes */
+        .insight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.05));
+            border-left: 3px solid var(--accent-primary);
+            border-radius: 0 12px 12px 0;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .insight strong {
+            color: var(--accent-primary);
+        }
+
+        /* Step indicators */
+        .step-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        /* Explanation flow */
+        .explanation-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: border-color 0.3s;
+        }
+
+        .flow-step:hover {
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .flow-step .content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .flow-step .content p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Eigenvalue display */
+        .eigen-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .eigen-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .eigen-badge .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .eigen-badge .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .eigen-badge .value {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* Applications grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .app-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .app-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .app-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .app-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Quiz section */
+        .quiz-container {
+            background: var(--bg-card);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .quiz-container h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--accent-warm);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .quiz-option {
+            padding: 1rem 2rem;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            background: transparent;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent-warm);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--accent-emerald);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-emerald);
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--accent-rose);
+            background: rgba(244, 63, 94, 0.1);
+            color: var(--accent-rose);
+        }
+
+        .quiz-feedback {
+            font-size: 1rem;
+            margin-top: 1rem;
+            min-height: 1.5em;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .canvas-card { padding: 1.5rem; }
+            .section { padding: 4rem 1rem; }
+            .controls { gap: 0.75rem; }
+            input[type="range"] { width: 100px; }
+        }
+
+        /* Particle canvas background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .sandbox-info {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 1.25rem;
+            min-width: 220px;
+            font-size: 0.9rem;
+        }
+
+        .sandbox-info h4 {
+            color: var(--accent-warm);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .sandbox-info p {
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .sandbox-info .mono {
+            font-family: monospace;
+            color: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Eigenvectors</h1>
+        <p>The hidden axes of transformation. The directions that <em>refuse to turn</em>. Discover them through your hands and eyes — no prerequisites required.</p>
+    </div>
+    <div class="scroll-hint">
+        <span>Scroll to explore</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+            <path d="M12 5v14M19 12l-7 7-7-7"/>
+        </svg>
+    </div>
+</section>
+
+<!-- SECTION 1: THE CORE INTUITION -->
+<section class="section">
+    <div class="section-header">
+        <h2>The Core Intuition</h2>
+        <p>Imagine stretching, squishing, or shearing a rubber sheet. Most arrows on that sheet change direction. But some special arrows only get longer or shorter — they <em>stay on their line</em>. Those are eigenvectors.</p>
+    </div>
+
+    <div class="canvas-card">
+        <h3>🎯 Interactive: Watch Arrows Transform</h3>
+        <p class="description">The grid of arrows shows every direction. Hit "Apply Transformation" and watch: most arrows rotate, but the <span style="color: var(--accent-warm);">golden arrows</span> (eigenvectors) only scale — they stay on their original line.</p>
+
+        <div class="canvas-wrapper">
+            <canvas id="canvas1" width="560" height="560"></canvas>
+            <div class="sandbox-info" id="info1">
+                <h4>Current Matrix</h4>
+                <div class="matrix-display" id="matrix1">
+                    <div class="matrix-row"><span class="matrix-val" id="m1a">2</span><span class="matrix-val" id="m1b">1</span></div>
+                    <div class="matrix-row"><span class="matrix-val" id="m1c">0</span><span class="matrix-val" id="m1d">3</span></div>
+                </div>
+                <br>
+                <h4>Eigenvectors</h4>
+                <p id="eig1-info">Click "Apply" to see</p>
+                <br>
+                <h4>What to notice</h4>
+                <p>Golden arrows stay on their line.<br>Blue arrows rotate away from their original direction.</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>a (top-left)</label>
+                <input type="range" id="m1-a" min="-3" max="3" step="0.1" value="2">
+            </div>
+            <div class="control-group">
+                <label>b (top-right)</label>
+                <input type="range" id="m1-b" min="-3" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>c (bottom-left)</label>
+                <input type="range" id="m1-c" min="-3" max="3" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>d (bottom-right)</label>
+                <input type="range" id="m1-d" min="-3" max="3" step="0.1" value="3">
+            </div>
+            <button class="btn" id="apply1">Apply Transformation</button>
+            <button class="btn" id="reset1">Reset</button>
+        </div>
+    </div>
+
+    <div class="insight">
+        <strong>Key Insight:</strong> An eigenvector of a matrix A is any non-zero vector <strong>v</strong> such that <em>Av = λv</em>. That means applying the transformation A to v just scales it by some number λ (the eigenvalue). The vector doesn't rotate — it stays on its line.
+    </div>
+</section>
+
+<!-- SECTION 2: BUILDING INTUITION STEP BY STEP -->
+<section class="section">
+    <div class="section-header">
+        <h2>Building Intuition</h2>
+        <p>Let's break it down into three visceral ideas you can feel.</p>
+    </div>
+
+    <div class="explanation-flow">
+        <div class="flow-step">
+            <span class="step-indicator">1</span>
+            <div class="content">
+                <h4>A matrix is a machine that moves arrows</h4>
+                <p>Every 2×2 matrix takes a 2D arrow (vector) and spits out a new 2D arrow. It's a transformation — think of it as a function that reshapes space itself.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <span class="step-indicator">2</span>
+            <div class="content">
+                <h4>Most arrows get both rotated AND scaled</h4>
+                <p>If you pick a random direction and apply the matrix, the output arrow usually points somewhere completely different. It moved off its original line.</p>
+            </div>
+        </div>
+        <div class="flow-step">
+            <span class="step-indicator">3</span>
+            <div class="content">
+                <h4>Eigenvectors are the exceptions — they only scale</h4>
+                <p>These are the special directions where the matrix's output is just a stretched or flipped version of the input. The direction is preserved. The eigenvalue tells you the stretch factor.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="canvas-card">
+        <h3>🔬 Interactive: Single Vector Explorer</h3>
+        <p class="description">Drag the blue vector anywhere. The orange vector shows where the matrix sends it. When they're perfectly aligned (same or opposite direction), you've found an eigenvector! The angle meter shows how close you are.</p>
+
+        <div class="canvas-wrapper">
+            <canvas id="canvas2" width="500" height="500"></canvas>
+            <div class="sandbox-info" id="info2">
+                <h4>Your Vector</h4>
+                <p>Direction: <span class="mono" id="vec2-dir">0°</span></p>
+                <p>After transform: <span class="mono" id="vec2-after">0°</span></p>
+                <br>
+                <h4>Alignment</h4>
+                <p style="font-size: 1.5rem; font-weight: 700;" id="alignment-meter">—</p>
+                <p id="alignment-label" style="color: var(--text-muted);">Drag the vector!</p>
+                <br>
+                <h4>Eigenvalue (when aligned)</h4>
+                <p class="mono" id="eigenvalue-display">—</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Matrix a</label>
+                <input type="range" id="m2-a" min="-3" max="3" step="0.1" value="2">
+            </div>
+            <div class="control-group">
+                <label>Matrix b</label>
+                <input type="range" id="m2-b" min="-3" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>Matrix c</label>
+                <input type="range" id="m2-c" min="-3" max="3" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>Matrix d</label>
+                <input type="range" id="m2-d" min="-3" max="3" step="0.1" value="3">
+            </div>
+            <button class="btn" id="snap2">Snap to Eigenvector</button>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: EIGENVALUES — THE STRETCH FACTOR -->
+<section class="section">
+    <div class="section-header">
+        <h2>Eigenvalues — The Stretch Factor</h2>
+        <p>Each eigenvector has a partner number: the eigenvalue λ. It tells you <em>how much</em> the vector gets scaled. Positive λ means same direction. Negative λ means it flips 180°. λ between -1 and 1 means it shrinks.</p>
+    </div>
+
+    <div class="canvas-card">
+        <h3>📐 Interactive: Eigenvalue Visualizer</h3>
+        <p class="description">See both eigenvectors of the matrix and their eigenvalues. Watch how changing the matrix changes the "skeleton" of the transformation — its fundamental axes of action.</p>
+
+        <div class="canvas-wrapper">
+            <canvas id="canvas3" width="560" height="560"></canvas>
+            <div class="sandbox-info" id="info3">
+                <h4>Eigenpairs</h4>
+                <div class="eigen-info" id="eigen-pairs">
+                    <div class="eigen-badge">
+                        <div class="dot" style="background: var(--accent-warm);"></div>
+                        <div>
+                            <div class="label">Eigenvector 1</div>
+                            <div class="value mono" id="ev1-val">—</div>
+                        </div>
+                    </div>
+                    <div class="eigen-badge">
+                        <div class="dot" style="background: var(--accent-emerald);"></div>
+                        <div>
+                            <div class="label">Eigenvector 2</div>
+                            <div class="value mono" id="ev2-val">—</div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <h4>Eigenvalues</h4>
+                <p>λ₁ = <span class="mono" id="eval1">—</span></p>
+                <p>λ₂ = <span class="mono" id="eval2">—</span></p>
+                <br>
+                <h4>Interpretation</h4>
+                <p id="interp3" style="color: var(--text-secondary); font-size: 0.85rem;">Adjust the matrix to explore.</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>a</label>
+                <input type="range" id="m3-a" min="-3" max="3" step="0.1" value="2">
+            </div>
+            <div class="control-group">
+                <label>b</label>
+                <input type="range" id="m3-b" min="-3" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>c</label>
+                <input type="range" id="m3-c" min="-3" max="3" step="0.1" value="0">
+            </div>
+            <div class="control-group">
+                <label>d</label>
+                <input type="range" id="m3-d" min="-3" max="3" step="0.1" value="3">
+            </div>
+            <button class="btn" id="preset-shear">Shear</button>
+            <button class="btn" id="preset-rotate">Rotation</button>
+            <button class="btn" id="preset-scale">Pure Scale</button>
+            <button class="btn" id="preset-reflect">Reflection</button>
+        </div>
+    </div>
+
+    <div class="insight">
+        <strong>Why rotations are special:</strong> A pure rotation matrix (like 90°) has <em>no real eigenvectors</em> in 2D — because every direction gets rotated! No arrow stays on its line. The eigenvalues become complex numbers. This is why the visualization shows no golden arrows for rotations.
+    </div>
+</section>
+
+<!-- SECTION 4: REPEATED APPLICATION / POWER -->
+<section class="section">
+    <div class="section-header">
+        <h2>The Power of Eigenvectors: Repeated Transformation</h2>
+        <p>Apply a matrix over and over, and everything aligns with the dominant eigenvector — the one with the largest eigenvalue. This is why Google's PageRank works, why vibrations settle into modes, and why populations converge.</p>
+    </div>
+
+    <div class="canvas-card">
+        <h3>⚡ Interactive: Iterated Transformation</h3>
+        <p class="description">Watch a cloud of random vectors get transformed repeatedly. After many applications, they all align with the dominant eigenvector. This is the essence of power iteration — one of the most important algorithms in computing.</p>
+
+        <div class="canvas-wrapper">
+            <canvas id="canvas4" width="560" height="560"></canvas>
+            <div class="sandbox-info" id="info4">
+                <h4>Iteration Count</h4>
+                <p style="font-size: 2rem; font-weight: 800; color: var(--accent-primary);" id="iter-count">0</p>
+                <br>
+                <h4>Dominant Eigenvalue</h4>
+                <p class="mono" id="dom-eval">—</p>
+                <br>
+                <h4>Convergence</h4>
+                <p id="convergence-info" style="color: var(--text-secondary); font-size: 0.85rem;">Press "Iterate" to begin</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="iterate-once">Iterate Once</button>
+            <button class="btn" id="iterate-auto">Auto-Iterate</button>
+            <button class="btn" id="reset4">Reset Cloud</button>
+            <div class="control-group">
+                <label>Speed</label>
+                <input type="range" id="iter-speed" min="100" max="1000" step="100" value="500">
+            </div>
+        </div>
+    </div>
+
+    <div class="insight">
+        <strong>This is power iteration:</strong> Multiply any random vector by a matrix over and over, and it converges to the dominant eigenvector. This is how Google originally computed PageRank — the "importance" of every webpage is the dominant eigenvector of the internet's link matrix.
+    </div>
+</section>
+
+<!-- SECTION 5: WHAT ARE THEY GOOD FOR? -->
+<section class="section">
+    <div class="section-header">
+        <h2>What Are Eigenvectors Good For?</h2>
+        <p>They reveal the hidden structure of any system that can be described by a matrix — which is almost everything.</p>
+    </div>
+
+    <div class="app-grid">
+        <div class="app-card">
+            <div class="icon">🔍</div>
+            <h4>Google PageRank</h4>
+            <p>The importance of every webpage is the dominant eigenvector of the web's link matrix. Pages that many important pages link to become important themselves.</p>
+        </div>
+        <div class="app-card">
+            <div class="icon">🎵</div>
+            <h4>Vibration Modes</h4>
+            <p>A bridge, guitar string, or building vibrates in specific patterns — each is an eigenvector of the system's stiffness matrix. The eigenvalue gives the frequency.</p>
+        </div>
+        <div class="app-card">
+            <div class="icon">📊</div>
+            <h4>PCA (Data Science)</h4>
+            <p>Principal Component Analysis finds the eigenvectors of your data's covariance matrix — revealing the directions of maximum variance. It's how we compress and understand high-dimensional data.</p>
+        </div>
+        <div class="app-card">
+            <div class="icon">🧬</div>
+            <h4>Quantum Mechanics</h4>
+            <p>Observable quantities (energy, momentum) are eigenvalues of operators. The possible states a particle can be measured in are eigenvectors. Reality itself is built on this concept.</p>
+        </div>
+        <div class="app-card">
+            <div class="icon">🖼️</div>
+            <h4>Facial Recognition</h4>
+            <p>"Eigenfaces" — the eigenvectors of a matrix of face images — capture the essential variations between faces. A face is a weighted sum of these basis faces.</p>
+        </div>
+        <div class="app-card">
+            <div class="icon">📈</div>
+            <h4>Stability Analysis</h4>
+            <p>Will a system explode, decay, or oscillate? The eigenvalues tell you. If all eigenvalues have magnitude < 1, the system is stable. This governs everything from economies to ecosystems.</p>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 6: MENTAL WORKOUT -->
+<section class="section">
+    <div class="section-header">
+        <h2>Test Your Intuition</h2>
+        <p>Use what you've seen to answer these without any calculation — just visual reasoning.</p>
+    </div>
+
+    <div class="quiz-container" id="quiz1">
+        <h3>Quiz 1</h3>
+        <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1rem;">A matrix scales everything horizontally by 3 and vertically by 2. What are its eigenvectors?</p>
+        <div class="quiz-options">
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz1')">Any diagonal direction</button>
+            <button class="quiz-option" data-answer="correct" onclick="checkQuiz(this, 'quiz1')">The horizontal and vertical axes</button>
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz1')">It has no eigenvectors</button>
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz1')">Every direction is an eigenvector</button>
+        </div>
+        <p class="quiz-feedback" id="quiz1-feedback"></p>
+    </div>
+
+    <br><br>
+
+    <div class="quiz-container" id="quiz2">
+        <h3>Quiz 2</h3>
+        <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1rem;">A matrix has eigenvalues λ₁ = 5 and λ₂ = 0.1. After applying it 100 times to a random vector, what happens?</p>
+        <div class="quiz-options">
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz2')">The vector shrinks to zero</button>
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz2')">The vector spins wildly</button>
+            <button class="quiz-option" data-answer="correct" onclick="checkQuiz(this, 'quiz2')">It aligns with eigenvector 1 and grows enormously</button>
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz2')">Nothing — it stays the same</button>
+        </div>
+        <p class="quiz-feedback" id="quiz2-feedback"></p>
+    </div>
+
+    <br><br>
+
+    <div class="quiz-container" id="quiz3">
+        <h3>Quiz 3</h3>
+        <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1rem;">A pure 90° rotation matrix in 2D has:</p>
+        <div class="quiz-options">
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz3')">Two eigenvectors along the axes</button>
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz3')">One eigenvector along the diagonal</button>
+            <button class="quiz-option" data-answer="correct" onclick="checkQuiz(this, 'quiz3')">No real eigenvectors (only complex ones)</button>
+            <button class="quiz-option" data-answer="wrong" onclick="checkQuiz(this, 'quiz3')">Every vector is an eigenvector</button>
+        </div>
+        <p class="quiz-feedback" id="quiz3-feedback"></p>
+    </div>
+</section>
+
+<!-- SECTION 7: THE FORMULA (for those who want it) -->
+<section class="section">
+    <div class="section-header">
+        <h2>The Math (When You're Ready)</h2>
+        <p>Now that you have the intuition, here's the algebra — it should feel natural.</p>
+    </div>
+
+    <div class="canvas-card">
+        <h3>The Eigenvalue Equation</h3>
+        <p class="description" style="max-width: 100%; font-size: 1.05rem; line-height: 1.9;">
+            We want vectors <strong>v</strong> where applying matrix <strong>A</strong> just scales them:<br><br>
+            <span style="font-size: 1.4rem; color: var(--accent-primary); font-family: monospace; font-weight: 700;">Av = λv</span><br><br>
+            Rearranging: <span style="font-family: monospace; color: var(--accent-secondary);">(A - λI)v = 0</span><br><br>
+            For a non-zero v to exist, the matrix (A - λI) must be singular:<br><br>
+            <span style="font-size: 1.2rem; font-family: monospace; color: var(--accent-warm);">det(A - λI) = 0</span><br><br>
+            This gives you the <strong>characteristic polynomial</strong>. Its roots are the eigenvalues λ. Plug each λ back in to find its eigenvector.
+        </p>
+
+        <div class="explanation-flow" style="margin-top: 2rem;">
+            <div class="flow-step">
+                <span class="step-indicator">1</span>
+                <div class="content">
+                    <h4>Find eigenvalues</h4>
+                    <p>Solve det(A - λI) = 0. For a 2×2 matrix [[a,b],[c,d]], this gives: λ² - (a+d)λ + (ad-bc) = 0</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <span class="step-indicator">2</span>
+                <div class="content">
+                    <h4>Find eigenvectors</h4>
+                    <p>For each λ, solve (A - λI)v = 0. This gives you the direction that only gets scaled by that λ.</p>
+                </div>
+            </div>
+            <div class="flow-step">
+                <span class="step-indicator">3</span>
+                <div class="content">
+                    <h4>Interpret</h4>
+                    <p>The eigenvectors are the "natural axes" of the transformation. The eigenvalues tell you the stretch factor along each axis. Together, they completely characterize what the matrix does.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>Built with love for anyone who ever stared at a textbook definition of eigenvectors and thought "but what does it <em>mean</em>?"</p>
+    <p style="margin-top: 0.5rem; opacity: 0.6;">Drag, slide, click, and play. Mathematics is a contact sport.</p>
+</footer>
+
+<script>
+// ============================================================
+// BACKGROUND PARTICLES
+// ============================================================
+(function() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const NUM = 60;
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (let i = 0; i < NUM; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.3,
+            vy: (Math.random() - 0.5) * 0.3,
+            r: Math.random() * 2 + 1
+        });
+    }
+
+    function drawBg() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(99, 102, 241, 0.4)';
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Draw connections
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.08)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 150) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(drawBg);
+    }
+    drawBg();
+})();
+
+// ============================================================
+// UTILITY: Compute eigenvectors/values for 2x2 matrix
+// ============================================================
+function computeEigen(a, b, c, d) {
+    // Characteristic equation: λ² - (a+d)λ + (ad-bc) = 0
+    const trace = a + d;
+    const det = a * d - b * c;
+    const discriminant = trace * trace - 4 * det;
+
+    if (discriminant < 0) {
+        // Complex eigenvalues
+        const realPart = trace / 2;
+        const imagPart = Math.sqrt(-discriminant) / 2;
+        return {
+            real: false,
+            lambda1: { re: realPart, im: imagPart },
+            lambda2: { re: realPart, im: -imagPart },
+            v1: null,
+            v2: null
+        };
+    }
+
+    const sqrtDisc = Math.sqrt(discriminant);
+    const lambda1 = (trace + sqrtDisc) / 2;
+    const lambda2 = (trace - sqrtDisc) / 2;
+
+    // Find eigenvectors
+    function eigenvector(lambda) {
+        // (A - λI)v = 0
+        const a1 = a - lambda, b1 = b;
+        const c1 = c, d1 = d - lambda;
+
+        let vx, vy;
+        if (Math.abs(b1) > 1e-10) {
+            vx = b1;
+            vy = lambda - a;
+        } else if (Math.abs(c1) > 1e-10) {
+            vx = lambda - d;
+            vy = c1;
+        } else if (Math.abs(a1) > 1e-10) {
+            vx = 0;
+            vy = 1;
+        } else {
+            vx = 1;
+            vy = 0;
+        }
+
+        const len = Math.sqrt(vx * vx + vy * vy);
+        if (len > 1e-10) {
+            vx /= len;
+            vy /= len;
+        }
+        return { x: vx, y: vy };
+    }
+
+    return {
+        real: true,
+        lambda1: lambda1,
+        lambda2: lambda2,
+        v1: eigenvector(lambda1),
+        v2: eigenvector(lambda2)
+    };
+}
+
+// ============================================================
+// CANVAS 1: Arrow Field Transformation
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas1');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const scale = 80;
+
+    let a = 2, b = 1, c = 0, d = 3;
+    let animProgress = 0;
+    let animating = false;
+    let transformed = false;
+
+    const sliders = {
+        a: document.getElementById('m1-a'),
+        b: document.getElementById('m1-b'),
+        c: document.getElementById('m1-c'),
+        d: document.getElementById('m1-d')
+    };
+
+    function updateMatrix() {
+        a = parseFloat(sliders.a.value);
+        b = parseFloat(sliders.b.value);
+        c = parseFloat(sliders.c.value);
+        d = parseFloat(sliders.d.value);
+        document.getElementById('m1a').textContent = a.toFixed(1);
+        document.getElementById('m1b').textContent = b.toFixed(1);
+        document.getElementById('m1c').textContent = c.toFixed(1);
+        document.getElementById('m1d').textContent = d.toFixed(1);
+        if (!animating) {
+            transformed = false;
+            animProgress = 0;
+            draw(0);
+        }
+    }
+
+    Object.values(sliders).forEach(s => s.addEventListener('input', updateMatrix));
+
+    function drawArrow(fromX, fromY, toX, toY, color, width = 2) {
+        const dx = toX - fromX, dy = toY - fromY;
+        const len = Math.sqrt(dx*dx + dy*dy);
+        if (len < 2) return;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        // Arrowhead
+        const headLen = Math.min(10, len * 0.3);
+        const angle = Math.atan2(dy, dx);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - 0.4), toY - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(toX - headLen * Math.cos(angle + 0.4), toY - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function draw(t) {
+        ctx.clearRect(0, 0, W, H);
+
+        // Grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        for (let i = -5; i <= 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(cx + i * scale, 0);
+            ctx.lineTo(cx + i * scale, H);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, cy + i * scale);
+            ctx.lineTo(W, cy + i * scale);
+            ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+        ctx.moveTo(cx, 0); ctx.lineTo(cx, H);
+        ctx.stroke();
+
+        const eigen = computeEigen(a, b, c, d);
+
+        // Draw arrows in a circle of directions
+        const numArrows = 36;
+        for (let i = 0; i < numArrows; i++) {
+            const angle = (i / numArrows) * Math.PI * 2;
+            const vx = Math.cos(angle);
+            const vy = Math.sin(angle);
+
+            // Transformed
+            const tx = a * vx + b * vy;
+            const ty = c * vx + d * vy;
+
+            // Interpolate
+            const ix = vx + (tx - vx) * t;
+            const iy = vy + (ty - vy) * t;
+
+            // Check if this is close to an eigenvector direction
+            let isEigen = false;
+            if (eigen.real && eigen.v1 && eigen.v2) {
+                const dot1 = Math.abs(vx * eigen.v1.x + vy * eigen.v1.y);
+                const dot2 = Math.abs(vx * eigen.v2.x + vy * eigen.v2.y);
+                if (dot1 > 0.97 || dot2 > 0.97) isEigen = true;
+            }
+
+            const color = isEigen ? 'rgba(245, 158, 11, 0.95)' : 'rgba(99, 102, 241, 0.5)';
+            const width = isEigen ? 3 : 1.5;
+
+            drawArrow(cx, cy, cx + ix * scale * 1.8, cy - iy * scale * 1.8, color, width);
+        }
+
+        // Draw eigenvector lines extended
+        if (eigen.real && eigen.v1) {
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(cx - eigen.v1.x * 300, cy + eigen.v1.y * 300);
+            ctx.lineTo(cx + eigen.v1.x * 300, cy - eigen.v1.y * 300);
+            ctx.stroke();
+            if (eigen.v2) {
+                ctx.strokeStyle = 'rgba(16, 185, 129, 0.2)';
+                ctx.beginPath();
+                ctx.moveTo(cx - eigen.v2.x * 300, cy + eigen.v2.y * 300);
+                ctx.lineTo(cx + eigen.v2.x * 300, cy - eigen.v2.y * 300);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+        }
+
+        // Update info
+        if (eigen.real) {
+            document.getElementById('eig1-info').innerHTML =
+                `<span style="color: var(--accent-warm);">v₁ = (${eigen.v1.x.toFixed(2)}, ${eigen.v1.y.toFixed(2)}), λ₁ = ${eigen.lambda1.toFixed(2)}</span><br>` +
+                `<span style="color: var(--accent-emerald);">v₂ = (${eigen.v2.x.toFixed(2)}, ${eigen.v2.y.toFixed(2)}), λ₂ = ${eigen.lambda2.toFixed(2)}</span>`;
+        } else {
+            document.getElementById('eig1-info').innerHTML = `<span style="color: var(--accent-rose);">Complex eigenvalues — no real eigenvectors!</span>`;
+        }
+    }
+
+    function animate() {
+        if (!animating) return;
+        animProgress += 0.02;
+        if (animProgress >= 1) {
+            animProgress = 1;
+            animating = false;
+            transformed = true;
+        }
+        draw(animProgress);
+        if (animating) requestAnimationFrame(animate);
+    }
+
+    document.getElementById('apply1').addEventListener('click', () => {
+        if (animating) return;
+        animProgress = 0;
+        animating = true;
+        animate();
+    });
+
+    document.getElementById('reset1').addEventListener('click', () => {
+        animating = false;
+        animProgress = 0;
+        transformed = false;
+        draw(0);
+    });
+
+    draw(0);
+})();
+
+// ============================================================
+// CANVAS 2: Single Vector Explorer (Draggable)
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas2');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const scale = 100;
+
+    let vecX = 1, vecY = 0.5;
+    let dragging = false;
+
+    let a = 2, b = 1, c = 0, d = 3;
+
+    const sliders = {
+        a: document.getElementById('m2-a'),
+        b: document.getElementById('m2-b'),
+        c: document.getElementById('m2-c'),
+        d: document.getElementById('m2-d')
+    };
+
+    function updateMatrix() {
+        a = parseFloat(sliders.a.value);
+        b = parseFloat(sliders.b.value);
+        c = parseFloat(sliders.c.value);
+        d = parseFloat(sliders.d.value);
+        draw();
+    }
+
+    Object.values(sliders).forEach(s => s.addEventListener('input', updateMatrix));
+
+    function drawArrow(fromX, fromY, toX, toY, color, width = 2) {
+        const dx = toX - fromX, dy = toY - fromY;
+        const len = Math.sqrt(dx*dx + dy*dy);
+        if (len < 2) return;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        const headLen = Math.min(12, len * 0.3);
+        const angle = Math.atan2(dy, dx);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - 0.4), toY - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(toX - headLen * Math.cos(angle + 0.4), toY - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        for (let i = -5; i <= 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(cx + i * scale, 0); ctx.lineTo(cx + i * scale, H);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, cy + i * scale); ctx.lineTo(W, cy + i * scale);
+            ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+        ctx.beginPath();
+        ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+        ctx.moveTo(cx, 0); ctx.lineTo(cx, H);
+        ctx.stroke();
+
+        // Transform vector
+        const tx = a * vecX + b * vecY;
+        const ty = c * vecX + d * vecY;
+
+        // Draw eigenvector lines (faint)
+        const eigen = computeEigen(a, b, c, d);
+        if (eigen.real && eigen.v1) {
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(cx - eigen.v1.x * 300, cy + eigen.v1.y * 300);
+            ctx.lineTo(cx + eigen.v1.x * 300, cy - eigen.v1.y * 300);
+            ctx.stroke();
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.15)';
+            ctx.beginPath();
+            ctx.moveTo(cx - eigen.v2.x * 300, cy + eigen.v2.y * 300);
+            ctx.lineTo(cx + eigen.v2.x * 300, cy - eigen.v2.y * 300);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Input vector (blue)
+        drawArrow(cx, cy, cx + vecX * scale, cy - vecY * scale, '#6366f1', 3);
+
+        // Output vector (orange)
+        drawArrow(cx, cy, cx + tx * scale, cy - ty * scale, '#f59e0b', 3);
+
+        // Labels
+        ctx.font = '14px Inter';
+        ctx.fillStyle = '#6366f1';
+        ctx.fillText('v (input)', cx + vecX * scale + 10, cy - vecY * scale);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText('Av (output)', cx + tx * scale + 10, cy - ty * scale);
+
+        // Compute alignment
+        const inputAngle = Math.atan2(vecY, vecX);
+        const outputAngle = Math.atan2(ty, tx);
+        let angleDiff = Math.abs(inputAngle - outputAngle);
+        if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+        // Also check 180° (negative eigenvalue)
+        let angleDiff180 = Math.abs(angleDiff - Math.PI);
+        const minDiff = Math.min(angleDiff, angleDiff180);
+
+        const alignmentPct = Math.max(0, (1 - minDiff / (Math.PI / 2)) * 100);
+
+        document.getElementById('vec2-dir').textContent = (inputAngle * 180 / Math.PI).toFixed(1) + '°';
+        document.getElementById('vec2-after').textContent = (outputAngle * 180 / Math.PI).toFixed(1) + '°';
+
+        const meterEl = document.getElementById('alignment-meter');
+        const labelEl = document.getElementById('alignment-label');
+        const evalEl = document.getElementById('eigenvalue-display');
+
+        if (minDiff < 0.05) {
+            meterEl.textContent = '✨ EIGENVECTOR! ✨';
+            meterEl.style.color = 'var(--accent-warm)';
+            labelEl.textContent = 'Perfect alignment — this direction only scales!';
+            // Compute eigenvalue
+            const inputLen = Math.sqrt(vecX*vecX + vecY*vecY);
+            const outputLen = Math.sqrt(tx*tx + ty*ty);
+            let lambda = outputLen / inputLen;
+            if (angleDiff > Math.PI / 2) lambda = -lambda;
+            evalEl.textContent = 'λ = ' + lambda.toFixed(3);
+        } else {
+            meterEl.textContent = alignmentPct.toFixed(0) + '%';
+            meterEl.style.color = alignmentPct > 80 ? 'var(--accent-emerald)' : 'var(--text-secondary)';
+            labelEl.textContent = alignmentPct > 80 ? 'Getting close!' : 'Drag to find alignment';
+            evalEl.textContent = '—';
+        }
+
+        // Draw alignment arc
+        if (angleDiff > 0.01 && angleDiff < Math.PI - 0.01) {
+            ctx.strokeStyle = `rgba(244, 63, 94, ${0.3 + 0.7 * (1 - alignmentPct/100)})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const arcR = 40;
+            const startA = -inputAngle;
+            const endA = -outputAngle;
+            ctx.arc(cx, cy, arcR, Math.min(startA, endA), Math.max(startA, endA));
+            ctx.stroke();
+        }
+    }
+
+    // Dragging
+    canvas.addEventListener('mousedown', (e) => { dragging = true; updateVec(e); });
+    canvas.addEventListener('mousemove', (e) => { if (dragging) updateVec(e); });
+    canvas.addEventListener('mouseup', () => { dragging = false; });
+    canvas.addEventListener('mouseleave', () => { dragging = false; });
+
+    canvas.addEventListener('touchstart', (e) => { dragging = true; updateVecTouch(e); e.preventDefault(); });
+    canvas.addEventListener('touchmove', (e) => { if (dragging) updateVecTouch(e); e.preventDefault(); });
+    canvas.addEventListener('touchend', () => { dragging = false; });
+
+    function updateVec(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const scaleX = W / rect.width;
+        const scaleY = H / rect.height;
+        vecX = (x * scaleX - cx) / scale;
+        vecY = -(y * scaleY - cy) / scale;
+        draw();
+    }
+
+    function updateVecTouch(e) {
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        const scaleX = W / rect.width;
+        const scaleY = H / rect.height;
+        vecX = (x * scaleX - cx) / scale;
+        vecY = -(y * scaleY - cy) / scale;
+        draw();
+    }
+
+    // Snap to eigenvector
+    document.getElementById('snap2').addEventListener('click', () => {
+        const eigen = computeEigen(a, b, c, d);
+        if (eigen.real && eigen.v1) {
+            vecX = eigen.v1.x * 1.5;
+            vecY = eigen.v1.y * 1.5;
+            draw();
+        }
+    });
+
+    draw();
+})();
+
+// ============================================================
+// CANVAS 3: Eigenvalue Visualizer
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas3');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const scale = 80;
+
+    let a = 2, b = 1, c = 0, d = 3;
+
+    const sliders = {
+        a: document.getElementById('m3-a'),
+        b: document.getElementById('m3-b'),
+        c: document.getElementById('m3-c'),
+        d: document.getElementById('m3-d')
+    };
+
+    function updateMatrix() {
+        a = parseFloat(sliders.a.value);
+        b = parseFloat(sliders.b.value);
+        c = parseFloat(sliders.c.value);
+        d = parseFloat(sliders.d.value);
+        draw();
+    }
+
+    Object.values(sliders).forEach(s => s.addEventListener('input', updateMatrix));
+
+    // Presets
+    document.getElementById('preset-shear').addEventListener('click', () => {
+        sliders.a.value = 1; sliders.b.value = 1.5; sliders.c.value = 0; sliders.d.value = 1;
+        updateMatrix();
+    });
+    document.getElementById('preset-rotate').addEventListener('click', () => {
+        sliders.a.value = 0; sliders.b.value = -1; sliders.c.value = 1; sliders.d.value = 0;
+        updateMatrix();
+    });
+    document.getElementById('preset-scale').addEventListener('click', () => {
+        sliders.a.value = 3; sliders.b.value = 0; sliders.c.value = 0; sliders.d.value = 1.5;
+        updateMatrix();
+    });
+    document.getElementById('preset-reflect').addEventListener('click', () => {
+        sliders.a.value = 0; sliders.b.value = 1; sliders.c.value = 1; sliders.d.value = 0;
+        updateMatrix();
+    });
+
+    function drawArrow(fromX, fromY, toX, toY, color, width = 2) {
+        const dx = toX - fromX, dy = toY - fromY;
+        const len = Math.sqrt(dx*dx + dy*dy);
+        if (len < 2) return;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        const headLen = Math.min(14, len * 0.3);
+        const angle = Math.atan2(dy, dx);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - 0.35), toY - headLen * Math.sin(angle - 0.35));
+        ctx.lineTo(toX - headLen * Math.cos(angle + 0.35), toY - headLen * Math.sin(angle + 0.35));
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+        ctx.lineWidth = 1;
+        for (let i = -5; i <= 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(cx + i * scale, 0); ctx.lineTo(cx + i * scale, H);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, cy + i * scale); ctx.lineTo(W, cy + i * scale);
+            ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+        ctx.beginPath();
+        ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+        ctx.moveTo(cx, 0); ctx.lineTo(cx, H);
+        ctx.stroke();
+
+        // Draw transformed unit circle
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let i = 0; i <= 64; i++) {
+            const angle = (i / 64) * Math.PI * 2;
+            const vx = Math.cos(angle);
+            const vy = Math.sin(angle);
+            const tx = a * vx + b * vy;
+            const ty = c * vx + d * vy;
+            const px = cx + tx * scale;
+            const py = cy - ty * scale;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+
+        // Unit circle
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.beginPath();
+        ctx.arc(cx, cy, scale, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const eigen = computeEigen(a, b, c, d);
+
+        if (eigen.real && eigen.v1 && eigen.v2) {
+            // Draw eigenvector 1 line
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.25)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.moveTo(cx - eigen.v1.x * 350, cy + eigen.v1.y * 350);
+            ctx.lineTo(cx + eigen.v1.x * 350, cy - eigen.v1.y * 350);
+            ctx.stroke();
+
+            // Draw eigenvector 2 line
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
+            ctx.beginPath();
+            ctx.moveTo(cx - eigen.v2.x * 350, cy + eigen.v2.y * 350);
+            ctx.lineTo(cx + eigen.v2.x * 350, cy - eigen.v2.y * 350);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Eigenvector 1: input and output
+            const len1 = 1.5;
+            const ev1x = eigen.v1.x * len1;
+            const ev1y = eigen.v1.y * len1;
+            const ev1tx = a * ev1x + b * ev1y;
+            const ev1ty = c * ev1x + d * ev1y;
+
+            drawArrow(cx, cy, cx + ev1x * scale, cy - ev1y * scale, 'rgba(245, 158, 11, 0.6)', 2);
+            drawArrow(cx, cy, cx + ev1tx * scale, cy - ev1ty * scale, '#f59e0b', 4);
+
+            // Eigenvector 2: input and output
+            const ev2x = eigen.v2.x * len1;
+            const ev2y = eigen.v2.y * len1;
+            const ev2tx = a * ev2x + b * ev2y;
+            const ev2ty = c * ev2x + d * ev2y;
+
+            drawArrow(cx, cy, cx + ev2x * scale, cy - ev2y * scale, 'rgba(16, 185, 129, 0.6)', 2);
+            drawArrow(cx, cy, cx + ev2tx * scale, cy - ev2ty * scale, '#10b981', 4);
+
+            // Labels
+            ctx.font = 'bold 13px Inter';
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillText(`v₁ (λ=${eigen.lambda1.toFixed(2)})`, cx + ev1tx * scale + 8, cy - ev1ty * scale - 8);
+            ctx.fillStyle = '#10b981';
+            ctx.fillText(`v₂ (λ=${eigen.lambda2.toFixed(2)})`, cx + ev2tx * scale + 8, cy - ev2ty * scale - 8);
+
+            // Update info panel
+            document.getElementById('ev1-val').textContent = `(${eigen.v1.x.toFixed(2)}, ${eigen.v1.y.toFixed(2)})`;
+            document.getElementById('ev2-val').textContent = `(${eigen.v2.x.toFixed(2)}, ${eigen.v2.y.toFixed(2)})`;
+            document.getElementById('eval1').textContent = eigen.lambda1.toFixed(3);
+            document.getElementById('eval2').textContent = eigen.lambda2.toFixed(3);
+
+            let interp = '';
+            if (eigen.lambda1 > 0 && eigen.lambda2 > 0) interp = 'Both eigenvalues positive: stretching in both eigen-directions.';
+            else if (eigen.lambda1 < 0 || eigen.lambda2 < 0) interp = 'Negative eigenvalue: one direction gets flipped!';
+            if (Math.abs(eigen.lambda1) < 1 && Math.abs(eigen.lambda2) < 1) interp = 'Both |λ| < 1: the transformation shrinks everything. Stable!';
+            if (Math.abs(eigen.lambda1) > 1 && Math.abs(eigen.lambda2) > 1) interp += ' Both |λ| > 1: everything grows. Unstable!';
+            document.getElementById('interp3').textContent = interp;
+
+        } else {
+            // Complex eigenvalues — draw rotation indicator
+            ctx.font = 'bold 16px Inter';
+            ctx.fillStyle = 'var(--accent-rose)';
+            ctx.textAlign = 'center';
+            ctx.fillText('No real eigenvectors — pure rotation/spiral!', cx, cy - scale * 2.5);
+            ctx.textAlign = 'left';
+
+            document.getElementById('ev1-val').textContent = 'complex';
+            document.getElementById('ev2-val').textContent = 'complex';
+            document.getElementById('eval1').textContent = `${eigen.lambda1.re.toFixed(2)} + ${eigen.lambda1.im.toFixed(2)}i`;
+            document.getElementById('eval2').textContent = `${eigen.lambda2.re.toFixed(2)} + ${eigen.lambda2.im.toFixed(2)}i`;
+            document.getElementById('interp3').textContent = 'Complex eigenvalues mean rotation is involved. No direction stays on its line in real 2D space.';
+
+            // Draw spiral hint
+            ctx.strokeStyle = 'rgba(244, 63, 94, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i <= 100; i++) {
+                const t = i / 100 * Math.PI * 4;
+                const r = scale * 0.3 * Math.exp(eigen.lambda1.re * t * 0.1);
+                const px = cx + r * Math.cos(t);
+                const py = cy - r * Math.sin(t);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+        }
+    }
+
+    draw();
+})();
+
+// ============================================================
+// CANVAS 4: Iterated Transformation (Power Iteration)
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas4');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const scale = 100;
+
+    const a = 1.2, b = 0.4, c = 0.3, d = 0.9;
+    let vectors = [];
+    let iterCount = 0;
+    let autoInterval = null;
+
+    const eigen = computeEigen(a, b, c, d);
+
+    function initVectors() {
+        vectors = [];
+        for (let i = 0; i < 40; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const r = 0.8 + Math.random() * 0.5;
+            vectors.push({ x: Math.cos(angle) * r, y: Math.sin(angle) * r });
+        }
+        iterCount = 0;
+        document.getElementById('iter-count').textContent = '0';
+        document.getElementById('convergence-info').textContent = 'Press "Iterate" to begin';
+    }
+
+    function iterate() {
+        vectors = vectors.map(v => {
+            let nx = a * v.x + b * v.y;
+            let ny = c * v.x + d * v.y;
+            // Normalize to prevent explosion
+            const len = Math.sqrt(nx*nx + ny*ny);
+            if (len > 0.001) {
+                nx /= len;
+                ny /= len;
+            }
+            return { x: nx, y: ny };
+        });
+        iterCount++;
+        document.getElementById('iter-count').textContent = iterCount;
+
+        // Check convergence
+        if (eigen.real && eigen.v1) {
+            let avgAlignment = 0;
+            vectors.forEach(v => {
+                const dot = Math.abs(v.x * eigen.v1.x + v.y * eigen.v1.y);
+                avgAlignment += dot;
+            });
+            avgAlignment /= vectors.length;
+            if (avgAlignment > 0.99) {
+                document.getElementById('convergence-info').textContent = '✨ Converged! All vectors aligned with dominant eigenvector.';
+                if (autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+            } else {
+                document.getElementById('convergence-info').textContent = `Alignment: ${(avgAlignment * 100).toFixed(1)}%`;
+            }
+        }
+
+        draw();
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, width = 2) {
+        const dx = toX - fromX, dy = toY - fromY;
+        const len = Math.sqrt(dx*dx + dy*dy);
+        if (len < 2) return;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+
+        const headLen = Math.min(10, len * 0.25);
+        const angle = Math.atan2(dy, dx);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headLen * Math.cos(angle - 0.4), toY - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(toX - headLen * Math.cos(angle + 0.4), toY - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        for (let i = -5; i <= 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(cx + i * scale, 0); ctx.lineTo(cx + i * scale, H);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, cy + i * scale); ctx.lineTo(W, cy + i * scale);
+            ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.beginPath();
+        ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+        ctx.moveTo(cx, 0); ctx.lineTo(cx, H);
+        ctx.stroke();
+
+        // Draw dominant eigenvector line
+        if (eigen.real && eigen.v1) {
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 4]);
+            ctx.beginPath();
+            ctx.moveTo(cx - eigen.v1.x * 350, cy + eigen.v1.y * 350);
+            ctx.lineTo(cx + eigen.v1.x * 350, cy - eigen.v1.y * 350);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.font = 'bold 12px Inter';
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillText('dominant eigenvector', cx + eigen.v1.x * 250 + 5, cy - eigen.v1.y * 250 - 10);
+        }
+
+        // Draw vectors
+        vectors.forEach((v, i) => {
+            const hue = (i / vectors.length) * 60 + 200;
+            const color = `hsla(${hue}, 70%, 65%, 0.8)`;
+            drawArrow(cx, cy, cx + v.x * scale * 1.8, cy - v.y * scale * 1.8, color, 2.5);
+        });
+
+        // Unit circle reference
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy, scale * 1.8, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Update dominant eigenvalue display
+        if (eigen.real) {
+            document.getElementById('dom-eval').textContent = `λ₁ = ${eigen.lambda1.toFixed(3)}`;
+        }
+    }
+
+    document.getElementById('iterate-once').addEventListener('click', iterate);
+
+    document.getElementById('iterate-auto').addEventListener('click', function() {
+        if (autoInterval) {
+            clearInterval(autoInterval);
+            autoInterval = null;
+            this.textContent = 'Auto-Iterate';
+            this.classList.remove('active');
+        } else {
+            const speed = parseInt(document.getElementById('iter-speed').value);
+            autoInterval = setInterval(iterate, speed);
+            this.textContent = 'Stop';
+            this.classList.add('active');
+        }
+    });
+
+    document.getElementById('reset4').addEventListener('click', () => {
+        if (autoInterval) {
+            clearInterval(autoInterval);
+            autoInterval = null;
+            document.getElementById('iterate-auto').textContent = 'Auto-Iterate';
+            document.getElementById('iterate-auto').classList.remove('active');
+        }
+        initVectors();
+        draw();
+    });
+
+    initVectors();
+    draw();
+})();
+
+// ============================================================
+// QUIZ LOGIC
+// ============================================================
+function checkQuiz(btn, quizId) {
+    const container = document.getElementById(quizId);
+    const options = container.querySelectorAll('.quiz-option');
+    const feedback = document.getElementById(quizId + '-feedback');
+
+    // Disable all buttons
+    options.forEach(opt => {
+        opt.style.pointerEvents = 'none';
+        if (opt.dataset.answer === 'correct') {
+            opt.classList.add('correct');
+        }
+    });
+
+    if (btn.dataset.answer === 'correct') {
+        btn.classList.add('correct');
+        feedback.style.color = 'var(--accent-emerald)';
+        if (quizId === 'quiz1') {
+            feedback.textContent = '🎉 Correct! A pure scaling matrix scales each axis independently, so the axes themselves are eigenvectors. Horizontal gets λ=3, vertical gets λ=2.';
+        } else if (quizId === 'quiz2') {
+            feedback.textContent = '🎉 Correct! 5¹⁰⁰ is astronomically larger than 0.1¹⁰⁰ (which is basically 0). The component along eigenvector 1 dominates completely.';
+        } else if (quizId === 'quiz3') {
+            feedback.textContent = '🎉 Correct! Every direction gets rotated by 90°, so no real vector stays on its line. The eigenvalues are ±i (imaginary).';
+        }
+    } else {
+        btn.classList.add('wrong');
+        feedback.style.color = 'var(--accent-rose)';
+        if (quizId === 'quiz1') {
+            feedback.textContent = '❌ Not quite. Think about it: if you scale x by 3 and y by 2, which directions don\'t rotate? The axes themselves! A vector along x stays along x (just 3× longer). Same for y.';
+        } else if (quizId === 'quiz2') {
+            feedback.textContent = '❌ Not quite. After 100 iterations, the component along eigenvector 1 is multiplied by 5¹⁰⁰, while the component along eigenvector 2 is multiplied by 0.1¹⁰⁰ ≈ 0. So everything aligns with eigenvector 1.';
+        } else if (quizId === 'quiz3') {
+            feedback.textContent = '❌ Not quite. A 90° rotation moves every vector off its original line — no direction is preserved. That means no real eigenvectors exist.';
+        }
+    }
+}
+
+// ============================================================
+// SMOOTH SCROLL
+// ============================================================
+document.querySelector('.scroll-hint').addEventListener('click', () => {
+    window.scrollBy({ top: window.innerHeight * 0.85, behavior: 'smooth' });
+});
+</script>
+
+</body>
+</html>

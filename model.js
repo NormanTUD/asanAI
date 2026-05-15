@@ -93,7 +93,7 @@ async function _create_model () {
 			e = e.message;
 		}
 
-		create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
+		create_model_queue = create_model_queue.filter(function(ee) { return ee !== _create_model_uuid; });
 
 		if(("" + e).includes("undefined has no properties")) {
 			wrn("[create_model] Trying to work on undefined model. This may be the case when this function is called, but the model is currently being rebuilt.");
@@ -152,7 +152,7 @@ async function _create_model () {
 		}
 	}
 
-	create_model_queue = create_model_queue.filter(function(e) { return e !== _create_model_uuid; });
+	create_model_queue = create_model_queue.filter(function(ee) { return ee !== _create_model_uuid; });
 
 	await add_layer_debugger_if_model();
 
@@ -298,7 +298,7 @@ async function compile_model(recursion_level=0) {
 		wrn(language[lang]["global_model_data_is_empty"]);
 	}
 
-	if (!typeof model.compile === "function") {
+	if (typeof model.compile !== "function") {
 		dbg("model has no compile() method");
 		return;
 	}
@@ -382,9 +382,6 @@ async function handle_model_compile_error (e, recursion_level) {
 			set_layer_background(layer_idx, "red");
 			has_missing_values = true;
 		}
-	} else if (("" + e).includes("model is empty")) {
-		err("[compile_model] " + e);
-		return true;
 	} else if (("" + e).includes("e is null")) {
 		err("[compile_model] " + e);
 		await delay(1000);
@@ -588,7 +585,6 @@ function get_data_for_layer (type, layer_idx, first_layer) {
 }
 
 async function get_model_structure(is_fake_model = 0) {
-	var new_current_status_hash = "";
 	var first_layer = true; // seperate from i because first layer may be input layer (which is not a "real" layer)
 	var structure = [];
 

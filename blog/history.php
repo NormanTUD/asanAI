@@ -113,7 +113,7 @@ Ultimately, the Ishango bone represents the most significant archaeological indi
 <div class="image-row">
 	<figure>
 		<img src="salamic_table.jpg" alt="The Salamis Tablet" />
-		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known surving counting board</figcaption>
+		<figcaption>The \citealternativetitle{salamictablet} from ca. 300 BC, the earliest known surviving counting board</figcaption>
 	</figure>
 	<figure>
 		<img src="abacus.jpg" alt="The earliest depiction of an Abacus" />
@@ -329,6 +329,12 @@ Before von Neumann, computers like the ENIAC had to be physically rewired to cha
 One of his **Big Ideas** for **Computing**: Data and instructions are stored in the same memory. This allowed the computer to be "reprogrammed" via software rather than hardware switches.
 
 ### Alan Turing: Theory and the Universal Machine (1936-1950)
+
+<figure>
+    <img style="width: 100%" src="turing.jpg" alt="Alan Turing" />
+    <figcaption class="md">\citetitle{turingimage}, c. 1930</figcaption>
+</figure>
+
 \citeauthor{turing1937} provided the mathematical proof for what a computer *could* do.
 * **Turing Machine (1936):** A theoretical model showing that a simple machine reading symbols on a tape could simulate any algorithmic logic.
 * **ACE & Enigma:** Beyond theory, he designed the Automatic Computing Engine (ACE) and led the cryptanalysis at Bletchley Park using the "Bombe."
@@ -397,7 +403,7 @@ These early neural networks were extremely limited by today's standards, but the
 
 #### The Hype (1958)
 
-When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. All of Rosenblatts predictions were astoundly accurate.
+When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the first hardware implementation of a neural network. It was hailed by the \citealternativetitle{newyorktimesperceptron} as the beginning of a machine that would eventually be able to walk, talk, and think like humans, and even translate languages into another. All of Rosenblatts predictions were astoundingly accurate.
 
 Between the invention of the Perceptron in 1958 and the release of chatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
@@ -484,7 +490,7 @@ While AI research suffered through funding winters, the physical substrate of co
 This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This "free" improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
 
 ## Automatic differentiation (1976)
-While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1976 master's thesis of \citeauthor{linnainmaa1976}. He developed the "automatic differentiation" method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the hochefficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
+While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1976 master's thesis of \citeauthor{linnainmaa1976}. He developed the "automatic differentiation" method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the highly efficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
 
 ## The Illusion of Empathy: The ELIZA-Effect
 
@@ -569,6 +575,36 @@ The neural revolution in language modeling began with Bengio et al.'s \citeyear{
 The real inflection point came with the \citealternativetitle{vaswani2017attention}, which replaced sequential processing with parallelizable **self-attention**. Two competing branches emerged almost simultaneously. \citealternativetitle{bert} used the Transformer's *encoder* with **Masked Language Modeling**, hiding random words and predicting them from both directions, to produce deeply bidirectional representations. A single pre-trained BERT model, fine-tuned with minimal data, shattered nearly every NLP benchmark overnight and popularized the **pre-train then fine-tune** paradigm. In parallel, OpenAI pursued the *decoder-only* path: \citealternativetitle{firstgpt} showed that autoregressive next-token prediction over a large Transformer could learn powerful representations. \citealternativetitle{gpt2} demonstrated emergent zero-shot abilities, and \citealternativetitle{brown2020gpt3}, with 175 billion parameters, proved that sheer scale could produce remarkably flexible few-shot learners. Combined with \citetitle[Deep-Reinforcement-Learning]{christiano2017rlhf}, as described in the \citealternativetitle{ouyang2022instructgpt} paper, this lineage culminated in **ChatGPT** in November 2022, the moment large language models crossed from research artifact into mainstream cultural phenomenon.
 
 The trajectory from Shannon's n-grams to ChatGPT vindicates a consistent theme: each generation traded hand-crafted linguistic knowledge for greater scale and more general learning, raw computation and data, given the right architecture, eventually surpassing human-designed heuristics, again proving the \citealternativetitle{sutton2019bitter}.
+
+## Computer-Generated Text: Early Examples
+
+
+<div class="smart-quote" data-cite="racter1984">
+More than iron, more than lead, more than gold I need electricity.
+I need it more than I need lamb or pork or lettuce or cucumber.
+I need it for my dreams.
+</div>
+
+\citetitle{racter1984} (\citeyear{racter1984}) is widely cited as the first book
+to be entirely written by a computer program. It was generated by **Racter**, a
+text-generation program created by William Chamberlain and Thomas Etter, running on a
+Z80 microprocessor. Racter used a system of templates,
+grammatical rules, and randomized word selection to produce prose and poetry that was
+syntactically coherent but semantically surreal, lines like "More than iron, more
+than lead, more than gold I need electricity" became iconic examples of early machine
+creativity.
+
+However, Racter was not the first instance of computer-generated text. Earlier examples
+include **Christopher Strachey's** \citetitle{strachey1952} (\citeyear{strachey1952}), which ran on the
+Manchester Mark I computer and used templates to produce randomized romantic letters,
+arguably the earliest known computer-generated literary text.
+
+Lutz's \citetitle{lutz1959} (1959) used a Zuse Z22 computer to recombine
+words from Kafka's *The Castle* according to probabilistic rules, producing what he
+explicitly called "stochastic texts". These experiments predate
+Racter by decades and sit at the intersection of combinatorics and language that traces
+back through \cite[Shannon's]{shannon1948communication} information-theoretic treatment
+of English as a stochastic process.
 
 ## What this tells us about the world and ourselves
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 123">
@@ -656,7 +692,6 @@ Today's models are the ultimate synthesis: the combinatorial logic of the ancien
 </div>
 
 <div class="optional md" data-headline="The Invisible Foundations: Discoveries from Unrelated Fields Without Which AI Could Not Exist">
-
 The narrative above traces the *intellectual* lineage of the LLM, from Aristotle's syllogisms to the Transformer. But ideas alone do not compute. Every inference made by a modern language model rests upon a vast, invisible scaffolding of discoveries made by people who never imagined, and could never have imagined, that their work would one day help a machine write poetry. These are the **displaced prerequisites**: contributions so fundamental that they vanish into the background, like the air we breathe but rarely notice.
 
 ### From Amber to Amperes: The Discovery and Harnessing of Electricity
@@ -774,6 +809,131 @@ The consequences were staggering. Within a decade, millions of people were volun
 This is the direct, causal link to modern AI. A large language model learns by ingesting text, as much text as possible, in as many domains, registers, and languages as possible. The datasets that power models like GPT-3 and its successors (such as \citetitle[Common Crawl]{commoncrawl}, and \cite[Wikipedia dumps]{wikimediadumps}) are direct products of the Web's open, self-publishing architecture. Without Berners-Lee's decision to make the Web royalty-free and without the open protocols of TCP/IP, the digital text generated by humanity would have remained fragmented across proprietary, incompatible, and inaccessible systems, bulletin boards, corporate intranets, and gated databases. There would be no single, crawlable, interlinked ocean of human language.
 
 As noted elsewhere in this history, the \cite[Bitter Lesson]{sutton2019bitter} teaches that scale and data ultimately outperform hand-crafted rules. But scale requires *something to scale on*. The World Wide Web provided exactly that: a self-assembling, ever-growing corpus of human thought, freely accessible and machine-readable. ARPANET gave machines the ability to talk to each other. TCP/IP gave them a common language. The World Wide Web gave humanity a reason to pour its collective knowledge into the network. And that collective knowledge became the raw material from which a language model learns to speak.
+</div>
+
+<div class="optional md" data-headline="The Neolithic Revolution: Sedentarization as a Prerequisite for Abstraction">
+The entire trajectory from stone tools to silicon chips presupposes a
+transformation so fundamental that it is easily overlooked: the
+**Neolithic Revolution**, the transition from nomadic
+hunter-gatherer societies to settled agricultural communities,
+beginning roughly 10,000–12,000 years ago in the Fertile Crescent.
+
+Without **sedentarization** (*Sesshaftwerdung*), none of the
+intellectual and material prerequisites described in this history
+could have emerged. Permanent settlements enabled:
+
+* **Surplus and Specialization:** Agriculture produced food surpluses
+  that freed individuals from constant subsistence labor. For the
+  first time, a society could sustain specialists: potters,
+  metalworkers, scribes, priests, and, eventually, mathematicians and
+  philosophers. Without surplus, there is no leisure for abstract
+  thought; without abstract thought, there is no Aristotle, no
+  Leibniz, no Turing.
+
+* **Writing and Record-Keeping:** The earliest writing systems,
+  Sumerian cuneiform and Egyptian hieroglyphs, emerged not from
+  literary ambition but from the bureaucratic need to track grain
+  stores, land ownership, and trade debts in settled communities. The
+  very act of *encoding information on a physical medium*, the
+  conceptual ancestor of every punch card, magnetic tape, and SSD,
+  was born from agricultural bookkeeping.
+
+* **Accumulation of Knowledge Across Generations:** Nomadic groups
+  carry only what they can remember or transport. Settled societies
+  accumulate **libraries**, observational records spanning centuries
+  (essential for astronomy and mathematics), and physical
+  infrastructure like workshops and forges. The Antikythera Mechanism
+  could not have been conceived, let alone built, by a society without
+  permanent workshops, multi-generational craft traditions, and
+  written astronomical tables accumulated over hundreds of years.
+
+* **Dense Social Networks:** Permanent settlements concentrated
+  populations, enabling the rapid exchange of ideas, the division of
+  intellectual labor, and the institutional structures (academies,
+  universities, guilds) that preserved and transmitted knowledge.
+
+This list is far from exhaustive. Countless other "invisible
+prerequisites" underpin the history of computation and AI that remain
+unmentioned here: the domestication of animals (enabling transport
+and communication networks), the invention of metallurgy (without
+which no gear, no wire, no chip), the development of glass-making
+(without which no lenses, no microscopes, no fiber optics), the
+social invention of currency and markets (which drove the need for
+arithmetic and accounting), and the political emergence of
+institutions capable of funding long-term research with no immediate
+practical return. Each of these, like sedentarization itself,
+represents a **displaced prerequisite**: a transformation made for
+reasons entirely unrelated to computation, yet without which the
+entire edifice of artificial intelligence would be inconceivable.
+
+The history of AI is not merely a history of algorithms and
+architectures. It is the visible tip of an iceberg whose submerged
+mass is the entire cumulative infrastructure of human civilization,
+built layer upon layer over millennia by people who could never have
+imagined what their contributions would eventually make possible.
+</div>
+
+<div class="optional md" data-headline="The Physical Substrate: A History of Computer Hardware">
+
+Every weight update in a modern neural network is an electrical signal propagating through silicon, coordinated by a clock, stored in volatile memory, and communicated across copper traces on a printed circuit board. None of these components was invented for artificial intelligence. The CPU descends from wartime code-breaking. RAM evolved from radar. The GPU was forged by video games. Networking grew from military resilience planning. Storage was driven by census-taking. Yet together, they form the physical body in which neural networks are incarnated.
+
+### The Central Processing Unit (CPU)
+
+The CPU's modern history begins with relay-based processors like Zuse's Z3 (1941) and the vacuum-tube ENIAC (1945), which used thousands of tubes to achieve speeds thousands of times faster than relays \cite[see]{eniac1946}. The \cite[transistor]{semiconductor} (1947) made miniaturization possible, and the **integrated circuit**, independently conceived by \cite[Jack Kilby]{kilbyic} (1958) and \cite[Robert Noyce]{noyceic} (1959), placed multiple transistors on a single die.
+
+The leap to the **microprocessor** arrived in 1971 with the \cite[Intel 4004]{intel4004}, containing 2,300 transistors at 740 kHz. The relentless growth described by \citealternativetitle{mooreslaw} drove counts from thousands to billions. Key architectural innovations included **pipelining** (IBM System/360, 1964), **out-of-order execution** \cite[first in the IBM System/360 Model 91]{tomasulo1967}, **superscalar architectures** (1990s), and **multi-core processors** (IBM POWER4, 2001), acknowledging that frequency scaling had hit thermal limits. For AI, the CPU served as the sole training platform until the mid-2000s, but its sequential MIMD architecture proved poorly suited to the massively parallel matrix operations of deep learning.
+
+### Random Access Memory (RAM)
+
+The earliest electronic computers used **delay-line memory**, first implemented in the \cite[EDSAC]{edsac1949} (1949). An alternative approach, the **Williams tube** (1947), developed by \cite[Freddie Williams and Tom Kilburn]{williamstube} at the University of Manchester, stored bits as charged dots on the face of a cathode ray tube, making it the first form of truly random-access electronic memory. It was used in the Manchester Baby (1948), the world's first stored-program computer to run a program, and later in machines like the IBM 701. However, it was unreliable and required constant refreshing of the display. The breakthrough in reliability came with **magnetic-core memory**, developed by \cite[An Wang]{wangcore} (1949) and Jay Forrester at MIT, which dominated from the 1950s through the early 1970s.
+
+The modern era began when \cite[Robert Dennard]{dennard1968} at IBM invented **DRAM** (1966), storing each bit as a charge in a capacitor. The \cite[Intel 1103]{intel1103} (1970), holding 1 kilobit, rapidly displaced core memory. DRAM capacity has followed its own exponential trajectory: 1 Kb (1970), 1 Mb (1986), 1 Gb (early 2000s), to modern DDR5 modules offering 64 GB per DIMM at bandwidths exceeding 50 GB/s. For AI workloads, memory bandwidth is often the binding constraint: **High Bandwidth Memory (HBM)**, developed by \cite[AMD and SK Hynix]{hbm2013}, provides the necessary throughput for GPU-based training.
+
+### The Motherboard
+
+The motherboard physically and electrically connects all components. The modern form traces to the **IBM PC** (1981), which established standardized expansion slots. The evolution of bus architectures, from ISA (1981) to PCI (1992) to \cite[PCI Express]{pciespec} (2003), reflects ever-increasing bandwidth demands. For AI training, motherboard design determines how many GPUs can communicate and at what speed; proprietary interconnects like \cite[NVLink]{nvlink} provide up to 900 GB/s between GPUs, far exceeding PCIe alone.
+
+### Networking
+
+The digital networking revolution began with **packet switching**, independently conceived by \cite[Paul Baran]{baran1964} (1964) and Donald Davies (1965). This was realized in \cite[ARPANET]{rfc1} (1969) and universalized through \cite[TCP/IP]{cerfkahn} (1974). Key milestones for AI include:
+
+* **Ethernet** (1973, \cite[Robert Metcalfe]{metcalfe1976}): now operating at 800 Gbps in data centers.
+* **InfiniBand** (\cite[first specified in 2000]{infiniband2000}): the backbone of most GPU training clusters, offering latencies under 1 μs and bandwidths exceeding 400 Gbps.
+* **RDMA (Remote Direct Memory Access)**, formalized in the \cite[Virtual Interface Architecture]{via1998} and built natively into InfiniBand: allowing one machine to read another's memory without involving either CPU, critical for gradient synchronization in distributed training frameworks like \cite[Horovod]{horovod2018}.
+
+Training a frontier LLM may involve thousands of GPUs synchronizing gradients every few hundred milliseconds. The collective communication patterns (all-reduce, ring-allreduce) are as much "hardware" as the chips themselves.
+
+### Storage
+
+* **Punched Cards** (\cite[Jacquard, 1804]{jacquard1804}; \cite[Hollerith, 1890]{hollerith1890}): the first machine-readable medium.
+* **Magnetic Tape** (1951, \cite[UNIVAC I]{univac1951}): sequential-access, still used for archival.
+* **Hard Disk Drives** (1956, \cite[IBM 305 RAMAC]{ibmramac}): the first random-access magnetic storage, originally 5 MB across fifty 24-inch platters; by 2025, individual HDDs exceed 30 TB.
+* **Solid-State Drives** (commercially viable ~2008, based on \cite[NAND flash memory]{masuoka1987}): NVMe PCIe 5.0 SSDs offer 14+ GB/s reads, enabling the rapid random access needed to feed GPU pipelines.
+
+For large-scale training, data is stored in distributed file systems (Lustre, GPFS) or object storage (S3), striping petabytes across thousands of drives at aggregate bandwidths of hundreds of GB/s.
+
+### The Graphics Processing Unit (GPU)
+
+The first dedicated graphics chips (e.g., the \cite[IBM Professional Graphics Controller]{ibmpgc}, 1984) were fixed-function pipelines. Programmable shaders (NVIDIA GeForce 3, 2001) made GPUs flexible, and \cite[CUDA]{cuda} (2006) provided the software bridge. Key milestones for AI:
+
+* **NVIDIA Tesla (2007)**: first GPU marketed for general-purpose computing.
+* **NVIDIA Volta / V100 (2017)**: introduced **Tensor Cores** for mixed-precision matrix operations.
+* **NVIDIA A100 (2020)**: third-generation Tensor Cores, sparsity-aware computation, Multi-Instance GPU.
+* **NVIDIA H100 (2022)** and **B200 (2024)**: Transformer Engine, FP8 support, NVLink 4.0.
+
+Google's **TPUs**, custom ASICs for neural network workloads \cite[first deployed in 2015]{jouppi2017tpu}, offer an alternative architecture, and the competition between general-purpose GPUs and specialized accelerators continues to shape AI hardware.
+
+### The Power Supply
+
+Modern GPUs alone draw over 700 W; a full training node may consume 5–10 kW. The evolution from linear regulators to high-efficiency **switched-mode power supplies** (1960s–70s) made dense computing viable. The 80 PLUS certification program (2004) drove PSU efficiency above 90%, a seemingly mundane achievement that determines the economic viability of large-scale training.
+
+### The Clock
+
+Every digital computer operates to the rhythm of a **crystal oscillator**. The quartz crystal oscillator, developed by \cite[Walter Cady]{cady1922} in 1921 for radio, was adopted for computing to ensure billions of transistors switch in lockstep. Modern CPUs tick at 3–6 GHz. Without this temporal coordination, the parallel operations within a CPU or GPU would dissolve into chaos.
+
+### Convergence
+
+None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the "displaced prerequisite": a convergence of solutions to unrelated problems that proved inseparable once they met.
 </div>
 
 <div class="optional md" data-headline="Scaling Abstraction: From Bits to Frameworks">

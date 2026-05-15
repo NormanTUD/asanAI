@@ -1,4 +1,277 @@
 window.bibData = {
+	"racter1984": {
+		title: "The Policeman's Beard Is Half Constructed: Computer Prose and Poetry by Racter",
+		author: "Racter (William Chamberlain, Thomas Etter)",
+		year: 1984,
+		url: "https://f17webadvanced.teachinginter.net/contents/pdfs/RACTER_Policemans-Beard.pdf"
+	},
+	"strachey1952": {
+		title: "Love Letter Generator (Manchester Mark I)",
+		author: "Christopher Strachey",
+		year: 1952,
+		url: "https://grandtextauto.soe.ucsc.edu/2005/08/01/christopher-strachey-first-digital-artist/"
+	},
+	"lutz1959": {
+		title: "Stochastische Texte",
+		author: "Theo Lutz",
+		year: 1959,
+		url: "http://www.stuttgarter-schule.de/lutz_schule_en.htm"
+	},
+
+	"masuoka1987": {
+		title: "New Ultra High Density EPROM and Flash EEPROM with NAND Structure",
+		author: "Fujio Masuoka, Masamichi Asano, Hidemi Iwahashi, Tetsuo Komuro, Susumu Tanaka",
+		year: 1987,
+		url: "https://ieeexplore.ieee.org/document/1487443"
+	},
+
+	"univac1951": {
+		title: "The UNIVAC System",
+		author: "John Presper Eckert, John W. Mauchly",
+		year: 1951,
+		url: "https://archive.computerhistory.org/resources/access/text/2010/08/102722064-05-01-acc.pdf"
+	},
+
+	"jacquard1804": {
+		title: "Métier à tisser (Loom with Punched Card Mechanism)",
+		author: "Joseph Marie Jacquard",
+		year: 1804,
+		url: "https://www.computerhistory.org/storageengine/punched-cards-control-jacquard-loom/"
+	},
+	"hollerith1890": {
+		title: "An Electric Tabulating System (The Quarterly, Columbia University School of Mines, Vol. X, No. 16)",
+		author: "Herman Hollerith",
+		year: 1889,
+		url: "https://www.columbia.edu/cu/computinghistory/hollerith.html"
+	},
+
+	"via1998": {
+		title: "The Virtual Interface Architecture",
+		author: "David Dunning, Greg Regnier, Gary McAlpine, Don Cameron, Bill Shubert, Frank Berry, Anne Marie Merritt, Ed Gronke, Chris Dodd",
+		year: 1998,
+		url: "https://ieeexplore.ieee.org/document/671404"
+	},
+
+	"infiniband2000": {
+		title: "InfiniBand Architecture Specification Volume 1, Release 1.0",
+		author: "InfiniBand Trade Association",
+		year: 2000,
+		url: "https://searchworks.stanford.edu/view/4654860"
+	},
+
+	"williamstube": {
+		title: "A Storage System for Use with Binary-Digital Computing Machines",
+		author: "Frederic Calland Williams, Tom Kilburn",
+		year: 1948,
+		url: "https://lampes-et-tubes.info/sc/WillamsKilburn1949.pdf"
+	},
+
+	"eniac1946": {
+		title: "Electronic Numerical Integrator and Computer",
+		author: "John Presper Eckert, John W. Mauchly",
+		year: 1945,
+		url: "https://fi.edu/sites/default/files/2016-04/EckertAndMauchly_CaseFilesReport_TheFranklinInstitute.pdf"
+	},
+	"kilbyic": {
+		title: "Miniaturized Electronic Circuits (U.S. Patent 3,138,743)",
+		author: "Jack St. Clair Kilby",
+		year: 1958,
+		url: "https://patents.google.com/patent/US3138743A/en"
+	},
+	"noyceic": {
+		title: "Semiconductor Device-and-Lead Structure (U.S. Patent 2,981,877)",
+		author: "Robert Norton Noyce",
+		year: 1959,
+		url: "https://patents.google.com/patent/US2981877A/en"
+	},
+	"intel4004": {
+		title: "A New Era of Integrated Electronics: The Intel 4004 Microprocessor",
+		author: "Federico Faggin, Marcian E. Hoff, Stanley Mazor, Masatoshi Shima",
+		year: 1971,
+		url: "https://www.intel.com/content/www/us/en/history/museum-story-of-intel-4004.html"
+	},
+	"tomasulo1967": {
+		title: "An Efficient Algorithm for Exploiting Multiple Arithmetic Units",
+		author: "Robert Marco Tomasulo",
+		year: 1967,
+		url: "https://ieeexplore.ieee.org/document/5392028"
+	},
+	"edsac1949": {
+		title: "The EDSAC: An Electronic Calculating Machine",
+		author: "Maurice Vincent Wilkes, William Renwick",
+		year: 1949,
+		url: "https://www.cl.cam.ac.uk/events/EDSAC99/"
+	},
+	"wangcore": {
+		title: "Pulse Transfer Controlling Devices (U.S. Patent 2,708,722)",
+		author: "An Wang",
+		year: 1949,
+		url: "https://patents.google.com/patent/US2708722A/en"
+	},
+	"dennard1968": {
+		title: "Field-Effect Transistor Memory (U.S. Patent 3,387,286)",
+		author: "Robert Heath Dennard",
+		year: 1968,
+		url: "https://patents.google.com/patent/US3387286A/en"
+	},
+	"intel1103": {
+		title: "The Intel 1103: First Commercially Available DRAM Chip",
+		author: "Intel Corporation",
+		year: 1971,
+		url: "https://www.allaboutcircuits.com/news/intel-1103-the-dram-chip-that-dethroned-magnetic-core-memory/"
+	},
+	"hbm2013": {
+		title: "High Bandwidth Memory (HBM) DRAM (JESD235)",
+		author: "AMD, SK Hynix, JEDEC",
+		year: 2013,
+		url: "https://www.jedec.org/standards-documents/docs/jesd235a"
+	},
+	"pciespec": {
+		title: "PCI Express Base Specification Revision 1.0",
+		author: "PCI-SIG",
+		year: 2002,
+		url: "https://0x04.net/~mwk/doc/pci/PCI%20Express%20Base%20Specification%20v1.0%20-%202002.pdf"
+	},
+	"nvlink": {
+		title: "NVIDIA NVLink High-Speed GPU Interconnect",
+		author: "NVIDIA Corporation",
+		year: 2016,
+		url: "https://www.nvidia.com/en-us/data-center/nvlink/"
+	},
+	"baran1964": {
+		title: "On Distributed Communications Networks",
+		author: "Paul Baran",
+		year: 1964,
+		url: "https://www.rand.org/pubs/research_memoranda/RM3420.html"
+	},
+	"metcalfe1976": {
+		title: "Ethernet: Distributed Packet Switching for Local Computer Networks",
+		author: "Robert Melancton Metcalfe, David R. Boggs",
+		year: 1976,
+		url: "https://www.cl.cam.ac.uk/teaching/2425/CompNet/files/p395-metcalfe.pdf"
+	},
+	"horovod2018": {
+		title: "Horovod: fast and easy distributed deep learning in TensorFlow",
+		author: "Alexander Sergeev, Mike Del Balso",
+		year: 2018,
+		url: "https://arxiv.org/abs/1802.05799"
+	},
+	"ibmramac": {
+		title: "The IBM 305 RAMAC",
+		author: "IBM Corporation",
+		year: 1956,
+		url: "https://www.ibm.com/history/ramac"
+	},
+	"ibmpgc": {
+		title: "IBM Professional Graphics Controller",
+		author: "IBM Corporation",
+		year: 1984,
+		url: "https://www.seasip.info/VintagePC/pgc.html"
+	},
+	"jouppi2017tpu": {
+		title: "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+		author: "Norman P. Jouppi, Cliff Young, Nishant Patil, David Patterson, et al.",
+		year: 2017,
+		url: "https://arxiv.org/abs/1704.04760"
+	},
+	"cady1922": {
+		title: "The Piezo-Electric Resonator",
+		author: "Walter Guyton Cady",
+		year: 1922,
+		url: "https://ieeexplore.ieee.org/document/1666707?reload=true&tp=&arnumber=1666707&queryText%3Dwalter%20cady="
+	},
+
+
+	// ═══════════════════════════════════════════════
+	// Security & Adversarial Attacks
+	// ═══════════════════════════════════════════════
+
+	"greshake2023injection": {
+		title: "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection",
+		author: "Kai Greshake, Sahar Abdelnabi, Shailesh Mishra, Christoph Endres, Thorsten Holz, Mario Fritz",
+		year: 2023,
+		url: "https://arxiv.org/abs/2302.12173"
+	},
+	"liu2024formalizing": {
+		title: "Formalizing and Benchmarking Prompt Injection Attacks and Defenses",
+		author: "Yupei Liu, Yuqi Jia, Runpeng Geng, Jinyuan Jia, Neil Zhenqiang Gong",
+		year: 2024,
+		url: "https://arxiv.org/abs/2310.12815"
+	},
+	"wei2024jailbroken": {
+		title: "Jailbroken: How Does LLM Safety Training Fail?",
+		author: "Alexander Wei, Nika Haghtalab, Jacob Steinhardt",
+		year: 2024,
+		url: "https://arxiv.org/abs/2307.02483"
+	},
+	"jain2023baseline": {
+		title: "Baseline Defenses for Adversarial Attacks Against Aligned Language Models",
+		author: "Neel Jain, Avi Schwarzschild, Yuxin Wen, Gowthami Somepalli, John Kirchenbauer, Ping-yeh Chiang, Micah Goldblum, Aniruddha Saha, Jonas Geiping, Tom Goldstein",
+		year: 2023,
+		url: "https://arxiv.org/abs/2309.00614"
+	},
+	"wallace2024hierarchy": {
+		title: "The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions",
+		author: "Eric Wallace, Kai Xiao, Reimar Leber, Lilian Weng, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.13208"
+	},
+	"mazeika2024harmbench": {
+		title: "HarmBench: A Standardized Evaluation Framework for Automated Red Teaming and Robust Refusal",
+		author: "Mantas Mazeika, Long Phan, Xuwang Yin, Andy Zou, Zifan Wang, Norman Mu, Elham Sakhaee, Nathaniel Li, Steven Basart, Bo Li, David Forsyth, Dan Hendrycks",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.04249"
+	},
+	"chen2024ibprotector": {
+		title: "IBProtector: An Information Bottleneck Approach to Defend Against Prompt Injection Attacks",
+		author: "Zichuan Chen, Zhibo Wang, Zhaolong Zhang, Feng Ma",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.02156"
+	},
+
+	// ═══════════════════════════════════════════════
+	// Inference Optimization
+	// ═══════════════════════════════════════════════
+
+	"dettmers2022llmint8": {
+		title: "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+		author: "Tim Dettmers, Mike Lewis, Younes Belkada, Luke Zettlemoyer",
+		year: 2022,
+		url: "https://arxiv.org/abs/2208.07339"
+	},
+	"pope2023efficiently": {
+		title: "Efficiently Scaling Transformer Inference",
+		author: "Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, Jeff Dean",
+		year: 2023,
+		url: "https://arxiv.org/abs/2211.05102"
+	},
+	"leviathan2023speculative": {
+		title: "Fast Inference from Transformers via Speculative Decoding",
+		author: "Yaniv Leviathan, Matan Kalman, Yossi Matias",
+		year: 2023,
+		url: "https://arxiv.org/abs/2211.17192"
+	},
+	"hinton2015distilling": {
+		title: "Distilling the Knowledge in a Neural Network",
+		author: "Geoffrey Hinton, Oriol Vinyals, Jeff Dean",
+		year: 2015,
+		url: "https://arxiv.org/abs/1503.02531"
+	},
+
+	/* OLD */
+
+	"alankayfuture": {
+		url: "https://www.youtube.com/watch?v=BZLpfZ9wPVY",
+		author: "Alan Kay",
+		title: "The Best Way to Predict the Future is to Invent It",
+		year: 2016
+	},
+	"turingimage": {
+		url: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg",
+		title: "Alan Turing",
+		year: 1930,
+		author: "Unknown author"
+	},
 	"hoffmann2022chinchilla": {
 		title: "Training Compute-Optimal Large Language Models",
 		author: "Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, et al.",
@@ -700,7 +973,7 @@ window.bibData = {
 		year: 2019,
 		author: "Mikhail Belkin, Daniel Hsu, Siyuan Ma, Soumik Mandal"
 	},
-	"caleygroups": {
+	"cayleygroups": {
 		url: "https://www.jstor.org/stable/2369415",
 		title: "On the Theory of Groups",
 		year: 1889,

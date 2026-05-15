@@ -929,7 +929,9 @@ async function predict(item) {
 			return predict_data_error_string_or_false;
 		}
 
-		predict_data = divide_predict_data_by_divide_by(predict_data);
+		if (!is_image_prediction) {
+			predict_data = divide_predict_data_by_divide_by(predict_data);
+		}
 
 		if(check_predict_data_and_model(predict_data)) {
 			return;

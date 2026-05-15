@@ -82,7 +82,7 @@ print(add(10, 5)) # Output: 15</code></pre>
 
 
 <div class="md">
-We can use this $\text{add}$ function in the code, similiar to what we had before.
+We can use this $\text{add}$ function in the code, similar to what we had before.
 </div>
 
 <pre><code class="language-python">result = add(1, 2) # Calls the 'add' function with x = 1 and y = 2,
@@ -197,7 +197,7 @@ total = sum(numbers)
 
 ## The Product Symbol $\prod$
 
-The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similiar to the $\sum$:
+The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similar to the $\sum$:
 
 $$\prod_{i = 1}^5 i = 1 \cdot 2 \cdot 3 \cdot 4 \cdot 5 = 120 $$
 
@@ -253,7 +253,7 @@ In the floating-point math used by AI models, infinity follows specific rules th
 * **The Exponential Decay:** $$e^{-\infty} = 0$$
 	The exponential of negative infinity is exactly zero. This is a "superpower" in machine learning. It allows us to "mask" certain pieces of data, essentially telling the model to completely ignore specific words by assigning them a value of $-\infty$. This will become useful later on in the chapter about Transformers.
 * $\infty$ is not a normal *number*, though. $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
-* Similiarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
+* Similarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
 
 ### The Concept of Limits ($\lim$)
 

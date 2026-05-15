@@ -173,7 +173,7 @@ async function _get_urls_and_keys () {
 	return [urls, keys, data];
 }
 
-async function _get_set_percentage_text (percentage, url_idx, urls_length, percentage_div, old_percentage, times) {
+async function _get_set_percentage_text(percentage, url_idx, urls_length, percentage_div, old_percentage, times) {
 	var percentage_text = percentage + "%";
 
 	var eta;
@@ -181,17 +181,19 @@ async function _get_set_percentage_text (percentage, url_idx, urls_length, perce
 	var data_progressbar_div = $("#data_progressbar>div");
 	data_progressbar_div.css("width", percentage + "%");
 
-	if(finished_loading) {
+	if (finished_loading) {
 		set_document_title(language[lang]["loading_data"] + " " + (url_idx + 1) + " " + language[lang]["of"] + " " + urls_length + " (" + percentage_text + ") - asanAI");
 
-		if(percentage > 20) {
+		if (percentage > 20 && times.length > 0) {
 			var remaining_items = urls_length - url_idx;
 			var time_per_image = decille(times, ((100 - percentage) / 100) + 0.01);
 
-			eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
-			old_percentage = percentage;
+			if (time_per_image !== 0 && !isNaN(time_per_image) && time_per_image !== null && time_per_image !== undefined) {
+				eta = parse_int(parse_int(remaining_items * Math.floor(time_per_image)) / 1000) + 10;
+				old_percentage = percentage;
 
-			percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
+				percentage_text += " ca. " + human_readable_time(eta) + " " + trm("left");
+			}
 		}
 	}
 
@@ -931,6 +933,8 @@ function check_xy_for_x_and_y(xy_data) {
 			ok = 0;
 		}
 	});
+
+	return ok;
 }
 
 async function get_x_and_y () {
@@ -959,7 +963,9 @@ async function get_x_and_y () {
 		xy_data = await get_xy_data_for_noncustom_data();
 	}
 
-	check_xy_for_x_and_y(xy_data);
+	if(!check_xy_for_x_and_y(xy_data)) {
+		wrn(`check_xy_for_x_and_y failed`);
+	}
 
 	dbg(language[lang]["got_data_creating_tensors"]);
 
@@ -1030,7 +1036,7 @@ async function get_default_data() {
 		x_or_y_empty_or_null = true;
 	}
 
-	if (y === null | y === undefined) {
+	if (y === null || y === undefined) {
 		wrn(`get_default_data: y was null`);
 		x_or_y_empty_or_null = true;
 	}
@@ -1392,10 +1398,8 @@ function x_y_warning(x_and_y) {
 
 	if (!("x" in x_and_y)) {
 		error_messages.push("X-data is missing. Make sure your input includes features or images under 'x'.");
-	} else if (x_and_y["x"] === undefined) {
-		error_messages.push("y-data is null.");
-	} else if (x_and_y["x"] === null) {
-		error_messages.push("y-data is null.");
+	} else if (x_and_y["x"] === undefined || x_and_y["x"] === null) {
+		error_messages.push("x-data is null.");
 	} else {
 		tf.engine().startScope();
 		var x_data = array_sync(x_and_y["x"]);
@@ -1552,14 +1556,29 @@ function median(values) {
 	return (values[half - 1] + values[half]) / 2.0;
 }
 
-function decille (arr, percentage) {
+function decille(arr, percentage) {
 	typeassert(arr, array, "arr");
 
-	arr.sort();
-	var len = arr.length;
-	var per = Math.floor(len*percentage) - 1;
+	if (arr.length === 0) return 0;
 
-	return per;
+	if (isNaN(percentage) || percentage === null || percentage === undefined) {
+		return 0;
+	}
+
+	// Clone the array to avoid mutating the original
+	var sorted = arr.slice().sort(function (a, b) {
+		return a - b;
+	});
+
+	var len = sorted.length;
+	var index = Math.floor(len * percentage) - 1;
+
+	// Clamp the index to valid bounds
+	if (index < 0) index = 0;
+	if (index >= len) index = len - 1;
+
+	// Return the value at the computed index, not the index itself
+	return sorted[index];
 }
 
 async function reset_data () {

@@ -230,8 +230,8 @@ async function _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_l
 	got_images_from_webcam = true;
 }
 
-async function show_webcam(force_restart = 0) {
-	if (force_restart) {
+async function show_webcam(force_restart = 0, _isRestart = false) {
+	if (force_restart && !_isRestart) {
 		stop_webcam();
 	}
 
@@ -255,8 +255,8 @@ async function show_webcam(force_restart = 0) {
 			clearInterval(auto_predict_webcam_interval);
 		}
 
-		if (force_restart && stopped) {
-			await show_webcam();
+		if (force_restart && stopped && !_isRestart) {
+			await show_webcam(0, true);
 		}
 	} catch (e) {
 		err(e);
@@ -341,7 +341,7 @@ function force_stop_all_webcam_streams(video_element) {
 	}
 }
 
-async function get_data_from_webcam(force_restart = 0) {
+async function get_data_from_webcam(force_restart = 0, _isRestart = false) {
 	if (!inited_webcams) {
 		await init_webcams();
 	}
@@ -370,8 +370,8 @@ async function get_data_from_webcam(force_restart = 0) {
 		}
 	}
 
-	if (force_restart && stopped) {
-		await get_data_from_webcam();
+	if (force_restart && stopped && !_isRestart) {
+		await get_data_from_webcam(0, true);
 	}
 
 	await wait_for_updated_page(1);
@@ -659,8 +659,8 @@ async function take_image_from_webcam(elem, nol = false, _enable_train_and_last_
 
 		await _captureAndProcessWebcamImage(elem, nol, _enable_train_and_last_layer_shape_warning);
 
-	} catch (err) {
-		try { if (!nol) l(language[lang]["error_taking_photo"]); } catch (e) { }
+	} catch (_err) {
+		try { if (!nol) l(`${language[lang]["error_taking_photo"]}: ${_err}`); } catch (e) { }
 	}
 }
 
@@ -755,8 +755,6 @@ async function take_image_from_webcam_n_times(elem) {
 	const delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
 
 	dbg(`take_image_from_webcam_n_times: n=${number}, delay=${delaybetween}`);
-
-	let timerInterval;
 
 	const modal_params = {
 		title: language[lang]["soon_a_photo_series_will_start"],

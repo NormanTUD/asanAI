@@ -48,9 +48,16 @@ This text is designed to help you navigate these shifts. We will constantly move
 ## Disclaimer
 
 This tutorial was built with the help of Google Gemini, Claude, chatGPT and other LLM systems. We've done our best to verify the code and info, but please double-check before using it in production.
+</div>
 
+<?php
+	if(!isCli()) {
+?>
+<div class="md">
 ## Please report Errors!
 
 Please report errros to <a href="mailto:<?php echo hide_email('norman.koch@tu-dresden.de'); ?>">my email</a>. I try my best to keep this site as factually correct as possible, but I may get things wrong or incomplete, and thus am happy to get any feedback.
-
 </div>
+<?php
+	}
+?>

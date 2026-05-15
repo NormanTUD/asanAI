@@ -78,7 +78,6 @@ const CRSim = (() => {
   let responseTimes = [];
 
   // ── DOM refs ───────────────────────────────────────────────────────
-  const $ = id => document.getElementById(id);
 
   // ── Helpers ────────────────────────────────────────────────────────
   function shuffle(arr) {
@@ -105,82 +104,85 @@ const CRSim = (() => {
   }
 
   // ── Render a round ────────────────────────────────────────────────
-  function renderRound() {
-    const r = rounds[currentRound];
+	function renderRound() {
+	  const r = rounds[currentRound];
 
-    // Show room, hide reveal
-    $('cr-room').style.display = '';
-    $('cr-reveal').style.display = 'none';
+	  // Show room, hide reveal
+	  $('#cr-room').show();
+	  $('#cr-reveal').hide();
 
-    // Round number
-    $('cr-round-num').textContent = currentRound + 1;
-    $('cr-total-rounds').textContent = rounds.length;
+	  // Round number
+	  $('#cr-round-num').text(currentRound + 1);
+	  $('#cr-total-rounds').text(rounds.length);
 
-    // Incoming message with slide-in animation
-    const msgEl = $('cr-incoming-msg');
-    msgEl.style.opacity = '0';
-    msgEl.style.transform = 'translateX(-60px)';
-    msgEl.textContent = r.input;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        msgEl.style.opacity = '1';
-        msgEl.style.transform = 'translateX(0)';
-      });
-    });
+	  // Incoming message with slide-in animation
+	  const $msgEl = $('#cr-incoming-msg');
+	  $msgEl.css({ opacity: '0', transform: 'translateX(-60px)' });
+	  $msgEl.text(r.input);
+	  requestAnimationFrame(() => {
+	    requestAnimationFrame(() => {
+	      $msgEl.css({ opacity: '1', transform: 'translateX(0)' });
+	    });
+	  });
 
-    // Rulebook
-    const tbody = $('cr-rulebook-body');
-    tbody.innerHTML = '';
-    r.rules.forEach(([inp, out]) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td style="padding:0.4em 0.5em; border-bottom:1px solid #333; font-size:1.15em; letter-spacing:0.05em;">${inp}</td>
-        <td style="padding:0.4em 0.5em; border-bottom:1px solid #333; font-size:1.15em; letter-spacing:0.05em; color:#81d4fa;">${out}</td>
-      `;
-      tr.dataset.input = inp;
-      tbody.appendChild(tr);
-    });
+	  // Rulebook
+	  const $tbody = $('#cr-rulebook-body');
+	  $tbody.empty();
+	  r.rules.forEach(([inp, out]) => {
+	    const $tr = $('<tr>')
+	      .data('input', inp)
+	      .append(
+		$('<td>').css({ padding: '0.4em 0.5em', borderBottom: '1px solid #333', fontSize: '1.15em', letterSpacing: '0.05em' }).text(inp),
+		$('<td>').css({ padding: '0.4em 0.5em', borderBottom: '1px solid #333', fontSize: '1.15em', letterSpacing: '0.05em', color: '#81d4fa' }).text(out)
+	      );
+	    $tbody.append($tr);
+	  });
 
-    // Options
-    const optContainer = $('cr-options');
-    optContainer.innerHTML = '';
+	  // Options
+	  const $optContainer = $('#cr-options');
+	  $optContainer.empty();
 
-    let options;
-    if (r.isTrick) {
-      options = shuffle(r.distractors);
-    } else {
-      options = shuffle([r.correct, ...r.distractors]);
-    }
+	  let options;
+	  if (r.isTrick) {
+	    options = shuffle(r.distractors);
+	  } else {
+	    options = shuffle([r.correct, ...r.distractors]);
+	  }
 
-    options.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.textContent = opt;
-	btn.style.cssText = `
-    padding: 0.6em 1.2em;
-    font-size: 1.2em;
-    letter-spacing: 0.08em;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    background: #ffffff;
-    color: #333;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.1s;
-    min-width: 120px;
-`;
+	  options.forEach(opt => {
+	    const $btn = $('<button>')
+	      .text(opt)
+	      .css({
+		padding: '0.6em 1.2em',
+		fontSize: '1.2em',
+		letterSpacing: '0.08em',
+		border: '2px solid #ccc',
+		borderRadius: '8px',
+		background: '#ffffff',
+		color: '#333',
+		cursor: 'pointer',
+		transition: 'background 0.2s, border-color 0.2s, transform 0.1s',
+		minWidth: '120px'
+	      })
+	      .on('mouseenter', function () {
+		$(this).css({ background: '#fff', borderColor: '#eee' });
+	      })
+	      .on('mouseleave', function () {
+		$(this).css({ background: '#eee', borderColor: '#555' });
+	      })
+	      .on('click', function () {
+		handleChoice(opt, $(this));
+	      });
 
-      btn.addEventListener('mouseenter', () => { btn.style.background = '#fff'; btn.style.borderColor = '#eee'; });
-      btn.addEventListener('mouseleave', () => { btn.style.background = '#eee'; btn.style.borderColor = '#555'; });
-      btn.addEventListener('click', () => handleChoice(opt, btn));
-      optContainer.appendChild(btn);
-    });
+	    $optContainer.append($btn);
+	  });
 
-    // Clear feedback
-    $('cr-feedback').textContent = '';
-    $('cr-feedback').style.opacity = '1';
+	  // Clear feedback
+	  $('#cr-feedback').text('').css('opacity', '1');
 
-    // Start timer
-    startTimer();
-  }
+	  // Start timer
+	  startTimer();
+	}
 
   // ── Handle user choice ────────────────────────────────────────────
   function handleChoice(chosen, btnEl) {

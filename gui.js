@@ -631,7 +631,7 @@ function add_seed_option (type, nr) {
 }
 
 function add_visualize_option(type, nr) {
-	assert(typeof(type) == "string", "type is not a number");
+	assert(typeof(type) == "string", "type is not a string");
 	assert(typeof(nr) == "number", "nr is not a number");
 
 	var style = "";
@@ -3419,7 +3419,7 @@ function reset_photo_gallery() {
 }
 
 function set_xyz_values(j, name, values) {
-	assert(typeof(j) == "number", "j must be number, is: " + typeof(number));
+	assert(typeof(j) == "number", "j must be number, is: " + typeof(j));
 	assert(typeof(name) == "string", "name must be string, is: " + typeof(name));
 	assert(typeof(values) == "object", "name must be object, is: " + typeof(values));
 
@@ -6195,7 +6195,7 @@ function show_tab_label(label, click=0) {
 
 function getDimFromString(input) {
 	if (typeof input !== "string") {
-		throw new TypeError("getDimFromString erwartet einen String als Eingabe.");
+		throw new TypeError("getDimFromString expects a string.");
 	}
 
 	var regex = /(\d+)[dD]/g;
@@ -6204,7 +6204,7 @@ function getDimFromString(input) {
 	if (match && match[1] !== undefined) {
 		var parsed = parseInt(match[1], 10);
 		if (Number.isNaN(parsed)) {
-			throw new Error("Fehler beim Parsen der gefundenen Zahl.");
+			throw new Error("Error at parsing the input number.");
 		}
 		return parsed;
 	}
@@ -6217,7 +6217,7 @@ function safeGetDim(input) {
 		return getDimFromString(input);
 	} catch (err) {
 		if (typeof console !== "undefined" && typeof console.error === "function") {
-			console.error("safeGetDim: Eingabefehler:", err && err.message ? err.message : err);
+			console.error("safeGetDim: error:", err && err.message ? err.message : err);
 		}
 		return null;
 	}
@@ -6947,10 +6947,10 @@ function l(msg) {
 
 	try {
 		if(last_l != msg) {
-			var load_time = Date().toLocaleString();
-			load_time = load_time.replace(/ GMT.*/, "");
+			var _load_time = new Date().toLocaleString();
+			_load_time = _load_time.replace(/ GMT.*/, "");
 			msg = ("" + msg).replace(/^(Error:\s*)+/, "Error: ");
-			$("#log").prepend(load_time + ": " + msg + "\n");
+			$("#log").prepend(_load_time + ": " + msg + "\n");
 			last_l = msg;
 			if(msg.toString().startsWith("ERROR:") || msg.toString().startsWith("TypeError:")) {
 				err(msg);
