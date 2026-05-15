@@ -1,29 +1,28 @@
 window.bibData = {
-"brain2012otavia": {
-    title: "The First Animals: ca. 760-Million-Year-Old Sponge-Like Fossils from Namibia",
-    author: "Courtney K. Brain, Anthony R. Prave, Karl-Heinz Hoffmann, Anthony E. Fallick, Andre Botha, Donald A. Herd, Craig Sturrock, Iain Young, Daniel J. Condon, Stuart G. Allison",
-    year: 2012,
-    url: "https://doi.org/10.1016/j.sajb.2012.07.001"
-},
-"bobrovskiy2018dickinsonia": {
-    title: "Ancient steroids establish the Ediacaran fossil Dickinsonia as one of the earliest animals",
-    author: "Ilya Bobrovskiy, Janet M. Hope, Andrey Ivantsov, Benjamin J. Nettersheim, Christian Hallmann, Jochen J. Brocks",
-    year: 2018,
-    url: "https://www.science.org/doi/10.1126/science.aat7228"
-},
-"begun2003planet": {
-    title: "Planet of the Apes",
-    author: "David R. Begun",
-    year: 2003,
-    url: "https://www.scientificamerican.com/article/planet-of-the-apes/"
-},
-"white2009ardipithecus": {
-    title: "Ardipithecus ramidus and the Paleobiology of Early Hominids",
-    author: "Tim D. White, Berhane Asfaw, Yonas Beyene, Yohannes Haile-Selassie, C. Owen Lovejoy, Gen Suwa, Giday WoldeGabriel",
-    year: 2009,
-    url: "https://www.science.org/doi/10.1126/science.1175802"
-},
-
+	"brain2012otavia": {
+		title: "The First Animals: ca. 760-Million-Year-Old Sponge-Like Fossils from Namibia",
+		author: "Courtney K. Brain, Anthony R. Prave, Karl-Heinz Hoffmann, Anthony E. Fallick, Andre Botha, Donald A. Herd, Craig Sturrock, Iain Young, Daniel J. Condon, Stuart G. Allison",
+		year: 2012,
+		url: "https://research-repository.st-andrews.ac.uk/bitstream/handle/10023/2295/Brainetal2012SAfrJSci_FirstAnimals.pdf?sequence=1&isAllowed=y"
+	},
+	"bobrovskiy2018dickinsonia": {
+		title: "Ancient steroids establish the Ediacaran fossil Dickinsonia as one of the earliest animals",
+		author: "Ilya Bobrovskiy, Janet M. Hope, Andrey Ivantsov, Benjamin J. Nettersheim, Christian Hallmann, Jochen J. Brocks",
+		year: 2018,
+		url: "https://www.science.org/doi/10.1126/science.aat7228"
+	},
+	"begun2003planet": {
+		title: "Planet of the Apes",
+		author: "David R. Begun",
+		year: 2003,
+		url: "https://www.scientificamerican.com/article/planet-of-the-apes/"
+	},
+	"white2009ardipithecus": {
+		title: "Ardipithecus ramidus and the Paleobiology of Early Hominids",
+		author: "Tim D. White, Berhane Asfaw, Yonas Beyene, Yohannes Haile-Selassie, C. Owen Lovejoy, Gen Suwa, Giday WoldeGabriel",
+		year: 2009,
+		url: "https://www.science.org/doi/10.1126/science.1175802"
+	},
 	"hublin2017jebel": {
 		title: "New fossils from Jebel Irhoud, Morocco and the pan-African origin of Homo sapiens",
 		author: "Jean-Jacques Hublin, Abdelouahed Ben-Ncer, Shara E. Bailey, Sarah E. Freidline, Simon Neubauer, Matthew M. Skinner, Inga Bergmann, Adeline Le Cabec, Stefano Benazzi, Katerina Harvati, Philipp Gunz",
