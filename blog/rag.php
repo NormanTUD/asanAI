@@ -7,7 +7,7 @@ The best way to predict the future is to invent it.
 <div class="md">
 ## What is RAG?
 
-A standard LLM can only use what it memorised during training. Ask it about a document it never saw, and it either **hallucinates** or says *"I don't know."*
+A standard LLM can only use what it memorized during training. Ask it about a document it never saw, and it either **hallucinates** or says *"I don't know."*
 
 **Retrieval-Augmented Generation (RAG)** gives the LLM an external, searchable memory. Before the model generates an answer, a *retriever* finds the most relevant passages from a document store and injects them into the prompt. The LLM then answers **grounded in those passages**.
 
@@ -36,7 +36,7 @@ $$
 $$
 
 **Step 3, Store in a vector database.**
-Save every $(\vec{v}_i,\; \text{chunk\_text}_i,\; \text{metadata}_i)$ triple in a specialised database optimised for nearest-neighbor search (FAISS, Pinecone, Weaviate, Chroma, Qdrant).
+Save every $(\vec{v}_i,\; \text{chunk\_text}_i,\; \text{metadata}_i)$ triple in a specialised database optimized for nearest-neighbor search (FAISS, Pinecone, Weaviate, Chroma, Qdrant).
 
 ### Phase 2: Retrieval + Generation (online, every query)
 
