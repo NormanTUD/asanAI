@@ -1,4 +1,61 @@
 window.bibData = {
+"brain2012otavia": {
+    title: "The First Animals: ca. 760-Million-Year-Old Sponge-Like Fossils from Namibia",
+    author: "Courtney K. Brain, Anthony R. Prave, Karl-Heinz Hoffmann, Anthony E. Fallick, Andre Botha, Donald A. Herd, Craig Sturrock, Iain Young, Daniel J. Condon, Stuart G. Allison",
+    year: 2012,
+    url: "https://doi.org/10.1016/j.sajb.2012.07.001"
+},
+"bobrovskiy2018dickinsonia": {
+    title: "Ancient steroids establish the Ediacaran fossil Dickinsonia as one of the earliest animals",
+    author: "Ilya Bobrovskiy, Janet M. Hope, Andrey Ivantsov, Benjamin J. Nettersheim, Christian Hallmann, Jochen J. Brocks",
+    year: 2018,
+    url: "https://www.science.org/doi/10.1126/science.aat7228"
+},
+"begun2003planet": {
+    title: "Planet of the Apes",
+    author: "David R. Begun",
+    year: 2003,
+    url: "https://www.scientificamerican.com/article/planet-of-the-apes/"
+},
+"white2009ardipithecus": {
+    title: "Ardipithecus ramidus and the Paleobiology of Early Hominids",
+    author: "Tim D. White, Berhane Asfaw, Yonas Beyene, Yohannes Haile-Selassie, C. Owen Lovejoy, Gen Suwa, Giday WoldeGabriel",
+    year: 2009,
+    url: "https://www.science.org/doi/10.1126/science.1175802"
+},
+
+	"hublin2017jebel": {
+		title: "New fossils from Jebel Irhoud, Morocco and the pan-African origin of Homo sapiens",
+		author: "Jean-Jacques Hublin, Abdelouahed Ben-Ncer, Shara E. Bailey, Sarah E. Freidline, Simon Neubauer, Matthew M. Skinner, Inga Bergmann, Adeline Le Cabec, Stefano Benazzi, Katerina Harvati, Philipp Gunz",
+		year: 2017,
+		url: "https://www.nature.com/articles/nature22336"
+	},
+	"weinberg1977first": {
+		title: "The First Three Minutes: A Modern View of the Origin of the Universe",
+		author: "Steven Weinberg",
+		year: 1977,
+		url: "https://svetlogike.wordpress.com/wp-content/uploads/2014/02/15-steven-weinberg-the-first-three-minutes-a-moderm-view-of-the-origin-of-the-universe-1977.pdf"
+	},
+	"penzias1965measurement": {
+		title: "A Measurement of Excess Antenna Temperature at 4080 Mc/s",
+		author: "Arno A. Penzias, Robert W. Wilson",
+		year: 1965,
+		url: "https://ui.adsabs.harvard.edu/abs/1965ApJ...142..419P"
+	},
+	"allegre1995age": {
+		title: "The Age of the Earth",
+		author: "Claude J. Allègre, Gérard Manhès, Christa Göpel",
+		year: 1995,
+		url: "https://www.sciencedirect.com/science/article/abs/pii/0016703795000544"
+	},
+	"hartmann1975satellite": {
+		title: "Satellite-Sized Planetesimals and Lunar Origin",
+		author: "William K. Hartmann, Donald R. Davis",
+		year: 1975,
+		url: "https://courses.seas.harvard.edu/climate/eli/Courses/EPS281r/Sources/Origin-of-the-Moon/more/Hartmann-Davis-1975.pdf"
+	},
+
+
 	"racter1984": {
 		title: "The Policeman's Beard Is Half Constructed: Computer Prose and Poetry by Racter",
 		author: "Racter (William Chamberlain, Thomas Etter)",
