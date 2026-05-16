@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wie NNs beliebige Muster bauen – Mechanismen-Visualisierung</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0a1a;
+    color: #ddd;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    padding: 18px 10px;
+    font-size: 1.5em;
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #151530;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border-color: #667eea;
+    font-weight: bold;
+  }
+  .tab-btn:hover { border-color: #667eea; }
+  .tab-content { display: none; padding: 15px; }
+  .tab-content.active { display: block; }
+
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 10px;
+    background: #111128;
+    border-bottom: 1px solid #2a2a4a;
+  }
+  .ctrl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .ctrl label { font-size: 0.78em; color: #888; }
+  .ctrl input[type="range"] { width: 110px; accent-color: #667eea; }
+  .ctrl select, .ctrl button {
+    padding: 5px 10px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #151530;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 0.85em;
+  }
+  .ctrl button {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    font-weight: bold;
+  }
+  .ctrl button:hover { opacity: 0.9; }
+
+  canvas {
+    display: block;
+    margin: 10px auto;
+    background: #0d0d20;
+    border-radius: 10px;
+    border: 1px solid #2a2a4a;
+    max-width: 100%;
+  }
+
+  .explanation {
+    max-width: 900px;
+    margin: 10px auto;
+    padding: 15px;
+    background: #111128;
+    border-radius: 10px;
+    border: 1px solid #2a2a4a;
+    font-size: 0.88em;
+    line-height: 1.7;
+  }
+  .explanation h3 {
+    color: #f7971e;
+    margin-bottom: 8px;
+  }
+  .explanation code {
+    background: #1a1a3a;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #48dbfb;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.92em;
+  }
+  .hl-y { color: #ffd200; }
+  .hl-b { color: #48dbfb; }
+  .hl-r { color: #ff6b6b; }
+  .hl-g { color: #1dd1a1; }
+  .hl-p { color: #a29bfe; }
+
+  .side-by-side {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .side-by-side > div { flex: 1; min-width: 300px; }
+
+  .formula-box {
+    background: #0d0d20;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 8px 0;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .layer-graph-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .layer-graph-row canvas {
+    margin: 0;
+  }
+
+  #netCanvas {
+    cursor: crosshair;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧠 Wie baut ein NN aus simplen Bausteinen beliebige Muster?</h1>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="tab1">1️⃣ Ein Neuron = Ein Knick</button>
+  <button class="tab-btn" data-tab="tab2">2️⃣ Eine Schicht = Viele Knicks</button>
+  <button class="tab-btn" data-tab="tab3">3️⃣ Tiefe = Faltung der Faltung</button>
+  <button class="tab-btn" data-tab="tab4">4️⃣ Volles Netz: N×M interaktiv</button>
+  <button class="tab-btn" data-tab="tab5">5️⃣ CSV-Fit Demo</button>
+</div>
+
+<!-- TAB 1: Ein Neuron -->
+<div class="tab-content active" id="tab1">
+  <div class="explanation">
+    <h3>Mechanismus 1: Ein Neuron = Ein Knick im Raum</h3>
+    <p>Ein einzelnes Neuron mit ReLU berechnet: <code>a = relu(w·x + b) = max(0, w·x + b)</code></p>
+    <p>Das erzeugt eine <span class="hl-y">Knickfunktion</span>: Links vom Knickpunkt <code>x = -b/w</code> ist alles 0, rechts steigt es linear mit Steigung <code>w</code>.</p>
+    <p>Ändere <span class="hl-b">w</span> und <span class="hl-r">b</span> um zu sehen, wie sich der Knick verschiebt und dreht:</p>
+  </div>
+  <div class="controls-row">
+    <div class="ctrl">
+      <label>Gewicht w</label>
+      <input type="range" id="t1w" min="-3" max="3" step="0.1" value="1">
+      <span id="t1wV">1.0</span>
+    </div>
+    <div class="ctrl">
+      <label>Bias b</label>
+      <input type="range" id="t1b" min="-3" max="3" step="0.1" value="0">
+      <span id="t1bV">0.0</span>
+    </div>
+  </div>
+  <canvas id="c1" width="700" height="350"></canvas>
+  <div class="formula-box" style="max-width:700px;margin:10px auto;">
+    <span class="hl-y">a(x)</span> = max(0, <span class="hl-b">w</span>·x + <span class="hl-r">b</span>)
+    <br>Knickpunkt bei x = <span class="hl-r">-b</span>/<span class="hl-b">w</span> = <span id="t1kink">0.00</span>
+    <br><br>→ Das ist der <strong>atomare Baustein</strong>. Alles weitere ist Kombination davon.
+  </div>
+</div>
+
+<!-- TAB 2: Eine Schicht -->
+<div class="tab-content" id="tab2">
+  <div class="explanation">
+    <h3>Mechanismus 2: Mehrere Neuronen = Bumps & Stufen</h3>
+    <p>Wenn die <strong>Ausgabeschicht</strong> die Ergebnisse mehrerer ReLU-Neuronen <strong>gewichtet addiert</strong>, entstehen Bumps, Stufen, Dreiecke:</p>
+    <p><code>y = c₁·relu(w₁·x+b₁) + c₂·relu(w₂·x+b₂) + ... + bias_out</code></p>
+    <p>Jedes Neuron "knickt" an einer anderen Stelle. Die Ausgabeschicht <strong>mischt</strong> diese Knicks. Zwei gegenläufige Knicks = ein <span class="hl-g">Bump</span> (Dreieck/Plateau).</p>
+  </div>
+  <div class="controls-row">
+    <div class="ctrl">
+      <label>Neuronen in Hidden Layer</label>
+      <input type="range" id="t2n" min="1" max="12" value="4">
+      <span id="t2nV">4</span>
+    </div>
+    <div class="ctrl"><label>&nbsp;</label><button id="t2rand">🎲 Neue Gewichte</button></div>
+    <div class="ctrl"><label>&nbsp;</label><button id="t2fit">🎯 Fit Sinus</button></div>
+  </div>
+  <div class="side-by-side" style="padding:10px;">
+    <div>
+      <canvas id="c2main" width="600" height="350"></canvas>
+    </div>
+    <div>
+      <canvas id="c2parts" width="400" height="350"></canvas>
+    </div>
+  </div>
+  <div class="formula-box" style="max-width:1020px;margin:10px auto;" id="t2formula"></div>
+</div>
+
+<!-- TAB 3: Tiefe -->
+<div class="tab-content" id="tab3">
+  <div class="explanation">
+    <h3>Mechanismus 3: Tiefe = Faltung der Faltung (exponentiell mehr Regionen)</h3>
+    <p>Eine Schicht mit k Neuronen erzeugt bis zu <strong>k+1 lineare Regionen</strong>.</p>
+    <p>Aber: <strong>L Schichten</strong> mit je k Neuronen erzeugen bis zu <strong>O(k<sup>L</sup>) Regionen</strong>!</p>
+    <p>Warum? Schicht 2 knickt nicht den Original-Input, sondern <span class="hl-p">die bereits geknickte Funktion von Schicht 1</span>. Jeder Knick wird nochmal geknickt → exponentielles Wachstum.</p>
+    <p>Vergleiche: <span class="hl-b">1 Schicht mit 8 Neuronen</span> vs. <span class="hl-r">3 Schichten mit je 3 Neuronen</span> (≈ gleich viele Parameter):</p>
+  </div>
+  <div class="controls-row">
+    <div class="ctrl"><label>&nbsp;</label><button id="t3rand">🎲 Neue Gewichte</button></div>
+  </div>
+  <div class="side-by-side" style="padding:10px;">
+    <div>
+      <p style="text-align:center;color:#48dbfb;font-size:0.9em;margin-bottom:5px;">Breit: 1 Hidden Layer × 8 Neuronen</p>
+      <canvas id="c3wide" width="480" height="300"></canvas>
+    </div>
+    <div>
+      <p style="text-align:center;color:#ff6b6b;font-size:0.9em;margin-bottom:5px;">Tief: 3 Hidden Layers × 3 Neuronen</p>
+      <canvas id="c3deep" width="480" height="300"></canvas>
+    </div>
+  </div>
+  <div class="explanation">
+    <p>👆 Beachte: Das tiefe Netz erzeugt <strong>komplexere Formen</strong> mit weniger Parametern. Es kann Kurven, Spitzen und Plateaus erzeugen, die das breite Netz nicht kann.</p>
+    <p>Das ist der Grund warum Deep Learning funktioniert: <strong>Tiefe ist effizienter als Breite</strong>.</p>
+  </div>
+</div>
+
+<!-- TAB 4: Volles Netz -->
+<div class="tab-content" id="tab4">
+  <div class="explanation">
+    <h3>Volles Netz: N Schichten × M Neuronen – Schicht für Schicht</h3>
+    <p>Sieh dir an, wie jede Schicht die Funktion transformiert. Links: die Ausgabe jeder Schicht einzeln. Rechts: das Netzwerk.</p>
+  </div>
+  <div class="controls-row">
+    <div class="ctrl">
+      <label>Hidden Layers</label>
+      <input type="range" id="t4layers" min="1" max="6" value="3">
+      <span id="t4layersV">3</span>
+    </div>
+    <div class="ctrl">
+      <label>Neuronen / Layer</label>
+      <input type="range" id="t4neurons" min="2" max="10" value="4">
+      <span id="t4neuronsV">4</span>
+    </div>
+    <div class="ctrl">
+      <label>Aktivierung</label>
+      <select id="t4act">
+        <option value="relu" selected>ReLU</option>
+        <option value="sigmoid">Sigmoid</option>
+        <option value="tanh">tanh</option>
+      </select>
+    </div>
+    <div class="ctrl"><label>&nbsp;</label><button id="t4rand">🎲 Neue Gewichte</button></div>
+  </div>
+  <div style="padding:10px;">
+    <canvas id="c4net" width="1100" height="400"></canvas>
+    <div class="layer-graph-row" id="t4graphs"></div>
+  </div>
+</div>
+
+<!-- TAB 5: CSV Fit -->
+<div class="tab-content" id="tab5">
+  <div class="explanation">
+    <h3>CSV-Fit Demo: Das Netz lernt ein Muster aus Daten</h3>
+    <p>Klicke auf den Graph um Datenpunkte zu setzen (wie Zeilen in einer CSV). Dann trainiert das Netz live per Backpropagation und du siehst, wie es die Kurve Schritt für Schritt approximiert.</p>
+  </div>
+  <div class="controls-row">
+    <div class="ctrl">
+      <label>Hidden Layers</label>
+      <input type="range" id="t5layers" min="1" max="4" value="2">
+      <span id="t5layersV">2</span>
+    </div>
+    <div class="ctrl">
+      <label>Neuronen / Layer</label>
+      <input type="range" id="t5neurons" min="2" max="16" value="8">
+      <span id="t5neuronsV">8</span>
+    </div>
+    <div class="ctrl">
+      <label>Lernrate</label>
+      <input type="range" id="t5lr" min="0.001" max="0.1" step="0.001" value="0.01">
+      <span id="t5lrV">0.010</span>
+    </div>
+    <div class="ctrl"><label>&nbsp;</label><button id="t5train">▶ Trainieren</button></div>
+    <div class="ctrl"><label>&nbsp;</label><button id="t5stop">⏹ Stop</button></div>
+    <div class="ctrl"><label>&nbsp;</label><button id="t5clear">🗑 Clear</button></div>
+    <div class="ctrl"><label>&nbsp;</label><button id="t5preset">📈 Preset: Sinus</button></div>
+  </div>
+  <canvas id="c5" width="900" height="450" style="cursor:crosshair;"></canvas>
+  <div style="text-align:center;padding:5px;color:#888;font-size:0.85em;">
+    Epoch: <span id="t5epoch" style="color:#ffd200;">0</span> | Loss: <span id="t5loss" style="color:#ff6b6b;">-</span>
+  </div>
+</div>
+
+<script>
+// ============ UTILITIES ============
+const relu = x => Math.max(0, x);
+const sigmoid = x => 1 / (1 + Math.exp(-Math.max(-500, Math.min(500, x))));
+const tanhFn = x => Math.tanh(x);
+const actFns = { relu, sigmoid, tanh: tanhFn };
+const actDervs = {
+  relu: x => x > 0 ? 1 : 0,
+  sigmoid: x => { const s = sigmoid(x); return s * (1 - s); },
+  tanh: x => 1 - Math.tanh(x) ** 2
+};
+
+function randN() { return (Math.random() * 2 - 1); }
+function randW(fanIn) {
+  // He initialization
+  const std = Math.sqrt(2 / fanIn);
+  return (Math.random() * 2 - 1) * std;
+}
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+function drawAxes(ctx, w, h, xMin, xMax, yMin, yMax, label) {
+  const toX = x => ((x - xMin) / (xMax - xMin)) * (w - 80) + 50;
+  const toY = y => h - 40 - ((y - yMin) / (yMax - yMin)) * (h - 70);
+
+  // Grid
+  ctx.strokeStyle = '#1a1a3a';
+  ctx.lineWidth = 1;
+  for (let gx = Math.ceil(xMin); gx <= Math.floor(xMax); gx++) {
+    ctx.beginPath(); ctx.moveTo(toX(gx), 20); ctx.lineTo(toX(gx), h - 40); ctx.stroke();
+  }
+  for (let gy = Math.ceil(yMin); gy <= Math.floor(yMax); gy++) {
+    ctx.beginPath(); ctx.moveTo(50, toY(gy)); ctx.lineTo(w - 30, toY(gy)); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#444';
+  ctx.lineWidth = 1.5;
+  if (yMin <= 0 && yMax >= 0) {
+    ctx.beginPath(); ctx.moveTo(50, toY(0)); ctx.lineTo(w - 30, toY(0)); ctx.stroke();
+  }
+  if (xMin <= 0 && xMax >= 0) {
+    ctx.beginPath(); ctx.moveTo(toX(0), 20); ctx.lineTo(toX(0), h - 40); ctx.stroke();
+  }
+
+  // Labels
+  ctx.fillStyle = '#666';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  for (let gx = Math.ceil(xMin); gx <= Math.floor(xMax); gx++) {
+    ctx.fillText(gx, toX(gx), h - 25);
+  }
+  ctx.textAlign = 'right';
+  for (let gy = Math.ceil(yMin); gy <= Math.floor(yMax); gy++) {
+    ctx.fillText(gy.toFixed(0), 45, toY(gy) + 4);
+  }
+
+  if (label) {
+    ctx.fillStyle = '#888';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, w / 2, 15);
+  }
+
+  return { toX, toY };
+}
+
+function plotFn(ctx, w, h, xMin, xMax, yMin, yMax, fn, color, lineWidth = 2) {
+  const toX = x => ((x - xMin) / (xMax - xMin)) * (w - 80) + 50;
+  const toY = y => h - 40 - ((y - yMin) / (yMax - yMin)) * (h - 70);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.beginPath();
+  let first = true;
+  for (let px = 50; px <= w - 30; px++) {
+    const x = xMin + (px - 50) / (w - 80) * (xMax - xMin);
+    const y = fn(x);
+    const py = toY(y);
+    if (first) { ctx.moveTo(px, py); first = false; }
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+}
+
+// ============ TAB 1: Single Neuron ============
+(function() {
+  const c = document.getElementById('c1');
+  const ctx = c.getContext('2d');
+  const wSlider = document.getElementById('t1w');
+  const bSlider = document.getElementById('t1b');
+
+  function draw1() {
+    const w = +wSlider.value;
+    const b = +bSlider.value;
+    document.getElementById('t1wV').textContent = w.toFixed(1);
+    document.getElementById('t1bV').textContent = b.toFixed(1);
+    const kink = w !== 0 ? (-b / w) : 'undef';
+    document.getElementById('t1kink').textContent = typeof kink === 'number' ? kink.toFixed(2) : kink;
+
+    ctx.clearRect(0, 0, c.width, c.height);
+    const axes = drawAxes(ctx, c.width, c.height, -5, 5, -1, 5, 'a(x) = relu(w·x + b)');
+
+    // Linear part (before relu)
+    plotFn(ctx, c.width, c.height, -5, 5, -1, 5, x => w * x + b, 'rgba(255,107,107,0.3)', 1);
+
+    // ReLU output
+    plotFn(ctx, c.width, c.height, -5, 5, -1, 5, x => relu(w * x + b), '#ffd200', 3);
+
+    // Kink point
+    if (typeof kink === 'number' && kink >= -5 && kink <= 5) {
+      ctx.beginPath();
+      ctx.arc(axes.toX(kink), axes.toY(0), 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#ff6b6b';
+      ctx.fill();
+      ctx.fillStyle = '#ff6b6b';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Knick: x=${kink.toFixed(1)}`, axes.toX(kink), axes.toY(0) - 12);
+    }
+  }
+
+  wSlider.addEventListener('input', draw1);
+  bSlider.addEventListener('input', draw1);
+  draw1();
+})();
+
+// ============ TAB 2: One Layer ============
+(function() {
+  const cMain = document.getElementById('c2main');
+  const cParts = document.getElementById('c2parts');
+  const ctxM = cMain.getContext('2d');
+  const ctxP = cParts.getContext('2d');
+  const nSlider = document.getElementById('t2n');
+  const formulaBox = document.getElementById('t2formula');
+
+  let neurons = [];
+  let outWeights = [];
+  let outBias = 0;
+
+  function initT2(fitSin = false) {
+    const n = +nSlider.value;
+    document.getElementById('t2nV').textContent = n;
+
+    if (fitSin) {
+      // Hand-craft weights to approximate sin(x) on [-π, π]
+      neurons = [];
+      outWeights = [];
+      const step = 2 * Math.PI / n;
+      for (let i = 0; i < n; i++) {
+        const pos = -Math.PI + step * i;
+        neurons.push({ w: (i % 2 === 0 ? 1 : -1) * 1.5, b: -pos * (i % 2 === 0 ? 1 : -1) * 1.5 });
+        outWeights.push((i % 2 === 0 ? 1 : -1) * (0.5 + Math.random() * 0.3));
+      }
+      outBias = 0;
+      // Simple gradient descent to fit sin
+      const lr = 0.001;
+      for (let epoch = 0; epoch < 2000; epoch++) {
+        let dW = neurons.map(() => ({ dw: 0, db: 0 }));
+        let dOW = outWeights.map(() => 0);
+        let dOB = 0;
+        for (let s = 0; s < 50; s++) {
+          const x = -Math.PI + (2 * Math.PI / 50) * s;
+          const target = Math.sin(x);
+          const acts = neurons.map(n => relu(n.w * x + n.b));
+          let y = outBias;
+          acts.forEach((a, i) => y += outWeights[i] * a);
+          const err = y - target;
+          dOB += err;
+          acts.forEach((a, i) => {
+            dOW[i] += err * a;
+            if (neurons[i].w * x + neurons[i].b > 0) {
+              dW[i].dw += err * outWeights[i] * x;
+              dW[i].db += err * outWeights[i];
+            }
+          });
+        }
+        outBias -= lr * dOB / 50;
+        outWeights.forEach((_, i) => {
+          outWeights[i] -= lr * dOW[i] / 50;
+          neurons[i].w -= lr * dW[i].dw / 50;
+          neurons[i].b -= lr * dW[i].db / 50;
+        });
+      }
+    } else {
+      neurons = Array.from({ length: n }, () => ({ w: randN() * 2, b: randN() * 2 }));
+      outWeights = Array.from({ length: n }, () => randN());
+      outBias = randN() * 0.5;
+    }
+    drawT2();
+  }
+
+  function evalT2(x) {
+    let y = outBias;
+    neurons.forEach((n, i) => {
+      y += outWeights[i] * relu(n.w * x + n.b);
+    });
+    return y;
+  }
+
+  function drawT2() {
+    const xMin = -4, xMax = 4, yMin = -3, yMax = 3;
+
+    // Main: combined output
+    ctxM.clearRect(0, 0, cMain.width, cMain.height);
+    drawAxes(ctxM, cMain.width, cMain.height, xMin, xMax, yMin, yMax, 'Kombinierte Ausgabe: y = Σ cᵢ·relu(wᵢ·x+bᵢ) + bias');
+    plotFn(ctxM, cMain.width, cMain.height, xMin, xMax, yMin, yMax, evalT2, '#1dd1a1', 3);
+
+    // Parts: individual neuron contributions
+    ctxP.clearRect(0, 0, cParts.width, cParts.height);
+    drawAxes(ctxP, cParts.width, cParts.height, xMin, xMax, yMin, yMax, 'Einzelne Neuron-Beiträge: cᵢ·relu(wᵢ·x+bᵢ)');
+
+    const colors = ['#ff6b6b','#48dbfb','#ffd200','#a29bfe','#1dd1a1','#ff9ff3','#f7971e','#00d2d3','#ee5a24','#c8d6e5','#6c5ce7','#fdcb6e'];
+    neurons.forEach((n, i) => {
+      const col = colors[i % colors.length];
+      plotFn(ctxP, cParts.width, cParts.height, xMin, xMax, yMin, yMax,
+        x => outWeights[i] * relu(n.w * x + n.b), col, 1.5);
+    });
+
+    // Formula
+    let f = `<span class="hl-g">y(x)</span> = `;
+    neurons.forEach((n, i) => {
+      const sign = outWeights[i] >= 0 ? (i > 0 ? ' + ' : '') : ' - ';
+      f += `${sign}<span class="hl-r">${Math.abs(outWeights[i]).toFixed(2)}</span>·relu(<span class="hl-b">${n.w.toFixed(2)}</span>·x + <span class="hl-p">${n.b.toFixed(2)}</span>)`;
+    });
+    f += ` + <span class="hl-y">${outBias.toFixed(2)}</span>`;
+    f += `\n\n→ ${neurons.length} Neuronen = bis zu ${neurons.length + 1} lineare Regionen (Knickstellen)`;
+    formulaBox.innerHTML = f;
+  }
+
+  nSlider.addEventListener('input', () => initT2(false));
+  document.getElementById('t2rand').addEventListener('click', () => initT2(false));
+  document.getElementById('t2fit').addEventListener('click', () => initT2(true));
+  initT2(false);
+})();
+
+// ============ TAB 3: Deep vs Wide ============
+(function() {
+  const cWide = document.getElementById('c3wide');
+  const cDeep = document.getElementById('c3deep');
+  const ctxW = cWide.getContext('2d');
+  const ctxD = cDeep.getContext('2d');
+
+  function buildSimpleNet(layerSizes) {
+    // layerSizes e.g. [1, 8, 1] or [1, 3, 3, 3, 1]
+    const net = [];
+    for (let l = 1; l < layerSizes.length; l++) {
+      const layer = {
+        weights: [],
+        biases: []
+      };
+      for (let n = 0; n < layerSizes[l]; n++) {
+        const w = [];
+        for (let p = 0; p < layerSizes[l - 1]; p++) {
+          w.push(randW(layerSizes[l - 1]));
+        }
+        layer.weights.push(w);
+        layer.biases.push(randN() * 0.5);
+      }
+      net.push(layer);
+    }
+    return net;
+  }
+
+  function evalNet(net, x, actKey = 'relu') {
+    let values = [x];
+    const act = actFns[actKey];
+    for (let l = 0; l < net.length; l++) {
+      const newValues = [];
+      const isLast = l === net.length - 1;
+      for (let n = 0; n < net[l].weights.length; n++) {
+        let z = net[l].biases[n];
+        for (let p = 0; p < values.length; p++) {
+          z += net[l].weights[n][p] * values[p];
+        }
+        newValues.push(isLast ? z : act(z));
+      }
+      values = newValues;
+    }
+    return values[0];
+  }
+
+  let wideNet, deepNet;
+
+  function initT3() {
+    wideNet = buildSimpleNet([1, 8, 1]);
+    deepNet = buildSimpleNet([1, 3, 3, 3, 1]);
+    drawT3();
+  }
+
+  function drawT3() {
+    const xMin = -4, xMax = 4, yMin = -3, yMax = 3;
+
+    ctxW.clearRect(0, 0, cWide.width, cWide.height);
+    drawAxes(ctxW, cWide.width, cWide.height, xMin, xMax, yMin, yMax, '1×8 = 8 Neuronen, ~17 Parameter');
+    plotFn(ctxW, cWide.width, cWide.height, xMin, xMax, yMin, yMax,
+      x => evalNet(wideNet, x), '#48dbfb', 3);
+
+    ctxD.clearRect(0, 0, cDeep.width, cDeep.height);
+    drawAxes(ctxD, cDeep.width, cDeep.height, xMin, xMax, yMin, yMax, '3×3 = 9 Neuronen, ~22 Parameter');
+    plotFn(ctxD, cDeep.width, cDeep.height, xMin, xMax, yMin, yMax,
+      x => evalNet(deepNet, x), '#ff6b6b', 3);
+  }
+
+  document.getElementById('t3rand').addEventListener('click', initT3);
+  initT3();
+})();
+
+// ============ TAB 4: Full N×M Network ============
+(function() {
+  const cNet = document.getElementById('c4net');
+  const ctxN = cNet.getContext('2d');
+  const graphsDiv = document.getElementById('t4graphs');
+
+  let fullNet = null;
+  let layerOutputs = [];
+
+  function buildFullNet() {
+    const nLayers = +document.getElementById('t4layers').value;
+    const nNeurons = +document.getElementById('t4neurons').value;
+    document.getElementById('t4layersV').textContent = nLayers;
+    document.getElementById('t4neuronsV').textContent = nNeurons;
+
+    const sizes = [1];
+    for (let i = 0; i < nLayers; i++) sizes.push(nNeurons);
+    sizes.push(1);
+
+    const net = [];
+    for (let l = 1; l < sizes.length; l++) {
+      const layer = { weights: [], biases: [] };
+      for (let n = 0; n < sizes[l]; n++) {
+        const w = [];
+        for (let p = 0; p < sizes[l - 1]; p++) {
+          w.push(randW(sizes[l - 1]));
+        }
+        layer.weights.push(w);
+        layer.biases.push(randN() * 0.3);
+      }
+      net.push(layer);
+    }
+    fullNet = net;
+  }
+
+  function evalFullNetLayered(x) {
+    const actKey = document.getElementById('t4act').value;
+    const act = actFns[actKey];
+    let values = [x];
+    const outputs = [values.slice()];
+
+    for (let l = 0; l < fullNet.length; l++) {
+      const newValues = [];
+      const isLast = l === fullNet.length - 1;
+      for (let n = 0; n < fullNet[l].weights.length; n++) {
+        let z = fullNet[l].biases[n];
+        for (let p = 0; p < values.length; p++) {
+          z += fullNet[l].weights[n][p] * values[p];
+        }
+        newValues.push(isLast ? z : act(z));
+      }
+      values = newValues;
+      outputs.push(values.slice());
+    }
+    return outputs;
+  }
+
+  function drawT4() {
+    if (!fullNet) return;
+
+    // Compute layer outputs for a range of x
+    const xMin = -4, xMax = 4, yMin = -3, yMax = 3;
+    const steps = 200;
+
+    // Draw network diagram
+    ctxN.clearRect(0, 0, cNet.width, cNet.height);
+    const sizes = [1];
+    const nLayers = fullNet.length - 1;
+    for (let i = 0; i < nLayers; i++) sizes.push(fullNet[i].weights.length);
+    sizes.push(1);
+
+    const padding = 60;
+    const netW = cNet.width - padding * 2;
+    const netH = cNet.height - padding * 2;
+
+    // Positions
+    const positions = [];
+    for (let l = 0; l < sizes.length; l++) {
+      const lx = padding + (netW / (sizes.length - 1)) * l;
+      const layerPos = [];
+      for (let n = 0; n < sizes[l]; n++) {
+        const ly = padding + (netH / (sizes[l] + 1)) * (n + 1);
+        layerPos.push({ x: lx, y: ly });
+      }
+      positions.push(layerPos);
+    }
+
+    // Connections
+    for (let l = 1; l < sizes.length; l++) {
+      for (let n = 0; n < sizes[l]; n++) {
+        for (let p = 0; p < sizes[l - 1]; p++) {
+          const w = fullNet[l - 1].weights[n][p];
+          const absW = Math.min(Math.abs(w), 2) / 2;
+          const from = positions[l - 1][p];
+          const to = positions[l][n];
+          ctx_color = w >= 0 ? `rgba(255,107,107,${0.15 + absW * 0.7})` : `rgba(72,219,251,${0.15 + absW * 0.7})`;
+          ctxN.strokeStyle = ctx_color;
+          ctxN.lineWidth = 0.3 + absW * 2.5;
+          ctxN.beginPath();
+          ctxN.moveTo(from.x, from.y);
+          ctxN.lineTo(to.x, to.y);
+          ctxN.stroke();
+        }
+      }
+    }
+
+    // Neurons
+    const layerLabels = ['Input', ...Array.from({ length: nLayers }, (_, i) => `Hidden ${i + 1}`), 'Output'];
+    for (let l = 0; l < sizes.length; l++) {
+      for (let n = 0; n < sizes[l]; n++) {
+        const pos = positions[l][n];
+        const r = 14;
+        let color = l === 0 ? '#667eea' : l === sizes.length - 1 ? '#1dd1a1' : '#a29bfe';
+        ctxN.beginPath();
+        ctxN.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+        ctxN.fillStyle = color;
+        ctxN.fill();
+        ctxN.strokeStyle = '#fff';
+        ctxN.lineWidth = 1;
+        ctxN.stroke();
+      }
+      // Layer label
+      ctxN.fillStyle = '#666';
+      ctxN.font = '11px sans-serif';
+      ctxN.textAlign = 'center';
+      ctxN.fillText(layerLabels[l], positions[l][0].x, 25);
+    }
+
+    // Layer-by-layer graphs
+    graphsDiv.innerHTML = '';
+    const allOutputs = [];
+    for (let s = 0; s <= steps; s++) {
+      const x = xMin + (xMax - xMin) * (s / steps);
+      allOutputs.push(evalFullNetLayered(x));
+    }
+
+    for (let l = 0; l < sizes.length; l++) {
+      const gc = document.createElement('canvas');
+      gc.width = 180;
+      gc.height = 150;
+      gc.style.background = '#0d0d20';
+      gc.style.borderRadius = '8px';
+      gc.style.border = '1px solid #2a2a4a';
+      graphsDiv.appendChild(gc);
+      const gctx = gc.getContext('2d');
+
+      const label = l === 0 ? 'Eingabe' : l === sizes.length - 1 ? 'Ausgabe' : `Hidden ${l}`;
+      drawAxes(gctx, gc.width, gc.height, xMin, xMax, yMin, yMax, label);
+
+      const colors = ['#ff6b6b', '#48dbfb', '#ffd200', '#a29bfe', '#1dd1a1', '#ff9ff3', '#f7971e', '#00d2d3', '#ee5a24', '#c8d6e5'];
+      for (let n = 0; n < sizes[l]; n++) {
+        const col = colors[n % colors.length];
+        gctx.strokeStyle = col;
+        gctx.lineWidth = 1.5;
+        gctx.beginPath();
+        let first = true;
+        for (let s = 0; s <= steps; s++) {
+          const x = xMin + (xMax - xMin) * (s / steps);
+          const val = allOutputs[s][l][n];
+          const clampedVal = Math.max(yMin, Math.min(yMax, val));
+          const px = ((x - xMin) / (xMax - xMin)) * (gc.width - 80) + 50;
+          const py = gc.height - 40 - ((clampedVal - yMin) / (yMax - yMin)) * (gc.height - 70);
+          if (first) { gctx.moveTo(px, py); first = false; }
+          else gctx.lineTo(px, py);
+        }
+        gctx.stroke();
+      }
+    }
+  }
+
+  function initT4() {
+    buildFullNet();
+    drawT4();
+  }
+
+  document.getElementById('t4layers').addEventListener('input', () => {
+    document.getElementById('t4layersV').textContent = document.getElementById('t4layers').value;
+    initT4();
+  });
+  document.getElementById('t4neurons').addEventListener('input', () => {
+    document.getElementById('t4neuronsV').textContent = document.getElementById('t4neurons').value;
+    initT4();
+  });
+  document.getElementById('t4act').addEventListener('change', drawT4);
+  document.getElementById('t4rand').addEventListener('click', initT4);
+  initT4();
+})();
+
+// ============ TAB 5: CSV Fit with Backprop ============
+(function() {
+  const c5 = document.getElementById('c5');
+  const ctx5 = c5.getContext('2d');
+
+  let dataPoints = [];
+  let trainNet = null;
+  let training = false;
+  let epochCount = 0;
+  let animFrame = null;
+
+  const xMin = -5, xMax = 5, yMin = -3, yMax = 3;
+  const toCanvasX = x => ((x - xMin) / (xMax - xMin)) * (c5.width - 80) + 50;
+  const toCanvasY = y => c5.height - 40 - ((y - yMin) / (yMax - yMin)) * (c5.height - 70);
+  const fromCanvasX = px => xMin + (px - 50) / (c5.width - 80) * (xMax - xMin);
+  const fromCanvasY = py => yMin + (c5.height - 40 - py) / (c5.height - 70) * (yMax - yMin);
+
+  function buildTrainNet() {
+    const nL = +document.getElementById('t5layers').value;
+    const nN = +document.getElementById('t5neurons').value;
+    document.getElementById('t5layersV').textContent = nL;
+    document.getElementById('t5neuronsV').textContent = nN;
+
+    const sizes = [1];
+    for (let i = 0; i < nL; i++) sizes.push(nN);
+    sizes.push(1);
+
+    const net = [];
+    for (let l = 1; l < sizes.length; l++) {
+      const layer = { weights: [], biases: [], dw: [], db: [], zs: [], as: [] };
+      for (let n = 0; n < sizes[l]; n++) {
+        const w = [];
+        for (let p = 0; p < sizes[l - 1]; p++) {
+          w.push(randW(sizes[l - 1]));
+        }
+        layer.weights.push(w);
+        layer.biases.push(randN() * 0.1);
+        layer.dw.push(w.map(() => 0));
+        layer.db.push(0);
+      }
+      net.push(layer);
+    }
+    trainNet = net;
+    epochCount = 0;
+    document.getElementById('t5epoch').textContent = '0';
+    document.getElementById('t5loss').textContent = '-';
+  }
+
+  function forwardTrain(net, x) {
+    let values = [x];
+    const layerInputs = [values.slice()];
+
+    for (let l = 0; l < net.length; l++) {
+      const newValues = [];
+      const isLast = l === net.length - 1;
+      net[l].zs = [];
+      net[l].as = [];
+      for (let n = 0; n < net[l].weights.length; n++) {
+        let z = net[l].biases[n];
+        for (let p = 0; p < values.length; p++) {
+          z += net[l].weights[n][p] * values[p];
+        }
+        net[l].zs.push(z);
+        const a = isLast ? z : relu(z);
+        net[l].as.push(a);
+        newValues.push(a);
+      }
+      values = newValues;
+      layerInputs.push(values.slice());
+    }
+    return { output: values[0], layerInputs };
+  }
+
+  function trainStep() {
+    if (!trainNet || dataPoints.length < 2) return;
+
+    const lr = +document.getElementById('t5lr').value;
+    document.getElementById('t5lrV').textContent = lr.toFixed(3);
+    let totalLoss = 0;
+
+    // Zero gradients
+    for (let l = 0; l < trainNet.length; l++) {
+      for (let n = 0; n < trainNet[l].weights.length; n++) {
+        trainNet[l].db[n] = 0;
+        for (let p = 0; p < trainNet[l].weights[n].length; p++) {
+          trainNet[l].dw[n][p] = 0;
+        }
+      }
+    }
+
+    // Accumulate gradients over all data points
+    for (const dp of dataPoints) {
+      const { output, layerInputs } = forwardTrain(trainNet, dp.x);
+      const error = output - dp.y;
+      totalLoss += error * error;
+
+      // Backpropagation
+      let deltas = [error]; // dL/da for output layer
+
+      for (let l = trainNet.length - 1; l >= 0; l--) {
+        const newDeltas = [];
+        const prevActs = layerInputs[l]; // inputs to this layer
+        const isLast = l === trainNet.length - 1;
+
+        for (let n = 0; n < trainNet[l].weights.length; n++) {
+          let delta = deltas[n];
+          if (!isLast) {
+            // ReLU derivative
+            delta *= trainNet[l].zs[n] > 0 ? 1 : 0;
+          }
+
+          trainNet[l].db[n] += delta;
+          for (let p = 0; p < trainNet[l].weights[n].length; p++) {
+            trainNet[l].dw[n][p] += delta * prevActs[p];
+          }
+
+          // Propagate to previous layer
+          if (l > 0) {
+            for (let p = 0; p < prevActs.length; p++) {
+              if (!newDeltas[p]) newDeltas[p] = 0;
+              newDeltas[p] += delta * trainNet[l].weights[n][p];
+            }
+          }
+        }
+        deltas = newDeltas;
+      }
+    }
+
+    // Update weights
+    const N = dataPoints.length;
+    for (let l = 0; l < trainNet.length; l++) {
+      for (let n = 0; n < trainNet[l].weights.length; n++) {
+        trainNet[l].biases[n] -= lr * trainNet[l].db[n] / N;
+        for (let p = 0; p < trainNet[l].weights[n].length; p++) {
+          trainNet[l].weights[n][p] -= lr * trainNet[l].dw[n][p] / N;
+        }
+      }
+    }
+
+    totalLoss /= N;
+    epochCount++;
+    return totalLoss;
+  }
+
+  function evalTrainNet(x) {
+    if (!trainNet) return 0;
+    return forwardTrain(trainNet, x).output;
+  }
+
+  function drawT5() {
+    ctx5.clearRect(0, 0, c5.width, c5.height);
+    drawAxes(ctx5, c5.width, c5.height, xMin, xMax, yMin, yMax, 'Klicke um Datenpunkte zu setzen → Trainiere das Netz');
+
+    // Draw network prediction
+    if (trainNet) {
+      plotFn(ctx5, c5.width, c5.height, xMin, xMax, yMin, yMax, evalTrainNet, '#1dd1a1', 2.5);
+    }
+
+    // Draw data points
+    for (const dp of dataPoints) {
+      const px = toCanvasX(dp.x);
+      const py = toCanvasY(dp.y);
+      ctx5.beginPath();
+      ctx5.arc(px, py, 5, 0, Math.PI * 2);
+      ctx5.fillStyle = '#ffd200';
+      ctx5.fill();
+      ctx5.strokeStyle = '#fff';
+      ctx5.lineWidth = 1;
+      ctx5.stroke();
+    }
+  }
+
+  // Click to add points
+  c5.addEventListener('click', (e) => {
+    const rect = c5.getBoundingClientRect();
+    const px = (e.clientX - rect.left) * (c5.width / rect.width);
+    const py = (e.clientY - rect.top) * (c5.height / rect.height);
+    const x = fromCanvasX(px);
+    const y = fromCanvasY(py);
+    if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
+      dataPoints.push({ x, y });
+      drawT5();
+    }
+  });
+
+  // Training loop
+  function trainingLoop() {
+    if (!training) return;
+    const batchSize = 50; // steps per frame
+    let loss = 0;
+    for (let i = 0; i < batchSize; i++) {
+      loss = trainStep();
+    }
+    document.getElementById('t5epoch').textContent = epochCount;
+    document.getElementById('t5loss').textContent = loss !== undefined ? loss.toFixed(6) : '-';
+    drawT5();
+    animFrame = requestAnimationFrame(trainingLoop);
+  }
+
+  document.getElementById('t5train').addEventListener('click', () => {
+    if (dataPoints.length < 2) {
+      alert('Setze mindestens 2 Datenpunkte!');
+      return;
+    }
+    if (!trainNet) buildTrainNet();
+    training = true;
+    trainingLoop();
+  });
+
+  document.getElementById('t5stop').addEventListener('click', () => {
+    training = false;
+    if (animFrame) cancelAnimationFrame(animFrame);
+  });
+
+  document.getElementById('t5clear').addEventListener('click', () => {
+    training = false;
+    if (animFrame) cancelAnimationFrame(animFrame);
+    dataPoints = [];
+    trainNet = null;
+    epochCount = 0;
+    document.getElementById('t5epoch').textContent = '0';
+    document.getElementById('t5loss').textContent = '-';
+    drawT5();
+  });
+
+  document.getElementById('t5preset').addEventListener('click', () => {
+    training = false;
+    if (animFrame) cancelAnimationFrame(animFrame);
+    dataPoints = [];
+    for (let i = 0; i <= 30; i++) {
+      const x = xMin + (xMax - xMin) * (i / 30);
+      dataPoints.push({ x, y: Math.sin(x) * 1.5 });
+    }
+    buildTrainNet();
+    drawT5();
+  });
+
+  document.getElementById('t5layers').addEventListener('input', () => {
+    document.getElementById('t5layersV').textContent = document.getElementById('t5layers').value;
+    training = false;
+    if (animFrame) cancelAnimationFrame(animFrame);
+    buildTrainNet();
+    drawT5();
+  });
+  document.getElementById('t5neurons').addEventListener('input', () => {
+    document.getElementById('t5neuronsV').textContent = document.getElementById('t5neurons').value;
+    training = false;
+    if (animFrame) cancelAnimationFrame(animFrame);
+    buildTrainNet();
+    drawT5();
+  });
+  document.getElementById('t5lr').addEventListener('input', () => {
+    document.getElementById('t5lrV').textContent = (+document.getElementById('t5lr').value).toFixed(3);
+  });
+
+  buildTrainNet();
+  drawT5();
+})();
+</script>
+
+</body>
+</html>
