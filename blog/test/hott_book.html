@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive HoTT Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 50%, #0d0d3d 100%);
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+        .hero-content {
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+        }
+        .hero h1 {
+            font-size: 4rem;
+            background: linear-gradient(90deg, #64ffda, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.3)); }
+            to { filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.5)); }
+        }
+        .hero p { font-size: 1.3rem; opacity: 0.8; max-width: 600px; }
+        .scroll-hint {
+            position: absolute; bottom: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem; opacity: 0.6;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10, 10, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            justify-content: center;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+        }
+        nav a {
+            color: #64ffda; text-decoration: none;
+            padding: 0.5rem 1rem; border-radius: 20px;
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        nav a:hover {
+            background: rgba(100, 255, 218, 0.1);
+            border-color: #64ffda;
+            transform: translateY(-2px);
+        }
+        .section {
+            max-width: 1200px; margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        .section h2 {
+            font-size: 2.5rem; margin-bottom: 1rem;
+            color: #a78bfa;
+            border-left: 4px solid #64ffda;
+            padding-left: 1rem;
+        }
+        .section h3 {
+            font-size: 1.5rem; margin: 2rem 0 1rem;
+            color: #f472b6;
+        }
+        .section p, .section li {
+            line-height: 1.8; margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+        .card {
+            background: rgba(30, 30, 80, 0.6);
+            border: 1px solid rgba(100, 255, 218, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(100, 255, 218, 0.1);
+        }
+        .interactive-box {
+            background: rgba(20, 20, 60, 0.8);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .interactive-box h4 {
+            color: #64ffda; margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        canvas.demo {
+            display: block;
+            margin: 1rem auto;
+            border-radius: 8px;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            max-width: 100%;
+        }
+        .plotly-chart {
+            width: 100%; min-height: 400px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        button {
+            background: linear-gradient(135deg, #64ffda, #a78bfa);
+            border: none; padding: 0.7rem 1.5rem;
+            border-radius: 25px; color: #0a0a2e;
+            font-weight: bold; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 0.3rem;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(100, 255, 218, 0.3);
+        }
+        button.secondary {
+            background: transparent;
+            border: 1px solid #a78bfa;
+            color: #a78bfa;
+        }
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px; padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem; overflow-x: auto;
+            border-left: 3px solid #64ffda;
+            margin: 1rem 0;
+        }
+        .analogy {
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.05), rgba(167, 139, 250, 0.05));
+            border-radius: 12px; padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px dashed rgba(244, 114, 182, 0.3);
+        }
+        .analogy::before {
+            content: "💡 Intuition: ";
+            color: #f472b6; font-weight: bold;
+        }
+        .controls {
+            display: flex; flex-wrap: wrap; gap: 0.5rem;
+            align-items: center; margin: 1rem 0;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px; border-radius: 3px;
+            background: rgba(100, 255, 218, 0.3);
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: #64ffda; cursor: pointer;
+        }
+        label { color: #a78bfa; margin-right: 0.5rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        .type-tree {
+            font-family: monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem; border-radius: 8px;
+            line-height: 2;
+        }
+        .type-tree .type { color: #64ffda; }
+        .type-tree .elem { color: #f472b6; }
+        .type-tree .op { color: #a78bfa; }
+        .fiber-viz { position: relative; }
+        select {
+            background: rgba(30, 30, 80, 0.8);
+            color: #e0e0ff; border: 1px solid #a78bfa;
+            padding: 0.5rem; border-radius: 8px;
+            margin: 0.3rem;
+        }
+        .tooltip {
+            position: relative; display: inline-block;
+            border-bottom: 1px dotted #64ffda; cursor: help;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden; width: 250px;
+            background: rgba(10, 10, 46, 0.95);
+            color: #e0e0ff; text-align: left;
+            border-radius: 8px; padding: 0.8rem;
+            position: absolute; z-index: 10;
+            bottom: 125%; left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #64ffda;
+            font-size: 0.85rem;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+        .progress-bar {
+            height: 3px; background: rgba(100,255,218,0.2);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+        }
+        .progress-bar .fill {
+            height: 100%; background: linear-gradient(90deg, #64ffda, #a78bfa);
+            width: 0%; transition: width 0.1s;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+
+    <!-- HERO SECTION with animated intro -->
+    <div class="hero" id="hero">
+        <canvas id="heroCanvas"></canvas>
+        <div class="hero-content">
+            <h1>Homotopy Type Theory</h1>
+            <p>An interactive visual journey through the univalent foundations of mathematics — where types are spaces, identifications are paths, and equivalent things are equal.</p>
+            <br>
+            <button onclick="document.getElementById('nav').scrollIntoView({behavior:'smooth'})">Begin Exploration ↓</button>
+        </div>
+        <div class="scroll-hint">⌄</div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav id="nav">
+        <a href="#sec-types">Types & Elements</a>
+        <a href="#sec-functions">Π-Types</a>
+        <a href="#sec-nat">ℕ & Induction</a>
+        <a href="#sec-identity">Identity Types</a>
+        <a href="#sec-equiv">Equivalences</a>
+        <a href="#sec-contract">Contractibility</a>
+        <a href="#sec-truncation">Truncation Levels</a>
+        <a href="#sec-univalence">Univalence</a>
+        <a href="#sec-circle">The Circle</a>
+    </nav>
+
+    <!-- SECTION 1: Types and Elements -->
+    <div class="section" id="sec-types">
+        <h2>1. Types & Elements</h2>
+        <p>In HoTT, the basic objects are <strong>types</strong> and <strong>elements</strong>. Think of a type as a space, and elements as points in that space. Every element belongs to exactly one type.</p>
+
+        <div class="analogy">
+            Unlike set theory where everything is a set and ∈ is a global relation, in type theory <code>a : A</code> is a <em>judgment</em> — it's part of how <code>a</code> was constructed. You can't ask "is true = 1ℕ?" because they live in different types.
+        </div>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: The Type Universe</h4>
+            <p>Click on types to see their elements. Types are containers with strict membership.</p>
+            <canvas id="typeCanvas" class="demo" width="700" height="350"></canvas>
+            <div class="controls">
+                <button onclick="showType('nat')">ℕ (Naturals)</button>
+                <button onclick="showType('bool')">Bool</button>
+                <button onclick="showType('unit')">𝟏 (Unit)</button>
+                <button onclick="showType('empty')">∅ (Empty)</button>
+                <button onclick="showType('fin')">Fin₃</button>
+            </div>
+            <p id="typeInfo" style="margin-top:1rem; color:#64ffda;"></p>
+        </div>
+
+        <div class="card">
+            <h3>Contexts & Judgments</h3>
+            <p>A <strong>judgment</strong> takes the form <code>Γ ⊢ a : A</code>, meaning "in context Γ, the term a has type A." There are four kinds:</p>
+            <div class="type-tree">
+                <span class="op">Γ ⊢</span> <span class="type">A type</span> — "A is a well-formed type"<br>
+                <span class="op">Γ ⊢</span> <span class="elem">a : A</span> — "a is an element of A"<br>
+                <span class="op">Γ ⊢</span> <span class="type">A ≡ B type</span> — "A and B are judgmentally equal types"<br>
+                <span class="op">Γ ⊢</span> <span class="elem">a ≡ b : A</span> — "a and b are judgmentally equal elements"
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Type Families (Dependent Types)</h3>
+            <p>A <strong>type family</strong> B over A is a type B(x) that varies as x ranges over A. Think of it as a fiber bundle: over each point x in the base space A, there's a fiber B(x).</p>
+            <div class="plotly-chart" id="fiberBundle"></div>
+        </div>
+    </div>
+
+    <!-- SECTION 2: Dependent Function Types -->
+    <div class="section" id="sec-functions">
+        <h2>2. Dependent Function Types (Π-Types)</h2>
+        <p>A dependent function <code>f : Π(x:A) B(x)</code> assigns to each <code>x : A</code> an element <code>f(x) : B(x)</code>. The output type can depend on the input!</p>
+
+        <div class="analogy">
+            Think of a dependent function as a <em>section</em> of a fiber bundle. For each point in the base, you pick exactly one point in the fiber above it. An ordinary function A → B is the special case where all fibers are the same type B.
+        </div>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Functions as Sections</h4>
+            <p>Drag the slider to see how a section (dependent function) picks one point from each fiber.</p>
+            <canvas id="sectionCanvas" class="demo" width="700" height="350"></canvas>
+            <div class="controls">
+                <label>Wiggle:</label>
+                <input type="range" id="sectionWiggle" min="0" max="100" value="50" oninput="drawSection()">
+                <button onclick="animateSection()">Animate</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>The Four Rules</h3>
+            <div class="grid-2">
+                <div>
+                    <strong style="color:#64ffda">Formation:</strong>
+                    <div class="code-block">If B(x) is a type for x:A,<br>then Π(x:A) B(x) is a type.</div>
+                </div>
+                <div>
+                    <strong style="color:#64ffda">Introduction (λ):</strong>
+                    <div class="code-block">If b(x) : B(x) for x:A,<br>then λx.b(x) : Π(x:A) B(x)</div>
+                </div>
+                <div>
+                    <strong style="color:#64ffda">Elimination (eval):</strong>
+                    <div class="code-block">If f : Π(x:A) B(x),<br>then f(x) : B(x) for x:A</div>
+                </div>
+                <div>
+                    <strong style="color:#64ffda">Computation (β+η):</strong>
+                    <div class="code-block">β: (λy.b(y))(x) ≡ b(x)<br>η: λx.f(x) ≡ f</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Composition of Functions</h3>
+            <p>Given f : A → B and g : B → C, we get g∘f : A → C defined by (g∘f)(x) := g(f(x)).</p>
+            <div class="plotly-chart" id="compositionChart"></div>
+            <div class="controls">
+                <button onclick="showComposition('linear')">Linear f,g</button>
+                <button onclick="showComposition('quadratic')">Quadratic f, Linear g</button>
+                <button onclick="showComposition('trig')">Trig f, Abs g</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: Natural Numbers -->
+    <div class="section" id="sec-nat">
+        <h2>3. The Natural Numbers ℕ</h2>
+        <p>ℕ is the archetypal inductive type. It has two constructors: <code>0</code> and <code>succ</code>. Its induction principle lets us define functions and prove properties by specifying behavior at 0 and at successors.</p>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Induction Machine</h4>
+            <p>Define a function on ℕ by giving a base case and inductive step. Watch it compute!</p>
+            <div class="controls">
+                <label>Function:</label>
+                <select id="natFunc" onchange="computeNat()">
+                    <option value="add">add(3, n)</option>
+                    <option value="mul">mul(2, n)</option>
+                    <option value="fib">fibonacci(n)</option>
+                    <option value="tri">triangular(n)</option>
+                    <option value="fact">factorial(n)</option>
+                </select>
+                <label>n =</label>
+                <input type="range" id="natN" min="0" max="12" value="5" oninput="computeNat()">
+                <span id="natNVal">5</span>
+            </div>
+            <div class="code-block" id="natComputation"></div>
+            <div class="plotly-chart" id="natChart"></div>
+        </div>
+
+        <div class="card">
+            <h3>Pattern Matching</h3>
+            <p>Instead of explicitly invoking ind_ℕ, we can define functions by pattern matching:</p>
+            <div class="code-block">
+add(m, 0)      := m           -- base case<br>
+add(m, succ(n)) := succ(add(m, n))  -- inductive step
+            </div>
+            <p>This gives us the judgmental equalities: <code>m + 0 ≡ m</code> and <code>m + succ(n) ≡ succ(m + n)</code>.</p>
+            <p>But note: <code>0 + n = n</code> requires a <em>proof by induction</em> — it's an identification, not a judgmental equality!</p>
+        </div>
+    </div>
+
+    <!-- SECTION 4: Identity Types -->
+    <div class="section" id="sec-identity">
+        <h2>4. Identity Types — Paths in Space</h2>
+        <p>The identity type <code>a =_A x</code> is the type of <em>identifications</em> (paths) from a to x in A. It's inductively generated by <code>refl_a : a = a</code>.</p>
+
+        <div class="analogy">
+            Think of a type as a topological space. Elements are points. An identification p : x = y is a <em>path</em> from x to y. There might be many different paths! The identity type x = y is itself a space — the space of all paths from x to y.
+        </div>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Paths, Concatenation & Inversion</h4>
+            <p>Explore the groupoidal structure of identity types. Click points to create paths.</p>
+            <canvas id="pathCanvas" class="demo" width="700" height="400"></canvas>
+            <div class="controls">
+                <button onclick="pathDemo('refl')">refl (trivial path)</button>
+                <button onclick="pathDemo('concat')">p · q (concatenation)</button>
+                <button onclick="pathDemo('inv')">p⁻¹ (inverse)</button>
+                <button onclick="pathDemo('assoc')">Associativity</button>
+                <button onclick="pathDemo('ap')">ap_f (action on paths)</button>
+            </div>
+            <p id="pathInfo" style="margin-top:1rem; color:#f472b6;"></p>
+        </div>
+
+        <div class="card">
+            <h3>The Groupoid Structure</h3>
+            <p>Every type has the structure of an ∞-groupoid:</p>
+            <ul>
+                <li><strong>Reflexivity:</strong> refl_x : x = x</li>
+                <li><strong>Symmetry (inverse):</strong> If p : x = y, then p⁻¹ : y = x</li>
+                <li><strong>Transitivity (concat):</strong> If p : x = y and q : y = z, then p · q : x = z</li>
+                <li><strong>Associativity:</strong> (p · q) · r = p · (q · r)</li>
+                <li><strong>Unit laws:</strong> refl · p = p, p · refl = p</li>
+                <li><strong>Inverse laws:</strong> p⁻¹ · p = refl, p · p⁻¹ = refl</li>
+            </ul>
+            <p>All these "equalities" are themselves identifications — paths between paths!</p>
+        </div>
+
+        <div class="card">
+            <h3>Transport</h3>
+            <p>Given a type family B over A and a path p : x = y, we get <code>tr_B(p) : B(x) → B(y)</code>.</p>
+            <div class="plotly-chart" id="transportChart"></div>
+            <p>Transport moves elements along paths in the base. It's like parallel transport in differential geometry!</p>
+        </div>
+    </div>
+
+    <!-- SECTION 5: Equivalences -->
+    <div class="section" id="sec-equiv">
+        <h2>5. Equivalences</h2>
+        <p>An equivalence f : A ≃ B is a function with both a section (right inverse) and a retraction (left inverse). Equivalent types are "the same" for all mathematical purposes.</p>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Equivalence Explorer</h4>
+            <p>See how equivalences biject points while preserving all structure.</p>
+            <canvas id="equivCanvas" class="demo" width="700" height="350"></canvas>
+            <div class="controls">
+                <button onclick="equivDemo('id')">id : A ≃ A</button>
+                <button onclick="equivDemo('neg')">neg : Bool ≃ Bool</button>
+                <button onclick="equivDemo('succ')">succ : ℤ ≃ ℤ</button>
+                <button onclick="equivDemo('swap')">swap : A×B ≃ B×A</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Bi-invertible Maps</h3>
+            <div class="code-block">
+is-equiv(f) := sec(f) × retr(f)<br>
+where sec(f)  = Σ(g:B→A) f∘g ~ id<br>
+      retr(f) = Σ(h:B→A) h∘f ~ id
+            </div>
+            <p>Why not just "has an inverse"? Because <code>has-inverse(f)</code> can be homotopically complex, while <code>is-equiv(f)</code> is always a proposition (has at most one proof).</p>
+        </div>
+
+        <div class="card">
+            <h3>Fibers of a Map</h3>
+            <p>The fiber of f : A → B at b is: <code>fib_f(b) := Σ(a:A) f(a) = b</code></p>
+            <div class="plotly-chart" id="fiberChart"></div>
+            <div class="controls">
+                <label>Function:</label>
+                <select id="fiberFunc" onchange="drawFibers()">
+                    <option value="double">f(x) = 2x (each fiber has ≤1 point)</option>
+                    <option value="square">f(x) = x² (fibers can have 2 points)</option>
+                    <option value="mod3">f(x) = x mod 3 (infinite fibers)</option>
+                </select>
+            </div>
+            <p><strong>Key theorem:</strong> f is an equivalence ⟺ all fibers of f are contractible.</p>
+        </div>
+    </div>
+
+    <!-- SECTION 6: Contractibility -->
+    <div class="section" id="sec-contract">
+        <h2>6. Contractible Types</h2>
+        <p>A type A is <strong>contractible</strong> if it has a center c : A such that c = x for all x : A. Contractible types are "singletons up to homotopy."</p>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Contracting a Space</h4>
+            <p>Watch a contractible space shrink to its center of contraction.</p>
+            <canvas id="contractCanvas" class="demo" width="700" height="350"></canvas>
+            <div class="controls">
+                <label>t:</label>
+                <input type="range" id="contractT" min="0" max="100" value="0" oninput="drawContraction()">
+                <button onclick="animateContraction()">Animate</button>
+                <select id="contractType" onchange="drawContraction()">
+                    <option value="unit">Unit type 𝟏</option>
+                    <option value="pathspace">Path space Σ(x:A) a=x</option>
+                    <option value="disk">Disk (contractible)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>The Fundamental Fact</h3>
+            <p>For any a : A, the type <code>Σ(x:A) a = x</code> is contractible with center (a, refl_a).</p>
+            <p>This is the basis for the <strong>fundamental theorem of identity types</strong>: to characterize the identity type of A, find a family B(x) with contractible total space Σ(x:A) B(x).</p>
+        </div>
+    </div>
+
+    <!-- SECTION 7: Truncation Levels -->
+    <div class="section" id="sec-truncation">
+        <h2>7. Truncation Levels</h2>
+        <p>Types are stratified by how "complex" their identity types are:</p>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: The Truncation Hierarchy</h4>
+            <div class="plotly-chart" id="truncChart"></div>
+        </div>
+
+        <div class="card">
+            <div class="type-tree">
+<span class="op">Level -2:</span> <span class="type">Contractible types</span> — at most one point, trivially<br>
+<span class="op">Level -1:</span> <span class="type">Propositions</span> — at most one point (any two elements are equal)<br>
+<span class="op">Level  0:</span> <span class="type">Sets</span> — identity types are propositions (equality is a property)<br>
+<span class="op">Level  1:</span> <span class="type">1-Groupoids</span> — identity types are sets<br>
+<span class="op">Level  k+1:</span> <span class="type">(k+1)-types</span> — identity types are k-types<br>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Examples</h3>
+            <ul>
+                <li><strong>∅, 𝟏</strong> are propositions (level -1)</li>
+                <li><strong>ℕ, ℤ, Bool, Fin_k</strong> are sets (level 0)</li>
+                <li><strong>The universe U</strong> is NOT a set — types can be equivalent in many ways!</li>
+                <li><strong>The circle S¹</strong> is a 1-groupoid (its loop space is ℤ)</li>
+            </ul>
+        </div>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Is it a Proposition? A Set?</h4>
+            <div class="controls">
+                <select id="truncExample" onchange="showTruncation()">
+                    <option value="empty">∅ (Empty type)</option>
+                    <option value="unit">𝟏 (Unit type)</option>
+                    <option value="bool">Bool</option>
+                    <option value="nat">ℕ</option>
+                    <option value="fin">Fin₃</option>
+                    <option value="universe">Universe U</option>
+                </select>
+            </div>
+            <div id="truncInfo" class="code-block"></div>
+        </div>
+    </div>
+
+    <!-- SECTION 8: Univalence -->
+    <div class="section" id="sec-univalence">
+        <h2>8. The Univalence Axiom</h2>
+        <p>The univalence axiom is the crown jewel of HoTT. It says: <strong>(A = B) ≃ (A ≃ B)</strong>. Identity of types is equivalent to equivalence of types. Equivalent types <em>are</em> equal.</p>
+
+        <div class="analogy">
+            In classical math, we constantly "identify" isomorphic structures informally. Univalence makes this formal: if two types are equivalent (same structure, same behavior), then they are literally equal in the universe. Every property of one automatically transfers to the other.
+        </div>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Univalence in Action</h4>
+            <p>See how equivalent types become identified. The path in the universe connects them.</p>
+            <canvas id="univalenceCanvas" class="demo" width="700" height="400"></canvas>
+            <div class="controls">
+                <button onclick="univalenceDemo('bool-bool')">Bool ≃ Bool (swap)</button>
+                <button onclick="univalenceDemo('nat-list')">ℕ ≃ List(𝟏)</button>
+                <button onclick="univalenceDemo('prod-comm')">A×B ≃ B×A</button>
+            </div>
+            <p id="univalenceInfo" style="margin-top:1rem; color:#64ffda;"></p>
+        </div>
+
+        <div class="card">
+            <h3>What Univalence Says</h3>
+            <div class="code-block">
+idtoeqv : (A =<sub>𝒰</sub> B) → (A ≃ B)
+
+Univalence Axiom: idtoeqv is an equivalence.
+
+In particular:
+  ua : (A ≃ B) → (A =<sub>𝒰</sub> B)     — introduction
+  transport(ua(f), x) = f(x)   — computation
+            </div>
+            <p>This means: to give a path between types in the universe is the same as giving an equivalence between them.</p>
+        </div>
+
+        <div class="card">
+            <h3>Consequences</h3>
+            <ul>
+                <li><strong>Structure Identity Principle:</strong> Equal structures are isomorphic, and isomorphic structures are equal</li>
+                <li><strong>Function extensionality</strong> follows from univalence</li>
+                <li>The universe 𝒰 is NOT a set — it has nontrivial paths (autoequivalences)</li>
+                <li>Proofs and constructions automatically respect equivalences</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECTION 9: The Circle S¹ -->
+    <div class="section" id="sec-circle">
+        <h2>9. Higher Inductive Types — The Circle S¹</h2>
+        <p>Higher inductive types (HITs) let us define types with path constructors, not just point constructors. The simplest interesting example is the circle S¹.</p>
+
+        <div class="card">
+            <h3>Definition of S¹</h3>
+            <div class="code-block">
+S¹ is generated by:
+  • base : S¹                    — a point
+  • loop : base = base           — a path from base to itself
+            </div>
+            <p>The circle is freely generated by one point and one loop. This means loop ≠ refl — it's a genuinely new path!</p>
+        </div>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: Walking Around the Circle</h4>
+            <p>Explore the loop space of S¹. Every integer corresponds to a winding number!</p>
+            <canvas id="circleCanvas" class="demo" width="700" height="400"></canvas>
+            <div class="controls">
+                <label>Winding number:</label>
+                <input type="range" id="windingN" min="-5" max="5" value="1" oninput="drawCircleLoop()">
+                <span id="windingVal">1</span>
+                <button onclick="animateCircleLoop()">Animate</button>
+            </div>
+            <p id="circleInfo" style="margin-top:1rem; color:#f472b6;">loop¹ — one full loop around the circle</p>
+        </div>
+
+        <div class="card">
+            <h3>The Fundamental Theorem: π₁(S¹) ≅ ℤ</h3>
+            <p>The loop space of the circle is the integers! Each integer n corresponds to going around the loop n times (negative = backwards).</p>
+            <div class="code-block">
+Ω(S¹, base) ≃ ℤ
+
+loop⁰  = refl     (stay put)
+loop¹  = loop      (go around once)
+loop²  = loop · loop  (go around twice)
+loop⁻¹ = loop⁻¹   (go backwards once)
+...
+            </div>
+            <p>This is proven using the <strong>encode-decode method</strong>: define a "winding number" type family over S¹ using transport, then show it characterizes the path space.</p>
+        </div>
+
+        <div class="interactive-box">
+            <h4>🎮 Play: The Universal Cover</h4>
+            <p>The universal cover of S¹ is a helix — each sheet corresponds to an integer. Transport along loop shifts up by 1.</p>
+            <div class="plotly-chart" id="helixChart"></div>
+        </div>
+
+        <div class="card">
+            <h3>Other Higher Inductive Types</h3>
+            <div class="grid-2">
+                <div>
+                    <strong style="color:#64ffda">Suspensions ΣA:</strong>
+                    <div class="code-block">N, S : ΣA<br>merid : A → (N = S)</div>
+                    <p>ΣS⁰ ≃ S¹, ΣSⁿ ≃ Sⁿ⁺¹</p>
+                </div>
+                <div>
+                    <strong style="color:#64ffda">Pushouts A ⊔_C B:</strong>
+                    <div class="code-block">inl : A → A⊔B<br>inr : B → A⊔B<br>glue : C → (inl∘f = inr∘g)</div>
+                    <p>Generalizes coproducts, quotients, etc.</p>
+                </div>
+                <div>
+                    <strong style="color:#64ffda">Truncations ‖A‖ₙ:</strong>
+                    <div class="code-block">|–| : A → ‖A‖ₙ<br>+ n-truncation constructor</div>
+                    <p>Forces a type to be an n-type</p>
+                </div>
+                <div>
+                    <strong style="color:#64ffda">Quotients A/R:</strong>
+                    <div class="code-block">q : A → A/R<br>∀a,b. R(a,b) → q(a)=q(b)<br>+ set-truncation</div>
+                    <p>Set-level quotients by relations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="text-align:center; padding:4rem 2rem; opacity:0.6;">
+        <p>Interactive HoTT Explorer — Based on the HoTT Book (Univalent Foundations Program, IAS 2013)</p>
+        <p>Built with Canvas, Plotly.js, and a love for higher-dimensional mathematics ∞</p>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+    // ============ PROGRESS BAR ============
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressFill').style.width = pct + '%';
+    });
+
+    // ============ HERO CANVAS — Animated paths/loops ============
+    (function() {
+        const c = document.getElementById('heroCanvas');
+        const ctx = c.getContext('2d');
+        let W, H, particles = [], paths = [];
+        function resize() {
+            W = c.width = c.offsetWidth;
+            H = c.height = c.offsetHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        for (let i = 0; i < 80; i++) {
+            particles.push({
+                x: Math.random() * 2000, y: Math.random() * 1200,
+                vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+                r: Math.random() * 2 + 1,
+                hue: Math.random() * 60 + 160
+            });
+        }
+
+        function drawHero(t) {
+            ctx.clearRect(0, 0, W, H);
+            // Draw connections (paths between points)
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const d = Math.sqrt(dx*dx + dy*dy);
+                    if (d < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `hsla(${particles[i].hue}, 80%, 60%, ${(1 - d/150) * 0.3})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+            // Draw particles (points in a type)
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > W) p.vx *= -1;
+                if (p.y < 0 || p.y > H) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, 0.8)`;
+                ctx.fill();
+            });
+
+            // Draw a loop (representing S¹)
+            const cx = W * 0.8, cy = H * 0.3, r = 40;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(244, 114, 182, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            const angle = t * 0.002;
+            ctx.beginPath();
+            ctx.arc(cx + r * Math.cos(angle), cy + r * Math.sin(angle), 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#f472b6';
+            ctx.fill();
+
+            requestAnimationFrame(() => drawHero(t + 16));
+        }
+        drawHero(0);
+    })();
+
+    // ============ TYPE UNIVERSE CANVAS ============
+    const typeData = {
+        nat: { name: 'ℕ (Natural Numbers)', elements: ['0', '1', '2', '3', '4', '...'], color: '#64ffda',
+            desc: 'ℕ is a set (0-type). Generated by 0 and succ. Has decidable equality. Its identity types are either 𝟏 or ∅.' },
+        bool: { name: 'Bool (𝟐)', elements: ['0₂', '1₂'], color: '#a78bfa',
+            desc: 'Bool ≡ 𝟏 + 𝟏. A set with exactly two elements. inl ≠ inr by encode-decode.' },
+        unit: { name: '𝟏 (Unit)', elements: ['⋆'], color: '#f472b6',
+            desc: '𝟏 is contractible: it has exactly one element. (x = y) ≃ 𝟏 for all x,y : 𝟏.' },
+        empty: { name: '∅ (Empty)', elements: [], color: '#fbbf24',
+            desc: '∅ has no constructors and no elements. From ∅ we can prove anything (ex falso). ¬A ≡ A → ∅.' },
+        fin: { name: 'Fin₃', elements: ['0₃', '1₃', '2₃'], color: '#34d399',
+            desc: 'Fin(n) is the type with exactly n elements. Fin(3) has three. It\'s a set.' }
+    };
+
+    function showType(key) {
+        const c = document.getElementById('typeCanvas');
+        const ctx = c.getContext('2d');
+        const d = typeData[key];
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        // Draw the type as a container
+        ctx.fillStyle = 'rgba(30, 30, 80, 0.8)';
+        ctx.strokeStyle = d.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(50, 30, c.width - 100, c.height - 60, 20);
+        ctx.fill(); ctx.stroke();
+
+        // Label
+        ctx.fillStyle = d.color;
+        ctx.font = 'bold 20px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.name, c.width / 2, 65);
+
+        // Elements
+        const els = d.elements;
+        if (els.length === 0) {
+            ctx.fillStyle = '#666';
+            ctx.font = 'italic 16px Georgia';
+            ctx.fillText('(empty — no elements)', c.width / 2, c.height / 2);
+        } else {
+            const spacing = Math.min(80, (c.width - 150) / els.length);
+            const startX = c.width / 2 - (els.length - 1) * spacing / 2;
+            els.forEach((el, i) => {
+                const x = startX + i * spacing;
+                const y = c.height / 2 + 20;
+                // Point
+                ctx.beginPath();
+                ctx.arc(x, y, 12, 0, Math.PI * 2);
+                ctx.fillStyle = d.color;
+                ctx.fill();
+                // Label
+                ctx.fillStyle = '#fff';
+                ctx.font = '14px Georgia';
+                ctx.textAlign = 'center';
+                ctx.fillText(el, x, y + 35);
+            });
+        }
+
+        document.getElementById('typeInfo').textContent = d.desc;
+    }
+    showType('nat');
+
+    // ============ FIBER BUNDLE (Plotly) ============
+    (function() {
+        const theta = [];
+        const xBase = [], yBase = [];
+        for (let i = 0; i <= 100; i++) {
+            const t = i / 100 * Math.PI * 2;
+            theta.push(t);
+            xBase.push(Math.cos(t));
+            yBase.push(Math.sin(t));
+        }
+        // Fibers at selected points
+        const traces = [{
+            x: xBase, y: yBase, z: yBase.map(() => 0),
+            type: 'scatter3d', mode: 'lines',
+            line: { color: '#64ffda', width: 4 },
+            name: 'Base space A (circle)'
+        }];
+        for (let i = 0; i < 8; i++) {
+            const t = i / 8 * Math.PI * 2;
+            const bx = Math.cos(t), by = Math.sin(t);
+            const fiberZ = [];
+            const fiberX = [], fiberY = [];
+            for (let j = 0; j <= 20; j++) {
+                const s = (j / 20 - 0.5) * 2;
+                fiberX.push(bx); fiberY.push(by); fiberZ.push(s);
+            }
+            traces.push({
+                x: fiberX, y: fiberY, z: fiberZ,
+                type: 'scatter3d', mode: 'lines',
+                line: { color: '#a78bfa', width: 2 },
+                name: i === 0 ? 'Fibers B(x)' : undefined,
+                showlegend: i === 0
+            });
+        }
+        Plotly.newPlot('fiberBundle', traces, {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+            scene: {
+                xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                zaxis: { showgrid: false, zeroline: false, showticklabels: false, title: 'Fiber' },
+                bgcolor: 'rgba(0,0,0,0)',
+                camera: { eye: { x: 1.5, y: 1.5, z: 1 } }
+            },
+            font: { color: '#e0e0ff' },
+            margin: { l: 0, r: 0, t: 30, b: 0 },
+            title: { text: 'Type Family as Fibration: B : A → 𝒰', font: { size: 14, color: '#a78bfa' } }
+        }, { responsive: true });
+    })();
+
+    // ============ SECTION CANVAS (Dependent Functions) ============
+    function drawSection() {
+        const c = document.getElementById('sectionCanvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        const wiggle = document.getElementById('sectionWiggle').value / 100;
+        ctx.clearRect(0, 0, w, h);
+
+        // Base line
+        ctx.strokeStyle = '#64ffda';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(50, h - 50);
+        ctx.lineTo(w - 50, h - 50);
+        ctx.stroke();
+        ctx.fillStyle = '#64ffda';
+        ctx.font = '14px Georgia';
+        ctx.fillText('Base type A', w / 2 - 30, h - 25);
+
+        // Fibers
+        const nFibers = 12;
+        for (let i = 0; i < nFibers; i++) {
+            const x = 50 + (i / (nFibers - 1)) * (w - 100);
+            const fiberH = 80 + 60 * Math.sin(i * 0.8 + 1);
+            ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x, h - 50);
+            ctx.lineTo(x, h - 50 - fiberH);
+            ctx.stroke();
+        }
+
+        // Section (the dependent function)
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i < nFibers; i++) {
+            const x = 50 + (i / (nFibers - 1)) * (w - 100);
+            const fiberH = 80 + 60 * Math.sin(i * 0.8 + 1);
+            const sectionY = h - 50 - fiberH * (0.3 + 0.4 * wiggle * Math.sin(i * 0.7 + wiggle * 3));
+            if (i === 0) ctx.moveTo(x, sectionY);
+            else ctx.lineTo(x, sectionY);
+            // Point on section
+            ctx.fillStyle = '#f472b6';
+            ctx.fillRect(x - 3, sectionY - 3, 6, 6);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = '#f472b6';
+        ctx.font = '14px Georgia';
+        ctx.fillText('Section f : Π(x:A) B(x)', w / 2 - 60, 30);
+        ctx.fillStyle = 'rgba(167, 139, 250, 0.7)';
+        ctx.fillText('Fibers B(x)', 60, 60);
+    }
+    drawSection();
+
+    let sectionAnim = null;
+    function animateSection() {
+        if (sectionAnim) { cancelAnimationFrame(sectionAnim); sectionAnim = null; return; }
+        let t = 0;
+        function step() {
+            t += 0.02;
+            document.getElementById('sectionWiggle').value = 50 + 40 * Math.sin(t);
+            drawSection();
+            sectionAnim = requestAnimationFrame(step);
+        }
+        step();
+    }
+
+    // ============ COMPOSITION CHART (Plotly) ============
+    function showComposition(type) {
+        const x = [];
+        for (let i = -3; i <= 3; i += 0.1) x.push(Math.round(i * 100) / 100);
+        let fVals, gVals, gfVals, fName, gName;
+        if (type === 'linear') {
+            fVals = x.map(v => 2 * v + 1);
+            gVals = x.map(v => -v + 3);
+            gfVals = x.map(v => -(2 * v + 1) + 3);
+            fName = 'f(x) = 2x+1'; gName = 'g(x) = -x+3';
+        } else if (type === 'quadratic') {
+            fVals = x.map(v => v * v);
+            gVals = x.map(v => 2 * v - 1);
+            gfVals = x.map(v => 2 * v * v - 1);
+            fName = 'f(x) = x²'; gName = 'g(x) = 2x-1';
+        } else {
+            fVals = x.map(v => Math.sin(v * 2));
+            gVals = x.map(v => Math.abs(v));
+            gfVals = x.map(v => Math.abs(Math.sin(v * 2)));
+            fName = 'f(x) = sin(2x)'; gName = 'g(x) = |x|';
+        }
+        Plotly.newPlot('compositionChart', [
+            { x, y: fVals, name: fName, line: { color: '#64ffda' } },
+            { x, y: gVals, name: gName, line: { color: '#a78bfa' } },
+            { x, y: gfVals, name: 'g∘f', line: { color: '#f472b6', width: 3 } }
+        ], {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(20,20,60,0.5)',
+            font: { color: '#e0e0ff' },
+            xaxis: { gridcolor: 'rgba(100,255,218,0.1)', title: 'x' },
+            yaxis: { gridcolor: 'rgba(100,255,218,0.1)', title: 'y' },
+            title: { text: 'Function Composition: g∘f', font: { size: 14, color: '#a78bfa' } },
+            margin: { t: 40 }
+        }, { responsive: true });
+    }
+    showComposition('linear');
+
+    // ============ NATURAL NUMBERS ============
+    function computeNat() {
+        const func = document.getElementById('natFunc').value;
+        const n = parseInt(document.getElementById('natN').value);
+        document.getElementById('natNVal').textContent = n;
+        let vals = [], labels = [], compText = '';
+
+        if (func === 'add') {
+            for (let i = 0; i <= n; i++) vals.push(3 + i);
+            compText = `add(3, 0) := 3\nadd(3, succ(n)) := succ(add(3, n))\n\nadd(3, ${n}) = ${3 + n}`;
+        } else if (func === 'mul') {
+            for (let i = 0; i <= n; i++) vals.push(2 * i);
+            compText = `mul(2, 0) := 0\nmul(2, succ(n)) := 2 + mul(2, n)\n\nmul(2, ${n}) = ${2 * n}`;
+        } else if (func === 'fib') {
+            let a = 0, b = 1;
+            vals.push(a);
+            for (let i = 1; i <= n; i++) { vals.push(b); [a, b] = [b, a + b]; }
+            compText = `fib(0) := 0\nfib(1) := 1\nfib(succ(succ(n))) := fib(succ(n)) + fib(n)\n\nfib(${n}) = ${vals[n]}`;
+        } else if (func === 'tri') {
+            for (let i = 0; i <= n; i++) vals.push(i * (i + 1) / 2);
+            compText = `tri(0) := 0\ntri(succ(n)) := succ(n) + tri(n)\n\ntri(${n}) = ${vals[n]}`;
+        } else {
+            let f = 1; vals.push(1);
+            for (let i = 1; i <= n; i++) { f *= i; vals.push(f); }
+            compText = `fact(0) := 1\nfact(succ(n)) := succ(n) × fact(n)\n\nfact(${n}) = ${vals[n]}`;
+        }
+
+        document.getElementById('natComputation').textContent = compText;
+        labels = vals.map((_, i) => i);
+
+        Plotly.newPlot('natChart', [{
+            x: labels, y: vals, type: 'bar',
+            marker: { color: vals.map((_, i) => `hsl(${160 + i * 15}, 80%, 60%)`) }
+        }], {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(20,20,60,0.5)',
+            font: { color: '#e0e0ff' },
+            xaxis: { gridcolor: 'rgba(100,255,218,0.1)', title: 'n' },
+            yaxis: { gridcolor: 'rgba(100,255,218,0.1)', title: 'value' },
+            margin: { t: 20, b: 40 }
+        }, { responsive: true });
+    }
+    computeNat();
+
+    // ============ PATH CANVAS ============
+    function pathDemo(type) {
+        const c = document.getElementById('pathCanvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2, cy = h / 2;
+
+        function drawPoint(x, y, label, color = '#64ffda') {
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = '16px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, x, y - 15);
+        }
+
+        function drawPath(x1, y1, x2, y2, curve, color, label, labelPos) {
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            const mx = (x1 + x2) / 2 + curve;
+            const my = (y1 + y2) / 2 - Math.abs(curve) * 0.5;
+            ctx.quadraticCurveTo(mx, my, x2, y2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            // Arrow
+            const t = 0.6;
+            const px = (1-t)*(1-t)*x1 + 2*(1-t)*t*mx + t*t*x2;
+            const py = (1-t)*(1-t)*y1 + 2*(1-t)*t*my + t*t*y2;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, Math.PI * 2);
+            ctx.fill();
+            if (label) {
+                ctx.fillStyle = color;
+                ctx.font = '14px Georgia';
+                ctx.fillText(label, mx + (labelPos || 0), my - 10);
+            }
+        }
+
+        if (type === 'refl') {
+            drawPoint(cx, cy, 'x');
+            ctx.beginPath();
+            ctx.arc(cx, cy - 30, 25, 0.3 * Math.PI, 0.7 * Math.PI);
+            ctx.strokeStyle = '#a78bfa';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = '#a78bfa';
+            ctx.font = '14px Georgia';
+            ctx.fillText('refl_x : x = x', cx, cy - 65);
+            document.getElementById('pathInfo').textContent =
+                'refl_x is the constant path at x — the identity morphism in the ∞-groupoid.';
+        } else if (type === 'concat') {
+            const x1 = cx - 200, x2 = cx, x3 = cx + 200;
+            drawPoint(x1, cy, 'x');
+            drawPoint(x2, cy, 'y');
+            drawPoint(x3, cy, 'z');
+            drawPath(x1, cy, x2, cy, -60, '#a78bfa', 'p', 0);
+            drawPath(x2, cy, x3, cy, -60, '#f472b6', 'q', 0);
+            drawPath(x1, cy + 5, x3, cy + 5, 80, '#64ffda', 'p · q', 0);
+            document.getElementById('pathInfo').textContent =
+                'Concatenation: if p : x = y and q : y = z, then p · q : x = z. This is transitivity of equality / composition of morphisms.';
+        } else if (type === 'inv') {
+            const x1 = cx - 150, x2 = cx + 150;
+            drawPoint(x1, cy, 'x');
+            drawPoint(x2, cy, 'y');
+            drawPoint(x1, cy, 'x');
+            drawPoint(x2, cy, 'y');
+            drawPath(x1, cy, x2, cy, -70, '#a78bfa', 'p', 0);
+            drawPath(x2, cy, x1, cy, -70, '#f472b6', 'p⁻¹', 0);
+            document.getElementById('pathInfo').textContent =
+                'Inverse: if p : x = y, then p⁻¹ : y = x. This is symmetry of equality / inverse morphism.';
+        } else if (type === 'assoc') {
+            const pts = [cx - 250, cx - 80, cx + 80, cx + 250];
+            drawPoint(pts[0], cy, 'w');
+            drawPoint(pts[1], cy, 'x');
+            drawPoint(pts[2], cy, 'y');
+            drawPoint(pts[3], cy, 'z');
+            drawPath(pts[0], cy, pts[1], cy, -50, '#a78bfa', 'p', 0);
+            drawPath(pts[1], cy, pts[2], cy, -50, '#f472b6', 'q', 0);
+            drawPath(pts[2], cy, pts[3], cy, -50, '#64ffda', 'r', 0);
+            // Show two bracketings
+            ctx.setLineDash([5, 5]);
+            drawPath(pts[0], cy + 5, pts[2], cy + 5, 60, 'rgba(167,139,250,0.4)', '(p·q)', -20);
+            drawPath(pts[1], cy + 5, pts[3], cy + 5, 60, 'rgba(100,255,218,0.4)', '(q·r)', 20);
+            ctx.setLineDash([]);
+            document.getElementById('pathInfo').textContent =
+                'Associativity: (p · q) · r = p · (q · r). Both bracketings give the same path from w to z.';
+        } else if (type === 'ap') {
+            // Show action on paths
+            const x1 = 100, x2 = 350, x3 = 450, x4 = 650;
+            const y1 = cy - 50, y2 = cy + 50;
+            // Domain
+            ctx.strokeStyle = 'rgba(100,255,218,0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.ellipse(225, cy, 150, 100, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(100,255,218,0.2)';
+            ctx.font = '12px Georgia';
+            ctx.fillText('Type A', 225, cy - 110);
+
+            // Codomain
+            ctx.strokeStyle = 'rgba(244,114,182,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(550, cy, 150, 100, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(244,114,182,0.2)';
+            ctx.fillText('Type B', 550, cy - 110);
+
+            drawPoint(150, cy - 30, 'x', '#64ffda');
+            drawPoint(300, cy + 30, 'y', '#64ffda');
+            drawPath(150, cy - 30, 300, cy + 30, -40, '#a78bfa', 'p', -10);
+
+            drawPoint(470, cy - 40, 'f(x)', '#f472b6');
+            drawPoint(630, cy + 20, 'f(y)', '#f472b6');
+            drawPath(470, cy - 40, 630, cy + 20, -40, '#f472b6', 'ap_f(p)', -10);
+
+            // Arrow for f
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(350, cy - 60);
+            ctx.quadraticCurveTo(400, cy - 80, 430, cy - 60);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = '14px Georgia';
+            ctx.fillText('f', 390, cy - 85);
+
+            document.getElementById('pathInfo').textContent =
+                'ap_f : (x = y) → (f(x) = f(y)). Every function preserves identifications — this is "continuity" in HoTT.';
+        }
+    }
+    pathDemo('refl');
+
+    // ============ TRANSPORT CHART (Plotly) ============
+    (function() {
+        // Visualize transport as moving along a path in the base
+        const theta = [];
+        const xB = [], yB = [];
+        for (let i = 0; i <= 50; i++) {
+            const t = i / 50;
+            theta.push(t);
+            xB.push(t * 4 - 2);
+            yB.push(Math.sin(t * Math.PI));
+        }
+        // Fiber heights at start and end
+        const traces = [
+            { x: xB, y: yB, z: yB.map(() => 0), type: 'scatter3d', mode: 'lines',
+              line: { color: '#64ffda', width: 4 }, name: 'Path p : x = y in A' },
+        ];
+        // Fiber at start
+        const startFiber = [], endFiber = [];
+        for (let j = 0; j <= 10; j++) {
+            const s = j / 10 * 2 - 1;
+            startFiber.push({ x: -2, y: 0, z: s });
+            endFiber.push({ x: 2, y: 0, z: s });
+        }
+        traces.push({
+            x: startFiber.map(p => p.x), y: startFiber.map(p => p.y), z: startFiber.map(p => p.z),
+            type: 'scatter3d', mode: 'lines', line: { color: '#a78bfa', width: 3 }, name: 'Fiber B(x)'
+        });
+        traces.push({
+            x: endFiber.map(p => p.x), y: endFiber.map(p => p.y), z: endFiber.map(p => p.z),
+            type: 'scatter3d', mode: 'lines', line: { color: '#f472b6', width: 3 }, name: 'Fiber B(y)'
+        });
+        // Transport arrow
+        traces.push({
+            x: [-2, 2], y: [0, 0], z: [0.5, 0.3],
+            type: 'scatter3d', mode: 'lines+markers',
+            line: { color: '#fbbf24', width: 2, dash: 'dash' },
+            marker: { size: 5, color: '#fbbf24' },
+            name: 'tr_B(p, b) : B(x) → B(y)'
+        });
+        Plotly.newPlot('transportChart', traces, {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+            scene: {
+                xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                zaxis: { showgrid: false, zeroline: false, showticklabels: false, title: 'Fiber' },
+                bgcolor: 'rgba(0,0,0,0)',
+                camera: { eye: { x: 1.8, y: 1.2, z: 0.8 } }
+            },
+            font: { color: '#e0e0ff' },
+            margin: { l: 0, r: 0, t: 30, b: 0 },
+            title: { text: 'Transport: tr_B(p) : B(x) → B(y)', font: { size: 14, color: '#fbbf24' } }
+        }, { responsive: true });
+    })();
+
+    // ============ EQUIVALENCE CANVAS ============
+    function equivDemo(type) {
+        const c = document.getElementById('equivCanvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const leftX = 180, rightX = w - 180;
+        const topY = 60, spacing = 50;
+
+        // Draw type containers
+        function drawContainer(x, y, label, color) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(x, y + 60, 120, 100, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = color;
+            ctx.font = 'bold 16px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, x, y - 50);
+        }
+
+        let leftLabels, rightLabels, mapping, title;
+
+        if (type === 'id') {
+            drawContainer(leftX, topY + 60, 'A', '#64ffda');
+            drawContainer(rightX, topY + 60, 'A', '#a78bfa');
+            leftLabels = ['a', 'b', 'c'];
+            rightLabels = ['a', 'b', 'c'];
+            mapping = [[0,0],[1,1],[2,2]];
+            title = 'id_A : A ≃ A — identity equivalence';
+        } else if (type === 'neg') {
+            drawContainer(leftX, topY + 60, 'Bool', '#64ffda');
+            drawContainer(rightX, topY + 60, 'Bool', '#a78bfa');
+            leftLabels = ['true', 'false'];
+            rightLabels = ['true', 'false'];
+            mapping = [[0,1],[1,0]];
+            title = 'neg : Bool ≃ Bool — swap true↔false';
+        } else if (type === 'succ') {
+            drawContainer(leftX, topY + 60, 'ℤ', '#64ffda');
+            drawContainer(rightX, topY + 60, 'ℤ', '#a78bfa');
+            leftLabels = ['-1', '0', '1', '2'];
+            rightLabels = ['-1', '0', '1', '2'];
+            mapping = [[0,1],[1,2],[2,3],[3,0]];
+            title = 'succ : ℤ ≃ ℤ — shift by +1';
+        } else {
+            drawContainer(leftX, topY + 60, 'A × B', '#64ffda');
+            drawContainer(rightX, topY + 60, 'B × A', '#a78bfa');
+            leftLabels = ['(a,b)', '(a,b\')', '(a\',b)'];
+            rightLabels = ['(b,a)', '(b\',a)', '(b,a\')'];
+            mapping = [[0,0],[1,2],[2,1]];
+            title = 'swap : A×B ≃ B×A';
+        }
+
+        // Draw points and mappings
+        const lSpacing = Math.min(spacing, 160 / leftLabels.length);
+        const rSpacing = Math.min(spacing, 160 / rightLabels.length);
+        const lStartY = topY + 60 - (leftLabels.length - 1) * lSpacing / 2;
+        const rStartY = topY + 60 - (rightLabels.length - 1) * rSpacing / 2;
+
+        leftLabels.forEach((label, i) => {
+            const y = lStartY + i * lSpacing;
+            ctx.beginPath();
+            ctx.arc(leftX, y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#64ffda';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Georgia';
+            ctx.textAlign = 'right';
+            ctx.fillText(label, leftX - 15, y + 4);
+        });
+
+        rightLabels.forEach((label, i) => {
+            const y = rStartY + i * rSpacing;
+            ctx.beginPath();
+            ctx.arc(rightX, y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#a78bfa';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Georgia';
+            ctx.textAlign = 'left';
+            ctx.fillText(label, rightX + 15, y + 4);
+        });
+
+        // Draw arrows
+        mapping.forEach(([from, to]) => {
+            const y1 = lStartY + from * lSpacing;
+            const y2 = rStartY + to * rSpacing;
+            ctx.beginPath();
+            ctx.moveTo(leftX + 8, y1);
+            ctx.lineTo(rightX - 8, y2);
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            // Arrowhead
+            const angle = Math.atan2(y2 - y1, rightX - leftX);
+            ctx.beginPath();
+            ctx.moveTo(rightX - 8, y2);
+            ctx.lineTo(rightX - 18, y2 - 5);
+            ctx.lineTo(rightX - 18, y2 + 5);
+            ctx.fillStyle = 'rgba(251, 191, 36, 0.6)';
+            ctx.fill();
+        });
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '14px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(title, w / 2, h - 20);
+    }
+    equivDemo('id');
+
+    // ============ CONTRACTION CANVAS ============
+    let contractAnim = null;
+    function drawContraction() {
+        const c = document.getElementById('contractCanvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        const t = document.getElementById('contractT').value / 100;
+        const type = document.getElementById('contractType').value;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2, cy = h / 2;
+
+        if (type === 'unit') {
+            // Unit type: just one point
+            const r = 30 * (1 - t);
+            ctx.beginPath();
+            ctx.arc(cx, cy, Math.max(r, 3), 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(100, 255, 218, ${0.3 + 0.7 * t})`;
+            ctx.fill();
+            ctx.fillStyle = '#64ffda';
+            ctx.font = '16px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText('★', cx, cy + 5);
+            ctx.fillText('𝟏 is contractible: center = ★', cx, h - 30);
+        } else if (type === 'pathspace') {
+            // Σ(x:A) a = x contracts to (a, refl)
+            const nPts = 8;
+            const center = { x: cx, y: cy };
+            for (let i = 0; i < nPts; i++) {
+                const angle = (i / nPts) * Math.PI * 2;
+                const dist = 120 * (1 - t);
+                const px = cx + dist * Math.cos(angle);
+                const py = cy + dist * Math.sin(angle);
+                // Draw path from center to point
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(px, py);
+                ctx.strokeStyle = `rgba(167, 139, 250, ${0.5 * (1 - t)})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                // Point
+                ctx.beginPath();
+                ctx.arc(px, py, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#a78bfa';
+                ctx.fill();
+            }
+            // Center
+            ctx.beginPath();
+            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#64ffda';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = '12px Georgia';
+            ctx.fillText('(a, refl)', cx, cy - 15);
+            ctx.fillStyle = '#a78bfa';
+            ctx.font = '14px Georgia';
+            ctx.fillText('Σ(x:A) a = x is contractible', cx, h - 30);
+        } else {
+            // Disk
+            const nPts = 30;
+            ctx.beginPath();
+            for (let i = 0; i < nPts; i++) {
+                const angle = (i / nPts) * Math.PI * 2;
+                const r = (80 + 30 * Math.sin(angle * 3)) * (1 - t);
+                const px = cx + r * Math.cos(angle);
+                const py = cy + r * Math.sin(angle);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.fillStyle = `rgba(100, 255, 218, 0.15)`;
+            ctx.fill();
+            ctx.strokeStyle = '#64ffda';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            // Center
+            ctx.beginPath();
+            ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#f472b6';
+            ctx.fill();
+            ctx.fillStyle = '#64ffda';
+            ctx.font = '14px Georgia';
+            ctx.fillText('Disk contracts to center', cx, h - 30);
+        }
+    }
+    drawContraction();
+
+    function animateContraction() {
+        if (contractAnim) { cancelAnimationFrame(contractAnim); contractAnim = null; return; }
+        let t = 0;
+        function step() {
+            t += 0.01;
+            if (t > 1) t = 0;
+            document.getElementById('contractT').value = t * 100;
+            drawContraction();
+            contractAnim = requestAnimationFrame(step);
+        }
+        step();
+    }
+
+    // ============ TRUNCATION CHART (Plotly) ============
+    (function() {
+        const levels = ['Level -2<br>Contractible', 'Level -1<br>Propositions', 'Level 0<br>Sets', 'Level 1<br>1-Groupoids', 'Level 2<br>2-Groupoids', '...'];
+        const examples = ['𝟏, Σ(x:A) a=x', '∅, 𝟏, (m ≤ n)', 'ℕ, ℤ, Bool, Fin_k', 'Universe 𝒰', 'Higher types', '∞-Groupoids'];
+        const colors = ['#64ffda', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#888'];
+        const sizes = [20, 30, 40, 35, 30, 25];
+
+        Plotly.newPlot('truncChart', [{
+            type: 'bar',
+            x: levels,
+            y: [1, 2, 4, 3, 2.5, 2],
+            marker: {
+                color: colors,
+                line: { color: colors.map(c => c), width: 2 }
+            },
+            text: examples,
+            textposition: 'inside',
+            textfont: { color: '#fff', size: 11 },
+            hoverinfo: 'text'
+        }], {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(20,20,60,0.5)',
+            font: { color: '#e0e0ff' },
+            xaxis: { gridcolor: 'rgba(100,255,218,0.1)' },
+            yaxis: { visible: false },
+            title: { text: 'The Truncation Hierarchy', font: { size: 14, color: '#a78bfa' } },
+            margin: { t: 40, b: 80 }
+        }, { responsive: true });
+    })();
+
+    // ============ TRUNCATION INFO ============
+    function showTruncation() {
+        const sel = document.getElementById('truncExample').value;
+        const info = {
+            empty: 'Level: -1 (Proposition)\n∅ has no elements. Any two elements are vacuously equal.\nis-prop(∅) holds because ∅ → is-contr(x = y) is vacuously true.\n∅ is also a set (level 0) since propositions are sets.',
+            unit: 'Level: -2 (Contractible) and -1 (Proposition)\n𝟏 has exactly one element: ★.\nis-contr(𝟏) holds with center ★ and contraction ind₁(refl).\nSince contractible types are propositions, 𝟏 is also a proposition.',
+            bool: 'Level: 0 (Set)\nBool has two elements: true and false.\ntrue ≠ false (by observational equality).\nBut (true = true) ≃ 𝟏 and (false = false) ≃ 𝟏, so identity types are propositions.\nBool is NOT a proposition (it has two distinct elements).',
+            nat: 'Level: 0 (Set)\nℕ has elements 0, 1, 2, 3, ...\n(m = n) ≃ Eq_ℕ(m, n), which is either 𝟏 or ∅.\nSo identity types are propositions → ℕ is a set.\nℕ is NOT a proposition (0 ≠ 1).',
+            fin: 'Level: 0 (Set)\nFin₃ has exactly 3 elements: 0₃, 1₃, 2₃.\nIdentity types are decidable and propositional.\nFin_k is a set for every k.',
+            universe: 'Level: NOT a set! (at least level 1)\nThe universe 𝒰 contains types as elements.\nBy univalence: (A =_𝒰 B) ≃ (A ≃ B).\nBool ≃ Bool has TWO elements (id and neg).\nSo (Bool = Bool) is not a proposition → 𝒰 is not a set!'
+        };
+        document.getElementById('truncInfo').textContent = info[sel] || '';
+    }
+    showTruncation();
+
+    // ============ UNIVALENCE CANVAS ============
+    function univalenceDemo(type) {
+        const c = document.getElementById('univalenceCanvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2, cy = h / 2;
+
+        // Universe container
+        ctx.strokeStyle = 'rgba(167, 139, 250, 0.3)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(30, 20, w - 60, h - 50, 20);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(167, 139, 250, 0.5)';
+        ctx.font = '14px Georgia';
+        ctx.textAlign = 'left';
+        ctx.fillText('Universe 𝒰', 45, 45);
+
+        let typeA, typeB, equivLabel, desc;
+
+        if (type === 'bool-bool') {
+            typeA = { x: cx - 150, y: cy, label: 'Bool', elements: ['T', 'F'] };
+            typeB = { x: cx + 150, y: cy, label: 'Bool', elements: ['T', 'F'] };
+            equivLabel = 'neg : Bool ≃ Bool';
+            desc = 'By univalence, the swap equivalence gives a non-trivial path Bool = Bool in 𝒰. This is why 𝒰 is not a set!';
+        } else if (type === 'nat-list') {
+            typeA = { x: cx - 150, y: cy, label: 'ℕ', elements: ['0', '1', '2', '...'] };
+            typeB = { x: cx + 150, y: cy, label: 'List(𝟏)', elements: ['[]', '[★]', '[★,★]', '...'] };
+            equivLabel = 'length⁻¹ : ℕ ≃ List(𝟏)';
+            desc = 'ℕ and List(𝟏) are equivalent — by univalence they are equal in 𝒰!';
+        } else {
+            typeA = { x: cx - 150, y: cy, label: 'A × B', elements: ['(a,b)', '(a\',b\')'] };
+            typeB = { x: cx + 150, y: cy, label: 'B × A', elements: ['(b,a)', '(b\',a\')'] };
+            equivLabel = 'swap : A×B ≃ B×A';
+            desc = 'Product commutativity is an equivalence, so by univalence A×B = B×A in 𝒰.';
+        }
+
+        // Draw types as circles
+        [typeA, typeB].forEach(t => {
+            ctx.beginPath();
+            ctx.ellipse(t.x, t.y, 90, 70, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(30, 30, 80, 0.8)';
+            ctx.fill();
+            ctx.strokeStyle = '#64ffda';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = '#64ffda';
+            ctx.font = 'bold 16px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(t.label, t.x, t.y - 50);
+            t.elements.forEach((el, i) => {
+                const ey = t.y - 20 + i * 25;
+                ctx.fillStyle = '#e0e0ff';
+                ctx.font = '13px Georgia';
+                ctx.fillText(el, t.x, ey);
+            });
+        });
+
+        // Draw equivalence arrow (curved)
+        ctx.beginPath();
+        ctx.moveTo(typeA.x + 90, cy - 20);
+        ctx.quadraticCurveTo(cx, cy - 80, typeB.x - 90, cy - 20);
+        ctx.strokeStyle = '#f472b6';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#f472b6';
+        ctx.font = '13px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(equivLabel, cx, cy - 85);
+
+        // Draw path in universe (below)
+        ctx.beginPath();
+        ctx.moveTo(typeA.x, cy + 70);
+        ctx.quadraticCurveTo(cx, cy + 120, typeB.x, cy + 70);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('ua(e) : A =_𝒰 B', cx, cy + 135);
+
+        ctx.fillStyle = '#e0e0ff';
+        ctx.font = '12px Georgia';
+        ctx.fillText(desc, cx, h - 15);
+
+        document.getElementById('univalenceInfo').textContent =
+            'Univalence: (A =_𝒰 B) ≃ (A ≃ B). The path ua(e) witnesses that equivalent types are equal.';
+    }
+    univalenceDemo('bool-bool');
+
+    // ============ CIRCLE CANVAS ============
+    let circleAnim = null;
+    function drawCircleLoop() {
+        const c = document.getElementById('circleCanvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        const n = parseInt(document.getElementById('windingN').value);
+        document.getElementById('windingVal').textContent = n;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2, cy = h / 2, r = 120;
+
+        // Draw circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(100, 255, 218, 0.3)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Base point
+        const bx = cx + r, by = cy;
+        ctx.beginPath();
+        ctx.arc(bx, by, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#64ffda';
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '14px Georgia';
+        ctx.textAlign = 'left';
+        ctx.fillText('base', bx + 12, by + 5);
+
+        // Draw the loop n times
+        if (n !== 0) {
+            const absN = Math.abs(n);
+            const dir = n > 0 ? 1 : -1;
+            const totalAngle = absN * Math.PI * 2;
+            const steps = absN * 100;
+
+            for (let loop = 0; loop < absN; loop++) {
+                const offset = loop * 3 * dir;
+                const hue = 200 + loop * 40;
+                ctx.beginPath();
+                for (let i = 0; i <= 100; i++) {
+                    const angle = dir * (i / 100) * Math.PI * 2;
+                    const lr = r + offset;
+                    const px = cx + lr * Math.cos(angle);
+                    const py = cy + lr * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.strokeStyle = `hsla(${hue}, 80%, 60%, 0.7)`;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        // Label
+        let loopLabel;
+        if (n === 0) loopLabel = 'refl (trivial loop)';
+        else if (n === 1) loopLabel = 'loop';
+        else if (n === -1) loopLabel = 'loop⁻¹';
+        else if (n > 0) loopLabel = `loop${superscript(n)}`;
+        else loopLabel = `loop${superscript(n)}`;
+
+        function superscript(n) {
+            const sups = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+            return String(n).split('').map(c => sups[c] || c).join('');
+        }
+
+        ctx.fillStyle = '#64ffda';
+        ctx.font = '18px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(loopLabel, cx, h - 20);
+
+        // Winding number display
+        ctx.fillStyle = '#a78bfa';
+        ctx.font = '14px Georgia';
+        ctx.fillText(`Winding number: ${n}  ∈  Ω(S¹, base) ≃ ℤ`, cx, h - 45);
+
+        document.getElementById('circleInfo').textContent =
+            n === 0 ? 'refl — the trivial loop (stay at base)' :
+            n === 1 ? 'loop — one full counterclockwise traversal' :
+            n === -1 ? 'loop⁻¹ — one full clockwise traversal' :
+            n > 0 ? `loop composed ${n} times — wind ${n} times counterclockwise` :
+            `loop⁻¹ composed ${Math.abs(n)} times — wind ${Math.abs(n)} times clockwise`;
+    }
+    drawCircleLoop();
+
+    let circleAnimObj = null;
+    function animateCircleLoop() {
+        if (circleAnimObj) { cancelAnimationFrame(circleAnimObj); circleAnimObj = null; return; }
+        let t = 0;
+        const n = parseInt(document.getElementById('windingN').value);
+        const c = document.getElementById('circleCanvas');
+        const ctx = c.getContext('2d');
+        const w = c.width, h = c.height;
+        const cxC = w / 2, cyC = h / 2, r = 120;
+
+        function step() {
+            drawCircleLoop();
+            t += 0.03;
+            if (t > 1) t = 0;
+
+            // Animate a point traveling along the loop
+            const angle = n * t * Math.PI * 2;
+            const px = cxC + r * Math.cos(angle);
+            const py = cyC + r * Math.sin(angle);
+
+            ctx.beginPath();
+            ctx.arc(px, py, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#fbbf24';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(px, py, 10, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Trail
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = '12px Georgia';
+            ctx.textAlign = 'center';
+            ctx.fillText(`t = ${t.toFixed(2)}`, px, py - 15);
+
+            circleAnimObj = requestAnimationFrame(step);
+        }
+        step();
+    }
+
+    // ============ HELIX / UNIVERSAL COVER (Plotly) ============
+    (function() {
+        const traces = [];
+        // The helix (universal cover)
+        const helixX = [], helixY = [], helixZ = [];
+        for (let t = -3; t <= 3; t += 0.02) {
+            helixX.push(Math.cos(t * Math.PI * 2));
+            helixY.push(Math.sin(t * Math.PI * 2));
+            helixZ.push(t);
+        }
+        traces.push({
+            x: helixX, y: helixY, z: helixZ,
+            type: 'scatter3d', mode: 'lines',
+            line: { color: helixZ.map(z => z), colorscale: [[0,'#a78bfa'],[0.5,'#64ffda'],[1,'#f472b6']], width: 3 },
+            name: 'Universal cover (helix)'
+        });
+
+        // The base circle
+        const circX = [], circY = [], circZ = [];
+        for (let t = 0; t <= 1; t += 0.01) {
+            circX.push(Math.cos(t * Math.PI * 2));
+            circY.push(Math.sin(t * Math.PI * 2));
+            circZ.push(-4);
+        }
+        traces.push({
+            x: circX, y: circY, z: circZ,
+            type: 'scatter3d', mode: 'lines',
+            line: { color: '#64ffda', width: 4 },
+            name: 'S¹ (base circle)'
+        });
+
+        // Vertical fibers at a few points
+        for (let i = 0; i < 4; i++) {
+            const angle = (i / 4) * Math.PI * 2;
+            const fx = [], fy = [], fz = [];
+            for (let z = -3; z <= 3; z += 1) {
+                fx.push(Math.cos(angle));
+                fy.push(Math.sin(angle));
+                fz.push(z);
+            }
+            traces.push({
+                x: fx, y: fy, z: fz,
+                type: 'scatter3d', mode: 'markers',
+                marker: { size: 3, color: '#fbbf24' },
+                showlegend: i === 0,
+                name: i === 0 ? 'Fiber points (ℤ)' : undefined
+            });
+        }
+
+        // Base point
+        traces.push({
+            x: [1], y: [0], z: [-4],
+            type: 'scatter3d', mode: 'markers+text',
+            marker: { size: 6, color: '#f472b6' },
+            text: ['base'], textposition: 'top center',
+            textfont: { color: '#f472b6', size: 12 },
+            name: 'base point'
+        });
+
+        Plotly.newPlot('helixChart', traces, {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+            scene: {
+                xaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                yaxis: { showgrid: false, zeroline: false, showticklabels: false, title: '' },
+                zaxis: { showgrid: false, zeroline: false, title: 'ℤ (winding number)',
+                         gridcolor: 'rgba(100,255,218,0.1)', color: '#e0e0ff' },
+                bgcolor: 'rgba(0,0,0,0)',
+                camera: { eye: { x: 1.8, y: 1.2, z: 0.8 } }
+            },
+            font: { color: '#e0e0ff' },
+            margin: { l: 0, r: 0, t: 40, b: 0 },
+            title: { text: 'Universal Cover of S¹: The Helix ℝ → S¹', font: { size: 14, color: '#f472b6' } }
+        }, { responsive: true });
+    })();
+
+    // ============ FIBER CHART (Plotly) ============
+    function drawFibers() {
+        const sel = document.getElementById('fiberFunc').value;
+        const traces = [];
+
+        if (sel === 'double') {
+            // f(x) = 2x: injective, fibers have ≤1 point
+            const xVals = [], yVals = [];
+            for (let x = -3; x <= 3; x += 0.5) {
+                xVals.push(x);
+                yVals.push(2 * x);
+            }
+            traces.push({
+                x: xVals, y: yVals, mode: 'markers',
+                marker: { size: 8, color: '#64ffda' },
+                name: 'Points (x, f(x))'
+            });
+            // Show fibers as vertical lines at y values
+            for (let y = -4; y <= 4; y += 2) {
+                traces.push({
+                    x: [y/2 - 0.1, y/2 + 0.1], y: [y, y],
+                    mode: 'lines', line: { color: 'rgba(167,139,250,0.5)', width: 8 },
+                    showlegend: y === -4, name: y === -4 ? 'Fiber (≤1 point)' : undefined
+                });
+            }
+        } else if (sel === 'square') {
+            // f(x) = x²: fibers can have 2 points
+            const xVals = [], yVals = [];
+            for (let x = -3; x <= 3; x += 0.1) {
+                xVals.push(x);
+                yVals.push(x * x);
+            }
+            traces.push({
+                x: xVals, y: yVals, mode: 'lines',
+                line: { color: '#64ffda', width: 2 },
+                name: 'f(x) = x²'
+            });
+            // Show fibers
+            for (let y = 1; y <= 4; y++) {
+                const sq = Math.sqrt(y);
+                traces.push({
+                    x: [-sq, sq], y: [y, y],
+                    mode: 'markers', marker: { size: 10, color: '#f472b6' },
+                    showlegend: y === 1, name: y === 1 ? 'Fiber (2 points)' : undefined
+                });
+            }
+            traces.push({
+                x: [0], y: [0], mode: 'markers',
+                marker: { size: 10, color: '#fbbf24' },
+                name: 'Fiber at 0 (1 point)'
+            });
+        } else {
+            // f(x) = x mod 3
+            const xVals = [], yVals = [];
+            for (let x = -6; x <= 6; x++) {
+                xVals.push(x);
+                yVals.push(((x % 3) + 3) % 3);
+            }
+            traces.push({
+                x: xVals, y: yVals, mode: 'markers',
+                marker: { size: 8, color: xVals.map(x => `hsl(${((x % 3 + 3) % 3) * 120}, 80%, 60%)`) },
+                name: 'Points (x, x mod 3)'
+            });
+        }
+
+        Plotly.newPlot('fiberChart', traces, {
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(20,20,60,0.5)',
+            font: { color: '#e0e0ff' },
+            xaxis: { gridcolor: 'rgba(100,255,218,0.1)', title: 'Domain' },
+            yaxis: { gridcolor: 'rgba(100,255,218,0.1)', title: 'Codomain' },
+            title: { text: 'Fibers of a Map: fib_f(b) = Σ(a:A) f(a)=b', font: { size: 14, color: '#a78bfa' } },
+            margin: { t: 40 }
+        }, { responsive: true });
+    }
+    drawFibers();
+
+    // ============ SUPERSCRIPT HELPER ============
+    function superscript(n) {
+        const sups = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+        return String(n).split('').map(c => sups[c] || c).join('');
+    }
+
+    // ============ SMOOTH SCROLL FOR NAV ============
+    document.querySelectorAll('nav a').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // ============ ROUNDRECT POLYFILL ============
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+            if (typeof r === 'number') r = [r, r, r, r];
+            this.moveTo(x + r[0], y);
+            this.lineTo(x + w - r[1], y);
+            this.quadraticCurveTo(x + w, y, x + w, y + r[1]);
+            this.lineTo(x + w, y + h - r[2]);
+            this.quadraticCurveTo(x + w, y + h, x + w - r[2], y + h);
+            this.lineTo(x + r[3], y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r[3]);
+            this.lineTo(x, y + r[0]);
+            this.quadraticCurveTo(x, y, x + r[0], y);
+            this.closePath();
+            return this;
+        };
+    }
+
+    console.log('🌀 HoTT Explorer loaded. Types are spaces. Paths are identifications. Equivalent things are equal.');
+    </script>
+</body>
+</html>
