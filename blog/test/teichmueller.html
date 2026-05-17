@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teichmüller Theory — Visual Explorer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0f0;
+            overflow-x: hidden;
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(135deg, #1a1a3e, #0a0a1a);
+            border-bottom: 1px solid #2a2a5a;
+        }
+        header h1 {
+            font-size: 2.4em;
+            background: linear-gradient(90deg, #7eb8ff, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        header p { color: #8888bb; font-size: 1.1em; }
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 20px;
+            background: #0d0d22;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #1a1a3e;
+        }
+        .nav-tabs button {
+            padding: 10px 18px;
+            border: 1px solid #2a2a5a;
+            background: #12122a;
+            color: #8888cc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        .nav-tabs button:hover { background: #1e1e44; color: #aaaaee; }
+        .nav-tabs button.active {
+            background: linear-gradient(135deg, #2a2a6a, #3a2a6a);
+            color: #c084fc;
+            border-color: #6a4aaa;
+            box-shadow: 0 0 12px rgba(140, 80, 220, 0.3);
+        }
+        .section {
+            display: none;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        .section.active { display: block; }
+        .section h2 {
+            font-size: 1.8em;
+            color: #c084fc;
+            margin-bottom: 10px;
+        }
+        .section .subtitle {
+            color: #7a7aaa;
+            font-size: 1.05em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .canvas-container {
+            position: relative;
+            background: #0e0e24;
+            border: 1px solid #2a2a5a;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            cursor: grab;
+        }
+        canvas:active { cursor: grabbing; }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+            background: #111130;
+            border-radius: 10px;
+            margin: 15px 0;
+            align-items: center;
+        }
+        .controls label {
+            color: #9999cc;
+            font-size: 0.9em;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .controls input[type="range"] {
+            width: 180px;
+            accent-color: #8b5cf6;
+        }
+        .controls button {
+            padding: 8px 16px;
+            border: 1px solid #4a3a8a;
+            background: #2a2a5a;
+            color: #c084fc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .controls button:hover {
+            background: #3a3a7a;
+            box-shadow: 0 0 8px rgba(140, 80, 220, 0.3);
+        }
+        .info-box {
+            background: #111130;
+            border-left: 3px solid #8b5cf6;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            line-height: 1.7;
+            color: #b0b0dd;
+        }
+        .info-box strong { color: #c084fc; }
+        .analogy-box {
+            background: linear-gradient(135deg, #1a1530, #121230);
+            border: 1px solid #3a2a6a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            line-height: 1.7;
+        }
+        .analogy-box .emoji { font-size: 1.5em; margin-right: 8px; }
+        .step-indicator {
+            display: inline-block;
+            background: #8b5cf6;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            font-size: 0.85em;
+            margin-right: 8px;
+        }
+        .math {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            font-style: italic;
+            color: #f0c0ff;
+            font-size: 1.05em;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 700px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            header h1 { font-size: 1.6em; }
+            .controls input[type="range"] { width: 130px; }
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 10px 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #9999bb;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .value-display {
+            font-family: monospace;
+            color: #7eb8ff;
+            font-size: 0.95em;
+            min-width: 50px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Teichmüller Theory</h1>
+    <p>An interactive visual journey — from rubber sheets to the space of all shapes</p>
+</header>
+
+<nav class="nav-tabs">
+    <button class="active" onclick="showSection(0)">① Big Idea</button>
+    <button onclick="showSection(1)">② Surfaces</button>
+    <button onclick="showSection(2)">③ Stretching</button>
+    <button onclick="showSection(3)">④ Moduli Space</button>
+    <button onclick="showSection(4)">⑤ Torus Shapes</button>
+    <button onclick="showSection(5)">⑥ Distance</button>
+    <button onclick="showSection(6)">⑦ Summary</button>
+</nav>
+
+<!-- ==================== SECTION 0: BIG IDEA ==================== -->
+<div class="section active" id="sec0">
+    <h2>The Big Idea</h2>
+    <p class="subtitle">Teichmüller theory answers one beautiful question: <strong>How many truly different shapes can a surface have?</strong></p>
+
+    <div class="analogy-box">
+        <p><span class="emoji">🎈</span><strong>Everyday Analogy:</strong> Imagine you have a rubber balloon. You can stretch it, squeeze it, twist it — but you can't tear or glue it. Some deformations just "stretch" the pattern on the balloon. Teichmüller theory studies which shapes are <em>genuinely different</em> versus just "stretched versions" of each other.</p>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="canvasBigIdea" width="960" height="400"></canvas>
+    </div>
+    <div class="controls">
+        <button onclick="bigIdeaAnimate()">▶ Animate Deformation</button>
+        <button onclick="bigIdeaReset()">↺ Reset</button>
+        <label>
+            Stretch X
+            <input type="range" id="bigStretchX" min="0.5" max="2" step="0.01" value="1" oninput="bigIdeaDraw()">
+        </label>
+        <label>
+            Stretch Y
+            <input type="range" id="bigStretchY" min="0.5" max="2" step="0.01" value="1" oninput="bigIdeaDraw()">
+        </label>
+    </div>
+
+    <div class="info-box">
+        <p><span class="step-indicator">1</span><strong>Topology</strong> — the donut and coffee mug are "the same" (you can morph one into the other without cutting).</p>
+        <p><span class="step-indicator">2</span><strong>Geometry</strong> — but a thin, tall donut and a flat, wide donut <em>look</em> different. They have different <strong>conformal structures</strong> (angle-patterns).</p>
+        <p><span class="step-indicator">3</span><strong>Teichmüller Space</strong> — the collection of <em>all</em> genuinely different geometric shapes a given surface can take. Each point in this space = one shape.</p>
+    </div>
+</div>
+
+<!-- ==================== SECTION 1: SURFACES ==================== -->
+<div class="section" id="sec1">
+    <h2>What is a Surface?</h2>
+    <p class="subtitle">A surface is a 2D shape — like the skin of an object. The key property is its <strong>genus</strong> (number of holes).</p>
+
+    <div class="canvas-container">
+        <canvas id="canvasSurfaces" width="960" height="420"></canvas>
+    </div>
+    <div class="controls">
+        <label>
+            Genus (number of holes)
+            <input type="range" id="genusSlider" min="0" max="4" step="1" value="1" oninput="drawSurfaces()">
+        </label>
+        <span class="value-display" id="genusValue">g = 1</span>
+        <span style="color:#8888bb; margin-left:10px;" id="genusName">Torus (Donut)</span>
+    </div>
+
+    <div class="info-box">
+        <p><strong>Genus 0</strong> = Sphere (no holes) → Teichmüller space is a single point (only one shape!).</p>
+        <p><strong>Genus 1</strong> = Torus (one hole, like a donut) → Teichmüller space is 2-dimensional.</p>
+        <p><strong>Genus g ≥ 2</strong> → Teichmüller space is <span class="math">(6g − 6)</span>-dimensional. More holes = vastly more possible shapes!</p>
+    </div>
+
+    <div class="analogy-box">
+        <p><span class="emoji">🍩</span> Think of genus as "how many donut holes." A pretzel has genus 3. Each hole adds more freedom for the shape to vary.</p>
+    </div>
+</div>
+
+<!-- ==================== SECTION 2: STRETCHING ==================== -->
+<div class="section" id="sec2">
+    <h2>Conformal Maps & Quasiconformal Stretching</h2>
+    <p class="subtitle">The core tool: maps that stretch by a controlled, bounded amount. Small circles become small ellipses.</p>
+
+    <div class="canvas-container">
+        <canvas id="canvasStretch" width="960" height="480"></canvas>
+    </div>
+    <div class="controls">
+        <label>
+            Stretch Factor K
+            <input type="range" id="stretchK" min="1" max="4" step="0.05" value="1" oninput="drawStretch()">
+        </label>
+        <span class="value-display" id="stretchKVal">K = 1.00</span>
+        <label>
+            Rotation θ
+            <input type="range" id="stretchAngle" min="0" max="180" step="1" value="0" oninput="drawStretch()">
+        </label>
+        <span class="value-display" id="stretchAngleVal">θ = 0°</span>
+        <button onclick="animateStretch()">▶ Animate</button>
+    </div>
+
+    <div class="grid-2">
+        <div class="info-box">
+            <p><strong>Conformal (K = 1):</strong> Preserves angles. Circles stay circles. This is the "zero distortion" case — like a perfect map projection.</p>
+        </div>
+        <div class="info-box">
+            <p><strong>Quasiconformal (K > 1):</strong> Angles get distorted by a bounded amount. Circles become ellipses with axis ratio ≤ K. The bigger K, the more distortion.</p>
+        </div>
+    </div>
+
+    <div class="analogy-box">
+        <p><span class="emoji">🗺️</span> <strong>Map Projection Analogy:</strong> A conformal map is like a Mercator projection — angles are correct but sizes change. A quasiconformal map allows some angle distortion too, but keeps it bounded. K measures the "worst-case ellipse ratio."</p>
+    </div>
+</div>
+
+<!-- ==================== SECTION 3: MODULI SPACE ==================== -->
+<div class="section" id="sec3">
+    <h2>Teichmüller Space & Moduli Space</h2>
+    <p class="subtitle">Each point in Teichmüller space represents one "marked shape." Forgetting the marking gives the Moduli space.</p>
+
+    <div class="canvas-container">
+        <canvas id="canvasModuli" width="960" height="500"></canvas>
+    </div>
+    <div class="controls">
+        <label>
+            Navigate X
+            <input type="range" id="moduliX" min="-2" max="2" step="0.02" value="0" oninput="drawModuli()">
+        </label>
+        <label>
+            Navigate Y
+            <input type="range" id="moduliY" min="0.3" max="3" step="0.02" value="1" oninput="drawModuli()">
+        </label>
+        <button onclick="moduliPreset('square')">Square Torus</button>
+        <button onclick="moduliPreset('hex')">Hexagonal Torus</button>
+        <button onclick="moduliPreset('thin')">Thin Torus</button>
+        <button onclick="moduliPreset('random')">Random</button>
+    </div>
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> Current shape (τ)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div> Equivalent points (moduli)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,0.15)"></div> Fundamental domain</div>
+    </div>
+
+    <div class="info-box">
+        <p><strong>For the torus (genus 1):</strong> Every torus shape is described by a single complex number <span class="math">τ</span> in the upper half-plane. The real part controls "shear" and the imaginary part controls "height."</p>
+        <p>Two values of <span class="math">τ</span> give the <em>same unmarked shape</em> if they're related by a Möbius transformation <span class="math">τ → (aτ+b)/(cτ+d)</span> with integer coefficients and determinant 1.</p>
+    </div>
+</div>
+
+<!-- ==================== SECTION 4: TORUS SHAPES ==================== -->
+<div class="section" id="sec4">
+    <h2>Building a Torus from a Parallelogram</h2>
+    <p class="subtitle">A torus is just a parallelogram with opposite edges glued! The shape of the parallelogram = the shape of the torus.</p>
+
+    <div class="canvas-container">
+        <canvas id="canvasTorus" width="960" height="500"></canvas>
+    </div>
+    <div class="controls">
+        <label>
+            Real part of τ
+            <input type="range" id="torusTauRe" min="-1" max="1" step="0.02" value="0" oninput="drawTorus()">
+        </label>
+        <span class="value-display" id="torusTauReVal">Re = 0.00</span>
+        <label>
+            Imaginary part of τ
+            <input type="range" id="torusTauIm" min="0.3" max="2.5" step="0.02" value="1" oninput="drawTorus()">
+        </label>
+        <span class="value-display" id="torusTauImVal">Im = 1.00</span>
+        <button onclick="torusAnimate()">▶ Morph</button>
+    </div>
+
+    <div class="info-box">
+        <p><span class="step-indicator">1</span> The bottom edge goes from (0,0) to (1,0) — always fixed.</p>
+        <p><span class="step-indicator">2</span> The second basis vector is <span class="math">τ = x + iy</span> — you control it with the sliders.</p>
+        <p><span class="step-indicator">3</span> Glue left↔right and top↔bottom → you get a torus! The grid pattern on the parallelogram becomes the "conformal structure."</p>
+    </div>
+</div>
+
+<!-- ==================== SECTION 5: DISTANCE ==================== -->
+<div class="section" id="sec5">
+    <h2>Teichmüller Distance</h2>
+    <p class="subtitle">How "far apart" are two shapes? The Teichmüller distance measures the minimal distortion needed to deform one into the other.</p>
+
+    <div class="canvas-container">
+        <canvas id="canvasDist" width="960" height="460"></canvas>
+    </div>
+    <div class="controls">
+        <label>
+            Shape A — τ real
+            <input type="range" id="distAx" min="-0.5" max="0.5" step="0.02" value="0" oninput="drawDist()">
+        </label>
+        <label>
+            Shape A — τ imag
+            <input type="range" id="distAy" min="0.5" max="2.5" step="0.02" value="1" oninput="drawDist()">
+        </label>
+        <label>
+            Shape B — τ real
+            <input type="range" id="distBx" min="-0.5" max="0.5" step="0.02" value="0.3" oninput="drawDist()">
+        </label>
+        <label>
+            Shape B — τ imag
+            <input type="range" id="distBy" min="0.5" max="2.5" step="0.02" value="1.5" oninput="drawDist()">
+        </label>
+    </div>
+    <div id="distResult" class="info-box" style="font-size:1.1em;"></div>
+
+    <div class="analogy-box">
+        <p><span class="emoji">📏</span> <strong>Analogy:</strong> Imagine you have two rubber stamps with different grid patterns. The Teichmüller distance asks: "What's the <em>least</em> amount of stretching needed to turn one pattern into the other?" — measured as <span class="math">d = ½ ln(K)</span>, where K is the minimal stretch ratio.</p>
+    </div>
+</div>
+
+<!-- ==================== SECTION 6: SUMMARY ==================== -->
+<div class="section" id="sec6">
+    <h2>Putting It All Together</h2>
+    <p class="subtitle">A bird's-eye view of the whole theory.</p>
+
+    <div class="canvas-container">
+        <canvas id="canvasSummary" width="960" height="500"></canvas>
+    </div>
+    <div class="controls">
+        <button onclick="summaryStep(0)">① Surface</button>
+        <button onclick="summaryStep(1)">② Shapes</button>
+        <button onclick="summaryStep(2)">③ Space</button>
+        <button onclick="summaryStep(3)">④ Distance</button>
+        <button onclick="summaryStep(4)">⑤ Full Picture</button>
+    </div>
+
+    <div class="info-box" id="summaryText">
+        <p>Click the buttons above to walk through the key concepts.</p>
+    </div>
+
+    <div class="analogy-box">
+        <p><span class="emoji">🌌</span> <strong>The Deep Insight:</strong> Teichmüller theory creates a <em>geometry of geometries</em>. Each "point" is an entire shape of a surface, and the "distance" between points measures how much you must distort one shape to get another. This space has its own rich geometry — hyperbolic, with deep connections to complex analysis, dynamics, number theory, and even string theory in physics.</p>
+    </div>
+
+    <div class="info-box">
+        <p><strong>Key formulas to remember:</strong></p>
+        <p>• Dimension of Teichmüller space for genus <span class="math">g</span>: <span class="math">dim = 6g − 6</span> (for g ≥ 2)</p>
+        <p>• Torus parameter: <span class="math">τ ∈ ℍ</span> (upper half-plane)</p>
+        <p>• Teichmüller distance: <span class="math">d(S₁, S₂) = ½ ln(K)</span> where K = minimal quasiconformal dilatation</p>
+        <p>• Moduli space = Teichmüller space / Mapping class group</p>
+    </div>
+</div>
+
+<script>
+// ===================== UTILITIES =====================
+function getCtx(id) {
+    const c = document.getElementById(id);
+    const dpr = window.devicePixelRatio || 1;
+    const rect = c.getBoundingClientRect();
+    c.width = rect.width * dpr;
+    c.height = (c.height / (c.getAttribute('width') || 960)) * rect.width * dpr;
+    const ctx = c.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx, w: rect.width, h: c.height / dpr };
+}
+
+function showSection(idx) {
+    document.querySelectorAll('.section').forEach((s, i) => {
+        s.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.nav-tabs button').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+    });
+    // Redraw the relevant canvas
+    const drawFns = [bigIdeaDraw, drawSurfaces, drawStretch, drawModuli, drawTorus, drawDist, drawSummary];
+    setTimeout(() => drawFns[idx](), 50);
+}
+
+// ===================== SECTION 0: BIG IDEA =====================
+let bigIdeaAnim = null;
+function bigIdeaDraw() {
+    const { ctx, w, h } = getCtx('canvasBigIdea');
+    ctx.clearRect(0, 0, w, h);
+
+    const sx = parseFloat(document.getElementById('bigStretchX').value);
+    const sy = parseFloat(document.getElementById('bigStretchY').value);
+
+    // Draw two grids side by side
+    const gridSize = 8;
+    const cellW = Math.min(w * 0.35, 180) / gridSize;
+
+    // Original grid
+    const ox1 = w * 0.25, oy1 = h * 0.5;
+    ctx.save();
+    ctx.translate(ox1, oy1);
+    drawGrid(ctx, gridSize, cellW, 1, 1, '#3a3a8a', '#7eb8ff');
+    ctx.restore();
+    ctx.fillStyle = '#7eb8ff';
+    ctx.font = '16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Original Shape', ox1, h - 20);
+
+    // Arrow
+    const arrowX = w * 0.5;
+    ctx.strokeStyle = '#c084fc';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(arrowX - 40, h * 0.5);
+    ctx.lineTo(arrowX + 30, h * 0.5);
+    ctx.lineTo(arrowX + 20, h * 0.5 - 8);
+    ctx.moveTo(arrowX + 30, h * 0.5);
+    ctx.lineTo(arrowX + 20, h * 0.5 + 8);
+    ctx.stroke();
+    ctx.fillStyle = '#c084fc';
+    ctx.font = '13px Segoe UI';
+    ctx.fillText(`K = ${Math.max(sx/sy, sy/sx).toFixed(2)}`, arrowX, h * 0.5 - 18);
+    ctx.fillText('stretch', arrowX, h * 0.5 + 30);
+
+    // Stretched grid
+    const ox2 = w * 0.75, oy2 = h * 0.5;
+    ctx.save();
+    ctx.translate(ox2, oy2);
+    drawGrid(ctx, gridSize, cellW, sx, sy, '#3a2a5a', '#f472b6');
+    ctx.restore();
+    ctx.fillStyle = '#f472b6';
+    ctx.font = '16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Stretched Shape', ox2, h - 20);
+
+    // Title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.fillText('Stretching a grid — circles become ellipses', w * 0.5, 30);
+}
+
+function drawGrid(ctx, n, cell, sx, sy, lineColor, dotColor) {
+    const half = n / 2;
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 0.8;
+    // Lines
+    for (let i = -half; i <= half; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * cell * sx, -half * cell * sy);
+        ctx.lineTo(i * cell * sx, half * cell * sy);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-half * cell * sx, i * cell * sy);
+        ctx.lineTo(half * cell * sx, i * cell * sy);
+        ctx.stroke();
+    }
+    // Circles / Ellipses at intersections (sample)
+    for (let i = -half; i <= half; i += 2) {
+        for (let j = -half; j <= half; j += 2) {
+            ctx.strokeStyle = dotColor;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(i * cell * sx, j * cell * sy, cell * 0.6 * sx, cell * 0.6 * sy, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+    }
+}
+
+function bigIdeaAnimate() {
+    if (bigIdeaAnim) cancelAnimationFrame(bigIdeaAnim);
+    let t = 0;
+    function step() {
+        t += 0.02;
+        const v = 1 + 0.6 * Math.sin(t);
+        document.getElementById('bigStretchX').value = v;
+        document.getElementById('bigStretchY').value = 2 - v;
+        bigIdeaDraw();
+        if (t < Math.PI * 4) bigIdeaAnim = requestAnimationFrame(step);
+    }
+    step();
+}
+
+function bigIdeaReset() {
+    if (bigIdeaAnim) cancelAnimationFrame(bigIdeaAnim);
+    document.getElementById('bigStretchX').value = 1;
+    document.getElementById('bigStretchY').value = 1;
+    bigIdeaDraw();
+}
+
+// ===================== SECTION 1: SURFACES =====================
+function drawSurfaces() {
+    const { ctx, w, h } = getCtx('canvasSurfaces');
+    ctx.clearRect(0, 0, w, h);
+    const g = parseInt(document.getElementById('genusSlider').value);
+    document.getElementById('genusValue').textContent = `g = ${g}`;
+    const names = ['Sphere', 'Torus (Donut)', 'Double Torus', 'Triple Torus (Pretzel)', 'Genus 4 Surface'];
+    const dims = ['0 (one point)', '2', '6', '12', '18'];
+    document.getElementById('genusName').textContent = names[g];
+
+    const cx = w / 2, cy = h / 2 - 20;
+
+    // Draw the surface
+    ctx.save();
+    ctx.translate(cx, cy);
+    if (g === 0) drawSphere(ctx);
+    else drawGenusSurface(ctx, g, w);
+    ctx.restore();
+
+    // Info
+    ctx.fillStyle = '#c084fc';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${names[g]}  —  genus ${g}`, cx, h - 50);
+    ctx.fillStyle = '#7eb8ff';
+    ctx.font = '14px Segoe UI';
+    ctx.fillText(`Teichmüller space dimension: ${dims[g]}`, cx, h - 25);
+}
+
+function drawSphere(ctx) {
+    const r = 80;
+    const grad = ctx.createRadialGradient(-20, -20, 10, 0, 0, r);
+    grad.addColorStop(0, '#6a5acd');
+    grad.addColorStop(0.3, '#4a3aad');
+    grad.addColorStop(1, '#1a1a4a');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Latitude lines
+    ctx.strokeStyle = 'rgba(139,92,246,0.4)';
+    ctx.lineWidth = 0.8;
+    for (let i = -2; i <= 2; i++) {
+        const y = i * r * 0.3;
+        const rx = Math.sqrt(r * r - y * y);
+        ctx.beginPath();
+        ctx.ellipse(0, y, rx, rx * 0.25, 0, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    // Longitude lines
+    for (let i = 0; i < 4; i++) {
+        const angle = (i / 4) * Math.PI;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, r * Math.cos(angle), r, angle, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+}
+
+function drawGenusSurface(ctx, g, totalW) {
+    const spacing = Math.min(120, (totalW * 0.7) / g);
+    const startX = -(g - 1) * spacing / 2;
+
+    for (let i = 0; i < g; i++) {
+        const cx = startX + i * spacing;
+        drawSingleHandle(ctx, cx, 0, spacing * 0.45);
+    }
+
+    // Connect handles with tubes
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = 'rgba(74, 58, 173, 0.3)';
+
+    if (g > 1) {
+        const tubeY = 50;
+        ctx.beginPath();
+        ctx.moveTo(startX - spacing * 0.4, tubeY);
+        ctx.lineTo(startX + (g - 1) * spacing + spacing * 0.4, tubeY);
+        ctx.quadraticCurveTo(startX + (g - 1) * spacing + spacing * 0.55, 0,
+            startX + (g - 1) * spacing + spacing * 0.4, -tubeY);
+        ctx.lineTo(startX - spacing * 0.4, -tubeY);
+        ctx.quadraticCurveTo(startX - spacing * 0.55, 0,
+            startX - spacing * 0.4, tubeY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    }
+}
+
+function drawSingleHandle(ctx, cx, cy, r) {
+    // Draw a torus-like handle
+    const grad = ctx.createRadialGradient(cx, cy, r * 0.2, cx, cy, r);
+    grad.addColorStop(0, '#0a0a1a');
+    grad.addColorStop(0.4, '#1a1a4a');
+    grad.addColorStop(1, '#4a3aad');
+
+    // Outer ellipse
+    ctx.fillStyle = '#3a2a7a';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, r, r * 0.7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Inner hole
+    ctx.fillStyle = '#0a0a1a';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, r * 0.45, r * 0.3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#c084fc';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+}
+
+// ===================== SECTION 2: STRETCHING =====================
+let stretchAnim = null;
+function drawStretch() {
+    const { ctx, w, h } = getCtx('canvasStretch');
+    ctx.clearRect(0, 0, w, h);
+
+    const K = parseFloat(document.getElementById('stretchK').value);
+    const angle = parseFloat(document.getElementById('stretchAngle').value) * Math.PI / 180;
+    document.getElementById('stretchKVal').textContent = `K = ${K.toFixed(2)}`;
+    document.getElementById('stretchAngleVal').textContent = `θ = ${parseInt(document.getElementById('stretchAngle').value)}°`;
+
+    const leftCx = w * 0.25, rightCx = w * 0.72;
+    const cy = h * 0.48;
+
+    // Title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Before (circles)', leftCx, 30);
+    ctx.fillText('After (ellipses, K = ' + K.toFixed(2) + ')', rightCx, 30);
+
+    // Draw grid of circles on the left
+    const gridN = 5;
+    const spacing = 50;
+    const circR = 18;
+
+    for (let i = -2; i <= 2; i++) {
+        for (let j = -2; j <= 2; j++) {
+            const x = leftCx + i * spacing;
+            const y = cy + j * spacing;
+
+            // Circle
+            ctx.strokeStyle = 'rgba(126,184,255,0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y, circR, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Center dot
+            ctx.fillStyle = '#7eb8ff';
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Corresponding ellipse on the right
+            const rx = rightCx + i * spacing * K;
+            const ry = cy + j * spacing / K;
+
+            ctx.strokeStyle = 'rgba(244,114,182,0.7)';
+            ctx.lineWidth = 1.5;
+            ctx.save();
+            ctx.translate(rx, ry);
+            ctx.rotate(angle);
+            ctx.beginPath();
+            ctx.ellipse(0, 0, circR * K, circR / K, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+
+            // Axes of ellipse
+            if (i === 0 && j === 0) {
+                ctx.save();
+                ctx.translate(rx, ry);
+                ctx.rotate(angle);
+                ctx.strokeStyle = '#f472b6';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 3]);
+                ctx.beginPath();
+                ctx.moveTo(-circR * K - 5, 0);
+                ctx.lineTo(circR * K + 5, 0);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(0, -circR / K - 5);
+                ctx.lineTo(0, circR / K + 5);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.restore();
+
+                // Labels
+                ctx.fillStyle = '#f472b6';
+                ctx.font = '12px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`major = ${K.toFixed(1)}r`, rx, ry + circR * K + 20);
+                ctx.fillText(`minor = r/${K.toFixed(1)}`, rx, ry - circR / K - 10);
+            }
+
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.arc(rx, ry, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Arrow between
+    const arrowX = w * 0.48;
+    ctx.strokeStyle = '#c084fc';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(arrowX - 20, cy);
+    ctx.lineTo(arrowX + 20, cy);
+    ctx.lineTo(arrowX + 12, cy - 7);
+    ctx.moveTo(arrowX + 20, cy);
+    ctx.lineTo(arrowX + 12, cy + 7);
+    ctx.stroke();
+    ctx.fillStyle = '#c084fc';
+    ctx.font = '13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('f(z)', arrowX, cy - 15);
+
+    // K = 1 indicator
+    if (Math.abs(K - 1) < 0.06) {
+        ctx.fillStyle = '#4ade80';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.fillText('✓ Conformal! (angles preserved)', w * 0.5, h - 20);
+    } else {
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.fillText(`Quasiconformal — max angle distortion ratio: ${K.toFixed(2)}`, w * 0.5, h - 20);
+    }
+}
+
+function animateStretch() {
+    if (stretchAnim) cancelAnimationFrame(stretchAnim);
+    let t = 0;
+    function step() {
+        t += 0.025;
+        const K = 1 + 1.5 * Math.abs(Math.sin(t));
+        document.getElementById('stretchK').value = K;
+        document.getElementById('stretchAngle').value = (t * 30) % 180;
+        drawStretch();
+        if (t < Math.PI * 6) stretchAnim = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// ===================== SECTION 3: MODULI SPACE =====================
+function drawModuli() {
+    const { ctx, w, h } = getCtx('canvasModuli');
+    ctx.clearRect(0, 0, w, h);
+
+    const tauRe = parseFloat(document.getElementById('moduliX').value);
+    const tauIm = parseFloat(document.getElementById('moduliY').value);
+
+    // Upper half-plane visualization
+    const planeX = 30, planeY = 30;
+    const planeW = w * 0.55 - 40, planeH = h - 60;
+    const scale = planeH / 3.5;
+
+    // Map tau to pixel coords
+    function toPixel(re, im) {
+        return {
+            x: planeX + planeW / 2 + re * scale,
+            y: planeY + planeH - im * scale
+        };
+    }
+
+    // Background
+    ctx.fillStyle = '#0e0e28';
+    ctx.fillRect(planeX, planeY, planeW, planeH);
+    ctx.strokeStyle = '#2a2a5a';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(planeX, planeY, planeW, planeH);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(100,100,180,0.2)';
+    ctx.lineWidth = 0.5;
+    for (let re = -2; re <= 2; re += 0.5) {
+        const p = toPixel(re, 0);
+        ctx.beginPath();
+        ctx.moveTo(p.x, planeY);
+        ctx.lineTo(p.x, planeY + planeH);
+        ctx.stroke();
+    }
+    for (let im = 0; im <= 3.5; im += 0.5) {
+        const p = toPixel(0, im);
+        ctx.beginPath();
+        ctx.moveTo(planeX, p.y);
+        ctx.lineTo(planeX + planeW, p.y);
+        ctx.stroke();
+    }
+
+    // Fundamental domain of SL(2,Z)
+    ctx.fillStyle = 'rgba(139,92,246,0.12)';
+    ctx.strokeStyle = 'rgba(139,92,246,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    // Left boundary: Re = -0.5
+    const bl = toPixel(-0.5, Math.sqrt(3) / 2);
+    const tl = toPixel(-0.5, 3.5);
+    const tr = toPixel(0.5, 3.5);
+    const br = toPixel(0.5, Math.sqrt(3) / 2);
+    ctx.moveTo(bl.x, bl.y);
+    ctx.lineTo(tl.x, tl.y);
+    ctx.lineTo(tr.x, tr.y);
+    ctx.lineTo(br.x, br.y);
+    // Arc at bottom: |τ| = 1
+    const arcCenter = toPixel(0, 0);
+    const arcR = scale;
+    const startAngle = Math.PI / 3;
+    const endAngle = 2 * Math.PI / 3;
+    // Draw arc from br to bl
+    for (let a = Math.PI / 3; a <= 2 * Math.PI / 3; a += 0.02) {
+        const px = arcCenter.x + arcR * Math.cos(a);
+        const py = arcCenter.y - arcR * Math.sin(a);
+        ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Label fundamental domain
+    ctx.fillStyle = 'rgba(139,92,246,0.7)';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'center';
+    const fdLabel = toPixel(0, 2.2);
+    ctx.fillText('Fundamental', fdLabel.x, fdLabel.y - 8);
+    ctx.fillText('Domain', fdLabel.x, fdLabel.y + 8);
+
+    // Axes labels
+    ctx.fillStyle = '#6666aa';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'center';
+    for (let re = -2; re <= 2; re++) {
+        const p = toPixel(re, 0);
+        if (p.x > planeX && p.x < planeX + planeW)
+            ctx.fillText(re.toString(), p.x, planeY + planeH + 15);
+    }
+    ctx.textAlign = 'right';
+    for (let im = 0.5; im <= 3; im += 0.5) {
+        const p = toPixel(0, im);
+        ctx.fillText(im.toFixed(1) + 'i', planeX - 5, p.y + 4);
+    }
+
+    // Current τ point
+    const tauPx = toPixel(tauRe, tauIm);
+    if (tauPx.x > planeX && tauPx.x < planeX + planeW && tauPx.y > planeY && tauPx.y < planeY + planeH) {
+        // Glow
+        const glow = ctx.createRadialGradient(tauPx.x, tauPx.y, 0, tauPx.x, tauPx.y, 20);
+        glow.addColorStop(0, 'rgba(139,92,246,0.6)');
+        glow.addColorStop(1, 'rgba(139,92,246,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(tauPx.x, tauPx.y, 20, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#8b5cf6';
+        ctx.beginPath();
+        ctx.arc(tauPx.x, tauPx.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#c084fc';
+        ctx.font = 'bold 13px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`τ = ${tauRe.toFixed(2)} + ${tauIm.toFixed(2)}i`, tauPx.x + 10, tauPx.y - 8);
+    }
+
+    // Equivalent points under modular group (show a few)
+    const equivalents = [];
+    for (let a = -2; a <= 2; a++) {
+        // T^n: τ → τ + n
+        equivalents.push({ re: tauRe + a, im: tauIm, label: `τ+${a}` });
+    }
+    // S: τ → -1/τ
+    const denom = tauRe * tauRe + tauIm * tauIm;
+    if (denom > 0.01) {
+        equivalents.push({ re: -tauRe / denom, im: tauIm / denom, label: '-1/τ' });
+    }
+
+    ctx.fillStyle = '#f472b6';
+    equivalents.forEach(eq => {
+        if (Math.abs(eq.re - tauRe) < 0.01 && Math.abs(eq.im - tauIm) < 0.01) return;
+        const p = toPixel(eq.re, eq.im);
+        if (p.x > planeX && p.x < planeX + planeW && p.y > planeY && p.y < planeY + planeH) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(244,114,182,0.7)';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(eq.label, p.x, p.y - 8);
+            ctx.fillStyle = '#f472b6';
+        }
+    });
+
+    // Right side: draw the corresponding torus
+    const torusX = w * 0.62, torusY = 50;
+    const torusW = w * 0.35, torusH = h - 80;
+
+    ctx.fillStyle = '#0e0e28';
+    ctx.strokeStyle = '#2a2a5a';
+    ctx.lineWidth = 1;
+    ctx.fillRect(torusX, torusY, torusW, torusH);
+    ctx.strokeRect(torusX, torusY, torusW, torusH);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Corresponding Torus', torusX + torusW / 2, torusY - 10);
+
+    // Draw parallelogram
+    const parCx = torusX + torusW / 2;
+    const parCy = torusY + torusH / 2;
+    const parScale = Math.min(torusW, torusH) * 0.3;
+
+    const v1 = { x: parScale, y: 0 };
+    const v2 = { x: tauRe * parScale, y: -tauIm * parScale };
+
+    ctx.save();
+    ctx.translate(parCx, parCy);
+
+    // Parallelogram fill
+    ctx.fillStyle = 'rgba(139,92,246,0.15)';
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(v1.x, v1.y);
+    ctx.lineTo(v1.x + v2.x, v1.y + v2.y);
+    ctx.lineTo(v2.x, v2.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Grid lines inside parallelogram
+    ctx.strokeStyle = 'rgba(139,92,246,0.3)';
+    ctx.lineWidth = 0.5;
+    const gridSteps = 6;
+    for (let i = 1; i < gridSteps; i++) {
+        const t = i / gridSteps;
+        ctx.beginPath();
+        ctx.moveTo(v1.x * t, v1.y * t);
+        ctx.lineTo(v1.x * t + v2.x, v1.y * t + v2.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(v2.x * t, v2.y * t);
+        ctx.lineTo(v2.x * t + v1.x, v2.y * t + v1.y);
+        ctx.stroke();
+    }
+
+    // Gluing arrows
+    ctx.strokeStyle = '#7eb8ff';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    // Bottom edge
+    drawArrowLine(ctx, v1.x * 0.3, v1.y * 0.3, v1.x * 0.7, v1.y * 0.7);
+    // Top edge
+    drawArrowLine(ctx, v2.x + v1.x * 0.3, v2.y + v1.y * 0.3, v2.x + v1.x * 0.7, v2.y + v1.y * 0.7);
+    ctx.strokeStyle = '#f472b6';
+    // Left edge
+    drawArrowLine(ctx, v2.x * 0.3, v2.y * 0.3, v2.x * 0.7, v2.y * 0.7);
+    // Right edge
+    drawArrowLine(ctx, v1.x + v2.x * 0.3, v1.y + v2.y * 0.3, v1.x + v2.x * 0.7, v1.y + v2.y * 0.7);
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.fillStyle = '#7eb8ff';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('1', v1.x / 2, 20);
+    ctx.fillStyle = '#f472b6';
+    ctx.fillText('τ', v2.x / 2 - 15, v2.y / 2);
+
+    ctx.restore();
+
+    // Gluing explanation
+    ctx.fillStyle = '#7eb8ff';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Blue edges glued ↔ Blue edges', torusX + torusW / 2, torusY + torusH - 25);
+    ctx.fillStyle = '#f472b6';
+    ctx.fillText('Pink edges glued ↔ Pink edges', torusX + torusW / 2, torusY + torusH - 8);
+}
+
+function drawArrowLine(ctx, x1, y1, x2, y2) {
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const ux = dx / len, uy = dy / len;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    // Arrowhead
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - ux * 8 + uy * 5, y2 - uy * 8 - ux * 5);
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - ux * 8 - uy * 5, y2 - uy * 8 + ux * 5);
+    ctx.stroke();
+    ctx.setLineDash([6, 4]);
+}
+
+function moduliPreset(name) {
+    switch (name) {
+        case 'square':
+            document.getElementById('moduliX').value = 0;
+            document.getElementById('moduliY').value = 1;
+            break;
+        case 'hex':
+            document.getElementById('moduliX').value = 0.5;
+            document.getElementById('moduliY').value = 0.87;
+            break;
+        case 'thin':
+            document.getElementById('moduliX').value = 0;
+            document.getElementById('moduliY').value = 2.5;
+            break;
+        case 'random':
+            document.getElementById('moduliX').value = (Math.random() - 0.5).toFixed(2);
+            document.getElementById('moduliY').value = (0.4 + Math.random() * 2.2).toFixed(2);
+            break;
+    }
+    drawModuli();
+}
+
+// ===================== SECTION 4: TORUS SHAPES =====================
+let torusAnimHandle = null;
+function drawTorus() {
+    const { ctx, w, h } = getCtx('canvasTorus');
+    ctx.clearRect(0, 0, w, h);
+
+    const tauRe = parseFloat(document.getElementById('torusTauRe').value);
+    const tauIm = parseFloat(document.getElementById('torusTauIm').value);
+    document.getElementById('torusTauReVal').textContent = `Re = ${tauRe.toFixed(2)}`;
+    document.getElementById('torusTauImVal').textContent = `Im = ${tauIm.toFixed(2)}`;
+
+    // Left: Parallelogram with grid
+    const leftCx = w * 0.28, leftCy = h * 0.5;
+    const sc = Math.min(w * 0.2, 120);
+
+    const v1 = { x: sc, y: 0 };
+    const v2 = { x: tauRe * sc, y: -tauIm * sc };
+
+    ctx.save();
+    ctx.translate(leftCx, leftCy);
+
+    // Draw tiled copies (faded)
+    for (let ni = -1; ni <= 1; ni++) {
+        for (let nj = -1; nj <= 1; nj++) {
+            if (ni === 0 && nj === 0) continue;
+            const ox = ni * v1.x + nj * v2.x;
+            const oy = ni * v1.y + nj * v2.y;
+            ctx.fillStyle = 'rgba(60,40,120,0.1)';
+            ctx.strokeStyle = 'rgba(139,92,246,0.15)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(ox, oy);
+            ctx.lineTo(ox + v1.x, oy + v1.y);
+            ctx.lineTo(ox + v1.x + v2.x, oy + v1.y + v2.y);
+            ctx.lineTo(ox + v2.x, oy + v2.y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }
+    }
+
+    // Main parallelogram
+    ctx.fillStyle = 'rgba(139,92,246,0.2)';
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(v1.x, v1.y);
+    ctx.lineTo(v1.x + v2.x, v1.y + v2.y);
+    ctx.lineTo(v2.x, v2.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Grid inside
+    const gSteps = 8;
+    ctx.strokeStyle = 'rgba(139,92,246,0.35)';
+    ctx.lineWidth = 0.6;
+    for (let i = 1; i < gSteps; i++) {
+        const t = i / gSteps;
+        ctx.beginPath();
+        ctx.moveTo(v1.x * t, v1.y * t);
+        ctx.lineTo(v1.x * t + v2.x, v1.y * t + v2.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(v2.x * t, v2.y * t);
+        ctx.lineTo(v2.x * t + v1.x, v2.y * t + v1.y);
+        ctx.stroke();
+    }
+
+    // Vertices
+    const verts = [
+        { x: 0, y: 0 }, { x: v1.x, y: v1.y },
+        { x: v1.x + v2.x, y: v1.y + v2.y }, { x: v2.x, y: v2.y }
+    ];
+    verts.forEach(v => {
+        ctx.fillStyle = '#c084fc';
+        ctx.beginPath();
+        ctx.arc(v.x, v.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // Labels
+    ctx.fillStyle = '#7eb8ff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('1', v1.x / 2, 22);
+    ctx.fillStyle = '#f472b6';
+    ctx.fillText('τ', v2.x / 2 - 15, v2.y / 2 + 5);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '11px monospace';
+    ctx.fillText(`(${tauRe.toFixed(2)}, ${tauIm.toFixed(2)})`, v2.x + 10, v2.y - 10);
+
+    ctx.restore();
+
+    // Right: 3D torus visualization
+    const rightCx = w * 0.7, rightCy = h * 0.48;
+    draw3DTorus(ctx, rightCx, rightCy, tauRe, tauIm, Math.min(w * 0.25, 160));
+
+    // Labels
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Parallelogram (flat torus)', w * 0.28, 25);
+    ctx.fillText('3D Torus Shape', w * 0.7, 25);
+
+    // Arrow
+    const arrowX = w * 0.49;
+    ctx.strokeStyle = '#c084fc';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(arrowX - 25, h * 0.48);
+    ctx.lineTo(arrowX + 25, h * 0.48);
+    ctx.lineTo(arrowX + 17, h * 0.48 - 7);
+    ctx.moveTo(arrowX + 25, h * 0.48);
+    ctx.lineTo(arrowX + 17, h * 0.48 + 7);
+    ctx.stroke();
+    ctx.fillStyle = '#c084fc';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('glue edges', arrowX, h * 0.48 + 18);
+}
+
+function draw3DTorus(ctx, cx, cy, tauRe, tauIm, size) {
+    const R = size * 0.6; // Major radius
+    const r = size * 0.25 * (1 / Math.max(tauIm, 0.5)); // Minor radius affected by tau
+    const shear = tauRe * 0.5;
+
+    const steps = 40;
+    const rings = 20;
+
+    // Draw back half of torus first, then front
+    for (let pass = 0; pass < 2; pass++) {
+        for (let i = 0; i < steps; i++) {
+            const u = (i / steps) * Math.PI * 2;
+            const u2 = ((i + 1) / steps) * Math.PI * 2;
+
+            for (let j = 0; j < rings; j++) {
+                const v = (j / rings) * Math.PI * 2;
+                const v2 = ((j + 1) / rings) * Math.PI * 2;
+
+                // Check if front or back
+                const midU = (u + u2) / 2;
+                const isFront = Math.sin(midU) > 0;
+                if ((pass === 0 && isFront) || (pass === 1 && !isFront)) continue;
+
+                // Torus parametric equations with shear
+                function torusPoint(uu, vv) {
+                    const cosU = Math.cos(uu), sinU = Math.sin(uu);
+                    const cosV = Math.cos(vv + shear * uu), sinV = Math.sin(vv + shear * uu);
+                    const x = (R + r * cosV) * cosU;
+                    const y = (R + r * cosV) * sinU;
+                    const z = r * sinV;
+                    // Simple 3D to 2D projection
+                    const tiltX = 0.3;
+                    const projX = x;
+                    const projY = -z * Math.cos(tiltX) + y * Math.sin(tiltX);
+                    return { x: cx + projX, y: cy + projY };
+                }
+
+                const p1 = torusPoint(u, v);
+                const p2 = torusPoint(u2, v);
+                const p3 = torusPoint(u2, v2);
+                const p4 = torusPoint(u, v2);
+
+                // Color based on position
+                const brightness = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(u));
+                const hue = (v / (Math.PI * 2)) * 60 + 250;
+                ctx.fillStyle = `hsla(${hue}, 60%, ${brightness * 40 + 15}%, 0.8)`;
+                ctx.strokeStyle = `hsla(${hue}, 50%, ${brightness * 30 + 20}%, 0.3)`;
+                ctx.lineWidth = 0.5;
+
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.lineTo(p4.x, p4.y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+    }
+
+    // Label
+    ctx.fillStyle = '#8888bb';
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`τ = ${tauRe.toFixed(2)} + ${tauIm.toFixed(2)}i`, cx, cy + size * 0.75);
+}
+
+function torusAnimate() {
+    if (torusAnimHandle) cancelAnimationFrame(torusAnimHandle);
+    let t = 0;
+    function step() {
+        t += 0.02;
+        document.getElementById('torusTauRe').value = (0.5 * Math.sin(t * 0.7)).toFixed(2);
+        document.getElementById('torusTauIm').value = (1.2 + 0.8 * Math.sin(t * 0.5)).toFixed(2);
+        drawTorus();
+        if (t < Math.PI * 8) torusAnimHandle = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// ===================== SECTION 5: DISTANCE =====================
+function drawDist() {
+    const { ctx, w, h } = getCtx('canvasDist');
+    ctx.clearRect(0, 0, w, h);
+
+    const ax = parseFloat(document.getElementById('distAx').value);
+    const ay = parseFloat(document.getElementById('distAy').value);
+    const bx = parseFloat(document.getElementById('distBx').value);
+    const by = parseFloat(document.getElementById('distBy').value);
+
+    // Upper half-plane
+    const planeX = 30, planeY = 40;
+    const planeW = w * 0.45, planeH = h - 80;
+    const scale = planeH / 3;
+
+    function toPixel(re, im) {
+        return {
+            x: planeX + planeW / 2 + re * scale,
+            y: planeY + planeH - im * scale
+        };
+    }
+
+    // Background
+    ctx.fillStyle = '#0e0e28';
+    ctx.fillRect(planeX, planeY, planeW, planeH);
+    ctx.strokeStyle = '#2a2a5a';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(planeX, planeY, planeW, planeH);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(100,100,180,0.15)';
+    ctx.lineWidth = 0.5;
+    for (let re = -1; re <= 1; re += 0.25) {
+        const p = toPixel(re, 0);
+        ctx.beginPath();
+        ctx.moveTo(p.x, planeY);
+        ctx.lineTo(p.x, planeY + planeH);
+        ctx.stroke();
+    }
+    for (let im = 0; im <= 3; im += 0.25) {
+        const p = toPixel(0, im);
+        ctx.beginPath();
+        ctx.moveTo(planeX, p.y);
+        ctx.lineTo(planeX + planeW, p.y);
+        ctx.stroke();
+    }
+
+    // Hyperbolic geodesic between A and B (approximate with line in upper half-plane)
+    const pA = toPixel(ax, ay);
+    const pB = toPixel(bx, by);
+
+    // Draw geodesic (semicircle or vertical line)
+    ctx.strokeStyle = 'rgba(250,200,50,0.5)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+
+    if (Math.abs(ax - bx) < 0.01) {
+        // Vertical geodesic
+        ctx.beginPath();
+        ctx.moveTo(pA.x, pA.y);
+        ctx.lineTo(pB.x, pB.y);
+        ctx.stroke();
+    } else {
+        // Semicircular geodesic
+        // Center of the semicircle on the real axis
+        const midRe = (ax + bx) / 2 + (ay * ay - by * by) / (2 * (bx - ax));
+        // Radius
+        const geoR = Math.sqrt((ax - midRe) * (ax - midRe) + ay * ay);
+        const centerPx = toPixel(midRe, 0);
+        const radiusPx = geoR * scale;
+
+        const angleA = Math.atan2(ay, ax - midRe);
+        const angleB = Math.atan2(by, bx - midRe);
+        const startA = Math.min(angleA, angleB);
+        const endA = Math.max(angleA, angleB);
+
+        ctx.beginPath();
+        ctx.arc(centerPx.x, centerPx.y, radiusPx, -endA, -startA, false);
+        ctx.stroke();
+    }
+    ctx.setLineDash([]);
+
+    // Point A
+    const glowA = ctx.createRadialGradient(pA.x, pA.y, 0, pA.x, pA.y, 18);
+    glowA.addColorStop(0, 'rgba(126,184,255,0.5)');
+    glowA.addColorStop(1, 'rgba(126,184,255,0)');
+    ctx.fillStyle = glowA;
+    ctx.beginPath();
+    ctx.arc(pA.x, pA.y, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#7eb8ff';
+    ctx.beginPath();
+    ctx.arc(pA.x, pA.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#7eb8ff';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('A', pA.x + 10, pA.y - 5);
+
+    // Point B
+    const glowB = ctx.createRadialGradient(pB.x, pB.y, 0, pB.x, pB.y, 18);
+    glowB.addColorStop(0, 'rgba(244,114,182,0.5)');
+    glowB.addColorStop(1, 'rgba(244,114,182,0)');
+    ctx.fillStyle = glowB;
+    ctx.beginPath();
+    ctx.arc(pB.x, pB.y, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#f472b6';
+    ctx.beginPath();
+    ctx.arc(pB.x, pB.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#f472b6';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('B', pB.x + 10, pB.y - 5);
+
+    // Title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 15px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Upper Half-Plane (Hyperbolic Geometry)', planeX + planeW / 2, planeY - 10);
+
+    // Right side: show the two tori
+    const rightX = w * 0.55;
+    const torusSize = Math.min(w * 0.18, 90);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Shape A', rightX + torusSize, 55);
+    draw3DTorusMini(ctx, rightX + torusSize, h * 0.3, ax, ay, torusSize, '#7eb8ff');
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.fillText('Shape B', rightX + torusSize, h * 0.52 + 10);
+    draw3DTorusMini(ctx, rightX + torusSize, h * 0.7, bx, by, torusSize, '#f472b6');
+
+    // Compute Teichmüller distance (hyperbolic distance in upper half-plane)
+    // d_hyp(z1, z2) = arccosh(1 + |z1-z2|^2 / (2 * Im(z1) * Im(z2)))
+    const dx = bx - ax, dy = by - ay;
+    const distSq = dx * dx + dy * dy;
+    const coshD = 1 + distSq / (2 * ay * by);
+    const hypDist = Math.acosh(coshD);
+    const K = Math.exp(hypDist);
+
+    document.getElementById('distResult').innerHTML =
+        `<strong>Teichmüller Distance:</strong> d(A, B) = <span class="math">${hypDist.toFixed(3)}</span><br>` +
+        `<strong>Minimal stretch ratio:</strong> K = e<sup>2d</sup> = <span class="math">${Math.exp(2 * hypDist).toFixed(3)}</span><br>` +
+        `<strong>Meaning:</strong> To deform torus A into torus B, you need at least a ${Math.exp(2 * hypDist).toFixed(2)}:1 stretch ratio.<br>` +
+        `<span style="color:#fbbf24">τ<sub>A</sub> = ${ax.toFixed(2)} + ${ay.toFixed(2)}i, &nbsp; τ<sub>B</sub> = ${bx.toFixed(2)} + ${by.toFixed(2)}i</span>`;
+
+    // Distance arrow between tori
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.moveTo(rightX + torusSize, h * 0.3 + torusSize * 0.5);
+    ctx.lineTo(rightX + torusSize, h * 0.52 + 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`d = ${hypDist.toFixed(2)}`, rightX + torusSize + 45, h * 0.43);
+}
+
+function draw3DTorusMini(ctx, cx, cy, tauRe, tauIm, size, color) {
+    const R = size * 0.55;
+    const r = size * 0.2 * (1 / Math.max(tauIm, 0.4));
+    const shear = tauRe * 0.5;
+    const steps = 24;
+    const rings = 12;
+
+    for (let pass = 0; pass < 2; pass++) {
+        for (let i = 0; i < steps; i++) {
+            const u = (i / steps) * Math.PI * 2;
+            const u2 = ((i + 1) / steps) * Math.PI * 2;
+            for (let j = 0; j < rings; j++) {
+                const v = (j / rings) * Math.PI * 2;
+                const v2 = ((j + 1) / rings) * Math.PI * 2;
+
+                const midU = (u + u2) / 2;
+                const isFront = Math.sin(midU) > 0;
+                if ((pass === 0 && isFront) || (pass === 1 && !isFront)) continue;
+
+                function tp(uu, vv) {
+                    const cosU = Math.cos(uu), sinU = Math.sin(uu);
+                    const cosV = Math.cos(vv + shear * uu), sinV = Math.sin(vv + shear * uu);
+                    const x = (R + r * cosV) * cosU;
+                    const y = (R + r * cosV) * sinU;
+                    const z = r * sinV;
+                    return { x: cx + x, y: cy + (-z * 0.95 + y * 0.3) };
+                }
+
+                const p1 = tp(u, v), p2 = tp(u2, v), p3 = tp(u2, v2), p4 = tp(u, v2);
+                const brightness = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(u));
+
+                // Parse color to get hue
+                let hue = 250;
+                if (color === '#7eb8ff') hue = 215;
+                else if (color === '#f472b6') hue = 330;
+
+                ctx.fillStyle = `hsla(${hue}, 55%, ${brightness * 35 + 15}%, 0.85)`;
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.lineTo(p3.x, p3.y);
+                ctx.lineTo(p4.x, p4.y);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+    }
+}
+
+// ===================== SECTION 6: SUMMARY =====================
+let summaryState = 0;
+function drawSummary() {
+    const { ctx, w, h } = getCtx('canvasSummary');
+    ctx.clearRect(0, 0, w, h);
+
+    const cx = w / 2, cy = h / 2;
+
+    // Background stars
+    ctx.fillStyle = '#0a0a1a';
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < 80; i++) {
+        const sx = (Math.sin(i * 127.1) * 0.5 + 0.5) * w;
+        const sy = (Math.cos(i * 311.7) * 0.5 + 0.5) * h;
+        const sr = 0.5 + Math.random() * 1;
+        ctx.fillStyle = `rgba(200,200,255,${0.1 + Math.random() * 0.3})`;
+        ctx.beginPath();
+        ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    if (summaryState === 0) {
+        // Step 1: Surface
+        drawSummaryTitle(ctx, w, 'Step 1: Start with a Surface');
+        ctx.save();
+        ctx.translate(cx, cy);
+        drawSingleHandle(ctx, 0, 0, 80);
+        ctx.restore();
+        ctx.fillStyle = '#8888bb';
+        ctx.font = '15px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('A torus — genus 1 surface', cx, cy + 110);
+        ctx.fillText('Topologically fixed: one hole, no tearing allowed.', cx, cy + 135);
+    } else if (summaryState === 1) {
+        // Step 2: Different shapes
+        drawSummaryTitle(ctx, w, 'Step 2: Same Topology, Different Shapes');
+        const taus = [
+            { re: 0, im: 1, label: 'Square' },
+            { re: 0.5, im: 0.87, label: 'Hexagonal' },
+            { re: 0.3, im: 1.8, label: 'Tall' },
+            { re: -0.4, im: 0.7, label: 'Sheared' }
+        ];
+        const spacing = w / (taus.length + 1);
+        taus.forEach((t, i) => {
+            const tx = spacing * (i + 1);
+            const ty = cy;
+            const sc = 50;
+            const v1 = { x: sc, y: 0 };
+            const v2 = { x: t.re * sc, y: -t.im * sc };
+            ctx.save();
+            ctx.translate(tx, ty);
+            ctx.fillStyle = `hsla(${260 + i * 30}, 50%, 25%, 0.5)`;
+            ctx.strokeStyle = `hsla(${260 + i * 30}, 70%, 60%, 0.8)`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(v1.x, v1.y);
+            ctx.lineTo(v1.x + v2.x, v1.y + v2.y);
+            ctx.lineTo(v2.x, v2.y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+            ctx.fillStyle = '#c084fc';
+            ctx.font = '13px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(t.label, tx + sc / 2, ty + 80);
+            ctx.fillStyle = '#7eb8ff';
+            ctx.font = '11px monospace';
+            ctx.fillText(`τ = ${t.re} + ${t.im}i`, tx + sc / 2, ty + 98);
+        });
+        ctx.fillStyle = '#8888bb';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('All are tori — but with different conformal structures (angle patterns)', cx, h - 30);
+    } else if (summaryState === 2) {
+        // Step 3: Teichmüller Space
+        drawSummaryTitle(ctx, w, 'Step 3: Teichmüller Space — The Space of All Shapes');
+
+        // Draw upper half-plane
+        const phW = w * 0.6, phH = h * 0.6;
+        const phX = (w - phW) / 2, phY = 70;
+        ctx.fillStyle = 'rgba(20,15,50,0.8)';
+        ctx.fillRect(phX, phY, phW, phH);
+        ctx.strokeStyle = '#4a3a8a';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(phX, phY, phW, phH);
+
+        // Scatter some points
+        const points = [];
+        for (let i = 0; i < 30; i++) {
+            const px = phX + 30 + Math.random() * (phW - 60);
+            const py = phY + 20 + Math.random() * (phH - 40);
+            const hue = 220 + Math.random() * 120;
+            ctx.fillStyle = `hsla(${hue}, 60%, 60%, 0.7)`;
+            ctx.beginPath();
+            ctx.arc(px, py, 3 + Math.random() * 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.fillStyle = '#c084fc';
+        ctx.font = 'bold 16px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Each point = one shape of the torus', cx, phY + phH + 30);
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = '14px Segoe UI';
+        ctx.fillText('This is the upper half-plane ℍ — the Teichmüller space for genus 1', cx, phY + phH + 55);
+    } else if (summaryState === 3) {
+        // Step 4: Distance
+        drawSummaryTitle(ctx, w, 'Step 4: Teichmüller Distance');
+
+        const pAx = cx - 100, pAy = cy - 20;
+        const pBx = cx + 100, pBy = cy + 30;
+
+        // Geodesic arc
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 5]);
+        ctx.beginPath();
+        const cpx = cx, cpy = cy - 80;
+        ctx.moveTo(pAx, pAy);
+        ctx.quadraticCurveTo(cpx, cpy, pBx, pBy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Points
+        ctx.fillStyle = '#7eb8ff';
+        ctx.beginPath();
+        ctx.arc(pAx, pAy, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Shape A', pAx, pAy + 30);
+
+        ctx.fillStyle = '#f472b6';
+        ctx.beginPath();
+        ctx.arc(pBx, pBy, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.fillText('Shape B', pBx, pBy + 30);
+
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 15px Segoe UI';
+        ctx.fillText('d = ½ ln(K)', cx, cy - 90);
+        ctx.fillStyle = '#8888bb';
+        ctx.font = '14px Segoe UI';
+        ctx.fillText('K = minimal quasiconformal dilatation to go from A to B', cx, h - 50);
+        ctx.fillText('The geodesic (shortest path) is a hyperbolic arc', cx, h - 25);
+    } else if (summaryState === 4) {
+        // Full picture
+        drawSummaryTitle(ctx, w, 'The Full Picture');
+
+        const boxW = w * 0.22, boxH = 80;
+        const boxes = [
+            { x: cx - boxW * 2, y: 80, label: 'Surface\n(genus g)', color: '#7eb8ff' },
+            { x: cx - boxW * 0.6, y: 80, label: 'Conformal\nStructures', color: '#8b5cf6' },
+            { x: cx + boxW * 0.8, y: 80, label: 'Teichmüller\nSpace', color: '#c084fc' },
+            { x: cx - boxW * 0.6, y: 220, label: 'Quasiconformal\nMaps', color: '#f472b6' },
+            { x: cx + boxW * 0.8, y: 220, label: 'Teichmüller\nDistance', color: '#fbbf24' },
+            { x: cx + boxW * 0.1, y: 340, label: 'Moduli\nSpace', color: '#4ade80' }
+        ];
+
+        boxes.forEach((b, i) => {
+            ctx.fillStyle = `${b.color}22`;
+            ctx.strokeStyle = b.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(b.x, b.y, boxW, boxH, 10);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = b.color;
+            ctx.font = 'bold 13px Segoe UI';
+            ctx.textAlign = 'center';
+            const lines = b.label.split('\n');
+            lines.forEach((line, li) => {
+                ctx.fillText(line, b.x + boxW / 2, b.y + 30 + li * 20);
+            });
+        });
+
+        // Arrows between boxes
+        function drawConnector(fromIdx, toIdx) {
+            const from = boxes[fromIdx], to = boxes[toIdx];
+            ctx.strokeStyle = 'rgba(200,200,255,0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(from.x + boxW, from.y + boxH / 2);
+            ctx.lineTo(to.x, to.y + boxH / 2);
+            ctx.stroke();
+        }
+        drawConnector(0, 1);
+        drawConnector(1, 2);
+
+        // Vertical arrows
+        ctx.strokeStyle = 'rgba(200,200,255,0.3)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(boxes[1].x + boxW / 2, boxes[1].y + boxH);
+        ctx.lineTo(boxes[3].x + boxW / 2, boxes[3].y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(boxes[2].x + boxW / 2, boxes[2].y + boxH);
+        ctx.lineTo(boxes[4].x + boxW / 2, boxes[4].y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(boxes[2].x + boxW / 2, boxes[4].y + boxH);
+        ctx.lineTo(boxes[5].x + boxW / 2, boxes[5].y);
+        ctx.stroke();
+
+        // Bottom summary
+        ctx.fillStyle = '#e0e0f0';
+        ctx.font = '14px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('Teichmüller theory = the geometry of the space of all geometric structures on a surface', cx, h - 30);
+    }
+}
+
+function drawSummaryTitle(ctx, w, text) {
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 18px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, w / 2, 35);
+}
+
+function summaryStep(idx) {
+    summaryState = idx;
+    drawSummary();
+    const texts = [
+        '<p><span class="step-indicator">1</span> We start with a <strong>topological surface</strong> — defined by its genus (number of holes). The topology is fixed: no cutting or gluing allowed.</p>',
+        '<p><span class="step-indicator">2</span> The same topological surface can carry many different <strong>geometric shapes</strong>. A square torus and a sheared torus are topologically identical but geometrically different — they have different <strong>conformal structures</strong> (different angle patterns).</p>',
+        '<p><span class="step-indicator">3</span> <strong>Teichmüller space</strong> collects ALL possible shapes into one big space. For the torus, this is the upper half-plane ℍ. For genus g ≥ 2, it\'s a (6g−6)-dimensional space. Each point = one shape.</p>',
+        '<p><span class="step-indicator">4</span> The <strong>Teichmüller distance</strong> between two shapes = the log of the minimal stretching needed to deform one into the other. The "best" deformation is always a quasiconformal map. Geodesics in this metric are called <strong>Teichmüller geodesics</strong>.</p>',
+        '<p><span class="step-indicator">5</span> <strong>The full picture:</strong> Start with a surface → enumerate all its conformal structures → organize them into Teichmüller space → measure distances via quasiconformal maps → quotient by symmetries to get Moduli space. This framework connects complex analysis, hyperbolic geometry, dynamics, and algebraic geometry into one beautiful theory.</p>'
+    ];
+    document.getElementById('summaryText').innerHTML = texts[idx];
+}
+
+// ===================== INITIAL DRAWS =====================
+window.addEventListener('load', () => {
+    setTimeout(bigIdeaDraw, 100);
+});
+
+// Polyfill for roundRect if needed
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+    CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        if (typeof r === 'number') r = [r, r, r, r];
+        const [tl, tr, br, bl] = r;
+        this.moveTo(x + tl, y);
+        this.lineTo(x + w - tr, y);
+        this.arcTo(x + w, y, x + w, y + tr, tr);
+        this.lineTo(x + w, y + h - br);
+        this.arcTo(x + w, y + h, x + w - br, y + h, br);
+        this.lineTo(x + bl, y + h);
+        this.arcTo(x, y + h, x, y + h - bl, bl);
+        this.lineTo(x, y + tl);
+        this.arcTo(x, y, x + tl, y, tl);
+        this.closePath();
+        return this;
+    };
+}
+
+// Handle window resize
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        const activeIdx = [...document.querySelectorAll('.section')].findIndex(s => s.classList.contains('active'));
+        const drawFns = [bigIdeaDraw, drawSurfaces, drawStretch, drawModuli, drawTorus, drawDist, drawSummary];
+        if (activeIdx >= 0 && drawFns[activeIdx]) drawFns[activeIdx]();
+    }, 200);
+});
+</script>
+
+</body>
+</html>
