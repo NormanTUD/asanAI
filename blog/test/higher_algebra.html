@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Guide: Higher Algebra & Homotopy Theory</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0a0a1a;
+  color: #e0e0e0;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  font-size: 2.2em;
+  margin: 30px 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+h2 {
+  font-size: 1.5em;
+  margin: 20px 0 10px;
+  color: #667eea;
+  border-bottom: 2px solid #333;
+  padding-bottom: 5px;
+}
+h3 {
+  font-size: 1.2em;
+  color: #a0a0ff;
+  margin: 15px 0 8px;
+}
+.section {
+  background: #12122a;
+  border: 1px solid #2a2a4a;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 25px 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.canvas-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px 0;
+  position: relative;
+}
+canvas {
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #080818;
+  cursor: pointer;
+}
+.explanation {
+  background: #1a1a3a;
+  border-left: 4px solid #667eea;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95em;
+}
+.analogy {
+  background: #1a2a1a;
+  border-left: 4px solid #4aea66;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 0 8px 8px 0;
+}
+.analogy::before {
+  content: "💡 Analogy: ";
+  font-weight: bold;
+  color: #4aea66;
+}
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+  justify-content: center;
+}
+button {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+}
+button.active {
+  background: linear-gradient(135deg, #4aea66, #2a8a46);
+  box-shadow: 0 0 15px rgba(74,234,102,0.3);
+}
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  justify-content: center;
+}
+input[type="range"] {
+  width: 200px;
+  accent-color: #667eea;
+}
+.label {
+  font-size: 0.85em;
+  color: #aaa;
+}
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10,10,26,0.95);
+  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  z-index: 1000;
+  border-bottom: 1px solid #333;
+}
+.nav a {
+  color: #667eea;
+  text-decoration: none;
+  font-size: 0.85em;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: 15px;
+  transition: background 0.2s;
+}
+.nav a:hover {
+  background: #1a1a3a;
+}
+.spacer { height: 60px; }
+.tower {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.tower-level {
+  padding: 8px 20px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.9em;
+  transition: all 0.3s;
+  cursor: pointer;
+  min-width: 200px;
+}
+.tower-level:hover {
+  transform: scale(1.05);
+}
+.arrow-down {
+  color: #667eea;
+  font-size: 1.5em;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin: 15px 0;
+}
+.card {
+  background: #1a1a3a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: #667eea;
+}
+.card h4 {
+  color: #667eea;
+  margin-bottom: 8px;
+}
+.tooltip {
+  position: absolute;
+  background: #2a2a4a;
+  border: 1px solid #667eea;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  pointer-events: none;
+  z-index: 100;
+  max-width: 250px;
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#sec-overview">Overview</a>
+  <a href="#sec-monoid">Monoids</a>
+  <a href="#sec-monoidal">Monoidal Categories</a>
+  <a href="#sec-spectra">Spectra</a>
+  <a href="#sec-smash">Smash Product</a>
+  <a href="#sec-einfinity">E∞-Rings</a>
+  <a href="#sec-model">Model Categories</a>
+  <a href="#sec-coherence">Coherence</a>
+  <a href="#sec-hierarchy">Big Picture</a>
+</nav>
+
+<div class="spacer"></div>
+
+<div class="container">
+<h1>Higher Algebra: A Visual Guide</h1>
+
+<p style="text-align:center; color:#aaa; margin-bottom:30px;">
+  Click, drag, and interact with the diagrams below. Each concept builds on the previous ones.
+</p>
+
+<!-- SECTION 1: OVERVIEW -->
+<div class="section" id="sec-overview">
+<h2>1. The Big Idea: What is Higher Algebra?</h2>
+
+<div class="explanation">
+  <strong>Ordinary algebra</strong> studies structures like numbers, polynomials, and matrices where you can add and multiply things. The rules (like a·b = b·a for commutativity) hold <em>exactly</em>.<br><br>
+  <strong>Higher algebra</strong> studies the same kinds of structures, but in a world where equations only hold <em>up to a continuous deformation</em> (a "homotopy"). Instead of saying a·b = b·a, we say "there exists a path from a·b to b·a" — and these paths themselves must be compatible in coherent ways.
+</div>
+
+<div class="analogy">
+  Think of tying knots. In ordinary algebra, two expressions are either equal or not. In higher algebra, two expressions are "the same" if you can continuously deform one into the other — like untangling a rope without cutting it. The record of HOW you deformed it matters too!
+</div>
+
+<div class="canvas-container">
+  <canvas id="overviewCanvas" width="700" height="300"></canvas>
+</div>
+<div class="controls">
+  <button onclick="overviewAnimate('equality')">Strict Equality (=)</button>
+  <button onclick="overviewAnimate('homotopy')">Up to Homotopy (≃)</button>
+  <button onclick="overviewAnimate('coherent')">Coherent Homotopies</button>
+</div>
+</div>
+
+<!-- SECTION 2: MONOIDS -->
+<div class="section" id="sec-monoid">
+<h2>2. Monoids: The Simplest Algebraic Structure</h2>
+
+<div class="explanation">
+  A <strong>monoid</strong> is a set with a binary operation that is associative and has a unit element. Examples: (ℕ, +, 0) or (ℕ, ×, 1).<br><br>
+  A <strong>commutative monoid</strong> additionally satisfies a·b = b·a.
+</div>
+
+<div class="canvas-container">
+  <canvas id="monoidCanvas" width="700" height="350"></canvas>
+</div>
+<div class="controls">
+  <button onclick="monoidDemo('associativity')">Associativity</button>
+  <button onclick="monoidDemo('unit')">Unit Element</button>
+  <button onclick="monoidDemo('commutativity')">Commutativity</button>
+  <button onclick="monoidDemo('internal')">Monoid in a Category</button>
+</div>
+
+<div class="explanation" id="monoidExplanation">
+  Click a button above to see the property visualized.
+</div>
+
+<div class="analogy">
+  A ring (like the integers ℤ) is just a monoid for multiplication that lives inside the world of abelian groups (which handles the addition). This is the key insight: a ring = monoid in (Ab, ⊗).
+</div>
+</div>
+
+<!-- SECTION 3: MONOIDAL CATEGORIES -->
+<div class="section" id="sec-monoidal">
+<h2>3. Monoidal Categories: Where Monoids Live</h2>
+
+<div class="explanation">
+  A <strong>monoidal category</strong> is a category (a collection of objects and arrows between them) equipped with a "tensor product" ⊗ that lets you combine objects, plus a unit object 𝟙. The key: associativity and unitality hold only up to <em>isomorphism</em>, not equality — but these isomorphisms must satisfy "coherence conditions" (pentagon and triangle identities).
+</div>
+
+<div class="canvas-container">
+  <canvas id="monoidalCanvas" width="700" height="400"></canvas>
+</div>
+<div class="controls">
+  <button onclick="monoidalDemo('tensor')">Tensor Product ⊗</button>
+  <button onclick="monoidalDemo('pentagon')">Pentagon Identity</button>
+  <button onclick="monoidalDemo('braiding')">Braiding (Symmetric)</button>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Sets × (Cartesian)</h4>
+    <p>Objects: sets. Tensor: A×B. Unit: {*}. A monoid here = ordinary monoid.</p>
+  </div>
+  <div class="card">
+    <h4>Ab ⊗ (Tensor)</h4>
+    <p>Objects: abelian groups. Tensor: A⊗B. Unit: ℤ. A monoid here = ring.</p>
+  </div>
+  <div class="card">
+    <h4>Top∗ ∧ (Smash)</h4>
+    <p>Objects: pointed spaces. Tensor: X∧Y. Unit: S⁰. A monoid here = ring up to homotopy.</p>
+  </div>
+  <div class="card">
+    <h4>Spectra ∧ (Smash)</h4>
+    <p>Objects: spectra. Tensor: X∧Y. Unit: 𝕊. A monoid here = ring spectrum.</p>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 4: SPECTRA -->
+<div class="section" id="sec-spectra">
+<h2>4. Spectra: Stabilized Spaces</h2>
+
+<div class="explanation">
+  A <strong>spectrum</strong> is a sequence of pointed topological spaces (X₀, X₁, X₂, ...) connected by "structure maps" σₙ: S¹∧Xₙ → Xₙ₊₁. Think of it as a space that has been "stabilized" — all the unstable phenomena have been washed away, leaving only the stable homotopy information.<br><br>
+  Spectra are to stable homotopy theory what abelian groups are to homological algebra.
+</div>
+
+<div class="canvas-container">
+  <canvas id="spectraCanvas" width="700" height="350"></canvas>
+</div>
+<div class="controls">
+  <button onclick="spectraDemo('sequential')">Sequential Spectrum</button>
+  <button onclick="spectraDemo('suspension')">Suspension (S¹∧−)</button>
+  <button onclick="spectraDemo('symmetric')">Symmetric Spectrum</button>
+  <button onclick="spectraDemo('sphere')">Sphere Spectrum 𝕊</button>
+</div>
+
+<div class="analogy">
+  Imagine a movie (sequence of frames). Each frame Xₙ is a topological space. The structure map is like a "zoom in" operation — it takes the previous frame, wraps it with a circle (S¹∧−), and maps it into the next frame. A spectrum is the entire movie, capturing information that stabilizes as you keep zooming.
+</div>
+</div>
+
+<!-- SECTION 5: SMASH PRODUCT -->
+<div class="section" id="sec-smash">
+<h2>5. Smash Product of Spectra: Multiplication for Spectra</h2>
+
+<div class="explanation">
+  The <strong>smash product</strong> X∧Y of two spectra is the "tensor product" in the world of spectra. It's the operation that lets you do algebra with spectra. Making this product strictly associative and commutative (not just up to homotopy) was a major achievement — it required moving from plain sequential spectra to "highly structured" spectra (symmetric spectra, orthogonal spectra, or S-modules).<br><br>
+  The key technique is <strong>Day convolution</strong>: if you have a monoidal category 𝒞, then functors from 𝒞 to spaces inherit a tensor product by "convolving" over 𝒞.
+</div>
+
+<div class="canvas-container">
+  <canvas id="smashCanvas" width="700" height="350"></canvas>
+</div>
+<div class="controls">
+  <button onclick="smashDemo('smash')">Smash of Spaces X∧Y</button>
+  <button onclick="smashDemo('day')">Day Convolution</button>
+  <button onclick="smashDemo('symmetric')">Why Symmetric Spectra?</button>
+</div>
+
+<div class="explanation">
+  <strong>Day Convolution Formula:</strong><br>
+  (X ⊗<sub>Day</sub> Y)(c) = ∫<sup>c₁,c₂</sup> 𝒞(c₁⊗c₂, c) ∧ X(c₁) ∧ Y(c₂)<br><br>
+  This "integral" (coend) sums over all ways to decompose c into a tensor product c₁⊗c₂, weighted by the values of X and Y.
+</div>
+</div>
+
+<!-- SECTION 6: E-INFINITY RINGS -->
+<div class="section" id="sec-einfinity">
+<h2>6. E∞-Rings: Commutative Rings Up to All Higher Homotopies</h2>
+
+<div class="explanation">
+  An <strong>E∞-ring</strong> is a commutative monoid in the (∞,1)-category of spectra. It's the homotopy-theoretic generalization of a commutative ring.<br><br>
+  "E∞" stands for "everything commutes, up to all coherent higher homotopies." The "E" refers to the little cubes operad E<sub>n</sub> and ∞ means we take n→∞.<br><br>
+  Concretely: in a model with symmetric monoidal smash product, an E∞-ring is just an ordinary commutative monoid object — the model category machinery handles all the homotopy coherence for free!
+</div>
+
+<div class="canvas-container">
+  <canvas id="einfCanvas" width="700" height="400"></canvas>
+</div>
+<div class="controls">
+  <button onclick="einfDemo('levels')">Levels of Commutativity</button>
+  <button onclick="einfDemo('operad')">E_n Operads</button>
+  <button onclick="einfDemo('sphere')">Sphere Spectrum as E∞-Ring</button>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>A∞-ring (E₁)</h4>
+    <p>Associative up to coherent homotopies. Like a non-commutative ring, but flexible.</p>
+  </div>
+  <div class="card">
+    <h4>E₂-ring</h4>
+    <p>Commutative up to homotopy, with one level of coherence for the commutativity homotopies.</p>
+  </div>
+  <div class="card">
+    <h4>E∞-ring</h4>
+    <p>Commutative up to ALL higher coherent homotopies. The "fully commutative" case.</p>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 7: MODEL CATEGORIES -->
+<div class="section" id="sec-model">
+<h2>7. Model Categories: Doing Homotopy Theory Concretely</h2>
+
+<div class="explanation">
+  A <strong>model category</strong> is a category equipped with three classes of morphisms — <em>weak equivalences</em> (W), <em>fibrations</em> (Fib), and <em>cofibrations</em> (Cof) — satisfying axioms that let you do homotopy theory concretely. They form the "workshop" where you can compute with homotopical objects using 1-categorical tools.<br><br>
+  The key axiom: (Cof, Fib∩W) and (Cof∩W, Fib) are <em>weak factorization systems</em> — meaning any morphism can be factored through them, and they satisfy lifting properties.
+</div>
+
+<div class="canvas-container">
+  <canvas id="modelCanvas" width="700" height="400"></canvas>
+</div>
+<div class="controls">
+  <button onclick="modelDemo('classes')">Three Classes</button>
+  <button onclick="modelDemo('factorization')">Factorization</button>
+  <button onclick="modelDemo('lifting')">Lifting Property</button>
+  <button onclick="modelDemo('fibcof')">Fibrant & Cofibrant</button>
+</div>
+
+<div class="analogy">
+  Think of a model category as a "workshop manual" for building things up to deformation. Cofibrations are like building up (adding cells), fibrations are like projecting down (nice surjections), and weak equivalences are the "same up to wiggling" maps. The factorization axiom says: any construction can be broken into a "build up" step followed by a "project down" step.
+</div>
+</div>
+
+<!-- SECTION 8: COHERENCE -->
+<div class="section" id="sec-coherence">
+<h2>8. Coherence: Why Higher Homotopies Must Agree</h2>
+
+<div class="explanation">
+  When associativity holds only up to homotopy, you get an "associator" — a path from (a·b)·c to a·(b·c). But then for four elements, there are multiple paths from ((a·b)·c)·d to a·(b·(c·d)), and these must all be connected by a <em>2-homotopy</em>. This is the <strong>pentagon identity</strong>.<br><br>
+  <strong>Coherence</strong> means: the space of all possible ways to re-bracket (or re-order) is <em>contractible</em> — there's essentially only one way, even though it looks like there are many choices.
+</div>
+
+<div class="canvas-container">
+  <canvas id="coherenceCanvas" width="700" height="400"></canvas>
+</div>
+<div class="controls">
+  <button onclick="coherenceDemo('pentagon')">Pentagon (Associativity)</button>
+  <button onclick="coherenceDemo('contractible')">Contractible Space</button>
+  <button onclick="coherenceDemo('levels')">Homotopies of Homotopies</button>
+</div>
+
+<div class="analogy">
+  Imagine you're in a room with many doors leading to the same destination. Coherence says: not only can you reach the destination through any door, but the room itself can be shrunk to a point — all paths through it are equivalent. There's no "interesting topology" in the space of choices.
+</div>
+</div>
+
+<!-- SECTION 9: HIERARCHY -->
+<div class="section" id="sec-hierarchy">
+<h2>9. The Complete Picture: How Everything Connects</h2>
+
+<div class="tower">
+  <div class="tower-level" style="background:#4a1a6a; border:2px solid #9a4aea;">
+    <strong>∞-Categories</strong><br><small>The universe where everything lives</small>
+  </div>
+  <div class="arrow-down">↕</div>
+  <div class="tower-level" style="background:#1a3a6a; border:2px solid #4a9aea;">
+    <strong>Stable (∞,1)-Category of Spectra</strong><br><small>Where "stable" homotopy theory happens</small>
+  </div>
+  <div class="arrow-down">↕</div>
+  <div class="tower-level" style="background:#1a5a3a; border:2px solid #4aea8a;">
+    <strong>E∞-Rings = Commutative Monoids in Spectra</strong><br><small>Higher commutative algebra</small>
+  </div>
+  <div class="arrow-down">↕ presented by</div>
+  <div class="tower-level" style="background:#4a3a1a; border:2px solid #eaaa4a;">
+    <strong>Model Categories (Symmetric/Orthogonal Spectra)</strong><br><small>Concrete computational tools</small>
+  </div>
+  <div class="arrow-down">↕ generalizes</div>
+  <div class="tower-level" style="background:#3a1a1a; border:2px solid #ea4a4a;">
+    <strong>Ordinary Commutative Rings</strong><br><small>Classical algebra (ℤ, ℚ, ℝ, ...)</small>
+  </div>
+</div>
+
+<div class="canvas-container" style="margin-top:30px;">
+  <canvas id="hierarchyCanvas" width="700" height="400"></canvas>
+</div>
+<div class="controls">
+  <button onclick="hierarchyDemo('analogy')">Ring ↔ Ring Spectrum</button>
+  <button onclick="hierarchyDemo('examples')">Key Examples</button>
+  <button onclick="hierarchyDemo('flow')">Information Flow</button>
+</div>
+</div>
+
+</div><!-- end container -->
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ============ UTILITY FUNCTIONS ============
+function getCtx(id) {
+  return document.getElementById(id).getContext('2d');
+}
+
+function clearCanvas(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  return ctx;
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color='#667eea', width=2) {
+  const headLen = 10;
+  const angle = Math.atan2(y2-y1, x2-x1);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen*Math.cos(angle-Math.PI/6), y2 - headLen*Math.sin(angle-Math.PI/6));
+  ctx.lineTo(x2 - headLen*Math.cos(angle+Math.PI/6), y2 - headLen*Math.sin(angle+Math.PI/6));
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawCurvedArrow(ctx, x1, y1, x2, y2, curve, color='#667eea', width=2) {
+  const mx = (x1+x2)/2 + curve;
+  const my = (y1+y2)/2 + curve;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.quadraticCurveTo(mx, my, x2, y2);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+  // arrowhead
+  const t = 0.95;
+  const px = (1-t)*(1-t)*x1 + 2*(1-t)*t*mx + t*t*x2;
+  const py = (1-t)*(1-t)*y1 + 2*(1-t)*t*my + t*t*y2;
+  const angle = Math.atan2(y2-py, x2-px);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 8*Math.cos(angle-Math.PI/6), y2 - 8*Math.sin(angle-Math.PI/6));
+  ctx.lineTo(x2 - 8*Math.cos(angle+Math.PI/6), y2 - 8*Math.sin(angle+Math.PI/6));
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawBlob(ctx, x, y, r, color, label, labelColor='#fff') {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = labelColor;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  if (label) {
+    ctx.fillStyle = labelColor;
+    ctx.font = '13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, y);
+  }
+}
+
+function drawBox(ctx, x, y, w, h, color, label, textColor='#fff') {
+  ctx.fillStyle = color;
+  ctx.strokeStyle = '#555';
+  ctx.lineWidth = 1;
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeRect(x, y, w, h);
+  if (label) {
+    ctx.fillStyle = textColor;
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x+w/2, y+h/2);
+  }
+}
+
+function drawText(ctx, text, x, y, color='#ccc', size=13, align='center') {
+  ctx.fillStyle = color;
+  ctx.font = size+'px Segoe UI';
+  ctx.textAlign = align;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+}
+
+// ============ SECTION 1: OVERVIEW ============
+let overviewAnim = null;
+function overviewAnimate(mode) {
+  if (overviewAnim) cancelAnimationFrame(overviewAnim);
+  const ctx = clearCanvas('overviewCanvas');
+  const canvas = document.getElementById('overviewCanvas');
+  let t = 0;
+  
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    t += 0.02;
+    
+    if (mode === 'equality') {
+      // Two expressions that are strictly equal
+      drawText(ctx, 'a · (b · c)', 200, 100, '#4aea66', 22);
+      drawText(ctx, '=', 350, 100, '#fff', 28);
+      drawText(ctx, '(a · b) · c', 500, 100, '#4aea66', 22);
+      drawText(ctx, 'Strict equality: one single truth.', 350, 180, '#aaa', 14);
+      drawText(ctx, 'No wiggle room. No paths. Just equal.', 350, 210, '#888', 12);
+      
+      // Static dots
+      drawBlob(ctx, 250, 260, 8, '#4aea66', '');
+      drawBlob(ctx, 450, 260, 8, '#4aea66', '');
+      drawText(ctx, '• These are the SAME point •', 350, 260, '#4aea66', 12);
+      
+    } else if (mode === 'homotopy') {
+      // Two expressions connected by a path
+      const x1 = 180, x2 = 520, y = 150;
+      drawText(ctx, 'a · (b · c)', x1, 80, '#667eea', 18);
+      drawText(ctx, '(a · b) · c', x2, 80, '#667eea', 18);
+      
+      drawBlob(ctx, x1, y, 10, '#667eea', '');
+      drawBlob(ctx, x2, y, 10, '#667eea', '');
+      
+      // Animated path between them
+      const pathY = y + 30*Math.sin(t*2);
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.quadraticCurveTo(350, y + 50 + 20*Math.sin(t), x2, y);
+      ctx.strokeStyle = '#ea4a66';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([5, 5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Moving point on path
+      const pathT = (Math.sin(t) + 1) / 2;
+      const px = x1 + (x2 - x1) * pathT;
+      const py = y + (50 + 20*Math.sin(t)) * Math.sin(Math.PI * pathT);
+      drawBlob(ctx, px, py, 6, '#ea4a66', '');
+      
+      drawText(ctx, '≃', 350, 80, '#ea4a66', 28);
+      drawText(ctx, '"There exists a PATH between them"', 350, 240, '#aaa', 14);
+      drawText(ctx, 'The path itself is data — it records HOW they are equivalent.', 350, 270, '#888', 12);
+      
+    } else if (mode === 'coherent') {
+      // Multiple paths with homotopies between them
+      const x1 = 150, x2 = 550, y = 120;
+      drawText(ctx, '((a·b)·c)·d', x1 - 20, 50, '#667eea', 14);
+      drawText(ctx, 'a·(b·(c·d))', x2 + 20, 50, '#667eea', 14);
+      
+      drawBlob(ctx, x1, y, 8, '#667eea', '');
+      drawBlob(ctx, x2, y, 8, '#667eea', '');
+      
+      // Path 1 (top)
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.quadraticCurveTo(350, y - 60, x2, y);
+      ctx.strokeStyle = '#ea4a66';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      drawText(ctx, 'path α', 350, y - 55, '#ea4a66', 11);
+      
+      // Path 2 (bottom)
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.quadraticCurveTo(350, y + 60, x2, y);
+      ctx.strokeStyle = '#4aea66';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      drawText(ctx, 'path β', 350, y + 65, '#4aea66', 11);
+      
+      // Homotopy between paths (animated)
+      const homotopyY = 15 * Math.sin(t * 2);
+      ctx.beginPath();
+      ctx.moveTo(250, y - 30 + homotopyY);
+      ctx.lineTo(250, y + 30 + homotopyY);
+      ctx.strokeStyle = '#eaaa4a';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([3, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      drawArrow(ctx, 280, y - 20, 280, y + 15, '#eaaa4a', 1.5);
+      drawText(ctx, 'homotopy', 310, y, '#eaaa4a', 11);
+      drawText(ctx, 'H: α ≃ β', 310, y + 15, '#eaaa4a', 11);
+      
+      drawText(ctx, 'Coherence: ALL paths between the same endpoints', 350, 220, '#fff', 14);
+      drawText(ctx, 'are connected by homotopies, which are connected by higher homotopies...', 350, 245, '#aaa', 12);
+      drawText(ctx, 'The space of all such choices is CONTRACTIBLE.', 350, 275, '#4aea66', 13);
+    }
+    
+    overviewAnim = requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// ============ SECTION 2: MONOIDS ============
+function monoidDemo(mode) {
+  const ctx = clearCanvas('monoidCanvas');
+  const el = document.getElementById('monoidExplanation');
+  
+  if (mode === 'associativity') {
+    // (a·b)·c = a·(b·c)
+    drawText(ctx, 'Associativity: (a · b) · c = a · (b · c)', 350, 30, '#fff', 18);
+    
+    // Left side: (a·b)·c
+    drawBlob(ctx, 100, 120, 25, '#334', 'a', '#667eea');
+    drawBlob(ctx, 180, 120, 25, '#334', 'b', '#667eea');
+    drawBlob(ctx, 260, 120, 25, '#334', 'c', '#667eea');
+    
+    // Bracket (a·b) first
+    ctx.beginPath();
+    ctx.arc(140, 120, 55, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ea4a66';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    drawText(ctx, 'first', 140, 80, '#ea4a66', 11);
+    
+    drawText(ctx, '=', 350, 120, '#fff', 28);
+    
+    // Right side: a·(b·c)
+    drawBlob(ctx, 440, 120, 25, '#334', 'a', '#667eea');
+    drawBlob(ctx, 520, 120, 25, '#334', 'b', '#667eea');
+    drawBlob(ctx, 600, 120, 25, '#334', 'c', '#667eea');
+    
+    // Bracket (b·c) first
+    ctx.beginPath();
+    ctx.arc(560, 120, 55, 0, Math.PI * 2);
+    ctx.strokeStyle = '#4aea66';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    drawText(ctx, 'first', 560, 80, '#4aea66', 11);
+    
+    drawText(ctx, 'The ORDER of combining doesn\'t matter.', 350, 200, '#aaa', 14);
+    drawText(ctx, 'Example: (2+3)+4 = 2+(3+4) = 9', 350, 230, '#888', 13);
+    
+    // Tree diagrams
+    drawText(ctx, 'Tree view:', 350, 270, '#fff', 14);
+    // Left tree
+    drawBlob(ctx, 150, 320, 12, '#ea4a66', '·');
+    drawBlob(ctx, 110, 290, 12, '#ea4a66', '·');
+    ctx.beginPath(); ctx.moveTo(110, 302); ctx.lineTo(150, 308); ctx.strokeStyle='#555'; ctx.lineWidth=1; ctx.stroke();
+    drawBlob(ctx, 80, 260, 10, '#334', 'a', '#aaa');
+    drawBlob(ctx, 140, 260, 10, '#334', 'b', '#aaa');
+    drawBlob(ctx, 190, 290, 10, '#334', 'c', '#aaa');
+    ctx.beginPath(); ctx.moveTo(80, 270); ctx.lineTo(110, 278); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(140, 270); ctx.lineTo(110, 278); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(190, 300); ctx.lineTo(150, 308); ctx.stroke();
+    
+    drawText(ctx, '=', 350, 300, '#fff', 22);
+    
+    // Right tree
+    drawBlob(ctx, 500, 320, 12, '#4aea66', '·');
+    drawBlob(ctx, 540, 290, 12, '#4aea66', '·');
+    ctx.beginPath(); ctx.moveTo(540, 302); ctx.lineTo(500, 308); ctx.strokeStyle='#555'; ctx.lineWidth=1; ctx.stroke();
+    drawBlob(ctx, 460, 290, 10, '#334', 'a', '#aaa');
+    drawBlob(ctx, 510, 260, 10, '#334', 'b', '#aaa');
+    drawBlob(ctx, 570, 260, 10, '#334', 'c', '#aaa');
+    ctx.beginPath(); ctx.moveTo(460, 300); ctx.lineTo(500, 308); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(510, 270); ctx.lineTo(540, 278); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(570, 270); ctx.lineTo(540, 278); ctx.stroke();
+    
+    el.innerHTML = '<strong>Associativity</strong> says the grouping doesn\'t matter. In a monoid, (a·b)·c = a·(b·c) always. This means we can write a·b·c without ambiguity.';
+    
+  } else if (mode === 'unit') {
+    drawText(ctx, 'Unit Element: e · a = a = a · e', 350, 30, '#fff', 18);
+    
+    // Visual: e is "invisible" in multiplication
+    drawBlob(ctx, 150, 130, 30, '#1a3a1a', 'e', '#4aea66');
+    drawText(ctx, '·', 210, 130, '#fff', 22);
+    drawBlob(ctx, 270, 130, 30, '#334', 'a', '#667eea');
+    drawText(ctx, '=', 340, 130, '#fff', 22);
+    drawBlob(ctx, 410, 130, 30, '#334', 'a', '#667eea');
+    
+    drawBlob(ctx, 150, 220, 30, '#334', 'a', '#667eea');
+    drawText(ctx, '·', 210, 220, '#fff', 22);
+    drawBlob(ctx, 270, 220, 30, '#1a3a1a', 'e', '#4aea66');
+    drawText(ctx, '=', 340, 220, '#fff', 22);
+    drawBlob(ctx, 410, 220, 30, '#334', 'a', '#667eea');
+    
+    drawText(ctx, 'The unit element is "transparent" — multiplying by it changes nothing.', 350, 300, '#aaa', 13);
+    drawText(ctx, 'Examples: 0 for addition, 1 for multiplication, empty string for concatenation', 350, 325, '#888', 12);
+    
+    el.innerHTML = '<strong>Unit element</strong> (also called identity element): an element e such that e·a = a·e = a for all a. It\'s the "do nothing" element.';
+    
+  } else if (mode === 'commutativity') {
+    drawText(ctx, 'Commutativity: a · b = b · a', 350, 30, '#fff', 18);
+    
+    // Animated swap
+    drawBlob(ctx, 150, 130, 30, '#2a2a6a', 'a', '#667eea');
+    drawText(ctx, '·', 220, 130, '#fff', 22);
+    drawBlob(ctx, 290, 130, 30, '#4a2a2a', 'b', '#ea4a66');
+    
+    drawText(ctx, '=', 350, 130, '#fff', 28);
+    
+    drawBlob(ctx, 420, 130, 30, '#4a2a2a', 'b', '#ea4a66');
+    drawText(ctx, '·', 490, 130, '#fff', 22);
+    drawBlob(ctx, 560, 130, 30, '#2a2a6a', 'a', '#667eea');
+    
+    // Swap arrow
+    drawCurvedArrow(ctx, 200, 180, 500, 180, 40, '#eaaa4a', 2);
+    drawText(ctx, 'swap!', 350, 230, '#eaaa4a', 14);
+    
+    drawText(ctx, 'Commutative: 3×5 = 5×3 = 15  ✓', 350, 280, '#4aea66', 13);
+    drawText(ctx, 'Non-commutative: matrix A×B ≠ B×A in general  ✗', 350, 310, '#ea4a66', 13);
+    
+    el.innerHTML = '<strong>Commutativity</strong> means the order doesn\'t matter. A <em>commutative</em> monoid satisfies a·b = b·a. Not all monoids are commutative! Matrix multiplication, for instance, is not.';
+    
+  } else if (mode === 'internal') {
+    drawText(ctx, 'Monoid in a Category: The Key Abstraction', 350, 25, '#fff', 16);
+    
+    // Show different categories and what monoids in them are
+    const items = [
+      { cat: 'Sets ×', monoid: 'Ordinary Monoid', y: 80, color: '#667eea' },
+      { cat: 'Ab ⊗ℤ', monoid: 'Ring', y: 130, color: '#ea4a66' },
+      { cat: 'Vect ⊗', monoid: 'Algebra', y: 180, color: '#4aea66' },
+      { cat: 'Ch(Ab) ⊗', monoid: 'DG-Algebra', y: 230, color: '#eaaa4a' },
+      { cat: 'Spectra ∧', monoid: 'Ring Spectrum', y: 280, color: '#aa4aea' },
+    ];
+    
+    drawText(ctx, 'Category (with ⊗)', 200, 55, '#aaa', 13);
+    drawText(ctx, 'Monoid in it =', 450, 55, '#aaa', 13);
+    
+    items.forEach(item => {
+      drawBox(ctx, 80, item.y - 15, 220, 30, '#1a1a3a', item.cat, item.color);
+      drawText(ctx, '→', 320, item.y, '#555', 18);
+      drawBox(ctx, 350, item.y - 15, 250, 30, '#1a1a3a', item.monoid, item.color);
+    });
+    
+    drawText(ctx, '"A ring is just a monoid in (Ab, ⊗ℤ, ℤ)"', 350, 330, '#ea4a66', 14);
+    
+    el.innerHTML = '<strong>Monoid in a category</strong>: The same pattern (object + associative multiplication + unit) can be defined in ANY monoidal category. Different ambient categories give different algebraic structures. This is the central insight that higher algebra generalizes.';
+  }
+}
+
+// ============ SECTION 3: MONOIDAL CATEGORIES ============
+function monoidalDemo(mode) {
+  const ctx = clearCanvas('monoidalCanvas');
+  
+  if (mode === 'tensor') {
+    drawText(ctx, 'Tensor Product ⊗ in a Monoidal Category', 350, 25, '#fff', 16);
+    
+    // Show objects being combined
+    drawBlob(ctx, 150, 120, 35, '#2a2a6a', 'A', '#667eea');
+    drawText(ctx, '⊗', 230, 120, '#fff', 24);
+    drawBlob(ctx, 310, 120, 35, '#4a2a2a', 'B', '#ea4a66');
+    drawText(ctx, '=', 390, 120, '#fff', 24);
+    drawBlob(ctx, 490, 120, 45, '#3a2a4a', 'A⊗B', '#aa4aea');
+    
+    // Unit object
+    drawText(ctx, 'Unit object 𝟙:', 120, 200, '#aaa', 14);
+    drawBlob(ctx, 250, 200, 25, '#1a3a1a', '𝟙', '#4aea66');
+    drawText(ctx, '⊗ A ≅ A ≅ A ⊗', 370, 200, '#aaa', 14);
+    drawBlob(ctx, 510, 200, 25, '#1a3a1a', '𝟙', '#4aea66');
+    
+    // Key point
+    drawText(ctx, 'Key: ⊗ is like multiplication for objects in a category.', 350, 270, '#fff', 14);
+    drawText(ctx, 'In Sets: ⊗ = ×  (Cartesian product),  𝟙 = {*}', 350, 300, '#aaa', 12);
+    drawText(ctx, 'In Ab:   ⊗ = ⊗ℤ (tensor product),    𝟙 = ℤ', 350, 320, '#aaa', 12);
+    drawText(ctx, 'In Top*: ⊗ = ∧  (smash product),     𝟙 = S⁰', 350, 340, '#aaa', 12);
+    drawText(ctx, 'In Sp:   ⊗ = ∧  (smash product),     𝟙 = 𝕊', 350, 360, '#aaa', 12);
+    
+  } else if (mode === 'pentagon') {
+    drawText(ctx, 'Pentagon Identity: Coherence for Associativity', 350, 25, '#fff', 16);
+    
+    // Pentagon vertices
+    const cx = 350, cy = 220, r = 140;
+    const angles = [-Math.PI/2, -Math.PI/2 + 2*Math.PI/5, -Math.PI/2 + 4*Math.PI/5, 
+                     -Math.PI/2 + 6*Math.PI/5, -Math.PI/2 + 8*Math.PI/5];
+    const labels = [
+      '((AB)C)D',
+      '(A(BC))D', 
+      'A((BC)D)',
+      'A(B(CD))',
+      '(AB)(CD)'
+    ];
+    const pts = angles.map(a => ({x: cx + r * Math.cos(a), y: cy + r * Math.sin(a)}));
+    
+    // Draw edges
+    for (let i = 0; i < 5; i++) {
+      const j = (i + 1) % 5;
+      drawArrow(ctx, pts[i].x, pts[i].y, pts[j].x, pts[j].y, '#667eea', 2);
+    }
+    
+    // Draw vertices
+    pts.forEach((p, i) => {
+      drawBlob(ctx, p.x, p.y, 6, '#667eea', '');
+      drawText(ctx, labels[i], p.x, p.y - 15, '#ccc', 11);
+    });
+    
+    // Label edges
+    drawText(ctx, 'α', (pts[0].x+pts[1].x)/2 - 20, (pts[0].y+pts[1].y)/2, '#ea4a66', 12);
+    drawText(ctx, 'α', (pts[1].x+pts[2].x)/2 - 20, (pts[1].y+pts[2].y)/2, '#ea4a66', 12);
+    drawText(ctx, 'α', (pts[2].x+pts[3].x)/2, (pts[2].y+pts[3].y)/2 + 15, '#ea4a66', 12);
+    drawText(ctx, 'α', (pts[3].x+pts[4].x)/2 + 15, (pts[3].y+pts[4].y)/2, '#ea4a66', 12);
+    drawText(ctx, 'α⊗1', (pts[4].x+pts[0].x)/2 + 20, (pts[4].y+pts[0].y)/2, '#4aea66', 12);
+    
+    drawText(ctx, 'This pentagon must COMMUTE: going around either way gives the same result.', 350, 385, '#aaa', 12);
+    
+  } else if (mode === 'braiding') {
+    drawText(ctx, 'Braiding: A⊗B ≅ B⊗A (Symmetric Monoidal)', 350, 25, '#fff', 16);
+    
+    // Draw crossing strands
+    const x1 = 200, x2 = 500;
+    
+    // Strand A
+    ctx.beginPath();
+    ctx.moveTo(x1, 80);
+    ctx.bezierCurveTo(x1, 150, x2, 150, x2, 220);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    drawText(ctx, 'A', x1, 70, '#667eea', 16);
+    drawText(ctx, 'A', x2, 235, '#667eea', 16);
+    
+    // Strand B (goes behind)
+    ctx.beginPath();
+    ctx.moveTo(x2, 80);
+    ctx.bezierCurveTo(x2, 120, x1 + 80, 140, 350, 150);
+    ctx.strokeStyle = '#ea4a66';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(350, 150);
+    ctx.bezierCurveTo(x1 + 20, 160, x1, 180, x1, 220);
+    ctx.strokeStyle = '#ea4a66';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    drawText(ctx, 'B', x2, 70, '#ea4a66', 16);
+    drawText(ctx, 'B', x1, 235, '#ea4a66', 16);
+    
+    drawText(ctx, 'τ: A⊗B → B⊗A', 350, 270, '#eaaa4a', 16);
+    drawText(ctx, 'Symmetric: τ∘τ = identity (braiding twice = doing nothing)', 350, 310, '#aaa', 13);
+    drawText(ctx, 'This is what makes "commutative monoid" possible!', 350, 340, '#4aea66', 13);
+    drawText(ctx, 'Without braiding: only associative monoids (A∞). With braiding: commutative monoids (E∞).', 350, 370, '#888', 11);
+  }
+}
+
+// ============ SECTION 4: SPECTRA ============
+function spectraDemo(mode) {
+  const ctx = clearCanvas('spectraCanvas');
+  
+  if (mode === 'sequential') {
+    drawText(ctx, 'Sequential Spectrum: (X₀, X₁, X₂, ...)', 350, 25, '#fff', 16);
+    
+    // Draw sequence of spaces
+    for (let i = 0; i < 6; i++) {
+      const x = 60 + i * 110;
+      const r = 20 + i * 4;
+      
+      // Draw space as blob
+      drawBlob(ctx, x, 130, r, '#1a2a4a', 'X' + i, '#667eea');
+      
+      // Draw structure map arrow
+      if (i < 5) {
+        drawText(ctx, 'σ' + i, x + 55, 100, '#ea4a66', 11);
+        drawArrow(ctx, x + r + 5, 130, x + 110 - (24 + (i+1)*4) - 5, 130, '#ea4a66', 2);
+      }
+    }
+    
+    drawText(ctx, '...', 640, 130, '#aaa', 20);
+    
+    // Structure map explanation
+    drawText(ctx, 'Structure maps: σₙ: S¹∧Xₙ → Xₙ₊₁', 350, 200, '#ea4a66', 14);
+    drawText(ctx, '"Suspend Xₙ, then map into Xₙ₊₁"', 350, 225, '#aaa', 12);
+    
+    // Show suspension
+    drawText(ctx, 'S¹∧Xₙ', 200, 280, '#eaaa4a', 14);
+    drawArrow(ctx, 270, 280, 370, 280, '#ea4a66', 2);
+    drawText(ctx, 'Xₙ₊₁', 420, 280, '#667eea', 14);
+    drawText(ctx, 'σₙ', 320, 268, '#ea4a66', 12);
+    
+    drawText(ctx, 'The information "stabilizes" as n→∞: this is stable homotopy theory.', 350, 325, '#4aea66', 13);
+    
+  } else if (mode === 'suspension') {
+    drawText(ctx, 'Suspension: S¹∧X (Smash with a Circle)', 350, 25, '#fff', 16);
+    
+    // Draw X as a blob
+    drawBlob(ctx, 150, 150, 40, '#1a2a4a', 'X', '#667eea');
+    
+    // Arrow
+    drawText(ctx, 'S¹∧(−)', 300, 120, '#eaaa4a', 16);
+    drawArrow(ctx, 210, 150, 380, 150, '#eaaa4a', 3);
+    
+    // Draw ΣX as a taller blob
+    ctx.beginPath();
+    ctx.ellipse(480, 150, 30, 55, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a2a4a';
+    ctx.fill();
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawText(ctx, 'S¹∧X', 480, 150, '#667eea', 14);
+    
+    drawText(ctx, 'Suspension "stretches" a space by one dimension.', 350, 240, '#aaa', 14);
+    drawText(ctx, 'S¹∧Sⁿ ≅ Sⁿ⁺¹  (suspending an n-sphere gives an (n+1)-sphere)', 350, 270, '#4aea66', 13);
+    drawText(ctx, 'A spectrum is a sequence of spaces connected by suspensions.', 350, 300, '#aaa', 13);
+    drawText(ctx, 'Stable phenomena: things that don\'t change under further suspension.', 350, 330, '#888', 12);
+    
+  } else if (mode === 'symmetric') {
+    drawText(ctx, 'Symmetric Spectra: Adding Group Actions', 350, 25, '#fff', 16);
+    
+    // Draw sequence with group actions
+    for (let i = 0; i < 5; i++) {
+      const x = 80 + i * 130;
+      const r = 22;
+      
+      drawBlob(ctx, x, 130, r, '#1a2a4a', 'X' + i, '#667eea');
+      
+      // Show group action
+      ctx.beginPath();
+      ctx.arc(x, 130, r + 10, -0.5, 1.5);
+      ctx.strokeStyle = '#aa4aea';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      drawText(ctx, 'Σ' + i, x + 5, 130 - r - 18, '#aa4aea', 10);
+      
+      if (i < 4) {
+        drawArrow(ctx, x + r + 12, 130, x + 130 - r - 12, 130, '#ea4a66', 1.5);
+      }
+    }
+    
+    drawText(ctx, 'Each Xₙ carries an action of the symmetric group Σₙ', 350, 200, '#aa4aea', 14);
+    drawText(ctx, 'This extra structure is what makes the smash product commutative!', 350, 230, '#4aea66', 13);
+    
+    drawText(ctx, 'Sequential spectra: no Σₙ action → no symmetric smash product', 350, 270, '#ea4a66', 12);
+    drawText(ctx, 'Symmetric spectra: Σₙ action → symmetric monoidal ∧', 350, 295, '#4aea66', 12);
+    drawText(ctx, 'Orthogonal spectra: O(n) action → symmetric monoidal ∧', 350, 320, '#667eea', 12);
+    
+  } else if (mode === 'sphere') {
+    drawText(ctx, 'The Sphere Spectrum 𝕊: The "Integers" of Spectra', 350, 25, '#fff', 16);
+    
+    // Draw sphere spectrum components
+    for (let i = 0; i < 5; i++) {
+      const x = 80 + i * 130;
+      
+      // Draw sphere
+      ctx.beginPath();
+      ctx.arc(x, 130, 25, 0, Math.PI * 2);
+      ctx.fillStyle = '#1a3a1a';
+      ctx.fill();
+      ctx.strokeStyle = '#4aea66';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      drawText(ctx, 'S' + i, x, 130, '#4aea66', 16);
+      
+      if (i < 4) {
+        drawArrow(ctx, x + 30, 130, x + 100, 130, '#eaaa4a', 2);
+        drawText(ctx, '≅', x + 65, 118, '#eaaa4a', 12);
+      }
+    }
+    
+    drawText(ctx, '𝕊 = (S⁰, S¹, S², S³, ...)', 350, 190, '#4aea66', 16);
+    drawText(ctx, 'Structure maps: S¹∧Sⁿ ≅ Sⁿ⁺¹ (isomorphisms!)', 350, 220, '#eaaa4a', 13);
+    
+    drawText(ctx, 'Just as ℤ is the initial ring (every ring has a map from ℤ),', 350, 260, '#aaa', 13);
+    drawText(ctx, '𝕊 is the initial E∞-ring (every E∞-ring has a map from 𝕊).', 350, 285, '#4aea66', 13);
+    drawText(ctx, 'π₀(𝕊) = ℤ — the sphere spectrum "contains" the integers!', 350, 315, '#eaaa4a', 13);
+  }
+}
+
+// ============ SECTION 5: SMASH PRODUCT ============
+function smashDemo(mode) {
+  const ctx = clearCanvas('smashCanvas');
+  
+  if (mode === 'smash') {
+    drawText(ctx, 'Smash Product of Pointed Spaces: X∧Y', 350, 25, '#fff', 16);
+    
+    // Show X × Y
+    drawBox(ctx, 50, 70, 120, 80, '#1a2a4a', 'X × Y', '#667eea');
+    drawText(ctx, 'Cartesian product', 110, 170, '#888', 11);
+    
+    // Arrow: collapse
+    drawArrow(ctx, 185, 110, 265, 110, '#eaaa4a', 2);
+    drawText(ctx, 'collapse\nX∨Y', 225, 90, '#eaaa4a', 10);
+    
+    // Show X ∧ Y
+    drawBox(ctx, 280, 70, 120, 80, '#2a1a4a', 'X ∧ Y', '#aa4aea');
+    drawText(ctx, '= X×Y / X∨Y', 340, 170, '#888', 11);
+    
+    // Concrete example
+    drawText(ctx, 'Example: S¹∧S¹ ≅ S²', 550, 90, '#4aea66', 14);
+    drawText(ctx, 'Circle ∧ Circle = Sphere!', 550, 115, '#aaa', 12);
+    
+    // Visual: torus with circles collapsed
+    ctx.beginPath();
+    ctx.arc(550, 200, 40, 0, Math.PI * 2);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawText(ctx, 'S¹', 550, 200, '#667eea', 12);
+    
+    drawText(ctx, '∧', 610, 200, '#fff', 18);
+    
+    ctx.beginPath();
+    ctx.arc(660, 200, 40, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ea4a66';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawText(ctx, 'S¹', 660, 200, '#ea4a66', 12);
+    
+    drawText(ctx, 'The smash product is the "tensor product" for pointed spaces.', 350, 270, '#aaa', 13);
+    drawText(ctx, 'Key: S^m ∧ S^n ≅ S^(m+n) — smashing spheres adds dimensions!', 350, 300, '#4aea66', 13);
+    drawText(ctx, 'This is why spectra (sequences of spaces connected by S¹∧−) work.', 350, 330, '#888', 12);
+    
+  } else if (mode === 'day') {
+    drawText(ctx, 'Day Convolution: Tensor Product for Functors', 350, 25, '#fff', 16);
+    
+    // Formula
+    drawText(ctx, '(X ⊗_Day Y)(c) = ∫^{c₁,c₂} C(c₁⊗c₂, c) ∧ X(c₁) ∧ Y(c₂)', 350, 70, '#eaaa4a', 13);
+    
+    // Visual explanation
+    drawText(ctx, 'Idea: To compute (X⊗Y) at c, sum over all ways to decompose c:', 350, 110, '#aaa', 13);
+    
+    // Diagram
+    drawBlob(ctx, 150, 180, 25, '#1a2a4a', 'c₁', '#667eea');
+    drawBlob(ctx, 300, 180, 25, '#4a1a2a', 'c₂', '#ea4a66');
+    drawText(ctx, '⊗', 225, 180, '#fff', 16);
+    drawArrow(ctx, 340, 180, 430, 180, '#eaaa4a', 2);
+    drawBlob(ctx, 480, 180, 25, '#2a2a2a', 'c', '#fff');
+    
+    drawText(ctx, 'Weight: C(c₁⊗c₂, c)', 390, 160, '#eaaa4a', 11);
+    
+    // Values
+    drawText(ctx, 'X(c₁)', 150, 230, '#667eea', 13);
+    drawText(ctx, 'Y(c₂)', 300, 230, '#ea4a66', 13);
+    drawText(ctx, '∧', 225, 230, '#fff', 14);
+    
+    drawText(ctx, '∫ = "sum over all decompositions"', 350, 270, '#aaa', 13);
+    drawText(ctx, 'This is a categorified version of convolution of functions!', 350, 300, '#4aea66', 13);
+    drawText(ctx, 'f*g(n) = Σ_{i+j=n} f(i)·g(j)  ←→  (X⊗Y)(c) = ∫^{c₁⊗c₂=c} X(c₁)∧Y(c₂)', 350, 330, '#888', 11);
+    
+  } else if (mode === 'symmetric') {
+    drawText(ctx, 'Why Symmetric Spectra? The Commutativity Problem', 350, 25, '#fff', 16);
+    
+    // Problem
+    drawText(ctx, 'Problem: S^m ∧ S^n ≅ S^n ∧ S^m, but the isomorphism is NOT trivial!', 350, 65, '#ea4a66', 13);
+    drawText(ctx, 'It involves a TWIST — a permutation of coordinates.', 350, 90, '#ea4a66', 12);
+    
+    // Sequential spectra can't see this
+    drawBox(ctx, 50, 120, 280, 60, '#3a1a1a', 'Sequential Spectra', '#ea4a66');
+    drawText(ctx, 'No group actions → can\'t encode the twist', 190, 200, '#ea4a66', 11);
+    drawText(ctx, '→ No symmetric smash product!', 190, 220, '#ea4a66', 11);
+    
+    // Symmetric spectra can
+    drawBox(ctx, 370, 120, 280, 60, '#1a3a1a', 'Symmetric Spectra', '#4aea66');
+    drawText(ctx, 'Σₙ actions → encode all permutations', 510, 200, '#4aea66', 11);
+    drawText(ctx, '→ Symmetric monoidal ∧ product!', 510, 220, '#4aea66', 11);
+    
+    // Key insight
+    drawText(ctx, 'Key Insight (Lewis\'s Theorem, 1991):', 350, 260, '#fff', 14);
+    drawText(ctx, 'You CANNOT have a symmetric monoidal category of spectra', 350, 285, '#eaaa4a', 12);
+    drawText(ctx, 'satisfying ALL of Lewis\'s "nice" requirements simultaneously.', 350, 305, '#eaaa4a', 12);
+    drawText(ctx, 'Solution: Drop one requirement → get S-modules, symmetric spectra,', 350, 330, '#4aea66', 12);
+    drawText(ctx, 'or orthogonal spectra. All are Quillen equivalent!', 350, 350, '#4aea66', 12);
+  }
+}
+
+// ============ SECTION 6: E-INFINITY RINGS ============
+function einfDemo(mode) {
+  const ctx = clearCanvas('einfCanvas');
+  
+  if (mode === 'levels') {
+    drawText(ctx, 'Levels of Commutativity', 350, 25, '#fff', 16);
+    
+    const levels = [
+      { name: 'Strict', desc: 'a·b = b·a (on the nose)', y: 70, color: '#ea4a66', w: 500 },
+      { name: 'E∞', desc: 'a·b ≃ b·a via coherent homotopies at ALL levels', y: 120, color: '#4aea66', w: 460 },
+      { name: 'E₃', desc: 'Homotopies of homotopies of commutativity homotopies', y: 170, color: '#667eea', w: 380 },
+      { name: 'E₂', desc: 'Homotopies between commutativity homotopies', y: 220, color: '#aa4aea', w: 300 },
+      { name: 'E₁ = A∞', desc: 'Only associative (up to homotopy), NOT commutative', y: 270, color: '#eaaa4a', w: 220 },
+      { name: 'E₀', desc: 'Just a pointed space, no multiplication', y: 320, color: '#888', w: 140 },
+    ];
+    
+    levels.forEach(l => {
+      const x = 350 - l.w/2;
+      ctx.fillStyle = l.color + '22';
+      ctx.strokeStyle = l.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(x, l.y, l.w, 38, 8);
+      ctx.fill();
+      ctx.stroke();
+      drawText(ctx, l.name + ': ' + l.desc, 350, l.y + 19, l.color, 12);
+    });
+    
+    drawText(ctx, '↑ More commutative (more coherence data)', 100, 380, '#aaa', 12);
+    drawArrow(ctx, 100, 370, 100, 80, '#aaa', 1);
+    
+  } else if (mode === 'operad') {
+    drawText(ctx, 'E_n Operads: Little n-Cubes', 350, 25, '#fff', 16);
+    
+    // E1: little intervals
+    drawText(ctx, 'E₁: Little 1-cubes (intervals)', 150, 60, '#eaaa4a', 13);
+    ctx.strokeStyle = '#eaaa4a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(50, 75, 200, 30);
+    ctx.fillStyle = '#eaaa4a44';
+    ctx.fillRect(60, 80, 40, 20);
+    ctx.fillRect(120, 80, 30, 20);
+    ctx.fillRect(170, 80, 50, 20);
+    drawText(ctx, '→ Associative (A∞)', 150, 125, '#eaaa4a', 11);
+    
+    // E2: little disks
+    drawText(ctx, 'E₂: Little 2-cubes (disks)', 450, 60, '#aa4aea', 13);
+    ctx.strokeStyle = '#aa4aea';
+    ctx.strokeRect(350, 75, 200, 80);
+    ctx.fillStyle = '#aa4aea44';
+    ctx.beginPath(); ctx.arc(390, 110, 15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(450, 100, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(510, 120, 12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    drawText(ctx, '→ Braided (can swap!)', 450, 175, '#aa4aea', 11);
+    
+    // E∞: little ∞-cubes
+    drawText(ctx, 'E∞: Little ∞-cubes', 300, 220, '#4aea66', 14);
+    drawText(ctx, 'In infinite dimensions, any configuration of cubes', 300, 250, '#aaa', 12);
+    drawText(ctx, 'can be continuously moved to any other configuration.', 300, 270, '#aaa', 12);
+    drawText(ctx, 'The space of configurations is CONTRACTIBLE.', 300, 300, '#4aea66', 13);
+    drawText(ctx, '→ Fully commutative, with all coherences!', 300, 330, '#4aea66', 13);
+    
+    drawText(ctx, 'E₁ ⊂ E₂ ⊂ E₃ ⊂ ... ⊂ E∞', 350, 370, '#fff', 14);
+    
+  } else if (mode === 'sphere') {
+    drawText(ctx, 'The Sphere Spectrum 𝕊 as Initial E∞-Ring', 350, 25, '#fff', 16);
+    
+    // Analogy table
+    const rows = [
+      { left: 'ℤ (integers)', right: '𝕊 (sphere spectrum)', y: 80 },
+      { left: 'Initial commutative ring', right: 'Initial E∞-ring', y: 120 },
+      { left: '∀ ring R: ∃! ℤ → R', right: '∀ E∞-ring R: ∃! 𝕊 → R', y: 160 },
+      { left: 'π₀(ℤ) = ℤ', right: 'π₀(𝕊) = ℤ', y: 200 },
+      { left: 'ℤ-modules = Ab. groups', right: '𝕊-modules = Spectra', y: 240 },
+    ];
+    
+    drawText(ctx, 'Classical Algebra', 180, 55, '#667eea', 14);
+    drawText(ctx, 'Higher Algebra', 520, 55, '#4aea66', 14);
+    
+    rows.forEach(r => {
+      drawBox(ctx, 30, r.y - 15, 280, 30, '#1a1a3a', r.left, '#667eea');
+      drawText(ctx, '↔', 350, r.y, '#eaaa4a', 18);
+      drawBox(ctx, 390, r.y - 15, 280, 30, '#1a1a3a', r.right, '#4aea66');
+    });
+    
+    drawText(ctx, 'Higher algebra generalizes classical algebra by replacing', 350, 300, '#aaa', 13);
+    drawText(ctx, 'abelian groups with spectra and rings with E∞-rings.', 350, 325, '#aaa', 13);
+    drawText(ctx, 'The sphere spectrum 𝕊 plays the role of the integers ℤ.', 350, 355, '#4aea66', 14);
+  }
+}
+
+// ============ SECTION 7: MODEL CATEGORIES ============
+function modelDemo(mode) {
+  const ctx = clearCanvas('modelCanvas');
+  
+  if (mode === 'classes') {
+    drawText(ctx, 'Three Classes of Morphisms in a Model Category', 350, 25, '#fff', 16);
+    
+    // Venn-like diagram
+    const cx = 350, cy = 200;
+    
+    // Weak equivalences (big circle)
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 200, 130, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = '#eaaa4a';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    drawText(ctx, 'W (Weak Equivalences)', cx, cy - 140, '#eaaa4a', 13);
+    
+    // Cofibrations
+    ctx.beginPath();
+    ctx.ellipse(cx - 80, cy + 20, 100, 80, -0.2, 0, Math.PI * 2);
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawText(ctx, 'Cof', cx - 130, cy + 20, '#667eea', 14);
+    
+    // Fibrations
+    ctx.beginPath();
+    ctx.ellipse(cx + 80, cy + 20, 100, 80, 0.2, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ea4a66';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawText(ctx, 'Fib', cx + 130, cy + 20, '#ea4a66', 14);
+    
+    // Intersections
+    drawText(ctx, 'W∩Cof', cx - 40, cy - 30, '#4aea66', 11);
+    drawText(ctx, '(acyclic cof)', cx - 40, cy - 15, '#4aea66', 9);
+    drawText(ctx, 'W∩Fib', cx + 40, cy - 30, '#aa4aea', 11);
+    drawText(ctx, '(acyclic fib)', cx + 40, cy - 15, '#aa4aea', 9);
+    
+    drawText(ctx, 'Two weak factorization systems:', 350, 350, '#fff', 13);
+    drawText(ctx, '(Cof, W∩Fib)  and  (W∩Cof, Fib)', 350, 375, '#aaa', 13);
+    
+  } else if (mode === 'factorization') {
+    drawText(ctx, 'Factorization Axiom: Any Map = Cofibration ∘ Acyclic Fibration', 350, 25, '#fff', 14);
+    
+    // First factorization
+    drawBlob(ctx, 100, 130, 20, '#334', 'A', '#fff');
+    drawBlob(ctx, 300, 130, 20, '#334', 'B', '#fff');
+    drawArrow(ctx, 125, 130, 275, 130, '#aaa', 2);
+    drawText(ctx, 'f (any map)', 200, 115, '#aaa', 12);
+    
+    drawText(ctx, '=', 350, 130, '#fff', 20);
+    
+    drawBlob(ctx, 400, 130, 20, '#334', 'A', '#fff');
+    drawBlob(ctx, 500, 80, 20, '#1a2a4a', 'Z', '#667eea');
+    drawBlob(ctx, 600, 130, 20, '#334', 'B', '#fff');
+    
+    drawArrow(ctx, 418, 118, 483, 88, '#667eea', 2);
+    drawText(ctx, '∈ Cof', 440, 88, '#667eea', 11);
+    drawArrow(ctx, 517, 88, 583, 118, '#aa4aea', 2);
+    drawText(ctx, '∈ W∩Fib', 560, 88, '#aa4aea', 11);
+    
+    // Second factorization
+    drawText(ctx, 'Also: f = Acyclic Cofibration ∘ Fibration', 350, 190, '#fff', 14);
+    
+    drawBlob(ctx, 100, 260, 20, '#334', 'A', '#fff');
+    drawBlob(ctx, 300, 260, 20, '#334', 'B', '#fff');
+    drawArrow(ctx, 125, 260, 275, 260, '#aaa', 2);
+    drawText(ctx, 'f (any map)', 200, 245, '#aaa', 12);
+    
+    drawText(ctx, '=', 350, 260, '#fff', 20);
+    
+    drawBlob(ctx, 400, 260, 20, '#334', 'A', '#fff');
+    drawBlob(ctx, 500, 210, 20, '#1a2a4a', 'Z\'', '#4aea66');
+    drawBlob(ctx, 600, 260, 20, '#334', 'B', '#fff');
+    
+    drawArrow(ctx, 418, 248, 483, 218, '#4aea66', 2);
+    drawText(ctx, '∈ W∩Cof', 435, 218, '#4aea66', 11);
+    drawArrow(ctx, 517, 218, 583, 248, '#ea4a66', 2);
+    drawText(ctx, '∈ Fib', 565, 218, '#ea4a66', 11);
+    
+    drawText(ctx, 'Every map can be "factored" into a nice inclusion followed by a nice surjection.', 350, 330, '#aaa', 12);
+    drawText(ctx, 'This is the engine that makes homotopy theory computable!', 350, 355, '#4aea66', 12);
+    
+  } else if (mode === 'lifting') {
+    drawText(ctx, 'Lifting Property: The Key Axiom', 350, 25, '#fff', 16);
+    
+    // Lifting square
+    const x1 = 200, x2 = 500, y1 = 100, y2 = 280;
+    
+    drawBlob(ctx, x1, y1, 20, '#334', 'A', '#fff');
+    drawBlob(ctx, x2, y1, 20, '#334', 'X', '#fff');
+    drawBlob(ctx, x1, y2, 20, '#334', 'B', '#fff');
+    drawBlob(ctx, x2, y2, 20, '#334', 'Y', '#fff');
+    
+    // Horizontal arrows
+    drawArrow(ctx, x1 + 25, y1, x2 - 25, y1, '#aaa', 2);
+    drawArrow(ctx, x1 + 25, y2, x2 - 25, y2, '#aaa', 2);
+    
+    // Left vertical: cofibration
+    drawArrow(ctx, x1, y1 + 25, x1, y2 - 25, '#667eea', 3);
+    drawText(ctx, 'i ∈ Cof', x1 - 50, (y1+y2)/2, '#667eea', 12);
+    
+    // Right vertical: acyclic fibration
+    drawArrow(ctx, x2, y1 + 25, x2, y2 - 25, '#aa4aea', 3);
+    drawText(ctx, 'p ∈ W∩Fib', x2 + 60, (y1+y2)/2, '#aa4aea', 12);
+    
+    // Diagonal lift
+    ctx.setLineDash([4, 4]);
+    drawArrow(ctx, x1 + 20, y2 - 20, x2 - 20, y1 + 20, '#4aea66', 2);
+    ctx.setLineDash([]);
+    drawText(ctx, 'h (lift exists!)', 380, 170, '#4aea66', 13);
+    
+    drawText(ctx, 'If i is a cofibration and p is an acyclic fibration,', 350, 330, '#aaa', 13);
+    drawText(ctx, 'then a diagonal lift h always exists making both triangles commute.', 350, 355, '#aaa', 12);
+    drawText(ctx, 'Similarly: acyclic cofibration lifts against any fibration.', 350, 380, '#4aea66', 12);
+    
+  } else if (mode === 'fibcof') {
+    drawText(ctx, 'Fibrant and Cofibrant Objects', 350, 25, '#fff', 16);
+    
+    // Cofibrant
+    drawText(ctx, 'Cofibrant object:', 170, 70, '#667eea', 14);
+    drawBlob(ctx, 100, 130, 15, '#334', '∅', '#888');
+    drawArrow(ctx, 118, 130, 222, 130, '#667eea', 3);
+    drawBlob(ctx, 240, 130, 20, '#1a2a4a', 'X', '#667eea');
+    drawText(ctx, '∈ Cof', 170, 115, '#667eea', 11);
+    drawText(ctx, '"X is built up nicely from nothing"', 170, 170, '#aaa', 11);
+    
+    // Fibrant
+    drawText(ctx, 'Fibrant object:', 530, 70, '#ea4a66', 14);
+    drawBlob(ctx, 460, 130, 20, '#4a1a2a', 'X', '#ea4a66');
+    drawArrow(ctx, 478, 130, 582, 130, '#ea4a66', 3);
+    drawBlob(ctx, 600, 130, 15, '#334', '*', '#888');
+    drawText(ctx, '∈ Fib', 530, 115, '#ea4a66', 11);
+    drawText(ctx, '"X maps down nicely to a point"', 530, 170, '#aaa', 11);
+    
+    // Fibrant-cofibrant replacement
+    drawText(ctx, 'Fibrant-Cofibrant Replacement:', 350, 220, '#fff', 14);
+    
+    drawBlob(ctx, 100, 290, 20, '#334', 'X', '#aaa');
+    drawArrow(ctx, 125, 290, 225, 290, '#4aea66', 2);
+    drawText(ctx, '≃', 175, 275, '#4aea66', 14);
+    drawBlob(ctx, 250, 290, 25, '#1a3a1a', 'X̂', '#4aea66');
+    drawText(ctx, 'cofibrant +', 250, 330, '#667eea', 10);
+    drawText(ctx, 'fibrant', 250, 345, '#ea4a66', 10);
+    
+    drawText(ctx, 'Every object can be replaced by a "nice" (fibrant-cofibrant) one', 450, 290, '#aaa', 12);
+    drawText(ctx, 'that is weakly equivalent to it. This is like finding a', 450, 310, '#aaa', 12);
+    drawText(ctx, '"good representative" in a homotopy class.', 450, 330, '#aaa', 12);
+    
+    drawText(ctx, 'The homotopy category Ho(C) only sees objects up to weak equivalence.', 350, 380, '#4aea66', 12);
+  }
+}
+
+// ============ SECTION 8: COHERENCE ============
+function coherenceDemo(mode) {
+  const ctx = clearCanvas('coherenceCanvas');
+  
+  if (mode === 'pentagon') {
+    drawText(ctx, 'Pentagon Identity: 5 Ways to Re-bracket 4 Objects', 350, 25, '#fff', 16);
+    
+    // Pentagon
+    const cx = 350, cy = 210, r = 140;
+    const angles = [-Math.PI/2, -Math.PI/2 + 2*Math.PI/5, -Math.PI/2 + 4*Math.PI/5, 
+                     -Math.PI/2 + 6*Math.PI/5, -Math.PI/2 + 8*Math.PI/5];
+    const labels = [
+      '((ab)c)d',
+      '(a(bc))d', 
+      'a((bc)d)',
+      'a(b(cd))',
+      '(ab)(cd)'
+    ];
+    const pts = angles.map(a => ({x: cx + r * Math.cos(a), y: cy + r * Math.sin(a)}));
+    
+    // Fill pentagon
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < 5; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.closePath();
+    ctx.fillStyle = '#667eea11';
+    ctx.fill();
+    
+    // Draw edges
+    for (let i = 0; i < 5; i++) {
+      const j = (i + 1) % 5;
+      drawArrow(ctx, pts[i].x, pts[i].y, pts[j].x, pts[j].y, '#667eea', 2);
+    }
+    
+    // Draw vertices with labels
+    pts.forEach((p, i) => {
+      drawBlob(ctx, p.x, p.y, 8, '#667eea', '');
+      const offset = i === 0 ? -20 : (i < 3 ? 20 : -20);
+      drawText(ctx, labels[i], p.x, p.y + offset, '#ccc', 12);
+    });
+    
+    drawText(ctx, 'Each edge = one application of the associator α', 350, 370, '#aaa', 12);
+    drawText(ctx, 'The pentagon COMMUTES: both paths around give the same result.', 350, 390, '#4aea66', 12);
+    
+  } else if (mode === 'contractible') {
+    drawText(ctx, 'Contractible Space of Choices', 350, 25, '#fff', 16);
+    
+    // Draw a blob that contracts to a point
+    drawText(ctx, 'Non-contractible:', 170, 60, '#ea4a66', 14);
+    // Torus-like shape (has a hole)
+    ctx.beginPath();
+    ctx.ellipse(170, 150, 60, 40, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = '#ea4a66';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(170, 150, 20, 12, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#080818';
+    ctx.fill();
+    ctx.strokeStyle = '#ea4a66';
+    ctx.stroke();
+    drawText(ctx, 'Has a "hole" — different', 170, 210, '#ea4a66', 11);
+    drawText(ctx, 'paths are NOT equivalent', 170, 225, '#ea4a66', 11);
+    
+    drawText(ctx, 'Contractible:', 500, 60, '#4aea66', 14);
+    // Blob that can shrink to a point
+    ctx.beginPath();
+    ctx.ellipse(500, 150, 60, 40, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#4aea6622';
+    ctx.fill();
+    ctx.strokeStyle = '#4aea66';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawBlob(ctx, 500, 150, 5, '#4aea66', '');
+    drawText(ctx, 'Can shrink to a point —', 500, 210, '#4aea66', 11);
+    drawText(ctx, 'ALL paths are equivalent', 500, 225, '#4aea66', 11);
+    
+    drawText(ctx, 'Coherence = the space of all choices of associators/unitors/braidings', 350, 280, '#fff', 13);
+    drawText(ctx, 'is CONTRACTIBLE. There is essentially only ONE way to do it.', 350, 310, '#4aea66', 13);
+    
+    drawText(ctx, 'This is why E∞ structures work: the space of all ways to make', 350, 350, '#aaa', 12);
+    drawText(ctx, 'something "commutative up to homotopy" is contractible.', 350, 375, '#aaa', 12);
+    
+  } else if (mode === 'levels') {
+    drawText(ctx, 'Homotopies of Homotopies of Homotopies...', 350, 25, '#fff', 16);
+    
+    // Level 0: objects
+    drawText(ctx, 'Level 0: Objects', 100, 60, '#667eea', 13);
+    drawBlob(ctx, 250, 60, 8, '#667eea', '');
+    drawText(ctx, 'a·b', 280, 60, '#667eea', 12);
+    drawBlob(ctx, 450, 60, 8, '#ea4a66', '');
+    drawText(ctx, 'b·a', 480, 60, '#ea4a66', 12);
+    
+    // Level 1: paths (homotopies)
+    drawText(ctx, 'Level 1: Paths', 100, 120, '#4aea66', 13);
+    ctx.beginPath();
+    ctx.moveTo(260, 60);
+    ctx.quadraticCurveTo(350, 30, 440, 60);
+    ctx.strokeStyle = '#4aea66';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawText(ctx, 'τ (braiding)', 350, 25, '#4aea66', 10);
+    
+    ctx.beginPath();
+    ctx.moveTo(260, 60);
+    ctx.quadraticCurveTo(350, 90, 440, 60);
+    ctx.strokeStyle = '#eaaa4a';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    drawText(ctx, 'τ\' (another braiding)', 350, 100, '#eaaa4a', 10);
+    
+    // Level 2: homotopies between paths
+    drawText(ctx, 'Level 2: Paths between paths', 100, 160, '#aa4aea', 13);
+    drawText(ctx, 'H: τ ≃ τ\'', 350, 160, '#aa4aea', 12);
+    drawArrow(ctx, 340, 50, 340, 80, '#aa4aea', 1.5);
+    
+    // Level 3
+    drawText(ctx, 'Level 3: Paths between those...', 100, 200, '#ea4a66', 13);
+    
+    // Level ∞
+    drawText(ctx, 'Level ∞: All the way up!', 100, 240, '#fff', 13);
+    
+    // Summary
+    drawText(ctx, 'E₁ (A∞): Only level 0-1 data (associativity homotopies)', 350, 290, '#eaaa4a', 12);
+    drawText(ctx, 'E₂: Levels 0-2 (+ commutativity homotopies)', 350, 315, '#aa4aea', 12);
+    drawText(ctx, 'E₃: Levels 0-3 ...', 350, 340, '#667eea', 12);
+    drawText(ctx, 'E∞: ALL levels — fully coherent commutativity', 350, 365, '#4aea66', 13);
+    drawText(ctx, 'The space of all this data is contractible → essentially unique!', 350, 395, '#fff', 12);
+  }
+}
+
+// ============ SECTION 9: HIERARCHY ============
+function hierarchyDemo(mode) {
+  const ctx = clearCanvas('hierarchyCanvas');
+  
+  if (mode === 'analogy') {
+    drawText(ctx, 'The Grand Analogy: Classical ↔ Higher', 350, 25, '#fff', 16);
+    
+    const rows = [
+      { left: 'ℤ (integers)', right: '𝕊 (sphere spectrum)', y: 65 },
+      { left: 'Abelian groups', right: 'Spectra', y: 105 },
+      { left: 'ℤ-modules = Ab. groups', right: '𝕊-modules = Spectra', y: 145 },
+      { left: 'Rings = Mon(Ab, ⊗)', right: 'A∞-rings = Mon(Sp, ∧)', y: 185 },
+      { left: 'Comm. rings = CMon(Ab, ⊗)', right: 'E∞-rings = CMon(Sp, ∧)', y: 225 },
+      { left: 'R-modules', right: 'R-module spectra', y: 265 },
+      { left: 'R-algebras', right: 'R-algebra spectra', y: 305 },
+      { left: 'Tensor product ⊗_R', right: 'Smash product ∧_R', y: 345 },
+    ];
+    
+    drawText(ctx, 'Classical Algebra', 170, 42, '#667eea', 13);
+    drawText(ctx, 'Higher Algebra', 530, 42, '#4aea66', 13);
+    
+    rows.forEach(r => {
+      drawBox(ctx, 20, r.y - 15, 280, 30, '#1a1a3a', r.left, '#667eea');
+      drawText(ctx, '↔', 350, r.y, '#eaaa4a', 16);
+      drawBox(ctx, 400, r.y - 15, 280, 30, '#1a1a3a', r.right, '#4aea66');
+    });
+    
+    drawText(ctx, 'Every concept in classical algebra has a "brave new" counterpart!', 350, 385, '#eaaa4a', 12);
+    
+  } else if (mode === 'examples') {
+    drawText(ctx, 'Key Examples of E∞-Ring Spectra', 350, 25, '#fff', 16);
+    
+    const examples = [
+      { name: '𝕊 (Sphere spectrum)', desc: 'Initial E∞-ring. π₀(𝕊)=ℤ. The "integers" of spectra.', y: 70, color: '#4aea66' },
+      { name: 'Hℤ (Eilenberg-MacLane)', desc: 'Represents ordinary cohomology. Hℤ-modules ≃ chain complexes.', y: 120, color: '#667eea' },
+      { name: 'KU (Complex K-theory)', desc: 'Represents topological K-theory. π*(KU) = ℤ[β,β⁻¹].', y: 170, color: '#ea4a66' },
+      { name: 'MU (Complex cobordism)', desc: 'Universal complex-oriented cohomology. Very rich π*(MU).', y: 220, color: '#aa4aea' },
+      { name: 'Hℝ, Hℚ', desc: 'Represent real/rational cohomology. Rationalization simplifies everything.', y: 270, color: '#eaaa4a' },
+    ];
+    
+    examples.forEach(ex => {
+      drawBox(ctx, 30, ex.y - 15, 180, 30, '#1a1a3a', ex.name, ex.color);
+      drawText(ctx, ex.desc, 430, ex.y, '#aaa', 11);
+    });
+    
+    drawText(ctx, 'Each of these is a commutative monoid in (Spectra, ∧, 𝕊).', 350, 330, '#fff', 13);
+    drawText(ctx, 'Their module categories give different flavors of "generalized homological algebra".', 350, 355, '#aaa', 12);
+    drawText(ctx, 'Hℤ-modules ≃ chain complexes: higher algebra CONTAINS homological algebra!', 350, 385, '#4aea66', 12);
+    
+  } else if (mode === 'flow') {
+    drawText(ctx, 'Information Flow: From Spaces to Algebra', 350, 25, '#fff', 16);
+    
+    // Flow diagram
+    const steps = [
+      { label: 'Topological Spaces', x: 100, y: 80, color: '#667eea' },
+      { label: 'Stabilize (Σ∞)', x: 100, y: 150, color: '#4aea66' },
+      { label: 'Spectra', x: 100, y: 220, color: '#ea4a66' },
+      { label: 'Smash Product ∧', x: 350, y: 220, color: '#eaaa4a' },
+      { label: 'E∞-Rings', x: 580, y: 220, color: '#aa4aea' },
+      { label: 'Modules, Algebras', x: 580, y: 300, color: '#4aea66' },
+      { label: 'Homotopy Groups π*', x: 350, y: 300, color: '#667eea' },
+      { label: 'Graded Rings (classical)', x: 350, y: 370, color: '#ea4a66' },
+    ];
+    
+    steps.forEach(s => {
+      drawBox(ctx, s.x - 80, s.y - 15, 160, 30, '#1a1a3a', s.label, s.color);
+    });
+    
+    // Arrows
+    drawArrow(ctx, 100, 95, 100, 135, '#aaa', 2);
+    drawArrow(ctx, 100, 165, 100, 205, '#aaa', 2);
+    drawArrow(ctx, 180, 220, 270, 220, '#aaa', 2);
+    drawArrow(ctx, 430, 220, 500, 220, '#aaa', 2);
+    drawArrow(ctx, 580, 235, 580, 285, '#aaa', 2);
+    drawArrow(ctx, 500, 300, 430, 300, '#aaa', 2);
+    drawArrow(ctx, 350, 315, 350, 355, '#aaa', 2);
+    
+    drawText(ctx, 'Higher algebra captures MORE information than classical algebra.', 350, 395, '#fff', 12);
+  }
+}
+
+// ============ INITIAL ANIMATIONS ============
+// Start with overview animation
+overviewAnimate('homotopy');
+
+// Auto-initialize other sections with defaults
+setTimeout(() => monoidDemo('associativity'), 100);
+setTimeout(() => monoidalDemo('tensor'), 200);
+setTimeout(() => spectraDemo('sequential'), 300);
+setTimeout(() => smashDemo('smash'), 400);
+setTimeout(() => einfDemo('levels'), 500);
+setTimeout(() => modelDemo('classes'), 600);
+setTimeout(() => coherenceDemo('pentagon'), 700);
+setTimeout(() => hierarchyDemo('analogy'), 800);
+
+// ============ SMOOTH SCROLL ============
+document.querySelectorAll('.nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+</script>
+</body>
+</html>
