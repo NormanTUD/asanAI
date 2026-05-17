@@ -58,7 +58,7 @@ A more unconventional argument, associated with the thinker \citeauthor{jocaxian
 
 Instead of asking "Why something?", the question becomes: **"What could prevent something from existing?"** And the answer is: *nothing*, because nothingness lacks all causal power. Sustaining a void would itself require a kind of rule, which would already be *something*.
 
-These three perspectives share a recognition that existence is not self-evident. Leibniz answers with a necessary ground; Heidegger preserves the wonder; Joaxian argues that the very emptiness of nothing guarantees its own dissolution.
+These three perspectives share a recognition that existence is not self-evident. Leibniz answers with a necessary ground; Heidegger preserves the wonder; Jocaxian argues that the very emptiness of nothing guarantees its own dissolution.
 
 **The Development of Life**
 
