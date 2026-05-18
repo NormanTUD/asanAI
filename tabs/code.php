@@ -57,7 +57,7 @@
 	<div id="pyodide_editor_tab" class="tab">
 		<br>
 		<style>
-			/* ===== PYODIDE EDITOR THEME ===== */
+			/* ===== PYODIDE EDITOR THEME (v3 — Fixed & Enhanced) ===== */
 			#pyodide_editor_wrapper {
 				--pe-bg: #0f0f1a;
 				--pe-surface: #1a1a2e;
@@ -72,6 +72,7 @@
 				--pe-warning: #ffd93d;
 				--pe-radius: 8px;
 				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				position: relative;
 			}
 
 			#pyodide_editor_wrapper button {
@@ -86,12 +87,33 @@
 				transform: translateY(0);
 			}
 
+			/* Fullscreen mode */
+			#pyodide_editor_wrapper.pe-fullscreen {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 99999;
+				background: var(--pe-bg);
+				padding: 16px;
+				overflow-y: auto;
+				border-radius: 0;
+			}
+			#pyodide_editor_wrapper.pe-fullscreen .pe-editor-container {
+				flex: 1;
+			}
+			#pyodide_editor_wrapper.pe-fullscreen #pyodide_editor_textarea {
+				min-height: 50vh;
+				max-height: 70vh;
+			}
+
 			.pe-toolbar {
 				display: flex;
 				align-items: center;
-				gap: 8px;
+				gap: 6px;
 				flex-wrap: wrap;
-				padding: 10px 14px;
+				padding: 8px 12px;
 				background: var(--pe-surface);
 				border: 1px solid var(--pe-border);
 				border-radius: var(--pe-radius);
@@ -100,14 +122,15 @@
 
 			.pe-btn {
 				border: none;
-				padding: 6px 14px;
+				padding: 6px 12px;
 				border-radius: 6px;
 				cursor: pointer;
 				font-weight: 600;
 				font-size: 12px;
 				display: inline-flex;
 				align-items: center;
-				gap: 5px;
+				gap: 4px;
+				white-space: nowrap;
 			}
 			.pe-btn-run {
 				background: linear-gradient(135deg, #00d4aa, #00b894);
@@ -144,7 +167,7 @@
 				width: 1px;
 				height: 24px;
 				background: var(--pe-border);
-				margin: 0 4px;
+				margin: 0 2px;
 			}
 
 			/* Editor container */
@@ -157,26 +180,15 @@
 			}
 			.pe-editor-header {
 				background: var(--pe-surface);
-				padding: 8px 14px;
+				padding: 6px 14px;
 				font-size: 12px;
 				color: var(--pe-muted);
 				border-bottom: 1px solid var(--pe-border);
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
+				gap: 8px;
 			}
-			.pe-editor-header .pe-dots {
-				display: flex;
-				gap: 6px;
-			}
-			.pe-editor-header .pe-dots span {
-				width: 10px;
-				height: 10px;
-				border-radius: 50%;
-			}
-			.pe-editor-header .pe-dot-red { background: #ff5f57; }
-			.pe-editor-header .pe-dot-yellow { background: #ffbd2e; }
-			.pe-editor-header .pe-dot-green { background: #28c840; }
 
 			.pe-editor-body {
 				position: relative;
@@ -230,7 +242,6 @@
 				display: block;
 			}
 
-			/* LINE NUMBERS - FIXED: use pre with white-space:pre and display:block */
 			#pyodide_editor_line_numbers {
 				position: absolute;
 				top: 0;
@@ -266,7 +277,7 @@
 			.pe-hl .cn { color: #fab387; font-weight: 500; }
 			.pe-hl .tx { color: #cdd6f4; }
 
-			/* Console styling - now supports rich output */
+			/* Console styling */
 			.pe-console-container {
 				margin-top: 10px;
 				border: 1px solid var(--pe-border);
@@ -307,7 +318,7 @@
 				box-sizing: border-box;
 			}
 
-			/* Rich output cells (like Jupyter) */
+			/* Rich output cells */
 			.pe-output-cell {
 				margin: 8px 0;
 				padding: 8px;
@@ -315,12 +326,7 @@
 				border-radius: 6px;
 				background: #12121f;
 			}
-			.pe-output-cell canvas {
-				display: block;
-				margin: 4px auto;
-				border-radius: 4px;
-				max-width: 100%;
-			}
+			.pe-output-cell canvas,
 			.pe-output-cell img {
 				display: block;
 				margin: 4px auto;
@@ -335,6 +341,7 @@
 			.pe-output-cell .pe-html-output table {
 				border-collapse: collapse;
 				margin: 4px 0;
+				width: 100%;
 			}
 			.pe-output-cell .pe-html-output th,
 			.pe-output-cell .pe-html-output td {
@@ -408,23 +415,25 @@
 				text-align: center;
 			}
 
+			/* FIX: Prediction output wider to prevent bar overflow */
 			#pyodide_prediction_output {
 				min-width: 200px;
-				max-width: 320px;
+				max-width: 480px;
 				min-height: 50px;
-				max-height: 180px;
+				max-height: 220px;
 				overflow: auto;
 				background: #0a1628;
 				color: #61dafb;
 				font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
-				font-size: 12px;
+				font-size: 11px;
 				line-height: 1.4;
 				padding: 10px;
 				border: 1px solid #1a3a5c;
 				border-radius: 6px;
 				margin: 4px 0 0 0;
-				white-space: pre-wrap;
-				word-wrap: break-word;
+				white-space: pre;
+				word-wrap: normal;
+				overflow-x: auto;
 				box-sizing: border-box;
 			}
 
@@ -447,6 +456,7 @@
 				opacity: 0;
 				pointer-events: none;
 				transition: opacity 0.2s;
+				z-index: 100;
 			}
 			.pe-tooltip:hover::after {
 				opacity: 1;
@@ -501,6 +511,57 @@
 				font-size: 11px;
 				color: var(--pe-muted);
 			}
+
+			/* Fullscreen mode */
+			#pyodide_editor_wrapper.pe-fullscreen {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 99999;
+				background: var(--pe-bg);
+				padding: 16px;
+				overflow-y: auto;
+				border-radius: 0;
+			}
+			#pyodide_editor_wrapper.pe-fullscreen #pyodide_editor_textarea {
+				min-height: 50vh;
+				max-height: 70vh;
+			}
+
+			/* Autosave indicator */
+			#pyodide_autosave_indicator {
+				font-size: 10px;
+				color: var(--pe-success);
+				opacity: 0;
+				transition: opacity 0.3s ease;
+				margin-left: 8px;
+			}
+
+			/* FPS counter */
+			#pyodide_fps_label {
+				font-size: 11px;
+				color: var(--pe-accent2);
+				min-width: 55px;
+				font-weight: 600;
+				font-variant-numeric: tabular-nums;
+			}
+
+			/* Keyboard shortcuts help */
+			.pe-shortcuts-hint {
+				font-size: 10px;
+				color: var(--pe-muted);
+				opacity: 0.7;
+			}
+			.pe-shortcuts-hint kbd {
+				background: var(--pe-surface2);
+				border: 1px solid var(--pe-border);
+				border-radius: 3px;
+				padding: 1px 4px;
+				font-size: 9px;
+				font-family: inherit;
+			}
 		</style>
 
 		<div id="pyodide_editor_wrapper">
@@ -516,18 +577,28 @@
 				<button onclick="pyodideEditorClear()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Clear output">
 					🧹 Clear
 				</button>
-				<button onclick="pyodideEditorReset()" class="pe-btn pe-btn-reset pe-tooltip" data-tip="Reset Python runtime" class="pe-advanced-only">
+				<button onclick="pyodideEditorReset()" class="pe-btn pe-btn-reset pe-tooltip pe-advanced-only" data-tip="Reset Python runtime">
 					🔄 Reset
 				</button>
 				<div class="pe-separator"></div>
 				<button onclick="pyodideToggleExamples()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Show examples">
 					📚 Examples
 				</button>
-				<button id="pyodide_webcam_btn_simple" onclick="pyodideStartWebcam()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Start webcam">
+				<button id="pyodide_webcam_btn_simple" onclick="pyodideStartWebcam()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Ctrl+Shift+W">
 					📷 Webcam
 				</button>
 				<button onclick="pyodideToggleMode()" class="pe-btn pe-btn-mode pe-tooltip" data-tip="Toggle Simple/Advanced">
 					🔀 Mode
+				</button>
+				<div class="pe-separator pe-advanced-only"></div>
+				<button onclick="pyodideToggleFullscreen()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Ctrl+Shift+F">
+					⛶ Fullscreen
+				</button>
+				<button onclick="pyodideCopyOutput()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Copy console output">
+					📋 Copy
+				</button>
+				<button onclick="pyodideDownloadOutput()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Download output as .txt">
+					📥 Save
 				</button>
 				<div class="pe-separator pe-advanced-only"></div>
 				<label class="pe-advanced-only" style="font-size:12px;cursor:pointer;color:var(--pe-text);display:flex;align-items:center;gap:4px;">
@@ -536,18 +607,23 @@
 				</label>
 				<span id="pyodide_status" class="pe-badge pe-badge-loading" style="margin-left:auto;">⏳ Not loaded</span>
 				<span id="pyodide_error_indicator" style="display:none;" class="pe-badge pe-badge-error">⚠ Error</span>
+				<span id="pyodide_autosave_indicator"></span>
 			</div>
 
 			<!-- Examples Panel (hidden by default) -->
 			<div id="pyodide_examples_panel" class="pe-examples-panel">
 				<div style="font-size:12px;color:var(--pe-muted);margin-bottom:8px;font-weight:600;">📚 Click an example to load it:</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('hello_world')">
+					<h4>👋 Hello World</h4>
+					<p>The simplest example — print and explore available functions</p>
+				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('random_input')">
 					<h4>🎲 Random Input</h4>
 					<p>Generate random data matching your model's input shape and predict</p>
 				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_webcam')">
 					<h4>📷 Webcam Prediction</h4>
-					<p>Use your webcam as live input to the model</p>
+					<p>Use your webcam as live input — auto-starts camera</p>
 				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_upload')">
 					<h4>🖼️ Image Upload</h4>
@@ -559,7 +635,7 @@
 				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('weights_inspect')">
 					<h4>🔍 Inspect Weights</h4>
-					<p>View model architecture and weight shapes</p>
+					<p>View model architecture and weight shapes in detail</p>
 				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('draw_chart')">
 					<h4>📊 Draw a Chart</h4>
@@ -593,6 +669,7 @@
 				<span style="font-size:11px;color:var(--pe-muted);font-weight:600;">TEMPLATE:</span>
 				<select onchange="if(this.value)pyodideLoadTemplate(this.value);this.value='';" style="padding:4px 8px;border-radius:6px;font-size:11px;background:var(--pe-surface2);color:var(--pe-text);border:1px solid var(--pe-border);cursor:pointer;">
 					<option value="">Select...</option>
+					<option value="hello_world">👋 Hello World</option>
 					<option value="random_input">🎲 Random Input</option>
 					<option value="image_webcam">📷 Webcam</option>
 					<option value="image_upload">🖼️ Image Upload</option>
@@ -606,7 +683,7 @@
 				<span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
 					<label style="font-size:11px;color:var(--pe-muted);">FPS:</label>
 					<input type="range" min="1" max="15" value="5" oninput="pyodideSetWebcamFPS(this.value)" style="width:60px;cursor:pointer;accent-color:var(--pe-accent);">
-					<span id="pyodide_fps_label" style="font-size:11px;color:var(--pe-accent2);min-width:35px;font-weight:600;">5 FPS</span>
+					<span id="pyodide_fps_label">5 FPS</span>
 				</span>
 			</div>
 
@@ -622,7 +699,7 @@
 						<canvas id="pyodide_webcam_canvas" style="border-radius:8px;border:2px solid var(--pe-border);background:#000;image-rendering:pixelated;width:100px;height:100px;"></canvas>
 					</div>
 					<div id="pyodide_prediction_results" style="display:none; text-align:left;">
-						<strong style="font-size:12px;color:var(--pe-accent2);">🎯 Prediction Results</strong>
+						<strong style="font-size:12px;color:var(--pe-accent2);">🎯 Live Prediction</strong>
 						<pre id="pyodide_prediction_output"></pre>
 					</div>
 				</div>
@@ -637,13 +714,19 @@
 			<!-- Editor with syntax highlighting -->
 			<div class="pe-editor-container">
 				<div class="pe-editor-header">
-					<div class="pe-dots">
-						<span class="pe-dot-red"></span>
-						<span class="pe-dot-yellow"></span>
-						<span class="pe-dot-green"></span>
-					</div>
 					<span>🐍 Python Editor</span>
-					<span class="pe-advanced-only" style="font-size:10px;opacity:0.7;">Ctrl+Enter: Run | Ctrl+S: Save | Tab: Indent | Ctrl+D: Duplicate</span>
+					<span class="pe-shortcuts-hint pe-advanced-only">
+						<kbd>Ctrl</kbd>+<kbd>Enter</kbd> Run &nbsp;
+						<kbd>Ctrl</kbd>+<kbd>S</kbd> Save &nbsp;
+						<kbd>Ctrl</kbd>+<kbd>/</kbd> Comment &nbsp;
+						<kbd>Esc</kbd> Stop
+					</span>
+					<span style="display:flex;align-items:center;gap:4px;" class="pe-advanced-only">
+						<button onclick="pyodideChangeFontSize(-1)" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Decrease font">A-</button>
+						<span id="pyodide_fontsize_label" style="font-size:10px;color:var(--pe-muted);min-width:28px;text-align:center;">13px</span>
+						<button onclick="pyodideChangeFontSize(1)" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Increase font">A+</button>
+						<button onclick="pyodideToggleWordWrap()" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Toggle word wrap">↩</button>
+					</span>
 				</div>
 				<div class="pe-editor-body">
 					<div id="pyodide_editor_line_numbers" aria-hidden="true">1
@@ -653,15 +736,23 @@
 				</div>
 			</div>
 
-			<!-- Console Output (Rich - supports canvases, HTML, images) -->
+			<!-- Console Output -->
 			<div class="pe-console-container">
 				<div class="pe-console-header">
 					<strong>
 						<span style="color:var(--pe-success);">▸</span> Console
 					</strong>
-					<button onclick="pyodideEditorClear()" class="pe-btn pe-btn-clear" style="padding:3px 10px;font-size:11px;">
-						🧹 Clear Console
-					</button>
+					<span style="display:flex;align-items:center;gap:6px;">
+						<button onclick="pyodideCopyOutput()" class="pe-btn pe-btn-clear" style="padding:3px 8px;font-size:11px;" title="Copy output">
+							📋
+						</button>
+						<button onclick="pyodideDownloadOutput()" class="pe-btn pe-btn-clear" style="padding:3px 8px;font-size:11px;" title="Download output">
+							📥
+						</button>
+						<button onclick="pyodideEditorClear()" class="pe-btn pe-btn-clear" style="padding:3px 10px;font-size:11px;">
+							🧹 Clear
+						</button>
+					</span>
 				</div>
 				<div id="pyodide_console_output"></div>
 			</div>
