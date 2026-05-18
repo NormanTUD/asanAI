@@ -59,7 +59,7 @@ function check_all_tabs () {
 		var _item = $("#" + tab_name);
 
 		if(_item.length != 1) {
-			alert(tab_name + " does not have exactly 1 element!");
+			console.error(tab_name + " does not have exactly 1 element!");
 		}
 	}
 }

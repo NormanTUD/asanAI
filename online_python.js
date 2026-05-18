@@ -2,6 +2,7 @@
 
 /**
  * Pyodide Editor Module
+ * With live webcam predictions, image upload, and multi-input-type support.
  */
 
 (function () {
@@ -13,51 +14,112 @@
 	let pyodideReady = false;
 	let pyodideLoading = false;
 	let isRunning = false;
-	let abortController = null;
 	let livePredictEnabled = true;
 	let lastPredictionResult = null;
 	let runCounter = 0;
-	let editorHistory = [];
-	let historyIndex = -1;
 
-	// Default example code
-const DEFAULT_CODE = `# Python Code Editor - Pyodide (stdlib only, no numpy required)
-#
-# Available functions:
-#   get_weights()       - Returns model weights as nested Python lists
-#   predict(input_data) - Run prediction, returns results as Python list
-#   get_model_info()    - Returns dict with model architecture info
-#   set_prediction_result(result) - Store result for JS to grab
-#   rand_nested(shape)  - Generate random nested list matching a shape
-#
-# To install numpy (optional, requires internet):
-#   import micropip
-#   await micropip.install("numpy")
-#   import numpy as np
+	// Webcam state
+	let webcamStream = null;
+	let webcamAnimationFrame = null;
+	let webcamPredicting = false;
+	let webcamInterval = null;
+	let webcamFPS = 5; // predictions per second
 
-# Get model info
+	// =========================================================================
+	// DEFAULT CODE TEMPLATES
+	// =========================================================================
+
+	const TEMPLATES = {
+		image_webcam: `# Live Webcam Prediction
+# This code runs automatically each frame when webcam is active.
+# 'input_data' is pre-filled with the current webcam frame as a nested list
+# matching your model's input shape.
+
+info = get_model_info()
+print(f"Input shape: {info['input_shape']}, Output shape: {info['output_shape']}")
+
+# input_data is already provided by the webcam capture system
+result = predict(input_data)
+print(f"Prediction: {result}")
+set_prediction_result(result)
+`,
+		image_upload: `# Image Upload Prediction
+# Upload an image using the button above, then run this code.
+# 'input_data' is pre-filled with the uploaded image pixels.
+
+info = get_model_info()
+print(f"Model expects: {info['input_shape']}")
+
+result = predict(input_data)
+print(f"Prediction: {result}")
+set_prediction_result(result)
+`,
+		random_input: `# Random Input Prediction
+# Generates random data matching your model's input shape.
+
 info = get_model_info()
 print(f"Model layers: {info['num_layers']}")
 print(f"Input shape: {info['input_shape']}")
 print(f"Output shape: {info['output_shape']}")
 
-# Create sample input matching the model's expected input shape
 input_shape = info['input_shape']
-# Remove batch dimension (first None)
 sample_shape = [s if s is not None else 1 for s in input_shape[1:]]
-print(f"Sample input shape (no batch): {sample_shape}")
+print(f"Sample shape: {sample_shape}")
 
-# Generate random input using stdlib
 input_list = rand_nested(sample_shape)
-print(f"Sample input generated")
-
-# Run prediction
 result = predict(input_list)
-print(f"Prediction result: {result}")
-
-# Store result for JS to grab
+print(f"Prediction: {result}")
 set_prediction_result(result)
-`;
+`,
+		custom_data: `# Custom Data Prediction
+# Enter your own data and predict.
+
+info = get_model_info()
+input_shape = info['input_shape']
+print(f"Model expects input shape: {input_shape}")
+print(f"Model output shape: {info['output_shape']}")
+
+# Example: for a model expecting [None, 4] (4 features):
+# my_data = [0.5, 0.3, 0.8, 0.1]
+
+# Example: for a model expecting [None, 28, 28, 1] (grayscale image):
+# my_data = [[[pixel/255.0] for pixel in row] for row in image_rows]
+
+# Auto-generate matching input for testing:
+sample_shape = [s if s is not None else 1 for s in input_shape[1:]]
+my_data = rand_nested(sample_shape)
+
+result = predict(my_data)
+print(f"Result: {result}")
+set_prediction_result(result)
+`,
+		weights_inspect: `# Inspect Model Weights
+
+info = get_model_info()
+print(f"Layers: {info['num_layers']}")
+print(f"Layer names: {info['layer_names']}")
+print(f"Layer types: {info['layer_types']}")
+print(f"Trainable params: {info['trainable_params']}")
+print(f"Non-trainable params: {info['non_trainable_params']}")
+print()
+
+weights = get_weights()
+if weights:
+    for i, w in enumerate(weights):
+        if isinstance(w, list):
+            # Get shape
+            shape = []
+            temp = w
+            while isinstance(temp, list):
+                shape.append(len(temp))
+                temp = temp[0] if len(temp) > 0 else []
+            print(f"  Weight {i}: shape={shape}")
+        else:
+            print(f"  Weight {i}: {type(w)}")
+`
+	};
+
+	const DEFAULT_CODE = TEMPLATES.random_input;
 
 	// =========================================================================
 	// INITIALIZATION
@@ -79,7 +141,6 @@ set_prediction_result(result)
 				stderr: (text) => appendConsole(text + "\n", "stderr"),
 			});
 
-			// No numpy loading — just set up the environment with stdlib only
 			await setupPythonEnvironment();
 
 			pyodideReady = true;
@@ -93,43 +154,32 @@ set_prediction_result(result)
 		}
 	}
 
+	async function setupPythonEnvironment() {
+		pyodideInstance.globals.set("_js_model_ref", null);
+		pyodideInstance.globals.set("_js_prediction_result", null);
 
-	/**
-	 * Set up the Python-side environment with helper functions.
-	 * IMPORTANT: The Python code string must have NO leading indentation
-	 * because Python is whitespace-sensitive.
-	 */
-async function setupPythonEnvironment() {
-	pyodideInstance.globals.set("_js_model_ref", null);
-	pyodideInstance.globals.set("_js_prediction_result", null);
+		pyodideInstance.registerJsModule("_bridge", {
+			getModelWeights: function () { return getModelWeightsForPython(); },
+			runPrediction: function (inputData) { return runPredictionForPython(inputData); },
+			getModelInfo: function () { return getModelInfoForPython(); },
+			setPredictionResult: function (result) {
+				lastPredictionResult = result;
+				showPredictionResult(result);
+			},
+			getModelExists: function () {
+				return !!(typeof model !== "undefined" && model && model.layers);
+			}
+		});
 
-	pyodideInstance.registerJsModule("_bridge", {
-		getModelWeights: function () {
-			return getModelWeightsForPython();
-		},
-		runPrediction: function (inputData) {
-			return runPredictionForPython(inputData);
-		},
-		getModelInfo: function () {
-			return getModelInfoForPython();
-		},
-		setPredictionResult: function (result) {
-			lastPredictionResult = result;
-			showPredictionResult(result);
-		},
-		getModelExists: function () {
-			return !!(typeof model !== "undefined" && model && model.layers);
-		}
-	});
-
-	// Python setup code — NO numpy, stdlib only.
-	// Using array.join to avoid any indentation issues from JS template literals.
-	var pythonSetupCode = [
+		var pythonSetupCode = [
 "import json",
 "import random",
 "import math",
 "from _bridge import getModelWeights, runPrediction, getModelInfo, setPredictionResult, getModelExists",
 "from pyodide.ffi import to_js, JsProxy",
+"",
+"# Global that webcam/image upload will fill before running user code",
+"input_data = None",
 "",
 "def get_weights():",
 "    if not getModelExists():",
@@ -141,19 +191,22 @@ async function setupPythonEnvironment() {
 "        return raw.to_py()",
 "    return raw",
 "",
-"def predict(input_data):",
+"def predict(data=None):",
+"    global input_data",
+"    if data is None:",
+"        data = input_data",
+"    if data is None:",
+"        raise RuntimeError('No input data. Provide data or use webcam/upload.')",
 "    if not getModelExists():",
 "        raise RuntimeError('No model available. Please create/train a model first.')",
-"    if isinstance(input_data, list):",
-"        pass",
-"    elif isinstance(input_data, JsProxy):",
-"        input_data = input_data.to_py()",
-"    else:",
+"    if isinstance(data, JsProxy):",
+"        data = data.to_py()",
+"    elif not isinstance(data, list):",
 "        try:",
-"            input_data = list(input_data)",
+"            data = list(data)",
 "        except (TypeError, ValueError):",
 "            raise TypeError('input_data must be a list or convertible to list')",
-"    raw = runPrediction(to_js(input_data, dict_converter=None))",
+"    raw = runPrediction(to_js(data, dict_converter=None))",
 "    if raw is None:",
 "        return None",
 "    if isinstance(raw, JsProxy):",
@@ -187,13 +240,12 @@ async function setupPythonEnvironment() {
 "        return [random.random() for _ in range(shape[0])]",
 "    return [rand_nested(shape[1:]) for _ in range(shape[0])]",
 "",
-"print('Python environment ready. (stdlib only, no numpy)')",
-"print('Available: get_weights(), predict(input), get_model_info(), set_prediction_result(result), rand_nested(shape)')",
-"print('To install numpy: import micropip; await micropip.install(\"numpy\")')",
-	].join("\n");
+"print('Python environment ready.')",
+"print('Functions: predict(data), get_model_info(), get_weights(), set_prediction_result(r), rand_nested(shape)')",
+		].join("\n");
 
-	await pyodideInstance.runPythonAsync(pythonSetupCode);
-}
+		await pyodideInstance.runPythonAsync(pythonSetupCode);
+	}
 
 	// =========================================================================
 	// JS <-> PYTHON BRIDGE FUNCTIONS
@@ -286,6 +338,290 @@ async function setupPythonEnvironment() {
 	}
 
 	// =========================================================================
+	// WEBCAM HANDLING
+	// =========================================================================
+
+	async function startWebcam() {
+		const video = document.getElementById("pyodide_webcam_video");
+		const btn = document.getElementById("pyodide_webcam_btn");
+		if (!video) return;
+
+		try {
+			webcamStream = await navigator.mediaDevices.getUserMedia({
+				video: { facingMode: "environment", width: { ideal: 320 }, height: { ideal: 320 } },
+				audio: false
+			});
+			video.srcObject = webcamStream;
+			video.play();
+
+			document.getElementById("pyodide_webcam_container").style.display = "block";
+			if (btn) btn.textContent = "⏹ Stop Webcam";
+			btn.onclick = stopWebcam;
+
+			// Wait for video to be ready
+			video.onloadedmetadata = function() {
+				startWebcamPredictionLoop();
+			};
+		} catch (e) {
+			appendConsole("[Webcam Error] " + e.message + "\n", "stderr");
+			if (e.name === "NotAllowedError") {
+				appendConsole("[Hint] Camera permission denied. Allow camera access and try again.\n", "info");
+			} else if (e.name === "NotFoundError") {
+				appendConsole("[Hint] No camera found on this device.\n", "info");
+			}
+		}
+	}
+
+	function stopWebcam() {
+		const video = document.getElementById("pyodide_webcam_video");
+		const btn = document.getElementById("pyodide_webcam_btn");
+
+		if (webcamInterval) {
+			clearInterval(webcamInterval);
+			webcamInterval = null;
+		}
+		if (webcamAnimationFrame) {
+			cancelAnimationFrame(webcamAnimationFrame);
+			webcamAnimationFrame = null;
+		}
+		if (webcamStream) {
+			webcamStream.getTracks().forEach(function(track) { track.stop(); });
+			webcamStream = null;
+		}
+		if (video) {
+			video.srcObject = null;
+		}
+
+		document.getElementById("pyodide_webcam_container").style.display = "none";
+		if (btn) {
+			btn.textContent = "📷 Start Webcam";
+			btn.onclick = startWebcam;
+		}
+		webcamPredicting = false;
+	}
+
+	function startWebcamPredictionLoop() {
+		if (webcamInterval) clearInterval(webcamInterval);
+
+		webcamInterval = setInterval(async function() {
+			if (webcamPredicting) return; // skip if previous prediction still running
+			if (!webcamStream) return;
+			if (!pyodideReady) return;
+			if (isRunning) return;
+
+			webcamPredicting = true;
+			try {
+				await runWebcamFrame();
+			} catch (e) {
+				// Don't spam console on every frame error
+				console.warn("Webcam prediction error:", e);
+			}
+			webcamPredicting = false;
+		}, 1000 / webcamFPS);
+	}
+
+	async function runWebcamFrame() {
+		const video = document.getElementById("pyodide_webcam_video");
+		const canvas = document.getElementById("pyodide_webcam_canvas");
+		if (!video || !canvas || video.readyState < 2) return;
+
+		// Get model input shape to know target size
+		const info = getModelInfoForPython();
+		if (!info || !info.input_shape) return;
+
+		const inputShape = info.input_shape; // e.g. [None, 40, 40, 3]
+		const targetH = inputShape[1] || 40;
+		const targetW = inputShape[2] || 40;
+		const channels = inputShape[3] || 3;
+
+		// Draw video frame to canvas at target size
+		canvas.width = targetW;
+		canvas.height = targetH;
+		const ctx = canvas.getContext("2d");
+		ctx.drawImage(video, 0, 0, targetW, targetH);
+
+		// Get pixel data
+		const imageData = ctx.getImageData(0, 0, targetW, targetH);
+		const pixels = imageData.data; // RGBA flat array
+
+		// Convert to nested list matching model input: [H, W, C]
+		const inputList = pixelsToNestedList(pixels, targetH, targetW, channels);
+
+		// Set input_data in Python and run prediction
+		await runPredictionWithData(inputList);
+	}
+
+	function pixelsToNestedList(pixels, height, width, channels) {
+		// pixels is Uint8ClampedArray in RGBA format
+		const divideBy = getDivideByValue();
+		const result = [];
+
+		for (let y = 0; y < height; y++) {
+			const row = [];
+			for (let x = 0; x < width; x++) {
+				const idx = (y * width + x) * 4;
+				const pixel = [];
+				for (let c = 0; c < channels; c++) {
+					let val = pixels[idx + c]; // R, G, B (skip A if channels=3)
+					if (divideBy > 0) {
+						val = val / divideBy;
+					}
+					pixel.push(val);
+				}
+				// Handle grayscale (channels=1): average RGB
+				if (channels === 1) {
+					let avg = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
+					if (divideBy > 0) avg = avg / divideBy;
+					row.push([avg]);
+				} else {
+					row.push(pixel);
+				}
+			}
+			result.push(row);
+		}
+		return result;
+	}
+
+	function getDivideByValue() {
+		const el = document.getElementById("divide_by");
+		if (el && parseFloat(el.value) > 0) {
+			return parseFloat(el.value);
+		}
+		return 0;
+	}
+
+	// =========================================================================
+	// IMAGE UPLOAD HANDLING
+	// =========================================================================
+
+	function handleImageUpload(event) {
+		const file = event.target.files[0];
+		if (!file) return;
+
+		if (!file.type.startsWith("image/")) {
+			appendConsole("[Error] Please select an image file.\n", "stderr");
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = function(e) {
+			const img = new Image();
+			img.onload = function() {
+				displayUploadedImage(img);
+				processUploadedImage(img);
+			};
+			img.onerror = function() {
+				appendConsole("[Error] Failed to load image.\n", "stderr");
+			};
+			img.src = e.target.result;
+		};
+		reader.readAsDataURL(file);
+	}
+
+	function displayUploadedImage(img) {
+		const preview = document.getElementById("pyodide_image_preview");
+		if (!preview) return;
+
+		preview.style.display = "block";
+		const canvas = document.getElementById("pyodide_image_canvas");
+		if (!canvas) return;
+
+		// Display at reasonable size
+		const maxDisplay = 200;
+		const scale = Math.min(maxDisplay / img.width, maxDisplay / img.height, 1);
+		canvas.width = Math.round(img.width * scale);
+		canvas.height = Math.round(img.height * scale);
+		const ctx = canvas.getContext("2d");
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	}
+
+	async function processUploadedImage(img) {
+		const info = getModelInfoForPython();
+		if (!info || !info.input_shape) {
+			appendConsole("[Error] No model loaded. Cannot determine input shape.\n", "stderr");
+			return;
+		}
+
+		const inputShape = info.input_shape;
+		const targetH = inputShape[1] || img.height;
+		const targetW = inputShape[2] || img.width;
+		const channels = inputShape[3] || 3;
+
+		// Resize image to model's expected input
+		const tempCanvas = document.createElement("canvas");
+		tempCanvas.width = targetW;
+		tempCanvas.height = targetH;
+		const ctx = tempCanvas.getContext("2d");
+		ctx.drawImage(img, 0, 0, targetW, targetH);
+
+		const imageData = ctx.getImageData(0, 0, targetW, targetH);
+		const inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+
+		appendConsole("[Image loaded: " + img.width + "x" + img.height + " → resized to " + targetW + "x" + targetH + "x" + channels + "]\n", "info");
+
+		// Run prediction with this data
+		await runPredictionWithData(inputList);
+	}
+
+	// =========================================================================
+	// UNIFIED PREDICTION RUNNER
+	// =========================================================================
+
+	/**
+	 * Sets input_data in Python and runs the user's code (or auto-predicts).
+	 * This is used by webcam, image upload, and manual data entry.
+	 */
+	async function runPredictionWithData(inputList) {
+		if (!pyodideReady) {
+			await initPyodide();
+			if (!pyodideReady) return;
+		}
+
+		try {
+			// Set input_data in Python as a global
+			pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
+
+			// If user code is in the editor, run it; otherwise just predict
+			const textarea = document.getElementById("pyodide_editor_textarea");
+			const code = textarea ? textarea.value : "";
+
+			if (code.includes("predict") || code.includes("input_data")) {
+				// Run user code which should use input_data
+				if (!isRunning) {
+					isRunning = true;
+					runCounter++;
+					const thisRun = runCounter;
+
+					try {
+						await pyodideInstance.runPythonAsync(code);
+					} catch (e) {
+						// For webcam, don't spam errors — just log once
+						if (!webcamStream) {
+							handlePythonError(e);
+						} else {
+							console.warn("Webcam prediction code error:", e.message || e);
+						}
+					} finally {
+						if (thisRun === runCounter) {
+							isRunning = false;
+						}
+					}
+				}
+			} else {
+				// No user code references input — just run predict directly
+				var quickPredict = [
+"result = predict(input_data)",
+"set_prediction_result(result)",
+				].join("\n");
+
+				await pyodideInstance.runPythonAsync(quickPredict);
+			}
+		} catch (e) {
+			console.warn("runPredictionWithData error:", e);
+		}
+	}
+
+	// =========================================================================
 	// EDITOR FUNCTIONALITY
 	// =========================================================================
 
@@ -330,20 +666,19 @@ async function setupPythonEnvironment() {
 					const lineStart = beforeSelection.lastIndexOf("\n") + 1;
 					const textToProcess = value.substring(lineStart, end);
 					const lines = textToProcess.split("\n");
-					const indentedLines = lines.map(function(line) { return "\t" + line; });
-					const addedChars = lines.length;
+					const indentedLines = lines.map(function(line) { return "    " + line; });
+					const addedChars = lines.length * 4;
 
 					this.value = value.substring(0, lineStart) + indentedLines.join("\n") + value.substring(end);
-					this.selectionStart = start + 1;
+					this.selectionStart = start + 4;
 					this.selectionEnd = end + addedChars;
 				} else {
-					this.value = value.substring(0, start) + "\t" + value.substring(end);
-					this.selectionStart = this.selectionEnd = start + 1;
+					this.value = value.substring(0, start) + "    " + value.substring(end);
+					this.selectionStart = this.selectionEnd = start + 4;
 				}
 				return;
 			}
 
-			// Enter key - auto-indent
 			if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
 				e.preventDefault();
 				const start = this.selectionStart;
@@ -356,30 +691,49 @@ async function setupPythonEnvironment() {
 				if (trimmedLine.endsWith(":")) {
 					newIndent += "    ";
 				}
+				// Dedent after return/break/continue/pass
+				if (/^\s*(return|break|continue|pass)\b/.test(trimmedLine)) {
+					if (newIndent.length >= 4) {
+						newIndent = newIndent.substring(4);
+					}
+				}
 				const insertion = "\n" + newIndent;
 				this.value = value.substring(0, start) + insertion + value.substring(this.selectionEnd);
 				this.selectionStart = this.selectionEnd = start + insertion.length;
 				return;
 			}
 
-			// Ctrl+Enter or Cmd+Enter - Run code
 			if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
 				e.preventDefault();
 				pyodideEditorRun();
 				return;
 			}
 
-			// Ctrl+S or Cmd+S - Save
 			if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
 				e.preventDefault();
 				saveEditorContent();
 				appendConsole("[Saved to browser storage]\n", "info");
 				return;
 			}
+
+			// Ctrl+D - duplicate line
+			if (e.key === "d" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				const start = this.selectionStart;
+				const value = this.value;
+				const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+				const lineEnd = value.indexOf("\n", start);
+				const line = value.substring(lineStart, lineEnd === -1 ? value.length : lineEnd);
+				const insertion = "\n" + line;
+				const insertPos = lineEnd === -1 ? value.length : lineEnd;
+				this.value = value.substring(0, insertPos) + insertion + value.substring(insertPos);
+				this.selectionStart = this.selectionEnd = start + insertion.length;
+				return;
+			}
 		});
 
 		textarea.addEventListener("keypress", function (e) {
-			const pairs = { "(": ")", "[": "]", "{": "}", "\"": "\"", "'": "'" };
+			const pairs = { "(": ")", "[": "]", "{": "}" };
 			const char = e.key;
 
 			if (pairs[char]) {
@@ -425,6 +779,16 @@ async function setupPythonEnvironment() {
 		}
 	}
 
+	function loadTemplate(name) {
+		const textarea = document.getElementById("pyodide_editor_textarea");
+		if (!textarea) return;
+		if (TEMPLATES[name]) {
+			textarea.value = TEMPLATES[name];
+			saveEditorContent();
+			appendConsole("[Loaded template: " + name + "]\n", "info");
+		}
+	}
+
 	// =========================================================================
 	// EXECUTION
 	// =========================================================================
@@ -447,6 +811,7 @@ async function setupPythonEnvironment() {
 		saveEditorContent();
 
 		if (!pyodideReady) {
+			appendConsole("[Initializing Pyodide, please wait...]\n", "info");
 			await initPyodide();
 			if (!pyodideReady) {
 				appendConsole("[ERROR] Pyodide failed to initialize. Cannot run code.\n", "stderr");
@@ -460,7 +825,7 @@ async function setupPythonEnvironment() {
 
 		const runBtn = document.getElementById("pyodide_run_btn");
 		const stopBtn = document.getElementById("pyodide_stop_btn");
-		if (runBtn) runBtn.disabled = true;
+
 		if (stopBtn) stopBtn.disabled = false;
 
 		setStatus("Running...");
@@ -531,236 +896,297 @@ async function setupPythonEnvironment() {
 		await initPyodide();
 	}
 
-async function refreshModelInPython() {
-	if (!pyodideInstance) return;
-
-	try {
-		var checkCode = [
-"import _bridge",
-"_model_available = _bridge.getModelExists()",
-"if not _model_available:",
-"    print('[Warning] No model available. Create or train a model first.')",
-		].join("\n");
-
-		await pyodideInstance.runPythonAsync(checkCode);
-	} catch (e) {
-		console.warn("refreshModelInPython:", e);
-	}
-}
-
 	// =========================================================================
-	// ERROR HANDLING
+	// WEBCAM HANDLING
 	// =========================================================================
 
-	function handlePythonError(e) {
-		let errorMsg = "";
+	async function startWebcam() {
+		const video = document.getElementById("pyodide_webcam_video");
+		const btn = document.getElementById("pyodide_webcam_btn");
+		if (!video) return;
 
-		if (e && e.message) {
-			errorMsg = e.message;
-		} else if (typeof e === "string") {
-			errorMsg = e;
-		} else {
-			errorMsg = String(e);
-		}
-
-		let formattedError = "";
-
-		if (errorMsg.includes("Traceback")) {
-			formattedError = errorMsg;
-		} else if (errorMsg.includes("PythonError")) {
-			formattedError = errorMsg.replace("PythonError: ", "");
-		} else if (errorMsg.includes("SyntaxError")) {
-			formattedError = "SyntaxError: " + errorMsg;
-		} else {
-			formattedError = "Error: " + errorMsg;
-		}
-
-		appendConsole(formattedError + "\n", "stderr");
-		showErrorIndicator();
-		setStatus("Pyodide: error ✗");
-
-		const hints = getErrorHints(errorMsg);
-		if (hints) {
-			appendConsole("[Hint] " + hints + "\n", "info");
-		}
-	}
-
-	function getErrorHints(errorMsg) {
-		if (errorMsg.includes("No model available")) {
-			return "Create a model in the main interface first, then run your code.";
-		}
-		if (errorMsg.includes("IndentationError")) {
-			return "Check your indentation. Python uses consistent indentation (tabs or spaces, not mixed).";
-		}
-		if (errorMsg.includes("ModuleNotFoundError")) {
-			var match = errorMsg.match(/No module named '([^']+)'/);
-			if (match) {
-				return "Module '" + match[1] + "' is not available. Try: import micropip; await micropip.install('" + match[1] + "')";
+		if (!pyodideReady) {
+			appendConsole("[Initializing Pyodide first...]\n", "info");
+			await initPyodide();
+			if (!pyodideReady) {
+				appendConsole("[ERROR] Cannot start webcam without Pyodide.\n", "stderr");
+				return;
 			}
 		}
-		if (errorMsg.includes("shape")) {
-			return "Shape mismatch. Check get_model_info() to see expected input/output shapes.";
-		}
-		if (errorMsg.includes("NameError")) {
-			return "A variable or function name was not found. Check for typos.";
-		}
-		if (errorMsg.includes("TypeError")) {
-			return "A type error occurred. Check that you're passing the correct types to functions.";
-		}
-		if (errorMsg.includes("ValueError")) {
-			return "A value error occurred. Check your input data dimensions and values.";
-		}
-		if (errorMsg.includes("ZeroDivisionError")) {
-			return "Division by zero detected. Check your arithmetic operations.";
-		}
-		if (errorMsg.includes("IndexError")) {
-			return "Index out of range. Check your array/list indexing.";
-		}
-		if (errorMsg.includes("KeyError")) {
-			return "Key not found in dictionary. Check available keys with .keys().";
-		}
-		if (errorMsg.includes("AttributeError")) {
-			return "Attribute not found on object. Use dir(obj) to see available attributes.";
-		}
-		if (errorMsg.includes("RuntimeError") && errorMsg.includes("model")) {
-			return "Model-related runtime error. Ensure the model is created and compiled before running predictions.";
-		}
-		if (errorMsg.includes("OverflowError") || errorMsg.includes("MemoryError")) {
-			return "Resource limit hit. Try reducing data sizes or resetting the runtime.";
-		}
-		return null;
-	}
 
-	// =========================================================================
-	// UI HELPERS
-	// =========================================================================
-
-	function appendConsole(text, type) {
-		const output = document.getElementById("pyodide_console_output");
-		if (!output) return;
-
-		const span = document.createElement("span");
-		span.textContent = text;
-
-		switch (type) {
-			case "stderr":
-				span.style.color = "#ff5555";
-				break;
-			case "warn":
-				span.style.color = "#ffaa00";
-				break;
-			case "info":
-				span.style.color = "#888888";
-				break;
-			case "stdout":
-			default:
-				span.style.color = "#00ff00";
-				break;
-		}
-
-		output.appendChild(span);
-		output.scrollTop = output.scrollHeight;
-	}
-
-	function setStatus(text) {
-		const el = document.getElementById("pyodide_status");
-		if (el) el.textContent = text;
-	}
-
-	function showErrorIndicator() {
-		const el = document.getElementById("pyodide_error_indicator");
-		if (el) el.style.display = "inline";
-	}
-
-	function hideErrorIndicator() {
-		const el = document.getElementById("pyodide_error_indicator");
-		if (el) el.style.display = "none";
-	}
-
-	function showPredictionResult(result) {
-		const container = document.getElementById("pyodide_prediction_results");
-		const output = document.getElementById("pyodide_prediction_output");
-		if (!container || !output) return;
-
-		container.style.display = "block";
-
-		let displayText = "";
 		try {
-			if (result === null || result === undefined) {
-				displayText = "(no prediction result)";
-			} else if (typeof result === "object" && result.toJs) {
-				var jsResult = result.toJs();
-				displayText = formatPredictionResult(jsResult);
-			} else if (Array.isArray(result)) {
-				displayText = formatPredictionResult(result);
-			} else {
-				displayText = JSON.stringify(result, null, 2);
+			webcamStream = await navigator.mediaDevices.getUserMedia({
+				video: { facingMode: "environment", width: { ideal: 320 }, height: { ideal: 320 } },
+				audio: false
+			});
+			video.srcObject = webcamStream;
+			video.play();
+
+			document.getElementById("pyodide_webcam_container").style.display = "block";
+			if (btn) {
+				btn.textContent = "\u23F9 Stop Webcam";
+				btn.onclick = stopWebcam;
+			}
+
+			video.onloadedmetadata = function() {
+				appendConsole("[Webcam started: " + video.videoWidth + "x" + video.videoHeight + "]\n", "info");
+				startWebcamPredictionLoop();
+			};
+		} catch (e) {
+			appendConsole("[Webcam Error] " + e.message + "\n", "stderr");
+			if (e.name === "NotAllowedError") {
+				appendConsole("[Hint] Camera permission denied. Allow camera access and try again.\n", "info");
+			} else if (e.name === "NotFoundError") {
+				appendConsole("[Hint] No camera found on this device.\n", "info");
+			} else if (e.name === "NotReadableError") {
+				appendConsole("[Hint] Camera is in use by another application.\n", "info");
+			}
+		}
+	}
+
+	function stopWebcam() {
+		const video = document.getElementById("pyodide_webcam_video");
+		const btn = document.getElementById("pyodide_webcam_btn");
+
+		if (webcamInterval) {
+			clearInterval(webcamInterval);
+			webcamInterval = null;
+		}
+		if (webcamStream) {
+			webcamStream.getTracks().forEach(function(track) { track.stop(); });
+			webcamStream = null;
+		}
+		if (video) {
+			video.srcObject = null;
+		}
+
+		var container = document.getElementById("pyodide_webcam_container");
+		if (container) container.style.display = "none";
+
+		if (btn) {
+			btn.textContent = "\uD83D\uDCF7 Start Webcam";
+			btn.onclick = startWebcam;
+		}
+		webcamPredicting = false;
+		appendConsole("[Webcam stopped]\n", "info");
+	}
+
+	function startWebcamPredictionLoop() {
+		if (webcamInterval) clearInterval(webcamInterval);
+
+		webcamInterval = setInterval(async function() {
+			if (webcamPredicting) return;
+			if (!webcamStream) return;
+			if (!pyodideReady) return;
+			if (isRunning) return;
+
+			webcamPredicting = true;
+			try {
+				await runWebcamFrame();
+			} catch (e) {
+				console.warn("Webcam frame error:", e);
+			}
+			webcamPredicting = false;
+		}, 1000 / webcamFPS);
+	}
+
+	async function runWebcamFrame() {
+		const video = document.getElementById("pyodide_webcam_video");
+		const canvas = document.getElementById("pyodide_webcam_canvas");
+		if (!video || !canvas || video.readyState < 2) return;
+
+		var info = getModelInfoForPython();
+		if (!info || !info.input_shape) return;
+
+		var inputShape = info.input_shape;
+		var targetH = inputShape[1] || 40;
+		var targetW = inputShape[2] || 40;
+		var channels = inputShape[3] || 3;
+
+		canvas.width = targetW;
+		canvas.height = targetH;
+		var ctx = canvas.getContext("2d");
+		ctx.drawImage(video, 0, 0, targetW, targetH);
+
+		var imageData = ctx.getImageData(0, 0, targetW, targetH);
+		var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+
+		// Run prediction directly via JS bridge (faster than going through Python for webcam)
+		try {
+			var resultArray = runPredictionForPython(inputList);
+			if (resultArray) {
+				lastPredictionResult = resultArray;
+				showPredictionResult(resultArray);
 			}
 		} catch (e) {
-			displayText = String(result);
+			console.warn("Webcam prediction error:", e);
 		}
-
-		output.textContent = displayText;
 	}
 
-	function formatPredictionResult(result) {
-		if (!Array.isArray(result)) {
-			return JSON.stringify(result, null, 2);
-		
+	function pixelsToNestedList(pixels, height, width, channels) {
+		var divideBy = getDivideByValue();
+		var result = [];
+
+		for (var y = 0; y < height; y++) {
+			var row = [];
+			for (var x = 0; x < width; x++) {
+				var idx = (y * width + x) * 4;
+				if (channels === 1) {
+					var avg = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
+					if (divideBy > 0) avg = avg / divideBy;
+					row.push([avg]);
+				} else {
+					var pixel = [];
+					for (var c = 0; c < channels; c++) {
+						var val = pixels[idx + c];
+						if (divideBy > 0) val = val / divideBy;
+						pixel.push(val);
+					}
+					row.push(pixel);
+				}
+			}
+			result.push(row);
+		}
+		return result;
+	}
+
+	function getDivideByValue() {
+		var el = document.getElementById("divide_by");
+		if (el && parseFloat(el.value) > 0) {
+			return parseFloat(el.value);
+		}
+		return 0;
+	}
+
+	// =========================================================================
+	// IMAGE UPLOAD HANDLING
+	// =========================================================================
+
+	function handleImageUpload(event) {
+		var file = event.target.files[0];
+		if (!file) return;
+
+		if (!file.type.startsWith("image/")) {
+			appendConsole("[Error] Please select an image file.\n", "stderr");
+			return;
 		}
 
-		let lines = [];
-		lines.push("Prediction (" + result.length + " outputs):");
-		lines.push("─".repeat(40));
-
-		// Try to match with labels if available
-		let labelsList = [];
-		try {
-			if (typeof labels !== "undefined" && Array.isArray(labels)) {
-				labelsList = labels;
-			}
-		} catch (e) { /* no labels available */ }
-
-		// Create indexed results with optional labels
-		const indexed = result.map(function(val, idx) {
-			return {
-				index: idx,
-				value: typeof val === "number" ? val : parseFloat(val),
-				label: labelsList[idx] || ("Output " + idx)
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var img = new Image();
+			img.onload = function() {
+				displayUploadedImage(img);
+				processUploadedImage(img);
 			};
-		});
+			img.onerror = function() {
+				appendConsole("[Error] Failed to load image.\n", "stderr");
+			};
+			img.src = e.target.result;
+		};
+		reader.onerror = function() {
+			appendConsole("[Error] Failed to read file.\n", "stderr");
+		};
+		reader.readAsDataURL(file);
+	}
 
-		// Sort by value descending for classification-like outputs
-		const sorted = indexed.slice().sort(function(a, b) { return b.value - a.value; });
+	function displayUploadedImage(img) {
+		var preview = document.getElementById("pyodide_image_preview");
+		if (!preview) return;
 
-		// Determine if this looks like probabilities (all values between 0 and 1, sum ~1)
-		const sum = indexed.reduce(function(s, v) { return s + v.value; }, 0);
-		const looksLikeProbabilities = indexed.every(function(v) {
-			return v.value >= 0 && v.value <= 1;
-		}) && Math.abs(sum - 1.0) < 0.05;
+		preview.style.display = "block";
+		var canvas = document.getElementById("pyodide_image_canvas");
+		if (!canvas) return;
 
-		if (looksLikeProbabilities) {
-			lines.push("(sorted by confidence)");
-			for (var i = 0; i < sorted.length; i++) {
-				var item = sorted[i];
-				var pct = (item.value * 100).toFixed(2);
-				var bar = "\u2588".repeat(Math.round(item.value * 20));
-				lines.push("  " + item.label.padEnd(20) + " " + pct.padStart(7) + "%  " + bar);
-			}
-		} else {
-			for (var j = 0; j < indexed.length; j++) {
-				var it = indexed[j];
-				var valStr = typeof it.value === "number" ? it.value.toFixed(6) : String(it.value);
-				lines.push("  " + it.label.padEnd(20) + " " + valStr);
+		var maxDisplay = 200;
+		var scale = Math.min(maxDisplay / img.width, maxDisplay / img.height, 1);
+		canvas.width = Math.round(img.width * scale);
+		canvas.height = Math.round(img.height * scale);
+		var ctx = canvas.getContext("2d");
+		ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+	}
+
+	async function processUploadedImage(img) {
+		if (!pyodideReady) {
+			appendConsole("[Initializing Pyodide first...]\n", "info");
+			await initPyodide();
+			if (!pyodideReady) {
+				appendConsole("[ERROR] Cannot process image without Pyodide.\n", "stderr");
+				return;
 			}
 		}
 
-		return lines.join("\n");
+		var info = getModelInfoForPython();
+		if (!info || !info.input_shape) {
+			appendConsole("[Error] No model loaded. Cannot determine input shape.\n", "stderr");
+			return;
+		}
+
+		var inputShape = info.input_shape;
+		var targetH = inputShape[1] || img.height;
+		var targetW = inputShape[2] || img.width;
+		var channels = inputShape[3] || 3;
+
+		var tempCanvas = document.createElement("canvas");
+		tempCanvas.width = targetW;
+		tempCanvas.height = targetH;
+		var ctx = tempCanvas.getContext("2d");
+		ctx.drawImage(img, 0, 0, targetW, targetH);
+
+		var imageData = ctx.getImageData(0, 0, targetW, targetH);
+		var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+
+		appendConsole("[Image: " + img.width + "x" + img.height + " \u2192 " + targetW + "x" + targetH + "x" + channels + "]\n", "info");
+
+		// Set input_data in Python and run user code
+		try {
+			pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
+
+			var textarea = document.getElementById("pyodide_editor_textarea");
+			var code = textarea ? textarea.value : "";
+
+			if (code.includes("input_data") || code.includes("predict")) {
+				await pyodideEditorRun();
+			} else {
+				// Quick predict without user code
+				var resultArray = runPredictionForPython(inputList);
+				if (resultArray) {
+					lastPredictionResult = resultArray;
+					showPredictionResult(resultArray);
+					appendConsole("Prediction: [" + resultArray.map(function(v) { return v.toFixed(4); }).join(", ") + "]\n", "stdout");
+				}
+			}
+		} catch (e) {
+			appendConsole("[Error] " + e.message + "\n", "stderr");
+		}
 	}
 
-	function hidePredictionResults() {
-		const container = document.getElementById("pyodide_prediction_results");
-		if (container) container.style.display = "none";
+	// =========================================================================
+	// TEMPLATE LOADING
+	// =========================================================================
+
+	function loadTemplate(name) {
+		var textarea = document.getElementById("pyodide_editor_textarea");
+		if (!textarea) return;
+		if (TEMPLATES[name]) {
+			textarea.value = TEMPLATES[name];
+			saveEditorContent();
+			appendConsole("[Loaded template: " + name + "]\n", "info");
+		}
+	}
+
+	// =========================================================================
+	// FPS CONTROL
+	// =========================================================================
+
+	function setWebcamFPS(fps) {
+		webcamFPS = Math.max(1, Math.min(30, parseInt(fps) || 5));
+		var label = document.getElementById("pyodide_fps_label");
+		if (label) label.textContent = webcamFPS + " FPS";
+
+		// Restart loop if active
+		if (webcamStream && webcamInterval) {
+			startWebcamPredictionLoop();
+		}
 	}
 
 	// =========================================================================
@@ -796,7 +1222,234 @@ async function refreshModelInPython() {
 	}
 
 	// =========================================================================
-	// PUBLIC API - Grab predictions from JS
+	// REFRESH MODEL
+	// =========================================================================
+
+	async function refreshModelInPython() {
+		if (!pyodideInstance) return;
+
+		try {
+			var checkCode = [
+"import _bridge",
+"_model_available = _bridge.getModelExists()",
+"if not _model_available:",
+"    print('[Warning] No model available. Create or train a model first.')",
+			].join("\n");
+
+			await pyodideInstance.runPythonAsync(checkCode);
+		} catch (e) {
+			console.warn("refreshModelInPython:", e);
+		}
+	}
+
+	// =========================================================================
+	// ERROR HANDLING
+	// =========================================================================
+
+	function handlePythonError(e) {
+		let errorMsg = "";
+
+		if (e && e.message) {
+			errorMsg = e.message;
+		} else if (typeof e === "string") {
+			errorMsg = e;
+		} else {
+			errorMsg = String(e);
+		}
+
+		let formattedError = "";
+
+		if (errorMsg.includes("Traceback")) {
+			formattedError = errorMsg;
+		} else if (errorMsg.includes("PythonError")) {
+			formattedError = errorMsg.replace("PythonError: ", "");
+		} else if (errorMsg.includes("SyntaxError")) {
+			formattedError = "SyntaxError: " + errorMsg;
+		} else {
+			formattedError = "Error: " + errorMsg;
+		}
+
+		appendConsole(formattedError + "\n", "stderr");
+		showErrorIndicator();
+		setStatus("Pyodide: error \u2717");
+
+		var hints = getErrorHints(errorMsg);
+		if (hints) {
+			appendConsole("[Hint] " + hints + "\n", "info");
+		}
+	}
+
+	function getErrorHints(errorMsg) {
+		if (errorMsg.includes("No model available")) {
+			return "Create a model in the main interface first, then run your code.";
+		}
+		if (errorMsg.includes("IndentationError")) {
+			return "Check your indentation. Use consistent spaces (not mixed tabs/spaces).";
+		}
+		if (errorMsg.includes("ModuleNotFoundError")) {
+			var match = errorMsg.match(/No module named '([^']+)'/);
+			if (match) {
+				return "Module '" + match[1] + "' not available. Try: import micropip; await micropip.install('" + match[1] + "')";
+			}
+		}
+		if (errorMsg.includes("shape")) {
+			return "Shape mismatch. Use get_model_info() to check expected shapes.";
+		}
+		if (errorMsg.includes("NameError")) {
+			return "Variable/function not found. Check for typos.";
+		}
+		if (errorMsg.includes("TypeError")) {
+			return "Type error. Check argument types.";
+		}
+		if (errorMsg.includes("ValueError")) {
+			return "Value error. Check data dimensions and values.";
+		}
+		if (errorMsg.includes("IndexError")) {
+			return "Index out of range.";
+		}
+		if (errorMsg.includes("KeyError")) {
+			return "Key not found. Use .keys() to see available keys.";
+		}
+		if (errorMsg.includes("AttributeError")) {
+			return "Attribute not found. Use dir(obj) to inspect.";
+		}
+		return null;
+	}
+
+	// =========================================================================
+	// UI HELPERS
+	// =========================================================================
+
+	function appendConsole(text, type) {
+		const output = document.getElementById("pyodide_console_output");
+		if (!output) return;
+
+		const span = document.createElement("span");
+		span.textContent = text;
+
+		switch (type) {
+			case "stderr":
+				span.style.color = "#ff5555";
+				break;
+			case "warn":
+				span.style.color = "#ffaa00";
+				break;
+			case "info":
+				span.style.color = "#888888";
+				break;
+			case "stdout":
+			default:
+				span.style.color = "#00ff00";
+				break;
+		}
+
+		output.appendChild(span);
+
+		// Limit console lines to prevent memory issues
+		while (output.childNodes.length > 500) {
+			output.removeChild(output.firstChild);
+		}
+
+		output.scrollTop = output.scrollHeight;
+	}
+
+	function setStatus(text) {
+		var el = document.getElementById("pyodide_status");
+		if (el) el.textContent = text;
+	}
+
+	function showErrorIndicator() {
+		var el = document.getElementById("pyodide_error_indicator");
+		if (el) el.style.display = "inline";
+	}
+
+	function hideErrorIndicator() {
+		var el = document.getElementById("pyodide_error_indicator");
+		if (el) el.style.display = "none";
+	}
+
+	function showPredictionResult(result) {
+		var container = document.getElementById("pyodide_prediction_results");
+		var output = document.getElementById("pyodide_prediction_output");
+		if (!container || !output) return;
+
+		container.style.display = "block";
+
+		var displayText = "";
+		try {
+			if (result === null || result === undefined) {
+				displayText = "(no prediction result)";
+			} else if (typeof result === "object" && result.toJs) {
+				displayText = formatPredictionResult(result.toJs());
+			} else if (Array.isArray(result)) {
+				displayText = formatPredictionResult(result);
+			} else {
+				displayText = JSON.stringify(result, null, 2);
+			}
+		} catch (e) {
+			displayText = String(result);
+		}
+
+		output.textContent = displayText;
+	}
+
+	function formatPredictionResult(result) {
+		if (!Array.isArray(result)) {
+			return JSON.stringify(result, null, 2);
+		}
+
+		var lines = [];
+		lines.push("Prediction (" + result.length + " outputs):");
+		lines.push("\u2500".repeat(40));
+
+		var labelsList = [];
+		try {
+			if (typeof labels !== "undefined" && Array.isArray(labels)) {
+				labelsList = labels;
+			}
+		} catch (e) {}
+
+		var indexed = result.map(function(val, idx) {
+			return {
+				index: idx,
+				value: typeof val === "number" ? val : parseFloat(val),
+				label: labelsList[idx] || ("Output " + idx)
+			};
+		});
+
+		var sorted = indexed.slice().sort(function(a, b) { return b.value - a.value; });
+
+		var sum = indexed.reduce(function(s, v) { return s + v.value; }, 0);
+		var looksLikeProbabilities = indexed.every(function(v) {
+			return v.value >= 0 && v.value <= 1;
+		}) && Math.abs(sum - 1.0) < 0.05;
+
+		if (looksLikeProbabilities) {
+			lines.push("(sorted by confidence)");
+			for (var i = 0; i < sorted.length; i++) {
+				var item = sorted[i];
+				var pct = (item.value * 100).toFixed(2);
+				var bar = "\u2588".repeat(Math.round(item.value * 20));
+				lines.push("  " + item.label.padEnd(20) + " " + pct.padStart(7) + "%  " + bar);
+			}
+		} else {
+			for (var j = 0; j < indexed.length; j++) {
+				var it = indexed[j];
+				var valStr = it.value.toFixed(6);
+				lines.push("  " + it.label.padEnd(20) + " " + valStr);
+			}
+		}
+
+		return lines.join("\n");
+	}
+
+	function hidePredictionResults() {
+		var container = document.getElementById("pyodide_prediction_results");
+		if (container) container.style.display = "none";
+	}
+
+	// =========================================================================
+	// PUBLIC API
 	// =========================================================================
 
 	function getLastPyodidePrediction() {
@@ -842,12 +1495,147 @@ async function refreshModelInPython() {
 		try {
 			await pyodideInstance.loadPackage(pkgList);
 			appendConsole("[Packages loaded successfully]\n", "info");
-			setStatus("Pyodide: ready ✓");
+			setStatus("Pyodide: ready \u2713");
 		} catch (e) {
 			appendConsole("[Failed to load packages: " + e.message + "]\n", "stderr");
-			setStatus("Pyodide: ready ✓");
+			setStatus("Pyodide: ready \u2713");
 			throw e;
 		}
+	}
+
+	// =========================================================================
+	// EDITOR KEY HANDLERS
+	// =========================================================================
+
+	function setupEditorKeyHandlers() {
+		const textarea = document.getElementById("pyodide_editor_textarea");
+		if (!textarea) return;
+
+		textarea.addEventListener("keydown", function (e) {
+			if (e.key === "Tab") {
+				e.preventDefault();
+				var start = this.selectionStart;
+				var end = this.selectionEnd;
+				var value = this.value;
+
+				if (e.shiftKey) {
+					var beforeSelection = value.substring(0, start);
+					var afterSelection = value.substring(end);
+					var lineStart = beforeSelection.lastIndexOf("\n") + 1;
+					var textToProcess = value.substring(lineStart, end);
+					var lines = textToProcess.split("\n");
+					var removedChars = 0;
+					var firstLineRemoved = 0;
+
+					var dedentedLines = lines.map(function(line, idx) {
+						if (line.startsWith("    ")) {
+							if (idx === 0) firstLineRemoved = 4;
+							removedChars += 4;
+							return line.substring(4);
+						} else if (line.startsWith("\t")) {
+							if (idx === 0) firstLineRemoved = 1;
+							removedChars++;
+							return line.substring(1);
+						}
+						return line;
+					});
+
+					this.value = value.substring(0, lineStart) + dedentedLines.join("\n") + afterSelection;
+					this.selectionStart = Math.max(lineStart, start - firstLineRemoved);
+					this.selectionEnd = end - removedChars;
+				} else if (start !== end) {
+					var beforeSel = value.substring(0, start);
+					var ls = beforeSel.lastIndexOf("\n") + 1;
+					var proc = value.substring(ls, end);
+					var lns = proc.split("\n");
+					var indented = lns.map(function(line) { return "    " + line; });
+
+					this.value = value.substring(0, ls) + indented.join("\n") + value.substring(end);
+					this.selectionStart = start + 4;
+					this.selectionEnd = end + (lns.length * 4);
+				} else {
+					this.value = value.substring(0, start) + "    " + value.substring(end);
+					this.selectionStart = this.selectionEnd = start + 4;
+				}
+				return;
+			}
+
+			if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
+				e.preventDefault();
+				var s = this.selectionStart;
+				var v = this.value;
+				var lineStart = v.lastIndexOf("\n", s - 1) + 1;
+				var currentLine = v.substring(lineStart, s);
+				var indent = currentLine.match(/^[\t ]*/)[0];
+				var trimmedLine = currentLine.trimEnd();
+				var newIndent = indent;
+
+				if (trimmedLine.endsWith(":")) {
+					newIndent += "    ";
+				}
+				// Dedent after return/break/continue/pass
+				if (/^\s*(return|break|continue|pass)\b/.test(trimmedLine)) {
+					if (newIndent.length >= 4) {
+						newIndent = newIndent.substring(4);
+					} else if (newIndent.length >= 1 && newIndent[0] === "\t") {
+						newIndent = newIndent.substring(1);
+					}
+				}
+
+				var insertion = "\n" + newIndent;
+				this.value = v.substring(0, s) + insertion + v.substring(this.selectionEnd);
+				this.selectionStart = this.selectionEnd = s + insertion.length;
+				return;
+			}
+
+			if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				pyodideEditorRun();
+				return;
+			}
+
+			if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				saveEditorContent();
+				appendConsole("[Saved to browser storage]\n", "info");
+				return;
+			}
+
+			// Ctrl+D - duplicate line
+			if (e.key === "d" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				var start = this.selectionStart;
+				var value = this.value;
+				var ls = value.lastIndexOf("\n", start - 1) + 1;
+				var le = value.indexOf("\n", start);
+				if (le === -1) le = value.length;
+				var line = value.substring(ls, le);
+				this.value = value.substring(0, le) + "\n" + line + value.substring(le);
+				this.selectionStart = this.selectionEnd = start + line.length + 1;
+				return;
+			}
+		});
+
+		textarea.addEventListener("keypress", function (e) {
+			var pairs = { "(": ")", "[": "]", "{": "}" };
+			var char = e.key;
+
+			if (pairs[char]) {
+				var start = this.selectionStart;
+				var end = this.selectionEnd;
+				var value = this.value;
+
+				if (start !== end) {
+					e.preventDefault();
+					var selected = value.substring(start, end);
+					this.value = value.substring(0, start) + char + selected + pairs[char] + value.substring(end);
+					this.selectionStart = start + 1;
+					this.selectionEnd = end + 1;
+				}
+			}
+		});
+
+		loadEditorContent();
 	}
 
 	// =========================================================================
@@ -897,6 +1685,11 @@ async function refreshModelInPython() {
 	window.pyodideEditorClear = pyodideEditorClear;
 	window.pyodideEditorReset = pyodideEditorReset;
 	window.pyodideLivePredictChanged = pyodideLivePredictChanged;
+	window.pyodideStartWebcam = startWebcam;
+	window.pyodideStopWebcam = stopWebcam;
+	window.pyodideHandleImageUpload = handleImageUpload;
+	window.pyodideLoadTemplate = loadTemplate;
+	window.pyodideSetWebcamFPS = setWebcamFPS;
 
 	window.PyodideEditor = {
 		getLastPrediction: getLastPyodidePrediction,
@@ -905,7 +1698,9 @@ async function refreshModelInPython() {
 		isRunning: isPyodideRunning,
 		runCode: runPythonCode,
 		loadPackage: loadPyodidePackage,
-		init: initPyodide
+		init: initPyodide,
+		startWebcam: startWebcam,
+		stopWebcam: stopWebcam
 	};
 
 })();
