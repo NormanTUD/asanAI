@@ -715,23 +715,20 @@ elif isinstance(result, list):
     if len(result) > 10:
         print(f"   ... ({len(result) - 10} more)")
 `,
-image_snapshot_rps: `# ✊✋✌️ Rock Paper Scissors — 2 Players!
-# Take turns pressing 📸 Snap. Player 1 snaps, then Player 2 snaps.
-# The model predicts what each player shows → winner is decided!
+	image_snapshot_rps: `# ✊✋✌️ Rock Paper Scissors — 2 Players!
+# The camera stays LIVE. Press 📸 Snap for Player 1, then 📸 Snap for Player 2.
+# Winner gets an emoji crown!
 
 if 'game' not in dir():
-    # === SETUP (runs once) ===
     game = {'round': 0, 'p1_score': 0, 'p2_score': 0, 'turn': 1, 'p1_move': None}
     info = get_model_info()
     num_classes = info['output_shape'][-1] if info['output_shape'] else 0
     class_labels = _labels if '_labels' in dir() and _labels else None
     is_classif = _is_classification if '_is_classification' in dir() else False
 
-    # Map classes to rock/paper/scissors (works with ANY model)
     rps = ['rock', 'paper', 'scissors']
     emoji = {'rock': '✊', 'paper': '✋', 'scissors': '✌️'}
     rps_map = {i: rps[i % 3] for i in range(num_classes)}
-    history = []  # stores (round, p1_conf, p2_conf)
 
     print("✊✋✌️  ROCK PAPER SCISSORS — 2 PLAYERS")
     print("═" * 40)
@@ -740,10 +737,10 @@ if 'game' not in dir():
             print(f"  {emoji[rps_map[i]]} {class_labels[i]} → {rps_map[i]}")
     print()
     print("📸 Press SNAP for Player 1, then SNAP again for Player 2!")
+    print("   Camera stays live — just snap when ready!")
     print("═" * 40)
     print()
 
-# === EACH SNAPSHOT ===
 if input_data is not None:
     result = predict(input_data)
     set_prediction_result(result)
@@ -753,7 +750,6 @@ if input_data is not None:
     label = class_labels[top] if class_labels and top < len(class_labels) else f"Class {top}"
 
     if game['turn'] == 1:
-        # Player 1's turn
         game['p1_move'] = (top, conf, move, label)
         game['turn'] = 2
         print(f"👤 Player 1 snapped! → {emoji[move]} {move} ({label}, {conf*100:.0f}%)")
@@ -761,108 +757,48 @@ if input_data is not None:
         print()
 
     else:
-        # Player 2's turn → decide winner!
         game['round'] += 1
         p1 = game['p1_move']
         p2 = (top, conf, move, label)
         game['turn'] = 1
         game['p1_move'] = None
 
-        # Who wins?
         wins = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
         if p1[2] == p2[2]:
             result_text = "🤝 DRAW!"
+            p1_emoji = "😐"
+            p2_emoji = "😐"
         elif wins[p1[2]] == p2[2]:
-            result_text = "👤 Player 1 WINS! 🎉"
+            result_text = "👑 Player 1 WINS!"
             game['p1_score'] += 1
+            p1_emoji = "🏆"
+            p2_emoji = "😢"
         else:
-            result_text = "👥 Player 2 WINS! 🎉"
+            result_text = "👑 Player 2 WINS!"
             game['p2_score'] += 1
+            p1_emoji = "😢"
+            p2_emoji = "🏆"
 
-        # Save real confidences for chart
-        history.append((game['round'], p1[1], p2[1]))
-
-        # Print result
         print(f"══ Round {game['round']} ═══════════════════════")
-        print(f"  👤 P1: {emoji[p1[2]]} {p1[2]} ({p1[3]}, {p1[1]*100:.0f}%)")
-        print(f"  👥 P2: {emoji[p2[2]]} {p2[2]} ({p2[3]}, {conf*100:.0f}%)")
+        print(f"  {p1_emoji} P1: {emoji[p1[2]]} {p1[2]} ({p1[3]}, {p1[1]*100:.0f}%)")
+        print(f"  {p2_emoji} P2: {emoji[p2[2]]} {p2[2]} ({p2[3]}, {conf*100:.0f}%)")
         print(f"  → {result_text}")
-        print(f"  Score: P1={game['p1_score']} | P2={game['p2_score']}")
-        print(f"═══════════════════════════════════════")
+        print()
+        print(f"  ┌─────────────────────────────┐")
+        print(f"  │  {'🏆' if game['p1_score'] > game['p2_score'] else '👤'} P1: {game['p1_score']}  vs  {'🏆' if game['p2_score'] > game['p1_score'] else '👥'} P2: {game['p2_score']}  │")
+        print(f"  └─────────────────────────────┘")
+        print()
+        if game['p1_score'] > game['p2_score']:
+            print(f"  🏆 Player 1 leads!")
+        elif game['p2_score'] > game['p1_score']:
+            print(f"  🏆 Player 2 leads!")
+        else:
+            print(f"  ⚖️ Tied!")
         print()
         print(f"📸 Press Snap for next round (Player 1 goes first)")
         print()
-
-        # === Draw scoreboard with REAL confidence chart ===
-        canvas = create_canvas(400, 180)
-        ctx = canvas.getContext("2d")
-        ctx.fillStyle = "#0f0f1a"
-        ctx.fillRect(0, 0, 400, 180)
-
-        # Score
-        ctx.fillStyle = "#cdd6f4"
-        ctx.font = "bold 14px sans-serif"
-        ctx.textAlign = "center"
-        ctx.fillText(f"P1: {game['p1_score']}  vs  P2: {game['p2_score']}  ({game['round']} rounds)", 200, 20)
-
-        # Confidence chart (real data!)
-        if len(history) > 0:
-            ctx.fillStyle = "#a6adc8"
-            ctx.font = "10px sans-serif"
-            ctx.textAlign = "left"
-            ctx.fillText("Confidence per round:", 10, 45)
-
-            chart_x, chart_y, chart_w, chart_h = 10, 55, 380, 100
-            n = len(history)
-
-            # P1 line (green)
-            ctx.strokeStyle = "#00d4aa"
-            ctx.lineWidth = 2
-            ctx.beginPath()
-            for j in range(n):
-                px = chart_x + (j / max(n-1, 1)) * chart_w
-                py = chart_y + chart_h - (history[j][1] * chart_h)
-                if j == 0: ctx.moveTo(px, py)
-                else: ctx.lineTo(px, py)
-            ctx.stroke()
-
-            # P2 line (blue)
-            ctx.strokeStyle = "#89b4fa"
-            ctx.lineWidth = 2
-            ctx.beginPath()
-            for j in range(n):
-                px = chart_x + (j / max(n-1, 1)) * chart_w
-                py = chart_y + chart_h - (history[j][2] * chart_h)
-                if j == 0: ctx.moveTo(px, py)
-                else: ctx.lineTo(px, py)
-            ctx.stroke()
-
-            # Dots
-            for j in range(n):
-                px = chart_x + (j / max(n-1, 1)) * chart_w
-                # P1 dot
-                py1 = chart_y + chart_h - (history[j][1] * chart_h)
-                ctx.beginPath()
-                ctx.arc(px, py1, 4, 0, 6.28)
-                ctx.fillStyle = "#00d4aa"
-                ctx.fill()
-                # P2 dot
-                py2 = chart_y + chart_h - (history[j][2] * chart_h)
-                ctx.beginPath()
-                ctx.arc(px, py2, 4, 0, 6.28)
-                ctx.fillStyle = "#89b4fa"
-                ctx.fill()
-
-            # Legend
-            ctx.font = "10px sans-serif"
-            ctx.fillStyle = "#00d4aa"
-            ctx.textAlign = "left"
-            ctx.fillText("● P1", 10, 172)
-            ctx.fillStyle = "#89b4fa"
-            ctx.fillText("● P2", 50, 172)
-
-        display(canvas)
 `,
+
 };
 
 	const DEFAULT_CODE = TEMPLATES.hello_world;
@@ -1830,143 +1766,154 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		}
 
 		// =========================================================================
-		// SNAPSHOT MODE (single image capture, no live stream)
+		// SNAPSHOT MODE — keeps live stream, only captures model input on snap
 		// =========================================================================
 
 		let snapshotStream = null;
+		let snapshotVideo = null;
 
-		async function takeSnapshot() {
-			if (!isImageModel()) {
-				appendConsole("[⚠️ Snapshot requires an image model]\n", "warn");
-				return;
-			}
+		/**
+		 * Ensures the live webcam feed is running and visible.
+		 * Does NOT stop the stream — it stays live.
+		 */
+		async function ensureLiveStream() {
+		    const video = document.getElementById("pyodide_webcam_video");
+		    const container = document.getElementById("pyodide_webcam_container");
+		    if (!video || !container) return false;
 
-			if (!pyodideReady) {
-				appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
-				await initPyodide();
-				if (!pyodideReady) return;
-			}
+		    // Already have a live stream running on the video element
+		    if (snapshotStream && video.srcObject === snapshotStream && !video.paused && video.readyState >= 2) {
+			return true;
+		    }
 
-			// Temporarily open camera, grab one frame, close camera
-			let stream = null;
+		    // Stop any old frozen/capture streams on the video
+		    if (video.srcObject && video.srcObject !== snapshotStream) {
 			try {
-				stream = await navigator.mediaDevices.getUserMedia({
-					video: { facingMode: "environment", width: { ideal: 320 }, height: { ideal: 320 } },
-					audio: false
-				});
-			} catch (e) {
-				appendConsole("[📸 Camera error: " + e.message + "]\n", "stderr");
-				return;
-			}
+			    video.srcObject.getTracks().forEach(function(t) { t.stop(); });
+			} catch(e) {}
+			video.srcObject = null;
+		    }
 
-			// Create a temporary video element to capture from
-			const tempVideo = document.createElement("video");
-			tempVideo.srcObject = stream;
-			tempVideo.setAttribute("playsinline", "");
-			tempVideo.muted = true;
-
-			await new Promise(function(resolve) {
-				tempVideo.onloadedmetadata = function() {
-					tempVideo.play();
-					setTimeout(resolve, 500);
-				};
+		    // Start a fresh live stream
+		    try {
+			snapshotStream = await navigator.mediaDevices.getUserMedia({
+			    video: { facingMode: "environment", width: { ideal: 320 }, height: { ideal: 320 } },
+			    audio: false
 			});
+		    } catch (e) {
+			appendConsole("[📸 Camera error: " + e.message + "]\n", "stderr");
+			return false;
+		    }
 
-			// Get model input dimensions
-			var info = getModelInfoForPython();
-			if (!info || !info.input_shape) {
-				stream.getTracks().forEach(function(t) { t.stop(); });
-				appendConsole("[Error] No model loaded.\n", "stderr");
-				return;
+		    video.srcObject = snapshotStream;
+		    video.setAttribute("playsinline", "");
+		    video.muted = true;
+		    container.style.display = "block";
+
+		    await new Promise(function(resolve) {
+			if (video.readyState >= 2) {
+			    resolve();
+			} else {
+			    video.onloadedmetadata = function() {
+				video.play();
+				resolve();
+			    };
 			}
+		    });
 
-			var inputShape = info.input_shape;
-			var targetH = inputShape[1] || 40;
-			var targetW = inputShape[2] || 40;
-			var channels = inputShape[3] || 3;
+		    await video.play().catch(function() {});
 
-			// === Show the snapshot in the video element as a frozen frame ===
-			var container = document.getElementById("pyodide_webcam_container");
-			if (container) container.style.display = "block";
+		    // Wait a moment for frames to actually flow
+		    await new Promise(function(resolve) { setTimeout(resolve, 300); });
 
-			var videoEl = document.getElementById("pyodide_webcam_video");
-			var webcamCanvas = document.getElementById("pyodide_webcam_canvas");
-
-			// Draw full-res frame onto a display canvas, then feed it to the video element
-			var displayCanvas = document.createElement("canvas");
-			displayCanvas.width = tempVideo.videoWidth || 320;
-			displayCanvas.height = tempVideo.videoHeight || 240;
-			var displayCtx = displayCanvas.getContext("2d");
-			displayCtx.drawImage(tempVideo, 0, 0, displayCanvas.width, displayCanvas.height);
-
-			// Show in video element via captureStream (frozen single frame)
-			if (videoEl) {
-				videoEl.style.display = "";
-				// Stop any existing srcObject
-				if (videoEl.srcObject) {
-					try {
-						videoEl.srcObject.getTracks().forEach(function(t) { t.stop(); });
-					} catch(e) {}
-					videoEl.srcObject = null;
-				}
-				// Use a static canvas stream to display the frozen frame
-				try {
-					var frozenStream = displayCanvas.captureStream(0); // 0 FPS = static
-					videoEl.srcObject = frozenStream;
-					videoEl.play().catch(function() {});
-				} catch(e) {
-					// Fallback: show on webcam canvas directly
-					if (webcamCanvas) {
-						webcamCanvas.width = displayCanvas.width;
-						webcamCanvas.height = displayCanvas.height;
-						webcamCanvas.style.display = "block";
-						var wctx = webcamCanvas.getContext("2d");
-						wctx.drawImage(displayCanvas, 0, 0);
-					}
-				}
-			}
-
-			// Also draw on webcam canvas as backup display
-			if (webcamCanvas) {
-				webcamCanvas.width = displayCanvas.width;
-				webcamCanvas.height = displayCanvas.height;
-				webcamCanvas.style.display = "block";
-				var canvasCtx = webcamCanvas.getContext("2d");
-				canvasCtx.drawImage(displayCanvas, 0, 0);
-			}
-
-			// === Get pixel data at MODEL input size for prediction ===
-			var modelCanvas = document.createElement("canvas");
-			modelCanvas.width = targetW;
-			modelCanvas.height = targetH;
-			var modelCtx = modelCanvas.getContext("2d");
-			modelCtx.drawImage(tempVideo, 0, 0, targetW, targetH);
-
-			var imageData = modelCtx.getImageData(0, 0, targetW, targetH);
-			var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
-
-			// Stop camera immediately
-			stream.getTracks().forEach(function(t) { t.stop(); });
-			tempVideo.srcObject = null;
-
-			// Set input_data in Python
-			try {
-				pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
-
-				var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
-				var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
-				pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
-				pyodideInstance.globals.set("_is_classification", classificationFlag);
-			} catch (e) {
-				appendConsole("[Error setting input] " + e.message + "\n", "stderr");
-				return;
-			}
-
-			appendConsole("[📸 Snapshot captured! (" + targetW + "x" + targetH + ")]\n", "info");
-
-			// === AUTO-RUN the code so the game advances automatically ===
-			await pyodideEditorRun();
+		    appendConsole("[📷 Live camera feed active]\n", "info");
+		    return true;
 		}
+
+		/**
+		 * Takes a snapshot: grabs the CURRENT frame from the live video,
+		 * resizes it to model input size, sets input_data, and runs the code.
+		 * The live video stream is NEVER stopped.
+		 */
+		async function takeSnapshot() {
+		    if (!isImageModel()) {
+			appendConsole("[⚠️ Snapshot requires an image model]\n", "warn");
+			return;
+		    }
+
+		    if (!pyodideReady) {
+			appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
+			await initPyodide();
+			if (!pyodideReady) return;
+		    }
+
+		    // Ensure live stream is running (starts it if not already)
+		    const streamReady = await ensureLiveStream();
+		    if (!streamReady) return;
+
+		    const video = document.getElementById("pyodide_webcam_video");
+		    if (!video || video.readyState < 2) {
+			appendConsole("[⚠️ Video not ready yet, try again]\n", "warn");
+			return;
+		    }
+
+		    // Get model input dimensions
+		    var info = getModelInfoForPython();
+		    if (!info || !info.input_shape) {
+			appendConsole("[Error] No model loaded.\n", "stderr");
+			return;
+		    }
+
+		    var inputShape = info.input_shape;
+		    var targetH = inputShape[1] || 40;
+		    var targetW = inputShape[2] || 40;
+		    var channels = inputShape[3] || 3;
+
+		    // === Grab current frame and resize to model input size ===
+		    var modelCanvas = document.createElement("canvas");
+		    modelCanvas.width = targetW;
+		    modelCanvas.height = targetH;
+		    var modelCtx = modelCanvas.getContext("2d");
+		    modelCtx.drawImage(video, 0, 0, targetW, targetH);
+
+		    var imageData = modelCtx.getImageData(0, 0, targetW, targetH);
+		    var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+
+		    // Set input_data in Python (video stays live — we only changed the data)
+		    try {
+			pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
+
+			var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
+			var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
+			pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
+			pyodideInstance.globals.set("_is_classification", classificationFlag);
+		    } catch (e) {
+			appendConsole("[Error setting input] " + e.message + "\n", "stderr");
+			return;
+		    }
+
+		    appendConsole("[📸 Snap! Frame captured (" + targetW + "x" + targetH + ") — stream still live]\n", "info");
+
+		    // Auto-run the code
+		    await pyodideEditorRun();
+		}
+
+		/**
+		 * Stops the snapshot live stream (called from stop button or cleanup)
+		 */
+		function stopSnapshotStream() {
+		    if (snapshotStream) {
+			snapshotStream.getTracks().forEach(function(t) { t.stop(); });
+			snapshotStream = null;
+		    }
+		    var video = document.getElementById("pyodide_webcam_video");
+		    if (video && video.srcObject) {
+			video.srcObject = null;
+		    }
+		    var container = document.getElementById("pyodide_webcam_container");
+		    if (container) container.style.display = "none";
+		}
+
 
 	function startWebcamPredictionLoop() {
 		if (webcamInterval) clearInterval(webcamInterval);
@@ -2317,7 +2264,7 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	}
 
 		function pyodideEditorStop() {
-			if (!isRunning && !webcamStream) return;
+			if (!isRunning && !webcamStream && !snapshotStream) return;
 
 			interruptExecution = true;
 			isRunning = false;
@@ -2327,13 +2274,17 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 				stopWebcam();
 			}
 
+			// Also stop snapshot live stream
+			if (snapshotStream) {
+				stopSnapshotStream();
+			}
+
 			appendConsole("\n[⏹ Stopped]\n", "warn");
 			setStatus("✓ Ready", "ready");
 
 			const stopBtn = document.getElementById("pyodide_stop_btn");
 			if (stopBtn) stopBtn.disabled = true;
 
-			// *** FIX: Scroll editor wrapper into view so user can access controls ***
 			var wrapper = document.getElementById("pyodide_editor_wrapper");
 			if (wrapper) {
 				wrapper.scrollIntoView({ behavior: "smooth", block: "start" });
