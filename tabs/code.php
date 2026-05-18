@@ -588,10 +588,7 @@
 					📷 Webcam
 				</button>
 				<button id="pyodide_snapshot_btn" onclick="pyodideSnapshot()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Take a single photo">
-				    📸 Snap
-				</button>
-				<button id="pyodide_snapshot_btn_adv" onclick="pyodideSnapshot()" class="pe-btn pe-btn-clear" style="font-size:12px;">
-				    📸 Snapshot
+				    📸 Snap single photo
 				</button>
 				<button onclick="pyodideToggleMode()" class="pe-btn pe-btn-mode pe-tooltip" data-tip="Toggle Simple/Advanced">
 					🔀 Mode

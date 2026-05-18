@@ -1830,10 +1830,10 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		}
 
 		// =========================================================================
-// SNAPSHOT MODE (single image capture, no live stream)
-// =========================================================================
+		// SNAPSHOT MODE (single image capture, no live stream)
+		// =========================================================================
 
-let snapshotStream = null;
+		let snapshotStream = null;
 
 		async function takeSnapshot() {
 			if (!isImageModel()) {
@@ -1859,7 +1859,7 @@ let snapshotStream = null;
 				return;
 			}
 
-			// Create a temporary video element
+			// Create a temporary video element to capture from
 			const tempVideo = document.createElement("video");
 			tempVideo.srcObject = stream;
 			tempVideo.setAttribute("playsinline", "");
@@ -1886,32 +1886,59 @@ let snapshotStream = null;
 			var targetW = inputShape[2] || 40;
 			var channels = inputShape[3] || 3;
 
+			// Create a canvas at model input size for the pixel data
 			var snapCanvas = document.createElement("canvas");
 			snapCanvas.width = targetW;
 			snapCanvas.height = targetH;
 			var ctx = snapCanvas.getContext("2d");
 			ctx.drawImage(tempVideo, 0, 0, targetW, targetH);
 
-			// Stop camera immediately
-			stream.getTracks().forEach(function(t) { t.stop(); });
-			tempVideo.srcObject = null;
-
 			var imageData = ctx.getImageData(0, 0, targetW, targetH);
 			var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
 
-			// Show preview in webcam container
+			// === Show the snapshot in the live video element ===
 			var container = document.getElementById("pyodide_webcam_container");
 			if (container) container.style.display = "block";
 
-			var displayCanvas = document.getElementById("pyodide_webcam_canvas");
-			if (displayCanvas) {
-				displayCanvas.width = targetW;
-				displayCanvas.height = targetH;
-				var dctx = displayCanvas.getContext("2d");
-				dctx.putImageData(imageData, 0, 0);
+			var videoEl = document.getElementById("pyodide_webcam_video");
+			if (videoEl) {
+				// Create a full-resolution snapshot for display purposes
+				var displayCanvas = document.createElement("canvas");
+				displayCanvas.width = tempVideo.videoWidth;
+				displayCanvas.height = tempVideo.videoHeight;
+				var displayCtx = displayCanvas.getContext("2d");
+				displayCtx.drawImage(tempVideo, 0, 0);
+
+				// Convert to a blob URL and show it as a poster/frame on the video element
+				// We use the video element's poster or replace srcObject with a static stream
+				try {
+					var dataUrl = displayCanvas.toDataURL("image/png");
+					// Stop any existing live stream on the video element
+					if (videoEl.srcObject) {
+						videoEl.srcObject.getTracks().forEach(function(t) { t.stop(); });
+						videoEl.srcObject = null;
+					}
+					// Use poster attribute to show the frozen frame
+					videoEl.poster = dataUrl;
+					videoEl.removeAttribute("src");
+					videoEl.load(); // force poster to show
+				} catch (posterErr) {
+					// Fallback: draw on the webcam canvas instead
+					var webcamCanvas = document.getElementById("pyodide_webcam_canvas");
+					if (webcamCanvas) {
+						webcamCanvas.width = tempVideo.videoWidth;
+						webcamCanvas.height = tempVideo.videoHeight;
+						var wctx = webcamCanvas.getContext("2d");
+						wctx.drawImage(tempVideo, 0, 0);
+					}
+				}
 			}
 
-			// Set input_data in Python
+			// Stop camera immediately after capturing
+			stream.getTracks().forEach(function(t) { t.stop(); });
+			tempVideo.srcObject = null;
+
+			// Set input_data in Python (but do NOT auto-run)
 			try {
 				pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
 
@@ -1925,10 +1952,10 @@ let snapshotStream = null;
 				return;
 			}
 
-			appendConsole("[📸 Snapshot taken! (" + targetW + "x" + targetH + ")]\n", "info");
+			appendConsole("[📸 Snapshot taken! (" + targetW + "x" + targetH + ") — press ▶ Run to predict]\n", "info");
 
-			// Auto-run the code
-			await pyodideEditorRun();
+			// NOTE: We do NOT call pyodideEditorRun() here.
+			// The user must press Run manually to trigger prediction.
 		}
 
 	function startWebcamPredictionLoop() {
