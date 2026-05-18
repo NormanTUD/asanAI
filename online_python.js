@@ -71,8 +71,8 @@
 	// DEFAULT CODE TEMPLATES
 	// =========================================================================
 
-	const TEMPLATES = {
-		image_webcam: `# 📷 Live Webcam Prediction
+const TEMPLATES = {
+	image_webcam: `# 📷 Live Webcam Prediction
 # This script runs on EVERY frame from the webcam.
 # Automatically adapts to your model's input shape.
 
@@ -89,7 +89,7 @@ if 'frame_count' not in dir():
     class_labels = _labels if '_labels' in dir() and _labels else None
     is_classif = _is_classification if '_is_classification' in dir() else False
     if class_labels and is_classif:
-	print(f"Labels: {list(class_labels)}")
+        print(f"Labels: {list(class_labels)}")
     print()
 
 if input_data is not None:
@@ -99,27 +99,27 @@ if input_data is not None:
 
     # Show prediction based on model type
     if isinstance(result, list) and len(result) > 1 and is_classif:
-	top_idx = result.index(max(result))
-	confidence = result[top_idx] * 100
-	if class_labels and top_idx < len(class_labels):
-	    label_name = class_labels[top_idx]
-	else:
-	    label_name = f"Class {top_idx}"
-	if frame_count % 5 == 0:
-	    print(f"Frame {frame_count} | 🏆 {label_name} ({confidence:.1f}%)")
+        top_idx = result.index(max(result))
+        confidence = result[top_idx] * 100
+        if class_labels and top_idx < len(class_labels):
+            label_name = class_labels[top_idx]
+        else:
+            label_name = f"Class {top_idx}"
+        if frame_count % 5 == 0:
+            print(f"Frame {frame_count} | 🏆 {label_name} ({confidence:.1f}%)")
     elif isinstance(result, list) and not is_classif:
-	if frame_count % 5 == 0:
-	    vals = ', '.join(f'{v:.4f}' for v in result[:5])
-	    suffix = '...' if len(result) > 5 else ''
-	    print(f"Frame {frame_count} | Output: [{vals}{suffix}]")
+        if frame_count % 5 == 0:
+            vals = ', '.join(f'{v:.4f}' for v in result[:5])
+            suffix = '...' if len(result) > 5 else ''
+            print(f"Frame {frame_count} | Output: [{vals}{suffix}]")
     else:
-	if frame_count % 5 == 0:
-	    print(f"Frame {frame_count} | Result: {result}")
+        if frame_count % 5 == 0:
+            print(f"Frame {frame_count} | Result: {result}")
 else:
     print("⏳ Waiting for webcam frame...")
 `,
 
-		image_webcam_tracking: `# 📷 Webcam + Confidence Tracking
+    image_webcam_tracking: `# 📷 Webcam + Confidence Tracking
 # Tracks predictions over time and detects stable classifications.
 
 if 'frame_count' not in dir():
@@ -134,13 +134,13 @@ if 'frame_count' not in dir():
     is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Model: {info['input_shape']} → {num_classes} classes")
     if class_labels and is_classif:
-	print(f"   Labels: {list(class_labels)}")
+        print(f"   Labels: {list(class_labels)}")
     print(f"   Tracking stability over {STABILITY_THRESHOLD} frames")
     print()
 
 def get_label(idx):
     if class_labels and is_classif and idx < len(class_labels):
-	return class_labels[idx]
+        return class_labels[idx]
     return f"Class {idx}"
 
 if input_data is not None:
@@ -149,28 +149,28 @@ if input_data is not None:
     set_prediction_result(result)
 
     if isinstance(result, list) and len(result) > 1:
-	top_idx = result.index(max(result))
-	confidence = result[top_idx]
-	history.append({'class': top_idx, 'conf': confidence})
+        top_idx = result.index(max(result))
+        confidence = result[top_idx]
+        history.append({'class': top_idx, 'conf': confidence})
 
-	if len(history) > 60:
-	    history = history[-60:]
+        if len(history) > 60:
+            history = history[-60:]
 
-	if top_idx == last_class:
-	    stable_count += 1
-	else:
-	    stable_count = 1
-	    last_class = top_idx
+        if top_idx == last_class:
+            stable_count += 1
+        else:
+            stable_count = 1
+            last_class = top_idx
 
-	if stable_count == STABILITY_THRESHOLD:
-	    avg_conf = sum(h['conf'] for h in history[-STABILITY_THRESHOLD:]) / STABILITY_THRESHOLD
-	    print(f"🔒 STABLE: {get_label(top_idx)} for {STABILITY_THRESHOLD} frames (avg {avg_conf*100:.1f}%)")
+        if stable_count == STABILITY_THRESHOLD:
+            avg_conf = sum(h['conf'] for h in history[-STABILITY_THRESHOLD:]) / STABILITY_THRESHOLD
+            print(f"🔒 STABLE: {get_label(top_idx)} for {STABILITY_THRESHOLD} frames (avg {avg_conf*100:.1f}%)")
 
-	if frame_count % 15 == 0:
-	    avg_conf = sum(h['conf'] for h in history[-15:]) / min(len(history), 15)
-	    print(f"📊 Frame {frame_count} | Current: {get_label(top_idx)} | Avg conf: {avg_conf*100:.1f}% | Stable: {stable_count}")
+        if frame_count % 15 == 0:
+            avg_conf = sum(h['conf'] for h in history[-15:]) / min(len(history), 15)
+            print(f"📊 Frame {frame_count} | Current: {get_label(top_idx)} | Avg conf: {avg_conf*100:.1f}% | Stable: {stable_count}")
 `,
-		image_webcam_threshold: `# 📷 Webcam + Threshold Alerts
+    image_webcam_threshold: `# 📷 Webcam + Threshold Alerts
 # Only prints when confidence exceeds a threshold.
 
 if 'frame_count' not in dir():
@@ -183,14 +183,14 @@ if 'frame_count' not in dir():
     is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Model: {info['input_shape']} → {info['output_shape']}")
     if class_labels and is_classif:
-	print(f"   Labels: {list(class_labels)}")
+        print(f"   Labels: {list(class_labels)}")
     print(f"⚙️  High threshold: {HIGH_THRESHOLD*100:.0f}%")
     print(f"⚙️  Low threshold: {LOW_THRESHOLD*100:.0f}%")
     print()
 
 def get_label(idx):
     if class_labels and is_classif and idx < len(class_labels):
-	return class_labels[idx]
+        return class_labels[idx]
     return f"Class {idx}"
 
 if input_data is not None:
@@ -199,16 +199,16 @@ if input_data is not None:
     set_prediction_result(result)
 
     if isinstance(result, list) and len(result) > 1:
-	top_idx = result.index(max(result))
-	confidence = result[top_idx]
+        top_idx = result.index(max(result))
+        confidence = result[top_idx]
 
-	if confidence >= HIGH_THRESHOLD:
-	    alert_count += 1
-	    print(f"🚨 HIGH [{frame_count}]: {get_label(top_idx)} at {confidence*100:.1f}% (alert #{alert_count})")
-	elif confidence <= LOW_THRESHOLD:
-	    print(f"🤷 LOW  [{frame_count}]: Best guess {get_label(top_idx)} at {confidence*100:.1f}%")
+        if confidence >= HIGH_THRESHOLD:
+            alert_count += 1
+            print(f"🚨 HIGH [{frame_count}]: {get_label(top_idx)} at {confidence*100:.1f}% (alert #{alert_count})")
+        elif confidence <= LOW_THRESHOLD:
+            print(f"🤷 LOW  [{frame_count}]: Best guess {get_label(top_idx)} at {confidence*100:.1f}%")
 `,
-		image_webcam_multiclass: `# 📷 Webcam + Multi-Class Monitor
+    image_webcam_multiclass: `# 📷 Webcam + Multi-Class Monitor
 # Monitors all classes and reports when any class spikes.
 
 if 'frame_count' not in dir():
@@ -220,15 +220,15 @@ if 'frame_count' not in dir():
     is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Monitoring {num_classes} classes")
     if class_labels and is_classif:
-	print(f"   Labels: {list(class_labels)}")
+        print(f"   Labels: {list(class_labels)}")
     print(f"   Will report when any class exceeds its previous peak")
     print()
     for i in range(num_classes):
-	class_peaks[i] = 0.0
+        class_peaks[i] = 0.0
 
 def get_label(idx):
     if class_labels and is_classif and idx < len(class_labels):
-	return class_labels[idx]
+        return class_labels[idx]
     return f"Class {idx}"
 
 if input_data is not None:
@@ -237,19 +237,19 @@ if input_data is not None:
     set_prediction_result(result)
 
     if isinstance(result, list) and len(result) > 1:
-	for idx, conf in enumerate(result):
-	    if conf > class_peaks[idx] + 0.1:
-		class_peaks[idx] = conf
-		print(f"📈 NEW PEAK [{frame_count}]: {get_label(idx)} → {conf*100:.1f}%")
+        for idx, conf in enumerate(result):
+            if conf > class_peaks[idx] + 0.1:
+                class_peaks[idx] = conf
+                print(f"📈 NEW PEAK [{frame_count}]: {get_label(idx)} → {conf*100:.1f}%")
 
-	if frame_count % 30 == 0:
-	    print(f"\\n--- Frame {frame_count} Summary ---")
-	    for idx in sorted(class_peaks, key=class_peaks.get, reverse=True):
-		bar = "█" * int(class_peaks[idx] * 20)
-		print(f"  {get_label(idx):12s}: {class_peaks[idx]*100:.1f}% {bar}")
-	    print()
+        if frame_count % 30 == 0:
+            print(f"\\n--- Frame {frame_count} Summary ---")
+            for idx in sorted(class_peaks, key=class_peaks.get, reverse=True):
+                bar = "█" * int(class_peaks[idx] * 20)
+                print(f"  {get_label(idx):12s}: {class_peaks[idx]*100:.1f}% {bar}")
+            print()
 `,
-		image_webcam_smoothed: `# 📷 Webcam + Smoothed Predictions
+    image_webcam_smoothed: `# 📷 Webcam + Smoothed Predictions
 # Averages predictions over a sliding window to reduce noise.
 
 if 'frame_count' not in dir():
@@ -262,13 +262,13 @@ if 'frame_count' not in dir():
     is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Model: {num_classes} classes")
     if class_labels and is_classif:
-	print(f"   Labels: {list(class_labels)}")
+        print(f"   Labels: {list(class_labels)}")
     print(f"📊 Smoothing window: {window_size} frames")
     print()
 
 def get_label(idx):
     if class_labels and is_classif and idx < len(class_labels):
-	return class_labels[idx]
+        return class_labels[idx]
     return f"Class {idx}"
 
 if input_data is not None:
@@ -276,28 +276,28 @@ if input_data is not None:
     result = predict(input_data)
 
     if isinstance(result, list) and len(result) > 1:
-	prediction_buffer.append(result)
-	if len(prediction_buffer) > window_size:
-	    prediction_buffer = prediction_buffer[-window_size:]
+        prediction_buffer.append(result)
+        if len(prediction_buffer) > window_size:
+            prediction_buffer = prediction_buffer[-window_size:]
 
-	num_cls = len(result)
-	smoothed = [0.0] * num_cls
-	for pred in prediction_buffer:
-	    for i in range(num_cls):
-		smoothed[i] += pred[i]
-	smoothed = [s / len(prediction_buffer) for s in smoothed]
+        num_cls = len(result)
+        smoothed = [0.0] * num_cls
+        for pred in prediction_buffer:
+            for i in range(num_cls):
+                smoothed[i] += pred[i]
+        smoothed = [s / len(prediction_buffer) for s in smoothed]
 
-	set_prediction_result(smoothed)
+        set_prediction_result(smoothed)
 
-	top_idx = smoothed.index(max(smoothed))
-	confidence = smoothed[top_idx]
+        top_idx = smoothed.index(max(smoothed))
+        confidence = smoothed[top_idx]
 
-	if frame_count % 10 == 0:
-	    raw_top = result.index(max(result))
-	    raw_conf = result[raw_top]
-	    print(f"Frame {frame_count} | Raw: {get_label(raw_top)} ({raw_conf*100:.1f}%) | Smoothed: {get_label(top_idx)} ({confidence*100:.1f}%)")
+        if frame_count % 10 == 0:
+            raw_top = result.index(max(result))
+            raw_conf = result[raw_top]
+            print(f"Frame {frame_count} | Raw: {get_label(raw_top)} ({raw_conf*100:.1f}%) | Smoothed: {get_label(top_idx)} ({confidence*100:.1f}%)")
 `,
-		image_upload: `# 🖼️ Image Upload Prediction
+    image_upload: `# 🖼️ Image Upload Prediction
 # Upload an image using the 📁 button above, then run this code.
 
 info = get_model_info()
@@ -310,7 +310,7 @@ print()
 
 def get_label(idx):
     if class_labels and is_classif and idx < len(class_labels):
-	return class_labels[idx]
+        return class_labels[idx]
     return f"Class {idx}"
 
 if input_data is None:
@@ -323,17 +323,17 @@ else:
     set_prediction_result(result)
 
     if isinstance(result, list) and len(result) > 1:
-	top_idx = result.index(max(result))
-	confidence = result[top_idx] * 100
-	print(f"🏆 Top: {get_label(top_idx)} ({confidence:.1f}%)")
-	print()
-	# Show all classes sorted
-	indexed = sorted(enumerate(result), key=lambda x: x[1], reverse=True)
-	for idx, conf in indexed:
-	    bar = "█" * int(conf * 20)
-	    print(f"  {get_label(idx):12s} {conf*100:5.1f}% {bar}")
+        top_idx = result.index(max(result))
+        confidence = result[top_idx] * 100
+        print(f"🏆 Top: {get_label(top_idx)} ({confidence:.1f}%)")
+        print()
+        # Show all classes sorted
+        indexed = sorted(enumerate(result), key=lambda x: x[1], reverse=True)
+        for idx, conf in indexed:
+            bar = "█" * int(conf * 20)
+            print(f"  {get_label(idx):12s} {conf*100:5.1f}% {bar}")
 `,
-		random_input: `# 🎲 Random Input Prediction
+    random_input: `# 🎲 Random Input Prediction
 # Generates random data matching your model's input shape.
 
 info = get_model_info()
@@ -350,7 +350,7 @@ print()
 
 def get_label(idx):
     if class_labels and is_classif and idx < len(class_labels):
-	return class_labels[idx]
+        return class_labels[idx]
     return f"Class {idx}"
 
 input_shape = info['input_shape']
@@ -367,7 +367,7 @@ if isinstance(result, list) and len(result) > 1:
     confidence = result[top_idx] * 100
     print(f"🏆 Top: {get_label(top_idx)} ({confidence:.1f}%)")
 `,
-		custom_data: `# ✏️ Custom Data Prediction
+    custom_data: `# ✏️ Custom Data Prediction
 # Enter your own data and predict.
 
 info = get_model_info()
@@ -382,7 +382,7 @@ print()
 
 def get_label(idx):
     if class_labels and is_classif and idx < len(class_labels):
-	return class_labels[idx]
+        return class_labels[idx]
     return f"Class {idx}"
 
 # Auto-generate matching input for testing:
@@ -402,7 +402,7 @@ if isinstance(result, list) and len(result) > 1:
     confidence = result[top_idx] * 100
     print(f"🏆 Top: {get_label(top_idx)} ({confidence:.1f}%)")
 `,
-		weights_inspect: `# 🔍 Inspect Model Weights
+    weights_inspect: `# 🔍 Inspect Model Weights
 
 info = get_model_info()
 print("🧠 Model Architecture")
@@ -433,22 +433,22 @@ if weights:
     print("-" * 50)
     total_values = 0
     for i, w in enumerate(weights):
-	if isinstance(w, list):
-	    shape = []
-	    temp = w
-	    while isinstance(temp, list):
-		shape.append(len(temp))
-		temp = temp[0] if len(temp) > 0 else []
-	    size = 1
-	    for s in shape:
-		size *= s
-	    total_values += size
-	    print(f"  Weight {i}: shape={shape} ({size:,} values)")
-	else:
-	    print(f"  Weight {i}: {type(w)}")
+        if isinstance(w, list):
+            shape = []
+            temp = w
+            while isinstance(temp, list):
+                shape.append(len(temp))
+                temp = temp[0] if len(temp) > 0 else []
+            size = 1
+            for s in shape:
+                size *= s
+            total_values += size
+            print(f"  Weight {i}: shape={shape} ({size:,} values)")
+        else:
+            print(f"  Weight {i}: {type(w)}")
     print(f"\\n  Total weight values: {total_values:,}")
 `,
-		draw_chart: `# 📊 Draw a Bar Chart in the Console
+    draw_chart: `# 📊 Draw a Bar Chart in the Console
 # Uses the rich output canvas API
 
 import random
@@ -490,9 +490,9 @@ for i, (label, val) in enumerate(zip(chart_labels, values)):
     ctx.fillRect(x, y, bar_width, bar_height)
 
     if val == max_val:
-	ctx.strokeStyle = "#fff"
-	ctx.lineWidth = 2
-	ctx.strokeRect(x, y, bar_width, bar_height)
+        ctx.strokeStyle = "#fff"
+        ctx.lineWidth = 2
+        ctx.strokeRect(x, y, bar_width, bar_height)
 
     ctx.fillStyle = "#cdd6f4"
     ctx.font = "10px sans-serif"
@@ -510,7 +510,7 @@ ctx.fillText("📊 Random Predictions", 10, 22)
 display(canvas)
 print("Chart drawn! ✨")
 `,
-		draw_canvas: `# 🎨 Custom Canvas Drawing
+    draw_canvas: `# 🎨 Custom Canvas Drawing
 # Draw shapes, gradients, and patterns
 
 import math
@@ -551,7 +551,7 @@ ctx.fillText("🌈 Rainbow Circles", 150, 25)
 display(canvas)
 print("Canvas art complete! 🎨")
 `,
-		html_table: `# 📋 Render an HTML Table
+    html_table: `# 📋 Render an HTML Table
 # Display rich HTML directly in the console
 
 info = get_model_info()
@@ -588,7 +588,7 @@ html = f"""
 display_html(html)
 print("Table rendered! 📋")
 `,
-		pixel_art: `# 🕹️ Pixel Art Editor
+    pixel_art: `# 🕹️ Pixel Art Editor
 # Draw pixel art on a small grid, displayed scaled up
 
 canvas = create_canvas(256, 256)
@@ -630,8 +630,8 @@ sprite = [
 # Draw pixels
 for y, row in enumerate(sprite):
     for x, color_idx in enumerate(row):
-	ctx.fillStyle = palette.get(color_idx, "#000")
-	ctx.fillRect(x * pixel_size, y * pixel_size, pixel_size, pixel_size)
+        ctx.fillStyle = palette.get(color_idx, "#000")
+        ctx.fillRect(x * pixel_size, y * pixel_size, pixel_size, pixel_size)
 
 # Grid lines (subtle)
 ctx.strokeStyle = "rgba(255,255,255,0.05)"
@@ -649,7 +649,7 @@ for i in range(grid_size + 1):
 display(canvas)
 print("🕹️ Pixel art rendered! Try editing the sprite array.")
 `,
-		hello_world: `# 👋 Hello World!
+    hello_world: `# 👋 Hello World!
 # The simplest example to get started.
 
 print("Hello, World! 🌍")
@@ -667,7 +667,7 @@ print("  display(canvas)      — Show canvas in console")
 print("  display_html(html)   — Render HTML in console")
 print("  display_image(url)   — Show image in console")
 `,
-		generic_io: `# 🔌 Generic Input / Output
+	generic_io: `# 🔌 Generic Input / Output
 # This script works with any model shape.
 # It generates matching random input and shows the output.
 
@@ -714,11 +714,11 @@ if isinstance(result, list) and len(result) > 1 and is_classif:
 elif isinstance(result, list):
     print(f"   (Regression/multi-output — {len(result)} output values)")
     for i, v in enumerate(result[:10]):
-	print(f"   [{i}] {v:.6f}")
+        print(f"   [{i}] {v:.6f}")
     if len(result) > 10:
-	print(f"   ... ({len(result) - 10} more)")
+        print(f"   ... ({len(result) - 10} more)")
 `,
-		image_snapshot_rps: `# ✊✋✌️ Rock Paper Scissors — 2 Players!
+	image_snapshot_rps: `# ✊✋✌️ Rock Paper Scissors — 2 Players!
 # The camera stays LIVE. Press 📸 Snap for Player 1, then 📸 Snap for Player 2.
 # Winner gets an emoji crown!
 
@@ -736,8 +736,8 @@ if 'game' not in dir():
     print("✊✋✌️  ROCK PAPER SCISSORS — 2 PLAYERS")
     print("═" * 40)
     if class_labels:
-	for i in range(num_classes):
-	    print(f"  {emoji[rps_map[i]]} {class_labels[i]} → {rps_map[i]}")
+        for i in range(num_classes):
+            print(f"  {emoji[rps_map[i]]} {class_labels[i]} → {rps_map[i]}")
     print()
     print("📸 Press SNAP for Player 1, then SNAP again for Player 2!")
     print("   Camera stays live — just snap when ready!")
@@ -753,55 +753,55 @@ if input_data is not None:
     label = class_labels[top] if class_labels and top < len(class_labels) else f"Class {top}"
 
     if game['turn'] == 1:
-	game['p1_move'] = (top, conf, move, label)
-	game['turn'] = 2
-	print(f"👤 Player 1 snapped! → {emoji[move]} {move} ({label}, {conf*100:.0f}%)")
-	print(f"   Now press 📸 Snap for Player 2!")
-	print()
+        game['p1_move'] = (top, conf, move, label)
+        game['turn'] = 2
+        print(f"👤 Player 1 snapped! → {emoji[move]} {move} ({label}, {conf*100:.0f}%)")
+        print(f"   Now press 📸 Snap for Player 2!")
+        print()
 
     else:
-	game['round'] += 1
-	p1 = game['p1_move']
-	p2 = (top, conf, move, label)
-	game['turn'] = 1
-	game['p1_move'] = None
+        game['round'] += 1
+        p1 = game['p1_move']
+        p2 = (top, conf, move, label)
+        game['turn'] = 1
+        game['p1_move'] = None
 
-	wins = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
-	if p1[2] == p2[2]:
-	    result_text = "🤝 DRAW!"
-	    p1_emoji = "😐"
-	    p2_emoji = "😐"
-	elif wins[p1[2]] == p2[2]:
-	    result_text = "👑 Player 1 WINS!"
-	    game['p1_score'] += 1
-	    p1_emoji = "🏆"
-	    p2_emoji = "😢"
-	else:
-	    result_text = "👑 Player 2 WINS!"
-	    game['p2_score'] += 1
-	    p1_emoji = "😢"
-	    p2_emoji = "🏆"
+        wins = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
+        if p1[2] == p2[2]:
+            result_text = "🤝 DRAW!"
+            p1_emoji = "😐"
+            p2_emoji = "😐"
+        elif wins[p1[2]] == p2[2]:
+            result_text = "👑 Player 1 WINS!"
+            game['p1_score'] += 1
+            p1_emoji = "🏆"
+            p2_emoji = "😢"
+        else:
+            result_text = "👑 Player 2 WINS!"
+            game['p2_score'] += 1
+            p1_emoji = "😢"
+            p2_emoji = "🏆"
 
-	print(f"══ Round {game['round']} ═══════════════════════")
-	print(f"  {p1_emoji} P1: {emoji[p1[2]]} {p1[2]} ({p1[3]}, {p1[1]*100:.0f}%)")
-	print(f"  {p2_emoji} P2: {emoji[p2[2]]} {p2[2]} ({p2[3]}, {conf*100:.0f}%)")
-	print(f"  → {result_text}")
-	print()
-	print(f"  ┌─────────────────────────────┐")
-	print(f"  │  {'🏆' if game['p1_score'] > game['p2_score'] else '👤'} P1: {game['p1_score']}  vs  {'🏆' if game['p2_score'] > game['p1_score'] else '👥'} P2: {game['p2_score']}  │")
-	print(f"  └─────────────────────────────┘")
-	print()
-	if game['p1_score'] > game['p2_score']:
-	    print(f"  🏆 Player 1 leads!")
-	elif game['p2_score'] > game['p1_score']:
-	    print(f"  🏆 Player 2 leads!")
-	else:
-	    print(f"  ⚖️ Tied!")
-	print()
-	print(f"📸 Press Snap for next round (Player 1 goes first)")
-	print()
+        print(f"══ Round {game['round']} ═══════════════════════")
+        print(f"  {p1_emoji} P1: {emoji[p1[2]]} {p1[2]} ({p1[3]}, {p1[1]*100:.0f}%)")
+        print(f"  {p2_emoji} P2: {emoji[p2[2]]} {p2[2]} ({p2[3]}, {conf*100:.0f}%)")
+        print(f"  → {result_text}")
+        print()
+        print(f"  ┌─────────────────────────────┐")
+        print(f"  │  {'🏆' if game['p1_score'] > game['p2_score'] else '👤'} P1: {game['p1_score']}  vs  {'🏆' if game['p2_score'] > game['p1_score'] else '👥'} P2: {game['p2_score']}  │")
+        print(f"  └─────────────────────────────┘")
+        print()
+        if game['p1_score'] > game['p2_score']:
+            print(f"  🏆 Player 1 leads!")
+        elif game['p2_score'] > game['p1_score']:
+            print(f"  🏆 Player 2 leads!")
+        else:
+            print(f"  ⚖️ Tied!")
+        print()
+        print(f"📸 Press Snap for next round (Player 1 goes first)")
+        print()
 `,
-		image_group_battle: `# ⚔️ Group Battle — Use photos[] to pair off and find winners!
+image_group_battle: `# ⚔️ Group Battle — Use photos[] to pair off and find winners!
 # 
 # HOW TO USE:
 #   1. Click "📸 Multi-Snap" to open the photo capture area
@@ -845,87 +845,87 @@ else:
     print(f"  Photos captured: {num_photos}")
     print(f"  Model classes:   {num_classes}")
     if class_labels:
-	print(f"  Labels: {list(class_labels)}")
+        print(f"  Labels: {list(class_labels)}")
     if beats:
-	print(f"  Game rules: {beats}")
+        print(f"  Game rules: {beats}")
     else:
-	print(f"  Mode: Highest confidence wins")
+        print(f"  Mode: Highest confidence wins")
     print("═" * 50)
     print()
 
     # ─── Predict each photo ───
     players = []
     for i in range(num_photos):
-	result = predict(photos[i])
-	if isinstance(result, list) and len(result) > 1:
-	    top_idx = result.index(max(result))
-	    confidence = result[top_idx]
-	    label = class_labels[top_idx] if class_labels and top_idx < len(class_labels) else f"Class {top_idx}"
-	else:
-	    top_idx = 0
-	    confidence = result[0] if isinstance(result, list) else float(result)
-	    label = f"Output {confidence:.4f}"
+        result = predict(photos[i])
+        if isinstance(result, list) and len(result) > 1:
+            top_idx = result.index(max(result))
+            confidence = result[top_idx]
+            label = class_labels[top_idx] if class_labels and top_idx < len(class_labels) else f"Class {top_idx}"
+        else:
+            top_idx = 0
+            confidence = result[0] if isinstance(result, list) else float(result)
+            label = f"Output {confidence:.4f}"
 
-	players.append({
-	    'num': i + 1,
-	    'label': label,
-	    'confidence': confidence,
-	    'class_idx': top_idx,
-	    'result': result
-	})
-	print(f"  📷 Photo {i+1}: {label} ({confidence*100:.1f}%)")
+        players.append({
+            'num': i + 1,
+            'label': label,
+            'confidence': confidence,
+            'class_idx': top_idx,
+            'result': result
+        })
+        print(f"  📷 Photo {i+1}: {label} ({confidence*100:.1f}%)")
 
     print()
 
     # ─── Determine winner of a pair ───
     def determine_winner(p1, p2):
-	if beats:
-	    m1 = p1['label'].lower().strip()
-	    m2 = p2['label'].lower().strip()
-	    if m1 == m2:
-		if p1['confidence'] >= p2['confidence']:
-		    return p1, p2, f"Tie ({m1}) → confidence tiebreak"
-		else:
-		    return p2, p1, f"Tie ({m1}) → confidence tiebreak"
-	    elif beats.get(m1) == m2:
-		return p1, p2, f"{m1} beats {m2}"
-	    elif beats.get(m2) == m1:
-		return p2, p1, f"{m2} beats {m1}"
-	    else:
-		if p1['confidence'] >= p2['confidence']:
-		    return p1, p2, "No rule → confidence"
-		else:
-		    return p2, p1, "No rule → confidence"
-	else:
-	    if p1['confidence'] >= p2['confidence']:
-		return p1, p2, f"{p1['confidence']*100:.1f}% > {p2['confidence']*100:.1f}%"
-	    else:
-		return p2, p1, f"{p2['confidence']*100:.1f}% > {p1['confidence']*100:.1f}%"
+        if beats:
+            m1 = p1['label'].lower().strip()
+            m2 = p2['label'].lower().strip()
+            if m1 == m2:
+                if p1['confidence'] >= p2['confidence']:
+                    return p1, p2, f"Tie ({m1}) → confidence tiebreak"
+                else:
+                    return p2, p1, f"Tie ({m1}) → confidence tiebreak"
+            elif beats.get(m1) == m2:
+                return p1, p2, f"{m1} beats {m2}"
+            elif beats.get(m2) == m1:
+                return p2, p1, f"{m2} beats {m1}"
+            else:
+                if p1['confidence'] >= p2['confidence']:
+                    return p1, p2, "No rule → confidence"
+                else:
+                    return p2, p1, "No rule → confidence"
+        else:
+            if p1['confidence'] >= p2['confidence']:
+                return p1, p2, f"{p1['confidence']*100:.1f}% > {p2['confidence']*100:.1f}%"
+            else:
+                return p2, p1, f"{p2['confidence']*100:.1f}% > {p1['confidence']*100:.1f}%"
 
     # ─── Create pairs and battle ───
     pairs = []
     for i in range(0, len(players) - 1, 2):
-	pairs.append((i, i + 1))
+        pairs.append((i, i + 1))
 
     if len(players) % 2 == 1:
-	print(f"  ⚠️ Odd number — Photo {players[-1]['num']} gets a BYE")
-	print()
+        print(f"  ⚠️ Odd number — Photo {players[-1]['num']} gets a BYE")
+        print()
 
     print("⚔️  MATCHUPS:")
     print("─" * 50)
 
     winners = []
     for p1_idx, p2_idx in pairs:
-	p1 = players[p1_idx]
-	p2 = players[p2_idx]
-	winner, loser, reason = determine_winner(p1, p2)
-	winners.append(winner)
+        p1 = players[p1_idx]
+        p2 = players[p2_idx]
+        winner, loser, reason = determine_winner(p1, p2)
+        winners.append(winner)
 
-	print(f"  📷{p1['num']} {p1['label']} ({p1['confidence']*100:.0f}%)")
-	print(f"    vs")
-	print(f"  📷{p2['num']} {p2['label']} ({p2['confidence']*100:.0f}%)")
-	print(f"    → 👑 Photo {winner['num']} wins! ({reason})")
-	print()
+        print(f"  📷{p1['num']} {p1['label']} ({p1['confidence']*100:.0f}%)")
+        print(f"    vs")
+        print(f"  📷{p2['num']} {p2['label']} ({p2['confidence']*100:.0f}%)")
+        print(f"    → 👑 Photo {winner['num']} wins! ({reason})")
+        print()
 
     # ─── Draw visual results ───
     num_pairs = len(pairs)
@@ -948,65 +948,65 @@ else:
 
     y_offset = 50
     for i, (p1_idx, p2_idx) in enumerate(pairs):
-	p1 = players[p1_idx]
-	p2 = players[p2_idx]
-	winner = winners[i]
-	y = y_offset + i * row_h
-	mid_x = canvas_w // 2
+        p1 = players[p1_idx]
+        p2 = players[p2_idx]
+        winner = winners[i]
+        y = y_offset + i * row_h
+        mid_x = canvas_w // 2
 
-	# Left player
-	is_p1_win = winner['num'] == p1['num']
-	ctx.fillStyle = "#00d4aa" if is_p1_win else "#ff6b6b"
-	ctx.font = "bold 13px sans-serif"
-	ctx.textAlign = "right"
-	ctx.fillText(f"📷{p1['num']}: {p1['label']}", mid_x - 30, y + 20)
+        # Left player
+        is_p1_win = winner['num'] == p1['num']
+        ctx.fillStyle = "#00d4aa" if is_p1_win else "#ff6b6b"
+        ctx.font = "bold 13px sans-serif"
+        ctx.textAlign = "right"
+        ctx.fillText(f"📷{p1['num']}: {p1['label']}", mid_x - 30, y + 20)
 
-	# Confidence bar left
-	bar_w = int(p1['confidence'] * 100)
-	ctx.fillStyle = "rgba(0,212,170,0.4)" if is_p1_win else "rgba(255,107,107,0.2)"
-	ctx.fillRect(mid_x - 30 - bar_w, y + 28, bar_w, 8)
-	ctx.fillStyle = "#6c7086"
-	ctx.font = "10px sans-serif"
-	ctx.textAlign = "right"
-	ctx.fillText(f"{p1['confidence']*100:.0f}%", mid_x - 30, y + 50)
+        # Confidence bar left
+        bar_w = int(p1['confidence'] * 100)
+        ctx.fillStyle = "rgba(0,212,170,0.4)" if is_p1_win else "rgba(255,107,107,0.2)"
+        ctx.fillRect(mid_x - 30 - bar_w, y + 28, bar_w, 8)
+        ctx.fillStyle = "#6c7086"
+        ctx.font = "10px sans-serif"
+        ctx.textAlign = "right"
+        ctx.fillText(f"{p1['confidence']*100:.0f}%", mid_x - 30, y + 50)
 
-	# VS
-	ctx.fillStyle = "#ffd93d"
-	ctx.font = "bold 14px sans-serif"
-	ctx.textAlign = "center"
-	ctx.fillText("⚔️", mid_x, y + 22)
+        # VS
+        ctx.fillStyle = "#ffd93d"
+        ctx.font = "bold 14px sans-serif"
+        ctx.textAlign = "center"
+        ctx.fillText("⚔️", mid_x, y + 22)
 
-	# Right player
-	is_p2_win = winner['num'] == p2['num']
-	ctx.fillStyle = "#00d4aa" if is_p2_win else "#ff6b6b"
-	ctx.font = "bold 13px sans-serif"
-	ctx.textAlign = "left"
-	ctx.fillText(f"📷{p2['num']}: {p2['label']}", mid_x + 30, y + 20)
+        # Right player
+        is_p2_win = winner['num'] == p2['num']
+        ctx.fillStyle = "#00d4aa" if is_p2_win else "#ff6b6b"
+        ctx.font = "bold 13px sans-serif"
+        ctx.textAlign = "left"
+        ctx.fillText(f"📷{p2['num']}: {p2['label']}", mid_x + 30, y + 20)
 
-	# Confidence bar right
-	bar_w2 = int(p2['confidence'] * 100)
-	ctx.fillStyle = "rgba(0,212,170,0.4)" if is_p2_win else "rgba(255,107,107,0.2)"
-	ctx.fillRect(mid_x + 30, y + 28, bar_w2, 8)
-	ctx.fillStyle = "#6c7086"
-	ctx.font = "10px sans-serif"
-	ctx.textAlign = "left"
-	ctx.fillText(f"{p2['confidence']*100:.0f}%", mid_x + 30, y + 50)
+        # Confidence bar right
+        bar_w2 = int(p2['confidence'] * 100)
+        ctx.fillStyle = "rgba(0,212,170,0.4)" if is_p2_win else "rgba(255,107,107,0.2)"
+        ctx.fillRect(mid_x + 30, y + 28, bar_w2, 8)
+        ctx.fillStyle = "#6c7086"
+        ctx.font = "10px sans-serif"
+        ctx.textAlign = "left"
+        ctx.fillText(f"{p2['confidence']*100:.0f}%", mid_x + 30, y + 50)
 
-	# Crown on winner
-	crown_x = (mid_x - 100) if is_p1_win else (mid_x + 100)
-	ctx.fillStyle = "#ffd93d"
-	ctx.font = "18px sans-serif"
-	ctx.textAlign = "center"
-	ctx.fillText("👑", crown_x, y + 8)
+        # Crown on winner
+        crown_x = (mid_x - 100) if is_p1_win else (mid_x + 100)
+        ctx.fillStyle = "#ffd93d"
+        ctx.font = "18px sans-serif"
+        ctx.textAlign = "center"
+        ctx.fillText("👑", crown_x, y + 8)
 
-	# Separator
-	if i < num_pairs - 1:
-	    ctx.strokeStyle = "#2a2a4a"
-	    ctx.lineWidth = 1
-	    ctx.beginPath()
-	    ctx.moveTo(30, y + row_h - 15)
-	    ctx.lineTo(canvas_w - 30, y + row_h - 15)
-	    ctx.stroke()
+        # Separator
+        if i < num_pairs - 1:
+            ctx.strokeStyle = "#2a2a4a"
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.moveTo(30, y + row_h - 15)
+            ctx.lineTo(canvas_w - 30, y + row_h - 15)
+            ctx.stroke()
 
     # Summary
     y_sum = y_offset + num_pairs * row_h
@@ -1022,10 +1022,10 @@ else:
     print("═" * 50)
     print("🏆 WINNERS:")
     for w in winners:
-	print(f"   👑 Photo {w['num']}: {w['label']} ({w['confidence']*100:.1f}%)")
+        print(f"   👑 Photo {w['num']}: {w['label']} ({w['confidence']*100:.1f}%)")
     print("═" * 50)
 `,
-		image_group_predict: `# 📸 Multi-Photo Predictions
+	image_group_predict: `# 📸 Multi-Photo Predictions
 # Access each captured photo as photos[0], photos[1], etc.
 #
 # HOW TO USE:
@@ -1044,22 +1044,22 @@ else:
     print(f"📸 {num_photos} photos loaded")
     print(f"🧠 Model: {info['input_shape']} → {info['output_shape']}")
     if class_labels:
-	print(f"   Labels: {list(class_labels)}")
+        print(f"   Labels: {list(class_labels)}")
     print()
     print("─" * 40)
 
     # Predict each photo
     for i in range(num_photos):
-	result = predict(photos[i])
-	set_prediction_result(result)
+        result = predict(photos[i])
+        set_prediction_result(result)
 
-	if isinstance(result, list) and len(result) > 1 and is_classif:
-	    top_idx = result.index(max(result))
-	    confidence = result[top_idx]
-	    label = class_labels[top_idx] if class_labels and top_idx < len(class_labels) else f"Class {top_idx}"
-	    print(f"  photos[{i}] → {label} ({confidence*100:.1f}%)")
-	else:
-	    print(f"  photos[{i}] → {result}")
+        if isinstance(result, list) and len(result) > 1 and is_classif:
+            top_idx = result.index(max(result))
+            confidence = result[top_idx]
+            label = class_labels[top_idx] if class_labels and top_idx < len(class_labels) else f"Class {top_idx}"
+            print(f"  photos[{i}] → {label} ({confidence*100:.1f}%)")
+        else:
+            print(f"  photos[{i}] → {result}")
 
     print()
     print("─" * 40)
@@ -1068,7 +1068,7 @@ else:
     print("   result = predict(photos[0])")
     print("   result = predict(photos[2])")
 `,
-	};
+};
 
 	const DEFAULT_CODE = TEMPLATES.hello_world;
 
