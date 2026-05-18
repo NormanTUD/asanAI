@@ -1846,32 +1846,28 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			}
 		}
 
-	function pixelsToNestedList(pixels, height, width, channels) {
-		var divideBy = getDivideByValue();
-		var result = [];
-
-		for (var y = 0; y < height; y++) {
-			var row = [];
-			for (var x = 0; x < width; x++) {
-				var idx = (y * width + x) * 4;
-				if (channels === 1) {
-					var avg = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
-					if (divideBy > 0) avg = avg / divideBy;
-					row.push([avg]);
-				} else {
-					var pixel = [];
-					for (var c = 0; c < channels; c++) {
-						var val = pixels[idx + c];
-						if (divideBy > 0) val = val / divideBy;
-						pixel.push(val);
+		function pixelsToNestedList(pixels, height, width, channels) {
+			// Do NOT divide here — let runPredictionForPython handle it
+			var result = [];
+			for (var y = 0; y < height; y++) {
+				var row = [];
+				for (var x = 0; x < width; x++) {
+					var idx = (y * width + x) * 4;
+					if (channels === 1) {
+						var avg = (pixels[idx] + pixels[idx + 1] + pixels[idx + 2]) / 3;
+						row.push([avg]);
+					} else {
+						var pixel = [];
+						for (var c = 0; c < channels; c++) {
+							pixel.push(pixels[idx + c]);
+						}
+						row.push(pixel);
 					}
-					row.push(pixel);
 				}
+				result.push(row);
 			}
-			result.push(row);
+			return result;
 		}
-		return result;
-	}
 
 	function getDivideByValue() {
 		var el = document.getElementById("divide_by");
