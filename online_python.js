@@ -68,32 +68,183 @@
 	// DEFAULT CODE TEMPLATES
 	// =========================================================================
 
-	const TEMPLATES = {
-		image_webcam: `# 📷 Live Webcam Prediction
-# The webcam starts automatically when you load this template.
-# Predictions run continuously — see results in the prediction panel.
+const TEMPLATES = {
+    image_webcam: `# 📷 Live Webcam Prediction
+# This script runs on EVERY frame from the webcam.
+# Use 'if "var" not in dir()' to initialize state once.
 
-info = get_model_info()
-print(f"Model: {info['input_shape']} → {info['output_shape']}")
-print(f"Layers: {info['num_layers']}, Params: {info['trainable_params']:,}")
-print()
+# Initialize once (persists across frames)
+if 'frame_count' not in dir():
+    frame_count = 0
+    info = get_model_info()
+    print(f"Model: {info['input_shape']} → {info['output_shape']}")
+    print(f"Layers: {info['num_layers']}, Params: {info['trainable_params']:,}")
+    print()
 
 if input_data is not None:
+    frame_count += 1
     result = predict(input_data)
-    print(f"✅ Prediction: {result}")
     set_prediction_result(result)
-    
+
     # Show top prediction
     if isinstance(result, list) and len(result) > 1:
         top_idx = result.index(max(result))
         confidence = result[top_idx] * 100
-        print(f"🏆 Top class: {top_idx} ({confidence:.1f}%)")
+        if frame_count % 5 == 0:  # Print every 5th frame to reduce spam
+            print(f"Frame {frame_count} | 🏆 Class {top_idx} ({confidence:.1f}%)")
 else:
     print("⏳ Waiting for webcam frame...")
-    print("   The webcam should be active — predictions update automatically.")
-    print("   Check the prediction panel above for live results.")
 `,
-		image_upload: `# 🖼️ Image Upload Prediction
+    image_webcam_tracking: `# 📷 Webcam + Confidence Tracking
+# Tracks predictions over time and detects stable classifications.
+
+if 'frame_count' not in dir():
+    frame_count = 0
+    history = []
+    stable_count = 0
+    last_class = -1
+    STABILITY_THRESHOLD = 10  # frames of same class = "stable"
+    info = get_model_info()
+    num_classes = info['output_shape'][-1] if info['output_shape'] else 0
+    print(f"🧠 Model: {info['input_shape']} → {num_classes} classes")
+    print(f"   Tracking stability over {STABILITY_THRESHOLD} frames")
+    print()
+
+if input_data is not None:
+    frame_count += 1
+    result = predict(input_data)
+    set_prediction_result(result)
+
+    if isinstance(result, list) and len(result) > 1:
+        top_idx = result.index(max(result))
+        confidence = result[top_idx]
+        history.append({'class': top_idx, 'conf': confidence})
+
+        # Keep last 60 frames of history
+        if len(history) > 60:
+            history = history[-60:]
+
+        # Track stability
+        if top_idx == last_class:
+            stable_count += 1
+        else:
+            stable_count = 1
+            last_class = top_idx
+
+        # Report when stable
+        if stable_count == STABILITY_THRESHOLD:
+            avg_conf = sum(h['conf'] for h in history[-STABILITY_THRESHOLD:]) / STABILITY_THRESHOLD
+            print(f"🔒 STABLE: Class {top_idx} for {STABILITY_THRESHOLD} frames (avg {avg_conf*100:.1f}%)")
+
+        # Periodic status
+        if frame_count % 15 == 0:
+            avg_conf = sum(h['conf'] for h in history[-15:]) / min(len(history), 15)
+            print(f"📊 Frame {frame_count} | Current: class {top_idx} | Avg conf: {avg_conf*100:.1f}% | Stable: {stable_count}")
+`,
+    image_webcam_threshold: `# 📷 Webcam + Threshold Alerts
+# Only prints when confidence exceeds a threshold.
+
+if 'frame_count' not in dir():
+    frame_count = 0
+    alert_count = 0
+    HIGH_THRESHOLD = 0.85
+    LOW_THRESHOLD = 0.30
+    info = get_model_info()
+    print(f"🧠 Model: {info['input_shape']} → {info['output_shape']}")
+    print(f"⚙️  High threshold: {HIGH_THRESHOLD*100:.0f}%")
+    print(f"⚙️  Low threshold: {LOW_THRESHOLD*100:.0f}%")
+    print()
+
+if input_data is not None:
+    frame_count += 1
+    result = predict(input_data)
+    set_prediction_result(result)
+
+    if isinstance(result, list) and len(result) > 1:
+        top_idx = result.index(max(result))
+        confidence = result[top_idx]
+
+        if confidence >= HIGH_THRESHOLD:
+            alert_count += 1
+            print(f"🚨 HIGH [{frame_count}]: Class {top_idx} at {confidence*100:.1f}% (alert #{alert_count})")
+        elif confidence <= LOW_THRESHOLD:
+            print(f"🤷 LOW  [{frame_count}]: Best guess class {top_idx} at {confidence*100:.1f}%")
+`,
+    image_webcam_multiclass: `# 📷 Webcam + Multi-Class Monitor
+# Monitors all classes and reports when any class spikes.
+
+if 'frame_count' not in dir():
+    frame_count = 0
+    class_peaks = {}
+    info = get_model_info()
+    num_classes = info['output_shape'][-1] if info['output_shape'] else 0
+    print(f"🧠 Monitoring {num_classes} classes")
+    print(f"   Will report when any class exceeds its previous peak")
+    print()
+    for i in range(num_classes):
+        class_peaks[i] = 0.0
+
+if input_data is not None:
+    frame_count += 1
+    result = predict(input_data)
+    set_prediction_result(result)
+
+    if isinstance(result, list) and len(result) > 1:
+        for idx, conf in enumerate(result):
+            if conf > class_peaks[idx] + 0.1:  # New peak (with 10% margin)
+                class_peaks[idx] = conf
+                print(f"📈 NEW PEAK [{frame_count}]: Class {idx} → {conf*100:.1f}%")
+
+        # Summary every 30 frames
+        if frame_count % 30 == 0:
+            print(f"\\n--- Frame {frame_count} Summary ---")
+            for idx in sorted(class_peaks, key=class_peaks.get, reverse=True):
+                bar = "█" * int(class_peaks[idx] * 20)
+                print(f"  Class {idx}: {class_peaks[idx]*100:.1f}% {bar}")
+            print()
+`,
+    image_webcam_smoothed: `# 📷 Webcam + Smoothed Predictions
+# Averages predictions over a sliding window to reduce noise.
+
+if 'frame_count' not in dir():
+    frame_count = 0
+    window_size = 10
+    prediction_buffer = []
+    info = get_model_info()
+    num_classes = info['output_shape'][-1] if info['output_shape'] else 0
+    print(f"🧠 Model: {num_classes} classes")
+    print(f"📊 Smoothing window: {window_size} frames")
+    print()
+
+if input_data is not None:
+    frame_count += 1
+    result = predict(input_data)
+
+    if isinstance(result, list) and len(result) > 1:
+        prediction_buffer.append(result)
+        if len(prediction_buffer) > window_size:
+            prediction_buffer = prediction_buffer[-window_size:]
+
+        # Compute smoothed average
+        num_cls = len(result)
+        smoothed = [0.0] * num_cls
+        for pred in prediction_buffer:
+            for i in range(num_cls):
+                smoothed[i] += pred[i]
+        smoothed = [s / len(prediction_buffer) for s in smoothed]
+
+        # Use smoothed result for display
+        set_prediction_result(smoothed)
+
+        top_idx = smoothed.index(max(smoothed))
+        confidence = smoothed[top_idx]
+
+        if frame_count % 10 == 0:
+            raw_top = result.index(max(result))
+            raw_conf = result[raw_top]
+            print(f"Frame {frame_count} | Raw: class {raw_top} ({raw_conf*100:.1f}%) | Smoothed: class {top_idx} ({confidence*100:.1f}%)")
+`,
+    image_upload: `# 🖼️ Image Upload Prediction
 # Upload an image using the 📁 button above, then run this code.
 # 'input_data' is automatically filled with the resized image pixels.
 
@@ -109,13 +260,13 @@ else:
     result = predict(input_data)
     print(f"\\n🎯 Prediction: {result}")
     set_prediction_result(result)
-    
+
     if isinstance(result, list) and len(result) > 1:
         top_idx = result.index(max(result))
         confidence = result[top_idx] * 100
         print(f"🏆 Top class: {top_idx} ({confidence:.1f}%)")
 `,
-		random_input: `# 🎲 Random Input Prediction
+    random_input: `# 🎲 Random Input Prediction
 # Generates random data matching your model's input shape.
 
 info = get_model_info()
@@ -135,7 +286,7 @@ result = predict(input_list)
 print(f"\\n🎯 Prediction: {result}")
 set_prediction_result(result)
 `,
-		custom_data: `# ✏️ Custom Data Prediction
+    custom_data: `# ✏️ Custom Data Prediction
 # Enter your own data and predict.
 
 info = get_model_info()
@@ -156,7 +307,7 @@ result = predict(my_data)
 print(f"\\n🎯 Result: {result}")
 set_prediction_result(result)
 `,
-		weights_inspect: `# 🔍 Inspect Model Weights
+    weights_inspect: `# 🔍 Inspect Model Weights
 
 info = get_model_info()
 print("🧠 Model Architecture")
@@ -196,7 +347,7 @@ if weights:
             print(f"  Weight {i}: {type(w)}")
     print(f"\\n  Total weight values: {total_values:,}")
 `,
-		draw_chart: `# 📊 Draw a Bar Chart in the Console
+    draw_chart: `# 📊 Draw a Bar Chart in the Console
 # Uses the rich output canvas API
 
 import random
@@ -223,24 +374,24 @@ for i, (label, val) in enumerate(zip(labels, values)):
     x = start_x + i * (bar_width + gap)
     bar_height = (val / max_val) * 150
     y = 185 - bar_height
-    
+
     # Bar gradient color
     hue = i * 65
     ctx.fillStyle = f"hsl({hue}, 70%, 60%)"
     ctx.fillRect(x, y, bar_width, bar_height)
-    
+
     # Highlight top bar
     if val == max_val:
         ctx.strokeStyle = "#fff"
         ctx.lineWidth = 2
         ctx.strokeRect(x, y, bar_width, bar_height)
-    
+
     # Label
     ctx.fillStyle = "#cdd6f4"
     ctx.font = "11px sans-serif"
     ctx.textAlign = "center"
     ctx.fillText(label, x + bar_width/2, 202)
-    
+
     # Value on top
     ctx.fillText(f"{val:.2f}", x + bar_width/2, y - 8)
 
@@ -254,7 +405,7 @@ ctx.fillText("📊 Random Predictions", 10, 22)
 display(canvas)
 print("Chart drawn! ✨")
 `,
-		draw_canvas: `# 🎨 Custom Canvas Drawing
+    draw_canvas: `# 🎨 Custom Canvas Drawing
 # Draw shapes, gradients, and patterns
 
 import math
@@ -295,7 +446,7 @@ ctx.fillText("🌈 Rainbow Circles", 150, 25)
 display(canvas)
 print("Canvas art complete! 🎨")
 `,
-		html_table: `# 📋 Render an HTML Table
+    html_table: `# 📋 Render an HTML Table
 # Display rich HTML directly in the console
 
 info = get_model_info()
@@ -325,7 +476,7 @@ html = f"""
 display_html(html)
 print("Table rendered! 📋")
 `,
-		pixel_art: `# 🕹️ Pixel Art Editor
+    pixel_art: `# 🕹️ Pixel Art Editor
 # Draw pixel art on a small grid, displayed scaled up
 
 canvas = create_canvas(256, 256)
@@ -386,7 +537,7 @@ for i in range(grid_size + 1):
 display(canvas)
 print("🕹️ Pixel art rendered! Try editing the sprite array.")
 `,
-		hello_world: `# 👋 Hello World!
+    hello_world: `# 👋 Hello World!
 # The simplest example to get started.
 
 print("Hello, World! 🌍")
@@ -404,7 +555,7 @@ print("  display(canvas)      — Show canvas in console")
 print("  display_html(html)   — Render HTML in console")
 print("  display_image(url)   — Show image in console")
 `
-	};
+};
 
 	const DEFAULT_CODE = TEMPLATES.hello_world;
 
