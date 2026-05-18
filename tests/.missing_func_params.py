@@ -31,6 +31,7 @@ ignored_file_funcs = [
     "debug.js:l",
     "predict.js:predict",
     "online_python.js:predict",
+    "online_python.js:frame",
     "train.js:fire"
 ]
 
