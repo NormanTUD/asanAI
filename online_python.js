@@ -715,6 +715,291 @@ elif isinstance(result, list):
     if len(result) > 10:
         print(f"   ... ({len(result) - 10} more)")
 `,
+image_webcam_rps: `# ✊✋✌️ Rock Paper Scissors — State Tracking Game
+# Works with LIVE webcam OR single snapshots (press Run repeatedly).
+# Tracks your moves over time, compares them, and keeps score.
+
+# ═══════════════════════════════════════════════════════════
+# PERSISTENT STATE (survives across frames / re-runs)
+# ═══════════════════════════════════════════════════════════
+if 'game_initialized' not in dir():
+    game_initialized = True
+    frame_count = 0
+    round_number = 0
+    player_history = []        # list of (class_index, confidence, label)
+    score = {'wins': 0, 'losses': 0, 'draws': 0}
+    last_locked_class = -1
+    lock_frames = 0
+    LOCK_THRESHOLD = 8         # frames of stability before "locking in" a move
+    CONFIDENCE_MIN = 0.55      # minimum confidence to count as a valid move
+    waiting_for_next = False   # after a round, wait for hand to change
+    
+    info = get_model_info()
+    input_shape = info['input_shape']
+    num_classes = info['output_shape'][-1] if info['output_shape'] else 0
+    class_labels = _labels if '_labels' in dir() and _labels else None
+    is_classif = _is_classification if '_is_classification' in dir() else False
+    
+    print("✊✋✌️  ROCK PAPER SCISSORS")
+    print("═" * 40)
+    print(f"Model: {input_shape} → {num_classes} classes")
+    if class_labels and is_classif:
+        print(f"Labels: {list(class_labels)}")
+    else:
+        print("⚠️  For best results, train a model with labels:")
+        print("   ['rock', 'paper', 'scissors'] or similar")
+    print()
+    print("📷 Show your hand gesture to the camera!")
+    print("   Hold steady for ~{} frames to lock in.".format(LOCK_THRESHOLD))
+    print("   The game auto-detects rounds.")
+    print("═" * 40)
+    print()
+    
+    # ─── RPS Logic ───
+    # Map class indices to RPS moves (customize if your labels differ)
+    rps_map = {}  # class_index -> 'rock'/'paper'/'scissors'
+    if class_labels and is_classif:
+        for i, lbl in enumerate(class_labels):
+            lower = lbl.lower().strip()
+            if 'rock' in lower or 'fist' in lower:
+                rps_map[i] = 'rock'
+            elif 'paper' in lower or 'open' in lower or 'palm' in lower:
+                rps_map[i] = 'paper'
+            elif 'scissor' in lower or 'peace' in lower or 'two' in lower:
+                rps_map[i] = 'scissors'
+    
+    # Fallback: assume first 3 classes are rock, paper, scissors
+    if len(rps_map) < 3 and num_classes >= 3:
+        rps_map = {0: 'rock', 1: 'paper', 2: 'scissors'}
+        print("ℹ️  Auto-mapped: 0=rock, 1=paper, 2=scissors")
+        print("   (Edit rps_map in code if your labels differ)")
+        print()
+
+    def get_rps_winner(move_a, move_b):
+        """Returns 'a', 'b', or 'draw'"""
+        if move_a == move_b:
+            return 'draw'
+        wins = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
+        return 'a' if wins.get(move_a) == move_b else 'b'
+
+    def get_computer_move(history):
+        """Simple AI: counter the player's most frequent recent move."""
+        import random
+        if len(history) < 2:
+            return random.choice(['rock', 'paper', 'scissors'])
+        # Look at last 5 moves
+        recent = [h[2] for h in history[-5:] if h[2] in ('rock','paper','scissors')]
+        if not recent:
+            return random.choice(['rock', 'paper', 'scissors'])
+        # Find most common
+        counts = {}
+        for m in recent:
+            counts[m] = counts.get(m, 0) + 1
+        predicted = max(counts, key=counts.get)
+        # Counter it
+        counters = {'rock': 'paper', 'paper': 'scissors', 'scissors': 'rock'}
+        return counters[predicted]
+
+    def draw_scoreboard():
+        """Draw a visual scoreboard with real prediction history."""
+        total = score['wins'] + score['losses'] + score['draws']
+        if total == 0:
+            return
+        
+        canvas = create_canvas(420, 200)
+        ctx = canvas.getContext("2d")
+        
+        # Background
+        ctx.fillStyle = "#0f0f1a"
+        ctx.fillRect(0, 0, 420, 200)
+        
+        # Title
+        ctx.fillStyle = "#cdd6f4"
+        ctx.font = "bold 14px sans-serif"
+        ctx.textAlign = "center"
+        ctx.fillText("✊✋✌️ Scoreboard", 210, 22)
+        
+        # Score bars
+        bar_y = 45
+        bar_height = 28
+        max_bar = 280
+        max_count = max(score['wins'], score['losses'], score['draws'], 1)
+        
+        categories = [
+            ('Wins', score['wins'], '#00d4aa'),
+            ('Losses', score['losses'], '#ff6b6b'),
+            ('Draws', score['draws'], '#ffd93d'),
+        ]
+        
+        for i, (label, count, color) in enumerate(categories):
+            y = bar_y + i * (bar_height + 12)
+            bar_w = (count / max_count) * max_bar if max_count > 0 else 0
+            
+            # Label
+            ctx.fillStyle = "#a6adc8"
+            ctx.font = "12px sans-serif"
+            ctx.textAlign = "right"
+            ctx.fillText(label, 65, y + 18)
+            
+            # Bar
+            ctx.fillStyle = color
+            ctx.fillRect(75, y, max(bar_w, 2), bar_height)
+            
+            # Count
+            ctx.fillStyle = "#fff"
+            ctx.font = "bold 12px sans-serif"
+            ctx.textAlign = "left"
+            ctx.fillText(str(count), 80 + bar_w + 8, y + 18)
+        
+        # ─── Confidence History Chart (REAL predictions) ───
+        if len(player_history) > 1:
+            chart_y = 150
+            chart_h = 40
+            chart_w = 380
+            chart_x = 20
+            
+            ctx.fillStyle = "#a6adc8"
+            ctx.font = "10px sans-serif"
+            ctx.textAlign = "left"
+            ctx.fillText("Confidence over rounds:", chart_x, chart_y - 4)
+            
+            # Plot real confidence values
+            ctx.strokeStyle = "#6c63ff"
+            ctx.lineWidth = 2
+            ctx.beginPath()
+            
+            n = len(player_history)
+            for j in range(n):
+                conf = player_history[j][1]  # real confidence
+                px = chart_x + (j / max(n - 1, 1)) * chart_w
+                py = chart_y + chart_h - (conf * chart_h)
+                if j == 0:
+                    ctx.moveTo(px, py)
+                else:
+                    ctx.lineTo(px, py)
+            ctx.stroke()
+            
+            # Dots on data points
+            for j in range(n):
+                conf = player_history[j][1]
+                px = chart_x + (j / max(n - 1, 1)) * chart_w
+                py = chart_y + chart_h - (conf * chart_h)
+                move = player_history[j][2]
+                dot_color = '#00d4aa' if move == 'rock' else '#89b4fa' if move == 'paper' else '#f38ba8'
+                ctx.beginPath()
+                ctx.arc(px, py, 3, 0, 6.28)
+                ctx.fillStyle = dot_color
+                ctx.fill()
+        
+        display(canvas)
+
+
+# ═══════════════════════════════════════════════════════════
+# PER-FRAME / PER-IMAGE LOGIC
+# ═══════════════════════════════════════════════════════════
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
+
+if input_data is not None:
+    frame_count += 1
+    result = predict(input_data)
+    set_prediction_result(result)
+    
+    if isinstance(result, list) and len(result) > 1:
+        top_idx = result.index(max(result))
+        confidence = result[top_idx]
+        move_name = rps_map.get(top_idx, 'unknown')
+        
+        # ─── State Machine: detect stable gesture ───
+        if waiting_for_next:
+            # After a round, wait for the player to change gesture
+            if top_idx != last_locked_class or confidence < CONFIDENCE_MIN:
+                waiting_for_next = False
+                lock_frames = 0
+                last_locked_class = -1
+                if frame_count % 10 == 0:
+                    print("👋 Show your next move!")
+        else:
+            if top_idx == last_locked_class and confidence >= CONFIDENCE_MIN:
+                lock_frames += 1
+            else:
+                last_locked_class = top_idx
+                lock_frames = 1
+            
+            # ─── LOCKED IN: Play a round! ───
+            if lock_frames == LOCK_THRESHOLD and move_name in ('rock', 'paper', 'scissors'):
+                round_number += 1
+                computer_move = get_computer_move(player_history)
+                winner = get_rps_winner(move_name, computer_move)
+                
+                # Record history with REAL confidence
+                player_history.append((top_idx, confidence, move_name))
+                
+                # Update score
+                if winner == 'a':
+                    score['wins'] += 1
+                    result_emoji = "🎉 YOU WIN!"
+                elif winner == 'b':
+                    score['losses'] += 1
+                    result_emoji = "😢 You lose"
+                else:
+                    score['draws'] += 1
+                    result_emoji = "🤝 Draw"
+                
+                move_emojis = {'rock': '✊', 'paper': '✋', 'scissors': '✌️'}
+                
+                print(f"")
+                print(f"══ Round {round_number} ══════════════════════")
+                print(f"  You:      {move_emojis.get(move_name, '?')} {move_name} ({confidence*100:.1f}%)")
+                print(f"  Computer: {move_emojis.get(computer_move, '?')} {computer_move}")
+                print(f"  Result:   {result_emoji}")
+                print(f"  Score:    W:{score['wins']} L:{score['losses']} D:{score['draws']}")
+                print(f"══════════════════════════════════════")
+                
+                # Draw updated scoreboard with real data
+                draw_scoreboard()
+                
+                # Wait for player to change gesture before next round
+                waiting_for_next = True
+                lock_frames = 0
+            
+            elif lock_frames > 0 and lock_frames % 3 == 0 and not waiting_for_next:
+                # Progress indicator
+                progress = min(lock_frames / LOCK_THRESHOLD, 1.0)
+                bar = "█" * int(progress * 10) + "░" * (10 - int(progress * 10))
+                if confidence >= CONFIDENCE_MIN:
+                    print(f"  🎯 {get_label(top_idx)} ({confidence*100:.0f}%) [{bar}]", end="\\r")
+    
+    # Periodic status (every 30 frames)
+    if frame_count % 30 == 0 and not waiting_for_next:
+        if isinstance(result, list) and len(result) > 1:
+            top_idx = result.index(max(result))
+            print(f"  📷 Frame {frame_count} | Detecting: {get_label(top_idx)} ({result[top_idx]*100:.0f}%)")
+
+elif input_data is None and frame_count == 0:
+    print("⏳ Waiting for input...")
+    print("   • Use 📷 Webcam for live play")
+    print("   • Or 📁 Upload Image and press ▶ Run for single-shot mode")
+    print()
+    print("💡 SINGLE-SHOT MODE:")
+    print("   Upload/capture an image → Run → it counts as one move.")
+    print("   Do it again for the next round!")
+    
+    # In single-shot mode without webcam, treat each Run as a new "frame"
+    # The state persists between runs!
+
+elif input_data is None and frame_count > 0:
+    print(f"📊 Game Status after {round_number} rounds:")
+    print(f"   Wins: {score['wins']} | Losses: {score['losses']} | Draws: {score['draws']}")
+    if player_history:
+        print(f"   Last move: {player_history[-1][2]} ({player_history[-1][1]*100:.1f}% confidence)")
+        draw_scoreboard()
+    print()
+    print("   Upload/capture another image and press ▶ Run to play again!")
+`,
 };
 
 	const DEFAULT_CODE = TEMPLATES.hello_world;

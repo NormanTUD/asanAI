@@ -653,6 +653,10 @@
 					<h4>🕹️ Pixel Art</h4>
 					<p>Draw pixel art on a tiny canvas, scaled up</p>
 				</div>
+				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_webcam_rps')">
+				    <h4>✊✋✌️ Rock Paper Scissors</h4>
+				    <p>Play RPS against the AI — works with live webcam or single snapshots. Tracks state, keeps score, plots real confidence.</p>
+				</div>
 			</div>
 
 			<!-- Toolbar Row 2: Input sources (advanced only) -->
@@ -679,6 +683,7 @@
 					<option value="draw_canvas">🎨 Canvas Art</option>
 					<option value="html_table">📋 HTML Table</option>
 					<option value="pixel_art">🕹️ Pixel Art</option>
+					<option value="image_webcam_rps" data-requires="image">✊✋✌️ Rock Paper Scissors</option>
 				</select>
 				<span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
 					<label style="font-size:11px;color:var(--pe-muted);">FPS:</label>
