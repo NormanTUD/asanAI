@@ -590,6 +590,9 @@
 				<button id="pyodide_snapshot_btn" onclick="pyodideSnapshot()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Take a single photo">
 				    📸 Snap single photo
 				</button>
+				<button id="pyodide_photos_btn" onclick="pyodideTogglePhotos()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Capture a group of photos">
+				    📸 Multi-Snap
+				</button>
 				<button onclick="pyodideToggleMode()" class="pe-btn pe-btn-mode pe-tooltip" data-tip="Toggle Simple/Advanced">
 					🔀 Mode
 				</button>
@@ -660,6 +663,10 @@
 				    <h4>✊✋✌️ RPS — 2 Players (Snapshots)</h4>
 				    <p>Take turns! Each player snaps a photo. Compare predictions to find the winner.</p>
 				</div>
+				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_group_battle')">
+				    <h4>⚔️ Group Battle (N photos, paired)</h4>
+				    <p>Capture multiple photos, then pair them off and show winners. Uses photos[0], photos[1], etc.</p>
+				</div>
 			</div>
 
 			<!-- Toolbar Row 2: Input sources (advanced only) -->
@@ -716,6 +723,33 @@
 			<div id="pyodide_image_preview" class="pe-media-container">
 				<div style="font-size:11px;color:var(--pe-muted);margin-bottom:6px;font-weight:600;">🖼️ Uploaded Image (resized to model input)</div>
 				<canvas id="pyodide_image_canvas" style="border-radius:8px;border:2px solid var(--pe-border);background:#000;max-width:200px;"></canvas>
+			</div>
+
+			<!-- Multi-photo capture area (hidden by default) -->
+			<div id="pyodide_photos_container" class="pe-media-container">
+			    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+				<div style="font-size:11px;color:var(--pe-muted);font-weight:600;">📸 Photo Group</div>
+				<div style="display:flex;align-items:center;gap:6px;">
+				    <label style="font-size:11px;color:var(--pe-muted);">Need:</label>
+				    <input type="number" id="pyodide_photos_needed" min="2" max="20" value="4"
+					style="width:45px;padding:2px 6px;border-radius:4px;font-size:11px;background:var(--pe-surface2);color:var(--pe-text);border:1px solid var(--pe-border);text-align:center;">
+				    <button onclick="pyodidePhotosSnap()" class="pe-btn pe-btn-run" style="font-size:11px;padding:4px 10px;">
+					📸 Snap
+				    </button>
+				    <button onclick="pyodidePhotosClear()" class="pe-btn pe-btn-clear" style="font-size:11px;padding:4px 10px;">
+					🗑️ Clear
+				    </button>
+				    <button onclick="pyodidePhotosRun()" class="pe-btn pe-btn-run" style="font-size:11px;padding:4px 10px;background:linear-gradient(135deg,#6c63ff,#5a52d5);color:#fff;">
+					▶ Run with Photos
+				    </button>
+				</div>
+			    </div>
+			    <div style="font-size:11px;color:var(--pe-accent2);margin-bottom:6px;">
+				<span id="pyodide_photos_status">0 / 4 photos captured</span>
+			    </div>
+			    <div id="pyodide_photos_strip" style="display:flex;gap:6px;flex-wrap:wrap;min-height:60px;padding:8px;background:var(--pe-bg);border-radius:6px;border:1px solid var(--pe-border);align-items:center;">
+				<span style="color:var(--pe-muted);font-size:11px;font-style:italic;">No photos yet — press 📸 Snap to capture</span>
+			    </div>
 			</div>
 
 			<!-- Editor with syntax highlighting -->
