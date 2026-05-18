@@ -621,9 +621,9 @@
 					<h4>🎲 Random Input</h4>
 					<p>Generate random data matching your model's input shape and predict</p>
 				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_webcam')">
-					<h4>📷 Webcam Prediction</h4>
-					<p>Use your webcam as live input — auto-starts camera</p>
+				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_webcam')">
+				    <h4>📷 Webcam Prediction</h4>
+				    <p>Use your webcam as live input — auto-starts camera</p>
 				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_upload')">
 					<h4>🖼️ Image Upload</h4>
@@ -671,7 +671,7 @@
 					<option value="">Select...</option>
 					<option value="hello_world">👋 Hello World</option>
 					<option value="random_input">🎲 Random Input</option>
-					<option value="image_webcam">📷 Webcam</option>
+					<option value="image_webcam" data-requires="image">📷 Webcam</option>
 					<option value="image_upload">🖼️ Image Upload</option>
 					<option value="custom_data">✏️ Custom Data</option>
 					<option value="weights_inspect">🔍 Inspect Weights</option>

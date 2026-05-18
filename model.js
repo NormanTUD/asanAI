@@ -313,6 +313,11 @@ async function compile_model(recursion_level=0) {
 		});
 		model_config_hash = new_model_config_hash;
 
+		if (typeof pyodideOnModelChanged === "function") {
+			pyodideOnModelChanged();
+			pyodideEditorStop();
+		}
+
 		// --- FIX: Do NOT clear editables here. Only clear if model structure actually changed. ---
 		// math_clear_editables();  // REMOVED
 	} catch (e) {

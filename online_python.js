@@ -663,10 +663,131 @@ print("  create_canvas(w, h)  — Create a drawable canvas")
 print("  display(canvas)      — Show canvas in console")
 print("  display_html(html)   — Render HTML in console")
 print("  display_image(url)   — Show image in console")
-`
+`,
+	generic_io: `# 🔌 Generic Input / Output
+# This script works with any model shape.
+# It generates matching random input and shows the output.
+
+info = get_model_info()
+input_shape = info['input_shape']
+output_shape = info['output_shape']
+
+print(f"🧠 Model Info")
+print(f"   Input shape:  {input_shape}")
+print(f"   Output shape: {output_shape}")
+print(f"   Layers: {info['num_layers']}")
+print(f"   Params: {info['trainable_params']:,} trainable")
+print()
+
+# Build a sample input matching the model's expected shape
+sample_shape = [s if s is not None else 1 for s in input_shape[1:]]
+print(f"📐 Generating input with shape: {sample_shape}")
+
+# You can replace this with your own data:
+# my_input = [0.5, 0.3]  # for a [null, 2] model
+# my_input = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]  # for a [null, 2, 3] model
+my_input = rand_nested(sample_shape)
+
+print(f"   Sample input (first 5 values): {str(my_input)[:80]}...")
+print()
+
+# Run prediction
+result = predict(my_input)
+set_prediction_result(result)
+
+print(f"🎯 Output ({len(result)} values):")
+print(f"   {result}")
+print()
+
+# Interpret output
+class_labels = _labels if '_labels' in dir() and _labels else None
+is_classif = _is_classification if '_is_classification' in dir() else False
+
+if isinstance(result, list) and len(result) > 1 and is_classif:
+    top_idx = result.index(max(result))
+    confidence = result[top_idx] * 100
+    label = class_labels[top_idx] if class_labels and top_idx < len(class_labels) else f"Class {top_idx}"
+    print(f"🏆 Top class: {label} ({confidence:.1f}%)")
+elif isinstance(result, list):
+    print(f"   (Regression/multi-output — {len(result)} output values)")
+    for i, v in enumerate(result[:10]):
+        print(f"   [{i}] {v:.6f}")
+    if len(result) > 10:
+        print(f"   ... ({len(result) - 10} more)")
+`,
 };
 
 	const DEFAULT_CODE = TEMPLATES.hello_world;
+
+	// =========================================================================
+	// MODEL INPUT TYPE DETECTION
+	// =========================================================================
+
+	function isImageModel() {
+		try {
+			if (!model || !model.layers || !model.layers[0] || !model.layers[0].input) return false;
+			var shape = model.layers[0].input.shape; // e.g. [null, 40, 40, 3]
+			return shape.length === 4; // [batch, H, W, C]
+		} catch (e) {
+			return false;
+		}
+	}
+
+	function getModelInputRank() {
+		try {
+			if (!model || !model.layers || !model.layers[0] || !model.layers[0].input) return null;
+			return model.layers[0].input.shape.length;
+		} catch (e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Call this whenever the model changes.
+	 * Hides webcam buttons and stops webcam if model is not image-like.
+	 */
+	function updateWebcamAvailability() {
+		var imageModel = isImageModel();
+		var webcamBtn = document.getElementById("pyodide_webcam_btn");
+		var webcamBtnSimple = document.getElementById("pyodide_webcam_btn_simple");
+		var fpsControls = document.querySelector('.pe-input-bar [oninput*="pyodideSetWebcamFPS"]');
+		var fpsLabel = document.getElementById("pyodide_fps_label");
+		var liveCheckbox = document.getElementById("pyodide_live_predict");
+
+		// Hide/show webcam buttons
+		if (webcamBtn) webcamBtn.style.display = imageModel ? "" : "none";
+		if (webcamBtnSimple) webcamBtnSimple.style.display = imageModel ? "" : "none";
+
+		// Hide FPS controls for non-image models
+		if (fpsControls) fpsControls.parentElement.style.display = imageModel ? "" : "none";
+
+		// If webcam is active and model is no longer image-compatible, stop it
+		if (!imageModel && webcamStream) {
+			appendConsole("[📷 Webcam stopped — model input shape is not image-like]\n", "warn");
+			stopWebcam();
+		}
+
+		// Update the examples panel: hide webcam-related templates for non-image models
+		var webcamExamples = document.querySelectorAll('.pe-example-card[onclick*="image_webcam"]');
+		webcamExamples.forEach(function(card) {
+			card.style.display = imageModel ? "" : "none";
+		});
+
+		// If current code is a webcam template and model changed to non-image, replace with generic
+		if (!imageModel) {
+			var textarea = document.getElementById("pyodide_editor_textarea");
+			if (textarea) {
+				var code = textarea.value;
+				if (code.includes("# 📷 Live Webcam") || code.includes("frame_count")) {
+					textarea.value = TEMPLATES.generic_io;
+					scheduleHighlight();
+					saveEditorContent();
+					appendConsole("[📄 Switched to generic I/O template (model is not image-based)]\n", "info");
+				}
+			}
+		}
+	}
+
 
 	// =========================================================================
 	// SYNTAX HIGHLIGHTING
@@ -1436,6 +1557,14 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// =========================================================================
 
 		async function startWebcam() {
+			if (!isImageModel()) {
+				appendConsole("[⚠️ Webcam not available — model input shape is not image-like (needs [batch, H, W, C])]\n", "warn");
+				appendConsole("[💡 Hint] Your model expects input shape: " +
+					JSON.stringify(model.layers[0].input.shape) +
+					". Use the generic I/O template instead.\n", "info");
+				return;
+			}
+
 			const video = document.getElementById("pyodide_webcam_video");
 			const btn = document.getElementById("pyodide_webcam_btn");
 			const btnSimple = document.getElementById("pyodide_webcam_btn_simple");
@@ -1959,6 +2088,13 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	function loadTemplate(name) {
 		const textarea = document.getElementById("pyodide_editor_textarea");
 		if (!textarea || !TEMPLATES[name]) return;
+
+		if (name.startsWith('image_webcam') && !isImageModel()) {
+			appendConsole("[⚠️ Webcam templates require an image model (input shape [batch, H, W, C])]\n", "warn");
+			appendConsole("[📄 Loading generic I/O template instead]\n", "info");
+			name = 'generic_io';
+		}
+
 		textarea.value = TEMPLATES[name];
 		saveEditorContent();
 		scheduleHighlight();
@@ -2626,6 +2762,7 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	window.pyodideChangeFontSize = changeFontSize;
 	window.pyodideToggleWordWrap = toggleWordWrap;
 	window.pyodideInsertSnippet = insertSnippet;
+	window.pyodideOnModelChanged = updateWebcamAvailability;
 
 	window.PyodideEditor = {
 		getLastPrediction: getLastPyodidePrediction,
@@ -2641,7 +2778,8 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		displayImage: displayImage,
 		appendRichOutput: appendRichOutput,
 		createCanvas: createCanvasForPython,
-		insertSnippet: insertSnippet
+		insertSnippet: insertSnippet,
+		onModelChanged: updateWebcamAvailability
 	};
 
 })();
