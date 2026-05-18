@@ -30,6 +30,7 @@ ignored_file_funcs = [
     "debug.js:random",
     "debug.js:l",
     "predict.js:predict",
+    "online_python.js:predict",
     "train.js:fire"
 ]
 

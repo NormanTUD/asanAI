@@ -1238,49 +1238,55 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		}, 1000 / webcamFPS);
 	}
 
-	async function runWebcamFrame() {
-		const video = document.getElementById("pyodide_webcam_video");
-		const canvas = document.getElementById("pyodide_webcam_canvas");
-		if (!video || !canvas || video.readyState < 2) return;
+		async function runWebcamFrame() {
+			const video = document.getElementById("pyodide_webcam_video");
+			const canvas = document.getElementById("pyodide_webcam_canvas");
+			if (!video || !canvas || video.readyState < 2) return;
 
-		var info = getModelInfoForPython();
-		if (!info || !info.input_shape) return;
+			var info = getModelInfoForPython();
+			if (!info || !info.input_shape) return;
 
-		var inputShape = info.input_shape;
-		var targetH = inputShape[1] || 40;
-		var targetW = inputShape[2] || 40;
-		var channels = inputShape[3] || 3;
+			var inputShape = info.input_shape;
+			var targetH = inputShape[1] || 40;
+			var targetW = inputShape[2] || 40;
+			var channels = inputShape[3] || 3;
 
-		canvas.width = targetW;
-		canvas.height = targetH;
-		var ctx = canvas.getContext("2d");
-		ctx.drawImage(video, 0, 0, targetW, targetH);
+			canvas.width = targetW;
+			canvas.height = targetH;
+			var ctx = canvas.getContext("2d");
+			ctx.drawImage(video, 0, 0, targetW, targetH);
 
-		var imageData = ctx.getImageData(0, 0, targetW, targetH);
-		var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+			var imageData = ctx.getImageData(0, 0, targetW, targetH);
+			var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
 
-		// *** FIX: Set input_data in Python so user code can access it ***
-		if (pyodideInstance) {
+			// Set input_data in Python so user code can access it
+			if (pyodideInstance) {
+				try {
+					pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
+				} catch (e) {
+					console.warn("Failed to set input_data:", e);
+					return;
+				}
+			}
+
+			// *** CHANGED: Re-run the user's Python script on each frame ***
 			try {
-				pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
+				const textarea = document.getElementById("pyodide_editor_textarea");
+				if (textarea && pyodideInstance) {
+					const code = textarea.value;
+					await pyodideInstance.runPythonAsync(code);
+				}
 			} catch (e) {
-				console.warn("Failed to set input_data:", e);
+				// Only log non-spam errors
+				if (e.message && !e.message.includes("No model") && !e.message.includes("KeyboardInterrupt")) {
+					console.warn("Webcam frame script error:", e);
+				}
+				// If user interrupted, stop the loop
+				if (e.message && e.message.includes("KeyboardInterrupt")) {
+					stopWebcam();
+				}
 			}
 		}
-
-		try {
-			var resultArray = runPredictionForPython(inputList);
-			if (resultArray) {
-				lastPredictionResult = resultArray;
-				showPredictionResult(resultArray);
-			}
-		} catch (e) {
-			// Don't spam console for every frame error
-			if (!e.message.includes("No model")) {
-				console.warn("Webcam prediction error:", e);
-			}
-		}
-	}
 
 	function pixelsToNestedList(pixels, height, width, channels) {
 		var divideBy = getDivideByValue();
