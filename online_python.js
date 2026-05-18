@@ -400,57 +400,6 @@ if weights:
 		webcamPredicting = false;
 	}
 
-	function startWebcamPredictionLoop() {
-		if (webcamInterval) clearInterval(webcamInterval);
-
-		webcamInterval = setInterval(async function() {
-			if (webcamPredicting) return; // skip if previous prediction still running
-			if (!webcamStream) return;
-			if (!pyodideReady) return;
-			if (isRunning) return;
-
-			webcamPredicting = true;
-			try {
-				await runWebcamFrame();
-			} catch (e) {
-				// Don't spam console on every frame error
-				console.warn("Webcam prediction error:", e);
-			}
-			webcamPredicting = false;
-		}, 1000 / webcamFPS);
-	}
-
-	async function runWebcamFrame() {
-		const video = document.getElementById("pyodide_webcam_video");
-		const canvas = document.getElementById("pyodide_webcam_canvas");
-		if (!video || !canvas || video.readyState < 2) return;
-
-		// Get model input shape to know target size
-		const info = getModelInfoForPython();
-		if (!info || !info.input_shape) return;
-
-		const inputShape = info.input_shape; // e.g. [None, 40, 40, 3]
-		const targetH = inputShape[1] || 40;
-		const targetW = inputShape[2] || 40;
-		const channels = inputShape[3] || 3;
-
-		// Draw video frame to canvas at target size
-		canvas.width = targetW;
-		canvas.height = targetH;
-		const ctx = canvas.getContext("2d");
-		ctx.drawImage(video, 0, 0, targetW, targetH);
-
-		// Get pixel data
-		const imageData = ctx.getImageData(0, 0, targetW, targetH);
-		const pixels = imageData.data; // RGBA flat array
-
-		// Convert to nested list matching model input: [H, W, C]
-		const inputList = pixelsToNestedList(pixels, targetH, targetW, channels);
-
-		// Set input_data in Python and run prediction
-		await runPredictionWithData(inputList);
-	}
-
 	function pixelsToNestedList(pixels, height, width, channels) {
 		// pixels is Uint8ClampedArray in RGBA format
 		const divideBy = getDivideByValue();
@@ -977,8 +926,8 @@ if weights:
 		webcamInterval = setInterval(async function() {
 			if (webcamPredicting) return;
 			if (!webcamStream) return;
-			if (!pyodideReady) return;
-			if (isRunning) return;
+			// REMOVE: if (!pyodideReady) return;  -- not needed, webcam uses JS bridge directly
+			// REMOVE: if (isRunning) return;      -- this blocks webcam updates unnecessarily
 
 			webcamPredicting = true;
 			try {
@@ -1011,12 +960,11 @@ if weights:
 		var imageData = ctx.getImageData(0, 0, targetW, targetH);
 		var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
 
-		// Run prediction directly via JS bridge (faster than going through Python for webcam)
 		try {
 			var resultArray = runPredictionForPython(inputList);
 			if (resultArray) {
 				lastPredictionResult = resultArray;
-				showPredictionResult(resultArray);
+				showPredictionResult(resultArray); // This SHOULD update the UI
 			}
 		} catch (e) {
 			console.warn("Webcam prediction error:", e);

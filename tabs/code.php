@@ -106,7 +106,7 @@
 				</span>
 			</div>
 
-			<!-- Webcam container (hidden by default) -->
+			<!-- Webcam container (hidden by default) — now includes Prediction Results -->
 			<div id="pyodide_webcam_container" style="display:none; margin-bottom:8px; padding:8px; background:#0a0a0a; border-radius:4px; border:1px solid #333; text-align:center;">
 				<div style="display:flex; align-items:flex-start; gap:12px; justify-content:center; flex-wrap:wrap;">
 					<div>
@@ -116,6 +116,28 @@
 					<div>
 						<div style="font-size:11px;color:#888;margin-bottom:4px;">Model Input</div>
 						<canvas id="pyodide_webcam_canvas" style="border-radius:4px;border:1px solid #444;background:#000;image-rendering:pixelated;width:100px;height:100px;"></canvas>
+					</div>
+					<div id="pyodide_prediction_results" style="display:none; text-align:left;">
+						<strong style="font-size:12px;color:#aaa;">Prediction Results</strong>
+						<pre id="pyodide_prediction_output" style="
+							min-width: 200px;
+							max-width: 300px;
+							min-height: 50px;
+							max-height: 180px;
+							overflow: auto;
+							background: #0a1628;
+							color: #61dafb;
+							font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
+							font-size: 12px;
+							line-height: 1.4;
+							padding: 10px;
+							border: 1px solid #1a3a5c;
+							border-radius: 4px;
+							margin: 4px 0 0 0;
+							white-space: pre-wrap;
+							word-wrap: break-word;
+							box-sizing: border-box;
+						"></pre>
 					</div>
 				</div>
 			</div>
@@ -173,29 +195,6 @@
 					border: 1px solid #333;
 					border-radius: 4px;
 					margin: 0;
-					white-space: pre-wrap;
-					word-wrap: break-word;
-					box-sizing: border-box;
-				"></pre>
-			</div>
-
-			<!-- Prediction Results -->
-			<div id="pyodide_prediction_results" style="margin-top:8px;display:none;">
-				<strong style="font-size:12px;color:#aaa;">Prediction Results</strong>
-				<pre id="pyodide_prediction_output" style="
-					width: 100%;
-					min-height: 50px;
-					max-height: 180px;
-					overflow: auto;
-					background: #0a1628;
-					color: #61dafb;
-					font-family: 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
-					font-size: 12px;
-					line-height: 1.4;
-					padding: 10px;
-					border: 1px solid #1a3a5c;
-					border-radius: 4px;
-					margin: 4px 0 0 0;
 					white-space: pre-wrap;
 					word-wrap: break-word;
 					box-sizing: border-box;
