@@ -587,6 +587,12 @@
 				<button id="pyodide_webcam_btn_simple" onclick="pyodideStartWebcam()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Ctrl+Shift+W">
 					📷 Webcam
 				</button>
+				<button id="pyodide_snapshot_btn" onclick="pyodideSnapshot()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Take a single photo">
+				    📸 Snap
+				</button>
+				<button id="pyodide_snapshot_btn_adv" onclick="pyodideSnapshot()" class="pe-btn pe-btn-clear" style="font-size:12px;">
+				    📸 Snapshot
+				</button>
 				<button onclick="pyodideToggleMode()" class="pe-btn pe-btn-mode pe-tooltip" data-tip="Toggle Simple/Advanced">
 					🔀 Mode
 				</button>
@@ -653,9 +659,9 @@
 					<h4>🕹️ Pixel Art</h4>
 					<p>Draw pixel art on a tiny canvas, scaled up</p>
 				</div>
-				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_webcam_rps')">
-				    <h4>✊✋✌️ Rock Paper Scissors</h4>
-				    <p>Play RPS against the AI — works with live webcam or single snapshots. Tracks state, keeps score, plots real confidence.</p>
+				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_snapshot_rps')">
+				    <h4>✊✋✌️ RPS — 2 Players (Snapshots)</h4>
+				    <p>Take turns! Each player snaps a photo. Compare predictions to find the winner.</p>
 				</div>
 			</div>
 
@@ -683,7 +689,6 @@
 					<option value="draw_canvas">🎨 Canvas Art</option>
 					<option value="html_table">📋 HTML Table</option>
 					<option value="pixel_art">🕹️ Pixel Art</option>
-					<option value="image_webcam_rps" data-requires="image">✊✋✌️ Rock Paper Scissors</option>
 				</select>
 				<span style="margin-left:auto;display:flex;align-items:center;gap:6px;">
 					<label style="font-size:11px;color:var(--pe-muted);">FPS:</label>
@@ -700,7 +705,7 @@
 						<video id="pyodide_webcam_video" autoplay playsinline muted style="max-width:200px;border-radius:8px;border:2px solid var(--pe-border);background:#000;"></video>
 					</div>
 					<div>
-						<div style="font-size:11px;color:var(--pe-muted);margin-bottom:6px;font-weight:600;">🧠 Model Input</div>
+						<div style="font-size:11px;color:var(--pe-muted);margin-bottom:6px;font-weight:600;">🤖 Model Input</div>
 						<canvas id="pyodide_webcam_canvas" style="border-radius:8px;border:2px solid var(--pe-border);background:#000;image-rendering:pixelated;width:100px;height:100px;"></canvas>
 					</div>
 					<div id="pyodide_prediction_results" style="display:none; text-align:left;">
