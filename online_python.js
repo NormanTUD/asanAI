@@ -71,7 +71,7 @@
 const TEMPLATES = {
     image_webcam: `# 📷 Live Webcam Prediction
 # This script runs on EVERY frame from the webcam.
-# Use 'if "var" not in dir()' to initialize state once.
+# Uses class labels automatically when available.
 
 # Initialize once (persists across frames)
 if 'frame_count' not in dir():
@@ -79,6 +79,11 @@ if 'frame_count' not in dir():
     info = get_model_info()
     print(f"Model: {info['input_shape']} → {info['output_shape']}")
     print(f"Layers: {info['num_layers']}, Params: {info['trainable_params']:,}")
+    # Get labels from JS environment
+    class_labels = _labels if '_labels' in dir() and _labels else None
+    is_classif = _is_classification if '_is_classification' in dir() else False
+    if class_labels and is_classif:
+        print(f"Labels: {list(class_labels)}")
     print()
 
 if input_data is not None:
@@ -90,8 +95,13 @@ if input_data is not None:
     if isinstance(result, list) and len(result) > 1:
         top_idx = result.index(max(result))
         confidence = result[top_idx] * 100
-        if frame_count % 5 == 0:  # Print every 5th frame to reduce spam
-            print(f"Frame {frame_count} | 🏆 Class {top_idx} ({confidence:.1f}%)")
+        # Use label name if classification
+        if class_labels and is_classif and top_idx < len(class_labels):
+            label_name = class_labels[top_idx]
+        else:
+            label_name = f"Class {top_idx}"
+        if frame_count % 5 == 0:
+            print(f"Frame {frame_count} | 🏆 {label_name} ({confidence:.1f}%)")
 else:
     print("⏳ Waiting for webcam frame...")
 `,
@@ -103,12 +113,21 @@ if 'frame_count' not in dir():
     history = []
     stable_count = 0
     last_class = -1
-    STABILITY_THRESHOLD = 10  # frames of same class = "stable"
+    STABILITY_THRESHOLD = 10
     info = get_model_info()
     num_classes = info['output_shape'][-1] if info['output_shape'] else 0
+    class_labels = _labels if '_labels' in dir() and _labels else None
+    is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Model: {info['input_shape']} → {num_classes} classes")
+    if class_labels and is_classif:
+        print(f"   Labels: {list(class_labels)}")
     print(f"   Tracking stability over {STABILITY_THRESHOLD} frames")
     print()
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
 
 if input_data is not None:
     frame_count += 1
@@ -120,26 +139,22 @@ if input_data is not None:
         confidence = result[top_idx]
         history.append({'class': top_idx, 'conf': confidence})
 
-        # Keep last 60 frames of history
         if len(history) > 60:
             history = history[-60:]
 
-        # Track stability
         if top_idx == last_class:
             stable_count += 1
         else:
             stable_count = 1
             last_class = top_idx
 
-        # Report when stable
         if stable_count == STABILITY_THRESHOLD:
             avg_conf = sum(h['conf'] for h in history[-STABILITY_THRESHOLD:]) / STABILITY_THRESHOLD
-            print(f"🔒 STABLE: Class {top_idx} for {STABILITY_THRESHOLD} frames (avg {avg_conf*100:.1f}%)")
+            print(f"🔒 STABLE: {get_label(top_idx)} for {STABILITY_THRESHOLD} frames (avg {avg_conf*100:.1f}%)")
 
-        # Periodic status
         if frame_count % 15 == 0:
             avg_conf = sum(h['conf'] for h in history[-15:]) / min(len(history), 15)
-            print(f"📊 Frame {frame_count} | Current: class {top_idx} | Avg conf: {avg_conf*100:.1f}% | Stable: {stable_count}")
+            print(f"📊 Frame {frame_count} | Current: {get_label(top_idx)} | Avg conf: {avg_conf*100:.1f}% | Stable: {stable_count}")
 `,
     image_webcam_threshold: `# 📷 Webcam + Threshold Alerts
 # Only prints when confidence exceeds a threshold.
@@ -150,10 +165,19 @@ if 'frame_count' not in dir():
     HIGH_THRESHOLD = 0.85
     LOW_THRESHOLD = 0.30
     info = get_model_info()
+    class_labels = _labels if '_labels' in dir() and _labels else None
+    is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Model: {info['input_shape']} → {info['output_shape']}")
+    if class_labels and is_classif:
+        print(f"   Labels: {list(class_labels)}")
     print(f"⚙️  High threshold: {HIGH_THRESHOLD*100:.0f}%")
     print(f"⚙️  Low threshold: {LOW_THRESHOLD*100:.0f}%")
     print()
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
 
 if input_data is not None:
     frame_count += 1
@@ -166,9 +190,9 @@ if input_data is not None:
 
         if confidence >= HIGH_THRESHOLD:
             alert_count += 1
-            print(f"🚨 HIGH [{frame_count}]: Class {top_idx} at {confidence*100:.1f}% (alert #{alert_count})")
+            print(f"🚨 HIGH [{frame_count}]: {get_label(top_idx)} at {confidence*100:.1f}% (alert #{alert_count})")
         elif confidence <= LOW_THRESHOLD:
-            print(f"🤷 LOW  [{frame_count}]: Best guess class {top_idx} at {confidence*100:.1f}%")
+            print(f"🤷 LOW  [{frame_count}]: Best guess {get_label(top_idx)} at {confidence*100:.1f}%")
 `,
     image_webcam_multiclass: `# 📷 Webcam + Multi-Class Monitor
 # Monitors all classes and reports when any class spikes.
@@ -178,11 +202,20 @@ if 'frame_count' not in dir():
     class_peaks = {}
     info = get_model_info()
     num_classes = info['output_shape'][-1] if info['output_shape'] else 0
+    class_labels = _labels if '_labels' in dir() and _labels else None
+    is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Monitoring {num_classes} classes")
+    if class_labels and is_classif:
+        print(f"   Labels: {list(class_labels)}")
     print(f"   Will report when any class exceeds its previous peak")
     print()
     for i in range(num_classes):
         class_peaks[i] = 0.0
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
 
 if input_data is not None:
     frame_count += 1
@@ -191,16 +224,15 @@ if input_data is not None:
 
     if isinstance(result, list) and len(result) > 1:
         for idx, conf in enumerate(result):
-            if conf > class_peaks[idx] + 0.1:  # New peak (with 10% margin)
+            if conf > class_peaks[idx] + 0.1:
                 class_peaks[idx] = conf
-                print(f"📈 NEW PEAK [{frame_count}]: Class {idx} → {conf*100:.1f}%")
+                print(f"📈 NEW PEAK [{frame_count}]: {get_label(idx)} → {conf*100:.1f}%")
 
-        # Summary every 30 frames
         if frame_count % 30 == 0:
             print(f"\\n--- Frame {frame_count} Summary ---")
             for idx in sorted(class_peaks, key=class_peaks.get, reverse=True):
                 bar = "█" * int(class_peaks[idx] * 20)
-                print(f"  Class {idx}: {class_peaks[idx]*100:.1f}% {bar}")
+                print(f"  {get_label(idx):12s}: {class_peaks[idx]*100:.1f}% {bar}")
             print()
 `,
     image_webcam_smoothed: `# 📷 Webcam + Smoothed Predictions
@@ -212,9 +244,18 @@ if 'frame_count' not in dir():
     prediction_buffer = []
     info = get_model_info()
     num_classes = info['output_shape'][-1] if info['output_shape'] else 0
+    class_labels = _labels if '_labels' in dir() and _labels else None
+    is_classif = _is_classification if '_is_classification' in dir() else False
     print(f"🧠 Model: {num_classes} classes")
+    if class_labels and is_classif:
+        print(f"   Labels: {list(class_labels)}")
     print(f"📊 Smoothing window: {window_size} frames")
     print()
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
 
 if input_data is not None:
     frame_count += 1
@@ -225,7 +266,6 @@ if input_data is not None:
         if len(prediction_buffer) > window_size:
             prediction_buffer = prediction_buffer[-window_size:]
 
-        # Compute smoothed average
         num_cls = len(result)
         smoothed = [0.0] * num_cls
         for pred in prediction_buffer:
@@ -233,7 +273,6 @@ if input_data is not None:
                 smoothed[i] += pred[i]
         smoothed = [s / len(prediction_buffer) for s in smoothed]
 
-        # Use smoothed result for display
         set_prediction_result(smoothed)
 
         top_idx = smoothed.index(max(smoothed))
@@ -242,15 +281,23 @@ if input_data is not None:
         if frame_count % 10 == 0:
             raw_top = result.index(max(result))
             raw_conf = result[raw_top]
-            print(f"Frame {frame_count} | Raw: class {raw_top} ({raw_conf*100:.1f}%) | Smoothed: class {top_idx} ({confidence*100:.1f}%)")
+            print(f"Frame {frame_count} | Raw: {get_label(raw_top)} ({raw_conf*100:.1f}%) | Smoothed: {get_label(top_idx)} ({confidence*100:.1f}%)")
 `,
     image_upload: `# 🖼️ Image Upload Prediction
 # Upload an image using the 📁 button above, then run this code.
-# 'input_data' is automatically filled with the resized image pixels.
 
 info = get_model_info()
+class_labels = _labels if '_labels' in dir() and _labels else None
+is_classif = _is_classification if '_is_classification' in dir() else False
 print(f"Model expects: {info['input_shape']}")
+if class_labels and is_classif:
+    print(f"Labels: {list(class_labels)}")
 print()
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
 
 if input_data is None:
     print("⚠️  No image uploaded yet!")
@@ -264,18 +311,33 @@ else:
     if isinstance(result, list) and len(result) > 1:
         top_idx = result.index(max(result))
         confidence = result[top_idx] * 100
-        print(f"🏆 Top class: {top_idx} ({confidence:.1f}%)")
+        print(f"🏆 Top: {get_label(top_idx)} ({confidence:.1f}%)")
+        print()
+        # Show all classes sorted
+        indexed = sorted(enumerate(result), key=lambda x: x[1], reverse=True)
+        for idx, conf in indexed:
+            bar = "█" * int(conf * 20)
+            print(f"  {get_label(idx):12s} {conf*100:5.1f}% {bar}")
 `,
     random_input: `# 🎲 Random Input Prediction
 # Generates random data matching your model's input shape.
 
 info = get_model_info()
+class_labels = _labels if '_labels' in dir() and _labels else None
+is_classif = _is_classification if '_is_classification' in dir() else False
 print(f"🧠 Model Summary")
 print(f"   Layers: {info['num_layers']}")
 print(f"   Input:  {info['input_shape']}")
 print(f"   Output: {info['output_shape']}")
 print(f"   Params: {info['trainable_params']:,} trainable")
+if class_labels and is_classif:
+    print(f"   Labels: {list(class_labels)}")
 print()
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
 
 input_shape = info['input_shape']
 sample_shape = [s if s is not None else 1 for s in input_shape[1:]]
@@ -285,15 +347,29 @@ input_list = rand_nested(sample_shape)
 result = predict(input_list)
 print(f"\\n🎯 Prediction: {result}")
 set_prediction_result(result)
+
+if isinstance(result, list) and len(result) > 1:
+    top_idx = result.index(max(result))
+    confidence = result[top_idx] * 100
+    print(f"🏆 Top: {get_label(top_idx)} ({confidence:.1f}%)")
 `,
     custom_data: `# ✏️ Custom Data Prediction
 # Enter your own data and predict.
 
 info = get_model_info()
 input_shape = info['input_shape']
+class_labels = _labels if '_labels' in dir() and _labels else None
+is_classif = _is_classification if '_is_classification' in dir() else False
 print(f"Model expects input shape: {input_shape}")
 print(f"Model output shape: {info['output_shape']}")
+if class_labels and is_classif:
+    print(f"Labels: {list(class_labels)}")
 print()
+
+def get_label(idx):
+    if class_labels and is_classif and idx < len(class_labels):
+        return class_labels[idx]
+    return f"Class {idx}"
 
 # Auto-generate matching input for testing:
 sample_shape = [s if s is not None else 1 for s in input_shape[1:]]
@@ -306,6 +382,11 @@ my_data = rand_nested(sample_shape)
 result = predict(my_data)
 print(f"\\n🎯 Result: {result}")
 set_prediction_result(result)
+
+if isinstance(result, list) and len(result) > 1:
+    top_idx = result.index(max(result))
+    confidence = result[top_idx] * 100
+    print(f"🏆 Top: {get_label(top_idx)} ({confidence:.1f}%)")
 `,
     weights_inspect: `# 🔍 Inspect Model Weights
 
@@ -319,6 +400,12 @@ print(f"  Trainable:       {info['trainable_params']:,}")
 print(f"  Non-trainable:   {info['non_trainable_params']:,}")
 print(f"  Total params:    {info['trainable_params'] + info['non_trainable_params']:,}")
 print()
+
+class_labels = _labels if '_labels' in dir() and _labels else None
+is_classif = _is_classification if '_is_classification' in dir() else False
+if class_labels and is_classif:
+    print(f"  Classification labels: {list(class_labels)}")
+    print()
 
 print("📋 Layer Details")
 print("-" * 50)
@@ -356,9 +443,16 @@ import random
 canvas = create_canvas(420, 220)
 ctx = canvas.getContext("2d")
 
-# Data — try changing these!
-labels = ["Cat", "Dog", "Bird", "Fish", "Frog"]
-values = [random.random() for _ in range(5)]
+# Use model labels if available, otherwise defaults
+class_labels = _labels if '_labels' in dir() and _labels else None
+is_classif = _is_classification if '_is_classification' in dir() else False
+
+if class_labels and is_classif:
+    chart_labels = list(class_labels)
+else:
+    chart_labels = ["Cat", "Dog", "Bird", "Fish", "Frog"]
+
+values = [random.random() for _ in range(len(chart_labels))]
 max_val = max(values)
 
 # Background
@@ -366,42 +460,39 @@ ctx.fillStyle = "#1e1e2e"
 ctx.fillRect(0, 0, 420, 220)
 
 # Draw bars
-bar_width = 55
-gap = 18
-start_x = 45
+num_bars = len(chart_labels)
+total_width = 380
+bar_width = max(20, (total_width - (num_bars - 1) * 8) // num_bars)
+gap = 8
+start_x = (420 - (num_bars * bar_width + (num_bars - 1) * gap)) // 2
 
-for i, (label, val) in enumerate(zip(labels, values)):
+for i, (label, val) in enumerate(zip(chart_labels, values)):
     x = start_x + i * (bar_width + gap)
     bar_height = (val / max_val) * 150
     y = 185 - bar_height
 
-    # Bar gradient color
-    hue = i * 65
+    hue = i * (360 // num_bars)
     ctx.fillStyle = f"hsl({hue}, 70%, 60%)"
     ctx.fillRect(x, y, bar_width, bar_height)
 
-    # Highlight top bar
     if val == max_val:
         ctx.strokeStyle = "#fff"
         ctx.lineWidth = 2
         ctx.strokeRect(x, y, bar_width, bar_height)
 
-    # Label
     ctx.fillStyle = "#cdd6f4"
-    ctx.font = "11px sans-serif"
+    ctx.font = "10px sans-serif"
     ctx.textAlign = "center"
-    ctx.fillText(label, x + bar_width/2, 202)
-
-    # Value on top
+    # Truncate label if too long
+    short_label = label[:7] if len(label) > 7 else label
+    ctx.fillText(short_label, x + bar_width/2, 202)
     ctx.fillText(f"{val:.2f}", x + bar_width/2, y - 8)
 
-# Title
 ctx.fillStyle = "#89b4fa"
 ctx.font = "bold 14px sans-serif"
 ctx.textAlign = "left"
 ctx.fillText("📊 Random Predictions", 10, 22)
 
-# Display it!
 display(canvas)
 print("Chart drawn! ✨")
 `,
@@ -457,6 +548,12 @@ for i, (name, ltype) in enumerate(zip(info['layer_names'], info['layer_types']))
     bg = "rgba(108,99,255,0.05)" if i % 2 == 0 else "transparent"
     rows += f'<tr style="background:{bg}"><td>{i}</td><td>{name}</td><td>{ltype}</td></tr>'
 
+class_labels = _labels if '_labels' in dir() and _labels else None
+is_classif = _is_classification if '_is_classification' in dir() else False
+labels_html = ""
+if class_labels and is_classif:
+    labels_html = f'<p style="color:#a6adc8;font-size:11px;">Labels: <strong style="color:#89b4fa;">{", ".join(class_labels)}</strong></p>'
+
 html = f"""
 <div style="padding:8px;">
   <h3 style="color:#89b4fa;margin:0 0 8px 0;">🧠 Model Architecture</h3>
@@ -470,6 +567,7 @@ html = f"""
     Total params: <strong style="color:#00d4aa;">{info['trainable_params'] + info['non_trainable_params']:,}</strong>
     (trainable: {info['trainable_params']:,})
   </p>
+  {labels_html}
 </div>
 """
 
@@ -1010,34 +1108,47 @@ print("  display_image(url)   — Show image in console")
 	// INITIALIZATION
 	// =========================================================================
 
-	async function initPyodide() {
-		if (pyodideReady || pyodideLoading) return;
-		pyodideLoading = true;
-		setStatus("⏳ Loading...", "loading");
+		async function initPyodide() {
+			if (pyodideReady || pyodideLoading) return;
+			pyodideLoading = true;
+			setStatus("⏳ Loading...", "loading");
 
-		try {
-			if (typeof loadPyodide === "undefined") {
-				throw new Error("loadPyodide is not defined. Ensure libs/pyodide.js is loaded.");
+			var maxRetries = 3;
+			var attempt = 0;
+
+			while (attempt < maxRetries) {
+				attempt++;
+				try {
+					if (typeof loadPyodide === "undefined") {
+						throw new Error("loadPyodide is not defined. Ensure libs/pyodide.js is loaded.");
+					}
+
+					pyodideInstance = await loadPyodide({
+						indexURL: "libs/",
+						stdout: function (text) { appendConsole(text + "\n", "stdout"); },
+						stderr: function (text) { appendConsole(text + "\n", "stderr"); },
+					});
+
+					await setupPythonEnvironment();
+
+					pyodideReady = true;
+					pyodideLoading = false;
+					setStatus("✓ Ready", "ready");
+					return; // Success — exit
+				} catch (e) {
+					console.error("Pyodide init attempt " + attempt + " failed:", e);
+					if (attempt < maxRetries) {
+						appendConsole("[⏳ Pyodide init failed, retrying (" + attempt + "/" + maxRetries + ")...]\n", "warn");
+						await new Promise(function (resolve) { setTimeout(resolve, 1000 * attempt); });
+					} else {
+						pyodideLoading = false;
+						setStatus("✗ Failed", "error");
+						appendConsole("[ERROR] Pyodide failed to initialize after " + maxRetries + " attempts: " + e.message + "\n", "stderr");
+						appendConsole("[💡 Hint] Try refreshing the page or check your network connection.\n", "info");
+					}
+				}
 			}
-
-			pyodideInstance = await loadPyodide({
-				indexURL: "libs/",
-				stdout: function (text) { appendConsole(text + "\n", "stdout"); },
-				stderr: function (text) { appendConsole(text + "\n", "stderr"); },
-			});
-
-			await setupPythonEnvironment();
-
-			pyodideReady = true;
-			pyodideLoading = false;
-			setStatus("✓ Ready", "ready");
-		} catch (e) {
-			pyodideLoading = false;
-			setStatus("✗ Failed", "error");
-			appendConsole("[ERROR] Failed to initialize Pyodide: " + e.message + "\n", "stderr");
-			console.error("Pyodide init error:", e);
 		}
-	}
 
 	async function setupPythonEnvironment() {
 		pyodideInstance.globals.set("_js_model_ref", null);
@@ -1394,6 +1505,19 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			const canvas = document.getElementById("pyodide_webcam_canvas");
 			if (!video || !canvas || video.readyState < 2) return;
 
+			// Check if model is still valid before doing anything
+			try {
+				if (!model || !model.layers || !model.predict) return;
+				// Quick check: try accessing a weight to see if model is disposed
+				if (model.weights && model.weights.length > 0 && model.weights[0].isDisposed) {
+					console.warn("Model weights disposed, skipping frame.");
+					return;
+				}
+			} catch (e) {
+				console.warn("Model check failed, skipping frame:", e.message);
+				return;
+			}
+
 			var info = getModelInfoForPython();
 			if (!info || !info.input_shape) return;
 
@@ -1420,7 +1544,19 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 				}
 			}
 
-			// *** CHANGED: Re-run the user's Python script on each frame ***
+			// Also pass labels and is_classification to Python
+			if (pyodideInstance) {
+				try {
+					var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
+					var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
+					pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
+					pyodideInstance.globals.set("_is_classification", classificationFlag);
+				} catch (e) {
+					// Non-critical, continue
+				}
+			}
+
+			// Re-run the user's Python script on each frame
 			try {
 				const textarea = document.getElementById("pyodide_editor_textarea");
 				if (textarea && pyodideInstance) {
@@ -1428,14 +1564,26 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 					await pyodideInstance.runPythonAsync(code);
 				}
 			} catch (e) {
-				// Only log non-spam errors
-				if (e.message && !e.message.includes("No model") && !e.message.includes("KeyboardInterrupt")) {
-					console.warn("Webcam frame script error:", e);
+				var msg = e.message || String(e);
+				// Silently skip disposed model errors — model is being rebuilt
+				if (msg.includes("disposed")) {
+					return;
+				}
+				// Skip "No model" errors silently
+				if (msg.includes("No model")) {
+					return;
 				}
 				// If user interrupted, stop the loop
-				if (e.message && e.message.includes("KeyboardInterrupt")) {
+				if (msg.includes("KeyboardInterrupt")) {
 					stopWebcam();
+					return;
 				}
+				// Prediction failed (transient) — skip frame
+				if (msg.includes("Prediction failed")) {
+					return;
+				}
+				// Log other errors but don't spam
+				console.warn("Webcam frame script error:", msg);
 			}
 		}
 
