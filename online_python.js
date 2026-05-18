@@ -1868,12 +1868,11 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			await new Promise(function(resolve) {
 				tempVideo.onloadedmetadata = function() {
 					tempVideo.play();
-					// Wait a moment for camera to adjust exposure
-					setTimeout(resolve, 400);
+					setTimeout(resolve, 500);
 				};
 			});
 
-			// Grab the frame
+			// Get model input dimensions
 			var info = getModelInfoForPython();
 			if (!info || !info.input_shape) {
 				stream.getTracks().forEach(function(t) { t.stop(); });
@@ -1886,63 +1885,74 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			var targetW = inputShape[2] || 40;
 			var channels = inputShape[3] || 3;
 
-			// Create a canvas at model input size for the pixel data
-			var snapCanvas = document.createElement("canvas");
-			snapCanvas.width = targetW;
-			snapCanvas.height = targetH;
-			var ctx = snapCanvas.getContext("2d");
-			ctx.drawImage(tempVideo, 0, 0, targetW, targetH);
-
-			var imageData = ctx.getImageData(0, 0, targetW, targetH);
-			var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
-
-			// === Show the snapshot in the live video element ===
+			// === Show the snapshot in the video element as a frozen frame ===
 			var container = document.getElementById("pyodide_webcam_container");
 			if (container) container.style.display = "block";
 
 			var videoEl = document.getElementById("pyodide_webcam_video");
-			if (videoEl) {
-				// Create a full-resolution snapshot for display purposes
-				var displayCanvas = document.createElement("canvas");
-				displayCanvas.width = tempVideo.videoWidth;
-				displayCanvas.height = tempVideo.videoHeight;
-				var displayCtx = displayCanvas.getContext("2d");
-				displayCtx.drawImage(tempVideo, 0, 0);
+			var webcamCanvas = document.getElementById("pyodide_webcam_canvas");
 
-				// Convert to a blob URL and show it as a poster/frame on the video element
-				// We use the video element's poster or replace srcObject with a static stream
-				try {
-					var dataUrl = displayCanvas.toDataURL("image/png");
-					// Stop any existing live stream on the video element
-					if (videoEl.srcObject) {
+			// Draw full-res frame onto a display canvas, then feed it to the video element
+			var displayCanvas = document.createElement("canvas");
+			displayCanvas.width = tempVideo.videoWidth || 320;
+			displayCanvas.height = tempVideo.videoHeight || 240;
+			var displayCtx = displayCanvas.getContext("2d");
+			displayCtx.drawImage(tempVideo, 0, 0, displayCanvas.width, displayCanvas.height);
+
+			// Show in video element via captureStream (frozen single frame)
+			if (videoEl) {
+				videoEl.style.display = "";
+				// Stop any existing srcObject
+				if (videoEl.srcObject) {
+					try {
 						videoEl.srcObject.getTracks().forEach(function(t) { t.stop(); });
-						videoEl.srcObject = null;
-					}
-					// Use poster attribute to show the frozen frame
-					videoEl.poster = dataUrl;
-					videoEl.removeAttribute("src");
-					videoEl.load(); // force poster to show
-				} catch (posterErr) {
-					// Fallback: draw on the webcam canvas instead
-					var webcamCanvas = document.getElementById("pyodide_webcam_canvas");
+					} catch(e) {}
+					videoEl.srcObject = null;
+				}
+				// Use a static canvas stream to display the frozen frame
+				try {
+					var frozenStream = displayCanvas.captureStream(0); // 0 FPS = static
+					videoEl.srcObject = frozenStream;
+					videoEl.play().catch(function() {});
+				} catch(e) {
+					// Fallback: show on webcam canvas directly
 					if (webcamCanvas) {
-						webcamCanvas.width = tempVideo.videoWidth;
-						webcamCanvas.height = tempVideo.videoHeight;
+						webcamCanvas.width = displayCanvas.width;
+						webcamCanvas.height = displayCanvas.height;
+						webcamCanvas.style.display = "block";
 						var wctx = webcamCanvas.getContext("2d");
-						wctx.drawImage(tempVideo, 0, 0);
+						wctx.drawImage(displayCanvas, 0, 0);
 					}
 				}
 			}
 
-			// Stop camera immediately after capturing
+			// Also draw on webcam canvas as backup display
+			if (webcamCanvas) {
+				webcamCanvas.width = displayCanvas.width;
+				webcamCanvas.height = displayCanvas.height;
+				webcamCanvas.style.display = "block";
+				var canvasCtx = webcamCanvas.getContext("2d");
+				canvasCtx.drawImage(displayCanvas, 0, 0);
+			}
+
+			// === Get pixel data at MODEL input size for prediction ===
+			var modelCanvas = document.createElement("canvas");
+			modelCanvas.width = targetW;
+			modelCanvas.height = targetH;
+			var modelCtx = modelCanvas.getContext("2d");
+			modelCtx.drawImage(tempVideo, 0, 0, targetW, targetH);
+
+			var imageData = modelCtx.getImageData(0, 0, targetW, targetH);
+			var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+
+			// Stop camera immediately
 			stream.getTracks().forEach(function(t) { t.stop(); });
 			tempVideo.srcObject = null;
 
-			// Set input_data in Python (but do NOT auto-run)
+			// Set input_data in Python
 			try {
 				pyodideInstance.globals.set("input_data", pyodideInstance.toPy(inputList));
 
-				// Pass labels
 				var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
 				var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
 				pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
@@ -1952,10 +1962,10 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 				return;
 			}
 
-			appendConsole("[📸 Snapshot taken! (" + targetW + "x" + targetH + ") — press ▶ Run to predict]\n", "info");
+			appendConsole("[📸 Snapshot captured! (" + targetW + "x" + targetH + ")]\n", "info");
 
-			// NOTE: We do NOT call pyodideEditorRun() here.
-			// The user must press Run manually to trigger prediction.
+			// === AUTO-RUN the code so the game advances automatically ===
+			await pyodideEditorRun();
 		}
 
 	function startWebcamPredictionLoop() {
