@@ -78,6 +78,7 @@
 		_js("safety.js");
 		_js("tests.js");
 		_js("model.js");
+		_js("online_python.js");
 		_js("explain.js");
 		_js("math_editable.js");
 		_js("math_mode.js");
