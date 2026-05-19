@@ -1042,5 +1042,8 @@ where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The stand
 ### Type Theory: The Mathematical Foundations
 
 The theoretical underpinning traces to \cite[*Principia Mathematica*]{russell1910principia} (Russell & Whitehead, 1910), developed computationally by \cite[Alonzo Church]{churchsimplytyped} (simply typed lambda calculus, 1940), \cite[Roger Hindley]{hindleytypes} (1969) and \cite[Robin Milner]{milnertypeinference} (1978) with type inference, and \cite[Per Martin-Löf]{martinloeftypetheory} (dependent types, 1971).
+</div>
 
+<div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
+In 1937, a 21-year-old MIT graduate student named Claude Elwood Shannon submitted his master's thesis, \cite[*A Symbolic Analysis of Relay and Switching Circuits*]{shannon1937switching}, which demonstrated that the two-valued Boolean algebra developed by \citeauthor{bool1854} in 1854 could serve as a theoretical foundation for the design of electrical switching circuits. Shannon recognized that the binary states of electrical relay switches—open or closed, on or off—were isomorphic to the truth values of Boolean logic: true and false, 1 and 0. Any arrangement of series and parallel switches could be described by a Boolean expression, and conversely, any Boolean expression could be physically realized as a circuit of relays. His thesis laid the foundations for all digital computing and digital circuits. The utilization of the binary properties of electrical switches to perform logic functions is the basic concept that underlies all electronic digital computer designs, from the earliest relay computers to the GPU clusters training today's large language models.
 </div>
