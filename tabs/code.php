@@ -57,7 +57,9 @@
 	<div id="pyodide_editor_tab" class="tab">
 		<br>
 		<style>
-			/* ===== PYODIDE EDITOR THEME (v3 — Fixed & Enhanced) ===== */
+			/* ===== PYODIDE EDITOR THEME (v4 — Side-by-side + Dark/Light Mode) ===== */
+
+			/* ---- DARK MODE (default) ---- */
 			#pyodide_editor_wrapper {
 				--pe-bg: #0f0f1a;
 				--pe-surface: #1a1a2e;
@@ -71,8 +73,70 @@
 				--pe-error: #ff6b6b;
 				--pe-warning: #ffd93d;
 				--pe-radius: 8px;
+				--pe-editor-bg: #1e1e2e;
+				--pe-line-num-bg: #181825;
+				--pe-console-bg: #0b0b14;
+				--pe-console-text: #00ff88;
+				--pe-caret-color: #fff;
 				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 				position: relative;
+			}
+
+			/* ---- LIGHT MODE ---- */
+			#pyodide_editor_wrapper.pe-light-mode {
+				--pe-bg: #f5f5f7;
+				--pe-surface: #ffffff;
+				--pe-surface2: #eef0f4;
+				--pe-border: #d0d4dc;
+				--pe-accent: #5046e5;
+				--pe-accent2: #059669;
+				--pe-text: #1f2937;
+				--pe-muted: #6b7280;
+				--pe-success: #059669;
+				--pe-error: #dc2626;
+				--pe-warning: #d97706;
+				--pe-radius: 8px;
+				--pe-editor-bg: #ffffff;
+				--pe-line-num-bg: #f3f4f6;
+				--pe-console-bg: #f9fafb;
+				--pe-console-text: #065f46;
+				--pe-caret-color: #111;
+			}
+
+			/* Light mode syntax overrides */
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .kw { color: #7c3aed; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .bi { color: #0891b2; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .fn { color: #2563eb; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .st { color: #16a34a; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .cm { color: #9ca3af; font-style: italic; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .nu { color: #ea580c; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .op { color: #0891b2; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .dc { color: #ca8a04; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .sf { color: #e11d48; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .cn { color: #ea580c; font-weight: 500; }
+			#pyodide_editor_wrapper.pe-light-mode .pe-hl .tx { color: #1f2937; }
+
+			/* Light mode line numbers */
+			#pyodide_editor_wrapper.pe-light-mode #pyodide_editor_line_numbers {
+				color: #9ca3af;
+				background: var(--pe-line-num-bg);
+				border-right-color: var(--pe-border);
+			}
+
+			/* Light mode console */
+			#pyodide_editor_wrapper.pe-light-mode #pyodide_console_output {
+				background: var(--pe-console-bg);
+				color: var(--pe-console-text);
+			}
+
+			/* Light mode editor body */
+			#pyodide_editor_wrapper.pe-light-mode .pe-editor-body {
+				background: var(--pe-editor-bg);
+			}
+
+			/* Light mode textarea caret */
+			#pyodide_editor_wrapper.pe-light-mode #pyodide_editor_textarea {
+				caret-color: var(--pe-caret-color);
 			}
 
 			#pyodide_editor_wrapper button {
@@ -170,6 +234,36 @@
 				margin: 0 2px;
 			}
 
+			/* === SIDE-BY-SIDE LAYOUT: Editor left, Console right === */
+			.pe-main-layout {
+				display: flex;
+				flex-direction: row;
+				gap: 10px;
+				align-items: stretch;
+			}
+
+			.pe-main-layout .pe-editor-container {
+				flex: 1 1 60%;
+				min-width: 0;
+			}
+
+			.pe-main-layout .pe-console-container {
+				flex: 0 0 35%;
+				min-width: 280px;
+				margin-top: 0;
+			}
+
+			/* Responsive: stack vertically on narrow screens */
+			@media (max-width: 900px) {
+				.pe-main-layout {
+					flex-direction: column;
+				}
+				.pe-main-layout .pe-console-container {
+					flex: none;
+					min-width: unset;
+				}
+			}
+
 			/* Editor container */
 			.pe-editor-container {
 				position: relative;
@@ -177,6 +271,8 @@
 				border-radius: var(--pe-radius);
 				overflow: hidden;
 				box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+				display: flex;
+				flex-direction: column;
 			}
 			.pe-editor-header {
 				background: var(--pe-surface);
@@ -192,7 +288,8 @@
 
 			.pe-editor-body {
 				position: relative;
-				background: #1e1e2e;
+				background: var(--pe-editor-bg);
+				flex: 1;
 			}
 
 			#pyodide_editor_highlight {
@@ -220,8 +317,8 @@
 				position: relative;
 				z-index: 2;
 				width: 100%;
-				min-height: 320px;
-				max-height: 60vh;
+				min-height: 520px;
+				max-height: 75vh;
 				font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
 				font-size: 13px;
 				line-height: 1.6;
@@ -237,7 +334,7 @@
 				overflow-x: hidden;
 				background: transparent;
 				color: transparent;
-				caret-color: #fff;
+				caret-color: var(--pe-caret-color);
 				box-sizing: border-box;
 				display: block;
 			}
@@ -253,7 +350,7 @@
 				font-size: 13px;
 				line-height: 1.6;
 				color: #555;
-				background: #181825;
+				background: var(--pe-line-num-bg);
 				border-right: 1px solid var(--pe-border);
 				user-select: none;
 				pointer-events: none;
@@ -264,7 +361,7 @@
 				margin: 0;
 			}
 
-			/* Syntax colors (Catppuccin-inspired) */
+			/* Syntax colors (Catppuccin-inspired, dark mode default) */
 			.pe-hl .kw { color: #cba6f7; font-weight: 500; }
 			.pe-hl .bi { color: #89dceb; }
 			.pe-hl .fn { color: #89b4fa; }
@@ -279,11 +376,12 @@
 
 			/* Console styling */
 			.pe-console-container {
-				margin-top: 10px;
 				border: 1px solid var(--pe-border);
 				border-radius: var(--pe-radius);
 				overflow: hidden;
 				box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+				display: flex;
+				flex-direction: column;
 			}
 			.pe-console-header {
 				background: var(--pe-surface);
@@ -303,11 +401,12 @@
 
 			#pyodide_console_output {
 				width: 100%;
+				flex: 1;
 				min-height: 140px;
-				max-height: 400px;
+				max-height: none;
 				overflow: auto;
-				background: #0b0b14;
-				color: #00ff88;
+				background: var(--pe-console-bg);
+				color: var(--pe-console-text);
 				font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
 				font-size: 12px;
 				line-height: 1.5;
@@ -326,6 +425,11 @@
 				border-radius: 6px;
 				background: #12121f;
 			}
+
+			#pyodide_editor_wrapper.pe-light-mode .pe-output-cell {
+				background: #f3f4f6;
+			}
+
 			.pe-output-cell canvas,
 			.pe-output-cell img {
 				display: block;
@@ -437,6 +541,12 @@
 				box-sizing: border-box;
 			}
 
+			#pyodide_editor_wrapper.pe-light-mode #pyodide_prediction_output {
+				background: #f0f9ff;
+				color: #1e40af;
+				border-color: #bfdbfe;
+			}
+
 			/* Tooltip */
 			.pe-tooltip {
 				position: relative;
@@ -510,24 +620,6 @@
 				margin: 0;
 				font-size: 11px;
 				color: var(--pe-muted);
-			}
-
-			/* Fullscreen mode */
-			#pyodide_editor_wrapper.pe-fullscreen {
-				position: fixed;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				z-index: 99999;
-				background: var(--pe-bg);
-				padding: 16px;
-				overflow-y: auto;
-				border-radius: 0;
-			}
-			#pyodide_editor_wrapper.pe-fullscreen #pyodide_editor_textarea {
-				min-height: 50vh;
-				max-height: 70vh;
 			}
 
 			/* Autosave indicator */
@@ -752,51 +844,94 @@
 			    </div>
 			</div>
 
-			<!-- Editor with syntax highlighting -->
-			<div class="pe-editor-container">
-				<div class="pe-editor-header">
-					<span>🐍 Python Editor</span>
-					<span class="pe-shortcuts-hint pe-advanced-only">
-						<kbd>Ctrl</kbd>+<kbd>Enter</kbd> Run &nbsp;
-						<kbd>Ctrl</kbd>+<kbd>S</kbd> Save &nbsp;
-						<kbd>Ctrl</kbd>+<kbd>/</kbd> Comment &nbsp;
-						<kbd>Esc</kbd> Stop
-					</span>
-					<span style="display:flex;align-items:center;gap:4px;" class="pe-advanced-only">
-						<button onclick="pyodideChangeFontSize(-1)" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Decrease font">A-</button>
-						<span id="pyodide_fontsize_label" style="font-size:10px;color:var(--pe-muted);min-width:28px;text-align:center;">13px</span>
-						<button onclick="pyodideChangeFontSize(1)" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Increase font">A+</button>
-						<button onclick="pyodideToggleWordWrap()" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Toggle word wrap">↩</button>
-					</span>
-				</div>
-				<div class="pe-editor-body">
-					<div id="pyodide_editor_line_numbers" aria-hidden="true">1
+			<!-- === SIDE-BY-SIDE LAYOUT: Editor (left) + Console (right) === -->
+			<div class="pe-main-layout">
+				<!-- Editor with syntax highlighting -->
+				<div class="pe-editor-container">
+					<div class="pe-editor-header">
+						<span>🐍 Python Editor</span>
+						<span class="pe-shortcuts-hint pe-advanced-only">
+							<kbd>Ctrl</kbd>+<kbd>Enter</kbd> Run &nbsp;
+							<kbd>Ctrl</kbd>+<kbd>S</kbd> Save &nbsp;
+							<kbd>Ctrl</kbd>+<kbd>/</kbd> Comment &nbsp;
+							<kbd>Esc</kbd> Stop
+						</span>
+						<span style="display:flex;align-items:center;gap:4px;" class="pe-advanced-only">
+							<button onclick="pyodideChangeFontSize(-1)" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Decrease font">A-</button>
+							<span id="pyodide_fontsize_label" style="font-size:10px;color:var(--pe-muted);min-width:28px;text-align:center;">13px</span>
+							<button onclick="pyodideChangeFontSize(1)" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Increase font">A+</button>
+							<button onclick="pyodideToggleWordWrap()" class="pe-btn pe-btn-clear" style="padding:2px 6px;font-size:10px;" title="Toggle word wrap">↩</button>
+						</span>
+					</div>
+					<div class="pe-editor-body">
+						<div id="pyodide_editor_line_numbers" aria-hidden="true">1
 </div>
-					<pre id="pyodide_editor_highlight" class="pe-hl" aria-hidden="true"></pre>
-					<textarea id="pyodide_editor_textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+						<pre id="pyodide_editor_highlight" class="pe-hl" aria-hidden="true"></pre>
+						<textarea id="pyodide_editor_textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+					</div>
 				</div>
-			</div>
 
-			<!-- Console Output -->
-			<div class="pe-console-container">
-				<div class="pe-console-header">
-					<strong>
-						<span style="color:var(--pe-success);">▸</span> Console
-					</strong>
-					<span style="display:flex;align-items:center;gap:6px;">
-						<button onclick="pyodideCopyOutput()" class="pe-btn pe-btn-clear" style="padding:3px 8px;font-size:11px;" title="Copy output">
-							📋
-						</button>
-						<button onclick="pyodideDownloadOutput()" class="pe-btn pe-btn-clear" style="padding:3px 8px;font-size:11px;" title="Download output">
-							📥
-						</button>
-						<button onclick="pyodideEditorClear()" class="pe-btn pe-btn-clear" style="padding:3px 10px;font-size:11px;">
-							🧹 Clear
-						</button>
-					</span>
+				<!-- Console Output (now on the RIGHT) -->
+				<div class="pe-console-container">
+					<div class="pe-console-header">
+						<strong>
+							<span style="color:var(--pe-success);">▸</span> Console
+						</strong>
+						<span style="display:flex;align-items:center;gap:6px;">
+							<button onclick="pyodideCopyOutput()" class="pe-btn pe-btn-clear" style="padding:3px 8px;font-size:11px;" title="Copy output">
+								📋
+							</button>
+							<button onclick="pyodideDownloadOutput()" class="pe-btn pe-btn-clear" style="padding:3px 8px;font-size:11px;" title="Download output">
+								📥
+							</button>
+							<button onclick="pyodideEditorClear()" class="pe-btn pe-btn-clear" style="padding:3px 10px;font-size:11px;">
+								🧹 Clear
+							</button>
+						</span>
+					</div>
+					<div id="pyodide_console_output"></div>
 				</div>
-				<div id="pyodide_console_output"></div>
-			</div>
-		</div>
+			</div><!-- end .pe-main-layout -->
+		</div><!-- end #pyodide_editor_wrapper -->
+
+		<script>
+		// ===== DARK/LIGHT MODE: Monitor global `is_dark_mode` =====
+		(function() {
+			function applyPyodideTheme() {
+				var wrapper = document.getElementById('pyodide_editor_wrapper');
+				if (!wrapper) return;
+				if (typeof is_dark_mode !== 'undefined' && !is_dark_mode) {
+					wrapper.classList.add('pe-light-mode');
+				} else {
+					wrapper.classList.remove('pe-light-mode');
+				}
+			}
+
+			// Apply on load
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', applyPyodideTheme);
+			} else {
+				applyPyodideTheme();
+			}
+
+			// Monitor `is_dark_mode` for changes using a polling interval
+			// (since it's a plain global variable, we can't use Object.defineProperty on window reliably in all cases)
+			var _lastDarkMode = (typeof is_dark_mode !== 'undefined') ? is_dark_mode : true;
+			setInterval(function() {
+				var current = (typeof is_dark_mode !== 'undefined') ? is_dark_mode : true;
+				if (current !== _lastDarkMode) {
+					_lastDarkMode = current;
+					applyPyodideTheme();
+				}
+			}, 300);
+
+			// Also listen for a custom event if the app dispatches one
+			document.addEventListener('darkModeChanged', applyPyodideTheme);
+			window.addEventListener('darkModeChanged', applyPyodideTheme);
+
+			// Expose for manual calls
+			window.applyPyodideTheme = applyPyodideTheme;
+		})();
+		</script>
 	</div>
 </div>
