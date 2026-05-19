@@ -136,10 +136,6 @@
 
 			    <!-- Category: Needs a trained model -->
 			    <div class="pe-example-category">
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_upload')">
-				    <h4>🖼️ <span class="TRANSLATEME_pe_example_image_upload"></span></h4>
-				    <p><span class="TRANSLATEME_pe_example_image_upload_desc"></span></p>
-				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('custom_data')">
 				    <h4>✏️ <span class="TRANSLATEME_pe_example_custom_data"></span></h4>
 				    <p><span class="TRANSLATEME_pe_example_custom_data_desc"></span></p>
@@ -170,17 +166,12 @@
 				<button id="pyodide_webcam_btn" onclick="pyodideStartWebcam()" class="pe-btn pe-btn-clear" style="font-size:12px;">
 					📷 <span class="TRANSLATEME_pe_webcam"></span>
 				</button>
-				<label class="pe-btn pe-btn-clear" style="font-size:12px;cursor:pointer;">
-					📁 <span class="TRANSLATEME_pe_upload_image"></span>
-					<input type="file" accept="image/*" onchange="pyodideHandleImageUpload(event)" style="display:none;">
-				</label>
 				<div class="pe-separator"></div>
 				<span style="font-size:11px;color:var(--pe-muted);font-weight:600;"><span class="TRANSLATEME_pe_template_label"></span></span>
 				<select onchange="if(this.value)pyodideLoadTemplate(this.value);this.value='';" style="padding:4px 8px;border-radius:6px;font-size:11px;background:var(--pe-surface2);color:var(--pe-text);border:1px solid var(--pe-border);cursor:pointer;">
 					<option value=""><span class="TRANSLATEME_pe_select"></span></option>
 					<option value="hello_world">👋 Hello World</option>
 					<option value="image_webcam" data-requires="image">📷 Webcam</option>
-					<option value="image_upload">🖼️ Image Upload</option>
 					<option value="custom_data">✏️ Custom Data</option>
 					<option value="weights_inspect">🔍 Inspect Weights</option>
 					<option value="draw_chart">📊 Draw Chart</option>
@@ -211,12 +202,6 @@
 						<pre id="pyodide_prediction_output"></pre>
 					</div>
 				</div>
-			</div>
-
-			<!-- Image preview (hidden by default) -->
-			<div id="pyodide_image_preview" class="pe-media-container">
-				<div style="font-size:11px;color:var(--pe-muted);margin-bottom:6px;font-weight:600;">🖼️ <span class="TRANSLATEME_pe_uploaded_image_resized"></span></div>
-				<canvas id="pyodide_image_canvas" style="border-radius:8px;border:2px solid var(--pe-border);background:#000;max-width:200px;"></canvas>
 			</div>
 
 			<!-- Multi-photo capture area (hidden by default) -->
