@@ -3037,11 +3037,185 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// EDITOR KEY HANDLERS & SETUP
 	// =========================================================================
 
-	function autoResizeTextarea() {
-		// REMOVED / NO-OP: This function causes severe layout thrashing
-		// (resetting height to 'auto' then reading scrollHeight forces synchronous reflow)
-		// which directly conflicts with scroll performance.
-		// The editor should use a fixed height with overflow:auto instead.
+	function handleTabKey(textarea, e) {
+		e.preventDefault();
+		var start = textarea.selectionStart;
+		var end = textarea.selectionEnd;
+		var value = textarea.value;
+
+		if (e.shiftKey) {
+			handleDedent(textarea, start, end, value);
+		} else if (start !== end) {
+			handleIndentSelection(textarea, start, end, value);
+		} else {
+			textarea.value = value.substring(0, start) + "    " + value.substring(end);
+			textarea.selectionStart = textarea.selectionEnd = start + 4;
+		}
+		scheduleHighlight();
+	}
+
+	function handleDedent(textarea, start, end, value) {
+		var beforeSelection = value.substring(0, start);
+		var lineStart = beforeSelection.lastIndexOf("\n") + 1;
+		var textToProcess = value.substring(lineStart, end);
+		var lines = textToProcess.split("\n");
+		var removedChars = 0;
+		var firstLineRemoved = 0;
+
+		var dedentedLines = lines.map(function (line, idx) {
+			if (line.startsWith("    ")) {
+				if (idx === 0) firstLineRemoved = 4;
+				removedChars += 4;
+				return line.substring(4);
+			} else if (line.startsWith("\t")) {
+				if (idx === 0) firstLineRemoved = 1;
+				removedChars++;
+				return line.substring(1);
+			}
+			return line;
+		});
+
+		textarea.value = value.substring(0, lineStart) + dedentedLines.join("\n") + value.substring(end);
+		textarea.selectionStart = Math.max(lineStart, start - firstLineRemoved);
+		textarea.selectionEnd = end - removedChars;
+	}
+
+	function handleIndentSelection(textarea, start, end, value) {
+		var beforeSel = value.substring(0, start);
+		var ls = beforeSel.lastIndexOf("\n") + 1;
+		var proc = value.substring(ls, end);
+		var lns = proc.split("\n");
+		var indented = lns.map(function (line) { return "    " + line; });
+
+		textarea.value = value.substring(0, ls) + indented.join("\n") + value.substring(end);
+		textarea.selectionStart = start + 4;
+		textarea.selectionEnd = end + (lns.length * 4);
+	}
+
+	function handleEnterKey(textarea, e) {
+		e.preventDefault();
+		var s = textarea.selectionStart;
+		var v = textarea.value;
+		var lineStart = v.lastIndexOf("\n", s - 1) + 1;
+		var currentLine = v.substring(lineStart, s);
+		var indent = currentLine.match(/^[\t ]*/)[0];
+		var trimmedLine = currentLine.trimEnd();
+		var newIndent = indent;
+
+		if (trimmedLine.endsWith(":")) {
+			newIndent += "    ";
+		}
+		if (/^\s*(return|break|continue|pass)\b/.test(trimmedLine)) {
+			if (newIndent.length >= 4) {
+				newIndent = newIndent.substring(4);
+			} else if (newIndent.length >= 1 && newIndent[0] === "\t") {
+				newIndent = newIndent.substring(1);
+			}
+		}
+
+		var insertion = "\n" + newIndent;
+		textarea.value = v.substring(0, s) + insertion + v.substring(textarea.selectionEnd);
+		textarea.selectionStart = textarea.selectionEnd = s + insertion.length;
+		scheduleHighlight();
+	}
+
+	function handleDuplicateLine(textarea, e) {
+		e.preventDefault();
+		var startD = textarea.selectionStart;
+		var valueD = textarea.value;
+		var lsD = valueD.lastIndexOf("\n", startD - 1) + 1;
+		var leD = valueD.indexOf("\n", startD);
+		if (leD === -1) leD = valueD.length;
+		var lineD = valueD.substring(lsD, leD);
+		textarea.value = valueD.substring(0, leD) + "\n" + lineD + valueD.substring(leD);
+		textarea.selectionStart = textarea.selectionEnd = startD + lineD.length + 1;
+		scheduleHighlight();
+	}
+
+	function handleEscapeKey(e) {
+		e.preventDefault();
+		if (isRunning || webcamStream) {
+			pyodideEditorStop();
+		} else {
+			var panel = document.getElementById('pyodide_examples_panel');
+			if (panel && panel.classList.contains('pe-visible')) {
+				panel.classList.remove('pe-visible');
+			}
+		}
+	}
+
+	function handleKeypress(textarea, e) {
+		var pairs = { "(": ")", "[": "]", "{": "}", '"': '"', "'": "'" };
+		var char = e.key;
+
+		if (!pairs[char]) return;
+
+		var start = textarea.selectionStart;
+		var end = textarea.selectionEnd;
+		if (start === end) return;
+
+		e.preventDefault();
+		var value = textarea.value;
+		var selected = value.substring(start, end);
+		textarea.value = value.substring(0, start) + char + selected + pairs[char] + value.substring(end);
+		textarea.selectionStart = start + 1;
+		textarea.selectionEnd = end + 1;
+		scheduleHighlight();
+	}
+
+	function handleEditorKeydown(e) {
+		var textarea = this;
+
+		if (e.key === "Tab") {
+			handleTabKey(textarea, e);
+			return;
+		}
+
+		if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
+			handleEnterKey(textarea, e);
+			return;
+		}
+
+		if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+			e.preventDefault();
+			pyodideEditorRun();
+			return;
+		}
+
+		if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+			e.preventDefault();
+			saveEditorContent();
+			appendConsole("[💾 Saved to browser storage]\n", "info");
+			return;
+		}
+
+		if (e.key === "d" && (e.ctrlKey || e.metaKey)) {
+			handleDuplicateLine(textarea, e);
+			return;
+		}
+
+		if (e.key === "Escape") {
+			handleEscapeKey(e);
+			return;
+		}
+
+		if (e.key === "W" && e.ctrlKey && e.shiftKey) {
+			e.preventDefault();
+			if (webcamStream) { stopWebcam(); } else { startWebcam(); }
+			return;
+		}
+
+		if (e.key === "F" && e.ctrlKey && e.shiftKey) {
+			e.preventDefault();
+			toggleFullscreen();
+			return;
+		}
+
+		if (e.key === "/" && (e.ctrlKey || e.metaKey)) {
+			e.preventDefault();
+			toggleComment(textarea);
+			return;
+		}
 	}
 
 	function setupEditorKeyHandlers() {
@@ -3049,196 +3223,20 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		if (!textarea) return;
 
 		textarea.addEventListener("input", function () {
-			// Don't schedule highlight during template loading
 			if (!_templateLoading) {
 				scheduleHighlight();
 			}
-			// Debounced auto-save
 			clearTimeout(autoSaveTimer);
 			autoSaveTimer = setTimeout(saveEditorContent, 3000);
 		});
 
-		// PASSIVE scroll listener — tells browser we won't call preventDefault()
-		// This allows the browser to scroll immediately without waiting for JS
 		textarea.addEventListener("scroll", syncScroll, { passive: true });
-
-		textarea.addEventListener("keydown", function (e) {
-			// Tab handling
-			if (e.key === "Tab") {
-				e.preventDefault();
-				var start = this.selectionStart;
-				var end = this.selectionEnd;
-				var value = this.value;
-
-				if (e.shiftKey) {
-					// Dedent
-					var beforeSelection = value.substring(0, start);
-					var lineStart = beforeSelection.lastIndexOf("\n") + 1;
-					var textToProcess = value.substring(lineStart, end);
-					var lines = textToProcess.split("\n");
-					var removedChars = 0;
-					var firstLineRemoved = 0;
-
-					var dedentedLines = lines.map(function (line, idx) {
-						if (line.startsWith("    ")) {
-							if (idx === 0) firstLineRemoved = 4;
-							removedChars += 4;
-							return line.substring(4);
-						} else if (line.startsWith("\t")) {
-							if (idx === 0) firstLineRemoved = 1;
-							removedChars++;
-							return line.substring(1);
-						}
-						return line;
-					});
-
-					this.value = value.substring(0, lineStart) + dedentedLines.join("\n") + value.substring(end);
-					this.selectionStart = Math.max(lineStart, start - firstLineRemoved);
-					this.selectionEnd = end - removedChars;
-				} else if (start !== end) {
-					// Indent selection
-					var beforeSel = value.substring(0, start);
-					var ls = beforeSel.lastIndexOf("\n") + 1;
-					var proc = value.substring(ls, end);
-					var lns = proc.split("\n");
-					var indented = lns.map(function (line) { return "    " + line; });
-
-					this.value = value.substring(0, ls) + indented.join("\n") + value.substring(end);
-					this.selectionStart = start + 4;
-					this.selectionEnd = end + (lns.length * 4);
-				} else {
-					// Insert 4 spaces
-					this.value = value.substring(0, start) + "    " + value.substring(end);
-					this.selectionStart = this.selectionEnd = start + 4;
-				}
-				scheduleHighlight();
-				return;
-			}
-
-			// Enter - auto indent
-			if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
-				e.preventDefault();
-				var s = this.selectionStart;
-				var v = this.value;
-				var lineStart2 = v.lastIndexOf("\n", s - 1) + 1;
-				var currentLine = v.substring(lineStart2, s);
-				var indent = currentLine.match(/^[\t ]*/)[0];
-				var trimmedLine = currentLine.trimEnd();
-				var newIndent = indent;
-
-				if (trimmedLine.endsWith(":")) {
-					newIndent += "    ";
-				}
-				if (/^\s*(return|break|continue|pass)\b/.test(trimmedLine)) {
-					if (newIndent.length >= 4) {
-						newIndent = newIndent.substring(4);
-					} else if (newIndent.length >= 1 && newIndent[0] === "\t") {
-						newIndent = newIndent.substring(1);
-					}
-				}
-
-				var insertion = "\n" + newIndent;
-				this.value = v.substring(0, s) + insertion + v.substring(this.selectionEnd);
-				this.selectionStart = this.selectionEnd = s + insertion.length;
-				scheduleHighlight();
-				return;
-			}
-
-			// Ctrl+Enter - run
-			if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-				e.preventDefault();
-				pyodideEditorRun();
-				return;
-			}
-
-			// Ctrl+S - save
-			if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
-				e.preventDefault();
-				saveEditorContent();
-				appendConsole("[💾 Saved to browser storage]\n", "info");
-				return;
-			}
-
-			// Ctrl+D - duplicate line
-			if (e.key === "d" && (e.ctrlKey || e.metaKey)) {
-				e.preventDefault();
-				var startD = this.selectionStart;
-				var valueD = this.value;
-				var lsD = valueD.lastIndexOf("\n", startD - 1) + 1;
-				var leD = valueD.indexOf("\n", startD);
-				if (leD === -1) leD = valueD.length;
-				var lineD = valueD.substring(lsD, leD);
-				this.value = valueD.substring(0, leD) + "\n" + lineD + valueD.substring(leD);
-				this.selectionStart = this.selectionEnd = startD + lineD.length + 1;
-				scheduleHighlight();
-				return;
-			}
-
-			// Escape - stop execution / close panels
-			if (e.key === "Escape") {
-				e.preventDefault();
-				if (isRunning || webcamStream) {
-					pyodideEditorStop();
-				} else {
-					// Close examples panel if open
-					var panel = document.getElementById('pyodide_examples_panel');
-					if (panel && panel.classList.contains('pe-visible')) {
-						panel.classList.remove('pe-visible');
-					}
-				}
-				return;
-			}
-
-			// Ctrl+Shift+W - toggle webcam
-			if (e.key === "W" && e.ctrlKey && e.shiftKey) {
-				e.preventDefault();
-				if (webcamStream) {
-					stopWebcam();
-				} else {
-					startWebcam();
-				}
-				return;
-			}
-
-			// Ctrl+Shift+F - toggle fullscreen
-			if (e.key === "F" && e.ctrlKey && e.shiftKey) {
-				e.preventDefault();
-				toggleFullscreen();
-				return;
-			}
-
-			// Ctrl+/ - toggle comment
-			if (e.key === "/" && (e.ctrlKey || e.metaKey)) {
-				e.preventDefault();
-				toggleComment(this);
-				return;
-			}
-		});
-
-		// Auto-close brackets when wrapping selection
+		textarea.addEventListener("keydown", handleEditorKeydown);
 		textarea.addEventListener("keypress", function (e) {
-			var pairs = { "(": ")", "[": "]", "{": "}", '"': '"', "'": "'" };
-			var char = e.key;
-
-			if (pairs[char]) {
-				var start = this.selectionStart;
-				var end = this.selectionEnd;
-				var value = this.value;
-
-				if (start !== end) {
-					e.preventDefault();
-					var selected = value.substring(start, end);
-					this.value = value.substring(0, start) + char + selected + pairs[char] + value.substring(end);
-					this.selectionStart = start + 1;
-					this.selectionEnd = end + 1;
-					scheduleHighlight();
-				}
-			}
+			handleKeypress(this, e);
 		});
 
 		applyScrollPerformanceHints();
-
-		// Load content and do initial highlight
 		loadEditorContent();
 		loadMode();
 		scheduleHighlight();
