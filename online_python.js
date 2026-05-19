@@ -4213,6 +4213,67 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 
 		// IndentationError — common: mixed tabs/spaces or wrong indent level
 		if (errorMsg.includes("IndentationError")) {
+			var lineMatch = errorMsg.match(/line (\d+)/);
+			if (lineMatch) {
+				var ln = parseInt(lineMatch[1]);
+				return {
+					description: 'Fix indentation on line ' + ln + ' (align with surrounding lines)',
+					apply: function(currentCode) {
+						var lines = currentCode.split('\n');
+						if (ln < 1 || ln > lines.length) {
+							// Fallback: just convert tabs to spaces
+							return currentCode.replace(/\t/g, '    ');
+						}
+
+						var targetLine = lines[ln - 1];
+						var targetIndent = targetLine.match(/^(\s*)/)[1].length;
+
+						// Look at the previous non-empty line to determine expected indent
+						var expectedIndent = 0;
+						for (var i = ln - 2; i >= 0; i--) {
+							var prevLine = lines[i];
+							if (prevLine.trim().length === 0) continue; // skip blank lines
+
+							var prevIndent = prevLine.match(/^(\s*)/)[1].length;
+							var prevTrimmed = prevLine.trimEnd();
+
+							// If previous line ends with ':', expect one more indent level
+							if (prevTrimmed.endsWith(':')) {
+								expectedIndent = prevIndent + 4;
+							} else {
+								expectedIndent = prevIndent;
+							}
+							break;
+						}
+
+						// Also check the NEXT non-empty line for context
+						// (if both neighbors have the same indent, use that)
+						var nextIndent = -1;
+						for (var j = ln; j < lines.length; j++) { // ln is 1-based, so lines[ln] is the line AFTER
+							if (lines[j] && lines[j].trim().length > 0) {
+								nextIndent = lines[j].match(/^(\s*)/)[1].length;
+								break;
+							}
+						}
+
+						// If prev and next lines agree on indent, use that
+						if (nextIndent >= 0 && nextIndent === expectedIndent) {
+							// Strong signal: both neighbors agree
+						} else if (nextIndent >= 0 && targetIndent !== expectedIndent && targetIndent !== nextIndent) {
+							// Target doesn't match either neighbor — use prev-based expected
+						} 
+						// else just use expectedIndent from prev line logic
+
+						// Apply the fix: replace the target line's indentation
+						var content = targetLine.trimStart();
+						lines[ln - 1] = ' '.repeat(expectedIndent) + content;
+
+						return lines.join('\n');
+					}
+				};
+			}
+
+			// Fallback if no line number found: convert tabs to spaces
 			return {
 				description: 'Fix indentation (convert tabs to 4 spaces)',
 				apply: function(currentCode) {
