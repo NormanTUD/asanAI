@@ -83,6 +83,15 @@
 	var _consoleFlushRAF = null;
 	var _consoleScrollRAF = null;
 
+	var _cachedLineHeight = 18;
+	var _cachedClientHeight = 400;
+	var _layoutCacheTimer = null;
+
+	var _lastHighlightTime = 0;
+	var _highlightThrottleMs = 32; // ~30fps max for highlighting
+	var _predictionUpdateRAF = null;
+	var _pendingPredictionText = null;
+
 	// =========================================================================
 	// DEFAULT CODE TEMPLATES
 	// =========================================================================
@@ -1045,27 +1054,23 @@ else:
 	 */
 	function updateWebcamAvailability() {
 		var imageModel = isImageModel();
+
+		// BATCH ALL DOM READS FIRST
 		var webcamBtn = document.getElementById("pyodide_webcam_btn");
 		var webcamBtnSimple = document.getElementById("pyodide_webcam_btn_simple");
-		var fpsControls = document.querySelector('.pe-input-bar [oninput*="pyodideSetWebcamFPS"]');
-		var fpsLabel = document.getElementById("pyodide_fps_label");
-		var liveCheckbox = document.getElementById("pyodide_live_predict");
+		var panel = document.getElementById('pyodide_examples_panel');
+		var textarea = document.getElementById("pyodide_editor_textarea");
+		var currentCode = textarea ? textarea.value : '';
 
-		// Hide/show webcam buttons
+		// BATCH ALL DOM WRITES
 		if (webcamBtn) webcamBtn.style.display = imageModel ? "" : "none";
 		if (webcamBtnSimple) webcamBtnSimple.style.display = imageModel ? "" : "none";
 
-		// Hide FPS controls for non-image models
-		if (fpsControls) fpsControls.parentElement.style.display = imageModel ? "" : "none";
-
-		// If webcam is active and model is no longer image-compatible, stop it
 		if (!imageModel && webcamStream) {
 			appendConsole("[📷 Webcam stopped — model input shape is not image-like]\n", "warn");
 			stopWebcam();
 		}
 
-		// *** FIX 5: Use a single class on the panel instead of looping through cards ***
-		var panel = document.getElementById('pyodide_examples_panel');
 		if (panel) {
 			if (imageModel) {
 				panel.classList.remove('pe-no-image-model');
@@ -1074,21 +1079,15 @@ else:
 			}
 		}
 
-		// If current code is a webcam template and model changed to non-image, replace with generic
-		if (!imageModel) {
-			var textarea = document.getElementById("pyodide_editor_textarea");
-			if (textarea) {
-				var code = textarea.value;
-				if (code.includes("# 📷 Live Webcam") || code.includes("frame_count")) {
-					textarea.value = TEMPLATES.generic_io;
-					scheduleHighlight();
-					saveEditorContent();
-					appendConsole("[📄 Switched to generic I/O template (model is not image-based)]\n", "info");
-				}
+		if (!imageModel && textarea) {
+			if (currentCode.includes("# 📷 Live Webcam") || currentCode.includes("frame_count")) {
+				textarea.value = TEMPLATES.generic_io;
+				scheduleHighlight();
+				saveEditorContent();
+				appendConsole("[📄 Switched to generic I/O template (model is not image-based)]\n", "info");
 			}
 		}
 	}
-
 
 	// =========================================================================
 	// SYNTAX HIGHLIGHTING
@@ -1250,7 +1249,9 @@ else:
 
 			var lineCount = textarea.value.split('\n').length;
 			var currentCount = lineNumbersEl.getAttribute('data-lines');
-			if (currentCount && parseInt(currentCount) === lineCount) return;
+
+			// GUARDRAIL: Skip entirely if count hasn't changed
+			if (currentCount && parseInt(currentCount, 10) === lineCount) return;
 
 			// Build string only if count changed
 			var numbers = '';
@@ -1258,10 +1259,11 @@ else:
 				numbers += i + '\n';
 			}
 
-			// Avoid setting textContent if it hasn't changed (prevents reflow)
+			// GUARDRAIL: Double-check cache to avoid redundant textContent set
 			if (_lineNumbersCache === numbers) return;
 			_lineNumbersCache = numbers;
 
+			// Single DOM write — no reads after this
 			lineNumbersEl.textContent = numbers;
 			lineNumbersEl.setAttribute('data-lines', lineCount);
 		}
@@ -1282,25 +1284,26 @@ else:
 		}
 
 		function syncScroll() {
-			// Skip scroll sync entirely while a template is being loaded
 			if (_templateLoading) return;
-
 			if (_scrollPending) return;
 			_scrollPending = true;
 
-			if (_scrollRAF) cancelAnimationFrame(_scrollRAF);
+			if (_scrollRAF) return; // Already scheduled, don't double-schedule
 			_scrollRAF = requestAnimationFrame(function() {
 				_scrollRAF = null;
 				_scrollPending = false;
 
 				var textarea = document.getElementById('pyodide_editor_textarea');
-				var highlightEl = document.getElementById('pyodide_editor_highlight');
-				var lineNumbersEl = document.getElementById('pyodide_editor_line_numbers');
 				if (!textarea) return;
 
+				var highlightEl = document.getElementById('pyodide_editor_highlight');
+				var lineNumbersEl = document.getElementById('pyodide_editor_line_numbers');
+
+				// BATCH READ (single read pass)
 				var scrollTop = textarea.scrollTop;
 				var scrollLeft = textarea.scrollLeft;
 
+				// BATCH WRITE (no reads after this)
 				if (highlightEl) {
 					highlightEl.scrollTop = scrollTop;
 					highlightEl.scrollLeft = scrollLeft;
@@ -1311,24 +1314,30 @@ else:
 			});
 		}
 
-
 	// =========================================================================
 	// HIGHLIGHT SYNC
 	// =========================================================================
 
 		function injectScrollPerformanceCSS() {
+			if (document.getElementById('pe-scroll-perf-css')) return; // Don't inject twice
+
 			var style = document.createElement('style');
 			style.id = 'pe-scroll-perf-css';
 			style.textContent = `
-	/* Prevent scroll-anchor reflow on console output */
+/* Prevent scroll-anchor reflow on console output */
 #pyodide_console_output {
     overflow-anchor: none;
     contain: layout style;
     will-change: scroll-position;
+    transform: translateZ(0);
 }
 
 #pyodide_console_output > span {
     contain: layout style;
+}
+
+#pyodide_console_output > .pe-output-cell {
+    contain: layout style paint;
 }
 
 #pyodide_photos_container {
@@ -1348,54 +1357,97 @@ else:
     contain-intrinsic-size: 64px 64px;
 }
 
-	/* GPU-accelerate the editor layers */
-	#pyodide_editor_textarea,
-	#pyodide_editor_highlight,
-	#pyodide_editor_line_numbers {
-	    -webkit-overflow-scrolling: touch;
-	    scroll-behavior: auto !important; /* Disable smooth scroll on these — we want instant */
-	    overflow-anchor: none; /* Prevent scroll anchoring interference */
-	    will-change: scroll-position;
-	    transform: translateZ(0);
-	    backface-visibility: hidden;
-	    -webkit-backface-visibility: hidden;
-	}
+/* GPU-accelerate the editor layers */
+#pyodide_editor_textarea,
+#pyodide_editor_highlight,
+#pyodide_editor_line_numbers {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto !important;
+    overflow-anchor: none;
+    will-change: scroll-position;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
 
-	/* Reduce paint cost of highlight overlay */
-	#pyodide_editor_highlight {
-	    pointer-events: none;
-	    contain: strict;
-	    content-visibility: auto;
-	    contain-intrinsic-size: auto 500px;
-	}
+/* CRITICAL for Firefox: isolate highlight from triggering parent reflows */
+#pyodide_editor_highlight {
+    pointer-events: none;
+    contain: strict;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+}
 
-	/* Reduce layout cost of line numbers */
-	#pyodide_editor_line_numbers {
-	    contain: content;
-	    content-visibility: auto;
-	    contain-intrinsic-size: auto 500px;
-	}
+/* Reduce layout cost of line numbers */
+#pyodide_editor_line_numbers {
+    contain: content;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+}
 
-	/* Examples panel: reduce off-screen cost */
-	#pyodide_examples_panel {
-	    contain: layout style paint;
-	}
+/* FIREFOX FIX: Prevent .pe-editor-body from reflowing on child scroll/content changes */
+.pe-editor-body {
+    contain: size layout style;
+    overflow: hidden;
+    position: relative;
+}
 
-	#pyodide_examples_panel:not(.pe-visible) {
-	    content-visibility: hidden;
-	}
+/* Examples panel: reduce off-screen cost */
+#pyodide_examples_panel {
+    contain: layout style paint;
+}
 
-	/* Prevent layout shift during template load */
-	.pe-editor-area {
-	    contain: size layout;
-	    overflow: hidden;
-	}
+#pyodide_examples_panel:not(.pe-visible) {
+    content-visibility: hidden;
+    contain-intrinsic-size: 0px;
+}
+
+/* FIREFOX FIX: Prevent prediction results from causing parent reflow */
+#pyodide_prediction_results {
+    contain: layout style paint;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 80px;
+}
+
+#pyodide_prediction_output {
+    contain: content;
+    overflow: hidden;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* FIREFOX FIX: Webcam container isolation */
+#pyodide_webcam_container {
+    contain: layout style paint;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px;
+}
+
+/* FIREFOX FIX: Toolbar should never cause reflow of editor area */
+.pe-toolbar, .pe-input-bar {
+    contain: layout style;
+}
+
+/* FIREFOX FIX: Prevent pe-main-layout from reflowing when console content changes */
+.pe-main-layout {
+    contain: layout style;
+}
+
+.pe-console-container {
+    contain: layout style;
+    overflow: hidden;
+}
+
+.pe-editor-container {
+    contain: layout style;
+    overflow: hidden;
+}
     `;
 			document.head.appendChild(style);
 		}
 
 		function updateHighlight() {
-			if (_templateLoading) return; // Don't fight with template load
+			if (_templateLoading) return;
 
 			var textarea = document.getElementById('pyodide_editor_textarea');
 			var highlightEl = document.getElementById('pyodide_editor_highlight');
@@ -1403,12 +1455,15 @@ else:
 
 			var code = textarea.value;
 
-			// For very large code (>5000 chars), use a simpler/faster approach
+			// For very large code (>5000 chars), use viewport-based highlighting
 			if (code.length > 5000) {
-				// Only highlight visible portion + buffer
+				// CRITICAL FIX: Cache these values — don't read layout props every highlight
+				// Use a cached line height instead of forcing getComputedStyle (causes reflow in Firefox)
+				var lineHeight = _cachedLineHeight || 18;
+				var clientHeight = _cachedClientHeight || 400;
 				var scrollTop = textarea.scrollTop;
-				var lineHeight = parseInt(getComputedStyle(textarea).lineHeight) || 18;
-				var visibleLines = Math.ceil(textarea.clientHeight / lineHeight);
+
+				var visibleLines = Math.ceil(clientHeight / lineHeight);
 				var startLine = Math.max(0, Math.floor(scrollTop / lineHeight) - 5);
 				var endLine = startLine + visibleLines + 10;
 
@@ -1417,9 +1472,8 @@ else:
 				var visible = lines.slice(startLine, endLine).join('\n');
 				var after = lines.slice(endLine).join('\n');
 
-				// Only syntax-highlight the visible portion
 				var html = escapeHtml(before) + (before ? '\n' : '') +
-					highlightPython(visible) + 
+					highlightPython(visible) +
 					(after ? '\n' : '') + escapeHtml(after) + '\n';
 				highlightEl.innerHTML = html;
 			} else {
@@ -1431,11 +1485,28 @@ else:
 		}
 
 		function scheduleHighlight() {
-			// Don't schedule during template loading — updateHighlightImmediate handles it
 			if (_templateLoading) return;
 			if (highlightDebounce) cancelAnimationFrame(highlightDebounce);
-			highlightDebounce = requestAnimationFrame(updateHighlight);
+
+			var now = performance.now();
+			var elapsed = now - _lastHighlightTime;
+
+			if (elapsed < _highlightThrottleMs) {
+				// Throttle: delay until minimum interval has passed
+				highlightDebounce = requestAnimationFrame(function() {
+					highlightDebounce = requestAnimationFrame(function() {
+						_lastHighlightTime = performance.now();
+						updateHighlight();
+					});
+				});
+			} else {
+				highlightDebounce = requestAnimationFrame(function() {
+					_lastHighlightTime = performance.now();
+					updateHighlight();
+				});
+			}
 		}
+
 
 	// =========================================================================
 	// MODE TOGGLE (Simple / Advanced)
@@ -1489,7 +1560,6 @@ else:
 
 			if (isVisible) {
 				panel.classList.remove('pe-visible');
-				// Use a short delay before hiding to allow CSS transition
 				setTimeout(function() {
 					if (!panel.classList.contains('pe-visible')) {
 						panel.style.display = 'none';
@@ -1499,9 +1569,15 @@ else:
 			} else {
 				panel.style.contentVisibility = 'visible';
 				panel.style.display = 'flex';
-				// Force reflow before adding class for smooth transition
-				void panel.offsetHeight;
-				panel.classList.add('pe-visible');
+
+				// CRITICAL FIX: Do NOT use `void panel.offsetHeight` to force reflow
+				// Instead, use a double-rAF to ensure the display:flex has been committed
+				// before adding the transition class
+				requestAnimationFrame(function() {
+					requestAnimationFrame(function() {
+						panel.classList.add('pe-visible');
+					});
+				});
 
 				if (!_examplesTranslated) {
 					_examplesTranslated = true;
@@ -1634,11 +1710,17 @@ else:
 			var output = document.getElementById("pyodide_console_output");
 			if (!output || _consoleBatch.length === 0) return;
 
+			// GUARDRAIL: Limit batch size per frame to prevent long frames
+			var maxPerFrame = 50;
+			var processBatch = _consoleBatch.length > maxPerFrame
+				? _consoleBatch.splice(0, maxPerFrame)
+				: _consoleBatch.splice(0);
+
 			// Build a document fragment (no reflows until appended)
 			var frag = document.createDocumentFragment();
 
-			for (var i = 0; i < _consoleBatch.length; i++) {
-				var item = _consoleBatch[i];
+			for (var i = 0; i < processBatch.length; i++) {
+				var item = processBatch[i];
 				var span = document.createElement("span");
 				span.style.display = "inline";
 				span.textContent = item.text;
@@ -1653,14 +1735,22 @@ else:
 				frag.appendChild(span);
 			}
 
-			_consoleBatch = [];
-
 			// Single DOM write
 			output.appendChild(frag);
 
-			// Prune excess nodes (batch the check)
-			while (output.childNodes.length > 500) {
-				output.removeChild(output.firstChild);
+			// GUARDRAIL: Prune excess nodes — but don't read scrollHeight here
+			var childCount = output.childNodes.length;
+			if (childCount > 500) {
+				var toRemove = childCount - 400; // Remove in bulk to avoid frequent pruning
+				while (toRemove-- > 0) {
+					output.removeChild(output.firstChild);
+				}
+			}
+
+			// If there are remaining items, schedule another flush
+			if (_consoleBatch.length > 0) {
+				_consoleFlushRAF = requestAnimationFrame(flushConsole);
+				return; // Don't scroll until all batches are done
 			}
 
 			// Defer scroll to NEXT frame — avoids forced reflow in this frame
@@ -1718,24 +1808,34 @@ else:
 	/**
 	 * Append a rich output cell (canvas, HTML, image) to the console
 	 */
-	function appendRichOutput(element) {
-		const output = document.getElementById("pyodide_console_output");
-		if (!output) return;
+		function appendRichOutput(element) {
+			var output = document.getElementById("pyodide_console_output");
+			if (!output) return;
 
-		cellCounter++;
-		const cell = document.createElement("div");
-		cell.className = "pe-output-cell";
-		cell.setAttribute("data-cell", cellCounter);
+			cellCounter++;
+			var cell = document.createElement("div");
+			cell.className = "pe-output-cell";
+			cell.setAttribute("data-cell", cellCounter);
 
-		const label = document.createElement("div");
-		label.style.cssText = "font-size:10px;color:#6c7086;margin-bottom:4px;font-weight:600;";
-		label.textContent = "Out [" + cellCounter + "]:";
-		cell.appendChild(label);
-		cell.appendChild(element);
+			var label = document.createElement("div");
+			label.style.cssText = "font-size:10px;color:#6c7086;margin-bottom:4px;font-weight:600;";
+			label.textContent = "Out [" + cellCounter + "]:";
+			cell.appendChild(label);
+			cell.appendChild(element);
 
-		output.appendChild(cell);
-		output.scrollTop = output.scrollHeight;
-	}
+			// Single DOM write
+			output.appendChild(cell);
+
+			// GUARDRAIL: Defer scroll to next frame (don't read scrollHeight immediately)
+			if (!_consoleScrollRAF) {
+				_consoleScrollRAF = requestAnimationFrame(function() {
+					_consoleScrollRAF = null;
+					if (output) {
+						output.scrollTop = output.scrollHeight;
+					}
+				});
+			}
+		}
 
 	/**
 	 * Create a canvas element that can be drawn on from Python
@@ -2395,35 +2495,40 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		}
 
 
-	function startWebcamPredictionLoop() {
-		if (webcamInterval) clearInterval(webcamInterval);
-		if (webcamFPSTimer) clearInterval(webcamFPSTimer);
+		function startWebcamPredictionLoop() {
+			if (webcamInterval) clearInterval(webcamInterval);
+			if (webcamFPSTimer) clearInterval(webcamFPSTimer);
 
-		webcamFrameCount = 0;
-
-		// FPS counter
-		webcamFPSTimer = setInterval(function () {
-			webcamFPSDisplay = webcamFrameCount;
 			webcamFrameCount = 0;
-			var fpsLabel = document.getElementById("pyodide_fps_label");
-			if (fpsLabel && webcamStream) {
-				fpsLabel.textContent = webcamFPSDisplay + "/" + webcamFPS + " FPS";
-			}
-		}, 1000);
+			var _frameInProgress = false;
 
-		webcamInterval = setInterval(async function () {
-			if (!isEffectivelyVisible()) return;  // <-- ADD THIS
-			if (webcamPredicting || !webcamStream || interruptExecution) return;
-			webcamPredicting = true;
-			try {
-				await runWebcamFrame();
-				webcamFrameCount++;
-			} catch (e) {
-				console.warn("Webcam frame error:", e);
-			}
-			webcamPredicting = false;
-		}, 1000 / webcamFPS);
-	}
+			// FPS counter
+			webcamFPSTimer = setInterval(function () {
+				webcamFPSDisplay = webcamFrameCount;
+				webcamFrameCount = 0;
+				var fpsLabel = document.getElementById("pyodide_fps_label");
+				if (fpsLabel && webcamStream) {
+					fpsLabel.textContent = webcamFPSDisplay + "/" + webcamFPS + " FPS";
+				}
+			}, 1000);
+
+			webcamInterval = setInterval(async function () {
+				if (!isEffectivelyVisible()) return;
+				if (webcamPredicting || !webcamStream || interruptExecution) return;
+				if (_frameInProgress) return; // GUARDRAIL: Skip if previous frame hasn't finished
+
+				_frameInProgress = true;
+				webcamPredicting = true;
+				try {
+					await runWebcamFrame();
+					webcamFrameCount++;
+				} catch (e) {
+					console.warn("Webcam frame error:", e);
+				}
+				webcamPredicting = false;
+				_frameInProgress = false;
+			}, 1000 / webcamFPS);
+		}
 
 		async function runWebcamFrame() {
 			const video = document.getElementById("pyodide_webcam_video");
@@ -2811,20 +2916,12 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 
 		var code = textarea.value;
 
-		// Temporarily disable pointer events and transitions during bulk update
-		highlightEl.style.pointerEvents = 'none';
-		highlightEl.style.transition = 'none';
-
+		// CRITICAL FIX: Do NOT force reflow with void el.offsetHeight
+		// Instead, batch all writes together and let the browser coalesce naturally
 		highlightEl.innerHTML = highlightPython(code) + '\n';
 		updateLineNumbers();
 
-		// Force layout recalc, then re-enable
-		void highlightEl.offsetHeight; // Force reflow
-
-		highlightEl.style.pointerEvents = '';
-		highlightEl.style.transition = '';
-
-		// Ensure scroll is at top for new content
+		// Reset scroll positions (write-only, no reads)
 		highlightEl.scrollTop = 0;
 		highlightEl.scrollLeft = 0;
 	}
@@ -2838,49 +2935,61 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			name = 'generic_io';
 		}
 
-		// --- FREEZE scrolling during template load ---
+		// --- FREEZE scrolling and highlighting during template load ---
 		_templateLoading = true;
 
-		// Immediately reset scroll position BEFORE changing content
-		textarea.scrollTop = 0;
-		textarea.scrollLeft = 0;
+		// Cancel any pending highlight/scroll work
+		if (highlightDebounce) {
+			cancelAnimationFrame(highlightDebounce);
+			highlightDebounce = null;
+		}
+		if (_scrollRAF) {
+			cancelAnimationFrame(_scrollRAF);
+			_scrollRAF = null;
+			_scrollPending = false;
+		}
 
 		var highlightEl = document.getElementById('pyodide_editor_highlight');
 		var lineNumbersEl = document.getElementById('pyodide_editor_line_numbers');
+
+		// BATCH ALL WRITES — no reads interleaved
+		textarea.value = TEMPLATES[name];
+		textarea.scrollTop = 0;
+		textarea.scrollLeft = 0;
 		if (highlightEl) { highlightEl.scrollTop = 0; highlightEl.scrollLeft = 0; }
 		if (lineNumbersEl) { lineNumbersEl.scrollTop = 0; }
 
-		// Set new content
-		textarea.value = TEMPLATES[name];
 		saveEditorContent();
 
-		// Force immediate highlight (not debounced) so content is ready
-		updateHighlightImmediate();
+		// Defer the expensive highlight to next frame (not immediate)
+		requestAnimationFrame(function() {
+			updateHighlightImmediate();
 
-		// Close examples panel
-		var panel = document.getElementById('pyodide_examples_panel');
-		if (panel) {
-			panel.classList.remove('pe-visible');
-			panel.style.display = 'none';
-		}
+			// Close examples panel (write-only)
+			var panel = document.getElementById('pyodide_examples_panel');
+			if (panel) {
+				panel.classList.remove('pe-visible');
+				panel.style.display = 'none';
+			}
+
+			// UNFREEZE after highlight is done
+			clearTimeout(_templateLoadTimer);
+			_templateLoadTimer = setTimeout(function() {
+				_templateLoading = false;
+			}, 100);
+		});
 
 		appendConsole("[📄 Loaded template: " + name + "]\n", "info");
 
-		// --- UNFREEZE after a short delay to let the browser settle ---
-		clearTimeout(_templateLoadTimer);
-		_templateLoadTimer = setTimeout(function() {
-			_templateLoading = false;
-		}, 150);
-
-		// Auto-start webcam / auto-run logic (unchanged)
+		// Auto-start webcam / auto-run logic
 		if (name === 'image_webcam') {
 			if (!webcamStream) {
 				appendConsole("[📷 Auto-starting webcam...]\n", "info");
-				startWebcam();
+				setTimeout(startWebcam, 200); // Delay to let template settle
 			}
 		}
 		if (name === 'random_input' || name === 'weights_inspect' || name === 'hello_world') {
-			setTimeout(function () { pyodideEditorRun(); }, 100);
+			setTimeout(function () { pyodideEditorRun(); }, 200);
 		}
 	}
 
@@ -3347,16 +3456,29 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			autoSaveTimer = setTimeout(saveEditorContent, 3000);
 		});
 
+		// GUARDRAIL: Use passive listener and ensure syncScroll is already throttled
 		textarea.addEventListener("scroll", syncScroll, { passive: true });
 		textarea.addEventListener("keydown", handleEditorKeydown);
 		textarea.addEventListener("keypress", function (e) {
 			handleKeypress(this, e);
 		});
 
+		// Cache layout dimensions on resize (not on every highlight)
+		var resizeTimer = null;
+		window.addEventListener("resize", function() {
+			clearTimeout(resizeTimer);
+			resizeTimer = setTimeout(cacheEditorLayout, 200);
+		}, { passive: true });
+
 		applyScrollPerformanceHints();
 		loadEditorContent();
 		loadMode();
-		scheduleHighlight();
+
+		// Cache layout ONCE after initial render
+		requestAnimationFrame(function() {
+			cacheEditorLayout();
+			scheduleHighlight();
+		});
 	}
 
 	// =========================================================================
@@ -3444,11 +3566,16 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	}
 
 	function initWhenReady() {
-		injectScrollPerformanceCSS();   // <-- FIX 10
-		applyScrollPerformanceHints();  // <-- FIX 2
+		injectScrollPerformanceCSS();
+		applyScrollPerformanceHints();
 		setupEditorKeyHandlers();
 		setupLivePredictions();
 		setupVisibilityObservers();
+
+		// Cache layout dimensions after first paint
+		requestAnimationFrame(function() {
+			requestAnimationFrame(cacheEditorLayout);
+		});
 
 		// Watch for tab visibility to auto-init Pyodide IN THE BACKGROUND
 		_tabObserver = new MutationObserver(function (mutations) {
@@ -3472,6 +3599,16 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 
 		// Auto-save every 30 seconds
 		setInterval(saveEditorContent, 30000);
+
+		// Re-cache layout on resize (throttled)
+		var _resizeRAF = null;
+		window.addEventListener("resize", function() {
+			if (_resizeRAF) return;
+			_resizeRAF = requestAnimationFrame(function() {
+				_resizeRAF = null;
+				cacheEditorLayout();
+			});
+		}, { passive: true });
 	}
 
 	// =========================================================================
@@ -3945,6 +4082,59 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		});
 		mutObs.observe(pyodideTab, { attributes: true, attributeFilter: ["style", "class"] });
 	    }
+	}
+
+	function cacheEditorLayout() {
+		var textarea = document.getElementById('pyodide_editor_textarea');
+		if (!textarea) return;
+
+		// Read layout properties ONCE, outside of any write cycle
+		_cachedClientHeight = textarea.clientHeight;
+		var computed = getComputedStyle(textarea);
+		_cachedLineHeight = parseInt(computed.lineHeight) || 18;
+	}
+
+	function scheduleCacheEditorLayout() {
+		if (_layoutCacheTimer) return;
+		_layoutCacheTimer = setTimeout(function() {
+			_layoutCacheTimer = null;
+			requestAnimationFrame(cacheEditorLayout);
+		}, 500);
+	}
+
+
+	function showPredictionResult(result) {
+		var container = document.getElementById("pyodide_prediction_results");
+		var output = document.getElementById("pyodide_prediction_output");
+		if (!container || !output) return;
+
+		// Compute the text synchronously (no DOM interaction)
+		var displayText = "";
+		try {
+			if (result === null || result === undefined) {
+				displayText = "(no prediction result)";
+			} else if (typeof result === "object" && result.toJs) {
+				displayText = formatPredictionResult(result.toJs());
+			} else if (Array.isArray(result)) {
+				displayText = formatPredictionResult(result);
+			} else {
+				displayText = JSON.stringify(result, null, 2);
+			}
+		} catch (e) {
+			displayText = String(result);
+		}
+
+		// GUARDRAIL: Skip DOM write if text hasn't changed
+		if (_pendingPredictionText === displayText) return;
+		_pendingPredictionText = displayText;
+
+		// GUARDRAIL: Coalesce rapid updates into a single rAF write
+		if (_predictionUpdateRAF) return; // Already scheduled
+		_predictionUpdateRAF = requestAnimationFrame(function() {
+			_predictionUpdateRAF = null;
+			if (container) container.style.display = "block";
+			if (output) output.textContent = _pendingPredictionText;
+		});
 	}
 
 	// =========================================================================
