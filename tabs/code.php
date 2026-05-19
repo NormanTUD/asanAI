@@ -90,9 +90,6 @@
 					🔀 <span class="TRANSLATEME_pe_mode"></span>
 				</button>
 				<div class="pe-separator pe-advanced-only"></div>
-				<button onclick="pyodideToggleFullscreen()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Ctrl+Shift+F">
-					⛶ <span class="TRANSLATEME_pe_fullscreen"></span>
-				</button>
 				<button onclick="pyodideCopyOutput()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Copy console output">
 					📋 <span class="TRANSLATEME_pe_copy"></span>
 				</button>
