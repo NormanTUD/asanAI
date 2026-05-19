@@ -43,6 +43,7 @@
     //   if (window._acInserting) return;
     // Add that check at the top of whatever function runs the Python code automatically.
     window._acInserting = false;
+    window._acRecentlyInserted = false;
 
     // =========================================================================
     // CONTEXT-AWARE COMPLETION SOURCES
@@ -703,14 +704,24 @@
 
         textarea.focus();
 
-        // *** CLEAR FLAGS AFTER A DELAY ***
-        // The delay ensures any queued input event handlers see the flag as true
-        // and skip auto-execution
+        // CLEAR the immediate flag after a short delay
+        // But set a SECONDARY "cooldown" flag that lasts longer than the
+        // live-predict debounce (1500ms) to prevent stale timers from firing
+        window._acRecentlyInserted = true;
+
         setTimeout(function() {
             acAccepting = false;
             window._acInserting = false;
-        }, 300);
+        }, 100);
+
+        // This secondary flag stays true for 2 seconds — longer than the
+        // 1500ms live-predict debounce — so any timer that was started
+        // BEFORE the autocomplete accept will see this flag and abort
+        setTimeout(function() {
+            window._acRecentlyInserted = false;
+        }, 2000);
     }
+
 
     // =========================================================================
     // TRIGGER AUTOCOMPLETE

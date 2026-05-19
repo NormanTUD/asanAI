@@ -2477,8 +2477,9 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// =========================================================================
 
 		async function pyodideEditorRun() {
-			// *** AUTOCOMPLETE GUARD: Never auto-execute during autocomplete insertion ***
+			// AUTOCOMPLETE GUARD: Never auto-execute during or shortly after autocomplete
 			if (window._acInserting) return;
+			if (window._acRecentlyInserted) return;
 
 			if (isRunning) {
 				appendConsole("[⏳ Already running...]\n", "warn");
@@ -2546,7 +2547,7 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			if (livePredictEnabled && lastPredictionResult !== null) {
 				showPredictionResult(lastPredictionResult);
 			}
-		}
+}
 
 		function pyodideEditorStop() {
 			if (!isRunning && !webcamStream && !snapshotStream) return;
@@ -2664,15 +2665,17 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			if (!textarea) return;
 
 			textarea.addEventListener("input", function () {
-				// *** AUTOCOMPLETE GUARD: Don't auto-run during autocomplete insertion ***
+				// AUTOCOMPLETE GUARD
 				if (window._acInserting) return;
 
 				if (!livePredictEnabled || isRunning) return;
 
 				clearTimeout(livePredictDebounceTimer);
 				livePredictDebounceTimer = setTimeout(async function () {
-					// *** Check again in case flag was set during the delay ***
+					// Check AGAIN — the flag might have been set and cleared during the delay
+					// Also check the secondary "cooldown" flag
 					if (window._acInserting) return;
+					if (window._acRecentlyInserted) return;
 					if (!livePredictEnabled || isRunning) return;
 					var code = textarea.value;
 					if (code.includes("set_prediction_result") || code.includes("predict(")) {
