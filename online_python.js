@@ -2140,57 +2140,65 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		 * Does NOT stop the stream — it stays live.
 		 */
 		async function ensureLiveStream() {
-		    const video = document.getElementById("pyodide_webcam_video");
-		    const container = document.getElementById("pyodide_webcam_container");
-		    if (!video || !container) return false;
+			const video = document.getElementById("pyodide_webcam_video");
+			const container = document.getElementById("pyodide_webcam_container");
+			if (!video || !container) return false;
 
-		    // Already have a live stream running on the video element
-		    if (snapshotStream && video.srcObject === snapshotStream && !video.paused && video.readyState >= 2) {
-			return true;
-		    }
-
-		    // Stop any old frozen/capture streams on the video
-		    if (video.srcObject && video.srcObject !== snapshotStream) {
-			try {
-			    video.srcObject.getTracks().forEach(function(t) { t.stop(); });
-			} catch(e) {}
-			video.srcObject = null;
-		    }
-
-		    // Start a fresh live stream
-		    try {
-			snapshotStream = await navigator.mediaDevices.getUserMedia({
-			    video: { facingMode: "environment", width: { ideal: 320 }, height: { ideal: 320 } },
-			    audio: false
-			});
-		    } catch (e) {
-			appendConsole("[📸 Camera error: " + e.message + "]\n", "stderr");
-			return false;
-		    }
-
-		    video.srcObject = snapshotStream;
-		    video.setAttribute("playsinline", "");
-		    video.muted = true;
-		    container.style.display = "block";
-
-		    await new Promise(function(resolve) {
-			if (video.readyState >= 2) {
-			    resolve();
-			} else {
-			    video.onloadedmetadata = function() {
-				video.play();
-				resolve();
-			    };
+			// Already have a live stream running on the video element
+			if (snapshotStream && video.srcObject === snapshotStream && !video.paused && video.readyState >= 2) {
+				return true;
 			}
-		    });
 
-		    await video.play().catch(function() {});
+			// Stop any old frozen/capture streams on the video
+			if (video.srcObject && video.srcObject !== snapshotStream) {
+				try {
+					video.srcObject.getTracks().forEach(function(t) { t.stop(); });
+				} catch(e) {}
+				video.srcObject = null;
+			}
 
-		    // Wait a moment for frames to actually flow
-		    await new Promise(function(resolve) { setTimeout(resolve, 300); });
+			// Start a fresh live stream
+			try {
+				snapshotStream = await navigator.mediaDevices.getUserMedia({
+					video: { facingMode: "environment", width: { ideal: 320 }, height: { ideal: 320 } },
+					audio: false
+				});
+			} catch (e) {
+				appendConsole("[📸 Camera error: " + e.message + "]\n", "stderr");
+				return false;
+			}
 
-		    appendConsole("[📷 Live camera feed active]\n", "info");
-		    return true;
+			video.srcObject = snapshotStream;
+			video.setAttribute("playsinline", "");
+			video.muted = true;
+			container.style.display = "block";
+
+			// Wait for metadata to load
+			await new Promise(function(resolve) {
+				if (video.readyState >= 2) {
+					resolve();
+				} else {
+					video.onloadedmetadata = function() {
+						video.play();
+						resolve();
+					};
+				}
+			});
+
+			await video.play().catch(function() {});
+
+			// Wait for first frame to actually render (reduced from 300ms)
+			// Use requestVideoFrameCallback if available, otherwise short timeout
+			if (video.requestVideoFrameCallback) {
+				await new Promise(function(resolve) {
+					video.requestVideoFrameCallback(resolve);
+				});
+			} else {
+				await new Promise(function(resolve) { setTimeout(resolve, 100); });
+			}
+
+			appendConsole("[📷 Live camera feed active]\n", "info");
+			return true;
 		}
 
 		/**
@@ -3362,92 +3370,100 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// =========================================================================
 
 	function togglePhotosPanel() {
-	    var container = document.getElementById("pyodide_photos_container");
-	    if (!container) return;
+		var container = document.getElementById("pyodide_photos_container");
+		if (!container) return;
 
-	    if (container.style.display === "block") {
-		container.style.display = "none";
-	    } else {
-		container.style.display = "block";
-		// Ensure live stream is running for snapping
-		if (isImageModel()) {
-		    ensureLiveStream();
+		if (container.style.display === "block") {
+			container.style.display = "none";
+		} else {
+			container.style.display = "block";
+			// Start live stream immediately when panel opens (so first snap is instant)
+			if (isImageModel()) {
+				ensureLiveStream();
+			}
+			// Also validate the needed count on open
+			updatePhotosStatus();
 		}
-	    }
 	}
 
 	async function photosSnap() {
-	    if (!isImageModel()) {
-		appendConsole("[⚠️ Multi-snap requires an image model]\n", "warn");
-		return;
-	    }
+		if (!isImageModel()) {
+			appendConsole("[⚠️ Multi-snap requires an image model]\n", "warn");
+			return;
+		}
 
-	    if (!pyodideReady) {
-		appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
-		await initPyodide();
-		if (!pyodideReady) return;
-	    }
+		if (!pyodideReady) {
+			appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
+			await initPyodide();
+			if (!pyodideReady) return;
+		}
 
-	    // Ensure live stream is running
-	    var streamReady = await ensureLiveStream();
-	    if (!streamReady) return;
+		// Only call ensureLiveStream if we don't already have a live stream
+		// This avoids the 300ms delay on every snap after the first
+		var video = document.getElementById("pyodide_webcam_video");
+		var streamAlreadyLive = snapshotStream && video && video.srcObject === snapshotStream && !video.paused && video.readyState >= 2;
 
-	    var video = document.getElementById("pyodide_webcam_video");
-	    if (!video || video.readyState < 2) {
-		appendConsole("[⚠️ Video not ready yet, try again]\n", "warn");
-		return;
-	    }
+		if (!streamAlreadyLive) {
+			var streamReady = await ensureLiveStream();
+			if (!streamReady) return;
+			video = document.getElementById("pyodide_webcam_video");
+		}
 
-	    // Get model input dimensions
-	    var info = getModelInfoForPython();
-	    if (!info || !info.input_shape) {
-		appendConsole("[Error] No model loaded.\n", "stderr");
-		return;
-	    }
+		if (!video || video.readyState < 2) {
+			appendConsole("[⚠️ Video not ready yet, try again]\n", "warn");
+			return;
+		}
 
-	    var inputShape = info.input_shape;
-	    var targetH = inputShape[1] || 40;
-	    var targetW = inputShape[2] || 40;
-	    var channels = inputShape[3] || 3;
+		// Get model input dimensions
+		var info = getModelInfoForPython();
+		if (!info || !info.input_shape) {
+			appendConsole("[Error] No model loaded.\n", "stderr");
+			return;
+		}
 
-	    // Grab current frame and resize to model input size
-	    var modelCanvas = document.createElement("canvas");
-	    modelCanvas.width = targetW;
-	    modelCanvas.height = targetH;
-	    var modelCtx = modelCanvas.getContext("2d");
-	    modelCtx.drawImage(video, 0, 0, targetW, targetH);
+		var inputShape = info.input_shape;
+		var targetH = inputShape[1] || 40;
+		var targetW = inputShape[2] || 40;
+		var channels = inputShape[3] || 3;
 
-	    var imageData = modelCtx.getImageData(0, 0, targetW, targetH);
-	    var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+		// Grab current frame and resize to model input size
+		var modelCanvas = document.createElement("canvas");
+		modelCanvas.width = targetW;
+		modelCanvas.height = targetH;
+		var modelCtx = modelCanvas.getContext("2d");
+		modelCtx.drawImage(video, 0, 0, targetW, targetH);
 
-	    // Also create a larger thumbnail for display
-	    var thumbCanvas = document.createElement("canvas");
-	    thumbCanvas.width = 128;
-	    thumbCanvas.height = 128;
-	    var thumbCtx = thumbCanvas.getContext("2d");
-	    thumbCtx.drawImage(video, 0, 0, 128, 128);
-	    var thumbnailDataURL = thumbCanvas.toDataURL("image/jpeg", 0.7);
+		var imageData = modelCtx.getImageData(0, 0, targetW, targetH);
+		var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
 
-	    // Store the photo
-	    var photoIndex = capturedPhotos.length;
-	    capturedPhotos.push({
-		pixelData: inputList,
-		thumbnailDataURL: thumbnailDataURL,
-		index: photoIndex
-	    });
+		// Also create a larger thumbnail for display
+		var thumbCanvas = document.createElement("canvas");
+		thumbCanvas.width = 128;
+		thumbCanvas.height = 128;
+		var thumbCtx = thumbCanvas.getContext("2d");
+		thumbCtx.drawImage(video, 0, 0, 128, 128);
+		var thumbnailDataURL = thumbCanvas.toDataURL("image/jpeg", 0.7);
 
-	    // Update the visual strip
-	    updatePhotosStrip();
+		// Store the photo
+		var photoIndex = capturedPhotos.length;
+		capturedPhotos.push({
+			pixelData: inputList,
+			thumbnailDataURL: thumbnailDataURL,
+			index: photoIndex
+		});
 
-	    // Update status
-	    var needed = parseInt(document.getElementById("pyodide_photos_needed").value) || 4;
-	    updatePhotosStatus();
+		// Update the visual strip
+		updatePhotosStrip();
 
-	    appendConsole("[📸 Photo " + (photoIndex + 1) + " captured (" + targetW + "x" + targetH + ")]\n", "info");
+		// Update status (with validation)
+		updatePhotosStatus();
 
-	    if (capturedPhotos.length >= needed) {
-		appendConsole("[✅ All " + needed + " photos captured! Press ▶ Run with Photos or use photos[] in your code]\n", "info");
-	    }
+		var needed = parseInt(document.getElementById("pyodide_photos_needed").value) || 2;
+		appendConsole("[📸 Photo " + (photoIndex + 1) + " captured (" + targetW + "x" + targetH + ")]\n", "info");
+
+		if (capturedPhotos.length >= needed) {
+			appendConsole("[✅ All " + needed + " photos captured! Press ▶ Run with Photos]\n", "info");
+		}
 	}
 
 	function photosRemove(index) {
@@ -3488,46 +3504,74 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	}
 
 	function updatePhotosStatus() {
-	    var statusEl = document.getElementById("pyodide_photos_status");
-	    if (!statusEl) return;
-	    var needed = parseInt(document.getElementById("pyodide_photos_needed").value) || 4;
-	    var count = capturedPhotos.length;
-	    var color = count >= needed ? "#00d4aa" : "#ffd93d";
-	    statusEl.innerHTML = '<span style="color:' + color + ';">' + count + ' / ' + needed + ' photos captured</span>';
+		var statusEl = document.getElementById("pyodide_photos_status");
+		if (!statusEl) return;
+		var neededInput = document.getElementById("pyodide_photos_needed");
+		var raw = parseInt(neededInput ? neededInput.value : 2) || 2;
+
+		// Enforce: must be even and >= 2
+		if (raw < 2) raw = 2;
+		if (raw % 2 !== 0) raw = raw + 1; // round up to next even
+
+		// Write back the corrected value
+		if (neededInput && parseInt(neededInput.value) !== raw) {
+			neededInput.value = raw;
+		}
+
+		var needed = raw;
+		var count = capturedPhotos.length;
+		var color = count >= needed ? "#00d4aa" : "#ffd93d";
+		statusEl.innerHTML = '<span style="color:' + color + ';">' + count + ' / ' + needed + ' photos captured</span>';
 	}
 
 	async function photosRun() {
-	    if (capturedPhotos.length === 0) {
-		appendConsole("[⚠️ No photos captured yet! Press 📸 Snap first.]\n", "warn");
-		return;
-	    }
+		if (capturedPhotos.length === 0) {
+			appendConsole("[⚠️ No photos captured yet! Press 📸 Snap first.]\n", "warn");
+			return;
+		}
 
-	    if (!pyodideReady) {
-		appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
-		await initPyodide();
-		if (!pyodideReady) return;
-	    }
+		if (!pyodideReady) {
+			appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
+			await initPyodide();
+			if (!pyodideReady) return;
+		}
 
-	    // Set the photos list in Python
-	    try {
-		var photoDataList = capturedPhotos.map(function(p) { return p.pixelData; });
-		pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
-		pyodideInstance.globals.set("num_photos", capturedPhotos.length);
+		// Validate photo count — must be even and >= 2
+		var neededInput = document.getElementById("pyodide_photos_needed");
+		var needed = parseInt(neededInput ? neededInput.value : 2) || 2;
+		if (needed < 2) needed = 2;
+		if (needed % 2 !== 0) needed = needed + 1;
 
-		// Also set labels and classification flag
-		var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
-		var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
-		pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
-		pyodideInstance.globals.set("_is_classification", classificationFlag);
-	    } catch (e) {
-		appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
-		return;
-	    }
+		var photoCount = Math.min(capturedPhotos.length, needed);
+		if (photoCount < 2) {
+			appendConsole("[⚠️ Need at least 2 photos for a battle!]\n", "warn");
+			return;
+		}
+		if (photoCount % 2 !== 0) {
+			// Use one fewer photo to keep it even (or let the template handle the BYE)
+			// The template already handles odd with a BYE, so just pass through
+		}
 
-	    appendConsole("[📸 " + capturedPhotos.length + " photos loaded into `photos` list — running code...]\n", "info");
+		// Set the photos list in Python
+		try {
+			var photoDataList = capturedPhotos.slice(0, photoCount).map(function(p) { return p.pixelData; });
+			pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
+			pyodideInstance.globals.set("num_photos", photoCount);
 
-	    // Run the editor code
-	    await pyodideEditorRun();
+			// Also set labels and classification flag
+			var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
+			var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
+			pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
+			pyodideInstance.globals.set("_is_classification", classificationFlag);
+		} catch (e) {
+			appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
+			return;
+		}
+
+		appendConsole("[📸 " + photoCount + " photos loaded into `photos` list — running code...]\n", "info");
+
+		// Run the editor code
+		await pyodideEditorRun();
 	}
 
 	// =========================================================================
