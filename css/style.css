@@ -1882,3 +1882,12 @@ border-collapse: collapse;
 #pyodide_photos_strip .pe-photo-thumb:hover .pe-photo-remove {
     display: block;
 }
+
+.pe-btn-success-flash {
+    animation: successPulse 1.2s ease-out;
+}
+@keyframes successPulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.7); }
+    50% { box-shadow: 0 0 12px 4px rgba(0, 212, 170, 0.4); }
+    100% { box-shadow: none; }
+}

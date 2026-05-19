@@ -2830,6 +2830,12 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 				if (isRunning && thisRun === runCounter) {
 					appendConsole("─── ✓ Done ───\n", "info");
 					setStatus("✓ Ready", "ready");
+
+					var runBtn = document.getElementById("pyodide_run_btn");
+					if (runBtn) {
+						runBtn.classList.add("pe-btn-success-flash");
+						setTimeout(function() { runBtn.classList.remove("pe-btn-success-flash"); }, 1200);
+					}
 				}
 			} catch (e) {
 				if (thisRun === runCounter) {
