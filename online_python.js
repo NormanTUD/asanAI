@@ -918,145 +918,85 @@ if input_data is not None:
         print_round_result(game, p1, p2, outcome)
 `,
 
-	image_group_battle: `# ⚔️ Group Battle — Use photos[] to pair off and find winners!
+	image_group_battle: `# ⚔️ Group Battle — Capture photos, pair off, find winners!
 #
-# HOW TO USE:
-#   1. Click "📸 Multi-Snap" to open the photo capture area
-#   2. Snap photos for each player
-#   3. Press "▶ Run with Photos"
+# 1. Click "📸 Multi-Snap" to capture photos
+# 2. Press "▶ Run with Photos"
 #
-# Set beats = None for "highest confidence wins" (any model)
+# Set beats = None for "highest confidence wins"
 beats = None
 
-def classify_photo(photo, labels, is_classif):
-    result = predict(photo)
-    if isinstance(result, list) and len(result) > 1:
-        top_idx = result.index(max(result))
-        confidence = result[top_idx]
-        label = labels[top_idx] if labels and top_idx < len(labels) else f"Class {top_idx}"
-    else:
-        top_idx = 0
-        confidence = result[0] if isinstance(result, list) else float(result)
-        label = f"Output {confidence:.4f}"
-    return {'label': label, 'confidence': confidence, 'class_idx': top_idx, 'result': result}
+def setup():
+    info = get_model_info()
+    lbls = _labels if '_labels' in dir() and _labels else None
+    is_cls = _is_classification if '_is_classification' in dir() else False
+    return lbls, is_cls, info
 
-def determine_winner(p1, p2, beats_rules):
-    if beats_rules:
+def classify_all(photo_list, lbls, is_cls):
+    """Classify all photos in one pass and return player dicts."""
+    players = []
+    for i, photo in enumerate(photo_list):
+        result = predict(photo)
+        check_interrupt()
+        top_idx = result.index(max(result)) if len(result) > 1 else 0
+        conf = result[top_idx] if len(result) > 1 else (result[0] if result else 0.0)
+        label = lbls[top_idx] if lbls and top_idx < len(lbls) else f"Class {top_idx}"
+        players.append({'num': i+1, 'label': label, 'confidence': conf})
+        print(f"  📷 Photo {i+1}: {label} ({conf*100:.1f}%)")
+    return players
+
+def battle(p1, p2, rules):
+    """Determine winner between two players."""
+    if rules:
         m1, m2 = p1['label'].lower().strip(), p2['label'].lower().strip()
-        if m1 == m2:
-            winner = p1 if p1['confidence'] >= p2['confidence'] else p2
-            return winner, f"Tie ({m1}) → confidence tiebreak"
-        elif beats_rules.get(m1) == m2:
-            return p1, f"{m1} beats {m2}"
-        elif beats_rules.get(m2) == m1:
-            return p2, f"{m2} beats {m1}"
-        else:
-            winner = p1 if p1['confidence'] >= p2['confidence'] else p2
-            return winner, "No rule → confidence"
-    else:
-        winner = p1 if p1['confidence'] >= p2['confidence'] else p2
-        return winner, f"{winner['confidence']*100:.1f}% wins"
+        if m1 != m2:
+            if rules.get(m1) == m2:
+                return p1, f"{m1} beats {m2}"
+            if rules.get(m2) == m1:
+                return p2, f"{m2} beats {m1}"
+    # Default: highest confidence wins
+    winner = p1 if p1['confidence'] >= p2['confidence'] else p2
+    return winner, f"{winner['confidence']*100:.1f}% wins"
 
-def make_pairs(players):
-    pairs = []
-    for i in range(0, len(players) - 1, 2):
-        pairs.append((i, i + 1))
-    return pairs
-
+# === MAIN ===
 if 'photos' not in dir() or not photos:
-    print("⚠️  No photos captured yet!")
-    print()
-    print("Steps:")
-    print("  1. Click '📸 Multi-Snap' button in the toolbar")
-    print("  2. Press 📸 Snap for each player")
+    print("⚠️  No photos captured!")
+    print("  1. Click '📸 Multi-Snap'")
+    print("  2. Snap each player")
     print("  3. Press '▶ Run with Photos'")
 else:
-    info = get_model_info()
-    class_labels = _labels if '_labels' in dir() and _labels else None
-    is_classif = _is_classification if '_is_classification' in dir() else False
+    lbls, is_cls, info = setup()
 
     print("⚔️  GROUP BATTLE")
-    print("═" * 50)
-    print(f"  Photos: {num_photos} | Mode: {'Rules' if beats else 'Highest confidence'}")
-    if class_labels:
-        print(f"  Labels: {list(class_labels)}")
-    print("═" * 50)
+    print("═" * 40)
+    print(f"  Photos: {num_photos} | Mode: {'Rules' if beats else 'Confidence'}")
+    if lbls:
+        print(f"  Labels: {list(lbls)}")
+    print("═" * 40)
+
+    players = classify_all(list(photos[:num_photos]), lbls, is_cls)
     print()
 
-    # Classify all photos
-    players = []
-    for i in range(num_photos):
-        p = classify_photo(photos[i], class_labels, is_classif)
-        p['num'] = i + 1
-        players.append(p)
-        print(f"  📷 Photo {i+1}: {p['label']} ({p['confidence']*100:.1f}%)")
-
-    print()
-
-    # Battle pairs
-    pairs = make_pairs(players)
-    if len(players) % 2 == 1:
-        print(f"  ⚠️ Odd number — Photo {players[-1]['num']} gets a BYE")
-        print()
+    if num_photos % 2 == 1:
+        print(f"  ⚠️ Odd number — Photo {num_photos} gets a BYE")
 
     print("⚔️  MATCHUPS:")
-    print("─" * 50)
+    print("─" * 40)
 
     winners = []
-    for p1_idx, p2_idx in pairs:
-        p1, p2 = players[p1_idx], players[p2_idx]
-        winner, reason = determine_winner(p1, p2, beats)
+    for i in range(0, num_photos - 1, 2):
+        p1, p2 = players[i], players[i+1]
+        winner, reason = battle(p1, p2, beats)
         winners.append(winner)
-        print(f"  📷{p1['num']} {p1['label']} ({p1['confidence']*100:.0f}%)")
-        print(f"    vs")
-        print(f"  📷{p2['num']} {p2['label']} ({p2['confidence']*100:.0f}%)")
-        print(f"    → 👑 Photo {winner['num']} wins! ({reason})")
-        print()
+        print(f"  📷{p1['num']} {p1['label']} ({p1['confidence']*100:.0f}%)"
+              f" vs 📷{p2['num']} {p2['label']} ({p2['confidence']*100:.0f}%)")
+        print(f"    → 👑 Photo {winner['num']} wins! ({reason})\\n")
 
-    print("═" * 50)
+    print("═" * 40)
     print("🏆 WINNERS:")
     for w in winners:
         print(f"   👑 Photo {w['num']}: {w['label']} ({w['confidence']*100:.1f}%)")
-    print("═" * 50)
-`,
-
-	image_group_predict: `# 📸 Multi-Photo Predictions
-# Access each captured photo as photos[0], photos[1], etc.
-
-def get_label(idx):
-    labels = _labels if '_labels' in dir() and _labels else None
-    is_classif = _is_classification if '_is_classification' in dir() else False
-    if labels and is_classif and idx < len(labels):
-        return labels[idx]
-    return f"Class {idx}"
-
-if 'photos' not in dir() or not photos:
-    print("⚠️  No photos yet!")
-    print("   Click '📸 Multi-Snap', snap some photos, then '▶ Run with Photos'")
-else:
-    info = get_model_info()
-    is_classif = _is_classification if '_is_classification' in dir() else False
-
-    print(f"📸 {num_photos} photos loaded")
-    print(f"🧠 Model: {info['input_shape']} → {info['output_shape']}")
-    print()
-    print("─" * 40)
-
-    for i in range(num_photos):
-        result = predict(photos[i])
-        set_prediction_result(result)
-
-        if isinstance(result, list) and len(result) > 1 and is_classif:
-            top_idx = result.index(max(result))
-            confidence = result[top_idx]
-            print(f"  photos[{i}] → {get_label(top_idx)} ({confidence*100:.1f}%)")
-        else:
-            print(f"  photos[{i}] → {result}")
-
-    print()
-    print("─" * 40)
-    print()
-    print("💡 Access individual photos: predict(photos[0])")
+    print("═" * 40)
 `,
 };
 

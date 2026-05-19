@@ -869,7 +869,6 @@
 
     function initAutocomplete() {
         setupAutocompleteHandlers();
-        console.log('[Autocomplete] Initialized. window._acInserting flag available.');
     }
 
     if (document.readyState === 'loading') {
