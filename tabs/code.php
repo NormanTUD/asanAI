@@ -110,45 +110,56 @@
 
 			<!-- Examples Panel (hidden by default) -->
 			<div id="pyodide_examples_panel" class="pe-examples-panel">
+			    <!-- Category: Works without a model -->
+			    <div class="pe-example-category">
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('hello_world')">
-					<h4>👋 <span class="TRANSLATEME_pe_example_hello_world"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_hello_world_desc"></span></p>
+				    <h4>👋 <span class="TRANSLATEME_pe_example_hello_world"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_hello_world_desc"></span></p>
 				</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('draw_chart')">
+				    <h4>📊 <span class="TRANSLATEME_pe_example_draw_chart"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_draw_chart_desc"></span></p>
+				</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('draw_canvas')">
+				    <h4>🎨 <span class="TRANSLATEME_pe_example_custom_canvas"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_custom_canvas_desc"></span></p>
+				</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('html_table')">
+				    <h4>📋 <span class="TRANSLATEME_pe_example_html_table"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_html_table_desc"></span></p>
+				</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('pixel_art')">
+				    <h4>🕹️ <span class="TRANSLATEME_pe_example_pixel_art"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_pixel_art_desc"></span></p>
+				</div>
+			    </div>
+
+			    <!-- Category: Needs a trained model -->
+			    <div class="pe-example-category">
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('random_input')">
-					<h4>🎲 <span class="TRANSLATEME_pe_example_random_input"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_random_input_desc"></span></p>
+				    <h4>🎲 <span class="TRANSLATEME_pe_example_random_input"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_random_input_desc"></span></p>
 				</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_upload')">
+				    <h4>🖼️ <span class="TRANSLATEME_pe_example_image_upload"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_image_upload_desc"></span></p>
+				</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('custom_data')">
+				    <h4>✏️ <span class="TRANSLATEME_pe_example_custom_data"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_custom_data_desc"></span></p>
+				</div>
+				<div class="pe-example-card" onclick="pyodideLoadTemplate('weights_inspect')">
+				    <h4>🔍 <span class="TRANSLATEME_pe_example_inspect_weights"></span></h4>
+				    <p><span class="TRANSLATEME_pe_example_inspect_weights_desc"></span></p>
+				</div>
+			    </div>
+
+			    <!-- Category: Needs an image model + webcam -->
+			    <div class="pe-example-category">
+				<div class="pe-example-category-label">📷 Needs an image model + webcam</div>
 				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_webcam')">
 				    <h4>📷 <span class="TRANSLATEME_pe_example_webcam_prediction"></span></h4>
 				    <p><span class="TRANSLATEME_pe_example_webcam_prediction_desc"></span></p>
-				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_upload')">
-					<h4>🖼️ <span class="TRANSLATEME_pe_example_image_upload"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_image_upload_desc"></span></p>
-				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('custom_data')">
-					<h4>✏️ <span class="TRANSLATEME_pe_example_custom_data"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_custom_data_desc"></span></p>
-				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('weights_inspect')">
-					<h4>🔍 <span class="TRANSLATEME_pe_example_inspect_weights"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_inspect_weights_desc"></span></p>
-				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('draw_chart')">
-					<h4>📊 <span class="TRANSLATEME_pe_example_draw_chart"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_draw_chart_desc"></span></p>
-				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('draw_canvas')">
-					<h4>🎨 <span class="TRANSLATEME_pe_example_custom_canvas"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_custom_canvas_desc"></span></p>
-				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('html_table')">
-					<h4>📋 <span class="TRANSLATEME_pe_example_html_table"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_html_table_desc"></span></p>
-				</div>
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('pixel_art')">
-					<h4>🕹️ <span class="TRANSLATEME_pe_example_pixel_art"></span></h4>
-					<p><span class="TRANSLATEME_pe_example_pixel_art_desc"></span></p>
 				</div>
 				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_snapshot_rps')">
 				    <h4>✊✋✌️ <span class="TRANSLATEME_pe_example_rps"></span></h4>
@@ -158,6 +169,7 @@
 				    <h4>⚔️ <span class="TRANSLATEME_pe_example_group_battle"></span></h4>
 				    <p><span class="TRANSLATEME_pe_example_group_battle_desc"></span></p>
 				</div>
+			    </div>
 			</div>
 
 			<!-- Toolbar Row 2: Input sources (advanced only) -->

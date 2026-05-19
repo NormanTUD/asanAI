@@ -3067,6 +3067,51 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 
 		var hints = getErrorHints(errorMsg);
 		if (hints) appendConsole("[💡 Hint] " + hints + "\n", "info");
+
+		// NEW: Check for auto-fix
+		var textarea = document.getElementById("pyodide_editor_textarea");
+		var code = textarea ? textarea.value : '';
+		var autoFix = getAutoFix(errorMsg, code);
+
+		if (autoFix) {
+			showFixButton(autoFix);
+		}
+	}
+
+	function showFixButton(autoFix) {
+		var output = document.getElementById("pyodide_console_output");
+		if (!output) return;
+
+		var fixDiv = document.createElement("div");
+		fixDiv.style.cssText = "margin:6px 0;padding:6px 10px;background:rgba(108,99,255,0.15);border:1px solid var(--pe-accent, #6c63ff);border-radius:6px;display:inline-flex;align-items:center;gap:8px;";
+
+		var label = document.createElement("span");
+		label.style.cssText = "font-size:12px;color:var(--pe-text, #cdd6f4);";
+		label.textContent = "🔧 " + autoFix.description;
+
+		var btn = document.createElement("button");
+		btn.style.cssText = "padding:4px 12px;border-radius:4px;border:none;background:var(--pe-accent, #6c63ff);color:#fff;font-size:11px;font-weight:600;cursor:pointer;";
+		btn.textContent = "Fix it";
+		btn.onclick = function() {
+			var textarea = document.getElementById("pyodide_editor_textarea");
+			if (!textarea) return;
+			var fixed = autoFix.apply(textarea.value);
+			textarea.value = fixed;
+			scheduleHighlight();
+			saveEditorContent();
+			fixDiv.remove();
+			appendConsole("[🔧 Fix applied! Press ▶ Run to try again.]\n", "info");
+			hideErrorIndicator();
+		};
+
+		fixDiv.appendChild(label);
+		fixDiv.appendChild(btn);
+		output.appendChild(fixDiv);
+
+		// Scroll to show the fix button
+		requestAnimationFrame(function() {
+			output.scrollTop = output.scrollHeight;
+		});
 	}
 
 	function getErrorHints(errorMsg) {
@@ -4135,6 +4180,107 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			if (container) container.style.display = "block";
 			if (output) output.textContent = _pendingPredictionText;
 		});
+	}
+
+// Add after the getErrorHints function
+
+	function getAutoFix(errorMsg, code) {
+		// Missing colon after def/if/for/while/class/elif/else/try/except/finally/with
+		var colonMatch = errorMsg.match(/SyntaxError.*expected ':'/i) ||
+			(errorMsg.includes("SyntaxError") && errorMsg.includes("expected ':'"));
+		if (colonMatch || (errorMsg.includes("SyntaxError") && code)) {
+			// Find the line with the error
+			var lineMatch = errorMsg.match(/line (\d+)/);
+			if (lineMatch) {
+				var lineNum = parseInt(lineMatch[1]);
+				var lines = code.split('\n');
+				if (lineNum > 0 && lineNum <= lines.length) {
+					var line = lines[lineNum - 1];
+					// Check if it's a statement that needs a colon
+					if (/^\s*(def|if|elif|else|for|while|class|try|except|finally|with)\b/.test(line) && !line.trimEnd().endsWith(':')) {
+						return {
+							description: 'Add missing ":" at end of line ' + lineNum,
+							apply: function(currentCode) {
+								var codeLines = currentCode.split('\n');
+								codeLines[lineNum - 1] = codeLines[lineNum - 1].trimEnd() + ':';
+								return codeLines.join('\n');
+							}
+						};
+					}
+				}
+			}
+		}
+
+		// IndentationError — common: mixed tabs/spaces or wrong indent level
+		if (errorMsg.includes("IndentationError")) {
+			return {
+				description: 'Fix indentation (convert tabs to 4 spaces)',
+				apply: function(currentCode) {
+					return currentCode.replace(/\t/g, '    ');
+				}
+			};
+		}
+
+		// Unclosed string
+		if (errorMsg.includes("EOL while scanning string literal") || errorMsg.includes("unterminated string")) {
+			var lineMatch2 = errorMsg.match(/line (\d+)/);
+			if (lineMatch2) {
+				var ln = parseInt(lineMatch2[1]);
+				var lines2 = code.split('\n');
+				if (ln > 0 && ln <= lines2.length) {
+					var errLine = lines2[ln - 1];
+					// Count quotes
+					var singleCount = (errLine.match(/'/g) || []).length;
+					var doubleCount = (errLine.match(/"/g) || []).length;
+					if (singleCount % 2 !== 0) {
+						return {
+							description: "Add missing ' at end of line " + ln,
+							apply: function(currentCode) {
+								var cl = currentCode.split('\n');
+								cl[ln - 1] = cl[ln - 1] + "'";
+								return cl.join('\n');
+							}
+						};
+					}
+					if (doubleCount % 2 !== 0) {
+						return {
+							description: 'Add missing " at end of line ' + ln,
+							apply: function(currentCode) {
+								var cl = currentCode.split('\n');
+								cl[ln - 1] = cl[ln - 1] + '"';
+								return cl.join('\n');
+							}
+						};
+					}
+				}
+			}
+		}
+
+		// NameError for common typos: "pritn" -> "print", "ture" -> "True", etc.
+		if (errorMsg.includes("NameError")) {
+			var nameMatch = errorMsg.match(/name '([^']+)' is not defined/);
+			if (nameMatch) {
+				var badName = nameMatch[1];
+				var corrections = {
+					'pritn': 'print', 'pirnt': 'print', 'prnt': 'print',
+					'ture': 'True', 'treu': 'True', 'flase': 'False', 'fasle': 'False',
+					'noen': 'None', 'none': 'None',
+					'retrun': 'return', 'reutrn': 'return',
+					'lenght': 'length', 'legth': 'len',
+				};
+				var fix = corrections[badName.toLowerCase()];
+				if (fix) {
+					return {
+						description: 'Replace "' + badName + '" with "' + fix + '"',
+						apply: function(currentCode) {
+							return currentCode.replace(new RegExp('\\b' + badName + '\\b', 'g'), fix);
+						}
+					};
+				}
+			}
+		}
+
+		return null; // No auto-fix available
 	}
 
 	// =========================================================================

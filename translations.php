@@ -737,6 +737,9 @@
 			"pe_python_editor" => "Python Editor",
 			"pe_comment" => "Comment",
 			"pe_console" => "Console",
+			"pe_category_no_model" => "No model needed",
+			"pe_category_needs_model" => "Needs a trained model",
+			"pe_category_needs_image_model" => "Needs an image model + webcam",
 		),
 
 		'de' => array(
@@ -1475,6 +1478,9 @@
 			"pe_python_editor" => "Python-Editor",
 			"pe_comment" => "Kommentar",
 			"pe_console" => "Konsole",
+			"pe_category_no_model" => "Kein Modell nötig",
+			"pe_category_needs_model" => "Braucht ein trainiertes Modell",
+			"pe_category_needs_image_model" => "Braucht ein Bildmodell + Webcam",
 		)
 	);
 

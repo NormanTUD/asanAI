@@ -645,3 +645,16 @@
 .pe-examples-panel.pe-no-image-model .pe-example-card[data-requires="image"] {
     display: none;
 }
+
+.pe-example-category {
+    display: contents; /* or use flex-wrap within the grid */
+}
+.pe-example-category-label {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--pe-muted);
+    padding: 8px 4px 4px;
+    border-bottom: 1px solid var(--pe-border);
+    margin-bottom: 4px;
+}
