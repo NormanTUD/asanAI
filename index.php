@@ -40,6 +40,7 @@
 		_css("css/auto_animations.css");
 		_css("css/ribbon.css");
 		_css("css/code_tab.css");
+		_css("css/auto_complete.css");
 
 		_css("css/ribbon_media.css");
 		_css("css/".$theme_base."mode.css", "css_mode");
@@ -80,6 +81,7 @@
 		_js("tests.js");
 		_js("model.js");
 		_js("online_python.js");
+		_js("online_python_code_completion.js");
 		_js("explain.js");
 		_js("math_editable.js");
 		_js("math_mode.js");

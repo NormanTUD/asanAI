@@ -1,0 +1,46 @@
+/* ===== AUTOCOMPLETE POPUP STYLES ===== */
+
+.pe-autocomplete-popup {
+    scrollbar-width: thin;
+    scrollbar-color: var(--pe-border, #45475a) transparent;
+}
+
+.pe-autocomplete-popup::-webkit-scrollbar {
+    width: 6px;
+}
+
+.pe-autocomplete-popup::-webkit-scrollbar-thumb {
+    background: var(--pe-border, #45475a);
+    border-radius: 3px;
+}
+
+.pe-ac-item {
+    transition: background 0.08s ease;
+}
+
+.pe-ac-item:hover:not(.pe-ac-selected) {
+    background: var(--pe-surface2, #313244);
+}
+
+.pe-ac-selected {
+    background: var(--pe-accent, #6c63ff) !important;
+    color: #fff !important;
+    border-radius: 3px;
+    margin: 0 3px;
+}
+
+/* Light mode adjustments */
+.pe-light-mode .pe-autocomplete-popup {
+    background: #fff;
+    border-color: #ddd;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.pe-light-mode .pe-ac-item:hover:not(.pe-ac-selected) {
+    background: #f0f0f0;
+}
+
+.pe-light-mode .pe-ac-selected {
+    background: #6c63ff !important;
+    color: #fff !important;
+}
