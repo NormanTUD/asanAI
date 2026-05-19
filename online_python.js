@@ -3153,6 +3153,18 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// INITIALIZATION ON DOM READY
 	// =========================================================================
 
+	function handleTabMutation(mutation) {
+		if (mutation.type !== "attributes" || mutation.attributeName !== "style") return;
+		var tab = document.getElementById("pyodide_editor_tab");
+		if (!tab || tab.style.display === "none" || pyodideReady || pyodideLoading) return;
+
+		if (window.requestIdleCallback) {
+			requestIdleCallback(function() { initPyodide(); }, { timeout: 5000 });
+		} else {
+			setTimeout(function() { initPyodide(); }, 500);
+		}
+	}
+
 	function initWhenReady() {
 		setupEditorKeyHandlers();
 		setupLivePredictions();
@@ -3161,17 +3173,7 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		// Watch for tab visibility to auto-init Pyodide IN THE BACKGROUND
 		_tabObserver = new MutationObserver(function (mutations) {
 			for (var i = 0; i < mutations.length; i++) {
-				var mutation = mutations[i];
-				if (mutation.type === "attributes" && mutation.attributeName === "style") {
-					var tab = document.getElementById("pyodide_editor_tab");
-					if (tab && tab.style.display !== "none" && !pyodideReady && !pyodideLoading) {
-						if (window.requestIdleCallback) {
-							requestIdleCallback(function() { initPyodide(); }, { timeout: 5000 });
-						} else {
-							setTimeout(function() { initPyodide(); }, 500);
-						}
-					}
-				}
+				handleTabMutation(mutations[i]);
 			}
 		});
 
