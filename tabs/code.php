@@ -86,9 +86,11 @@
 				<button id="pyodide_photos_btn" onclick="pyodideTogglePhotos()" class="pe-btn pe-btn-clear pe-tooltip" data-tip="Capture a group of photos">
 				    📸 <span class="TRANSLATEME_pe_multi_snap"></span>
 				</button>
+				<!--
 				<button onclick="pyodideToggleMode()" class="pe-btn pe-btn-mode pe-tooltip" data-tip="Toggle Simple/Advanced">
 					🔀 <span class="TRANSLATEME_pe_mode"></span>
 				</button>
+				-->
 				<div class="pe-separator pe-advanced-only"></div>
 				<button onclick="pyodideCopyOutput()" class="pe-btn pe-btn-clear pe-advanced-only pe-tooltip" data-tip="Copy console output">
 					📋 <span class="TRANSLATEME_pe_copy"></span>
