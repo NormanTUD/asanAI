@@ -234,7 +234,7 @@
 				<div style="font-size:11px;color:var(--pe-muted);font-weight:600;">📸 <span class="TRANSLATEME_pe_photo_group"></span></div>
 				<div style="display:flex;align-items:center;gap:6px;">
 				    <label style="font-size:11px;color:var(--pe-muted);"><span class="TRANSLATEME_pe_need"></span></label>
-				    <input type="number" id="pyodide_photos_needed" min="2" max="20" value="4"
+				    <input type="number" id="pyodide_photos_needed" min="2" max="20" value="2"
 					style="width:45px;padding:2px 6px;border-radius:4px;font-size:11px;background:var(--pe-surface2);color:var(--pe-text);border:1px solid var(--pe-border);text-align:center;">
 				    <button onclick="pyodidePhotosSnap()" class="pe-btn pe-btn-run" style="font-size:11px;padding:4px 10px;">
 					📸 <span class="TRANSLATEME_pe_snap"></span>

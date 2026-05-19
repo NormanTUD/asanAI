@@ -3925,34 +3925,62 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 
 		var photoCount = Math.min(capturedPhotos.length, needed);
 		if (photoCount < 2) {
-			appendConsole("[⚠️ Need at least 2 photos for a battle!]\n", "warn");
+			appendConsole("[⚠️ Need at least 2 photos!]\n", "warn");
 			return;
 		}
-		if (photoCount % 2 !== 0) {
-			// Use one fewer photo to keep it even (or let the template handle the BYE)
-			// The template already handles odd with a BYE, so just pass through
-		}
 
-		// Set the photos list in Python
+		var photoDataList = capturedPhotos.slice(0, photoCount).map(function(p) { return p.pixelData; });
+
+		// Set labels and classification flag
+		var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
+		var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
+
 		try {
-			var photoDataList = capturedPhotos.slice(0, photoCount).map(function(p) { return p.pixelData; });
-			pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
-			pyodideInstance.globals.set("num_photos", photoCount);
-
-			// Also set labels and classification flag
-			var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
-			var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
 			pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
 			pyodideInstance.globals.set("_is_classification", classificationFlag);
 		} catch (e) {
-			appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
-			return;
+			appendConsole("[Error setting labels] " + e.message + "\n", "stderr");
 		}
 
-		appendConsole("[📸 " + photoCount + " photos loaded into `photos` list — running code...]\n", "info");
+		// Detect which template is active
+		var textarea = document.getElementById("pyodide_editor_textarea");
+		var code = textarea ? textarea.value : '';
+		var isRPSTemplate = code.includes("image_snapshot_rps") || 
+			code.includes("ROCK PAPER SCISSORS") || 
+			(code.includes("game['turn']") && code.includes("rps_map"));
+		var isGroupBattle = code.includes("image_group_battle") || 
+			code.includes("GROUP BATTLE") || 
+			(code.includes("photos") && code.includes("num_photos") && code.includes("MATCHUPS"));
 
-		// Run the editor code
-		await pyodideEditorRun();
+		if (isRPSTemplate) {
+			// === RPS MODE: Feed photos one-by-one as input_data ===
+			appendConsole("[📸 " + photoCount + " photos — running RPS (one per turn)...]\n", "info");
+
+			for (var i = 0; i < photoCount; i++) {
+				try {
+					pyodideInstance.globals.set("input_data", pyodideInstance.toPy(photoDataList[i]));
+				} catch (e) {
+					appendConsole("[Error setting input_data for photo " + i + "] " + e.message + "\n", "stderr");
+					return;
+				}
+				await pyodideEditorRun();
+
+				// Check if execution was interrupted
+				if (interruptExecution) break;
+			}
+		} else {
+			// === GROUP BATTLE MODE (or any other template): Set photos list ===
+			try {
+				pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
+				pyodideInstance.globals.set("num_photos", photoCount);
+			} catch (e) {
+				appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
+				return;
+			}
+
+			appendConsole("[📸 " + photoCount + " photos loaded into `photos` list — running code...]\n", "info");
+			await pyodideEditorRun();
+		}
 	}
 
 	// =========================================================================
