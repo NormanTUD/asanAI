@@ -432,19 +432,6 @@ else:
     _print_all_classes(result)
 `,
 
-    random_input: `# 🎲 Random Input Prediction
-# Generates random data matching your model's input shape.
-
-_print_model_summary()
-
-shape = _sample_shape()
-print(f"📐 Sample shape: {shape}")
-
-result = _predict_and_show(rand_nested(shape))
-print()
-_print_all_classes(result)
-`,
-
     custom_data: `# ✏️ Custom Data Prediction
 # Enter your own data and predict.
 
