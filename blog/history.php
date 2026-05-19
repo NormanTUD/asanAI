@@ -988,3 +988,59 @@ Today, a developer can invoke a convolutional layer with a single command, such 
 
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
 </div>
+
+<div class="optional md" data-headline="Fibonacci and the Introduction of Zero to Europe">
+
+The numeral zero, along with the positional decimal system, was \cite[introduced to Western Europe]{kleinetymology} through the work of **Leonardo of Pisa** (Fibonacci). In his 1202 work *Liber Abaci*, Fibonacci \cite[popularized the Indo-Arabic numeral system]{fibonacciliber} in the Western world, using digits $0$ through $9$ with place-value notation. Unlike the cumbersome Roman numerals used in Europe at the time, this system offered revolutionary simplicity and computational power. Fibonacci is \cite[responsible for popularising the Arabic numerals (0, 1, 2, 3, 4, …) in Europe]{fibonaccimathigon}, which was still using Roman numerals (I, V, X, D, …) in the 12th century CE.
+
+Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Africa, where his father held a diplomatic post. The system originated in India — **Brahmagupta** (c. 628 CE) formalized arithmetic with zero in his \cite[*Brāhmasphuṭasiddhānta*]{brahmagupta628}. It reached the Islamic world through \cite[Al-Khwarizmi]{alkwarizma}, whose 9th-century *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* served as the conduit to North Africa and, eventually, to Fibonacci.
+
+*Liber Abaci* also \cite[introduced Europe to the Fibonacci sequence]{fibonacciseq}:
+
+$$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
+
+</div>
+
+<div class="optional md" data-headline="Data Types: A History of int, float, str, and bool">
+
+A **data type** classifies a value's representation and permitted operations. The core primitive types in most modern languages:
+
+| Type | Example | Bits (typical) |
+|------|---------|----------------|
+| `int` | `42` | 32 or 64 |
+| `float` | `3.14` | 32 (IEEE 754) |
+| `double` | `3.14159265` | 64 (IEEE 754) |
+| `str` | `"hello"` | variable |
+| `bool` | `true` / `false` | 1 (logical) |
+
+### The Prehistory: Machines Without Types
+
+The earliest computers, such as \cite[Zuse's Z3]{zusebook} (1941) and the \cite[ENIAC]{eniac1946} (1945), operated on raw binary patterns. The machine made no distinction between an integer, a floating-point number, or an instruction — interpretation was entirely in the mind of the programmer.
+
+### FORTRAN and the Birth of Explicit Types (1957)
+
+The first major formalization came with **FORTRAN**, designed by \cite[John Backus]{backusfortran} and his team at IBM. FORTRAN introduced the distinction between `INTEGER` and `REAL` (floating-point) variables, determined implicitly by naming convention: variables beginning with I–N were integers, all others were real. This was the first time a compiler enforced a distinction between numeric types.
+
+### ALGOL 60 and Explicit Type Declarations (1960)
+
+The \cite[ALGOL 60 report]{algol60report}, edited by **Peter Naur**, introduced *explicit type declarations*. Programmers now wrote `integer x` or `real y`. ALGOL 60 also introduced the `Boolean` type, named after \cite[George Boole]{bool1854}, whose 1854 *An Investigation of the Laws of Thought* reduced logic to binary algebra. This was the first language to include `Boolean` as a named, first-class data type.
+
+### Floating-Point Standardization: IEEE 754 (1985)
+
+While floating-point arithmetic existed from the earliest computers, every manufacturer implemented it differently. The chaos was resolved by \cite[IEEE 754]{ieee754_1985}, primarily the work of **William Kahan** (UC Berkeley, Turing Award 1989). It defined:
+
+$$\text{float (32-bit):}\quad (-1)^s \times 1.m \times 2^{e-127}$$
+
+where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The standard was revised in \cite[2008]{ieee754_2008} and \cite[2019]{ieee754_2019}.
+
+### The Boolean in Programming
+
+- **ALGOL 60** (1960): first language with `Boolean` as a named type.
+- **C** (1972): notoriously lacked a dedicated Boolean type, using `int` with the convention $0 = \text{false}$. A `_Bool` type was only added in \cite[C99]{c99standard} (ISO/IEC 9899:1999).
+- **Python**: `bool` added as a subclass of `int` in version 2.3 (2003), formalized by \cite[PEP 285]{pep285} (Guido van Rossum, 2002).
+
+### Type Theory: The Mathematical Foundations
+
+The theoretical underpinning traces to \cite[*Principia Mathematica*]{russell1910principia} (Russell & Whitehead, 1910), developed computationally by \cite[Alonzo Church]{churchsimplytyped} (simply typed lambda calculus, 1940), \cite[Roger Hindley]{hindleytypes} (1969) and \cite[Robin Milner]{milnertypeinference} (1978) with type inference, and \cite[Per Martin-Löf]{martinloeftypetheory} (dependent types, 1971).
+
+</div>

@@ -1,4 +1,101 @@
 window.bibData = {
+"fibonacciliber": {
+    title: "Liber Abaci",
+    author: "Leonardo of Pisa (Fibonacci)",
+    year: 1202,
+    url: "https://archive.org/details/LiberAbaci"
+},
+"fibonaccihistory": {
+    title: "Fibonacci: His Times and His Influence",
+    author: "Laurence Sigler",
+    year: 2002,
+    url: "https://link.springer.com/book/10.1007/978-1-4613-0079-3"
+},
+"fibonacciseq": {
+    title: "Fibonacci - Wikipedia, The Free Encyclopedia",
+    author: "Wikipedia contributors",
+    year: 2026,
+    url: "https://en.wikipedia.org/wiki/Fibonacci"
+},
+"fibonaccimathigon": {
+    title: "Fibonacci – Timeline of Mathematics",
+    author: "Mathigon",
+    year: 2026,
+    url: "https://mathigon.org/timeline/fibonacci"
+},
+"brahmagupta628": {
+    title: "Brāhmasphuṭasiddhānta",
+    author: "Brahmagupta",
+    year: 628,
+    url: "https://archive.org/details/Brahmasphutasiddhanta"
+},
+"backusfortran": {
+    title: "The FORTRAN Automatic Coding System",
+    author: "John W. Backus, R. J. Beeber, S. Best, R. Goldberg, L. M. Haibt, H. L. Herrick, R. A. Nelson, D. Sayre, P. B. Sheridan, H. Stern, I. Ziller, R. A. Hughes, R. Nutt",
+    year: 1957,
+    url: "https://archive.computerhistory.org/resources/text/Fortran/102649787.05.01.acc.pdf"
+},
+"algol60report": {
+    title: "Revised Report on the Algorithmic Language ALGOL 60",
+    author: "Peter Naur (editor), John W. Backus, Friedrich L. Bauer, Julien Green, C. Katz, John McCarthy, Alan J. Perlis, Heinz Rutishauser, Klaus Samelson, Bernard Vauquois, Joseph Henry Wegstein, Adriaan van Wijngaarden, Michael Woodger",
+    year: 1963,
+    url: "https://www.masswerk.at/algol60/report.htm"
+},
+"ieee754_1985": {
+    title: "IEEE Standard for Binary Floating-Point Arithmetic (IEEE 754-1985)",
+    author: "IEEE Computer Society, William Kahan (primary architect)",
+    year: 1985,
+    url: "https://ieeexplore.ieee.org/document/30711"
+},
+"ieee754_2008": {
+    title: "IEEE Standard for Floating-Point Arithmetic (IEEE 754-2008)",
+    author: "IEEE Computer Society",
+    year: 2008,
+    url: "https://ieeexplore.ieee.org/document/4610935"
+},
+"ieee754_2019": {
+    title: "IEEE Standard for Floating-Point Arithmetic (IEEE 754-2019)",
+    author: "IEEE Computer Society",
+    year: 2019,
+    url: "https://ieeexplore.ieee.org/document/8766229"
+},
+"c99standard": {
+    title: "ISO/IEC 9899:1999 (C99)",
+    author: "ISO/IEC JTC 1/SC 22/WG 14",
+    year: 1999,
+    url: "https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf"
+},
+"pep285": {
+    title: "PEP 285 – Adding a bool type",
+    author: "Guido van Rossum",
+    year: 2002,
+    url: "https://peps.python.org/pep-0285/"
+},
+"churchsimplytyped": {
+    title: "A Formulation of the Simple Theory of Types",
+    author: "Alonzo Church",
+    year: 1940,
+    url: "https://www.jstor.org/stable/2266170"
+},
+"hindleytypes": {
+    title: "The Principal Type-Scheme of an Object in Combinatory Logic",
+    author: "J. Roger Hindley",
+    year: 1969,
+    url: "https://www.ams.org/journals/tran/1969-146-00/S0002-9947-1969-0253905-6/S0002-9947-1969-0253905-6.pdf"
+},
+"milnertypeinference": {
+    title: "A Theory of Type Polymorphism in Programming",
+    author: "Robin Milner",
+    year: 1978,
+    url: "https://homepages.inf.ed.ac.uk/wadler/papers/papers-we-love/milner-type-polymorphism.pdf"
+},
+"martinloeftypetheory": {
+    title: "An Intuitionistic Theory of Types: Predicative Part",
+    author: "Per Martin-Löf",
+    year: 1975,
+    url: "https://archive-pml.github.io/martin-lof/pdfs/An-Intuitionistic-Theory-of-Types-Predicative-Part-1975.pdf"
+},
+
 	"leibniz1714monadology": {
 		title: "Monadologie",
 		author: "Gottfried Wilhelm Leibniz",
