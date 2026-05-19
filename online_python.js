@@ -690,7 +690,11 @@ if 'game' not in dir():
 if input_data is not None:
     result = predict(input_data)
     set_prediction_result(result)
-    idx, conf = _top_prediction(result)
+
+    # Only consider classes in the RPS mapping (ignore extra outputs)
+    rps_indices = list(game['rps_map'].keys())
+    rps_scores = [(i, result[i]) for i in rps_indices if i < len(result)]
+    idx, conf = max(rps_scores, key=lambda x: x[1])
     move = game['rps_map'][idx]
     emoji = _RPS_EMOJI[move]
 
@@ -716,74 +720,6 @@ if input_data is not None:
         print(f"  Score: {game['player1_score']} — {game['player2_score']}\\n")
 `,
 
-    image_group_battle: `# ⚔️ Group Battle — Capture photos, pair off, find winners!
-#
-# 1. Click "📸 Multi-Snap" to capture photos
-# 2. Press "▶ Run with Photos"
-#
-# Set beats = None for "highest confidence wins"
-beats = None
-
-if 'photos' not in dir() or not photos:
-    print("⚠️  No photos captured!")
-    print("  1. Click '📸 Multi-Snap'")
-    print("  2. Snap each player")
-    print("  3. Press '▶ Run with Photos'")
-else:
-    state = _setup_model()
-    _print_model_summary()
-
-    print("⚔️  GROUP BATTLE")
-    print("═" * 40)
-    print(f"  Photos: {num_photos} | Mode: {'Rules' if beats else 'Confidence'}")
-    print("═" * 40)
-
-    # Classify all photos
-    players = []
-    for i, photo in enumerate(list(photos[:num_photos])):
-        result = predict(photo)
-        check_interrupt()
-        top_idx, conf = _top_prediction(result)
-        label = _get_label(top_idx)
-        players.append({'num': i+1, 'label': label, 'confidence': conf})
-        print(f"  📷 Photo {i+1}: {label} ({conf*100:.1f}%)")
-
-    print()
-    if num_photos % 2 == 1:
-        print(f"  ⚠️ Odd number — Photo {num_photos} gets a BYE")
-
-    print("⚔️  MATCHUPS:")
-    print("─" * 40)
-
-    winners = []
-    for i in range(0, num_photos - 1, 2):
-        p1, p2 = players[i], players[i+1]
-
-        # Determine winner
-        if beats:
-            m1, m2 = p1['label'].lower().strip(), p2['label'].lower().strip()
-            if m1 != m2 and beats.get(m1) == m2:
-                winner, reason = p1, f"{m1} beats {m2}"
-            elif m1 != m2 and beats.get(m2) == m1:
-                winner, reason = p2, f"{m2} beats {m1}"
-            else:
-                winner = p1 if p1['confidence'] >= p2['confidence'] else p2
-                reason = f"{winner['confidence']*100:.1f}% wins"
-        else:
-            winner = p1 if p1['confidence'] >= p2['confidence'] else p2
-            reason = f"{winner['confidence']*100:.1f}% wins"
-
-        winners.append(winner)
-        print(f"  📷{p1['num']} {p1['label']} ({p1['confidence']*100:.0f}%)"
-              f" vs 📷{p2['num']} {p2['label']} ({p2['confidence']*100:.0f}%)")
-        print(f"    → 👑 Photo {winner['num']} wins! ({reason})\\n")
-
-    print("═" * 40)
-    print("🏆 WINNERS:")
-    for w in winners:
-        print(f"   👑 Photo {w['num']}: {w['label']} ({w['confidence']*100:.1f}%)")
-    print("═" * 40)
-`,
 };
 
 	const DEFAULT_CODE = TEMPLATES.hello_world;
@@ -3905,6 +3841,28 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		statusEl.innerHTML = '<span style="color:' + color + ';">' + count + ' / ' + needed + ' photos captured</span>';
 	}
 
+	function ensureRPSTemplateUpdated() {
+		var textarea = document.getElementById("pyodide_editor_textarea");
+		if (!textarea) return false;
+
+		var code = textarea.value;
+
+		// Detect OLD broken RPS template (uses _top_prediction which causes KeyError)
+		var hasOldRPS = code.includes("idx, conf = _top_prediction(result)") &&
+			code.includes("game['rps_map'][idx]");
+
+		if (hasOldRPS) {
+			// Replace with the fixed template
+			textarea.value = TEMPLATES.image_snapshot_rps;
+			scheduleHighlight();
+			saveEditorContent();
+			appendConsole("[🔧 Auto-updated RPS template to fix KeyError]\n", "info");
+			return true;
+		}
+
+		return false;
+	}
+
 	async function photosRun() {
 		if (capturedPhotos.length === 0) {
 			appendConsole("[⚠️ No photos captured yet! Press 📸 Snap first.]\n", "warn");
@@ -3916,6 +3874,14 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 			await initPyodide();
 			if (!pyodideReady) return;
 		}
+
+		if (isRunning) {
+			appendConsole("[⏳ Already running...]\n", "warn");
+			return;
+		}
+
+		// Auto-fix old RPS template if detected
+		ensureRPSTemplateUpdated();
 
 		// Validate photo count — must be even and >= 2
 		var neededInput = document.getElementById("pyodide_photos_needed");
@@ -3942,44 +3908,90 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 			appendConsole("[Error setting labels] " + e.message + "\n", "stderr");
 		}
 
-		// Detect which template is active
+		// Get the code from the editor
 		var textarea = document.getElementById("pyodide_editor_textarea");
 		var code = textarea ? textarea.value : '';
-		var isRPSTemplate = code.includes("image_snapshot_rps") || 
-			code.includes("ROCK PAPER SCISSORS") || 
-			(code.includes("game['turn']") && code.includes("rps_map"));
-		var isGroupBattle = code.includes("image_group_battle") || 
-			code.includes("GROUP BATTLE") || 
-			(code.includes("photos") && code.includes("num_photos") && code.includes("MATCHUPS"));
 
-		if (isRPSTemplate) {
-			// === RPS MODE: Feed photos one-by-one as input_data ===
-			appendConsole("[📸 " + photoCount + " photos — running RPS (one per turn)...]\n", "info");
+		if (!code.trim()) {
+			appendConsole("[No code to run]\n", "warn");
+			return;
+		}
 
-			for (var i = 0; i < photoCount; i++) {
+		// Detect which template is active
+		var isRPSTemplate = code.includes("ROCK PAPER SCISSORS") ||
+			(code.includes("game['turn']") && code.includes("rps_map")) ||
+			(code.includes("game[") && code.includes("_rps_"));
+
+		isRunning = true;
+		interruptExecution = false;
+		runCounter++;
+		var thisRun = runCounter;
+
+		var stopBtn = document.getElementById("pyodide_stop_btn");
+		if (stopBtn) stopBtn.disabled = false;
+
+		setStatus("⚡ Running...", "loading");
+		hideErrorIndicator();
+
+		appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
+
+		try {
+			await refreshModelInPython();
+
+			if (isRPSTemplate) {
+				// === RPS MODE: Feed photos one-by-one as input_data ===
+				appendConsole("[📸 " + photoCount + " photos — running RPS...]\n", "info");
+
+				for (var i = 0; i < photoCount; i++) {
+					if (interruptExecution) break;
+
+					try {
+						pyodideInstance.globals.set("input_data", pyodideInstance.toPy(photoDataList[i]));
+					} catch (e) {
+						appendConsole("[Error setting input_data for photo " + i + "] " + e.message + "\n", "stderr");
+						break;
+					}
+
+					// Run the code directly (NOT via pyodideEditorRun which has its own isRunning guard)
+					await pyodideInstance.runPythonAsync(code);
+				}
+			} else {
+				// === GROUP BATTLE or other template: Set photos list ===
 				try {
-					pyodideInstance.globals.set("input_data", pyodideInstance.toPy(photoDataList[i]));
+					pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
+					pyodideInstance.globals.set("num_photos", photoCount);
 				} catch (e) {
-					appendConsole("[Error setting input_data for photo " + i + "] " + e.message + "\n", "stderr");
+					appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
 					return;
 				}
-				await pyodideEditorRun();
 
-				// Check if execution was interrupted
-				if (interruptExecution) break;
-			}
-		} else {
-			// === GROUP BATTLE MODE (or any other template): Set photos list ===
-			try {
-				pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
-				pyodideInstance.globals.set("num_photos", photoCount);
-			} catch (e) {
-				appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
-				return;
+				appendConsole("[📸 " + photoCount + " photos loaded into `photos` list]\n", "info");
+				await pyodideInstance.runPythonAsync(code);
 			}
 
-			appendConsole("[📸 " + photoCount + " photos loaded into `photos` list — running code...]\n", "info");
-			await pyodideEditorRun();
+			if (thisRun === runCounter) {
+				appendConsole("─── ✓ Done ───\n", "info");
+				setStatus("✓ Ready", "ready");
+			}
+		} catch (e) {
+			if (thisRun === runCounter) {
+				if (e.message && e.message.includes("KeyboardInterrupt")) {
+					appendConsole("\n[⏹ Execution interrupted]\n", "warn");
+					setStatus("✓ Ready", "ready");
+				} else {
+					handlePythonError(e);
+				}
+			}
+		} finally {
+			if (thisRun === runCounter) {
+				isRunning = false;
+				interruptExecution = false;
+				if (stopBtn) stopBtn.disabled = true;
+			}
+		}
+
+		if (livePredictEnabled && lastPredictionResult !== null) {
+			showPredictionResult(lastPredictionResult);
 		}
 	}
 
