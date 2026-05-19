@@ -72,6 +72,13 @@
 	var _examplesTranslated = false;
 	var _tabObserver = null;
 
+	var _scrollPending = false;
+
+	var _templateLoading = false;
+	var _templateLoadTimer = null;
+
+	var _lineNumbersCache = '';
+
 	// =========================================================================
 	// DEFAULT CODE TEMPLATES
 	// =========================================================================
@@ -1238,22 +1245,50 @@ else:
 			if (!textarea || !lineNumbersEl) return;
 
 			var lineCount = textarea.value.split('\n').length;
-			// Only rebuild if line count changed (avoid unnecessary DOM writes)
 			var currentCount = lineNumbersEl.getAttribute('data-lines');
 			if (currentCount && parseInt(currentCount) === lineCount) return;
 
+			// Build string only if count changed
 			var numbers = '';
 			for (var i = 1; i <= lineCount; i++) {
 				numbers += i + '\n';
 			}
+
+			// Avoid setting textContent if it hasn't changed (prevents reflow)
+			if (_lineNumbersCache === numbers) return;
+			_lineNumbersCache = numbers;
+
 			lineNumbersEl.textContent = numbers;
 			lineNumbersEl.setAttribute('data-lines', lineCount);
 		}
 
+		function applyScrollPerformanceHints() {
+			var textarea = document.getElementById('pyodide_editor_textarea');
+			var highlightEl = document.getElementById('pyodide_editor_highlight');
+			var lineNumbersEl = document.getElementById('pyodide_editor_line_numbers');
+
+			[textarea, highlightEl, lineNumbersEl].forEach(function(el) {
+				if (!el) return;
+				el.style.willChange = 'scroll-position, transform';
+				el.style.contain = 'layout style';
+				// Use GPU-accelerated layer
+				el.style.transform = 'translateZ(0)';
+				el.style.backfaceVisibility = 'hidden';
+			});
+		}
+
 		function syncScroll() {
-			if (_scrollRAF) return;
+			// Skip scroll sync entirely while a template is being loaded
+			if (_templateLoading) return;
+
+			if (_scrollPending) return;
+			_scrollPending = true;
+
+			if (_scrollRAF) cancelAnimationFrame(_scrollRAF);
 			_scrollRAF = requestAnimationFrame(function() {
 				_scrollRAF = null;
+				_scrollPending = false;
+
 				var textarea = document.getElementById('pyodide_editor_textarea');
 				var highlightEl = document.getElementById('pyodide_editor_highlight');
 				var lineNumbersEl = document.getElementById('pyodide_editor_line_numbers');
@@ -1262,7 +1297,6 @@ else:
 				var scrollTop = textarea.scrollTop;
 				var scrollLeft = textarea.scrollLeft;
 
-				// scrollTop DOES work on overflow:hidden elements — it just hides the scrollbar
 				if (highlightEl) {
 					highlightEl.scrollTop = scrollTop;
 					highlightEl.scrollLeft = scrollLeft;
@@ -1278,22 +1312,98 @@ else:
 	// HIGHLIGHT SYNC
 	// =========================================================================
 
-				function updateHighlight() {
-					var textarea = document.getElementById('pyodide_editor_textarea');
-					var highlightEl = document.getElementById('pyodide_editor_highlight');
-					if (!textarea || !highlightEl) return;
-
-					var code = textarea.value;
-					highlightEl.innerHTML = highlightPython(code) + '\n';
-					updateLineNumbers();
-					// Sync scroll position after content update
-					syncScroll();
-				}
-
-	function scheduleHighlight() {
-		if (highlightDebounce) cancelAnimationFrame(highlightDebounce);
-		highlightDebounce = requestAnimationFrame(updateHighlight);
+		function injectScrollPerformanceCSS() {
+			var style = document.createElement('style');
+			style.id = 'pe-scroll-perf-css';
+			style.textContent = `
+	/* GPU-accelerate the editor layers */
+	#pyodide_editor_textarea,
+	#pyodide_editor_highlight,
+	#pyodide_editor_line_numbers {
+	    -webkit-overflow-scrolling: touch;
+	    scroll-behavior: auto !important; /* Disable smooth scroll on these — we want instant */
+	    overflow-anchor: none; /* Prevent scroll anchoring interference */
+	    will-change: scroll-position;
+	    transform: translateZ(0);
+	    backface-visibility: hidden;
+	    -webkit-backface-visibility: hidden;
 	}
+
+	/* Reduce paint cost of highlight overlay */
+	#pyodide_editor_highlight {
+	    pointer-events: none;
+	    contain: strict;
+	    content-visibility: auto;
+	    contain-intrinsic-size: auto 500px;
+	}
+
+	/* Reduce layout cost of line numbers */
+	#pyodide_editor_line_numbers {
+	    contain: content;
+	    content-visibility: auto;
+	    contain-intrinsic-size: auto 500px;
+	}
+
+	/* Examples panel: reduce off-screen cost */
+	#pyodide_examples_panel {
+	    contain: layout style paint;
+	}
+
+	#pyodide_examples_panel:not(.pe-visible) {
+	    content-visibility: hidden;
+	}
+
+	/* Prevent layout shift during template load */
+	.pe-editor-area {
+	    contain: size layout;
+	    overflow: hidden;
+	}
+    `;
+			document.head.appendChild(style);
+		}
+
+		function updateHighlight() {
+			if (_templateLoading) return; // Don't fight with template load
+
+			var textarea = document.getElementById('pyodide_editor_textarea');
+			var highlightEl = document.getElementById('pyodide_editor_highlight');
+			if (!textarea || !highlightEl) return;
+
+			var code = textarea.value;
+
+			// For very large code (>5000 chars), use a simpler/faster approach
+			if (code.length > 5000) {
+				// Only highlight visible portion + buffer
+				var scrollTop = textarea.scrollTop;
+				var lineHeight = parseInt(getComputedStyle(textarea).lineHeight) || 18;
+				var visibleLines = Math.ceil(textarea.clientHeight / lineHeight);
+				var startLine = Math.max(0, Math.floor(scrollTop / lineHeight) - 5);
+				var endLine = startLine + visibleLines + 10;
+
+				var lines = code.split('\n');
+				var before = lines.slice(0, startLine).join('\n');
+				var visible = lines.slice(startLine, endLine).join('\n');
+				var after = lines.slice(endLine).join('\n');
+
+				// Only syntax-highlight the visible portion
+				var html = escapeHtml(before) + (before ? '\n' : '') +
+					highlightPython(visible) + 
+					(after ? '\n' : '') + escapeHtml(after) + '\n';
+				highlightEl.innerHTML = html;
+			} else {
+				highlightEl.innerHTML = highlightPython(code) + '\n';
+			}
+
+			updateLineNumbers();
+			syncScroll();
+		}
+
+		function scheduleHighlight() {
+			// Don't schedule during template loading — updateHighlightImmediate handles it
+			if (_templateLoading) return;
+			if (highlightDebounce) cancelAnimationFrame(highlightDebounce);
+			highlightDebounce = requestAnimationFrame(updateHighlight);
+		}
 
 	// =========================================================================
 	// MODE TOGGLE (Simple / Advanced)
@@ -1347,9 +1457,18 @@ else:
 
 			if (isVisible) {
 				panel.classList.remove('pe-visible');
-				panel.style.display = 'none';
+				// Use a short delay before hiding to allow CSS transition
+				setTimeout(function() {
+					if (!panel.classList.contains('pe-visible')) {
+						panel.style.display = 'none';
+						panel.style.contentVisibility = 'hidden';
+					}
+				}, 200);
 			} else {
+				panel.style.contentVisibility = 'visible';
 				panel.style.display = 'flex';
+				// Force reflow before adding class for smooth transition
+				void panel.offsetHeight;
 				panel.classList.add('pe-visible');
 
 				if (!_examplesTranslated) {
@@ -2568,43 +2687,83 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// TEMPLATE & FPS (FIXED — auto-start webcam)
 	// =========================================================================
 
+	function updateHighlightImmediate() {
+		var textarea = document.getElementById('pyodide_editor_textarea');
+		var highlightEl = document.getElementById('pyodide_editor_highlight');
+		if (!textarea || !highlightEl) return;
+
+		var code = textarea.value;
+
+		// Temporarily disable pointer events and transitions during bulk update
+		highlightEl.style.pointerEvents = 'none';
+		highlightEl.style.transition = 'none';
+
+		highlightEl.innerHTML = highlightPython(code) + '\n';
+		updateLineNumbers();
+
+		// Force layout recalc, then re-enable
+		void highlightEl.offsetHeight; // Force reflow
+
+		highlightEl.style.pointerEvents = '';
+		highlightEl.style.transition = '';
+
+		// Ensure scroll is at top for new content
+		highlightEl.scrollTop = 0;
+		highlightEl.scrollLeft = 0;
+	}
+
 	function loadTemplate(name) {
 		const textarea = document.getElementById("pyodide_editor_textarea");
 		if (!textarea || !TEMPLATES[name]) return;
 
 		if (name.startsWith('image_webcam') && !isImageModel()) {
-			appendConsole("[⚠️ Webcam templates require an image model (input shape [batch, H, W, C])]\n", "warn");
-			appendConsole("[📄 Loading generic I/O template instead]\n", "info");
+			appendConsole("[⚠️ Webcam templates require an image model]\n", "warn");
 			name = 'generic_io';
 		}
 
+		// --- FREEZE scrolling during template load ---
+		_templateLoading = true;
+
+		// Immediately reset scroll position BEFORE changing content
+		textarea.scrollTop = 0;
+		textarea.scrollLeft = 0;
+
+		var highlightEl = document.getElementById('pyodide_editor_highlight');
+		var lineNumbersEl = document.getElementById('pyodide_editor_line_numbers');
+		if (highlightEl) { highlightEl.scrollTop = 0; highlightEl.scrollLeft = 0; }
+		if (lineNumbersEl) { lineNumbersEl.scrollTop = 0; }
+
+		// Set new content
 		textarea.value = TEMPLATES[name];
 		saveEditorContent();
-		scheduleHighlight();
-		appendConsole("[📄 Loaded template: " + name + "]\n", "info");
 
-		// Close examples panel after selection (FIXED: also set display:none)
+		// Force immediate highlight (not debounced) so content is ready
+		updateHighlightImmediate();
+
+		// Close examples panel
 		var panel = document.getElementById('pyodide_examples_panel');
 		if (panel) {
 			panel.classList.remove('pe-visible');
 			panel.style.display = 'none';
 		}
 
-		// *** FIX: Auto-start webcam when loading webcam template ***
+		appendConsole("[📄 Loaded template: " + name + "]\n", "info");
+
+		// --- UNFREEZE after a short delay to let the browser settle ---
+		clearTimeout(_templateLoadTimer);
+		_templateLoadTimer = setTimeout(function() {
+			_templateLoading = false;
+		}, 150);
+
+		// Auto-start webcam / auto-run logic (unchanged)
 		if (name === 'image_webcam') {
 			if (!webcamStream) {
 				appendConsole("[📷 Auto-starting webcam...]\n", "info");
 				startWebcam();
-			} else {
-				appendConsole("[📷 Webcam already active — predictions running live]\n", "info");
 			}
 		}
-
-		// Auto-run for certain templates
 		if (name === 'random_input' || name === 'weights_inspect' || name === 'hello_world') {
-			setTimeout(function () {
-				pyodideEditorRun();
-			}, 100);
+			setTimeout(function () { pyodideEditorRun(); }, 100);
 		}
 	}
 
@@ -2878,181 +3037,183 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// EDITOR KEY HANDLERS & SETUP
 	// =========================================================================
 
-		function autoResizeTextarea() {
-			const textarea = document.getElementById('pyodide_editor_textarea');
-			if (!textarea) return;
-			// Reset height to auto to measure scrollHeight accurately
-			textarea.style.height = 'auto';
-			// Set height to scrollHeight so all content is visible (no internal scroll)
-			textarea.style.height = textarea.scrollHeight + 'px';
-		}
+	function autoResizeTextarea() {
+		// REMOVED / NO-OP: This function causes severe layout thrashing
+		// (resetting height to 'auto' then reading scrollHeight forces synchronous reflow)
+		// which directly conflicts with scroll performance.
+		// The editor should use a fixed height with overflow:auto instead.
+	}
 
-		function setupEditorKeyHandlers() {
-			var textarea = document.getElementById("pyodide_editor_textarea");
-			if (!textarea) return;
+	function setupEditorKeyHandlers() {
+		var textarea = document.getElementById("pyodide_editor_textarea");
+		if (!textarea) return;
 
-			textarea.addEventListener("input", function () {
+		textarea.addEventListener("input", function () {
+			// Don't schedule highlight during template loading
+			if (!_templateLoading) {
 				scheduleHighlight();
-				// Debounced auto-save
-				clearTimeout(autoSaveTimer);
-				autoSaveTimer = setTimeout(saveEditorContent, 3000);
-			});
+			}
+			// Debounced auto-save
+			clearTimeout(autoSaveTimer);
+			autoSaveTimer = setTimeout(saveEditorContent, 3000);
+		});
 
-			// Scroll listener directly on textarea
-			textarea.addEventListener("scroll", syncScroll);
+		// PASSIVE scroll listener — tells browser we won't call preventDefault()
+		// This allows the browser to scroll immediately without waiting for JS
+		textarea.addEventListener("scroll", syncScroll, { passive: true });
 
-			textarea.addEventListener("keydown", function (e) {
-				// Tab handling
-				if (e.key === "Tab") {
-					e.preventDefault();
-					var start = this.selectionStart;
-					var end = this.selectionEnd;
-					var value = this.value;
+		textarea.addEventListener("keydown", function (e) {
+			// Tab handling
+			if (e.key === "Tab") {
+				e.preventDefault();
+				var start = this.selectionStart;
+				var end = this.selectionEnd;
+				var value = this.value;
 
-					if (e.shiftKey) {
-						// Dedent
-						var beforeSelection = value.substring(0, start);
-						var lineStart = beforeSelection.lastIndexOf("\n") + 1;
-						var textToProcess = value.substring(lineStart, end);
-						var lines = textToProcess.split("\n");
-						var removedChars = 0;
-						var firstLineRemoved = 0;
+				if (e.shiftKey) {
+					// Dedent
+					var beforeSelection = value.substring(0, start);
+					var lineStart = beforeSelection.lastIndexOf("\n") + 1;
+					var textToProcess = value.substring(lineStart, end);
+					var lines = textToProcess.split("\n");
+					var removedChars = 0;
+					var firstLineRemoved = 0;
 
-						var dedentedLines = lines.map(function (line, idx) {
-							if (line.startsWith("    ")) {
-								if (idx === 0) firstLineRemoved = 4;
-								removedChars += 4;
-								return line.substring(4);
-							} else if (line.startsWith("\t")) {
-								if (idx === 0) firstLineRemoved = 1;
-								removedChars++;
-								return line.substring(1);
-							}
-							return line;
-						});
-
-						this.value = value.substring(0, lineStart) + dedentedLines.join("\n") + value.substring(end);
-						this.selectionStart = Math.max(lineStart, start - firstLineRemoved);
-						this.selectionEnd = end - removedChars;
-					} else if (start !== end) {
-						// Indent selection
-						var beforeSel = value.substring(0, start);
-						var ls = beforeSel.lastIndexOf("\n") + 1;
-						var proc = value.substring(ls, end);
-						var lns = proc.split("\n");
-						var indented = lns.map(function (line) { return "    " + line; });
-
-						this.value = value.substring(0, ls) + indented.join("\n") + value.substring(end);
-						this.selectionStart = start + 4;
-						this.selectionEnd = end + (lns.length * 4);
-					} else {
-						// Insert 4 spaces
-						this.value = value.substring(0, start) + "    " + value.substring(end);
-						this.selectionStart = this.selectionEnd = start + 4;
-					}
-					scheduleHighlight();
-					return;
-				}
-
-				// Enter - auto indent
-				if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
-					e.preventDefault();
-					var s = this.selectionStart;
-					var v = this.value;
-					var lineStart2 = v.lastIndexOf("\n", s - 1) + 1;
-					var currentLine = v.substring(lineStart2, s);
-					var indent = currentLine.match(/^[\t ]*/)[0];
-					var trimmedLine = currentLine.trimEnd();
-					var newIndent = indent;
-
-					if (trimmedLine.endsWith(":")) {
-						newIndent += "    ";
-					}
-					if (/^\s*(return|break|continue|pass)\b/.test(trimmedLine)) {
-						if (newIndent.length >= 4) {
-							newIndent = newIndent.substring(4);
-						} else if (newIndent.length >= 1 && newIndent[0] === "\t") {
-							newIndent = newIndent.substring(1);
+					var dedentedLines = lines.map(function (line, idx) {
+						if (line.startsWith("    ")) {
+							if (idx === 0) firstLineRemoved = 4;
+							removedChars += 4;
+							return line.substring(4);
+						} else if (line.startsWith("\t")) {
+							if (idx === 0) firstLineRemoved = 1;
+							removedChars++;
+							return line.substring(1);
 						}
+						return line;
+					});
+
+					this.value = value.substring(0, lineStart) + dedentedLines.join("\n") + value.substring(end);
+					this.selectionStart = Math.max(lineStart, start - firstLineRemoved);
+					this.selectionEnd = end - removedChars;
+				} else if (start !== end) {
+					// Indent selection
+					var beforeSel = value.substring(0, start);
+					var ls = beforeSel.lastIndexOf("\n") + 1;
+					var proc = value.substring(ls, end);
+					var lns = proc.split("\n");
+					var indented = lns.map(function (line) { return "    " + line; });
+
+					this.value = value.substring(0, ls) + indented.join("\n") + value.substring(end);
+					this.selectionStart = start + 4;
+					this.selectionEnd = end + (lns.length * 4);
+				} else {
+					// Insert 4 spaces
+					this.value = value.substring(0, start) + "    " + value.substring(end);
+					this.selectionStart = this.selectionEnd = start + 4;
+				}
+				scheduleHighlight();
+				return;
+			}
+
+			// Enter - auto indent
+			if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
+				e.preventDefault();
+				var s = this.selectionStart;
+				var v = this.value;
+				var lineStart2 = v.lastIndexOf("\n", s - 1) + 1;
+				var currentLine = v.substring(lineStart2, s);
+				var indent = currentLine.match(/^[\t ]*/)[0];
+				var trimmedLine = currentLine.trimEnd();
+				var newIndent = indent;
+
+				if (trimmedLine.endsWith(":")) {
+					newIndent += "    ";
+				}
+				if (/^\s*(return|break|continue|pass)\b/.test(trimmedLine)) {
+					if (newIndent.length >= 4) {
+						newIndent = newIndent.substring(4);
+					} else if (newIndent.length >= 1 && newIndent[0] === "\t") {
+						newIndent = newIndent.substring(1);
 					}
-
-					var insertion = "\n" + newIndent;
-					this.value = v.substring(0, s) + insertion + v.substring(this.selectionEnd);
-					this.selectionStart = this.selectionEnd = s + insertion.length;
-					scheduleHighlight();
-					return;
 				}
 
-				// Ctrl+Enter - run
-				if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-					e.preventDefault();
-					pyodideEditorRun();
-					return;
-				}
+				var insertion = "\n" + newIndent;
+				this.value = v.substring(0, s) + insertion + v.substring(this.selectionEnd);
+				this.selectionStart = this.selectionEnd = s + insertion.length;
+				scheduleHighlight();
+				return;
+			}
 
-				// Ctrl+S - save
-				if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
-					e.preventDefault();
-					saveEditorContent();
-					appendConsole("[💾 Saved to browser storage]\n", "info");
-					return;
-				}
+			// Ctrl+Enter - run
+			if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				pyodideEditorRun();
+				return;
+			}
 
-				// Ctrl+D - duplicate line
-				if (e.key === "d" && (e.ctrlKey || e.metaKey)) {
-					e.preventDefault();
-					var startD = this.selectionStart;
-					var valueD = this.value;
-					var lsD = valueD.lastIndexOf("\n", startD - 1) + 1;
-					var leD = valueD.indexOf("\n", startD);
-					if (leD === -1) leD = valueD.length;
-					var lineD = valueD.substring(lsD, leD);
-					this.value = valueD.substring(0, leD) + "\n" + lineD + valueD.substring(leD);
-					this.selectionStart = this.selectionEnd = startD + lineD.length + 1;
-					scheduleHighlight();
-					return;
-				}
+			// Ctrl+S - save
+			if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				saveEditorContent();
+				appendConsole("[💾 Saved to browser storage]\n", "info");
+				return;
+			}
 
-				// Escape - stop execution / close panels
-				if (e.key === "Escape") {
-					e.preventDefault();
-					if (isRunning || webcamStream) {
-						pyodideEditorStop();
-					} else {
-						// Close examples panel if open
-						var panel = document.getElementById('pyodide_examples_panel');
-						if (panel && panel.classList.contains('pe-visible')) {
-							panel.classList.remove('pe-visible');
-						}
+			// Ctrl+D - duplicate line
+			if (e.key === "d" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				var startD = this.selectionStart;
+				var valueD = this.value;
+				var lsD = valueD.lastIndexOf("\n", startD - 1) + 1;
+				var leD = valueD.indexOf("\n", startD);
+				if (leD === -1) leD = valueD.length;
+				var lineD = valueD.substring(lsD, leD);
+				this.value = valueD.substring(0, leD) + "\n" + lineD + valueD.substring(leD);
+				this.selectionStart = this.selectionEnd = startD + lineD.length + 1;
+				scheduleHighlight();
+				return;
+			}
+
+			// Escape - stop execution / close panels
+			if (e.key === "Escape") {
+				e.preventDefault();
+				if (isRunning || webcamStream) {
+					pyodideEditorStop();
+				} else {
+					// Close examples panel if open
+					var panel = document.getElementById('pyodide_examples_panel');
+					if (panel && panel.classList.contains('pe-visible')) {
+						panel.classList.remove('pe-visible');
 					}
-					return;
 				}
+				return;
+			}
 
-				// Ctrl+Shift+W - toggle webcam
-				if (e.key === "W" && e.ctrlKey && e.shiftKey) {
-					e.preventDefault();
-					if (webcamStream) {
-						stopWebcam();
-					} else {
-						startWebcam();
-					}
-					return;
+			// Ctrl+Shift+W - toggle webcam
+			if (e.key === "W" && e.ctrlKey && e.shiftKey) {
+				e.preventDefault();
+				if (webcamStream) {
+					stopWebcam();
+				} else {
+					startWebcam();
 				}
+				return;
+			}
 
-				// Ctrl+Shift+F - toggle fullscreen
-				if (e.key === "F" && e.ctrlKey && e.shiftKey) {
-					e.preventDefault();
-					toggleFullscreen();
-					return;
-				}
+			// Ctrl+Shift+F - toggle fullscreen
+			if (e.key === "F" && e.ctrlKey && e.shiftKey) {
+				e.preventDefault();
+				toggleFullscreen();
+				return;
+			}
 
-				// Ctrl+/ - toggle comment
-				if (e.key === "/" && (e.ctrlKey || e.metaKey)) {
-					e.preventDefault();
-					toggleComment(this);
-					return;
-				}
-			});
+			// Ctrl+/ - toggle comment
+			if (e.key === "/" && (e.ctrlKey || e.metaKey)) {
+				e.preventDefault();
+				toggleComment(this);
+				return;
+			}
+		});
 
 		// Auto-close brackets when wrapping selection
 		textarea.addEventListener("keypress", function (e) {
@@ -3074,6 +3235,8 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 				}
 			}
 		});
+
+		applyScrollPerformanceHints();
 
 		// Load content and do initial highlight
 		loadEditorContent();
@@ -3166,6 +3329,8 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	}
 
 	function initWhenReady() {
+		injectScrollPerformanceCSS();   // <-- FIX 10
+		applyScrollPerformanceHints();  // <-- FIX 2
 		setupEditorKeyHandlers();
 		setupLivePredictions();
 		setupVisibilityObservers();
