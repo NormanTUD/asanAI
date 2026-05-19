@@ -79,6 +79,10 @@
 
 	var _lineNumbersCache = '';
 
+	var _consoleBatch = [];
+	var _consoleFlushRAF = null;
+	var _consoleScrollRAF = null;
+
 	// =========================================================================
 	// DEFAULT CODE TEMPLATES
 	// =========================================================================
@@ -1316,6 +1320,16 @@ else:
 			var style = document.createElement('style');
 			style.id = 'pe-scroll-perf-css';
 			style.textContent = `
+	/* Prevent scroll-anchor reflow on console output */
+#pyodide_console_output {
+    overflow-anchor: none;
+    contain: layout style;
+    will-change: scroll-position;
+}
+
+#pyodide_console_output > span {
+    contain: layout style;
+}
 	/* GPU-accelerate the editor layers */
 	#pyodide_editor_textarea,
 	#pyodide_editor_highlight,
@@ -1583,28 +1597,105 @@ else:
 	/**
 	 * Append text to the console
 	 */
-	function appendConsole(text, type) {
-		const output = document.getElementById("pyodide_console_output");
-		if (!output) return;
 
-		const span = document.createElement("span");
-		span.style.display = "inline";
-		span.textContent = text;
+		// =========================================================================
+		// CONSOLE OUTPUT — BATCHED (eliminates forced reflow)
+		// =========================================================================
 
-		switch (type) {
-			case "stderr": span.style.color = "#ff6b6b"; break;
-			case "warn": span.style.color = "#ffd93d"; break;
-			case "info": span.style.color = "#6c7086"; break;
-			case "stdout": default: span.style.color = "#00ff88"; break;
+		function appendConsole(text, type) {
+			_consoleBatch.push({ text: text, type: type });
+
+			if (!_consoleFlushRAF) {
+				_consoleFlushRAF = requestAnimationFrame(flushConsole);
+			}
 		}
 
-		output.appendChild(span);
+		function flushConsole() {
+			_consoleFlushRAF = null;
 
-		while (output.childNodes.length > 500) {
-			output.removeChild(output.firstChild);
+			var output = document.getElementById("pyodide_console_output");
+			if (!output || _consoleBatch.length === 0) return;
+
+			// Build a document fragment (no reflows until appended)
+			var frag = document.createDocumentFragment();
+
+			for (var i = 0; i < _consoleBatch.length; i++) {
+				var item = _consoleBatch[i];
+				var span = document.createElement("span");
+				span.style.display = "inline";
+				span.textContent = item.text;
+
+				switch (item.type) {
+					case "stderr": span.style.color = "#ff6b6b"; break;
+					case "warn":   span.style.color = "#ffd93d"; break;
+					case "info":   span.style.color = "#6c7086"; break;
+					case "stdout": default: span.style.color = "#00ff88"; break;
+				}
+
+				frag.appendChild(span);
+			}
+
+			_consoleBatch = [];
+
+			// Single DOM write
+			output.appendChild(frag);
+
+			// Prune excess nodes (batch the check)
+			while (output.childNodes.length > 500) {
+				output.removeChild(output.firstChild);
+			}
+
+			// Defer scroll to NEXT frame — avoids forced reflow in this frame
+			if (!_consoleScrollRAF) {
+				_consoleScrollRAF = requestAnimationFrame(function() {
+					_consoleScrollRAF = null;
+					if (output) {
+						output.scrollTop = output.scrollHeight;
+					}
+				});
+			}
 		}
-		output.scrollTop = output.scrollHeight;
-	}
+
+		/**
+		 * Force-flush console immediately (use sparingly — e.g., before showing an error)
+		 * This DOES cause a reflow, but only when explicitly needed.
+		 */
+		function flushConsoleSync() {
+			if (_consoleFlushRAF) {
+				cancelAnimationFrame(_consoleFlushRAF);
+				_consoleFlushRAF = null;
+			}
+			if (_consoleScrollRAF) {
+				cancelAnimationFrame(_consoleScrollRAF);
+				_consoleScrollRAF = null;
+			}
+
+			var output = document.getElementById("pyodide_console_output");
+			if (!output || _consoleBatch.length === 0) return;
+
+			var frag = document.createDocumentFragment();
+			for (var i = 0; i < _consoleBatch.length; i++) {
+				var item = _consoleBatch[i];
+				var span = document.createElement("span");
+				span.style.display = "inline";
+				span.textContent = item.text;
+				switch (item.type) {
+					case "stderr": span.style.color = "#ff6b6b"; break;
+					case "warn":   span.style.color = "#ffd93d"; break;
+					case "info":   span.style.color = "#6c7086"; break;
+					case "stdout": default: span.style.color = "#00ff88"; break;
+				}
+				frag.appendChild(span);
+			}
+			_consoleBatch = [];
+			output.appendChild(frag);
+
+			while (output.childNodes.length > 500) {
+				output.removeChild(output.firstChild);
+			}
+
+			output.scrollTop = output.scrollHeight;
+		}
 
 	/**
 	 * Append a rich output cell (canvas, HTML, image) to the console
@@ -3398,8 +3489,6 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			if (!pyodideReady) return;
 		}
 
-		// Only call ensureLiveStream if we don't already have a live stream
-		// This avoids the 300ms delay on every snap after the first
 		var video = document.getElementById("pyodide_webcam_video");
 		var streamAlreadyLive = snapshotStream && video && video.srcObject === snapshotStream && !video.paused && video.readyState >= 2;
 
@@ -3414,7 +3503,6 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			return;
 		}
 
-		// Get model input dimensions
 		var info = getModelInfoForPython();
 		if (!info || !info.input_shape) {
 			appendConsole("[Error] No model loaded.\n", "stderr");
@@ -3426,25 +3514,24 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		var targetW = inputShape[2] || 40;
 		var channels = inputShape[3] || 3;
 
-		// Grab current frame and resize to model input size
+		// Grab frame
 		var modelCanvas = document.createElement("canvas");
 		modelCanvas.width = targetW;
 		modelCanvas.height = targetH;
-		var modelCtx = modelCanvas.getContext("2d");
+		var modelCtx = modelCanvas.getContext("2d", { willReadFrequently: true });
 		modelCtx.drawImage(video, 0, 0, targetW, targetH);
 
 		var imageData = modelCtx.getImageData(0, 0, targetW, targetH);
 		var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
 
-		// Also create a larger thumbnail for display
+		// Thumbnail — use smaller size (64px) for speed
 		var thumbCanvas = document.createElement("canvas");
-		thumbCanvas.width = 128;
-		thumbCanvas.height = 128;
+		thumbCanvas.width = 64;
+		thumbCanvas.height = 64;
 		var thumbCtx = thumbCanvas.getContext("2d");
-		thumbCtx.drawImage(video, 0, 0, 128, 128);
-		var thumbnailDataURL = thumbCanvas.toDataURL("image/jpeg", 0.7);
+		thumbCtx.drawImage(video, 0, 0, 64, 64);
+		var thumbnailDataURL = thumbCanvas.toDataURL("image/jpeg", 0.5);
 
-		// Store the photo
 		var photoIndex = capturedPhotos.length;
 		capturedPhotos.push({
 			pixelData: inputList,
@@ -3452,17 +3539,15 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			index: photoIndex
 		});
 
-		// Update the visual strip
+		// Batch UI updates — single appendConsole call
 		updatePhotosStrip();
-
-		// Update status (with validation)
 		updatePhotosStatus();
 
 		var needed = parseInt(document.getElementById("pyodide_photos_needed").value) || 2;
-		appendConsole("[📸 Photo " + (photoIndex + 1) + " captured (" + targetW + "x" + targetH + ")]\n", "info");
-
 		if (capturedPhotos.length >= needed) {
-			appendConsole("[✅ All " + needed + " photos captured! Press ▶ Run with Photos]\n", "info");
+			appendConsole("[📸 Photo " + (photoIndex + 1) + "/" + needed + " ✅ All captured! Press ▶ Run]\n", "info");
+		} else {
+			appendConsole("[📸 Photo " + (photoIndex + 1) + "/" + needed + " captured]\n", "info");
 		}
 	}
 
