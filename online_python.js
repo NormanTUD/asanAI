@@ -2583,9 +2583,12 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		scheduleHighlight();
 		appendConsole("[📄 Loaded template: " + name + "]\n", "info");
 
-		// Close examples panel after selection
+		// Close examples panel after selection (FIXED: also set display:none)
 		var panel = document.getElementById('pyodide_examples_panel');
-		if (panel) panel.classList.remove('pe-visible');
+		if (panel) {
+			panel.classList.remove('pe-visible');
+			panel.style.display = 'none';
+		}
 
 		// *** FIX: Auto-start webcam when loading webcam template ***
 		if (name === 'image_webcam') {
