@@ -2476,74 +2476,77 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	// EXECUTION (FIXED)
 	// =========================================================================
 
-	async function pyodideEditorRun() {
-		if (isRunning) {
-			appendConsole("[⏳ Already running...]\n", "warn");
-			return;
-		}
+		async function pyodideEditorRun() {
+			// *** AUTOCOMPLETE GUARD: Never auto-execute during autocomplete insertion ***
+			if (window._acInserting) return;
 
-		const textarea = document.getElementById("pyodide_editor_textarea");
-		if (!textarea) return;
-
-		const code = textarea.value;
-		if (!code.trim()) {
-			appendConsole("[No code to run]\n", "warn");
-			return;
-		}
-
-		saveEditorContent();
-
-		if (!pyodideReady) {
-			appendConsole("[⏳ Initializing Pyodide...]\n", "info");
-			await initPyodide();
-			if (!pyodideReady) {
-				appendConsole("[ERROR] Pyodide failed to initialize.\n", "stderr");
+			if (isRunning) {
+				appendConsole("[⏳ Already running...]\n", "warn");
 				return;
 			}
-		}
 
-		isRunning = true;
-		interruptExecution = false;
-		runCounter++;
-		const thisRun = runCounter;
+			const textarea = document.getElementById("pyodide_editor_textarea");
+			if (!textarea) return;
 
-		const stopBtn = document.getElementById("pyodide_stop_btn");
-		if (stopBtn) stopBtn.disabled = false;
-
-		setStatus("⚡ Running...", "loading");
-		hideErrorIndicator();
-
-		appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
-
-		try {
-			await refreshModelInPython();
-			await pyodideInstance.runPythonAsync(code);
-
-			if (isRunning && thisRun === runCounter) {
-				appendConsole("─── ✓ Done ───\n", "info");
-				setStatus("✓ Ready", "ready");
+			const code = textarea.value;
+			if (!code.trim()) {
+				appendConsole("[No code to run]\n", "warn");
+				return;
 			}
-		} catch (e) {
-			if (thisRun === runCounter) {
-				if (e.message && e.message.includes("KeyboardInterrupt")) {
-					appendConsole("\n[⏹ Execution interrupted]\n", "warn");
-					setStatus("✓ Ready", "ready");
-				} else {
-					handlePythonError(e);
+
+			saveEditorContent();
+
+			if (!pyodideReady) {
+				appendConsole("[⏳ Initializing Pyodide...]\n", "info");
+				await initPyodide();
+				if (!pyodideReady) {
+					appendConsole("[ERROR] Pyodide failed to initialize.\n", "stderr");
+					return;
 				}
 			}
-		} finally {
-			if (thisRun === runCounter) {
-				isRunning = false;
-				interruptExecution = false;
-				if (stopBtn) stopBtn.disabled = true;
+
+			isRunning = true;
+			interruptExecution = false;
+			runCounter++;
+			const thisRun = runCounter;
+
+			const stopBtn = document.getElementById("pyodide_stop_btn");
+			if (stopBtn) stopBtn.disabled = false;
+
+			setStatus("⚡ Running...", "loading");
+			hideErrorIndicator();
+
+			appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
+
+			try {
+				await refreshModelInPython();
+				await pyodideInstance.runPythonAsync(code);
+
+				if (isRunning && thisRun === runCounter) {
+					appendConsole("─── ✓ Done ───\n", "info");
+					setStatus("✓ Ready", "ready");
+				}
+			} catch (e) {
+				if (thisRun === runCounter) {
+					if (e.message && e.message.includes("KeyboardInterrupt")) {
+						appendConsole("\n[⏹ Execution interrupted]\n", "warn");
+						setStatus("✓ Ready", "ready");
+					} else {
+						handlePythonError(e);
+					}
+				}
+			} finally {
+				if (thisRun === runCounter) {
+					isRunning = false;
+					interruptExecution = false;
+					if (stopBtn) stopBtn.disabled = true;
+				}
+			}
+
+			if (livePredictEnabled && lastPredictionResult !== null) {
+				showPredictionResult(lastPredictionResult);
 			}
 		}
-
-		if (livePredictEnabled && lastPredictionResult !== null) {
-			showPredictionResult(lastPredictionResult);
-		}
-	}
 
 		function pyodideEditorStop() {
 			if (!isRunning && !webcamStream && !snapshotStream) return;
@@ -2656,23 +2659,28 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		livePredictEnabled = checkbox ? checkbox.checked : false;
 	}
 
-	function setupLivePredictions() {
-		const textarea = document.getElementById("pyodide_editor_textarea");
-		if (!textarea) return;
+		function setupLivePredictions() {
+			const textarea = document.getElementById("pyodide_editor_textarea");
+			if (!textarea) return;
 
-		textarea.addEventListener("input", function () {
-			if (!livePredictEnabled || isRunning) return;
+			textarea.addEventListener("input", function () {
+				// *** AUTOCOMPLETE GUARD: Don't auto-run during autocomplete insertion ***
+				if (window._acInserting) return;
 
-			clearTimeout(livePredictDebounceTimer);
-			livePredictDebounceTimer = setTimeout(async function () {
 				if (!livePredictEnabled || isRunning) return;
-				var code = textarea.value;
-				if (code.includes("set_prediction_result") || code.includes("predict(")) {
-					await pyodideEditorRun();
-				}
-			}, 1500);
-		});
-	}
+
+				clearTimeout(livePredictDebounceTimer);
+				livePredictDebounceTimer = setTimeout(async function () {
+					// *** Check again in case flag was set during the delay ***
+					if (window._acInserting) return;
+					if (!livePredictEnabled || isRunning) return;
+					var code = textarea.value;
+					if (code.includes("set_prediction_result") || code.includes("predict(")) {
+						await pyodideEditorRun();
+					}
+				}, 1500);
+			});
+		}
 
 	// =========================================================================
 	// REFRESH MODEL

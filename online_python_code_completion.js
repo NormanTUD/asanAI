@@ -4,7 +4,7 @@
 (function setupAutocomplete() {
 
     // =========================================================================
-    // LOCAL UTILITY — escapeHtml (self-contained, no external dependency)
+    // LOCAL UTILITIES
     // =========================================================================
 
     function escapeHtml(text) {
@@ -16,7 +16,6 @@
             .replace(/'/g, '&#39;');
     }
 
-    // Local set of Python keywords (so we don't depend on the main IIFE's PY_KEYWORDS)
     var PY_KEYWORDS = new Set([
         'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await',
         'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
@@ -29,75 +28,82 @@
     // AUTOCOMPLETE STATE
     // =========================================================================
 
-    let acPopup = null;
-    let acItems = [];
-    let acSelectedIndex = -1;   // *** FIX: Start at -1 (nothing pre-selected) ***
-    let acVisible = false;
-    let acPrefix = '';
-    let acTriggerPos = 0;
-    let acDismissed = false;
-    let acDebounceTimer = null;
+    var acPopup = null;
+    var acItems = [];
+    var acSelectedIndex = -1;
+    var acVisible = false;
+    var acPrefix = '';
+    var acStartPos = 0;
+    var acDismissed = false;
+    var acDebounceTimer = null;
+    var acAccepting = false;
+
+    // *** GLOBAL FLAG ***
+    // Your main editor (online_python.js) should check this before auto-executing:
+    //   if (window._acInserting) return;
+    // Add that check at the top of whatever function runs the Python code automatically.
+    window._acInserting = false;
 
     // =========================================================================
     // CONTEXT-AWARE COMPLETION SOURCES
     // =========================================================================
 
-    const ENV_FUNCTIONS = [
+    var ENV_FUNCTIONS = [
         { text: 'predict(', label: 'predict(data)', kind: 'function', detail: 'Run model prediction on input data' },
-        { text: 'get_model_info()', label: 'get_model_info()', kind: 'function', detail: 'Get model architecture info (shape, layers, params)' },
-        { text: 'get_weights()', label: 'get_weights()', kind: 'function', detail: 'Get model weight tensors as nested lists' },
-        { text: 'set_prediction_result(', label: 'set_prediction_result(result)', kind: 'function', detail: 'Display prediction result in the UI bar' },
-        { text: 'rand_nested(', label: 'rand_nested(shape)', kind: 'function', detail: 'Generate random nested list matching shape' },
-        { text: 'create_canvas(', label: 'create_canvas(w, h)', kind: 'function', detail: 'Create a drawable HTML canvas element' },
-        { text: 'display(', label: 'display(obj)', kind: 'function', detail: 'Show canvas/object in console output' },
-        { text: 'display_html(', label: 'display_html(html)', kind: 'function', detail: 'Render raw HTML in console output' },
-        { text: 'display_image(', label: 'display_image(src, w, h)', kind: 'function', detail: 'Show image from URL/data URL in console' },
-        { text: 'check_interrupt()', label: 'check_interrupt()', kind: 'function', detail: 'Call in loops to allow stopping execution' },
+        { text: 'get_model_info()', label: 'get_model_info()', kind: 'function', detail: 'Get model architecture info' },
+        { text: 'get_weights()', label: 'get_weights()', kind: 'function', detail: 'Get model weight tensors' },
+        { text: 'set_prediction_result(', label: 'set_prediction_result(result)', kind: 'function', detail: 'Display prediction result in UI' },
+        { text: 'rand_nested(', label: 'rand_nested(shape)', kind: 'function', detail: 'Generate random nested list' },
+        { text: 'create_canvas(', label: 'create_canvas(w, h)', kind: 'function', detail: 'Create drawable HTML canvas' },
+        { text: 'display(', label: 'display(obj)', kind: 'function', detail: 'Show canvas/object in output' },
+        { text: 'display_html(', label: 'display_html(html)', kind: 'function', detail: 'Render raw HTML in output' },
+        { text: 'display_image(', label: 'display_image(src, w, h)', kind: 'function', detail: 'Show image in output' },
+        { text: 'check_interrupt()', label: 'check_interrupt()', kind: 'function', detail: 'Allow stopping execution' },
     ];
 
-    const ENV_VARIABLES = [
-        { text: 'input_data', label: 'input_data', kind: 'variable', detail: 'Current input (webcam frame or uploaded image)' },
-        { text: '_labels', label: '_labels', kind: 'variable', detail: 'List of class labels (if classification model)' },
-        { text: '_is_classification', label: '_is_classification', kind: 'variable', detail: 'Boolean: whether model is classification' },
-        { text: 'photos', label: 'photos', kind: 'variable', detail: 'List of captured multi-snap photos' },
+    var ENV_VARIABLES = [
+        { text: 'input_data', label: 'input_data', kind: 'variable', detail: 'Current input (webcam/image)' },
+        { text: '_labels', label: '_labels', kind: 'variable', detail: 'List of class labels' },
+        { text: '_is_classification', label: '_is_classification', kind: 'variable', detail: 'Boolean: classification model' },
+        { text: 'photos', label: 'photos', kind: 'variable', detail: 'List of captured photos' },
         { text: 'num_photos', label: 'num_photos', kind: 'variable', detail: 'Number of captured photos' },
     ];
 
-    const PYTHON_BUILTINS = [
-        { text: 'print(', label: 'print()', kind: 'builtin', detail: 'Print to console output' },
-        { text: 'len(', label: 'len(obj)', kind: 'builtin', detail: 'Return length of object' },
-        { text: 'range(', label: 'range(stop)', kind: 'builtin', detail: 'Generate sequence of numbers' },
+    var PYTHON_BUILTINS = [
+        { text: 'print(', label: 'print()', kind: 'builtin', detail: 'Print to output' },
+        { text: 'len(', label: 'len(obj)', kind: 'builtin', detail: 'Return length' },
+        { text: 'range(', label: 'range(stop)', kind: 'builtin', detail: 'Generate sequence' },
         { text: 'enumerate(', label: 'enumerate(iterable)', kind: 'builtin', detail: 'Iterate with index' },
-        { text: 'isinstance(', label: 'isinstance(obj, type)', kind: 'builtin', detail: 'Check object type' },
+        { text: 'isinstance(', label: 'isinstance(obj, type)', kind: 'builtin', detail: 'Check type' },
         { text: 'sorted(', label: 'sorted(iterable)', kind: 'builtin', detail: 'Return sorted list' },
-        { text: 'zip(', label: 'zip(a, b)', kind: 'builtin', detail: 'Iterate multiple sequences together' },
-        { text: 'max(', label: 'max(iterable)', kind: 'builtin', detail: 'Return maximum value' },
-        { text: 'min(', label: 'min(iterable)', kind: 'builtin', detail: 'Return minimum value' },
-        { text: 'sum(', label: 'sum(iterable)', kind: 'builtin', detail: 'Sum all values' },
+        { text: 'zip(', label: 'zip(a, b)', kind: 'builtin', detail: 'Iterate together' },
+        { text: 'max(', label: 'max(iterable)', kind: 'builtin', detail: 'Maximum value' },
+        { text: 'min(', label: 'min(iterable)', kind: 'builtin', detail: 'Minimum value' },
+        { text: 'sum(', label: 'sum(iterable)', kind: 'builtin', detail: 'Sum values' },
         { text: 'abs(', label: 'abs(x)', kind: 'builtin', detail: 'Absolute value' },
-        { text: 'round(', label: 'round(x, ndigits)', kind: 'builtin', detail: 'Round to n decimal places' },
-        { text: 'int(', label: 'int(x)', kind: 'builtin', detail: 'Convert to integer' },
+        { text: 'round(', label: 'round(x, n)', kind: 'builtin', detail: 'Round number' },
+        { text: 'int(', label: 'int(x)', kind: 'builtin', detail: 'Convert to int' },
         { text: 'float(', label: 'float(x)', kind: 'builtin', detail: 'Convert to float' },
         { text: 'str(', label: 'str(x)', kind: 'builtin', detail: 'Convert to string' },
         { text: 'list(', label: 'list(x)', kind: 'builtin', detail: 'Convert to list' },
         { text: 'dict(', label: 'dict()', kind: 'builtin', detail: 'Create dictionary' },
         { text: 'tuple(', label: 'tuple(x)', kind: 'builtin', detail: 'Convert to tuple' },
-        { text: 'type(', label: 'type(obj)', kind: 'builtin', detail: 'Get type of object' },
-        { text: 'hasattr(', label: 'hasattr(obj, name)', kind: 'builtin', detail: 'Check if object has attribute' },
-        { text: 'getattr(', label: 'getattr(obj, name)', kind: 'builtin', detail: 'Get attribute from object' },
+        { text: 'type(', label: 'type(obj)', kind: 'builtin', detail: 'Get type' },
+        { text: 'hasattr(', label: 'hasattr(obj, name)', kind: 'builtin', detail: 'Check attribute' },
+        { text: 'getattr(', label: 'getattr(obj, name)', kind: 'builtin', detail: 'Get attribute' },
     ];
 
-    const PYTHON_KEYWORDS_AC = [
-        { text: 'def ', label: 'def', kind: 'keyword', detail: 'Define a function' },
-        { text: 'class ', label: 'class', kind: 'keyword', detail: 'Define a class' },
-        { text: 'if ', label: 'if', kind: 'keyword', detail: 'Conditional statement' },
-        { text: 'elif ', label: 'elif', kind: 'keyword', detail: 'Else-if branch' },
+    var PYTHON_KEYWORDS_AC = [
+        { text: 'def ', label: 'def', kind: 'keyword', detail: 'Define function' },
+        { text: 'class ', label: 'class', kind: 'keyword', detail: 'Define class' },
+        { text: 'if ', label: 'if', kind: 'keyword', detail: 'Conditional' },
+        { text: 'elif ', label: 'elif', kind: 'keyword', detail: 'Else-if' },
         { text: 'else:', label: 'else:', kind: 'keyword', detail: 'Else branch' },
         { text: 'for ', label: 'for', kind: 'keyword', detail: 'For loop' },
         { text: 'while ', label: 'while', kind: 'keyword', detail: 'While loop' },
-        { text: 'return ', label: 'return', kind: 'keyword', detail: 'Return from function' },
+        { text: 'return ', label: 'return', kind: 'keyword', detail: 'Return value' },
         { text: 'import ', label: 'import', kind: 'keyword', detail: 'Import module' },
-        { text: 'from ', label: 'from', kind: 'keyword', detail: 'Import from module' },
+        { text: 'from ', label: 'from', kind: 'keyword', detail: 'Import from' },
         { text: 'try:', label: 'try:', kind: 'keyword', detail: 'Try block' },
         { text: 'except ', label: 'except', kind: 'keyword', detail: 'Exception handler' },
         { text: 'finally:', label: 'finally:', kind: 'keyword', detail: 'Finally block' },
@@ -105,30 +111,28 @@
         { text: 'lambda ', label: 'lambda', kind: 'keyword', detail: 'Anonymous function' },
         { text: 'raise ', label: 'raise', kind: 'keyword', detail: 'Raise exception' },
         { text: 'yield ', label: 'yield', kind: 'keyword', detail: 'Generator yield' },
-        { text: 'pass', label: 'pass', kind: 'keyword', detail: 'No-op placeholder' },
-        { text: 'break', label: 'break', kind: 'keyword', detail: 'Break out of loop' },
-        { text: 'continue', label: 'continue', kind: 'keyword', detail: 'Skip to next iteration' },
+        { text: 'pass', label: 'pass', kind: 'keyword', detail: 'No-op' },
+        { text: 'break', label: 'break', kind: 'keyword', detail: 'Break loop' },
+        { text: 'continue', label: 'continue', kind: 'keyword', detail: 'Next iteration' },
         { text: 'True', label: 'True', kind: 'constant', detail: 'Boolean true' },
         { text: 'False', label: 'False', kind: 'constant', detail: 'Boolean false' },
-        { text: 'None', label: 'None', kind: 'constant', detail: 'Null/None value' },
+        { text: 'None', label: 'None', kind: 'constant', detail: 'Null value' },
     ];
 
-    const COMMON_SNIPPETS = [
+    var COMMON_SNIPPETS = [
         { text: 'for i in range(', label: 'for i in range(...)', kind: 'snippet', detail: 'For loop with range' },
         { text: 'for i, item in enumerate(', label: 'for i, item in enumerate(...)', kind: 'snippet', detail: 'Enumerate loop' },
         { text: 'if __name__ == "__main__":', label: 'if __name__ == "__main__":', kind: 'snippet', detail: 'Main guard' },
-        { text: "f'{", label: "f-string f'{...}'", kind: 'snippet', detail: 'Formatted string literal' },
-        { text: 'print(f"', label: 'print(f"...")', kind: 'snippet', detail: 'Print formatted string' },
     ];
 
-    const DOT_COMPLETIONS = {
+    var DOT_COMPLETIONS = {
         'list': [
             { text: 'append(', label: '.append(item)', kind: 'method', detail: 'Add item to end' },
             { text: 'extend(', label: '.extend(iterable)', kind: 'method', detail: 'Extend list' },
             { text: 'insert(', label: '.insert(i, item)', kind: 'method', detail: 'Insert at index' },
             { text: 'remove(', label: '.remove(item)', kind: 'method', detail: 'Remove first occurrence' },
-            { text: 'pop(', label: '.pop(i)', kind: 'method', detail: 'Remove and return item' },
-            { text: 'index(', label: '.index(item)', kind: 'method', detail: 'Find index of item' },
+            { text: 'pop(', label: '.pop(i)', kind: 'method', detail: 'Remove and return' },
+            { text: 'index(', label: '.index(item)', kind: 'method', detail: 'Find index' },
             { text: 'count(', label: '.count(item)', kind: 'method', detail: 'Count occurrences' },
             { text: 'sort(', label: '.sort()', kind: 'method', detail: 'Sort in place' },
             { text: 'reverse()', label: '.reverse()', kind: 'method', detail: 'Reverse in place' },
@@ -137,65 +141,60 @@
         'str': [
             { text: 'format(', label: '.format(...)', kind: 'method', detail: 'Format string' },
             { text: 'split(', label: '.split(sep)', kind: 'method', detail: 'Split into list' },
-            { text: 'join(', label: '.join(iterable)', kind: 'method', detail: 'Join iterable with string' },
+            { text: 'join(', label: '.join(iterable)', kind: 'method', detail: 'Join with string' },
             { text: 'strip()', label: '.strip()', kind: 'method', detail: 'Remove whitespace' },
             { text: 'replace(', label: '.replace(old, new)', kind: 'method', detail: 'Replace substring' },
             { text: 'startswith(', label: '.startswith(prefix)', kind: 'method', detail: 'Check prefix' },
             { text: 'endswith(', label: '.endswith(suffix)', kind: 'method', detail: 'Check suffix' },
             { text: 'lower()', label: '.lower()', kind: 'method', detail: 'Lowercase' },
             { text: 'upper()', label: '.upper()', kind: 'method', detail: 'Uppercase' },
-            { text: 'find(', label: '.find(sub)', kind: 'method', detail: 'Find substring index' },
+            { text: 'find(', label: '.find(sub)', kind: 'method', detail: 'Find substring' },
         ],
         'dict': [
             { text: 'keys()', label: '.keys()', kind: 'method', detail: 'Get all keys' },
             { text: 'values()', label: '.values()', kind: 'method', detail: 'Get all values' },
             { text: 'items()', label: '.items()', kind: 'method', detail: 'Get key-value pairs' },
             { text: 'get(', label: '.get(key, default)', kind: 'method', detail: 'Get with default' },
-            { text: 'update(', label: '.update(other)', kind: 'method', detail: 'Merge dictionaries' },
-            { text: 'pop(', label: '.pop(key)', kind: 'method', detail: 'Remove and return value' },
-            { text: 'setdefault(', label: '.setdefault(key, default)', kind: 'method', detail: 'Get or set default' },
+            { text: 'update(', label: '.update(other)', kind: 'method', detail: 'Merge dicts' },
+            { text: 'pop(', label: '.pop(key)', kind: 'method', detail: 'Remove and return' },
         ],
         'ctx': [
             { text: 'fillRect(', label: '.fillRect(x, y, w, h)', kind: 'method', detail: 'Fill rectangle' },
             { text: 'strokeRect(', label: '.strokeRect(x, y, w, h)', kind: 'method', detail: 'Stroke rectangle' },
             { text: 'clearRect(', label: '.clearRect(x, y, w, h)', kind: 'method', detail: 'Clear rectangle' },
-            { text: 'beginPath()', label: '.beginPath()', kind: 'method', detail: 'Start new path' },
-            { text: 'closePath()', label: '.closePath()', kind: 'method', detail: 'Close current path' },
+            { text: 'beginPath()', label: '.beginPath()', kind: 'method', detail: 'Start path' },
             { text: 'moveTo(', label: '.moveTo(x, y)', kind: 'method', detail: 'Move to point' },
             { text: 'lineTo(', label: '.lineTo(x, y)', kind: 'method', detail: 'Line to point' },
-            { text: 'arc(', label: '.arc(x, y, r, start, end)', kind: 'method', detail: 'Draw arc/circle' },
-            { text: 'fill()', label: '.fill()', kind: 'method', detail: 'Fill current path' },
-            { text: 'stroke()', label: '.stroke()', kind: 'method', detail: 'Stroke current path' },
-            { text: 'fillText(', label: '.fillText(text, x, y)', kind: 'method', detail: 'Draw filled text' },
-            { text: 'strokeText(', label: '.strokeText(text, x, y)', kind: 'method', detail: 'Draw stroked text' },
-            { text: 'drawImage(', label: '.drawImage(img, x, y)', kind: 'method', detail: 'Draw image' },
+            { text: 'arc(', label: '.arc(x, y, r, start, end)', kind: 'method', detail: 'Draw arc' },
+            { text: 'fill()', label: '.fill()', kind: 'method', detail: 'Fill path' },
+            { text: 'stroke()', label: '.stroke()', kind: 'method', detail: 'Stroke path' },
+            { text: 'fillText(', label: '.fillText(text, x, y)', kind: 'method', detail: 'Draw text' },
         ],
         'info': [
-            { text: "['input_shape']", label: "['input_shape']", kind: 'property', detail: 'Model input shape e.g. [null, 40, 40, 3]' },
+            { text: "['input_shape']", label: "['input_shape']", kind: 'property', detail: 'Model input shape' },
             { text: "['output_shape']", label: "['output_shape']", kind: 'property', detail: 'Model output shape' },
             { text: "['num_layers']", label: "['num_layers']", kind: 'property', detail: 'Number of layers' },
-            { text: "['layer_names']", label: "['layer_names']", kind: 'property', detail: 'List of layer names' },
-            { text: "['layer_types']", label: "['layer_types']", kind: 'property', detail: 'List of layer types' },
-            { text: "['trainable_params']", label: "['trainable_params']", kind: 'property', detail: 'Trainable parameter count' },
-            { text: "['non_trainable_params']", label: "['non_trainable_params']", kind: 'property', detail: 'Non-trainable parameter count' },
+            { text: "['layer_names']", label: "['layer_names']", kind: 'property', detail: 'Layer names list' },
+            { text: "['layer_types']", label: "['layer_types']", kind: 'property', detail: 'Layer types list' },
+            { text: "['trainable_params']", label: "['trainable_params']", kind: 'property', detail: 'Trainable params' },
         ],
     };
 
-    const IMPORTABLE_MODULES = [
+    var IMPORTABLE_MODULES = [
         { text: 'json', label: 'json', kind: 'module', detail: 'JSON encoding/decoding' },
-        { text: 'math', label: 'math', kind: 'module', detail: 'Mathematical functions' },
-        { text: 'random', label: 'random', kind: 'module', detail: 'Random number generation' },
+        { text: 'math', label: 'math', kind: 'module', detail: 'Math functions' },
+        { text: 'random', label: 'random', kind: 'module', detail: 'Random numbers' },
         { text: 'itertools', label: 'itertools', kind: 'module', detail: 'Iterator tools' },
         { text: 'functools', label: 'functools', kind: 'module', detail: 'Higher-order functions' },
-        { text: 'collections', label: 'collections', kind: 'module', detail: 'Specialized containers' },
+        { text: 'collections', label: 'collections', kind: 'module', detail: 'Containers' },
         { text: 're', label: 're', kind: 'module', detail: 'Regular expressions' },
         { text: 'time', label: 'time', kind: 'module', detail: 'Time functions' },
-        { text: 'datetime', label: 'datetime', kind: 'module', detail: 'Date and time types' },
-        { text: 'statistics', label: 'statistics', kind: 'module', detail: 'Statistical functions' },
+        { text: 'datetime', label: 'datetime', kind: 'module', detail: 'Date/time types' },
+        { text: 'statistics', label: 'statistics', kind: 'module', detail: 'Statistics' },
     ];
 
     // =========================================================================
-    // EXTRACT USER-DEFINED SYMBOLS FROM CODE
+    // EXTRACT USER-DEFINED SYMBOLS
     // =========================================================================
 
     function extractUserSymbols(code) {
@@ -215,19 +214,14 @@
                     text: funcMatch[1] + '(',
                     label: funcMatch[1] + '(' + params + ')',
                     kind: 'user-function',
-                    detail: 'Defined on line ' + (i + 1)
+                    detail: 'Line ' + (i + 1)
                 });
             }
 
             var classMatch = line.match(/^\s*class\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
             if (classMatch && !seenNames.has(classMatch[1])) {
                 seenNames.add(classMatch[1]);
-                symbols.push({
-                    text: classMatch[1],
-                    label: classMatch[1],
-                    kind: 'user-class',
-                    detail: 'Class defined on line ' + (i + 1)
-                });
+                symbols.push({ text: classMatch[1], label: classMatch[1], kind: 'user-class', detail: 'Line ' + (i + 1) });
             }
 
             var varMatch = line.match(/^(\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*=/);
@@ -235,58 +229,33 @@
                 var varName = varMatch[2];
                 if (varName.length > 1 && !PY_KEYWORDS.has(varName) && varName !== 'self') {
                     seenNames.add(varName);
-                    symbols.push({
-                        text: varName,
-                        label: varName,
-                        kind: 'user-variable',
-                        detail: 'Variable (line ' + (i + 1) + ')'
-                    });
+                    symbols.push({ text: varName, label: varName, kind: 'user-variable', detail: 'Line ' + (i + 1) });
                 }
             }
 
             var forMatch = line.match(/^\s*for\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
-            if (forMatch && !seenNames.has(forMatch[1])) {
-                var forVar = forMatch[1];
-                if (forVar.length > 1) {
-                    seenNames.add(forVar);
-                    symbols.push({
-                        text: forVar,
-                        label: forVar,
-                        kind: 'user-variable',
-                        detail: 'Loop variable (line ' + (i + 1) + ')'
-                    });
-                }
+            if (forMatch && !seenNames.has(forMatch[1]) && forMatch[1].length > 1) {
+                seenNames.add(forMatch[1]);
+                symbols.push({ text: forMatch[1], label: forMatch[1], kind: 'user-variable', detail: 'Loop var line ' + (i + 1) });
             }
 
             var importMatch = line.match(/^\s*import\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
             if (importMatch && !seenNames.has(importMatch[1])) {
                 seenNames.add(importMatch[1]);
-                symbols.push({
-                    text: importMatch[1],
-                    label: importMatch[1],
-                    kind: 'module',
-                    detail: 'Imported module'
-                });
+                symbols.push({ text: importMatch[1], label: importMatch[1], kind: 'module', detail: 'Imported' });
             }
 
             var fromImportMatch = line.match(/^\s*from\s+\S+\s+import\s+(.+)/);
             if (fromImportMatch) {
-                var imports = fromImportMatch[1].split(',');
-                imports.forEach(function(imp) {
+                fromImportMatch[1].split(',').forEach(function(imp) {
                     var name = imp.trim().split(/\s+as\s+/).pop().trim();
                     if (name && !seenNames.has(name) && /^[a-zA-Z_]/.test(name)) {
                         seenNames.add(name);
-                        symbols.push({
-                            text: name,
-                            label: name,
-                            kind: 'import',
-                            detail: 'Imported symbol'
-                        });
+                        symbols.push({ text: name, label: name, kind: 'import', detail: 'Imported' });
                     }
                 });
             }
         }
-
         return symbols;
     }
 
@@ -294,16 +263,15 @@
         var lines = code.split('\n');
         for (var i = lines.length - 1; i >= 0; i--) {
             var line = lines[i];
-            var assignMatch = line.match(new RegExp('^\\s*' + varName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*=\\s*(.+)'));
-            if (assignMatch) {
-                var rhs = assignMatch[1].trim();
+            var re = new RegExp('^\\s*' + varName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*=\\s*(.+)');
+            var m = line.match(re);
+            if (m) {
+                var rhs = m[1].trim();
                 if (rhs.startsWith('[') || rhs.includes('.split(') || rhs.startsWith('list(')) return 'list';
                 if (rhs.startsWith('{') && rhs.includes(':')) return 'dict';
-                if (rhs.startsWith('{')) return 'set';
                 if (rhs.startsWith('"') || rhs.startsWith("'") || rhs.startsWith('f"') || rhs.startsWith("f'")) return 'str';
                 if (rhs === 'get_model_info()') return 'info';
                 if (rhs.includes('getContext(') || rhs.includes('get_context(')) return 'ctx';
-                if (rhs.includes('create_canvas(')) return 'canvas';
             }
         }
         if (varName === 'ctx' || varName === 'context') return 'ctx';
@@ -326,37 +294,27 @@
         }
 
         if (/^\s*(import|from\s+\S+\s+import)\s+\w*$/.test(currentLine)) {
-            return { type: 'import', prefix: currentLine.match(/(\w*)$/)[1] };
+            var m = currentLine.match(/(\w*)$/);
+            return { type: 'import', prefix: m[1], startPos: cursorPos - m[1].length };
         }
         if (/^\s*from\s+\w*$/.test(currentLine)) {
-            return { type: 'import', prefix: currentLine.match(/(\w*)$/)[1] };
+            var m2 = currentLine.match(/(\w*)$/);
+            return { type: 'import', prefix: m2[1], startPos: cursorPos - m2[1].length };
         }
 
         var dotMatch = currentLine.match(/([a-zA-Z_][a-zA-Z0-9_]*)\.\s*([a-zA-Z_]*)$/);
         if (dotMatch) {
-            return {
-                type: 'dot',
-                objectName: dotMatch[1],
-                prefix: dotMatch[2] || '',
-                fullMatch: dotMatch[0]
-            };
+            return { type: 'dot', objectName: dotMatch[1], prefix: dotMatch[2] || '', startPos: cursorPos - (dotMatch[2] || '').length };
         }
 
         var dictMatch = currentLine.match(/([a-zA-Z_][a-zA-Z0-9_]*)\[\s*['"]([^'"]*)$/);
         if (dictMatch) {
-            return {
-                type: 'dict_key',
-                objectName: dictMatch[1],
-                prefix: dictMatch[2] || ''
-            };
+            return { type: 'dict_key', objectName: dictMatch[1], prefix: dictMatch[2] || '', startPos: cursorPos - (dictMatch[2] || '').length };
         }
 
         var identMatch = currentLine.match(/([a-zA-Z_][a-zA-Z0-9_]*)$/);
         if (identMatch && identMatch[1].length >= 2) {
-            return {
-                type: 'identifier',
-                prefix: identMatch[1]
-            };
+            return { type: 'identifier', prefix: identMatch[1], startPos: cursorPos - identMatch[1].length };
         }
 
         return { type: 'none' };
@@ -377,8 +335,8 @@
                 }
             }
             if (textBefore[i] === '\\') { i += 2; continue; }
-            if (textBefore[i] === '"' && !inSingle && !inTripleSingle && !inTripleDouble) { inDouble = !inDouble; }
-            if (textBefore[i] === "'" && !inDouble && !inTripleDouble && !inTripleSingle) { inSingle = !inSingle; }
+            if (textBefore[i] === '"' && !inSingle && !inTripleSingle && !inTripleDouble) inDouble = !inDouble;
+            if (textBefore[i] === "'" && !inDouble && !inTripleDouble && !inTripleSingle) inSingle = !inSingle;
             i++;
         }
         return inSingle || inDouble || inTripleSingle || inTripleDouble;
@@ -392,13 +350,10 @@
         var suggestions = [];
 
         switch (context.type) {
-            case 'none':
-                return [];
-
+            case 'none': return [];
             case 'import':
                 suggestions = IMPORTABLE_MODULES.slice();
                 break;
-
             case 'dot':
                 var varType = inferVariableType(fullCode, context.objectName);
                 if (varType && DOT_COMPLETIONS[varType]) {
@@ -406,93 +361,60 @@
                 } else if (DOT_COMPLETIONS[context.objectName]) {
                     suggestions = DOT_COMPLETIONS[context.objectName].slice();
                 } else {
-                    suggestions = [].concat(
-                        DOT_COMPLETIONS['list'],
-                        DOT_COMPLETIONS['str'],
-                        DOT_COMPLETIONS['dict']
-                    );
+                    suggestions = [].concat(DOT_COMPLETIONS['list'], DOT_COMPLETIONS['str'], DOT_COMPLETIONS['dict']);
                 }
                 break;
-
             case 'dict_key':
-                var dictType = inferVariableType(fullCode, context.objectName);
-                if (dictType === 'info' || context.objectName === 'info' || context.objectName === 'model_info') {
+                var dt = inferVariableType(fullCode, context.objectName);
+                if (dt === 'info' || context.objectName === 'info' || context.objectName === 'model_info') {
                     suggestions = DOT_COMPLETIONS['info'].map(function(item) {
                         var key = item.text.replace(/^\['/, '').replace(/'\]$/, '');
-                        return {
-                            text: key + "']",
-                            label: key,
-                            kind: item.kind,
-                            detail: item.detail
-                        };
+                        return { text: key + "']", label: key, kind: item.kind, detail: item.detail };
                     });
                 }
                 break;
-
             case 'identifier':
-                var userSymbols = extractUserSymbols(fullCode);
                 suggestions = [].concat(
-                    userSymbols,
-                    ENV_FUNCTIONS,
-                    ENV_VARIABLES,
-                    COMMON_SNIPPETS,
-                    PYTHON_BUILTINS,
-                    PYTHON_KEYWORDS_AC
+                    extractUserSymbols(fullCode),
+                    ENV_FUNCTIONS, ENV_VARIABLES, COMMON_SNIPPETS,
+                    PYTHON_BUILTINS, PYTHON_KEYWORDS_AC
                 );
                 break;
         }
 
-        // Filter by prefix
         var prefix = context.prefix || '';
         if (prefix.length > 0) {
-            var lowerPrefix = prefix.toLowerCase();
+            var lp = prefix.toLowerCase();
             suggestions = suggestions.filter(function(item) {
-                var matchText = item.label || item.text;
-                return matchText.toLowerCase().startsWith(lowerPrefix) ||
-                       fuzzyMatch(lowerPrefix, matchText.toLowerCase());
+                var t = (item.label || item.text).toLowerCase();
+                return t.startsWith(lp) || fuzzyMatch(lp, t);
             });
         }
 
-        // Remove exact matches (don't suggest what's already fully typed)
         suggestions = suggestions.filter(function(item) {
             return item.text !== prefix && (item.label || item.text) !== prefix;
         });
 
-        // Sort
         var kindPriority = {
             'user-function': 0, 'user-variable': 1, 'user-class': 2,
             'function': 3, 'variable': 4, 'snippet': 5,
             'method': 6, 'property': 7, 'builtin': 8,
             'keyword': 9, 'constant': 10, 'module': 11, 'import': 12
         };
-
-        var lp = (prefix || '').toLowerCase();
-        suggestions.sort(
-            function(a, b) {
-                var aExact = (a.label || a.text).toLowerCase().startsWith(lp) ? 0 : 1;
-                var bExact = (b.label || b.text).toLowerCase().startsWith(lp) ? 0 : 1;
-                if (aExact !== bExact) return aExact - bExact;
-
-                var aPri = kindPriority[a.kind] !== undefined ? kindPriority[a.kind] : 99;
-                var bPri = kindPriority[b.kind] !== undefined ? kindPriority[b.kind] : 99;
-                if (aPri !== bPri) return aPri - bPri;
-
-                return (a.label || a.text).localeCompare(b.label || b.text);
-            }
-        );
-
-        // Remove exact matches (don't suggest what's already fully typed)
-        suggestions = suggestions.filter(function(item) {
-            return item.text !== prefix && (item.label || item.text) !== prefix;
+        var lp2 = (prefix || '').toLowerCase();
+        suggestions.sort(function(a, b) {
+            var aE = (a.label || a.text).toLowerCase().startsWith(lp2) ? 0 : 1;
+            var bE = (b.label || b.text).toLowerCase().startsWith(lp2) ? 0 : 1;
+            if (aE !== bE) return aE - bE;
+            var aP = kindPriority[a.kind] !== undefined ? kindPriority[a.kind] : 99;
+            var bP = kindPriority[b.kind] !== undefined ? kindPriority[b.kind] : 99;
+            if (aP !== bP) return aP - bP;
+            return (a.label || a.text).localeCompare(b.label || b.text);
         });
 
-        // Limit to top 12 suggestions
         return suggestions.slice(0, 12);
     }
 
-    /**
-     * Simple fuzzy match: checks if all chars of pattern appear in str in order
-     */
     function fuzzyMatch(pattern, str) {
         var pi = 0;
         for (var si = 0; si < str.length && pi < pattern.length; si++) {
@@ -502,64 +424,22 @@
     }
 
     // =========================================================================
-    // LOCAL UTILITY — escapeHtml (self-contained, no external dependency)
-    // =========================================================================
-
-    function escapeHtml(text) {
-        return text
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;');
-    }
-
-    // Local PY_KEYWORDS set (so we don't depend on the main IIFE)
-    var PY_KEYWORDS = new Set([
-        'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await',
-        'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
-        'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is',
-        'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return',
-        'try', 'while', 'with', 'yield'
-    ]);
-
-    /**
-     * Trigger highlight update in the main editor (if available)
-     */
-    function scheduleHighlight() {
-        // Try to call the main editor's highlight function via a textarea input event
-        var textarea = document.getElementById('pyodide_editor_textarea');
-        if (textarea) {
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    }
-
-    // =========================================================================
     // POPUP UI
     // =========================================================================
 
     function createPopup() {
         if (acPopup) return acPopup;
-
         acPopup = document.createElement('div');
         acPopup.className = 'pe-autocomplete-popup';
         acPopup.style.cssText = [
-            'position:absolute',
-            'z-index:10000',
+            'position:absolute', 'z-index:10000',
             'background:var(--pe-surface, #1e1e2e)',
             'border:1px solid var(--pe-border, #45475a)',
-            'border-radius:6px',
-            'box-shadow:0 4px 16px rgba(0,0,0,0.4)',
-            'max-height:240px',
-            'overflow-y:auto',
-            'overflow-x:hidden',
-            'min-width:220px',
-            'max-width:380px',
-            'font-family:monospace',
-            'font-size:12px',
-            'display:none',
-            'padding:4px 0',
-            'scrollbar-width:thin',
+            'border-radius:6px', 'box-shadow:0 4px 16px rgba(0,0,0,0.4)',
+            'max-height:240px', 'overflow-y:auto', 'overflow-x:hidden',
+            'min-width:220px', 'max-width:380px',
+            'font-family:monospace', 'font-size:12px',
+            'display:none', 'padding:4px 0', 'scrollbar-width:thin',
         ].join(';');
 
         acPopup.addEventListener('mousedown', function(e) {
@@ -598,10 +478,8 @@
                 + '">';
             html += '<span style="font-size:11px;opacity:0.7;min-width:16px;text-align:center;color:' + (isSelected ? '#fff' : kindColor) + ';">' + kindIcon + '</span>';
             html += '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(item.label || item.text) + '</span>';
-            if (item.detail && !isSelected) {
-                html += '<span style="font-size:10px;color:var(--pe-muted, #6c7086);margin-left:8px;opacity:0.7;max-width:140px;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(item.detail) + '</span>';
-            } else if (item.detail && isSelected) {
-                html += '<span style="font-size:10px;color:rgba(255,255,255,0.7);margin-left:8px;max-width:140px;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(item.detail) + '</span>';
+            if (item.detail) {
+                html += '<span style="font-size:10px;color:' + (isSelected ? 'rgba(255,255,255,0.7)' : 'var(--pe-muted, #6c7086)') + ';margin-left:8px;opacity:0.7;max-width:140px;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(item.detail) + '</span>';
             }
             html += '</div>';
         }
@@ -636,7 +514,6 @@
         if (!textarea || !popup) return;
 
         var coords = getCursorCoordinates(textarea, textarea.selectionStart);
-
         var editorBody = textarea.closest('.pe-editor-body');
         if (editorBody) {
             var bodyRect = editorBody.getBoundingClientRect();
@@ -672,11 +549,8 @@
         var computed = window.getComputedStyle(textarea);
 
         mirror.style.cssText = [
-            'position:absolute',
-            'visibility:hidden',
-            'white-space:pre-wrap',
-            'word-wrap:break-word',
-            'overflow:hidden',
+            'position:absolute', 'visibility:hidden',
+            'white-space:pre-wrap', 'word-wrap:break-word', 'overflow:hidden',
             'width:' + textarea.clientWidth + 'px',
             'font:' + computed.font,
             'padding:' + computed.padding,
@@ -710,17 +584,14 @@
 
     function getKindIcon(kind) {
         switch (kind) {
-            case 'function': return 'ƒ';
-            case 'user-function': return 'ƒ';
+            case 'function': case 'user-function': return 'ƒ';
             case 'method': return 'μ';
-            case 'variable': return 'x';
-            case 'user-variable': return 'x';
+            case 'variable': case 'user-variable': return 'x';
             case 'user-class': return 'C';
             case 'keyword': return '⚷';
             case 'builtin': return '⊕';
             case 'snippet': return '✂';
-            case 'module': return '◫';
-            case 'import': return '↗';
+            case 'module': case 'import': return '◫';
             case 'property': return '◆';
             case 'constant': return '∅';
             default: return '·';
@@ -743,7 +614,7 @@
     }
 
     // =========================================================================
-    // ACCEPT / DISMISS SUGGESTION
+    // ACCEPT SUGGESTION — WITH EXECUTION PREVENTION
     // =========================================================================
 
     function acceptSuggestion(index) {
@@ -755,21 +626,90 @@
 
         var value = textarea.value;
         var cursorPos = textarea.selectionStart;
-
-        var context = getCompletionContext(value, cursorPos);
-        var prefixLen = (context.prefix || '').length;
-
-        var replaceStart = cursorPos - prefixLen;
-
         var insertText = item.text;
-        var newValue = value.substring(0, replaceStart) + insertText + value.substring(cursorPos);
 
-        textarea.value = newValue;
-        textarea.selectionStart = textarea.selectionEnd = replaceStart + insertText.length;
+        var replaceStart = acStartPos;
+        var replaceEnd = cursorPos;
+
+        // GUARDS
+        if (replaceStart < 0) replaceStart = 0;
+        if (replaceStart > cursorPos) replaceStart = cursorPos;
+        if (replaceStart > value.length) replaceStart = value.length;
+        if (replaceEnd > value.length) replaceEnd = value.length;
+
+        var currentPrefix = value.substring(replaceStart, replaceEnd);
+
+        // Sanity check
+        if (currentPrefix.length > 0 && !insertText.toLowerCase().startsWith(currentPrefix.toLowerCase())) {
+            var redetectStart = cursorPos;
+            while (redetectStart > 0 && /[a-zA-Z0-9_]/.test(value[redetectStart - 1])) {
+                redetectStart--;
+            }
+            var redetectedPrefix = value.substring(redetectStart, cursorPos);
+            if (insertText.toLowerCase().startsWith(redetectedPrefix.toLowerCase()) || redetectedPrefix.length === 0) {
+                replaceStart = redetectStart;
+                replaceEnd = cursorPos;
+            }
+        }
+
+        // *** SET GLOBAL FLAGS TO PREVENT AUTO-EXECUTION ***
+        acAccepting = true;
+        window._acInserting = true;
 
         hidePopup();
-        scheduleHighlight();
+
+        var success = false;
+
+        // STRATEGY 1: execCommand (best — native undo support, fires input event)
+        try {
+            textarea.focus();
+            textarea.setSelectionRange(replaceStart, replaceEnd);
+            success = document.execCommand('insertText', false, insertText);
+            if (success) {
+                var check = textarea.value.substring(replaceStart, replaceStart + insertText.length);
+                if (check !== insertText) success = false;
+            }
+        } catch (e) {
+            success = false;
+        }
+
+        // STRATEGY 2: setRangeText
+        if (!success) {
+            try {
+                textarea.setRangeText(insertText, replaceStart, replaceEnd, 'end');
+                success = true;
+            } catch (e) {
+                success = false;
+            }
+        }
+
+        // STRATEGY 3: Direct value set (last resort)
+        if (!success) {
+            var newValue = value.substring(0, replaceStart) + insertText + value.substring(replaceEnd);
+            textarea.value = newValue;
+            textarea.selectionStart = textarea.selectionEnd = replaceStart + insertText.length;
+            success = true;
+        }
+
+        // Final verification
+        if (success) {
+            var finalCheck = textarea.value.substring(replaceStart, replaceStart + insertText.length);
+            if (finalCheck !== insertText) {
+                var nuclear = value.substring(0, replaceStart) + insertText + value.substring(replaceEnd);
+                textarea.value = nuclear;
+                textarea.selectionStart = textarea.selectionEnd = replaceStart + insertText.length;
+            }
+        }
+
         textarea.focus();
+
+        // *** CLEAR FLAGS AFTER A DELAY ***
+        // The delay ensures any queued input event handlers see the flag as true
+        // and skip auto-execution
+        setTimeout(function() {
+            acAccepting = false;
+            window._acInserting = false;
+        }, 300);
     }
 
     // =========================================================================
@@ -807,16 +747,12 @@
             return;
         }
 
-        if (suggestions.length === 1 && suggestions[0].text === context.prefix) {
-            hidePopup();
-            return;
-        }
-
         acItems = suggestions;
-        // *** FIX #2: Start with NO item selected (-1) so Enter/Tab pass through ***
         acSelectedIndex = -1;
         acPrefix = context.prefix || '';
         acDismissed = false;
+        acStartPos = cursorPos - acPrefix.length;
+        if (acStartPos < 0) acStartPos = 0;
 
         positionPopup();
         renderPopup();
@@ -830,74 +766,79 @@
         var textarea = document.getElementById('pyodide_editor_textarea');
         if (!textarea) return;
 
-        // Trigger on input with debounce
         textarea.addEventListener('input', function() {
+            if (acAccepting) return;
+            if (window._acInserting) return;
             acDismissed = false;
             clearTimeout(acDebounceTimer);
             acDebounceTimer = setTimeout(function() {
-                if (!acDismissed) {
+                if (!acDismissed && !window._acInserting) {
                     triggerAutocomplete();
                 }
             }, 150);
         });
 
-        // Handle keyboard navigation in the popup
+        // CAPTURE PHASE keydown
         textarea.addEventListener('keydown', function(e) {
             if (!acVisible) return;
 
-            // Arrow Down
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
+                e.stopImmediatePropagation();
                 acSelectedIndex = (acSelectedIndex + 1) % acItems.length;
                 renderPopup();
                 return;
             }
 
-            // Arrow Up
             if (e.key === 'ArrowUp') {
                 e.preventDefault();
+                e.stopImmediatePropagation();
                 acSelectedIndex = (acSelectedIndex - 1 + acItems.length) % acItems.length;
                 renderPopup();
                 return;
             }
 
-            // Tab — accept suggestion ONLY if an item is actively selected
             if (e.key === 'Tab') {
-                if (acSelectedIndex >= 0) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    acceptSuggestion(acSelectedIndex);
-                    return;
-                }
-                // If nothing selected, let Tab pass through normally (indent)
-                hidePopup();
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var idx = acSelectedIndex >= 0 ? acSelectedIndex : 0;
+                acceptSuggestion(idx);
                 return;
             }
 
-            // Enter — accept ONLY if user has navigated to select an item
             if (e.key === 'Enter') {
                 if (acSelectedIndex >= 0) {
                     e.preventDefault();
-                    e.stopPropagation();
+                    e.stopImmediatePropagation();
                     acceptSuggestion(acSelectedIndex);
                     return;
                 }
-                // If nothing selected, let Enter pass through (newline)
                 hidePopup();
                 return;
             }
 
-            // Escape — dismiss popup
             if (e.key === 'Escape') {
                 e.preventDefault();
-                e.stopPropagation();
+                e.stopImmediatePropagation();
                 hidePopup();
                 acDismissed = true;
                 return;
             }
-        });
 
-        // Hide on blur
+            if (e.key === 'Home' || e.key === 'End' || e.key === 'PageUp' || e.key === 'PageDown') {
+                hidePopup();
+            }
+        }, true);
+
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === ' ' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                acDismissed = false;
+                triggerAutocomplete();
+            }
+        }, true);
+
         textarea.addEventListener('blur', function() {
             setTimeout(function() {
                 if (!acPopup || !acPopup.matches(':hover')) {
@@ -906,20 +847,8 @@
             }, 200);
         });
 
-        // Hide on scroll
         textarea.addEventListener('scroll', function() {
-            if (acVisible) {
-                hidePopup();
-            }
-        });
-
-        // Ctrl+Space to force trigger
-        textarea.addEventListener('keydown', function(e) {
-            if (e.key === ' ' && (e.ctrlKey || e.metaKey)) {
-                e.preventDefault();
-                acDismissed = false;
-                triggerAutocomplete();
-            }
+            if (acVisible) hidePopup();
         });
     }
 
@@ -929,6 +858,7 @@
 
     function initAutocomplete() {
         setupAutocompleteHandlers();
+        console.log('[Autocomplete] Initialized. window._acInserting flag available.');
     }
 
     if (document.readyState === 'loading') {
