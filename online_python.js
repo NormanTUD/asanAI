@@ -677,67 +677,43 @@ elif isinstance(result, list):
 
     image_snapshot_rps: `# ✊✋✌️ Rock Paper Scissors — 2 Players!
 # Camera stays LIVE. Press 📸 Snap for Player 1, then Player 2.
-
-RPS_NAMES = ['rock', 'paper', 'scissors']
-RPS_EMOJI = {'rock': '✊', 'paper': '✋', 'scissors': '✌️'}
-WINS_OVER = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
-
-def init_game():
-    s = _setup_model()
-    rps_map = {i: RPS_NAMES[i % 3] for i in range(s['num_classes'])}
-    print("✊✋✌️  ROCK PAPER SCISSORS — 2 PLAYERS")
-    print("═" * 40)
-    if s['labels']:
-        for i in range(s['num_classes']):
-            print(f"  {RPS_EMOJI[rps_map[i]]} {s['labels'][i]} → {rps_map[i]}")
-    print("\\n📸 Press SNAP for Player 1, then again for Player 2!")
-    print("═" * 40 + "\\n")
-    return {**s, 'round': 0, 'p1_score': 0, 'p2_score': 0,
-            'turn': 1, 'p1_move': None, 'rps_map': rps_map}
-
-def classify_frame(result, g):
-    top_idx, conf = _top_prediction(result)
-    move = g['rps_map'][top_idx]
-    label = _get_label(top_idx)
-    return top_idx, conf, move, label
-
-def determine_winner(p1, p2):
-    m1, m2 = p1[2], p2[2]
-    if m1 == m2: return 'draw'
-    return 'p1' if WINS_OVER[m1] == m2 else 'p2'
+# Auto-detects German & English labels (Schere/Scissors, Stein/Rock, Papier/Paper).
 
 if 'game' not in dir():
-    game = init_game()
+    state = _setup_model()
+    rps_map = _rps_detect_mapping(state['labels'])
+    game = {'rps_map': rps_map, 'turn': 1, 'round': 0,
+            'player1_score': 0, 'player2_score': 0, 'player1_move': None}
+    print("\\n✊✋✌️  ROCK PAPER SCISSORS")
+    print("📸 Snap Player 1, then Player 2!\\n")
 
 if input_data is not None:
     result = predict(input_data)
     set_prediction_result(result)
-    move_data = classify_frame(result, game)
+    idx, conf = _top_prediction(result)
+    move = game['rps_map'][idx]
+    emoji = _RPS_EMOJI[move]
 
     if game['turn'] == 1:
-        game['p1_move'] = move_data
+        game['player1_move'] = (move, conf)
         game['turn'] = 2
-        print(f"👤 P1: {RPS_EMOJI[move_data[2]]} {move_data[2]} ({move_data[1]*100:.0f}%) — Now snap P2!")
+        print(f"👤 Player 1: {emoji} {move} ({conf*100:.0f}%) — now snap Player 2!")
     else:
-        p1, p2 = game['p1_move'], move_data
+        player1_move, player1_conf = game['player1_move']
+        player2_move, player2_conf = move, conf
         game['turn'] = 1
         game['round'] += 1
-        outcome = determine_winner(p1, p2)
 
-        if outcome == 'draw': game['p1_score'] += 0
-        elif outcome == 'p1': game['p1_score'] += 1
-        else: game['p2_score'] += 1
+        outcome = _rps_winner(player1_move, player2_move)
+        if outcome == 'player1': game['player1_score'] += 1
+        elif outcome == 'player2': game['player2_score'] += 1
 
-        icons = {'draw': ('😐','😐'), 'p1': ('🏆','😢'), 'p2': ('😢','🏆')}
-        e1, e2 = icons[outcome]
-        results = {'draw': '🤝 DRAW!', 'p1': '👑 P1 WINS!', 'p2': '👑 P2 WINS!'}
-
-        print(f"══ Round {game['round']} ═══════════════════════")
-        print(f"  {e1} P1: {RPS_EMOJI[p1[2]]} {p1[2]} ({p1[1]*100:.0f}%)")
-        print(f"  {e2} P2: {RPS_EMOJI[p2[2]]} {p2[2]} ({p2[1]*100:.0f}%)")
-        print(f"  → {results[outcome]}")
-        print(f"  Score: P1 {game['p1_score']} — P2 {game['p2_score']}")
-        print()
+        tag = {'draw': '🤝 DRAW', 'player1': '👑 Player 1 wins!', 'player2': '👑 Player 2 wins!'}
+        print(f"══ Round {game['round']} ══════════════════")
+        print(f"  Player 1: {_RPS_EMOJI[player1_move]} {player1_move} ({player1_conf*100:.0f}%)")
+        print(f"  Player 2: {_RPS_EMOJI[player2_move]} {player2_move} ({player2_conf*100:.0f}%)")
+        print(f"  → {tag[outcome]}")
+        print(f"  Score: {game['player1_score']} — {game['player2_score']}\\n")
 `,
 
     image_group_battle: `# ⚔️ Group Battle — Capture photos, pair off, find winners!
@@ -2008,6 +1984,50 @@ def _get_tensor_shape(w):
         shape.append(len(temp))
         temp = temp[0] if len(temp) > 0 else []
     return shape
+
+# ─── RPS HELPERS ─────────────────────────────────────────────────
+
+_RPS_KEYWORDS = {
+    'scissors': ['scissors', 'schere', 'scheere'],
+    'rock':     ['rock', 'stein', 'stone', 'fels'],
+    'paper':    ['paper', 'papier'],
+}
+_RPS_EMOJI = {'scissors': '✌️', 'rock': '✊', 'paper': '✋'}
+_RPS_WINS = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
+
+def _rps_detect_mapping(label_list):
+    """Auto-detect RPS mapping from label names (DE/EN). Returns {index: move}."""
+    if not label_list or len(label_list) != 3:
+        if label_list and len(label_list) != 3:
+            print(f"⚠️  RPS needs exactly 3 labels, got {len(label_list)}: {list(label_list)}")
+        print("   → Fallback: [0]=scissors, [1]=rock, [2]=paper")
+        return {0: 'scissors', 1: 'rock', 2: 'paper'}
+
+    mapping = {}
+    used = set()
+    for idx, lbl in enumerate(label_list):
+        low = lbl.strip().lower()
+        for move, keywords in _RPS_KEYWORDS.items():
+            if low in keywords and move not in used:
+                mapping[idx] = move
+                used.add(move)
+                break
+
+    if len(mapping) == 3:
+        for idx, move in sorted(mapping.items()):
+            lname = label_list[idx]
+            print(f'  {_RPS_EMOJI[move]} "{lname}" -> {move}')
+        return mapping
+
+    unmatched = [label_list[i] for i in range(3) if i not in mapping]
+    print(f'⚠️  Could not identify: {unmatched}')
+    print("   → Fallback: [0]=scissors, [1]=rock, [2]=paper")
+    return {0: 'scissors', 1: 'rock', 2: 'paper'}
+
+def _rps_winner(move1, move2):
+    """Returns 'player1', 'player2', or 'draw'."""
+    if move1 == move2: return 'draw'
+    return 'player1' if _RPS_WINS[move1] == move2 else 'player2'
 
 print('🐍 Python environment ready!')
 print('📦 Functions: predict(), get_model_info(), get_weights(), rand_nested(shape)')
