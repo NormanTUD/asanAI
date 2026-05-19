@@ -1614,18 +1614,24 @@ else:
 						throw new Error("loadPyodide is not defined. Ensure libs/pyodide.js is loaded.");
 					}
 
+					// Yield to the browser before heavy work
+					await new Promise(function(resolve) { setTimeout(resolve, 0); });
+
 					pyodideInstance = await loadPyodide({
 						indexURL: "libs/",
 						stdout: function (text) { appendConsole(text + "\n", "stdout"); },
 						stderr: function (text) { appendConsole(text + "\n", "stderr"); },
 					});
 
+					// Yield again before setting up the Python env
+					await new Promise(function(resolve) { setTimeout(resolve, 0); });
+
 					await setupPythonEnvironment();
 
 					pyodideReady = true;
 					pyodideLoading = false;
 					setStatus("✓ Ready", "ready");
-					return; // Success — exit
+					return;
 				} catch (e) {
 					console.error("Pyodide init attempt " + attempt + " failed:", e);
 					if (attempt < maxRetries) {
@@ -2207,6 +2213,7 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		}, 1000);
 
 		webcamInterval = setInterval(async function () {
+			if (!isEffectivelyVisible()) return;  // <-- ADD THIS
 			if (webcamPredicting || !webcamStream || interruptExecution) return;
 			webcamPredicting = true;
 			try {
@@ -3172,15 +3179,21 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	function initWhenReady() {
 		setupEditorKeyHandlers();
 		setupLivePredictions();
+		setupVisibilityObservers();
 
-		// Watch for tab visibility to auto-init Pyodide
+		// Watch for tab visibility to auto-init Pyodide IN THE BACKGROUND
 		var observer = new MutationObserver(function (mutations) {
 			for (var i = 0; i < mutations.length; i++) {
 				var mutation = mutations[i];
 				if (mutation.type === "attributes" && mutation.attributeName === "style") {
 					var tab = document.getElementById("pyodide_editor_tab");
 					if (tab && tab.style.display !== "none" && !pyodideReady && !pyodideLoading) {
-						initPyodide();
+						// Use requestIdleCallback to avoid blocking the main thread
+						if (window.requestIdleCallback) {
+							requestIdleCallback(function() { initPyodide(); }, { timeout: 2000 });
+						} else {
+							setTimeout(function() { initPyodide(); }, 100);
+						}
 					}
 				}
 			}
@@ -3191,7 +3204,12 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			observer.observe(pyodideTab, { attributes: true, attributeFilter: ["style"] });
 
 			if (pyodideTab.style.display !== "none" && pyodideTab.offsetParent !== null) {
-				initPyodide();
+				// Defer init so the UI renders first (no hang)
+				if (window.requestIdleCallback) {
+					requestIdleCallback(function() { initPyodide(); }, { timeout: 2000 });
+				} else {
+					setTimeout(function() { initPyodide(); }, 100);
+				}
 			}
 		}
 
@@ -3431,6 +3449,93 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		document.addEventListener("DOMContentLoaded", initWhenReady);
 	} else {
 		setTimeout(initWhenReady, 0);
+	}
+
+	// =========================================================================
+	// VISIBILITY-BASED PAUSE/RESUME
+	// =========================================================================
+
+	let editorVisible = true;
+	let pageVisible = true;
+
+	function isEffectivelyVisible() {
+	    return editorVisible && pageVisible;
+	}
+
+	function pauseCalculations() {
+	    if (webcamInterval) {
+		clearInterval(webcamInterval);
+		webcamInterval = null;
+	    }
+	    if (webcamFPSTimer) {
+		clearInterval(webcamFPSTimer);
+		webcamFPSTimer = null;
+	    }
+	}
+
+	function resumeCalculations() {
+	    // Only resume webcam loop if stream is still active
+	    if (webcamStream && !webcamInterval) {
+		startWebcamPredictionLoop();
+	    }
+	}
+
+	function onVisibilityChange() {
+	    var wasVisible = isEffectivelyVisible();
+
+	    // Check page visibility
+	    pageVisible = !document.hidden;
+
+	    // Now check if state changed
+	    var nowVisible = isEffectivelyVisible();
+
+	    if (wasVisible && !nowVisible) {
+		pauseCalculations();
+	    } else if (!wasVisible && nowVisible) {
+		resumeCalculations();
+	    }
+	}
+
+	function setupVisibilityObservers() {
+	    // 1. Page Visibility API (tab switch, minimize)
+	    document.addEventListener("visibilitychange", onVisibilityChange);
+
+	    // 2. IntersectionObserver (scrolled out of view, hidden div)
+	    var wrapper = document.getElementById("pyodide_editor_wrapper");
+	    if (wrapper && window.IntersectionObserver) {
+		var observer = new IntersectionObserver(function(entries) {
+		    var wasVisible = isEffectivelyVisible();
+		    editorVisible = entries[0].isIntersecting;
+		    var nowVisible = isEffectivelyVisible();
+
+		    if (wasVisible && !nowVisible) {
+			pauseCalculations();
+		    } else if (!wasVisible && nowVisible) {
+			resumeCalculations();
+		    }
+		}, {
+		    threshold: 0.05  // At least 5% visible to be considered "visible"
+		});
+		observer.observe(wrapper);
+	    }
+
+	    // 3. Also watch the parent tab div for display:none toggling
+	    var pyodideTab = document.getElementById("pyodide_editor_tab");
+	    if (pyodideTab && window.MutationObserver) {
+		var mutObs = new MutationObserver(function() {
+		    var wasVisible = isEffectivelyVisible();
+		    // Check if the tab is hidden via display:none
+		    editorVisible = (pyodideTab.style.display !== "none" && pyodideTab.offsetParent !== null);
+		    var nowVisible = isEffectivelyVisible();
+
+		    if (wasVisible && !nowVisible) {
+			pauseCalculations();
+		    } else if (!wasVisible && nowVisible) {
+			resumeCalculations();
+		    }
+		});
+		mutObs.observe(pyodideTab, { attributes: true, attributeFilter: ["style", "class"] });
+	    }
 	}
 
 	// =========================================================================
