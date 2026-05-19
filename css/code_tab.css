@@ -1,0 +1,610 @@
+/* ===== PYODIDE EDITOR THEME (v4 — Side-by-side + Dark/Light Mode) ===== */
+
+/* ---- DARK MODE (default) ---- */
+#pyodide_editor_wrapper {
+	--pe-bg: #0f0f1a;
+	--pe-surface: #1a1a2e;
+	--pe-surface2: #16213e;
+	--pe-border: #2a2a4a;
+	--pe-accent: #6c63ff;
+	--pe-accent2: #00d4aa;
+	--pe-text: #e0e0e0;
+	--pe-muted: #888;
+	--pe-success: #00d4aa;
+	--pe-error: #ff6b6b;
+	--pe-warning: #ffd93d;
+	--pe-radius: 8px;
+	--pe-editor-bg: #1e1e2e;
+	--pe-line-num-bg: #181825;
+	--pe-console-bg: #0b0b14;
+	--pe-console-text: #00ff88;
+	--pe-caret-color: #fff;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	position: relative;
+}
+
+/* ---- LIGHT MODE ---- */
+#pyodide_editor_wrapper.pe-light-mode {
+	--pe-bg: #f5f5f7;
+	--pe-surface: #ffffff;
+	--pe-surface2: #eef0f4;
+	--pe-border: #d0d4dc;
+	--pe-accent: #5046e5;
+	--pe-accent2: #059669;
+	--pe-text: #1f2937;
+	--pe-muted: #6b7280;
+	--pe-success: #059669;
+	--pe-error: #dc2626;
+	--pe-warning: #d97706;
+	--pe-radius: 8px;
+	--pe-editor-bg: #ffffff;
+	--pe-line-num-bg: #f3f4f6;
+	--pe-console-bg: #f9fafb;
+	--pe-console-text: #065f46;
+	--pe-caret-color: #111;
+}
+
+/* Light mode syntax overrides */
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .kw { color: #7c3aed; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .bi { color: #0891b2; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .fn { color: #2563eb; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .st { color: #16a34a; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .cm { color: #9ca3af; font-style: italic; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .nu { color: #ea580c; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .op { color: #0891b2; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .dc { color: #ca8a04; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .sf { color: #e11d48; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .cn { color: #ea580c; font-weight: 500; }
+#pyodide_editor_wrapper.pe-light-mode .pe-hl .tx { color: #1f2937; }
+
+/* Light mode line numbers */
+#pyodide_editor_wrapper.pe-light-mode #pyodide_editor_line_numbers {
+	color: #9ca3af;
+	background: var(--pe-line-num-bg);
+	border-right-color: var(--pe-border);
+}
+
+/* Light mode console */
+#pyodide_editor_wrapper.pe-light-mode #pyodide_console_output {
+	background: var(--pe-console-bg);
+	color: var(--pe-console-text);
+}
+
+/* Light mode editor body */
+#pyodide_editor_wrapper.pe-light-mode .pe-editor-body {
+	background: var(--pe-editor-bg);
+}
+
+/* Light mode textarea caret */
+#pyodide_editor_wrapper.pe-light-mode #pyodide_editor_textarea {
+	caret-color: var(--pe-caret-color);
+}
+
+#pyodide_editor_wrapper button {
+	transition: all 0.15s ease;
+	font-family: inherit;
+}
+#pyodide_editor_wrapper button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+}
+#pyodide_editor_wrapper button:active {
+	transform: translateY(0);
+}
+
+/* Fullscreen mode */
+#pyodide_editor_wrapper.pe-fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 99999;
+	background: var(--pe-bg);
+	padding: 16px;
+	overflow-y: auto;
+	border-radius: 0;
+}
+#pyodide_editor_wrapper.pe-fullscreen .pe-editor-container {
+	flex: 1;
+}
+#pyodide_editor_wrapper.pe-fullscreen #pyodide_editor_textarea {
+	min-height: 50vh;
+	max-height: 70vh;
+}
+
+.pe-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+	padding: 8px 12px;
+	background: var(--pe-surface);
+	border: 1px solid var(--pe-border);
+	border-radius: var(--pe-radius);
+	margin-bottom: 8px;
+}
+
+.pe-btn {
+	border: none;
+	padding: 6px 12px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 12px;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	white-space: nowrap;
+}
+.pe-btn-run {
+	background: linear-gradient(135deg, #00d4aa, #00b894);
+	color: #000;
+	font-size: 13px;
+}
+.pe-btn-run:hover {
+	background: linear-gradient(135deg, #00e6b8, #00d4aa);
+	box-shadow: 0 4px 15px rgba(0, 212, 170, 0.4) !important;
+}
+.pe-btn-stop {
+	background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+	color: #fff;
+}
+.pe-btn-stop:hover {
+	box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4) !important;
+}
+.pe-btn-clear {
+	background: var(--pe-surface2);
+	color: var(--pe-text);
+	border: 1px solid var(--pe-border);
+}
+.pe-btn-reset {
+	background: var(--pe-surface2);
+	color: var(--pe-warning);
+	border: 1px solid var(--pe-border);
+}
+.pe-btn-mode {
+	background: linear-gradient(135deg, #6c63ff, #5a52d5);
+	color: #fff;
+}
+
+.pe-separator {
+	width: 1px;
+	height: 24px;
+	background: var(--pe-border);
+	margin: 0 2px;
+}
+
+/* === SIDE-BY-SIDE LAYOUT: Editor left, Console right === */
+.pe-main-layout {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	align-items: stretch;
+}
+
+.pe-main-layout .pe-editor-container {
+	flex: 1 1 60%;
+	min-width: 0;
+}
+
+.pe-main-layout .pe-console-container {
+	flex: 0 0 35%;
+	min-width: 280px;
+	margin-top: 0;
+}
+
+/* Responsive: stack vertically on narrow screens */
+@media (max-width: 900px) {
+	.pe-main-layout {
+		flex-direction: column;
+	}
+	.pe-main-layout .pe-console-container {
+		flex: none;
+		min-width: unset;
+	}
+}
+
+/* Editor container */
+.pe-editor-container {
+	position: relative;
+	border: 1px solid var(--pe-border);
+	border-radius: var(--pe-radius);
+	overflow: hidden;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	display: flex;
+	flex-direction: column;
+}
+.pe-editor-header {
+	background: var(--pe-surface);
+	padding: 6px 14px;
+	font-size: 12px;
+	color: var(--pe-muted);
+	border-bottom: 1px solid var(--pe-border);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.pe-editor-body {
+	position: relative;
+	background: var(--pe-editor-bg);
+	flex: 1;
+	overflow: hidden;
+	min-height: 520px;
+	max-height: 75vh;
+}
+
+#pyodide_editor_line_numbers {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 40px;
+	padding: 12px 6px 12px 0;
+	text-align: right;
+	font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+	font-size: 13px;
+	line-height: 1.6;
+	color: #555;
+	background: var(--pe-line-num-bg);
+	border-right: 1px solid var(--pe-border);
+	user-select: none;
+	pointer-events: none;
+	z-index: 3;
+	overflow: hidden;
+	white-space: pre;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+#pyodide_editor_highlight {
+	position: absolute;
+	top: 0;
+	left: 40px;
+	right: 0;
+	bottom: 0;
+	padding: 12px;
+	font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+	font-size: 13px;
+	line-height: 1.6;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow: hidden;
+	pointer-events: none;
+	tab-size: 4;
+	border: none;
+	margin: 0;
+	z-index: 1;
+	box-sizing: border-box;
+}
+
+#pyodide_editor_textarea {
+	position: absolute;
+	top: 0;
+	left: 40px;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	width: calc(100% - 40px);
+	height: 100%;
+	font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+	font-size: 13px;
+	line-height: 1.6;
+	padding: 12px;
+	border: none;
+	outline: none;
+	resize: none;
+	tab-size: 4;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background: transparent;
+	color: transparent;
+	caret-color: var(--pe-caret-color);
+	box-sizing: border-box;
+	display: block;
+}
+
+.pe-editor-scroll-area {
+	position: relative;
+	flex: 1;
+	overflow: auto;
+	min-height: 0;
+}
+
+/* Syntax colors (Catppuccin-inspired, dark mode default) */
+.pe-hl .kw { color: #cba6f7; font-weight: 500; }
+.pe-hl .bi { color: #89dceb; }
+.pe-hl .fn { color: #89b4fa; }
+.pe-hl .st { color: #a6e3a1; }
+.pe-hl .cm { color: #6c7086; font-style: italic; }
+.pe-hl .nu { color: #fab387; }
+.pe-hl .op { color: #89dceb; }
+.pe-hl .dc { color: #f9e2af; }
+.pe-hl .sf { color: #f38ba8; }
+.pe-hl .cn { color: #fab387; font-weight: 500; }
+.pe-hl .tx { color: #cdd6f4; }
+
+/* Console styling */
+.pe-console-container {
+	border: 1px solid var(--pe-border);
+	border-radius: var(--pe-radius);
+	overflow: hidden;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+}
+.pe-console-header {
+	background: var(--pe-surface);
+	padding: 6px 14px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid var(--pe-border);
+}
+.pe-console-header strong {
+	font-size: 12px;
+	color: var(--pe-muted);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+#pyodide_console_output {
+	width: 100%;
+	flex: 1;
+	min-height: 140px;
+	max-height: none;
+	overflow: auto;
+	background: var(--pe-console-bg);
+	color: var(--pe-console-text);
+	font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+	font-size: 12px;
+	line-height: 1.5;
+	padding: 12px;
+	margin: 0;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	box-sizing: border-box;
+}
+
+/* Rich output cells */
+.pe-output-cell {
+	margin: 8px 0;
+	padding: 8px;
+	border: 1px solid var(--pe-border);
+	border-radius: 6px;
+	background: #12121f;
+}
+
+#pyodide_editor_wrapper.pe-light-mode .pe-output-cell {
+	background: #f3f4f6;
+}
+
+.pe-output-cell canvas,
+.pe-output-cell img {
+	display: block;
+	margin: 4px auto;
+	border-radius: 4px;
+	max-width: 100%;
+}
+.pe-output-cell .pe-html-output {
+	color: var(--pe-text);
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	font-size: 13px;
+}
+.pe-output-cell .pe-html-output table {
+	border-collapse: collapse;
+	margin: 4px 0;
+	width: 100%;
+}
+.pe-output-cell .pe-html-output th,
+.pe-output-cell .pe-html-output td {
+	border: 1px solid var(--pe-border);
+	padding: 4px 8px;
+	font-size: 12px;
+}
+.pe-output-cell .pe-html-output th {
+	background: var(--pe-surface);
+	color: var(--pe-accent2);
+}
+
+/* Input source bar */
+.pe-input-bar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	padding: 8px 14px;
+	background: linear-gradient(135deg, var(--pe-surface), var(--pe-surface2));
+	border: 1px solid var(--pe-border);
+	border-radius: var(--pe-radius);
+	margin-bottom: 8px;
+}
+.pe-input-bar label,
+.pe-input-bar button {
+	font-size: 12px;
+}
+
+.pe-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 8px;
+	border-radius: 12px;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+.pe-badge-ready {
+	background: rgba(0, 212, 170, 0.15);
+	color: var(--pe-success);
+	border: 1px solid rgba(0, 212, 170, 0.3);
+}
+.pe-badge-loading {
+	background: rgba(108, 99, 255, 0.15);
+	color: var(--pe-accent);
+	border: 1px solid rgba(108, 99, 255, 0.3);
+	animation: pe-pulse 1.5s infinite;
+}
+.pe-badge-error {
+	background: rgba(255, 107, 107, 0.15);
+	color: var(--pe-error);
+	border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+@keyframes pe-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.5; }
+}
+
+/* Webcam & prediction */
+.pe-media-container {
+	display: none;
+	margin-bottom: 8px;
+	padding: 12px;
+	background: var(--pe-bg);
+	border-radius: var(--pe-radius);
+	border: 1px solid var(--pe-border);
+	text-align: center;
+}
+
+/* FIX: Prediction output wider to prevent bar overflow */
+#pyodide_prediction_output {
+	min-width: 200px;
+	max-width: 480px;
+	min-height: 50px;
+	max-height: 220px;
+	overflow: auto;
+	background: #0a1628;
+	color: #61dafb;
+	font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+	font-size: 11px;
+	line-height: 1.4;
+	padding: 10px;
+	border: 1px solid #1a3a5c;
+	border-radius: 6px;
+	margin: 4px 0 0 0;
+	white-space: pre;
+	word-wrap: normal;
+	overflow-x: auto;
+	box-sizing: border-box;
+}
+
+#pyodide_editor_wrapper.pe-light-mode #pyodide_prediction_output {
+	background: #f0f9ff;
+	color: #1e40af;
+	border-color: #bfdbfe;
+}
+
+/* Tooltip */
+.pe-tooltip {
+	position: relative;
+}
+.pe-tooltip::after {
+	content: attr(data-tip);
+	position: absolute;
+	bottom: 120%;
+	left: 50%;
+	transform: translateX(-50%);
+	background: #333;
+	color: #fff;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 10px;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s;
+	z-index: 100;
+}
+.pe-tooltip:hover::after {
+	opacity: 1;
+}
+
+/* Simple mode hides advanced stuff */
+#pyodide_editor_wrapper.pe-simple-mode .pe-advanced-only {
+	display: none !important;
+}
+#pyodide_editor_wrapper.pe-simple-mode .pe-editor-container {
+	min-height: 200px;
+}
+#pyodide_editor_wrapper.pe-simple-mode #pyodide_editor_textarea {
+	min-height: 200px;
+}
+
+/* Examples panel */
+.pe-examples-panel {
+	display: none;
+	margin-bottom: 8px;
+	padding: 12px;
+	background: var(--pe-surface);
+	border: 1px solid var(--pe-border);
+	border-radius: var(--pe-radius);
+	max-height: 300px;
+	overflow-y: auto;
+}
+.pe-examples-panel.pe-visible {
+	display: block;
+}
+.pe-example-card {
+	padding: 10px 12px;
+	margin: 6px 0;
+	background: var(--pe-surface2);
+	border: 1px solid var(--pe-border);
+	border-radius: 6px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+.pe-example-card:hover {
+	border-color: var(--pe-accent);
+	background: rgba(108, 99, 255, 0.1);
+	transform: translateX(4px);
+}
+.pe-example-card h4 {
+	margin: 0 0 4px 0;
+	font-size: 13px;
+	color: var(--pe-accent2);
+}
+.pe-example-card p {
+	margin: 0;
+	font-size: 11px;
+	color: var(--pe-muted);
+}
+
+/* Autosave indicator */
+#pyodide_autosave_indicator {
+	font-size: 10px;
+	color: var(--pe-success);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	margin-left: 8px;
+}
+
+/* FPS counter */
+#pyodide_fps_label {
+	font-size: 11px;
+	color: var(--pe-accent2);
+	min-width: 55px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Keyboard shortcuts help */
+.pe-shortcuts-hint {
+	font-size: 10px;
+	color: var(--pe-muted);
+	opacity: 0.7;
+}
+.pe-shortcuts-hint kbd {
+	background: var(--pe-surface2);
+	border: 1px solid var(--pe-border);
+	border-radius: 3px;
+	padding: 1px 4px;
+	font-size: 9px;
+	font-family: inherit;
+}

@@ -39,6 +39,7 @@
 		_css("css/style.css");
 		_css("css/auto_animations.css");
 		_css("css/ribbon.css");
+		_css("css/code_tab.css");
 
 		_css("css/ribbon_media.css");
 		_css("css/".$theme_base."mode.css", "css_mode");
