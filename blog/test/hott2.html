@@ -1,0 +1,2068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homotopy Type Theory — Why It Should Be the Foundation of Math</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue-light: #e8f4fe;
+            --blue-mid: #5b9bd5;
+            --blue-deep: #2c6faa;
+            --purple-light: #f3eaff;
+            --purple-mid: #9b6dd7;
+            --purple-deep: #6b3fa0;
+            --green-light: #e8faf0;
+            --green-mid: #4caf80;
+            --red-light: #fde8e8;
+            --red-mid: #d45b5b;
+            --orange-mid: #e8943a;
+            --gray-warm: #6b6570;
+            --gray-light: #f9f8fb;
+            --gray-border: #eae7ed;
+            --text-primary: #1a1720;
+            --text-secondary: #55505d;
+            --bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.75;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        header {
+            text-align: center;
+            padding: 90px 28px 50px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, var(--blue-deep), var(--purple-deep));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+
+        section {
+            padding: 70px 0;
+            border-top: 1px solid var(--gray-border);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+
+        .section-number {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--purple-mid);
+            margin-bottom: 6px;
+        }
+
+        .explanation {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            max-width: 700px;
+            margin-bottom: 28px;
+            line-height: 1.85;
+        }
+
+        .explanation strong {
+            color: var(--text-primary);
+        }
+
+        .canvas-container {
+            background: var(--gray-light);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            position: relative;
+            border: 1px solid var(--gray-border);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .hint {
+            font-size: 0.78rem;
+            color: var(--gray-warm);
+            text-align: center;
+            margin-top: 12px;
+            font-style: italic;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 9px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--blue-light);
+            color: var(--blue-deep);
+        }
+
+        button:hover {
+            background: var(--blue-mid);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44,111,170,0.2);
+        }
+
+        button.purple {
+            background: var(--purple-light);
+            color: var(--purple-deep);
+        }
+
+        button.purple:hover {
+            background: var(--purple-mid);
+            color: white;
+            box-shadow: 0 4px 12px rgba(107,63,160,0.2);
+        }
+
+        button.green {
+            background: var(--green-light);
+            color: #2e7d52;
+        }
+
+        button.green:hover {
+            background: var(--green-mid);
+            color: white;
+        }
+
+        select {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            padding: 8px 14px;
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .comp-side {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-border);
+        }
+
+        .comp-side.bad {
+            background: var(--red-light);
+            border-color: rgba(212,91,91,0.2);
+        }
+
+        .comp-side.good {
+            background: var(--green-light);
+            border-color: rgba(76,175,128,0.2);
+        }
+
+        .comp-side h4 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .comp-side.bad h4 { color: var(--red-mid); }
+        .comp-side.good h4 { color: var(--green-mid); }
+
+        .comp-side p {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .comp-side code {
+            background: rgba(0,0,0,0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .insight-box {
+            background: linear-gradient(135deg, var(--purple-light), var(--blue-light));
+            border-radius: 14px;
+            padding: 22px 26px;
+            margin: 24px 0;
+            font-size: 0.92rem;
+            color: var(--purple-deep);
+            line-height: 1.8;
+            border: 1px solid rgba(107,63,160,0.1);
+        }
+
+        .insight-box strong {
+            color: var(--purple-deep);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .footer-item {
+            text-align: center;
+        }
+
+        .footer-item canvas {
+            cursor: default;
+        }
+
+        .footer-item p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 700px) {
+            header h1 { font-size: 2.1rem; }
+            section h2 { font-size: 1.5rem; }
+            .comparison-box { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            header { padding: 50px 20px 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Homotopy Type Theory</h1>
+    <p class="subtitle">A visual explanation of why types-as-spaces, equality-as-paths, and univalence give us a foundation for mathematics that <em>actually makes sense</em> — where structure is respected, proofs carry information, and equivalent things are truly equal.</p>
+</header>
+
+<div class="container">
+
+    <!-- ===== SECTION 1: TYPES vs SETS ===== -->
+    <section id="sec-types">
+        <div class="section-number">Section 1</div>
+        <h2>Types Are Not Just Sets</h2>
+        <p class="explanation">
+            In set theory, a set is a bag of elements — <code>{true, false}</code> is Bool. But sets have <strong>no structure beyond membership</strong>. In HoTT, a type is a <strong>space with shape</strong>. The type Bool has exactly two points and <em>no paths between them</em> (true ≠ false, period). But a type like the Circle has one point and infinitely many loops. <strong>The shape of the space IS the mathematics.</strong>
+        </p>
+
+        <div class="comparison-box">
+            <div class="comp-side bad">
+                <h4>❌ Set Theory</h4>
+                <p>A set is just a bag. <code>{a, b}</code> has two elements. That's ALL you know. No notion of "how" elements relate. Equality is just "same element or not" — a single bit of information.</p>
+            </div>
+            <div class="comp-side good">
+                <h4>✓ HoTT</h4>
+                <p>A type is a <strong>space</strong>. It has points (elements), paths (equalities), paths-between-paths, and so on. The <em>topology</em> of the type carries mathematical meaning. Bool is <strong>discrete</strong> — two isolated points. ℕ is a chain. The Circle has a loop.</p>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="canvas-types" height="320"></canvas>
+            <p class="hint">Click "Add Point" to see how types constrain their elements differently than sets</p>
+        </div>
+        <div class="controls">
+            <button id="btn-type-add">Add Point to Bool</button>
+            <button id="btn-type-show-paths" class="purple">Show: Why Paths Matter</button>
+            <button id="btn-type-reset" class="green">Reset</button>
+        </div>
+
+        <div class="insight-box">
+            <strong>The key insight:</strong> In set theory, <code>{0,1}</code> and <code>{true, false}</code> are "different sets" that happen to be isomorphic. In HoTT, if two types are equivalent, they are <em>the same type</em>. The foundation itself respects mathematical structure.
+        </div>
+    </section>
+
+    <!-- ===== SECTION 2: PATHS = EQUALITY ===== -->
+    <section id="sec-paths">
+        <div class="section-number">Section 2</div>
+        <h2>Equality Is a Path (Not a Bit)</h2>
+        <p class="explanation">
+            Consider the expressions <code>x + 1 + 1</code> and <code>x + 2</code>. They compute to the same thing. In classical math, we just say "they're equal" — a yes/no. But <strong>HOW</strong> do we know they're equal? There's a <em>computation</em> that transforms one into the other. In HoTT, that computation IS the equality — it's a <strong>path</strong> from one to the other. Different computations = different paths = different <em>reasons</em> why things are equal.
+        </p>
+
+        <div class="canvas-container">
+            <canvas id="canvas-paths" height="360"></canvas>
+            <p class="hint">Watch: multiple different proofs that two expressions are equal — each is a distinct path</p>
+        </div>
+        <div class="controls">
+            <button id="btn-path-compute">▶ Show Computation Path</button>
+            <button id="btn-path-algebra">▶ Show Algebraic Path</button>
+            <button id="btn-path-both">▶ Show Both (Different Proofs!)</button>
+            <button id="btn-path-reset" class="green">Reset</button>
+        </div>
+
+        <div class="insight-box">
+            <strong>Why this matters:</strong> In set theory, "2+2=4" is just TRUE. In HoTT, the <em>proof</em> that 2+2=4 is a mathematical object — a path you can study, compose with other paths, or invert. Proofs aren't just certificates; they're <strong>first-class mathematical structures</strong>.
+        </div>
+    </section>
+
+    <!-- ===== SECTION 3: HIGHER STRUCTURE ===== -->
+    <section id="sec-higher">
+        <div class="section-number">Section 3</div>
+        <h2>Paths Between Paths — Infinite Depth</h2>
+        <p class="explanation">
+            If two proofs of equality are themselves "the same proof," that sameness is <em>another</em> path — a path between paths. This is a <strong>homotopy</strong>: a continuous deformation of one path into another. And you can ask if two homotopies are the same... giving paths between paths between paths. This infinite tower of structure is exactly what topology studies — and HoTT makes it the <em>foundation</em> of all math.
+        </p>
+
+        <div class="canvas-container">
+            <canvas id="canvas-higher" height="340"></canvas>
+            <p class="hint">The blue and red paths are two different proofs of A=B. The purple surface is a proof that those proofs are equal.</p>
+        </div>
+        <div class="controls">
+            <button id="btn-homotopy-play">▶ Animate Homotopy (path between paths)</button>
+            <button id="btn-homotopy-reset" class="purple">Reset</button>
+        </div>
+
+        <div class="comparison-box">
+            <div class="comp-side bad">
+                <h4>❌ Classical Logic</h4>
+                <p>Two proofs of the same theorem? Irrelevant — a theorem is just "true." All proofs are interchangeable. We lose information.</p>
+            </div>
+            <div class="comp-side good">
+                <h4>✓ HoTT</h4>
+                <p>Different proofs are different paths. Some can be deformed into each other (homotopic), some can't. This <strong>proof-relevant</strong> structure captures real mathematical content that classical foundations throw away.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 4: THE CIRCLE ===== -->
+    <section id="sec-circle">
+        <div class="section-number">Section 4</div>
+        <h2>The Circle — Where Types Get Interesting</h2>
+        <p class="explanation">
+            The circle S¹ is a type with <strong>one point</strong> (called "base") and <strong>one non-trivial path</strong> (a loop from base back to base). But you can go around the loop multiple times! Once, twice, backwards... The "equality type" base=base turns out to be <strong>the integers ℤ</strong> — the winding number. This is a type whose <em>equality structure</em> is infinitely rich, emerging purely from its shape.
+        </p>
+
+        <div class="canvas-container">
+            <canvas id="canvas-circle" height="320"></canvas>
+        </div>
+        <div class="controls">
+            <button id="btn-wind-plus">+1 Loop (counterclockwise)</button>
+            <button id="btn-wind-minus" class="purple">−1 Loop (clockwise)</button>
+            <button id="btn-wind-reset" class="green">Reset to 0</button>
+            <label style="margin-left:16px; font-size:1rem;">Winding: <strong id="winding-display" style="font-size:1.3rem; color:var(--purple-deep);">0</strong> ∈ ℤ</label>
+        </div>
+
+        <div class="insight-box">
+            <strong>The punchline:</strong> The integers aren't "defined" here — they <em>emerge</em> from the topology of the circle. In HoTT, you can <strong>define</strong> the circle as a type (one point + one loop), and the integers <strong>fall out</strong> as its fundamental group. Topology and algebra are unified at the foundational level.
+        </div>
+    </section>
+
+    <!-- ===== SECTION 5: UNIVALENCE ===== -->
+    <section id="sec-univalence">
+        <div class="section-number">Section 5</div>
+        <h2>Univalence — The Killer Feature</h2>
+        <p class="explanation">
+            Mathematicians constantly say things like "ℤ/2 and {even, odd} are the same thing." In set theory, this is <strong>technically false</strong> — they're different sets that happen to be isomorphic. You need to manually transport theorems between them. In HoTT, the <strong>Univalence Axiom</strong> says: equivalent types ARE equal. Period. If there's a perfect two-way mapping, they're literally the same type. Math finally works the way mathematicians actually think.
+        </p>
+
+        <div class="canvas-container">
+            <canvas id="canvas-univalence" height="340"></canvas>
+            <p class="hint">Watch: two equivalent types are revealed to be the SAME type — not just "similar"</p>
+        </div>
+        <div class="controls">
+            <button id="btn-morph-play">▶ Show Equivalence → Equality</button>
+            <button id="btn-morph-reset" class="purple">Reset</button>
+        </div>
+
+        <div class="comparison-box">
+            <div class="comp-side bad">
+                <h4>❌ Set Theory (ZFC)</h4>
+                <p>ℤ/2 = {0,1} with addition mod 2.<br>{even,odd} = a different set.<br>They're isomorphic but NOT equal. Every theorem about one must be manually "transported" to the other. Tedious. Error-prone.</p>
+            </div>
+            <div class="comp-side good">
+                <h4>✓ HoTT + Univalence</h4>
+                <p>If A ≃ B (equivalent), then A = B (equal). <strong>Automatically.</strong> Any theorem about A is instantly a theorem about B. The foundation <em>respects</em> the way mathematicians actually work. No more "abuse of notation" — it's just correct.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION 6: ARITHMETIC ===== -->
+    <section id="sec-arithmetic">
+        <div class="section-number">Section 6</div>
+        <h2>Seeing It Work: 2 + 2 = 4 as a Path</h2>
+        <p class="explanation">
+            Natural numbers form a type — a chain of points connected by the successor function S. The number 2 is S(S(0)): start at 0, step twice. Addition "a + b" means: start at a, take b successor steps. So 2+2 means "start at 2, step twice" → land on 4. The proof of equality is a <strong>path</strong> from the expression "2+2" to the point "4" — and that path is <code>refl</code> (reflexivity), because after computation they're <em>definitionally</em> the same point.
+        </p>
+
+        <div class="canvas-container">
+            <canvas id="canvas-arithmetic" height="300"></canvas>
+        </div>
+        <div class="controls">
+            <button id="btn-arith-add">▶ Animate 2 + 2 = 4</button>
+            <button id="btn-arith-mult" class="purple">▶ Animate 3 × 4 = 12</button>
+            <button id="btn-arith-reset" class="green">Reset</button>
+        </div>
+        <div style="margin-top:16px;">
+            <div class="controls">
+                <label>Try it: </label>
+                <select id="sel-a">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <span style="color:var(--text-secondary); font-weight:600;">+</span>
+                <select id="sel-b">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <button id="btn-arith-custom">▶ Walk it</button>
+            </div>
+        </div>
+
+        <div class="insight-box">
+            In HoTT, a proof that 2+2=4 isn't just a checkmark — it's a <strong>path in a space</strong>. And because paths are real mathematical objects, you can compose them, invert them, and reason about them structurally. The proof <em>is</em> the mathematics.
+        </div>
+    </section>
+
+    <!-- ===== SECTION 7: WHAT THIS UNLOCKS ===== -->
+    <section id="sec-footer">
+        <div class="section-number">Section 7</div>
+        <h2>What This Unlocks</h2>
+        <p class="explanation">HoTT isn't just philosophy — it's being implemented in proof assistants right now, unifying three fields that were always secretly the same thing.</p>
+        <div class="footer-grid">
+            <div class="footer-item">
+                <div class="canvas-container" style="padding:14px;">
+                    <canvas id="canvas-footer1" height="150"></canvas>
+                </div>
+                <p><strong>Machine-Verified Proofs</strong><br>Cubical Agda, Lean — proofs that check themselves</p>
+            </div>
+            <div class="footer-item">
+                <div class="canvas-container" style="padding:14px;">
+                    <canvas id="canvas-footer2" height="150"></canvas>
+                </div>
+                <p><strong>Structure-Respecting Math</strong><br>Isomorphic = Equal. No more "abuse of notation"</p>
+            </div>
+            <div class="footer-item">
+                <div class="canvas-container" style="padding:14px;">
+                    <canvas id="canvas-footer3" height="150"></canvas>
+                </div>
+                <p><strong>Three Fields, One Foundation</strong><br>Topology + Logic + Computer Science, unified</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer style="text-align:center; padding:50px 28px; color:var(--gray-warm); font-size:0.78rem; border-top:1px solid var(--gray-border);">
+    A visual introduction to Homotopy Type Theory. Built with vanilla HTML, CSS & Canvas. No dependencies.
+</footer>
+
+<script>
+// ===== UTILITIES =====
+function getCanvas(id) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    return { canvas, ctx, w: rect.width, h: rect.height };
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function dist(x1, y1, x2, y2) { return Math.sqrt((x2-x1)**2 + (y2-y1)**2); }
+function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+// ===== SCROLL OBSERVER =====
+const sections = document.querySelectorAll('section');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+}, { threshold: 0.08 });
+sections.forEach(s => observer.observe(s));
+
+// ============================================================
+// SECTION 1: TYPES vs SETS
+// ============================================================
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-types');
+    
+    let state = 'initial'; // 'initial', 'overflow', 'paths'
+    let boolPoints = [];
+    let animFrame = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        animFrame++;
+
+        const leftX = w * 0.25;
+        const rightX = w * 0.72;
+        const cy = h * 0.5;
+
+        // === LEFT: Set Theory Bool ===
+        ctx.save();
+        // Container
+        ctx.beginPath();
+        ctx.ellipse(leftX, cy, 100, 110, 0, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(212,91,91,0.05)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(212,91,91,0.3)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5,5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Title
+        ctx.fillStyle = '#888';
+        ctx.font = '600 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('SET THEORY: Bool = {true, false}', leftX, cy - 130);
+        ctx.font = '10px Inter';
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('(just a bag — no structure)', leftX, cy - 115);
+
+        // Fixed points
+        ctx.beginPath();
+        ctx.arc(leftX - 20, cy - 20, 8, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(212,91,91,0.7)';
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 8px Inter';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('T', leftX - 20, cy - 20);
+
+        ctx.beginPath();
+        ctx.arc(leftX + 20, cy + 20, 8, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(212,91,91,0.7)';
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.fillText('F', leftX + 20, cy + 20);
+
+        // Extra points (if user added them — showing the problem)
+        boolPoints.forEach((p, i) => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 7, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(212,91,91,0.5)';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 7px Inter';
+            ctx.fillText('?', p.x, p.y);
+        });
+
+        if (boolPoints.length > 0) {
+            ctx.fillStyle = 'rgba(212,91,91,0.8)';
+            ctx.font = '600 10px Inter';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('⚠ Sets don\'t prevent this!', leftX, cy + 90);
+            ctx.font = '9px Inter';
+            ctx.fillStyle = '#999';
+            ctx.fillText('Nothing in set theory says Bool has only 2 elements', leftX, cy + 105);
+            ctx.fillText('unless you add external axioms.', leftX, cy + 118);
+        }
+
+        ctx.restore();
+
+        // === RIGHT: HoTT Bool ===
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(rightX, cy, 100, 110, 0, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(76,175,128,0.05)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(76,175,128,0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#555';
+        ctx.font = '600 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('HoTT: Bool (a type with shape)', rightX, cy - 130);
+        ctx.font = '10px Inter';
+        ctx.fillStyle = '#888';
+        ctx.fillText('Exactly 2 points. No paths between them.', rightX, cy - 115);
+
+        // Two isolated points with clear separation
+        const trueX = rightX - 30, trueY = cy - 15;
+        const falseX = rightX + 30, falseY = cy + 15;
+
+        // Glow around points to show isolation
+        ctx.beginPath();
+        ctx.arc(trueX, trueY, 20, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(76,175,128,0.08)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(falseX, falseY, 20, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(76,175,128,0.08)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(trueX, trueY, 10, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(76,175,128,0.8)';
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 9px Inter';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.fillText('T', trueX, trueY);
+
+        ctx.beginPath();
+        ctx.arc(falseX, falseY, 10, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(76,175,128,0.8)';
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.fillText('F', falseX, falseY);
+
+        // Show NO path between them (crossed out)
+        if (state === 'paths') {
+            ctx.beginPath();
+            ctx.moveTo(trueX + 12, trueY);
+            ctx.lineTo(falseX - 12, falseY);
+            ctx.strokeStyle = 'rgba(212,91,91,0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4,4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // X mark on the path
+            const midPX = (trueX + falseX) / 2;
+            const midPY = (trueY + falseY) / 2;
+            ctx.beginPath();
+            ctx.moveTo(midPX - 8, midPY - 8);
+            ctx.lineTo(midPX + 8, midPY + 8);
+            ctx.moveTo(midPX + 8, midPY - 8);
+            ctx.lineTo(midPX - 8, midPY + 8);
+            ctx.strokeStyle = 'rgba(212,91,91,0.8)';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([]);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(76,175,128,0.9)';
+            ctx.font = '600 10px Inter';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('No path T→F exists!', rightX, cy + 55);
+            ctx.font = '9px Inter';
+            ctx.fillStyle = '#888';
+            ctx.fillText('true ≠ false is BUILT INTO the shape.', rightX, cy + 70);
+            ctx.fillText('The type itself enforces its own rules.', rightX, cy + 83);
+
+            // Show self-loops (refl)
+            ctx.beginPath();
+            ctx.arc(trueX, trueY - 18, 8, 0.3*Math.PI, 0.7*Math.PI);
+            ctx.strokeStyle = 'rgba(76,175,128,0.5)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(76,175,128,0.6)';
+            ctx.font = '8px Inter';
+            ctx.fillText('refl', trueX, trueY - 30);
+
+            ctx.beginPath();
+            ctx.arc(falseX, falseY + 18, 8, 1.3*Math.PI, 1.7*Math.PI);
+            ctx.strokeStyle = 'rgba(76,175,128,0.5)';
+            ctx.stroke();
+            ctx.fillText('refl', falseX, falseY + 38);
+        }
+
+        ctx.restore();
+
+        // Divider
+        ctx.beginPath();
+        ctx.moveTo(w/2, cy - 100);
+        ctx.lineTo(w/2, cy + 100);
+        ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3,6]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#bbb';
+        ctx.font = '10px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('vs', w/2, cy);
+    }
+
+    document.getElementById('btn-type-add').addEventListener('click', () => {
+        state = 'overflow';
+        const leftX = w * 0.25;
+        const cy = h * 0.5;
+        const angle = Math.random() * Math.PI * 2;
+        const r = 30 + Math.random() * 50;
+        boolPoints.push({
+            x: leftX + Math.cos(angle) * r,
+            y: cy + Math.sin(angle) * r
+        });
+        draw();
+    });
+
+    document.getElementById('btn-type-show-paths').addEventListener('click', () => {
+        state = 'paths';
+        draw();
+    });
+
+    document.getElementById('btn-type-reset').addEventListener('click', () => {
+        state = 'initial';
+        boolPoints = [];
+        draw();
+    });
+
+    draw();
+})();
+
+// ============================================================
+// SECTION 2: PATHS = EQUALITY
+// ============================================================
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-paths');
+    
+    let showCompute = false;
+    let showAlgebra = false;
+    let animT = 0;
+    let animating = false;
+    let animTarget = '';
+
+    const exprY = h * 0.35;
+    const resultY = h * 0.35;
+    const leftX = w * 0.15;
+    const rightX = w * 0.85;
+    const midY = h * 0.5;
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+
+        // Title area
+        ctx.fillStyle = '#444';
+        ctx.font = '600 13px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('Two expressions that are equal — but WHY are they equal?', w/2, 25);
+
+        // Expression boxes
+        const exprAx = w * 0.2;
+        const exprBx = w * 0.8;
+        const boxY = h * 0.22;
+
+        // Box A
+        ctx.fillStyle = 'rgba(74,122,181,0.1)';
+        ctx.strokeStyle = 'rgba(74,122,181,0.4)';
+        ctx.lineWidth = 2;
+        roundRect(ctx, exprAx - 60, boxY - 18, 120, 36, 8);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(44,111,170,0.9)';
+        ctx.font = '600 14px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('(n+1)+1', exprAx, boxY);
+
+        // Box B
+        ctx.fillStyle = 'rgba(107,63,160,0.1)';
+        ctx.strokeStyle = 'rgba(107,63,160,0.4)';
+        ctx.lineWidth = 2;
+        roundRect(ctx, exprBx - 50, boxY - 18, 100, 36, 8);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(107,63,160,0.9)';
+        ctx.font = '600 14px Inter';
+        ctx.fillText('n + 2', exprBx, boxY);
+
+        // Path 1: Computation (top arc)
+        if (showCompute) {
+            const progress = animTarget === 'compute' ? easeInOut(Math.min(animT, 1)) : 1;
+            ctx.save();
+            ctx.beginPath();
+            const cp1x = w * 0.5;
+            const cp1y = boxY - 80;
+            
+            // Draw partial path
+            const steps = Math.floor(progress * 50);
+            ctx.moveTo(exprAx + 60, boxY);
+            for (let i = 1; i <= steps; i++) {
+                const t = i / 50;
+                const px = (1-t)*(1-t)*(exprAx+60) + 2*(1-t)*t*cp1x + t*t*(exprBx-50);
+                const py = (1-t)*(1-t)*boxY + 2*(1-t)*t*cp1y + t*t*boxY;
+                ctx.lineTo(px, py);
+            }
+            ctx.strokeStyle = 'rgba(44,111,170,0.8)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Arrow at end
+            if (progress >= 1) {
+                ctx.beginPath();
+                ctx.moveTo(exprBx - 52, boxY - 4);
+                ctx.lineTo(exprBx - 50, boxY);
+                ctx.lineTo(exprBx - 52, boxY + 4);
+                ctx.strokeStyle = 'rgba(44,111,170,0.8)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Label
+            ctx.fillStyle = 'rgba(44,111,170,0.9)';
+            ctx.font = '500 11px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('Path 1: Compute step by step', w*0.5, cp1y - 8);
+            ctx.font = '10px Inter';
+            ctx.fillStyle = '#888';
+            ctx.fillText('(n+1)+1 → S((n+1)) → S(S(n)) → n+2', w*0.5, cp1y + 8);
+
+            // Moving point
+            if (progress < 1) {
+                const pt = progress;
+                const px = (1-pt)*(1-pt)*(exprAx+60) + 2*(1-pt)*pt*cp1x + pt*pt*(exprBx-50);
+                const py = (1-pt)*(1-pt)*boxY + 2*(1-pt)*pt*cp1y + pt*pt*boxY;
+                ctx.beginPath();
+                ctx.arc(px, py, 6, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(44,111,170,0.9)';
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // Path 2: Algebraic (bottom arc)
+        if (showAlgebra) {
+            const progress = animTarget === 'algebra' ? easeInOut(Math.min(animT, 1)) : 1;
+            ctx.save();
+            ctx.beginPath();
+            const cp2x = w * 0.5;
+            const cp2y = boxY + 100;
+            
+            const steps = Math.floor(progress * 50);
+            ctx.moveTo(exprAx + 60, boxY);
+            for (let i = 1; i <= steps; i++) {
+                const t = i / 50;
+                const px = (1-t)*(1-t)*(exprAx+60) + 2*(1-t)*t*cp2x + t*t*(exprBx-50);
+                const py = (1-t)*(1-t)*boxY + 2*(1-t)*t*cp2y + t*t*boxY;
+                ctx.lineTo(px, py);
+            }
+            ctx.strokeStyle = 'rgba(155,109,215,0.8)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            if (progress >= 1) {
+                ctx.beginPath();
+                ctx.moveTo(exprBx - 52, boxY - 4);
+                ctx.lineTo(exprBx - 50, boxY);
+                ctx.lineTo(exprBx - 52, boxY + 4);
+                ctx.strokeStyle = 'rgba(155,109,215,0.8)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = 'rgba(107,63,160,0.9)';
+            ctx.font = '500 11px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('Path 2: Use associativity of +', w*0.5, cp2y + 18);
+            ctx.font = '10px Inter';
+            ctx.fillStyle = '#888';
+            ctx.fillText('(n+1)+1 = n+(1+1) = n+2', w*0.5, cp2y + 34);
+
+            if (progress < 1) {
+                const pt = progress;
+                const px = (1-pt)*(1-pt)*(exprAx+60) + 2*(1-pt)*pt*cp2x + pt*pt*(exprBx-50);
+                const py = (1-pt)*(1-pt)*boxY + 2*(1-pt)*pt*cp2y + pt*pt*boxY;
+                ctx.beginPath();
+                ctx.arc(px, py, 6, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(155,109,215,0.9)';
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        // Bottom explanation
+        if (showCompute && showAlgebra) {
+            ctx.fillStyle = 'rgba(107,63,160,0.9)';
+            ctx.font = '600 12px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('TWO different paths = TWO different proofs of the same equality!', w/2, h - 50);
+            ctx.font = '11px Inter';
+            ctx.fillStyle = '#777';
+            ctx.fillText('In classical math, these are "the same." In HoTT, they\'re distinct objects you can study.', w/2, h - 32);
+            ctx.fillText('Are these two paths themselves equal? That\'s a question about paths-between-paths! → Section 3', w/2, h - 15);
+        }
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+
+    function animate() {
+        if (!animating) return;
+        animT += 0.02;
+        if (animT >= 1.2) {
+            animT = 1;
+            animating = false;
+        }
+        draw();
+        if (animating) requestAnimationFrame(animate);
+    }
+
+    document.getElementById('btn-path-compute').addEventListener('click', () => {
+        showCompute = true;
+        showAlgebra = false;
+        animT = 0;
+        animTarget = 'compute';
+        animating = true;
+        animate();
+    });
+
+    document.getElementById('btn-path-algebra').addEventListener('click', () => {
+        showAlgebra = true;
+        showCompute = false;
+        animT = 0;
+        animTarget = 'algebra';
+        animating = true;
+        animate();
+    });
+
+    document.getElementById('btn-path-both').addEventListener('click', () => {
+        showCompute = true;
+        showAlgebra = true;
+        animT = 1;
+        animating = false;
+        draw();
+    });
+
+    document.getElementById('btn-path-reset').addEventListener('click', () => {
+        showCompute = false;
+        showAlgebra = false;
+        animT = 0;
+        animating = false;
+        draw();
+    });
+
+    draw();
+})();
+
+// ============================================================
+// SECTION 3: HIGHER STRUCTURE
+// ============================================================
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-higher');
+    
+    let homotopyT = 0;
+    let playing = false;
+    let direction = 1;
+
+    const A = { x: w * 0.15, y: h * 0.5 };
+    const B = { x: w * 0.85, y: h * 0.5 };
+
+    function drawScene(t) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Background space
+        ctx.beginPath();
+        ctx.ellipse(w/2, h/2, w*0.44, h*0.44, 0, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(155,122,212,0.04)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(155,122,212,0.15)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        const ctrl1Y = h * 0.12; // top path
+        const ctrl2Y = h * 0.88; // bottom path
+        const ctrlY = lerp(ctrl1Y, ctrl2Y, t); // interpolated
+
+        // Draw filled region (homotopy surface)
+        if (t > 0 && t < 1) {
+            // Fill between top path and current path
+            ctx.beginPath();
+            ctx.moveTo(A.x, A.y);
+            // Top path
+            ctx.quadraticCurveTo(w/2, ctrl1Y, B.x, B.y);
+            // Back along current path
+            ctx.quadraticCurveTo(w/2, ctrlY, A.x, A.y);
+            ctx.fillStyle = `rgba(155,122,212,${0.12 * Math.sin(t * Math.PI)})`;
+            ctx.fill();
+
+            // Draw intermediate paths (ghosted)
+            const numGhosts = 8;
+            for (let i = 1; i < numGhosts; i++) {
+                const gt = i / numGhosts;
+                if (gt > t) break;
+                const gy = lerp(ctrl1Y, ctrl2Y, gt);
+                ctx.beginPath();
+                ctx.moveTo(A.x, A.y);
+                ctx.quadraticCurveTo(w/2, gy, B.x, B.y);
+                ctx.strokeStyle = `rgba(155,122,212,0.12)`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+        }
+
+        // Path 1 (top - blue)
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.quadraticCurveTo(w/2, ctrl1Y, B.x, B.y);
+        ctx.strokeStyle = 'rgba(44,111,170,0.7)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(44,111,170,0.8)';
+        ctx.font = '600 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('path p (proof 1)', w/2, ctrl1Y - 8);
+
+        // Path 2 (bottom - red)
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.quadraticCurveTo(w/2, ctrl2Y, B.x, B.y);
+        ctx.strokeStyle = 'rgba(181,74,74,0.7)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(181,74,74,0.8)';
+        ctx.font = '600 11px Inter';
+        ctx.fillText('path q (proof 2)', w/2, ctrl2Y + 18);
+
+        // Current interpolated path (purple, thick)
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.quadraticCurveTo(w/2, ctrlY, B.x, B.y);
+        ctx.strokeStyle = 'rgba(107,63,160,0.9)';
+        ctx.lineWidth = 3.5;
+        ctx.stroke();
+
+        // Endpoints
+        [A, B].forEach((p, i) => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
+            ctx.fillStyle = '#444';
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 11px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(i === 0 ? 'A' : 'B', p.x, p.y);
+        });
+
+        // Labels
+        if (t > 0 && t < 1) {
+            ctx.fillStyle = 'rgba(107,63,160,0.9)';
+            ctx.font = '600 12px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('← Homotopy: a path BETWEEN paths p and q →', w/2, h/2);
+            ctx.font = '10px Inter';
+            ctx.fillStyle = '#888';
+            ctx.fillText('This purple surface IS the proof that proof₁ = proof₂', w/2, h/2 + 16);
+        }
+
+        // Progress indicator
+        ctx.fillStyle = '#ccc';
+        ctx.font = '10px Inter';
+        ctx.textAlign = 'right';
+        ctx.fillText(`t = ${t.toFixed(2)}`, w - 10, h - 10);
+    }
+
+    function animateHomotopy() {
+        if (!playing) return;
+        homotopyT += 0.008 * direction;
+        if (homotopyT >= 1) { homotopyT = 1; direction = -1; }
+        if (homotopyT <= 0) { homotopyT = 0; direction = 1; playing = false; }
+        drawScene(homotopyT);
+        if (playing) requestAnimationFrame(animateHomotopy);
+    }
+
+    document.getElementById('btn-homotopy-play').addEventListener('click', () => {
+        playing = true;
+        direction = 1;
+        homotopyT = 0;
+        animateHomotopy();
+    });
+
+    document.getElementById('btn-homotopy-reset').addEventListener('click', () => {
+        playing = false;
+        homotopyT = 0;
+        drawScene(0);
+    });
+
+    drawScene(0);
+})();
+
+// ============================================================
+// SECTION 4: THE CIRCLE
+// ============================================================
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-circle');
+    
+    let winding = 0;
+    let animAngle = 0;
+    let targetAngle = 0;
+    let animating = false;
+
+    const cx = w / 2;
+    const cy = h / 2;
+    const radius = Math.min(w, h) * 0.28;
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+
+        // Background
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius + 30, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(123,164,212,0.04)';
+        ctx.fill();
+
+        // The circle S¹
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(123,164,212,0.5)';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Label the circle
+        ctx.fillStyle = '#888';
+        ctx.font = '600 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('S¹ (the circle type)', cx, cy - radius - 40);
+        ctx.font = '10px Inter';
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('One point "base" + one generating loop "loop"', cx, cy - radius - 25);
+
+        // Base point
+        const baseX = cx + radius;
+        const baseY = cy;
+        ctx.beginPath();
+        ctx.arc(baseX, baseY, 10, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(44,111,170,0.9)';
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 9px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('b', baseX, baseY);
+
+        // Label base
+        ctx.fillStyle = '#555';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('base', baseX + 16, baseY);
+
+        // Draw winding trail
+        if (Math.abs(animAngle) > 0.01) {
+            const trailRadius = radius - 6;
+            const totalAngle = -animAngle; // negative for visual direction
+            
+            // Determine color based on direction
+            const isPositive = animAngle > 0;
+            const color = isPositive ? 'rgba(107,63,160,0.8)' : 'rgba(232,148,58,0.8)';
+            
+            // Draw the winding arc
+            ctx.beginPath();
+            if (isPositive) {
+                ctx.arc(cx, cy, trailRadius, 0, totalAngle, true);
+            } else {
+                ctx.arc(cx, cy, trailRadius, 0, totalAngle, false);
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            ctx.lineCap = 'butt';
+
+            // Moving point at the end of the trail
+            const endAngle = totalAngle;
+            const ptX = cx + trailRadius * Math.cos(endAngle);
+            const ptY = cy + trailRadius * Math.sin(endAngle);
+            ctx.beginPath();
+            ctx.arc(ptX, ptY, 7, 0, Math.PI*2);
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            // Show winding count visually
+            const absWind = Math.abs(winding);
+            if (absWind > 0) {
+                // Small ticks for each full loop
+                for (let i = 1; i <= Math.min(absWind, 5); i++) {
+                    const tickAngle = isPositive ? -i * Math.PI * 2 + 0.1 : i * Math.PI * 2 - 0.1;
+                    const tx = cx + (trailRadius + 12) * Math.cos(tickAngle);
+                    const ty = cy + (trailRadius + 12) * Math.sin(tickAngle);
+                    ctx.beginPath();
+                    ctx.arc(tx, ty, 3, 0, Math.PI*2);
+                    ctx.fillStyle = color.replace('0.8', '0.4');
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Winding number display
+        ctx.fillStyle = 'rgba(107,63,160,0.9)';
+        ctx.font = 'bold 32px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(winding.toString(), cx, cy);
+        ctx.font = '10px Inter';
+        ctx.fillStyle = '#888';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('∈ ℤ', cx, cy + 20);
+
+        // Bottom explanation
+        ctx.fillStyle = '#666';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Ω(S¹, base) ≅ ℤ — the loop space of the circle IS the integers', cx, h - 15);
+    }
+
+    function animateWinding() {
+        if (!animating) return;
+        const diff = targetAngle - animAngle;
+        if (Math.abs(diff) < 0.03) {
+            animAngle = targetAngle;
+            animating = false;
+            draw();
+            return;
+        }
+        animAngle += diff * 0.05;
+        draw();
+        requestAnimationFrame(animateWinding);
+    }
+
+    document.getElementById('btn-wind-plus').addEventListener('click', () => {
+        winding++;
+        targetAngle = winding * Math.PI * 2;
+        animating = true;
+        document.getElementById('winding-display').textContent = winding;
+        animateWinding();
+    });
+
+    document.getElementById('btn-wind-minus').addEventListener('click', () => {
+        winding--;
+        targetAngle = winding * Math.PI * 2;
+        animating = true;
+        document.getElementById('winding-display').textContent = winding;
+        animateWinding();
+    });
+
+    document.getElementById('btn-wind-reset').addEventListener('click', () => {
+        winding = 0;
+        targetAngle = 0;
+        animating = true;
+        document.getElementById('winding-display').textContent = '0';
+        animateWinding();
+    });
+
+    draw();
+})();
+
+// ============================================================
+// SECTION 5: UNIVALENCE
+// ============================================================
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-univalence');
+    
+    let morphT = 0;
+    let playing = false;
+    let phase = 'equiv'; // 'equiv', 'morphing', 'equal'
+
+    function drawScene(t) {
+        ctx.clearRect(0, 0, w, h);
+
+        // Phase 1: Show two types with bijection (t: 0 to 0.3)
+        // Phase 2: Morph them together (t: 0.3 to 0.7)
+        // Phase 3: Show them as one type (t: 0.7 to 1.0)
+
+        const leftCx = w * 0.28;
+        const rightCx = w * 0.72;
+        const cy = h * 0.5;
+
+        if (t < 0.35) {
+            // Phase 1: Two separate types with bijection arrows
+            const alpha = 1;
+
+            // Type A: {a₁, a₂, a₃} as triangle
+            const typeApoints = [
+                { x: leftCx, y: cy - 40 },
+                { x: leftCx - 35, y: cy + 30 },
+                { x: leftCx + 35, y: cy + 30 }
+            ];
+
+            // Type B: {b₁, b₂, b₃} as inverted triangle
+            const typeBpoints = [
+                { x: rightCx, y: cy + 40 },
+                { x: rightCx - 35, y: cy - 30 },
+                { x: rightCx + 35, y: cy - 30 }
+            ];
+
+            // Draw type A container
+            ctx.beginPath();
+            ctx.moveTo(typeApoints[0].x, typeApoints[0].y - 15);
+            ctx.lineTo(typeApoints[1].x - 15, typeApoints[1].y + 10);
+            ctx.lineTo(typeApoints[2].x + 15, typeApoints[2].y + 10);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(44,111,170,0.08)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(44,111,170,0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Draw type B container
+            ctx.beginPath();
+            ctx.moveTo(typeBpoints[0].x, typeBpoints[0].y + 15);
+            ctx.lineTo(typeBpoints[1].x - 15, typeBpoints[1].y - 10);
+            ctx.lineTo(typeBpoints[2].x + 15, typeBpoints[2].y - 10);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(107,63,160,0.08)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(107,63,160,0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Draw points
+            typeApoints.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(44,111,170,0.85)';
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 9px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('a'+(i+1), p.x, p.y);
+            });
+
+            typeBpoints.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(107,63,160,0.85)';
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 9px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('b'+(i+1), p.x, p.y);
+            });
+
+            // Draw bijection arrows
+            const arrowAlpha = Math.min(1, t * 5);
+            ctx.globalAlpha = arrowAlpha;
+            for (let i = 0; i < 3; i++) {
+                const from = typeApoints[i];
+                const to = typeBpoints[i];
+                ctx.beginPath();
+                ctx.moveTo(from.x + 12, from.y);
+                ctx.lineTo(to.x - 12, to.y);
+                ctx.strokeStyle = 'rgba(232,148,58,0.7)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([4, 3]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Arrowhead
+                const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                const ax = to.x - 12;
+                const ay = to.y;
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(ax - 8*Math.cos(angle - 0.4), ay - 8*Math.sin(angle - 0.4));
+                ctx.moveTo(ax, ay);
+                ctx.lineTo(ax - 8*Math.cos(angle + 0.4), ay - 8*Math.sin(angle + 0.4));
+                ctx.strokeStyle = 'rgba(232,148,58,0.7)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+
+            // Labels
+            ctx.fillStyle = 'rgba(44,111,170,0.9)';
+            ctx.font = '600 12px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('Type A', leftCx, cy + 70);
+
+            ctx.fillStyle = 'rgba(107,63,160,0.9)';
+            ctx.fillText('Type B', rightCx, cy + 70);
+
+            ctx.fillStyle = 'rgba(232,148,58,0.9)';
+            ctx.font = '600 11px Inter';
+            ctx.fillText('f : A → B (bijection)', w/2, cy - 60);
+            ctx.font = '10px Inter';
+            ctx.fillStyle = '#888';
+            ctx.fillText('Every a maps to exactly one b, and vice versa', w/2, cy - 44);
+
+            // Equivalence symbol
+            ctx.fillStyle = 'rgba(232,148,58,0.9)';
+            ctx.font = 'bold 22px Inter';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('≃', w/2, cy);
+            ctx.font = '10px Inter';
+            ctx.fillStyle = '#888';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('equivalent', w/2, cy + 18);
+
+        } else if (t < 0.7) {
+            // Phase 2: Morphing together
+            const morphProgress = (t - 0.35) / 0.35;
+            const ease = easeInOut(morphProgress);
+
+            const typeApoints = [
+                { x: lerp(leftCx, w/2, ease), y: lerp(cy - 40, cy - 40, ease) },
+                { x: lerp(leftCx - 35, w/2 - 35, ease), y: lerp(cy + 30, cy + 30, ease) },
+                { x: lerp(leftCx + 35, w/2 + 35, ease), y: lerp(cy + 30, cy + 30, ease) }
+            ];
+
+            const typeBpoints = [
+                { x: lerp(rightCx, w/2, ease), y: lerp(cy + 40, cy - 40, ease) },
+                { x: lerp(rightCx - 35, w/2 - 35, ease), y: lerp(cy - 30, cy + 30, ease) },
+                { x: lerp(rightCx + 35, w/2 + 35, ease), y: lerp(cy + 30, cy + 30, ease) }
+            ];
+
+            // Draw merging shapes
+            ctx.globalAlpha = 1 - ease * 0.5;
+            // Type A
+            typeApoints.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(44,111,170,0.85)';
+                ctx.fill();
+            });
+            // Type B
+            typeBpoints.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(107,63,160,0.85)';
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+
+            // Morphing label
+            ctx.fillStyle = 'rgba(107,63,160,0.9)';
+            ctx.font = '600 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('Univalence: A ≃ B  →  A = B', w/2, h - 40);
+            ctx.font = '11px Inter';
+            ctx.fillStyle = '#888';
+            ctx.fillText('Equivalence IS equality. They merge into one.', w/2, h - 22);
+
+            // Glow effect during morph
+            ctx.beginPath();
+            ctx.arc(w/2, cy, 60 * (1 - Math.abs(ease - 0.5) * 2), 0, Math.PI*2);
+            const glow = ctx.createRadialGradient(w/2, cy, 0, w/2, cy, 60);
+            glow.addColorStop(0, `rgba(232,148,58,${0.3 * Math.sin(ease * Math.PI)})`);
+            glow.addColorStop(1, 'rgba(232,148,58,0)');
+            ctx.fillStyle = glow;
+            ctx.fill();
+
+        } else {
+            // Phase 3: One unified type
+            const fadeIn = easeInOut((t - 0.7) / 0.3);
+
+            const unifiedPoints = [
+                { x: w/2, y: cy - 40 },
+                { x: w/2 - 35, y: cy + 30 },
+                { x: w/2 + 35, y: cy + 30 }
+            ];
+
+            // Unified container with glow
+            ctx.beginPath();
+            ctx.moveTo(unifiedPoints[0].x, unifiedPoints[0].y - 15);
+            ctx.lineTo(unifiedPoints[1].x - 15, unifiedPoints[1].y + 10);
+            ctx.lineTo(unifiedPoints[2].x + 15, unifiedPoints[2].y + 10);
+            ctx.closePath();
+            ctx.fillStyle = `rgba(107,63,160,${0.1 * fadeIn})`;
+            ctx.fill();
+            ctx.strokeStyle = `rgba(107,63,160,${0.6 * fadeIn})`;
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Unified points (merged colors)
+            unifiedPoints.forEach((p, i) => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
+                const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 10);
+                gradient.addColorStop(0, 'rgba(107,63,160,0.9)');
+                gradient.addColorStop(1, 'rgba(44,111,170,0.9)');
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 9px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText((i+1).toString(), p.x, p.y);
+            });
+
+            // Big equals sign
+            ctx.fillStyle = `rgba(76,175,128,${fadeIn})`;
+            ctx.font = 'bold 36px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('=', w/2, cy - 80);
+
+            // Labels
+            ctx.fillStyle = `rgba(44,111,170,${fadeIn})`;
+            ctx.font = '600 13px Inter';
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'right';
+            ctx.fillText('Type A', w/2 - 50, cy - 80);
+
+            ctx.fillStyle = `rgba(107,63,160,${fadeIn})`;
+            ctx.textAlign = 'left';
+            ctx.fillText('Type B', w/2 + 50, cy - 80);
+
+            // Explanation
+            ctx.fillStyle = `rgba(76,175,128,${fadeIn})`;
+            ctx.font = '600 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('They ARE the same type.', w/2, cy + 75);
+            ctx.font = '11px Inter';
+            ctx.fillStyle = `rgba(100,100,100,${fadeIn})`;
+            ctx.fillText('Any theorem about A is automatically a theorem about B.', w/2, cy + 95);
+            ctx.fillText('No "transport" needed. No "abuse of notation." Just truth.', w/2, cy + 112);
+        }
+    }
+
+    function animateMorph() {
+        if (!playing) return;
+        morphT += 0.006;
+        if (morphT >= 1) {
+            morphT = 1;
+            playing = false;
+            drawScene(1);
+            return;
+        }
+        drawScene(morphT);
+        if (playing) requestAnimationFrame(animateMorph);
+    }
+
+    document.getElementById('btn-morph-play').addEventListener('click', () => {
+        playing = true;
+        morphT = 0;
+        animateMorph();
+    });
+
+    document.getElementById('btn-morph-reset').addEventListener('click', () => {
+        playing = false;
+        morphT = 0;
+        drawScene(0);
+    });
+
+    drawScene(0);
+})();
+
+// ============================================================
+// SECTION 6: ARITHMETIC AS PATHS
+// ============================================================
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-arithmetic');
+    
+    let animState = null;
+
+    const maxNum = 13;
+    const startX = 50;
+    const endX = w - 50;
+    const baseY = h * 0.4;
+    const spacing = (endX - startX) / (maxNum - 1);
+
+    function getPointX(n) { return startX + n * spacing; }
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw number line
+        ctx.beginPath();
+        ctx.moveTo(startX - 10, baseY);
+        ctx.lineTo(endX + 10, baseY);
+        ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Arrowhead at end
+        ctx.beginPath();
+        ctx.moveTo(endX + 10, baseY);
+        ctx.lineTo(endX + 4, baseY - 4);
+        ctx.moveTo(endX + 10, baseY);
+        ctx.lineTo(endX + 4, baseY + 4);
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Draw points and labels
+        for (let i = 0; i < maxNum; i++) {
+            const x = getPointX(i);
+            const isHighlighted = animState && (i === animState.startNum || i === animState.startNum + animState.steps);
+            
+            ctx.beginPath();
+            ctx.arc(x, baseY, isHighlighted ? 7 : 4, 0, Math.PI*2);
+            ctx.fillStyle = isHighlighted ? 'rgba(44,111,170,0.9)' : 'rgba(123,164,212,0.6)';
+            ctx.fill();
+
+            ctx.fillStyle = '#777';
+            ctx.font = isHighlighted ? 'bold 11px Inter' : '10px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(i.toString(), x, baseY + 14);
+        }
+
+        // Draw successor arrows (small)
+        for (let i = 0; i < maxNum - 1; i++) {
+            const x1 = getPointX(i) + 6;
+            const x2 = getPointX(i + 1) - 6;
+            const midX = (x1 + x2) / 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, baseY - 12);
+            ctx.quadraticCurveTo(midX, baseY - 20, x2, baseY - 12);
+            ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Title
+        ctx.fillStyle = '#aaa';
+        ctx.font = '10px Inter';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('ℕ (natural numbers type): 0 → S(0)=1 → S(S(0))=2 → ...', startX, baseY - 30);
+
+        // Animation
+        if (animState) {
+            const { steps, current, t, label, showPath, startNum } = animState;
+
+            // Draw completed arcs
+            for (let i = 0; i < current; i++) {
+                const fromX = getPointX(startNum + i);
+                const toX = getPointX(startNum + i + 1);
+                const midX = (fromX + toX) / 2;
+                ctx.beginPath();
+                ctx.moveTo(fromX, baseY);
+                ctx.quadraticCurveTo(midX, baseY - 35, toX, baseY);
+                ctx.strokeStyle = 'rgba(107,63,160,0.7)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // "S" label on arc
+                ctx.fillStyle = 'rgba(107,63,160,0.6)';
+                ctx.font = '9px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillText('S', midX, baseY - 37);
+            }
+
+            // Animate current step
+            if (current < steps) {
+                const fromX = getPointX(startNum + current);
+                const toX = getPointX(startNum + current + 1);
+                const midX = (fromX + toX) / 2;
+                const et = easeInOut(t);
+                const px = (1-et)*(1-et)*fromX + 2*(1-et)*et*midX + et*et*toX;
+                const py = (1-et)*(1-et)*baseY + 2*(1-et)*et*(baseY-35) + et*et*baseY;
+                
+                ctx.beginPath();
+                ctx.arc(px, py, 8, 0, Math.PI*2);
+                ctx.fillStyle = 'rgba(107,63,160,0.9)';
+                ctx.fill();
+
+                // Partial arc
+                ctx.beginPath();
+                ctx.moveTo(fromX, baseY);
+                const partialSteps = Math.floor(et * 20);
+                for (let s = 1; s <= partialSteps; s++) {
+                    const st = s / 20;
+                    const sx = (1-st)*(1-st)*fromX + 2*(1-st)*st*midX + st*st*toX;
+                    const sy = (1-st)*(1-st)*baseY + 2*(1-st)*st*(baseY-35) + st*st*baseY;
+                    ctx.lineTo(sx, sy);
+                }
+                ctx.strokeStyle = 'rgba(107,63,160,0.5)';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Show equality path when done
+            if (showPath) {
+                const resultX = getPointX(startNum + steps);
+                
+                // Glowing result point
+                ctx.beginPath();
+                ctx.arc(resultX, baseY, 16, 0, Math.PI*2);
+                const glow = ctx.createRadialGradient(resultX, baseY, 4, resultX, baseY, 16);
+                glow.addColorStop(0, 'rgba(232,180,60,0.5)');
+                glow.addColorStop(1, 'rgba(232,180,60,0)');
+                ctx.fillStyle = glow;
+                ctx.fill();
+
+                // Label
+                ctx.fillStyle = 'rgba(107,63,160,0.95)';
+                ctx.font = 'bold 14px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'alphabetic';
+                ctx.fillText(label, w/2, baseY + 60);
+
+                // Path explanation
+                ctx.font = '11px Inter';
+                ctx.fillStyle = 'rgba(232,148,58,0.9)';
+                ctx.fillText('↑ The proof is "refl" — after computing, both sides are the same point', w/2, baseY + 80);
+                
+                ctx.font = '10px Inter';
+                ctx.fillStyle = '#999';
+                ctx.fillText('This path (refl) is a real object in the type. You can compose it, invert it, study it.', w/2, baseY + 98);
+
+                // Draw the "refl" loop at the result
+                ctx.beginPath();
+                ctx.arc(resultX, baseY - 5, 12, -0.8*Math.PI, -0.2*Math.PI);
+                ctx.strokeStyle = 'rgba(232,148,58,0.7)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(232,148,58,0.8)';
+                ctx.font = 'bold 10px Inter';
+                ctx.fillText('refl', resultX, baseY - 20);
+            }
+        }
+    }
+
+    function animateArithmetic(startNum, steps, label) {
+        animState = { steps, current: 0, t: 0, label, showPath: false, startNum };
+        draw();
+
+        function step() {
+            if (!animState) return;
+            if (animState.current >= animState.steps) {
+                animState.showPath = true;
+                draw();
+                return;
+            }
+            animState.t += 0.04;
+            if (animState.t >= 1) {
+                animState.t = 0;
+                animState.current++;
+            }
+            draw();
+            requestAnimationFrame(step);
+        }
+        step();
+    }
+
+    document.getElementById('btn-arith-add').addEventListener('click', () => {
+        animateArithmetic(2, 2, '2 + 2 = 4  (start at 2, apply S twice)');
+    });
+
+    document.getElementById('btn-arith-mult').addEventListener('click', () => {
+        animateArithmetic(0, 12, '3 × 4 = 12  (start at 0, apply S twelve times: three groups of four)');
+    });
+
+    document.getElementById('btn-arith-reset').addEventListener('click', () => {
+        animState = null;
+        draw();
+    });
+
+    document.getElementById('btn-arith-custom').addEventListener('click', () => {
+        const a = parseInt(document.getElementById('sel-a').value);
+        const b = parseInt(document.getElementById('sel-b').value);
+        animateArithmetic(a, b, `${a} + ${b} = ${a+b}  (start at ${a}, apply S ${b} time${b>1?'s':''})`);
+    });
+
+    draw();
+})();
+
+// ============================================================
+// SECTION 7: FOOTER VIGNETTES
+// ============================================================
+
+// Footer 1: Proof tree checking itself
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-footer1');
+    let tick = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        tick += 0.03;
+
+        const cx = w/2, cy = h/2 - 5;
+
+        // Tree structure
+        const nodes = [
+            { x: cx, y: cy + 35, label: '⊢ P' },
+            { x: cx - 30, y: cy + 5, label: 'Γ' },
+            { x: cx + 30, y: cy + 5, label: 'Δ' },
+            { x: cx - 45, y: cy - 25, label: 'A' },
+            { x: cx - 15, y: cy - 25, label: 'B' },
+            { x: cx + 15, y: cy - 25, label: 'C' },
+            { x: cx + 45, y: cy - 25, label: 'D' }
+        ];
+
+        // Draw edges
+        ctx.strokeStyle = 'rgba(123,164,212,0.4)';
+        ctx.lineWidth = 1.5;
+        // Root to children
+        ctx.beginPath();
+        ctx.moveTo(nodes[0].x, nodes[0].y - 5);
+        ctx.lineTo(nodes[1].x, nodes[1].y + 8);
+        ctx.moveTo(nodes[0].x, nodes[0].y - 5);
+        ctx.lineTo(nodes[2].x, nodes[2].y + 8);
+        ctx.stroke();
+        // Second level
+        ctx.beginPath();
+        ctx.moveTo(nodes[1].x, nodes[1].y - 5);
+        ctx.lineTo(nodes[3].x, nodes[3].y + 8);
+        ctx.moveTo(nodes[1].x, nodes[1].y - 5);
+        ctx.lineTo(nodes[4].x, nodes[4].y + 8);
+        ctx.moveTo(nodes[2].x, nodes[2].y - 5);
+        ctx.lineTo(nodes[5].x, nodes[5].y + 8);
+        ctx.moveTo(nodes[2].x, nodes[2].y - 5);
+        ctx.lineTo(nodes[6].x, nodes[6].y + 8);
+        ctx.stroke();
+
+        // Horizontal inference lines
+        ctx.strokeStyle = 'rgba(123,164,212,0.6)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cx - 50, cy + 18);
+        ctx.lineTo(cx + 50, cy + 18);
+        ctx.moveTo(cx - 55, cy - 12);
+        ctx.lineTo(cx - 5, cy - 12);
+        ctx.moveTo(cx + 5, cy - 12);
+        ctx.lineTo(cx + 55, cy - 12);
+        ctx.stroke();
+
+        // Draw nodes with checking animation
+        nodes.forEach((n, i) => {
+            const phase = tick + i * 0.7;
+            const checking = Math.sin(phase) > 0.2;
+            const checked = Math.sin(phase) > 0.6;
+
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, 10, 0, Math.PI*2);
+            ctx.fillStyle = checked ? 'rgba(76,175,128,0.2)' : 'rgba(123,164,212,0.1)';
+            ctx.fill();
+            ctx.strokeStyle = checked ? 'rgba(76,175,128,0.7)' : 'rgba(123,164,212,0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.fillStyle = checked ? 'rgba(76,175,128,0.9)' : '#888';
+            ctx.font = checked ? 'bold 8px Inter' : '8px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(checked ? '✓' : n.label, n.x, n.y);
+        });
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// Footer 2: Shapes morphing with equals
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-footer2');
+    let t = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        t += 0.02;
+        const morph = (Math.sin(t) + 1) / 2;
+
+        const cx = w/2, cy = h/2;
+        const lx = cx - 38, rx = cx + 38;
+        const r = 20;
+
+        // Left shape: morphing between circle and triangle
+        ctx.beginPath();
+        const sides = 3;
+        for (let i = 0; i <= 40; i++) {
+            const angle = (i / 40) * Math.PI * 2 - Math.PI/2;
+            // Interpolate between circle and polygon
+            const polyR = r / Math.cos(((angle + Math.PI/2) % (Math.PI*2/sides)) - Math.PI/sides);
+            const actualR = lerp(r, Math.min(polyR, r * 1.3), morph);
+            const px = lx + actualR * Math.cos(angle);
+            const py = cy + actualR * Math.sin(angle);
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(44,111,170,0.2)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(44,111,170,0.7)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Equals sign
+        ctx.fillStyle = 'rgba(76,175,128,0.9)';
+        ctx.font = 'bold 20px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('≃', cx, cy);
+
+        // Right shape: morphing between square and circle
+        ctx.beginPath();
+        for (let i = 0; i <= 40; i++) {
+            const angle = (i / 40) * Math.PI * 2;
+            const n = lerp(2, 6, morph);
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const px = rx + r * Math.sign(cos) * Math.pow(Math.abs(cos), 2/n);
+            const py = cy + r * Math.sign(sin) * Math.pow(Math.abs(sin), 2/n);
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(107,63,160,0.2)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(107,63,160,0.7)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// Footer 3: Bridge connecting three domains
+(function() {
+    const { canvas, ctx, w, h } = getCanvas('canvas-footer3');
+    let t = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        t += 0.025;
+
+        const cy = h/2;
+        const positions = [w*0.18, w*0.5, w*0.82];
+        const symbols = ['◯', '∀', '{ }'];
+        const labels = ['Spaces', 'Proofs', 'Programs'];
+        const colors = ['rgba(44,111,170,0.85)', 'rgba(107,63,160,0.85)', 'rgba(232,148,58,0.85)'];
+        const bgColors = ['rgba(44,111,170,0.1)', 'rgba(107,63,160,0.1)', 'rgba(232,148,58,0.1)'];
+
+        // Animated connecting arcs
+        for (let i = 0; i < 2; i++) {
+            const fromX = positions[i];
+            const toX = positions[i+1];
+            const midX = (fromX + toX) / 2;
+            const wave = Math.sin(t + i) * 8;
+
+            ctx.beginPath();
+            ctx.moveTo(fromX + 18, cy);
+            ctx.quadraticCurveTo(midX, cy - 20 + wave, toX - 18, cy);
+            ctx.strokeStyle = `rgba(107,63,160,${0.3 + 0.1 * Math.sin(t + i)})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Animated particles along the bridge
+            const particleT = (t * 0.3 + i * 0.5) % 1;
+            const px = (1-particleT)*(1-particleT)*fromX + 2*(1-particleT)*particleT*midX + particleT*particleT*toX;
+            const py = (1-particleT)*(1-particleT)*cy + 2*(1-particleT)*particleT*(cy - 20 + wave) + particleT*particleT*cy;
+            ctx.beginPath();
+            ctx.arc(px, py, 3, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(107,63,160,0.5)';
+            ctx.fill();
+        }
+
+        // Draw nodes
+        positions.forEach((x, i) => {
+            // Background circle
+            ctx.beginPath();
+            ctx.arc(x, cy, 20, 0, Math.PI*2);
+            ctx.fillStyle = bgColors[i];
+            ctx.fill();
+            ctx.strokeStyle = colors[i];
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Symbol
+            ctx.fillStyle = colors[i];
+            ctx.font = 'bold 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(symbols[i], x, cy);
+
+            // Label below
+            ctx.fillStyle = '#777';
+            ctx.font = '9px Inter';
+            ctx.textBaseline = 'top';
+            ctx.fillText(labels[i], x, cy + 26);
+        });
+
+        // Unifying label at top
+        const pulseAlpha = 0.5 + 0.3 * Math.sin(t * 0.8);
+        ctx.fillStyle = `rgba(107,63,160,${pulseAlpha})`;
+        ctx.font = '600 10px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('HoTT unifies all three', w/2, cy - 35);
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+</script>
+
+</body>
+</html>
