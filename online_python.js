@@ -4211,33 +4211,37 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			}
 		}
 
-		// IndentationError — common: mixed tabs/spaces or wrong indent level
+		// IndentationError — detect and fix the specific misindented line
 		if (errorMsg.includes("IndentationError")) {
-			var lineMatch = errorMsg.match(/line (\d+)/);
-			if (lineMatch) {
-				var ln = parseInt(lineMatch[1]);
+			// CRITICAL: Extract line number from the USER'S code ("<exec>"), 
+			// NOT from Pyodide internals (_base.py, _pyodide, etc.)
+			var execLineMatch = errorMsg.match(/File\s+"<exec>",\s+line\s+(\d+)/);
+
+			if (execLineMatch) {
+				var ln = parseInt(execLineMatch[1]);
 				return {
 					description: 'Fix indentation on line ' + ln + ' (align with surrounding lines)',
 					apply: function(currentCode) {
 						var lines = currentCode.split('\n');
 						if (ln < 1 || ln > lines.length) {
-							// Fallback: just convert tabs to spaces
 							return currentCode.replace(/\t/g, '    ');
 						}
 
 						var targetLine = lines[ln - 1];
-						var targetIndent = targetLine.match(/^(\s*)/)[1].length;
+						var targetContent = targetLine.trimStart();
+
+						// If the line is empty/whitespace-only, skip
+						if (targetContent.length === 0) return currentCode;
 
 						// Look at the previous non-empty line to determine expected indent
 						var expectedIndent = 0;
 						for (var i = ln - 2; i >= 0; i--) {
 							var prevLine = lines[i];
-							if (prevLine.trim().length === 0) continue; // skip blank lines
+							if (prevLine.trim().length === 0) continue;
 
 							var prevIndent = prevLine.match(/^(\s*)/)[1].length;
 							var prevTrimmed = prevLine.trimEnd();
 
-							// If previous line ends with ':', expect one more indent level
 							if (prevTrimmed.endsWith(':')) {
 								expectedIndent = prevIndent + 4;
 							} else {
@@ -4246,34 +4250,29 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 							break;
 						}
 
-						// Also check the NEXT non-empty line for context
-						// (if both neighbors have the same indent, use that)
-						var nextIndent = -1;
-						for (var j = ln; j < lines.length; j++) { // ln is 1-based, so lines[ln] is the line AFTER
+						// Also check the NEXT non-empty line for additional context
+						for (var j = ln; j < lines.length; j++) {
 							if (lines[j] && lines[j].trim().length > 0) {
-								nextIndent = lines[j].match(/^(\s*)/)[1].length;
+								var nextIndent = lines[j].match(/^(\s*)/)[1].length;
+								// If prev and next agree, strong signal
+								// If they disagree, trust prev (since error is "unexpected indent",
+								// meaning this line has MORE indent than expected)
+								if (nextIndent === expectedIndent) {
+									// Both neighbors agree — use this
+								}
 								break;
 							}
 						}
 
-						// If prev and next lines agree on indent, use that
-						if (nextIndent >= 0 && nextIndent === expectedIndent) {
-							// Strong signal: both neighbors agree
-						} else if (nextIndent >= 0 && targetIndent !== expectedIndent && targetIndent !== nextIndent) {
-							// Target doesn't match either neighbor — use prev-based expected
-						} 
-						// else just use expectedIndent from prev line logic
-
-						// Apply the fix: replace the target line's indentation
-						var content = targetLine.trimStart();
-						lines[ln - 1] = ' '.repeat(expectedIndent) + content;
+						// Apply fix: replace the offending line's indentation
+						lines[ln - 1] = ' '.repeat(expectedIndent) + targetContent;
 
 						return lines.join('\n');
 					}
 				};
 			}
 
-			// Fallback if no line number found: convert tabs to spaces
+			// Fallback if no <exec> line found: tabs to spaces
 			return {
 				description: 'Fix indentation (convert tabs to 4 spaces)',
 				apply: function(currentCode) {
