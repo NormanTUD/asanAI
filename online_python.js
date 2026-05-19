@@ -1340,38 +1340,25 @@ else:
 	// =========================================================================
 
 		function toggleExamples() {
-			if (_examplesToggling) return;
-			_examplesToggling = true;
-
 			var panel = document.getElementById('pyodide_examples_panel');
-			if (!panel) {
-				_examplesToggling = false;
-				return;
-			}
+			if (!panel) return;
 
-			// Disconnect observer to prevent cascade during toggle
-			var pyodideTab = document.getElementById("pyodide_editor_tab");
-			if (_tabObserver) _tabObserver.disconnect();
+			var isVisible = panel.classList.contains('pe-visible');
 
-			requestAnimationFrame(function() {
-				panel.classList.toggle('pe-visible');
+			if (isVisible) {
+				panel.classList.remove('pe-visible');
+				panel.style.display = 'none';
+			} else {
+				panel.style.display = 'flex';
+				panel.classList.add('pe-visible');
 
-				// Only translate once, on first open
-				if (!_examplesTranslated && panel.classList.contains('pe-visible')) {
+				if (!_examplesTranslated) {
 					_examplesTranslated = true;
 					if (typeof translateElement === 'function') {
 						translateElement(panel);
 					}
 				}
-
-				// Reconnect observer after paint completes
-				requestAnimationFrame(function() {
-					if (_tabObserver && pyodideTab) {
-						_tabObserver.observe(pyodideTab, { attributes: true, attributeFilter: ["style"] });
-					}
-					_examplesToggling = false;
-				});
-			});
+			}
 		}
 
 	// =========================================================================
