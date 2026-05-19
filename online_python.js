@@ -1330,6 +1330,24 @@ else:
 #pyodide_console_output > span {
     contain: layout style;
 }
+
+#pyodide_photos_container {
+    contain: layout style paint;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 120px;
+}
+
+#pyodide_photos_strip {
+    contain: content;
+    will-change: contents;
+    overflow-anchor: none;
+}
+
+.pe-photo-thumb {
+    contain: strict;
+    contain-intrinsic-size: 64px 64px;
+}
+
 	/* GPU-accelerate the editor layers */
 	#pyodide_editor_textarea,
 	#pyodide_editor_highlight,
@@ -3489,13 +3507,21 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			if (!pyodideReady) return;
 		}
 
-		var video = document.getElementById("pyodide_webcam_video");
-		var streamAlreadyLive = snapshotStream && video && video.srcObject === snapshotStream && !video.paused && video.readyState >= 2;
+		// GUARDRAIL 1: Cache all DOM references upfront (single lookup pass)
+		const video = document.getElementById("pyodide_webcam_video");
+		const container = document.getElementById("pyodide_webcam_container");
+		const neededInput = document.getElementById("pyodide_photos_needed");
 
+		// GUARDRAIL 2: Batch all DOM reads BEFORE any writes
+		const streamAlreadyLive = snapshotStream && video && 
+			video.srcObject === snapshotStream && 
+			!video.paused && 
+			video.readyState >= 2;
+
+		// GUARDRAIL 3: Isolate the "ensure stream" side-effect
 		if (!streamAlreadyLive) {
-			var streamReady = await ensureLiveStream();
+			const streamReady = await ensureLiveStreamSafe(video, container);
 			if (!streamReady) return;
-			video = document.getElementById("pyodide_webcam_video");
 		}
 
 		if (!video || video.readyState < 2) {
@@ -3503,52 +3529,134 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 			return;
 		}
 
-		var info = getModelInfoForPython();
+		const info = getModelInfoForPython();
 		if (!info || !info.input_shape) {
 			appendConsole("[Error] No model loaded.\n", "stderr");
 			return;
 		}
 
-		var inputShape = info.input_shape;
-		var targetH = inputShape[1] || 40;
-		var targetW = inputShape[2] || 40;
-		var channels = inputShape[3] || 3;
+		const inputShape = info.input_shape;
+		const targetH = inputShape[1] || 40;
+		const targetW = inputShape[2] || 40;
+		const channels = inputShape[3] || 3;
 
-		// Grab frame
-		var modelCanvas = document.createElement("canvas");
+		// GUARDRAIL 4: Use OffscreenCanvas or willReadFrequently hint to avoid GPU stalls
+		const modelCanvas = document.createElement("canvas");
 		modelCanvas.width = targetW;
 		modelCanvas.height = targetH;
-		var modelCtx = modelCanvas.getContext("2d", { willReadFrequently: true });
+		const modelCtx = modelCanvas.getContext("2d", { willReadFrequently: true });
 		modelCtx.drawImage(video, 0, 0, targetW, targetH);
 
-		var imageData = modelCtx.getImageData(0, 0, targetW, targetH);
-		var inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
+		const imageData = modelCtx.getImageData(0, 0, targetW, targetH);
+		const inputList = pixelsToNestedList(imageData.data, targetH, targetW, channels);
 
-		// Thumbnail — use smaller size (64px) for speed
-		var thumbCanvas = document.createElement("canvas");
-		thumbCanvas.width = 64;
-		thumbCanvas.height = 64;
-		var thumbCtx = thumbCanvas.getContext("2d");
-		thumbCtx.drawImage(video, 0, 0, 64, 64);
-		var thumbnailDataURL = thumbCanvas.toDataURL("image/jpeg", 0.5);
+		// GUARDRAIL 5: Generate thumbnail asynchronously using createImageBitmap + blob
+		const thumbnailDataURL = await generateThumbnailAsync(video);
 
-		var photoIndex = capturedPhotos.length;
+		const photoIndex = capturedPhotos.length;
 		capturedPhotos.push({
 			pixelData: inputList,
 			thumbnailDataURL: thumbnailDataURL,
 			index: photoIndex
 		});
 
-		// Batch UI updates — single appendConsole call
-		updatePhotosStrip();
-		updatePhotosStatus();
+		// GUARDRAIL 6: Batch ALL DOM writes into a single rAF
+		const needed = parseInt(neededInput ? neededInput.value : 2) || 2;
+		requestAnimationFrame(function() {
+			updatePhotosStrip();
+			updatePhotosStatus();
+		});
 
-		var needed = parseInt(document.getElementById("pyodide_photos_needed").value) || 2;
-		if (capturedPhotos.length >= needed) {
-			appendConsole("[📸 Photo " + (photoIndex + 1) + "/" + needed + " ✅ All captured! Press ▶ Run]\n", "info");
-		} else {
-			appendConsole("[📸 Photo " + (photoIndex + 1) + "/" + needed + " captured]\n", "info");
+		// GUARDRAIL 7: Single console message (don't call appendConsole multiple times)
+		const msg = capturedPhotos.length >= needed
+			? "[📸 Photo " + (photoIndex + 1) + "/" + needed + " ✅ All captured! Press ▶ Run]\n"
+			: "[📸 Photo " + (photoIndex + 1) + "/" + needed + " captured]\n";
+		appendConsole(msg, "info");
+	}
+
+	async function ensureLiveStreamSafe(video, container) {
+		if (!video || !container) return false;
+
+		// READ phase: gather all state first
+		const currentSrc = video.srcObject;
+		const isPaused = video.paused;
+		const readyState = video.readyState;
+		const isAlreadyLive = snapshotStream && currentSrc === snapshotStream && !isPaused && readyState >= 2;
+
+		if (isAlreadyLive) return true;
+
+		// WRITE phase: stop old stream (no reads after this)
+		if (currentSrc && currentSrc !== snapshotStream) {
+			try {
+				currentSrc.getTracks().forEach(function(t) { t.stop(); });
+			} catch(e) {}
+			video.srcObject = null;
 		}
+
+		// Async work (no DOM interaction during getUserMedia)
+		try {
+			snapshotStream = await navigator.mediaDevices.getUserMedia({
+				video: { facingMode: "environment", width: { ideal: 320 }, height: { ideal: 320 } },
+				audio: false
+			});
+		} catch (e) {
+			appendConsole("[📸 Camera error: " + e.message + "]\n", "stderr");
+			return false;
+		}
+
+		// WRITE phase: batch all DOM mutations together
+		video.srcObject = snapshotStream;
+		video.setAttribute("playsinline", "");
+		video.muted = true;
+		container.style.display = "block";
+
+		// Wait for metadata (no DOM reads during wait)
+		await new Promise(function(resolve) {
+			if (video.readyState >= 2) {
+				resolve();
+			} else {
+				video.onloadedmetadata = function() {
+					resolve();
+				};
+			}
+		});
+
+		await video.play().catch(function() {});
+
+		// GUARDRAIL: Use requestVideoFrameCallback instead of setTimeout
+		if (video.requestVideoFrameCallback) {
+			await new Promise(function(resolve) {
+				video.requestVideoFrameCallback(resolve);
+			});
+		} else {
+			await new Promise(function(resolve) { setTimeout(resolve, 50); });
+		}
+
+		appendConsole("[📷 Live camera feed active]\n", "info");
+		return true;
+	}
+
+	async function generateThumbnailAsync(video) {
+		// GUARDRAIL 5: Use OffscreenCanvas if available (no main-thread blocking)
+		if (typeof OffscreenCanvas !== 'undefined') {
+			const offscreen = new OffscreenCanvas(64, 64);
+			const ctx = offscreen.getContext("2d");
+			ctx.drawImage(video, 0, 0, 64, 64);
+			const blob = await offscreen.convertToBlob({ type: "image/jpeg", quality: 0.5 });
+			return URL.createObjectURL(blob);
+		}
+
+		// Fallback: regular canvas but yield to browser between draw and encode
+		const thumbCanvas = document.createElement("canvas");
+		thumbCanvas.width = 64;
+		thumbCanvas.height = 64;
+		const thumbCtx = thumbCanvas.getContext("2d");
+		thumbCtx.drawImage(video, 0, 0, 64, 64);
+
+		// Yield to browser before expensive toDataURL
+		await new Promise(function(resolve) { setTimeout(resolve, 0); });
+
+		return thumbCanvas.toDataURL("image/jpeg", 0.5);
 	}
 
 	function photosRemove(index) {
@@ -3569,23 +3677,55 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 	}
 
 	function updatePhotosStrip() {
-	    var strip = document.getElementById("pyodide_photos_strip");
-	    if (!strip) return;
+		const strip = document.getElementById("pyodide_photos_strip");
+		if (!strip) return;
 
-	    if (capturedPhotos.length === 0) {
-		strip.innerHTML = '<span style="color:var(--pe-muted);font-size:11px;font-style:italic;">No photos yet — press 📸 Snap to capture</span>';
-		return;
-	    }
+		if (capturedPhotos.length === 0) {
+			strip.innerHTML = '<span style="color:var(--pe-muted);font-size:11px;font-style:italic;">No photos yet — press 📸 Snap to capture</span>';
+			return;
+		}
 
-	    var html = '';
-	    for (var i = 0; i < capturedPhotos.length; i++) {
-		html += '<div class="pe-photo-thumb" title="photos[' + i + ']">';
-		html += '<img src="' + capturedPhotos[i].thumbnailDataURL + '" alt="Photo ' + i + '">';
-		html += '<div class="pe-photo-label">photos[' + i + ']</div>';
-		html += '<div class="pe-photo-remove" onclick="event.stopPropagation();pyodidePhotosRemove(' + i + ')">×</div>';
-		html += '</div>';
-	    }
-	    strip.innerHTML = html;
+		// GUARDRAIL: Only append the NEW photo instead of rebuilding everything
+		const existingThumbs = strip.querySelectorAll('.pe-photo-thumb');
+
+		if (existingThumbs.length < capturedPhotos.length) {
+			// Only add the missing ones
+			const frag = document.createDocumentFragment();
+			for (let i = existingThumbs.length; i < capturedPhotos.length; i++) {
+				const div = document.createElement('div');
+				div.className = 'pe-photo-thumb';
+				div.title = 'photos[' + i + ']';
+				div.innerHTML = 
+					'<img src="' + capturedPhotos[i].thumbnailDataURL + '" alt="Photo ' + i + '">' +
+					'<div class="pe-photo-label">photos[' + i + ']</div>' +
+					'<div class="pe-photo-remove" onclick="event.stopPropagation();pyodidePhotosRemove(' + i + ')">×</div>';
+				frag.appendChild(div);
+			}
+			// Clear placeholder if it exists
+			const placeholder = strip.querySelector('span');
+			if (placeholder) placeholder.remove();
+
+			strip.appendChild(frag); // Single DOM write
+		} else if (existingThumbs.length > capturedPhotos.length) {
+			// Photos were removed — rebuild (rare case)
+			rebuildPhotosStripFull(strip);
+		}
+	}
+
+	function rebuildPhotosStripFull(strip) {
+		const frag = document.createDocumentFragment();
+		for (let i = 0; i < capturedPhotos.length; i++) {
+			const div = document.createElement('div');
+			div.className = 'pe-photo-thumb';
+			div.title = 'photos[' + i + ']';
+			div.innerHTML = 
+				'<img src="' + capturedPhotos[i].thumbnailDataURL + '" alt="Photo ' + i + '">' +
+				'<div class="pe-photo-label">photos[' + i + ']</div>' +
+				'<div class="pe-photo-remove" onclick="event.stopPropagation();pyodidePhotosRemove(' + i + ')">×</div>';
+			frag.appendChild(div);
+		}
+		strip.innerHTML = '';
+		strip.appendChild(frag);
 	}
 
 	function updatePhotosStatus() {
