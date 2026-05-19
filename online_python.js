@@ -3587,6 +3587,190 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		}
 	}
 
+	async function photosRun() {
+		if (capturedPhotos.length === 0) {
+			appendConsole("[⚠️ No photos captured yet! Press 📸 Snap first.]\n", "warn");
+			return;
+		}
+
+		if (!pyodideReady) {
+			appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
+			await initPyodide();
+			if (!pyodideReady) return;
+		}
+
+		if (isRunning) {
+			appendConsole("[⏳ Already running...]\n", "warn");
+			return;
+		}
+
+		// Auto-fix old RPS template if detected
+		ensureRPSTemplateUpdated();
+
+		// Determine photo count: use ALL captured photos (not capped by "needed")
+		var photoCount = capturedPhotos.length;
+
+		// Enforce: must be even and >= 2
+		if (photoCount < 2) {
+			appendConsole("[⚠️ Need at least 2 photos!]\n", "warn");
+			return;
+		}
+
+		// Enforce even number of photos for RPS (pairs)
+		if (photoCount % 2 !== 0) {
+			photoCount = photoCount - 1; // drop the last unpaired photo
+			appendConsole("[⚠️ Odd number of photos — using " + photoCount + " (need pairs)]\n", "warn");
+		}
+
+		var photoDataList = capturedPhotos.slice(0, photoCount).map(function(p) { return p.pixelData; });
+
+		// Set labels and classification flag
+		var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
+		var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
+
+		try {
+			pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
+			pyodideInstance.globals.set("_is_classification", classificationFlag);
+		} catch (e) {
+			appendConsole("[Error setting labels] " + e.message + "\n", "stderr");
+		}
+
+		// Get the code from the editor
+		var textarea = document.getElementById("pyodide_editor_textarea");
+		var code = textarea ? textarea.value : '';
+
+		if (!code.trim()) {
+			appendConsole("[No code to run]\n", "warn");
+			return;
+		}
+
+		// Detect which template is active
+		var isRPSTemplate = code.includes("ROCK PAPER SCISSORS") ||
+			(code.includes("game['turn']") && code.includes("rps_map")) ||
+			(code.includes("game[") && code.includes("_rps_"));
+
+		isRunning = true;
+		interruptExecution = false;
+		runCounter++;
+		var thisRun = runCounter;
+
+		var stopBtn = document.getElementById("pyodide_stop_btn");
+		if (stopBtn) stopBtn.disabled = false;
+
+		setStatus("⚡ Running...", "loading");
+		hideErrorIndicator();
+
+		appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
+
+		try {
+			await refreshModelInPython();
+
+			if (isRPSTemplate) {
+				// === RPS MODE: Feed photos one-by-one as input_data ===
+				var numRounds = photoCount / 2;
+				appendConsole("[📸 " + photoCount + " photos — playing " + numRounds + " round" + (numRounds > 1 ? "s" : "") + " of RPS...]\n", "info");
+
+				// Reset game state for a fresh multi-round session
+				await pyodideInstance.runPythonAsync("if 'game' in dir(): del game");
+
+				for (var i = 0; i < photoCount; i++) {
+					if (interruptExecution) break;
+
+					try {
+						pyodideInstance.globals.set("input_data", pyodideInstance.toPy(photoDataList[i]));
+					} catch (e) {
+						appendConsole("[Error setting input_data for photo " + i + "] " + e.message + "\n", "stderr");
+						break;
+					}
+
+					// Run the code directly (NOT via pyodideEditorRun which has its own isRunning guard)
+					await pyodideInstance.runPythonAsync(code);
+				}
+
+				// Print final summary if multiple rounds were played
+				if (numRounds > 1 && !interruptExecution) {
+					try {
+						await pyodideInstance.runPythonAsync(
+							"if 'game' in dir() and game.get('round', 0) > 1:\n" +
+							"    print(f\"\\n{'═' * 36}\")\n" +
+							"    print(f\"🏁 FINAL SCORE after {game['round']} rounds:\")\n" +
+							"    print(f\"   Player 1: {game['player1_score']}\")\n" +
+							"    print(f\"   Player 2: {game['player2_score']}\")\n" +
+							"    if game['player1_score'] > game['player2_score']:\n" +
+							"        print(f\"   👑 Player 1 WINS the series!\")\n" +
+							"    elif game['player2_score'] > game['player1_score']:\n" +
+							"        print(f\"   👑 Player 2 WINS the series!\")\n" +
+							"    else:\n" +
+							"        print(f\"   🤝 Series tied!\")\n" +
+							"    print(f\"{'═' * 36}\\n\")\n"
+						);
+					} catch (e) {
+						// Non-critical — summary is optional
+					}
+				}
+			} else {
+				// === GROUP BATTLE or other template: Set photos list ===
+				try {
+					pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
+					pyodideInstance.globals.set("num_photos", photoCount);
+				} catch (e) {
+					appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
+					return;
+				}
+
+				appendConsole("[📸 " + photoCount + " photos loaded into `photos` list]\n", "info");
+				await pyodideInstance.runPythonAsync(code);
+			}
+
+			if (thisRun === runCounter) {
+				appendConsole("─── ✓ Done ───\n", "info");
+				setStatus("✓ Ready", "ready");
+			}
+		} catch (e) {
+			if (thisRun === runCounter) {
+				if (e.message && e.message.includes("KeyboardInterrupt")) {
+					appendConsole("\n[⏹ Execution interrupted]\n", "warn");
+					setStatus("✓ Ready", "ready");
+				} else {
+					handlePythonError(e);
+				}
+			}
+		} finally {
+			if (thisRun === runCounter) {
+				isRunning = false;
+				interruptExecution = false;
+				if (stopBtn) stopBtn.disabled = true;
+			}
+		}
+
+		if (livePredictEnabled && lastPredictionResult !== null) {
+			showPredictionResult(lastPredictionResult);
+		}
+	}
+
+	function updatePhotosStatus() {
+		var statusEl = document.getElementById("pyodide_photos_status");
+		if (!statusEl) return;
+		var neededInput = document.getElementById("pyodide_photos_needed");
+		var raw = parseInt(neededInput ? neededInput.value : 2) || 2;
+
+		// Enforce: must be even and >= 2
+		if (raw < 2) raw = 2;
+		if (raw % 2 !== 0) raw = raw + 1; // round up to next even
+
+		// Write back the corrected value
+		if (neededInput && parseInt(neededInput.value) !== raw) {
+			neededInput.value = raw;
+		}
+
+		var needed = raw;
+		var count = capturedPhotos.length;
+		var rounds = Math.floor(count / 2); // rounds based on ACTUAL captured photos
+		var color = count >= needed ? "#00d4aa" : "#ffd93d";
+		var roundsText = rounds >= 1 ? " (" + rounds + " round" + (rounds > 1 ? "s" : "") + ")" : "";
+		statusEl.innerHTML = '<span style="color:' + color + ';">' + count + ' / ' + needed + ' photos captured' + roundsText + '</span>';
+	}
+
 	async function photosSnap() {
 		if (!isImageModel()) {
 			appendConsole("[⚠️ Multi-snap requires an image model]\n", "warn");
@@ -3652,17 +3836,31 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 			index: photoIndex
 		});
 
+		// Auto-increase "needed" if user keeps snapping beyond the current needed count
+		var raw = parseInt(neededInput ? neededInput.value : 2) || 2;
+		if (raw < 2) raw = 2;
+		if (raw % 2 !== 0) raw = raw + 1;
+
+		if (capturedPhotos.length > raw) {
+			// Round up to next even number that accommodates all captured photos
+			var newNeeded = capturedPhotos.length;
+			if (newNeeded % 2 !== 0) newNeeded = newNeeded + 1;
+			if (neededInput) neededInput.value = newNeeded;
+			raw = newNeeded;
+		}
+
+		var needed = raw;
+
 		// GUARDRAIL 6: Batch ALL DOM writes into a single rAF
-		const needed = parseInt(neededInput ? neededInput.value : 2) || 2;
 		requestAnimationFrame(function() {
 			updatePhotosStrip();
 			updatePhotosStatus();
 		});
 
 		// GUARDRAIL 7: Single console message (don't call appendConsole multiple times)
-		const msg = capturedPhotos.length >= needed
-			? "[📸 Photo " + (photoIndex + 1) + "/" + needed + " ✅ All captured! Press ▶ Run]\n"
-			: "[📸 Photo " + (photoIndex + 1) + "/" + needed + " captured]\n";
+		var msg = capturedPhotos.length >= needed
+			? "[📸 Photo " + capturedPhotos.length + "/" + needed + " ✅ All captured! Press ▶ Run]\n"
+			: "[📸 Photo " + capturedPhotos.length + "/" + needed + " captured]\n";
 		appendConsole(msg, "info");
 	}
 
@@ -3820,26 +4018,9 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		strip.appendChild(frag);
 	}
 
-	function updatePhotosStatus() {
-		var statusEl = document.getElementById("pyodide_photos_status");
-		if (!statusEl) return;
-		var neededInput = document.getElementById("pyodide_photos_needed");
-		var raw = parseInt(neededInput ? neededInput.value : 2) || 2;
 
-		// Enforce: must be even and >= 2
-		if (raw < 2) raw = 2;
-		if (raw % 2 !== 0) raw = raw + 1; // round up to next even
 
-		// Write back the corrected value
-		if (neededInput && parseInt(neededInput.value) !== raw) {
-			neededInput.value = raw;
-		}
 
-		var needed = raw;
-		var count = capturedPhotos.length;
-		var color = count >= needed ? "#00d4aa" : "#ffd93d";
-		statusEl.innerHTML = '<span style="color:' + color + ';">' + count + ' / ' + needed + ' photos captured</span>';
-	}
 
 	function ensureRPSTemplateUpdated() {
 		var textarea = document.getElementById("pyodide_editor_textarea");
@@ -3863,137 +4044,7 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 		return false;
 	}
 
-	async function photosRun() {
-		if (capturedPhotos.length === 0) {
-			appendConsole("[⚠️ No photos captured yet! Press 📸 Snap first.]\n", "warn");
-			return;
-		}
 
-		if (!pyodideReady) {
-			appendConsole("[⏳ Initializing Pyodide first...]\n", "info");
-			await initPyodide();
-			if (!pyodideReady) return;
-		}
-
-		if (isRunning) {
-			appendConsole("[⏳ Already running...]\n", "warn");
-			return;
-		}
-
-		// Auto-fix old RPS template if detected
-		ensureRPSTemplateUpdated();
-
-		// Validate photo count — must be even and >= 2
-		var neededInput = document.getElementById("pyodide_photos_needed");
-		var needed = parseInt(neededInput ? neededInput.value : 2) || 2;
-		if (needed < 2) needed = 2;
-		if (needed % 2 !== 0) needed = needed + 1;
-
-		var photoCount = Math.min(capturedPhotos.length, needed);
-		if (photoCount < 2) {
-			appendConsole("[⚠️ Need at least 2 photos!]\n", "warn");
-			return;
-		}
-
-		var photoDataList = capturedPhotos.slice(0, photoCount).map(function(p) { return p.pixelData; });
-
-		// Set labels and classification flag
-		var labelsList = (typeof labels !== "undefined" && Array.isArray(labels)) ? labels : [];
-		var classificationFlag = (typeof is_classification !== "undefined") ? !!is_classification : false;
-
-		try {
-			pyodideInstance.globals.set("_labels", pyodideInstance.toPy(labelsList));
-			pyodideInstance.globals.set("_is_classification", classificationFlag);
-		} catch (e) {
-			appendConsole("[Error setting labels] " + e.message + "\n", "stderr");
-		}
-
-		// Get the code from the editor
-		var textarea = document.getElementById("pyodide_editor_textarea");
-		var code = textarea ? textarea.value : '';
-
-		if (!code.trim()) {
-			appendConsole("[No code to run]\n", "warn");
-			return;
-		}
-
-		// Detect which template is active
-		var isRPSTemplate = code.includes("ROCK PAPER SCISSORS") ||
-			(code.includes("game['turn']") && code.includes("rps_map")) ||
-			(code.includes("game[") && code.includes("_rps_"));
-
-		isRunning = true;
-		interruptExecution = false;
-		runCounter++;
-		var thisRun = runCounter;
-
-		var stopBtn = document.getElementById("pyodide_stop_btn");
-		if (stopBtn) stopBtn.disabled = false;
-
-		setStatus("⚡ Running...", "loading");
-		hideErrorIndicator();
-
-		appendConsole("\n─── Run #" + thisRun + " ───\n", "info");
-
-		try {
-			await refreshModelInPython();
-
-			if (isRPSTemplate) {
-				// === RPS MODE: Feed photos one-by-one as input_data ===
-				appendConsole("[📸 " + photoCount + " photos — running RPS...]\n", "info");
-
-				for (var i = 0; i < photoCount; i++) {
-					if (interruptExecution) break;
-
-					try {
-						pyodideInstance.globals.set("input_data", pyodideInstance.toPy(photoDataList[i]));
-					} catch (e) {
-						appendConsole("[Error setting input_data for photo " + i + "] " + e.message + "\n", "stderr");
-						break;
-					}
-
-					// Run the code directly (NOT via pyodideEditorRun which has its own isRunning guard)
-					await pyodideInstance.runPythonAsync(code);
-				}
-			} else {
-				// === GROUP BATTLE or other template: Set photos list ===
-				try {
-					pyodideInstance.globals.set("photos", pyodideInstance.toPy(photoDataList));
-					pyodideInstance.globals.set("num_photos", photoCount);
-				} catch (e) {
-					appendConsole("[Error setting photos] " + e.message + "\n", "stderr");
-					return;
-				}
-
-				appendConsole("[📸 " + photoCount + " photos loaded into `photos` list]\n", "info");
-				await pyodideInstance.runPythonAsync(code);
-			}
-
-			if (thisRun === runCounter) {
-				appendConsole("─── ✓ Done ───\n", "info");
-				setStatus("✓ Ready", "ready");
-			}
-		} catch (e) {
-			if (thisRun === runCounter) {
-				if (e.message && e.message.includes("KeyboardInterrupt")) {
-					appendConsole("\n[⏹ Execution interrupted]\n", "warn");
-					setStatus("✓ Ready", "ready");
-				} else {
-					handlePythonError(e);
-				}
-			}
-		} finally {
-			if (thisRun === runCounter) {
-				isRunning = false;
-				interruptExecution = false;
-				if (stopBtn) stopBtn.disabled = true;
-			}
-		}
-
-		if (livePredictEnabled && lastPredictionResult !== null) {
-			showPredictionResult(lastPredictionResult);
-		}
-	}
 
 	// =========================================================================
 	// PUBLIC API FUNCTIONS
