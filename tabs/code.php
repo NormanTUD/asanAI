@@ -290,59 +290,16 @@
 				position: relative;
 				background: var(--pe-editor-bg);
 				flex: 1;
-			}
-
-			#pyodide_editor_highlight {
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				padding: 12px;
-				padding-left: 52px;
-				font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
-				font-size: 13px;
-				line-height: 1.6;
-				white-space: pre-wrap;
-				word-wrap: break-word;
 				overflow: hidden;
-				pointer-events: none;
-				color: transparent;
-				tab-size: 4;
-				border: none;
-				margin: 0;
-			}
-
-			#pyodide_editor_textarea {
-				position: relative;
-				z-index: 2;
-				width: 100%;
 				min-height: 520px;
 				max-height: 75vh;
-				font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
-				font-size: 13px;
-				line-height: 1.6;
-				padding: 12px;
-				padding-left: 52px;
-				border: none;
-				outline: none;
-				resize: vertical;
-				tab-size: 4;
-				white-space: pre-wrap;
-				word-wrap: break-word;
-				overflow-y: auto;
-				overflow-x: hidden;
-				background: transparent;
-				color: transparent;
-				caret-color: var(--pe-caret-color);
-				box-sizing: border-box;
-				display: block;
 			}
 
 			#pyodide_editor_line_numbers {
 				position: absolute;
 				top: 0;
 				left: 0;
+				bottom: 0;
 				width: 40px;
 				padding: 12px 6px 12px 0;
 				text-align: right;
@@ -357,8 +314,64 @@
 				z-index: 3;
 				overflow: hidden;
 				white-space: pre;
-				display: block;
 				margin: 0;
+				box-sizing: border-box;
+			}
+
+			#pyodide_editor_highlight {
+				position: absolute;
+				top: 0;
+				left: 40px;
+				right: 0;
+				bottom: 0;
+				padding: 12px;
+				font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+				font-size: 13px;
+				line-height: 1.6;
+				white-space: pre-wrap;
+				word-wrap: break-word;
+				overflow: hidden;
+				pointer-events: none;
+				tab-size: 4;
+				border: none;
+				margin: 0;
+				z-index: 1;
+				box-sizing: border-box;
+			}
+
+			#pyodide_editor_textarea {
+				position: absolute;
+				top: 0;
+				left: 40px;
+				right: 0;
+				bottom: 0;
+				z-index: 2;
+				width: calc(100% - 40px);
+				height: 100%;
+				font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+				font-size: 13px;
+				line-height: 1.6;
+				padding: 12px;
+				border: none;
+				outline: none;
+				resize: none;
+				tab-size: 4;
+				white-space: pre-wrap;
+				word-wrap: break-word;
+				overflow-y: auto;
+				overflow-x: hidden;
+				background: transparent;
+				color: transparent;
+				caret-color: var(--pe-caret-color);
+				box-sizing: border-box;
+				display: block;
+			}
+
+			.pe-editor-scroll-area {
+				position: relative;
+				flex: 1;
+				overflow: auto;
+				min-height: 0;
 			}
 
 			/* Syntax colors (Catppuccin-inspired, dark mode default) */
@@ -865,7 +878,7 @@
 					</div>
 					<div class="pe-editor-body">
 						<div id="pyodide_editor_line_numbers" aria-hidden="true">1
-</div>
+					</div>
 						<pre id="pyodide_editor_highlight" class="pe-hl" aria-hidden="true"></pre>
 						<textarea id="pyodide_editor_textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
 					</div>
