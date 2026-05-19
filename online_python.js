@@ -68,6 +68,9 @@
 	let capturedPhotos = []; // Array of {pixelData: [...nested list...], thumbnailDataURL: "...", index: N}
 
 	var _scrollRAF = null;
+	var _examplesToggling = false;
+	var _examplesTranslated = false;
+	var _tabObserver = null;
 
 	// =========================================================================
 	// DEFAULT CODE TEMPLATES
@@ -1050,11 +1053,15 @@ else:
 			stopWebcam();
 		}
 
-		// Update the examples panel: hide webcam-related templates for non-image models
-		var webcamExamples = document.querySelectorAll('.pe-example-card[onclick*="image_webcam"]');
-		webcamExamples.forEach(function(card) {
-			card.style.display = imageModel ? "" : "none";
-		});
+		// *** FIX 5: Use a single class on the panel instead of looping through cards ***
+		var panel = document.getElementById('pyodide_examples_panel');
+		if (panel) {
+			if (imageModel) {
+				panel.classList.remove('pe-no-image-model');
+			} else {
+				panel.classList.add('pe-no-image-model');
+			}
+		}
 
 		// If current code is a webcam template and model changed to non-image, replace with generic
 		if (!imageModel) {
@@ -1332,11 +1339,40 @@ else:
 	// EXAMPLES PANEL
 	// =========================================================================
 
-	function toggleExamples() {
-		var panel = document.getElementById('pyodide_examples_panel');
-		if (!panel) return;
-		panel.classList.toggle('pe-visible');
-	}
+		function toggleExamples() {
+			if (_examplesToggling) return;
+			_examplesToggling = true;
+
+			var panel = document.getElementById('pyodide_examples_panel');
+			if (!panel) {
+				_examplesToggling = false;
+				return;
+			}
+
+			// Disconnect observer to prevent cascade during toggle
+			var pyodideTab = document.getElementById("pyodide_editor_tab");
+			if (_tabObserver) _tabObserver.disconnect();
+
+			requestAnimationFrame(function() {
+				panel.classList.toggle('pe-visible');
+
+				// Only translate once, on first open
+				if (!_examplesTranslated && panel.classList.contains('pe-visible')) {
+					_examplesTranslated = true;
+					if (typeof translateElement === 'function') {
+						translateElement(panel);
+					}
+				}
+
+				// Reconnect observer after paint completes
+				requestAnimationFrame(function() {
+					if (_tabObserver && pyodideTab) {
+						_tabObserver.observe(pyodideTab, { attributes: true, attributeFilter: ["style"] });
+					}
+					_examplesToggling = false;
+				});
+			});
+		}
 
 	// =========================================================================
 	// FULLSCREEN TOGGLE
@@ -3133,17 +3169,16 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 		setupVisibilityObservers();
 
 		// Watch for tab visibility to auto-init Pyodide IN THE BACKGROUND
-		var observer = new MutationObserver(function (mutations) {
+		_tabObserver = new MutationObserver(function (mutations) {
 			for (var i = 0; i < mutations.length; i++) {
 				var mutation = mutations[i];
 				if (mutation.type === "attributes" && mutation.attributeName === "style") {
 					var tab = document.getElementById("pyodide_editor_tab");
 					if (tab && tab.style.display !== "none" && !pyodideReady && !pyodideLoading) {
-						// Use requestIdleCallback to avoid blocking the main thread
 						if (window.requestIdleCallback) {
-							requestIdleCallback(function() { initPyodide(); }, { timeout: 2000 });
+							requestIdleCallback(function() { initPyodide(); }, { timeout: 5000 });
 						} else {
-							setTimeout(function() { initPyodide(); }, 100);
+							setTimeout(function() { initPyodide(); }, 500);
 						}
 					}
 				}
@@ -3152,10 +3187,9 @@ print('🎨 Rich output: create_canvas(w,h), display(canvas), display_html(html)
 
 		var pyodideTab = document.getElementById("pyodide_editor_tab");
 		if (pyodideTab) {
-			observer.observe(pyodideTab, { attributes: true, attributeFilter: ["style"] });
+			_tabObserver.observe(pyodideTab, { attributes: true, attributeFilter: ["style"] });
 
 			if (pyodideTab.style.display !== "none" && pyodideTab.offsetParent !== null) {
-				// Defer init so the UI renders first (no hang)
 				if (window.requestIdleCallback) {
 					requestIdleCallback(function() { initPyodide(); }, { timeout: 2000 });
 				} else {

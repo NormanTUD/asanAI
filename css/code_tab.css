@@ -539,17 +539,24 @@
 
 /* Examples panel */
 .pe-examples-panel {
-	display: none;
-	margin-bottom: 8px;
-	padding: 12px;
-	background: var(--pe-surface);
-	border: 1px solid var(--pe-border);
-	border-radius: var(--pe-radius);
-	max-height: 300px;
-	overflow-y: auto;
+    /* Always in the layout flow, but invisible and collapsed */
+    visibility: hidden;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.15s ease, max-height 0.2s ease, visibility 0s 0.2s;
+    /* Remove any display:none rule */
+    padding: 0 12px;
+    will-change: opacity, max-height;
+    contain: content; /* CSS containment — prevents layout from propagating */
 }
 .pe-examples-panel.pe-visible {
-	display: block;
+    visibility: visible;
+    opacity: 1;
+    max-height: 800px; /* generous upper bound */
+    overflow-y: auto;
+    padding: 12px;
+    transition: opacity 0.15s ease, max-height 0.25s ease, visibility 0s 0s;
 }
 .pe-example-card {
 	padding: 10px 12px;
@@ -607,4 +614,13 @@
 	padding: 1px 4px;
 	font-size: 9px;
 	font-family: inherit;
+}
+
+.pe-examples-panel.pe-no-image-model .pe-example-card[onclick*="image_webcam"] {
+    display: none;
+}
+
+.pe-example-card {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 60px; /* estimated card height for stable scrollbar */
 }
