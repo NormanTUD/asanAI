@@ -417,21 +417,6 @@ if input_data is not None:
             print(f"Frame {state['frame_count']} | Raw: {_get_label(raw_idx)} ({raw_conf*100:.1f}%) | Smooth: {_get_label(sm_idx)} ({sm_conf*100:.1f}%)")
 `,
 
-    image_upload: `# 🖼️ Image Upload Prediction
-# Upload an image using the 📁 button above, then run this code.
-
-_print_model_summary()
-
-if input_data is None:
-    print("⚠️  No image uploaded yet!")
-    print("   Click '📁 Upload Image' above and select an image file.")
-else:
-    print("🖼️  Image loaded into input_data")
-    result = _predict_and_show(input_data)
-    print()
-    _print_all_classes(result)
-`,
-
     custom_data: `# ✏️ Custom Data Prediction
 # Enter your own data and predict.
 

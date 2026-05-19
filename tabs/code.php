@@ -136,10 +136,6 @@
 
 			    <!-- Category: Needs a trained model -->
 			    <div class="pe-example-category">
-				<div class="pe-example-card" onclick="pyodideLoadTemplate('random_input')">
-				    <h4>🎲 <span class="TRANSLATEME_pe_example_random_input"></span></h4>
-				    <p><span class="TRANSLATEME_pe_example_random_input_desc"></span></p>
-				</div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('image_upload')">
 				    <h4>🖼️ <span class="TRANSLATEME_pe_example_image_upload"></span></h4>
 				    <p><span class="TRANSLATEME_pe_example_image_upload_desc"></span></p>
@@ -165,10 +161,6 @@
 				    <h4>✊✋✌️ <span class="TRANSLATEME_pe_example_rps"></span></h4>
 				    <p><span class="TRANSLATEME_pe_example_rps_desc"></span></p>
 				</div>
-				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_group_battle')">
-				    <h4>⚔️ <span class="TRANSLATEME_pe_example_group_battle"></span></h4>
-				    <p><span class="TRANSLATEME_pe_example_group_battle_desc"></span></p>
-				</div>
 			    </div>
 			</div>
 
@@ -187,7 +179,6 @@
 				<select onchange="if(this.value)pyodideLoadTemplate(this.value);this.value='';" style="padding:4px 8px;border-radius:6px;font-size:11px;background:var(--pe-surface2);color:var(--pe-text);border:1px solid var(--pe-border);cursor:pointer;">
 					<option value=""><span class="TRANSLATEME_pe_select"></span></option>
 					<option value="hello_world">👋 Hello World</option>
-					<option value="random_input">🎲 Random Input</option>
 					<option value="image_webcam" data-requires="image">📷 Webcam</option>
 					<option value="image_upload">🖼️ Image Upload</option>
 					<option value="custom_data">✏️ Custom Data</option>
