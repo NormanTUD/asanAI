@@ -50,7 +50,7 @@
     // =========================================================================
 
     var ENV_FUNCTIONS = [
-        { text: 'predict(', label: 'predict(data)', kind: 'function', detail: 'Run model prediction on input data' },
+	{ text: 'predict(', label: 'predict(data)', kind: 'function', detail: 'Run model prediction on input data' },
         { text: 'get_model_info()', label: 'get_model_info()', kind: 'function', detail: 'Get model architecture info' },
         { text: 'get_weights()', label: 'get_weights()', kind: 'function', detail: 'Get model weight tensors' },
         { text: 'set_prediction_result(', label: 'set_prediction_result(result)', kind: 'function', detail: 'Display prediction result in UI' },
@@ -60,6 +60,18 @@
         { text: 'display_html(', label: 'display_html(html)', kind: 'function', detail: 'Render raw HTML in output' },
         { text: 'display_image(', label: 'display_image(src, w, h)', kind: 'function', detail: 'Show image in output' },
         { text: 'check_interrupt()', label: 'check_interrupt()', kind: 'function', detail: 'Allow stopping execution' },
+        // PRE-INJECTED HELPERS
+        { text: '_setup_model()', label: '_setup_model()', kind: 'function', detail: 'Setup model + return state dict' },
+        { text: '_print_model_summary(', label: '_print_model_summary(info)', kind: 'function', detail: 'Print formatted model summary' },
+        { text: '_predict_and_show(', label: '_predict_and_show(data, verbose)', kind: 'function', detail: 'Predict + display + return result' },
+        { text: '_format_result(', label: '_format_result(result)', kind: 'function', detail: 'Format prediction as string' },
+        { text: '_print_all_classes(', label: '_print_all_classes(result)', kind: 'function', detail: 'Print sorted class bar chart' },
+        { text: '_get_label(', label: '_get_label(idx, labels, is_classif)', kind: 'function', detail: 'Get label for class index' },
+        { text: '_sample_shape(', label: '_sample_shape(input_shape)', kind: 'function', detail: 'Get sample input shape (no batch)' },
+        { text: '_draw_bar_chart(', label: '_draw_bar_chart(values, labels, title)', kind: 'function', detail: 'Draw bar chart on canvas' },
+        { text: '_smooth_predictions(', label: '_smooth_predictions(buffer)', kind: 'function', detail: 'Average prediction buffer' },
+        { text: '_top_prediction(', label: '_top_prediction(result)', kind: 'function', detail: 'Get (idx, conf) of top class' },
+        { text: '_get_tensor_shape(', label: '_get_tensor_shape(w)', kind: 'function', detail: 'Get shape of nested list tensor' },
     ];
 
     var ENV_VARIABLES = [
