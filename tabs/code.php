@@ -3,7 +3,7 @@
 		<li><a href="#python_tab" id="python_tab_label">Python</a></li>
 		<li><a href="#python_expert_tab" id="python_expert_tab_label">Python (expert)</a></li>
 		<li><a href="#html_tab" id="html_tab_label">HTML</a></li>
-		<li><a href="#pyodide_editor_tab" id="pyodide_editor_tab_label">⚡ Run Python</a></li>
+		<li><a href="#pyodide_editor_tab" id="pyodide_editor_tab_label">Run Python</a></li>
 	</ul>
 
 	<div id="python_tab" class="tab">
