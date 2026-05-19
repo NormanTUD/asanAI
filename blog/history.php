@@ -993,7 +993,7 @@ Operating Systems, later frameworks, growing complexity on the system side to re
 
 The numeral zero, along with the positional decimal system, was \cite[introduced to Western Europe]{kleinetymology} through the work of **Leonardo of Pisa** (Fibonacci). In his 1202 work *Liber Abaci*, Fibonacci \cite[popularized the Indo-Arabic numeral system]{fibonacciliber} in the Western world, using digits $0$ through $9$ with place-value notation. Unlike the cumbersome Roman numerals used in Europe at the time, this system offered revolutionary simplicity and computational power. Fibonacci is \cite[responsible for popularising the Arabic numerals (0, 1, 2, 3, 4, …) in Europe]{fibonaccimathigon}, which was still using Roman numerals (I, V, X, D, …) in the 12th century CE.
 
-Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Africa, where his father held a diplomatic post. The system originated in India — **Brahmagupta** (c. 628 CE) formalized arithmetic with zero in his \cite[*Brāhmasphuṭasiddhānta*]{brahmagupta628}. It reached the Islamic world through \cite[Al-Khwarizmi]{alkwarizma}, whose 9th-century *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* served as the conduit to North Africa and, eventually, to Fibonacci.
+Fibonacci \cite[studied with Arab mathematicians]{fibonaccihistory} in North Africa, where his father held a diplomatic post. The system originated in India, **Brahmagupta** (c. 628 CE) formalized arithmetic with zero in his \cite[*Brāhmasphuṭasiddhānta*]{brahmagupta628}. It reached the Islamic world through \cite[Al-Khwarizmi]{alkwarizma}, whose 9th-century *al-Kitāb al-mukhtaṣar fī ḥisāb al-jabr wa-l-muqābala* served as the conduit to North Africa and, eventually, to Fibonacci.
 
 *Liber Abaci* also \cite[introduced Europe to the Fibonacci sequence]{fibonacciseq}:
 
@@ -1015,7 +1015,7 @@ A **data type** classifies a value's representation and permitted operations. Th
 
 ### The Prehistory: Machines Without Types
 
-The earliest computers, such as \cite[Zuse's Z3]{zusebook} (1941) and the \cite[ENIAC]{eniac1946} (1945), operated on raw binary patterns. The machine made no distinction between an integer, a floating-point number, or an instruction — interpretation was entirely in the mind of the programmer.
+The earliest computers, such as \cite[Zuse's Z3]{zusebook} (1941) and the \cite[ENIAC]{eniac1946} (1945), operated on raw binary patterns. The machine made no distinction between an integer, a floating-point number, or an instruction, interpretation was entirely in the mind of the programmer.
 
 ### FORTRAN and the Birth of Explicit Types (1957)
 
