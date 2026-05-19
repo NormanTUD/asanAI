@@ -111,7 +111,6 @@
 
 			<!-- Examples Panel (hidden by default) -->
 			<div id="pyodide_examples_panel" class="pe-examples-panel">
-				<div style="font-size:12px;color:var(--pe-muted);margin-bottom:8px;font-weight:600;">📚 <span class="TRANSLATEME_pe_click_example_to_load"></span></div>
 				<div class="pe-example-card" onclick="pyodideLoadTemplate('hello_world')">
 					<h4>👋 <span class="TRANSLATEME_pe_example_hello_world"></span></h4>
 					<p><span class="TRANSLATEME_pe_example_hello_world_desc"></span></p>

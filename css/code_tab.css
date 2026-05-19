@@ -605,7 +605,6 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
     /* Prevent ANY layout propagation to parent/siblings */
-    contain: strict;
 }
 
 .pe-examples-panel.pe-visible {
