@@ -147,7 +147,7 @@
 			    </div>
 
 			    <!-- Category: Needs an image model + webcam -->
-			    <div class="pe-example-category" data-requires="image" >
+			    <div class="pe-example-category hide_when_no_image" data-requires="image" >
 				<div class="pe-example-category-label">📷 <span class="TRANSLATEME_pe_category_needs_image_model"></span></div>
 				<div class="pe-example-card" data-requires="image" onclick="pyodideLoadTemplate('image_webcam')">
 				    <h4>📷 <span class="TRANSLATEME_pe_example_webcam_prediction"></span></h4>
