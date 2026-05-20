@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christoffel Symbols – Visual Explorer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #64b5f6, #ce93d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .demo-section {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            border: 1px solid #2a2a4a;
+        }
+        .demo-section h2 {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            color: #90caf9;
+        }
+        .demo-section .hint {
+            font-size: 0.85em;
+            color: #777;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+        .controls label {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+        .controls input[type="range"] {
+            width: 140px;
+            accent-color: #64b5f6;
+        }
+        .controls select, .controls button {
+            background: #1e1e3a;
+            color: #ccc;
+            border: 1px solid #3a3a5a;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .controls button:hover {
+            background: #2a2a5a;
+        }
+        .formula-box {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #ce93d8;
+            text-align: center;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 800px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .legend {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+        .tab-bar button {
+            background: #1a1a2e;
+            color: #888;
+            border: 1px solid #2a2a4a;
+            padding: 8px 20px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-bar button.active {
+            background: #12122a;
+            color: #64b5f6;
+            border-bottom-color: #12122a;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Christoffel Symbols — Visual Explorer</h1>
+    <p class="subtitle">How basis vectors twist and stretch in curved coordinates</p>
+
+    <!-- DEMO 1: The Core Idea -->
+    <div class="demo-section">
+        <h2>① The Core Idea: Basis Vectors Change From Point to Point</h2>
+        <p class="hint">Drag the point around. Watch how the basis vectors (arrows) change direction and length in polar coordinates vs. staying constant in Cartesian.</p>
+        <div class="tab-bar">
+            <button class="active" onclick="switchCoordSystem('cartesian')">Cartesian (flat)</button>
+            <button onclick="switchCoordSystem('polar')">Polar (curved)</button>
+            <button onclick="switchCoordSystem('custom')">Wavy (wild)</button>
+        </div>
+        <canvas id="canvas1" width="600" height="400"></canvas>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#ff6b6b"></div> e₁ basis vector</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4ecdc4"></div> e₂ basis vector</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffd93d"></div> Change in basis (Christoffel!)</div>
+        </div>
+        <div class="formula-box">
+            Γᵏᵢⱼ = "When I move in direction j, how much does basis vector eᵢ change in the eₖ direction?"
+        </div>
+    </div>
+
+    <!-- DEMO 2: Parallel Transport -->
+    <div class="demo-section">
+        <h2>② Parallel Transport: Why Christoffel Symbols Matter</h2>
+        <p class="hint">A vector is "parallel transported" along a path. On a curved surface, it rotates even though it's trying to stay parallel! The Christoffel symbols tell us exactly how much correction is needed.</p>
+        <canvas id="canvas2" width="600" height="400"></canvas>
+        <div class="controls">
+            <label>Curvature: <input type="range" id="curvatureSlider" min="0" max="100" value="50"></label>
+            <label>Path progress: <input type="range" id="transportSlider" min="0" max="100" value="0"></label>
+            <button onclick="resetTransport()">Reset</button>
+            <button onclick="animateTransport()">▶ Animate</button>
+        </div>
+        <div class="formula-box">
+            ∇ⱼ vⁱ = ∂ⱼvⁱ + Γⁱⱼₖ vᵏ = 0 &nbsp; ← "keep the vector parallel"
+        </div>
+    </div>
+
+    <!-- DEMO 3: Component Breakdown -->
+    <div class="demo-section">
+        <h2>③ What Each Component Means</h2>
+        <p class="hint">In 2D polar coordinates (r, θ): move the point and see which Christoffel components are non-zero and what they physically do.</p>
+        <div class="grid-2">
+            <div>
+                <canvas id="canvas3" width="380" height="380"></canvas>
+            </div>
+            <div>
+                <div id="symbolDisplay" style="font-family: monospace; font-size: 0.95em; line-height: 2;">
+                    <!-- filled by JS -->
+                </div>
+                <div class="formula-box" style="text-align:left; font-size:0.8em; margin-top:16px;">
+                    Polar coords (r,θ):<br>
+                    Γʳ_θθ = −r &nbsp;(centripetal)<br>
+                    Γᶿ_rθ = Γᶿ_θr = 1/r &nbsp;(Coriolis-like)<br>
+                    All others = 0
+                </div>
+            </div>
+        </div>
+        <div class="controls">
+            <label>Show: </label>
+            <button onclick="showSymbol('r_tt')" id="btn_r_tt">Γʳ_θθ</button>
+            <button onclick="showSymbol('t_rt')" id="btn_t_rt">Γᶿ_rθ</button>
+            <button onclick="showSymbol('all')" id="btn_all">All</button>
+        </div>
+    </div>
+
+    <!-- DEMO 4: Geodesics -->
+    <div class="demo-section">
+        <h2>④ Geodesics: Straightest Possible Paths</h2>
+        <p class="hint">Click to set start point and direction. The geodesic equation uses Christoffel symbols to find the "straightest" path in curved coordinates. On a sphere, geodesics are great circles!</p>
+        <canvas id="canvas4" width="600" height="400"></canvas>
+        <div class="controls">
+            <label>Surface:</label>
+            <select id="surfaceSelect" onchange="resetGeodesic()">
+                <option value="flat">Flat plane</option>
+                <option value="sphere" selected>Sphere (top view)</option>
+                <option value="saddle">Saddle</option>
+                <option value="bump">Gaussian bump</option>
+            </select>
+            <button onclick="fireGeodesic()">🚀 Launch Geodesic</button>
+            <button onclick="resetGeodesic()">Reset</button>
+        </div>
+        <div class="formula-box">
+            d²xᵏ/dt² + Γᵏᵢⱼ (dxⁱ/dt)(dxʲ/dt) = 0 &nbsp; ← geodesic equation
+        </div>
+    </div>
+
+    <!-- DEMO 5: Metric → Christoffel -->
+    <div class="demo-section">
+        <h2>⑤ From Metric to Christoffel: The Recipe</h2>
+        <p class="hint">Adjust the metric components and watch the Christoffel symbols and grid deformation change in real time.</p>
+        <canvas id="canvas5" width="600" height="350"></canvas>
+        <div class="controls">
+            <label>g₁₁: <input type="range" id="g11" min="50" max="200" value="100"></label>
+            <label>g₂₂: <input type="range" id="g22" min="50" max="200" value="100"></label>
+            <label>g₁₂: <input type="range" id="g12" min="-80" max="80" value="0"></label>
+        </div>
+        <div class="formula-box">
+            Γᵏᵢⱼ = ½ gᵏˡ (∂ᵢgⱼˡ + ∂ⱼgᵢˡ − ∂ˡgᵢⱼ)
+        </div>
+    </div>
+</div>
+
+<script>
+// ============ DEMO 1: Basis vectors in different coordinate systems ============
+const c1 = document.getElementById('canvas1');
+const ctx1 = c1.getContext('2d');
+let coordSystem = 'cartesian';
+let dragPoint = { x: 300, y: 200 };
+let isDragging = false;
+
+function switchCoordSystem(sys) {
+    coordSystem = sys;
+    document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    drawDemo1();
+}
+
+function getBasisVectors(px, py) {
+    const cx = px - 300, cy = py - 200;
+    if (coordSystem === 'cartesian') {
+        return { e1: {x:1, y:0}, e2: {x:0, y:1}, de1: {x:0,y:0}, de2: {x:0,y:0} };
+    } else if (coordSystem === 'polar') {
+        const r = Math.sqrt(cx*cx + cy*cy) || 1;
+        const th = Math.atan2(cy, cx);
+        // e_r and e_theta
+        const er = { x: Math.cos(th), y: Math.sin(th) };
+        const eth = { x: -Math.sin(th), y: Math.cos(th) };
+        // scale e_theta by r for visualization
+        const scale = r / 100;
+        return { 
+            e1: er, 
+            e2: { x: eth.x * scale, y: eth.y * scale },
+            de1: { x: -eth.x * 0.3, y: -eth.y * 0.3 },
+            de2: { x: er.x * scale * 0.3, y: er.y * scale * 0.3 }
+        };
+    } else { // wavy
+        const freq = 0.02;
+        const amp = 0.4;
+        const dx = 1 + amp * Math.sin(freq * px) * Math.cos(freq * py);
+        const dy = 1 + amp * Math.cos(freq * px) * Math.sin(freq * py);
+        const shearX = amp * Math.cos(freq * px) * Math.cos(freq * py) * 0.5;
+        const shearY = amp * Math.sin(freq * px) * Math.sin(freq * py) * 0.5;
+        return {
+            e1: { x: dx, y: shearY },
+            e2: { x: shearX, y: dy },
+            de1: { x: -amp * freq * Math.cos(freq*px) * 0.5, y: amp * freq * Math.cos(freq*px) * 0.3 },
+            de2: { x: amp * freq * Math.sin(freq*py) * 0.3, y: -amp * freq * Math.sin(freq*py) * 0.5 }
+        };
+    }
+}
+
+function drawArrow(ctx, x, y, dx, dy, color, width=2) {
+    const len = Math.sqrt(dx*dx + dy*dy);
+    if (len < 0.01) return;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + dx, y + dy);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+    // arrowhead
+    const angle = Math.atan2(dy, dx);
+    const headLen = Math.min(10, len * 0.3);
+    ctx.beginPath();
+    ctx.moveTo(x + dx, y + dy);
+    ctx.lineTo(x + dx - headLen * Math.cos(angle - 0.4), y + dy - headLen * Math.sin(angle - 0.4));
+    ctx.lineTo(x + dx - headLen * Math.cos(angle + 0.4), y + dy - headLen * Math.sin(angle + 0.4));
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+}
+
+function drawDemo1() {
+    ctx1.fillStyle = '#0a0a1a';
+    ctx1.fillRect(0, 0, 600, 400);
+    
+    // Draw grid of basis vectors (faint)
+    const step = 50;
+    for (let gx = 50; gx < 600; gx += step) {
+        for (let gy = 50; gy < 400; gy += step) {
+            const b = getBasisVectors(gx, gy);
+            const scale = 18;
+            drawArrow(ctx1, gx, gy, b.e1.x * scale, b.e1.y * scale, 'rgba(255,107,107,0.2)', 1);
+            drawArrow(ctx1, gx, gy, b.e2.x * scale, b.e2.y * scale, 'rgba(78,205,196,0.2)', 1);
+        }
+    }
+    
+    // Draw at drag point
+    const b = getBasisVectors(dragPoint.x, dragPoint.y);
+    const scale = 50;
+    drawArrow(ctx1, dragPoint.x, dragPoint.y, b.e1.x * scale, b.e1.y * scale, '#ff6b6b', 3);
+    drawArrow(ctx1, dragPoint.x, dragPoint.y, b.e2.x * scale, b.e2.y * scale, '#4ecdc4', 3);
+    
+    // Draw change vectors (Christoffel contribution)
+    const cScale = 80;
+    if (coordSystem !== 'cartesian') {
+        const tipX1 = dragPoint.x + b.e1.x * scale;
+        const tipY1 = dragPoint.y + b.e1.y * scale;
+        drawArrow(ctx1, tipX1, tipY1, b.de1.x * cScale, b.de1.y * cScale, '#ffd93d', 2);
+        
+        const tipX2 = dragPoint.x + b.e2.x * scale;
+        const tipY2 = dragPoint.y + b.e2.y * scale;
+        drawArrow(ctx1, tipX2, tipY2, b.de2.x * cScale, b.de2.y * cScale, '#ffd93d', 2);
+    }
+    
+    // Draw point
+    ctx1.beginPath();
+    ctx1.arc(dragPoint.x, dragPoint.y, 6, 0, Math.PI * 2);
+    ctx1.fillStyle = '#fff';
+    ctx1.fill();
+    
+    // Label
+    ctx1.font = '13px monospace';
+    ctx1.fillStyle = '#888';
+    ctx1.fillText(coordSystem.toUpperCase() + ' coordinates', 10, 20);
+    if (coordSystem !== 'cartesian') {
+        ctx1.fillStyle = '#ffd93d';
+        ctx1.fillText('Yellow = Γ contribution (how basis changes)', 10, 385);
+    } else {
+        ctx1.fillStyle = '#666';
+        ctx1.fillText('Basis vectors constant everywhere → all Γ = 0', 10, 385);
+    }
+}
+
+c1.addEventListener('mousedown', (e) => { isDragging = true; });
+c1.addEventListener('mouseup', () => { isDragging = false; });
+c1.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const rect = c1.getBoundingClientRect();
+    dragPoint.x = e.clientX - rect.left;
+    dragPoint.y = e.clientY - rect.top;
+    drawDemo1();
+});
+c1.addEventListener('click', (e) => {
+    const rect = c1.getBoundingClientRect();
+    dragPoint.x = e.clientX - rect.left;
+    dragPoint.y = e.clientY - rect.top;
+    drawDemo1();
+});
+
+drawDemo1();
+
+// ============ DEMO 2: Parallel Transport ============
+const c2 = document.getElementById('canvas2');
+const ctx2 = c2.getContext('2d');
+let transportAnim = null;
+
+function drawDemo2() {
+    const curvature = document.getElementById('curvatureSlider').value / 100;
+    const t = document.getElementById('transportSlider').value / 100;
+    
+    ctx2.fillStyle = '#0a0a1a';
+    ctx2.fillRect(0, 0, 600, 400);
+    
+    // Draw curved surface (represented as a deformed grid)
+    ctx2.strokeStyle = 'rgba(100,181,246,0.15)';
+    ctx2.lineWidth = 1;
+    for (let i = 0; i <= 20; i++) {
+        ctx2.beginPath();
+        for (let j = 0; j <= 40; j++) {
+            const x = 50 + j * 12.5;
+            const y = 50 + i * 15;
+            const distFromCenter = Math.sqrt((x-300)**2 + (y-200)**2);
+            const deform = curvature * 20 * Math.exp(-distFromCenter*distFromCenter / 30000);
+            const dx = deform * (x - 300) / (distFromCenter || 1);
+            const dy = deform * (y - 200) / (distFromCenter || 1);
+            if (j === 0) ctx2.moveTo(x + dx, y + dy);
+            else ctx2.lineTo(x + dx, y + dy);
+        }
+        ctx2.stroke();
+    }
+    for (let j = 0; j <= 40; j++) {
+        ctx2.beginPath();
+        for (let i = 0; i <= 20; i++) {
+            const x = 50 + j * 12.5;
+            const y = 50 + i * 15;
+            const distFromCenter = Math.sqrt((x-300)**2 + (y-200)**2);
+            const deform = curvature * 20 * Math.exp(-distFromCenter*distFromCenter / 30000);
+            const dx = deform * (x - 300) / (distFromCenter || 1);
+            const dy = deform * (y - 200) / (distFromCenter || 1);
+            if (i === 0) ctx2.moveTo(x + dx, y + dy);
+            else ctx2.lineTo(x + dx, y + dy);
+        }
+        ctx2.stroke();
+    }
+    
+    // Path: a triangle
+    const path = [];
+    const N = 150;
+    const cx = 300, cy = 200, R = 120;
+    for (let i = 0; i <= N; i++) {
+        const frac = i / N;
+        let px, py;
+        if (frac < 1/3) {
+            const s = frac * 3;
+            px = cx + R * (1 - s) + R * Math.cos(2*Math.PI/3) * s;
+            py = cy - R * 0.5 * (1 - s) + (cy + R * Math.sin(2*Math.PI/3) * s - cy) ;
+            px = cx + R * Math.cos(-Math.PI/6 + s * 2*Math.PI/3);
+            py = cy + R * Math.sin(-Math.PI/6 + s * 2*Math.PI/3);
+        } else if (frac < 2/3) {
+            const s = (frac - 1/3) * 3;
+            px = cx + R * Math.cos(-Math.PI/6 + 2*Math.PI/3 + s * 2*Math.PI/3);
+            py = cy + R * Math.sin(-Math.PI/6 + 2*Math.PI/3 + s * 2*Math.PI/3);
+        } else {
+            const s = (frac - 2/3) * 3;
+            px = cx + R * Math.cos(-Math.PI/6 + 4*Math.PI/3 + s * 2*Math.PI/3);
+            py = cy + R * Math.sin(-Math.PI/6 + 4*Math.PI/3 + s * 2*Math.PI/3);
+        }
+        path.push({x: px, y: py});
+    }
+    
+    // Draw path
+    ctx2.beginPath();
+    ctx2.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx2.lineWidth = 2;
+    path.forEach((p, i) => i === 0 ? ctx2.moveTo(p.x, p.y) : ctx2.lineTo(p.x, p.y));
+    ctx2.stroke();
+    
+    // Parallel transport the vector
+    const idx = Math.floor(t * (path.length - 1));
+    const pos = path[idx];
+    
+    // The vector rotates due to curvature (holonomy)
+    const totalRotation = curvature * Math.PI * 0.8; // total rotation after full loop
+    const currentRotation = totalRotation * t;
+    const vecLen = 40;
+    const initAngle = -Math.PI / 4;
+    const angle = initAngle + currentRotation;
+    
+    // Draw transported vector
+    drawArrow(ctx2, pos.x, pos.y, vecLen * Math.cos(angle), vecLen * Math.sin(angle), '#ff6b6b', 3);
+    
+    // Draw ghost of initial vector at current position
+    drawArrow(ctx2, pos.x, pos.y, vecLen * Math.cos(initAngle), vecLen * Math.sin(initAngle), 'rgba(255,107,107,0.25)', 2);
+    
+    // Point
+    ctx2.beginPath();
+    ctx2.arc(pos.x, pos.y, 5, 0, Math.PI * 2);
+    ctx2.fillStyle = '#fff';
+    ctx2.fill();
+    
+    // Info
+    ctx2.font = '12px monospace';
+    ctx2.fillStyle = '#ffd93d';
+    ctx2.fillText(`Rotation from parallel transport: ${(currentRotation * 180 / Math.PI).toFixed(1)}°`, 10, 385);
+    ctx2.fillStyle = '#888';
+    ctx2.fillText('Ghost = original direction | Solid = transported vector', 10, 20);
+}
+
+document.getElementById('curvatureSlider').addEventListener('input', drawDemo2);
+document.getElementById('transportSlider').addEventListener('input', drawDemo2);
+
+function resetTransport() {
+    document.getElementById('transportSlider').value = 0;
+    if (transportAnim) cancelAnimationFrame(transportAnim);
+    drawDemo2();
+}
+
+function animateTransport() {
+    const slider = document.getElementById('transportSlider');
+    let val = parseInt(slider.value);
+    function step() {
+        val += 0.5;
+        if (val > 100) val = 0;
+        slider.value = val;
+        drawDemo2();
+        transportAnim = requestAnimationFrame(step);
+    }
+    if (transportAnim) cancelAnimationFrame(transportAnim);
+    transportAnim = requestAnimationFrame(step);
+}
+
+drawDemo2();
+
+// ============ DEMO 3: Component Breakdown (Polar) ============
+const c3 = document.getElementById('canvas3');
+const ctx3 = c3.getContext('2d');
+let demo3Point = { x: 250, y: 150 };
+let activeSymbol = 'all';
+
+function showSymbol(sym) {
+    activeSymbol = sym;
+    document.querySelectorAll('[id^="btn_"]').forEach(b => b.style.background = '#1e1e3a');
+    document.getElementById('btn_' + sym).style.background = '#3a3a7a';
+    drawDemo3();
+}
+
+function drawDemo3() {
+    ctx3.fillStyle = '#0a0a1a';
+    ctx3.fillRect(0, 0, 380, 380);
+    
+    const cx = 190, cy = 190;
+    
+    // Draw polar grid
+    ctx3.strokeStyle = 'rgba(100,181,246,0.2)';
+    ctx3.lineWidth = 1;
+    for (let r = 30; r <= 160; r += 30) {
+        ctx3.beginPath();
+        ctx3.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx3.stroke();
+    }
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 6) {
+        ctx3.beginPath();
+        ctx3.moveTo(cx, cy);
+        ctx3.lineTo(cx + 170 * Math.cos(a), cy + 170 * Math.sin(a));
+        ctx3.stroke();
+    }
+    
+    // Point
+    const px = demo3Point.x, py = demo3Point.y;
+    const dx = px - cx, dy = py - cy;
+    const r = Math.sqrt(dx*dx + dy*dy) || 1;
+    const theta = Math.atan2(dy, dx);
+    
+    // Basis vectors at point
+    const er = { x: Math.cos(theta), y: Math.sin(theta) };
+    const eth = { x: -Math.sin(theta), y: Math.cos(theta) };
+    
+    const bScale = 35;
+    drawArrow(ctx3, px, py, er.x * bScale, er.y * bScale, '#ff6b6b', 2.5);
+    drawArrow(ctx3, px, py, eth.x * bScale, eth.y * bScale, '#4ecdc4', 2.5);
+    
+    // Show Christoffel effects
+    const cScale = 25;
+    if (activeSymbol === 'r_tt' || activeSymbol === 'all') {
+        // Γʳ_θθ = -r : moving in θ, the θ-basis changes in -r direction (centripetal)
+        const mag = -r / 160 * cScale;
+        drawArrow(ctx3, px + eth.x * bScale, py + eth.y * bScale, 
+                  er.x * mag, er.y * mag, '#ffd93d', 2.5);
+        ctx3.font = '11px monospace';
+        ctx3.fillStyle = '#ffd93d';
+        ctx3.fillText('Γʳ_θθ = −r (centripetal)', px + eth.x * bScale + er.x * mag + 5, py + eth.y * bScale + er.y * mag);
+    }
+    if (activeSymbol === 't_rt' || activeSymbol === 'all') {
+        // Γᶿ_rθ = 1/r : moving in r, the θ-basis changes in θ direction (scaled by 1/r)
+        const mag = (160 / r) * cScale * 0.15;
+        drawArrow(ctx3, px + er.x * bScale, py + er.y * bScale,
+                  eth.x * mag, eth.y * mag, '#a8e6cf', 2.5);
+        ctx3.font = '11px monospace';
+        ctx3.fillStyle = '#a8e6cf';
+        ctx3.fillText('Γᶿ_rθ = 1/r', px + er.x * bScale + eth.x * mag + 5, py + er.y * bScale + eth.y * mag);
+    }
+    
+    // Draw point
+    ctx3.beginPath();
+    ctx3.arc(px, py, 5, 0, Math.PI * 2);
+    ctx3.fillStyle = '#fff';
+    ctx3.fill();
+    
+    // Update display
+    const display = document.getElementById('symbolDisplay');
+    display.innerHTML = `
+        <div style="color:#aaa;">At point (r=${(r/30).toFixed(1)}, θ=${(theta*180/Math.PI).toFixed(0)}°)</div>
+        <br>
+        <div style="color:#ff6b6b;">eᵣ = (${er.x.toFixed(2)}, ${er.y.toFixed(2)})</div>
+        <div style="color:#4ecdc4;">eθ = (${eth.x.toFixed(2)}, ${eth.y.toFixed(2)})</div>
+        <br>
+        <div style="color:#ffd93d;">Γʳ_θθ = −r = ${(-r/30).toFixed(2)}</div>
+        <div style="color:#a8e6cf;">Γᶿ_rθ = 1/r = ${(30/r).toFixed(2)}</div>
+        <div style="color:#888;">Γᶿ_θr = 1/r = ${(30/r).toFixed(2)}</div>
+        <br>
+        <div style="color:#666; font-size:0.8em;">All other components = 0</div>
+    `;
+}
+
+c3.addEventListener('click', (e) => {
+    const rect = c3.getBoundingClientRect();
+    demo3Point.x = e.clientX - rect.left;
+    demo3Point.y = e.clientY - rect.top;
+    drawDemo3();
+});
+c3.addEventListener('mousemove', (e) => {
+    if (e.buttons !== 1) return;
+    const rect = c3.getBoundingClientRect();
+    demo3Point.x = e.clientX - rect.left;
+    demo3Point.y = e.clientY - rect.top;
+    drawDemo3();
+});
+
+showSymbol('all');
+drawDemo3();
+
+// ============ DEMO 4: Geodesics ============
+const c4 = document.getElementById('canvas4');
+const ctx4 = c4.getContext('2d');
+let geodesicPaths = [];
+let geodesicStart = null;
+let geodesicDir = null;
+let clickState4 = 0;
+
+function getSurfaceHeight(x, y, surface) {
+    const cx = 300, cy = 200;
+    const dx = (x - cx) / 150, dy = (y - cy) / 150;
+    const r2 = dx*dx + dy*dy;
+    switch(surface) {
+        case 'flat': return 0;
+        case 'sphere': return Math.sqrt(Math.max(0, 1 - r2)) * 0.5;
+        case 'saddle': return (dx*dx - dy*dy) * 0.5;
+        case 'bump': return Math.exp(-r2 * 2) * 0.8;
+        default: return 0;
+    }
+}
+
+function getMetricAt(x, y, surface) {
+    const h = 1.0;
+    const hx = (getSurfaceHeight(x+h, y, surface) - getSurfaceHeight(x-h, y, surface)) / (2*h);
+    const hy = (getSurfaceHeight(x, y+h, surface) - getSurfaceHeight(x, y-h, surface)) / (2*h);
+    // Induced metric: g_ij = delta_ij + dh/dxi * dh/dxj
+    return {
+        g11: 1 + hx*hx,
+        g12: hx*hy,
+        g22: 1 + hy*hy
+    };
+}
+
+function getChristoffelAt(x, y, surface) {
+    const eps = 2.0;
+    const gC = getMetricAt(x, y, surface);
+    const gR = getMetricAt(x+eps, y, surface);
+    const gL = getMetricAt(x-eps, y, surface);
+    const gU = getMetricAt(x, y-eps, surface);
+    const gD = getMetricAt(x, y+eps, surface);
+    
+    // Numerical derivatives of metric
+    const dg11_dx = (gR.g11 - gL.g11) / (2*eps);
+    const dg11_dy = (gD.g11 - gU.g11) / (2*eps);
+    const dg22_dx = (gR.g22 - gL.g22) / (2*eps);
+    const dg22_dy = (gD.g22 - gU.g22) / (2*eps);
+    const dg12_dx = (gR.g12 - gL.g12) / (2*eps);
+    const dg12_dy = (gD.g12 - gU.g12) / (2*eps);
+    
+    // Inverse metric
+    const det = gC.g11 * gC.g22 - gC.g12 * gC.g12;
+    const gi11 = gC.g22 / det;
+    const gi22 = gC.g11 / det;
+    const gi12 = -gC.g12 / det;
+    
+    // Christoffel symbols of the second kind
+    // Γ^k_ij = 1/2 g^kl (∂_i g_jl + ∂_j g_il - ∂_l g_ij)
+    const G1_11 = 0.5 * (gi11 * dg11_dx + gi12 * (2*dg12_dx - dg11_dy));
+    const G1_12 = 0.5 * (gi11 * dg11_dy + gi12 * dg22_dx);
+    const G1_22 = 0.5 * (gi11 * (2*dg12_dy - dg22_dx) + gi12 * dg22_dy);
+    const G2_11 = 0.5 * (gi12 * dg11_dx + gi22 * (2*dg12_dx - dg11_dy));
+    const G2_12 = 0.5 * (gi12 * dg11_dy + gi22 * dg22_dx);
+    const G2_22 = 0.5 * (gi12 * (2*dg12_dy - dg22_dx) + gi22 * dg22_dy);
+    
+    return { G1_11, G1_12, G1_22, G2_11, G2_12, G2_22 };
+}
+
+function computeGeodesic(startX, startY, vx, vy, surface) {
+    const points = [];
+    let x = startX, y = startY;
+    let dx = vx, dy = vy;
+    const dt = 1.5;
+    const steps = 300;
+    
+    for (let i = 0; i < steps; i++) {
+        points.push({x, y});
+        if (x < 0 || x > 600 || y < 0 || y > 400) break;
+        
+        const G = getChristoffelAt(x, y, surface);
+        
+        // Geodesic equation: d²x^k/dt² + Γ^k_ij dx^i/dt dx^j/dt = 0
+        const ddx = -(G.G1_11 * dx * dx + 2 * G.G1_12 * dx * dy + G.G1_22 * dy * dy);
+        const ddy = -(G.G2_11 * dx * dx + 2 * G.G2_12 * dx * dy + G.G2_22 * dy * dy);
+        
+        dx += ddx * dt;
+        dy += ddy * dt;
+        x += dx * dt;
+        y += dy * dt;
+    }
+    return points;
+}
+
+function drawDemo4() {
+    const surface = document.getElementById('surfaceSelect').value;
+    ctx4.fillStyle = '#0a0a1a';
+    ctx4.fillRect(0, 0, 600, 400);
+    
+    // Draw surface coloring
+    const imgData = ctx4.createImageData(600, 400);
+    for (let px = 0; px < 600; px += 3) {
+        for (let py = 0; py < 400; py += 3) {
+            const h = getSurfaceHeight(px, py, surface);
+            const val = Math.floor(128 + h * 80);
+            for (let ox = 0; ox < 3; ox++) {
+                for (let oy = 0; oy < 3; oy++) {
+                    const idx = ((py+oy) * 600 + (px+ox)) * 4;
+                    imgData.data[idx] = val * 0.3;
+                    imgData.data[idx+1] = val * 0.4;
+                    imgData.data[idx+2] = val * 0.7;
+                    imgData.data[idx+3] = 255;
+                }
+            }
+        }
+    }
+    ctx4.putImageData(imgData, 0, 0);
+    
+    // Draw grid lines (deformed by surface)
+    ctx4.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx4.lineWidth = 1;
+    for (let gx = 0; gx < 600; gx += 40) {
+        ctx4.beginPath();
+        for (let gy = 0; gy < 400; gy += 5) {
+            const h = getSurfaceHeight(gx, gy, surface);
+            const dispX = gx + h * 10;
+            const dispY = gy + h * 10;
+            if (gy === 0) ctx4.moveTo(dispX, dispY);
+            else ctx4.lineTo(dispX, dispY);
+        }
+        ctx4.stroke();
+    }
+    for (let gy = 0; gy < 400; gy += 40) {
+        ctx4.beginPath();
+        for (let gx = 0; gx < 600; gx += 5) {
+            const h = getSurfaceHeight(gx, gy, surface);
+            const dispX = gx + h * 10;
+            const dispY = gy + h * 10;
+            if (gx === 0) ctx4.moveTo(dispX, dispY);
+            else ctx4.lineTo(dispX, dispY);
+        }
+        ctx4.stroke();
+    }
+    
+    // Draw geodesics
+    geodesicPaths.forEach((path, idx) => {
+        if (path.length < 2) return;
+        ctx4.beginPath();
+        ctx4.strokeStyle = `hsl(${idx * 60 + 30}, 80%, 60%)`;
+        ctx4.lineWidth = 2.5;
+        path.forEach((p, i) => i === 0 ? ctx4.moveTo(p.x, p.y) : ctx4.lineTo(p.x, p.y));
+        ctx4.stroke();
+        
+        // Start dot
+        ctx4.beginPath();
+        ctx4.arc(path[0].x, path[0].y, 5, 0, Math.PI * 2);
+        ctx4.fillStyle = '#fff';
+        ctx4.fill();
+    });
+    
+    // Draw pending start point
+    if (geodesicStart && clickState4 === 1) {
+        ctx4.beginPath();
+        ctx4.arc(geodesicStart.x, geodesicStart.y, 6, 0, Math.PI * 2);
+        ctx4.fillStyle = '#ffd93d';
+        ctx4.fill();
+        ctx4.font = '12px monospace';
+        ctx4.fillStyle = '#ffd93d';
+        ctx4.fillText('Click again to set direction →', geodesicStart.x + 12, geodesicStart.y - 8);
+    }
+    
+    // Straight line comparison
+    if (geodesicPaths.length > 0 && surface !== 'flat') {
+        const last = geodesicPaths[geodesicPaths.length - 1];
+        if (last.length > 1) {
+            const dx = last[1].x - last[0].x;
+            const dy = last[1].y - last[0].y;
+            const len = Math.sqrt(dx*dx + dy*dy);
+            ctx4.beginPath();
+            ctx4.setLineDash([5, 5]);
+            ctx4.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx4.lineWidth = 1;
+            ctx4.moveTo(last[0].x, last[0].y);
+            ctx4.lineTo(last[0].x + dx/len * 400, last[0].y + dy/len * 400);
+            ctx4.stroke();
+            ctx4.setLineDash([]);
+        }
+    }
+    
+    ctx4.font = '11px monospace';
+    ctx4.fillStyle = '#666';
+    ctx4.fillText(`Surface: ${surface} | Click to place start, click again for direction`, 10, 390);
+}
+
+c4.addEventListener('click', (e) => {
+    const rect = c4.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    
+    if (clickState4 === 0) {
+        geodesicStart = { x: mx, y: my };
+        clickState4 = 1;
+        drawDemo4();
+    } else {
+        const dx = mx - geodesicStart.x;
+        const dy = my - geodesicStart.y;
+        const len = Math.sqrt(dx*dx + dy*dy) || 1;
+        const speed = 3;
+        const surface = document.getElementById('surfaceSelect').value;
+        const path = computeGeodesic(geodesicStart.x, geodesicStart.y, dx/len * speed, dy/len * speed, surface);
+        geodesicPaths.push(path);
+        clickState4 = 0;
+        geodesicStart = null;
+        drawDemo4();
+    }
+});
+
+function fireGeodesic() {
+    const surface = document.getElementById('surfaceSelect').value;
+    const angle = Math.random() * Math.PI * 2;
+    const startX = 200 + Math.random() * 200;
+    const startY = 100 + Math.random() * 200;
+    const speed = 3;
+    const path = computeGeodesic(startX, startY, Math.cos(angle)*speed, Math.sin(angle)*speed, surface);
+    geodesicPaths.push(path);
+    drawDemo4();
+}
+
+function resetGeodesic() {
+    geodesicPaths = [];
+    clickState4 = 0;
+    geodesicStart = null;
+    drawDemo4();
+}
+
+drawDemo4();
+
+// ============ DEMO 5: Metric → Christoffel ============
+const c5 = document.getElementById('canvas5');
+const ctx5 = c5.getContext('2d');
+
+function drawDemo5() {
+    const g11 = document.getElementById('g11').value / 100;
+    const g22 = document.getElementById('g22').value / 100;
+    const g12 = document.getElementById('g12').value / 100;
+    
+    ctx5.fillStyle = '#0a0a1a';
+    ctx5.fillRect(0, 0, 600, 350);
+    
+    const cx = 300, cy = 175;
+    
+    // Draw deformed grid based on metric
+    ctx5.strokeStyle = 'rgba(100,181,246,0.3)';
+    ctx5.lineWidth = 1;
+    
+    const gridSize = 12;
+    const spacing = 20;
+    
+    function transform(i, j) {
+        // Apply metric as a linear transformation for visualization
+        const x = i * spacing * Math.sqrt(g11) + j * spacing * g12 * 0.5;
+        const y = j * spacing * Math.sqrt(g22) + i * spacing * g12 * 0.5;
+        return { x: cx + x, y: cy + y };
+    }
+    
+    // Horizontal lines
+    for (let j = -gridSize; j <= gridSize; j++) {
+        ctx5.beginPath();
+        for (let i = -gridSize; i <= gridSize; i++) {
+            const p = transform(i, j);
+            if (i === -gridSize) ctx5.moveTo(p.x, p.y);
+            else ctx5.lineTo(p.x, p.y);
+        }
+        ctx5.stroke();
+    }
+    // Vertical lines
+    for (let i = -gridSize; i <= gridSize; i++) {
+        ctx5.beginPath();
+        for (let j = -gridSize; j <= gridSize; j++) {
+            const p = transform(i, j);
+            if (j === -gridSize) ctx5.moveTo(p.x, p.y);
+            else ctx5.lineTo(p.x, p.y);
+        }
+        ctx5.stroke();
+    }
+    
+    // Draw basis vectors at center
+    const e1End = transform(2, 0);
+    const e2End = transform(0, 2);
+    drawArrow(ctx5, cx, cy, e1End.x - cx, e1End.y - cy, '#ff6b6b', 3);
+    drawArrow(ctx5, cx, cy, e2End.x - cx, e2End.y - cy, '#4ecdc4', 3);
+    
+    // Show metric tensor values
+    ctx5.font = '13px monospace';
+    ctx5.fillStyle = '#ce93d8';
+    ctx5.fillText(`g₁₁ = ${g11.toFixed(2)}   g₁₂ = ${(g12*0.5).toFixed(2)}`, 10, 25);
+    ctx5.fillText(`g₂₁ = ${(g12*0.5).toFixed(2)}   g₂₂ = ${g22.toFixed(2)}`, 10, 45);
+    
+    // Compute and display effective Christoffel-like info
+    // For a position-dependent metric, we'd need spatial variation
+    // Here we show the concept: when metric varies, Christoffel ≠ 0
+    const det = g11 * g22 - (g12*0.5)*(g12*0.5);
+    ctx5.fillStyle = '#ffd93d';
+    ctx5.fillText(`det(g) = ${det.toFixed(3)}`, 10, 340);
+    
+    if (Math.abs(g12) > 0.05 || Math.abs(g11 - 1) > 0.05 || Math.abs(g22 - 1) > 0.05) {
+        ctx5.fillStyle = '#ffd93d';
+        ctx5.fillText('Non-trivial metric → Christoffel symbols arise from spatial derivatives of g', 10, 320);
+    } else {
+        ctx5.fillStyle = '#4ecdc4';
+        ctx5.fillText('Metric ≈ identity → Christoffel symbols ≈ 0 (flat space!)', 10, 320);
+    }
+    
+    // Draw dot at center
+    ctx5.beginPath();
+    ctx5.arc(cx, cy, 4, 0, Math.PI * 2);
+    ctx5.fillStyle = '#fff';
+    ctx5.fill();
+    
+    // Show angle between basis vectors
+    const angle = Math.acos(g12 * 0.5 / (Math.sqrt(g11) * Math.sqrt(g22)));
+    if (!isNaN(angle)) {
+        ctx5.fillStyle = '#888';
+        ctx5.fillText(`Angle between basis vectors: ${(angle * 180 / Math.PI).toFixed(1)}°`, 350, 25);
+    }
+}
+
+document.getElementById('g11').addEventListener('input', drawDemo5);
+document.getElementById('g22').addEventListener('input', drawDemo5);
+document.getElementById('g12').addEventListener('input', drawDemo5);
+
+drawDemo5();
+
+// ============ Animation loop for smooth interactions ============
+function globalUpdate() {
+    // Lightweight - only redraw on interaction
+}
+
+</script>
+</body>
+</html>
+
