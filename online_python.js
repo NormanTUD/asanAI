@@ -2529,7 +2529,15 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 				const textarea = document.getElementById("pyodide_editor_textarea");
 				if (textarea && pyodideInstance) {
 					const code = textarea.value;
-					await pyodideInstance.runPythonAsync(code);
+					try {
+						await pyodideInstance.runPythonAsync(code);
+					} catch (e) {
+						if (e && e.message && e.message.includes("is already disposed")) {
+							console.warn("Pyodide Warning: Instance is already disposed.", e);
+						} else {
+							throw e;
+						}
+					}
 				}
 			} catch (e) {
 				var msg = e.message || String(e);
