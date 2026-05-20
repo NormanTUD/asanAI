@@ -520,3 +520,12 @@ sahelanthropus
 theia
 cercopithecoidea
 ramidus
+mukhta
+fortran
+rossum
+ieee
+guido
+iec
+naur
+muq
+kahan
