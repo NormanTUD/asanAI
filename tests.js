@@ -2900,6 +2900,8 @@ async function run_python_code_tests() {
 			return false;
 		}
 
+		await delay(5000);
+
 		if(!$("#pyodide_console_output").text().includes("Python environment ready")) {
 			err(`pyodide_console_output does not contain 'Python environment ready'`);
 			return false;
