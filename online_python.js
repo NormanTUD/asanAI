@@ -2048,8 +2048,12 @@ print('🔧 Helpers: _setup_model(), _predict_and_show(), _print_model_summary()
 
 				return resultArray;
 			} catch (e) {
-				console.error("runPredictionForPython error:", e);
-				throw new Error("Prediction failed: " + e.message);
+				if (e && e.message && e.message.includes("is already disposed")) {
+					console.warn("Pyodide Warning: Instance is already disposed.", e);
+				} else {
+					console.error("runPredictionForPython error:", e);
+					throw new Error("Prediction failed: " + e.message);
+				}
 			}
 		}
 
