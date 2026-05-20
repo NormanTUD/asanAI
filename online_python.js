@@ -1257,6 +1257,8 @@ if input_data is not None:
 					}
 				}
 			}
+
+			update_translations(); // await not possible here
 		}
 
 	// =========================================================================
