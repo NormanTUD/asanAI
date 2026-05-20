@@ -2887,6 +2887,72 @@ async function new_tiny_tests() {
 	return true;
 }
 
+async function run_python_code_tests() {
+	await set_dataset_and_wait("signs");
+	await delay(3000);
+
+	$("#code_tab_label").click();
+	await delay(1000);
+
+	$("#pyodide_editor_tab_label").click()
+	await delay(5000);
+
+	if(!$(".pe-main-layout").is(":visible")) {
+		err(`.pe-main-layout is not visible`);
+		return false;
+	}
+
+	if(!$("#pyodide_console_output").text().includes("Python environment ready")) {
+		err(`pyodide_console_output does not contain 'Python environment ready'`);
+		return false;
+	}
+
+	pyodideEditorClear();
+	await delay(1000);
+
+	if($("#pyodide_console_output").text() != "") {
+		err(`pyodideEditorClear() didn't clean the console`);
+		return false;
+	}
+
+	$("#pyodide_run_btn").click();
+	await delay(1000);
+
+	if(!$("#pyodide_console_output").text().includes("Hello, World")) {
+		err("#pyodide_console_output does not contain 'Hello, World' after clicking 'Run' for default program");
+		return false;
+	}
+
+	pyodideToggleExamples();
+	await delay(1000);
+
+	if(!$("#pyodide_examples_panel").is(":visible")) {
+		err(`#pyodide_examples_panel is not visible after clicking 'Examples'/running pyodideToggleExamples()`);
+		return false;
+	}
+	
+	pyodideLoadTemplate('html_table');
+	await delay(1000);
+
+	pyodideEditorClear();
+	await delay(1000);
+
+	$("#pyodide_run_btn").click();
+	await delay(1000);
+
+	if(!$("#pyodide_console_output").text().includes("Model Architecture")) {
+		err("#pyodide_console_output does not contain 'Model Architecture' after running HTML Table example");
+		return false;
+	}
+
+	if(!$("#pyodide_console_output").text().includes("Table rendered")) {
+		err("#pyodide_console_output does not contain 'Table rendered' after running HTML Table example");
+		return false;
+	}
+
+	return true;
+}
+
 async function run_tests (quick=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
@@ -2969,6 +3035,7 @@ async function run_tests (quick=0) {
 		test_equal("test_if_plotter_is_shown()", await test_if_plotter_is_shown(), true);
 
 		test_equal("test_math_editable_system()", await test_math_editable_system(), true);
+		test_equal("run_python_code_tests()", await run_python_code_tests(), true);
 
 		test_no_new_errors_or_warnings();
 

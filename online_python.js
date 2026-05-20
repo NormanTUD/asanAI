@@ -160,7 +160,7 @@ def _print_model_summary(info=None):
         info = get_model_info()
     labels = _labels if '_labels' in dir() and _labels else None
     is_classif = _is_classification if '_is_classification' in dir() else False
-    print(f"🧠 Model Summary")
+    print(f"Model Summary")
     print(f"   Input:  {info['input_shape']}")
     print(f"   Output: {info['output_shape']}")
     print(f"   Layers: {info['num_layers']}")
@@ -529,7 +529,7 @@ if labels_list:
 
 html = f"""
 <div style="padding:8px;">
-  <h3 style="color:#89b4fa;margin:0 0 8px 0;">🧠 Model Architecture</h3>
+  <h3 style="color:#89b4fa;margin:0 0 8px 0;">Model Architecture</h3>
   <table style="width:100%;">
     <thead><tr><th>#</th><th>Layer Name</th><th>Type</th></tr></thead>
     <tbody>{rows}</tbody>
@@ -1790,7 +1790,7 @@ def _print_model_summary(info=None):
         info = get_model_info()
     labels = _labels if '_labels' in dir() and _labels else None
     is_classif = _is_classification if '_is_classification' in dir() else False
-    print(f"🧠 Model Summary")
+    print(f"Model Summary")
     print(f"   Input:  {info['input_shape']}")
     print(f"   Output: {info['output_shape']}")
     print(f"   Layers: {info['num_layers']}")
