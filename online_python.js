@@ -1402,7 +1402,7 @@ if input_data is not None:
 					case "stderr": span.style.color = "#ff6b6b"; break;
 					case "warn":   span.style.color = "#ffd93d"; break;
 					case "info":   span.style.color = "#6c7086"; break;
-					case "stdout": default: span.style.color = "#00ff88"; break;
+					case "stdout": default: span.style.color = "#39A846"; break;
 				}
 
 				frag.appendChild(span);
