@@ -2888,27 +2888,36 @@ async function new_tiny_tests() {
 }
 
 async function run_python_code_tests() {
+	async function load_python_code_tab() {
+		$("#code_tab_label").click();
+		await delay(1000);
+
+		$("#pyodide_editor_tab_label").click()
+		await delay(5000);
+
+		if(!$(".pe-main-layout").is(":visible")) {
+			err(`.pe-main-layout is not visible`);
+			return false;
+		}
+
+		if(!$("#pyodide_console_output").text().includes("Python environment ready")) {
+			err(`pyodide_console_output does not contain 'Python environment ready'`);
+			return false;
+		}
+
+		pyodideEditorClear();
+		await delay(1000);
+
+		return true;
+	}
+
 	await set_dataset_and_wait("signs");
 	await delay(3000);
 
-	$("#code_tab_label").click();
-	await delay(1000);
-
-	$("#pyodide_editor_tab_label").click()
-	await delay(5000);
-
-	if(!$(".pe-main-layout").is(":visible")) {
-		err(`.pe-main-layout is not visible`);
+	if(!(await load_python_code_tab())) {
+		err("Could not load python code tab after loading signs");
 		return false;
 	}
-
-	if(!$("#pyodide_console_output").text().includes("Python environment ready")) {
-		err(`pyodide_console_output does not contain 'Python environment ready'`);
-		return false;
-	}
-
-	pyodideEditorClear();
-	await delay(1000);
 
 	if($("#pyodide_console_output").text() != "") {
 		err(`pyodideEditorClear() didn't clean the console`);
@@ -2947,6 +2956,14 @@ async function run_python_code_tests() {
 
 	if(!$("#pyodide_console_output").text().includes("Table rendered")) {
 		err("#pyodide_console_output does not contain 'Table rendered' after running HTML Table example");
+		return false;
+	}
+
+	await set_dataset_and_wait("and_xor");
+	await delay(3000);
+
+	if(!(await load_python_code_tab())) {
+		err("Could not load python code tab after loading and_xor");
 		return false;
 	}
 
