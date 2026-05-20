@@ -2902,14 +2902,6 @@ async function run_python_code_tests() {
 
 		await delay(5000);
 
-		if(!$("#pyodide_console_output").text().includes("Python environment ready")) {
-			err(`pyodide_console_output does not contain 'Python environment ready'`);
-			return false;
-		}
-
-		pyodideEditorClear();
-		await delay(1000);
-
 		return true;
 	}
 
@@ -2920,6 +2912,14 @@ async function run_python_code_tests() {
 		err("Could not load python code tab after loading signs");
 		return false;
 	}
+
+	if(!$("#pyodide_console_output").text().includes("Python environment ready")) {
+		err(`pyodide_console_output does not contain 'Python environment ready'`);
+		return false;
+	}
+
+	pyodideEditorClear();
+	await delay(1000);
 
 	if($("#pyodide_console_output").text() != "") {
 		err(`pyodideEditorClear() didn't clean the console`);
