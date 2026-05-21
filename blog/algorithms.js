@@ -1599,7 +1599,7 @@ function renderICLExecution(container, options = {}) {
                     <option value="gcd">GCD (Euclidean)</option>
                 </select>
             </div>
-            <pre id="icl-code-display" style="margin:0; font-size:0.82em; line-height:1.5; color:#a5f3fc; overflow-x:auto; white-space:pre-wrap;">${algorithms[selectedAlgo].code}</pre>
+            <pre id="icl-code-display" style="margin:0; font-size:0.82em; line-height:1.5; background: black; color:green; overflow-x:auto; white-space:pre-wrap;">${algorithms[selectedAlgo].code}</pre>
         `;
         controlPanel.appendChild(leftPanel);
 
