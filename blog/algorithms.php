@@ -9,13 +9,13 @@ $$a + b \mod P$$
 
 where $P = 113$ is a prime number. The network's vocabulary is just the numbers $\{0, 1, 2, \ldots, 112\}$, and it must output the correct sum modulo 113.
 
-### The Core Insight
+## The Core Insight
 
 The network learns that **modular arithmetic is circular**. After $P$, you wrap around to 0, just like an angle wrapping around a circle. So the network represents each number as a **point on a circle**, and performs addition by **rotating angles**.
 
 But a single circle (a single frequency) has too many ambiguities. So the network uses **5 different frequencies** simultaneously, and combines them via **constructive interference**, the same principle that makes noise-cancelling headphones work, but in reverse.
 
-### The Algorithm in Five Steps
+## The Algorithm in Five Steps
 
 The trained network implements the following algorithm \cite[Section 4]{nanda2023grokking}:
 
@@ -35,22 +35,13 @@ $$\text{Logit}(c) = \sum_{k \in \{14,35,41,42,52\}} \alpha_k \cdot \underbrace{\
 
 This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms equal 1 simultaneously.
 
-### Connection to Grokking
+## Connection to Grokking
 
 This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ~0% test accuracy). Then, after many more epochs, it suddenly "groks" the pattern, test accuracy jumps from 0% to 100% in a few hundred steps \cite[Figure 1]{nanda2023grokking}. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
 
-### Interactive Exploration
+## Interactive Exploration
 
 Below you can explore each step of the algorithm interactively. Change the input numbers, toggle frequencies on and off, and watch how the interference pattern changes.
 </div>
 
 <div id="fourier-algorithm-container"></div>
-
-<script src="fourier_algorithm.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof renderFourierAlgorithm === 'function') {
-        renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 });
-    }
-});
-</script>
