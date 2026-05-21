@@ -1,4 +1,10 @@
 window.bibData = {
+	"nanda2023grokking": {
+		title: "Progress Measures for Grokking via Mechanistic Interpretability",
+		author: "Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith, Jacob Steinhardt",
+		year: 2023,
+		url: "https://arxiv.org/abs/2301.05217"
+	},
 	"shannon1937switching": {
 		title: "A Symbolic Analysis of Relay and Switching Circuits",
 		author: "Claude Elwood Shannon",
