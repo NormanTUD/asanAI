@@ -726,19 +726,28 @@ function renderFourierAlgorithm(container, options = {}) {
 			});
 
 			const maxVal = Math.max(...playSignal);
-			const EPS = 1e-9;
+			const numFreqs = activeFreqs.length;
 
-			// Find ALL indices that share the maximum value (within floating-point tolerance)
-			const tiedIndices = tokens.filter(c => Math.abs(playSignal[c] - maxVal) < EPS);
-			const numTied = tiedIndices.length;
+			// Sort signal values descending to find the margin
+			const sorted = [...playSignal].sort((a, b) => b - a);
+			const secondMax = sorted[1];
+			const margin = maxVal - secondMax;
 
-			// The argmax as reported (first occurrence)
+			// The margin with all 5 frequencies is ~5 - (~1.5) = ~3.5
+			// With 1 frequency the margin is ~1.0 - 0.997 = ~0.003
+			// We consider the prediction "unreliable" if margin < 0.5 per active frequency
+			// This threshold means: the 2nd-best token gets more than (max - 0.5*numFreqs)
+			const reliableThreshold = 0.5; // margin must be at least this to be "reliable"
+			const isReliable = margin > reliableThreshold;
+
+			// Find near-peak tokens (within 10% of the max value relative to the range)
+			const range = maxVal - Math.min(...playSignal);
+			const nearPeakThreshold = maxVal - 0.1 * range; // within top 10% of range
+			const nearPeakTokens = tokens.filter(c => playSignal[c] >= nearPeakThreshold);
+
+			// The argmax (first occurrence)
 			const maxIdx = playSignal.indexOf(maxVal);
-
-			// Determine correctness: only correct if the correct answer is the UNIQUE maximum
-			const isUnambiguous = numTied === 1;
-			const correctIsAmongTied = tiedIndices.includes(playResult);
-			const isCorrect = isUnambiguous && maxIdx === playResult;
+			const isCorrect = maxIdx === playResult;
 
 			// Build plot traces
 			const traces = [
@@ -746,36 +755,49 @@ function renderFourierAlgorithm(container, options = {}) {
 				{ x: [playResult], y: [playSignal[playResult]], mode: 'markers', marker: { size: 14, color: '#ef4444', symbol: 'star' }, name: `Correct: ${playResult}` },
 			];
 
-			if (isUnambiguous) {
+			if (isReliable) {
 				traces.push({
 					x: [maxIdx], y: [playSignal[maxIdx]], mode: 'markers',
 					marker: { size: 10, color: isCorrect ? '#10b981' : '#f59e0b', symbol: 'diamond' },
 					name: `argmax: ${maxIdx}`
 				});
 			} else {
-				// Show all tied peaks
+				// Show all near-peak tokens to illustrate the ambiguity
 				traces.push({
-					x: tiedIndices, y: tiedIndices.map(c => playSignal[c]), mode: 'markers',
+					x: nearPeakTokens, y: nearPeakTokens.map(c => playSignal[c]), mode: 'markers',
 					marker: { size: 8, color: '#f59e0b', symbol: 'diamond' },
-					name: `${numTied} tied peaks (all = ${maxVal.toFixed(2)})`
+					name: `${nearPeakTokens.length} near-peak tokens (margin=${margin.toFixed(4)})`
 				});
 			}
 
-			Plotly.react('play-plot', traces, {
+			// Add a horizontal line at the near-peak threshold when unreliable
+			const layout = {
 				xaxis: { title: 'Candidate token c', range: [-2, P + 2] },
 				yaxis: { title: 'Logit' },
 				margin: { t: 20, b: 50, l: 50, r: 20 },
-				showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
-			});
+				showlegend: true,
+				legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' },
+				shapes: []
+			};
+
+			if (!isReliable) {
+				layout.shapes.push({
+					type: 'line', x0: -2, x1: P + 2,
+					y0: nearPeakThreshold, y1: nearPeakThreshold,
+					line: { color: '#f59e0b', width: 1.5, dash: 'dash' }
+				});
+			}
+
+			Plotly.react('play-plot', traces, layout);
 
 			// Update info display
 			const infoEl = document.getElementById('play-info');
-			if (isCorrect) {
-				infoEl.innerHTML = `<span style="color:#059669; font-weight:bold;">&#10003; Correct! argmax = ${maxIdx} = (${playA}+${playB}) mod ${P}</span><br><span style="font-size:0.85em;">${activeFreqs.length} frequency(ies) active. Unique peak height: ${playSignal[playResult].toFixed(2)} / ${activeFreqs.length}.0</span>`;
-			} else if (!isUnambiguous && correctIsAmongTied) {
-				infoEl.innerHTML = `<span style="color:#f59e0b; font-weight:bold;">&#9888; Ambiguous! ${numTied} tokens are tied at the maximum value of ${maxVal.toFixed(2)}</span><br><span style="font-size:0.85em;">The correct answer c*=${playResult} is among them, but so are ${numTied - 1} false peaks. With only ${activeFreqs.length} frequency(ies), the network <strong>cannot uniquely identify</strong> the answer.</span><br><span style="font-size:0.82em; color:#64748b;">Tied tokens: [${tiedIndices.slice(0, 10).join(', ')}${numTied > 10 ? ', ...' : ''}] — these repeat every P/k ≈ ${(P / activeFreqs[0]).toFixed(1)} positions.</span>`;
-			} else {
-				infoEl.innerHTML = `<span style="color:#ef4444; font-weight:bold;">&#10007; Wrong! argmax = ${maxIdx}, but correct would be ${playResult}</span><br><span style="font-size:0.85em;">Too few frequencies! Try enabling more. ${numTied > 1 ? `(${numTied} tokens tied at max)` : ''}</span>`;
+			if (isCorrect && isReliable) {
+				infoEl.innerHTML = `<span style="color:#059669; font-weight:bold;">&#10003; Correct! argmax = ${maxIdx} = (${playA}+${playB}) mod ${P}</span><br><span style="font-size:0.85em;">${numFreqs} frequency(ies) active. Peak: ${maxVal.toFixed(2)} / ${numFreqs}.0 | Margin over 2nd place: <strong>${margin.toFixed(4)}</strong></span>`;
+			} else if (isCorrect && !isReliable) {
+				infoEl.innerHTML = `<span style="color:#f59e0b; font-weight:bold;">&#9888; Technically correct, but unreliable! Margin is only ${margin.toFixed(4)}</span><br><span style="font-size:0.85em;">With only ${numFreqs} frequency(ies), <strong>${nearPeakTokens.length} tokens</strong> have nearly identical scores (within top 10% of range). The correct answer c*=${playResult} wins by a hair, but noise or finite precision would break this.</span><br><span style="font-size:0.82em; color:#64748b;">Near-peak tokens: [${nearPeakTokens.slice(0, 12).join(', ')}${nearPeakTokens.length > 12 ? ', ...' : ''}] — spaced ~P/k ≈ ${(P / activeFreqs[0]).toFixed(1)} apart.</span>`;
+			} else if (!isCorrect) {
+				infoEl.innerHTML = `<span style="color:#ef4444; font-weight:bold;">&#10007; Wrong! argmax = ${maxIdx}, but correct = ${playResult}</span><br><span style="font-size:0.85em;">${numFreqs} frequency(ies) active. Margin: ${margin.toFixed(4)}. ${!isReliable ? 'Prediction is unreliable.' : ''}</span>`;
 			}
 		}
 
