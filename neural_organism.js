@@ -1,9 +1,26 @@
 /**
  * Renders a radial "neural organism" visualization of a TF.js model's weights.
  * @param {tf.LayersModel} _m - A TensorFlow.js model
- * @param {HTMLElement|null} targetDiv - Div to append canvas to (null = document.body)
+ * @param {HTMLElement|string|null} targetDiv - Div element, ID string, or null (appends to body)
  */
 function visualizeModelOrganism(_m, targetDiv) {
+  // ─── Resolve target container ───────────────────────────────────
+  let container;
+  if (typeof targetDiv === 'string') {
+    container = document.getElementById(targetDiv);
+    if (!container) {
+      console.warn(`[visualizeModelOrganism] Element with id "${targetDiv}" not found, appending to body.`);
+      container = document.body;
+    }
+  } else if (targetDiv && targetDiv.appendChild) {
+    container = targetDiv;
+  } else {
+    container = document.body;
+  }
+
+  // Clear previous render so repeated calls update instead of stacking
+  container.innerHTML = '';
+
   // ─── Helpers ────────────────────────────────────────────────────
   function flatten(arr) {
     const result = [];
@@ -35,12 +52,16 @@ function visualizeModelOrganism(_m, targetDiv) {
 
   for (let li = 0; li < _m.layers.length; li++) {
     const layer = _m.layers[li];
-    const layerWeights = layer.getWeights();
+    let layerWeights;
+    try {
+      layerWeights = layer.getWeights();
+    } catch (e) {
+      continue;
+    }
     const layerName = layer.name || `layer_${li}`;
     const layerType = layer.getClassName ? layer.getClassName() : 'Unknown';
 
-    if (layerWeights.length === 0) {
-      // Layer with no weights (e.g., Flatten, Dropout, Input)
+    if (!layerWeights || layerWeights.length === 0) {
       layerInfos.push({ name: layerName, type: layerType, hasWeights: false });
       continue;
     }
@@ -52,8 +73,13 @@ function visualizeModelOrganism(_m, targetDiv) {
       } catch (e) {
         continue;
       }
-      const shape = getShape(data);
-      const flat = flatten(data);
+      if (!data || (Array.isArray(data) && data.length === 0)) continue;
+
+      const shape = Array.isArray(data) ? getShape(data) : [1];
+      const flat = Array.isArray(data) ? flatten(data) : [data];
+
+      if (flat.length === 0) continue;
+
       weightEntries.push({
         layerIndex: li,
         weightIndex: wi,
@@ -68,8 +94,9 @@ function visualizeModelOrganism(_m, targetDiv) {
 
   const numKernels = weightEntries.length;
   if (numKernels === 0) {
-    console.warn('No weights found in model.');
-    return;
+    console.warn('[visualizeModelOrganism] No weights found in model.');
+    container.innerHTML = '<p style="color:#888;font-family:monospace;">No weight tensors found in model.</p>';
+    return null;
   }
 
   // ─── Canvas Setup ──────────────────────────────────────────────
@@ -81,16 +108,13 @@ function visualizeModelOrganism(_m, targetDiv) {
   canvas.style.background = '#020208';
   canvas.style.borderRadius = '8px';
   canvas.style.display = 'block';
+  canvas.style.maxWidth = '100%';
 
-  if (targetDiv && targetDiv.appendChild) {
-    targetDiv.appendChild(canvas);
-  } else {
-    document.body.appendChild(canvas);
-  }
+  container.appendChild(canvas);
 
   const ctx = canvas.getContext('2d');
-  const cx = canvasW / 2;
-  const cy = canvasH / 2;
+  const cxCenter = canvasW / 2;
+  const cyCenter = canvasH / 2;
 
   // ─── Background ────────────────────────────────────────────────
   ctx.fillStyle = '#020208';
@@ -100,7 +124,7 @@ function visualizeModelOrganism(_m, targetDiv) {
   for (let r = 375; r > 0; r -= 5) {
     const alpha = 0.01 + ((375 - r) / 375) * 0.03;
     ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+    ctx.arc(cxCenter, cyCenter, r, 0, 2 * Math.PI);
     ctx.strokeStyle = `rgba(20, 10, 50, ${alpha})`;
     ctx.lineWidth = 5;
     ctx.stroke();
@@ -163,17 +187,16 @@ function visualizeModelOrganism(_m, targetDiv) {
 
     // Ring backbone
     ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+    ctx.arc(cxCenter, cyCenter, radius, 0, 2 * Math.PI);
     ctx.strokeStyle = `rgba(60, 40, 120, ${0.15 + energyRatio * 0.3})`;
     ctx.lineWidth = 1;
     ctx.stroke();
 
     // Draw neuron nodes
-    const nodePositions = [];
     for (let ni = 0; ni < numNodes; ni++) {
       const angle = (ni / numNodes) * 2 * Math.PI - Math.PI / 2;
-      const nx = cx + Math.cos(angle) * radius;
-      const ny = cy + Math.sin(angle) * radius;
+      const nx = cxCenter + Math.cos(angle) * radius;
+      const ny = cyCenter + Math.sin(angle) * radius;
       const val = sampled[ni];
       const t = (val - sMn) / sRng;
       const nodeR = 1.5 + t * 4;
@@ -202,8 +225,6 @@ function visualizeModelOrganism(_m, targetDiv) {
       ctx.arc(nx, ny, nodeR, 0, 2 * Math.PI);
       ctx.fillStyle = `rgb(${r},${g},${b})`;
       ctx.fill();
-
-      nodePositions.push({ x: nx, y: ny, val, absVal: Math.abs(val) });
     }
 
     // ─── Dendrite connections to next ring ───────────────────────
@@ -225,16 +246,16 @@ function visualizeModelOrganism(_m, targetDiv) {
         const angleFrom = (si / numNodes) * 2 * Math.PI - Math.PI / 2;
         const angleTo = (ci / numConnections) * 2 * Math.PI - Math.PI / 2;
 
-        const x1 = cx + Math.cos(angleFrom) * radius;
-        const y1 = cy + Math.sin(angleFrom) * radius;
-        const x2 = cx + Math.cos(angleTo) * nextRadius;
-        const y2 = cy + Math.sin(angleTo) * nextRadius;
+        const x1 = cxCenter + Math.cos(angleFrom) * radius;
+        const y1 = cyCenter + Math.sin(angleFrom) * radius;
+        const x2 = cxCenter + Math.cos(angleTo) * nextRadius;
+        const y2 = cyCenter + Math.sin(angleTo) * nextRadius;
 
         // Curved control point
         const ctrlR = (radius + nextRadius) / 2 + 10;
         const ctrlAngle = (angleFrom + angleTo) / 2;
-        const cpx = cx + Math.cos(ctrlAngle) * ctrlR * 0.85;
-        const cpy = cy + Math.sin(ctrlAngle) * ctrlR * 0.85;
+        const cpx = cxCenter + Math.cos(ctrlAngle) * ctrlR * 0.85;
+        const cpy = cyCenter + Math.sin(ctrlAngle) * ctrlR * 0.85;
 
         const strength = Math.abs(sampled[si]) / (Math.abs(sMx) + 0.0001);
         const alpha = 0.05 + strength * 0.2;
@@ -257,7 +278,7 @@ function visualizeModelOrganism(_m, targetDiv) {
     const alpha = ((30 - r) / 30) * 0.6;
     const hueShift = r * 4;
     ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+    ctx.arc(cxCenter, cyCenter, r, 0, 2 * Math.PI);
     ctx.fillStyle = `hsla(${260 + hueShift}, 80%, ${30 + r}%, ${alpha})`;
     ctx.fill();
   }
@@ -265,10 +286,10 @@ function visualizeModelOrganism(_m, targetDiv) {
   ctx.fillStyle = '#e0d0ff';
   ctx.font = 'bold 11px monospace';
   ctx.textAlign = 'center';
-  ctx.fillText(`E=${totalEnergy.toFixed(4)}`, cx, cy - 5);
+  ctx.fillText(`E=${totalEnergy.toFixed(4)}`, cxCenter, cyCenter - 5);
   ctx.fillStyle = '#aa88dd';
   ctx.font = '9px monospace';
-  ctx.fillText(`S=${(avgSparsity * 100).toFixed(1)}%`, cx, cy + 8);
+  ctx.fillText(`S=${(avgSparsity * 100).toFixed(1)}%`, cxCenter, cyCenter + 8);
 
   // ─── Outer sparsity band ───────────────────────────────────────
   const outerR = baseRadius + numKernels * ringGap + 25;
@@ -282,15 +303,15 @@ function visualizeModelOrganism(_m, targetDiv) {
     const hue = 260 + Math.floor((stats.energy / maxEnergy) * 60);
 
     ctx.beginPath();
-    ctx.arc(cx, cy, outerR, arcStart + gap, arcEnd - gap);
+    ctx.arc(cxCenter, cyCenter, outerR, arcStart + gap, arcEnd - gap);
     ctx.strokeStyle = `hsla(${hue}, 70%, ${20 + Math.floor(brightness * 50)}%, ${0.3 + brightness * 0.6})`;
     ctx.lineWidth = 8;
     ctx.stroke();
 
     // Layer label
     const midAngle = (arcStart + arcEnd) / 2;
-    const tx = cx + Math.cos(midAngle) * (outerR + 18);
-    const ty = cy + Math.sin(midAngle) * (outerR + 18);
+    const tx = cxCenter + Math.cos(midAngle) * (outerR + 18);
+    const ty = cyCenter + Math.sin(midAngle) * (outerR + 18);
     ctx.fillStyle = `rgba(200, 180, 255, ${0.4 + brightness * 0.4})`;
     ctx.font = '8px monospace';
     ctx.textAlign = 'center';
@@ -329,7 +350,6 @@ function visualizeModelOrganism(_m, targetDiv) {
   ctx.fillText('cyan = negative | warm = positive | core E = L2 energy | S = sparsity', canvasW / 2, canvasH - 12);
 
   // ─── Layer list (bottom-left) ──────────────────────────────────
-  ctx.fillStyle = '#443388';
   ctx.font = '9px monospace';
   ctx.textAlign = 'left';
   const listY = canvasH - 14 - Math.min(numKernels, 10) * 12;
