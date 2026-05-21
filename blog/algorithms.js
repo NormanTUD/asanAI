@@ -1577,10 +1577,10 @@ function renderICLExecution(container, options = {}) {
         // Title
         const title = document.createElement('div');
         title.style.cssText = 'text-align:center; margin-bottom:20px;';
-        title.innerHTML = BACKTICK
+        title.innerHTML = `
             <h3 style="color:#1e293b; margin:0 0 8px 0;">In-Context Algorithm Execution</h3>
             <p style="color:#64748b; margin:0; font-size:0.9em;">The algorithm exists <strong>only in the prompt</strong>. Watch how the LLM traces through it token by token.</p>
-        BACKTICK;
+        `;
         root.appendChild(title);
 
         // Algorithm selector + inputs
@@ -1590,7 +1590,7 @@ function renderICLExecution(container, options = {}) {
         // Left: algorithm selection and code display
         const leftPanel = document.createElement('div');
         leftPanel.style.cssText = 'background:#1e293b; border-radius:10px; padding:15px; color:#e2e8f0;';
-        leftPanel.innerHTML = BACKTICK
+        leftPanel.innerHTML = `
             <div style="margin-bottom:10px;">
                 <label style="font-size:0.8em; color:#94a3b8; font-weight:600;">ALGORITHM IN CONTEXT:</label>
                 <select id="icl-algo-select" style="margin-left:10px; padding:4px 8px; border-radius:4px; background:#334155; color:#e2e8f0; border:1px solid #475569;">
@@ -1600,13 +1600,13 @@ function renderICLExecution(container, options = {}) {
                 </select>
             </div>
             <pre id="icl-code-display" style="margin:0; font-size:0.82em; line-height:1.5; color:#a5f3fc; overflow-x:auto; white-space:pre-wrap;">${algorithms[selectedAlgo].code}</pre>
-        BACKTICK;
+        `;
         controlPanel.appendChild(leftPanel);
 
         // Right: inputs and controls
         const rightPanel = document.createElement('div');
         rightPanel.style.cssText = 'background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px;';
-        rightPanel.innerHTML = BACKTICK
+        rightPanel.innerHTML = `
             <label style="font-size:0.8em; color:#64748b; font-weight:600;">FUNCTION CALL:</label>
             <div style="margin:10px 0; font-family:monospace; font-size:1.1em; color:#1e293b; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
                 <span id="icl-call-display">${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)</span>
@@ -1627,7 +1627,7 @@ function renderICLExecution(container, options = {}) {
                 <button id="icl-animate-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#10b981; color:#fff; cursor:pointer; font-weight:600;">▶ Animate</button>
                 <button id="icl-reset-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#64748b; color:#fff; cursor:pointer; font-weight:600;">↺ Reset</button>
             </div>
-        BACKTICK;
+        `;
         controlPanel.appendChild(rightPanel);
         root.appendChild(controlPanel);
 
@@ -1646,7 +1646,7 @@ function renderICLExecution(container, options = {}) {
         const statePanel = document.createElement('div');
         statePanel.id = 'icl-state-panel';
         statePanel.style.cssText = 'display:flex; flex-direction:column; gap:10px;';
-        statePanel.innerHTML = BACKTICK
+        statePanel.innerHTML = `
             <div id="icl-state-vars" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:15px;">
                 <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#166534;">RESIDUAL STREAM STATE</h4>
                 <div style="color:#94a3b8; font-size:0.85em;">No state yet</div>
@@ -1659,14 +1659,14 @@ function renderICLExecution(container, options = {}) {
                 <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4>
                 <div style="color:#94a3b8; font-size:0.85em;">0 / 0 steps</div>
             </div>
-        BACKTICK;
+        `;
         traceArea.appendChild(statePanel);
         root.appendChild(traceArea);
 
         // Explanation panel
         const explPanel = document.createElement('div');
         explPanel.style.cssText = 'display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:15px;';
-        explPanel.innerHTML = BACKTICK
+        explPanel.innerHTML = `
             <div style="padding:12px; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px;">
                 <h5 style="margin:0 0 6px 0; color:#92400e; font-size:0.8em;">1. PARSING (Layers 1–4)</h5>
                 <p style="margin:0; font-size:0.78em; line-height:1.5; color:#451a03;">
@@ -1688,7 +1688,7 @@ function renderICLExecution(container, options = {}) {
                     The output becomes input for the next forward pass — the scratchpad is external memory.
                 </p>
             </div>
-        BACKTICK;
+        `;
         root.appendChild(explPanel);
 
         // Bind events
@@ -1699,19 +1699,19 @@ function renderICLExecution(container, options = {}) {
         document.getElementById('icl-algo-select').addEventListener('change', (e) => {
             selectedAlgo = e.target.value;
             document.getElementById('icl-code-display').textContent = algorithms[selectedAlgo].code;
-            document.getElementById('icl-call-display').innerHTML = BACKTICK${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)BACKTICK;
+            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)`;
             resetExecution();
         });
 
         document.getElementById('icl-param-a').addEventListener('change', (e) => {
             numA = parseInt(e.target.value) || 0;
-            document.getElementById('icl-call-display').innerHTML = BACKTICK${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)BACKTICK;
+            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)`;
             resetExecution();
         });
 
         document.getElementById('icl-param-b').addEventListener('change', (e) => {
             numB = parseInt(e.target.value) || 0;
-            document.getElementById('icl-call-display').innerHTML = BACKTICK${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)BACKTICK;
+            document.getElementById('icl-call-display').innerHTML = `${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)`;
             resetExecution();
         });
 
@@ -1769,8 +1769,8 @@ function renderICLExecution(container, options = {}) {
         }
 
         const stepDiv = document.createElement('div');
-        stepDiv.style.cssText = BACKTICK padding:8px 12px; margin-bottom:6px; border-radius:6px; border-left:3px solid ${step.action === 'init' ? '#3b82f6' : step.action === 'return' ? '#10b981' : '#f59e0b'}; background:${step.action === 'init' ? '#eff6ff' : step.action === 'return' ? '#f0fdf4' : '#fffbeb'}; animation: fadeIn 0.3s ease; BACKTICK;
-        stepDiv.innerHTML = BACKTICK
+        stepDiv.style.cssText = ` padding:8px 12px; margin-bottom:6px; border-radius:6px; border-left:3px solid ${step.action === 'init' ? '#3b82f6' : step.action === 'return' ? '#10b981' : '#f59e0b'}; background:${step.action === 'init' ? '#eff6ff' : step.action === 'return' ? '#f0fdf4' : '#fffbeb'}; animation: fadeIn 0.3s ease; `;
+        stepDiv.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size:0.75em; font-weight:600; color:#64748b;">STEP ${step.iteration}</span>
                 <span style="font-size:0.7em; padding:2px 6px; border-radius:3px; background:${step.action === 'init' ? '#3b82f6' : step.action === 'return' ? '#10b981' : '#f59e0b'}; color:#fff;">${step.action.toUpperCase()}</span>
@@ -1779,7 +1779,7 @@ function renderICLExecution(container, options = {}) {
             <div style="font-family:monospace; font-size:0.8em; color:#7c3aed; background:#f5f3ff; padding:4px 8px; border-radius:4px; margin-top:4px;">
                 → token: "${step.tokenGenerated}"
             </div>
-        BACKTICK;
+        `;
         tokenTrace.appendChild(stepDiv);
         tokenTrace.scrollTop = tokenTrace.scrollHeight;
 
@@ -1790,17 +1790,17 @@ function renderICLExecution(container, options = {}) {
         for (const [key, val] of Object.entries(state)) {
             if (val === null) continue;
             let displayVal = Array.isArray(val) ? '[' + val.join(', ') + ']' : val;
-            stateHTML += BACKTICK<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid #dcfce7;">
+            stateHTML += `<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid #dcfce7;">
                 <span style="font-family:monospace; font-size:0.85em; color:#166534; font-weight:600;">${key}</span>
                 <span style="font-family:monospace; font-size:0.85em; color:#1e293b;">${displayVal}</span>
-            </div>BACKTICK;
+            </div>`
         }
         stateVars.innerHTML = stateHTML;
 
         // Layer activity
         const layersViz = document.getElementById('icl-layers-viz');
         const la = step.layerActivity;
-        layersViz.innerHTML = BACKTICK
+        layersViz.innerHTML = ` 
             <div style="margin-bottom:8px;">
                 <div style="display:flex; justify-content:space-between; font-size:0.8em; margin-bottom:2px;">
                     <span>Parsing (L1–4)</span>
@@ -1828,19 +1828,19 @@ function renderICLExecution(container, options = {}) {
                     <div style="height:100%; width:${la.execution * 100}%; background:#10b981; border-radius:4px; transition:width 0.3s;"></div>
                 </div>
             </div>
-        BACKTICK;
+        `;
 
         // Progress
         const progress = document.getElementById('icl-progress');
         const pct = ((stepIdx + 1) / steps.length * 100).toFixed(0);
-        progress.innerHTML = BACKTICK
+        progress.innerHTML = `
             <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4>
             <div style="font-size:0.85em; color:#1e293b; margin-bottom:6px;">${stepIdx + 1} / ${steps.length} steps</div>
             <div style="height:10px; background:#fef9c3; border-radius:5px; overflow:hidden;">
                 <div style="height:100%; width:${pct}%; background:#eab308; border-radius:5px; transition:width 0.3s;"></div>
             </div>
             ${stepIdx === steps.length - 1 ? '<div style="margin-top:8px; font-weight:bold; color:#059669;">✅ Execution complete</div>' : ''}
-        BACKTICK;
+        `;
     }
 
     function stepOnce() {
