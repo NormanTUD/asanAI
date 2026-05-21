@@ -1,5 +1,5 @@
 /**
- * Live Training Network Visualizer — v6
+ * Live Training Network Visualizer — v8 (Bulletproof)
  * @param {tf.LayersModel} _m - A TensorFlow.js model
  * @param {HTMLElement|string|null} targetDiv - Div element, ID string, or null
  */
@@ -15,6 +15,8 @@ function visualizeModelOrganism(_m, targetDiv) {
   }
   container.innerHTML = '';
 
+  // ─── UTILITIES ──────────────────────────────────────────────────
+
   function flatten(arr) {
     const result = [];
     const stack = [arr];
@@ -23,7 +25,7 @@ function visualizeModelOrganism(_m, targetDiv) {
       if (Array.isArray(item)) {
         for (let i = item.length - 1; i >= 0; i--) stack.push(item[i]);
       } else {
-        result.push(item);
+        result.push(typeof item === 'number' ? item : 0);
       }
     }
     return result;
@@ -32,31 +34,53 @@ function visualizeModelOrganism(_m, targetDiv) {
   function getShape(arr) {
     const shape = [];
     let current = arr;
-    while (Array.isArray(current)) {
+    while (Array.isArray(current) && current.length > 0) {
       shape.push(current.length);
       current = current[0];
     }
     return shape;
   }
 
+  function sanitize(val) {
+    if (val === null || val === undefined) return 0;
+    if (typeof val !== 'number') return 0;
+    if (!isFinite(val)) return 0;
+    if (isNaN(val)) return 0;
+    return val;
+  }
+
+  // Safe mapping: maps index i in range [0, fromCount) to range [0, toCount)
+  // Guarantees: output is always a valid integer in [0, toCount-1]
+  function mapIndex(i, fromCount, toCount) {
+    if (toCount <= 0) return 0;
+    if (fromCount <= 0) return 0;
+    if (toCount === 1) return 0;
+    if (fromCount === 1) return Math.floor(toCount / 2);
+    const ratio = i / (fromCount - 1);
+    return Math.min(toCount - 1, Math.max(0, Math.round(ratio * (toCount - 1))));
+  }
+
   function getPerUnitSummary(weightData) {
     if (!weightData) return null;
+    if (!weightData.flat || weightData.flat.length === 0) return null;
+    if (!weightData.shape || weightData.shape.length === 0) return null;
     const shape = weightData.shape;
     const flat = weightData.flat;
-    if (!flat || flat.length === 0) return null;
     const numUnits = shape[shape.length - 1] || 1;
     const perUnit = Math.floor(flat.length / numUnits);
-    if (perUnit === 0) return null;
+    if (perUnit <= 0) return null;
     const summaries = [];
     for (let u = 0; u < numUnits; u++) {
       const start = u * perUnit;
       const end = Math.min(start + perUnit, flat.length);
-      let sum = 0, sumAbs = 0;
+      let sum = 0, sumAbs = 0, count = 0;
       for (let i = start; i < end; i++) {
-        sum += flat[i];
-        sumAbs += Math.abs(flat[i]);
+        const v = sanitize(flat[i]);
+        sum += v;
+        sumAbs += Math.abs(v);
+        count++;
       }
-      const count = end - start || 1;
+      if (count === 0) count = 1;
       summaries.push({ mean: sum / count, meanAbs: sumAbs / count });
     }
     return summaries.length > 0 ? summaries : null;
@@ -64,37 +88,44 @@ function visualizeModelOrganism(_m, targetDiv) {
 
   function describeLayer(layer) {
     const type = layer.getClassName ? layer.getClassName() : 'Unknown';
-    const config = layer.getConfig ? layer.getConfig() : {};
+    let config = {};
+    try { config = layer.getConfig ? layer.getConfig() : {}; } catch (e) {}
     let shortDesc = '';
     let role = '';
     let nodeCount = 1;
 
     switch (type.toLowerCase()) {
-      case 'inputlayer':
+      case 'inputlayer': {
         const inputShape = config.batchInputShape || config.inputShape || [];
-        shortDesc = `[${inputShape.filter(x => x !== null).join(',')}]`;
+        const filtered = inputShape.filter(x => x !== null && x !== undefined && x > 0);
+        shortDesc = `[${filtered.join(',')}]`;
         role = 'INPUT';
-        nodeCount = Math.min(inputShape.filter(x => x !== null).reduce((a, b) => a * b, 1) || 4, 128);
+        nodeCount = Math.min(filtered.reduce((a, b) => a * b, 1) || 4, 128);
         break;
-      case 'dense':
+      }
+      case 'dense': {
         const units = config.units || 1;
         const act = config.activation || 'linear';
         shortDesc = `${units} × ${act}`;
         role = act === 'softmax' ? 'OUTPUT' : act === 'sigmoid' ? 'GATE' : 'DENSE';
         nodeCount = units;
         break;
+      }
       case 'conv2d':
-      case 'conv1d':
+      case 'conv1d': {
         const filters = config.filters || 1;
         const ks = config.kernelSize || [];
         shortDesc = `${filters}f ${Array.isArray(ks) ? ks.join('×') : ks}k`;
         role = 'CONV';
         nodeCount = filters;
         break;
+      }
       case 'maxpooling2d':
       case 'maxpooling1d':
       case 'averagepooling2d':
-        shortDesc = 'shrink';
+      case 'globalmaxpooling2d':
+      case 'globalaveragepooling2d':
+        shortDesc = 'pool';
         role = 'POOL';
         nodeCount = 4;
         break;
@@ -115,19 +146,26 @@ function visualizeModelOrganism(_m, targetDiv) {
         break;
       case 'lstm':
       case 'gru':
+      case 'simplernn':
         shortDesc = `${config.units || '?'} cells`;
         role = type.toUpperCase();
         nodeCount = config.units || 4;
         break;
+      case 'embedding':
+        shortDesc = `${config.outputDim || '?'}d`;
+        role = 'EMBED';
+        nodeCount = config.outputDim || 4;
+        break;
       default:
-        shortDesc = type;
+        shortDesc = type.substring(0, 10);
         role = type.substring(0, 5).toUpperCase();
         nodeCount = 4;
     }
-    return { type, shortDesc, role, nodeCount };
+    return { type, shortDesc, role, nodeCount: Math.max(1, nodeCount) };
   }
 
-  // ─── Extract layers ─────────────────────────────────────────────
+  // ─── EXTRACT LAYERS ─────────────────────────────────────────────
+
   const layers = [];
   for (let li = 0; li < _m.layers.length; li++) {
     const layer = _m.layers[li];
@@ -135,22 +173,26 @@ function visualizeModelOrganism(_m, targetDiv) {
     let weightData = null;
     let biasData = null;
 
-    let layerWeights;
-    try { layerWeights = layer.getWeights(); } catch (e) { layerWeights = []; }
+    let layerWeights = [];
+    try { layerWeights = layer.getWeights() || []; } catch (e) {}
 
-    if (layerWeights && layerWeights.length > 0) {
+    if (layerWeights.length > 0) {
       try {
         const w = layerWeights[0].arraySync();
-        const flat = Array.isArray(w) ? flatten(w) : [w];
-        const shape = Array.isArray(w) ? getShape(w) : [1];
-        if (flat.length > 0) {
-          weightData = { flat, shape };
+        if (w !== null && w !== undefined) {
+          const flat = Array.isArray(w) ? flatten(w) : (typeof w === 'number' ? [w] : []);
+          const shape = Array.isArray(w) ? getShape(w) : [1];
+          if (flat.length > 0) {
+            weightData = { flat, shape };
+          }
         }
       } catch (e) {}
       if (layerWeights.length > 1) {
         try {
           const b = layerWeights[1].arraySync();
-          biasData = { flat: Array.isArray(b) ? flatten(b) : [b] };
+          if (b !== null && b !== undefined) {
+            biasData = { flat: Array.isArray(b) ? flatten(b) : (typeof b === 'number' ? [b] : []) };
+          }
         } catch (e) {}
       }
     }
@@ -171,10 +213,10 @@ function visualizeModelOrganism(_m, targetDiv) {
     return null;
   }
 
-  // ─── Canvas ────────────────────────────────────────────────────
+  // ─── CANVAS SETUP ──────────────────────────────────────────────
+
   const maxNodes = Math.max(...layers.map(l => l.nodeCount));
-  const minCanvasH = 500;
-  const canvasH = Math.max(minCanvasH, Math.min(950, 130 + maxNodes * 8));
+  const canvasH = Math.max(480, Math.min(950, 130 + maxNodes * 8));
   const canvasW = 1050;
 
   const canvas = document.createElement('canvas');
@@ -189,7 +231,8 @@ function visualizeModelOrganism(_m, targetDiv) {
   ctx.fillStyle = '#0b0b14';
   ctx.fillRect(0, 0, canvasW, canvasH);
 
-  // ─── Layout ────────────────────────────────────────────────────
+  // ─── LAYOUT CONSTANTS ──────────────────────────────────────────
+
   const marginL = 45;
   const marginR = 45;
   const headerH = 42;
@@ -198,8 +241,27 @@ function visualizeModelOrganism(_m, targetDiv) {
   const graphTop = headerH;
   const graphH = canvasH - headerH - footerH;
   const colW = graphW / numLayers;
+  const nodeAreaTop = graphTop + 36;
+  const nodeAreaH = graphH - 52;
 
-  // ─── Header ────────────────────────────────────────────────────
+  // ─── POSITION HELPERS ──────────────────────────────────────────
+
+  function getNodeR(count) {
+    const spacePerNode = nodeAreaH / (count + 1);
+    return Math.max(1.5, Math.min(5.5, spacePerNode * 0.35));
+  }
+
+  function getNodeY(nodeIdx, totalCount) {
+    if (totalCount <= 1) return nodeAreaTop + nodeAreaH / 2;
+    return nodeAreaTop + ((nodeIdx + 0.5) / totalCount) * nodeAreaH;
+  }
+
+  function getLayerX(idx) {
+    return marginL + idx * colW + colW / 2;
+  }
+
+  // ─── HEADER ────────────────────────────────────────────────────
+
   ctx.fillStyle = '#dde0f0';
   ctx.font = 'bold 13px system-ui, sans-serif';
   ctx.textAlign = 'left';
@@ -218,419 +280,225 @@ function visualizeModelOrganism(_m, targetDiv) {
   ctx.fillStyle = '#445566';
   ctx.fillText('data flows left → right', canvasW - marginR, 34);
 
-  // ─── Node layout helpers ───────────────────────────────────────
-  const nodeAreaTop = graphTop + 36;
-  const nodeAreaH = graphH - 52;
-
-  function getNodeLayout(layer) {
-    const count = layer.nodeCount;
-    const spacePerNode = nodeAreaH / (count + 1);
-    const nodeR = Math.max(1.5, Math.min(5.5, spacePerNode * 0.35));
-    return { count, nodeR, spacePerNode };
-  }
-
-  function getNodeY(nodeIdx, totalCount) {
-    if (totalCount <= 1) return nodeAreaTop + nodeAreaH / 2;
-    return nodeAreaTop + ((nodeIdx + 0.5) / totalCount) * nodeAreaH;
-  }
-
-  function getLayerX(idx) {
-    return marginL + idx * colW + colW / 2;
-  }
-
   // ─── CONNECTION DRAWING ────────────────────────────────────────
-  // Possible failure modes for Conv2D→Conv2D connections:
   //
-  // 1. layerB.unitSummary is null because weightData extraction failed
-  //    → FIX: fall back to layerA.unitSummary, then to uniform connections
+  // GUARANTEE: Between every pair of adjacent layers, EVERY visual node
+  // on the left will have at least one line going right, and EVERY visual
+  // node on the right will have at least one line coming from the left.
   //
-  // 2. Conv2D weight shape is [kH, kW, inChannels, outFilters] (4D)
-  //    and the indexing math (inIdx * outDim + outIdx) is wrong for 4D
-  //    → FIX: for conv layers, DON'T try to index individual weights,
-  //      use per-filter summaries instead
+  // Method: We draw a FULL GRID of connections: every sampled left node
+  // connects to every sampled right node. We sample up to 24 nodes per side.
+  // If a layer has fewer than 24 nodes, ALL its nodes get connections.
   //
-  // 3. shape[0] for conv is kernel height (e.g., 3), not input channels
-  //    so inDim=3 and outDim=filters, but the actual connection is
-  //    inChannels→outFilters, which is shape[2]→shape[3]
-  //    → FIX: detect conv shapes (length >= 3) and use correct dims
-  //
-  // 4. localMax is 0 or NaN because all weights are exactly 0 (untrained)
-  //    → FIX: clamp localMax, and always draw with minimum alpha
-  //
-  // 5. maxSampleA * maxSampleB = 0 because one layer has 0 display nodes
-  //    → FIX: ensure minimum 1 sample per side
-  //
-  // 6. The connection loop skips entries where strength < threshold
-  //    → FIX: remove threshold entirely, always draw every sampled connection
-  //
-  // 7. NaN/Infinity in weight values corrupts color strings
-  //    → FIX: sanitize all values before using in rgba()
-  //
-  // 8. bezierCurveTo produces invisible curves when y1 ≈ y2 and points overlap
-  //    → FIX: ensure start/end x have enough separation
-
-  function sanitize(val) {
-    if (!isFinite(val) || isNaN(val)) return 0;
-    return val;
-  }
-
-  function clampAlpha(a) {
-    return Math.max(0.06, Math.min(0.35, a));
-  }
-
-  function getConvConnectionData(weightData, numA, numB) {
-    // For Conv2D: shape = [kH, kW, inChannels, outFilters]
-    // For Conv1D: shape = [kW, inChannels, outFilters]
-    // Connection meaning: each output filter connects to ALL input channels
-    // So we summarize per (inChannel, outFilter) pair
-    const shape = weightData.shape;
-    const flat = weightData.flat;
-    const dims = shape.length;
-
-    let inChannels, outFilters, kernelSize;
-
-    if (dims >= 4) {
-      // Conv2D: [kH, kW, inCh, outF]
-      kernelSize = shape[0] * shape[1];
-      inChannels = shape[2];
-      outFilters = shape[3];
-    } else if (dims === 3) {
-      // Conv1D: [kW, inCh, outF]
-      kernelSize = shape[0];
-      inChannels = shape[1];
-      outFilters = shape[2];
-    } else if (dims === 2) {
-      // Dense-like: [in, out]
-      inChannels = shape[0];
-      outFilters = shape[1];
-      kernelSize = 1;
-    } else {
-      // Fallback: can't determine structure
-      return null;
-    }
-
-    if (inChannels === 0 || outFilters === 0 || kernelSize === 0) return null;
-
-    // Build per-(in, out) connection strengths
-    // For conv: weight layout is [kH][kW][inCh][outF] flattened
-    // So weight for (kh, kw, ic, of) = flat[kh * kW * inCh * outF + kw * inCh * outF + ic * outF + of]
-    // Per (ic, of) pair, sum across kernel spatial dims
-    const connections = [];
-    const perPair = kernelSize; // number of weights per (inChannel, outFilter) pair
-
-    for (let ic = 0; ic < inChannels; ic++) {
-      for (let of_ = 0; of_ < outFilters; of_++) {
-        let sum = 0, sumAbs = 0;
-        for (let k = 0; k < kernelSize; k++) {
-          const idx = k * inChannels * outFilters + ic * outFilters + of_;
-          const val = idx < flat.length ? sanitize(flat[idx]) : 0;
-          sum += val;
-          sumAbs += Math.abs(val);
-        }
-        connections.push({
-          inIdx: ic,
-          outIdx: of_,
-          mean: sum / perPair,
-          meanAbs: sumAbs / perPair
-        });
-      }
-    }
-
-    return { connections, inChannels, outFilters };
-  }
-
-  function getDenseConnectionData(weightData) {
-    const shape = weightData.shape;
-    const flat = weightData.flat;
-    if (shape.length < 2) return null;
-
-    const inDim = shape[0];
-    const outDim = shape[shape.length - 1];
-    if (inDim === 0 || outDim === 0) return null;
-
-    return { inDim, outDim, flat };
-  }
+  // Weight data determines ONLY the color and thickness of lines.
+  // It NEVER determines whether a line is drawn or not.
 
   for (let idx = 0; idx < numLayers - 1; idx++) {
     const layerA = layers[idx];
     const layerB = layers[idx + 1];
     const xA = getLayerX(idx);
     const xB = getLayerX(idx + 1);
+    const countA = layerA.nodeCount;
+    const countB = layerB.nodeCount;
+    const nodeRA = getNodeR(countA);
+    const nodeRB = getNodeR(countB);
 
-    const layoutA = getNodeLayout(layerA);
-    const layoutB = getNodeLayout(layerB);
+    // Number of visual nodes to sample per side
+    // CRITICAL: if count <= 24, use ALL nodes. No node left behind.
+    const sampleA = Math.min(countA, 24);
+    const sampleB = Math.min(countB, 24);
 
-    // Ensure we have at least 1 sample per side
-    const maxSampleA = Math.max(1, Math.min(layoutA.count, 18));
-    const maxSampleB = Math.max(1, Math.min(layoutB.count, 18));
+    // Find weight data
+    let weightFlat = null;
+    let weightShape = null;
 
-    // Ensure enough x-separation for visible bezier curves
-    const xSep = xB - xA;
-    if (xSep < 10) continue; // layers too close, skip
-
-    let connectionsDrawn = false;
-
-    // ─── Strategy 1: Use layerB's weights (receiving layer) ─────
     if (layerB.weightData && layerB.weightData.flat.length > 0) {
-      const shape = layerB.weightData.shape;
-      const isConvLike = shape.length >= 3;
+      weightFlat = layerB.weightData.flat;
+      weightShape = layerB.weightData.shape;
+    } else if (layerA.weightData && layerA.weightData.flat.length > 0) {
+      weightFlat = layerA.weightData.flat;
+      weightShape = layerA.weightData.shape;
+    }
 
-      if (isConvLike) {
-        // Conv layer receiving: use per-(inChannel, outFilter) summary
-        const convData = getConvConnectionData(layerB.weightData, layoutA.count, layoutB.count);
+    // Build value for every (sampleA, sampleB) pair
+    const totalConns = sampleA * sampleB;
+    const values = new Array(totalConns);
 
-        if (convData && convData.connections.length > 0) {
-          const localMax = Math.max(
-            ...convData.connections.map(c => c.meanAbs),
-            0.0001
-          );
+    if (weightFlat && weightShape && weightFlat.length > 0) {
+      // We have weight data — compute a value for each visual connection
+      const wLen = weightFlat.length;
 
-          // Sample connections evenly
-          const maxConns = Math.min(convData.connections.length, maxSampleA * maxSampleB, 80);
-          const step = Math.max(1, Math.floor(convData.connections.length / maxConns));
+      for (let ai = 0; ai < sampleA; ai++) {
+        for (let bi = 0; bi < sampleB; bi++) {
+          const connIdx = ai * sampleB + bi;
 
-          for (let ci = 0; ci < convData.connections.length && ci * step < convData.connections.length; ci++) {
-            const conn = convData.connections[Math.min(ci * step, convData.connections.length - 1)];
-            const strength = conn.meanAbs / localMax;
+          // Strategy: map (ai, bi) to a position in the weight array
+          // Use multiple approaches and pick the one that works
 
-            // Map inIdx/outIdx to visual node positions
-            const visualA = Math.floor((conn.inIdx / convData.inChannels) * layoutA.count);
-            const visualB = Math.floor((conn.outIdx / convData.outFilters) * layoutB.count);
+          let val = 0;
+          let found = false;
 
-            const y1 = getNodeY(visualA, layoutA.count);
-            const y2 = getNodeY(visualB, layoutB.count);
-            const cpx = (xA + xB) / 2;
-
-            const alpha = clampAlpha(0.07 + strength * 0.2);
-            const lw = 0.4 + strength * 1.2;
-            const val = sanitize(conn.mean);
-
-            const color = val >= 0
-              ? `rgba(255, 170, 60, ${alpha})`
-              : `rgba(80, 160, 255, ${alpha})`;
-
-            ctx.beginPath();
-            ctx.moveTo(xA + layoutA.nodeR + 2, y1);
-            ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
-            ctx.strokeStyle = color;
-            ctx.lineWidth = lw;
-            ctx.stroke();
-          }
-          connectionsDrawn = true;
-        }
-      } else {
-        // Dense-like layer receiving (2D weight matrix)
-        const denseData = getDenseConnectionData(layerB.weightData);
-
-        if (denseData) {
-          const { inDim, outDim, flat } = denseData;
-          const maxConns = maxSampleA * maxSampleB;
-          let localMax = 0.0001;
-
-          // Pre-scan for local max
-          const sampleStep = Math.max(1, Math.floor(flat.length / maxConns));
-          for (let i = 0; i < flat.length; i += sampleStep) {
-            const v = Math.abs(sanitize(flat[i]));
-            if (v > localMax) localMax = v;
-          }
-
-          for (let ai = 0; ai < maxSampleA; ai++) {
-            const inIdx = Math.floor((ai / maxSampleA) * inDim);
-            const visualA = Math.floor((ai / maxSampleA) * layoutA.count);
-
-            for (let bi = 0; bi < maxSampleB; bi++) {
-              const outIdx = Math.floor((bi / maxSampleB) * outDim);
-              const visualB = Math.floor((bi / maxSampleB) * layoutB.count);
-
-              const wIdx = inIdx * outDim + outIdx;
-              const val = sanitize(wIdx < flat.length ? flat[wIdx] : 0);
-              const strength = Math.abs(val) / localMax;
-
-              const y1 = getNodeY(visualA, layoutA.count);
-              const y2 = getNodeY(visualB, layoutB.count);
-              const cpx = (xA + xB) / 2;
-
-              const alpha = clampAlpha(0.07 + strength * 0.18);
-              const lw = 0.3 + strength * 1.3;
-
-              const color = val >= 0
-                ? `rgba(255, 170, 60, ${alpha})`
-                : `rgba(80, 160, 255, ${alpha})`;
-
-              ctx.beginPath();
-              ctx.moveTo(xA + layoutA.nodeR + 2, y1);
-              ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
-              ctx.strokeStyle = color;
-              ctx.lineWidth = lw;
-              ctx.stroke();
+          // Approach 1: 2D matrix indexing [inDim, outDim]
+          if (!found && weightShape.length === 2) {
+            const inDim = weightShape[0];
+            const outDim = weightShape[1];
+            if (inDim > 0 && outDim > 0) {
+              const row = mapIndex(ai, sampleA, inDim);
+              const col = mapIndex(bi, sampleB, outDim);
+              const wIdx = row * outDim + col;
+              if (wIdx >= 0 && wIdx < wLen) {
+                val = sanitize(weightFlat[wIdx]);
+                found = true;
+              }
             }
           }
-          connectionsDrawn = true;
+
+          // Approach 2: 4D conv [kH, kW, inCh, outF]
+          if (!found && weightShape.length === 4) {
+            const kH = weightShape[0];
+            const kW = weightShape[1];
+            const inCh = weightShape[2];
+            const outF = weightShape[3];
+            if (inCh > 0 && outF > 0 && kH > 0 && kW > 0) {
+              const ic = mapIndex(ai, sampleA, inCh);
+              const of_ = mapIndex(bi, sampleB, outF);
+              // Average across kernel
+              let sum = 0;
+              const kernelSize = kH * kW;
+              for (let k = 0; k < kernelSize; k++) {
+                const wIdx = k * (inCh * outF) + ic * outF + of_;
+                if (wIdx >= 0 && wIdx < wLen) {
+                  sum += sanitize(weightFlat[wIdx]);
+                }
+              }
+              val = sum / kernelSize;
+              found = true;
+            }
+          }
+
+          // Approach 3: 3D conv [kW, inCh, outF]
+          if (!found && weightShape.length === 3) {
+            const kW = weightShape[0];
+            const inCh = weightShape[1];
+            const outF = weightShape[2];
+            if (inCh > 0 && outF > 0 && kW > 0) {
+              const ic = mapIndex(ai, sampleA, inCh);
+              const of_ = mapIndex(bi, sampleB, outF);
+              let sum = 0;
+              for (let k = 0; k < kW; k++) {
+                const wIdx = k * (inCh * outF) + ic * outF + of_;
+                if (wIdx >= 0 && wIdx < wLen) {
+                  sum += sanitize(weightFlat[wIdx]);
+                }
+              }
+              val = sum / kW;
+              found = true;
+            }
+          }
+
+          // Approach 4: 1D or unknown shape — linear interpolation into flat array
+          if (!found) {
+            const flatIdx = Math.floor((connIdx / totalConns) * wLen);
+            if (flatIdx >= 0 && flatIdx < wLen) {
+              val = sanitize(weightFlat[flatIdx]);
+              found = true;
+            }
+          }
+
+          // Approach 5: absolute fallback
+          if (!found) {
+            val = 0;
+          }
+
+          values[connIdx] = val;
         }
+      }
+    } else {
+      // No weight data at all — fill with zeros (will draw as neutral)
+      for (let i = 0; i < totalConns; i++) {
+        values[i] = 0;
       }
     }
 
-    // ─── Strategy 2: Fall back to layerA's weights (sending layer) ─
-    if (!connectionsDrawn && layerA.weightData && layerA.weightData.flat.length > 0) {
-      const shape = layerA.weightData.shape;
-      const isConvLike = shape.length >= 3;
-
-      if (isConvLike) {
-        const convData = getConvConnectionData(layerA.weightData, layoutA.count, layoutB.count);
-        if (convData && convData.connections.length > 0) {
-          const localMax = Math.max(...convData.connections.map(c => c.meanAbs), 0.0001);
-          const maxConns = Math.min(convData.connections.length, maxSampleA * maxSampleB, 80);
-          const step = Math.max(1, Math.floor(convData.connections.length / maxConns));
-
-          for (let ci = 0; ci < maxConns; ci++) {
-            const connIdx = Math.min(ci * step, convData.connections.length - 1);
-            const conn = convData.connections[connIdx];
-            const strength = conn.meanAbs / localMax;
-
-            const visualA = Math.floor((conn.inIdx / convData.inChannels) * layoutA.count);
-            const visualB = Math.floor((conn.outIdx / convData.outFilters) * layoutB.count);
-
-            const y1 = getNodeY(Math.min(visualA, layoutA.count - 1), layoutA.count);
-            const y2 = getNodeY(Math.min(visualB, layoutB.count - 1), layoutB.count);
-            const cpx = (xA + xB) / 2;
-
-            const alpha = clampAlpha(0.07 + strength * 0.2);
-            const lw = 0.4 + strength * 1.2;
-            const val = sanitize(conn.mean);
-
-            const color = val >= 0
-              ? `rgba(255, 170, 60, ${alpha})`
-              : `rgba(80, 160, 255, ${alpha})`;
-
-            ctx.beginPath();
-            ctx.moveTo(xA + layoutA.nodeR + 2, y1);
-            ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
-            ctx.strokeStyle = color;
-            ctx.lineWidth = lw;
-            ctx.stroke();
-          }
-          connectionsDrawn = true;
-        }
-      } else if (layerA.unitSummary && layerA.unitSummary.length > 0) {
-        // Use unit summaries spread across connections
-        const summaries = layerA.unitSummary;
-        const localMax = Math.max(...summaries.map(s => s.meanAbs), 0.0001);
-
-        for (let ai = 0; ai < maxSampleA; ai++) {
-          const visualA = Math.floor((ai / maxSampleA) * layoutA.count);
-          for (let bi = 0; bi < maxSampleB; bi++) {
-            const visualB = Math.floor((bi / maxSampleB) * layoutB.count);
-            const sIdx = (ai + bi) % summaries.length;
-            const u = summaries[sIdx];
-            const strength = u.meanAbs / localMax;
-
-            const y1 = getNodeY(visualA, layoutA.count);
-            const y2 = getNodeY(visualB, layoutB.count);
-            const cpx = (xA + xB) / 2;
-
-            const alpha = clampAlpha(0.07 + strength * 0.15);
-            const lw = 0.3 + strength * 1.0;
-            const val = sanitize(u.mean);
-
-            const color = val >= 0
-              ? `rgba(255, 170, 60, ${alpha})`
-              : `rgba(80, 160, 255, ${alpha})`;
-
-            ctx.beginPath();
-            ctx.moveTo(xA + layoutA.nodeR + 2, y1);
-            ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
-            ctx.strokeStyle = color;
-            ctx.lineWidth = lw;
-            ctx.stroke();
-          }
-        }
-        connectionsDrawn = true;
-      }
+    // Find local max for normalization
+    let localMax = 0;
+    for (let i = 0; i < totalConns; i++) {
+      const abs = Math.abs(values[i]);
+      if (abs > localMax) localMax = abs;
     }
+    if (localMax < 0.00001) localMax = 1; // untrained or all-zero
 
-    // ─── Strategy 3: Fall back to unitSummary from either side ────
-    if (!connectionsDrawn) {
-      const summaries = layerB.unitSummary || layerA.unitSummary;
-      if (summaries && summaries.length > 0) {
-        const localMax = Math.max(...summaries.map(s => s.meanAbs), 0.0001);
+    const hasWeights = weightFlat !== null && localMax > 0.00001;
 
-        for (let ai = 0; ai < maxSampleA; ai++) {
-          const visualA = Math.floor((ai / maxSampleA) * layoutA.count);
-          for (let bi = 0; bi < maxSampleB; bi++) {
-            const visualB = Math.floor((bi / maxSampleB) * layoutB.count);
-            const sIdx = (ai * maxSampleB + bi) % summaries.length;
-            const u = summaries[sIdx];
-            const strength = u.meanAbs / localMax;
+    // ─── DRAW EVERY CONNECTION ──────────────────────────────────
+    for (let ai = 0; ai < sampleA; ai++) {
+      // Map sample index to visual node index
+      // CRITICAL: use mapIndex to guarantee coverage of all visual nodes
+      const visualA = mapIndex(ai, sampleA, countA);
+      const y1 = getNodeY(visualA, countA);
 
-            const y1 = getNodeY(visualA, layoutA.count);
-            const y2 = getNodeY(visualB, layoutB.count);
-            const cpx = (xA + xB) / 2;
+      for (let bi = 0; bi < sampleB; bi++) {
+        const visualB = mapIndex(bi, sampleB, countB);
+        const y2 = getNodeY(visualB, countB);
 
-            const alpha = clampAlpha(0.07 + strength * 0.15);
-            const lw = 0.3 + strength * 1.0;
-            const val = sanitize(u.mean);
+        const val = values[ai * sampleB + bi];
+        const strength = Math.abs(val) / localMax;
 
-            const color = val >= 0
-              ? `rgba(255, 170, 60, ${alpha})`
-              : `rgba(80, 160, 255, ${alpha})`;
-
-            ctx.beginPath();
-            ctx.moveTo(xA + layoutA.nodeR + 2, y1);
-            ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
-            ctx.strokeStyle = color;
-            ctx.lineWidth = lw;
-            ctx.stroke();
-          }
-        }
-        connectionsDrawn = true;
-      }
-    }
-
-    // ─── Strategy 4: ABSOLUTE FALLBACK — always draw something ───
-    if (!connectionsDrawn) {
-      // No weight data available anywhere — draw neutral pass-through
-      // This guarantees every adjacent layer pair has visible connections
-      const numLines = Math.max(3, Math.min(maxSampleA, maxSampleB, 8));
-      for (let i = 0; i < numLines; i++) {
-        const frac = numLines <= 1 ? 0.5 : i / (numLines - 1);
-        const visualA = Math.floor(frac * (layoutA.count - 1));
-        const visualB = Math.floor(frac * (layoutB.count - 1));
-        const y1 = getNodeY(visualA, layoutA.count);
-        const y2 = getNodeY(visualB, layoutB.count);
         const cpx = (xA + xB) / 2;
+        const x1 = xA + nodeRA + 2;
+        const x2 = xB - nodeRB - 2;
+
+        let alpha, lw, color;
+
+        if (hasWeights) {
+          // MINIMUM alpha = 0.06, so even the weakest connection is visible
+          alpha = 0.06 + strength * 0.24;
+          lw = 0.35 + strength * 1.5;
+
+          if (val >= 0) {
+            color = `rgba(255, 170, 60, ${alpha})`;
+          } else {
+            color = `rgba(80, 160, 255, ${alpha})`;
+          }
+        } else {
+          // No weights — uniform gray dashed
+          alpha = 0.14;
+          lw = 0.6;
+          color = `rgba(130, 150, 180, ${alpha})`;
+        }
 
         ctx.beginPath();
-        ctx.moveTo(xA + layoutA.nodeR + 2, y1);
-        ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
-        ctx.strokeStyle = 'rgba(120, 140, 170, 0.22)';
-        ctx.lineWidth = 0.8;
-        ctx.setLineDash([3, 3]);
+        ctx.moveTo(x1, y1);
+        ctx.bezierCurveTo(cpx, y1, cpx, y2, x2, y2);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lw;
+
+        if (!hasWeights) {
+          ctx.setLineDash([3, 3]);
+        }
         ctx.stroke();
-        ctx.setLineDash([]);
+        if (!hasWeights) {
+          ctx.setLineDash([]);
+        }
       }
     }
   }
 
-  // ─── Draw layers ───────────────────────────────────────────────
+  // ─── DRAW LAYER NODES ──────────────────────────────────────────
+
   const roleColors = {
-    'INPUT': '#44bb88',
-    'DENSE': '#6699dd',
-    'OUTPUT': '#ff8855',
-    'GATE': '#ddaa44',
-    'CONV': '#aa77dd',
-    'POOL': '#55aabb',
-    'FLATTEN': '#778899',
-    'DROP': '#aa6666',
-    'NORM': '#66aa88',
-    'LSTM': '#dd77aa',
-    'GRU': '#dd77aa',
+    'INPUT': '#44bb88', 'DENSE': '#6699dd', 'OUTPUT': '#ff8855',
+    'GATE': '#ddaa44', 'CONV': '#aa77dd', 'POOL': '#55aabb',
+    'FLATTEN': '#778899', 'DROP': '#aa6666', 'NORM': '#66aa88',
+    'LSTM': '#dd77aa', 'GRU': '#dd77aa', 'EMBED': '#77aadd',
   };
 
   for (let idx = 0; idx < numLayers; idx++) {
     const layer = layers[idx];
     const x = getLayerX(idx);
     const color = roleColors[layer.role] || '#6688aa';
-    const layout = getNodeLayout(layer);
+    const count = layer.nodeCount;
+    const nodeR = getNodeR(count);
 
     // Role label
     ctx.fillStyle = color;
@@ -643,7 +511,7 @@ function visualizeModelOrganism(_m, targetDiv) {
     ctx.font = '8px system-ui, sans-serif';
     ctx.fillText(layer.shortDesc, x, graphTop + 22);
 
-    // Local normalization
+    // Local normalization for node coloring
     let localAbsMax = 0.001;
     if (layer.unitSummary) {
       for (const u of layer.unitSummary) {
@@ -652,56 +520,65 @@ function visualizeModelOrganism(_m, targetDiv) {
     }
 
     // Draw ALL nodes
-    for (let n = 0; n < layout.count; n++) {
-      const ny = getNodeY(n, layout.count);
-      let nodeR = layout.nodeR;
+    for (let n = 0; n < count; n++) {
+      const ny = getNodeY(n, count);
+      let r = nodeR;
       let nodeColor = color;
       let glowAlpha = 0.04;
 
-      if (layer.unitSummary) {
+      if (layer.unitSummary && layer.unitSummary.length > 0) {
         const uIdx = n % layer.unitSummary.length;
         const u = layer.unitSummary[uIdx];
         const strength = u.meanAbs / localAbsMax;
-        nodeR = layout.nodeR * (0.6 + strength * 0.5);
-        glowAlpha = 0.03 + strength * 0.1;
+        r = nodeR * (0.6 + strength * 0.5);
+        glowAlpha = 0.03 + strength * 0.12;
 
         const val = sanitize(u.mean);
         if (val > 0) {
           const t = Math.min(1, strength);
           nodeColor = `rgb(${Math.floor(180 + t * 75)}, ${Math.floor(130 + t * 40)}, 40)`;
-        } else {
+        } else if (val < 0) {
           const t = Math.min(1, strength);
           nodeColor = `rgb(40, ${Math.floor(120 + t * 60)}, ${Math.floor(180 + t * 75)})`;
         }
+        // val === 0 keeps default color
       }
 
-      if (nodeR > 2.5) {
+      // Glow
+      if (r > 2) {
         ctx.beginPath();
-        ctx.arc(x, ny, nodeR + 2.5, 0, 2 * Math.PI);
+        ctx.arc(x, ny, r + 2.5, 0, 2 * Math.PI);
         ctx.fillStyle = `rgba(150, 150, 220, ${glowAlpha})`;
         ctx.fill();
       }
 
+      // Node body — always at least 1.2px radius so it's visible
       ctx.beginPath();
-      ctx.arc(x, ny, Math.max(1.2, nodeR), 0, 2 * Math.PI);
+      ctx.arc(x, ny, Math.max(1.2, r), 0, 2 * Math.PI);
       ctx.fillStyle = nodeColor;
       ctx.fill();
     }
 
-    // Count label
-    if (layout.count > 1) {
-      const bottomY = nodeAreaTop + nodeAreaH + 10;
+    // Count label below
+    if (count > 1) {
       ctx.fillStyle = '#556677';
       ctx.font = '8px system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`${layout.count}`, x, bottomY);
+      ctx.fillText(`${count}`, x, nodeAreaTop + nodeAreaH + 10);
     }
 
-    // Weight stats + mini distribution bar
+    // Mini distribution bar + σ
     if (layer.weightData && layer.weightData.flat.length > 1) {
       const flat = layer.weightData.flat;
-      const mean = flat.reduce((a, b) => a + b, 0) / flat.length;
-      const std = Math.sqrt(flat.reduce((a, b) => a + (b - mean) ** 2, 0) / flat.length);
+      const n2 = flat.length;
+      let sum = 0, sumSq = 0;
+      for (let i = 0; i < n2; i++) {
+        const v = sanitize(flat[i]);
+        sum += v;
+        sumSq += v * v;
+      }
+      const mean = sum / n2;
+      const std = Math.sqrt(Math.max(0, sumSq / n2 - mean * mean));
 
       const barY = graphTop + graphH - 14;
       const barW = Math.min(colW - 12, 46);
@@ -709,22 +586,21 @@ function visualizeModelOrganism(_m, targetDiv) {
       const barX = x - barW / 2;
 
       let neg = 0, zero = 0, pos = 0;
-      const threshold = std * 0.2;
-      for (const v of flat) {
+      const threshold = Math.max(std * 0.2, 0.0001);
+      for (let i = 0; i < n2; i++) {
+        const v = sanitize(flat[i]);
         if (v < -threshold) neg++;
         else if (v > threshold) pos++;
         else zero++;
       }
-      const total = flat.length;
 
       ctx.fillStyle = 'rgba(80, 160, 255, 0.7)';
-      ctx.fillRect(barX, barY, (neg / total) * barW, barH);
+      ctx.fillRect(barX, barY, (neg / n2) * barW, barH);
       ctx.fillStyle = 'rgba(70, 70, 90, 0.5)';
-      ctx.fillRect(barX + (neg / total) * barW, barY, (zero / total) * barW, barH);
+      ctx.fillRect(barX + (neg / n2) * barW, barY, (zero / n2) * barW, barH);
       ctx.fillStyle = 'rgba(255, 170, 60, 0.7)';
-      ctx.fillRect(barX + ((neg + zero) / total) * barW, barY, (pos / total) * barW, barH);
+      ctx.fillRect(barX + ((neg + zero) / n2) * barW, barY, (pos / n2) * barW, barH);
 
-      // σ value
       ctx.fillStyle = '#556677';
       ctx.font = '7px system-ui, sans-serif';
       ctx.textAlign = 'center';
@@ -732,7 +608,8 @@ function visualizeModelOrganism(_m, targetDiv) {
     }
   }
 
-  // ─── Footer ────────────────────────────────────────────────────
+  // ─── FOOTER ────────────────────────────────────────────────────
+
   const footY = canvasH - footerH + 3;
   ctx.fillStyle = 'rgba(8, 8, 16, 0.95)';
   ctx.fillRect(0, footY, canvasW, footerH);
@@ -757,23 +634,31 @@ function visualizeModelOrganism(_m, targetDiv) {
   ctx.fillText('positive (amplifies)', marginL + 254, legY + 9);
 
   ctx.fillStyle = '#556677';
-  ctx.fillText('σ = weight spread · lines = actual weights between neurons/filters', marginL + 400, legY + 9);
+  ctx.fillText('σ = weight spread · thickness = strength', marginL + 400, legY + 9);
 
   ctx.fillStyle = '#4a5a6a';
   ctx.font = '9px system-ui, sans-serif';
-  ctx.fillText('Training shifts weights from random (gray, small) → specialized (colored, large). Lines show learned connection strengths.', marginL, legY + 26);
+  ctx.fillText('Watch during training: nodes grow & color as patterns emerge. Thick lines = strong learned paths.', marginL, legY + 26);
 
-  // Health check
+  // Health
   let healthMsg = 'healthy';
   let healthColor = '#44bb77';
   for (const layer of layers) {
     if (!layer.weightData) continue;
     const flat = layer.weightData.flat;
-    const mean = flat.reduce((a, b) => a + b, 0) / flat.length;
-    const std = Math.sqrt(flat.reduce((a, b) => a + (b - mean) ** 2, 0) / flat.length);
-    const dead = flat.filter(v => Math.abs(v) < 0.0001).length / flat.length;
-    if (dead > 0.7) {
-      healthMsg = `⚠ ${layer.name}: ${(dead * 100).toFixed(0)}% dead weights`;
+    const n2 = flat.length;
+    if (n2 === 0) continue;
+    let sum = 0, sumSq = 0, deadCount = 0;
+    for (let i = 0; i < n2; i++) {
+      const v = sanitize(flat[i]);
+      sum += v;
+      sumSq += v * v;
+      if (Math.abs(v) < 0.0001) deadCount++;
+    }
+    const mean = sum / n2;
+    const std = Math.sqrt(Math.max(0, sumSq / n2 - mean * mean));
+    if (deadCount / n2 > 0.7) {
+      healthMsg = `⚠ ${layer.name}: ${((deadCount / n2) * 100).toFixed(0)}% dead`;
       healthColor = '#dd8844';
       break;
     }
