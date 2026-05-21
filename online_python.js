@@ -651,6 +651,13 @@ elif isinstance(result, list):
 # Camera stays LIVE. Press 📸 Snap for Player 1, then Player 2.
 # Auto-detects German & English labels (Schere/Scissors, Stein/Rock, Papier/Paper).
 
+
+def rps_winner(move1, move2):
+    """Returns 'player1', 'player2', or 'draw'."""
+    if move1 == move2: return 'draw'
+    RPS_WINS = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
+    return 'player1' if RPS_WINS[move1] == move2 else 'player2'
+
 if 'game' not in dir():
     state = _setup_model()
     rps_map = _rps_detect_mapping(state['labels'])
@@ -680,7 +687,7 @@ if input_data is not None:
         game['turn'] = 1
         game['round'] += 1
 
-        outcome = _rps_winner(player1_move, player2_move)
+        outcome = rps_winner(player1_move, player2_move)
         if outcome == 'player1': game['player1_score'] += 1
         elif outcome == 'player2': game['player2_score'] += 1
 
@@ -1903,7 +1910,6 @@ _RPS_KEYWORDS = {
     'paper':    ['paper', 'papier'],
 }
 _RPS_EMOJI = {'scissors': '✌️', 'rock': '✊', 'paper': '✋'}
-_RPS_WINS = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
 
 def _rps_detect_mapping(label_list):
     """Auto-detect RPS mapping from label names (DE/EN). Returns {index: move}."""
@@ -1933,11 +1939,6 @@ def _rps_detect_mapping(label_list):
     print(f'⚠️  Could not identify: {unmatched}')
     print("   → Fallback: [0]=scissors, [1]=rock, [2]=paper")
     return {0: 'scissors', 1: 'rock', 2: 'paper'}
-
-def _rps_winner(move1, move2):
-    """Returns 'player1', 'player2', or 'draw'."""
-    if move1 == move2: return 'draw'
-    return 'player1' if _RPS_WINS[move1] == move2 else 'player2'
 
 print('🐍 Python environment ready!')
 print('📦 Functions: predict(), get_model_info(), get_weights(), rand_nested(shape)')
