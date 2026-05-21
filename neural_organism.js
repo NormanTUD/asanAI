@@ -1,24 +1,19 @@
 /**
- * Renders a radial "neural organism" visualization of a TF.js model's weights.
+ * Live Training Network Visualizer
+ * Shows the actual structure, data flow, and learning dynamics of a TF.js model.
  * @param {tf.LayersModel} _m - A TensorFlow.js model
- * @param {HTMLElement|string|null} targetDiv - Div element, ID string, or null (appends to body)
+ * @param {HTMLElement|string|null} targetDiv - Div element, ID string, or null
  */
 function visualizeModelOrganism(_m, targetDiv) {
-  // ─── Resolve target container ───────────────────────────────────
   let container;
   if (typeof targetDiv === 'string') {
     container = document.getElementById(targetDiv);
-    if (!container) {
-      console.warn(`[visualizeModelOrganism] Element with id "${targetDiv}" not found, appending to body.`);
-      container = document.body;
-    }
+    if (!container) container = document.body;
   } else if (targetDiv && targetDiv.appendChild) {
     container = targetDiv;
   } else {
     container = document.body;
   }
-
-  // Clear previous render so repeated calls update instead of stacking
   container.innerHTML = '';
 
   // ─── Helpers ────────────────────────────────────────────────────
@@ -46,325 +41,584 @@ function visualizeModelOrganism(_m, targetDiv) {
     return shape;
   }
 
-  // ─── Extract weights from model ────────────────────────────────
-  const weightEntries = [];
-  const layerInfos = [];
+  function describeLayer(layer, idx) {
+    const type = layer.getClassName ? layer.getClassName() : 'Unknown';
+    const config = layer.getConfig ? layer.getConfig() : {};
+    const outputShape = layer.outputShape || [];
 
-  for (let li = 0; li < _m.layers.length; li++) {
-    const layer = _m.layers[li];
-    let layerWeights;
-    try {
-      layerWeights = layer.getWeights();
-    } catch (e) {
-      continue;
+    let description = '';
+    let role = '';
+    let icon = '';
+
+    switch (type.toLowerCase()) {
+      case 'inputlayer':
+        description = `Receives raw data`;
+        role = 'DATA IN';
+        icon = '→';
+        break;
+      case 'dense':
+        const units = config.units || '?';
+        const activation = config.activation || 'linear';
+        description = `${units} neurons, ${activation}`;
+        role = activation === 'softmax' ? 'DECISION' :
+               activation === 'relu' ? 'TRANSFORM' :
+               activation === 'sigmoid' ? 'GATE' : 'COMPUTE';
+        icon = activation === 'relu' ? '⦿' :
+               activation === 'softmax' ? '◎' :
+               activation === 'sigmoid' ? '◐' : '○';
+        break;
+      case 'conv2d':
+      case 'conv1d':
+        const filters = config.filters || '?';
+        const kernelSize = config.kernelSize || '?';
+        description = `${filters} filters, ${kernelSize} kernel`;
+        role = 'DETECT FEATURES';
+        icon = '▣';
+        break;
+      case 'maxpooling2d':
+      case 'maxpooling1d':
+      case 'averagepooling2d':
+        description = `Compress spatial info`;
+        role = 'COMPRESS';
+        icon = '▽';
+        break;
+      case 'flatten':
+        description = `Reshape to 1D`;
+        role = 'RESHAPE';
+        icon = '═';
+        break;
+      case 'dropout':
+        const rate = config.rate || 0;
+        description = `Drop ${(rate * 100).toFixed(0)}% randomly`;
+        role = 'REGULARIZE';
+        icon = '✕';
+        break;
+      case 'batchnormalization':
+        description = `Normalize activations`;
+        role = 'STABILIZE';
+        icon = '≈';
+        break;
+      case 'lstm':
+      case 'gru':
+        const rUnits = config.units || '?';
+        description = `${rUnits} memory cells`;
+        role = 'REMEMBER';
+        icon = '↻';
+        break;
+      default:
+        description = type;
+        role = 'PROCESS';
+        icon = '◇';
     }
-    const layerName = layer.name || `layer_${li}`;
-    const layerType = layer.getClassName ? layer.getClassName() : 'Unknown';
 
-    if (!layerWeights || layerWeights.length === 0) {
-      layerInfos.push({ name: layerName, type: layerType, hasWeights: false });
-      continue;
-    }
-
-    for (let wi = 0; wi < layerWeights.length; wi++) {
-      let data;
-      try {
-        data = layerWeights[wi].arraySync();
-      } catch (e) {
-        continue;
-      }
-      if (!data || (Array.isArray(data) && data.length === 0)) continue;
-
-      const shape = Array.isArray(data) ? getShape(data) : [1];
-      const flat = Array.isArray(data) ? flatten(data) : [data];
-
-      if (flat.length === 0) continue;
-
-      weightEntries.push({
-        layerIndex: li,
-        weightIndex: wi,
-        layerName: layerName,
-        layerType: layerType,
-        shape: shape,
-        flat: flat
-      });
-    }
-    layerInfos.push({ name: layerName, type: layerType, hasWeights: true });
+    return { type, description, role, icon, outputShape, config };
   }
 
-  const numKernels = weightEntries.length;
-  if (numKernels === 0) {
-    console.warn('[visualizeModelOrganism] No weights found in model.');
-    container.innerHTML = '<p style="color:#888;font-family:monospace;">No weight tensors found in model.</p>';
+  // ─── Extract all layer info and weights ─────────────────────────
+  const layers = [];
+  for (let li = 0; li < _m.layers.length; li++) {
+    const layer = _m.layers[li];
+    const info = describeLayer(layer, li);
+    let weightData = null;
+    let biasData = null;
+
+    let layerWeights;
+    try { layerWeights = layer.getWeights(); } catch (e) { layerWeights = []; }
+
+    if (layerWeights && layerWeights.length > 0) {
+      try {
+        const w = layerWeights[0].arraySync();
+        const flat = Array.isArray(w) ? flatten(w) : [w];
+        const shape = Array.isArray(w) ? getShape(w) : [1];
+        weightData = { flat, shape };
+      } catch (e) {}
+
+      if (layerWeights.length > 1) {
+        try {
+          const b = layerWeights[1].arraySync();
+          const flat = Array.isArray(b) ? flatten(b) : [b];
+          biasData = { flat };
+        } catch (e) {}
+      }
+    }
+
+    layers.push({
+      index: li,
+      name: layer.name || `layer_${li}`,
+      ...info,
+      weightData,
+      biasData
+    });
+  }
+
+  const numLayers = layers.length;
+  if (numLayers === 0) {
+    container.innerHTML = '<p style="color:#888;font-family:monospace;">No layers found.</p>';
     return null;
   }
 
   // ─── Canvas Setup ──────────────────────────────────────────────
-  const canvasW = 750;
-  const canvasH = 750;
+  const canvasW = 1000;
+  const canvasH = 650;
   const canvas = document.createElement('canvas');
   canvas.width = canvasW;
   canvas.height = canvasH;
-  canvas.style.background = '#020208';
-  canvas.style.borderRadius = '8px';
   canvas.style.display = 'block';
   canvas.style.maxWidth = '100%';
-
+  canvas.style.borderRadius = '6px';
   container.appendChild(canvas);
-
   const ctx = canvas.getContext('2d');
-  const cxCenter = canvasW / 2;
-  const cyCenter = canvasH / 2;
 
   // ─── Background ────────────────────────────────────────────────
-  ctx.fillStyle = '#020208';
+  ctx.fillStyle = '#080810';
   ctx.fillRect(0, 0, canvasW, canvasH);
 
-  // Subtle radial depth
-  for (let r = 375; r > 0; r -= 5) {
-    const alpha = 0.01 + ((375 - r) / 375) * 0.03;
-    ctx.beginPath();
-    ctx.arc(cxCenter, cyCenter, r, 0, 2 * Math.PI);
-    ctx.strokeStyle = `rgba(20, 10, 50, ${alpha})`;
-    ctx.lineWidth = 5;
-    ctx.stroke();
+  // Subtle grid
+  ctx.strokeStyle = 'rgba(40, 40, 80, 0.3)';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < canvasW; x += 40) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvasH); ctx.stroke();
+  }
+  for (let y = 0; y < canvasH; y += 40) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvasW, y); ctx.stroke();
   }
 
-  // ─── Compute layer statistics ──────────────────────────────────
-  const layerStats = weightEntries.map(wd => {
-    const flat = wd.flat;
-    const n = flat.length;
-    let sum = 0, sumSq = 0, mn = Infinity, mx = -Infinity;
-    for (let i = 0; i < n; i++) {
-      const v = flat[i];
-      sum += v;
-      sumSq += v * v;
-      if (v < mn) mn = v;
-      if (v > mx) mx = v;
+  // ─── Layout ────────────────────────────────────────────────────
+  const marginL = 60;
+  const marginR = 40;
+  const headerH = 50;
+  const footerH = 100;
+  const graphW = canvasW - marginL - marginR;
+  const graphH = canvasH - headerH - footerH;
+  const graphTop = headerH;
+
+  const colW = graphW / numLayers;
+
+  // ─── Title ─────────────────────────────────────────────────────
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 14px monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('LIVE MODEL STRUCTURE', marginL, 20);
+
+  ctx.fillStyle = '#556677';
+  ctx.font = '11px monospace';
+  const totalParams = layers.reduce((s, l) => {
+    let p = 0;
+    if (l.weightData) p += l.weightData.flat.length;
+    if (l.biasData) p += l.biasData.flat.length;
+    return s + p;
+  }, 0);
+  ctx.fillText(`${numLayers} layers | ${totalParams.toLocaleString()} trainable parameters | data flows left → right`, marginL, 38);
+
+  // ─── Flow arrow along bottom ───────────────────────────────────
+  const arrowY = headerH + graphH + 15;
+  ctx.strokeStyle = '#334455';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(marginL, arrowY);
+  ctx.lineTo(marginL + graphW - 10, arrowY);
+  ctx.stroke();
+  // Arrowhead
+  ctx.beginPath();
+  ctx.moveTo(marginL + graphW - 10, arrowY);
+  ctx.lineTo(marginL + graphW - 18, arrowY - 5);
+  ctx.lineTo(marginL + graphW - 18, arrowY + 5);
+  ctx.closePath();
+  ctx.fillStyle = '#334455';
+  ctx.fill();
+
+  ctx.fillStyle = '#44aa77';
+  ctx.font = 'bold 10px monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('INPUT DATA', marginL, arrowY + 16);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#ff8855';
+  ctx.fillText('PREDICTION', marginL + graphW, arrowY + 16);
+
+  // ─── Draw each layer ───────────────────────────────────────────
+  const layerPositions = []; // store x positions for connection drawing
+
+  for (let idx = 0; idx < numLayers; idx++) {
+    const layer = layers[idx];
+    const x = marginL + idx * colW + colW / 2;
+    const centerY = graphTop + graphH / 2;
+    layerPositions.push({ x, centerY });
+
+    // Determine visual height based on output shape
+    const outShape = layer.outputShape;
+    let numNeurons = 1;
+    if (Array.isArray(outShape)) {
+      const flat = outShape.flat ? outShape.flat() : outShape;
+      for (const s of flat) {
+        if (typeof s === 'number' && s > 0) numNeurons *= s;
+      }
     }
-    const mean = sum / n;
-    const variance = sumSq / n - mean * mean;
-    const std = Math.sqrt(Math.max(0, variance));
-    const energy = sumSq / n;
-    let sparseCount = 0;
-    const threshold = std * 0.1;
-    for (let i = 0; i < n; i++) {
-      if (Math.abs(flat[i]) < threshold) sparseCount++;
-    }
-    const sparsity = sparseCount / n;
-    return { mean, std, min: mn, max: mx, energy, sparsity, n };
-  });
+    numNeurons = Math.min(numNeurons, 200);
+    const displayNodes = Math.min(Math.max(3, Math.ceil(Math.sqrt(numNeurons))), 16);
 
-  const maxEnergy = Math.max(...layerStats.map(s => s.energy), 1e-10);
+    // Layer column background
+    const colLeft = marginL + idx * colW + 4;
+    const colRight = colLeft + colW - 8;
+    ctx.fillStyle = 'rgba(15, 15, 30, 0.6)';
+    ctx.fillRect(colLeft, graphTop, colW - 8, graphH);
 
-  // ─── Draw layers as concentric organism rings ──────────────────
-  const ringGap = Math.min(280 / Math.max(numKernels, 1), 40);
-  const baseRadius = 60;
+    // ─── Role badge at top ──────────────────────────────────────
+    const badgeColors = {
+      'DATA IN': '#44aa77',
+      'TRANSFORM': '#5588dd',
+      'DECISION': '#ff8855',
+      'GATE': '#ddaa44',
+      'DETECT FEATURES': '#aa66dd',
+      'COMPRESS': '#66aaaa',
+      'RESHAPE': '#888899',
+      'REGULARIZE': '#cc6666',
+      'STABILIZE': '#66bb88',
+      'REMEMBER': '#dd77aa',
+      'COMPUTE': '#7799bb',
+      'PROCESS': '#7799bb'
+    };
+    const badgeColor = badgeColors[layer.role] || '#667788';
 
-  for (let idx = 0; idx < numKernels; idx++) {
-    const wd = weightEntries[idx];
-    const stats = layerStats[idx];
-    const flat = wd.flat;
-    const radius = baseRadius + idx * ringGap;
-    const energyRatio = stats.energy / maxEnergy;
+    ctx.fillStyle = badgeColor;
+    ctx.font = 'bold 8px monospace';
+    ctx.textAlign = 'center';
+    const badgeW = ctx.measureText(layer.role).width + 10;
+    const badgeX = x - badgeW / 2;
+    const badgeY = graphTop + 5;
 
-    // Number of nodes on ring
-    let numNodes = Math.min(Math.floor(Math.sqrt(stats.n)), 90);
-    numNodes = Math.max(numNodes, 12);
-
-    // Sample weights
-    const step = Math.max(1, Math.floor(flat.length / numNodes));
-    const sampled = [];
-    for (let i = 0; i < numNodes && i * step < flat.length; i++) {
-      sampled.push(flat[i * step]);
-    }
-    numNodes = sampled.length;
-    if (numNodes === 0) continue;
-
-    const sMn = Math.min(...sampled);
-    const sMx = Math.max(...sampled);
-    const sRng = sMx - sMn || 1;
-
-    // Ring backbone
-    ctx.beginPath();
-    ctx.arc(cxCenter, cyCenter, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = `rgba(60, 40, 120, ${0.15 + energyRatio * 0.3})`;
+    // Badge background
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(badgeX, badgeY, badgeW, 14);
+    ctx.strokeStyle = badgeColor;
     ctx.lineWidth = 1;
-    ctx.stroke();
+    ctx.strokeRect(badgeX, badgeY, badgeW, 14);
+    ctx.fillStyle = badgeColor;
+    ctx.fillText(layer.role, x, badgeY + 10);
 
-    // Draw neuron nodes
-    for (let ni = 0; ni < numNodes; ni++) {
-      const angle = (ni / numNodes) * 2 * Math.PI - Math.PI / 2;
-      const nx = cxCenter + Math.cos(angle) * radius;
-      const ny = cyCenter + Math.sin(angle) * radius;
-      const val = sampled[ni];
-      const t = (val - sMn) / sRng;
-      const nodeR = 1.5 + t * 4;
+    // ─── Layer type + description ────────────────────────────────
+    ctx.fillStyle = '#ccccee';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(layer.type, x, badgeY + 28);
 
-      let r, g, b;
-      if (val < 0) {
-        const intensity = Math.abs(val - sMn) / sRng;
-        r = 20;
-        g = Math.floor(80 + intensity * 150);
-        b = Math.floor(180 + intensity * 75);
-      } else {
-        const intensity = (val - sMn) / sRng;
-        r = Math.floor(180 + intensity * 75);
-        g = Math.floor(40 + intensity * 60);
-        b = Math.floor(Math.max(0, 80 - intensity * 40));
+    ctx.fillStyle = '#667788';
+    ctx.font = '9px monospace';
+    ctx.fillText(layer.description, x, badgeY + 40);
+
+    // ─── Draw neurons/nodes ──────────────────────────────────────
+    const nodeAreaTop = graphTop + 60;
+    const nodeAreaH = graphH - 130;
+    const nodeSpacing = nodeAreaH / (displayNodes + 1);
+
+    for (let n = 0; n < displayNodes; n++) {
+      const ny = nodeAreaTop + (n + 1) * nodeSpacing;
+      const nodeR = 6;
+
+      // If we have weight data, color the node by its average weight
+      let nodeColor = '#445566';
+      let nodeGlow = 'rgba(60, 80, 120, 0.3)';
+
+      if (layer.weightData && layer.weightData.flat.length > 0) {
+        const flat = layer.weightData.flat;
+        const chunkSize = Math.max(1, Math.floor(flat.length / displayNodes));
+        const start = n * chunkSize;
+        const end = Math.min(start + chunkSize, flat.length);
+        let sum = 0, sumAbs = 0;
+        for (let i = start; i < end; i++) {
+          sum += flat[i];
+          sumAbs += Math.abs(flat[i]);
+        }
+        const avg = sum / (end - start || 1);
+        const avgAbs = sumAbs / (end - start || 1);
+
+        // Color by sign and magnitude
+        if (avg > 0) {
+          const t = Math.min(1, avgAbs * 3);
+          nodeColor = `rgb(${Math.floor(180 + t * 75)}, ${Math.floor(100 + t * 50)}, ${Math.floor(30)})`;
+          nodeGlow = `rgba(255, 150, 40, ${t * 0.4})`;
+        } else {
+          const t = Math.min(1, avgAbs * 3);
+          nodeColor = `rgb(${Math.floor(30)}, ${Math.floor(100 + t * 80)}, ${Math.floor(180 + t * 75)})`;
+          nodeGlow = `rgba(60, 150, 255, ${t * 0.4})`;
+        }
       }
 
       // Glow
       ctx.beginPath();
-      ctx.arc(nx, ny, nodeR + 3, 0, 2 * Math.PI);
-      ctx.fillStyle = `rgba(${r},${g},${b},0.15)`;
+      ctx.arc(x, ny, nodeR + 4, 0, 2 * Math.PI);
+      ctx.fillStyle = nodeGlow;
       ctx.fill();
 
-      // Node
+      // Node body
       ctx.beginPath();
-      ctx.arc(nx, ny, nodeR, 0, 2 * Math.PI);
-      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.arc(x, ny, nodeR, 0, 2 * Math.PI);
+      ctx.fillStyle = nodeColor;
       ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
     }
 
-    // ─── Dendrite connections to next ring ───────────────────────
-    if (idx < numKernels - 1) {
-      const nextRadius = baseRadius + (idx + 1) * ringGap;
-      let nextNodes = Math.min(Math.floor(Math.sqrt(layerStats[idx + 1].n)), 90);
-      nextNodes = Math.max(nextNodes, 12);
+    // "..." if more neurons than displayed
+    if (numNeurons > displayNodes) {
+      ctx.fillStyle = '#556677';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`⋮ ${numNeurons} total`, x, nodeAreaTop + nodeAreaH + 5);
+    }
 
-      const numConnections = Math.min(numNodes, nextNodes, 20);
+    // ─── Weight distribution mini-chart ──────────────────────────
+    if (layer.weightData && layer.weightData.flat.length > 1) {
+      const flat = layer.weightData.flat;
+      const chartY = graphTop + graphH - 55;
+      const chartW2 = colW - 20;
+      const chartH2 = 35;
+      const chartX = x - chartW2 / 2;
 
-      // Sort by absolute value descending
-      const sortedIndices = sampled
-        .map((v, i) => ({ i, abs: Math.abs(v) }))
-        .sort((a, b) => b.abs - a.abs)
-        .map(x => x.i);
+      // Mini histogram
+      const numBins = 20;
+      const bins = new Array(numBins).fill(0);
+      let mn = Infinity, mx = -Infinity;
+      for (const v of flat) { if (v < mn) mn = v; if (v > mx) mx = v; }
+      const range = mx - mn || 1;
+      for (const v of flat) {
+        const bin = Math.min(numBins - 1, Math.max(0, Math.floor(((v - mn) / range) * numBins)));
+        bins[bin]++;
+      }
+      const maxBin = Math.max(...bins);
 
-      for (let ci = 0; ci < Math.min(numConnections, sortedIndices.length); ci++) {
-        const si = sortedIndices[ci];
-        const angleFrom = (si / numNodes) * 2 * Math.PI - Math.PI / 2;
-        const angleTo = (ci / numConnections) * 2 * Math.PI - Math.PI / 2;
+      // Background
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(chartX, chartY, chartW2, chartH2);
 
-        const x1 = cxCenter + Math.cos(angleFrom) * radius;
-        const y1 = cyCenter + Math.sin(angleFrom) * radius;
-        const x2 = cxCenter + Math.cos(angleTo) * nextRadius;
-        const y2 = cyCenter + Math.sin(angleTo) * nextRadius;
+      // Bars
+      const barW = chartW2 / numBins;
+      for (let i = 0; i < numBins; i++) {
+        const barH = (bins[i] / maxBin) * (chartH2 - 4);
+        const t = i / numBins; // 0 = negative side, 1 = positive side
+        let r, g, b;
+        if (t < 0.5) {
+          r = 40; g = Math.floor(100 + t * 200); b = Math.floor(200 + t * 100);
+        } else {
+          const t2 = (t - 0.5) * 2;
+          r = Math.floor(150 + t2 * 105); g = Math.floor(100 + t2 * 50); b = 40;
+        }
+        ctx.fillStyle = `rgba(${r},${g},${b},0.8)`;
+        ctx.fillRect(chartX + i * barW, chartY + chartH2 - barH - 2, barW - 1, barH);
+      }
 
-        // Curved control point
-        const ctrlR = (radius + nextRadius) / 2 + 10;
-        const ctrlAngle = (angleFrom + angleTo) / 2;
-        const cpx = cxCenter + Math.cos(ctrlAngle) * ctrlR * 0.85;
-        const cpy = cyCenter + Math.sin(ctrlAngle) * ctrlR * 0.85;
+      // Zero line in histogram
+      const zeroPos = (0 - mn) / range;
+      const zeroX = chartX + zeroPos * chartW2;
+      if (zeroPos > 0 && zeroPos < 1) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.moveTo(zeroX, chartY);
+        ctx.lineTo(zeroX, chartY + chartH2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
 
-        const strength = Math.abs(sampled[si]) / (Math.abs(sMx) + 0.0001);
-        const alpha = 0.05 + strength * 0.2;
+      // Stats
+      const mean = flat.reduce((a, b) => a + b, 0) / flat.length;
+      const std = Math.sqrt(flat.reduce((a, b) => a + (b - mean) ** 2, 0) / flat.length);
+      ctx.fillStyle = '#778899';
+      ctx.font = '7px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`μ=${mean.toFixed(3)} σ=${std.toFixed(3)}`, x, chartY + chartH2 + 9);
+    }
+  }
+
+  // ─── Draw connections between layers ───────────────────────────
+  for (let idx = 0; idx < numLayers - 1; idx++) {
+    const layerA = layers[idx];
+    const layerB = layers[idx + 1];
+    const posA = layerPositions[idx];
+    const posB = layerPositions[idx + 1];
+
+    const nodeAreaTop = graphTop + 60;
+    const nodeAreaH = graphH - 130;
+
+    const outShapeA = layerA.outputShape;
+    let numA = 1;
+    if (Array.isArray(outShapeA)) {
+      const flatS = outShapeA.flat ? outShapeA.flat() : outShapeA;
+      for (const s of flatS) { if (typeof s === 'number' && s > 0) numA *= s; }
+    }
+    numA = Math.min(numA, 200);
+    const displayA = Math.min(Math.max(3, Math.ceil(Math.sqrt(numA))), 16);
+
+    const outShapeB = layerB.outputShape;
+    let numB = 1;
+    if (Array.isArray(outShapeB)) {
+      const flatS = outShapeB.flat ? outShapeB.flat() : outShapeB;
+      for (const s of flatS) { if (typeof s === 'number' && s > 0) numB *= s; }
+    }
+    numB = Math.min(numB, 200);
+    const displayB = Math.min(Math.max(3, Math.ceil(Math.sqrt(numB))), 16);
+
+    const spacingA = nodeAreaH / (displayA + 1);
+    const spacingB = nodeAreaH / (displayB + 1);
+
+    // Get weight data for connections
+    let weightFlat = null;
+    let absMax = 1;
+    if (layerB.weightData) {
+      weightFlat = layerB.weightData.flat;
+      absMax = Math.max(...weightFlat.map(Math.abs)) || 1;
+    }
+
+    // Draw subset of connections
+    const maxConns = 40;
+    let drawn = 0;
+
+    for (let a = 0; a < displayA && drawn < maxConns; a++) {
+      for (let b = 0; b < displayB && drawn < maxConns; b++) {
+        const y1 = nodeAreaTop + (a + 1) * spacingA;
+        const y2 = nodeAreaTop + (b + 1) * spacingB;
+
+        let strength = 0.2;
+        let val = 0;
+
+        if (weightFlat) {
+          const wIdx = (a * displayB + b) % weightFlat.length;
+          val = weightFlat[wIdx];
+          strength = Math.abs(val) / absMax;
+        }
+
+        if (strength < 0.15) continue; // skip weak connections
+
+        const x1 = posA.x + 8;
+        const x2 = posB.x - 8;
+        const cpx = (x1 + x2) / 2;
+
+        let color;
+        if (val >= 0) {
+          color = `rgba(255, 160, 50, ${0.05 + strength * 0.35})`;
+        } else {
+          color = `rgba(70, 150, 255, ${0.05 + strength * 0.35})`;
+        }
 
         ctx.beginPath();
         ctx.moveTo(x1, y1);
-        ctx.quadraticCurveTo(cpx, cpy, x2, y2);
-        ctx.strokeStyle = `rgba(140, 80, 255, ${alpha})`;
-        ctx.lineWidth = 0.5 + strength * 1.5;
+        ctx.bezierCurveTo(cpx, y1, cpx, y2, x2, y2);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 0.3 + strength * 2;
         ctx.stroke();
+
+        drawn++;
       }
     }
   }
 
-  // ─── Core: energy center ───────────────────────────────────────
-  const totalEnergy = layerStats.reduce((s, l) => s + l.energy, 0);
-  const avgSparsity = layerStats.reduce((s, l) => s + l.sparsity, 0) / numKernels;
+  // ─── Training insight panel (bottom) ───────────────────────────
+  const panelY = canvasH - footerH + 30;
+  ctx.fillStyle = 'rgba(10, 10, 20, 0.9)';
+  ctx.fillRect(marginL - 10, panelY - 5, graphW + 20, footerH - 25);
+  ctx.strokeStyle = '#222244';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(marginL - 10, panelY - 5, graphW + 20, footerH - 25);
 
-  for (let r = 30; r > 0; r -= 3) {
-    const alpha = ((30 - r) / 30) * 0.6;
-    const hueShift = r * 4;
-    ctx.beginPath();
-    ctx.arc(cxCenter, cyCenter, r, 0, 2 * Math.PI);
-    ctx.fillStyle = `hsla(${260 + hueShift}, 80%, ${30 + r}%, ${alpha})`;
-    ctx.fill();
-  }
-
-  ctx.fillStyle = '#e0d0ff';
-  ctx.font = 'bold 11px monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText(`E=${totalEnergy.toFixed(4)}`, cxCenter, cyCenter - 5);
-  ctx.fillStyle = '#aa88dd';
-  ctx.font = '9px monospace';
-  ctx.fillText(`S=${(avgSparsity * 100).toFixed(1)}%`, cxCenter, cyCenter + 8);
-
-  // ─── Outer sparsity band ───────────────────────────────────────
-  const outerR = baseRadius + numKernels * ringGap + 25;
-  for (let idx = 0; idx < numKernels; idx++) {
-    const stats = layerStats[idx];
-    const arcStart = (idx / numKernels) * 2 * Math.PI - Math.PI / 2;
-    const arcEnd = ((idx + 1) / numKernels) * 2 * Math.PI - Math.PI / 2;
-    const gap = 0.02;
-
-    const brightness = 1.0 - stats.sparsity;
-    const hue = 260 + Math.floor((stats.energy / maxEnergy) * 60);
-
-    ctx.beginPath();
-    ctx.arc(cxCenter, cyCenter, outerR, arcStart + gap, arcEnd - gap);
-    ctx.strokeStyle = `hsla(${hue}, 70%, ${20 + Math.floor(brightness * 50)}%, ${0.3 + brightness * 0.6})`;
-    ctx.lineWidth = 8;
-    ctx.stroke();
-
-    // Layer label
-    const midAngle = (arcStart + arcEnd) / 2;
-    const tx = cxCenter + Math.cos(midAngle) * (outerR + 18);
-    const ty = cyCenter + Math.sin(midAngle) * (outerR + 18);
-    ctx.fillStyle = `rgba(200, 180, 255, ${0.4 + brightness * 0.4})`;
-    ctx.font = '8px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText(`L${weightEntries[idx].layerIndex}`, tx, ty + 3);
-  }
-
-  // ─── Annotations ───────────────────────────────────────────────
-  ctx.fillStyle = '#5544aa';
-  ctx.font = '10px monospace';
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 10px monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('TOPOLOGY:', 15, 20);
-  ctx.fillStyle = '#8877cc';
-  ctx.fillText(`  rings = weight tensors (${numKernels})`, 15, 34);
-  ctx.fillText('  nodes = sampled weights (size=magnitude)', 15, 48);
-  ctx.fillText('  arcs = strongest weight connections', 15, 62);
-  ctx.fillText('  outer band = sparsity per tensor', 15, 76);
+  ctx.fillText('WHAT TRAINING DOES:', marginL, panelY + 10);
 
-  // Insights
-  const maxEIdx = layerStats.reduce((best, s, i) => s.energy > layerStats[best].energy ? i : best, 0);
-  const minEIdx = layerStats.reduce((best, s, i) => s.energy < layerStats[best].energy ? i : best, 0);
-  const mostSparse = layerStats.reduce((best, s, i) => s.sparsity > layerStats[best].sparsity ? i : best, 0);
-
-  ctx.textAlign = 'right';
-  ctx.fillStyle = '#5544aa';
-  ctx.fillText('INSIGHT:', canvasW - 15, 20);
-  ctx.fillStyle = '#8877cc';
-  ctx.fillText(`highest energy: ${weightEntries[maxEIdx].layerName} (${layerStats[maxEIdx].energy.toFixed(5)})`, canvasW - 15, 34);
-  ctx.fillText(`lowest energy: ${weightEntries[minEIdx].layerName} (${layerStats[minEIdx].energy.toFixed(5)})`, canvasW - 15, 48);
-  ctx.fillText(`most sparse: ${weightEntries[mostSparse].layerName} (${(layerStats[mostSparse].sparsity * 100).toFixed(1)}% near-zero)`, canvasW - 15, 62);
-  ctx.fillText(`total params: ${layerStats.reduce((s, l) => s + l.n, 0).toLocaleString()}`, canvasW - 15, 76);
-
-  // Color key
-  ctx.fillStyle = '#00ccaa';
+  ctx.fillStyle = '#99aabb';
   ctx.font = '9px monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('cyan = negative | warm = positive | core E = L2 energy | S = sparsity', canvasW / 2, canvasH - 12);
 
-  // ─── Layer list (bottom-left) ──────────────────────────────────
-  ctx.font = '9px monospace';
+  // Compute training health indicators
+  let hasDeadLayers = false;
+  let hasExploding = false;
+  let healthNotes = [];
+
+  for (const layer of layers) {
+    if (!layer.weightData) continue;
+    const flat = layer.weightData.flat;
+    const mean = flat.reduce((a, b) => a + b, 0) / flat.length;
+    const std = Math.sqrt(flat.reduce((a, b) => a + (b - mean) ** 2, 0) / flat.length);
+    const nearZero = flat.filter(v => Math.abs(v) < 0.001).length / flat.length;
+
+    if (nearZero > 0.8) {
+      hasDeadLayers = true;
+      healthNotes.push(`⚠ ${layer.name}: ${(nearZero * 100).toFixed(0)}% weights near zero — may be dying`);
+    }
+    if (std > 2.0) {
+      hasExploding = true;
+      healthNotes.push(`⚠ ${layer.name}: std=${std.toFixed(2)} — weights may be exploding`);
+    }
+  }
+
+  const explanations = [
+    'Each iteration: data enters left → flows through layers → prediction exits right → error computed → weights adjusted backward',
+    'Orange connections = excitatory (amplify signal) | Blue connections = inhibitory (suppress signal)',
+    'Mini histograms show weight distribution per layer — should be centered near zero, bell-shaped after good training',
+  ];
+
+  let textY = panelY + 24;
+  for (const line of explanations) {
+    ctx.fillStyle = '#778899';
+    ctx.fillText(line, marginL, textY);
+    textY += 13;
+  }
+
+  // Health warnings
+  if (healthNotes.length > 0) {
+    textY += 4;
+    ctx.fillStyle = '#ffaa44';
+    ctx.font = 'bold 9px monospace';
+    ctx.fillText('TRAINING HEALTH:', marginL, textY);
+    textY += 13;
+    ctx.font = '9px monospace';
+    for (const note of healthNotes.slice(0, 3)) {
+      ctx.fillStyle = '#dd8833';
+      ctx.fillText(note, marginL + 10, textY);
+      textY += 12;
+    }
+  } else {
+    textY += 4;
+    ctx.fillStyle = '#44bb77';
+    ctx.font = '9px monospace';
+    ctx.fillText('✓ All layers look healthy — weights are well-distributed', marginL, textY);
+  }
+
+  // ─── Color legend (top right) ──────────────────────────────────
+  const legX = canvasW - 200;
+  const legY2 = 8;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.7)';
+  ctx.fillRect(legX - 8, legY2, 195, 85);
+  ctx.strokeStyle = '#222244';
+  ctx.strokeRect(legX - 8, legY2, 195, 85);
+
+  ctx.fillStyle = '#aabbcc';
+  ctx.font = 'bold 9px monospace';
   ctx.textAlign = 'left';
-  const listY = canvasH - 14 - Math.min(numKernels, 10) * 12;
-  const showCount = Math.min(numKernels, 10);
-  for (let i = 0; i < showCount; i++) {
-    const wd = weightEntries[i];
-    const shapeStr = wd.shape.join('x');
-    ctx.fillStyle = `hsla(${(i * 45 + 140) % 360}, 60%, 60%, 0.8)`;
-    ctx.fillText(`■ L${wd.layerIndex} ${wd.layerType} [${shapeStr}]`, 15, listY + i * 12);
-  }
-  if (numKernels > 10) {
-    ctx.fillStyle = '#555';
-    ctx.fillText(`  ...and ${numKernels - 10} more`, 15, listY + showCount * 12);
-  }
+  ctx.fillText('NODE COLORS:', legX, legY2 + 12);
 
-  console.log(`[visualizeModelOrganism] Rendered ${numKernels} weight tensors, ${layerStats.reduce((s, l) => s + l.n, 0).toLocaleString()} total params`);
+  ctx.fillStyle = '#ff9933';
+  ctx.beginPath(); ctx.arc(legX + 6, legY2 + 25, 4, 0, 2 * Math.PI); ctx.fill();
+  ctx.fillStyle = '#aabbcc';
+  ctx.font = '9px monospace';
+  ctx.fillText('positive avg weight (excites)', legX + 16, legY2 + 28);
+
+  ctx.fillStyle = '#3399ff';
+  ctx.beginPath(); ctx.arc(legX + 6, legY2 + 40, 4, 0, 2 * Math.PI); ctx.fill();
+  ctx.fillStyle = '#aabbcc';
+  ctx.fillText('negative avg weight (inhibits)', legX + 16, legY2 + 43);
+
+  ctx.fillStyle = '#445566';
+  ctx.beginPath(); ctx.arc(legX + 6, legY2 + 55, 4, 0, 2 * Math.PI); ctx.fill();
+  ctx.fillStyle = '#aabbcc';
+  ctx.fillText('no weights (pass-through)', legX + 16, legY2 + 58);
+
+  ctx.fillStyle = '#aabbcc';
+  ctx.font = 'bold 9px monospace';
+  ctx.fillText('CONNECTIONS:', legX, legY2 + 73);
+  ctx.font = '9px monospace';
+  ctx.fillText('thicker = stronger influence', legX, legY2 + 84);
+
   return canvas;
 }
