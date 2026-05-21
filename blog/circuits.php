@@ -31,7 +31,7 @@ The simplest "circuit" is no circuit at all: the embedding of a token flows dire
 ### 2. Induction Heads (Pattern Completion)
 \cite[Induction heads]{olsson2022induction} are perhaps the most important circuit discovered so far. They implement the following algorithm:
 
-> "If I've seen the pattern $[A][B] \ldots [A]$, predict $[B]$."
+"If I've seen the pattern $[A][B] \ldots [A]$, predict $[B]$."
 
 This requires **two attention heads working together** across two layers:
 
@@ -43,7 +43,7 @@ $$\underbrace{[\text{...} A \; B \; \text{...} \; A]}_{\text{context}} \xrightar
 ### 3. Indirect Object Identification (IOI)
 The \cite[IOI circuit]{wang2022interpretability} in GPT-2 small handles sentences like:
 
-> "When Mary and John went to the store, John gave a drink to ___"
+"When Mary and John went to the store, John gave a drink to ___"
 
 The circuit must identify that "Mary" is the indirect object (the answer), not "John" (who is the subject). This requires a sophisticated collaboration of **26 attention heads** across multiple layers, organized into functional groups:
 
