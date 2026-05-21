@@ -45,7 +45,7 @@ The \cite[IOI circuit]{wang2022interpretability} in GPT-2 small handles sentence
 
 "When Mary and John went to the store, John gave a drink to ___"
 
-The circuit must identify that "Mary" is the indirect object (the answer), not "John" (who is the subject). This requires a sophisticated collaboration of **26 attention heads** across multiple layers, organized into functional groups:
+The circuit must identify that "Mary" is the indirect object (the answer), not "John" (who is the subject). This requires a sophisticated collaboration of multiple attention heads across multiple layers, organized into functional groups:
 
 - **Duplicate Token Heads:** Detect that "John" appears twice
 - **S-Inhibition Heads:** Suppress the repeated name
