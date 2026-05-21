@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-When we train a neural network on a simple task like modular addition, something remarkable happens. The network doesn't just memorize the answers — it *discovers* an algorithm. Specifically, it learns to use the **Discrete Fourier Transform** to convert addition into wave interference \cite[Nanda et al., 2023]{nanda2023grokking}.
+When we train a neural network on a simple task like modular addition, something remarkable happens. The network doesn't just memorize the answers, it *discovers* an algorithm. Specifically, it learns to use the **Discrete Fourier Transform** to convert addition into wave interference \cite[Nanda et al., 2023]{nanda2023grokking}.
 
 This section walks through, step by step, exactly *how* a tiny one-layer Transformer computes:
 
@@ -11,9 +11,9 @@ where $P = 113$ is a prime number. The network's vocabulary is just the numbers 
 
 ### The Core Insight
 
-The network learns that **modular arithmetic is circular**. After $P$, you wrap around to 0 — just like an angle wrapping around a circle. So the network represents each number as a **point on a circle**, and performs addition by **rotating angles**.
+The network learns that **modular arithmetic is circular**. After $P$, you wrap around to 0, just like an angle wrapping around a circle. So the network represents each number as a **point on a circle**, and performs addition by **rotating angles**.
 
-But a single circle (a single frequency) has too many ambiguities. So the network uses **5 different frequencies** simultaneously, and combines them via **constructive interference** — the same principle that makes noise-cancelling headphones work, but in reverse.
+But a single circle (a single frequency) has too many ambiguities. So the network uses **5 different frequencies** simultaneously, and combines them via **constructive interference**, the same principle that makes noise-cancelling headphones work, but in reverse.
 
 ### The Algorithm in Five Steps
 
@@ -37,7 +37,7 @@ This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms e
 
 ### Connection to Grokking
 
-This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ~0% test accuracy). Then, after many more epochs, it suddenly "groks" the pattern — test accuracy jumps from 0% to 100% in a few hundred steps \cite[Figure 1]{nanda2023grokking}. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
+This algorithm is not present at the start of training. The network first **memorizes** the training data (achieving 100% train accuracy but ~0% test accuracy). Then, after many more epochs, it suddenly "groks" the pattern, test accuracy jumps from 0% to 100% in a few hundred steps \cite[Figure 1]{nanda2023grokking}. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
 
 ### Interactive Exploration
 
