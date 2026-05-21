@@ -385,6 +385,479 @@ function refreshMath() {
 // CERES ASTRONOMY
 // ============================================================
 
+const ceres_astronomy_real_data = {
+  "source": "Piazzi, Giuseppe. Risultati delle osservazioni della nuova stella. Palermo: Reale Stamperia, 1801.",
+  "notes": {
+    "quality_markers": "Observations marked with ':' (colon) are slightly doubtful; those marked with '::' (double colon) are very uncertain.",
+    "coordinate_system": "Positions are geocentric. Declinations marked 'B' are Boreal (North).",
+    "date_context": "January dates are in January 1801; dates after the ruled line (1, 2, 4, 5, 8, 11) are in February 1801.",
+    "angle_notation": "s = sign (30° zodiacal segment), so 9s.11°.1'.33\".1 = 9×30° + 11°1'33\".1 = 281°1'33\".1"
+  },
+
+  "section_II_parabolic_elements": {
+    "description": "Parabolic orbit combining observations of Jan 1, Jan 19, and Feb 11",
+    "perihelion_longitude": "4s 5° 28' 36\"",
+    "longitude_ascending_node": "2s 19° 43' 0\"",
+    "inclination": "10° 34' 0\"",
+    "log_perihelion_distance": 0.3713077,
+    "perihelion_passage": "1801 July 3.6985"
+  },
+
+  "section_VI_circular_orbit_results": {
+    "description": "Results assuming a circular orbit",
+    "orbital_radius_AU": 2.6862,
+    "orbital_motion_jan1_to_feb11": "9° 2' 29\".7",
+    "epoch_1801_longitude": "2s 8° 46' 22\".0",
+    "motion_per_100_days": "0s 22° 6' 33\".7",
+    "longitude_ascending_node": "2s 20° 46' 48\".0",
+    "orbital_inclination": "10° 51' 12\".0",
+    "mean_distance_from_stationary_point_AU": 2.9352,
+    "tropical_revolution_years": 5.03,
+    "sidereal_revolution_days": 1628.27,
+    "apparent_diameter_at_1AU": "19\"",
+    "volume_relative_to_earth": "1 and 1/3",
+    "opposition_1802": "early March"
+  },
+
+  "section_VII_table_I": {
+    "title": "Mean time, right ascensions, and declinations observed with the longitude of the Sun and logarithm of its distance from Earth",
+    "columns": ["day_of_month", "fraction_of_day_10000ths", "right_ascension_deg_min_sec", "declination_deg_min_sec", "sun_longitude", "log_earth_sun_distance"],
+    "month_january": [
+      {
+        "day": 1,
+        "time_fraction": 3635,
+        "right_ascension": {"deg": 51, "min": 47, "sec": 48.7, "quality": "good"},
+        "declination": {"deg": 15, "min": 37, "sec": 43.5, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 11, "min": 1, "sec": 33.1},
+        "log_distance": 9.992617
+      },
+      {
+        "day": 2,
+        "time_fraction": 3606,
+        "right_ascension": {"deg": 51, "min": 43, "sec": 27.7, "quality": "doubtful"},
+        "declination": {"deg": 15, "min": 41, "sec": 5.5, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 12, "min": 2, "sec": 31.7},
+        "log_distance": 9.992629
+      },
+      {
+        "day": 3,
+        "time_fraction": 3577,
+        "right_ascension": {"deg": 51, "min": 39, "sec": 36.0, "quality": "very_uncertain"},
+        "declination": {"deg": 15, "min": 44, "sec": 31.6, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 13, "min": 3, "sec": 30.2},
+        "log_distance": 9.992641
+      },
+      {
+        "day": 4,
+        "time_fraction": 3547,
+        "right_ascension": {"deg": 51, "min": 35, "sec": 47.2},
+        "declination": {"deg": 15, "min": 47, "sec": 57.6, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 14, "min": 4, "sec": 29.0},
+        "log_distance": 9.992652
+      },
+      {
+        "day": 10,
+        "time_fraction": 3378,
+        "right_ascension": {"deg": 51, "min": 23, "sec": 1.5, "quality": "doubtful"},
+        "declination": {"deg": 16, "min": 10, "sec": 32.0, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 20, "min": 10, "sec": 29.5},
+        "log_distance": 9.992768
+      },
+      {
+        "day": 11,
+        "time_fraction": 3350,
+        "right_ascension": {"deg": 51, "min": 22, "sec": 26.0},
+        "declination": {"deg": 16, "min": 14, "sec": 30.0, "direction": "B", "quality": "estimated"},
+        "sun_longitude": {"sign": 9, "deg": 21, "min": 11, "sec": 29.5},
+        "log_distance": 9.992794
+      },
+      {
+        "day": 13,
+        "time_fraction": 3295,
+        "right_ascension": {"deg": 51, "min": 22, "sec": 34.5},
+        "declination": {"deg": 16, "min": 22, "sec": 49.5, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 23, "min": 14, "sec": 28.0},
+        "log_distance": 9.992848
+      },
+      {
+        "day": 14,
+        "time_fraction": 3268,
+        "right_ascension": {"deg": 51, "min": 22, "sec": 55.8},
+        "declination": {"deg": 16, "min": 27, "sec": 5.7, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 24, "min": 14, "sec": 27.3},
+        "log_distance": 9.992882
+      },
+      {
+        "day": 17,
+        "time_fraction": null,
+        "right_ascension": {"deg": 51, "min": 27, "sec": 35.0, "quality": "very_uncertain"},
+        "declination": {"deg": 16, "min": 40, "sec": 13.0, "direction": "B"},
+        "sun_longitude": null,
+        "log_distance": null
+      },
+      {
+        "day": 18,
+        "time_fraction": null,
+        "right_ascension": {"deg": 51, "min": 28, "sec": 45.0, "quality": "very_uncertain"},
+        "declination": null,
+        "sun_longitude": null,
+        "log_distance": null
+      },
+      {
+        "day": 19,
+        "time_fraction": 3136,
+        "right_ascension": {"deg": 51, "min": 32, "sec": 2.2},
+        "declination": {"deg": 16, "min": 45, "sec": 16.1, "direction": "B"},
+        "sun_longitude": {"sign": 9, "deg": 29, "min": 19, "sec": 14.1},
+        "log_distance": 9.99306
+      },
+      {
+        "day": 21,
+        "time_fraction": 3084,
+        "right_ascension": {"deg": 51, "min": 38, "sec": 34.0},
+        "declination": {"deg": 16, "min": 58, "sec": 35.9, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 1, "min": 21, "sec": 2.5},
+        "log_distance": 9.993151
+      },
+      {
+        "day": 22,
+        "time_fraction": 3059,
+        "right_ascension": {"deg": 51, "min": 42, "sec": 21.3},
+        "declination": {"deg": 17, "min": 3, "sec": 18.5, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 2, "min": 22, "sec": 55.2},
+        "log_distance": 9.993196
+      },
+      {
+        "day": 23,
+        "time_fraction": 3033,
+        "right_ascension": {"deg": 51, "min": 46, "sec": 43.5},
+        "declination": {"deg": 17, "min": 8, "sec": 5.5, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 3, "min": 22, "sec": 46.4},
+        "log_distance": 9.993242
+      },
+      {
+        "day": 24,
+        "time_fraction": null,
+        "right_ascension": {"deg": 51, "min": 51, "sec": 45.0, "quality": "very_uncertain"},
+        "declination": null,
+        "sun_longitude": null,
+        "log_distance": null
+      },
+      {
+        "day": 28,
+        "time_fraction": 2909,
+        "right_ascension": {"deg": 52, "min": 13, "sec": 38.3},
+        "declination": {"deg": 17, "min": 32, "sec": 54.1, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 8, "min": 26, "sec": 45.5},
+        "log_distance": 9.993522
+      },
+      {
+        "day": 30,
+        "time_fraction": 2860,
+        "right_ascension": {"deg": 52, "min": 27, "sec": 2.1},
+        "declination": {"deg": 17, "min": 43, "sec": 11.0, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 10, "min": 28, "sec": 10.6},
+        "log_distance": 9.993645
+      },
+      {
+        "day": 31,
+        "time_fraction": 2837,
+        "right_ascension": {"deg": 52, "min": 34, "sec": 18.8},
+        "declination": {"deg": 17, "min": 48, "sec": 21.5, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 11, "min": 28, "sec": 55.5},
+        "log_distance": 9.993798
+      }
+    ],
+    "month_february": [
+      {
+        "day": 1,
+        "time_fraction": 2813,
+        "right_ascension": {"deg": 52, "min": 41, "sec": 48.0},
+        "declination": {"deg": 17, "min": 53, "sec": 36.5, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 12, "min": 29, "sec": 36.6},
+        "log_distance": 9.993773
+      },
+      {
+        "day": 2,
+        "time_fraction": 2789,
+        "right_ascension": {"deg": 52, "min": 49, "sec": 45.9},
+        "declination": {"deg": 17, "min": 58, "sec": 57.5, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 13, "min": 30, "sec": 17.0},
+        "log_distance": 9.993852
+      },
+      {
+        "day": 4,
+        "time_fraction": null,
+        "right_ascension": {"deg": 53, "min": 7, "sec": 45.0, "quality": "very_uncertain"},
+        "declination": null,
+        "sun_longitude": null,
+        "log_distance": null
+      },
+      {
+        "day": 5,
+        "time_fraction": 2719,
+        "right_ascension": {"deg": 53, "min": 15, "sec": 40.5},
+        "declination": {"deg": 18, "min": 15, "sec": 1.0, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 16, "min": 32, "sec": 13.9},
+        "log_distance": 9.994083
+      },
+      {
+        "day": 8,
+        "time_fraction": 2650,
+        "right_ascension": {"deg": 53, "min": 44, "sec": 37.5},
+        "declination": {"deg": 18, "min": 31, "sec": 23.2, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 19, "min": 35, "sec": 2.2},
+        "log_distance": 9.994328
+      },
+      {
+        "day": 11,
+        "time_fraction": 2583,
+        "right_ascension": {"deg": 54, "min": 16, "sec": 23.1},
+        "declination": {"deg": 18, "min": 47, "sec": 58.8, "direction": "B"},
+        "sun_longitude": {"sign": 10, "deg": 22, "min": 35, "sec": 41.3},
+        "log_distance": 9.994588
+      }
+    ]
+  },
+
+  "section_VIII_table_II": {
+    "title": "Geocentric longitudes and latitudes, observed and calculated, and their differences",
+    "columns": ["day_of_month", "longitude_observed", "longitude_calculated", "longitude_difference", "latitude_observed", "latitude_calculated", "latitude_difference"],
+    "data": [
+      {
+        "day": "Jan 1",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 22, "sec": 58.5},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 21, "sec": 59.2},
+        "longitude_diff_arcsec": -59.3,
+        "latitude_observed": {"deg": 3, "min": 6, "sec": 32.4},
+        "latitude_calculated": {"deg": 3, "min": 6, "sec": 50.2},
+        "latitude_diff_arcsec": 17.8
+      },
+      {
+        "day": "Jan 2",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 19, "sec": 44.8},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 18, "sec": 40.2},
+        "longitude_diff_arcsec": -64.6,
+        "latitude_observed": {"deg": 3, "min": 2, "sec": 13.1},
+        "latitude_calculated": {"deg": 3, "min": 2, "sec": 27.7},
+        "latitude_diff_arcsec": 16.6
+      },
+      {
+        "day": "Jan 3",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 16, "sec": 49.3},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 15, "sec": 47.1},
+        "longitude_diff_arcsec": -62.2,
+        "latitude_observed": {"deg": 2, "min": 57, "sec": 58.9},
+        "latitude_calculated": {"deg": 2, "min": 58, "sec": 6.3},
+        "latitude_diff_arcsec": 7.4
+      },
+      {
+        "day": "Jan 4",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 14, "sec": 16.5},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 13, "sec": 18.9},
+        "longitude_diff_arcsec": -57.6,
+        "latitude_observed": {"deg": 2, "min": 53, "sec": 44.5},
+        "latitude_calculated": {"deg": 2, "min": 53, "sec": 48.4},
+        "latitude_diff_arcsec": 3.9
+      },
+      {
+        "day": "Jan 10",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 7, "sec": 59.4},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 7, "sec": 19.5},
+        "longitude_diff_arcsec": -39.9,
+        "latitude_observed": {"deg": 2, "min": 28, "sec": 50.9},
+        "latitude_calculated": {"deg": 2, "min": 28, "sec": 31.8},
+        "latitude_diff_arcsec": -19.1
+      },
+      {
+        "day": "Jan 11",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 8, "sec": 25.7},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 7, "sec": 43.4},
+        "longitude_diff_arcsec": -42.3,
+        "latitude_observed": null,
+        "latitude_calculated": null,
+        "latitude_diff_arcsec": null
+      },
+      {
+        "day": "Jan 13",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 9, "sec": 58.0},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 9, "sec": 38.9},
+        "longitude_diff_arcsec": -19.1,
+        "latitude_observed": {"deg": 2, "min": 16, "sec": 49.0},
+        "latitude_calculated": {"deg": 2, "min": 16, "sec": 21.0},
+        "latitude_diff_arcsec": -28.0
+      },
+      {
+        "day": "Jan 14",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 12, "sec": 1.6},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 11, "sec": 32.6},
+        "longitude_diff_arcsec": -29.0,
+        "latitude_observed": {"deg": 2, "min": 12, "sec": 47.1},
+        "latitude_calculated": {"deg": 2, "min": 12, "sec": 23.2},
+        "latitude_diff_arcsec": -23.9
+      },
+      {
+        "day": "Jan 19",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 25, "sec": 49.4},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 25, "sec": 51.5},
+        "longitude_diff_arcsec": 2.1,
+        "latitude_observed": {"deg": 1, "min": 53, "sec": 28.3},
+        "latitude_calculated": {"deg": 1, "min": 53, "sec": 1.3},
+        "latitude_diff_arcsec": -27.0
+      },
+      {
+        "day": "Jan 21",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 34, "sec": 21.8},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 34, "sec": 23.4},
+        "longitude_diff_arcsec": 1.6,
+        "latitude_observed": {"deg": 1, "min": 45, "sec": 58.9},
+        "latitude_calculated": {"deg": 1, "min": 45, "sec": 31.6},
+        "latitude_diff_arcsec": -27.3
+      },
+      {
+        "day": "Jan 22",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 39, "sec": 1.8},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 39, "sec": 6.7},
+        "longitude_diff_arcsec": 4.9,
+        "latitude_observed": {"deg": 1, "min": 42, "sec": 18.7},
+        "latitude_calculated": {"deg": 1, "min": 41, "sec": 51.3},
+        "latitude_diff_arcsec": -27.4
+      },
+      {
+        "day": "Jan 23",
+        "longitude_observed": {"sign": 1, "deg": 23, "min": 41, "sec": 15.6},
+        "longitude_calculated": {"sign": 1, "deg": 23, "min": 44, "sec": 17.4},
+        "longitude_diff_arcsec": 1.8,
+        "latitude_observed": {"deg": 1, "min": 38, "sec": 39.2},
+        "latitude_calculated": {"deg": 1, "min": 38, "sec": 12.3},
+        "latitude_diff_arcsec": -26.9
+      },
+      {
+        "day": "Jan 28",
+        "longitude_observed": {"sign": 1, "deg": 24, "min": 15, "sec": 16.0},
+        "longitude_calculated": {"sign": 1, "deg": 24, "min": 15, "sec": 28.1},
+        "longitude_diff_arcsec": 12.1,
+        "latitude_observed": {"deg": 1, "min": 20, "sec": 58.7},
+        "latitude_calculated": {"deg": 1, "min": 20, "sec": 32.0},
+        "latitude_diff_arcsec": -26.7
+      },
+      {
+        "day": "Jan 30",
+        "longitude_observed": {"sign": 1, "deg": 24, "min": 30, "sec": 5.4},
+        "longitude_calculated": {"sign": 1, "deg": 24, "min": 30, "sec": 23.0},
+        "longitude_diff_arcsec": 17.6,
+        "latitude_observed": {"deg": 1, "min": 14, "sec": 5.3},
+        "latitude_calculated": {"deg": 1, "min": 13, "sec": 43.5},
+        "latitude_diff_arcsec": -21.8
+      },
+      {
+        "day": "Jan 31",
+        "longitude_observed": {"sign": 1, "deg": 24, "min": 38, "sec": 8.6},
+        "longitude_calculated": {"sign": 1, "deg": 24, "min": 38, "sec": 20.5},
+        "longitude_diff_arcsec": 11.9,
+        "latitude_observed": {"deg": 1, "min": 10, "sec": 45.0},
+        "latitude_calculated": {"deg": 1, "min": 10, "sec": 22.4},
+        "latitude_diff_arcsec": -22.6
+      },
+      {
+        "day": "Feb 1",
+        "longitude_observed": {"sign": 1, "deg": 24, "min": 46, "sec": 19.6},
+        "longitude_calculated": {"sign": 1, "deg": 24, "min": 46, "sec": 38.8},
+        "longitude_diff_arcsec": 18.4,
+        "latitude_observed": {"deg": 1, "min": 7, "sec": 23.8},
+        "latitude_calculated": {"deg": 1, "min": 7, "sec": 3.6},
+        "latitude_diff_arcsec": -20.2
+      },
+      {
+        "day": "Feb 2",
+        "longitude_observed": {"sign": 1, "deg": 24, "min": 54, "sec": 55.6},
+        "longitude_calculated": {"sign": 1, "deg": 24, "min": 55, "sec": 12.8},
+        "longitude_diff_arcsec": 17.2,
+        "latitude_observed": {"deg": 1, "min": 4, "sec": 0.7},
+        "latitude_calculated": {"deg": 1, "min": 3, "sec": 47.0},
+        "latitude_diff_arcsec": -13.7
+      },
+      {
+        "day": "Feb 5",
+        "longitude_observed": {"sign": 1, "deg": 25, "min": 22, "sec": 43.5},
+        "longitude_calculated": {"sign": 1, "deg": 25, "min": 22, "sec": 52.8},
+        "longitude_diff_arcsec": 9.3,
+        "latitude_observed": {"deg": 0, "min": 54, "sec": 19.0},
+        "latitude_calculated": {"deg": 0, "min": 54, "sec": 9.6},
+        "latitude_diff_arcsec": -9.3
+      },
+      {
+        "day": "Feb 8",
+        "longitude_observed": {"sign": 1, "deg": 25, "min": 53, "sec": 17.9},
+        "longitude_calculated": {"sign": 1, "deg": 25, "min": 53, "sec": 15.6},
+        "longitude_diff_arcsec": -2.3,
+        "latitude_observed": {"deg": 0, "min": 44, "sec": 42.7},
+        "latitude_calculated": {"deg": 0, "min": 44, "sec": 50.9},
+        "latitude_diff_arcsec": 8.2
+      },
+      {
+        "day": "Feb 11",
+        "longitude_observed": {"sign": 1, "deg": 26, "min": 26, "sec": 26.1},
+        "longitude_calculated": {"sign": 1, "deg": 26, "min": 26, "sec": 24.8},
+        "longitude_diff_arcsec": -1.3,
+        "latitude_observed": {"deg": 0, "min": 35, "sec": 47.9},
+        "latitude_calculated": {"deg": 0, "min": 35, "sec": 50.4},
+        "latitude_diff_arcsec": 2.5
+      }
+    ]
+  },
+
+  "appendix_oriani_parabola": {
+    "computed_by": "Barnaba Oriani (Milan)",
+    "orbit_type": "parabola",
+    "ascending_node": "2s 21° 48'",
+    "inclination": "9° 33'",
+    "perihelion_longitude": "4s 10° 16'",
+    "perihelion_distance_AU": 2.1045,
+    "perihelion_passage": "1801 June 21.07"
+  },
+
+  "appendix_anonymous_parabola": {
+    "computed_by": "Unknown astronomer",
+    "orbit_type": "parabola",
+    "ascending_node": "2s 20° 50'",
+    "inclination": "9° 41'",
+    "perihelion_longitude": "4s 8° 38' 25\"",
+    "distance_from_sun_AU": 2.21883,
+    "perihelion_passage": "1801 June 30, 19h 1m"
+  },
+
+  "appendix_anonymous_circle": {
+    "computed_by": "Same unknown astronomer",
+    "orbit_type": "circle",
+    "radius_AU": 2.74,
+    "epoch_1801_longitude": "2s 8° 16' 20\"",
+    "ascending_node": "2s 20° 15' 0\"",
+    "inclination": "11° 21'",
+    "sidereal_revolution_years": 4.5,
+    "max_error": "2' 30\""
+  },
+
+  "appendix_burckhardt_ellipse": {
+    "computed_by": "Johann Karl Burckhardt",
+    "orbit_type": "ellipse",
+    "ascending_node": "2s 20° 58' 30\"",
+    "inclination": "10° 47' 0\"",
+    "aphelion_longitude": "2s 8° 59' 37\"",
+    "aphelion_passage": "1801 January 1.3328",
+    "eccentricity": 0.0364,
+    "log_semi_major_axis": 0.04106586,
+    "sidereal_revolution_years": 4.13
+  },
+
+  "corrections_to_right_ascension": {
+    "description": "Piazzi's final corrections after rigorous re-examination",
+    "subtract_1.5_arcsec": ["Jan 1", "Jan 2", "Jan 3", "Jan 4"],
+    "add_1.5_arcsec": ["Jan 10", "Jan 11", "Jan 14", "Jan 19", "Jan 21", "Jan 23", "Jan 28", "Jan 30", "Jan 31", "Feb 1"],
+    "subtract_3_arcsec": ["Feb 5", "Feb 8"]
+  }
+};
+
 async function renderCeresAstronomy() {
     const sliderSigma = document.getElementById('astro-sigma');
     if (!sliderSigma) return;
