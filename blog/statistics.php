@@ -58,12 +58,12 @@ Binomial coefficients, written as $\binom{n}{k}$, represent the number of ways t
 
 $$
 \begin{array}{c}
-    n=0: & 1 \\
-    n=1: & 1 \quad 1 \\
-    n=2: & 1 \quad 2 \quad 1 \\
-    n=3: & 1 \quad 3 \quad 3 \quad 1 \\
-    n=4: & 1 \quad 4 \quad 6 \quad 4 \quad 1 \\
-    n=5: & 1 \quad 5 \quad 10 \quad 10 \quad 5 \quad 1 \\
+    n=0: & 1 \\\\
+    n=1: & 1 \quad 1 \\\\
+    n=2: & 1 \quad 2 \quad 1 \\\\
+    n=3: & 1 \quad 3 \quad 3 \quad 1 \\\\
+    n=4: & 1 \quad 4 \quad 6 \quad 4 \quad 1 \\\\
+    n=5: & 1 \quad 5 \quad 10 \quad 10 \quad 5 \quad 1 \\\\
 \end{array}
 $$
 
