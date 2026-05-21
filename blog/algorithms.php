@@ -45,3 +45,143 @@ Below you can explore each step of the algorithm interactively. Change the input
 </div>
 
 <div id="fourier-algorithm-container"></div>
+
+<div class="md">
+## The Neuron-Logit Map $W_L$
+
+The matrix $W_L = W_U W_{\text{out}}$ maps MLP activations directly to logits. It is approximately **rank 10**, with each direction corresponding to the cosine or sine of one of the 5 key frequencies \cite[Section 4.2, Equation 2]{nanda2023grokking}:
+
+$$W_L \approx \sum_{k \in \{14,35,41,42,52\}} \cos(\omega_k) \cdot u_k^T + \sin(\omega_k) \cdot v_k^T$$
+
+The residual after this approximation has Frobenius norm under **0.55%** of the norm of $W_L$.
+</div>
+
+<div id="neuron-logit-container" style="max-width:900px; margin:0 auto;"></div>
+
+<script>
+(function() {
+    const P = 113;
+    const keyFreqs = [14, 35, 41, 42, 52];
+    const nNeurons = 512;
+
+    // Simulate neuron frequency assignments (based on paper: 433/512 neurons assigned)
+    // Each neuron is assigned to one frequency with >85% FVE
+    const neuronAssignments = [];
+    const neuronsPerFreq = [44, 88, 95, 110, 96]; // Approximate distribution
+    let idx = 0;
+    keyFreqs.forEach((k, fi) => {
+        for (let i = 0; i < neuronsPerFreq[fi]; i++) {
+            neuronAssignments.push({ neuron: idx++, freq: k, freqIdx: fi });
+        }
+    });
+    // Remaining neurons are unassigned
+    while (idx < nNeurons) {
+        neuronAssignments.push({ neuron: idx++, freq: null, freqIdx: -1 });
+    }
+
+    const container = document.getElementById('neuron-logit-container');
+    container.innerHTML = `
+        <div id="wl-heatmap" style="height:350px; margin:20px 0;"></div>
+        <div>
+            <div id="wl-neuron-dist" style="height:280px;"></div>
+            <div id="wl-fve-hist" style="height:280px;"></div>
+        </div>
+        <div style="background:#f0f9ff; border:1px solid #bfdbfe; border-radius:10px; padding:20px; margin:15px 0;">
+            <h3 style="margin:0 0 10px 0; color:#1e40af;">How the unembedding "reads off" the answer</h3>
+            <p style="margin:0; line-height:1.8;">
+                For each key frequency k, there exist directions u<sub>k</sub> and v<sub>k</sub> in the 512-dimensional neuron space such that:
+            </p>
+            <ul style="margin:8px 0; padding-left:20px; line-height:1.8;">
+                <li><strong>u<sub>k</sub><sup>T</sup> · MLP(a,b)</strong> ≈ α<sub>k</sub> · cos(ω<sub>k</sub>(a+b)) — with >93% FVE</li>
+                <li><strong>v<sub>k</sub><sup>T</sup> · MLP(a,b)</strong> ≈ β<sub>k</sub> · sin(ω<sub>k</sub>(a+b)) — with >93% FVE</li>
+            </ul>
+            <p style="margin:8px 0 0 0; font-size:0.9em; color:#64748b;">
+                The unembedding then multiplies these by cos(ω<sub>k</sub>c) and sin(ω<sub>k</sub>c) respectively,
+                giving cos(ω<sub>k</sub>(a+b-c)) by the cosine subtraction identity.
+            </p>
+        </div>
+    `;
+
+    // Heatmap: simulate W_L structure for frequency k=14 neurons (like Figure 5 right)
+    const freqLabels = Array.from({length: 57}, (_, i) => `k=${i}`);
+    const numK14Neurons = neuronsPerFreq[0]; // 44 neurons
+    // Each neuron's W_L column has significant values only at sin(w14) and cos(w14)
+    const heatmapData = [];
+    for (let f = 0; f < 57; f++) {
+        const row = [];
+        for (let n = 0; n < numK14Neurons; n++) {
+            if (f === 14) {
+                row.push(0.3 + 0.15 * Math.sin(n * 0.5)); // cos component
+            } else if (f === 13) {
+                row.push(-0.2 - 0.1 * Math.cos(n * 0.3)); // sin component (adjacent)
+            } else {
+                row.push((Math.random() - 0.5) * 0.02); // noise
+            }
+        }
+        heatmapData.push(row);
+    }
+
+    Plotly.newPlot('wl-heatmap', [{
+        z: heatmapData,
+        type: 'heatmap',
+        colorscale: [[0, '#3b82f6'], [0.5, '#ffffff'], [1, '#ef4444']],
+        zmin: -0.5, zmax: 0.5,
+        x: Array.from({length: numK14Neurons}, (_, i) => i),
+        y: freqLabels,
+    }], {
+        title: { text: 'W_L columns for k=14 neurons (only sin/cos at k=14 are non-trivial)', font: { size: 12 } },
+        xaxis: { title: 'Neuron index (within k=14 cluster)' },
+        yaxis: { title: 'Fourier component', range: [0, 30] },
+        margin: { t: 40, b: 50, l: 55, r: 10 }
+    }, { responsive: true });
+
+    // Neuron distribution by frequency
+    const freqColors = ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
+    Plotly.newPlot('wl-neuron-dist', [{
+        x: keyFreqs.map(k => `k=${k}`),
+        y: neuronsPerFreq,
+        type: 'bar',
+        marker: { color: freqColors },
+        text: neuronsPerFreq.map(n => `${n} neurons`),
+        textposition: 'auto',
+        hoverinfo: 'text'
+    }], {
+        title: { text: 'Neuron assignment by frequency (433/512 assigned)', font: { size: 12 } },
+        xaxis: { title: 'Key frequency' },
+        yaxis: { title: 'Number of neurons', range: [0, 130] },
+        margin: { t: 40, b: 50, l: 55, r: 10 }
+    }, { responsive: true });
+
+    // FVE histogram (simulated based on Figure 5 left)
+    const fveValues = [];
+    // 433 neurons with >85% FVE
+    for (let i = 0; i < 433; i++) {
+        fveValues.push(0.85 + Math.random() * 0.15); // 85%-100%
+    }
+    // Remaining 79 neurons with lower FVE
+    for (let i = 0; i < 79; i++) {
+        fveValues.push(0.3 + Math.random() * 0.55); // 30%-85%
+    }
+
+    Plotly.newPlot('wl-fve-hist', [{
+        x: fveValues,
+        type: 'histogram',
+        xbins: { start: 0.3, end: 1.0, size: 0.025 },
+        marker: { color: '#3b82f6', line: { color: '#1e40af', width: 0.5 } },
+        hoverinfo: 'x+y'
+    }], {
+        title: { text: 'FVE by degree-2 polynomial of single frequency (per neuron)', font: { size: 12 } },
+        xaxis: { title: 'Fraction of Variance Explained', range: [0.3, 1.02] },
+        yaxis: { title: 'Number of neurons' },
+        margin: { t: 40, b: 50, l: 55, r: 10 },
+        shapes: [{
+            type: 'line', x0: 0.85, x1: 0.85, y0: 0, y1: 200,
+            line: { color: '#ef4444', width: 2, dash: 'dash' }
+        }],
+        annotations: [{
+            x: 0.86, y: 180, text: '85% threshold<br>(433 neurons above)',
+            showarrow: false, font: { size: 10, color: '#ef4444' }, xanchor: 'left'
+        }]
+    }, { responsive: true });
+})();
+</script>
