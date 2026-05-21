@@ -198,21 +198,35 @@ function renderFourierAlgorithm(container, options = {}) {
     steps.push({ title: 'What is a Frequency k?', render() {
         const k = FREQS[0];
         const wk = 2 * Math.PI * k / P;
+        const baseAngle = 2 * Math.PI / P;
 
         content.innerHTML = `
             <h2 style="text-align:center; color:#1e293b;">Step 1: What is a Frequency ${mathInline('k')}?</h2>
             <p style="text-align:center; color:#64748b;">The fundamental idea: represent numbers as angles on a circle</p>
 
             ${card('The Core Formula', `
-                ${mathBlock(`\\omega_k = \\underbrace{\\frac{2\\pi}{P}}_{\\text{base angle} = \\frac{2\\pi}{${P}} = ${(2*Math.PI/P).toFixed(6)}} \\cdot \\underbrace{k}_{\\text{frequency index}}`)}
+                ${mathBlock(`\\omega_k = \\underbrace{\\frac{2\\pi}{P}}_{\\text{base angle} = \\frac{2\\pi}{${P}} = ${baseAngle.toFixed(6)}} \\cdot \\underbrace{k}_{\\text{frequency index}}`)}
                 <p style="text-align:center;">For ${mathInline(`k = ${k}`)}, ${mathInline(`P = ${P}`)}:</p>
-                ${mathBlock(`\\omega_{${k}} = \\frac{2\\pi}{${P}} \\cdot ${k} = ${(2*Math.PI/P).toFixed(6)} \\cdot ${k} = ${wk.toFixed(6)} \\text{ rad}`)}
+                ${mathBlock(`\\omega_{${k}} = \\frac{2\\pi}{${P}} \\cdot ${k} = ${baseAngle.toFixed(6)} \\cdot ${k} = ${wk.toFixed(6)} \\text{ rad}`)}
             `)}
+
+            ${card('From 0.055603... to radians: step by step', `
+                <p>The value ${mathInline(`${baseAngle.toFixed(6)}`)} <strong>is already in radians</strong>. Here's why:</p>
+                <ol style="padding-left:20px;">
+                    <li><strong>Start:</strong> ${mathInline(`2\\pi = 6.283185\\ldots`)} radians (one full circle)</li>
+                    <li><strong>Divide by P:</strong> ${mathInline(`\\frac{6.283185\\ldots}{${P}} = ${baseAngle.toFixed(6)}`)} rad — this is the <em>angular step per number</em></li>
+                    <li><strong>Multiply by k:</strong> ${mathInline(`${baseAngle.toFixed(6)} \\times ${k} = ${wk.toFixed(6)}`)} rad — this is the <em>angular velocity</em> at frequency ${k}</li>
+                </ol>
+                <p>The unit is <strong>radians throughout</strong>. The multiplication by ${mathInline('k')} simply scales how far around the circle each number advances.</p>
+                <div style="background:#f0f9ff; border-radius:8px; padding:12px; margin-top:10px;">
+                    ${mathBlock(`\\underbrace{\\frac{2\\pi}{${P}}}_{\\substack{= ${baseAngle.toFixed(6)} \\text{ rad}\\\\\\text{(base step size)}}} \\;\\times\\; \\underbrace{${k}}_{\\text{frequency index}} \\;=\\; \\underbrace{${wk.toFixed(6)} \\text{ rad}}_{\\substack{\\text{angular velocity } \\omega_{${k}}\\\\\\text{(rad per number)}}}`)}
+                </div>
+            `, '#f59e0b')}
 
             ${card('What does this mean?', `
                 <p>${mathInline('\\omega_k')} is the <strong>angular velocity</strong>. It determines how fast a point rotates around the unit circle as we count from 0 to ${P-1}.</p>
                 <ul>
-                    <li>${mathInline('k=1')}: Each number advances the point by ${mathInline(`\\frac{2\\pi}{${P}} = ${(2*Math.PI/P).toFixed(5)}`)} rad (1 full rotation total)</li>
+                    <li>${mathInline('k=1')}: Each number advances the point by ${mathInline(`\\frac{2\\pi}{${P}} = ${baseAngle.toFixed(5)}`)} rad (1 full rotation total)</li>
                     <li>${mathInline(`k=${k}`)}: Each number advances by ${mathInline(`${wk.toFixed(5)}`)} rad (<strong>${k} full rotations</strong> from 0 to ${P-1})</li>
                 </ul>
                 <p>Think of it like a clock hand: ${mathInline('k')} controls how many times the hand goes around as you count through all numbers.</p>
@@ -314,6 +328,33 @@ function renderFourierAlgorithm(container, options = {}) {
                 ${mathBlock(`\\text{Check: } \\sin(\\underbrace{${angS.toFixed(4)}}_{${wk.toFixed(4)} \\times ${a+b}}) = ${sinS.toFixed(5)} \\quad \\checkmark`)}
             `, '#f59e0b')}
 
+            ${card('How the Attention Heads Compute Pairwise Products', `
+                <p>The 4 attention heads each produce a <strong>degree-2 product</strong> of Fourier embeddings. Here's the mechanism:</p>
+
+                <p><strong>Step A: Attention Pattern (scalar weight)</strong></p>
+                <p>For head ${mathInline('j')}, the attention from "=" to position 0 (token ${mathInline('a')}) is:</p>
+                ${mathBlock(`A^j_0 = \\sigma\\!\\left(\\underbrace{C^j[a] - C^j[b]}_{\\text{difference of lookup scores}}\\right) \\approx 0.5 + \\underbrace{\\alpha_j}_{\\text{learned}} \\cdot (\\cos(\\omega_{k_j} a) - \\cos(\\omega_{k_j} b)) + \\underbrace{\\beta_j}_{\\text{learned}} \\cdot (\\sin(\\omega_{k_j} a) - \\sin(\\omega_{k_j} b))`)}
+                <p style="font-size:0.88em; color:#64748b;">The softmax over 2 positions reduces to a sigmoid ${mathInline('\\sigma')}, which operates in a near-linear regime (97.5% FVE with linear fit).</p>
+
+                <p><strong>Step B: OV Circuit (value output)</strong></p>
+                <p>The OV circuit ${mathInline('W^j_O W^j_V x^{(0)}')} outputs a vector concentrated on a single frequency's sin/cos:</p>
+                ${mathBlock(`\\text{OV}^j(\\text{pos } i) \\approx \\gamma_j \\cdot \\cos(\\omega_{k_j} \\cdot t_i) + \\delta_j \\cdot \\sin(\\omega_{k_j} \\cdot t_i)`)}
+
+                <p><strong>Step C: The Product (attention × value)</strong></p>
+                <p>The head output is attention weight × OV output. Since both are functions of a single frequency:</p>
+                ${mathBlock(`\\text{Head}^j = \\underbrace{A^j_0}_{\\substack{\\text{attention weight}\\\\\\propto \\cos(\\omega_k a) \\text{ or } \\sin(\\omega_k a)}} \\times \\underbrace{\\text{OV}^j(\\text{pos } 1)}_{\\substack{\\text{value output}\\\\\\propto \\cos(\\omega_k b) \\text{ or } \\sin(\\omega_k b)}} \\;\\Rightarrow\\; \\text{degree-2 product}`)}
+
+                <p><strong>Result: Each head computes one pairwise product:</strong></p>
+                <table style="width:100%; border-collapse:collapse; font-size:0.88em; margin:8px 0;">
+                    <tr style="background:#f8fafc;"><th style="padding:6px; border:1px solid #e2e8f0;">Head</th><th style="padding:6px; border:1px solid #e2e8f0;">Attention pattern ∝</th><th style="padding:6px; border:1px solid #e2e8f0;">OV output ∝</th><th style="padding:6px; border:1px solid #e2e8f0;">Product</th></tr>
+                    <tr><td style="padding:6px; border:1px solid #e2e8f0; text-align:center;">0</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\cos(\\omega_k a)')}</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\cos(\\omega_k b)')}</td><td style="padding:6px; border:1px solid #e2e8f0; font-weight:bold;">${mathInline('\\cos(\\omega_k a)\\cos(\\omega_k b)')}</td></tr>
+                    <tr><td style="padding:6px; border:1px solid #e2e8f0; text-align:center;">1</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\sin(\\omega_k a)')}</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\sin(\\omega_k b)')}</td><td style="padding:6px; border:1px solid #e2e8f0; font-weight:bold;">${mathInline('\\sin(\\omega_k a)\\sin(\\omega_k b)')}</td></tr>
+                    <tr><td style="padding:6px; border:1px solid #e2e8f0; text-align:center;">2</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\sin(\\omega_k a)')}</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\cos(\\omega_k b)')}</td><td style="padding:6px; border:1px solid #e2e8f0; font-weight:bold;">${mathInline('\\sin(\\omega_k a)\\cos(\\omega_k b)')}</td></tr>
+                    <tr><td style="padding:6px; border:1px solid #e2e8f0; text-align:center;">3</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\cos(\\omega_k a)')}</td><td style="padding:6px; border:1px solid #e2e8f0;">${mathInline('\\sin(\\omega_k b)')}</td><td style="padding:6px; border:1px solid #e2e8f0; font-weight:bold;">${mathInline('\\cos(\\omega_k a)\\sin(\\omega_k b)')}</td></tr>
+                </table>
+                <p style="font-size:0.85em; color:#64748b;">Note: In practice, heads 0 and 2 compute degree-2 products while heads 1 and 3 amplify key frequencies in the residual stream (their attention patterns nearly sum to 1).</p>
+            `, '#8b5cf6')}
+
             ${plotDiv('step3-circle', '340px')}
 
             ${card('How the network layers implement this', `
@@ -333,7 +374,7 @@ function renderFourierAlgorithm(container, options = {}) {
                         <p style="margin:5px 0 0 0; font-size:0.9em; color:#64748b;">ReLU neurons approximate the subtraction/addition by learning appropriate weights. Pairs of neurons can approximate products via ${mathInline('\\text{ReLU}(x+y)^2 - \\text{ReLU}(x-y)^2 \\propto xy')}.</p>
                     </td></tr>
                 </table>
-            `, '#8b5cf6')}
+            `, '#059669')}
         `;
         renderMath();
 
@@ -432,7 +473,7 @@ function renderFourierAlgorithm(container, options = {}) {
         renderMath();
 
         Plotly.newPlot('step5-plot', [
-            { x: tokens, y: signal, mode: 'lines', line: { color: '#3b82f6', width: 1.2 }, showlegend: false },
+            { x: tokens, y: signal, mode: 'lines', line: { color: '#3b82f6', width: 1.2 }, name: `cos(w_${k}*(a+b-c))` },
             { x: highPeaks, y: highPeaks.map(c => signal[c]), mode: 'markers', marker: { size: 7, color: '#f59e0b' }, name: `${highPeaks.length} peaks > 0.9` },
             { x: [correctAnswer], y: [1.0], mode: 'markers', marker: { size: 14, color: '#ef4444', symbol: 'star' }, name: `Correct: c*=${correctAnswer}` },
         ], {
@@ -443,7 +484,7 @@ function renderFourierAlgorithm(container, options = {}) {
                 { type: 'line', x0: 0, x1: P, y0: 0.9, y1: 0.9, line: { color: '#f59e0b', width: 1, dash: 'dot' } },
                 { type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }
             ],
-            showlegend: true, legend: { x: 0.02, y: -0.25, orientation: 'h' }
+            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
         }, { responsive: true });
     }});
 
@@ -536,7 +577,7 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { title: 'Total logit = sum of cos(wk*(a+b-c))' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
             shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }],
-            showlegend: true, legend: { x: 0.02, y: -0.25, orientation: 'h' }
+            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
         }, { responsive: true });
     }});
 
@@ -574,7 +615,7 @@ function renderFourierAlgorithm(container, options = {}) {
             xaxis: { title: 'Candidate output token c', range: [-2, P + 2] },
             yaxis: { title: 'Probability [%]', rangemode: 'tozero' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
-            showlegend: true, legend: { x: 0.02, y: -0.25, orientation: 'h' }
+            showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
         }, { responsive: true });
     }});
 
@@ -591,6 +632,10 @@ function renderFourierAlgorithm(container, options = {}) {
             ${card('(2) ATTENTION: Bringing information together', `
                 <p>The 4 attention heads move information from positions a and b to the output position, creating products:</p>
                 ${mathBlock(`\\underbrace{\\cos(\\omega_k a) \\cdot \\cos(\\omega_k b)}_{\\text{head 0: cos-cos product}}, \\quad \\underbrace{\\sin(\\omega_k a) \\cdot \\sin(\\omega_k b)}_{\\text{head 1: sin-sin product}}, \\quad \\underbrace{\\sin(\\omega_k a) \\cdot \\cos(\\omega_k b)}_{\\text{head 2: sin-cos product}}`)}
+
+                <p><strong>How each head produces its product:</strong></p>
+                ${mathBlock(`\\text{Head}^j \\;=\\; \\underbrace{A^j_0}_{\\substack{\\text{attention weight}\\\\= \\sigma(C^j[a] - C^j[b])\\\\\\approx 0.5 + \\alpha_j(\\cos(\\omega_{k_j} a) - \\cos(\\omega_{k_j} b))}} \\;\\times\\; \\underbrace{W^j_O W^j_V x^{(0)}}_{\\substack{\\text{OV circuit output}\\\\\\propto \\cos(\\omega_{k_j} b) \\text{ or } \\sin(\\omega_{k_j} b)}}`)}
+                <p style="font-size:0.88em; color:#64748b;">The softmax over 2 positions reduces to a sigmoid σ, which operates in a near-linear regime (97.5% FVE with linear fit). The product of the linear attention weight × OV output gives a degree-2 polynomial.</p>
             `, '#8b5cf6')}
 
             ${card('(3) MLP: Applying addition theorems', `
@@ -675,8 +720,8 @@ function renderFourierAlgorithm(container, options = {}) {
             ], {
                 xaxis: { title: 'Candidate token c', range: [-2, P + 2] },
                 yaxis: { title: 'Logit' },
-                margin: { t: 20, b: 50,                 l: 50, r: 20 },
-                showlegend: true, legend: { x: 0.55, y: 0.95 }
+                margin: { t: 20, b: 50, l: 50, r: 20 },
+                showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
             });
 
             const infoEl = document.getElementById('play-info');
@@ -717,9 +762,9 @@ function renderFourierAlgorithm(container, options = {}) {
 
             ${card('4. GROKKING: Sudden Understanding', `
                 <p><strong>Phase 1 (Memorization):</strong> The network memorizes training data. Test accuracy stays at ~0%.</p>
-                <p><strong>Phase 2 (Generalization):</strong> Weight decay penalizes large weights. The network is forced to find a <strong>compact solution</strong>.</p>
-                <p><strong>The Moment:</strong> Suddenly it "discovers" the Fourier algorithm. Test accuracy jumps from ~0% to ~100% in a few hundred steps ${cite('(Power et al., 2022)', 'grokking')}!</p>
-                <p>This phenomenon is called <strong>"Grokking"</strong>: sudden understanding after prolonged memorization.</p>
+                <p><strong>Phase 2 (Circuit Formation):</strong> Weight decay penalizes large weights. The Fourier multiplication circuit forms gradually while train/test loss stay flat.</p>
+                <p><strong>Phase 3 (Cleanup):</strong> The memorization components are shed. Test accuracy jumps from ~0% to ~100% in a few hundred steps ${cite('(Power et al., 2022)', 'grokking')}!</p>
+                <p>This phenomenon is called <strong>"Grokking"</strong>: sudden understanding after prolonged memorization. The key insight from Nanda et al. is that grokking is <em>not</em> sudden — the generalizing circuit forms continuously during Phase 2, well before the test accuracy jump.</p>
             `, '#8b5cf6')}
 
             <div style="text-align:center; padding:20px; background:#ecfdf5; border-radius:12px; margin-top:20px;">
@@ -774,7 +819,7 @@ function renderFourierAlgorithm(container, options = {}) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	if (typeof renderFourierAlgorithm === 'function') {
-		renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 });
-	}
+    if (typeof renderFourierAlgorithm === 'function') {
+        renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 });
+    }
 });
