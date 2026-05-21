@@ -1,4 +1,11 @@
 window.bibData = {
+	"garg2022incontext": {
+		title: "What Can Transformers Learn In-Context? A Case Study of Simple Function Classes",
+		author: "Shivam Garg, Dimitris Tsipras, Percy Liang, Gregory Valiant",
+		year: 2022,
+		url: "https://arxiv.org/abs/2208.01066"
+	},
+
 	"olsson2022induction": {
 		title: "In-context Learning and Induction Heads",
 		author: "Catherine Olsson, Nelson Elhage, Neel Nanda, Nicholas Joseph, Nova DasSarma, Tom Henighan, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, Dawn Drain, Deep Ganguli, Zac Hatfield-Dodds, Danny Hernandez, Scott Johnston, Andy Jones, Jackson Kernion, Liane Lovitt, Kamal Ndousse, Dario Amodei, Tom Brown, Jack Clark, Jared Kaplan, Sam McCandlish, Chris Olah",
