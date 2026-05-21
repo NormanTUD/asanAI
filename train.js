@@ -382,6 +382,8 @@ async function get_fit_data () {
 		var percentage = parse_int((current_epoch / max_number_epochs) * 100);
 		$("#training_progressbar>div").css("width", percentage + "%");
 		confusion_matrix_and_grid_cache = {};
+
+		visualizeModelOrganism(model, $("neural_organism")[0]);
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -533,6 +535,8 @@ async function get_fit_data () {
 		reset_neuron_outputs();
 
 		//await visualizeModelBends();
+
+		visualizeModelOrganism(model, $("neural_organism")[0]);
 	};
 
 	callbacks["onTrainEnd"] = async function () {

@@ -28,6 +28,7 @@
 			</div>
 		</div>
 	</div>
+	<div id="neural_organism"></div>
 	<div id="confusion_matrix_training"></div>
 </div>
 
