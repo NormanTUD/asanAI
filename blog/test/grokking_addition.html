@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grokking Explained: How Neural Networks Learn Modular Addition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.6em;
+            margin: 40px 0 15px;
+            color: #667eea;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+            color: #9b8ec4;
+        }
+        .section {
+            background: #12122a;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .explanation {
+            background: #1a1a35;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95em;
+        }
+        .math-note {
+            background: #1a2a1a;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9em;
+        }
+        canvas {
+            display: block;
+            margin: 15px auto;
+            border-radius: 10px;
+            background: #0d0d20;
+            border: 1px solid #333;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #0d0d20;
+            border-radius: 10px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        label {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+        input[type="range"] {
+            width: 150px;
+            accent-color: #667eea;
+        }
+        input[type="number"] {
+            width: 70px;
+            background: #1a1a35;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 5px 8px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        .value-display {
+            font-family: monospace;
+            color: #667eea;
+            font-size: 1.1em;
+            min-width: 40px;
+            text-align: center;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 800px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+        .phase-indicator {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            padding: 10px;
+            background: #0d0d20;
+            border-radius: 8px;
+        }
+        .phase {
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+        .phase.active {
+            opacity: 1;
+        }
+        .phase-memo { background: #ff6b6b33; border: 1px solid #ff6b6b; }
+        .phase-circuit { background: #feca5733; border: 1px solid #feca57; }
+        .phase-cleanup { background: #48dbfb33; border: 1px solid #48dbfb; }
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #0a0a1aee;
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            border-bottom: 1px solid #333;
+            flex-wrap: wrap;
+        }
+        .nav a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.85em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        .nav a:hover {
+            background: #667eea22;
+        }
+        .spacer {
+            height: 60px;
+        }
+        .highlight {
+            color: #feca57;
+            font-weight: bold;
+        }
+        .interactive-result {
+            background: #1a1a35;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            min-height: 40px;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 4px;
+            border-radius: 2px;
+        }
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 8px 16px;
+            background: #1a1a35;
+            border: 1px solid #333;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background 0.2s;
+        }
+        .tab.active {
+            background: #667eea33;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <a href="#intro">Intro</a>
+        <a href="#modular">Modular Math</a>
+        <a href="#circle">Circle Trick</a>
+        <a href="#fourier">Fourier</a>
+        <a href="#trig">Trig Identity</a>
+        <a href="#interference">Interference</a>
+        <a href="#grokking">Grokking</a>
+        <a href="#full-algo">Full Algorithm</a>
+    </nav>
+    <div class="spacer"></div>
+
+    <div class="container">
+        <h1>🧠 Grokking: How a Neural Network Learns to Add</h1>
+        
+        <div class="section" id="intro">
+            <h2>What's This Paper About?</h2>
+            <div class="explanation">
+                <p><strong>The Big Question:</strong> Researchers trained a tiny neural network (a transformer) to do modular addition — like clock arithmetic. Something weird happened: the network first <em>memorized</em> all the answers (like a student cramming), then suddenly <em>understood</em> the pattern. This sudden "aha!" moment is called <span class="highlight">grokking</span>.</p>
+                <br>
+                <p><strong>The Discovery:</strong> They cracked open the network and found it learned a beautiful algorithm using <span class="highlight">circles, waves, and trigonometry</span> — converting addition into rotation!</p>
+                <br>
+                <p><strong>What you'll learn here:</strong> Step by step, interactively, how the network turns numbers into points on circles, uses trig identities to add them, and reads off the answer using wave interference.</p>
+            </div>
+        </div>
+
+        <div class="section" id="modular">
+            <h2>Step 0: What is Modular Addition?</h2>
+            <div class="explanation">
+                <p>Modular addition is like a clock. On a 12-hour clock, 10 + 5 = 3 (not 15). The paper uses mod 113 (a prime number), so numbers wrap around at 113.</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Number a</label>
+                    <input type="number" id="mod-a" value="47" min="0" max="112">
+                </div>
+                <div class="control-group">
+                    <label>Number b</label>
+                    <input type="number" id="mod-b" value="89" min="0" max="112">
+                </div>
+                <div class="control-group">
+                    <label>Modulus P</label>
+                    <input type="number" id="mod-p" value="113" min="2" max="200">
+                </div>
+                <button onclick="calculateMod()">Calculate</button>
+            </div>
+            <div class="interactive-result" id="mod-result">
+                Click "Calculate" to see modular addition in action.
+            </div>
+            <canvas id="clock-canvas" width="400" height="400"></canvas>
+            <div class="explanation">
+                <p>The circle above shows numbers 0 to P-1 arranged like a clock. The two inputs are marked, and their sum (mod P) is highlighted. The network needs to learn this "wrapping" behavior!</p>
+            </div>
+        </div>
+
+        <div class="section" id="circle">
+            <h2>Step 1: Mapping Numbers to a Circle (Embedding)</h2>
+            <div class="explanation">
+                <p>The network's first trick: it maps each number to a <span class="highlight">point on a circle</span> using sine and cosine. For a number <em>a</em> and frequency <em>k</em>, it computes:</p>
+                <p style="text-align:center; margin: 10px; font-size: 1.1em;">
+                    x = cos(2πk·a / P) &nbsp;&nbsp;&nbsp; y = sin(2πk·a / P)
+                </p>
+                <p>This is like placing the number at an angle on a circle. Different frequencies <em>k</em> give different "views" of the same number.</p>
+            </div>
+            <div class="math-note">
+                <p><strong>Abitur Connection:</strong> Remember the unit circle? cos(θ) gives the x-coordinate and sin(θ) gives the y-coordinate of a point at angle θ. Here, the angle is proportional to the number <em>a</em>.</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Number a: <span class="value-display" id="circle-a-val">25</span></label>
+                    <input type="range" id="circle-a" min="0" max="112" value="25" oninput="updateCircleViz()">
+                </div>
+                <div class="control-group">
+                    <label>Frequency k: <span class="value-display" id="circle-k-val">14</span></label>
+                    <input type="range" id="circle-k" min="1" max="56" value="14" oninput="updateCircleViz()">
+                </div>
+                <div class="control-group">
+                    <label>P = 113</label>
+                </div>
+            </div>
+            <canvas id="embedding-canvas" width="700" height="350"></canvas>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:#ff6b6b"></div>Point for number a</div>
+                <div class="legend-item"><div class="legend-color" style="background:#48dbfb"></div>All 113 numbers</div>
+                <div class="legend-item"><div class="legend-color" style="background:#feca57"></div>Angle = 2πka/P</div>
+            </div>
+            <div class="interactive-result" id="circle-result"></div>
+        </div>
+
+        <div class="section" id="fourier">
+            <h2>Step 2: Why Fourier? Sparsity in Frequency Space</h2>
+            <div class="explanation">
+                <p>The network doesn't use ALL possible frequencies — it picks just <span class="highlight">5 "key frequencies"</span> (out of 56 possible). In the paper's main model, these are k ∈ {14, 35, 41, 42, 52}.</p>
+                <p>Think of it like a radio: out of all possible stations, the network tunes into just 5 channels that together give it enough information.</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Toggle frequencies (click bars to select)</label>
+                </div>
+                <button onclick="resetFrequencies()">Reset to Paper's Frequencies</button>
+                <button onclick="randomFrequencies()">Random Frequencies</button>
+            </div>
+            <canvas id="fourier-canvas" width="700" height="300"></canvas>
+            <div class="explanation">
+                <p>Click on the frequency bars above to toggle them on/off. The network learned that using just these 5 frequencies is enough to perfectly identify any sum mod 113. Below, see how well the selected frequencies can distinguish the correct answer:</p>
+            </div>
+            <canvas id="interference-preview" width="700" height="200"></canvas>
+            <div class="interactive-result" id="fourier-result">Select frequencies above to see how well they identify the correct sum.</div>
+        </div>
+
+        <div class="section" id="trig">
+            <h2>Step 3: The Core Trick — Trig Identities Compute Addition!</h2>
+            <div class="explanation">
+                <p>Here's the magical insight: the network uses the <span class="highlight">cosine addition formula</span> to turn multiplication of embeddings into addition of the original numbers!</p>
+                <p style="text-align:center; margin: 15px; font-size: 1.1em; color: #feca57;">
+                    cos(α + β) = cos(α)cos(β) − sin(α)sin(β)
+                </p>
+                <p>If α = wk·a and β = wk·b (where wk = 2πk/P), then:</p>
+                <p style="text-align:center; margin: 15px; font-size: 1.05em;">
+                    cos(wk·a)·cos(wk·b) − sin(wk·a)·sin(wk·b) = cos(wk·(a+b))
+                </p>
+                <p><strong>This is how the network computes a+b without ever "adding" directly!</strong> It multiplies the sine/cosine embeddings of a and b to get the sine/cosine of (a+b).</p>
+            </div>
+         
+            <div class="math-note">
+                <p><strong>Abitur Connection:</strong> This is the Additionstheorem you learned! The network's MLP layer computes exactly this formula. The attention layer helps set up the products.</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>a: <span class="value-display" id="trig-a-val">30</span></label>
+                    <input type="range" id="trig-a" min="0" max="112" value="30" oninput="updateTrigViz()">
+                </div>
+                <div class="control-group">
+                    <label>b: <span class="value-display" id="trig-b-val">50</span></label>
+                    <input type="range" id="trig-b" min="0" max="112" value="50" oninput="updateTrigViz()">
+                </div>
+                <div class="control-group">
+                    <label>k: <span class="value-display" id="trig-k-val">14</span></label>
+                    <input type="range" id="trig-k" min="1" max="56" value="14" oninput="updateTrigViz()">
+                </div>
+            </div>
+            <canvas id="trig-canvas" width="700" height="400"></canvas>
+            <div class="interactive-result" id="trig-result"></div>
+            <div class="explanation">
+                <p>Above: The left circle shows the embeddings of <em>a</em> and <em>b</em> separately. The right circle shows the result — the point for (a+b) mod P. The network computed this by multiplying components, not by adding numbers!</p>
+            </div>
+        </div>
+
+        <div class="section" id="interference">
+            <h2>Step 4: Constructive Interference — Reading Off the Answer</h2>
+            <div class="explanation">
+                <p>The final step: for each possible answer c (0 to 112), the network computes:</p>
+                <p style="text-align:center; margin: 10px; font-size: 1.05em;">
+                    score(c) = Σ<sub>k</sub> cos(wk·(a + b − c))
+                </p>
+                <p>When c = a+b mod P, then a+b−c ≡ 0 mod P, so <span class="highlight">all cosines equal 1</span> and add up to a big peak. For wrong answers, the cosines point in different directions and mostly cancel out — <span class="highlight">destructive interference</span>!</p>
+            </div>
+            <div class="math-note">
+                <p><strong>Abitur Connection:</strong> Think of wave superposition from physics! When waves are "in phase" they amplify (constructive interference). When they're out of phase, they cancel (destructive interference). Same principle here!</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>a: <span class="value-display" id="interf-a-val">20</span></label>
+                    <input type="range" id="interf-a" min="0" max="112" value="20" oninput="updateInterference()">
+                </div>
+                <div class="control-group">
+                    <label>b: <span class="value-display" id="interf-b-val">45</span></label>
+                    <input type="range" id="interf-b" min="0" max="112" value="45" oninput="updateInterference()">
+                </div>
+                <div class="control-group">
+                    <label>Num frequencies: <span class="value-display" id="interf-nf-val">5</span></label>
+                    <input type="range" id="interf-nf" min="1" max="10" value="5" oninput="updateInterference()">
+                </div>
+            </div>
+            <canvas id="interference-canvas" width="700" height="350"></canvas>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:#4caf50"></div>Correct answer (peak)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#667eea"></div>Score for each c</div>
+                <div class="legend-item"><div class="legend-color" style="background:#ff6b6b55; height:20px; width:20px; border-radius:3px;"></div>Wrong answers</div>
+            </div>
+            <div class="interactive-result" id="interf-result"></div>
+            
+            <h3>Individual Frequency Contributions</h3>
+            <div class="explanation">
+                <p>Below, see how each individual frequency contributes a cosine wave. At the correct answer, ALL waves peak at 1. Everywhere else, they partially cancel.</p>
+            </div>
+            <canvas id="waves-canvas" width="700" height="300"></canvas>
+        </div>
+
+        <div class="section" id="grokking">
+            <h2>Step 5: The Grokking Phenomenon — Three Phases of Learning</h2>
+            <div class="explanation">
+                <p>Now the big picture: <span class="highlight">how does the network learn this algorithm?</span> Not all at once! Training splits into three phases:</p>
+                <ol style="margin: 10px 0 10px 20px;">
+                    <li><strong style="color:#ff6b6b">Memorization</strong> (early): The network just memorizes training examples like a lookup table</li>
+                    <li><strong style="color:#feca57">Circuit Formation</strong> (middle): The Fourier algorithm gradually forms in the weights, even while test accuracy stays low</li>
+                    <li><strong style="color:#48dbfb">Cleanup</strong> (late): Weight decay removes the memorization, revealing the algorithm — test accuracy suddenly jumps!</li>
+                </ol>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Training Epoch: <span class="value-display" id="epoch-val">0</span></label>
+                    <input type="range" id="epoch-slider" min="0" max="300" value="0" oninput="updateGrokking()">
+                </div>
+                <button onclick="animateGrokking()">▶ Animate Training</button>
+                <button onclick="stopAnimation()">⏹ Stop</button>
+                <div class="control-group">
+                    <label>Speed</label>
+                    <input type="range" id="anim-speed" min="1" max="10" value="5">
+                </div>
+            </div>
+            <div class="phase-indicator">
+                <div class="phase phase-memo" id="phase-memo">📝 Memorization</div>
+                <div class="phase phase-circuit" id="phase-circuit">⚙️ Circuit Formation</div>
+                <div class="phase phase-cleanup" id="phase-cleanup">🧹 Cleanup</div>
+            </div>
+            <canvas id="grokking-canvas" width="700" height="350"></canvas>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background:#ff6b6b"></div>Train Loss</div>
+                <div class="legend-item"><div class="legend-color" style="background:#48dbfb"></div>Test Loss</div>
+                <div class="legend-item"><div class="legend-color" style="background:#feca57"></div>Circuit Strength (hidden progress)</div>
+                <div class="legend-item"><div class="legend-color" style="background:#4caf50"></div>Weight Norm</div>
+            </div>
+            <div class="interactive-result" id="grokking-result">Drag the slider or press Animate to watch training unfold.</div>
+            
+            <h3>Weight Decay: The Key Ingredient</h3>
+            <div class="explanation">
+                <p><strong>Weight decay</strong> is a regularization technique that continuously pushes all weights toward zero. It's like a "simplicity pressure" — the network must justify every weight by how much it helps reduce loss.</p>
+                <p>The memorization solution needs many large weights (one for each training example). The Fourier algorithm needs fewer, more structured weights. So weight decay gradually favors the algorithm over memorization!</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Weight Decay λ: <span class="value-display" id="wd-val">1.0</span></label>
+                    <input type="range" id="wd-slider" min="0" max="50" value="10" oninput="updateWeightDecay()">
+                </div>
+            </div>
+            <canvas id="wd-canvas" width="700" height="250"></canvas>
+            <div class="interactive-result" id="wd-result">Adjust weight decay to see how it affects grokking speed. λ=0 means no grokking!</div>
+        </div>
+
+        <div class="section" id="full-algo">
+            <h2>The Full Algorithm: End-to-End</h2>
+            <div class="explanation">
+                <p>Let's trace through the entire computation for a specific example. Enter two numbers and watch the network process them step by step:</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>a</label>
+                    <input type="number" id="full-a" value="37" min="0" max="112">
+                </div>
+                <div class="control-group">
+                    <label>b</label>
+                    <input type="number" id="full-b" value="78" min="0" max="112">
+                </div>
+                <button onclick="runFullAlgorithm()">Run Algorithm Step by Step</button>
+            </div>
+            <canvas id="full-canvas" width="700" height="500"></canvas>
+            <div class="interactive-result" id="full-result">Click "Run Algorithm" to see the full computation.</div>
+            
+            <h3>Summary of the Algorithm</h3>
+            <div class="explanation">
+                <p><strong>1. Embed:</strong> Map a → (cos(wk·a), sin(wk·a)) for each key frequency k</p>
+                <p><strong>2. Combine:</strong> Use trig identity to compute cos(wk·(a+b)) and sin(wk·(a+b))</p>
+                <p><strong>3. Score:</strong> For each candidate answer c, compute Σ<sub>k</sub> cos(wk·(a+b−c))</p>
+                <p><strong>4. Output:</strong> The c with highest score wins — it's the correct answer!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Key Takeaways</h2>
+            <div class="explanation">
+                <p>🔑 <strong>Neural networks can discover elegant mathematical algorithms</strong> — this one found Fourier analysis on its own!</p>
+                <p>🔑 <strong>Grokking isn't sudden</strong> — the algorithm forms gradually, hidden beneath memorization</p>
+                <p>🔑 <strong>Regularization (weight decay) is crucial</strong> — it provides the pressure to prefer the simpler, generalizing solution</p>
+                <p>🔑 <strong>Mechanistic interpretability works</strong> — we can actually understand what networks learn, not just that they learn</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============== CONSTANTS ==============
+    const P = 113;
+    const KEY_FREQS = [14, 35, 41, 42, 52];
+    const COLORS = ['#ff6b6b', '#feca57', '#48dbfb', '#4caf50', '#a55eea', '#fd9644', '#26de81', '#fc5c65', '#45aaf2', '#fed330'];
+
+    // ============== MODULAR ARITHMETIC ==============
+    function calculateMod() {
+        const a = parseInt(document.getElementById('mod-a').value);
+        const b = parseInt(document.getElementById('mod-b').value);
+        const p = parseInt(document.getElementById('mod-p').value);
+        const result = ((a + b) % p + p) % p;
+        document.getElementById('mod-result').innerHTML = 
+            `<span style="color:#667eea">${a}</span> + <span style="color:#48dbfb">${b}</span> = ${a+b} → <span style="color:#4caf50">${a+b} mod ${p} = <strong>${result}</strong></span>` +
+            `<br><small style="color:#888">Just like a clock with ${p} hours: after ${p-1} comes 0 again.</small>`;
+        drawClock(a, b, p, result);
+    }
+
+    function drawClock(a, b, p, result) {
+        const canvas = document.getElementById('clock-canvas');
+        const ctx = canvas.getContext('2d');
+        const cx = 200, cy = 200, r = 150;
+        ctx.clearRect(0, 0, 400, 400);
+        
+        // Draw circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw tick marks
+        for (let i = 0; i < p; i++) {
+            const angle = (2 * Math.PI * i / p) - Math.PI / 2;
+            const inner = r - 5;
+            const outer = r + 3;
+            ctx.beginPath();
+            ctx.moveTo(cx + inner * Math.cos(angle), cy + inner * Math.sin(angle));
+            ctx.lineTo(cx + outer * Math.cos(angle), cy + outer * Math.sin(angle));
+            ctx.strokeStyle = '#444';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            if (p <= 30 || i % Math.ceil(p / 12) === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '11px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i, cx + (r + 18) * Math.cos(angle), cy + (r + 18) * Math.sin(angle));
+            }
+        }
+        
+        // Draw point a
+        const angleA = (2 * Math.PI * a / p) - Math.PI / 2;
+        ctx.beginPath();
+        ctx.arc(cx + r * Math.cos(angleA), cy + r * Math.sin(angleA), 8, 0, 2 * Math.PI);
+        ctx.fillStyle = '#667eea';
+        ctx.fill();
+        ctx.fillStyle = '#667eea';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(`a=${a}`, cx + (r - 25) * Math.cos(angleA), cy + (r - 25) * Math.sin(angleA));
+        
+        // Draw point b
+        const angleB = (2 * Math.PI * b / p) - Math.PI / 2;
+        ctx.beginPath();
+        ctx.arc(cx + r * Math.cos(angleB), cy + r * Math.sin(angleB), 8, 0, 2 * Math.PI);
+        ctx.fillStyle = '#48dbfb';
+        ctx.fill();
+        ctx.fillStyle = '#48dbfb';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(`b=${b}`, cx + (r - 25) * Math.cos(angleB), cy + (r - 25) * Math.sin(angleB));
+        
+        // Draw result
+        const angleR = (2 * Math.PI * result / p) - Math.PI / 2;
+        ctx.beginPath();
+        ctx.arc(cx + r * Math.cos(angleR), cy + r * Math.sin(angleR), 10, 0, 2 * Math.PI);
+        ctx.fillStyle = '#4caf50';
+        ctx.fill();
+        ctx.fillStyle = '#4caf50';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(`${result}`, cx + (r - 30) * Math.cos(angleR), cy + (r - 30) * Math.sin(angleR));
+        
+        // Draw arc from a to result
+        ctx.beginPath();
+        ctx.arc(cx, cy, r - 15, angleA, angleR, false);
+        ctx.strokeStyle = '#4caf5088';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Arrow
+        ctx.beginPath();
+        ctx.moveTo(cx + (r - 15) * Math.cos(angleR), cy + (r - 15) * Math.sin(angleR));
+        ctx.lineTo(cx + (r - 15) * Math.cos(angleR) - 8 * Math.cos(angleR - 0.5), cy + (r - 15) * Math.sin(angleR) - 8 * Math.sin(angleR - 0.5));
+        ctx.strokeStyle = '#4caf50';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    // ============== CIRCLE EMBEDDING ==============
+    function updateCircleViz() {
+        const a = parseInt(document.getElementById('circle-a').value);
+        const k = parseInt(document.getElementById('circle-k').value);
+        document.getElementById('circle-a-val').textContent = a;
+        document.getElementById('circle-k-val').textContent = k;
+        
+        const canvas = document.getElementById('embedding-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 350);
+        
+        const cx1 = 175, cy1 = 175, r1 = 130;
+        const cx2 = 525, cy2 = 175, r2 = 130;
+        
+        // Left: Unit circle with all points
+        ctx.beginPath();
+        ctx.arc(cx1, cy1, r1, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw all 113 points faintly
+        for (let i = 0; i < P; i++) {
+            const angle = 2 * Math.PI * k * i / P;
+            const x = cx1 + r1 * Math.cos(angle);
+            const y = cy1 - r1 * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            ctx.fillStyle = '#48dbfb33';
+            ctx.fill();
+        }
+        
+        // Highlight point a
+        const angleA = 2 * Math.PI * k * a / P;
+        const xA = cx1 + r1 * Math.cos(angleA);
+        const yA = cy1 - r1 * Math.sin(angleA);
+        
+        // Draw angle arc
+        ctx.beginPath();
+        ctx.moveTo(cx1, cy1);
+        ctx.lineTo(cx1 + r1, cy1);
+        ctx.strokeStyle = '#feca5744';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.arc(cx1, cy1, 40, 0, -angleA, angleA > 0);
+        ctx.strokeStyle = '#feca57';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw line to point
+        ctx.beginPath();
+        ctx.moveTo(cx1, cy1);
+        ctx.lineTo(xA, yA);
+        ctx.strokeStyle = '#ff6b6b88';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw projections
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(xA, yA);
+        ctx.lineTo(xA, cy1);
+        ctx.strokeStyle = '#4caf5088';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(xA, yA);
+        ctx.lineTo(cx1, yA);
+        ctx.strokeStyle = '#a55eea88';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Point
+        ctx.beginPath();
+        ctx.arc(xA, yA, 8, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Labels
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Embedding of a=${a}`, cx1, 20);
+        ctx.fillText(`at frequency k=${k}`, cx1, 38);
+        
+        ctx.fillStyle = '#4caf50';
+        ctx.font = '12px monospace';
+        ctx.fillText(`cos = ${Math.cos(angleA).toFixed(3)}`, cx1 + 80, cy1 + 20);
+        ctx.fillStyle = '#a55eea';
+        ctx.fillText(`sin = ${Math.sin(angleA).toFixed(3)}`, cx1 - 80, yA - 10);
+        
+        // Right: Show how angle changes with a
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText('Cosine wave as a varies', cx2, 20);
+        
+        // Draw axes
+        ctx.beginPath();
+        ctx.moveTo(cx2 - r2 - 20, cy2);
+        ctx.lineTo(cx2 + r2 + 20, cy2);
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(cx2 - r2 - 20, cy2 - r2);
+        ctx.lineTo(cx2 - r2 - 20, cy2 + r2);
+        ctx.strokeStyle = '#444';
+        ctx.stroke();
+        
+        // Draw cosine wave
+        ctx.beginPath();
+        for (let i = 0; i <= P; i++) {
+            const x = cx2 - r2 + (2 * r2 * i / P);
+            const y = cy2 - r2 * 0.8 * Math.cos(2 * Math.PI * k * i / P);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#48dbfb';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Mark current a
+        const xMark = cx2 - r2 + (2 * r2 * a / P);
+        const yMark = cy2 - r2 * 0.8 * Math.cos(angleA);
+        ctx.beginPath();
+        ctx.arc(xMark, yMark, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fill();
+        
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(xMark, cy2);
+        ctx.lineTo(xMark, yMark);
+        ctx.strokeStyle = '#ff6b6b88';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Axis labels
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.fillText('0', cx2 - r2, cy2 + 15);
+        ctx.fillText('112', cx2 + r2, cy2 + 15);
+        ctx.fillText(`a=${a}`, xMark, cy2 + 15);
+        ctx.fillText('1', cx2 - r2 - 30, cy2 - r2 * 0.8);
+        ctx.fillText('-1', cx2 - r2 - 30, cy2 + r2 * 0.8);
+        
+        // Result text
+        const cosVal = Math.cos(angleA);
+        const sinVal = Math.sin(angleA);
+        document.getElementById('circle-result').innerHTML = 
+            `<span style="color:#feca57">Angle</span> = 2π × ${k} × ${a} / ${P} = <strong>${(angleA).toFixed(3)} rad</strong> (${(angleA * 180 / Math.PI).toFixed(1)}°)<br>` +
+            `<span style="color:#4caf50">cos(angle)</span> = ${cosVal.toFixed(4)} &nbsp;&nbsp; <span style="color:#a55eea">sin(angle)</span> = ${sinVal.toFixed(4)}<br>` +
+            `<small style="color:#888">The network stores these two numbers as the "representation" of ${a} at frequency ${k}.</small>`;
+    }
+
+    // ============== FOURIER FREQUENCY SELECTION ==============
+    let selectedFreqs = [...KEY_FREQS];
+    
+    function drawFourierBars() {
+        const canvas = document.getElementById('fourier-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 300);
+        
+        const barWidth = 700 / 56 - 2;
+        const maxHeight = 220;
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Click bars to toggle frequencies (paper uses k ∈ {14, 35, 41, 42, 52})', 350, 15);
+        
+        for (let k = 1; k <= 56; k++) {
+            const x = (k - 1) * (700 / 56) + 1;
+            const isKey = KEY_FREQS.includes(k);
+            const isSelected = selectedFreqs.includes(k);
+            
+            // Simulated "importance" - key frequencies are tall
+            let height = isKey ? maxHeight * (0.7 + 0.3 * Math.random()) : maxHeight * 0.05 * Math.random();
+            
+            ctx.fillStyle = isSelected ? (isKey ? '#667eea' : '#feca57') : '#333';
+            ctx.fillRect(x, 280 - height, barWidth, height);
+            
+            if (isKey) {
+                ctx.fillStyle = '#fff';
+                ctx.font = '9px monospace';
+                ctx.fillText(k, x + barWidth / 2, 295);
+            }
+        }
+        
+        // Axis
+        ctx.strokeStyle = '#444';
+        ctx.beginPath();
+        ctx.moveTo(0, 280);
+        ctx.lineTo(700, 280);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Frequency k →', 5, 270);
+        ctx.fillText('‖Fourier component‖ ↑', 5, 40);
+        
+        updateInterferencePreview();
+    }
+    
+    function updateInterferencePreview() {
+        const canvas = document.getElementById('interference-preview');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 200);
+        
+        const a = 20, b = 45;
+        const correct = (a + b) % P;
+        
+        // Compute scores
+        let scores = [];
+        let maxScore = -Infinity, minScore = Infinity;
+        for (let c = 0; c < P; c++) {
+            let score = 0;
+            for (const k of selectedFreqs) {
+                const wk = 2 * Math.PI * k / P;
+                score += Math.cos(wk * (a + b - c));
+            }
+            scores.push(score);
+            maxScore = Math.max(maxScore, score);
+            minScore = Math.min(minScore, score);
+        }
+        
+        const range = maxScore - minScore || 1;
+        const barW = 700 / P;
+        
+        for (let c = 0; c < P; c++) {
+            const h = ((scores[c] - minScore) / range) * 160;
+            const x = c * barW;
+            ctx.fillStyle = c === correct ? '#4caf50' : '#667eea44';
+            ctx.fillRect(x, 180 - h, barW - 1, h);
+        }
+        
+        ctx.fillStyle = '#4caf50';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Correct: ${a}+${b} mod ${P} = ${correct}`, correct * barW, 180 - ((scores[correct] - minScore) / range) * 160 - 8);
+        
+        const ratio = selectedFreqs.length > 0 ? (scores[correct] / (maxScore || 1)).toFixed(2) : 'N/A';
+        document.getElementById('fourier-result').innerHTML = 
+            `Using ${selectedFreqs.length} frequencies: [${selectedFreqs.sort((a,b)=>a-b).join(', ')}]<br>` +
+            `Peak at correct answer (c=${correct}): score = ${scores[correct].toFixed(2)} | ` +
+            `Max wrong answer score: ${Math.max(...scores.filter((s,i) => i !== correct)).toFixed(2)}<br>` +
+            `<small>More frequencies → sharper peak → more confident answer!</small>`;
+    }
+    
+    // Click handler for fourier bars
+    document.getElementById('fourier-canvas').addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const k = Math.floor(x / (700 / 56)) + 1;
+        if (k >= 1 && k <= 56) {
+            const idx = selectedFreqs.indexOf(k);
+            if (idx >= 0) selectedFreqs.splice(idx, 1);
+            else selectedFreqs.push(k);
+            drawFourierBars();
+        }
+    });
+    
+    function resetFrequencies() {
+        selectedFreqs = [...KEY_FREQS];
+        drawFourierBars();
+    }
+    
+    function randomFrequencies() {
+        selectedFreqs = [];
+        const n = Math.floor(Math.random() * 8) + 2;
+        while (selectedFreqs.length < n) {
+            const k = Math.floor(Math.random() * 56) + 1;
+            if (!selectedFreqs.includes(k)) selectedFreqs.push(k);
+        }
+        drawFourierBars();
+    }
+
+    // ============== TRIG IDENTITY VISUALIZATION ==============
+    function updateTrigViz() {
+        const a = parseInt(document.getElementById('trig-a').value);
+        const b = parseInt(document.getElementById('trig-b').value);
+        const k = parseInt(document.getElementById('trig-k').value);
+        document.getElementById('trig-a-val').textContent = a;
+        document.getElementById('trig-b-val').textContent = b;
+        document.getElementById('trig-k-val').textContent = k;
+        
+        const canvas = document.getElementById('trig-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 400);
+        
+        const wk = 2 * Math.PI * k / P;
+        const angleA = wk * a;
+        const angleB = wk * b;
+        const angleSum = wk * ((a + b) % P);
+        
+        // Left circle: individual embeddings
+        const cx1 = 175, cy1 = 200, r1 = 120;
+        // Right circle: result
+        const cx2 = 525, cy2 = 200, r2 = 120;
+        
+        // Draw left circle
+        ctx.beginPath();
+        ctx.arc(cx1, cy1, r1, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw axes
+        ctx.beginPath();
+        ctx.moveTo(cx1 - r1 - 10, cy1);
+        ctx.lineTo(cx1 + r1 + 10, cy1);
+        ctx.moveTo(cx1, cy1 - r1 - 10);
+        ctx.lineTo(cx1, cy1 + r1 + 10);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Point for a
+        const xA = cx1 + r1 * Math.cos(angleA);
+        const yA = cy1 - r1 * Math.sin(angleA);
+        ctx.beginPath();
+        ctx.moveTo(cx1, cy1);
+        ctx.lineTo(xA, yA);
+        ctx.strokeStyle = '#667eea88';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(xA, yA, 7, 0, 2 * Math.PI);
+        ctx.fillStyle = '#667eea';
+        ctx.fill();
+        
+        // Point for b
+        const xB = cx1 + r1 * Math.cos(angleB);
+        const yB = cy1 - r1 * Math.sin(angleB);
+        ctx.beginPath();
+        ctx.moveTo(cx1, cy1);
+        ctx.lineTo(xB, yB);
+        ctx.strokeStyle = '#48dbfb88';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(xB, yB, 7, 0, 2 * Math.PI);
+        ctx.fillStyle = '#48dbfb';
+        ctx.fill();
+        
+        // Labels
+        ctx.fillStyle = '#667eea';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`a=${a}`, xA + (xA > cx1 ? 15 : -15), yA - 10);
+        ctx.fillStyle = '#48dbfb';
+        ctx.fillText(`b=${b}`, xB + (xB > cx1 ? 15 : -15), yB + 15);
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('Inputs (separate)', cx1, 30);
+        
+        // Draw right circle
+        ctx.beginPath();
+        ctx.arc(cx2, cy2, r2, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw axes
+        ctx.beginPath();
+        ctx.moveTo(cx2 - r2 - 10, cy2);
+        ctx.lineTo(cx2 + r2 + 10, cy2);
+        ctx.moveTo(cx2, cy2 - r2 - 10);
+        ctx.lineTo(cx2, cy2 + r2 + 10);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Point for a+b
+        const xSum = cx2 + r2 * Math.cos(angleSum);
+        const ySum = cy2 - r2 * Math.sin(angleSum);
+        ctx.beginPath();
+        ctx.moveTo(cx2, cy2);
+        ctx.lineTo(xSum, ySum);
+        ctx.strokeStyle = '#4caf5088';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(xSum, ySum, 9, 0, 2 * Math.PI);
+        ctx.fillStyle = '#4caf50';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = '#4caf50';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(`(a+b) mod P = ${(a+b)%P}`, xSum + (xSum > cx2 ? 20 : -20), ySum - 15);
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('Result (combined via trig identity)', cx2, 30);
+        
+        // Draw the arrow between circles
+        ctx.beginPath();
+        ctx.moveTo(310, 200);
+        ctx.lineTo(380, 200);
+        ctx.lineTo(370, 190);
+        ctx.moveTo(380, 200);
+        ctx.lineTo(370, 210);
+        ctx.strokeStyle = '#feca57';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = '#feca57';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('cos(α)cos(β)−sin(α)sin(β)', 345, 185);
+        ctx.fillText('= cos(α+β)', 345, 220);
+        
+        // Show the computation
+        const cosA = Math.cos(angleA);
+        const sinA = Math.sin(angleA);
+        const cosB = Math.cos(angleB);
+        const sinB = Math.sin(angleB);
+        const cosSum = Math.cos(angleSum);
+        const sinSum = Math.sin(angleSum);
+        const computed = cosA * cosB - sinA * sinB;
+        
+        // Bottom: show the math
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'left';
+        const y0 = 350;
+        ctx.fillText(`cos(w${k}·${a}) = ${cosA.toFixed(4)}`, 20, y0);
+        ctx.fillText(`sin(w${k}·${a}) = ${sinA.toFixed(4)}`, 20, y0 + 18);
+        ctx.fillText(`cos(w${k}·${b}) = ${cosB.toFixed(4)}`, 250, y0);
+        ctx.fillText(`sin(w${k}·${b}) = ${sinB.toFixed(4)}`, 250, y0 + 18);
+        ctx.fillStyle = '#4caf50';
+        ctx.fillText(`cos(w${k}·(${a}+${b})) = ${computed.toFixed(4)}`, 470, y0);
+        ctx.fillText(`Actual cos(w${k}·${(a+b)%P}) = ${cosSum.toFixed(4)}`, 470, y0 + 18);
+        
+        document.getElementById('trig-result').innerHTML = 
+            `<strong>The Trig Identity in Action:</strong><br>` +
+            `cos(w<sub>${k}</sub>·${a}) × cos(w<sub>${k}</sub>·${b}) − sin(w<sub>${k}</sub>·${a}) × sin(w<sub>${k}</sub>·${b})<br>` +
+            `= ${cosA.toFixed(4)} × ${cosB.toFixed(4)} − ${sinA.toFixed(4)} × ${sinB.toFixed(4)}<br>` +
+            `= <span style="color:#4caf50"><strong>${computed.toFixed(6)}</strong></span><br>` +
+            `cos(w<sub>${k}</sub>·(${a}+${b} mod ${P})) = cos(w<sub>${k}</sub>·${(a+b)%P}) = <span style="color:#4caf50"><strong>${cosSum.toFixed(6)}</strong></span><br>` +
+            `<small style="color:#888">They match! The network computed addition by multiplying trig values.</small>`;
+    }
+
+    // ============== INTERFERENCE VISUALIZATION ==============
+    function updateInterference() {
+        const a = parseInt(document.getElementById('interf-a').value);
+        const b = parseInt(document.getElementById('interf-b').value);
+        const nf = parseInt(document.getElementById('interf-nf').value);
+        document.getElementById('interf-a-val').textContent = a;
+        document.getElementById('interf-b-val').textContent = b;
+        document.getElementById('interf-nf-val').textContent = nf;
+        
+        // Use first nf key frequencies (extend if needed)
+        const allFreqs = [14, 35, 41, 42, 52, 7, 23, 31, 49, 55];
+        const freqs = allFreqs.slice(0, nf);
+        const correct = (a + b) % P;
+        
+        // Compute scores for all c
+        let scores = [];
+        let maxScore = -Infinity, minScore = Infinity;
+        for (let c = 0; c < P; c++) {
+            let score = 0;
+            for (const k of freqs) {
+                const wk = 2 * Math.PI * k / P;
+                score += Math.cos(wk * (a + b - c));
+            }
+            scores.push(score);
+            maxScore = Math.max(maxScore, score);
+            minScore = Math.min(minScore, score);
+        }
+        
+        // Draw main interference plot
+        const canvas = document.getElementById('interference-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 350);
+        
+        const margin = {left: 50, right: 20, top: 30, bottom: 40};
+        const plotW = 700 - margin.left - margin.right;
+        const plotH = 350 - margin.top - margin.bottom;
+        
+        // Draw axes
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+        
+        // Zero line
+        const zeroY = margin.top + plotH * (maxScore / (maxScore - minScore));
+        ctx.beginPath();
+        ctx.moveTo(margin.left, zeroY);
+        ctx.lineTo(margin.left + plotW, zeroY);
+        ctx.strokeStyle = '#555';
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Draw bars
+        const barW = plotW / P;
+        for (let c = 0; c < P; c++) {
+            const x = margin.left + c * barW;
+            const h = ((scores[c] - minScore) / (maxScore - minScore)) * plotH;
+            const y = margin.top + plotH - h;
+            
+            if (c === correct) {
+                ctx.fillStyle = '#4caf50';
+                ctx.shadowColor = '#4caf5066';
+                ctx.shadowBlur = 10;
+            } else {
+                ctx.fillStyle = '#667eea55';
+                ctx.shadowBlur = 0;
+            }
+            ctx.fillRect(x, y, barW - 1, h);
+            ctx.shadowBlur = 0;
+        }
+        
+        // Label correct answer
+        const correctX = margin.left + correct * barW + barW / 2;
+        const correctH = ((scores[correct] - minScore) / (maxScore - minScore)) * plotH;
+        ctx.fillStyle = '#4caf50';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`c=${correct}`, correctX, margin.top + plotH - correctH - 8);
+        ctx.fillText(`↓ PEAK`, correctX, margin.top + plotH - correctH - 22);
+        
+        // Axis labels
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Candidate answer c', margin.left + plotW / 2, margin.top + plotH + 30);
+        ctx.save();
+        ctx.translate(15, margin.top + plotH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Score(c)', 0, 0);
+        ctx.restore();
+        
+        // Title
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Scores for ${a} + ${b} mod ${P} using ${nf} frequencies`, 350, 18);
+        
+        // Y-axis labels
+        ctx.fillStyle = '#888';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(maxScore.toFixed(1), margin.left - 5, margin.top + 10);
+        ctx.fillText(minScore.toFixed(1), margin.left - 5, margin.top + plotH);
+        ctx.fillText('0', margin.left - 5, zeroY + 4);
+        
+        // Draw individual waves
+        drawWaves(a, b, freqs, correct);
+        
+        // Result
+        const secondBest = Math.max(...scores.filter((s, i) => i !== correct));
+        const gap = scores[correct] - secondBest;
+        document.getElementById('interf-result').innerHTML = 
+            `<strong>Correct answer:</strong> ${a} + ${b} mod ${P} = <span style="color:#4caf50">${correct}</span><br>` +
+            `<strong>Peak score:</strong> ${scores[correct].toFixed(3)} (all ${nf} cosines = 1, sum = ${nf})<br>` +
+            `<strong>Best wrong answer score:</strong> ${secondBest.toFixed(3)}<br>` +
+            `<strong>Gap:</strong> ${gap.toFixed(3)} — <em>${gap > 1 ? 'Clear separation! ✓' : 'Weak separation — need more frequencies!'}</em>`;
+    }
+    
+    function drawWaves(a, b, freqs, correct) {
+        const canvas = document.getElementById('waves-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 300);
+        
+        const margin = {left: 50, right: 20, top: 20, bottom: 30};
+        const plotW = 700 - margin.left - margin.right;
+        const plotH = 300 - margin.top - margin.bottom;
+        
+        // Draw axes
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top + plotH / 2);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH / 2);
+        ctx.stroke();
+        
+        // Draw each frequency's contribution
+        for (let fi = 0; fi < freqs.length; fi++) {
+            const k = freqs[fi];
+            const wk = 2 * Math.PI * k / P;
+            const color = COLORS[fi % COLORS.length];
+            
+            ctx.beginPath();
+            for (let c = 0; c < P; c++) {
+                const x = margin.left + (c / P) * plotW;
+                const val = Math.cos(wk * (a + b - c));
+                const y = margin.top + plotH / 2 - val * (plotH / 2 - 10);
+                if (c === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.7;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+            
+            // Label
+            ctx.fillStyle = color;
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(`k=${k}`, margin.left + plotW + 3, margin.top + 15 + fi * 14);
+        }
+        
+        // Mark correct answer
+        const correctX = margin.left + (correct / P) * plotW;
+        ctx.beginPath();
+        ctx.moveTo(correctX, margin.top);
+        ctx.lineTo(correctX, margin.top + plotH);
+        ctx.strokeStyle = '#4caf5088';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#4caf50';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`c=${correct}: ALL waves = 1`, correctX, margin.top + plotH + 15);
+        
+        // Y-axis labels
+        ctx.fillStyle = '#888';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('1', margin.left - 5, margin.top + 10);
+        ctx.fillText('-1', margin.left - 5, margin.top + plotH - 5);
+        ctx.fillText('0', margin.left - 5, margin.top + plotH / 2 + 4);
+    }
+
+    // ============== GROKKING ANIMATION ==============
+    let grokkingAnimId = null;
+    
+    function simulateTraining(epoch) {
+        // Simulated training curves based on the paper's findings
+        const maxEpoch = 300;
+        const t = epoch / maxEpoch;
+        
+        // Train loss: drops quickly, stays low
+        let trainLoss;
+        if (t < 0.05) trainLoss = 4 * (1 - t / 0.05) + 0.001;
+        else trainLoss = 0.001 * Math.exp(-t * 2);
+        
+        // Test loss: stays high, then drops during cleanup
+        let testLoss;
+        if (t < 0.35) testLoss = 3.5 + 0.5 * Math.sin(t * 5);
+        else if (t < 0.45) testLoss = 3.5 * (1 - (t - 0.35) / 0.1);
+        else testLoss = 0.001 * Math.exp(-(t - 0.45) * 5);
+        
+        // Circuit strength: grows during circuit formation
+        let circuit;
+        if (t < 0.05) circuit = 0;
+        else if (t < 0.35) circuit = (t - 0.05) / 0.3;
+        else circuit = 1;
+        
+        // Weight norm: grows during memorization, shrinks during cleanup
+        let weightNorm;
+        if (t < 0.05) weightNorm = 0.3 + t * 10;
+        else if (t < 0.35) weightNorm = 0.8 - (t - 0.05) * 0.5;
+        else if (t < 0.5) weightNorm = 0.65 - (t - 0.35) * 2;
+        else weightNorm = 0.35;
+        
+        return { trainLoss, testLoss, circuit, weightNorm };
+    }
+    
+    function updateGrokking() {
+        const epoch = parseInt(document.getElementById('epoch-slider').value);
+        document.getElementById('epoch-val').textContent = epoch;
+        
+        const canvas = document.getElementById('grokking-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 350);
+        
+        const margin = {left: 60, right: 20, top: 20, bottom: 40};
+        const plotW = 700 - margin.left - margin.right;
+        const plotH = 350 - margin.top - margin.bottom;
+        
+        // Draw axes
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+        
+        // Phase boundaries
+        const phases = [
+            { start: 0, end: 0.05, color: '#ff6b6b22', label: 'Memo' },
+            { start: 0.05, end: 0.35, color: '#feca5722', label: 'Circuit' },
+            { start: 0.35, end: 0.5, color: '#48dbfb22', label: 'Cleanup' }
+        ];
+        
+        for (const phase of phases) {
+            const x1 = margin.left + phase.start * plotW;
+            const x2 = margin.left + phase.end * plotW;
+            ctx.fillStyle = phase.color;
+            ctx.fillRect(x1, margin.top, x2 - x1, plotH);
+        }
+        
+        // Draw all curves up to current epoch
+        const maxEpoch = 300;
+        const curves = [
+            { key: 'trainLoss', color: '#ff6b6b', label: 'Train Loss', scale: v => Math.log10(Math.max(v, 0.0001)) },
+            { key: 'testLoss', color: '#48dbfb', label: 'Test Loss', scale: v => Math.log10(Math.max(v, 0.0001)) },
+            { key: 'circuit', color: '#feca57', label: 'Circuit', scale: v => v * -3 },
+            { key: 'weightNorm', color: '#4caf50', label: 'Weight Norm', scale: v => v * -3 }
+        ];
+        
+        // Normalize: map log scale [-4, 1] to [0, 1]
+        const logMin = -4, logMax = 1;
+        const toY = (logVal) => margin.top + plotH * (1 - (logVal - logMin) / (logMax - logMin));
+        
+        for (const curve of curves) {
+            ctx.beginPath();
+            let started = false;
+            for (let e = 0; e <= epoch; e++) {
+                const data = simulateTraining(e);
+                const val = curve.key === 'circuit' ? data.circuit : 
+                           curve.key === 'weightNorm' ? data.weightNorm : data[curve.key];
+                let y;
+                if (curve.key === 'circuit') {
+                    y = margin.top + plotH * (1 - val);
+                } else if (curve.key === 'weightNorm') {
+                    y = margin.top + plotH * (1 - val);
+                } else {
+                    const logVal = Math.log10(Math.max(val, 0.00001));
+                    y = toY(logVal);
+                }
+                const x = margin.left + (e / maxEpoch) * plotW;
+                if (!started) { ctx.moveTo(x, y); started = true; }
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = curve.color;
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+        }
+        
+        // Current epoch marker
+        const currentX = margin.left + (epoch / maxEpoch) * plotW;
+        ctx.beginPath();
+        ctx.moveTo(currentX, margin.top);
+        ctx.lineTo(currentX, margin.top + plotH);
+        ctx.strokeStyle = '#ffffff44';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Axis labels
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Training Epoch', margin.left + plotW / 2, margin.top + plotH + 30);
+        
+        // Y-axis
+        ctx.textAlign = 'right';
+        ctx.fillText('High', margin.left - 5, margin.top + 10);
+        ctx.fillText('Low', margin.left - 5, margin.top + plotH);
+        
+        // Update phase indicators
+        const t = epoch / maxEpoch;
+        document.getElementById('phase-memo').classList.toggle('active', t < 0.05);
+        document.getElementById('phase-circuit').classList.toggle('active', t >= 0.05 && t < 0.35);
+        document.getElementById('phase-cleanup').classList.toggle('active', t >= 0.35 && t < 0.5);
+        
+        // Result text
+        let phaseText = '';
+        if (t < 0.05) phaseText = '📝 <strong>Memorization Phase:</strong> The network is memorizing training examples. Train loss drops but test loss stays high. No algorithm yet!';
+        else if (t < 0.35) phaseText = '⚙️ <strong>Circuit Formation Phase:</strong> The Fourier algorithm is gradually forming in the weights. Test loss is still high (memorization masks the algorithm), but the circuit strength is growing!';
+        else if (t < 0.5) phaseText = '🧹 <strong>Cleanup Phase:</strong> Weight decay is removing the memorization components. The algorithm is revealed — test loss drops suddenly! This is the "grokking" moment.';
+        else phaseText = '✅ <strong>Stable Phase:</strong> The network has fully grokked. Both train and test loss are low. The Fourier multiplication algorithm is the dominant computation.';
+        
+        document.getElementById('grokking-result').innerHTML = phaseText;
+    }
+    
+    function animateGrokking() {
+        stopAnimation();
+        const slider = document.getElementById('epoch-slider');
+        let epoch = parseInt(slider.value);
+        const speed = parseInt(document.getElementById('anim-speed').value);
+        
+        function step() {
+            epoch += speed;
+            if (epoch > 300) epoch = 300;
+            slider.value = epoch;
+            updateGrokking();
+            if (epoch < 300) {
+                grokkingAnimId = requestAnimationFrame(step);
+            }
+        }
+        grokkingAnimId = requestAnimationFrame(step);
+    }
+    
+    function stopAnimation() {
+        if (grokkingAnimId) {
+            cancelAnimationFrame(grokkingAnimId);
+            grokkingAnimId = null;
+        }
+    }
+
+    // ============== WEIGHT DECAY VISUALIZATION ==============
+    function updateWeightDecay() {
+        const wd = parseInt(document.getElementById('wd-slider').value) / 10;
+        document.getElementById('wd-val').textContent = wd.toFixed(1);
+        
+        const canvas = document.getElementById('wd-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 250);
+        
+        const margin = {left: 60, right: 20, top: 20, bottom: 40};
+        const plotW = 700 - margin.left - margin.right;
+        const plotH = 250 - margin.top - margin.bottom;
+        
+        // Draw axes
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + plotH);
+        ctx.lineTo(margin.left + plotW, margin.top + plotH);
+        ctx.stroke();
+        
+        // Simulate grokking time as function of weight decay
+        // Based on paper: λ=0 → no grokking, λ=0.3 → ~20k epochs, λ=1 → ~10k, λ=3 → ~3k
+        const epochs = 300;
+        
+        // Test loss curve depends on weight decay
+        ctx.beginPath();
+        let grokkingEpoch = -1;
+        for (let e = 0; e <= epochs; e++) {
+            const t = e / epochs;
+            let testLoss;
+            if (wd === 0) {
+                testLoss = 3.5; // Never groks
+            } else {
+                const grokkingPoint = Math.max(0.1, 0.8 / (wd * wd + 0.1));
+                if (t < grokkingPoint) {
+                    testLoss = 3.5;
+                } else if (t < grokkingPoint + 0.1) {
+                    testLoss = 3.5 * (1 - (t - grokkingPoint) / 0.1);
+                    if (grokkingEpoch < 0) grokkingEpoch = e;
+                } else {
+                    testLoss = 0.001;
+                }
+            }
+            const x = margin.left + t * plotW;
+            const y = margin.top + plotH * (1 - (3.5 - testLoss) / 3.5);
+            if (e === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#48dbfb';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        
+        // Train loss
+        ctx.beginPath();
+        for (let e = 0; e <= epochs; e++) {
+            const t = e / epochs;
+            let trainLoss = t < 0.05 ? 3.5 * (1 - t / 0.05) : 0.001;
+            const x = margin.left + t * plotW;
+            const y = margin.top + plotH * (1 - (3.5 - trainLoss) / 3.5);
+            if (e === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Labels
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Weight Decay λ = ${wd.toFixed(1)}`, 350, 15);
+        
+        // Axis labels
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Training Epoch', margin.left + plotW / 2, margin.top + plotH + 30);
+        ctx.textAlign = 'right';
+        ctx.fillText('High Loss', margin.left - 5, margin.top + 10);
+        ctx.fillText('Low Loss', margin.left - 5, margin.top + plotH);
+        
+        // Legend
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillRect(margin.left + 10, margin.top + 5, 20, 3);
+        ctx.fillText('Train Loss', margin.left + 35, margin.top + 10);
+        ctx.fillStyle = '#48dbfb';
+        ctx.fillRect(margin.left + 130, margin.top + 5, 20, 3);
+        ctx.fillText('Test Loss', margin.left + 155, margin.top + 10);
+        
+        // Mark grokking point
+        if (wd > 0) {
+            const grokkingPoint = Math.max(0.1, 0.8 / (wd * wd + 0.1));
+            if (grokkingPoint < 1) {
+                const gx = margin.left + grokkingPoint * plotW;
+                ctx.beginPath();
+                ctx.moveTo(gx, margin.top);
+                ctx.lineTo(gx, margin.top + plotH);
+                ctx.strokeStyle = '#feca5788';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#feca57';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Grokking!', gx, margin.top + plotH + 15);
+            }
+        }
+        
+        // Result text
+        let resultText = '';
+        if (wd === 0) {
+            resultText = '⚠️ <strong>λ = 0:</strong> No weight decay → no pressure to simplify → the network never groks! It stays memorized forever.';
+        } else if (wd < 0.5) {
+            resultText = `⏳ <strong>λ = ${wd.toFixed(1)}:</strong> Very weak weight decay → very slow grokking. The pressure to simplify is too gentle.`;
+        } else if (wd < 2) {
+            resultText = `✓ <strong>λ = ${wd.toFixed(1)}:</strong> Moderate weight decay → grokking occurs at a reasonable pace. This is similar to the paper's setting (λ=1).`;
+        } else {
+            resultText = `⚡ <strong>λ = ${wd.toFixed(1)}:</strong> Strong weight decay → fast grokking! The network is strongly pushed to find the simpler Fourier solution quickly.`;
+        }
+        document.getElementById('wd-result').innerHTML = resultText;
+    }
+
+    // ============== FULL ALGORITHM VISUALIZATION ==============
+    function runFullAlgorithm() {
+        const a = parseInt(document.getElementById('full-a').value);
+        const b = parseInt(document.getElementById('full-b').value);
+        const correct = ((a + b) % P + P) % P;
+        
+        const canvas = document.getElementById('full-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 700, 500);
+        
+        const freqs = KEY_FREQS;
+        const stepY = [30, 130, 250, 380];
+        
+        // Step 1: Embedding
+        ctx.fillStyle = '#667eea';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Step 1: EMBED — Map numbers to circles', 20, stepY[0]);
+        
+        ctx.font = '11px monospace';
+        ctx.fillStyle = '#ddd';
+        let y = stepY[0] + 25;
+        for (let i = 0; i < freqs.length; i++) {
+            const k = freqs[i];
+            const wk = 2 * Math.PI * k / P;
+            const cosA = Math.cos(wk * a).toFixed(3);
+            const sinA = Math.sin(wk * a).toFixed(3);
+            const cosB = Math.cos(wk * b).toFixed(3);
+            const sinB = Math.sin(wk * b).toFixed(3);
+            
+            ctx.fillStyle = COLORS[i];
+            ctx.fillText(`k=${k}: `, 30, y);
+            ctx.fillStyle = '#ccc';
+            ctx.fillText(`a=${a} → (cos=${cosA}, sin=${sinA})   b=${b} → (cos=${cosB}, sin=${sinB})`, 80, y);
+            y += 16;
+        }
+        
+        // Draw small circles for embedding
+        for (let i = 0; i < Math.min(3, freqs.length); i++) {
+            const k = freqs[i];
+            const wk = 2 * Math.PI * k / P;
+            const cx = 580 + i * 40;
+            const cy = stepY[0] + 50;
+            const r = 15;
+            
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.strokeStyle = COLORS[i] + '88';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Point for a
+            const angleA = wk * a;
+            ctx.beginPath();
+            ctx.arc(cx + r * Math.cos(angleA), cy - r * Math.sin(angleA), 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#667eea';
+            ctx.fill();
+            
+            // Point for b
+            const angleB = wk * b;
+            ctx.beginPath();
+            ctx.arc(cx + r * Math.cos(angleB), cy - r * Math.sin(angleB), 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#48dbfb';
+            ctx.fill();
+        }
+        
+        // Arrow
+        ctx.beginPath();
+        ctx.moveTo(350, stepY[0] + 90);
+        ctx.lineTo(350, stepY[1] - 10);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(345, stepY[1] - 15);
+        ctx.lineTo(350, stepY[1] - 5);
+        ctx.lineTo(355, stepY[1] - 15);
+        ctx.fillStyle = '#555';
+        ctx.fill();
+        
+        // Step 2: Trig Identity
+        ctx.fillStyle = '#feca57';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Step 2: COMBINE — Use trig identity: cos(α)cos(β) − sin(α)sin(β) = cos(α+β)', 20, stepY[1]);
+        
+        ctx.font = '11px monospace';
+        y = stepY[1] + 25;
+        for (let i = 0; i < freqs.length; i++) {
+            const k = freqs[i];
+            const wk = 2 * Math.PI * k / P;
+            const cosSum = Math.cos(wk * (a + b)).toFixed(4);
+            const sinSum = Math.sin(wk * (a + b)).toFixed(4);
+            
+            ctx.fillStyle = COLORS[i];
+            ctx.fillText(`k=${k}: `, 30, y);
+            ctx.fillStyle = '#ccc';
+            ctx.fillText(`cos(w${k}·(${a}+${b})) = ${cosSum}    sin(w${k}·(${a}+${b})) = ${sinSum}`, 80, y);
+            y += 16;
+        }
+        
+        // Arrow
+        ctx.beginPath();
+        ctx.moveTo(350, stepY[1] + 105);
+        ctx.lineTo(350, stepY[2] - 10);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(345, stepY[2] - 15);
+        ctx.lineTo(350, stepY[2] - 5);
+        ctx.lineTo(355, stepY[2] - 15);
+        ctx.fillStyle = '#555';
+        ctx.fill();
+        
+        // Step 3: Scoring
+        ctx.fillStyle = '#48dbfb';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Step 3: SCORE — For each candidate c, compute Σ cos(wk·(a+b−c))', 20, stepY[2]);
+        
+        // Compute scores
+        let scores = [];
+        let maxScore = -Infinity;
+        for (let c = 0; c < P; c++) {
+            let score = 0;
+            for (const k of freqs) {
+                const wk = 2 * Math.PI * k / P;
+                score += Math.cos(wk * (a + b - c));
+            }
+            scores.push(score);
+            maxScore = Math.max(maxScore, score);
+        }
+        
+        // Draw mini bar chart
+        const chartX = 30, chartY = stepY[2] + 20, chartW = 640, chartH = 80;
+        const barW = chartW / P;
+        
+        for (let c = 0; c < P; c++) {
+            const h = (scores[c] / maxScore) * chartH;
+            const x = chartX + c * barW;
+            if (h > 0) {
+                ctx.fillStyle = c === correct ? '#4caf50' : '#667eea44';
+                ctx.fillRect(x, chartY + chartH - h, barW - 0.5, h);
+            }
+        }
+        
+        // Label peak
+        ctx.fillStyle = '#4caf50';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        const peakX = chartX + correct * barW + barW / 2;
+        ctx.fillText(`c=${correct}`, peakX, chartY - 5);
+        ctx.fillText('↓', peakX, chartY + 5);
+        
+        // Arrow to step 4
+        ctx.beginPath();
+        ctx.moveTo(350, stepY[2] + 110);
+        ctx.lineTo(350, stepY[3] - 10);
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(345, stepY[3] - 15);
+        ctx.lineTo(350, stepY[3] - 5);
+        ctx.lineTo(355, stepY[3] - 15);
+        ctx.fillStyle = '#555';
+        ctx.fill();
+        
+        // Step 4: Output
+        ctx.fillStyle = '#4caf50';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Step 4: OUTPUT — The highest-scoring c is the answer!', 20, stepY[3]);
+        
+        ctx.font = '13px monospace';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(`Score(c=${correct}) = ${scores[correct].toFixed(3)} = ${freqs.length} (all cosines = 1!)`, 30, stepY[3] + 25);
+        
+        // Find second best
+        let secondBest = -Infinity;
+        let secondIdx = -1;
+        for (let c = 0; c < P; c++) {
+            if (c !== correct && scores[c] > secondBest) {
+                secondBest = scores[c];
+                secondIdx = c;
+            }
+        }
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText(`Best wrong: Score(c=${secondIdx}) = ${secondBest.toFixed(3)}`, 30, stepY[3] + 45);
+        
+        ctx.fillStyle = '#4caf50';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(`✓ Answer: ${a} + ${b} mod ${P} = ${correct}`, 30, stepY[3] + 75);
+        
+        // Margin
+        const margin = scores[correct] - secondBest;
+        ctx.fillStyle = '#feca57';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(`Confidence margin: ${margin.toFixed(3)} (peak − second best)`, 30, stepY[3] + 100);
+        
+        document.getElementById('full-result').innerHTML = 
+            `<strong>Complete!</strong> The network computed <span style="color:#667eea">${a}</span> + <span style="color:#48dbfb">${b}</span> mod ${P} = <span style="color:#4caf50"><strong>${correct}</strong></span><br>` +
+            `Using ${freqs.length} frequencies: [${freqs.join(', ')}]<br>` +
+            `Peak score: ${scores[correct].toFixed(3)} | Best wrong answer: ${secondBest.toFixed(3)} | Margin: ${margin.toFixed(3)}<br>` +
+            `<small style="color:#888">The network never "added" the numbers — it rotated points on circles and used wave interference to find the answer!</small>`;
+    }
+
+    // ============== INITIALIZATION ==============
+    function init() {
+        calculateMod();
+        updateCircleViz();
+        drawFourierBars();
+        updateTrigViz();
+        updateInterference();
+        updateGrokking();
+        updateWeightDecay();
+    }
+    
+    // Run on load
+    window.addEventListener('load', init);
+    
+    // Also run if DOM is already ready
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(init, 100);
+    }
+    </script>
+</body>
+</html>
