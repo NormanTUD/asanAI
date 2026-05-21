@@ -1,6 +1,5 @@
 /**
- * Live Training Network Visualizer
- * Shows the actual structure, data flow, and learning dynamics of a TF.js model.
+ * Live Training Network Visualizer — Clean Edition v2
  * @param {tf.LayersModel} _m - A TensorFlow.js model
  * @param {HTMLElement|string|null} targetDiv - Div element, ID string, or null
  */
@@ -41,84 +40,97 @@ function visualizeModelOrganism(_m, targetDiv) {
     return shape;
   }
 
-  function describeLayer(layer, idx) {
+  function getPerUnitSummary(weightData) {
+    if (!weightData) return null;
+    const shape = weightData.shape;
+    const flat = weightData.flat;
+    const numUnits = shape[shape.length - 1] || 1;
+    const perUnit = Math.floor(flat.length / numUnits);
+    const summaries = [];
+    for (let u = 0; u < numUnits; u++) {
+      const start = u * perUnit;
+      const end = Math.min(start + perUnit, flat.length);
+      let sum = 0, sumAbs = 0;
+      for (let i = start; i < end; i++) {
+        sum += flat[i];
+        sumAbs += Math.abs(flat[i]);
+      }
+      const count = end - start || 1;
+      summaries.push({ mean: sum / count, meanAbs: sumAbs / count });
+    }
+    return summaries;
+  }
+
+  function describeLayer(layer) {
     const type = layer.getClassName ? layer.getClassName() : 'Unknown';
     const config = layer.getConfig ? layer.getConfig() : {};
-    const outputShape = layer.outputShape || [];
-
-    let description = '';
+    let shortDesc = '';
     let role = '';
-    let icon = '';
+    let nodeCount = 1;
 
     switch (type.toLowerCase()) {
       case 'inputlayer':
-        description = `Receives raw data`;
-        role = 'DATA IN';
-        icon = '→';
+        const inputShape = config.batchInputShape || config.inputShape || [];
+        shortDesc = `[${inputShape.filter(x => x !== null).join(',')}]`;
+        role = 'INPUT';
+        nodeCount = Math.min(inputShape.filter(x => x !== null).reduce((a, b) => a * b, 1) || 4, 64);
         break;
       case 'dense':
-        const units = config.units || '?';
-        const activation = config.activation || 'linear';
-        description = `${units} neurons, ${activation}`;
-        role = activation === 'softmax' ? 'DECISION' :
-               activation === 'relu' ? 'TRANSFORM' :
-               activation === 'sigmoid' ? 'GATE' : 'COMPUTE';
-        icon = activation === 'relu' ? '⦿' :
-               activation === 'softmax' ? '◎' :
-               activation === 'sigmoid' ? '◐' : '○';
+        const units = config.units || 1;
+        const act = config.activation || 'linear';
+        shortDesc = `${units} × ${act}`;
+        role = act === 'softmax' ? 'OUTPUT' : act === 'sigmoid' ? 'GATE' : 'DENSE';
+        nodeCount = units;
         break;
       case 'conv2d':
       case 'conv1d':
-        const filters = config.filters || '?';
-        const kernelSize = config.kernelSize || '?';
-        description = `${filters} filters, ${kernelSize} kernel`;
-        role = 'DETECT FEATURES';
-        icon = '▣';
+        const filters = config.filters || 1;
+        const ks = config.kernelSize || [];
+        shortDesc = `${filters}f ${Array.isArray(ks) ? ks.join('×') : ks}k`;
+        role = 'CONV';
+        nodeCount = filters;
         break;
       case 'maxpooling2d':
       case 'maxpooling1d':
       case 'averagepooling2d':
-        description = `Compress spatial info`;
-        role = 'COMPRESS';
-        icon = '▽';
+        shortDesc = 'shrink';
+        role = 'POOL';
+        nodeCount = 4;
         break;
       case 'flatten':
-        description = `Reshape to 1D`;
-        role = 'RESHAPE';
-        icon = '═';
+        shortDesc = '→ 1D';
+        role = 'FLATTEN';
+        nodeCount = 8;
         break;
       case 'dropout':
-        const rate = config.rate || 0;
-        description = `Drop ${(rate * 100).toFixed(0)}% randomly`;
-        role = 'REGULARIZE';
-        icon = '✕';
+        shortDesc = `${((config.rate || 0) * 100).toFixed(0)}%`;
+        role = 'DROP';
+        nodeCount = 5;
         break;
       case 'batchnormalization':
-        description = `Normalize activations`;
-        role = 'STABILIZE';
-        icon = '≈';
+        shortDesc = 'norm';
+        role = 'NORM';
+        nodeCount = 5;
         break;
       case 'lstm':
       case 'gru':
-        const rUnits = config.units || '?';
-        description = `${rUnits} memory cells`;
-        role = 'REMEMBER';
-        icon = '↻';
+        shortDesc = `${config.units || '?'} cells`;
+        role = type.toUpperCase();
+        nodeCount = config.units || 4;
         break;
       default:
-        description = type;
-        role = 'PROCESS';
-        icon = '◇';
+        shortDesc = type;
+        role = type.substring(0, 5).toUpperCase();
+        nodeCount = 4;
     }
-
-    return { type, description, role, icon, outputShape, config };
+    return { type, shortDesc, role, nodeCount };
   }
 
-  // ─── Extract all layer info and weights ─────────────────────────
+  // ─── Extract layers ─────────────────────────────────────────────
   const layers = [];
   for (let li = 0; li < _m.layers.length; li++) {
     const layer = _m.layers[li];
-    const info = describeLayer(layer, li);
+    const info = describeLayer(layer);
     let weightData = null;
     let biasData = null;
 
@@ -132,12 +144,10 @@ function visualizeModelOrganism(_m, targetDiv) {
         const shape = Array.isArray(w) ? getShape(w) : [1];
         weightData = { flat, shape };
       } catch (e) {}
-
       if (layerWeights.length > 1) {
         try {
           const b = layerWeights[1].arraySync();
-          const flat = Array.isArray(b) ? flatten(b) : [b];
-          biasData = { flat };
+          biasData = { flat: Array.isArray(b) ? flatten(b) : [b] };
         } catch (e) {}
       }
     }
@@ -147,7 +157,8 @@ function visualizeModelOrganism(_m, targetDiv) {
       name: layer.name || `layer_${li}`,
       ...info,
       weightData,
-      biasData
+      biasData,
+      unitSummary: getPerUnitSummary(weightData)
     });
   }
 
@@ -157,9 +168,9 @@ function visualizeModelOrganism(_m, targetDiv) {
     return null;
   }
 
-  // ─── Canvas Setup ──────────────────────────────────────────────
+  // ─── Canvas ────────────────────────────────────────────────────
   const canvasW = 1000;
-  const canvasH = 650;
+  const canvasH = 560;
   const canvas = document.createElement('canvas');
   canvas.width = canvasW;
   canvas.height = canvasH;
@@ -170,455 +181,329 @@ function visualizeModelOrganism(_m, targetDiv) {
   const ctx = canvas.getContext('2d');
 
   // ─── Background ────────────────────────────────────────────────
-  ctx.fillStyle = '#080810';
+  ctx.fillStyle = '#0b0b14';
   ctx.fillRect(0, 0, canvasW, canvasH);
 
-  // Subtle grid
-  ctx.strokeStyle = 'rgba(40, 40, 80, 0.3)';
-  ctx.lineWidth = 0.5;
-  for (let x = 0; x < canvasW; x += 40) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvasH); ctx.stroke();
-  }
-  for (let y = 0; y < canvasH; y += 40) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvasW, y); ctx.stroke();
-  }
-
   // ─── Layout ────────────────────────────────────────────────────
-  const marginL = 60;
-  const marginR = 40;
-  const headerH = 50;
-  const footerH = 100;
+  const marginL = 45;
+  const marginR = 45;
+  const headerH = 42;
+  const footerH = 60;
   const graphW = canvasW - marginL - marginR;
-  const graphH = canvasH - headerH - footerH;
   const graphTop = headerH;
-
+  const graphH = canvasH - headerH - footerH;
   const colW = graphW / numLayers;
 
-  // ─── Title ─────────────────────────────────────────────────────
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 14px monospace';
+  // ─── Header ────────────────────────────────────────────────────
+  ctx.fillStyle = '#dde0f0';
+  ctx.font = 'bold 13px system-ui, sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText('LIVE MODEL STRUCTURE', marginL, 20);
+  ctx.fillText('Network Structure', marginL, 18);
 
-  ctx.fillStyle = '#556677';
-  ctx.font = '11px monospace';
   const totalParams = layers.reduce((s, l) => {
     let p = 0;
     if (l.weightData) p += l.weightData.flat.length;
     if (l.biasData) p += l.biasData.flat.length;
     return s + p;
   }, 0);
-  ctx.fillText(`${numLayers} layers | ${totalParams.toLocaleString()} trainable parameters | data flows left → right`, marginL, 38);
+  ctx.fillStyle = '#556677';
+  ctx.font = '10px system-ui, sans-serif';
+  ctx.fillText(`${numLayers} layers · ${totalParams.toLocaleString()} parameters`, marginL, 34);
 
-  // ─── Flow arrow along bottom ───────────────────────────────────
-  const arrowY = headerH + graphH + 15;
-  ctx.strokeStyle = '#334455';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(marginL, arrowY);
-  ctx.lineTo(marginL + graphW - 10, arrowY);
-  ctx.stroke();
-  // Arrowhead
-  ctx.beginPath();
-  ctx.moveTo(marginL + graphW - 10, arrowY);
-  ctx.lineTo(marginL + graphW - 18, arrowY - 5);
-  ctx.lineTo(marginL + graphW - 18, arrowY + 5);
-  ctx.closePath();
-  ctx.fillStyle = '#334455';
-  ctx.fill();
-
-  ctx.fillStyle = '#44aa77';
-  ctx.font = 'bold 10px monospace';
-  ctx.textAlign = 'left';
-  ctx.fillText('INPUT DATA', marginL, arrowY + 16);
   ctx.textAlign = 'right';
-  ctx.fillStyle = '#ff8855';
-  ctx.fillText('PREDICTION', marginL + graphW, arrowY + 16);
+  ctx.fillStyle = '#445566';
+  ctx.fillText('data flows left → right', canvasW - marginR, 34);
 
-  // ─── Draw each layer ───────────────────────────────────────────
-  const layerPositions = []; // store x positions for connection drawing
+  // ─── Determine display node counts and positions ───────────────
+  const maxDisplayNodes = 10;
+  const nodeAreaTop = graphTop + 38;
+  const nodeAreaH = graphH - 65;
+
+  function getDisplayNodes(layer) {
+    return Math.min(layer.nodeCount, maxDisplayNodes);
+  }
+
+  function getNodeY(nodeIdx, totalDisplay) {
+    const spacing = nodeAreaH / (totalDisplay + 1);
+    return nodeAreaTop + (nodeIdx + 1) * spacing;
+  }
+
+  // ─── Find the NEXT layer with weights (for drawing connections) ─
+  // This ensures connections pass through weightless layers (Flatten, Pool, etc.)
+  function findNextWeightedLayer(fromIdx) {
+    for (let i = fromIdx + 1; i < numLayers; i++) {
+      if (layers[i].weightData) return i;
+    }
+    return -1;
+  }
+
+  // ─── Draw connections ──────────────────────────────────────────
+  // Strategy: draw connections between ALL adjacent layers,
+  // using the receiving layer's weights if available,
+  // or just thin pass-through lines if no weights.
+
+  for (let idx = 0; idx < numLayers - 1; idx++) {
+    const layerA = layers[idx];
+    const layerB = layers[idx + 1];
+
+    const xA = marginL + idx * colW + colW / 2;
+    const xB = marginL + (idx + 1) * colW + colW / 2;
+
+    const displayA = getDisplayNodes(layerA);
+    const displayB = getDisplayNodes(layerB);
+
+    if (layerB.unitSummary) {
+      // Layer B has weights — draw weighted connections
+      const summaries = layerB.unitSummary;
+
+      // Normalize within THIS connection pair (not globally)
+      // This prevents conv→conv from being super thick
+      const localMax = Math.max(...summaries.map(s => s.meanAbs), 0.001);
+
+      const maxConns = Math.min(displayA * displayB, 40);
+      let drawn = 0;
+
+      for (let a = 0; a < displayA && drawn < maxConns; a++) {
+        for (let b = 0; b < displayB && drawn < maxConns; b++) {
+          const sIdx = b % summaries.length;
+          const u = summaries[sIdx];
+          // Normalize relative to this layer's own max
+          const strength = u.meanAbs / localMax;
+
+          if (strength < 0.1) { drawn++; continue; }
+
+          const y1 = getNodeY(a, displayA);
+          const y2 = getNodeY(b, displayB);
+          const cpx = (xA + xB) / 2;
+
+          // Cap alpha and line width to prevent ugly thick lines
+          const alpha = Math.min(0.25, 0.03 + strength * 0.15);
+          const lw = Math.min(2, 0.3 + strength * 1.2);
+
+          let color;
+          if (u.mean >= 0) {
+            color = `rgba(255, 170, 60, ${alpha})`;
+          } else {
+            color = `rgba(80, 160, 255, ${alpha})`;
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(xA + 6, y1);
+          ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - 6, y2);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = lw;
+          ctx.stroke();
+
+          drawn++;
+        }
+      }
+    } else {
+      // No weights on layer B (Flatten, Pool, Dropout, etc.)
+      // Draw thin pass-through lines to show data still flows
+      const numLines = Math.min(displayA, displayB, 6);
+      for (let i = 0; i < numLines; i++) {
+        const aIdx = Math.floor((i / numLines) * displayA);
+        const bIdx = Math.floor((i / numLines) * displayB);
+        const y1 = getNodeY(aIdx, displayA);
+        const y2 = getNodeY(bIdx, displayB);
+        const cpx = (xA + xB) / 2;
+
+        ctx.beginPath();
+        ctx.moveTo(xA + 6, y1);
+        ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - 6, y2);
+        ctx.strokeStyle = 'rgba(100, 120, 150, 0.15)';
+        ctx.lineWidth = 0.8;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+  }
+
+  // ─── Draw layers (nodes + labels) ──────────────────────────────
+  const roleColors = {
+    'INPUT': '#44bb88',
+    'DENSE': '#6699dd',
+    'OUTPUT': '#ff8855',
+    'GATE': '#ddaa44',
+    'CONV': '#aa77dd',
+    'POOL': '#55aabb',
+    'FLATTEN': '#778899',
+    'DROP': '#aa6666',
+    'NORM': '#66aa88',
+    'LSTM': '#dd77aa',
+    'GRU': '#dd77aa',
+  };
 
   for (let idx = 0; idx < numLayers; idx++) {
     const layer = layers[idx];
     const x = marginL + idx * colW + colW / 2;
-    const centerY = graphTop + graphH / 2;
-    layerPositions.push({ x, centerY });
+    const color = roleColors[layer.role] || '#6688aa';
+    const displayNodes = getDisplayNodes(layer);
 
-    // Determine visual height based on output shape
-    const outShape = layer.outputShape;
-    let numNeurons = 1;
-    if (Array.isArray(outShape)) {
-      const flat = outShape.flat ? outShape.flat() : outShape;
-      for (const s of flat) {
-        if (typeof s === 'number' && s > 0) numNeurons *= s;
-      }
-    }
-    numNeurons = Math.min(numNeurons, 200);
-    const displayNodes = Math.min(Math.max(3, Math.ceil(Math.sqrt(numNeurons))), 16);
-
-    // Layer column background
-    const colLeft = marginL + idx * colW + 4;
-    const colRight = colLeft + colW - 8;
-    ctx.fillStyle = 'rgba(15, 15, 30, 0.6)';
-    ctx.fillRect(colLeft, graphTop, colW - 8, graphH);
-
-    // ─── Role badge at top ──────────────────────────────────────
-    const badgeColors = {
-      'DATA IN': '#44aa77',
-      'TRANSFORM': '#5588dd',
-      'DECISION': '#ff8855',
-      'GATE': '#ddaa44',
-      'DETECT FEATURES': '#aa66dd',
-      'COMPRESS': '#66aaaa',
-      'RESHAPE': '#888899',
-      'REGULARIZE': '#cc6666',
-      'STABILIZE': '#66bb88',
-      'REMEMBER': '#dd77aa',
-      'COMPUTE': '#7799bb',
-      'PROCESS': '#7799bb'
-    };
-    const badgeColor = badgeColors[layer.role] || '#667788';
-
-    ctx.fillStyle = badgeColor;
-    ctx.font = 'bold 8px monospace';
+    // ─── Role + description at top ──────────────────────────────
+    ctx.fillStyle = color;
+    ctx.font = 'bold 9px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    const badgeW = ctx.measureText(layer.role).width + 10;
-    const badgeX = x - badgeW / 2;
-    const badgeY = graphTop + 5;
-
-    // Badge background
-    ctx.fillStyle = 'rgba(0,0,0,0.7)';
-    ctx.fillRect(badgeX, badgeY, badgeW, 14);
-    ctx.strokeStyle = badgeColor;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(badgeX, badgeY, badgeW, 14);
-    ctx.fillStyle = badgeColor;
-    ctx.fillText(layer.role, x, badgeY + 10);
-
-    // ─── Layer type + description ────────────────────────────────
-    ctx.fillStyle = '#ccccee';
-    ctx.font = '10px monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText(layer.type, x, badgeY + 28);
+    ctx.fillText(layer.role, x, graphTop + 10);
 
     ctx.fillStyle = '#667788';
-    ctx.font = '9px monospace';
-    ctx.fillText(layer.description, x, badgeY + 40);
+    ctx.font = '8px system-ui, sans-serif';
+    ctx.fillText(layer.shortDesc, x, graphTop + 22);
 
-    // ─── Draw neurons/nodes ──────────────────────────────────────
-    const nodeAreaTop = graphTop + 60;
-    const nodeAreaH = graphH - 130;
-    const nodeSpacing = nodeAreaH / (displayNodes + 1);
+    // ─── Nodes ──────────────────────────────────────────────────
+    // Compute local normalization for this layer's unit summaries
+    let localAbsMax = 0.001;
+    if (layer.unitSummary) {
+      for (const u of layer.unitSummary) {
+        if (u.meanAbs > localAbsMax) localAbsMax = u.meanAbs;
+      }
+    }
 
     for (let n = 0; n < displayNodes; n++) {
-      const ny = nodeAreaTop + (n + 1) * nodeSpacing;
-      const nodeR = 6;
+      const ny = getNodeY(n, displayNodes);
+      let nodeR = 4.5;
+      let nodeColor = color;
+      let glowAlpha = 0.08;
 
-      // If we have weight data, color the node by its average weight
-      let nodeColor = '#445566';
-      let nodeGlow = 'rgba(60, 80, 120, 0.3)';
+      if (layer.unitSummary) {
+        const uIdx = n % layer.unitSummary.length;
+        const u = layer.unitSummary[uIdx];
+        const strength = u.meanAbs / localAbsMax;
+        nodeR = 3.5 + strength * 3.5;
+        glowAlpha = 0.05 + strength * 0.15;
 
-      if (layer.weightData && layer.weightData.flat.length > 0) {
-        const flat = layer.weightData.flat;
-        const chunkSize = Math.max(1, Math.floor(flat.length / displayNodes));
-        const start = n * chunkSize;
-        const end = Math.min(start + chunkSize, flat.length);
-        let sum = 0, sumAbs = 0;
-        for (let i = start; i < end; i++) {
-          sum += flat[i];
-          sumAbs += Math.abs(flat[i]);
-        }
-        const avg = sum / (end - start || 1);
-        const avgAbs = sumAbs / (end - start || 1);
-
-        // Color by sign and magnitude
-        if (avg > 0) {
-          const t = Math.min(1, avgAbs * 3);
-          nodeColor = `rgb(${Math.floor(180 + t * 75)}, ${Math.floor(100 + t * 50)}, ${Math.floor(30)})`;
-          nodeGlow = `rgba(255, 150, 40, ${t * 0.4})`;
+        if (u.mean > 0) {
+          const t = Math.min(1, strength);
+          nodeColor = `rgb(${Math.floor(200 + t * 55)}, ${Math.floor(140 + t * 30)}, ${Math.floor(40)})`;
         } else {
-          const t = Math.min(1, avgAbs * 3);
-          nodeColor = `rgb(${Math.floor(30)}, ${Math.floor(100 + t * 80)}, ${Math.floor(180 + t * 75)})`;
-          nodeGlow = `rgba(60, 150, 255, ${t * 0.4})`;
+          const t = Math.min(1, strength);
+          nodeColor = `rgb(${Math.floor(40)}, ${Math.floor(130 + t * 50)}, ${Math.floor(200 + t * 55)})`;
         }
       }
 
       // Glow
       ctx.beginPath();
-      ctx.arc(x, ny, nodeR + 4, 0, 2 * Math.PI);
-      ctx.fillStyle = nodeGlow;
+      ctx.arc(x, ny, nodeR + 3, 0, 2 * Math.PI);
+      ctx.fillStyle = `rgba(150, 150, 200, ${glowAlpha})`;
       ctx.fill();
 
-      // Node body
+      // Node
       ctx.beginPath();
       ctx.arc(x, ny, nodeR, 0, 2 * Math.PI);
       ctx.fillStyle = nodeColor;
       ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
     }
 
-    // "..." if more neurons than displayed
-    if (numNeurons > displayNodes) {
+    // Overflow indicator
+    if (layer.nodeCount > maxDisplayNodes) {
+      const overflowY = getNodeY(displayNodes, displayNodes) + 8;
       ctx.fillStyle = '#556677';
-      ctx.font = '10px monospace';
+      ctx.font = '8px system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`⋮ ${numNeurons} total`, x, nodeAreaTop + nodeAreaH + 5);
+      ctx.fillText(`+${layer.nodeCount - maxDisplayNodes}`, x, overflowY);
     }
 
-    // ─── Weight distribution mini-chart ──────────────────────────
+    // ─── Mini distribution bar ──────────────────────────────────
     if (layer.weightData && layer.weightData.flat.length > 1) {
       const flat = layer.weightData.flat;
-      const chartY = graphTop + graphH - 55;
-      const chartW2 = colW - 20;
-      const chartH2 = 35;
-      const chartX = x - chartW2 / 2;
+      const barY = graphTop + graphH - 20;
+      const barW = Math.min(colW - 12, 50);
+      const barH = 6;
+      const barX = x - barW / 2;
 
-      // Mini histogram
-      const numBins = 20;
-      const bins = new Array(numBins).fill(0);
-      let mn = Infinity, mx = -Infinity;
-      for (const v of flat) { if (v < mn) mn = v; if (v > mx) mx = v; }
-      const range = mx - mn || 1;
-      for (const v of flat) {
-        const bin = Math.min(numBins - 1, Math.max(0, Math.floor(((v - mn) / range) * numBins)));
-        bins[bin]++;
-      }
-      const maxBin = Math.max(...bins);
-
-      // Background
-      ctx.fillStyle = 'rgba(0,0,0,0.5)';
-      ctx.fillRect(chartX, chartY, chartW2, chartH2);
-
-      // Bars
-      const barW = chartW2 / numBins;
-      for (let i = 0; i < numBins; i++) {
-        const barH = (bins[i] / maxBin) * (chartH2 - 4);
-        const t = i / numBins; // 0 = negative side, 1 = positive side
-        let r, g, b;
-        if (t < 0.5) {
-          r = 40; g = Math.floor(100 + t * 200); b = Math.floor(200 + t * 100);
-        } else {
-          const t2 = (t - 0.5) * 2;
-          r = Math.floor(150 + t2 * 105); g = Math.floor(100 + t2 * 50); b = 40;
-        }
-        ctx.fillStyle = `rgba(${r},${g},${b},0.8)`;
-        ctx.fillRect(chartX + i * barW, chartY + chartH2 - barH - 2, barW - 1, barH);
-      }
-
-      // Zero line in histogram
-      const zeroPos = (0 - mn) / range;
-      const zeroX = chartX + zeroPos * chartW2;
-      if (zeroPos > 0 && zeroPos < 1) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([2, 2]);
-        ctx.beginPath();
-        ctx.moveTo(zeroX, chartY);
-        ctx.lineTo(zeroX, chartY + chartH2);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // Stats
       const mean = flat.reduce((a, b) => a + b, 0) / flat.length;
       const std = Math.sqrt(flat.reduce((a, b) => a + (b - mean) ** 2, 0) / flat.length);
-      ctx.fillStyle = '#778899';
-      ctx.font = '7px monospace';
-      ctx.textAlign = 'center';
-      ctx.fillText(`μ=${mean.toFixed(3)} σ=${std.toFixed(3)}`, x, chartY + chartH2 + 9);
-    }
-  }
-
-  // ─── Draw connections between layers ───────────────────────────
-  for (let idx = 0; idx < numLayers - 1; idx++) {
-    const layerA = layers[idx];
-    const layerB = layers[idx + 1];
-    const posA = layerPositions[idx];
-    const posB = layerPositions[idx + 1];
-
-    const nodeAreaTop = graphTop + 60;
-    const nodeAreaH = graphH - 130;
-
-    const outShapeA = layerA.outputShape;
-    let numA = 1;
-    if (Array.isArray(outShapeA)) {
-      const flatS = outShapeA.flat ? outShapeA.flat() : outShapeA;
-      for (const s of flatS) { if (typeof s === 'number' && s > 0) numA *= s; }
-    }
-    numA = Math.min(numA, 200);
-    const displayA = Math.min(Math.max(3, Math.ceil(Math.sqrt(numA))), 16);
-
-    const outShapeB = layerB.outputShape;
-    let numB = 1;
-    if (Array.isArray(outShapeB)) {
-      const flatS = outShapeB.flat ? outShapeB.flat() : outShapeB;
-      for (const s of flatS) { if (typeof s === 'number' && s > 0) numB *= s; }
-    }
-    numB = Math.min(numB, 200);
-    const displayB = Math.min(Math.max(3, Math.ceil(Math.sqrt(numB))), 16);
-
-    const spacingA = nodeAreaH / (displayA + 1);
-    const spacingB = nodeAreaH / (displayB + 1);
-
-    // Get weight data for connections
-    let weightFlat = null;
-    let absMax = 1;
-    if (layerB.weightData) {
-      weightFlat = layerB.weightData.flat;
-      absMax = Math.max(...weightFlat.map(Math.abs)) || 1;
-    }
-
-    // Draw subset of connections
-    const maxConns = 40;
-    let drawn = 0;
-
-    for (let a = 0; a < displayA && drawn < maxConns; a++) {
-      for (let b = 0; b < displayB && drawn < maxConns; b++) {
-        const y1 = nodeAreaTop + (a + 1) * spacingA;
-        const y2 = nodeAreaTop + (b + 1) * spacingB;
-
-        let strength = 0.2;
-        let val = 0;
-
-        if (weightFlat) {
-          const wIdx = (a * displayB + b) % weightFlat.length;
-          val = weightFlat[wIdx];
-          strength = Math.abs(val) / absMax;
-        }
-
-        if (strength < 0.15) continue; // skip weak connections
-
-        const x1 = posA.x + 8;
-        const x2 = posB.x - 8;
-        const cpx = (x1 + x2) / 2;
-
-        let color;
-        if (val >= 0) {
-          color = `rgba(255, 160, 50, ${0.05 + strength * 0.35})`;
-        } else {
-          color = `rgba(70, 150, 255, ${0.05 + strength * 0.35})`;
-        }
-
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.bezierCurveTo(cpx, y1, cpx, y2, x2, y2);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 0.3 + strength * 2;
-        ctx.stroke();
-
-        drawn++;
+      let neg = 0, zero = 0, pos = 0;
+      const threshold = std * 0.2;
+      for (const v of flat) {
+        if (v < -threshold) neg++;
+        else if (v > threshold) pos++;
+        else zero++;
       }
+      const total = flat.length;
+
+      const negW = (neg / total) * barW;
+      const zeroW = (zero / total) * barW;
+      const posW = (pos / total) * barW;
+
+      ctx.fillStyle = 'rgba(80, 160, 255, 0.7)';
+      ctx.fillRect(barX, barY, negW, barH);
+      ctx.fillStyle = 'rgba(70, 70, 90, 0.5)';
+      ctx.fillRect(barX + negW, barY, zeroW, barH);
+      ctx.fillStyle = 'rgba(255, 170, 60, 0.7)';
+      ctx.fillRect(barX + negW + zeroW, barY, posW, barH);
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(barX, barY, barW, barH);
     }
   }
 
-  // ─── Training insight panel (bottom) ───────────────────────────
-  const panelY = canvasH - footerH + 30;
-  ctx.fillStyle = 'rgba(10, 10, 20, 0.9)';
-  ctx.fillRect(marginL - 10, panelY - 5, graphW + 20, footerH - 25);
-  ctx.strokeStyle = '#222244';
+  // ─── Footer ────────────────────────────────────────────────────
+  const footY = canvasH - footerH + 5;
+
+  ctx.fillStyle = 'rgba(8, 8, 16, 0.9)';
+  ctx.fillRect(0, footY, canvasW, footerH);
+  ctx.strokeStyle = 'rgba(60, 60, 100, 0.3)';
   ctx.lineWidth = 1;
-  ctx.strokeRect(marginL - 10, panelY - 5, graphW + 20, footerH - 25);
+  ctx.beginPath();
+  ctx.moveTo(0, footY);
+  ctx.lineTo(canvasW, footY);
+  ctx.stroke();
 
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 10px monospace';
+  // Legend
+  const legY = footY + 14;
   ctx.textAlign = 'left';
-  ctx.fillText('WHAT TRAINING DOES:', marginL, panelY + 10);
+  ctx.font = '9px system-ui, sans-serif';
 
+  ctx.fillStyle = 'rgba(80, 160, 255, 0.9)';
+  ctx.fillRect(marginL, legY, 10, 10);
   ctx.fillStyle = '#99aabb';
-  ctx.font = '9px monospace';
+  ctx.fillText('suppresses', marginL + 14, legY + 9);
 
-  // Compute training health indicators
-  let hasDeadLayers = false;
-  let hasExploding = false;
-  let healthNotes = [];
+  ctx.fillStyle = 'rgba(70, 70, 90, 0.7)';
+  ctx.fillRect(marginL + 90, legY, 10, 10);
+  ctx.fillStyle = '#99aabb';
+  ctx.fillText('near zero', marginL + 104, legY + 9);
 
+  ctx.fillStyle = 'rgba(255, 170, 60, 0.9)';
+  ctx.fillRect(marginL + 175, legY, 10, 10);
+  ctx.fillStyle = '#99aabb';
+  ctx.fillText('amplifies', marginL + 189, legY + 9);
+
+  ctx.fillStyle = '#667788';
+  ctx.fillText('|  node size = strength  |  dashed = pass-through (no weights)', marginL + 255, legY + 9);
+
+  // Training note
+  ctx.fillStyle = '#556677';
+  ctx.font = '9px system-ui, sans-serif';
+  ctx.fillText('Watch nodes grow and color as training finds patterns. Gray → colored = learning.', marginL, legY + 26);
+
+  // Health
+  let healthMsg = 'All layers healthy';
+  let healthColor = '#44bb77';
   for (const layer of layers) {
     if (!layer.weightData) continue;
     const flat = layer.weightData.flat;
     const mean = flat.reduce((a, b) => a + b, 0) / flat.length;
     const std = Math.sqrt(flat.reduce((a, b) => a + (b - mean) ** 2, 0) / flat.length);
-    const nearZero = flat.filter(v => Math.abs(v) < 0.001).length / flat.length;
-
-    if (nearZero > 0.8) {
-      hasDeadLayers = true;
-      healthNotes.push(`⚠ ${layer.name}: ${(nearZero * 100).toFixed(0)}% weights near zero — may be dying`);
+    const dead = flat.filter(v => Math.abs(v) < 0.0001).length / flat.length;
+    if (dead > 0.7) {
+      healthMsg = `${layer.name}: ${(dead * 100).toFixed(0)}% dead weights`;
+      healthColor = '#dd8844';
+      break;
     }
-    if (std > 2.0) {
-      hasExploding = true;
-      healthNotes.push(`⚠ ${layer.name}: std=${std.toFixed(2)} — weights may be exploding`);
+    if (std > 3) {
+      healthMsg = `${layer.name}: weights may be exploding (σ=${std.toFixed(2)})`;
+      healthColor = '#dd6644';
+      break;
     }
   }
-
-  const explanations = [
-    'Each iteration: data enters left → flows through layers → prediction exits right → error computed → weights adjusted backward',
-    'Orange connections = excitatory (amplify signal) | Blue connections = inhibitory (suppress signal)',
-    'Mini histograms show weight distribution per layer — should be centered near zero, bell-shaped after good training',
-  ];
-
-  let textY = panelY + 24;
-  for (const line of explanations) {
-    ctx.fillStyle = '#778899';
-    ctx.fillText(line, marginL, textY);
-    textY += 13;
-  }
-
-  // Health warnings
-  if (healthNotes.length > 0) {
-    textY += 4;
-    ctx.fillStyle = '#ffaa44';
-    ctx.font = 'bold 9px monospace';
-    ctx.fillText('TRAINING HEALTH:', marginL, textY);
-    textY += 13;
-    ctx.font = '9px monospace';
-    for (const note of healthNotes.slice(0, 3)) {
-      ctx.fillStyle = '#dd8833';
-      ctx.fillText(note, marginL + 10, textY);
-      textY += 12;
-    }
-  } else {
-    textY += 4;
-    ctx.fillStyle = '#44bb77';
-    ctx.font = '9px monospace';
-    ctx.fillText('✓ All layers look healthy — weights are well-distributed', marginL, textY);
-  }
-
-  // ─── Color legend (top right) ──────────────────────────────────
-  const legX = canvasW - 200;
-  const legY2 = 8;
-
-  ctx.fillStyle = 'rgba(0,0,0,0.7)';
-  ctx.fillRect(legX - 8, legY2, 195, 85);
-  ctx.strokeStyle = '#222244';
-  ctx.strokeRect(legX - 8, legY2, 195, 85);
-
-  ctx.fillStyle = '#aabbcc';
-  ctx.font = 'bold 9px monospace';
-  ctx.textAlign = 'left';
-  ctx.fillText('NODE COLORS:', legX, legY2 + 12);
-
-  ctx.fillStyle = '#ff9933';
-  ctx.beginPath(); ctx.arc(legX + 6, legY2 + 25, 4, 0, 2 * Math.PI); ctx.fill();
-  ctx.fillStyle = '#aabbcc';
-  ctx.font = '9px monospace';
-  ctx.fillText('positive avg weight (excites)', legX + 16, legY2 + 28);
-
-  ctx.fillStyle = '#3399ff';
-  ctx.beginPath(); ctx.arc(legX + 6, legY2 + 40, 4, 0, 2 * Math.PI); ctx.fill();
-  ctx.fillStyle = '#aabbcc';
-  ctx.fillText('negative avg weight (inhibits)', legX + 16, legY2 + 43);
-
-  ctx.fillStyle = '#445566';
-  ctx.beginPath(); ctx.arc(legX + 6, legY2 + 55, 4, 0, 2 * Math.PI); ctx.fill();
-  ctx.fillStyle = '#aabbcc';
-  ctx.fillText('no weights (pass-through)', legX + 16, legY2 + 58);
-
-  ctx.fillStyle = '#aabbcc';
-  ctx.font = 'bold 9px monospace';
-  ctx.fillText('CONNECTIONS:', legX, legY2 + 73);
-  ctx.font = '9px monospace';
-  ctx.fillText('thicker = stronger influence', legX, legY2 + 84);
+  ctx.fillStyle = healthColor;
+  ctx.font = '9px system-ui, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(healthMsg, canvasW - marginR, legY + 26);
 
   return canvas;
 }
