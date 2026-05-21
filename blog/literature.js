@@ -1,4 +1,35 @@
 window.bibData = {
+	"olsson2022induction": {
+		title: "In-context Learning and Induction Heads",
+		author: "Catherine Olsson, Nelson Elhage, Neel Nanda, Nicholas Joseph, Nova DasSarma, Tom Henighan, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, Dawn Drain, Deep Ganguli, Zac Hatfield-Dodds, Danny Hernandez, Scott Johnston, Andy Jones, Jackson Kernion, Liane Lovitt, Kamal Ndousse, Dario Amodei, Tom Brown, Jack Clark, Jared Kaplan, Sam McCandlish, Chris Olah",
+		year: 2022,
+		url: "https://arxiv.org/abs/2209.11895"
+	},
+	"wang2022interpretability": {
+		title: "Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small",
+		author: "Kevin Wang, Alexandre Variengien, Arthur Conmy, Buck Shlegeris, Jacob Steinhardt",
+		year: 2022,
+		url: "https://arxiv.org/abs/2211.00593"
+	},
+	"conmy2023automated": {
+		title: "Towards Automated Circuit Discovery for Mechanistic Interpretability",
+		author: "Arthur Conmy, Augustine N. Mavor-Parker, Aengus Lynch, Stefan Heimersheim, Adrià Garriga-Alonso",
+		year: 2023,
+		url: "https://arxiv.org/abs/2304.14997"
+	},
+	"cunningham2023sparse": {
+		title: "Sparse Autoencoders Find Highly Interpretable Features in Language Models",
+		author: "Hoagy Cunningham, Aidan Ewart, Logan Riggs, Robert Huben, Lee Sharkey",
+		year: 2023,
+		url: "https://arxiv.org/abs/2309.08600"
+	},
+	"meng2022locating": {
+		title: "Locating and Editing Factual Associations in GPT",
+		author: "Kevin Meng, David Bau, Alex Andonian, Yonatan Belinkov",
+		year: 2022,
+		url: "https://arxiv.org/abs/2202.05262"
+	},
+
 	"nanda2023grokking": {
 		title: "Progress Measures for Grokking via Mechanistic Interpretability",
 		author: "Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith, Jacob Steinhardt",
