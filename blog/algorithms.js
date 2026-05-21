@@ -658,85 +658,132 @@ function renderFourierAlgorithm(container, options = {}) {
         renderMath();
     }});
 
-    // ── STEP 10: Interactive Playground ──
-    steps.push({ title: 'Interactive Playground', render() {
-        content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Interactive Playground</h2>
-            <p style="text-align:center; color:#64748b;">Change a, b and toggle frequencies to see how the algorithm works (or breaks!)</p>
+	// ── STEP 10: Interactive Playground ──
+	steps.push({ title: 'Interactive Playground', render() {
+		content.innerHTML = `
+	<h2 style="text-align:center; color:#1e293b;">Interactive Playground</h2>
+	<p style="text-align:center; color:#64748b;">Change a, b and toggle frequencies to see how the algorithm works (or breaks!)</p>
 
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin:15px 0;">
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; margin-bottom:15px;">
-                    <div>
-                        <label style="font-weight:600; font-size:0.9em;">Number a:</label><br>
-                        <input type="range" id="play-a" min="0" max="${P-1}" value="${a}" style="width:100%;">
-                        <span id="play-a-val" style="font-weight:bold;">${a}</span>
-                    </div>
-                    <div>
-                        <label style="font-weight:600; font-size:0.9em;">Number b:</label><br>
-                        <input type="range" id="play-b" min="0" max="${P-1}" value="${b}" style="width:100%;">
-                        <span id="play-b-val" style="font-weight:bold;">${b}</span>
-                    </div>
-                    <div>
-                        <label style="font-weight:600; font-size:0.9em;">Correct answer:</label><br>
-                        <span id="play-result" style="font-size:1.5em; font-weight:bold; color:#059669;">${correctAnswer}</span>
-                    </div>
-                </div>
-                <div style="margin-bottom:10px;">
-                    <label style="font-weight:600; font-size:0.9em;">Active frequencies (try disabling some!):</label><br>
-                    ${FREQS.map(k => `<label style="margin-right:12px; cursor:pointer;"><input type="checkbox" class="play-freq" value="${k}" checked> k=${k} (period ${(P/k).toFixed(1)})</label>`).join('')}
-                </div>
-            </div>
+	<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin:15px 0;">
+	    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; margin-bottom:15px;">
+		<div>
+		    <label style="font-weight:600; font-size:0.9em;">Number a:</label><br>
+		    <input type="range" id="play-a" min="0" max="${P-1}" value="${a}" style="width:100%;">
+		    <span id="play-a-val" style="font-weight:bold;">${a}</span>
+		</div>
+		<div>
+		    <label style="font-weight:600; font-size:0.9em;">Number b:</label><br>
+		    <input type="range" id="play-b" min="0" max="${P-1}" value="${b}" style="width:100%;">
+		    <span id="play-b-val" style="font-weight:bold;">${b}</span>
+		</div>
+		<div>
+		    <label style="font-weight:600; font-size:0.9em;">Correct answer:</label><br>
+		    <span id="play-result" style="font-size:1.5em; font-weight:bold; color:#059669;">${correctAnswer}</span>
+		</div>
+	    </div>
+	    <div style="margin-bottom:10px;">
+		<label style="font-weight:600; font-size:0.9em;">Active frequencies (try disabling some!):</label><br>
+		${FREQS.map(k => `<label style="margin-right:12px; cursor:pointer;"><input type="checkbox" class="play-freq" value="${k}" checked> k=${k} (period ${(P/k).toFixed(1)})</label>`).join('')}
+	    </div>
+	</div>
 
-            ${plotDiv('play-plot', '320px')}
+	${plotDiv('play-plot', '320px')}
 
-            <div id="play-info" style="text-align:center; padding:12px; background:#f0f9ff; border-radius:8px; margin-top:10px; font-size:0.95em;"></div>
-        `;
-        renderMath();
+	<div id="play-info" style="text-align:center; padding:12px; background:#f0f9ff; border-radius:8px; margin-top:10px; font-size:0.95em;"></div>
+    `;
+		renderMath();
 
-        function updatePlayground() {
-            const playA = parseInt(document.getElementById('play-a').value);
-            const playB = parseInt(document.getElementById('play-b').value);
-            const playResult = (playA + playB) % P;
-            const activeFreqs = Array.from(document.querySelectorAll('.play-freq:checked')).map(el => parseInt(el.value));
+		function updatePlayground() {
+			const playA = parseInt(document.getElementById('play-a').value);
+			const playB = parseInt(document.getElementById('play-b').value);
+			const playResult = (playA + playB) % P;
+			const activeFreqs = Array.from(document.querySelectorAll('.play-freq:checked')).map(el => parseInt(el.value));
 
-            document.getElementById('play-a-val').textContent = playA;
-            document.getElementById('play-b-val').textContent = playB;
-            document.getElementById('play-result').textContent = playResult;
+			document.getElementById('play-a-val').textContent = playA;
+			document.getElementById('play-b-val').textContent = playB;
+			document.getElementById('play-result').textContent = playResult;
 
-            const playSignal = tokens.map(c => {
-                return activeFreqs.reduce((sum, k) => {
-                    const wk = 2 * Math.PI * k / P;
-                    return sum + Math.cos(wk * (playA + playB) - wk * c);
-                }, 0);
-            });
+			// Handle zero frequencies selected
+			if (activeFreqs.length === 0) {
+				const flatSignal = tokens.map(() => 0);
+				Plotly.react('play-plot', [
+					{ x: tokens, y: flatSignal, mode: 'lines', line: { color: '#94a3b8', width: 2 }, name: 'Logit(c) [no frequencies]' },
+				], {
+					xaxis: { title: 'Candidate token c', range: [-2, P + 2] },
+					yaxis: { title: 'Logit', range: [-1, 1] },
+					margin: { t: 20, b: 50, l: 50, r: 20 },
+					showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+				});
+				document.getElementById('play-info').innerHTML = `<span style="color:#ef4444; font-weight:bold;">&#10007; No frequencies active! All logits are 0. The network cannot distinguish any token.</span>`;
+				return;
+			}
 
-            const maxIdx = playSignal.indexOf(Math.max(...playSignal));
-            const isCorrect = maxIdx === playResult;
+			const playSignal = tokens.map(c => {
+				return activeFreqs.reduce((sum, k) => {
+					const wk = 2 * Math.PI * k / P;
+					return sum + Math.cos(wk * (playA + playB) - wk * c);
+				}, 0);
+			});
 
-            Plotly.react('play-plot', [
-                { x: tokens, y: playSignal, mode: 'lines', line: { color: '#3b82f6', width: 2 }, fill: 'tozeroy', fillcolor: 'rgba(59,130,246,0.04)', name: 'Logit(c)' },
-                { x: [playResult], y: [playSignal[playResult]], mode: 'markers', marker: { size: 14, color: '#ef4444', symbol: 'star' }, name: `Correct: ${playResult}` },
-                { x: [maxIdx], y: [playSignal[maxIdx]], mode: 'markers', marker: { size: 10, color: isCorrect ? '#10b981' : '#f59e0b', symbol: 'diamond' }, name: `argmax: ${maxIdx}` },
-            ], {
-                xaxis: { title: 'Candidate token c', range: [-2, P + 2] },
-                yaxis: { title: 'Logit' },
-                margin: { t: 20, b: 50, l: 50, r: 20 },
-                showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
-            });
+			const maxVal = Math.max(...playSignal);
+			const EPS = 1e-9;
 
-            const infoEl = document.getElementById('play-info');
-            if (isCorrect) {
-                infoEl.innerHTML = `<span style="color:#059669; font-weight:bold;">&#10003; Correct! argmax = ${maxIdx} = (${playA}+${playB}) mod ${P}</span><br><span style="font-size:0.85em;">${activeFreqs.length} frequency(ies) active. Peak height: ${playSignal[playResult].toFixed(2)} / ${activeFreqs.length}.0</span>`;
-            } else {
-                infoEl.innerHTML = `<span style="color:#ef4444; font-weight:bold;">&#10007; Wrong! argmax = ${maxIdx}, but correct would be ${playResult}</span><br><span style="font-size:0.85em;">Too few frequencies! Try enabling more.</span>`;
-            }
-        }
+			// Find ALL indices that share the maximum value (within floating-point tolerance)
+			const tiedIndices = tokens.filter(c => Math.abs(playSignal[c] - maxVal) < EPS);
+			const numTied = tiedIndices.length;
 
-        document.getElementById('play-a').addEventListener('input', updatePlayground);
-        document.getElementById('play-b').addEventListener('input', updatePlayground);
-        document.querySelectorAll('.play-freq').forEach(el => el.addEventListener('change', updatePlayground));
-        updatePlayground();
-    }});
+			// The argmax as reported (first occurrence)
+			const maxIdx = playSignal.indexOf(maxVal);
+
+			// Determine correctness: only correct if the correct answer is the UNIQUE maximum
+			const isUnambiguous = numTied === 1;
+			const correctIsAmongTied = tiedIndices.includes(playResult);
+			const isCorrect = isUnambiguous && maxIdx === playResult;
+
+			// Build plot traces
+			const traces = [
+				{ x: tokens, y: playSignal, mode: 'lines', line: { color: '#3b82f6', width: 2 }, fill: 'tozeroy', fillcolor: 'rgba(59,130,246,0.04)', name: 'Logit(c)' },
+				{ x: [playResult], y: [playSignal[playResult]], mode: 'markers', marker: { size: 14, color: '#ef4444', symbol: 'star' }, name: `Correct: ${playResult}` },
+			];
+
+			if (isUnambiguous) {
+				traces.push({
+					x: [maxIdx], y: [playSignal[maxIdx]], mode: 'markers',
+					marker: { size: 10, color: isCorrect ? '#10b981' : '#f59e0b', symbol: 'diamond' },
+					name: `argmax: ${maxIdx}`
+				});
+			} else {
+				// Show all tied peaks
+				traces.push({
+					x: tiedIndices, y: tiedIndices.map(c => playSignal[c]), mode: 'markers',
+					marker: { size: 8, color: '#f59e0b', symbol: 'diamond' },
+					name: `${numTied} tied peaks (all = ${maxVal.toFixed(2)})`
+				});
+			}
+
+			Plotly.react('play-plot', traces, {
+				xaxis: { title: 'Candidate token c', range: [-2, P + 2] },
+				yaxis: { title: 'Logit' },
+				margin: { t: 20, b: 50, l: 50, r: 20 },
+				showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+			});
+
+			// Update info display
+			const infoEl = document.getElementById('play-info');
+			if (isCorrect) {
+				infoEl.innerHTML = `<span style="color:#059669; font-weight:bold;">&#10003; Correct! argmax = ${maxIdx} = (${playA}+${playB}) mod ${P}</span><br><span style="font-size:0.85em;">${activeFreqs.length} frequency(ies) active. Unique peak height: ${playSignal[playResult].toFixed(2)} / ${activeFreqs.length}.0</span>`;
+			} else if (!isUnambiguous && correctIsAmongTied) {
+				infoEl.innerHTML = `<span style="color:#f59e0b; font-weight:bold;">&#9888; Ambiguous! ${numTied} tokens are tied at the maximum value of ${maxVal.toFixed(2)}</span><br><span style="font-size:0.85em;">The correct answer c*=${playResult} is among them, but so are ${numTied - 1} false peaks. With only ${activeFreqs.length} frequency(ies), the network <strong>cannot uniquely identify</strong> the answer.</span><br><span style="font-size:0.82em; color:#64748b;">Tied tokens: [${tiedIndices.slice(0, 10).join(', ')}${numTied > 10 ? ', ...' : ''}] — these repeat every P/k ≈ ${(P / activeFreqs[0]).toFixed(1)} positions.</span>`;
+			} else {
+				infoEl.innerHTML = `<span style="color:#ef4444; font-weight:bold;">&#10007; Wrong! argmax = ${maxIdx}, but correct would be ${playResult}</span><br><span style="font-size:0.85em;">Too few frequencies! Try enabling more. ${numTied > 1 ? `(${numTied} tokens tied at max)` : ''}</span>`;
+			}
+		}
+
+		document.getElementById('play-a').addEventListener('input', updatePlayground);
+		document.getElementById('play-b').addEventListener('input', updatePlayground);
+		document.querySelectorAll('.play-freq').forEach(el => el.addEventListener('change', updatePlayground));
+		updatePlayground();
+	}});
 
     // ── STEP 11: Summary & Grokking ──
     steps.push({ title: 'Summary and Grokking', render() {
