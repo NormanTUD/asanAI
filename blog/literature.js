@@ -1,6 +1,21 @@
 window.bibData = {
 	"garg2022incontext": {
 		title: "What Can Transformers Learn In-Context? A Case Study of Simple Function Classes",
+		author: "Shivam Garg and Dimitris Tsipras and Percy Liang and Gregory Valiant",
+		year: 2022,
+		url: "https://arxiv.org/abs/2208.01066",
+		abstract: "Transformers trained on diverse function classes can in-context learn new functions at inference time, matching optimal estimators like least squares, without any parameter updates."
+	},
+	"zhou2022algorithmic": {
+		title: "Teaching Algorithmic Reasoning via In-context Learning",
+		author: "Hattie Zhou and Azade Nova and Hugo Larochelle and Aaron Courville and Behnam Neyshabur and Hanie Sedghi",
+		year: 2022,
+		url: "https://arxiv.org/abs/2211.09066",
+		abstract: "LLMs can execute algorithms provided in-context with near-perfect accuracy when the algorithm is described unambiguously step by step. Algorithmic prompting achieves 90.5% accuracy on 19-digit addition vs 9.5% for few-shot baselines, proving the model learns and follows the in-context algorithm rather than relying on pretrained knowledge."
+	},
+
+	"garg2022incontext": {
+		title: "What Can Transformers Learn In-Context? A Case Study of Simple Function Classes",
 		author: "Shivam Garg, Dimitris Tsipras, Percy Liang, Gregory Valiant",
 		year: 2022,
 		url: "https://arxiv.org/abs/2208.01066"

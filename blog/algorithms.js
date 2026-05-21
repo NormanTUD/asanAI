@@ -1421,6 +1421,483 @@ function renderICLAlgorithm(container, options = {}) {
     initialize();
 }
 
+function renderICLExecution(container, options = {}) {
+    const root = typeof container === 'string' ? document.getElementById(container) : container;
+    if (!root) { console.error('renderICLExecution: container not found'); return; }
+
+    // ─── State ───────────────────────────────────────────────────────────────
+    let numA = 128;
+    let numB = 367;
+    let steps = [];
+    let currentStep = 0;
+    let animating = false;
+    let animInterval = null;
+    let selectedAlgo = 'addition';
+
+    const algorithms = {
+        addition: {
+            name: 'Addition (Columnar)',
+            code: 'def add(a, b):\n    carry = 0\n    result = []\n    while a or b or carry:\n        d_a = a % 10\n        d_b = b % 10\n        s = d_a + d_b + carry\n        result.append(s % 10)\n        carry = s // 10\n        a //= 10\n        b //= 10\n    return reversed(result)',
+            execute: function(a, b) {
+                let carry = 0;
+                let result = [];
+                let traceSteps = [];
+                let iteration = 0;
+                traceSteps.push({
+                    iteration: 0,
+                    action: 'init',
+                    description: 'Initialize: carry=0, result=[]',
+                    state: { a: a, b: b, carry: 0, result: [], d_a: null, d_b: null, s: null },
+                    layerActivity: { parsing: 1.0, binding: 0.8, execution: 0.2 },
+                    tokenGenerated: 'carry=0'
+                });
+                while (a > 0 || b > 0 || carry > 0) {
+                    iteration++;
+                    let d_a = a % 10;
+                    let d_b = b % 10;
+                    let s = d_a + d_b + carry;
+                    let newDigit = s % 10;
+                    let newCarry = Math.floor(s / 10);
+                    result.push(newDigit);
+                    traceSteps.push({
+                        iteration: iteration,
+                        action: 'loop_body',
+                        description: `Iter ${iteration}: d_a=${d_a}, d_b=${d_b}, carry=${carry}. s=${d_a}+${d_b}+${carry}=${s}. digit=${newDigit}, new_carry=${newCarry}`,
+                        state: { a: Math.floor(a/10), b: Math.floor(b/10), carry: newCarry, result: [...result], d_a: d_a, d_b: d_b, s: s },
+                        layerActivity: {
+                            parsing: 0.3,
+                            binding: 0.5 + 0.3 * (iteration === 1 ? 1 : 0),
+                            execution: 0.9
+                        },
+                        tokenGenerated: `${d_a}+${d_b}+${carry}=${s}, digit=${newDigit}, C=${newCarry}`
+                    });
+                    carry = newCarry;
+                    a = Math.floor(a / 10);
+                    b = Math.floor(b / 10);
+                }
+                traceSteps.push({
+                    iteration: iteration + 1,
+                    action: 'return',
+                    description: `Loop ended. Result (reversed): ${result.slice().reverse().join('')}`,
+                    state: { a: 0, b: 0, carry: 0, result: result, d_a: null, d_b: null, s: null },
+                    layerActivity: { parsing: 0.1, binding: 0.2, execution: 1.0 },
+                    tokenGenerated: result.slice().reverse().join('')
+                });
+                return traceSteps;
+            }
+        },
+        multiplication: {
+            name: 'Multiplication (Repeated Addition)',
+            code: 'def multiply(a, b):\n    result = 0\n    for i in range(b):\n        result = add(result, a)\n    return result',
+            execute: function(a, b) {
+                let bSmall = Math.min(Math.abs(b), 12);
+                let result = 0;
+                let traceSteps = [];
+                traceSteps.push({
+                    iteration: 0,
+                    action: 'init',
+                    description: `Initialize: result=0, will add ${a} exactly ${bSmall} times`,
+                    state: { a: a, b: bSmall, result: 0, i: 0 },
+                    layerActivity: { parsing: 1.0, binding: 0.9, execution: 0.2 },
+                    tokenGenerated: 'result=0'
+                });
+                for (let i = 0; i < bSmall; i++) {
+                    result += a;
+                    traceSteps.push({
+                        iteration: i + 1,
+                        action: 'loop_body',
+                        description: `Iter ${i+1}: result = result + ${a} = ${result - a} + ${a} = ${result}`,
+                        state: { a: a, b: bSmall, result: result, i: i + 1 },
+                        layerActivity: { parsing: 0.2, binding: 0.4, execution: 0.95 },
+                        tokenGenerated: `add(${result - a}, ${a}) = ${result}`
+                    });
+                }
+                traceSteps.push({
+                    iteration: bSmall + 1,
+                    action: 'return',
+                    description: `Loop ended after ${bSmall} iterations. Result: ${result}`,
+                    state: { a: a, b: bSmall, result: result, i: bSmall },
+                    layerActivity: { parsing: 0.1, binding: 0.1, execution: 1.0 },
+                    tokenGenerated: `${result}`
+                });
+                return traceSteps;
+            }
+        },
+        gcd: {
+            name: 'GCD (Euclidean)',
+            code: 'def gcd(a, b):\n    while b != 0:\n        temp = b\n        b = a % b\n        a = temp\n    return a',
+            execute: function(a, b) {
+                a = Math.abs(a) || 1;
+                b = Math.abs(b) || 1;
+                let traceSteps = [];
+                let iteration = 0;
+                traceSteps.push({
+                    iteration: 0,
+                    action: 'init',
+                    description: `Initialize: a=${a}, b=${b}`,
+                    state: { a: a, b: b, temp: null },
+                    layerActivity: { parsing: 1.0, binding: 0.9, execution: 0.2 },
+                    tokenGenerated: `a=${a}, b=${b}`
+                });
+                while (b !== 0 && iteration < 50) {
+                    iteration++;
+                    let temp = b;
+                    let newB = a % b;
+                    traceSteps.push({
+                        iteration: iteration,
+                        action: 'loop_body',
+                        description: `Iter ${iteration}: a=${a}, b=${b}. temp=${temp}, b=a%b=${a}%${b}=${newB}, a=temp=${temp}`,
+                        state: { a: temp, b: newB, temp: temp },
+                        layerActivity: { parsing: 0.2, binding: 0.5, execution: 0.9 },
+                        tokenGenerated: `${a} % ${b} = ${newB}, a←${temp}, b←${newB}`
+                    });
+                    a = temp;
+                    b = newB;
+                }
+                traceSteps.push({
+                    iteration: iteration + 1,
+                    action: 'return',
+                    description: `b=0, loop ended. GCD = ${a}`,
+                    state: { a: a, b: 0, temp: null },
+                    layerActivity: { parsing: 0.1, binding: 0.1, execution: 1.0 },
+                    tokenGenerated: `${a}`
+                });
+                return traceSteps;
+            }
+        }
+    };
+
+    // ─── Render UI ───────────────────────────────────────────────────────────
+    function render() {
+        root.innerHTML = '';
+        root.style.fontFamily = "'Segoe UI', system-ui, sans-serif";
+        root.style.maxWidth = '960px';
+        root.style.margin = '0 auto';
+
+        // Title
+        const title = document.createElement('div');
+        title.style.cssText = 'text-align:center; margin-bottom:20px;';
+        title.innerHTML = BACKTICK
+            <h3 style="color:#1e293b; margin:0 0 8px 0;">In-Context Algorithm Execution</h3>
+            <p style="color:#64748b; margin:0; font-size:0.9em;">The algorithm exists <strong>only in the prompt</strong>. Watch how the LLM traces through it token by token.</p>
+        BACKTICK;
+        root.appendChild(title);
+
+        // Algorithm selector + inputs
+        const controlPanel = document.createElement('div');
+        controlPanel.style.cssText = 'display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;';
+
+        // Left: algorithm selection and code display
+        const leftPanel = document.createElement('div');
+        leftPanel.style.cssText = 'background:#1e293b; border-radius:10px; padding:15px; color:#e2e8f0;';
+        leftPanel.innerHTML = BACKTICK
+            <div style="margin-bottom:10px;">
+                <label style="font-size:0.8em; color:#94a3b8; font-weight:600;">ALGORITHM IN CONTEXT:</label>
+                <select id="icl-algo-select" style="margin-left:10px; padding:4px 8px; border-radius:4px; background:#334155; color:#e2e8f0; border:1px solid #475569;">
+                    <option value="addition">Addition (Columnar)</option>
+                    <option value="multiplication">Multiplication (Repeated Add)</option>
+                    <option value="gcd">GCD (Euclidean)</option>
+                </select>
+            </div>
+            <pre id="icl-code-display" style="margin:0; font-size:0.82em; line-height:1.5; color:#a5f3fc; overflow-x:auto; white-space:pre-wrap;">${algorithms[selectedAlgo].code}</pre>
+        BACKTICK;
+        controlPanel.appendChild(leftPanel);
+
+        // Right: inputs and controls
+        const rightPanel = document.createElement('div');
+        rightPanel.style.cssText = 'background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:15px;';
+        rightPanel.innerHTML = BACKTICK
+            <label style="font-size:0.8em; color:#64748b; font-weight:600;">FUNCTION CALL:</label>
+            <div style="margin:10px 0; font-family:monospace; font-size:1.1em; color:#1e293b; background:#fff; padding:10px; border-radius:6px; border:1px solid #e2e8f0;">
+                <span id="icl-call-display">${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)</span>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+                <div>
+                    <label style="font-size:0.75em; color:#64748b;">Param A:</label><br>
+                    <input type="number" id="icl-param-a" value="${numA}" style="width:80px; padding:5px; border:1px solid #cbd5e1; border-radius:4px;">
+                </div>
+                <div>
+                    <label style="font-size:0.75em; color:#64748b;">Param B:</label><br>
+                    <input type="number" id="icl-param-b" value="${numB}" style="width:80px; padding:5px; border:1px solid #cbd5e1; border-radius:4px;">
+                </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button id="icl-execute-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#3b82f6; color:#fff; cursor:pointer; font-weight:600;">⚡ Execute</button>
+                <button id="icl-step-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#8b5cf6; color:#fff; cursor:pointer; font-weight:600;">→ Step</button>
+                <button id="icl-animate-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#10b981; color:#fff; cursor:pointer; font-weight:600;">▶ Animate</button>
+                <button id="icl-reset-btn" style="padding:8px 16px; border:none; border-radius:6px; background:#64748b; color:#fff; cursor:pointer; font-weight:600;">↺ Reset</button>
+            </div>
+        BACKTICK;
+        controlPanel.appendChild(rightPanel);
+        root.appendChild(controlPanel);
+
+        // Execution trace area
+        const traceArea = document.createElement('div');
+        traceArea.style.cssText = 'display:grid; grid-template-columns:2fr 1fr; gap:15px; margin-bottom:15px;';
+
+        // Left: token generation trace
+        const tokenTrace = document.createElement('div');
+        tokenTrace.id = 'icl-token-trace';
+        tokenTrace.style.cssText = 'background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:15px; max-height:400px; overflow-y:auto;';
+        tokenTrace.innerHTML = '<div style="color:#94a3b8; font-size:0.85em; text-align:center; padding:30px;">Press Execute or Step to begin</div>';
+        traceArea.appendChild(tokenTrace);
+
+        // Right: state panel + layer activity
+        const statePanel = document.createElement('div');
+        statePanel.id = 'icl-state-panel';
+        statePanel.style.cssText = 'display:flex; flex-direction:column; gap:10px;';
+        statePanel.innerHTML = BACKTICK
+            <div id="icl-state-vars" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:15px;">
+                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#166534;">RESIDUAL STREAM STATE</h4>
+                <div style="color:#94a3b8; font-size:0.85em;">No state yet</div>
+            </div>
+            <div id="icl-layer-activity" style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:15px;">
+                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#1e40af;">LAYER ACTIVITY</h4>
+                <div id="icl-layers-viz" style="font-size:0.85em; color:#94a3b8;">No activity yet</div>
+            </div>
+            <div id="icl-progress" style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:15px;">
+                <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4>
+                <div style="color:#94a3b8; font-size:0.85em;">0 / 0 steps</div>
+            </div>
+        BACKTICK;
+        traceArea.appendChild(statePanel);
+        root.appendChild(traceArea);
+
+        // Explanation panel
+        const explPanel = document.createElement('div');
+        explPanel.style.cssText = 'display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:15px;';
+        explPanel.innerHTML = BACKTICK
+            <div style="padding:12px; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px;">
+                <h5 style="margin:0 0 6px 0; color:#92400e; font-size:0.8em;">1. PARSING (Layers 1–4)</h5>
+                <p style="margin:0; font-size:0.78em; line-height:1.5; color:#451a03;">
+                    Attention heads identify loop structures, variable assignments, and arithmetic operations in the prompt.
+                    Induction heads match "when I see <code>carry = s // 10</code> and s=15, carry becomes 1."
+                </p>
+            </div>
+            <div style="padding:12px; background:#dbeafe; border:1px solid #93c5fd; border-radius:8px;">
+                <h5 style="margin:0 0 6px 0; color:#1e40af; font-size:0.8em;">2. STATE BINDING (Layers 5–8)</h5>
+                <p style="margin:0; font-size:0.78em; line-height:1.5; color:#1e3a5f;">
+                    The model binds query inputs (${numA}, ${numB}) to algorithm parameters (a, b).
+                    The residual stream now encodes: current variable values, loop position, partial results.
+                </p>
+            </div>
+            <div style="padding:12px; background:#f0fdf4; border:1px solid #86efac; border-radius:8px;">
+                <h5 style="margin:0 0 6px 0; color:#166534; font-size:0.8em;">3. STEP EXECUTION (Layers 9–12)</h5>
+                <p style="margin:0; font-size:0.78em; line-height:1.5; color:#14532d;">
+                    MLP layers apply the transformation rule from context. Each generated token advances state by one micro-step.
+                    The output becomes input for the next forward pass — the scratchpad is external memory.
+                </p>
+            </div>
+        BACKTICK;
+        root.appendChild(explPanel);
+
+        // Bind events
+        bindEvents();
+    }
+
+    function bindEvents() {
+        document.getElementById('icl-algo-select').addEventListener('change', (e) => {
+            selectedAlgo = e.target.value;
+            document.getElementById('icl-code-display').textContent = algorithms[selectedAlgo].code;
+            document.getElementById('icl-call-display').innerHTML = BACKTICK${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)BACKTICK;
+            resetExecution();
+        });
+
+        document.getElementById('icl-param-a').addEventListener('change', (e) => {
+            numA = parseInt(e.target.value) || 0;
+            document.getElementById('icl-call-display').innerHTML = BACKTICK${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)BACKTICK;
+            resetExecution();
+        });
+
+        document.getElementById('icl-param-b').addEventListener('change', (e) => {
+            numB = parseInt(e.target.value) || 0;
+            document.getElementById('icl-call-display').innerHTML = BACKTICK${selectedAlgo}(<span style="color:#3b82f6;">${numA}</span>, <span style="color:#3b82f6;">${numB}</span>)BACKTICK;
+            resetExecution();
+        });
+
+        document.getElementById('icl-execute-btn').addEventListener('click', () => {
+            executeAll();
+        });
+
+        document.getElementById('icl-step-btn').addEventListener('click', () => {
+            stepOnce();
+        });
+
+        document.getElementById('icl-animate-btn').addEventListener('click', () => {
+            toggleAnimate();
+        });
+
+        document.getElementById('icl-reset-btn').addEventListener('click', () => {
+            resetExecution();
+        });
+    }
+
+    function computeSteps() {
+        if (steps.length === 0) {
+            steps = algorithms[selectedAlgo].execute(numA, numB);
+            currentStep = 0;
+        }
+    }
+
+    function resetExecution() {
+        if (animating) {
+            clearInterval(animInterval);
+            animating = false;
+            const btn = document.getElementById('icl-animate-btn');
+            if (btn) { btn.textContent = '▶ Animate'; btn.style.background = '#10b981'; }
+        }
+        steps = [];
+        currentStep = 0;
+        const tokenTrace = document.getElementById('icl-token-trace');
+        if (tokenTrace) tokenTrace.innerHTML = '<div style="color:#94a3b8; font-size:0.85em; text-align:center; padding:30px;">Press Execute or Step to begin</div>';
+        const stateVars = document.getElementById('icl-state-vars');
+        if (stateVars) stateVars.innerHTML = '<h4 style="margin:0 0 10px 0; font-size:0.85em; color:#166534;">RESIDUAL STREAM STATE</h4><div style="color:#94a3b8; font-size:0.85em;">No state yet</div>';
+        const layersViz = document.getElementById('icl-layers-viz');
+        if (layersViz) layersViz.innerHTML = '<div style="color:#94a3b8;">No activity yet</div>';
+        const progress = document.getElementById('icl-progress');
+        if (progress) progress.innerHTML = '<h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4><div style="color:#94a3b8; font-size:0.85em;">0 / 0 steps</div>';
+    }
+
+    function renderStep(stepIdx) {
+        const step = steps[stepIdx];
+        if (!step) return;
+
+        // Token trace
+        const tokenTrace = document.getElementById('icl-token-trace');
+        if (stepIdx === 0) {
+            tokenTrace.innerHTML = '';
+        }
+
+        const stepDiv = document.createElement('div');
+        stepDiv.style.cssText = BACKTICK padding:8px 12px; margin-bottom:6px; border-radius:6px; border-left:3px solid ${step.action === 'init' ? '#3b82f6' : step.action === 'return' ? '#10b981' : '#f59e0b'}; background:${step.action === 'init' ? '#eff6ff' : step.action === 'return' ? '#f0fdf4' : '#fffbeb'}; animation: fadeIn 0.3s ease; BACKTICK;
+        stepDiv.innerHTML = BACKTICK
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.75em; font-weight:600; color:#64748b;">STEP ${step.iteration}</span>
+                <span style="font-size:0.7em; padding:2px 6px; border-radius:3px; background:${step.action === 'init' ? '#3b82f6' : step.action === 'return' ? '#10b981' : '#f59e0b'}; color:#fff;">${step.action.toUpperCase()}</span>
+            </div>
+            <div style="font-size:0.85em; margin:5px 0; color:#1e293b;">${step.description}</div>
+            <div style="font-family:monospace; font-size:0.8em; color:#7c3aed; background:#f5f3ff; padding:4px 8px; border-radius:4px; margin-top:4px;">
+                → token: "${step.tokenGenerated}"
+            </div>
+        BACKTICK;
+        tokenTrace.appendChild(stepDiv);
+        tokenTrace.scrollTop = tokenTrace.scrollHeight;
+
+        // State variables
+        const stateVars = document.getElementById('icl-state-vars');
+        let stateHTML = '<h4 style="margin:0 0 10px 0; font-size:0.85em; color:#166534;">RESIDUAL STREAM STATE</h4>';
+        const state = step.state;
+        for (const [key, val] of Object.entries(state)) {
+            if (val === null) continue;
+            let displayVal = Array.isArray(val) ? '[' + val.join(', ') + ']' : val;
+            stateHTML += BACKTICK<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid #dcfce7;">
+                <span style="font-family:monospace; font-size:0.85em; color:#166534; font-weight:600;">${key}</span>
+                <span style="font-family:monospace; font-size:0.85em; color:#1e293b;">${displayVal}</span>
+            </div>BACKTICK;
+        }
+        stateVars.innerHTML = stateHTML;
+
+        // Layer activity
+        const layersViz = document.getElementById('icl-layers-viz');
+        const la = step.layerActivity;
+        layersViz.innerHTML = BACKTICK
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8em; margin-bottom:2px;">
+                    <span>Parsing (L1–4)</span>
+                    <span>${(la.parsing * 100).toFixed(0)}%</span>
+                </div>
+                <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${la.parsing * 100}%; background:#f59e0b; border-radius:4px; transition:width 0.3s;"></div>
+                </div>
+            </div>
+            <div style="margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.8em; margin-bottom:2px;">
+                    <span>State Binding (L5–8)</span>
+                    <span>${(la.binding * 100).toFixed(0)}%</span>
+                </div>
+                <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${la.binding * 100}%; background:#3b82f6; border-radius:4px; transition:width 0.3s;"></div>
+                </div>
+            </div>
+            <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8em; margin-bottom:2px;">
+                    <span>Execution (L9–12)</span>
+                    <span>${(la.execution * 100).toFixed(0)}%</span>
+                </div>
+                <div style="height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
+                    <div style="height:100%; width:${la.execution * 100}%; background:#10b981; border-radius:4px; transition:width 0.3s;"></div>
+                </div>
+            </div>
+        BACKTICK;
+
+        // Progress
+        const progress = document.getElementById('icl-progress');
+        const pct = ((stepIdx + 1) / steps.length * 100).toFixed(0);
+        progress.innerHTML = BACKTICK
+            <h4 style="margin:0 0 10px 0; font-size:0.85em; color:#854d0e;">EXECUTION PROGRESS</h4>
+            <div style="font-size:0.85em; color:#1e293b; margin-bottom:6px;">${stepIdx + 1} / ${steps.length} steps</div>
+            <div style="height:10px; background:#fef9c3; border-radius:5px; overflow:hidden;">
+                <div style="height:100%; width:${pct}%; background:#eab308; border-radius:5px; transition:width 0.3s;"></div>
+            </div>
+            ${stepIdx === steps.length - 1 ? '<div style="margin-top:8px; font-weight:bold; color:#059669;">✅ Execution complete</div>' : ''}
+        BACKTICK;
+    }
+
+    function stepOnce() {
+        computeSteps();
+        if (currentStep < steps.length) {
+            renderStep(currentStep);
+            currentStep++;
+        }
+    }
+
+    function executeAll() {
+        resetExecution();
+        computeSteps();
+        for (let i = 0; i < steps.length; i++) {
+            renderStep(i);
+        }
+        currentStep = steps.length;
+    }
+
+    function toggleAnimate() {
+        const btn = document.getElementById('icl-animate-btn');
+        if (animating) {
+            clearInterval(animInterval);
+            animating = false;
+            btn.textContent = '▶ Animate';
+            btn.style.background = '#10b981';
+            return;
+        }
+        if (currentStep >= steps.length) {
+            resetExecution();
+        }
+        computeSteps();
+        animating = true;
+        btn.textContent = '⏸ Pause';
+        btn.style.background = '#f59e0b';
+        animInterval = setInterval(() => {
+            if (currentStep >= steps.length) {
+                clearInterval(animInterval);
+                animating = false;
+                btn.textContent = '▶ Animate';
+                btn.style.background = '#10b981';
+                return;
+            }
+            renderStep(currentStep);
+            currentStep++;
+        }, 600);
+    }
+
+    // Add CSS animation
+    const style = document.createElement('style');
+    style.textContent = '@keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }';
+    document.head.appendChild(style);
+
+    // Initialize
+    render();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof renderFourierAlgorithm === 'function') {
         renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 });
@@ -1431,5 +1908,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (iclContainer) {
             renderICLAlgorithm('icl-algorithm-container', { d: 5, maxExamples: 40 });
         }
+    }
+
+    const iclContainer = document.getElementById('icl-execution-container');
+    if (iclContainer) {
+        renderICLExecution(iclContainer);
     }
 });
