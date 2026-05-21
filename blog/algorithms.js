@@ -536,6 +536,96 @@ function renderFourierAlgorithm(container, options = {}) {
 	    }, { responsive: true });
     }});
 
+	// ── NEW STEP: Multi-Frequency View ──
+	steps.push({ title: 'Five Circles: One Token, Five Positions', render() {
+		content.innerHTML = `
+	<h2 style="text-align:center; color:#1e293b;">Five Circles, Five Positions</h2>
+	<p style="text-align:center; color:#64748b;">Each token exists simultaneously on 5 different circles</p>
+
+	${card('The key insight', `
+	    <p>Token ${mathInline(`n = ${a}`)} doesn't have just one position in the embedding space. It has <strong>5 positions</strong>, one per frequency:</p>
+	    ${mathBlock(`\\text{Token } ${a} \\;\\mapsto\\; \\begin{cases} \\text{Circle 1 (k=14):} & (\\cos(\\omega_{14} \\cdot ${a}),\\; \\sin(\\omega_{14} \\cdot ${a})) \\\\ \\text{Circle 2 (k=35):} & (\\cos(\\omega_{35} \\cdot ${a}),\\; \\sin(\\omega_{35} \\cdot ${a})) \\\\ \\text{Circle 3 (k=41):} & (\\cos(\\omega_{41} \\cdot ${a}),\\; \\sin(\\omega_{41} \\cdot ${a})) \\\\ \\text{Circle 4 (k=42):} & (\\cos(\\omega_{42} \\cdot ${a}),\\; \\sin(\\omega_{42} \\cdot ${a})) \\\\ \\text{Circle 5 (k=52):} & (\\cos(\\omega_{52} \\cdot ${a}),\\; \\sin(\\omega_{52} \\cdot ${a})) \\end{cases}`)}
+	    <p>These 5 circles live in <strong>orthogonal 2D subspaces</strong> of the 128-dimensional embedding space.</p>
+	`, '#3b82f6')}
+
+	${plotDiv('multi-freq-plot', '350px')}
+
+	${card('Why orthogonal subspaces matter', `
+	    <p>Because the 5 frequency channels are (approximately) orthogonal in the 128-dimensional space, they <strong>don't interfere with each other</strong> during computation. Each frequency's computation is independent until the final summation in the unembedding step.</p>
+	    <p>This is like having 5 independent radio channels — each carries its own signal without cross-talk.</p>
+	`, '#8b5cf6')}
+    `;
+		renderMath();
+
+		const colors = ['#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6'];
+		const traces = [];
+		const circleTheta = Array.from({length:80}, (_,i) => i*2*Math.PI/79);
+
+		FREQS.forEach((k, idx) => {
+			const wk = 2 * Math.PI * k / P;
+			const offsetX = (idx - 2) * 3; // Spread circles horizontally
+
+			// Circle outline
+			traces.push({
+				x: circleTheta.map(t => Math.cos(t) + offsetX),
+				y: circleTheta.map(t => Math.sin(t)),
+				mode: 'lines', line: { color: '#e2e8f0', width: 1 },
+				showlegend: false, hoverinfo: 'skip'
+			});
+
+			// Token a
+			traces.push({
+				x: [Math.cos(wk * a) + offsetX],
+				y: [Math.sin(wk * a)],
+				mode: 'markers',
+				marker: { size: 12, color: '#ef4444', symbol: 'circle' },
+				name: idx === 0 ? `a=${a}` : undefined,
+				showlegend: idx === 0,
+				hovertext: `a=${a} on k=${k}: (${Math.cos(wk*a).toFixed(3)}, ${Math.sin(wk*a).toFixed(3)})`,
+				hoverinfo: 'text'
+			});
+
+			// Token b
+			traces.push({
+				x: [Math.cos(wk * b) + offsetX],
+				y: [Math.sin(wk * b)],
+				mode: 'markers',
+				marker: { size: 12, color: '#3b82f6', symbol: 'square' },
+				name: idx === 0 ? `b=${b}` : undefined,
+				showlegend: idx === 0,
+				hovertext: `b=${b} on k=${k}: (${Math.cos(wk*b).toFixed(3)}, ${Math.sin(wk*b).toFixed(3)})`,
+				hoverinfo: 'text'
+			});
+
+			// Correct answer
+			traces.push({
+				x: [Math.cos(wk * correctAnswer) + offsetX],
+				y: [Math.sin(wk * correctAnswer)],
+				mode: 'markers',
+				marker: { size: 14, color: '#059669', symbol: 'triangle-up' },
+				name: idx === 0 ? `c*=${correctAnswer}` : undefined,
+				showlegend: idx === 0,
+				hovertext: `c*=${correctAnswer} on k=${k}`,
+				hoverinfo: 'text'
+			});
+
+			// Label
+			traces.push({
+				x: [offsetX], y: [-1.5],
+				mode: 'text', text: [`k=${k}`],
+				textfont: { size: 11, color: colors[idx] },
+				showlegend: false, hoverinfo: 'skip'
+			});
+		});
+
+		Plotly.newPlot('multi-freq-plot', traces, {
+			xaxis: { range: [-8, 8], showgrid: false, zeroline: false, showticklabels: false },
+			yaxis: { range: [-2, 1.8], showgrid: false, zeroline: false, showticklabels: false, scaleanchor: 'x' },
+			margin: { t: 20, b: 30, l: 20, r: 20 },
+			showlegend: true, legend: { x: 0.5, y: 1.1, orientation: 'h', xanchor: 'center' }
+		}, { responsive: true });
+	}});
+
     // ── STEP 5: Why one frequency fails ──
     steps.push({ title: 'Why One Frequency Fails', render() {
         const k = FREQS[0];
