@@ -47,9 +47,7 @@
 	incl("Positional Embeddings", "positionalembeddingslab");
 	incl("Temperature & Sampling", "samplinglab");
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
-	/*
 	incl("How Transformers Execute Algorithms", "algorithms");
-	 */
 	#incl("Topology and the Geometry of Thought", "topology");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
 	incl("Hallucinations and Dangers of AI and How to use AI Safely", "hallucinations");
