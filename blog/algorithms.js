@@ -293,6 +293,101 @@ function renderFourierAlgorithm(container, options = {}) {
         }, { responsive: true });
     }});
 
+// ── NEW STEP: Embedding Space Geometry ──
+	steps.push({ title: 'The Embedding Space', render() {
+		content.innerHTML = `
+	<h2 style="text-align:center; color:#1e293b;">The Embedding Space</h2>
+	<p style="text-align:center; color:#64748b;">How all ${P} tokens are arranged in the learned embedding</p>
+
+	${card('The Full Picture', `
+	    <p>The embedding matrix ${mathInline('W_E')} is ${mathInline(`${P} \\times 128`)} — each token gets a 128-dimensional vector.</p>
+	    <p>But only <strong>10 dimensions matter</strong> (5 frequencies × 2 for sin/cos). The rest is noise that gets cleaned up during training.</p>
+	    ${mathBlock(`W_E[n] = \\left(\\underbrace{\\cos(\\omega_{14} n), \\sin(\\omega_{14} n)}_{\\text{2D subspace for }k=14},\\; \\underbrace{\\cos(\\omega_{35} n), \\sin(\\omega_{35} n)}_{\\text{2D subspace for }k=35},\\; \\ldots,\\; \\underbrace{\\cos(\\omega_{52} n), \\sin(\\omega_{52} n)}_{\\text{2D subspace for }k=52},\\; \\underbrace{0, 0, \\ldots, 0}_{\\text{118 unused dims}}\\right)`)}
+	`, '#3b82f6')}
+
+	<div style="display:flex; gap:10px; margin:10px 0;">
+	    <label style="font-size:0.85em; font-weight:600;">Frequency:
+		<select id="embed-freq-select" style="padding:4px 8px; border:1px solid #cbd5e1; border-radius:4px;">
+		    ${FREQS.map(k => `<option value="${k}">k=${k} (period ${(P/k).toFixed(1)})</option>`).join('')}
+		</select>
+	    </label>
+	    <label style="font-size:0.85em; font-weight:600;">
+		<input type="checkbox" id="embed-highlight-inputs" checked> Highlight a=${a}, b=${b}
+	    </label>
+	</div>
+
+	${plotDiv('embed-circle-plot', '450px')}
+
+	${card('What you see above', `
+	    <p>Each dot is one of the ${P} tokens, plotted at its position ${mathInline('(\\cos(\\omega_k \\cdot n),\\; \\sin(\\omega_k \\cdot n))')} for the selected frequency.</p>
+	    <p>All tokens lie <strong>exactly on the unit circle</strong> — evenly spaced, making ${mathInline('k')} full rotations as ${mathInline('n')} goes from 0 to ${P-1}.</p>
+	    <p>The <span style="color:#ef4444; font-weight:bold;">red</span> and <span style="color:#3b82f6; font-weight:bold;">blue</span> dots show inputs a and b. The <span style="color:#059669; font-weight:bold;">green</span> triangle shows where the sum (a+b) mod P lands.</p>
+	`, '#8b5cf6')}
+
+	${card('Why circles?', `
+	    <p>Modular arithmetic wraps around: after ${P-1} comes 0 again. A circle is the natural geometry for this!</p>
+	    <p>The embedding matrix ${mathInline('W_E')} is <strong>sparse in the Fourier basis</strong> — it only has significant norm at 5-6 frequencies out of 56 possible.</p>
+	    ${mathBlock(`\\|W_E\\|_{\\text{Fourier component } k} \\approx \\begin{cases} \\text{large} & k \\in \\{14, 35, 41, 42, 52\\} \\\\ \\approx 0 & \\text{otherwise} \\end{cases}`)}
+	`, '#f59e0b')}
+    `;
+		renderMath();
+
+		function renderEmbedCircle() {
+			const k = parseInt(document.getElementById('embed-freq-select').value);
+			const highlight = document.getElementById('embed-highlight-inputs').checked;
+			const wk = 2 * Math.PI * k / P;
+
+			// All tokens on the circle
+			const allX = tokens.map(n => Math.cos(wk * n));
+			const allY = tokens.map(n => Math.sin(wk * n));
+
+			const traces = [
+				// Unit circle outline
+				{ x: Array.from({length:100}, (_,i) => Math.cos(i*2*Math.PI/99)),
+					y: Array.from({length:100}, (_,i) => Math.sin(i*2*Math.PI/99)),
+					mode: 'lines', line: { color: '#e2e8f0', width: 1 }, showlegend: false, hoverinfo: 'skip' },
+				// All tokens
+				{ x: allX, y: allY, mode: 'markers',
+					marker: { size: 4, color: '#94a3b8', opacity: 0.6 },
+					text: tokens.map(n => `Token ${n}`),
+					hoverinfo: 'text', name: `All ${P} tokens` },
+			];
+
+			if (highlight) {
+				// Input a
+				traces.push({ x: [Math.cos(wk*a)], y: [Math.sin(wk*a)], mode: 'markers',
+					marker: { size: 16, color: '#ef4444', symbol: 'circle', line: { width: 2, color: '#fff' } },
+					name: `a=${a}`, hoverinfo: 'name' });
+				// Input b
+				traces.push({ x: [Math.cos(wk*b)], y: [Math.sin(wk*b)], mode: 'markers',
+					marker: { size: 16, color: '#3b82f6', symbol: 'square', line: { width: 2, color: '#fff' } },
+					name: `b=${b}`, hoverinfo: 'name' });
+				// Sum
+				traces.push({ x: [Math.cos(wk*correctAnswer)], y: [Math.sin(wk*correctAnswer)], mode: 'markers',
+					marker: { size: 18, color: '#059669', symbol: 'triangle-up', line: { width: 2, color: '#fff' } },
+					name: `(a+b)%P=${correctAnswer}`, hoverinfo: 'name' });
+
+				// Draw arcs showing the angles
+				const arcA = Array.from({length:30}, (_,i) => i * wk * a / 29);
+				traces.push({ x: arcA.map(t => 0.3*Math.cos(t)), y: arcA.map(t => 0.3*Math.sin(t)),
+					mode: 'lines', line: { color: '#ef4444', width: 2, dash: 'dot' },
+					showlegend: false, hoverinfo: 'skip' });
+			}
+
+			Plotly.newPlot('embed-circle-plot', traces, {
+				xaxis: { range: [-1.6, 1.6], zeroline: true, scaleanchor: 'y', title: `cos(ω_${k} · n)` },
+				yaxis: { range: [-1.6, 1.6], zeroline: true, title: `sin(ω_${k} · n)` },
+				margin: { t: 30, b: 50, l: 60, r: 20 },
+				title: { text: `Embedding space projection: frequency k=${k}`, font: { size: 13 } },
+				showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' }
+			}, { responsive: true });
+		}
+
+		document.getElementById('embed-freq-select').addEventListener('change', renderEmbedCircle);
+		document.getElementById('embed-highlight-inputs').addEventListener('change', renderEmbedCircle);
+		renderEmbedCircle();
+	}});
+
     // ── STEP 3: Addition Theorem ──
     steps.push({ title: 'The Addition Theorem', render() {
         const k = FREQS[0];
