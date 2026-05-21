@@ -443,7 +443,7 @@ function renderFourierAlgorithm(container, options = {}) {
                 { type: 'line', x0: 0, x1: P, y0: 0.9, y1: 0.9, line: { color: '#f59e0b', width: 1, dash: 'dot' } },
                 { type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }
             ],
-            showlegend: true, legend: { x: 0.6, y: 0.5 }
+            showlegend: true, legend: { x: 0.02, y: -0.25, orientation: 'h' }
         }, { responsive: true });
     }});
 
@@ -491,7 +491,7 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { showticklabels: false },
             margin: { t: 20, b: 50, l: 30, r: 20 },
             shapes: [{ type: 'line', x0: correctAnswer, x1: correctAnswer, y0: -1, y1: 12.5, line: { color: '#ef4444', width: 1.5, dash: 'dash' } }],
-            showlegend: true, legend: { x: 0.72, y: 0.98 }
+            showlegend: true, legend: { x: 1.02, y: 0.98, xanchor: 'left' }
         }, { responsive: true });
     }});
 
@@ -536,7 +536,7 @@ function renderFourierAlgorithm(container, options = {}) {
             yaxis: { title: 'Total logit = sum of cos(wk*(a+b-c))' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
             shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }],
-            showlegend: true, legend: { x: 0.5, y: 0.95 }
+            showlegend: true, legend: { x: 0.02, y: -0.25, orientation: 'h' }
         }, { responsive: true });
     }});
 
@@ -574,7 +574,7 @@ function renderFourierAlgorithm(container, options = {}) {
             xaxis: { title: 'Candidate output token c', range: [-2, P + 2] },
             yaxis: { title: 'Probability [%]', rangemode: 'tozero' },
             margin: { t: 20, b: 50, l: 55, r: 20 },
-            showlegend: true, legend: { x: 0.55, y: 0.95 }
+            showlegend: true, legend: { x: 0.02, y: -0.25, orientation: 'h' }
         }, { responsive: true });
     }});
 
