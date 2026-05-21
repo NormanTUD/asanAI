@@ -1,5 +1,5 @@
 /**
- * Live Training Network Visualizer — v3
+ * Live Training Network Visualizer — v4
  * @param {tf.LayersModel} _m - A TensorFlow.js model
  * @param {HTMLElement|string|null} targetDiv - Div element, ID string, or null
  */
@@ -72,7 +72,7 @@ function visualizeModelOrganism(_m, targetDiv) {
         const inputShape = config.batchInputShape || config.inputShape || [];
         shortDesc = `[${inputShape.filter(x => x !== null).join(',')}]`;
         role = 'INPUT';
-        nodeCount = Math.min(inputShape.filter(x => x !== null).reduce((a, b) => a * b, 1) || 4, 64);
+        nodeCount = Math.min(inputShape.filter(x => x !== null).reduce((a, b) => a * b, 1) || 4, 128);
         break;
       case 'dense':
         const units = config.units || 1;
@@ -167,9 +167,12 @@ function visualizeModelOrganism(_m, targetDiv) {
     return null;
   }
 
-  // ─── Canvas ────────────────────────────────────────────────────
+  // ─── Canvas — height adapts to largest layer ───────────────────
+  const maxNodes = Math.max(...layers.map(l => l.nodeCount));
+  const minCanvasH = 500;
+  const canvasH = Math.max(minCanvasH, Math.min(900, 120 + maxNodes * 9));
   const canvasW = 1000;
-  const canvasH = 560;
+
   const canvas = document.createElement('canvas');
   canvas.width = canvasW;
   canvas.height = canvasH;
@@ -186,7 +189,7 @@ function visualizeModelOrganism(_m, targetDiv) {
   const marginL = 45;
   const marginR = 45;
   const headerH = 42;
-  const footerH = 55;
+  const footerH = 52;
   const graphW = canvasW - marginL - marginR;
   const graphTop = headerH;
   const graphH = canvasH - headerH - footerH;
@@ -211,38 +214,44 @@ function visualizeModelOrganism(_m, targetDiv) {
   ctx.fillStyle = '#445566';
   ctx.fillText('data flows left → right', canvasW - marginR, 34);
 
-  // ─── Node layout helpers ───────────────────────────────────────
-  const maxDisplayNodes = 10;
-  const nodeAreaTop = graphTop + 38;
-  const nodeAreaH = graphH - 60;
+  // ─── Node layout ──────────────────────────────────────────────
+  const nodeAreaTop = graphTop + 36;
+  const nodeAreaH = graphH - 50;
 
-  function getDisplayCount(layer) {
-    return Math.min(layer.nodeCount, maxDisplayNodes);
+  // Show ALL nodes — scale radius down when there are many
+  function getNodeLayout(layer) {
+    const count = layer.nodeCount;
+    // Available vertical space per node
+    const spacePerNode = nodeAreaH / (count + 1);
+    // Scale node radius: big when few, tiny when many
+    const nodeR = Math.max(1.5, Math.min(5, spacePerNode * 0.35));
+    return { count, nodeR, spacePerNode };
   }
 
-  function getNodeY(nodeIdx, totalDisplay) {
-    if (totalDisplay <= 1) return nodeAreaTop + nodeAreaH / 2;
-    const spacing = nodeAreaH / (totalDisplay + 1);
-    return nodeAreaTop + (nodeIdx + 1) * spacing;
+  function getNodeY(nodeIdx, totalCount) {
+    if (totalCount <= 1) return nodeAreaTop + nodeAreaH / 2;
+    return nodeAreaTop + ((nodeIdx + 0.5) / totalCount) * nodeAreaH;
   }
 
   function getLayerX(idx) {
     return marginL + idx * colW + colW / 2;
   }
 
-  // ─── Draw ALL connections between adjacent layers ──────────────
+  // ─── Draw connections ──────────────────────────────────────────
   for (let idx = 0; idx < numLayers - 1; idx++) {
     const layerA = layers[idx];
     const layerB = layers[idx + 1];
     const xA = getLayerX(idx);
     const xB = getLayerX(idx + 1);
-    const displayA = getDisplayCount(layerA);
-    const displayB = getDisplayCount(layerB);
 
-    // Determine if we have weight info from EITHER side
-    // Use layer B's weights if it has them (typical: Dense, Conv receiving input)
-    // Otherwise use layer A's weights if available (for connections leaving a weighted layer)
-    // Otherwise draw neutral pass-through
+    const layoutA = getNodeLayout(layerA);
+    const layoutB = getNodeLayout(layerB);
+
+    // Determine how many connection lines to draw
+    // For large layers, sample evenly
+    const maxLinesA = Math.min(layoutA.count, 16);
+    const maxLinesB = Math.min(layoutB.count, 16);
+
     let summaries = null;
     let localMax = 0.001;
 
@@ -250,30 +259,31 @@ function visualizeModelOrganism(_m, targetDiv) {
       summaries = layerB.unitSummary;
       localMax = Math.max(...summaries.map(s => s.meanAbs), 0.001);
     } else if (layerA.unitSummary && layerA.unitSummary.length > 0) {
-      // Use the outgoing layer's weights (e.g., Conv2D → Flatten)
       summaries = layerA.unitSummary;
       localMax = Math.max(...summaries.map(s => s.meanAbs), 0.001);
     }
 
     if (summaries) {
-      // Draw weighted connections
-      const maxConns = Math.min(displayA * displayB, 35);
+      const maxConns = Math.min(maxLinesA * maxLinesB, 60);
       let drawn = 0;
 
-      for (let a = 0; a < displayA && drawn < maxConns; a++) {
-        for (let b = 0; b < displayB && drawn < maxConns; b++) {
-          const sIdx = (a + b) % summaries.length;
+      for (let ai = 0; ai < maxLinesA && drawn < maxConns; ai++) {
+        // Map sampled index back to actual node index
+        const a = Math.floor((ai / maxLinesA) * layoutA.count);
+        for (let bi = 0; bi < maxLinesB && drawn < maxConns; bi++) {
+          const b = Math.floor((bi / maxLinesB) * layoutB.count);
+
+          const sIdx = (ai + bi) % summaries.length;
           const u = summaries[sIdx];
           const strength = u.meanAbs / localMax;
 
-          if (strength < 0.08) { drawn++; continue; }
-
-          const y1 = getNodeY(a, displayA);
-          const y2 = getNodeY(b, displayB);
+          const y1 = getNodeY(a, layoutA.count);
+          const y2 = getNodeY(b, layoutB.count);
           const cpx = (xA + xB) / 2;
 
-          const alpha = Math.min(0.22, 0.03 + strength * 0.12);
-          const lw = Math.min(1.8, 0.3 + strength * 1.0);
+          // MINIMUM visibility — never fully invisible
+          const alpha = 0.06 + strength * 0.18;
+          const lw = 0.4 + strength * 1.2;
 
           let color;
           if (u.mean >= 0) {
@@ -283,8 +293,8 @@ function visualizeModelOrganism(_m, targetDiv) {
           }
 
           ctx.beginPath();
-          ctx.moveTo(xA + 6, y1);
-          ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - 6, y2);
+          ctx.moveTo(xA + layoutA.nodeR + 2, y1);
+          ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
           ctx.strokeStyle = color;
           ctx.lineWidth = lw;
           ctx.stroke();
@@ -293,30 +303,28 @@ function visualizeModelOrganism(_m, targetDiv) {
         }
       }
     } else {
-      // No weights on either side — draw neutral pass-through lines
-      const numLines = Math.min(displayA, displayB, 5);
+      // Pass-through: always visible dashed lines
+      const numLines = Math.min(maxLinesA, maxLinesB, 8);
       for (let i = 0; i < numLines; i++) {
-        const aFrac = numLines <= 1 ? 0.5 : i / (numLines - 1);
-        const bFrac = numLines <= 1 ? 0.5 : i / (numLines - 1);
-        const aIdx = Math.floor(aFrac * (displayA - 1));
-        const bIdx = Math.floor(bFrac * (displayB - 1));
-        const y1 = getNodeY(aIdx, displayA);
-        const y2 = getNodeY(bIdx, displayB);
+        const a = Math.floor((i / numLines) * layoutA.count);
+        const b = Math.floor((i / numLines) * layoutB.count);
+        const y1 = getNodeY(a, layoutA.count);
+        const y2 = getNodeY(b, layoutB.count);
         const cpx = (xA + xB) / 2;
 
         ctx.beginPath();
-        ctx.moveTo(xA + 6, y1);
-        ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - 6, y2);
-        ctx.strokeStyle = 'rgba(100, 120, 150, 0.18)';
+        ctx.moveTo(xA + layoutA.nodeR + 2, y1);
+        ctx.bezierCurveTo(cpx, y1, cpx, y2, xB - layoutB.nodeR - 2, y2);
+        ctx.strokeStyle = 'rgba(120, 140, 170, 0.2)';
         ctx.lineWidth = 0.8;
-        ctx.setLineDash([3, 4]);
+        ctx.setLineDash([3, 3]);
         ctx.stroke();
         ctx.setLineDash([]);
       }
     }
   }
 
-  // ─── Draw layer nodes and labels ───────────────────────────────
+  // ─── Draw layers ───────────────────────────────────────────────
   const roleColors = {
     'INPUT': '#44bb88',
     'DENSE': '#6699dd',
@@ -335,7 +343,7 @@ function visualizeModelOrganism(_m, targetDiv) {
     const layer = layers[idx];
     const x = getLayerX(idx);
     const color = roleColors[layer.role] || '#6688aa';
-    const displayNodes = getDisplayCount(layer);
+    const layout = getNodeLayout(layer);
 
     // Role label
     ctx.fillStyle = color;
@@ -348,7 +356,7 @@ function visualizeModelOrganism(_m, targetDiv) {
     ctx.font = '8px system-ui, sans-serif';
     ctx.fillText(layer.shortDesc, x, graphTop + 22);
 
-    // Local normalization for node sizing
+    // Local normalization
     let localAbsMax = 0.001;
     if (layer.unitSummary) {
       for (const u of layer.unitSummary) {
@@ -356,57 +364,61 @@ function visualizeModelOrganism(_m, targetDiv) {
       }
     }
 
-    // Draw nodes
-    for (let n = 0; n < displayNodes; n++) {
-      const ny = getNodeY(n, displayNodes);
-      let nodeR = 4.5;
+    // Draw ALL nodes
+    for (let n = 0; n < layout.count; n++) {
+      const ny = getNodeY(n, layout.count);
+      let nodeR = layout.nodeR;
       let nodeColor = color;
-      let glowAlpha = 0.06;
+      let glowAlpha = 0.04;
 
       if (layer.unitSummary) {
         const uIdx = n % layer.unitSummary.length;
         const u = layer.unitSummary[uIdx];
         const strength = u.meanAbs / localAbsMax;
-        nodeR = 3.5 + strength * 3;
-        glowAlpha = 0.04 + strength * 0.12;
+
+        // Scale radius by strength but keep minimum visible
+        nodeR = layout.nodeR * (0.6 + strength * 0.6);
+        glowAlpha = 0.03 + strength * 0.1;
 
         if (u.mean > 0) {
           const t = Math.min(1, strength);
-          nodeColor = `rgb(${Math.floor(200 + t * 55)}, ${Math.floor(140 + t * 30)}, 40)`;
+          nodeColor = `rgb(${Math.floor(180 + t * 75)}, ${Math.floor(130 + t * 40)}, 40)`;
         } else {
           const t = Math.min(1, strength);
-          nodeColor = `rgb(40, ${Math.floor(130 + t * 50)}, ${Math.floor(200 + t * 55)})`;
+          nodeColor = `rgb(40, ${Math.floor(120 + t * 60)}, ${Math.floor(180 + t * 75)})`;
         }
       }
 
-      // Glow
-      ctx.beginPath();
-      ctx.arc(x, ny, nodeR + 3, 0, 2 * Math.PI);
-      ctx.fillStyle = `rgba(150, 150, 200, ${glowAlpha})`;
-      ctx.fill();
+      // Glow (only for larger nodes to avoid clutter)
+      if (nodeR > 2.5) {
+        ctx.beginPath();
+        ctx.arc(x, ny, nodeR + 2, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(150, 150, 220, ${glowAlpha})`;
+        ctx.fill();
+      }
 
-      // Node
+      // Node — always visible
       ctx.beginPath();
-      ctx.arc(x, ny, nodeR, 0, 2 * Math.PI);
+      ctx.arc(x, ny, Math.max(1.2, nodeR), 0, 2 * Math.PI);
       ctx.fillStyle = nodeColor;
       ctx.fill();
     }
 
-    // Overflow
-    if (layer.nodeCount > maxDisplayNodes) {
-      const overflowY = getNodeY(displayNodes - 1, displayNodes) + 16;
+    // Node count label below
+    if (layout.count > 1) {
+      const bottomY = nodeAreaTop + nodeAreaH + 10;
       ctx.fillStyle = '#556677';
       ctx.font = '8px system-ui, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(`+${layer.nodeCount - maxDisplayNodes}`, x, overflowY);
+      ctx.fillText(`${layout.count}`, x, bottomY);
     }
 
     // Mini distribution bar
     if (layer.weightData && layer.weightData.flat.length > 1) {
       const flat = layer.weightData.flat;
-      const barY = graphTop + graphH - 16;
-      const barW = Math.min(colW - 14, 46);
-      const barH = 5;
+      const barY = graphTop + graphH - 12;
+      const barW = Math.min(colW - 14, 44);
+      const barH = 4;
       const barX = x - barW / 2;
 
       const mean = flat.reduce((a, b) => a + b, 0) / flat.length;
@@ -426,10 +438,6 @@ function visualizeModelOrganism(_m, targetDiv) {
       ctx.fillRect(barX + (neg / total) * barW, barY, (zero / total) * barW, barH);
       ctx.fillStyle = 'rgba(255, 170, 60, 0.7)';
       ctx.fillRect(barX + ((neg + zero) / total) * barW, barY, (pos / total) * barW, barH);
-
-      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-      ctx.lineWidth = 0.5;
-      ctx.strokeRect(barX, barY, barW, barH);
     }
   }
 
@@ -450,20 +458,19 @@ function visualizeModelOrganism(_m, targetDiv) {
   ctx.fillStyle = 'rgba(70, 70, 90, 0.7)';
   ctx.fillRect(marginL + 88, legY, 10, 10);
   ctx.fillStyle = '#99aabb';
-  ctx.fillText('near zero', marginL + 102, legY + 9);
+  ctx.fillText('inactive', marginL + 102, legY + 9);
 
   ctx.fillStyle = 'rgba(255, 170, 60, 0.9)';
-  ctx.fillRect(marginL + 172, legY, 10, 10);
+  ctx.fillRect(marginL + 160, legY, 10, 10);
   ctx.fillStyle = '#99aabb';
-  ctx.fillText('amplifies', marginL + 186, legY + 9);
+  ctx.fillText('amplifies', marginL + 174, legY + 9);
 
   ctx.fillStyle = '#556677';
-  ctx.fillText('bigger node = stronger filter/neuron · dashed = reshape (no learned weights)', marginL + 260, legY + 9);
+  ctx.fillText('node size = strength · all neurons shown · dashed = no weights (reshape/pass)', marginL + 248, legY + 9);
 
-  // Training note
   ctx.fillStyle = '#4a5a6a';
   ctx.font = '9px system-ui, sans-serif';
-  ctx.fillText('Nodes grow and color as training progresses. Gray → blue/orange = the network is learning patterns.', marginL, legY + 25);
+  ctx.fillText('Nodes grow and shift blue/orange as training learns. Number below each column = neuron/filter count.', marginL, legY + 26);
 
   // Health
   let healthMsg = 'healthy';
@@ -487,7 +494,7 @@ function visualizeModelOrganism(_m, targetDiv) {
   }
   ctx.fillStyle = healthColor;
   ctx.textAlign = 'right';
-  ctx.fillText(healthMsg, canvasW - marginR, legY + 25);
+  ctx.fillText(healthMsg, canvasW - marginR, legY + 26);
 
   return canvas;
 }
