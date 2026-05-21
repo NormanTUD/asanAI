@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-## How Neural Networks Execute Algorithms
-
 When we train a neural network on a simple task like modular addition, something remarkable happens. The network doesn't just memorize the answers — it *discovers* an algorithm. Specifically, it learns to use the **Discrete Fourier Transform** to convert addition into wave interference \cite[Nanda et al., 2023]{nanda2023grokking}.
 
 This section walks through, step by step, exactly *how* a tiny one-layer Transformer computes:
