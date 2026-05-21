@@ -161,7 +161,7 @@ function renderFourierAlgorithm(container, options = {}) {
     // ── STEP 0: The Problem ──
     steps.push({ title: 'The Problem', render() {
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 0: The Problem</h2>
+            <h2 style="text-align:center; color:#1e293b;">The Problem</h2>
             <p style="text-align:center; color:#64748b;">What does the network need to compute?</p>
 
             ${card('The Task', `
@@ -201,7 +201,7 @@ function renderFourierAlgorithm(container, options = {}) {
         const baseAngle = 2 * Math.PI / P;
 
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 1: What is a Frequency ${mathInline('k')}?</h2>
+            <h2 style="text-align:center; color:#1e293b;">What is a Frequency ${mathInline('k')}?</h2>
             <p style="text-align:center; color:#64748b;">The fundamental idea: represent numbers as angles on a circle</p>
 
             ${card('The Core Formula', `
@@ -251,7 +251,7 @@ function renderFourierAlgorithm(container, options = {}) {
         const angB = wk * b, cosB = Math.cos(angB), sinB = Math.sin(angB);
 
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 2: Embedding</h2>
+            <h2 style="text-align:center; color:#1e293b;">Embedding</h2>
             <p style="text-align:center; color:#64748b;">Each input number is mapped to a point on the unit circle</p>
 
             ${card('The Embedding Formula', `
@@ -305,7 +305,7 @@ function renderFourierAlgorithm(container, options = {}) {
         const prod_sc = sinA * cosB, prod_cs = cosA * sinB;
 
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 3: The Addition Theorem</h2>
+            <h2 style="text-align:center; color:#1e293b;">The Addition Theorem</h2>
             <p style="text-align:center; color:#64748b;">The network computes cos(w*(a+b)) using only the individual embeddings of a and b</p>
 
             ${card('Recall: what is ' + mathInline('\\omega_k') + ' here?', `
@@ -401,7 +401,7 @@ function renderFourierAlgorithm(container, options = {}) {
         const falsePeaks = tokens.filter(c => signal[c] > 0.9 && c !== correctAnswer);
 
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 4: Unembedding</h2>
+            <h2 style="text-align:center; color:#1e293b;">Unembedding</h2>
             <p style="text-align:center; color:#64748b;">For every possible output token c: how well does it match the computed sum?</p>
 
             ${card('The Formula', `
@@ -448,7 +448,7 @@ function renderFourierAlgorithm(container, options = {}) {
         const highPeaks = tokens.filter(c => signal[c] > 0.9);
 
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 5: Why One Frequency Fails</h2>
+            <h2 style="text-align:center; color:#1e293b;">Why One Frequency Fails</h2>
             <p style="text-align:center; color:#64748b;">Cosine is periodic, so there are too many "false" peaks!</p>
 
             ${card('The Problem', `
@@ -491,7 +491,7 @@ function renderFourierAlgorithm(container, options = {}) {
     // ── STEP 6: All 5 frequencies ──
     steps.push({ title: 'All 5 Frequencies Together', render() {
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 6: All 5 Frequencies</h2>
+            <h2 style="text-align:center; color:#1e293b;">All 5 Frequencies</h2>
             <p style="text-align:center; color:#64748b;">Each frequency peaks at c*=${correctAnswer}, but their false peaks are at different positions</p>
 
             ${card('How each row is computed', `
@@ -543,7 +543,7 @@ function renderFourierAlgorithm(container, options = {}) {
         const second = sorted[0].i === correctAnswer ? sorted[1] : sorted[0];
 
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 7: Constructive Interference</h2>
+            <h2 style="text-align:center; color:#1e293b;">Constructive Interference</h2>
             <p style="text-align:center; color:#64748b;">The sum of all 5 waves: only the correct answer survives!</p>
 
             ${card('The Formula', `
@@ -586,7 +586,7 @@ function renderFourierAlgorithm(container, options = {}) {
         const prob = softmaxSignal[correctAnswer];
 
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 8: Softmax</h2>
+            <h2 style="text-align:center; color:#1e293b;">Softmax</h2>
             <p style="text-align:center; color:#64748b;">Converting raw logits into a probability distribution</p>
 
             ${card('The Formula', `
@@ -622,7 +622,7 @@ function renderFourierAlgorithm(container, options = {}) {
     // ── STEP 9: Complete Algorithm ──
     steps.push({ title: 'Complete Algorithm', render() {
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 9: The Complete Algorithm</h2>
+            <h2 style="text-align:center; color:#1e293b;">The Complete Algorithm</h2>
             <p style="text-align:center; color:#64748b;">All formulas at a glance ${cite('(Nanda et al., 2023)', 'nanda2023grokking')}</p>
 
             ${card('(1) EMBEDDING: Numbers become circle-points', `
@@ -661,7 +661,7 @@ function renderFourierAlgorithm(container, options = {}) {
     // ── STEP 10: Interactive Playground ──
     steps.push({ title: 'Interactive Playground', render() {
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 10: Interactive Playground</h2>
+            <h2 style="text-align:center; color:#1e293b;">Interactive Playground</h2>
             <p style="text-align:center; color:#64748b;">Change a, b and toggle frequencies to see how the algorithm works (or breaks!)</p>
 
             <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:20px; margin:15px 0;">
@@ -741,7 +741,7 @@ function renderFourierAlgorithm(container, options = {}) {
     // ── STEP 11: Summary & Grokking ──
     steps.push({ title: 'Summary and Grokking', render() {
         content.innerHTML = `
-            <h2 style="text-align:center; color:#1e293b;">Step 11: Summary</h2>
+            <h2 style="text-align:center; color:#1e293b;">Summary</h2>
             <p style="text-align:center; color:#64748b;">Why this is remarkable, and how it connects to "Grokking"</p>
 
             ${card('1. REPRESENTATION: Numbers as Angles', `
