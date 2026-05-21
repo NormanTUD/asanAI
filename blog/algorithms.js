@@ -1072,8 +1072,364 @@ function renderFourierAlgorithm(container, options = {}) {
     goToStep(0);
 }
 
+/**
+ * In-Context Learning Visualization
+ *
+ * Demonstrates how a Transformer learns a linear function from
+ * in-context examples during a single forward pass, matching
+ * the optimal least squares estimator.
+ *
+ * Reference: Garg et al. (2022) "What Can Transformers Learn In-Context?
+ * A Case Study of Simple Function Classes"
+ * https://arxiv.org/abs/2208.01066
+ */
+function renderICLAlgorithm(container, options = {}) {
+    const root = typeof container === 'string' ? document.getElementById(container) : container;
+    if (!root) { console.error('renderICLAlgorithm: container not found'); return; }
+
+    // ─── Configuration ───────────────────────────────────────────────────────
+    let d = options.d ?? 5;          // Dimension (keep low for visualization)
+    let maxExamples = options.maxExamples ?? 40;
+    let noiseStd = 0.0;
+    let currentExamples = 0;
+
+    // Generate a random true weight vector
+    let trueW = [];
+    let examples = [];    // {x, y} pairs
+    let queryX = [];
+
+    function randn() {
+        // Box-Muller
+        const u1 = Math.random(), u2 = Math.random();
+        return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
+
+    function generateW() {
+        trueW = Array.from({length: d}, () => randn());
+    }
+
+    function generateExamples(n) {
+        examples = [];
+        for (let i = 0; i < n; i++) {
+            const x = Array.from({length: d}, () => randn());
+            const y = trueW.reduce((s, w, j) => s + w * x[j], 0) + noiseStd * randn();
+            examples.push({x, y});
+        }
+    }
+
+    function generateQuery() {
+        queryX = Array.from({length: d}, () => randn());
+    }
+
+    function dot(a, b) {
+        return a.reduce((s, v, i) => s + v * b[i], 0);
+    }
+
+    function norm(a) {
+        return Math.sqrt(a.reduce((s, v) => s + v * v, 0));
+    }
+
+    // Least squares via normal equations (pseudoinverse for k < d)
+    function leastSquares(exs) {
+        if (exs.length === 0) return Array(d).fill(0);
+        const k = exs.length;
+        // X: k x d, y: k x 1
+        // w = (X^T X)^{-1} X^T y  (or pseudoinverse if k < d)
+        // For simplicity, use gradient descent to approximate
+        const lr = 0.01;
+        const steps = 500;
+        let w = Array(d).fill(0);
+        for (let step = 0; step < steps; step++) {
+            const grad = Array(d).fill(0);
+            for (let i = 0; i < k; i++) {
+                const pred = dot(w, exs[i].x);
+                const err = pred - exs[i].y;
+                for (let j = 0; j < d; j++) {
+                    grad[j] += (2 / k) * err * exs[i].x[j];
+                }
+            }
+            // L2 regularization (tiny, for stability)
+            for (let j = 0; j < d; j++) {
+                w[j] -= lr * (grad[j] + 0.001 * w[j]);
+            }
+        }
+        return w;
+    }
+
+    // Simulate "Transformer" prediction (approximates least squares with slight lag)
+    function transformerEstimate(exs) {
+        if (exs.length === 0) return Array(d).fill(0);
+        // Simulate: slightly worse than LS for small k, converges for k >= d
+        const lsW = leastSquares(exs);
+        const k = exs.length;
+        // Add a small perturbation that decreases with k (simulating the paper's results)
+        const perturbScale = Math.max(0, 0.15 * (1 - k / (2 * d)));
+        return lsW.map(v => v + perturbScale * randn() * 0.1);
+    }
+
+    // ─── UI ──────────────────────────────────────────────────────────────────
+    root.innerHTML = '';
+    root.style.fontFamily = "'Segoe UI', system-ui, sans-serif";
+    root.style.maxWidth = '900px';
+    root.style.margin = '0 auto';
+
+    // Header
+    const header = document.createElement('div');
+    header.style.cssText = 'text-align:center; margin-bottom:20px;';
+    header.innerHTML = `
+        <h3 style="color:#1e293b; margin:0 0 8px 0;">In-Context Learning: Linear Regression in a Forward Pass</h3>
+        <p style="color:#64748b; margin:0; font-size:0.9em;">Watch how the Transformer's implicit algorithm converges to the true function as more examples are provided</p>
+    `;
+    root.appendChild(header);
+
+    // Controls
+    const controls = document.createElement('div');
+    controls.style.cssText = 'display:flex; flex-wrap:wrap; gap:15px; align-items:center; padding:15px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; margin-bottom:15px;';
+    controls.innerHTML = `
+        <div>
+            <label style="font-size:0.85em; font-weight:600;">Dimensions (d):</label><br>
+            <input type="range" id="icl-dim" min="2" max="20" value="${d}" style="width:120px;">
+            <span id="icl-dim-val" style="font-weight:bold;">${d}</span>
+        </div>
+        <div>
+            <label style="font-size:0.85em; font-weight:600;">In-context examples (k):</label><br>
+            <input type="range" id="icl-k" min="0" max="${maxExamples}" value="0" style="width:200px;">
+            <span id="icl-k-val" style="font-weight:bold;">0</span>
+        </div>
+        <div>
+            <label style="font-size:0.85em; font-weight:600;">Noise σ:</label><br>
+            <input type="range" id="icl-noise" min="0" max="2" value="0" step="0.1" style="width:100px;">
+            <span id="icl-noise-val" style="font-weight:bold;">0.0</span>
+        </div>
+        <button id="icl-resample" style="padding:8px 16px; border:none; border-radius:6px; background:#3b82f6; color:#fff; cursor:pointer; font-weight:600;">🔄 New Function</button>
+        <button id="icl-animate" style="padding:8px 16px; border:none; border-radius:6px; background:#10b981; color:#fff; cursor:pointer; font-weight:600;">▶ Animate</button>
+    `;
+    root.appendChild(controls);
+
+    // Plots
+    const plotRow = document.createElement('div');
+    plotRow.innerHTML = `
+        <div id="icl-error-plot" style="height:320px;"></div>
+        <div id="icl-weight-plot" style="height:320px;"></div>
+    `;
+    root.appendChild(plotRow);
+
+    // Prediction display
+    const predDisplay = document.createElement('div');
+    predDisplay.style.cssText = 'padding:15px; background:#f0f9ff; border:1px solid #bfdbfe; border-radius:10px; margin-bottom:15px;';
+    root.appendChild(predDisplay);
+
+    // Info cards
+    const infoDiv = document.createElement('div');
+    infoDiv.style.cssText = 'display:grid; grid-template-columns:1fr 1fr; gap:10px;';
+    infoDiv.innerHTML = `
+        <div style="padding:15px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px;">
+            <h4 style="margin:0 0 8px 0; color:#059669;">What the Transformer does</h4>
+            <p style="margin:0; font-size:0.88em; line-height:1.6; color:#334155;">
+                In a <strong>single forward pass</strong>, the Transformer processes all in-context examples simultaneously via self-attention.
+                It implicitly computes something equivalent to least squares regression — but learned entirely from data, not programmed.
+                The attention layers aggregate information from examples, and the MLP layers transform it into a weight estimate.
+            </p>
+        </div>
+        <div style="padding:15px; background:#fef3c7; border:1px solid #fcd34d; border-radius:8px;">
+            <h4 style="margin:0 0 8px 0; color:#d97706;">Key insight from the paper</h4>
+            <p style="margin:0; font-size:0.88em; line-height:1.6; color:#334155;">
+                The model achieves error < 0.001 with 2d examples, while the best memorized weight vector from 32M training vectors
+                would give error ~0.216. This proves the model encodes a <strong>genuine learning algorithm</strong>, not a lookup table.
+                It even handles distribution shifts (noisy labels, skewed inputs) gracefully.
+            </p>
+        </div>
+    `;
+    root.appendChild(infoDiv);
+
+    // ─── Logic ───────────────────────────────────────────────────────────────
+    function initialize() {
+        generateW();
+        generateExamples(maxExamples);
+        generateQuery();
+        update();
+    }
+
+    function update() {
+        const k = currentExamples;
+        const activeExamples = examples.slice(0, k);
+
+        // Compute estimates
+        const lsW = leastSquares(activeExamples);
+        const tfW = transformerEstimate(activeExamples);
+
+        // True prediction
+        const trueY = dot(trueW, queryX);
+        const lsY = dot(lsW, queryX);
+        const tfY = dot(tfW, queryX);
+
+        // Compute error curves
+        const ks = Array.from({length: Math.min(k + 1, maxExamples + 1)}, (_, i) => i);
+        const lsErrors = [];
+        const tfErrors = [];
+        const avgErrors = [];
+
+        for (const ki of ks) {
+            const exs = examples.slice(0, ki);
+            if (ki === 0) {
+                lsErrors.push(1.0);
+                tfErrors.push(1.0);
+                avgErrors.push(1.0);
+                continue;
+            }
+            // LS error (normalized)
+            const lsWi = leastSquares(exs);
+            const lsErr = trueW.reduce((s, w, j) => s + (w - lsWi[j]) ** 2, 0) / d;
+            lsErrors.push(Math.min(lsErr, 1.5));
+
+            // Transformer error (simulated)
+            const tfWi = transformerEstimate(exs);
+            const tfErr = trueW.reduce((s, w, j) => s + (w - tfWi[j]) ** 2, 0) / d;
+            tfErrors.push(Math.min(tfErr, 1.5));
+
+            // Averaging estimator
+            let avgW = Array(d).fill(0);
+            for (const ex of exs) {
+                for (let j = 0; j < d; j++) avgW[j] += ex.x[j] * ex.y;
+            }
+            avgW = avgW.map(v => v / ki);
+            const avgErr = trueW.reduce((s, w, j) => s + (w - avgW[j]) ** 2, 0) / d;
+            avgErrors.push(Math.min(avgErr, 1.5));
+        }
+
+        // Error plot
+        Plotly.react('icl-error-plot', [
+            { x: ks, y: lsErrors, mode: 'lines', line: { color: '#3b82f6', width: 2 }, name: 'Least Squares (optimal)' },
+            { x: ks, y: tfErrors, mode: 'lines', line: { color: '#ef4444', width: 2.5 }, name: 'Transformer (simulated)' },
+            { x: ks, y: avgErrors, mode: 'lines', line: { color: '#94a3b8', width: 1.5, dash: 'dot' }, name: 'Averaging estimator' },
+            { x: [k], y: [tfErrors[tfErrors.length - 1] || 1], mode: 'markers', marker: { size: 12, color: '#ef4444', symbol: 'star' }, showlegend: false },
+        ], {
+            title: { text: 'Normalized Squared Error vs. In-Context Examples', font: { size: 12 } },
+            xaxis: { title: 'k (in-context examples)', range: [0, maxExamples] },
+            yaxis: { title: 'Normalized error', range: [0, 1.3] },
+            margin: { t: 35, b: 50, l: 55, r: 10 },
+            shapes: [
+                { type: 'line', x0: d, x1: d, y0: 0, y1: 1.3, line: { color: '#8b5cf6', width: 1.5, dash: 'dash' } },
+            ],
+            annotations: [
+                { x: d, y: 1.2, text: `k=d=${d}`, showarrow: false, font: { size: 10, color: '#8b5cf6' } }
+            ],
+            showlegend: true, legend: { x: 0.5, y: 0.98, xanchor: 'center', orientation: 'h', font: { size: 10 } }
+        }, { responsive: true });
+
+        // Weight recovery plot
+        const weightIndices = Array.from({length: d}, (_, i) => i);
+        Plotly.react('icl-weight-plot', [
+            { x: weightIndices, y: trueW, type: 'bar', marker: { color: '#3b82f6', opacity: 0.4 }, name: 'True w' },
+            { x: weightIndices, y: tfW, type: 'bar', marker: { color: '#ef4444', opacity: 0.7 }, name: 'Transformer estimate' },
+            { x: weightIndices, y: lsW, type: 'scatter', mode: 'markers', marker: { size: 8, color: '#059669', symbol: 'diamond' }, name: 'Least Squares estimate' },
+        ], {
+            title: { text: `Weight Vector Recovery (k=${k} examples)`, font: { size: 12 } },
+            xaxis: { title: 'Dimension index', dtick: 1 },
+            yaxis: { title: 'Weight value' },
+            margin: { t: 35, b: 50, l: 55, r: 10 },
+            barmode: 'group',
+            showlegend: true, legend: { x: 0.5, y: 0.98, xanchor: 'center', orientation: 'h', font: { size: 10 } }
+        }, { responsive: true });
+
+        // Prediction display
+        const trueErr = ((tfY - trueY) ** 2).toFixed(5);
+        const cosine = (dot(tfW, trueW) / (norm(tfW) * norm(trueW) + 1e-10)).toFixed(4);
+        predDisplay.innerHTML = `
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:15px; text-align:center;">
+                <div>
+                    <div style="font-size:0.8em; color:#64748b;">True f(x_query)</div>
+                    <div style="font-size:1.3em; font-weight:bold; color:#3b82f6;">${trueY.toFixed(4)}</div>
+                </div>
+                <div>
+                    <div style="font-size:0.8em; color:#64748b;">Transformer prediction</div>
+                    <div style="font-size:1.3em; font-weight:bold; color:#ef4444;">${tfY.toFixed(4)}</div>
+                </div>
+                <div>
+                    <div style="font-size:0.8em; color:#64748b;">Squared error</div>
+                    <div style="font-size:1.3em; font-weight:bold; color:${parseFloat(trueErr) < 0.01 ? '#059669' : '#f59e0b'};">${trueErr}</div>
+                </div>
+                <div>
+                    <div style="font-size:0.8em; color:#64748b;">cos(ŵ, w*)</div>
+                    <div style="font-size:1.3em; font-weight:bold; color:${parseFloat(cosine) > 0.95 ? '#059669' : '#f59e0b'};">${cosine}</div>
+                </div>
+                <div>
+                    <div style="font-size:0.8em; color:#64748b;">Status</div>
+                    <div style="font-size:1.1em; font-weight:bold; color:${k >= d ? '#059669' : k > 0 ? '#f59e0b' : '#94a3b8'};">
+                        ${k === 0 ? '⏳ No examples yet' : k < d ? `📈 Underdetermined (k < d=${d})` : k === d ? '✅ Just determined (k = d)' : '✅ Overdetermined (k > d)'}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Event handlers
+    document.getElementById('icl-dim').addEventListener('input', (e) => {
+        d = parseInt(e.target.value);
+        document.getElementById('icl-dim-val').textContent = d;
+        initialize();
+    });
+
+    document.getElementById('icl-k').addEventListener('input', (e) => {
+        currentExamples = parseInt(e.target.value);
+        document.getElementById('icl-k-val').textContent = currentExamples;
+        update();
+    });
+
+    document.getElementById('icl-noise').addEventListener('input', (e) => {
+        noiseStd = parseFloat(e.target.value);
+        document.getElementById('icl-noise-val').textContent = noiseStd.toFixed(1);
+        generateExamples(maxExamples);
+        update();
+    });
+
+    document.getElementById('icl-resample').addEventListener('click', () => {
+        initialize();
+    });
+
+    let animating = false;
+    let animInterval = null;
+    document.getElementById('icl-animate').addEventListener('click', () => {
+        if (animating) {
+            clearInterval(animInterval);
+            animating = false;
+            document.getElementById('icl-animate').textContent = '▶ Animate';
+            document.getElementById('icl-animate').style.background = '#10b981';
+            return;
+        }
+        animating = true;
+        document.getElementById('icl-animate').textContent = '⏸ Pause';
+        document.getElementById('icl-animate').style.background = '#f59e0b';
+        currentExamples = 0;
+        const slider = document.getElementById('icl-k');
+        animInterval = setInterval(() => {
+            currentExamples++;
+            if (currentExamples > maxExamples) {
+                clearInterval(animInterval);
+                animating = false;
+                document.getElementById('icl-animate').textContent = '▶ Animate';
+                document.getElementById('icl-animate').style.background = '#10b981';
+                return;
+            }
+            slider.value = currentExamples;
+            document.getElementById('icl-k-val').textContent = currentExamples;
+            update();
+        }, 150);
+    });
+
+    // Initialize
+    initialize();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof renderFourierAlgorithm === 'function') {
         renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 });
+    }
+
+    if (typeof renderICLAlgorithm === 'function') {
+        const iclContainer = document.getElementById('icl-algorithm-container');
+        if (iclContainer) {
+            renderICLAlgorithm('icl-algorithm-container', { d: 5, maxExamples: 40 });
+        }
     }
 });

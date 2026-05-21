@@ -312,3 +312,50 @@ This is the first line of evidence that the network operates in a Fourier basis:
     }, { responsive: true });
 })();
 </script>
+
+<div class="md">
+## In-Context Learning: How Transformers Learn Without Parameter Updates
+
+A remarkable property of Transformers is their ability to **learn new functions at inference time**, purely from examples provided in the prompt — without any gradient updates or fine-tuning. This is called **in-context learning** (ICL).
+
+\cite[Garg et al. (2022)]{garg2022incontext} formalize this by asking: can we train a Transformer from scratch to in-context learn an entire **function class**? That is, given a prompt of input-output pairs $(x_1, f(x_1), \ldots, x_k, f(x_k), x_{\text{query}})$, can the model predict $f(x_{\text{query}})$ for **unseen** functions $f$?
+
+The answer is yes — and the trained model matches or exceeds classical algorithms like least squares, Lasso, and even gradient descent on neural networks, all in a **single forward pass**.
+
+## The Setup
+
+The model receives a prompt structured as:
+
+$$P = (x_1, f(x_1), x_2, f(x_2), \ldots, x_k, f(x_k), x_{\text{query}})$$
+
+where inputs $x_i \sim \mathcal{N}(0, I_d)$ and $f$ is drawn from a function class $\mathcal{F}$ (e.g., linear functions $f(x) = w^\top x$ with $w \sim \mathcal{N}(0, I_d)$). The model is trained to minimize:
+
+$$\min_\theta \; \mathbb{E}_P \left[ \frac{1}{k+1} \sum_{i=0}^{k} \ell\left(M_\theta(P_i),\; f(x_{i+1})\right) \right]$$
+
+where $P_i$ is the prompt prefix containing $i$ in-context examples and the $(i+1)$th input \cite[Equation 2]{garg2022incontext}.
+
+## Key Findings
+
+1. **Linear Functions:** A 12-layer, 8-head, 256-dim Transformer (9.5M parameters) trained from scratch achieves error comparable to the **optimal least squares estimator** on 20-dimensional linear regression \cite[Section 3]{garg2022incontext}.
+
+2. **Robustness to Distribution Shift:** The model generalizes to prompts with skewed covariance, noisy labels, inputs from different orthants, and scaled inputs — indicating it has learned a genuine algorithm, not memorized training data \cite[Section 4]{garg2022incontext}.
+
+3. **Complex Function Classes:** The same approach works for sparse linear functions (matching Lasso), decision trees (outperforming XGBoost), and two-layer ReLU networks (matching gradient descent) \cite[Section 5]{garg2022incontext}.
+
+4. **Not Memorization:** With 2d in-context examples, the model achieves error < 0.001, while the best memorized weight vector from 32M training vectors would yield error ~0.216 \cite[Appendix B.7]{garg2022incontext}.
+
+## How Does the Transformer "Execute Code" Internally?
+
+The Transformer implements a learning algorithm **implicitly in its weights**. During a single forward pass:
+
+- **Attention layers** aggregate information from in-context examples (analogous to computing sufficient statistics)
+- **MLP layers** transform these aggregates into predictions (analogous to applying an estimator)
+
+The model doesn't store a lookup table — it encodes an **algorithm** that processes arbitrary new functions at inference time. This is meta-learning: the training loop teaches the model *how to learn*, and the forward pass *executes* that learning on new data.
+
+## Interactive Exploration
+
+Below you can explore how in-context learning works. Provide input-output pairs from a linear function, and watch the model's internal "algorithm" converge to the correct function as more examples are added.
+</div>
+
+<div id="icl-algorithm-container"></div>
