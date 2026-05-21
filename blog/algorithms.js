@@ -246,14 +246,20 @@ function renderFourierAlgorithm(container, options = {}) {
             `)}
 
             ${card('Concrete values (k=' + k + ')', `
-                ${mathBlock(`\\underbrace{a = ${a}}_{\\text{first input}} \\;\\mapsto\\; (\\cos(${wk.toFixed(4)} \\times ${a}),\\; \\sin(${wk.toFixed(4)} \\times ${a})) = (${cosA.toFixed(4)},\\; ${sinA.toFixed(4)})`)}
-                ${mathBlock(`\\underbrace{b = ${b}}_{\\text{second input}} \\;\\mapsto\\; (\\cos(${wk.toFixed(4)} \\times ${b}),\\; \\sin(${wk.toFixed(4)} \\times ${b})) = (${cosB.toFixed(4)},\\; ${sinB.toFixed(4)})`)}
+                <p>First, recall what ${mathInline('\\omega_k')} is for this frequency:</p>
+                ${mathBlock(`\\underbrace{\\omega_{${k}}}_{\\substack{\\text{angular velocity}\\\\\\text{for frequency }k=${k}}} = \\frac{2\\pi}{\\underbrace{${P}}_{\\text{modulus}}} \\cdot \\underbrace{${k}}_{\\text{freq. index}} = ${wk.toFixed(6)}`)}
+                <p>Now apply it to input ${mathInline('a')}:</p>
+                ${mathBlock(`\\underbrace{a = ${a}}_{\\text{first input}} \\;\\mapsto\\; \\left(\\;\\cos\\!\\left(\\underbrace{${wk.toFixed(4)}}_{\\omega_{${k}}} \\cdot \\underbrace{${a}}_{a}\\right),\\;\\; \\sin\\!\\left(\\underbrace{${wk.toFixed(4)}}_{\\omega_{${k}}} \\cdot \\underbrace{${a}}_{a}\\right)\\;\\right)`)}
+                ${mathBlock(`= \\left(\\;\\cos(\\underbrace{${angA.toFixed(4)}}_{${wk.toFixed(4)} \\times ${a}}),\\;\\; \\sin(\\underbrace{${angA.toFixed(4)}}_{${wk.toFixed(4)} \\times ${a}})\\;\\right) = (${cosA.toFixed(4)},\\; ${sinA.toFixed(4)})`)}
+                <p>And input ${mathInline('b')}:</p>
+                ${mathBlock(`\\underbrace{b = ${b}}_{\\text{second input}} \\;\\mapsto\\; \\left(\\;\\cos\\!\\left(\\underbrace{${wk.toFixed(4)}}_{\\omega_{${k}}} \\cdot \\underbrace{${b}}_{b}\\right),\\;\\; \\sin\\!\\left(\\underbrace{${wk.toFixed(4)}}_{\\omega_{${k}}} \\cdot \\underbrace{${b}}_{b}\\right)\\;\\right)`)}
+                ${mathBlock(`= \\left(\\;\\cos(\\underbrace{${angB.toFixed(4)}}_{${wk.toFixed(4)} \\times ${b}}),\\;\\; \\sin(\\underbrace{${angB.toFixed(4)}}_{${wk.toFixed(4)} \\times ${b}})\\;\\right) = (${cosB.toFixed(4)},\\; ${sinB.toFixed(4)})`)}
             `, '#ef4444')}
 
             ${plotDiv('step2-circle', '380px')}
 
             ${card('What is the embedding matrix?', `
-                <p>The Transformer's <strong>embedding matrix</strong> ${mathInline('W_E')} has shape ${mathInline(`(${P}, d_{\\text{model}})`)}. After training, its columns contain these cos/sin values for each frequency ${mathInline('k')}. When token "${a}" is fed in, the network looks up row ${a} of ${mathInline('W_E')}, which gives exactly ${mathInline(`(\\cos(\\omega_k \\cdot ${a}), \\sin(\\omega_k \\cdot ${a}))`)}.
+                <p>The Transformer has an <strong>embedding matrix</strong> ${mathInline('W_E')} of shape ${mathInline(`(${P}, d_{\\text{model}})`)}. After training, its columns contain these cos/sin values for each frequency ${mathInline('k')}. When token "${a}" is fed in, the network looks up row ${a} of ${mathInline('W_E')}, which gives exactly ${mathInline(`(\\cos(\\omega_k \\cdot ${a}), \\sin(\\omega_k \\cdot ${a}))`)}.
                 </p>
             `, '#64748b')}
         `;
@@ -288,25 +294,45 @@ function renderFourierAlgorithm(container, options = {}) {
             <h2 style="text-align:center; color:#1e293b;">Step 3: The Addition Theorem</h2>
             <p style="text-align:center; color:#64748b;">The network computes cos(w*(a+b)) using only the individual embeddings of a and b</p>
 
+            ${card('Recall: what is ' + mathInline('\\omega_k') + ' here?', `
+                ${mathBlock(`\\underbrace{\\omega_{${k}}}_{\\substack{\\text{angular velocity}\\\\\\text{for freq. }k=${k}}} = \\frac{2\\pi}{\\underbrace{${P}}_{P}} \\cdot \\underbrace{${k}}_{k} = ${wk.toFixed(6)} \\text{ rad per number}`)}
+                <p>This value stays the same throughout this step. Every ${mathInline('\\omega_k')} below equals ${wk.toFixed(4)}.</p>
+            `, '#64748b')}
+
             ${card('The Key Identity (Cosine)', `
-                ${mathBlock(`\\overbrace{\\cos(\\omega_k(a+b))}^{\\substack{\\text{what we WANT:}\\\\\\text{the angle for the sum}}} = \\underbrace{\\cos(\\omega_k a)}_{\\substack{\\text{from embedding}\\\\\\text{of token }a\\\\= ${cosA.toFixed(4)}}} \\cdot \\underbrace{\\cos(\\omega_k b)}_{\\substack{\\text{from embedding}\\\\\\text{of token }b\\\\= ${cosB.toFixed(4)}}} \\;-\\; \\underbrace{\\sin(\\omega_k a)}_{\\substack{\\text{from embedding}\\\\\\text{of token }a\\\\= ${sinA.toFixed(4)}}} \\cdot \\underbrace{\\sin(\\omega_k b)}_{\\substack{\\text{from embedding}\\\\\\text{of token }b\\\\= ${sinB.toFixed(4)}}}`)}
+                ${mathBlock(`\\overbrace{\\cos(\\underbrace{\\omega_k}_{=${wk.toFixed(4)}} \\cdot \\underbrace{(a+b)}_{${a}+${b}=${a+b}})}^{\\substack{\\text{what we WANT:}\\\\\\text{cosine of the sum-angle}}} = \\underbrace{\\cos(\\omega_k \\cdot a)}_{\\substack{\\text{from embedding of }a\\\\= \\cos(${wk.toFixed(4)} \\cdot ${a})\\\\= ${cosA.toFixed(4)}}} \\cdot \\underbrace{\\cos(\\omega_k \\cdot b)}_{\\substack{\\text{from embedding of }b\\\\= \\cos(${wk.toFixed(4)} \\cdot ${b})\\\\= ${cosB.toFixed(4)}}} - \\underbrace{\\sin(\\omega_k \\cdot a)}_{\\substack{\\text{from embedding of }a\\\\= \\sin(${wk.toFixed(4)} \\cdot ${a})\\\\= ${sinA.toFixed(4)}}} \\cdot \\underbrace{\\sin(\\omega_k \\cdot b)}_{\\substack{\\text{from embedding of }b\\\\= \\sin(${wk.toFixed(4)} \\cdot ${b})\\\\= ${sinB.toFixed(4)}}}`)}
             `, '#059669')}
 
             ${card('The Key Identity (Sine)', `
-                ${mathBlock(`\\overbrace{\\sin(\\omega_k(a+b))}^{\\substack{\\text{what we WANT}}} = \\underbrace{\\sin(\\omega_k a)}_{= ${sinA.toFixed(4)}} \\cdot \\underbrace{\\cos(\\omega_k b)}_{= ${cosB.toFixed(4)}} \\;+\\; \\underbrace{\\cos(\\omega_k a)}_{= ${cosA.toFixed(4)}} \\cdot \\underbrace{\\sin(\\omega_k b)}_{= ${sinB.toFixed(4)}}`)}
+                ${mathBlock(`\\overbrace{\\sin(\\underbrace{\\omega_k}_{=${wk.toFixed(4)}} \\cdot \\underbrace{(a+b)}_{=${a+b}})}^{\\text{what we WANT}} = \\underbrace{\\sin(\\omega_k a)}_{\\substack{\\text{embed. of }a\\\\=${sinA.toFixed(4)}}} \\cdot \\underbrace{\\cos(\\omega_k b)}_{\\substack{\\text{embed. of }b\\\\=${cosB.toFixed(4)}}} + \\underbrace{\\cos(\\omega_k a)}_{\\substack{\\text{embed. of }a\\\\=${cosA.toFixed(4)}}} \\cdot \\underbrace{\\sin(\\omega_k b)}_{\\substack{\\text{embed. of }b\\\\=${sinB.toFixed(4)}}}`)}
             `, '#3b82f6')}
 
             ${card('Numerical verification (k=' + k + ')', `
-                ${mathBlock(`\\cos(\\omega_{${k}}(a+b)) = \\underbrace{(${cosA.toFixed(4)})(${cosB.toFixed(4)})}_{= ${prod_cc.toFixed(5)}} - \\underbrace{(${sinA.toFixed(4)})(${sinB.toFixed(4)})}_{= ${prod_ss.toFixed(5)}} = ${(prod_cc - prod_ss).toFixed(5)}`)}
-                ${mathBlock(`\\text{Check: } \\cos(\\omega_{${k}} \\cdot ${a+b}) = \\cos(${angS.toFixed(4)}) = ${cosS.toFixed(5)} \\quad \\checkmark`)}
-                ${mathBlock(`\\sin(\\omega_{${k}}(a+b)) = \\underbrace{(${sinA.toFixed(4)})(${cosB.toFixed(4)})}_{= ${prod_sc.toFixed(5)}} + \\underbrace{(${cosA.toFixed(4)})(${sinB.toFixed(4)})}_{= ${prod_cs.toFixed(5)}} = ${(prod_sc + prod_cs).toFixed(5)}`)}
-                ${mathBlock(`\\text{Check: } \\sin(\\omega_{${k}} \\cdot ${a+b}) = \\sin(${angS.toFixed(4)}) = ${sinS.toFixed(5)} \\quad \\checkmark`)}
-            `, '#64748b')}
+                ${mathBlock(`\\cos(\\omega_{${k}}(a+b)) = \\underbrace{\\underbrace{${cosA.toFixed(4)}}_{\\cos(\\omega \\cdot ${a})} \\cdot \\underbrace{${cosB.toFixed(4)}}_{\\cos(\\omega \\cdot ${b})}}_{= ${prod_cc.toFixed(5)}} \\;-\\; \\underbrace{\\underbrace{${sinA.toFixed(4)}}_{\\sin(\\omega \\cdot ${a})} \\cdot \\underbrace{${sinB.toFixed(4)}}_{\\sin(\\omega \\cdot ${b})}}_{= ${prod_ss.toFixed(5)}} = ${(prod_cc - prod_ss).toFixed(5)}`)}
+                ${mathBlock(`\\text{Check: } \\cos(\\underbrace{\\omega_{${k}}}_{${wk.toFixed(4)}} \\cdot \\underbrace{(a+b)}_{${a+b}}) = \\cos(\\underbrace{${angS.toFixed(4)}}_{${wk.toFixed(4)} \\times ${a+b}}) = ${cosS.toFixed(5)} \\quad \\checkmark`)}
+                ${mathBlock(`\\sin(\\omega_{${k}}(a+b)) = \\underbrace{\\underbrace{${sinA.toFixed(4)}}_{\\sin(\\omega \\cdot ${a})} \\cdot \\underbrace{${cosB.toFixed(4)}}_{\\cos(\\omega \\cdot ${b})}}_{= ${prod_sc.toFixed(5)}} \\;+\\; \\underbrace{\\underbrace{${cosA.toFixed(4)}}_{\\cos(\\omega \\cdot ${a})} \\cdot \\underbrace{${sinB.toFixed(4)}}_{\\sin(\\omega \\cdot ${b})}}_{= ${prod_cs.toFixed(5)}} = ${(prod_sc + prod_cs).toFixed(5)}`)}
+                ${mathBlock(`\\text{Check: } \\sin(\\underbrace{${angS.toFixed(4)}}_{${wk.toFixed(4)} \\times ${a+b}}) = ${sinS.toFixed(5)} \\quad \\checkmark`)}
+            `, '#f59e0b')}
 
             ${plotDiv('step3-circle', '340px')}
 
             ${card('How the network layers implement this', `
-                ${plotDiv('step3-flow', '220px')}
+                <p>The computation is split across two layers:</p>
+                <table style="width:100%; border-collapse:collapse; font-size:0.9em; margin:10px 0;">
+                    <tr style="background:#ede9fe;"><td style="padding:10px; border:1px solid #e2e8f0; font-weight:bold; color:#7c3aed;">Attention<br>(4 heads)</td><td style="padding:10px; border:1px solid #e2e8f0;">
+                        <p style="margin:0 0 5px 0;">Each head attends from the output position back to positions a and b, creating <strong>pairwise products</strong>:</p>
+                        ${mathBlock(`\\underbrace{\\text{Head 0}}_{\\text{computes}} \\to \\cos(\\omega_k a) \\cdot \\cos(\\omega_k b)`)}
+                        ${mathBlock(`\\underbrace{\\text{Head 1}}_{\\text{computes}} \\to \\sin(\\omega_k a) \\cdot \\sin(\\omega_k b)`)}
+                        ${mathBlock(`\\underbrace{\\text{Head 2}}_{\\text{computes}} \\to \\sin(\\omega_k a) \\cdot \\cos(\\omega_k b)`)}
+                        ${mathBlock(`\\underbrace{\\text{Head 3}}_{\\text{computes}} \\to \\cos(\\omega_k a) \\cdot \\sin(\\omega_k b)`)}
+                    </td></tr>
+                    <tr style="background:#ecfdf5;"><td style="padding:10px; border:1px solid #e2e8f0; font-weight:bold; color:#059669;">MLP<br>(512 ReLU neurons)</td><td style="padding:10px; border:1px solid #e2e8f0;">
+                        <p style="margin:0 0 5px 0;">Combines the products using the addition theorem:</p>
+                        ${mathBlock(`\\underbrace{\\text{cos}\\cdot\\text{cos}}_{\\text{from Head 0}} - \\underbrace{\\text{sin}\\cdot\\text{sin}}_{\\text{from Head 1}} = \\cos(\\omega_k(a+b))`)}
+                        ${mathBlock(`\\underbrace{\\text{sin}\\cdot\\text{cos}}_{\\text{from Head 2}} + \\underbrace{\\text{cos}\\cdot\\text{sin}}_{\\text{from Head 3}} = \\sin(\\omega_k(a+b))`)}
+                        <p style="margin:5px 0 0 0; font-size:0.9em; color:#64748b;">ReLU neurons approximate the subtraction/addition by learning appropriate weights. Pairs of neurons can approximate products via ${mathInline('\\text{ReLU}(x+y)^2 - \\text{ReLU}(x-y)^2 \\propto xy')}.</p>
+                    </td></tr>
+                </table>
             `, '#8b5cf6')}
         `;
         renderMath();
@@ -324,27 +350,6 @@ function renderFourierAlgorithm(container, options = {}) {
             margin: { t: 20, b: 50, l: 55, r: 20 },
             showlegend: true, legend: { x: 0.01, y: 0.99 }
         }, { responsive: true });
-
-        // Flow diagram showing what each layer does
-        const flowAnnotations = [
-            { x: 0.5, y: 1.0, text: '<b>Input:</b> tokens a=' + a + ', b=' + b, showarrow: false, font: { size: 11 } },
-            { x: 0.5, y: 0.82, text: '<b>Embedding W_E:</b> look up cos(wk*a), sin(wk*a), cos(wk*b), sin(wk*b)', showarrow: false, font: { size: 10, color: '#3b82f6' } },
-            { x: 0.5, y: 0.64, text: '<b>Attention (4 heads):</b> move b-info to output position, compute products', showarrow: false, font: { size: 10, color: '#8b5cf6' } },
-            { x: 0.5, y: 0.46, text: '<b>MLP (512 ReLU neurons):</b> cos*cos - sin*sin = cos(sum), sin*cos + cos*sin = sin(sum)', showarrow: false, font: { size: 10, color: '#059669' } },
-            { x: 0.5, y: 0.28, text: '<b>Output:</b> cos(wk*(a+b)) and sin(wk*(a+b)) for each k', showarrow: false, font: { size: 10, color: '#ef4444' } },
-        ];
-        Plotly.newPlot('step3-flow', [], {
-            xaxis: { visible: false, range: [0, 1] },
-            yaxis: { visible: false, range: [0, 1.1] },
-            margin: { t: 5, b: 5, l: 5, r: 5 },
-            annotations: flowAnnotations,
-            shapes: [
-                { type: 'line', x0: 0.5, x1: 0.5, y0: 0.95, y1: 0.87, line: { color: '#94a3b8', width: 2 } },
-                { type: 'line', x0: 0.5, x1: 0.5, y0: 0.77, y1: 0.69, line: { color: '#94a3b8', width: 2 } },
-                { type: 'line', x0: 0.5, x1: 0.5, y0: 0.59, y1: 0.51, line: { color: '#94a3b8', width: 2 } },
-                { type: 'line', x0: 0.5, x1: 0.5, y0: 0.41, y1: 0.33, line: { color: '#94a3b8', width: 2 } },
-            ],
-        }, { responsive: true, staticPlot: true });
     }});
 
     // ── STEP 4: Unembedding ──
