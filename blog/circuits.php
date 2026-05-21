@@ -1,8 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-# Circuits Inside Large Language Models
-
 When we peer inside a Transformer, we don't find a single monolithic algorithm. Instead, we find **circuits**: small subnetworks of attention heads and MLP neurons that collaborate to perform specific, interpretable computations. This is the central finding of \cite[Mechanistic Interpretability]{elhage2021mathematical}, a research program that reverse-engineers neural networks the way an electrical engineer reverse-engineers a circuit board.
 
 ## What is a Circuit?
