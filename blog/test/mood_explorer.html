@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vektor-Alchemie: Semantische Navigation im Latent Space</title>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+        .plot-container {
+            background: #12122a;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #2a2a4a;
+            min-height: 550px;
+        }
+        #latent-plot { width: 100%; height: 540px; }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .panel {
+            background: #12122a;
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid #2a2a4a;
+        }
+        .panel h3 {
+            font-size: 1em;
+            margin-bottom: 12px;
+            color: #a0a0ff;
+        }
+        .input-group {
+            margin-bottom: 12px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.8em;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #3a3a5a;
+            background: #1a1a3a;
+            color: #fff;
+            font-size: 0.9em;
+        }
+        .slider-group {
+            margin-bottom: 14px;
+        }
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #bbb;
+            margin-bottom: 4px;
+        }
+        .slider-group input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #4a4aff, #ff4a8a);
+            outline: none;
+        }
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(100,100,255,0.5);
+        }
+        .output-panel {
+            background: #0d0d20;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #2a2a4a;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .word-prob {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px solid #1a1a3a;
+        }
+        .word-prob:last-child { border-bottom: none; }
+        .word-prob .word { font-weight: 600; font-size: 0.9em; }
+        .word-prob .bar-container {
+            width: 60%;
+            height: 14px;
+            background: #1a1a3a;
+            border-radius: 7px;
+            overflow: hidden;
+        }
+        .word-prob .bar {
+            height: 100%;
+            border-radius: 7px;
+            transition: width 0.4s ease, background 0.4s ease;
+        }
+        .vector-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            background: #1a1a3a;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 0.8em;
+        }
+        .vector-indicator .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.1s;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn:active { transform: scale(0.98); }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Vektor-Alchemie</h1>
+        <p class="subtitle">Semantische Navigation im Latent Space — Bedeutung ist eine Koordinate</p>
+
+        <div class="main-grid">
+            <div class="plot-container">
+                <div id="latent-plot"></div>
+            </div>
+
+            <div class="controls">
+                <div class="panel">
+                    <h3>📝 Eingabesatz</h3>
+                    <div class="input-group">
+                        <label>Dein Satz:</label>
+                        <input type="text" id="input-sentence" value="Das Wetter ist heute okay" placeholder="Satz eingeben...">
+                    </div>
+                    <button class="btn" onclick="updateVisualization()">Satz projizieren ➜</button>
+                </div>
+
+                <div class="panel">
+                    <h3>🎛️ Stimmungs-Vektoren (Latent Joystick)</h3>
+                    <div class="slider-group">
+                        <label><span>traurig 😢</span><span>fröhlich 😊</span></label>
+                        <input type="range" id="slider-mood" min="-100" max="100" value="0" oninput="updateVisualization()">
+                    </div>
+                    <div class="slider-group">
+                        <label><span>formell 🎩</span><span>slang 🤙</span></label>
+                        <input type="range" id="slider-formality" min="-100" max="100" value="0" oninput="updateVisualization()">
+                    </div>
+                    <div class="slider-group">
+                        <label><span>modern 📱</span><span>18. Jhd. 📜</span></label>
+                        <input type="range" id="slider-era" min="-100" max="100" value="0" oninput="updateVisualization()">
+                    </div>
+                    <div class="slider-group">
+                        <label><span>sanft 🕊️</span><span>aggressiv 🔥</span></label>
+                        <input type="range" id="slider-intensity" min="-100" max="100" value="0" oninput="updateVisualization()">
+                    </div>
+                    <div class="vector-indicator">
+                        <div class="dot" style="background: #ff4444;" id="target-dot"></div>
+                        <span id="vector-coords">Zielvektor: [0.00, 0.00, 0.00]</span>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3>📊 Wort-Wahrscheinlichkeiten (nächstes Token)</h3>
+                    <div class="output-panel" id="word-probs"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // --- Simulated Latent Space Vocabulary ---
+    const vocabulary = [
+        // Neutral / base words
+        { word: "okay", base: [0, 0, 0], mood: 0, formality: 0, era: 0, intensity: 0 },
+        { word: "gut", base: [0.5, 0.3, 0.1], mood: 0.3, formality: 0, era: 0, intensity: 0 },
+        { word: "schlecht", base: [-0.5, 0.2, -0.1], mood: -0.4, formality: 0, era: 0, intensity: -0.1 },
+        { word: "Wetter", base: [0.1, 0.8, 0.2], mood: 0, formality: 0, era: 0, intensity: 0 },
+        { word: "Sonne", base: [0.6, 0.9, 0.3], mood: 0.5, formality: 0, era: 0, intensity: 0 },
+        { word: "Regen", base: [-0.3, 0.7, 0.1], mood: -0.3, formality: 0, era: 0, intensity: 0 },
+        // Happy words
+        { word: "wunderbar", base: [1.0, 0.5, 0.4], mood: 0.9, formality: 0.2, era: 0, intensity: 0.2 },
+        { word: "fantastisch", base: [1.1, 0.4, 0.5], mood: 0.95, formality: 0, era: 0, intensity: 0.3 },
+        { word: "herrlich", base: [0.9, 0.6, 0.3], mood: 0.8, formality: 0.3, era: 0.2, intensity: 0.1 },
+        { word: "geil", base: [1.0, -0.3, -0.5], mood: 0.7, formality: -0.9, era: -0.3, intensity: 0.4 },
+        { word: "mega", base: [0.8, -0.4, -0.6], mood: 0.6, formality: -0.8, era: -0.5, intensity: 0.5 },
+        // Sad words
+        { word: "traurig", base: [-0.8, 0.3, -0.2], mood: -0.9, formality: 0, era: 0, intensity: -0.2 },
+        { word: "elend", base: [-1.0, 0.2, -0.3], mood: -0.95, formality: 0.1, era: 0.2, intensity: 0.3 },
+        { word: "trostlos", base: [-0.9, 0.4, -0.1], mood: -0.85, formality: 0.2, era: 0.1, intensity: 0 },
+        { word: "deprimierend", base: [-1.1, 0.1, -0.4], mood: -0.9, formality: 0.1, era: 0, intensity: 0.1 },
+        // Formal words
+        { word: "vortrefflich", base: [0.7, 0.8, 0.6], mood: 0.5, formality: 0.9, era: 0.4, intensity: 0 },
+        { word: "angemessen", base: [0.2, 0.6, 0.7], mood: 0.1, formality: 0.8, era: 0.2, intensity: -0.3 },
+        { word: "erfreulich", base: [0.6, 0.7, 0.5], mood: 0.6, formality: 0.7, era: 0.2, intensity: 0 },
+        { word: "bedauerlich", base: [-0.6, 0.5, 0.6], mood: -0.5, formality: 0.8, era: 0.3, intensity: -0.2 },
+        // Slang words
+        { word: "krass", base: [0.3, -0.6, -0.7], mood: 0.2, formality: -0.9, era: -0.4, intensity: 0.6 },
+        { word: "chillig", base: [0.4, -0.5, -0.6], mood: 0.4, formality: -0.85, era: -0.5, intensity: -0.3 },
+        { word: "mies", base: [-0.5, -0.4, -0.5], mood: -0.5, formality: -0.7, era: -0.3, intensity: 0.3 },
+        { word: "lit", base: [0.7, -0.7, -0.8], mood: 0.6, formality: -0.95, era: -0.6, intensity: 0.5 },
+        // 18th century words
+        { word: "trefflich", base: [0.6, 0.7, 1.0], mood: 0.4, formality: 0.7, era: 0.9, intensity: 0 },
+        { word: "fürwahr", base: [0.3, 0.5, 1.1], mood: 0.1, formality: 0.6, era: 0.95, intensity: 0.1 },
+        { word: "gar", base: [0.1, 0.3, 0.9], mood: 0, formality: 0.5, era: 0.85, intensity: 0 },
+        { word: "wahrlich", base: [0.2, 0.4, 1.0], mood: 0.1, formality: 0.6, era: 0.9, intensity: 0.2 },
+        { word: "hold", base: [0.5, 0.6, 1.1], mood: 0.5, formality: 0.5, era: 0.95, intensity: -0.2 },
+        { word: "jämmerlich", base: [-0.7, 0.3, 0.9], mood: -0.7, formality: 0.4, era: 0.8, intensity: 0.3 },
+        // Aggressive words
+        { word: "verdammt", base: [-0.2, -0.3, -0.2], mood: -0.3, formality: -0.5, era: 0, intensity: 0.8 },
+        { word: "brutal", base: [0.1, -0.2, -0.1], mood: -0.1, formality: -0.3, era: 0, intensity: 0.95 },
+        { word: "höllisch", base: [0.2, -0.1, 0.1], mood: -0.2, formality: -0.2, era: 0.2, intensity: 0.9 },
+        { word: "erbärmlich", base: [-0.8, 0.2, 0.3], mood: -0.6, formality: 0.3, era: 0.3, intensity: 0.7 },
+        { word: "Scheiße", base: [-0.4, -0.8, -0.5], mood: -0.5, formality: -0.95, era: -0.2, intensity: 0.85 },
+        // More variety
+        { word: "annehmbar", base: [0.1, 0.5, 0.4], mood: 0.1, formality: 0.6, era: 0.1, intensity: -0.3 },
+        { word: "passabel", base: [0.15, 0.4, 0.3], mood: 0.05, formality: 0.5, era: 0.1, intensity: -0.2 },
+        { word: "nice", base: [0.5, -0.3, -0.4], mood: 0.4, formality: -0.6, era: -0.4, intensity: 0 },
+        { word: "Sonnenschein", base: [0.8, 0.9, 0.2], mood: 0.7, formality: 0, era: 0, intensity: 0 },
+        { word: "Unwetter", base: [-0.4, 0.8, 0.1], mood: -0.4, formality: 0.1, era: 0, intensity: 0.5 },
+        { word: "prächtig", base: [0.8, 0.7, 0.8], mood: 0.6, formality: 0.6, era: 0.6, intensity: 0.2 },
+        { word: "grauenvoll", base: [-0.9, 0.1, 0.2], mood: -0.8, formality: 0.2, era: 0.2, intensity: 0.7 },
+    ];
+
+    // Compute 3D positions for each word (using PCA-like projection of their attributes)
+    function computePosition(item, moodVal, formalityVal, eraVal, intensityVal) {
+        const x = item.base[0] + item.mood * moodVal * 0.8 + item.intensity * intensityVal * 0.3;
+        const y = item.base[1] + item.formality * formalityVal * 0.8 + item.era * eraVal * 0.3;
+        const z = item.base[2] + item.era * eraVal * 0.8 + item.formality * formalityVal * 0.3;
+        return [x, y, z];
+    }
+
+    // Compute relevance score (how likely this word is given the current vector direction)
+    function computeRelevance(item, moodVal, formalityVal, eraVal, intensityVal) {
+        const score = 
+            item.mood * moodVal +
+            item.formality * formalityVal +
+            item.era * eraVal +
+            item.intensity * intensityVal;
+        return score;
+    }
+
+    // Softmax
+    function softmax(scores) {
+        const maxScore = Math.max(...scores);
+        const exps = scores.map(s => Math.exp((s - maxScore) * 3)); // temperature scaling
+        const sum = exps.reduce((a, b) => a + b, 0);
+        return exps.map(e => e / sum);
+    }
+
+    // Color based on relevance
+    function getColor(relevance, maxRel, minRel) {
+        const norm = (relevance - minRel) / (maxRel - minRel + 0.001);
+        const r = Math.round(80 + norm * 175);
+        const g = Math.round(80 + (1 - Math.abs(norm - 0.5) * 2) * 100);
+        const b = Math.round(255 - norm * 175);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    let currentPlot = null;
+
+    function updateVisualization() {
+        const moodVal = document.getElementById('slider-mood').value / 100;
+        const formalityVal = document.getElementById('slider-formality').value / 100;
+        const eraVal = document.getElementById('slider-era').value / 100;
+        const intensityVal = document.getElementById('slider-intensity').value / 100;
+
+        // Compute target vector for display
+        const targetVec = [
+            (moodVal * 0.5 + intensityVal * 0.3).toFixed(2),
+            (formalityVal * 0.5 + eraVal * 0.3).toFixed(2),
+            (eraVal * 0.5 + formalityVal * 0.2).toFixed(2)
+        ];
+        document.getElementById('vector-coords').textContent = `Zielvektor: [${targetVec.join(', ')}]`;
+
+        // Update dot color based on intensity
+        const dotHue = Math.round(240 - (intensityVal + 1) * 120);
+        document.getElementById('target-dot').style.background = `hsl(${dotHue}, 80%, 55%)`;
+
+        // Compute positions and relevances
+        const positions = [];
+        const relevances = [];
+        const labels = [];
+
+        vocabulary.forEach(item => {
+            const pos = computePosition(item, moodVal, formalityVal, eraVal, intensityVal);
+            const rel = computeRelevance(item, moodVal, formalityVal, eraVal, intensityVal);
+            positions.push(pos);
+            relevances.push(rel);
+            labels.push(item.word);
+        });
+
+        const maxRel = Math.max(...relevances);
+        const minRel = Math.min(...relevances);
+
+        // Colors and sizes based on relevance
+        const colors = relevances.map(r => getColor(r, maxRel, minRel));
+        const sizes = relevances.map(r => 6 + ((r - minRel) / (maxRel - minRel + 0.001)) * 18);
+
+        // Input sentence marker
+        const sentenceX = moodVal * 0.6 + intensityVal * 0.2;
+        const sentenceY = formalityVal * 0.6 + eraVal * 0.2;
+        const sentenceZ = eraVal * 0.6 + formalityVal * 0.1;
+
+        // Plotly traces
+        const wordTrace = {
+            x: positions.map(p => p[0]),
+            y: positions.map(p => p[1]),
+            z: positions.map(p => p[2]),
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: labels,
+            textposition: 'top center',
+            textfont: { size: 9, color: '#ccc' },
+            marker: {
+                size: sizes,
+                color: colors,
+                opacity: 0.85,
+                line: { width: 0.5, color: '#ffffff33' }
+            },
+            hovertemplate: '<b>%{text}</b><br>Relevanz: %{customdata:.2f}<extra></extra>',
+            customdata: relevances,
+            name: 'Wörter'
+        };
+
+        const targetTrace = {
+            x: [sentenceX],
+            y: [sentenceY],
+            z: [sentenceZ],
+            mode: 'markers',
+            type: 'scatter3d',
+            marker: {
+                size: 14,
+                color: '#ff4444',
+                symbol: 'diamond',
+                opacity: 1,
+                line: { width: 2, color: '#fff' }
+            },
+            name: '🎯 Zielpunkt (Eingabe + Vektor)'
+        };
+
+        // Vector arrow from origin to target
+        const arrowTrace = {
+            x: [0, sentenceX],
+            y: [0, sentenceY],
+            z: [0, sentenceZ],
+            mode: 'lines',
+            type: 'scatter3d',
+            line: { color: '#ff4444', width: 4 },
+            name: 'Stimmungsvektor'
+        };
+
+        const layout = {
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#12122a',
+            scene: {
+                bgcolor: '#0a0a1a',
+                xaxis: { 
+                    title: 'Stimmung ↔', 
+                    color: '#666', 
+                    gridcolor: '#1a1a3a',
+                    zerolinecolor: '#2a2a5a'
+                },
+                yaxis: { 
+                    title: 'Formalität ↔', 
+                    color: '#666', 
+                    gridcolor: '#1a1a3a',
+                    zerolinecolor: '#2a2a5a'
+                },
+                zaxis: { 
+                    title: 'Epoche ↔', 
+                    color: '#666', 
+                    gridcolor: '#1a1a3a',
+                    zerolinecolor: '#2a2a5a'
+                },
+                camera: {
+                    eye: { x: 1.8, y: 1.8, z: 1.2 }
+                }
+            },
+            font: { color: '#ccc' },
+            showlegend: true,
+            legend: { 
+                x: 0, y: 1, 
+                bgcolor: '#12122a88',
+                font: { color: '#aaa', size: 10 }
+            },
+            margin: { l: 0, r: 0, t: 30, b: 0 }
+        };
+
+        Plotly.react('latent-plot', [wordTrace, arrowTrace, targetTrace], layout, { 
+            responsive: true,
+            displayModeBar: true,
+            modeBarButtonsToRemove: ['toImage']
+        });
+
+        // Update word probabilities
+        updateWordProbabilities(relevances, labels);
+    }
+
+    function updateWordProbabilities(relevances, labels) {
+        const probs = softmax(relevances);
+        
+        // Get top 10
+        const indexed = probs.map((p, i) => ({ prob: p, word: labels[i], idx: i }));
+        indexed.sort((a, b) => b.prob - a.prob);
+        const top = indexed.slice(0, 10);
+
+        const container = document.getElementById('word-probs');
+        const maxProb = top[0].prob;
+
+        container.innerHTML = top.map(item => {
+            const barWidth = (item.prob / maxProb * 100).toFixed(1);
+            const hue = Math.round(item.prob / maxProb * 120);
+            return `
+                <div class="word-prob">
+                    <span class="word">${item.word}</span>
+                    <div class="bar-container">
+                        <div class="bar" style="width: ${barWidth}%; background: hsl(${hue}, 70%, 50%);"></div>
+                    </div>
+                    <span style="font-size:0.75em; color:#888; min-width:45px; text-align:right;">
+                        ${(item.prob * 100).toFixed(1)}%
+                    </span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        updateVisualization();
+    });
+
+    // Also update on sentence change
+    document.getElementById('input-sentence').addEventListener('input', updateVisualization);
+    </script>
+</body>
+</html>
