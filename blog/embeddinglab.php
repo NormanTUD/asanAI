@@ -326,6 +326,8 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 </section>
 
 <div class="md">
+This works because the real world structures the language first, and thus, "dog" has similiar relations to cat, pet, horse, mouse, ..., as "Hund" (german for dog) has to "Katze" (cat), "Haustier" (pet), "Pferd" (horse), mouse ("Maus") and so on. The language model the real world, and the models the language, and thus, it's an abstracted model of the real world.
+
 ## Attention as Metric Tensor
 
 There is an even more geometric way to think about attention. In differential geometry, a **metric tensor** defines how distances are measured locally on a manifold, it tells you the "shape" of space at each point. The attention matrix in a Transformer does something analogous: it dynamically redefines which tokens are "close" to which other tokens at each layer, effectively warping the local geometry of the embedding space as the representation is processed. This is not merely a metaphor, the connections between attention mechanisms and geometric structures on manifolds have been formalized in the \cite[framework of Geometric Deep Learning]{bronstein2021geometric}.
