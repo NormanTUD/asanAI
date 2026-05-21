@@ -48,7 +48,7 @@
 	incl("Temperature & Sampling", "samplinglab");
 	incl("The Architecture of Meaning: A Deep Dive into Transformers", "transformer");
 	/*
-	incl("How algorithms are executed by a transformer", "algorithms");
+	incl("How Neural Networks Execute Algorithms", "algorithms");
 	 */
 	#incl("Topology and the Geometry of Thought", "topology");
 	incl("Fine-Tuning: From Internet Scrape to Human Alignment", "finetuninglab");
