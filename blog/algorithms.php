@@ -510,7 +510,7 @@ This is why \cite[Zhou et al. (2022)]{zhou2022algorithmic} find that **context l
 
 Despite these capabilities, there are hard limits:
 
-- **Context length bounds computation:** The model can only execute as many steps as fit in its context window. For a 19-digit addition with full algorithmic output, this is already near the limit of 8000 tokens \cite[Section 5]{zhou2022algorithmic}.
+- **Context length bounds computation:** The model can only execute as many steps as fit in its context window.
 - **Ambiguity kills performance:** If the algorithm description allows multiple interpretations, the model may follow the wrong one. Uncommon operations (like indexing a variable position) are harder than common ones (like always taking the last element) \cite[Section 3.1]{zhou2022algorithmic}.
 - **Interference between skills:** Mixing very different types of reasoning (e.g., informal math reasoning + formal algorithm execution) in one prompt causes performance degradation \cite[Section 6]{zhou2022algorithmic}.
 - **No true compilation:** The model doesn't "compile" your code into an internal representation. It simulates execution token by token. This means execution speed is O(output_tokens), not O(algorithm_complexity).
