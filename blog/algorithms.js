@@ -411,34 +411,34 @@ function renderFourierAlgorithm(container, options = {}) {
                 ${mathBlock(`\\text{Logit}(c) = \\cos(\\underbrace{\\omega_k \\cdot (a+b) - \\omega_k \\cdot c}_{= \\omega_k \\cdot (a+b-c)})`)}
             `, '#3b82f6')}
 
-            ${card('How to read the plot below', `
-                <p>We evaluate ${mathInline('\\cos(\\omega_k \\cdot (a+b-c))')} for every token ${mathInline('c \\in \\{0, 1, \\ldots, ' + (P-1) + '\\}')}:</p>
-                <ul>
-                    <li>At ${mathInline('c^* = ' + correctAnswer)}: we get ${mathInline('a+b-c^* = ' + a + '+' + b + '-' + correctAnswer + ' = ' + ((a+b)-correctAnswer))} which is ${mathInline('\\equiv 0 \\pmod{' + P + '}')} so ${mathInline('\\cos(0) = 1')} (maximum!)</li>
-                    <li>At other values of ${mathInline('c')}: the angle is nonzero, so the cosine is less than 1</li>
-                    <li><strong>Problem:</strong> cosine is periodic with period ${mathInline('P/k = ' + P + '/' + k + ' \\approx ' + (P/k).toFixed(1))}, so there are <strong>${falsePeaks.length} false peaks</strong> above 0.9!</li>
-                </ul>
-            `, '#f59e0b')}
+	    ${card('How to read the plot below', `
+		<p>We evaluate ${mathInline('\\cos(\\omega_k \\cdot (a+b-c))')} for every token ${mathInline('c \\in \\{0, 1, \\ldots, ' + (P-1) + '\\}')}:</p>
+		<ul>
+		    <li>At ${mathInline('c^* = ' + correctAnswer)}: we get ${mathInline('a+b-c^* = ' + a + '+' + b + '-' + correctAnswer + ' = ' + ((a+b)-correctAnswer))} which is ${mathInline('\\equiv 0 \\pmod{' + P + '}')} so ${mathInline('\\cos(0) = 1')} (maximum!)</li>
+		    <li>At other values of ${mathInline('c')}: the angle is nonzero, so the cosine is less than 1</li>
+		    <li><strong>Problem:</strong> cosine is periodic with period ${mathInline('P/k = ' + P + '/' + k + ' \\approx ' + (P/k).toFixed(1))}, so there are <strong>${falsePeaks.length} false peaks</strong> above 0.9!</li>
+		</ul>
+	    `, '#f59e0b')}
 
-            ${plotDiv('step4-plot', '320px')}
+	    ${plotDiv('step4-plot', '320px')}
 
-            ${card('What is ' + mathInline('c') + '?', `
-                <p>${mathInline('c')} is a <strong>candidate output token</strong>. The network must choose one of the ${P} possible outputs. The unembedding step computes a score (logit) for each candidate, and the highest-scoring one becomes the prediction.</p>
-            `, '#64748b')}
-        `;
-        renderMath();
+	    ${card('What is ' + mathInline('c') + '?', `
+		<p>${mathInline('c')} is a <strong>candidate output token</strong>. The network must choose one of the ${P} possible outputs. The unembedding step computes a score (logit) for each candidate, and the highest-scoring one becomes the prediction.</p>
+	    `, '#64748b')}
+	`;
+	    renderMath();
 
-        Plotly.newPlot('step4-plot', [
-            { x: tokens, y: signal, mode: 'lines', line: { color: '#3b82f6', width: 1.5 }, fill: 'tozeroy', fillcolor: 'rgba(59,130,246,0.04)', name: `cos(w_${k} * (a+b-c))` },
-            { x: [correctAnswer], y: [signal[correctAnswer]], mode: 'markers', marker: { size: 13, color: '#ef4444', symbol: 'star' }, name: `Correct: c*=${correctAnswer}` },
-            { x: falsePeaks, y: falsePeaks.map(c => signal[c]), mode: 'markers', marker: { size: 7, color: '#f59e0b' }, name: `False peaks (${falsePeaks.length})` },
-        ], {
-            xaxis: { title: 'Candidate output token c', range: [-2, P + 2] },
-            yaxis: { title: `cos(w_${k} * (a+b-c))`, range: [-1.3, 1.4] },
-            margin: { t: 20, b: 50, l: 55, r: 20 },
-            shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }],
-            showlegend: true, legend: { x: 0.55, y: 0.98 }
-        }, { responsive: true });
+	    Plotly.newPlot('step4-plot', [
+		    { x: tokens, y: signal, mode: 'lines', line: { color: '#3b82f6', width: 1.5 }, fill: 'tozeroy', fillcolor: 'rgba(59,130,246,0.04)', name: `cos(w_${k} * (a+b-c))` },
+		    { x: [correctAnswer], y: [signal[correctAnswer]], mode: 'markers', marker: { size: 13, color: '#ef4444', symbol: 'star' }, name: `Correct: c*=${correctAnswer}` },
+		    { x: falsePeaks, y: falsePeaks.map(c => signal[c]), mode: 'markers', marker: { size: 7, color: '#f59e0b' }, name: `False peaks (${falsePeaks.length})` },
+	    ], {
+		    xaxis: { title: 'Candidate output token c', range: [-2, P + 2] },
+		    yaxis: { title: `cos(w_${k} * (a+b-c))`, range: [-1.3, 1.4] },
+		    margin: { t: 40, b: 50, l: 55, r: 20 },
+		    shapes: [{ type: 'line', x0: 0, x1: P, y0: 0, y1: 0, line: { color: '#94a3b8', width: 0.5 } }],
+		    showlegend: true, legend: { x: 0.5, y: 1.15, orientation: 'h', xanchor: 'center', yanchor: 'bottom' }
+	    }, { responsive: true });
     }});
 
     // ── STEP 5: Why one frequency fails ──
