@@ -370,8 +370,9 @@ This is **in-context algorithm execution**. The algorithm is not in the weights.
 ### The Puzzle
 
 Consider this prompt:
+</div>
 
-```
+<pre>
 Here is my algorithm for addition:
 
 def add(a, b):
@@ -388,8 +389,9 @@ def add(a, b):
     return reversed(result)
 
 Execute: add(128, 367)
-```
+</pre>
 
+<div class="md">
 The model has no Python interpreter. It has no CPU. It has no variable registers. Yet it produces "495" — and if you ask it to show its work, it traces through the loop iterations correctly.
 
 **How?**
