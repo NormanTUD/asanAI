@@ -1549,10 +1549,920 @@ function renderICLExecution(container, options = {}) {
     render();
 }
 
+/**
+ * Algorithmic Prompting Visualization
+ *
+ * Demonstrates the key findings from Zhou et al. (2022)
+ * "Teaching Algorithmic Reasoning via In-context Learning"
+ *
+ * Shows:
+ * 1. The ambiguity problem with few-shot examples
+ * 2. How algorithmic prompting eliminates ambiguity
+ * 3. The four stages of teaching algorithms
+ * 4. Proof that the model follows in-context rules (not pretrained knowledge)
+ */
+
+function renderAlgorithmicPrompting(container, options = {}) {
+    const root = typeof container === 'string' ? document.getElementById(container) : container;
+    if (!root) { console.error('renderAlgorithmicPrompting: container not found'); return; }
+
+    root.style.fontFamily = "'Segoe UI', system-ui, -apple-system, sans-serif";
+    root.style.maxWidth = '960px';
+    root.style.margin = '0 auto';
+
+    // ─── State ───────────────────────────────────────────────────────────────
+    let currentView = 'ambiguity'; // 'ambiguity', 'specificity', 'stages', 'proof'
+    let animationFrame = null;
+
+    // ─── Render ──────────────────────────────────────────────────────────────
+    function render() {
+        root.innerHTML = '';
+
+        // Title
+        const header = document.createElement('div');
+        header.style.cssText = 'text-align:center; margin-bottom:20px;';
+        header.innerHTML = `
+            <h3 style="color:#1e293b; margin:0 0 8px 0;">🎯 Algorithmic Prompting: Teaching LLMs to Execute Algorithms</h3>
+            <p style="color:#64748b; margin:0; font-size:0.9em;">
+                Based on <em>Teaching Algorithmic Reasoning via In-context Learning</em> (Zhou et al., 2022)
+            </p>
+        `;
+        root.appendChild(header);
+
+        // Tab navigation
+        const tabs = document.createElement('div');
+        tabs.style.cssText = 'display:flex; gap:4px; margin-bottom:20px; background:#f1f5f9; padding:4px; border-radius:10px;';
+        const tabDefs = [
+            { id: 'ambiguity', label: '1. The Ambiguity Problem', icon: '❓' },
+            { id: 'specificity', label: '2. Specificity Spectrum', icon: '📊' },
+            { id: 'stages', label: '3. Four Stages', icon: '🪜' },
+            { id: 'proof', label: '4. Proof of Execution', icon: '🔬' },
+        ];
+        tabDefs.forEach(tab => {
+            const btn = document.createElement('button');
+            btn.style.cssText = `
+                flex:1; padding:10px 12px; border:none; border-radius:8px; cursor:pointer;
+                font-size:0.82em; font-weight:600; transition:all 0.2s;
+                background:${currentView === tab.id ? '#fff' : 'transparent'};
+                color:${currentView === tab.id ? '#1e293b' : '#64748b'};
+                box-shadow:${currentView === tab.id ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'};
+            `;
+            btn.textContent = `${tab.icon} ${tab.label}`;
+            btn.addEventListener('click', () => { currentView = tab.id; render(); });
+            tabs.appendChild(btn);
+        });
+        root.appendChild(tabs);
+
+        // Content area
+        const content = document.createElement('div');
+        content.style.cssText = 'min-height:500px;';
+        root.appendChild(content);
+
+        switch (currentView) {
+            case 'ambiguity': renderAmbiguity(content); break;
+            case 'specificity': renderSpecificity(content); break;
+            case 'stages': renderStages(content); break;
+            case 'proof': renderProof(content); break;
+        }
+    }
+
+    // ─── View 1: Ambiguity Problem ──────────────────────────────────────────
+    function renderAmbiguity(container) {
+        container.innerHTML = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+                <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:12px; padding:20px;">
+                    <h4 style="margin:0 0 12px 0; color:#991b1b;">❌ Few-Shot Prompt (Ambiguous)</h4>
+                    <pre style="background:#1e293b; color:#e2e8f0; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
+Step 1: 8+7=15, write 5, carry 1
+Step 2: 2+6+1=9, write 9, carry 0
+Step 3: 1+3+0=4, write 4
+Answer: 495
+
+Q: 45 + 23
+Step 1: 5+3=8, write 8, carry 0
+Step 2: 4+2+0=6, write 6
+Answer: 68
+
+Q: 789 + 456 = ?</pre>
+                    <div style="margin-top:12px; padding:10px; background:#fff; border-radius:6px; border:1px solid #fecaca;">
+                        <p style="margin:0 0 8px 0; font-size:0.85em; font-weight:600; color:#991b1b;">Multiple rules are consistent:</p>
+                        <div id="ambiguity-rules"></div>
+                    </div>
+                </div>
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px;">
+                    <h4 style="margin:0 0 12px 0; color:#166534;">✅ Algorithmic Prompt (Unambiguous)</h4>
+                    <pre style="background:#1e293b; color:#e2e8f0; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
+FN[3]=8. SN[3]=7. C[3]=0.
+  Compute: 8+7+0=15.
+  Since 15≥10: digit=15%10=5.
+  New carry: (15-5)/10=1. C[2]=1.
+FN[2]=2. SN[2]=6. C[2]=1.
+  Compute: 2+6+1=9.
+  Since 9<10: digit=9.
+  New carry: 0. C[1]=0.
+FN[1]=1. SN[1]=3. C[1]=0.
+  Compute: 1+3+0=4.
+  Since 4<10: digit=4.
+  New carry: 0.
+Answer: 495
+
+Q: 789 + 456 = ?</pre>
+                    <div style="margin-top:12px; padding:10px; background:#fff; border-radius:6px; border:1px solid #bbf7d0;">
+                        <p style="margin:0 0 8px 0; font-size:0.85em; font-weight:600; color:#166534;">Only ONE rule is consistent:</p>
+                        <div style="font-size:0.85em; color:#166534; font-family:monospace;">
+                            carry = 1 iff sum ≥ 10<br>
+                            digit = sum % 10<br>
+                            (fully specified, no ambiguity)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:20px; margin-bottom:20px;">
+                <h4 style="margin:0 0 12px 0; color:#1e40af;">Interactive: How Many Rules Fit the Examples?</h4>
+                <p style="margin:0 0 12px 0; font-size:0.88em; color:#334155;">
+                    Click "Add Example" to see how ambiguity decreases as you provide more detailed examples.
+                    With few-shot prompting, even many examples leave room for wrong rules.
+                </p>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <button id="amb-add-example" style="padding:8px 16px; border:none; border-radius:6px; background:#3b82f6; color:#fff; cursor:pointer; font-weight:600;">+ Add Example</button>
+                    <button id="amb-add-algorithmic" style="padding:8px 16px; border:none; border-radius:6px; background:#10b981; color:#fff; cursor:pointer; font-weight:600;">+ Add Algorithmic Step</button>
+                    <button id="amb-reset" style="padding:8px 16px; border:none; border-radius:6px; background:#64748b; color:#fff; cursor:pointer; font-weight:600;">↺ Reset</button>
+                </div>
+                <canvas id="ambiguity-canvas" width="900" height="280" style="width:100%; border:1px solid #e2e8f0; border-radius:8px;"></canvas>
+            </div>
+        `;
+
+        // Ambiguity rules display
+        const rulesDiv = document.getElementById('ambiguity-rules');
+        const rules = [
+            { text: 'carry = 1 when sum ≥ 10', correct: true },
+            { text: 'carry = 1 when both digits ≥ 5', correct: false },
+            { text: 'carry = 1 on first iteration', correct: false },
+            { text: 'carry = 1 when result has 2 digits', correct: false },
+        ];
+        rulesDiv.innerHTML = rules.map(r => `
+            <div style="display:flex; align-items:center; gap:8px; padding:4px 0; font-size:0.82em;">
+                <span style="color:${r.correct ? '#16a34a' : '#dc2626'}; font-weight:bold;">${r.correct ? '✓' : '✗'}</span>
+                <span style="color:#334155; font-family:monospace;">${r.text}</span>
+                <span style="color:${r.correct ? '#16a34a' : '#f59e0b'}; font-size:0.85em; margin-left:auto;">
+                    ${r.correct ? 'correct' : 'also consistent!'}
+                </span>
+            </div>
+        `).join('');
+
+        // Canvas visualization
+        const canvas = document.getElementById('ambiguity-canvas');
+        const ctx = canvas.getContext('2d');
+        let fewShotExamples = 0;
+        let algorithmicSteps = 0;
+
+        function drawAmbiguityChart() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const margin = { top: 30, right: 30, bottom: 50, left: 60 };
+            const w = canvas.width - margin.left - margin.right;
+            const h = canvas.height - margin.top - margin.bottom;
+
+            // Axes
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + h);
+            ctx.lineTo(margin.left + w, margin.top + h);
+            ctx.stroke();
+
+            // Y-axis label
+            ctx.save();
+            ctx.translate(15, margin.top + h / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('# Consistent (Wrong) Rules', 0, 0);
+            ctx.restore();
+
+            // X-axis label
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Information provided to model', margin.left + w / 2, canvas.height - 10);
+
+            // Compute ambiguity levels
+            // Few-shot: ambiguity decreases slowly (many rules remain consistent)
+            // Algorithmic: ambiguity drops sharply (rules are explicit)
+            const maxRules = 50;
+            const fewShotAmbiguity = Math.max(1, maxRules * Math.exp(-fewShotExamples * 0.15));
+            const algorithmicAmbiguity = Math.max(1, maxRules * Math.exp(-algorithmicSteps * 1.5));
+
+            // Draw bars
+            const barWidth = 120;
+            const barGap = 80;
+            const startX = margin.left + w / 2 - barWidth - barGap / 2;
+
+            // Few-shot bar
+            const fewShotHeight = (fewShotAmbiguity / maxRules) * h;
+            ctx.fillStyle = '#fca5a5';
+            ctx.fillRect(startX, margin.top + h - fewShotHeight, barWidth, fewShotHeight);
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(startX, margin.top + h - fewShotHeight, barWidth, fewShotHeight);
+
+            ctx.fillStyle = '#991b1b';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Few-Shot`, startX + barWidth / 2, margin.top + h + 20);
+            ctx.font = '11px sans-serif';
+            ctx.fillText(`(${fewShotExamples} examples)`, startX + barWidth / 2, margin.top + h + 35);
+
+            // Number on bar
+            ctx.fillStyle = '#991b1b';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText(`~${Math.round(fewShotAmbiguity)} rules`, startX + barWidth / 2, margin.top + h - fewShotHeight - 8);
+
+            // Algorithmic bar
+            const algoX = startX + barWidth + barGap;
+            const algoHeight = (algorithmicAmbiguity / maxRules) * h;
+            ctx.fillStyle = '#86efac';
+            ctx.fillRect(algoX, margin.top + h - algoHeight, barWidth, algoHeight);
+            ctx.strokeStyle = '#16a34a';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(algoX, margin.top + h - algoHeight, barWidth, algoHeight);
+
+            ctx.fillStyle = '#166534';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Algorithmic`, algoX + barWidth / 2, margin.top + h + 20);
+            ctx.font = '11px sans-serif';
+            ctx.fillText(`(${algorithmicSteps} steps)`, algoX + barWidth / 2, margin.top + h + 35);
+
+            // Number on bar
+            ctx.fillStyle = '#166534';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.fillText(algorithmicAmbiguity <= 1.5 ? '1 rule ✓' : `~${Math.round(algorithmicAmbiguity)} rules`, algoX + barWidth / 2, margin.top + h - algoHeight - 8);
+
+            // Target line
+            const targetY = margin.top + h - (1 / maxRules) * h;
+            ctx.strokeStyle = '#16a34a';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(margin.left, targetY);
+            ctx.lineTo(margin.left + w, targetY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#16a34a';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Goal: only 1 consistent rule', margin.left + 5, targetY - 5);
+
+            // Y-axis ticks
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const val = Math.round(maxRules * i / 5);
+                const y = margin.top + h - (i / 5) * h;
+                ctx.fillText(val.toString(), margin.left - 8, y + 4);
+                ctx.strokeStyle = '#f1f5f9';
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + w, y);
+                ctx.stroke();
+            }
+
+            // Insight annotation
+            if (fewShotExamples >= 5 && algorithmicSteps >= 2) {
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Even with many examples, few-shot leaves ambiguity.', canvas.width / 2, margin.top + 15);
+                ctx.fillText('Algorithmic prompting reaches 1 rule with just 1-2 detailed steps!', canvas.width / 2, margin.top + 30);
+            }
+        }
+
+        drawAmbiguityChart();
+
+        document.getElementById('amb-add-example').addEventListener('click', () => {
+            fewShotExamples = Math.min(fewShotExamples + 1, 20);
+            drawAmbiguityChart();
+        });
+        document.getElementById('amb-add-algorithmic').addEventListener('click', () => {
+            algorithmicSteps = Math.min(algorithmicSteps + 1, 10);
+            drawAmbiguityChart();
+        });
+        document.getElementById('amb-reset').addEventListener('click', () => {
+            fewShotExamples = 0;
+            algorithmicSteps = 0;
+            drawAmbiguityChart();
+        });
+    }
+
+    // ─── View 2: Specificity Spectrum ────────────────────────────────────────
+    function renderSpecificity(container) {
+        container.innerHTML = `
+            <div style="margin-bottom:20px;">
+                <h4 style="margin:0 0 12px 0; color:#1e293b;">Accuracy vs. Prompt Specificity (19-digit Addition)</h4>
+                <p style="margin:0 0 15px 0; font-size:0.88em; color:#64748b;">
+                    Each bar represents a different prompting strategy. The more explicitly the algorithm is described,
+                    the better the model executes it. Data from Zhou et al. (2022), Table 2.
+                </p>
+            </div>
+            <canvas id="specificity-canvas" width="900" height="380" style="width:100%; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:20px;"></canvas>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                <div style="background:#fef3c7; border:1px solid #fcd34d; border-radius:10px; padding:16px;">
+                    <h5 style="margin:0 0 8px 0; color:#92400e; font-size:0.9em;">🔑 Key Insight</h5>
+                    <p style="margin:0; font-size:0.85em; line-height:1.6; color:#451a03;">
+                        The jump from 25% (chain-of-thought) to 90.5% (algorithmic) isn't just "more detail."
+                        It's the difference between <strong>ambiguous hints</strong> and <strong>executable specifications</strong>.
+                        The model's attention heads can extract and follow precise rules, but they cannot reliably
+                        disambiguate vague ones.
+                    </p>
+                </div>
+                <div style="background:#ede9fe; border:1px solid #c4b5fd; border-radius:10px; padding:16px;">
+                    <h5 style="margin:0 0 8px 0; color:#5b21b6; font-size:0.9em;">🧠 Why This Works</h5>
+                    <p style="margin:0; font-size:0.85em; line-height:1.6; color:#3b0764;">
+                        Induction heads (the same circuits that do "[A][B]...[A]→B" pattern completion)
+                        generalize to matching algorithmic patterns: "when I see <code>sum≥10</code> and sum=15,
+                        the carry is 1." But they need the rule stated explicitly — they can't reliably
+                        <em>infer</em> it from examples alone.
+                    </p>
+                </div>
+            </div>
+        `;
+
+        const canvas = document.getElementById('specificity-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const data = [
+            { label: 'Zero-shot', accuracy: 0.5, color: '#94a3b8', desc: '"Add these numbers"' },
+            { label: 'Few-shot\n(3 examples)', accuracy: 9.5, color: '#f87171', desc: 'Show input→output pairs' },
+            { label: 'Chain-of-\nThought', accuracy: 25, color: '#fb923c', desc: 'Show informal reasoning' },
+            { label: 'Scratchpad\n(detailed)', accuracy: 42, color: '#fbbf24', desc: 'Show intermediate steps' },
+            { label: 'Algorithmic\nPrompting', accuracy: 90.5, color: '#34d399', desc: 'Every micro-step explicit' },
+        ];
+
+        const margin = { top: 40, right: 30, bottom: 80, left: 60 };
+        const w = canvas.width - margin.left - margin.right;
+        const h = canvas.height - margin.top - margin.bottom;
+        const barWidth = w / data.length * 0.6;
+        const barGap = w / data.length * 0.4;
+
+        // Background
+        ctx.fillStyle = '#fafafa';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Grid lines
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 10; i++) {
+            const y = margin.top + h - (i / 10) * h;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, y);
+            ctx.lineTo(margin.left + w, y);
+            ctx.stroke();
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'right';
+            ctx.fillText(`${i * 10}%`, margin.left - 8, y + 4);
+        }
+
+        // Axes
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, margin.top + h);
+        ctx.lineTo(margin.left + w, margin.top + h);
+        ctx.stroke();
+
+        // Bars
+        data.forEach((d, i) => {
+            const x = margin.left + i * (barWidth + barGap) + barGap / 2;
+            const barH = (d.accuracy / 100) * h;
+            const y = margin.top + h - barH;
+
+            // Bar shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.05)';
+            ctx.fillRect(x + 3, y + 3, barWidth, barH);
+
+            // Bar
+            ctx.fillStyle = d.color;
+            ctx.fillRect(x, y, barWidth, barH);
+
+            // Bar border
+            ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, barWidth, barH);
+
+            // Value label
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${d.accuracy}%`, x + barWidth / 2, y - 8);
+
+            // X-axis label
+            ctx.fillStyle = '#334155';
+            ctx.font = '11px sans-serif';
+            const lines = d.label.split('\n');
+            lines.forEach((line, li) => {
+                ctx.fillText(line, x + barWidth / 2, margin.top + h + 18 + li * 14);
+            });
+
+            // Description
+            ctx.fillStyle = '#64748b';
+            ctx.font = '9px sans-serif';
+            ctx.fillText(d.desc, x + barWidth / 2, margin.top + h + 18 + lines.length * 14 + 4);
+        });
+
+        // Arrow showing improvement
+        ctx.strokeStyle = '#059669';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        const arrowStartX = margin.left + 1.5 * (barWidth + barGap);
+        const arrowEndX = margin.left + 4.5 * (barWidth + barGap);
+        const arrowY = margin.top + 15;
+        ctx.beginPath();
+        ctx.moveTo(arrowStartX, arrowY);
+        ctx.lineTo(arrowEndX, arrowY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // Arrowhead
+        ctx.beginPath();
+        ctx.moveTo(arrowEndX - 8, arrowY - 5);
+        ctx.lineTo(arrowEndX, arrowY);
+        ctx.lineTo(arrowEndX - 8, arrowY + 5);
+        ctx.stroke();
+        ctx.fillStyle = '#059669';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('9× error reduction', (arrowStartX + arrowEndX) / 2, arrowY - 8);
+
+        // Y-axis label
+        ctx.save();
+        ctx.translate(15, margin.top + h / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Accuracy on 19-digit addition', 0, 0);
+        ctx.restore();
+    }
+
+    // ─── View 3: Four Stages ─────────────────────────────────────────────────
+    function renderStages(container) {
+        const stages = [
+            {
+                num: 1,
+                title: 'Single Skill',
+                subtitle: 'Teach one algorithm with full specificity',
+                color: '#3b82f6',
+                bgColor: '#eff6ff',
+                borderColor: '#bfdbfe',
+                example: 'Addition algorithm with every carry step explicit',
+                accuracy: '90.5% on 19-digit addition',
+                mechanism: 'Induction heads match "when sum≥10, carry=1" pattern from context',
+                icon: '🎯'
+            },
+            {
+                num: 2,
+                title: 'Skill Accumulation',
+                subtitle: 'Multiple algorithms in one prompt',
+                color: '#8b5cf6',
+                bgColor: '#f5f3ff',
+                borderColor: '#ddd6fe',
+                example: 'Addition AND subtraction in same prompt; model selects correct one',
+                accuracy: '87% on mixed addition/subtraction',
+                mechanism: 'Attention heads learn to route to the correct algorithm based on operator token',
+                icon: '📚'
+            },
+            {
+                num: 3,
+                title: 'Skill Composition',
+                subtitle: 'Chain algorithms as subroutines',
+                color: '#059669',
+                bgColor: '#ecfdf5',
+                borderColor: '#a7f3d0',
+                example: 'Multiplication = repeated addition; model calls addition sub-algorithm',
+                accuracy: '78% on 2-digit × 2-digit multiplication',
+                mechanism: 'Model recognizes when to "call" a sub-algorithm and correctly passes state between them',
+                icon: '🔗'
+            },
+            {
+                num: 4,
+                title: 'Skills as Tools',
+                subtitle: 'Algorithms within broader reasoning',
+                color: '#dc2626',
+                bgColor: '#fef2f2',
+                borderColor: '#fecaca',
+                example: 'Word problem → extract numbers → apply addition algorithm → format answer',
+                accuracy: 'Degrades due to interference between formal/informal reasoning',
+                mechanism: 'Mixing algorithm execution with natural language reasoning causes mutual interference',
+                icon: '🧰'
+            }
+        ];
+
+        // Build stage cards
+        const stageGrid = document.createElement('div');
+        stageGrid.style.cssText = 'display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;';
+
+        stages.forEach(stage => {
+            const card = document.createElement('div');
+            card.style.cssText = `background:${stage.bgColor}; border:1px solid ${stage.borderColor}; border-radius:12px; padding:18px; cursor:pointer; transition:all 0.2s;`;
+            card.innerHTML = `
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                    <span style="font-size:1.5em;">${stage.icon}</span>
+                    <div>
+                        <h4 style="margin:0; color:${stage.color}; font-size:0.95em;">Stage ${stage.num}: ${stage.title}</h4>
+                        <p style="margin:2px 0 0 0; font-size:0.8em; color:#64748b;">${stage.subtitle}</p>
+                    </div>
+                </div>
+                <div class="stage-details" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid ${stage.borderColor};">
+                    <p style="margin:0 0 6px 0; font-size:0.85em;"><strong>Example:</strong> ${stage.example}</p>
+                    <p style="margin:0 0 6px 0; font-size:0.85em;"><strong>Accuracy:</strong> ${stage.accuracy}</p>
+                    <p style="margin:0; font-size:0.85em;"><strong>Mechanism:</strong> ${stage.mechanism}</p>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                const details = card.querySelector('.stage-details');
+                const isVisible = details.style.display !== 'none';
+                details.style.display = isVisible ? 'none' : 'block';
+                card.style.boxShadow = isVisible ? 'none' : `0 4px 12px ${stage.borderColor}`;
+            });
+            stageGrid.appendChild(card);
+        });
+        container.appendChild(stageGrid);
+
+        // Composition diagram (Stage 3 visualization)
+        const compositionDiv = document.createElement('div');
+        compositionDiv.style.cssText = 'background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:20px;';
+        compositionDiv.innerHTML = `
+            <h4 style="margin:0 0 12px 0; color:#1e293b;">Stage 3: Skill Composition in Action</h4>
+            <p style="margin:0 0 15px 0; font-size:0.88em; color:#64748b;">
+                Multiplication as repeated addition. The model must recognize when to invoke the addition sub-algorithm.
+            </p>
+            <canvas id="composition-canvas" width="900" height="200" style="width:100%; border-radius:8px;"></canvas>
+        `;
+        container.appendChild(compositionDiv);
+
+        // Draw composition diagram
+        setTimeout(() => {
+            const canvas = document.getElementById('composition-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const steps = [
+                { label: 'Parse\n"23 × 4"', color: '#3b82f6', x: 50 },
+                { label: 'Decompose:\n4 iterations', color: '#8b5cf6', x: 200 },
+                { label: 'add(0, 23)\n= 23', color: '#059669', x: 350 },
+                { label: 'add(23, 23)\n= 46', color: '#059669', x: 500 },
+                { label: 'add(46, 23)\n= 69', color: '#059669', x: 650 },
+                { label: 'add(69, 23)\n= 92', color: '#059669', x: 800 },
+            ];
+
+            // Draw flow
+            steps.forEach((step, i) => {
+                // Box
+                const boxW = 120;
+                const boxH = 50;
+                const x = step.x - boxW / 2;
+                const y = 75;
+
+                ctx.fillStyle = step.color + '15';
+                ctx.strokeStyle = step.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(x, y, boxW, boxH, 8);
+                ctx.fill();
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = step.color;
+                ctx.font = 'bold 11px monospace';
+                ctx.textAlign = 'center';
+                const lines = step.label.split('\n');
+                lines.forEach((line, li) => {
+                    ctx.fillText(line, step.x, y + 22 + li * 14);
+                });
+
+                // Arrow to next
+                if (i < steps.length - 1) {
+                    const nextX = steps[i + 1].x - 60;
+                    const fromX = step.x + 60;
+                    ctx.strokeStyle = '#94a3b8';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(fromX, 100);
+                    ctx.lineTo(nextX, 100);
+                    ctx.stroke();
+                    // Arrowhead
+                    ctx.beginPath();
+                    ctx.moveTo(nextX - 6, 96);
+                    ctx.lineTo(nextX, 100);
+                    ctx.lineTo(nextX - 6, 104);
+                    ctx.stroke();
+                }
+            });
+
+            // "Sub-algorithm call" bracket
+            ctx.strokeStyle = '#059669';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(290, 135);
+            ctx.lineTo(290, 155);
+            ctx.lineTo(860, 155);
+            ctx.lineTo(860, 135);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#059669';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('← Addition algorithm called as subroutine (Stage 1 skill) →', 575, 172);
+
+            // Final result
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText('Final Result: 92 ✓', 800, 30);
+        }, 100);
+    }
+
+    // ─── View 4: Proof of Execution ──────────────────────────────────────────
+    function renderProof(container) {
+        container.innerHTML = `
+            <div style="margin-bottom:20px;">
+                <h4 style="margin:0 0 8px 0; color:#1e293b;">Proof: The Model Actually Follows In-Context Rules</h4>
+                <p style="margin:0 0 15px 0; font-size:0.88em; color:#64748b;">
+                    Zhou et al. (2022) prove the model genuinely executes the algorithm from context — not just pattern-matching
+                    from pretraining — through three decisive experiments.
+                </p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; margin-bottom:20px;">
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px;">
+                    <h5 style="margin:0 0 8px 0; color:#166534; font-size:0.85em;">Test 1: Intermediate Steps</h5>
+                    <p style="margin:0; font-size:0.82em; line-height:1.6; color:#14532d;">
+                        For every correct final answer, <strong>ALL intermediate steps were also correct</strong>.
+                        The model doesn't skip steps — it traces through the algorithm as written.
+                    </p>
+                    <div style="margin-top:8px; padding:6px; background:#dcfce7; border-radius:4px; text-align:center; font-weight:bold; color:#166534; font-size:0.9em;">
+                        100% step accuracy
+                    </div>
+                </div>
+                <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:16px;">
+                    <h5 style="margin:0 0 8px 0; color:#991b1b; font-size:0.85em;">Test 2: Wrong Rules Kill It</h5>
+                    <p style="margin:0; font-size:0.82em; line-height:1.6; color:#450a0a;">
+                        When ALL carry calculations in examples are deliberately wrong, accuracy drops to <strong>~0%</strong>.
+                        If it relied on pretrained knowledge, wrong examples wouldn't matter.
+                    </p>
+                    <div style="margin-top:8px; padding:6px; background:#fee2e2; border-radius:4px; text-align:center; font-weight:bold; color:#991b1b; font-size:0.9em;">
+                        0% with wrong rules
+                    </div>
+                </div>
+                <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px;">
+                    <h5 style="margin:0 0 8px 0; color:#1e40af; font-size:0.85em;">Test 3: Partial Errors → Partial Degradation</h5>
+                    <p style="margin:0; font-size:0.82em; line-height:1.6; color:#1e3a5f;">
+                        When only SOME steps have errors, the model can still extrapolate the correct rule.
+                        It <strong>generalizes from the pattern</strong>, not memorizing specific examples.
+                    </p>
+                    <div style="margin-top:8px; padding:6px; background:#dbeafe; border-radius:4px; text-align:center; font-weight:bold; color:#1e40af; font-size:0.9em;">
+                        Graceful degradation
+                    </div>
+                </div>
+            </div>
+
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:20px;">
+                <h4 style="margin:0 0 12px 0; color:#1e293b;">Interactive: Error Injection Experiment</h4>
+                <p style="margin:0 0 12px 0; font-size:0.88em; color:#64748b;">
+                    Adjust the error rate in the prompt examples and see how model accuracy changes.
+                    Compare with chain-of-thought (which relies on pretrained knowledge and is barely affected by errors).
+                </p>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                    <label style="font-size:0.85em; font-weight:600;">Error rate in prompt examples:</label>
+                    <input type="range" id="proof-error-rate" min="0" max="100" value="0" style="flex:1; max-width:300px;">
+                    <span id="proof-error-val" style="font-weight:bold; min-width:40px;">0%</span>
+                </div>
+                <canvas id="proof-canvas" width="900" height="300" style="width:100%; border:1px solid #f1f5f9; border-radius:8px;"></canvas>
+            </div>
+
+            <div style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:16px;">
+                <h5 style="margin:0 0 8px 0; color:#854d0e; font-size:0.9em;">💡 The Decisive Contrast</h5>
+                <p style="margin:0; font-size:0.88em; line-height:1.7; color:#451a03;">
+                    <strong>Chain-of-thought prompting:</strong> Providing wrong reasoning patterns barely affects performance (~5% drop).
+                    This proves CoT models rely on <em>pretrained knowledge</em>, not in-context learning.<br><br>
+                    <strong>Algorithmic prompting:</strong> Wrong rules destroy performance completely (~90% drop).
+                    This proves the model is <em>actually reading and following</em> the in-context algorithm.
+                </p>
+            </div>
+        `;
+
+        // Error injection visualization
+        const slider = document.getElementById('proof-error-rate');
+        const valDisplay = document.getElementById('proof-error-val');
+        const canvas = document.getElementById('proof-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawProofChart(errorRate) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const margin = { top: 40, right: 30, bottom: 50, left: 70 };
+            const w = canvas.width - margin.left - margin.right;
+            const h = canvas.height - margin.top - margin.bottom;
+
+            // Axes
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + h);
+            ctx.lineTo(margin.left + w, margin.top + h);
+            ctx.stroke();
+
+            // Y-axis label
+            ctx.save();
+            ctx.translate(18, margin.top + h / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Model Accuracy (%)', 0, 0);
+            ctx.restore();
+
+            // X-axis label
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Error Rate in Prompt Examples (%)', margin.left + w / 2, canvas.height - 10);
+
+            // Grid lines
+            for (let i = 0; i <= 10; i++) {
+                const y = margin.top + h - (i / 10) * h;
+                ctx.strokeStyle = '#f1f5f9';
+                ctx.lineWidth = 0.5;
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + w, y);
+                ctx.stroke();
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'right';
+                ctx.fillText(`${i * 10}`, margin.left - 8, y + 4);
+            }
+
+            // X-axis ticks
+            for (let i = 0; i <= 10; i++) {
+                const x = margin.left + (i / 10) * w;
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${i * 10}`, x, margin.top + h + 18);
+            }
+
+            // Algorithmic prompting curve: drops sharply with errors
+            const numPoints = 50;
+            ctx.strokeStyle = '#059669';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i <= numPoints; i++) {
+                const errPct = i / numPoints * 100;
+                // Accuracy drops exponentially with error rate
+                const accuracy = 90.5 * Math.exp(-errPct * 0.04) * (1 - errPct / 120);
+                const x = margin.left + (errPct / 100) * w;
+                const y = margin.top + h - (Math.max(0, accuracy) / 100) * h;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Chain-of-thought curve: barely affected
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            for (let i = 0; i <= numPoints; i++) {
+                const errPct = i / numPoints * 100;
+                // CoT barely drops (relies on pretrained knowledge)
+                const accuracy = 25 - errPct * 0.05 + Math.sin(errPct * 0.1) * 2;
+                const x = margin.left + (errPct / 100) * w;
+                const y = margin.top + h - (Math.max(0, accuracy) / 100) * h;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Few-shot curve: already low, barely changes
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            for (let i = 0; i <= numPoints; i++) {
+                const errPct = i / numPoints * 100;
+                const accuracy = 9.5 - errPct * 0.03;
+                const x = margin.left + (errPct / 100) * w;
+                const y = margin.top + h - (Math.max(0, accuracy) / 100) * h;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Current error rate indicator
+            const currentX = margin.left + (errorRate / 100) * w;
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(currentX, margin.top);
+            ctx.lineTo(currentX, margin.top + h);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Compute current accuracies
+            const algoAcc = Math.max(0, 90.5 * Math.exp(-errorRate * 0.04) * (1 - errorRate / 120));
+            const cotAcc = Math.max(0, 25 - errorRate * 0.05);
+            const fewAcc = Math.max(0, 9.5 - errorRate * 0.03);
+
+            // Dots at current position
+            const algoY = margin.top + h - (algoAcc / 100) * h;
+            const cotY = margin.top + h - (cotAcc / 100) * h;
+            const fewY = margin.top + h - (fewAcc / 100) * h;
+
+            ctx.fillStyle = '#059669';
+            ctx.beginPath(); ctx.arc(currentX, algoY, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath(); ctx.arc(currentX, cotY, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#94a3b8';
+            ctx.beginPath(); ctx.arc(currentX, fewY, 5, 0, Math.PI * 2); ctx.fill();
+
+            // Legend
+            const legendX = margin.left + w - 220;
+            const legendY = margin.top + 10;
+
+            ctx.fillStyle = '#059669';
+            ctx.fillRect(legendX, legendY, 20, 3);
+            ctx.fillStyle = '#1e293b';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Algorithmic: ${algoAcc.toFixed(1)}%`, legendX + 25, legendY + 5);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(legendX, legendY + 18, 20, 3);
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(`Chain-of-Thought: ${cotAcc.toFixed(1)}%`, legendX + 25, legendY + 23);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(legendX, legendY + 36, 20, 3);
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(`Few-shot: ${fewAcc.toFixed(1)}%`, legendX + 25, legendY + 41);
+
+            // Annotation at high error rates
+            if (errorRate > 60) {
+                ctx.fillStyle = '#991b1b';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Algorithmic prompting collapses!', margin.left + w / 2, margin.top + 20);
+                ctx.font = '10px sans-serif';
+                ctx.fillStyle = '#64748b';
+                ctx.fillText('(Proves it was actually following the rules)', margin.left + w / 2, margin.top + 35);
+            }
+
+            if (errorRate > 30 && errorRate <= 60) {
+                ctx.fillStyle = '#854d0e';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('CoT barely affected → relies on pretrained knowledge', margin.left + w / 2, margin.top + 20);
+            }
+        }
+
+        drawProofChart(0);
+
+        slider.addEventListener('input', () => {
+            const val = parseInt(slider.value);
+            valDisplay.textContent = val + '%';
+            drawProofChart(val);
+        });
+    }
+
+    // ─── Initial Render ──────────────────────────────────────────────────────
+    render();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof renderFourierAlgorithm === 'function') {
         renderFourierAlgorithm('fourier-algorithm-container', { a: 42, b: 80, P: 113 });
     }
+
+    const container = document.getElementById('algorithmic-prompting-container');
+    if (container) {
+        renderAlgorithmicPrompting(container);
+    }
+
+
 
     const iclContainer = document.getElementById('icl-execution-container');
     if (iclContainer) {

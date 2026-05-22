@@ -475,3 +475,45 @@ Below you can explore how an LLM executes an addition algorithm step by step. Pr
 </div>
 
 <div id="icl-execution-container" style="max-width:900px; margin:0 auto;"></div>
+
+<div class="md">
+## Algorithmic Prompting: Why Specificity Unlocks Execution
+
+The discovery by \cite[Zhou et al. (2022)]{zhou2022algorithmic} that changed how we think about in-context algorithm execution is deceptively simple: **the more precisely you describe each step, the better the model executes it.** But the mechanism behind this is subtle and reveals something deep about how Transformers process instructions.
+
+### The Specificity Spectrum
+
+Consider teaching a model to add two numbers. There's a spectrum of how explicitly you can describe the algorithm:
+
+| Level | Prompt Style | Accuracy (19-digit) |
+|-------|-------------|-------------------|
+| **Zero-shot** | "What is 1234567890123456789 + 9876543210987654321?" | ~0% |
+| **Few-shot** | Show 3 examples of addition with answers | 9.5% |
+| **Chain-of-thought** | Show examples with informal reasoning ("carry the 1...") | ~25% |
+| **Algorithmic prompting** | Show the *exact* algorithm with every micro-step explicit | **90.5%** |
+
+The 9× improvement from few-shot to algorithmic prompting isn't just "more detail helps." It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** \cite[Section 2]{zhou2022algorithmic}.
+
+### The Ambiguity Problem (Visualized)
+
+When you show the model `8 + 7 = 15, write 5, carry 1` followed by `2 + 6 = 8, write 8, carry 0`, the model must infer the carry rule. But from just these two examples, multiple rules are consistent:
+
+- ✅ "Carry = 1 when sum ≥ 10" (correct)
+- ❌ "Carry = 1 when both digits are ≥ 7" (consistent with examples!)
+- ❌ "Carry = 1 on the first iteration only" (also consistent!)
+
+Algorithmic prompting eliminates this by making the rule explicit: `Since 8+7+0=15 and 15≥10, carry = (15-5)/10 = 1`.
+
+### The Four Stages of Algorithmic Teaching
+
+Zhou et al. discovered that algorithmic reasoning can be taught progressively through four stages, each building on the last:
+
+1. **Single Skill:** Teach one algorithm with full step-by-step specificity
+2. **Skill Accumulation:** Teach multiple algorithms in one prompt (the model learns to select the right one)
+3. **Skill Composition:** Teach how to chain algorithms (multiplication = repeated addition)
+4. **Skills as Tools:** Use algorithms as subroutines within broader reasoning tasks
+
+Each stage introduces new challenges. Stage 3 (composition) is particularly interesting: the model must recognize when to "call" a sub-algorithm and correctly pass state between them.
+</div>
+
+<div id="algorithmic-prompting-container" style="max-width:960px; margin:0 auto;"></div>
