@@ -326,7 +326,7 @@ The deeper theoretical reason the path-finding framing works is the **\cite[Mani
 </section>
 
 <div class="md">
-This works because the real world structures the language first, and thus, "dog" has similiar relations to cat, pet, horse, mouse, ..., as "Hund" (german for dog) has to "Katze" (cat), "Haustier" (pet), "Pferd" (horse), mouse ("Maus") and so on. The language model the real world, and the models the language, and thus, it's an abstracted model of the real world. It's all about the relations to each other.
+This works because the real world structures the language first, and thus, "dog" has similar relations to cat, pet, horse, mouse, ..., as "Hund" (german for dog) has to "Katze" (cat), "Haustier" (pet), "Pferd" (horse), mouse ("Maus") and so on. The language model the real world, and the models the language, and thus, it's an abstracted model of the real world. It's all about the relations to each other.
 
 ## Attention as Metric Tensor
 

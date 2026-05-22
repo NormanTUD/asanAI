@@ -529,3 +529,17 @@ iec
 naur
 muq
 kahan
+subnetworks
+haustier
+groks
+katze
+modulo
+frobenius
+zhou
+subgraph
+hund
+pferd
+maus
+acdc
+qkv
+ioi
