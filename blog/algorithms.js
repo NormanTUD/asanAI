@@ -1632,7 +1632,7 @@ function renderAlgorithmicPrompting(container, options = {}) {
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
                 <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:12px; padding:20px;">
                     <h4 style="margin:0 0 12px 0; color:#991b1b;">❌ Few-Shot Prompt (Ambiguous)</h4>
-                    <pre style="background:#1e293b; color:#e2e8f0; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
+                    <pre style="background:#1e293b; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
 Step 1: 8+7=15, write 5, carry 1
 Step 2: 2+6+1=9, write 9, carry 0
 Step 3: 1+3+0=4, write 4
@@ -1651,7 +1651,7 @@ Q: 789 + 456 = ?</pre>
                 </div>
                 <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px;">
                     <h4 style="margin:0 0 12px 0; color:#166534;">✅ Algorithmic Prompt (Unambiguous)</h4>
-                    <pre style="background:#1e293b; color:#e2e8f0; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
+                    <pre style="background:#1e293b; padding:14px; border-radius:8px; font-size:0.8em; line-height:1.6; overflow-x:auto; white-space:pre-wrap;">Q: 128 + 367
 FN[3]=8. SN[3]=7. C[3]=0.
   Compute: 8+7+0=15.
   Since 15≥10: digit=15%10=5.
