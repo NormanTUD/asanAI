@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Theory vs Homotopy Type Theory - Foundations of Mathematics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(135deg, #1a1a3e 0%, #0a0a1a 100%);
+            border-bottom: 1px solid #333;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            background: linear-gradient(90deg, #64b5f6, #ce93d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #aaa;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .theory-card {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 35px;
+            border: 1px solid #2a2a4a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theory-card.set-theory {
+            border-top: 4px solid #64b5f6;
+        }
+
+        .theory-card.hott {
+            border-top: 4px solid #ce93d8;
+        }
+
+        .theory-card h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .theory-card.set-theory h2 {
+            color: #64b5f6;
+        }
+
+        .theory-card.hott h2 {
+            color: #ce93d8;
+        }
+
+        .theory-card p {
+            line-height: 1.7;
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        .visual-section {
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .visual-section h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .canvas-wrapper {
+            text-align: center;
+        }
+
+        .canvas-wrapper h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .canvas-wrapper.set-theory h3 {
+            color: #64b5f6;
+        }
+
+        .canvas-wrapper.hott h3 {
+            color: #ce93d8;
+        }
+
+        canvas {
+            border-radius: 12px;
+            background: #0d0d20;
+            border: 1px solid #2a2a4a;
+        }
+
+        .concept-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: #12122a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .concept-table th {
+            padding: 18px 25px;
+            text-align: left;
+            font-size: 1.1em;
+        }
+
+        .concept-table th:nth-child(1) {
+            background: #1a1a3e;
+            color: #aaa;
+        }
+
+        .concept-table th:nth-child(2) {
+            background: #1a2a4e;
+            color: #64b5f6;
+        }
+
+        .concept-table th:nth-child(3) {
+            background: #2a1a3e;
+            color: #ce93d8;
+        }
+
+        .concept-table td {
+            padding: 15px 25px;
+            border-bottom: 1px solid #1a1a3a;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .concept-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .concept-table td:nth-child(1) {
+            font-weight: bold;
+            color: #fff;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .interactive-section {
+            background: #12122a;
+            border-radius: 16px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid #2a2a4a;
+        }
+
+        .interactive-section h2 {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border: 1px solid #3a3a5a;
+            background: #1a1a3e;
+            color: #aaa;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: #2a2a5e;
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #1a3a6e, #3a1a5e);
+            color: #fff;
+            border-color: #6a6aaa;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .axiom-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .axiom-list li {
+            padding: 12px 20px;
+            margin: 8px 0;
+            background: #1a1a3e;
+            border-radius: 8px;
+            border-left: 3px solid #64b5f6;
+            color: #ccc;
+            line-height: 1.5;
+        }
+
+        .axiom-list.hott li {
+            border-left-color: #ce93d8;
+        }
+
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .layer-diagram {
+            position: relative;
+            width: 350px;
+            height: 400px;
+        }
+
+        .layer {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .layer:hover {
+            transform: translateX(-50%) scale(1.05);
+            z-index: 10;
+        }
+
+        .key-difference {
+            background: linear-gradient(135deg, #1a2a4e, #2a1a4e);
+            border: 1px solid #4a4a7a;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .key-difference h4 {
+            color: #e0b0ff;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .key-difference p {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        .animation-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .anim-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2a4a8e, #5a2a8e);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .anim-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(100, 100, 200, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            border-top: 1px solid #222;
+            margin-top: 60px;
+        }
+
+        .equality-demo {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .equality-box {
+            background: #0d0d20;
+            border-radius: 12px;
+            padding: 30px;
+            min-width: 300px;
+            text-align: center;
+            border: 1px solid #2a2a4a;
+        }
+
+        .equality-box h4 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .equality-box.set-eq h4 { color: #64b5f6; }
+        .equality-box.hott-eq h4 { color: #ce93d8; }
+
+        .code-block {
+            background: #0a0a15;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            color: #8be9fd;
+            text-align: left;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 900px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .canvas-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Set Theory vs Homotopy Type Theory</h1>
+        <p>Two competing foundations for all of mathematics — one classical and well-established, the other modern and computationally native. Explore how they differ in philosophy, structure, and expressiveness.</p>
+    </div>
+
+    <div class="container">
+        <!-- Overview Cards -->
+        <div class="comparison-grid">
+            <div class="theory-card set-theory">
+                <h2>Set Theory (ZFC)</h2>
+                <p><strong>The classical foundation.</strong> Since the early 20th century, Zermelo-Fraenkel set theory with the Axiom of Choice has served as the standard foundation for mathematics.</p>
+                <p>Everything is a set. Numbers, functions, spaces — all are encoded as sets of sets. Mathematics is built on top of first-order logic, which provides connectives, quantifiers, and inference rules before any mathematical content begins.</p>
+                <p>Equality is simple: two sets are equal if and only if they have the same elements (Axiom of Extensionality).</p>
+            </div>
+            <div class="theory-card hott">
+                <h2>Homotopy Type Theory (HoTT)</h2>
+                <p><strong>A modern, computational foundation.</strong> HoTT treats types as spaces and terms as points in those spaces. It exploits deep connections between homotopy theory and type theory.</p>
+                <p>Logic is not built separately — it emerges as a special case of the type-forming rules. Propositions are types, and proofs are terms inhabiting those types.</p>
+                <p>Equality is rich: the identity type between two terms forms a space of <em>paths</em>, which can themselves have paths between them (higher-dimensional structure).</p>
+            </div>
+        </div>
+
+        <!-- Visual: Building Blocks -->
+        <div class="visual-section">
+            <h2>Structural Architecture</h2>
+            <p style="color:#aaa; margin-bottom:30px;">How each foundation builds up from its primitives</p>
+            <div class="canvas-container">
+                <div class="canvas-wrapper set-theory">
+                    <h3>Set Theory Layers</h3>
+                    <canvas id="setTheoryCanvas" width="450" height="400"></canvas>
+                </div>
+                <div class="canvas-wrapper hott">
+                    <h3>HoTT Layers</h3>
+                    <canvas id="hottCanvas" width="450" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="visual-section">
+            <h2>Concept-by-Concept Comparison</h2>
+            <table class="concept-table">
+                <thead>
+                    <tr>
+                        <th>Concept</th>
+                        <th>Set Theory (ZFC)</th>
+                        <th>Homotopy Type Theory</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Basic Object</td>
+                        <td>Set (collection of elements)</td>
+                        <td>Type (a space of terms/points)</td>
+                    </tr>
+                    <tr>
+                        <td>Membership</td>
+                        <td>x ∈ A (element belongs to set)</td>
+                        <td>a : A (term inhabits a type)</td>
+                    </tr>
+                    <tr>
+                        <td>Equality</td>
+                        <td>Propositional (true or false)</td>
+                        <td>Path space (can have structure)</td>
+                    </tr>
+                    <tr>
+                        <td>Logic</td>
+                        <td>External (first-order logic assumed)</td>
+                        <td>Internal (propositions are types)</td>
+                    </tr>
+                    <tr>
+                        <td>Functions</td>
+                        <td>Sets of ordered pairs</td>
+                        <td>Primitive (lambda terms)</td>
+                    </tr>
+                    <tr>
+                        <td>Proof</td>
+                        <td>External derivation in FOL</td>
+                        <td>A term inhabiting a type</td>
+                    </tr>
+                    <tr>
+                        <td>Computation</td>
+                        <td>Not native</td>
+                        <td>Built-in (reduction rules)</td>
+                    </tr>
+                    <tr>
+                        <td>Univalence</td>
+                        <td>Not applicable</td>
+                        <td>Equivalent types are equal</td>
+                    </tr>
+                    <tr>
+                        <td>Higher Structure</td>
+                        <td>Must be manually constructed</td>
+                        <td>Native (∞-groupoid structure)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Interactive Demonstrations -->
+        <div class="interactive-section">
+            <h2>Interactive Explorations</h2>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('equality')">Equality</button>
+                <button class="tab-btn" onclick="showTab('axioms')">Axioms</button>
+                <button class="tab-btn" onclick="showTab('paths')">Paths & Homotopy</button>
+                <button class="tab-btn" onclick="showTab('universes')">Universes</button>
+                <button class="tab-btn" onclick="showTab('computation')">Computation</button>
+            </div>
+
+            <!-- Equality Tab -->
+            <div class="tab-content active" id="tab-equality">
+                <div class="equality-demo">
+                    <div class="equality-box set-eq">
+                        <h4>Set-Theoretic Equality</h4>
+                        <canvas id="setEqualityCanvas" width="300" height="250"></canvas>
+                        <p style="margin-top:15px; color:#aaa; font-size:0.9em;">Two sets are equal iff they have the same elements.<br>Equality is a simple proposition (true/false).</p>
+                    </div>
+                    <div class="equality-box hott-eq">
+                        <h4>HoTT Identity Types</h4>
+                        <canvas id="hottEqualityCanvas" width="300" height="250"></canvas>
+                        <p style="margin-top:15px; color:#aaa; font-size:0.9em;">Equality between a and b is a <em>space of paths</em>.<br>Paths can have paths between them (higher structure).</p>
+                    </div>
+                </div>
+                <div class="key-difference">
+                    <h4>Key Insight</h4>
+                    <p>In set theory, equality is a binary relation — either two things are equal or they aren't. In HoTT, the identity type Id(A, a, b) is itself a type that can have multiple inhabitants (multiple "proofs" or "paths" showing a = b). This captures the idea that there can be <em>different ways</em> in which two things are the same, which is fundamental in topology and category theory.</p>
+                </div>
+            </div>
+
+            <!-- Axioms Tab -->
+            <div class="tab-content" id="tab-axioms">
+                <div class="comparison-grid">
+                    <div>
+                        <h3 style="color:#64b5f6; margin-bottom:15px;">ZFC Axioms</h3>
+                        <ul class="axiom-list">
+                            <li><strong>Extensionality:</strong> Sets with same elements are equal</li>
+                            <li><strong>Pairing:</strong> For any a, b there exists {a, b}</li>
+                            <li><strong>Union:</strong> Union of a set of sets exists</li>
+                            <li><strong>Power Set:</strong> Set of all subsets exists</li>
+                            <li><strong>Infinity:</strong> An infinite set exists</li>
+                            <li><strong>Separation:</strong> Subsets defined by properties exist</li>
+                            <li><strong>Replacement:</strong> Images of sets under functions exist</li>
+                            <li><strong>Foundation:</strong> No infinite descending ∈-chains</li>
+                            <li><strong>Choice:</strong> Products of non-empty sets are non-empty</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color:#ce93d8; margin-bottom:15px;">HoTT Rules & Axioms</h3>
+                        <ul class="axiom-list hott">
+                            <li><strong>Type Formation:</strong> Rules for forming Π, Σ, +, Id types</li>
+                            <li><strong>Introduction:</strong> How to construct terms of each type</li>
+                            <li><strong>Elimination:</strong> How to use/destruct terms</li>
+                            <li><strong>Computation:</strong> β-reduction and η-expansion</li>
+                            <li><strong>Universe Hierarchy:</strong> U₀ : U₁ : U₂ : ...</li>
+                            <li><strong>Univalence Axiom:</strong> (A ≃ B) ≃ (A =_U B)</li>
+                            <li><strong>Higher Inductive Types:</strong> Types with path constructors</li>
+                            <li><strong>Function Extensionality:</strong> Pointwise equal → equal</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="key-difference">
+                    <h4>Structural Difference</h4>
+                    <p>Set theory states axioms <em>within</em> first-order logic — you need the entire logical apparatus before you can even state the axioms. Type theory's rules <em>are</em> the logic. The type-forming rules simultaneously define what objects exist and what you can prove about them. This makes type theory inherently computational: every proof corresponds to a program.</p>
+                </div>
+            </div>
+
+            <!-- Paths Tab -->
+            <div class="tab-content" id="tab-paths">
+                <div style="text-align:center;">
+                    <canvas id="pathsCanvas" width="700" height="400"></canvas>
+                    <div class="animation-controls">
+                        <button class="anim-btn" onclick="animatePaths()">Animate Paths</button>
+                        <button class="anim-btn" onclick="showHigherPaths()">Show Higher Paths</button>
+                        <button class="anim-btn" onclick="resetPaths()">Reset</button>
+                    </div>
+                </div>
+                <div class="key-difference" style="margin-top:20px;">
+                    <h4>Paths as Equality Proofs</h4>
+                    <p>In HoTT, a proof that a = b is literally a <em>path</em> from point a to point b in the type (viewed as a space). A proof that two proofs of a = b are "the same" is a path between paths — a <em>homotopy</em>. This gives rise to an infinite tower of higher-dimensional structure, making types behave like ∞-groupoids.</p>
+                </div>
+                <div class="key-difference">
+                    <h4>The Circle as a Higher Inductive Type</h4>
+                    <p>In HoTT, you can define the circle S¹ with just: a point <code>base : S¹</code> and a path <code>loop : base = base</code>. The fundamental group π₁(S¹) ≅ ℤ is then a theorem, not an axiom. This is impossible to express so directly in set theory.</p>
+                </div>
+            </div>
+
+            <!-- Universes Tab -->
+            <div class="tab-content" id="tab-universes">
+                <div style="text-align:center;">
+                    <canvas id="universesCanvas" width="700" height="400"></canvas>
+                </div>
+                <div class="comparison-grid" style="margin-top:30px;">
+                    <div class="key-difference">
+                        <h4>Set Theory: Cumulative Hierarchy</h4>
+                        <p>Sets are built in stages: V₀ = ∅, V_{α+1} = P(V_α). The universe of all sets doesn't exist (Russell's paradox). We work "inside" the universe without being able to talk about it as an object.</p>
+                    </div>
+                    <div class="key-difference">
+                        <h4>HoTT: Universe Hierarchy</h4>
+                        <p>Types live in universes: U₀ : U₁ : U₂ : ... Each universe is a type in the next. The Univalence Axiom says: equivalent types in a universe are <em>equal</em> in that universe. This is the key innovation of HoTT.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Computation Tab -->
+            <div class="tab-content" id="tab-computation">
+                <div class="comparison-grid">
+                    <div>
+                        <h3 style="color:#64b5f6; margin-bottom:15px;">Set Theory & Computation</h3>
+                        <div class="code-block">
+-- In set theory, "2 + 2 = 4" is a theorem
+-- proved externally in first-order logic.
+-- There's no built-in notion of
+-- "computing" 2 + 2.
+
+-- Addition is defined as a set of triples:
+-- + = {(m,n,p) | p = m + n}
+-- where m + 0 = m
+--       m + S(n) = S(m + n)
+
+-- Verification requires logical deduction,
+-- not computation.
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color:#ce93d8; margin-bottom:15px;">HoTT & Computation</h3>
+                        <div class="code-block">
+-- In type theory, 2 + 2 COMPUTES to 4.
+-- This is called "definitional equality."
+
+-- nat : Type
+-- zero : nat
+-- succ : nat -> nat
+
+-- add : nat -> nat -> nat
+-- add m zero     = m          (β-rule)
+-- add m (succ n) = succ (add m n)
+
+-- add (succ(succ zero)) (succ(succ zero))
+-- => succ (add (succ(succ zero)) (succ zero))
+-- => succ (succ (add (succ(succ zero)) zero))
+-- => succ (succ (succ (succ zero)))
+-- = 4  ✓  (by computation!)
+                        </div>
+                    </div>
+                </div>
+                <div class="key-difference">
+                    <h4>Proofs as Programs (Curry-Howard)</h4>
+                    <p>In HoTT, every proof is a program and every program is a proof. The type of a program is its specification. Type-checking is proof-checking. This means mathematics done in HoTT is automatically verifiable by computer — tools like Coq, Agda, and Lean implement this directly.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Philosophy Section -->
+        <div class="visual-section">
+            <h2>Philosophical Differences</h2>
+            <div class="canvas-container">
+                <canvas id="philosophyCanvas" width="900" height="350"></canvas>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="interactive-section">
+            <h2>Summary: When to Use What?</h2>
+            <div class="comparison-grid">
+                <div class="key-difference">
+                    <h4 style="color:#64b5f6;">Set Theory Strengths</h4>
+                    <p>• Well-understood, vast existing literature<br>
+                    • Flexible — anything can be encoded<br>
+                    • Good for classical analysis, combinatorics<br>
+                    • Independence results (forcing, large cardinals)<br>
+                    • Mature model theory</p>
+                </div>
+                <div class="key-difference">
+                    <h4 style="color:#ce93d8;">HoTT Strengths</h4>
+                    <p>• Natively computational (proofs = programs)<br>
+                    • Natural for homotopy theory & higher categories<br>
+                    • Machine-verifiable proofs<br>
+                    • Constructive by default<br>
+                    • Univalence captures mathematical practice<br>
+                    • Synthetic approach to topology</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>An interactive exploration of mathematical foundations | Set Theory (ZFC) vs Homotopy Type Theory (HoTT)</p>
+    </div>
+
+    <script>
+        // ============ TAB SYSTEM ============
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Redraw canvases when tabs become visible
+            if (tabName === 'paths') drawPaths();
+            if (tabName === 'universes') drawUniverses();
+            if (tabName === 'equality') {
+                drawSetEquality();
+                drawHottEquality();
+            }
+        }
+
+        // ============ SET THEORY ARCHITECTURE CANVAS ============
+        function drawSetTheoryArchitecture() {
+            const canvas = document.getElementById('setTheoryCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const layers = [
+                { label: 'Mathematics', color: '#4a90d9', y: 30, h: 55 },
+                { label: 'Theorems & Proofs', color: '#3d7bc4', y: 95, h: 55 },
+                { label: 'Axioms (ZFC)', color: '#2d66af', y: 160, h: 55 },
+                { label: 'First-Order Logic', color: '#1d519a', y: 225, h: 55 },
+                { label: 'Syntax & Inference Rules', color: '#0d3c85', y: 290, h: 55 },
+            ];
+
+            layers.forEach((layer, i) => {
+                const w = 350 - i * 10;
+                const x = (canvas.width - w) / 2;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fillRect(x + 4, layer.y + 4, w, layer.h);
+
+                // Layer
+                ctx.fillStyle = layer.color;
+                ctx.fillRect(x, layer.y, w, layer.h);
+
+                // Border
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.strokeRect(x, layer.y, w, layer.h);
+
+                // Text
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 15px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(layer.label, canvas.width / 2, layer.y + layer.h / 2 + 5);
+            });
+
+            // Arrow annotation
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(390, 250);
+            ctx.lineTo(390, 100);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Arrow head
+            ctx.beginPath();
+            ctx.moveTo(385, 105);
+            ctx.lineTo(390, 90);
+            ctx.lineTo(395, 105);
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fill();
+
+            ctx.font = '12px Segoe UI';
+            ctx.fillStyle = '#ff6b6b';
+            ctx.textAlign = 'left';
+            ctx.fillText('Built on top', 398, 170);
+            ctx.fillText('(layered)', 398, 185);
+
+            // Bottom note
+            ctx.font = '11px Segoe UI';
+            ctx.fillStyle = '#888';
+            ctx.textAlign = 'center';
+            ctx.fillText('Logic is separate from mathematical content', canvas.width / 2, 370);
+            ctx.fillText('Everything is encoded as sets of sets', canvas.width / 2, 385);
+        }
+
+        // ============ HOTT ARCHITECTURE CANVAS ============
+        function drawHoTTArchitecture() {
+            const canvas = document.getElementById('hottCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const layers = [
+                { label: 'Mathematics & Topology', color: '#9b59b6', y: 30, h: 55 },
+                { label: 'Higher Inductive Types', color: '#8e44ad', y: 95, h: 55 },
+                { label: 'Univalence Axiom', color: '#7d3c98', y: 160, h: 55 },
+                { label: 'Identity Types & Paths', color: '#6c3483', y: 225, h: 55 },
+                { label: 'Type Formation Rules (Π, Σ, +, Id)', color: '#5b2c6f', y: 290, h: 55 },
+            ];
+
+            layers.forEach((layer, i) => {
+                const w = 350 - i * 10;
+                const x = (canvas.width - w) / 2;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.fillRect(x + 4, layer.y + 4, w, layer.h);
+
+                // Layer
+                ctx.fillStyle = layer.color;
+                ctx.fillRect(x, layer.y, w, layer.h);
+
+                // Border
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.strokeRect(x, layer.y, w, layer.h);
+
+                // Text
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 15px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(layer.label, canvas.width / 2, layer.y + layer.h / 2 + 5);
+            });
+
+            // Bidirectional arrow annotation
+            ctx.strokeStyle = '#2ecc71';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(390, 250);
+            ctx.lineTo(390, 100);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Double arrow heads
+            ctx.beginPath();
+            ctx.moveTo(385, 105);
+            ctx.lineTo(390, 90);
+            ctx.lineTo(395, 105);
+            ctx.fillStyle = '#2ecc71';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(385, 245);
+            ctx.lineTo(390, 260);
+            ctx.lineTo(395, 245);
+            ctx.fill();
+
+            ctx.font = '12px Segoe UI';
+            ctx.fillStyle = '#2ecc71';
+            ctx.textAlign = 'left';
+            ctx.fillText('Unified', 398, 165);
+            ctx.fillText('(logic = types)', 398, 180);
+
+            // Bottom note
+            ctx.font = '11px Segoe UI';
+            ctx.fillStyle = '#888';
+            ctx.textAlign = 'center';
+            ctx.fillText('Logic emerges from type-forming rules', canvas.width / 2, 370);
+            ctx.fillText('Proofs are programs, types are spaces', canvas.width / 2, 385);
+        }
+
+        // ============ SET EQUALITY CANVAS ============
+        function drawSetEquality() {
+            const canvas = document.getElementById('setEqualityCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw two sets (circles)
+            // Set A
+            ctx.beginPath();
+            ctx.arc(100, 130, 60, 0, Math.PI * 2);
+            ctx.strokeStyle = '#64b5f6';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(100, 181, 246, 0.1)';
+            ctx.fill();
+
+            // Set B
+            ctx.beginPath();
+            ctx.arc(200, 130, 60, 0, Math.PI * 2);
+            ctx.strokeStyle = '#64b5f6';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(100, 181, 246, 0.1)';
+            ctx.fill();
+
+            // Elements in A
+            ctx.fillStyle = '#64b5f6';
+            ctx.font = '16px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('1', 80, 115);
+            ctx.fillText('2', 105, 140);
+            ctx.fillText('3', 90, 165);
+
+            // Elements in B
+            ctx.fillText('1', 180, 115);
+            ctx.fillText('2', 205, 140);
+            ctx.fillText('3', 190, 165);
+
+            // Labels
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('A', 100, 60);
+            ctx.fillText('B', 200, 60);
+
+            // Equals sign
+            ctx.font = 'bold 24px Segoe UI';
+            ctx.fillStyle = '#4caf50';
+            ctx.fillText('=', 150, 135);
+
+            // Bottom text
+            ctx.font = '13px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('Same elements → Equal', 150, 220);
+            ctx.fillText('(True or False, nothing more)', 150, 240);
+        }
+
+        // ============ HOTT EQUALITY CANVAS ============
+        function drawHottEquality() {
+            const canvas = document.getElementById('hottEqualityCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw a space (ellipse)
+            ctx.beginPath();
+            ctx.ellipse(150, 140, 120, 80, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = '#ce93d8';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(206, 147, 216, 0.05)';
+            ctx.fill();
+
+            // Points a and b
+            ctx.beginPath();
+            ctx.arc(90, 140, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#e91e63';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(210, 140, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#e91e63';
+            ctx.fill();
+
+            // Labels
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillStyle = '#e91e63';
+            ctx.textAlign = 'center';
+            ctx.fillText('a', 90, 125);
+            ctx.fillText('b', 210, 125);
+
+            // Path 1 (top arc)
+            ctx.beginPath();
+            ctx.moveTo(90, 140);
+            ctx.quadraticCurveTo(150, 80, 210, 140);
+            ctx.strokeStyle = '#ffeb3b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Path 2 (bottom arc)
+            ctx.beginPath();
+            ctx.moveTo(90, 140);
+            ctx.quadraticCurveTo(150, 200, 210, 140);
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Path 3 (straight)
+            ctx.beginPath();
+            ctx.moveTo(90, 140);
+            ctx.lineTo(210, 140);
+            ctx.strokeStyle = '#2196f3';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Path labels
+            ctx.font = '12px Segoe UI';
+            ctx.fillStyle = '#ffeb3b';
+            ctx.fillText('p', 150, 95);
+            ctx.fillStyle = '#4caf50';
+            ctx.fillText('q', 150, 195);
+            ctx.fillStyle = '#2196f3';
+            ctx.fillText('r', 150, 155);
+
+            // Type label
+            ctx.font = 'bold 13px Segoe UI';
+            ctx.fillStyle = '#ce93d8';
+            ctx.fillText('Type A', 150, 50);
+
+            // Bottom text
+            ctx.font = '13px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('Multiple paths (proofs of a = b)', 150, 235);
+        }
+
+        // ============ PATHS CANVAS ============
+        let pathAnimationId = null;
+        let pathAnimPhase = 0;
+        let showHigher = false;
+
+        function drawPaths() {
+            const canvas = document.getElementById('pathsCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Title
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.fillText('Paths in a Type (Space)', canvas.width / 2, 30);
+
+            // Draw the space as a torus-like shape
+            ctx.beginPath();
+            ctx.ellipse(350, 220, 250, 150, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(206, 147, 216, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(206, 147, 216, 0.03)';
+            ctx.fill();
+
+            // Points
+            const points = [
+                { x: 200, y: 200, label: 'a' },
+                { x: 500, y: 200, label: 'b' },
+                { x: 350, y: 320, label: 'c' },
+            ];
+
+            // Draw paths between a and b
+            // Path p1
+            ctx.beginPath();
+            ctx.moveTo(200, 200);
+            ctx.quadraticCurveTo(350, 120 + Math.sin(pathAnimPhase) * 10, 500, 200);
+            ctx.strokeStyle = '#ffeb3b';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Path p2
+            ctx.beginPath();
+            ctx.moveTo(200, 200);
+            ctx.quadraticCurveTo(350, 260 + Math.cos(pathAnimPhase) * 10, 500, 200);
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Path from a to c
+            ctx.beginPath();
+            ctx.moveTo(200, 200);
+            ctx.quadraticCurveTo(240, 280, 350, 320);
+            ctx.strokeStyle = '#2196f3';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Path from b to c
+            ctx.beginPath();
+            ctx.moveTo(500, 200);
+            ctx.quadraticCurveTo(460, 280, 350, 320);
+            ctx.strokeStyle = '#ff9800';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Higher paths (homotopy between p1 and p2)
+            if (showHigher) {
+                ctx.setLineDash([3, 3]);
+                for (let t = 0.2; t <= 0.8; t += 0.2) {
+                    ctx.beginPath();
+                    const midY1 = 120 + Math.sin(pathAnimPhase) * 10;
+                    const midY2 = 260 + Math.cos(pathAnimPhase) * 10;
+                    const midY = midY1 + (midY2 - midY1) * t;
+                    ctx.moveTo(200, 200);
+                    ctx.quadraticCurveTo(350, midY, 500, 200);
+                    ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 - t * 0.2})`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+                ctx.setLineDash([]);
+
+                // Higher path arrow
+                ctx.beginPath();
+                ctx.moveTo(340, 150);
+                ctx.lineTo(340, 230);
+                ctx.strokeStyle = '#e91e63';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(335, 225);
+                ctx.lineTo(340, 235);
+                ctx.lineTo(345, 225);
+                ctx.fillStyle = '#e91e63';
+                ctx.fill();
+
+                ctx.font = '12px Segoe UI';
+                ctx.fillStyle = '#e91e63';
+                ctx.textAlign = 'left';
+                ctx.fillText('homotopy', 350, 185);
+                ctx.fillText('(path between paths)', 350, 200);
+            }
+
+            // Draw points on top
+            points.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#e91e63';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.font = 'bold 16px Segoe UI';
+                ctx.fillStyle = '#fff';
+                ctx.textAlign = 'center';
+                ctx.fillText(p.label, p.x, p.y - 15);
+            });
+
+            // Path labels
+            ctx.font = '13px Segoe UI';
+            ctx.fillStyle = '#ffeb3b';
+            ctx.textAlign = 'center';
+            ctx.fillText('p : a =_A b', 350, 110);
+            ctx.fillStyle = '#4caf50';
+            ctx.fillText('q : a =_A b', 350, 285);
+            ctx.fillStyle = '#2196f3';
+            ctx.textAlign = 'right';
+            ctx.fillText('r : a =_A c', 240, 275);
+            ctx.fillStyle = '#ff9800';
+            ctx.textAlign = 'left';
+            ctx.fillText('s : b =_A c', 460, 275);
+
+            // Legend
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('Points = terms of type A', 30, 370);
+            ctx.fillText('Paths = proofs of equality', 30, 388);
+            if (showHigher) {
+                ctx.fillStyle = '#e91e63';
+                ctx.fillText('Higher paths = proofs that proofs are equal', 300, 370);
+            }
+        }
+
+        function animatePaths() {
+            if (pathAnimationId) {
+                cancelAnimationFrame(pathAnimationId);
+            }
+            function animate() {
+                pathAnimPhase += 0.03;
+                drawPaths();
+                pathAnimationId = requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function showHigherPaths() {
+            showHigher = !showHigher;
+            drawPaths();
+        }
+
+        function resetPaths() {
+            if (pathAnimationId) {
+                cancelAnimationFrame(pathAnimationId);
+                pathAnimationId = null;
+            }
+            pathAnimPhase = 0;
+            showHigher = false;
+            drawPaths();
+        }
+
+        // ============ UNIVERSES CANVAS ============
+        function drawUniverses() {
+            const canvas = document.getElementById('universesCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set theory side - cumulative hierarchy
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillStyle = '#64b5f6';
+            ctx.textAlign = 'center';
+            ctx.fillText('Set Theory: Cumulative Hierarchy', 175, 30);
+
+            // Draw V_alpha levels
+            const levels = ['V_0 = empty set', 'V_1 = {empty set}', 'V_2 = {empty set, {empty set}}', 'V_3 ...', 'V_omega', 'V_{omega+1}', '...'];
+            levels.forEach((level, i) => {
+                const y = 60 + i * 45;
+                const w = 80 + i * 30;
+                const x = 175 - w / 2;
+
+                ctx.beginPath();
+                ctx.moveTo(x, y + 35);
+                ctx.lineTo(x + w, y + 35);
+                ctx.strokeStyle = 'rgba(100, 181, 246, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.font = '12px Segoe UI';
+                ctx.fillStyle = '#64b5f6';
+                ctx.textAlign = 'center';
+                ctx.fillText(level, 175, y + 25);
+            });
+
+            // Upward arrow
+            ctx.beginPath();
+            ctx.moveTo(175, 370);
+            ctx.lineTo(175, 50);
+            ctx.strokeStyle = 'rgba(100, 181, 246, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // HoTT side - universe hierarchy
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillStyle = '#ce93d8';
+            ctx.textAlign = 'center';
+            ctx.fillText('HoTT: Universe Hierarchy', 525, 30);
+
+            // Draw nested universes
+            const universes = [
+                { label: 'U_0', r: 40, color: 'rgba(206, 147, 216, 0.8)' },
+                { label: 'U_1', r: 80, color: 'rgba(206, 147, 216, 0.5)' },
+                { label: 'U_2', r: 120, color: 'rgba(206, 147, 216, 0.3)' },
+                { label: 'U_3', r: 160, color: 'rgba(206, 147, 216, 0.15)' },
+            ];
+
+            const cx = 525, cy = 220;
+
+            universes.reverse().forEach(u => {
+                ctx.beginPath();
+                ctx.arc(cx, cy, u.r, 0, Math.PI * 2);
+                ctx.strokeStyle = u.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = 'rgba(206, 147, 216, 0.02)';
+                ctx.fill();
+            });
+
+            // Labels for universes
+            ctx.font = '13px Segoe UI';
+            ctx.fillStyle = '#ce93d8';
+            ctx.textAlign = 'left';
+            ctx.fillText('U_0', cx + 45, cy - 5);
+            ctx.fillText('U_1', cx + 85, cy - 5);
+            ctx.fillText('U_2', cx + 125, cy - 5);
+            ctx.fillText('U_3 ...', cx + 145, cy + 40);
+
+            // Small types inside U_0
+            ctx.font = '11px Segoe UI';
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.fillText('Bool', cx - 15, cy - 10);
+            ctx.fillText('Nat', cx + 10, cy + 10);
+
+            // Univalence annotation
+            ctx.font = '12px Segoe UI';
+            ctx.fillStyle = '#ffeb3b';
+            ctx.textAlign = 'center';
+            ctx.fillText('Univalence: (A ≃ B) ≃ (A =_U B)', 525, 385);
+
+            // Dividing line
+            ctx.beginPath();
+            ctx.moveTo(350, 50);
+            ctx.lineTo(350, 380);
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // ============ PHILOSOPHY CANVAS ============
+        function drawPhilosophy() {
+            const canvas = document.getElementById('philosophyCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set Theory Philosophy
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillStyle = '#64b5f6';
+            ctx.textAlign = 'center';
+            ctx.fillText('Set Theory Philosophy', 225, 30);
+
+            // Draw a "material" view - objects with internal structure
+            ctx.font = '13px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('"What is it made of?"', 225, 55);
+
+            // Draw nested sets
+            ctx.strokeStyle = '#64b5f6';
+            ctx.lineWidth = 1.5;
+
+            // Outer set
+            ctx.beginPath();
+            ctx.ellipse(225, 180, 140, 100, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(100, 181, 246, 0.05)';
+            ctx.fill();
+
+            // Inner sets
+            ctx.beginPath();
+            ctx.ellipse(180, 160, 40, 30, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(260, 170, 35, 25, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(210, 210, 30, 20, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Elements (dots)
+            const dots = [[160,155],[190,165],[250,165],[270,175],[200,205],[220,215]];
+            dots.forEach(d => {
+                ctx.beginPath();
+                ctx.arc(d[0], d[1], 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#64b5f6';
+                ctx.fill();
+            });
+
+            ctx.font = '11px Segoe UI';
+            ctx.fillStyle = '#888';
+            ctx.textAlign = 'center';
+            ctx.fillText('Material: objects have internal structure', 225, 300);
+            ctx.fillText('2 = {empty, {empty}} (a specific encoding)', 225, 318);
+            ctx.fillText('Equality is membership-based', 225, 336);
+
+            // HoTT Philosophy
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillStyle = '#ce93d8';
+            ctx.textAlign = 'center';
+            ctx.fillText('HoTT Philosophy', 675, 30);
+
+            ctx.font = '13px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('"How does it behave?"', 675, 55);
+
+            // Draw a structural view - nodes and connections
+            const nodes = [
+                { x: 625, y: 150 },
+                { x: 725, y: 150 },
+                { x: 675, y: 220 },
+                { x: 625, y: 250 },
+                { x: 725, y: 250 },
+            ];
+
+            // Connections (paths)
+            ctx.strokeStyle = '#ce93d8';
+            ctx.lineWidth = 2;
+
+            // Draw curved paths between nodes
+            ctx.beginPath();
+            ctx.moveTo(nodes[0].x, nodes[0].y);
+            ctx.quadraticCurveTo(675, 120, nodes[1].x, nodes[1].y);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(nodes[0].x, nodes[0].y);
+            ctx.quadraticCurveTo(630, 185, nodes[2].x, nodes[2].y);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(nodes[1].x, nodes[1].y);
+            ctx.quadraticCurveTo(720, 185, nodes[2].x, nodes[2].y);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(nodes[2].x, nodes[2].y);
+            ctx.quadraticCurveTo(640, 240, nodes[3].x, nodes[3].y);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(nodes[2].x, nodes[2].y);
+            ctx.quadraticCurveTo(710, 240, nodes[4].x, nodes[4].y);
+            ctx.stroke();
+
+            // A second path between nodes 0 and 1 (showing multiple paths)
+            ctx.beginPath();
+            ctx.moveTo(nodes[0].x, nodes[0].y);
+            ctx.quadraticCurveTo(675, 175, nodes[1].x, nodes[1].y);
+            ctx.strokeStyle = 'rgba(206, 147, 216, 0.4)';
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw nodes
+            nodes.forEach(n => {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, 7, 0, Math.PI * 2);
+                ctx.fillStyle = '#ce93d8';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            });
+
+            ctx.font = '11px Segoe UI';
+            ctx.fillStyle = '#888';
+            ctx.textAlign = 'center';
+            ctx.fillText('Structural: objects defined by relationships', 675, 300);
+            ctx.fillText('2 = type with exactly two terms', 675, 318);
+            ctx.fillText('Equality is path-based (homotopical)', 675, 336);
+
+            // Dividing line
+            ctx.beginPath();
+            ctx.moveTo(450, 20);
+            ctx.lineTo(450, 340);
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // ============ INITIALIZE ALL CANVASES ============
+        function init() {
+            drawSetTheoryArchitecture();
+            drawHoTTArchitecture();
+            drawSetEquality();
+            drawHottEquality();
+            drawPaths();
+            drawUniverses();
+            drawPhilosophy();
+        }
+
+        window.addEventListener('load', init);
+        window.addEventListener('resize', init);
+    </script>
+</body>
+</html>
