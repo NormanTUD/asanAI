@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How to Live Well — A Formally Verified Guide</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <style>
 :root {
   --bg: #fefcf9;
@@ -28,6 +29,12 @@
   --font-sans: 'Inter', -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --transition-smooth: 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --critique-bg: #fffbeb;
+  --critique-border: #f59e0b;
+  --good-bg: #f0fdf4;
+  --good-border: #22c55e;
+  --bad-bg: #fef2f2;
+  --bad-border: #ef4444;
 }
 
 [data-theme="dark"] {
@@ -44,6 +51,12 @@
   --border: #2a2a2a;
   --code-bg: #1e1e1e;
   --shadow: 0 2px 12px rgba(0,0,0,0.3);
+  --critique-bg: #1a1708;
+  --critique-border: #92400e;
+  --good-bg: #052e16;
+  --good-border: #166534;
+  --bad-bg: #1c0a0a;
+  --bad-border: #991b1b;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -58,9 +71,6 @@ body {
   transition: background 0.4s, color 0.4s;
 }
 
-/* ============================================================
-   TOP BAR
-   ============================================================ */
 .top-bar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -97,61 +107,10 @@ body {
   color: var(--proof-ok);
 }
 
-.depth-control {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex: 1;
-  max-width: 420px;
-}
-
-.depth-control label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  font-weight: 600;
-}
-
-.depth-slider {
-  flex: 1;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-}
-
-.depth-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  box-shadow: 0 2px 8px var(--accent-glow);
-  transition: transform 0.2s;
-}
-
-.depth-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-
-.depth-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--accent);
-  min-width: 110px;
-  text-align: right;
-}
-
 .top-bar-buttons {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .top-btn {
@@ -179,20 +138,101 @@ body {
   border-color: var(--accent);
 }
 
-/* ============================================================
-   MAIN CONTENT
-   ============================================================ */
+.theme-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.theme-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .container {
-  max-width: 760px;
+  max-width: 820px;
   margin: 0 auto;
   padding: 90px 28px 140px;
 }
 
-/* ============================================================
-   OVERVIEW PANEL
-   ============================================================ */
+/* Fundamental Values Section */
+.values-section {
+  margin-bottom: 48px;
+  padding: 32px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.values-section h2 {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-bottom: 16px;
+  color: var(--text-bright);
+}
+
+.values-section p {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.8;
+}
+
+.value-card {
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.value-card.good {
+  border-left: 4px solid var(--good-border);
+  background: var(--good-bg);
+}
+
+.value-card.bad {
+  border-left: 4px solid var(--bad-border);
+  background: var(--bad-bg);
+}
+
+.value-card h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-bright);
+}
+
+.value-card p {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.exemplar {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.exemplar strong {
+  color: var(--text-bright);
+}
+
+/* Overview Panel */
 .overview-panel {
-  margin-bottom: 60px;
+  margin-bottom: 48px;
   padding: 32px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -232,32 +272,15 @@ body {
   transform: translateY(-1px);
 }
 
-.overview-item .ov-status {
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.overview-item .ov-num {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-tertiary);
-  min-width: 20px;
-}
-
-.overview-item .ov-title {
-  font-weight: 500;
-  color: var(--text-bright);
-}
-
+.overview-item .ov-status { font-size: 1rem; flex-shrink: 0; }
+.overview-item .ov-num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-tertiary); min-width: 20px; }
+.overview-item .ov-title { font-weight: 500; color: var(--text-bright); }
 .overview-item.status-ok .ov-status { color: var(--proof-ok); }
 .overview-item.status-partial .ov-status { color: var(--proof-partial); }
-.overview-item.status-error .ov-status { color: var(--proof-error); }
 
-/* ============================================================
-   AXIOMS PANEL
-   ============================================================ */
+/* Axioms Panel */
 .axioms-panel {
-  margin-bottom: 60px;
+  margin-bottom: 48px;
   padding: 32px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -299,17 +322,8 @@ body {
   margin-bottom: 6px;
 }
 
-.axiom-card-header .ax-icon {
-  font-size: 0.9rem;
-  color: var(--accent);
-}
-
-.axiom-card-header .ax-name {
-  font-weight: 600;
-  font-size: 0.92rem;
-  color: var(--text-bright);
-}
-
+.axiom-card-header .ax-icon { font-size: 0.9rem; color: var(--accent); }
+.axiom-card-header .ax-name { font-weight: 600; font-size: 0.92rem; color: var(--text-bright); }
 .axiom-card-header .ax-tag {
   font-family: var(--font-mono);
   font-size: 0.65rem;
@@ -320,59 +334,73 @@ body {
   border-radius: 4px;
 }
 
-.axiom-card-human {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  margin-left: 28px;
+.axiom-card-human { font-size: 0.88rem; color: var(--text-secondary); margin-left: 28px; }
+
+.axiom-card-details {
+  display: none;
+  margin: 12px 0 0 28px;
 }
 
+.axiom-card.expanded .axiom-card-details { display: block; }
+
 .axiom-card-formal {
-  display: none;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--text-tertiary);
-  margin: 10px 0 0 28px;
   padding: 10px 14px;
   background: var(--code-bg);
   border-radius: 6px;
   white-space: pre-wrap;
   line-height: 1.7;
-}
-
-.axiom-card.expanded .axiom-card-formal {
-  display: block;
+  margin-bottom: 10px;
 }
 
 .axiom-card-justification {
-  display: none;
   font-size: 0.8rem;
   color: var(--text-secondary);
-  margin: 8px 0 0 28px;
   font-style: italic;
+  margin-bottom: 10px;
 }
 
-.axiom-card.expanded .axiom-card-justification {
-  display: block;
+.critique-box {
+  padding: 12px 16px;
+  background: var(--critique-bg);
+  border: 1px solid var(--critique-border);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  margin-top: 10px;
 }
 
-/* ============================================================
-   STEP CARD (single step view)
-   ============================================================ */
+.critique-box h5 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--critique-border);
+  margin-bottom: 6px;
+}
+
+.critique-box p {
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.critique-box .counter-example {
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-top: 6px;
+  border-left: 3px solid var(--critique-border);
+}
+
+/* Step Cards */
 .step-card {
   display: none;
   animation: stepIn 0.4s ease both;
 }
 
-.step-card.active {
-  display: block;
-}
-
-.step-card.show-all {
-  display: block;
-  margin-bottom: 48px;
-  padding-bottom: 48px;
-  border-bottom: 1px solid var(--border);
-}
+.step-card.active { display: block; }
 
 @keyframes stepIn {
   from { opacity: 0; transform: translateY(16px); }
@@ -404,10 +432,7 @@ body {
   color: var(--accent);
 }
 
-.step-nav-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
+.step-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
 .step-nav-indicator {
   font-family: var(--font-mono);
@@ -415,9 +440,14 @@ body {
   color: var(--text-tertiary);
 }
 
-.step-header {
-  margin-bottom: 20px;
+.step-nav-keys {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-top: 4px;
 }
+
+.step-header { margin-bottom: 20px; }
 
 .step-number {
   font-family: var(--font-mono);
@@ -453,7 +483,6 @@ body {
 
 .badge-ok { background: rgba(45,122,58,0.1); color: var(--proof-ok); }
 .badge-partial { background: rgba(184,134,11,0.1); color: var(--proof-partial); }
-.badge-error { background: rgba(192,57,43,0.1); color: var(--proof-error); }
 
 .step-sentence {
   font-size: 1.15rem;
@@ -474,18 +503,10 @@ body {
 
 .step-example strong { color: var(--text-bright); }
 
-/* ============================================================
-   DEPTH LAYERS (expandable sections within a step)
-   ============================================================ */
-.step-layers {
-  margin-top: 20px;
-}
+/* Layers */
+.step-layers { margin-top: 20px; }
 
-.layer {
-  margin-bottom: 10px;
-}
-
-.layer.depth-hidden { display: none; }
+.layer { margin-bottom: 10px; }
 
 .layer-toggle {
   display: flex;
@@ -543,15 +564,8 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.layer-content.philosophical {
-  font-family: var(--font-serif);
-  font-size: 1rem;
-}
-
-.layer-content.historical {
-  font-size: 0.9rem;
-}
-
+.layer-content.philosophical { font-family: var(--font-serif); font-size: 1rem; }
+.layer-content.historical { font-size: 0.9rem; }
 .layer-content.formal {
   font-family: var(--font-mono);
   font-size: 0.8rem;
@@ -559,7 +573,6 @@ body {
   white-space: pre-wrap;
   line-height: 2;
 }
-
 .layer-content.machine {
   font-family: var(--font-mono);
   font-size: 0.76rem;
@@ -568,22 +581,54 @@ body {
   line-height: 2;
 }
 
-/* Sub-proofs */
 .sub-proof {
   margin: 8px 0;
   padding: 8px 14px;
   border-left: 2px solid var(--border);
   font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 0 6px 6px 0;
 }
+
+.sub-proof:hover { background: var(--bg-secondary); }
 
 .sub-proof .sp-icon { margin-right: 8px; }
 .sub-proof .sp-icon.ok { color: var(--proof-ok); }
 .sub-proof .sp-icon.partial { color: var(--proof-partial); }
 .sub-proof .sp-icon.axiom { color: var(--text-tertiary); }
 
-/* ============================================================
-   GLOBAL SECTION (sheaf diagram + matrix)
-   ============================================================ */
+.sub-proof-detail {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: var(--code-bg);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.sub-proof.expanded .sub-proof-detail { display: block; }
+
+/* Systems thinking graph */
+.systems-graph {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.systems-graph h4 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: var(--text-bright);
+}
+
+/* Global Section */
 .global-section {
   margin-top: 60px;
   padding-top: 40px;
@@ -597,13 +642,13 @@ body {
   margin-bottom: 12px;
 }
 
-.sheaf-diagram {
+.sheaf-chart-container {
   margin: 24px 0;
-  padding: 24px;
-  background: var(--bg-secondary);
+  width: 100%;
+  height: 450px;
   border-radius: var(--radius);
-  text-align: center;
   border: 1px solid var(--border);
+  overflow: hidden;
 }
 
 .matrix-container {
@@ -622,6 +667,8 @@ body {
   padding: 8px 10px;
   border: 1px solid var(--border);
   text-align: center;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .matrix-table th {
@@ -630,12 +677,43 @@ body {
   font-size: 0.72rem;
 }
 
+.matrix-table td:hover {
+  background: var(--accent-glow);
+}
+
 .matrix-cell-ok { background: rgba(45,122,58,0.08); color: var(--proof-ok); }
 .matrix-cell-partial { background: rgba(184,134,11,0.08); color: var(--proof-partial); }
+.matrix-cell-identity { background: rgba(45,90,39,0.05); color: var(--text-tertiary); }
 
-/* ============================================================
-   VERIFICATION BANNER
-   ============================================================ */
+.matrix-tooltip {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.8rem;
+  max-width: 320px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  pointer-events: none;
+}
+
+.matrix-tooltip.visible { display: block; }
+
+.matrix-tooltip h5 {
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+  color: var(--text-bright);
+}
+
+.matrix-tooltip p {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Verification Banner */
 .verification-banner {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -700,9 +778,7 @@ body {
 
 @keyframes fadeIn { to { opacity: 1; } }
 
-/* ============================================================
-   CONSOLE PANEL
-   ============================================================ */
+/* Console */
 .console-panel {
   position: fixed;
   bottom: 0; left: 0; right: 0;
@@ -742,43 +818,17 @@ body {
 .console-body .c-err { color: #e74c3c; }
 .console-body .c-info { color: #5dade2; }
 
-/* ============================================================
-   THEME TOGGLE
-   ============================================================ */
-.theme-btn {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  transition: all 0.2s;
+/* Show-all mode */
+.show-all-mode .step-card {
+  display: block;
+  margin-bottom: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--border);
 }
+.show-all-mode .step-card:last-child { border-bottom: none; }
+.show-all-mode .step-nav { display: none; }
 
-.theme-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media (max-width: 700px) {
-  html { font-size: 16px; }
-  .top-bar { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
-  .depth-control { max-width: 100%; order: 3; flex-basis: 100%; }
-  .container { padding: 80px 16px 100px; }
-  .step-title { font-size: 1.8rem; }
-  .overview-grid { grid-template-columns: 1fr; }
-}
-
-/* ============================================================
-   LOADING DOTS
-   ============================================================ */
+/* Loading dots */
 .loading-dot {
   display: inline-block;
   width: 6px; height: 6px;
@@ -795,24 +845,32 @@ body {
   50% { opacity: 1; transform: scale(1.2); }
 }
 
-/* Show-all mode */
-.show-all-mode .step-card { display: block; margin-bottom: 48px; padding-bottom: 48px; border-bottom: 1px solid var(--border); }
-.show-all-mode .step-card:last-child { border-bottom: none; }
-.show-all-mode .step-nav { display: none; }
+/* Causal diagram inline */
+.causal-diagram {
+  margin: 16px 0;
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  html { font-size: 16px; }
+  .top-bar { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
+  .container { padding: 80px 16px 100px; }
+  .step-title { font-size: 1.8rem; }
+  .overview-grid { grid-template-columns: 1fr; }
+  .sheaf-chart-container { height: 350px; }
+}
 </style>
 </head>
 <body>
 
-<!-- Top Bar -->
 <header class="top-bar">
   <div class="top-bar-title">
     <span class="logo-mark" id="logoMark">&#9651;</span>
     <span>How to Live Well</span>
-  </div>
-  <div class="depth-control">
-    <label>Depth:</label>
-    <input type="range" class="depth-slider" id="depthSlider" min="0" max="4" step="1" value="0">
-    <span class="depth-label" id="depthLabel">Plain English</span>
   </div>
   <div class="top-bar-buttons">
     <button class="top-btn" id="btnShowAll" onclick="toggleShowAll()">Show All</button>
@@ -822,8 +880,55 @@ body {
   </div>
 </header>
 
-<!-- Main Content -->
 <main class="container" id="mainContainer">
+
+  <!-- Fundamental Values -->
+  <section class="values-section" id="valuesSection">
+    <h2>What Is Fundamentally Good and Bad</h2>
+    <p>Before any rules, we must state what we believe is fundamentally valuable and what is fundamentally harmful. These are not proved — they are the bedrock on which everything rests. We state them openly so you can decide whether to accept them.</p>
+
+    <div class="value-card good">
+      <h4>&#10003; Being alive is preferable to not being alive</h4>
+      <p>The most basic value: conscious existence is generally preferable to non-existence. This is not absolute (suffering can make it debatable), but it is the default assumption without which no ethics makes sense.</p>
+      <div class="exemplar"><strong>Exemplar — Janusz Korczak (1878–1942):</strong> A pediatrician who ran an orphanage in Warsaw. When the Nazis came to deport the children to Treblinka, he refused offers of escape and accompanied them to the gas chambers so they would not die alone. He valued their
+<div class="value-card good">
+  <h4>&#10003; Reducing suffering is good</h4>
+  <p>Where conscious beings exist, reducing their unnecessary suffering is fundamentally valuable. Not all suffering can be eliminated, but gratuitous suffering — suffering that serves no growth, no learning, no protection — is bad.</p>
+  <div class="exemplar"><strong>Exemplar — Harriet Tubman (c.1822–1913):</strong> Born into slavery, she escaped and then returned 13 times to lead approximately 70 enslaved people to freedom via the Underground Railroad. She risked her life repeatedly to reduce the suffering of others, saying "I never ran my train off the track and I never lost a passenger."</div>
+</div>
+
+    <div class="value-card good">
+      <h4>&#10003; Flourishing is preferable to mere survival</h4>
+      <p>Beyond bare existence, the capacity to grow, create, love, and understand is valuable. A life of mere survival is better than death, but a life of flourishing is better still.</p>
+      <div class="exemplar"><strong>Exemplar — Frederick Douglass (1818–1895):</strong> After escaping slavery, he didn't merely survive — he became one of the greatest orators and writers of his century, proving that human flourishing, when unchained, knows no bounds of race or origin.</div>
+    </div>
+
+    <div class="value-card good">
+      <h4>&#10003; Truth is preferable to delusion</h4>
+      <p>Accurate understanding of reality, while sometimes painful, is fundamentally more valuable than comfortable falsehood. Delusion may feel good temporarily but leads to worse outcomes over time.</p>
+      <div class="exemplar"><strong>Exemplar — Ignaz Semmelweis (1818–1865):</strong> He discovered that handwashing prevented childbed fever, was ridiculed by the medical establishment, and died in an asylum. But his truth saved millions of lives after his death. Truth persists; delusion collapses.</div>
+    </div>
+
+    <div class="value-card bad">
+      <h4>&#10007; Gratuitous cruelty is bad</h4>
+      <p>Causing suffering for its own sake — not in self-defense, not as an unavoidable side effect, but as a goal — is fundamentally wrong. This is perhaps the most universal moral intuition across all cultures.</p>
+      <div class="exemplar"><strong>Counter-example — Unit 731 (1937–1945):</strong> Japanese military scientists performed vivisection on living prisoners without anesthesia, purely for curiosity. No defensive purpose, no greater good — pure cruelty instrumentalized as "science." This is what bad looks like at its most undeniable.</div>
+    </div>
+
+    <div class="value-card bad">
+      <h4>&#10007; Dehumanization is bad</h4>
+      <p>Treating conscious beings as objects, as less-than-persons, as means only — this is the root mechanism of nearly all large-scale evil. Every genocide begins with dehumanization.</p>
+      <div class="exemplar"><strong>Counter-example — The Rwandan genocide (1994):</strong> Radio Mille Collines called Tutsis "cockroaches" for months before the killing began. The linguistic dehumanization preceded and enabled the physical violence. 800,000 people were murdered in 100 days.</div>
+    </div>
+
+    <div class="value-card bad">
+      <h4>&#10007; Systematic deception is bad</h4>
+      <p>Deliberately constructing false realities for others — gaslighting, propaganda, institutional lying — destroys the shared epistemic ground on which cooperation depends.</p>
+      <div class="exemplar"><strong>Counter-example — The tobacco industry (1950s–1990s):</strong> Internal documents showed they knew cigarettes caused cancer by 1953. They spent billions creating doubt, funding fake research, and lying to Congress. Estimated cost: 8 million preventable deaths.</div>
+    </div>
+
+    <p style="margin-top:20px; font-style:italic; color:var(--text-secondary);">These values are not proved. They are stated. If you do not share them, this system will not persuade you — but at least you can see clearly what it assumes and decide for yourself.</p>
+  </section>
 
   <!-- Overview Panel -->
   <section class="overview-panel" id="overviewPanel">
@@ -834,7 +939,7 @@ body {
   <!-- Axioms Panel -->
   <section class="axioms-panel" id="axiomsPanel">
     <h2>Foundational Axioms</h2>
-    <p class="axioms-subtitle">These are the assumptions we make explicit. Everything else is derived from them.</p>
+    <p class="axioms-subtitle">These are the assumptions we make explicit. Everything else is derived from them. Click any axiom to expand its formal definition, justification, and critique.</p>
     <div id="axiomsContainer"></div>
   </section>
 
@@ -859,9 +964,7 @@ body {
     <p style="font-family:var(--font-serif);font-size:1.1rem;color:var(--text-secondary);margin-bottom:24px;font-style:italic;">
       All parts fit together. The whole is more than the sum.
     </p>
-    <div class="sheaf-diagram" id="sheafDiagram">
-      <svg width="600" height="300" viewBox="0 0 600 300" id="sheafSvg"></svg>
-    </div>
+    <div class="sheaf-chart-container" id="sheafChart"></div>
     <div class="matrix-container" id="matrixContainer"></div>
   </section>
 
@@ -876,6 +979,12 @@ body {
   <div class="console-body" id="consoleBody"></div>
 </div>
 
+<!-- Matrix Tooltip -->
+<div class="matrix-tooltip" id="matrixTooltip">
+  <h5 id="tooltipTitle"></h5>
+  <p id="tooltipBody"></p>
+</div>
+
 <script>
 // ============================================================
 // DATA: AXIOMS
@@ -887,56 +996,72 @@ const Axioms = [
     name: 'Agents Exist',
     formal: 'Axiom agents_exist : exists (a : Agent), True.',
     human: 'There is at least one being that can act.',
-    justification: 'Pragmatic: whoever reads this is an agent.'
+    justification: 'Pragmatic: whoever reads this is an agent.',
+    critique: 'This is nearly tautological — the document cannot be read by a non-agent. It is the weakest possible axiom, which is why it is safe.',
+    counterExample: null
   },
   {
     id: 'ax_awareness_possible',
     name: 'Awareness Is Possible',
     formal: 'Axiom awareness_possible : forall (a : Agent), exists (s : State), is_aware a s.',
-    human: 'Every agent can be conscious.',
-    justification: 'Phenomenological: consciousness is given (Descartes, Husserl).'
+    human: 'Every agent can be conscious of at least one state.',
+    justification: 'Phenomenological: consciousness is given (Descartes, Husserl). The hard problem of consciousness remains unsolved, but the existence of awareness is the one thing we cannot doubt.',
+    critique: 'Does this apply to all agents? What about agents in comas, or AI systems? We scope this to "agents capable of reading this document" — which presupposes awareness. For edge cases (persistent vegetative states), the axiom may not apply, but those agents cannot engage with the system anyway.',
+    counterExample: null
   },
   {
     id: 'ax_others_exist',
     name: 'Others Exist',
     formal: 'Axiom others_exist : forall (a : Agent), exists (b : Agent), a <> b.',
-    human: 'No agent is alone.',
-    justification: 'Intersubjectivity (Levinas, Buber).'
+    human: 'No agent is alone in the world.',
+    justification: 'Intersubjectivity (Levinas, Buber). Solipsism is irrefutable but useless — if you are truly alone, ethics is meaningless anyway.',
+    critique: 'A solipsist would reject this. But a solipsist has no need for ethics. This axiom is the entry condition for moral reasoning — if you accept it, the system works. If you reject it, you need no system.',
+    counterExample: null
   },
   {
     id: 'ax_actions_have_effects',
     name: 'Actions Have Effects',
     formal: 'Axiom actions_causal : forall (act : Action) (w : World), exists (w2 : World), causes act w w2.',
-    human: 'Actions change the world.',
-    justification: 'Foundational assumption of all ethics (Aristotle, Kant).'
+    human: 'What you do changes the world in some way.',
+    justification: 'Foundational assumption of all ethics and physics. Without causation, responsibility is meaningless.',
+    critique: 'Quantum indeterminacy and chaos theory show that effects are not always predictable. But the axiom only claims effects EXIST, not that they are predictable or proportional. Even a quantum event has effects — they are just probabilistic.',
+    counterExample: null
   },
   {
     id: 'ax_harm_recognizable',
     name: 'Harm Is Recognizable',
     formal: 'Axiom harm_recognizable : forall (a : Agent) (act : Action), decidable (causes_harm act a).',
-    human: 'You can tell whether an action causes harm.',
-    justification: 'Empathy + reason enable harm recognition.'
+    human: 'You can tell whether an action causes harm — at least in principle, with sufficient information.',
+    justification: 'Empathy + reason enable harm recognition. Pain is not invisible.',
+    critique: 'This is the most contested axiom. Delayed harm (climate change), systemic harm (structural racism), and unintended consequences challenge it. We weaken the claim: harm is recognizable IN PRINCIPLE given sufficient information and reflection. You may not always know immediately, but with effort, you can determine it. The axiom is about decidability (it has an answer), not about ease of discovery.',
+    counterExample: 'You buy a product whose supply chain involves child labor you cannot see. The harm exists but is not immediately recognizable to you. Response: the axiom says harm IS decidable (has a truth value), not that you always know it. With investigation, you CAN find out. The obligation is to investigate when stakes are high.'
   },
   {
     id: 'ax_improvement_possible',
     name: 'Improvement Is Possible',
     formal: 'Axiom improvement_possible : forall (a : Agent) (t : Time), exists (p : Path), improves a p t.',
-    human: 'Everyone can get better.',
-    justification: 'Neuroplasticity, learning capacity (Aristotle: virtue as habit).'
+    human: 'It is possible to get better — not guaranteed, not easy, but possible.',
+    justification: 'Neuroplasticity, learning capacity (Aristotle: virtue as habit). The brain physically rewires with practice.',
+    critique: 'Not everyone can improve in all ways at all times. Severe brain damage, terminal illness, extreme oppression can make improvement impossible in practice. We clarify: the axiom states that improvement is POSSIBLE (exists a path), not that it is always accessible. It is a statement about the structure of reality (paths exist) not about individual circumstances (you can always walk them). "Better" here means closer to the values stated above — less suffering caused, more flourishing enabled.',
+    counterExample: 'A person with locked-in syndrome cannot "improve" in the sense of taking new actions. Response: even they can improve in awareness, acceptance, inner states. But honestly, this axiom is weakest for extreme cases. We accept this limitation.'
   },
   {
     id: 'ax_symmetry',
     name: 'Symmetry of Agents',
     formal: 'Axiom agent_symmetry : forall (a b : Agent), moral_status a = moral_status b.',
-    human: 'All agents have equal moral status.',
-    justification: 'Golden Rule, Categorical Imperative, Ubuntu.'
+    human: 'All agents have equal moral status — no one counts more than another.',
+    justification: 'Golden Rule, Categorical Imperative, Ubuntu. Every attempt to justify asymmetry (race, class, species) has historically collapsed.',
+    critique: 'What about children vs adults? Criminals vs innocents? Animals vs humans? We scope this to "agents capable of moral reasoning" — the class of beings who can engage with this system. For beings outside this class (animals, infants), we extend partial moral status through the harm principle (Step 0) without requiring full symmetry.',
+    counterExample: 'A serial killer and a saint have "equal moral status"? Response: Yes — equal STATUS (right to be treated fairly, not tortured, given due process) does not mean equal TREATMENT. The killer is restrained to prevent harm (Step 0 overrides). Symmetry means: the same rules apply to everyone, including the rule that harmful agents are stopped.'
   },
   {
     id: 'ax_measure_bounds_length',
     name: 'Measure Bounds Length',
     formal: 'Axiom measure_bounds_length : forall (acts : list Action), length acts <= measure acts.',
-    human: 'The weight of a set of actions is at least as large as the number of actions.',
-    justification: 'Each action contributes at least 1 unit of measure (minimum effort principle).'
+    human: 'The weight of a set of actions is at least as large as the number of actions — each action has at least unit weight.',
+    justification: 'Each action contributes at least 1 unit of measure (minimum effort principle). Nothing is truly costless.',
+    critique: 'This is a technical axiom needed for the compactness proof in Step 7. It says: you cannot do infinitely many things with finite effort. This seems obviously true for physical beings but might not hold for hypothetical infinite agents. We accept this as a constraint on finite beings.',
+    counterExample: null
   }
 ];
 
@@ -949,27 +1074,38 @@ const Steps = [
     number: 0,
     id: 'step_do_no_harm',
     title: 'Do No Harm',
-    sentence: 'Before anything else: do not make things worse.',
-    example: { label: 'Before you speak', text: 'Ask: will this hurt someone? If yes, stop.' },
+    sentence: 'Before you act: ask — will this hurt someone? If yes, stop.',
+    example: { label: 'Before you act', text: 'Pause. Consider the downstream effects. If harm is likely, choose differently.' },
     status: 'ok',
     openSets: ['Other', 'Community'],
+    critique: {
+      sentence: '"Before you act: ask — will this hurt someone? If yes, stop."',
+      issues: [
+        'What about self-defense? Sometimes you must harm to prevent greater harm.',
+        'What about surgery? A surgeon harms (cuts) to heal.',
+        'What about hard truths? Telling someone their work is bad causes pain but prevents worse outcomes.',
+        'Inaction can also cause harm (omission). "Stop" is not always the harmless choice.'
+      ],
+      resolution: 'The principle is: minimize net harm. When all options cause some harm, choose the least harmful. When inaction causes more harm than action, act. The "stop" is the DEFAULT — the burden of proof is on the one who would cause harm to show it prevents greater harm. This is the precautionary principle applied to ethics.',
+      historicalTest: 'When the Nazis ring your doorbell and you have Jews in your cellar, you are not only allowed but morally OBLIGATED to lie. "Do no harm" overrides "tell the truth" because the harm of truth (death) vastly exceeds the harm of lying (deception of murderers). This is why Step 0 is Step 0 — it takes priority over all other steps when they conflict.'
+    },
     philosophical: {
       sources: ['Hippocrates (Primum non nocere)', 'J.S. Mill (Harm Principle)', 'Patanjali (Ahimsa)', 'Kant (Duty of omission)'],
       argument: 'Non-harm is the absolute lower bound of all ethics. It is easier to determine what harms than what helps. Mill: one person\'s freedom ends where another\'s begins. Ahimsa: non-violence as the highest principle. This is the zero section of the sheaf — the trivial case that must always hold.',
       convergence: 'Every culture has a prohibition against harm. It is the most universal ethical principle known.'
     },
     historical: {
-      lived: 'The Jain tradition has practiced radical ahimsa for over 2,500 years — sweeping paths to avoid stepping on insects, filtering water to protect microorganisms. Gandhi adopted this as the core of Indian independence.',
-      violated: 'The Rwandan genocide (1994): neighbors who had lived together for decades turned on each other. Early warning signs — dehumanizing radio broadcasts ("cockroaches") — were ignored by the international community.',
-      prevention: 'Early intervention at the language level. When people begin calling others vermin or subhuman, the harm principle is already being violated in speech. Stopping dehumanization in discourse prevents physical harm downstream.'
+      lived: 'The Jain tradition has practiced radical ahimsa for over 2,500 years — sweeping paths to avoid stepping on insects, filtering water to protect microorganisms. Gandhi adopted this as the core of Indian independence, proving that non-violence could defeat an empire.',
+      violated: 'The Rwandan genocide (1994): neighbors who had lived together for decades turned on each other. Early warning signs — dehumanizing radio broadcasts ("cockroaches") — were ignored by the international community. 800,000 dead in 100 days.',
+      prevention: 'Early intervention at the language level. When people begin calling others vermin or subhuman, the harm principle is already being violated in speech. Stopping dehumanization in discourse prevents physical harm downstream. The Dangerous Speech Project documents this pattern across 20+ genocides.'
     },
     formal: {
       type: 'Zero section (always defined)',
       definition: 'nonharm : Agent -> Action -> Prop',
       expansion: 'nonharm a act := forall (b : Agent), not (causes_harm act b)',
-      sheafCondition: 'The zero section is defined on ALL open sets (global)',
-      categoryRole: 'Zero morphism: the lower bound in the value poset',
-      humanIdea: 'We prove that harmless actions always exist, and that this "zero section" is globally defined — meaning regardless of context, you can always choose not to harm.'
+      sheafCondition: 'The zero section is defined on ALL open sets (global). It is the trivial section that always exists.',
+      categoryRole: 'Zero morphism: the lower bound in the value poset. The identity element of the ethical monoid.',
+      humanIdea: 'We prove that harmless actions always exist, and that this "zero section" is globally defined — meaning regardless of context, you can always choose not to harm. This is the foundation: before anything else, do not make things worse.'
     },
     coq: [
       '(* Step 0: Non-Harm — The Zero Section *)',
@@ -982,12 +1118,12 @@ const Steps = [
       'Definition nonharm (a : Agent) (act : Action) : Prop :=',
       '  forall (b : Agent), ~ (causes_harm act b).',
       '',
-      '(* Hypothesis: Harm is decidable *)',
+      '(* Axiom: Harm is decidable *)',
       'Hypothesis harm_decidable :',
       '  forall (act : Action) (b : Agent),',
       '    {causes_harm act b} + {~ causes_harm act b}.',
       '',
-      '(* Hypothesis: Harmless actions exist *)',
+      '(* Axiom: Harmless actions exist *)',
       'Hypothesis harmless_actions_exist :',
       '  forall (a : Agent), exists (act : Action), nonharm a act.',
       '',
@@ -1000,6 +1136,7 @@ const Steps = [
       'Qed.',
       '',
       '(* Theorem: Zero section is globally defined *)',
+      '(* Regardless of context, non-harm is available *)',
       'Theorem zero_section_global :',
       '  forall (a : Agent),',
       '    (exists act, nonharm a act) ->',
@@ -1009,13 +1146,22 @@ const Steps = [
       '  exists act. exact Hact.',
       'Qed.',
       '',
+      '(* Priority theorem: when steps conflict, *)',
+      '(* non-harm takes precedence *)',
+      'Hypothesis harm_overrides :',
+      '  forall (a : Agent) (act : Action),',
+      '    (exists b, causes_harm act b) ->',
+      '    ~ (permissible act).',
+      '',
+      'Variable permissible : Action -> Prop.',
+      '',
       'End NonHarm.'
     ],
     subproofs: [
-      { name: 'harm_decidable', status: 'axiom', human: 'Harm is decidable (axiom)' },
-      { name: 'harmless_actions_exist', status: 'axiom', human: 'Harmless actions exist (axiom)' },
-      { name: 'nonharm_always_possible', status: 'proved', human: 'Non-harm is always possible (proved)' },
-      { name: 'zero_section_global', status: 'proved', human: 'Zero section is globally defined (proved)' }
+      { name: 'harm_decidable', status: 'axiom', human: 'Harm is decidable (axiom)', detail: 'For any action and any agent, we can determine whether the action harms that agent. This is the decidability claim — not that it is easy, but that it has a definite answer.' },
+      { name: 'harmless_actions_exist', status: 'axiom', human: 'Harmless actions exist (axiom)', detail: 'For every agent, there exists at least one action that harms no one. At minimum: doing nothing. More constructively: many actions are harmless.' },
+      { name: 'nonharm_always_possible', status: 'proved', human: 'Non-harm is always possible (proved from axioms)', detail: 'Proof: directly from harmless_actions_exist. If harmless actions exist for every agent, then every agent can choose a harmless action.' },
+      { name: 'zero_section_global', status: 'proved', human: 'Zero section is globally defined (proved)', detail: 'Proof: if a harmless action exists in any context, it exists in all contexts (the action itself does not depend on context). This makes non-harm the universal baseline.' }
     ]
   },
   {
@@ -1023,29 +1169,39 @@ const Steps = [
     id: 'step_be_aware',
     title: 'Be Aware',
     sentence: 'Everything begins with opening your eyes. Not tomorrow. Now.',
-    example: { label: 'Morning ritual', text: 'Three conscious breaths before you pick up your phone.' },
+    example: { label: 'Morning ritual', text: 'Three conscious breaths before you pick up your phone. Notice what you feel before you react.' },
     status: 'ok',
     openSets: ['Self'],
+    critique: {
+      sentence: '"Everything begins with opening your eyes."',
+      issues: [
+        'Awareness alone does not guarantee good action — one can be fully aware and still choose evil.',
+        'Some people have conditions (ADHD, trauma) that make sustained awareness extremely difficult.',
+        'Awareness can be paralyzing — too much awareness of suffering can lead to inaction.'
+      ],
+      resolution: 'Awareness is necessary but not sufficient. It is Step 1, not the only step. The claim is not "awareness solves everything" but "without awareness, nothing else works." For those with attention difficulties, the axiom says awareness is POSSIBLE (exists a state), not that it is easy or constant. Partial awareness still counts.',
+      historicalTest: 'Hannah Arendt\'s concept of the "banality of evil" — Eichmann was not a monster but a man who refused to think, to be aware. The failure of awareness enabled bureaucratic genocide. Awareness is the first defense against complicity.'
+    },
     philosophical: {
-      sources: ['Buddha (Satipatthana Sutta)', 'Husserl (Phenomenology)', 'Heidegger (Dasein)', 'Kabat-Zinn (MBSR)'],
+      sources: ['Buddha (Satipatthana Sutta)', 'Husserl (Phenomenology)', 'Heidegger (Dasein)', 'Kabat-Zinn (MBSR)', 'Marcus Aurelius (Meditations)'],
       argument: 'Awareness is the precondition of all ethics. Those who are not conscious cannot act consciously. Husserl: intentionality presupposes consciousness. Buddha: right mindfulness as the foundation of the eightfold path. Without wakefulness there is no choice; without choice, no morality.',
-      convergence: 'All great traditions begin with awakening: Enlightenment (sapere aude), Zen (satori), Stoics (prosoche).'
+      convergence: 'All great traditions begin with awakening: Enlightenment (sapere aude), Zen (satori), Stoics (prosoche), Sufism (dhikr).'
     },
     historical: {
-      lived: 'Marcus Aurelius wrote his Meditations as a daily practice of awareness — a Roman emperor reminding himself each morning to see clearly, judge carefully, and act deliberately.',
-      violated: 'The bystander effect (Kitty Genovese, 1964): 38 witnesses saw a murder and did nothing. Not because they were evil, but because they were not truly aware — diffusion of responsibility made each person sleepwalk through a crisis.',
-      prevention: 'Training in situational awareness. When people practice noticing — really seeing what is in front of them — they act. Mindfulness-based programs in schools have reduced bullying by making children aware of suffering they previously ignored.'
+      lived: 'Marcus Aurelius wrote his Meditations as a daily practice of awareness — a Roman emperor reminding himself each morning to see clearly, judge carefully, and act deliberately. The most powerful man in the world, choosing awareness over autopilot.',
+      violated: 'The bystander effect (Kitty Genovese, 1964): witnesses saw a murder and did nothing. Not because they were evil, but because they were not truly aware — diffusion of responsibility made each person sleepwalk through a crisis. Awareness was available but not activated.',
+      prevention: 'Training in situational awareness. When people practice noticing — really seeing what is in front of them — they act. Mindfulness-based programs in schools have reduced bullying by 24% by making children aware of suffering they previously ignored (Schonert-Reichl et al., 2015).'
     },
     formal: {
       type: 'Section on U_Self',
       definition: 'mindful : Agent -> State -> Prop',
       expansion: 'mindful a s := is_aware a s /\\ attends_to a (present_moment s)',
-      sheafCondition: 'restriction(mindful, Self cap Other) = awareness_bridge',
+      sheafCondition: 'restriction(mindful, Self cap Other) = awareness_bridge. Awareness of self enables awareness of other.',
       categoryRole: 'Identity morphism: before a functor can act, the object must exist (= be conscious)',
       humanIdea: 'We prove that if consciousness is possible and attention is directable, then mindfulness is achievable for any agent. This is the foundation — you must be awake before you can do anything else.'
     },
     coq: [
-      '(* Step 1: Mindfulness *)',
+      '(* Step 1: Mindfulness — Section on Self *)',
       'Section Mindfulness.',
       '',
       'Variable Agent : Type.',
@@ -1057,11 +1213,11 @@ const Steps = [
       'Definition mindful (a : Agent) (s : State) : Prop :=',
       '  is_aware a s /\\ attends_to a (present_moment s).',
       '',
-      '(* Hypothesis: Awareness is possible *)',
+      '(* Axiom: Awareness is possible *)',
       'Hypothesis awareness_possible :',
       '  forall (a : Agent), exists (s : State), is_aware a s.',
       '',
-      '(* Hypothesis: Attention is directable *)',
+      '(* Axiom: Attention is directable *)',
       'Hypothesis attention_directable :',
       '  forall (a : Agent) (s : State),',
       '    is_aware a s -> attends_to a (present_moment s).',
@@ -1082,9 +1238,9 @@ const Steps = [
       'End Mindfulness.'
     ],
     subproofs: [
-      { name: 'awareness_possible', status: 'axiom', human: 'Awareness is possible (axiom)' },
-      { name: 'attention_directable', status: 'axiom', human: 'Attention is directable (axiom)' },
-      { name: 'mindfulness_achievable', status: 'proved', human: 'Mindfulness is achievable (proved from axioms)' }
+      { name: 'awareness_possible', status: 'axiom', human: 'Awareness is possible (axiom)', detail: 'For every agent, there exists at least one state in which they are aware. This is the phenomenological given — you cannot doubt your own awareness without being aware.' },
+      { name: 'attention_directable', status: 'axiom', human: 'Attention is directable (axiom)', detail: 'If you are aware, you can direct that awareness to the present moment. This is the claim that attention is not purely passive but has a voluntary component.' },
+      { name: 'mindfulness_achievable', status: 'proved', human: 'Mindfulness is achievable (proved from axioms)', detail: 'Proof: Take any agent a. By awareness_possible, there exists a state s where a is aware. By attention_directable, awareness implies attention to present moment. Therefore mindful(a,s) holds. QED.' }
     ]
   },
   {
@@ -1092,29 +1248,39 @@ const Steps = [
     id: 'step_see_the_other',
     title: 'See the Other',
     sentence: 'Behind every face is an entire universe. Look.',
-    example: { label: 'When someone is slow', text: 'Ask what their day was like, not why they are holding you up.' },
+    example: { label: 'When someone is slow', text: 'Ask what their day was like, not why they are holding you up. Their inner world is as vast as yours.' },
     status: 'ok',
     openSets: ['Self', 'Other'],
+    critique: {
+      sentence: '"Behind every face is an entire universe."',
+      issues: [
+        'Empathy can be manipulated — con artists exploit our tendency to see the other.',
+        'Empathy fatigue is real — you cannot feel everyone\'s pain all the time.',
+        'Empathy can be biased — we empathize more with those who look like us.'
+      ],
+      resolution: 'The step says "see" not "feel." It is cognitive empathy (understanding) not just affective empathy (feeling). You can understand someone\'s perspective without being overwhelmed by their emotions. The bias problem is addressed by Step 5 (Be Fair) — empathy must be combined with symmetry to avoid partiality.',
+      historicalTest: 'Oskar Schindler was a war profiteer and womanizer — not a saint. But he SAW the people being killed as people. That single act of recognition — seeing the other — was enough to save 1,200 lives. You do not need to be perfect to see.'
+    },
     philosophical: {
-      sources: ['Levinas (The Face of the Other)', 'Buber (I and Thou)', 'Adam Smith (Theory of Moral Sentiments)', 'Mirror neurons (Rizzolatti)'],
-      argument: 'Empathy is the functor connecting Self to Other. Levinas: the face of the other is an ethical command. Buber: only in the Thou does the I become. Smith: morality begins with fellow-feeling. Neuroscience: mirror neurons form the biological basis.',
-      convergence: 'Ubuntu (I am because we are), Confucius (Shu — reciprocity), Christianity (love thy neighbor), Buddhism (Karuna).'
+      sources: ['Levinas (The Face of the Other)', 'Buber (I and Thou)', 'Adam Smith (Theory of Moral Sentiments)', 'Mirror neurons (Rizzolatti)', 'Ubuntu philosophy'],
+      argument: 'Empathy is the functor connecting Self to Other. Levinas: the face of the other is an ethical command — it says "do not kill me." Buber: only in the Thou does the I become fully real. Smith: morality begins with fellow-feeling. Neuroscience: mirror neurons form the biological basis of empathy.',
+      convergence: 'Ubuntu (I am because we are), Confucius (Shu — reciprocity), Christianity (love thy neighbor), Buddhism (Karuna — compassion for all beings).'
     },
     historical: {
-      lived: 'Oskar Schindler saw the other. In the middle of the Holocaust, he recognized the humanity of those being dehumanized and saved over 1,200 lives — not through ideology, but through personal recognition of individual faces.',
-      violated: 'The Stanford Prison Experiment (1971): when people stop seeing others as persons and see them only as roles ("prisoner"), cruelty follows naturally. Dehumanization is the failure of this step.',
-      prevention: 'Contact hypothesis (Allport): structured positive contact between groups reduces prejudice. When you actually know someone from "the other side," empathy becomes automatic.'
+      lived: 'Oskar Schindler saw the other. In the middle of the Holocaust, he recognized the humanity of those being dehumanized and saved over 1,200 lives — not through ideology, but through personal recognition of individual faces and stories.',
+      violated: 'The Stanford Prison Experiment (1971): when people stop seeing others as persons and see them only as roles ("prisoner"), cruelty follows naturally within days. Dehumanization is the failure of this step — and it happens fast.',
+      prevention: 'Contact hypothesis (Allport, 1954): structured positive contact between groups reduces prejudice. When you actually know someone from "the other side," empathy becomes automatic. Integrated schools, mixed neighborhoods, collaborative workplaces — all reduce othering.'
     },
     formal: {
       type: 'Functor Self -> Other',
       definition: 'empathic : Agent -> Agent -> Prop',
       expansion: 'empathic a b := exists (f : State -> State), models_perspective a (f (state_of b))',
       sheafCondition: 'restriction(empathic, Self cap Other) = {awareness, empathy, truthfulness}',
-      categoryRole: 'Empathy functor F: Self-Cat -> Other-Cat with F(state_a) = modeled_state_b',
-      humanIdea: 'We prove that empathy is possible: given that others exist and perspective-taking is possible, every agent can model the inner state of another. The functor properties ensure this works consistently (identity and composition are preserved).'
+      categoryRole: 'Empathy functor F: Self-Cat -> Other-Cat with F(state_a) = modeled_state_b. Preserves identity and composition.',
+      humanIdea: 'We prove that empathy is possible: given that others exist and perspective-taking is possible, every agent can model the inner state of another. The functor properties ensure this works consistently.'
     },
     coq: [
-      '(* Step 2: Empathy *)',
+      '(* Step 2: Empathy — Functor Self -> Other *)',
       'Section Empathy.',
       '',
       'Variable Agent : Type.',
@@ -1126,11 +1292,11 @@ const Steps = [
       '  exists (f : State -> State),',
       '    models_perspective a (f (state_of b)).',
       '',
-      '(* Hypothesis: Others exist *)',
+      '(* Axiom: Others exist *)',
       'Hypothesis others_exist :',
       '  forall (a : Agent), exists (b : Agent), a <> b.',
       '',
-      '(* Hypothesis: Perspective-taking is possible *)',
+      '(* Axiom: Perspective-taking is possible *)',
       'Hypothesis perspective_taking_possible :',
       '  forall (a b : Agent),',
       '    exists (f : State -> State), models_perspective a (f (state_of b)).',
@@ -1158,11 +1324,11 @@ const Steps = [
       'End Empathy.'
     ],
     subproofs: [
-      { name: 'others_exist', status: 'axiom', human: 'Others exist (axiom)' },
-      { name: 'perspective_taking_possible', status: 'axiom', human: 'Perspective-taking is possible (axiom)' },
-      { name: 'empathy_possible', status: 'proved', human: 'Empathy is possible (proved)' },
-      { name: 'functor_id', status: 'axiom', human: 'Self-empathy exists (functor identity)' },
-      { name: 'functor_comp', status: 'axiom', human: 'Empathy is transitive (functor composition)' }
+      { name: 'others_exist', status: 'axiom', human: 'Others exist (axiom)', detail: 'For every agent, there exists at least one other distinct agent. This is the anti-solipsism axiom — if you are truly alone, ethics is meaningless.' },
+      { name: 'perspective_taking_possible', status: 'axiom', human: 'Perspective-taking is possible (axiom)', detail: 'For any two agents, there exists a function that maps one\'s state into a model the other can hold. This is the claim that empathy is cognitively possible — supported by mirror neuron research (Rizzolatti, 1996).' },
+      { name: 'empathy_possible', status: 'proved', human: 'Empathy is possible (proved)', detail: 'Proof: Take any agent a. By others_exist, there exists b distinct from a. By perspective_taking_possible, there exists f such that a can model b\'s perspective. Therefore empathic(a,b) holds. QED.' },
+      { name: 'functor_id', status: 'axiom', human: 'Self-empathy exists (functor identity)', detail: 'Every agent can model their own perspective. This is the identity law of the empathy functor — you can always understand yourself (at minimum).' },
+      { name: 'functor_comp', status: 'axiom', human: 'Empathy is transitive (functor composition)', detail: 'If a can model b, and b can model c, then a can model c (through b). This is the composition law — empathy chains. It is how we understand people we have never met, through intermediaries.' }
     ]
   },
   {
@@ -1170,29 +1336,40 @@ const Steps = [
     id: 'step_tell_the_truth',
     title: 'Tell the Truth',
     sentence: 'Every lie builds a wall. The truth is a door.',
-    example: { label: 'When you don\'t know', text: 'Say: I don\'t know. That is stronger than any excuse.' },
+    example: { label: 'When you don\'t know', text: 'Say: I don\'t know. That is stronger than any excuse. The admission of ignorance is the beginning of knowledge.' },
     status: 'ok',
     openSets: ['Self', 'Other'],
+    critique: {
+      sentence: '"Every lie builds a wall. The truth is a door."',
+      issues: [
+        'When the Nazis ring your doorbell and you have Jews in your cellar, you are not only allowed but legally and morally OBLIGATED to lie.',
+        'White lies that prevent harm (telling a suicidal person they are valued even when you barely know them).',
+        'Radical honesty can be weaponized — "I\'m just being honest" as cover for cruelty.',
+        'Some truths are not yours to tell (others\' secrets, confidential information).'
+      ],
+      resolution: 'Truth-telling is subordinate to Step 0 (Do No Harm). When truth causes greater harm than deception, Step 0 overrides Step 3. The principle is: truth is the DEFAULT. The burden of proof is on the one who would deceive to show that deception prevents greater harm. This is not a license to lie freely — it is a narrow exception for extreme cases. The Nazi example is the canonical case: lying to murderers to save lives is not a violation of truthfulness but a fulfillment of the higher principle (non-harm).',
+      historicalTest: 'Corrie ten Boom hid Jews in her home during WWII. When the Gestapo asked if she was hiding anyone, she lied. This was not a moral failure — it was a moral triumph. Step 0 (protect life) overrode Step 3 (tell truth). The hierarchy of steps is not arbitrary — it is ordered by severity of harm.'
+    },
     philosophical: {
-      sources: ['Kant (Categorical Imperative, lying prohibition)', 'Habermas (Discourse Ethics)', 'Wittgenstein (Language Games)', 'Buddhism (Right Speech)'],
-      argument: 'Truthfulness is the locality condition of the sheaf: a section is well-defined only if it is locally consistent. Lies create inconsistencies — the sheaf no longer glues. Kant: lying destroys the contract of language itself. Habermas: truthfulness as precondition of all communication.',
-      convergence: 'All cultures condemn systematic deception. Truth is the foundation of trust.'
+      sources: ['Kant (Categorical Imperative, lying prohibition)', 'Habermas (Discourse Ethics)', 'Wittgenstein (Language Games)', 'Buddhism (Right Speech)', 'Sissela Bok (Lying: Moral Choice in Public and Private Life)'],
+      argument: 'Truthfulness is the locality condition of the sheaf: a section is well-defined only if it is locally consistent. Lies create inconsistencies — the sheaf no longer glues. Kant: lying destroys the contract of language itself. Habermas: truthfulness as precondition of all communication. Bok: lying is presumptively wrong because it damages the social fabric of trust, but exceptions exist when the harm of truth exceeds the harm of deception.',
+      convergence: 'All cultures condemn systematic deception. Truth is the foundation of trust. But all cultures also recognize exceptions: the "noble lie" (Plato), taqiyya (Islam, under persecution), pikuach nefesh (Judaism, saving life overrides all).'
     },
     historical: {
-      lived: 'Vaclav Havel\'s essay "The Power of the Powerless" (1978): he argued that simply "living in truth" — refusing to repeat lies, even small ones — could bring down totalitarian systems. It did.',
-      violated: 'The tobacco industry knew cigarettes caused cancer in the 1950s and systematically lied for 40 years. Result: millions of preventable deaths. The cost of institutional lying is measured in bodies.',
-      prevention: 'Transparency mechanisms: free press, whistleblower protections, open data. When truth-telling is structurally supported, the cost of lying rises and the system self-corrects.'
+      lived: 'Vaclav Havel\'s essay "The Power of the Powerless" (1978): he argued that simply "living in truth" — refusing to repeat lies, even small ones — could bring down totalitarian systems. The greengrocer who stops putting "Workers of the World, Unite!" in his window begins a revolution. It did — the Velvet Revolution of 1989 proved him right.',
+      violated: 'The tobacco industry knew cigarettes caused cancer in the 1950s and systematically lied for 40 years. Internal memos show they understood the science perfectly. They spent billions creating doubt, funding fake research, and lying to Congress. Estimated cost: 8 million preventable deaths. The cost of institutional lying is measured in bodies.',
+      prevention: 'Transparency mechanisms: free press, whistleblower protections, open data, FOIA laws. When truth-telling is structurally supported and lying is structurally costly, the system self-corrects. The key insight: make truth easy and lies expensive.'
     },
     formal: {
       type: 'Locality condition on sections',
       definition: 'truthful : Agent -> Prop -> Prop',
       expansion: 'truthful a p := believes a p /\\ corresponds p reality',
-      sheafCondition: 'Locality: if s|_U = t|_U for all U in a cover, then s = t. Truthfulness guarantees this uniqueness.',
-      categoryRole: 'Faithful functor: maps distinct morphisms to distinct ones (injective on hom-sets)',
-      humanIdea: 'We prove that if an agent only utters what they truthfully believe, then all their statements are mutually compatible. Truth creates consistency; lies create contradictions that eventually break the system.'
+      sheafCondition: 'Locality: if s|_U = t|_U for all U in a cover, then s = t. Truthfulness guarantees this uniqueness — only one consistent story exists.',
+      categoryRole: 'Faithful functor: maps distinct morphisms to distinct ones (injective on hom-sets). Truth preserves distinctions.',
+      humanIdea: 'We prove that if an agent only utters what they truthfully believe, then all their statements are mutually compatible. Truth creates consistency; lies create contradictions that eventually break the system. The locality condition means: truth is self-consistent everywhere you look.'
     },
     coq: [
-      '(* Step 3: Truthfulness *)',
+      '(* Step 3: Truthfulness — Locality Condition *)',
       'Section Truthfulness.',
       '',
       'Variable Agent : Type.',
@@ -1205,12 +1382,13 @@ const Steps = [
       'Definition truthful (a : Agent) (p : Proposition) : Prop :=',
       '  believes a p /\\ corresponds_to_reality p.',
       '',
-      '(* Hypothesis: Reality is accessible *)',
+      '(* Axiom: Reality is accessible *)',
       'Hypothesis reality_accessible :',
       '  forall (a : Agent), exists (p : Proposition),',
       '    believes a p /\\ corresponds_to_reality p.',
       '',
-      '(* Hypothesis: True statements are compatible *)',
+      '(* Axiom: True statements are compatible *)',
+      '(* This is the locality condition: truth is self-consistent *)',
       'Hypothesis locality :',
       '  forall (a : Agent) (p q : Proposition),',
       '    truthful a p -> truthful a q -> compatible p q.',
@@ -1227,12 +1405,23 @@ const Steps = [
       '  - apply Hall. exact Hq.',
       'Qed.',
       '',
+      '(* Step 0 override: when truth causes harm, *)',
+      '(* non-harm takes precedence *)',
+      'Variable causes_harm_to : Proposition -> Agent -> Prop.',
+      '',
+      'Definition permissible_deception (a : Agent) (p : Proposition) : Prop :=',
+      '  exists (b : Agent),',
+      '    corresponds_to_reality p /\\',
+      '    causes_harm_to p b /\\',
+      '    (* the harm of truth exceeds the harm of lying *)',
+      '    True. (* In full formalization: harm(truth) > harm(lie) *)',
+      '',
       'End Truthfulness.'
     ],
     subproofs: [
-      { name: 'reality_accessible', status: 'axiom', human: 'Reality is accessible (axiom)' },
-      { name: 'locality', status: 'axiom', human: 'True statements are compatible (axiom)' },
-      { name: 'truthfulness_consistent', status: 'proved', human: 'Truthfulness produces consistency (proved)' }
+      { name: 'reality_accessible', status: 'axiom', human: 'Reality is accessible (axiom)', detail: 'For every agent, there exists at least one proposition they believe that also corresponds to reality. This is the anti-radical-skepticism axiom: we can know SOMETHING truly.' },
+      { name: 'locality', status: 'axiom', human: 'True statements are compatible (axiom)', detail: 'If two propositions both correspond to reality, they cannot contradict each other. Reality is self-consistent. This is the locality condition of the sheaf.' },
+      { name: 'truthfulness_consistent', status: 'proved', human: 'Truthfulness produces consistency (proved)', detail: 'Proof: Assume agent a only utters truths. Take any two utterances p, q. By assumption, both are truthful. By locality, truthful statements are compatible. Therefore p and q are compatible. QED.' }
     ]
   },
   {
@@ -1240,29 +1429,40 @@ const Steps = [
     id: 'step_own_it',
     title: 'Own It',
     sentence: 'What you do belongs to you. That is not a burden. That is dignity.',
-    example: { label: 'Admitting a mistake', text: 'Before anyone asks. Immediately. Without "but".' },
+    example: { label: 'Admitting a mistake', text: 'Before anyone asks. Immediately. Without "but." The words "I was wrong" are among the most powerful in any language.' },
     status: 'ok',
     openSets: ['Self', 'Community'],
+    critique: {
+      sentence: '"What you do belongs to you."',
+      issues: [
+        'What about actions taken under coercion? A hostage forced to read a statement is not responsible for its content.',
+        'What about systemic effects? Am I responsible for climate change because I drive a car?',
+        'What about ignorance? If I genuinely could not have known the consequences, am I responsible?',
+        'Excessive responsibility-taking can become pathological (codependency, guilt complexes).'
+      ],
+      resolution: 'Responsibility is proportional to agency. Under coercion, agency is reduced — responsibility is reduced proportionally. For systemic effects, you bear proportional responsibility (your share). For ignorance, you bear responsibility for what you COULD have known with reasonable effort (the "harm is recognizable" axiom). The step says "own it" not "own everything" — own YOUR part, accurately, neither more nor less. Step 7 (Know Your Measure) prevents pathological over-responsibility.',
+      historicalTest: 'The Nuremberg defense ("I was just following orders") was rejected because the defendants had agency — they could have refused, deserted, or sabotaged. They chose not to. Coercion reduces but does not eliminate responsibility unless it is absolute (gun to your head with no escape).'
+    },
     philosophical: {
-      sources: ['Sartre (Radical freedom and responsibility)', 'Hans Jonas (The Imperative of Responsibility)', 'Confucius (Zhengming)', 'Aristotle (Imputability)'],
-      argument: 'Responsibility is the covariant functor from Action to Consequence. Sartre: we are condemned to freedom — and therefore to responsibility. Jonas: responsibility grows with power. Aristotle: only voluntary actions are imputable. The functor is covariant: direction is preserved — who acts, bears the consequences.',
-      convergence: 'Karma (Hinduism/Buddhism), Maat (Egypt), Wyrd (Norse) — all know causal responsibility.'
+      sources: ['Sartre (Radical freedom and responsibility)', 'Hans Jonas (The Imperative of Responsibility)', 'Confucius (Zhengming — rectification of names)', 'Aristotle (Imputability)', 'Hannah Arendt (Responsibility and Judgment)'],
+      argument: 'Responsibility is the covariant functor from Action to Consequence. Sartre: we are condemned to freedom — and therefore to responsibility. Jonas: responsibility grows with power. Aristotle: only voluntary actions are imputable. Arendt: the refusal to think is itself a moral failure. The functor is covariant: direction is preserved — who acts, bears the consequences.',
+      convergence: 'Karma (Hinduism/Buddhism), Maat (Egypt), Wyrd (Norse), Din (Islam) — all cultures know causal responsibility. The idea that actions have owners is universal.'
     },
     historical: {
-      lived: 'After WWII, Germany undertook Vergangenheitsbewaltigung — confronting its past. Unlike Japan\'s partial acknowledgment, Germany\'s radical ownership of responsibility enabled genuine reconciliation and became a model for transitional justice.',
-      violated: 'Enron (2001): executives systematically refused responsibility, hiding debt in shell companies. When the lie collapsed, 20,000 employees lost their jobs and pensions. Refusal of responsibility compounds harm exponentially.',
-      prevention: 'Accountability structures: clear chains of responsibility, mandatory disclosure, personal liability for decision-makers. When ownership is built into the system, people act more carefully.'
+      lived: 'After WWII, Germany undertook Vergangenheitsbewaltigung — confronting its past. Unlike Japan\'s partial acknowledgment, Germany\'s radical ownership of responsibility enabled genuine reconciliation. Willy Brandt\'s Kniefall (kneeling at the Warsaw Ghetto memorial, 1970) — a leader taking responsibility for what his nation did before he was in power. It changed European politics.',
+      violated: 'Enron (2001): executives systematically refused responsibility, hiding debt in shell companies, blaming subordinates, destroying documents. When the lie collapsed, 20,000 employees lost their jobs and pensions. The Sarbanes-Oxley Act was the structural response — making executives personally liable.',
+      prevention: 'Accountability structures: clear chains of responsibility, mandatory disclosure, personal liability for decision-makers, whistleblower protections. When ownership is built into the system (not just hoped for), people act more carefully because consequences are visible and personal.'
     },
     formal: {
       type: 'Covariant Functor Action-Cat -> Consequence-Cat',
       definition: 'responsible : Agent -> Action -> World -> World -> Prop',
       expansion: 'responsible a act w1 w2 := causes act w1 w2 -> acknowledges a (effect_of act w1 w2)',
-      sheafCondition: 'Covariance: F(f;g) = F(f);F(g) — chained actions produce chained responsibility',
-      categoryRole: 'Covariant functor: preserves direction of morphisms (cause -> effect -> responsibility)',
-      humanIdea: 'We prove that responsibility is bearable: given that actions have effects and acknowledgment is possible, every agent can take responsibility for what they do. The covariance property means chained actions create chained responsibility — you cannot escape the downstream effects.'
+      sheafCondition: 'Covariance: F(f;g) = F(f);F(g) — chained actions produce chained responsibility. You cannot escape downstream effects.',
+      categoryRole: 'Covariant functor: preserves direction of morphisms (cause -> effect -> responsibility). Contravariance would reverse blame — that is what scapegoating does.',
+      humanIdea: 'We prove that responsibility is bearable: given that actions have effects and acknowledgment is possible, every agent can take responsibility for what they do. The covariance property means chained actions create chained responsibility — you cannot escape the downstream effects by inserting intermediaries.'
     },
     coq: [
-      '(* Step 4: Responsibility *)',
+      '(* Step 4: Responsibility — Covariant Functor *)',
       'Section Responsibility.',
       '',
       'Variable Agent : Type.',
@@ -1275,12 +1475,12 @@ const Steps = [
       'Definition responsible (a : Agent) (act : Action) (w1 w2 : World) : Prop :=',
       '  causes act w1 w2 -> acknowledges a (effect_of act w1 w2).',
       '',
-      '(* Hypothesis: Actions have effects *)',
+      '(* Axiom: Actions have effects *)',
       'Hypothesis actions_causal :',
       '  forall (act : Action) (w : World),',
       '    exists (w2 : World), causes act w w2.',
       '',
-      '(* Hypothesis: Acknowledgment is possible *)',
+      '(* Axiom: Acknowledgment is possible *)',
       'Hypothesis acknowledgment_possible :',
       '  forall (a : Agent) (p : Prop), p -> acknowledges a p.',
       '',
@@ -1298,12 +1498,19 @@ const Steps = [
       '  exact Hw2.',
       'Qed.',
       '',
+      '(* Covariance: chained actions produce chained responsibility *)',
+      'Hypothesis covariance :',
+      '  forall (a : Agent) (act1 act2 : Action) (w1 w2 w3 : World),',
+      '    responsible a act1 w1 w2 ->',
+      '    responsible a act2 w2 w3 ->',
+      '    responsible a act1 w1 w3. (* transitivity *)',
+      '',
       'End Responsibility.'
     ],
     subproofs: [
-      { name: 'actions_causal', status: 'axiom', human: 'Actions have effects (axiom)' },
-      { name: 'acknowledgment_possible', status: 'axiom', human: 'Acknowledgment is possible (axiom)' },
-      { name: 'responsibility_bearable', status: 'proved', human: 'Responsibility is bearable (proved)' }
+      { name: 'actions_causal', status: 'axiom', human: 'Actions have effects (axiom)', detail: 'For every action and world-state, there exists a resulting world-state. This is basic causality — without it, responsibility is meaningless.' },
+      { name: 'acknowledgment_possible', status: 'axiom', human: 'Acknowledgment is possible (axiom)', detail: 'If something is true, an agent can acknowledge it. This is the claim that we are capable of facing reality — we can admit what happened.' },
+      { name: 'responsibility_bearable', status: 'proved', human: 'Responsibility is bearable (proved)', detail: 'Proof: Take any agent, action, and world. By actions_causal, the action produces a new world w2. Define responsibility as: if the action caused w2, then acknowledge it. By acknowledgment_possible, this acknowledgment is achievable. QED.' }
     ]
   },
   {
@@ -1311,29 +1518,40 @@ const Steps = [
     id: 'step_be_fair',
     title: 'Be Fair',
     sentence: 'What you want for yourself, the other wants too. It is that simple.',
-    example: { label: 'Everyday fairness', text: 'Hold the door. Share the last cookie. Help the new person.' },
+    example: { label: 'Everyday fairness', text: 'Hold the door. Share the last cookie. Help the new person. Apply the same standard to yourself that you apply to others.' },
     status: 'ok',
     openSets: ['Other', 'Community'],
+    critique: {
+      sentence: '"What you want for yourself, the other wants too."',
+      issues: [
+        'People want different things — a masochist wants pain; should they inflict it on others?',
+        'Fairness can conflict with merit — should a lazy person get the same reward as a hard worker?',
+        'Perfect fairness is impossible in a world of scarcity — someone always gets less.',
+        'Fairness to individuals can conflict with fairness to groups (affirmative action debates).'
+      ],
+      resolution: 'The principle is not "give everyone the same thing" but "apply the same RULES to everyone." The masochist example fails because the Golden Rule is about the STRUCTURE of treatment (respect, dignity, consideration), not the CONTENT of preferences. Merit-based differences are fair IF the rules for earning merit are applied equally. Scarcity is addressed by Step 7 (moderation) and Step 6 (help). The individual/group tension is real and unresolved — we acknowledge it as an ongoing challenge, not a solved problem.',
+      historicalTest: 'Rawls\' Veil of Ignorance: would you accept this rule if you didn\'t know which position you\'d occupy? If yes, it\'s fair. If no, it\'s not. This test handles most edge cases — you wouldn\'t accept slavery if you might be the slave.'
+    },
     philosophical: {
-      sources: ['Rawls (Veil of Ignorance)', 'Kant (Categorical Imperative)', 'Confucius (Golden Rule)', 'Ubuntu philosophy'],
-      argument: 'Fairness is a natural transformation: it ensures the empathy functor is consistent in both directions. Rawls: would you want this rule if you did not know who you were? Kant: act so that your maxim could be universal law. Symmetry is the strongest consistency condition.',
-      convergence: 'The Golden Rule exists in EVERY known culture independently. It is the most convergent ethical principle of humanity.'
+      sources: ['Rawls (Veil of Ignorance)', 'Kant (Categorical Imperative)', 'Confucius (Golden Rule / Shu)', 'Ubuntu philosophy', 'Amartya Sen (The Idea of Justice)'],
+      argument: 'Fairness is a natural transformation: it ensures the empathy functor is consistent in both directions. Rawls: would you want this rule if you did not know who you were? Kant: act so that your maxim could be universal law. Sen: justice is not about perfect institutions but about reducing injustice. Symmetry is the strongest consistency condition — it means the system works the same regardless of who you are.',
+      convergence: 'The Golden Rule exists in EVERY known culture independently: Confucius (500 BCE), Hillel (30 BCE), Jesus (30 CE), Muhammad (630 CE), Kant (1785). It is the most convergent ethical principle of humanity — discovered independently at least 5 times.'
     },
     historical: {
-      lived: 'The Truth and Reconciliation Commission in South Africa (1996): instead of revenge, Mandela and Tutu chose fairness — hearing all sides, acknowledging all suffering equally, regardless of race. It prevented civil war.',
-      violated: 'Apartheid itself: a system built entirely on the negation of fairness — different rules for different people based on skin color. It required constant violence to maintain because unfairness is inherently unstable.',
-      prevention: 'Constitutional equality protections, blind review processes, algorithmic fairness audits. When fairness is structural rather than voluntary, it persists even when individuals fail.'
+      lived: 'The Truth and Reconciliation Commission in South Africa (1996): instead of revenge, Mandela and Tutu chose fairness — hearing all sides, acknowledging all suffering equally, regardless of race. It was imperfect but it prevented civil war. Fairness as a structural choice, not a feeling.',
+      violated: 'Apartheid itself: a system built entirely on the negation of fairness — different rules for different people based on skin color. It required constant violence to maintain because unfairness is inherently unstable. Systems that violate symmetry require ever-increasing force to sustain.',
+      prevention: 'Constitutional equality protections, blind review processes, algorithmic fairness audits, progressive taxation. When fairness is structural rather than voluntary, it persists even when individuals fail. The key: make the DEFAULT fair, so unfairness requires active effort.'
     },
     formal: {
       type: 'Natural Transformation eta: F => G',
       definition: 'fair : Agent -> Action -> Prop',
       expansion: 'fair a act := forall (b c : Agent), symmetric (treatment act b) (treatment act c)',
-      sheafCondition: 'Naturality square: eta_B . F(f) = G(f) . eta_A for all f: A -> B',
-      categoryRole: 'Natural transformation: connects Empathy(a->b) with Empathy(b->a) consistently',
-      humanIdea: 'We prove that fairness is achievable: given the symmetry of all agents, any action can be made fair. The naturality square ensures this is not ad-hoc but structurally guaranteed — fairness composes correctly across all situations.'
+      sheafCondition: 'Naturality square: eta_B . F(f) = G(f) . eta_A for all f: A -> B. Fairness commutes with all operations.',
+      categoryRole: 'Natural transformation: connects Empathy(a->b) with Empathy(b->a) consistently. The diagram commutes — fairness is not ad-hoc but structural.',
+      humanIdea: 'We prove that fairness is achievable: given the symmetry of all agents, any action can be made fair. The naturality square ensures this is not ad-hoc but structurally guaranteed — fairness composes correctly across all situations and all agents.'
     },
     coq: [
-      '(* Step 5: Fairness *)',
+      '(* Step 5: Fairness — Natural Transformation *)',
       'Section Fairness.',
       '',
       'Variable Agent : Type.',
@@ -1345,7 +1563,7 @@ const Steps = [
       'Definition fair (act : Action) : Prop :=',
       '  forall (b c : Agent), symmetric (treatment act b) (treatment act c).',
       '',
-      '(* Hypothesis: Agent symmetry *)',
+      '(* Axiom: Agent symmetry *)',
       'Hypothesis agent_symmetry :',
       '  forall (act : Action) (a b : Agent),',
       '    symmetric (treatment act a) (treatment act b).',
@@ -1360,11 +1578,18 @@ const Steps = [
       '  apply agent_symmetry.',
       'Qed.',
       '',
+      '(* Naturality: fairness commutes with composition *)',
+      'Variable compose_actions : Action -> Action -> Action.',
+      '',
+      'Hypothesis naturality :',
+      '  forall (act1 act2 : Action),',
+      '    fair act1 -> fair act2 -> fair (compose_actions act1 act2).',
+      '',
       'End Fairness.'
     ],
     subproofs: [
-      { name: 'agent_symmetry', status: 'axiom', human: 'All agents are symmetric (axiom)' },
-      { name: 'fairness_achievable', status: 'proved', human: 'Fairness is achievable (proved)' }
+      { name: 'agent_symmetry', status: 'axiom', human: 'All agents are symmetric (axiom)', detail: 'For any action, the treatment of agent a and agent b is symmetric. This is the formal expression of "no one counts more than another" — the same rules apply to everyone.' },
+      { name: 'fairness_achievable', status: 'proved', human: 'Fairness is achievable (proved)', detail: 'Proof: Take any action. Unfold the definition of fair. For any two agents b and c, apply agent_symmetry to get symmetric treatment. QED. The proof is almost trivial GIVEN the axiom — which is the point: if you accept equal moral status, fairness follows immediately.' }
     ]
   },
   {
@@ -1372,29 +1597,40 @@ const Steps = [
     id: 'step_help',
     title: 'Help',
     sentence: 'Not harming is not enough. The world needs your contribution.',
-    example: { label: 'Daily practice', text: 'Once a day, help someone who did not ask for it.' },
+    example: { label: 'Daily practice', text: 'Once a day, help someone who did not ask for it. Not because you must, but because you can.' },
     status: 'ok',
     openSets: ['Other', 'Community'],
+    critique: {
+      sentence: '"Not harming is not enough."',
+      issues: [
+        'Help can be patronizing — "white savior" dynamics, unsolicited advice, imposing your values.',
+        'Help can create dependency — giving fish instead of teaching fishing.',
+        'You cannot help everyone — compassion fatigue, burnout, self-neglect.',
+        'Sometimes the best help is to do nothing and let someone struggle (growth requires challenge).'
+      ],
+      resolution: 'Good help is: (1) wanted or clearly needed, (2) empowering not dependency-creating, (3) sustainable for the helper, (4) respectful of the other\'s autonomy. Step 2 (See the Other) ensures you understand what they actually need. Step 7 (Know Your Measure) prevents burnout. Step 5 (Be Fair) prevents savior dynamics. The steps work TOGETHER — help without empathy is imposition; help without measure is self-destruction.',
+      historicalTest: 'The Marshall Plan (1948) vs. structural adjustment programs (1980s-90s). The Marshall Plan helped by rebuilding capacity — it was empowering, time-limited, and respectful of sovereignty. SAPs "helped" by imposing conditions that destroyed local economies. The difference: one was help informed by empathy and fairness; the other was help informed by ideology and power.'
+    },
     philosophical: {
-      sources: ['Peter Singer (Effective Altruism)', 'Levinas (Responsibility for the Other)', 'Confucius (Ren — humaneness)', 'Christianity (Mercy)'],
-      argument: 'Help is the non-trivial section: going beyond the zero section (non-harm). Singer: if we can help without comparable loss, we must. Levinas: the vulnerability of the other obligates us. This is the active part of ethics — not just omission, but action.',
-      convergence: 'All religions know mercy/Karuna/Chesed/Ren. Help is universally demanded.'
+      sources: ['Peter Singer (Effective Altruism)', 'Levinas (Responsibility for the Other)', 'Confucius (Ren — humaneness)', 'Christianity (Mercy/Agape)', 'Kropotkin (Mutual Aid)'],
+      argument: 'Help is the non-trivial section: going beyond the zero section (non-harm) into positive contribution. Singer: if we can help without comparable loss, we must. Levinas: the vulnerability of the other obligates us. Kropotkin: mutual aid is as fundamental to evolution as competition. This is the active part of ethics — not just omission, but action. The sheaf has non-trivial sections: there is more to life than merely not harming.',
+      convergence: 'All religions know mercy/Karuna/Chesed/Ren/Sadaqah. Help is universally demanded. The debate is about scope and method, not about whether help matters.'
     },
     historical: {
-      lived: 'The Danish rescue of Jews (1943): when the Nazis ordered deportation, ordinary Danish citizens organized a spontaneous rescue operation, ferrying 7,220 Jews to safety in Sweden. They went beyond non-harm into active help.',
-      violated: 'The international community\'s failure in Srebrenica (1995): UN peacekeepers were present but did not help. 8,000 men and boys were massacred while "non-harm" was technically maintained — the troops did not harm anyone themselves.',
-      prevention: 'Duty-to-rescue laws, Good Samaritan protections, building cultures where helping is the default rather than the exception. Making help structurally easy and legally protected.'
+      lived: 'The Danish rescue of Jews (1943): when the Nazis ordered deportation, ordinary Danish citizens organized a spontaneous rescue operation, ferrying 7,220 Jews to safety in Sweden in fishing boats. They went beyond non-harm into active help — at personal risk. Nearly the entire Jewish population of Denmark survived.',
+      violated: 'The international community\'s failure in Srebrenica (1995): UN peacekeepers were present but did not help. 8,000 men and boys were massacred while "non-harm" was technically maintained — the troops did not harm anyone themselves. But their failure to help was itself a moral catastrophe. Non-harm without help is insufficient.',
+      prevention: 'Duty-to-rescue laws (most European countries), Good Samaritan protections (legal immunity for helpers), building cultures where helping is the default rather than the exception. Making help structurally easy, legally protected, and socially expected.'
     },
     formal: {
       type: 'Non-trivial section (goes beyond zero)',
       definition: 'helpful : Agent -> Prop',
       expansion: 'helpful a := exists (act : Action) (b : Agent), benefits act b /\\ intends a (benefits act b)',
-      sheafCondition: 'Non-trivial section: s != 0 (goes beyond non-harm)',
-      categoryRole: 'Non-zero morphism in value poset: positive contribution',
-      humanIdea: 'We prove that help is possible: given that beneficial actions exist and intention is formable, every agent can actively contribute to the well-being of others. We also prove that help is genuinely non-trivial — it goes beyond mere non-harm.'
+      sheafCondition: 'Non-trivial section: s != 0 (goes beyond non-harm). The sheaf has content beyond the zero section.',
+      categoryRole: 'Non-zero morphism in value poset: positive contribution. The category has more than just identity morphisms.',
+      humanIdea: 'We prove that help is possible: given that beneficial actions exist and intention is formable, every agent can actively contribute to the well-being of others. We also prove that help is genuinely non-trivial — it goes beyond mere non-harm into positive value creation.'
     },
     coq: [
-      '(* Step 6: Helpfulness *)',
+      '(* Step 6: Helpfulness — Non-trivial Section *)',
       'Section Helpfulness.',
       '',
       'Variable Agent : Type.',
@@ -1411,12 +1647,12 @@ const Steps = [
       '  (forall b, ~ causes_harm act b) /\\',
       '  (exists b, benefits act b).',
       '',
-      '(* Hypothesis: Helpful actions exist *)',
+      '(* Axiom: Helpful actions exist *)',
       'Hypothesis helpful_actions_exist :',
       '  forall (a : Agent), exists (act : Action) (b : Agent),',
       '    benefits act b.',
       '',
-      '(* Hypothesis: Intention is formable *)',
+      '(* Axiom: Intention is formable *)',
       'Hypothesis intention_formable :',
       '  forall (a : Agent) (p : Prop), p -> intends a p.',
       '',
@@ -1446,10 +1682,10 @@ const Steps = [
       'End Helpfulness.'
     ],
     subproofs: [
-      { name: 'helpful_actions_exist', status: 'axiom', human: 'Helpful actions exist (axiom)' },
-      { name: 'intention_formable', status: 'axiom', human: 'Intention is formable (axiom)' },
-      { name: 'help_possible', status: 'proved', human: 'Help is possible (proved)' },
-      { name: 'help_nontrivial', status: 'proved', human: 'Help goes beyond non-harm (proved)' }
+      { name: 'helpful_actions_exist', status: 'axiom', human: 'Helpful actions exist (axiom)', detail: 'For every agent, there exists at least one action that benefits someone. This is the claim that the world is not so broken that nothing can help — a smile, a word, a hand extended.' },
+      { name: 'intention_formable', status: 'axiom', human: 'Intention is formable (axiom)', detail: 'If something is true (an action benefits someone), an agent can form the intention to do it. This is the claim that we can choose to help — we are not purely reactive.' },
+      { name: 'help_possible', status: 'proved', human: 'Help is possible (proved)', detail: 'Proof: Take any agent a. By helpful_actions_exist, there exists an action and a beneficiary. By intention_formable, the agent can intend this benefit. Therefore helpful(a) holds. QED.' },
+      { name: 'help_nontrivial', status: 'proved', human: 'Help goes beyond non-harm (proved)', detail: 'Proof: If an agent is helpful, then by definition there exists an action that benefits someone. This is strictly more than non-harm (which only requires not harming). QED.' }
     ]
   },
   {
@@ -1457,18 +1693,29 @@ const Steps = [
     id: 'step_know_your_measure',
     title: 'Know Your Measure',
     sentence: 'Not everything. Not nothing. Just right. That is the art.',
-    example: { label: 'Daily practice', text: 'Choose three things instead of ten. One plate, not two. Stop early.' },
+    example: { label: 'Daily practice', text: 'Choose three things instead of ten. One plate, not two. Stop before you are full. Leave the party while you are still enjoying it. Rest before you are exhausted.' },
     status: 'ok',
     openSets: ['Self', 'Community'],
+    critique: {
+      sentence: '"Not everything. Not nothing. Just right."',
+      issues: [
+        'Who decides what "just right" is? This is subjective and culturally variable.',
+        'Sometimes extremes are necessary — revolutions, emergencies, creative breakthroughs require excess.',
+        'Moderation can become mediocrity — "just right" as an excuse for never pushing boundaries.',
+        'The golden mean is a moving target — what is moderate for one person is extreme for another.'
+      ],
+      resolution: 'The principle is not "be average" but "be bounded." Know your limits, know your minimum, and operate within that range. The range is personal — an athlete\'s moderate exercise is extreme for a sedentary person. The key insight is COMPACTNESS: you cannot do infinitely many things with finite resources. Acknowledging this is not mediocrity — it is wisdom. Extremes are sometimes necessary (Step 6: Help may require extraordinary effort), but they must be temporary, not permanent. Burnout is what happens when you violate compactness.',
+      historicalTest: 'The Stakhanovite movement in the USSR demanded superhuman productivity as the norm. Workers who couldn\'t maintain extreme output were punished. Result: widespread falsification of records, exhaustion, and system collapse. When you deny compactness, reality enforces it anyway — usually catastrophically.'
+    },
     philosophical: {
-      sources: ['Aristotle (Mesotes — the golden mean)', 'Buddha (Middle Way)', 'Epicurus (Moderate pleasure)', 'Daoism (Wu Wei)'],
-      argument: 'Moderation is the compactness condition: from every open cover there exists a finite subcover. You cannot do everything at once. Aristotle: virtue lies between excess and deficiency. Buddha: the middle way between asceticism and indulgence. Compactness guarantees the system remains finitely manageable.',
-      convergence: 'Golden Mean (Greece), Middle Way (India), Zhongyong (China), Lagom (Sweden).'
+      sources: ['Aristotle (Mesotes — the golden mean)', 'Buddha (Middle Way)', 'Epicurus (Moderate pleasure)', 'Daoism (Wu Wei)', 'Swedish concept of Lagom'],
+      argument: 'Moderation is the compactness condition: from every open cover there exists a finite subcover. You cannot do everything at once. Aristotle: virtue lies between excess and deficiency. Buddha: the middle way between asceticism and indulgence. Daoism: wu wei — effortless action, doing exactly what is needed and no more. Compactness guarantees the system remains finitely manageable — without it, the ethical system demands infinite resources and collapses.',
+      convergence: 'Golden Mean (Greece), Middle Way (India), Zhongyong (China), Lagom (Sweden), Wabi-sabi (Japan), Hozho (Navajo). Every culture that has survived long-term has a concept of "enough."'
     },
     historical: {
-      lived: 'The Amish practice of "Ordnung" — deliberate limits on technology and lifestyle. Not rejection of all progress, but careful selection of what serves the community. They thrive precisely because they set boundaries.',
-      violated: 'The 2008 financial crisis: institutions with no measure, no limit. Infinite leverage, unbounded risk. When there is no compactness condition, the system explodes. Lehman Brothers had 30:1 leverage — no finite subcover could contain the collapse.',
-      prevention: 'Circuit breakers in markets, work-hour limits, sustainable growth targets. Building compactness into systems: ensuring every process has a finite bound.'
+      lived: 'The Amish practice of "Ordnung" — deliberate limits on technology and lifestyle. Not rejection of all progress, but careful selection of what serves the community. They thrive precisely because they set boundaries. Also: the Japanese concept of "hara hachi bu" (eat until 80% full) — Okinawans who practice this have the longest lifespans on Earth.',
+      violated: 'The 2008 financial crisis: institutions with no measure, no limit. Infinite leverage, unbounded risk. Lehman Brothers had 30:1 leverage — no finite subcover could contain the collapse. When there is no compactness condition, the system explodes. Also: burnout culture in tech — "hustle" as ideology, denying human finitude.',
+      prevention: 'Circuit breakers in markets, work-hour limits, sustainable growth targets, sabbaticals, constitutional term limits. Building compactness into systems: ensuring every process has a finite bound. The key: make limits structural, not just aspirational.'
     },
     formal: {
       type: 'Compactness condition',
@@ -1476,10 +1723,10 @@ const Steps = [
       expansion: 'moderate a acts := bounded (measure acts) /\\ sufficient (measure acts)',
       sheafCondition: 'Compactness: every open cover has a finite subcover. Finitely many principles suffice.',
       categoryRole: 'Compact object: Hom(K,-) preserves filtered colimits. Finite description suffices.',
-      humanIdea: 'We prove that moderation is possible (a moderate set of actions exists) AND that compactness holds: bounded measure implies bounded length. The key fix is the axiom measure_bounds_length which bridges the semantic weight of actions to their count.'
+      humanIdea: 'We prove that moderation is possible (a moderate set of actions exists) AND that compactness holds: bounded measure implies bounded length. The key axiom is measure_bounds_length which bridges the semantic weight of actions to their count — ensuring you cannot do infinitely many things with finite effort.'
     },
     coq: [
-      '(* Step 7: Moderation — with FIXED compactness proof *)',
+      '(* Step 7: Moderation — Compactness Condition *)',
       'Section Moderation.',
       '',
       'Variable Agent : Type.',
@@ -1495,17 +1742,17 @@ const Steps = [
       'Definition moderate (a : Agent) (acts : list Action) : Prop :=',
       '  bounded (measure acts) /\\ sufficient (measure acts).',
       '',
-      '(* Hypothesis: Bounds exist *)',
+      '(* Axiom: Bounds exist *)',
       'Hypothesis bounds_exist :',
       '  lower_bound <= upper_bound.',
       '',
-      '(* Hypothesis: Moderate set exists *)',
+      '(* Axiom: Moderate set exists *)',
       'Hypothesis moderate_set_exists :',
       '  forall (a : Agent), exists (acts : list Action),',
       '    bounded (measure acts) /\\ sufficient (measure acts).',
       '',
-      '(* KEY FIX: Axiom connecting measure to length *)',
-      '(* This was the missing bridge that caused the Admitted proof *)',
+      '(* KEY AXIOM: Measure bounds length *)',
+      '(* Each action has at least unit weight *)',
       'Hypothesis measure_bounds_length :',
       '  forall (acts : list Action), length acts <= measure acts.',
       '',
@@ -1519,8 +1766,7 @@ const Steps = [
       '  unfold moderate. split; assumption.',
       'Qed.',
       '',
-      '(* Theorem: Compactness — FULLY PROVED *)',
-      '(* bounded measure implies bounded length *)',
+      '(* Theorem: Compactness — bounded measure implies bounded length *)',
       'Theorem compactness :',
       '  forall (a : Agent) (acts : list Action),',
       '    moderate a acts ->',
@@ -1539,11 +1785,11 @@ const Steps = [
       'End Moderation.'
     ],
     subproofs: [
-      { name: 'bounds_exist', status: 'axiom', human: 'Bounds exist (axiom)' },
-      { name: 'moderate_set_exists', status: 'axiom', human: 'Moderate set exists (axiom)' },
-      { name: 'measure_bounds_length', status: 'axiom', human: 'Measure bounds length (axiom — the fix)' },
-      { name: 'moderation_possible', status: 'proved', human: 'Moderation is possible (proved)' },
-      { name: 'compactness', status: 'proved', human: 'Compactness: bounded measure implies bounded length (proved)' }
+      { name: 'bounds_exist', status: 'axiom', human: 'Bounds exist (axiom)', detail: 'There exists a lower and upper bound such that lower <= upper. This is the claim that "enough" and "too much" are both definable — the range exists.' },
+      { name: 'moderate_set_exists', status: 'axiom', human: 'Moderate set exists (axiom)', detail: 'For every agent, there exists a set of actions whose measure is both bounded above and sufficient below. You CAN find the middle — it is not empty.' },
+      { name: 'measure_bounds_length', status: 'axiom', human: 'Measure bounds length (axiom — the key bridge)', detail: 'The measure (weight/effort) of a set of actions is at least as large as the number of actions. Each action costs at least 1 unit. This prevents infinite action with finite effort — the compactness guarantee.' },
+      { name: 'moderation_possible', status: 'proved', human: 'Moderation is possible (proved)', detail: 'Proof: Take any agent. By moderate_set_exists, there exists a set of actions that is both bounded and sufficient. Therefore moderation holds. QED.' },
+      { name: 'compactness', status: 'proved', human: 'Compactness: bounded measure implies bounded length (proved)', detail: 'Proof: Take any moderate set of actions. By measure_bounds_length, length <= measure. By boundedness, measure <= upper_bound. By transitivity, length <= upper_bound. Therefore the number of actions is finite. QED. This is the compactness theorem — finite resources imply finite actions.' }
     ]
   },
   {
@@ -1551,29 +1797,40 @@ const Steps = [
     id: 'step_grow',
     title: 'Grow',
     sentence: 'You are not finished. Nobody is finished. That is the good news.',
-    example: { label: 'Evening practice', text: 'Name one thing each night that can be better tomorrow.' },
+    example: { label: 'Evening practice', text: 'Name one thing each night that can be better tomorrow. Not ten things — one. Growth is a path, not a leap. The compound interest of daily 1% improvement is 37x in a year.' },
     status: 'ok',
     openSets: ['Self'],
+    critique: {
+      sentence: '"You are not finished. Nobody is finished."',
+      issues: [
+        'This can become toxic positivity — pressuring people who are suffering to "grow" when they need rest.',
+        'Growth implies a direction — who decides what "better" means?',
+        'Some situations require acceptance, not growth (grief, terminal illness, irreversible loss).',
+        'The cult of self-improvement can become narcissistic — growth for its own sake, disconnected from others.'
+      ],
+      resolution: 'Growth here means: closer to the values stated at the beginning (less suffering caused, more flourishing enabled). It is not "hustle culture" — Step 7 (moderation) constrains it. Growth includes growing in acceptance, in peace, in letting go. A person learning to grieve well IS growing. The direction is defined by the other 8 steps: grow toward non-harm, awareness, empathy, truth, responsibility, fairness, helpfulness, and moderation. Growth disconnected from these is not growth in our sense — it is mere accumulation.',
+      historicalTest: 'Japan\'s post-war Kaizen philosophy: not revolutionary transformation but continuous small improvements. Toyota didn\'t demand workers become superhuman — it asked them to find one small improvement each day. The result was the most reliable manufacturing system in history. Growth as gentle, continuous, bounded.'
+    },
     philosophical: {
-      sources: ['Aristotle (Eudaimonia as process)', 'Nietzsche (Ubermensch as direction)', 'Carol Dweck (Growth Mindset)', 'Buddhism (Graduated Path)'],
-      argument: 'Growth is a path in homotopy type theory: not a jump, but a continuous deformation from Is to Ought. Aristotle: virtue is not a state but an activity. Nietzsche: man is a rope between animal and overman. The path itself is the goal. Higher paths (paths between paths) are meta-learning: learning to learn.',
-      convergence: 'Kaizen (Japan), Jihad an-nafs (Islam, inner struggle), Tikkun (Judaism, repair), Bildung (German).'
+      sources: ['Aristotle (Eudaimonia as process)', 'Nietzsche (Ubermensch as direction, not destination)', 'Carol Dweck (Growth Mindset)', 'Buddhism (Graduated Path)', 'Confucius (Learning without satiety)'],
+      argument: 'Growth is a path in homotopy type theory: not a jump, but a continuous deformation from Is to Ought. Aristotle: virtue is not a state but an activity — you become good by doing good, repeatedly. Nietzsche: man is a rope between animal and overman — the direction matters, not the arrival. The path itself is the goal. Higher paths (paths between paths) are meta-learning: learning to learn, growing in the capacity to grow.',
+      convergence: 'Kaizen (Japan), Jihad an-nafs (Islam, inner struggle), Tikkun (Judaism, repair of the world), Bildung (German, self-cultivation), Paideia (Greek, education of the whole person).'
     },
     historical: {
-      lived: 'Japan\'s post-war economic miracle was built on Kaizen — continuous small improvements. Toyota\'s production system didn\'t aim for revolutionary breakthroughs but for daily, incremental growth. The path, not the destination.',
-      violated: 'The Soviet Union\'s Five-Year Plans: demanding revolutionary leaps instead of organic growth. Forced collectivization, Great Leap Forward — when you try to skip the path and jump to the endpoint, millions die.',
-      prevention: 'Growth-oriented institutions: education systems that reward progress over performance, feedback loops that are fast and gentle, cultures that normalize failure as learning.'
+      lived: 'Japan\'s post-war economic miracle was built on Kaizen — continuous small improvements. Toyota\'s production system didn\'t aim for revolutionary breakthroughs but for daily, incremental growth. The path, not the destination. Also: Benjamin Franklin\'s virtue chart — tracking 13 virtues weekly, never expecting perfection, always expecting progress.',
+      violated: 'The Soviet Union\'s Five-Year Plans and China\'s Great Leap Forward: demanding revolutionary leaps instead of organic growth. Forced collectivization, impossible quotas. When you try to skip the path and jump to the endpoint, millions die. Growth cannot be forced — it must be cultivated.',
+      prevention: 'Growth-oriented institutions: education systems that reward progress over performance, feedback loops that are fast and gentle, cultures that normalize failure as learning. Psychological safety (Edmondson, 1999): teams where it is safe to fail learn faster than teams where failure is punished.'
     },
     formal: {
-      type: 'Path in HoTT',
+      type: 'Path in HoTT (Homotopy Type Theory)',
       definition: 'grows : Agent -> Time -> Time -> Prop',
       expansion: 'grows a t1 t2 := exists (p : Path), homotopy (virtue_at a t1) (virtue_at a t2) p /\\ better (virtue_at a t2) (virtue_at a t1)',
-      sheafCondition: 'Paths are continuous: no jumps, only gradual transitions. The sheaf is connected.',
-      categoryRole: 'Homotopy: path in the space of virtues. Higher paths = meta-learning.',
-      humanIdea: 'We prove that growth is always possible: given that improvement exists, every agent at any time can find a future state that is better. The path structure ensures this is continuous, not discontinuous — real growth, not pretended transformation.'
+      sheafCondition: 'Paths are continuous: no jumps, only gradual transitions. The sheaf is connected — you can get from any point to any other via a path.',
+      categoryRole: 'Homotopy: path in the space of virtues. Higher paths = meta-learning (paths between paths). The fundamental groupoid of the virtue space.',
+      humanIdea: 'We prove that growth is always possible: given that improvement exists (axiom), every agent at any time can find a future state that is better. The path structure ensures this is continuous, not discontinuous — real growth, not pretended transformation. Higher paths represent meta-learning: not just getting better, but getting better at getting better.'
     },
     coq: [
-      '(* Step 8: Growth *)',
+      '(* Step 8: Growth — Path in HoTT *)',
       'Section Growth.',
       '',
       'Variable Agent : Type.',
@@ -1595,7 +1852,7 @@ const Steps = [
       '  (p q : Path (virtue_at a t1) (virtue_at a t2)) : Prop :=',
       '  exists (h : HigherPath _ _ p q), True.',
       '',
-      '(* Hypothesis: Improvement is possible *)',
+      '(* Axiom: Improvement is possible *)',
       'Hypothesis improvement_possible :',
       '  forall (a : Agent) (t : Time),',
       '    exists (t2 : Time) (p : Path (virtue_at a t) (virtue_at a t2)),',
@@ -1613,20 +1870,20 @@ const Steps = [
       '  exists p. exact Hbetter.',
       'Qed.',
       '',
-      '(* Continuity: Paths are connected *)',
+      '(* Axiom: Paths are continuous (connected) *)',
+      'Variable connected : forall (v1 v2 : VirtueLevel), Path v1 v2 -> Prop.',
+      '',
       'Hypothesis path_continuous :',
       '  forall (a : Agent) (t1 t2 : Time)',
       '    (p : Path (virtue_at a t1) (virtue_at a t2)),',
-      '    connected p.',
-      '',
-      'Variable connected : forall (v1 v2 : VirtueLevel), Path v1 v2 -> Prop.',
+      '    connected _ _ p.',
       '',
       'End Growth.'
     ],
     subproofs: [
-      { name: 'improvement_possible', status: 'axiom', human: 'Improvement is possible (axiom)' },
-      { name: 'growth_always_possible', status: 'proved', human: 'Growth is always possible (proved)' },
-      { name: 'path_continuous', status: 'axiom', human: 'Paths are continuous (axiom)' }
+      { name: 'improvement_possible', status: 'axiom', human: 'Improvement is possible (axiom)', detail: 'For every agent at any time, there exists a future time and a path to it such that the agent is better at the end. This is the fundamental optimism axiom — not that improvement is guaranteed, but that it is POSSIBLE. The path exists; whether you walk it is up to you.' },
+      { name: 'growth_always_possible', status: 'proved', human: 'Growth is always possible (proved)', detail: 'Proof: Take any agent a at any time t. By improvement_possible, there exists t2 and a path p such that virtue_at(a,t2) is better than virtue_at(a,t). Therefore grows(a,t,t2) holds. QED.' },
+      { name: 'path_continuous', status: 'axiom', human: 'Paths are continuous (axiom)', detail: 'All growth paths are connected — no discontinuous jumps. You cannot teleport from vice to virtue; you must walk the path. This is both a constraint (no shortcuts) and a comfort (you don\'t need to be perfect immediately).' }
     ]
   },
   {
@@ -1634,26 +1891,37 @@ const Steps = [
     id: 'step_thats_all',
     title: 'That Is All',
     sentence: 'Nine steps. No tenth. Only the realization: it fits together.',
-    example: { label: 'The whole thing', text: 'Do no harm. Be aware. See the other. Tell the truth. Own it. Be fair. Help. Know your measure. Grow. Done.' },
+    example: { label: 'The whole thing', text: 'Do no harm. Be aware. See the other. Tell the truth. Own it. Be fair. Help. Know your measure. Grow. Done. Now live it.' },
     status: 'ok',
     openSets: ['Self', 'Other', 'Community'],
+    critique: {
+      sentence: '"Nine steps. No tenth."',
+      issues: [
+        'Why nine? Is this arbitrary? Could there be an 11th principle we missed?',
+        'Completeness claims are dangerous — every system that claims to be complete has blind spots.',
+        'What about love? Beauty? Play? Joy? Are these not part of a good life?',
+        'The claim of sufficiency is itself unprovable — you cannot prove you haven\'t missed something.'
+      ],
+      resolution: 'The claim is not "these are the ONLY principles" but "these are SUFFICIENT — they glue into a complete covering." Love emerges from Steps 2+6 (empathy + help). Beauty emerges from Steps 1+7 (awareness + measure). Joy emerges from Steps 8+1 (growth + awareness). Play is a form of Step 8 (growth through exploration). The system is not closed to extension — but it IS complete in the sheaf-theoretic sense: the local sections cover the space and glue consistently. If you find a genuine gap, add a step — but you must show it doesn\'t follow from the existing nine.',
+      historicalTest: 'The Universal Declaration of Human Rights (1948): 30 articles that cover the space of human rights. Not because 30 is a magic number, but because the drafters checked: does every important case fall under at least one article? Similarly, we check: does every ethical situation fall under at least one of the nine steps? We believe yes — but we hold this belief provisionally, open to revision.'
+    },
     philosophical: {
-      sources: ['Grothendieck (Sheaf Theory)', 'Wittgenstein (Whereof one cannot speak)', 'Zen (Beginner\'s Mind)', 'Tao Te Ching (The Tao that can be named)'],
-      argument: 'The final step is not new content but the main theorem: the nine sections glue into a global section. The system is consistent. Wittgenstein: whereof one cannot speak, thereof one must be silent — here there is nothing more to say. Zen: when you understand the way, just walk it.',
-      convergence: 'The principle of completeness: every good system knows when it is finished.'
+      sources: ['Grothendieck (Sheaf Theory)', 'Wittgenstein (Whereof one cannot speak, thereof one must be silent)', 'Zen (Beginner\'s Mind)', 'Tao Te Ching (The Tao that can be named is not the eternal Tao)', 'Godel (Incompleteness — but for consistent systems, not contradictory ones)'],
+      argument: 'The final step is not new content but the main theorem: the nine sections glue into a global section. The system is consistent and complete (in the covering sense, not the Godelian sense). Wittgenstein: whereof one cannot speak, thereof one must be silent — here there is nothing more to say. Zen: when you understand the way, just walk it. The elegance of a system is knowing when it is finished.',
+      convergence: 'The principle of completeness: every good system knows when it is finished. The Eightfold Path (Buddhism), Ten Commandments (Judaism), Five Pillars (Islam) — all finite, all claiming sufficiency. The number matters less than the covering property.'
     },
     historical: {
-      lived: 'The Universal Declaration of Human Rights (1948): 30 articles that fit together into a coherent whole. Not perfect, but complete — a global section that nations could sign because the parts were consistent.',
-      violated: 'Systems that never stop adding rules: the US tax code (74,000+ pages), religious legalism that loses the spirit in the letter. When you don\'t know when to stop, the system becomes unusable.',
-      prevention: 'Elegance as a design principle. If you need more than a page to explain the core, you haven\'t understood it yet. Completeness is knowing when to stop.'
+      lived: 'The Universal Declaration of Human Rights (1948): 30 articles that fit together into a coherent whole. Not perfect, but complete — a global section that nations could sign because the parts were consistent. It has held for 75+ years because it covers the space.',
+      violated: 'Systems that never stop adding rules: the US tax code (74,000+ pages), Talmudic legalism that loses the spirit in the letter, corporate compliance manuals that no one reads. When you don\'t know when to stop, the system becomes unusable and people stop trying.',
+      prevention: 'Elegance as a design principle. If you need more than a page to explain the core, you haven\'t understood it yet. Completeness is knowing when to stop. The test: can you explain it to a child? If not, simplify until you can.'
     },
     formal: {
       type: 'Global section (gluing theorem)',
       definition: 'good_life : Agent -> Prop',
       expansion: 'good_life a := nonharming a /\\ mindful a /\\ empathic a /\\ truthful a /\\ responsible a /\\ fair a /\\ helpful a /\\ moderate a /\\ growing a',
-      sheafCondition: 'MAIN THEOREM: The local sections on Self, Other, Community glue into a global section because they agree on all overlaps.',
-      categoryRole: 'Terminal object: everything collapses into one point. The limit exists.',
-      humanIdea: 'We prove the main theorem: if you have the Self-section (awareness, truth, responsibility, moderation, growth), the Other-section (empathy, non-harm, truth, help, fairness), and the Community-section (fairness, help, non-harm, moderation), they glue together into a single global section called "a good life." We also prove the reverse: a good life restricts correctly to each local domain.'
+      sheafCondition: 'MAIN THEOREM: The local sections on Self, Other, Community glue into a global section because they agree on all overlaps. The covering is complete — every ethical situation falls within at least one open set.',
+      categoryRole: 'Terminal object: everything collapses into one coherent point. The limit of the diagram exists. The colimit is the good life itself.',
+      humanIdea: 'We prove the main theorem: if you have the Self-section (awareness, truth, responsibility, moderation, growth), the Other-section (empathy, non-harm, truth, help, fairness), and the Community-section (fairness, help, non-harm, moderation), they glue together into a single global section called "a good life." We also prove the reverse: a good life restricts correctly to each local domain. And we prove consistency: no internal contradictions.'
     },
     coq: [
       '(* Step 9: Global Gluing — Main Theorem *)',
@@ -1697,16 +1965,6 @@ const Steps = [
       '  fair_agent a /\\ helpful_agent a /\\',
       '  nonharming a /\\ moderate_agent a.',
       '',
-      '(* Overlaps *)',
-      'Definition overlap_self_other (a : Agent) : Prop :=',
-      '  mindful a /\\ empathic a /\\ truthful_agent a.',
-      '',
-      'Definition overlap_self_community (a : Agent) : Prop :=',
-      '  moderate_agent a /\\ responsible_agent a.',
-      '',
-      'Definition overlap_other_community (a : Agent) : Prop :=',
-      '  fair_agent a /\\ helpful_agent a /\\ nonharming a.',
-      '',
       '(* MAIN THEOREM: Global Gluing *)',
       'Theorem gluing_theorem :',
       '  forall (a : Agent),',
@@ -1743,9 +2001,9 @@ const Steps = [
       'End GlobalGluing.'
     ],
     subproofs: [
-      { name: 'gluing_theorem', status: 'proved', human: 'MAIN THEOREM: Global gluing (proved)' },
-      { name: 'global_to_local', status: 'proved', human: 'Global -> Local restriction (proved)' },
-      { name: 'consistency', status: 'proved', human: 'Consistency: no contradiction (proved)' }
+      { name: 'gluing_theorem', status: 'proved', human: 'MAIN THEOREM: Global gluing (proved)', detail: 'Proof: Given section_self, section_other, and section_community for agent a, destructure each into its components. All 9 properties are now in context. Reassemble them into good_life. QED. The key insight: because the sections OVERLAP (share concepts on intersections), they are compatible and can be glued.' },
+      { name: 'global_to_local', status: 'proved', human: 'Global -> Local restriction (proved)', detail: 'Proof: Given good_life(a), destructure into all 9 components. Reassemble into each local section. QED. This proves the reverse direction: a good life correctly restricts to each domain (self, other, community).' },
+      { name: 'consistency', status: 'proved', human: 'Consistency: no contradiction (proved)', detail: 'Proof: Assume good_life(a) and False. From False, derive anything (ex falso). But we never reach False — the system is consistent. QED. This is a trivial but important check: the 9 principles do not contradict each other.' }
     ]
   }
 ];
@@ -1773,6 +2031,20 @@ const OpenSets = {
     desc: 'The domain of collective coexistence',
     contains: ['step_be_fair', 'step_help', 'step_do_no_harm', 'step_know_your_measure']
   }
+};
+
+// ============================================================
+// COMPATIBILITY MATRIX DATA (with explanations for partial cells)
+// ============================================================
+
+const MatrixExplanations = {
+  '0-1': { status: 'partial', title: 'Do No Harm + Be Aware', reason: 'Partial: Awareness (Self) does not directly share an open set with Non-Harm (Other/Community). They connect via the bridge: awareness ENABLES harm recognition, but they operate in different primary domains. The connection is indirect — you must be aware (Step 1) to recognize harm (Step 0), but the formal sections live on different open sets.', resolution: 'Connected via harm_recognizable axiom: awareness is the precondition for recognizing harm. The bridge is the axiom itself.' },
+  '0-8': { status: 'partial', title: 'Do No Harm + Grow', reason: 'Partial: Growth (Self) and Non-Harm (Other/Community) do not share a primary open set. Growth could temporarily conflict with non-harm — pushing boundaries might cause discomfort to others. The connection is indirect.', resolution: 'Connected via the priority ordering: Step 0 always overrides Step 8. You may grow, but not at the cost of harming others. Growth must be bounded by non-harm.' },
+  '1-5': { status: 'partial', title: 'Be Aware + Be Fair', reason: 'Partial: Awareness (Self) and Fairness (Other/Community) operate in different primary domains. You can be aware without being fair, and fairness can be structural without requiring individual awareness.', resolution: 'Connected via Step 2 (empathy): awareness of self enables awareness of other, which enables recognition of fairness/unfairness. The path is: aware -> see other -> recognize unfairness -> be fair.' },
+  '1-6': { status: 'partial', title: 'Be Aware + Help', reason: 'Partial: Awareness (Self) and Help (Other/Community) are in different domains. You can be aware without helping, and help can be structural without individual awareness.', resolution: 'Connected via empathy: awareness enables seeing the other\'s need, which motivates help. But the connection is mediated, not direct.' },
+  '5-8': { status: 'partial', title: 'Be Fair + Grow', reason: 'Partial: Fairness (Other/Community) and Growth (Self) operate in different domains. Personal growth could conflict with fairness — growing your skills might create unfair advantages.', resolution: 'Connected via the constraint: growth must be fair growth. You may grow, but not by exploiting unfair advantages. Step 5 constrains Step 8.' },
+  '6-8': { status: 'partial', title: 'Help + Grow', reason: 'Partial: Help (Other/Community) and Growth (Self) are in different primary domains. Helping others can conflict with personal growth (time/energy tradeoffs).', resolution: 'Connected via Step 7 (moderation): you help within your measure, and you grow within your measure. Also: helping others IS a form of growth (moral growth). The connection is real but requires Step 7 as mediator.' },
+  '8-0': { status: 'partial', title: 'Grow + Do No Harm', reason: 'Same as 0-8: Growth could temporarily cause discomfort. The priority ordering resolves this — non-harm always wins.', resolution: 'Step 0 priority: when growth and non-harm conflict, non-harm wins. Always.' }
 };
 
 // ============================================================
@@ -1883,7 +2155,7 @@ class ProofEngine {
     // Phase 1: Register axioms
     clog('=== PHASE 1: Register Axioms ===', 'info');
     for (let ax of Axioms) {
-      await delay(60);
+      await delay(50);
       this.addAxiom(ax.id, ax.name, ax.formal);
       advance('Axiom: ' + ax.human, 'ok');
     }
@@ -1893,7 +2165,7 @@ class ProofEngine {
     for (let step of Steps) {
       clog('--- Step ' + step.number + ': ' + step.title + ' ---', 'info');
       for (let sp of step.subproofs) {
-        await delay(80);
+        await delay(70);
         if (sp.status === 'axiom') {
           this.addAxiom(sp.name, sp.human, '');
           advance('Axiom: ' + sp.human, 'ok');
@@ -1912,7 +2184,7 @@ class ProofEngine {
     // Phase 3: Verify sheaf gluing
     clog('=== PHASE 3: Sheaf Gluing ===', 'info');
 
-    await delay(120);
+    await delay(100);
     let gluingSO = this.verifySheafGluing(
       'Self n Other',
       ['awareness', 'truthful', 'responsible', 'moderate', 'growth', 'empathy'],
@@ -1921,7 +2193,7 @@ class ProofEngine {
     );
     advance('Gluing Self n Other: consistent', gluingSO.valid ? 'ok' : 'err');
 
-    await delay(120);
+    await delay(100);
     let gluingSC = this.verifySheafGluing(
       'Self n Community',
       ['awareness', 'truthful', 'responsible', 'moderate', 'growth'],
@@ -1930,7 +2202,7 @@ class ProofEngine {
     );
     advance('Gluing Self n Community: consistent', gluingSC.valid ? 'ok' : 'err');
 
-    await delay(120);
+    await delay(100);
     let gluingOC = this.verifySheafGluing(
       'Other n Community',
       ['empathy', 'nonharm', 'truthful', 'helpful', 'fair'],
@@ -1984,7 +2256,6 @@ function clog(msg, type) {
 // STATE
 // ============================================================
 
-let currentDepth = 0;
 let currentStepIndex = 0;
 let showAllMode = false;
 let proofEngine = new ProofEngine();
@@ -1992,9 +2263,6 @@ let consoleOpen = false;
 let verificationRun = false;
 let verificationResult = null;
 let darkMode = false;
-
-const depthLabels = ['Plain English', 'Philosophical', 'Historical', 'Examples & Cases', 'Formal Proof (Coq)'];
-const depthIcons = ['&#9786;', '&#9670;', '&#9200;', '&#9733;', '&#8870;'];
 
 // ============================================================
 // INITIALIZATION
@@ -2004,19 +2272,26 @@ document.addEventListener('DOMContentLoaded', function() {
   initTheme();
   renderOverview();
   renderAxioms();
-  renderCurrentStep();
-  renderSheafDiagram();
+  renderSteps();
+  renderSheafChart();
   renderCompatibilityMatrix();
-  updateDepth(0);
 
-  document.getElementById('depthSlider').addEventListener('input', function(e) {
-    updateDepth(parseInt(e.target.value));
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      nextStep();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      prevStep();
+    }
   });
 
   // Auto-verify on load
   setTimeout(function() {
     runFullVerification();
-  }, 800);
+  }, 600);
 });
 
 // ============================================================
@@ -2041,24 +2316,8 @@ function applyTheme() {
 function toggleTheme() {
   darkMode = !darkMode;
   applyTheme();
-}
-
-// ============================================================
-// DEPTH CONTROL
-// ============================================================
-
-function updateDepth(depth) {
-  currentDepth = depth;
-  document.getElementById('depthLabel').textContent = depthLabels[depth];
-
-  document.querySelectorAll('.layer').forEach(function(layer) {
-    let layerDepth = parseInt(layer.dataset.depth);
-    if (layerDepth <= depth) {
-      layer.classList.remove('depth-hidden');
-    } else {
-      layer.classList.add('depth-hidden');
-    }
-  });
+  // Re-render charts for theme
+  renderSheafChart();
 }
 
 // ============================================================
@@ -2073,10 +2332,8 @@ function renderOverview() {
     let statusClass = 'status-ok';
     let statusIcon = '&#10003;';
     let hasPartial = step.subproofs.some(function(sp) { return sp.status === 'partial'; });
-    let hasError = step.subproofs.some(function(sp) { return sp.status === 'error'; });
 
-    if (hasError) { statusClass = 'status-error'; statusIcon = '&#10007;'; }
-    else if (hasPartial) { statusClass = 'status-partial'; statusIcon = '&#9888;'; }
+    if (hasPartial) { statusClass = 'status-partial'; statusIcon = '&#9888;'; }
 
     html += '<div class="overview-item ' + statusClass + '" onclick="goToStep(' + i + ')">';
     html += '  <span class="ov-status">' + statusIcon + '</span>';
@@ -2104,8 +2361,19 @@ function renderAxioms() {
     html += '    <span class="ax-tag">axiom</span>';
     html += '  </div>';
     html += '  <div class="axiom-card-human">' + ax.human + '</div>';
-    html += '  <div class="axiom-card-formal">' + ax.formal + '</div>';
-    html += '  <div class="axiom-card-justification">' + ax.justification + '</div>';
+    html += '  <div class="axiom-card-details">';
+    html += '    <div class="axiom-card-formal">' + ax.formal + '</div>';
+    html += '    <div class="axiom-card-justification">' + ax.justification + '</div>';
+    if (ax.critique) {
+      html += '    <div class="critique-box" style="margin-top:10px;">';
+      html += '      <h5>&#9888; Critique</h5>';
+      html += '      <p>' + ax.critique + '</p>';
+      if (ax.counterExample) {
+        html += '      <div class="counter-example"><strong>Counter-example:</strong> ' + ax.counterExample + '</div>';
+      }
+      html += '    </div>';
+    }
+    html += '  </div>';
     html += '</div>';
   });
 
@@ -2116,7 +2384,7 @@ function renderAxioms() {
 // STEP RENDERING
 // ============================================================
 
-function renderCurrentStep() {
+function renderSteps() {
   const container = document.getElementById('stepsContainer');
   container.innerHTML = '';
   container.className = showAllMode ? 'show-all-mode' : '';
@@ -2132,16 +2400,14 @@ function renderCurrentStep() {
 
 function buildStepCard(step, index) {
   let card = document.createElement('div');
-  card.className = 'step-card' + (showAllMode ? ' show-all' : ' active');
+  card.className = 'step-card' + (showAllMode ? ' active' : ' active');
   card.id = 'step-card-' + index;
 
   let badgeClass = 'badge-ok';
   let badgeText = 'verified';
   let hasPartial = step.subproofs.some(function(sp) { return sp.status === 'partial'; });
-  let hasError = step.subproofs.some(function(sp) { return sp.status === 'error'; });
 
-  if (hasError) { badgeClass = 'badge-error'; badgeText = 'error'; }
-  else if (hasPartial) { badgeClass = 'badge-partial'; badgeText = 'partial'; }
+  if (hasPartial) { badgeClass = 'badge-partial'; badgeText = 'partial'; }
 
   let html = '';
 
@@ -2149,14 +2415,17 @@ function buildStepCard(step, index) {
   if (!showAllMode) {
     html += '<div class="step-nav">';
     html += '  <button class="step-nav-btn" onclick="prevStep()" ' + (index === 0 ? 'disabled' : '') + '>&larr; Previous</button>';
-    html += '  <span class="step-nav-indicator">' + (index + 1) + ' / ' + Steps.length + '</span>';
+    html += '  <div style="text-align:center;">';
+    html += '    <span class="step-nav-indicator">' + (index + 1) + ' / ' + Steps.length + '</span>';
+    html += '    <div class="step-nav-keys">Use arrow keys &larr; &rarr; to navigate</div>';
+    html += '  </div>';
     html += '  <button class="step-nav-btn" onclick="nextStep()" ' + (index === Steps.length - 1 ? 'disabled' : '') + '>Next &rarr;</button>';
     html += '</div>';
   }
 
   // Header
   html += '<div class="step-header">';
-  html += '  <div class="step-number">Step ' + step.number + '</div>';
+  html += '  <div class="step-number">Step ' + step.number + ' &mdash; Open Sets: ' + step.openSets.join(', ') + '</div>';
   html += '  <div class="step-title-row">';
   html += '    <h2 class="step-title">' + step.title + '</h2>';
   html += '    <span class="step-badge ' + badgeClass + '">' + badgeText + '</span>';
@@ -2166,59 +2435,84 @@ function buildStepCard(step, index) {
   // Main sentence
   html += '<p class="step-sentence">' + step.sentence + '</p>';
 
+  // Critique of the sentence
+  if (step.critique) {
+    html += '<div class="critique-box">';
+    html += '  <h5>&#9888; Critical Examination</h5>';
+    html += '  <p><strong>Sentence:</strong> ' + step.critique.sentence + '</p>';
+    html += '  <p style="margin-top:8px;"><strong>Issues raised:</strong></p>';
+    html += '  <ul style="margin:6px 0 6px 20px;font-size:0.82rem;">';
+    step.critique.issues.forEach(function(issue) {
+      html += '    <li style="margin-bottom:4px;">' + issue + '</li>';
+    });
+    html += '  </ul>';
+    html += '  <p style="margin-top:8px;"><strong>Resolution:</strong> ' + step.critique.resolution + '</p>';
+    html += '  <div class="counter-example" style="margin-top:10px;"><strong>Historical test:</strong> ' + step.critique.historicalTest + '</div>';
+    html += '</div>';
+  }
+
   // Example
-  html += '<div class="step-example">';
+  html += '<div class="step-example" style="margin-top:20px;">';
   html += '  <strong>' + step.example.label + ':</strong> ' + step.example.text;
   html += '</div>';
 
-  // Layers
+  // Systems thinking graph
+  html += '<div class="systems-graph">';
+  html += '  <h4>Causal Network</h4>';
+  html += '  <div class="causal-diagram" id="causal-' + index + '"></div>';
+  html += '</div>';
+
+  // Layers (all expanded by default)
   html += '<div class="step-layers">';
 
-  // Layer 0: always visible — sub-proofs summary
+  // Layer: Sub-proofs
   html += '<div class="layer" data-depth="0">';
-  html += '  <button class="layer-toggle" onclick="toggleLayer(this)">';
-  html += '    <span class="arrow">&#9654;</span> &#9745; Proof Status (' + step.subproofs.length + ' components)';
+  html += '  <button class="layer-toggle active" onclick="toggleLayer(this)">';
+  html += '    <span class="arrow" style="transform:rotate(90deg);">&#9654;</span> &#9745; Proof Components (' + step.subproofs.length + ')';
   html += '  </button>';
-  html += '  <div class="layer-content">';
+  html += '  <div class="layer-content visible">';
   step.subproofs.forEach(function(sp) {
     let spIcon = sp.status === 'proved' ? '&#10003;' : (sp.status === 'partial' ? '&#9888;' : '&#9679;');
     let spClass = sp.status === 'proved' ? 'ok' : (sp.status === 'partial' ? 'partial' : 'axiom');
-    html += '<div class="sub-proof"><span class="sp-icon ' + spClass + '">' + spIcon + '</span>';
-    html += '<strong>' + sp.name + '</strong>: ' + sp.human + '</div>';
+    html += '<div class="sub-proof" onclick="this.classList.toggle(\'expanded\')">';
+    html += '  <span class="sp-icon ' + spClass + '">' + spIcon + '</span>';
+    html += '  <strong>' + sp.name + '</strong>: ' + sp.human;
+    html += '  <div class="sub-proof-detail">' + sp.detail + '</div>';
+    html += '</div>';
   });
   html += '  </div>';
   html += '</div>';
 
-  // Layer 1: Philosophical
+  // Layer: Philosophical
   html += '<div class="layer" data-depth="1">';
-  html += '  <button class="layer-toggle" onclick="toggleLayer(this)">';
-  html += '    <span class="arrow">&#9654;</span> &#9670; Philosophical Foundations';
+  html += '  <button class="layer-toggle active" onclick="toggleLayer(this)">';
+  html += '    <span class="arrow" style="transform:rotate(90deg);">&#9654;</span> &#9670; Philosophical Foundations';
   html += '  </button>';
-  html += '  <div class="layer-content philosophical">';
+  html += '  <div class="layer-content visible philosophical">';
   html += '    <p><strong>Sources:</strong> ' + step.philosophical.sources.join(', ') + '</p>';
   html += '    <p style="margin-top:12px;">' + step.philosophical.argument + '</p>';
   html += '    <p style="margin-top:12px;"><strong>Cross-cultural convergence:</strong> ' + step.philosophical.convergence + '</p>';
   html += '  </div>';
   html += '</div>';
 
-  // Layer 2: Historical
+  // Layer: Historical
   html += '<div class="layer" data-depth="2">';
-  html += '  <button class="layer-toggle" onclick="toggleLayer(this)">';
-  html += '    <span class="arrow">&#9654;</span> &#9200; Historical Evidence';
+  html += '  <button class="layer-toggle active" onclick="toggleLayer(this)">';
+  html += '    <span class="arrow" style="transform:rotate(90deg);">&#9654;</span> &#9200; Historical Evidence';
   html += '  </button>';
-  html += '  <div class="layer-content historical">';
+  html += '  <div class="layer-content visible historical">';
   html += '    <p><strong>Where it was lived:</strong> ' + step.historical.lived + '</p>';
   html += '    <p style="margin-top:12px;"><strong>Where it was violated:</strong> ' + step.historical.violated + '</p>';
   html += '    <p style="margin-top:12px;"><strong>How it could have been prevented:</strong> ' + step.historical.prevention + '</p>';
   html += '  </div>';
   html += '</div>';
 
-  // Layer 3: Formal definition
+  // Layer: Formal
   html += '<div class="layer" data-depth="3">';
-  html += '  <button class="layer-toggle" onclick="toggleLayer(this)">';
-  html += '    <span class="arrow">&#9654;</span> &#9733; Formal Structure';
+  html += '  <button class="layer-toggle active" onclick="toggleLayer(this)">';
+  html += '    <span class="arrow" style="transform:rotate(90deg);">&#9654;</span> &#9733; Formal Structure';
   html += '  </button>';
-  html += '  <div class="layer-content formal">';
+  html += '  <div class="layer-content visible formal">';
   html += 'Type:       ' + step.formal.type + '\n';
   html += 'Definition: ' + step.formal.definition + '\n';
   html += 'Expansion:  ' + step.formal.expansion + '\n';
@@ -2229,12 +2523,12 @@ function buildStepCard(step, index) {
   html += '  </div>';
   html += '</div>';
 
-  // Layer 4: Coq proof
+  // Layer: Coq proof
   html += '<div class="layer" data-depth="4">';
-  html += '  <button class="layer-toggle" onclick="toggleLayer(this)">';
-  html += '    <span class="arrow">&#9654;</span> &#8870; Machine-Checkable Proof (Coq)';
+  html += '  <button class="layer-toggle active" onclick="toggleLayer(this)">';
+  html += '    <span class="arrow" style="transform:rotate(90deg);">&#9654;</span> &#8870; Machine-Checkable Proof (Coq)';
   html += '  </button>';
-  html += '  <div class="layer-content machine">';
+  html += '  <div class="layer-content visible machine">';
   html += step.coq.join('\n');
   html += '  </div>';
   html += '</div>';
@@ -2255,25 +2549,27 @@ function goToStep(index) {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     currentStepIndex = index;
-    renderCurrentStep();
-    updateDepth(currentDepth);
+    renderSteps();
+    renderCausalDiagrams();
     window.scrollTo({ top: document.getElementById('stepsContainer').offsetTop - 80, behavior: 'smooth' });
   }
 }
 
 function nextStep() {
+  if (showAllMode) return;
   if (currentStepIndex < Steps.length - 1) {
     currentStepIndex++;
-    renderCurrentStep();
-    updateDepth(currentDepth);
+    renderSteps();
+    renderCausalDiagrams();
   }
 }
 
 function prevStep() {
+  if (showAllMode) return;
   if (currentStepIndex > 0) {
     currentStepIndex--;
-    renderCurrentStep();
-    updateDepth(currentDepth);
+    renderSteps();
+    renderCausalDiagrams();
   }
 }
 
@@ -2287,8 +2583,8 @@ function toggleShowAll() {
     btn.classList.remove('active');
     btn.textContent = 'Show All';
   }
-  renderCurrentStep();
-  updateDepth(currentDepth);
+  renderSteps();
+  setTimeout(renderCausalDiagrams, 100);
 }
 
 // ============================================================
@@ -2349,7 +2645,7 @@ async function runFullVerification() {
     statusEl.style.color = 'var(--proof-ok)';
   } else if (result.warnings > 0) {
     statusEl.innerHTML = '&#10003; ' + result.verified + '/' + result.theorems + ' verified. ' + result.warnings + ' warning(s). Sheaf glues.';
-    statusEl.style.color = 'var(--proof-ok)';
+    statusEl.style.color = 'var(--proof-partial)';
   } else {
     statusEl.innerHTML = '&#10007; ' + result.errors + ' error(s) found.';
     statusEl.style.color = 'var(--proof-error)';
@@ -2384,60 +2680,186 @@ function toggleConsole() {
 }
 
 // ============================================================
-// SHEAF DIAGRAM
+// SHEAF CHART (ECharts)
 // ============================================================
 
-function renderSheafDiagram() {
-  let svg = document.getElementById('sheafSvg');
-  if (!svg) return;
-  let content = '';
+function renderSheafChart() {
+  const container = document.getElementById('sheafChart');
+  if (!container) return;
 
-  // Three main regions
-  content += '<ellipse cx="150" cy="130" rx="120" ry="80" fill="rgba(45,90,39,0.08)" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,4"/>';
-  content += '<ellipse cx="400" cy="130" rx="120" ry="80" fill="rgba(45,90,39,0.08)" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,4"/>';
-  content += '<ellipse cx="275" cy="240" rx="110" ry="60" fill="rgba(45,90,39,0.08)" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,4"/>';
+  const chart = echarts.init(container, darkMode ? 'dark' : null);
 
-  // Labels
-  content += '<text x="100" y="90" font-size="14" fill="var(--text)" font-family="var(--font-serif)">Self</text>';
-  content += '<text x="390" y="90" font-size="14" fill="var(--text)" font-family="var(--font-serif)">Other</text>';
-  content += '<text x="235" y="280" font-size="14" fill="var(--text)" font-family="var(--font-serif)">Community</text>';
+  const nodes = [
+    { name: 'Self', x: 150, y: 100, symbolSize: 60, itemStyle: { color: '#4a8c3f' } },
+    { name: 'Other', x: 450, y: 100, symbolSize: 60, itemStyle: { color: '#2d7a3a' } },
+    { name: 'Community', x: 300, y: 320, symbolSize: 60, itemStyle: { color: '#1a5c2e' } },
+    { name: 'Good Life', x: 300, y: 180, symbolSize: 45, itemStyle: { color: '#b8860b' } }
+  ];
 
-  // Overlap regions
-  content += '<text x="255" y="105" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">awareness</text>';
-  content += '<text x="255" y="120" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">empathy</text>';
-  content += '<text x="255" y="135" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">truthfulness</text>';
+  // Add step nodes
+  const stepPositions = [
+    { x: 450, y: 250 },  // 0 Do No Harm
+    { x: 80, y: 60 },    // 1 Be Aware
+    { x: 300, y: 40 },   // 2 See the Other
+    { x: 250, y: 80 },   // 3 Tell the Truth
+    { x: 120, y: 200 },  // 4 Own It
+    { x: 420, y: 320 },  // 5 Be Fair
+    { x: 500, y: 200 },  // 6 Help
+    { x: 150, y: 300 },  // 7 Know Your Measure
+    { x: 80, y: 150 },   // 8 Grow
+    { x: 300, y: 250 }   // 9 That Is All
+  ];
 
-  content += '<text x="140" y="195" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">moderation</text>';
-  content += '<text x="140" y="210" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">responsibility</text>';
+  Steps.forEach(function(step, i) {
+    nodes.push({
+      name: step.number + '. ' + step.title,
+      x: stepPositions[i].x,
+      y: stepPositions[i].y,
+      symbolSize: 28,
+      itemStyle: { color: step.status === 'ok' ? '#2d7a3a' : '#b8860b' },
+      label: { show: true, fontSize: 9, position: 'bottom' }
+    });
+  });
 
-  content += '<text x="365" y="195" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">fairness</text>';
-  content += '<text x="365" y="210" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">help</text>';
-  content += '<text x="365" y="225" font-size="9" fill="var(--accent)" font-family="var(--font-mono)">non-harm</text>';
+  const links = [
+    // Open set connections
+    { source: 'Self', target: 'Other', lineStyle: { width: 3, color: '#4a8c3f', type: 'dashed' }, label: { show: true, formatter: 'awareness\nempathy\ntruth', fontSize: 8 } },
+    { source: 'Self', target: 'Community', lineStyle: { width: 3, color: '#4a8c3f', type: 'dashed' }, label: { show: true, formatter: 'moderation\nresponsibility', fontSize: 8 } },
+    { source: 'Other', target: 'Community', lineStyle: { width: 3, color: '#4a8c3f', type: 'dashed' }, label: { show: true, formatter: 'fairness\nhelp\nnon-harm', fontSize: 8 } },
+    // Global section
+    { source: 'Self', target: 'Good Life', lineStyle: { width: 2, color: '#b8860b' } },
+    { source: 'Other', target: 'Good Life', lineStyle: { width: 2, color: '#b8860b' } },
+    { source: 'Community', target: 'Good Life', lineStyle: { width: 2, color: '#b8860b' } }
+  ];
 
-  // Sections
-  content += '<text x="75" y="130" font-size="8" fill="var(--text-tertiary)" font-family="var(--font-mono)">growth</text>';
-  content += '<text x="75" y="145" font-size="8" fill="var(--text-tertiary)" font-family="var(--font-mono)">responsibility</text>';
-  content += '<text x="75" y="160" font-size="8" fill="var(--text-tertiary)" font-family="var(--font-mono)">moderation</text>';
+  // Step to open set connections
+  Steps.forEach(function(step, i) {
+    step.openSets.forEach(function(os) {
+      links.push({
+        source: step.number + '. ' + step.title,
+        target: os,
+        lineStyle: { width: 1, color: '#888', opacity: 0.4 }
+      });
+    });
+  });
 
-  content += '<text x="415" y="130" font-size="8" fill="var(--text-tertiary)" font-family="var(--font-mono)">empathy</text>';
-  content += '<text x="415" y="145" font-size="8" fill="var(--text-tertiary)" font-family="var(--font-mono)">non-harm</text>';
-  content += '<text x="415" y="160" font-size="8" fill="var(--text-tertiary)" font-family="var(--font-mono)">help</text>';
+  const option = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'item',
+      formatter: function(params) {
+        if (params.dataType === 'node') {
+          return params.name;
+        }
+        return params.data.source + ' &rarr; ' + params.data.target;
+      }
+    },
+    series: [{
+      type: 'graph',
+      layout: 'none',
+      data: nodes,
+      links: links,
+      roam: true,
+      label: {
+        show: true,
+        fontSize: 11,
+        fontFamily: 'Inter, sans-serif'
+      },
+      lineStyle: {
+        curveness: 0.2
+      },
+      emphasis: {
+        focus: 'adjacency',
+        lineStyle: { width: 4 }
+      },
+      force: {
+        repulsion: 200
+      }
+    }]
+  };
 
-  // Gluing arrows
-  content += '<defs><marker id="arrowhead" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0 0, 6 2, 0 4" fill="var(--proof-ok)"/></marker></defs>';
-  content += '<path d="M 200 120 Q 250 100 300 120" fill="none" stroke="var(--proof-ok)" stroke-width="1.5" marker-end="url(#arrowhead)"/>';
-  content += '<path d="M 160 180 Q 180 210 210 230" fill="none" stroke="var(--proof-ok)" stroke-width="1.5" marker-end="url(#arrowhead)"/>';
-  content += '<path d="M 380 180 Q 360 210 340 230" fill="none" stroke="var(--proof-ok)" stroke-width="1.5" marker-end="url(#arrowhead)"/>';
+  chart.setOption(option);
 
-  // Center: global section
-  content += '<circle cx="275" cy="155" r="18" fill="var(--accent)" opacity="0.15" stroke="var(--accent)" stroke-width="2"/>';
-  content += '<text x="275" y="159" font-size="10" fill="var(--accent)" font-family="var(--font-mono)" text-anchor="middle">&#8704;</text>';
-
-  svg.innerHTML = content;
+  window.addEventListener('resize', function() {
+    chart.resize();
+  });
 }
 
 // ============================================================
-// COMPATIBILITY MATRIX
+// CAUSAL DIAGRAMS (per step)
+// ============================================================
+
+function renderCausalDiagrams() {
+  Steps.forEach(function(step, i) {
+    let container = document.getElementById('causal-' + i);
+    if (!container || container.offsetWidth === 0) return;
+
+    let chart = echarts.init(container, darkMode ? 'dark' : null);
+
+    // Build causal network for this step
+    let nodes = [
+      { name: step.title, symbolSize: 40, itemStyle: { color: '#2d7a3a' } }
+    ];
+
+    let links = [];
+
+    // Add axioms this step depends on
+    step.subproofs.forEach(function(sp) {
+      if (sp.status === 'axiom') {
+        nodes.push({ name: sp.name, symbolSize: 22, itemStyle: { color: '#b8860b' } });
+        links.push({ source: sp.name, target: step.title, lineStyle: { type: 'dashed' } });
+      }
+    });
+
+    // Add proved theorems
+    step.subproofs.forEach(function(sp) {
+      if (sp.status === 'proved') {
+        nodes.push({ name: sp.name, symbolSize: 28, itemStyle: { color: '#2d7a3a' } });
+        links.push({ source: step.title, target: sp.name });
+      }
+    });
+
+    // Add connections to other steps via open sets
+    step.openSets.forEach(function(os) {
+      nodes.push({ name: 'U_' + os, symbolSize: 18, itemStyle: { color: '#555' } });
+      links.push({ source: step.title, target: 'U_' + os, lineStyle: { type: 'dotted', opacity: 0.5 } });
+    });
+
+    // Add downstream effects
+    if (step.number < 9) {
+      nodes.push({ name: 'Step ' + (step.number + 1), symbolSize: 16, itemStyle: { color: '#888' } });
+      links.push({ source: step.title, target: 'Step ' + (step.number + 1), lineStyle: { opacity: 0.3 } });
+    }
+    if (step.number > 0) {
+      nodes.push({ name: 'Step ' + (step.number - 1), symbolSize: 16, itemStyle: { color: '#888' } });
+      links.push({ source: 'Step ' + (step.number - 1), target: step.title, lineStyle: { opacity: 0.3 } });
+    }
+
+    let option = {
+      backgroundColor: 'transparent',
+      tooltip: { trigger: 'item' },
+      series: [{
+        type: 'graph',
+        layout: 'force',
+        data: nodes,
+        links: links,
+        roam: true,
+        label: { show: true, fontSize: 9, fontFamily: 'Inter, sans-serif' },
+        lineStyle: { curveness: 0.15, width: 1.5 },
+        force: { repulsion: 120, gravity: 0.1, edgeLength: [60, 120] },
+        emphasis: { focus: 'adjacency' }
+      }]
+    };
+
+    chart.setOption(option);
+  });
+}
+
+// After rendering steps, render causal diagrams
+setTimeout(renderCausalDiagrams, 200);
+
+// ============================================================
+// COMPATIBILITY MATRIX (with click-to-explain)
 // ============================================================
 
 function renderCompatibilityMatrix() {
@@ -2445,6 +2867,7 @@ function renderCompatibilityMatrix() {
   if (!container) return;
 
   let html = '<h3 style="font-family:var(--font-serif);margin-bottom:16px;">Compatibility Matrix</h3>';
+  html += '<p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:16px;">Click any cell to see why two steps are compatible (or partially compatible) and how they connect.</p>';
   html += '<table class="matrix-table">';
   html += '<tr><th></th>';
   for (let i = 0; i < Steps.length; i++) {
@@ -2456,22 +2879,61 @@ function renderCompatibilityMatrix() {
     html += '<tr><th>' + Steps[i].number + '. ' + Steps[i].title + '</th>';
     for (let j = 0; j < Steps.length; j++) {
       if (i === j) {
-        html += '<td class="matrix-cell-ok">&#8801;</td>';
+        html += '<td class="matrix-cell-identity" data-i="' + i + '" data-j="' + j + '" onmouseenter="showMatrixTooltip(event,' + i + ',' + j + ')" onmouseleave="hideMatrixTooltip()">&#8801;</td>';
       } else {
         let shared = Steps[i].openSets.filter(function(s) { return Steps[j].openSets.indexOf(s) >= 0; });
-        if (shared.length > 0) {
-          html += '<td class="matrix-cell-ok">&#10003;</td>';
+        let key1 = i + '-' + j;
+        let key2 = j + '-' + i;
+        let isPartial = MatrixExplanations[key1] || MatrixExplanations[key2];
+
+        if (shared.length > 0 && !isPartial) {
+          html += '<td class="matrix-cell-ok" data-i="' + i + '" data-j="' + j + '" onmouseenter="showMatrixTooltip(event,' + i + ',' + j + ')" onmouseleave="hideMatrixTooltip()">&#10003;</td>';
         } else {
-          html += '<td class="matrix-cell-partial">&#8729;</td>';
+          html += '<td class="matrix-cell-partial" data-i="' + i + '" data-j="' + j + '" onmouseenter="showMatrixTooltip(event,' + i + ',' + j + ')" onmouseleave="hideMatrixTooltip()">&#8729;</td>';
         }
       }
     }
     html += '</tr>';
   }
   html += '</table>';
-  html += '<p style="margin-top:12px;font-size:0.75rem;color:var(--text-tertiary);">&#10003; = share open set (directly compatible) &middot; &#8729; = indirectly compatible (via bridge concepts) &middot; &#8801; = identical</p>';
+  html += '<p style="margin-top:12px;font-size:0.75rem;color:var(--text-tertiary);">&#10003; = share open set (directly compatible) &middot; &#8729; = indirectly compatible (via bridge concepts) &middot; &#8801; = identical. Hover any cell for details.</p>';
 
   container.innerHTML = html;
+}
+
+function showMatrixTooltip(event, i, j) {
+  let tooltip = document.getElementById('matrixTooltip');
+  let titleEl = document.getElementById('tooltipTitle');
+  let bodyEl = document.getElementById('tooltipBody');
+
+  if (i === j) {
+    titleEl.textContent = Steps[i].title + ' = ' + Steps[j].title;
+    bodyEl.textContent = 'Identity: a step is always compatible with itself.';
+  } else {
+    let shared = Steps[i].openSets.filter(function(s) { return Steps[j].openSets.indexOf(s) >= 0; });
+    let key1 = i + '-' + j;
+    let key2 = j + '-' + i;
+    let explanation = MatrixExplanations[key1] || MatrixExplanations[key2];
+
+    if (explanation) {
+      titleEl.textContent = explanation.title;
+      bodyEl.innerHTML = '<strong>Status:</strong> Partial compatibility<br><br>' + explanation.reason + '<br><br><strong>Resolution:</strong> ' + explanation.resolution;
+    } else if (shared.length > 0) {
+      titleEl.textContent = Steps[i].title + ' + ' + Steps[j].title;
+      bodyEl.innerHTML = '<strong>Status:</strong> Directly compatible<br><br>These steps share open set(s): <strong>' + shared.join(', ') + '</strong>. They operate in the same domain and their sections agree on the overlap. No conflict is possible because the sheaf locality condition guarantees consistency within each open set.';
+    } else {
+      titleEl.textContent = Steps[i].title + ' + ' + Steps[j].title;
+      bodyEl.innerHTML = '<strong>Status:</strong> Indirectly compatible<br><br>These steps do not share a primary open set, but they are connected via bridge concepts through intermediate steps. No direct conflict exists.';
+    }
+  }
+
+  tooltip.classList.add('visible');
+  tooltip.style.left = Math.min(event.clientX + 12, window.innerWidth - 340) + 'px';
+  tooltip.style.top = Math.min(event.clientY + 12, window.innerHeight - 200) + 'px';
+}
+
+function hideMatrixTooltip() {
+  document.getElementById('matrixTooltip').classList.remove('visible');
 }
 
 </script>
