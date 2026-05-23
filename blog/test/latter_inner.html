@@ -1,0 +1,2069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Internal Topology: How Deep Layers Decode Superposition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin: 20px 0 10px;
+            color: #00d4ff;
+        }
+        h3 {
+            font-size: 1.2em;
+            margin: 15px 0 8px;
+            color: #a78bfa;
+        }
+        p, .explanation {
+            line-height: 1.7;
+            margin: 10px 0;
+            color: #c0c0d0;
+        }
+        .section {
+            background: #12122a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff006e);
+        }
+        canvas {
+            display: block;
+            margin: 15px auto;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            background: #080818;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #1a1a3a;
+            border-radius: 8px;
+        }
+        .controls label {
+            color: #a0a0c0;
+            font-size: 0.9em;
+        }
+        .controls input[type="range"] {
+            width: 150px;
+            accent-color: #7b2ff7;
+        }
+        .controls select, .controls button {
+            padding: 8px 16px;
+            background: #2a2a5a;
+            border: 1px solid #4a4a7a;
+            color: #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        .controls button:hover {
+            background: #3a3a7a;
+            border-color: #7b2ff7;
+        }
+        .controls button.active {
+            background: #7b2ff7;
+            border-color: #9b4bff;
+        }
+        .value-display {
+            color: #00d4ff;
+            font-weight: bold;
+            min-width: 40px;
+            display: inline-block;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        .tooltip {
+            position: absolute;
+            background: #1a1a3a;
+            border: 1px solid #7b2ff7;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            pointer-events: none;
+            z-index: 1000;
+            max-width: 300px;
+            display: none;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-tabs button {
+            padding: 10px 20px;
+            background: #1a1a3a;
+            border: 1px solid #2a2a4a;
+            color: #a0a0c0;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        .nav-tabs button:hover {
+            background: #2a2a5a;
+            color: #e0e0e0;
+        }
+        .nav-tabs button.active {
+            background: #7b2ff7;
+            color: white;
+            border-color: #7b2ff7;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #1a1a3a;
+            border-radius: 6px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .info-box {
+            background: #1a1a3a;
+            border-left: 4px solid #7b2ff7;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95em;
+        }
+        .highlight {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        .math {
+            font-family: 'Courier New', monospace;
+            background: #1a1a3a;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ffd700;
+        }
+        .animation-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #080818;
+            border-radius: 8px;
+            border: 1px solid #2a2a4a;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #1a1a3a;
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>How Neural Networks Decode Superposition in Deep Layers</h1>
+        <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.05em;">
+            An interactive exploration of how internal layers use topological structures, Fourier decomposition, 
+            and constructive interference to transform superimposed representations into meaningful computations.
+        </p>
+
+        <div class="nav-tabs">
+            <button class="active" onclick="showTab('tab1')">1. Superposition & Embedding</button>
+            <button onclick="showTab('tab2')">2. Fourier Topology</button>
+            <button onclick="showTab('tab3')">3. Layer Computation</button>
+            <button onclick="showTab('tab4')">4. Interference & Decoding</button>
+            <button onclick="showTab('tab5')">5. Grokking Dynamics</button>
+        </div>
+
+        <div id="tab1" class="tab-content active">
+            <div class="section">
+                <h2>What is Superposition in Neural Networks?</h2>
+                <p>In deeply nested networks, neurons encode <span class="highlight">multiple features simultaneously</span> in the same set of weights. This is called <span class="highlight">superposition</span> - the network stores more concepts than it has dimensions by overlapping them in a high-dimensional space.</p>
+                
+                <div class="info-box">
+                    <strong>Key Insight:</strong> The embedding matrix maps discrete inputs onto continuous rotations in high-dimensional space. For modular addition, inputs a and b are mapped to sin(w_k * a), cos(w_k * a), sin(w_k * b), cos(w_k * b) at specific "key frequencies" w_k.
+                </div>
+
+                <h3>Interactive: Embedding as Rotation on a Circle</h3>
+                <p>Adjust the input value to see how it maps onto a circle at different frequencies. The network uses this circular topology to represent addition as rotation composition.</p>
+                
+                <div class="controls">
+                    <label>Input value (a): <span class="value-display" id="inputA-val">7</span></label>
+                    <input type="range" id="inputA" min="0" max="112" value="7" oninput="updateEmbedding()">
+                    <label>Frequency (k): <span class="value-display" id="freqK-val">14</span></label>
+                    <input type="range" id="freqK" min="1" max="56" value="14" oninput="updateEmbedding()">
+                    <label>Prime P: <span class="value-display" id="primeP-val">113</span></label>
+                    <input type="range" id="primeP" min="7" max="113" value="113" step="2" oninput="updateEmbedding()">
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <canvas id="embeddingCircle" width="400" height="400"></canvas>
+                        <p style="text-align:center; font-size:0.85em;">Embedding maps input to position on circle</p>
+                    </div>
+                    <div>
+                        <canvas id="embeddingSpectrum" width="400" height="400"></canvas>
+                        <p style="text-align:center; font-size:0.85em;">Fourier spectrum of embedding (sparse in key frequencies)</p>
+                    </div>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#00d4ff"></div> cos(w_k * a)</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ff006e"></div> sin(w_k * a)</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ffd700"></div> Current point on circle</div>
+                </div>
+
+                <div class="info-box">
+                    <strong>Topology Connection:</strong> The circle (S1) is the fundamental topological space here. The embedding creates a homomorphism from the discrete group Z/PZ to rotations on the circle. Multiple frequencies create a product of circles (a torus), giving the network a rich topological manifold to work with.
+                </div>
+            </div>
+        </div>
+
+        <div id="tab2" class="tab-content">
+            <div class="section">
+                <h2>Fourier Topology: How Layers Organize Information</h2>
+                <p>The network's internal representations are <span class="highlight">sparse in the Fourier basis</span>. Out of all possible frequencies, only a handful of "key frequencies" carry meaningful information. This creates a topological structure where computations are <span class="highlight">localized by frequency</span>.</p>
+
+                <div class="info-box">
+                    <strong>From the Research:</strong> In a trained transformer doing modular addition (mod 113), the embedding matrix W_E is sparse in the Fourier basis - only 5 key frequencies (k = 14, 35, 41, 42, 52) have significant norm. Each neuron operates primarily on a single frequency, creating frequency-localized computation.
+                </div>
+
+                <h3>Interactive: Fourier Decomposition of Network Weights</h3>
+                <p>This visualization shows how the neuron-logit map W_L decomposes into frequency components. Toggle frequencies to see how they contribute to the final output.</p>
+
+                <div class="controls">
+                    <button id="freq14-btn" class="active" onclick="toggleFreq(14)">k=14</button>
+                    <button id="freq35-btn" class="active" onclick="toggleFreq(35)">k=35</button>
+                    <button id="freq41-btn" class="active" onclick="toggleFreq(41)">k=41</button>
+                    <button id="freq42-btn" class="active" onclick="toggleFreq(42)">k=42</button>
+                    <button id="freq52-btn" class="active" onclick="toggleFreq(52)">k=52</button>
+                    <label style="margin-left:20px;">Neuron index: <span class="value-display" id="neuronIdx-val">0</span></label>
+                    <input type="range" id="neuronIdx" min="0" max="511" value="0" oninput="updateFourierViz()">
+                </div>
+
+                <canvas id="fourierTopology" width="900" height="450"></canvas>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#ff4444"></div> k=14</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#44ff44"></div> k=35</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#4444ff"></div> k=41</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ffff44"></div> k=42</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ff44ff"></div> k=52</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ffffff"></div> Combined output</div>
+                </div>
+
+                <h3>Topological Manifold Structure</h3>
+                <canvas id="torusViz" width="900" height="400"></canvas>
+                <div class="controls">
+                    <label>Rotation X: <span class="value-display" id="rotX-val">0</span></label>
+                    <input type="range" id="rotX" min="0" max="360" value="30" oninput="updateTorus()">
+                    <label>Rotation Y: <span class="value-display" id="rotY-val">0</span></label>
+                    <input type="range" id="rotY" min="0" max="360" value="45" oninput="updateTorus()">
+                    <label>Input a: <span class="value-display" id="torusA-val">5</span></label>
+                    <input type="range" id="torusA" min="0" max="112" value="5" oninput="updateTorus()">
+                    <label>Input b: <span class="value-display" id="torusB-val">3</span></label>
+                    <input type="range" id="torusB" min="0" max="112" value="3" oninput="updateTorus()">
+                </div>
+                <p style="text-align:center; font-size:0.85em;">Two frequencies create a torus (T2). The network navigates this manifold to compute a+b mod P.</p>
+            </div>
+        </div>
+
+        <div id="tab3" class="tab-content">
+            <div class="section">
+                <h2>Layer-by-Layer Computation: From Superposition to Answer</h2>
+                <p>Each layer performs a specific topological operation. The attention layer computes <span class="highlight">products of trigonometric functions</span> (bilinear mixing), and the MLP layer uses <span class="highlight">trigonometric identities</span> to compose rotations.</p>
+
+                <div class="info-box">
+                    <strong>The Algorithm:</strong><br>
+                    1. <strong>Embed:</strong> Map a, b to sin(w_k*a), cos(w_k*a), sin(w_k*b), cos(w_k*b)<br>
+                    2. <strong>Attention + MLP:</strong> Compute cos(w_k*(a+b)) and sin(w_k*(a+b)) via trig identities<br>
+                    3. <strong>Unembed:</strong> For each output c, compute cos(w_k*(a+b-c)) and sum over frequencies<br>
+                    4. <strong>Interference:</strong> Constructive interference at c* = a+b mod P gives the answer
+                </div>
+
+                <h3>Interactive: Step-by-Step Computation Flow</h3>
+                <div class="controls">
+                    <label>Input a: <span class="value-display" id="compA-val">7</span></label>
+                    <input type="range" id="compA" min="0" max="112" value="7" oninput="updateComputation()">
+                    <label>Input b: <span class="value-display" id="compB-val">23</span></label>
+                    <input type="range" id="compB" min="0" max="112" value="23" oninput="updateComputation()">
+                    <button onclick="animateComputation()">Animate Flow</button>
+                    <label>Speed: <span class="value-display" id="speed-val">1x</span></label>
+                    <input type="range" id="animSpeed" min="1" max="5" value="2" oninput="document.getElementById('speed-val').textContent=this.value+'x'">
+                </div>
+
+                <canvas id="computationFlow" width="900" height="500"></canvas>
+
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="compProgress" style="width:0%"></div>
+                </div>
+
+                <h3>Neuron Activation Patterns (Degree-2 Polynomials)</h3>
+                <p>84.6% of MLP neurons are well-approximated by degree-2 polynomials of a single frequency. Each neuron "specializes" in one frequency.</p>
+                
+                <div class="controls">
+                    <label>Neuron frequency: </label>
+                    <select id="neuronFreqSelect" onchange="updateNeuronActivation()">
+                        <option value="14">k = 14 (44 neurons)</option>
+                        <option value="35">k = 35</option>
+                        <option value="41">k = 41</option>
+                        <option value="42" selected>k = 42</option>
+                        <option value="52">k = 52</option>
+                    </select>
+                    <label>Show: </label>
+                    <select id="neuronShowSelect" onchange="updateNeuronActivation()">
+                        <option value="activation">Raw Activation</option>
+                        <option value="polynomial">Degree-2 Polynomial Fit</option>
+                        <option value="residual">Residual (difference)</option>
+                    </select>
+                </div>
+                <canvas id="neuronActivation" width="900" height="350"></canvas>
+            </div>
+        </div>
+
+        <div id="tab4" class="tab-content">
+            <div class="section">
+                <h2>Constructive Interference: How the Answer Emerges</h2>
+                <p>The final decoding step uses <span class="highlight">constructive interference</span> - multiple cosine waves at different frequencies all peak at the correct answer c* = a+b mod P, while destructively interfering everywhere else. This is the topological "readout" mechanism.</p>
+
+                <div class="info-box">
+                    <strong>Why Multiple Frequencies?</strong> A single cosine cos(2pi*k*x/P) has its maximum at x=0, but other values of x can be nearly as large. By summing cosines at multiple key frequencies, the network creates a function where ONLY x=0 mod P gives a large value - all other peaks cancel out through destructive interference.
+                </div>
+
+                <h3>Interactive: Interference Pattern</h3>
+                <div class="controls">
+                    <label>a: <span class="value-display" id="intA-val">15</span></label>
+                    <input type="range" id="intA" min="0" max="112" value="15" oninput="updateInterference()">
+                    <label>b: <span class="value-display" id="intB-val">28</span></label>
+                    <input type="range" id="intB" min="0" max="112" value="28" oninput="updateInterference()">
+                    <label>Frequencies active: <span class="value-display" id="numFreqs-val">5</span></label>
+                    <input type="range" id="numFreqs" min="1" max="5" value="5" oninput="updateInterference()">
+                    <button onclick="animateInterference()">Animate Addition</button>
+                </div>
+
+                <canvas id="interferenceCanvas" width="900" height="400"></canvas>
+
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#ff4444"></div> Individual frequency contributions</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#00ff88"></div> Sum (logit for each c)</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ffd700"></div> Correct answer c* = (a+b) mod P</div>
+                </div>
+
+                <h3>Ablation Study: What Happens When Frequencies Are Removed?</h3>
+                <p>Removing key frequencies destroys performance. Removing all OTHER frequencies actually improves it!</p>
+                
+                <div class="controls">
+                    <button id="ablate-none" class="active" onclick="setAblation('none')">No Ablation</button>
+                    <button id="ablate-key" onclick="setAblation('key')">Remove Key Frequencies</button>
+                    <button id="ablate-other" onclick="setAblation('other')">Remove Non-Key (Restricted)</button>
+                    <button id="ablate-single" onclick="setAblation('single')">Remove Single Key Freq</button>
+                </div>
+                <canvas id="ablationCanvas" width="900" height="300"></canvas>
+            </div>
+        </div>
+
+        <div id="tab5" class="tab-content">
+            <div class="section">
+                <h2>Grokking: The Three Phases of Learning</h2>
+                <p>Grokking is the phenomenon where a network suddenly generalizes long after memorizing training data. Using progress measures from mechanistic interpretability, we can see that this "sudden" shift is actually the result of <span class="highlight">three continuous phases</span>.</p>
+
+                <div class="info-box">
+                    <strong>The Three Phases:</strong><br>
+                    1. <strong>Memorization (0-1.4k epochs):</strong> Network memorizes training data. Key frequencies unused.<br>
+                    2. <strong>Circuit Formation (1.4k-9.4k epochs):</strong> Fourier multiplication circuit gradually forms. Weight decay drives this.<br>
+                    3. <strong>Cleanup (9.4k-14k epochs):</strong> Weight decay removes memorization components. Test accuracy suddenly jumps.
+                </div>
+
+                <h3>Interactive: Training Dynamics Visualization</h3>
+                <div class="controls">
+                    <label>Epoch: <span class="value-display" id="epoch-val">0</span></label>
+                    <input type="range" id="epochSlider" min="0" max="30000" value="0" step="100" oninput="updateGrokking()">
+                    <button onclick="animateGrokking()">Play Training</button>
+                    <button onclick="stopGrokking()">Stop</button>
+                    <label>Show: </label>
+                    <select id="grokkingMetric" onchange="updateGrokking()">
+                        <option value="loss">Train/Test Loss</option>
+                        <option value="restricted">Restricted Loss</option>
+                        <option value="excluded">Excluded Loss</option>
+                        <option value="weights">Sum of Squared Weights</option>
+                        <option value="gini">Gini Coefficient (Sparsity)</option>
+                    </select>
+                </div>
+
+                <canvas id="grokkingCanvas" width="900" height="400"></canvas>
+
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="grokkingProgress" style="width:0%"></div>
+                </div>
+
+                <h3>Network State at Current Epoch</h3>
+                <canvas id="networkState" width="900" height="250"></canvas>
+                
+                <div class="info-box">
+                    <strong>Why Weight Decay Matters:</strong> Weight decay acts as a regularizer that favors simpler solutions. The generalizing Fourier multiplication circuit has lower weight norm than the memorization circuit. During cleanup, weight decay removes the memorized components, revealing the already-formed generalizing circuit underneath.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+    // ============ GLOBAL STATE ============
+    const P = 113;
+    const keyFreqs = [14, 35, 41, 42, 52];
+    const freqColors = ['#ff4444', '#44ff44', '#4444ff', '#ffff44', '#ff44ff'];
+    let activeFreqs = new Set(keyFreqs);
+    let grokkingAnimId = null;
+    let compAnimId = null;
+
+    // ============ TAB NAVIGATION ============
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        const idx = ['tab1','tab2','tab3','tab4','tab5'].indexOf(tabId);
+        document.querySelectorAll('.nav-tabs button')[idx].classList.add('active');
+        
+        // Trigger initial renders
+        if (tabId === 'tab1') updateEmbedding();
+        if (tabId === 'tab2') { updateFourierViz(); updateTorus(); }
+        if (tabId === 'tab3') { updateComputation(); updateNeuronActivation(); }
+        if (tabId === 'tab4') { updateInterference(); updateAblation(); }
+        if (tabId === 'tab5') updateGrokking();
+    }
+
+    // ============ TAB 1: EMBEDDING ============
+    function updateEmbedding() {
+        const a = parseInt(document.getElementById('inputA').value);
+        const k = parseInt(document.getElementById('freqK').value);
+        const p = parseInt(document.getElementById('primeP').value);
+        document.getElementById('inputA-val').textContent = a;
+        document.getElementById('freqK-val').textContent = k;
+        document.getElementById('primeP-val').textContent = p;
+
+        drawEmbeddingCircle(a, k, p);
+        drawEmbeddingSpectrum(a, k, p);
+    }
+
+    function drawEmbeddingCircle(a, k, p) {
+        const canvas = document.getElementById('embeddingCircle');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        const cx = w/2, cy = h/2, r = 150;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = '#3a3a6a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw axes
+        ctx.beginPath();
+        ctx.moveTo(cx - r - 20, cy);
+        ctx.lineTo(cx + r + 20, cy);
+        ctx.moveTo(cx, cy - r - 20);
+        ctx.lineTo(cx, cy + r + 20);
+        ctx.strokeStyle = '#2a2a4a';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#808090';
+        ctx.font = '12px monospace';
+        ctx.fillText('cos(w_k * x)', cx + r + 5, cy - 5);
+        ctx.fillText('sin(w_k * x)', cx + 5, cy - r - 8);
+
+        // Draw all points on circle (faded)
+        const wk = 2 * Math.PI * k / p;
+        for (let i = 0; i < p; i++) {
+            const angle = wk * i;
+            const x = cx + r * Math.cos(angle);
+            const y = cy - r * Math.sin(angle);
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(100, 100, 200, 0.3)';
+            ctx.fill();
+        }
+
+        // Draw current point
+        const angle = wk * a;
+        const px = cx + r * Math.cos(angle);
+        const py = cy - r * Math.sin(angle);
+
+        // Line from center
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Point
+        ctx.beginPath();
+        ctx.arc(px, py, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffd700';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Projections
+        // cos projection
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(px, py);
+        ctx.lineTo(px, cy);
+        ctx.strokeStyle = '#00d4ff';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // sin projection
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(px, py);
+        ctx.lineTo(cx, py);
+        ctx.strokeStyle = '#ff006e';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Values
+        ctx.fillStyle = '#00d4ff';
+        ctx.font = '14px monospace';
+        ctx.fillText('cos(' + k + '*' + a + '*2pi/' + p + ') = ' + Math.cos(angle).toFixed(3), 20, h - 60);
+        ctx.fillStyle = '#ff006e';
+        ctx.fillText('sin(' + k + '*' + a + '*2pi/' + p + ') = ' + Math.sin(angle).toFixed(3), 20, h - 40);
+        ctx.fillStyle = '#ffd700';
+        ctx.fillText('angle = ' + (angle % (2*Math.PI)).toFixed(3) + ' rad', 20, h - 20);
+    }
+
+    function drawEmbeddingSpectrum(a, k, p) {
+        const canvas = document.getElementById('embeddingSpectrum');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const margin = {top: 30, right: 20, bottom: 50, left: 60};
+        const plotW = w - margin.left - margin.right;
+        const plotH = h - margin.top - margin.bottom;
+
+        // Simulate Fourier spectrum - sparse at key frequencies
+        const maxFreq = Math.floor(p / 2);
+        const barWidth = plotW / maxFreq;
+
+        // Draw axes
+        ctx.strokeStyle = '#3a3a6a';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, h - margin.bottom);
+        ctx.lineTo(w - margin.right, h - margin.bottom);
+        ctx.stroke();
+
+        // Generate spectrum data
+        const spectrum = [];
+        for (let i = 0; i <= maxFreq; i++) {
+            let val = Math.random() * 0.05; // noise floor
+            if (keyFreqs.includes(i)) {
+                val = 1.5 + Math.random() * 0.5;
+            }
+            if (i === k) {
+                val = Math.max(val, 2.0);
+            }
+            spectrum.push(val);
+        }
+
+        const maxVal = Math.max(...spectrum) * 1.1;
+
+        // Draw bars
+        for (let i = 0; i < spectrum.length; i++) {
+            const x = margin.left + i * barWidth;
+            const barH = (spectrum[i] / maxVal) * plotH;
+            
+            let color = '#3a3a6a';
+            if (keyFreqs.includes(i)) {
+                const idx = keyFreqs.indexOf(i);
+                color = freqColors[idx];
+            }
+            if (i === k) {
+                color = '#ffd700';
+            }
+
+            ctx.fillStyle = color;
+            ctx.fillRect(x, h - margin.bottom - barH, Math.max(barWidth - 1, 2), barH);
+        }
+
+        // Labels
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'center';
+        for (let i = 0; i <= maxFreq; i += 7) {
+            ctx.fillText(i.toString(), margin.left + i * barWidth + barWidth/2, h - margin.bottom + 15);
+        }
+        ctx.fillText('Frequency k', w/2, h - 10);
+
+        ctx.save();
+        ctx.translate(15, h/2);
+        ctx.rotate(-Math.PI/2);
+        ctx.textAlign = 'center';
+        ctx.fillText('Norm of Fourier Component', 0, 0);
+        ctx.restore();
+
+        // Title
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Fourier Spectrum of Embedding (sparse at key frequencies)', w/2, 20);
+    }
+
+    // ============ TAB 2: FOURIER TOPOLOGY ============
+    let activeFreqSet = new Set(keyFreqs);
+
+    function toggleFreq(k) {
+        const btn = document.getElementById('freq' + k + '-btn');
+        if (activeFreqSet.has(k)) {
+            activeFreqSet.delete(k);
+            btn.classList.remove('active');
+        } else {
+            activeFreqSet.add(k);
+            btn.classList.add('active');
+        }
+        updateFourierViz();
+    }
+
+    function updateFourierViz() {
+        const neuronIdx = parseInt(document.getElementById('neuronIdx').value);
+        document.getElementById('neuronIdx-val').textContent = neuronIdx;
+
+        const canvas = document.getElementById('fourierTopology');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const margin = {top: 40, right: 30, bottom: 50, left: 60};
+        const plotW = w - margin.left - margin.right;
+        const plotH = h - margin.top - margin.bottom;
+
+        // Draw axes
+        ctx.strokeStyle = '#3a3a6a';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, h - margin.bottom);
+        ctx.lineTo(w - margin.right, h - margin.bottom);
+        ctx.stroke();
+
+        // For each active frequency, draw the contribution as a wave
+        const numPoints = P;
+        const xScale = plotW / numPoints;
+        const yCenter = margin.top + plotH / 2;
+        const yScale = plotH / 4;
+
+        // Simulate neuron response - each neuron responds primarily to one frequency
+        const neuronFreq = keyFreqs[neuronIdx % keyFreqs.length];
+        const neuronPhase = (neuronIdx * 0.7) % (2 * Math.PI);
+
+        // Draw zero line
+        ctx.beginPath();
+        ctx.moveTo(margin.left, yCenter);
+        ctx.lineTo(w - margin.right, yCenter);
+        ctx.strokeStyle = '#2a2a4a';
+        ctx.stroke();
+
+        // Draw individual frequency contributions
+        let combined = new Array(numPoints).fill(0);
+
+        keyFreqs.forEach((k, idx) => {
+            if (!activeFreqSet.has(k)) return;
+            
+            const wk = 2 * Math.PI * k / P;
+            const amplitude = (k === neuronFreq) ? 1.0 : 0.15;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = freqColors[idx];
+            ctx.lineWidth = (k === neuronFreq) ? 2.5 : 1;
+            ctx.globalAlpha = (k === neuronFreq) ? 1.0 : 0.5;
+
+            for (let i = 0; i < numPoints; i++) {
+                const x = margin.left + i * xScale;
+                const val = amplitude * Math.cos(wk * i + neuronPhase);
+                combined[i] += val;
+                const y = yCenter - val * yScale;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+        });
+
+        // Draw combined signal
+        ctx.beginPath();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < numPoints; i++) {
+            const x = margin.left + i * xScale;
+            const y = yCenter - combined[i] * yScale * 0.6;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'center';
+        for (let i = 0; i <= numPoints; i += 14) {
+            ctx.fillText(i.toString(), margin.left + i * xScale, h - margin.bottom + 15);
+        }
+        ctx.fillText('Output logit index c', w/2, h - 10);
+
+        ctx.save();
+        ctx.translate(15, h/2);
+        ctx.rotate(-Math.PI/2);
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#808090';
+        ctx.fillText('Activation / Weight value', 0, 0);
+        ctx.restore();
+
+        // Title
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Neuron ' + neuronIdx + ' (primary freq: k=' + neuronFreq + ') - Neuron-Logit Map W_L decomposition', w/2, 25);
+    }
+
+    function updateTorus() {
+        const rotX = parseInt(document.getElementById('rotX').value);
+        const rotY = parseInt(document.getElementById('rotY').value);
+        const torusA = parseInt(document.getElementById('torusA').value);
+        const torusB = parseInt(document.getElementById('torusB').value);
+        document.getElementById('rotX-val').textContent = rotX;
+        document.getElementById('rotY-val').textContent = rotY;
+        document.getElementById('torusA-val').textContent = torusA;
+        document.getElementById('torusB-val').textContent = torusB;
+
+        const canvas = document.getElementById('torusViz');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2, cy = h / 2;
+        const R = 120; // major radius
+        const r = 50;  // minor radius
+        const angleX = rotX * Math.PI / 180;
+        const angleY = rotY * Math.PI / 180;
+
+        // Draw torus wireframe
+        const cosX = Math.cos(angleX), sinX = Math.sin(angleX);
+        const cosY = Math.cos(angleY), sinY = Math.sin(angleY);
+
+        function project3D(x, y, z) {
+            // Rotate around Y
+            let x1 = x * cosY - z * sinY;
+            let z1 = x * sinY + z * cosY;
+            // Rotate around X
+            let y1 = y * cosX - z1 * sinX;
+            let z2 = y * sinX + z1 * cosX;
+            // Simple perspective
+            const scale = 300 / (300 + z2);
+            return { x: cx + x1 * scale, y: cy + y1 * scale, z: z2 };
+        }
+
+        function torusPoint(theta, phi) {
+            const x = (R + r * Math.cos(phi)) * Math.cos(theta);
+            const y = (R + r * Math.cos(phi)) * Math.sin(theta);
+            const z = r * Math.sin(phi);
+            return project3D(x, y, z);
+        }
+
+        // Draw torus grid
+        const nTheta = 32, nPhi = 16;
+        ctx.strokeStyle = 'rgba(100, 100, 200, 0.2)';
+        ctx.lineWidth = 0.5;
+
+        // Theta lines (circles around the tube)
+        for (let i = 0; i < nTheta; i++) {
+            const theta = (i / nTheta) * 2 * Math.PI;
+            ctx.beginPath();
+            for (let j = 0; j <= nPhi; j++) {
+                const phi = (j / nPhi) * 2 * Math.PI;
+                const p = torusPoint(theta, phi);
+                if (j === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+        }
+
+        // Phi lines (circles around the hole)
+        for (let j = 0; j < nPhi; j++) {
+            const phi = (j / nPhi) * 2 * Math.PI;
+            ctx.beginPath();
+            for (let i = 0; i <= nTheta; i++) {
+                const theta = (i / nTheta) * 2 * Math.PI;
+                const p = torusPoint(theta, phi);
+                if (i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+        }
+
+        // Draw the point for (a, b) on the torus
+        // theta corresponds to w_k * a, phi corresponds to w_k * b
+        const k = keyFreqs[0]; // use first key frequency
+        const thetaA = 2 * Math.PI * k * torusA / P;
+        const phiB = 2 * Math.PI * k * torusB / P;
+        const pointAB = torusPoint(thetaA, phiB);
+
+        // Draw point
+        ctx.beginPath();
+        ctx.arc(pointAB.x, pointAB.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffd700';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw the result point (a+b)
+        const thetaAB = 2 * Math.PI * k * ((torusA + torusB) % P) / P;
+        const pointResult = torusPoint(thetaAB, 0);
+        ctx.beginPath();
+        ctx.arc(pointResult.x, pointResult.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = '#00ff88';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '13px monospace';
+        ctx.fillText('(a=' + torusA + ', b=' + torusB + ')', pointAB.x + 12, pointAB.y - 5);
+        ctx.fillStyle = '#00ff88';
+        ctx.fillText('a+b=' + ((torusA + torusB) % P), pointResult.x + 12, pointResult.y - 5);
+
+        // Info text
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Torus T2: theta = w_k * a (around hole), phi = w_k * b (around tube)', 20, h - 30);
+        ctx.fillText('The network navigates this manifold to compute rotation composition', 20, h - 12);
+    }
+
+    // ============ TAB 3: COMPUTATION FLOW ============
+    function updateComputation() {
+        const a = parseInt(document.getElementById('compA').value);
+        const b = parseInt(document.getElementById('compB').value);
+        document.getElementById('compA-val').textContent = a;
+        document.getElementById('compB-val').textContent = b;
+
+        drawComputationFlow(a, b, 1.0);
+    }
+
+    function drawComputationFlow(a, b, progress) {
+        const canvas = document.getElementById('computationFlow');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const stages = [
+            { name: 'Input', x: 50, desc: 'a=' + a + ', b=' + b },
+            { name: 'Embed', x: 200, desc: 'sin/cos(w_k*a), sin/cos(w_k*b)' },
+            { name: 'Attention+MLP', x: 420, desc: 'cos(w_k(a+b)), sin(w_k(a+b))' },
+            { name: 'Unembed (W_L)', x: 640, desc: 'cos(w_k(a+b-c)) for each c' },
+            { name: 'Output', x: 820, desc: 'c* = ' + ((a + b) % P) }
+        ];
+
+        const stageY = 80;
+        const dataY = 200;
+
+        // Draw stage boxes
+        stages.forEach((stage, i) => {
+            const alpha = progress >= (i / stages.length) ? 1.0 : 0.3;
+            ctx.globalAlpha = alpha;
+
+            // Box
+            ctx.fillStyle = '#1a1a4a';
+            ctx.strokeStyle = '#7b2ff7';
+            ctx.lineWidth = 2;
+            const boxW = 130, boxH = 40;
+            ctx.fillRect(stage.x - boxW/2, stageY - boxH/2, boxW, boxH);
+            ctx.strokeRect(stage.x - boxW/2, stageY - boxH/2, boxW, boxH);
+
+            // Name
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(stage.name, stage.x, stageY + 5);
+
+            // Description
+            ctx.fillStyle = '#a0a0c0';
+            ctx.font = '10px monospace';
+            ctx.fillText(stage.desc, stage.x, stageY + 30);
+
+            // Arrow to next
+            if (i < stages.length - 1) {
+                const nextX = stages[i + 1].x;
+                ctx.beginPath();
+                ctx.moveTo(stage.x + boxW/2 + 5, stageY);
+                ctx.lineTo(nextX - boxW/2 - 5, stageY);
+                ctx.strokeStyle = '#4a4a7a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                // Arrowhead
+                ctx.beginPath();
+                ctx.moveTo(nextX - boxW/2 - 5, stageY);
+                ctx.lineTo(nextX - boxW/2 - 15, stageY - 5);
+                ctx.lineTo(nextX - boxW/2 - 15, stageY + 5);
+                ctx.closePath();
+                ctx.fillStyle = '#4a4a7a';
+                ctx.fill();
+            }
+        });
+
+        ctx.globalAlpha = 1.0;
+
+        // Draw data representations at each stage
+        const k = keyFreqs[0];
+        const wk = 2 * Math.PI * k / P;
+
+        // Stage 1: Input one-hot
+        drawOneHot(ctx, 50, dataY, a, P, 'a (one-hot)');
+
+        // Stage 2: Embedding circle
+        drawMiniCircle(ctx, 200, dataY + 50, a, k, P, 'Embed a');
+        drawMiniCircle(ctx, 200, dataY + 150, b, k, P, 'Embed b');
+
+        // Stage 3: Combined rotation
+        drawMiniCircle(ctx, 420, dataY + 100, (a + b) % P, k, P, 'cos/sin(w_k(a+b))');
+
+        // Stage 4: Logit wave
+        drawLogitWave(ctx, 640, dataY + 50, a, b, P);
+
+        // Stage 5: Output
+        const answer = (a + b) % P;
+        ctx.fillStyle = '#00ff88';
+        ctx.font = 'bold 24px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(answer.toString(), 820, dataY + 100);
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('(' + a + ' + ' + b + ') mod ' + P, 820, dataY + 125);
+    }
+
+    function drawOneHot(ctx, x, y, val, p, label) {
+        const barW = 80, barH = 60;
+        ctx.fillStyle = '#1a1a3a';
+        ctx.fillRect(x - barW/2, y, barW, barH);
+        
+        // Draw sparse representation
+        const numBars = 20;
+        const step = Math.floor(p / numBars);
+        for (let i = 0; i < numBars; i++) {
+            const idx = i * step;
+            const bx = x - barW/2 + (i / numBars) * barW;
+            const bh = (idx === val) ? barH * 0.9 : barH * 0.05;
+            ctx.fillStyle = (idx === val) ? '#ffd700' : '#3a3a6a';
+            ctx.fillRect(bx, y + barH - bh, barW / numBars - 1, bh);
+        }
+        ctx.fillStyle = '#808090';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x, y + barH + 12);
+    }
+
+    function drawMiniCircle(ctx, x, y, val, k, p, label) {
+        const r = 25;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.strokeStyle = '#3a3a6a';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        const angle = 2 * Math.PI * k * val / p;
+        const px = x + r * Math.cos(angle);
+        const py = y - r * Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = '#00d4ff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffd700';
+        ctx.fill();
+
+        ctx.fillStyle = '#808090';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x, y + r + 14);
+    }
+
+    function drawLogitWave(ctx, x, y, a, b, p) {
+        const waveW = 120, waveH = 80;
+        ctx.fillStyle = '#0a0a1a';
+        ctx.fillRect(x - waveW/2, y, waveW, waveH);
+
+        const answer = (a + b) % p;
+        
+        ctx.beginPath();
+        ctx.strokeStyle = '#00ff88';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < waveW; i++) {
+            const c = Math.floor((i / waveW) * p);
+            let logit = 0;
+            keyFreqs.forEach(k => {
+                const wk = 2 * Math.PI * k / p;
+                logit += Math.cos(wk * (a + b - c));
+            });
+            logit /= keyFreqs.length;
+            const py = y + waveH/2 - logit * waveH * 0.4;
+            if (i === 0) ctx.moveTo(x - waveW/2 + i, py);
+            else ctx.lineTo(x - waveW/2 + i, py);
+        }
+        ctx.stroke();
+
+        // Mark answer
+        const answerX = x - waveW/2 + (answer / p) * waveW;
+        ctx.beginPath();
+        ctx.moveTo(answerX, y);
+        ctx.lineTo(answerX, y + waveH);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#808090';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Logits (peak at c*=' + answer + ')', x, y + waveH + 12);
+    }
+
+    let compAnimProgress = 0;
+    function animateComputation() {
+        if (compAnimId) cancelAnimationFrame(compAnimId);
+        compAnimProgress = 0;
+        const a = parseInt(document.getElementById('compA').value);
+        const b = parseInt(document.getElementById('compB').value);
+        const speed = parseInt(document.getElementById('animSpeed').value);
+
+        function step() {
+            compAnimProgress += 0.005 * speed;
+            if (compAnimProgress > 1) compAnimProgress = 1;
+            drawComputationFlow(a, b, compAnimProgress);
+            document.getElementById('compProgress').style.width = (compAnimProgress * 100) + '%';
+            if (compAnimProgress < 1) {
+                compAnimId = requestAnimationFrame(step);
+            }
+        }
+        step();
+    }
+
+    function updateNeuronActivation() {
+        const freqK = parseInt(document.getElementById('neuronFreqSelect').value);
+        const showType = document.getElementById('neuronShowSelect').value;
+
+        const canvas = document.getElementById('neuronActivation');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const margin = {top: 30, right: 30, bottom: 50, left: 60};
+        const plotW = w - margin.left - margin.right;
+        const plotH = h - margin.top - margin.bottom;
+
+        // Draw as a 2D heatmap of neuron activation for inputs (a, b)
+        const gridSize = 56; // half of P for display
+        const cellW = plotW / gridSize;
+        const cellH = plotH / gridSize;
+
+        const wk = 2 * Math.PI * freqK / P;
+
+        for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                const a = i * 2;
+                const b = j * 2;
+                
+                let val;
+                // Degree-2 polynomial: c0 + c1*cos(wk*a)*cos(wk*b) + c2*sin(wk*a)*sin(wk*b)
+                const poly = 0.5 + 2.0 * Math.cos(wk * a) * Math.cos(wk * b) - 1.8 * Math.sin(wk * a) * Math.sin(wk * b);
+                const activation = Math.max(0, poly + 0.3 * Math.cos(wk * 2 * a) * 0.1); // ReLU + noise
+                const residual = activation - Math.max(0, poly);
+
+                if (showType === 'activation') val = activation;
+                else if (showType === 'polynomial') val = Math.max(0, poly);
+                else val = residual;
+
+                // Color mapping
+                let color;
+                if (showType === 'residual') {
+                    const norm = Math.abs(val) * 5;
+                    const r = val > 0 ? Math.min(255, norm * 255) : 0;
+                    const bl = val < 0 ? Math.min(255, norm * 255) : 0;
+                    color = 'rgb(' + Math.floor(r) + ',50,' + Math.floor(bl) + ')';
+                } else {
+                    const norm = Math.min(1, val / 3);
+                    const r = Math.floor(norm * 200);
+                    const g = Math.floor(norm * 100 + 50);
+                    const bl = Math.floor(255 - norm * 100);
+                    color = 'rgb(' + r + ',' + g + ',' + bl + ')';
+                }
+
+                ctx.fillStyle = color;
+                ctx.fillRect(margin.left + i * cellW, margin.top + j * cellH, cellW + 0.5, cellH + 0.5);
+            }
+        }
+
+        // Axes labels
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Input a', w/2, h - 10);
+        ctx.save();
+        ctx.translate(15, h/2);
+        ctx.rotate(-Math.PI/2);
+        ctx.fillText('Input b', 0, 0);
+        ctx.restore();
+
+        // Title
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        const titles = {
+            'activation': 'Neuron Activation (freq k=' + freqK + ') - periodic pattern',
+            'polynomial': 'Degree-2 Polynomial Approximation (FVE > 85%)',
+            'residual': 'Residual (Activation - Polynomial) - mostly noise'
+        };
+        ctx.fillText(titles[showType], w/2, 20);
+    }
+
+    // ============ TAB 4: INTERFERENCE ============
+    function updateInterference() {
+        const a = parseInt(document.getElementById('intA').value);
+        const b = parseInt(document.getElementById('intB').value);
+        const numFreqs = parseInt(document.getElementById('numFreqs').value);
+        document.getElementById('intA-val').textContent = a;
+        document.getElementById('intB-val').textContent = b;
+        document.getElementById('numFreqs-val').textContent = numFreqs;
+
+        drawInterference(a, b, numFreqs);
+    }
+
+    function drawInterference(a, b, numFreqs) {
+        const canvas = document.getElementById('interferenceCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const margin = {top: 40, right: 30, bottom: 50, left: 60};
+        const plotW = w - margin.left - margin.right;
+        const plotH = h - margin.top - margin.bottom;
+
+        const answer = (a + b) % P;
+
+        // Compute logits for each c
+        const logits = [];
+        const freqContributions = [];
+        
+        for (let c = 0; c < P; c++) {
+            let total = 0;
+            const contribs = [];
+            for (let fi = 0; fi < numFreqs; fi++) {
+                const k = keyFreqs[fi];
+                const wk = 2 * Math.PI * k / P;
+                const val = Math.cos(wk * (a + b - c));
+                contribs.push(val);
+                total += val;
+            }
+            logits.push(total);
+            freqContributions.push(contribs);
+        }
+
+        const maxLogit = Math.max(...logits);
+        const minLogit = Math.min(...logits);
+        const range = maxLogit - minLogit || 1;
+
+        // Draw axes
+        ctx.strokeStyle = '#3a3a6a';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, h - margin.bottom);
+        ctx.lineTo(w - margin.right, h - margin.bottom);
+        ctx.stroke();
+
+        // Draw zero line
+        const zeroY = margin.top + plotH * (maxLogit / range);
+        ctx.beginPath();
+        ctx.moveTo(margin.left, zeroY);
+        ctx.lineTo(w - margin.right, zeroY);
+        ctx.strokeStyle = '#2a2a4a';
+        ctx.stroke();
+
+        // Draw individual frequency contributions (faded)
+        const barWidth = plotW / P;
+        for (let fi = 0; fi < numFreqs; fi++) {
+            ctx.beginPath();
+            ctx.strokeStyle = freqColors[fi];
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.4;
+            for (let c = 0; c < P; c++) {
+                const x = margin.left + c * barWidth + barWidth / 2;
+                const val = freqContributions[c][fi];
+                const y = margin.top + plotH * ((maxLogit - val) / range);
+                if (c === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Draw combined logits as bars
+        for (let c = 0; c < P; c++) {
+            const x = margin.left + c * barWidth;
+            const val = logits[c];
+            const barH = (val / range) * plotH;
+            const y = zeroY - barH;
+
+            let color = '#00ff88';
+            if (c === answer) {
+                color = '#ffd700';
+            }
+
+            ctx.fillStyle = color;
+            ctx.globalAlpha = c === answer ? 1.0 : 0.6;
+            ctx.fillRect(x + 1, Math.min(y, zeroY), barWidth - 2, Math.abs(barH));
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Highlight answer
+        const answerX = margin.left + answer * barWidth + barWidth / 2;
+        ctx.beginPath();
+        ctx.moveTo(answerX, margin.top);
+        ctx.lineTo(answerX, h - margin.bottom);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Answer label
+        ctx.fillStyle = '#ffd700';
+        ctx.font = 'bold 14px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('c* = ' + answer, answerX, margin.top - 10);
+        ctx.fillText('(' + document.getElementById('intA').value + '+' + document.getElementById('intB').value + ') mod ' + P, answerX, margin.top - 25);
+
+        // Axis labels
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'center';
+        for (let c = 0; c < P; c += 10) {
+            ctx.fillText(c.toString(), margin.left + c * barWidth + barWidth / 2, h - margin.bottom + 15);
+        }
+        ctx.fillText('Output class c', w / 2, h - 10);
+
+        ctx.save();
+        ctx.translate(15, h / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = 'center';
+        ctx.fillText('Logit value (sum of cosines)', 0, 0);
+        ctx.restore();
+
+        // Title
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Constructive Interference: ' + numFreqs + ' frequencies sum to peak at correct answer', w / 2, 20);
+    }
+
+    function animateInterference() {
+        const a = parseInt(document.getElementById('intA').value);
+        let numF = 0;
+        const slider = document.getElementById('numFreqs');
+        
+        function step() {
+            numF++;
+            if (numF > 5) return;
+            slider.value = numF;
+            document.getElementById('numFreqs-val').textContent = numF;
+            drawInterference(a, parseInt(document.getElementById('intB').value), numF);
+            setTimeout(step, 800);
+        }
+        step();
+    }
+
+    // ============ ABLATION ============
+    let currentAblation = 'none';
+
+    function setAblation(type) {
+        currentAblation = type;
+        document.querySelectorAll('[id^="ablate-"]').forEach(b => b.classList.remove('active'));
+        document.getElementById('ablate-' + type).classList.add('active');
+        updateAblation();
+    }
+
+    function updateAblation() {
+        const canvas = document.getElementById('ablationCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const margin = {top: 40, right: 30, bottom: 50, left: 80};
+        const plotW = w - margin.left - margin.right;
+        const plotH = h - margin.top - margin.bottom;
+
+        // Simulated ablation results based on the paper
+        const data = {
+            'none': { loss: 2.4e-7, accuracy: 100, label: 'Original Model' },
+            'key': { loss: 5.27, accuracy: 0.9, label: 'Key Frequencies Removed' },
+            'other': { loss: 7.24e-8, accuracy: 100, label: 'Non-Key Frequencies Removed (Restricted)' },
+            'single': { loss: 0.01, accuracy: 97, label: 'Single Key Frequency Removed (k=42)' }
+        };
+
+        // Draw comparison bars
+        const allTypes = ['none', 'other', 'single', 'key'];
+        const labels = ['Original', 'Restricted\n(non-key removed)', 'Single key\nremoved', 'All key\nremoved'];
+        const losses = [2.4e-7, 7.24e-8, 0.01, 5.27];
+        const accuracies = [100, 100, 97, 0.9];
+
+        const barGroupW = plotW / allTypes.length;
+        const barW = barGroupW * 0.6;
+
+        // Log scale for loss
+        const maxLogLoss = Math.log10(10);
+        const minLogLoss = Math.log10(1e-8);
+        const logRange = maxLogLoss - minLogLoss;
+
+        // Draw loss bars
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Loss (log scale) - Lower is better', w / 2, 20);
+
+        for (let i = 0; i < allTypes.length; i++) {
+            const x = margin.left + i * barGroupW + (barGroupW - barW) / 2;
+            const logLoss = Math.log10(losses[i]);
+            const barH = ((logLoss - minLogLoss) / logRange) * plotH;
+
+            const isActive = allTypes[i] === currentAblation;
+            ctx.fillStyle = isActive ? '#7b2ff7' : '#3a3a6a';
+            if (allTypes[i] === 'key') ctx.fillStyle = isActive ? '#ff4444' : '#663333';
+            if (allTypes[i] === 'other') ctx.fillStyle = isActive ? '#00ff88' : '#336633';
+
+            ctx.fillRect(x, h - margin.bottom - barH, barW, barH);
+
+            // Border for active
+            if (isActive) {
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, h - margin.bottom - barH, barW, barH);
+            }
+
+            // Label
+            ctx.fillStyle = '#a0a0c0';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            const labelLines = labels[i].split('\n');
+            labelLines.forEach((line, li) => {
+                ctx.fillText(line, x + barW / 2, h - margin.bottom + 14 + li * 12);
+            });
+
+            // Loss value
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '10px monospace';
+            ctx.fillText(losses[i].toExponential(1), x + barW / 2, h - margin.bottom - barH - 8);
+
+            // Accuracy
+            ctx.fillStyle = '#00d4ff';
+            ctx.fillText(accuracies[i] + '%', x + barW / 2, h - margin.bottom - barH - 22);
+        }
+
+        // Y axis labels
+        ctx.fillStyle = '#808090';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'right';
+        for (let exp = -8; exp <= 1; exp += 1) {
+            const y = h - margin.bottom - ((exp - minLogLoss) / logRange) * plotH;
+            if (y > margin.top && y < h - margin.bottom) {
+                ctx.fillText('1e' + exp, margin.left - 5, y + 4);
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(w - margin.right, y);
+                ctx.strokeStyle = '#1a1a3a';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        }
+
+        // Info text
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'left';
+        const info = {
+            'none': 'Original model: uses 5 key frequencies for Fourier multiplication algorithm',
+            'key': 'Removing key frequencies destroys performance (worse than random chance!)',
+            'other': 'Removing non-key frequencies IMPROVES performance - they are noise!',
+            'single': 'Removing even one key frequency significantly hurts performance'
+        };
+        ctx.fillText(info[currentAblation], margin.left, margin.top - 5);
+    }
+
+    // ============ TAB 5: GROKKING ============
+    function updateGrokking() {
+        const epoch = parseInt(document.getElementById('epochSlider').value);
+        document.getElementById('epoch-val').textContent = epoch;
+        document.getElementById('grokkingProgress').style.width = (epoch / 30000 * 100) + '%';
+
+        drawGrokkingCurves(epoch);
+        drawNetworkState(epoch);
+    }
+
+    function drawGrokkingCurves(currentEpoch) {
+        const canvas = document.getElementById('grokkingCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const margin = {top: 40, right: 100, bottom: 50, left: 70};
+        const plotW = w - margin.left - margin.right;
+        const plotH = h - margin.top - margin.bottom;
+
+        const metric = document.getElementById('grokkingMetric').value;
+
+        // Generate simulated training curves based on the paper's findings
+        const numPoints = 300;
+        const epochs = [];
+        const trainLoss = [];
+        const testLoss = [];
+        const restrictedLoss = [];
+        const excludedLoss = [];
+        const weights = [];
+        const gini = [];
+
+        for (let i = 0; i < numPoints; i++) {
+            const ep = (i / numPoints) * 30000;
+            epochs.push(ep);
+
+            // Train loss: drops quickly, stays low
+            const tl = ep < 1400 ? Math.exp(-ep / 300) * 4 + 0.0001 : 0.0001 + Math.random() * 0.00001;
+            trainLoss.push(tl);
+
+            // Test loss: stays high until cleanup phase (~10k), then drops
+            let testL;
+            if (ep < 9400) {
+                testL = 4.0 - ep * 0.0001;
+            } else if (ep < 14000) {
+                const t = (ep - 9400) / 4600;
+                testL = 3.5 * Math.exp(-t * 8);
+            } else {
+                testL = 0.0001 + Math.random() * 0.00001;
+            }
+            testLoss.push(testL);
+
+            // Restricted loss: starts declining during circuit formation
+            let rl;
+            if (ep < 1400) {
+                rl = 4.5;
+            } else if (ep < 9400) {
+                const t = (ep - 1400) / 8000;
+                rl = 4.5 * Math.exp(-t * 2);
+            } else if (ep < 14000) {
+                const t = (ep - 9400) / 4600;
+                rl = 0.5 * Math.exp(-t * 5);
+            } else {
+                rl = 0.00005;
+            }
+            restrictedLoss.push(rl);
+
+            // Excluded loss: rises during circuit formation, plateaus during cleanup
+            let el;
+            if (ep < 1400) {
+                el = tl;
+            } else if (ep < 9400) {
+                const t = (ep - 1400) / 8000;
+                el = 0.001 + t * 4.5;
+            } else {
+                el = 4.5 + Math.random() * 0.1;
+            }
+            excludedLoss.push(el);
+
+            // Sum of squared weights
+            let sw;
+            if (ep < 1400) {
+                sw = 1500 + ep * 1.2;
+            } else if (ep < 9400) {
+                const t = (ep - 1400) / 8000;
+                sw = 3200 - t * 800;
+            } else if (ep < 14000) {
+                const t = (ep - 9400) / 4600;
+                sw = 2400 - t * 1200;
+            } else {
+                sw = 1200 + Math.random() * 20;
+            }
+            weights.push(sw);
+
+            // Gini coefficient
+            let g;
+            if (ep < 1400) {
+                g = 0.15 + ep * 0.00002;
+            } else if (ep < 9400) {
+                const t = (ep - 1400) / 8000;
+                g = 0.18 + t * 0.15;
+            } else if (ep < 14000) {
+                const t = (ep - 9400) / 4600;
+                g = 0.33 + t * 0.45;
+            } else {
+                g = 0.78 + Math.random() * 0.02;
+            }
+            gini.push(g);
+        }
+
+        // Select data based on metric
+        let curves = [];
+        let yLabel = '';
+        let useLogScale = false;
+
+        if (metric === 'loss') {
+            curves = [
+                { data: trainLoss, color: '#00d4ff', label: 'Train Loss' },
+                { data: testLoss, color: '#ff006e', label: 'Test Loss' }
+            ];
+            yLabel = 'Loss (log scale)';
+            useLogScale = true;
+        } else if (metric === 'restricted') {
+            curves = [
+                { data: trainLoss, color: '#00d4ff', label: 'Train Loss' },
+                { data: testLoss, color: '#ff006e', label: 'Test Loss' },
+                { data: restrictedLoss, color: '#00ff88', label: 'Restricted Loss' }
+            ];
+            yLabel = 'Loss (log scale)';
+            useLogScale = true;
+        } else if (metric === 'excluded') {
+            curves = [
+                { data: trainLoss, color: '#00d4ff', label: 'Train Loss' },
+                { data: testLoss, color: '#ff006e', label: 'Test Loss' },
+                { data: excludedLoss, color: '#ffd700', label: 'Excluded Loss' }
+            ];
+            yLabel = 'Loss (log scale)';
+            useLogScale = true;
+        } else if (metric === 'weights') {
+            curves = [
+                { data: weights, color: '#a78bfa', label: 'Sum of Squared Weights' }
+            ];
+            yLabel = 'Sum of Squared Weights';
+            useLogScale = false;
+        } else if (metric === 'gini') {
+            curves = [
+                { data: gini, color: '#ff8844', label: 'Gini Coefficient (Sparsity)' }
+            ];
+            yLabel = 'Gini Coefficient';
+            useLogScale = false;
+        }
+
+        // Draw axes
+        ctx.strokeStyle = '#3a3a6a';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin.left, margin.top);
+        ctx.lineTo(margin.left, h - margin.bottom);
+        ctx.lineTo(w - margin.right, h - margin.bottom);
+        ctx.stroke();
+
+        // Compute y range
+        let allVals = [];
+        curves.forEach(c => allVals = allVals.concat(c.data));
+        let yMin, yMax;
+        if (useLogScale) {
+            const logVals = allVals.filter(v => v > 0).map(v => Math.log10(v));
+            yMin = Math.floor(Math.min(...logVals));
+            yMax = Math.ceil(Math.max(...logVals));
+        } else {
+            yMin = Math.min(...allVals) * 0.9;
+            yMax = Math.max(...allVals) * 1.1;
+        }
+
+        function toScreenX(ep) {
+            return margin.left + (ep / 30000) * plotW;
+        }
+        function toScreenY(val) {
+            if (useLogScale) {
+                const logVal = Math.log10(Math.max(val, 1e-10));
+                return margin.top + plotH * (1 - (logVal - yMin) / (yMax - yMin));
+            } else {
+                return margin.top + plotH * (1 - (val - yMin) / (yMax - yMin));
+            }
+        }
+
+        // Draw phase boundaries
+        const phases = [
+            { start: 0, end: 1400, label: 'Memorization', color: 'rgba(255,100,100,0.1)' },
+            { start: 1400, end: 9400, label: 'Circuit Formation', color: 'rgba(100,255,100,0.1)' },
+            { start: 9400, end: 14000, label: 'Cleanup', color: 'rgba(100,100,255,0.1)' },
+            { start: 14000, end: 30000, label: 'Stable', color: 'rgba(200,200,200,0.05)' }
+        ];
+
+        phases.forEach(phase => {
+            const x1 = toScreenX(phase.start);
+            const x2 = toScreenX(phase.end);
+            ctx.fillStyle = phase.color;
+            ctx.fillRect(x1, margin.top, x2 - x1, plotH);
+
+            // Phase label
+            ctx.fillStyle = '#808090';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(phase.label, (x1 + x2) / 2, h - margin.bottom + 35);
+
+            // Boundary line
+            if (phase.start > 0) {
+                ctx.beginPath();
+                ctx.moveTo(x1, margin.top);
+                ctx.lineTo(x1, h - margin.bottom);
+                ctx.strokeStyle = '#4a4a7a';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        });
+
+        // Draw curves
+        curves.forEach(curve => {
+            ctx.beginPath();
+            ctx.strokeStyle = curve.color;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < numPoints; i++) {
+                const x = toScreenX(epochs[i]);
+                const y = toScreenY(curve.data[i]);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        });
+
+        // Draw current epoch marker
+        const markerX = toScreenX(currentEpoch);
+        ctx.beginPath();
+        ctx.moveTo(markerX, margin.top);
+        ctx.lineTo(markerX, h - margin.bottom);
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Epoch label
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('Epoch ' + currentEpoch, markerX, margin.top - 8);
+
+        // Legend
+        let legendX = w - margin.right + 10;
+        curves.forEach((curve, i) => {
+            ctx.fillStyle = curve.color;
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillRect(legendX, margin.top + i * 20, 12, 12);
+            ctx.fillText(curve.label, legendX + 16, margin.top + i * 20 + 10);
+        });
+
+        // Y axis labels
+        ctx.fillStyle = '#808090';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'right';
+        if (useLogScale) {
+            for (let exp = yMin; exp <= yMax; exp++) {
+                const y = toScreenY(Math.pow(10, exp));
+                ctx.fillText('1e' + exp, margin.left - 5, y + 4);
+            }
+        } else {
+            const steps = 5;
+            for (let i = 0; i <= steps; i++) {
+                const val = yMin + (yMax - yMin) * i / steps;
+                const y = toScreenY(val);
+                ctx.fillText(val.toFixed(0), margin.left - 5, y + 4);
+            }
+        }
+
+        // X axis labels
+        ctx.textAlign = 'center';
+        for (let ep = 0; ep <= 30000; ep += 5000) {
+            ctx.fillText(ep / 1000 + 'k', toScreenX(ep), h - margin.bottom + 15);
+        }
+        ctx.fillText('Epoch', w / 2, h - 5);
+
+        // Title
+        ctx.fillStyle = '#e0e0e0';
+        ctx.font = '13px sans-serif';
+        ctx.textAlign = 'center';
+        const titles = {
+            'loss': 'Train and Test Loss over Training (Grokking)',
+            'restricted': 'Restricted Loss: Performance using only key frequencies',
+            'excluded': 'Excluded Loss: Performance without key frequencies (memorization)',
+            'weights': 'Sum of Squared Weights (driven down by weight decay)',
+            'gini': 'Gini Coefficient: Sparsity in Fourier basis increases during cleanup'
+        };
+        ctx.fillText(titles[metric], w / 2, 20);
+    }
+
+    function drawNetworkState(epoch) {
+        const canvas = document.getElementById('networkState');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Show a simplified network state visualization
+        const margin = {top: 20, right: 20, bottom: 30, left: 20};
+
+        // Determine phase
+        let phase, phaseColor, phaseDesc;
+        if (epoch < 1400) {
+            phase = 'Memorization';
+            phaseColor = '#ff6666';
+            phaseDesc = 'Network memorizes training data. Key frequencies unused.';
+        } else if (epoch < 9400) {
+            phase = 'Circuit Formation';
+            phaseColor = '#66ff66';
+            phaseDesc = 'Fourier multiplication circuit gradually forms. Weight decay drives this.';
+        } else if (epoch < 14000) {
+            phase = 'Cleanup';
+            phaseColor = '#6666ff';
+            phaseDesc = 'Weight decay removes memorization. Test accuracy jumps.';
+        } else {
+            phase = 'Stable';
+            phaseColor = '#aaaaaa';
+            phaseDesc = 'Network uses clean Fourier multiplication algorithm.';
+        }
+
+        // Phase indicator
+        ctx.fillStyle = phaseColor;
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Phase: ' + phase, margin.left, margin.top + 20);
+        ctx.fillStyle = '#a0a0c0';
+        ctx.font = '12px sans-serif';
+        ctx.fillText(phaseDesc, margin.left, margin.top + 40);
+
+        // Draw frequency bars showing how much each key frequency is used
+        const barStartX = margin.left;
+        const barStartY = margin.top + 60;
+        const barMaxW = 150;
+        const barH = 20;
+        const barGap = 5;
+
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('Key Frequency Usage:', barStartX, barStartY - 5);
+
+        keyFreqs.forEach((k, i) => {
+            const y = barStartY + i * (barH + barGap);
+            
+            // Calculate usage based on epoch
+            let usage;
+            if (epoch < 1400) {
+                usage = 0.05 + Math.random() * 0.05;
+            } else if (epoch < 9400) {
+                const t = (epoch - 1400) / 8000;
+                usage = 0.05 + t * 0.7;
+            } else if (epoch < 14000) {
+                const t = (epoch - 9400) / 4600;
+                usage = 0.75 + t * 0.25;
+            } else {
+                usage = 1.0;
+            }
+
+            // Background
+            ctx.fillStyle = '#1a1a3a';
+            ctx.fillRect(barStartX + 50, y, barMaxW, barH);
+
+            // Fill
+            ctx.fillStyle = freqColors[i];
+            ctx.globalAlpha = 0.8;
+            ctx.fillRect(barStartX + 50, y, barMaxW * usage, barH);
+            ctx.globalAlpha = 1.0;
+
+            // Label
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('k=' + k, barStartX, y + 14);
+            ctx.fillText((usage * 100).toFixed(0) + '%', barStartX + 55 + barMaxW, y + 14);
+        });
+
+        // Draw memorization vs generalization balance
+        const balX = 350;
+        const balY = barStartY;
+        const balW = 250;
+        const balH = 30;
+
+        let memRatio;
+        if (epoch < 1400) {
+            memRatio = 0.95;
+        } else if (epoch < 9400) {
+            const t = (epoch - 1400) / 8000;
+            memRatio = 0.95 - t * 0.45;
+        } else if (epoch < 14000) {
+            const t = (epoch - 9400) / 4600;
+            memRatio = 0.5 - t * 0.48;
+        } else {
+            memRatio = 0.02;
+        }
+
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('Memorization vs Generalization:', balX, balY - 5);
+
+        // Memorization bar
+        ctx.fillStyle = '#ff4444';
+        ctx.globalAlpha = 0.7;
+        ctx.fillRect(balX, balY, balW * memRatio, balH);
+        ctx.globalAlpha = 1.0;
+
+        // Generalization bar
+        ctx.fillStyle = '#00ff88';
+        ctx.globalAlpha = 0.7;
+        ctx.fillRect(balX + balW * memRatio, balY, balW * (1 - memRatio), balH);
+        ctx.globalAlpha = 1.0;
+
+        // Labels
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        if (memRatio > 0.15) ctx.fillText('Memorization ' + (memRatio * 100).toFixed(0) + '%', balX + balW * memRatio / 2, balY + 18);
+        if ((1 - memRatio) > 0.15) ctx.fillText('Generalization ' + ((1 - memRatio) * 100).toFixed(0) + '%', balX + balW * memRatio + balW * (1 - memRatio) / 2, balY + 18);
+
+        // Draw weight norm indicator
+        const wnX = 350;
+        const wnY = balY + 60;
+        let weightNorm;
+        if (epoch < 1400) {
+            weightNorm = 1500 + epoch * 1.2;
+        } else if (epoch < 9400) {
+            const t = (epoch - 1400) / 8000;
+            weightNorm = 3200 - t * 800;
+        } else if (epoch < 14000) {
+            const t = (epoch - 9400) / 4600;
+            weightNorm = 2400 - t * 1200;
+        } else {
+            weightNorm = 1200;
+        }
+
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('Weight Norm: ' + weightNorm.toFixed(0), wnX, wnY);
+
+        // Gini
+        let giniVal;
+        if (epoch < 1400) {
+            giniVal = 0.15;
+        } else if (epoch < 9400) {
+            const t = (epoch - 1400) / 8000;
+            giniVal = 0.18 + t * 0.15;
+        } else if (epoch < 14000) {
+            const t = (epoch - 9400) / 4600;
+            giniVal = 0.33 + t * 0.45;
+        } else {
+            giniVal = 0.78;
+        }
+        ctx.fillText('Fourier Sparsity (Gini): ' + giniVal.toFixed(2), wnX, wnY + 20);
+
+        // Draw simplified network diagram showing active circuits
+        const netX = 650;
+        const netY = margin.top + 20;
+
+        ctx.fillStyle = '#808090';
+        ctx.font = '11px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText('Network Circuit State:', netX, netY);
+
+        // Draw layers
+        const layers = ['Embed', 'Attn', 'MLP', 'Unembed'];
+        const layerW = 55;
+        const layerH = 35;
+        const layerGap = 15;
+
+        layers.forEach((layer, i) => {
+            const lx = netX + i * (layerW + layerGap);
+            const ly = netY + 20;
+
+            // Determine circuit strength
+            let circuitStrength;
+            if (epoch < 1400) {
+                circuitStrength = 0.1;
+            } else if (epoch < 9400) {
+                const t = (epoch - 1400) / 8000;
+                circuitStrength = 0.1 + t * 0.7;
+            } else {
+                circuitStrength = 0.8 + Math.min(0.2, (epoch - 9400) / 10000);
+            }
+
+            // Draw layer box
+            const alpha = 0.3 + circuitStrength * 0.7;
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = '#7b2ff7';
+            ctx.fillRect(lx, ly, layerW, layerH);
+            ctx.globalAlpha = 1.0;
+
+            ctx.strokeStyle = '#9b4bff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(lx, ly, layerW, layerH);
+
+            ctx.fillStyle = '#e0e0e0';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(layer, lx + layerW / 2, ly + layerH / 2 + 4);
+
+            // Arrow
+            if (i < layers.length - 1) {
+                ctx.beginPath();
+                ctx.moveTo(lx + layerW + 2, ly + layerH / 2);
+                ctx.lineTo(lx + layerW + layerGap - 2, ly + layerH / 2);
+                ctx.strokeStyle = '#4a4a7a';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        });
+
+        // Memorization indicator (fading noise)
+        let memAlpha;
+        if (epoch < 1400) {
+            memAlpha = 0.8;
+        } else if (epoch < 14000) {
+            memAlpha = 0.8 * (1 - (epoch - 1400) / 12600);
+        } else {
+            memAlpha = 0.02;
+        }
+
+        ctx.globalAlpha = memAlpha;
+        ctx.fillStyle = '#ff4444';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Memorization noise in weights', netX, netY + 80);
+
+        // Draw noise dots
+        for (let i = 0; i < 30; i++) {
+            const nx = netX + Math.sin(i * 7.3) * 100 + 100;
+            const ny = netY + 90 + Math.cos(i * 5.1) * 15;
+            ctx.beginPath();
+            ctx.arc(nx, ny, 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#ff4444';
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1.0;
+    }
+
+    let grokkingEpoch = 0;
+    function animateGrokking() {
+        if (grokkingAnimId) cancelAnimationFrame(grokkingAnimId);
+        grokkingEpoch = 0;
+
+        function step() {
+            grokkingEpoch += 100;
+            if (grokkingEpoch > 30000) {
+                grokkingAnimId = null;
+                return;
+            }
+            document.getElementById('epochSlider').value = grokkingEpoch;
+            updateGrokking();
+            grokkingAnimId = requestAnimationFrame(step);
+        }
+        step();
+    }
+
+    function stopGrokking() {
+        if (grokkingAnimId) {
+            cancelAnimationFrame(grokkingAnimId);
+            grokkingAnimId = null;
+        }
+    }
+
+    // ============ INITIALIZATION ============
+    window.addEventListener('load', function() {
+        updateEmbedding();
+    });
+
+    // Also initialize when tab is first shown
+    updateEmbedding();
+    </script>
+</body>
+</html>
