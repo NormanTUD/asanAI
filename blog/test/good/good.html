@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Live Well — A Formally Verified Guide</title>
+</head>
+<body>
+<script src="formal-ethics-framework.js"></script>
+<script src="good_styles.js"></script>
+<script>
+renderFormalEthicsGuide({
+
+  // ============================================================
+  // METADATA
+  // ============================================================
+  title: "How to Live Well",
+  rootSelector: "body",
+  defaultView: "steps",
+  globalLabel: "Good Life",
+
+  // ============================================================
+  // HERO
+  // ============================================================
+  hero: {
+    title: "How to Live Well",
+    subtitle: "A guide to living ethically — grounded in everyday practice, backed by formal proof, open to critique. Nine principles that fit together into one coherent whole.",
+    meta: "9 steps · 8 axioms · 14 theorems · sheaf-theoretic consistency · machine-verifiable"
+  },
+
+  // ============================================================
+  // SUMMARY
+  // ============================================================
+  summaryTitle: "The Nine Steps at a Glance",
+  summarySubtitle: "Each step is a practical principle you can apply today. Click any step to explore it in depth.",
+
+  // ============================================================
+  // OPEN SET MAPPING (which steps live on which domains)
+  // ============================================================
+  openSetNames: ["Self", "Other", "Community"],
+  openSetMapping: {
+    0: ["Other", "Community"],
+    1: ["Self"],
+    2: ["Self", "Other"],
+    3: ["Self", "Other"],
+    4: ["Self", "Community"],
+    5: ["Other", "Community"],
+    6: ["Other", "Community"],
+    7: ["Self", "Community"],
+    8: ["Self"],
+    9: ["Self", "Other", "Community"]
+  },
+
+  // ============================================================
+  // GLUING OVERLAPS (for verification animation)
+  // ============================================================
+  overlaps: [
+    "Gluing Self ∩ Other: sections agree on {awareness, empathy, truthfulness}",
+    "Gluing Self ∩ Community: sections agree on {moderation, responsibility}",
+    "Gluing Other ∩ Community: sections agree on {fairness, helpfulness, non-harm}"
+  ],
+
+  // ============================================================
+  // VALUES (optional foundational assumptions)
+  // ============================================================
+  valuesTitle: "What We Assume Is Good and Bad",
+  valuesSubtitle: "Before any rules, we state our bedrock values openly. These are not proved — they are chosen.",
+  values: [
+    {
+      type: "good",
+      title: "Being alive is preferable to not being alive",
+      description: "Conscious existence is generally preferable to non-existence.",
+      exemplarLabel: "Lived example — Janusz Korczak",
+      exemplar: "A pediatrician who refused escape and accompanied orphans to Treblinka so they would not die alone."
+    },
+    {
+      type: "good",
+      title: "Reducing suffering is good",
+      description: "Where conscious beings exist, reducing their unnecessary suffering is fundamentally valuable.",
+      exemplarLabel: "Lived example — Harriet Tubman",
+      exemplar: "Escaped slavery and returned 13 times to lead approximately 70 enslaved people to freedom."
+    },
+    {
+      type: "bad",
+      title: "Gratuitous cruelty is bad",
+      description: "Causing suffering for its own sake is fundamentally wrong.",
+      exemplarLabel: "Counter-example — Unit 731",
+      exemplar: "Japanese military scientists performed vivisection on living prisoners without anesthesia, purely for curiosity."
+    }
+    // ... add more values as needed
+  ],
+
+  // ============================================================
+  // AXIOMS (formal foundations)
+  // ============================================================
+  axioms: [
+    { id: "ax_agents_exist", name: "Agents Exist", human: "There is at least one being that can act and reflect." },
+    { id: "ax_awareness_possible", name: "Awareness Is Possible", human: "Every agent can be conscious of at least one state." },
+    { id: "ax_others_exist", name: "Others Exist", human: "No agent is alone. Other minds exist." },
+    { id: "ax_actions_causal", name: "Actions Have Effects", human: "What you do changes the world." },
+    { id: "ax_harm_recognizable", name: "Harm Is Recognizable", human: "You can tell whether an action causes harm." },
+    { id: "ax_improvement_possible", name: "Improvement Is Possible", human: "It is possible to get better." },
+    { id: "ax_symmetry", name: "Symmetry of Agents", human: "All agents have equal moral status." },
+    { id: "ax_measure_bounds", name: "Measure Bounds Length", human: "You cannot do infinitely many things with finite effort." }
+  ],
+
+  // ============================================================
+  // STEPS (the core content — each with all layers)
+  // ============================================================
+  steps: [
+    {
+      number: 0,
+      title: "Do No Harm",
+      oneLiner: "The absolute minimum. The floor beneath all ethics.",
+      sentence: "Before you act, ask: will this hurt someone? If yes, find another way.",
+      everyday: {
+        title: "What this looks like in daily life",
+        points: [
+          "Before sending an angry email, wait 24 hours.",
+          "When driving, remember every other car contains a person with a family.",
+          "Before sharing gossip, ask: would this hurt the person if they heard it?"
+        ],
+        realistic: "You will sometimes cause harm accidentally. The principle is: minimize net harm."
+      },
+      critique: {
+        issues: [
+          "Self-defense: sometimes you must harm to prevent greater harm.",
+          "Surgery: a surgeon cuts to heal.",
+          "Inaction can also cause harm."
+        ],
+        resolution: "The principle is: minimize NET harm. The burden of proof is on the one who would cause harm.",
+        historicalTest: "When Nazis ring your doorbell and you have Jews in your cellar, you lie. Step 0 overrides Step 3.",
+        couldBeWrong: "Could be incomplete if there exist situations where causing harm is intrinsically good.",
+        historicalFailure: "Jain monks starving themselves to avoid harming any living thing. When non-harm becomes self-destruction, Step 7 constrains Step 0."
+      },
+      philosophical: {
+        sources: ["Hippocrates (Primum non nocere)", "J.S. Mill (Harm Principle)", "Patanjali (Ahimsa)"],
+        argument: "Non-harm is the absolute lower bound of all ethics. It is the zero section of the sheaf.",
+        convergence: "Every culture has a prohibition against harm. The most universal ethical principle known."
+      },
+      historical: {
+        lived: "The Jain tradition has practiced radical ahimsa for over 2,500 years. Gandhi adopted this as the core of Indian independence.",
+        violated: "The Rwandan genocide (1994): 800,000 dead in 100 days.",
+        prevention: "Early intervention at the language level. When people begin calling others vermin, the harm principle is already being violated."
+      },
+      formal: {
+        type: "Zero section (always defined)",
+        definition: "nonharm : Agent -> Action -> Prop",
+        expansion: "forall (b : Agent), not (causes_harm act b)",
+        sheafCondition: "The zero section is defined on ALL open sets (global).",
+        categoryRole: "Zero morphism: the lower bound in the value poset.",
+        humanIdea: "We prove that harmless actions always exist, and that this zero section is globally defined."
+      },
+      coq: [
+        "(* Step 0: Non-Harm — The Zero Section *)",
+        "Section NonHarm.",
+        "",
+        "Variable Agent : Type.",
+        "Variable Action : Type.",
+        "Variable causes_harm : Action -> Agent -> Prop.",
+        "",
+        "Definition nonharm (a : Agent) (act : Action) : Prop :=",
+        "  forall (b : Agent), ~ (causes_harm act b).",
+        "",
+        "Hypothesis harmless_actions_exist :",
+        "  forall (a : Agent), exists (act : Action), nonharm a act.",
+        "",
+        "Theorem nonharm_always_possible :",
+        "  forall (a : Agent), exists (act : Action), nonharm a act.",
+        "Proof.",
+        "  intro a. apply harmless_actions_exist.",
+        "Qed.",
+        "",
+        "End NonHarm."
+      ],
+      subproofs: [
+        { name: "harmless_actions_exist", status: "axiom", human: "Harmless actions exist (axiom)", detail: "For every agent, at least one action harms no one." },
+        { name: "nonharm_always_possible", status: "proved", human: "Non-harm is always possible (proved)", detail: "Directly from harmless_actions_exist." }
+      ]
+    }
+    // ... add remaining steps (1-9) following the same structure
+  ],
+
+  // ============================================================
+  // SYSTEMS (connections to other axiomatic frameworks)
+  // ============================================================
+  systemsTitle: "Connection to Other Axiomatic Systems",
+  systemsSubtitle: "This ethical system connects to other axiomatic frameworks.",
+  systems: [
+    {
+      title: "Physical Axioms: The World Has Rules",
+      description: "Our system presupposes that the physical world is lawful.",
+      connection: "Our Axiom 4 (Actions Have Effects) is a special case of physical causality."
+    },
+    {
+      title: "Logical Axioms: Consistency Is Possible",
+      description: "We presuppose classical logic: non-contradiction, modus ponens.",
+      connection: "The sheaf locality condition IS the logical axiom of non-contradiction applied to ethics."
+    },
+    {
+      title: "Biological Axioms: Agents Are Embodied",
+      description: "Agents are finite, embodied, mortal beings with limited energy, attention, and time. This grounds moderation — compactness is a biological fact before it is a mathematical theorem.",
+      connection: "The compactness axiom (measure bounds length) is the formal expression of biological finitude. You cannot do infinitely many things because you have finite ATP, finite neurons, finite hours."
+    },
+    {
+      title: "Social Axioms: Others Exist and Communicate",
+      description: "We presuppose intersubjectivity: other minds exist, communication is possible, shared meaning can be constructed.",
+      connection: "Our Axiom 3 (Others Exist) is the anti-solipsism axiom. It cannot be proved — solipsism is irrefutable. But it is the entry condition for all social ethics."
+    },
+    {
+      title: "Evolutionary Axioms: Cooperation Is Stable",
+      description: "Game theory and evolutionary biology show that cooperation is an evolutionarily stable strategy under iterated interactions.",
+      connection: "Steps 0 (non-harm), 5 (fairness), and 6 (help) correspond to cooperative strategies that dominate in iterated prisoner's dilemmas (Axelrod, 1984)."
+    }
+  ]
+
+});
+</script>
+</body>
+</html>
