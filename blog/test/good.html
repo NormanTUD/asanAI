@@ -1702,12 +1702,18 @@ body {
 				'  intro Hcauses. apply acknowledgment_possible. exact Hw2.',
 				'Qed.',
 				'',
-				'End Responsibility.'
+					'End Responsibility.'
 			],
-		}
+			subproofs: [
+				{ name: 'actions_causal', status: 'axiom', human: 'Actions have effects (axiom)', detail: 'Every action produces a new world-state.' },
+				{ name: 'acknowledgment_possible', status: 'axiom', human: 'Acknowledgment is possible (axiom)', detail: 'If something is true, you can face it.' },
+				{ name: 'responsibility_bearable', status: 'proved', human: 'Responsibility is bearable (proved)', detail: 'From actions_causal + acknowledgment_possible. QED.' }
+			]
+		},
 		{
 			number: 5,
 			title: 'Be Fair',
+
 			sentence: 'What you want for yourself, the other wants too. It is that simple.',
 			oneLiner: 'Fairness is the natural transformation: consistency in both directions.',
 			everyday: {
