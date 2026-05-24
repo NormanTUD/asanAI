@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Signal Analysis Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #58a6ff, #bc8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8b949e;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover {
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+        .tab-btn.active {
+            background: #1f2937;
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+        .section {
+            display: none;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section.active {
+            display: block;
+        }
+        .section h2 {
+            color: #58a6ff;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .section h3 {
+            color: #bc8cff;
+            margin: 15px 0 10px;
+            font-size: 1.2em;
+        }
+        .equation-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .control-group {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .control-group label {
+            display: block;
+            color: #8b949e;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .control-group .value {
+            color: #58a6ff;
+            font-weight: bold;
+            float: right;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 8px 0;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: #30363d;
+            border-radius: 3px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #58a6ff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: #58a6ff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            border-radius: 6px;
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+        .plot-container {
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .explanation {
+            background: #0d1117;
+            border-left: 3px solid #58a6ff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95em;
+            color: #8b949e;
+        }
+        .explanation strong {
+            color: #e6edf3;
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 768px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+        button.action-btn {
+            padding: 8px 16px;
+            background: #238636;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        button.action-btn:hover {
+            background: #2ea043;
+        }
+        .info-badge {
+            display: inline-block;
+            background: #1f2937;
+            border: 1px solid #30363d;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            color: #bc8cff;
+            margin: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Signal Analysis Explorer</h1>
+        <p class="subtitle">Understand signals through interactive visualization — move sliders, see results, learn the math</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showSection('basics')">Signal Basics</button>
+            <button class="tab-btn" onclick="showSection('fourier')">Fourier Series</button>
+            <button class="tab-btn" onclick="showSection('dft')">Discrete Fourier Transform</button>
+            <button class="tab-btn" onclick="showSection('filtering')">Filtering</button>
+            <button class="tab-btn" onclick="showSection('sampling')">Sampling &amp; Aliasing</button>
+            <button class="tab-btn" onclick="showSection('wavelets')">Wavelet Analysis</button>
+            <button class="tab-btn" onclick="showSection('holography')">Holographic Storage</button>
+        </div>
+
+        <!-- SECTION 1: Signal Basics -->
+        <div class="section active" id="sec-basics">
+            <h2>Signal Basics</h2>
+            <div class="explanation">
+                <strong>What is a signal?</strong> A signal is any quantity that varies over time (or space). The simplest signal is a sinusoid, described by amplitude, frequency, and phase. All complex signals can be built from these simple building blocks.
+            </div>
+            <div class="equation-box" id="eq-basics"></div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Amplitude (A): <span class="value" id="val-amp">1.0</span></label>
+                    <input type="range" id="sl-amp" min="0.1" max="3" step="0.1" value="1.0" oninput="updateBasics()">
+                </div>
+                <div class="control-group">
+                    <label>Frequency (f) Hz: <span class="value" id="val-freq">2.0</span></label>
+                    <input type="range" id="sl-freq" min="0.5" max="20" step="0.5" value="2.0" oninput="updateBasics()">
+                </div>
+                <div class="control-group">
+                    <label>Phase (φ) rad: <span class="value" id="val-phase">0.0</span></label>
+                    <input type="range" id="sl-phase" min="0" max="6.28" step="0.1" value="0" oninput="updateBasics()">
+                </div>
+                <div class="control-group">
+                    <label>DC Offset: <span class="value" id="val-dc">0.0</span></label>
+                    <input type="range" id="sl-dc" min="-2" max="2" step="0.1" value="0" oninput="updateBasics()">
+                </div>
+            </div>
+            <div class="plot-container" id="plot-basics"></div>
+            <h3>Signal Addition</h3>
+            <div class="explanation">
+                Signals can be added together. Below you see two sinusoids and their sum — this is the foundation of Fourier analysis: any signal is a sum of sinusoids.
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Signal 2 Frequency (Hz): <span class="value" id="val-freq2">5.0</span></label>
+                    <input type="range" id="sl-freq2" min="0.5" max="20" step="0.5" value="5.0" oninput="updateBasics()">
+                </div>
+                <div class="control-group">
+                    <label>Signal 2 Amplitude: <span class="value" id="val-amp2">0.5</span></label>
+                    <input type="range" id="sl-amp2" min="0.1" max="2" step="0.1" value="0.5" oninput="updateBasics()">
+                </div>
+            </div>
+            <div class="plot-container" id="plot-addition"></div>
+        </div>
+
+        <!-- SECTION 2: Fourier Series -->
+        <div class="section" id="sec-fourier">
+            <h2>Fourier Series Approximation</h2>
+            <div class="explanation">
+                <strong>Key Insight:</strong> Any periodic signal can be decomposed into a sum of sines and cosines (harmonics). The Fourier series lets us approximate complex waveforms by adding up simple sinusoids. Move the slider to add more harmonics and watch the approximation improve!
+            </div>
+            <div class="equation-box" id="eq-fourier"></div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Number of Harmonics (N): <span class="value" id="val-harmonics">1</span></label>
+                    <input type="range" id="sl-harmonics" min="1" max="50" step="1" value="1" oninput="updateFourier()">
+                </div>
+                <div class="control-group">
+                    <label>Target Waveform:</label>
+                    <select id="sel-waveform" onchange="updateFourier()">
+                        <option value="square">Square Wave</option>
+                        <option value="sawtooth">Sawtooth Wave</option>
+                        <option value="triangle">Triangle Wave</option>
+                        <option value="pulse">Pulse Train</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Fundamental Frequency (Hz): <span class="value" id="val-fund">2.0</span></label>
+                    <input type="range" id="sl-fund" min="0.5" max="10" step="0.5" value="2.0" oninput="updateFourier()">
+                </div>
+            </div>
+            <div class="plot-container" id="plot-fourier"></div>
+            <h3>Individual Harmonics</h3>
+            <div class="explanation">
+                Each colored line below is one harmonic component. Together they sum to approximate the target signal.
+            </div>
+            <div class="plot-container" id="plot-harmonics"></div>
+            <h3>Frequency Spectrum</h3>
+            <div class="explanation">
+                The bar chart shows the amplitude of each harmonic — this is the <strong>frequency domain</strong> representation of the signal.
+            </div>
+            <div class="plot-container" id="plot-spectrum"></div>
+            <div class="equation-box" id="eq-fourier-coeffs"></div>
+        </div>
+
+        <!-- SECTION 3: DFT -->
+        <div class="section" id="sec-dft">
+            <h2>Discrete Fourier Transform (DFT)</h2>
+            <div class="explanation">
+                <strong>The DFT</strong> takes a finite sequence of samples and computes the frequency content. It's the practical tool used in all digital signal processing. The equation correlates the signal with complex exponentials at each frequency bin.
+            </div>
+            <div class="equation-box" id="eq-dft"></div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Signal Composition:</label>
+                    <select id="sel-dft-signal" onchange="updateDFT()">
+                        <option value="custom">Custom (set frequencies below)</option>
+                        <option value="chirp">Chirp (sweep)</option>
+                        <option value="noise">White Noise</option>
+                        <option value="am">AM Modulated</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Frequency 1 (Hz): <span class="value" id="val-dft-f1">5</span></label>
+                    <input type="range" id="sl-dft-f1" min="1" max="50" step="1" value="5" oninput="updateDFT()">
+                </div>
+                <div class="control-group">
+                    <label>Frequency 2 (Hz): <span class="value" id="val-dft-f2">12</span></label>
+                    <input type="range" id="sl-dft-f2" min="1" max="50" step="1" value="12" oninput="updateDFT()">
+                </div>
+                <div class="control-group">
+                    <label>Frequency 3 (Hz): <span class="value" id="val-dft-f3">20</span></label>
+                    <input type="range" id="sl-dft-f3" min="1" max="50" step="1" value="20" oninput="updateDFT()">
+                </div>
+                <div class="control-group">
+                    <label>Number of Samples (N): <span class="value" id="val-dft-n">256</span></label>
+                    <input type="range" id="sl-dft-n" min="32" max="512" step="32" value="256" oninput="updateDFT()">
+                </div>
+                <div class="control-group">
+                    <label>Noise Level: <span class="value" id="val-dft-noise">0.0</span></label>
+                    <input type="range" id="sl-dft-noise" min="0" max="2" step="0.1" value="0" oninput="updateDFT()">
+                </div>
+            </div>
+            <div class="plot-container" id="plot-dft-time"></div>
+            <div class="two-col">
+                <div class="plot-container" id="plot-dft-mag"></div>
+                <div class="plot-container" id="plot-dft-phase"></div>
+            </div>
+            <div class="equation-box" id="eq-euler"></div>
+            <div class="explanation">
+                <strong>Euler's Formula:</strong> The DFT uses complex exponentials. Each frequency bin k measures how much the signal "correlates" with a complex sinusoid at that frequency. The magnitude tells you the amplitude, the phase tells you the time shift.
+            </div>
+        </div>
+
+        <!-- SECTION 4: Filtering -->
+        <div class="section" id="sec-filtering">
+            <h2>Signal Filtering</h2>
+            <div class="explanation">
+                <strong>Filtering</strong> means selectively removing or keeping certain frequency components. A low-pass filter keeps low frequencies, a high-pass keeps high frequencies, and a band-pass keeps a specific range.
+            </div>
+            <div class="equation-box" id="eq-filter"></div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Filter Type:</label>
+                    <select id="sel-filter-type" onchange="updateFilter()">
+                        <option value="lowpass">Low-Pass</option>
+                        <option value="highpass">High-Pass</option>
+                        <option value="bandpass">Band-Pass</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Cutoff Frequency (Hz): <span class="value" id="val-filter-cutoff">15</span></label>
+                    <input type="range" id="sl-filter-cutoff" min="1" max="50" step="1" value="15" oninput="updateFilter()">
+                </div>
+                <div class="control-group">
+                    <label>Bandwidth (for band-pass): <span class="value" id="val-filter-bw">10</span></label>
+                    <input type="range" id="sl-filter-bw" min="2" max="30" step="1" value="10" oninput="updateFilter()">
+                </div>
+                <div class="control-group">
+                    <label>Signal: Square wave with noise</label>
+                    <label>Noise Level: <span class="value" id="val-filter-noise">0.5</span></label>
+                    <input type="range" id="sl-filter-noise" min="0" max="2" step="0.1" value="0.5" oninput="updateFilter()">
+                </div>
+            </div>
+            <div class="plot-container" id="plot-filter-time"></div>
+            <div class="two-col">
+                <div class="plot-container" id="plot-filter-freq"></div>
+                <div class="plot-container" id="plot-filter-response"></div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: Sampling & Aliasing -->
+        <div class="section" id="sec-sampling">
+            <h2>Sampling &amp; Aliasing (Nyquist Theorem)</h2>
+            <div class="explanation">
+                <strong>Nyquist-Shannon Theorem:</strong> To perfectly reconstruct a signal, you must sample at least twice the highest frequency present. If you sample too slowly, high frequencies "fold" into lower ones — this is <strong>aliasing</strong>.
+            </div>
+            <div class="equation-box" id="eq-nyquist"></div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Signal Frequency (Hz): <span class="value" id="val-sig-freq">5</span></label>
+                    <input type="range" id="sl-sig-freq" min="1" max="30" step="1" value="5" oninput="updateSampling()">
+                </div>
+                <div class="control-group">
+                    <label>Sampling Rate (Hz): <span class="value" id="val-sample-rate">20</span></label>
+                    <input type="range" id="sl-sample-rate" min="2" max="100" step="1" value="20" oninput="updateSampling()">
+                </div>
+            </div>
+            <div class="plot-container" id="plot-sampling"></div>
+            <div class="explanation" id="alias-info">
+                <strong>Status:</strong> Sampling rate is sufficient (no aliasing).
+            </div>
+            <div class="plot-container" id="plot-reconstructed"></div>
+        </div>
+
+        <!-- SECTION 6: Wavelets -->
+        <div class="section" id="sec-wavelets">
+            <h2>Wavelet Analysis</h2>
+            <div class="explanation">
+                <strong>Wavelets vs Fourier:</strong> Fourier analysis tells you WHAT frequencies are present but not WHEN they occur. Wavelets give you time-frequency localization — you can see which frequencies are active at which times. This is crucial for non-stationary signals.
+            </div>
+            <div class="equation-box" id="eq-wavelet"></div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Wavelet Type:</label>
+                    <select id="sel-wavelet" onchange="updateWavelet()">
+                        <option value="morlet">Morlet Wavelet</option>
+                        <option value="mexican_hat">Mexican Hat (Ricker)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Scale (dilation): <span class="value" id="val-wavelet-scale">5</span></label>
+                    <input type="range" id="sl-wavelet-scale" min="1" max="30" step="1" value="5" oninput="updateWavelet()">
+                </div>
+                <div class="control-group">
+                    <label>Signal Type:</label>
+                    <select id="sel-wavelet-sig" onchange="updateWavelet()">
+                        <option value="chirp">Chirp (frequency sweep)</option>
+                        <option value="burst">Tone Burst</option>
+                        <option value="step">Frequency Step</option>
+                    </select>
+                </div>
+            </div>
+            <div class="plot-container" id="plot-wavelet-signal"></div>
+            <div class="plot-container" id="plot-wavelet-scalogram"></div>
+            <div class="explanation">
+                The scalogram (bottom) shows signal energy across time and scale (inversely related to frequency). Bright areas indicate where a particular frequency is active.
+            </div>
+        </div>
+
+        <!-- SECTION 7: Holographic Storage -->
+        <div class="section" id="sec-holography">
+            <h2>Holographic Data Storage</h2>
+            <div class="explanation">
+                <strong>Holography</strong> stores information as interference patterns. When two coherent waves (reference and object beams) interfere, they create a pattern that encodes both amplitude AND phase information. This is fundamentally a signal processing concept — the interference pattern is the Fourier transform of the stored data!
+            </div>
+            <div class="equation-box" id="eq-holography"></div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Reference Beam Angle (°): <span class="value" id="val-holo-angle">30</span></label>
+                    <input type="range" id="sl-holo-angle" min="5" max="80" step="1" value="30" oninput="updateHolography()">
+                </div>
+                <div class="control-group">
+                    <label>Object Pattern:</label>
+                    <select id="sel-holo-pattern" onchange="updateHolography()">
+                        <option value="point">Point Source</option>
+                        <option value="grating">Diffraction Grating</option>
+                        <option value="letter">Letter Pattern</option>
+                        <option value="binary">Binary Data</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Wavelength (nm): <span class="value" id="val-holo-lambda">532</span></label>
+                    <input type="range" id="sl-holo-lambda" min="400" max="700" step="10" value="532" oninput="updateHolography()">
+                </div>
+                <div class="control-group">
+                    <label>Resolution (pixels): <span class="value" id="val-holo-res">64</span></label>
+                    <input type="range" id="sl-holo-res" min="32" max="128" step="16" value="64" oninput="updateHolography()">
+                </div>
+            </div>
+            <div class="two-col">
+                <div class="plot-container" id="plot-holo-interference"></div>
+                <div class="plot-container" id="plot-holo-reconstruction"></div>
+            </div>
+            <div class="explanation">
+                <strong>Left:</strong> The interference pattern (hologram) stored in the medium. <strong>Right:</strong> Reconstruction when illuminated with the reference beam — the original object information is recovered via diffraction (which is essentially a Fourier transform performed by light!).
+            </div>
+            <div class="plot-container" id="plot-holo-1d"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============ UTILITY FUNCTIONS ============
+        function linspace(start, end, n) {
+            const arr = [];
+            const step = (end - start) / (n - 1);
+            for (let i = 0; i < n; i++) arr.push(start + step * i);
+            return arr;
+        }
+
+        function renderEquation(elementId, latex) {
+            const el = document.getElementById(elementId);
+            try {
+                el.innerHTML = temml.renderToString(latex, { displayMode: true });
+            } catch(e) {
+                el.innerHTML = '<span style="color:#ff7b72;">Equation rendering error</span>';
+            }
+        }
+
+        function showSection(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sec-' + name).classList.add('active');
+            event.target.classList.add('active');
+            // Trigger update for the section
+            switch(name) {
+                case 'basics': updateBasics(); break;
+                case 'fourier': updateFourier(); break;
+                case 'dft': updateDFT(); break;
+                case 'filtering': updateFilter(); break;
+                case 'sampling': updateSampling(); break;
+                case 'wavelets': updateWavelet(); break;
+                case 'holography': updateHolography(); break;
+            }
+        }
+
+        const plotLayout = {
+            paper_bgcolor: '#0d1117',
+            plot_bgcolor: '#0d1117',
+            font: { color: '#e6edf3', size: 12 },
+            margin: { t: 40, b: 40, l: 50, r: 20 },
+            xaxis: { gridcolor: '#21262d', zerolinecolor: '#30363d' },
+            yaxis: { gridcolor: '#21262d', zerolinecolor: '#30363d' }
+        };
+
+        function getLayout(title, xlab, ylab, extra) {
+            return Object.assign({}, plotLayout, {
+                title: { text: title, font: { size: 14, color: '#8b949e' } },
+                xaxis: Object.assign({}, plotLayout.xaxis, { title: xlab }),
+                yaxis: Object.assign({}, plotLayout.yaxis, { title: ylab })
+            }, extra || {});
+        }
+
+        const plotConfig = { responsive: true, displayModeBar: false };
+
+        // ============ SECTION 1: BASICS ============
+        function updateBasics() {
+            const A = parseFloat(document.getElementById('sl-amp').value);
+            const f = parseFloat(document.getElementById('sl-freq').value);
+            const phi = parseFloat(document.getElementById('sl-phase').value);
+            const dc = parseFloat(document.getElementById('sl-dc').value);
+            const f2 = parseFloat(document.getElementById('sl-freq2').value);
+            const A2 = parseFloat(document.getElementById('sl-amp2').value);
+
+            document.getElementById('val-amp').textContent = A.toFixed(1);
+            document.getElementById('val-freq').textContent = f.toFixed(1);
+            document.getElementById('val-phase').textContent = phi.toFixed(1);
+            document.getElementById('val-dc').textContent = dc.toFixed(1);
+            document.getElementById('val-freq2').textContent = f2.toFixed(1);
+            document.getElementById('val-amp2').textContent = A2.toFixed(1);
+
+            renderEquation('eq-basics', `x(t) = ${A.toFixed(1)} \\cdot \\sin(2\\pi \\cdot ${f.toFixed(1)} \\cdot t + ${phi.toFixed(1)}) + ${dc.toFixed(1)}`);
+
+            const t = linspace(0, 2, 1000);
+            const y = t.map(ti => A * Math.sin(2 * Math.PI * f * ti + phi) + dc);
+
+            Plotly.newPlot('plot-basics', [{
+                x: t, y: y, type: 'scatter', mode: 'lines',
+                line: { color: '#58a6ff', width: 2 },
+                name: 'x(t)'
+            }], getLayout('Single Sinusoid', 'Time (s)', 'Amplitude'), plotConfig);
+
+            const y1 = t.map(ti => A * Math.sin(2 * Math.PI * f * ti + phi));
+            const y2 = t.map(ti => A2 * Math.sin(2 * Math.PI * f2 * ti));
+            const ysum = t.map((ti, i) => y1[i] + y2[i]);
+
+            Plotly.newPlot('plot-addition', [
+                { x: t, y: y1, type: 'scatter', mode: 'lines', line: { color: '#58a6ff', width: 1.5 }, name: `Signal 1 (${f}Hz)` },
+                { x: t, y: y2, type: 'scatter', mode: 'lines', line: { color: '#bc8cff', width: 1.5 }, name: `Signal 2 (${f2}Hz)` },
+                { x: t, y: ysum, type: 'scatter', mode: 'lines', line: { color: '#3fb950', width: 2.5 }, name: 'Sum' }
+            ], getLayout('Signal Addition', 'Time (s)', 'Amplitude'), plotConfig);
+        }
+
+        // ============ SECTION 2: FOURIER SERIES ============
+        function updateFourier() {
+            const N = parseInt(document.getElementById('sl-harmonics').value);
+            const waveform = document.getElementById('sel-waveform').value;
+            const f0 = parseFloat(document.getElementById('sl-fund').value);
+
+            document.getElementById('val-harmonics').textContent = N;
+            document.getElementById('val-fund').textContent = f0.toFixed(1);
+
+            renderEquation('eq-fourier', `f(t) = \\frac{a_0}{2} + \\sum_{n=1}^{N} \\left[ a_n \\cos(2\\pi n f_0 t) + b_n \\sin(2\\pi n f_0 t) \\right]`);
+
+            // Fourier coefficients for different waveforms
+            let coeffsText = '';
+            switch(waveform) {
+                case 'square':
+                    coeffsText = `\\text{Square wave: } b_n = \\frac{4}{n\\pi} \\text{ (odd n only)}, \\quad a_n = 0`;
+                    break;
+                case 'sawtooth':
+                    coeffsText = `\\text{Sawtooth: } b_n = \\frac{-2(-1)^n}{n\\pi}, \\quad a_n = 0`;
+                    break;
+                case 'triangle':
+                    coeffsText = `\\text{Triangle: } a_n = \\frac{-4}{(n\\pi)^2} \\text{ (odd n)}, \\quad b_n = 0`;
+                    break;
+                case 'pulse':
+                    coeffsText = `\\text{Pulse (duty=25\\%): } a_n = \\frac{2}{n\\pi}\\sin\\left(\\frac{n\\pi}{4}\\right), \\quad b_n = 0`;
+                    break;
+            }
+            renderEquation('eq-fourier-coeffs', coeffsText);
+
+            const t = linspace(0, 2, 2000);
+            
+            // Generate target waveform
+            function targetWaveform(ti) {
+                const period = 1 / f0;
+                const phase = ((ti % period) + period) % period;
+                const normalized = phase / period;
+                switch(waveform) {
+                    case 'square': return normalized < 0.5 ? 1 : -1;
+                    case 'sawtooth': return 2 * normalized - 1;
+                    case 'triangle': return normalized < 0.5 ? 4 * normalized - 1 : 3 - 4 * normalized;
+                    case 'pulse': return normalized < 0.25 ? 1 : -0.333;
+                    default: return 0;
+                }
+            }
+
+            // Get Fourier coefficients
+            function getCoeffs(n) {
+                switch(waveform) {
+                    case 'square':
+                        if (n % 2 === 0) return { a: 0, b: 0 };
+                        return { a: 0, b: 4 / (n * Math.PI) };
+                    case 'sawtooth':
+                        return { a: 0, b: -2 * Math.pow(-1, n) / (n * Math.PI) };
+                    case 'triangle':
+                        if (n % 2 === 0) return { a: 0, b: 0 };
+                        return { a: -4 / (n * n * Math.PI * Math.PI) * (n % 4 === 1 ? 1 : -1), b: 0 };
+                    case 'pulse':
+                        return { a: 2 * Math.sin(n * Math.PI / 4) / (n * Math.PI), b: 0 };
+                    default: return { a: 0, b: 0 };
+                }
+            }
+
+            // Compute approximation
+            const yTarget = t.map(targetWaveform);
+            const yApprox = new Array(t.length).fill(0);
+            const harmonicTraces = [];
+            const amplitudes = [];
+            const freqs = [];
+
+            // DC component for pulse
+            let dc = 0;
+            if (waveform === 'pulse') dc = -0.333 + 1.333 * 0.25;
+
+            for (let i = 0; i < t.length; i++) yApprox[i] = dc;
+
+            for (let n = 1; n <= N; n++) {
+                const { a, b } = getCoeffs(n);
+                const amplitude = Math.sqrt(a * a + b * b);
+                amplitudes.push(amplitude);
+                freqs.push(n * f0);
+
+                const harmonicY = t.map(ti => a * Math.cos(2 * Math.PI * n * f0 * ti) + b * Math.sin(2 * Math.PI * n * f0 * ti));
+                for (let i = 0; i < t.length; i++) yApprox[i] += harmonicY[i];
+
+                if (n <= 8 && amplitude > 0.001) {
+                    const colors = ['#ff7b72','#ffa657','#d2a8ff','#79c0ff','#56d364','#f778ba','#a5d6ff','#ffd700'];
+                    harmonicTraces.push({
+                        x: t, y: harmonicY, type: 'scatter', mode: 'lines',
+                        line: { color: colors[(n-1) % colors.length], width: 1.5 },
+                        name: `n=${n} (${(n*f0).toFixed(1)}Hz)`
+                    });
+                }
+            }
+
+            // Main Fourier plot
+            Plotly.newPlot('plot-fourier', [
+                { x: t, y: yTarget, type: 'scatter', mode: 'lines', line: { color: '#30363d', width: 3 }, name: 'Target' },
+                { x: t, y: yApprox, type: 'scatter', mode: 'lines', line: { color: '#58a6ff', width: 2 }, name: `Approx (N=${N})` }
+            ], getLayout(`Fourier Series Approximation (${N} harmonics)`, 'Time (s)', 'Amplitude'), plotConfig);
+
+            // Harmonics plot
+            Plotly.newPlot('plot-harmonics', harmonicTraces, getLayout('Individual Harmonic Components', 'Time (s)', 'Amplitude'), plotConfig);
+
+            // Spectrum plot
+            Plotly.newPlot('plot-spectrum', [{
+                x: freqs, y: amplitudes, type: 'bar',
+                marker: { color: freqs.map((f, i) => i < N ? '#58a6ff' : '#30363d') }
+            }], getLayout('Frequency Spectrum (Harmonic Amplitudes)', 'Frequency (Hz)', 'Amplitude'), plotConfig);
+        }
+
+        // ============ SECTION 3: DFT ============
+        function computeDFT(signal) {
+            const N = signal.length;
+            const real = new Array(N).fill(0);
+            const imag = new Array(N).fill(0);
+            for (let k = 0; k < N; k++) {
+                for (let n = 0; n < N; n++) {
+                    const angle = -2 * Math.PI * k * n / N;
+                    real[k] += signal[n] * Math.cos(angle);
+                    imag[k] += signal[n] * Math.sin(angle);
+                }
+            }
+            return { real, imag };
+        }
+
+        function updateDFT() {
+            const sigType = document.getElementById('sel-dft-signal').value;
+            const f1 = parseInt(document.getElementById('sl-dft-f1').value);
+            const f2 = parseInt(document.getElementById('sl-dft-f2').value);
+            const f3 = parseInt(document.getElementById('sl-dft-f3').value);
+            const N = parseInt(document.getElementById('sl-dft-n').value);
+            const noiseLevel = parseFloat(document.getElementById('sl-dft-noise').value);
+
+            document.getElementById('val-dft-f1').textContent = f1;
+            document.getElementById('val-dft-f2').textContent = f2;
+            document.getElementById('val-dft-f3').textContent = f3;
+            document.getElementById('val-dft-n').textContent = N;
+            document.getElementById('val-dft-noise').textContent = noiseLevel.toFixed(1);
+
+            renderEquation('eq-dft', `X[k] = \\sum_{n=0}^{N-1} x[n] \\cdot e^{-j2\\pi kn/N} = \\sum_{n=0}^{N-1} x[n] \\left[\\cos\\left(\\frac{2\\pi kn}{N}\\right) - j\\sin\\left(\\frac{2\\pi kn}{N}\\right)\\right]`);
+            renderEquation('eq-euler', `e^{j\\theta} = \\cos(\\theta) + j\\sin(\\theta) \\quad \\text{(Euler's Formula)}`);
+
+            const fs = 128; // sampling frequency
+            const t = linspace(0, N / fs, N);
+            let signal = new Array(N).fill(0);
+
+            switch(sigType) {
+                case 'custom':
+                    signal = t.map(ti => Math.sin(2*Math.PI*f1*ti) + 0.7*Math.sin(2*Math.PI*f2*ti) + 0.4*Math.sin(2*Math.PI*f3*ti));
+                    break;
+                case 'chirp':
+                    signal = t.map((ti, i) => {
+                        const fInst = f1 + (f3 - f1) * i / N;
+                        return Math.sin(2 * Math.PI * fInst * ti);
+                    });
+                    break;
+                case 'noise':
+                    signal = t.map(() => (Math.random() - 0.5) * 2);
+                    break;
+                case 'am':
+                    signal = t.map(ti => (1 + 0.8 * Math.sin(2*Math.PI*f1*ti)) * Math.sin(2*Math.PI*f2*ti));
+                    break;
+            }
+
+            // Add noise
+            signal = signal.map(s => s + noiseLevel * (Math.random() - 0.5) * 2);
+
+            // Compute DFT
+            const { real, imag } = computeDFT(signal);
+            const magnitude = real.map((r, i) => Math.sqrt(r*r + imag[i]*imag[i]) / N * 2);
+            const phase = real.map((r, i) => Math.atan2(imag[i], r));
+            const freqBins = linspace(0, fs, N);
+
+            // Time domain plot
+            Plotly.newPlot('plot-dft-time', [{
+                x: t, y: signal, type: 'scatter', mode: 'lines',
+                line: { color: '#58a6ff', width: 1.5 }, name: 'Signal'
+            }], getLayout('Time Domain Signal', 'Time (s)', 'Amplitude'), plotConfig);
+
+            // Magnitude spectrum (only show first half - positive frequencies)
+            const halfN = Math.floor(N / 2);
+            Plotly.newPlot('plot-dft-mag', [{
+                x: freqBins.slice(0, halfN), y: magnitude.slice(0, halfN),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#3fb950', width: 2 }, fill: 'tozeroy',
+                fillcolor: 'rgba(63,185,80,0.1)'
+            }], getLayout('Magnitude Spectrum |X[k]|', 'Frequency (Hz)', 'Magnitude'), plotConfig);
+
+            // Phase spectrum
+            Plotly.newPlot('plot-dft-phase', [{
+                x: freqBins.slice(0, halfN), y: phase.slice(0, halfN),
+                type: 'scatter', mode: 'lines',
+                line: { color: '#bc8cff', width: 1.5 }
+            }], getLayout('Phase Spectrum arg(X[k])', 'Frequency (Hz)', 'Phase (rad)'), plotConfig);
+        }
+
+        // ============ SECTION 4: FILTERING ============
+        function updateFilter() {
+            const filterType = document.getElementById('sel-filter-type').value;
+            const cutoff = parseInt(document.getElementById('sl-filter-cutoff').value);
+            const bw = parseInt(document.getElementById('sl-filter-bw').value);
+            const noiseLevel = parseFloat(document.getElementById('sl-filter-noise').value);
+
+            document.getElementById('val-filter-cutoff').textContent = cutoff;
+            document.getElementById('val-filter-bw').textContent = bw;
+            document.getElementById('val-filter-noise').textContent = noiseLevel.toFixed(1);
+
+            let filterEq = '';
+            switch(filterType) {
+                case 'lowpass':
+                    filterEq = `H(f) = \\begin{cases} 1 & |f| \\leq f_c \\\\ 0 & |f| > f_c \\end{cases} \\quad f_c = ${cutoff} \\text{ Hz}`;
+                    break;
+                case 'highpass':
+                    filterEq = `H(f) = \\begin{cases} 0 & |f| < f_c \\\\ 1 & |f| \\geq f_c \\end{cases} \\quad f_c = ${cutoff} \\text{ Hz}`;
+                    break;
+                case 'bandpass':
+                    filterEq = `H(f) = \\begin{cases} 1 & f_c - \\frac{B}{2} \\leq |f| \\leq f_c + \\frac{B}{2} \\\\ 0 & \\text{otherwise} \\end{cases} \\quad f_c = ${cutoff}, B = ${bw}`;
+                    break;
+            }
+            renderEquation('eq-filter', filterEq);
+
+            const N = 512;
+            const fs = 128;
+            const t = linspace(0, N / fs, N);
+
+            // Create a square wave + noise signal
+            const f0 = 3;
+            let signal = t.map(ti => {
+                let val = 0;
+                for (let n = 1; n <= 20; n += 2) {
+                    val += (4 / (n * Math.PI)) * Math.sin(2 * Math.PI * n * f0 * ti);
+                }
+                return val + noiseLevel * (Math.random() - 0.5) * 2;
+            });
+
+            // Compute DFT
+            const { real, imag } = computeDFT(signal);
+
+            // Apply filter in frequency domain
+            const filteredReal = new Array(N).fill(0);
+            const filteredImag = new Array(N).fill(0);
+            const filterResponse = new Array(N).fill(0);
+
+            for (let k = 0; k < N; k++) {
+                const freq = k < N/2 ? k * fs / N : (k - N) * fs / N;
+                const absFreq = Math.abs(freq);
+                let H = 0;
+
+                switch(filterType) {
+                    case 'lowpass':
+                        H = absFreq <= cutoff ? 1 : 0;
+                        break;
+                    case 'highpass':
+                        H = absFreq >= cutoff ? 1 : 0;
+                        break;
+                    case 'bandpass':
+                        H = (absFreq >= cutoff - bw/2 && absFreq <= cutoff + bw/2) ? 1 : 0;
+                        break;
+                }
+
+                filteredReal[k] = real[k] * H;
+                filteredImag[k] = imag[k] * H;
+                filterResponse[k] = H;
+            }
+
+            // Inverse DFT
+            const filtered = new Array(N).fill(0);
+            for (let n = 0; n < N; n++) {
+                for (let k = 0; k < N; k++) {
+                    const angle = 2 * Math.PI * k * n / N;
+                    filtered[n] += filteredReal[k] * Math.cos(angle) - filteredImag[k] * Math.sin(angle);
+                }
+                filtered[n] /= N;
+            }
+
+            // Plots
+            Plotly.newPlot('plot-filter-time', [
+                { x: t, y: signal, type: 'scatter', mode: 'lines', line: { color: '#8b949e', width: 1 }, name: 'Original + Noise' },
+                { x: t, y: filtered, type: 'scatter', mode: 'lines', line: { color: '#58a6ff', width: 2 }, name: 'Filtered' }
+            ], getLayout('Time Domain: Before and After Filtering', 'Time (s)', 'Amplitude'), plotConfig);
+
+            const freqBins = linspace(0, fs, N);
+            const halfN = Math.floor(N / 2);
+            const origMag = real.map((r, i) => Math.sqrt(r*r + imag[i]*imag[i]) / N * 2);
+            const filtMag = filteredReal.map((r, i) => Math.sqrt(r*r + filteredImag[i]*filteredImag[i]) / N * 2);
+
+            Plotly.newPlot('plot-filter-freq', [
+                { x: freqBins.slice(0, halfN), y: origMag.slice(0, halfN), type: 'scatter', mode: 'lines', line: { color: '#8b949e', width: 1 }, name: 'Original Spectrum' },
+                { x: freqBins.slice(0, halfN), y: filtMag.slice(0, halfN), type: 'scatter', mode: 'lines', line: { color: '#58a6ff', width: 2 }, fill: 'tozeroy', fillcolor: 'rgba(88,166,255,0.1)', name: 'Filtered Spectrum' }
+            ], getLayout('Frequency Spectra', 'Frequency (Hz)', 'Magnitude'), plotConfig);
+
+            Plotly.newPlot('plot-filter-response', [{
+                x: freqBins.slice(0, halfN), y: filterResponse.slice(0, halfN),
+                type: 'scatter', mode: 'lines', line: { color: '#3fb950', width: 2.5 },
+                fill: 'tozeroy', fillcolor: 'rgba(63,185,80,0.15)', name: 'H(f)'
+            }], getLayout('Filter Response H(f)', 'Frequency (Hz)', 'Gain'), plotConfig);
+        }
+
+        // ============ SECTION 5: SAMPLING & ALIASING ============
+        function updateSampling() {
+            const fSig = parseInt(document.getElementById('sl-sig-freq').value);
+            const fSample = parseInt(document.getElementById('sl-sample-rate').value);
+
+            document.getElementById('val-sig-freq').textContent = fSig;
+            document.getElementById('val-sample-rate').textContent = fSample;
+
+            renderEquation('eq-nyquist', `f_s \\geq 2 f_{\\max} \\quad \\Rightarrow \\quad f_s = ${fSample} \\text{ Hz} ${fSample >= 2*fSig ? '\\geq' : '<'} 2 \\times ${fSig} = ${2*fSig} \\text{ Hz}`);
+
+            const tCont = linspace(0, 1, 2000);
+            const yCont = tCont.map(ti => Math.sin(2 * Math.PI * fSig * ti));
+
+            // Sampled points
+            const nSamples = fSample;
+            const tSampled = linspace(0, 1, nSamples + 1).slice(0, nSamples);
+            const ySampled = tSampled.map(ti => Math.sin(2 * Math.PI * fSig * ti));
+
+            // Reconstructed signal (sinc interpolation approximation)
+            // If aliased, show the apparent frequency
+            let fApparent = fSig;
+            const isAliased = fSample < 2 * fSig;
+            if (isAliased) {
+                // Compute aliased frequency
+                fApparent = Math.abs(fSig - Math.round(fSig / fSample) * fSample);
+            }
+            const yReconstructed = tCont.map(ti => Math.sin(2 * Math.PI * fApparent * ti));
+
+            // Update alias info
+            const infoEl = document.getElementById('alias-info');
+            if (isAliased) {
+                infoEl.innerHTML = `<strong style="color:#ff7b72;">ALIASING DETECTED!</strong> The signal at ${fSig} Hz appears as ${fApparent.toFixed(1)} Hz after sampling at ${fSample} Hz. The Nyquist frequency is ${fSample/2} Hz, but the signal frequency exceeds it.`;
+            } else {
+                infoEl.innerHTML = `<strong style="color:#3fb950;">No aliasing.</strong> Sampling rate (${fSample} Hz) is sufficient for a ${fSig} Hz signal. Nyquist frequency = ${fSample/2} Hz > ${fSig} Hz.`;
+            }
+
+            Plotly.newPlot('plot-sampling', [
+                { x: tCont, y: yCont, type: 'scatter', mode: 'lines', line: { color: '#58a6ff', width: 2 }, name: `Original (${fSig} Hz)` },
+                { x: tSampled, y: ySampled, type: 'scatter', mode: 'markers', marker: { color: '#ff7b72', size: 8 }, name: `Samples (fs=${fSample} Hz)` }
+            ], getLayout('Continuous Signal and Discrete Samples', 'Time (s)', 'Amplitude'), plotConfig);
+
+            Plotly.newPlot('plot-reconstructed', [
+                { x: tCont, y: yCont, type: 'scatter', mode: 'lines', line: { color: '#30363d', width: 2, dash: 'dash' }, name: `Original (${fSig} Hz)` },
+                { x: tCont, y: yReconstructed, type: 'scatter', mode: 'lines', line: { color: isAliased ? '#ff7b72' : '#3fb950', width: 2.5 }, name: `Reconstructed (${fApparent.toFixed(1)} Hz)` }
+            ], getLayout('Reconstructed Signal from Samples', 'Time (s)', 'Amplitude'), plotConfig);
+        }
+
+        // ============ SECTION 6: WAVELETS ============
+        function updateWavelet() {
+            const waveletType = document.getElementById('sel-wavelet').value;
+            const scale = parseInt(document.getElementById('sl-wavelet-scale').value);
+            const sigType = document.getElementById('sel-wavelet-sig').value;
+
+            document.getElementById('val-wavelet-scale').textContent = scale;
+
+            if (waveletType === 'morlet') {
+                renderEquation('eq-wavelet', `\\psi(t) = \\pi^{-1/4} e^{j\\omega_0 t} e^{-t^2/2} \\quad \\text{(Morlet wavelet, } \\omega_0 = 5\\text{)}`);
+            } else {
+                renderEquation('eq-wavelet', `\\psi(t) = \\frac{2}{\\sqrt{3}\\pi^{1/4}} (1 - t^2) e^{-t^2/2} \\quad \\text{(Mexican Hat / Ricker wavelet)}`);
+            }
+
+            const N = 512;
+            const t = linspace(0, 4, N);
+            let signal = new Array(N).fill(0);
+
+            switch(sigType) {
+                case 'chirp':
+                    signal = t.map(ti => Math.sin(2 * Math.PI * (2 + 15 * ti / 4) * ti));
+                    break;
+                case 'burst':
+                    signal = t.map(ti => {
+                        if (ti > 1 && ti < 2) return Math.sin(2 * Math.PI * 10 * ti);
+                        if (ti > 2.5 && ti < 3.5) return Math.sin(2 * Math.PI * 25 * ti);
+                        return 0;
+                    });
+                    break;
+                case 'step':
+                    signal = t.map(ti => {
+                        if (ti < 2) return Math.sin(2 * Math.PI * 5 * ti);
+                        return Math.sin(2 * Math.PI * 20 * ti);
+                    });
+                    break;
+            }
+
+            // Compute scalogram (CWT approximation)
+            const numScales = 40;
+            const scales = linspace(1, 40, numScales);
+            const scalogram = [];
+
+            for (let si = 0; si < numScales; si++) {
+                const s = scales[si];
+                const row = new Array(N).fill(0);
+                const waveletLen = Math.min(Math.floor(s * 8), N);
+
+                for (let pos = 0; pos < N; pos++) {
+                    let sum = 0;
+                    for (let k = -Math.floor(waveletLen/2); k <= Math.floor(waveletLen/2); k++) {
+                        const idx = pos + k;
+                        if (idx >= 0 && idx < N) {
+                            const tNorm = k / s;
+                            let waveletVal = 0;
+                            if (waveletType === 'morlet') {
+                                waveletVal = Math.cos(5 * tNorm) * Math.exp(-tNorm * tNorm / 2);
+                            } else {
+                                waveletVal = (1 - tNorm * tNorm) * Math.exp(-tNorm * tNorm / 2);
+                            }
+                            sum += signal[idx] * waveletVal;
+                        }
+                    }
+                    row[pos] = Math.abs(sum) / Math.sqrt(s);
+                }
+                scalogram.push(row);
+            }
+
+            // Signal plot
+            Plotly.newPlot('plot-wavelet-signal', [{
+                x: t, y: signal, type: 'scatter', mode: 'lines',
+                line: { color: '#58a6ff', width: 1.5 }
+            }], getLayout('Signal (Time Domain)', 'Time (s)', 'Amplitude'), plotConfig);
+
+            // Scalogram
+            Plotly.newPlot('plot-wavelet-scalogram', [{
+                z: scalogram,
+                x: t,
+                y: scales.map(s => (N / (4 * s)).toFixed(1)),
+                type: 'heatmap',
+                colorscale: [
+                    [0, '#0d1117'],
+                    [0.2, '#161b22'],
+                    [0.4, '#1f3a5f'],
+                    [0.6, '#58a6ff'],
+                    [0.8, '#bc8cff'],
+                    [1, '#ffd700']
+                ],
+                colorbar: { title: 'Magnitude', titlefont: { color: '#8b949e' }, tickfont: { color: '#8b949e' } }
+            }], Object.assign({}, getLayout('Scalogram (Continuous Wavelet Transform)', 'Time (s)', 'Approx. Frequency (Hz)'), {
+                yaxis: { title: 'Approx. Frequency (Hz)', gridcolor: '#21262d' }
+            }), plotConfig);
+        }
+
+        // ============ SECTION 7: HOLOGRAPHY ============
+        function updateHolography() {
+            const angle = parseInt(document.getElementById('sl-holo-angle').value);
+            const pattern = document.getElementById('sel-holo-pattern').value;
+            const lambda = parseInt(document.getElementById('sl-holo-lambda').value);
+            const res = parseInt(document.getElementById('sl-holo-res').value);
+
+            document.getElementById('val-holo-angle').textContent = angle;
+            document.getElementById('val-holo-lambda').textContent = lambda;
+            document.getElementById('val-holo-res').textContent = res;
+
+            renderEquation('eq-holography', `I(x,y) = |E_R + E_O|^2 = |E_R|^2 + |E_O|^2 + E_R^* E_O + E_R E_O^*`);
+
+            const N = res;
+            const lambdaM = lambda * 1e-9;
+            const k = 2 * Math.PI / lambdaM;
+            const angleRad = angle * Math.PI / 180;
+
+            // Create object wave
+            const objectAmplitude = [];
+            const objectPhase = [];
+
+            for (let iy = 0; iy < N; iy++) {
+                const rowA = [];
+                const rowP = [];
+                for (let ix = 0; ix < N; ix++) {
+                    const x = (ix - N/2) / N;
+                    const y = (iy - N/2) / N;
+                    let amp = 0, ph = 0;
+
+                    switch(pattern) {
+                        case 'point':
+                            const r = Math.sqrt(x*x + y*y);
+                            amp = Math.exp(-r*r * 50);
+                            ph = k * r * r * 1000;
+                            break;
+                        case 'grating':
+                            amp = 0.5 + 0.5 * Math.cos(2 * Math.PI * x * 10);
+                            ph = 0;
+                            break;
+                        case 'letter':
+                            // Simple "H" pattern
+                            const inH = (Math.abs(x) < 0.3 && Math.abs(y) < 0.4) &&
+                                       (Math.abs(x) > 0.15 || Math.abs(y) < 0.05);
+                            amp = inH ? 1 : 0;
+                            ph = 0;
+                            break;
+                        case 'binary':
+                            // Binary data pattern
+                            const bx = Math.floor((ix / N) * 8);
+                            const by = Math.floor((iy / N) * 8);
+                            const bit = ((bx * 7 + by * 13 + 5) % 2);
+                            amp = bit;
+                            ph = 0;
+                            break;
+                    }
+                    rowA.push(amp);
+                    rowP.push(ph);
+                }
+                objectAmplitude.push(rowA);
+                objectPhase.push(rowP);
+            }
+
+            // Reference wave (plane wave at angle)
+            const refPhase = [];
+            for (let iy = 0; iy < N; iy++) {
+                const row = [];
+                for (let ix = 0; ix < N; ix++) {
+                    const x = (ix - N/2) / N;
+                    row.push(k * x * Math.sin(angleRad) * 1e-4);
+                }
+                refPhase.push(row);
+            }
+
+            // Compute interference pattern (hologram)
+            const hologram = [];
+            for (let iy = 0; iy < N; iy++) {
+                const row = [];
+                for (let ix = 0; ix < N; ix++) {
+                    // E_R = exp(j * refPhase)
+                    // E_O = amp * exp(j * objPhase)
+                    const erReal = Math.cos(refPhase[iy][ix]);
+                    const erImag = Math.sin(refPhase[iy][ix]);
+                    const eoReal = objectAmplitude[iy][ix] * Math.cos(objectPhase[iy][ix]);
+                    const eoImag = objectAmplitude[iy][ix] * Math.sin(objectPhase[iy][ix]);
+
+                    // Total field
+                    const totalReal = erReal + eoReal;
+                    const totalImag = erImag + eoImag;
+
+                    // Intensity = |E_total|^2
+                    const intensity = totalReal * totalReal + totalImag * totalImag;
+                    row.push(intensity);
+                }
+                hologram.push(row);
+            }
+
+            // Reconstruction: illuminate hologram with reference beam and compute diffraction (2D FFT approximation)
+            // We'll do a simple 2D DFT on a smaller grid for performance
+            const reconN = N;
+            const reconstruction = [];
+
+            // Multiply hologram by reference beam
+            const illuminated = [];
+            for (let iy = 0; iy < reconN; iy++) {
+                const row = [];
+                for (let ix = 0; ix < reconN; ix++) {
+                    const refR = Math.cos(refPhase[iy][ix]);
+                    const refI = Math.sin(refPhase[iy][ix]);
+                    // hologram * ref beam (real * complex)
+                    row.push({ r: hologram[iy][ix] * refR, i: hologram[iy][ix] * refI });
+                }
+                illuminated.push(row);
+            }
+
+            // Simple 2D FFT approximation (row-column decomposition with reduced resolution)
+            // For performance, we'll compute magnitude of the 2D transform
+            const fftSize = Math.min(reconN, 64);
+            const reconResult = [];
+
+            // Simplified: compute 2D DFT at reduced resolution
+            for (let ky = 0; ky < fftSize; ky++) {
+                const row = [];
+                for (let kx = 0; kx < fftSize; kx++) {
+                    let sumR = 0, sumI = 0;
+                    // Subsample for speed
+                    const step = Math.max(1, Math.floor(reconN / 32));
+                    for (let ny = 0; ny < reconN; ny += step) {
+                        for (let nx = 0; nx < reconN; nx += step) {
+                            const angle2 = -2 * Math.PI * (kx * nx / reconN + ky * ny / reconN);
+                            const cosA = Math.cos(angle2);
+                            const sinA = Math.sin(angle2);
+                            sumR += illuminated[ny][nx].r * cosA - illuminated[ny][nx].i * sinA;
+                            sumI += illuminated[ny][nx].r * sinA + illuminated[ny][nx].i * cosA;
+                        }
+                    }
+                    const mag = Math.sqrt(sumR * sumR + sumI * sumI);
+                    row.push(mag);
+                }
+                reconResult.push(row);
+            }
+
+            // Normalize
+            let maxVal = 0;
+            for (let iy = 0; iy < fftSize; iy++)
+                for (let ix = 0; ix < fftSize; ix++)
+                    if (reconResult[iy][ix] > maxVal) maxVal = reconResult[iy][ix];
+            if (maxVal > 0) {
+                for (let iy = 0; iy < fftSize; iy++)
+                    for (let ix = 0; ix < fftSize; ix++)
+                        reconResult[iy][ix] /= maxVal;
+            }
+
+            // Plot hologram
+            Plotly.newPlot('plot-holo-interference', [{
+                z: hologram,
+                type: 'heatmap',
+                colorscale: [
+                    [0, '#000000'],
+                    [0.25, '#1a1a2e'],
+                    [0.5, '#16213e'],
+                    [0.75, '#0f3460'],
+                    [1, '#e6e6e6']
+                ],
+                colorbar: { title: 'Intensity', titlefont: { color: '#8b949e' }, tickfont: { color: '#8b949e' } }
+            }], Object.assign({}, getLayout('Hologram (Interference Pattern)', '', ''), {
+                xaxis: { visible: false },
+                yaxis: { visible: false, scaleanchor: 'x' }
+            }), plotConfig);
+
+            // Plot reconstruction
+            Plotly.newPlot('plot-holo-reconstruction', [{
+                z: reconResult,
+                type: 'heatmap',
+                colorscale: [
+                    [0, '#0d1117'],
+                    [0.3, '#1f2937'],
+                    [0.5, '#58a6ff'],
+                    [0.7, '#bc8cff'],
+                    [1, '#ffd700']
+                ],
+                colorbar: { title: 'Amplitude', titlefont: { color: '#8b949e' }, tickfont: { color: '#8b949e' } }
+            }], Object.assign({}, getLayout('Reconstruction (Diffracted Field)', '', ''), {
+                xaxis: { visible: false },
+                yaxis: { visible: false, scaleanchor: 'x' }
+            }), plotConfig);
+
+            // 1D cross-section of hologram
+            const midRow = Math.floor(N / 2);
+            const holoSlice = hologram[midRow];
+            const xCoords = linspace(-0.5, 0.5, N);
+
+            Plotly.newPlot('plot-holo-1d', [{
+                x: xCoords, y: holoSlice, type: 'scatter', mode: 'lines',
+                line: { color: '#58a6ff', width: 1.5 }, name: 'Hologram cross-section'
+            }], getLayout('1D Cross-Section of Hologram (middle row)', 'Position', 'Intensity'), plotConfig);
+        }
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBasics();
+            // Pre-render equations for inactive sections
+            renderEquation('eq-fourier', `f(t) = \\frac{a_0}{2} + \\sum_{n=1}^{N} \\left[ a_n \\cos(2\\pi n f_0 t) + b_n \\sin(2\\pi n f_0 t) \\right]`);
+            renderEquation('eq-dft', `X[k] = \\sum_{n=0}^{N-1} x[n] \\cdot e^{-j2\\pi kn/N}`);
+            renderEquation('eq-nyquist', `f_s \\geq 2 f_{\\max}`);
+            renderEquation('eq-wavelet', `\\psi(t) = \\pi^{-1/4} e^{j\\omega_0 t} e^{-t^2/2}`);
+            renderEquation('eq-holography', `I(x,y) = |E_R + E_O|^2 = |E_R|^2 + |E_O|^2 + E_R^* E_O + E_R E_O^*`);
+        });
+    </script>
+</body>
+</html>
