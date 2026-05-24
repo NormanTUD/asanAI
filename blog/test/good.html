@@ -1704,72 +1704,7 @@ body {
 				'',
 				'End Responsibility.'
 			],
-			subproofs: [
-				{ name: 'actions_causal', status: 'axiom', human: 'Actions have effects (axiom)', detail: 'Every action produces a new world-state.' },
-				{ name: 'acknowledgment_possible', status: 'axiom', human: 'Acknowledgment is possible (axiom)', detail: 'If something is true, you can face it.' },
-				{ name: 'responsibility_bearable', status: 'proved', human: 'Responsibility is bearable (proved)', detail: 'From actions_causal + acknowledgment_possible. QED.' }
-			]
-		},
-		{
-			sources: ['Hippocrates (Primum non nocere)', 'J.S. Mill, On Liberty, 1859 (Harm Principle)', 'Patanjali, Yoga Sutras (Ahimsa)', 'Kant, Groundwork, 1785 (Duty of omission)'],
-			argument: 'Non-harm is the absolute lower bound of all ethics. It is easier to determine what harms than what helps. Mill: one person\'s freedom ends where another\'s begins. Ahimsa: non-violence as the highest principle. This is the zero section of the sheaf &mdash; the trivial case that must always hold.',
-			convergence: 'Every culture has a prohibition against harm. It is the most universal ethical principle known. The Hippocratic oath, the first Buddhist precept, the Jain doctrine of ahimsa, the harm principle of liberalism &mdash; all converge.'
-		},
-		historical: {
-			lived: 'The Jain tradition has practiced radical ahimsa for over 2,500 years. Gandhi adopted this as the core of Indian independence, proving that non-violence could defeat an empire. But even Gandhi acknowledged: ahimsa is an ideal you approach asymptotically. He ate, which required killing plants. He walked, which killed insects. The practice is DIRECTIONAL &mdash; minimize harm, don\'t pretend you can eliminate it entirely.',
-				violated: 'The Rwandan genocide (1994): neighbors who had lived together for decades turned on each other. Early warning signs &mdash; dehumanizing radio broadcasts calling Tutsis "cockroaches" &mdash; were ignored. 800,000 dead in 100 days.',
-				prevention: 'Early intervention at the language level. When people begin calling others vermin or subhuman, the harm principle is already being violated in speech. The Dangerous Speech Project documents this pattern across 20+ genocides.'
-		},
-		formal: {
-			type: 'Zero section (always defined)',
-				definition: 'nonharm : Agent -> Action -> Prop',
-				expansion: 'nonharm a act := forall (b : Agent), not (causes_harm act b)',
-				sheafCondition: 'The zero section is defined on ALL open sets (global). It is the trivial section that always exists.',
-				categoryRole: 'Zero morphism: the lower bound in the value poset.',
-				humanIdea: 'We prove that harmless actions always exist, and that this "zero section" is globally defined &mdash; meaning regardless of context, you can always choose not to harm.'
-		},
-		coq: [
-			'(* Step 0: Non-Harm &mdash; The Zero Section *)',
-			'Section NonHarm.',
-			'',
-			'Variable Agent : Type.',
-			'Variable Action : Type.',
-			'Variable causes_harm : Action -> Agent -> Prop.',
-			'',
-			'Definition nonharm (a : Agent) (act : Action) : Prop :=',
-			'  forall (b : Agent), ~ (causes_harm act b).',
-			'',
-			'Hypothesis harm_decidable :',
-			'  forall (act : Action) (b : Agent),',
-			'    {causes_harm act b} + {~ causes_harm act b}.',
-			'',
-			'Hypothesis harmless_actions_exist :',
-			'  forall (a : Agent), exists (act : Action), nonharm a act.',
-			'',
-			'Theorem nonharm_always_possible :',
-			'  forall (a : Agent), exists (act : Action), nonharm a act.',
-			'Proof.',
-			'  intro a. apply harmless_actions_exist.',
-			'Qed.',
-			'',
-			'Theorem zero_section_global :',
-			'  forall (a : Agent),',
-			'    (exists act, nonharm a act) ->',
-			'    forall (context : Type), exists act, nonharm a act.',
-			'Proof.',
-			'  intros a [act Hact] context.',
-			'  exists act. exact Hact.',
-			'Qed.',
-			'',
-			'End NonHarm.'
-		],
-		subproofs: [
-			{ name: 'harm_decidable', status: 'axiom', human: 'Harm is decidable (axiom)', detail: 'For any action and agent, we can determine whether harm occurs.' },
-			{ name: 'harmless_actions_exist', status: 'axiom', human: 'Harmless actions exist (axiom)', detail: 'For every agent, at least one action harms no one.' },
-			{ name: 'nonharm_always_possible', status: 'proved', human: 'Non-harm is always possible (proved)', detail: 'Directly from harmless_actions_exist.' },
-			{ name: 'zero_section_global', status: 'proved', human: 'Zero section is globally defined (proved)', detail: 'If a harmless action exists, it exists regardless of context.' }
-		]
-},
+		}
 		{
 			number: 5,
 			title: 'Be Fair',
