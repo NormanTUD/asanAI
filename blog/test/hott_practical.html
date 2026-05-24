@@ -1,0 +1,3811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homotopy Type Theory - Visual Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(180deg, #1a1a3e 0%, #0a0a1a 100%);
+            border-bottom: 1px solid #2a2a5a;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #7b68ee, #00bcd4, #ff6ec7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #8888bb;
+            font-size: 1.1em;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 20px;
+            background: #0d0d22;
+            border-bottom: 1px solid #2a2a5a;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            border: 1px solid #3a3a6a;
+            border-radius: 25px;
+            background: #1a1a3e;
+            color: #aaaadd;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .nav-tab:hover {
+            background: #2a2a5e;
+            border-color: #7b68ee;
+            color: #fff;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #7b68ee, #5b48ce);
+            border-color: #7b68ee;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(123, 104, 238, 0.3);
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: #12122a;
+            border: 1px solid #2a2a5a;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #7b68ee;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .card h3 {
+            color: #00bcd4;
+            margin: 15px 0 10px;
+            font-size: 1.2em;
+        }
+
+        .card p {
+            line-height: 1.7;
+            color: #bbbbdd;
+            margin-bottom: 12px;
+        }
+
+        canvas {
+            border: 1px solid #2a2a5a;
+            border-radius: 12px;
+            background: #080818;
+            display: block;
+            margin: 15px auto;
+            max-width: 100%;
+        }
+
+        .interactive-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #0a0a20;
+            border-radius: 12px;
+            border: 1px solid #2a2a4a;
+        }
+
+        .interactive-panel label {
+            color: #8888bb;
+            font-size: 0.9em;
+        }
+
+        .interactive-panel input[type="range"] {
+            width: 150px;
+            accent-color: #7b68ee;
+        }
+
+        .interactive-panel input[type="number"] {
+            width: 80px;
+            padding: 6px 10px;
+            background: #1a1a3e;
+            border: 1px solid #3a3a6a;
+            border-radius: 8px;
+            color: #e0e0f0;
+            font-size: 0.9em;
+        }
+
+        .interactive-panel select {
+            padding: 6px 12px;
+            background: #1a1a3e;
+            border: 1px solid #3a3a6a;
+            border-radius: 8px;
+            color: #e0e0f0;
+            font-size: 0.9em;
+        }
+
+        .interactive-panel button {
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #7b68ee, #5b48ce);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .interactive-panel button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(123, 104, 238, 0.4);
+        }
+
+        .type-box {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #1a1a4a;
+            border: 1px solid #4a4a8a;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            color: #ff6ec7;
+            margin: 2px 4px;
+            font-size: 0.9em;
+        }
+
+        .path-arrow {
+            display: inline-block;
+            color: #00bcd4;
+            margin: 0 8px;
+            font-size: 1.2em;
+        }
+
+        .construction-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #0f0f28;
+            border-left: 3px solid #7b68ee;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #7b68ee;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85em;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dashed #7b68ee;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #1a1a4a;
+            color: #e0e0f0;
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #4a4a8a;
+            font-size: 0.85em;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .diagram-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .type-diagram {
+            text-align: center;
+            padding: 20px;
+            background: #0a0a20;
+            border-radius: 12px;
+            border: 1px solid #2a2a5a;
+            min-width: 150px;
+        }
+
+        .type-diagram .type-name {
+            font-size: 1.3em;
+            color: #ff6ec7;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 8px;
+        }
+
+        .type-diagram .type-desc {
+            font-size: 0.8em;
+            color: #8888bb;
+        }
+
+        .arrow-connector {
+            display: flex;
+            align-items: center;
+            color: #00bcd4;
+            font-size: 1.5em;
+        }
+
+        .code-block {
+            background: #0a0a1a;
+            border: 1px solid #2a2a5a;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #aaddaa;
+            overflow-x: auto;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .highlight-keyword {
+            color: #7b68ee;
+        }
+
+        .highlight-type {
+            color: #ff6ec7;
+        }
+
+        .highlight-comment {
+            color: #666699;
+        }
+
+        .result-display {
+            padding: 15px;
+            background: #0f1f0f;
+            border: 1px solid #2a5a2a;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            color: #88ff88;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .fiber-visual {
+            position: relative;
+            height: 200px;
+            margin: 20px 0;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #0a0a20;
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            color: #8888bb;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .computation-log {
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #0a0a1a;
+            border: 1px solid #2a2a5a;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            margin: 10px 0;
+        }
+
+        .computation-log .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid #1a1a3a;
+            color: #aaaacc;
+        }
+
+        .computation-log .log-entry:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Homotopy Type Theory Visual Explorer</h1>
+        <p>Explore how HoTT constructs numbers from fundamental types, defines arithmetic operations through type-theoretic principles, and connects algebra to geometry through paths and homotopies.</p>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('foundations')">Foundations</div>
+        <div class="nav-tab" onclick="showSection('naturals')">Natural Numbers</div>
+        <div class="nav-tab" onclick="showSection('integers')">Integers</div>
+        <div class="nav-tab" onclick="showSection('rationals')">Rationals</div>
+        <div class="nav-tab" onclick="showSection('reals')">Real Numbers</div>
+        <div class="nav-tab" onclick="showSection('arithmetic')">Arithmetic</div>
+        <div class="nav-tab" onclick="showSection('geometry')">Geometry of Paths</div>
+        <div class="nav-tab" onclick="showSection('calculator')">Live Calculator</div>
+    </div>
+
+    <div class="content">
+        <!-- FOUNDATIONS SECTION -->
+        <div class="section active" id="section-foundations">
+            <div class="card">
+                <h2>What is Homotopy Type Theory?</h2>
+                <p>In HoTT, <strong>types are spaces</strong>, <strong>terms are points</strong>, and <strong>equalities are paths</strong>. Instead of building mathematics on sets and membership, we build it on types and inhabitants. Every mathematical object is a type, and proving something means constructing a term of that type.</p>
+
+                <h3>The Fundamental Building Blocks</h3>
+                <div class="diagram-container">
+                    <div class="type-diagram">
+                        <div class="type-name">0</div>
+                        <div class="type-desc">Empty type<br>(no inhabitants)</div>
+                    </div>
+                    <div class="arrow-connector">→</div>
+                    <div class="type-diagram">
+                        <div class="type-name">1</div>
+                        <div class="type-desc">Unit type<br>(one inhabitant: *)</div>
+                    </div>
+                    <div class="arrow-connector">→</div>
+                    <div class="type-diagram">
+                        <div class="type-name">2</div>
+                        <div class="type-desc">Bool type<br>(two: 0₂, 1₂)</div>
+                    </div>
+                    <div class="arrow-connector">→</div>
+                    <div class="type-diagram">
+                        <div class="type-name">N</div>
+                        <div class="type-desc">Natural numbers<br>(0, S(0), S(S(0))...)</div>
+                    </div>
+                </div>
+
+                <h3>Key Concepts Visualized</h3>
+                <canvas id="foundationsCanvas" width="800" height="350"></canvas>
+                <div class="interactive-panel">
+                    <label>Concept:</label>
+                    <select id="foundationConcept" onchange="drawFoundations()">
+                        <option value="types-as-spaces">Types as Spaces</option>
+                        <option value="paths">Paths (Equality)</option>
+                        <option value="dependent-types">Dependent Types</option>
+                        <option value="higher-paths">Higher Paths (Homotopies)</option>
+                    </select>
+                    <button onclick="animateFoundation()">Animate</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>The Identity Type (Path Type)</h2>
+                <p>For any type <span class="type-box">A</span> and terms <span class="type-box">a, b : A</span>, the identity type <span class="type-box">a =_A b</span> represents the space of paths from a to b. This is the revolutionary idea: <strong>equality is not a proposition but a type that can have multiple inhabitants</strong> (multiple different paths/proofs of equality).</p>
+
+                <div class="code-block">
+                    <span class="highlight-comment">-- The identity type / path type</span><br>
+                    <span class="highlight-keyword">data</span> <span class="highlight-type">_==_</span> {A : <span class="highlight-type">Type</span>} (a : A) : A -> <span class="highlight-type">Type</span> <span class="highlight-keyword">where</span><br>
+                    &nbsp;&nbsp;refl : a == a<br><br>
+                    <span class="highlight-comment">-- Path induction (J-eliminator)</span><br>
+                    <span class="highlight-keyword">J</span> : (A : <span class="highlight-type">Type</span>) -> (C : (x y : A) -> x == y -> <span class="highlight-type">Type</span>)<br>
+                    &nbsp;&nbsp;-> ((x : A) -> C x x refl)<br>
+                    &nbsp;&nbsp;-> (x y : A) -> (p : x == y) -> C x y p
+                </div>
+            </div>
+        </div>
+
+        <!-- NATURAL NUMBERS SECTION -->
+        <div class="section" id="section-naturals">
+            <div class="card">
+                <h2>Constructing Natural Numbers (N)</h2>
+                <p>Natural numbers are the first inductive type we build. In HoTT, <span class="type-box">N</span> is defined by two constructors and an elimination principle:</p>
+
+                <div class="construction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Zero constructor:</strong> <span class="type-box">0 : N</span><br>
+                        <span style="color:#8888bb">We have a base point - the number zero.</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Successor constructor:</strong> <span class="type-box">S : N → N</span><br>
+                        <span style="color:#8888bb">Given any natural number n, we can form its successor S(n).</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Recursion principle:</strong> To define a function out of N, provide a base case and a step.<br>
+                        <span style="color:#8888bb">This is what lets us define addition, multiplication, etc.</span>
+                    </div>
+                </div>
+
+                <canvas id="naturalsCanvas" width="800" height="300"></canvas>
+                <div class="interactive-panel">
+                    <label>Show number:</label>
+                    <input type="range" id="natSlider" min="0" max="10" value="3" oninput="drawNaturals()">
+                    <span id="natValue">3</span>
+                    <label style="margin-left:20px">Operation:</label>
+                    <select id="natOp" onchange="drawNaturals()">
+                        <option value="construction">Construction (S^n(0))</option>
+                        <option value="addition">Addition (recursive)</option>
+                        <option value="multiplication">Multiplication (recursive)</option>
+                    </select>
+                    <label style="margin-left:10px">Second number:</label>
+                    <input type="number" id="natB" value="2" min="0" max="8" onchange="drawNaturals()">
+                </div>
+                <div class="computation-log" id="natLog"></div>
+            </div>
+
+            <div class="card">
+                <h2>Addition on N via Recursion</h2>
+                <div class="code-block">
+                    <span class="highlight-comment">-- Addition defined by recursion on the second argument</span><br>
+                    <span class="highlight-keyword">add</span> : <span class="highlight-type">N</span> -> <span class="highlight-type">N</span> -> <span class="highlight-type">N</span><br>
+                    add m 0 = m<br>
+                    add m (S n) = S (add m n)<br><br>
+                    <span class="highlight-comment">-- Example: 2 + 3</span><br>
+                    <span class="highlight-comment">-- add 2 3 = add 2 (S 2) = S(add 2 2) = S(S(add 2 1))</span><br>
+                    <span class="highlight-comment">-- = S(S(S(add 2 0))) = S(S(S(2))) = 5</span>
+                </div>
+                <p>Each step of the recursion corresponds to "walking one step further" along the natural number line. The path from the input to the output is the <em>computation</em> itself, witnessed by definitional equalities (refl).</p>
+            </div>
+        </div>
+
+        <!-- INTEGERS SECTION -->
+        <div class="section" id="section-integers">
+            <div class="card">
+                <h2>Constructing Integers (Z)</h2>
+                <p>Integers extend naturals with negatives. In HoTT, we can construct Z in multiple equivalent ways:</p>
+
+                <div class="construction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>As a coproduct:</strong> <span class="type-box">Z := N + 1 + N</span><br>
+                        <span style="color:#8888bb">Negative naturals + zero + positive naturals. (N ⊔ {0} ⊔ N)</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>As a quotient:</strong> <span class="type-box">Z := (N × N) / ~</span><br>
+                        <span style="color:#8888bb">Pairs (a,b) representing a - b, quotiented by (a,b) ~ (c,d) iff a+d = b+c</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>As a loop space:</strong> <span class="type-box">Z ≃ Ω(S¹)</span><br>
+                        <span style="color:#8888bb">The integers are the loop space of the circle! This is a deep HoTT result.</span>
+                    </div>
+                </div>
+
+                <canvas id="integersCanvas" width="800" height="350"></canvas>
+                <div class="interactive-panel">
+                    <label>View:</label>
+                    <select id="intView" onchange="drawIntegers()">
+                        <option value="numberline">Number Line</option>
+                        <option value="quotient">Quotient Construction</option>
+                        <option value="loopspace">Loop Space (S¹)</option>
+                    </select>
+                    <label style="margin-left:15px">Integer:</label>
+                    <input type="range" id="intSlider" min="-5" max="5" value="2" oninput="drawIntegers()">
+                    <span id="intValue">2</span>
+                    <button onclick="animateIntegers()">Animate</button>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#7b68ee"></div> Positive</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ff6ec7"></div> Negative</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#00bcd4"></div> Zero / Base</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ffaa00"></div> Path / Loop</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Z ≃ Ω(S¹): Integers as Loops</h2>
+                <p>One of the most beautiful results in HoTT: the fundamental group of the circle is Z. Each integer n corresponds to winding around the circle n times (negative = opposite direction). This gives integers a <em>geometric</em> meaning!</p>
+                <div class="code-block">
+                    <span class="highlight-comment">-- The circle type</span><br>
+                    <span class="highlight-keyword">data</span> <span class="highlight-type">S¹</span> : <span class="highlight-type">Type</span> <span class="highlight-keyword">where</span><br>
+                    &nbsp;&nbsp;base : S¹<br>
+                    &nbsp;&nbsp;loop : base == base<br><br>
+                    <span class="highlight-comment">-- The fundamental theorem: Ω(S¹) ≃ Z</span><br>
+                    <span class="highlight-comment">-- loop^n corresponds to integer n</span><br>
+                    <span class="highlight-keyword">encode</span> : base == base -> <span class="highlight-type">Z</span><br>
+                    <span class="highlight-keyword">decode</span> : <span class="highlight-type">Z</span> -> base == base
+                </div>
+            </div>
+        </div>
+
+        <!-- RATIONALS SECTION -->
+        <div class="section" id="section-rationals">
+            <div class="card">
+                <h2>Constructing Rationals (Q)</h2>
+                <p>Rationals are constructed as a <strong>set-quotient</strong> of pairs of integers:</p>
+
+                <div class="construction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Raw fractions:</strong> <span class="type-box">Z × Z⁺</span><br>
+                        <span style="color:#8888bb">Pairs (numerator, positive denominator)</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Equivalence relation:</strong> <span class="type-box">(a,b) ~ (c,d) iff a*d = c*b</span><br>
+                        <span style="color:#8888bb">Cross-multiplication identifies equivalent fractions</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>Set-quotient:</strong> <span class="type-box">Q := (Z × Z⁺) / ~</span><br>
+                        <span style="color:#8888bb">In HoTT, this is a higher inductive type (HIT) with path constructors for the equivalence</span>
+                    </div>
+                </div>
+
+                <canvas id="rationalsCanvas" width="800" height="350"></canvas>
+                <div class="interactive-panel">
+                    <label>Numerator:</label>
+                    <input type="number" id="ratNum" value="1" min="-10" max="10" onchange="drawRationals()">
+                    <label>Denominator:</label>
+                    <input type="number" id="ratDen" value="2" min="1" max="10" onchange="drawRationals()">
+                    <label style="margin-left:15px">Show:</label>
+                    <select id="ratView" onchange="drawRationals()">
+                        <option value="equivalence">Equivalence Classes</option>
+                        <option value="density">Density on Line</option>
+                        <option value="quotient-paths">Quotient Paths</option>
+                    </select>
+                    <button onclick="animateRationals()">Animate</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Division as a Type-Theoretic Operation</h2>
+                <p>In HoTT, division on rationals is defined via multiplication by the inverse. The key insight is that the <strong>quotient type ensures well-definedness</strong>: we must prove that our operations respect the equivalence relation.</p>
+                <div class="code-block">
+                    <span class="highlight-comment">-- Rational division (multiply by inverse)</span><br>
+                    <span class="highlight-keyword">div</span> : <span class="highlight-type">Q</span> -> <span class="highlight-type">Q</span> -> <span class="highlight-type">Q</span><br>
+                    div [a,b] [c,d] = [a*d, b*c] <span class="highlight-comment">-- when c != 0</span><br><br>
+                    <span class="highlight-comment">-- Well-definedness proof required:</span><br>
+                    <span class="highlight-keyword">div-resp</span> : (a,b) ~ (a',b') -> (c,d) ~ (c',d')<br>
+                    &nbsp;&nbsp;-> div [a,b] [c,d] ~ div [a',b'] [c',d']
+                </div>
+            </div>
+        </div>
+
+        <!-- REAL NUMBERS SECTION -->
+        <div class="section" id="section-reals">
+            <div class="card">
+                <h2>Constructing Real Numbers (R)</h2>
+                <p>The reals are where HoTT truly shines. There are multiple constructions, each revealing different aspects:</p>
+
+                <div class="construction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <strong>Cauchy Reals:</strong> <span class="type-box">R_C := CauchySeq(Q) / ~</span><br>
+                        <span style="color:#8888bb">Equivalence classes of Cauchy sequences of rationals. A sequence (q_n) is Cauchy if for all epsilon > 0, there exists N such that |q_m - q_n| &lt; epsilon for m,n > N.</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <strong>Dedekind Reals:</strong> <span class="type-box">R_D := {(L,U) : P(Q) × P(Q) | cuts}</span><br>
+                        <span style="color:#8888bb">A pair of subsets of Q (lower and upper) satisfying: inhabited, rounded, disjoint, located. Each cut "pinches" a real number from both sides.</span>
+                    </div>
+                </div>
+                <div class="construction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <strong>HIT Reals (Cauchy completion):</strong> <span class="type-box">R := HIT with lim constructor</span><br>
+                        <span style="color:#8888bb">A higher inductive type with: rational embeddings, a limit constructor for Cauchy sequences, and path constructors ensuring limits of equivalent sequences are equal.</span>
+                    </div>
+                </div>
+
+                <canvas id="realsCanvas" width="800" height="400"></canvas>
+                <div class="interactive-panel">
+                    <label>Construction:</label>
+                    <select id="realView" onchange="drawReals()">
+                        <option value="cauchy">Cauchy Sequences</option>
+                        <option value="dedekind">Dedekind Cuts</option>
+                        <option value="completion">Completion Process</option>
+                    </select>
+                    <label style="margin-left:15px">Target real:</label>
+                    <select id="realTarget" onchange="drawReals()">
+                        <option value="sqrt2">sqrt(2)</option>
+                        <option value="pi">pi</option>
+                        <option value="e">e</option>
+                        <option value="golden">phi (golden ratio)</option>
+                    </select>
+                    <label style="margin-left:15px">Precision:</label>
+                    <input type="range" id="realPrecision" min="1" max="20" value="5" oninput="drawReals()">
+                    <button onclick="animateReals()">Animate Convergence</button>
+                </div>
+                <div class="computation-log" id="realLog"></div>
+            </div>
+
+            <div class="card">
+                <h2>The Tower of Construction</h2>
+                <p>Here's the full picture of how we get from nothing to the reals:</p>
+                <canvas id="towerCanvas" width="800" height="300"></canvas>
+                <p style="text-align:center; margin-top:10px; color:#8888bb;">Click on any level to see details about that construction step.</p>
+            </div>
+        </div>
+
+        <!-- ARITHMETIC SECTION -->
+        <div class="section" id="section-arithmetic">
+            <div class="card">
+                <h2>Arithmetic Operations in HoTT</h2>
+                <p>Every arithmetic operation is defined by <strong>recursion</strong> or <strong>induction</strong> on the type structure. The key principle: operations must respect the type's equivalence relations (for quotient types like Q and R).</p>
+
+                <h3>Addition</h3>
+                <canvas id="addCanvas" width="800" height="250"></canvas>
+                <div class="interactive-panel">
+                    <label>Type:</label>
+                    <select id="addType" onchange="drawAddition()">
+                        <option value="nat">Natural Numbers</option>
+                        <option value="int">Integers</option>
+                        <option value="rat">Rationals</option>
+                        <option value="real">Reals</option>
+                    </select>
+                    <label>a =</label>
+                    <input type="number" id="addA" value="3" step="0.5" onchange="drawAddition()">
+                    <label>b =</label>
+                    <input type="number" id="addB" value="2" step="0.5" onchange="drawAddition()">
+                    <button onclick="animateAddition()">Step Through</button>
+                </div>
+                <div class="result-display" id="addResult">Result will appear here</div>
+            </div>
+
+            <div class="card">
+                <h3>Multiplication</h3>
+                <canvas id="mulCanvas" width="800" height="250"></canvas>
+                <div class="interactive-panel">
+                    <label>Type:</label>
+                    <select id="mulType" onchange="drawMultiplication()">
+                        <option value="nat">Natural Numbers</option>
+                        <option value="int">Integers</option>
+                        <option value="rat">Rationals</option>
+                        <option value="real">Reals</option>
+                    </select>
+                    <label>a =</label>
+                    <input type="number" id="mulA" value="3" step="0.5" onchange="drawMultiplication()">
+                    <label>b =</label>
+                    <input type="number" id="mulB" value="4" step="0.5" onchange="drawMultiplication()">
+                    <button onclick="animateMultiplication()">Visualize</button>
+                </div>
+                <div class="result-display" id="mulResult">Result will appear here</div>
+            </div>
+
+            <div class="card">
+                <h3>Division</h3>
+                <canvas id="divCanvas" width="800" height="250"></canvas>
+                <div class="interactive-panel">
+                    <label>Type:</label>
+                    <select id="divType" onchange="drawDivision()">
+                        <option value="rat">Rationals</option>
+                        <option value="real">Reals</option>
+                    </select>
+                    <label>a =</label>
+                    <input type="number" id="divA" value="3" step="0.5" onchange="drawDivision()">
+                    <label>b =</label>
+                    <input type="number" id="divB" value="2" step="0.5" onchange="drawDivision()">
+                    <button onclick="animateDivision()">Visualize</button>
+                </div>
+                <div class="result-display" id="divResult">Result will appear here</div>
+                <p style="margin-top:10px; color:#8888bb;"><strong>Note:</strong> Division requires a proof that the divisor is non-zero. In HoTT, this is a <em>witness</em> of type <span class="type-box">b != 0</span>, which is <span class="type-box">(b = 0) -> 0</span> (a function from the path b=0 to the empty type).</p>
+            </div>
+        </div>
+
+        <!-- GEOMETRY SECTION -->
+        <div class="section" id="section-geometry">
+            <div class="card">
+                <h2>The Geometry of Paths and Homotopies</h2>
+                <p>In HoTT, every equality proof is a <strong>path</strong>, and every proof that two proofs are equal is a <strong>homotopy</strong> (a path between paths). This gives arithmetic a deeply geometric flavor.</p>
+
+                <canvas id="geometryCanvas" width="800" height="400"></canvas>
+                <div class="interactive-panel">
+                    <label>Visualization:</label>
+                    <select id="geoView" onchange="drawGeometry()">
+                        <option value="path-composition">Path Composition (Transitivity)</option>
+                        <option value="path-inverse">Path Inverse (Symmetry)</option>
+                        <option value="homotopy">Homotopy (2-path)</option>
+                        <option value="circle-loops">Circle Loops (Z)</option>
+                        <option value="commutativity">Commutativity Path</option>
+                    </select>
+                    <button onclick="animateGeometry()">Animate</button>
+                    <label style="margin-left:15px">Speed:</label>
+                    <input type="range" id="geoSpeed" min="1" max="10" value="5">
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#7b68ee"></div> Path p</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ff6ec7"></div> Path q</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#00bcd4"></div> Composed path p . q</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#ffaa00"></div> Homotopy / 2-path</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Univalence and Transport</h2>
+                <p>The <strong>Univalence Axiom</strong> states that equivalent types are equal: <span class="type-box">(A ≃ B) ≃ (A =_U B)</span>. This means we can <em>transport</em> structure along equivalences. For arithmetic, this means:</p>
+                <ul style="margin:10px 0 10px 20px; color:#bbbbdd; line-height:2;">
+                    <li>Different constructions of Z (coproduct vs quotient vs loop space) are <em>equal as types</em></li>
+                    <li>Arithmetic defined on one construction automatically transfers to another</li>
+                    <li>The path witnessing this equality IS the translation function</li>
+                </ul>
+                <canvas id="transportCanvas" width="800" height="300"></canvas>
+                <div class="interactive-panel">
+                    <label>Transport example:</label>
+                    <select id="transportView" onchange="drawTransport()">
+                        <option value="equiv-types">Equivalent Types</option>
+                        <option value="fiber-transport">Fiber Transport</option>
+                        <option value="arithmetic-transfer">Arithmetic Transfer</option>
+                    </select>
+                    <button onclick="animateTransport()">Animate Transport</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CALCULATOR SECTION -->
+        <div class="section" id="section-calculator">
+            <div class="card">
+                <h2>HoTT-Style Calculator</h2>
+                <p>Perform calculations and see the type-theoretic reduction steps. Each computation shows how the result is derived from the inductive/recursive definitions.</p>
+
+                <div class="grid-2">
+                    <div>
+                        <h3>Input</h3>
+                        <div class="interactive-panel" style="flex-direction:column; align-items:stretch;">
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <label>Number system:</label>
+                                <select id="calcType" onchange="updateCalcUI()">
+                                    <option value="nat">N (Naturals)</option>
+                                    <option value="int">Z (Integers)</option>
+                                    <option value="rat">Q (Rationals)</option>
+                                    <option value="real">R (Reals)</option>
+                                </select>
+                            </div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <label>a =</label>
+                                <input type="number" id="calcA" value="7" step="1" style="width:100px;">
+                                <span id="calcADen" style="display:none;">/ <input type="number" id="calcADenom" value="1" min="1" style="width:60px;"></span>
+                            </div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <label>Operation:</label>
+                                <select id="calcOp">
+                                    <option value="add">+ (Addition)</option>
+                                    <option value="mul">x (Multiplication)</option>
+                                    <option value="sub">- (Subtraction)</option>
+                                    <option value="div">/ (Division)</option>
+                                </select>
+                            </div>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <label>b =</label>
+                                <input type="number" id="calcB" value="3" step="1" style="width:100px;">
+                                <span id="calcBDen" style="display:none;">/ <input type="number" id="calcBDenom" value="1" min="1" style="width:60px;"></span>
+                            </div>
+                            <button onclick="performCalculation()" style="width:100%;">Compute with Type-Theoretic Reduction</button>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Result</h3>
+                        <div class="result-display" id="calcResult" style="min-height:60px;">
+                            Press "Compute" to see the result
+                        </div>
+                        <h3>Type Signature</h3>
+                        <div class="code-block" id="calcSignature" style="min-height:40px;">
+                            -- Select operation and compute
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Reduction Steps</h3>
+                <div class="computation-log" id="calcLog" style="max-height:300px;">
+                    <div class="log-entry">Waiting for computation...</div>
+                </div>
+
+                <h3>Geometric Visualization</h3>
+                <canvas id="calcCanvas" width="800" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ NAVIGATION ============
+        function showSection(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('section-' + name).classList.add('active');
+            event.target.classList.add('active');
+
+            // Trigger drawing for the section
+            switch(name) {
+                case 'foundations': drawFoundations(); break;
+                case 'naturals': drawNaturals(); break;
+                case 'integers': drawIntegers(); break;
+                case 'rationals': drawRationals(); break;
+                case 'reals': drawReals(); drawTower(); break;
+                case 'arithmetic': drawAddition(); drawMultiplication(); drawDivision(); break;
+                case 'geometry': drawGeometry(); drawTransport(); break;
+                case 'calculator': drawCalcCanvas(); break;
+            }
+        }
+
+        // ============ UTILITY FUNCTIONS ============
+        function getCtx(id) {
+            const canvas = document.getElementById(id);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            return ctx;
+        }
+
+        function drawPoint(ctx, x, y, radius, color, label) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            if (label) {
+                ctx.fillStyle = '#e0e0f0';
+                ctx.font = '12px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, x, y + radius + 15);
+            }
+        }
+
+        function drawArrow(ctx, x1, y1, x2, y2, color, width) {
+            const headLen = 10;
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const angle = Math.atan2(dy, dx);
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = color || '#7b68ee';
+            ctx.lineWidth = width || 2;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 6), y2 - headLen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 6), y2 - headLen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = color || '#7b68ee';
+            ctx.fill();
+        }
+
+        function drawCurvedPath(ctx, x1, y1, x2, y2, curve, color, width, dashed) {
+            const mx = (x1 + x2) / 2;
+            const my = (y1 + y2) / 2 - curve;
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.quadraticCurveTo(mx, my, x2, y2);
+            ctx.strokeStyle = color || '#7b68ee';
+            ctx.lineWidth = width || 2;
+            if (dashed) ctx.setLineDash([5, 5]);
+            else ctx.setLineDash([]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // ============ FOUNDATIONS ============
+        let foundationAnim = null;
+        let foundationT = 0;
+
+        function drawFoundations() {
+            const ctx = getCtx('foundationsCanvas');
+            const concept = document.getElementById('foundationConcept').value;
+            const canvas = document.getElementById('foundationsCanvas');
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+
+            switch(concept) {
+                case 'types-as-spaces':
+                    drawTypesAsSpaces(ctx, canvas);
+                    break;
+                case 'paths':
+                    drawPaths(ctx, canvas);
+                    break;
+                case 'dependent-types':
+                    drawDependentTypes(ctx, canvas);
+                    break;
+                case 'higher-paths':
+                    drawHigherPaths(ctx, canvas);
+                    break;
+            }
+        }
+
+        function drawTypesAsSpaces(ctx, canvas) {
+            const w = canvas.width, h = canvas.height;
+
+            // Draw empty type (0)
+            ctx.fillText('0 (Empty)', 100, 30);
+            ctx.strokeStyle = '#ff4444';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.ellipse(100, 100, 40, 30, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ff4444';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('No points!', 100, 105);
+
+            // Draw unit type (1)
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('1 (Unit)', 270, 30);
+            ctx.strokeStyle = '#00bcd4';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(270, 100, 40, 30, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            drawPoint(ctx, 270, 100, 6, '#00bcd4', '*');
+
+            // Draw Bool (2)
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('2 (Bool)', 440, 30);
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(440, 100, 50, 35, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            drawPoint(ctx, 420, 100, 6, '#ffaa00', 'true');
+            drawPoint(ctx, 460, 100, 6, '#ffaa00', 'false');
+
+            // Draw N
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('N (Naturals)', 650, 30);
+            ctx.strokeStyle = '#7b68ee';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(650, 100, 80, 40, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            for (let i = 0; i < 5; i++) {
+                drawPoint(ctx, 590 + i * 30, 100, 5, '#7b68ee', String(i));
+            }
+            ctx.fillStyle = '#7b68ee';
+            ctx.fillText('...', 720, 100);
+
+            // Draw a function type
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('A -> B (Function Space)', 400, 200);
+
+            // Source space
+            ctx.strokeStyle = '#7b68ee';
+            ctx.beginPath();
+            ctx.ellipse(250, 280, 60, 40, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Type A', 250, 330);
+
+            // Target space
+            ctx.strokeStyle = '#ff6ec7';
+            ctx.beginPath();
+            ctx.ellipse(550, 280, 60, 40, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Type B', 550, 330);
+
+            // Points and arrows
+            let pts = [[230, 270], [250, 290], [270, 265]];
+            let tgts = [[530, 275], [560, 285], [540, 270]];
+            for (let i = 0; i < 3; i++) {
+                drawPoint(ctx, pts[i][0], pts[i][1], 4, '#7b68ee');
+                drawPoint(ctx, tgts[i][0], tgts[i][1], 4, '#ff6ec7');
+                drawArrow(ctx, pts[i][0] + 5, pts[i][1], tgts[i][0] - 5, tgts[i][1], '#00bcd4', 1.5);
+            }
+
+            ctx.fillStyle = '#00bcd4';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('f : A -> B', 400, 260);
+        }
+
+        function drawPaths(ctx, canvas) {
+            const w = canvas.width, h = canvas.height;
+
+            ctx.fillText('Paths = Equality Proofs', w/2, 25);
+
+            // Two points with a path
+            const ax = 200, ay = 120, bx = 500, by = 120;
+            drawPoint(ctx, ax, ay, 8, '#7b68ee', 'a : A');
+            drawPoint(ctx, bx, by, 8, '#ff6ec7', 'b : A');
+
+            // Draw path (curved line)
+            drawCurvedPath(ctx, ax, ay, bx, by, 60, '#00bcd4', 3);
+            ctx.fillStyle = '#00bcd4';
+            ctx.font = '13px Segoe UI';
+            ctx.fillText('p : a =_A b', 350, 55);
+
+            // Reflexivity
+            const rx = 150, ry = 250;
+            drawPoint(ctx, rx, ry, 8, '#7b68ee', 'a : A');
+            ctx.beginPath();
+            ctx.arc(rx, ry - 30, 20, 0, Math.PI * 2);
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('refl_a : a = a', rx, ry + 30);
+
+            // Path composition
+            const cx = 350, cy = 250, dx = 500, dy = 250, ex = 650, ey = 250;
+            drawPoint(ctx, cx, cy, 7, '#7b68ee', 'a');
+            drawPoint(ctx, dx, dy, 7, '#00bcd4', 'b');
+            drawPoint(ctx, ex, ey, 7, '#ff6ec7', 'c');
+
+            drawCurvedPath(ctx, cx, cy, dx, dy, 40, '#7b68ee', 2);
+            drawCurvedPath(ctx, dx, dy, ex, ey, 40, '#ff6ec7', 2);
+            drawCurvedPath(ctx, cx, cy, ex, ey, -40, '#ffaa00', 2, true);
+
+            ctx.fillStyle = '#7b68ee';
+            ctx.fillText('p', 420, 205);
+            ctx.fillStyle = '#ff6ec7';
+            ctx.fillText('q', 570, 205);
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillText('p . q (composition)', 500, 305);
+        }
+
+        function drawDependentTypes(ctx, canvas) {
+            const w = canvas.width, h = canvas.height;
+
+            ctx.fillText('Dependent Types: Fibrations', w/2, 25);
+
+            // Base space
+            ctx.strokeStyle = '#7b68ee';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(100, 280);
+            ctx.lineTo(700, 280);
+            ctx.stroke();
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('Base type B', 400, 310);
+
+            // Fibers
+            const fibers = [
+                {x: 200, label: 'b1', height: 80, color: '#ff6ec7'},
+                {x: 350, label: 'b2', height: 120, color: '#00bcd4'},
+                {x: 500, label: 'b3', height: 60, color: '#ffaa00'},
+                {x: 650, label: 'b4', height: 100, color: '#88ff88'},
+            ];
+
+            fibers.forEach(f => {
+                drawPoint(ctx, f.x, 280, 6, '#7b68ee', f.label);
+
+                // Draw fiber above
+                ctx.strokeStyle = f.color;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.ellipse(f.x, 280 - f.height, 25, 15, 0, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Vertical line connecting
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(f.x, 275);
+                ctx.lineTo(f.x, 280 - f.height + 15);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Points in fiber
+                drawPoint(ctx, f.x - 8, 280 - f.height, 3, f.color);
+                drawPoint(ctx, f.x + 8, 280 - f.height + 5, 3, f.color);
+            });
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('P(b1)', 200, 280 - 80 - 25);
+            ctx.fillText('P(b2)', 350, 280 - 120 - 25);
+            ctx.fillText('P(b3)', 500, 280 - 60 - 25);
+            ctx.fillText('P(b4)', 650, 280 - 100 - 25);
+
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Each fiber P(b) can be a different type!', 400, 340);
+            ctx.fillText('Sigma type: total space | Pi type: sections', 400, 355);
+        }
+
+        function drawHigherPaths(ctx, canvas) {
+            const w = canvas.width, h = canvas.height;
+
+            ctx.fillText('Higher Paths: Paths between Paths', w/2, 25);
+
+            // Two points
+            const ax = 200, ay = 180, bx = 600, by = 180;
+            drawPoint(ctx, ax, ay, 8, '#7b68ee', 'a');
+            drawPoint(ctx, bx, by, 8, '#ff6ec7', 'b');
+
+            // Two different paths
+            drawCurvedPath(ctx, ax, ay, bx, by, 80, '#00bcd4', 2.5);
+            drawCurvedPath(ctx, ax, ay, bx, by, -80, '#ffaa00', 2.5);
+
+            ctx.fillStyle = '#00bcd4';
+            ctx.fillText('p : a = b', 400, 85);
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillText('q : a = b', 400, 280);
+
+            // Homotopy between them (filled region)
+            ctx.fillStyle = 'rgba(123, 104, 238, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            const steps = 50;
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const x = ax + (bx - ax) * t;
+                const mx = (ax + bx) / 2;
+                const curve1 = 80;
+                const yOff = -curve1 * 4 * t * (1 - t);
+                ctx.lineTo(x, ay + (by - ay) * t + yOff);
+            }
+            for (let i = steps; i >= 0; i--) {
+                const t = i / steps;
+                const x = ax + (bx - ax) * t;
+                const curve2 = -80;
+                const yOff = -curve2 * 4 * t * (1 - t);
+                ctx.lineTo(x, ay + (by - ay) * t + yOff);
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            // Label the homotopy
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '13px Segoe UI';
+            ctx.fillText('alpha : p =_{a=b} q', 400, 185);
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('(a 2-dimensional path / homotopy)', 400, 205);
+
+            // Higher structure note
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Types can have paths, paths between paths, paths between those... forming an infinity-groupoid!', w/2, 330);
+        }
+
+        function animateFoundation() {
+            if (foundationAnim) cancelAnimationFrame(foundationAnim);
+            foundationT = 0;
+            const concept = document.getElementById('foundationConcept').value;
+
+            function animate() {
+                foundationT += 0.02;
+                if (foundationT > 1) foundationT = 0;
+
+                const ctx = getCtx('foundationsCanvas');
+                const canvas = document.getElementById('foundationsCanvas');
+                const w = canvas.width, h = canvas.height;
+
+                if (concept === 'paths') {
+                    // Animate a point traveling along a path
+                    const ax = 200, ay = 180, bx = 600, by = 180;
+                    drawPaths(ctx, canvas);
+
+                    // Moving point along the curved path
+                    const t = foundationT;
+                    const mx = (ax + bx) / 2;
+                    const my = ay - 60;
+                    const px = (1-t)*(1-t)*ax + 2*(1-t)*t*mx + t*t*bx;
+                    const py = (1-t)*(1-t)*ay + 2*(1-t)*t*my + t*t*by;
+                    drawPoint(ctx, px, py, 6, '#ffffff');
+                } else if (concept === 'types-as-spaces') {
+                    drawTypesAsSpaces(ctx, canvas);
+                    // Animate points appearing
+                    const numPts = Math.floor(foundationT * 10);
+                    for (let i = 0; i < numPts; i++) {
+                        const x = 590 + i * 30;
+                        if (x < 730) {
+                            drawPoint(ctx, x, 100, 7, '#ffffff');
+                        }
+                    }
+                } else if (concept === 'higher-paths') {
+                    drawHigherPaths(ctx, canvas);
+                    // Animate the homotopy sweeping
+                    const ax = 200, ay = 180, bx = 600, by = 180;
+                    const t = foundationT;
+                    const curve = 80 - 160 * t; // interpolate between two paths
+                    ctx.beginPath();
+                    ctx.moveTo(ax, ay);
+                    for (let i = 0; i <= 50; i++) {
+                        const s = i / 50;
+                        const x = ax + (bx - ax) * s;
+                        const yOff = -curve * 4 * s * (1 - s);
+                        ctx.lineTo(x, ay + yOff);
+                    }
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                } else {
+                    drawDependentTypes(ctx, canvas);
+                }
+
+                foundationAnim = requestAnimationFrame(animate);
+            }
+            foundationAnim = requestAnimationFrame(animate);
+
+            // Stop after 5 seconds
+            setTimeout(() => {
+                if (foundationAnim) cancelAnimationFrame(foundationAnim);
+            }, 5000);
+        }
+
+        // ============ NATURAL NUMBERS ============
+        function drawNaturals() {
+            const ctx = getCtx('naturalsCanvas');
+            const canvas = document.getElementById('naturalsCanvas');
+            const n = parseInt(document.getElementById('natSlider').value);
+            const op = document.getElementById('natOp').value;
+            const b = parseInt(document.getElementById('natB').value);
+            document.getElementById('natValue').textContent = n;
+
+            const w = canvas.width, h = canvas.height;
+            const log = document.getElementById('natLog');
+
+            if (op === 'construction') {
+                // Show S^n(0)
+                ctx.fillStyle = '#e0e0f0';
+                ctx.font = 'bold 14px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Construction of ' + n + ' = S^' + n + '(0)', w/2, 25);
+
+                const startX = 80;
+                const spacing = Math.min(65, (w - 160) / (n + 1));
+
+                for (let i = 0; i <= n; i++) {
+                    const x = startX + i * spacing;
+                    const y = h / 2;
+                    const color = i === 0 ? '#00bcd4' : '#7b68ee';
+                    drawPoint(ctx, x, y, 12, color);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 12px Courier New';
+                    ctx.fillText(String(i), x, y + 4);
+
+                    if (i < n) {
+                        drawArrow(ctx, x + 15, y, x + spacing - 15, y, '#ffaa00', 2);
+                        ctx.fillStyle = '#ffaa00';
+                        ctx.font = '10px Segoe UI';
+                        ctx.fillText('S', x + spacing/2, y - 12);
+                    }
+                }
+
+                // Show the term
+                let term = '0';
+                for (let i = 0; i < n; i++) term = 'S(' + term + ')';
+                ctx.fillStyle = '#ff6ec7';
+                ctx.font = '14px Courier New';
+                ctx.fillText(term, w/2, h - 30);
+
+                log.innerHTML = '<div class="log-entry">Construction: ' + n + ' := ' + term + '</div>';
+            } else if (op === 'addition') {
+                ctx.fillStyle = '#e0e0f0';
+                ctx.font = 'bold 14px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Addition: ' + n + ' + ' + b + ' (recursive unfolding)', w/2, 25);
+
+                // Show the recursive steps
+                let steps = [];
+                steps.push('add(' + n + ', ' + b + ')');
+                let current = b;
+                let result = n;
+                while (current > 0) {
+                    current--;
+                    result++;
+                    steps.push('= S(add(' + n + ', ' + current + '))');
+                }
+                steps.push('= ' + (n + b));
+
+                let logHtml = '';
+                const yStart = 60;
+                const ySpacing = Math.min(30, (h - 80) / steps.length);
+
+                steps.forEach((step, i) => {
+                    const y = yStart + i * ySpacing;
+                    ctx.fillStyle = i === steps.length - 1 ? '#88ff88' : '#aaaacc';
+                    ctx.font = '12px Courier New';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(step, 50, y);
+                    logHtml += '<div class="log-entry">' + step + '</div>';
+                });
+
+                // Visual: number line showing the jump
+                const lineY = h - 50;
+                ctx.strokeStyle = '#3a3a6a';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(50, lineY);
+                ctx.lineTo(w - 50, lineY);
+                ctx.stroke();
+
+                const scale = (w - 100) / (n + b + 2);
+                for (let i = 0; i <= n + b + 1; i++) {
+                    const x = 50 + i * scale;
+                    drawPoint(ctx, x, lineY, 4, i <= n ? '#7b68ee' : (i <= n + b ? '#ff6ec7' : '#3a3a6a'));
+                    ctx.fillStyle = '#8888bb';
+                    ctx.font = '10px Segoe UI';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(String(i), x, lineY + 15);
+                }
+
+                // Bracket for n
+                drawCurvedPath(ctx, 50, lineY - 15, 50 + n * scale, lineY - 15, 15, '#7b68ee', 2);
+                ctx.fillStyle = '#7b68ee';
+                ctx.fillText(String(n), 50 + n * scale / 2, lineY - 35);
+
+                // Bracket for b
+                drawCurvedPath(ctx, 50 + n * scale, lineY - 15, 50 + (n + b) * scale, lineY - 15, 15, '#ff6ec7', 2);
+                ctx.fillStyle = '#ff6ec7';
+                ctx.fillText('+' + String(b), 50 + (n + b/2) * scale, lineY - 35);
+
+                log.innerHTML = logHtml;
+            } else if (op === 'multiplication') {
+                ctx.fillStyle = '#e0e0f0';
+                ctx.font = 'bold 14px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Multiplication: ' + n + ' * ' + b + ' (repeated addition)', w/2, 25);
+
+                // Grid visualization
+                const gridX = 100, gridY = 60;
+                const cellSize = Math.min(30, (w - 200) / Math.max(n, 1), (h - 120) / Math.max(b, 1));
+
+                for (let i = 0; i < b; i++) {
+                    for (let j = 0; j < n; j++) {
+                        const x = gridX + j * cellSize;
+                        const y = gridY + i * cellSize;
+                        ctx.fillStyle = 'rgba(123, 104, 238, 0.3)';
+                        ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
+                        ctx.strokeStyle = '#7b68ee';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x, y, cellSize - 2, cellSize - 2);
+                    }
+                }
+
+                ctx.fillStyle = '#7b68ee';
+                ctx.font = '12px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(n + ' (columns)', gridX + n * cellSize / 2, gridY + b * cellSize + 20);
+                ctx.save();
+                ctx.translate(gridX - 20, gridY + b * cellSize / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText(b + ' (rows)', 0, 0);
+                ctx.restore();
+
+                // Recursive definition
+                let steps = ['mul(' + n + ', ' + b + ')'];
+                let curr = b;
+                while (curr > 0) {
+                    curr--;
+                    steps.push('= add(' + n + ', mul(' + n + ', ' + curr + '))');
+                }
+                steps.push('= ' + (n * b));
+
+                const textX = w / 2 + 100;
+                steps.forEach((step, i) => {
+                    ctx.fillStyle = i === steps.length - 1 ? '#88ff88' : '#aaaacc';
+                    ctx.font = '11px Courier New';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(step, textX, 70 + i * 22);
+                });
+
+                ctx.fillStyle = '#88ff88';
+                ctx.font = 'bold 16px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('= ' + (n * b), w/2, h - 20);
+
+                log.innerHTML = steps.map(s => '<div class="log-entry">' + s + '</div>').join('');
+            }
+        }
+
+        // ============ INTEGERS ============
+        let intAnim = null;
+        let intT = 0;
+
+        function drawIntegers() {
+            const ctx = getCtx('integersCanvas');
+            const canvas = document.getElementById('integersCanvas');
+            const view = document.getElementById('intView').value;
+            const n = parseInt(document.getElementById('intSlider').value);
+            document.getElementById('intValue').textContent = n;
+
+            const w = canvas.width, h = canvas.height;
+
+            switch(view) {
+                case 'numberline':
+                    drawIntNumberLine(ctx, w, h, n);
+                    break;
+                case 'quotient':
+                    drawIntQuotient(ctx, w, h, n);
+                    break;
+                case 'loopspace':
+                    drawIntLoopSpace(ctx, w, h, n);
+                    break;
+            }
+        }
+
+        function drawIntNumberLine(ctx, w, h, n) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Z as N + 1 + N (Coproduct Construction)', w/2, 25);
+
+            const lineY = h / 2;
+            const centerX = w / 2;
+            const spacing = 50;
+
+            // Draw number line
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(30, lineY);
+            ctx.lineTo(w - 30, lineY);
+            ctx.stroke();
+
+            // Draw numbers
+            for (let i = -6; i <= 6; i++) {
+                const x = centerX + i * spacing;
+                let color = '#3a3a6a';
+                if (i === 0) color = '#00bcd4';
+                else if (i > 0) color = '#7b68ee';
+                else color = '#ff6ec7';
+
+                const isSelected = i === n;
+                drawPoint(ctx, x, lineY, isSelected ? 10 : 6, isSelected ? '#ffffff' : color);
+
+                ctx.fillStyle = isSelected ? '#ffffff' : '#8888bb';
+                ctx.font = isSelected ? 'bold 14px Segoe UI' : '11px Segoe UI';
+                ctx.fillText(String(i), x, lineY + 25);
+            }
+
+            // Labels for the coproduct
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('N (negatives: inl)', centerX - 150, lineY - 40);
+            ctx.fillStyle = '#00bcd4';
+            ctx.fillText('1 (zero)', centerX, lineY - 40);
+            ctx.fillStyle = '#7b68ee';
+            ctx.fillText('N (positives: inr)', centerX + 150, lineY - 40);
+
+            // Show the encoding
+            let encoding = '';
+            if (n === 0) encoding = 'inm(*) : 1';
+            else if (n > 0) encoding = 'inr(' + (n-1) + ') : N';
+            else encoding = 'inl(' + (-n-1) + ') : N';
+
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '14px Courier New';
+            ctx.fillText(n + ' encoded as: ' + encoding, w/2, h - 40);
+        }
+
+        function drawIntQuotient(ctx, w, h, n) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Z as (N x N) / ~ where (a,b) ~ (c,d) iff a+d = b+c', w/2, 25);
+
+            // Show equivalence class for n
+            // n = a - b, so all pairs (a, a-n) for a >= max(0, -n)
+            const pairs = [];
+            for (let a = Math.max(0, -n); a < Math.max(0, -n) + 6; a++) {
+                pairs.push([a, a - n]);
+            }
+
+            // Draw the pairs as points in N x N grid
+            const gridX = 100, gridY = 60;
+            const cellSize = 35;
+            const maxVal = 8;
+
+            // Grid
+            ctx.strokeStyle = '#1a1a3a';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i <= maxVal; i++) {
+                ctx.beginPath();
+                ctx.moveTo(gridX + i * cellSize, gridY);
+                ctx.lineTo(gridX + i * cellSize, gridY + maxVal * cellSize);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(gridX, gridY + i * cellSize);
+                ctx.lineTo(gridX + maxVal * cellSize, gridY + i * cellSize);
+                ctx.stroke();
+            }
+
+            // Axes labels
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('first component (a)', gridX + maxVal * cellSize / 2, gridY + maxVal * cellSize + 20);
+            ctx.save();
+            ctx.translate(gridX - 20, gridY + maxVal * cellSize / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('second component (b)', 0, 0);
+            ctx.restore();
+
+            // Draw the equivalence class (diagonal line)
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]);
+            ctx.beginPath();
+            if (n >= 0) {
+                ctx.moveTo(gridX + n * cellSize, gridY);
+                ctx.lineTo(gridX + maxVal * cellSize, gridY + (maxVal - n) * cellSize);
+            } else {
+                ctx.moveTo(gridX, gridY + (-n) * cellSize);
+                ctx.lineTo(gridX + (maxVal + n) * cellSize, gridY + maxVal * cellSize);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw specific pairs in the class
+            pairs.forEach((pair, i) => {
+                if (pair[0] <= maxVal && pair[1] <= maxVal && pair[0] >= 0 && pair[1] >= 0) {
+                    const x = gridX + pair[0] * cellSize;
+                    const y = gridY + pair[1] * cellSize;
+                    drawPoint(ctx, x, y, 6, '#ffaa00');
+                    ctx.fillStyle = '#ffaa00';
+                    ctx.font = '9px Courier New';
+                    ctx.fillText('(' + pair[0] + ',' + pair[1] + ')', x, y - 10);
+                }
+            });
+
+            // Explanation
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = '13px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText('Integer ' + n + ' = equivalence class:', w - 280, 70);
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '12px Courier New';
+            pairs.slice(0, 4).forEach((pair, i) => {
+                ctx.fillText('(' + pair[0] + ', ' + pair[1] + ')  [' + pair[0] + ' - ' + pair[1] + ' = ' + n + ']', w - 280, 95 + i * 22);
+            });
+            ctx.fillText('...', w - 280, 95 + 4 * 22);
+
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('All points on the orange diagonal represent the SAME integer (connected by paths in the quotient)', w/2, h - 15);
+        }
+
+        function drawIntLoopSpace(ctx, w, h, n) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Z as loop space of S1: integer ' + n + ' = loop^' + n, w/2, 25);
+
+            // Draw the circle
+            const cx = w / 2, cy = h / 2 + 20;
+            const radius = 100;
+
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Base point
+            drawPoint(ctx, cx + radius, cy, 8, '#00bcd4', 'base');
+
+            // Draw the loop n times
+            if (n !== 0) {
+                const absN = Math.abs(n);
+                const direction = n > 0 ? 1 : -1;
+
+                for (let i = 0; i < absN; i++) {
+                    const offset = (i + 1) * 8;
+                    const loopRadius = radius + offset;
+                    ctx.strokeStyle = n > 0 ? `hsl(${260 + i * 20}, 70%, 60%)` : `hsl(${330 + i * 20}, 70%, 60%)`;
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    if (direction > 0) {
+                        ctx.arc(cx, cy, loopRadius, 0, Math.PI * 2);
+                    } else {
+                        ctx.arc(cx, cy, loopRadius, 0, -Math.PI * 2, true);
+                    }
+                    ctx.stroke();
+
+                    // Arrow to show direction
+                    const arrowAngle = Math.PI * 0.75;
+                    const ax = cx + loopRadius * Math.cos(arrowAngle);
+                    const ay = cy + loopRadius * Math.sin(arrowAngle);
+                    const tangentAngle = arrowAngle + (direction > 0 ? Math.PI/2 : -Math.PI/2);
+                    const headLen = 8;
+                    ctx.beginPath();
+                    ctx.moveTo(ax, ay);
+                    ctx.lineTo(ax - headLen * Math.cos(tangentAngle - 0.3), ay - headLen * Math.sin(tangentAngle - 0.3));
+                    ctx.moveTo(ax, ay);
+                    ctx.lineTo(ax - headLen * Math.cos(tangentAngle + 0.3), ay - headLen * Math.sin(tangentAngle + 0.3));
+                    ctx.stroke();
+                }
+            } else {
+                // n = 0: just refl (constant path)
+                ctx.fillStyle = '#ffaa00';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('refl_base (constant loop)', cx, cy + radius + 40);
+            }
+
+            // Label
+            ctx.fillStyle = n > 0 ? '#7b68ee' : (n < 0 ? '#ff6ec7' : '#00bcd4');
+            ctx.font = '14px Courier New';
+            ctx.fillText('loop' + (n >= 0 ? '^' + n : '^(' + n + ')') + ' : base =_{S1} base', w/2, h - 20);
+
+            // Direction indicator
+            if (n !== 0) {
+                ctx.fillStyle = '#8888bb';
+                ctx.font = '11px Segoe UI';
+                ctx.fillText(n > 0 ? 'Counter-clockwise (positive)' : 'Clockwise (negative)', w/2, h - 40);
+            }
+        }
+
+        function animateIntegers() {
+            if (intAnim) cancelAnimationFrame(intAnim);
+            intT = 0;
+            const view = document.getElementById('intView').value;
+
+            function animate() {
+                intT += 0.015;
+                if (intT > 1) { cancelAnimationFrame(intAnim); return; }
+
+                const ctx = getCtx('integersCanvas');
+                const canvas = document.getElementById('integersCanvas');
+                const n = parseInt(document.getElementById('intSlider').value);
+                const w = canvas.width, h = canvas.height;
+
+                if (view === 'loopspace') {
+                    drawIntLoopSpace(ctx, w, h, n);
+
+                    // Animate a point going around the loop
+                    const cx = w / 2, cy = h / 2 + 20;
+                    const radius = 100 + 8;
+                    const angle = intT * Math.PI * 2 * Math.abs(n) * (n >= 0 ? -1 : 1);
+                    const px = cx + radius * Math.cos(angle);
+                    const py = cy + radius * Math.sin(angle);
+                    drawPoint(ctx, px, py, 6, '#ffffff');
+                } else {
+                    drawIntegers();
+                }
+
+                intAnim = requestAnimationFrame(animate);
+            }
+            intAnim = requestAnimationFrame(animate);
+        }
+
+        // ============ RATIONALS ============
+        let ratAnim = null;
+
+        function drawRationals() {
+            const ctx = getCtx('rationalsCanvas');
+            const canvas = document.getElementById('rationalsCanvas');
+            const num = parseInt(document.getElementById('ratNum').value);
+            const den = parseInt(document.getElementById('ratDen').value);
+            const view = document.getElementById('ratView').value;
+            const w = canvas.width, h = canvas.height;
+
+            switch(view) {
+                case 'equivalence':
+                    drawRatEquivalence(ctx, w, h, num, den);
+                    break;
+                case 'density':
+                    drawRatDensity(ctx, w, h, num, den);
+                    break;
+                case 'quotient-paths':
+                    drawRatQuotientPaths(ctx, w, h, num, den);
+                    break;
+            }
+        }
+
+        function drawRatEquivalence(ctx, w, h, num, den) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Equivalence class of ' + num + '/' + den + ' in (Z x Z+) / ~', w/2, 25);
+
+            // Show equivalent fractions
+            const fractions = [];
+            for (let k = -3; k <= 5; k++) {
+                if (k === 0) continue;
+                const n = num * k;
+                const d = den * k;
+                if (d > 0) fractions.push([n, d]);
+            }
+
+            // Draw them in a cluster
+            const centerX = w / 2, centerY = h / 2;
+            const clusterRadius = 120;
+
+            fractions.forEach((frac, i) => {
+                const angle = (i / fractions.length) * Math.PI * 2 - Math.PI / 2;
+                const x = centerX + clusterRadius * Math.cos(angle);
+                const y = centerY + clusterRadius * Math.sin(angle);
+
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = '#7b68ee';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.roundRect(x - 30, y - 18, 60, 36, 8);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#e0e0f0';
+                ctx.font = '13px Courier New';
+                ctx.fillText(frac[0] + '/' + frac[1], x, y + 5);
+
+                // Draw path to center (showing they're all equal)
+                ctx.strokeStyle = 'rgba(255, 170, 0, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(centerX, centerY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            });
+
+            // Center: the rational number itself
+            ctx.fillStyle = '#0a2a0a';
+            ctx.strokeStyle = '#88ff88';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 35, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#88ff88';
+            ctx.font = 'bold 16px Courier New';
+            ctx.fillText('[' + num + '/' + den + ']', centerX, centerY + 6);
+
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('All fractions connected by paths in the quotient type', w/2, h - 20);
+            ctx.fillText('Path witness: (a,b) ~ (c,d) when a*d = c*b', w/2, h - 40);
+        }
+
+        function drawRatDensity(ctx, w, h, num, den) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Density of Q: Between any two rationals, there is another', w/2, 25);
+
+            const lineY = h / 2;
+            const margin = 80;
+            const lineWidth = w - 2 * margin;
+
+            // Number line from -2 to 2
+            const minVal = -2, maxVal = 2;
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin, lineY);
+            ctx.lineTo(w - margin, lineY);
+            ctx.stroke();
+
+            // Tick marks
+            for (let i = minVal; i <= maxVal; i++) {
+                const x = margin + (i - minVal) / (maxVal - minVal) * lineWidth;
+                ctx.beginPath();
+                ctx.moveTo(x, lineY - 8);
+                ctx.lineTo(x, lineY + 8);
+                ctx.strokeStyle = '#5a5a8a';
+                ctx.stroke();
+                ctx.fillStyle = '#8888bb';
+                ctx.font = '11px Segoe UI';
+                ctx.fillText(String(i), x, lineY + 25);
+            }
+
+            // Plot rationals with small denominators
+            const plotted = new Set();
+            for (let d = 1; d <= den + 3; d++) {
+                for (let n = Math.ceil(minVal * d); n <= Math.floor(maxVal * d); n++) {
+                    const val = n / d;
+                    const key = val.toFixed(6);
+                    if (plotted.has(key)) continue;
+                    plotted.add(key);
+
+                    const x = margin + (val - minVal) / (maxVal - minVal) * lineWidth;
+                    const size = Math.max(2, 6 - d);
+                    const alpha = Math.max(0.3, 1 - d * 0.15);
+                    ctx.fillStyle = `rgba(123, 104, 238, ${alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(x, lineY, size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Highlight our rational
+            const val = num / den;
+            const x = margin + (val - minVal) / (maxVal - minVal) * lineWidth;
+            drawPoint(ctx, x, lineY, 8, '#ff6ec7');
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = 'bold 13px Courier New';
+            ctx.fillText(num + '/' + den + ' = ' + val.toFixed(4), x, lineY - 20);
+
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Larger dots = smaller denominators. Q is dense but has "gaps" (irrationals).', w/2, h - 20);
+        }
+
+        function drawRatQuotientPaths(ctx, w, h, num, den) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Quotient Paths: How equivalent fractions are connected', w/2, 25);
+
+            // Show a few equivalent fractions with explicit paths between them
+            const fracs = [];
+            for (let k = 1; k <= 5; k++) {
+                fracs.push([num * k, den * k]);
+            }
+
+            const startX = 100;
+            const spacing = (w - 200) / (fracs.length - 1);
+
+            fracs.forEach((frac, i) => {
+                const x = startX + i * spacing;
+                const y = h / 2;
+
+                // Draw the fraction box
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = '#7b68ee';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(x - 35, y - 22, 70, 44, 8);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#e0e0f0';
+                ctx.font = '14px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(frac[0] + '/' + frac[1], x, y + 5);
+
+                // Draw paths between consecutive fractions
+                if (i < fracs.length - 1) {
+                    const nx = startX + (i + 1) * spacing;
+                    drawCurvedPath(ctx, x + 35, y, nx - 35, y, 40, '#ffaa00', 2);
+
+                    // Label the path witness
+                    ctx.fillStyle = '#ffaa00';
+                    ctx.font = '10px Courier New';
+                    const midX = (x + nx) / 2;
+                    ctx.fillText(frac[0] + '*' + fracs[i+1][1] + ' = ' + frac[1] + '*' + fracs[i+1][0], midX, y - 50);
+                    ctx.fillText(frac[0] * fracs[i+1][1] + ' = ' + frac[1] * fracs[i+1][0], midX, y - 35);
+                }
+            });
+
+            // Explanation at bottom
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Each orange path is a PROOF that the fractions are equal (witness of the equivalence relation)', w/2, h - 40);
+            ctx.fillText('In the quotient type, these paths make all equivalent fractions literally equal', w/2, h - 20);
+        }
+
+        function animateRationals() {
+            if (ratAnim) cancelAnimationFrame(ratAnim);
+            let t = 0;
+
+            function animate() {
+                t += 0.02;
+                if (t > 1) { cancelAnimationFrame(ratAnim); return; }
+
+                drawRationals();
+                const ctx = document.getElementById('rationalsCanvas').getContext('2d');
+                const view = document.getElementById('ratView').value;
+
+                if (view === 'density') {
+                    // Animate zooming in to show more rationals
+                    const num = parseInt(document.getElementById('ratNum').value);
+                    const den = parseInt(document.getElementById('ratDen').value);
+                    const val = num / den;
+
+                    ctx.fillStyle = 'rgba(255, 110, 199, 0.3)';
+                    ctx.beginPath();
+                    const canvas = document.getElementById('rationalsCanvas');
+                    const w = canvas.width;
+                    const margin = 80;
+                    const lineWidth = w - 2 * margin;
+                    const x = margin + (val - (-2)) / 4 * lineWidth;
+                    const pulseR = 15 + 10 * Math.sin(t * Math.PI * 4);
+                    ctx.arc(x, canvas.height / 2, pulseR, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ratAnim = requestAnimationFrame(animate);
+            }
+            ratAnim = requestAnimationFrame(animate);
+        }
+
+        // ============ REAL NUMBERS ============
+        let realAnim = null;
+
+        function drawReals() {
+            const ctx = getCtx('realsCanvas');
+            const canvas = document.getElementById('realsCanvas');
+            const view = document.getElementById('realView').value;
+            const target = document.getElementById('realTarget').value;
+            const precision = parseInt(document.getElementById('realPrecision').value);
+            const w = canvas.width, h = canvas.height;
+            const log = document.getElementById('realLog');
+
+            switch(view) {
+                case 'cauchy':
+                    drawCauchyReals(ctx, w, h, target, precision, log);
+                    break;
+                case 'dedekind':
+                    drawDedekindReals(ctx, w, h, target, precision, log);
+                    break;
+                case 'completion':
+                    drawCompletion(ctx, w, h, target, precision, log);
+                    break;
+            }
+        }
+
+        function getTargetValue(target) {
+            switch(target) {
+                case 'sqrt2': return Math.sqrt(2);
+                case 'pi': return Math.PI;
+                case 'e': return Math.E;
+                case 'golden': return (1 + Math.sqrt(5)) / 2;
+            }
+        }
+
+        function getTargetName(target) {
+            switch(target) {
+                case 'sqrt2': return 'sqrt(2)';
+                case 'pi': return 'pi';
+                case 'e': return 'e';
+                case 'golden': return 'phi';
+            }
+        }
+
+        function getCauchySequence(target, n) {
+            const val = getTargetValue(target);
+            // Generate a Cauchy sequence converging to the target
+            const seq = [];
+            for (let i = 1; i <= n; i++) {
+                let approx;
+                switch(target) {
+                    case 'sqrt2':
+                        // Newton's method: x_{n+1} = (x_n + 2/x_n) / 2
+                        approx = 1;
+                        for (let j = 0; j < i; j++) approx = (approx + 2 / approx) / 2;
+                        break;
+                    case 'pi':
+                        // Leibniz series partial sums
+                        approx = 0;
+                        for (let j = 0; j < i * 50; j++) approx += (j % 2 === 0 ? 1 : -1) / (2 * j + 1);
+                        approx *= 4;
+                        break;
+                    case 'e':
+                        // e = sum 1/n!
+                        approx = 0;
+                        let fact = 1;
+                        for (let j = 0; j <= i + 2; j++) {
+                            if (j > 0) fact *= j;
+                            approx += 1 / fact;
+                        }
+                        break;
+                    case 'golden':
+                        // Fibonacci ratios
+                        let a = 1, b = 1;
+                        for (let j = 0; j < i + 2; j++) { let tmp = b; b = a + b; a = tmp; }
+                        approx = b / a;
+                        break;
+                }
+                seq.push(approx);
+            }
+            return seq;
+        }
+
+        function drawCauchyReals(ctx, w, h, target, precision, log) {
+            const val = getTargetValue(target);
+            const name = getTargetName(target);
+            const seq = getCauchySequence(target, precision);
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Cauchy Sequence converging to ' + name + ' approx ' + val.toFixed(6), w/2, 25);
+
+            // Plot the sequence
+            const margin = 60;
+            const plotW = w - 2 * margin;
+            const plotH = h - 120;
+            const plotY = 50;
+
+            // Determine y-range
+            let minY = val - 1, maxY = val + 1;
+            seq.forEach(v => {
+                if (v < minY) minY = v - 0.5;
+                if (v > maxY) maxY = v + 0.5;
+            });
+
+            // Axes
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(margin, plotY);
+            ctx.lineTo(margin, plotY + plotH);
+            ctx.lineTo(margin + plotW, plotY + plotH);
+            ctx.stroke();
+
+            // Target line
+            const targetY = plotY + plotH - (val - minY) / (maxY - minY) * plotH;
+            ctx.strokeStyle = '#88ff88';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(margin, targetY);
+            ctx.lineTo(margin + plotW, targetY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#88ff88';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText(name + ' = ' + val.toFixed(6), margin + plotW + 5, targetY + 4);
+
+            // Plot points
+            const xSpacing = plotW / (precision + 1);
+            let logHtml = '';
+
+            seq.forEach((v, i) => {
+                const x = margin + (i + 1) * xSpacing;
+                const y = plotY + plotH - (v - minY) / (maxY - minY) * plotH;
+
+                drawPoint(ctx, x, y, 5, '#7b68ee');
+
+                // Connect to previous
+                if (i > 0) {
+                    const prevX = margin + i * xSpacing;
+                    const prevY = plotY + plotH - (seq[i-1] - minY) / (maxY - minY) * plotH;
+                    ctx.strokeStyle = 'rgba(123, 104, 238, 0.5)';
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(prevX, prevY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+
+                // Epsilon band
+                const eps = Math.abs(v - val);
+                ctx.fillStyle = 'rgba(123, 104, 238, 0.1)';
+                const bandTop = plotY + plotH - (val + eps - minY) / (maxY - minY) * plotH;
+                const bandBot = plotY + plotH - (val - eps - minY) / (maxY - minY) * plotH;
+                ctx.fillRect(x - 3, bandTop, 6, bandBot - bandTop);
+
+                logHtml += '<div class="log-entry">q_' + (i+1) + ' = ' + v.toFixed(8) + '  |error| = ' + eps.toFixed(8) + '</div>';
+            });
+
+            // X-axis labels
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '10px Segoe UI';
+            ctx.textAlign = 'center';
+            for (let i = 0; i < precision; i++) {
+                ctx.fillText('q' + (i+1), margin + (i + 1) * xSpacing, plotY + plotH + 15);
+            }
+
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('The sequence (q_n) is Cauchy: for all eps > 0, exists N s.t. |q_m - q_n| < eps for m,n > N', w/2, h - 10);
+
+            log.innerHTML = logHtml;
+        }
+
+        function drawDedekindReals(ctx, w, h, target, precision, log) {
+            const val = getTargetValue(target);
+            const name = getTargetName(target);
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Dedekind Cut for ' + name + ' approx ' + val.toFixed(6), w/2, 25);
+
+            const lineY = h / 2;
+            const margin = 60;
+            const lineW = w - 2 * margin;
+
+            // Determine range
+            const minVal = val - 2;
+            const maxVal = val + 2;
+
+            // Draw the number line
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin, lineY);
+            ctx.lineTo(w - margin, lineY);
+            ctx.stroke();
+
+            // Lower set (red/pink region)
+            const cutX = margin + (val - minVal) / (maxVal - minVal) * lineW;
+
+            ctx.fillStyle = 'rgba(255, 110, 199, 0.2)';
+            ctx.fillRect(margin, lineY - 30, cutX - margin, 60);
+            ctx.fillStyle = 'rgba(123, 104, 238, 0.2)';
+            ctx.fillRect(cutX, lineY - 30, w - margin - cutX, 60);
+
+            // Labels
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = 'bold 13px Segoe UI';
+            ctx.fillText('L (Lower set)', (margin + cutX) / 2, lineY - 45);
+            ctx.fillStyle = '#7b68ee';
+            ctx.fillText('U (Upper set)', (cutX + w - margin) / 2, lineY - 45);
+
+            // The cut point
+            ctx.strokeStyle = '#88ff88';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(cutX, lineY - 40);
+            ctx.lineTo(cutX, lineY + 40);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#88ff88';
+            ctx.font = 'bold 12px Courier New';
+            ctx.fillText(name, cutX, lineY + 60);
+
+            // Show some rationals in L and U
+            const step = 1 / (precision + 1);
+            let logHtml = '<div class="log-entry" style="color:#ff6ec7">Lower set L = {q in Q | q < ' + name + '}</div>';
+            logHtml += '<div class="log-entry" style="color:#7b68ee">Upper set U = {q in Q | q > ' + name + '}</div>';
+            logHtml += '<div class="log-entry">---</div>';
+
+            for (let i = 0; i < precision * 2; i++) {
+                const q = val - 2 + i * step * 4 / precision;
+                if (q < minVal || q > maxVal) continue;
+                const x = margin + (q - minVal) / (maxVal - minVal) * lineW;
+                const inLower = q < val;
+
+                drawPoint(ctx, x, lineY, 4, inLower ? '#ff6ec7' : '#7b68ee');
+
+                if (Math.abs(q - val) < 0.5) {
+                    logHtml += '<div class="log-entry">' + q.toFixed(4) + ' in ' + (inLower ? 'L' : 'U') + '</div>';
+                }
+            }
+
+            // Properties
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Properties: L,U inhabited | L,U rounded | L,U disjoint | Located: for all q<r, q in L or r in U', w/2, h - 40);
+            ctx.fillText('The real number IS the cut (L,U) - it lives "between" L and U', w/2, h - 20);
+
+            log.innerHTML = logHtml;
+        }
+
+        function drawCompletion(ctx, w, h, target, precision, log) {
+            const val = getTargetValue(target);
+            const name = getTargetName(target);
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Cauchy Completion: Filling the gaps in Q to get R', w/2, 25);
+
+            const lineY = h / 2;
+            const margin = 80;
+            const lineW = w - 2 * margin;
+
+            // Draw Q with gaps
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin, lineY - 40);
+            ctx.lineTo(w - margin, lineY - 40);
+            ctx.stroke();
+
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText('Q (rationals - has gaps)', margin, lineY - 55);
+
+            // Draw R (complete)
+            ctx.strokeStyle = '#88ff88';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(margin, lineY + 40);
+            ctx.lineTo(w - margin, lineY + 40);
+            ctx.stroke();
+
+            ctx.fillStyle = '#88ff88';
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText('R (reals - complete, no gaps)', margin, lineY + 65);
+
+            // Show rationals on Q line (with a gap at target)
+            const minV = val - 2, maxV = val + 2;
+            for (let d = 1; d <= 5; d++) {
+                for (let n = Math.ceil(minV * d); n <= Math.floor(maxV * d); n++) {
+                    const v = n / d;
+                    const x = margin + (v - minV) / (maxV - minV) * lineW;
+                    ctx.fillStyle = 'rgba(123, 104, 238, 0.6)';
+                    ctx.beginPath();
+                    ctx.arc(x, lineY - 40, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Show the gap
+            const gapX = margin + (val - minV) / (maxV - minV) * lineW;
+            ctx.strokeStyle = '#ff4444';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.arc(gapX, lineY - 40, 12, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ff4444';
+            ctx.font = '10px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('gap!', gapX, lineY - 60);
+
+            // Show the filled point on R
+            drawPoint(ctx, gapX, lineY + 40, 7, '#ffaa00');
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '11px Courier New';
+            ctx.fillText(name, gapX, lineY + 25);
+
+            // Arrow showing completion
+            drawArrow(ctx, gapX, lineY - 25, gapX, lineY + 30, '#ffaa00', 2);
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('lim', gapX + 15, lineY);
+
+            // Show Cauchy sequence converging
+            const seq = getCauchySequence(target, precision);
+            seq.forEach((v, i) => {
+                const x = margin + (v - minV) / (maxV - minV) * lineW;
+                const alpha = 0.3 + 0.7 * (i / seq.length);
+                ctx.fillStyle = `rgba(0, 188, 212, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(x, lineY - 40, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Arrow down
+                if (i === seq.length - 1) {
+                    ctx.strokeStyle = '#00bcd4';
+                    ctx.setLineDash([2, 2]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, lineY - 35);
+                    ctx.lineTo(gapX, lineY + 33);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('The HIT construction: R has constructors for Q-embeddings, limits, and path constructors for equivalence', w/2, h - 20);
+
+            let logHtml = '<div class="log-entry" style="color:#00bcd4">Cauchy sequence converging to ' + name + ':</div>';
+            seq.forEach((v, i) => {
+                logHtml += '<div class="log-entry">q_' + (i+1) + ' = ' + v.toFixed(8) + '</div>';
+            });
+            logHtml += '<div class="log-entry" style="color:#88ff88">lim(q_n) = ' + val.toFixed(10) + ' (the real number ' + name + ')</div>';
+            log.innerHTML = logHtml;
+        }
+
+        function animateReals() {
+            if (realAnim) cancelAnimationFrame(realAnim);
+            let step = 1;
+            const maxPrec = 20;
+
+            function animate() {
+                document.getElementById('realPrecision').value = step;
+                drawReals();
+                step++;
+                if (step <= maxPrec) {
+                    realAnim = setTimeout(animate, 400);
+                }
+            }
+            document.getElementById('realPrecision').value = 1;
+            animate();
+        }
+
+        // ============ TOWER ============
+        function drawTower() {
+            const ctx = getCtx('towerCanvas');
+            const canvas = document.getElementById('towerCanvas');
+            const w = canvas.width, h = canvas.height;
+
+            const levels = [
+                { name: '0, 1, 2', desc: 'Finite types', color: '#ff4444', y: h - 40 },
+                { name: 'N', desc: 'Natural numbers (inductive)', color: '#ffaa00', y: h - 90 },
+                { name: 'Z', desc: 'Integers (quotient/coproduct)', color: '#00bcd4', y: h - 140 },
+                { name: 'Q', desc: 'Rationals (set-quotient)', color: '#7b68ee', y: h - 190 },
+                { name: 'R', desc: 'Reals (Cauchy completion HIT)', color: '#88ff88', y: h - 240 },
+            ];
+
+            // Draw tower
+            levels.forEach((level, i) => {
+                const boxW = 200 + i * 40;
+                const boxX = (w - boxW) / 2;
+
+                ctx.fillStyle = level.color + '22';
+                ctx.strokeStyle = level.color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(boxX, level.y - 18, boxW, 36, 8);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = level.color;
+                ctx.font = 'bold 14px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(level.name, w/2 - 50, level.y + 5);
+
+                ctx.fillStyle = '#aaaacc';
+                ctx.font = '11px Segoe UI';
+                ctx.fillText(level.desc, w/2 + 60, level.y + 5);
+
+                // Arrow to next level
+                if (i < levels.length - 1) {
+                    drawArrow(ctx, w/2, level.y - 20, w/2, levels[i+1].y + 20, level.color + '88', 1.5);
+                }
+            });
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('The Tower of Number Types', w/2, 25);
+        }
+
+        // ============ ARITHMETIC ============
+        function drawAddition() {
+            const ctx = getCtx('addCanvas');
+            const canvas = document.getElementById('addCanvas');
+            const type = document.getElementById('addType').value;
+            const a = parseFloat(document.getElementById('addA').value);
+            const b = parseFloat(document.getElementById('addB').value);
+            const w = canvas.width, h = canvas.height;
+            const result = a + b;
+
+            document.getElementById('addResult').textContent = a + ' + ' + b + ' = ' + result + ' (in ' + type.toUpperCase() + ')';
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+
+            if (type === 'nat' || type === 'int') {
+                ctx.fillText('Addition on ' + (type === 'nat' ? 'N' : 'Z') + ': ' + a + ' + ' + b + ' = ' + result, w/2, 25);
+
+                // Number line visualization
+                const lineY = h / 2 + 20;
+                const minV = Math.min(0, a, result) - 1;
+                const maxV = Math.max(0, a, result) + 1;
+                const margin = 60;
+                const lineW = w - 2 * margin;
+
+                ctx.strokeStyle = '#3a3a6a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(margin, lineY);
+                ctx.lineTo(w - margin, lineY);
+                ctx.stroke();
+
+                // Ticks
+                for (let i = Math.ceil(minV); i <= Math.floor(maxV); i++) {
+                    const x = margin + (i - minV) / (maxV - minV) * lineW;
+                    ctx.beginPath();
+                    ctx.moveTo(x, lineY - 5);
+                    ctx.lineTo(x, lineY + 5);
+                    ctx.strokeStyle = '#5a5a8a';
+                    ctx.stroke();
+                    ctx.fillStyle = '#8888bb';
+                    ctx.font = '10px Segoe UI';
+                    ctx.fillText(String(i), x, lineY + 20);
+                }
+
+                // Show a
+                const aX = margin + (a - minV) / (maxV - minV) * lineW;
+                drawPoint(ctx, aX, lineY, 8, '#7b68ee');
+                ctx.fillStyle = '#7b68ee';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('a = ' + a, aX, lineY - 20);
+
+                // Show jump of b
+                const rX = margin + (result - minV) / (maxV - minV) * lineW;
+                drawCurvedPath(ctx, aX, lineY, rX, lineY, 40, '#ff6ec7', 2.5);
+                ctx.fillStyle = '#ff6ec7';
+                ctx.fillText('+' + b, (aX + rX) / 2, lineY - 55);
+
+                // Show result
+                drawPoint(ctx, rX, lineY, 8, '#88ff88');
+                ctx.fillStyle = '#88ff88';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText(result, rX, lineY - 20);
+            } else {
+                ctx.fillText('Addition on ' + (type === 'rat' ? 'Q' : 'R') + ': ' + a + ' + ' + b + ' = ' + result, w/2, 25);
+
+                // Geometric: vector addition on number line
+                const lineY = h / 2 + 20;
+                const minV = Math.min(0, a, b, result) - 0.5;
+                const maxV = Math.max(0, a, b, result) + 0.5;
+                const margin = 60;
+                const lineW = w - 2 * margin;
+
+                ctx.strokeStyle = '#3a3a6a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(margin, lineY);
+                ctx.lineTo(w - margin, lineY);
+                ctx.stroke();
+
+                // Origin
+                const oX = margin + (0 - minV) / (maxV - minV) * lineW;
+                drawPoint(ctx, oX, lineY, 4, '#ffffff');
+
+                // Vector a from origin
+                const aX = margin + (a - minV) / (maxV - minV) * lineW;
+                drawArrow(ctx, oX, lineY - 15, aX, lineY - 15, '#7b68ee', 3);
+                ctx.fillStyle = '#7b68ee';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('a = ' + a, (oX + aX) / 2, lineY - 25);
+
+                // Vector b from a
+                const rX = margin + (result - minV) / (maxV - minV) * lineW;
+                drawArrow(ctx, aX, lineY + 15, rX, lineY + 15, '#ff6ec7', 3);
+                ctx.fillStyle = '#ff6ec7';
+                ctx.fillText('b = ' + b, (aX + rX) / 2, lineY + 35);
+
+                // Result vector
+                drawArrow(ctx, oX, lineY, rX, lineY, '#88ff88', 2);
+                drawPoint(ctx, rX, lineY, 6, '#88ff88');
+                ctx.fillStyle = '#88ff88';
+                ctx.fillText('a + b = ' + result, rX, lineY - 10);
+            }
+        }
+
+        function drawMultiplication() {
+            const ctx = getCtx('mulCanvas');
+            const canvas = document.getElementById('mulCanvas');
+            const type = document.getElementById('mulType').value;
+            const a = parseFloat(document.getElementById('mulA').value);
+            const b = parseFloat(document.getElementById('mulB').value);
+            const w = canvas.width, h = canvas.height;
+            const result = a * b;
+
+            document.getElementById('mulResult').textContent = a + ' * ' + b + ' = ' + result + ' (in ' + type.toUpperCase() + ')';
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Multiplication on ' + (type === 'nat' ? 'N' : type === 'int' ? 'Z' : type === 'rat' ? 'Q' : 'R') + ': ' + a + ' x ' + b + ' = ' + result, w/2, 25);
+
+            if (type === 'nat' || type === 'int') {
+                // Area model
+                const maxDim = Math.max(Math.abs(a), Math.abs(b));
+                const cellSize = Math.min(25, (w - 200) / (Math.abs(a) + 1), (h - 100) / (Math.abs(b) + 1));
+                const gridX = 100, gridY = 50;
+
+                const absA = Math.abs(a);
+                const absB = Math.abs(b);
+
+                for (let i = 0; i < absB; i++) {
+                    for (let j = 0; j < absA; j++) {
+                        const x = gridX + j * cellSize;
+                        const y = gridY + i * cellSize;
+                        const isNeg = (a < 0) !== (b < 0);
+                        ctx.fillStyle = isNeg ? 'rgba(255, 110, 199, 0.3)' : 'rgba(123, 104, 238, 0.3)';
+                        ctx.fillRect(x, y, cellSize - 2, cellSize - 2);
+                        ctx.strokeStyle = isNeg ? '#ff6ec7' : '#7b68ee';
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(x, y, cellSize - 2, cellSize - 2);
+                    }
+                }
+
+                // Labels
+                ctx.fillStyle = '#7b68ee';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('|a| = ' + absA, gridX + absA * cellSize / 2, gridY + absB * cellSize + 20);
+
+                ctx.save();
+                ctx.translate(gridX - 15, gridY + absB * cellSize / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText('|b| = ' + absB, 0, 0);
+                ctx.restore();
+
+                // Sign info
+                ctx.fillStyle = '#ffaa00';
+                ctx.font = '12px Segoe UI';
+                ctx.textAlign = 'left';
+                ctx.fillText('Sign: ' + (a >= 0 ? '+' : '-') + ' x ' + (b >= 0 ? '+' : '-') + ' = ' + (result >= 0 ? '+' : '-'), w - 250, 60);
+                ctx.fillText('Area = |a| x |b| = ' + (absA * absB), w - 250, 80);
+                ctx.fillText('Result = ' + result, w - 250, 100);
+
+                // Type-theoretic definition
+                ctx.fillStyle = '#aaaacc';
+                ctx.font = '11px Courier New';
+                ctx.fillText('mul m 0     = 0', w - 250, 140);
+                ctx.fillText('mul m (S n) = add m (mul m n)', w - 250, 158);
+            } else {
+                // Scaling visualization for Q and R
+                const lineY = h / 2 + 30;
+                const margin = 60;
+                const lineW = w - 2 * margin;
+                const maxV = Math.max(Math.abs(a), Math.abs(b), Math.abs(result)) + 1;
+                const minV = -maxV;
+
+                // Number line
+                ctx.strokeStyle = '#3a3a6a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(margin, lineY);
+                ctx.lineTo(w - margin, lineY);
+                ctx.stroke();
+
+                // Origin
+                const oX = margin + (0 - minV) / (maxV - minV) * lineW;
+                drawPoint(ctx, oX, lineY, 4, '#ffffff');
+                ctx.fillStyle = '#8888bb';
+                ctx.font = '10px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('0', oX, lineY + 18);
+
+                // Unit
+                const unitX = margin + (1 - minV) / (maxV - minV) * lineW;
+                drawPoint(ctx, unitX, lineY, 4, '#5a5a8a');
+                ctx.fillText('1', unitX, lineY + 18);
+
+                // Show a
+                const aX = margin + (a - minV) / (maxV - minV) * lineW;
+                drawPoint(ctx, aX, lineY - 20, 6, '#7b68ee');
+                ctx.fillStyle = '#7b68ee';
+                ctx.fillText('a = ' + a, aX, lineY - 35);
+
+                // Show scaling: a * b means scaling a by b
+                const rX = margin + (result - minV) / (maxV - minV) * lineW;
+
+                // Draw scaling arc
+                drawCurvedPath(ctx, aX, lineY - 20, rX, lineY - 20, 30, '#ff6ec7', 2);
+                ctx.fillStyle = '#ff6ec7';
+                ctx.fillText('x ' + b, (aX + rX) / 2, lineY - 60);
+
+                drawPoint(ctx, rX, lineY, 8, '#88ff88');
+                ctx.fillStyle = '#88ff88';
+                ctx.font = 'bold 12px Segoe UI';
+                ctx.fillText('a*b = ' + result, rX, lineY + 30);
+
+                // Explanation
+                ctx.fillStyle = '#aaaacc';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Multiplication = scaling: stretch the number line by factor b, see where a lands', w/2, h - 15);
+            }
+        }
+
+        function drawDivision() {
+            const ctx = getCtx('divCanvas');
+            const canvas = document.getElementById('divCanvas');
+            const type = document.getElementById('divType').value;
+            const a = parseFloat(document.getElementById('divA').value);
+            const b = parseFloat(document.getElementById('divB').value);
+            const w = canvas.width, h = canvas.height;
+
+            if (b === 0) {
+                ctx.fillStyle = '#ff4444';
+                ctx.font = 'bold 16px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Division by zero is undefined!', w/2, h/2 - 20);
+                ctx.fillStyle = '#aaaacc';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('In HoTT: we need a proof that b != 0, i.e., a term of type (b = 0) -> Empty', w/2, h/2 + 10);
+                ctx.fillText('Without this witness, the division function cannot be applied.', w/2, h/2 + 30);
+                document.getElementById('divResult').textContent = 'ERROR: Division by zero requires proof of b != 0';
+                return;
+            }
+
+            const result = a / b;
+            document.getElementById('divResult').textContent = a + ' / ' + b + ' = ' + result + ' (in ' + type.toUpperCase() + ')';
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Division on ' + (type === 'rat' ? 'Q' : 'R') + ': ' + a + ' / ' + b + ' = ' + result.toFixed(4), w/2, 25);
+
+            if (type === 'rat') {
+                // Show as fraction manipulation
+                // a/1 divided by b/1 = a/b = a * (1/b)
+                const midY = h / 2;
+
+                // Step 1: a as fraction
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = '#7b68ee';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.roundRect(80, midY - 25, 80, 50, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#7b68ee';
+                ctx.font = '16px Courier New';
+                ctx.fillText(a + '/1', 120, midY + 6);
+
+                // Division symbol
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Segoe UI';
+                ctx.fillText('/', 200, midY + 8);
+
+                // Step 2: b as fraction
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = '#ff6ec7';
+                ctx.beginPath();
+                ctx.roundRect(240, midY - 25, 80, 50, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#ff6ec7';
+                ctx.font = '16px Courier New';
+                ctx.fillText(b + '/1', 280, midY + 6);
+
+                // Equals
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Segoe UI';
+                ctx.fillText('=', 360, midY + 8);
+
+                // Step 3: multiply by inverse
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = '#00bcd4';
+                ctx.beginPath();
+                ctx.roundRect(400, midY - 25, 80, 50, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#00bcd4';
+                ctx.font = '16px Courier New';
+                ctx.fillText(a + '/1', 440, midY + 6);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Segoe UI';
+                ctx.fillText('x', 510, midY + 8);
+
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = '#ffaa00';
+                ctx.beginPath();
+                ctx.roundRect(540, midY - 25, 80, 50, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#ffaa00';
+                ctx.font = '16px Courier New';
+                ctx.fillText('1/' + b, 580, midY + 6);
+
+                // Equals result
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '24px Segoe UI';
+                ctx.fillText('=', 650, midY + 8);
+
+                ctx.fillStyle = '#1a1a4a';
+                ctx.strokeStyle = '#88ff88';
+                ctx.beginPath();
+                ctx.roundRect(680, midY - 25, 80, 50, 8);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = '#88ff88';
+                ctx.font = '16px Courier New';
+                ctx.fillText(a + '/' + b, 720, midY + 6);
+
+                // Explanation
+                ctx.fillStyle = '#aaaacc';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Division = multiplication by multiplicative inverse. Inverse exists because b != 0.', w/2, h - 30);
+                ctx.fillText('div [a,b] [c,d] = [a*d, b*c]  (requires proof: c != 0)', w/2, h - 12);
+            } else {
+                // Real division: scaling visualization
+                const lineY = h / 2 + 30;
+                const margin = 60;
+                const lineW = w - 2 * margin;
+                const maxV = Math.max(Math.abs(a), Math.abs(result), Math.abs(b)) + 1;
+                const minV = -maxV;
+
+                ctx.strokeStyle = '#3a3a6a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(margin, lineY);
+                ctx.lineTo(w - margin, lineY);
+                ctx.stroke();
+
+                const oX = margin + (0 - minV) / (maxV - minV) * lineW;
+                drawPoint(ctx, oX, lineY, 4, '#ffffff');
+
+                // Show a
+                const aX = margin + (a - minV) / (maxV - minV) * lineW;
+                drawPoint(ctx, aX, lineY, 7, '#7b68ee');
+                ctx.fillStyle = '#7b68ee';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('a = ' + a, aX, lineY - 20);
+
+                // Show result
+                const rX = margin + (result - minV) / (maxV - minV) * lineW;
+                drawCurvedPath(ctx, aX, lineY, rX, lineY, 35, '#ffaa00', 2.5);
+                ctx.fillStyle = '#ffaa00';
+                ctx.fillText('/ ' + b, (aX + rX) / 2, lineY - 50);
+
+                drawPoint(ctx, rX, lineY, 8, '#88ff88');
+                ctx.fillStyle = '#88ff88';
+                ctx.font = 'bold 12px Segoe UI';
+                ctx.fillText('a/b = ' + result.toFixed(4), rX, lineY + 25);
+
+                ctx.fillStyle = '#aaaacc';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText('Division = inverse scaling. On Cauchy reals: lim(a_n) / lim(b_n) = lim(a_n / b_n)', w/2, h - 15);
+            }
+        }
+
+        function animateAddition() {
+            drawAddition();
+        }
+
+        function animateMultiplication() {
+            drawMultiplication();
+        }
+
+        function animateDivision() {
+            drawDivision();
+        }
+
+        // ============ GEOMETRY ============
+        let geoAnim = null;
+        let geoT = 0;
+
+        function drawGeometry() {
+            const ctx = getCtx('geometryCanvas');
+            const canvas = document.getElementById('geometryCanvas');
+            const view = document.getElementById('geoView').value;
+            const w = canvas.width, h = canvas.height;
+
+            switch(view) {
+                case 'path-composition':
+                    drawPathComposition(ctx, w, h);
+                    break;
+                case 'path-inverse':
+                    drawPathInverse(ctx, w, h);
+                    break;
+                case 'homotopy':
+                    drawHomotopyVis(ctx, w, h);
+                    break;
+                case 'circle-loops':
+                    drawCircleLoops(ctx, w, h);
+                    break;
+                case 'commutativity':
+                    drawCommutativity(ctx, w, h);
+                    break;
+            }
+        }
+
+        function drawPathComposition(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Path Composition: p . q (Transitivity of Equality)', w/2, 25);
+
+            // Three points
+            const ax = 150, ay = 200;
+            const bx = 400, by = 200;
+            const cx = 650, cy = 200;
+
+            drawPoint(ctx, ax, ay, 10, '#7b68ee', 'a');
+            drawPoint(ctx, bx, by, 10, '#00bcd4', 'b');
+            drawPoint(ctx, cx, cy, 10, '#ff6ec7', 'c');
+
+            // Path p: a -> b
+            drawCurvedPath(ctx, ax, ay, bx, by, 70, '#7b68ee', 3);
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText('p : a = b', (ax + bx) / 2, ay - 80);
+
+            // Path q: b -> c
+            drawCurvedPath(ctx, bx, by, cx, cy, 70, '#ff6ec7', 3);
+            ctx.fillStyle = '#ff6ec7';
+            ctx.fillText('q : b = c', (bx + cx) / 2, by - 80);
+
+            // Composed path p . q: a -> c
+            drawCurvedPath(ctx, ax, ay, cx, cy, -60, '#00bcd4', 2.5, true);
+            ctx.fillStyle = '#00bcd4';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText('p . q : a = c', (ax + cx) / 2, ay + 80);
+
+            // Type-theoretic explanation
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Composition corresponds to transitivity: if a = b and b = c, then a = c', w/2, h - 40);
+            ctx.fillText('In HoTT: concat : (a =_A b) -> (b =_A c) -> (a =_A c)', w/2, h - 20);
+        }
+
+        function drawPathInverse(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Path Inverse: p^(-1) (Symmetry of Equality)', w/2, 25);
+
+            const ax = 250, ay = 200;
+            const bx = 550, by = 200;
+
+            drawPoint(ctx, ax, ay, 10, '#7b68ee', 'a');
+            drawPoint(ctx, bx, by, 10, '#ff6ec7', 'b');
+
+            // Forward path
+            drawCurvedPath(ctx, ax, ay, bx, by, 80, '#7b68ee', 3);
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText('p : a = b', (ax + bx) / 2, ay - 90);
+
+            // Draw arrow on forward path
+            const fmx = (ax + bx) / 2, fmy = ay - 80 * 0.5;
+            drawArrow(ctx, fmx - 30, fmy - 5, fmx + 30, fmy + 5, '#7b68ee', 2);
+
+            // Inverse path
+            drawCurvedPath(ctx, bx, by, ax, by, -80, '#ff6ec7', 3);
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText('p^(-1) : b = a', (ax + bx) / 2, by + 95);
+
+            // Draw arrow on inverse path
+            const imx = (ax + bx) / 2, imy = by + 80 * 0.5;
+            drawArrow(ctx, imx + 30, imy + 5, imx - 30, imy - 5, '#ff6ec7', 2);
+
+            // Explanation
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Every path has an inverse: symmetry of equality. p . p^(-1) ~ refl_a', w/2, h - 40);
+            ctx.fillText('inv : (a =_A b) -> (b =_A a)', w/2, h - 20);
+        }
+
+        function drawHomotopyVis(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Homotopy: A path between paths (2-cell)', w/2, 25);
+
+            const ax = 200, ay = 200;
+            const bx = 600, by = 200;
+
+            drawPoint(ctx, ax, ay, 10, '#7b68ee', 'a');
+            drawPoint(ctx, bx, by, 10, '#ff6ec7', 'b');
+
+            // Multiple intermediate paths showing the homotopy
+            const numPaths = 8;
+            for (let i = 0; i <= numPaths; i++) {
+                const t = i / numPaths;
+                const curve = 100 - 200 * t; // from +100 to -100
+                const alpha = 0.2 + 0.6 * (i === 0 || i === numPaths ? 1 : 0.3);
+                const hue = 200 + t * 160;
+                ctx.strokeStyle = `hsla(${hue}, 70%, 60%, ${alpha})`;
+                ctx.lineWidth = i === 0 || i === numPaths ? 3 : 1.5;
+                ctx.beginPath();
+                ctx.moveTo(ax, ay);
+                const mx = (ax + bx) / 2;
+                const my = (ay + by) / 2 - curve;
+                ctx.quadraticCurveTo(mx, my, bx, by);
+                ctx.stroke();
+            }
+
+            // Labels
+            ctx.fillStyle = '#00bcd4';
+            ctx.font = '13px Segoe UI';
+            ctx.fillText('p', (ax + bx) / 2, ay - 110);
+            ctx.fillStyle = '#ffaa00';
+            ctx.fillText('q', (ax + bx) / 2, ay + 115);
+
+            // Homotopy arrow
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('alpha : p =_{a=b} q', (ax + bx) / 2, ay - 5);
+            drawArrow(ctx, (ax + bx) / 2, ay - 80, (ax + bx) / 2, ay + 80, 'rgba(255,255,255,0.3)', 1);
+
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('A homotopy continuously deforms one path into another. This is a 2-dimensional path!', w/2, h - 40);
+            ctx.fillText('Types in HoTT are infinity-groupoids: they have paths at all dimensions.', w/2, h - 20);
+        }
+
+        function drawCircleLoops(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Circle Loops: Addition of integers = composition of loops', w/2, 25);
+
+            // Two circles showing loop composition
+            const c1x = 200, c1y = 200, c2x = 550, c2y = 200;
+            const radius = 80;
+
+            // First circle: loop^2
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(c1x, c1y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+            drawPoint(ctx, c1x + radius, c1y, 6, '#00bcd4', 'base');
+
+            // Draw 2 loops
+            ctx.strokeStyle = '#7b68ee';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(c1x, c1y, radius + 10, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.strokeStyle = '#7b68ee';
+            ctx.beginPath();
+            ctx.arc(c1x, c1y, radius + 22, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#7b68ee';
+            ctx.fillText('loop^2 (= integer 2)', c1x, c1y + radius + 50);
+
+            // Second circle: loop^3
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(c2x, c2y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+            drawPoint(ctx, c2x + radius, c2y, 6, '#00bcd4', 'base');
+
+            ctx.strokeStyle = '#ff6ec7';
+            ctx.lineWidth = 3;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.arc(c2x, c2y, radius + 10 + i * 12, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.fillStyle = '#ff6ec7';
+            ctx.fillText('loop^3 (= integer 3)', c2x, c2y + radius + 50);
+
+            // Composition arrow
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = 'bold 16px Segoe UI';
+            ctx.fillText('.', 375, 195);
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('compose', 375, 215);
+
+            // Result
+            ctx.fillStyle = '#88ff88';
+            ctx.font = '13px Segoe UI';
+            ctx.fillText('= loop^5 (= integer 5)', w/2, h - 50);
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('loop^m . loop^n = loop^(m+n)  =>  Addition of integers IS composition of loops!', w/2, h - 25);
+        }
+
+        function drawCommutativity(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Commutativity: The path proving a + b = b + a', w/2, 25);
+
+            // Show two computation paths meeting at the same result
+            const startAB = {x: 150, y: 100};
+            const startBA = {x: 150, y: 300};
+            const resultPt = {x: 650, y: 200};
+
+            // a + b path
+            drawPoint(ctx, startAB.x, startAB.y, 8, '#7b68ee');
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '13px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText('a + b', startAB.x + 15, startAB.y + 5);
+
+            // b + a path
+            drawPoint(ctx, startBA.x, startBA.y, 8, '#ff6ec7');
+            ctx.fillStyle = '#ff6ec7';
+            ctx.fillText('b + a', startBA.x + 15, startBA.y + 5);
+
+            // Result
+            drawPoint(ctx, resultPt.x, resultPt.y, 10, '#88ff88');
+            ctx.fillStyle = '#88ff88';
+            ctx.font = '13px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('n (same result)', resultPt.x, resultPt.y + 25);
+
+            // Paths to result
+            drawCurvedPath(ctx, startAB.x, startAB.y, resultPt.x, resultPt.y, 50, '#7b68ee', 2.5);
+            drawCurvedPath(ctx, startBA.x, startBA.y, resultPt.x, resultPt.y, -50, '#ff6ec7', 2.5);
+
+            // The commutativity path between them
+            ctx.fillStyle = 'rgba(255, 170, 0, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(startAB.x, startAB.y);
+            ctx.quadraticCurveTo(400, 50, resultPt.x, resultPt.y);
+            ctx.quadraticCurveTo(400, 350, startBA.x, startBA.y);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(startAB.x, startAB.y);
+            ctx.lineTo(startBA.x, startBA.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('comm(a,b) : a+b = b+a', 120, 200);
+
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Commutativity is not just TRUE - it is a PATH (proof term) that we can manipulate!', w/2, h - 40);
+            ctx.fillText('This path is constructed by induction on N, using paths for the base and step cases.', w/2, h - 20);
+        }
+
+        function animateGeometry() {
+            if (geoAnim) cancelAnimationFrame(geoAnim);
+            geoT = 0;
+            const view = document.getElementById('geoView').value;
+            const speed = parseInt(document.getElementById('geoSpeed').value) / 500;
+
+            function animate() {
+                geoT += speed;
+                if (geoT > 1) { geoT = 0; }
+
+                const ctx = getCtx('geometryCanvas');
+                const canvas = document.getElementById('geometryCanvas');
+                const w = canvas.width, h = canvas.height;
+
+                // Redraw base
+                drawGeometry();
+
+                // Overlay animation
+                const gctx = canvas.getContext('2d');
+
+                if (view === 'path-composition') {
+                    // Animate point traveling along composed path
+                    const ax = 150, ay = 200, cx = 650, cy = 200;
+                    const mx = (ax + cx) / 2, my = ay + 60;
+                    const px = (1-geoT)*(1-geoT)*ax + 2*(1-geoT)*geoT*mx + geoT*geoT*cx;
+                    const py = (1-geoT)*(1-geoT)*ay + 2*(1-geoT)*geoT*my + geoT*geoT*cy;
+                    drawPoint(gctx, px, py, 7, '#ffffff');
+                } else if (view === 'homotopy') {
+                    // Animate the sweeping homotopy
+                    const ax = 200, ay = 200, bx = 600, by = 200;
+                    const curve = 100 - 200 * geoT;
+                    gctx.strokeStyle = '#ffffff';
+                    gctx.lineWidth = 3;
+                    gctx.beginPath();
+                    gctx.moveTo(ax, ay);
+                    const mx = (ax + bx) / 2;
+                    const my = (ay + by) / 2 - curve;
+                    gctx.quadraticCurveTo(mx, my, bx, by);
+                    gctx.stroke();
+
+                    // Point on the path
+                    const t = 0.5;
+                    const ppx = (1-t)*(1-t)*ax + 2*(1-t)*t*mx + t*t*bx;
+                    const ppy = (1-t)*(1-t)*ay + 2*(1-t)*t*my + t*t*by;
+                    drawPoint(gctx, ppx, ppy, 5, '#ffffff');
+                } else if (view === 'circle-loops') {
+                    // Animate point going around circle
+                    const c1x = 200, c1y = 200, radius = 80;
+                    const angle = geoT * Math.PI * 2 * 2; // 2 loops
+                    const px = c1x + (radius + 10) * Math.cos(angle);
+                    const py = c1y + (radius + 10) * Math.sin(angle);
+                    drawPoint(gctx, px, py, 6, '#ffffff');
+                } else if (view === 'path-inverse') {
+                    // Animate forward then backward
+                    const ax = 250, ay = 200, bx = 550, by = 200;
+                    let t, curve, startX, startY, endX, endY;
+                    if (geoT < 0.5) {
+                        t = geoT * 2;
+                        curve = 80;
+                        startX = ax; startY = ay; endX = bx; endY = by;
+                    } else {
+                        t = (geoT - 0.5) * 2;
+                        curve = -80;
+                        startX = bx; startY = by; endX = ax; endY = ay;
+                    }
+                    const mx = (startX + endX) / 2;
+                    const my = (startY + endY) / 2 - curve;
+                    const ppx = (1-t)*(1-t)*startX + 2*(1-t)*t*mx + t*t*endX;
+                    const ppy = (1-t)*(1-t)*startY + 2*(1-t)*t*my + t*t*endY;
+                    drawPoint(gctx, ppx, ppy, 7, '#ffffff');
+                } else if (view === 'commutativity') {
+                    // Animate the commutativity path
+                    const startAB = {x: 150, y: 100};
+                    const startBA = {x: 150, y: 300};
+                    const px = startAB.x + (startBA.x - startAB.x) * geoT;
+                    const py = startAB.y + (startBA.y - startAB.y) * geoT;
+                    drawPoint(gctx, px, py, 7, '#ffffff');
+                }
+
+                geoAnim = requestAnimationFrame(animate);
+            }
+            geoAnim = requestAnimationFrame(animate);
+
+            // Stop after 8 seconds
+            setTimeout(() => {
+                if (geoAnim) cancelAnimationFrame(geoAnim);
+            }, 8000);
+        }
+
+        // ============ TRANSPORT ============
+        let transportAnim = null;
+
+        function drawTransport() {
+            const ctx = getCtx('transportCanvas');
+            const canvas = document.getElementById('transportCanvas');
+            const view = document.getElementById('transportView').value;
+            const w = canvas.width, h = canvas.height;
+
+            switch(view) {
+                case 'equiv-types':
+                    drawEquivTypes(ctx, w, h);
+                    break;
+                case 'fiber-transport':
+                    drawFiberTransport(ctx, w, h);
+                    break;
+                case 'arithmetic-transfer':
+                    drawArithmeticTransfer(ctx, w, h);
+                    break;
+            }
+        }
+
+        function drawEquivTypes(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Univalence: (A ≃ B) ≃ (A =_U B) — Equivalent types ARE equal', w/2, 25);
+
+            // Two types
+            const ax = 200, ay = 150;
+            const bx = 600, by = 150;
+
+            // Type A
+            ctx.strokeStyle = '#7b68ee';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(ax, ay, 70, 50, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = 'bold 16px Courier New';
+            ctx.fillText('A', ax, ay - 60);
+
+            // Points in A
+            const ptsA = [[ax-30, ay-15], [ax+20, ay-10], [ax-10, ay+20], [ax+30, ay+15]];
+            ptsA.forEach(p => drawPoint(ctx, p[0], p[1], 5, '#7b68ee'));
+
+            // Type B
+            ctx.strokeStyle = '#ff6ec7';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(bx, by, 70, 50, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = 'bold 16px Courier New';
+            ctx.fillText('B', bx, by - 60);
+
+            // Points in B
+            const ptsB = [[bx-25, by-10], [bx+25, by-15], [bx-15, by+18], [bx+20, by+20]];
+            ptsB.forEach(p => drawPoint(ctx, p[0], p[1], 5, '#ff6ec7'));
+
+            // Equivalence arrows (bijection)
+            for (let i = 0; i < 4; i++) {
+                drawArrow(ctx, ptsA[i][0] + 5, ptsA[i][1], ptsB[i][0] - 5, ptsB[i][1], '#00bcd4', 1.5);
+            }
+
+            // Equivalence label
+            ctx.fillStyle = '#00bcd4';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText('f : A ≃ B (equivalence)', w/2, ay + 70);
+
+            // Univalence path
+            drawCurvedPath(ctx, ax, ay - 60, bx, by - 60, 40, '#ffaa00', 2.5);
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '13px Segoe UI';
+            ctx.fillText('ua(f) : A =_U B (path in the universe)', w/2, ay - 110);
+
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('Univalence: the equivalence f BECOMES a path. Transport along this path IS the function f.', w/2, h - 20);
+        }
+
+        function drawFiberTransport(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Transport: Moving data along paths', w/2, 25);
+
+            // Base line with path
+            const lineY = h - 80;
+            const ax = 200, bx = 600;
+
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(100, lineY);
+            ctx.lineTo(700, lineY);
+            ctx.stroke();
+
+            drawPoint(ctx, ax, lineY, 8, '#7b68ee', 'a');
+            drawPoint(ctx, bx, lineY, 8, '#ff6ec7', 'b');
+
+            // Path in base
+            drawCurvedPath(ctx, ax, lineY, bx, lineY, 30, '#ffaa00', 2.5);
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('p : a = b', (ax + bx) / 2, lineY - 35);
+
+            // Fibers above
+            ctx.strokeStyle = '#7b68ee';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(ax, lineY - 100, 40, 25, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('P(a)', ax, lineY - 135);
+
+            ctx.strokeStyle = '#ff6ec7';
+            ctx.beginPath();
+            ctx.ellipse(bx, lineY - 100, 40, 25, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#ff6ec7';
+            ctx.fillText('P(b)', bx, lineY - 135);
+
+            // Point in P(a)
+            drawPoint(ctx, ax, lineY - 100, 6, '#88ff88');
+            ctx.fillStyle = '#88ff88';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('x : P(a)', ax, lineY - 70);
+
+            // Transport arrow
+            drawArrow(ctx, ax + 40, lineY - 100, bx - 40, lineY - 100, '#88ff88', 2);
+            ctx.fillStyle = '#88ff88';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('transport(p, x) : P(b)', (ax + bx) / 2, lineY - 115);
+
+            // Transported point
+            drawPoint(ctx, bx, lineY - 100, 6, '#88ff88');
+
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('transport : (a = b) -> P(a) -> P(b)  — paths let us move data between fibers', w/2, h - 20);
+        }
+
+        function drawArithmeticTransfer(ctx, w, h) {
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Arithmetic Transfer: Operations move between equivalent constructions', w/2, 25);
+
+            // Two constructions of Z
+            const leftX = 180, rightX = 620, midY = 150;
+
+            // Construction 1: Coproduct
+            ctx.strokeStyle = '#7b68ee';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(leftX - 80, midY - 40, 160, 80, 12);
+            ctx.stroke();
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '13px Courier New';
+            ctx.fillText('Z_1 = N + 1 + N', leftX, midY - 10);
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('(coproduct)', leftX, midY + 15);
+
+            // Construction 2: Loop space
+            ctx.strokeStyle = '#ff6ec7';
+            ctx.beginPath();
+            ctx.roundRect(rightX - 80, midY - 40, 160, 80, 12);
+            ctx.stroke();
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = '13px Courier New';
+            ctx.fillText('Z_2 = Omega(S1)', rightX, midY - 10);
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('(loop space)', rightX, midY + 15);
+
+            // Equivalence between them
+            drawCurvedPath(ctx, leftX + 80, midY, rightX - 80, midY, 50, '#ffaa00', 2.5);
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = '12px Segoe UI';
+            ctx.fillText('e : Z_1 ≃ Z_2', w/2, midY - 60);
+            ctx.fillText('(univalence gives: Z_1 = Z_2)', w/2, midY - 42);
+
+            // Addition on Z_1
+            ctx.strokeStyle = '#7b68ee';
+            ctx.beginPath();
+            ctx.roundRect(leftX - 60, midY + 70, 120, 40, 8);
+            ctx.stroke();
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '12px Courier New';
+            ctx.fillText('add_1 : Z_1->Z_1->Z_1', leftX, midY + 95);
+
+            // Addition on Z_2
+            ctx.strokeStyle = '#ff6ec7';
+            ctx.beginPath();
+            ctx.roundRect(rightX - 60, midY + 70, 120, 40, 8);
+            ctx.stroke();
+            ctx.fillStyle = '#ff6ec7';
+            ctx.font = '12px Courier New';
+            ctx.fillText('add_2 : Z_2->Z_2->Z_2', rightX, midY + 95);
+
+            // Transport arrow
+            drawArrow(ctx, leftX + 60, midY + 90, rightX - 60, midY + 90, '#88ff88', 2);
+            ctx.fillStyle = '#88ff88';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('transport(ua(e))', w/2, midY + 82);
+
+            ctx.fillStyle = '#aaaacc';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('By univalence, arithmetic defined on one construction automatically transfers to any equivalent one!', w/2, h - 40);
+            ctx.fillText('add_2 = transport(ua(e), add_1) — the operation is "the same" across representations', w/2, h - 20);
+        }
+
+        function animateTransport() {
+            if (transportAnim) cancelAnimationFrame(transportAnim);
+            let t = 0;
+
+            function animate() {
+                t += 0.015;
+                if (t > 1) { cancelAnimationFrame(transportAnim); return; }
+
+                drawTransport();
+                const ctx = document.getElementById('transportCanvas').getContext('2d');
+                const canvas = document.getElementById('transportCanvas');
+                const view = document.getElementById('transportView').value;
+                const w = canvas.width;
+
+                if (view === 'fiber-transport') {
+                    // Animate the transport
+                    const ax = 200, bx = 600, lineY = canvas.height - 80;
+                    const px = ax + (bx - ax) * t;
+                    const py = lineY - 100;
+                    drawPoint(ctx, px, py, 7, '#ffffff');
+
+                    // Also animate along base path
+                    const baseY = lineY;
+                    const curve = 30;
+                    const mx = (ax + bx) / 2, my = baseY - curve;
+                    const bpx = (1-t)*(1-t)*ax + 2*(1-t)*t*mx + t*t*bx;
+                    const bpy = (1-t)*(1-t)*baseY + 2*(1-t)*t*my + t*t*baseY;
+                    drawPoint(ctx, bpx, bpy, 5, '#ffaa00');
+                }
+
+                transportAnim = requestAnimationFrame(animate);
+            }
+            transportAnim = requestAnimationFrame(animate);
+        }
+
+        // ============ CALCULATOR ============
+        function updateCalcUI() {
+            const type = document.getElementById('calcType').value;
+            const showDen = type === 'rat';
+            document.getElementById('calcADen').style.display = showDen ? 'inline' : 'none';
+            document.getElementById('calcBDen').style.display = showDen ? 'inline' : 'none';
+
+            // Update step for inputs
+            const step = (type === 'nat') ? '1' : (type === 'int') ? '1' : '0.5';
+            document.getElementById('calcA').step = step;
+            document.getElementById('calcB').step = step;
+        }
+
+        function performCalculation() {
+            const type = document.getElementById('calcType').value;
+            const op = document.getElementById('calcOp').value;
+            let a = parseFloat(document.getElementById('calcA').value);
+            let b = parseFloat(document.getElementById('calcB').value);
+            let aDen = 1, bDen = 1;
+
+            if (type === 'rat') {
+                aDen = parseInt(document.getElementById('calcADenom').value) || 1;
+                bDen = parseInt(document.getElementById('calcBDenom').value) || 1;
+            }
+
+            // Validate
+            if (type === 'nat' && (a < 0 || b < 0)) {
+                document.getElementById('calcResult').textContent = 'ERROR: Natural numbers must be >= 0';
+                return;
+            }
+
+            if ((op === 'div') && b === 0) {
+                document.getElementById('calcResult').textContent = 'ERROR: Division by zero! Need proof: (b = 0) -> Empty';
+                document.getElementById('calcLog').innerHTML = '<div class="log-entry" style="color:#ff4444">Cannot divide by zero. In HoTT, division requires a witness that the divisor is non-zero.</div>';
+                return;
+            }
+
+            let result, steps = [], signature = '';
+
+            if (type === 'nat') {
+                a = Math.floor(Math.abs(a));
+                b = Math.floor(Math.abs(b));
+
+                switch(op) {
+                    case 'add':
+                        result = a + b;
+                        signature = 'add : N -> N -> N\nadd m 0 = m\nadd m (S n) = S (add m n)';
+                        steps.push('add(' + a + ', ' + b + ')');
+                        let curr = b;
+                        while (curr > 0) {
+                            curr--;
+                            steps.push('= S(add(' + a + ', ' + curr + '))');
+                        }
+                        steps.push('= ' + result);
+                        break;
+                    case 'mul':
+                        result = a * b;
+                        signature = 'mul : N -> N -> N\nmul m 0 = 0\nmul m (S n) = add m (mul m n)';
+                        steps.push('mul(' + a + ', ' + b + ')');
+                        let c = b;
+                        while (c > 0) {
+                            c--;
+                            steps.push('= add(' + a + ', mul(' + a + ', ' + c + '))');
+                        }
+                        steps.push('= add(' + a + ', 0) = ' + a + ' ... (unfolding all additions)');
+                        steps.push('= ' + result);
+                        break;
+                    case 'sub':
+                        if (a < b) {
+                            document.getElementById('calcResult').textContent = 'ERROR: ' + a + ' - ' + b + ' is negative, not in N! Use Z instead.';
+                            return;
+                        }
+                        result = a - b;
+                        signature = 'sub : N -> N -> N  (partial! only when a >= b)\nsub m 0 = m\nsub (S m) (S n) = sub m n';
+                        steps.push('sub(' + a + ', ' + b + ')');
+                        let sa = a, sb = b;
+                        while (sb > 0) {
+                            sa--; sb--;
+                            steps.push('= sub(' + sa + ', ' + sb + ')');
+                        }
+                        steps.push('= ' + result);
+                        break;
+                    case 'div':
+                        document.getElementById('calcResult').textContent = 'Division not defined on N (no inverses). Use Q or R.';
+                        return;
+                }
+            } else if (type === 'int') {
+                a = Math.floor(a);
+                b = Math.floor(b);
+
+                switch(op) {
+                    case 'add':
+                        result = a + b;
+                        signature = 'add_Z : Z -> Z -> Z\n-- Defined by cases on the sign';
+                        steps.push('add_Z(' + a + ', ' + b + ')');
+                        steps.push('-- Representing as pairs: (' + Math.max(a,0) + ',' + Math.max(-a,0) + ') + (' + Math.max(b,0) + ',' + Math.max(-b,0) + ')');
+                        steps.push('= (' + (Math.max(a,0)+Math.max(b,0)) + ', ' + (Math.max(-a,0)+Math.max(-b,0)) + ')');
+                        steps.push('= ' + result);
+                        break;
+                    case 'mul':
+                        result = a * b;
+                        signature = 'mul_Z : Z -> Z -> Z\nmul_Z a b = sign(a)*sign(b) * |a|*|b|';
+                        steps.push('mul_Z(' + a + ', ' + b + ')');
+                        steps.push('= sign(' + a + ') * sign(' + b + ') * |' + a + '| * |' + b + '|');
+                        steps.push('= ' + (a >= 0 ? '+' : '-') + ' * ' + (b >= 0 ? '+' : '-') + ' * ' + Math.abs(a) + ' * ' + Math.abs(b));
+                        steps.push('= ' + result);
+                        break;
+                    case 'sub':
+                        result = a - b;
+                        signature = 'sub_Z : Z -> Z -> Z\nsub_Z a b = add_Z a (neg b)';
+                        steps.push('sub_Z(' + a + ', ' + b + ')');
+                        steps.push('= add_Z(' + a + ', neg(' + b + '))');
+                        steps.push('= add_Z(' + a + ', ' + (-b) + ')');
+                        steps.push('= ' + result);
+                        break;
+                    case 'div':
+                        document.getElementById('calcResult').textContent = 'Division not closed on Z. Use Q or R.';
+                        return;
+                }
+            } else if (type === 'rat') {
+                const aNum = a * aDen === Math.floor(a) ? Math.floor(a) : a;
+                result = (a / aDen) / (b / bDen);
+                const rNum = a * bDen;
+                const rDen = aDen * b;
+
+                switch(op) {
+                    case 'add':
+                        const addNum = a * bDen + b * aDen;
+                        const addDen = aDen * bDen;
+                        result = addNum / addDen;
+                        signature = 'add_Q : Q -> Q -> Q\nadd_Q [a,b] [c,d] = [a*d + c*b, b*d]';
+                        steps.push('add_Q([' + a + ',' + aDen + '], [' + b + ',' + bDen + '])');
+                        steps.push('= [' + a + '*' + bDen + ' + ' + b + '*' + aDen + ', ' + aDen + '*' + bDen + ']');
+                        steps.push('= [' + addNum + ', ' + addDen + ']');
+                        steps.push('= ' + result.toFixed(6));
+                        break;
+                    case 'mul':
+                        const mulNum = a * b;
+                        const mulDen = aDen * bDen;
+                        result = mulNum / mulDen;
+                        signature = 'mul_Q : Q -> Q -> Q\nmul_Q [a,b] [c,d] = [a*c, b*d]';
+                        steps.push('mul_Q([' + a + ',' + aDen + '], [' + b + ',' + bDen + '])');
+                        steps.push('= [' + a + '*' + b + ', ' + aDen + '*' + bDen + ']');
+                        steps.push('= [' + mulNum + ', ' + mulDen + ']');
+                        steps.push('= ' + result.toFixed(6));
+                        break;
+                    case 'sub':
+                        const subNum = a * bDen - b * aDen;
+                        const subDen = aDen * bDen;
+                        result = subNum / subDen;
+                        signature = 'sub_Q : Q -> Q -> Q\nsub_Q [a,b] [c,d] = [a*d - c*b, b*d]';
+                        steps.push('sub_Q([' + a + ',' + aDen + '], [' + b + ',' + bDen + '])');
+                        steps.push('= [' + a + '*' + bDen + ' - ' + b + '*' + aDen + ', ' + aDen + '*' + bDen + ']');
+                        steps.push('= [' + subNum + ', ' + subDen + ']');
+                        steps.push('= ' + result.toFixed(6));
+                        break;
+                    case 'div':
+                        const divNum = a * bDen;
+                        const divDen = aDen * b;
+                        result = divNum / divDen;
+                        signature = 'div_Q : Q -> Q -> Q\ndiv_Q [a,b] [c,d] = [a*d, b*c]\n-- requires proof: c != 0';
+                        steps.push('div_Q([' + a + ',' + aDen + '], [' + b + ',' + bDen + '])');
+                        steps.push('-- Need witness: ' + b + ' != 0 (provided!)');
+                        steps.push('= mul_Q([' + a + ',' + aDen + '], [' + bDen + ',' + b + '])  -- multiply by inverse');
+                        steps.push('= [' + a + '*' + bDen + ', ' + aDen + '*' + b + ']');
+                        steps.push('= [' + divNum + ', ' + divDen + ']');
+                        steps.push('= ' + result.toFixed(6));
+                        break;
+                }
+            } else { // real
+                switch(op) {
+                    case 'add':
+                        result = a + b;
+                        signature = 'add_R : R -> R -> R\nadd_R (lim a_n) (lim b_n) = lim (a_n + b_n)\n-- Must prove: sum of Cauchy seqs is Cauchy';
+                        steps.push('add_R(lim(a_n), lim(b_n)) where a_n -> ' + a + ', b_n -> ' + b);
+                        steps.push('= lim(a_n + b_n)');
+                        steps.push('-- Proof that (a_n + b_n) is Cauchy:');
+                        steps.push('-- |a_m+b_m - a_n-b_n| <= |a_m-a_n| + |b_m-b_n| < eps/2 + eps/2 = eps');
+                        steps.push('= ' + result);
+                        break;
+                    case 'mul':
+                        result = a * b;
+                        signature = 'mul_R : R -> R -> R\nmul_R (lim a_n) (lim b_n) = lim (a_n * b_n)\n-- Must prove: product of Cauchy seqs is Cauchy';
+                        steps.push('mul_R(lim(a_n), lim(b_n)) where a_n -> ' + a + ', b_n -> ' + b);
+                        steps.push('= lim(a_n * b_n)');
+                        steps.push('-- Cauchy sequences are bounded, so product is Cauchy');
+                        steps.push('= ' + result);
+                        break;
+                    case 'sub':
+                        result = a - b;
+                        signature = 'sub_R : R -> R -> R\nsub_R x y = add_R x (neg_R y)';
+                        steps.push('sub_R(' + a + ', ' + b + ')');
+                        steps.push('= add_R(' + a + ', neg_R(' + b + '))');
+                        steps.push('= add_R(' + a + ', ' + (-b) + ')');
+                        steps.push('= ' + result);
+                        break;
+                    case 'div':
+                        result = a / b;
+                        signature = 'div_R : R -> R -> R\ndiv_R x y = mul_R x (inv_R y)\n-- requires: y apart from 0 (constructive non-zero)';
+                        steps.push('div_R(' + a + ', ' + b + ')');
+                        steps.push('-- Need: ' + b + ' # 0 (apartness, not just inequality)');
+                        steps.push('= mul_R(' + a + ', inv_R(' + b + '))');
+                        steps.push('= mul_R(' + a + ', ' + (1/b).toFixed(6) + ')');
+                        steps.push('-- inv_R(lim b_n) = lim(1/b_n) (eventually bounded away from 0)');
+                        steps.push('= ' + result.toFixed(6));
+                        break;
+                }
+            }
+
+            document.getElementById('calcResult').textContent = a + (type === 'rat' ? '/' + aDen : '') + ' ' + {add:'+',mul:'*',sub:'-',div:'/'}[op] + ' ' + b + (type === 'rat' ? '/' + bDen : '') + ' = ' + (typeof result === 'number' ? result.toFixed(6) : result);
+            document.getElementById('calcSignature').textContent = signature;
+            document.getElementById('calcLog').innerHTML = steps.map(s => '<div class="log-entry">' + s + '</div>').join('');
+
+            drawCalcCanvas(a, b, result, op, type);
+        }
+
+        function drawCalcCanvas(a, b, result, op, type) {
+            const ctx = getCtx('calcCanvas');
+            const canvas = document.getElementById('calcCanvas');
+            const w = canvas.width, h = canvas.height;
+
+            if (!a && a !== 0) return;
+
+            ctx.fillStyle = '#e0e0f0';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Geometric Visualization of the Computation', w/2, 25);
+
+            // Number line
+            const lineY = h / 2 + 20;
+            const margin = 80;
+            const lineW = w - 2 * margin;
+
+            const allVals = [0, a, b, result].filter(v => !isNaN(v));
+            const minV = Math.min(...allVals) - 1;
+            const maxV = Math.max(...allVals) + 1;
+
+            ctx.strokeStyle = '#3a3a6a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin, lineY);
+            ctx.lineTo(w - margin, lineY);
+            ctx.stroke();
+
+            // Ticks
+            const tickStep = Math.max(1, Math.floor((maxV - minV) / 10));
+            for (let i = Math.ceil(minV); i <= Math.floor(maxV); i += tickStep) {
+                const x = margin + (i - minV) / (maxV - minV) * lineW;
+                ctx.beginPath();
+                ctx.moveTo(x, lineY - 5);
+                ctx.lineTo(x, lineY + 5);
+                ctx.strokeStyle = '#5a5a8a';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.fillStyle = '#8888bb';
+                ctx.font = '9px Segoe UI';
+                ctx.fillText(String(i), x, lineY + 18);
+            }
+
+            // Origin
+            const oX = margin + (0 - minV) / (maxV - minV) * lineW;
+            if (0 >= minV && 0 <= maxV) {
+                drawPoint(ctx, oX, lineY, 3, '#ffffff');
+            }
+
+            // Show a
+            const aX = margin + (a - minV) / (maxV - minV) * lineW;
+            drawPoint(ctx, aX, lineY - 15, 7, '#7b68ee');
+            ctx.fillStyle = '#7b68ee';
+            ctx.font = '11px Segoe UI';
+            ctx.fillText('a=' + a, aX, lineY - 30);
+
+            // Show b
+            const bX = margin + (b - minV) / (maxV - minV) * lineW;
+            drawPoint(ctx, bX, lineY + 15, 7, '#ff6ec7');
+            ctx.fillStyle = '#ff6ec7';
+            ctx.fillText('b=' + b, bX, lineY + 35);
+
+            // Show result
+            const rX = margin + (result - minV) / (maxV - minV) * lineW;
+            drawPoint(ctx, rX, lineY, 9, '#88ff88');
+            ctx.fillStyle = '#88ff88';
+            ctx.font = 'bold 12px Segoe UI';
+            ctx.fillText(result.toFixed(4), rX, lineY - 15);
+
+            // Operation visualization
+            if (op === 'add' || op === 'sub') {
+                drawCurvedPath(ctx, aX, lineY - 15, rX, lineY, 30, '#00bcd4', 2);
+                ctx.fillStyle = '#00bcd4';
+                ctx.font = '11px Segoe UI';
+                ctx.fillText(op === 'add' ? '+' + b : '-' + b, (aX + rX) / 2, lineY - 50);
+            } else if (op === 'mul') {
+                // Show scaling
+                drawArrow(ctx, oX, lineY - 30, aX, lineY - 30, '#7b68ee', 1.5);
+                drawArrow(ctx, oX, lineY + 30, rX, lineY + 30, '#88ff88', 1.5);
+                ctx.fillStyle = '#ffaa00';
+                ctx.font = '11px Segoe UI';
+                ctx.fillText('scale by ' + b, (oX + rX) / 2, lineY + 48);
+            } else if (op === 'div') {
+                drawArrow(ctx, oX, lineY - 30, aX, lineY - 30, '#7b68ee', 1.5);
+                drawArrow(ctx, oX, lineY + 30, rX, lineY + 30, '#88ff88', 1.5);
+                ctx.fillStyle = '#ffaa00';
+                ctx.font = '11px Segoe UI';
+                ctx.fillText('scale by 1/' + b, (oX + rX) / 2, lineY + 48);
+            }
+
+            // Type annotation
+            ctx.fillStyle = '#8888bb';
+            ctx.font = '10px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText('Type: ' + type.toUpperCase(), 10, h - 10);
+        }
+
+        // ============ INITIALIZATION ============
+        window.addEventListener('load', function() {
+            drawFoundations();
+
+            // Add roundRect polyfill if needed
+            if (!CanvasRenderingContext2D.prototype.roundRect) {
+                CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                    if (typeof r === 'number') r = {tl: r, tr: r, br: r, bl: r};
+                    this.beginPath();
+                    this.moveTo(x + r.tl, y);
+                    this.lineTo(x + w - r.tr, y);
+                    this.quadraticCurveTo(x + w, y, x + w, y + r.tr);
+                    this.lineTo(x + w, y + h - r.br);
+                    this.quadraticCurveTo(x + w, y + h, x + w - r.br, y + h);
+                    this.lineTo(x + r.bl, y + h);
+                    this.quadraticCurveTo(x, y + h, x, y + h - r.bl);
+                    this.lineTo(x, y + r.tl);
+                    this.quadraticCurveTo(x, y, x + r.tl, y);
+                    this.closePath();
+                    return this;
+                };
+            }
+        });
+    </script>
+</body>
+</html>
