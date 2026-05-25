@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOST - Interactive Story Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, #000000, #0d1b0e);
+            border-bottom: 2px solid #2a5a2a;
+        }
+
+        .header h1 {
+            font-size: 72px;
+            letter-spacing: 20px;
+            color: #ffffff;
+            text-shadow: 0 0 20px #3a7a3a, 0 0 40px #2a5a2a;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: #8ab88a;
+            font-style: italic;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 20px;
+            background: #111;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #aaa;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .nav-tab:hover {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #4a8a4a;
+        }
+
+        .nav-tab.active {
+            background: #1a3a1a;
+            color: #7cfc00;
+            border-color: #4a8a4a;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .content-section {
+            display: none;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #4a8a4a, #2a5a2a, #4a8a4a);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 30px 0;
+            padding: 20px 30px;
+            width: 45%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:nth-child(odd) {
+            margin-left: 5%;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 50%;
+        }
+
+        .timeline-item:hover {
+            border-color: #4a8a4a;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+            transform: scale(1.02);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #4a8a4a;
+            border-radius: 50%;
+            top: 30px;
+            border: 3px solid #0a0a0a;
+        }
+
+        .timeline-item:nth-child(odd)::before {
+            right: -38px;
+        }
+
+        .timeline-item:nth-child(even)::before {
+            left: -38px;
+        }
+
+        .timeline-item h3 {
+            color: #7cfc00;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .timeline-item .season-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #2a5a2a;
+            border-radius: 3px;
+            font-size: 11px;
+            color: #aaffaa;
+            margin-bottom: 8px;
+        }
+
+        .timeline-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .timeline-detail {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #aaa;
+        }
+
+        .timeline-detail.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Character Styles */
+        .character-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .character-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-card:hover {
+            border-color: #4a8a4a;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .character-card .char-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .character-card h3 {
+            color: #7cfc00;
+            margin-bottom: 5px;
+        }
+
+        .character-card .char-role {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .character-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #bbb;
+        }
+
+        .character-card .char-detail {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            font-size: 13px;
+            color: #999;
+            line-height: 1.7;
+        }
+
+        .character-card .char-detail.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .char-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        .status-alive { background: #1a3a1a; color: #7cfc00; }
+        .status-deceased { background: #3a1a1a; color: #fc7c7c; }
+        .status-unknown { background: #3a3a1a; color: #fcfc7c; }
+
+        /* Mysteries Section */
+        .mystery-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mystery-item {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .mystery-item:hover {
+            border-color: #4a8a4a;
+        }
+
+        .mystery-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mystery-header h3 {
+            color: #7cfc00;
+            font-size: 16px;
+        }
+
+        .mystery-header .toggle-icon {
+            color: #4a8a4a;
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .mystery-header .toggle-icon.rotated {
+            transform: rotate(45deg);
+        }
+
+        .mystery-body {
+            display: none;
+            padding: 0 25px 20px;
+            line-height: 1.8;
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        .mystery-body.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .mystery-body .explanation {
+            background: #0d1b0e;
+            border-left: 3px solid #4a8a4a;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Connections Map */
+        .connections-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .connections-svg {
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        .node {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .node:hover circle {
+            r: 35;
+            fill-opacity: 0.9;
+        }
+
+        .node text {
+            font-size: 11px;
+            fill: #fff;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .link {
+            stroke-opacity: 0.4;
+            transition: stroke-opacity 0.3s;
+        }
+
+        .connection-info {
+            background: #1a1a1a;
+            border: 1px solid #4a8a4a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 100px;
+            text-align: left;
+        }
+
+        .connection-info h3 {
+            color: #7cfc00;
+            margin-bottom: 10px;
+        }
+
+        .connection-info p {
+            color: #bbb;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* DHARMA Section */
+        .dharma-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .dharma-station {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dharma-station:hover {
+            border-color: #4a8a4a;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .dharma-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #222;
+            border: 3px solid #4a8a4a;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #7cfc00;
+            font-weight: bold;
+        }
+
+        .dharma-station h3 {
+            color: #7cfc00;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .dharma-station p {
+            color: #999;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .dharma-station .station-detail {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            text-align: left;
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.7;
+        }
+
+        .dharma-station .station-detail.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Season Guide */
+        .season-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .season-block {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .season-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #1a1a1a, #0d1b0e);
+        }
+
+        .season-header h2 {
+            color: #7cfc00;
+            font-size: 20px;
+        }
+
+        .season-header .episode-count {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .season-body {
+            display: none;
+            padding: 20px 25px;
+        }
+
+        .season-body.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .season-body p {
+            color: #bbb;
+            line-height: 1.8;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .key-episodes {
+            background: #0d1b0e;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .key-episodes h4 {
+            color: #4a8a4a;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .key-episodes ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .key-episodes li {
+            padding: 5px 0;
+            color: #aaa;
+            font-size: 13px;
+            border-bottom: 1px solid #1a2a1a;
+        }
+
+        .key-episodes li:last-child {
+            border-bottom: none;
+        }
+
+        .key-episodes li span {
+            color: #7cfc00;
+        }
+
+        /* Numbers Section */
+        .numbers-display {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .numbers-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .number-ball {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #3a7a3a, #1a3a1a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid #4a8a4a;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .number-ball:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.6);
+        }
+
+        .number-ball.active {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.8);
+            background: radial-gradient(circle at 30% 30%, #5aba5a, #2a6a2a);
+        }
+
+        .number-info {
+            background: #1a1a1a;
+            border: 1px solid #4a8a4a;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 120px;
+        }
+
+        .number-info h3 {
+            color: #7cfc00;
+            margin-bottom: 10px;
+        }
+
+        .number-info p {
+            color: #bbb;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* Factions */
+        .faction-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .faction-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .faction-card:hover {
+            border-color: #4a8a4a;
+            transform: translateY(-3px);
+        }
+
+        .faction-card h3 {
+            color: #7cfc00;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .faction-card p {
+            color: #bbb;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .faction-card .faction-detail {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .faction-card .faction-detail.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Section titles */
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            font-size: 32px;
+            color: #7cfc00;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #888;
+            font-size: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 48px;
+                letter-spacing: 10px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                width: 80%;
+                margin-left: 50px !important;
+            }
+
+            .timeline-item::before {
+                left: -38px !important;
+                right: auto !important;
+            }
+
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .numbers-row {
+                gap: 10px;
+            }
+
+            .number-ball {
+                width: 60px;
+                height: 60px;
+                font-size: 22px;
+            }
+        }
+
+        .click-hint {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>L O S T</h1>
+        <p>An Interactive Guide to the Island's Mysteries</p>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('overview')">Overview</div>
+        <div class="nav-tab" onclick="showSection('timeline')">Timeline</div>
+        <div class="nav-tab" onclick="showSection('characters')">Characters</div>
+        <div class="nav-tab" onclick="showSection('seasons')">Seasons</div>
+        <div class="nav-tab" onclick="showSection('mysteries')">Mysteries</div>
+        <div class="nav-tab" onclick="showSection('dharma')">DHARMA</div>
+        <div class="nav-tab" onclick="showSection('numbers')">The Numbers</div>
+        <div class="nav-tab" onclick="showSection('factions')">Factions</div>
+        <div class="nav-tab" onclick="showSection('connections')">Connections</div>
+    </div>
+
+    <!-- Overview Section -->
+    <div class="content-section active" id="section-overview">
+        <div class="section-title">
+            <h2>The Story of LOST</h2>
+            <p>A tale of survival, destiny, and redemption</p>
+        </div>
+        <div style="max-width: 800px; margin: 0 auto; line-height: 1.9; font-size: 15px; color: #ccc;">
+            <p style="margin-bottom: 20px;">
+                <strong style="color: #7cfc00;">LOST</strong> (2004-2010) is a groundbreaking television series that aired on ABC for six seasons. The show begins when Oceanic Airlines Flight 815, traveling from Sydney to Los Angeles, breaks apart mid-air and crashes on a mysterious tropical island in the South Pacific.
+            </p>
+            <p style="margin-bottom: 20px;">
+                The 48 survivors of the crash must work together to survive, but they quickly discover that the island holds dark secrets. Strange creatures lurk in the jungle, a group of hostile inhabitants called "The Others" threaten their safety, and the island itself seems to possess supernatural properties including healing abilities and electromagnetic anomalies.
+            </p>
+            <p style="margin-bottom: 20px;">
+                As the series progresses, the narrative expands through flashbacks, flash-forwards, and eventually flash-sideways, revealing the deeply interconnected pasts of the survivors and the island's ancient history. Central to the mythology is the conflict between two ageless beings — Jacob, the island's protector, and his brother, the Man in Black (also known as the Smoke Monster) — who have been locked in a philosophical struggle about the nature of humanity for thousands of years.
+            </p>
+            <p style="margin-bottom: 20px;">
+                The island serves as a cork, holding back a destructive force (described as evil, malevolence, or darkness). Jacob has been bringing people to the island for centuries, seeking a replacement to protect it. The survivors of Flight 815 were his final candidates.
+            </p>
+            <p>
+                Ultimately, LOST is a story about broken people finding redemption, the power of human connection, and the idea that what we do together matters more than what happens to us alone. The series finale reveals that the "flash-sideways" world of Season 6 is a kind of afterlife — a place the characters created together so they could find one another and "move on" after death.
+            </p>
+        </div>
+    </div>
+
+    <!-- Timeline Section -->
+    <div class="content-section" id="section-timeline">
+        <div class="section-title">
+            <h2>Island Timeline</h2>
+            <p>Click events to reveal more details</p>
+        </div>
+        <div class="timeline" id="timeline-container"></div>
+    </div>
+
+    <!-- Characters Section -->
+    <div class="content-section" id="section-characters">
+        <div class="section-title">
+            <h2>Main Characters</h2>
+            <p>Click a character to learn more about their journey</p>
+        </div>
+        <div class="character-grid" id="character-grid"></div>
+    </div>
+
+    <!-- Seasons Section -->
+    <div class="content-section" id="section-seasons">
+        <div class="section-title">
+            <h2>Season Guide</h2>
+            <p>Click each season to expand its summary</p>
+        </div>
+        <div class="season-container" id="season-container"></div>
+    </div>
+
+    <!-- Mysteries Section -->
+    <div class="content-section" id="section-mysteries">
+        <div class="section-title">
+            <h2>The Island's Mysteries</h2>
+            <p>Click each mystery to reveal its explanation</p>
+        </div>
+        <div class="mystery-container" id="mystery-container"></div>
+    </div>
+
+    <!-- DHARMA Section -->
+    <div class="content-section" id="section-dharma">
+        <div class="section-title">
+            <h2>DHARMA Initiative Stations</h2>
+            <p>Click stations to learn about their purpose</p>
+        </div>
+        <div class="dharma-grid" id="dharma-grid"></div>
+    </div>
+
+    <!-- Numbers Section -->
+    <div class="content-section" id="section-numbers">
+        <div class="section-title">
+            <h2>The Numbers</h2>
+            <p>Click each number to discover its significance</p>
+        </div>
+        <div class="numbers-display">
+            <div class="numbers-row" id="numbers-row"></div>
+            <div class="number-info" id="number-info">
+                <h3>4 8 15 16 23 42</h3>
+                <p>These six numbers appear repeatedly throughout the series. They are the core values of the Valenzetti Equation, which predicts the exact number of years until humanity destroys itself. Click each number to learn its specific significance.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Factions Section -->
+    <div class="content-section" id="section-factions">
+        <div class="section-title">
+            <h2>Groups & Factions</h2>
+            <p>Click to learn about each group on the island</p>
+        </div>
+        <div class="faction-container" id="faction-container"></div>
+    </div>
+
+    <!-- Connections Section -->
+    <div class="content-section" id="section-connections">
+        <div class="section-title">
+            <h2>Character Connections</h2>
+            <p>Click on characters to see their relationships</p>
+        </div>
+        <div class="connections-container">
+            <svg class="connections-svg" id="connections-svg"></svg>
+            <div class="connection-info" id="connection-info">
+                <h3>Character Relationships</h3>
+                <p>The survivors of Oceanic 815 were all connected before the crash in ways they never realized. Click on a character node above to explore their connections.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('section-' + sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Timeline Data
+        const timelineData = [
+            {
+                title: "Ancient Times - The Island's Origin",
+                season: "Mythology",
+                summary: "The Island has existed since ancient times, containing a pocket of electromagnetic energy and a 'Heart' — a source of life, death, and rebirth.",
+                detail: "A woman known as 'Mother' protected the Heart of the Island. She raised twin brothers — Jacob and the Man in Black — after killing their birth mother. When the Man in Black attempted to leave the island and exploit its power, Mother destroyed his village. In revenge, he killed her. Jacob then threw his brother into the Heart of the Island, transforming him into the Smoke Monster — a being of pure destructive energy trapped on the island."
+            },
+            {
+                title: "1954 - The U.S. Military Arrives",
+                season: "Season 5",
+                summary: "The U.S. Army brings a hydrogen bomb called 'Jughead' to the island for testing. The Others, led by a young Charles Widmore, kill the soldiers.",
+                detail: "Richard Alpert, Jacob's ageless advisor, convinces the Others to bury the bomb rather than detonate it. Decades later, this bomb becomes central to the survivors' plan to change the past. When our time-traveling survivors arrive in 1954, they encounter young Widmore and a young Eloise Hawking among the Others."
+            },
+            {
+                title: "1970s - DHARMA Initiative Arrives",
+                season: "Season 5",
+                summary: "The DHARMA Initiative, a scientific research group, establishes multiple research stations on the island to study its unique properties.",
+                detail: "Founded by Gerald and Karen DeGroot and funded by Alvar Hanso, DHARMA built stations to study electromagnetism, zoology, psychology, and more. They maintained an uneasy truce with the Others (whom they called 'the Hostiles'). Key stations included The Swan, The Pearl, The Orchid, and The Hydra. DHARMA discovered the island's massive electromagnetic pocket and began drilling into it."
+            },
+            {
+                title: "1977 - The Incident",
+                season: "Season 5",
+                summary: "DHARMA's drilling into the electromagnetic pocket causes a catastrophic event. The survivors (who time-traveled to 1977) detonate Jughead to try to prevent it.",
+                detail: "The detonation of the hydrogen bomb at the Swan station site is known as 'The Incident.' Rather than preventing the future crash of Flight 815, it actually caused the very electromagnetic anomaly that would later bring down the plane. DHARMA built the Swan station over the site, requiring a button to be pushed every 108 minutes to discharge the built-up energy. Juliet Burke sacrificed herself to detonate the bomb."
+            },
+            {
+                title: "1992 - The Purge",
+                season: "Season 3",
+                summary: "Ben Linus and the Others gas the entire DHARMA Initiative, killing all its members on the island.",
+                detail: "Benjamin Linus, who had been recruited by the Others as a child, helped orchestrate the mass killing of all DHARMA personnel using toxic gas. Ben's father Roger was among the victims. After the Purge, the Others took over DHARMA's facilities and infrastructure. Ben eventually became the leader of the Others, though he was manipulated by the Man in Black posing as Jacob."
+        },
+        {
+            name: "John Locke",
+            role: "Box Company Employee / Hunter",
+            color: "#d9a04a",
+            status: "deceased",
+            summary: "A paralyzed man miraculously healed by the island, who becomes its greatest believer and champion.",
+            detail: "Locke was paralyzed from the waist down before the crash but could walk on the island. His faith in the island's purpose was unshakeable. He was manipulated by Ben and eventually murdered off-island. The Man in Black then took his form to manipulate others. Locke's tragedy is that he was right about the island being special, but he never lived to see his faith vindicated."
+        },
+        {
+            name: "Kate Austen",
+            role: "Fugitive",
+            color: "#d94a7b",
+            status: "alive",
+            summary: "A fugitive on the run for killing her abusive stepfather, torn between Jack and Sawyer.",
+            detail: "Kate killed her stepfather Wayne to protect her mother, then spent years on the run. On the island, she became a capable survivor and was part of the love triangle with Jack and Sawyer. She raised Aaron off-island as one of the Oceanic Six, then returned to find Claire. She ultimately killed the Man in Black by shooting him after Jack made him mortal. She escaped the island on the Ajira plane."
+        },
+        {
+            name: "James 'Sawyer' Ford",
+            role: "Con Man",
+            color: "#d97a4a",
+            status: "alive",
+            summary: "A charming con man seeking revenge for his parents' death, who becomes a surprising leader.",
+            detail: "Sawyer's parents were destroyed by a con man named 'Sawyer' (Anthony Cooper — also Locke's father). He took the name and became a con man himself. On the island he evolved from selfish outcast to capable leader. During the time-travel period, he spent three years as 'LaFleur,' head of DHARMA security, and fell in love with Juliet. Her death devastated him. He escaped the island on the Ajira plane with Kate, Claire, Richard, Miles, and Frank."
+        },
+        {
+            name: "Hugo 'Hurley' Reyes",
+            role: "Lottery Winner",
+            color: "#7ad94a",
+            status: "alive",
+            summary: "A lovable, cursed lottery winner who becomes the island's final protector.",
+            detail: "Hurley won the lottery using the Numbers (4 8 15 16 23 42) and believed they cursed him. He could see and communicate with the dead. His kindness and empathy made him the heart of the group. After Jack's sacrifice, Hurley became the new protector of the island with Ben Linus as his second-in-command. He was Jacob's candidate #8."
+        },
+        {
+            name: "Sayid Jarrah",
+            role: "Iraqi Republican Guard / Torturer",
+            color: "#9b4ad9",
+            status: "deceased",
+            summary: "A former Iraqi torturer seeking redemption and his lost love Nadia.",
+            detail: "Sayid's skills made him invaluable but haunted him. He spent his life trying to atone for his past as a torturer. He loved Nadia, whom he was reunited with off-island only to have her killed. He was 'claimed' by darkness after being resurrected in the Temple spring, but ultimately sacrificed himself by running with a bomb to save the other candidates on the submarine."
+        },
+        {
+            name: "Benjamin Linus",
+            role: "Leader of the Others",
+            color: "#4ad9d9",
+            status: "alive",
+            summary: "The manipulative, brilliant leader of the Others who was himself being manipulated.",
+            detail: "Ben grew up on the island with his abusive father (a DHARMA janitor). He was recruited by the Others and helped execute the Purge. He led the Others for years, believing he served Jacob — but Jacob never spoke to him directly. He was manipulated by the Man in Black into killing Jacob. After deep remorse, he became Hurley's trusted advisor as the new #2 on the island, finally finding purpose and redemption."
+        },
+        {
+            name: "Desmond Hume",
+            role: "Dishonorably Discharged Soldier",
+            color: "#d9d94a",
+            status: "alive",
+            summary: "A man unstuck in time, whose love for Penny Widmore becomes the show's greatest love story.",
+            detail: "Desmond ended up on the island after his sailboat race went wrong. He pushed the button in the Swan for 3 years. After the implosion, he gained the ability to see flashes of the future and became unstuck in time. His constant — Penny Widmore — anchored him. His unique resistance to electromagnetism made him the 'failsafe' — the only person who could enter the Heart of the Island and survive. He was the key to both the Man in Black's plan and Jack's counter-plan."
+        },
+        {
+            name: "Sun & Jin Kwon",
+            role: "Korean Couple",
+            color: "#d94a4a",
+            status: "deceased",
+            summary: "A married Korean couple whose love is tested and ultimately proven unbreakable.",
+            detail: "Sun and Jin's marriage was strained — Jin worked for Sun's powerful father, and Sun planned to leave him. The island renewed their love. They were separated for three years when Jin was left behind on the freighter (which exploded, though Jin survived). They were reunited in Season 6 only to die together when the submarine was bombed, choosing to stay together rather than be separated again."
+        },
+        {
+            name: "Claire Littleton",
+            role: "Pregnant Woman / Jack's Half-Sister",
+            color: "#ff99cc",
+            status: "alive",
+            summary: "A pregnant Australian woman who gives birth on the island and is later 'claimed' by darkness.",
+            detail: "Claire is Jack's half-sister (both daughters of Christian Shephard, though she doesn't know it initially). She gave birth to Aaron on the island. After being abandoned for three years when the Oceanic Six left, she was 'claimed' by the Man in Black's influence and became feral. Kate's return helped bring her back to sanity. She escaped on the Ajira plane and was presumably reunited with Aaron."
+            },
+            {
+                name: "The Orchid",
+                logo: "6",
+                purpose: "Space-Time Research",
+                detail: "Station 6. Disguised as a botanical greenhouse, the Orchid was built near a pocket of 'exotic matter' and the Frozen Wheel. DHARMA used it to conduct experiments in time displacement — demonstrated by the 'Casimir effect' on rabbits. Ben used the chamber beneath it to turn the Frozen Wheel and move the island."
+            },
+            {
+                name: "The Hydra",
+                logo: "1",
+                purpose: "Zoology / Animal Research",
+                detail: "Station 1. Located on a smaller island off the coast of the main island. Originally used for zoological research (including polar bears and sharks with DHARMA logos). The Others later used it as a prison facility where they held Jack, Kate, and Sawyer in Season 3. The Ajira plane landed on its runway."
+            },
+            {
+                name: "The Staff",
+                logo: "2",
+                purpose: "Medical Research",
+                detail: "Station 2. A medical facility used for health and obstetric research. Claire was held here by Ethan Rom and given injections during her pregnancy. The Others later used it for their fertility research, as pregnant women mysteriously died on the island during their second trimester — a problem Ben was obsessed with solving."
+            },
+            {
+                name: "The Flame",
+                logo: "4",
+                purpose: "Communications",
+                detail: "Station 4. The island's communication hub, allowing contact with the outside world. Manned by Mikhail Bakunin (an Other). It contained a computer system that could trigger a self-destruct sequence. Locke accidentally destroyed it by entering '77' into the computer, severing the island's communication link."
+            },
+            {
+                name: "The Arrow",
+                logo: "2a",
+                purpose: "Defense / Storage",
+                detail: "Station originally designed for developing defensive strategies against the Hostiles (Others). By the time the tail section survivors found it, it was largely empty, used as storage. They used it as their shelter. It contained a glass eye, a radio, and a hollowed-out Bible with portions of an orientation film."
+            },
+            {
+                name: "The Looking Glass",
+                logo: "LG",
+                purpose: "Underwater Communications",
+                detail: "An underwater station connected to the island by a cable running along the ocean floor. It housed equipment that jammed all radio signals to and from the island, preventing communication with the outside world. Charlie Pace sacrificed his life here, disabling the jamming equipment and warning Desmond that the freighter was 'Not Penny's Boat.'"
+            },
+            {
+                name: "The Tempest",
+                logo: "T",
+                purpose: "Chemical Weapons / Power",
+                detail: "A station that served as a chemical weapons facility and possibly a power station. It housed the toxic gas used in the Purge to kill all DHARMA members. Daniel Faraday and Charlotte raced to disable it when they feared Ben might use it again. It provided power to the island's other stations."
+            },
+            {
+                name: "The Lamp Post",
+                logo: "LP",
+                purpose: "Island Location Tracking",
+                detail: "The only known DHARMA station located off-island, built in Los Angeles beneath a church. It used a Foucault pendulum and complex equations to predict the island's location as it moved through space-time. Eloise Hawking used it to help the Oceanic Six determine how to return to the island aboard Ajira Flight 316."
+            }
+        ];
+
+        // Render DHARMA Stations
+        function renderDharma() {
+            const grid = document.getElementById('dharma-grid');
+            grid.innerHTML = dharmaStations.map((station, i) => {
+                return '<div class="dharma-station" onclick="toggleStation(' + i + ')">' +
+                    '<div class="dharma-logo">ST. ' + station.logo + '</div>' +
+                    '<h3>' + station.name + '</h3>' +
+                    '<p>' + station.purpose + '</p>' +
+                    '<div class="station-detail" id="station-detail-' + i + '">' + station.detail + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function toggleStation(index) {
+            const detail = document.getElementById('station-detail-' + index);
+            detail.classList.toggle('show');
+        }
+
+        // Numbers Data
+        const numbersData = [
+            {
+                number: 4,
+                candidate: "John Locke",
+                significance: "Locke was candidate #4. The number 4 appears in: the 4 toed statue (Taweret), the 4 years between the crash and the Oceanic Six's return, and the 4th station (The Flame). Locke's faith and destiny were central to the island's story, yet he was crossed off Jacob's list after his death."
+            },
+            {
+                number: 8,
+                candidate: "Hugo 'Hurley' Reyes",
+                significance: "Hurley was candidate #8. He won $114 million in the lottery using all six numbers. The number 8 appears in his jersey number, and 108 (the sum of all the Numbers) was the timer countdown in the Swan. Hurley became the final protector of the island — the winning candidate."
+            },
+            {
+                number: 15,
+                candidate: "James 'Sawyer' Ford",
+                significance: "Sawyer was candidate #15. The number 15 appears in: Sawyer's age when his parents died, Flight 815's number, and the 15th floor of a building in several flashbacks. Sawyer's con man nature made him a survivor, and his character growth from selfish outcast to selfless leader mirrors the show's themes."
+            },
+            {
+                number: 16,
+                candidate: "Sayid Jarrah",
+                significance: "Sayid was candidate #16. The number 16 appears in: Danielle Rousseau's distress signal playing for 16 years, and various episode timestamps. Sayid's struggle between his violent past and desire for redemption ended with his sacrifice — running a bomb away from his friends on the submarine."
+            },
+            {
+                number: 23,
+                candidate: "Jack Shephard",
+                significance: "Jack was candidate #23. The number 23 appears in: Jack's seat number (23A), the 23rd Psalm (referenced with Eko), and numerous addresses and dates. Jack was Jacob's ultimate choice — the one who would willingly sacrifice himself to save the island and pass the torch to Hurley."
+            },
+            {
+                number: 42,
+                candidate: "Sun or Jin Kwon",
+                significance: "The Kwon candidate was #42 — Jacob never specified whether it was Sun, Jin, or both. The number 42 appears in: their hotel room, various flight numbers, and Ana Lucia's badge number. Their love story — separated and reunited — represents the show's theme that connection transcends all barriers, even death."
+            }
+        ];
+
+        // Render Numbers
+        function renderNumbers() {
+            const row = document.getElementById('numbers-row');
+            row.innerHTML = numbersData.map((n, i) => {
+                return '<div class="number-ball" id="num-ball-' + i + '" onclick="showNumberInfo(' + i + ')">' + n.number + '</div>';
+            }).join('');
+        }
+
+        function showNumberInfo(index) {
+            const info = document.getElementById('number-info');
+            const data = numbersData[index];
+            document.querySelectorAll('.number-ball').forEach(b => b.classList.remove('active'));
+            document.getElementById('num-ball-' + index).classList.add('active');
+            info.innerHTML = '<h3>Number ' + data.number + ' — ' + data.candidate + '</h3><p>' + data.significance + '</p>';
+        }
+
+        // Factions Data
+        const factions = [
+            {
+                name: "The Survivors (Oceanic 815)",
+                summary: "The 48 survivors of the mid-section crash who form the core group of the show. Led initially by Jack, they establish a beach camp and struggle to survive while uncovering the island's secrets.",
+                detail: "The survivors split multiple times — Jack vs. Locke on whether to leave or stay, those who trust the freighter vs. those who don't. Key members: Jack, Kate, Sawyer, Hurley, Sayid, Sun, Jin, Claire, Charlie, Shannon, Boone, Michael, Walt, Rose, Bernard. Six eventually escape as the 'Oceanic Six' but return."
+            },
+            {
+                name: "The Others (The Hostiles)",
+                summary: "A group of island inhabitants who predate DHARMA, recruited by Jacob over centuries to live on and protect the island. They appear primitive but have access to advanced resources.",
+                detail: "Led by Ben Linus (and before him, Charles Widmore and Eloise Hawking), with Richard Alpert as eternal advisor. They live in the former DHARMA Barracks, have a submarine for off-island travel, and follow Jacob's orders (often interpreted through Richard). They kidnap 'good people' and children, seeing themselves as protectors of a sacred place."
+            },
+            {
+                name: "The DHARMA Initiative",
+                summary: "A 1970s scientific research collective that built multiple stations on the island to study its unique properties, hoping to change the Valenzetti Equation and save humanity from extinction.",
+                detail: "Founded by Gerald and Karen DeGroot, funded by Alvar Hanso. They maintained an uneasy truce with the Others until the Purge of 1992 wiped them out. Their legacy remains in the stations, supplies (food drops continued via automation), and the Swan's button protocol. Key members encountered via time travel: Horace Goodspeed, Pierre Chang (Dr. Marvin Candle), Radzinsky."
+            },
+            {
+                name: "Widmore's Team",
+                summary: "Charles Widmore, a former leader of the Others who was banished, sends teams to reclaim the island. His freighter team and later his submarine team play major roles.",
+                detail: "Widmore was banished by Ben for breaking the Others' rules (having a daughter, Penny, with an outsider and frequently leaving the island). He spent years trying to return, first sending the freighter Kahana (with mercenary Keamy, plus scientists Faraday, Charlotte, and Miles), then returning personally in Season 6 with Desmond, claiming Jacob invited him back to help stop the Man in Black. He was killed by Ben."
+            },
+            {
+                name: "Jacob and His Legacy",
+                summary: "Jacob is the island's ageless protector, a demigod-like figure who has guided events for over 2,000 years to find his replacement and keep his brother (the Man in Black) imprisoned.",
+                detail: "Jacob was born on the island circa 1st century AD. His 'Mother' (the previous protector) made him the guardian after the Man in Black killed her. He brought people to the island for centuries to prove his brother wrong about human nature being corrupt. He touched each of the final candidates at key moments in their lives, subtly guiding them to Flight 815. After his death at Ben's hands, his ghost guided the candidates to complete his mission."
+            },
+            {
+                name: "The Man in Black / Smoke Monster",
+                summary: "Jacob's twin brother, transformed into a smoke creature and trapped on the island for millennia. He manipulates people toward one goal: escape.",
+                detail: "Once a normal man who wanted to leave the island and explore the world, he was transformed against his will into the Smoke Monster. He cannot directly kill candidates (a rule imposed by Jacob). He manipulates others to do his bidding — appearing as dead people (Christian Shephard, Yemi, Alex, ultimately Locke). His endgame in Season 6: use Desmond to destroy the Heart of the Island, which would free him but destroy everything. He was made mortal and killed by Kate."
+            },
+            {
+                name: "Ajira Airways Flight 316",
+                summary: "The flight that brought the Oceanic Six (and others) back to the island in Season 5. Its passengers include new characters and returning ones.",
+                detail: "The flight was arranged using the Lamp Post station to find the island's location. Passengers included: Jack, Kate, Hurley, Sayid, Sun, Ben, Frank Lapidus (pilot), and new characters Ilana (a protector of candidates sent by Jacob) and Bram. The plane landed on the Hydra island's runway. In the finale, Frank flies the repaired plane off the island, carrying Kate, Sawyer, Claire, Miles, and Richard to safety."
+            }
+        ];
+
+        // Render Factions
+        function renderFactions() {
+            const container = document.getElementById('faction-container');
+            container.innerHTML = factions.map((f, i) => {
+                return '<div class="faction-card" onclick="toggleFaction(' + i + ')">' +
+                    '<h3>' + f.name + '</h3>' +
+                    '<p>' + f.summary + '</p>' +
+                    '<div class="faction-detail" id="faction-detail-' + i + '">' + f.detail + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function toggleFaction(index) {
+            const detail = document.getElementById('faction-detail-' + index);
+            detail.classList.toggle('show');
+        }
+
+        // Connections SVG
+        function renderConnections() {
+            const svg = document.getElementById('connections-svg');
+            const width = svg.clientWidth || 900;
+            const height = 600;
+            svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+
+            const nodes = [
+                { id: 'jack', name: 'Jack', x: width * 0.5, y: 100, color: '#4a90d9' },
+                { id: 'kate', name: 'Kate', x: width * 0.35, y: 180, color: '#d94a7b' },
+                { id: 'sawyer', name: 'Sawyer', x: width * 0.65, y: 180, color: '#d97a4a' },
+                { id: 'locke', name: 'Locke', x: width * 0.2, y: 280, color: '#d9a04a' },
+                { id: 'hurley', name: 'Hurley', x: width * 0.5, y: 300, color: '#7ad94a' },
+                { id: 'sayid', name: 'Sayid', x: width * 0.8, y: 280, color: '#9b4ad9' },
+                { id: 'sun', name: 'Sun', x: width * 0.7, y: 380, color: '#d94a4a' },
+                { id: 'jin', name: 'Jin', x: width * 0.82, y: 420, color: '#d94a4a' },
+                { id: 'ben', name: 'Ben', x: width * 0.15, y: 400, color: '#4ad9d9' },
+                { id: 'desmond', name: 'Desmond', x: width * 0.35, y: 420, color: '#d9d94a' },
+                { id: 'charlie', name: 'Charlie', x: width * 0.5, y: 450, color: '#cc99ff' },
+                { id: 'claire', name: 'Claire', x: width * 0.4, y: 530, color: '#ff99cc' },
+                { id: 'jacob', name: 'Jacob', x: width * 0.15, y: 150, color: '#ffffff' },
+                { id: 'mib', name: 'MiB', x: width * 0.85, y: 150, color: '#666666' },
+                { id: 'richard', name: 'Richard', x: width * 0.1, y: 530, color: '#aaaaaa' },
+                { id: 'juliet', name: 'Juliet', x: width * 0.65, y: 500, color: '#66ccff' }
+            ];
+
+            const links = [
+                { source: 'jack', target: 'kate', type: 'love', color: '#d94a7b' },
+                { source: 'kate', target: 'sawyer', type: 'love', color: '#d97a4a' },
+                { source: 'jack', target: 'locke', type: 'rivalry', color: '#ffaa00' },
+                { source: 'jack', target: 'hurley', type: 'friendship', color: '#7ad94a' },
+                { source: 'jack', target: 'claire', type: 'siblings', color: '#ff99cc' },
+                { source: 'sawyer', target: 'juliet', type: 'love', color: '#66ccff' },
+                { source: 'sun', target: 'jin', type: 'love', color: '#d94a4a' },
+                { source: 'charlie', target: 'claire', type: 'love', color: '#cc99ff' },
+                { source: 'desmond', target: 'charlie', type: 'fate', color: '#d9d94a' },
+                { source: 'ben', target: 'locke', type: 'rivalry', color: '#4ad9d9' },
+                { source: 'jacob', target: 'mib', type: 'brothers', color: '#888888' },
+                { source: 'jacob', target: 'richard', type: 'loyalty', color: '#aaaaaa' },
+                { source: 'jacob', target: 'jack', type: 'candidate', color: '#4a90d9' },
+                { source: 'jacob', target: 'hurley', type: 'candidate', color: '#7ad94a' },
+                { source: 'jacob', target: 'sawyer', type: 'candidate', color: '#d97a4a' },
+                { source: 'jacob', target: 'sayid', type: 'candidate', color: '#9b4ad9' },
+                { source: 'ben', target: 'jacob', type: 'killed', color: '#ff0000' },
+                { source: 'mib', target: 'locke', type: 'impersonated', color: '#666666' },
+                { source: 'sayid', target: 'hurley', type: 'friendship', color: '#7ad94a' },
+                { source: 'jack', target: 'sawyer', type: 'rivalry', color: '#ffaa00' },
+                { source: 'ben', target: 'hurley', type: 'loyalty', color: '#7ad94a' },
+                { source: 'desmond', target: 'jack', type: 'fate', color: '#d9d94a' },
+                { source: 'richard', target: 'ben', type: 'advisor', color: '#aaaaaa' }
+            ];
+
+            const connectionDescriptions = {
+                'jack': 'Jack Shephard is connected to nearly everyone. He is Claire\'s half-brother (same father, Christian Shephard), Kate and Juliet\'s love interest, Locke\'s philosophical rival, Hurley\'s close friend, and Jacob\'s chosen successor as island protector. He operated on Ben\'s spine and ultimately sacrificed himself to save the island.',
+                'kate': 'Kate is at the center of the love triangle with Jack and Sawyer. She is a maternal figure to Aaron (Claire\'s son) and helps bring Claire back from darkness. She ultimately kills the Man in Black. Before the crash, she was connected to Sawyer\'s father figure (the U.S. Marshal) and to Jack through their father\'s hospital.',
+                'sawyer': 'Sawyer is connected to many characters through his cons and through fate. His parents were killed by Anthony Cooper — who is also Locke\'s father. He loves both Kate and Juliet. He becomes a leader during the DHARMA years and eventually helps defeat the Man in Black.',
+                'locke': 'Locke is tragically connected to many characters. His father Anthony Cooper is the con man who ruined Sawyer\'s family. Ben sees him as a threat and kills him. The Man in Black takes his form. Jacob touched him after Cooper pushed him from a window. His faith in the island was ultimately vindicated, though he never lived to see it.',
+                'hurley': 'Hurley is the heart of the group, connected to everyone through friendship and kindness. He uses the Numbers that connect to all candidates. He sees dead people (including Charlie, Eko, and Jacob). He becomes the final island protector with Ben as his #2, suggesting a kinder, gentler era for the island.',
+                'sayid': 'Sayid is connected through his military past and his search for Nadia. He tortured Sawyer on the island. He worked as an assassin for Ben off-island. He sacrificed himself to save the other candidates. His connection to Shannon in the afterlife suggests she was his true soulmate.',
+                'sun': 'Sun and Jin\'s connections revolve around their love story and Sun\'s father\'s criminal empire. Sun\'s father employed Jin as an enforcer. Their separation and reunion spans seasons. They are connected to Widmore (who Jin worked for briefly in the sideways) and to Jacob who blessed their wedding.',
+                'jin': 'Jin is bound to Sun through love and to her father through obligation. He was separated from Sun for three years, believed dead. His connection to the other survivors deepened during the DHARMA time period. He chose to die with Sun rather than be separated again.',
+                'ben': 'Ben is one of the most connected characters. He killed Jacob, manipulated Locke, was healed by the Others as a child (with Sayid having shot him), operated as leader of the Others, and eventually found redemption as Hurley\'s advisor. He killed his own father and his daughter was killed because of his choices.',
+                'desmond': 'Desmond is uniquely connected — he is the "variable" in the equation. His love for Penny Widmore (Charles Widmore\'s daughter) drives his story. He is connected to Charlie through visions of his death, to Jack through their stadium meeting, and to everyone through the flash-sideways where he awakens them to their true lives.',
+                'charlie': 'Charlie is connected to Claire through love and to Desmond through fate. Desmond repeatedly saves him from death before Charlie accepts his destiny. His band Drive Shaft connects him to the outside world. His sacrifice in the Looking Glass station saves everyone by allowing communication with the freighter.',
+                'claire': 'Claire is Jack\'s half-sister (both children of Christian Shephard, though they didn\'t know each other). She is connected to Charlie through love, to Kate who raised her son Aaron, and to the Man in Black who "claimed" her during her years alone on the island.',
+                'jacob': 'Jacob is connected to every candidate — he touched each of them at pivotal moments in their lives, subtly guiding them to the island. He is the Man in Black\'s twin brother, Richard\'s benefactor, and the unseen force behind the Others. His death at Ben\'s hands set the final season in motion.',
+                'mib': 'The Man in Black (Smoke Monster) is Jacob\'s twin brother, trapped on the island for millennia. He impersonated Locke to manipulate Ben into killing Jacob. He appeared as Christian Shephard, Yemi, and others. He manipulated Claire, Sayid, and others to his cause. His ultimate defeat required Jack, Kate, and Desmond working together.',
+                'richard': 'Richard Alpert arrived in 1867 on the Black Rock. Jacob saved him and granted immortality. He served as advisor to every leader of the Others — Widmore, Eloise, Ben. He is the bridge between Jacob and humanity. After Jacob\'s death, he found new purpose helping defeat the Man in Black.',
+                'juliet': 'Juliet was recruited by the Others for fertility research. She fell in love with Jack initially, then deeply with Sawyer during the DHARMA years. Her detonation of Jughead is the pivotal moment of Season 5. Her death motivates Sawyer in Season 6. In the flash-sideways, she and Sawyer find each other again.'
+            };
+
+            // Draw links
+            let linksHTML = '';
+            links.forEach(link => {
+                const source = nodes.find(n => n.id === link.source);
+                const target = nodes.find(n => n.id === link.target);
+                linksHTML += '<line class="link" x1="' + source.x + '" y1="' + source.y + '" x2="' + target.x + '" y2="' + target.y + '" stroke="' + link.color + '" stroke-width="1.5" data-source="' + link.source + '" data-target="' + link.target + '"/>';
+            });
+
+            // Draw nodes
+            let nodesHTML = '';
+            nodes.forEach(node => {
+                nodesHTML += '<g class="node" onclick="showConnectionInfo(\'' + node.id + '\')" transform="translate(' + node.x + ',' + node.y + ')">' +
+                    '<circle r="28" fill="' + node.color + '" fill-opacity="0.3" stroke="' + node.color + '" stroke-width="2"/>' +
+                    '<text dy="4">' + node.name + '</text>' +
+                    '</g>';
+            });
+
+            svg.innerHTML = linksHTML + nodesHTML;
+
+            // Store descriptions globally
+            window.connectionDescriptions = connectionDescriptions;
+        }
+
+        function showConnectionInfo(nodeId) {
+            const info = document.getElementById('connection-info');
+            const descriptions = window.connectionDescriptions;
+            const nodes = document.querySelectorAll('.node');
+            const links = document.querySelectorAll('.link');
+
+            // Highlight connected links
+            links.forEach(link => {
+                const source = link.getAttribute('data-source');
+                const target = link.getAttribute('data-target');
+                if (source === nodeId || target === nodeId) {
+                    link.style.strokeOpacity = '1';
+                    link.style.strokeWidth = '3';
+                } else {
+                    link.style.strokeOpacity = '0.1';
+                    link.style.strokeWidth = '1';
+                }
+            });
+
+            // Show info
+            const charName = nodeId.charAt(0).toUpperCase() + nodeId.slice(1);
+            info.innerHTML = '<h3>' + charName + ' - Connections</h3><p>' + (descriptions[nodeId] || 'Click a character to see their connections.') + '</p>';
+        }
+
+        // Initialize everything
+        function init() {
+            renderTimeline();
+            renderCharacters();
+            renderSeasons();
+            renderMysteries();
+            renderDharma();
+            renderNumbers();
+            renderFactions();
+            renderConnections();
+        }
+
+        // Run on load
+        window.addEventListener('load', init);
+        window.addEventListener('resize', renderConnections);
+    </script>
+</body>
+</html>
