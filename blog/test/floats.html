@@ -1029,3 +1029,1640 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Point Numbers - Interactive Deep Dive</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #58a6ff, #a371f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8b949e;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            color: #58a6ff;
+            margin-bottom: 16px;
+            font-size: 1.4em;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 10px;
+        }
+
+        .card h3 {
+            color: #a371f7;
+            margin: 16px 0 10px 0;
+            font-size: 1.15em;
+        }
+
+        .math-block {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 12px 0;
+            text-align: center;
+            overflow-x: auto;
+            font-size: 1.2em;
+        }
+
+        .math-inline {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .explanation {
+            color: #c9d1d9;
+            margin: 10px 0;
+        }
+
+        .explanation p {
+            margin-bottom: 12px;
+        }
+
+        /* Input area */
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .input-row label {
+            font-weight: 600;
+            color: #c9d1d9;
+        }
+
+        .input-row input {
+            background: #0d1117;
+            border: 2px solid #30363d;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: #e6edf3;
+            font-size: 1.2em;
+            width: 220px;
+            outline: none;
+            transition: border-color 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-row input:focus {
+            border-color: #58a6ff;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #30363d;
+            background: #21262d;
+            color: #c9d1d9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .btn.active {
+            background: #1f6feb;
+            border-color: #1f6feb;
+            color: #fff;
+        }
+
+        /* Bit display */
+        .bit-container {
+            margin: 16px 0;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .bit-row {
+            display: flex;
+            gap: 1px;
+            align-items: center;
+            min-width: fit-content;
+        }
+
+        .bit-cell {
+            width: 30px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .bit-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .bit-cell.sign { background: #da3633; color: #fff; }
+        .bit-cell.exponent { background: #2ea043; color: #fff; }
+        .bit-cell.mantissa { background: #1f6feb; color: #fff; }
+
+        .bit-separator {
+            width: 8px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #484f58;
+            font-size: 1.2em;
+        }
+
+        .bit-index-row {
+            display: flex;
+            gap: 1px;
+            align-items: center;
+            min-width: fit-content;
+            margin-top: 2px;
+        }
+
+        .bit-index {
+            width: 30px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6em;
+            color: #484f58;
+        }
+
+        .bit-index-sep {
+            width: 8px;
+            height: 16px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9em;
+        }
+
+        .legend-swatch {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+
+        /* Representations grid */
+        .repr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .repr-item {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .repr-item .label {
+            color: #8b949e;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .repr-item .val {
+            font-family: 'Courier New', monospace;
+            font-size: 1.05em;
+            color: #f0f6fc;
+            word-break: break-all;
+        }
+
+        /* Step by step */
+        .step {
+            background: #0d1117;
+            border-left: 3px solid #a371f7;
+            border-radius: 0 8px 8px 0;
+            padding: 14px 18px;
+            margin: 10px 0;
+        }
+
+        .step .step-num {
+            color: #a371f7;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        /* Plotly charts */
+        .chart-container {
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Interactive sliders */
+        .slider-group {
+            margin: 12px 0;
+        }
+
+        .slider-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: #8b949e;
+            font-size: 0.9em;
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #30363d;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #58a6ff;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            color: #58a6ff;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        /* Analogy box */
+        .analogy {
+            background: linear-gradient(135deg, #1c2431, #1a2332);
+            border: 1px solid #2d5a88;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 14px 0;
+        }
+
+        .analogy .analogy-title {
+            color: #79c0ff;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        /* Canvas for custom drawings */
+        .drawing-canvas {
+            width: 100%;
+            border-radius: 8px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+        }
+
+        /* Special values grid */
+        .special-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .special-btn {
+            padding: 10px 12px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .special-btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+            color: #fff;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 0;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            color: #8b949e;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #c9d1d9;
+        }
+
+        .tab.active {
+            color: #58a6ff;
+            border-bottom-color: #58a6ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Highlight animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .highlight-pulse {
+            animation: pulse 1s ease-in-out 3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bit-cell {
+                width: 22px;
+                height: 30px;
+                font-size: 0.8em;
+            }
+            h1 { font-size: 1.6em; }
+            .card { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Floating Point Numbers: The Full Picture</h1>
+        <p class="subtitle">An interactive, visual guide to how computers store decimal numbers</p>
+
+        <!-- SECTION 1: The Big Idea -->
+        <div class="card">
+            <h2>The Big Idea: Scientific Notation in Binary</h2>
+            <div class="explanation">
+                <p>You already know scientific notation from science class:</p>
+            </div>
+            <div class="math-block" id="mathSciNotation"></div>
+            <div class="explanation">
+                <p>Computers do the <strong>exact same thing</strong>, but in base 2 (binary) instead of base 10:</p>
+            </div>
+            <div class="math-block" id="mathFloatFormula"></div>
+
+            <div class="analogy">
+                <div class="analogy-title">Analogy: Think of it like a ruler</div>
+                <p>Imagine you have a ruler that can slide left and right (the <strong style="color:#2ea043">exponent</strong> controls where it sits on the number line), and the ruler has tick marks on it (the <strong style="color:#1f6feb">mantissa</strong> gives you precision between powers of 2). The <strong style="color:#da3633">sign</strong> just flips it to the negative side.</p>
+            </div>
+
+            <div class="math-block" id="mathParts"></div>
+        </div>
+
+        <!-- SECTION 2: Interactive Explorer -->
+        <div class="card">
+            <h2>Interactive Explorer</h2>
+            <div class="input-row">
+                <label>Enter a number:</label>
+                <input type="text" id="mainInput" value="6.75" placeholder="e.g. 3.14, -0.5, 0.1">
+                <div class="btn-group">
+                    <button class="btn active" id="btnFloat32" onclick="setPrecision(32)">32-bit float</button>
+                    <button class="btn" id="btnFloat64" onclick="setPrecision(64)">64-bit double</button>
+                </div>
+            </div>
+
+            <!-- Bit visualization -->
+            <h3>The Bits (click to toggle!)</h3>
+            <div class="bit-container">
+                <div class="bit-row" id="bitRow"></div>
+                <div class="bit-index-row" id="bitIndexRow"></div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-swatch" style="background:#da3633"></div> Sign (1 bit)</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#2ea043"></div> Exponent (<span id="expBitsCount">8</span> bits)</div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#1f6feb"></div> Mantissa (<span id="manBitsCount">23</span> bits)</div>
+            </div>
+
+            <!-- Representations -->
+            <h3>All Representations</h3>
+            <div class="repr-grid">
+                <div class="repr-item">
+                    <div class="label">You typed (Decimal)</div>
+                    <div class="val" id="reprDecimal">6.75</div>
+                </div>
+                <div class="repr-item">
+                    <div class="label">Actually stored</div>
+                    <div class="val" id="reprStored">6.75</div>
+                </div>
+                <div class="repr-item">
+                    <div class="label">Hexadecimal (of bits)</div>
+                    <div class="val" id="reprHex">0x40D80000</div>
+                </div>
+                <div class="repr-item">
+                    <div class="label">Full Binary</div>
+                    <div class="val" id="reprBinary">01000000110110000...</div>
+                </div>
+                <div class="repr-item">
+                    <div class="label">Rounding Error</div>
+                    <div class="val" id="reprError">0 (exact)</div>
+                </div>
+                <div class="repr-item">
+                    <div class="label">Gap to next float</div>
+                    <div class="val" id="reprGap">...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: Step by Step Calculation -->
+        <div class="card">
+            <h2>Step-by-Step: How the Computer Calculates the Value</h2>
+            <div id="stepByStep"></div>
+        </div>
+
+        <!-- SECTION 4: Converting Decimal to Float -->
+        <div class="card">
+            <h2>How to Convert a Decimal to Float (Worked Example)</h2>
+            <div class="input-row">
+                <label>Convert:</label>
+                <input type="text" id="convertInput" value="6.75" placeholder="e.g. 6.75">
+                <button class="btn" onclick="showConversion()">Show Steps</button>
+            </div>
+            <div id="conversionSteps"></div>
+        </div>
+
+        <!-- SECTION 5: The Mantissa Sum Visualization -->
+        <div class="card">
+            <h2>The Mantissa: A Sum of Fractions</h2>
+            <div class="explanation">
+                <p>The mantissa stores the "digits" of your number as a sum of powers of 1/2. Each bit position represents a fraction:</p>
+            </div>
+            <div class="math-block" id="mathMantissaSum"></div>
+            <div class="explanation">
+                <p>Use the sliders below to see how toggling each mantissa bit adds a fraction to the total:</p>
+            </div>
+            <div id="mantissaSliders"></div>
+            <div class="math-block" id="mathMantissaResult"></div>
+            <div class="chart-container" id="mantissaBarChart" style="height: 300px;"></div>
+        </div>
+
+        <!-- SECTION 6: Float Density -->
+        <div class="card">
+            <h2>Float Density: Numbers Aren't Evenly Spaced!</h2>
+            <div class="explanation">
+                <p>This is one of the most important things to understand: <strong>floating point numbers are NOT evenly distributed</strong> on the number line. They are packed very tightly near zero and become more spread out as numbers get larger.</p>
+                <p>Between any two consecutive powers of 2 (like 1-2, 2-4, 4-8), there are <strong>exactly the same number</strong> of representable floats!</p>
+            </div>
+
+            <div class="slider-group">
+                <label>Zoom into range: <span class="slider-value" id="densityRangeLabel">0 to 4</span></label>
+                <input type="range" id="densityZoom" min="0" max="10" step="1" value="2" oninput="updateDensityPlot()">
+            </div>
+            <div class="chart-container" id="densityPlot" style="height: 350px;"></div>
+
+            <h3>Gap Size vs Number Magnitude</h3>
+            <div class="explanation">
+                <p>This plot shows how the gap between consecutive floats grows as numbers get larger:</p>
+            </div>
+            <div class="chart-container" id="gapPlot" style="height: 300px;"></div>
+        </div>
+
+        <!-- SECTION 7: The 0.1 + 0.2 Problem -->
+        <div class="card">
+            <h2>Why 0.1 + 0.2 ≠ 0.3</h2>
+            <div class="explanation">
+                <p>This is the most famous floating point "bug" — but it's not a bug, it's a fundamental limitation. Let's see exactly why:</p>
+            </div>
+
+            <div class="step">
+                <div class="step-num">The Problem</div>
+                <div class="math-block" id="mathPointOne"></div>
+                <p>Just like 1/3 = 0.333... repeats forever in decimal, the number 0.1 repeats forever in binary!</p>
+            </div>
+
+            <div id="additionVisualization"></div>
+
+            <div class="chart-container" id="additionPlot" style="height: 250px;"></div>
+        </div>
+
+        <!-- SECTION 8: Interactive Number Line -->
+        <div class="card">
+            <h2>Interactive Number Line</h2>
+            <div class="explanation">
+                <p>Drag the slider to move along the number line. Watch how the spacing between representable floats changes!</p>
+            </div>
+            <div class="slider-group">
+                <label>Center position: <span class="slider-value" id="numberLineCenter">1.0</span></label>
+                <input type="range" id="numberLineSlider" min="-5" max="20" step="0.1" value="0" oninput="updateNumberLine()">
+            </div>
+            <div class="chart-container" id="numberLinePlot" style="height: 200px;"></div>
+            <div class="math-block" id="numberLineInfo"></div>
+        </div>
+
+        <!-- SECTION 9: Exponent Explorer -->
+        <div class="card">
+            <h2>Exponent Explorer: Powers of 2</h2>
+            <div class="explanation">
+                <p>The exponent determines the "scale" of your number. Drag the slider to see how changing the exponent shifts the value:</p>
+            </div>
+            <div class="slider-group">
+                <label>Exponent value (stored): <span class="slider-value" id="expSliderVal">127</span> → actual power: <span class="slider-value" id="expActualVal">0</span></label>
+                <input type="range" id="expSlider" min="0" max="254" step="1" value="127" oninput="updateExpExplorer()">
+            </div>
+            <div class="math-block" id="expFormula"></div>
+            <div class="chart-container" id="expPlot" style="height: 280px;"></div>
+        </div>
+
+        <!-- SECTION 10: Special Values -->
+        <div class="card">
+            <h2>Special Values</h2>
+            <div class="explanation">
+                <p>IEEE 754 reserves certain bit patterns for special values that aren't normal numbers:</p>
+            </div>
+            <div class="special-grid">
+                <div class="special-btn" onclick="setNumber('0')">+0</div>
+                <div class="special-btn" onclick="setNumber('-0')">-0</div>
+                <div class="special-btn" onclick="setNumber('Infinity')">+∞</div>
+                <div class="special-btn" onclick="setNumber('-Infinity')">-∞</div>
+                <div class="special-btn" onclick="setNumber('NaN')">NaN</div>
+                <div class="special-btn" onclick="setNumber('1')">1.0</div>
+                <div class="special-btn" onclick="setNumber('-1')">-1.0</div>
+                <div class="special-btn" onclick="setNumber('0.1')">0.1</div>
+                <div class="special-btn" onclick="setNumber('0.5')">0.5 (exact!)</div>
+                <div class="special-btn" onclick="setNumber('3.14159265')">π approx</div>
+                <div class="special-btn" onclick="setNumber('1e38')">1×10³⁸</div>
+                <div class="special-btn" onclick="setNumber('1e-38')">1×10⁻³⁸</div>
+            </div>
+            <div class="math-block" id="specialExplanation"></div>
+        </div>
+
+        <!-- SECTION 11: Limits -->
+        <div class="card">
+            <h2>The Limits</h2>
+            <div class="chart-container" id="limitsPlot" style="height: 350px;"></div>
+            <div class="math-block" id="mathLimits"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============ GLOBALS ============
+        let precision = 32;
+        let currentBits = [];
+        let mantissaToggles = new Array(8).fill(0);
+
+        // ============ TEMML RENDERING ============
+        function renderMath(elementId, latex) {
+            const el = document.getElementById(elementId);
+            try {
+                el.innerHTML = temml.renderToString(latex, { displayMode: true });
+            } catch(e) {
+                el.textContent = latex;
+            }
+        }
+
+        function renderMathInline(latex) {
+            try {
+                return temml.renderToString(latex, { displayMode: false });
+            } catch(e) {
+                return latex;
+            }
+        }
+
+        // ============ INITIAL MATH RENDERING ============
+        function renderStaticMath() {
+            renderMath('mathSciNotation',
+                '6750 = \\underbrace{6.75}_{\\text{significand}} \\times \\underbrace{10}_{\\text{base}}^{\\overbrace{3}^{\\text{exponent}}}'
+            );
+
+            renderMath('mathFloatFormula',
+                '\\text{value} = \\underbrace{(-1)^{\\color{#da3633}s}}_{\\text{sign}} \\times \\underbrace{(1 + \\color{#1f6feb}f\\color{white})}_{\\text{mantissa}} \\times \\underbrace{2^{\\color{#2ea043}e\\color{white} - \\text{bias}}}_{\\text{exponent}}'
+            );
+
+            renderMath('mathParts',
+                '\\underbrace{\\color{#da3633}0}_{\\substack{\\text{sign}\\\\\\text{(+)}}} \\quad \\underbrace{\\color{#2ea043}10000001}_{\\substack{\\text{exponent}\\\\= 129 - 127 = 2}} \\quad \\underbrace{\\color{#1f6feb}10110000000000000000000}_{\\substack{\\text{mantissa}\\\\= 1 + 0.5 + 0.125 + 0.0625 = 1.6875}}'
+            );
+
+            renderMath('mathMantissaSum',
+                '1 + \\sum_{i=1}^{23} b_i \\cdot 2^{-i} = 1 + \\frac{b_1}{2} + \\frac{b_2}{4} + \\frac{b_3}{8} + \\frac{b_4}{16} + \\cdots'
+            );
+
+            renderMath('mathPointOne',
+                '0.1_{10} = 0.0\\overline{0011}_{2} = 0.00011001100110011001100110011\\ldots'
+            );
+
+            renderMath('mathLimits',
+                '\\begin{aligned} \\text{32-bit max} &= (2 - 2^{-23}) \\times 2^{127} \\approx 3.4028 \\times 10^{38} \\\\ \\text{32-bit min normal} &= 1.0 \\times 2^{-126} \\approx 1.175 \\times 10^{-38} \\\\ \\text{32-bit min denormal} &= 2^{-149} \\approx 1.4 \\times 10^{-45} \\\\ \\text{64-bit max} &= (2 - 2^{-52}) \\times 2^{1023} \\approx 1.798 \\times 10^{308} \\end{aligned}'
+            );
+        }
+
+        // ============ FLOAT UTILITIES ============
+        function numToBits32(num) {
+            const buf = new ArrayBuffer(4);
+            const view = new DataView(buf);
+            view.setFloat32(0, num, false);
+            const int = view.getUint32(0, false);
+            let bits = [];
+            for (let i = 31; i >= 0; i--) bits.push((int >>> i) & 1);
+            return bits;
+        }
+
+        function numToBits64(num) {
+            const buf = new ArrayBuffer(8);
+            const view = new DataView(buf);
+            view.setFloat64(0, num, false);
+            const hi = view.getUint32(0, false);
+            const lo = view.getUint32(4, false);
+            let bits = [];
+            for (let i = 31; i >= 0; i--) bits.push((hi >>> i) & 1);
+            for (let i = 31; i >= 0; i--) bits.push((lo >>> i) & 1);
+            return bits;
+        }
+
+        function bitsToNum32(bits) {
+            let int = 0;
+            for (let i = 0; i < 32; i++) int = int * 2 + bits[i];
+            const buf = new ArrayBuffer(4);
+            const view = new DataView(buf);
+            view.setUint32(0, int >>> 0, false);
+            return view.getFloat32(0, false);
+        }
+
+        function bitsToNum64(bits) {
+            let hi = 0, lo = 0;
+            for (let i = 0; i < 32; i++) hi = hi * 2 + bits[i];
+            for (let i = 32; i < 64; i++) lo = lo * 2 + bits[i];
+            const buf = new ArrayBuffer(8);
+            const view = new DataView(buf);
+            view.setUint32(0, hi >>> 0, false);
+            view.setUint32(4, lo >>> 0, false);
+            return view.getFloat64(0, false);
+        }
+
+        function nextFloat32(num) {
+            const buf = new ArrayBuffer(4);
+            const view = new DataView(buf);
+            view.setFloat32(0, num, false);
+            let int = view.getUint32(0, false);
+            if (num > 0) int--; else int++;
+            view.setUint32(0, int >>> 0, false);
+            return view.getFloat32(0, false);
+        }
+
+        function getFloatsInRange(start, end, maxCount) {
+            const buf = new ArrayBuffer(4);
+            const view = new DataView(buf);
+            view.setFloat32(0, start, false);
+            let intStart = view.getUint32(0, false);
+            view.setFloat32(0, end, false);
+            let intEnd = view.getUint32(0, false);
+
+            const total = intEnd - intStart;
+            const step = Math.max(1, Math.floor(total / maxCount));
+            let floats = [];
+
+            for (let i = intStart; i <= intEnd && floats.length < maxCount; i += step) {
+                view.setUint32(0, i, false);
+                floats.push(view.getFloat32(0, false));
+            }
+            return { floats, total };
+        }
+
+        // ============ PRECISION TOGGLE ============
+        function setPrecision(p) {
+            precision = p;
+            document.getElementById('btnFloat32').classList.toggle('active', p === 32);
+            document.getElementById('btnFloat64').classList.toggle('active', p === 64);
+            document.getElementById('expBitsCount').textContent = p === 32 ? '8' : '11';
+            document.getElementById('manBitsCount').textContent = p === 32 ? '23' : '52';
+            updateAll();
+        }
+
+        function setNumber(val) {
+            document.getElementById('mainInput').value = val;
+            updateAll();
+        }
+
+        // ============ MAIN UPDATE ============
+        function updateAll() {
+            const input = document.getElementById('mainInput').value.trim();
+            let num = parseSpecialValue(input);
+
+            let bits;
+            if (precision === 32) {
+                bits = numToBits32(num);
+            } else {
+                bits = numToBits64(num);
+            }
+            currentBits = bits;
+
+            renderBitDisplay(bits);
+            updateRepresentations(num, bits);
+            updateStepByStep(bits);
+            updateSpecialExplanation(bits);
+        }
+
+        function parseSpecialValue(input) {
+            if (input.toLowerCase() === 'nan') return NaN;
+            if (input.toLowerCase() === 'infinity' || input === '+Infinity') return Infinity;
+            if (input === '-Infinity' || input === '-infinity') return -Infinity;
+            if (input === '-0') return -0;
+            let num = parseFloat(input);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function updateFromBitToggle() {
+            let num;
+            if (precision === 32) {
+                num = bitsToNum32(currentBits);
+            } else {
+                num = bitsToNum64(currentBits);
+            }
+
+            if (Object.is(num, -0)) {
+                document.getElementById('mainInput').value = '-0';
+            } else if (isNaN(num)) {
+                document.getElementById('mainInput').value = 'NaN';
+            } else {
+                document.getElementById('mainInput').value = num.toString();
+            }
+
+            renderBitDisplay(currentBits);
+            updateRepresentations(num, currentBits);
+            updateStepByStep(currentBits);
+            updateSpecialExplanation(currentBits);
+        }
+
+        // ============ BIT DISPLAY ============
+        function renderBitDisplay(bits) {
+            const row = document.getElementById('bitRow');
+            const indexRow = document.getElementById('bitIndexRow');
+            row.innerHTML = '';
+            indexRow.innerHTML = '';
+
+            const expBits = precision === 32 ? 8 : 11;
+
+            for (let i = 0; i < bits.length; i++) {
+                // Add separators
+                if (i === 1 || i === 1 + expBits) {
+                    const sep = document.createElement('div');
+                    sep.className = 'bit-separator';
+                    sep.textContent = '|';
+                    row.appendChild(sep);
+
+                    const sepIdx = document.createElement('div');
+                    sepIdx.className = 'bit-index-sep';
+                    indexRow.appendChild(sepIdx);
+                }
+
+                let type = i === 0 ? 'sign' : (i <= expBits ? 'exponent' : 'mantissa');
+
+                const cell = document.createElement('div');
+                cell.className = 'bit-cell ' + type;
+                cell.textContent = bits[i];
+                cell.addEventListener('click', ((idx) => () => {
+                    currentBits[idx] = currentBits[idx] === 0 ? 1 : 0;
+                    updateFromBitToggle();
+                })(i));
+                row.appendChild(cell);
+
+                const idx = document.createElement('div');
+                idx.className = 'bit-index';
+                idx.textContent = i;
+                indexRow.appendChild(idx);
+            }
+        }
+
+        // ============ REPRESENTATIONS ============
+        function updateRepresentations(inputNum, bits) {
+            const storedNum = precision === 32 ? bitsToNum32(bits) : bitsToNum64(bits);
+
+            // Decimal
+            if (Object.is(inputNum, -0)) {
+                document.getElementById('reprDecimal').textContent = '-0';
+            } else {
+                document.getElementById('reprDecimal').textContent = String(inputNum);
+            }
+
+            // Stored
+            if (Object.is(storedNum, -0)) {
+                document.getElementById('reprStored').textContent = '-0';
+            } else if (isNaN(storedNum)) {
+                document.getElementById('reprStored').textContent = 'NaN';
+            } else {
+                document.getElementById('reprStored').textContent = storedNum.toPrecision(precision === 32 ? 9 : 17);
+            }
+
+            // Binary
+            document.getElementById('reprBinary').textContent = bits.join('');
+
+            // Hex
+            let hex = '';
+            const binStr = bits.join('');
+            for (let i = 0; i < binStr.length; i += 4) {
+                hex += parseInt(binStr.substr(i, 4), 2).toString(16).toUpperCase();
+            }
+            document.getElementById('reprHex').textContent = '0x' + hex;
+
+            // Error
+            if (isNaN(storedNum) || !isFinite(storedNum) || isNaN(inputNum) || !isFinite(inputNum)) {
+                document.getElementById('reprError').textContent = 'N/A (special value)';
+            } else {
+                const err = storedNum - inputNum;
+                document.getElementById('reprError').textContent = err === 0 ? '0 (exact!)' : ((err > 0 ? '+' : '') + err.toExponential(8));
+            }
+
+            // Gap
+            if (isNaN(storedNum) || !isFinite(storedNum)) {
+                document.getElementById('reprGap').textContent = 'N/A';
+            } else if (precision === 32) {
+                const next = nextFloat32(storedNum);
+                const gap = next - storedNum;
+                document.getElementById('reprGap').textContent = gap.toExponential(4);
+            } else {
+                document.getElementById('reprGap').textContent = '(64-bit gap is tiny)';
+            }
+        }
+
+        // ============ STEP BY STEP ============
+        function updateStepByStep(bits) {
+            const container = document.getElementById('stepByStep');
+            const expBitsCount = precision === 32 ? 8 : 11;
+            const manBitsCount = precision === 32 ? 23 : 52;
+            const bias = precision === 32 ? 127 : 1023;
+
+            const sign = bits[0];
+            let expVal = 0;
+            for (let i = 1; i <= expBitsCount; i++) expVal = expVal * 2 + bits[i];
+
+            let manBits = bits.slice(1 + expBitsCount);
+            let manBinStr = manBits.join('');
+
+            const allExpOnes = expVal === (Math.pow(2, expBitsCount) - 1);
+            const allManZero = manBits.every(b => b === 0);
+
+            // Special cases
+            if (allExpOnes && !allManZero) {
+                container.innerHTML = '<div class="step"><div class="step-num">Result</div><p>Exponent is all 1s and mantissa is non-zero → <strong>NaN (Not a Number)</strong></p><p>This happens with operations like 0/0, √(-1), ∞ - ∞</p></div>';
+                return;
+            }
+            if (allExpOnes && allManZero) {
+                container.innerHTML = '<div class="step"><div class="step-num">Result</div><p>Exponent is all 1s and mantissa is all zeros → <strong>' + (sign ? '-' : '+') + '∞ (Infinity)</strong></p></div>';
+                return;
+            }
+
+            const isDenormal = expVal === 0;
+            let html = '';
+
+            // Step 1: Sign
+            html += '<div class="step"><div class="step-num">Step 1: Read the Sign Bit</div>';
+            html += '<div class="math-block" id="step1Math"></div>';
+            html += '</div>';
+
+            // Step 2: Exponent
+            html += '<div class="step"><div class="step-num">Step 2: Decode the Exponent</div>';
+            html += '<div class="math-block" id="step2Math"></div>';
+            html += '</div>';
+
+            // Step 3: Mantissa
+            html += '<div class="step"><div class="step-num">Step 3: Build the Mantissa</div>';
+            html += '<div class="math-block" id="step3Math"></div>';
+            html += '</div>';
+
+            // Step 4: Combine
+            html += '<div class="step"><div class="step-num">Step 4: Combine Everything</div>';
+            html += '<div class="math-block" id="step4Math"></div>';
+            html += '</div>';
+
+            container.innerHTML = html;
+
+            // Render math for each step
+            renderMath('step1Math',
+                '\\color{#da3633}s = ' + sign + ' \\color{white}\\implies (-1)^{' + sign + '} = ' + (sign === 0 ? '+1' : '-1')
+            );
+
+            if (isDenormal) {
+                renderMath('step2Math',
+                    '\\color{#2ea043}e_{\\text{stored}} = ' + bits.slice(1, 1 + expBitsCount).join('') + '_2 = 0 \\color{white}\\quad \\text{(denormalized!)} \\quad e_{\\text{actual}} = 1 - ' + bias + ' = ' + (1 - bias)
+                );
+            } else {
+                renderMath('step2Math',
+                    '\\color{#2ea043}e_{\\text{stored}} = ' + bits.slice(1, 1 + expBitsCount).join('') + '_2 = ' + expVal + ' \\color{white}\\quad e_{\\text{actual}} = ' + expVal + ' - ' + bias + ' = ' + (expVal - bias)
+                );
+            }
+
+            // Build mantissa sum
+            let manSum = isDenormal ? 0 : 1;
+            let manTerms = isDenormal ? [] : ['1'];
+            let manFractions = [];
+            for (let i = 0; i < Math.min(manBits.length, 12); i++) {
+                if (manBits[i] === 1) {
+                    manSum += Math.pow(2, -(i + 1));
+                    manTerms.push('\\frac{1}{' + Math.pow(2, i + 1) + '}');
+                    manFractions.push('2^{-' + (i + 1) + '}');
+                }
+            }
+            // Count remaining bits
+            for (let i = 12; i < manBits.length; i++) {
+                if (manBits[i] === 1) {
+                    manSum += Math.pow(2, -(i + 1));
+                }
+            }
+
+            let manLatex = '\\color{#1f6feb}\\text{mantissa bits: } ' + manBinStr.substring(0, 20) + (manBinStr.length > 20 ? '\\ldots' : '');
+            if (manTerms.length > 0) {
+                manLatex += '\\color{white} \\\\ = ' + manTerms.join(' + ');
+                if (manBits.slice(12).some(b => b === 1)) manLatex += ' + \\cdots';
+                manLatex += ' = ' + manSum.toPrecision(10);
+            } else {
+                manLatex += '\\color{white} \\\\ = ' + (isDenormal ? '0' : '1') + '.0';
+            }
+
+            renderMath('step3Math', manLatex);
+
+            // Final combination
+            const actualExp = isDenormal ? (1 - bias) : (expVal - bias);
+            const finalVal = precision === 32 ? bitsToNum32(bits) : bitsToNum64(bits);
+            let finalStr;
+            if (Object.is(finalVal, -0)) finalStr = '-0';
+            else finalStr = finalVal.toPrecision(precision === 32 ? 9 : 17);
+
+            renderMath('step4Math',
+                '\\text{value} = ' + (sign === 0 ? '+1' : '-1') + ' \\times ' + manSum.toPrecision(8) + ' \\times 2^{' + actualExp + '} = \\boxed{' + finalStr + '}'
+            );
+        }
+
+        // ============ SPECIAL EXPLANATION ============
+        function updateSpecialExplanation(bits) {
+            const expBitsCount = precision === 32 ? 8 : 11;
+            let expVal = 0;
+            for (let i = 1; i <= expBitsCount; i++) expVal = expVal * 2 + bits[i];
+            const allExpOnes = expVal === (Math.pow(2, expBitsCount) - 1);
+            const manBits = bits.slice(1 + expBitsCount);
+            const allManZero = manBits.every(b => b === 0);
+
+            let latex = '';
+            if (expVal === 0 && allManZero) {
+                latex = '\\text{Exponent = 0, Mantissa = 0} \\implies \\pm 0 \\text{ (yes, there are TWO zeros!)}';
+            } else if (expVal === 0) {
+                latex = '\\text{Exponent = 0, Mantissa } \\neq 0 \\implies \\text{Denormalized (subnormal) number — very tiny!}';
+            } else if (allExpOnes && allManZero) {
+                latex = '\\text{Exponent = all 1s, Mantissa = 0} \\implies \\pm\\infty';
+            } else if (allExpOnes) {
+                latex = '\\text{Exponent = all 1s, Mantissa } \\neq 0 \\implies \\text{NaN (Not a Number)}';
+            } else {
+                latex = '\\text{Normal number: } (-1)^{' + bits[0] + '} \\times 1.' + manBits.slice(0, 8).join('') + '\\ldots \\times 2^{' + (expVal - (precision === 32 ? 127 : 1023)) + '}';
+            }
+            renderMath('specialExplanation', latex);
+        }
+
+        // ============ CONVERSION STEPS ============
+        function showConversion() {
+            const input = document.getElementById('convertInput').value.trim();
+            const num = parseFloat(input);
+            const container = document.getElementById('conversionSteps');
+
+            if (isNaN(num) || !isFinite(num) || num === 0) {
+                container.innerHTML = '<div class="step"><div class="step-num">Note</div><p>Try a normal number like 6.75, 3.14, or -0.5 for a detailed conversion walkthrough.</p></div>';
+                return;
+            }
+
+            const absNum = Math.abs(num);
+            const signBit = num < 0 ? 1 : 0;
+
+            // Find integer and fractional parts
+            const intPart = Math.floor(absNum);
+            const fracPart = absNum - intPart;
+
+            // Convert integer part to binary
+            let intBinary = intPart === 0 ? '0' : intPart.toString(2);
+
+            // Convert fractional part to binary (up to 30 bits)
+            let fracBinary = '';
+            let frac = fracPart;
+            let fracSteps = [];
+            for (let i = 0; i < 30 && frac > 0; i++) {
+                frac *= 2;
+                if (frac >= 1) {
+                    fracBinary += '1';
+                    fracSteps.push(frac.toFixed(6) + ' ≥ 1 → bit = 1, remainder = ' + (frac - 1).toFixed(6));
+                    frac -= 1;
+                } else {
+                    fracBinary += '0';
+                    fracSteps.push(frac.toFixed(6) + ' < 1 → bit = 0');
+                }
+            }
+            const repeats = frac > 0;
+
+            // Full binary
+            let fullBinary = intBinary + '.' + fracBinary;
+
+            // Normalize: find the position of the first 1
+            let normalized;
+            let exponent;
+            if (intPart > 0) {
+                exponent = intBinary.length - 1;
+                normalized = intBinary[0] + '.' + intBinary.slice(1) + fracBinary;
+            } else {
+                // Find first 1 in fraction
+                let firstOne = fracBinary.indexOf('1');
+                exponent = -(firstOne + 1);
+                normalized = '1.' + fracBinary.slice(firstOne + 1);
+            }
+
+            const bias = precision === 32 ? 127 : 1023;
+            const storedExp = exponent + bias;
+            const expBitsCount = precision === 32 ? 8 : 11;
+            const manBitsCount = precision === 32 ? 23 : 52;
+            const expBinary = storedExp.toString(2).padStart(expBitsCount, '0');
+
+            // Mantissa (everything after the "1.")
+            let mantissaBits;
+            if (intPart > 0) {
+                mantissaBits = intBinary.slice(1) + fracBinary;
+            } else {
+                let firstOne = fracBinary.indexOf('1');
+                mantissaBits = fracBinary.slice(firstOne + 1);
+            }
+            mantissaBits = mantissaBits.padEnd(manBitsCount, '0').slice(0, manBitsCount);
+
+            let html = '';
+
+            // Step 1
+            html += '<div class="step"><div class="step-num">Step 1: Determine the Sign</div>';
+            html += '<div class="math-block" id="conv1"></div>';
+            html += '</div>';
+
+            // Step 2
+            html += '<div class="step"><div class="step-num">Step 2: Convert to Binary</div>';
+            html += '<p><strong>Integer part:</strong> ' + intPart + ' → ' + intBinary + '</p>';
+            html += '<p><strong>Fractional part:</strong> Multiply by 2 repeatedly:</p>';
+            html += '<div style="background:#0d1117;padding:10px;border-radius:6px;font-family:monospace;font-size:0.85em;max-height:150px;overflow-y:auto;margin:8px 0;">';
+            fracSteps.slice(0, 10).forEach(s => { html += s + '<br>'; });
+            if (fracSteps.length > 10) html += '...<br>';
+            if (repeats) html += '<em style="color:#f0883e;">Pattern repeats forever!</em>';
+            html += '</div>';
+            html += '<div class="math-block" id="conv2"></div>';
+            html += '</div>';
+
+            // Step 3
+            html += '<div class="step"><div class="step-num">Step 3: Normalize (Scientific Notation in Binary)</div>';
+            html += '<div class="math-block" id="conv3"></div>';
+            html += '</div>';
+
+            // Step 4
+            html += '<div class="step"><div class="step-num">Step 4: Encode the Exponent</div>';
+            html += '<div class="math-block" id="conv4"></div>';
+            html += '</div>';
+
+            // Step 5
+            html += '<div class="step"><div class="step-num">Step 5: Store the Mantissa (drop the leading 1)</div>';
+            html += '<div class="math-block" id="conv5"></div>';
+            html += '</div>';
+
+            // Step 6
+            html += '<div class="step"><div class="step-num">Step 6: Final Result</div>';
+            html += '<div class="math-block" id="conv6"></div>';
+            html += '</div>';
+
+            container.innerHTML = html;
+
+            renderMath('conv1', num + (num >= 0 ? ' \\geq 0' : ' < 0') + ' \\implies \\text{sign bit} = \\color{#da3633}' + signBit);
+            renderMath('conv2', absNum + '_{10} = ' + fullBinary.substring(0, 30) + (repeats ? '\\ldots' : '') + '_{2}');
+            renderMath('conv3', fullBinary.substring(0, 20) + (repeats ? '\\ldots' : '') + ' = 1.' + mantissaBits.substring(0, 15) + '\\ldots \\times 2^{' + exponent + '}');
+            renderMath('conv4', '\\text{stored exponent} = ' + exponent + ' + ' + bias + ' = ' + storedExp + ' = \\color{#2ea043}' + expBinary + '\\color{white}_2');
+            renderMath('conv5', '\\text{mantissa bits} = \\color{#1f6feb}' + mantissaBits.substring(0, 23) + (manBitsCount > 23 ? '\\ldots' : ''));
+
+            const finalBits = signBit + ' \\;|\\; ' + expBinary + ' \\;|\\; ' + mantissaBits.substring(0, manBitsCount);
+            renderMath('conv6', '\\boxed{\\color{#da3633}' + signBit + '\\color{white}\\;' + '\\color{#2ea043}' + expBinary + '\\color{white}\\;' + '\\color{#1f6feb}' + mantissaBits.substring(0, Math.min(manBitsCount, 23)) + (manBitsCount > 23 ? '\\ldots' : '') + '}');
+        }
+
+        // ============ MANTISSA INTERACTIVE ============
+        function buildMantissaSliders() {
+            const container = document.getElementById('mantissaSliders');
+            let html = '<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:8px;">';
+
+            for (let i = 0; i < 8; i++) {
+                const fraction = '1/' + Math.pow(2, i + 1);
+                const decimal = (1 / Math.pow(2, i + 1)).toFixed(i + 1 > 4 ? 6 : 4);
+                html += '<div style="background:#0d1117;padding:10px;border-radius:6px;text-align:center;">';
+                html += '<div style="color:#8b949e;font-size:0.75em;">bit ' + (i + 1) + ' = ' + fraction + '</div>';
+                html += '<div style="font-size:0.85em;color:#58a6ff;">' + decimal + '</div>';
+                html += '<button class="btn" id="manToggle' + i + '" onclick="toggleMantissaBit(' + i + ')" style="margin-top:6px;width:100%;padding:6px;">' + (mantissaToggles[i] ? 'ON (1)' : 'OFF (0)') + '</button>';
+                html += '</div>';
+            }
+            html += '</div>';
+            container.innerHTML = html;
+            updateMantissaResult();
+        }
+
+        function toggleMantissaBit(i) {
+            mantissaToggles[i] = mantissaToggles[i] ? 0 : 1;
+            const btn = document.getElementById('manToggle' + i);
+            btn.textContent = mantissaToggles[i] ? 'ON (1)' : 'OFF (0)';
+            btn.style.background = mantissaToggles[i] ? '#1f6feb' : '#21262d';
+            updateMantissaResult();
+            updateMantissaChart();
+        }
+
+        function updateMantissaResult() {
+            let sum = 1;
+            let terms = ['1'];
+            for (let i = 0; i < 8; i++) {
+                if (mantissaToggles[i]) {
+                    sum += Math.pow(2, -(i + 1));
+                    terms.push('\\frac{1}{' + Math.pow(2, i + 1) + '}');
+                }
+            }
+            renderMath('mathMantissaResult',
+                '1.\\text{mantissa} = ' + terms.join(' + ') + ' = \\boxed{' + sum.toFixed(8) + '}'
+            );
+        }
+
+        function updateMantissaChart() {
+            let values = [];
+            let labels = [];
+            let colors = [];
+
+            // The implicit 1
+            values.push(1);
+            labels.push('Implicit 1');
+            colors.push('#f0883e');
+
+            for (let i = 0; i < 8; i++) {
+                if (mantissaToggles[i]) {
+                    values.push(Math.pow(2, -(i + 1)));
+                    labels.push('Bit ' + (i + 1) + ' (1/' + Math.pow(2, i + 1) + ')');
+                    colors.push('#1f6feb');
+                }
+            }
+
+            Plotly.newPlot('mantissaBarChart', [{
+                type: 'bar',
+                x: labels,
+                y: values,
+                marker: { color: colors },
+                text: values.map(v => v.toFixed(6)),
+                textposition: 'outside'
+            }], {
+                title: { text: 'Mantissa Components (sum = ' + values.reduce((a, b) => a + b, 0).toFixed(8) + ')', font: { color: '#c9d1d9', size: 14 } },
+                paper_bgcolor: '#0d1117',
+                plot_bgcolor: '#0d1117',
+                font: { color: '#8b949e' },
+                xaxis: { gridcolor: '#21262d' },
+                yaxis: { gridcolor: '#21262d', title: 'Value' },
+                margin: { t: 50, b: 80, l: 50, r: 20 }
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        // ============ DENSITY PLOT ============
+        function updateDensityPlot() {
+            const zoom = parseInt(document.getElementById('densityZoom').value);
+            const ranges = [
+                [0, 0.0625], [0, 0.125], [0, 0.5], [0, 1], [0, 2], [0, 4],
+                [0, 8], [0, 16], [0, 64], [0, 256], [0, 1024]
+            ];
+            const [start, end] = ranges[zoom];
+            document.getElementById('densityRangeLabel').textContent = start + ' to ' + end;
+
+            const { floats, total } = getFloatsInRange(start, end, 500);
+
+            // Create tick marks on a number line
+            const y = floats.map(() => 0);
+
+            Plotly.newPlot('densityPlot', [{
+                type: 'scatter',
+                mode: 'markers',
+                x: floats,
+                y: y,
+                marker: {
+                    symbol: 'line-ns',
+                    size: 12,
+                    color: '#58a6ff',
+                    line: { width: 1, color: '#58a6ff' }
+                },
+                hovertemplate: '%{x}<extra></extra>'
+            }], {
+                title: { text: 'Representable 32-bit Floats (' + total.toLocaleString() + ' total in this range)', font: { color: '#c9d1d9', size: 14 } },
+                paper_bgcolor: '#0d1117',
+                plot_bgcolor: '#0d1117',
+                font: { color: '#8b949e' },
+                xaxis: {
+                    gridcolor: '#21262d',
+                    title: 'Value',
+                    range: [start - (end - start) * 0.02, end + (end - start) * 0.02]
+                },
+                yaxis: {
+                    visible: false,
+                    range: [-1, 1]
+                },
+                margin: { t: 50, b: 50, l: 20, r: 20 },
+                shapes: [{
+                    type: 'line',
+                    x0: start, x1: end,
+                    y0: 0, y1: 0,
+                    line: { color: '#30363d', width: 2 }
+                }],
+                annotations: [
+                    { x: (end - start) * 0.15 + start, y: 0.6, text: 'Dense here (small numbers)', showarrow: false, font: { color: '#2ea043', size: 11 } },
+                    { x: (end - start) * 0.85 + start, y: 0.6, text: 'Sparse here (larger numbers)', showarrow: false, font: { color: '#da3633', size: 11 } }
+                ]
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        // ============ GAP PLOT ============
+        function drawGapPlot() {
+            let xs = [];
+            let gaps = [];
+
+            const buf = new ArrayBuffer(4);
+            const view = new DataView(buf);
+
+            // Sample floats from small to large
+            for (let exp = -20; exp <= 20; exp += 0.5) {
+                const num = Math.pow(2, exp);
+                if (!isFinite(num)) continue;
+                const next = nextFloat32(num);
+                const gap = next - num;
+                if (gap > 0 && isFinite(gap)) {
+                    xs.push(num);
+                    gaps.push(gap);
+                }
+            }
+
+            Plotly.newPlot('gapPlot', [{
+                type: 'scatter',
+                mode: 'lines+markers',
+                x: xs,
+                y: gaps,
+                marker: { color: '#a371f7', size: 4 },
+                line: { color: '#a371f7', width: 2 },
+                hovertemplate: 'At %{x:.4e}<br>Gap: %{y:.4e}<extra></extra>'
+            }], {
+                title: { text: 'Gap Between Consecutive Floats vs. Magnitude', font: { color: '#c9d1d9', size: 14 } },
+                paper_bgcolor: '#0d1117',
+                plot_bgcolor: '#0d1117',
+                font: { color: '#8b949e' },
+                xaxis: { type: 'log', gridcolor: '#21262d', title: 'Number magnitude (log scale)' },
+                yaxis: { type: 'log', gridcolor: '#21262d', title: 'Gap size (log scale)' },
+                margin: { t: 50, b: 60, l: 70, r: 20 },
+                annotations: [{
+                    x: Math.log10(1), y: Math.log10(1.1920929e-7),
+                    text: 'Gap doubles every<br>power of 2!',
+                    showarrow: true,
+                    arrowcolor: '#8b949e',
+                    font: { color: '#f0883e', size: 11 },
+                    ax: 60, ay: -40
+                }]
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        // ============ 0.1 + 0.2 VISUALIZATION ============
+        function drawAdditionVisualization() {
+            const container = document.getElementById('additionVisualization');
+
+            const val01 = 0.1;
+            const val02 = 0.2;
+            const sum = val01 + val02;
+
+            const bits01 = numToBits64(val01);
+            const bits02 = numToBits64(val02);
+            const bitsSum = numToBits64(sum);
+            const bits03 = numToBits64(0.3);
+
+            let html = '';
+
+            html += '<div class="step"><div class="step-num">What the computer stores for 0.1</div>';
+            html += '<p style="font-family:monospace;color:#58a6ff;">Stored: ' + val01.toPrecision(20) + '</p>';
+            html += '<p style="font-family:monospace;color:#8b949e;font-size:0.85em;">Bits: ' + bits01.join('') + '</p>';
+            html += '</div>';
+
+            html += '<div class="step"><div class="step-num">What the computer stores for 0.2</div>';
+            html += '<p style="font-family:monospace;color:#58a6ff;">Stored: ' + val02.toPrecision(20) + '</p>';
+            html += '<p style="font-family:monospace;color:#8b949e;font-size:0.85em;">Bits: ' + bits02.join('') + '</p>';
+            html += '</div>';
+
+            html += '<div class="step"><div class="step-num">The Sum (0.1 + 0.2)</div>';
+            html += '<p style="font-family:monospace;color:#f0883e;font-size:1.1em;">Result: ' + sum.toPrecision(20) + '</p>';
+            html += '<p style="font-family:monospace;color:#8b949e;font-size:0.85em;">Bits: ' + bitsSum.join('') + '</p>';
+            html += '</div>';
+
+            html += '<div class="step"><div class="step-num">What 0.3 actually is</div>';
+            html += '<p style="font-family:monospace;color:#2ea043;">Stored: ' + (0.3).toPrecision(20) + '</p>';
+            html += '<p style="font-family:monospace;color:#8b949e;font-size:0.85em;">Bits: ' + bits03.join('') + '</p>';
+            html += '</div>';
+
+            html += '<div class="step"><div class="step-num">The Difference</div>';
+            html += '<div class="math-block" id="mathAddDiff"></div>';
+            html += '</div>';
+
+            container.innerHTML = html;
+
+            renderMath('mathAddDiff',
+                '(0.1 + 0.2) - 0.3 = ' + (sum - 0.3).toExponential(10) + ' \\neq 0'
+            );
+
+            // Plotly visualization showing the three values on a zoomed number line
+            const center = 0.3;
+            const range = 1e-16;
+
+            Plotly.newPlot('additionPlot', [
+                {
+                    type: 'scatter',
+                    mode: 'markers+text',
+                    x: [sum, 0.3],
+                    y: [0, 0],
+                    marker: { size: 14, color: ['#f0883e', '#2ea043'] },
+                    text: ['0.1 + 0.2', '0.3'],
+                    textposition: ['top center', 'bottom center'],
+                    textfont: { color: ['#f0883e', '#2ea043'], size: 12 },
+                    hovertemplate: '%{x:.20f}<extra></extra>'
+                }
+            ], {
+                title: { text: 'Zoomed In: 0.1+0.2 vs 0.3 on the Number Line', font: { color: '#c9d1d9', size: 13 } },
+                paper_bgcolor: '#0d1117',
+                plot_bgcolor: '#0d1117',
+                font: { color: '#8b949e' },
+                xaxis: {
+                    range: [center - range * 5, center + range * 50],
+                    gridcolor: '#21262d',
+                    title: 'Value (zoomed in extremely close)',
+                    exponentformat: 'e'
+                },
+                yaxis: { visible: false, range: [-1, 1] },
+                margin: { t: 50, b: 60, l: 20, r: 20 },
+                shapes: [{
+                    type: 'line',
+                    x0: center - range * 5, x1: center + range * 50,
+                    y0: 0, y1: 0,
+                    line: { color: '#30363d', width: 2 }
+                }]
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        // ============ NUMBER LINE ============
+        function updateNumberLine() {
+            const power = parseFloat(document.getElementById('numberLineSlider').value);
+            const center = Math.pow(2, power);
+            document.getElementById('numberLineCenter').textContent = center.toExponential(4);
+
+            // Get floats around this center
+            let floats = [];
+            let current = center;
+
+            // Go backward
+            for (let i = 0; i < 20; i++) {
+                current = prevFloat32(current);
+                if (!isFinite(current) || current <= 0) break;
+                floats.unshift(current);
+            }
+
+            floats.push(center);
+
+            // Go forward
+            current = center;
+            for (let i = 0; i < 20; i++) {
+                current = nextFloat32(current);
+                if (!isFinite(current)) break;
+                floats.push(current);
+            }
+
+            const gap = floats.length > 1 ? floats[1] - floats[0] : 0;
+
+            Plotly.newPlot('numberLinePlot', [{
+                type: 'scatter',
+                mode: 'markers',
+                x: floats,
+                y: floats.map(() => 0),
+                marker: {
+                    symbol: 'line-ns',
+                    size: 16,
+                    color: '#58a6ff',
+                    line: { width: 2, color: '#58a6ff' }
+                },
+                hovertemplate: '%{x:.10e}<extra></extra>'
+            }, {
+                type: 'scatter',
+                mode: 'markers',
+                x: [center],
+                y: [0],
+                marker: { size: 12, color: '#f0883e', symbol: 'diamond' },
+                hovertemplate: 'Center: %{x:.10e}<extra></extra>'
+            }], {
+                paper_bgcolor: '#0d1117',
+                plot_bgcolor: '#0d1117',
+                font: { color: '#8b949e' },
+                xaxis: { gridcolor: '#21262d', exponentformat: 'e' },
+                yaxis: { visible: false, range: [-1, 1] },
+                margin: { t: 20, b: 40, l: 20, r: 20 },
+                showlegend: false,
+                shapes: [{
+                    type: 'line',
+                    x0: floats[0], x1: floats[floats.length - 1],
+                    y0: 0, y1: 0,
+                    line: { color: '#30363d', width: 2 }
+                }]
+            }, { responsive: true, displayModeBar: false });
+
+            renderMath('numberLineInfo',
+                '\\text{At } \\approx 2^{' + power.toFixed(1) + '} = ' + center.toExponential(3) + ', \\quad \\text{gap between floats} = ' + gap.toExponential(4)
+            );
+        }
+
+        // ============ EXPONENT EXPLORER ============
+        function updateExpExplorer() {
+            const storedExp = parseInt(document.getElementById('expSlider').value);
+            const actualExp = storedExp - 127;
+            document.getElementById('expSliderVal').textContent = storedExp;
+            document.getElementById('expActualVal').textContent = actualExp;
+
+            const multiplier = Math.pow(2, actualExp);
+
+            renderMath('expFormula',
+                '2^{' + actualExp + '} = ' + (isFinite(multiplier) ? multiplier.toExponential(6) : '\\text{too large}') +
+                '\\quad \\text{(numbers in range } [' + multiplier.toExponential(2) + ',\\; ' + (multiplier * 2).toExponential(2) + ')\\text{)}'
+            );
+
+            // Show a bar chart of powers of 2
+            let exps = [];
+            let values = [];
+            let colors = [];
+
+            for (let e = Math.max(0, storedExp - 8); e <= Math.min(254, storedExp + 8); e++) {
+                exps.push('2^' + (e - 127));
+                values.push(Math.pow(2, e - 127));
+                colors.push(e === storedExp ? '#f0883e' : '#1f6feb');
+            }
+
+            Plotly.newPlot('expPlot', [{
+                type: 'bar',
+                x: exps,
+                y: values,
+                marker: { color: colors },
+                hovertemplate: '%{x} = %{y:.4e}<extra></extra>'
+            }], {
+                title: { text: 'Powers of 2 (highlighted = current exponent)', font: { color: '#c9d1d9', size: 13 } },
+                paper_bgcolor: '#0d1117',
+                plot_bgcolor: '#0d1117',
+                font: { color: '#8b949e', size: 10 },
+                xaxis: { gridcolor: '#21262d' },
+                yaxis: { type: 'log', gridcolor: '#21262d', title: 'Value (log scale)' },
+                margin: { t: 50, b: 60, l: 60, r: 20 }
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        // ============ LIMITS PLOT ============
+        function drawLimitsPlot() {
+            // Visual comparison of 32-bit vs 64-bit ranges
+            const categories = ['Max Value', 'Min Normal', 'Min Denormal', 'Precision (digits)', 'Max Safe Int'];
+            const float32 = [3.4e38, 1.17e-38, 1.4e-45, 7, 16777216];
+            const float64 = [1.8e308, 2.2e-308, 5e-324, 16, 9007199254740992];
+
+            Plotly.newPlot('limitsPlot', [
+                {
+                    type: 'bar',
+                    name: '32-bit float',
+                    x: categories,
+                    y: float32.map(v => Math.log10(Math.abs(v) + 1)),
+                    marker: { color: '#58a6ff' },
+                    text: float32.map(v => v.toExponential(2)),
+                    textposition: 'outside',
+                    textfont: { size: 10 }
+                },
+                {
+                    type: 'bar',
+                    name: '64-bit double',
+                    x: categories,
+                    y: float64.map(v => Math.log10(Math.abs(v) + 1)),
+                    marker: { color: '#a371f7' },
+                    text: float64.map(v => v.toExponential(2)),
+                    textposition: 'outside',
+                    textfont: { size: 10 }
+                }
+            ], {
+                title: { text: '32-bit vs 64-bit: Range Comparison (log scale)', font: { color: '#c9d1d9', size: 14 } },
+                paper_bgcolor: '#0d1117',
+                plot_bgcolor: '#0d1117',
+                font: { color: '#8b949e' },
+                xaxis: { gridcolor: '#21262d' },
+                yaxis: { gridcolor: '#21262d', title: 'log10(value)' },
+                margin: { t: 50, b: 60, l: 60, r: 20 },
+                barmode: 'group',
+                legend: { font: { color: '#c9d1d9' } }
+            }, { responsive: true, displayModeBar: false });
+        }
+
+        // ============ INITIALIZATION ============
+        function init() {
+            renderStaticMath();
+            updateAll();
+            buildMantissaSliders();
+            updateMantissaChart();
+            updateDensityPlot();
+            drawGapPlot();
+            drawAdditionVisualization();
+            updateNumberLine();
+            updateExpExplorer();
+            drawLimitsPlot();
+            showConversion();
+
+            // Event listeners
+            document.getElementById('mainInput').addEventListener('input', updateAll);
+            document.getElementById('mainInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') updateAll();
+            });
+            document.getElementById('convertInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') showConversion();
+            });
+        }
+
+        // Wait for everything to load
+        window.addEventListener('load', init);
+        window.addEventListener('resize', function() {
+            updateDensityPlot();
+            drawGapPlot();
+            updateNumberLine();
+            updateExpExplorer();
+            updateMantissaChart();
+            drawLimitsPlot();
+        });
+    </script>
+</body>
+</html>
