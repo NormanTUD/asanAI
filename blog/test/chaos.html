@@ -1771,39 +1771,58 @@
         document.getElementById('bif-res-val').textContent = document.getElementById('bif-res').value;
     }
 
-    function drawBifurcation() {
-        const canvas = document.getElementById('bifurcation-canvas');
-        const ctx = canvas.getContext('2d');
-        const rMin = parseFloat(document.getElementById('bif-rmin').value);
-        const rMax = parseFloat(document.getElementById('bif-rmax').value);
-        const resolution = parseInt(document.getElementById('bif-res').value);
+function drawBifurcation() {
+    const canvas = document.getElementById('bifurcation-canvas');
+    const ctx = canvas.getContext('2d');
+    const rMin = parseFloat(document.getElementById('bif-rmin').value);
+    const rMax = parseFloat(document.getElementById('bif-rmax').value);
+    const resolution = parseInt(document.getElementById('bif-res').value);
 
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        const margin = 40;
-        const plotW = canvas.width - 2 * margin;
-        const plotH = canvas.height - 2 * margin;
-        const transient = 300;
-        const plotPoints = 150;
+    const margin = 40;
+    const plotW = canvas.width - 2 * margin;
+    const plotH = canvas.height - 2 * margin;
+    const transient = 300;
+    const plotPoints = 150;
 
-  
-                p.y = ny % 1;
-            } else { // stretch-fold
-                // Stretch and fold like kneading dough
-                let nx = p.x * 2;
-                let ny = p.y;
-                if (nx > 1) {
-                    nx = 2 - nx;
-                    ny = 1 - ny;
-                }
-                p.x = nx;
-                p.y = ny * 0.9 + 0.05;
-            }
-        });
+    // --- THIS IS THE MISSING PART ---
+    for (let i = 0; i < resolution; i++) {
+        const r = rMin + (i / resolution) * (rMax - rMin);
+        let x = 0.5; // initial condition
 
-        drawTopology();
+        // Discard transient iterations
+        for (let j = 0; j < transient; j++) {
+            x = r * x * (1 - x);
+        }
+
+        // Plot the attractor points
+        for (let j = 0; j < plotPoints; j++) {
+            x = r * x * (1 - x);
+            const px = margin + (i / resolution) * plotW;
+            const py = margin + plotH * (1 - x); // x is in [0,1]
+            ctx.fillStyle = 'rgba(72, 219, 251, 0.3)';
+            ctx.fillRect(px, py, 1, 1);
+        }
     }
+
+    // Draw axes and labels
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin, margin);
+    ctx.lineTo(margin, canvas.height - margin);
+    ctx.lineTo(canvas.width - margin, canvas.height - margin);
+    ctx.stroke();
+
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('r = ' + rMin.toFixed(2), margin, canvas.height - margin + 15);
+    ctx.fillText('r = ' + rMax.toFixed(3), canvas.width - margin - 40, canvas.height - margin + 15);
+    ctx.fillText('x', margin - 15, margin + 5);
+    ctx.fillText('Bifurcation Diagram (Logistic Map)', margin + 10, margin - 10);
+}
 
     function drawTopology() {
         const canvas = document.getElementById('topology-canvas');
