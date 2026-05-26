@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Floating Point Numbers Work - Interactive Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            color: #00d2ff;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .input-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .input-section label {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .input-section input[type="number"],
+        .input-section input[type="text"] {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #3a7bd5;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 1.2em;
+            width: 250px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-section input:focus {
+            border-color: #00d2ff;
+        }
+
+        .precision-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .precision-toggle button {
+            padding: 10px 20px;
+            border: 2px solid #3a7bd5;
+            background: transparent;
+            color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .precision-toggle button.active {
+            background: #3a7bd5;
+            color: #fff;
+        }
+
+        .precision-toggle button:hover {
+            background: rgba(58, 123, 213, 0.3);
+        }
+
+        /* Bit visualization */
+        .bit-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            align-items: center;
+        }
+
+        .bit {
+            width: 32px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .bit:hover {
+            transform: scale(1.15);
+            filter: brightness(1.3);
+        }
+
+        .bit.sign {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .bit.exponent {
+            background: #2ecc71;
+            color: #000;
+        }
+
+        .bit.mantissa {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .bit-labels {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .bit-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+
+        .bit-label .swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .swatch.sign-color { background: #e74c3c; }
+        .swatch.exp-color { background: #2ecc71; }
+        .swatch.mantissa-color { background: #3498db; }
+
+        /* Representations */
+        .representations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .repr-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #3a7bd5;
+        }
+
+        .repr-box h3 {
+            color: #aaa;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .repr-box .value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            color: #fff;
+            word-break: break-all;
+        }
+
+        /* Formula section */
+        .formula {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .formula .highlight-sign { color: #e74c3c; font-weight: bold; }
+        .formula .highlight-exp { color: #2ecc71; font-weight: bold; }
+        .formula .highlight-mantissa { color: #3498db; font-weight: bold; }
+        .formula .result { color: #f1c40f; font-weight: bold; font-size: 1.2em; }
+
+        /* Special values */
+        .special-values {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .special-btn {
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            text-align: center;
+        }
+
+        .special-btn:hover {
+            background: rgba(58, 123, 213, 0.3);
+            border-color: #3a7bd5;
+        }
+
+        /* Limits table */
+        .limits-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .limits-table th, .limits-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .limits-table th {
+            color: #00d2ff;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .limits-table td {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        .limits-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Explanation */
+        .explanation {
+            line-height: 1.7;
+            color: #ccc;
+        }
+
+        .explanation p {
+            margin-bottom: 12px;
+        }
+
+        .explanation strong {
+            color: #fff;
+        }
+
+        /* Number line */
+        .numberline-container {
+            margin-top: 15px;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Precision demo */
+        .precision-demo {
+            margin-top: 15px;
+        }
+
+        .precision-demo .example {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .precision-demo .example .input-val {
+            color: #aaa;
+        }
+
+        .precision-demo .example .stored-val {
+            color: #f1c40f;
+        }
+
+        .precision-demo .example .error-val {
+            color: #e74c3c;
+            font-size: 0.9em;
+        }
+
+        .separator {
+            width: 4px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 0 2px;
+        }
+
+        @media (max-width: 600px) {
+            .bit {
+                width: 24px;
+                height: 32px;
+                font-size: 0.85em;
+            }
+            .input-section input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>How Floating Point Numbers Work</h1>
+        <p class="subtitle">An interactive explorer of IEEE 754 — how computers store decimal numbers</p>
+
+        <!-- Quick Explanation -->
+        <div class="card">
+            <h2>What is a Floating Point Number?</h2>
+            <div class="explanation">
+                <p>Computers can only store 0s and 1s. So how do they store numbers like <strong>3.14</strong> or <strong>-0.001</strong>? They use a system called <strong>IEEE 754 Floating Point</strong>, which is similar to scientific notation:</p>
+                <p style="text-align:center; font-size:1.3em; color:#f1c40f; margin: 15px 0;">
+                    value = <span style="color:#e74c3c">(-1)^sign</span> &times; <span style="color:#3498db">1.mantissa</span> &times; <span style="color:#2ecc71">2^(exponent - bias)</span>
+                </p>
+                <p>Every floating point number is split into <strong>3 parts</strong>:</p>
+                <p><span style="color:#e74c3c; font-weight:bold;">Sign (1 bit)</span> — Is the number positive (0) or negative (1)?</p>
+                <p><span style="color:#2ecc71; font-weight:bold;">Exponent (8 or 11 bits)</span> — How big or small is the number? (like the power of 10 in scientific notation, but using power of 2)</p>
+                <p><span style="color:#3498db; font-weight:bold;">Mantissa/Fraction (23 or 52 bits)</span> — The precise digits of the number</p>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="card">
+            <h2>Enter a Number to Explore</h2>
+            <div class="input-section">
+                <label>Value:</label>
+                <input type="text" id="numberInput" value="3.14" placeholder="Enter any number...">
+                <div class="precision-toggle">
+                    <button id="btn32" class="active" onclick="setPrecision(32)">32-bit (float)</button>
+                    <button id="btn64" onclick="setPrecision(64)">64-bit (double)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bit Visualization -->
+        <div class="card">
+            <h2>Binary Representation (Click bits to toggle!)</h2>
+            <div class="bit-display" id="bitDisplay"></div>
+            <div class="bit-labels">
+                <div class="bit-label"><div class="swatch sign-color"></div> Sign (1 bit)</div>
+                <div class="bit-label"><div class="swatch exp-color"></div> Exponent (<span id="expBitsLabel">8</span> bits)</div>
+                <div class="bit-label"><div class="swatch mantissa-color"></div> Mantissa (<span id="mantissaBitsLabel">23</span> bits)</div>
+            </div>
+        </div>
+
+        <!-- Representations -->
+        <div class="card">
+            <h2>Number Representations</h2>
+            <div class="representations">
+                <div class="repr-box">
+                    <h3>Decimal (what you typed)</h3>
+                    <div class="value" id="decimalValue">3.14</div>
+                </div>
+                <div class="repr-box">
+                    <h3>Actually Stored (closest representable)</h3>
+                    <div class="value" id="storedValue">3.140000104904175</div>
+                </div>
+                <div class="repr-box">
+                    <h3>Hexadecimal (of the bits)</h3>
+                    <div class="value" id="hexValue">0x4048F5C3</div>
+                </div>
+                <div class="repr-box">
+                    <h3>Binary (all bits)</h3>
+                    <div class="value" id="binaryValue">01000000010010001111010111000011</div>
+                </div>
+                <div class="repr-box">
+                    <h3>Rounding Error</h3>
+                    <div class="value" id="errorValue">+0.00000010490417...</div>
+                </div>
+                <div class="repr-box">
+                    <h3>Next Representable Number</h3>
+                    <div class="value" id="nextValue">3.1400003...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formula Breakdown -->
+        <div class="card">
+            <h2>How the Value is Calculated</h2>
+            <div class="formula" id="formulaDisplay">
+            </div>
+        </div>
+
+        <!-- Special Values -->
+        <div class="card">
+            <h2>Try Special Values</h2>
+            <div class="special-values">
+                <div class="special-btn" onclick="setNumber('0')">+0 (Positive Zero)</div>
+                <div class="special-btn" onclick="setNumber('-0')">-0 (Negative Zero)</div>
+                <div class="special-btn" onclick="setNumber('Infinity')">+Infinity</div>
+                <div class="special-btn" onclick="setNumber('-Infinity')">-Infinity</div>
+                <div class="special-btn" onclick="setNumber('NaN')">NaN (Not a Number)</div>
+                <div class="special-btn" onclick="setNumber('1')">1.0</div>
+                <div class="special-btn" onclick="setNumber('0.1')">0.1 (famous!)</div>
+                <div class="special-btn" onclick="setNumber('0.2')">0.2</div>
+                <div class="special-btn" onclick="setNumber('0.3')">0.3</div>
+                <div class="special-btn" onclick="setNumber('9007199254740992')">2^53 (max safe int for 64-bit)</div>
+                <div class="special-btn" onclick="setNumber('16777216')">2^24 (max safe int for 32-bit)</div>
+                <div class="special-btn" onclick="setNumber('1e-45')">Smallest denormal (32-bit)</div>
+            </div>
+        </div>
+
+        <!-- Precision Problems -->
+        <div class="card">
+            <h2>Famous Precision Problems</h2>
+            <div class="explanation">
+                <p>Because floats use binary fractions, many simple decimal numbers <strong>cannot be stored exactly</strong>. It's like how 1/3 = 0.3333... never ends in decimal — similarly, 0.1 never ends in binary!</p>
+            </div>
+            <div class="precision-demo">
+                <div class="example">
+                    <span class="input-val">0.1 + 0.2 =</span>
+                    <span class="stored-val" id="demo1"></span>
+                    <span class="error-val">not exactly 0.3!</span>
+                </div>
+                <div class="example">
+                    <span class="input-val">0.1 in binary =</span>
+                    <span class="stored-val">0.0001100110011001100... (repeats forever)</span>
+                </div>
+                <div class="example">
+                    <span class="input-val">1/3 in decimal =</span>
+                    <span class="stored-val">0.3333333333333... (same idea!)</span>
+                </div>
+                <div class="example">
+                    <span class="input-val">9007199254740992 + 1 =</span>
+                    <span class="stored-val" id="demo2"></span>
+                    <span class="error-val">integers lose precision too!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Limits -->
+        <div class="card">
+            <h2>Limits of Floating Point Numbers</h2>
+            <table class="limits-table">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>32-bit (float)</th>
+                        <th>64-bit (double)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total bits</td>
+                        <td>32</td>
+                        <td>64</td>
+                    </tr>
+                    <tr>
+                        <td>Sign bits</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Exponent bits</td>
+                        <td>8</td>
+                        <td>11</td>
+                    </tr>
+                    <tr>
+                        <td>Mantissa bits</td>
+                        <td>23</td>
+                        <td>52</td>
+                    </tr>
+                    <tr>
+                        <td>Exponent bias</td>
+                        <td>127</td>
+                        <td>1023</td>
+                    </tr>
+                    <tr>
+                        <td>Max value</td>
+                        <td>~3.4028 x 10^38</td>
+                        <td>~1.7977 x 10^308</td>
+                    </tr>
+                    <tr>
+                        <td>Min positive normal</td>
+                        <td>~1.1755 x 10^-38</td>
+                        <td>~2.2251 x 10^-308</td>
+                    </tr>
+                    <tr>
+                        <td>Min positive denormal</td>
+                        <td>~1.4013 x 10^-45</td>
+                        <td>~4.9407 x 10^-324</td>
+                    </tr>
+                    <tr>
+                        <td>Decimal digits of precision</td>
+                        <td>~7 digits</td>
+                        <td>~15-16 digits</td>
+                    </tr>
+                    <tr>
+                        <td>Max safe integer</td>
+                        <td>16,777,216 (2^24)</td>
+                        <td>9,007,199,254,740,992 (2^53)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Density Visualization -->
+        <div class="card">
+            <h2>Float Density: Numbers Aren't Evenly Spaced!</h2>
+            <div class="explanation">
+                <p>Unlike integers, floating point numbers are <strong>not evenly distributed</strong>. They are packed very densely near zero and become more spread out as they get larger. Between 1 and 2, there are the same number of floats as between 2 and 4, or between 4 and 8!</p>
+            </div>
+            <div class="numberline-container">
+                <canvas id="densityCanvas" height="120"></canvas>
+            </div>
+            <p style="text-align:center; margin-top:10px; color:#888; font-size:0.9em;">Each tick mark represents a representable float (showing a small subset near zero)</p>
+        </div>
+
+    </div>
+
+    <script>
+        let precision = 32;
+        let currentBits = new Uint8Array(32);
+
+        function setPrecision(p) {
+            precision = p;
+            document.getElementById('btn32').classList.toggle('active', p === 32);
+            document.getElementById('btn64').classList.toggle('active', p === 64);
+            document.getElementById('expBitsLabel').textContent = p === 32 ? '8' : '11';
+            document.getElementById('mantissaBitsLabel').textContent = p === 32 ? '23' : '52';
+            updateFromInput();
+        }
+
+        function setNumber(val) {
+            document.getElementById('numberInput').value = val;
+            updateFromInput();
+        }
+
+        function numberToFloat32Bits(num) {
+            const buffer = new ArrayBuffer(4);
+            const view = new DataView(buffer);
+            view.setFloat32(0, num, false); // big-endian
+            const intVal = view.getUint32(0, false);
+            let bits = [];
+            for (let i = 31; i >= 0; i--) {
+                bits.push((intVal >>> i) & 1);
+            }
+            return bits;
+        }
+
+        function numberToFloat64Bits(num) {
+            const buffer = new ArrayBuffer(8);
+            const view = new DataView(buffer);
+            view.setFloat64(0, num, false); // big-endian
+            const high = view.getUint32(0, false);
+            const low = view.getUint32(4, false);
+            let bits = [];
+            for (let i = 31; i >= 0; i--) {
+                bits.push((high >>> i) & 1);
+            }
+            for (let i = 31; i >= 0; i--) {
+                bits.push((low >>> i) & 1);
+            }
+            return bits;
+        }
+
+        function bitsToFloat32(bits) {
+            let intVal = 0;
+            for (let i = 0; i < 32; i++) {
+                intVal = (intVal * 2) + bits[i];
+            }
+            const buffer = new ArrayBuffer(4);
+            const view = new DataView(buffer);
+            view.setUint32(0, intVal, false);
+            return view.getFloat32(0, false);
+        }
+
+        function bitsToFloat64(bits) {
+            let high = 0;
+            let low = 0;
+            for (let i = 0; i < 32; i++) {
+                high = (high * 2) + bits[i];
+            }
+            for (let i = 32; i < 64; i++) {
+                low = (low * 2) + bits[i];
+            }
+            const buffer = new ArrayBuffer(8);
+            const view = new DataView(buffer);
+            view.setUint32(0, high, false);
+            view.setUint32(4, low, false);
+            return view.getFloat64(0, false);
+        }
+
+        function getNextFloat32(num) {
+            const buffer = new ArrayBuffer(4);
+            const view = new DataView(buffer);
+            view.setFloat32(0, num, false);
+            let intVal = view.getUint32(0, false);
+            if (num >= 0) {
+                intVal += 1;
+            } else {
+                intVal -= 1;
+            }
+            view.setUint32(0, intVal, false);
+            return view.getFloat32(0, false);
+        }
+
+        function getNextFloat64(num) {
+            const buffer = new ArrayBuffer(8);
+            const view = new DataView(buffer);
+            view.setFloat64(0, num, false);
+            let high = view.getUint32(0, false);
+            let low = view.getUint32(4, false);
+            if (num >= 0) {
+                low += 1;
+                if (low > 0xFFFFFFFF) {
+                    low = 0;
+                    high += 1;
+                }
+            } else {
+                if (low === 0) {
+                    high -= 1;
+                    low = 0xFFFFFFFF;
+                } else {
+                    low -= 1;
+                }
+            }
+            view.setUint32(0, high, false);
+            view.setUint32(4, low, false);
+            return view.getFloat64(0, false);
+        }
+
+        function updateFromInput() {
+            const input = document.getElementById('numberInput').value.trim();
+            let num;
+
+            if (input.toLowerCase() === 'nan') {
+                num = NaN;
+            } else if (input.toLowerCase() === 'infinity' || input === '+Infinity') {
+                num = Infinity;
+            } else if (input === '-Infinity' || input === '-infinity') {
+                num = -Infinity;
+            } else if (input === '-0') {
+                num = -0;
+            } else {
+                num = parseFloat(input);
+                if (isNaN(num) && input.toLowerCase() !== 'nan') {
+                    num = 0;
+                }
+            }
+
+            let bits;
+            let storedNum;
+            if (precision === 32) {
+                bits = numberToFloat32Bits(num);
+                storedNum = bitsToFloat32(bits);
+            } else {
+                bits = numberToFloat64Bits(num);
+                storedNum = bitsToFloat64(bits);
+            }
+
+            currentBits = bits;
+            renderBits(bits);
+            updateRepresentations(num, bits, storedNum);
+            updateFormula(bits, storedNum);
+        }
+
+        function updateFromBits() {
+            let num;
+            if (precision === 32) {
+                num = bitsToFloat32(currentBits);
+            } else {
+                num = bitsToFloat64(currentBits);
+            }
+
+            renderBits(currentBits);
+            updateRepresentations(num, currentBits, num);
+            updateFormula(currentBits, num);
+
+            // Update input field
+            if (Object.is(num, -0)) {
+                document.getElementById('numberInput').value = '-0';
+            } else if (isNaN(num)) {
+                document.getElementById('numberInput').value = 'NaN';
+            } else {
+                document.getElementById('numberInput').value = num.toString();
+            }
+        }
+
+        function renderBits(bits) {
+            const container = document.getElementById('bitDisplay');
+            container.innerHTML = '';
+
+            const expBits = precision === 32 ? 8 : 11;
+            const mantissaBits = precision === 32 ? 23 : 52;
+
+            for (let i = 0; i < bits.length; i++) {
+                let type;
+                if (i === 0) {
+                    type = 'sign';
+                } else if (i <= expBits) {
+                    type = 'exponent';
+                } else {
+                    type = 'mantissa';
+                }
+
+                // Add separators
+                if (i === 1 || i === expBits + 1) {
+                    const sep = document.createElement('div');
+                    sep.className = 'separator';
+                    container.appendChild(sep);
+                }
+
+                const bitEl = document.createElement('div');
+                bitEl.className = 'bit ' + type;
+                bitEl.textContent = bits[i];
+                bitEl.title = `Bit ${i} (${type})`;
+                bitEl.addEventListener('click', () => {
+                    currentBits[i] = currentBits[i] === 0 ? 1 : 0;
+                    updateFromBits();
+                });
+                container.appendChild(bitEl);
+            }
+        }
+
+        function updateRepresentations(inputNum, bits, storedNum) {
+            // Decimal
+            if (Object.is(inputNum, -0)) {
+                document.getElementById('decimalValue').textContent = '-0';
+            } else {
+                document.getElementById('decimalValue').textContent = inputNum.toString();
+            }
+
+            // Stored value
+            if (Object.is(storedNum, -0)) {
+                document.getElementById('storedValue').textContent = '-0';
+            } else {
+                document.getElementById('storedValue').textContent = storedNum.toPrecision(precision === 32 ? 9 : 17);
+            }
+
+            // Binary
+            document.getElementById('binaryValue').textContent = bits.join('');
+
+            // Hex
+            const binaryStr = bits.join('');
+            let hexStr = '';
+            for (let i = 0; i < binaryStr.length; i += 4) {
+                hexStr += parseInt(binaryStr.substr(i, 4), 2).toString(16).toUpperCase();
+            }
+            document.getElementById('hexValue').textContent = '0x' + hexStr;
+
+            // Error
+            if (isNaN(storedNum) || !isFinite(storedNum) || isNaN(inputNum) || !isFinite(inputNum)) {
+                document.getElementById('errorValue').textContent = 'N/A (special value)';
+            } else {
+                const error = storedNum - inputNum;
+                if (error === 0) {
+                    document.getElementById('errorValue').textContent = '0 (exact!)';
+                } else {
+                    document.getElementById('errorValue').textContent = (error > 0 ? '+' : '') + error.toExponential(6);
+                }
+            }
+
+            // Next representable
+            if (isNaN(storedNum) || !isFinite(storedNum)) {
+                document.getElementById('nextValue').textContent = 'N/A (special value)';
+            } else {
+                let nextNum;
+                if (precision === 32) {
+                    nextNum = getNextFloat32(storedNum);
+                } else {
+                    nextNum = getNextFloat64(storedNum);
+                }
+                document.getElementById('nextValue').textContent = nextNum.toPrecision(precision === 32 ? 9 : 17);
+            }
+        }
+
+        function updateFormula(bits, storedNum) {
+            const container = document.getElementById('formulaDisplay');
+            const expBits = precision === 32 ? 8 : 11;
+            const mantissaBits = precision === 32 ? 23 : 52;
+            const bias = precision === 32 ? 127 : 1023;
+
+            const sign = bits[0];
+            let expVal = 0;
+            for (let i = 1; i <= expBits; i++) {
+                expVal = expVal * 2 + bits[i];
+            }
+
+            let mantissaStr = '';
+            for (let i = expBits + 1; i < bits.length; i++) {
+                mantissaStr += bits[i];
+            }
+
+            // Check for special cases
+            const allExpOnes = expVal === (Math.pow(2, expBits) - 1);
+            const allMantissaZero = mantissaStr.split('').every(b => b === '0');
+
+            if (allExpOnes && !allMantissaZero) {
+                container.innerHTML = `
+                    <span class="highlight-sign">Sign: ${sign} (${sign === 0 ? 'positive' : 'negative'})</span><br>
+                    <span class="highlight-exp">Exponent: all 1s (${expVal})</span><br>
+                    <span class="highlight-mantissa">Mantissa: non-zero</span><br><br>
+                    This is a special value: <span class="result">NaN (Not a Number)</span><br>
+                    NaN occurs when you do things like 0/0, sqrt(-1), or Infinity - Infinity.
+                `;
+                return;
+            }
+
+            if (allExpOnes && allMantissaZero) {
+                container.innerHTML = `
+                    <span class="highlight-sign">Sign: ${sign} (${sign === 0 ? 'positive' : 'negative'})</span><br>
+                    <span class="highlight-exp">Exponent: all 1s (${expVal})</span><br>
+                    <span class="highlight-mantissa">Mantissa: all zeros</span><br><br>
+                    This is a special value: <span class="result">${sign === 0 ? '+' : '-'}Infinity</span><br>
+                    Infinity represents numbers too large to store.
+                `;
+                return;
+            }
+
+            const isDenormal = expVal === 0;
+
+            if (isDenormal) {
+                // Denormalized number
+                let mantissaVal = 0;
+                for (let i = 0; i < mantissaStr.length; i++) {
+                    if (mantissaStr[i] === '1') {
+                        mantissaVal += Math.pow(2, -(i + 1));
+                    }
+                }
+                const actualExp = 1 - bias;
+
+                container.innerHTML = `
+                    <span class="highlight-sign">Sign bit: ${sign}</span> → (-1)^${sign} = <strong>${sign === 0 ? '+1' : '-1'}</strong><br><br>
+                    <span class="highlight-exp">Exponent bits: ${bits.slice(1, expBits + 1).join('')} = ${expVal}</span><br>
+                    Since exponent is 0, this is a <strong>denormalized</strong> (subnormal) number!<br>
+                    Actual exponent = 1 - ${bias} = <strong>${actualExp}</strong><br><br>
+                    <span class="highlight-mantissa">Mantissa bits: ${mantissaStr.substring(0, 20)}${mantissaStr.length > 20 ? '...' : ''}</span><br>
+                    For denormals, there is NO hidden "1." prefix: value = 0.${mantissaStr.substring(0, 10)}... (binary)<br>
+                    Mantissa value = <strong>${mantissaVal.toExponential(6)}</strong><br><br>
+                    <strong>Final calculation:</strong><br>
+                    ${sign === 0 ? '+1' : '-1'} x ${mantissaVal.toExponential(6)} x 2^(${actualExp})<br>
+                    = <span class="result">${storedNum.toPrecision(precision === 32 ? 9 : 17)}</span>
+                `;
+                return;
+            }
+
+            // Normal number
+            let mantissaVal = 1; // implicit leading 1
+            let mantissaFracStr = '1.';
+            for (let i = 0; i < mantissaStr.length; i++) {
+                mantissaFracStr += mantissaStr[i];
+                if (mantissaStr[i] === '1') {
+                    mantissaVal += Math.pow(2, -(i + 1));
+                }
+            }
+
+            const actualExp = expVal - bias;
+
+            container.innerHTML = `
+                <span class="highlight-sign">Sign bit: ${sign}</span> → (-1)^${sign} = <strong>${sign === 0 ? '+1' : '-1'}</strong><br><br>
+                <span class="highlight-exp">Exponent bits: ${bits.slice(1, expBits + 1).join('')} = ${expVal}</span><br>
+                Actual exponent = ${expVal} - ${bias} (bias) = <strong>${actualExp}</strong><br>
+                This means multiply by 2^${actualExp} = <strong>${Math.pow(2, actualExp)}</strong><br><br>
+                <span class="highlight-mantissa">Mantissa bits: ${mantissaStr.substring(0, 23)}${mantissaStr.length > 23 ? '...' : ''}</span><br>
+                With hidden "1." prefix: 1.${mantissaStr.substring(0, 20)}${mantissaStr.length > 20 ? '...' : ''} (binary)<br>
+                Mantissa value = <strong>${mantissaVal.toPrecision(10)}</strong><br><br>
+                <strong>Final calculation:</strong><br>
+                value = (-1)^<span class="highlight-sign">${sign}</span> x <span class="highlight-mantissa">${mantissaVal.toPrecision(10)}</span> x 2^<span class="highlight-exp">${actualExp}</span><br>
+                = ${sign === 0 ? '+1' : '-1'} x ${mantissaVal.toPrecision(10)} x ${Math.pow(2, actualExp)}<br>
+                = <span class="result">${storedNum.toPrecision(precision === 32 ? 9 : 17)}</span>
+            `;
+        }
+
+        function drawDensityVisualization() {
+            const canvas = document.getElementById('densityCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth * 2;
+            canvas.height = 240;
+            ctx.scale(2, 2);
+            const width = canvas.offsetWidth;
+            const height = 120;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw number line showing float density between 0 and 4
+            const margin = 40;
+            const lineY = 60;
+            const usableWidth = width - margin * 2;
+
+            // Draw axis
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(margin, lineY);
+            ctx.lineTo(width - margin, lineY);
+            ctx.stroke();
+
+            // Generate all 32-bit floats between 0 and 4 (we will show a subset)
+            // Actually, let's show floats in a small range to demonstrate density
+            const ranges = [
+                { start: 0, end: 0.25, label: '0 to 0.25', y: 30 },
+                { start: 1, end: 1.25, label: '1 to 1.25', y: 60 },
+                { start: 8, end: 10, label: '8 to 10', y: 90 }
+            ];
+
+            ctx.font = '10px Segoe UI';
+
+            ranges.forEach((range, ri) => {
+                const y = range.y;
+
+                // Draw axis for this range
+                ctx.strokeStyle = '#444';
+                ctx.beginPath();
+                ctx.moveTo(margin, y);
+                ctx.lineTo(width - margin, y);
+                ctx.stroke();
+
+                // Label
+                ctx.fillStyle = '#888';
+                ctx.textAlign = 'left';
+                ctx.fillText(range.label, 5, y - 8);
+
+                // Draw ticks for representable floats in this range
+                const buffer = new ArrayBuffer(4);
+                const view = new DataView(buffer);
+
+                view.setFloat32(0, range.start, false);
+                let intStart = view.getUint32(0, false);
+                view.setFloat32(0, range.end, false);
+                let intEnd = view.getUint32(0, false);
+
+                const totalFloats = intEnd - intStart;
+                const maxTicks = Math.min(totalFloats, 200);
+                const step = Math.max(1, Math.floor(totalFloats / maxTicks));
+
+                ctx.strokeStyle = ri === 0 ? '#3498db' : ri === 1 ? '#2ecc71' : '#e74c3c';
+                ctx.lineWidth = 0.5;
+
+                let count = 0;
+                for (let i = intStart; i <= intEnd && count < maxTicks; i += step) {
+                    view.setUint32(0, i, false);
+                    const floatVal = view.getFloat32(0, false);
+                    const x = margin + ((floatVal - range.start) / (range.end - range.start)) * usableWidth;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x, y - 5);
+                    ctx.lineTo(x, y + 5);
+                    ctx.stroke();
+                    count++;
+                }
+
+                // Show count
+                ctx.fillStyle = '#aaa';
+                ctx.textAlign = 'right';
+                ctx.fillText(`~${totalFloats.toLocaleString()} floats in range`, width - 10, y + 4);
+            });
+
+            // Title
+            ctx.fillStyle = '#ccc';
+            ctx.font = '11px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('Notice: smaller ranges near 0 have just as many representable numbers as larger ranges!', width / 2, 112);
+        }
+
+        // Initialize
+        document.getElementById('numberInput').addEventListener('input', updateFromInput);
+        document.getElementById('numberInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') updateFromInput();
+        });
+
+        // Precision demos
+        document.getElementById('demo1').textContent = (0.1 + 0.2).toPrecision(20);
+        document.getElementById('demo2').textContent = (9007199254740992 + 1).toString();
+
+        // Initial render
+        updateFromInput();
+
+        // Draw density visualization
+        window.addEventListener('load', drawDensityVisualization);
+        window.addEventListener('resize', drawDensityVisualization);
+    </script>
+</body>
+</html>
