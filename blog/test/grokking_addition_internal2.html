@@ -484,6 +484,20 @@
                 Click "Animate Step by Step" to see the computation unfold.
             </div>
         </div>
+<!-- STEP 7: GROKKING -->
+<h2>Step 7: Grokking (Training Dynamics)</h2>
+<div class="step-section">
+    <div class="step-number">Step 7</div>
+    <p>The model first memorizes the training data, then suddenly "groks" the generalizing algorithm.</p>
+    
+    <canvas id="grokkingCanvas" width="600" height="400"></canvas>
+    <div class="diagram-label">Training dynamics showing the grokking phenomenon.</div>
+    <div class="controls">
+        <label>Epoch: <span id="epochLabel">0</span></label>
+        <input type="range" id="epochSlider" min="0" max="300" value="0">
+        <button id="playGrokking">Play Training</button>
+    </div>
+</div>
 
     <!-- SUMMARY -->
     <h2>Summary: The Complete Algorithm</h2>
