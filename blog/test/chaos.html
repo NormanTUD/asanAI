@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaos Theory & Attractors Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #1a1a3e, #0a0a2a);
+            border-bottom: 1px solid #333;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #aaa;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            padding: 15px;
+            background: #111;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-tab {
+            padding: 10px 18px;
+            background: #1a1a3e;
+            border: 1px solid #444;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        .nav-tab:hover {
+            background: #2a2a5e;
+            border-color: #666;
+        }
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #764ba2;
+            color: white;
+            font-weight: bold;
+        }
+        .section {
+            display: none;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section.active {
+            display: block;
+        }
+        .section h2 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #48dbfb;
+        }
+        .section h3 {
+            font-size: 1.3em;
+            margin: 20px 0 10px;
+            color: #feca57;
+        }
+        .explanation {
+            background: #1a1a2e;
+            border-left: 4px solid #48dbfb;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.7;
+        }
+        .explanation.warning {
+            border-left-color: #ff6b6b;
+        }
+        .explanation.success {
+            border-left-color: #00d2d3;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #000;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #1a1a2e;
+            border-radius: 8px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .control-group label {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+        .control-group input[type="range"] {
+            width: 150px;
+            accent-color: #667eea;
+        }
+        .control-group .value-display {
+            font-size: 0.8em;
+            color: #48dbfb;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        .concept-card {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .concept-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        .concept-card h4 {
+            color: #ff9ff3;
+            margin-bottom: 10px;
+        }
+        .lyapunov-bar {
+            height: 20px;
+            border-radius: 10px;
+            margin: 5px 0;
+            transition: width 0.5s;
+        }
+        .lyapunov-positive {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+        }
+        .lyapunov-negative {
+            background: linear-gradient(90deg, #48dbfb, #0abde3);
+        }
+        .lyapunov-zero {
+            background: linear-gradient(90deg, #feca57, #f39c12);
+        }
+        .equation {
+            font-family: 'Courier New', monospace;
+            background: #0d0d1a;
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border: 1px solid #2a2a4a;
+            overflow-x: auto;
+        }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #667eea;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1a1a2e;
+            border-radius: 8px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+        .timeline-item .year {
+            color: #feca57;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        #bifurcation-canvas, #logistic-canvas {
+            image-rendering: pixelated;
+        }
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            padding: 10px 15px;
+            background: #0d0d1a;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 0.85em;
+            flex-wrap: wrap;
+        }
+        .status-item {
+            color: #aaa;
+        }
+        .status-item span {
+            color: #48dbfb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Chaos Theory & Attractors Explorer</h1>
+        <p>An interactive journey through dynamical systems, from simple fixed points to hyperchaotic attractors. 
+        Explore how deterministic systems can produce unpredictable behavior, and how topology helps us understand the structure of chaos.</p>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('intro')">Introduction</div>
+        <div class="nav-tab" onclick="showSection('fixed-points')">Fixed Points</div>
+        <div class="nav-tab" onclick="showSection('limit-cycles')">Limit Cycles</div>
+        <div class="nav-tab" onclick="showSection('logistic')">Logistic Map</div>
+        <div class="nav-tab" onclick="showSection('lorenz')">Lorenz Attractor</div>
+        <div class="nav-tab" onclick="showSection('rossler')">Rossler Attractor</div>
+        <div class="nav-tab" onclick="showSection('hyperchaos')">Hyperchaos</div>
+        <div class="nav-tab" onclick="showSection('lyapunov')">Lyapunov Exponents</div>
+        <div class="nav-tab" onclick="showSection('bifurcation')">Bifurcation</div>
+        <div class="nav-tab" onclick="showSection('topology')">Topology & Chaos</div>
+    </div>
+
+    <!-- INTRODUCTION SECTION -->
+    <div class="section active" id="section-intro">
+        <h2>What Are Attractors?</h2>
+        <div class="explanation">
+            An <strong>attractor</strong> is a set of states toward which a dynamical system tends to evolve over time, 
+            regardless of the starting conditions (within a region called the <em>basin of attraction</em>). 
+            An attractor can be a point, a finite set of points, a curve, a manifold, or even a complicated set 
+            with a fractal structure known as a <strong>strange attractor</strong>.
+        </div>
+
+        <h3>Types of Attractors</h3>
+        <div class="grid-2">
+            <div class="concept-card">
+                <h4>Fixed Point (0D)</h4>
+                <p>The simplest attractor. The system settles to a single point. Example: a pendulum coming to rest due to friction.</p>
+            </div>
+            <div class="concept-card">
+                <h4>Limit Cycle (1D)</h4>
+                <p>A closed orbit the system repeatedly traces. Example: a beating heart, oscillating circuits.</p>
+            </div>
+            <div class="concept-card">
+                <h4>Torus (2D)</h4>
+                <p>Quasiperiodic motion on a torus surface. Two incommensurate frequencies create a never-repeating path that fills the torus.</p>
+            </div>
+            <div class="concept-card">
+                <h4>Strange Attractor (Fractal D)</h4>
+                <p>A fractal-dimensional attractor arising in chaotic systems. Has infinite detail at every scale and exhibits sensitive dependence on initial conditions.</p>
+            </div>
+        </div>
+
+        <h3>Historical Timeline</h3>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="year">1890s - Poincare</div>
+                <p>Henri Poincare discovers sensitive dependence on initial conditions while studying the three-body problem. Lays groundwork for topology in dynamics.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="year">1963 - Lorenz</div>
+                <p>Edward Lorenz discovers the first strange attractor while modeling weather. The famous "butterfly effect" is born.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="year">1976 - Rossler</div>
+                <p>Otto Rossler designs a minimal chaos generator with just three coupled ODEs, producing the simplest possible strange attractor.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="year">1979 - Hyperchaos</div>
+                <p>Rossler introduces a 4D system with two positive Lyapunov exponents, coining the term "hyperchaotic" for such systems.</p>
+            </div>
+        </div>
+
+        <h3>Where Do Attractors Show Up?</h3>
+        <div class="explanation success">
+            <strong>Weather systems</strong> - Lorenz's original discovery<br>
+            <strong>Population dynamics</strong> - Logistic map in ecology<br>
+            <strong>Electronic circuits</strong> - Chua's circuit<br>
+            <strong>Fluid dynamics</strong> - Turbulent flow<br>
+            <strong>Heart rhythms</strong> - Cardiac fibrillation<br>
+            <strong>Neuroscience</strong> - Brain activity patterns<br>
+            <strong>Economics</strong> - Market fluctuations<br>
+            <strong>Cryptography</strong> - Chaos-based encryption
+        </div>
+    </div>
+
+    <!-- FIXED POINTS SECTION -->
+    <div class="section" id="section-fixed-points">
+        <h2>Fixed Point Attractors</h2>
+        <div class="explanation">
+            A <strong>fixed point</strong> is where the system stays put: f(x*) = x*. The stability is determined by 
+            the eigenvalues of the Jacobian matrix at that point. If all eigenvalues have negative real parts, 
+            it's a <strong>stable node (sink)</strong>. If at least one has a positive real part, it's <strong>unstable (source)</strong>.
+        </div>
+
+        <canvas id="fixed-point-canvas" width="700" height="500"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>System Type</label>
+                <select id="fp-type" onchange="resetFixedPoint()">
+                    <option value="stable-node">Stable Node (Sink)</option>
+                    <option value="unstable-node">Unstable Node (Source)</option>
+                    <option value="saddle">Saddle Point</option>
+                    <option value="stable-spiral">Stable Spiral</option>
+                    <option value="unstable-spiral">Unstable Spiral</option>
+                    <option value="center">Center (Neutral)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Speed</label>
+                <input type="range" id="fp-speed" min="0.5" max="3" step="0.1" value="1">
+                <div class="value-display" id="fp-speed-val">1.0</div>
+            </div>
+            <button onclick="resetFixedPoint()">Reset Particles</button>
+        </div>
+
+        <div class="explanation">
+            <strong>Stable Node:</strong> All trajectories converge to the fixed point (eigenvalues: real, negative)<br>
+            <strong>Unstable Node:</strong> All trajectories diverge from the fixed point (eigenvalues: real, positive)<br>
+            <strong>Saddle:</strong> Attracts along one axis, repels along another (eigenvalues: one positive, one negative)<br>
+            <strong>Stable Spiral:</strong> Spirals inward (eigenvalues: complex with negative real part)<br>
+            <strong>Unstable Spiral:</strong> Spirals outward (eigenvalues: complex with positive real part)<br>
+            <strong>Center:</strong> Closed orbits, neither attracting nor repelling (eigenvalues: purely imaginary)
+        </div>
+    </div>
+
+    <!-- LIMIT CYCLES SECTION -->
+    <div class="section" id="section-limit-cycles">
+        <h2>Limit Cycles</h2>
+        <div class="explanation">
+            A <strong>limit cycle</strong> is an isolated closed trajectory. Nearby trajectories spiral toward it (stable) 
+            or away from it (unstable). The classic example is the Van der Pol oscillator, which models everything 
+            from heartbeats to electronic oscillators.
+        </div>
+
+        <canvas id="limit-cycle-canvas" width="700" height="500"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Mu (nonlinearity)</label>
+                <input type="range" id="vdp-mu" min="0.1" max="5" step="0.1" value="1.5">
+                <div class="value-display" id="vdp-mu-val">1.5</div>
+            </div>
+            <div class="control-group">
+                <label>Trail Length</label>
+                <input type="range" id="vdp-trail" min="50" max="500" step="10" value="200">
+                <div class="value-display" id="vdp-trail-val">200</div>
+            </div>
+            <button onclick="resetLimitCycle()">Reset</button>
+        </div>
+
+        <div class="equation">
+            Van der Pol Oscillator:<br>
+            dx/dt = y<br>
+            dy/dt = mu * (1 - x^2) * y - x
+        </div>
+
+        <div class="explanation success">
+            When mu is small, the limit cycle is nearly circular. As mu increases, the oscillation becomes more 
+            "relaxation-like" with sharp transitions. This is the transition from sinusoidal to relaxation oscillation.
+        </div>
+    </div>
+
+    <!-- LOGISTIC MAP SECTION -->
+    <div class="section" id="section-logistic">
+        <h2>The Logistic Map: Route to Chaos</h2>
+        <div class="explanation">
+            The logistic map x(n+1) = r * x(n) * (1 - x(n)) is the simplest system that exhibits chaos. 
+            As the parameter r increases, the system undergoes <strong>period-doubling bifurcations</strong> 
+            until it becomes chaotic. This is a universal route to chaos found in many systems.
+        </div>
+
+        <canvas id="logistic-canvas" width="700" height="400"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>r parameter</label>
+                <input type="range" id="logistic-r" min="1" max="4" step="0.001" value="3.5" oninput="updateLogistic()">
+                <div class="value-display" id="logistic-r-val">3.500</div>
+            </div>
+            <div class="control-group">
+                <label>Initial x0</label>
+                <input type="range" id="logistic-x0" min="0.01" max="0.99" step="0.01" value="0.5" oninput="updateLogistic()">
+                <div class="value-display" id="logistic-x0-val">0.50</div>
+            </div>
+            <button onclick="updateLogistic()">Recalculate</button>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">r = <span id="log-r-display">3.5</span></div>
+            <div class="status-item">Behavior: <span id="log-behavior">Chaotic</span></div>
+        </div>
+
+        <div class="explanation">
+            <strong>r &lt; 1:</strong> Population dies out (fixed point at 0)<br>
+            <strong>1 &lt; r &lt; 3:</strong> Stable fixed point at (r-1)/r<br>
+            <strong>3 &lt; r &lt; 3.449:</strong> Period-2 cycle<br>
+            <strong>3.449 &lt; r &lt; 3.544:</strong> Period-4 cycle<br>
+            <strong>r ~ 3.5699:</strong> Onset of chaos (Feigenbaum point)<br>
+            <strong>r = 4:</strong> Full chaos, ergodic on [0,1]
+        </div>
+    </div>
+
+    <!-- LORENZ ATTRACTOR SECTION -->
+    <div class="section" id="section-lorenz">
+        <h2>The Lorenz Attractor</h2>
+        <div class="explanation">
+            Discovered by Edward Lorenz in 1963 while modeling atmospheric convection. This was the first 
+            strange attractor ever found. Its butterfly-like shape has become the icon of chaos theory. 
+            The system exhibits sensitive dependence on initial conditions - the famous "butterfly effect."
+        </div>
+
+        <canvas id="lorenz-canvas" width="700" height="550"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Sigma (sigma)</label>
+                <input type="range" id="lorenz-sigma" min="1" max="30" step="0.5" value="10" oninput="updateLorenzParams()">
+                <div class="value-display" id="lorenz-sigma-val">10.0</div>
+            </div>
+            <div class="control-group">
+                <label>Rho (rho)</label>
+                <input type="range" id="lorenz-rho" min="0.1" max="50" step="0.5" value="28" oninput="updateLorenzParams()">
+                <div class="value-display" id="lorenz-rho-val">28.0</div>
+            </div>
+            <div class="control-group">
+                <label>Beta (beta)</label>
+                <input type="range" id="lorenz-beta" min="0.1" max="10" step="0.1" value="2.667" oninput="updateLorenzParams()">
+                <div class="value-display" id="lorenz-beta-val">2.667</div>
+            </div>
+            <div class="control-group">
+                <label>View</label>
+                <select id="lorenz-view" onchange="updateLorenzParams()">
+                    <option value="xz">X-Z (Classic butterfly)</option>
+                    <option value="xy">X-Y</option>
+                    <option value="yz">Y-Z</option>
+                    <option value="3d">3D Rotation</option>
+                </select>
+            </div>
+            <button onclick="resetLorenz()">Reset</button>
+        </div>
+
+        <div class="equation">
+            Lorenz System:<br>
+            dx/dt = sigma * (y - x)<br>
+            dy/dt = x * (rho - z) - y<br>
+            dz/dt = x * y - beta * z
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">Points: <span id="lorenz-points">0</span></div>
+            <div class="status-item">x: <span id="lorenz-x">0</span></div>
+            <div class="status-item">y: <span id="lorenz-y">0</span></div>
+            <div class="status-item">z: <span id="lorenz-z">0</span></div>
+        </div>
+
+        <div class="explanation success">
+            <strong>Try this:</strong> Set rho below 24.74 to see the system converge to a fixed point. 
+            Above this value, the system becomes chaotic. This is a <em>subcritical Hopf bifurcation</em>.
+        </div>
+    </div>
+
+    <!-- ROSSLER ATTRACTOR SECTION -->
+    <div class="section" id="section-rossler">
+        <h2>The Rossler Attractor</h2>
+        <div class="explanation">
+            Otto Rossler designed this system in 1976 as a <strong>minimal chaos generator</strong> - the simplest 
+            possible system of three coupled ODEs that produces a strange attractor. It has a single-scroll 
+            spiral structure that stretches and folds back on itself, making the folding mechanism visually clear. 
+            Its fractal dimension is just above 2, making it ideal for introductory analysis.
+        </div>
+
+        <canvas id="rossler-canvas" width="700" height="550"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>a</label>
+                <input type="range" id="rossler-a" min="0.05" max="0.5" step="0.01" value="0.2" oninput="updateRosslerParams()">
+                <div class="value-display" id="rossler-a-val">0.20</div>
+            </div>
+            <div class="control-group">
+                <label>b</label>
+                <input type="range" id="rossler-b" min="0.05" max="1" step="0.01" value="0.2" oninput="updateRosslerParams()">
+                <div class="value-display" id="rossler-b-val">0.20</div>
+            </div>
+            <div class="control-group">
+                <label>c</label>
+                <input type="range" id="rossler-c" min="1" max="18" step="0.1" value="5.7" oninput="updateRosslerParams()">
+                <div class="value-display" id="rossler-c-val">5.7</div>
+            </div>
+            <div class="control-group">
+                <label>View</label>
+                <select id="rossler-view" onchange="updateRosslerParams()">
+                    <option value="xy">X-Y (Top view)</option>
+                    <option value="xz">X-Z (Side view)</option>
+                    <option value="yz">Y-Z</option>
+                    <option value="3d">3D Rotation</option>
+                </select>
+            </div>
+            <button onclick="resetRossler()">Reset</button>
+        </div>
+
+        <div class="equation">
+            Rossler System:<br>
+            dx/dt = -y - z<br>
+            dy/dt = x + a * y<br>
+            dz/dt = b + z * (x - c)
+        </div>
+
+        <div class="explanation success">
+            <strong>Try this:</strong> Increase c from 2 to 18 and watch the system go from a simple limit cycle 
+            through period-doubling to chaos. At c ~ 4.2 you get period-2, at c ~ 5.7 full chaos emerges.
+        </div>
+    </div>
+
+    <!-- HYPERCHAOS SECTION -->
+    <div class="section" id="section-hyperchaos">
+        <h2>Hyperchaos</h2>
+        <div class="explanation warning">
+            <strong>Hyperchaos</strong> occurs when a system has <strong>two or more positive Lyapunov exponents</strong>. 
+            This means the system expands in multiple directions simultaneously, creating even more complex 
+            and unpredictable behavior than ordinary chaos. It requires at least a 4-dimensional system. 
+            Rossler introduced the concept in 1979 with a 4D system.
+        </div>
+
+        <canvas id="hyperchaos-canvas" width="700" height="550"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>a</label>
+                <input type="range" id="hyper-a" min="0.1" max="0.5" step="0.01" value="0.25" oninput="updateHyperParams()">
+                <div class="value-display" id="hyper-a-val">0.25</div>
+            </div>
+            <div class="control-group">
+                <label>b</label>
+                <input type="range" id="hyper-b" min="0.1" max="6" step="0.1" value="3.0" oninput="updateHyperParams()">
+                <div class="value-display" id="hyper-b-val">3.0</div>
+            </div>
+            <div class="control-group">
+                <label>c</label>
+                <input type="range" id="hyper-c" min="0.1" max="2" step="0.01" value="0.5" oninput="updateHyperParams()">
+                <div class="value-display" id="hyper-c-val">0.50</div>
+            </div>
+            <div class="control-group">
+                <label>d</label>
+                <input type="range" id="hyper-d" min="0.01" max="0.2" step="0.005" value="0.05" oninput="updateHyperParams()">
+                <div class="value-display" id="hyper-d-val">0.05</div>
+            </div>
+            <div class="control-group">
+                <label>Projection</label>
+                <select id="hyper-proj" onchange="updateHyperParams()">
+                    <option value="xy">X-Y</option>
+                    <option value="xz">X-Z</option>
+                    <option value="xw">X-W (4th dim)</option>
+                    <option value="yw">Y-W</option>
+                    <option value="zw">Z-W</option>
+                </select>
+            </div>
+            <button onclick="resetHyper()">Reset</button>
+        </div>
+
+        <div class="equation">
+            Hyperchaotic Rossler System (4D):<br>
+            dx/dt = -y - z<br>
+            dy/dt = x + a*y + w<br>
+            dz/dt = b + x*z<br>
+            dw/dt = -c*z + d*w
+        </div>
+
+        <div class="grid-2">
+            <div class="concept-card">
+                <h4>Chaos vs Hyperchaos</h4>
+                <p><strong>Chaos:</strong> 1 positive Lyapunov exponent. Trajectories diverge exponentially in one direction.</p>
+                <p><strong>Hyperchaos:</strong> 2+ positive Lyapunov exponents. Trajectories diverge in multiple directions simultaneously, creating more complex topology.</p>
+            </div>
+            <div class="concept-card">
+                <h4>Requirements</h4>
+                <p>Minimum dimension for chaos: 3 (continuous systems)</p>
+                <p>Minimum dimension for hyperchaos: 4</p>
+                <p>Each additional positive Lyapunov exponent requires at least one more dimension.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- LYAPUNOV EXPONENTS SECTION -->
+    <div class="section" id="section-lyapunov">
+        <h2>Lyapunov Exponents</h2>
+        <div class="explanation">
+            <strong>Lyapunov exponents</strong> measure the rate of separation of infinitesimally close trajectories. 
+            They are the key diagnostic tool for chaos. A system with at least one positive Lyapunov exponent 
+            is chaotic - nearby trajectories diverge exponentially.
+        </div>
+
+        <canvas id="lyapunov-canvas" width="700" height="400"></canvas>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>System</label>
+                <select id="lyap-system" onchange="resetLyapunov()">
+                    <option value="logistic">Logistic Map</option>
+                    <option value="henon">Henon Map</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Parameter r</label>
+                <input type="range" id="lyap-r" min="2.5" max="4" step="0.01" value="3.9" oninput="updateLyapDisplay()">
+                <div class="value-display" id="lyap-r-val">3.90</div>
+            </div>
+            <div class="control-group">
+                <label>Iterations</label>
+                <input type="range" id="lyap-iter" min="100" max="5000" step="100" value="1000" oninput="updateLyapDisplay()">
+                <div class="value-display" id="lyap-iter-val">1000</div>
+            </div>
+            <button onclick="computeLyapunov()">Compute</button>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">Lyapunov Exponent: <span id="lyap-value">--</span></div>
+            <div class="status-item">Classification: <span id="lyap-class">--</span></div>
+        </div>
+
+        <h3>Understanding the Spectrum</h3>
+        <div class="explanation">
+            Every n-dimensional system has n Lyapunov exponents. If you start with a small sphere of initial conditions, 
+            that sphere becomes an ellipsoid over time. Each Lyapunov exponent measures the rate of stretching or 
+            compression along one principal axis of that ellipsoid [[1]].
+        </div>
+
+        <div class="grid-2">
+            <div class="concept-card">
+                <h4>Classification Rules</h4>
+                <p><strong>Fixed Point:</strong> All exponents negative (-, -, -)</p>
+                <p><strong>Limit Cycle:</strong> One zero, rest negative (0, -, -)</p>
+                <p><strong>Torus:</strong> Two zeros, rest negative (0, 0, -)</p>
+                <p><strong>Chaos:</strong> One positive (+, 0, -)</p>
+                <p><strong>Hyperchaos:</strong> Two positive (+, +, 0, -)</p>
+            </div>
+            <div class="concept-card">
+                <h4>Physical Meaning</h4>
+                <p><strong>Positive:</strong> Stretching - information is created (unpredictability)</p>
+                <p><strong>Zero:</strong> Flow direction - neither stretching nor compressing</p>
+                <p><strong>Negative:</strong> Compression - information is destroyed (dissipation)</p>
+                <p>The sum of all exponents gives the rate of phase space volume change (negative for dissipative systems).</p>
+            </div>
+        </div>
+
+        <h3>Visual: Lyapunov Exponent vs Parameter</h3>
+        <canvas id="lyap-spectrum-canvas" width="700" height="300"></canvas>
+        <button onclick="drawLyapSpectrum()" style="margin-top:10px;">Draw Spectrum (may take a moment)</button>
+        
+        <div class="explanation success">
+            The Lyapunov exponent characterizes the exponential rate of separation of infinitesimally close trajectories, 
+            providing information on the rate of growth of small errors in the initial state during aperiodic motions [[3]] [[4]].
+        </div>
+    </div>
+
+    <!-- BIFURCATION SECTION -->
+    <div class="section" id="section-bifurcation">
+        <h2>Bifurcation Diagrams</h2>
+        <div class="explanation">
+            A <strong>bifurcation</strong> is a qualitative change in the behavior of a dynamical system as a parameter 
+            is varied. The bifurcation diagram shows the long-term values visited by the system as a function of 
+            the parameter. It reveals the route from order to chaos through period-doubling cascades.
+        </div>
+
+        <canvas id="bifurcation-canvas" width="700" height="450"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>r min</label>
+                <input type="range" id="bif-rmin" min="1" max="3.5" step="0.01" value="2.5" oninput="updateBifDisplay()">
+                <div class="value-display" id="bif-rmin-val">2.50</div>
+            </div>
+            <div class="control-group">
+                <label>r max</label>
+                <input type="range" id="bif-rmax" min="3.5" max="4" step="0.001" value="4" oninput="updateBifDisplay()">
+                <div class="value-display" id="bif-rmax-val">4.000</div>
+            </div>
+            <div class="control-group">
+                <label>Resolution</label>
+                <input type="range" id="bif-res" min="200" max="1000" step="50" value="500" oninput="updateBifDisplay()">
+                <div class="value-display" id="bif-res-val">500</div>
+            </div>
+            <button onclick="drawBifurcation()">Draw Bifurcation</button>
+            <button onclick="zoomBifurcation()">Zoom to Feigenbaum</button>
+        </div>
+
+        <div class="explanation success">
+            <strong>Feigenbaum's Constant:</strong> The ratio of successive bifurcation intervals converges to 
+            delta = 4.6692... This is a <em>universal constant</em> - it appears in ALL systems that undergo 
+            period-doubling, regardless of the specific equations! This universality is one of the deepest 
+            results in chaos theory.
+        </div>
+
+        <div class="grid-2">
+            <div class="concept-card">
+                <h4>Types of Bifurcations</h4>
+                <p><strong>Saddle-node:</strong> Fixed points appear/disappear in pairs</p>
+                <p><strong>Pitchfork:</strong> Symmetric splitting (period doubling)</p>
+                <p><strong>Hopf:</strong> Fixed point becomes a limit cycle</p>
+                <p><strong>Crisis:</strong> Sudden expansion/destruction of attractor</p>
+            </div>
+            <div class="concept-card">
+                <h4>Self-Similarity</h4>
+                <p>The bifurcation diagram is a fractal! Zoom into any region and you'll find smaller copies of the 
+                whole diagram. This self-similarity is related to the renormalization group in physics.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOPOLOGY & CHAOS SECTION -->
+    <div class="section" id="section-topology">
+        <h2>Topology & Chaos</h2>
+        <div class="explanation">
+            Topology provides powerful tools for understanding chaotic systems. The key insight is that 
+            <strong>stretching and folding</strong> is the fundamental mechanism of chaos. A strange attractor 
+            is created when a system stretches nearby trajectories apart (creating sensitivity) while folding 
+            them back (keeping the attractor bounded).
+        </div>
+
+        <canvas id="topology-canvas" width="700" height="500"></canvas>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Demonstration</label>
+                <select id="topo-demo" onchange="resetTopology()">
+                    <option value="horseshoe">Smale Horseshoe</option>
+                    <option value="baker">Baker's Map</option>
+                    <option value="stretch-fold">Stretch & Fold</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Iterations</label>
+                <input type="range" id="topo-iter" min="1" max="8" step="1" value="1" oninput="updateTopoDisplay()">
+                <div class="value-display" id="topo-iter-val">1</div>
+            </div>
+            <button onclick="stepTopology()">Step Forward</button>
+            <button onclick="resetTopology()">Reset</button>
+        </div>
+
+        <h3>Key Topological Concepts in Chaos</h3>
+        <div class="grid-2">
+            <div class="concept-card">
+                <h4>Smale Horseshoe</h4>
+                <p>The prototypical chaotic map. A square is stretched into a long strip, then folded back into a horseshoe 
+                shape and placed back on the original square. The invariant set has Cantor set structure - a fractal.</p>
+            </div>
+            <div class="concept-card">
+                <h4>Fractal Dimension</h4>
+                <p>Strange attractors have non-integer (fractal) dimension. The Lorenz attractor has dimension ~2.06, 
+                meaning it's slightly more than a surface but less than a volume. This fractional dimension 
+                reflects the infinite folding structure.</p>
+            </div>
+            <div class="concept-card">
+                <h4>Symbolic Dynamics</h4>
+                <p>We can encode trajectories as sequences of symbols (e.g., L and R for which lobe of the Lorenz attractor). 
+                This converts dynamics into a shift map on symbol sequences - a topological conjugacy that preserves 
+                the essential structure.</p>
+            </div>
+            <div class="concept-card">
+                <h4>Poincare Sections</h4>
+                <p>A Poincare section reduces a continuous flow to a discrete map by recording where trajectories 
+                cross a chosen surface. This reduces dimension by 1 and reveals the topological structure 
+                (knots, links, templates) of periodic orbits.</p>
+            </div>
+        </div>
+
+        <h3>Stretching + Folding = Chaos</h3>
+        <div class="explanation">
+            <strong>Stretching</strong> creates sensitivity to initial conditions (nearby points separate).<br>
+            <strong>Folding</strong> keeps the attractor bounded (prevents escape to infinity).<br>
+            <strong>Together</strong> they create the infinite layered structure of a strange attractor - 
+            like kneading dough, each iteration creates more and more layers, approaching a fractal limit.
+        </div>
+
+        <div class="explanation success">
+            <strong>Connection to your topology background:</strong> The key topological invariants in chaos are:<br>
+            - <strong>Genus</strong> of the bounding torus (how many holes the attractor "lives in")<br>
+            - <strong>Linking numbers</strong> of periodic orbits (how orbits wind around each other)<br>
+            - <strong>Templates/Branched manifolds</strong> that organize all periodic orbits<br>
+            - <strong>Homoclinic/heteroclinic tangles</strong> where stable and unstable manifolds intersect
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+    // ==================== NAVIGATION ====================
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('section-' + id).classList.add('active');
+        event.target.classList.add('active');
+        
+        // Initialize visualizations when shown
+        switch(id) {
+            case 'fixed-points': initFixedPoint(); break;
+            case 'limit-cycles': initLimitCycle(); break;
+            case 'logistic': updateLogistic(); break;
+            case 'lorenz': initLorenz(); break;
+            case 'rossler': initRossler(); break;
+            case 'hyperchaos': initHyper(); break;
+            case 'lyapunov': initLyapunov(); break;
+            case 'bifurcation': drawBifurcation(); break;
+            case 'topology': initTopology(); break;
+        }
+    }
+
+    // ==================== FIXED POINTS ====================
+    let fpParticles = [];
+    let fpAnimId = null;
+
+    function initFixedPoint() {
+        if (fpAnimId) cancelAnimationFrame(fpAnimId);
+        resetFixedPoint();
+    }
+
+    function resetFixedPoint() {
+        const canvas = document.getElementById('fixed-point-canvas');
+        const ctx = canvas.getContext('2d');
+        fpParticles = [];
+        
+        for (let i = 0; i < 60; i++) {
+            fpParticles.push({
+                x: (Math.random() - 0.5) * canvas.width * 0.8,
+                y: (Math.random() - 0.5) * canvas.height * 0.8,
+                trail: []
+            });
+        }
+        if (fpAnimId) cancelAnimationFrame(fpAnimId);
+        animateFixedPoint();
+    }
+
+    function animateFixedPoint() {
+        const canvas = document.getElementById('fixed-point-canvas');
+        const ctx = canvas.getContext('2d');
+        const type = document.getElementById('fp-type').value;
+        const speed = parseFloat(document.getElementById('fp-speed').value);
+        document.getElementById('fp-speed-val').textContent = speed.toFixed(1);
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const dt = 0.02 * speed;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw fixed point
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fill();
+
+        fpParticles.forEach(p => {
+            let dx = 0, dy = 0;
+            const x = p.x, y = p.y;
+
+            switch(type) {
+                case 'stable-node':
+                    dx = -1.5 * x;
+                    dy = -0.8 * y;
+                    break;
+                case 'unstable-node':
+                    dx = 1.5 * x;
+                    dy = 0.8 * y;
+                    break;
+                case 'saddle':
+                    dx = 1.2 * x;
+                    dy = -1.2 * y;
+                    break;
+                case 'stable-spiral':
+                    dx = -0.3 * x - 2 * y;
+                    dy = 2 * x - 0.3 * y;
+                    break;
+                case 'unstable-spiral':
+                    dx = 0.3 * x - 2 * y;
+                    dy = 2 * x + 0.3 * y;
+                    break;
+                case 'center':
+                    dx = -2 * y;
+                    dy = 2 * x;
+                    break;
+            }
+
+            p.x += dx * dt;
+            p.y += dy * dt;
+
+            // Boundary check
+            if (Math.abs(p.x) > canvas.width/2 || Math.abs(p.y) > canvas.height/2) {
+                p.x = (Math.random() - 0.5) * canvas.width * 0.8;
+                p.y = (Math.random() - 0.5) * canvas.height * 0.8;
+                p.trail = [];
+            }
+
+            p.trail.push({x: p.x + cx, y: p.y + cy});
+            if (p.trail.length > 80) p.trail.shift();
+
+            // Draw trail
+            if (p.trail.length > 1) {
+                ctx.beginPath();
+                ctx.moveTo(p.trail[p.trail.length-2].x, p.trail[p.trail.length-2].y);
+                ctx.lineTo(p.trail[p.trail.length-1].x, p.trail[p.trail.length-1].y);
+                const hue = (Math.atan2(p.y, p.x) * 180 / Math.PI + 360) % 360;
+                ctx.strokeStyle = 'hsla(' + hue + ', 80%, 60%, 0.8)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            // Draw particle
+            ctx.beginPath();
+            ctx.arc(p.x + cx, p.y + cy, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+        });
+
+        fpAnimId = requestAnimationFrame(animateFixedPoint);
+    }
+
+    // ==================== LIMIT CYCLES (Van der Pol) ====================
+    let vdpParticles = [];
+    let vdpAnimId = null;
+
+    function initLimitCycle() {
+        if (vdpAnimId) cancelAnimationFrame(vdpAnimId);
+        resetLimitCycle();
+    }
+
+    function resetLimitCycle() {
+        vdpParticles = [];
+        for (let i = 0; i < 15; i++) {
+            vdpParticles.push({
+                x: (Math.random() - 0.5) * 6,
+                y: (Math.random() - 0.5) * 6,
+                trail: []
+            });
+        }
+        // Add some starting inside
+        for (let i = 0; i < 5; i++) {
+            vdpParticles.push({
+                x: (Math.random() - 0.5) * 0.5,
+                y: (Math.random() - 0.5) * 0.5,
+                trail: []
+            });
+        }
+        if (vdpAnimId) cancelAnimationFrame(vdpAnimId);
+        animateLimitCycle();
+    }
+
+    function animateLimitCycle() {
+        const canvas = document.getElementById('limit-cycle-canvas');
+        const ctx = canvas.getContext('2d');
+        const mu = parseFloat(document.getElementById('vdp-mu').value);
+        const trailLen = parseInt(document.getElementById('vdp-trail').value);
+        document.getElementById('vdp-mu-val').textContent = mu.toFixed(1);
+        document.getElementById('vdp-trail-val').textContent = trailLen;
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const scale = 60;
+        const dt = 0.02;
+        const steps = 5;
+
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw axes
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy);
+        ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height);
+        ctx.stroke();
+
+        vdpParticles.forEach((p, idx) => {
+            for (let s = 0; s < steps; s++) {
+                const dxdt = p.y;
+                const dydt = mu * (1 - p.x * p.x) * p.y - p.x;
+                p.x += dxdt * dt;
+                p.y += dydt * dt;
+            }
+
+            p.trail.push({x: p.x, y: p.y});
+            if (p.trail.length > trailLen) p.trail.shift();
+
+            // Draw trail
+            if (p.trail.length > 1) {
+                for (let i = 1; i < p.trail.length; i++) {
+                    const alpha = i / p.trail.length;
+                    ctx.beginPath();
+                    ctx.moveTo(cx + p.trail[i-1].x * scale, cy - p.trail[i-1].y * scale);
+                    ctx.lineTo(cx + p.trail[i].x * scale, cy - p.trail[i].y * scale);
+                    const hue = (idx * 37 + 200) % 360;
+                    ctx.strokeStyle = 'hsla(' + hue + ', 70%, 60%, ' + (alpha * 0.7) + ')';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+            }
+
+            // Draw particle
+            ctx.beginPath();
+            ctx.arc(cx + p.x * scale, cy - p.y * scale, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+        });
+
+        vdpAnimId = requestAnimationFrame(animateLimitCycle);
+    }
+
+    // ==================== LOGISTIC MAP ====================
+    function updateLogistic() {
+        const canvas = document.getElementById('logistic-canvas');
+        const ctx = canvas.getContext('2d');
+        const r = parseFloat(document.getElementById('logistic-r').value);
+        const x0 = parseFloat(document.getElementById('logistic-x0').value);
+        
+        document.getElementById('logistic-r-val').textContent = r.toFixed(3);
+        document.getElementById('logistic-x0-val').textContent = x0.toFixed(2);
+        document.getElementById('log-r-display').textContent = r.toFixed(3);
+
+        // Classify behavior
+        let behavior = '';
+        if (r < 1) behavior = 'Extinction';
+        else if (r < 3) behavior = 'Fixed Point';
+        else if (r < 3.449) behavior = 'Period-2';
+        else if (r < 3.544) behavior = 'Period-4';
+        else if (r < 3.5699) behavior = 'Period-8+';
+        else behavior = 'Chaotic';
+        document.getElementById('log-behavior').textContent = behavior;
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const iterations = 200;
+        const values = [x0];
+        let x = x0;
+        for (let i = 0; i < iterations; i++) {
+            x = r * x * (1 - x);
+            values.push(x);
+        }
+
+        // Draw cobweb diagram on left half
+        const halfW = canvas.width / 2;
+        const margin = 40;
+
+        // Left: time series
+        ctx.strokeStyle = '#48dbfb';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let i = 0; i < values.length; i++) {
+            const px = margin + (i / iterations) * (halfW - 2 * margin);
+            const py = canvas.height - margin - values[i] * (canvas.height - 2 * margin);
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Axes for time series
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(margin, margin); ctx.lineTo(margin, canvas.height - margin);
+        ctx.lineTo(halfW - margin, canvas.height - margin);
+        ctx.stroke();
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Time Series', margin + 10, margin + 15);
+        ctx.fillText('n', halfW - margin - 10, canvas.height - margin + 15);
+        ctx.fillText('x', margin - 15, margin + 5);
+
+        // Right: cobweb diagram
+        const rOff = halfW;
+        const size = halfW - 2 * margin;
+
+        // Draw parabola
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (let i = 0; i <= 100; i++) {
+            const xv = i / 100;
+            const yv = r * xv * (1 - xv);
+            const px = rOff + margin + xv * size;
+            const py = canvas.height - margin - yv * size;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Draw y=x line
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(rOff + margin, canvas.height - margin);
+        ctx.lineTo(rOff + margin + size, canvas.height - margin - size);
+        ctx.stroke();
+
+        // Draw cobweb
+        ctx.strokeStyle = 'rgba(72, 219, 251, 0.6)';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        x = x0;
+        let px = rOff + margin + x * size;
+        let py = canvas.height - margin;
+        ctx.moveTo(px, py);
+        
+        for (let i = 0; i < Math.min(100, iterations); i++) {
+            const nx = r * x * (1 - x);
+            // Vertical to parabola
+            py = canvas.height - margin - nx * size;
+            ctx.lineTo(px, py);
+            // Horizontal to y=x
+            px = rOff + margin + nx * size;
+            ctx.lineTo(px, py);
+            x = nx;
+        }
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#aaa';
+        ctx.fillText('Cobweb Diagram', rOff + margin + 10, margin + 15);
+        ctx.fillText('f(x) = rx(1-x)', rOff + margin + size - 90, margin + 15);
+
+        // Axes
+        ctx.strokeStyle = '#555';
+        ctx.beginPath();
+        ctx.moveTo(rOff + margin, margin); ctx.lineTo(rOff + margin, canvas.height - margin);
+        ctx.lineTo(rOff + margin + size, canvas.height - margin);
+        ctx.stroke();
+    }
+
+    // ==================== LORENZ ATTRACTOR ====================
+    let lorenzState = {x: 1, y: 1, z: 1};
+    let lorenzTrail = [];
+    let lorenzAnimId = null;
+    let lorenzAngle = 0;
+
+    function initLorenz() {
+        if (lorenzAnimId) cancelAnimationFrame(lorenzAnimId);
+        resetLorenz();
+    }
+
+    function resetLorenz() {
+        lorenzState = {x: 1, y: 1, z: 1};
+        lorenzTrail = [];
+        lorenzAngle = 0;
+        if (lorenzAnimId) cancelAnimationFrame(lorenzAnimId);
+        animateLorenz();
+    }
+
+    function updateLorenzParams() {
+        document.getElementById('lorenz-sigma-val').textContent = parseFloat(document.getElementById('lorenz-sigma').value).toFixed(1);
+        document.getElementById('lorenz-rho-val').textContent = parseFloat(document.getElementById('lorenz-rho').value).toFixed(1);
+        document.getElementById('lorenz-beta-val').textContent = parseFloat(document.getElementById('lorenz-beta').value).toFixed(3);
+    }
+
+    function animateLorenz() {
+        const canvas = document.getElementById('lorenz-canvas');
+        const ctx = canvas.getContext('2d');
+        const sigma = parseFloat(document.getElementById('lorenz-sigma').value);
+        const rho = parseFloat(document.getElementById('lorenz-rho').value);
+        const beta = parseFloat(document.getElementById('lorenz-beta').value);
+        const view = document.getElementById('lorenz-view').value;
+
+        const dt = 0.005;
+        const stepsPerFrame = 10;
+
+        for (let s = 0; s < stepsPerFrame; s++) {
+            const dx = sigma * (lorenzState.y - lorenzState.x);
+            const dy = lorenzState.x * (rho - lorenzState.z) - lorenzState.y;
+            const dz = lorenzState.x * lorenzState.y - beta * lorenzState.z;
+            lorenzState.x += dx * dt;
+            lorenzState.y += dy * dt;
+            lorenzState.z += dz * dt;
+            lorenzTrail.push({x: lorenzState.x, y: lorenzState.y, z: lorenzState.z});
+        }
+
+        if (lorenzTrail.length > 8000) lorenzTrail = lorenzTrail.slice(-8000);
+
+        // Update status
+        document.getElementById('lorenz-points').textContent = lorenzTrail.length;
+        document.getElementById('lorenz-x').textContent = lorenzState.x.toFixed(2);
+        document.getElementById('lorenz-y').textContent = lorenzState.y.toFixed(2);
+        document.getElementById('lorenz-z').textContent = lorenzState.z.toFixed(2);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.06)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const scale = 7;
+
+        lorenzAngle += 0.003;
+
+        for (let i = 1; i < lorenzTrail.length; i++) {
+            const p = lorenzTrail[i];
+            const pp = lorenzTrail[i-1];
+            let px, py, ppx, ppy;
+
+            if (view === 'xz') {
+                px = cx + p.x * scale;
+                py = canvas.height - 50 - (p.z - 10) * scale;
+                ppx = cx + pp.x * scale;
+                ppy = canvas.height - 50 - (pp.z - 10) * scale;
+            } else if (view === 'xy') {
+                px = cx + p.x * scale;
+                py = cy - p.y * scale;
+                ppx = cx + pp.x * scale;
+                ppy = cy - pp.y * scale;
+            } else if (view === 'yz') {
+                px = cx + p.y * scale;
+                py = canvas.height - 50 - (p.z - 10) * scale;
+                ppx = cx + pp.y * scale;
+                ppy = canvas.height - 50 - (pp.z - 10) * scale;
+            } else { // 3d
+                const cosA = Math.cos(lorenzAngle);
+                const sinA = Math.sin(lorenzAngle);
+                const rx = p.x * cosA - p.y * sinA;
+                const ry = p.x * sinA + p.y * cosA;
+                px = cx + rx * scale;
+                py = canvas.height - 50 - (p.z - 10) * scale * 0.8 - ry * scale * 0.3;
+                const rrx = pp.x * cosA - pp.y * sinA;
+                const rry = pp.x * sinA + pp.y * cosA;
+                ppx = cx + rrx * scale;
+                ppy = canvas.height - 50 - (pp.z - 10) * scale * 0.8 - rry * scale * 0.3;
+            }
+
+            const alpha = i / lorenzTrail.length;
+            const hue = (i * 0.05) % 360;
+            ctx.beginPath();
+            ctx.moveTo(ppx, ppy);
+            ctx.lineTo(px, py);
+            ctx.strokeStyle = 'hsla(' + hue + ', 80%, 55%, ' + (alpha * 0.8) + ')';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+        }
+
+        // Draw current position
+        if (lorenzTrail.length > 0) {
+            const last = lorenzTrail[lorenzTrail.length - 1];
+            let lx, ly;
+            if (view === 'xz') {
+                lx = cx + last.x * scale;
+                ly = canvas.height - 50 - (last.z - 10) * scale;
+            } else if (view === 'xy') {
+                lx = cx + last.x * scale;
+                ly = cy - last.y * scale;
+            } else if (view === 'yz') {
+                lx = cx + last.y * scale;
+                ly = canvas.height - 50 - (last.z - 10) * scale;
+            } else {
+                const cosA = Math.cos(lorenzAngle);
+                const sinA = Math.sin(lorenzAngle);
+                const rx = last.x * cosA - last.y * sinA;
+                const ry = last.x * sinA + last.y * cosA;
+                lx = cx + rx * scale;
+                ly = canvas.height - 50 - (last.z - 10) * scale * 0.8 - ry * scale * 0.3;
+            }
+            ctx.beginPath();
+            ctx.arc(lx, ly, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(lx, ly, 8, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        lorenzAnimId = requestAnimationFrame(animateLorenz);
+    }
+
+    // ==================== ROSSLER ATTRACTOR ====================
+    let rosslerState = {x: 1, y: 1, z: 1};
+    let rosslerTrail = [];
+    let rosslerAnimId = null;
+    let rosslerAngle = 0;
+
+    function initRossler() {
+        if (rosslerAnimId) cancelAnimationFrame(rosslerAnimId);
+        resetRossler();
+    }
+
+    function resetRossler() {
+        rosslerState = {x: 1, y: 1, z: 1};
+        rosslerTrail = [];
+        rosslerAngle = 0;
+        if (rosslerAnimId) cancelAnimationFrame(rosslerAnimId);
+        animateRossler();
+    }
+
+    function updateRosslerParams() {
+        document.getElementById('rossler-a-val').textContent = parseFloat(document.getElementById('rossler-a').value).toFixed(2);
+        document.getElementById('rossler-b-val').textContent = parseFloat(document.getElementById('rossler-b').value).toFixed(2);
+        document.getElementById('rossler-c-val').textContent = parseFloat(document.getElementById('rossler-c').value).toFixed(1);
+    }
+
+    function animateRossler() {
+        const canvas = document.getElementById('rossler-canvas');
+        const ctx = canvas.getContext('2d');
+        const a = parseFloat(document.getElementById('rossler-a').value);
+        const b = parseFloat(document.getElementById('rossler-b').value);
+        const c = parseFloat(document.getElementById('rossler-c').value);
+        const view = document.getElementById('rossler-view').value;
+
+        const dt = 0.01;
+        const stepsPerFrame = 8;
+
+        for (let s = 0; s < stepsPerFrame; s++) {
+            const dx = -rosslerState.y - rosslerState.z;
+            const dy = rosslerState.x + a * rosslerState.y;
+            const dz = b + rosslerState.z * (rosslerState.x - c);
+            rosslerState.x += dx * dt;
+            rosslerState.y += dy * dt;
+            rosslerState.z += dz * dt;
+            
+            // Prevent blowup
+            if (Math.abs(rosslerState.x) > 1000 || Math.abs(rosslerState.y) > 1000 || Math.abs(rosslerState.z) > 1000) {
+                rosslerState = {x: 1, y: 1, z: 1};
+                rosslerTrail = [];
+            }
+            rosslerTrail.push({x: rosslerState.x, y: rosslerState.y, z: rosslerState.z});
+        }
+
+        if (rosslerTrail.length > 8000) rosslerTrail = rosslerTrail.slice(-8000);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.06)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const scale = 12;
+
+        rosslerAngle += 0.004;
+
+        for (let i = 1; i < rosslerTrail.length; i++) {
+            const p = rosslerTrail[i];
+            const pp = rosslerTrail[i-1];
+            let px, py, ppx, ppy;
+
+            if (view === 'xy') {
+                px = cx + p.x * scale;
+                py = cy - p.y * scale;
+                ppx = cx + pp.x * scale;
+                ppy = cy - pp.y * scale;
+            } else if (view === 'xz') {
+                px = cx + p.x * scale;
+                py = canvas.height - 80 - p.z * scale * 0.8;
+                ppx = cx + pp.x * scale;
+                ppy = canvas.height - 80 - pp.z * scale * 0.8;
+            } else if (view === 'yz') {
+                px = cx + p.y * scale;
+                py = canvas.height - 80 - p.z * scale * 0.8;
+                ppx = cx + pp.y * scale;
+                ppy = canvas.height - 80 - pp.z * scale * 0.8;
+            } else { // 3d
+                const cosA = Math.cos(rosslerAngle);
+                const sinA = Math.sin(rosslerAngle);
+                const rx = p.x * cosA - p.y * sinA;
+                const ry = p.x * sinA + p.y * cosA;
+                px = cx + rx * scale;
+                py = cy - p.z * scale * 0.6 - ry * scale * 0.4;
+                const rrx = pp.x * cosA - pp.y * sinA;
+                const rry = pp.x * sinA + pp.y * cosA;
+                ppx = cx + rrx * scale;
+                ppy = cy - pp.z * scale * 0.6 - rry * scale * 0.4;
+            }
+
+            const alpha = i / rosslerTrail.length;
+            const hue = (120 + i * 0.04) % 360;
+            ctx.beginPath();
+            ctx.moveTo(ppx, ppy);
+            ctx.lineTo(px, py);
+            ctx.strokeStyle = 'hsla(' + hue + ', 75%, 55%, ' + (alpha * 0.8) + ')';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+        }
+
+        // Current position marker
+        if (rosslerTrail.length > 0) {
+            const last = rosslerTrail[rosslerTrail.length - 1];
+            let lx, ly;
+            if (view === 'xy') { lx = cx + last.x * scale; ly = cy - last.y * scale; }
+            else if (view === 'xz') { lx = cx + last.x * scale; ly = canvas.height - 80 - last.z * scale * 0.8; }
+            else if (view === 'yz') { lx = cx + last.y * scale; ly = canvas.height - 80 - last.z * scale * 0.8; }
+            else {
+                const cosA = Math.cos(rosslerAngle);
+                const sinA = Math.sin(rosslerAngle);
+                lx = cx + (last.x * cosA - last.y * sinA) * scale;
+                ly = cy - last.z * scale * 0.6 - (last.x * sinA + last.y * cosA) * scale * 0.4;
+            }
+            ctx.beginPath();
+            ctx.arc(lx, ly, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+        }
+
+        rosslerAnimId = requestAnimationFrame(animateRossler);
+    }
+
+    // ==================== HYPERCHAOS ====================
+    let hyperState = {x: -10, y: -6, z: 0, w: 10};
+    let hyperTrail = [];
+    let hyperAnimId = null;
+
+    function initHyper() {
+        if (hyperAnimId) cancelAnimationFrame(hyperAnimId);
+        resetHyper();
+    }
+
+    function resetHyper() {
+        hyperState = {x: -10, y: -6, z: 0, w: 10};
+        hyperTrail = [];
+        if (hyperAnimId) cancelAnimationFrame(hyperAnimId);
+        animateHyper();
+    }
+
+    function updateHyperParams() {
+        document.getElementById('hyper-a-val').textContent = parseFloat(document.getElementById('hyper-a').value).toFixed(2);
+        document.getElementById('hyper-b-val').textContent = parseFloat(document.getElementById('hyper-b').value).toFixed(1);
+        document.getElementById('hyper-c-val').textContent = parseFloat(document.getElementById('hyper-c').value).toFixed(2);
+        document.getElementById('hyper-d-val').textContent = parseFloat(document.getElementById('hyper-d').value).toFixed(3);
+    }
+
+    function animateHyper() {
+        const canvas = document.getElementById('hyperchaos-canvas');
+        const ctx = canvas.getContext('2d');
+        const a = parseFloat(document.getElementById('hyper-a').value);
+        const b = parseFloat(document.getElementById('hyper-b').value);
+        const c = parseFloat(document.getElementById('hyper-c').value);
+        const d = parseFloat(document.getElementById('hyper-d').value);
+        const proj = document.getElementById('hyper-proj').value;
+
+        const dt = 0.005;
+        const stepsPerFrame = 12;
+
+        for (let s = 0; s < stepsPerFrame; s++) {
+            const dx = -hyperState.y - hyperState.z;
+            const dy = hyperState.x + a * hyperState.y + hyperState.w;
+            const dz = b + hyperState.x * hyperState.z;
+            const dw = -c * hyperState.z + d * hyperState.w;
+            hyperState.x += dx * dt;
+            hyperState.y += dy * dt;
+            hyperState.z += dz * dt;
+            hyperState.w += dw * dt;
+
+            // Prevent blowup
+            if (Math.abs(hyperState.x) > 500 || Math.abs(hyperState.y) > 500 || 
+                Math.abs(hyperState.z) > 500 || Math.abs(hyperState.w) > 500) {
+                hyperState = {x: -10, y: -6, z: 0, w: 10};
+                hyperTrail = [];
+            }
+            hyperTrail.push({x: hyperState.x, y: hyperState.y, z: hyperState.z, w: hyperState.w});
+        }
+
+        if (hyperTrail.length > 10000) hyperTrail = hyperTrail.slice(-10000);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const cxc = canvas.width / 2;
+        const cyc = canvas.height / 2;
+        const scale = 8;
+
+        for (let i = 1; i < hyperTrail.length; i++) {
+            const p = hyperTrail[i];
+            const pp = hyperTrail[i-1];
+            let px, py, ppx, ppy;
+
+            if (proj === 'xy') { px = cxc + p.x * scale; py = cyc - p.y * scale; ppx = cxc + pp.x * scale; ppy = cyc - pp.y * scale; }
+            else if (proj === 'xz') { px = cxc + p.x * scale; py = cyc - p.z * scale; ppx = cxc + pp.x * scale; ppy = cyc - pp.z * scale; }
+            else if (proj === 'xw') { px = cxc + p.x * scale; py = cyc - p.w * scale; ppx = cxc + pp.x * scale; ppy = cyc - pp.w * scale; }
+            else if (proj === 'yw') { px = cxc + p.y * scale; py = cyc - p.w * scale; ppx = cxc + pp.y * scale; ppy = cyc - pp.w * scale; }
+            else { px = cxc + p.z * scale; py = cyc - p.w * scale; ppx = cxc + pp.z * scale; ppy = cyc - pp.w * scale; }
+
+            const alpha = i / hyperTrail.length;
+            const hue = (280 + i * 0.03) % 360;
+            ctx.beginPath();
+            ctx.moveTo(ppx, ppy);
+            ctx.lineTo(px, py);
+            ctx.strokeStyle = 'hsla(' + hue + ', 85%, 55%, ' + (alpha * 0.7) + ')';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Current position
+        if (hyperTrail.length > 0) {
+            const last = hyperTrail[hyperTrail.length - 1];
+            let lx, ly;
+            if (proj === 'xy') { lx = cxc + last.x * scale; ly = cyc - last.y * scale; }
+            else if (proj === 'xz') { lx = cxc + last.x * scale; ly = cyc - last.z * scale; }
+            else if (proj === 'xw') { lx = cxc + last.x * scale; ly = cyc - last.w * scale; }
+            else if (proj === 'yw') { lx = cxc + last.y * scale; ly = cyc - last.w * scale; }
+            else { lx = cxc + last.z * scale; ly = cyc - last.w * scale; }
+            ctx.beginPath();
+            ctx.arc(lx, ly, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+        }
+
+        hyperAnimId = requestAnimationFrame(animateHyper);
+    }
+
+    // ==================== LYAPUNOV ====================
+    function initLyapunov() {
+        computeLyapunov();
+    }
+
+    function updateLyapDisplay() {
+        document.getElementById('lyap-r-val').textContent = parseFloat(document.getElementById('lyap-r').value).toFixed(2);
+        document.getElementById('lyap-iter-val').textContent = document.getElementById('lyap-iter').value;
+    }
+
+    function computeLyapunov() {
+        const canvas = document.getElementById('lyapunov-canvas');
+        const ctx = canvas.getContext('2d');
+        const r = parseFloat(document.getElementById('lyap-r').value);
+        const iterations = parseInt(document.getElementById('lyap-iter').value);
+        const system = document.getElementById('lyap-system').value;
+
+        updateLyapDisplay();
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let lyapunov = 0;
+        let x = 0.5;
+        const lyapValues = [];
+        let runningSum = 0;
+
+        if (system === 'logistic') {
+            // Transient
+            for (let i = 0; i < 100; i++) {
+                x = r * x * (1 - x);
+            }
+            // Compute
+            for (let i = 0; i < iterations; i++) {
+                const derivative = Math.abs(r * (1 - 2 * x));
+                if (derivative > 0) {
+                    runningSum += Math.log(derivative);
+                }
+                lyapValues.push(runningSum / (i + 1));
+                x = r * x * (1 - x);
+            }
+            lyapunov = runningSum / iterations;
+        } else { // Henon
+            let y = 0;
+            const a = r; // use r slider as 'a' parameter
+            const bh = 0.3;
+            for (let i = 0; i < 100; i++) {
+                const nx = 1 - a * x * x + y;
+                const ny = bh * x;
+                x = nx; y = ny;
+            }
+            for (let i = 0; i < iterations; i++) {
+                const derivative = Math.abs(-2 * a * x);
+                if (derivative > 0) {
+                    runningSum += Math.log(derivative);
+                }
+                lyapValues.push(runningSum / (i + 1));
+                const nx = 1 - a * x * x + y;
+                const ny = bh * x;
+                x = nx; y = ny;
+                if (Math.abs(x) > 1e10) break;
+            }
+            lyapunov = runningSum / iterations;
+        }
+
+        // Display result
+        document.getElementById('lyap-value').textContent = lyapunov.toFixed(4);
+        if (lyapunov > 0.01) {
+            document.getElementById('lyap-class').textContent = 'CHAOTIC';
+            document.getElementById('lyap-class').style.color = '#ff6b6b';
+        } else if (lyapunov < -0.01) {
+            document.getElementById('lyap-class').textContent = 'PERIODIC/FIXED';
+            document.getElementById('lyap-class').style.color = '#48dbfb';
+        } else {
+            document.getElementById('lyap-class').textContent = 'EDGE OF CHAOS';
+            document.getElementById('lyap-class').style.color = '#feca57';
+        }
+
+        // Draw convergence plot
+        const margin = 50;
+        const plotW = canvas.width - 2 * margin;
+        const plotH = canvas.height - 2 * margin;
+
+        // Find y range
+        let yMin = -1, yMax = 1;
+        if (lyapValues.length > 0) {
+            yMin = Math.min(...lyapValues, -0.5);
+            yMax = Math.max(...lyapValues, 0.5);
+            const yPad = (yMax - yMin) * 0.1;
+            yMin -= yPad;
+            yMax += yPad;
+        }
+
+        // Draw zero line
+        const zeroY = margin + plotH * (yMax / (yMax - yMin));
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(margin, zeroY);
+        ctx.lineTo(canvas.width - margin, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw axes
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(margin, margin);
+        ctx.lineTo(margin, canvas.height - margin);
+        ctx.lineTo(canvas.width - margin, canvas.height - margin);
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#aaa';
+        ctx.font = '12px sans-serif';
+        ctx.fillText('Lyapunov Exponent Convergence', margin + 10, margin - 10);
+        ctx.fillText('0', margin - 15, zeroY + 4);
+        ctx.fillText('Iterations', canvas.width / 2, canvas.height - 10);
+
+        // Plot
+        ctx.beginPath();
+        for (let i = 0; i < lyapValues.length; i++) {
+            const px = margin + (i / lyapValues.length) * plotW;
+            const py = margin + plotH * ((yMax - lyapValues[i]) / (yMax - yMin));
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = lyapunov > 0 ? '#ff6b6b' : '#48dbfb';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Final value line
+        const finalY = margin + plotH * ((yMax - lyapunov) / (yMax - yMin));
+        ctx.strokeStyle = lyapunov > 0 ? 'rgba(255,107,107,0.5)' : 'rgba(72,219,251,0.5)';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(margin, finalY);
+        ctx.lineTo(canvas.width - margin, finalY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = lyapunov > 0 ? '#ff6b6b' : '#48dbfb';
+        ctx.fillText('lambda = ' + lyapunov.toFixed(4), canvas.width - margin - 120, finalY - 8);
+    }
+
+    function drawLyapSpectrum() {
+        const canvas = document.getElementById('lyap-spectrum-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const margin = 50;
+        const plotW = canvas.width - 2 * margin;
+        const plotH = canvas.height - 2 * margin;
+        const rMin = 2.5, rMax = 4.0;
+        const steps = 500;
+
+        for (let i = 0; i < steps; i++) {
+            const r = rMin + (i / steps) * (rMax - rMin);
+            let x = 0.5;
+            let lyap = 0;
+
+            // Transient
+            for (let j = 0; j < 200; j++) x = r * x * (1 - x);
+            // Compute
+            for (let j = 0; j < 500; j++) {
+                const deriv = Math.abs(r * (1 - 2 * x));
+                if (deriv > 0) lyap += Math.log(deriv);
+                x = r * x * (1 - x);
+            }
+            lyap /= 500;
+
+            const px = margin + (i / steps) * plotW;
+            const py = margin + plotH * (1 - (lyap + 1) / 2); // map [-1, 1] to plot
+
+            ctx.fillStyle = lyap > 0 ? '#ff6b6b' : '#48dbfb';
+            ctx.fillRect(px, py, 2, 2);
+        }
+
+        // Zero line
+        const zeroY = margin + plotH * 0.5;
+        ctx.strokeStyle = '#feca57';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(margin, zeroY);
+        ctx.lineTo(canvas.width - margin, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Axes
+        ctx.strokeStyle = '#666';
+        ctx.beginPath();
+        ctx.moveTo(margin, margin);
+        ctx.lineTo(margin, canvas.height - margin);
+        ctx.lineTo(canvas.width - margin, canvas.height - margin);
+        ctx.stroke();
+
+        ctx.fillStyle = '#aaa';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('r = ' + rMin.toFixed(1), margin, canvas.height - margin + 15);
+        ctx.fillText('r = ' + rMax.toFixed(1), canvas.width - margin - 30, canvas.height - margin + 15);
+        ctx.fillText('lambda = 0', margin - 45, zeroY + 4);
+        ctx.fillText('Lyapunov Exponent vs r (Logistic Map)', margin + 10, margin - 10);
+        ctx.fillStyle = '#ff6b6b';
+        ctx.fillText('Red = Chaotic (lambda > 0)', canvas.width - margin - 170, margin + 15);
+        ctx.fillStyle = '#48dbfb';
+        ctx.fillText('Blue = Periodic (lambda < 0)', canvas.width - margin - 170, margin + 30);
+    }
+
+    // ==================== BIFURCATION ====================
+    function updateBifDisplay() {
+        document.getElementById('bif-rmin-val').textContent = parseFloat(document.getElementById('bif-rmin').value).toFixed(2);
+        document.getElementById('bif-rmax-val').textContent = parseFloat(document.getElementById('bif-rmax').value).toFixed(3);
+        document.getElementById('bif-res-val').textContent = document.getElementById('bif-res').value;
+    }
+
+    function drawBifurcation() {
+        const canvas = document.getElementById('bifurcation-canvas');
+        const ctx = canvas.getContext('2d');
+        const rMin = parseFloat(document.getElementById('bif-rmin').value);
+        const rMax = parseFloat(document.getElementById('bif-rmax').value);
+        const resolution = parseInt(document.getElementById('bif-res').value);
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const margin = 40;
+        const plotW = canvas.width - 2 * margin;
+        const plotH = canvas.height - 2 * margin;
+        const transient = 300;
+        const plotPoints = 150;
+
+  
+                p.y = ny % 1;
+            } else { // stretch-fold
+                // Stretch and fold like kneading dough
+                let nx = p.x * 2;
+                let ny = p.y;
+                if (nx > 1) {
+                    nx = 2 - nx;
+                    ny = 1 - ny;
+                }
+                p.x = nx;
+                p.y = ny * 0.9 + 0.05;
+            }
+        });
+
+        drawTopology();
+    }
+
+    function drawTopology() {
+        const canvas = document.getElementById('topology-canvas');
+        const ctx = canvas.getContext('2d');
+        const demo = document.getElementById('topo-demo').value;
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const margin = 60;
+        const plotSize = Math.min(canvas.width - 2 * margin, canvas.height - 2 * margin);
+        const offsetX = (canvas.width - plotSize) / 2;
+        const offsetY = (canvas.height - plotSize) / 2;
+
+        // Draw unit square boundary
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(offsetX, offsetY, plotSize, plotSize);
+
+        // Draw grid lines for reference
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 0.5;
+        for (let i = 1; i < 4; i++) {
+            ctx.beginPath();
+            ctx.moveTo(offsetX + (i/4) * plotSize, offsetY);
+            ctx.lineTo(offsetX + (i/4) * plotSize, offsetY + plotSize);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(offsetX, offsetY + (i/4) * plotSize);
+            ctx.lineTo(offsetX + plotSize, offsetY + (i/4) * plotSize);
+            ctx.stroke();
+        }
+
+        // Draw points
+        topoState.points.forEach(p => {
+            const px = offsetX + p.x * plotSize;
+            const py = offsetY + (1 - p.y) * plotSize;
+            
+            // Color based on original position
+            const hue = (p.ox * 360) % 360;
+            const lightness = 40 + p.oy * 30;
+            ctx.fillStyle = 'hsl(' + hue + ', 80%, ' + lightness + '%)';
+            ctx.fillRect(px - 2, py - 2, 4, 4);
+        });
+
+        // Labels
+        ctx.fillStyle = '#aaa';
+        ctx.font = '13px sans-serif';
+        let title = '';
+        if (demo === 'horseshoe') title = 'Smale Horseshoe Map';
+        else if (demo === 'baker') title = "Baker's Map";
+        else title = 'Stretch & Fold';
+        ctx.fillText(title + ' - Iteration: ' + topoState.iteration, offsetX, offsetY - 15);
+        
+        ctx.fillStyle = '#666';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Colors encode original position. Watch how regions stretch and fold!', offsetX, canvas.height - 20);
+    }
+
+    // ==================== INITIALIZATION ====================
+    // Start with intro section visible, initialize fixed points when that tab is clicked
+    window.addEventListener('load', function() {
+        // Pre-draw logistic map
+        updateLogistic();
+    });
+
+    // Clean up animations when switching sections
+    function stopAllAnimations() {
+        if (fpAnimId) { cancelAnimationFrame(fpAnimId); fpAnimId = null; }
+        if (vdpAnimId) { cancelAnimationFrame(vdpAnimId); vdpAnimId = null; }
+        if (lorenzAnimId) { cancelAnimationFrame(lorenzAnimId); lorenzAnimId = null; }
+        if (rosslerAnimId) { cancelAnimationFrame(rosslerAnimId); rosslerAnimId = null; }
+        if (hyperAnimId) { cancelAnimationFrame(hyperAnimId); hyperAnimId = null; }
+    }
+
+    // Override showSection to handle cleanup
+    const originalShowSection = showSection;
+    showSection = function(id) {
+        stopAllAnimations();
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('section-' + id).classList.add('active');
+        event.target.classList.add('active');
+        
+        switch(id) {
+            case 'fixed-points': initFixedPoint(); break;
+            case 'limit-cycles': initLimitCycle(); break;
+            case 'logistic': updateLogistic(); break;
+            case 'lorenz': initLorenz(); break;
+            case 'rossler': initRossler(); break;
+            case 'hyperchaos': initHyper(); break;
+            case 'lyapunov': initLyapunov(); break;
+            case 'bifurcation': drawBifurcation(); break;
+            case 'topology': initTopology(); break;
+        }
+    };
+    </script>
+</body>
+</html>
