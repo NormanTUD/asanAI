@@ -341,7 +341,6 @@ function init_categories () {
 		var dataset_name = dataset_names[j];
 		if(!dataset_already_there(dataset_name)) {
 			var dataset_value = traindata_struct[dataset_names[j]]["name"];
-			var existing_keys_in_dataset = $.map($("#dataset option"), e => $(e).val());
 
 			$("#dataset").append(`<option value="${dataset_value}">${dataset_name}</option>`);
 		}
