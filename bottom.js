@@ -1,6 +1,9 @@
 "use strict";
 
 var get_methods = (obj) => Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === "function");
+var local_store = window.localStorage;
+local_store.clear();
+
 var old_mode = "beginner";
 
 function get_mode() {
