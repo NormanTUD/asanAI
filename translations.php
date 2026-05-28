@@ -1499,7 +1499,7 @@
 			} elseif ($keys !== $subKeys) {
 				$missingKeys = array_diff($keys, $subKeys);
 				if ($missingKeys) {
-					die("Missing key in '$lang': " . reset($missingKeys));
+					die("Missing key in '$lang': " . reset($missingKeys) . "\n");
 				}
 
 				$extraKeys = array_diff($subKeys, $keys);
