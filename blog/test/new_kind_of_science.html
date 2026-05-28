@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A New Kind of Science - Interactive Explorer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 70%);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            line-height: 1.8;
+            color: #aaa;
+        }
+
+        .scroll-hint {
+            margin-top: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+            color: #48dbfb;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: #48dbfb;
+        }
+
+        section p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ccc;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .concept-card {
+            background: #1a1a3e;
+            border: 1px solid #2a2a5e;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(72, 219, 251, 0.2);
+        }
+
+        .concept-card h3 {
+            color: #feca57;
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+        }
+
+        .concept-card p {
+            font-size: 0.95rem;
+            color: #aaa;
+        }
+
+        /* Cellular Automaton Section */
+        .ca-section {
+            text-align: center;
+        }
+
+        .ca-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .ca-controls label {
+            color: #feca57;
+            font-size: 1rem;
+        }
+
+        .ca-controls input[type="number"] {
+            width: 80px;
+            padding: 0.5rem;
+            border: 1px solid #48dbfb;
+            border-radius: 6px;
+            background: #0a0a1a;
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .ca-controls button {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #48dbfb, #0abde3);
+            color: #000;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .ca-controls button:hover {
+            transform: scale(1.05);
+        }
+
+        .ca-canvas-container {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+
+        canvas {
+            background: #000;
+            border: 1px solid #2a2a5e;
+            border-radius: 8px;
+        }
+
+        .rule-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .rule-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #1a1a3e;
+            border-radius: 8px;
+            padding: 0.5rem;
+            border: 1px solid #2a2a5e;
+        }
+
+        .rule-pattern {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 4px;
+        }
+
+        .rule-cell {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #444;
+        }
+
+        .rule-cell.on {
+            background: #48dbfb;
+        }
+
+        .rule-cell.off {
+            background: #111;
+        }
+
+        .rule-result {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #444;
+            margin-top: 4px;
+        }
+
+        .rule-result.on {
+            background: #feca57;
+        }
+
+        .rule-result.off {
+            background: #111;
+        }
+
+        /* Famous Rules Gallery */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .gallery-btn {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid #ff6b6b;
+            border-radius: 20px;
+            background: transparent;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .gallery-btn:hover, .gallery-btn.active {
+            background: #ff6b6b;
+            color: #000;
+        }
+
+        /* Complexity Classes */
+        .complexity-section {
+            background: #0f0f2a;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin: 2rem 0;
+        }
+
+        .class-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .class-card {
+            background: #1a1a3e;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .class-card:nth-child(1) { border-color: #636e72; }
+        .class-card:nth-child(2) { border-color: #0984e3; }
+        .class-card:nth-child(3) { border-color: #e17055; }
+        .class-card:nth-child(4) { border-color: #fdcb6e; }
+
+        .class-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .class-card:nth-child(1) h4 { color: #636e72; }
+        .class-card:nth-child(2) h4 { color: #0984e3; }
+        .class-card:nth-child(3) h4 { color: #e17055; }
+        .class-card:nth-child(4) h4 { color: #fdcb6e; }
+
+        .class-card p {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .class-card canvas {
+            margin-top: 1rem;
+            width: 100%;
+            height: 80px;
+        }
+
+        /* Key Ideas Section */
+        .key-ideas {
+            position: relative;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin-top: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #48dbfb, #ff6b6b, #feca57);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            background: #1a1a3e;
+            border-radius: 12px;
+            border: 1px solid #2a2a5e;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.35rem;
+            top: 1.5rem;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #48dbfb;
+            border: 3px solid #0a0a1a;
+        }
+
+        .timeline-item h3 {
+            color: #ff9ff3;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-item p {
+            font-size: 0.95rem;
+            color: #bbb;
+        }
+
+        /* Interactive Playground */
+        .playground {
+            background: #0f0f2a;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .playground h2 {
+            margin-bottom: 1rem;
+        }
+
+        .speed-control {
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .speed-control label {
+            color: #feca57;
+        }
+
+        .speed-control input[type="range"] {
+            width: 200px;
+            accent-color: #48dbfb;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: #1a1a3e;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #2a2a5e;
+        }
+
+        .stat-item .label {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        .stat-item .value {
+            font-size: 1.5rem;
+            color: #48dbfb;
+            font-weight: bold;
+        }
+
+        /* Principle of Computational Equivalence */
+        .pce-section {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .pce-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .pce-node {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .pce-node:hover {
+            transform: scale(1.1);
+        }
+
+        .pce-node:nth-child(1) { background: rgba(255, 107, 107, 0.3); border: 2px solid #ff6b6b; color: #ff6b6b; }
+        .pce-node:nth-child(2) { background: rgba(254, 202, 87, 0.3); border: 2px solid #feca57; color: #feca57; }
+        .pce-node:nth-child(3) { background: rgba(72, 219, 251, 0.3); border: 2px solid #48dbfb; color: #48dbfb; }
+        .pce-node:nth-child(4) { background: rgba(255, 159, 243, 0.3); border: 2px solid #ff9ff3; color: #ff9ff3; }
+        .pce-node:nth-child(5) { background: rgba(85, 239, 196, 0.3); border: 2px solid #55efc4; color: #55efc4; }
+
+        .pce-equals {
+            font-size: 2rem;
+            color: #feca57;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #666;
+            border-top: 1px solid #1a1a3e;
+        }
+
+        footer a {
+            color: #48dbfb;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+            }
+            section h2 {
+                font-size: 1.6rem;
+            }
+            .pce-visual {
+                gap: 1rem;
+            }
+            .pce-node {
+                width: 90px;
+                height: 90px;
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>A New Kind of Science</h1>
+        <p>Stephen Wolfram's groundbreaking 1,280-page book explores a radical idea: 
+        <strong>simple rules can produce immensely complex behavior</strong>. 
+        This interactive page lets you explore the core concepts yourself.</p>
+        <div class="scroll-hint">&#8595;</div>
+    </div>
+
+    <section>
+        <h2>The Central Discovery</h2>
+        <p>Traditional science uses mathematical equations to describe nature. Wolfram proposes a different approach: 
+        use <strong>simple computational rules</strong> (programs) and let them run. The surprising finding? 
+        Even the simplest possible programs can generate behavior as complex as anything in nature.</p>
+        <p>The book asks a fundamental question: <em>"If one sets up a system to follow a particular set of simple rules, what will the system do?"</em></p>
+
+        <div class="concept-grid">
+            <div class="concept-card">
+                <h3>Simple Programs</h3>
+                <p>Instead of complex equations, start with the simplest possible rules. Cellular automata with just 2 colors and nearest-neighbor rules can produce stunning complexity.</p>
+            </div>
+            <div class="concept-card">
+                <h3>Computational Irreducibility</h3>
+                <p>For many systems, there's no shortcut to predict their behavior. You must run the computation step by step. No formula can jump ahead.</p>
+            </div>
+            <div class="concept-card">
+                <h3>Principle of Computational Equivalence</h3>
+                <p>Almost all systems that aren't obviously simple are equivalent in computational sophistication. A weather system, a brain, and Rule 110 are all equally powerful.</p>
+            </div>
+            <div class="concept-card">
+                <h3>The Computational Universe</h3>
+                <p>There exists a vast universe of all possible simple programs. By systematically exploring them, we discover that complexity is the norm, not the exception.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="ca-section">
+        <h2>Interactive: Elementary Cellular Automata</h2>
+        <p style="text-align:center; max-width: 800px; margin: 0 auto;">
+            A cellular automaton is a row of cells, each either black or white. At each step, 
+            each cell looks at itself and its two neighbors, then applies a rule to determine its next state. 
+            There are 256 possible rules (0-255). Try different ones!
+        </p>
+
+        <div class="ca-controls">
+            <label>Rule Number (0-255):</label>
+            <input type="number" id="ruleInput" min="0" max="255" value="30">
+            <button id="generateBtn">Generate</button>
+            <button id="randomBtn">Random Rule</button>
+        </div>
+
+        <div class="rule-display" id="ruleDisplay"></div>
+
+        <div class="ca-canvas-container">
+            <canvas id="caCanvas" width="800" height="400"></canvas>
+        </div>
+
+        <h3 style="color: #feca57; margin-top: 2rem;">Famous Rules to Try</h3>
+        <div class="gallery">
+            <button class="gallery-btn" data-rule="30">Rule 30 (Chaos)</button>
+            <button class="gallery-btn" data-rule="110">Rule 110 (Universal)</button>
+            <button class="gallery-btn" data-rule="90">Rule 90 (Fractal)</button>
+            <button class="gallery-btn" data-rule="184">Rule 184 (Traffic)</button>
+            <button class="gallery-btn" data-rule="0">Rule 0 (Death)</button>
+            <button class="gallery-btn" data-rule="255">Rule 255 (All On)</button>
+            <button class="gallery-btn" data-rule="73">Rule 73 (Nested)</button>
+            <button class="gallery-btn" data-rule="54">Rule 54 (Complex)</button>
+            <button class="gallery-btn" data-rule="150">Rule 150 (Fractal)</button>
+            <button class="gallery-btn" data-rule="22">Rule 22 (Triangles)</button>
+        </div>
+    </section>
+
+    <section>
+        <div class="complexity-section">
+            <h2 style="text-align:center;">Wolfram's Four Classes of Behavior</h2>
+            <p style="text-align:center; max-width: 700px; margin: 0 auto;">
+                Wolfram classified all elementary cellular automata into four classes based on their long-term behavior:
+            </p>
+            <div class="class-container">
+                <div class="class-card">
+                    <h4>Class 1: Uniformity</h4>
+                    <p>All cells quickly reach the same fixed state. (e.g., Rule 0, Rule 32)</p>
+                    <canvas id="class1Canvas" width="200" height="80"></canvas>
+                </div>
+                <div class="class-card">
+                    <h4>Class 2: Repetition</h4>
+                    <p>Cells form simple periodic or stable patterns. (e.g., Rule 4, Rule 108)</p>
+                    <canvas id="class2Canvas" width="200" height="80"></canvas>
+                </div>
+                <div class="class-card">
+                    <h4>Class 3: Randomness</h4>
+                    <p>Cells produce seemingly random, chaotic patterns. (e.g., Rule 30, Rule 45)</p>
+                    <canvas id="class3Canvas" width="200" height="80"></canvas>
+                </div>
+                <div class="class-card">
+                    <h4>Class 4: Complexity</h4>
+                    <p>Localized structures that interact in complex ways. (e.g., Rule 110, Rule 54)</p>
+                    <canvas id="class4Canvas" width="200" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="key-ideas">
+        <h2>Key Ideas of the Book</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <h3>1. The Foundations of a New Science</h3>
+                <p>Science should be based on exploring the computational universe of simple programs, not just fitting equations to data. This is what Wolfram now calls "ruliology" - the pure study of how rules behave.</p>
+            </div>
+            <div class="timeline-item">
+                <h3>2. Nature Uses Simple Programs</h3>
+                <p>Patterns in seashells, snowflakes, fluid turbulence, and biological growth can all be explained by simple computational rules rather than complex mathematical models.</p>
+            </div>
+            <div class="timeline-item">
+                <h3>3. Computational Irreducibility</h3>
+                <p>Many systems cannot be predicted without actually running them step by step. This places fundamental limits on what science can predict, regardless of how smart we are.</p>
+            </div>
+            <div class="timeline-item">
+                <h3>4. Principle of Computational Equivalence (PCE)</h3>
+                <p>Almost all processes that are not obviously simple are equivalent in their computational power. This means a simple cellular automaton can be as computationally sophisticated as the human brain.</p>
+            </div>
+            <div class="timeline-item">
+                <h3>5. Implications for Physics</h3>
+                <p>The universe itself might be running on simple computational rules. Space, time, and quantum mechanics could emerge from a discrete network of simple operations (later developed into the Wolfram Physics Project).</p>
+            </div>
+            <div class="timeline-item">
+                <h3>6. Free Will and Undecidability</h3>
+                <p>Computational irreducibility provides a scientific basis for free will: even in a deterministic universe, behavior can be fundamentally unpredictable from the outside.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="playground">
+            <h2>Live Playground: Watch Complexity Emerge</h2>
+            <p style="max-width: 600px; margin: 0 auto 1rem;">
+                Watch a cellular automaton grow row by row. Change the rule mid-stream and see how behavior shifts!
+            </p>
+            <div class="ca-controls">
+                <label>Rule:</label>
+                <input type="number" id="liveRuleInput" min="0" max="255" value="110">
+                <button id="liveStartBtn">Start</button>
+                <button id="liveStopBtn">Stop</button>
+                <button id="liveResetBtn">Reset</button>
+            </div>
+            <div class="speed-control">
+                <label>Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="60" value="20">
+                <span id="speedValue" style="color:#48dbfb;">20 rows/sec</span>
+            </div>
+            <div class="ca-canvas-container">
+                <canvas id="liveCanvas" width="800" height="300"></canvas>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="label">Generation</div>
+                    <div class="value" id="genCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="label">Live Cells</div>
+                    <div class="value" id="liveCells">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="label">Density</div>
+                    <div class="value" id="density">0%</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pce-section">
+        <h2>The Principle of Computational Equivalence</h2>
+        <p style="max-width: 700px; margin: 0 auto;">
+            Perhaps the most profound claim in the book: once a system passes a very low threshold of complexity, 
+            it becomes equivalent in computational power to any other complex system - including a universal Turing machine.
+        </p>
+        <div class="pce-visual">
+            <div class="pce-node">Human Brain</div>
+            <div class="pce-node">Rule 110</div>
+            <div class="pce-node">Weather System</div>
+            <div class="pce-node">Turing Machine</div>
+            <div class="pce-node">Fluid Turbulence</div>
+        </div>
+        <p style="max-width: 600px; margin: 1rem auto; color: #feca57; font-size: 1.2rem;">
+            All computationally equivalent in power &#8596;
+        </p>
+        <p style="max-width: 700px; margin: 0 auto; font-size: 0.95rem;">
+            This means complexity doesn't require complex origins. The simplest possible rules, 
+            once they cross the threshold, are already as powerful as anything in the universe.
+        </p>
+    </section>
+
+    <section>
+        <h2>Why It Matters</h2>
+        <div class="concept-grid">
+            <div class="concept-card">
+                <h3>For Physics</h3>
+                <p>Led to the Wolfram Physics Project: the idea that spacetime itself emerges from simple hypergraph rewriting rules.</p>
+            </div>
+            <div class="concept-card">
+                <h3>For Biology</h3>
+                <p>Explains how simple genetic rules produce complex organisms. Morphogenesis, pigmentation patterns, and growth all follow simple programs.</p>
+            </div>
+            <div class="concept-card">
+                <h3>For Mathematics</h3>
+                <p>Suggests that undecidability and incompleteness (Godel) are not rare pathologies but the norm in the computational universe.</p>
+            </div>
+            <div class="concept-card">
+                <h3>For Philosophy</h3>
+                <p>Provides new frameworks for thinking about determinism, free will, consciousness, and the nature of complexity itself.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Interactive exploration of concepts from <em>A New Kind of Science</em> (2002) by Stephen Wolfram.</p>
+        <p style="margin-top: 0.5rem;">The book is freely available at <a href="https://www.wolframscience.com/nks/" target="_blank">wolframscience.com/nks</a></p>
+    </footer>
+
+    <script>
+        // ============ CELLULAR AUTOMATON ENGINE ============
+        function getRuleBits(ruleNumber) {
+            const bits = [];
+            for (let i = 0; i < 8; i++) {
+                bits.push((ruleNumber >> i) & 1);
+            }
+            return bits;
+        }
+
+        function applyRule(left, center, right, ruleBits) {
+            const index = (left << 2) | (center << 1) | right;
+            return ruleBits[index];
+        }
+
+        function generateCA(ruleNumber, width, height, initialState) {
+            const ruleBits = getRuleBits(ruleNumber);
+            const grid = [];
+
+            if (initialState) {
+                grid.push([...initialState]);
+            } else {
+                const firstRow = new Array(width).fill(0);
+                firstRow[Math.floor(width / 2)] = 1;
+                grid.push(firstRow);
+            }
+
+            for (let row = 1; row < height; row++) {
+                const prevRow = grid[row - 1];
+                const newRow = new Array(width).fill(0);
+                for (let col = 0; col < width; col++) {
+                    const left = prevRow[(col - 1 + width) % width];
+                    const center = prevRow[col];
+                    const right = prevRow[(col + 1) % width];
+                    newRow[col] = applyRule(left, center, right, ruleBits);
+                }
+                grid.push(newRow);
+            }
+
+            return grid;
+        }
+
+        function drawCA(canvas, grid, cellColor) {
+            const ctx = canvas.getContext('2d');
+            const cellWidth = canvas.width / grid[0].length;
+            const cellHeight = canvas.height / grid.length;
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const color = cellColor || '#48dbfb';
+
+            for (let row = 0; row < grid.length; row++) {
+                for (let col = 0; col < grid[row].length; col++) {
+                    if (grid[row][col] === 1) {
+                        ctx.fillStyle = color;
+                        ctx.fillRect(col * cellWidth, row * cellHeight, cellWidth, cellHeight);
+                    }
+                }
+            }
+        }
+
+        // ============ RULE DISPLAY ============
+        function displayRule(ruleNumber) {
+            const container = document.getElementById('ruleDisplay');
+            container.innerHTML = '';
+            const ruleBits = getRuleBits(ruleNumber);
+
+            for (let i = 7; i >= 0; i--) {
+                const box = document.createElement('div');
+                box.className = 'rule-box';
+
+                const pattern = document.createElement('div');
+                pattern.className = 'rule-pattern';
+
+                const left = (i >> 2) & 1;
+                const center = (i >> 1) & 1;
+                const right = i & 1;
+
+                [left, center, right].forEach(val => {
+                    const cell = document.createElement('div');
+                    cell.className = 'rule-cell ' + (val ? 'on' : 'off');
+                    pattern.appendChild(cell);
+                });
+
+                const result = document.createElement('div');
+                result.className = 'rule-result ' + (ruleBits[i] ? 'on' : 'off');
+
+                box.appendChild(pattern);
+                box.appendChild(result);
+                container.appendChild(box);
+            }
+        }
+
+        // ============ MAIN CA GENERATOR ============
+        function generateMainCA() {
+            const ruleNumber = parseInt(document.getElementById('ruleInput').value);
+            if (ruleNumber < 0 || ruleNumber > 255 || isNaN(ruleNumber)) return;
+
+            const canvas = document.getElementById('caCanvas');
+            const width = 200;
+            const height = 100;
+            const grid = generateCA(ruleNumber, width, height);
+            drawCA(canvas, grid);
+            displayRule(ruleNumber);
+        }
+
+        document.getElementById('generateBtn').addEventListener('click', generateMainCA);
+   document.getElementById('randomBtn').addEventListener('click', () => {
+        const rule = Math.floor(Math.random() * 256);
+        document.getElementById('ruleInput').value = rule;
+        generateMainCA();
+    });
+
+    // Gallery buttons
+    document.querySelectorAll('.gallery-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const rule = parseInt(btn.dataset.rule);
+            document.getElementById('ruleInput').value = rule;
+            generateMainCA();
+            document.querySelectorAll('.gallery-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // ============ CLASS EXAMPLES ============
+    function drawClassExamples() {
+        // Class 1 - Rule 0 (everything dies)
+        const class1Grid = generateCA(0, 80, 40);
+        drawCA(document.getElementById('class1Canvas'), class1Grid, '#636e72');
+
+        // Class 2 - Rule 4 (simple periodic)
+        const class2Grid = generateCA(4, 80, 40);
+        drawCA(document.getElementById('class2Canvas'), class2Grid, '#0984e3');
+
+        // Class 3 - Rule 30 (chaotic)
+        const class3Grid = generateCA(30, 80, 40);
+        drawCA(document.getElementById('class3Canvas'), class3Grid, '#e17055');
+
+        // Class 4 - Rule 110 (complex)
+        const class4Grid = generateCA(110, 80, 40);
+        drawCA(document.getElementById('class4Canvas'), class4Grid, '#fdcb6e');
+    }
+
+    // ============ LIVE PLAYGROUND ============
+    let liveInterval = null;
+    let liveGeneration = 0;
+    let liveCurrentRow = null;
+    let liveCanvas = document.getElementById('liveCanvas');
+    let liveCtx = liveCanvas.getContext('2d');
+    let liveWidth = 200;
+    let liveRowHeight = 2;
+    let liveMaxRows = Math.floor(liveCanvas.height / liveRowHeight);
+    let liveRowsDrawn = 0;
+
+    function liveReset() {
+        if (liveInterval) {
+            clearInterval(liveInterval);
+            liveInterval = null;
+        }
+        liveGeneration = 0;
+        liveRowsDrawn = 0;
+        liveCurrentRow = new Array(liveWidth).fill(0);
+        liveCurrentRow[Math.floor(liveWidth / 2)] = 1;
+        liveCtx.fillStyle = '#000';
+        liveCtx.fillRect(0, 0, liveCanvas.width, liveCanvas.height);
+        updateStats();
+    }
+
+    function liveStep() {
+        const ruleNumber = parseInt(document.getElementById('liveRuleInput').value) || 110;
+        const ruleBits = getRuleBits(ruleNumber);
+
+        // Draw current row
+        const cellWidth = liveCanvas.width / liveWidth;
+
+        if (liveRowsDrawn >= liveMaxRows) {
+            // Scroll up by shifting image data
+            const imageData = liveCtx.getImageData(0, liveRowHeight, liveCanvas.width, liveCanvas.height - liveRowHeight);
+            liveCtx.putImageData(imageData, 0, 0);
+            liveCtx.fillStyle = '#000';
+            liveCtx.fillRect(0, liveCanvas.height - liveRowHeight, liveCanvas.width, liveRowHeight);
+            liveRowsDrawn = liveMaxRows - 1;
+        }
+
+        const y = liveRowsDrawn * liveRowHeight;
+        for (let col = 0; col < liveWidth; col++) {
+            if (liveCurrentRow[col] === 1) {
+                liveCtx.fillStyle = '#48dbfb';
+                liveCtx.fillRect(col * cellWidth, y, cellWidth, liveRowHeight);
+            }
+        }
+
+        // Compute next row
+        const newRow = new Array(liveWidth).fill(0);
+        for (let col = 0; col < liveWidth; col++) {
+            const left = liveCurrentRow[(col - 1 + liveWidth) % liveWidth];
+            const center = liveCurrentRow[col];
+            const right = liveCurrentRow[(col + 1) % liveWidth];
+            newRow[col] = applyRule(left, center, right, ruleBits);
+        }
+        liveCurrentRow = newRow;
+        liveGeneration++;
+        liveRowsDrawn++;
+        updateStats();
+    }
+
+    function updateStats() {
+        document.getElementById('genCount').textContent = liveGeneration;
+        if (liveCurrentRow) {
+            const live = liveCurrentRow.reduce((a, b) => a + b, 0);
+            document.getElementById('liveCells').textContent = live;
+            document.getElementById('density').textContent = Math.round((live / liveWidth) * 100) + '%';
+        }
+    }
+
+    document.getElementById('liveStartBtn').addEventListener('click', () => {
+        if (liveInterval) return;
+        if (liveGeneration === 0) {
+            liveCurrentRow = new Array(liveWidth).fill(0);
+            liveCurrentRow[Math.floor(liveWidth / 2)] = 1;
+        }
+        const speed = parseInt(document.getElementById('speedSlider').value);
+        liveInterval = setInterval(liveStep, 1000 / speed);
+    });
+
+    document.getElementById('liveStopBtn').addEventListener('click', () => {
+        if (liveInterval) {
+            clearInterval(liveInterval);
+            liveInterval = null;
+        }
+    });
+
+    document.getElementById('liveResetBtn').addEventListener('click', liveReset);
+
+    document.getElementById('speedSlider').addEventListener('input', (e) => {
+        const speed = parseInt(e.target.value);
+        document.getElementById('speedValue').textContent = speed + ' rows/sec';
+        if (liveInterval) {
+            clearInterval(liveInterval);
+            liveInterval = setInterval(liveStep, 1000 / speed);
+        }
+    });
+
+    // ============ INITIALIZATION ============
+    generateMainCA();
+    drawClassExamples();
+    liveReset();
+
+    // ============ PCE ANIMATION ============
+    const pceNodes = document.querySelectorAll('.pce-node');
+    let pceAngle = 0;
+
+    function animatePCE() {
+        pceAngle += 0.01;
+        pceNodes.forEach((node, i) => {
+            const offset = (i / pceNodes.length) * Math.PI * 2;
+            const scale = 1 + 0.05 * Math.sin(pceAngle + offset);
+            node.style.transform = 'scale(' + scale + ')';
+        });
+        requestAnimationFrame(animatePCE);
+    }
+    animatePCE();
+
+    // ============ SMOOTH SCROLL ============
+    document.querySelector('.scroll-hint').addEventListener('click', () => {
+        window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+    });
+</script>
