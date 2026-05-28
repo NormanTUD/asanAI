@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How a Tiny AI Learned to Add — A Visual Story</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: 'Georgia', serif;
+background: #1a1a2e;
+color: #e8e8e8;
+line-height: 1.9;
+font-size: 18px;
+}
+.page {
+max-width: 800px;
+margin: 0 auto;
+padding: 40px 30px;
+}
+h1 {
+font-size: 2.2em;
+text-align: center;
+margin: 40px 0 20px;
+color: #ffd700;
+font-weight: normal;
+}
+h2 {
+font-size: 1.6em;
+margin: 60px 0 20px;
+color: #7ecfff;
+border-bottom: 2px solid #333;
+padding-bottom: 10px;
+}
+h3 {
+font-size: 1.2em;
+margin: 30px 0 15px;
+color: #ffb347;
+}
+p {
+margin: 15px 0;
+color: #ccc;
+}
+.story-box {
+background: #12122a;
+border-radius: 12px;
+padding: 25px 30px;
+margin: 25px 0;
+border-left: 4px solid #7ecfff;
+}
+.story-box.green { border-left-color: #4caf50; }
+.story-box.orange { border-left-color: #ffb347; }
+.story-box.red { border-left-color: #ff6b6b; }
+.story-box.purple { border-left-color: #c77dff; }
+.story-box.gold { border-left-color: #ffd700; }
+.analogy {
+background: #1a2a1a;
+border-radius: 12px;
+padding: 20px 25px;
+margin: 20px 0;
+border-left: 4px solid #4caf50;
+font-style: italic;
+}
+.analogy::before {
+content: "Analogy: ";
+font-weight: bold;
+color: #4caf50;
+font-style: normal;
+}
+.key-point {
+background: #2a1a1a;
+border-radius: 12px;
+padding: 20px 25px;
+margin: 20px 0;
+border-left: 4px solid #ffd700;
+}
+.key-point::before {
+content: "Key Point: ";
+font-weight: bold;
+color: #ffd700;
+}
+canvas {
+display: block;
+margin: 20px auto;
+border-radius: 10px;
+background: #0a0a1a;
+border: 1px solid #333;
+}
+.controls {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+align-items: center;
+justify-content: center;
+margin: 15px 0;
+padding: 15px;
+background: #0a0a1a;
+border-radius: 10px;
+}
+.control-group {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 5px;
+}
+.control-group label {
+font-size: 0.85em;
+color: #aaa;
+}
+.control-group .val {
+font-family: monospace;
+font-size: 1.3em;
+color: #7ecfff;
+font-weight: bold;
+}
+input[type="range"] {
+width: 140px;
+accent-color: #7ecfff;
+}
+button {
+background: linear-gradient(135deg, #667eea, #764ba2);
+color: white;
+border: none;
+padding: 10px 20px;
+border-radius: 8px;
+cursor: pointer;
+font-size: 0.9em;
+}
+button:hover { opacity: 0.9; }
+.formula {
+background: #0a0a1a;
+padding: 15px 20px;
+border-radius: 8px;
+font-family: monospace;
+text-align: center;
+margin: 15px 0;
+font-size: 1.1em;
+color: #ffd700;
+overflow-x: auto;
+}
+.pipeline {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: center;
+gap: 8px;
+margin: 30px 0;
+padding: 20px;
+}
+.pipe-box {
+padding: 12px 16px;
+border-radius: 10px;
+text-align: center;
+font-size: 0.85em;
+font-weight: bold;
+min-width: 110px;
+border: 2px solid;
+}
+.pipe-box small { display: block; font-weight: normal; opacity: 0.7; margin-top: 3px; font-size: 0.85em; }
+.pipe-arrow { font-size: 1.4em; color: #555; }
+.table-wrap {
+overflow-x: auto;
+margin: 20px 0;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 0.9em;
+}
+th, td {
+padding: 12px 15px;
+text-align: left;
+border-bottom: 1px solid #333;
+}
+th {
+color: #7ecfff;
+font-weight: bold;
+}
+td:first-child {
+font-weight: bold;
+}
+.highlight { color: #ffd700; font-weight: bold; }
+.blue { color: #7ecfff; }
+.green { color: #4caf50; }
+.red { color: #ff6b6b; }
+.orange { color: #ffb347; }
+.purple { color: #c77dff; }
+ol, ul { margin: 10px 0 10px 25px; }
+li { margin: 8px 0; }
+.visual-step {
+display: flex;
+align-items: flex-start;
+gap: 20px;
+margin: 20px 0;
+padding: 20px;
+background: #12122a;
+border-radius: 12px;
+}
+.visual-step .number {
+font-size: 2em;
+color: #ffd700;
+font-weight: bold;
+min-width: 50px;
+text-align: center;
+}
+.visual-step .content {
+flex: 1;
+}
+@media (max-width: 600px) {
+.visual-step { flex-direction: column; }
+.pipeline { flex-direction: column; }
+.pipe-arrow { transform: rotate(90deg); }
+}
+.separator {
+height: 2px;
+background: linear-gradient(90deg, transparent, #333, transparent);
+margin: 50px 0;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>How a Tiny AI Learned to Add<br><small style="font-size:0.5em; color:#888;">A visual explanation of the "Grokking" paper for curious humans</small></h1>
+
+<div class="story-box">
+<p><strong>The Setup:</strong> Researchers trained a tiny neural network (a "transformer") to compute things like <span class="blue">17 + 42 mod 113 = 59</span>. "Mod 113" just means: if the answer goes past 112, wrap around back to 0 (like a clock with 113 hours instead of 12).</p>
+<p>The network has 128 dimensions internally, uses 4 attention heads, and has 512 neurons in its MLP layer. It was trained on only 30% of all possible input pairs.</p>
+<p><strong>The surprise:</strong> The network first memorized all the answers like flashcards. Then, after thousands more training steps, it suddenly "got it" — it discovered a beautiful mathematical trick that lets it compute ANY answer, even ones it never saw during training.</p>
+<p>This document explains <em>what that trick is</em> and <em>how each part of the network contributes</em>.</p>
+</div>
+
+<div class="separator"></div>
+
+<h2>Chapter 1: The Clock Trick — Why Circles?</h2>
+
+<p>Here is the single most important insight of the whole paper:</p>
+
+<div class="key-point">
+<strong>Adding numbers mod 113 is the same as rotating a point around a circle.</strong> If you place the numbers 0 through 112 evenly around a circle, then "adding b" means "rotating by b steps." The answer is wherever you land.
+</div>
+
+<div class="analogy">
+Imagine a clock with 113 tick marks (numbered 0 to 112). You start at tick mark "a". You rotate forward by "b" tick marks. Wherever the hand points — that's (a + b) mod 113.
+</div>
+
+<p>But how do you describe "where you are on a circle" with numbers a computer can work with? That's where <strong>cosine</strong> and <strong>sine</strong> come in.</p>
+
+<h3>Cosine and Sine = "Address on a Circle"</h3>
+
+<p>Think of a circle drawn on graph paper. Any point on the circle has an x-coordinate and a y-coordinate:</p>
+<ul>
+<li><span class="green">Cosine</span> = how far RIGHT the point is (the x-coordinate)</li>
+<li><span class="purple">Sine</span> = how far UP the point is (the y-coordinate)</li>
+</ul>
+
+<p>Together, (cos, sin) tells you EXACTLY where on the circle you are. It's like GPS coordinates, but for a circle.</p>
+
+<canvas id="circleDemo" width="700" height="350"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Number a</label>
+<div class="val" id="cd_a_val">25</div>
+<input type="range" id="cd_a" min="0" max="112" value="25" oninput="updateCircleDemo()">
+</div>
+<div class="control-group">
+<label>Frequency k</label>
+<div class="val" id="cd_k_val">14</div>
+<input type="range" id="cd_k" min="1" max="56" value="14" oninput="updateCircleDemo()">
+</div>
+</div>
+
+<p><strong>What does "frequency k" mean?</strong> It controls how fast numbers move around the circle. At frequency k=1, the numbers 0 to 112 make exactly ONE full trip around the circle. At k=2, they make TWO full trips (so each number appears at two different spots that overlap). At k=14, they make 14 full trips.</p>
+
+<div class="analogy">
+Think of a vinyl record. Frequency k=1 is like one groove going around once. Frequency k=14 is like a groove that spirals around 14 times. Different frequencies give you different "views" of the same set of numbers — like looking at the same city from 5 different hilltops.
+</div>
+
+<p>The network uses <strong>5 specific frequencies</strong>: k = 14, 35, 41, 42, and 52. Why 5? We'll get to that in Chapter 4.</p>
+
+<div class="separator"></div>
+
+<h2>Chapter 2: The Addition Formula — How to Add Without Adding</h2>
+
+<p>Here's the mathematical magic that makes everything work. There's a formula from trigonometry (discovered centuries ago) that says:</p>
+
+<div class="formula">
+cos(angle_A + angle_B) = cos(angle_A) × cos(angle_B) − sin(angle_A) × sin(angle_B)
+</div>
+
+<p>Let me translate this into plain English:</p>
+
+<div class="story-box green">
+<p><strong>If you know WHERE "a" is on the circle</strong> (its cos and sin),</p>
+<p><strong>and you know WHERE "b" is on the circle</strong> (its cos and sin),</p>
+<p><strong>then you can figure out WHERE "a+b" is on the circle</strong> — just by multiplying and subtracting the coordinates you already have!</p>
+<p style="margin-top:15px;">You never need to actually "add" a and b as numbers. You just combine their circle-positions using multiplication and subtraction.</p>
+</div>
+
+<p>Let's see this in action:</p>
+
+<canvas id="trigDemo" width="700" height="320"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>a</label>
+<div class="val" id="td_a_val">30</div>
+<input type="range" id="td_a" min="0" max="112" value="30" oninput="updateTrigDemo()">
+</div>
+<div class="control-group">
+<label>b</label>
+<div class="val" id="td_b_val">50</div>
+<input type="range" id="td_b" min="0" max="112" value="50" oninput="updateTrigDemo()">
+</div>
+</div>
+<div id="trigResult" style="background:#0a0a1a; padding:15px; border-radius:8px; font-family:monospace; font-size:0.9em; margin:10px 0;"></div>
+
+<div class="key-point">
+The formula needs us to MULTIPLY cos(a) with cos(b), and sin(a) with sin(b). Neural networks are mostly about adding things together (linear operations). So where does the multiplication come from? That's what the <strong>attention mechanism</strong> provides — it's the only part of the network that can multiply two different inputs together.
+</div>
+
+<div class="separator"></div>
+
+<h2>Chapter 3: The Full Pipeline — What Each Part Does</h2>
+
+<p>Now let's see how the transformer's components work together. Here's the flow:</p>
+
+<div class="pipeline">
+<div class="pipe-box" style="border-color:#ff6b6b; background:rgba(255,107,107,0.08);">Embedding<small>numbers to circles</small></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box" style="border-color:#ffb347; background:rgba(255,179,71,0.08);">Attention<small>multiplies sin/cos</small></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box" style="border-color:#4caf50; background:rgba(76,175,80,0.08);">MLP<small>applies the formula</small></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box" style="border-color:#7ecfff; background:rgba(126,207,255,0.08);">Unembedding<small>scores each answer</small></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-box" style="border-color:#c77dff; background:rgba(199,125,255,0.08);">Softmax<small>picks the winner</small></div>
+</div>
+
+<p>Let me explain each one:</p>
+
+<!-- STEP 1 -->
+<div class="visual-step">
+<div class="number" style="color:#ff6b6b;">1</div>
+<div class="content">
+<h3 style="color:#ff6b6b; margin-top:0;">Embedding — "Put the numbers on circles"</h3>
+<p>The embedding is a big table (128 rows × 113 columns). Each column stores the "circle coordinates" for one number. After training, column "a" basically contains cos(w×a) and sin(w×a) for each of the 5 key frequencies.</p>
+<p><strong>Think of it as:</strong> A lookup table. You give it the number 42, it gives you back 10 values: the cos and sin of 42 at each of the 5 frequencies.</p>
+<p><strong>Where is sine "stored"?</strong> RIGHT HERE. The sine and cosine values ARE the learned weights of this matrix. The network figured out during training that storing numbers as circle-coordinates is useful.</p>
+</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="visual-step">
+<div class="number" style="color:#ffb347;">2</div>
+<div class="content">
+<h3 style="color:#ffb347; margin-top:0;">Attention — "Multiply the coordinates together"</h3>
+<p>Remember: the addition formula needs products like cos(a)×cos(b). But the network mostly does addition (linear operations). Attention is special because it's <strong>bilinear</strong> — it naturally creates products.</p>
+<p><strong>How?</strong> The attention mechanism computes a "weight" that depends on token a, and multiplies it by a "value" that depends on token b. Weight × Value = a product of functions of a and b. That's exactly the multiplication we need!</p>
+<p><strong>Specifically:</strong> The attention weight from the "=" token to token "a" is approximately:</p>
+<p style="font-family:monospace; color:#ffb347;">weight ≈ 0.5 + 0.27 × (cos(w×a) − cos(w×b))</p>
+<p>This weight multiplies the value (which contains cos(w×b) and sin(w×b)), creating the cross-terms cos(w×a)×cos(w×b) etc.</p>
+<p><strong>Important detail:</strong> The softmax in attention is operating almost linearly here (97.5% of its behavior is explained by a straight line). This is what makes the whole thing work cleanly as a multiplication.</p>
+</div>
+</div>
+
+<!-- STEP 3 -->
+<div class="visual-step">
+<div class="number" style="color:#4caf50;">3</div>
+<div class="content">
+<h3 style="color:#4caf50; margin-top:0;">MLP (Feed-Forward Network) — "Apply the addition formula"</h3>
+<p>The MLP takes the products created by attention and combines them according to the trig formula. Each neuron computes something like:</p>
+<p style="font-family:monospace; color:#4caf50;">ReLU( weight₁ × cos(a)cos(b) + weight₂ × sin(a)sin(b) + ... )</p>
+<p>The result: the MLP outputs values proportional to cos(w×(a+b)) and sin(w×(a+b)) — the circle-coordinates of the SUM.</p>
+<p><strong>How well does this work?</strong> 84.6% of the 512 neurons (that's 433 neurons) have over 85% of their behavior explained by a simple formula involving just ONE frequency. The neurons are specialized!</p>
+</div>
+</div>
+
+<!-- STEP 4 -->
+<div class="visual-step">
+<div class="number" style="color:#7ecfff;">4</div>
+<div class="content">
+<h3 style="color:#7ecfff; margin-top:0;">Unembedding — "Score every possible answer"</h3>
+<p>Now the network has cos(w×(a+b)) and sin(w×(a+b)). But it needs to output a specific NUMBER (0 to 112). How?</p>
+<p>The unembedding matrix computes, for each possible answer c:</p>
+<p style="font-family:monospace; color:#7ecfff;">score(c) = cos(w×(a+b)) × cos(w×c) + sin(w×(a+b)) × sin(w×c)</p>
+<p>This simplifies (by another trig identity) to:</p>
+<p style="font-family:monospace; color:#7ecfff;">score(c) = cos(w × (a+b−c))</p>
+<p>When c equals the correct answer (a+b mod 113), then (a+b−c) = 0, and cos(0) = 1 (the maximum!). For wrong answers, cos gives smaller values.</p>
+</div>
+</div>
+
+<!-- STEP 5 -->
+<div class="visual-step">
+<div class="number" style="color:#c77dff;">5</div>
+<div class="content">
+<h3 style="color:#c77dff; margin-top:0;">Softmax — "Pick the highest score"</h3>
+<p>Softmax takes all 113 scores and converts them to probabilities. The highest score gets almost all the probability. Since the correct answer has the highest score (thanks to constructive interference), the network outputs the right answer.</p>
+</div>
+</div>
+
+<div class="separator"></div>
+
+<h2>Chapter 4: Why 5 Frequencies? — The Interference Trick</h2>
+
+<p>Here's a problem: with just ONE frequency, cos(w×(a+b−c)) is maximized at the correct c, but it's ALSO nearly 1 at some wrong answers. For example, with k=14, the value at c=correct is 1.000, but at c=correct±8 it's 0.998 — almost indistinguishable!</p>
+
+<div class="analogy">
+Imagine trying to find one specific person in a crowd using only ONE feature ("wears glasses"). Many people wear glasses! But if you use FIVE features ("glasses + red jacket + tall + beard + hat"), only ONE person matches all five.
+</div>
+
+<p>The network adds up cos waves from 5 different frequencies. At the correct answer, ALL FIVE waves equal 1 (because cos(0)=1 for all of them). At any wrong answer, the waves point in random directions and mostly cancel out.</p>
+
+<canvas id="interferenceDemo" width="700" height="350"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>a</label>
+<div class="val" id="id_a_val">25</div>
+<input type="range" id="id_a" min="0" max="112" value="25" oninput="updateInterference()">
+</div>
+<div class="control-group">
+<label>b</label>
+<div class="val" id="id_b_val">47</div>
+<input type="range" id="id_b" min="0" max="112" value="47" oninput="updateInterference()">
+</div>
+<div class="control-group">
+<label>Number of frequencies</label>
+<div class="val" id="id_n_val">5</div>
+<input type="range" id="id_n" min="1" max="5" value="5" oninput="updateInterference()">
+</div>
+</div>
+<div id="intResult" style="background:#0a0a1a; padding:15px; border-radius:8px; font-family:monospace; font-size:0.85em; margin:10px 0;"></div>
+
+<div class="key-point">
+With 5 frequencies, the correct answer gets a score of about 260 (sum of all alpha weights), while the best wrong answer gets maybe 30-40. After softmax, the correct answer gets probability ≈ 1.000000. The network is essentially certain.
+</div>
+
+<div class="separator"></div>
+
+<h2>Chapter 5: The Role of Each Component — Summary Table</h2>
+
+<div class="table-wrap">
+<table>
+<tr>
+<th>Component</th>
+<th>What it stores in its weights</th>
+<th>What it does at runtime</th>
+<th>Analogy</th>
+</tr>
+<tr>
+<td style="color:#ff6b6b;">Embedding (W_E)</td>
+<td>cos(w_k × a) and sin(w_k × a) for each number a and each key frequency k</td>
+<td>Looks up the circle-coordinates of the input number</td>
+<td>A phone book that converts names to GPS coordinates</td>
+</tr>
+<tr>
+<td style="color:#ffb347;">Attention Heads</td>
+<td>Periodic patterns at specific frequencies; QK circuit selects frequency, OV circuit copies values</td>
+<td>Creates PRODUCTS of sin/cos from different tokens (the multiplication step)</td>
+<td>A volume knob (depending on a) that controls how loud b's signal is → knob × signal = product</td>
+</tr>
+<tr>
+<td style="color:#4caf50;">MLP / FFN</td>
+<td>Weights that implement the trig addition formula for each frequency</td>
+<td>Combines the products into cos(w×(a+b)) and sin(w×(a+b))</td>
+<td>A calculator that takes the raw ingredients and computes the final recipe</td>
+</tr>
+<tr>
+<td style="color:#7ecfff;">Unembedding (W_U × W_out)</td>
+<td>cos(w_k × c) and sin(w_k × c) for each possible output c</td>
+<td>Computes cos(w×(a+b−c)) for every c, adds across frequencies</td>
+<td>A template-matcher: "which stored pattern matches what the MLP computed?"</td>
+</tr>
+<tr>
+<td style="color:#c77dff;">Softmax</td>
+<td>(nothing — it's a fixed function)</td>
+<td>Converts scores to probabilities; picks the highest one</td>
+<td>A "winner takes all" vote</td>
+</tr>
+</table>
+</div>
+
+<div class="separator"></div>
+
+<h2>Chapter 6: How the Network Learned This (Grokking)</h2>
+
+<p>The network didn't figure this out instantly. Training happened in three phases:</p>
+
+<div class="visual-step">
+<div class="number">1</div>
+<div class="content">
+<h3 style="color:#ff6b6b; margin-top:0;">Memorization (epochs 0 – 1,400)</h3>
+<p>The network just memorizes the training examples like flashcards. It gets 100% on training data but 0% on new data. The Fourier trick hasn't formed yet.</p>
+</div>
+</div>
+
+<div class="visual-step">
+<div class="number">2</div>
+<div class="content">
+<h3 style="color:#ffb347; margin-top:0;">Circuit Formation (epochs 1,400 – 9,400)</h3>
+<p>Slowly, in the background, the Fourier trick starts forming. The weights gradually become more "sine-like." But the memorized answers are still there too, so test accuracy doesn't improve yet. You can't see the progress from outside!</p>
+</div>
+</div>
+
+<div class="visual-step">
+<div class="number">3</div>
+<div class="content">
+<h3 style="color:#7ecfff; margin-top:0;">Cleanup (epochs 9,400 – 14,000)</h3>
+<p>Weight decay (a training rule that says "make all weights a little smaller each step") gradually erases the memorized junk. The Fourier circuit is compact and survives; the memorization is bulky and gets erased. Suddenly, test accuracy shoots to 100%!</p>
+</div>
+</div>
+
+<div class="analogy">
+A student memorizes 1000 math problems. Meanwhile, they're unconsciously noticing the pattern. The teacher gradually shrinks their cheat sheet (weight decay). Eventually the cheat sheet is too small to hold all the memorized answers, but the pattern still fits — so the student is forced to use the pattern. Suddenly they can solve ANY problem!
+</div>
+
+<canvas id="grokkingDemo" width="700" height="280"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>Training progress</label>
+<div class="val" id="gd_val">0%</div>
+<input type="range" id="gd_slider" min="0" max="100" value="0" oninput="updateGrokking()">
+</div>
+<button onclick="animateGrokking()">Play Animation</button>
+</div>
+<div id="grokResult" style="background:#0a0a1a; padding:12px; border-radius:8px; font-size:0.9em; margin:10px 0;"></div>
+
+<div class="separator"></div>
+
+<h2>Chapter 7: Frequently Asked Questions</h2>
+
+<div class="story-box orange">
+<p><strong>Q: "Where is the sine generated?"</strong></p>
+<p>A: It's NOT generated at runtime. The sine values are literally the numbers stored in the embedding matrix's weights. During training, the network learned that storing numbers as (cos, sin) pairs is the best strategy. The embedding matrix IS a table of pre-computed sines and cosines.</p>
+</div>
+
+<div class="story-box orange">
+<p><strong>Q: "How does the addition formula actually get computed?"</strong></p>
+<p>A: In two steps: (1) Attention creates the products cos(a)×cos(b) and sin(a)×sin(b) by multiplying attention-weights (which depend on a) with values (which depend on b). (2) The MLP combines these products with learned weights that implement the subtraction: cos(a)cos(b) MINUS sin(a)sin(b) = cos(a+b).</p>
+</div>
+
+<div class="story-box orange">
+<p><strong>Q: "What does the ReLU activation do?"</strong></p>
+<p>A: ReLU (which zeros out negative values) is the nonlinearity in the MLP. Each neuron computes a weighted sum of the products from attention, applies ReLU, and the result approximates a piece of the trig formula. Multiple neurons working together reconstruct the full cos(w×(a+b)) signal. 84.6% of neurons are well-described by a degree-2 polynomial of a single frequency.</p>
+</div>
+
+<div class="story-box orange">
+<p><strong>Q: "Why these specific 5 frequencies (14, 35, 41, 42, 52)?"</strong></p>
+<p>A: There's nothing mathematically special about these exact numbers. Different random seeds produce different key frequencies (e.g., one seed used k=2, 9, 19, 31). What matters is that the chosen frequencies, when their cosines are added together, create strong constructive interference at x=0 and destructive interference everywhere else. The network finds whichever set of frequencies achieves this during training.</p>
+</div>
+
+<div class="story-box orange">
+<p><strong>Q: "Why does weight decay matter?"</strong></p>
+<p>A: Without weight decay, the network never "groks" — it stays memorized forever. Weight decay constantly pushes all weights toward zero. The memorization solution needs LOTS of weight (one entry per training example). The Fourier solution is compact (just 5 frequencies). So weight decay selectively destroys memorization while preserving the elegant algorithm.</p>
+</div>
+
+<div class="separator"></div>
+
+<h2>Chapter 8: The Complete Picture in One Diagram</h2>
+
+<canvas id="fullPipeline" width="700" height="500"></canvas>
+<div class="controls">
+<div class="control-group">
+<label>a</label>
+<div class="val" id="fp_a_val">37</div>
+<input type="range" id="fp_a" min="0" max="112" value="37" oninput="updateFullPipeline()">
+</div>
+<div class="control-group">
+<label>b</label>
+<div class="val" id="fp_b_val">78</div>
+<input type="range" id="fp_b" min="0" max="112" value="78" oninput="updateFullPipeline()">
+</div>
+</div>
+
+<div class="story-box gold">
+<p><strong>The punchline:</strong> This tiny network never learned to "add." It learned to represent numbers as points on circles, rotate those points using trigonometric identities (implemented via attention × MLP), and then use wave interference to identify which number corresponds to the resulting position. It's a Fourier calculator, built from scratch by gradient descent.</p>
+</div>
+
+<div class="separator"></div>
+
+<h2>Appendix: Quick Reference Card</h2>
+
+<div class="story-box">
+<p><strong>The problem:</strong> Compute (a + b) mod 113, where a and b are integers from 0 to 112.</p>
+<p><strong>The network:</strong> 1-layer transformer, 128-dim embeddings, 4 attention heads (dim 32 each), 512 MLP neurons, ReLU activation, trained with weight decay λ=1.</p>
+<p><strong>The algorithm it discovers:</strong></p>
+<ol>
+<li>Embed a and b as (cos(ω_k·a), sin(ω_k·a)) and (cos(ω_k·b), sin(ω_k·b)) for k ∈ {14, 35, 41, 42, 52}</li>
+<li>Use attention (bilinear) to create products: cos(ω·a)·cos(ω·b), sin(ω·a)·sin(ω·b), etc.</li>
+<li>Use MLP to combine products via trig identity → cos(ω·(a+b)), sin(ω·(a+b))</li>
+<li>Unembed: for each candidate c, compute score = Σ_k α_k · cos(ω_k·(a+b−c))</li>
+<li>Softmax picks the c with the highest score (which is c* = (a+b) mod 113)</li>
+</ol>
+<p><strong>Key numbers from the paper:</strong></p>
+<ul>
+<li>5 key frequencies explain 95% of logit variance</li>
+<li>84.6% of MLP neurons are well-described by a single-frequency degree-2 polynomial</li>
+<li>Softmax in attention is 97.5% linear</li>
+<li>Ablating non-key frequencies IMPROVES performance (loss drops 70%)</li>
+<li>Grokking phases: memorization (0–1.4k epochs), circuit formation (1.4k–9.4k), cleanup (9.4k–14k)</li>
+</ul>
+</div>
+
+</div><!-- end .page -->
+
+<script>
+// ============ CONSTANTS ============
+const P = 113;
+const KEY_FREQS = [14, 35, 41, 42, 52];
+const ALPHAS = [44.1, 42.2, 44.8, 66.6, 63.0];
+const FREQ_COLORS = ['#ff6b6b', '#ffb347', '#4caf50', '#7ecfff', '#c77dff'];
+
+function wk(k) { return 2 * Math.PI * k / P; }
+function mod(n, m) { return ((n % m) + m) % m; }
+
+// ============ CHAPTER 1: CIRCLE DEMO ============
+function updateCircleDemo() {
+    const a = parseInt(document.getElementById('cd_a').value);
+    const k = parseInt(document.getElementById('cd_k').value);
+    document.getElementById('cd_a_val').textContent = a;
+    document.getElementById('cd_k_val').textContent = k;
+
+    const canvas = document.getElementById('circleDemo');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const w = wk(k);
+
+    // Left: Circle
+    const cx = 175, cy = H/2, r = 130;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, 2*Math.PI);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Axes
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - r - 15, cy);
+    ctx.lineTo(cx + r + 15, cy);
+    ctx.moveTo(cx, cy - r - 15);
+    ctx.lineTo(cx, cy + r + 15);
+    ctx.stroke();
+
+    ctx.fillStyle = '#666';
+    ctx.font = '11px monospace';
+    ctx.fillText('cos →', cx + r + 3, cy - 5);
+    ctx.fillText('sin ↑', cx + 5, cy - r - 5);
+
+    // Plot all 113 points lightly
+    for (let i = 0; i < P; i++) {
+        const angle = w * i;
+        const px = cx + r * Math.cos(angle);
+        const py = cy - r * Math.sin(angle);
+        ctx.beginPath();
+        ctx.arc(px, py, 2, 0, 2*Math.PI);
+        ctx.fillStyle = 'rgba(126,207,255,0.15)';
+        ctx.fill();
+    }
+
+    // Highlight point for a
+    const angle = w * a;
+    const cosVal = Math.cos(angle);
+    const sinVal = Math.sin(angle);
+    const px = cx + r * cosVal;
+    const py = cy - r * sinVal;
+
+    // Line from center
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(px, py);
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Projections
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = '#4caf50';
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(px, cy);
+    ctx.stroke();
+    ctx.strokeStyle = '#c77dff';
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(cx, py);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Point
+    ctx.beginPath();
+    ctx.arc(px, py, 8, 0, 2*Math.PI);
+    ctx.fillStyle = '#ffd700';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#ffd700';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('a = ' + a, px + 12, py - 10);
+
+    ctx.fillStyle = '#4caf50';
+    ctx.font = '12px monospace';
+    ctx.fillText('cos = ' + cosVal.toFixed(3), cx + r + 20, cy + 30);
+    ctx.fillStyle = '#c77dff';
+    ctx.fillText('sin = ' + sinVal.toFixed(3), cx + r + 20, cy + 50);
+
+    // Right: Cosine wave
+    const rx = 400, rw = 260, rh = 100;
+    const ry = H/2;
+
+    ctx.fillStyle = '#ccc';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('cos(2pi * ' + k + ' * a / 113) as a goes 0 to 112:', rx, 30);
+
+    // Axis
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(rx, ry);
+    ctx.lineTo(rx + rw, ry);
+    ctx.stroke();
+
+    // Wave
+    ctx.beginPath();
+    ctx.strokeStyle = '#7ecfff';
+    ctx.lineWidth = 2;
+    for (let i = 0; i <= P; i++) {
+        const x = rx + (i / P) * rw;
+        const y = ry - Math.cos(w * i) * rh;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Mark current a
+    const markX = rx + (a / P) * rw;
+    const markY = ry - cosVal * rh;
+    ctx.beginPath();
+    ctx.arc(markX, markY, 6, 0, 2*Math.PI);
+    ctx.fillStyle = '#ffd700';
+    ctx.fill();
+
+    ctx.setLineDash([2, 2]);
+    ctx.strokeStyle = '#ffd70088';
+    ctx.beginPath();
+    ctx.moveTo(markX, ry);
+    ctx.lineTo(markX, markY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Axis labels
+    ctx.fillStyle = '#888';
+    ctx.font = '10px monospace';
+    ctx.fillText('0', rx, ry + 15);
+    ctx.fillText('112', rx + rw - 15, ry + 15);
+    ctx.fillText('+1', rx - 20, ry - rh + 4);
+    ctx.fillText('-1', rx - 20, ry + rh + 4);
+
+    // Title
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Number ' + a + ' on circle (freq k=' + k + ')', cx, 20);
+    ctx.textAlign = 'left';
+
+    // Explanation
+    ctx.fillStyle = '#aaa';
+    ctx.font = '11px sans-serif';
+    ctx.fillText('Frequency k=' + k + ' means the numbers', rx, H - 50);
+    ctx.fillText('go around the circle ' + k + ' times', rx, H - 35);
+    ctx.fillText('as a goes from 0 to 112.', rx, H - 20);
+}
+
+// ============ CHAPTER 2: TRIG DEMO ============
+function updateTrigDemo() {
+    const a = parseInt(document.getElementById('td_a').value);
+    const b = parseInt(document.getElementById('td_b').value);
+    document.getElementById('td_a_val').textContent = a;
+    document.getElementById('td_b_val').textContent = b;
+
+    const canvas = document.getElementById('trigDemo');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const k = 14;
+    const w = wk(k);
+    const sum = mod(a + b, P);
+
+    const cosA = Math.cos(w * a);
+    const sinA = Math.sin(w * a);
+    const cosB = Math.cos(w * b);
+    const sinB = Math.sin(w * b);
+    const cosAB = Math.cos(w * sum);
+    const sinAB = Math.sin(w * sum);
+
+    // Three circles
+    const r = 70;
+    const circles = [
+        { cx: 120, cy: 160, label: 'a = ' + a, angle: w*a, color: '#ff6b6b' },
+        { cx: 350, cy: 160, label: 'b = ' + b, angle: w*b, color: '#7ecfff' },
+        { cx: 580, cy: 160, label: '(a+b)%113 = ' + sum, angle: w*sum, color: '#4caf50' }
+    ];
+
+    circles.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.cx, c.cy, r, 0, 2*Math.PI);
+        ctx.strokeStyle = '#333';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Axes
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.moveTo(c.cx - r, c.cy);
+        ctx.lineTo(c.cx + r, c.cy);
+        ctx.moveTo(c.cx, c.cy - r);
+        ctx.lineTo(c.cx, c.cy + r);
+        ctx.stroke();
+
+        // Point
+        const px = c.cx + r * Math.cos(c.angle);
+        const py = c.cy - r * Math.sin(c.angle);
+
+        ctx.beginPath();
+        ctx.moveTo(c.cx, c.cy);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = c.color + '88';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, 2*Math.PI);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+
+        ctx.fillStyle = c.color;
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(c.label, c.cx, c.cy - r - 10);
+    });
+
+    // Arrow from first two to third
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath();
+    ctx.moveTo(200, 80);
+    ctx.quadraticCurveTo(350, 40, 500, 80);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(495, 75);
+    ctx.lineTo(500, 80);
+    ctx.lineTo(493, 82);
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Formula label
+    ctx.fillStyle = '#ffd700';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('cos(a)cos(b) - sin(a)sin(b) = cos(a+b)', 350, 35);
+    ctx.textAlign = 'left';
+
+    // Result text
+    const resultDiv = document.getElementById('trigResult');
+    const computed = cosA * cosB - sinA * sinB;
+    resultDiv.innerHTML =
+        '<span style="color:#ff6b6b;">cos(w*' + a + ') = ' + cosA.toFixed(4) + '</span> &nbsp; ' +
+        '<span style="color:#ff6b6b;">sin(w*' + a + ') = ' + sinA.toFixed(4) + '</span><br>' +
+        '<span style="color:#7ecfff;">cos(w*' + b + ') = ' + cosB.toFixed(4) + '</span> &nbsp; ' +
+        '<span style="color:#7ecfff;">sin(w*' + b + ') = ' + sinB.toFixed(4) + '</span><br>' +
+        '<span style="color:#ffd700;">Formula: ' + cosA.toFixed(3) + ' x ' + cosB.toFixed(3) + ' - (' + sinA.toFixed(3) + ' x ' + sinB.toFixed(3) + ') = ' + computed.toFixed(4) + '</span><br>' +
+        '<span style="color:#4caf50;">Actual cos(w*' + sum + ') = ' + cosAB.toFixed(4) + ' --- Match! (' + a + '+' + b + ') mod 113 = ' + sum + '</span>';
+}
+
+// ============ CHAPTER 4: INTERFERENCE DEMO ============
+function updateInterference() {
+    const a = parseInt(document.getElementById('id_a').value);
+    const b = parseInt(document.getElementById('id_b').value);
+    const numFreqs = parseInt(document.getElementById('id_n').value);
+    document.getElementById('id_a_val').textContent = a;
+    document.getElementById('id_b_val').textContent = b;
+    document.getElementById('id_n_val').textContent = numFreqs;
+
+    const correct = mod(a + b, P);
+    const freqs = KEY_FREQS.slice(0, numFreqs);
+
+    const canvas = document.getElementById('interferenceDemo');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const margin = { left: 55, right: 20, top: 35, bottom: 45 };
+    const plotW = W - margin.left - margin.right;
+    const plotH = H - margin.top - margin.bottom;
+
+    // Compute scores
+    const scores = [];
+    for (let c = 0; c < P; c++) {
+        let score = 0;
+        for (let fi = 0; fi < freqs.length; fi++) {
+            score += ALPHAS[fi] * Math.cos(wk(freqs[fi]) * (a + b - c));
+        }
+        scores.push(score);
+    }
+
+    const maxScore = Math.max(...scores);
+    const minScore = Math.min(...scores);
+    const range = maxScore - minScore || 1;
+
+    // Axes
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin.left, margin.top);
+    ctx.lineTo(margin.left, margin.top + plotH);
+    ctx.lineTo(margin.left + plotW, margin.top + plotH);
+    ctx.stroke();
+
+    // Draw individual waves
+    for (let fi = 0; fi < freqs.length; fi++) {
+        ctx.beginPath();
+        ctx.strokeStyle = FREQ_COLORS[fi] + '88';
+        ctx.lineWidth = 1.2;
+        for (let c = 0; c < P; c++) {
+            const val = ALPHAS[fi] * Math.cos(wk(freqs[fi]) * (a + b - c));
+            const x = margin.left + (c / (P-1)) * plotW;
+            const y = margin.top + plotH * ((maxScore - val) / range);
+            if (c === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    // Draw sum (white, bold)
+    ctx.beginPath();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2.5;
+    for (let c = 0; c < P; c++) {
+        const x = margin.left + (c / (P-1)) * plotW;
+        const y = margin.top + plotH * ((maxScore - scores[c]) / range);
+        if (c === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Mark correct answer
+    const peakX = margin.left + (correct / (P-1)) * plotW;
+    const peakY = margin.top + plotH * ((maxScore - scores[correct]) / range);
+    ctx.beginPath();
+    ctx.arc(peakX, peakY, 8, 0, 2*Math.PI);
+    ctx.fillStyle = '#4caf50';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#4caf50';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText('c*=' + correct + ' CORRECT', peakX + 12, peakY - 8);
+
+    // Title
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(numFreqs + ' frequency' + (numFreqs > 1 ? 's' : '') + ' — score for each possible answer c', W/2, 20);
+    ctx.textAlign = 'left';
+
+    // Legend
+    ctx.font = '10px monospace';
+    for (let fi = 0; fi < freqs.length; fi++) {
+        ctx.fillStyle = FREQ_COLORS[fi];
+        ctx.fillText('k=' + freqs[fi], W - 80, margin.top + 15 + fi * 14);
+    }
+    ctx.fillStyle = '#fff';
+    ctx.fillText('SUM', W - 80, margin.top + 15 + freqs.length * 14);
+
+    // X axis
+    ctx.fillStyle = '#888';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('candidate answer c (0 to 112)', margin.left + plotW/2, H - 8);
+    ctx.textAlign = 'left';
+
+    // Result text
+    const secondBest = Math.max(...scores.filter((s, i) => i !== correct));
+    const gap = scores[correct] - secondBest;
+    const resultDiv = document.getElementById('intResult');
+    resultDiv.innerHTML =
+        '<strong>Correct answer:</strong> ' + a + ' + ' + b + ' mod 113 = <span style="color:#4caf50;">' + correct + '</span><br>' +
+        '<strong>Score at correct:</strong> ' + scores[correct].toFixed(1) + ' | <strong>Best wrong:</strong> ' + secondBest.toFixed(1) + ' | <strong>Gap:</strong> ' + gap.toFixed(1) + '<br>' +
+        (numFreqs < 3 ? '<span style="color:#ff6b6b;">Not enough frequencies — wrong answers score almost as high!</span>' :
+         numFreqs < 5 ? '<span style="color:#ffb347;">Getting better — correct answer stands out more.</span>' :
+         '<span style="color:#4caf50;">5 frequencies — massive gap! The correct answer is unmistakable.</span>');
+}
+
+// ============ CHAPTER 6: GROKKING DEMO ============
+function updateGrokking() {
+    const pct = parseInt(document.getElementById('gd_slider').value);
+    document.getElementById('gd_val').textContent = pct + '%';
+
+    const canvas = document.getElementById('grokkingDemo');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const margin = { left: 55, right: 20, top: 25, bottom: 35 };
+    const plotW = W - margin.left - margin.right;
+    const plotH = H - margin.top - margin.bottom;
+
+    // Phase backgrounds
+    const phases = [
+        { start: 0, end: 10, color: 'rgba(255,107,107,0.08)', label: 'Memorize' },
+        { start: 10, end: 65, color: 'rgba(255,179,71,0.08)', label: 'Circuit forms' },
+        { start: 65, end: 85, color: 'rgba(126,207,255,0.08)', label: 'Cleanup' },
+        { start: 85, end: 100, color: 'rgba(76,175,80,0.08)', label: 'Done' }
+    ];
+
+    phases.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(margin.left + (p.start/100)*plotW, margin.top, ((p.end-p.start)/100)*plotW, plotH);
+        ctx.fillStyle = '#666';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.label, margin.left + ((p.start+p.end)/2/100)*plotW, margin.top + plotH + 12);
+    });
+    ctx.textAlign = 'left';
+
+    // Axes
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(margin.left, margin.top);
+    ctx.lineTo(margin.left, margin.top + plotH);
+    ctx.lineTo(margin.left + plotW, margin.top + plotH);
+    ctx.stroke();
+
+    // Simulate curves
+    function trainAcc(t) {
+        if (t < 0.08) return t / 0.08;
+        return 1.0;
+    }
+    function testAcc(t) {
+        if (t < 0.65) return 0.01 + 0.01 * Math.random();
+        if (t < 0.85) return Math.pow((t - 0.65) / 0.20, 2);
+        return 1.0;
+    }
+    function algoStrength(t) {
+        if (t < 0.08) return 0;
+        if (t < 0.65) return (t - 0.08) / 0.57 * 0.7;
+        return 0.7 + (t - 0.65) * 0.86;
+    }
+
+    // Draw curves up to current pct
+    const curves = [
+        { fn: trainAcc, color: '#ff6b6b', label: 'Train accuracy' },
+        { fn: testAcc, color: '#7ecfff', label: 'Test accuracy' },
+        { fn: algoStrength, color: '#ffd700', label: 'Algorithm strength' }
+    ];
+
+    curves.forEach(curve => {
+        ctx.beginPath();
+        ctx.strokeStyle = curve.color;
+        ctx.lineWidth = 2.5;
+        for (let p = 0; p <= pct; p++) {
+            const t = p / 100;
+            const val = Math.min(1, Math.max(0, curve.fn(t)));
+            const x = margin.left + (p / 100) * plotW;
+            const y = margin.top + plotH * (1 - val);
+            if (p === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    });
+
+    // Current position line
+    const curX = margin.left + (pct / 100) * plotW;
+    ctx.strokeStyle = '#ffffff44';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(curX, margin.top);
+    ctx.lineTo(curX, margin.top + plotH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Legend
+    ctx.font = '10px sans-serif';
+    curves.forEach((curve, i) => {
+        ctx.fillStyle = curve.color;
+        ctx.fillRect(margin.left + 10 + i * 160, margin.top + 5, 12, 3);
+        ctx.fillText(curve.label, margin.left + 25 + i * 160, margin.top + 10);
+    });
+
+    // Y axis
+    ctx.fillStyle = '#888';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('100%', margin.left - 5, margin.top + 8);
+    ctx.fillText('0%', margin.left - 5, margin.top + plotH + 4);
+    ctx.textAlign = 'left';
+
+    // Result text
+    const t = pct / 100;
+    const resultDiv = document.getElementById('grokResult');
+    let phase = '';
+    if (t < 0.10) phase = '<span style="color:#ff6b6b;"><strong>Phase 1: Memorization.</strong></span> The network memorizes training examples. Train accuracy shoots up, but test accuracy stays at 0%. The Fourier algorithm hasn\'t formed yet.';
+    else if (t < 0.65) phase = '<span style="color:#ffb347;"><strong>Phase 2: Circuit Formation.</strong></span> The Fourier algorithm is slowly forming in the weights (yellow line rising). But the memorized answers are still there, so test accuracy doesn\'t improve yet. Hidden progress!';
+    else if (t < 0.85) phase = '<span style="color:#7ecfff;"><strong>Phase 3: Cleanup.</strong></span> Weight decay erases the bulky memorization. The compact Fourier circuit survives. Test accuracy suddenly shoots up — this is the "grokking" moment!';
+    else phase = '<span style="color:#4caf50;"><strong>Done!</strong></span> The network now uses only the Fourier algorithm. Both train and test accuracy are 100%. The network can solve ANY (a+b) mod 113, even pairs it never saw during training.';
+    resultDiv.innerHTML = phase;
+}
+
+let grokkingAnimId = null;
+function animateGrokking() {
+    if (grokkingAnimId) { clearTimeout(grokkingAnimId); grokkingAnimId = null; }
+    const slider = document.getElementById('gd_slider');
+    let val = 0;
+    slider.value = val;
+    function step() {
+        val += 1;
+        if (val > 100) { grokkingAnimId = null; return; }
+        slider.value = val;
+        updateGrokking();
+        grokkingAnimId = setTimeout(step, 60);
+    }
+    step();
+}
+
+// ============ CHAPTER 8: FULL PIPELINE DEMO ============
+function updateFullPipeline() {
+    const a = parseInt(document.getElementById('fp_a').value);
+    const b = parseInt(document.getElementById('fp_b').value);
+    document.getElementById('fp_a_val').textContent = a;
+    document.getElementById('fp_b_val').textContent = b;
+
+    const correct = mod(a + b, P);
+
+    const canvas = document.getElementById('fullPipeline');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const stageH = 80;
+    const stageGap = 15;
+    const stageColors = ['#ff6b6b', '#ffb347', '#4caf50', '#7ecfff', '#c77dff'];
+    const stageLabels = ['EMBED', 'ATTENTION (multiply)', 'MLP (trig identity)', 'UNEMBED (interference)', 'SOFTMAX (pick winner)'];
+
+    for (let i = 0; i < 5; i++) {
+        const y = 10 + i * (stageH + stageGap);
+
+        // Box
+        ctx.fillStyle = stageColors[i] + '11';
+        ctx.strokeStyle = stageColors[i];
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(15, y, W - 30, stageH, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = stageColors[i];
+        ctx.font = 'bold 12px monospace';
+        ctx.fillText(stageLabels[i], 30, y + 18);
+
+        // Content
+        ctx.fillStyle = '#ddd';
+        ctx.font = '11px monospace';
+
+        const k0 = KEY_FREQS[0];
+        const w0 = wk(k0);
+
+        if (i === 0) {
+            ctx.fillText('a=' + a + ': cos(w14*' + a + ')=' + Math.cos(w0*a).toFixed(3) + '  sin=' + Math.sin(w0*a).toFixed(3), 30, y + 40);
+            ctx.fillText('b=' + b + ': cos(w14*' + b + ')=' + Math.cos(w0*b).toFixed(3) + '  sin=' + Math.sin(w0*b).toFixed(3), 30, y + 60);
+        } else if (i === 1) {
+            const prod1 = (Math.cos(w0*a) * Math.cos(w0*b)).toFixed(4);
+            const prod2 = (Math.sin(w0*a) * Math.sin(w0*b)).toFixed(4);
+            ctx.fillText('cos(w*a)*cos(w*b) = ' + prod1 + '   sin(w*a)*sin(w*b) = ' + prod2, 30, y + 42);
+            ctx.fillText('Attention multiplies these together (bilinear!)', 30, y + 60);
+        } else if (i === 2) {
+            const cosSum = Math.cos(w0 * correct).toFixed(4);
+            const sinSum = Math.sin(w0 * correct).toFixed(4);
+            ctx.fillText('cos(w*(a+b)) = cos(w*' + correct + ') = ' + cosSum, 30, y + 42);
+            ctx.fillText('sin(w*(a+b)) = sin(w*' + correct + ') = ' + sinSum + '  (via trig identity)', 30, y + 60);
+        } else if (i === 3) {
+            let totalScore = 0;
+            for (let fi = 0; fi < KEY_FREQS.length; fi++) {
+                totalScore += ALPHAS[fi];
+            }
+            ctx.fillText('logit(c) = Sum alpha_k * cos(w_k*(a+b-c))  for k in {14,35,41,42,52}', 30, y + 42);
+            ctx.fillText('At c*=' + correct + ': all cos=1, sum=' + totalScore.toFixed(1) + '  |  Wrong c: waves cancel!', 30, y + 60);
+        } else if (i === 4) {
+            ctx.fillText('softmax picks the peak → P(c=' + correct + ') approx 1.000', 30, y + 42);
+            ctx.fillStyle = '#4caf50';
+            ctx.font = 'bold 14px monospace';
+            ctx.fillText('ANSWER: (' + a + ' + ' + b + ') mod 113 = ' + correct + '  CORRECT', 30, y + 62);
+        }
+
+        // Arrow to next stage
+        if (i < 4) {
+            const arrowY = y + stageH + stageGap / 2;
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(W / 2, y + stageH + 2);
+            ctx.lineTo(W / 2, y + stageH + stageGap - 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(W / 2 - 5, y + stageH + stageGap - 7);
+            ctx.lineTo(W / 2, y + stageH + stageGap - 2);
+            ctx.lineTo(W / 2 + 5, y + stageH + stageGap - 7);
+            ctx.fillStyle = '#555';
+            ctx.fill();
+        }
+    }
+}
+
+// ============ INITIALIZATION ============
+function init() {
+    updateCircleDemo();
+    updateTrigDemo();
+    updateInterference();
+    updateGrokking();
+    updateFullPipeline();
+}
+
+window.addEventListener('load', init);
+window.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
