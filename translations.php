@@ -1504,7 +1504,7 @@
 
 				$extraKeys = array_diff($subKeys, $keys);
 				if ($extraKeys) {
-					die("Extra key in '$lang' not found in first language: " . reset($extraKeys));
+					die("Extra key in '$lang' not found in first language: " . reset($extraKeys) . "\n");
 				}
 			}
 		}
@@ -1513,7 +1513,7 @@
 	}
 
 	if (!checkSubElementsKeys($GLOBALS["translations"])) {
-		die("Sub-elements do not have the same keys");
+		die("Sub-elements do not have the same keys\n");
 	}
 
 	if (isset($_GET["print"])) {
