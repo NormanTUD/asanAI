@@ -1487,7 +1487,7 @@
 	function checkSubElementsKeys($array) {
 		$keys = [];
 
-		foreach ($array as $subArray) {
+		foreach ($array as $lang => $subArray) {
 			if (!is_array($subArray)) {
 				die("Sub-element is not an array");
 			}
@@ -1498,8 +1498,13 @@
 				$keys = $subKeys;
 			} elseif ($keys !== $subKeys) {
 				$missingKeys = array_diff($keys, $subKeys);
-				if($missingKeys) {
-					die("Missing key: " . reset($missingKeys));
+				if ($missingKeys) {
+					die("Missing key in '$lang': " . reset($missingKeys));
+				}
+
+				$extraKeys = array_diff($subKeys, $keys);
+				if ($extraKeys) {
+					die("Extra key in '$lang' not found in first language: " . reset($extraKeys));
 				}
 			}
 		}
@@ -1507,8 +1512,12 @@
 		return true;
 	}
 
-	if(!checkSubElementsKeys($GLOBALS["translations"])) {
+	if (!checkSubElementsKeys($GLOBALS["translations"])) {
 		die("Sub-elements do not have the same keys");
+	}
+
+	if (isset($_GET["print"])) {
+		print json_encode($translations);
 	}
 
 	if(isset($_GET["print"])) {
