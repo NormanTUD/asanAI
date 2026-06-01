@@ -1,0 +1,2390 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signalanalyse für LLM-Internals – Interaktiv</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Local.css">
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent2: #f78166;
+            --accent3: #7ee787;
+            --accent4: #d2a8ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--accent), var(--accent4));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .nav-tab.active {
+            background: var(--accent);
+            color: #000;
+            font-weight: 600;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 1.4em;
+        }
+
+        .card h3 {
+            color: var(--accent3);
+            margin: 16px 0 8px;
+            font-size: 1.1em;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .formula-box {
+            background: #1c2128;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-group label span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+
+        .plot-container {
+            width: 100%;
+            height: 350px;
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .dual-plot {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .dual-plot {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin: 16px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #1c2128;
+            border: 1px solid var(--border);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: var(--accent);
+            margin: 4px 4px 4px 0;
+        }
+
+        .insight-box {
+            background: rgba(126, 231, 135, 0.05);
+            border-left: 3px solid var(--accent3);
+            padding: 12px 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .insight-box strong {
+            color: var(--accent3);
+        }
+
+        button.action-btn {
+            padding: 8px 16px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        button.action-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .matrix-viz {
+            display: grid;
+            gap: 2px;
+            margin: 16px auto;
+            width: fit-content;
+        }
+
+        .matrix-cell {
+            width: 20px;
+            height: 20px;
+            border-radius: 2px;
+        }
+
+        select {
+            padding: 8px 12px;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .temml-display {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Signalanalyse für LLM-Internals</h1>
+            <p>Interaktive Visualisierungen – von Fourier bis Sparse Autoencoders</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('fourier')">1. Fourier</button>
+            <button class="nav-tab" onclick="showSection('stft')">2. STFT / Spektrogramm</button>
+            <button class="nav-tab" onclick="showSection('wavelets')">3. Wavelets</button>
+            <button class="nav-tab" onclick="showSection('pca')">4. PCA / SVD</button>
+            <button class="nav-tab" onclick="showSection('ica')">5. ICA</button>
+            <button class="nav-tab" onclick="showSection('sparse')">6. Sparse Coding / SAE</button>
+            <button class="nav-tab" onclick="showSection('nonlinear')">7. Nicht-Linearität</button>
+            <button class="nav-tab" onclick="showSection('llm')">8. LLM-Signale</button>
+        </div>
+
+        <!-- SECTION 1: FOURIER -->
+        <div id="section-fourier" class="section active">
+            <div class="card">
+                <h2>Fourier-Transformation: Signale in Frequenzen zerlegen</h2>
+                <p>Jedes Signal ist eine Summe von Sinus- und Kosinuswellen. Hier kannst du live sehen, wie einzelne Frequenzkomponenten sich zu einem komplexen Signal addieren.</p>
+
+                <div class="formula-box">
+                    <div id="fourier-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Baue dein eigenes Signal</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Frequenz 1 (f₁): <span id="f1-val">1</span> Hz</label>
+                        <input type="range" id="f1" min="0" max="10" step="0.5" value="1" oninput="updateFourier()">
+                    </div>
+                    <div class="control-group">
+                        <label>Amplitude 1 (A₁): <span id="a1-val">1.0</span></label>
+                        <input type="range" id="a1" min="0" max="2" step="0.1" value="1" oninput="updateFourier()">
+                    </div>
+                    <div class="control-group">
+                        <label>Frequenz 2 (f₂): <span id="f2-val">3</span> Hz</label>
+                        <input type="range" id="f2" min="0" max="10" step="0.5" value="3" oninput="updateFourier()">
+                    </div>
+                    <div class="control-group">
+                        <label>Amplitude 2 (A₂): <span id="a2-val">0.5</span></label>
+                        <input type="range" id="a2" min="0" max="2" step="0.1" value="0.5" oninput="updateFourier()">
+                    </div>
+                    <div class="control-group">
+                        <label>Frequenz 3 (f₃): <span id="f3-val">7</span> Hz</label>
+                        <input type="range" id="f3" min="0" max="15" step="0.5" value="7" oninput="updateFourier()">
+                    </div>
+                    <div class="control-group">
+                        <label>Amplitude 3 (A₃): <span id="a3-val">0.3</span></label>
+                        <input type="range" id="a3" min="0" max="2" step="0.1" value="0.3" oninput="updateFourier()">
+                    </div>
+                </div>
+
+                <div class="dual-plot">
+                    <div>
+                        <h3>Zeitdomäne (Signal)</h3>
+                        <div id="fourier-time" class="plot-container"></div>
+                    </div>
+                    <div>
+                        <h3>Frequenzdomäne (Spektrum)</h3>
+                        <div id="fourier-freq" class="plot-container"></div>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <strong>LLM-Bezug:</strong> In Neel Nandas Grokking-Paper lernt das Modell, nur bestimmte Frequenzen zu nutzen. Im Spektrum würdest du scharfe Peaks sehen – das Modell hat eine "saubere" Fourier-Darstellung gelernt.
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>DFT interaktiv: Vom Signal zum Spektrum</h2>
+                <p>Zeichne ein beliebiges Signal und sieh live die Fourier-Zerlegung:</p>
+
+                <div class="canvas-container">
+                    <canvas id="draw-canvas"></canvas>
+                </div>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="analyzeDrawing()">🔍 Fourier-Analyse</button>
+                    <button class="action-btn" onclick="clearCanvas()">🗑️ Löschen</button>
+                    <button class="action-btn" onclick="loadPreset('square')">◻️ Rechteck</button>
+                    <button class="action-btn" onclick="loadPreset('sawtooth')">📐 Sägezahn</button>
+                    <button class="action-btn" onclick="loadPreset('impulse')">⚡ Impuls</button>
+                </div>
+                <div id="draw-spectrum" class="plot-container"></div>
+
+                <div class="formula-box">
+                    <div id="dft-formula" class="temml-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: STFT -->
+        <div id="section-stft" class="section">
+            <div class="card">
+                <h2>Kurzzeit-Fourier-Transformation (STFT)</h2>
+                <p>Die STFT schiebt ein Fenster über das Signal und berechnet in jedem Fenster eine Fourier-Transformation. So bekommst du Zeit-Frequenz-Information.</p>
+
+                <div class="formula-box">
+                    <div id="stft-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Signal mit sich ändernden Frequenzen (Chirp)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Startfrequenz: <span id="chirp-start-val">1</span> Hz</label>
+                        <input type="range" id="chirp-start" min="1" max="10" step="0.5" value="1" oninput="updateSTFT()">
+                    </div>
+                    <div class="control-group">
+                        <label>Endfrequenz: <span id="chirp-end-val">10</span> Hz</label>
+                        <input type="range" id="chirp-end" min="5" max="30" step="1" value="10" oninput="updateSTFT()">
+                    </div>
+                    <div class="control-group">
+                        <label>Fenstergröße: <span id="window-size-val">64</span> Samples</label>
+                        <input type="range" id="window-size" min="16" max="256" step="16" value="64" oninput="updateSTFT()">
+                    </div>
+                    <div class="control-group">
+                        <label>Signal-Typ:
+                        <select id="stft-signal-type" onchange="updateSTFT()">
+                            <option value="chirp">Chirp (ansteigende Freq.)</option>
+                            <option value="switch">Frequenz-Wechsel</option>
+                            <option value="burst">Burst-Signal</option>
+                            <option value="llm-sim">LLM-Aktivierung (simuliert)</option>
+                        </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="stft-time-plot" class="plot-container"></div>
+                <h3>Spektrogramm (Zeit × Frequenz)</h3>
+                <div id="stft-spectrogram" class="plot-container" style="height:400px;"></div>
+
+                <div class="insight-box">
+                    <strong>LLM-Bezug:</strong> Stell dir vor, die x-Achse sind Token-Positionen und die y-Achse sind "Feature-Frequenzen". Ein Spektrogramm der Residual-Stream-Aktivierungen würde zeigen, welche Features an welchen Positionen aktiv sind – genau wie ein Audio-Spektrogramm zeigt, welche Töne wann erklingen.
+                </div>
+
+                <h3>Heisenberg-Unsicherheit der Signalanalyse</h3>
+                <p>Du kannst nicht gleichzeitig perfekte Zeit- UND Frequenzauflösung haben:</p>
+                <div class="formula-box">
+                    <div id="heisenberg-formula" class="temml-display"></div>
+                </div>
+                <p>→ Kleines Fenster = gute Zeitauflösung, schlechte Frequenzauflösung<br>
+                → Großes Fenster = gute Frequenzauflösung, schlechte Zeitauflösung</p>
+            </div>
+        </div>
+
+        <!-- SECTION 3: WAVELETS -->
+        <div id="section-wavelets" class="section">
+            <div class="card">
+                <h2>Wavelet-Transformation</h2>
+                <p>Wavelets lösen das Heisenberg-Problem elegant: Sie nutzen <strong>kurze Wavelets für hohe Frequenzen</strong> und <strong>lange Wavelets für niedrige Frequenzen</strong>.</p>
+
+                <div class="formula-box">
+                    <div id="wavelet-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Wavelet-Typen erkunden</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Wavelet-Typ:
+                        <select id="wavelet-type" onchange="updateWavelet()">
+                            <option value="morlet">Morlet (Gabor)</option>
+                            <option value="haar">Haar</option>
+                            <option value="mexican-hat">Mexican Hat (Ricker)</option>
+                            <option value="daubechies">Daubechies-ähnlich</option>
+                        </select>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>Skala (a): <span id="wavelet-scale-val">1.0</span></label>
+                        <input type="range" id="wavelet-scale" min="0.2" max="5" step="0.1" value="1" oninput="updateWavelet()">
+                    </div>
+                    <div class="control-group">
+                        <label>Position (b): <span id="wavelet-pos-val">0.0</span></label>
+                        <input type="range" id="wavelet-pos" min="-3" max="3" step="0.1" value="0" oninput="updateWavelet()">
+                    </div>
+                    <div class="control-group">
+                        <label>Frequenz (ω₀): <span id="wavelet-freq-val">5.0</span></label>
+                        <input type="range" id="wavelet-freq" min="2" max="15" step="0.5" value="5" oninput="updateWavelet()">
+                    </div>
+                </div>
+
+                <div class="dual-plot">
+                    <div>
+                        <h3>Mutter-Wavelet ψ(t)</h3>
+                        <div id="wavelet-mother" class="plot-container"></div>
+                    </div>
+                    <div>
+                        <h3>Skaliertes & verschobenes Wavelet</h3>
+                        <div id="wavelet-scaled" class="plot-container"></div>
+                    </div>
+                </div>
+
+                <h3>Wavelet-Analyse eines Signals</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Test-Signal:
+                        <select id="wavelet-signal" onchange="updateWaveletAnalysis()">
+                            <option value="transient">Transientes Signal</option>
+                            <option value="multi">Multi-Frequenz</option>
+                            <option value="step">Sprung-Signal</option>
+                        </select>
+                        </label>
+                    </div>
+                </div>
+                <div id="wavelet-signal-plot" class="plot-container"></div>
+                <h3>Scalogram (Wavelet-Koeffizienten)</h3>
+                <div id="wavelet-scalogram" class="plot-container" style="height:400px;"></div>
+
+                <div class="insight-box">
+                    <strong>LLM-Bezug:</strong> Wavelets sind ideal, um transiente Features zu finden – z.B. wenn ein bestimmtes Konzept nur an einer Stelle in der Sequenz "aufblitzt". Die Multi-Skalen-Eigenschaft entspricht der Hierarchie von Features in verschiedenen Layern.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: PCA/SVD -->
+        <div id="section-pca" class="section">
+            <div class="card">
+                <h2>PCA / SVD: Datengetriebene Basis</h2>
+                <p>Statt eine feste Basis (Fourier) zu nutzen, findet PCA die <strong>optimale Basis für deine Daten</strong> – die Richtungen maximaler Varianz.</p>
+
+                <div class="formula-box">
+                    <div id="pca-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Interaktive 2D-PCA</h3>
+                <p>Klicke um Datenpunkte zu setzen, oder nutze die Presets:</p>
+                <div class="btn-group">
+                    <button class="action-btn" onclick="pcaPreset('cluster')">🔵 Cluster</button>
+                    <button class="action-btn" onclick="pcaPreset('elongated')">↗️ Elongiert</button>
+                    <button class="action-btn" onclick="pcaPreset('circular')">⭕ Kreisförmig</button>
+                    <button class="action-btn" onclick="pcaPreset('llm-activations')">🧠 LLM-Aktivierungen</button>
+                    <button class="action-btn" onclick="clearPCA()">🗑️ Löschen</button>
+                </div>
+
+                <div id="pca-plot" class="plot-container" style="height:450px;"></div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Varianz erklärt durch PC1: <span id="pca-var1">-</span>%</label>
+                    </div>
+                    <div class="control-group">
+                        <label>Varianz erklärt durch PC2: <span id="pca-var2">-</span>%</label>
+                    </div>
+                </div>
+
+                <h3>SVD-Zerlegung: A = UΣVᵀ</h3>
+                <div class="formula-box">
+                    <div id="svd-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Rang-k Approximation</h3>
+                <p>SVD erlaubt es, eine Matrix durch wenige Komponenten zu approximieren:</p>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Matrix-Größe: 16×16</label>
+                    </div>
+                    <div class="control-group">
+                        <label>Rang k: <span id="svd-rank-val">1</span></label>
+                        <input type="range" id="svd-rank" min="1" max="16" step="1" value="1" oninput="updateSVD()">
+                    </div>
+                </div>
+                <div class="dual-plot">
+                    <div>
+                        <h3>Original-Matrix</h3>
+                        <div id="svd-original" class="plot-container"></div>
+                    </div>
+                    <div>
+                        <h3>Rang-k Approximation</h3>
+                        <div id="svd-approx" class="plot-container"></div>
+                    </div>
+                </div>
+                <div id="svd-error-plot" class="plot-container" style="height:250px;"></div>
+
+                <div class="insight-box">
+                    <strong>LLM-Bezug:</strong> Die Gewichtsmatrizen in Transformern haben oft niedrigen effektiven Rang – wenige Singulärwerte dominieren. Das ist die Grundlage für LoRA (Low-Rank Adaptation) und erklärt, warum LLMs komprimierbar sind.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: ICA -->
+        <div id="section-ica" class="section">
+            <div class="card">
+                <h2>Independent Component Analysis (ICA)</h2>
+                <p>ICA trennt gemischte Signale in ihre <strong>statistisch unabhängigen Quellen</strong>. Das Cocktailparty-Problem!</p>
+
+                <div class="formula-box">
+                    <div id="ica-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Cocktailparty-Demo: Signale mischen und entmischen</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Quelle 1:
+                        <select id="ica-source1" onchange="updateICA()">
+                            <option value="sine">Sinus</option>
+                            <option value="square">Rechteck</option>
+                            <option value="sawtooth">Sägezahn</option>
+                            <option value="noise">Rauschen</option>
+                        </select>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>Quelle 2:
+                        <select id="ica-source2" onchange="updateICA()">
+                            <option value="square" selected>Rechteck</option>
+                            <option value="sine">Sinus</option>
+                            <option value="sawtooth">Sägezahn</option>
+                            <option value="noise">Rauschen</option>
+                        </select>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>Mischung a₁₁: <span id="ica-a11-val">0.7</span></label>
+                        <input type="range" id="ica-a11" min="-1" max="1" step="0.1" value="0.7" oninput="updateICA()">
+                    </div>
+                    <div class="control-group">
+                        <label>Mischung a₁₂: <span id="ica-a12-val">0.3</span></label>
+                        <input type="range" id="ica-a12" min="-1" max="1" step="0.1" value="0.3" oninput="updateICA()">
+                    </div>
+                    <div class="control-group">
+                        <label>Mischung a₂₁: <span id="ica-a21-val">0.4</span></label>
+                        <input type="range" id="ica-a21" min="-1" max="1" step="0.1" value="0.4" oninput="updateICA()">
+                    </div>
+                    <div class="control-group">
+                        <label>Mischung a₂₂: <span id="ica-a22-val">0.6</span></label>
+                        <input type="range" id="ica-a22" min="-1" max="1" step="0.1" value="0.6" oninput="updateICA()">
+                    </div>
+                </div>
+
+                <h3>Originale Quellen</h3>
+                <div id="ica-sources" class="plot-container"></div>
+                <h3>Gemischte Signale (was wir beobachten)</h3>
+                <div id="ica-mixed" class="plot-container"></div>
+                <h3>ICA-Rekonstruktion (entmischt)</h3>
+                <div id="ica-recovered" class="plot-container"></div>
+
+                <div class="btn-group">
+                    <button class="action-btn" onclick="runICA()">🔄 ICA ausführen</button>
+                </div>
+
+                <div class="insight-box">
+                    <strong>LLM-Bezug:</strong> Features in Superposition sind genau dieses Problem! Mehrere semantische Konzepte (Quellen) sind in denselben Neuronen (Beobachtungen) gemischt. ICA-ähnliche Methoden können helfen, sie zu trennen.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: SPARSE CODING -->
+        <div id="section-sparse" class="section">
+            <div class="card">
+                <h2>Sparse Coding & Sparse Autoencoders (SAE)</h2>
+                <p>Finde ein <strong>überbestimmtes Dictionary</strong>, sodass jedes Signal als spärliche Kombination weniger Atome darstellbar ist.</p>
+
+                <div class="formula-box">
+                
+                    <div id="sparse-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Visualisierung: Überbestimmtes Dictionary</h3>
+                <p>Ein Dictionary mit mehr Atomen (Spalten) als Dimensionen. Jedes Signal wird als spärliche Kombination weniger Atome dargestellt.</p>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Dimensionen (n): <span id="sparse-n-val">2</span></label>
+                        <input type="range" id="sparse-n" min="2" max="3" step="1" value="2" oninput="updateSparse()">
+                    </div>
+                    <div class="control-group">
+                        <label>Dictionary-Atome (h): <span id="sparse-h-val">8</span></label>
+                        <input type="range" id="sparse-h" min="3" max="20" step="1" value="8" oninput="updateSparse()">
+                    </div>
+                    <div class="control-group">
+                        <label>Sparsity (k aktive): <span id="sparse-k-val">2</span></label>
+                        <input type="range" id="sparse-k" min="1" max="5" step="1" value="2" oninput="updateSparse()">
+                    </div>
+                    <div class="control-group">
+                        <label>L1-Regularisierung (λ): <span id="sparse-lambda-val">0.5</span></label>
+                        <input type="range" id="sparse-lambda" min="0" max="2" step="0.1" value="0.5" oninput="updateSparse()">
+                    </div>
+                </div>
+
+                <div id="sparse-dict-plot" class="plot-container" style="height:450px;"></div>
+
+                <h3>Sparse Autoencoder Architektur</h3>
+                <div class="formula-box">
+                    <div id="sae-formula" class="temml-display"></div>
+                </div>
+
+                <h3>SAE Live-Demo: Encode → Sparsify → Decode</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Input x₁: <span id="sae-x1-val">0.5</span></label>
+                        <input type="range" id="sae-x1" min="-2" max="2" step="0.1" value="0.5" oninput="updateSAE()">
+                    </div>
+                    <div class="control-group">
+                        <label>Input x₂: <span id="sae-x2-val">0.8</span></label>
+                        <input type="range" id="sae-x2" min="-2" max="2" step="0.1" value="0.8" oninput="updateSAE()">
+                    </div>
+                </div>
+
+                <div id="sae-activations" class="plot-container" style="height:300px;"></div>
+                <div id="sae-reconstruction" class="plot-container" style="height:300px;"></div>
+
+                <div class="insight-box">
+                    <strong>LLM-Bezug:</strong> Sparse Autoencoders sind DAS Werkzeug der aktuellen Mechanistic Interpretability. Sie werden auf Residual-Stream-Aktivierungen trainiert und finden interpretierbare Features. Die Sparsity-Bedingung erzwingt, dass pro Input nur wenige Features aktiv sind – genau wie in der Neurowissenschaft.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 7: NON-LINEARITY -->
+        <div id="section-nonlinear" class="section">
+            <div class="card">
+                <h2>Nicht-Linearität & Harmonische</h2>
+                <p>Aktivierungsfunktionen wie ReLU und GELU sind <strong>nicht-linear</strong>. Wenn ein Signal durch eine Nicht-Linearität geht, entstehen neue Frequenzen (Harmonische) – genau wie bei Verzerrung in der Elektrotechnik.</p>
+
+                <div class="formula-box">
+                    <div id="nonlinear-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Signal durch Aktivierungsfunktion schicken</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Aktivierungsfunktion:
+                        <select id="activation-type" onchange="updateNonlinear()">
+                            <option value="relu">ReLU</option>
+                            <option value="gelu">GELU</option>
+                            <option value="sigmoid">Sigmoid</option>
+                            <option value="tanh">Tanh</option>
+                            <option value="softplus">Softplus</option>
+                        </select>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>Eingangsfrequenz: <span id="nl-freq-val">2</span> Hz</label>
+                        <input type="range" id="nl-freq" min="1" max="10" step="0.5" value="2" oninput="updateNonlinear()">
+                    </div>
+                    <div class="control-group">
+                        <label>Amplitude: <span id="nl-amp-val">1.0</span></label>
+                        <input type="range" id="nl-amp" min="0.1" max="3" step="0.1" value="1" oninput="updateNonlinear()">
+                    </div>
+                    <div class="control-group">
+                        <label>DC-Offset: <span id="nl-offset-val">0.0</span></label>
+                        <input type="range" id="nl-offset" min="-2" max="2" step="0.1" value="0" oninput="updateNonlinear()">
+                    </div>
+                </div>
+
+                <div class="dual-plot">
+                    <div>
+                        <h3>Eingang vs. Ausgang (Zeitdomäne)</h3>
+                        <div id="nl-time" class="plot-container"></div>
+                    </div>
+                    <div>
+                        <h3>Spektrum: Neue Harmonische!</h3>
+                        <div id="nl-freq-plot" class="plot-container"></div>
+                    </div>
+                </div>
+
+                <h3>Aktivierungsfunktion selbst</h3>
+                <div id="nl-function" class="plot-container" style="height:250px;"></div>
+
+                <div class="insight-box">
+                    <strong>LLM-Bezug:</strong> Jede Schicht eines Transformers enthält Nicht-Linearitäten (GELU in den MLPs). Diese erzeugen neue "Frequenzen" (Features), die im Eingang nicht vorhanden waren. Das ist der Mechanismus, durch den tiefe Netze komplexe Features aus einfachen aufbauen.
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 8: LLM SIGNALS -->
+        <div id="section-llm" class="section">
+            <div class="card">
+                <h2>Signale in echten LLMs</h2>
+                <p>Hier bringen wir alles zusammen: Wie sehen die Konzepte der Signalanalyse in einem Transformer aus?</p>
+
+                <h3>Der Residual Stream als Signalbus</h3>
+                <div class="formula-box">
+                    <div id="llm-residual-formula" class="temml-display"></div>
+                </div>
+
+                <h3>Simulierter Residual Stream</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Anzahl Layers: <span id="llm-layers-val">6</span></label>
+                        <input type="range" id="llm-layers" min="2" max="12" step="1" value="6" oninput="updateLLM()">
+                    </div>
+                    <div class="control-group">
+                        <label>Hidden Dim: <span id="llm-dim-val">64</span></label>
+                        <input type="range" id="llm-dim" min="16" max="128" step="16" value="64" oninput="updateLLM()">
+                    </div>
+                    <div class="control-group">
+                        <label>Seq Length: <span id="llm-seq-val">32</span></label>
+                        <input type="range" id="llm-seq" min="8" max="64" step="4" value="32" oninput="updateLLM()">
+                    </div>
+                    <div class="control-group">
+                        <label>Feature Sparsity: <span id="llm-sparsity-val">0.8</span></label>
+                        <input type="range" id="llm-sparsity" min="0.1" max="0.99" step="0.05" value="0.8" oninput="updateLLM()">
+                    </div>
+                </div>
+
+                <h3>Aktivierungen über Positionen (Heatmap)</h3>
+                <div id="llm-heatmap" class="plot-container" style="height:400px;"></div>
+
+                <h3>Spektrale Analyse der Aktivierungen</h3>
+                <div id="llm-spectrum" class="plot-container" style="height:350px;"></div>
+
+                <h3>Superposition visualisiert</h3>
+                <p>Mehr Features als Dimensionen – Features teilen sich den Raum:</p>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Dimensionen: <span id="sup-dim-val">2</span></label>
+                        <input type="range" id="sup-dim" min="2" max="3" step="1" value="2" oninput="updateSuperposition()">
+                    </div>
+                    <div class="control-group">
+                        <label>Anzahl Features: <span id="sup-feat-val">5</span></label>
+                        <input type="range" id="sup-feat" min="2" max="15" step="1" value="5" oninput="updateSuperposition()">
+                    </div>
+                    <div class="control-group">
+                        <label>Feature-Wichtigkeit (Decay): <span id="sup-decay-val">0.7</span></label>
+                        <input type="range" id="sup-decay" min="0.1" max="1" step="0.05" value="0.7" oninput="updateSuperposition()">
+                    </div>
+                </div>
+                <div id="superposition-plot" class="plot-container" style="height:450px;"></div>
+
+                <div class="insight-box">
+                    <strong>Zusammenfassung:</strong> LLMs nutzen den Residual Stream als hochdimensionalen Signalbus. Jede Schicht addiert Informationen. Die Signale sind eine Mischung aus periodischen Mustern (Fourier), transienten Features (Wavelets), niedrig-rangigen Strukturen (SVD), und spärlichen Aktivierungen (SAE). Alle Werkzeuge der Signalanalyse helfen, diese Signale zu verstehen.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        const plotLayout = {
+            paper_bgcolor: '#161b22',
+            plot_bgcolor: '#1c2128',
+            font: { color: '#e6edf3', size: 11 },
+            margin: { t: 30, b: 40, l: 50, r: 20 },
+            xaxis: { gridcolor: '#30363d', zerolinecolor: '#484f58' },
+            yaxis: { gridcolor: '#30363d', zerolinecolor: '#484f58' }
+        };
+
+        const plotConfig = { responsive: true, displayModeBar: false };
+
+        function linspace(start, end, n) {
+            const step = (end - start) / (n - 1);
+            return Array.from({ length: n }, (_, i) => start + i * step);
+        }
+
+        function fft(signal) {
+            const N = signal.length;
+            if (N <= 1) return signal.map(x => ({ re: x, im: 0 }));
+
+            const padN = Math.pow(2, Math.ceil(Math.log2(N)));
+            const padded = [...signal, ...new Array(padN - N).fill(0)];
+
+            // Simple DFT for visualization (not optimized)
+            const result = [];
+            for (let k = 0; k < padded.length; k++) {
+                let re = 0, im = 0;
+                for (let n = 0; n < padded.length; n++) {
+                    const angle = -2 * Math.PI * k * n / padded.length;
+                    re += padded[n] * Math.cos(angle);
+                    im += padded[n] * Math.sin(angle);
+                }
+                result.push({ re, im });
+            }
+            return result;
+        }
+
+        function magnitude(complex) {
+            return Math.sqrt(complex.re * complex.re + complex.im * complex.im);
+        }
+
+        // ============================================
+        // SECTION NAVIGATION
+        // ============================================
+        function showSection(name) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('section-' + name).classList.add('active');
+            event.target.classList.add('active');
+
+            // Initialize section
+            switch(name) {
+                case 'fourier': updateFourier(); break;
+                case 'stft': updateSTFT(); break;
+                case 'wavelets': updateWavelet(); updateWaveletAnalysis(); break;
+                case 'pca': pcaPreset('elongated'); initSVD(); break;
+                case 'ica': updateICA(); break;
+                case 'sparse': updateSparse(); updateSAE(); break;
+                case 'nonlinear': updateNonlinear(); break;
+                case 'llm': updateLLM(); updateSuperposition(); break;
+            }
+        }
+
+        // ============================================
+        // SECTION 1: FOURIER
+        // ============================================
+        function updateFourier() {
+            const f1 = parseFloat(document.getElementById('f1').value);
+            const a1 = parseFloat(document.getElementById('a1').value);
+            const f2 = parseFloat(document.getElementById('f2').value);
+            const a2 = parseFloat(document.getElementById('a2').value);
+            const f3 = parseFloat(document.getElementById('f3').value);
+            const a3 = parseFloat(document.getElementById('a3').value);
+
+            document.getElementById('f1-val').textContent = f1;
+            document.getElementById('a1-val').textContent = a1;
+            document.getElementById('f2-val').textContent = f2;
+            document.getElementById('a2-val').textContent = a2;
+            document.getElementById('f3-val').textContent = f3;
+            document.getElementById('a3-val').textContent = a3;
+
+            const N = 512;
+            const t = linspace(0, 2, N);
+            const signal = t.map(ti => a1 * Math.sin(2 * Math.PI * f1 * ti) + a2 * Math.sin(2 * Math.PI * f2 * ti) + a3 * Math.sin(2 * Math.PI * f3 * ti));
+
+            // Time domain
+            const traces = [
+                { x: t, y: t.map(ti => a1 * Math.sin(2 * Math.PI * f1 * ti)), name: `f₁=${f1}Hz`, line: { color: '#58a6ff', width: 1, dash: 'dot' } },
+                { x: t, y: t.map(ti => a2 * Math.sin(2 * Math.PI * f2 * ti)), name: `f₂=${f2}Hz`, line: { color: '#7ee787', width: 1, dash: 'dot' } },
+                { x: t, y: t.map(ti => a3 * Math.sin(2 * Math.PI * f3 * ti)), name: `f₃=${f3}Hz`, line: { color: '#d2a8ff', width: 1, dash: 'dot' } },
+                { x: t, y: signal, name: 'Summe', line: { color: '#f78166', width: 2.5 } }
+            ];
+
+            Plotly.newPlot('fourier-time', traces, {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit (s)' },
+                yaxis: { ...plotLayout.yaxis, title: 'Amplitude' },
+                showlegend: true,
+                legend: { x: 0.7, y: 1, font: { size: 10 } }
+            }, plotConfig);
+
+            // Frequency domain
+            const spectrum = fft(signal);
+            const freqs = linspace(0, N / 2, Math.floor(spectrum.length / 2));
+            const mags = spectrum.slice(0, Math.floor(spectrum.length / 2)).map(c => magnitude(c) * 2 / N);
+
+            Plotly.newPlot('fourier-freq', [{
+                x: freqs.map(f => f / 2),
+                y: mags,
+                type: 'bar',
+                marker: { color: '#58a6ff' },
+                width: 0.3
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Frequenz (Hz)', range: [0, 20] },
+                yaxis: { ...plotLayout.yaxis, title: '|X(f)|' }
+            }, plotConfig);
+
+            // Update formula
+            const formulaStr = `x(t) = ${a1}\\sin(2\\pi \\cdot ${f1} \\cdot t) + ${a2}\\sin(2\\pi \\cdot ${f2} \\cdot t) + ${a3}\\sin(2\\pi \\cdot ${f3} \\cdot t)`;
+            renderFormula('fourier-formula', formulaStr);
+        }
+
+        // Drawing canvas for DFT
+        let drawPoints = [];
+        let isDrawing = false;
+
+        function initCanvas() {
+            const canvas = document.getElementById('draw-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            canvas.addEventListener('mousedown', (e) => { isDrawing = true; drawPoints = []; });
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                drawPoints.push({ x, y });
+                redrawCanvas();
+            });
+            canvas.addEventListener('mouseup', () => { isDrawing = false; analyzeDrawing(); });
+            canvas.addEventListener('mouseleave', () => { isDrawing = false; });
+        }
+
+        function redrawCanvas() {
+            const canvas = document.getElementById('draw-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1c2128';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grid
+            ctx.strokeStyle = '#30363d';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i < canvas.width; i += 50) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+            }
+            for (let i = 0; i < canvas.height; i += 50) {
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            // Center line
+            ctx.strokeStyle = '#484f58';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(0, canvas.height / 2); ctx.lineTo(canvas.width, canvas.height / 2); ctx.stroke();
+
+            // Draw signal
+            if (drawPoints.length > 1) {
+                ctx.strokeStyle = '#f78166';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(drawPoints[0].x, drawPoints[0].y);
+                for (let i = 1; i < drawPoints.length; i++) {
+                    ctx.lineTo(drawPoints[i].x, drawPoints[i].y);
+                }
+                ctx.stroke();
+            }
+        }
+
+        function clearCanvas() {
+            drawPoints = [];
+            redrawCanvas();
+            Plotly.purge('draw-spectrum');
+        }
+
+        function loadPreset(type) {
+            const canvas = document.getElementById('draw-canvas');
+            const w = canvas.width;
+            const h = canvas.height;
+            drawPoints = [];
+
+            for (let i = 0; i < w; i += 2) {
+                const t = i / w;
+                let y;
+                switch(type) {
+                    case 'square':
+                        y = Math.sign(Math.sin(2 * Math.PI * 3 * t)) * 0.4 + 0.5;
+                        break;
+                    case 'sawtooth':
+                        y = 0.5 - 0.4 * (2 * (t * 3 % 1) - 1);
+                        break;
+                    case 'impulse':
+                        y = 0.5 - 0.8 * Math.exp(-200 * (t - 0.5) * (t - 0.5));
+                        break;
+                }
+                drawPoints.push({ x: i, y: y * h });
+            }
+            redrawCanvas();
+            analyzeDrawing();
+        }
+
+        function analyzeDrawing() {
+            if (drawPoints.length < 10) return;
+
+            const canvas = document.getElementById('draw-canvas');
+            const h = canvas.height;
+
+            // Normalize to signal
+            const signal = drawPoints.map(p => -(p.y / h - 0.5) * 2);
+
+            // Resample to power of 2
+            const N = 256;
+            const resampled = [];
+            for (let i = 0; i < N; i++) {
+                const idx = Math.floor(i * signal.length / N);
+                resampled.push(signal[Math.min(idx, signal.length - 1)]);
+            }
+
+            const spectrum = fft(resampled);
+            const mags = spectrum.slice(0, N / 2).map(c => magnitude(c) * 2 / N);
+            const freqs = linspace(0, N / 2, N / 2);
+
+            Plotly.newPlot('draw-spectrum', [{
+                x: freqs,
+                y: mags,
+                type: 'bar',
+                marker: { color: mags.map(m => `rgba(88, 166, 255, ${Math.min(1, m / Math.max(...mags))})`) }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Frequenz-Bin (k)' },
+                yaxis: { ...plotLayout.yaxis, title: '|X[k]|' }
+            }, plotConfig);
+        }
+
+        // ============================================
+        // SECTION 2: STFT
+        // ============================================
+        function updateSTFT() {
+            const startFreq = parseFloat(document.getElementById('chirp-start').value);
+            const endFreq = parseFloat(document.getElementById('chirp-end').value);
+            const windowSize = parseInt(document.getElementById('window-size').value);
+            const signalType = document.getElementById('stft-signal-type').value;
+
+            document.getElementById('chirp-start-val').textContent = startFreq;
+            document.getElementById('chirp-end-val').textContent = endFreq;
+            document.getElementById('window-size-val').textContent = windowSize;
+
+            const N = 1024;
+            const t = linspace(0, 4, N);
+            let signal;
+
+            switch(signalType) {
+                case 'chirp':
+                    signal = t.map(ti => Math.sin(2 * Math.PI * (startFreq + (endFreq - startFreq) * ti / 4) * ti));
+                    break;
+                case 'switch':
+                    signal = t.map(ti => ti < 2 ? Math.sin(2 * Math.PI * startFreq * ti) : Math.sin(2 * Math.PI * endFreq * ti));
+                    break;
+                case 'burst':
+                    signal = t.map(ti => {
+                        const burst1 = (ti > 0.5 && ti < 1.5) ? Math.sin(2 * Math.PI * startFreq * ti) : 0;
+                        const burst2 = (ti > 2.5 && ti < 3.5) ? Math.sin(2 * Math.PI * endFreq * ti) : 0;
+                        return burst1 + burst2;
+                    });
+                    break;
+                case 'llm-sim':
+                    signal = t.map(ti => {
+                        const base = 0.3 * Math.sin(2 * Math.PI * 2 * ti);
+                        const attention = (ti > 1 && ti < 2) ? Math.sin(2 * Math.PI * 8 * ti) * Math.exp(-2 * (ti - 1.5) * (ti - 1.5)) : 0;
+                        const mlp = (ti > 2.5 && ti < 3.5) ? 0.7 * Math.sign(Math.sin(2 * Math.PI * 5 * ti)) : 0;
+                        return base + attention + mlp;
+                    });
+                    break;
+            }
+
+            // Time plot
+            Plotly.newPlot('stft-time-plot', [{
+                x: t, y: signal, line: { color: '#f78166', width: 1.5 }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit (s)' },
+                yaxis: { ...plotLayout.yaxis, title: 'Amplitude' },
+                height: 200
+            }, plotConfig);
+
+            // STFT computation
+            const hopSize = Math.floor(windowSize / 4);
+            const numFrames = Math.floor((N - windowSize) / hopSize);
+            const numBins = Math.floor(windowSize / 2);
+            const spectrogram = [];
+
+            for (let frame = 0; frame < numFrames; frame++) {
+                const start = frame * hopSize;
+                const windowed = [];
+                for (let i = 0; i < windowSize; i++) {
+                    // Hann window
+                    const w = 0.5 * (1 - Math.cos(2 * Math.PI * i / (windowSize - 1)));
+                    windowed.push((signal[start + i] || 0) * w);
+                }
+                const spec = fft(windowed);
+                spectrogram.push(spec.slice(0, numBins).map(c => Math.log10(magnitude(c) + 0.001)));
+            }
+
+            // Transpose for heatmap
+            const z = [];
+            for (let bin = 0; bin < numBins; bin++) {
+                z.push(spectrogram.map(frame => frame[bin]));
+            }
+
+            const timeAxis = linspace(0, 4, numFrames);
+            const freqAxis = linspace(0, N / 8, numBins);
+
+            Plotly.newPlot('stft-spectrogram', [{
+                z: z,
+                x: timeAxis,
+                y: freqAxis,
+                type: 'heatmap',
+                colorscale: [
+                    [0, '#0d1117'], [0.2, '#161b22'], [0.4, '#1f3a5f'],
+                    [0.6, '#58a6ff'], [0.8, '#f78166'], [1, '#ffd700']
+                ],
+                showscale: true,
+                colorbar: { title: 'log|X|', titlefont: { color: '#8b949e' }, tickfont: { color: '#8b949e' } }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit (s)' },
+                yaxis: { ...plotLayout.yaxis, title: 'Frequenz (Hz)' }
+            }, plotConfig);
+        }
+
+        // ============================================
+        // SECTION 3: WAVELETS
+        // ============================================
+        function waveletFunction(t, type, omega0) {
+            switch(type) {
+                case 'morlet':
+                    return Math.exp(-t * t / 2) * Math.cos(omega0 * t);
+                case 'haar':
+                    if (t >= 0 && t < 0.5) return 1;
+                    if (t >= 0.5 && t < 1) return -1;
+                    return 0;
+                case 'mexican-hat':
+                    return (1 - t * t) * Math.exp(-t * t / 2);
+                case 'daubechies':
+                    // Simplified approximation
+                    return Math.exp(-Math.abs(t)) * Math.sin(3 * t) * (t > -2 && t < 2 ? 1 : 0);
+                default:
+                    return 0;
+            }
+        }
+
+        function updateWavelet() {
+            const type = document.getElementById('wavelet-type').value;
+            const scale = parseFloat(document.getElementById('wavelet-scale').value);
+            const pos = parseFloat(document.getElementById('wavelet-pos').value);
+            const omega0 = parseFloat(document.getElementById('wavelet-freq').value);
+
+            document.getElementById('wavelet-scale-val').textContent = scale.toFixed(1);
+            document.getElementById('wavelet-pos-val').textContent = pos.toFixed(1);
+            document.getElementById('wavelet-freq-val').textContent = omega0.toFixed(1);
+
+            const t = linspace(-5, 5, 500);
+
+            // Mother wavelet
+            const mother = t.map(ti => waveletFunction(ti, type, omega0));
+            Plotly.newPlot('wavelet-mother', [{
+                x: t, y: mother, line: { color: '#d2a8ff', width: 2 }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 't' },
+                yaxis: { ...plotLayout.yaxis, title: 'ψ(t)' }
+            }, plotConfig);
+
+            // Scaled and shifted
+            const scaled = t.map(ti => (1 / Math.sqrt(scale)) * waveletFunction((ti - pos) / scale, type, omega0));
+            Plotly.newPlot('wavelet-scaled', [
+                { x: t, y: mother, line: { color: '#d2a8ff', width: 1, dash: 'dot' }, name: 'Mutter' },
+                { x: t, y: scaled, line: { color: '#f78166', width: 2.5 }, name: `a=${scale.toFixed(1)}, b=${pos.toFixed(1)}` }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 't' },
+                yaxis: { ...plotLayout.yaxis, title: 'ψ_{a,b}(t)' },
+                showlegend: true,
+                legend: { x: 0.6, y: 1, font: { size: 10 } }
+            }, plotConfig);
+
+            // Update formula
+            let formulaStr;
+            switch(type) {
+                case 'morlet':
+                    formulaStr = `\\psi(t) = e^{-t^2/2} \\cos(${omega0.toFixed(1)} \\cdot t), \\quad \\psi_{a,b}(t) = \\frac{1}{\\sqrt{${scale.toFixed(1)}}} \\psi\\!\\left(\\frac{t - ${pos.toFixed(1)}}{${scale.toFixed(1)}}\\right)`;
+                    break;
+                case 'mexican-hat':
+                    formulaStr = `\\psi(t) = (1 - t^2) e^{-t^2/2}, \\quad \\psi_{a,b}(t) = \\frac{1}{\\sqrt{a}} \\psi\\!\\left(\\frac{t - b}{a}\\right)`;
+                    break;
+                default:
+                    formulaStr = `\\psi_{a,b}(t) = \\frac{1}{\\sqrt{a}} \\psi\\!\\left(\\frac{t - b}{a}\\right), \\quad a = ${scale.toFixed(1)},\\; b = ${pos.toFixed(1)}`;
+            }
+            renderFormula('wavelet-formula', formulaStr);
+        }
+
+        function updateWaveletAnalysis() {
+            const sigType = document.getElementById('wavelet-signal').value;
+            const N = 512;
+            const t = linspace(0, 4, N);
+            let signal;
+
+            switch(sigType) {
+                case 'transient':
+                    signal = t.map(ti => {
+                        const pulse1 = Math.exp(-50 * (ti - 1) * (ti - 1)) * Math.sin(2 * Math.PI * 8 * ti);
+                        const pulse2 = Math.exp(-50 * (ti - 3) * (ti - 3)) * Math.sin(2 * Math.PI * 3 * ti);
+                        return pulse1 + pulse2;
+                    });
+                    break;
+                case 'multi':
+                    signal = t.map(ti => {
+                        if (ti < 1.5) return Math.sin(2 * Math.PI * 2 * ti);
+                        if (ti < 3) return Math.sin(2 * Math.PI * 8 * ti);
+                        return Math.sin(2 * Math.PI * 2 * ti) + 0.5 * Math.sin(2 * Math.PI * 12 * ti);
+                    });
+                    break;
+                case 'step':
+                    signal = t.map(ti => {
+                        const step = ti > 2 ? 1 : 0;
+                        const osc = 0.3 * Math.sin(2 * Math.PI * 5 * ti);
+                        return step + osc;
+                    });
+                    break;
+            }
+
+            // Signal plot
+            Plotly.newPlot('wavelet-signal-plot', [{
+                x: t, y: signal, line: { color: '#7ee787', width: 1.5 }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit (s)' },
+                yaxis: { ...plotLayout.yaxis, title: 'Amplitude' },
+                height: 200
+            }, plotConfig);
+
+            // Compute scalogram (CWT with Morlet)
+            const scales = linspace(0.5, 8, 40);
+            const omega0 = 5;
+            const scalogram = [];
+
+            for (let si = 0; si < scales.length; si++) {
+                const row = [];
+                const a = scales[si];
+                for (let ni = 0; ni < N; ni += 4) {
+                    let coeff = 0;
+                    for (let ki = 0; ki < N; ki++) {
+                        const tau = (t[ki] - t[ni]) / a;
+                        const wavelet = Math.exp(-tau * tau / 2) * Math.cos(omega0 * tau);
+                        coeff += signal[ki] * wavelet * (1 / Math.sqrt(a));
+                    }
+                    row.push(Math.abs(coeff) * (t[1] - t[0]));
+                }
+                scalogram.push(row);
+            }
+
+            const timeAxisW = linspace(0, 4, scalogram[0].length);
+
+            Plotly.newPlot('wavelet-scalogram', [{
+                z: scalogram,
+                x: timeAxisW,
+                y: scales,
+                type: 'heatmap',
+                colorscale: [
+                    [0, '#0d1117'], [0.15, '#161b22'], [0.3, '#1f3a5f'],
+                    [0.5, '#58a6ff'], [0.7, '#d2a8ff'], [0.85, '#f78166'], [1, '#ffd700']
+                ],
+                showscale: true,
+                colorbar: { title: '|W|', titlefont: { color: '#8b949e' }, tickfont: { color: '#8b949e' } }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit (s)' },
+                yaxis: { ...plotLayout.yaxis, title: 'Skala (a) ≈ 1/Frequenz' }
+            }, plotConfig);
+        }
+
+        // ============================================
+        // SECTION 4: PCA / SVD
+        // ============================================
+        let pcaData = [];
+
+        function pcaPreset(type) {
+            pcaData = [];
+            const N = 100;
+
+            switch(type) {
+                case 'cluster':
+                    for (let i = 0; i < N; i++) {
+                        pcaData.push([randn() * 0.5 + 2, randn() * 0.5 + 2]);
+                    }
+                    for (let i = 0; i < N; i++) {
+                        pcaData.push([randn() * 0.5 - 1, randn() * 0.5 - 1]);
+                    }
+                    break;
+                case 'elongated':
+                    for (let i = 0; i < N * 2; i++) {
+                        const x = randn() * 2;
+                        const y = 0.7 * x + randn() * 0.3;
+                        pcaData.push([x, y]);
+                    }
+                    break;
+                case 'circular':
+                    for (let i = 0; i < N * 2; i++) {
+                        const angle = Math.random() * 2 * Math.PI;
+                        const r = 1.5 + randn() * 0.3;
+                        pcaData.push([r * Math.cos(angle), r * Math.sin(angle)]);
+                    }
+                    break;
+                case 'llm-activations':
+                    // Simulate: few dominant directions + noise
+                    for (let i = 0; i < N * 2; i++) {
+                        const pc1 = randn() * 2;
+                        const pc2 = randn() * 0.5;
+                        // Rotate by 30 degrees
+                        const angle = Math.PI / 6;
+                        const x = pc1 * Math.cos(angle) - pc2 * Math.sin(angle);
+                        const y = pc1 * Math.sin(angle) + pc2 * Math.cos(angle);
+                        pcaData.push([x + randn() * 0.1, y + randn() * 0.1]);
+                    }
+                    break;
+            }
+            computePCA();
+        }
+
+        function clearPCA() {
+            pcaData = [];
+            Plotly.purge('pca-plot');
+            document.getElementById('pca-var1').textContent = '-';
+            document.getElementById('pca-var2').textContent = '-';
+        }
+
+        function randn() {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        }
+
+        function computePCA() {
+            if (pcaData.length < 3) return;
+
+            const N = pcaData.length;
+
+            // Compute mean
+            let mx = 0, my = 0;
+            pcaData.forEach(p => { mx += p[0]; my += p[1]; });
+            mx /= N; my /= N;
+
+            // Center data
+            const centered = pcaData.map(p => [p[0] - mx, p[1] - my]);
+
+            // Covariance matrix
+            let cxx = 0, cxy = 0, cyy = 0;
+            centered.forEach(p => {
+                cxx += p[0] * p[0];
+                cxy += p[0] * p[1];
+                cyy += p[1] * p[1];
+            });
+            cxx /= N; cxy /= N; cyy /= N;
+
+            // Eigenvalues (2x2 analytic solution)
+            const trace = cxx + cyy;
+            const det = cxx * cyy - cxy * cxy;
+            const disc = Math.sqrt(Math.max(0, trace * trace / 4 - det));
+            const lambda1 = trace / 2 + disc;
+            const lambda2 = trace / 2 - disc;
+
+            // Eigenvectors
+            let v1, v2;
+            if (cxy !== 0) {
+                v1 = [lambda1 - cyy, cxy];
+                v2 = [lambda2 - cyy, cxy];
+            } else {
+                v1 = [1, 0];
+                v2 = [0, 1];
+            }
+
+            // Normalize
+            const norm1 = Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1]);
+            const norm2 = Math.sqrt(v2[0] * v2[0] + v2[1] * v2[1]);
+            v1 = [v1[0] / norm1, v1[1] / norm1];
+            v2 = [v2[0] / norm2, v2[1] / norm2];
+
+            // Variance explained
+            const totalVar = lambda1 + lambda2;
+            const var1 = (lambda1 / totalVar * 100).toFixed(1);
+            const var2 = (lambda2 / totalVar * 100).toFixed(1);
+            document.getElementById('pca-var1').textContent = var1;
+            document.getElementById('pca-var2').textContent = var2;
+
+            // Plot
+            const scale = 3;
+            const traces = [
+                {
+                    x: pcaData.map(p => p[0]),
+                    y: pcaData.map(p => p[1]),
+                    mode: 'markers',
+                    type: 'scatter',
+                    marker: { color: '#58a6ff', size: 5, opacity: 0.6 },
+                    name: 'Daten'
+                },
+                {
+                    x: [mx - v1[0] * scale * Math.sqrt(lambda1), mx + v1[0] * scale * Math.sqrt(lambda1)],
+                    y: [my - v1[1] * scale * Math.sqrt(lambda1), my + v1[1] * scale * Math.sqrt(lambda1)],
+                    mode: 'lines',
+                    line: { color: '#f78166', width: 3 },
+                    name: `PC1 (${var1}%)`
+                },
+                {
+                    x: [mx - v2[0] * scale * Math.sqrt(lambda2), mx + v2[0] * scale * Math.sqrt(lambda2)],
+                    y: [my - v2[1] * scale * Math.sqrt(lambda2), my + v2[1] * scale * Math.sqrt(lambda2)],
+                    mode: 'lines',
+                    line: { color: '#7ee787', width: 3 },
+                    name: `PC2 (${var2}%)`
+                },
+                {
+                    x: [mx], y: [my],
+                    mode: 'markers',
+                    marker: { color: '#ffd700', size: 12, symbol: 'x' },
+                    name: 'Mittelwert'
+                }
+            ];
+
+            Plotly.newPlot('pca-plot', traces, {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'x₁', scaleanchor: 'y' },
+                yaxis: { ...plotLayout.yaxis, title: 'x₂' },
+                showlegend: true,
+                legend: { x: 0.01, y: 0.99, font: { size: 10 } }
+            }, plotConfig);
+        }
+
+        // SVD
+        let svdMatrix = [];
+
+        function initSVD() {
+            // Create an interesting 16x16 matrix
+            const n = 16;
+            svdMatrix = [];
+            for (let i = 0; i < n; i++) {
+                const row = [];
+                for (let j = 0; j < n; j++) {
+                    // Low-rank structure + noise
+                    const val = Math.sin(2 * Math.PI * i / n) * Math.cos(2 * Math.PI * j / n) * 3
+                        + 0.5 * Math.cos(4 * Math.PI * i / n) * Math.sin(2 * Math.PI * j / n)
+                        + 0.2 * randn();
+                    row.push(val);
+                }
+                svdMatrix.push(row);
+            }
+            updateSVD();
+        }
+
+        function updateSVD() {
+            const rank = parseInt(document.getElementById('svd-rank').value);
+            document.getElementById('svd-rank-val').textContent = rank;
+
+            if (svdMatrix.length === 0) { initSVD(); return; }
+
+            const n = svdMatrix.length;
+
+            // Simple power iteration SVD approximation for visualization
+            // Compute rank-k approximation using iterative method
+            let residual = svdMatrix.map(row => [...row]);
+            let approx = Array.from({ length: n }, () => new Array(n).fill(0));
+            const singularValues = [];
+
+            for (let k = 0; k < Math.min(rank, n); k++) {
+                // Power iteration for top singular vector
+                let v = Array.from({ length: n }, () => randn());
+                let vNorm = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+                v = v.map(x => x / vNorm);
+
+                for (let iter = 0; iter < 20; iter++) {
+                    // u = A * v
+                    let u = new Array(n).fill(0);
+                    for (let i = 0; i < n; i++) {
+                        for (let j = 0; j < n; j++) {
+                            u[i] += residual[i][j] * v[j];
+                        }
+                    }
+                    let uNorm = Math.sqrt(u.reduce((s, x) => s + x * x, 0));
+                    if (uNorm < 1e-10) break;
+                    u = u.map(x => x / uNorm);
+
+                    // v = A^T * u
+                    v = new Array(n).fill(0);
+                    for (let j = 0; j < n; j++) {
+                        for (let i = 0; i < n; i++) {
+                            v[j] += residual[i][j] * u[i];
+                        }
+                    }
+                    vNorm = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+                    if (vNorm < 1e-10) break;
+                    v = v.map(x => x / vNorm);
+                }
+
+                // Singular value
+                let sigma = 0;
+                let u = new Array(n).fill(0);
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        u[i] += residual[i][j] * v[j];
+                    }
+                }
+                sigma = Math.sqrt(u.reduce((s, x) => s + x * x, 0));
+                let uNorm = Math.sqrt(u.reduce((s, x) => s + x * x, 0));
+                u = u.map(x => x / (uNorm || 1));
+
+                singularValues.push(sigma);
+
+                // Add to approximation, subtract from residual
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n; j++) {
+                        const contribution = sigma * u[i] * v[j];
+                        approx[i][j] += contribution;
+                        residual[i][j] -= contribution;
+                    }
+                }
+            }
+
+            // Plot original
+            Plotly.newPlot('svd-original', [{
+                z: svdMatrix, type: 'heatmap',
+                colorscale: 'RdBu', zmid: 0,
+                showscale: false
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: '' },
+                yaxis: { ...plotLayout.yaxis, title: '', autorange: 'reversed' }
+            }, plotConfig);
+
+            // Plot approximation
+            Plotly.newPlot('svd-approx', [{
+                z: approx, type: 'heatmap',
+                colorscale: 'RdBu', zmid: 0,
+                showscale: false
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: '' },
+                yaxis: { ...plotLayout.yaxis, title: '', autorange: 'reversed' }
+            }, plotConfig);
+
+            // Error plot (singular values)
+            const allSVs = [];
+            let tempResidual = svdMatrix.map(row => [...row]);
+            for (let k = 0; k < n; k++) {
+                let v = Array.from({ length: n }, () => randn());
+                let vN = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+                v = v.map(x => x / vN);
+                for (let iter = 0; iter < 20; iter++) {
+                    let u2 = new Array(n).fill(0);
+                    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) u2[i] += tempResidual[i][j] * v[j];
+                    let u2N = Math.sqrt(u2.reduce((s, x) => s + x * x, 0));
+                    if (u2N < 1e-10) break;
+                    u2 = u2.map(x => x / u2N);
+                    v = new Array(n).fill(0);
+                    for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) v[j] += tempResidual[i][j] * u2[i];
+                    vN = Math.sqrt(v.reduce((s, x) => s + x * x, 0));
+                    if (vN < 1e-10) break;
+                    v = v.map(x => x / vN);
+                }
+                let u3 = new Array(n).fill(0);
+                for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) u3[i] += tempResidual[i][j] * v[j];
+                const sv = Math.sqrt(u3.reduce((s, x) => s + x * x, 0));
+                allSVs.push(sv);
+                let u3N = Math.sqrt(u3.reduce((s, x) => s + x * x, 0));
+                u3 = u3.map(x => x / (u3N || 1));
+                for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) tempResidual[i][j] -= sv * u3[i] * v[j];
+            }
+
+            const colors = allSVs.map((_, i) => i < rank ? '#58a6ff' : '#30363d');
+            Plotly.newPlot('svd-error-plot', [{
+                x: Array.from({ length: n }, (_, i) => i + 1),
+                y: allSVs,
+                type: 'bar',
+                marker: { color: colors }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Singulärwert-Index' },
+                yaxis: { ...plotLayout.yaxis, title: 'σᵢ' },
+                height: 250,
+                annotations: [{
+                    x: rank, y: allSVs[rank - 1] || 0,
+                    text: `Rang ${rank}`, showarrow: true,
+                    arrowhead: 2, arrowcolor: '#f78166',
+                    font: { color: '#f78166', size: 11 }
+                }]
+            }, plotConfig);
+        }
+
+        // ============================================
+        // SECTION 5: ICA
+        // ============================================
+        function generateICASource(type, t) {
+            switch(type) {
+                case 'sine': return t.map(ti => Math.sin(2 * Math.PI * 3 * ti));
+                case 'square': return t.map(ti => Math.sign(Math.sin(2 * Math.PI * 2 * ti)));
+                case 'sawtooth': return t.map(ti => 2 * (ti * 2 % 1) - 1);
+                case 'noise':
+                    const noise = [];
+                    for (let i = 0; i < t.length; i++) noise.push(randn() * 0.5);
+                    return noise;
+                default: return t.map(() => 0);
+            }
+        }
+
+        function updateICA() {
+            const src1Type = document.getElementById('ica-source1').value;
+            const src2Type = document.getElementById('ica-source2').value;
+            const a11 = parseFloat(document.getElementById('ica-a11').value);
+            const a12 = parseFloat(document.getElementById('ica-a12').value);
+            const a21 = parseFloat(document.getElementById('ica-a21').value);
+            const a22 = parseFloat(document.getElementById('ica-a22').value);
+
+            document.getElementById('ica-a11-val').textContent = a11.toFixed(1);
+            document.getElementById('ica-a12-val').textContent = a12.toFixed(1);
+            document.getElementById('ica-a21-val').textContent = a21.toFixed(1);
+            document.getElementById('ica-a22-val').textContent = a22.toFixed(1);
+
+            const N = 500;
+            const t = linspace(0, 4, N);
+
+            const s1 = generateICASource(src1Type, t);
+            const s2 = generateICASource(src2Type, t);
+
+            // Mix
+            const x1 = t.map((_, i) => a11 * s1[i] + a12 * s2[i]);
+            const x2 = t.map((_, i) => a21 * s1[i] + a22 * s2[i]);
+
+            // Plot sources
+            Plotly.newPlot('ica-sources', [
+                { x: t, y: s1, name: 'Quelle 1', line: { color: '#58a6ff', width: 1.5 } },
+                { x: t, y: s2, name: 'Quelle 2', line: { color: '#7ee787', width: 1.5 } }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit' },
+                yaxis: { ...plotLayout.yaxis, title: 'Amplitude' },
+                showlegend: true, legend: { x: 0.8, y: 1, font: { size: 10 } }
+            }, plotConfig);
+
+            // Plot mixed
+            Plotly.newPlot('ica-mixed', [
+                { x: t, y: x1, name: 'Mischung 1', line: { color: '#f78166', width: 1.5 } },
+                { x: t, y: x2, name: 'Mischung 2', line: { color: '#d2a8ff', width: 1.5 } }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit' },
+                yaxis: { ...plotLayout.yaxis, title: 'Amplitude' },
+                showlegend: true, legend: { x: 0.8, y: 1, font: { size: 10 } }
+            }, plotConfig);
+
+            // Store for ICA
+            window.icaData = { t, x1, x2, s1, s2 };
+        }
+
+        function runICA() {
+            if (!window.icaData) { updateICA(); return; }
+            const { t, x1, x2, s1, s2 } = window.icaData;
+            const N = t.length;
+
+            // Simple FastICA implementation (2D)
+            // 1. Center
+            const mx1 = x1.reduce((a, b) => a + b) / N;
+            const mx2 = x2.reduce((a, b) => a + b) / N;
+            const cx1 = x1.map(x => x - mx1);
+            const cx2 = x2.map(x => x - mx2);
+
+            // 2. Whiten (PCA + normalize)
+            let c11 = 0, c12 = 0, c22 = 0;
+            for (let i = 0; i < N; i++) {
+                c11 += cx1[i] * cx1[i];
+                c12 += cx1[i] * cx2[i];
+                c22 += cx2[i] * cx2[i];
+            }
+            c11 /= N; c12 /= N; c22 /= N;
+
+            const tr = c11 + c22;
+            const det = c11 * c22 - c12 * c12;
+            const d = Math.sqrt(Math.max(0, tr * tr / 4 - det));
+            const l1 = tr / 2 + d;
+            const l2 = tr / 2 - d;
+
+            let e1, e2;
+            if (Math.abs(c12) > 1e-10) {
+                e1 = [l1 - c22, c12];
+                e2 = [l2 - c22, c12];
+            } else {
+                e1 = [1, 0]; e2 = [0, 1];
+            }
+            const n1 = Math.sqrt(e1[0] * e1[0] + e1[1] * e1[1]);
+            const n2 = Math.sqrt(e2[0] * e2[0] + e2[1] * e2[1]);
+            e1 = [e1[0] / n1, e1[1] / n1];
+            e2 = [e2[0] / n2, e2[1] / n2];
+
+            // Whitened data
+            const w1 = [], w2 = [];
+            for (let i = 0; i < N; i++) {
+                const p1 = (cx1[i] * e1[0] + cx2[i] * e1[1]) / Math.sqrt(l1 || 1);
+                const p2 = (cx1[i] * e2[0] + cx2[i] * e2[1]) / Math.sqrt(l2 || 1);
+                w1.push(p1);
+                w2.push(p2);
+            }
+
+            // 3. FastICA iteration (using tanh nonlinearity)
+            let ww = [Math.random(), Math.random()];
+            let wwN = Math.sqrt(ww[0] * ww[0] + ww[1] * ww[1]);
+            ww = [ww[0] / wwN, ww[1] / wwN];
+
+            for (let iter = 0; iter < 50; iter++) {
+                // w+ = E{z * g(w^T z)} - E{g'(w^T z)} * w
+                let ew1 = 0, ew2 = 0, egp = 0;
+                for (let i = 0; i < N; i++) {
+                    const wtz = ww[0] * w1[i] + ww[1] * w2[i];
+                    const g = Math.tanh(wtz);
+                    const gp = 1 - g * g;
+                    ew1 += w1[i] * g;
+                    ew2 += w2[i] * g;
+                    egp += gp;
+                }
+                ew1 /= N; ew2 /= N; egp /= N;
+
+                const newW = [ew1 - egp * ww[0], ew2 - egp * ww[1]];
+                wwN = Math.sqrt(newW[0] * newW[0] + newW[1] * newW[1]);
+                ww = [newW[0] / (wwN || 1), newW[1] / (wwN || 1)];
+            }
+
+            // Second component orthogonal
+            const ww2 = [-ww[1], ww[0]];
+
+            // Recover signals
+            const r1 = [], r2 = [];
+            for (let i = 0; i < N; i++) {
+                r1.push(ww[0] * w1[i] + ww[1] * w2[i]);
+                r2.push(ww2[0] * w1[i] + ww2[1] * w2[i]);
+            }
+
+            // Normalize for display
+            const maxR1 = Math.max(...r1.map(Math.abs));
+            const maxR2 = Math.max(...r2.map(Math.abs));
+            const nr1 = r1.map(x => x / (maxR1 || 1));
+            const nr2 = r2.map(x => x / (maxR2 || 1));
+
+            Plotly.newPlot('ica-recovered', [
+                { x: t, y: nr1, name: 'Rekonstruiert 1', line: { color: '#58a6ff', width: 1.5 } },
+                { x: t, y: nr2, name: 'Rekonstruiert 2', line: { color: '#7ee787', width: 1.5 } }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit' },
+                yaxis: { ...plotLayout.yaxis, title: 'Amplitude (normalisiert)' },
+                showlegend: true, legend: { x: 0.8, y: 1, font: { size: 10 } }
+            }, plotConfig);
+        }
+
+        // ============================================
+        // SECTION 6: SPARSE CODING / SAE
+        // ============================================
+        let saeWeights = null;
+
+        function initSAEWeights(nInput, nHidden) {
+            // Random dictionary atoms (normalized)
+            const W_enc = [];
+            const W_dec = [];
+            for (let h = 0; h < nHidden; h++) {
+                const angle = (2 * Math.PI * h) / nHidden + (Math.random() - 0.5) * 0.3;
+                W_enc.push([Math.cos(angle), Math.sin(angle)]);
+                W_dec.push([Math.cos(angle), Math.sin(angle)]);
+            }
+            const bias = new Array(nHidden).fill(-0.3);
+            return { W_enc, W_dec, bias };
+        }
+
+        function updateSparse() {
+            const nDim = parseInt(document.getElementById('sparse-n').value);
+            const nAtoms = parseInt(document.getElementById('sparse-h').value);
+            const k = parseInt(document.getElementById('sparse-k').value);
+            const lambda = parseFloat(document.getElementById('sparse-lambda').value);
+
+            document.getElementById('sparse-n-val').textContent = nDim;
+            document.getElementById('sparse-h-val').textContent = nAtoms;
+            document.getElementById('sparse-k-val').textContent = k;
+            document.getElementById('sparse-lambda-val').textContent = lambda.toFixed(1);
+
+            // Generate dictionary atoms
+            const atoms = [];
+            for (let i = 0; i < nAtoms; i++) {
+                const angle = (2 * Math.PI * i) / nAtoms;
+                atoms.push([Math.cos(angle), Math.sin(angle)]);
+            }
+
+            // Generate some sparse signals
+            const signals = [];
+            const activeAtoms = [];
+            for (let s = 0; s < 30; s++) {
+                // Pick k random atoms
+                const indices = [];
+                while (indices.length < k) {
+                    const idx = Math.floor(Math.random() * nAtoms);
+                    if (!indices.includes(idx)) indices.push(idx);
+                }
+                let x = 0, y = 0;
+                const coeffs = [];
+                indices.forEach(idx => {
+                    const coeff = 0.3 + Math.random() * 0.7;
+                    x += coeff * atoms[idx][0];
+                    y += coeff * atoms[idx][1];
+                    coeffs.push({ idx, coeff });
+                });
+                signals.push([x, y]);
+                activeAtoms.push(coeffs);
+            }
+
+            // Plot
+            const traces = [];
+
+            // Dictionary atoms as arrows
+            for (let i = 0; i < nAtoms; i++) {
+                traces.push({
+                    x: [0, atoms[i][0]],
+                    y: [0, atoms[i][1]],
+                    mode: 'lines+markers',
+                    line: { color: '#d2a8ff', width: 2 },
+                    marker: { size: [0, 6], color: '#d2a8ff' },
+                    showlegend: i === 0,
+                    name: 'Dictionary-Atome',
+                    hoverinfo: 'text',
+                    text: [``, `Atom ${i}`]
+                });
+            }
+
+            // Signals
+            traces.push({
+                x: signals.map(s => s[0]),
+                y: signals.map(s => s[1]),
+                mode: 'markers',
+                marker: { color: '#f78166', size: 8, opacity: 0.7 },
+                name: `Signale (k=${k} aktive)`
+            });
+
+            // Unit circle for reference
+            const circleT = linspace(0, 2 * Math.PI, 100);
+            traces.push({
+                x: circleT.map(t => Math.cos(t)),
+                y: circleT.map(t => Math.sin(t)),
+                mode: 'lines',
+                line: { color: '#30363d', width: 1, dash: 'dot' },
+                showlegend: false
+            });
+
+            Plotly.newPlot('sparse-dict-plot', traces, {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'x₁', scaleanchor: 'y', range: [-2.5, 2.5] },
+                yaxis: { ...plotLayout.yaxis, title: 'x₂', range: [-2.5, 2.5] },
+                showlegend: true,
+                legend: { x: 0.01, y: 0.99, font: { size: 10 } },
+                annotations: [{
+                    x: 0.5, y: -2.2, xref: 'x', yref: 'y',
+                    text: `${nAtoms} Atome in ${nDim}D → Überbestimmt (${nAtoms} > ${nDim})`,
+                    showarrow: false, font: { color: '#8b949e', size: 11 }
+                }]
+            }, plotConfig);
+
+            // Update formula
+            renderFormula('sparse-formula',
+                `\\min_{\\mathbf{a}} \\|\\mathbf{x} - \\mathbf{D}\\mathbf{a}\\|_2^2 + \\lambda \\|\\mathbf{a}\\|_1, \\quad \\lambda = ${lambda.toFixed(1)}, \\quad \\|\\mathbf{a}\\|_0 \\leq ${k}`
+            );
+        }
+
+        function updateSAE() {
+            const x1 = parseFloat(document.getElementById('sae-x1').value);
+            const x2 = parseFloat(document.getElementById('sae-x2').value);
+            document.getElementById('sae-x1-val').textContent = x1.toFixed(1);
+            document.getElementById('sae-x2-val').textContent = x2.toFixed(1);
+
+            const nHidden = 8;
+            if (!saeWeights) {
+                saeWeights = initSAEWeights(2, nHidden);
+            }
+
+            const { W_enc, W_dec, bias } = saeWeights;
+
+            // Encode: h = ReLU(W_enc * x + bias)
+            const preActivation = [];
+            const hidden = [];
+            for (let h = 0; h < nHidden; h++) {
+                const pre = W_enc[h][0] * x1 + W_enc[h][1] * x2 + bias[h];
+                preActivation.push(pre);
+                hidden.push(Math.max(0, pre)); // ReLU
+            }
+
+            // Decode: x_hat = W_dec^T * h
+            let xHat1 = 0, xHat2 = 0;
+            for (let h = 0; h < nHidden; h++) {
+                xHat1 += W_dec[h][0] * hidden[h];
+                xHat2 += W_dec[h][1] * hidden[h];
+            }
+
+            // Plot activations
+            const colors = hidden.map(h => h > 0 ? '#7ee787' : '#30363d');
+            Plotly.newPlot('sae-activations', [{
+                x: Array.from({ length: nHidden }, (_, i) => `h${i}`),
+                y: hidden,
+                type: 'bar',
+                marker: { color: colors },
+                name: 'Aktivierungen'
+            }, {
+                x: Array.from({ length: nHidden }, (_, i) => `h${i}`),
+                y: preActivation,
+                type: 'scatter',
+                mode: 'markers',
+                marker: { color: '#f78166', size: 8, symbol: 'diamond' },
+                name: 'Pre-ReLU'
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Hidden Unit' },
+                yaxis: { ...plotLayout.yaxis, title: 'Aktivierung' },
+                showlegend: true,
+                legend: { x: 0.7, y: 1, font: { size: 10 } },
+                annotations: [{
+                    x: 0.5, y: 1.05, xref: 'paper', yref: 'paper',
+                    text: `Aktive Features: ${hidden.filter(h => h > 0).length}/${nHidden} (Sparsity: ${(1 - hidden.filter(h => h > 0).length / nHidden).toFixed(2)})`,
+                    showarrow: false, font: { color: '#58a6ff', size: 12 }
+                }]
+            }, plotConfig);
+
+            // Plot reconstruction
+            Plotly.newPlot('sae-reconstruction', [
+                {
+                    x: [x1], y: [x2],
+                    mode: 'markers', marker: { color: '#58a6ff', size: 14, symbol: 'circle' },
+                    name: 'Input x'
+                },
+                {
+                    x: [xHat1], y: [xHat2],
+                    mode: 'markers', marker: { color: '#f78166', size: 14, symbol: 'x' },
+                    name: 'Rekonstruktion x̂'
+                },
+                {
+                    x: [x1, xHat1], y: [x2, xHat2],
+                    mode: 'lines', line: { color: '#8b949e', width: 1, dash: 'dot' },
+                    showlegend: false
+                },
+                // Show active decoder directions
+                ...hidden.map((h, i) => h > 0 ? {
+                    x: [0, W_dec[i][0] * h],
+                    y: [0, W_dec[i][1] * h],
+                    mode: 'lines',
+                    line: { color: '#7ee787', width: 2 },
+                    showlegend: i === hidden.findIndex(hh => hh > 0),
+                    name: 'Aktive Decoder-Richtungen'
+                } : null).filter(Boolean)
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'x₁', scaleanchor: 'y', range: [-3, 3] },
+                yaxis: { ...plotLayout.yaxis, title: 'x₂', range: [-3, 3] },
+                showlegend: true,
+                legend: { x: 0.01, y: 0.99, font: { size: 10 } }
+            }, plotConfig);
+
+            // Update SAE formula
+            renderFormula('sae-formula',
+                `\\hat{\\mathbf{x}} = \\mathbf{W}_{\\text{dec}} \\cdot \\text{ReLU}(\\mathbf{W}_{\\text{enc}} \\cdot \\mathbf{x} + \\mathbf{b}), \\quad \\mathcal{L} = \\|\\mathbf{x} - \\hat{\\mathbf{x}}\\|_2^2 + \\lambda \\|\\mathbf{h}\\|_1`
+            );
+        }
+
+        // ============================================
+        // SECTION 7: NON-LINEARITY
+        // ============================================
+        function activationFn(x, type) {
+            switch(type) {
+                case 'relu': return Math.max(0, x);
+                case 'gelu': return 0.5 * x * (1 + Math.tanh(Math.sqrt(2 / Math.PI) * (x + 0.044715 * x * x * x)));
+                case 'sigmoid': return 1 / (1 + Math.exp(-x));
+                case 'tanh': return Math.tanh(x);
+                case 'softplus': return Math.log(1 + Math.exp(x));
+                default: return x;
+            }
+        }
+
+        function updateNonlinear() {
+            const type = document.getElementById('activation-type').value;
+            const freq = parseFloat(document.getElementById('nl-freq').value);
+            const amp = parseFloat(document.getElementById('nl-amp').value);
+            const offset = parseFloat(document.getElementById('nl-offset').value);
+
+            document.getElementById('nl-freq-val').textContent = freq;
+            document.getElementById('nl-amp-val').textContent = amp.toFixed(1);
+            document.getElementById('nl-offset-val').textContent = offset.toFixed(1);
+
+            const N = 512;
+            const t = linspace(0, 2, N);
+
+            // Input signal
+            const input = t.map(ti => amp * Math.sin(2 * Math.PI * freq * ti) + offset);
+            // Output after activation
+            const output = input.map(x => activationFn(x, type));
+
+            // Time domain plot
+            Plotly.newPlot('nl-time', [
+                { x: t, y: input, name: 'Eingang', line: { color: '#58a6ff', width: 1.5 } },
+                { x: t, y: output, name: `Ausgang (${type})`, line: { color: '#f78166', width: 2 } }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Zeit (s)' },
+                yaxis: { ...plotLayout.yaxis, title: 'Amplitude' },
+                showlegend: true, legend: { x: 0.65, y: 1, font: { size: 10 } }
+            }, plotConfig);
+
+            // Frequency domain
+            const specIn = fft(input);
+            const specOut = fft(output);
+            const halfN = Math.floor(N / 4);
+            const freqs = linspace(0, N / 4, halfN);
+
+            const magsIn = specIn.slice(0, halfN).map(c => magnitude(c) * 2 / N);
+            const magsOut = specOut.slice(0, halfN).map(c => magnitude(c) * 2 / N);
+
+            Plotly.newPlot('nl-freq-plot', [
+                { x: freqs.map(f => f / 2), y: magsIn, name: 'Eingang', type: 'bar', marker: { color: 'rgba(88,166,255,0.5)' }, width: 0.3 },
+                { x: freqs.map(f => f / 2 + 0.15), y: magsOut, name: 'Ausgang', type: 'bar', marker: { color: 'rgba(247,129,102,0.8)' }, width: 0.3 }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Frequenz (Hz)', range: [0, 25] },
+                yaxis: { ...plotLayout.yaxis, title: '|X(f)|' },
+                showlegend: true, legend: { x: 0.65, y: 1, font: { size: 10 } },
+                barmode: 'group'
+            }, plotConfig);
+
+            // Activation function plot
+            const xRange = linspace(-3, 3, 200);
+            const yAct = xRange.map(x => activationFn(x, type));
+
+            Plotly.newPlot('nl-function', [
+                { x: xRange, y: yAct, line: { color: '#7ee787', width: 2.5 }, name: type },
+                { x: xRange, y: xRange, line: { color: '#30363d', width: 1, dash: 'dot' }, name: 'linear (y=x)' }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'x' },
+                yaxis: { ...plotLayout.yaxis, title: `${type}(x)` },
+                showlegend: true, legend: { x: 0.01, y: 0.99, font: { size: 10 } },
+                height: 250
+            }, plotConfig);
+
+            // Update formula
+            let formulaStr;
+            switch(type) {
+                case 'relu':
+                    formulaStr = `\\text{ReLU}(x) = \\max(0, x)`;
+                    break;
+                case 'gelu':
+                    formulaStr = `\\text{GELU}(x) = \\frac{x}{2}\\left[1 + \\tanh\\!\\left(\\sqrt{\\frac{2}{\\pi}}(x + 0.044715\\,x^3)\\right)\\right]`;
+                    break;
+                case 'sigmoid':
+                    formulaStr = `\\sigma(x) = \\frac{1}{1 + e^{-x}}`;
+                    break;
+                case 'tanh':
+                    formulaStr = `\\tanh(x) = \\frac{e^x - e^{-x}}{e^x + e^{-x}}`;
+                    break;
+                case 'softplus':
+                    formulaStr = `\\text{Softplus}(x) = \\ln(1 + e^x)`;
+                    break;
+            }
+            renderFormula('nonlinear-formula', formulaStr);
+        }
+
+        // ============================================
+        // SECTION 8: LLM SIGNALS
+        // ============================================
+        function updateLLM() {
+            const nLayers = parseInt(document.getElementById('llm-layers').value);
+            const dim = parseInt(document.getElementById('llm-dim').value);
+            const seqLen = parseInt(document.getElementById('llm-seq').value);
+            const sparsity = parseFloat(document.getElementById('llm-sparsity').value);
+
+            document.getElementById('llm-layers-val').textContent = nLayers;
+            document.getElementById('llm-dim-val').textContent = dim;
+            document.getElementById('llm-seq-val').textContent = seqLen;
+            document.getElementById('llm-sparsity-val').textContent = sparsity.toFixed(2);
+
+            // Simulate residual stream activations
+            // Each layer adds structured information
+            const activations = [];
+            for (let pos = 0; pos < seqLen; pos++) {
+                const row = [];
+                for (let d = 0; d < dim; d++) {
+                    let val = 0;
+                    // Positional encoding (sinusoidal)
+                    val += 0.3 * Math.sin(pos / Math.pow(10000, 2 * d / dim));
+                    // Sparse features
+                    if (Math.random() > sparsity) {
+                        val += randn() * 1.5;
+                    }
+                    // Some structured patterns
+                    if (d < dim / 4) {
+                        val += 0.5 * Math.sin(2 * Math.PI * pos / seqLen * (d + 1));
+                    }
+                    row.push(val);
+                }
+                activations.push(row);
+            }
+
+            // Heatmap
+            Plotly.newPlot('llm-heatmap', [{
+                z: activations,
+                type: 'heatmap',
+                colorscale: [
+                    [0, '#1f0a3d'], [0.25, '#0d1117'], [0.45, '#161b22'],
+                    [0.5, '#1c2128'], [0.55, '#1f3a5f'],
+                    [0.75, '#58a6ff'], [1, '#ffd700']
+                ],
+                showscale: true,
+                colorbar: { title: 'Aktivierung', titlefont: { color: '#8b949e' }, tickfont: { color: '#8b949e' } }
+            }], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Hidden Dimension' },
+                yaxis: { ...plotLayout.yaxis, title: 'Token-Position' }
+            }, plotConfig);
+
+            // Spectral analysis: average power spectrum across positions
+            const avgSpectrum = new Array(Math.floor(dim / 2)).fill(0);
+            for (let pos = 0; pos < seqLen; pos++) {
+                const spec = fft(activations[pos]);
+                for (let k = 0; k < Math.floor(dim / 2); k++) {
+                    avgSpectrum[k] += magnitude(spec[k]) / seqLen;
+                }
+            }
+
+            const freqBins = Array.from({ length: avgSpectrum.length }, (_, i) => i);
+
+            Plotly.newPlot('llm-spectrum', [
+                {
+                    x: freqBins,
+                    y: avgSpectrum,
+                    type: 'bar',
+                    marker: {
+                        color: avgSpectrum.map(v => {
+                            const maxV = Math.max(...avgSpectrum);
+                            const ratio = v / maxV;
+                            return `rgba(88, 166, 255, ${0.3 + ratio * 0.7})`;
+                        })
+                    },
+                    name: 'Mittleres Leistungsspektrum'
+                }
+            ], {
+                ...plotLayout,
+                xaxis: { ...plotLayout.xaxis, title: 'Frequenz-Bin (k)' },
+                yaxis: { ...plotLayout.yaxis, title: 'Mittlere |X[k]|' },
+                showlegend: false
+            }, plotConfig);
+
+            // Update formula
+            renderFormula('llm-residual-formula',
+                `\\mathbf{x}^{(l)} = \\mathbf{x}^{(l-1)} + \\text{Attn}^{(l)}(\\mathbf{x}^{(l-1)}) + \\text{MLP}^{(l)}(\\mathbf{x}^{(l-1)})`
+            );
+        }
+
+        function updateSuperposition() {
+            const dim = parseInt(document.getElementById('sup-dim').value);
+            const nFeat = parseInt(document.getElementById('sup-feat').value);
+            const decay = parseFloat(document.getElementById('sup-decay').value);
+
+            document.getElementById('sup-dim-val').textContent = dim;
+            document.getElementById('sup-feat-val').textContent = nFeat;
+            document.getElementById('sup-decay-val').textContent = decay.toFixed(2);
+
+            // Generate feature directions (more features than dimensions)
+            const features = [];
+            for (let i = 0; i < nFeat; i++) {
+                const angle = (2 * Math.PI * i) / nFeat;
+                if (dim === 2) {
+                    features.push([Math.cos(angle), Math.sin(angle)]);
+                } else {
+                    // 3D: distribute on sphere
+                    const phi = Math.acos(1 - 2 * (i + 0.5) / nFeat);
+                    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+                    features.push([
+                        Math.sin(phi) * Math.cos(theta),
+                        Math.sin(phi) * Math.sin(theta),
+                        Math.cos(phi)
+                    ]);
+                }
+            }
+
+            // Feature importances (decaying)
+            const importances = features.map((_, i) => Math.pow(decay, i));
+
+            if (dim === 2) {
+                const traces = [];
+
+                // Feature directions with importance coloring
+                for (let i = 0; i < nFeat; i++) {
+                    const imp = importances[i];
+                    traces.push({
+                        x: [0, features[i][0] * imp],
+                        y: [0, features[i][1] * imp],
+                        mode: 'lines+markers+text',
+                        line: { color: `rgba(${Math.round(255 * imp)}, ${Math.round(126 + 129 * imp)}, ${Math.round(255 * (1 - imp))}, ${0.4 + imp * 0.6})`, width: 2 + imp * 2 },
+                        marker: { size: [0, 6 + imp * 6] },
+                        text: ['', `f${i}`],
+                        textposition: 'top right',
+                        textfont: { size: 9, color: '#8b949e' },
+                        showlegend: false,
+                        hoverinfo: 'text',
+                        hovertext: `Feature ${i}, Importance: ${imp.toFixed(2)}`
+                    });
+                }
+
+                // Unit circle
+                const circT = linspace(0, 2 * Math.PI, 100);
+                traces.push({
+                    x: circT.map(t => Math.cos(t)),
+                    y: circT.map(t => Math.sin(t)),
+                    mode: 'lines',
+                    line: { color: '#30363d', width: 1, dash: 'dot' },
+                    showlegend: false
+                });
+
+                // Interference regions (where features are close)
+                const annotations = [];
+                if (nFeat > dim) {
+                    annotations.push({
+                        x: 0.5, y: -1.6, xref: 'x', yref: 'y',
+                        text: `⚠️ ${nFeat} Features in ${dim}D → Superposition! (Interferenz unvermeidbar)`,
+                        showarrow: false,
+                        font: { color: '#f78166', size: 12 }
+                    });
+                }
+
+                Plotly.newPlot('superposition-plot', traces, {
+                    ...plotLayout,
+                    xaxis: { ...plotLayout.xaxis, title: 'Dim 1', scaleanchor: 'y', range: [-1.8, 1.8] },
+                    yaxis: { ...plotLayout.yaxis, title: 'Dim 2', range: [-1.8, 1.8] },
+                    annotations
+                }, plotConfig);
+            } else {
+                // 3D plot
+                const traces = [];
+                for (let i = 0; i < nFeat; i++) {
+                    const imp = importances[i];
+                    traces.push({
+                        x: [0, features[i][0] * imp],
+                        y: [0, features[i][1] * imp],
+                        z: [0, features[i][2] * imp],
+                        mode: 'lines+markers',
+                        type: 'scatter3d',
+                        line: { color: `rgba(${Math.round(255 * imp)}, ${Math.round(126 + 129 * imp)}, ${Math.round(255 * (1 - imp))}, ${0.5 + imp * 0.5})`, width: 3 + imp * 3 },
+                        marker: { size: [0, 3 + imp * 5] },
+                        showlegend: false,
+                        hoverinfo: 'text',
+                        hovertext: `Feature ${i}, Imp: ${imp.toFixed(2)}`
+                    });
+                }
+
+                Plotly.newPlot('superposition-plot', traces, {
+                    ...plotLayout,
+                    scene: {
+                        xaxis: { title: 'Dim 1', gridcolor: '#30363d', color: '#8b949e' },
+                        yaxis: { title: 'Dim 2', gridcolor: '#30363d', color: '#8b949e' },
+                        zaxis: { title: 'Dim 3', gridcolor: '#30363d', color: '#8b949e' },
+                        bgcolor: '#1c2128'
+                    }
+                }, plotConfig);
+            }
+        }
+
+        // ============================================
+        // FORMULA RENDERING
+        // ============================================
+        function renderFormula(elementId, latex) {
+            const el = document.getElementById(elementId);
+            if (el && typeof temml !== 'undefined') {
+                try {
+                    temml.render(latex, el, { displayMode: true });
+                } catch (e) {
+                    el.textContent = latex;
+                }
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function init() {
+            // Render all static formulas
+            renderFormula('fourier-formula',
+                `x(t) = \\sum_{k=0}^{N-1} A_k \\sin(2\\pi f_k t + \\phi_k)`
+            );
+            renderFormula('dft-formula',
+                `X[k] = \\sum_{n=0}^{N-1} x[n] \\cdot e^{-i 2\\pi k n / N} = \\sum_{n=0}^{N-1} x[n] \\left[\\cos\\!\\left(\\frac{2\\pi kn}{N}\\right) - i\\sin\\!\\left(\\frac{2\\pi kn}{N}\\right)\\right]`
+            );
+            renderFormula('stft-formula',
+                `\\text{STFT}\\{x\\}(\\tau, \\omega) = \\int_{-\\infty}^{\\infty} x(t)\\, w(t - \\tau)\\, e^{-i\\omega t}\\, dt`
+            );
+            renderFormula('heisenberg-formula',
+                `\\Delta t \\cdot \\Delta \\omega \\geq \\frac{1}{2}`
+            );
+            renderFormula('wavelet-formula',
+                `W_\\psi\\{x\\}(a, b) = \\frac{1}{\\sqrt{a}} \\int_{-\\infty}^{\\infty} x(t)\\, \\psi^*\\!\\left(\\frac{t-b}{a}\\right) dt`
+            );
+            renderFormula('pca-formula',
+                `\\mathbf{C} = \\frac{1}{N}\\mathbf{X}^T\\mathbf{X}, \\quad \\mathbf{C}\\mathbf{v}_i = \\lambda_i \\mathbf{v}_i, \\quad \\text{PC}_i = \\mathbf{X}\\mathbf{v}_i`
+            );
+            renderFormula('svd-formula',
+                `\\mathbf{A} = \\mathbf{U} \\boldsymbol{\\Sigma} \\mathbf{V}^T = \\sum_{i=1}^{r} \\sigma_i \\mathbf{u}_i \\mathbf{v}_i^T \\approx \\sum_{i=1}^{k} \\sigma_i \\mathbf{u}_i \\mathbf{v}_i^T`
+            );
+            renderFormula('ica-formula',
+                `\\mathbf{x} = \\mathbf{A}\\mathbf{s}, \\quad \\text{finde } \\mathbf{W} \\approx \\mathbf{A}^{-1} \\text{ sodass } \\hat{\\mathbf{s}} = \\mathbf{W}\\mathbf{x} \\text{ unabhängig}`
+            );
+            renderFormula('sparse-formula',
+                `\\min_{\\mathbf{D}, \\mathbf{a}} \\sum_i \\|\\mathbf{x}_i - \\mathbf{D}\\mathbf{a}_i\\|_2^2 + \\lambda \\|\\mathbf{a}_i\\|_1, \\quad \\mathbf{D} \\in \\mathbb{R}^{n \\times h},\\; h \\gg n`
+            );
+            renderFormula('sae-formula',
+                `\\hat{\\mathbf{x}} = \\mathbf{W}_{\\text{dec}} \\cdot \\text{ReLU}(\\mathbf{W}_{\\text{enc}} \\cdot \\mathbf{x} + \\mathbf{b}), \\quad \\mathcal{L} = \\|\\mathbf{x} - \\hat{\\mathbf{x}}\\|_2^2 + \\lambda \\|\\mathbf{h}\\|_1`
+            );
+            renderFormula('nonlinear-formula',
+                `\\text{ReLU}(x) = \\max(0, x)`
+            );
+            renderFormula('llm-residual-formula',
+                `\\mathbf{x}^{(l)} = \\mathbf{x}^{(l-1)} + \\text{Attn}^{(l)}(\\mathbf{x}^{(l-1)}) + \\text{MLP}^{(l)}(\\mathbf{x}^{(l-1)})`
+            );
+
+            // Initialize first section
+            updateFourier();
+            initCanvas();
+
+            // Handle canvas resize
+            window.addEventListener('resize', () => {
+                const canvas = document.getElementById('draw-canvas');
+                if (canvas) {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    redrawCanvas();
+                }
+            });
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Also run immediately if DOM already loaded
+        if (document.readyState !== 'loading') {
+            init();
+        }
+    </script>
+</body>
+</html>
