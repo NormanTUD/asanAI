@@ -457,8 +457,18 @@
       \draw[-{Stealth}] (-0.5,0) -- (8,0) node[right, font=\small]{$c$};
       \draw[-{Stealth}] (0,-2) -- (0,3.5) node[above, font=\small]{Logit};
       
-      \draw[blue!50, thick, domain=0:7.5, samples=80] 
-        plot (\x, {0.5*cos(14*(\x)/113*360)});
+	\pgfmathsetmacro{\freqA}{14*360/113}
+	\pgfmathsetmacro{\freqB}{35*360/113}
+	\pgfmathsetmacro{\freqC}{42*360/113}
+
+	\draw[blue!50, thick, domain=0:7.5, samples=80] 
+	  plot (\x, {0.5*cos(\freqA*\x)});
+	\draw[red!50, thick, domain=0:7.5, samples=80] 
+	  plot (\x, {0.5*cos(\freqB*\x)});
+	\draw[green!50!black, opacity=0.5, thick, domain=0:7.5, samples=80] 
+	  plot (\x, {0.5*cos(\freqC*\x)});
+	\draw[akzent, line width=2pt, domain=0:7.5, samples=100] 
+	  plot (\x, {0.5*cos(\freqA*\x) + 0.5*cos(\freqB*\x) + 0.5*cos(\freqC*\x)});
       
       \draw[red!50, thick, domain=0:7.5, samples=80] 
         plot (\x, {0.5*cos(14*(\x)/113*360)});
