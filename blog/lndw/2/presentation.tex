@@ -458,13 +458,13 @@
       \draw[-{Stealth}] (0,-2) -- (0,3.5) node[above, font=\small]{Logit};
       
       \draw[blue!50, thick, domain=0:7.5, samples=80] 
-        plot (\x, {0.5*cos(14*360*(\x)/113)});
+        plot (\x, {0.5*cos(14*(\x)/113*360)});
       
       \draw[red!50, thick, domain=0:7.5, samples=80] 
-        plot (\x, {0.5*cos(35*360*(\x)/113)});
+        plot (\x, {0.5*cos(14*(\x)/113*360)});
       
       \draw[green!50!black, opacity=0.5, thick, domain=0:7.5, samples=80] 
-        plot (\x, {0.5*cos(42*360*(\x)/113)});
+        plot (\x, {0.5*cos(14*(\x)/113*360)});
       
       \draw[akzent, line width=2pt, domain=0:7.5, samples=100] 
         plot (\x, {0.5*cos(14*360*(\x)/113) + 0.5*cos(35*360*(\x)/113) + 0.5*cos(42*360*(\x)/113)});
