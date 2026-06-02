@@ -1,0 +1,793 @@
+\documentclass[aspectratio=169, 12pt]{beamer}
+
+% ── Pakete ──────────────────────────────────────────────────
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, calc, positioning, decorations.markings,
+                 shapes.geometric, backgrounds, fit, matrix, angles, quotes}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{fontawesome5}
+\usepackage{hyperref}
+\usepackage[table]{xcolor}
+\usepackage{multimedia}
+\usepackage{animate}
+
+% ── Theme ───────────────────────────────────────────────────
+\usetheme{metropolis}
+\setbeamercolor{frametitle}{bg=black!85, fg=white}
+\setbeamercolor{progress bar}{fg=orange}
+\metroset{progressbar=frametitle, block=fill}
+
+% ── Farben ──────────────────────────────────────────────────
+\definecolor{akzent}{HTML}{E8590C}
+\definecolor{hintergrund}{HTML}{FAF9F6}
+\definecolor{dunkel}{HTML}{1A1A2E}
+\definecolor{mittel}{HTML}{16213E}
+\definecolor{hell}{HTML}{0F3460}
+\definecolor{highlight}{HTML}{E94560}
+\setbeamercolor{background canvas}{bg=hintergrund}
+
+% ── Hilfsbefehle ────────────────────────────────────────────
+\newcommand{\placeholder}[2][0.5\textwidth]{%
+  \begin{center}
+    \fcolorbox{akzent}{white!95!black}{%
+      \parbox{#1}{\centering\vspace{1.0cm}%
+        {\color{akzent}\faImage\quad\textit{#2}}%
+        \vspace{1.0cm}}}
+  \end{center}
+}
+
+\newcommand{\stich}[1]{\item[\color{akzent}\faAngleRight] #1}
+
+\newcommand{\formelbox}[1]{%
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.88\textwidth}{%
+        \centering
+        $\displaystyle #1$%
+      }%
+    }
+  \end{center}
+}
+
+\newcommand{\abschnitt}[2]{%
+  {
+  \setbeamercolor{background canvas}{bg=dunkel}
+  \begin{frame}[plain]
+    \vfill
+    \begin{center}
+      {\Huge\color{white}\textbf{#1}}\\[1em]
+      {\large\color{white!70}#2}
+    \end{center}
+    \vfill
+  \end{frame}
+  }
+}
+
+\newcommand{\quelle}[1]{{\vfill\hfill\scriptsize\color{gray}#1}}
+
+% ── Titelseite ──────────────────────────────────────────────
+\title{\textbf{Wie Transformer rechnen lernen}}
+\subtitle{Grokking, Fourier-Kreise und mechanistische Interpretierbarkeit}
+\author{}
+\date{}
+
+% ============================================================
+\begin{document}
+% ============================================================
+
+\begin{frame}[plain]
+  \maketitle
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Motivation}{K\"onnen neuronale Netze \emph{rechnen}?}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Die Frage}
+  \begin{center}
+    {\Large\texttt{\color{dunkel} 37 + 58 = \color{highlight}\textbf{?} \quad (mod 113)}}
+  \end{center}
+
+  \bigskip
+  \begin{itemize}
+    \stich{Ein winziger Transformer (1 Layer, 128 Dimensionen)}
+    \stich{Bekommt nur Zahlenpaare und ihre Summe modulo 113}
+    \stich{Lernt er \textbf{auswendig} -- oder entdeckt er einen \textbf{Algorithmus}?}
+  \end{itemize}
+
+  \bigskip
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.75\textwidth}{\centering\small
+        Neel Nanda et al.\ (ICLR 2023) haben den gelernten Algorithmus\\
+        \textbf{vollst\"andig reverse-engineered}.
+      }%
+    }
+  \end{center}
+
+  \quelle{Nanda, Chan, Lieberum, Smith, Steinhardt. ``Progress Measures for Grokking via Mechanistic Interpretability.'' ICLR 2023.}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Grokking}{Pl\"otzliches Verstehen -- nach langem Auswendiglernen}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Was ist Grokking?}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+    \begin{itemize}
+      \stich{Modell lernt Trainingsdaten \textbf{sofort} auswendig\\
+             (100\% Train-Accuracy nach wenigen Epochen)}
+      \stich{Test-Accuracy bleibt \textbf{lange bei 0\%}}
+      \stich{Nach tausenden weiteren Epochen:\\
+             pl\"otzlich \textbf{perfekte Generalisierung}}
+      \stich{Benannt nach Robert Heinlein:\\
+             ``to grok'' = tiefes Verstehen}
+    \end{itemize}
+
+    \column{0.4\textwidth}
+    \placeholder[0.9\linewidth]{Bild: Train/Test Accuracy Kurve\\
+    (Figure 2 aus Nanda et al.\ 2023)\\
+    \footnotesize Quelle: Paper Fig.\ 2}
+  \end{columns}
+
+  \quelle{Power et al.\ 2022 (Erstentdeckung); Nanda et al.\ 2023 (Erkl\"arung)}
+\end{frame}
+
+\begin{frame}{Grokking -- die drei Phasen}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.9]
+      \draw[-{Stealth}, thick] (0,0) -- (13,0) node[right]{\small Epochen};
+      
+      \fill[akzent!15] (0,0.3) rectangle (3,2.5);
+      \fill[hell!15] (3,0.3) rectangle (8,2.5);
+      \fill[highlight!15] (8,0.3) rectangle (12,2.5);
+      
+      \node[font=\small\bfseries, text=akzent] at (1.5,2.0) {Phase 1};
+      \node[font=\scriptsize, text width=2.5cm, align=center] at (1.5,1.2) {Memorisierung\\(Auswendiglernen)};
+      
+      \node[font=\small\bfseries, text=hell] at (5.5,2.0) {Phase 2};
+      \node[font=\scriptsize, text width=3cm, align=center] at (5.5,1.2) {Circuit Formation\\(Algorithmus bildet sich)};
+      
+      \node[font=\small\bfseries, text=highlight] at (10,2.0) {Phase 3};
+      \node[font=\scriptsize, text width=2.5cm, align=center] at (10,1.2) {Cleanup\\(Memorisierung\\wird entfernt)};
+      
+      \draw[dashed, gray] (3,0) -- (3,2.5);
+      \draw[dashed, gray] (8,0) -- (8,2.5);
+      
+      \node[below, font=\tiny] at (0,0) {0};
+      \node[below, font=\tiny] at (3,0) {$\sim$1.4k};
+      \node[below, font=\tiny] at (8,0) {$\sim$9.4k};
+      \node[below, font=\tiny] at (12,0) {$\sim$14k};
+    \end{tikzpicture}
+  \end{center}
+
+  \bigskip
+  \begin{itemize}
+    \stich{\textbf{\"Uberraschung:} Der Algorithmus ist \emph{l\"angst fertig}, bevor die Test-Accuracy springt!}
+    \stich{Weight Decay entfernt dann die Memorisierung $\Rightarrow$ pl\"otzlicher Sprung}
+  \end{itemize}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Das Setup}{Ein winziger Transformer}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Das Experiment}
+  \begin{center}
+    \begin{tikzpicture}[
+        box/.style={draw, thick, rounded corners, minimum width=2cm,
+                     minimum height=0.8cm, font=\small, align=center},
+        arr/.style={-{Stealth}, thick, akzent}
+      ]
+      \node[box, fill=hell!15] (input) {Eingabe:\\$a \quad b \quad =$};
+      \node[box, fill=dunkel!15, right=1.5cm of input] (transformer) {1-Layer\\Transformer};
+      \node[box, fill=highlight!15, right=1.5cm of transformer] (output) {Ausgabe:\\$c = (a+b) \bmod 113$};
+      
+      \draw[arr] (input) -- (transformer);
+      \draw[arr] (transformer) -- (output);
+    \end{tikzpicture}
+  \end{center}
+
+  \bigskip
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \textbf{Architektur:}
+    \begin{itemize}
+      \stich{$P = 113$ (Primzahl)}
+      \stich{$d_{\text{model}} = 128$}
+      \stich{4 Attention Heads}
+      \stich{512 MLP-Neuronen, ReLU}
+    \end{itemize}
+
+    \column{0.48\textwidth}
+    \textbf{Training:}
+    \begin{itemize}
+      \stich{30\% aller $113 \times 113$ Paare}
+      \stich{AdamW, Weight Decay $\lambda = 1$}
+      \stich{40.000 Epochen}
+      \stich{Kein LayerNorm}
+    \end{itemize}
+  \end{columns}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Der Algorithmus}{Addition als Rotation auf einem Kreis}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Die Kernidee in einem Satz}
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.85\textwidth}{\centering\large
+        Das Netzwerk wandelt \textbf{Addition}\\[4pt]
+        in \textbf{Rotation auf einem Kreis} um.
+      }%
+    }
+  \end{center}
+
+  \bigskip
+  \begin{center}
+    \begin{tikzpicture}[scale=1.5]
+      \draw[gray!50, thick] (0,0) circle (1);
+      \draw[-{Stealth}, gray!30] (-1.3,0) -- (1.3,0);
+      \draw[-{Stealth}, gray!30] (0,-1.3) -- (0,1.3);
+      
+      \fill[blue!70] (40:1) circle (2.5pt);
+      \node[blue!70, font=\small\bfseries] at (40:1.3) {$a$};
+      \draw[blue!70, dashed] (0,0) -- (40:1);
+      
+      \fill[red!70] (70:1) circle (2.5pt);
+      \node[red!70, font=\small\bfseries] at (70:1.3) {$b$};
+      \draw[red!70, dashed] (0,0) -- (70:1);
+      
+      \fill[green!60!black] (110:1) circle (3pt);
+      \node[green!60!black, font=\small\bfseries] at (110:1.35) {$a+b$};
+      \draw[green!60!black, thick] (0,0) -- (110:1);
+      
+      \draw[akzent, thick, -{Stealth}] (40:0.6) arc (40:110:0.6);
+      \node[akzent, font=\scriptsize] at (75:0.4) {$+b$};
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{center}
+    \small Jede Zahl $t$ wird auf einen \textbf{Winkel} $\omega_k \cdot t$ auf dem Einheitskreis abgebildet.\\
+    Addition $\to$ Winkel addieren $\to$ Rotation!
+  \end{center}
+\end{frame}
+
+\begin{frame}{Die Formel -- \"Uberblick}
+  \formelbox{
+    \text{Logit}(c \mid a, b) = \sum_{k \in \mathcal{K}} \alpha_k \cdot \cos\!\left(\frac{2\pi k\,(a + b - c)}{113}\right)
+  }
+
+  \bigskip
+  \begin{itemize}
+    \stich{$\mathcal{K}$ = wenige ``Schl\"usselfrequenzen'' (z.\,B.\ 5 St\"uck)}
+    \stich{$\alpha_k$ = gelernte Amplitude}
+    \stich{Wenn $c = (a+b) \bmod 113$: alle Cosinus $= 1$ $\Rightarrow$ \textbf{Maximum}}
+    \stich{Wenn $c \neq (a+b) \bmod 113$: verschiedene Richtungen $\Rightarrow$ \textbf{Ausl\"oschung}}
+  \end{itemize}
+
+  \bigskip
+  \begin{center}
+    \colorbox{highlight!10}{%
+      \parbox{0.6\textwidth}{\centering\small
+        \textbf{Konstruktive Interferenz} am richtigen Ergebnis,\\
+        \textbf{destruktive Interferenz} \"uberall sonst.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Schritt f\"ur Schritt}{Wie der Transformer rechnet}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Schritt 1: Embedding -- Zahlen werden zu Kreispunkten}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+    \begin{itemize}
+      \stich{Jede Zahl $t \in \{0, \ldots, 112\}$ wird eingebettet}
+      \stich{Die Embedding-Matrix $W_E$ ist \textbf{sparse im Fourier-Raum}}
+      \stich{Effektiv kodiert sie:\\[3pt]
+             $\cos(\omega_k \cdot t)$ und $\sin(\omega_k \cdot t)$\\[3pt]
+             f\"ur wenige Frequenzen $k$}
+      \stich{$\omega_k = \frac{2\pi k}{113}$}
+    \end{itemize}
+
+    \column{0.4\textwidth}
+    \begin{center}
+      \begin{tikzpicture}[scale=1.3]
+        \draw[gray!40, thick] (0,0) circle (1);
+        \draw[-{Stealth}, gray!30] (-1.2,0) -- (1.2,0) node[right, font=\tiny]{$\cos$};
+        \draw[-{Stealth}, gray!30] (0,-1.2) -- (0,1.2) node[above, font=\tiny]{$\sin$};
+        
+        \foreach \t/\col in {0/black, 15/blue!70, 37/red!70, 58/green!60!black, 95/violet} {
+          \pgfmathsetmacro{\angle}{360*14*\t/113}
+          \fill[\col] (\angle:1) circle (1.8pt);
+        }
+        
+        \node[font=\tiny, blue!70] at ({360*14*15/113}:1.25) {$15$};
+        \node[font=\tiny, red!70] at ({360*14*37/113}:1.25) {$37$};
+        \node[font=\tiny, green!60!black] at ({360*14*58/113}:1.3) {$58$};
+        
+        \node[font=\scriptsize, below] at (0,-1.5) {Frequenz $k=14$};
+      \end{tikzpicture}
+    \end{center}
+  \end{columns}
+
+  \bigskip
+  \begin{center}
+    \small Jede Zahl $\to$ ein Punkt auf dem Kreis. Verschiedene Frequenzen $\to$ verschiedene Kreise.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Wie die Kreise entstehen}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.85]
+      \begin{scope}[xshift=0cm]
+        \draw[gray!40] (0,0) circle (1);
+        \foreach \t in {0,8,...,112} {
+          \pgfmathsetmacro{\angle}{360*14*\t/113}
+          \fill[blue!60] (\angle:1) circle (1.2pt);
+        }
+        \node[font=\scriptsize, below] at (0,-1.4) {$k=14$};
+        \node[font=\tiny, above] at (0,1.3) {langsam};
+      \end{scope}
+      
+      \begin{scope}[xshift=3cm]
+        \draw[gray!40] (0,0) circle (1);
+        \foreach \t in {0,8,...,112} {
+          \pgfmathsetmacro{\angle}{360*35*\t/113}
+          \fill[red!60] (\angle:1) circle (1.2pt);
+        }
+        \node[font=\scriptsize, below] at (0,-1.4) {$k=35$};
+        \node[font=\tiny, above] at (0,1.3) {mittel};
+      \end{scope}
+      
+      \begin{scope}[xshift=6cm]
+        \draw[gray!40] (0,0) circle (1);
+        \foreach \t in {0,8,...,112} {
+          \pgfmathsetmacro{\angle}{360*41*\t/113}
+          \fill[green!60!black] (\angle:1) circle (1.2pt);
+        }
+        \node[font=\scriptsize, below] at (0,-1.4) {$k=41$};
+        \node[font=\tiny, above] at (0,1.3) {schnell};
+      \end{scope}
+      
+      \begin{scope}[xshift=9cm]
+        \draw[gray!40] (0,0) circle (1);
+        \foreach \t in {0,8,...,112} {
+          \pgfmathsetmacro{\angle}{360*52*\t/113}
+          \fill[violet] (\angle:1) circle (1.2pt);
+        }
+        \node[font=\scriptsize, below] at (0,-1.4) {$k=52$};
+        \node[font=\tiny, above] at (0,1.3) {sehr schnell};
+      \end{scope}
+      
+      \node[font=\small, text=dunkel] at (4.5,-2.5) {Dieselben 113 Zahlen -- auf verschiedenen Kreisen};
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \stich{Jede Frequenz $k$ erzeugt einen \textbf{eigenen Kreis}}
+    \stich{Zahl $t$ sitzt bei Winkel $\omega_k \cdot t = \frac{2\pi k \cdot t}{113}$}
+    \stich{H\"ohere Frequenz $\to$ schnellere Rotation $\to$ andere Nachbarschaften}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Schritt 2: Attention -- Information zusammenf\"uhren}
+  \begin{center}
+    \begin{tikzpicture}[
+        box/.style={draw, thick, rounded corners, minimum width=1.8cm,
+                     minimum height=0.7cm, font=\small},
+        arr/.style={-{Stealth}, thick}
+      ]
+      \node[box, fill=blue!15] (a) at (0,0) {Token $a$};
+      \node[box, fill=red!15] (b) at (4,0) {Token $b$};
+      \node[box, fill=gray!15] (eq) at (8,0) {Token $=$};
+      
+      \draw[arr, blue!60] (a.north) to[out=60, in=120] node[above, font=\scriptsize]{Attention} (eq.north);
+      \draw[arr, red!60] (b.north) to[out=60, in=120] (eq.north);
+      
+      \node[font=\scriptsize, below=0.5cm of eq, text width=4cm, align=center] 
+        {Hier wird das Ergebnis\\abgelesen};
+    \end{tikzpicture}
+  \end{center}
+
+  \bigskip
+  \begin{itemize}
+    \stich{Attention bewegt Fourier-Komponenten von $a$ und $b$ zur Position ``$=$''}
+    \stich{Softmax \"uber 2 Positionen $\approx$ Sigmoid $\approx$ \textbf{linear}}
+    \stich{Erzeugt \textbf{Produkte}: $\cos(\omega_k a) \cdot \cos(\omega_k b)$, etc.}
+    \stich{Das sind genau die Terme, die man f\"ur die Additionsformel braucht!}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Schritt 3: MLP -- die trigonometrische Identit\"at}
+  \formelbox{
+    \cos(\omega_k(a+b)) = \cos(\omega_k a)\cos(\omega_k b) - \sin(\omega_k a)\sin(\omega_k b)
+  }
+
+  \bigskip
+  \begin{itemize}
+    \stich{Die 512 ReLU-Neuronen berechnen \textbf{kollektiv} diese Identit\"at}
+    \stich{ReLU = st\"uckweise linear $\Rightarrow$ kann Produkte approximieren}
+    \stich{Ergebnis: $\cos(\omega_k(a+b))$ und $\sin(\omega_k(a+b))$}
+    \stich{\"Uber 90\% der Varianz erkl\"art!}
+  \end{itemize}
+
+  \bigskip
+  \begin{center}
+    \colorbox{akzent!10}{%
+      \parbox{0.7\textwidth}{\centering\small
+        \textbf{Aha!} Das Netz hat die Additionsformel aus der Schule\\
+        \emph{selbst\"andig entdeckt} -- ohne sie je gesehen zu haben.
+      }%
+    }
+  \end{center}
+\end{frame}
+
+\begin{frame}{Schritt 4: Unembedding -- Ablesen des Ergebnisses}
+  \begin{itemize}
+    \stich{Die Neuron-Logit-Matrix $W_L = W_U W_{\text{out}}$ ist \textbf{approximativ Rang 10}}
+    \stich{5 Frequenzen $\times$ 2 (cos + sin) = 10 Richtungen}
+    \stich{F\"ur jedes m\"ogliche Ergebnis $c$ wird berechnet:}
+  \end{itemize}
+
+  \formelbox{
+    \text{Logit}(c) \;=\; \sum_{k \in \mathcal{K}} \alpha_k \Big[\cos(\omega_k c) \cdot \cos(\omega_k(a{+}b)) + \sin(\omega_k c) \cdot \sin(\omega_k(a{+}b))\Big]
+  }
+
+  \bigskip
+  \begin{center}
+    $= \displaystyle\sum_{k \in \mathcal{K}} \alpha_k \cos\!\big(\omega_k(a+b-c)\big)$
+    \qquad {\small (Cosinus-Subtraktionsidentit\"at)}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Schritt 5: Konstruktive Interferenz}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.75]
+      \draw[-{Stealth}] (-0.5,0) -- (8,0) node[right, font=\small]{$c$};
+      \draw[-{Stealth}] (0,-2) -- (0,3.5) node[above, font=\small]{Logit};
+      
+      \draw[blue!50, thick, domain=0:7.5, samples=80] 
+        plot (\x, {0.5*cos(14*360*(\x)/113)});
+      
+      \draw[red!50, thick, domain=0:7.5, samples=80] 
+        plot (\x, {0.5*cos(35*360*(\x)/113)});
+      
+      \draw[green!50!black, opacity=0.5, thick, domain=0:7.5, samples=80] 
+        plot (\x, {0.5*cos(42*360*(\x)/113)});
+      
+      \draw[akzent, line width=2pt, domain=0:7.5, samples=100] 
+        plot (\x, {0.5*cos(14*360*(\x)/113) + 0.5*cos(35*360*(\x)/113) + 0.5*cos(42*360*(\x)/113)});
+      
+      \draw[akzent, thick, -{Stealth}] (0.1, 2.0) -- (0.1, 1.6);
+      \node[akzent, font=\scriptsize\bfseries, above] at (0.1, 2.0) {$c = a{+}b$};
+      
+      \node[font=\tiny, blue!60] at (6.5, 2.8) {Freq 1};
+      \node[font=\tiny, red!60] at (6.5, 2.3) {Freq 2};
+      \node[font=\tiny, green!50!black] at (6.5, 1.8) {Freq 3};
+      \node[font=\tiny, akzent] at (6.5, 1.3) {\textbf{Summe}};
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \stich{Bei $c = (a+b) \bmod 113$: \textbf{alle} Cosinus $= 1$ $\Rightarrow$ scharfes Maximum}
+    \stich{Bei jedem anderen $c$: verschiedene Phasen $\Rightarrow$ gegenseitige Ausl\"oschung}
+    \stich{Wie bei Wellen im Wasser: \"Uberlagerung verst\"arkt oder l\"oscht aus}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Warum mehrere Frequenzen?}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.8]
+      % Eine Frequenz
+      \begin{scope}[xshift=0cm]
+        \draw[gray!30] (0,-1.3) -- (0,1.5);
+        \draw[gray!30] (-0.3,0) -- (5.5,0);
+        \draw[blue!70, thick, domain=0:5, samples=60] 
+          plot (\x, {cos(14*360*\x/113)});
+        \fill[akzent] (0, 1) circle (3pt);
+        \node[font=\scriptsize, below] at (2.5, -1.6) {\textbf{1 Frequenz:} Nebenpeaks!};
+      \end{scope}
+      
+      % Mehrere Frequenzen
+      \begin{scope}[xshift=7cm]
+        \draw[gray!30] (0,-1.8) -- (0,3.5);
+        \draw[gray!30] (-0.3,0) -- (5.5,0);
+        \draw[akzent, line width=2pt, domain=0:5, samples=80] 
+          plot (\x, {cos(14*360*\x/113) + cos(35*360*\x/113) + cos(42*360*\x/113)});
+        \fill[green!60!black] (0, 3) circle (4pt);
+        \node[font=\scriptsize, below] at (2.5, -2.1) {\textbf{5 Frequenzen:} ein scharfer Peak!};
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
+
+  \bigskip
+  \begin{itemize}
+    \stich{Eine Frequenz allein hat \textbf{Nebenpeaks} (fast so hoch wie das Maximum)}
+    \stich{Mehrere Frequenzen: Nebenpeaks liegen an \textbf{verschiedenen Stellen}}
+    \stich{$\Rightarrow$ Sie l\"oschen sich gegenseitig aus, nur bei $c = a+b$ bleiben alle hoch}
+    \stich{5 Frequenzen reichen f\"ur $>99{,}99\%$ Genauigkeit}
+  \end{itemize}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Zusammenfassung}{Der vollst\"andige Algorithmus}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Der Algorithmus auf einen Blick}
+  \begin{center}
+    \begin{tikzpicture}[
+        box/.style={draw, thick, rounded corners, minimum width=2.8cm,
+                     minimum height=0.7cm, font=\scriptsize\bfseries, align=center},
+        arr/.style={-{Stealth}, thick, akzent},
+        node distance=0.35cm
+      ]
+      \node[box, fill=hell!15] (emb) {1. Embedding\\$t \to \cos(\omega_k t), \sin(\omega_k t)$};
+      \node[box, fill=dunkel!15, right=of emb] (attn) {2. Attention\\Produkte bilden};
+      \node[box, fill=akzent!15, right=of attn] (mlp) {3. MLP\\$\cos(\omega_k(a{+}b))$};
+      \node[box, fill=highlight!15, right=of mlp] (unemb) {4. Unembed\\$\cos(\omega_k(a{+}b{-}c))$};
+      
+      \draw[arr] (emb) -- (attn);
+      \draw[arr] (attn) -- (mlp);
+      \draw[arr] (mlp) -- (unemb);
+    \end{tikzpicture}
+  \end{center}
+
+  \bigskip
+  \formelbox{
+    \text{Logit}(c) = \sum_{k \in \{14,35,41,42,52\}} \alpha_k \cos\!\left(\frac{2\pi k(a+b-c)}{113}\right)
+  }
+
+  \bigskip
+  \begin{center}
+    \colorbox{highlight!10}{%
+      \parbox{0.8\textwidth}{\centering
+        Bei $c = (a+b) \bmod 113$: alle Cosinus $= 1$ $\Rightarrow$ \textbf{Maximum}\\[3pt]
+        Bei $c \neq (a+b) \bmod 113$: destruktive Interferenz $\Rightarrow$ \textbf{klein}
+      }%
+    }
+  \end{center}
+
+  \quelle{Nanda et al.\ 2023, Table 1: FVE $>93\%$ f\"ur alle Frequenzen}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Evidenz}{Wie wissen wir, dass das stimmt?}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Evidenz: Periodizit\"at \"uberall}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \placeholder[0.9\linewidth]{Bild: Fourier-Komponenten von $W_E$\\
+    (Figure 3 links aus dem Paper)\\
+    \footnotesize Zeigt Sparsity: nur 5 Frequenzen}
+
+    \column{0.48\textwidth}
+    \placeholder[0.9\linewidth]{Bild: Neuron-Aktivierungen\\
+    (Figure 4 Mitte aus dem Paper)\\
+    \footnotesize Periodische Muster in Neuronen}
+  \end{columns}
+
+  \bigskip
+  \begin{itemize}
+    \stich{Embedding-Matrix $W_E$: \textbf{sparse} im Fourier-Raum -- nur 5 Frequenzen}
+    \stich{Neuron-Aktivierungen: \textbf{periodisch} in den Eingaben}
+    \stich{Logits: nur 20 signifikante Fourier-Komponenten (5 Freq $\times$ 2$\times$2)}
+  \end{itemize}
+
+  \quelle{Nanda et al.\ 2023, Figures 3 \& 4}
+\end{frame}
+
+\begin{frame}{Evidenz: Ablationen best\"atigen den Circuit}
+  \begin{center}
+    \begin{tikzpicture}[scale=0.8]
+      % Balkendiagramm
+      \draw[-{Stealth}] (0,0) -- (0,4) node[above, font=\small]{Loss (log)};
+      \draw[-{Stealth}] (0,0) -- (8,0);
+      
+      % Balken
+      \fill[hell!60] (1,0) rectangle (2.5, 0.3);
+      \node[font=\tiny, below] at (1.75, 0) {Original};
+      \node[font=\tiny, above] at (1.75, 0.3) {$2.4 \cdot 10^{-7}$};
+      
+      \fill[green!50] (3,0) rectangle (4.5, 0.15);
+      \node[font=\tiny, below, text width=1.5cm, align=center] at (3.75, 0) {Nur Key-\\Freq.};
+      \node[font=\tiny, above] at (3.75, 0.15) {$7.2 \cdot 10^{-8}$};
+      
+      \fill[highlight!60] (5,0) rectangle (6.5, 3.5);
+      \node[font=\tiny, below, text width=1.5cm, align=center] at (5.75, 0) {Key-Freq.\\entfernt};
+      \node[font=\tiny, above] at (5.75, 3.5) {$5.27$};
+      
+      % Annotation
+      \node[font=\scriptsize, green!50!black] at (3.75, 1.0) {\textbf{besser!}};
+      \draw[-{Stealth}, highlight, thick] (5.75, 2.8) -- (5.75, 3.3);
+      \node[font=\scriptsize, highlight] at (5.75, 2.5) {\textbf{Zufall}};
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \stich{Alles au\ss er den 5 Key-Frequenzen entfernen $\Rightarrow$ \textbf{Performance verbessert sich!}}
+    \stich{Die 5 Key-Frequenzen entfernen $\Rightarrow$ \textbf{schlechter als Zufall}}
+    \stich{$\Rightarrow$ Der Circuit ist \textbf{notwendig und hinreichend}}
+  \end{itemize}
+
+  \quelle{Nanda et al.\ 2023, Figure 6 \& Section 4.4}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Analogie}{Selbst\"andiges Lernen von Zusammenh\"angen}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Analogie: Geografie lernen}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+    \begin{itemize}
+      \stich{Gurnee \& Tegmark (2023): LLMs lernen \textbf{Weltkarten}}
+      \stich{Nie explizit trainiert -- emergiert als\\
+             \textbf{beste Kompression} der Daten}
+      \stich{\"Ahnlich wie hier: das Netz entdeckt\\
+             \textbf{Kreise} als beste Repr\"asentation\\
+             f\"ur modulare Arithmetik}
+      \stich{In beiden F\"allen: das System lernt\\
+             \textbf{geometrische Strukturen} eigenst\"andig}
+    \end{itemize}
+
+    \column{0.4\textwidth}
+    \begin{center}
+      \includegraphics[width=\linewidth, keepaspectratio]{ai_approx_world.png}\\
+      {\scriptsize\color{gray}Weltkarte aus 2 Dimensionen\\eines LLM-Embedding-Raums}
+    \end{center}
+  \end{columns}
+
+  \quelle{Gurnee, Tegmark. arXiv:2310.02207 (2023)}
+\end{frame}
+
+\begin{frame}{Kreise hier -- Karten dort}
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.85\textwidth}{\centering\large
+        Das System lernt \textbf{eigenst\"andig} die geometrische Struktur,\\[4pt]
+        die am besten zu den Daten passt.
+      }%
+    }
+  \end{center}
+
+  \bigskip
+  \begin{columns}[T]
+    \column{0.45\textwidth}
+    \begin{center}
+      \textbf{Modulare Addition}\\[0.5em]
+      \begin{tikzpicture}[scale=0.8]
+        \draw[gray!40, thick] (0,0) circle (1);
+        \foreach \t in {0,8,...,112} {
+          \pgfmathsetmacro{\angle}{360*14*\t/113}
+          \fill[akzent] (\angle:1) circle (1.2pt);
+        }
+        \node[font=\scriptsize, below] at (0,-1.4) {Kreise (Fourier)};
+      \end{tikzpicture}
+    \end{center}
+
+    \column{0.45\textwidth}
+    \begin{center}
+      \textbf{Sprache / Geografie}\\[0.5em]
+      \begin{tikzpicture}[scale=0.8]
+        % Stilisierte Weltkarte
+        \draw[gray!40, thick] (0,0) ellipse (1.5 and 1);
+        \fill[hell!60] (-0.5, 0.3) circle (3pt);
+        \fill[hell!60] (0.2, 0.1) circle (3pt);
+        \fill[hell!60] (0.8, -0.2) circle (3pt);
+        \fill[akzent] (-0.8, -0.3) circle (3pt);
+        \fill[akzent] (0.5, 0.5) circle (3pt);
+        \node[font=\scriptsize, below] at (0,-1.4) {Mannigfaltigkeiten};
+      \end{tikzpicture}
+    \end{center}
+  \end{columns}
+
+  \bigskip
+  \begin{itemize}
+    \stich{Die \textbf{konkreten Distanzen} sind nicht so wichtig}
+    \stich{Entscheidend: die \textbf{Proportionen} und \textbf{topologische Struktur} stimmen}
+    \stich{$\Rightarrow$ Schnittstelle zur \textbf{Topologie} bleibt offen}
+  \end{itemize}
+\end{frame}
+
+% ════════════════════════════════════════════════════════════
+\abschnitt{Ausblick}{Ein kleiner Circuit -- viele weitere}
+% ════════════════════════════════════════════════════════════
+
+\begin{frame}{Einordnung: Ein winziger Baustein}
+  \begin{center}
+    \begin{tikzpicture}[
+        box/.style={draw, thick, rounded corners, minimum width=3cm,
+                     minimum height=0.8cm, font=\small, align=center},
+        arr/.style={-{Stealth}, thick, gray}
+      ]
+      % Großes Modell
+      \draw[thick, dunkel, rounded corners] (-4,-2) rectangle (4,2);
+      \node[font=\small, dunkel, above] at (0,2) {\textbf{Gro\ss es Sprachmodell (z.\,B.\ GPT-4)}};
+      
+      % Viele kleine Circuits
+      \foreach \x/\y/\col in {-2.5/0.8/akzent, -0.5/1.2/hell, 1.5/0.5/highlight,
+                               -2.0/-0.5/violet, 0.5/-0.8/green!50!black, 2.5/-0.3/blue!60,
+                               -1.0/0.0/orange, 2.0/1.0/red!50, -2.8/-1.3/teal} {
+        \fill[\col!30] (\x,\y) circle (0.4);
+        \draw[\col, thick] (\x,\y) circle (0.4);
+      }
+      
+      % Hervorhebung unseres Circuits
+      \fill[akzent!50] (-2.5,0.8) circle (0.4);
+      \draw[akzent, line width=2pt] (-2.5,0.8) circle (0.5);
+      \node[font=\tiny\bfseries, akzent] at (-2.5, 0.8) {Add};
+      
+      \draw[akzent, thick, -{Stealth}] (-2.5, 0.2) -- (-2.5, -1.5)
+        node[below, font=\scriptsize, text width=3cm, align=center]
+        {\textbf{Dieser Vortrag:}\\ein einzelner Circuit};
+      
+      \node[font=\scriptsize, gray, text width=3cm, align=center] at (2.5, -1.8)
+        {Hunderte weitere\\Circuits f\"ur andere\\Aufgaben};
+    \end{tikzpicture}
+  \end{center}
+
+  \begin{itemize}
+    \stich{Was wir gesehen haben: \textbf{ein sehr kleiner, m\"oglicher Circuit}}
+    \stich{Gro\ss e Modelle haben \textbf{hunderte bis tausende} solcher Circuits}
+    \stich{Jeder f\"ur eine andere Aufgabe: Grammatik, Logik, Fakten, \ldots}
+    \stich{Die Berechnung wird auf diesen Circuits \textbf{ausgef\"uhrt}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Was wir gelernt haben}
+  \begin{enumerate}
+    \item[\color{akzent}\textbf{1.}] \textbf{Grokking:} Pl\"otzliche Generalisierung nach langem Auswendiglernen
+    \item[\color{akzent}\textbf{2.}] \textbf{Fourier-Kreise:} Addition wird zu Rotation auf dem Einheitskreis
+    \item[\color{akzent}\textbf{3.}] \textbf{Konstruktive Interferenz:} Mehrere Frequenzen erzeugen scharfe Peaks
+    \item[\color{akzent}\textbf{4.}] \textbf{Eigenst\"andiges Lernen:} Das Netz entdeckt Geometrie ohne Anleitung
+    \item[\color{akzent}\textbf{5.}] \textbf{Topologie:} Proportionen z\"ahlen, nicht absolute Distanzen
+  \end{enumerate}
+
+  \bigskip
+  \begin{center}
+    \colorbox{dunkel!10}{%
+      \parbox{0.8\textwidth}{\centering
+        \textbf{Mechanistische Interpretierbarkeit} erm\"oglicht es uns,\\
+        in die Black Box hineinzuschauen -- Circuit f\"ur Circuit.
+      }%
+    }
+  \end{center}
+
+  \quelle{Nanda et al.\ 2023; Cammarata et al.\ 2020; Olsson et al.\ 2022}
+\end{frame}
+
+\begin{frame}[plain]
+  {
+  \setbeamercolor{background canvas}{bg=dunkel}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node at (current page.center) {%
+      \begin{minipage}{0.8\textwidth}
+        \centering
+        {\Huge\color{white}\textbf{Danke!}}\\[1.5em]
+        {\large\color{white!70}Fragen?}\\[2em]
+        {\small\color{white!50}
+          Paper: Nanda et al.\ ``Progress Measures for Grokking\\
+          via Mechanistic Interpretability'' (ICLR 2023)\\[0.5em]
+          Code: \texttt{neelnanda.io/grokking-paper}
+        }
+      \end{minipage}
+    };
+  \end{tikzpicture}
+  }
+\end{frame}
+
+% ============================================================
+\end{document}
+% ============================================================
