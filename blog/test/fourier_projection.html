@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fourier Projection: Extracting Circles from Skewed Embedding Spaces</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 30px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+            color: #667eea;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+            color: #9b8ec4;
+        }
+        .section {
+            background: #12122a;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .math-block {
+            background: #1a1a3a;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            overflow-x: auto;
+            text-align: center;
+        }
+        .math-inline {
+            display: inline-block;
+            margin: 0 4px;
+            vertical-align: middle;
+        }
+        .plot-container {
+            width: 100%;
+            min-height: 500px;
+            margin: 15px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .control-group {
+            background: #1a1a3a;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #2a2a4a;
+        }
+        .control-group label {
+            display: block;
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            margin: 5px 0;
+            accent-color: #667eea;
+        }
+        .control-group .value-display {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .explanation {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #333;
+            font-size: 0.95em;
+        }
+        .explanation p {
+            margin: 8px 0;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .highlight {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2a2a4a;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .step.active {
+            background: #667eea;
+            transform: scale(1.2);
+        }
+        .step-connector {
+            width: 30px;
+            height: 2px;
+            background: #444;
+            align-self: center;
+        }
+        .result-box {
+            background: linear-gradient(135deg, #1a2a1a, #1a3a2a);
+            border: 1px solid #2a5a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .warning-box {
+            background: linear-gradient(135deg, #2a1a1a, #3a1a2a);
+            border: 1px solid #5a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 8px 16px;
+            background: #2a2a4a;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .tab.active {
+            background: #667eea;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .fourier-coeff-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .coeff-item {
+            background: #1a1a3a;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
+        .coeff-item .freq {
+            color: #667eea;
+            font-size: 0.8em;
+        }
+        .coeff-item .val {
+            color: #ffd700;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fourier Projection: Extracting Circles from Skewed Embedding Spaces</h1>
+        
+        <div class="section">
+            <h2>1. The Problem: Circles Live "Skewed" in High Dimensions</h2>
+            <div class="explanation">
+                <p>In the grokking paper, transformers trained on modular addition learn to embed inputs onto <span class="highlight">circles in the embedding space</span>. The key insight is that these circles don't align neatly with any 2D coordinate plane — they exist in a <span class="highlight">skewed orientation</span> across multiple dimensions.</p>
+                <p>Below, we have a circle that lives in 3D space but is tilted/rotated so that no single 2D slice (XY, XZ, or YZ plane) reveals the full circular structure. This is analogous to how embedding dimensions in a neural network don't align with the "natural" Fourier basis.</p>
+            </div>
+            
+            <div class="math-block" id="math-circle-def"></div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Tilt angle α (rotation around X-axis)</label>
+                    <input type="range" id="tiltAlpha" min="0" max="90" value="35" step="1">
+                    <div class="value-display" id="tiltAlphaVal">35°</div>
+                </div>
+                <div class="control-group">
+                    <label>Tilt angle β (rotation around Y-axis)</label>
+                    <input type="range" id="tiltBeta" min="0" max="90" value="50" step="1">
+                    <div class="value-display" id="tiltBetaVal">50°</div>
+                </div>
+                <div class="control-group">
+                    <label>Tilt angle γ (rotation around Z-axis)</label>
+                    <input type="range" id="tiltGamma" min="0" max="90" value="25" step="1">
+                    <div class="value-display" id="tiltGammaVal">25°</div>
+                </div>
+                <div class="control-group">
+                    <label>Frequency k (number of cycles)</label>
+                    <input type="range" id="freqK" min="1" max="10" value="3" step="1">
+                    <div class="value-display" id="freqKVal">3</div>
+                </div>
+                <div class="control-group">
+                    <label>Number of points P</label>
+                    <input type="range" id="numPoints" min="20" max="200" value="80" step="5">
+                    <div class="value-display" id="numPointsVal">80</div>
+                </div>
+                <div class="control-group">
+                    <label>Noise level</label>
+                    <input type="range" id="noiseLevel" min="0" max="50" value="5" step="1">
+                    <div class="value-display" id="noiseLevelVal">0.05</div>
+                </div>
+            </div>
+            
+            <div class="plot-container" id="plot3d"></div>
+            
+            <div class="math-block" id="math-rotation"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Why Simple Slicing Fails</h2>
+            <div class="explanation">
+                <p>If we try to look at the data by projecting onto standard coordinate planes (XY, XZ, YZ), we see <span class="highlight">ellipses or distorted shapes</span> — not clean circles. The circular structure is "spread out" across all three dimensions.</p>
+                <p>This is exactly what happens in neural network embeddings: the periodic structure exists in the Fourier basis, not in the standard neuron basis.</p>
+            </div>
+            
+            <div class="warning-box">
+                <strong>⚠️ The Problem:</strong> Standard axis-aligned projections distort the circle into ellipses. We lose the key structural information — the periodicity and uniform spacing of points.
+            </div>
+            
+            <div class="plot-container" id="plotSlices"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. The Discrete Fourier Transform (DFT) — The Key Tool</h2>
+            <div class="explanation">
+                <p>The <span class="highlight">Discrete Fourier Transform</span> decomposes a signal into its frequency components. For a sequence of P values, the DFT finds how much of each frequency is present.</p>
+                <p>In the grokking context, the embedding matrix maps inputs to sines and cosines at specific frequencies. The DFT lets us identify which frequencies are active.</p>
+            </div>
+            
+            <div class="math-block" id="math-dft"></div>
+            
+            <div class="math-block" id="math-dft-inverse"></div>
+            
+            <div class="explanation">
+                <p><strong>Key Insight:</strong> The DFT basis vectors are <span class="math-inline" id="math-basis-cos"></span> and <span class="math-inline" id="math-basis-sin"></span>. These form an orthogonal basis. Projecting our data onto these basis vectors extracts the circular component at frequency k.</p>
+            </div>
+            
+            <div class="math-block" id="math-projection"></div>
+        </div>
+
+        <div class="section">
+            <h2>4. Fourier Projection in Action</h2>
+            <div class="explanation">
+                <p>Now we apply the Fourier projection. For each coordinate (x, y, z) of our skewed circle, we compute the DFT and look at the component at frequency k. The Fourier coefficients at frequency k give us the <span class="highlight">amplitude and phase</span> of the circular motion in each dimension.</p>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Projection frequency to examine</label>
+                    <input type="range" id="projFreq" min="1" max="10" value="3" step="1">
+                    <div class="value-display" id="projFreqVal">3</div>
+                </div>
+            </div>
+            
+            <div class="math-block" id="math-fourier-proj"></div>
+            
+            <h3>Fourier Spectrum of Each Coordinate</h3>
+            <div class="plot-container" id="plotSpectrum"></div>
+            
+            <div class="result-box" id="spectrumResult">
+                <strong>✓ Result:</strong> The DFT reveals a clear peak at frequency k in all three coordinates. This tells us the circle is there, just rotated.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>5. Extracting the Circle via Fourier Projection</h2>
+            <div class="explanation">
+                <p>The magic of Fourier projection: we take the DFT coefficients at frequency k from each coordinate dimension, and these coefficients define a <span class="highlight">2D plane</span> in which the circle lives. We can then project our 3D points onto this plane to recover the clean circle.</p>
+                <p>Specifically, for each dimension d, the Fourier coefficient at frequency k gives us:</p>
+            </div>
+            
+            <div class="math-block" id="math-extraction"></div>
+            
+            <div class="explanation">
+                <p>The vectors <span class="math-inline" id="math-vec-a"></span> (cosine coefficients) and <span class="math-inline" id="math-vec-b"></span> (sine coefficients) across all dimensions define the plane of the circle. Projecting onto these directions recovers the circular structure!</p>
+            </div>
+            
+            <div class="grid-2">
+                <div>
+                    <h3>Before: Axis-aligned projection (XY plane)</h3>
+                    <div class="plot-container" id="plotBefore"></div>
+                </div>
+                <div>
+                    <h3>After: Fourier-extracted circle</h3>
+                    <div class="plot-container" id="plotAfter"></div>
+                </div>
+            </div>
+            
+            <div class="result-box">
+                <strong>✓ Key Result:</strong> The Fourier projection successfully extracts the clean circular structure regardless of how the circle is oriented in 3D space!
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>6. The Full Algorithm (As Used in Grokking)</h2>
+            <div class="explanation">
+                <p>In the grokking paper, the transformer learns to:</p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Embed inputs a onto rotations: <span class="math-inline" id="math-step1"></span></li>
+                    <li>Compose rotations using trig identities to compute <span class="math-inline" id="math-step2"></span></li>
+                    <li>Read off logits using <span class="math-inline" id="math-step3"></span></li>
+                </ol>
+            </div>
+            
+            <div class="math-block" id="math-algorithm"></div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Input a (mod P)</label>
+                    <input type="range" id="inputA" min="0" max="112" value="17" step="1">
+                    <div class="value-display" id="inputAVal">17</div>
+                </div>
+                <div class="control-group">
+                    <label>Input b (mod P)</label>
+                    <input type="range" id="inputB" min="0" max="112" value="42" step="1">
+                    <div class="value-display" id="inputBVal">42</div>
+                </div>
+                <div class="control-group">
+                    <label>Prime P</label>
+                    <input type="range" id="primeP" min="7" max="113" value="113" step="2">
+                    <div class="value-display" id="primePVal">113</div>
+                </div>
+            </div>
+            
+            <div class="plot-container" id="plotLogits"></div>
+            
+            <div class="result-box" id="logitResult">
+                The cosine waves constructively interfere at c* = a + b mod P, giving it the largest logit.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>7. Interactive: See the Fourier Basis Decomposition</h2>
+            <div class="explanation">
+                <p>Here you can see how the embedding of a single input looks in the Fourier basis. The embedding matrix W_E maps each input to a vector that is <span class="highlight">sparse in the Fourier basis</span> — only a few key frequencies have significant amplitude.</p>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Number of key frequencies</label>
+                    <input type="range" id="numKeyFreqs" min="1" max="8" value="5" step="1">
+                    <div class="value-display" id="numKeyFreqsVal">5</div>
+                </div>
+                <div class="control-group">
+                    <label>Show constructive interference</label>
+                    <input type="range" id="showInterference" min="1" max="5" value="5" step="1">
+                    <div class="value-display" id="showInterferenceVal">5 frequencies</div>
+                </div>
+            </div>
+            
+            <div class="plot-container" id="plotInterference"></div>
+            
+            <div class="math-block" id="math-interference"></div>
+            
+            <div class="explanation">
+                <p>The sum of cosine waves at different key frequencies creates <span class="highlight">constructive interference</span> at x = 0 mod P (the correct answer) and <span class="highlight">destructive interference</span> everywhere else. This is how the model "picks out" the right answer!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>8. Summary: Why Fourier Projection Works</h2>
+            <div class="explanation">
+                <p><strong>The core idea:</strong></p>
+                <ol style="margin-left: 20px;">
+                    <li style="margin: 10px 0;"><strong>Circles in embedding space</strong> don't align with coordinate axes — they're "skewed" across many dimensions.</li>
+                    <li style="margin: 10px 0;"><strong>The DFT</strong> provides an orthogonal basis of sinusoidal functions at different frequencies.</li>
+                    <li style="margin: 10px 0;"><strong>Fourier projection</strong> = computing the inner product of the data with sin/cos at each frequency. This extracts the amplitude of circular motion at that frequency.</li>
+                    <li style="margin: 10px 0;">The <strong>Fourier coefficients</strong> at a given frequency k define the 2D plane in which the circle at that frequency lives.</li>
+                    <li style="margin: 10px 0;">Multiple frequencies can be <strong>superimposed</strong> — the DFT separates them cleanly because sin/cos at different frequencies are orthogonal.</li>
+                </ol>
+            </div>
+            
+            <div class="math-block" id="math-summary"></div>
+        </div>
+    </div>
+
+    <script>
+    // ============ MATH RENDERING ============
+    function renderMath() {
+        const mathElements = {
+            'math-circle-def': `\\text{A circle in 2D: } \\mathbf{p}(t) = \\begin{pmatrix} \\cos(w_k t) \\\\ \\sin(w_k t) \\end{pmatrix}, \\quad w_k = \\frac{2\\pi k}{P}, \\quad t \\in \\{0, 1, \\ldots, P-1\\}`,
+            
+            'math-rotation': `\\text{Rotation matrix: } R(\\alpha, \\beta, \\gamma) = R_z(\\gamma) \\cdot R_y(\\beta) \\cdot R_x(\\alpha) \\quad \\Rightarrow \\quad \\mathbf{p}_{3D}(t) = R \\cdot \\begin{pmatrix} \\cos(w_k t) \\\\ \\sin(w_k t) \\\\ 0 \\end{pmatrix}`,
+            
+            'math-dft': `\\text{DFT: } \\hat{X}[k] = \\sum_{n=0}^{P-1} x[n] \\cdot e^{-i \\frac{2\\pi k n}{P}} = \\underbrace{\\sum_{n=0}^{P-1} x[n] \\cos\\!\\left(\\frac{2\\pi k n}{P}\\right)}_{\\text{Real part (cosine coeff)}} - i\\underbrace{\\sum_{n=0}^{P-1} x[n] \\sin\\!\\left(\\frac{2\\pi k n}{P}\\right)}_{\\text{Imag part (sine coeff)}}`,
+            
+            'math-dft-inverse': `\\text{Inverse DFT: } x[n] = \\frac{1}{P}\\sum_{k=0}^{P-1} \\hat{X}[k] \\cdot e^{i \\frac{2\\pi k n}{P}}`,
+            
+            'math-projection': `\\text{Fourier projection onto frequency } k: \\quad a_k = \\frac{2}{P}\\sum_{n=0}^{P-1} x[n]\\cos\\!\\left(\\frac{2\\pi k n}{P}\\right), \\quad b_k = \\frac{2}{P}\\sum_{n=0}^{P-1} x[n]\\sin\\!\\left(\\frac{2\\pi k n}{P}\\right)`,
+            
+            'math-fourier-proj': `\\text{For each dimension } d \\in \\{x,y,z\\}: \\quad \\hat{X}_d[k] = \\sum_{n} X_d[n] e^{-i2\\pi kn/P} \\quad \\Rightarrow \\quad |\\hat{X}_d[k]| \\text{ gives amplitude at freq } k`,
+            
+            'math-extraction': `\\vec{a} = \\begin{pmatrix} a_k^{(x)} \\\\ a_k^{(y)} \\\\ a_k^{(z)} \\end{pmatrix} = \\frac{2}{P}\\sum_n \\mathbf{p}_{3D}(n) \\cos(w_k n), \\quad \\vec{b} = \\begin{pmatrix} b_k^{(x)} \\\\ b_k^{(y)} \\\\ b_k^{(z)} \\end{pmatrix} = \\frac{2}{P}\\sum_n \\mathbf{p}_{3D}(n) \\sin(w_k n)`,
+            
+            'math-algorithm': `\\text{Logit}(c) = \\sum_{k \\in \\text{keys}} \\alpha_k \\cos(w_k(a+b-c)) \\quad \\text{maximized when } c \\equiv a+b \\pmod{P}`,
+            
+            'math-interference': `\\text{Output}(c) = \\sum_{k=1}^{K} \\cos\\!\\left(\\frac{2\\pi k_i}{P}(a+b-c)\\right) \\quad \\xrightarrow{c = a+b \\bmod P} \\quad \\sum_{k=1}^{K} \\cos(0) = K \\quad (\\text{maximum!})`,
+            
+            'math-summary': `\\boxed{\\text{Fourier Projection: } \\quad \\text{proj}_k(\\mathbf{x}) = \\left(\\langle \\mathbf{x}, \\cos(w_k \\cdot) \\rangle, \\; \\langle \\mathbf{x}, \\sin(w_k \\cdot) \\rangle\\right) \\quad \\text{extracts the circle at frequency } k}`
+        };
+        
+        const inlineMath = {
+            'math-basis-cos': `\\cos(2\\pi k n / P)`,
+            'math-basis-sin': `\\sin(2\\pi k n / P)`,
+            'math-vec-a': `\\vec{a}`,
+            'math-vec-b': `\\vec{b}`,
+            'math-step1': `\\cos(w_k a), \\sin(w_k a)`,
+            'math-step2': `\\cos(w_k(a+b)), \\sin(w_k(a+b))`,
+            'math-step3': `\\cos(w_k(a+b-c))`
+        };
+        
+        for (const [id, tex] of Object.entries(mathElements)) {
+            const el = document.getElementById(id);
+            if (el) {
+                try {
+                    temml.render(tex, el, { displayMode: true });
+                } catch(e) {
+                    el.textContent = tex;
+                }
+            }
+        }
+        
+        for (const [id, tex] of Object.entries(inlineMath)) {
+            const el = document.getElementById(id);
+            if (el) {
+                try {
+                    temml.render(tex, el, { displayMode: false });
+                } catch(e) {
+                    el.textContent = tex;
+                }
+            }
+        }
+    }
+
+    // ============ MATH UTILITIES ============
+    function rotationMatrix(alpha, beta, gamma) {
+        const ca = Math.cos(alpha), sa = Math.sin(alpha);
+        const cb = Math.cos(beta), sb = Math.sin(beta);
+        const cg = Math.cos(gamma), sg = Math.sin(gamma);
+        
+        return [
+            [cb*cg, sa*sb*cg - ca*sg, ca*sb*cg + sa*sg],
+            [cb*sg, sa*sb*sg + ca*cg, ca*sb*sg - sa*cg],
+            [-sb, sa*cb, ca*cb]
+        ];
+    }
+
+    function matVecMul(M, v) {
+        return [
+            M[0][0]*v[0] + M[0][1]*v[1] + M[0][2]*v[2],
+            M[1][0]*v[0] + M[1][1]*v[1] + M[1][2]*v[2],
+            M[2][0]*v[0] + M[2][1]*v[1] + M[2][2]*v[2]
+        ];
+    }
+
+    function dft(signal) {
+        const N = signal.length;
+        const result = [];
+        for (let k = 0; k < N; k++) {
+            let re = 0, im = 0;
+            for (let n = 0; n < N; n++) {
+                const angle = 2 * Math.PI * k * n / N;
+                re += signal[n] * Math.cos(angle);
+                im -= signal[n] * Math.sin(angle);
+            }
+            result.push({ re: re / N, im: im / N, mag: Math.sqrt(re*re + im*im) / N });
+        }
+        return result;
+    }
+
+    // ============ GLOBAL STATE ============
+    let state = {
+        tiltAlpha: 35,
+        tiltBeta: 50,
+        tiltGamma: 25,
+        freqK: 3,
+        numPoints: 80,
+        noiseLevel: 0.05,
+        projFreq: 3,
+        inputA: 17,
+        inputB: 42,
+        primeP: 113,
+        numKeyFreqs: 5,
+        showInterference: 5
+    };
+
+    // ============ GENERATE DATA ============
+    function generateSkewedCircle() {
+        const P = state.numPoints;
+        const k = state.freqK;
+        const alpha = state.tiltAlpha * Math.PI / 180;
+        const beta = state.tiltBeta * Math.PI / 180;
+        const gamma = state.tiltGamma * Math.PI / 180;
+        const noise = state.noiseLevel;
+        
+        const R = rotationMatrix(alpha, beta, gamma);
+        
+        const xs = [], ys = [], zs = [];
+        const xs_clean = [], ys_clean = [], zs_clean = [];
+        
+        for (let n = 0; n < P; n++) {
+            const t = 2 * Math.PI * k * n / P;
+            const v = [Math.cos(t), Math.sin(t), 0];
+            const rotated = matVecMul(R, v);
+            
+            xs_clean.push(rotated[0]);
+            ys_clean.push(rotated[1]);
+            zs_clean.push(rotated[2]);
+            
+            xs.push(rotated[0] + (Math.random() - 0.5) * noise * 2);
+            ys.push(rotated[1] + (Math.random() - 0.5) * noise * 2);
+            zs.push(rotated[2] + (Math.random() - 0.5) * noise * 2);
+        }
+        
+        return { xs, ys, zs, xs_clean, ys_clean, zs_clean };
+    }
+
+    // ============ PLOTTING FUNCTIONS ============
+    function plot3D() {
+        const data = generateSkewedCircle();
+        
+        // Color by index to show ordering
+        const colors = Array.from({length: state.numPoints}, (_, i) => i);
+        
+        const trace1 = {
+            x: data.xs, y: data.ys, z: data.zs,
+            mode: 'markers',
+            type: 'scatter3d',
+            marker: { size: 4, color: colors, colorscale: 'HSV', opacity: 0.8 },
+            name: 'Skewed Circle (with noise)'
+        };
+        
+        const trace2 = {
+            x: data.xs_clean, y: data.ys_clean, z: data.zs_clean,
+            mode: 'lines',
+            type: 'scatter3d',
+            line: { color: 'rgba(255,255,255,0.3)', width: 2 },
+            name: 'True Circle'
+        };
+        
+        // Draw coordinate axes
+        const axisLen = 1.3;
+        const axes = [
+            { x: [0, axisLen], y: [0, 0], z: [0, 0], name: 'X-axis', color: 'red' },
+            { x: [0, 0], y: [0, axisLen], z: [0, 0], name: 'Y-axis', color: 'green' },
+            { x: [0, 0], y: [0, 0], z: [0, axisLen], name: 'Z-axis', color: 'blue' }
+        ];
+        
+        const axisTraces = axes.map(a => ({
+            x: a.x, y: a.y, z: a.z,
+            mode: 'lines',
+            type: 'scatter3d',
+            line: { color: a.color, width: 4 },
+            name: a.name,
+            showlegend: false
+        }));
+        
+        const layout = {
+            scene: {
+                xaxis: { title: 'Dim 1', range: [-1.5, 1.5], gridcolor: '#333' },
+                yaxis: { title: 'Dim 2', range: [-1.5, 1.5], gridcolor: '#333' },
+                zaxis: { title: 'Dim 3', range: [-1.5, 1.5], gridcolor: '#333' },
+                bgcolor: '#0a0a1a',
+                camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+            },
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            title: { text: 'Skewed Circle in 3D Embedding Space', font: { size: 16 } },
+            margin: { t: 50, b: 30 },
+            showlegend: true,
+            legend: { x: 0, y: 1, bgcolor: 'rgba(0,0,0,0.5)' }
+        };
+        
+        Plotly.newPlot('plot3d', [trace1, trace2, ...axisTraces], layout, {responsive: true});
+    }
+
+    function plotSlices() {
+        const data = generateSkewedCircle();
+        
+        const trace_xy = {
+            x: data.xs, y: data.ys,
+            mode: 'markers',
+            type: 'scatter',
+            marker: { size: 5, color: Array.from({length: state.numPoints}, (_, i) => i), colorscale: 'HSV' },
+            name: 'XY Projection',
+            xaxis: 'x', yaxis: 'y'
+        };
+        
+        const trace_xz = {
+            x: data.xs, y: data.zs,
+            mode: 'markers',
+            type: 'scatter',
+            marker: { size: 5, color: Array.from({length: state.numPoints}, (_, i) => i), colorscale: 'HSV' },
+            name: 'XZ Projection',
+            xaxis: 'x2', yaxis: 'y2'
+        };
+        
+        const trace_yz = {
+            x: data.ys, y: data.zs,
+            mode: 'markers',
+            type: 'scatter',
+            marker: { size: 5, color: Array.from({length: state.numPoints}, (_, i) => i), colorscale: 'HSV' },
+            name: 'YZ Projection',
+            xaxis: 'x3', yaxis: 'y3'
+        };
+        
+        const layout = {
+            grid: { rows: 1, columns: 3, pattern: 'independent' },
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3a',
+            font: { color: '#e0e0e0' },
+            title: { text: 'Axis-Aligned Projections (Slices) — Circles Appear Distorted!', font: { size: 14 } },
+            xaxis: { title: 'X', gridcolor: '#333', range: [-1.5, 1.5] },
+            yaxis: { title: 'Y', gridcolor: '#333', range: [-1.5, 1.5] },
+            xaxis2: { title: 'X', gridcolor: '#333', range: [-1.5, 1.5] },
+            yaxis2: { title: 'Z', gridcolor: '#333', range: [-1.5, 1.5] },
+            xaxis3: { title: 'Y', gridcolor: '#333', range: [-1.5, 1.5] },
+            yaxis3: { title: 'Z', gridcolor: '#333', range: [-1.5, 1.5] },
+            annotations: [
+                { text: 'XY Plane', x: 0.13, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { color: '#ff6b6b' } },
+                { text: 'XZ Plane', x: 0.5, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { color: '#ff6b6b' } },
+                { text: 'YZ Plane', x: 0.87, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { color: '#ff6b6b' } }
+            ],
+            showlegend: false,
+            margin: { t: 60, b: 40 },
+            height: 350
+        };
+        
+        Plotly.newPlot('plotSlices', [trace_xy, trace_xz, trace_yz], layout, {responsive: true});
+    }
+
+    function plotSpectrum() {
+        const data = generateSkewedCircle();
+        const P = state.numPoints;
+        
+        const dftX = dft(data.xs);
+        const dftY = dft(data.ys);
+        const dftZ = dft(data.zs);
+        
+        const freqs = Array.from({length: Math.floor(P/2)}, (_, i) => i);
+        const magX = freqs.map(k => dftX[k].mag * 2);
+        const magY = freqs.map(k => dftY[k].mag * 2);
+        const magZ = freqs.map(k => dftZ[k].mag * 2);
+        
+        const traceX = {
+            x: freqs, y: magX,
+            type: 'bar',
+            name: '|DFT(x)|',
+            marker: { color: 'rgba(255, 99, 132, 0.7)' },
+            xaxis: 'x', yaxis: 'y'
+        };
+        
+        const traceY = {
+            x: freqs, y: magY,
+            type: 'bar',
+            name: '|DFT(y)|',
+            marker: { color: 'rgba(75, 192, 192, 0.7)' },
+            xaxis: 'x2', yaxis: 'y2'
+        };
+        
+        const traceZ = {
+            x: freqs, y: magZ,
+            type: 'bar',
+            name: '|DFT(z)|',
+            marker: { color: 'rgba(153, 102, 255, 0.7)' },
+            xaxis: 'x3', yaxis: 'y3'
+        };
+        
+        // Highlight the target frequency
+        const highlightX = {
+            x: [state.projFreq], y: [magX[state.projFreq] || 0],
+            type: 'scatter', mode: 'markers',
+            marker: { size: 15, color: 'yellow', symbol: 'star' },
+            name: `Freq k=${state.projFreq}`,
+            xaxis: 'x', yaxis: 'y', showlegend: true
+        };
+        const highlightY = {
+            x: [state.projFreq], y: [magY[state.projFreq] || 0],
+            type: 'scatter', mode: 'markers',
+            marker: { size: 15, color: 'yellow', symbol: 'star' },
+            xaxis: 'x2', yaxis: 'y2', showlegend: false
+        };
+        const highlightZ = {
+            x: [state.projFreq], y: [magZ[state.projFreq] || 0],
+            type: 'scatter', mode: 'markers',
+            marker: { size: 15, color: 'yellow', symbol: 'star' },
+            xaxis: 'x3', yaxis: 'y3', showlegend: false
+        };
+        
+        const layout = {
+            grid: { rows: 1, columns: 3, pattern: 'independent' },
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3a',
+            font: { color: '#e0e0e0' },
+            title: { text: 'Fourier Spectrum of Each Coordinate (★ = target frequency)', font: { size: 14 } },
+            xaxis: { title: 'Frequency k', gridcolor: '#333' },
+            yaxis: { title: 'Magnitude', gridcolor: '#333' },
+            xaxis2: { title: 'Frequency k', gridcolor: '#333' },
+            yaxis2: { title: 'Magnitude', gridcolor: '#333' },
+            xaxis3: { title: 'Frequency k', gridcolor: '#333' },
+            yaxis3: { title: 'Magnitude', gridcolor: '#333' },
+            annotations: [
+                { text: 'X coordinate', x: 0.13, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { color: '#ff6384' } },
+                { text: 'Y coordinate', x: 0.5, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { color: '#4bc0c0' } },
+                { text: 'Z coordinate', x: 0.87, y: 1.08, xref: 'paper', yref: 'paper', showarrow: false, font: { color: '#9966ff' } }
+            ],
+            showlegend: true,
+            legend: { x: 0, y: -0.2, orientation: 'h' },
+            margin: { t: 60, b: 60 },
+            height: 350,
+            barmode: 'group'
+        };
+        
+        Plotly.newPlot('plotSpectrum', [traceX, traceY, traceZ, highlightX, highlightY, highlightZ], layout, {responsive: true});
+        
+        // Update result text
+        const peakFreq = state.freqK;
+        const matchesTarget = state.projFreq === peakFreq;
+        const resultEl = document.getElementById('spectrumResult');
+        if (matchesTarget) {
+            resultEl.innerHTML = `<strong>✓ Result:</strong> The DFT reveals a clear peak at frequency k=${peakFreq} in all three coordinates. The projection frequency matches the circle frequency — the Fourier projection will extract the circle perfectly!`;
+            resultEl.className = 'result-box';
+        } else {
+            resultEl.innerHTML = `<strong>⚠️ Mismatch:</strong> The circle lives at frequency k=${peakFreq}, but you're looking at frequency k=${state.projFreq}. Change the projection frequency to ${peakFreq} to extract the circle!`;
+            resultEl.className = 'warning-box';
+        }
+    }
+
+    function plotBeforeAfter() {
+        const data = generateSkewedCircle();
+        const P = state.numPoints;
+        const k = state.projFreq;
+        
+        // "Before" - simple XY projection
+        const traceBefore = {
+            x: data.xs, y: data.ys,
+            mode: 'markers+lines',
+            type: 'scatter',
+            marker: { size: 6, color: Array.from({length: P}, (_, i) => i), colorscale: 'HSV' },
+            line: { color: 'rgba(255,255,255,0.2)', width: 1 },
+            name: 'XY Projection'
+        };
+        
+        // "After" - Fourier projection
+        // Compute Fourier coefficients at frequency k for each coordinate
+        let ax = 0, bx = 0, ay = 0, by = 0, az = 0, bz = 0;
+        for (let n = 0; n < P; n++) {
+            const angle = 2 * Math.PI * k * n / P;
+            const cosA = Math.cos(angle);
+            const sinA = Math.sin(angle);
+            ax += data.xs[n] * cosA;
+            bx += data.xs[n] * sinA;
+            ay += data.ys[n] * cosA;
+            by += data.ys[n] * sinA;
+            az += data.zs[n] * cosA;
+            bz += data.zs[n] * sinA;
+        }
+        ax *= 2/P; bx *= 2/P;
+        ay *= 2/P; by *= 2/P;
+        az *= 2/P; bz *= 2/P;
+        
+        // The vectors a_vec = [ax, ay, az] and b_vec = [bx, by, bz] define the plane
+        const a_vec = [ax, ay, az];
+        const b_vec = [bx, by, bz];
+        
+        // Normalize for better visualization
+        const a_norm = Math.sqrt(a_vec[0]**2 + a_vec[1]**2 + a_vec[2]**2);
+        const b_norm = Math.sqrt(b_vec[0]**2 + b_vec[1]**2 + b_vec[2]**2);
+        
+        // Project each point onto the Fourier plane
+        const projCos = [], projSin = [];
+        for (let n = 0; n < P; n++) {
+            const point = [data.xs[n], data.ys[n], data.zs[n]];
+            // Project onto a_vec and b_vec directions
+            const dotA = (point[0]*a_vec[0] + point[1]*a_vec[1] + point[2]*a_vec[2]) / (a_norm || 1);
+            const dotB = (point[0]*b_vec[0] + point[1]*b_vec[1] + point[2]*b_vec[2]) / (b_norm || 1);
+            projCos.push(dotA);
+            projSin.push(dotB);
+        }
+        
+        const traceAfter = {
+            x: projCos, y: projSin,
+            mode: 'markers+lines',
+            type: 'scatter',
+            marker: { size: 6, color: Array.from({length: P}, (_, i) => i), colorscale: 'HSV' },
+            line: { color: 'rgba(255,255,255,0.2)', width: 1 },
+            name: 'Fourier Projection'
+        };
+        
+        const layoutBefore = {
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3a',
+            font: { color: '#e0e0e0' },
+            xaxis: { title: 'X', gridcolor: '#333', scaleanchor: 'y' },
+            yaxis: { title: 'Y', gridcolor: '#333' },
+            showlegend: false,
+            margin: { t: 20, b: 40, l: 50, r: 20 },
+            height: 400
+        };
+        
+        const layoutAfter = {
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3a',
+            font: { color: '#e0e0e0' },
+            xaxis: { title: 'cos direction (â)', gridcolor: '#333', scaleanchor: 'y' },
+            yaxis: { title: 'sin direction (b̂)', gridcolor: '#333' },
+            showlegend: false,
+            margin: { t: 20, b: 40, l: 50, r: 20 },
+            height: 400
+        };
+        
+        Plotly.newPlot('plotBefore', [traceBefore], layoutBefore, {responsive: true});
+        Plotly.newPlot('plotAfter', [traceAfter], layoutAfter, {responsive: true});
+    }
+
+    function plotLogits() {
+        const P = state.primeP;
+        const a = state.inputA % P;
+        const b = state.inputB % P;
+        const correctC = (a + b) % P;
+        
+        // Use a few key frequencies (simulating what the model learns)
+        const keyFreqs = [14, 35, 41, 42, 52].filter(k => k < Math.floor(P/2));
+        
+        // If P is small, use different frequencies
+        const freqs = P >= 113 ? keyFreqs : Array.from({length: Math.min(5, Math.floor(P/4))}, (_, i) => i + 1);
+        
+        const logits = [];
+        for (let c = 0; c < P; c++) {
+            let logit = 0;
+            for (const k of freqs) {
+                const wk = 2 * Math.PI * k / P;
+                logit += Math.cos(wk * (a + b - c));
+            }
+            logits.push(logit);
+        }
+        
+        const cs = Array.from({length: P}, (_, i) => i);
+        
+        // Color bars: highlight the correct answer
+        const colors = cs.map(c => c === correctC ? 'rgba(255, 215, 0, 0.9)' : 'rgba(102, 126, 234, 0.6)');
+        
+        const trace = {
+            x: cs, y: logits,
+            type: 'bar',
+            marker: { color: colors },
+            name: 'Logit(c)'
+        };
+        
+        // Also show individual cosine contributions
+        const cosTraces = freqs.map((k, idx) => {
+            const wk = 2 * Math.PI * k / P;
+            const vals = cs.map(c => Math.cos(wk * (a + b - c)));
+            return {
+                x: cs, y: vals,
+                type: 'scatter',
+                mode: 'lines',
+                line: { width: 1, dash: 'dot' },
+                name: `cos(w_${k}(a+b-c))`,
+                opacity: 0.5,
+                visible: 'legendonly'
+            };
+        });
+        
+        const layout = {
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3a',
+            font: { color: '#e0e0e0' },
+            title: { text: `Logits for a=${a}, b=${b} (correct: c*=${correctC})`, font: { size: 14 } },
+            xaxis: { title: 'Output c', gridcolor: '#333' },
+            yaxis: { title: 'Logit value', gridcolor: '#333' },
+            showlegend: true,
+            legend: { x: 0.7, y: 1, bgcolor: 'rgba(0,0,0,0.5)' },
+            margin: { t: 50, b: 50 },
+            height: 400,
+            annotations: [{
+                x: correctC, y: logits[correctC],
+                text: `c*=${correctC}`,
+                showarrow: true,
+                arrowhead: 2,
+                arrowcolor: '#ffd700',
+                font: { color: '#ffd700', size: 14 }
+            }]
+        };
+        
+        Plotly.newPlot('plotLogits', [trace, ...cosTraces], layout, {responsive: true});
+        
+        document.getElementById('logitResult').innerHTML = 
+            `<strong>✓ Constructive Interference:</strong> At c* = ${a} + ${b} mod ${P} = <span class="highlight">${correctC}</span>, all ${freqs.length} cosine waves equal 1 (since cos(0) = 1), giving a total logit of ${freqs.length}. Everywhere else, the waves destructively interfere, giving small logits.`;
+    }
+
+    function plotInterference() {
+        const P = state.primeP;
+        const numK = state.numKeyFreqs;
+        const showK = state.showInterference;
+        
+        // Generate key frequencies
+        const allFreqs = P >= 113 ? [14, 35, 41, 42, 52] : Array.from({length: 8}, (_, i) => i + 1);
+        const freqs = allFreqs.slice(0, numK);
+        const showFreqs = freqs.slice(0, showK);
+        
+        const xs = Array.from({length: P}, (_, i) => i);
+        
+        // Individual cosine waves
+        const individualTraces = showFreqs.map((k, idx) => {
+            const wk = 2 * Math.PI * k / P;
+            const vals = xs.map(x => Math.cos(wk * x));
+            return {
+                x: xs, y: vals,
+                type: 'scatter',
+                mode: 'lines',
+                name: `cos(2π·${k}·x/${P})`,
+                line: { width: 1.5, dash: 'dot' },
+                opacity: 0.6
+            };
+        });
+        
+        // Sum
+        const sumVals = xs.map(x => {
+            let sum = 0;
+            for (const k of showFreqs) {
+                sum += Math.cos(2 * Math.PI * k * x / P);
+            }
+            return sum;
+        });
+        
+        const sumTrace = {
+            x: xs, y: sumVals,
+            type: 'scatter',
+            mode: 'lines',
+            name: `Sum of ${showK} cosines`,
+            line: { width: 3, color: '#ffd700' }
+        };
+        
+        // Highlight x=0
+        const highlightTrace = {
+            x: [0], y: [showK],
+            type: 'scatter',
+            mode: 'markers',
+            marker: { size: 15, color: 'red', symbol: 'star' },
+            name: `x=0: sum=${showK}`
+        };
+        
+        const layout = {
+            paper_bgcolor: '#12122a',
+            plot_bgcolor: '#1a1a3a',
+            font: { color: '#e0e0e0' },
+            title: { text: `Constructive Interference: Sum of ${showK} cosine waves (peak at x=0)`, font: { size: 14 } },
+            xaxis: { title: 'x (= a+b-c)', gridcolor: '#333' },
+            yaxis: { title: 'Value', gridcolor: '#333' },
+            showlegend: true,
+            legend: { x: 0.7, y: 1, bgcolor: 'rgba(0,0,0,0.5)' },
+            margin: { t: 50, b: 50 },
+            height: 400
+        };
+        
+        Plotly.newPlot('plotInterference', [...individualTraces, sumTrace, highlightTrace], layout, {responsive: true});
+    }
+
+    // ============ EVENT HANDLERS ============
+    function setupControls() {
+        const controls = [
+            { id: 'tiltAlpha', key: 'tiltAlpha', display: v => v + '°' },
+            { id: 'tiltBeta', key: 'tiltBeta', display: v => v + '°' },
+            { id: 'tiltGamma', key: 'tiltGamma', display: v => v + '°' },
+            { id: 'freqK', key: 'freqK', display: v => v },
+            { id: 'numPoints', key: 'numPoints', display: v => v },
+            { id: 'noiseLevel', key: 'noiseLevel', display: v => (v/100).toFixed(2), transform: v => v/100 },
+            { id: 'projFreq', key: 'projFreq', display: v => v },
+            { id: 'inputA', key: 'inputA', display: v => v },
+            { id: 'inputB', key: 'inputB', display: v => v },
+            { id: 'primeP', key: 'primeP', display: v => v },
+            { id: 'numKeyFreqs', key: 'numKeyFreqs', display: v => v },
+            { id: 'showInterference', key: 'showInterference', display: v => v + ' frequencies' }
+        ];
+        
+        controls.forEach(ctrl => {
+            const el = document.getElementById(ctrl.id);
+            if (!el) return;
+            
+            el.addEventListener('input', function() {
+                const rawVal = parseInt(this.value);
+                state[ctrl.key] = ctrl.transform ? ctrl.transform(rawVal) : rawVal;
+                document.getElementById(ctrl.id + 'Val').textContent = ctrl.display(rawVal);
+                updatePlots(ctrl.key);
+            });
+        });
+    }
+
+    function updatePlots(changedKey) {
+        const upperPlots = ['tiltAlpha', 'tiltBeta', 'tiltGamma', 'freqK', 'numPoints', 'noiseLevel'];
+        const spectrumPlots = ['tiltAlpha', 'tiltBeta', 'tiltGamma', 'freqK', 'numPoints', 'noiseLevel', 'projFreq'];
+        const logitPlots = ['inputA', 'inputB', 'primeP'];
+        const interferencePlots = ['numKeyFreqs', 'showInterference', 'primeP'];
+        
+        if (upperPlots.includes(changedKey)) {
+            plot3D();
+            plotSlices();
+        }
+        if (spectrumPlots.includes(changedKey)) {
+            plotSpectrum();
+            plotBeforeAfter();
+        }
+        if (logitPlots.includes(changedKey)) {
+            plotLogits();
+        }
+        if (interferencePlots.includes(changedKey)) {
+            plotInterference();
+        }
+    }
+
+    // ============ INITIALIZATION ============
+    document.addEventListener('DOMContentLoaded', function() {
+        renderMath();
+        setupControls();
+        
+        // Initial plots
+        plot3D();
+        plotSlices();
+        plotSpectrum();
+        plotBeforeAfter();
+        plotLogits();
+        plotInterference();
+    });
+    </script>
+</body>
+</html>
