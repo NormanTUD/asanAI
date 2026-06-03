@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRNG Visual Explorer</title>
+    <!-- Temml for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f1117;
+            --card-bg: #1a1d27;
+            --accent: #6c63ff;
+            --accent2: #00d4aa;
+            --accent3: #ff6b6b;
+            --text: #e4e4e7;
+            --text-dim: #9ca3af;
+            --border: #2d3148;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+            color: var(--accent2);
+        }
+
+        .section h3 {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.5rem;
+            color: var(--accent);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .badge-insecure {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--accent3);
+            border: 1px solid var(--accent3);
+        }
+
+        .badge-secure {
+            background: rgba(0, 212, 170, 0.15);
+            color: var(--accent2);
+            border: 1px solid var(--accent2);
+        }
+
+        .math-block {
+            background: #12141c;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .code-block {
+            background: #12141c;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #a5d6ff;
+            white-space: pre;
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.7rem 1rem;
+            background: rgba(108, 99, 255, 0.05);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+        }
+
+        .step-num {
+            background: var(--accent);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .viz-canvas {
+            width: 100%;
+            height: 200px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1rem 0;
+            background: #12141c;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        button {
+            padding: 0.5rem 1.2rem;
+            border: 1px solid var(--accent);
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--accent);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        input[type="number"] {
+            padding: 0.5rem 0.8rem;
+            border: 1px solid var(--border);
+            background: #12141c;
+            color: var(--text);
+            border-radius: 8px;
+            width: 120px;
+            font-size: 0.9rem;
+        }
+
+        label {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            body { padding: 1rem; }
+        }
+
+        .bit-display {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            word-break: break-all;
+            color: var(--accent2);
+        }
+
+        .highlight { color: #fbbf24; font-weight: bold; }
+        .highlight2 { color: var(--accent2); font-weight: bold; }
+        .highlight3 { color: var(--accent3); font-weight: bold; }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border);
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--accent);
+        }
+
+        .output-box {
+            background: #12141c;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            min-height: 60px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .warning-box {
+            background: rgba(255, 107, 107, 0.08);
+            border: 1px solid var(--accent3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .info-box {
+            background: rgba(0, 212, 170, 0.08);
+            border: 1px solid var(--accent2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            padding: 1rem;
+        }
+
+        .flow-box {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: rgba(108, 99, 255, 0.08);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .flow-arrow {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🎲 PRNG Visual Explorer</h1>
+<p class="subtitle">Understanding Pseudo-Random Number Generators — from simple to cryptographically secure</p>
+
+<!-- ===== INTRO SECTION ===== -->
+<div class="section">
+    <h2>What is a PRNG?</h2>
+    <p>A <strong>Pseudo-Random Number Generator (PRNG)</strong> is a deterministic algorithm that produces a sequence of numbers that <em>appears</em> random but is entirely determined by an initial value called the <strong>seed</strong>.</p>
+
+    <div class="math-block" id="math-prng-def"></div>
+
+    <div class="flow-diagram">
+        <div class="flow-box">Seed (s₀)</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">f(s₀) → s₁, output₁</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">f(s₁) → s₂, output₂</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">f(s₂) → s₃, output₃</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">…</div>
+    </div>
+
+    <table class="comparison-table">
+        <tr>
+            <th>Property</th>
+            <th>Non-Cryptographic PRNG</th>
+            <th>Cryptographic PRNG (CSPRNG)</th>
+        </tr>
+        <tr>
+            <td>Speed</td>
+            <td>Very fast</td>
+            <td>Slower (but still fast)</td>
+        </tr>
+        <tr>
+            <td>Predictable from output?</td>
+            <td>Yes — state can be recovered</td>
+            <td>No — computationally infeasible</td>
+        </tr>
+        <tr>
+            <td>Use cases</td>
+            <td>Games, simulations, visuals</td>
+            <td>Keys, tokens, passwords, nonces</td>
+        </tr>
+        <tr>
+            <td>Period</td>
+            <td>Finite, sometimes short</td>
+            <td>Effectively infinite</td>
+        </tr>
+    </table>
+</div>
+
+<!-- ===== LCG SECTION ===== -->
+<div class="section">
+    <h2>1. Linear Congruential Generator (LCG)</h2>
+    <span class="badge badge-insecure">⚠️ Not Cryptographically Secure</span>
+
+    <p>The <strong>LCG</strong> is one of the oldest and simplest PRNGs. It was introduced by Lehmer in 1951. Many early standard library <code>rand()</code> functions used LCGs.</p>
+
+    <h3>The Formula</h3>
+    <div class="math-block" id="math-lcg"></div>
+
+    <p>Where:</p>
+    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li><strong>a</strong> = multiplier</li>
+        <li><strong>c</strong> = increment</li>
+        <li><strong>m</strong> = modulus (determines the period)</li>
+        <li><strong>s<sub>n</sub></strong> = current state</li>
+    </ul>
+
+    <h3>Implementation</h3>
+    <div class="code-block">class LCG {
+    constructor(seed, a = 1664525, c = 1013904223, m = 2**32) {
+        this.state = seed;
+        this.a = a;
+        this.c = c;
+        this.m = m;
+    }
+
+    next() {
+        // s_{n+1} = (a * s_n + c) mod m
+        this.state = (this.a * this.state + this.c) % this.m;
+        return this.state / this.m; // normalize to [0, 1)
+    }
+}</div>
+
+    <h3>Step-by-Step Execution</h3>
+    <div class="controls">
+        <div>
+            <label>Seed:</label>
+            <input type="number" id="lcg-seed" value="42" min="0">
+        </div>
+        <div>
+            <label>a:</label>
+            <input type="number" id="lcg-a" value="1664525">
+        </div>
+        <div>
+            <label>c:</label>
+            <input type="number" id="lcg-c" value="1013904223">
+        </div>
+        <div>
+            <label>m:</label>
+            <input type="number" id="lcg-m" value="4294967296">
+        </div>
+        <button onclick="stepLCG()">Step</button>
+        <button onclick="resetLCG()">Reset</button>
+        <button onclick="runLCG(50)">Generate 50</button>
+    </div>
+    <div class="step-container" id="lcg-steps"></div>
+    <canvas class="viz-canvas" id="lcg-canvas"></canvas>
+
+    <div class="warning-box">
+        <strong>⚠️ Why it's insecure:</strong> Given just a few outputs, an attacker can solve for the parameters (a, c, m) and predict all future values. The state space is small and the relationship is linear — trivially invertible.
+    </div>
+</div>
+
+<!-- ===== XorShift SECTION ===== -->
+<div class="section">
+    <h2>2. Xorshift Generator</h2>
+    <span class="badge badge-insecure">⚠️ Not Cryptographically Secure</span>
+
+    <p><strong>Xorshift</strong> was proposed by George Marsaglia in 2003. It uses only XOR and bit-shift operations, making it extremely fast. It's used in many game engines and simulations.</p>
+
+    <h3>The Algorithm (xorshift32)</h3>
+    <div class="math-block" id="math-xorshift"></div>
+
+    <p>The key insight: XOR with shifted versions of itself creates enough "mixing" for statistical randomness, but not enough for cryptographic security.</p>
+
+    <h3>Implementation</h3>
+    <div class="code-block">class Xorshift32 {
+    constructor(seed) {
+        this.state = seed || 1; // must not be 0
+    }
+
+    next() {
+        let x = this.state;
+        x ^= x << 13;   // shift left, XOR
+        x ^= x >>> 17;  // shift right (unsigned), XOR
+        x ^= x << 5;    // shift left, XOR
+        this.state = x >>> 0; // ensure unsigned 32-bit
+        return this.state / 0xFFFFFFFF;
+    }
+}</div>
+
+    <h3>Visualizing the Bit Manipulation</h3>
+    <div class="controls">
+        <div>
+            <label>Seed:</label>
+            <input type="number" id="xor-seed" value="12345" min="1">
+        </div>
+        <button onclick="stepXorshift()">Step</button>
+        <button onclick="resetXorshift()">Reset</button>
+        <button onclick="runXorshift(50)">Generate 50</button>
+    </div>
+    <div class="step-container" id="xor-steps"></div>
+    <canvas class="viz-canvas" id="xor-canvas"></canvas>
+
+    <div class="warning-box">
+        <strong>⚠️ Why it's insecure:</strong> The entire state IS the output. An attacker who sees one output knows the full internal state and can predict every future (and past) value. The operations are all linear over GF(2).
+    </div>
+</div>
+
+<!-- ===== xoshiro256** SECTION ===== -->
+<div class="section">
+    <h2>3. xoshiro128** (V8/Chrome's Math.random)</h2>
+    <span class="badge badge-insecure">⚠️ Not Cryptographically Secure</span>
+
+    <p>Modern browsers like Chrome (V8 engine) use <strong>xoshiro128**</strong> for <code>Math.random()</code>. It has a 128-bit state and excellent statistical properties, but is still predictable.</p>
+
+    <div class="math-block" id="math-xoshiro"></div>
+
+    <h3>Implementation (simplified 64-bit version concept)</h3>
+    <div class="code-block">// Conceptual xoshiro128** (actual uses 64-bit math)
+class Xoshiro128ss {
+    constructor(s0, s1, s2, s3) {
+        this.s = [s0, s1, s2, s3]; // 128-bit state
+    }
+
+    rotl(x, k) {
+        return ((x << k) | (x >>> (32 - k))) >>> 0;
+    }
+
+    next() {
+        const s = this.s;
+        // Output function: scramble s[1] * 5, rotate, * 9
+        const result = (this.rotl((s[1] * 5) >>> 0, 7) * 9) >>> 0;
+
+        // State update
+        const t = (s[1] << 9) >>> 0;
+        s[2] ^= s[0];
+        s[3] ^= s[1];
+        s[1] ^= s[2];
+        s[0] ^= s[3];
+        s[2] ^= t;
+        s[3] = this.rotl(s[3], 11);
+
+        return result / 0xFFFFFFFF;
+    }
+}</div>
+
+    <div class="controls">
+        <button onclick="stepXoshiro()">Step</button>
+        <button onclick="resetXoshiro()">Reset</button>
+        <button onclick="runXoshiro(50)">Generate 50</button>
+    </div>
+    <div class="step-container" id="xoshiro-steps"></div>
+    <canvas class="viz-canvas" id="xoshiro-canvas"></canvas>
+
+    <div class="warning-box">
+        <strong>⚠️ Why it's insecure:</strong> With ~5 outputs from <code>Math.random()</code>, an attacker can use a constraint solver (like Z3) to recover the full 128-bit state and predict all future outputs. The transformations, while non-linear in the output function, are still solvable.
+    </div>
+</div>
+
+<!-- ===== Blum Blum Shub SECTION ===== -->
+<div class="section">
+    <h2>4. Blum Blum Shub (BBS)</h2>
+    <span class="badge badge-secure">✓ Cryptographically Secure (theoretically)</span>
+
+    <p>The <strong>Blum Blum Shub</strong> generator (1986) is one of the simplest CSPRNGs. Its security is based on the difficulty of factoring large integers — the same hardness assumption behind RSA.</p>
+
+    <h3>The Formula</h3>
+    <div class="math-block" id="math-bbs"></div>
+
+    <p>Where:</p>
+    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li><strong>M = p × q</strong> where p and q are large primes, both ≡ 3 (mod 4)</li>
+        <li>The output is just the <strong>least significant bit</strong> (or few bits) of each state</li>
+        <li>Security relies on the <strong>Quadratic Residuosity Problem</strong></li>
+    </ul>
+
+    <h3>Implementation (small demo values)</h3>
+    <div class="code-block">class BlumBlumShub {
+    constructor(seed, p = 499, q = 547) {
+        // p and q must be primes ≡ 3 (mod 4)
+        this.M = p * q; // 499 * 547 = 272953
+        this.state = (seed * seed) % this.M; // x₀ = seed² mod M
+    }
+
+    next() {
+        // x_{n+1} = x_n² mod M
+        this.state = (this.state * this.state) % this.M;
+        return this.state & 1; // output = least significant bit
+    }
+
+    nextByte() {
+        let byte = 0;
+        for (let i = 0; i < 8; i++) {
+            byte = (byte << 1) | this.next();
+        }
+        return byte;
+    }
+}</div>
+
+    <h3>Step-by-Step Execution</h3>
+    <div class="controls">
+        <div>
+            <label>Seed:</label>
+            <input type="number" id="bbs-seed" value="7" min="2">
+        </div>
+        <div>
+            <label>p (prime ≡3 mod 4):</label>
+            <input type="number" id="bbs-p" value="499">
+        </div>
+        <div>
+            <label>q (prime ≡3 mod 4):</label>
+            <input type="number" id="bbs-q" value="547">
+        </div>
+        <button onclick="stepBBS()">Step (1 bit)</button>
+        <button onclick="resetBBS()">Reset</button>
+        <button onclick="runBBS(64)">Generate 64 bits</button>
+    </div>
+    <div class="step-container" id="bbs-steps"></div>
+    <div class="output-box" id="bbs-bits"></div>
+
+    <div class="info-box">
+        <strong>✓ Why it's secure:</strong> To predict the next bit, an attacker would need to compute square roots modulo M, which requires knowing the factorization of M (p and q). With large primes (1024+ bits each), this is computationally infeasible. However, BBS is very slow compared to modern CSPRNGs.
+    </div>
+</div>
+
+<!-- ===== CTR_DRBG / AES-based SECTION ===== -->
+<div class="section">
+    <h2>5. Counter-Mode DRBG (CTR_DRBG) — How crypto.getRandomValues works</h2>
+    <span class="badge badge-secure">✓ Cryptographically Secure</span>
+
+    <p>Modern operating systems and browsers use <strong>CTR_DRBG</strong> (NIST SP 800-90A) or similar constructions. The Web Crypto API's <code>crypto.getRandomValues()</code> uses the OS's CSPRNG which typically employs AES in counter mode.</p>
+
+    <h3>The Concept</h3>
+    <div class="math-block" id="math-ctr"></div>
+
+    <div class="flow-diagram">
+        <div class="flow-box">Entropy Pool<br><small>(hardware, interrupts, etc.)</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">Key Derivation</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">AES-CTR<br><small>Encrypt(key, counter++)</small></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-box">Random Output<br><small>(128 bits per block)</small></div>
+    </div>
+
+    <h3>Simplified Implementation Concept</h3>
+    <div class="code-block">class CTR_DRBG_Concept {
+    constructor(entropy) {
+        // In reality, uses hardware entropy sources
+        this.key = deriveKey(entropy);
+        this.counter = 0;
+    }
+
+    generate(numBytes) {
+        const blocks = Math.ceil(numBytes / 16);
+        let output = new Uint8Array(numBytes);
+        let offset = 0;
+
+        for (let i = 0; i < blocks; i++) {
+            // Each block = AES_Encrypt(key, counter)
+            const block = AES_Encrypt(this.key, this.counter);
+            this.counter++;
+
+            // Copy block to output
+            const copyLen = Math.min(16, numBytes - offset);
+            output.set(block.slice(0, copyLen), offset);
+            offset += copyLen;
+        }
+
+        // Periodically reseed with fresh entropy
+        this.reseed();
+        return output;
+    }
+}
+
+// In the browser, you simply use:
+const array = new Uint32Array(10);
+crypto.getRandomValues(array); // Uses OS CSPRNG</div>
+
+    <h3>Live Demo: crypto.getRandomValues()</h3>
+    <div class="controls">
+        <button onclick="generateSecure()">Generate 32 Secure Random Bytes</button>
+    </div>
+    <div class="output-box" id="secure-output"></div>
+    <canvas class="viz-canvas" id="secure-canvas"></canvas>
+
+    <div class="info-box">
+        <strong>✓ Why it's secure:</strong> Breaking this requires breaking AES (no known practical attack). The entropy comes from physical sources (CPU jitter, interrupt timing, hardware RNG). Even if you see all outputs, you cannot determine the key or predict future outputs without breaking AES-256.
+    </div>
+</div>
+
+<!-- ===== COMPARISON VISUALIZATION ===== -->
+<div class="section">
+    <h2>6. Visual Comparison: Distribution & Patterns</h2>
+    <p>Let's generate 2000 points from each PRNG and plot them as (x<sub>n</sub>, x<sub>n+1</sub>) pairs. Non-random generators often show visible lattice structures.</p>
+
+    <div class="controls">
+        <button onclick="drawComparison()">Generate Comparison Plots</button>
+    </div>
+
+    <div class="grid-2">
+        <div>
+            <h3 style="text-align:center">LCG (a=69069, c=1, m=2³²)</h3>
+            <canvas class="viz-canvas" id="comp-lcg" style="height:250px"></canvas>
+        </div>
+        <div>
+            <h3 style="text-align:center">Xorshift32</h3>
+            <canvas class="viz-canvas" id="comp-xor" style="height:250px"></canvas>
+        </div>
+        <div>
+            <h3 style="text-align:center">xoshiro128**</h3>
+            <canvas class="viz-canvas" id="comp-xoshiro" style="height:250px"></canvas>
+        </div>
+        <div>
+            <h3 style="text-align:center">crypto.getRandomValues()</h3>
+            <canvas class="viz-canvas" id="comp-secure" style="height:250px"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ATTACK DEMO ===== -->
+<div class="section">
+    <h2>7. Attack Demo: Cracking an LCG</h2>
+    <p>Given just <strong>3 consecutive outputs</strong> from an LCG with known modulus, we can recover the multiplier <em>a</em> and increment <em>c</em>.</p>
+
+    <h3>The Math</h3>
+    <div class="math-block" id="math-attack"></div>
+
+    <h3>Interactive Demo</h3>
+    <div class="controls">
+        <button onclick="demoAttack()">Run Attack</button>
+    </div>
+    <div class="step-container" id="attack-steps"></div>
+
+    <div class="warning-box">
+        <strong>Lesson:</strong> This is why <code>Math.random()</code> must NEVER be used for security-sensitive purposes like generating tokens, passwords, encryption keys, or session IDs. Always use <code>crypto.getRandomValues()</code> or equivalent.
+    </div>
+</div>
+
+<!-- ===== SUMMARY ===== -->
+<div class="section">
+    <h2>Summary & Best Practices</h2>
+    <table class="comparison-table">
+        <tr>
+            <th>Generator</th>
+            <th>State Size</th>
+            <th>Speed</th>
+            <th>Security</th>
+            <th>Use For</th>
+        </tr>
+        <tr>
+            <td>LCG</td>
+            <td>32-64 bits</td>
+            <td>⚡⚡⚡</td>
+            <td>❌ None</td>
+            <td>Teaching, legacy code</td>
+        </tr>
+        <tr>
+            <td>Xorshift</td>
+            <td>32-128 bits</td>
+            <td>⚡⚡⚡</td>
+            <td>❌ None</td>
+            <td>Games, simulations</td>
+        </tr>
+        <tr>
+            <td>xoshiro128**</td>
+            <td>128 bits</td>
+            <td>⚡⚡⚡</td>
+            <td>❌ None</td>
+            <td>Math.random() (general use)</td>
+        </tr>
+        <tr>
+            <td>Blum Blum Shub</td>
+            <td>~2048 bits</td>
+            <td>⚡</td>
+            <td>✅ Provable</td>
+            <td>Theoretical, niche</td>
+        </tr>
+        <tr>
+            <td>CTR_DRBG (AES)</td>
+            <td>256+ bits</td>
+            <td>⚡⚡</td>
+            <td>✅ Strong</td>
+            <td>All security applications</td>
+        
+        </tr>
+    </table>
+
+    <div class="info-box">
+        <strong>Rule of Thumb:</strong> If the word "security," "token," "key," "password," "nonce," or "secret" appears anywhere near your use case, use <code>crypto.getRandomValues()</code> (browser) or <code>crypto.randomBytes()</code> (Node.js). For everything else, <code>Math.random()</code> is fine.
+    </div>
+</div>
+
+<script>
+// ===========================
+// MATH RENDERING WITH TEMML
+// ===========================
+document.addEventListener('DOMContentLoaded', () => {
+    const mathExpressions = {
+        'math-prng-def': `f: S \\rightarrow S \\times O \\quad \\text{where } S = \\text{state space},\\; O = \\text{output space}`,
+        'math-lcg': `s_{n+1} = (a \\cdot s_n + c) \\mod m`,
+        'math-xorshift': `\\begin{aligned}
+            x &\\leftarrow x \\oplus (x \\ll 13) \\\\
+            x &\\leftarrow x \\oplus (x \\gg 17) \\\\
+            x &\\leftarrow x \\oplus (x \\ll 5)
+        \\end{aligned}`,
+        'math-xoshiro': `\\text{output} = \\text{rotl}(s_1 \\times 5,\\; 7) \\times 9 \\mod 2^{32}`,
+        'math-bbs': `\\begin{aligned}
+            M &= p \\times q \\quad (p, q \\text{ prime}, \\equiv 3 \\pmod{4}) \\\\
+            x_{n+1} &= x_n^2 \\mod M \\\\
+            \\text{output}_n &= x_{n+1} \\mod 2 \\quad (\\text{least significant bit})
+        \\end{aligned}`,
+        'math-ctr': `\\text{output}_i = \\text{AES}_{\\text{key}}(\\text{counter} + i) \\quad \\text{for } i = 0, 1, 2, \\ldots`,
+        'math-attack': `\\begin{aligned}
+            \\text{Given } & s_1, s_2, s_3 \\text{ (consecutive outputs):} \\\\
+            s_2 &= a \\cdot s_1 + c \\mod m \\\\
+            s_3 &= a \\cdot s_2 + c \\mod m \\\\
+            \\Rightarrow\\; a &= (s_3 - s_2) \\cdot (s_2 - s_1)^{-1} \\mod m \\\\
+            \\Rightarrow\\; c &= s_2 - a \\cdot s_1 \\mod m
+        \\end{aligned}`
+    };
+
+    for (const [id, tex] of Object.entries(mathExpressions)) {
+        const el = document.getElementById(id);
+        if (el) {
+            try {
+                temml.render(tex, el, { displayMode: true });
+            } catch (e) {
+                el.textContent = tex;
+            }
+        }
+    }
+});
+
+// ===========================
+// LCG IMPLEMENTATION
+// ===========================
+let lcgState = { state: 42, a: 1664525, c: 1013904223, m: 2**32, step: 0, values: [] };
+
+function resetLCG() {
+    lcgState.state = parseInt(document.getElementById('lcg-seed').value) || 42;
+    lcgState.a = parseInt(document.getElementById('lcg-a').value) || 1664525;
+    lcgState.c = parseInt(document.getElementById('lcg-c').value) || 1013904223;
+    lcgState.m = parseInt(document.getElementById('lcg-m').value) || 2**32;
+    lcgState.step = 0;
+    lcgState.values = [];
+    document.getElementById('lcg-steps').innerHTML = '';
+    clearCanvas('lcg-canvas');
+}
+
+function stepLCG() {
+    const prev = lcgState.state;
+    lcgState.state = (lcgState.a * lcgState.state + lcgState.c) % lcgState.m;
+    lcgState.step++;
+    const normalized = lcgState.state / lcgState.m;
+    lcgState.values.push(normalized);
+
+    const stepsEl = document.getElementById('lcg-steps');
+    const stepHtml = `
+        <div class="step">
+            <span class="step-num">${lcgState.step}</span>
+            <span>
+                s<sub>${lcgState.step}</sub> = (<span class="highlight">${lcgState.a}</span> × ${prev} + <span class="highlight2">${lcgState.c}</span>) mod ${lcgState.m}
+                = <span class="highlight3">${lcgState.state}</span>
+                → normalized: ${normalized.toFixed(6)}
+            </span>
+        </div>`;
+    stepsEl.innerHTML = stepHtml + stepsEl.innerHTML;
+
+    // Keep only last 8 steps visible
+    const steps = stepsEl.querySelectorAll('.step');
+    if (steps.length > 8) steps[steps.length - 1].remove();
+
+    drawTimeSeries('lcg-canvas', lcgState.values, '#6c63ff');
+}
+
+function runLCG(n) {
+    resetLCG();
+    for (let i = 0; i < n; i++) stepLCG();
+}
+
+// ===========================
+// XORSHIFT IMPLEMENTATION
+// ===========================
+let xorState = { state: 12345, step: 0, values: [] };
+
+function resetXorshift() {
+    xorState.state = parseInt(document.getElementById('xor-seed').value) || 12345;
+    xorState.step = 0;
+    xorState.values = [];
+    document.getElementById('xor-steps').innerHTML = '';
+    clearCanvas('xor-canvas');
+}
+
+function stepXorshift() {
+    const prev = xorState.state;
+    let x = xorState.state;
+
+    const afterShift1 = (x ^ (x << 13)) >>> 0;
+    x = afterShift1;
+    const afterShift2 = (x ^ (x >>> 17)) >>> 0;
+    x = afterShift2;
+    const afterShift3 = (x ^ (x << 5)) >>> 0;
+    x = afterShift3;
+
+    xorState.state = x;
+    xorState.step++;
+    const normalized = xorState.state / 0xFFFFFFFF;
+    xorState.values.push(normalized);
+
+    const toBin = (n) => (n >>> 0).toString(2).padStart(32, '0');
+
+    const stepsEl = document.getElementById('xor-steps');
+    const stepHtml = `
+        <div class="step">
+            <span class="step-num">${xorState.step}</span>
+            <span>
+                <div>Input:&nbsp;&nbsp;&nbsp;&nbsp; <span class="bit-display">${toBin(prev)}</span> (${prev})</div>
+                <div>x ^= x≪13: <span class="bit-display">${toBin(afterShift1)}</span></div>
+                <div>x ^= x≫17: <span class="bit-display">${toBin(afterShift2)}</span></div>
+                <div>x ^= x≪5:&nbsp; <span class="bit-display highlight3">${toBin(afterShift3)}</span> → ${normalized.toFixed(6)}</div>
+            </span>
+        </div>`;
+    stepsEl.innerHTML = stepHtml;
+
+    drawTimeSeries('xor-canvas', xorState.values, '#00d4aa');
+}
+
+function runXorshift(n) {
+    resetXorshift();
+    for (let i = 0; i < n; i++) stepXorshift();
+}
+
+// ===========================
+// XOSHIRO128** IMPLEMENTATION
+// ===========================
+let xoshiroState = { s: [123456789, 362436069, 521288629, 88675123], step: 0, values: [] };
+
+function resetXoshiro() {
+    xoshiroState.s = [123456789, 362436069, 521288629, 88675123];
+    xoshiroState.step = 0;
+    xoshiroState.values = [];
+    document.getElementById('xoshiro-steps').innerHTML = '';
+    clearCanvas('xoshiro-canvas');
+}
+
+function rotl(x, k) {
+    return ((x << k) | (x >>> (32 - k))) >>> 0;
+}
+
+function stepXoshiro() {
+    const s = xoshiroState.s;
+    const prevState = [...s];
+
+    // Output function
+    const result = (rotl(Math.imul(s[1], 5) >>> 0, 7) * 9) >>> 0;
+
+    // State transition
+    const t = (s[1] << 9) >>> 0;
+    s[2] = (s[2] ^ s[0]) >>> 0;
+    s[3] = (s[3] ^ s[1]) >>> 0;
+    s[1] = (s[1] ^ s[2]) >>> 0;
+    s[0] = (s[0] ^ s[3]) >>> 0;
+    s[2] = (s[2] ^ t) >>> 0;
+    s[3] = rotl(s[3], 11);
+
+    xoshiroState.step++;
+    const normalized = result / 0xFFFFFFFF;
+    xoshiroState.values.push(normalized);
+
+    const stepsEl = document.getElementById('xoshiro-steps');
+    const stepHtml = `
+        <div class="step">
+            <span class="step-num">${xoshiroState.step}</span>
+            <span>
+                State: [${prevState.map(v => '0x' + v.toString(16).padStart(8, '0')).join(', ')}]<br>
+                Output = rotl(s[1]×5, 7) × 9 = <span class="highlight3">${result}</span> → ${normalized.toFixed(6)}<br>
+                New state: [${s.map(v => '0x' + v.toString(16).padStart(8, '0')).join(', ')}]
+            </span>
+        </div>`;
+    stepsEl.innerHTML = stepHtml;
+
+    drawTimeSeries('xoshiro-canvas', xoshiroState.values, '#fbbf24');
+}
+
+function runXoshiro(n) {
+    resetXoshiro();
+    for (let i = 0; i < n; i++) stepXoshiro();
+}
+
+// ===========================
+// BLUM BLUM SHUB IMPLEMENTATION
+// ===========================
+let bbsState = { state: 0, M: 0, step: 0, bits: [] };
+
+function resetBBS() {
+    const seed = parseInt(document.getElementById('bbs-seed').value) || 7;
+    const p = parseInt(document.getElementById('bbs-p').value) || 499;
+    const q = parseInt(document.getElementById('bbs-q').value) || 547;
+    bbsState.M = p * q;
+    bbsState.state = (seed * seed) % bbsState.M;
+    bbsState.step = 0;
+    bbsState.bits = [];
+    document.getElementById('bbs-steps').innerHTML = '';
+    document.getElementById('bbs-bits').innerHTML = '';
+}
+
+function stepBBS() {
+    const prev = bbsState.state;
+    bbsState.state = (bbsState.state * bbsState.state) % bbsState.M;
+    bbsState.step++;
+    const bit = bbsState.state & 1;
+    bbsState.bits.push(bit);
+
+    const stepsEl = document.getElementById('bbs-steps');
+    const stepHtml = `
+        <div class="step">
+            <span class="step-num">${bbsState.step}</span>
+            <span>
+                x<sub>${bbsState.step}</sub> = ${prev}² mod ${bbsState.M}
+                = ${prev * prev} mod ${bbsState.M}
+                = <span class="highlight">${bbsState.state}</span>
+                → bit = ${bbsState.state} & 1 = <span class="highlight3">${bit}</span>
+            </span>
+        </div>`;
+    stepsEl.innerHTML = stepHtml;
+
+    // Display accumulated bits
+    const bitsEl = document.getElementById('bbs-bits');
+    let bitsStr = '';
+    for (let i = 0; i < bbsState.bits.length; i++) {
+        if (i > 0 && i % 8 === 0) bitsStr += ' ';
+        if (i > 0 && i % 32 === 0) bitsStr += '\n';
+        bitsStr += `<span style="color: ${bbsState.bits[i] ? 'var(--accent2)' : 'var(--accent3)'}">${bbsState.bits[i]}</span>`;
+    }
+    if (bbsState.bits.length >= 8) {
+        const bytes = [];
+        for (let i = 0; i + 7 < bbsState.bits.length; i += 8) {
+            let byte = 0;
+            for (let j = 0; j < 8; j++) byte = (byte << 1) | bbsState.bits[i + j];
+            bytes.push(byte.toString(16).padStart(2, '0'));
+        }
+        bitsStr += `\n\nHex: ${bytes.join(' ')}`;
+    }
+    bitsEl.innerHTML = bitsStr;
+}
+
+function runBBS(n) {
+    resetBBS();
+    for (let i = 0; i < n; i++) stepBBS();
+}
+
+// ===========================
+// SECURE RANDOM (crypto.getRandomValues)
+// ===========================
+function generateSecure() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+
+    const hex = Array.from(array).map(b => b.toString(16).padStart(2, '0')).join(' ');
+    const binary = Array.from(array).map(b => b.toString(2).padStart(8, '0')).join(' ');
+
+    document.getElementById('secure-output').innerHTML =
+        `<span style="color: var(--accent2)">Hex:</span> ${hex}\n\n` +
+        `<span style="color: var(--accent)">Bin:</span> ${binary}\n\n` +
+        `<span style="color: var(--text-dim)">Decimal:</span> [${array.join(', ')}]`;
+
+    // Draw distribution
+    const values = [];
+    const bigArray = new Uint32Array(200);
+    crypto.getRandomValues(bigArray);
+    for (let i = 0; i < bigArray.length; i++) {
+        values.push(bigArray[i] / 0xFFFFFFFF);
+    }
+    drawTimeSeries('secure-canvas', values, '#00d4aa');
+}
+
+// ===========================
+// COMPARISON PLOTS
+// ===========================
+function drawComparison() {
+    // LCG with known bad parameters that show lattice structure
+    const lcgPoints = [];
+    let lcgS = 1;
+    const lcgA = 69069, lcgC = 1, lcgM = 2**32;
+    for (let i = 0; i < 2000; i++) {
+        lcgS = (lcgA * lcgS + lcgC) % lcgM;
+        lcgPoints.push(lcgS / lcgM);
+    }
+    drawScatterPlot('comp-lcg', lcgPoints, '#6c63ff');
+
+    // Xorshift
+    const xorPoints = [];
+    let xorS = 12345;
+    for (let i = 0; i < 2000; i++) {
+        xorS ^= xorS << 13; xorS = xorS >>> 0;
+        xorS ^= xorS >>> 17; xorS = xorS >>> 0;
+        xorS ^= xorS << 5; xorS = xorS >>> 0;
+        xorPoints.push(xorS / 0xFFFFFFFF);
+    }
+    drawScatterPlot('comp-xor', xorPoints, '#00d4aa');
+
+    // Xoshiro
+    const xoshPoints = [];
+    let xs = [123456789, 362436069, 521288629, 88675123];
+    for (let i = 0; i < 2000; i++) {
+        const res = (rotl(Math.imul(xs[1], 5) >>> 0, 7) * 9) >>> 0;
+        const t = (xs[1] << 9) >>> 0;
+        xs[2] = (xs[2] ^ xs[0]) >>> 0;
+        xs[3] = (xs[3] ^ xs[1]) >>> 0;
+        xs[1] = (xs[1] ^ xs[2]) >>> 0;
+        xs[0] = (xs[0] ^ xs[3]) >>> 0;
+        xs[2] = (xs[2] ^ t) >>> 0;
+        xs[3] = rotl(xs[3], 11);
+        xoshPoints.push(res / 0xFFFFFFFF);
+    }
+    drawScatterPlot('comp-xoshiro', xoshPoints, '#fbbf24');
+
+    // Crypto secure
+    const secPoints = [];
+    const secArr = new Uint32Array(2000);
+    crypto.getRandomValues(secArr);
+    for (let i = 0; i < 2000; i++) secPoints.push(secArr[i] / 0xFFFFFFFF);
+    drawScatterPlot('comp-secure', secPoints, '#00d4aa');
+}
+
+// ===========================
+// ATTACK DEMO
+// ===========================
+function demoAttack() {
+    // Create a secret LCG
+    const secretA = 1103515245;
+    const secretC = 12345;
+    const m = 2**31;
+    let state = 67890;
+
+    // Generate 3 outputs
+    state = (secretA * state + secretC) % m;
+    const s1 = state;
+    state = (secretA * state + secretC) % m;
+    const s2 = state;
+    state = (secretA * state + secretC) % m;
+    const s3 = state;
+
+    // Attack: recover a and c
+    // a = (s3 - s2) * modInverse(s2 - s1, m) mod m
+    const diff1 = ((s2 - s1) % m + m) % m;
+    const diff2 = ((s3 - s2) % m + m) % m;
+
+    // Extended Euclidean for modular inverse
+    function modInverse(a, m) {
+        let [old_r, r] = [a, m];
+        let [old_s, s] = [1, 0];
+        while (r !== 0) {
+            const q = Math.floor(old_r / r);
+            [old_r, r] = [r, old_r - q * r];
+            [old_s, s] = [s, old_s - q * s];
+        }
+        return ((old_s % m) + m) % m;
+    }
+
+    const inv = modInverse(diff1, m);
+    const recoveredA = (diff2 * inv) % m;
+    const recoveredC = ((s2 - recoveredA * s1) % m + m) % m;
+
+    // Predict next value
+    const predicted = (recoveredA * s3 + recoveredC) % m;
+    state = (secretA * state + secretC) % m; // actual next
+    // Note: state was already advanced to s4 above, let's recompute
+    const actualS4 = (secretA * s3 + secretC) % m;
+
+    const stepsEl = document.getElementById('attack-steps');
+    stepsEl.innerHTML = `
+        <div class="step">
+            <span class="step-num">1</span>
+            <span><strong>Observed outputs:</strong> s₁ = ${s1}, s₂ = ${s2}, s₃ = ${s3}</span>
+        </div>
+        <div class="step">
+            <span class="step-num">2</span>
+            <span><strong>Compute differences:</strong> s₂ - s₁ = ${diff1}, s₃ - s₂ = ${diff2}</span>
+        </div>
+        <div class="step">
+            <span class="step-num">3</span>
+            <span><strong>Modular inverse:</strong> (${diff1})⁻¹ mod ${m} = ${inv}</span>
+        </div>
+        <div class="step">
+            <span class="step-num">4</span>
+            <span><strong>Recover a:</strong> ${diff2} × ${inv} mod ${m} = <span class="highlight">${recoveredA}</span> (actual: ${secretA}) ${recoveredA === secretA ? '✅' : '⚠️'}</span>
+        </div>
+        <div class="step">
+            <span class="step-num">5</span>
+            <span><strong>Recover c:</strong> s₂ - a×s₁ mod ${m} = <span class="highlight2">${recoveredC}</span> (actual: ${secretC}) ${recoveredC === secretC ? '✅' : '⚠️'}</span>
+        </div>
+        <div class="step">
+            <span class="step-num">6</span>
+            <span><strong>Predict s₄:</strong> a×s₃ + c mod m = <span class="highlight3">${predicted}</span> (actual: ${actualS4}) ${predicted === actualS4 ? '✅ MATCH!' : '❌'}</span>
+        </div>
+    `;
+}
+
+// ===========================
+// CANVAS DRAWING UTILITIES
+// ===========================
+function clearCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth * 2;
+    canvas.height = canvas.offsetHeight * 2;
+    ctx.scale(2, 2);
+    ctx.fillStyle = '#12141c';
+    ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+}
+
+function drawTimeSeries(canvasId, values, color) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * 2;
+    canvas.height = h * 2;
+    ctx.scale(2, 2);
+
+    // Background
+    ctx.fillStyle = '#12141c';
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= 4; i++) {
+        const y = (h / 4) * i;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+
+    if (values.length < 2) return;
+
+    // Line
+    const step = w / (values.length - 1);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, h - values[0] * h);
+    for (let i = 1; i < values.length; i++) {
+        ctx.lineTo(i * step, h - values[i] * h);
+    }
+    ctx.stroke();
+
+    // Dots
+    ctx.fillStyle = color;
+    for (let i = 0; i < values.length; i++) {
+        ctx.beginPath();
+        ctx.arc(i * step, h - values[i] * h, 2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Labels
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('1.0', 2, 12);
+    ctx.fillText('0.0', 2, h - 4);
+    ctx.fillText(`n=${values.length}`, w - 40, h - 4);
+}
+
+function drawScatterPlot(canvasId, values, color) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * 2;
+    canvas.height = h * 2;
+    ctx.scale(2, 2);
+
+    // Background
+    ctx.fillStyle = '#12141c';
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= 4; i++) {
+        ctx.beginPath(); ctx.moveTo(0, (h/4)*i); ctx.lineTo(w, (h/4)*i); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo((w/4)*i, 0); ctx.lineTo((w/4)*i, h); ctx.stroke();
+    }
+
+    // Plot (x_n, x_{n+1}) pairs
+    ctx.fillStyle = color;
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < values.length - 1; i++) {
+        const x = values[i] * w;
+        const y = h - values[i + 1] * h;
+        ctx.beginPath();
+        ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Labels
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '10px sans-serif';
+    ctx.fillText('xₙ →', w - 30, h - 4);
+    ctx.fillText('xₙ₊₁ ↑', 2, 12);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize all canvases
+    ['lcg-canvas', 'xor-canvas', 'xoshiro-canvas', 'secure-canvas',
+     'comp-lcg', 'comp-xor', 'comp-xoshiro', 'comp-secure'].forEach(clearCanvas);
+
+    // Run initial demos after a short delay for rendering
+    setTimeout(() => {
+        drawComparison();
+    }, 500);
+});
+</script>
+
+</body>
+</html>
