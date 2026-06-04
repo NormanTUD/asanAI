@@ -950,10 +950,6 @@ border-collapse: collapse;
 		pointer-events: none;
 		display: block ruby;
 		z-index: 999999;
-		position: absolute;
-		top: 80px;
-		left: 0px;
-		opacity: 0.5;
 	}
 
 	.own_image_upload_container {

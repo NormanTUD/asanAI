@@ -1731,8 +1731,6 @@ async function visualize_train () {
 	}
 
 	$("#plotly_epoch_history").show();
-	$("#canvas_grid_visualization").css({"position": "absolute"});
-	$("#canvas_grid_visualization").css({"opacity": "0.5"});
 
 	if(!labels.length) {
 		$("#canvas_grid_visualization").html("");
