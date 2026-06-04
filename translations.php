@@ -741,7 +741,7 @@
 			"pe_category_needs_model" => "Needs a trained model",
 			"pe_category_needs_image_model" => "Needs an image model + webcam",
 			"nr_of_images_in_this_category" => "Number of images in this category",
-			"upload_custom_zip_file" => '<img src="_gui/icons/zip.svg" height="15"> Upload Custom Zip File'
+			"upload_custom_zip_file" => 'Upload Custom Zip File'
 		),
 
 		'de' => array(
@@ -1484,7 +1484,7 @@
 			"pe_category_needs_model" => "Braucht ein trainiertes Modell",
 			"pe_category_needs_image_model" => "Braucht ein Bildmodell + Webcam",
 			"nr_of_images_in_this_category" => "Anzahl Bilder in dieser Kategorie",
-			"upload_custom_zip_file" => '<img src="_gui/icons/zip.svg" height="15"> Eigene Zip-Datei hochladen'
+			"upload_custom_zip_file" => 'Eigene Zip-Datei hochladen'
 		)
 	);
 

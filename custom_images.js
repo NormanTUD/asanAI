@@ -357,11 +357,10 @@ async function import_zip_and_replace_categories(inputElement) {
 	var file = inputElement.files[0];
 	if (!file) return;
 
-	var label = document.getElementById("zip_upload_label");
-	var originalHTML = label.innerHTML;
+	var labelEl = document.getElementById("zip_upload_label");
+	var originalHTML = labelEl.innerHTML;
 
-	// Spinner anzeigen und Text auf dem Button
-	label.innerHTML = '<span class="zip-spinner"></span> Importing...' + '<input type="file" id="zip_upload_input" accept=".zip" style="display:none" onchange="import_zip_and_replace_categories(this)">';
+	labelEl.innerHTML = '<span class="zip-spinner"></span> Importing...<input type="file" id="zip_upload_input" accept=".zip" style="display:none" onchange="import_zip_and_replace_categories(this)">';
 
 	try {
 		var zipReader = new zip.ZipReader(new zip.BlobReader(file));
@@ -370,7 +369,7 @@ async function import_zip_and_replace_categories(inputElement) {
 		if (!entries || entries.length === 0) {
 			err("Zip file is empty or could not be read.");
 			await zipReader.close();
-			label.innerHTML = originalHTML;
+			labelEl.innerHTML = originalHTML;
 			return;
 		}
 
@@ -399,7 +398,7 @@ async function import_zip_and_replace_categories(inputElement) {
 		var category_labels = Object.keys(categories);
 		if (category_labels.length === 0) {
 			err("No valid image categories found in zip.");
-			label.innerHTML = originalHTML;
+			labelEl.innerHTML = originalHTML;
 			return;
 		}
 
@@ -436,9 +435,7 @@ async function import_zip_and_replace_categories(inputElement) {
 		err("Error importing zip: " + (e.message || e));
 	}
 
-	// Button zurücksetzen
-	label.innerHTML = originalHTML;
-	inputElement.value = "";
+	labelEl.innerHTML = originalHTML;
 }
 
 function blob_to_data_url(blob) {
