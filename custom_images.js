@@ -357,19 +357,16 @@ async function import_zip_and_replace_categories(inputElement) {
 	var file = inputElement.files[0];
 	if (!file) return;
 
-	// SOFORT den Input-Wert leeren, BEVOR irgendwas anderes passiert
-	// Das stellt sicher, dass onchange beim nächsten Mal wieder feuert
 	inputElement.value = "";
 
 	var labelEl = document.getElementById("zip_upload_label");
+	var inputEl = document.getElementById("zip_upload_input");
 
-	// Spinner anzeigen - aber das Input NICHT im innerHTML ersetzen!
-	// Stattdessen: Input aus dem DOM rausnehmen, innerHTML ändern, Input wieder rein
-	var inputClone = document.getElementById("zip_upload_input");
-	inputClone.removeAttribute("onchange"); // temporär entfernen
+	// Remove onchange temporarily so it doesn't fire again
+	inputEl.removeAttribute("onchange");
+
+	// Show spinner in the button only — don't touch the input
 	labelEl.innerHTML = '<span class="zip-spinner"></span> Importing...';
-	// Input wieder anhängen mit frischem Event-Listener
-	labelEl.appendChild(inputClone);
 
 	try {
 		var zipReader = new zip.ZipReader(new zip.BlobReader(file));
@@ -378,7 +375,7 @@ async function import_zip_and_replace_categories(inputElement) {
 		if (!entries || entries.length === 0) {
 			err("Zip file is empty or could not be read.");
 			await zipReader.close();
-			restore_zip_upload_button(labelEl, inputClone);
+			restore_zip_upload_button(labelEl, inputEl);
 			return;
 		}
 
@@ -407,7 +404,7 @@ async function import_zip_and_replace_categories(inputElement) {
 		var category_labels = Object.keys(categories);
 		if (category_labels.length === 0) {
 			err("No valid image categories found in zip.");
-			restore_zip_upload_button(labelEl, inputClone);
+			restore_zip_upload_button(labelEl, inputEl);
 			return;
 		}
 
@@ -444,14 +441,14 @@ async function import_zip_and_replace_categories(inputElement) {
 		err("Error importing zip: " + (e.message || e));
 	}
 
-	restore_zip_upload_button(labelEl, inputClone);
+	restore_zip_upload_button(labelEl, inputEl);
 }
 
 function restore_zip_upload_button(labelEl, inputEl) {
 	labelEl.innerHTML = '<img src="_gui/icons/zip.svg" height="15"> <span class="TRANSLATEME_upload_custom_zip_file" data-lang="en">Upload custom data from a .zip file</span>';
 	inputEl.setAttribute("onchange", "import_zip_and_replace_categories(this)");
 	inputEl.value = "";
-	labelEl.appendChild(inputEl);
+	inputEl.style.display = "none";
 }
 
 function blob_to_data_url(blob) {
