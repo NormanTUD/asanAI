@@ -138,3 +138,21 @@ function get_drawing_board_on_page(indiv, idname, customfunc, uuid, label_nr) {
 
 	setup_atrament_data(idname, customfunc);
 }
+
+function get_custom_elements_from_webcam_page () {
+	var imgs = [];
+
+	$("#own_images_container").find("img").each((i, e) => {
+		if($(e).prop("src").match(/data:image\/png;base64,/)) {
+			imgs.push(e);
+		}
+	});
+
+	$("#own_images_container").find("canvas").each((i, e) => {
+		if($(e).attr("id").match(/_canvas$/)) {
+			imgs.push(e);
+		}
+	});
+
+	return imgs;
+}

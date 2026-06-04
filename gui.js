@@ -8908,24 +8908,6 @@ function hide_dataset_when_only_one () {
 	}
 }
 
-function get_custom_elements_from_webcam_page () {
-	var imgs = [];
-
-	$("#own_images_container").find("img").each((i, e) => {
-		if($(e).prop("src").match(/data:image\/png;base64,/)) {
-			imgs.push(e);
-		}
-	});
-
-	$("#own_images_container").find("canvas").each((i, e) => {
-		if($(e).attr("id").match(/_canvas$/)) {
-			imgs.push(e);
-		}
-	});
-
-	return imgs;
-}
-
 function get_example_csv () {
 	return `sex(m=0;w=1),height,shoe_size
 0,171,41
