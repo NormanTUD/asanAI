@@ -383,7 +383,7 @@ async function get_fit_data () {
 		$("#training_progressbar>div").css("width", percentage + "%");
 		confusion_matrix_and_grid_cache = {};
 
-		visualizeModelOrganism(model, "neural_organism");
+		//visualizeModelOrganism(model, "neural_organism");
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -536,7 +536,7 @@ async function get_fit_data () {
 
 		//await visualizeModelBends();
 
-		visualizeModelOrganism(model, "neural_organism");
+		//visualizeModelOrganism(model, "neural_organism");
 	};
 
 	callbacks["onTrainEnd"] = async function () {
