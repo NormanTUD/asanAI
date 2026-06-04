@@ -507,7 +507,7 @@
 					<table>
 						<tr>
 							<td><span class="TRANSLATEME_show_bars_instead_of_numbers"></span>?</td>
-							<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page()"></td>
+							<td><input class="show_data" type='checkbox' checked id="show_bars_instead_of_numbers" onclick="updated_page_restart_webcam_if_applicable()"></td>
 						</tr>
 						<tr>
 							<td><span class="TRANSLATEME_visualize_images_in_grid"></span>?</td>

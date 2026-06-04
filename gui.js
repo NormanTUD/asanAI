@@ -9530,3 +9530,20 @@ function open_help() {
 		return false;
 	}
 }
+
+async function updated_page_restart_webcam_if_applicable() {
+	var _webcam_enabled = false;
+
+	const $created_video_element = $("#webcam_tab").find("#created_video_element");
+	const created_video_element_display = $created_video_element.parent().css("display");
+
+	if($created_video_element && created_video_element_display && created_video_element_display != "none") {
+		_webcam_enabled = true;
+	}
+
+	await updated_page(null, null, null, null, null);
+
+	if(_webcam_enabled) {
+		show_webcam();
+	}
+}
