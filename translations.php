@@ -740,6 +740,7 @@
 			"pe_category_no_model" => "No model needed",
 			"pe_category_needs_model" => "Needs a trained model",
 			"pe_category_needs_image_model" => "Needs an image model + webcam",
+			"nr_of_images_in_this_category" => "Number of images in this category"
 		),
 
 		'de' => array(
@@ -1480,7 +1481,8 @@
 			"pe_console" => "Konsole",
 			"pe_category_no_model" => "Kein Modell nötig",
 			"pe_category_needs_model" => "Braucht ein trainiertes Modell",
-			"pe_category_needs_image_model" => "Braucht ein Bildmodell + Webcam",
+			"pe_category_needs_image_model" => "Braucht ein Bildmodell + Webcam",,
+			"nr_of_images_in_this_category" => "Anzahl Bilder in dieser Kategorie"
 		)
 	);
 
