@@ -3,10 +3,10 @@ function add_category_form(n, label_nr, uuid) {
 	const this_label = get_label_or_default(label_nr);
 
 	$(`
-		<form method="post" enctype="multipart/form-data">
+		<form method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
 			<a id="${uuid_input_form}_link"></a>
 			<input id="${uuid_input_form}" onkeyup="rename_labels()" class="own_image_label" value="${this_label}" />
-			<button class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>
+			<button type="button" class="delete_category_button" onclick="delete_category(this, '${uuid}')">&#10060;</button></div>
 			<input type="file" class="own_image_files" multiple accept="image/*">
 			<br/>
 		</form>
