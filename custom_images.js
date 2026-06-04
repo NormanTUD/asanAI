@@ -357,93 +357,76 @@ async function import_zip_and_replace_categories(inputElement) {
 	var file = inputElement.files[0];
 	if (!file) return;
 
+	var label = document.getElementById("zip_upload_label");
+	var originalHTML = label.innerHTML;
+
+	// Spinner anzeigen und Text auf dem Button
+	label.innerHTML = '<span class="zip-spinner"></span> Importing...' + '<input type="file" id="zip_upload_input" accept=".zip" style="display:none" onchange="import_zip_and_replace_categories(this)">';
+
 	try {
-		var blobReader = new zip.BlobReader(file);
-		var zipReader = new zip.ZipReader(blobReader);
+		var zipReader = new zip.ZipReader(new zip.BlobReader(file));
 		var entries = await zipReader.getEntries();
 
 		if (!entries || entries.length === 0) {
 			err("Zip file is empty or could not be read.");
 			await zipReader.close();
+			label.innerHTML = originalHTML;
 			return;
 		}
 
-		// Parse entries into categories: { "label": [ {filename, blob}, ... ] }
 		var categories = {};
 
 		for (var i = 0; i < entries.length; i++) {
 			var entry = entries[i];
-
-			// Skip directories
 			if (entry.directory) continue;
 
 			var path_parts = entry.filename.split("/");
-
-			// Expect structure: label/filename.png
 			if (path_parts.length < 2) continue;
 
-			var label = path_parts[0];
+			var cat_label = path_parts[0];
 			var filename = path_parts.slice(1).join("/");
 
-			// Only process image files
 			if (!filename.match(/\.(png|jpg|jpeg|gif|bmp|webp|svg)$/i)) continue;
 
 			var blob = await entry.getData(new zip.BlobWriter("image/png"));
 
-			if (!categories[label]) {
-				categories[label] = [];
-			}
-
-			categories[label].push({
-				filename: filename,
-				blob: blob
-			});
+			if (!categories[cat_label]) categories[cat_label] = [];
+			categories[cat_label].push({ filename: filename, blob: blob });
 		}
 
 		await zipReader.close();
 
 		var category_labels = Object.keys(categories);
-
 		if (category_labels.length === 0) {
 			err("No valid image categories found in zip.");
+			label.innerHTML = originalHTML;
 			return;
 		}
 
-		// Adjust number of categories to match zip contents
 		await click_on_new_category_or_delete_category_until_number_is_right(category_labels.length);
-
-		// Wait for DOM to settle
 		await delay(500);
 
-		// Rename labels and insert images
 		var label_inputs = $(".own_image_label");
 		var image_containers = $(".own_images");
 
 		for (var c = 0; c < category_labels.length; c++) {
-			var label = category_labels[c];
+			var this_label = category_labels[c];
 
-			// Set the label name
-			$(label_inputs[c]).val(label);
-
-			// Clear any existing images in this category
+			$(label_inputs[c]).val(this_label);
 			$(image_containers[c]).empty();
 
-			// Add each image from the zip
-			var images = categories[label];
+			var images = categories[this_label];
 			for (var img_idx = 0; img_idx < images.length; img_idx++) {
 				var img_data = images[img_idx];
 				var dataUrl = await blob_to_data_url(img_data.blob);
 
-				var img_id = img_data.filename.replace(/\.[^.]+$/, "") || uuidv4();
-				// Sanitize id
-				img_id = img_id.replace(/[^a-zA-Z0-9_-]/g, "_");
+				var img_id = img_data.filename.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, "_") || uuidv4();
 
 				var html = '<span class="own_image_span"><img height="90" id="' + img_id + '_image" src="' + dataUrl + '"><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span>';
 				$(image_containers[c]).append(html);
 			}
 		}
 
-		// Update counters and labels
 		update_image_counters();
 		await rename_labels();
 		enable_train_if_has_custom_images();
@@ -453,16 +436,15 @@ async function import_zip_and_replace_categories(inputElement) {
 		err("Error importing zip: " + (e.message || e));
 	}
 
-	// Reset the file input so the same file can be re-uploaded
+	// Button zurücksetzen
+	label.innerHTML = originalHTML;
 	inputElement.value = "";
 }
 
 function blob_to_data_url(blob) {
 	return new Promise(function(resolve, reject) {
 		var reader = new FileReader();
-		reader.onloadend = function() {
-			resolve(reader.result);
-		};
+		reader.onloadend = function() { resolve(reader.result); };
 		reader.onerror = reject;
 		reader.readAsDataURL(blob);
 	});
