@@ -1907,3 +1907,9 @@ border-collapse: collapse;
 @keyframes zip-spin {
 	to { transform: rotate(360deg); }
 }
+
+label.buttons_in_custom_images {
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+}
