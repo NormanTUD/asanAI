@@ -1891,3 +1891,7 @@ border-collapse: collapse;
     50% { box-shadow: 0 0 12px 4px rgba(0, 212, 170, 0.4); }
     100% { box-shadow: none; }
 }
+
+#created_video_element {
+	transform: scaleX(-1);
+}
