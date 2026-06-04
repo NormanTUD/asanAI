@@ -348,6 +348,8 @@ async function get_fit_data () {
 		confusion_matrix_and_grid_cache = {};
 
 		history_of_weights_for_loss_landscape = [];
+
+		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
 	callbacks["onBatchBegin"] = async function () {
@@ -361,6 +363,8 @@ async function get_fit_data () {
 		}
 
 		confusion_matrix_and_grid_cache = {};
+
+		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
 	callbacks["onEpochBegin"] = async function () {
@@ -382,6 +386,8 @@ async function get_fit_data () {
 		confusion_matrix_and_grid_cache = {};
 
 		//visualizeModelOrganism(model, "neural_organism");
+
+		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
 	callbacks["onBatchEnd"] = async function (batch, logs) {
@@ -434,6 +440,8 @@ async function get_fit_data () {
 		current_loss_value = logs.loss;
 
 		//history_of_weights_for_loss_landscape.push(extract_flat_weights_from_model(model));
+
+		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
 	callbacks["onEpochEnd"] = async function (batch, logs) {
@@ -529,6 +537,8 @@ async function get_fit_data () {
 		//await visualizeModelBends();
 
 		//visualizeModelOrganism(model, "neural_organism");
+
+		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
 	callbacks["onTrainEnd"] = async function () {
@@ -550,6 +560,8 @@ async function get_fit_data () {
 		if(_math_interactive_mode) {
 			toggle_math_interactive_mode();
 		}
+
+		show_or_hide_beginner_or_expert_mode_stuff();
 	};
 
 	var fit_data = {
