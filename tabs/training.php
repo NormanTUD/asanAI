@@ -15,7 +15,7 @@
 				<div id="plotly_epoch_history"></div>
 			</div>
 
-			<div style="display: none">
+			<div style="display: none" class="expert_mode_only">
 				<div id="plotly_batch_history"></div>
 			</div>
 
