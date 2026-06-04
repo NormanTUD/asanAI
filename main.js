@@ -765,6 +765,12 @@ function create_styled_upload_buttons() {
 			return;
 		}
 
+		// Skip the zip upload input — it has its own button
+		if (input.id === "zip_upload_input") {
+			input.dataset.styled = "true";
+			return;
+		}
+
 		input.style.position = "absolute";
 		input.style.opacity = "0";
 		input.style.pointerEvents = "none";
@@ -787,7 +793,7 @@ function create_styled_upload_buttons() {
 			err("Parent element of file upload element could not be determined");
 		}
 
-		update_translations(); // await not needed here
+		update_translations();
 	});
 }
 

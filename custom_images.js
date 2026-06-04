@@ -362,10 +362,10 @@ async function import_zip_and_replace_categories(inputElement) {
 	var labelEl = document.getElementById("zip_upload_label");
 	var inputEl = document.getElementById("zip_upload_input");
 
-	// Remove onchange temporarily so it doesn't fire again
 	inputEl.removeAttribute("onchange");
+	inputEl.setAttribute("hidden", "true");
+	inputEl.classList.add("force-hidden-input");
 
-	// Show spinner in the button only — don't touch the input
 	labelEl.innerHTML = '<span class="zip-spinner"></span> Importing...';
 
 	try {
@@ -448,7 +448,22 @@ function restore_zip_upload_button(labelEl, inputEl) {
 	labelEl.innerHTML = '<img src="_gui/icons/zip.svg" height="15"> <span class="TRANSLATEME_upload_custom_zip_file" data-lang="en">Upload custom data from a .zip file</span>';
 	inputEl.setAttribute("onchange", "import_zip_and_replace_categories(this)");
 	inputEl.value = "";
+
+	// Angle 3: Force hide via JS property
 	inputEl.style.display = "none";
+	inputEl.style.visibility = "hidden";
+	inputEl.style.position = "absolute";
+	inputEl.style.width = "0";
+	inputEl.style.height = "0";
+	inputEl.style.opacity = "0";
+	inputEl.style.pointerEvents = "none";
+
+	// Angle 4: Force hide via attribute
+	inputEl.setAttribute("hidden", "true");
+	inputEl.setAttribute("aria-hidden", "true");
+
+	// Angle 5: Force hide via class
+	inputEl.classList.add("force-hidden-input");
 }
 
 function blob_to_data_url(blob) {

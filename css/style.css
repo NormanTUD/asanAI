@@ -1546,358 +1546,375 @@ input:focus, textarea:focus, select:focus {
 	}
 }
 
-/* ============================================================
-MATH EDITABLE VARIABLES - Popup & Inline Styles
-============================================================ */
+.math-ed-wrap {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	vertical-align: baseline;
+	margin: 0 2px;
+}
 
-	/* Inline editable number */
-	.math-ed-wrap {
-		display: inline-flex;
-		flex-direction: column;
-		align-items: center;
-		vertical-align: baseline;
-		margin: 0 2px;
-	}
+.math-ed-num {
+	display: inline-block;
+	cursor: pointer;
+	padding: 1px 5px;
+	border-radius: 4px;
+	transition: all 0.12s;
+	font-family: "Temml", KaTeX_Main, "Times New Roman", serif;
+	font-size: 1.05em;
+	color: #53d8fb;
+	vertical-align: baseline;
+	min-width: 2.2em;
+	text-align: center;
+}
 
-	.math-ed-num {
-		display: inline-block;
-		cursor: pointer;
-		padding: 1px 5px;
-		border-radius: 4px;
-		transition: all 0.12s;
-		font-family: "Temml", KaTeX_Main, "Times New Roman", serif;
-		font-size: 1.05em;
-		color: #53d8fb;
-		vertical-align: baseline;
-		min-width: 2.2em;
-		text-align: center;
-	}
+.math-ed-num:hover {
+	background: rgba(83, 216, 251, 0.15);
+	box-shadow: 0 0 8px rgba(83, 216, 251, 0.15);
+}
 
-	.math-ed-num:hover {
-		background: rgba(83, 216, 251, 0.15);
-		box-shadow: 0 0 8px rgba(83, 216, 251, 0.15);
-	}
+.math-ed-num.math-ed-active {
+	background: rgba(233, 69, 96, 0.22);
+	box-shadow: 0 0 10px rgba(233, 69, 96, 0.25);
+	color: #e94560;
+}
 
-	.math-ed-num.math-ed-active {
-		background: rgba(233, 69, 96, 0.22);
-		box-shadow: 0 0 10px rgba(233, 69, 96, 0.25);
-		color: #e94560;
-	}
+.math-ed-label {
+	font-size: 0.55em;
+	color: #667;
+	font-family: monospace;
+	line-height: 1;
+	margin-top: 1px;
+	white-space: nowrap;
+}
 
-	.math-ed-label {
-		font-size: 0.55em;
-		color: #667;
-		font-family: monospace;
-		line-height: 1;
-		margin-top: 1px;
-		white-space: nowrap;
-	}
+/* Popup editor */
+.math-pop-ed {
+	position: fixed;
+	z-index: 99999;
+	background: #14142a;
+	border: 1px solid #53d8fb;
+	border-radius: 9px;
+	padding: 12px 14px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+	display: none;
+	min-width: 230px;
+	font-family: 'Segoe UI', system-ui, sans-serif;
+}
 
-	/* Popup editor */
-	.math-pop-ed {
-		position: fixed;
-		z-index: 99999;
-		background: #14142a;
-		border: 1px solid #53d8fb;
-		border-radius: 9px;
-		padding: 12px 14px;
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
-		display: none;
-		min-width: 230px;
-		font-family: 'Segoe UI', system-ui, sans-serif;
-	}
+.math-pop-ed.math-pop-visible {
+	display: block;
+}
 
-	.math-pop-ed.math-pop-visible {
-		display: block;
-	}
+.math-pop-label {
+	font-size: 0.78em;
+	color: #889;
+	display: block;
+	margin-bottom: 4px;
+	font-weight: bold;
+}
 
-	.math-pop-label {
-		font-size: 0.78em;
-		color: #889;
-		display: block;
-		margin-bottom: 4px;
-		font-weight: bold;
-	}
+.math-pop-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 6px;
+}
 
-	.math-pop-row {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		margin-bottom: 6px;
-	}
+.math-pop-row input[type=number] {
+	width: 90px;
+	background: #08080f;
+	border: 1px solid #2a2a4a;
+	color: #53d8fb;
+	padding: 5px 7px;
+	border-radius: 4px;
+	font-family: monospace;
+	font-size: 0.9em;
+	text-align: center;
+}
 
-	.math-pop-row input[type=number] {
-		width: 90px;
-		background: #08080f;
-		border: 1px solid #2a2a4a;
-		color: #53d8fb;
-		padding: 5px 7px;
-		border-radius: 4px;
-		font-family: monospace;
-		font-size: 0.9em;
-		text-align: center;
-	}
+.math-pop-range {
+	font-size: 0.65em;
+	color: #445;
+}
 
-	.math-pop-range {
-		font-size: 0.65em;
-		color: #445;
-	}
+.math-pop-ed input[type=range] {
+	width: 100%;
+	-webkit-appearance: none;
+	height: 5px;
+	border-radius: 3px;
+	background: #2a2a4a;
+	outline: none;
+	margin: 6px 0;
+}
 
-	.math-pop-ed input[type=range] {
-		width: 100%;
-		-webkit-appearance: none;
-		height: 5px;
-		border-radius: 3px;
-		background: #2a2a4a;
-		outline: none;
-		margin: 6px 0;
-	}
+.math-pop-ed input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #e94560;
+	cursor: pointer;
+	border: 2px solid #fff;
+}
 
-	.math-pop-ed input[type=range]::-webkit-slider-thumb {
-		-webkit-appearance: none;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: #e94560;
-		cursor: pointer;
-		border: 2px solid #fff;
-	}
+.math-pop-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+	margin-top: 6px;
+}
 
-	.math-pop-actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 6px;
-		margin-top: 6px;
-	}
+.math-pop-btn {
+	padding: 3px 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.75em;
+}
 
-	.math-pop-btn {
-		padding: 3px 10px;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-		font-size: 0.75em;
-	}
+.math-pop-btn-reset {
+	background: #1a1a30;
+	color: #889;
+}
 
-	.math-pop-btn-reset {
-		background: #1a1a30;
-		color: #889;
-	}
+.math-pop-btn-reset:hover {
+	background: #2a2a40;
+}
 
-	.math-pop-btn-reset:hover {
-		background: #2a2a40;
-	}
+.math-pop-btn-close {
+	background: #301414;
+	color: #e94560;
+}
 
-	.math-pop-btn-close {
-		background: #301414;
-		color: #e94560;
-	}
+.math-pop-btn-close:hover {
+	background: #501a1a;
+}
 
-	.math-pop-btn-close:hover {
-		background: #501a1a;
-	}
+/* Hybrid formula rows */
+.math-hybrid-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0;
+	margin: 2px 0;
+	line-height: 2.6;
+}
 
-	/* Hybrid formula rows */
-	.math-hybrid-row {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		gap: 0;
-		margin: 2px 0;
-		line-height: 2.6;
-	}
+.math-hybrid-row.math-hybrid-indent {
+	padding-left: 20px;
+}
 
-	.math-hybrid-row.math-hybrid-indent {
-		padding-left: 20px;
-	}
+.math-hybrid-tex {
+	display: inline-block;
+	vertical-align: baseline;
+}
 
-	.math-hybrid-tex {
-		display: inline-block;
-		vertical-align: baseline;
-	}
+/* Light theme overrides */
+body:not(.darkmode) .math-ed-num {
+	color: #0066cc;
+}
 
-	/* Light theme overrides */
-	body:not(.darkmode) .math-ed-num {
-		color: #0066cc;
-	}
+body:not(.darkmode) .math-ed-num:hover {
+	background: rgba(0, 102, 204, 0.1);
+}
 
-	body:not(.darkmode) .math-ed-num:hover {
-		background: rgba(0, 102, 204, 0.1);
-	}
+body:not(.darkmode) .math-pop-ed {
+	background: #ffffff;
+	border-color: #0066cc;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
 
-	body:not(.darkmode) .math-pop-ed {
-		background: #ffffff;
-		border-color: #0066cc;
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-	}
+body:not(.darkmode) .math-pop-row input[type=number] {
+	background: #f5f5f5;
+	border-color: #ddd;
+	color: #0066cc;
+}
 
-	body:not(.darkmode) .math-pop-row input[type=number] {
-		background: #f5f5f5;
-		border-color: #ddd;
-		color: #0066cc;
-	}
+/* Dark mode (default for your app) */
+.math-pop-ed.math-pop-dark {
+	background: #14142a;
+	border: 1px solid #53d8fb;
+	color: #eee;
+}
 
-	/* Dark mode (default for your app) */
-	.math-pop-ed.math-pop-dark {
-		background: #14142a;
-		border: 1px solid #53d8fb;
-		color: #eee;
-	}
+.math-pop-dark .math-pop-label {
+	color: #aab;
+}
 
-	.math-pop-dark .math-pop-label {
-		color: #aab;
-	}
+.math-pop-dark input[type=number] {
+	background: #08080f;
+	border: 1px solid #2a2a4a;
+	color: #53d8fb;
+}
 
-	.math-pop-dark input[type=number] {
-		background: #08080f;
-		border: 1px solid #2a2a4a;
-		color: #53d8fb;
-	}
+.math-pop-dark input[type=range]::-webkit-slider-runnable-track {
+	background: #2a2a4a;
+}
 
-	.math-pop-dark input[type=range]::-webkit-slider-runnable-track {
-		background: #2a2a4a;
-	}
+.math-pop-dark .math-pop-btn-reset {
+	background: #1a1a30;
+	color: #889;
+}
 
-	.math-pop-dark .math-pop-btn-reset {
-		background: #1a1a30;
-		color: #889;
-	}
+.math-pop-dark .math-pop-btn-close {
+	background: #301414;
+	color: #e94560;
+}
 
-	.math-pop-dark .math-pop-btn-close {
-		background: #301414;
-		color: #e94560;
-	}
+/* Light mode */
+.math-pop-ed.math-pop-light {
+	background: #ffffff;
+	border: 1px solid #0066cc;
+	color: #333;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
 
-	/* Light mode */
-	.math-pop-ed.math-pop-light {
-		background: #ffffff;
-		border: 1px solid #0066cc;
-		color: #333;
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-	}
+.math-pop-light .math-pop-label {
+	color: #555;
+}
 
-	.math-pop-light .math-pop-label {
-		color: #555;
-	}
+.math-pop-light input[type=number] {
+	background: #f5f5f5;
+	border: 1px solid #ccc;
+	color: #0066cc;
+}
 
-	.math-pop-light input[type=number] {
-		background: #f5f5f5;
-		border: 1px solid #ccc;
-		color: #0066cc;
-	}
+.math-pop-light input[type=range]::-webkit-slider-runnable-track {
+	background: #ddd;
+}
 
-	.math-pop-light input[type=range]::-webkit-slider-runnable-track {
-		background: #ddd;
-	}
+.math-pop-light .math-pop-btn-reset {
+	background: #f0f0f0;
+	color: #555;
+}
 
-	.math-pop-light .math-pop-btn-reset {
-		background: #f0f0f0;
-		color: #555;
-	}
+.math-pop-light .math-pop-btn-close {
+	background: #fee;
+	color: #c00;
+}
 
-	.math-pop-light .math-pop-btn-close {
-		background: #fee;
-		color: #c00;
-	}
+/* Editable number colors adapt to theme */
+.math-pop-dark ~ .math-ed-num,
+.math-ed-num {
+	color: #53d8fb;
+}
 
-	/* Editable number colors adapt to theme */
-	.math-pop-dark ~ .math-ed-num,
-	.math-ed-num {
-		color: #53d8fb;
-	}
+.math-pop-light ~ .math-ed-num {
+	color: #0066cc;
+}
 
-	.math-pop-light ~ .math-ed-num {
-		color: #0066cc;
-	}
+.math-pop-ed {
+	position: fixed;
+	z-index: 9999;
+}
 
-	.math-pop-ed {
-		position: fixed;
-		z-index: 9999;
-	}
+/* Photo strip thumbnails */
+#pyodide_photos_strip .pe-photo-thumb {
+	position: relative;
+	width: 64px;
+	height: 64px;
+	border-radius: 6px;
+	border: 2px solid var(--pe-border);
+	overflow: hidden;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+#pyodide_photos_strip .pe-photo-thumb:hover {
+	border-color: var(--pe-accent);
+	transform: scale(1.05);
+}
+#pyodide_photos_strip .pe-photo-thumb img,
+#pyodide_photos_strip .pe-photo-thumb canvas {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+#pyodide_photos_strip .pe-photo-thumb .pe-photo-label {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0,0,0,0.7);
+	color: #fff;
+	font-size: 9px;
+	text-align: center;
+	padding: 1px 0;
+	font-weight: 600;
+}
+#pyodide_photos_strip .pe-photo-thumb .pe-photo-remove {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	width: 14px;
+	height: 14px;
+	background: rgba(255,107,107,0.9);
+	border-radius: 50%;
+	color: #fff;
+	font-size: 9px;
+	line-height: 14px;
+	text-align: center;
+	cursor: pointer;
+	display: none;
+}
+#pyodide_photos_strip .pe-photo-thumb:hover .pe-photo-remove {
+	display: block;
+}
 
-	/* Photo strip thumbnails */
-	#pyodide_photos_strip .pe-photo-thumb {
-		position: relative;
-		width: 64px;
-		height: 64px;
-		border-radius: 6px;
-		border: 2px solid var(--pe-border);
-		overflow: hidden;
-		cursor: pointer;
-		transition: all 0.15s ease;
-	}
-	#pyodide_photos_strip .pe-photo-thumb:hover {
-		border-color: var(--pe-accent);
-		transform: scale(1.05);
-	}
-	#pyodide_photos_strip .pe-photo-thumb img,
-	#pyodide_photos_strip .pe-photo-thumb canvas {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-	}
-	#pyodide_photos_strip .pe-photo-thumb .pe-photo-label {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background: rgba(0,0,0,0.7);
-		color: #fff;
-		font-size: 9px;
-		text-align: center;
-		padding: 1px 0;
-		font-weight: 600;
-	}
-	#pyodide_photos_strip .pe-photo-thumb .pe-photo-remove {
-		position: absolute;
-		top: 2px;
-		right: 2px;
-		width: 14px;
-		height: 14px;
-		background: rgba(255,107,107,0.9);
-		border-radius: 50%;
-		color: #fff;
-		font-size: 9px;
-		line-height: 14px;
-		text-align: center;
-		cursor: pointer;
-		display: none;
-	}
-	#pyodide_photos_strip .pe-photo-thumb:hover .pe-photo-remove {
-		display: block;
-	}
+.pe-btn-success-flash {
+	animation: successPulse 1.2s ease-out;
+}
+@keyframes successPulse {
+	0% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.7); }
+	50% { box-shadow: 0 0 12px 4px rgba(0, 212, 170, 0.4); }
+	100% { box-shadow: none; }
+}
 
-	.pe-btn-success-flash {
-		animation: successPulse 1.2s ease-out;
-	}
-	@keyframes successPulse {
-		0% { box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.7); }
-		50% { box-shadow: 0 0 12px 4px rgba(0, 212, 170, 0.4); }
-		100% { box-shadow: none; }
-	}
+#created_video_element {
+	transform: scaleX(-1);
+}
 
-	#created_video_element {
-		transform: scaleX(-1);
-	}
+#zip_upload_label .zip-spinner {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border: 2px solid rgba(0,0,0,0.2);
+	border-top-color: #000;
+	border-radius: 50%;
+	animation: zip-spin 0.6s linear infinite;
+	vertical-align: middle;
+	margin-right: 5px;
+}
 
-	#zip_upload_label .zip-spinner {
-		display: inline-block;
-		width: 14px;
-		height: 14px;
-		border: 2px solid rgba(0,0,0,0.2);
-		border-top-color: #000;
-		border-radius: 50%;
-		animation: zip-spin 0.6s linear infinite;
-		vertical-align: middle;
-		margin-right: 5px;
-	}
+@keyframes zip-spin {
+	to { transform: rotate(360deg); }
+}
 
-	@keyframes zip-spin {
-		to { transform: rotate(360deg); }
-	}
+label.buttons_in_custom_images {
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+}
 
-	label.buttons_in_custom_images {
-		display: inline-block;
-		text-align: center;
-		vertical-align: middle;
-	}
+/* Angle 2: CSS rule to force-hide the file input */
+#zip_upload_input {
+	display: none !important;
+	width: 0 !important;
+	height: 0 !important;
+	opacity: 0 !important;
+	position: absolute !important;
+	visibility: hidden !important;
+	pointer-events: none !important;
+	overflow: hidden !important;
+}
+
+.force-hidden-input {
+	display: none !important;
+	visibility: hidden !important;
+	position: absolute !important;
+	width: 0 !important;
+	height: 0 !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
