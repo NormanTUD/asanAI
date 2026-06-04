@@ -154,8 +154,6 @@ async function _train_neural_network () {
 
 		last_batch_time = 0;
 
-		time_per_batch = get_empty_plotly("Time per batch (in seconds)");
-
 		training_memory_history = get_empty_training_memory_history_plotly();
 
 		reset_gui_before_training();
@@ -404,8 +402,6 @@ async function get_fit_data () {
 			last_batch_time = +new Date();
 		} else {
 			var current_time = +new Date();
-			time_per_batch[time_per_batch_name]["x"].push(batchNr);
-			time_per_batch[time_per_batch_name]["y"].push((current_time - last_batch_time) / 1000);
 			last_batch_time = current_time;
 		}
 
@@ -417,7 +413,6 @@ async function get_fit_data () {
 			const plot_func = (batchNr === 1) ? Plotly.newPlot : Plotly.update;
 
 			plot_func("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-			plot_func("plotly_time_per_batch", [time_per_batch[time_per_batch_name]], get_plotly_layout(language[lang]["time_per_batch"]));
 
 			last_batch_plot_time = Date.now();
 		}
@@ -491,9 +486,6 @@ async function get_fit_data () {
 		if(training_logs_batch && "loss" in training_logs_batch) {
 			this_plot_data = [training_logs_batch["loss"]];
 			Plotly.update("plotly_batch_history", this_plot_data, get_plotly_layout(language[lang]["batches"]));
-		}
-		if(time_per_batch && time_per_batch_name in time_per_batch) {
-			Plotly.update("plotly_time_per_batch", [time_per_batch[time_per_batch_name]], get_plotly_layout(language[lang]["time_per_batch"]));
 		}
 		last_batch_plot_time = false;
 
@@ -578,7 +570,6 @@ async function get_fit_data () {
 
 function show_plotly_graphs() {
 	$("#plotly_batch_history").parent().show();
-	$("#plotly_time_per_batch").parent().show();
 }
 
 function create_tiny_plot(x, y, y_val, w, h) {

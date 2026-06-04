@@ -20,10 +20,6 @@
 			</div>
 
 			<div style="display: none">
-				<div id="plotly_time_per_batch"></div>
-			</div>
-
-			<div style="display: none">
 				<div id="plotly_memory_history"></div>
 			</div>
 		</div>
