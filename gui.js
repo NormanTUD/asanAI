@@ -9544,6 +9544,6 @@ async function updated_page_restart_webcam_if_applicable() {
 	await updated_page(null, null, null, null, null);
 
 	if(_webcam_enabled) {
-		show_webcam();
+		await show_webcam();
 	}
 }
