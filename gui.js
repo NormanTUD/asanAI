@@ -6842,6 +6842,8 @@ function l(msg) {
 }
 
 async function set_custom_image_training () {
+	close_popups();
+
 	labels = [];
 
 	if($("#data_origin").val() != "image") {
@@ -6870,6 +6872,8 @@ async function get_data_from_webcam_if_possible(){
 }
 
 async function set_custom_webcam_training_data() {
+	close_popups();
+
 	labels = [];
 
 	dbg("Init webcams");
@@ -9536,4 +9540,11 @@ async function updated_page_restart_webcam_if_applicable() {
 	if(_webcam_enabled) {
 		await show_webcam();
 	}
+}
+
+function close_popups() {
+	close_popup('save_model_dialog');
+	close_popup('upload_dialog');
+	close_popup('sources_popup');
+	close_popup("losses_popup");
 }
