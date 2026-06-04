@@ -967,7 +967,9 @@ $(document).ready(async function() {
 
 	set_theme_from_cookie();
 
-	get_drawing_board_on_page($("#predict_handdrawn_canvas"), "sketcher", "predict_handdrawn();");
+	const predict_handdrawn_canvas = $("#predict_handdrawn_canvas");
+
+	get_drawing_board_on_page(predict_handdrawn_canvas, "sketcher", "predict_handdrawn();", null, null);
 
 	set_optimizer_metadata_input_change();
 
