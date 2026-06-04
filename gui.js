@@ -5199,15 +5199,6 @@ async function rename_labels(do_not_reset_labels=0) {
 	add_label_sidebar();
 }
 
-// shows or hides category delete
-function show_or_hide_hide_delete_category() {
-	if ($(".own_image_label").length > 1) {
-		$(".delete_category_button").show();
-	} else {
-		$(".delete_category_button").hide();
-	}
-}
-
 function set_shown_advanced(shown) {
 	for (var shown_idx = 0; shown_idx < shown.length; shown_idx++) {
 		if (shown[shown_idx]) {
@@ -5975,30 +5966,7 @@ function human_readable_time(seconds, start="", end="") {
 	return returntext;
 }
 
-function delete_own_image(elem) {
-    // Remove the associated segmentation layer controls if they exist
-    var $span = $(elem).parent();
-    var img_or_canvas = $span.find("img,canvas").not("[id$='_layer']").first();
-    if (img_or_canvas.length && img_or_canvas[0].id) {
-        var layer_id = img_or_canvas[0].id + "_layer";
-        $("#" + layer_id).remove();
-        $("#" + layer_id + "_controls").remove();
-        if (atrament_data[layer_id]) {
-            delete atrament_data[layer_id];
-        }
-    }
 
-    // Remove the <br> after the span if it exists
-    var $next = $span.next();
-    if ($next.is("br")) {
-        $next.remove();
-    }
-
-    // Remove only this specific image's span
-    $span.remove();
-
-    enable_train_if_has_custom_images();
-}
 
 async function get_layers_container_md5() {
 	await delay(1);
@@ -9146,22 +9114,6 @@ async function read_zip_to_category (content) {
 	}
 
 	return uploaded_images_to_categories;
-}
-
-async function click_on_new_category_or_delete_category_until_number_is_right (number_of_categories) {
-	while ($(".delete_category_button").length != number_of_categories) {
-		if($(".delete_category_button").length > number_of_categories) {
-			while ($(".delete_category_button").length != 1) {
-				var $last_delete_button = $(".delete_category_button")[$(".delete_category_button").length - 1];
-
-				$last_delete_button.click();
-
-				await delay(1000);
-			}
-		} else {
-			await add_new_category();
-		}
-	}
 }
 
 async function read_zip (content) {
