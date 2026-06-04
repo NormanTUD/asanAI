@@ -156,3 +156,126 @@ function get_custom_elements_from_webcam_page () {
 
 	return imgs;
 }
+
+function insertCanvasIntoCategory(elem, categoryName, id, width, height) {
+	let category = $(elem).parent();
+	let container = $(category).find(".own_images")[0];
+	let wrapper = document.createElement("div");
+	wrapper.className = "own_image_span";
+	wrapper.style.display = "block";
+	wrapper.style.marginBottom = "8px";
+	let canvas = document.createElement("canvas");
+	canvas.dataset.category = categoryName;
+	canvas.id = id + "_canvas";
+	canvas.width = width;
+	canvas.height = height;
+	canvas.classList.add("webcam_series_image");
+	canvas.classList.add("webcam_series_image_category_" + id);
+	let del = document.createElement("span");
+	del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
+	del.onclick = function () { delete_own_image(del); };
+	wrapper.appendChild(canvas);
+	wrapper.appendChild(del);
+	container.insertBefore(wrapper, container.firstChild);
+	return canvas;
+}
+
+function handle_file_select(e) {
+	if(!e.target.files || !window.FileReader) return;
+
+	var upload_nr = get_nr_from_own_image_files(e);
+
+	var imgDiv = $($(".own_images")[upload_nr]);
+
+	var filesArr = Array.prototype.slice.call(e.target.files);
+	filesArr.forEach(function(f) {
+		if(!f.type.match("image.*")) {
+			return;
+		}
+		var reader = new FileReader();
+		reader.onload = function (e) {
+			var html = "<span class=\"own_image_span\"><img height=\"90\" id=\"" + uuidv4() + "_image\" src=\"" + e.target.result + "\"><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span>";
+			imgDiv.append(html);
+		};
+		reader.readAsDataURL(f);
+	});
+}
+
+async function create_zip_with_custom_images () {
+	var zipWriter = new zip.ZipWriter(new zip.BlobWriter("application/zip"));
+
+	var canvasses = $(".own_image_span").find("canvas");
+
+	for (var canvas_idx = 0; canvas_idx < canvasses.length; canvas_idx++) {
+		var canvas = canvasses[canvas_idx];
+
+		var blob = await get_canvas_blob(canvas);
+
+		var label = $(canvas).parent().parent().parent().find(".own_image_label").val();
+
+		var filename = canvas.id;
+
+		if(!filename) {
+			filename = uuidv4();
+		}
+		var path = label + "/" + filename + ".png";
+
+		if(!blob) {
+			err(language[lang]["canvas_blob_could_not_be_found"]);
+		} else {
+			let blob_reader = new zip.BlobReader(blob);
+
+			try {
+				await zipWriter.add(path, blob_reader);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err(`${language[lang]["trying_to_add_canvas_to"]} '${path}': ` + e);
+			}
+		}
+	}
+
+	var imgs = $(".own_image_span").find("img");
+
+	for (var image_idx = 0; image_idx < imgs.length; image_idx++) {
+		var img = imgs[image_idx];
+
+		let blob = await get_img_blob(img);
+
+		let label = $(img).parent().parent().parent().find(".own_image_label").val();
+
+		let filename = img.id;
+
+		if(!filename) {
+			filename = uuidv4();
+		}
+		let path = label + "/" + filename + ".png";
+
+		if(!blob) {
+			err(language[lang]["img_blob_could_not_be_found"]);
+		} else {
+			let blob_reader = new zip.BlobReader(blob);
+
+			try {
+				await zipWriter.add(path, blob_reader);
+			} catch (e) {
+				if(Object.keys(e).includes("message")) {
+					e = e.message;
+				}
+
+				err(`Trying to add img to '${path}': ` + e);
+			}
+		}
+	}
+
+	var res = await zipWriter.close();
+	return res;
+}
+
+function add_image_to_category (img, category) {
+	var imgDiv = $($(".own_images")[category]);
+	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
+	imgDiv.prepend(html);
+}

@@ -618,29 +618,6 @@ function computeCanvasSizeFromTensor(tensor, maxSize) {
 	return [Math.round(width * ratio), Math.round(height * ratio)];
 }
 
-function insertCanvasIntoCategory(elem, categoryName, id, width, height) {
-	let category = $(elem).parent();
-	let container = $(category).find(".own_images")[0];
-	let wrapper = document.createElement("div");
-	wrapper.className = "own_image_span";
-	wrapper.style.display = "block";
-	wrapper.style.marginBottom = "8px";
-	let canvas = document.createElement("canvas");
-	canvas.dataset.category = categoryName;
-	canvas.id = id + "_canvas";
-	canvas.width = width;
-	canvas.height = height;
-	canvas.classList.add("webcam_series_image");
-	canvas.classList.add("webcam_series_image_category_" + id);
-	let del = document.createElement("span");
-	del.innerHTML = "&#10060;&nbsp;&nbsp;&nbsp;";
-	del.onclick = function () { delete_own_image(del); };
-	wrapper.appendChild(canvas);
-	wrapper.appendChild(del);
-	container.insertBefore(wrapper, container.firstChild);
-	return canvas;
-}
-
 function putArrayImageToCanvas(canvas, cam_image) {
 	let ctx = canvas.getContext("2d");
 	let h = cam_image.length;

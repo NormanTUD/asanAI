@@ -127,27 +127,6 @@ function get_nr_from_own_image_files (e) {
 	return nr;
 }
 
-function handle_file_select(e) {
-	if(!e.target.files || !window.FileReader) return;
-
-	var upload_nr = get_nr_from_own_image_files(e);
-
-	var imgDiv = $($(".own_images")[upload_nr]);
-
-	var filesArr = Array.prototype.slice.call(e.target.files);
-	filesArr.forEach(function(f) {
-		if(!f.type.match("image.*")) {
-			return;
-		}
-		var reader = new FileReader();
-		reader.onload = function (e) {
-			var html = "<span class=\"own_image_span\"><img height=\"90\" id=\"" + uuidv4() + "_image\" src=\"" + e.target.result + "\"><span onclick=\"delete_own_image(this)\">&#10060;&nbsp;&nbsp;&nbsp;</span></span>";
-			imgDiv.append(html);
-		};
-		reader.readAsDataURL(f);
-	});
-}
-
 if(window.location.href.indexOf("run_tests") > -1) {
 	run_tests(); // await not possible
 }
