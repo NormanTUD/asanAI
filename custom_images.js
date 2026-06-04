@@ -342,3 +342,13 @@ function show_or_hide_hide_delete_category() {
 		$(".delete_category_button").hide();
 	}
 }
+
+async function create_and_download_zip () {
+	var res = await create_zip_with_custom_images().then(save_custom_images_file);
+
+	return res;
+}
+
+function save_custom_images_file (blob, filename="custom_images.zip") {
+	save_file(filename, "data:application/zip", blob);
+}

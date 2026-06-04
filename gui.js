@@ -7892,16 +7892,6 @@ function save_file (name, type, data) {
 	a.remove();
 }
 
-function save_custom_images_file (blob, filename="custom_images.zip") {
-	save_file(filename, "data:application/zip", blob);
-}
-
-async function create_and_download_zip () {
-	var res = await create_zip_with_custom_images().then(save_custom_images_file);
-
-	return res;
-}
-
 function show_bars_instead_of_numbers () {
 	if(get_last_layer_activation_function() == "softmax") {
 		if($("#show_bars_instead_of_numbers").is(":checked")) {
