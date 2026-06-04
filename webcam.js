@@ -446,7 +446,12 @@ async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
 					tempCanvas.height = video.videoHeight || tempCanvas.height;
 				}
 				try {
-					tempCanvas.getContext("2d").drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+					let ctx = tempCanvas.getContext("2d");
+					ctx.save();
+					ctx.translate(tempCanvas.width, 0);
+					ctx.scale(-1, 1);
+					ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+					ctx.restore();
 				} catch (drawErr) {
 				}
 			} catch (metaErr) {
@@ -458,7 +463,7 @@ async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
 					return;
 				}
 				try {
-					dispose(tensor); // await not possible
+					dispose(tensor);
 				} catch (d) { }
 				if (performance.now() < deadlineTime) {
 					try { video.requestVideoFrameCallback(frameCallback); } catch (e) {}
@@ -493,7 +498,12 @@ async function waitForCompositedFrameWithRAF(video, tempCanvas, deadlineTime) {
 		tempCanvas.width = width;
 		tempCanvas.height = height;
 		try {
-			tempCanvas.getContext("2d").drawImage(video, 0, 0, width, height);
+			let ctx = tempCanvas.getContext("2d");
+			ctx.save();
+			ctx.translate(width, 0);
+			ctx.scale(-1, 1);
+			ctx.drawImage(video, 0, 0, width, height);
+			ctx.restore();
 		} catch (drawErr) {
 			continue;
 		}
@@ -548,7 +558,10 @@ async function _captureTensorFromActiveVideo(videoElement) {
 	tempCanvas.height = height;
 
 	try {
-		tempCanvas.getContext("2d").drawImage(videoElement, 0, 0, width, height);
+		let ctx = tempCanvas.getContext("2d");
+		ctx.translate(width, 0);
+		ctx.scale(-1, 1);
+		ctx.drawImage(videoElement, 0, 0, width, height);
 		let tensor = await tf.browser.fromPixelsAsync(tempCanvas);
 
 		if (tensor && tensor.shape && tensor.shape[0] > 1 && tensor.shape[1] > 1) {
