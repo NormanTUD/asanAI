@@ -445,7 +445,7 @@ async function import_zip_and_replace_categories(inputElement) {
 }
 
 function restore_zip_upload_button(labelEl, inputEl) {
-	labelEl.innerHTML = '<img src="_gui/icons/zip.svg" height="15"> <span class="TRANSLATEME_upload_custom_zip_file" data-lang="en">Upload custom data from a .zip file</span>';
+	labelEl.innerHTML = '<img src="_gui/icons/upload.svg" height="15"> <span class="TRANSLATEME_upload_custom_zip_file" data-lang="en">Upload custom data from a .zip file</span>';
 	inputEl.setAttribute("onchange", "import_zip_and_replace_categories(this)");
 	inputEl.value = "";
 
