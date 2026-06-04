@@ -4,7 +4,7 @@
 		<button class="buttons_in_custom_images" id="webcam_start_stop" onclick="get_data_from_webcam()"><img src='_gui/camera.svg' height=15 /> <span class="TRANSLATEME_enable_webcam"></span></button>
 		<button class="buttons_in_custom_images" onclick="create_and_download_zip()"><img src='_gui/icons/zip.svg' height=15 /> <span class="TRANSLATEME_download_custom_zip_file"></span></button>
 
-		<label class="buttons_in_custom_images" id="zip_upload_label" style="cursor:pointer"><img src="_gui/icons/zip.svg" height="15"> <span class="TRANSLATEME_upload_custom_zip_file" data-lang="en">Upload custom data from a .zip file</span><span style="display: none"><input type="file" id="zip_upload_input" accept=".zip" style="display:none" onchange="import_zip_and_replace_categories(this)"></span></label>
+		<label class="buttons_in_custom_images" id="zip_upload_label" style="cursor:pointer"><button class="TRANSLATEME_upload_custom_zip_file"></button><span style="display: none"><input type="file" id="zip_upload_input" accept=".zip" style="display:none" onchange="import_zip_and_replace_categories(this)"></span></label>
 
 		<br>
 		<span class="TRANSLATEME_auto_adjust_last_layer_if_dense buttons_in_custom_images"></span>? <input type="checkbox" value="1" id="auto_adjust_number_of_neurons" checked>
