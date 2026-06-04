@@ -24,7 +24,14 @@ function setup_drawing_board(n, uuid, label_nr) {
 }
 
 function create_images_div(n) {
-	$(`<div class="own_images"></div>`).appendTo($(".own_image_upload_container")[n]);
+	$(`<div class="own_images_counter"><span class="TRANSLATEME_nr_of_images_in_this_category"></span> <span class="own_images_count">0</span></div><div class="own_images"></div>`).appendTo($(".own_image_upload_container")[n]);
+}
+
+function update_image_counters() {
+	$(".own_image_upload_container").each(function(i, container) {
+		var count = $(container).find(".own_image_span").length;
+		$(container).find(".own_images_count").text(count);
+	});
 }
 
 function add_upload_container_html(k) {
@@ -177,6 +184,7 @@ function insertCanvasIntoCategory(elem, categoryName, id, width, height) {
 	wrapper.appendChild(canvas);
 	wrapper.appendChild(del);
 	container.insertBefore(wrapper, container.firstChild);
+	update_image_counters();
 	return canvas;
 }
 
@@ -198,6 +206,8 @@ function handle_file_select(e) {
 			imgDiv.append(html);
 		};
 		reader.readAsDataURL(f);
+
+		update_image_counters();
 	});
 }
 
@@ -278,6 +288,8 @@ function add_image_to_category (img, category) {
 	var imgDiv = $($(".own_images")[category]);
 	var html = `<span class="own_image_span"><img data-category="${category}" height="90" src="${img}" /><span onclick="delete_own_image(this)">&#10060;&nbsp;&nbsp;&nbsp;</span></span><br>`;
 	imgDiv.prepend(html);
+
+	update_image_counters();
 }
 
 async function click_on_new_category_or_delete_category_until_number_is_right (number_of_categories) {
@@ -319,6 +331,8 @@ function delete_own_image(elem) {
 	$span.remove();
 
 	enable_train_if_has_custom_images();
+
+	update_image_counters();
 }
 
 function show_or_hide_hide_delete_category() {
