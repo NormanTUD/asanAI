@@ -91,6 +91,7 @@
 		_js("data.js");
 		_js("webcam.js");
 		_js("gui.js");
+		_js("custom_images.js");
 		_js("segmentation.js");
 		_js("faster_canvas_functions.js");
 		_js("fcnn.js");
