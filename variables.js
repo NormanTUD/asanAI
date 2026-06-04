@@ -1244,7 +1244,7 @@ var training_memory_history = {
 	}
 };
 
-function get_plotly_layout (name="") {
+function get_plotly_layout (name="", y_label="Loss") {
 	var plotly_layout = {
 		paper_bgcolor: "rgba(0, 0, 0, 0)",
 		plot_bgcolor: "rgba(0, 0, 0, 0)",
@@ -1254,21 +1254,40 @@ function get_plotly_layout (name="") {
 			size: 18,
 			color: "#7f7f7f"
 		},
+		margin: {
+			l: 60,
+			r: 30,
+			b: 50,
+			t: 30
+		},
 		xaxis: {
+			title: {
+				text: name,
+				font: {
+					family: "Arial, Helvetica, sans-serif",
+					size: 14,
+					color: "#7f7f7f"
+				},
+				standoff: 10
+			},
 			dtick: 0,
 			showline: false,
 			showgrid: false
 		},
 		yaxis: {
+			title: {
+				text: y_label,
+				font: {
+					family: "Arial, Helvetica, sans-serif",
+					size: 14,
+					color: "#7f7f7f"
+				},
+				standoff: 10
+			},
 			showline: false,
 			showgrid: false
 		}
-
 	};
-
-	if(name) {
-		plotly_layout["title"] = name;
-	}
 
 	return plotly_layout;
 }
