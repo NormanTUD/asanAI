@@ -463,7 +463,7 @@ async function waitForCompositedFrameWithRVFC(video, tempCanvas, deadlineTime) {
 					return;
 				}
 				try {
-					dispose(tensor);
+					dispose(tensor); // await not possible
 				} catch (d) { }
 				if (performance.now() < deadlineTime) {
 					try { video.requestVideoFrameCallback(frameCallback); } catch (e) {}
