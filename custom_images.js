@@ -24,7 +24,7 @@ function setup_drawing_board(n, uuid, label_nr) {
 }
 
 function create_images_div(n) {
-	$(`<div class="own_images_counter"><span class="TRANSLATEME_nr_of_images_in_this_category"></span> <span class="own_images_count">0</span></div><div class="own_images"></div>`).appendTo($(".own_image_upload_container")[n]);
+	$(`<div class="own_images_counter"><span class="TRANSLATEME_nr_of_images_in_this_category"></span>: <span class="own_images_count">0</span></div><div class="own_images"></div>`).appendTo($(".own_image_upload_container")[n]);
 }
 
 function update_image_counters() {
