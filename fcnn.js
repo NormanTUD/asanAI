@@ -218,7 +218,7 @@ function _make_mini_canvas_rgb_data_url(data3d, maxDisplaySize) {
 
 function _build_neuron_tooltip_html(region) {
     var parts = [];
-    parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🧠 Neuron</div>`);
+    parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">♾️ Neuron</div>`);
     parts.push(`<table style="border-collapse:collapse;width:100%;">`);
 
     var row = (label, val) => `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
@@ -1762,7 +1762,7 @@ function _make_mini_canvas_rgb_data_url(data3d, maxDisplaySize) {
 
 function _build_neuron_tooltip_html(region) {
 	var parts = [];
-	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🧠 Neuron</div>`);
+	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">♾️ Neuron</div>`);
 	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
 
 	var row = function (label, val) {
