@@ -88,46 +88,12 @@ function _ensure_fcnn_tooltip() {
     return _fcnn_tooltip_el;
 }
 
-function _show_fcnn_tooltip(html, mouseX, mouseY) {
-    var tip = _ensure_fcnn_tooltip();
-    // Update theme colors dynamically
-    var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
-    tip.style.background = dark ? 'rgba(30,30,40,0.97)' : 'rgba(255,255,255,0.98)';
-    tip.style.color = dark ? '#e0e0e0' : '#222';
-    tip.style.border = `1px solid ${dark ? '#555' : '#bbb'}`;
-    tip.innerHTML = html;
-    tip.style.display = "block";
-    tip.style.opacity = "1";
-
-    // Position: prefer right/below cursor, but flip if near edge
-    var rect = tip.getBoundingClientRect();
-    var vw = window.innerWidth;
-    var vh = window.innerHeight;
-
-    var left = mouseX + 16;
-    var top = mouseY + 12;
-
-    if (left + tip.offsetWidth > vw - 10) left = mouseX - tip.offsetWidth - 10;
-    if (top + tip.offsetHeight > vh - 10) top = mouseY - tip.offsetHeight - 10;
-    if (left < 5) left = 5;
-    if (top < 5) top = 5;
-
-    tip.style.left = left + "px";
-    tip.style.top = top + "px";
-    _fcnn_tooltip_visible = true;
-}
-
 function _hide_fcnn_tooltip() {
     if (_fcnn_tooltip_el) {
         _fcnn_tooltip_el.style.opacity = "0";
         _fcnn_tooltip_el.style.display = "none";
     }
     _fcnn_tooltip_visible = false;
-}
-
-function _register_fcnn_hit_region(region) {
-    // region: { type, x, y, w, h, radius, layer_idx, neuron_idx, meta, data, ... }
-    _fcnn_hit_regions.push(region);
 }
 
 function _clear_fcnn_hit_regions() {
@@ -310,42 +276,6 @@ function _build_neuron_tooltip_html(region) {
     return parts.join("");
 }
 
-function _build_conv2d_tooltip_html(region) {
-    var parts = [];
-    parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🗺️ Conv2D Feature Map</div>`);
-    parts.push(`<table style="border-collapse:collapse;width:100%;">`);
-
-    var row = (label, val) => `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
-
-    parts.push(row("Layer", region.layer_idx));
-    parts.push(row("Channel/Filter", region.neuron_idx));
-    parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
-    parts.push(row("Size (w × h)", `${region.w} × ${region.h}`));
-
-    if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
-    if (region.kernel_size_x && region.kernel_size_y) parts.push(row("Kernel Size", `${region.kernel_size_x} × ${region.kernel_size_y}`));
-    if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(n => n).join(", ") + "]"));
-    if (region.input_shape) parts.push(row("Input Shape", "[" + region.input_shape.filter(n => n).join(", ") + "]"));
-
-    if (region.channel_stats) {
-        var s = region.channel_stats;
-        parts.push(row("Channel Min", _format_number(s.min)));
-        parts.push(row("Channel Max", _format_number(s.max)));
-        parts.push(row("Channel Avg", _format_number(s.avg)));
-        parts.push(row("Channel Std", _format_number(s.std)));
-        parts.push(row("Pixel Count", s.count));
-    }
-
-    parts.push(`</table>`);
-
-    // Show mini image if available
-    if (region.image_data_url) {
-        parts.push(`<div style="margin-top:6px;text-align:center;"><img src="${region.image_data_url}" style="border:1px solid #888;border-radius:3px;max-width:100px;max-height:100px;image-rendering:pixelated;" title="Feature map visualization"/></div>`);
-    }
-
-    return parts.join("");
-}
-
 function _build_flatten_tooltip_html(region) {
     var parts = [];
     parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">📏 Flatten Layer</div>`);
@@ -376,26 +306,6 @@ function _build_flatten_tooltip_html(region) {
         parts.push(`<div style="margin-top:6px;text-align:center;"><img src="${region.image_data_url}" style="border:1px solid #888;border-radius:3px;max-width:16px;max-height:200px;image-rendering:pixelated;" title="Flatten values"/></div>`);
     }
 
-    return parts.join("");
-}
-
-function _build_layernorm_tooltip_html(region) {
-    var parts = [];
-    parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">⚖️ Layer Normalization</div>`);
-    parts.push(`<table style="border-collapse:collapse;width:100%;">`);
-
-    var row = (label, val) => `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
-
-    parts.push(row("Layer", region.layer_idx));
-    parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
-    parts.push(row("Block Size (w × h)", `${region.w} × ${region.h}`));
-    if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
-    if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(n => n).join(", ") + "]"));
-    if (region.input_shape) parts.push(row("Input Shape", "[" + region.input_shape.filter(n => n).join(", ") + "]"));
-
-    parts.push(row("Operation", "Normalize → Scale (γ) → Shift (β)"));
-
-    parts.push(`</table>`);
     return parts.join("");
 }
 
@@ -746,56 +656,6 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 
 	// Bind mouse events after drawing (idempotent)
 	_bind_fcnn_canvas_mouse_events();
-}
-
-// ===== UPDATED: draw_layernorm with hit region =====
-
-function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize) {
-	try {
-		var blockWidth = maxShapeSize * 10;
-		var blockHeight = maxShapeSize * 2.5;
-
-		var x = layerX - blockWidth / 2;
-		var y = layerY - blockHeight / 2;
-
-		var sectionWidth = blockWidth / 3;
-
-		ctx.fillStyle = "#e0e0e0";
-		ctx.fillRect(x, y, sectionWidth, blockHeight);
-
-		ctx.fillStyle = "#b0d4ff";
-		ctx.fillRect(x + sectionWidth, y, sectionWidth, blockHeight);
-
-		ctx.fillStyle = "#ffd0a0";
-		ctx.fillRect(x + sectionWidth * 2, y, sectionWidth, blockHeight);
-
-		ctx.beginPath();
-		ctx.rect(x, y, blockWidth, blockHeight);
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = 2;
-		ctx.stroke();
-		ctx.closePath();
-
-		// Register hit region for tooltip
-		_register_fcnn_hit_region({
-			type: "layernorm",
-			shape: "rect",
-			x: x,
-			y: y,
-			w: blockWidth,
-			h: blockHeight,
-			layer_idx: layer_idx,
-			layer_type: meta_info.layer_type || "LayerNormalization",
-			output_shape: meta_info.output_shape || null,
-			input_shape: meta_info.input_shape || null
-		});
-
-	} catch (e) {
-		if (e && e.message) e = e.message;
-		assert(false, e);
-	}
-
-	return ctx;
 }
 
 // ===== UPDATED: _draw_connections_between_layers with hit regions =====
