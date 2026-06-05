@@ -1353,7 +1353,7 @@ function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY,
 		ctx.closePath();
 
 		// Register hit region for tooltip
-		_register_fcnn_hit_region({
+		const this_region = {
 			type: "layernorm",
 			shape: "rect",
 			x: x,
@@ -1364,7 +1364,8 @@ function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY,
 			layer_type: meta_info.layer_type || "LayerNormalization",
 			output_shape: meta_info.output_shape || null,
 			input_shape: meta_info.input_shape || null
-		});
+		};
+		_register_fcnn_hit_region(this_region);
 
 	} catch (e) {
 		if (e && e.message) e = e.message;
@@ -1460,7 +1461,7 @@ function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, la
 			}
 
 			// Register hit region for flatten
-			_register_fcnn_hit_region({
+			const this_region = {
 				type: "flatten",
 				shape: "rect",
 				x: _x,
@@ -1473,7 +1474,8 @@ function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, la
 				input_shape: meta_info.input_shape || null,
 				flatten_stats: flatten_stats,
 				image_data_url: flatten_image_url
-			});
+			};
+			_register_fcnn_hit_region(this_region);
 
 		} else {
 			alert("Has no output shape");
