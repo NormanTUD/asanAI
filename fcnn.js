@@ -1299,12 +1299,15 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 
 		for (var row = 0; row < n; row++) {
 			for (var col = 0; col < m; col++) {
-				var pixelValue = Math.floor((first_layer_input[row][col] - minVal) * scale);
 				var dataIndex = (row * m + col) * 4;
 
-				var red   = Math.abs(255 - parse_int((first_layer_input[row][col][0] - minVal) * scale));
-				var green = Math.abs(255 - parse_int((first_layer_input[row][col][1] - minVal) * scale));
-				var blue  = Math.abs(255 - parse_int((first_layer_input[row][col][2] - minVal) * scale));
+				var red   = parse_int((first_layer_input[row][col][0] - minVal) * scale);
+				var green = parse_int((first_layer_input[row][col][1] - minVal) * scale);
+				var blue  = parse_int((first_layer_input[row][col][2] - minVal) * scale);
+
+				red   = Math.max(0, Math.min(255, red));
+				green = Math.max(0, Math.min(255, green));
+				blue  = Math.max(0, Math.min(255, blue));
 
 				imageData.data[dataIndex + 0] = red;
 				imageData.data[dataIndex + 1] = green;
@@ -1316,7 +1319,7 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 		var _first_image_x = 10;
 		var _first_image_y = font_size + 10;
 
-		ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, n, m);
+		ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, m, n);
 
 		ctx.font = font_size + "px Arial";
 		if (is_dark_mode) {
@@ -1329,7 +1332,7 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 
 		ctx.strokeStyle = "black";
 		ctx.lineWidth = 1;
-		ctx.strokeRect(_first_image_x, _first_image_y, n, m);
+		ctx.strokeRect(_first_image_x, _first_image_y, m, n);
 	}
 
 	return ctx;
