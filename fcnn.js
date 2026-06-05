@@ -423,8 +423,9 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 		for (let i = 0; i < currYs.length; i++) {
 			const y1 = currYs[i];
 			for (let k = 0; k < nextYs.length; k++) {
+				var cpX = (localX1 + localX2) / 2;
 				octx.moveTo(localX1, y1);
-				octx.lineTo(localX2, nextYs[k]);
+				octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
 				count++;
 				if ((count % CHUNK) === 0) {
 					octx.stroke();
@@ -450,8 +451,9 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 
 				octx.beginPath();
 				octx.strokeStyle = get_weight_color(w, weightInfo.min, weightInfo.max);
+				var cpX = (localX1 + localX2) / 2;
 				octx.moveTo(localX1, y1);
-				octx.lineTo(localX2, nextYs[k]);
+				octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
 				octx.stroke();
 			}
 		}
