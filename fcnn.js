@@ -397,8 +397,6 @@ async function draw_fcnn(...args) {
 	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
-// ===== UPDATED: draw_first_layer_image (unchanged logic, included for completeness) =====
-
 function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
 	if (maxVal != minVal) {
 		var scale = 255 / (maxVal - minVal);
@@ -1277,8 +1275,6 @@ function _bind_fcnn_canvas_mouse_events() {
     });
 }
 
-// ===== UPDATED: _draw_neurons_and_connections (adds hit regions + binds mouse) =====
-
 async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
 
@@ -1691,14 +1687,7 @@ function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layer
 					// Use the INVERTED renderer with the SAME global minVal/maxVal
 					// that draw_filled_kernel_rectangle receives, so the tooltip
 					// image is pixel-identical to what's drawn on the canvas.
-					channel_image_url = _make_mini_canvas_data_url_inverted(
-						conv_layer_output_for_channel,
-						conv_layer_output_for_channel[0].length,
-						conv_layer_output_for_channel.length,
-						80,
-						minVal,  // global min from first_layer_input (same as canvas)
-						maxVal   // global max from first_layer_input (same as canvas)
-					);
+					channel_image_url = _make_mini_canvas_data_url_inverted(conv_layer_output_for_channel, conv_layer_output_for_channel[0].length, conv_layer_output_for_channel.length, 80, minVal, maxVal);
 				} catch (e) {
 					channel_stats = null;
 					channel_image_url = null;
