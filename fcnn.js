@@ -76,56 +76,6 @@ function _build_weight_histogram_html(weightStats, weightData) {
 
 // ===== CORE DRAWING FUNCTIONS (UPDATED) =====
 
-function get_layer_weights_for_connections(layer_nr, meta_infos) {
-    try {
-        if (!model || !model.layers) return null;
-
-        var meta = meta_infos[layer_nr + 1];
-        if (!meta) return null;
-
-        var actual_layer_idx = meta.nr;
-        if (actual_layer_idx === undefined || actual_layer_idx === null) return null;
-
-        var layer = model.layers[actual_layer_idx];
-        if (!layer || !layer.weights || layer.weights.length === 0) return null;
-
-        var kernel = layer.weights[0];
-        if (!kernel || !kernel.val) return null;
-
-        var weightData = kernel.val.dataSync();
-        if (!weightData || weightData.length === 0) return null;
-
-        var minW = weightData[0], maxW = weightData[0];
-        for (var i = 1; i < weightData.length; i++) {
-            if (weightData[i] < minW) minW = weightData[i];
-            if (weightData[i] > maxW) maxW = weightData[i];
-        }
-
-        return { data: weightData, min: minW, max: maxW, shape: kernel.shape };
-    } catch (e) {
-        return null;
-    }
-}
-
-function get_connection_weight(weightInfo, fromIdx, toIdx, fromTotal, toTotal) {
-    if (!weightInfo || !weightInfo.data) return 0;
-
-    var shape = weightInfo.shape;
-    if (!shape || shape.length < 2) return 0;
-
-    var cols = shape[shape.length - 1];
-    var rows = shape[shape.length - 2];
-
-    var fi = Math.min(fromIdx, rows - 1);
-    var ti = Math.min(toIdx, cols - 1);
-
-    var idx = fi * cols + ti;
-    if (idx >= 0 && idx < weightInfo.data.length) {
-        return weightInfo.data[idx];
-    }
-    return 0;
-}
-
 async function restart_fcnn(force = 0) {
     if ($("#fcnn_canvas").is(":visible")) {
         if (restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);

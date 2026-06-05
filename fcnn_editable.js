@@ -1065,31 +1065,6 @@ function _fcnn_edit_apply_bias_direct(layer, neuron_idx, newValue) {
 }
 
 // ============================================================
-// SAFE WEIGHT SETTING (handles TF.js layer.setWeights)
-// ============================================================
-
-function _fcnn_edit_set_layer_weights_safe(layer, layer_idx) {
-    try {
-        // Rebuild weight tensors from the .val references
-        var newWeights = [];
-        for (var i = 0; i < layer.weights.length; i++) {
-            var w = layer.weights[i];
-            if (w && w.val) {
-                newWeights.push(w.val);
-            }
-        }
-
-        if (newWeights.length > 0) {
-            layer.setWeights(newWeights);
-        }
-    } catch (e) {
-        // setWeights may fail if shapes don't match; the direct .val assignment
-        // above should still work for inference
-        console.warn("[fcnn_edit] setWeights fallback - direct tensor assignment used:", e.message);
-    }
-}
-
-// ============================================================
 // TRIGGER LIVE UPDATE (repredict, redraw FCNN, update GUI)
 // ============================================================
 
