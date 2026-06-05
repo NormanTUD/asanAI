@@ -5070,16 +5070,6 @@ async function last_shape_layer_warning() {
 	set_is_classification();
 }
 
-function alter_text_webcam_series () {
-	var number = parse_int($("#number_of_series_images").val());
-	var delaybetween = parse_float($("#delay_between_images_in_series").val());
-
-	var s = "&#128248; x " + number;
-	s = s + " (" + (1 / delaybetween) + "/s)";
-
-	$(".webcam_series_button").html(s);
-}
-
 async function add_new_category(disable_init_own_image_files = 0, do_not_reset_labels = 0) {
 	const n = get_current_category_count();
 	const imgDiv = $(".own_images");

@@ -15,7 +15,7 @@
 	<div id="last_layer_shape_warning"></div>
 	<div class='webcam_data only_when_webcam'>
 	<span class="TRANSLATEME_number_of_images_in_series"></span>: <input type='number' min=1 value='<?php print preg_match("/^\d+$/", isset($_GET["number_of_series_images"])) ? intval($_GET["number_of_series_images"]) : 20?>' id='number_of_series_images' onchange="alter_text_webcam_series()"><br>
-	<span class="TRANSLATEME_delay_between_images"></span>: <input type='number' value='0.1' id='delay_between_images_in_series' min=0 onchange="alter_text_webcam_series()"><br>
+	<span class="TRANSLATEME_delay_between_images"></span>: <input type='number' value='2' id='nr_of_imgs_per_second' min=0 onchange="alter_text_webcam_series()"><br>
 	</div>
 	<button class='add_category buttons_in_custom_images' onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>
 	<div id="own_image_data_categories"></div>

@@ -740,36 +740,47 @@ async function show_countdown_modal({ title, html, duration_ms }) {
 	});
 }
 
+function alter_text_webcam_series () {
+	var number = parse_int($("#number_of_series_images").val());
+	var nr_of_imgs_per_second = parse_float($("#nr_of_imgs_per_second").val());
+
+	var s = "&#128248; x " + number;
+	s = s + " (" + (1 / nr_of_imgs_per_second) + "/s)";
+
+	$(".webcam_series_button").html(s);
+}
+
 async function take_image_from_webcam_n_times(elem) {
-	const number = parse_int($("#number_of_series_images").val());
-	const delaybetween = parse_int($("#delay_between_images_in_series").val()) * 1000;
+        const number = parse_int($("#number_of_series_images").val());
+        const nr_of_imgs_per_second = parse_int($("#nr_of_imgs_per_second").val());
+        const delay_between_images_ms = Math.round(1000 / nr_of_imgs_per_second);
 
-	dbg(`take_image_from_webcam_n_times: n=${number}, delay=${delaybetween}`);
+        dbg(`take_image_from_webcam_n_times: n=${number}, delay=${delay_between_images_ms}ms`);
 
-	const modal_params = {
-		title: language[lang]["soon_a_photo_series_will_start"],
-		html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
-		duration_ms: 2000
-	}
+        const modal_params = {
+                title: language[lang]["soon_a_photo_series_will_start"],
+                html: language[lang]["first_photo_will_be_taken_in_n_seconds"],
+                duration_ms: 2000
+        }
 
-	await show_countdown_modal(modal_params);
+        await show_countdown_modal(modal_params);
 
-	for (let idx = 0; idx < number; idx++) {
-		const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
-		log(msg); l(msg);
+        for (let idx = 0; idx < number; idx++) {
+                const msg = sprintf(language[lang]["taking_image_n_of_m"], idx + 1, number);
+                log(msg); l(msg);
 
-		dbg("Updating translations");
-		await update_translations();
+                dbg("Updating translations");
+                await update_translations();
 
-		dbg("Taking next image");
-		await take_image_from_webcam(elem, true, false);
+                dbg("Taking next image");
+                await take_image_from_webcam(elem, true, false);
 
-		dbg(`Waiting ${delaybetween} ms`);
-		await delay(delaybetween);
-	}
+                dbg(`Waiting ${delay_between_images_ms} ms`);
+                await delay(delay_between_images_ms);
+        }
 
-	enable_train();
-	l(sprintf(language[lang]["done_taking_n_images"], number));
+        enable_train();
+        l(sprintf(language[lang]["done_taking_n_images"], number));
 
-	await last_shape_layer_warning();
+        await last_shape_layer_warning();
 }
