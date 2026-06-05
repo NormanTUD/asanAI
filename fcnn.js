@@ -758,7 +758,6 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 			ctx.fillStyle = "black";
 		}
 		ctx.textAlign = "left";
-		ctx.fillText(language[lang]["input_image"] + ":", 10, 10);
 		ctx.closePath();
 
 		ctx.strokeStyle = "black";
