@@ -328,30 +328,24 @@ function _connection_cache_key(layer_nr, currNeurons, nextNeurons, currX, nextX,
 	return `${layer_nr}:${currNeurons}x${nextNeurons}:x${Math.round(currX)}-${Math.round(nextX)}:s${Math.round(currSpacing)}-${Math.round(nextSpacing)}`;
 }
 
-// ===== ADD THESE HELPER FUNCTIONS =====
-
 function get_weight_color(weight, minW, maxW) {
-	// Normalize to [-1, 1]
-	var normalized = 0;
-	if (maxW !== minW) {
-		normalized = ((weight - minW) / (maxW - minW)) * 2 - 1;
-	}
+	var normalized = (maxW !== minW) ? ((weight - minW) / (maxW - minW)) * 2 - 1 : 0;
+	var abs = Math.abs(normalized);
 
 	var r, g, b;
 	if (normalized >= 0) {
-		// Positive → orange/red (visible on both dark and light)
-		r = Math.round(180 + normalized * 75);
-		g = Math.round(100 - normalized * 60);
-		b = Math.round(60 - normalized * 40);
+		// White → Red
+		r = 255;
+		g = Math.round(255 * (1 - abs));
+		b = Math.round(255 * (1 - abs));
 	} else {
-		// Negative → blue/cyan
-		var absN = Math.abs(normalized);
-		r = Math.round(60 - absN * 40);
-		g = Math.round(120 + absN * 40);
-		b = Math.round(180 + absN * 75);
+		// White → Blue
+		r = Math.round(255 * (1 - abs));
+		g = Math.round(255 * (1 - abs));
+		b = 255;
 	}
 
-	var alpha = 0.3 + Math.abs(normalized) * 0.6;
+	var alpha = 0.15 + abs * 0.75;
 	return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
 }
 
