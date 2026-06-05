@@ -7,6 +7,58 @@ var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
 
+function _make_mini_canvas_data_url_inverted(data2d, width, height, maxDisplaySize, globalMin, globalMax) {
+    // Replicates draw_filled_kernel_rectangle's rendering logic exactly
+    try {
+        if (!data2d || !data2d.length) return null;
+        var rows = data2d.length;
+        var cols = Array.isArray(data2d[0]) ? data2d[0].length : 0;
+        if (cols === 0) return null;
+
+        // Use global min/max if provided, otherwise compute local (fallback)
+        var mn = (typeof globalMin === "number" && isFinite(globalMin)) ? globalMin : Infinity;
+        var mx = (typeof globalMax === "number" && isFinite(globalMax)) ? globalMax : -Infinity;
+        if (mn === Infinity || mx === -Infinity) {
+            for (var r = 0; r < rows; r++) {
+                for (var col = 0; col < cols; col++) {
+                    var v = data2d[r][col];
+                    if (typeof v === "number" && isFinite(v)) {
+                        if (v < mn) mn = v;
+                        if (v > mx) mx = v;
+                    }
+                }
+            }
+        }
+        if (mn === mx) mx = mn + 1;
+
+        var scale = 255 / (mx - mn);
+
+        maxDisplaySize = maxDisplaySize || 64;
+        var pixelScale = Math.max(1, Math.floor(maxDisplaySize / Math.max(rows, cols)));
+        var cw = cols * pixelScale;
+        var ch = rows * pixelScale;
+
+        var c = document.createElement("canvas");
+        c.width = cw;
+        c.height = ch;
+        var cx = c.getContext("2d");
+
+        for (var r = 0; r < rows; r++) {
+            for (var col = 0; col < cols; col++) {
+                var v = data2d[r][col];
+                var value = Math.floor((v - mn) * scale);
+                var gray = Math.abs(255 - value);  // INVERT — same as canvas
+                gray = Math.max(0, Math.min(255, gray));
+                cx.fillStyle = `rgb(${gray},${gray},${gray})`;
+                cx.fillRect(col * pixelScale, r * pixelScale, pixelScale, pixelScale);
+            }
+        }
+        return c.toDataURL("image/png");
+    } catch (e) {
+        return null;
+    }
+}
+
 function _ensure_fcnn_tooltip() {
     if (_fcnn_tooltip_el && document.body.contains(_fcnn_tooltip_el)) return _fcnn_tooltip_el;
 
@@ -1050,171 +1102,6 @@ function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, vertic
 	}
 
 	ctx = draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
-
-	return ctx;
-}
-
-// ===== UPDATED: draw_layer_neurons with hit regions for each neuron/conv2d =====
-
-function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
-	var this_layer_output = null;
-	var this_layer_states = null;
-
-	var has_visualization = false;
-
-	const has_proper_layer_states_saved = proper_layer_states_saved();
-
-	if (shapeType === "rectangle_conv2d") {
-		for (var j = 0; j < numNeurons; j++) {
-			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-					var tmp_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
-					tmp_output = tmp_output[j];
-					var flat = tmp_output ? flatten(tmp_output) : [];
-					if (flat.length && Math.min(...flat) != Math.max(...flat)) {
-						has_visualization = true;
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	// Compute layer-wide stats for neurons (Dense layers)
-	var layer_flat_output = null;
-	var layer_stats = null;
-	if (shapeType === "circle" && has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-		try {
-			layer_flat_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
-			if (layer_flat_output && layer_flat_output.length > 0) {
-				layer_stats = _compute_stats(layer_flat_output);
-			}
-		} catch (e) {
-			layer_flat_output = null;
-			layer_stats = null;
-		}
-	}
-
-	for (let j = 0; j < numNeurons; j++) {
-		ctx.beginPath();
-		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-		ctx.beginPath();
-
-		if (shapeType === "circle") {
-			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-				this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
-			}
-
-			var availableSpace = verticalSpacing / 2 - 2;
-			var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
-			if (radius >= 0) {
-				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
-			} else {
-				log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
-				return ctx;
-			}
-
-			ctx = annotate_output_neurons(canvasWidth, ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
-
-			// Register neuron hit region
-			var activation_value = null;
-			if (this_layer_output && j < this_layer_output.length) {
-				activation_value = this_layer_output[j];
-			}
-
-			_register_fcnn_hit_region({
-				type: "neuron",
-				shape: "circle",
-				x: layerX,
-				y: neuronY,
-				radius: radius + 2, // slight padding for easier hover
-				layer_idx: layer_idx,
-				neuron_idx: j,
-				layer_type: meta_info.layer_type || "Dense",
-				activation_value: activation_value,
-				layer_stats: layer_stats,
-				output_shape: meta_info.output_shape || null,
-				input_shape: meta_info.input_shape || null,
-				label: (function () {
-					try {
-						var nr_layers = model?.layers?.length;
-						if (layer_idx == nr_layers - 1 && labels && Array.isArray(labels) && labels[j]) {
-							return labels[j];
-						}
-					} catch (e) { }
-					return null;
-				})()
-			});
-
-		} else if (shapeType === "rectangle_conv2d") {
-			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
-
-			var conv_layer_output_for_channel = null;
-
-			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-					this_layer_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
-					conv_layer_output_for_channel = this_layer_output[j];
-				}
-			}
-
-			var conv_rect_w, conv_rect_h, conv_rect_x, conv_rect_y;
-
-			if (has_visualization) {
-				ctx = draw_filled_kernel_rectangle(ctx, meta_info, conv_layer_output_for_channel, n, m, minVal, maxVal, layerX, neuronY);
-
-				// Compute rectangle dimensions for hit region
-				var _ww_hit = Number(meta_info?.input_shape?.[1]) || (conv_layer_output_for_channel ? conv_layer_output_for_channel[0].length : 10);
-				var _hh_hit = Number(meta_info?.input_shape?.[2]) || (conv_layer_output_for_channel ? conv_layer_output_for_channel.length : 10);
-				conv_rect_w = _ww_hit;
-				conv_rect_h = _hh_hit;
-				conv_rect_x = layerX - _ww_hit / 2;
-				conv_rect_y = neuronY - _hh_hit / 2;
-			} else {
-				ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
-
-				var _ww_empty = Math.min((meta_info["kernel_size_x"] || 3) * 3, verticalSpacing - 2);
-				var _hh_empty = Math.min((meta_info["kernel_size_y"] || 3) * 3, verticalSpacing - 2);
-				conv_rect_w = _ww_empty;
-				conv_rect_h = _hh_empty;
-				conv_rect_x = layerX - _ww_empty / 2;
-				conv_rect_y = neuronY - _hh_empty / 2;
-			}
-
-			// Compute channel stats and mini image for tooltip
-			var channel_stats = null;
-			var channel_image_url = null;
-			if (conv_layer_output_for_channel && Array.isArray(conv_layer_output_for_channel) && conv_layer_output_for_channel.length > 0) {
-				try {
-					var flat_channel = flatten(conv_layer_output_for_channel);
-					channel_stats = _compute_stats(flat_channel);
-					channel_image_url = _make_mini_canvas_data_url(conv_layer_output_for_channel, conv_layer_output_for_channel[0].length, conv_layer_output_for_channel.length, 80);
-				} catch (e) {
-					channel_stats = null;
-					channel_image_url = null;
-				}
-			}
-
-			// Register conv2d hit region
-			_register_fcnn_hit_region({
-				type: "conv2d",
-				shape: "rect",
-				x: conv_rect_x,
-				y: conv_rect_y,
-				w: conv_rect_w,
-				h: conv_rect_h,
-				layer_idx: layer_idx,
-				neuron_idx: j,
-				layer_type: meta_info.layer_type || "Conv2D",
-				kernel_size_x: meta_info.kernel_size_x,
-				kernel_size_y: meta_info.kernel_size_y,
-				output_shape: meta_info.output_shape || null,
-				input_shape: meta_info.input_shape || null,
-				channel_stats: channel_stats,
-				image_data_url: channel_image_url
-			});
-		}
-	}
 
 	return ctx;
 }
@@ -2497,13 +2384,25 @@ function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layer
 			}
 
 			// Compute channel stats and mini image for tooltip
+			// *** THIS IS THE FIX: use _make_mini_canvas_data_url_inverted with the same
+			// *** global minVal/maxVal that draw_filled_kernel_rectangle uses ***
 			var channel_stats = null;
 			var channel_image_url = null;
 			if (conv_layer_output_for_channel && Array.isArray(conv_layer_output_for_channel) && conv_layer_output_for_channel.length > 0) {
 				try {
 					var flat_channel = flatten(conv_layer_output_for_channel);
 					channel_stats = _compute_stats(flat_channel);
-					channel_image_url = _make_mini_canvas_data_url(conv_layer_output_for_channel, conv_layer_output_for_channel[0].length, conv_layer_output_for_channel.length, 80);
+					// Use the INVERTED renderer with the SAME global minVal/maxVal
+					// that draw_filled_kernel_rectangle receives, so the tooltip
+					// image is pixel-identical to what's drawn on the canvas.
+					channel_image_url = _make_mini_canvas_data_url_inverted(
+						conv_layer_output_for_channel,
+						conv_layer_output_for_channel[0].length,
+						conv_layer_output_for_channel.length,
+						80,
+						minVal,  // global min from first_layer_input (same as canvas)
+						maxVal   // global max from first_layer_input (same as canvas)
+					);
 				} catch (e) {
 					channel_stats = null;
 					channel_image_url = null;
