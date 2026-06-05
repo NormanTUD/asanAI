@@ -7,6 +7,73 @@ var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
 
+function _build_weight_histogram_html(weightStats, weightData) {
+    // Build a tiny SVG histogram of weight distribution
+    if (!weightData || !weightStats || weightStats.count < 2) return "";
+
+    var numBins = 30;
+    var bins = new Array(numBins).fill(0);
+    var range = weightStats.max - weightStats.min;
+    if (range === 0) return "";
+
+    var sampleSize = Math.min(weightData.length, 50000);
+    var step = Math.max(1, Math.floor(weightData.length / sampleSize));
+
+    for (var i = 0; i < weightData.length; i += step) {
+        var binIdx = Math.min(numBins - 1, Math.floor(((weightData[i] - weightStats.min) / range) * numBins));
+        bins[binIdx]++;
+    }
+
+    var maxBin = Math.max(...bins);
+    if (maxBin === 0) return "";
+
+    var svgW = 200;
+    var svgH = 40;
+    var barW = svgW / numBins;
+
+    var bars = "";
+    for (var b = 0; b < numBins; b++) {
+        var barH = (bins[b] / maxBin) * svgH;
+        var x = b * barW;
+        var y = svgH - barH;
+
+        // Color: blue for negative side, red for positive side
+        var t = b / (numBins - 1); // 0→1
+        var color;
+        if (t < 0.5) {
+            var intensity = Math.round(100 + (1 - t * 2) * 155);
+            color = `rgb(60, 80, ${intensity})`;
+        } else {
+            var intensity = Math.round(100 + (t * 2 - 1) * 155);
+            color = `rgb(${intensity}, 60, 60)`;
+        }
+
+        bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.5).toFixed(1)}" height="${barH.toFixed(1)}" fill="${color}" opacity="0.8"/>`;
+    }
+
+    // Zero line
+    var zeroX = ((0 - weightStats.min) / range) * svgW;
+    var zeroLine = "";
+    if (zeroX > 0 && zeroX < svgW) {
+        zeroLine = `<line x1="${zeroX.toFixed(1)}" y1="0" x2="${zeroX.toFixed(1)}" y2="${svgH}" stroke="white" stroke-width="1" opacity="0.7" stroke-dasharray="2,2"/>`;
+    }
+
+    return `
+        <tr><td colspan="2" style="padding:6px 0 2px;">
+            <div style="font-size:10px;font-weight:600;margin-bottom:3px;opacity:0.7;">Weight Distribution</div>
+            <svg width="${svgW}" height="${svgH}" style="border-radius:4px;background:rgba(0,0,0,0.15);">
+                ${bars}
+                ${zeroLine}
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-size:9px;opacity:0.6;margin-top:2px;">
+                <span>${_format_number(weightStats.min)}</span>
+                <span>0</span>
+                <span>${_format_number(weightStats.max)}</span>
+            </div>
+        </td></tr>
+    `;
+}
+
 // ===== CORE DRAWING FUNCTIONS (UPDATED) =====
 
 function get_layer_weights_for_connections(layer_nr, meta_infos) {
@@ -947,50 +1014,56 @@ function _build_layernorm_tooltip_html(region) {
 }
 
 function _build_connection_tooltip_html(region) {
-	var parts = [];
-	parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🔗 Connection</div>`);
-	parts.push(`<table style="border-collapse:collapse;width:100%;">`);
+    var parts = [];
+    parts.push(`<div style="font-weight:bold;font-size:13px;margin-bottom:4px;">🔗 Connection</div>`);
+    parts.push(`<table style="border-collapse:collapse;width:100%;">`);
 
-	var row = function (label, val) {
-		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
-	};
+    var row = function (label, val) {
+        return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
+    };
 
-	parts.push(row("From Layer", region.from_layer));
-	parts.push(row("To Layer", region.to_layer));
-	parts.push(row("Connections", `${region.from_neurons} × ${region.to_neurons} = ${region.from_neurons * region.to_neurons}`));
-	parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
-	parts.push(row("Area (w × h)", `${Math.round(region.w)} × ${Math.round(region.h)}`));
+    parts.push(row("From Layer", region.from_layer));
+    parts.push(row("To Layer", region.to_layer));
+    parts.push(row("Connections", `${region.from_neurons} × ${region.to_neurons} = ${region.from_neurons * region.to_neurons}`));
+    parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
+    parts.push(row("Area (w × h)", `${Math.round(region.w)} × ${Math.round(region.h)}`));
 
-	if (region.weight_stats) {
-		var s = region.weight_stats;
-		parts.push(row("Weight Min", _format_number(s.min)));
-		parts.push(row("Weight Max", _format_number(s.max)));
-		parts.push(row("Weight Avg", _format_number(s.avg)));
-		parts.push(row("Weight Std", _format_number(s.std)));
-		parts.push(row("Total Weights", s.count));
+    if (region.weight_stats) {
+        var s = region.weight_stats;
+        parts.push(row("Weight Min", _format_number(s.min)));
+        parts.push(row("Weight Max", _format_number(s.max)));
+        parts.push(row("Weight Avg", _format_number(s.avg)));
+        parts.push(row("Weight Std", _format_number(s.std)));
+        parts.push(row("Total Weights", s.count));
 
-		// Show weight distribution bar
-		if (s.min !== s.max) {
-			var zeroPos = ((0 - s.min) / (s.max - s.min)) * 100;
-			zeroPos = Math.max(0, Math.min(100, zeroPos));
-			parts.push(row("Zero Position", zeroPos.toFixed(1) + "% from left"));
-			parts.push(`<tr><td colspan="2" style="padding:4px 0;">
-				<div style="position:relative;height:12px;background:linear-gradient(to right, #4444ff, #ffffff ${zeroPos.toFixed(1)}%, #ff4444);border-radius:3px;border:1px solid #888;">
-					<div style="position:absolute;left:${zeroPos.toFixed(1)}%;top:0;bottom:0;width:1px;background:#000;"></div>
-				</div>
-				<div style="display:flex;justify-content:space-between;font-size:10px;margin-top:2px;">
-					<span>${_format_number(s.min)}</span>
-					<span>0</span>
-					<span>${_format_number(s.max)}</span>
-				</div>
-			</td></tr>`);
-		}
-	} else {
-		parts.push(row("Weights", "Not available (conv/fallback)"));
-	}
+        // Show weight distribution gradient bar
+        if (s.min !== s.max) {
+            var zeroPos = ((0 - s.min) / (s.max - s.min)) * 100;
+            zeroPos = Math.max(0, Math.min(100, zeroPos));
+            parts.push(row("Zero Position", zeroPos.toFixed(1) + "% from left"));
+            parts.push(`<tr><td colspan="2" style="padding:4px 0;">
+                <div style="position:relative;height:12px;background:linear-gradient(to right, #4444ff, #ffffff ${zeroPos.toFixed(1)}%, #ff4444);border-radius:3px;border:1px solid #888;">
+                    <div style="position:absolute;left:${zeroPos.toFixed(1)}%;top:0;bottom:0;width:1px;background:#000;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:2px;">
+                    <span>${_format_number(s.min)}</span>
+                    <span>0</span>
+                    <span>${_format_number(s.max)}</span>
+                </div>
+            </td></tr>`);
+        }
 
-	parts.push(`</table>`);
-	return parts.join("");
+        // ===== ADD HISTOGRAM IF WE HAVE WEIGHT DATA =====
+        if (region.weight_data && region.weight_data.length > 0) {
+            parts.push(_build_weight_histogram_html(region.weight_stats, region.weight_data));
+        }
+
+    } else {
+        parts.push(row("Weights", "Not available (conv/fallback)"));
+    }
+
+    parts.push(`</table>`);
+    return parts.join("");
 }
 
 function _build_input_image_tooltip_html(region) {
@@ -1596,122 +1669,134 @@ function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layer
 // ===== UPDATED: draw_layer_connections with hit region for connection areas =====
 
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-	try {
-		var meta = get_layer_meta(meta_infos, layer_nr);
-		var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+    try {
+        var meta = get_layer_meta(meta_infos, layer_nr);
+        var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
 
-		var layer_type = meta.layer_type;
-		var next_type = next_meta.layer_type;
+        var layer_type = meta.layer_type;
+        var next_type = next_meta.layer_type;
 
-		var currX = (layer_nr + 1) * layerSpacing + maxRadius;
-		var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+        var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+        var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
 
-		var currNeurons = layers[layer_nr];
-		var nextNeurons = layers[layer_nr + 1];
+        var currNeurons = layers[layer_nr];
+        var nextNeurons = layers[layer_nr + 1];
 
-		if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-			if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
-		}
-		if (next_type === "Flatten" || next_type === "MaxPooling2D") {
-			if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
-		}
+        if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+            if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
+        }
+        if (next_type === "Flatten" || next_type === "MaxPooling2D") {
+            if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
+        }
 
-		if (layer_type === "LayerNormalization") currNeurons = 1;
-		if (next_type === "LayerNormalization") nextNeurons = 1;
+        if (layer_type === "LayerNormalization") currNeurons = 1;
+        if (next_type === "LayerNormalization") nextNeurons = 1;
 
-		var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-		var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+        var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+        var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
 
-		var currYs = new Array(currNeurons);
-		for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+        var currYs = new Array(currNeurons);
+        for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
 
-		var nextYs = new Array(nextNeurons);
-		for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+        var nextYs = new Array(nextNeurons);
+        for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
 
-		var convLike = (currNeurons > 512 || nextNeurons > 512);
+        var convLike = (currNeurons > 512 || nextNeurons > 512);
 
-		// Get weight data for this layer pair
-		var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+        // Get weight data for this layer pair
+        var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
 
-		if (convLike) {
-			var yMin = Math.min(currYs[0], nextYs[0]);
-			var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
-			ctx.save();
-			ctx.globalAlpha = 0.1;
-			ctx.fillStyle = is_dark_mode ? "#8090b0" : "#606784";
-			ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
-			ctx.restore();
+        // Pre-compute weight_stats and weight_data sample for tooltip histogram
+        var _weight_stats = null;
+        var _weight_data_sample = null;
+        if (weightInfo && weightInfo.data) {
+            var sampleLimit = Math.min(weightInfo.data.length, 50000);
+            _weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
+            _weight_stats = _compute_stats(_weight_data_sample);
+        }
 
-			// Register connection hit region
-			_register_fcnn_hit_region({
-				type: "connection",
-				shape: "rect",
-				x: currX,
-				y: yMin,
-				w: nextX - currX,
-				h: Math.max(1, yMax - yMin),
-				from_layer: layer_nr,
-				to_layer: layer_nr + 1,
-				from_neurons: currNeurons,
-				to_neurons: nextNeurons,
-				weight_stats: weightInfo ? _compute_stats(Array.from(weightInfo.data.slice(0, Math.min(weightInfo.data.length, 100000)))) : null
-			});
-			return;
-		}
+        if (convLike) {
+            var yMin = Math.min(currYs[0], nextYs[0]);
+            var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
+            ctx.save();
+            ctx.globalAlpha = 0.1;
+            ctx.fillStyle = is_dark_mode ? "#8090b0" : "#606784";
+            ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
+            ctx.restore();
 
-		var estimateCount = currNeurons * nextNeurons;
-		var heavyThreshold = 300000;
-		if (estimateCount > heavyThreshold) {
-			var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
-			var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
-			ctx.save();
-			ctx.globalAlpha = 0.08;
-			ctx.fillStyle = is_dark_mode ? "#9ea3b5" : "#767b8d";
-			ctx.fillRect(currX, yMinB, nextX - currX, Math.max(1, yMaxB - yMinB));
-			ctx.restore();
+            // Register connection hit region WITH weight_data for histogram
+            _register_fcnn_hit_region({
+                type: "connection",
+                shape: "rect",
+                x: currX,
+                y: yMin,
+                w: nextX - currX,
+                h: Math.max(1, yMax - yMin),
+                from_layer: layer_nr,
+                to_layer: layer_nr + 1,
+                from_neurons: currNeurons,
+                to_neurons: nextNeurons,
+                weight_stats: _weight_stats,
+                weight_data: _weight_data_sample
+            });
+            return;
+        }
 
-			// Register connection hit region
-			_register_fcnn_hit_region({
-				type: "connection",
-				shape: "rect",
-				x: currX,
-				y: yMinB,
-				w: nextX - currX,
-				h: Math.max(1, yMaxB - yMinB),
-				from_layer: layer_nr,
-				to_layer: layer_nr + 1,
-				from_neurons: currNeurons,
-				to_neurons: nextNeurons,
-				weight_stats: weightInfo ? _compute_stats(Array.from(weightInfo.data.slice(0, Math.min(weightInfo.data.length, 100000)))) : null
-			});
-			return;
-		}
+        var estimateCount = currNeurons * nextNeurons;
+        var heavyThreshold = 300000;
+        if (estimateCount > heavyThreshold) {
+            var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
+            var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
+            ctx.save();
+            ctx.globalAlpha = 0.08;
+            ctx.fillStyle = is_dark_mode ? "#9ea3b5" : "#767b8d";
+            ctx.fillRect(currX, yMinB, nextX - currX, Math.max(1, yMaxB - yMinB));
+            ctx.restore();
 
-		// Render with weight colors (or fallback)
-		var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
-		ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
+            // Register connection hit region WITH weight_data for histogram
+            _register_fcnn_hit_region({
+                type: "connection",
+                shape: "rect",
+                x: currX,
+                y: yMinB,
+                w: nextX - currX,
+                h: Math.max(1, yMaxB - yMinB),
+                from_layer: layer_nr,
+                to_layer: layer_nr + 1,
+                from_neurons: currNeurons,
+                to_neurons: nextNeurons,
+                weight_stats: _weight_stats,
+                weight_data: _weight_data_sample
+            });
+            return;
+        }
 
-		// Register connection hit region for the rendered area
-		var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
-		var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
-		_register_fcnn_hit_region({
-			type: "connection",
-			shape: "rect",
-			x: currX,
-			y: connYMin,
-			w: nextX - currX,
-			h: Math.max(1, connYMax - connYMin),
-			from_layer: layer_nr,
-			to_layer: layer_nr + 1,
-			from_neurons: currNeurons,
-			to_neurons: nextNeurons,
-			weight_stats: weightInfo ? _compute_stats(Array.from(weightInfo.data.slice(0, Math.min(weightInfo.data.length, 100000)))) : null
-		});
+        // Render with weight colors (or fallback)
+        var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
+        ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
 
-	} catch (e) {
-		if (e && e.message) e = e.message;
-		assert(false, e);
-	}
+        // Register connection hit region for the rendered area WITH weight_data
+        var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
+        var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
+        _register_fcnn_hit_region({
+            type: "connection",
+            shape: "rect",
+            x: currX,
+            y: connYMin,
+            w: nextX - currX,
+            h: Math.max(1, connYMax - connYMin),
+            from_layer: layer_nr,
+            to_layer: layer_nr + 1,
+            from_neurons: currNeurons,
+            to_neurons: nextNeurons,
+            weight_stats: _weight_stats,
+            weight_data: _weight_data_sample
+        });
+
+    } catch (e) {
+        if (e && e.message) e = e.message;
+        assert(false, e);
+    }
 }
 
 // ===== HELPER FUNCTIONS =====
