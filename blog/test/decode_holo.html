@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holografische Entzerrung bei d=3 Grokking</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #58a6ff;
+            margin-bottom: 5px;
+            font-size: 1.4em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8b949e;
+            margin-bottom: 25px;
+            font-size: 0.9em;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+        .nav button {
+            padding: 8px 16px;
+            border: 1px solid #30363d;
+            background: #161b22;
+            color: #8b949e;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+        .nav button:hover { border-color: #58a6ff; color: #58a6ff; }
+        .nav button.active { background: #58a6ff; color: #0d1117; border-color: #58a6ff; }
+
+        .step { display: none; max-width: 950px; margin: 0 auto; }
+        .step.visible { display: block; }
+
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .card h2 { color: #58a6ff; margin-bottom: 12px; font-size: 1.15em; }
+        .card p { line-height: 1.7; margin-bottom: 10px; color: #c9d1d9; }
+        .highlight { color: #ffa657; font-weight: bold; }
+        .key-box {
+            background: #0d1117;
+            border-left: 3px solid #58a6ff;
+            padding: 12px 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .formula-box {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            text-align: center;
+            font-size: 1.1em;
+            overflow-x: auto;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto 15px;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            background: #0d1117;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .controls label { color: #8b949e; font-size: 0.85em; }
+        .controls input[type="range"] { width: 120px; accent-color: #58a6ff; }
+        .controls input[type="number"] {
+            width: 55px; padding: 4px; border: 1px solid #30363d;
+            background: #0d1117; color: #e6edf3; border-radius: 4px; text-align: center;
+        }
+        .controls button {
+            padding: 6px 14px; border: 1px solid #58a6ff;
+            background: transparent; color: #58a6ff; border-radius: 5px; cursor: pointer;
+        }
+        .controls button:hover { background: #58a6ff; color: #0d1117; }
+        .val { color: #ffa657; font-weight: bold; min-width: 30px; text-align: center; }
+        .arrow-hint {
+            text-align: center; color: #8b949e; margin-top: 15px; font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔬 Holografische Verzerrung bei d=3 Grokking</h1>
+<p class="subtitle">Wie der Fourier-Algorithmus in 3 Dimensionen gequetscht wird — und wie man ihn entzerrt</p>
+
+<div class="nav">
+    <button onclick="show(0)" id="b0">1. Das Problem</button>
+    <button onclick="show(1)" id="b1">2. d=128 vs d=3</button>
+    <button onclick="show(2)" id="b2">3. Superposition</button>
+    <button onclick="show(3)" id="b3">4. Gram-Matrix</button>
+    <button onclick="show(4)" id="b4">5. Entzerrung</button>
+    <button onclick="show(5)" id="b5">6. ReLU-Faltung</button>
+    <button onclick="show(6)" id="b6">7. Komplett</button>
+</div>
+
+<!-- STEP 0: Das Problem -->
+<div class="step" id="s0">
+    <div class="card">
+        <h2>Das Problem: Zu wenig Platz</h2>
+        <p>Im Original-Paper hat das Netz <span class="highlight">128 Dimensionen</span> im Embedding. Es benutzt 5 Frequenzen, jede braucht 2 Richtungen (sin + cos) = <span class="highlight">10 Richtungen</span>.</p>
+        <div class="key-box">
+            <strong>128 Dimensionen, 10 Richtungen gebraucht</strong> → Alles passt bequem rein. Die Richtungen stehen quasi senkrecht zueinander. Kein Problem.
+        </div>
+        <p>Aber was passiert bei <span class="highlight">d = 3</span>? Du hast nur 3 Richtungen — aber brauchst immer noch 10 (oder zumindest 4-6). Die Frequenzen <strong>überlagern sich</strong> und stören sich gegenseitig.</p>
+        <p>Das ist wie ein <span class="highlight">Hologramm</span>: 3D-Information wird auf eine 2D-Platte gepresst. Die Wellen interferieren, und man muss sie nachher wieder auseinander-rechnen.</p>
+    </div>
+    <div class="controls">
+        <label>Dimensionen d:</label>
+        <input type="range" id="dim0" min="2" max="20" value="3" oninput="draw0()">
+        <span class="val" id="dim0v">3</span>
+        <label>Frequenzen nötig:</label>
+        <input type="range" id="freq0" min="1" max="8" value="3" oninput="draw0()">
+        <span class="val" id="freq0v">3</span>
+    </div>
+    <canvas id="c0" width="800" height="350"></canvas>
+    <p class="arrow-hint">↑ Grün = verfügbare Richtungen, Orange = benötigte Richtungen (sin+cos pro Frequenz)</p>
+</div>
+
+<!-- STEP 1: d=128 vs d=3 -->
+<div class="step" id="s1">
+    <div class="card">
+        <h2>Vergleich: Luxus (d=128) vs. Enge (d=3)</h2>
+        <p>Bei <span class="highlight">d=128</span> kann das Netz jede Frequenz in ihre eigene Ecke des Raums legen. Die Vektoren u_k und v_k sind fast senkrecht zueinander.</p>
+        <div class="formula-box">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow>
+                    <msub><mi>W</mi><mi>L</mi></msub>
+                    <mo>=</mo>
+                    <munderover><mo>∑</mo><mi>k</mi><mrow></mrow></munderover>
+                    <mi>cos</mi><mo>(</mo><msub><mi>ω</mi><mi>k</mi></msub><mi>c</mi><mo>)</mo>
+                    <mo>·</mo>
+                    <msubsup><mi>u</mi><mi>k</mi><mi>T</mi></msubsup>
+                    <mo>+</mo>
+                    <mi>sin</mi><mo>(</mo><msub><mi>ω</mi><mi>k</mi></msub><mi>c</mi><mo>)</mo>
+                    <mo>·</mo>
+                    <msubsup><mi>v</mi><mi>k</mi><mi>T</mi></msubsup>
+                </mrow>
+            </math>
+        </div>
+        <p>Bei <span class="highlight">d=3</span> müssen sich alle Vektoren den gleichen kleinen Raum teilen. Sie sind <strong>nicht mehr senkrecht</strong> — sie zeigen teilweise in die gleiche Richtung!</p>
+        <div class="key-box">
+            <strong>Analogie:</strong> Stell dir vor, du hast 3 Haken an der Wand (= 3 Dimensionen), aber 6 Jacken (= 6 Richtungen). Du musst mehrere Jacken auf einen Haken hängen → sie "überlagern" sich.
+        </div>
+    </div>
+    <div class="controls">
+        <label>Anzahl Frequenzen:</label>
+        <input type="range" id="nf1" min="1" max="5" value="3" oninput="draw1()">
+        <span class="val" id="nf1v">3</span>
+        <button onclick="toggle1()">Umschalten: d=128 / d=3</button>
+        <span class="val" id="mode1v">d=3</span>
+    </div>
+    <canvas id="c1" width="800" height="450"></canvas>
+</div>
+
+<!-- STEP 2: Superposition -->
+<div class="step" id="s2">
+    <div class="card">
+        <h2>Superposition: Mehrere Frequenzen auf einem Vektor</h2>
+        <p>Wenn das Netz nur 3 Dimensionen hat, muss es <span class="highlight">Superposition</span> benutzen: Mehrere Frequenzen teilen sich dieselben Richtungen.</p>
+        <div class="key-box">
+            Stell dir vor, du hörst 3 Töne gleichzeitig (Akkord). Jeder Ton ist eine Frequenz. Zusammen klingen sie wie EIN Signal — aber du kannst die einzelnen Töne raushören, wenn du weißt wonach du suchst.
+        </div>
+        <p>Genau das passiert im Netz: Die 3D-Vektoren sind <strong>Mischungen</strong> mehrerer Frequenzen. Wenn du naiv hinschaust, siehst du nur Matsch. Aber mit der richtigen "Brille" (= Entzerrung) kannst du die einzelnen Frequenzen trennen.</p>
+    </div>
+    <div class="controls">
+        <label>Frequenz 1 Stärke:</label>
+        <input type="range" id="s2a" min="0" max="100" value="80" oninput="draw2()">
+        <span class="val" id="s2av">0.8</span>
+        <label>Frequenz 2 Stärke:</label>
+        <input type="range" id="s2b" min="0" max="100" value="60" oninput="draw2()">
+        <span class="val" id="s2bv">0.6</span>
+        <label>Frequenz 3 Stärke:</label>
+        <input type="range" id="s2c" min="0" max="100" value="40" oninput="draw2()">
+        <span class="val" id="s2cv">0.4</span>
+    </div>
+    <canvas id="c2" width="800" height="400"></canvas>
+    <p class="arrow-hint">↑ Oben: Einzelne Frequenzen. Unten: Ihre Überlagerung (was das Netz intern speichert)</p>
+</div>
+
+<!-- STEP 3: Gram-Matrix -->
+<div class="step" id="s3">
+    <div class="card">
+        <h2>Die Gram-Matrix: Wie stark stören sich die Frequenzen?</h2>
+        <p>Um die Verzerrung zu messen, berechnen wir die <span class="highlight">Gram-Matrix G</span>. Sie zeigt, wie sehr sich die Frequenz-Richtungen überlappen.</p>
+        <div class="formula-box">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow>
+                    <msub><mi>G</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub>
+                    <mo>=</mo>
+                    <mo>⟨</mo>
+                    <msub><mi>u</mi><mi>i</mi></msub>
+                    <mo>,</mo>
+                    <msub><mi>u</mi><mi>j</mi></msub>
+                    <mo>⟩</mo>
+                    <mo>=</mo>
+                    <mtext>Skalarprodukt der Richtungen i und j</mtext>
+                </mrow>
+            </math>
+        </div>
+        <div class="key-box">
+            <strong>Diagonal-Einträge</strong> (i = j): Immer 1 (ein Vektor mit sich selbst = perfekte Übereinstimmung)<br>
+            <strong>Nicht-Diagonal-Einträge</strong> (i ≠ j): Zeigen den "Crosstalk" — wie viel von Frequenz j in Frequenz i "reinleckt"<br><br>
+            Bei d=128: Nicht-Diagonal ≈ 0 (kein Crosstalk)<br>
+            Bei d=3: Nicht-Diagonal kann groß sein (viel Crosstalk = Verzerrung!)
+        </div>
+    </div>
+    <div class="controls">
+        <label>Anzahl Frequenzen:</label>
+        <input type="range" id="nf3" min="2" max="5" value="3" oninput="draw3()">
+        <span class="val" id="nf3v">3</span>
+        <label>Winkel zwischen Vektoren:</label>
+        <input type="range" id="angle3" min="10" max="90" value="45" oninput="draw3()">
+        <span class="val" id="angle3v">45°</span>
+    </div>
+    <canvas id="c3" width="800" height="400"></canvas>
+    <p class="arrow-hint">↑ Links: Vektoren im 3D-Raum. Rechts: Gram-Matrix (gelb = Crosstalk/Verzerrung)</p>
+</div>
+
+<!-- STEP 4: Entzerrung -->
+<div class="step" id="s4">
+    <div class="card">
+        <h2>Die Entzerrung: Duale Basis (G⁻¹ anwenden)</h2>
+        <p>Die Lösung ist elegant: Statt naiv zu projizieren, benutzen wir die <span class="highlight">Inverse der Gram-Matrix</span>.</p>
+        <div class="formula-box">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mtable>
+                    <mtr>
+                        <mtd><mtext>Naiv (verzerrt):</mtext></mtd>
+                        <mtd>
+                            <msub><mtext>Signal</mtext><mi>k</mi></msub>
+                            <mo>=</mo>
+                            <msubsup><mi>u</mi><mi>k</mi><mi>T</mi></msubsup>
+                            <mo>·</mo>
+                            <mtext>MLP</mtext><mo>(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>)</mo>
+                        </mtd>
+                    </mtr>
+                    <mtr>
+                        <mtd><mtext>Entzerrt:</mtext></mtd>
+                        <mtd>
+                            <mtext>Signal</mtext>
+                            <mo>=</mo>
+                            <msup><mi>G</mi><mrow><mo>-</mo><mn>1</mn></mrow></msup>
+                            <mo>·</mo>
+                            <mtext>[naive Projektionen]</mtext>
+                        </mtd>
+                    </mtr>
+                </mtable>
+            </math>
+        </div>
+        <div class="key-box">
+            <strong>Analogie:</strong> Wenn du durch eine verzerrte Glasscheibe schaust, siehst du alles verschoben. Wenn du weißt, WIE die Scheibe verzerrt (= Gram-Matrix), kannst du das Bild zurückrechnen (= G⁻¹ anwenden).
+        </div>
+        <p>Probier es aus: Links siehst du das "naive" (verzerrte) Signal, rechts das entzerrte.</p>
+    </div>
+    <div class="controls">
+        <label>Crosstalk-Stärke:</label>
+        <input type="range" id="ct4" min="0" max="90" value="50" oninput="draw4()">
+        <span class="val" id="ct4v">50%</span>
+        <label>Frequenz anzeigen:</label>
+        <input type="range" id="fshow4" min="0" max="2" value="0" oninput="draw4()">
+        <span class="val" id="fshow4v">1</span>
+    </div>
+    <canvas id="c4" width="800" height="380"></canvas>
+    <p class="arrow-hint">↑ Rot = wahres Signal, Blau = naive Messung (verzerrt), Grün = nach Entzerrung mit G⁻¹</p>
+</div>
+
+<!-- STEP 5: ReLU-Faltung -->
+<div class="step" id="s5">
+    <div class="card">
+        <h2>ReLU-Faltung: Wie das Netz mehr Platz schafft</h2>
+        <p>Das Netz hat einen Trick, um mit nur 3 Dimensionen mehr Information zu speichern: Die <span class="highlight">ReLU-Nichtlinearität</span>.</p>
+        <div class="key-box">
+            <strong>Was ReLU macht:</strong> Alles unter 0 wird auf 0 gesetzt. Alles über 0 bleibt.<br><br>
+            <strong>Warum das hilft:</strong> Jedes der 512 MLP-Neuronen schaut aus einer anderen Richtung auf den 3D-Raum. Jedes sieht nur die "positive Hälfte" seiner Richtung. Zusammen zerschneiden sie den 3D-Raum in viele kleine Regionen — wie verschiedene Blickwinkel auf ein Hologramm!
+        </div>
+        <div class="formula-box">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow>
+                    <mtext>Neuron</mtext><mo>_</mo><mi>i</mi>
+                    <mo>=</mo>
+                    <mtext>ReLU</mtext>
+                    <mo>(</mo>
+                    <msub><mi>w</mi><mi>i</mi></msub>
+                    <mo>·</mo>
+                    <mi>x</mi>
+                    <mo>+</mo>
+                    <msub><mi>b</mi><mi>i</mi></msub>
+                    <mo>)</mo>
+                    <mo>=</mo>
+                    <mrow>
+                        <mo>{</mo>
+                        <mtable>
+                            <mtr><mtd><msub><mi>w</mi><mi>i</mi></msub><mo>·</mo><mi>x</mi><mo>+</mo><msub><mi>b</mi><mi>i</mi></msub></mtd><mtd><mtext>wenn > 0</mtext></mtd></mtr>
+                            <mtr><mtd><mn>0</mn></mtd><mtd><mtext>sonst</mtext></mtd></mtr>
+                        </mtable>
+                    </mrow>
+                </mrow>
+            </math>
+        </div>
+        <p>Für die Entzerrung heißt das: In jeder Region ist die Transformation <strong>lokal linear</strong> → invertierbar!</p>
+    </div>
+    <div class="controls">
+        <label>Anzahl Neuronen sichtbar:</label>
+        <input type="range" id="nn5" min="2" max="20" value="6" oninput="draw5()">
+        <span class="val" id="nn5v">6</span>
+        <label>Input-Position x:</label>
+        <input type="range" id="xpos5" min="0" max="100" value="50" oninput="draw5()">
+        <span class="val" id="xpos5v">0.5</span>
+    </div>
+    <canvas id="c5" width="800" height="400"></canvas>
+    <p class="arrow-hint">↑ Jede Linie = ein Neuron. Aktive Neuronen (grün) definieren die lokale lineare Region.</p>
+</div>
+
+<!-- STEP 6: Komplett -->
+<div class="step" id="s6">
+    <div class="card">
+        <h2>Das komplette Entzerrungs-Rezept</h2>
+        <p>Hier siehst du alle Schritte zusammen. Das Netz hat den Fourier-Algorithmus in 3D gequetscht — wir holen ihn wieder raus:</p>
+        <div class="key-box">
+            <strong>Schritt 1:</strong> DFT von W_E → Finde aktive Frequenzen (wie im Paper, aber weniger passen rein)<br>
+            <strong>Schritt 2:</strong> Extrahiere die Richtungen u_k, v_k ∈ R³ für jede Frequenz<br>
+            <strong>Schritt 3:</strong> Berechne Gram-Matrix G (misst den Crosstalk)<br>
+            <strong>Schritt 4:</strong> Wende G⁻¹ an → entferne Crosstalk zwischen Frequenzen<br>
+            <strong>Schritt 5:</strong> Identifiziere aktive ReLU-Regionen → lokale Linearität nutzen<br>
+            <strong>Schritt 6:</strong> Least-Squares über 512 Neuronen → rekonstruiere Fourier-Koeffizienten
+        </div>
+    </div>
+    <div class="controls">
+        <label>P:</label>
+        <input type="number" id="p6" value="13" min="5" max="23" onchange="draw6()">
+        <label>a:</label>
+        <input type="range" id="a6" min="0" max="12" value="4" oninput="draw6()">
+        <span class="val" id="a6v">4</span>
+        <label>b:</label>
+        <input type="range" id="b6" min="0" max="12" value="7" oninput="draw6()">
+        <span class="val" id="b6v">7</span>
+        <label>Crosstalk:</label>
+        <input type="range" id="ct6" min="0" max="80" value="40" oninput="draw6()">
+        <span class="val" id="ct6v">40%</span>
+    </div>
+    <canvas id="c6" width="800" height="500"></canvas>
+    <p class="arrow-hint">↑ Links: Verzerrte Scores (naiv). Rechts: Entzerrte Scores (mit G⁻¹). Der richtige Balken sollte am höchsten sein!</p>
+</div>
+
+<script>
+// ===== Navigation =====
+let current = 0;
+function show(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('visible'));
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('s'+n).classList.add('visible');
+    document.getElementById('b'+n).classList.add('active');
+    current = n;
+    [draw0,draw1,draw2,draw3,draw4,draw5,draw6][n]();
+}
+
+// ===== Utilities =====
+function mod(a,m){return((a%m)+m)%m;}
+function lerp(a,b,t){return a+(b-a)*t;}
+
+// ===== STEP 0 =====
+function draw0() {
+    const d = parseInt(document.getElementById('dim0').value);
+    const nf = parseInt(document.getElementById('freq0').value);
+    document.getElementById('dim0v').textContent = d;
+    document.getElementById('freq0v').textContent = nf;
+    const needed = nf * 2; // sin + cos per frequency
+
+    const canvas = document.getElementById('c0');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const cx = canvas.width/2, cy = canvas.height/2;
+    const barW = 30, gap = 8;
+    const totalW = (barW+gap) * Math.max(d, needed);
+    const startX = cx - totalW/2;
+
+    // Title
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Verfügbar: ${d} Dimensionen | Benötigt: ${needed} Richtungen (${nf} Freq × 2)`, cx, 30);
+
+    // Status
+    const ok = d >= needed;
+    ctx.fillStyle = ok ? '#3fb950' : '#f85149';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.fillText(ok ? '✓ Genug Platz — keine Verzerrung nötig' : '✗ Zu wenig Platz — holografische Verzerrung entsteht!', cx, 55);
+
+    // Draw available dimensions (green bars)
+    const barH = 150;
+    const baseY = cy + 60;
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'center';
+    for (let i = 0; i < d; i++) {
+        const x = startX + i*(barW+gap);
+        ctx.fillStyle = '#238636';
+        ctx.fillRect(x, baseY - barH, barW, barH);
+        ctx.fillStyle = '#3fb950';
+        ctx.fillText(`d${i+1}`, x + barW/2, baseY + 15);
+    }
+
+    // Draw needed directions (orange outlines)
+    for (let i = 0; i < needed; i++) {
+        const x = startX + i*(barW+gap);
+        ctx.strokeStyle = '#ffa657';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4,3]);
+        ctx.strokeRect(x, baseY - barH - 20, barW, barH + 10);
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#ffa657';
+        const label = i%2===0 ? `cos_${Math.floor(i/2)+1}` : `sin_${Math.floor(i/2)+1}`;
+        ctx.fillText(label, x + barW/2, baseY - barH - 28);
+    }
+
+    // Overlap indicator
+    if (!ok) {
+        const overlapStart = startX + d*(barW+gap);
+        const overlapEnd = startX + needed*(barW+gap);
+        ctx.fillStyle = 'rgba(248,81,73,0.15)';
+        ctx.fillRect(overlapStart - gap, baseY - barH - 40, overlapEnd - overlapStart, barH + 70);
+        ctx.fillStyle = '#f85149';
+        ctx.font = '12px Segoe UI';
+        ctx.fillText(`${needed - d} Richtungen zu viel!`, (overlapStart + overlapEnd)/2, baseY + 40);
+        ctx.fillText('→ müssen sich Platz teilen (Superposition)', (overlapStart + overlapEnd)/2, baseY + 58);
+    }
+
+    // Legend
+    ctx.textAlign = 'left';
+    ctx.font = '12px Segoe UI';
+    ctx.fillStyle = '#3fb950';
+    ctx.fillRect(20, canvas.height - 30, 14, 14);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Verfügbare Dimensionen', 40, canvas.height - 18);
+    ctx.strokeStyle = '#ffa657';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4,3]);
+    ctx.strokeRect(200, canvas.height - 30, 14, 14);
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Benötigte Richtungen', 220, canvas.height - 18);
+}
+
+// ===== STEP 1 =====
+let mode1_is3d = true;
+function toggle1() {
+    mode1_is3d = !mode1_is3d;
+    document.getElementById('mode1v').textContent = mode1_is3d ? 'd=3' : 'd=128';
+    draw1();
+}
+
+function draw1() {
+    const nf = parseInt(document.getElementById('nf1').value);
+    document.getElementById('nf1v').textContent = nf;
+
+    const canvas = document.getElementById('c1');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const cx = canvas.width/2, cy = canvas.height/2;
+    const d = mode1_is3d ? 3 : 128;
+    // Title
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Frequenz-Richtungen bei d=${d} (${nf} Frequenzen = ${nf*2} Richtungen)`, canvas.width/2, 30);
+
+    // Generate random unit vectors in d dimensions, project to 2D for visualization
+    const vectors = [];
+    const colors = ['#ff6b6b','#4ecdc4','#ffd700','#a855f7','#f97316'];
+    for (let i = 0; i < nf*2; i++) {
+        // For d=128, spread evenly; for d=3, cluster them
+        let angle;
+        if (!mode1_is3d) {
+            // d=128: nearly orthogonal, spread evenly
+            angle = (i / (nf*2)) * Math.PI * 2;
+        } else {
+            // d=3: forced to cluster, overlapping
+            angle = (i / (nf*2)) * Math.PI * 1.2 + 0.3;
+        }
+        vectors.push({angle, color: colors[Math.floor(i/2) % 5], label: i%2===0 ? `cos_${Math.floor(i/2)+1}` : `sin_${Math.floor(i/2)+1}`});
+    }
+
+    const radius = 160;
+
+    // Draw circle
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI*2);
+    ctx.stroke();
+
+    // Draw vectors
+    for (let i = 0; i < vectors.length; i++) {
+        const v = vectors[i];
+        const ex = cx + radius * Math.cos(v.angle);
+        const ey = cy + radius * Math.sin(v.angle);
+
+        ctx.strokeStyle = v.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+
+        // Arrowhead
+        ctx.fillStyle = v.color;
+        ctx.beginPath();
+        ctx.arc(ex, ey, 5, 0, Math.PI*2);
+        ctx.fill();
+
+        // Label
+        const lx = cx + (radius + 25) * Math.cos(v.angle);
+        const ly = cy + (radius + 25) * Math.sin(v.angle);
+        ctx.fillStyle = v.color;
+        ctx.font = '11px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(v.label, lx, ly);
+    }
+
+    // Show angles between adjacent vectors
+    if (mode1_is3d && nf >= 2) {
+        const a1 = vectors[0].angle;
+        const a2 = vectors[1].angle;
+        const angleDeg = Math.abs(a2 - a1) * 180 / Math.PI;
+        ctx.fillStyle = '#f85149';
+        ctx.font = '13px Segoe UI';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Winkel zwischen Nachbarn: ~${angleDeg.toFixed(0)}°`, 20, canvas.height - 50);
+        ctx.fillText(`Bei d=128 wäre der Winkel ~90° (senkrecht)`, 20, canvas.height - 30);
+    }
+
+    // Status text
+    ctx.fillStyle = mode1_is3d ? '#f85149' : '#3fb950';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    if (mode1_is3d) {
+        ctx.fillText('d=3: Vektoren gequetscht — sie zeigen in ähnliche Richtungen!', cx, canvas.height - 10);
+    } else {
+        ctx.fillText('d=128: Vektoren können fast senkrecht stehen — kein Crosstalk!', cx, canvas.height - 10);
+    }
+}
+
+// ===== STEP 2: Superposition =====
+function draw2() {
+    const amp1 = parseInt(document.getElementById('s2a').value) / 100;
+    const amp2 = parseInt(document.getElementById('s2b').value) / 100;
+    const amp3 = parseInt(document.getElementById('s2c').value) / 100;
+    document.getElementById('s2av').textContent = amp1.toFixed(1);
+    document.getElementById('s2bv').textContent = amp2.toFixed(1);
+    document.getElementById('s2cv').textContent = amp3.toFixed(1);
+
+    const canvas = document.getElementById('c2');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const marginL = 60, marginR = 30, marginT = 20, marginB = 20;
+    const w = canvas.width - marginL - marginR;
+    const h = canvas.height - marginT - marginB;
+
+    // Top half: individual waves
+    const topH = h * 0.45;
+    const botH = h * 0.45;
+    const gap = h * 0.1;
+
+    const freqs = [1, 3, 5];
+    const colors = ['#ff6b6b', '#4ecdc4', '#ffd700'];
+    const amps = [amp1, amp2, amp3];
+    const N = 200;
+
+    // Draw individual waves (top)
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Einzelne Frequenzen:', marginL, marginT + 12);
+
+    for (let f = 0; f < 3; f++) {
+        const midY = marginT + 20 + topH / 2;
+        ctx.strokeStyle = colors[f];
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.7;
+        ctx.beginPath();
+        for (let i = 0; i <= N; i++) {
+            const x = marginL + (i / N) * w;
+            const t = (i / N) * Math.PI * 2 * 3;
+            const y = midY - amps[f] * Math.sin(freqs[f] * t) * (topH * 0.4);
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        // Label
+        ctx.fillStyle = colors[f];
+        ctx.font = '11px Segoe UI';
+        ctx.textAlign = 'right';
+        ctx.fillText(`k=${freqs[f]} (×${amps[f].toFixed(1)})`, marginL - 5, midY + f * 14 - 14);
+    }
+
+    // Zero line top
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.moveTo(marginL, marginT + 20 + topH/2);
+    ctx.lineTo(marginL + w, marginT + 20 + topH/2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw combined wave (bottom)
+    const botStart = marginT + topH + gap;
+    const botMidY = botStart + botH / 2;
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Überlagerung (was das Netz intern speichert):', marginL, botStart - 5);
+
+    // Zero line bottom
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    ctx.moveTo(marginL, botMidY);
+    ctx.lineTo(marginL + w, botMidY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.strokeStyle = '#58a6ff';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let i = 0; i <= N; i++) {
+        const x = marginL + (i / N) * w;
+        const t = (i / N) * Math.PI * 2 * 3;
+        let val = 0;
+        for (let f = 0; f < 3; f++) {
+            val += amps[f] * Math.sin(freqs[f] * t);
+        }
+        const y = botMidY - val * (botH * 0.3);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+}
+
+// ===== STEP 3: Gram-Matrix =====
+function draw3() {
+    const nf = parseInt(document.getElementById('nf3').value);
+    const angleDeg = parseInt(document.getElementById('angle3').value);
+    document.getElementById('nf3v').textContent = nf;
+    document.getElementById('angle3v').textContent = angleDeg + '°';
+
+    const canvas = document.getElementById('c3');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const angleRad = angleDeg * Math.PI / 180;
+
+    // Generate vectors in 3D (projected to 2D for display)
+    const vectors = [];
+    for (let i = 0; i < nf * 2; i++) {
+        const a = i * angleRad / (nf * 2 - 1 || 1);
+        vectors.push({x: Math.cos(a), y: Math.sin(a)});
+    }
+
+    // Normalize
+    for (let v of vectors) {
+        const len = Math.sqrt(v.x*v.x + v.y*v.y);
+        v.x /= len; v.y /= len;
+    }
+
+    // Compute Gram matrix
+    const n = vectors.length;
+    const G = [];
+    for (let i = 0; i < n; i++) {
+        G[i] = [];
+        for (let j = 0; j < n; j++) {
+            G[i][j] = vectors[i].x * vectors[j].x + vectors[i].y * vectors[j].y;
+        }
+    }
+
+    // LEFT: Draw vectors
+    const leftCx = 200, leftCy = 220, radius = 130;
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(leftCx, leftCy, radius, 0, Math.PI*2);
+    ctx.stroke();
+
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Richtungen im 3D-Raum', leftCx, 30);
+
+    const vColors = ['#ff6b6b','#ff6b6b','#4ecdc4','#4ecdc4','#ffd700','#ffd700','#a855f7','#a855f7','#f97316','#f97316'];
+    for (let i = 0; i < n; i++) {
+        const ex = leftCx + vectors[i].x * radius;
+        const ey = leftCy - vectors[i].y * radius;
+        ctx.strokeStyle = vColors[i % vColors.length];
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(leftCx, leftCy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        ctx.fillStyle = vColors[i % vColors.length];
+        ctx.beginPath();
+        ctx.arc(ex, ey, 4, 0, Math.PI*2);
+        ctx.fill();
+
+        const lx = leftCx + vectors[i].x * (radius + 18);
+        const ly = leftCy - vectors[i].y * (radius + 18);
+        ctx.font = '10px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(i%2===0?`c${Math.floor(i/2)+1}`:`s${Math.floor(i/2)+1}`, lx, ly);
+    }
+
+    // RIGHT: Draw Gram matrix as heatmap
+    const matX = 430, matY = 50;
+    const cellSize = Math.min(40, 280 / n);
+    const matW = cellSize * n;
+
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Gram-Matrix G (Crosstalk)', matX + matW/2, 30);
+
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+            const val = G[i][j];
+            // Color: diagonal = green, off-diagonal by magnitude
+            let r, g, b;
+            if (i === j) {
+                r = 56; g = 185; b = 80; // green
+            } else {
+                const absVal = Math.abs(val);
+                r = Math.floor(255 * absVal);
+                g = Math.floor(165 * absVal);
+                b = 0; // orange for crosstalk
+            }
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(matX + j * cellSize, matY + i * cellSize, cellSize - 1, cellSize - 1);
+
+            // Value text
+            if (cellSize >= 25) {
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(val.toFixed(2), matX + j * cellSize + cellSize/2, matY + i * cellSize + cellSize/2);
+            }
+        }
+    }
+
+    // Legend
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.font = '12px Segoe UI';
+    ctx.fillStyle = '#3fb950';
+    ctx.fillRect(matX, matY + matW + 20, 14, 14);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Diagonal = 1.0 (Vektor mit sich selbst)', matX + 20, matY + matW + 22);
+    ctx.fillStyle = '#ffa657';
+    ctx.fillRect(matX, matY + matW + 42, 14, 14);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Nicht-Diagonal = Crosstalk (Verzerrung!)', matX + 20, matY + matW + 44);
+
+    // Condition number hint
+    let maxOff = 0;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (i!==j) maxOff = Math.max(maxOff, Math.abs(G[i][j]));
+    ctx.fillStyle = maxOff > 0.7 ? '#f85149' : maxOff > 0.3 ? '#ffa657' : '#3fb950';
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.textAlign = 'center';
+    const statusText = maxOff > 0.7 ? '⚠ Starke Verzerrung! Entzerrung schwierig.' :
+                       maxOff > 0.3 ? '⚡ Moderate Verzerrung. Entzerrung möglich.' :
+                       '✓ Geringe Verzerrung. Leicht zu entzerren.';
+    ctx.fillText(statusText, canvas.width/2, canvas.height - 15);
+}
+
+// ===== STEP 4: Entzerrung =====
+function draw4() {
+    const ct = parseInt(document.getElementById('ct4').value) / 100;
+    const fshow = parseInt(document.getElementById('fshow4').value);
+    document.getElementById('ct4v').textContent = Math.round(ct*100) + '%';
+    document.getElementById('fshow4v').textContent = (fshow+1);
+
+    const canvas = document.getElementById('c4');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const P = 13;
+    const freqs = [2, 5, 6]; // three frequencies
+    const marginL = 60, marginR = 30, marginT = 50, marginB = 50;
+    const w = canvas.width - marginL - marginR;
+    const h = canvas.height - marginT - marginB;
+
+    // True signal for the selected frequency
+    const trueSignal = [];
+    for (let c = 0; c < P; c++) {
+        trueSignal.push(Math.cos(2 * Math.PI * freqs[fshow] * c / P));
+    }
+
+    // Naive (distorted) signal: true + crosstalk from other frequencies
+    const naiveSignal = [];
+    for (let c = 0; c < P; c++) {
+        let val = trueSignal[c];
+        for (let f = 0; f < freqs.length; f++) {
+            if (f !== fshow) {
+                val += ct * 0.7 * Math.cos(2 * Math.PI * freqs[f] * c / P + f * 0.5);
+            }
+        }
+        naiveSignal.push(val);
+    }
+
+    // "Corrected" signal: apply G^-1 (simulated as removing crosstalk)
+    const correctedSignal = [];
+    for (let c = 0; c < P; c++) {
+        // Simulate correction: lerp between naive and true based on how well G^-1 works
+        const correction = 1 - ct * 0.15; // imperfect correction at high crosstalk
+        correctedSignal.push(lerp(naiveSignal[c], trueSignal[c], correction));
+    }
+
+    // Title
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Frequenz k=${freqs[fshow]}: Wahres Signal vs. Naive Messung vs. Entzerrt (Crosstalk=${Math.round(ct*100)}%)`, canvas.width/2, 25);
+
+    // Draw bars
+    const barW = w / P / 3.5;
+    const maxVal = 2;
+
+    for (let c = 0; c < P; c++) {
+        const baseX = marginL + (c / P) * w + w/(P*2) - barW * 1.5;
+        const baseY = marginT + h/2;
+
+        // True (red)
+        const trueH = (trueSignal[c] / maxVal) * (h/2 - 10);
+        ctx.fillStyle = 'rgba(255,107,107,0.7)';
+        ctx.fillRect(baseX, baseY - trueH, barW, trueH);
+
+        // Naive (blue)
+        const naiveH = (naiveSignal[c] / maxVal) * (h/2 - 10);
+        ctx.fillStyle = 'rgba(88,166,255,0.7)';
+        ctx.fillRect(baseX + barW + 1, baseY - naiveH, barW, naiveH);
+
+        // Corrected (green)
+        const corrH = (correctedSignal[c] / maxVal) * (h/2 - 10);
+        ctx.fillStyle = 'rgba(63,185,80,0.7)';
+        ctx.fillRect(baseX + 2*(barW + 1), baseY - corrH, barW, corrH);
+
+        // Label
+        ctx.fillStyle = '#8b949e';
+        ctx.font = '10px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(c, baseX + barW * 1.5, baseY + 15);
+    }
+
+    // Zero line
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(marginL, marginT + h/2);
+    ctx.lineTo(marginL + w, marginT + h/2);
+    ctx.stroke();
+
+    // Legend
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#ff6b6b';
+    ctx.fillRect(marginL, canvas.height - 35, 12, 12);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Wahres Signal', marginL + 18, canvas.height - 24);
+
+    ctx.fillStyle = '#58a6ff';
+    ctx.fillRect(marginL + 150, canvas.height - 35, 12, 12);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Naive Messung (verzerrt)', marginL + 168, canvas.height - 24);
+
+    ctx.fillStyle = '#3fb950';
+    ctx.fillRect(marginL + 380, canvas.height - 35, 12, 12);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Nach G⁻¹ Entzerrung', marginL + 398, canvas.height - 24);
+}
+
+// ===== STEP 5: ReLU-Faltung =====
+function draw5() {
+    const nn = parseInt(document.getElementById('nn5').value);
+    const xpos = parseInt(document.getElementById('xpos5').value) / 100;
+    document.getElementById('nn5v').textContent = nn;
+    document.getElementById('xpos5v').textContent = xpos.toFixed(2);
+
+    const canvas = document.getElementById('c5');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const marginL = 60, marginR = 30, marginT = 50, marginB = 50;
+    const w = canvas.width - marginL - marginR;
+    const h = canvas.height - marginT - marginB;
+    const baseY = marginT + h;
+
+    // Title
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`ReLU-Neuronen: Jedes sieht den 3D-Raum aus einer anderen Richtung`, canvas.width/2, 25);
+
+    // Generate neurons with random directions and biases
+    const neurons = [];
+    for (let i = 0; i < nn; i++) {
+        const slope = (Math.random() - 0.5) * 4;
+        const bias = (Math.random() - 0.3) * 0.5;
+        neurons.push({slope, bias});
+    }
+
+    // Draw each neuron's ReLU response
+    const N = 200;
+    for (let ni = 0; ni < nn; ni++) {
+        const {slope, bias} = neurons[ni];
+        const isActive = (slope * xpos + bias) > 0;
+
+        ctx.strokeStyle = isActive ? '#3fb950' : '#484f58';
+        ctx.lineWidth = isActive ? 2.5 : 1;
+        ctx.globalAlpha = isActive ? 0.9 : 0.3;
+        ctx.beginPath();
+        for (let i = 0; i <= N; i++) {
+            const t = i / N;
+            const x = marginL + t * w;
+            const val = Math.max(0, slope * t + bias); // ReLU
+            const y = baseY - val * h * 0.3;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+    }
+
+    // Draw input position
+    const inputX = marginL + xpos * w;
+    ctx.strokeStyle = '#ffa657';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(inputX, marginT);
+    ctx.lineTo(inputX, baseY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#ffa657';
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`x = ${xpos.toFixed(2)}`, inputX, marginT - 5);
+
+    // Count active neurons
+    let activeCount = 0;
+    for (let ni = 0; ni < nn; ni++) {
+        const {slope, bias} = neurons[ni];
+        if (slope * xpos + bias > 0) activeCount++;
+    }
+
+    // Info
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '13px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Aktive Neuronen: ${activeCount} von ${nn}`, marginL, canvas.height - 25);
+    ctx.fillStyle = '#8b949e';
+    ctx.fillText(`→ In dieser Region ist die Transformation lokal linear → invertierbar!`, marginL + 200, canvas.height - 25);
+
+    // Legend
+    ctx.fillStyle = '#3fb950';
+    ctx.fillRect(canvas.width - 200, marginT, 12, 12);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '11px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText('Aktiv (> 0)', canvas.width - 183, marginT + 10);
+    ctx.fillStyle = '#484f58';
+    ctx.fillRect(canvas.width - 200, marginT + 18, 12, 12);
+    ctx.fillStyle = '#c9d1d9';
+    ctx.fillText('Inaktiv (= 0)', canvas.width - 183, marginT + 28);
+}
+
+// ===== STEP 6: Komplett =====
+function draw6() {
+    const P = parseInt(document.getElementById('p6').value);
+    const aSlider = document.getElementById('a6');
+    const bSlider = document.getElementById('b6');
+    aSlider.max = P - 1;
+    bSlider.max = P - 1;
+    const a = parseInt(aSlider.value);
+    const b = parseInt(bSlider.value);
+    const ct = parseInt(document.getElementById('ct6').value) / 100;
+    document.getElementById('a6v').textContent = a;
+    document.getElementById('b6v').textContent = b;
+    document.getElementById('ct6v').textContent = Math.round(ct*100) + '%';
+
+    const canvas = document.getElementById('c6');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const result = mod(a + b, P);
+    const freqs = [1, 3, 5]; // key frequencies for this demo
+    const nf = freqs.length;
+
+    // Title
+    ctx.fillStyle = '#58a6ff';
+    ctx.font = 'bold 16px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${a} + ${b} mod ${P} = ${result}`, canvas.width/2, 25);
+
+    // Compute scores for each possible answer c
+    const naiveScores = [];
+    const correctedScores = [];
+
+    for (let c = 0; c < P; c++) {
+        let naiveScore = 0;
+        let correctedScore = 0;
+        for (let fi = 0; fi < nf; fi++) {
+            const wk = 2 * Math.PI * freqs[fi] / P;
+            const trueVal = Math.cos(wk * (a + b - c));
+
+            // Add crosstalk for naive
+            let crosstalk = 0;
+            for (let fj = 0; fj < nf; fj++) {
+                if (fj !== fi) {
+                    crosstalk += ct * 0.5 * Math.cos(2 * Math.PI * freqs[fj] * (a + b - c) / P + fj);
+                }
+            }
+            naiveScore += trueVal + crosstalk;
+            correctedScore += trueVal + crosstalk * 0.1; // G^-1 removes most crosstalk
+        }
+        naiveScores.push(naiveScore);
+        correctedScores.push(correctedScore);
+    }
+
+    // Draw two bar charts side by side
+    const chartW = 340, chartH = 300;
+    const leftX = 50, rightX = 430;
+    const chartY = 70;
+
+    // Find max for scaling
+    const allVals = [...naiveScores, ...correctedScores];
+    const maxVal = Math.max(...allVals.map(Math.abs)) || 1;
+
+    // Left chart: Naive (distorted)
+    ctx.fillStyle = '#f85149';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Naive Projektion (verzerrt)', leftX + chartW/2, chartY - 5);
+
+    drawBarChart(ctx, naiveScores, P, result, leftX, chartY, chartW, chartH, maxVal, '#58a6ff');
+
+    // Right chart: Corrected
+    ctx.fillStyle = '#3fb950';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('Nach G⁻¹ Entzerrung', rightX + chartW/2, chartY - 5);
+
+    drawBarChart(ctx, correctedScores, P, result, rightX, chartY, chartW, chartH, maxVal, '#3fb950');
+
+    // Bottom explanation
+    ctx.fillStyle = '#c9d1d9';
+    ctx.font = '12px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Der höchste Balken = Antwort des Netzes. Richtige Antwort: ${result} (markiert mit ★)`, canvas.width/2, canvas.height - 30);
+
+    // Check if naive gets it wrong
+    const naiveAnswer = naiveScores.indexOf(Math.max(...naiveScores));
+    const corrAnswer = correctedScores.indexOf(Math.max(...correctedScores));
+    if (naiveAnswer !== result && corrAnswer === result) {
+        ctx.fillStyle = '#ffa657';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.fillText(`⚠ Naive Projektion gibt falsche Antwort (${naiveAnswer})! Entzerrung korrigiert zu ${result}. ✓`, canvas.width/2, canvas.height - 10);
+    } else if (naiveAnswer === result && corrAnswer === result) {
+        ctx.fillStyle = '#3fb950';
+        ctx.font = 'bold 12px Segoe UI';
+        ctx.fillText(`✓ Beide geben die richtige Antwort: ${result}. Entzerrung macht das Signal klarer.`, canvas.width/2, canvas.height - 10);
+    } else {
+        ctx.fillStyle = '#8b949e';
+        ctx.font = '12px Segoe UI';
+        ctx.fillText(`Naive Antwort: ${naiveAnswer}, Entzerrte Antwort: ${corrAnswer}, Richtig: ${result}`, canvas.width/2, canvas.height - 10);
+    }
+}
+
+function drawBarChart(ctx, scores, P, correctAnswer, x, y, w, h, maxVal, color) {
+    const barW = Math.max(2, (w - 20) / P - 2);
+    const barGap = (w - 20) / P;
+    const midY = y + h / 2;
+
+    // Zero line
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, midY);
+    ctx.lineTo(x + w, midY);
+    ctx.stroke();
+
+    for (let c = 0; c < P; c++) {
+        const barX = x + 10 + c * barGap;
+        const barH = (scores[c] / maxVal) * (h / 2 - 20);
+
+        // Highlight correct answer
+        if (c === correctAnswer) {
+            ctx.fillStyle = '#ffd700';
+        } else {
+            ctx.fillStyle = color;
+        }
+        ctx.globalAlpha = 0.8;
+        ctx.fillRect(barX, midY - barH, barW, barH);
+        ctx.globalAlpha = 1;
+
+        // Label
+        if (P <= 17 || c % 2 === 0) {
+            ctx.fillStyle = c === correctAnswer ? '#ffd700' : '#8b949e';
+            ctx.font = '9px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(c, barX + barW/2, midY + 12);
+        }
+
+        // Star for correct answer
+        if (c === correctAnswer) {
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '12px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText('★', barX + barW/2, midY - barH - 8);
+        }
+    }
+}
+
+// ===== Initialize =====
+show(0);
+</script>
+</body>
+</html>
