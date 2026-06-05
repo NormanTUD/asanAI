@@ -1884,50 +1884,71 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 // ===== LAYERS TEXT DRAWING =====
 
 function _draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
-	try {
-		for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
-			if (_labels && _labels[layer_idx]) {
-				ctx.beginPath();
-				ctx.font = font_size + "px Arial";
-				if (is_dark_mode) {
-					ctx.fillStyle = "white";
-				} else {
-					ctx.fillStyle = "black";
-				}
-				ctx.textAlign = "center";
-				ctx.fillText(_labels[layer_idx], (layer_idx + 1) * layerSpacing, canvasHeight - (2 * 24) - 5);
-				ctx.closePath();
-			}
+    try {
+        for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+            var x = (layer_idx + 1) * layerSpacing;
 
-			if (meta_infos && meta_infos[layer_idx]) {
-				ctx.beginPath();
-				var meta_info = meta_infos[layer_idx];
+            // Draw layer name as a pill badge at the top
+            if (_labels && _labels[layer_idx]) {
+                var labelText = _labels[layer_idx];
+                ctx.font = `bold ${font_size}px 'Segoe UI', Arial, sans-serif`;
+                var textWidth = ctx.measureText(labelText).width;
+                var pillW = textWidth + 20;
+                var pillH = font_size + 10;
+                var pillX = x - pillW / 2;
+                var pillY = 12;
 
-				var _is = meta_info.input_shape;
-				var _os = meta_info.output_shape;
+                // Pill background
+                ctx.beginPath();
+                _roundRect(ctx, pillX, pillY, pillW, pillH, 8);
+                ctx.fillStyle = is_dark_mode ? 'rgba(60, 70, 110, 0.7)' : 'rgba(70, 100, 200, 0.1)';
+                ctx.fill();
+                ctx.strokeStyle = is_dark_mode ? 'rgba(100, 130, 200, 0.5)' : 'rgba(70, 100, 200, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
 
-				ctx.font = font_size + "px Arial";
-				if (is_dark_mode) {
-					ctx.fillStyle = "white";
-				} else {
-					ctx.fillStyle = "black";
-				}
-				ctx.textAlign = "center";
-				if (_is) {
-					ctx.fillText("Input:  [" + _is.filter(n => n).join(", ") + "]", (layer_idx + 1) * layerSpacing, canvasHeight - (24) - 5);
-				}
-				if (_os) {
-					ctx.fillText("Output: [" + _os.filter(n => n).join(", ") + "]", (layer_idx + 1) * layerSpacing, canvasHeight - 5);
-				}
-				ctx.closePath();
-			}
-		}
-	} catch (e) {
-		if (Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-		assert(false, e);
-	}
+                // Pill text
+                ctx.fillStyle = is_dark_mode ? '#b0c4ff' : '#2a4494';
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(labelText, x, pillY + pillH / 2);
+                ctx.textBaseline = "alphabetic";
+            }
+
+            // Shape info at bottom
+            if (meta_infos && meta_infos[layer_idx]) {
+                var meta_info = meta_infos[layer_idx];
+                var _is = meta_info.input_shape;
+                var _os = meta_info.output_shape;
+
+                ctx.font = `${font_size - 1}px 'Segoe UI', Arial, sans-serif`;
+                ctx.fillStyle = is_dark_mode ? 'rgba(200,210,230,0.7)' : 'rgba(60,60,80,0.7)';
+                ctx.textAlign = "center";
+
+                if (_is) {
+                    ctx.fillText("In: [" + _is.filter(n => n).join(", ") + "]", x, canvasHeight - 28);
+                }
+                if (_os) {
+                    ctx.fillText("Out: [" + _os.filter(n => n).join(", ") + "]", x, canvasHeight - 10);
+                }
+            }
+        }
+    } catch (e) {
+        if (Object.keys(e).includes("message")) e = e.message;
+        assert(false, e);
+    }
+}
+
+// Helper: draw a rounded rectangle path
+function _roundRect(ctx, x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
 }
 
 // ===== TRANSFORM HELPER =====
