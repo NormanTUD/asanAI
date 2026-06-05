@@ -1100,7 +1100,13 @@ function _fcnn_edit_trigger_update() {
             try { if (typeof last_fcnn_data_hash !== 'undefined') last_fcnn_data_hash = null; } catch(e) {}
             try { if (typeof last_fcnn_hash !== 'undefined') last_fcnn_hash = null; } catch(e) {}
 
-            // 3. Re-run layer states (forward pass through model to get new activations)
+            // 3. Invalidate ALL prediction caches so repredict doesn't short-circuit
+            try { if (typeof last_predict_handdrawn_hash !== 'undefined') last_predict_handdrawn_hash = null; } catch(e) {}
+            try { if (typeof last_handdrawn_image_hash !== 'undefined') last_handdrawn_image_hash = null; } catch(e) {}
+            try { if (typeof last_status_hash_text_prediction !== 'undefined') last_status_hash_text_prediction = null; } catch(e) {}
+            try { if (typeof new_handdrawn_image_hash !== 'undefined') new_handdrawn_image_hash = null; } catch(e) {}
+
+            // 4. Re-run layer states (forward pass through model to get new activations)
             try {
                 if (typeof get_layer_states === 'function') {
                     await get_layer_states();
@@ -1109,7 +1115,7 @@ function _fcnn_edit_trigger_update() {
                 console.warn("[fcnn_edit] get_layer_states error (non-critical):", e.message || e);
             }
 
-            // 4. Repredict
+            // 5. Repredict
             try {
                 if (typeof _safe_predict_own_data_and_repredict === 'function') {
                     await _safe_predict_own_data_and_repredict();
@@ -1120,7 +1126,7 @@ function _fcnn_edit_trigger_update() {
                 console.warn("[fcnn_edit] Prediction error (non-critical):", e.message || e);
             }
 
-            // 5. Force redraw FCNN canvas
+            // 6. Force redraw FCNN canvas
             try {
                 if (typeof force_restart_fcnn === 'function') {
                     await force_restart_fcnn();
@@ -1131,17 +1137,17 @@ function _fcnn_edit_trigger_update() {
                 console.warn("[fcnn_edit] FCNN redraw error:", e.message || e);
             }
 
-            // 6. Update math displays if they exist
+            // 7. Update math displays if they exist
             try {
                 if (typeof updated_page === 'function') await updated_page();
             } catch (e) {}
 
-            // 7. Update confusion matrix / metrics if visible
+            // 8. Update confusion matrix / metrics if visible
             try {
                 if (typeof update_confusion_matrix === 'function') await update_confusion_matrix();
             } catch (e) {}
 
-            // 8. Fire custom event for any other listeners
+            // 9. Fire custom event for any other listeners
             try {
                 document.dispatchEvent(new CustomEvent("fcnn_weights_changed", {
                     detail: { active: _fcnn_edit_active, timestamp: Date.now() }
