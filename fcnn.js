@@ -1009,9 +1009,6 @@ function _build_connection_tooltip_html(region) {
         if (region.weight_data && region.weight_data.length > 0) {
             parts.push(_build_weight_histogram_html(region.weight_stats, region.weight_data));
         }
-
-    } else {
-        parts.push(row("Weights", "Not available (conv/fallback)"));
     }
 
     parts.push(`</table>`);
