@@ -677,15 +677,29 @@ function _draw_flatten (layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, l
 			var _x = layerX - _width / 2;
 			var _y = layerY - _height / 2;
 
-			if(this_layer_states && get_shape_from_array(this_layer_states["output"]).length == 2) {
-				// OK
-			} else {
-				this_layer_states = null;
+			// Try to extract a usable flat output array regardless of shape
+			var this_layer_output = null;
+
+			if(this_layer_states && this_layer_states["output"]) {
+				var output = this_layer_states["output"];
+				var shape = get_shape_from_array(output);
+
+				// Accept any shape: just flatten it to get the values
+				if(shape.length >= 1) {
+					if(Array.isArray(output)) {
+						this_layer_output = output.flat(Infinity);
+					} else {
+						this_layer_output = [output];
+					}
+				}
+
+				// If we got an empty or invalid array, fall back to null
+				if(!this_layer_output || this_layer_output.length === 0) {
+					this_layer_output = null;
+				}
 			}
 
-			if(this_layer_states) {
-				var this_layer_output = this_layer_states["output"].flat();
-
+			if(this_layer_output && this_layer_output.length > 0) {
 				var normalizedValues = normalizeArray(this_layer_output);
 
 				var numValues = normalizedValues.length;
