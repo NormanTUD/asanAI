@@ -819,57 +819,70 @@ function _make_mini_canvas_data_url_inverted(data2d, width, height, maxDisplaySi
     }
 }
 
+// ===== EXTRACTED HELPERS FOR _make_mini_canvas_rgb_data_url =====
+
+function _compute_rgb_global_min_max(data3d, rows, cols) {
+    var mn = Infinity, mx = -Infinity;
+    for (var r = 0; r < rows; r++) {
+        for (var col = 0; col < cols; col++) {
+            if (data3d[r] && data3d[r][col]) {
+                for (var ch2 = 0; ch2 < 3; ch2++) {
+                    var v = data3d[r][col][ch2];
+                    if (typeof v === "number" && isFinite(v)) {
+                        if (v < mn) mn = v;
+                        if (v > mx) mx = v;
+                    }
+                }
+            }
+        }
+    }
+    if (mn === mx) mx = mn + 1;
+    return { min: mn, max: mx };
+}
+
+function _render_rgb_pixels_to_canvas(cx, data3d, rows, cols, scale, mn, sc) {
+    for (var r = 0; r < rows; r++) {
+        for (var col = 0; col < cols; col++) {
+            var pixel = data3d[r][col];
+            if (!pixel) continue;
+            var red = Math.max(0, Math.min(255, Math.floor((pixel[0] - mn) * sc)));
+            var green = Math.max(0, Math.min(255, Math.floor((pixel[1] - mn) * sc)));
+            var blue = Math.max(0, Math.min(255, Math.floor((pixel[2] - mn) * sc)));
+            cx.fillStyle = `rgb(${red},${green},${blue})`;
+            cx.fillRect(col * scale, r * scale, scale, scale);
+        }
+    }
+}
+
+// ===== REFACTORED MAIN FUNCTION =====
+
 function _make_mini_canvas_rgb_data_url(data3d, maxDisplaySize) {
-	// data3d: [rows][cols][3] RGB array
-	try {
-		if (!data3d || !data3d.length) return null;
-		var rows = data3d.length;
-		var cols = Array.isArray(data3d[0]) ? data3d[0].length : 0;
-		if (cols === 0) return null;
+    // data3d: [rows][cols][3] RGB array
+    try {
+        if (!data3d || !data3d.length) return null;
+        var rows = data3d.length;
+        var cols = Array.isArray(data3d[0]) ? data3d[0].length : 0;
+        if (cols === 0) return null;
 
-		maxDisplaySize = maxDisplaySize || 64;
-		var scale = Math.max(1, Math.floor(maxDisplaySize / Math.max(rows, cols)));
-		var cw = cols * scale;
-		var ch = rows * scale;
+        maxDisplaySize = maxDisplaySize || 64;
+        var scale = Math.max(1, Math.floor(maxDisplaySize / Math.max(rows, cols)));
+        var cw = cols * scale;
+        var ch = rows * scale;
 
-		var c = document.createElement("canvas");
-		c.width = cw;
-		c.height = ch;
-		var cx = c.getContext("2d");
+        var c = document.createElement("canvas");
+        c.width = cw;
+        c.height = ch;
+        var cx = c.getContext("2d");
 
-		// Compute global min/max for normalization
-		var mn = Infinity, mx = -Infinity;
-		for (var r = 0; r < rows; r++) {
-			for (var col = 0; col < cols; col++) {
-				if (data3d[r] && data3d[r][col]) {
-					for (var ch2 = 0; ch2 < 3; ch2++) {
-						var v = data3d[r][col][ch2];
-						if (typeof v === "number" && isFinite(v)) {
-							if (v < mn) mn = v;
-							if (v > mx) mx = v;
-						}
-					}
-				}
-			}
-		}
-		if (mn === mx) mx = mn + 1;
-		var sc = 255 / (mx - mn);
+        var minMax = _compute_rgb_global_min_max(data3d, rows, cols);
+        var sc = 255 / (minMax.max - minMax.min);
 
-		for (var r = 0; r < rows; r++) {
-			for (var col = 0; col < cols; col++) {
-				var pixel = data3d[r][col];
-				if (!pixel) continue;
-				var red = Math.max(0, Math.min(255, Math.floor((pixel[0] - mn) * sc)));
-				var green = Math.max(0, Math.min(255, Math.floor((pixel[1] - mn) * sc)));
-				var blue = Math.max(0, Math.min(255, Math.floor((pixel[2] - mn) * sc)));
-				cx.fillStyle = `rgb(${red},${green},${blue})`;
-				cx.fillRect(col * scale, r * scale, scale, scale);
-			}
-		}
-		return c.toDataURL("image/png");
-	} catch (e) {
-		return null;
-	}
+        _render_rgb_pixels_to_canvas(cx, data3d, rows, cols, scale, minMax.min, sc);
+
+        return c.toDataURL("image/png");
+    } catch (e) {
+        return null;
+    }
 }
 
 // ===== TOOLTIP HTML BUILDERS =====

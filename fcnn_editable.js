@@ -1297,6 +1297,104 @@ function _fcnn_edit_find_dense_layer_for_neuron(fcnn_layer_idx) {
 // HELPER: Get bias data array for a layer
 // ============================================================
 
+// ===== EXTRACTED HELPERS FOR _fcnn_edit_get_bias_data =====
+
+function _try_read_bias_from_getWeights(layer) {
+    // Method 1: getWeights() — most reliable
+    try {
+        var weights = layer.getWeights();
+        if (weights && weights.length >= 2) {
+            var biasTensor = weights[1];
+            if (biasTensor) {
+                var result = _try_extract_array_from_tensor(biasTensor);
+                if (result) return result;
+            }
+        }
+    } catch(e) {}
+    return null;
+}
+
+function _try_read_bias_from_weights_property(layer) {
+    // Method 2: layer.weights[1].val (older TF.js / custom builds)
+    try {
+        if (layer.weights && layer.weights.length >= 2) {
+            var biasWeight = layer.weights[1];
+            if (biasWeight) {
+                var result = _try_extract_array_from_weight_variable(biasWeight);
+                if (result) return result;
+            }
+        }
+    } catch(e) {}
+    return null;
+}
+
+function _try_read_bias_from_layer_bias(layer) {
+    // Method 3: layer.bias (some TF.js versions expose this directly)
+    try {
+        if (layer.bias) {
+            var result = _try_extract_array_from_weight_variable(layer.bias);
+            if (result) return result;
+        }
+    } catch(e) {}
+    return null;
+}
+
+function _try_extract_array_from_tensor(tensor) {
+    if (typeof tensor.dataSync === 'function') {
+        var data = tensor.dataSync();
+        if (data && data.length > 0) {
+            return Array.from(data);
+        }
+    }
+    if (typeof tensor.arraySync === 'function') {
+        var arr = tensor.arraySync();
+        if (Array.isArray(arr)) {
+            return arr.flat ? arr.flat(Infinity) : arr;
+        }
+    }
+    return null;
+}
+
+function _try_extract_array_from_weight_variable(weightVar) {
+    // Try .val.dataSync()
+    if (weightVar.val && typeof weightVar.val.dataSync === 'function') {
+        var data = weightVar.val.dataSync();
+        if (data && data.length > 0) return Array.from(data);
+    }
+    // Try .val.arraySync()
+    if (weightVar.val && typeof weightVar.val.arraySync === 'function') {
+        var arr = weightVar.val.arraySync();
+        if (Array.isArray(arr)) return arr.flat ? arr.flat(Infinity) : arr;
+    }
+    // Try .read()
+    if (typeof weightVar.read === 'function') {
+        var tensor = weightVar.read();
+        if (tensor) {
+            var result = _try_extract_array_from_tensor(tensor);
+            if (result) return result;
+        }
+    }
+    // Try direct dataSync on the weight variable itself
+    if (typeof weightVar.dataSync === 'function') {
+        var data = weightVar.dataSync();
+        if (data && data.length > 0) return Array.from(data);
+    }
+    return null;
+}
+
+function _check_layer_has_no_bias(layer) {
+    // Method 4: Try layer.getConfig() to check if use_bias is false
+    try {
+        var config = layer.getConfig ? layer.getConfig() : null;
+        if (config && config.use_bias === false) {
+            return true;
+        }
+    } catch(e) {}
+    return false;
+}
+
+// ===== REFACTORED MAIN FUNCTION =====
+
 function _fcnn_edit_get_bias_data(actual_layer_idx) {
     try {
         if (typeof model === 'undefined' || !model || !model.layers) return null;
@@ -1305,106 +1403,20 @@ function _fcnn_edit_get_bias_data(actual_layer_idx) {
         var layer = model.layers[actual_layer_idx];
         if (!layer) return null;
 
-        // Method 1: getWeights() — most reliable
-        try {
-            var weights = layer.getWeights();
-            if (weights && weights.length >= 2) {
-                var biasTensor = weights[1];
-                if (biasTensor) {
-                    if (typeof biasTensor.dataSync === 'function') {
-                        var data = biasTensor.dataSync();
-                        if (data && data.length > 0) {
-                            return Array.from(data);
-                        }
-                    }
-                    if (typeof biasTensor.arraySync === 'function') {
-                        var arr = biasTensor.arraySync();
-                        if (Array.isArray(arr)) {
-                            return arr.flat ? arr.flat(Infinity) : arr;
-                        }
-                    }
-                }
-            }
-        } catch(e) {}
+        var result;
 
-        // Method 2: layer.weights[1].val (older TF.js / custom builds)
-        try {
-            if (layer.weights && layer.weights.length >= 2) {
-                var biasWeight = layer.weights[1];
-                if (biasWeight) {
-                    // Try .val.dataSync()
-                    if (biasWeight.val && typeof biasWeight.val.dataSync === 'function') {
-                        var data = biasWeight.val.dataSync();
-                        if (data && data.length > 0) return Array.from(data);
-                    }
-                    // Try .val.arraySync()
-                    if (biasWeight.val && typeof biasWeight.val.arraySync === 'function') {
-                        var arr = biasWeight.val.arraySync();
-                        if (Array.isArray(arr)) return arr.flat ? arr.flat(Infinity) : arr;
-                    }
-                    // Try .read()
-                    if (typeof biasWeight.read === 'function') {
-                        var tensor = biasWeight.read();
-                        if (tensor) {
-                            if (typeof tensor.dataSync === 'function') {
-                                var data = tensor.dataSync();
-                                if (data && data.length > 0) return Array.from(data);
-                            }
-                            if (typeof tensor.arraySync === 'function') {
-                                var arr = tensor.arraySync();
-                                if (Array.isArray(arr)) return arr.flat ? arr.flat(Infinity) : arr;
-                            }
-                        }
-                    }
-                    // Try direct dataSync on the weight variable itself
-                    if (typeof biasWeight.dataSync === 'function') {
-                        var data = biasWeight.dataSync();
-                        if (data && data.length > 0) return Array.from(data);
-                    }
-                }
-            }
-        } catch(e) {}
+        result = _try_read_bias_from_getWeights(layer);
+        if (result) return result;
 
-        // Method 3: layer.bias (some TF.js versions expose this directly)
-        try {
-            if (layer.bias) {
-                var b = layer.bias;
-                if (b.val && typeof b.val.dataSync === 'function') {
-                    var data = b.val.dataSync();
-                    if (data && data.length > 0) return Array.from(data);
-                }
-                if (b.val && typeof b.val.arraySync === 'function') {
-                    var arr = b.val.arraySync();
-                    if (Array.isArray(arr)) return arr.flat ? arr.flat(Infinity) : arr;
-                }
-                if (typeof b.read === 'function') {
-                    var t = b.read();
-                    if (t) {
-                        if (typeof t.dataSync === 'function') {
-                            var data = t.dataSync();
-                            if (data && data.length > 0) return Array.from(data);
-                        }
-                        if (typeof t.arraySync === 'function') {
-                            var arr = t.arraySync();
-                            if (Array.isArray(arr)) return arr.flat ? arr.flat(Infinity) : arr;
-                        }
-                    }
-                }
-                if (typeof b.dataSync === 'function') {
-                    var data = b.dataSync();
-                    if (data && data.length > 0) return Array.from(data);
-                }
-            }
-        } catch(e) {}
+        result = _try_read_bias_from_weights_property(layer);
+        if (result) return result;
 
-        // Method 4: Try layer.getConfig() to check if use_bias is false
-        try {
-            var config = layer.getConfig ? layer.getConfig() : null;
-            if (config && config.use_bias === false) {
-                // Layer explicitly has no bias
-                return null;
-            }
-        } catch(e) {}
+        result = _try_read_bias_from_layer_bias(layer);
+        if (result) return result;
+
+        if (_check_layer_has_no_bias(layer)) {
+            return null;
+        }
 
         return null;
     } catch (e) {
