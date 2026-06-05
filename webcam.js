@@ -744,8 +744,16 @@ function alter_text_webcam_series () {
 	var number = parse_int($("#number_of_series_images").val());
 	var nr_of_imgs_per_second = parse_float($("#nr_of_imgs_per_second").val());
 
+	const formatNumber = (num) => {
+		return new Intl.NumberFormat('en-US', {
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 2,
+			useGrouping: false // Set to true if you want commas for thousands (e.g., 1,000)
+		}).format(num);
+	};
+
 	var s = "&#128248; x " + number;
-	s = s + " (" + (1 / nr_of_imgs_per_second) + "/s)";
+	s = s + " (" + formatNumber(1 / nr_of_imgs_per_second) + "/s)";
 
 	$(".webcam_series_button").html(s);
 }
