@@ -978,6 +978,7 @@ function _build_connection_tooltip_html(region) {
 
     parts.push(row("From Layer", region.from_layer));
     parts.push(row("To Layer", region.to_layer));
+    parts.push(row("Connections", `${region.from_neurons} × ${region.to_neurons} = ${region.from_neurons * region.to_neurons}`));
 
     if (region.weight_stats) {
         var s = region.weight_stats;
