@@ -644,7 +644,7 @@ async function draw_fcnn(...args) {
 
 	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
 
-	var font_size = Math.max(12, Math.min(6, (canvasWidth / (layers.length * 24))));
+	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
 
 	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
 
