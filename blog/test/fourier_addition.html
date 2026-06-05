@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fourier Multiplication Algorithm - Step by Step</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: #7eb8ff;
+            text-align: center;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .step-container {
+            display: none;
+            width: 100%;
+            max-width: 700px;
+            background: #12122a;
+            border: 1px solid #2a2a5a;
+            border-radius: 12px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        .step-container.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .step-number {
+            background: #3a5fcd;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 1.1rem;
+            color: #a0c4ff;
+        }
+        .step-description {
+            font-size: 0.9rem;
+            color: #bbb;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .math {
+            font-family: 'Courier New', monospace;
+            color: #ffd700;
+            background: #1a1a3a;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            background: #080818;
+            border: 1px solid #2a2a4a;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-prev {
+            background: #2a2a5a;
+            color: #aaa;
+        }
+        .btn-prev:hover:not(:disabled) {
+            background: #3a3a6a;
+        }
+        .btn-next {
+            background: #3a5fcd;
+            color: white;
+        }
+        .btn-next:hover:not(:disabled) {
+            background: #4a6fdd;
+        }
+        .progress-bar {
+            width: 100%;
+            max-width: 700px;
+            height: 4px;
+            background: #1a1a3a;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3a5fcd, #7eb8ff);
+            transition: width 0.4s ease;
+            border-radius: 2px;
+        }
+        .input-display {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .input-display span {
+            color: #7eb8ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fourier Multiplication Algorithm</h1>
+    <div class="subtitle">Modular Addition via Rotation on a Circle (mod P = 113)</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="input-display">
+        Computing: <span id="inputA">23</span> + <span id="inputB">47</span> mod 113 = <span id="inputC">70</span>
+    </div>
+
+    <!-- Step 1: Embedding -->
+    <div class="step-container active" id="step1">
+        <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Embedding: Map inputs to sine/cosine</div>
+        </div>
+        <div class="step-description">
+            The embedding matrix maps each input <span class="math">a</span> and <span class="math">b</span> onto points on a circle using key frequencies <span class="math">wₖ = 2kπ/P</span>. This produces <span class="math">sin(wₖa)</span>, <span class="math">cos(wₖa)</span>, <span class="math">sin(wₖb)</span>, <span class="math">cos(wₖb)</span> for each key frequency k.
+        </div>
+        <canvas id="canvas1" width="640" height="300"></canvas>
+    </div>
+
+    <!-- Step 2: Trig Identity -->
+    <div class="step-container" id="step2">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-title">Trigonometric Identity: Compose rotations</div>
+        </div>
+        <div class="step-description">
+            The attention + MLP layers compute <span class="math">cos(wₖ(a+b))</span> and <span class="math">sin(wₖ(a+b))</span> using:<br><br>
+            <span class="math">cos(wₖ(a+b)) = cos(wₖa)cos(wₖb) − sin(wₖa)sin(wₖb)</span><br>
+            <span class="math">sin(wₖ(a+b)) = sin(wₖa)cos(wₖb) + cos(wₖa)sin(wₖb)</span>
+        </div>
+        <canvas id="canvas2" width="640" height="300"></canvas>
+    </div>
+
+    <!-- Step 3: Unembedding -->
+    <div class="step-container" id="step3">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-title">Unembedding: Compute logits via rotation by −c</div>
+        </div>
+        <div class="step-description">
+            For each candidate output <span class="math">c</span>, compute <span class="math">cos(wₖ(a+b−c))</span>. This is maximized when <span class="math">a+b ≡ c (mod P)</span>, since the cosine equals 1 when its argument is 0.
+        </div>
+        <canvas id="canvas3" width="640" height="300"></canvas>
+    </div>
+
+    <!-- Step 4: Constructive Interference -->
+    <div class="step-container" id="step4">
+        <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">Constructive Interference: Sum over frequencies</div>
+        </div>
+        <div class="step-description">
+            The model sums <span class="math">cos(wₖ(a+b−c))</span> across all key frequencies. At the correct answer <span class="math">c* = a+b mod P</span>, all cosines equal 1 and constructively interfere. Everywhere else, they destructively interfere, giving small logits.
+        </div>
+        <canvas id="canvas4" width="640" height="300"></canvas>
+    </div>
+
+    <!-- Step 5: Final Output -->
+    <div class="step-container" id="step5">
+        <div class="step-header">
+            <div class="step-number">5</div>
+            <div class="step-title">Result: Softmax produces the answer</div>
+        </div>
+        <div class="step-description">
+            After softmax, the logit spike at <span class="math">c* = a+b mod P</span> becomes a near-certain probability. The network has computed modular addition using only Fourier transforms and trigonometric identities.
+        </div>
+        <canvas id="canvas5" width="640" height="300"></canvas>
+    </div>
+
+    <div class="controls">
+        <button class="btn-prev" id="btnPrev" disabled>← Previous</button>
+        <button class="btn-next" id="btnNext">Next →</button>
+    </div>
+
+    <script>
+        const P = 113;
+        const keyFreqs = [14, 35, 41, 42, 52];
+        const a = 23, b = 47;
+        const correctC = (a + b) % P;
+
+        document.getElementById('inputA').textContent = a;
+        document.getElementById('inputB').textContent = b;
+        document.getElementById('inputC').textContent = correctC;
+
+        let currentStep = 1;
+        const totalSteps = 5;
+        let animFrames = {};
+
+        function updateUI() {
+            for (let i = 1; i <= totalSteps; i++) {
+                document.getElementById(`step${i}`).classList.toggle('active', i === currentStep);
+            }
+            document.getElementById('btnPrev').disabled = currentStep === 1;
+            document.getElementById('btnNext').disabled = currentStep === totalSteps;
+            document.getElementById('btnNext').textContent = currentStep === totalSteps ? 'Done' : 'Next →';
+            document.getElementById('progressFill').style.width = `${(currentStep / totalSteps) * 100}%`;
+            startAnimation(currentStep);
+        }
+
+        document.getElementById('btnNext').addEventListener('click', () => {
+            if (currentStep < totalSteps) { currentStep++; updateUI(); }
+        });
+        document.getElementById('btnPrev').addEventListener('click', () => {
+            if (currentStep > 1) { currentStep--; updateUI(); }
+        });
+
+        function startAnimation(step) {
+            // Cancel all other animations
+            Object.keys(animFrames).forEach(k => cancelAnimationFrame(animFrames[k]));
+            animFrames = {};
+            switch(step) {
+                case 1: animateStep1(); break;
+                case 2: animateStep2(); break;
+                case 3: animateStep3(); break;
+                case 4: animateStep4(); break;
+                case 5: animateStep5(); break;
+            }
+        }
+
+        // Step 1: Show embedding on circle
+        function animateStep1() {
+            const canvas = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            let t = 0;
+            function draw() {
+                t += 0.02;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const cx1 = 160, cy = 150, r = 100;
+                const cx2 = 480;
+
+                // Draw circles
+                ctx.strokeStyle = '#2a2a5a';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(cx1, cy, r, 0, Math.PI * 2); ctx.stroke();
+                ctx.beginPath(); ctx.arc(cx2, cy, r, 0, Math.PI * 2); ctx.stroke();
+
+                // Labels
+                ctx.fillStyle = '#7eb8ff';
+                ctx.font = '13px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(`a = ${a}`, cx1, cy + r + 25);
+                ctx.fillText(`b = ${b}`, cx2, cy + r + 25);
+
+                // Animate through key frequencies
+                const freqIdx = Math.floor(t * 0.5) % keyFreqs.length;
+                const k = keyFreqs[freqIdx];
+                const wk = 2 * Math.PI * k / P;
+
+                const angleA = wk * a;
+                const angleB = wk * b;
+
+                // Point for a
+                const ax = cx1 + r * Math.cos(angleA);
+                const ay = cy - r * Math.sin(angleA);
+                ctx.beginPath();
+                ctx.moveTo(cx1, cy);
+                ctx.lineTo(ax, ay);
+                ctx.strokeStyle = '#ff6b6b';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.beginPath(); ctx.arc(ax, ay, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff6b6b'; ctx.fill();
+
+                // Point for b
+                const bx = cx2 + r * Math.cos(angleB);
+                const by = cy - r * Math.sin(angleB);
+                ctx.beginPath();
+                ctx.moveTo(cx2, cy);
+                ctx.lineTo(bx, by);
+                ctx.strokeStyle = '#6bff6b';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI * 2);
+                ctx.fillStyle = '#6bff6b'; ctx.fill();
+
+                // Show frequency info
+                ctx.fillStyle = '#ffd700';
+                ctx.font = '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Key frequency k = ${k}   (wₖ = 2π·${k}/113)`, canvas.width / 2, 25);
+
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fillText(`cos(w${k}·${a}) = ${Math.cos(wk * a).toFixed(3)}`, cx1, cy - r - 15);
+                ctx.fillText(`sin(w${k}·${a}) = ${Math.sin(wk * a).toFixed(3)}`, cx1, cy - r - 30);
+
+                ctx.fillStyle = '#6bff6b';
+                ctx.fillText(`cos(w${k}·${b}) = ${Math.cos(wk * b).toFixed(3)}`, cx2, cy - r - 15);
+                ctx.fillText(`sin(w${k}·${b}) = ${Math.sin(wk * b).toFixed(3)}`, cx2, cy - r - 30);
+
+                animFrames[1] = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Step 2: Show trig identity composition
+        function animateStep2() {
+            const canvas = document.getElementById('canvas2');
+            const ctx = canvas.getContext('2d');
+            let t = 0;
+            function draw() {
+                t += 0.015;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const cx = 320, cy = 155, r = 100;
+
+                ctx.strokeStyle = '#2a2a5a';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+
+                const freqIdx = Math.floor(t * 0.5) % keyFreqs.length;
+                const k = keyFreqs[freqIdx];
+                const wk = 2 * Math.PI * k / P;
+
+                const angleA = wk * a;
+                const angleB = wk * b;
+                const angleSum = wk * (a + b);
+
+                // Show a angle (fading)
+                const fadedAlpha = 0.3;
+                ctx.globalAlpha = fadedAlpha;
+                const axp = cx + r * Math.cos(angleA);
+                const ayp = cy - r * Math.sin(angleA);
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(axp, ayp);
+                ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.globalAlpha = fadedAlpha;
+                const bxp = cx + r * Math.cos(angleB);
+                const byp = cy - r * Math.sin(angleB);
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(bxp, byp);
+                ctx.strokeStyle = '#6bff6b'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                ctx.globalAlpha = 1;
+
+                // Show sum angle
+                const sx = cx + r * Math.cos(angleSum);
+                const sy = cy - r * Math.sin(angleSum);
+                ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(sx, sy);
+                ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 3; ctx.stroke();
+                ctx.beginPath(); ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffd700'; ctx.fill();
+
+                // Arc for sum angle
+                ctx.beginPath();
+                ctx.arc(cx, cy, 30, -angleSum, 0);
+                ctx.strokeStyle = '#ffd70088'; ctx.lineWidth = 2; ctx.stroke();
+
+                // Labels
+                ctx.fillStyle = '#ffd700';
+                ctx.font = '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(`k = ${k}: wₖ(a+b) = wₖ·${a + b}`, cx, 25);
+
+                const cosSum = Math.cos(wk * (a + b));
+                const sinSum = Math.sin(wk * (a + b));
+                ctx.fillText(`cos(w${k}·${a + b}) = ${cosSum.toFixed(4)}`, cx, cy + r + 30);
+                ctx.fillText(`sin(w${k}·${a + b}) = ${sinSum.toFixed(4)}`, cx, cy + r + 48);
+
+                // Verification
+                const cosA = Math.cos(wk * a), sinA = Math.sin(wk * a);
+                const cosB = Math.cos(wk * b), sinB = Math.sin(wk * b);
+                const computed = cosA * cosB - sinA * sinB;
+                ctx.fillStyle = '#aaa';
+                ctx.font = '11px Courier New';
+                ctx.fillText(`cos(wₖa)cos(wₖb) - sin(wₖa)sin(wₖb) = ${computed.toFixed(4)} ✓`, cx, cy + r + 70);
+
+                animFrames[2] = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Step 3: Show logit computation for each c
+        function animateStep3() {
+            const canvas = document.getElementById('canvas3');
+            const ctx = canvas.getContext('2d');
+            let t = 0;
+            function draw() {
+                t += 0.03;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const k = keyFreqs[2]; // use k=41 as example
+                const wk = 2 * Math.PI * k / P;
+
+                // Show cos(wk(a+b-c)) for a range of c values around the correct answer
+                const barWidth = 4;
+                const startC = 0;
+                const numC = P;
+                const baseX = 40;
+                const baseY = 240;
+                const maxH = 160;
+
+                ctx.fillStyle = '#ffd700';
+                ctx.font = '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(`cos(w₄₁·(${a}+${b}-c)) for each candidate c`, canvas.width / 2, 20);
+
+                // Animate: reveal bars progressively
+                const revealed = Math.min(numC, Math.floor(t * 20));
+
+                for (let i = 0; i < revealed; i++) {
+                    const c = (startC + i) % P;
+                    const val = Math.cos(wk * ((a + b - c + P * 10) % P));
+                    const h = val * (maxH / 2);
+                    const x = baseX + i * (barWidth + 1.2);
+
+                    if (c === correctC) {
+                        ctx.fillStyle = '#ffd700';
+                    } else {
+                        ctx.fillStyle = val > 0 ? '#3a5fcd55' : '#cd3a3a55';
+                    }
+                    ctx.fillRect(x, baseY - Math.max(0, h), barWidth, Math.abs(h));
+                }
+
+                // Baseline
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(baseX, baseY); ctx.lineTo(baseX + numC * (barWidth + 1.2), baseY); ctx.stroke();
+
+                // Highlight correct
+                if (revealed > correctC) {
+                    const cx2 = baseX + correctC * (barWidth + 1.2) + barWidth / 2;
+                    ctx.fillStyle = '#ffd700';
+                    ctx.font = '11px Segoe UI';
+                    ctx.fillText(`c=${correctC}`, cx2, baseY + 20);
+                    ctx.fillText('↑ max', cx2, baseY + 34);
+                }
+
+                ctx.fillStyle = '#888';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'left';
+                ctx.fillText('c = 0', baseX, baseY + 50);
+                ctx.textAlign = 'right';
+                ctx.fillText(`c = ${P - 1}`, baseX + numC * (barWidth + 1.2), baseY + 50);
+
+                animFrames[3] = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Step 4: Constructive interference
+        function animateStep4() {
+            const canvas = document.getElementById('canvas4');
+            const ctx = canvas.getContext('2d');
+            let t = 0;
+            function draw() {
+                t += 0.015;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // How many frequencies to include (animate adding them)
+                const numFreqsToShow = Math.min(keyFreqs.length, Math.floor(t * 0.8) + 1);
+
+                const barWidth = 4;
+                const baseX = 40;
+                const baseY = 220;
+                const maxH = 140;
+
+                ctx.fillStyle = '#7eb8ff';
+                ctx.font = '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Sum of cos(wₖ(a+b-c)) over ${numFreqsToShow} key frequenc${numFreqsToShow === 1 ? 'y' : 'ies'}`, canvas.width / 2, 20);
+
+                // Show which frequencies are active
+                ctx.font = '11px Courier New';
+                ctx.fillStyle = '#888';
+                let freqLabel = 'k = ';
+                for (let f = 0; f < keyFreqs.length; f++) {
+                    freqLabel += f < numFreqsToShow ? `[${keyFreqs[f]}] ` : `${keyFreqs[f]} `;
+                }
+                ctx.fillText(freqLabel, canvas.width / 2, 40);
+
+                let maxVal = 0;
+                const values = [];
+                for (let c = 0; c < P; c++) {
+                    let sum = 0;
+                    for (let f = 0; f < numFreqsToShow; f++) {
+                        const wk = 2 * Math.PI * keyFreqs[f] / P;
+                        sum += Math.cos(wk * ((a + b - c + P * 10) % P));
+                    }
+                    values.push(sum);
+                    if (Math.abs(sum) > maxVal) maxVal = Math.abs(sum);
+                }
+
+                const scale = maxH / (maxVal || 1);
+
+                for (let c = 0; c < P; c++) {
+                    const h = values[c] * scale * 0.45;
+                    const x = baseX + c * (barWidth + 1.2);
+
+                    if (c === correctC) {
+                        ctx.fillStyle = '#ffd700';
+                    } else {
+                        ctx.fillStyle = values[c] > 0.5 ? '#3a5fcd88' : '#3a3a5a55';
+                    }
+                    ctx.fillRect(x, baseY - Math.max(0, h), barWidth, Math.abs(h));
+                }
+
+                // Baseline
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(baseX, baseY); ctx.lineTo(baseX + P * (barWidth + 1.2), baseY); ctx.stroke();
+
+                // Highlight
+                const cx2 = baseX + correctC * (barWidth + 1.2) + barWidth / 2;
+                ctx.fillStyle = '#ffd700';
+                ctx.font = '11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(`c*=${correctC}`, cx2, baseY + 18);
+
+                // Show value at correct c
+                ctx.fillStyle = '#ffd700';
+                ctx.font = '12px Courier New';
+                ctx.fillText(`Logit at c*=${correctC}: ${values[correctC].toFixed(2)} (max = ${numFreqsToShow})`, canvas.width / 2, baseY + 50);
+
+                ctx.fillStyle = '#888';
+                ctx.fillText(`Other logits ≈ ${(values[(correctC + 10) % P]).toFixed(2)} (destructive interference)`, canvas.width / 2, baseY + 70);
+
+                animFrames[4] = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Step 5: Softmax output
+        function animateStep5() {
+            const canvas = document.getElementById('canvas5');
+            const ctx = canvas.getContext('2d');
+            let t = 0;
+            function draw() {
+                t += 0.02;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Compute logits
+                const logits = [];
+                for (let c = 0; c < P; c++) {
+                    let sum = 0;
+                    for (let f = 0; f < keyFreqs.length; f++) {
+                        const wk = 2 * Math.PI * keyFreqs[f] / P;
+                        sum += Math.cos(wk * ((a + b - c + P * 10) % P));
+                    }
+                    logits.push(sum);
+                }
+
+                // Animate temperature (softmax sharpening)
+                const temperature = Math.max(0.15, 2.0 - t * 0.3);
+                const scaledLogits = logits.map(l => l / temperature);
+                const maxLogit = Math.max(...scaledLogits);
+                const expLogits = scaledLogits.map(l => Math.exp(l - maxLogit));
+                const sumExp = expLogits.reduce((a, b) => a + b, 0);
+                const probs = expLogits.map(e => e / sumExp);
+
+                const barWidth = 4;
+                const baseX = 40;
+                const baseY = 240;
+                const maxH = 180;
+
+                ctx.fillStyle = '#7eb8ff';
+                ctx.font = '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Softmax probabilities (temperature → 0)`, canvas.width / 2, 20);
+
+                for (let c = 0; c < P; c++) {
+                    const h = probs[c] * maxH;
+                    const x = baseX + c * (barWidth + 1.2);
+
+                    if (c === correctC) {
+                        ctx.fillStyle = '#ffd700';
+                    } else {
+                        ctx.fillStyle = '#3a5fcd44';
+                    }
+                    ctx.fillRect(x, baseY - h, barWidth, h);
+                }
+
+                // Baseline
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(baseX, baseY); ctx.lineTo(baseX + P * (barWidth + 1.2), baseY); ctx.stroke();
+
+                // Result
+                const cx2 = baseX + correctC * (barWidth + 1.2) + barWidth / 2;
+                ctx.fillStyle = '#ffd700';
+                ctx.font = '12px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.fillText(`P(c=${correctC}) = ${(probs[correctC] * 100).toFixed(1)}%`, cx2, baseY + 25);
+
+                ctx.fillStyle = '#6bff6b';
+                ctx.font = '14px Segoe UI';
+                ctx.fillText(`${a} + ${b} mod ${P} = ${correctC} ✓`, canvas.width / 2, baseY + 55);
+
+                ctx.fillStyle = '#666';
+                ctx.font = '11px Courier New';
+                ctx.fillText(`temp = ${temperature.toFixed(2)}`, canvas.width / 2, baseY + 75);
+
+                animFrames[5] = requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Initialize
+        updateUI();
+    </script>
+</body>
+</html>
