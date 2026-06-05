@@ -1110,112 +1110,158 @@ function _build_input_image_tooltip_html(region) {
 // ===== MOUSE EVENT BINDING =====
 
 function _bind_fcnn_canvas_mouse_events() {
-	if (_fcnn_canvas_mouse_bound) return;
+    if (_fcnn_canvas_mouse_bound) return;
 
-	var canvas = document.getElementById("fcnn_canvas");
-	if (!canvas) return;
+    var canvas = document.getElementById("fcnn_canvas");
+    if (!canvas) return;
 
-	_fcnn_canvas_mouse_bound = true;
+    _fcnn_canvas_mouse_bound = true;
 
-	var _last_hit_idx = -1;
-	var _debounce_timer = null;
+    var _last_hit_idx = -1;
 
-	canvas.addEventListener("mousemove", function (e) {
-		try {
-			var rect = canvas.getBoundingClientRect();
-			var scaleX = canvas.width / rect.width;
-			var scaleY = canvas.height / rect.height;
-			var cx = (e.clientX - rect.left) * scaleX;
-			var cy = (e.clientY - rect.top) * scaleY;
+    // ===== MOUSEMOVE (tooltip) - unchanged logic =====
+    canvas.addEventListener("mousemove", function (e) {
+        try {
+            var rect = canvas.getBoundingClientRect();
+            var scaleX = canvas.width / rect.width;
+            var scaleY = canvas.height / rect.height;
+            var cx = (e.clientX - rect.left) * scaleX;
+            var cy = (e.clientY - rect.top) * scaleY;
 
-			var hit = null;
-			var hitIdx = -1;
-			// Search in reverse so top-drawn items are found first
-			for (var i = _fcnn_hit_regions.length - 1; i >= 0; i--) {
-				if (_point_in_region(cx, cy, _fcnn_hit_regions[i])) {
-					hit = _fcnn_hit_regions[i];
-					hitIdx = i;
-					break;
-				}
-			}
+            var hit = null;
+            var hitIdx = -1;
+            for (var i = _fcnn_hit_regions.length - 1; i >= 0; i--) {
+                if (_point_in_region(cx, cy, _fcnn_hit_regions[i])) {
+                    hit = _fcnn_hit_regions[i];
+                    hitIdx = i;
+                    break;
+                }
+            }
 
-			// Avoid redundant tooltip rebuilds for same region
-			if (hitIdx === _last_hit_idx && _fcnn_tooltip_visible) {
-				// Just reposition
-				if (hit && _fcnn_tooltip_el) {
-					var vw = window.innerWidth;
-					var vh = window.innerHeight;
-					var left = e.clientX + 16;
-					var top = e.clientY + 12;
-					var tipW = _fcnn_tooltip_el.offsetWidth || 200;
-					var tipH = _fcnn_tooltip_el.offsetHeight || 100;
-					if (left + tipW > vw - 10) left = e.clientX - tipW - 10;
-					if (top + tipH > vh - 10) top = e.clientY - tipH - 10;
-					if (left < 5) left = 5;
-					if (top < 5) top = 5;
-					_fcnn_tooltip_el.style.left = left + "px";
-					_fcnn_tooltip_el.style.top = top + "px";
-				}
-				return;
-			}
+            if (hitIdx === _last_hit_idx && _fcnn_tooltip_visible) {
+                if (hit && _fcnn_tooltip_el) {
+                    var vw = window.innerWidth;
+                    var vh = window.innerHeight;
+                    var left = e.clientX + 16;
+                    var top = e.clientY + 12;
+                    var tipW = _fcnn_tooltip_el.offsetWidth || 200;
+                    var tipH = _fcnn_tooltip_el.offsetHeight || 100;
+                    if (left + tipW > vw - 10) left = e.clientX - tipW - 10;
+                    if (top + tipH > vh - 10) top = e.clientY - tipH - 10;
+                    if (left < 5) left = 5;
+                    if (top < 5) top = 5;
+                    _fcnn_tooltip_el.style.left = left + "px";
+                    _fcnn_tooltip_el.style.top = top + "px";
+                }
+                return;
+            }
 
-			_last_hit_idx = hitIdx;
+            _last_hit_idx = hitIdx;
 
-			if (hit) {
-				var html = "";
-				switch (hit.type) {
-					case "neuron":
-						html = _build_neuron_tooltip_html(hit);
-						break;
-					case "conv2d":
-						html = _build_conv2d_tooltip_html(hit);
-						break;
-					case "flatten":
-						html = _build_flatten_tooltip_html(hit);
-						break;
-					case "layernorm":
-						html = _build_layernorm_tooltip_html(hit);
-						break;
-					case "connection":
-						html = _build_connection_tooltip_html(hit);
-						break;
-					case "input_image":
-						html = _build_input_image_tooltip_html(hit);
-						break;
-					default:
-						html = `<div style="padding:4px;">Element: <b>${hit.type}</b><br>Layer: ${hit.layer_idx !== undefined ? hit.layer_idx : 'N/A'}<br>Position: (${Math.round(hit.x)}, ${Math.round(hit.y)})</div>`;
-				}
-				_show_fcnn_tooltip(html, e.clientX, e.clientY);
-				canvas.style.cursor = "crosshair";
-			} else {
-				_hide_fcnn_tooltip();
-				canvas.style.cursor = "default";
-			}
-		} catch (err) {
-			// Silently fail - tooltip is non-critical
-			_hide_fcnn_tooltip();
-			canvas.style.cursor = "default";
-		}
-	});
+            if (hit) {
+                var html = "";
+                switch (hit.type) {
+                    case "neuron":
+                        html = _build_neuron_tooltip_html(hit);
+                        break;
+                    case "conv2d":
+                        html = _build_conv2d_tooltip_html(hit);
+                        break;
+                    case "flatten":
+                        html = _build_flatten_tooltip_html(hit);
+                        break;
+                    case "layernorm":
+                        html = _build_layernorm_tooltip_html(hit);
+                        break;
+                    case "connection":
+                        html = _build_connection_tooltip_html(hit);
+                        break;
+                    case "input_image":
+                        html = _build_input_image_tooltip_html(hit);
+                        break;
+                    default:
+                        html = `<div style="padding:4px;">Element: <b>${hit.type}</b><br>Layer: ${hit.layer_idx !== undefined ? hit.layer_idx : 'N/A'}<br>Position: (${Math.round(hit.x)}, ${Math.round(hit.y)})</div>`;
+                }
+                _show_fcnn_tooltip(html, e.clientX, e.clientY);
+                canvas.style.cursor = "crosshair";
+            } else {
+                _hide_fcnn_tooltip();
+                canvas.style.cursor = "default";
+            }
+        } catch (err) {
+            _hide_fcnn_tooltip();
+            canvas.style.cursor = "default";
+        }
+    });
 
-	canvas.addEventListener("mouseleave", function () {
-		_hide_fcnn_tooltip();
-		_last_hit_idx = -1;
-		canvas.style.cursor = "default";
-	});
+    // ===== CLICK HANDLER FOR EDITING =====
+    canvas.addEventListener("click", function (e) {
+        try {
+            var rect = canvas.getBoundingClientRect();
+            var scaleX = canvas.width / rect.width;
+            var scaleY = canvas.height / rect.height;
+            var cx = (e.clientX - rect.left) * scaleX;
+            var cy = (e.clientY - rect.top) * scaleY;
 
-	// Also hide on scroll/resize to prevent stale tooltips
-	window.addEventListener("scroll", function () {
-		_hide_fcnn_tooltip();
-		_last_hit_idx = -1;
-	}, { passive: true });
+            var hit = null;
+            for (var i = _fcnn_hit_regions.length - 1; i >= 0; i--) {
+                if (_point_in_region(cx, cy, _fcnn_hit_regions[i])) {
+                    hit = _fcnn_hit_regions[i];
+                    break;
+                }
+            }
 
-	window.addEventListener("resize", function () {
-		_hide_fcnn_tooltip();
-		_last_hit_idx = -1;
-		// Reset binding flag so it rebinds after canvas resize
-		_fcnn_canvas_mouse_bound = false;
-	});
+            if (!hit) return;
+
+            // Block editing during training
+            if (typeof started_training !== 'undefined' && started_training) {
+                console.warn("[fcnn_edit] Cannot edit while training is in progress.");
+                return;
+            }
+
+            // Ensure the editable system is loaded
+            if (typeof _fcnn_edit_ensure_popup !== 'function') {
+                console.warn("[fcnn_edit] fcnn_editable.js not loaded.");
+                return;
+            }
+
+            // Hide tooltip when opening editor
+            _hide_fcnn_tooltip();
+
+            switch (hit.type) {
+                case "neuron":
+                    _fcnn_edit_open_neuron_weights(hit, e.clientX, e.clientY);
+                    break;
+                case "connection":
+                    _fcnn_edit_open_weight(hit, e.clientX, e.clientY);
+                    break;
+                default:
+                    // Conv2d, flatten, layernorm, input_image - not directly editable
+                    // but we could show info or do nothing
+                    break;
+            }
+        } catch (err) {
+            console.warn("[fcnn_edit] Click handler error:", err);
+        }
+    });
+
+    canvas.addEventListener("mouseleave", function () {
+        _hide_fcnn_tooltip();
+        _last_hit_idx = -1;
+        canvas.style.cursor = "default";
+    });
+
+    // Also hide on scroll/resize to prevent stale tooltips
+    window.addEventListener("scroll", function () {
+        _hide_fcnn_tooltip();
+        _last_hit_idx = -1;
+    }, { passive: true });
+
+    window.addEventListener("resize", function () {
+        _hide_fcnn_tooltip();
+        _last_hit_idx = -1;
+        _fcnn_canvas_mouse_bound = false;
+    });
 }
 
 // ===== UPDATED: _draw_neurons_and_connections (adds hit regions + binds mouse) =====
