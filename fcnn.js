@@ -992,7 +992,6 @@ function _build_connection_tooltip_html(region) {
         if (s.min !== s.max) {
             var zeroPos = ((0 - s.min) / (s.max - s.min)) * 100;
             zeroPos = Math.max(0, Math.min(100, zeroPos));
-            parts.push(row("Zero Position", zeroPos.toFixed(1) + "% from left"));
             parts.push(`<tr><td colspan="2" style="padding:4px 0;">
                 <div style="position:relative;height:12px;background:linear-gradient(to right, #4444ff, #ffffff ${zeroPos.toFixed(1)}%, #ff4444);border-radius:3px;border:1px solid #888;">
                     <div style="position:absolute;left:${zeroPos.toFixed(1)}%;top:0;bottom:0;width:1px;background:#000;"></div>
