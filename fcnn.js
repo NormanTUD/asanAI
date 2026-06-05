@@ -846,8 +846,6 @@ function _build_neuron_tooltip_html(region) {
 
 	parts.push(row("Layer", region.layer_idx));
 	parts.push(row("Neuron Index", region.neuron_idx));
-	parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
-	parts.push(row("Radius", _format_number(region.radius)));
 
 	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
 
@@ -890,8 +888,6 @@ function _build_conv2d_tooltip_html(region) {
 
 	parts.push(row("Layer", region.layer_idx));
 	parts.push(row("Channel/Filter", region.neuron_idx));
-	parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
-	parts.push(row("Size (w × h)", `${Math.round(region.w)} × ${Math.round(region.h)}`));
 
 	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
 	if (region.kernel_size_x && region.kernel_size_y) parts.push(row("Kernel Size", `${region.kernel_size_x} × ${region.kernel_size_y}`));
@@ -927,8 +923,6 @@ function _build_flatten_tooltip_html(region) {
 	};
 
 	parts.push(row("Layer", region.layer_idx));
-	parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
-	parts.push(row("Size (w × h)", `${Math.round(region.w)} × ${Math.round(region.h)}`));
 
 	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
 	if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(function (n) { return n; }).join(", ") + "]"));
@@ -962,7 +956,6 @@ function _build_layernorm_tooltip_html(region) {
 	};
 
 	parts.push(row("Layer", region.layer_idx));
-	parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
 	parts.push(row("Block Size (w × h)", `${Math.round(region.w)} × ${Math.round(region.h)}`));
 	if (region.layer_type) parts.push(row("Layer Type", region.layer_type));
 	if (region.output_shape) parts.push(row("Output Shape", "[" + region.output_shape.filter(function (n) { return n; }).join(", ") + "]"));
@@ -986,8 +979,6 @@ function _build_connection_tooltip_html(region) {
     parts.push(row("From Layer", region.from_layer));
     parts.push(row("To Layer", region.to_layer));
     parts.push(row("Connections", `${region.from_neurons} × ${region.to_neurons} = ${region.from_neurons * region.to_neurons}`));
-    parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
-    parts.push(row("Area (w × h)", `${Math.round(region.w)} × ${Math.round(region.h)}`));
 
     if (region.weight_stats) {
         var s = region.weight_stats;
@@ -1036,10 +1027,8 @@ function _build_input_image_tooltip_html(region) {
 		return `<tr><td style="padding:2px 6px 2px 0;font-weight:600;white-space:nowrap;">${label}</td><td style="padding:2px 0;">${val}</td></tr>`;
 	};
 
-	parts.push(row("Position (x, y)", `(${Math.round(region.x)}, ${Math.round(region.y)})`));
 	parts.push(row("Dimensions", `${region.img_width} × ${region.img_height}`));
 	parts.push(row("Channels", region.channels || "3 (RGB)"));
-	parts.push(row("Total Pixels", (region.img_width * region.img_height)));
 
 	if (region.pixel_stats) {
 		var s = region.pixel_stats;
