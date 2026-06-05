@@ -1922,10 +1922,12 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 	const localX1 = currX + shiftX;
 	const localX2 = nextX + shiftX;
 
+	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+
 	if (!weightInfo) {
-		// Fallback: single color adapted to theme
-		octx.strokeStyle = is_dark_mode ? "#9ea3b5" : "#767b8d";
-		octx.globalAlpha = 0.5;
+		// Fallback: single color adapted to theme with sufficient contrast
+		octx.strokeStyle = dark ? "rgba(160, 175, 210, 0.7)" : "rgba(40, 50, 90, 0.55)";
+		octx.globalAlpha = 1.0;
 		octx.beginPath();
 		let count = 0;
 		const CHUNK = 5000;
@@ -1952,14 +1954,13 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 		for (let i = 0; i < currYs.length; i++) {
 			const y1 = currYs[i];
 			for (let k = 0; k < nextYs.length; k++) {
-				// Map neuron indices to weight matrix indices
 				var fi = Math.min(i, rows - 1);
 				var ti = Math.min(k, cols - 1);
 				var idx = fi * cols + ti;
 				var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
 
 				octx.beginPath();
-				octx.strokeStyle = get_weight_color(w, weightInfo.min, weightInfo.max);
+				octx.strokeStyle = _get_weight_color_themed(w, weightInfo.min, weightInfo.max, dark);
 				var cpX = (localX1 + localX2) / 2;
 				octx.moveTo(localX1, y1);
 				octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
@@ -1970,6 +1971,45 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 
 	CONNECTION_CANVAS_CACHE.set(key, { canvas: off, shiftX: shiftX, pad: pad });
 	return CONNECTION_CANVAS_CACHE.get(key);
+}
+
+function _get_weight_color_themed(weight, minW, maxW, dark) {
+	var normalized = (maxW !== minW) ? ((weight - minW) / (maxW - minW)) * 2 - 1 : 0;
+	var abs = Math.abs(normalized);
+
+	var r, g, b, alpha;
+
+	if (dark) {
+		// Dark mode: bright colors on dark background
+		if (normalized >= 0) {
+			// Neutral → Blue
+			r = Math.round(80 + (1 - abs) * 100);
+			g = Math.round(80 + (1 - abs) * 100);
+			b = Math.round(140 + abs * 115);
+		} else {
+			// Neutral → Red
+			r = Math.round(140 + abs * 115);
+			g = Math.round(80 + (1 - abs) * 100);
+			b = Math.round(80 + (1 - abs) * 100);
+		}
+		alpha = 0.3 + abs * 0.65;
+	} else {
+		// Light mode: dark/saturated colors on white background
+		if (normalized >= 0) {
+			// Dark neutral → Deep Blue
+			r = Math.round(30 * (1 - abs));
+			g = Math.round(30 * (1 - abs));
+			b = Math.round(80 + abs * 175);
+		} else {
+			// Dark neutral → Deep Red
+			r = Math.round(80 + abs * 175);
+			g = Math.round(30 * (1 - abs));
+			b = Math.round(30 * (1 - abs));
+		}
+		alpha = 0.25 + abs * 0.7;
+	}
+
+	return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
 }
 
 // ===== LAYERS TEXT DRAWING =====
