@@ -777,6 +777,22 @@ function _fcnn_edit_apply_value(newValue) {
     try {
         var meta_infos = _fcnn_edit_active.meta_infos;
         var from_layer = _fcnn_edit_active.from_layer;
+        var meta = meta_infos[from_layer + 1];
+        var layer = model.layers[meta.nr];
+        var testWeights = layer.getWeights();
+        if (!testWeights || testWeights.length === 0) return;
+        // Test if tensor is actually alive
+        testWeights[0].dataSync();  // Will throw if disposed
+    } catch(e) {
+        // Model was recreated - close popup, stop trying
+        console.warn("[fcnn_edit] Model tensors disposed, closing popup.");
+        _fcnn_edit_close_popup();
+        return;
+    }
+
+    try {
+        var meta_infos = _fcnn_edit_active.meta_infos;
+        var from_layer = _fcnn_edit_active.from_layer;
         var weight_flat_idx = _fcnn_edit_active.weight_flat_idx;
 
         if (!meta_infos || from_layer + 1 >= meta_infos.length) {
