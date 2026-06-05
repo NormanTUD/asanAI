@@ -1923,3 +1923,5 @@ function toggle_math_interactive_mode() {
 	_math_interactive_mode = !_math_interactive_mode;
 	write_model_to_latex_to_page(); // await not possible
 }
+
+var CONNECTION_CANVAS_CACHE = new Map();

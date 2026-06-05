@@ -1,5 +1,62 @@
 "use strict";
 
+
+
+function get_layer_weights_for_connections(layer_nr, meta_infos) {
+	// Find the actual model layer index from meta_infos
+	try {
+		if (!model || !model.layers) return null;
+
+		var meta = meta_infos[layer_nr + 1]; // weights belong to the receiving layer
+		if (!meta) return null;
+
+		var actual_layer_idx = meta.nr;
+		if (actual_layer_idx === undefined || actual_layer_idx === null) return null;
+
+		var layer = model.layers[actual_layer_idx];
+		if (!layer || !layer.weights || layer.weights.length === 0) return null;
+
+		// Get kernel weights (first weight tensor, bias is second)
+		var kernel = layer.weights[0];
+		if (!kernel || !kernel.val) return null;
+
+		var weightData = kernel.val.dataSync(); // synchronous flat Float32Array
+		if (!weightData || weightData.length === 0) return null;
+
+		var minW = weightData[0], maxW = weightData[0];
+		for (var i = 1; i < weightData.length; i++) {
+			if (weightData[i] < minW) minW = weightData[i];
+			if (weightData[i] > maxW) maxW = weightData[i];
+		}
+
+		return { data: weightData, min: minW, max: maxW, shape: kernel.shape };
+	} catch (e) {
+		return null;
+	}
+}
+
+function get_connection_weight(weightInfo, fromIdx, toIdx, fromTotal, toTotal) {
+	// For Dense layers: weight shape is [fromTotal, toTotal]
+	// Index into flat array: fromIdx * toTotal + toIdx
+	if (!weightInfo || !weightInfo.data) return 0;
+
+	var shape = weightInfo.shape;
+	if (!shape || shape.length < 2) return 0;
+
+	var cols = shape[shape.length - 1];
+	var rows = shape[shape.length - 2];
+
+	// Clamp indices
+	var fi = Math.min(fromIdx, rows - 1);
+	var ti = Math.min(toIdx, cols - 1);
+
+	var idx = fi * cols + ti;
+	if (idx >= 0 && idx < weightInfo.data.length) {
+		return weightInfo.data[idx];
+	}
+	return 0;
+}
+
 async function restart_fcnn(force = 0) {
 	if($("#fcnn_canvas").is(":visible")) {
 		if(restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);
@@ -62,6 +119,8 @@ async function restart_fcnn_internal (force = 0) {
 	last_fcnn_data_hash = cache_key;
 
 	var [names, units, meta_infos] = fcnn_data;
+
+	CONNECTION_CANVAS_CACHE.clear();
 
 	await draw_fcnn(units, names, meta_infos);
 
@@ -185,45 +244,45 @@ async function _draw_neurons_and_connections (ctx, canvasWidth, layers, meta_inf
 }
 
 function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize) {
-    try {
-        var blockWidth = maxShapeSize * 10;
-        var blockHeight = maxShapeSize * 2.5;
+	try {
+		var blockWidth = maxShapeSize * 10;
+		var blockHeight = maxShapeSize * 2.5;
 
-        var x = layerX - blockWidth / 2;
-        var y = layerY - blockHeight / 2;
+		var x = layerX - blockWidth / 2;
+		var y = layerY - blockHeight / 2;
 
-        var sectionWidth = blockWidth / 3;
+		var sectionWidth = blockWidth / 3;
 
-        ctx.fillStyle = "#e0e0e0";
-        ctx.fillRect(x, y, sectionWidth, blockHeight);
+		ctx.fillStyle = "#e0e0e0";
+		ctx.fillRect(x, y, sectionWidth, blockHeight);
 
-        ctx.fillStyle = "#b0d4ff";
-        ctx.fillRect(x + sectionWidth, y, sectionWidth, blockHeight);
+		ctx.fillStyle = "#b0d4ff";
+		ctx.fillRect(x + sectionWidth, y, sectionWidth, blockHeight);
 
-        ctx.fillStyle = "#ffd0a0";
-        ctx.fillRect(x + sectionWidth * 2, y, sectionWidth, blockHeight);
+		ctx.fillStyle = "#ffd0a0";
+		ctx.fillRect(x + sectionWidth * 2, y, sectionWidth, blockHeight);
 
-        ctx.beginPath();
-        ctx.rect(x, y, blockWidth, blockHeight);
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.closePath();
+		ctx.beginPath();
+		ctx.rect(x, y, blockWidth, blockHeight);
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 2;
+		ctx.stroke();
+		ctx.closePath();
 
 		/*
-        ctx.fillStyle = "black";
-        ctx.font = "16px Arial";
+	ctx.fillStyle = "black";
+	ctx.font = "16px Arial";
 
-        ctx.fillText("Normalize", x + sectionWidth * 0.1, y + blockHeight * 0.65);
-        ctx.fillText("+ β", x + sectionWidth + sectionWidth * 0.35, y + blockHeight * 0.65);
-        ctx.fillText("× γ", x + sectionWidth * 2 + sectionWidth * 0.35, y + blockHeight * 0.65);
-		*/
-    } catch (e) {
-        if (e && e.message) e = e.message;
-        assert(false, e);
-    }
+	ctx.fillText("Normalize", x + sectionWidth * 0.1, y + blockHeight * 0.65);
+	ctx.fillText("+ β", x + sectionWidth + sectionWidth * 0.35, y + blockHeight * 0.65);
+	ctx.fillText("× γ", x + sectionWidth * 2 + sectionWidth * 0.35, y + blockHeight * 0.65);
+	*/
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
+	}
 
-    return ctx;
+	return ctx;
 }
 
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
@@ -267,20 +326,82 @@ function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type
 	return y;
 }
 
-var CONNECTION_CANVAS_CACHE = new Map();
-
 function _connection_cache_key(layer_nr, currNeurons, nextNeurons, currX, nextX, currSpacing, nextSpacing) {
 	return `${layer_nr}:${currNeurons}x${nextNeurons}:x${Math.round(currX)}-${Math.round(nextX)}:s${Math.round(currSpacing)}-${Math.round(nextSpacing)}`;
 }
 
-function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius) {
-	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0);
+
+
+// ===== ADD THESE HELPER FUNCTIONS =====
+
+function get_weight_color(weight, minW, maxW) {
+	// Normalize to [-1, 1]
+	var normalized = 0;
+	if (maxW !== minW) {
+		normalized = ((weight - minW) / (maxW - minW)) * 2 - 1;
+	}
+
+	var r, g, b;
+	if (normalized >= 0) {
+		// Positive → orange/red (visible on both dark and light)
+		r = Math.round(180 + normalized * 75);
+		g = Math.round(100 - normalized * 60);
+		b = Math.round(60 - normalized * 40);
+	} else {
+		// Negative → blue/cyan
+		var absN = Math.abs(normalized);
+		r = Math.round(60 - absN * 40);
+		g = Math.round(120 + absN * 40);
+		b = Math.round(180 + absN * 75);
+	}
+
+	var alpha = 0.3 + Math.abs(normalized) * 0.6;
+	return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+}
+
+function get_layer_weight_data(layer_nr, meta_infos) {
+	try {
+		if (!model || !model.layers) return null;
+
+		// Weights belong to the receiving layer (layer_nr + 1 in meta_infos)
+		var meta = meta_infos[layer_nr + 1];
+		if (!meta) return null;
+
+		var actual_layer_idx = meta.nr;
+		if (actual_layer_idx == null) return null;
+
+		var layer = model.layers[actual_layer_idx];
+		if (!layer || !layer.weights || layer.weights.length === 0) return null;
+
+		var kernel = layer.weights[0];
+		if (!kernel || !kernel.val) return null;
+
+		var weightData = kernel.val.dataSync();
+		if (!weightData || weightData.length === 0) return null;
+
+		var minW = weightData[0], maxW = weightData[0];
+		for (var i = 1; i < weightData.length; i++) {
+			if (weightData[i] < minW) minW = weightData[i];
+			if (weightData[i] > maxW) maxW = weightData[i];
+		}
+
+		return { data: weightData, min: minW, max: maxW, shape: kernel.shape };
+	} catch (e) {
+		return null;
+	}
+}
+
+// ===== REPLACE _render_layer_pair_to_offscreen =====
+
+function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
+	var darkFlag = (typeof is_dark_mode !== 'undefined' && is_dark_mode) ? "d" : "l";
+	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
+	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
 
 	if (CONNECTION_CANVAS_CACHE.has(key)) {
 		return CONNECTION_CANVAS_CACHE.get(key);
 	}
 
-	// create offscreen canvas sized tightly to the horizontal band we need
 	const pad = Math.ceil(maxRadius + 2);
 	const width = Math.max(1, Math.ceil(nextX - currX) + pad * 2);
 	const height = Math.max(1, canvasHeight);
@@ -290,110 +411,134 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 	off.height = height;
 	const octx = off.getContext("2d");
 
-	// Shift coordinates so currX becomes pad
 	const shiftX = pad - currX;
-
 	octx.lineWidth = 1;
-	octx.strokeStyle = "#767b8d";
-	octx.beginPath();
 
-	// build a path with local coordinates (fewer property lookups in the loops)
-	let count = 0;
-	const CHUNK = 5000;
+	const localX1 = currX + shiftX;
+	const localX2 = nextX + shiftX;
 
-	for (let i = 0; i < currYs.length; i++) {
-		const y1 = currYs[i];
-		const localX1 = currX + shiftX;
-		for (let k = 0; k < nextYs.length; k++) {
-			const localX2 = nextX + shiftX;
-			octx.moveTo(localX1, y1);
-			octx.lineTo(localX2, nextYs[k]);
-			count++;
-			if ((count % CHUNK) === 0) {
-				octx.stroke();
+	if (!weightInfo) {
+		// Fallback: single color adapted to theme
+		octx.strokeStyle = is_dark_mode ? "#9ea3b5" : "#767b8d";
+		octx.globalAlpha = 0.5;
+		octx.beginPath();
+		let count = 0;
+		const CHUNK = 5000;
+		for (let i = 0; i < currYs.length; i++) {
+			const y1 = currYs[i];
+			for (let k = 0; k < nextYs.length; k++) {
+				octx.moveTo(localX1, y1);
+				octx.lineTo(localX2, nextYs[k]);
+				count++;
+				if ((count % CHUNK) === 0) {
+					octx.stroke();
+					octx.beginPath();
+				}
+			}
+		}
+		if (count % CHUNK !== 0) octx.stroke();
+	} else {
+		// Weight-colored lines
+		var shape = weightInfo.shape;
+		var cols = shape[shape.length - 1];
+		var rows = shape[shape.length - 2];
+
+		for (let i = 0; i < currYs.length; i++) {
+			const y1 = currYs[i];
+			for (let k = 0; k < nextYs.length; k++) {
+				// Map neuron indices to weight matrix indices
+				var fi = Math.min(i, rows - 1);
+				var ti = Math.min(k, cols - 1);
+				var idx = fi * cols + ti;
+				var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
+
 				octx.beginPath();
+				octx.strokeStyle = get_weight_color(w, weightInfo.min, weightInfo.max);
+				octx.moveTo(localX1, y1);
+				octx.lineTo(localX2, nextYs[k]);
+				octx.stroke();
 			}
 		}
 	}
-	if (count % CHUNK !== 0) octx.stroke();
 
 	CONNECTION_CANVAS_CACHE.set(key, { canvas: off, shiftX: shiftX, pad: pad });
 	return CONNECTION_CANVAS_CACHE.get(key);
 }
 
+// ===== REPLACE draw_layer_connections =====
+
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-    try {
-        var meta = get_layer_meta(meta_infos, layer_nr);
-        var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+	try {
+		var meta = get_layer_meta(meta_infos, layer_nr);
+		var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
 
-        var layer_type = meta.layer_type;
-        var next_type = next_meta.layer_type;
+		var layer_type = meta.layer_type;
+		var next_type = next_meta.layer_type;
 
-        var currX = (layer_nr + 1) * layerSpacing + maxRadius;
-        var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+		var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+		var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
 
-        var currNeurons = layers[layer_nr];
-        var nextNeurons = layers[layer_nr + 1];
+		var currNeurons = layers[layer_nr];
+		var nextNeurons = layers[layer_nr + 1];
 
-        // Flatten / Pooling
-        if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-            if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
-        }
-        if (next_type === "Flatten" || next_type === "MaxPooling2D") {
-            if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
-        }
+		if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+			if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
+		}
+		if (next_type === "Flatten" || next_type === "MaxPooling2D") {
+			if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
+		}
 
-        // LayerNormalization wird als 1 Neuron dargestellt
-        if (layer_type === "LayerNormalization") currNeurons = 1;
-        if (next_type === "LayerNormalization") nextNeurons = 1;
+		if (layer_type === "LayerNormalization") currNeurons = 1;
+		if (next_type === "LayerNormalization") nextNeurons = 1;
 
-        var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-        var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+		var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+		var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
 
-        var currYs = new Array(currNeurons);
-        for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+		var currYs = new Array(currNeurons);
+		for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
 
-        var nextYs = new Array(nextNeurons);
-        for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+		var nextYs = new Array(nextNeurons);
+		for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
 
-        // Conv-like Layers
-        var convLike = false;
-        if (currNeurons > 512) convLike = true;
-        if (nextNeurons > 512) convLike = true;
+		var convLike = (currNeurons > 512 || nextNeurons > 512);
 
-        if (convLike) {
-            var yMin = Math.min(currYs[0], nextYs[0]);
-            var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
-            ctx.save();
-            ctx.globalAlpha = 0.1;
-            ctx.fillStyle = "#606784";
-            ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
-            ctx.restore();
-            return;
-        }
+		var isDark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
 
-        // große Anzahl Neuronen → fallback
-        var estimateCount = currNeurons * nextNeurons;
-        var heavyThreshold = 300000;
-        if (estimateCount > heavyThreshold) {
-            var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
-            var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
-            ctx.save();
-            ctx.globalAlpha = 0.08;
-            ctx.fillStyle = "#767b8d";
-            ctx.fillRect(currX, yMinB, nextX - currX, Math.max(1, yMaxB - yMinB));
-            ctx.restore();
-            return;
-        }
+		if (convLike) {
+			var yMin = Math.min(currYs[0], nextYs[0]);
+			var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
+			ctx.save();
+			ctx.globalAlpha = 0.1;
+			ctx.fillStyle = isDark ? "#8090b0" : "#606784";
+			ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
+			ctx.restore();
+			return;
+		}
 
-        // Render Dense-Lines
-        var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius);
-        ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
+		var estimateCount = currNeurons * nextNeurons;
+		var heavyThreshold = 300000;
+		if (estimateCount > heavyThreshold) {
+			var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
+			var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
+			ctx.save();
+			ctx.globalAlpha = 0.08;
+			ctx.fillStyle = isDark ? "#9ea3b5" : "#767b8d";
+			ctx.fillRect(currX, yMinB, nextX - currX, Math.max(1, yMaxB - yMinB));
+			ctx.restore();
+			return;
+		}
 
-    } catch (e) {
-        if (e && e.message) e = e.message;
-        assert(false, e);
-    }
+		// Get weight data for this layer pair
+		var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+
+		// Render with weight colors (or fallback)
+		var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
+		ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
+
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
+	}
 }
 
 function _draw_layers_text (layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
