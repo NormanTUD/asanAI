@@ -1,7 +1,5 @@
 "use strict";
 
-
-
 function get_layer_weights_for_connections(layer_nr, meta_infos) {
 	// Find the actual model layer index from meta_infos
 	try {
@@ -329,8 +327,6 @@ function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type
 function _connection_cache_key(layer_nr, currNeurons, nextNeurons, currX, nextX, currSpacing, nextSpacing) {
 	return `${layer_nr}:${currNeurons}x${nextNeurons}:x${Math.round(currX)}-${Math.round(nextX)}:s${Math.round(currSpacing)}-${Math.round(nextSpacing)}`;
 }
-
-
 
 // ===== ADD THESE HELPER FUNCTIONS =====
 
