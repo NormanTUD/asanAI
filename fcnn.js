@@ -1141,7 +1141,7 @@ function _bind_fcnn_canvas_mouse_events() {
                         html = _build_input_image_tooltip_html(hit);
                         break;
                     default:
-                        html = `<div style="padding:4px;">Element: <b>${hit.type}</b><br>Layer: ${hit.layer_idx !== undefined ? hit.layer_idx : 'N/A'}<br>Position: (${Math.round(hit.x)}, ${Math.round(hit.y)})</div>`;
+                        html = `<div style="padding:4px;">Element: <b>${hit.type}</b><br>Layer: ${hit.layer_idx !== undefined ? hit.layer_idx : 'N/A'}</div>`;
                 }
                 _show_fcnn_tooltip(html, e.clientX, e.clientY);
                 canvas.style.cursor = "crosshair";
