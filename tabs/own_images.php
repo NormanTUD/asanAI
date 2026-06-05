@@ -1,7 +1,7 @@
 <div id="own_images_tab" class="tab">
 	<div id="webcam_data" style="display: none"></div>
 	<span>
-		<button class="buttons_in_custom_images" id="webcam_start_stop" onclick="get_data_from_webcam()"><img src='_gui/camera.svg' height=15 /><img src="_gui/icons/webcam.svg" height="15">  <span class="TRANSLATEME_enable_webcam"></span></button>
+		<button class="buttons_in_custom_images" id="webcam_start_stop" onclick="get_data_from_webcam()"><img src="_gui/icons/webcam.svg" height="15">  <span class="TRANSLATEME_enable_webcam"></span></button>
 		<button class="buttons_in_custom_images" onclick="create_and_download_zip()"><img src='_gui/icons/zip.svg' height=15 /> <span class="TRANSLATEME_download_custom_zip_file"></span></button>
 
 		<button class="buttons_in_custom_images" id="zip_upload_label" type="button" onclick="document.getElementById('zip_upload_input').click()"><img src="_gui/icons/upload.svg" height="15"> <span class="TRANSLATEME_upload_custom_zip_file" data-lang="en">Upload custom data from a .zip file</span></button>
