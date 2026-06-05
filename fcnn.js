@@ -1887,15 +1887,15 @@ function get_weight_color(weight, minW, maxW) {
 
 	var r, g, b;
 	if (normalized >= 0) {
-		// White → Red
-		r = 255;
-		g = Math.round(255 * (1 - abs));
-		b = Math.round(255 * (1 - abs));
-	} else {
-		// White → Blue
+		// White → Blue (große/positive Gewichte)
 		r = Math.round(255 * (1 - abs));
 		g = Math.round(255 * (1 - abs));
 		b = 255;
+	} else {
+		// White → Red (kleine/negative Gewichte)
+		r = 255;
+		g = Math.round(255 * (1 - abs));
+		b = Math.round(255 * (1 - abs));
 	}
 
 	var alpha = 0.15 + abs * 0.75;
