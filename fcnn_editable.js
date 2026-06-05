@@ -774,20 +774,20 @@ function _fcnn_edit_apply_value(newValue) {
     if (_fcnn_edit_active.type !== "weight") return;
     if (!isFinite(newValue)) return;
 
+    // Check if model tensors are still valid (model may have been recreated)
     try {
         var meta_infos = _fcnn_edit_active.meta_infos;
         var from_layer = _fcnn_edit_active.from_layer;
         var meta = meta_infos[from_layer + 1];
         var layer = model.layers[meta.nr];
         var testWeights = layer.getWeights();
-        if (!testWeights || testWeights.length === 0) return;
-        // Test if tensor is actually alive
-        testWeights[0].dataSync();  // Will throw if disposed
+        if (!testWeights || testWeights.length === 0) return; // silent return
+        testWeights[0].dataSync();
     } catch(e) {
-        // Model was recreated - close popup, stop trying
-        console.warn("[fcnn_edit] Model tensors disposed, closing popup.");
-        _fcnn_edit_close_popup();
-        return;
+        // Model was recreated - DON'T close popup, just skip this update.
+        // The model will stabilize and next slider event will work.
+        log("[fcnn_edit] Skipping weight update - model tensors temporarily unavailable.");
+        return;  // <--- Einfach return, NICHT close!
     }
 
     try {
