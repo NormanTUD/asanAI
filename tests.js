@@ -983,6 +983,10 @@ async function run_super_quick_tests (quick=0) {
 	if(quick) {
 		remove_num_tests_overlay();
 	}
+
+	$($("#training_data_tab").find("img")[0]).click();
+
+	test_no_new_errors_or_warnings();
 }
 
 function enable_or_disable_show_layer_data(_status) {
