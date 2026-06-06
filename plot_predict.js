@@ -5,6 +5,21 @@ var ModelPlotter = (() => {
 	const _state = {};
 	window.__ModelPlotterMeta = window.__ModelPlotterMeta || {};
 
+	// --- Throttled weight caching ---
+	let _cachedWeights = "";
+	let _lastWeightCheck = 0;
+	const WEIGHT_CHECK_INTERVAL = 1000; // ms
+
+	function get_cached_weights() {
+		const now = Date.now();
+		if (now - _lastWeightCheck >= WEIGHT_CHECK_INTERVAL) {
+			_cachedWeights = get_weights_as_string?.() || "";
+			_lastWeightCheck = now;
+		}
+		return _cachedWeights;
+	}
+	// --- End throttled weight caching ---
+
 	const get_state = id => _state[id] || {};
 	const set_state = (id, obj) => _state[id] = obj;
 
@@ -14,7 +29,6 @@ var ModelPlotter = (() => {
 
 		const state = get_state(div_id);
 
-		// Wenn kein Modell da ist: Alles weg.
 		if (!has_valid_model_shape()) {
 			return total_hide(div_id, plot_div);
 		}
@@ -28,7 +42,8 @@ var ModelPlotter = (() => {
 		}
 		window.__ModelPlotterMeta.last_shapes = shape_key;
 
-		const current_weights = get_weights_as_string?.() || "";
+		// Use the throttled version instead of calling get_weights_as_string directly
+		const current_weights = get_cached_weights();
 		if (!force && state.last_weights === current_weights)
 			return; 
 
