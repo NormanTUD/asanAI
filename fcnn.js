@@ -7,6 +7,477 @@ var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
 
+// ===== OFFSCREEN RENDERING WITH LRU CACHE (replaces old CONNECTION_CANVAS_CACHE) =====
+
+var CONNECTION_CANVAS_CACHE = (function() {
+    // LRU cache with no arbitrary max — uses memory-aware eviction
+    var _cache = new Map();
+    var _access_order = [];
+    var _total_pixels = 0;
+    // Allow up to ~200MB of offscreen canvas pixels (RGBA = 4 bytes per pixel)
+    var MAX_PIXEL_BUDGET = 50000000; // 50 million pixels ≈ 200MB
+
+    function _evict_oldest() {
+        while (_access_order.length > 0 && _total_pixels > MAX_PIXEL_BUDGET) {
+            var oldest_key = _access_order.shift();
+            var entry = _cache.get(oldest_key);
+            if (entry) {
+                _total_pixels -= (entry.canvas.width * entry.canvas.height);
+                _cache.delete(oldest_key);
+            }
+        }
+    }
+
+    return {
+        has: function(key) {
+            return _cache.has(key);
+        },
+        get: function(key) {
+            if (!_cache.has(key)) return undefined;
+            // Move to end of access order (most recently used)
+            var idx = _access_order.indexOf(key);
+            if (idx > -1) {
+                _access_order.splice(idx, 1);
+            }
+            _access_order.push(key);
+            return _cache.get(key);
+        },
+        set: function(key, value) {
+            if (_cache.has(key)) {
+                // Update existing — remove old pixel count
+                var old = _cache.get(key);
+                _total_pixels -= (old.canvas.width * old.canvas.height);
+                var idx = _access_order.indexOf(key);
+                if (idx > -1) _access_order.splice(idx, 1);
+            }
+            var pixels = value.canvas.width * value.canvas.height;
+            _total_pixels += pixels;
+            _cache.set(key, value);
+            _access_order.push(key);
+            _evict_oldest();
+        },
+        clear: function() {
+            _cache.clear();
+            _access_order = [];
+            _total_pixels = 0;
+        },
+        get size() {
+            return _cache.size;
+        }
+    };
+})();
+
+function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
+    try {
+        var meta = get_layer_meta(meta_infos, layer_nr);
+        var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+
+        var layer_type = meta.layer_type;
+        var next_type = next_meta.layer_type;
+
+        var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+        var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+
+        var currNeurons = layers[layer_nr];
+        var nextNeurons = layers[layer_nr + 1];
+
+        if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+            if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
+        }
+        if (next_type === "Flatten" || next_type === "MaxPooling2D") {
+            if (next_meta.output_shape) nextNeurons = next_meta.output_shape[next_meta.output_shape.length - 1];
+        }
+
+        if (layer_type === "LayerNormalization") currNeurons = 1;
+        if (next_type === "LayerNormalization") nextNeurons = 1;
+
+        var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+        var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+
+        var currYs = new Array(currNeurons);
+        for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+
+        var nextYs = new Array(nextNeurons);
+        for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+
+        // Get weight data for this layer pair
+        var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+
+        var _weight_stats = null;
+        var _weight_data_sample = null;
+        if (weightInfo && weightInfo.data) {
+            var sampleLimit = Math.min(weightInfo.data.length, 50000);
+            _weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
+            _weight_stats = _compute_stats(_weight_data_sample);
+        }
+
+        var totalConnections = currNeurons * nextNeurons;
+
+        // Determine rendering strategy based on actual connection count
+        var strategy;
+        if (totalConnections > 50000) {
+            strategy = "gradient_fill";
+        } else if (totalConnections > 5000) {
+            strategy = "straight_sampled";
+        } else {
+            strategy = "bezier";
+        }
+
+        var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo, strategy);
+        ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
+
+        // Register connection hit region
+        var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
+        var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
+        var this_region = {
+            type: "connection",
+            shape: "rect",
+            x: currX,
+            y: connYMin,
+            w: nextX - currX,
+            h: Math.max(1, connYMax - connYMin),
+            from_layer: layer_nr,
+            to_layer: layer_nr + 1,
+            from_neurons: currNeurons,
+            to_neurons: nextNeurons,
+            weight_stats: _weight_stats,
+            weight_data: _weight_data_sample
+        };
+        _register_fcnn_hit_region(this_region);
+
+    } catch (e) {
+        if (e && e.message) e = e.message;
+        assert(false, e);
+    }
+}
+
+function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo, strategy) {
+    var darkFlag = (typeof is_dark_mode !== 'undefined' && is_dark_mode) ? "d" : "l";
+    var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
+    var key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag + ":" + strategy;
+
+    if (CONNECTION_CANVAS_CACHE.has(key)) {
+        return CONNECTION_CANVAS_CACHE.get(key);
+    }
+
+    var pad = Math.ceil(maxRadius + 2);
+    var width = Math.max(1, Math.ceil(nextX - currX) + pad * 2);
+    var height = Math.max(1, canvasHeight);
+
+    var off = document.createElement("canvas");
+    off.width = width;
+    off.height = height;
+    var octx = off.getContext("2d");
+
+    var shiftX = pad - currX;
+    var localX1 = currX + shiftX;
+    var localX2 = nextX + shiftX;
+    var cpX = (localX1 + localX2) / 2;
+
+    var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+
+    if (strategy === "gradient_fill") {
+        // For very large connections (Flatten→Dense): draw a smooth gradient shape
+        // connecting the source range to the destination range
+        _render_gradient_fill(octx, localX1, localX2, currYs, nextYs, dark, weightInfo, width, height);
+    } else if (strategy === "straight_sampled") {
+        // For medium-large connections: straight lines, heavily sampled, very thin
+        _render_straight_sampled(octx, localX1, localX2, currYs, nextYs, dark, weightInfo);
+    } else {
+        // For small connections: full bezier curves
+        _render_bezier_full(octx, localX1, localX2, cpX, currYs, nextYs, dark, weightInfo);
+    }
+
+    var result = { canvas: off, shiftX: shiftX, pad: pad };
+    CONNECTION_CANVAS_CACHE.set(key, result);
+    return result;
+}
+
+function _render_gradient_fill(octx, localX1, localX2, currYs, nextYs, dark, weightInfo, width, height) {
+    // Draw a smooth tapered shape from source neuron range to destination neuron range
+    // This is fast (no per-connection iteration) and looks clean
+
+    var srcTop = currYs[0];
+    var srcBot = currYs[currYs.length - 1];
+    var dstTop = nextYs[0];
+    var dstBot = nextYs[nextYs.length - 1];
+
+    var midX = (localX1 + localX2) / 2;
+
+    // Create smooth tapered path
+    octx.beginPath();
+    octx.moveTo(localX1, srcTop);
+
+    // Top edge: curve from source top to destination top
+    octx.bezierCurveTo(midX, srcTop, midX, dstTop, localX2, dstTop);
+
+    // Right edge: straight down destination
+    octx.lineTo(localX2, dstBot);
+
+    // Bottom edge: curve from destination bottom to source bottom
+    octx.bezierCurveTo(midX, dstBot, midX, srcBot, localX1, srcBot);
+
+    // Left edge: close
+    octx.closePath();
+
+    // Fill with gradient
+    var gradient = octx.createLinearGradient(localX1, 0, localX2, 0);
+
+    if (weightInfo) {
+        var minW = weightInfo.min;
+        var maxW = weightInfo.max;
+        var range = maxW - minW;
+        // Sample a few weights to determine average color
+        var sampleSize = Math.min(100, weightInfo.data.length);
+        var posCount = 0;
+        var step = Math.max(1, Math.floor(weightInfo.data.length / sampleSize));
+        for (var i = 0; i < weightInfo.data.length; i += step) {
+            if (weightInfo.data[i] > 0) posCount++;
+        }
+        var posRatio = posCount / sampleSize;
+
+        if (dark) {
+            var r = Math.round(100 + (1 - posRatio) * 80);
+            var g = Math.round(100);
+            var b = Math.round(100 + posRatio * 80);
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.04)`);
+            gradient.addColorStop(0.3, `rgba(${r}, ${g}, ${b}, 0.12)`);
+            gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.15)`);
+            gradient.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, 0.12)`);
+            gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0.04)`);
+        } else {
+            var r = Math.round(60 + (1 - posRatio) * 100);
+            var g = Math.round(40);
+            var b = Math.round(60 + posRatio * 100);
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.03)`);
+            gradient.addColorStop(0.3, `rgba(${r}, ${g}, ${b}, 0.10)`);
+            gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.13)`);
+            gradient.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, 0.10)`);
+            gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0.03)`);
+        }
+    } else {
+        if (dark) {
+            gradient.addColorStop(0, "rgba(130, 150, 200, 0.03)");
+            gradient.addColorStop(0.3, "rgba(130, 150, 200, 0.10)");
+            gradient.addColorStop(0.5, "rgba(130, 150, 200, 0.14)");
+            gradient.addColorStop(0.7, "rgba(130, 150, 200, 0.10)");
+            gradient.addColorStop(1, "rgba(130, 150, 200, 0.03)");
+        } else {
+            gradient.addColorStop(0, "rgba(50, 60, 120, 0.03)");
+            gradient.addColorStop(0.3, "rgba(50, 60, 120, 0.08)");
+            gradient.addColorStop(0.5, "rgba(50, 60, 120, 0.12)");
+            gradient.addColorStop(0.7, "rgba(50, 60, 120, 0.08)");
+            gradient.addColorStop(1, "rgba(50, 60, 120, 0.03)");
+        }
+    }
+
+    octx.fillStyle = gradient;
+    octx.fill();
+
+    // Add a few representative lines on top for visual texture (max 40 lines)
+    var numLines = Math.min(40, Math.max(nextYs.length, currYs.length));
+    var skipSrc = Math.max(1, Math.floor(currYs.length / numLines));
+    var skipDst = Math.max(1, Math.floor(nextYs.length / numLines));
+
+    octx.lineWidth = 0.5;
+    octx.globalAlpha = dark ? 0.15 : 0.1;
+    octx.strokeStyle = dark ? "rgba(160, 175, 220, 1)" : "rgba(40, 50, 100, 1)";
+
+    octx.beginPath();
+    for (var i = 0; i < currYs.length; i += skipSrc) {
+        var dstIdx = Math.floor((i / currYs.length) * nextYs.length);
+        dstIdx = Math.min(dstIdx, nextYs.length - 1);
+        octx.moveTo(localX1, currYs[i]);
+        octx.lineTo(localX2, nextYs[dstIdx]);
+    }
+    octx.stroke();
+    octx.globalAlpha = 1.0;
+}
+
+function _render_straight_sampled(octx, localX1, localX2, currYs, nextYs, dark, weightInfo) {
+    // For medium-large connections: straight lines with smart sampling
+    // Target ~2000 visible lines max for performance
+
+    var totalConnections = currYs.length * nextYs.length;
+    var TARGET = 2000;
+    var skipFrom = 1;
+    var skipTo = 1;
+    if (totalConnections > TARGET) {
+        var ratio = Math.sqrt(totalConnections / TARGET);
+        skipFrom = Math.max(1, Math.round(ratio));
+        skipTo = Math.max(1, Math.round(ratio));
+    }
+
+    var visibleLines = Math.ceil(currYs.length / skipFrom) * Math.ceil(nextYs.length / skipTo);
+
+    // Alpha: very low for many lines
+    var baseAlpha;
+    if (visibleLines <= 200) {
+        baseAlpha = 0.4;
+    } else if (visibleLines <= 800) {
+        baseAlpha = 0.2;
+    } else {
+        baseAlpha = 0.1;
+    }
+
+    if (!weightInfo) {
+        octx.strokeStyle = dark ? `rgba(140, 160, 210, ${baseAlpha.toFixed(2)})` : `rgba(40, 50, 100, ${baseAlpha.toFixed(2)})`;
+        octx.lineWidth = 0.5;
+
+        octx.beginPath();
+        var count = 0;
+        for (var i = 0; i < currYs.length; i += skipFrom) {
+            for (var k = 0; k < nextYs.length; k += skipTo) {
+                octx.moveTo(localX1, currYs[i]);
+                octx.lineTo(localX2, nextYs[k]);
+                count++;
+                if (count % 4000 === 0) {
+                    octx.stroke();
+                    octx.beginPath();
+                }
+            }
+        }
+        octx.stroke();
+    } else {
+        // Bucket by color
+        var NUM_BUCKETS = 32;
+        var buckets = new Array(NUM_BUCKETS);
+        for (var b = 0; b < NUM_BUCKETS; b++) buckets[b] = [];
+
+        var shape = weightInfo.shape;
+        var cols = shape[shape.length - 1];
+        var rows = shape[shape.length - 2];
+        var minW = weightInfo.min;
+        var maxW = weightInfo.max;
+        var range = maxW - minW;
+
+        for (var i = 0; i < currYs.length; i += skipFrom) {
+            var fi = Math.min(i, rows - 1);
+            for (var k = 0; k < nextYs.length; k += skipTo) {
+                var ti = Math.min(k, cols - 1);
+                var idx = fi * cols + ti;
+                var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
+                var bucketIdx;
+                if (range === 0) {
+                    bucketIdx = Math.floor(NUM_BUCKETS / 2);
+                } else {
+                    bucketIdx = Math.min(NUM_BUCKETS - 1, Math.max(0, Math.floor(((w - minW) / range) * (NUM_BUCKETS - 1))));
+                }
+                buckets[bucketIdx].push(currYs[i], nextYs[k]);
+            }
+        }
+
+        octx.lineWidth = 0.5;
+        for (var b = 0; b < NUM_BUCKETS; b++) {
+            var lines = buckets[b];
+            if (lines.length === 0) continue;
+            var bucketWeight = minW + (b / (NUM_BUCKETS - 1)) * range;
+            octx.strokeStyle = _get_weight_color_themed(bucketWeight, minW, maxW, dark);
+            octx.globalAlpha = baseAlpha;
+            octx.beginPath();
+            for (var li = 0; li < lines.length; li += 2) {
+                octx.moveTo(localX1, lines[li]);
+                octx.lineTo(localX2, lines[li + 1]);
+            }
+            octx.stroke();
+        }
+        octx.globalAlpha = 1.0;
+    }
+}
+
+function _render_bezier_full(octx, localX1, localX2, cpX, currYs, nextYs, dark, weightInfo) {
+    // For small connection counts: full bezier curves, looks nice
+
+    var totalConnections = currYs.length * nextYs.length;
+    var TARGET = 5000;
+    var skipFrom = 1;
+    var skipTo = 1;
+    if (totalConnections > TARGET) {
+        var ratio = Math.sqrt(totalConnections / TARGET);
+        skipFrom = Math.max(1, Math.round(ratio));
+        skipTo = Math.max(1, Math.round(ratio));
+    }
+
+    var visibleLines = Math.ceil(currYs.length / skipFrom) * Math.ceil(nextYs.length / skipTo);
+
+    var baseAlpha;
+    if (visibleLines <= 50) {
+        baseAlpha = 0.7;
+    } else if (visibleLines <= 200) {
+        baseAlpha = 0.5;
+    } else if (visibleLines <= 1000) {
+        baseAlpha = 0.3;
+    } else {
+        baseAlpha = 0.15;
+    }
+
+    if (!weightInfo) {
+        octx.strokeStyle = dark ? `rgba(150, 170, 210, ${baseAlpha.toFixed(2)})` : `rgba(40, 50, 90, ${baseAlpha.toFixed(2)})`;
+        octx.lineWidth = visibleLines > 1000 ? 0.5 : 1;
+
+        octx.beginPath();
+        var count = 0;
+        for (var i = 0; i < currYs.length; i += skipFrom) {
+            var y1 = currYs[i];
+            for (var k = 0; k < nextYs.length; k += skipTo) {
+                octx.moveTo(localX1, y1);
+                octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
+                count++;
+                if (count % 4000 === 0) {
+                    octx.stroke();
+                    octx.beginPath();
+                }
+            }
+        }
+        octx.stroke();
+    } else {
+        var shape = weightInfo.shape;
+        var cols = shape[shape.length - 1];
+        var rows = shape[shape.length - 2];
+
+        var NUM_BUCKETS = 32;
+        var buckets = new Array(NUM_BUCKETS);
+        for (var b = 0; b < NUM_BUCKETS; b++) buckets[b] = [];
+
+        var minW = weightInfo.min;
+        var maxW = weightInfo.max;
+        var range = maxW - minW;
+
+        for (var i = 0; i < currYs.length; i += skipFrom) {
+            var fi = Math.min(i, rows - 1);
+            var y1 = currYs[i];
+            for (var k = 0; k < nextYs.length; k += skipTo) {
+                var ti = Math.min(k, cols - 1);
+                var idx = fi * cols + ti;
+                var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
+                var bucketIdx;
+                if (range === 0) {
+                    bucketIdx = Math.floor(NUM_BUCKETS / 2);
+                } else {
+                    bucketIdx = Math.min(NUM_BUCKETS - 1, Math.max(0, Math.floor(((w - minW) / range) * (NUM_BUCKETS - 1))));
+                }
+                buckets[bucketIdx].push(y1, nextYs[k]);
+            }
+        }
+
+        octx.lineWidth = visibleLines > 1000 ? 0.5 : 1;
+        for (var b = 0; b < NUM_BUCKETS; b++) {
+            var lines = buckets[b];
+            if (lines.length === 0) continue;
+            var bucketWeight = minW + (b / (NUM_BUCKETS - 1)) * range;
+            octx.strokeStyle = _get_weight_color_themed(bucketWeight, minW, maxW, dark);
+            octx.globalAlpha = baseAlpha;
+            octx.beginPath();
+            for (var li = 0; li < lines.length; li += 2) {
+                octx.moveTo(localX1, lines[li]);
+                octx.bezierCurveTo(cpX, lines[li], cpX, lines[li + 1], localX2, lines[li + 1]);
+            }
+            octx.stroke();
+        }
+        octx.globalAlpha = 1.0;
+    }
+}
+
 function _build_weight_histogram_html(weightStats, weightData) {
     // Build a tiny SVG histogram of weight distribution
     if (!weightData || !weightStats || weightStats.count < 2) return "";
@@ -1654,142 +2125,6 @@ function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layer
 	return ctx;
 }
 
-// ===== UPDATED: draw_layer_connections with hit region for connection areas =====
-
-function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-	try {
-		var meta = get_layer_meta(meta_infos, layer_nr);
-		var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
-
-		var layer_type = meta.layer_type;
-		var next_type = next_meta.layer_type;
-
-		var currX = (layer_nr + 1) * layerSpacing + maxRadius;
-		var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
-
-		var currNeurons = layers[layer_nr];
-		var nextNeurons = layers[layer_nr + 1];
-
-		if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-			if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
-		}
-		if (next_type === "Flatten" || next_type === "MaxPooling2D") {
-			if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
-		}
-
-		if (layer_type === "LayerNormalization") currNeurons = 1;
-		if (next_type === "LayerNormalization") nextNeurons = 1;
-
-		var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-		var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-
-		var currYs = new Array(currNeurons);
-		for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
-
-		var nextYs = new Array(nextNeurons);
-		for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
-
-		var convLike = (currNeurons > 512 || nextNeurons > 512);
-
-		// Get weight data for this layer pair
-		var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
-
-		// Pre-compute weight_stats and weight_data sample for tooltip histogram
-		var _weight_stats = null;
-		var _weight_data_sample = null;
-		if (weightInfo && weightInfo.data) {
-			var sampleLimit = Math.min(weightInfo.data.length, 50000);
-			_weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
-			_weight_stats = _compute_stats(_weight_data_sample);
-		}
-
-		if (convLike) {
-			var yMin = Math.min(currYs[0], nextYs[0]);
-			var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
-			ctx.save();
-			ctx.globalAlpha = 0.1;
-			ctx.fillStyle = is_dark_mode ? "#8090b0" : "#606784";
-			ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
-			ctx.restore();
-
-			// Register connection hit region WITH weight_data for histogram
-			var this_region = {
-				type: "connection",
-				shape: "rect",
-				x: currX,
-				y: yMin,
-				w: nextX - currX,
-				h: Math.max(1, yMax - yMin),
-				from_layer: layer_nr,
-				to_layer: layer_nr + 1,
-				from_neurons: currNeurons,
-				to_neurons: nextNeurons,
-				weight_stats: _weight_stats,
-				weight_data: _weight_data_sample
-			};
-			_register_fcnn_hit_region(this_region);
-			return;
-		}
-
-		var estimateCount = currNeurons * nextNeurons;
-		var heavyThreshold = 300000;
-		if (estimateCount > heavyThreshold) {
-			var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
-			var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
-			ctx.save();
-			ctx.globalAlpha = 0.08;
-			ctx.fillStyle = is_dark_mode ? "#9ea3b5" : "#767b8d";
-			ctx.fillRect(currX, yMinB, nextX - currX, Math.max(1, yMaxB - yMinB));
-			ctx.restore();
-
-			// Register connection hit region WITH weight_data for histogram
-			var this_region = {
-				type: "connection",
-				shape: "rect",
-				x: currX,
-				y: yMinB,
-				w: nextX - currX,
-				h: Math.max(1, yMaxB - yMinB),
-				from_layer: layer_nr,
-				to_layer: layer_nr + 1,
-				from_neurons: currNeurons,
-				to_neurons: nextNeurons,
-				weight_stats: _weight_stats,
-				weight_data: _weight_data_sample
-			};
-			_register_fcnn_hit_region(this_region);
-			return;
-		}
-
-		// Render with weight colors (or fallback)
-		var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
-		ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
-
-		// Register connection hit region for the rendered area WITH weight_data
-		var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
-		var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
-		var this_region = {
-			type: "connection",
-			shape: "rect",
-			x: currX,
-			y: connYMin,
-			w: nextX - currX,
-			h: Math.max(1, connYMax - connYMin),
-			from_layer: layer_nr,
-			to_layer: layer_nr + 1,
-			from_neurons: currNeurons,
-			to_neurons: nextNeurons,
-			weight_stats: _weight_stats,
-			weight_data: _weight_data_sample
-		};
-		_register_fcnn_hit_region(this_region);
-
-	} catch (e) {
-		if (e && e.message) e = e.message;
-		assert(false, e);
-	}
-}
-
 // ===== HELPER FUNCTIONS =====
 
 function get_layer_meta(meta_infos, idx) {
@@ -1881,82 +2216,7 @@ function get_layer_weight_data(layer_nr, meta_infos) {
 
 // ===== OFFSCREEN RENDERING WITH CACHE =====
 
-var CONNECTION_CANVAS_CACHE = new Map();
 
-function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
-	var darkFlag = (typeof is_dark_mode !== 'undefined' && is_dark_mode) ? "d" : "l";
-	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
-	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
-
-	if (CONNECTION_CANVAS_CACHE.has(key)) {
-		return CONNECTION_CANVAS_CACHE.get(key);
-	}
-
-	const pad = Math.ceil(maxRadius + 2);
-	const width = Math.max(1, Math.ceil(nextX - currX) + pad * 2);
-	const height = Math.max(1, canvasHeight);
-
-	const off = document.createElement("canvas");
-	off.width = width;
-	off.height = height;
-	const octx = off.getContext("2d");
-
-	const shiftX = pad - currX;
-	octx.lineWidth = 1;
-
-	const localX1 = currX + shiftX;
-	const localX2 = nextX + shiftX;
-
-	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
-
-	if (!weightInfo) {
-		// Fallback: single color adapted to theme with sufficient contrast
-		octx.strokeStyle = dark ? "rgba(160, 175, 210, 0.7)" : "rgba(40, 50, 90, 0.55)";
-		octx.globalAlpha = 1.0;
-		octx.beginPath();
-		let count = 0;
-		const CHUNK = 5000;
-		for (let i = 0; i < currYs.length; i++) {
-			const y1 = currYs[i];
-			for (let k = 0; k < nextYs.length; k++) {
-				var cpX = (localX1 + localX2) / 2;
-				octx.moveTo(localX1, y1);
-				octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
-				count++;
-				if ((count % CHUNK) === 0) {
-					octx.stroke();
-					octx.beginPath();
-				}
-			}
-		}
-		if (count % CHUNK !== 0) octx.stroke();
-	} else {
-		// Weight-colored lines
-		var shape = weightInfo.shape;
-		var cols = shape[shape.length - 1];
-		var rows = shape[shape.length - 2];
-
-		for (let i = 0; i < currYs.length; i++) {
-			const y1 = currYs[i];
-			for (let k = 0; k < nextYs.length; k++) {
-				var fi = Math.min(i, rows - 1);
-				var ti = Math.min(k, cols - 1);
-				var idx = fi * cols + ti;
-				var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
-
-				octx.beginPath();
-				octx.strokeStyle = _get_weight_color_themed(w, weightInfo.min, weightInfo.max, dark);
-				var cpX = (localX1 + localX2) / 2;
-				octx.moveTo(localX1, y1);
-				octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
-				octx.stroke();
-			}
-		}
-	}
-
-	CONNECTION_CANVAS_CACHE.set(key, { canvas: off, shiftX: shiftX, pad: pad });
-	return CONNECTION_CANVAS_CACHE.get(key);
-}
 
 function _get_weight_color_themed(weight, minW, maxW, dark) {
 	var normalized = (maxW !== minW) ? ((weight - minW) / (maxW - minW)) * 2 - 1 : 0;
