@@ -2865,7 +2865,7 @@ async function new_tiny_tests() {
 	test_equal("extract_error_message number", extract_error_message(42), "42");
 
 	// --- predict.js: _prepare_data ---
-	test_equal("_prepare_data basic numbers", JSON.stringify(_prepare_data("1 2 3", "1 2 3")), "[[1,2,3]]");
+	test_equal("_prepare_data basic numbers", JSON.stringify(_prepare_data("1 2 3", "1 2 3")), "[1,2,3]");
 	test_equal("_prepare_data with true/false", JSON.stringify(_prepare_data("true false", "true false")), "[[1,0]]");
 	test_equal("_prepare_data no numbers", _prepare_data("abc", "abc"), false);
 	test_equal("_prepare_data negative", JSON.stringify(_prepare_data("-1 -2", "-1 -2")), "[[-1,-2]]");
