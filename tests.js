@@ -984,11 +984,23 @@ async function run_super_quick_tests (quick=0) {
 		remove_num_tests_overlay();
 	}
 
-	test_clicking_on_example_images_for_prediction();
+	await test_clicking_on_example_images_for_prediction();
 }
 
-function test_clicking_on_example_images_for_prediction() {
+async function test_clicking_on_example_images_for_prediction() {
+	$(".TRANSLATEME_remove_data_img_predictions").click();
+
+	test_equal("Starts with example example predictions", $("#training_data_tab").find(".predict_data_img").length, 0); 
+
 	$($("#training_data_tab").find("img")[0]).click();
+
+	await delay(1000);
+
+	test_equal("Has now one example prediction", $("#training_data_tab").find(".predict_data_img").length, 1);
+
+	$(".TRANSLATEME_remove_data_img_predictions").click();
+
+	test_equal("Has 0 example predictions after removing them", $("#training_data_tab").find(".predict_data_img").length, 0);
 
 	test_no_new_errors_or_warnings();
 }
