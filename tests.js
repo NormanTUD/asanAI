@@ -988,9 +988,15 @@ async function run_super_quick_tests (quick=0) {
 }
 
 async function test_clicking_on_example_images_for_prediction() {
+	await delay(1000);
+
 	$(".TRANSLATEME_remove_data_img_predictions").click();
 
+	await delay(1000);
+
 	test_equal("Starts with example example predictions", $("#training_data_tab").find(".predict_data_img").length, 0); 
+
+	await delay(1000);
 
 	$($("#training_data_tab").find("img")[0]).click();
 
@@ -998,9 +1004,15 @@ async function test_clicking_on_example_images_for_prediction() {
 
 	test_equal("Has now one example prediction", $("#training_data_tab").find(".predict_data_img").length, 1);
 
+	await delay(1000);
+
 	$(".TRANSLATEME_remove_data_img_predictions").click();
 
+	await delay(1000);
+
 	test_equal("Has 0 example predictions after removing them", $("#training_data_tab").find(".predict_data_img").length, 0);
+
+	await delay(1000);
 
 	test_no_new_errors_or_warnings();
 }
@@ -2865,6 +2877,7 @@ async function new_tiny_tests() {
 	test_equal("extract_error_message number", extract_error_message(42), "42");
 
 	// --- predict.js: _prepare_data ---
+	test_equal("_prepare_data basic numbers", JSON.stringify(_prepare_data("1 2 3", "1 2 3")), "[[1,2,3]]");
 	test_equal("_prepare_data with true/false", JSON.stringify(_prepare_data("true false", "true false")), "[[1,0]]");
 	test_equal("_prepare_data no numbers", _prepare_data("abc", "abc"), false);
 	test_equal("_prepare_data negative", JSON.stringify(_prepare_data("-1 -2", "-1 -2")), "[[-1,-2]]");
