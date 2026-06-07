@@ -341,18 +341,29 @@ async function compile_model(recursion_level=0) {
 	await plot_model_plot(true);
 }
 
-async function plot_model_plot(force = false) {
+async function plot_model_plot(force=false) {
 	if (_plot_done && !force) return ModelPlotter.plot("plotly_predict", force);
 
 	var el = $("#plotly_predict")[0];
 	if (!el) return;
 
-	if (check_visible(el)) {
-		trigger_plot(force);
-		return;
-	}
+	clearTimeout(_plot_timer);
+	_plot_timer = setTimeout(function(){
+		if (check_visible(el)) {
+			trigger_plot(force);
+			return;
+		}
 
-	trigger_plot(force);
+		if (!_plot_interval) {
+			_plot_interval = setInterval(function(){
+				if (check_visible(el)) {
+					clearInterval(_plot_interval);
+					_plot_interval = null;
+					trigger_plot(force);
+				}
+			}, 100);
+		}
+	}, 150);
 }
 
 function check_visible(el) {
