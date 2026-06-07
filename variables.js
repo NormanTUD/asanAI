@@ -1928,3 +1928,7 @@ var CONNECTION_CANVAS_CACHE = new Map();
 var _plot_observer = null;
 
 var log_tensor_stack = false;
+
+// ===== CANVAS POOL FOR drawImage REUSE =====
+var _fcnn_canvas_pool = [];
+var _fcnn_canvas_pool_idx = 0;

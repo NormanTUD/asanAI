@@ -222,6 +222,9 @@ function get_fcnn_data() {
 async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
 
+	// Reset canvas pool index — reuses canvases from previous frame without allocation
+	_fcnn_canvas_pool_idx = 0;
+
 	// Clear all hit regions before redrawing
 	_clear_fcnn_hit_regions();
 
@@ -260,7 +263,7 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
 
-	// Bind mouse events after drawing (idempotent)
+	// Bind mouse events after drawing (idempotent - only binds once)
 	_bind_fcnn_canvas_mouse_events();
 }
 
@@ -470,13 +473,25 @@ function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, m
 		var _y = Math.floor(neuronY - _hh / 2);
 
 		try {
-			// safer scaling path via drawImage
-			var tempCanvas = document.createElement("canvas");
-			tempCanvas.width = m;
-			tempCanvas.height = n;
-			var tctx = tempCanvas.getContext("2d");
-			tctx.putImageData(imageData, 0, 0);
-			ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
+			// Reuse pooled canvas instead of creating a new one each call
+			var poolEntry;
+			if (_fcnn_canvas_pool_idx < _fcnn_canvas_pool.length) {
+				poolEntry = _fcnn_canvas_pool[_fcnn_canvas_pool_idx];
+				if (poolEntry.canvas.width !== m || poolEntry.canvas.height !== n) {
+					poolEntry.canvas.width = m;
+					poolEntry.canvas.height = n;
+				}
+			} else {
+				var newCanvas = document.createElement("canvas");
+				newCanvas.width = m;
+				newCanvas.height = n;
+				poolEntry = { canvas: newCanvas, ctx: newCanvas.getContext("2d") };
+				_fcnn_canvas_pool.push(poolEntry);
+			}
+			_fcnn_canvas_pool_idx++;
+
+			poolEntry.ctx.putImageData(imageData, 0, 0);
+			ctx.drawImage(poolEntry.canvas, _x, _y, _ww, _hh);
 
 			ctx.strokeStyle = "black";
 			ctx.lineWidth = 1;
@@ -1210,50 +1225,6 @@ function _bind_fcnn_canvas_mouse_events() {
     });
 }
 
-async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
-	var _height = null;
-
-	// Clear all hit regions before redrawing
-	_clear_fcnn_hit_regions();
-
-	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
-		var meta_info = meta_infos[layer_idx];
-		var layer_type = meta_info["layer_type"];
-		var layerX = (layer_idx + 1) * layerSpacing;
-		var layerY = canvasHeight / 2;
-		var numNeurons = layers[layer_idx];
-		var verticalSpacing = maxSpacing;
-		var shapeType = "circle";
-
-		if (numNeurons * verticalSpacing > canvasHeight) {
-			verticalSpacing = canvasHeight / numNeurons;
-		}
-
-		if (layer_type.toLowerCase().includes("conv2d")) {
-			shapeType = "rectangle_conv2d";
-		} else if (layer_type.toLowerCase().includes("flatten")) {
-			shapeType = "rectangle_flatten";
-		} else if (layer_type.toLowerCase().includes("layernormalization")) {
-			shapeType = "layernorm";
-		}
-
-		if (shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
-		} else if (shapeType == "rectangle_flatten") {
-			_height = Math.min(650, meta_info["output_shape"][1]);
-			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
-		} else if (shapeType == "layernorm") {
-			ctx = draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
-		} else {
-			alert("Unknown shape Type: " + shapeType);
-		}
-	}
-
-	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
-
-	// Bind mouse events after drawing (idempotent - only binds once)
-	_bind_fcnn_canvas_mouse_events();
-}
 
 // ===== UPDATED: draw_layernorm with hit region =====
 
@@ -1885,7 +1856,8 @@ var CONNECTION_CANVAS_CACHE = new Map();
 
 function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
 	var darkFlag = (typeof is_dark_mode !== 'undefined' && is_dark_mode) ? "d" : "l";
-	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
+	// Quantize weight min/max to 1 decimal place to reduce cache thrashing during training
+	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(1) + "_" + weightInfo.max.toFixed(1)) : "nw";
 	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
 
 	if (CONNECTION_CANVAS_CACHE.has(key)) {
