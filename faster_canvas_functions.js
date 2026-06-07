@@ -78,14 +78,6 @@
 			schedule_flush();
 		}
 
-		function get_fill_key(ctx) {
-			if (_fill_key_dirty) {
-				_cached_fill_key = ctx.fillStyle + "|" + ctx.globalAlpha;
-				_fill_key_dirty = false;
-			}
-			return _cached_fill_key;
-		}
-
 		const proxy = new Proxy(real_ctx, {
 			get(target, prop) {
 				if ([
