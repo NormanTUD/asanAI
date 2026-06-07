@@ -31,21 +31,25 @@ var ModelPlotter = (() => {
 
 		// Set up observer if not already watching
 		if (!_observer) {
-			_observer = new IntersectionObserver(function(entries) {
-				for (var entry of entries) {
-					if (entry.isIntersecting && _pending_plot) {
-						var { div_id: d, force: f } = _pending_plot;
-						_observer.unobserve(entry.target);
-						_observer.disconnect();
-						_observer = null;
-						_do_plot(d, f);
-						break;
-					}
-				}
-			}, { threshold: 0.05 });
-
-			_observer.observe(plot_div);
+			create_observer(plot_div);
 		}
+	}
+
+	function create_observer() {
+		_observer = new IntersectionObserver(function(entries) {
+			for (var entry of entries) {
+				if (entry.isIntersecting && _pending_plot) {
+					var { div_id: d, force: f } = _pending_plot;
+					_observer.unobserve(entry.target);
+					_observer.disconnect();
+					_observer = null;
+					_do_plot(d, f);
+					break;
+				}
+			}
+		}, { threshold: 0.001 });
+
+		_observer.observe(plot_div);
 	}
 
 	async function _execute_plot(div_id, force) {
