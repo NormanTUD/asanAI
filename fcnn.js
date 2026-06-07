@@ -222,9 +222,6 @@ function get_fcnn_data() {
 async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
 
-	// Reset canvas pool index — reuses canvases from previous frame without allocation
-	_fcnn_canvas_pool_idx = 0;
-
 	// Clear all hit regions before redrawing
 	_clear_fcnn_hit_regions();
 
@@ -263,198 +260,21 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 
 	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
 
-	// Bind mouse events after drawing (idempotent - only binds once)
+	// Bind mouse events after drawing (idempotent)
 	_bind_fcnn_canvas_mouse_events();
 }
 
 // ===== UPDATED: _draw_connections_between_layers with hit regions =====
 
-// ===== UPDATED: _draw_connections_between_layers - BATCHED drawImage =====
-
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
-    try {
-        // Phase 1: Collect all connection rendering results without drawing
-        var drawCommands = [];
-
-        for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
-            var result = _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d);
-            if (result) {
-                drawCommands.push(result);
-            }
-        }
-
-        // Phase 2: Batch all drawImage calls together
-        for (var i = 0; i < drawCommands.length; i++) {
-            var cmd = drawCommands[i];
-            if (cmd.type === "drawImage") {
-                ctx.drawImage(cmd.canvas, cmd.x, cmd.y);
-            } else if (cmd.type === "fillRect") {
-                ctx.save();
-                ctx.globalAlpha = cmd.alpha;
-                ctx.fillStyle = cmd.fillStyle;
-                ctx.fillRect(cmd.x, cmd.y, cmd.w, cmd.h);
-                ctx.restore();
-            }
-        }
-    } catch (e) {
-        if (e && e.message) e = e.message;
-        assert(false, e);
-    }
-}
-
-// ===== NEW: _prepare_layer_connections - computes but doesn't draw =====
-
-function _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-    try {
-        var meta = get_layer_meta(meta_infos, layer_nr);
-        var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
-
-        var layer_type = meta.layer_type;
-        var next_type = next_meta.layer_type;
-
-        var currX = (layer_nr + 1) * layerSpacing + maxRadius;
-        var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
-
-        var currNeurons = layers[layer_nr];
-        var nextNeurons = layers[layer_nr + 1];
-
-        if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-            if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
-        }
-        if (next_type === "Flatten" || next_type === "MaxPooling2D") {
-            if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
-        }
-
-        if (layer_type === "LayerNormalization") currNeurons = 1;
-        if (next_type === "LayerNormalization") nextNeurons = 1;
-
-        var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-        var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-
-        var currYs = new Array(currNeurons);
-        for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
-
-        var nextYs = new Array(nextNeurons);
-        for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
-
-        var convLike = (currNeurons > 512 || nextNeurons > 512);
-
-        // Get weight data for this layer pair
-        var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
-
-        // Pre-compute weight_stats and weight_data sample for tooltip histogram
-        var _weight_stats = null;
-        var _weight_data_sample = null;
-        if (weightInfo && weightInfo.data) {
-            var sampleLimit = Math.min(weightInfo.data.length, 50000);
-            _weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
-            _weight_stats = _compute_stats(_weight_data_sample);
-        }
-
-        if (convLike) {
-            var yMin = Math.min(currYs[0], nextYs[0]);
-            var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
-
-		var this_region = {
-			type: "connection",
-			shape: "rect",
-			x: currX,
-			y: yMin,
-			w: nextX - currX,
-			h: Math.max(1, yMax - yMin),
-			from_layer: layer_nr,
-			to_layer: layer_nr + 1,
-			from_neurons: currNeurons,
-			to_neurons: nextNeurons,
-			weight_stats: _weight_stats,
-			weight_data: _weight_data_sample
-		};
-
-            // Register connection hit region
-            _register_fcnn_hit_region(this_region);
-
-            return {
-                type: "fillRect",
-                fillStyle: is_dark_mode ? "#8090b0" : "#606784",
-                alpha: 0.1,
-                x: currX,
-                y: yMin,
-                w: nextX - currX,
-                h: Math.max(1, yMax - yMin)
-            };
-        }
-
-        var estimateCount = currNeurons * nextNeurons;
-        var heavyThreshold = 300000;
-        if (estimateCount > heavyThreshold) {
-            var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
-            var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
-
-		const this_region1 = {
-			type: "connection",
-			shape: "rect",
-			x: currX,
-			y: yMinB,
-			w: nextX - currX,
-			h: Math.max(1, yMaxB - yMinB),
-			from_layer: layer_nr,
-			to_layer: layer_nr + 1,
-			from_neurons: currNeurons,
-			to_neurons: nextNeurons,
-			weight_stats: _weight_stats,
-			weight_data: _weight_data_sample
-		};
-
-            // Register connection hit region
-            _register_fcnn_hit_region(this_region1);
-
-            return {
-                type: "fillRect",
-                fillStyle: is_dark_mode ? "#9ea3b5" : "#767b8d",
-                alpha: 0.08,
-                x: currX,
-                y: yMinB,
-                w: nextX - currX,
-                h: Math.max(1, yMaxB - yMinB)
-            };
-        }
-
-        // Render to offscreen (this is the expensive part, but it's cached)
-        var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
-
-        // Register connection hit region
-        var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
-        var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
-	    const this_region2 = {
-            type: "connection",
-            shape: "rect",
-            x: currX,
-            y: connYMin,
-            w: nextX - currX,
-            h: Math.max(1, connYMax - connYMin),
-            from_layer: layer_nr,
-            to_layer: layer_nr + 1,
-            from_neurons: currNeurons,
-            to_neurons: nextNeurons,
-            weight_stats: _weight_stats,
-            weight_data: _weight_data_sample
-        };
-
-        _register_fcnn_hit_region(this_region2);
-
-        // Return draw command instead of drawing immediately
-        return {
-            type: "drawImage",
-            canvas: offInfo.canvas,
-            x: currX - offInfo.pad,
-            y: 0
-        };
-
-    } catch (e) {
-        if (e && e.message) e = e.message;
-        assert(false, e);
-        return null;
-    }
+	try {
+		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
+			draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d);
+		}
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
+	}
 }
 
 // ===== UPDATED: draw_fcnn (main entry) =====
@@ -650,25 +470,13 @@ function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, m
 		var _y = Math.floor(neuronY - _hh / 2);
 
 		try {
-			// Reuse pooled canvas instead of creating a new one each call
-			var poolEntry;
-			if (_fcnn_canvas_pool_idx < _fcnn_canvas_pool.length) {
-				poolEntry = _fcnn_canvas_pool[_fcnn_canvas_pool_idx];
-				if (poolEntry.canvas.width !== m || poolEntry.canvas.height !== n) {
-					poolEntry.canvas.width = m;
-					poolEntry.canvas.height = n;
-				}
-			} else {
-				var newCanvas = document.createElement("canvas");
-				newCanvas.width = m;
-				newCanvas.height = n;
-				poolEntry = { canvas: newCanvas, ctx: newCanvas.getContext("2d") };
-				_fcnn_canvas_pool.push(poolEntry);
-			}
-			_fcnn_canvas_pool_idx++;
-
-			poolEntry.ctx.putImageData(imageData, 0, 0);
-			ctx.drawImage(poolEntry.canvas, _x, _y, _ww, _hh);
+			// safer scaling path via drawImage
+			var tempCanvas = document.createElement("canvas");
+			tempCanvas.width = m;
+			tempCanvas.height = n;
+			var tctx = tempCanvas.getContext("2d");
+			tctx.putImageData(imageData, 0, 0);
+			ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
 
 			ctx.strokeStyle = "black";
 			ctx.lineWidth = 1;
@@ -736,40 +544,38 @@ function annotate_output_neurons(canvasWidth, ctx, layerId, numNeurons, j, font_
 }
 
 function draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j) {
-    // Use fillRect instead of arc - visually equivalent at small radii,
-    // avoids slow Path2D.arc() in the batching proxy
-    var size = radius * 2;
-    var x = layerX - radius;
-    var y = neuronY - radius;
+	ctx.beginPath();
+	ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
+	ctx.fillStyle = "#767b8d";  // gray base circle
+	ctx.fill();
 
-    // Gray base "circle" (now a square)
-    ctx.fillStyle = "#767b8d";
-    ctx.fillRect(x, y, size, size);
+	if (this_layer_output && this_layer_output.length > 0) {
+		var minVal = Math.min(...this_layer_output);
+		var maxVal = Math.max(...this_layer_output);
+		var value = this_layer_output[j];
 
-    if (this_layer_output && this_layer_output.length > 0) {
-        var minVal = Math.min(...this_layer_output);
-        var maxVal = Math.max(...this_layer_output);
-        var value = this_layer_output[j];
+		var normalizedValue;
+		if (maxVal === minVal) {
+			normalizedValue = 128; // all equal → neutral gray
+		} else {
+			normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+			normalizedValue = Math.max(0, Math.min(255, normalizedValue)); // clamp
+		}
 
-        var normalizedValue;
-        if (maxVal === minVal) {
-            normalizedValue = 128;
-        } else {
-            normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
-            normalizedValue = Math.max(0, Math.min(255, normalizedValue));
-        }
+		var color = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
 
-        var color = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = color;
+		ctx.fill();
+	} else {
+		ctx.beginPath();
+		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
+		ctx.fillStyle = "#ffffff";  // no value → white
+		ctx.fill();
+	}
 
-        // Inner filled rect (1px border effect)
-        ctx.fillStyle = color;
-        ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
-    } else {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
-    }
-
-    return ctx;
+	return ctx;
 }
 
 // ===== TOOLTIP INFRASTRUCTURE =====
@@ -1404,6 +1210,50 @@ function _bind_fcnn_canvas_mouse_events() {
     });
 }
 
+async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
+	var _height = null;
+
+	// Clear all hit regions before redrawing
+	_clear_fcnn_hit_regions();
+
+	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+		var meta_info = meta_infos[layer_idx];
+		var layer_type = meta_info["layer_type"];
+		var layerX = (layer_idx + 1) * layerSpacing;
+		var layerY = canvasHeight / 2;
+		var numNeurons = layers[layer_idx];
+		var verticalSpacing = maxSpacing;
+		var shapeType = "circle";
+
+		if (numNeurons * verticalSpacing > canvasHeight) {
+			verticalSpacing = canvasHeight / numNeurons;
+		}
+
+		if (layer_type.toLowerCase().includes("conv2d")) {
+			shapeType = "rectangle_conv2d";
+		} else if (layer_type.toLowerCase().includes("flatten")) {
+			shapeType = "rectangle_flatten";
+		} else if (layer_type.toLowerCase().includes("layernormalization")) {
+			shapeType = "layernorm";
+		}
+
+		if (shapeType == "circle" || shapeType == "rectangle_conv2d") {
+			ctx = _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
+		} else if (shapeType == "rectangle_flatten") {
+			_height = Math.min(650, meta_info["output_shape"][1]);
+			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+		} else if (shapeType == "layernorm") {
+			ctx = draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
+		} else {
+			alert("Unknown shape Type: " + shapeType);
+		}
+	}
+
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
+
+	// Bind mouse events after drawing (idempotent - only binds once)
+	_bind_fcnn_canvas_mouse_events();
+}
 
 // ===== UPDATED: draw_layernorm with hit region =====
 
@@ -2035,8 +1885,7 @@ var CONNECTION_CANVAS_CACHE = new Map();
 
 function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
 	var darkFlag = (typeof is_dark_mode !== 'undefined' && is_dark_mode) ? "d" : "l";
-	// Quantize weight min/max to 1 decimal place to reduce cache thrashing during training
-	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(1) + "_" + weightInfo.max.toFixed(1)) : "nw";
+	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
 	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
 
 	if (CONNECTION_CANVAS_CACHE.has(key)) {

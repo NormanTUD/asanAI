@@ -5,59 +5,16 @@ var ModelPlotter = (() => {
 	const _state = {};
 	window.__ModelPlotterMeta = window.__ModelPlotterMeta || {};
 
-	// Lazy plotting state
-	let _pending_plot = null;  // cached latest call: { div_id, force }
-	let _observer = null;
-
 	const get_state = id => _state[id] || {};
 	const set_state = (id, obj) => _state[id] = obj;
-
-	function _do_plot(div_id, force) {
-		_pending_plot = null;
-		return _execute_plot(div_id, force);
-	}
 
 	async function plot(div_id = 'plotly_predict', force = false) {
 		const plot_div = document.getElementById(div_id);
 		if (!plot_div) return;
 
-		// If already visible, plot immediately
-		if (check_visible(plot_div)) {
-			return _do_plot(div_id, force);
-		}
-
-		// Otherwise, cache the latest request (overwrites previous pending)
-		_pending_plot = { div_id, force };
-
-		// Set up observer if not already watching
-		if (!_observer) {
-			create_observer(plot_div);
-		}
-	}
-
-	function create_observer(plot_div) {
-		_observer = new IntersectionObserver(function(entries) {
-			for (var entry of entries) {
-				if (entry.isIntersecting && _pending_plot) {
-					var { div_id: d, force: f } = _pending_plot;
-					_observer.unobserve(entry.target);
-					_observer.disconnect();
-					_observer = null;
-					_do_plot(d, f);
-					break;
-				}
-			}
-		}, { threshold: 0.001 });
-
-		_observer.observe(plot_div);
-	}
-
-	async function _execute_plot(div_id, force) {
-		const plot_div = document.getElementById(div_id);
-		if (!plot_div) return;
-
 		const state = get_state(div_id);
 
+		// Wenn kein Modell da ist: Alles weg.
 		if (!has_valid_model_shape()) {
 			return total_hide(div_id, plot_div);
 		}
@@ -65,7 +22,7 @@ var ModelPlotter = (() => {
 		const in_shape = model?.input?.shape?.slice(1);
 		const out_shape = model?.output?.shape?.slice(1);
 		const shape_key = JSON.stringify({ in_shape, out_shape });
-
+		
 		if (window.__ModelPlotterMeta.last_shapes && window.__ModelPlotterMeta.last_shapes !== shape_key) {
 			reset_for_shape_change(div_id, plot_div);
 		}
@@ -73,7 +30,7 @@ var ModelPlotter = (() => {
 
 		const current_weights = get_weights_as_string?.() || "";
 		if (!force && state.last_weights === current_weights)
-			return;
+			return; 
 
 		set_state(div_id, { ...state, last_weights: current_weights });
 
@@ -82,16 +39,18 @@ var ModelPlotter = (() => {
 			return total_hide(div_id, plot_div);
 		}
 
+		// Controls sicherstellen und sichtbar machen
 		const controls = ensure_controls(div_id, plot_div);
-		controls.style.display = 'flex';
+		controls.style.display = 'flex'; 
 
 		const msg = ensure_message_box(controls);
-
+		
+		// Plot-Div initial versteckt halten
 		plot_div.style.display = 'none';
 
 		const update_fn = async () =>
 			await update_plot(plot_div, div_id, msg, state.fields || [], { fallA, fallB1, fallB2 });
-
+		
 		state.update_plot = update_fn;
 
 		const fields = ensure_inputs(div_id, controls, state, { fallA, fallB1, fallB2 }, update_fn);

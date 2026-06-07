@@ -242,9 +242,7 @@ function expand_dims (...args) {
 	_register_tensors(...args);
 	var res = tf.expandDims(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -254,9 +252,7 @@ function tf_transpose (...args) {
 	_register_tensors(...args);
 	var res = tf.transpose(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -266,9 +262,7 @@ function tf_sub (...args) {
 	_register_tensors(...args);
 	var res = tf.sub(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -278,9 +272,7 @@ function tf_min (...args) {
 	_register_tensors(...args);
 	var res = tf.min(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -290,9 +282,7 @@ function tf_max (...args) {
 	_register_tensors(...args);
 	var res = tf.max(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -308,9 +298,7 @@ function tf_add (...args) {
 	var second_arg = args[1];
 	var res = first_tensor.add(second_arg);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 	//_clean_custom_tensors();
 
@@ -321,9 +309,7 @@ function tf_mul (...args) {
 	_register_tensors(...args);
 	var res = tf.mul(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -333,9 +319,7 @@ function tf_div (...args) {
 	_register_tensors(...args);
 	var res = tf.div(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -352,9 +336,7 @@ function tf_reshape (...args) {
 	_register_tensors(...args);
 	var res = tf.reshape(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -364,10 +346,8 @@ function tf_unique (...args) {
 	_register_tensors(...args);
 	var res = tf.unique(...args);
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.values.id] = [get_stack_trace(), res.values, tensor_print_to_string(res.values)]; })();
-		(() => { _custom_tensors["" + res.indices.id] = [get_stack_trace(), res.indices, tensor_print_to_string(res.indices)]; })();
-	}
+	(() => { _custom_tensors["" + res.values.id] = [get_stack_trace(), res.values, tensor_print_to_string(res.values)]; })();
+	(() => { _custom_tensors["" + res.indices.id] = [get_stack_trace(), res.indices, tensor_print_to_string(res.indices)]; })();
 	//_clean_custom_tensors();
 
 	return res;
@@ -520,9 +500,7 @@ function tf_sequential(model_uuid) {
 		try {
 			var k = res.layers[res.layers.length - 1].kernel;
 			if(k) {
-				if(log_tensor_stack) {
-					(() => { _custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"]; })();
-				}
+				(() => { _custom_tensors["" + k.id] = ["UUID:" + model_uuid, k, "[kernel in tf_sequential]"]; })();
 			}
 		} catch (e) {
 			wrn(e);
@@ -532,9 +510,7 @@ function tf_sequential(model_uuid) {
 			var b = res.layers[res.layers.length - 1].bias;
 
 			if(b) {
-				if(log_tensor_stack) {
-					(() => { _custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"]; })();
-				}
+				(() => { _custom_tensors["" + b.id] = ["UUID:" + model_uuid, b, "[bias in tf_sequential]"]; })();
 			}
 		} catch (e) {
 			wrn(e);
@@ -545,9 +521,7 @@ function tf_sequential(model_uuid) {
 		return r;
 	};
 
-	if(log_tensor_stack) {
-		(() => { _custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"]; })();
-	}
+	(() => { _custom_tensors["" + res.id] = ["UUID:" + model_uuid, res, "[model in tf_sequential]"]; })();
 
 	//_clean_custom_tensors();
 
@@ -582,9 +556,7 @@ function fromPixels (...args) {
 	try {
 		var res = tf.browser.fromPixels(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -612,9 +584,7 @@ function input(...args) {
 	try {
 		var res = tf.input(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, "[input]"]; })();
-		}
+		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, "[input]"]; })();
 
 		//_clean_custom_tensors();
 
@@ -635,9 +605,7 @@ function ones(...args) {
 	try {
 		var res = tf.ones(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -658,9 +626,7 @@ function reshape(...args) {
 	try {
 		var res = tf.reshape(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -681,9 +647,7 @@ function min(...args) {
 	try {
 		var res = tf.min(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -704,9 +668,7 @@ function max(...args) {
 	try {
 		var res = tf.max(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -727,9 +689,7 @@ function add(...args) {
 	try {
 		var res = tf.add(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -750,9 +710,7 @@ function abs(...args) {
 	try {
 		var res = tf.abs(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -816,9 +774,7 @@ function resizeNearestNeighbor(...args) {
 	try {
 		var res = tf.image.resizeNearestNeighbor(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeNearestNeighbor]"]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeNearestNeighbor]"]; })();
 
 		//_clean_custom_tensors();
 
@@ -839,9 +795,7 @@ function resizeBilinear(...args) {
 	try {
 		var res = tf.image.resizeBilinear(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeBilinear]"]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, "[resizeBilinear]"]; })();
 
 		//_clean_custom_tensors();
 
@@ -862,9 +816,7 @@ function rotateWithOffset (...args) {
 	try {
 		var res = tf.image.rotateWithOffset(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -885,9 +837,7 @@ function flipLeftRight (...args) {
 	try {
 		var res = tf.image.flipLeftRight(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -908,9 +858,7 @@ function clipByValue (...args) {
 	try {
 		var res = tf.clipByValue(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -931,9 +879,7 @@ function randomUniform (...args) {
 	try {
 		var res = tf.randomUniform(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -954,9 +900,7 @@ function tf_square (...args) {
 	try {
 		var res = tf.square(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -977,9 +921,7 @@ function tf_mean (...args) {
 	try {
 		var res = tf.mean(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -1000,9 +942,7 @@ function sqrt (...args) {
 	try {
 		var res = tf.sqrt(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -1023,9 +963,7 @@ function tensor1d (...args) {
 	try {
 		var res = tf.tensor1d(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -1046,9 +984,7 @@ function tensor2d (...args) {
 	try {
 		var res = tf.tensor2d(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.dataId.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
@@ -1069,9 +1005,7 @@ function tensor (...args) {
 	try {
 		var res = tf.tensor(...args);
 
-		if(log_tensor_stack) {
-			(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
-		}
+		(() => { _custom_tensors["" + res.id] = [get_stack_trace(), res, tensor_print_to_string(res)]; })();
 
 		//_clean_custom_tensors();
 
