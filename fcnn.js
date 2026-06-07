@@ -269,15 +269,186 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 
 // ===== UPDATED: _draw_connections_between_layers with hit regions =====
 
+// ===== UPDATED: _draw_connections_between_layers - BATCHED drawImage =====
+
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
-	try {
-		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
-			draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d);
-		}
-	} catch (e) {
-		if (e && e.message) e = e.message;
-		assert(false, e);
-	}
+    try {
+        // Phase 1: Collect all connection rendering results without drawing
+        var drawCommands = [];
+
+        for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
+            var result = _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d);
+            if (result) {
+                drawCommands.push(result);
+            }
+        }
+
+        // Phase 2: Batch all drawImage calls together
+        for (var i = 0; i < drawCommands.length; i++) {
+            var cmd = drawCommands[i];
+            if (cmd.type === "drawImage") {
+                ctx.drawImage(cmd.canvas, cmd.x, cmd.y);
+            } else if (cmd.type === "fillRect") {
+                ctx.save();
+                ctx.globalAlpha = cmd.alpha;
+                ctx.fillStyle = cmd.fillStyle;
+                ctx.fillRect(cmd.x, cmd.y, cmd.w, cmd.h);
+                ctx.restore();
+            }
+        }
+    } catch (e) {
+        if (e && e.message) e = e.message;
+        assert(false, e);
+    }
+}
+
+// ===== NEW: _prepare_layer_connections - computes but doesn't draw =====
+
+function _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
+    try {
+        var meta = get_layer_meta(meta_infos, layer_nr);
+        var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+
+        var layer_type = meta.layer_type;
+        var next_type = next_meta.layer_type;
+
+        var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+        var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+
+        var currNeurons = layers[layer_nr];
+        var nextNeurons = layers[layer_nr + 1];
+
+        if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+            if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
+        }
+        if (next_type === "Flatten" || next_type === "MaxPooling2D") {
+            if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
+        }
+
+        if (layer_type === "LayerNormalization") currNeurons = 1;
+        if (next_type === "LayerNormalization") nextNeurons = 1;
+
+        var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+        var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+
+        var currYs = new Array(currNeurons);
+        for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+
+        var nextYs = new Array(nextNeurons);
+        for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+
+        var convLike = (currNeurons > 512 || nextNeurons > 512);
+
+        // Get weight data for this layer pair
+        var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+
+        // Pre-compute weight_stats and weight_data sample for tooltip histogram
+        var _weight_stats = null;
+        var _weight_data_sample = null;
+        if (weightInfo && weightInfo.data) {
+            var sampleLimit = Math.min(weightInfo.data.length, 50000);
+            _weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
+            _weight_stats = _compute_stats(_weight_data_sample);
+        }
+
+        if (convLike) {
+            var yMin = Math.min(currYs[0], nextYs[0]);
+            var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
+
+            // Register connection hit region
+            _register_fcnn_hit_region({
+                type: "connection",
+                shape: "rect",
+                x: currX,
+                y: yMin,
+                w: nextX - currX,
+                h: Math.max(1, yMax - yMin),
+                from_layer: layer_nr,
+                to_layer: layer_nr + 1,
+                from_neurons: currNeurons,
+                to_neurons: nextNeurons,
+                weight_stats: _weight_stats,
+                weight_data: _weight_data_sample
+            });
+
+            return {
+                type: "fillRect",
+                fillStyle: is_dark_mode ? "#8090b0" : "#606784",
+                alpha: 0.1,
+                x: currX,
+                y: yMin,
+                w: nextX - currX,
+                h: Math.max(1, yMax - yMin)
+            };
+        }
+
+        var estimateCount = currNeurons * nextNeurons;
+        var heavyThreshold = 300000;
+        if (estimateCount > heavyThreshold) {
+            var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
+            var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
+
+            // Register connection hit region
+            _register_fcnn_hit_region({
+                type: "connection",
+                shape: "rect",
+                x: currX,
+                y: yMinB,
+                w: nextX - currX,
+                h: Math.max(1, yMaxB - yMinB),
+                from_layer: layer_nr,
+                to_layer: layer_nr + 1,
+                from_neurons: currNeurons,
+                to_neurons: nextNeurons,
+                weight_stats: _weight_stats,
+                weight_data: _weight_data_sample
+            });
+
+            return {
+                type: "fillRect",
+                fillStyle: is_dark_mode ? "#9ea3b5" : "#767b8d",
+                alpha: 0.08,
+                x: currX,
+                y: yMinB,
+                w: nextX - currX,
+                h: Math.max(1, yMaxB - yMinB)
+            };
+        }
+
+        // Render to offscreen (this is the expensive part, but it's cached)
+        var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
+
+        // Register connection hit region
+        var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
+        var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
+        _register_fcnn_hit_region({
+            type: "connection",
+            shape: "rect",
+            x: currX,
+            y: connYMin,
+            w: nextX - currX,
+            h: Math.max(1, connYMax - connYMin),
+            from_layer: layer_nr,
+            to_layer: layer_nr + 1,
+            from_neurons: currNeurons,
+            to_neurons: nextNeurons,
+            weight_stats: _weight_stats,
+            weight_data: _weight_data_sample
+        });
+
+        // Return draw command instead of drawing immediately
+        return {
+            type: "drawImage",
+            canvas: offInfo.canvas,
+            x: currX - offInfo.pad,
+            y: 0
+        };
+
+    } catch (e) {
+        if (e && e.message) e = e.message;
+        assert(false, e);
+        return null;
+    }
 }
 
 // ===== UPDATED: draw_fcnn (main entry) =====
