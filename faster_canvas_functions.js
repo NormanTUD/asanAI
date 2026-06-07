@@ -78,6 +78,14 @@
 			schedule_flush();
 		}
 
+		function get_fill_key(ctx) {
+			if (_fill_key_dirty) {
+				_cached_fill_key = ctx.fillStyle + "|" + ctx.globalAlpha;
+				_fill_key_dirty = false;
+			}
+			return _cached_fill_key;
+		}
+
 		const proxy = new Proxy(real_ctx, {
 			get(target, prop) {
 				if ([
@@ -150,6 +158,10 @@
 
 			set(target, prop, value) {
 				target[prop] = value;
+				if (prop === 'fillStyle' || prop === 'globalAlpha') _fill_key_dirty = true;
+				if (prop === 'strokeStyle' || prop === 'globalAlpha' || 
+					prop === 'lineWidth' || prop === 'lineCap' || 
+					prop === 'lineJoin' || prop === 'miterLimit') _stroke_key_dirty = true;
 				return true;
 			}
 		});

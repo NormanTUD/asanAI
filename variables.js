@@ -1932,3 +1932,8 @@ var log_tensor_stack = false;
 // ===== CANVAS POOL FOR drawImage REUSE =====
 var _fcnn_canvas_pool = [];
 var _fcnn_canvas_pool_idx = 0;
+
+let _cached_fill_key = null;
+let _cached_stroke_key = null;
+let _fill_key_dirty = true;
+let _stroke_key_dirty = true;
