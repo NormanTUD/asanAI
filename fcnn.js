@@ -559,38 +559,40 @@ function annotate_output_neurons(canvasWidth, ctx, layerId, numNeurons, j, font_
 }
 
 function draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j) {
-	ctx.beginPath();
-	ctx.arc(layerX, neuronY, radius, 0, 2 * Math.PI);
-	ctx.fillStyle = "#767b8d";  // gray base circle
-	ctx.fill();
+    // Use fillRect instead of arc - visually equivalent at small radii,
+    // avoids slow Path2D.arc() in the batching proxy
+    var size = radius * 2;
+    var x = layerX - radius;
+    var y = neuronY - radius;
 
-	if (this_layer_output && this_layer_output.length > 0) {
-		var minVal = Math.min(...this_layer_output);
-		var maxVal = Math.max(...this_layer_output);
-		var value = this_layer_output[j];
+    // Gray base "circle" (now a square)
+    ctx.fillStyle = "#767b8d";
+    ctx.fillRect(x, y, size, size);
 
-		var normalizedValue;
-		if (maxVal === minVal) {
-			normalizedValue = 128; // all equal → neutral gray
-		} else {
-			normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
-			normalizedValue = Math.max(0, Math.min(255, normalizedValue)); // clamp
-		}
+    if (this_layer_output && this_layer_output.length > 0) {
+        var minVal = Math.min(...this_layer_output);
+        var maxVal = Math.max(...this_layer_output);
+        var value = this_layer_output[j];
 
-		var color = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
+        var normalizedValue;
+        if (maxVal === minVal) {
+            normalizedValue = 128;
+        } else {
+            normalizedValue = Math.floor(((value - minVal) / (maxVal - minVal)) * 255);
+            normalizedValue = Math.max(0, Math.min(255, normalizedValue));
+        }
 
-		ctx.beginPath();
-		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
-		ctx.fillStyle = color;
-		ctx.fill();
-	} else {
-		ctx.beginPath();
-		ctx.arc(layerX, neuronY, radius - 1, 0, 2 * Math.PI);
-		ctx.fillStyle = "#ffffff";  // no value → white
-		ctx.fill();
-	}
+        var color = `rgb(${normalizedValue}, ${normalizedValue}, ${normalizedValue})`;
 
-	return ctx;
+        // Inner filled rect (1px border effect)
+        ctx.fillStyle = color;
+        ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
+    } else {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
+    }
+
+    return ctx;
 }
 
 // ===== TOOLTIP INFRASTRUCTURE =====
