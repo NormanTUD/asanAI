@@ -168,7 +168,7 @@ async function add_layer_debugger_if_model () {
 async function _get_recreate_model(new_model_config_hash) {
 	var recreate_model = false;
 
-	if(model_config_hash != new_model_config_hash || current_status_hash != await get_current_status_hash(0)) {
+	if(model_config_hash != new_model_config_hash || no_weights_current_status_hash != await get_current_status_hash(0)) {
 		recreate_model = true;
 	}
 
@@ -1200,6 +1200,7 @@ async function create_model (old_model = model, fake_model_structure = undefined
 	}
 
 	current_status_hash = new_current_status_hash;
+	no_weights_current_status_hash = await get_current_status_hash(0);
 
 	hide_warning_container();
 

@@ -757,6 +757,7 @@ function get_initializer_name (name) {
 }
 
 var current_status_hash = "";
+var no_weights_current_status_hash = "";
 
 var constraints = {
 	"": "None",
