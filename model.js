@@ -1827,68 +1827,72 @@ async function get_weights_as_json (m) {
 	}
 }
 
-function get_weights_as_string (m = model) {
-	if(!m) {
-		m = model;
-	}
+function get_weights_as_string(m = model) {
+    if (!m) {
+        m = model;
+    }
 
-	if(!m) {
-		if(finished_loading) {
-			dbg("get_weights_as_string: " + language[lang]["could_not_get_model"]);
-		}
+    if (!m) {
+        if (finished_loading) {
+            dbg("get_weights_as_string: " + language[lang]["could_not_get_model"]);
+        }
+        return false;
+    }
 
-		return false;
-	}
+    if (!Object.keys(m).includes("_callHook")) {
+        dbg(language[lang]["given_model_is_not_a_model"]);
+        return false;
+    }
 
-	if(!Object.keys(m).includes("_callHook")) {
-		dbg(language[lang]["given_model_is_not_a_model"]);
-		return false;
-	}
+    if (!typeof(m.getWeights) == "function") {
+        dbg(language[lang]["get_weights_is_not_defined"]);
+        return false;
+    }
 
-	if(!typeof(m.getWeights) == "function") {
-		dbg(language[lang]["get_weights_is_not_defined"]);
-		return false;
-	}
+    var res;
 
-	var res;
+    if (m) {
+        tidy(() => {
+            try {
+                var weights = m.getWeights();
 
-	if(m) {
-		tidy(() => {
-			try {
-				var weights = m.getWeights();
+                // Build the JSON string incrementally to avoid
+                // holding both the full array AND the full string in memory.
+                var parts = new Array(weights.length);
 
-				var weights_array = [];
+                for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
+                    if (!weights[weight_idx].isDisposed) {
+                        // Stringify each weight tensor immediately,
+                        // so the nested array can be GC'd right after.
+                        parts[weight_idx] = JSON.stringify(array_sync(weights[weight_idx]));
+                    } else {
+                        wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
+                        parts[weight_idx] = "null";
+                    }
+                }
 
-				for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
-					if(!weights[weight_idx].isDisposed) {
-						weights_array[weight_idx] = array_sync(weights[weight_idx]);
-					} else {
-						wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
-					}
-				}
+                last_weights_as_string = "[" + parts.join(",") + "]";
+                res = last_weights_as_string;
+            } catch (e) {
+                if (("" + e).includes("already disposed")) {
+                    if (finished_loading) {
+                        //wrn("Maybe the model was recompiled...");
+                    }
+                } else if (("" + e).includes("e is undefined")) {
+                    wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
+                } else if (("" + e).includes("getWeights is not a function")) {
+                    wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
+                } else {
+                    err(e);
+                    console.trace();
+                }
+            }
+        });
+    } else {
+        res = false;
+    }
 
-				last_weights_as_string = JSON.stringify(weights_array);
-				res = last_weights_as_string;
-			} catch (e) {
-				if(("" + e).includes("already disposed")) {
-					if(finished_loading) {
-						//wrn("Maybe the model was recompiled or changed while predicting. This MAY be the cause of a problem, but it may also not be.");
-					}
-				} else if(("" + e).includes("e is undefined")) {
-					wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
-				} else if(("" + e).includes("getWeights is not a function")) {
-					wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
-				} else {
-					err(e);
-					console.trace();
-				}
-			}
-		});
-	} else {
-		res = false;
-	}
-
-	return res;
+    return res;
 }
 
 function download(filename, text) {
