@@ -35,7 +35,7 @@ var ModelPlotter = (() => {
 		}
 	}
 
-	function create_observer() {
+	function create_observer(plot_div) {
 		_observer = new IntersectionObserver(function(entries) {
 			for (var entry of entries) {
 				if (entry.isIntersecting && _pending_plot) {
