@@ -1924,7 +1924,3 @@ function toggle_math_interactive_mode() {
 }
 
 var CONNECTION_CANVAS_CACHE = new Map();
-
-var _plot_observer = null;
-
-var log_tensor_stack = false;

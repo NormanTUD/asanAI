@@ -1682,22 +1682,27 @@ async function get_valid_layer_types (layer_nr) {
 	return valid_layer_types;
 }
 
-async function set_weights_from_json_object(json, dont_show_weights, no_error, m) {
-	if (!json) {
+async function set_weights_from_json_object (json, dont_show_weights, no_error, m) {
+	if(!json) {
 		err(language[lang]["set_weights_from_json_object_json_was_empty"]);
 		return false;
 	}
 
-	if (!m) {
+	if(!m) {
+		//wrn("Model not given. Using model singleton.");
 		m = model;
 	}
 
-	if (!m) {
+	if(!m) {
 		err(language[lang]["no_model"]);
 		return;
 	}
 
-	if (typeof json === "string") {
+	var weights_array = [];
+
+	var tensors = [];
+
+	if(typeof(json) == "string") {
 		try {
 			json = JSON.parse(json);
 		} catch (e) {
@@ -1707,28 +1712,23 @@ async function set_weights_from_json_object(json, dont_show_weights, no_error, m
 		}
 	}
 
-	var tensors = [];
-
-	try {
-		for (let i = 0; i < json.length; i++) {
-			var shape = get_shape_from_array(json[i]);
-			var flat = flatten_array(json[i]);
-			var data = new Float32Array(flat);
-			tensors.push(tf.tensor(data, shape, 'float32'));
-		}
-	} catch (e) {
-		// Dispose any tensors we already created
-		for (let i = 0; i < tensors.length; i++) {
-			tensors[i].dispose();
-		}
-		err("Error creating weight tensors: " + e);
-		return false;
+	for (let json_idx = 0; json_idx < json.length; json_idx++) {
+		tensors.push(tensor(json[json_idx]));
 	}
 
 	try {
-		m.setWeights(tensors);
+		var old_model_weights = model.weights;
+		try {
+			m.setWeights(tensors);
+
+			for (let json_idx = 0; json_idx < json.length; json_idx++) {
+				await dispose(tensors[json_idx]);
+			}
+		} catch (e) {
+			//log("" + e);
+		}
 	} catch (e) {
-		if (!no_error) {
+		if(!no_error) {
 			Swal.fire({
 				icon: "error",
 				title: language[lang]["error_loading_weights"],
@@ -1736,18 +1736,10 @@ async function set_weights_from_json_object(json, dont_show_weights, no_error, m
 			});
 		}
 		err(e);
-		for (let i = 0; i < tensors.length; i++) {
-			tensors[i].dispose();
-		}
 		return false;
 	}
 
-	// Dispose tensors after setWeights copies the data
-	for (let i = 0; i < tensors.length; i++) {
-		tensors[i].dispose();
-	}
-
-	if (!dont_show_weights) {
+	if(!dont_show_weights) {
 		Swal.fire(
 			language[lang]["weights_loaded_successfully"],
 			"",
@@ -1756,24 +1748,6 @@ async function set_weights_from_json_object(json, dont_show_weights, no_error, m
 	}
 
 	return true;
-}
-
-// Helper: flatten nested array into a 1D array
-function flatten_array(arr) {
-	var result = [];
-	var stack = [arr];
-	while (stack.length) {
-		var item = stack.pop();
-		if (Array.isArray(item)) {
-			// Push in reverse order so we process left-to-right
-			for (var i = item.length - 1; i >= 0; i--) {
-				stack.push(item[i]);
-			}
-		} else {
-			result.push(item);
-		}
-	}
-	return result;
 }
 
 async function set_weights_from_string (_string, no_warning, no_error, m=model) {
