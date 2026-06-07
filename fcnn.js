@@ -355,21 +355,23 @@ function _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_in
             var yMin = Math.min(currYs[0], nextYs[0]);
             var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
 
+		var this_region = {
+			type: "connection",
+			shape: "rect",
+			x: currX,
+			y: yMin,
+			w: nextX - currX,
+			h: Math.max(1, yMax - yMin),
+			from_layer: layer_nr,
+			to_layer: layer_nr + 1,
+			from_neurons: currNeurons,
+			to_neurons: nextNeurons,
+			weight_stats: _weight_stats,
+			weight_data: _weight_data_sample
+		};
+
             // Register connection hit region
-            _register_fcnn_hit_region({
-                type: "connection",
-                shape: "rect",
-                x: currX,
-                y: yMin,
-                w: nextX - currX,
-                h: Math.max(1, yMax - yMin),
-                from_layer: layer_nr,
-                to_layer: layer_nr + 1,
-                from_neurons: currNeurons,
-                to_neurons: nextNeurons,
-                weight_stats: _weight_stats,
-                weight_data: _weight_data_sample
-            });
+            _register_fcnn_hit_region(this_region);
 
             return {
                 type: "fillRect",
@@ -388,21 +390,23 @@ function _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_in
             var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
             var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
 
+		const this_region1 = {
+			type: "connection",
+			shape: "rect",
+			x: currX,
+			y: yMinB,
+			w: nextX - currX,
+			h: Math.max(1, yMaxB - yMinB),
+			from_layer: layer_nr,
+			to_layer: layer_nr + 1,
+			from_neurons: currNeurons,
+			to_neurons: nextNeurons,
+			weight_stats: _weight_stats,
+			weight_data: _weight_data_sample
+		};
+
             // Register connection hit region
-            _register_fcnn_hit_region({
-                type: "connection",
-                shape: "rect",
-                x: currX,
-                y: yMinB,
-                w: nextX - currX,
-                h: Math.max(1, yMaxB - yMinB),
-                from_layer: layer_nr,
-                to_layer: layer_nr + 1,
-                from_neurons: currNeurons,
-                to_neurons: nextNeurons,
-                weight_stats: _weight_stats,
-                weight_data: _weight_data_sample
-            });
+            _register_fcnn_hit_region(this_region1);
 
             return {
                 type: "fillRect",
@@ -421,7 +425,7 @@ function _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_in
         // Register connection hit region
         var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
         var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
-        _register_fcnn_hit_region({
+	    const this_region2 = {
             type: "connection",
             shape: "rect",
             x: currX,
@@ -434,7 +438,9 @@ function _prepare_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_in
             to_neurons: nextNeurons,
             weight_stats: _weight_stats,
             weight_data: _weight_data_sample
-        });
+        };
+
+        _register_fcnn_hit_region(this_region2);
 
         // Return draw command instead of drawing immediately
         return {
