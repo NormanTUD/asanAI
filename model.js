@@ -342,31 +342,17 @@ async function compile_model(recursion_level=0) {
 }
 
 async function plot_model_plot(force = false) {
-    if (_plot_done && !force) return ModelPlotter.plot("plotly_predict", force);
+	if (_plot_done && !force) return ModelPlotter.plot("plotly_predict", force);
 
-    var el = $("#plotly_predict")[0];
-    if (!el) return;
+	var el = $("#plotly_predict")[0];
+	if (!el) return;
 
-    if (check_visible(el)) {
-        trigger_plot(force);
-        return;
-    }
+	if (check_visible(el)) {
+		trigger_plot(force);
+		return;
+	}
 
-    // Use IntersectionObserver to wait until the element is visible
-    if (!_plot_observer) {
-        _plot_observer = new IntersectionObserver(function(entries) {
-            for (var entry of entries) {
-                if (entry.isIntersecting) {
-                    _plot_observer.disconnect();
-                    _plot_observer = null;
-                    trigger_plot(force);
-                    break;
-                }
-            }
-        }, { threshold: 0.1 });
-
-        _plot_observer.observe(el);
-    }
+	trigger_plot(force);
 }
 
 function check_visible(el) {
