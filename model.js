@@ -1550,7 +1550,7 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape, layer
 				const layer_type_array = get_layer_type_array();
 				const next_layer_type = layer_type_array[layer_nr + 1];
 
-				if(["flatten", "conv2d"].includes(next_layer_type)) {
+				if(["flatten", "conv1d", "conv1dTranspose", "depthwiseConv1d", "upSampling1d", "averagePooling1d"].includes(next_layer_type)) {
 					return false;
 				}
 			}
@@ -1567,7 +1567,7 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape, layer
 				const layer_type_array = get_layer_type_array();
 				const next_layer_type = layer_type_array[layer_nr + 1];
 
-				if(["flatten", "conv2d"].includes(next_layer_type)) {
+				if(["flatten", "conv2d", "conv2dTranspose", "depthwiseConv2d", "upSampling2d", "averagePooling2d"].includes(next_layer_type)) {
 					return false;
 				}
 			}
