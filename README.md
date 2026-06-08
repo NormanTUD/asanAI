@@ -91,7 +91,6 @@ In addition, the training data as well as the model structure and weights can be
 <img src="https://github.com/NormanTUD/asanAI/blob/master/documentation/images/7_code.gif" alt="Code" width="600"/>
 </p>
 
-
 # How to use asanAI?
 
 > [!NOTE]
@@ -182,7 +181,6 @@ However, the user experience on small screens such as smartphones requires furth
 # Video tutorials
 A series of [video tutorials](https://www.youtube.com/playlist?list=PLZkHu66nUK_6F59YAUZc6_sTzvGK3PCpk) about how to use asanAI is available on our YouTube channel.  
 
-
 # Documentation (for advance users)
 A draft of the documentation for advanced users is available [here](https://asanai.scads.ai/manual.html).  
 
@@ -195,7 +193,6 @@ Although we do our best to keep this page up-to-date, some screenshots might dif
 The latest version from this repository is always accessible via [asanAI.ScaDS.AI](https://asanai.scads.ai).  
 If you encountered any problem using asanAI, please check [the issues](https://github.com/NormanTUD/asanAI/issues) and create a [new issue](https://github.com/NormanTUD/asanAI/issues/new/choose) if required.  
 The online version of asanAI employs an automatic monitoring mechanism which submits an anonymized log to the server in case of a failure.
-
 
 # Screenshots
 <details>
@@ -215,7 +212,6 @@ The online version of asanAI employs an automatic monitoring mechanism which sub
 
 ![Screenshot](screens/screen6.png "Maximally activated neurons")
 </details>
-
 
 # Standing on the shoulders of giants
 
