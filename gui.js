@@ -3413,6 +3413,7 @@ async function show_layers(number) {
 	sortable_layers_container(layers_container);
 
 	$(".train_neural_network_button").show();
+	$(".retrain_neural_network_button").show();
 }
 
 function reset_photo_gallery() {
