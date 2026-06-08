@@ -342,35 +342,36 @@ async function compile_model(recursion_level=0) {
 }
 
 async function plot_model_plot(force = false) {
-    var el = $("#plotly_predict")[0];
-    if (!el) return;
+	var el = $("#plotly_predict")[0];
+	if (!el) return;
+	if (!$(el).css("display") == "none") return;
 
-    clearTimeout(_plot_timer);
+	clearTimeout(_plot_timer);
 
-    // Mark that a plot update is pending (so the system "knows" it was triggered)
-    _plot_pending = true;
-    _plot_pending_force = force;
+	// Mark that a plot update is pending (so the system "knows" it was triggered)
+	_plot_pending = true;
+	_plot_pending_force = force;
 
-    _plot_timer = setTimeout(function () {
-        if (check_visible(el)) {
-            flush_plot(force);
-            return;
-        }
+	_plot_timer = setTimeout(function () {
+		if (!is_hidden_or_has_hidden_parent(el)) {
+			flush_plot(force);
+			return;
+		}
 
-        // Not visible — start polling, but don't actually plot yet
-        if (!_plot_interval) {
-            _plot_interval = setInterval(function () {
-                if (check_visible(el)) {
-                    clearInterval(_plot_interval);
-                    _plot_interval = null;
-                    // Now it's visible — flush whatever was pending
-                    if (_plot_pending) {
-                        flush_plot(_plot_pending_force);
-                    }
-                }
-            }, 100);
-        }
-    }, 150);
+		// Not visible — start polling, but don't actually plot yet
+		if (!_plot_interval) {
+			_plot_interval = setInterval(function () {
+				if (!is_hidden_or_has_hidden_parent(el)) {
+					clearInterval(_plot_interval);
+					_plot_interval = null;
+					// Now it's visible — flush whatever was pending
+					if (_plot_pending) {
+						flush_plot(_plot_pending_force);
+					}
+				}
+			}, 100);
+		}
+	}, 150);
 }
 
 function flush_plot(force) {
