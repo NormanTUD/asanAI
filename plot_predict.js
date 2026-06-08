@@ -8,6 +8,20 @@ var ModelPlotter = (() => {
 	const get_state = id => _state[id] || {};
 	const set_state = (id, obj) => _state[id] = obj;
 
+	const cached_get_weights_as_string = (() => {
+		let cached_value = "";
+		let last_time = 0;
+
+		return () => {
+			const now = Date.now();
+			if (now - last_time >= 1000) {
+				cached_value = get_weights_as_string?.() || "";
+				last_time = now;
+			}
+			return cached_value;
+		};
+	})();
+
 	async function plot(div_id = 'plotly_predict', force = false) {
 		const plot_div = document.getElementById(div_id);
 		if (!plot_div) return;
@@ -28,7 +42,7 @@ var ModelPlotter = (() => {
 		}
 		window.__ModelPlotterMeta.last_shapes = shape_key;
 
-		const current_weights = get_weights_as_string?.() || "";
+		const current_weights = cached_get_weights_as_string() || "";
 		if (!force && state.last_weights === current_weights)
 			return; 
 
