@@ -1880,7 +1880,11 @@ async function wait_for_webcam_images(category_id, timeout_ms, required) {
 	});
 }
 
-async function test_webcam() {
+async function test_webcam(disable_webcam) {
+	if(disable_webcam) {
+		return true;
+	}
+
 	log_test("Testing webcam");
 
 	if(disable_webcam_test) {
@@ -2998,7 +3002,7 @@ async function run_python_code_tests() {
 	return true;
 }
 
-async function run_tests (quick=0) {
+async function run_tests (quick=0, disable_webcam=0) {
 	original_num_errs = num_errs;
 	original_num_wrns = num_wrns;
 
@@ -3072,7 +3076,7 @@ async function run_tests (quick=0) {
 		test_equal("test_all_optimizers_on_xor()", await test_all_optimizers_on_xor(), true);
 		test_equal("test_if_python_code_is_valid()", await test_if_python_code_is_valid(), true);
 		test_equal("test_math_history()", await test_math_history(), true);
-		test_equal("test_webcam()", await test_webcam(), true);
+		test_equal("test_webcam()", await test_webcam(disable_webcam), true);
 		test_equal("test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
 		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
