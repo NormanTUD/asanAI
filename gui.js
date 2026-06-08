@@ -4669,7 +4669,7 @@ var handle_x_file = async function (evt) {
 	set_x_file(await get_custom_tensor_string_x(evt));
 	await set_input_shape("[" + get_shape_from_file(x_file) + "]");
 
-	if (!_heuristic_layer_possibility_check($($(".layer_type")[0]).val(), get_input_shape())) {
+	if (!_heuristic_layer_possibility_check($($(".layer_type")[0]).val(), get_input_shape()), 0) {
 		Swal.fire({
 			title: "X-Data and first layer have incompatible shape-requirements. Set to Dense for all layers?",
 			showDenyButton: true,
