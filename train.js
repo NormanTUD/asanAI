@@ -88,7 +88,7 @@ async function incrementAndReset() {
 }
 
 async function train_neural_network_from_scratch() {
-	incrementAndReset();
+	await incrementAndReset();
 
 	await train_neural_network();
 }
