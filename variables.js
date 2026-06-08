@@ -619,21 +619,21 @@ var layer_options = {
 	"globalAveragePooling2d": {
 		"description": `<span class="TRANSLATEME_globalAveragePooling2d_description" />`,
 		"options": [
-			"dtype", "trainable"
+			"dtype"
 		],
 		"category": `Pooling`
 	},
 	"globalMaxPooling1d": {
 		"description": `<span class="TRANSLATEME_globalMaxPooling1d_description" />`,
 		"options": [
-			"dtype", "trainable"
+			"dtype"
 		],
 		"category": `Pooling`
 	},
 	"globalMaxPooling2d": {
 		"description": `<span class="TRANSLATEME_globalMaxPooling2d_description" />`,
 		"options": [
-			"dtype", "trainable"
+			"dtype"
 		],
 		"category": `Pooling`
 	},
