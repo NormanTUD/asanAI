@@ -609,34 +609,6 @@ var layer_options = {
 		],
 		"category": `Pooling`
 	},
-	"globalAveragePooling1d": {
-		"description": `<span class="TRANSLATEME_globalAveragePooling1d_description" />`,
-		"options": [
-			"dtype"
-		],
-		"category": `Pooling`
-	},
-	"globalAveragePooling2d": {
-		"description": `<span class="TRANSLATEME_globalAveragePooling2d_description" />`,
-		"options": [
-			"dtype", "trainable"
-		],
-		"category": `Pooling`
-	},
-	"globalMaxPooling1d": {
-		"description": `<span class="TRANSLATEME_globalMaxPooling1d_description" />`,
-		"options": [
-			"dtype", "trainable"
-		],
-		"category": `Pooling`
-	},
-	"globalMaxPooling2d": {
-		"description": `<span class="TRANSLATEME_globalMaxPooling2d_description" />`,
-		"options": [
-			"dtype", "trainable"
-		],
-		"category": `Pooling`
-	},
 	"alphaDropout": {
 		"description": `<span class="TRANSLATEME_alphaDropout_description" />`,
 		"options": [
@@ -1952,6 +1924,3 @@ function toggle_math_interactive_mode() {
 }
 
 var CONNECTION_CANVAS_CACHE = new Map();
-
-var _plot_pending = false;
-var _plot_pending_force = false;

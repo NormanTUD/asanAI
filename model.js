@@ -341,44 +341,29 @@ async function compile_model(recursion_level=0) {
 	await plot_model_plot(true);
 }
 
-async function plot_model_plot(force = false) {
+async function plot_model_plot(force=false) {
+	if (_plot_done && !force) return ModelPlotter.plot("plotly_predict", force);
+
 	var el = $("#plotly_predict")[0];
 	if (!el) return;
-	if (!$(el).css("display") == "none") return;
 
 	clearTimeout(_plot_timer);
-
-	// Mark that a plot update is pending (so the system "knows" it was triggered)
-	_plot_pending = true;
-	_plot_pending_force = force;
-
-	_plot_timer = setTimeout(function () {
-		if (!is_hidden_or_has_hidden_parent(el)) {
-			flush_plot(force);
+	_plot_timer = setTimeout(function(){
+		if (check_visible(el)) {
+			trigger_plot(force);
 			return;
 		}
 
-		// Not visible — start polling, but don't actually plot yet
 		if (!_plot_interval) {
-			_plot_interval = setInterval(function () {
-				if (!is_hidden_or_has_hidden_parent(el)) {
+			_plot_interval = setInterval(function(){
+				if (check_visible(el)) {
 					clearInterval(_plot_interval);
 					_plot_interval = null;
-					// Now it's visible — flush whatever was pending
-					if (_plot_pending) {
-						flush_plot(_plot_pending_force);
-					}
+					trigger_plot(force);
 				}
 			}, 100);
 		}
 	}, 150);
-}
-
-function flush_plot(force) {
-    _plot_pending = false;
-    _plot_pending_force = false;
-    _plot_done = true;
-    ModelPlotter.plot("plotly_predict", force);
 }
 
 function check_visible(el) {
@@ -1556,55 +1541,38 @@ async function compile_fake_model(layer_nr, layer_type) {
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
 // this saves a lot of time
 
-// Heuristic check of whether layer types are possible at all. Only test if they're possible,
-// this saves a lot of time
-
-function _heuristic_layer_possibility_check(layer_type, layer_input_shape, layer_nr) {
-	// --- 1D layers: require input shape length == 2 (i.e. [steps, features]) ---
-	if(["conv1d", "averagePooling1d", "maxPooling1d", "globalAveragePooling1d", "globalMaxPooling1d"].includes(layer_type)) {
-		if(layer_input_shape.length == 2) {
-			// Global pooling layers followed by flatten is redundant (already flat output)
-			if(["globalAveragePooling1d", "globalMaxPooling1d"].includes(layer_type)) {
-				const layer_type_array = get_layer_type_array();
-				const next_layer_type = layer_type_array[layer_nr + 1];
-
-				if(next_layer_type == "flatten") {
-					return false;
-				}
+function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
+	if(["conv1d", "conv2d", "conv2dTranspose", "upSampling2d", "conv3d", "depthwiseConv2d", "separableConv2d", "averagePooling1d", "averagePooling2d", "averagePooling3d", "globalMaxPooling1d", "globalMaxPooling2d", "maxPooling1d", "maxPooling2d", "maxPooling3d", "globalAveragePooling1d"].includes(layer_type)) {
+		if(["conv1d", "averagePooling1d", "globalMaxPooling1d", "maxPooling1d", "globalAveragePooling1d"].includes(layer_type)) {
+			if(layer_input_shape.length == 2) {
+				return true;
 			}
-			return true;
-		}
-		return false;
-	}
-
-	// --- 2D layers: require input shape length == 3 (i.e. [rows, cols, channels]) ---
-	if(["conv2d", "conv2dTranspose", "upSampling2d", "depthwiseConv2d", "separableConv2d", "averagePooling2d", "maxPooling2d", "globalAveragePooling2d", "globalMaxPooling2d", "zeroPadding2d"].includes(layer_type)) {
-		if(layer_input_shape.length == 3) {
-			// Global pooling layers followed by flatten is redundant (already flat output)
-			if(["globalAveragePooling2d", "globalMaxPooling2d"].includes(layer_type)) {
-				const layer_type_array = get_layer_type_array();
-				const next_layer_type = layer_type_array[layer_nr + 1];
-
-				if(next_layer_type == "flatten") {
-					return false;
-				}
+			return false;
+		} else if(["conv2d", "conv2dTranspose", "upSampling2d", "depthwiseConv2d", "separableConv2d", "averagePooling2d", "globalMaxPooling2d", "maxPooling2d"].includes(layer_type)) {
+			if(layer_input_shape.length == 3) {
+				return true;
 			}
-			return true;
+			return false;
+		} else if(["conv3d", "averagePooling3d", "maxPooling3d", "globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+			if(layer_input_shape.length == 4) {
+				return true;
+			}
+			return false;
 		}
-		return false;
-	}
-
-	// --- 3D layers: require input shape length == 4 (i.e. [depths, rows, cols, channels]) ---
-	if(["conv3d", "averagePooling3d", "maxPooling3d"].includes(layer_type)) {
-		if(layer_input_shape.length == 4) {
-			return true;
+	} else if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+		if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
+			if(layer_input_shape.length == 3) {
+				return true;
+			}
+			return false;
 		}
-		return false;
-	}
 
-	// --- RNN layers: require at least 2D input ---
-	if(["gru", "lstm", "simpleRNN"].includes(layer_type)) {
-		if(layer_input_shape.length < 2) {
+	} else if(["gru"].includes(layer_type)) {
+		if(layer_type == "gru" && layer_input_shape.length < 2) {
+			return false;
+		}
+	} else if(["ZeroPadding2D"].includes(layer_type)) {
+		if(layer_type == "gru" && layer_input_shape.length != 4) {
 			return false;
 		}
 	}
@@ -1642,7 +1610,7 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 		return false;
 	}
 
-	var res = _heuristic_layer_possibility_check(layer_type, layer_input_shape, layer_nr);
+	var res = _heuristic_layer_possibility_check(layer_type, layer_input_shape);
 
 	return res;
 }
@@ -1861,32 +1829,6 @@ async function get_weights_as_json (m) {
 }
 
 function get_weights_as_string(m = model) {
-    m = _resolve_model(m);
-    if (!m) return false;
-
-    if (!_validate_model_for_weights(m)) return false;
-
-    var res;
-
-    if (m) {
-        tidy(() => {
-            try {
-                var weights = m.getWeights();
-                var parts = _serialize_weights(weights);
-                last_weights_as_string = "[" + parts.join(",") + "]";
-                res = last_weights_as_string;
-            } catch (e) {
-                _handle_get_weights_error(e);
-            }
-        });
-    } else {
-        res = false;
-    }
-
-    return res;
-}
-
-function _resolve_model(m) {
     if (!m) {
         m = model;
     }
@@ -1895,90 +1837,63 @@ function _resolve_model(m) {
         if (finished_loading) {
             dbg("get_weights_as_string: " + language[lang]["could_not_get_model"]);
         }
-        return null;
+        return false;
     }
 
-    return m;
-}
-
-function _validate_model_for_weights(m) {
     if (!Object.keys(m).includes("_callHook")) {
         dbg(language[lang]["given_model_is_not_a_model"]);
         return false;
     }
 
-    if (typeof m.getWeights !== "function") {
+    if (!typeof(m.getWeights) == "function") {
         dbg(language[lang]["get_weights_is_not_defined"]);
         return false;
     }
 
-    return true;
-}
+    var res;
 
-function _serialize_weights(weights) {
-    var parts = new Array(weights.length);
+    if (m) {
+        tidy(() => {
+            try {
+                var weights = m.getWeights();
 
-    for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
-        parts[weight_idx] = _serialize_single_weight(weights[weight_idx], weight_idx);
-    }
+                // Build the JSON string incrementally to avoid
+                // holding both the full array AND the full string in memory.
+                var parts = new Array(weights.length);
 
-    return parts;
-}
+                for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
+                    if (!weights[weight_idx].isDisposed) {
+                        // Stringify each weight tensor immediately,
+                        // so the nested array can be GC'd right after.
+                        parts[weight_idx] = JSON.stringify(array_sync(weights[weight_idx]));
+                    } else {
+                        wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
+                        parts[weight_idx] = "null";
+                    }
+                }
 
-function _serialize_single_weight(tensor, weight_idx) {
-    if (tensor.isDisposed) {
-        wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
-        return "null";
-    }
-
-    var flatData = tensor.dataSync();
-    var shape = tensor.shape;
-
-    if (shape.length === 0) {
-        return "" + flatData[0];
-    } else if (shape.length === 1) {
-        return "[" + flatData.join(",") + "]";
+                last_weights_as_string = "[" + parts.join(",") + "]";
+                res = last_weights_as_string;
+            } catch (e) {
+                if (("" + e).includes("already disposed")) {
+                    if (finished_loading) {
+                        //wrn("Maybe the model was recompiled...");
+                    }
+                } else if (("" + e).includes("e is undefined")) {
+                    wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
+                } else if (("" + e).includes("getWeights is not a function")) {
+                    wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
+                } else {
+                    err(e);
+                    console.trace();
+                }
+            }
+        });
     } else {
-        return serializeTensorStructure(flatData, shape);
+        res = false;
     }
-}
 
-function _handle_get_weights_error(e) {
-    if (("" + e).includes("already disposed")) {
-        if (finished_loading) {
-            //wrn("Maybe the model was recompiled...");
-        }
-    } else if (("" + e).includes("e is undefined")) {
-        wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
-    } else if (("" + e).includes("getWeights is not a function")) {
-        wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
-    } else {
-        err(e);
-        console.trace();
-    }
-}
-
-// Recursive/iterative flat layout writer to construct JSON strings without array allocations
-function serializeTensorStructure(flatData, shape) {
-    var flatIdx = 0;
-    
-    function recurseHere(dimIdx) {
-        var size = shape[dimIdx];
-        if (dimIdx === shape.length - 1) {
-            // Lowest dimension: batch-join values for speed
-            var slice = flatData.subarray(flatIdx, flatIdx + size);
-            flatIdx += size;
-            return "[" + slice.join(",") + "]";
-        }
-        
-        var strParts = new Array(size);
-        for (var i = 0; i < size; i++) {
-            strParts[i] = recurseHere(dimIdx + 1);
-        }
-        return "[" + strParts.join(",") + "]";
-    }
-    
-    return recurseHere(0);
+    return res;
 }
 
 function download(filename, text) {
