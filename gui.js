@@ -172,10 +172,12 @@ function enable_train() {
 	}
 
 	$(".train_neural_network_button").prop("disabled", false);
+	$(".retrain_neural_network_button").prop("disabled", false);
 }
 
 function disable_train() {
 	$(".train_neural_network_button").prop("disabled", true);
+	$(".retrain_neural_network_button").prop("disabled", true);
 }
 
 function get_key_from_path(_array, keypath) {
