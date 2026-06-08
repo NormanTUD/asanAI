@@ -1828,72 +1828,107 @@ async function get_weights_as_json (m) {
 	}
 }
 
-function get_weights_as_string(m = model) {
-    if (!m) {
-        m = model;
-    }
-
-    if (!m) {
-        if (finished_loading) {
+function get_weights_as_string(m = model) {                             
+    if (!m) {                                      
+        m = model;                                              
+    }                                                                          
+                                                                               
+    if (!m) {                                      
+        if (finished_loading) {                                
             dbg("get_weights_as_string: " + language[lang]["could_not_get_model"]);
-        }
-        return false;
-    }
-
-    if (!Object.keys(m).includes("_callHook")) {
-        dbg(language[lang]["given_model_is_not_a_model"]);
-        return false;
-    }
-
-    if (!typeof(m.getWeights) == "function") {
-        dbg(language[lang]["get_weights_is_not_defined"]);
-        return false;
-    }
-
-    var res;
-
-    if (m) {
-        tidy(() => {
-            try {
-                var weights = m.getWeights();
-
-                // Build the JSON string incrementally to avoid
-                // holding both the full array AND the full string in memory.
+        }                                                      
+        return false;                                          
+    }                                                                          
+                                                                               
+    if (!Object.keys(m).includes("_callHook")) {                               
+        dbg(language[lang]["given_model_is_not_a_model"]);                     
+        return false;                                          
+    }                                                                          
+                                                                               
+    // FIXED: Corrected type checking logical bug (!typeof X == "Y" is always false)
+    if (typeof m.getWeights !== "function") {                                 
+        dbg(language[lang]["get_weights_is_not_defined"]);                     
+        return false;                                          
+    }                                                                          
+                                                                               
+    var res;                                                                   
+                                                                               
+    if (m) {                                                                   
+        tidy(() => {                                                           
+            try {                                             
+                var weights = m.getWeights();  
+                                                               
                 var parts = new Array(weights.length);
-
+                                                               
                 for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
-                    if (!weights[weight_idx].isDisposed) {
-                        // Stringify each weight tensor immediately,
-                        // so the nested array can be GC'd right after.
-                        parts[weight_idx] = JSON.stringify(array_sync(weights[weight_idx]));
-                    } else {
+                    var tensor = weights[weight_idx];
+                    if (!tensor.isDisposed) {
+                        
+                        // ALGORITHM: High-performance flat serialization via dataSync
+                        // Avoids the massive overhead of arraySync() + generic JSON.stringify()
+                        var flatData = tensor.dataSync(); 
+                        var shape = tensor.shape;
+                        
+                        if (shape.length === 0) {
+                            parts[weight_idx] = "" + flatData[0];
+                        } else if (shape.length === 1) {
+                            parts[weight_idx] = "[" + flatData.join(",") + "]";
+                        } else {
+                            // Helper function to reconstruct JSON matrix format from a flat typed array
+                            parts[weight_idx] = serializeTensorStructure(flatData, shape);
+                        }
+                        
+                    } else {                  
                         wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
                         parts[weight_idx] = "null";
-                    }
-                }
-
+                    }                                                              
+                }                                             
+                                                               
                 last_weights_as_string = "[" + parts.join(",") + "]";
-                res = last_weights_as_string;
-            } catch (e) {
+                res = last_weights_as_string;  
+            } catch (e) {                                     
                 if (("" + e).includes("already disposed")) {
-                    if (finished_loading) {
+                    if (finished_loading) {   
                         //wrn("Maybe the model was recompiled...");
-                    }
+                    }                                         
                 } else if (("" + e).includes("e is undefined")) {
                     wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
                 } else if (("" + e).includes("getWeights is not a function")) {
                     wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
-                } else {
-                    err(e);
-                    console.trace();
-                }
-            }
-        });
-    } else {
-        res = false;
-    }
+                } else {                                      
+                    err(e);                                   
+                    console.trace();                          
+                }                                             
+            }                                                 
+        });                                                   
+    } else {                                                  
+        res = false;                                          
+    }                                                         
+                                                                               
+    return res;                                               
+}
 
-    return res;
+// Recursive/iterative flat layout writer to construct JSON strings without array allocations
+function serializeTensorStructure(flatData, shape) {
+    var flatIdx = 0;
+    
+    function recurse(dimIdx) {
+        var size = shape[dimIdx];
+        if (dimIdx === shape.length - 1) {
+            // Lowest dimension: batch-join values for speed
+            var slice = flatData.subarray(flatIdx, flatIdx + size);
+            flatIdx += size;
+            return "[" + slice.join(",") + "]";
+        }
+        
+        var strParts = new Array(size);
+        for (var i = 0; i < size; i++) {
+            strParts[i] = recurse(dimIdx + 1);
+        }
+        return "[" + strParts.join(",") + "]";
+    }
+    
+    return recurse(0);
 }
 
 function download(filename, text) {
