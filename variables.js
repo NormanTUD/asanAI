@@ -1924,3 +1924,6 @@ function toggle_math_interactive_mode() {
 }
 
 var CONNECTION_CANVAS_CACHE = new Map();
+
+var _plot_pending = false;
+var _plot_pending_force = false;

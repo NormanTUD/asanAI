@@ -341,29 +341,43 @@ async function compile_model(recursion_level=0) {
 	await plot_model_plot(true);
 }
 
-async function plot_model_plot(force=false) {
-	if (_plot_done && !force) return ModelPlotter.plot("plotly_predict", force);
+async function plot_model_plot(force = false) {
+    var el = $("#plotly_predict")[0];
+    if (!el) return;
 
-	var el = $("#plotly_predict")[0];
-	if (!el) return;
+    clearTimeout(_plot_timer);
 
-	clearTimeout(_plot_timer);
-	_plot_timer = setTimeout(function(){
-		if (check_visible(el)) {
-			trigger_plot(force);
-			return;
-		}
+    // Mark that a plot update is pending (so the system "knows" it was triggered)
+    _plot_pending = true;
+    _plot_pending_force = force;
 
-		if (!_plot_interval) {
-			_plot_interval = setInterval(function(){
-				if (check_visible(el)) {
-					clearInterval(_plot_interval);
-					_plot_interval = null;
-					trigger_plot(force);
-				}
-			}, 100);
-		}
-	}, 150);
+    _plot_timer = setTimeout(function () {
+        if (check_visible(el)) {
+            flush_plot(force);
+            return;
+        }
+
+        // Not visible — start polling, but don't actually plot yet
+        if (!_plot_interval) {
+            _plot_interval = setInterval(function () {
+                if (check_visible(el)) {
+                    clearInterval(_plot_interval);
+                    _plot_interval = null;
+                    // Now it's visible — flush whatever was pending
+                    if (_plot_pending) {
+                        flush_plot(_plot_pending_force);
+                    }
+                }
+            }, 100);
+        }
+    }, 150);
+}
+
+function flush_plot(force) {
+    _plot_pending = false;
+    _plot_pending_force = false;
+    _plot_done = true;
+    ModelPlotter.plot("plotly_predict", force);
 }
 
 function check_visible(el) {
