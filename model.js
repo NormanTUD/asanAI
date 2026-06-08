@@ -1550,7 +1550,7 @@ function _heuristic_layer_possibility_check(layer_type, layer_input_shape, layer
 				const layer_type_array = get_layer_type_array();
 				const next_layer_type = layer_type_array[layer_nr + 1];
 
-				if(next_layer_type == "flatten") {
+				if(["flatten", "conv2d"].includes(next_layer_type)) {
 					return false;
 				}
 			}
