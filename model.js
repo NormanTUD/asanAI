@@ -1828,84 +1828,102 @@ async function get_weights_as_json (m) {
 	}
 }
 
-function get_weights_as_string(m = model) {                             
-    if (!m) {                                      
-        m = model;                                              
-    }                                                                          
-                                                                               
-    if (!m) {                                      
-        if (finished_loading) {                                
-            dbg("get_weights_as_string: " + language[lang]["could_not_get_model"]);
-        }                                                      
-        return false;                                          
-    }                                                                          
-                                                                               
-    if (!Object.keys(m).includes("_callHook")) {                               
-        dbg(language[lang]["given_model_is_not_a_model"]);                     
-        return false;                                          
-    }                                                                          
-                                                                               
-    // FIXED: Corrected type checking logical bug (!typeof X == "Y" is always false)
-    if (typeof m.getWeights !== "function") {                                 
-        dbg(language[lang]["get_weights_is_not_defined"]);                     
-        return false;                                          
-    }                                                                          
-                                                                               
-    var res;                                                                   
-                                                                               
-    if (m) {                                                                   
-        tidy(() => {                                                           
-            try {                                             
-                var weights = m.getWeights();  
-                                                               
-                var parts = new Array(weights.length);
-                                                               
-                for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
-                    var tensor = weights[weight_idx];
-                    if (!tensor.isDisposed) {
-                        
-                        // ALGORITHM: High-performance flat serialization via dataSync
-                        // Avoids the massive overhead of arraySync() + generic JSON.stringify()
-                        var flatData = tensor.dataSync(); 
-                        var shape = tensor.shape;
-                        
-                        if (shape.length === 0) {
-                            parts[weight_idx] = "" + flatData[0];
-                        } else if (shape.length === 1) {
-                            parts[weight_idx] = "[" + flatData.join(",") + "]";
-                        } else {
-                            // Helper function to reconstruct JSON matrix format from a flat typed array
-                            parts[weight_idx] = serializeTensorStructure(flatData, shape);
-                        }
-                        
-                    } else {                  
-                        wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
-                        parts[weight_idx] = "null";
-                    }                                                              
-                }                                             
-                                                               
+function get_weights_as_string(m = model) {
+    m = _resolve_model(m);
+    if (!m) return false;
+
+    if (!_validate_model_for_weights(m)) return false;
+
+    var res;
+
+    if (m) {
+        tidy(() => {
+            try {
+                var weights = m.getWeights();
+                var parts = _serialize_weights(weights);
                 last_weights_as_string = "[" + parts.join(",") + "]";
-                res = last_weights_as_string;  
-            } catch (e) {                                     
-                if (("" + e).includes("already disposed")) {
-                    if (finished_loading) {   
-                        //wrn("Maybe the model was recompiled...");
-                    }                                         
-                } else if (("" + e).includes("e is undefined")) {
-                    wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
-                } else if (("" + e).includes("getWeights is not a function")) {
-                    wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
-                } else {                                      
-                    err(e);                                   
-                    console.trace();                          
-                }                                             
-            }                                                 
-        });                                                   
-    } else {                                                  
-        res = false;                                          
-    }                                                         
-                                                                               
-    return res;                                               
+                res = last_weights_as_string;
+            } catch (e) {
+                _handle_get_weights_error(e);
+            }
+        });
+    } else {
+        res = false;
+    }
+
+    return res;
+}
+
+function _resolve_model(m) {
+    if (!m) {
+        m = model;
+    }
+
+    if (!m) {
+        if (finished_loading) {
+            dbg("get_weights_as_string: " + language[lang]["could_not_get_model"]);
+        }
+        return null;
+    }
+
+    return m;
+}
+
+function _validate_model_for_weights(m) {
+    if (!Object.keys(m).includes("_callHook")) {
+        dbg(language[lang]["given_model_is_not_a_model"]);
+        return false;
+    }
+
+    if (typeof m.getWeights !== "function") {
+        dbg(language[lang]["get_weights_is_not_defined"]);
+        return false;
+    }
+
+    return true;
+}
+
+function _serialize_weights(weights) {
+    var parts = new Array(weights.length);
+
+    for (var weight_idx = 0; weight_idx < weights.length; weight_idx++) {
+        parts[weight_idx] = _serialize_single_weight(weights[weight_idx], weight_idx);
+    }
+
+    return parts;
+}
+
+function _serialize_single_weight(tensor, weight_idx) {
+    if (tensor.isDisposed) {
+        wrn(sprintf(language[lang]["weights_n_is_disposed"], weight_idx));
+        return "null";
+    }
+
+    var flatData = tensor.dataSync();
+    var shape = tensor.shape;
+
+    if (shape.length === 0) {
+        return "" + flatData[0];
+    } else if (shape.length === 1) {
+        return "[" + flatData.join(",") + "]";
+    } else {
+        return serializeTensorStructure(flatData, shape);
+    }
+}
+
+function _handle_get_weights_error(e) {
+    if (("" + e).includes("already disposed")) {
+        if (finished_loading) {
+            //wrn("Maybe the model was recompiled...");
+        }
+    } else if (("" + e).includes("e is undefined")) {
+        wrn(language[lang]["e_is_undefined_in_get_weights_as_string_probably_harmless"]);
+    } else if (("" + e).includes("getWeights is not a function")) {
+        wrn(language[lang]["get_weights_is_not_a_function_model_may_have_been_undefined"]);
+    } else {
+        err(e);
+        console.trace();
+    }
 }
 
 // Recursive/iterative flat layout writer to construct JSON strings without array allocations
