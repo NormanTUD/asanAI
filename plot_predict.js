@@ -25,6 +25,8 @@ var ModelPlotter = (() => {
 	async function plot(div_id = 'plotly_predict', force = false) {
 		const plot_div = document.getElementById(div_id);
 		if (!plot_div) return;
+		if (!$("#" + div_id).css("display") == "none") return;
+		if (is_hidden_or_has_hidden_parent($("#" + div_id))) return;
 
 		const state = get_state(div_id);
 
