@@ -87,7 +87,7 @@ async function incrementAndReset() {
     $el.val(originalValue).trigger('change');
 }
 
-async function train_neural_network_from_scratch() {
+async function retrain_neural_network() {
 	await incrementAndReset();
 
 	await train_neural_network();

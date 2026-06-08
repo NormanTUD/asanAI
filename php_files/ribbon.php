@@ -151,8 +151,8 @@
 				<table>
 					<tr>
 						<td colspan=2>
-							<button class="retrain_neural_network_button start_training" style="min-width: 100%" onclick="train_neural_network()"><span class="TRANSLATEME_start_training_from_scratch"></span></button>
-							<button class="train_neural_network_button start_training" style="min-width: 100%" onclick="train_neural_network_from_scratch()"><span class="TRANSLATEME_start_training"></span></button>
+							<button class="train_neural_network_button start_training" style="min-width: 100%" onclick="train_neural_network()"><span class="TRANSLATEME_start_training"></span></button>
+							<button class="retrain_neural_network_button restart_training" style="min-width: 100%" onclick="retrain_neural_network()"><span class="TRANSLATEME_start_training_from_scratch"></span></button>
 						</td>
 					</tr>
 					<tr>
