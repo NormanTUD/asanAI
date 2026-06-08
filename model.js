@@ -1556,38 +1556,55 @@ async function compile_fake_model(layer_nr, layer_type) {
 // Heuristic check of whether layer types are possible at all. Only test if they're possible,
 // this saves a lot of time
 
-function _heuristic_layer_possibility_check(layer_type, layer_input_shape) {
-	if(["conv1d", "conv2d", "conv2dTranspose", "upSampling2d", "conv3d", "depthwiseConv2d", "separableConv2d", "averagePooling1d", "averagePooling2d", "averagePooling3d", "globalMaxPooling1d", "globalMaxPooling2d", "maxPooling1d", "maxPooling2d", "maxPooling3d", "globalAveragePooling1d"].includes(layer_type)) {
-		if(["conv1d", "averagePooling1d", "globalMaxPooling1d", "maxPooling1d", "globalAveragePooling1d"].includes(layer_type)) {
-			if(layer_input_shape.length == 2) {
-				return true;
-			}
-			return false;
-		} else if(["conv2d", "conv2dTranspose", "upSampling2d", "depthwiseConv2d", "separableConv2d", "averagePooling2d", "globalMaxPooling2d", "maxPooling2d"].includes(layer_type)) {
-			if(layer_input_shape.length == 3) {
-				return true;
-			}
-			return false;
-		} else if(["conv3d", "averagePooling3d", "maxPooling3d", "globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
-			if(layer_input_shape.length == 4) {
-				return true;
-			}
-			return false;
-		}
-	} else if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
-		if(["globalAveragePooling2d", "zeroPadding2d"].includes(layer_type)) {
-			if(layer_input_shape.length == 3) {
-				return true;
-			}
-			return false;
-		}
+// Heuristic check of whether layer types are possible at all. Only test if they're possible,
+// this saves a lot of time
 
-	} else if(["gru"].includes(layer_type)) {
-		if(layer_type == "gru" && layer_input_shape.length < 2) {
-			return false;
+function _heuristic_layer_possibility_check(layer_type, layer_input_shape, layer_nr) {
+	// --- 1D layers: require input shape length == 2 (i.e. [steps, features]) ---
+	if(["conv1d", "averagePooling1d", "maxPooling1d", "globalAveragePooling1d", "globalMaxPooling1d"].includes(layer_type)) {
+		if(layer_input_shape.length == 2) {
+			// Global pooling layers followed by flatten is redundant (already flat output)
+			if(["globalAveragePooling1d", "globalMaxPooling1d"].includes(layer_type)) {
+				const layer_type_array = get_layer_type_array();
+				const next_layer_type = layer_type_array[layer_nr + 1];
+
+				if(next_layer_type == "flatten") {
+					return false;
+				}
+			}
+			return true;
 		}
-	} else if(["ZeroPadding2D"].includes(layer_type)) {
-		if(layer_type == "gru" && layer_input_shape.length != 4) {
+		return false;
+	}
+
+	// --- 2D layers: require input shape length == 3 (i.e. [rows, cols, channels]) ---
+	if(["conv2d", "conv2dTranspose", "upSampling2d", "depthwiseConv2d", "separableConv2d", "averagePooling2d", "maxPooling2d", "globalAveragePooling2d", "globalMaxPooling2d", "zeroPadding2d"].includes(layer_type)) {
+		if(layer_input_shape.length == 3) {
+			// Global pooling layers followed by flatten is redundant (already flat output)
+			if(["globalAveragePooling2d", "globalMaxPooling2d"].includes(layer_type)) {
+				const layer_type_array = get_layer_type_array();
+				const next_layer_type = layer_type_array[layer_nr + 1];
+
+				if(next_layer_type == "flatten") {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	// --- 3D layers: require input shape length == 4 (i.e. [depths, rows, cols, channels]) ---
+	if(["conv3d", "averagePooling3d", "maxPooling3d"].includes(layer_type)) {
+		if(layer_input_shape.length == 4) {
+			return true;
+		}
+		return false;
+	}
+
+	// --- RNN layers: require at least 2D input ---
+	if(["gru", "lstm", "simpleRNN"].includes(layer_type)) {
+		if(layer_input_shape.length < 2) {
 			return false;
 		}
 	}
@@ -1625,7 +1642,7 @@ function heuristic_layer_possibility_check (layer_nr, layer_type) {
 		return false;
 	}
 
-	var res = _heuristic_layer_possibility_check(layer_type, layer_input_shape);
+	var res = _heuristic_layer_possibility_check(layer_type, layer_input_shape, layer_nr);
 
 	return res;
 }
