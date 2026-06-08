@@ -742,7 +742,12 @@
 			"pe_category_needs_image_model" => "Needs an image model + webcam",
 			"nr_of_images_in_this_category" => "Number of images in this category",
 			"upload_custom_zip_file" => 'Upload Custom Zip File',
-			"start_training_from_scratch" => "Restart Training"
+			"start_training_from_scratch" => "Restart Training",
+                       'globalAveragePooling1d_description' => 'This layer computes the average of all time steps for each feature, reducing a sequence to a single summary vector. You can think of it as condensing an entire sequence into one compact representation by averaging over time. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+                       'globalAveragePooling2d_description' => 'This layer computes the average of all spatial positions (height and width) for each channel, reducing a full feature map to a single value per channel. You can  think of it as summarizing an entire image into one compact vector by averaging over all pixels. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+                       'globalMaxPooling1d_description' => 'This layer picks the maximum value across all time steps for each feature, reducing a sequence to a single summary vector. You can think of it as keeping only the strongest signal from the entire sequence for each feature. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+                       'globalMaxPooling2d_description' => 'This layer picks the maximum value across all spatial positions (height and width) for each channel, reducing a full feature map to a single value per channel. You can think of it as keeping only the most prominent activation from the entire image for each channel. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+
 		),
 
 		'de' => array(
@@ -1487,6 +1492,10 @@
 			"nr_of_images_in_this_category" => "Anzahl Bilder in dieser Kategorie",
 			"upload_custom_zip_file" => 'Eigene Zip-Datei hochladen',
 			'start_training_from_scratch' => 'Training neu starten',
+			'globalAveragePooling1d_description' => 'Diese Schicht berechnet den Durchschnitt aller Zeitschritte für jedes Merkmal und reduziert eine Sequenz auf einen einzigen zusammenfassenden Vektor. Man kann sich vorstellen, dass eine gesamte Sequenz durch Mittelwertbildung über die Zeit zu einer kompakten Darstellung verdichtet wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+			'globalAveragePooling2d_description' => 'Diese Schicht berechnet den Durchschnitt aller räumlichen Positionen (H√∂he und Breite) für jeden Kanal und reduziert eine vollständige Feature-Map auf einen einzigen Wert pro Kanal. Man kann sich vorstellen, dass ein gesamtes Bild durch Mittelwertbildung über alle Pixel zu einem kompakten Vektor zusammengefasst wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+			'globalMaxPooling1d_description' => 'Diese Schicht wählt den maximalen Wert über alle Zeitschritte für jedes Merkmal aus und reduziert eine Sequenz auf einen einzigen zusammenfassenden Vektor. Man kann sich vorstellen, dass nur das stärkste Signal aus der gesamten Sequenz für jedes Merkmal behalten wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+			'globalMaxPooling2d_description' => 'Diese Schicht wählt den maximalen Wert über alle räumlichen Positionen (H√∂he und Breite) für jeden Kanal aus und reduziert eine vollständige Feature-Map auf einen einzigen Wert pro Kanal. Man kann sich vorstellen, dass nur die stärkste Aktivierung aus dem gesamten Bild für jeden Kanal behalten wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
 		)
 	);
 
