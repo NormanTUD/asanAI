@@ -1945,7 +1945,7 @@ function _handle_get_weights_error(e) {
 function serializeTensorStructure(flatData, shape) {
     var flatIdx = 0;
     
-    function recurse(dimIdx) {
+    function recurseHere(dimIdx) {
         var size = shape[dimIdx];
         if (dimIdx === shape.length - 1) {
             // Lowest dimension: batch-join values for speed
@@ -1956,12 +1956,12 @@ function serializeTensorStructure(flatData, shape) {
         
         var strParts = new Array(size);
         for (var i = 0; i < size; i++) {
-            strParts[i] = recurse(dimIdx + 1);
+            strParts[i] = recurseHere(dimIdx + 1);
         }
         return "[" + strParts.join(",") + "]";
     }
     
-    return recurse(0);
+    return recurseHere(0);
 }
 
 function download(filename, text) {
