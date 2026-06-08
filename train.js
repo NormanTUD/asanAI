@@ -73,23 +73,7 @@ function get_empty_plotly(name) {
 	return obj;
 }
 
-async function incrementAndReset() {
-    const $el = $('input').filter('.input_data.units, .input_data.filters').first();
-    if ($el.length === 0) return;
-
-    const originalValue = parseFloat($el.val()) || 0;
-    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-    $el.val(originalValue + 1).trigger('change');
-
-    await wait(1000);
-
-    $el.val(originalValue).trigger('change');
-}
-
 async function train_neural_network_from_scratch() {
-	await incrementAndReset();
-
 	await train_neural_network();
 }
 
