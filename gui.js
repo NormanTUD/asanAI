@@ -5563,6 +5563,8 @@ async function write_error(e, fn, hide_swal) {
 		}
 
 		$(".train_neural_network_button").html("<span class='TRANSLATEME_start_training'></span>").removeClass("stop_training").addClass("start_training");
+		$(".retrain_neural_network_button").html("<span class='TRANSLATEME_start_training_from_scratch'></span>").removeClass("stop_training").addClass("start_training");
+
 		await update_translations();
 		await write_descriptions();
 		err("[write_error] "+ msg);
