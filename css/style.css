@@ -652,6 +652,11 @@ button:disabled:hover {
 	color: white;
 }
 
+.restart_training {
+	background-color: #ffb366;
+	color: black;
+}
+
 .start_training {
 	background-color: #9ACD32;
 	color: black;
