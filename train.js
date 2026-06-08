@@ -73,6 +73,10 @@ function get_empty_plotly(name) {
 	return obj;
 }
 
+async function train_neural_network_from_scratch() {
+	await train_neural_network();
+}
+
 async function train_neural_network() {
 	reset_math_history();
 
