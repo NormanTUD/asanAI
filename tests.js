@@ -1004,6 +1004,8 @@ async function test_clicking_on_example_images_for_prediction() {
 
 	const nr_of_example_imgs = $("#training_data_tab").find(".predict_data_img").length;
 
+	log(`Got nr_of_example_imgs: ${nr_of_example_imgs}`);
+
 	test_equal("Has now one example prediction", nr_of_example_imgs, 1);
 
 	await delay(1000);
