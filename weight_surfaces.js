@@ -365,6 +365,251 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	// ─── Main Render Logic ──────────────────────────────────────────────────────
 
+	// ─── Render Helpers (split from render_weight_array) ────────────────────────
+
+	function _render_1d(parent, arr, shape, title, baseKey) {
+		const c = _colors();
+		const values = shape.length === 0 ? [arr] : arr;
+		const n = values.length;
+		const indices = Array.from({ length: n }, (_, i) => i);
+
+		const minV = Math.min(...values);
+		const maxV = Math.max(...values);
+		const range = maxV - minV || 1;
+		const normed = values.map(v => (v - minV) / range);
+
+		const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
+		const layout = _base_layout(title, false);
+		layout.xaxis.title.text = shape.length === 0 ? '' : 'Neuron / Parameter Index';
+		layout.yaxis.title.text = 'Weight Value';
+		layout.shapes = [{
+			type: 'line', x0: 0, x1: n - 1, y0: 0, y1: 0,
+			line: { color: c.axis_line, width: 1.5, dash: 'dot' }
+		}];
+
+		return _plot_preserve_camera(plotDiv, [{
+			x: indices,
+			y: values,
+			type: 'scatter',
+			mode: n > 200 ? 'markers' : 'markers+lines',
+			marker: {
+				size: n > 500 ? 4 : n > 100 ? 6 : 9,
+				color: normed,
+				colorscale: 'Viridis',
+				showscale: n > 1,
+				colorbar: n > 1 ? {
+					title: { text: 'Value', side: 'right', font: { size: 10, color: c.font } },
+					thickness: 12, len: 0.6, tickfont: { size: 9, color: c.tick }
+				} : undefined,
+				line: { width: 0.5, color: c.marker_line },
+				opacity: 0.88
+			},
+			line: { width: 1.2, color: _dark() ? 'rgba(120,180,255,0.3)' : 'rgba(60,60,180,0.2)' },
+			hovertemplate: 'Index: %{x}<br>Value: %{y:.6f}<extra></extra>'
+		}], layout, {}, plotDiv.dataset.plotKey);
+	}
+
+	function _render_2d_heatmap(parent, arr, shape, title, baseKey) {
+		const c = _colors();
+		const k2d = baseKey + "_heat";
+		const plotDiv2d = create_plot_div(parent, title + " (Heatmap)", k2d);
+		const layout = _base_layout(title + ' — Weight Matrix Heatmap', false);
+		layout.xaxis.title.text = 'Output Neuron';
+		layout.yaxis.title.text = 'Input Neuron';
+
+		const zData = to_float_matrix(arr);
+		const flatVals = zData.flat();
+		const absMax = Math.max(Math.abs(Math.min(...flatVals)), Math.abs(Math.max(...flatVals))) || 1;
+
+		return _plot_preserve_camera(plotDiv2d, [{
+			z: zData,
+			type: 'heatmap',
+			colorscale: _dark()
+				? [[0, '#0d0887'], [0.25, '#7201a8'], [0.5, '#bd3786'], [0.75, '#ed7953'], [1, '#fdca26']]
+				: 'RdBu',
+			reversescale: !_dark(),
+			zmid: _dark() ? undefined : 0,
+			zmin: _dark() ? undefined : -absMax,
+			zmax: _dark() ? undefined : absMax,
+			hoverongaps: false,
+			hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 11, color: c.font } },
+				thickness: 14, tickfont: { size: 9, color: c.tick }, outlinewidth: 0
+			}
+		}], layout, {}, plotDiv2d.dataset.plotKey);
+	}
+
+	function _render_2d_surface(parent, arr, shape, title, baseKey) {
+		const c = _colors();
+		const k3d = baseKey + "_surf";
+		const plotDiv3d = create_plot_div(parent, title + " (3D Surface)", k3d);
+		const layout3d = _base_layout(title + ' — Weight Surface', true);
+		layout3d.scene = _scene('Output Neuron', 'Input Neuron', 'Weight Value');
+
+		const zData = to_float_matrix(arr);
+
+		return _plot_preserve_camera(plotDiv3d, [{
+			z: zData,
+			type: 'surface',
+			colorscale: 'Viridis',
+			lighting: { ambient: 0.6, diffuse: 0.7, specular: 0.3, roughness: 0.5, fresnel: 0.3 },
+			lightposition: { x: 1000, y: 1000, z: 2000 },
+			contours: {
+				z: { show: true, usecolormap: true, highlightcolor: _dark() ? '#ffffff' : '#333333', project: { z: true } }
+			},
+			hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+				thickness: 12, tickfont: { size: 9, color: c.tick }
+			}
+		}], layout3d, {}, plotDiv3d.dataset.plotKey);
+	}
+
+	async function _render_2d(parent, arr, shape, title, baseKey) {
+		const [h, w] = shape;
+		if (h < 1 || w < 1) return;
+
+		await _render_2d_heatmap(parent, arr, shape, title, baseKey);
+
+		if (h >= 3 && w >= 3 && opts.plot3d) {
+			await _render_2d_surface(parent, arr, shape, title, baseKey);
+		}
+	}
+
+	async function _render_3d_slice(parent, arr, shape, title, baseKey, sliceIndex) {
+		const c = _colors();
+		const slice = arr.map(r => r.map(col => col[sliceIndex]));
+		const key = baseKey + "_slice_" + sliceIndex;
+		const sliceTitle = `${title} — Filter ${sliceIndex}/${shape[2]} [${shape[0]}×${shape[1]}]`;
+		const plotDiv = create_plot_div(parent, sliceTitle, key);
+		const layout = _base_layout(sliceTitle, true);
+		layout.scene = _scene('Kernel X', 'Kernel Y', 'Weight Value');
+
+		await _plot_preserve_camera(plotDiv, [{
+			z: to_float_matrix(slice),
+			type: 'surface',
+			colorscale: 'Electric',
+			lighting: { ambient: 0.55, diffuse: 0.65, specular: 0.4, roughness: 0.4, fresnel: 0.2 },
+			contours: { z: { show: true, usecolormap: true, project: { z: true } } },
+			hovertemplate: 'X: %{x}<br>Y: %{y}<br>Weight: %{z:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+				thickness: 12, tickfont: { size: 9, color: c.tick }
+			}
+		}], layout, {}, plotDiv.dataset.plotKey);
+	}
+
+	async function _render_3d(parent, arr, shape, title, baseKey) {
+		const slices = Math.min(shape[2], opts.max_slices);
+		for (let i = 0; i < slices; i++) {
+			await new Promise(r => setTimeout(r, 0));
+			await _render_3d_slice(parent, arr, shape, title, baseKey, i);
+		}
+	}
+
+	async function _render_4d_slice(parent, arr, shape, title, baseKey, filterIndex) {
+		const c = _colors();
+		const [h, w, inCh] = shape;
+		const slice4 = arr.map(f => f.map(r => r.map(col => col[filterIndex])));
+		const surfaceData = slice4.map(row => row.map(col => col[0]));
+
+		const key = baseKey + "_slice4_" + filterIndex;
+		const sliceTitle = `${title} — Output Filter ${filterIndex}/${shape[3]} [${h}×${w}×${inCh}]`;
+		const plotDiv4 = create_plot_div(parent, sliceTitle, key);
+		const layout = _base_layout(sliceTitle, true);
+		layout.scene = _scene('Kernel Width', 'Kernel Height', 'Weight Value');
+
+		await _plot_preserve_camera(plotDiv4, [{
+			z: to_float_matrix(surfaceData),
+			type: 'surface',
+			colorscale: 'Plasma',
+			lighting: { ambient: 0.5, diffuse: 0.7, specular: 0.35, roughness: 0.45, fresnel: 0.25 },
+			contours: {
+				z: { show: true, usecolormap: true, project: { z: true } },
+				x: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.1)', project: { x: false } }
+			},
+			hovertemplate: 'W: %{x}<br>H: %{y}<br>Weight: %{z:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+				thickness: 12, tickfont: { size: 9, color: c.tick }
+			}
+		}], layout, {}, plotDiv4.dataset.plotKey);
+	}
+
+	async function _render_4d(parent, arr, shape, title, baseKey) {
+		const slices = Math.min(shape[3], opts.max_slices);
+		for (let j = 0; j < slices; j++) {
+			await new Promise(r => setTimeout(r, 0));
+			await _render_4d_slice(parent, arr, shape, title, baseKey, j);
+		}
+	}
+
+	function _build_5d_volume_data(arr, shape, ic, oc) {
+		const [kx, ky, kz] = shape;
+		const volume = arr.map(x => x.map(y => y.map(z => z[ic][oc])));
+		const x = [], y = [], z = [], value = [];
+
+		for (let i = 0; i < kx; i++) {
+			for (let j = 0; j < ky; j++) {
+				for (let k = 0; k < kz; k++) {
+					x.push(i);
+					y.push(j);
+					z.push(k);
+					value.push(volume[i][j][k]);
+				}
+			}
+		}
+		return { x, y, z, value };
+	}
+
+	async function _render_5d_volume(parent, arr, shape, title, baseKey, ic, oc) {
+		const c = _colors();
+		const [kx, ky, kz] = shape;
+		const { x, y, z, value } = _build_5d_volume_data(arr, shape, ic, oc);
+
+		const key = baseKey + "_5d_" + ic + "_" + oc;
+		const volTitle = `${title} — 3D Volume (Out=${oc}, In=${ic}) [${kx}×${ky}×${kz}]`;
+		const plotDiv = create_plot_div(parent, volTitle, key);
+		const layout = _base_layout(volTitle, true);
+		layout.scene = _scene('Kernel X', 'Kernel Y', 'Kernel Z');
+		layout.scene.aspectmode = 'cube';
+
+		const vMin = Math.min(...value);
+		const vMax = Math.max(...value);
+
+		await _plot_preserve_camera(plotDiv, [{
+			type: 'isosurface',
+			x, y, z, value,
+			colorscale: 'Viridis',
+			isomin: vMin + (vMax - vMin) * 0.1,
+			isomax: vMax - (vMax - vMin) * 0.1,
+			surface: { show: true, count: 5, fill: 0.7 },
+			caps: { x: { show: false }, y: { show: false }, z: { show: false } },
+			opacity: 0.6,
+			hovertemplate: 'X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Value: %{value:.6f}<extra></extra>',
+			colorbar: {
+				title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+				thickness: 12, tickfont: { size: 9, color: c.tick }
+			}
+		}], layout, {}, plotDiv.dataset.plotKey);
+	}
+
+	async function _render_5d(parent, arr, shape, title, baseKey) {
+		const [kx, ky, kz, in_ch, out_ch] = shape;
+		const slices_out = Math.min(out_ch, opts.max_slices);
+		const slices_in = Math.min(in_ch, opts.max_slices);
+
+		for (let oc = 0; oc < slices_out; oc++) {
+			for (let ic = 0; ic < slices_in; ic++) {
+				await new Promise(r => setTimeout(r, 0));
+				await _render_5d_volume(parent, arr, shape, title, baseKey, ic, oc);
+			}
+		}
+	}
+
+	// ─── Main Render Logic ──────────────────────────────────────────────────────
+
 	async function render_weight_array(parent, arr, title, shape, layerType) {
 		if (!arr || !shape || !finished_loading) return;
 		if (shape.length > 5) {
@@ -373,260 +618,17 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 
 		const baseKey = (title || "plot").replace(/\s+/g, '_').replace(/[^\w-]/g, '');
-		const c = _colors();
 
-		// ── Scalar or 1D ──────────────────────────────────────────────────────────
 		if (shape.length <= 1) {
-			const values = shape.length === 0 ? [arr] : arr;
-			const n = values.length;
-			const indices = Array.from({ length: n }, (_, i) => i);
-
-			// Compute normalized positions for gradient coloring
-			const minV = Math.min(...values);
-			const maxV = Math.max(...values);
-			const range = maxV - minV || 1;
-			const normed = values.map(v => (v - minV) / range);
-
-			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-			const layout = _base_layout(title, false);
-			layout.xaxis.title.text = shape.length === 0 ? '' : 'Neuron / Parameter Index';
-			layout.yaxis.title.text = 'Weight Value';
-
-			// Add a subtle horizontal zero line
-			layout.shapes = [{
-				type: 'line', x0: 0, x1: n - 1, y0: 0, y1: 0,
-				line: { color: c.axis_line, width: 1.5, dash: 'dot' }
-			}];
-
-			await _plot_preserve_camera(plotDiv, [{
-				x: indices,
-				y: values,
-				type: 'scatter',
-				mode: n > 200 ? 'markers' : 'markers+lines',
-				marker: {
-					size: n > 500 ? 4 : n > 100 ? 6 : 9,
-					color: normed,
-					colorscale: 'Viridis',
-					showscale: n > 1,
-					colorbar: n > 1 ? {
-						title: { text: 'Value', side: 'right', font: { size: 10, color: c.font } },
-						thickness: 12,
-						len: 0.6,
-						tickfont: { size: 9, color: c.tick }
-					} : undefined,
-					line: { width: 0.5, color: c.marker_line },
-					opacity: 0.88
-				},
-				line: { width: 1.2, color: _dark() ? 'rgba(120,180,255,0.3)' : 'rgba(60,60,180,0.2)' },
-				hovertemplate: 'Index: %{x}<br>Value: %{y:.6f}<extra></extra>'
-			}], layout, {}, plotDiv.dataset.plotKey);
-		}
-
-		// ── 2D Matrix ─────────────────────────────────────────────────────────────
-		else if (shape.length === 2) {
-			const [h, w] = shape;
-			if (h >= 1 && w >= 1) {
-				const k2d = baseKey + "_heat";
-				const plotDiv2d = create_plot_div(parent, title + " (Heatmap)", k2d);
-				const layout = _base_layout(title + ' — Weight Matrix Heatmap', false);
-				layout.xaxis.title.text = 'Output Neuron';
-				layout.yaxis.title.text = 'Input Neuron';
-
-				const zData = to_float_matrix(arr);
-				const flatVals = zData.flat();
-				const absMax = Math.max(Math.abs(Math.min(...flatVals)), Math.abs(Math.max(...flatVals))) || 1;
-
-				await _plot_preserve_camera(plotDiv2d, [{
-					z: zData,
-					type: 'heatmap',
-					colorscale: _dark()
-						? [[0, '#0d0887'], [0.25, '#7201a8'], [0.5, '#bd3786'], [0.75, '#ed7953'], [1, '#fdca26']]
-						: 'RdBu',
-					reversescale: !_dark(),
-					zmid: _dark() ? undefined : 0,
-					zmin: _dark() ? undefined : -absMax,
-					zmax: _dark() ? undefined : absMax,
-					hoverongaps: false,
-					hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
-					colorbar: {
-						title: { text: 'Weight', side: 'right', font: { size: 11, color: c.font } },
-						thickness: 14,
-						tickfont: { size: 9, color: c.tick },
-						outlinewidth: 0
-					}
-				}], layout, {}, plotDiv2d.dataset.plotKey);
-
-				// Also render a 3D surface for 2D weights if large enough
-				if (h >= 3 && w >= 3 && opts.plot3d) {
-					const k3d = baseKey + "_surf";
-					const plotDiv3d = create_plot_div(parent, title + " (3D Surface)", k3d);
-					const layout3d = _base_layout(title + ' — Weight Surface', true);
-					layout3d.scene = _scene('Output Neuron', 'Input Neuron', 'Weight Value');
-
-					await _plot_preserve_camera(plotDiv3d, [{
-						z: zData,
-						type: 'surface',
-						colorscale: 'Viridis',
-						lighting: {
-							ambient: 0.6,
-							diffuse: 0.7,
-							specular: 0.3,
-							roughness: 0.5,
-							fresnel: 0.3
-						},
-						lightposition: { x: 1000, y: 1000, z: 2000 },
-						contours: {
-							z: {
-								show: true,
-								usecolormap: true,
-								highlightcolor: _dark() ? '#ffffff' : '#333333',
-								project: { z: true }
-							}
-						},
-						hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
-						colorbar: {
-							title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
-							thickness: 12,
-							tickfont: { size: 9, color: c.tick }
-						}
-					}], layout3d, {}, plotDiv3d.dataset.plotKey);
-				}
-			}
-		}
-
-		// ── 3D Tensor (e.g. Conv1D kernels) ─────────────────────────────────────
-		else if (shape.length === 3) {
-			const slices = Math.min(shape[2], opts.max_slices);
-			for (let i = 0; i < slices; i++) {
-				await new Promise(r => setTimeout(r, 0));
-				const slice = arr.map(r => r.map(c => c[i]));
-				const key = baseKey + "_slice_" + i;
-				const sliceTitle = `${title} — Filter ${i}/${shape[2]} [${shape[0]}×${shape[1]}]`;
-				const plotDiv = create_plot_div(parent, sliceTitle, key);
-				const layout = _base_layout(sliceTitle, true);
-				layout.scene = _scene('Kernel X', 'Kernel Y', 'Weight Value');
-
-				await _plot_preserve_camera(plotDiv, [{
-					z: to_float_matrix(slice),
-					type: 'surface',
-					colorscale: 'Electric',
-					lighting: {
-						ambient: 0.55,
-						diffuse: 0.65,
-						specular: 0.4,
-						roughness: 0.4,
-						fresnel: 0.2
-					},
-					contours: {
-						z: { show: true, usecolormap: true, project: { z: true } }
-					},
-					hovertemplate: 'X: %{x}<br>Y: %{y}<br>Weight: %{z:.6f}<extra></extra>',
-					colorbar: {
-						title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
-						thickness: 12,
-						tickfont: { size: 9, color: c.tick }
-					}
-				}], layout, {}, plotDiv.dataset.plotKey);
-			}
-		}
-
-		// ── 4D Tensor (e.g. Conv2D kernels) ─────────────────────────────────────
-		else if (shape.length === 4) {
-			const slices = Math.min(shape[3], opts.max_slices);
-			for (let j = 0; j < slices; j++) {
-				await new Promise(r => setTimeout(r, 0));
-				// Take first input channel, j-th output filter
-				const slice4 = arr.map(f => f.map(r => r.map(c => c[j])));
-				// Flatten the first two spatial dims for surface
-				const h = shape[0], w = shape[1], inCh = shape[2];
-				// Show first input channel as representative
-				const surfaceData = slice4.map(row => row.map(col => col[0]));
-
-				const key = baseKey + "_slice4_" + j;
-				const sliceTitle = `${title} — Output Filter ${j}/${shape[3]} [${h}×${w}×${inCh}]`;
-				const plotDiv4 = create_plot_div(parent, sliceTitle, key);
-				const layout = _base_layout(sliceTitle, true);
-				layout.scene = _scene('Kernel Width', 'Kernel Height', 'Weight Value');
-
-				await _plot_preserve_camera(plotDiv4, [{
-					z: to_float_matrix(surfaceData),
-					type: 'surface',
-					colorscale: 'Plasma',
-					lighting: {
-						ambient: 0.5,
-						diffuse: 0.7,
-						specular: 0.35,
-						roughness: 0.45,
-						fresnel: 0.25
-					},
-					contours: {
-						z: { show: true, usecolormap: true, project: { z: true } },
-						x: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.1)', project: { x: false } }
-					},
-					hovertemplate: 'W: %{x}<br>H: %{y}<br>Weight: %{z:.6f}<extra></extra>',
-					colorbar: {
-						title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
-						thickness: 12,
-						tickfont: { size: 9, color: c.tick }
-					}
-				}], layout, {}, plotDiv4.dataset.plotKey);
-			}
-		}
-
-		// ── 5D Tensor (e.g. Conv3D kernels) ─────────────────────────────────────
-		else if (shape.length === 5) {
-			const [kx, ky, kz, in_ch, out_ch] = shape;
-			const slices_out = Math.min(out_ch, opts.max_slices);
-			const slices_in = Math.min(in_ch, opts.max_slices);
-
-			for (let oc = 0; oc < slices_out; oc++) {
-				for (let ic = 0; ic < slices_in; ic++) {
-					await new Promise(r => setTimeout(r, 0));
-					const volume = arr.map(x =>
-						x.map(y =>
-							y.map(z => z[ic][oc])
-						)
-					);
-
-					const x = [], y = [], z = [], value = [];
-					for (let i = 0; i < kx; i++)
-						for (let j = 0; j < ky; j++)
-							for (let k = 0; k < kz; k++) {
-								x.push(i);
-								y.push(j);
-								z.push(k);
-								value.push(volume[i][j][k]);
-							}
-
-					const key = baseKey + "_5d_" + ic + "_" + oc;
-					const volTitle = `${title} — 3D Volume (Out=${oc}, In=${ic}) [${kx}×${ky}×${kz}]`;
-					const plotDiv = create_plot_div(parent, volTitle, key);
-					const layout = _base_layout(volTitle, true);
-					layout.scene = _scene('Kernel X', 'Kernel Y', 'Kernel Z');
-					layout.scene.aspectmode = 'cube';
-
-					const vMin = Math.min(...value);
-					const vMax = Math.max(...value);
-
-					await _plot_preserve_camera(plotDiv, [{
-						type: 'isosurface',
-						x, y, z,
-						value,
-						colorscale: 'Viridis',
-						isomin: vMin + (vMax - vMin) * 0.1,
-						isomax: vMax - (vMax - vMin) * 0.1,
-						surface: { show: true, count: 5, fill: 0.7 },
-						caps: { x: { show: false }, y: { show: false }, z: { show: false } },
-						opacity: 0.6,
-						hovertemplate: 'X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Value: %{value:.6f}<extra></extra>',
-						colorbar: {
-							title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
-							thickness: 12,
-							tickfont: { size: 9, color: c.tick }
-						}
-					}], layout, {}, plotDiv.dataset.plotKey);
-				}
-			}
+			await _render_1d(parent, arr, shape, title, baseKey);
+		} else if (shape.length === 2) {
+			await _render_2d(parent, arr, shape, title, baseKey);
+		} else if (shape.length === 3) {
+			await _render_3d(parent, arr, shape, title, baseKey);
+		} else if (shape.length === 4) {
+			await _render_4d(parent, arr, shape, title, baseKey);
+		} else if (shape.length === 5) {
+			await _render_5d(parent, arr, shape, title, baseKey);
 		}
 	}
 
