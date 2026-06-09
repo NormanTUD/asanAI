@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Attention: Q, K, V Interactive Explorer</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin: 30px 0 15px;
+            color: #667eea;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 1.2em;
+            margin: 20px 0 10px;
+            color: #9b8ec4;
+        }
+        .section {
+            background: #12122a;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid #2a2a4a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .math-block {
+            background: #1a1a3a;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            overflow-x: auto;
+        }
+        .math-inline {
+            display: inline-block;
+            margin: 0 4px;
+        }
+        .plot-container {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .control-group {
+            background: #1a1a3a;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            margin: 5px 0;
+            accent-color: #667eea;
+        }
+        .control-group input[type="number"] {
+            width: 80px;
+            background: #0a0a1a;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .control-group select {
+            width: 100%;
+            background: #0a0a1a;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+        .value-display {
+            font-family: monospace;
+            color: #667eea;
+            font-size: 0.9em;
+        }
+        .explanation {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+            border: 1px solid #2a2a4a;
+        }
+        .highlight {
+            color: #667eea;
+            font-weight: bold;
+        }
+        .highlight-q { color: #ff6b6b; }
+        .highlight-k { color: #4ecdc4; }
+        .highlight-v { color: #ffd93d; }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        .step-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .step-btn {
+            padding: 10px 20px;
+            background: #1a1a3a;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .step-btn:hover, .step-btn.active {
+            background: #667eea;
+            color: #fff;
+        }
+        .step-content {
+            display: none;
+        }
+        .step-content.active {
+            display: block;
+        }
+        .matrix-display {
+            font-family: monospace;
+            background: #0a0a1a;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            overflow-x: auto;
+            white-space: pre;
+            font-size: 0.85em;
+        }
+        .token-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .token-chip {
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+            border: 2px solid #444;
+            background: #1a1a3a;
+        }
+        .token-chip:hover {
+            border-color: #667eea;
+        }
+        .token-chip.selected {
+            background: #667eea;
+            border-color: #667eea;
+            color: #fff;
+        }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            background: #0d0d20;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+        }
+        .legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+            font-size: 0.85em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .intro-text {
+            text-align: center;
+            font-size: 1.1em;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Transformer Attention: Q, K, V Interactive Explorer</h1>
+        <p class="intro-text">
+            Build your geometric intuition for how <span class="highlight-q">Queries</span>, 
+            <span class="highlight-k">Keys</span>, and <span class="highlight-v">Values</span> 
+            work inside transformer attention — from simple 2D to full multi-head attention.
+        </p>
+
+        <div class="step-nav">
+            <button class="step-btn active" onclick="showStep(0)">1. Embeddings</button>
+            <button class="step-btn" onclick="showStep(1)">2. Linear Projections</button>
+            <button class="step-btn" onclick="showStep(2)">3. Dot-Product Attention</button>
+            <button class="step-btn" onclick="showStep(3)">4. Softmax & Weighting</button>
+            <button class="step-btn" onclick="showStep(4)">5. Value Aggregation</button>
+            <button class="step-btn" onclick="showStep(5)">6. Full 3D Multi-Head</button>
+        </div>
+
+        <!-- STEP 0: Embeddings -->
+        <div class="step-content active" id="step-0">
+            <div class="section">
+                <h2>Step 1: Token Embeddings in Space</h2>
+                <div class="explanation">
+                    Every token in a transformer is represented as a <strong>vector</strong> in a high-dimensional space.
+                    Here we use 2D so you can see it directly. Each axis represents a learned semantic dimension.
+                    Think of them as "concepts" — e.g., one axis might correlate with "animal-ness", another with "size".
+                </div>
+                <div class="math-block" id="math-embedding"></div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Token 1 ("cat") — x:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="2" id="t1x" oninput="updateStep0()">
+                        <span class="value-display" id="t1x-val">2.0</span>
+                        <label>Token 1 — y:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="1.5" id="t1y" oninput="updateStep0()">
+                        <span class="value-display" id="t1y-val">1.5</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Token 2 ("dog") — x:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="1.8" id="t2x" oninput="updateStep0()">
+                        <span class="value-display" id="t2x-val">1.8</span>
+                        <label>Token 2 — y:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="1.2" id="t2y" oninput="updateStep0()">
+                        <span class="value-display" id="t2y-val">1.2</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Token 3 ("car") — x:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="-1" id="t3x" oninput="updateStep0()">
+                        <span class="value-display" id="t3x-val">-1.0</span>
+                        <label>Token 3 — y:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="2" id="t3y" oninput="updateStep0()">
+                        <span class="value-display" id="t3y-val">2.0</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Token 4 ("runs") — x:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="0.5" id="t4x" oninput="updateStep0()">
+                        <span class="value-display" id="t4x-val">0.5</span>
+                        <label>Token 4 — y:</label>
+                        <input type="range" min="-3" max="3" step="0.1" value="-1.5" id="t4y" oninput="updateStep0()">
+                        <span class="value-display" id="t4y-val">-1.5</span>
+                    </div>
+                </div>
+                <div class="plot-container" id="plot-step0"></div>
+                <div class="explanation">
+                    <strong>Key insight:</strong> Tokens that are semantically similar (cat, dog) live close together in embedding space.
+                    The embedding is the <em>starting point</em> — attention will transform these positions via learned linear maps.
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 1: Linear Projections -->
+        <div class="step-content" id="step-1">
+            <div class="section">
+                <h2>Step 2: Q, K, V Linear Projections</h2>
+                <div class="explanation">
+                    Each embedding <span class="math-inline" id="math-x-inline"></span> is multiplied by three learned weight matrices to produce
+                    <span class="highlight-q">Query (Q)</span>, <span class="highlight-k">Key (K)</span>, and <span class="highlight-v">Value (V)</span> vectors.
+                    These are <strong>linear transformations</strong> — geometrically they are rotations, scalings, and shears of the embedding space.
+                </div>
+                <div class="math-block" id="math-projections"></div>
+                <div class="explanation">
+                    <strong>Intuition:</strong><br>
+                    • <span class="highlight-q">Q (Query)</span> = "What am I looking for?" — rotates the token into a "question" space<br>
+                    • <span class="highlight-k">K (Key)</span> = "What do I contain?" — rotates the token into a "label" space<br>
+                    • <span class="highlight-v">V (Value)</span> = "What information do I carry?" — rotates into a "content" space<br><br>
+                    Attention scores come from Q·K similarity. The output is a weighted sum of V vectors.
+                </div>
+                <h3>W_Q Matrix (2×2)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>W_Q[0,0]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="1" id="wq00" oninput="updateStep1()">
+                        <span class="value-display" id="wq00-val">1.00</span>
+                        <label>W_Q[0,1]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="0.3" id="wq01" oninput="updateStep1()">
+                        <span class="value-display" id="wq01-val">0.30</span>
+                    </div>
+                    <div class="control-group">
+                        <label>W_Q[1,0]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="-0.2" id="wq10" oninput="updateStep1()">
+                        <span class="value-display" id="wq10-val">-0.20</span>
+                        <label>W_Q[1,1]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="1.1" id="wq11" oninput="updateStep1()">
+                        <span class="value-display" id="wq11-val">1.10</span>
+                    </div>
+                </div>
+                <h3>W_K Matrix (2×2)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>W_K[0,0]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="0.8" id="wk00" oninput="updateStep1()">
+                        <span class="value-display" id="wk00-val">0.80</span>
+                        <label>W_K[0,1]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="-0.5" id="wk01" oninput="updateStep1()">
+                        <span class="value-display" id="wk01-val">-0.50</span>
+                    </div>
+                    <div class="control-group">
+                        <label>W_K[1,0]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="0.4" id="wk10" oninput="updateStep1()">
+                        <span class="value-display" id="wk10-val">0.40</span>
+                        <label>W_K[1,1]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="0.9" id="wk11" oninput="updateStep1()">
+                        <span class="value-display" id="wk11-val">0.90</span>
+                    </div>
+                </div>
+                <h3>W_V Matrix (2×2)</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>W_V[0,0]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="0.6" id="wv00" oninput="updateStep1()">
+                        <span class="value-display" id="wv00-val">0.60</span>
+                        <label>W_V[0,1]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="0.7" id="wv01" oninput="updateStep1()">
+                        <span class="value-display" id="wv01-val">0.70</span>
+                    </div>
+                    <div class="control-group">
+                        <label>W_V[1,0]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="-0.3" id="wv10" oninput="updateStep1()">
+                        <span class="value-display" id="wv10-val">-0.30</span>
+                        <label>W_V[1,1]:</label>
+                        <input type="range" min="-2" max="2" step="0.05" value="1.2" id="wv11" oninput="updateStep1()">
+                        <span class="value-display" id="wv11-val">1.20</span>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="plot-container" id="plot-step1-qk"></div>
+                    <div class="plot-container" id="plot-step1-v"></div>
+                </div>
+                <div class="matrix-display" id="matrix-display-1"></div>
+                <div class="explanation">
+                    <strong>Watch how:</strong> The Q and K projections rotate/scale tokens differently. 
+                    Two tokens might be close in embedding space but far apart in Q-K space (or vice versa).
+                    The V projection determines what "content" each token carries to the output.
+                    Try making W_Q a pure rotation vs. a stretch — see how it changes which tokens align!
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Dot-Product Attention -->
+        <div class="step-content" id="step-2">
+            <div class="section">
+                <h2>Step 3: Dot-Product Attention Scores</h2>
+                <div class="explanation">
+                    For each query token, we compute its dot product with all key tokens.
+                    The dot product measures <strong>alignment</strong> — how much two vectors point in the same direction.
+                    Geometrically: <span class="math-inline" id="math-dot-inline"></span> = projection of q onto k × magnitudes.
+                </div>
+                <div class="math-block" id="math-dotproduct"></div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Select Query Token:</label>
+                        <div class="token-selector" id="query-selector">
+                            <span class="token-chip selected" onclick="selectQuery(0)">cat</span>
+                            <span class="token-chip" onclick="selectQuery(1)">dog</span>
+                            <span class="token-chip" onclick="selectQuery(2)">car</span>
+                            <span class="token-chip" onclick="selectQuery(3)">runs</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Temperature (÷ √d_k scaling):</label>
+                        <input type="range" min="0.1" max="5" step="0.1" value="1.41" id="temperature" oninput="updateStep2()">
+                        <span class="value-display" id="temperature-val">1.41 (√2)</span>
+                    </div>
+                </div>
+                <div class="plot-container" id="plot-step2-geometric"></div>
+                <div class="plot-container" id="plot-step2-scores"></div>
+                <div class="explanation">
+                    <strong>Geometric view:</strong> The query vector (red arrow) is projected onto each key vector (teal arrows).
+                    The longer the projection and the more aligned the directions, the higher the attention score.
+                    The <span class="math-inline" id="math-sqrt-dk"></span> scaling prevents scores from becoming too large in high dimensions.
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Softmax -->
+        <div class="step-content" id="step-3">
+            <div class="section">
+                <h2>Step 4: Softmax — From Scores to Weights</h2>
+                <div class="explanation">
+                    Raw dot-product scores are converted to a probability distribution via softmax.
+                    This creates <strong>attention weights</strong> that sum to 1. Higher temperature → more uniform; lower → more peaked.
+                </div>
+                <div class="math-block" id="math-softmax"></div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Select Query Token:</label>
+                        <div class="token-selector" id="query-selector-3">
+                            <span class="token-chip selected" onclick="selectQuery3(0)">cat</span>
+                            <span class="token-chip" onclick="selectQuery3(1)">dog</span>
+                            <span class="token-chip" onclick="selectQuery3(2)">car</span>
+                            <span class="token-chip" onclick="selectQuery3(3)">runs</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Softmax Temperature:</label>
+                        <input type="range" min="0.1" max="5" step="0.05" value="1" id="softmax-temp" oninput="updateStep3()">
+                        <span class="value-display" id="softmax-temp-val">1.00</span>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="plot-container" id="plot-step3-bars"></div>
+                    <div class="plot-container" id="plot-step3-pie"></div>
+                </div>
+                <div class="plot-container" id="plot-step3-heatmap"></div>
+                <div class="explanation">
+                    <strong>Key insight:</strong> Softmax is a "soft" argmax. At low temperature it approaches one-hot (hard attention).
+                    At high temperature it approaches uniform distribution (all tokens attend equally).
+                    Real transformers use <span class="math-inline" id="math-temp-real"></span> which is moderate scaling.
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Value Aggregation -->
+        <div class="step-content" id="step-4">
+            <div class="section">
+                <h2>Step 5: Value Aggregation — The Output</h2>
+                <div class="explanation">
+                    The final attention output for each query position is a <strong>weighted sum of Value vectors</strong>,
+                    where the weights come from softmax. Geometrically, the output vector is pulled toward the V vectors
+                    of highly-attended tokens.
+                </div>
+                <div class="math-block" id="math-output"></div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Select Query Token:</label>
+                        <div class="token-selector" id="query-selector-4">
+                            <span class="token-chip selected" onclick="selectQuery4(0)">cat</span>
+                            <span class="token-chip" onclick="selectQuery4(1)">dog</span>
+                            <span class="token-chip" onclick="selectQuery4(2)">car</span>
+                            <span class="token-chip" onclick="selectQuery4(3)">runs</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>Show weighted contributions:</label>
+                        <select id="show-contributions" onchange="updateStep4()">
+                            <option value="all">All contributions</option>
+                            <option value="individual">Individual weighted V's</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="plot-container" id="plot-step4"></div>
+                <div class="matrix-display" id="step4-computation"></div>
+                <div class="explanation">
+                    <strong>Geometric intuition:</strong> The output (purple star) is a convex combination of V vectors.
+                    It lies inside the convex hull of the V vectors, pulled toward those with highest attention weight.
+                    This is how attention "mixes" information from different positions — it doesn't copy one token,
+                    it blends content from multiple tokens based on Q-K similarity.
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: Full 3D Multi-Head -->
+        <div class="step-content" id="step-5">
+            <div class="section">
+                <h2>Step 6: Full 3D Multi-Head Attention</h2>
+                <div class="explanation">
+                    In real transformers, embeddings are high-dimensional (768, 1024, etc.) and attention uses multiple "heads"
+                    that each learn different Q, K, V projections — attending to different relationship types simultaneously.
+                    Here we show 3D with 2 heads so you can see how different heads capture different patterns.
+                </div>
+                <div class="math-block" id="math-multihead"></div>
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Number of tokens:</label>
+                        <input type="range" min="3" max="8" step="1" value="5" id="n-tokens-3d" oninput="updateStep5()">
+                        <span class="value-display" id="n-tokens-3d-val">5</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Head 1 rotation (degrees):</label>
+                        <input type="range" min="0" max="360" step="5" value="30" id="head1-rot" oninput="updateStep5()">
+                        <span class="value-display" id="head1-rot-val">30°</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Head 2 rotation (degrees):</label>
+                        <input type="range" min="0" max="360" step="5" value="120" id="head2-rot" oninput="updateStep5()">
+                        <span class="value-display" id="head2-rot-val">120°</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Query token (3D):</label>
+                        <select id="query-3d" onchange="updateStep5()">
+                            <option value="0">Token 0</option>
+                            <option value="1">Token 1</option>
+                            <option value="2">Token 2</option>
+                            <option value="3">Token 3</option>
+                            <option value="4">Token 4</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div>
+                        <h3>Head 1 — Q/K Space</h3>
+                        <div class="plot-container" id="plot-step5-head1"></div>
+                    </div>
+                    <div>
+                        <h3>Head 2 — Q/K Space</h3>
+                        <div class="plot-container" id="plot-step5-head2"></div>
+                    </div>
+                </div>
+                <div class="plot-container" id="plot-step5-3d"></div>
+                <div class="plot-container" id="plot-step5-combined"></div>
+                <div class="explanation">
+                    <strong>Multi-head intuition:</strong> Each head "looks" at the sequence from a different angle.
+                    Head 1 might attend based on syntactic relationships, Head 2 based on semantic similarity.
+                    The final output concatenates (or averages) all heads, giving the model a rich, multi-faceted
+                    understanding of token relationships. This is why transformers are so powerful — they don't just
+                    compute one type of attention, they compute many in parallel.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============================================================
+    // GLOBAL STATE
+    // ============================================================
+    let currentStep = 0;
+    let selectedQuery = 0;
+    let selectedQuery3 = 0;
+    let selectedQuery4 = 0;
+    const tokenNames = ['cat', 'dog', 'car', 'runs'];
+    const tokenColors = ['#ff6b6b', '#4ecdc4', '#ffd93d', '#a8e6cf'];
+
+    // ============================================================
+    // UTILITY FUNCTIONS
+    // ============================================================
+    function matMul2x2(M, v) {
+        return [
+            M[0][0] * v[0] + M[0][1] * v[1],
+            M[1][0] * v[0] + M[1][1] * v[1]
+        ];
+    }
+
+    function dot2(a, b) {
+        return a[0] * b[0] + a[1] * b[1];
+    }
+
+    function norm2(v) {
+        return Math.sqrt(v[0    * v[0] + v[1] * v[1]);
+    }
+
+    function softmax(arr, temperature = 1.0) {
+        const scaled = arr.map(x => x / temperature);
+        const maxVal = Math.max(...scaled);
+        const exps = scaled.map(x => Math.exp(x - maxVal));
+        const sum = exps.reduce((a, b) => a + b, 0);
+        return exps.map(x => x / sum);
+    }
+
+    function getTokens() {
+        return [
+            [parseFloat(document.getElementById('t1x').value), parseFloat(document.getElementById('t1y').value)],
+            [parseFloat(document.getElementById('t2x').value), parseFloat(document.getElementById('t2y').value)],
+            [parseFloat(document.getElementById('t3x').value), parseFloat(document.getElementById('t3y').value)],
+            [parseFloat(document.getElementById('t4x').value), parseFloat(document.getElementById('t4y').value)]
+        ];
+    }
+
+    function getWQ() {
+        return [
+            [parseFloat(document.getElementById('wq00').value), parseFloat(document.getElementById('wq01').value)],
+            [parseFloat(document.getElementById('wq10').value), parseFloat(document.getElementById('wq11').value)]
+        ];
+    }
+
+    function getWK() {
+        return [
+            [parseFloat(document.getElementById('wk00').value), parseFloat(document.getElementById('wk01').value)],
+            [parseFloat(document.getElementById('wk10').value), parseFloat(document.getElementById('wk11').value)]
+        ];
+    }
+
+    function getWV() {
+        return [
+            [parseFloat(document.getElementById('wv00').value), parseFloat(document.getElementById('wv01').value)],
+            [parseFloat(document.getElementById('wv10').value), parseFloat(document.getElementById('wv11').value)]
+        ];
+    }
+
+    function updateValDisplay(id) {
+        const el = document.getElementById(id);
+        const valEl = document.getElementById(id + '-val');
+        if (el && valEl) {
+            valEl.textContent = parseFloat(el.value).toFixed(2);
+        }
+    }
+
+    // ============================================================
+    // STEP NAVIGATION
+    // ============================================================
+    function showStep(n) {
+        document.querySelectorAll('.step-content').forEach((el, i) => {
+            el.classList.toggle('active', i === n);
+        });
+        document.querySelectorAll('.step-btn').forEach((el, i) => {
+            el.classList.toggle('active', i === n);
+        });
+        currentStep = n;
+        switch(n) {
+            case 0: updateStep0(); break;
+            case 1: updateStep1(); break;
+            case 2: updateStep2(); break;
+            case 3: updateStep3(); break;
+            case 4: updateStep4(); break;
+            case 5: updateStep5(); break;
+        }
+    }
+
+    // ============================================================
+    // STEP 0: Embeddings
+    // ============================================================
+    function updateStep0() {
+        ['t1x','t1y','t2x','t2y','t3x','t3y','t4x','t4y'].forEach(updateValDisplay);
+        const tokens = getTokens();
+
+        const traces = tokens.map((t, i) => ({
+            x: [0, t[0]],
+            y: [0, t[1]],
+            mode: 'lines+markers',
+            name: tokenNames[i],
+            line: { color: tokenColors[i], width: 3 },
+            marker: { size: [4, 12], color: tokenColors[i] }
+        }));
+
+        // Add labels
+        const annotations = tokens.map((t, i) => ({
+            x: t[0],
+            y: t[1],
+            text: `  ${tokenNames[i]}`,
+            showarrow: false,
+            font: { color: tokenColors[i], size: 14 }
+        }));
+
+        const layout = {
+            title: 'Token Embeddings in 2D Space',
+            xaxis: { title: 'Dimension 1 (e.g., "animal-ness")', range: [-4, 4], zeroline: true, gridcolor: '#2a2a4a' },
+            yaxis: { title: 'Dimension 2 (e.g., "action-ness")', range: [-4, 4], zeroline: true, gridcolor: '#2a2a4a' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            annotations: annotations,
+            showlegend: true,
+            legend: { bgcolor: 'rgba(0,0,0,0.5)' }
+        };
+
+        Plotly.newPlot('plot-step0', traces, layout, { responsive: true });
+    }
+
+    // ============================================================
+    // STEP 1: Linear Projections
+    // ============================================================
+    function updateStep1() {
+        ['wq00','wq01','wq10','wq11','wk00','wk01','wk10','wk11','wv00','wv01','wv10','wv11'].forEach(updateValDisplay);
+        const tokens = getTokens();
+        const WQ = getWQ();
+        const WK = getWK();
+        const WV = getWV();
+
+        const queries = tokens.map(t => matMul2x2(WQ, t));
+        const keys = tokens.map(t => matMul2x2(WK, t));
+        const values = tokens.map(t => matMul2x2(WV, t));
+
+        // Q and K plot
+        const qTraces = queries.map((q, i) => ({
+            x: [0, q[0]], y: [0, q[1]],
+            mode: 'lines+markers',
+            name: `Q(${tokenNames[i]})`,
+            line: { color: tokenColors[i], width: 3, dash: 'solid' },
+            marker: { size: [4, 10], symbol: ['circle', 'arrow'], color: tokenColors[i] },
+            legendgroup: tokenNames[i]
+        }));
+
+        const kTraces = keys.map((k, i) => ({
+            x: [0, k[0]], y: [0, k[1]],
+            mode: 'lines+markers',
+            name: `K(${tokenNames[i]})`,
+            line: { color: tokenColors[i], width: 2, dash: 'dash' },
+            marker: { size: [4, 8], symbol: ['circle', 'diamond'], color: tokenColors[i] },
+            legendgroup: tokenNames[i]
+        }));
+
+        const layoutQK = {
+            title: 'Q (solid) and K (dashed) Projections',
+            xaxis: { title: 'Projected Dim 1', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            yaxis: { title: 'Projected Dim 2', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            showlegend: true,
+            legend: { bgcolor: 'rgba(0,0,0,0.5)', font: { size: 10 } }
+        };
+
+        Plotly.newPlot('plot-step1-qk', [...qTraces, ...kTraces], layoutQK, { responsive: true });
+
+        // V plot
+        const vTraces = values.map((v, i) => ({
+            x: [0, v[0]], y: [0, v[1]],
+            mode: 'lines+markers',
+            name: `V(${tokenNames[i]})`,
+            line: { color: tokenColors[i], width: 3 },
+            marker: { size: [4, 10], color: tokenColors[i] }
+        }));
+
+        const layoutV = {
+            title: 'V (Value) Projections',
+            xaxis: { title: 'Value Dim 1', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            yaxis: { title: 'Value Dim 2', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            showlegend: true,
+            legend: { bgcolor: 'rgba(0,0,0,0.5)' }
+        };
+
+        Plotly.newPlot('plot-step1-v', vTraces, layoutV, { responsive: true });
+
+        // Matrix display
+        const matDisplay = document.getElementById('matrix-display-1');
+        matDisplay.textContent = `W_Q = [[${WQ[0][0].toFixed(2)}, ${WQ[0][1].toFixed(2)}], [${WQ[1][0].toFixed(2)}, ${WQ[1][1].toFixed(2)}]]
+W_K = [[${WK[0][0].toFixed(2)}, ${WK[0][1].toFixed(2)}], [${WK[1][0].toFixed(2)}, ${WK[1][1].toFixed(2)}]]
+W_V = [[${WV[0][0].toFixed(2)}, ${WV[0][1].toFixed(2)}], [${WV[1][0].toFixed(2)}, ${WV[1][1].toFixed(2)}]]
+
+Queries:  ${queries.map((q, i) => `${tokenNames[i]}=[${q[0].toFixed(2)}, ${q[1].toFixed(2)}]`).join('  ')}
+Keys:     ${keys.map((k, i) => `${tokenNames[i]}=[${k[0].toFixed(2)}, ${k[1].toFixed(2)}]`).join('  ')}
+Values:   ${values.map((v, i) => `${tokenNames[i]}=[${v[0].toFixed(2)}, ${v[1].toFixed(2)}]`).join('  ')}`;
+    }
+
+    // ============================================================
+    // STEP 2: Dot-Product Attention
+    // ============================================================
+    function selectQuery(idx) {
+        selectedQuery = idx;
+        document.querySelectorAll('#query-selector .token-chip').forEach((el, i) => {
+            el.classList.toggle('selected', i === idx);
+        });
+        updateStep2();
+    }
+
+    function updateStep2() {
+        updateValDisplay('temperature');
+        const temp = parseFloat(document.getElementById('temperature').value);
+        document.getElementById('temperature-val').textContent = temp.toFixed(2) + (Math.abs(temp - 1.41) < 0.05 ? ' (√2)' : '');
+
+        const tokens = getTokens();
+        const WQ = getWQ();
+        const WK = getWK();
+
+        const queries = tokens.map(t => matMul2x2(WQ, t));
+        const keys = tokens.map(t => matMul2x2(WK, t));
+
+        const q = queries[selectedQuery];
+        const scores = keys.map(k => dot2(q, k) / temp);
+
+        // Geometric visualization - show Q vector and K vectors with projections
+        const traces = [];
+
+        // Query vector (thick red)
+        traces.push({
+            x: [0, q[0]], y: [0, q[1]],
+            mode: 'lines+markers',
+            name: `Query: ${tokenNames[selectedQuery]}`,
+            line: { color: '#ff6b6b', width: 4 },
+            marker: { size: [4, 14], color: '#ff6b6b', symbol: ['circle', 'arrow-up'] }
+        });
+
+        // Key vectors
+        keys.forEach((k, i) => {
+            traces.push({
+                x: [0, k[0]], y: [0, k[1]],
+                mode: 'lines+markers',
+                name: `Key: ${tokenNames[i]}`,
+                line: { color: '#4ecdc4', width: 2, dash: i === selectedQuery ? 'solid' : 'dot' },
+                marker: { size: [4, 10], color: tokenColors[i] }
+            });
+
+            // Show projection of q onto k direction
+            const kNorm = norm2(k);
+            if (kNorm > 0.01) {
+                const kUnit = [k[0] / kNorm, k[1] / kNorm];
+                const projLen = dot2(q, kUnit);
+                const projPoint = [kUnit[0] * projLen, kUnit[1] * projLen];
+                traces.push({
+                    x: [q[0], projPoint[0]], y: [q[1], projPoint[1]],
+                    mode: 'lines',
+                    name: `proj → ${tokenNames[i]}`,
+                    line: { color: tokenColors[i], width: 1, dash: 'dash' },
+                    showlegend: false
+                });
+                traces.push({
+                    x: [projPoint[0]], y: [projPoint[1]],
+                    mode: 'markers',
+                    showlegend: false,
+                    marker: { size: 8, color: tokenColors[i], symbol: 'x' }
+                });
+            }
+        });
+
+        const layoutGeom = {
+            title: `Geometric View: Q(${tokenNames[selectedQuery]}) projected onto Keys`,
+            xaxis: { title: 'Q/K Dim 1', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            yaxis: { title: 'Q/K Dim 2', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            showlegend: true,
+            legend: { bgcolor: 'rgba(0,0,0,0.5)' }
+        };
+
+        Plotly.newPlot('plot-step2-geometric', traces, layoutGeom, { responsive: true });
+
+        // Bar chart of scores
+        const barTrace = {
+            x: tokenNames,
+            y: scores,
+            type: 'bar',
+            marker: { color: tokenColors },
+            text: scores.map(s => s.toFixed(3)),
+            textposition: 'outside'
+        };
+
+        const layoutBar = {
+            title: `Raw Attention Scores (Q·K / ${temp.toFixed(2)})`,
+            xaxis: { title: 'Key Token' },
+            yaxis: { title: 'Score' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' }
+        };
+
+        Plotly.newPlot('plot-step2-scores', [barTrace], layoutBar, { responsive: true });
+    }
+
+    // ============================================================
+    // STEP 3: Softmax
+    // ============================================================
+    function selectQuery3(idx) {
+        selectedQuery3 = idx;
+        document.querySelectorAll('#query-selector-3 .token-chip').forEach((el, i) => {
+            el.classList.toggle('selected', i === idx);
+        });
+        updateStep3();
+    }
+
+    function updateStep3() {
+        const softTemp = parseFloat(document.getElementById('softmax-temp').value);
+        document.getElementById('softmax-temp-val').textContent = softTemp.toFixed(2);
+
+        const tokens = getTokens();
+        const WQ = getWQ();
+        const WK = getWK();
+        const queries = tokens.map(t => matMul2x2(WQ, t));
+        const keys = tokens.map(t => matMul2x2(WK, t));
+
+        const temp = parseFloat(document.getElementById('temperature').value);
+
+        // Compute full attention matrix
+        const attentionMatrix = [];
+        for (let i = 0; i < 4; i++) {
+            const scores = keys.map(k => dot2(queries[i], k) / temp);
+            attentionMatrix.push(softmax(scores, softTemp));
+        }
+
+        const weights = attentionMatrix[selectedQuery3];
+
+        // Bar chart
+        const barTrace = {
+            x: tokenNames,
+            y: weights,
+            type: 'bar',
+            marker: { color: tokenColors },
+            text: weights.map(w => (w * 100).toFixed(1) + '%'),
+            textposition: 'outside'
+        };
+
+        const layoutBar = {
+            title: `Attention Weights for Query: "${tokenNames[selectedQuery3]}"`,
+            xaxis: { title: 'Key Token' },
+            yaxis: { title: 'Weight', range: [0, 1.1] },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' }
+        };
+
+        Plotly.newPlot('plot-step3-bars', [barTrace], layoutBar, { responsive: true });
+
+        // Pie chart
+        const pieTrace = {
+            labels: tokenNames,
+            values: weights,
+            type: 'pie',
+            marker: { colors: tokenColors },
+            textinfo: 'label+percent',
+            hole: 0.3
+        };
+
+        const layoutPie = {
+            title: 'Attention Distribution',
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' }
+        };
+
+        Plotly.newPlot('plot-step3-pie', [pieTrace], layoutPie, { responsive: true });
+
+        // Heatmap of full attention matrix
+        const heatTrace = {
+            z: attentionMatrix,
+            x: tokenNames.map(n => 'Key: ' + n),
+            y: tokenNames.map(n => 'Query: ' + n),
+            type: 'heatmap',
+            colorscale: [[0, '#0d0d20'], [0.5, '#667eea'], [1, '#ff6b6b']],
+            text: attentionMatrix.map(row => row.map(v => v.toFixed(3))),
+            texttemplate: '%{text}',
+            showscale: true
+        };
+
+        const layoutHeat = {
+            title: 'Full Attention Matrix (all queries × all keys)',
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' }
+        };
+
+        Plotly.newPlot('plot-step3-heatmap', [heatTrace], layoutHeat, { responsive: true });
+    }
+
+    // ============================================================
+    // STEP 4: Value Aggregation
+    // ============================================================
+    function selectQuery4(idx) {
+        selectedQuery4 = idx;
+        document.querySelectorAll('#query-selector-4 .token-chip').forEach((el, i) => {
+            el.classList.toggle('selected', i === idx);
+        });
+        updateStep4();
+    }
+
+    function updateStep4() {
+        const tokens = getTokens();
+        const WQ = getWQ();
+        const WK = getWK();
+        const WV = getWV();
+
+        const queries = tokens.map(t => matMul2x2(WQ, t));
+        const keys = tokens.map(t => matMul2x2(WK, t));
+        const values = tokens.map(t => matMul2x2(WV, t));
+
+        const temp = parseFloat(document.getElementById('temperature').value);
+        const softTemp = parseFloat(document.getElementById('softmax-temp').value);
+
+        const scores = keys.map(k => dot2(queries[selectedQuery4], k) / temp);
+        const weights = softmax(scores, softTemp);
+
+        // Compute output
+        const output = [0, 0];
+        for (let i = 0; i < 4; i++) {
+            output[0] += weights[i] * values[i][0];
+            output[1] += weights[i] * values[i][1];
+        }
+
+        const showMode = document.getElementById('show-contributions').value;
+        const traces = [];
+
+        // Value vectors
+        values.forEach((v, i) => {
+            traces.push({
+                x: [0, v[0]], y: [0, v[1]],
+                mode: 'lines+markers',
+                name: `V(${tokenNames[i]}) w=${(weights[i]*100).toFixed(1)}%`,
+                line: { color: tokenColors[i], width: 2 + weights[i] * 5 },
+                marker: { size: [4, 8 + weights[i] * 12], color: tokenColors[i] },
+                opacity: 0.3 + weights[i] * 0.7
+            });
+        });
+
+        if (showMode === 'individual') {
+            // Show weighted V vectors
+            values.forEach((v, i) => {
+                const wv = [weights[i] * v[0], weights[i] * v[1]];
+                traces.push({
+                    x: [0, wv[0]], y: [0, wv[1]],
+                    mode: 'lines+markers',
+                    name: `α·V(${tokenNames[i]})`,
+                    line: { color: tokenColors[i], width: 2, dash: 'dash' },
+                    marker: { size: [3, 7], color: tokenColors[i], symbol: 'diamond' },
+                    opacity: 0.8
+                });
+            });
+        }
+
+        // Show convex hull
+        const hullX = values.map(v => v[0]);
+        const hullY = values.map(v => v[1]);
+        hullX.push(values[0][0]);
+        hullY.push(values[0][1]);
+        traces.push({
+            x: hullX, y: hullY,
+            mode: 'lines',
+            name: 'Convex hull of V',
+            line: { color: 'rgba(102, 126, 234, 0.3)', width: 1, dash: 'dot' },
+            fill: 'toself',
+            fillcolor: 'rgba(102, 126, 234, 0.05)'
+        });
+
+        // Output vector (star)
+        traces.push({
+            x: [0, output[0]], y: [0, output[1]],
+            mode: 'lines+markers',
+            name: `Output: [${output[0].toFixed(2)}, ${output[1].toFixed(2)}]`,
+            line: { color: '#b44dff', width: 4 },
+            marker: { size: [4, 16], color: '#b44dff', symbol: ['circle', 'star'] }
+        });
+
+        const layoutV = {
+            title: `Attention Output for "${tokenNames[selectedQuery4]}" (weighted sum of V)`,
+            xaxis: { title: 'Value Dim 1', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            yaxis: { title: 'Value Dim 2', range: [-6, 6], zeroline: true, gridcolor: '#2a2a4a' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            showlegend: true,
+            legend: { bgcolor: 'rgba(0,0,0,0.5)' }
+        };
+
+        Plotly.newPlot('plot-step4', traces, layoutV, { responsive: true });
+
+        // Computation display
+        const compDisplay = document.getElementById('step4-computation');
+        let compText = `Query: "${tokenNames[selectedQuery4]}"\n\n`;
+        compText += `Attention weights: [${weights.map(w => w.toFixed(4)).join(', ')}]\n\n`;
+        compText += `Output = `;
+        for (let i = 0; i < 4; i++) {
+            compText += `${weights[i].toFixed(3)} × [${values[i][0].toFixed(2)}, ${values[i][1].toFixed(2)}]`;
+            if (i < 3) compText += ` + `;
+        }
+        compText += `\n       = [${output[0].toFixed(4)}, ${output[1].toFixed(4)}]`;
+        compDisplay.textContent = compText;
+    }
+
+    // ============================================================
+    // STEP 5: Full 3D Multi-Head
+    // ============================================================
+    function updateStep5() {
+        const nTokens = parseInt(document.getElementById('n-tokens-3d').value);
+        const head1Rot = parseFloat(document.getElementById('head1-rot').value) * Math.PI / 180;
+        const head2Rot = parseFloat(document.getElementById('head2-rot').value) * Math.PI / 180;
+        const queryIdx = parseInt(document.getElementById('query-3d').value);
+
+        document.getElementById('n-tokens-3d-val').textContent = nTokens;
+        document.getElementById('head1-rot-val').textContent = document.getElementById('head1-rot').value + '°';
+        document.getElementById('head2-rot-val').textContent = document.getElementById('head2-rot').value + '°';
+
+        // Generate 3D token embeddings
+        const tokens3D = [];
+        const names3D = ['The', 'cat', 'sat', 'on', 'the', 'mat', 'today', 'here'];
+        for (let i = 0; i < nTokens; i++) {
+            const angle = (i / nTokens) * Math.PI * 2;
+            const r = 1 + Math.sin(i * 1.5) * 0.5;
+            tokens3D.push([
+                r * Math.cos(angle),
+                r * Math.sin(angle),
+                Math.cos(i * 0.8) * 1.5
+            ]);
+        }
+
+        // Head 1: rotation in XY plane
+        function projectHead(tokens, rot, scale = 1.0) {
+            const cosR = Math.cos(rot);
+            const sinR = Math.sin(rot);
+            return tokens.map(t => [
+                scale * (cosR * t[0] - sinR * t[1]),
+                scale * (sinR * t[0] + cosR * t[1])
+            ]);
+        }
+
+        const q1 = projectHead(tokens3D, head1Rot, 1.0);
+        const k1 = projectHead(tokens3D, head1Rot + 0.3, 0.9);
+        const q2 = projectHead(tokens3D, head2Rot, 1.0);
+        const k2 = projectHead(tokens3D, head2Rot + 0.3, 0.9);
+
+        // Compute attention for each head
+        function computeAttention(queries, keys, qIdx) {
+            const scores = keys.map(k => dot2(queries[qIdx], k) / Math.sqrt(2));
+            return softmax(scores, 1.0);
+        }
+
+        const attn1 = computeAttention(q1, k1, queryIdx);
+        const attn2 = computeAttention(q2, k2, queryIdx);
+
+        // Head 1 plot
+        const h1Traces = [];
+        // Query
+        h1Traces.push({
+            x: [0, q1[queryIdx][0]], y: [0, q1[queryIdx][1]],
+            mode: 'lines+markers',
+            name: `Q(${names3D[queryIdx]})`,
+            line: { color: '#ff6b6b', width: 4 },
+            marker: { size: [4, 12], color: '#ff6b6b' }
+        });
+        // Keys with size proportional to attention
+        for (let i = 0; i < nTokens; i++) {
+            h1Traces.push({
+                x: [k1[i][0]], y: [k1[i][1]],
+                mode: 'markers+text',
+                name: `K(${names3D[i]}) α=${(attn1[i]*100).toFixed(1)}%`,
+                marker: { size: 10 + attn1[i] * 40, color: tokenColors[i % 4], opacity: 0.3 + attn1[i] * 0.7 },
+                text: [names3D[i]],
+                textposition: 'top center',
+                textfont: { size: 10 }
+            });
+        }
+
+        const layoutH1 = {
+            title: 'Head 1: Q/K Space',
+            xaxis: { range: [-4, 4], zeroline: true, gridcolor: '#2a2a4a' },
+            yaxis: { range: [-4, 4], zeroline: true, gridcolor: '#2a2a4a' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            showlegend: false
+        };
+
+        Plotly.newPlot('plot-step5-head1', h1Traces, layoutH1, { responsive: true });
+
+        // Head 2 plot
+        const h2Traces = [];
+        h2Traces.push({
+            x: [0, q2[queryIdx][0]], y: [0, q2[queryIdx][1]],
+            mode: 'lines+markers',
+            name: `Q(${names3D[queryIdx]})`,
+            line: { color: '#ff6b6b', width: 4 },
+            marker: { size: [4, 12], color: '#ff6b6b' }
+        });
+        for (let i = 0; i < nTokens; i++) {
+            h2Traces.push({
+                x: [k2[i][0]], y: [k2[i][1]],
+                mode: 'markers+text',
+                name: `K(${names3D[i]})`,
+                marker: { size: 10 + attn2[i] * 40, color: tokenColors[i % 4], opacity: 0.3 + attn2[i] * 0.7 },
+                text: [names3D[i]],
+                textposition: 'top center',
+                textfont: { size: 10 }
+            });
+        }
+
+        const layoutH2 = {
+            title: 'Head 2: Q/K Space',
+            xaxis: { range: [-4, 4], zeroline: true, gridcolor: '#2a2a4a' },
+            yaxis: { range: [-4, 4], zeroline: true, gridcolor: '#2a2a4a' },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            showlegend: false
+        };
+
+        Plotly.newPlot('plot-step5-head2', h2Traces, layoutH2, { responsive: true });
+
+        // 3D plot of original embeddings
+        const trace3D = {
+            x: tokens3D.map(t => t[0]),
+            y: tokens3D.map(t => t[1]),
+            z: tokens3D.map(t => t[2]),
+            mode: 'markers+text',
+            type: 'scatter3d',
+            text: names3D.slice(0, nTokens),
+            marker: {
+                size: tokens3D.map((_, i) => 6 + (i === queryIdx ? 8 : 0)),
+                color: tokens3D.map((_, i) => i === queryIdx                    ? '#ff6b6b' : tokenColors[i % 4]),
+                opacity: 0.9
+            },
+            textposition: 'top center',
+            textfont: { color: '#e0e0e0', size: 11 }
+        };
+
+        // Lines from query to other tokens with opacity = attention
+        const lines3D = [];
+        const avgAttn = attn1.map((a, i) => (a + attn2[i]) / 2);
+        for (let i = 0; i < nTokens; i++) {
+            if (i === queryIdx) continue;
+            lines3D.push({
+                x: [tokens3D[queryIdx][0], tokens3D[i][0]],
+                y: [tokens3D[queryIdx][1], tokens3D[i][1]],
+                z: [tokens3D[queryIdx][2], tokens3D[i][2]],
+                mode: 'lines',
+                type: 'scatter3d',
+                line: { color: tokenColors[i % 4], width: 2 + avgAttn[i] * 10 },
+                opacity: 0.2 + avgAttn[i] * 0.8,
+                showlegend: false
+            });
+        }
+
+        const layout3D = {
+            title: '3D Embedding Space (line thickness = avg attention)',
+            scene: {
+                xaxis: { title: 'Dim 1 (semantic)', gridcolor: '#2a2a4a', color: '#aaa' },
+                yaxis: { title: 'Dim 2 (syntactic)', gridcolor: '#2a2a4a', color: '#aaa' },
+                zaxis: { title: 'Dim 3 (positional)', gridcolor: '#2a2a4a', color: '#aaa' },
+                bgcolor: '#0d0d20'
+            },
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            showlegend: false,
+            margin: { t: 40, b: 20 }
+        };
+
+        Plotly.newPlot('plot-step5-3d', [trace3D, ...lines3D], layout3D, { responsive: true });
+
+        // Combined attention comparison
+        const combinedTrace1 = {
+            x: names3D.slice(0, nTokens),
+            y: attn1,
+            name: 'Head 1',
+            type: 'bar',
+            marker: { color: '#667eea' }
+        };
+        const combinedTrace2 = {
+            x: names3D.slice(0, nTokens),
+            y: attn2,
+            name: 'Head 2',
+            type: 'bar',
+            marker: { color: '#764ba2' }
+        };
+        const combinedTraceAvg = {
+            x: names3D.slice(0, nTokens),
+            y: avgAttn,
+            name: 'Average (combined)',
+            type: 'bar',
+            marker: { color: '#ff6b6b' }
+        };
+
+        const layoutCombined = {
+            title: `Multi-Head Attention Weights for "${names3D[queryIdx]}"`,
+            barmode: 'group',
+            xaxis: { title: 'Key Token' },
+            yaxis: { title: 'Attention Weight', range: [0, 1] },
+            plot_bgcolor: '#0d0d20',
+            paper_bgcolor: '#12122a',
+            font: { color: '#e0e0e0' },
+            legend: { bgcolor: 'rgba(0,0,0,0.5)' }
+        };
+
+        Plotly.newPlot('plot-step5-combined', [combinedTrace1, combinedTrace2, combinedTraceAvg], layoutCombined, { responsive: true });
+    }
+
+    // ============================================================
+    // RENDER MATH WITH TEMML
+    // ============================================================
+    function renderMath() {
+        // Step 0
+        const mathEmbedding = document.getElementById('math-embedding');
+        if (mathEmbedding) {
+            temml.render(String.raw`\mathbf{x}_i \in \mathbb{R}^{d_{\text{model}}} \quad \text{(here } d_{\text{model}} = 2\text{)} \qquad X = \begin{bmatrix} \mathbf{x}_1 \\ \mathbf{x}_2 \\ \vdots \\ \mathbf{x}_n \end{bmatrix} \in \mathbb{R}^{n \times d}`, mathEmbedding, { displayMode: true });
+        }
+
+        // Step 1 inline
+        const mathXInline = document.getElementById('math-x-inline');
+        if (mathXInline) {
+            temml.render(String.raw`\mathbf{x}`, mathXInline);
+        }
+
+        // Step 1 projections
+        const mathProj = document.getElementById('math-projections');
+        if (mathProj) {
+            temml.render(String.raw`\mathbf{q}_i = W_Q \mathbf{x}_i, \quad \mathbf{k}_i = W_K \mathbf{x}_i, \quad \mathbf{v}_i = W_V \mathbf{x}_i \qquad W_Q, W_K, W_V \in \mathbb{R}^{d_k \times d_{\text{model}}}`, mathProj, { displayMode: true });
+        }
+
+        // Step 2
+        const mathDotInline = document.getElementById('math-dot-inline');
+        if (mathDotInline) {
+            temml.render(String.raw`\mathbf{q} \cdot \mathbf{k} = \|\mathbf{q}\|\|\mathbf{k}\|\cos\theta`, mathDotInline);
+        }
+
+        const mathDot = document.getElementById('math-dotproduct');
+        if (mathDot) {
+            temml.render(String.raw`\text{score}(i, j) = \frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k}} = \frac{\sum_{m=1}^{d_k} q_{i,m} \cdot k_{j,m}}{\sqrt{d_k}}`, mathDot, { displayMode: true });
+        }
+
+        const mathSqrtDk = document.getElementById('math-sqrt-dk');
+        if (mathSqrtDk) {
+            temml.render(String.raw`\frac{1}{\sqrt{d_k}}`, mathSqrtDk);
+        }
+
+        // Step 3
+        const mathSoftmax = document.getElementById('math-softmax');
+        if (mathSoftmax) {
+            temml.render(String.raw`\alpha_{ij} = \text{softmax}_j\!\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k}}\right) = \frac{\exp\!\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k} \cdot \tau}\right)}{\sum_{l=1}^{n} \exp\!\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_l}{\sqrt{d_k} \cdot \tau}\right)} \qquad \sum_j \alpha_{ij} = 1`, mathSoftmax, { displayMode: true });
+        }
+
+        const mathTempReal = document.getElementById('math-temp-real');
+        if (mathTempReal) {
+            temml.render(String.raw`\tau = 1, \; \sqrt{d_k} \approx 8\text{–}11 \text{ in GPT-scale models}`, mathTempReal);
+        }
+
+        // Step 4
+        const mathOutput = document.getElementById('math-output');
+        if (mathOutput) {
+            temml.render(String.raw`\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V \qquad \mathbf{o}_i = \sum_{j=1}^{n} \alpha_{ij} \, \mathbf{v}_j`, mathOutput, { displayMode: true });
+        }
+
+        // Step 5
+        const mathMultihead = document.getElementById('math-multihead');
+        if (mathMultihead) {
+            temml.render(String.raw`\text{MultiHead}(Q,K,V) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h) W^O \quad \text{where } \text{head}_i = \text{Attention}(XW_Q^{(i)}, XW_K^{(i)}, XW_V^{(i)})`, mathMultihead, { displayMode: true });
+        }
+    }
+
+    // ============================================================
+    // INITIALIZATION
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+        renderMath();
+        updateStep0();
+    });
+
+    // Make sure plots resize properly
+    window.addEventListener('resize', () => {
+        document.querySelectorAll('.js-plotly-plot').forEach(plot => {
+            Plotly.Plots.resize(plot);
+        });
+    });
+    </script>
+</body>
+</html>
