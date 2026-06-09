@@ -586,76 +586,70 @@ var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
 
 function _ensure_fcnn_tooltip() {
-	if (_fcnn_tooltip_el && document.body.contains(_fcnn_tooltip_el)) return _fcnn_tooltip_el;
+    if (_fcnn_tooltip_el && document.body.contains(_fcnn_tooltip_el)) return _fcnn_tooltip_el;
 
-	_fcnn_tooltip_el = document.createElement("div");
-	_fcnn_tooltip_el.id = "fcnn_tooltip_overlay";
-	_fcnn_tooltip_el.style.cssText = `
-		position: fixed;
-		z-index: 999999;
-		pointer-events: none;
-		background: ${(typeof is_dark_mode !== 'undefined' && is_dark_mode) ? 'rgba(30,30,40,0.97)' : 'rgba(255,255,255,0.98)'};
-		color: ${(typeof is_dark_mode !== 'undefined' && is_dark_mode) ? '#e0e0e0' : '#222'};
-		border: 1px solid ${(typeof is_dark_mode !== 'undefined' && is_dark_mode) ? '#555' : '#bbb'};
-		border-radius: 8px;
-		padding: 10px 14px;
-		font-family: 'Segoe UI', Arial, sans-serif;
-		font-size: 12px;
-		line-height: 1.5;
-		max-width: 420px;
-		max-height: 500px;
-		overflow: auto;
-		box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-		display: none;
-		transition: opacity 0.12s ease;
-		opacity: 0;
-	`;
-	document.body.appendChild(_fcnn_tooltip_el);
-	return _fcnn_tooltip_el;
+    _fcnn_tooltip_el = document.createElement("div");
+    _fcnn_tooltip_el.id = "fcnn_tooltip_overlay";
+
+    var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+
+    _fcnn_tooltip_el.style.cssText = `
+        position: fixed;
+        z-index: 999999;
+        pointer-events: none;
+        background: ${dark
+            ? 'linear-gradient(135deg, rgba(20,25,40,0.97), rgba(30,35,55,0.97))'
+            : 'linear-gradient(135deg, rgba(255,255,255,0.99), rgba(245,248,255,0.99))'};
+        color: ${dark ? '#e8ecf4' : '#1a1a2e'};
+        border: 1px solid ${dark ? 'rgba(100,140,255,0.3)' : 'rgba(70,100,200,0.2)'};
+        border-radius: 12px;
+        padding: 14px 18px;
+        font-family: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+        font-size: 12px;
+        line-height: 1.6;
+        max-width: 440px;
+        max-height: 520px;
+        overflow: auto;
+        box-shadow:
+            0 8px 32px rgba(0,0,0,${dark ? '0.5' : '0.12'}),
+            0 2px 8px rgba(0,0,0,${dark ? '0.3' : '0.06'}),
+            inset 0 1px 0 rgba(255,255,255,${dark ? '0.05' : '0.8'});
+        display: none;
+        transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        transform: translateY(4px) scale(0.98);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    `;
+    document.body.appendChild(_fcnn_tooltip_el);
+    return _fcnn_tooltip_el;
 }
 
 function _show_fcnn_tooltip(html, mouseX, mouseY) {
-	var tip = _ensure_fcnn_tooltip();
-	// Update theme colors dynamically
-	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
-	tip.style.background = dark ? 'rgba(30,30,40,0.97)' : 'rgba(255,255,255,0.98)';
-	tip.style.color = dark ? '#e0e0e0' : '#222';
-	tip.style.border = `1px solid ${dark ? '#555' : '#bbb'}`;
-	tip.innerHTML = html;
-	tip.style.display = "block";
-	tip.style.opacity = "1";
-
-	// Position: prefer right/below cursor, but flip if near edge
-	var vw = window.innerWidth;
-	var vh = window.innerHeight;
-
-	var left = mouseX + 16;
-	var top = mouseY + 12;
-
-	// Need to measure after setting content
-	requestAnimationFrame(function () {
-		if (!tip || tip.style.display === "none") return;
-		var tipW = tip.offsetWidth;
-		var tipH = tip.offsetHeight;
-		if (left + tipW > vw - 10) left = mouseX - tipW - 10;
-		if (top + tipH > vh - 10) top = mouseY - tipH - 10;
-		if (left < 5) left = 5;
-		if (top < 5) top = 5;
-		tip.style.left = left + "px";
-		tip.style.top = top + "px";
-	});
-
-	tip.style.left = left + "px";
-	tip.style.top = top + "px";
-	_fcnn_tooltip_visible = true;
+    var tip = _ensure_fcnn_tooltip();
+    // ... (existing positioning logic) ...
+    tip.innerHTML = html;
+    tip.style.display = "block";
+    // Trigger animation
+    requestAnimationFrame(() => {
+        tip.style.opacity = "1";
+        tip.style.transform = "translateY(0) scale(1)";
+    });
+    _fcnn_tooltip_visible = true;
 }
 
 function _hide_fcnn_tooltip() {
-	if (_fcnn_tooltip_el) {
-		_fcnn_tooltip_el.style.opacity = "0";
-		_fcnn_tooltip_el.style.display = "none";
-	}
-	_fcnn_tooltip_visible = false;
+    if (_fcnn_tooltip_el) {
+        _fcnn_tooltip_el.style.opacity = "0";
+        _fcnn_tooltip_el.style.transform = "translateY(4px) scale(0.98)";
+        setTimeout(() => {
+            if (_fcnn_tooltip_el && !_fcnn_tooltip_visible) {
+                _fcnn_tooltip_el.style.display = "none";
+            }
+        }, 150);
+    }
+    _fcnn_tooltip_visible = false;
 }
 
 function _register_fcnn_hit_region(region) {
