@@ -513,7 +513,6 @@ button:disabled:hover {
 }
 
 #webcam_data {
-	position: fixed;
 	right: 10px;
 	bottom: 30px;
 	z-index: 99999;
@@ -1922,4 +1921,8 @@ label.buttons_in_custom_images {
 	height: 0 !important;
 	opacity: 0 !important;
 	pointer-events: none !important;
+}
+
+#created_video_element {
+	pointer-events: none;
 }
