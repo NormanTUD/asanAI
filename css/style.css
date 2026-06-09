@@ -1926,3 +1926,19 @@ label.buttons_in_custom_images {
 #created_video_element {
 	pointer-events: none;
 }
+
+#fcnn_canvas {
+    border-radius: 16px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 8px 20px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+#fcnn_canvas:hover {
+    box-shadow:
+        0 24px 80px rgba(60, 100, 255, 0.15),
+        0 12px 30px rgba(0, 0, 0, 0.12),
+        inset 0 0 0 1px rgba(100, 150, 255, 0.2);
+}
