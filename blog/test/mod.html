@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How a Neural Network Learns Addition on a Circle</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: 'Segoe UI', system-ui, sans-serif;
+background: #0a0a1a;
+color: #e0e0e0;
+line-height: 1.6;
+overflow-x: hidden;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 20px;
+}
+h1 {
+text-align: center;
+font-size: 2.2em;
+margin: 30px 0;
+background: linear-gradient(135deg, #667eea, #764ba2);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+h2 {
+font-size: 1.6em;
+margin: 30px 0 15px;
+color: #667eea;
+border-bottom: 2px solid #333;
+padding-bottom: 10px;
+}
+h3 {
+font-size: 1.2em;
+margin: 20px 0 10px;
+color: #a0a0ff;
+}
+.step {
+background: #12122a;
+border: 1px solid #2a2a4a;
+border-radius: 12px;
+padding: 25px;
+margin: 25px 0;
+transition: all 0.3s;
+}
+.step:hover {
+border-color: #667eea;
+box-shadow: 0 0 20px rgba(102, 126, 234, 0.1);
+}
+.explanation-levels {
+margin: 15px 0;
+}
+.level-tabs {
+display: flex;
+gap: 5px;
+margin-bottom: 10px;
+flex-wrap: wrap;
+}
+.level-tab {
+padding: 6px 14px;
+border-radius: 20px;
+border: 1px solid #444;
+background: #1a1a3a;
+color: #aaa;
+cursor: pointer;
+font-size: 0.85em;
+transition: all 0.2s;
+}
+.level-tab.active {
+background: #667eea;
+color: white;
+border-color: #667eea;
+}
+.level-content {
+display: none;
+padding: 15px;
+background: #0d0d20;
+border-radius: 8px;
+border: 1px solid #2a2a4a;
+}
+.level-content.active {
+display: block;
+}
+canvas {
+display: block;
+margin: 15px auto;
+border-radius: 8px;
+background: #080818;
+border: 1px solid #2a2a4a;
+}
+.controls {
+display: flex;
+gap: 15px;
+align-items: center;
+flex-wrap: wrap;
+margin: 15px 0;
+padding: 15px;
+background: #0d0d20;
+border-radius: 8px;
+}
+.controls label {
+font-size: 0.9em;
+color: #aaa;
+}
+.controls input[type="range"] {
+width: 150px;
+accent-color: #667eea;
+}
+.controls input[type="number"] {
+width: 60px;
+background: #1a1a3a;
+border: 1px solid #444;
+color: #e0e0e0;
+padding: 4px 8px;
+border-radius: 4px;
+}
+.controls select {
+background: #1a1a3a;
+border: 1px solid #444;
+color: #e0e0e0;
+padding: 4px 8px;
+border-radius: 4px;
+}
+.controls button {
+padding: 6px 16px;
+background: #667eea;
+border: none;
+color: white;
+border-radius: 6px;
+cursor: pointer;
+font-size: 0.9em;
+transition: background 0.2s;
+}
+.controls button:hover {
+background: #7b8ff0;
+}
+.math-display {
+text-align: center;
+margin: 15px 0;
+padding: 15px;
+background: #0d0d20;
+border-radius: 8px;
+overflow-x: auto;
+}
+.io-box {
+display: grid;
+grid-template-columns: 1fr auto 1fr;
+gap: 15px;
+align-items: center;
+margin: 15px 0;
+}
+.io-panel {
+padding: 15px;
+background: #0d0d20;
+border-radius: 8px;
+border: 1px solid #2a2a4a;
+}
+.io-panel h4 {
+color: #667eea;
+margin-bottom: 8px;
+font-size: 0.95em;
+}
+.arrow {
+font-size: 2em;
+color: #667eea;
+}
+.highlight {
+color: #ffd700;
+font-weight: bold;
+}
+.note {
+font-size: 0.85em;
+color: #888;
+font-style: italic;
+margin-top: 8px;
+}
+.grid-2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+}
+@media (max-width: 768px) {
+.grid-2 { grid-template-columns: 1fr; }
+.io-box { grid-template-columns: 1fr; }
+.arrow { transform: rotate(90deg); text-align: center; }
+}
+.value-display {
+font-family: 'Courier New', monospace;
+background: #1a1a3a;
+padding: 3px 8px;
+border-radius: 4px;
+font-size: 0.9em;
+}
+.interference-bar {
+height: 30px;
+margin: 2px 0;
+border-radius: 4px;
+display: flex;
+align-items: center;
+padding: 0 8px;
+font-size: 0.75em;
+color: white;
+transition: width 0.3s;
+}
+#toc {
+position: fixed;
+right: 20px;
+top: 50%;
+transform: translateY(-50%);
+background: #12122a;
+border: 1px solid #2a2a4a;
+border-radius: 8px;
+padding: 10px;
+z-index: 100;
+max-height: 80vh;
+overflow-y: auto;
+font-size: 0.75em;
+}
+#toc a {
+display: block;
+color: #888;
+text-decoration: none;
+padding: 3px 8px;
+border-radius: 4px;
+margin: 2px 0;
+}
+#toc a:hover, #toc a.active {
+color: #667eea;
+background: #1a1a3a;
+}
+@media (max-width: 1400px) {
+#toc { display: none; }
+}
+.animate-btn {
+padding: 8px 20px;
+background: linear-gradient(135deg, #667eea, #764ba2);
+border: none;
+color: white;
+border-radius: 6px;
+cursor: pointer;
+font-size: 1em;
+margin: 10px 5px;
+}
+.animate-btn:hover {
+opacity: 0.9;
+}
+</style>
+</head>
+<body>
+<nav id="toc">
+<a href="#step0">0. The Big Picture</a>
+<a href="#step1">1. Circles & Angles</a>
+<a href="#step2">2. Cos & Sin from Circles</a>
+<a href="#step3">3. The Embedding Space</a>
+<a href="#step4">4. Trig Addition</a>
+<a href="#step5">5. The Full Algorithm</a>
+<a href="#step6">6. Constructive Interference</a>
+<a href="#step7">7. Real Network Data</a>
+</nav>
+
+<div class="container">
+<h1>🧠 How a Neural Network Learns to Add (mod P) Using Circles</h1>
+<p style="text-align:center; color:#aaa; max-width:700px; margin:0 auto 30px;">
+An interactive exploration of the <em>Fourier Multiplication Algorithm</em> — the exact mechanism
+a small transformer discovers to perform modular addition. Based on real research by Nanda et al. (ICLR 2023).
+</p>
+
+<!-- STEP 0: BIG PICTURE -->
+<div class="step" id="step0">
+<h2>Step 0: The Big Picture — What Are We Doing?</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l0-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l0-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l0-math')">Math</div>
+</div>
+<div class="level-content active" id="l0-simple">
+<p>Imagine you have a clock with <strong>P</strong> numbers on it (like a normal clock has 12). 
+We want to teach a computer to add two numbers on this clock.</p>
+<p>For example, on a clock with P=7: <span class="highlight">5 + 4 = 2</span> (because 9 wraps around past 7).</p>
+<p>The amazing discovery: the neural network figures out, <em>all by itself</em>, that it should put numbers on a circle and use rotation to add them!</p>
+</div>
+<div class="level-content" id="l0-medium">
+<p>We train a small transformer neural network to compute <strong>a + b mod P</strong> for a prime P (like P=113).
+The network discovers an algorithm that:</p>
+<ol style="margin:10px 0 10px 20px;">
+<li>Maps each number to points on circles (using sine and cosine)</li>
+<li>Combines the circle positions using trigonometric identities</li>
+<li>Reads off the answer by checking which output position has the strongest signal</li>
+</ol>
+<p>This is remarkable because nobody told the network to use circles or trig — it invented this approach!</p>
+</div>
+<div class="level-content" id="l0-math">
+<p>Given inputs a, b ∈ {0, ..., P−1}, the network computes:</p>
+<div class="math-display" id="math-l0"></div>
+<p>The logit for output c is maximized when c = (a+b) mod P, because cos(0) = 1 is the maximum of cosine.</p>
+</div>
+</div>
+
+<div class="controls">
+<label>P (clock size): </label>
+<input type="number" id="globalP" value="7" min="3" max="113" onchange="updateGlobalP()">
+<label>a: </label>
+<input type="number" id="globalA" value="5" min="0" max="112" onchange="updateGlobalInputs()">
+<label>b: </label>
+<input type="number" id="globalB" value="4" min="0" max="112" onchange="updateGlobalInputs()">
+<span style="margin-left:20px;">Answer: <span class="value-display" id="globalAnswer">2</span></span>
+</div>
+
+<canvas id="canvas0" width="600" height="300"></canvas>
+<p class="note">↑ A "mod P" clock. The answer to a+b is where you land after walking a steps then b more steps around the circle.</p>
+</div>
+
+<!-- STEP 1: CIRCLES AND ANGLES -->
+<div class="step" id="step1">
+<h2>Step 1: Numbers Live on Circles — Angles & Frequencies</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l1-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l1-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l1-math')">Math</div>
+</div>
+<div class="level-content active" id="l1-simple">
+<p>Think of a clock. Each number gets a position on the circle. The "frequency" k tells you how many times you go around the circle as you count from 0 to P-1.</p>
+<p><strong>Frequency k=1:</strong> Numbers are evenly spaced, going around once.<br>
+<strong>Frequency k=2:</strong> Numbers go around twice (so they're more "squished").<br>
+<strong>Frequency k=3:</strong> Three times around, etc.</p>
+<p>The network picks a few special frequencies (called "key frequencies") and uses those circles to do its computation.</p>
+</div>
+<div class="level-content" id="l1-medium">
+<p>For a prime P, we define the angular frequency:</p>
+<div class="math-display" id="math-l1-freq"></div>
+<p>Each number n ∈ {0, 1, ..., P-1} maps to an angle w<sub>k</sub>·n on the circle. Different values of k give different "views" of the numbers — like looking at the clock through different lenses.</p>
+<p>The key insight: <strong>addition of numbers corresponds to addition of angles</strong>. If a maps to angle w<sub>k</sub>·a and b maps to angle w<sub>k</sub>·b, then a+b maps to angle w<sub>k</sub>·(a+b). This works mod P because the angles repeat every P steps!</p>
+</div>
+<div class="level-content" id="l1-math">
+<div class="math-display" id="math-l1-full"></div>
+<p style="margin-top:10px;">Since w<sub>k</sub> = 2kπ/P, we have w<sub>k</sub>·P = 2kπ, which means cos(w<sub>k</sub>·(n+P)) = cos(w<sub>k</sub>·n). The function is periodic with period P — exactly what we need for modular arithmetic!</p>
+</div>
+</div>
+
+<div class="controls">
+<label>Frequency k: </label>
+<input type="range" id="freqK" min="1" max="56" value="1" oninput="drawStep1()">
+<span id="freqKVal">1</span>
+<label style="margin-left:20px;">Highlight number: </label>
+<input type="range" id="highlightN" min="0" max="6" value="0" oninput="drawStep1()">
+<span id="highlightNVal">0</span>
+<button onclick="animateStep1()">▶ Animate</button>
+</div>
+
+<canvas id="canvas1" width="700" height="400"></canvas>
+<div class="io-box">
+<div class="io-panel">
+<h4>📥 Input</h4>
+<p>Number n = <span class="value-display" id="s1-input">0</span></p>
+<p>Frequency k = <span class="value-display" id="s1-freq">1</span></p>
+</div>
+<div class="arrow">→</div>
+<div class="io-panel">
+<h4>📤 Output</h4>
+<p>Angle = <span class="value-display" id="s1-angle">0</span> radians</p>
+<p>Position on circle: (<span class="value-display" id="s1-cos">1.000</span>, <span class="value-display" id="s1-sin">0.000</span>)</p>
+</div>
+</div>
+</div>
+
+<!-- STEP 2: COS AND SIN FROM CIRCLES -->
+<div class="step" id="step2">
+<h2>Step 2: Where Cosine and Sine Come From — The Circle Connection</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l2-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l2-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l2-math')">Math</div>
+</div>
+<div class="level-content active" id="l2-simple">
+<p>Cosine and sine are just the <strong>x and y coordinates</strong> of a point moving around a circle!</p>
+<p>As you walk around a circle of radius 1:
+<br>• Your <strong>x-position</strong> (left-right) = cosine of the angle
+<br>• Your <strong>y-position</strong> (up-down) = sine of the angle</p>
+<p>Watch the animation below — the blue dot goes around the circle, and its x-coordinate traces out the cosine wave, while its y-coordinate traces out the sine wave.</p>
+</div>
+<div class="level-content" id="l2-medium">
+<p>The unit circle (radius = 1, centered at origin) defines cosine and sine geometrically:</p>
+<p>For any angle θ, the point on the unit circle at that angle has coordinates (cos θ, sin θ).</p>
+<p>This means:
+<br>• cos²θ + sin²θ = 1 (always on the circle!)
+<br>• cos(0) = 1, sin(0) = 0 (start at the right)
+<br>• cos(π/2) = 0, sin(π/2) = 1 (top of circle)
+<br>• cos(π) = -1, sin(π) = 0 (left side)</p>
+</div>
+<div class="level-content" id="l2-math">
+<div class="math-display" id="math-l2"></div>
+</div>
+</div>
+
+<div class="controls">
+<label>Angle θ: </label>
+<input type="range" id="circleAngle" min="0" max="628" value="0" oninput="drawStep2()">
+<span id="circleAngleVal">0.00</span> rad
+<button onclick="animateStep2()">▶ Animate Circle</button>
+<button onclick="stopAnimation2()" style="background:#e74c3c;">⏹ Stop</button>
+</div>
+
+<canvas id="canvas2" width="900" height="400"></canvas>
+<p class="note">↑ LEFT: Point on unit circle. RIGHT: The cosine (blue) and sine (red) waves traced out as the angle increases. The waves ARE the circle coordinates!</p>
+</div>
+
+<!-- STEP 3: THE EMBEDDING SPACE -->
+<div class="step" id="step3">
+<h2>Step 3: The Embedding Space — How the Network Sees Numbers</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l3-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l3-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l3-math')">Math</div>
+</div>
+<div class="level-content active" id="l3-simple">
+<p>The network needs to represent each number as a list of values (called an "embedding"). It learns to make these values follow sine and cosine patterns!</p>
+<p>For each "key frequency" k, the number n gets mapped to two values: cos(w<sub>k</sub>·n) and sin(w<sub>k</sub>·n). This is like recording the x and y position on a circle.</p>
+<p>The real network (P=113) uses 5 key frequencies: k ∈ {14, 35, 41, 42, 52}. Each gives a different "view" of the numbers on a circle.</p>
+</div>
+<div class="level-content" id="l3-medium">
+<p>The embedding matrix W<sub>E</sub> maps each one-hot encoded input to a 128-dimensional vector. When we analyze this matrix in the Fourier basis, it turns out to be <strong>sparse</strong> — only a few frequencies have significant weight.</p>
+<p>Effectively, for each key frequency k, the embedding extracts:</p>
+<div class="math-display" id="math-l3-embed"></div>
+<p>These 10 values (2 per frequency × 5 frequencies) are the "useful" part of the embedding. The rest is noise that gets cleaned up during training.</p>
+</div>
+<div class="level-content" id="l3-math">
+<div class="math-display" id="math-l3-full"></div>
+</div>
+</div>
+
+<div class="controls">
+<label>Number to embed: </label>
+<input type="range" id="embedN" min="0" max="112" value="23" oninput="drawStep3()">
+<span id="embedNVal">23</span>
+<label style="margin-left:15px;">Show frequency: </label>
+<select id="embedFreq" onchange="drawStep3()">
+<option value="14">k=14</option>
+<option value="35">k=35</option>
+<option value="41">k=41</option>
+<option value="42">k=42</option>
+<option value="52">k=52</option>
+<option value="all">All 5</option>
+</select>
+<button onclick="animateStep3()">▶ Sweep Numbers</button>
+</div>
+
+<canvas id="canvas3" width="800" height="450"></canvas>
+<div class="io-box">
+<div class="io-panel">
+<h4>📥 Input</h4>
+<p>Number: <span class="value-display" id="s3-input">23</span></p>
+<p>(as one-hot vector of length P=113)</p>
+</div>
+<div class="arrow">→</div>
+<div class="io-panel">
+<h4>📤 Output (Embedding)</h4>
+<div id="s3-output" style="font-size:0.85em;"></div>
+</div>
+</div>
+</div>
+
+<!-- STEP 4: TRIG ADDITION IDENTITIES -->
+<div class="step" id="step4">
+<h2>Step 4: The Magic Trick — Adding Angles with Trigonometric Identities</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l4-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l4-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l4-math')">Math</div>
+</div>
+<div class="level-content active" id="l4-simple">
+<p>Here's the key trick: if you know the circle-position of number <strong>a</strong> and the circle-position of number <strong>b</strong>, you can figure out the circle-position of <strong>a+b</strong> using just multiplication and subtraction!</p>
+<p>It's like a recipe:
+<br>• To get the x-coordinate of (a+b): multiply the x's together, then subtract the product of the y's
+<br>• To get the y-coordinate of (a+b): cross-multiply (x of one times y of the other) and add</p>
+<p>This is what the attention and MLP layers compute!</p>
+</div>
+<div class="level-content" id="l4-medium">
+<p>The cosine and sine addition formulas let us compute cos(α+β) and sin(α+β) from cos α, sin α, cos β, sin β:</p>
+<div class="math-display" id="math-l4-formulas"></div>
+<p>The network implements these formulas! The attention heads create products of sines and cosines (degree-2 polynomials), and the MLP combines them according to these identities.</p>
+</div>
+<div class="level-content" id="l4-math">
+<div class="math-display" id="math-l4-full"></div>
+</div>
+</div>
+
+<div class="controls">
+<label>a: </label>
+<input type="number" id="trigA" value="23" min="0" max="112" onchange="drawStep4()">
+<label>b: </label>
+<input type="number" id="trigB" value="47" min="0" max="112" onchange="drawStep4()">
+<label style="margin-left:15px;">Frequency k: </label>
+<select id="trigFreq" onchange="drawStep4()">
+<option value="14">k=14</option>
+<option value="35">k=35</option>
+<option value="41">k=41</option>
+<option value="42" selected>k=42</option>
+<option value="52">k=52</option>
+</select>
+<button onclick="animateStep4()">▶ Show It Working</button>
+</div>
+
+<canvas id="canvas4" width="900" height="500"></canvas>
+<div class="io-box">
+<div class="io-panel">
+<h4>📥 Inputs</h4>
+<div id="s4-input"></div>
+</div>
+<div class="arrow">→</div>
+<div class="io-panel">
+<h4>📤 Output</h4>
+<div id="s4-output"></div>
+</div>
+</div>
+<div id="s4-verify" style="margin-top:15px; padding:15px; background:#0d2010; border-radius:8px; border:1px solid #2a4a2a;"></div>
+</div>
+
+<!-- STEP 5: THE FULL ALGORITHM -->
+<div class="step" id="step5">
+<h2>Step 5: The Full Algorithm — From Input to Answer</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l5-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l5-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l5-math')">Math</div>
+</div>
+<div class="level-content active" id="l5-simple">
+<p>The full algorithm in plain English:</p>
+<ol style="margin:10px 0 10px 20px;">
+<li><strong>Embed:</strong> Put numbers a and b on circles (get their cos and sin at key frequencies)</li>
+<li><strong>Combine:</strong> Use the trig trick to find cos and sin of (a+b) at each frequency</li>
+<li><strong>Score each answer:</strong> For each possible answer c, compute cos(w<sub>k</sub>(a+b−c))</li>
+<li><strong>Add up scores:</strong> Sum the scores from all frequencies. The correct answer gets the biggest total!</li>
+</ol>
+<p>The correct answer c* = (a+b) mod P gets cos(0) = 1 from every frequency, so it wins!</p>
+</div>
+<div class="level-content" id="l5-medium">
+<p>The unembedding step computes, for each candidate answer c:</p>
+<div class="math-display" id="math-l5-unembed"></div>
+<p>This uses one more trig identity: cos(α−β) = cos α cos β + sin α sin β. The network already has cos(w<sub>k</sub>(a+b)) and sin(w<sub>k</sub>(a+b)) from Step 4. The unembedding matrix W<sub>L</sub> contains cos(w<sub>k</sub>c) and sin(w<sub>k</sub>c) for each output position c.</p>
+</div>
+<div class="level-content" id="l5-math">
+<div class="math-display" id="math-l5-full"></div>
+</div>
+</div>
+
+<div class="controls">
+<label>a: </label>
+<input type="number" id="fullA" value="23" min="0" max="112" onchange="drawStep5()">
+<label>b: </label>
+<input type="number" id="fullB" value="47" min="0" max="112" onchange="drawStep5()">
+<label style="margin-left:15px;">P: </label>
+<input type="number" id="fullP" value="113" min="5" max="113" onchange="drawStep5()">
+<button onclick="drawStep5()">Compute!</button>
+</div>
+
+<canvas id="canvas5" width="900" height="400"></canvas>
+<div id="s5-logits" style="margin-top:15px;"></div>
+</div>
+
+<!-- STEP 6: CONSTRUCTIVE INTERFERENCE -->
+<div class="step" id="step6">
+<h2>Step 6: Why Multiple Frequencies? — Constructive Interference</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l6-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l6-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l6-math')">Math</div>
+</div>
+<div class="level-content active" id="l6-simple">
+<p>One cosine wave has a clear peak at the right answer, but it also has values close to 1 at other positions (false peaks). By adding multiple cosine waves at different frequencies, the peaks <strong>line up only at the correct answer</strong> and cancel out everywhere else!</p>
+<p>It's like tuning multiple radio stations — they only agree at one "channel" (the right answer).</p>
+</div>
+<div class="level-content" id="l6-medium">
+<p>For a single frequency k, cos(w<sub>k</sub>·x) = 1 at x=0 but can be close to 1 at other values of x. For example, cos(2π·14/113 · 8) ≈ 0.998 — dangerously close!</p>
+<p>But cos(2π·35/113 · 8) ≈ −0.990. Adding these two: 0.998 + (−0.990) ≈ 0.008, which is tiny! The false peak is destroyed.</p>
+<p>With 5 frequencies, the sum at x=0 is 5 (all peaks align), but everywhere else the waves mostly cancel.</p>
+</div>
+<div class="level-content" id="l6-math">
+<div class="math-display" id="math-l6"></div>
+</div>
+</div>
+<div class="controls">
+<label>a: </label>
+<input type="number" id="intA" value="23" min="0" max="112" onchange="drawStep6()">
+<label>b: </label>
+<input type="number" id="intB" value="47" min="0" max="112" onchange="drawStep6()">
+<label style="margin-left:15px;">Show frequencies:</label>
+<input type="range" id="numFreqs" min="1" max="5" value="1" oninput="drawStep6()">
+<span id="numFreqsVal">1</span> of 5
+<button onclick="animateStep6()">▶ Add Frequencies One by One</button>
+</div>
+
+<canvas id="canvas6" width="900" height="400"></canvas>
+<div id="s6-bars" style="margin-top:15px;"></div>
+</div>
+
+<!-- STEP 7: REAL NETWORK DATA -->
+<div class="step" id="step7">
+<h2>Step 7: The Real Network — Putting It All Together</h2>
+<div class="explanation-levels">
+<div class="level-tabs">
+<div class="level-tab active" onclick="showLevel(this, 'l7-simple')">Simple</div>
+<div class="level-tab" onclick="showLevel(this, 'l7-medium')">More Detail</div>
+<div class="level-tab" onclick="showLevel(this, 'l7-math')">Math</div>
+</div>
+<div class="level-content active" id="l7-simple">
+<p>The real trained network (P=113, 5 key frequencies k∈{14,35,41,42,52}) does exactly what we described! Here's the full pipeline running on real data:</p>
+<ol style="margin:10px 0 10px 20px;">
+<li>Input numbers a and b are embedded onto circles at 5 frequencies</li>
+<li>The attention + MLP layers compute cos(w<sub>k</sub>(a+b)) and sin(w<sub>k</sub>(a+b)) for each k</li>
+<li>The unembedding scores each possible answer c using cos(w<sub>k</sub>(a+b−c))</li>
+<li>The 5 cosine waves add up (constructive interference) to make the correct answer have the highest score</li>
+</ol>
+<p>The real network explains <strong>95% of variance</strong> in its logits with just these 5 cosine terms! [[11]]</p>
+</div>
+<div class="level-content" id="l7-medium">
+<p>From the paper (Table 1), the real network's MLP activations projected onto the unembedding directions give:</p>
+<ul style="margin:10px 0 10px 20px; font-size:0.9em;">
+<li>k=14: 44.1·cos(w₁₄(a+b)), FVE=93.2%</li>
+<li>k=35: 42.2·cos(w₃₅(a+b)), FVE=96.8%</li>
+<li>k=41: 44.8·cos(w₄₁(a+b)), FVE=97.0%</li>
+<li>k=42: 66.6·cos(w₄₂(a+b)), FVE=96.4%</li>
+<li>k=52: 63.0·cos(w₅₂(a+b)), FVE=97.4%</li>
+</ul>
+<p>These are the <em>actual measured coefficients</em> from the trained network! The network independently discovered this algorithm through gradient descent. [[11]]</p>
+</div>
+<div class="level-content" id="l7-math">
+<div class="math-display" id="math-l7"></div>
+</div>
+</div>
+
+<div class="controls">
+<label>a: </label>
+<input type="number" id="realA" value="23" min="0" max="112" onchange="drawStep7()">
+<label>b: </label>
+<input type="number" id="realB" value="47" min="0" max="112" onchange="drawStep7()">
+<button onclick="drawStep7()">Compute with Real Weights</button>
+<button onclick="animateStep7()">▶ Animate Full Pipeline</button>
+</div>
+
+<canvas id="canvas7" width="900" height="450"></canvas>
+<div id="s7-result" style="margin-top:15px; padding:15px; background:#0d0d20; border-radius:8px;"></div>
+</div>
+
+<!-- FINAL SUMMARY -->
+<div class="step" id="summary" style="background: linear-gradient(135deg, #12122a, #1a1040); border-color:#667eea;">
+<h2>🎉 Summary: The Complete Algorithm</h2>
+<div style="text-align:center; padding:20px;">
+<canvas id="canvasSummary" width="900" height="300"></canvas>
+</div>
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-top:20px;">
+<div style="background:#0d0d20; padding:15px; border-radius:8px; border-left:3px solid #667eea;">
+<h4 style="color:#667eea;">1. Embed</h4>
+<p style="font-size:0.85em;">Map numbers to (cos, sin) pairs on circles at key frequencies</p>
+</div>
+<div style="background:#0d0d20; padding:15px; border-radius:8px; border-left:3px solid #764ba2;">
+<h4 style="color:#764ba2;">2. Combine</h4>
+<p style="font-size:0.85em;">Use trig identities to compute cos/sin of the sum (a+b)</p>
+</div>
+<div style="background:#0d0d20; padding:15px; border-radius:8px; border-left:3px solid #e74c3c;">
+<h4 style="color:#e74c3c;">3. Score</h4>
+<p style="font-size:0.85em;">For each candidate c, compute cos(w<sub>k</sub>(a+b−c))</p>
+</div>
+<div style="background:#0d0d20; padding:15px; border-radius:8px; border-left:3px solid #2ecc71;">
+<h4 style="color:#2ecc71;">4. Interfere</h4>
+<p style="font-size:0.85em;">Sum across frequencies — correct answer wins by constructive interference!</p>
+</div>
+</div>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+let P = 7;
+let globalA = 5, globalB = 4;
+const KEY_FREQS = [14, 35, 41, 42, 52];
+// Real coefficients from the paper (Table 1)
+const REAL_COEFFS = {
+14: { cos: 44.1, sin: 44.1 },
+35: { cos: 42.2, sin: 41.8 },
+41: { cos: 44.8, sin: 44.5 },
+42: { cos: 66.6, sin: 67.8 },
+52: { cos: 63.0, sin: 64.5 }
+};
+
+let animationIds = {};
+
+function updateGlobalP() {
+P = parseInt(document.getElementById('globalP').value);
+document.getElementById('highlightN').max = P - 1;
+document.getElementById('freqK').max = Math.floor(P / 2);
+updateGlobalInputs();
+drawStep0();
+drawStep1();
+}
+
+function updateGlobalInputs() {
+globalA = parseInt(document.getElementById('globalA').value) % P;
+globalB = parseInt(document.getElementById('globalB').value) % P;
+document.getElementById('globalA').value = globalA;
+document.getElementById('globalB').value = globalB;
+document.getElementById('globalAnswer').textContent = (globalA + globalB) % P;
+drawStep0();
+}
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function omega(k, p) {
+return 2 * Math.PI * k / p;
+}
+
+function lerp(a, b, t) {
+return a + (b - a) * t;
+}
+
+function hsl(h, s, l) {
+return `hsl(${h}, ${s}%, ${l}%)`;
+}
+
+function drawArrow(ctx, fromX, fromY, toX, toY, color = '#667eea') {
+const headLen = 10;
+const dx = toX - fromX;
+const dy = toY - fromY;
+const angle = Math.atan2(dy, dx);
+ctx.beginPath();
+ctx.moveTo(fromX, fromY);
+ctx.lineTo(toX, toY);
+ctx.strokeStyle = color;
+ctx.lineWidth = 2;
+ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(toX, toY);
+ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI / 6), toY - headLen * Math.sin(angle - Math.PI / 6));
+ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI / 6), toY - headLen * Math.sin(angle + Math.PI / 6));
+ctx.closePath();
+ctx.fillStyle = color;
+ctx.fill();
+}
+
+// ============================================================
+// LEVEL SWITCHING
+// ============================================================
+function showLevel(tab, contentId) {
+const parent = tab.closest('.explanation-levels');
+parent.querySelectorAll('.level-tab').forEach(t => t.classList.remove('active'));
+parent.querySelectorAll('.level-content').forEach(c => c.classList.remove('active'));
+tab.classList.add('active');
+document.getElementById(contentId).classList.add('active');
+}
+
+// ============================================================
+// STEP 0: MOD CLOCK
+// ============================================================
+function drawStep0() {
+const canvas = document.getElementById('canvas0');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const cx = canvas.width / 2;
+const cy = canvas.height / 2;
+const r = 120;
+
+// Draw circle
+ctx.beginPath();
+ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+ctx.strokeStyle = '#333';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw numbers
+for (let i = 0; i < P; i++) {
+const angle = -Math.PI / 2 + (2 * Math.PI * i) / P;
+const x = cx + r * Math.cos(angle);
+const y = cy + r * Math.sin(angle);
+
+// Tick mark
+const innerR = r - 10;
+const ix = cx + innerR * Math.cos(angle);
+const iy = cy + innerR * Math.sin(angle);
+ctx.beginPath();
+ctx.moveTo(ix, iy);
+ctx.lineTo(x, y);
+ctx.strokeStyle = '#555';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Number label
+const labelR = r + 20;
+const lx = cx + labelR * Math.cos(angle);
+const ly = cy + labelR * Math.sin(angle);
+ctx.font = '14px monospace';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+
+let color = '#888';
+if (i === globalA) color = '#667eea';
+if (i === globalB) color = '#e74c3c';
+if (i === (globalA + globalB) % P) color = '#2ecc71';
+ctx.fillStyle = color;
+ctx.fillText(i, lx, ly);
+}
+
+// Draw arc for a
+const startAngle = -Math.PI / 2;
+const aAngle = startAngle + (2 * Math.PI * globalA) / P;
+ctx.beginPath();
+ctx.arc(cx, cy, r - 25, startAngle, aAngle, false);
+ctx.strokeStyle = '#667eea';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Draw arc for b (continuing from a)
+const bAngle = aAngle + (2 * Math.PI * globalB) / P;
+ctx.beginPath();
+ctx.arc(cx, cy, r - 35, aAngle, bAngle, false);
+ctx.strokeStyle = '#e74c3c';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Mark the answer
+const ansAngle = startAngle + (2 * Math.PI * ((globalA + globalB) % P)) / P;
+const ax = cx + (r - 5) * Math.cos(ansAngle);
+const ay = cy + (r - 5) * Math.sin(ansAngle);
+ctx.beginPath();
+ctx.arc(ax, ay, 8, 0, 2 * Math.PI);
+ctx.fillStyle = '#2ecc71';
+ctx.globalAlpha = 0.5;
+ctx.fill();
+ctx.globalAlpha = 1;
+
+// Legend
+ctx.font = '13px sans-serif';
+ctx.textAlign = 'left';
+ctx.fillStyle = '#667eea';
+ctx.fillText(`a = ${globalA}`, 20, 30);
+ctx.fillStyle = '#e74c3c';
+ctx.fillText(`b = ${globalB}`, 20, 50);
+ctx.fillStyle = '#2ecc71';
+ctx.fillText(`a + b mod ${P} = ${(globalA + globalB) % P}`, 20, 70);
+}
+
+// ============================================================
+// STEP 1: CIRCLES AND ANGLES
+// ============================================================
+function drawStep1() {
+const canvas = document.getElementById('canvas1');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const k = parseInt(document.getElementById('freqK').value);
+const n = parseInt(document.getElementById('highlightN').value);
+document.getElementById('freqKVal').textContent = k;
+document.getElementById('highlightNVal').textContent = n;
+
+const w = omega(k, P);
+const angle = w * n;
+
+// Update IO
+document.getElementById('s1-input').textContent = n;
+document.getElementById('s1-freq').textContent = k;
+document.getElementById('s1-angle').textContent = angle.toFixed(4);
+document.getElementById('s1-cos').textContent = Math.cos(angle).toFixed(4);
+document.getElementById('s1-sin').textContent = Math.sin(angle).toFixed(4);
+
+const cx = 200, cy = 200, r = 140;
+
+// Draw circle
+ctx.beginPath();
+ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+ctx.strokeStyle = '#333';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw axes
+ctx.beginPath();
+ctx.moveTo(cx - r - 20, cy);
+ctx.lineTo(cx + r + 20, cy);
+ctx.moveTo(cx, cy - r - 20);
+ctx.lineTo(cx, cy + r + 20);
+ctx.strokeStyle = '#222';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Draw all P points on the circle
+for (let i = 0; i < P; i++) {
+const a = w * i;
+const x = cx + r * Math.cos(a);
+const y = cy - r * Math.sin(a);
+
+ctx.beginPath();
+ctx.arc(x, y, i === n ? 8 : 4, 0, 2 * Math.PI);
+ctx.fillStyle = i === n ? '#ffd700' : hsl((360 * i / P), 70, 50);
+ctx.fill();
+
+if (P <= 20 || i === n) {
+ctx.font = i === n ? 'bold 14px monospace' : '11px monospace';
+ctx.fillStyle = i === n ? '#ffd700' : '#aaa';
+ctx.textAlign = 'center';
+ctx.fillText(i, x, y - 12);
+}
+}
+
+// Draw radius to highlighted point
+const hx = cx + r * Math.cos(angle);
+const hy = cy - r * Math.sin(angle);
+ctx.beginPath();
+ctx.moveTo(cx, cy);
+ctx.lineTo(hx, hy);
+ctx.strokeStyle = '#ffd700';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw angle arc
+ctx.beginPath();
+ctx.arc(cx, cy, 30, 0, -angle, angle > 0);
+ctx.strokeStyle = '#ffd700';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw cos projection
+ctx.beginPath();
+ctx.moveTo(hx, hy);
+ctx.lineTo(hx, cy);
+ctx.strokeStyle = '#4ecdc4';
+ctx.lineWidth = 2;
+ctx.setLineDash([4, 4]);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Draw sin projection
+ctx.beginPath();
+ctx.moveTo(hx, hy);
+ctx.lineTo(cx, hy);
+ctx.strokeStyle = '#ff6b6b';
+ctx.lineWidth = 2;
+ctx.setLineDash([4, 4]);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Right side: show the wave
+const waveX = 420;
+const waveW = 250;
+const waveH = 150;
+const waveCY = 200;
+
+// Axes
+ctx.beginPath();
+ctx.moveTo(waveX, waveCY);
+ctx.lineTo(waveX + waveW, waveCY);
+ctx.moveTo(waveX, waveCY - waveH / 2 - 10);
+ctx.lineTo(waveX, waveCY + waveH / 2 + 10);
+ctx.strokeStyle = '#333';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Draw cos wave for all numbers
+ctx.beginPath();
+for (let i = 0; i <= P; i++) {
+const px = waveX + (i / P) * waveW;
+const py = waveCY - Math.cos(w * i) * (waveH / 2);
+if (i === 0) ctx.moveTo(px, py);
+else ctx.lineTo(px, py);
+}
+ctx.strokeStyle = '#4ecdc4';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw sin wave
+ctx.beginPath();
+for (let i = 0; i <= P; i++) {
+const px = waveX + (i / P) * waveW;
+const py = waveCY - Math.sin(w * i) * (waveH / 2);
+if (i === 0) ctx.moveTo(px, py);
+else ctx.lineTo(px, py);
+}
+ctx.strokeStyle = '#ff6b6b';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Mark the highlighted point on the wave
+const markX = waveX + (n / P) * waveW;
+const markYcos = waveCY - Math.cos(angle) * (waveH / 2);
+const markYsin = waveCY - Math.sin(angle) * (waveH / 2);
+
+ctx.beginPath();
+ctx.arc(markX, markYcos, 6, 0, 2 * Math.PI);
+ctx.fillStyle = '#4ecdc4';
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(markX, markYsin, 6, 0, 2 * Math.PI);
+ctx.fillStyle = '#ff6b6b';
+ctx.fill();
+
+// Labels
+ctx.font = '12px sans-serif';
+ctx.fillStyle = '#4ecdc4';
+ctx.textAlign = 'left';
+ctx.fillText('cos(wₖ·n)', waveX + waveW + 10, waveCY - 40);
+ctx.fillStyle = '#ff6b6b';
+ctx.fillText('sin(wₖ·n)', waveX + waveW + 10, waveCY + 40);
+
+ctx.fillStyle = '#aaa';
+ctx.textAlign = 'center';
+ctx.fillText('number n →', waveX + waveW / 2, waveCY + waveH / 2 + 25);
+
+// Title
+ctx.font = 'bold 14px sans-serif';
+ctx.fillStyle = '#ddd';
+ctx.textAlign = 'center';
+ctx.fillText(`Frequency k=${k}: each number gets angle ${k}×2π/${P}×n`, canvas.width / 2, 25);
+}
+
+let step1AnimId = null;
+function animateStep1() {
+if (step1AnimId) cancelAnimationFrame(step1AnimId);
+let n = 0;
+function frame() {
+document.getElementById('highlightN').value = n;
+drawStep1();
+n = (n + 1) % P;
+if (n === 0) { step1AnimId = null; return; }
+step1AnimId = setTimeout(() => requestAnimationFrame(frame), 500);
+}
+frame();
+}
+
+// ============================================================
+// STEP 2: COS AND SIN FROM CIRCLES
+// ============================================================
+let anim2Id = null;
+function drawStep2() {
+const canvas = document.getElementById('canvas2');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const theta = parseInt(document.getElementById('circleAngle').value) / 100;
+document.getElementById('circleAngleVal').textContent = theta.toFixed(2);
+
+// Left: Unit circle
+const cx = 180, cy = 200, r = 130;
+
+// Circle
+ctx.beginPath();
+ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+ctx.strokeStyle = '#333';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Axes
+ctx.beginPath();
+ctx.moveTo(cx - r - 20, cy);
+ctx.lineTo(cx + r + 20, cy);
+ctx.moveTo(cx, cy - r - 20);
+ctx.lineTo(cx, cy + r + 20);
+ctx.strokeStyle = '#444';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Point on circle
+const px = cx + r * Math.cos(theta);
+const py = cy - r * Math.sin(theta);
+
+// Radius line
+ctx.beginPath();
+ctx.moveTo(cx, cy);
+ctx.lineTo(px, py);
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Point
+ctx.beginPath();
+ctx.arc(px, py, 7, 0, 2 * Math.PI);
+ctx.fillStyle = '#ffd700';
+ctx.fill();
+
+// Cos projection (x)
+ctx.beginPath();
+ctx.moveTo(px, py);
+ctx.lineTo(px, cy);
+ctx.strokeStyle = '#4ecdc4';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Cos line on x-axis
+ctx.beginPath();
+ctx.moveTo(cx, cy);
+ctx.lineTo(px, cy);
+ctx.strokeStyle = '#4ecdc4';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Sin projection (y)
+ctx.beginPath();
+ctx.moveTo(px, py);
+ctx.lineTo(cx, py);
+ctx.strokeStyle = '#ff6b6b';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Sin line on y-axis
+ctx.beginPath();
+ctx.moveTo(cx, cy);
+ctx.lineTo(cx, py);
+ctx.strokeStyle = '#ff6b6b';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Angle arc
+ctx.beginPath();
+ctx.arc(cx, cy, 25, 0, -theta, theta > 0);
+ctx.strokeStyle = '#ffd700';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Labels
+ctx.font = '13px sans-serif';
+ctx.fillStyle = '#4ecdc4';
+ctx.textAlign = 'center';
+ctx.fillText(`cos θ = ${Math.cos(theta).toFixed(3)}`, (cx + px) / 2, cy + 20);
+ctx.fillStyle = '#ff6b6b';
+ctx.fillText(`sin θ = ${Math.sin(theta).toFixed(3)}`, cx - 50, (cy + py) / 2);
+ctx.fillStyle = '#ffd700';
+ctx.fillText(`θ = ${theta.toFixed(2)}`, cx + 40, cy - 10);
+
+// Right: Waves
+const waveX = 380, waveW = 480, waveH = 130, waveCY = 200;
+
+// Axes
+ctx.beginPath();
+ctx.moveTo(waveX, waveCY);
+ctx.lineTo(waveX + waveW, waveCY);
+ctx.moveTo(waveX, waveCY - waveH - 10);
+ctx.lineTo(waveX, waveCY + waveH + 10);
+ctx.strokeStyle = '#333';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Draw full cos wave
+ctx.beginPath();
+for (let i = 0; i <= waveW; i++) {
+const t = (i / waveW) * 2 * Math.PI;
+const y = waveCY - Math.cos(t) * waveH * 0.7;
+if (i === 0) ctx.moveTo(waveX + i, y);
+else ctx.lineTo(waveX + i, y);
+}
+ctx.strokeStyle = 'rgba(78, 205, 196, 0.4)';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw full sin wave
+ctx.beginPath();
+for (let i = 0; i <= waveW; i++) {
+const t = (i / waveW) * 2 * Math.PI;
+const y = waveCY - Math.sin(t) * waveH * 0.7;
+if (i === 0) ctx.moveTo(waveX + i, y);
+else ctx.lineTo(waveX + i, y);
+}
+ctx.strokeStyle = 'rgba(255, 107, 107, 0.4)';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Draw traced portion (cos)
+ctx.beginPath();
+for (let i = 0; i <= (theta / (2 * Math.PI)) * waveW; i++) {
+const t = (i / waveW) * 2 * Math.PI;
+const y = waveCY - Math.cos(t) * waveH * 0.7;
+if (i === 0) ctx.moveTo(waveX + i, y);
+else ctx.lineTo(waveX + i, y);
+}
+ctx.strokeStyle = '#4ecdc4';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Draw traced portion (sin)
+ctx.beginPath();
+for (let i = 0; i <= (theta / (2 * Math.PI)) * waveW; i++) {
+const t = (i / waveW) * 2 * Math.PI;
+const y = waveCY - Math.sin(t) * waveH * 0.7;
+if (i === 0) ctx.moveTo(waveX + i, y);
+else ctx.lineTo(waveX + i, y);
+}
+ctx.strokeStyle = '#ff6b6b';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Current position markers
+const curX = waveX + (theta / (2 * Math.PI)) * waveW;
+const curYcos = waveCY - Math.cos(theta) * waveH * 0.7;
+const curYsin = waveCY - Math.sin(theta) * waveH * 0.7;
+
+ctx.beginPath();
+ctx.arc(curX, curYcos, 6, 0, 2 * Math.PI);
+ctx.fillStyle = '#4ecdc4';
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(curX, curYsin, 6, 0, 2 * Math.PI);
+ctx.fillStyle = '#ff6b6b';
+ctx.fill();
+
+// Connecting lines from circle to wave
+ctx.beginPath();
+ctx.moveTo(cx + r + 20, py);
+ctx.lineTo(waveX - 10, curYsin);
+ctx.strokeStyle = 'rgba(255, 107, 107, 0.3)';
+ctx.lineWidth = 1;
+ctx.setLineDash([3, 3]);
+ctx.stroke();
+ctx.setLineDash([]);
+
+// Labels
+ctx.font = 'bold 12px sans-serif';
+ctx.fillStyle = '#4ecdc4';
+ctx.textAlign = 'left';
+ctx.fillText('cos θ', waveX + waveW + 5, waveCY - waveH * 0.5);
+ctx.fillStyle = '#ff6b6b';
+ctx.fillText('sin θ', waveX + waveW + 5, waveCY + waveH * 0.3);
+
+ctx.fillStyle = '#888';
+ctx.textAlign = 'center';
+ctx.fillText('angle θ →', waveX + waveW / 2, waveCY + waveH + 25);
+}
+
+function animateStep2() {
+stopAnimation2();
+let angle = 0;
+function frame() {
+angle += 2;
+if (angle > 628) angle = 0;
+document.getElementById('circleAngle').value = angle;
+drawStep2();
+anim2Id = requestAnimationFrame(frame);
+}
+frame();
+}
+
+function stopAnimation2() {
+if (anim2Id) {
+cancelAnimationFrame(anim2Id);
+anim2Id = null;
+}
+}
+
+// ============================================================
+// STEP 3: EMBEDDING SPACE
+// ============================================================
+function drawStep3() {
+const canvas = document.getElementById('canvas3');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const n = parseInt(document.getElementById('embedN').value);
+const freqSel = document.getElementById('embedFreq').value;
+document.getElementById('embedNVal').textContent = n;
+
+const freqs = freqSel === 'all' ? KEY_FREQS : [parseInt(freqSel)];
+const numCircles = freqs.length;
+const circleR = numCircles === 1 ? 140 : 70;
+const spacing = canvas.width / (numCircles + 1);
+
+freqs.forEach((k, idx) => {
+const cx = spacing * (idx + 1);
+const cy = 220;
+const w = omega(k, 113);
+
+// Draw circle
+ctx.beginPath();
+ctx.arc(cx, cy, circleR, 0, 2 * Math.PI);
+ctx.strokeStyle = '#333';
+ctx.lineWidth = 1.5;
+ctx.stroke();
+
+// Draw all 113 points faintly
+for (let i = 0; i < 113; i++) {
+const angle = w * i;
+const x = cx + circleR * Math.cos(angle);
+const y = cy - circleR * Math.sin(angle);
+ctx.beginPath();
+ctx.arc(x, y, 2, 0, 2 * Math.PI);
+ctx.fillStyle = i === n ? '#ffd700' : 'rgba(100, 126, 234, 0.2)';
+ctx.fill();
+}
+
+// Highlight the selected number
+const angle = w * n;
+const hx = cx + circleR * Math.cos(angle);
+const hy = cy - circleR * Math.sin(angle);
+
+ctx.beginPath();
+ctx.moveTo(cx, cy);
+ctx.lineTo(hx, hy);
+ctx.strokeStyle = '#ffd700';
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Highlight point
+ctx.beginPath();
+ctx.arc(hx, hy, 8, 0, 2 * Math.PI);
+ctx.fillStyle = '#ffd700';
+ctx.fill();
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Label
+ctx.font = numCircles === 1 ? 'bold 14px sans-serif' : 'bold 11px sans-serif';
+ctx.fillStyle = '#ddd';
+ctx.textAlign = 'center';
+ctx.fillText(`k=${k}`, cx, cy - circleR - 15);
+
+// Show cos/sin values
+const cosVal = Math.cos(angle).toFixed(3);
+const sinVal = Math.sin(angle).toFixed(3);
+if (numCircles === 1) {
+ctx.font = '12px monospace';
+ctx.fillStyle = '#4ecdc4';
+ctx.fillText(`cos = ${cosVal}`, cx, cy + circleR + 25);
+ctx.fillStyle = '#ff6b6b';
+ctx.fillText(`sin = ${sinVal}`, cx, cy + circleR + 45);
+}
+});
+
+// Update output panel
+const outputDiv = document.getElementById('s3-output');
+let html = '<table style="width:100%; font-size:0.85em;">';
+html += '<tr><th>Freq k</th><th>cos(wₖ·n)</th><th>sin(wₖ·n)</th></tr>';
+KEY_FREQS.forEach(k => {
+const w = omega(k, 113);
+const angle = w * n;
+html += `<tr><td>${k}</td><td>${Math.cos(angle).toFixed(6)}</td><td>${Math.sin(angle).toFixed(6)}</td></tr>`;
+});
+html += '</table>';
+outputDiv.innerHTML = html;
+document.getElementById('s3-input').textContent = n;
+}
+
+let step3AnimId = null;
+function animateStep3() {
+if (step3AnimId) clearTimeout(step3AnimId);
+let n = 0;
+function frame() {
+document.getElementById('embedN').value = n;
+drawStep3();
+n = (n + 1) % 113;
+if (n === 0) { step3AnimId = null; return; }
+step3AnimId = setTimeout(frame, 80);
+}
+frame();
+}
+
+// ============================================================
+// STEP 4: TRIG ADDITION IDENTITIES
+// ============================================================
+function drawStep4() {
+const canvas = document.getElementById('canvas4');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const a = parseInt(document.getElementById('trigA').value);
+const b = parseInt(document.getElementById('trigB').value);
+const k = parseInt(document.getElementById('trigFreq').value);
+const P_val = 113;
+const w = omega(k, P_val);
+
+const angleA = w * a;
+const angleB = w * b;
+const angleSum = w * ((a + b) % P_val);
+
+const cosA = Math.cos(angleA);
+const sinA = Math.sin(angleA);
+const cosB = Math.cos(angleB);
+const sinB = Math.sin(angleB);
+
+// Trig identity computation
+const cosAcosB = cosA * cosB;
+const sinAsinB = sinA * sinB;
+const sinAcosB = sinA * cosB;
+const cosAsinB = cosA * sinB;
+
+const cosSum = cosAcosB - sinAsinB;
+const sinSum = sinAcosB + cosAsinB;
+
+// Direct computation for verification
+const cosDirect = Math.cos(w * (a + b));
+const sinDirect = Math.sin(w * (a + b));
+
+// Draw three circles: a, b, a+b
+const circles = [
+{ label: `a = ${a}`, angle: angleA, color: '#667eea', cx: 150, cy: 200 },
+{ label: `b = ${b}`, angle: angleB, color: '#e74c3c', cx: 450, cy: 200 },
+{ label: `a+b = ${(a + b) % P_val}`, angle: angleSum, color: '#2ecc71', cx: 750, cy: 200 }
+];
+
+const r = 100;
+
+circles.forEach((c, idx) => {
+// Circle
+ctx.beginPath();
+ctx.arc(c.cx, c.cy, r, 0, 2 * Math.PI);
+ctx.strokeStyle = '#333';
+ctx.lineWidth = 1.5;
+ctx.stroke();
+
+// Axes
+ctx.beginPath();
+ctx.moveTo(c.cx - r - 10, c.cy);
+ctx.lineTo(c.cx + r + 10, c.cy);
+ctx.moveTo(c.cx, c.cy - r - 10);
+ctx.lineTo(c.cx, c.cy + r + 10);
+ctx.strokeStyle = '#222';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Point
+const px = c.cx + r * Math.cos(c.angle);
+const py = c.cy - r * Math.sin(c.angle);
+
+// Radius
+ctx.beginPath();
+ctx.moveTo(c.cx, c.cy);
+ctx.lineTo(px, py);
+ctx.strokeStyle = c.color;
+ctx.lineWidth = 2;
+ctx.stroke();
+
+// Point dot
+ctx.beginPath();
+ctx.arc(px, py, 7, 0, 2 * Math.PI);
+ctx.fillStyle = c.color;
+ctx.fill();
+
+// Label
+ctx.font = 'bold 13px sans-serif';
+ctx.fillStyle = c.color;
+ctx.textAlign = 'center';
+ctx.fillText(c.label, c.cx, c.cy - r - 20);
+
+// Angle value
+ctx.font = '11px monospace';
+ctx.fillStyle = '#aaa';
+ctx.fillText(`θ = ${c.angle.toFixed(3)} rad`, c.cx, c.cy + r + 20);
+ctx.fillText(`cos = ${Math.cos(c.angle).toFixed(4)}`, c.cx, c.cy + r + 38);
+ctx.fillText(`sin = ${Math.sin(c.angle).toFixed(4)}`, c.cx, c.cy + r + 54);
+});
+
+// Draw arrows between circles
+drawArrow(ctx, 260, 200, 340, 200, '#ffd700');
+ctx.font = 'bold 14px sans-serif';
+ctx.fillStyle = '#ffd700';
+ctx.textAlign = 'center';
+ctx.fillText('+', 300, 190);
+
+drawArrow(ctx, 560, 200, 640, 200, '#ffd700');
+ctx.fillText('=', 600, 190);
+
+// Title
+ctx.font = 'bold 14px sans-serif';
+ctx.fillStyle = '#ddd';
+ctx.textAlign = 'center';
+ctx.fillText(`Trig Addition at frequency k=${k} (P=113)`, canvas.width / 2, 25);
+
+// Bottom: show the computation
+ctx.font = '12px monospace';
+ctx.fillStyle = '#4ecdc4';
+ctx.textAlign = 'left';
+const baseY = 340;
+ctx.fillText(`cos(wₖa)·cos(wₖb) = ${cosA.toFixed(4)} × ${cosB.toFixed(4)} = ${cosAcosB.toFixed(6)}`, 50, baseY);
+ctx.fillStyle = '#ff6b6b';
+ctx.fillText(`sin(wₖa)·sin(wₖb) = ${sinA.toFixed(4)} × ${sinB.toFixed(4)} = ${sinAsinB.toFixed(6)}`, 50, baseY + 20);
+ctx.fillStyle = '#2ecc71';
+ctx.fillText(`cos(wₖ(a+b)) = ${cosAcosB.toFixed(6)} - ${sinAsinB.toFixed(6)} = ${cosSum.toFixed(6)}`, 50, baseY + 45);
+ctx.fillStyle = '#aaa';
+ctx.fillText(`Direct: cos(wₖ·${(a + b) % P_val}) = ${cosDirect.toFixed(6)}`, 50, baseY + 70);
+ctx.fillStyle = cosSum.toFixed(6) === cosDirect.toFixed(6) ? '#2ecc71' : '#ffd700';
+ctx.fillText(`Match: ${Math.abs(cosSum - cosDirect) < 1e-10 ? '✓ EXACT' : '≈ ' + Math.abs(cosSum - cosDirect).toExponential(2)}`, 50, baseY + 90);
+
+// Right side computation
+ctx.fillStyle = '#4ecdc4';
+ctx.fillText(`sin(wₖa)·cos(wₖb) = ${sinA.toFixed(4)} × ${cosB.toFixed(4)} = ${sinAcosB.toFixed(6)}`, 480, baseY);
+ctx.fillStyle = '#ff6b6b';
+ctx.fillText(`cos(wₖa)·sin(wₖb) = ${cosA.toFixed(4)} × ${sinB.toFixed(4)} = ${cosAsinB.toFixed(6)}`, 480, baseY + 20);
+ctx.fillStyle = '#2ecc71';
+ctx.fillText(`sin(wₖ(a+b)) = ${sinAcosB.toFixed(6)} + ${cosAsinB.toFixed(6)} = ${sinSum.toFixed(6)}`, 480, baseY + 45);
+ctx.fillStyle = '#aaa';
+ctx.fillText(`Direct: sin(wₖ·${(a + b) % P_val}) = ${sinDirect.toFixed(6)}`, 480, baseY + 70);
+ctx.fillStyle = sinSum.toFixed(6) === sinDirect.toFixed(6) ? '#2ecc71' : '#ffd700';
+ctx.fillText(`Match: ${Math.abs(sinSum - sinDirect) < 1e-10 ? '✓ EXACT' : '≈ ' + Math.abs(sinSum - sinDirect).toExponential(2)}`, 480, baseY + 90);
+
+// Update IO panels
+document.getElementById('s4-input').innerHTML = `
+<p>a = ${a}, b = ${b}, k = ${k}, P = ${P_val}</p>
+<p>w<sub>k</sub> = 2π·${k}/${P_val} = ${w.toFixed(6)}</p>
+<p>cos(w<sub>k</sub>·a) = cos(${angleA.toFixed(4)}) = <span class="value-display">${cosA.toFixed(6)}</span></p>
+<p>sin(w<sub>k</sub>·a) = sin(${angleA.toFixed(4)}) = <span class="value-display">${sinA.toFixed(6)}</span></p>
+<p>cos(w<sub>k</sub>·b) = cos(${angleB.toFixed(4)}) = <span class="value-display">${cosB.toFixed(6)}</span></p>
+<p>sin(w<sub>k</sub>·b) = sin(${angleB.toFixed(4)}) = <span class="value-display">${sinB.toFixed(6)}</span></p>
+`;
+
+document.getElementById('s4-output').innerHTML = `
+<p>cos(w<sub>k</sub>(a+b)) = <span class="value-display">${cosSum.toFixed(6)}</span></p>
+<p>sin(w<sub>k</sub>(a+b)) = <span class="value-display">${sinSum.toFixed(6)}</span></p>
+<p style="margin-top:8px; color:#2ecc71;">✓ These match cos/sin of angle w<sub>k</sub>·${(a + b) % P_val}</p>
+`;
+
+document.getElementById('s4-verify').innerHTML = `
+<h4 style="color:#2ecc71;">✓ Verification</h4>
+<p>The trig identity gives us cos(w<sub>${k}</sub>(${a}+${b})) = <strong>${cosSum.toFixed(8)}</strong></p>
+<p>Direct computation: cos(w<sub>${k}</sub>·${(a + b) % P_val}) = <strong>${cosDirect.toFixed(8)}</strong></p>
+<p>Difference: <strong>${Math.abs(cosSum - cosDirect).toExponential(3)}</strong> (essentially zero — floating point precision)</p>
+<p class="note">The network computes this using the products cos·cos, sin·sin, sin·cos, cos·sin which are degree-2 polynomials of the embeddings — exactly what attention heads produce!</p>
+`;
+}
+
+function animateStep4() {
+let frame = 0;
+const a = parseInt(document.getElementById('trigA').value);
+function step() {
+document.getElementById('trigB').value = frame;
+drawStep4();
+frame = (frame + 1) % 113;
+if (frame === 0) return;
+setTimeout(step, 60);
+}
+step();
+}
+
+// ============================================================
+// STEP 5: FULL ALGORITHM
+// ============================================================
+function drawStep5() {
+const canvas = document.getElementById('canvas5');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const a = parseInt(document.getElementById('fullA').value);
+const b = parseInt(document.getElementById('fullB').value);
+const P_val = parseInt(document.getElementById('fullP').value);
+const correctAnswer = (a + b) % P_val;
+
+// Use the real coefficients for P=113, otherwise equal weights
+const useRealCoeffs = (P_val === 113);
+const freqs = (P_val === 113) ? KEY_FREQS : [1, 2, 3, 4, 5].filter(k => k < Math.floor(P_val / 2));
+
+// Compute logits for each candidate c
+const logits = [];
+let maxLogit = -Infinity;
+let maxC = 0;
+
+for (let c = 0; c < P_val; c++) {
+let logit = 0;
+freqs.forEach(k => {
+const w = omega(k, P_val);
+const cosTerm = Math.cos(w * (a + b - c));
+const coeff = useRealCoeffs && REAL_COEFFS[k] ? REAL_COEFFS[k].cos : 1;
+logit += coeff * cosTerm;
+});
+logits.push(logit);
+if (logit > maxLogit) {
+maxLogit = logit;
+maxC = c;
+}
+}
+
+// Normalize for display
+const minLogit = Math.min(...logits);
+const range = maxLogit - minLogit;
+
+// Draw bar chart of logits
+const barW = Math.min(8, (canvas.width - 100) / P_val);
+const chartX = 50;
+const chartY = 350;
+const chartH = 300;
+
+// Axes
+ctx.beginPath();
+ctx.moveTo(chartX, chartY - chartH);
+ctx.lineTo(chartX, chartY);
+ctx.lineTo(chartX + P_val * barW + 10, chartY);
+ctx.strokeStyle = '#444';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Bars
+for (let c = 0; c < P_val; c++) {
+const normalized = (logits[c] - minLogit) / range;
+const barH = normalized * (chartH - 20);
+const x = chartX + c * barW;
+
+let color;
+if (c === correctAnswer) {
+color = '#2ecc71';
+} else if (c === maxC && maxC !== correctAnswer) {
+color = '#e74c3c';
+} else {
+color = `rgba(102, 126, 234, ${0.3 + normalized * 0.5})`;
+}
+
+ctx.fillStyle = color;
+ctx.fillRect(x, chartY - barH, Math.max(barW - 1, 1), barH);
+}
+
+// Labels
+ctx.font = 'bold 14px sans-serif';
+ctx.fillStyle = '#ddd';
+ctx.textAlign = 'center';
+ctx.fillText(`Logits for ${a} + ${b} mod ${P_val} = ${correctAnswer}`, canvas.width / 2, 25);
+
+ctx.font = '11px sans-serif';
+ctx.fillStyle = '#2ecc71';
+ctx.fillText(`↑ c=${correctAnswer} (correct)`, chartX + correctAnswer * barW, chartY - (logits[correctAnswer] - minLogit) / range * (chartH - 20) - 10);
+
+ctx.fillStyle = '#888';
+ctx.textAlign = 'center';
+ctx.fillText('candidate answer c →', chartX + P_val * barW / 2, chartY + 20);
+ctx.save();
+ctx.translate(20, chartY - chartH / 2);
+ctx.rotate(-Math.PI / 2);
+ctx.fillText('logit score', 0, 0);
+ctx.restore();
+
+// Show the logit values
+const logitDiv = document.getElementById('s5-logits');
+logitDiv.innerHTML = `
+<div style="background:#0d2010; padding:15px; border-radius:8px; border:1px solid #2a4a2a;">
+<h4 style="color:#2ecc71;">Result: ${a} + ${b} mod ${P_val} = ${maxC} ${maxC === correctAnswer ? '✓' : '✗'}</h4>
+<p>Correct answer: <span class="value-display">${correctAnswer}</span> | Network's answer: <span class="value-display">${maxC}</span></p>
+<p>Logit at correct answer: <span class="value-display">${logits[correctAnswer].toFixed(4)}</span></p>
+<p>Max logit: <span class="value-display">${maxLogit.toFixed(4)}</span> at c=${maxC}</p>
+<p>Margin (correct - 2nd best): <span class="value-display">${(logits[correctAnswer] - logits.filter((_, i) => i !== correctAnswer).reduce((a, b) => Math.max(a, b), -Infinity)).toFixed(4)}</span></p>
+<p class="note">The correct answer gets cos(0)=1 from every frequency, giving it the maximum possible score. All other answers get a mix of positive and negative cosine values that mostly cancel out.</p>
+</div>
+`;
+}
+
+// ============================================================
+// STEP 6: CONSTRUCTIVE INTERFERENCE
+// ============================================================
+function drawStep6() {
+const canvas = document.getElementById('canvas6');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const a = parseInt(document.getElementById('intA').value);
+const b = parseInt(document.getElementById('intB').value);
+const numF = parseInt(document.getElementById('numFreqs').value);
+document.getElementById('numFreqsVal').textContent = numF;
+
+const P_val = 113;
+const correctAnswer = (a + b) % P_val;
+const freqsToUse = KEY_FREQS.slice(0, numF);
+
+const chartX = 60;
+const chartW = canvas.width - 120;
+const chartY = 350;
+const chartH = 280;
+
+// Compute individual waves and sum
+const waves = [];
+const sumWave = new Array(P_val).fill(0);
+
+KEY_FREQS.forEach((k, idx) => {
+const wave = [];
+const w = omega(k, P_val);
+for (let c = 0; c < P_val; c++) {
+const val = Math.cos(w * (a + b - c));
+wave.push(val);
+if (idx < numF) {
+sumWave[c] += val;
+}
+}
+waves.push(wave);
+});
+
+// Find max for scaling
+const maxSum = Math.max(...sumWave);
+const minSum = Math.min(...sumWave);
+const absMax = Math.max(Math.abs(maxSum), Math.abs(minSum), numF);
+
+// Draw axes
+ctx.beginPath();
+ctx.moveTo(chartX, chartY - chartH / 2);
+ctx.lineTo(chartX, chartY + chartH / 2);
+ctx.moveTo(chartX, chartY);
+ctx.lineTo(chartX + chartW, chartY);
+ctx.strokeStyle = '#444';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// Zero line label
+ctx.font = '10px monospace';
+ctx.fillStyle = '#555';
+ctx.textAlign = 'right';
+ctx.fillText('0', chartX - 5, chartY + 4);
+
+// Draw individual waves (faded)
+const waveColors = ['#667eea', '#e74c3c', '#2ecc71', '#ffd700', '#ff6b9d'];
+freqsToUse.forEach((k, idx) => {
+ctx.beginPath();
+const wave = waves[KEY_FREQS.indexOf(k)];
+for (let c = 0; c < P_val; c++) {
+const x = chartX + (c / P_val) * chartW;
+const y = chartY - (wave[c] / absMax) * (chartH / 2 - 10);
+if (c === 0) ctx.moveTo(x, y);
+else ctx.lineTo(x, y);
+}
+ctx.strokeStyle = waveColors[idx] + '60';
+ctx.lineWidth = 1.5;
+ctx.stroke();
+});
+
+// Draw sum wave (bold)
+ctx.beginPath();
+for (let c = 0; c < P_val; c++) {
+const x = chartX + (c / P_val) * chartW;
+const y = chartY - (sumWave[c] / absMax) * (chartH / 2 - 10);
+if (c === 0) ctx.moveTo(x, y);
+else ctx.lineTo(x, y);
+}
+ctx.strokeStyle = '#fff';
+ctx.lineWidth = 2.5;
+ctx.stroke();
+
+// Mark the correct answer
+const correctX = chartX + (correctAnswer / P_val) * chartW;
+const correctY = chartY - (sumWave[correctAnswer] / absMax) * (chartH / 2 - 10);
+ctx.beginPath();
+ctx.arc(correctX, correctY, 8, 0, 2 * Math.PI);
+ctx.fillStyle = '#2ecc71';
+ctx.fill();
+ctx.font = 'bold 12px sans-serif';
+ctx.fillStyle = '#2ecc71';
+ctx.textAlign = 'center';
+ctx.fillText(`c=${correctAnswer}`, correctX, correctY - 15);
+ctx.fillText(`sum=${sumWave[correctAnswer].toFixed(2)}`, correctX, correctY - 30);
+
+// Title and legend
+ctx.font = 'bold 14px sans-serif';
+ctx.fillStyle = '#ddd';
+ctx.textAlign = 'center';
+ctx.fillText(`Constructive Interference: ${numF} of 5 frequencies (${a}+${b} mod 113 = ${correctAnswer})`, canvas.width / 2, 25);
+
+// Legend
+ctx.font = '11px sans-serif';
+ctx.textAlign = 'left';
+freqsToUse.forEach((k, idx) => {
+ctx.fillStyle = waveColors[idx];
+ctx.fillText(`k=${k}`, canvas.width - 100, 50 + idx * 18);
+});
+ctx.fillStyle = '#fff';
+ctx.fillText(`Sum (white)`, canvas.width - 100, 50 + numF * 18);
+
+// X-axis label
+ctx.fillStyle = '#888';
+ctx.textAlign = 'center';
+ctx.fillText('candidate answer c →', chartX + chartW / 2, chartY + chartH / 2 + 20);
+
+// Show peak value info
+ctx.font = '12px monospace';
+ctx.fillStyle = '#2ecc71';
+ctx.textAlign = 'left';
+ctx.fillText(`Peak at correct answer: ${numF} (each cos(0)=1 adds 1)`, 60, chartY + chartH / 2 + 40);
+ctx.fillStyle = '#aaa';
+const secondBest = sumWave.filter((_, i) => i !== correctAnswer).reduce((a, b) => Math.max(a, b), -Infinity);
+ctx.fillText(`Highest wrong answer: ${secondBest.toFixed(4)}`, 60, chartY + chartH / 2 + 58);
+ctx.fillText(`Ratio: ${(numF / secondBest).toFixed(2)}x`, 60, chartY + chartH / 2 + 76);
+}
+
+function animateStep6() {
+let n = 1;
+function frame() {
+document.getElementById('numFreqs').value = n;
+drawStep6();
+n++;
+if (n > 5) return;
+setTimeout(frame, 1200);
+}
+frame();
+}
+
+// ============================================================
+// STEP 7: REAL NETWORK DATA
+// ============================================================
+function drawStep7() {
+const canvas = document.getElementById('canvas7');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const a = parseInt(document.getElementById('realA').value);
+const b = parseInt(document.getElementById('realB').value);
+const P_val = 113;
+const correctAnswer = (a + b) % P_val;
+
+// Compute logits using real coefficients from Table 1
+const logits = new Array(P_val).fill(0);
+
+KEY_FREQS.forEach(k => {
+const w = omega(k, P_val);
+const cosCoeff = REAL_COEFFS[k].cos;
+const sinCoeff = REAL_COEFFS[k].sin;
+
+// The network computes: cosCoeff * cos(wk(a+b)) projected onto cos(wk*c)
+// + sinCoeff * sin(wk(a+b)) projected onto sin(wk*c)
+// = cosCoeff * cos(wk(a+b-c)) (approximately, when cosCoeff ≈ sinCoeff)
+const cosAB = Math.cos(w * (a + b));
+const sinAB = Math.sin(w * (a + b));
+
+for (let c = 0; c < P_val; c++) {
+const cosC = Math.cos(w * c);
+const sinC = Math.sin(w * c);
+// cos(wk(a+b-c)) = cos(wk(a+b))cos(wkc) + sin(wk(a+b))sin(wkc)
+logits[c] += cosCoeff * cosAB * cosC + sinCoeff * sinAB * sinC;
+}
+});
+
+// Find max
+let maxLogit = -Infinity, maxC = 0;
+for (let c = 0; c < P_val; c++) {
+if (logits[c] > maxLogit) {
+maxLogit = logits[c];
+maxC = c;
+}
+}
+const minLogit = Math.min(...logits);
+
+// Draw pipeline diagram at top
+const pipeY = 60;
+const stages = [
+{ label: 'Input', desc: `a=${a}, b=${b}`, color: '#667eea', x: 80 },
+{ label: 'Embed', desc: 'cos/sin at 5 freqs', color: '#764ba2', x: 250 },
+{ label: 'Attn+MLP', desc: 'trig identities', color: '#e74c3c', x: 450 },
+{ label: 'Unembed', desc: 'cos(wₖ(a+b-c))', color: '#ffd700', x: 650 },
+{ label: 'Output', desc: `c=${correctAnswer}`, color: '#2ecc71', x: 820 }
+];
+
+stages.forEach((s, idx) => {
+ctx.fillStyle = s.color + '30';
+ctx.fillRect(s.x - 50, pipeY - 25, 100, 50);
+ctx.strokeStyle = s.color;
+ctx.lineWidth = 2;
+ctx.strokeRect(s.x - 50, pipeY - 25, 100, 50);
+
+ctx.font = 'bold 12px sans-serif';
+ctx.fillStyle = s.color;
+ctx.textAlign = 'center';
+ctx.fillText(s.label, s.x, pipeY - 5);
+ctx.font = '10px sans-serif';
+ctx.fillStyle = '#aaa';
+ctx.fillText(s.desc, s.x, pipeY + 12);
+
+if (idx < stages.length - 1) {
+drawArrow(ctx, s.x + 55, pipeY, stages[idx + 1].x - 55, pipeY, '#555');
+}
+});
+
+// Draw logit bar chart
+const chartX = 60;
+const chartW = canvas.width - 120;
+const chartY = 380;
+const chartH = 250;
+const barW = chartW / P_val;
+
+// Axes
+ctx.beginPath();
+ctx.moveTo(chartX, chartY - chartH);
+ctx.lineTo(chartX, chartY);
+ctx.lineTo(chartX + chartW, chartY);
+ctx.strokeStyle = '#444';
+ctx.lineWidth = 1;
+ctx.stroke();
+
+const range = maxLogit - minLogit;
+
+for (let c = 0; c < P_val; c++) {
+const normalized = (logits[c] - minLogit) / range;
+const barH = normalized * (chartH - 30);
+const x = chartX + c * barW;
+
+let color;
+if (c === correctAnswer) {
+color = '#2ecc71';
+} else {
+const intensity = Math.max(0, normalized);
+color = `rgba(102, 126, 234, ${0.2 + intensity * 0.6})`;
+}
+
+ctx.fillStyle = color;
+ctx.fillRect(x, chartY - barH, Math.max(barW - 0.5, 0.5), barH);
+}
+
+// Mark correct answer
+const correctX = chartX + correctAnswer * barW + barW / 2;
+ctx.font = 'bold 12px sans-serif';
+ctx.fillStyle = '#2ecc71';
+ctx.textAlign = 'center';
+ctx.fillText(`↑ ${correctAnswer}`, correctX, chartY + 15);
+
+// Title
+ctx.font = 'bold 14px sans-serif';
+ctx.fillStyle = '#ddd';
+ctx.textAlign = 'center';
+ctx.fillText(`Real Network Output: ${a} + ${b} mod 113 = ${correctAnswer}`, canvas.width / 2, 115);
+
+ctx.font = '11px sans-serif';
+ctx.fillStyle = '#888';
+ctx.fillText('candidate answer c →', chartX + chartW / 2, chartY + 30);
+
+// Result panel
+const resultDiv = document.getElementById('s7-result');
+const softmax = logits.map(l => Math.exp(l - maxLogit));
+const softmaxSum = softmax.reduce((a, b) => a + b, 0);
+const prob = softmax[correctAnswer] / softmaxSum;
+
+resultDiv.innerHTML = `
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+<div>
+<h4 style="color:#2ecc71;">✓ Network Output</h4>
+<p>Predicted answer: <span class="value-display">${maxC}</span> ${maxC === correctAnswer ? '(CORRECT!)' : '(wrong)'}</p>
+<p>Logit at correct answer: <span class="value-display">${
+logits[correctAnswer].toFixed(4)}</span></p>
+<p>Probability (softmax): <span class="value-display">${(prob * 100).toFixed(4)}%</span></p>
+<p>Sum of all 5 frequency coefficients at correct answer: <span class="value-display">${(REAL_COEFFS[14].cos + REAL_COEFFS[35].cos + REAL_COEFFS[41].cos + REAL_COEFFS[42].cos + REAL_COEFFS[52].cos).toFixed(1)}</span></p>
+</div>
+<div>
+<h4 style="color:#667eea;">📊 Per-Frequency Contributions at c=${correctAnswer}</h4>
+<table style="width:100%; font-size:0.85em;">
+<tr><th>Freq k</th><th>Coefficient</th><th>cos(wₖ(a+b−c))</th><th>Contribution</th></tr>
+${KEY_FREQS.map(k => {
+const w = omega(k, P_val);
+const cosVal = Math.cos(w * (a + b - correctAnswer));
+const contrib = REAL_COEFFS[k].cos * cosVal;
+return `<tr><td>${k}</td><td>${REAL_COEFFS[k].cos}</td><td>${cosVal.toFixed(6)}</td><td>${contrib.toFixed(4)}</td></tr>`;
+}).join('')}
+</table>
+<p class="note" style="margin-top:10px;">At the correct answer, cos(wₖ(a+b−c)) = cos(0) = 1 for all k, so each frequency contributes its full coefficient!</p>
+</div>
+</div>
+`;
+}
+
+function animateStep7() {
+let frame = 0;
+function step() {
+document.getElementById('realA').value = Math.floor(Math.random() * 113);
+document.getElementById('realB').value = Math.floor(Math.random() * 113);
+drawStep7();
+frame++;
+if (frame > 20) return;
+setTimeout(step, 1500);
+}
+step();
+}
+
+// ============================================================
+// SUMMARY CANVAS
+// ============================================================
+function drawSummary() {
+const canvas = document.getElementById('canvasSummary');
+const ctx = canvas.getContext('2d');
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const stages = [
+{ x: 80, label: 'a, b', sublabel: 'Input numbers', color: '#667eea' },
+{ x: 250, label: 'cos(wₖa)\nsin(wₖa)', sublabel: 'Embedding', color: '#764ba2' },
+{ x: 450, label: 'cos(wₖ(a+b))\nsin(wₖ(a+b))', sublabel: 'Attn + MLP', color: '#e74c3c' },
+{ x: 650, label: 'Σₖ cos(wₖ(a+b−c))', sublabel: 'Unembed + Sum', color: '#ffd700' },
+{ x: 830, label: 'argmax = c*', sublabel: 'Answer!', color: '#2ecc71' }
+];
+
+const y = 150;
+
+stages.forEach((s, idx) => {
+// Box
+ctx.fillStyle = s.color + '20';
+ctx.fillRect(s.x - 65, y - 40, 130, 80);
+ctx.strokeStyle = s.color;
+ctx.lineWidth = 2;
+ctx.strokeRect(s.x - 65, y - 40, 130, 80);
+
+// Label
+ctx.font = 'bold 12px monospace';
+ctx.fillStyle = s.color;
+ctx.textAlign = 'center';
+const lines = s.label.split('\n');
+lines.forEach((line, li) => {
+ctx.fillText(line, s.x, y - 10 + li * 16);
+});
+
+// Sublabel
+ctx.font = '11px sans-serif';
+ctx.fillStyle = '#888';
+ctx.fillText(s.sublabel, s.x, y + 55);
+
+// Arrow
+if (idx < stages.length - 1) {
+drawArrow(ctx, s.x + 70, y, stages[idx + 1].x - 70, y, '#555');
+}
+});
+
+// Title
+ctx.font = 'bold 16px sans-serif';
+ctx.fillStyle = '#ddd';
+ctx.textAlign = 'center';
+ctx.fillText('The Fourier Multiplication Algorithm (Full Pipeline)', canvas.width / 2, 30);
+
+// Bottom note
+ctx.font = '12px sans-serif';
+ctx.fillStyle = '#888';
+ctx.fillText('Key frequencies k ∈ {14, 35, 41, 42, 52} for P=113 — discovered by the network through gradient descent!', canvas.width / 2, 280);
+}
+
+// ============================================================
+// RENDER MATH WITH TEMML
+// ============================================================
+function renderMath() {
+try {
+// Step 0 math
+temml.render(String.raw`\text{logit}(c) = \sum_{k \in \{14,35,41,42,52\}} \alpha_k \cos\!\left(\frac{2\pi k}{P}(a+b-c)\right)`, document.getElementById('math-l0'));
+
+// Step 1 math
+temml.render(String.raw`\omega_k = \frac{2\pi k}{P}, \quad k \in \{1, 2, \ldots, \lfloor P/2 \rfloor\}`, document.getElementById('math-l1-freq'));
+
+temml.render(String.raw`\begin{aligned}
+&\text{Number } n \xmapsto{\text{frequency } k} \text{Angle } \omega_k \cdot n = \frac{2\pi k \cdot n}{P} \\[8pt]
+&\text{Position on circle: } \bigl(\cos(\omega_k n),\; \sin(\omega_k n)\bigr) \\[8pt]
+&\text{Key property: } \omega_k \cdot (n + P) = \omega_k \cdot n + 2\pi k \implies \text{same point on circle!}
+\end{aligned}`, document.getElementById('math-l1-full'));
+
+// Step 2 math
+temml.render(String.raw`\begin{aligned}
+&\text{Unit circle: } x^2 + y^2 = 1 \\[6pt]
+&\text{Point at angle } \theta: \quad (x, y) = (\cos\theta,\; \sin\theta) \\[6pt]
+&\cos^2\theta + \sin^2\theta = 1 \quad \text{(Pythagorean identity)}
+\end{aligned}`, document.getElementById('math-l2'));
+
+// Step 3 math
+temml.render(String.raw`\text{Embedding}(n) \approx \bigl[\cos(\omega_{14} n),\; \sin(\omega_{14} n),\; \cos(\omega_{35} n),\; \sin(\omega_{35} n),\; \ldots,\; \cos(\omega_{52} n),\; \sin(\omega_{52} n)\bigr]`, document.getElementById('math-l3-embed'));
+
+temml.render(String.raw`\begin{aligned}
+W_E &: \mathbb{R}^{113} \to \mathbb{R}^{128} \quad \text{(one-hot → embedding vector)} \\[6pt]
+\text{In Fourier basis: } W_E[n] &\approx \sum_{k \in \{14,35,41,42,52\}} \bigl[c_k \cos(\omega_k n) + s_k \sin(\omega_k n)\bigr] \cdot \mathbf{e}_k \\[6pt]
+&\text{where } \mathbf{e}_k \text{ are learned direction vectors in } \mathbb{R}^{128}
+\end{aligned}`, document.getElementById('math-l3-full'));
+
+// Step 4 math
+temml.render(String.raw`\begin{aligned}
+\cos(\alpha + \beta) &= \cos\alpha\cos\beta - \sin\alpha\sin\beta \\[6pt]
+\sin(\alpha + \beta) &= \sin\alpha\cos\beta + \cos\alpha\sin\beta
+\end{aligned}`, document.getElementById('math-l4-formulas'));
+
+temml.render(String.raw`\begin{aligned}
+&\text{Let } \alpha = \omega_k a, \quad \beta = \omega_k b \\[6pt]
+&\cos(\omega_k(a+b)) = \cos(\omega_k a)\cos(\omega_k b) - \sin(\omega_k a)\sin(\omega_k b) \\[6pt]
+&\sin(\omega_k(a+b)) = \sin(\omega_k a)\cos(\omega_k b) + \cos(\omega_k a)\sin(\omega_k b) \\[10pt]
+&\text{The attention heads compute products like } \cos(\omega_k a)\cos(\omega_k b) \\
+&\text{(degree-2 polynomials of the embeddings)} \\[6pt]
+&\text{The MLP combines them into } \cos(\omega_k(a+b)) \text{ and } \sin(\omega_k(a+b))
+\end{aligned}`, document.getElementById('math-l4-full'));
+
+// Step 5 math
+temml.render(String.raw`\text{logit}(c) = \sum_k \bigl[\cos(\omega_k(a+b))\cos(\omega_k c) + \sin(\omega_k(a+b))\sin(\omega_k c)\bigr] = \sum_k \cos(\omega_k(a+b-c))`, document.getElementById('math-l5-unembed'));
+
+temml.render(String.raw`\begin{aligned}
+\text{Logits}(a,b) &= W_U \cdot W_{\text{out}} \cdot \text{MLP}(a,b) \\[6pt]
+&\approx \sum_{k \in \{14,35,41,42,52\}} \alpha_k \cos(\omega_k(a+b-c)) \\[10pt]
+\text{where: } \quad W_L &= W_U W_{\text{out}} \approx \sum_k \cos(\omega_k)\,\mathbf{u}_k^\top + \sin(\omega_k)\,\mathbf{v}_k^\top \\[6pt]
+\mathbf{u}_k^\top \text{MLP}(a,b) &\approx \alpha_k \cos(\omega_k(a+b)) \\[4pt]
+\mathbf{v}_k^\top \text{MLP}(a,b) &\approx \alpha_k \sin(\omega_k(a+b)) \\[10pt]
+\text{Correct answer } c^* &= (a+b) \bmod P: \\
+\cos(\omega_k(a+b-c^*)) &= \cos(0) = 1 \quad \forall k \quad \text{(maximum!)}
+\end{aligned}`, document.getElementById('math-l5-full'));
+
+// Step 6 math
+temml.render(String.raw`\begin{aligned}
+\text{logit}(c) &= \sum_{k \in K} \alpha_k \cos\!\left(\frac{2\pi k}{P}(a+b-c)\right) \\[8pt]
+\text{At } c = c^* &= (a+b) \bmod P: \quad \text{logit}(c^*) = \sum_k \alpha_k \cdot 1 = \sum_k \alpha_k \\[6pt]
+\text{At } c \neq c^*&: \quad \text{logit}(c) = \sum_k \alpha_k \cos\!\left(\frac{2\pi k}{P}\cdot(c^* - c)\right) \ll \sum_k \alpha_k \\[10pt]
+&\text{Because the cosines at different frequencies destructively interfere for } c \neq c^*
+\end{aligned}`, document.getElementById('math-l6'));
+
+// Step 7 math
+temml.render(String.raw`\begin{aligned}
+\text{Real network (P=113):}& \\[6pt]
+\text{logit}(c) &\approx 44.1\cos(\omega_{14}(a\!+\!b\!-\!c)) + 42.2\cos(\omega_{35}(a\!+\!b\!-\!c)) \\
+&\quad + 44.8\cos(\omega_{41}(a\!+\!b\!-\!c)) + 66.6\cos(\omega_{42}(a\!+\!b\!-\!c)) \\
+&\quad + 63.0\cos(\omega_{52}(a\!+\!b\!-\!c)) \\[10pt]
+\text{At correct answer: }& \text{logit}(c^*) \approx 44.1 + 42.2 + 44.8 + 66.6 + 63.0 = 260.7 \\[6pt]
+\text{FVE (fraction of variance explained):}& \; 95\% \text{ of all logit variance!} \\[6pt]
+\text{This approximation actually \textit{improves} test loss:}& \; 2.4\!\times\!10^{-7} \to 4.7\!\times\!10^{-8}
+\end{aligned}`, document.getElementById('math-l7'));
+
+} catch (e) {
+console.error('Temml rendering error:', e);
+}
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+renderMath();
+updateGlobalP();
+drawStep0();
+drawStep1();
+drawStep2();
+drawStep3();
+drawStep4();
+drawStep5();
+drawStep6();
+drawStep7();
+drawSummary();
+}
+
+// Run on load
+window.addEventListener('load', init);
+
+// Also handle scroll for TOC highlighting
+window.addEventListener('scroll', () => {
+const sections = document.querySelectorAll('.step, #summary');
+const tocLinks = document.querySelectorAll('#toc a');
+let current = '';
+
+sections.forEach(section => {
+const rect = section.getBoundingClientRect();
+if (rect.top <= 200) {
+current = section.id;
+}
+});
+
+tocLinks.forEach(link => {
+link.classList.remove('active');
+if (link.getAttribute('href') === '#' + current) {
+link.classList.add('active');
+}
+});
+});
+</script>
+</body>
+</html>
