@@ -101,50 +101,45 @@ async function restart_fcnn(force = 0) {
 }
 
 async function restart_fcnn_internal(force = 0) {
-    if (is_running_test || currently_running_change_data_origin) {
-        if (!force) {
-            return;
-        }
-    }
+	if (is_running_test || currently_running_change_data_origin) {
+		if (!force) {
+			return;
+		}
+	}
 
-    if (!$("#fcnn_canvas").is(":visible")) {
-        return;
-    }
+	if (!$("#fcnn_canvas").is(":visible")) {
+		return;
+	}
 
-    // Don't interrupt a running animation unless forced
-    if (_fcnn_anim_running && !force) {
-        return;
-    }
+	var fcnn_data = get_fcnn_data();
 
-    var fcnn_data = get_fcnn_data();
+	if (!fcnn_data) {
+		return;
+	}
 
-    if (!fcnn_data) {
-        return;
-    }
+	var right_side_width = $("#right_side").width();
 
-    var right_side_width = $("#right_side").width();
+	if (!fcnn_data) {
+		dbg(language[lang]["could_not_get_fcnn_data"]);
+		return;
+	}
 
-    if (!fcnn_data) {
-        dbg(language[lang]["could_not_get_fcnn_data"]);
-        return;
-    }
+	var cache_key = await md5(JSON.stringify({
+		"right_side_width": right_side_width,
+		"fcnn_data": fcnn_data
+	}));
 
-    var cache_key = await md5(JSON.stringify({
-        "right_side_width": right_side_width,
-        "fcnn_data": fcnn_data
-    }));
+	if (last_fcnn_data_hash == cache_key && !force) {
+		return;
+	}
 
-    if (last_fcnn_data_hash == cache_key && !force) {
-        return;
-    }
+	last_fcnn_data_hash = cache_key;
 
-    last_fcnn_data_hash = cache_key;
+	var [names, units, meta_infos] = fcnn_data;
 
-    var [names, units, meta_infos] = fcnn_data;
+	await draw_fcnn(units, names, meta_infos);
 
-    await draw_fcnn_smooth(units, names, meta_infos);
-
-    return true;
+	return true;
 }
 
 async function force_restart_fcnn() {
@@ -231,207 +226,42 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 	}
 }
 
-var _fcnn_animation_id = null;
-var _fcnn_is_animating = false;
-var _fcnn_offscreen_old = null;
-var _fcnn_offscreen_new = null;
-var _fcnn_offscreen_anim = null;
-var _fcnn_prev_layout = null;
+async function draw_fcnn(...args) {
+	assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
-// ===== SMOOTH TRANSITION SYSTEM (BULLETPROOF) =====
-// Strategy: Pre-render new state fully to offscreen, then crossfade.
-// NO intermediate drawing. NO simplified rendering. NO async gaps.
-// Both old and new frames are FULL QUALITY renders.
+	if (is_setting_config) {
+		return;
+	}
 
-var _fcnn_anim_id = null;
-var _fcnn_anim_running = false;
-var _fcnn_snapshot = null; // stores last fully-rendered canvas as ImageBitmap or canvas
-var _fcnn_offscreen_new = null;
-var _fcnn_draw_lock = false; // prevents re-entry
+	var args_hash = await md5(JSON.stringify(args));
 
-async function draw_fcnn_smooth(units, names, meta_infos) {
-    var canvas = document.getElementById("fcnn_canvas");
-    if (!canvas) return;
+	if (last_fcnn_hash == args_hash) {
+		return;
+	}
 
-    // === GUARD: Prevent re-entry ===
-    if (_fcnn_draw_lock) return;
-    _fcnn_draw_lock = true;
+	last_fcnn_hash = args_hash;
 
-    try {
-        await _draw_fcnn_smooth_internal(canvas, units, names, meta_infos);
-    } finally {
-        _fcnn_draw_lock = false;
-    }
-}
+	var layers = args[0];
+	var _labels = args[1];
+	var meta_infos = args[2];
 
-async function _draw_fcnn_smooth_internal(canvas, units, names, meta_infos) {
-    var ghw = $("#graphs_here").width();
-    var canvasWidth = Math.max(800, ghw);
-    var canvasHeight = 800;
+	var ctx = _dfcnn_setup_canvas();
+	if (!ctx) return;
 
-    // === STEP 1: Cancel any running animation ===
-    if (_fcnn_anim_id) {
-        cancelAnimationFrame(_fcnn_anim_id);
-        _fcnn_anim_id = null;
-        _fcnn_anim_running = false;
-    }
+	var canvas = document.getElementById("fcnn_canvas");
+	var canvasWidth = canvas.width;
+	var canvasHeight = canvas.height;
 
-    // === STEP 2: Resize canvas if needed (BEFORE capturing snapshot) ===
-    var needsResize = (canvas.width !== canvasWidth || canvas.height !== canvasHeight);
-    if (needsResize) {
-        // Capture current content before resize destroys it
-        if (!needsResize) {
-            // won't reach here, but for clarity
-        }
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        // After resize, canvas is blank — no animation possible
-        _fcnn_snapshot = null;
-    }
+	var dimensions = _dfcnn_compute_dimensions(layers, meta_infos, canvasWidth, canvasHeight);
 
-    // === STEP 3: Capture current visible state as "old frame" ===
-    // Only if we have something visible (not first draw, not after resize)
-    var hasOldFrame = false;
-    if (_fcnn_snapshot && _fcnn_snapshot.width === canvasWidth && _fcnn_snapshot.height === canvasHeight) {
-        hasOldFrame = true;
-    } else {
-        // Try to capture from current canvas
-        var ctx = canvas.getContext("2d", { willReadFrequently: true });
-        try {
-            var testPixel = ctx.getImageData(Math.floor(canvasWidth / 2), Math.floor(canvasHeight / 2), 1, 1).data;
-            // Check if canvas has any content (not all transparent)
-            if (testPixel[3] > 0) {
-                _fcnn_snapshot = document.createElement("canvas");
-                _fcnn_snapshot.width = canvasWidth;
-                _fcnn_snapshot.height = canvasHeight;
-                _fcnn_snapshot.getContext("2d").drawImage(canvas, 0, 0);
-                hasOldFrame = true;
-            }
-        } catch(e) {
-            hasOldFrame = false;
-        }
-    }
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, dimensions.layerSpacing, _labels, dimensions.font_size);
 
-    // === STEP 4: Render NEW state to offscreen canvas (FULL QUALITY) ===
-    if (!_fcnn_offscreen_new || _fcnn_offscreen_new.width !== canvasWidth || _fcnn_offscreen_new.height !== canvasHeight) {
-        _fcnn_offscreen_new = document.createElement("canvas");
-        _fcnn_offscreen_new.width = canvasWidth;
-        _fcnn_offscreen_new.height = canvasHeight;
-    }
-    var newCtx = _fcnn_offscreen_new.getContext("2d");
-    newCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-    // Use the REAL drawing pipeline — full quality, weight colors, feature maps, everything
-    CONNECTION_CANVAS_CACHE.clear();
-    _clear_fcnn_hit_regions();
-
-    var dims = _dfcnn_compute_dimensions(units, meta_infos, canvasWidth, canvasHeight);
-
-    _draw_layers_text(units, meta_infos, newCtx, canvasHeight, canvasWidth,
-        dims.layerSpacing, names, dims.font_size);
-
-    await _draw_neurons_and_connections(
-        newCtx, canvasWidth, units, meta_infos,
-        dims.layerSpacing, canvasHeight,
-        dims.maxSpacing, dims.maxShapeSize,
-        dims.maxRadius, dims.maxSpacingConv2d, dims.font_size
-    );
-
-    // === STEP 5: If no old frame, just stamp immediately ===
-    if (!hasOldFrame) {
-        var ctx = canvas.getContext("2d", { willReadFrequently: true });
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        ctx.drawImage(_fcnn_offscreen_new, 0, 0);
-        // Save snapshot for next time
-        _fcnn_save_snapshot(canvasWidth, canvasHeight);
-        _bind_fcnn_canvas_mouse_events();
-        return;
-    }
-
-    // === STEP 6: Animate crossfade from old snapshot to new frame ===
-    var ctx = canvas.getContext("2d", { willReadFrequently: true });
-    var oldFrame = _fcnn_snapshot; // guaranteed to be correct size
-    var startTime = performance.now();
-    var duration = 250; // ms — fast enough to feel snappy
-    _fcnn_anim_running = true;
-
-    function doFrame(now) {
-        if (!_fcnn_anim_running) return; // cancelled
-
-        var elapsed = now - startTime;
-        var t = Math.min(1.0, elapsed / duration);
-
-        // Ease-out cubic — starts fast, decelerates
-        t = 1 - Math.pow(1 - t, 3);
-
-        // === ATOMIC FRAME RENDER ===
-        // No clearRect-then-draw gap. We composite in one pass.
-        ctx.globalAlpha = 1.0;
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-        // Draw old frame (fading out)
-        if (t < 1.0) {
-            ctx.globalAlpha = 1.0 - t;
-            ctx.drawImage(oldFrame, 0, 0);
-        }
-
-        // Draw new frame (fading in)
-        ctx.globalAlpha = t;
-        ctx.drawImage(_fcnn_offscreen_new, 0, 0);
-
-        // Reset alpha
-        ctx.globalAlpha = 1.0;
-
-        if (t < 1.0) {
-            _fcnn_anim_id = requestAnimationFrame(doFrame);
-        } else {
-            // === ANIMATION COMPLETE ===
-            _fcnn_anim_id = null;
-            _fcnn_anim_running = false;
-
-            // Final stamp — just draw the new frame one more time cleanly
-            // NO clearRect gap here because we already have the correct image
-            // (the last frame of animation at t=1.0 IS the new frame at full opacity)
-
-            // Save snapshot for next animation
-            _fcnn_save_snapshot(canvasWidth, canvasHeight);
-            _bind_fcnn_canvas_mouse_events();
-        }
-    }
-
-    _fcnn_anim_id = requestAnimationFrame(doFrame);
-}
-
-function _fcnn_save_snapshot(canvasWidth, canvasHeight) {
-    // Save the current new frame as snapshot for next transition
-    if (!_fcnn_snapshot || _fcnn_snapshot.width !== canvasWidth || _fcnn_snapshot.height !== canvasHeight) {
-        _fcnn_snapshot = document.createElement("canvas");
-        _fcnn_snapshot.width = canvasWidth;
-        _fcnn_snapshot.height = canvasHeight;
-    }
-    _fcnn_snapshot.getContext("2d").drawImage(_fcnn_offscreen_new, 0, 0);
-}
-
-var _fcnn_offscreen_canvas = null;
-
-async function _draw_fcnn_to_context(ctx, canvasWidth, canvasHeight, layers, _labels, meta_infos) {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-    CONNECTION_CANVAS_CACHE.clear();
-
-    var dims = _dfcnn_compute_dimensions(layers, meta_infos, canvasWidth, canvasHeight);
-    var font_size = dims.font_size;
-
-    _draw_layers_text(
-        layers, meta_infos, ctx, canvasHeight, canvasWidth,
-        dims.layerSpacing, _labels, font_size
-    );
-
-    await _draw_neurons_and_connections(
-        ctx, canvasWidth, layers, meta_infos,
-        dims.layerSpacing, canvasHeight,
-        dims.maxSpacing, dims.maxShapeSize,
-        dims.maxRadius, dims.maxSpacingConv2d, font_size
-    );
+	await _draw_neurons_and_connections(
+		ctx, canvasWidth, layers, meta_infos,
+		dimensions.layerSpacing, canvasHeight, dimensions.maxSpacing,
+		dimensions.maxShapeSize, dimensions.maxRadius,
+		dimensions.maxSpacingConv2d, dimensions.font_size
+	);
 }
 
 // ===== PREFIX: _dfcnn_ (draw_fcnn helper) =====
@@ -442,7 +272,6 @@ function _dfcnn_setup_canvas() {
 	if (!canvas) {
 		canvas = document.createElement("canvas");
 		canvas.id = "fcnn_canvas";
-		canvas.style.transition = "opacity 0.25s ease-in-out";
 		document.body.appendChild(canvas);
 	}
 
@@ -2450,6 +2279,9 @@ window.addEventListener("beforeunload", function () {
 	_fcnn_hit_regions = [];
 	CONNECTION_CANVAS_CACHE.clear();
 });
+
+// ===== DARK MODE CHANGE LISTENER =====
+// Re-style tooltip when dark mode changes
 
 (function () {
 	var _last_dark_mode_state = (typeof is_dark_mode !== 'undefined') ? is_dark_mode : false;
