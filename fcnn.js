@@ -611,16 +611,22 @@ function _ensure_fcnn_tooltip() {
 }
 
 function _show_fcnn_tooltip(html, mouseX, mouseY) {
-	var tip = _ensure_fcnn_tooltip();
-	// ... (existing positioning logic) ...
-	tip.innerHTML = html;
-	tip.style.display = "block";
-	// Trigger animation
-	requestAnimationFrame(() => {
-		tip.style.opacity = "1";
-		tip.style.transform = "translateY(0) scale(1)";
-	});
-	_fcnn_tooltip_visible = true;
+    var tip = _ensure_fcnn_tooltip();
+    tip.innerHTML = html;
+    tip.style.display = "block";
+    // Position BEFORE triggering animation
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var tipW = tip.offsetWidth || 200, tipH = tip.offsetHeight || 100;
+    var left = mouseX + 16, top = mouseY + 12;
+    if (left + tipW > vw - 10) left = mouseX - tipW - 10;
+    if (top + tipH > vh - 10) top = mouseY - tipH - 10;
+    tip.style.left = Math.max(5, left) + "px";
+    tip.style.top = Math.max(5, top) + "px";
+    requestAnimationFrame(() => {
+        tip.style.opacity = "1";
+        tip.style.transform = "translateY(0) scale(1)";
+    });
+    _fcnn_tooltip_visible = true;
 }
 
 function _hide_fcnn_tooltip() {
