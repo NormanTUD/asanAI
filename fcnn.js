@@ -279,72 +279,111 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 
 // ===== UPDATED: draw_fcnn (main entry) =====
 
+// ===== REFACTORED: draw_fcnn — now a coordinator =====
+
 async function draw_fcnn(...args) {
-	assert(args.length == 3, "draw_fcnn must have 3 arguments");
+    assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
-	if (is_setting_config) {
-		return;
-	}
+    if (is_setting_config) {
+        return;
+    }
 
-	var args_hash = await md5(JSON.stringify(args));
+    var args_hash = await md5(JSON.stringify(args));
 
-	if (last_fcnn_hash == args_hash) {
-		return;
-	}
+    if (last_fcnn_hash == args_hash) {
+        return;
+    }
 
-	args_hash = last_fcnn_hash;
+    args_hash = last_fcnn_hash;
 
-	var layers = args[0];
-	var _labels = args[1];
-	var meta_infos = args[2];
+    var layers = args[0];
+    var _labels = args[1];
+    var meta_infos = args[2];
 
-	var canvas = document.getElementById("fcnn_canvas");
+    var ctx = _dfcnn_setup_canvas();
+    if (!ctx) return;
 
-	if (!canvas) {
-		canvas = document.createElement("canvas");
-		canvas.id = "fcnn_canvas";
-		document.body.appendChild(canvas);
-	}
+    var canvas = document.getElementById("fcnn_canvas");
+    var canvasWidth = canvas.width;
+    var canvasHeight = canvas.height;
 
-	var ctx = canvas.getContext("2d", { willReadFrequently: true });
+    var dimensions = _dfcnn_compute_dimensions(layers, meta_infos, canvasWidth, canvasHeight);
 
-	var ghw = $("#graphs_here").width();
+    _draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, dimensions.layerSpacing, _labels, dimensions.font_size);
 
-	var canvasWidth = Math.max(800, ghw);
-	var canvasHeight = 800;
+    await _draw_neurons_and_connections(
+        ctx, canvasWidth, layers, meta_infos,
+        dimensions.layerSpacing, canvasHeight, dimensions.maxSpacing,
+        dimensions.maxShapeSize, dimensions.maxRadius,
+        dimensions.maxSpacingConv2d, dimensions.font_size
+    );
+}
 
-	canvas.width = canvasWidth;
-	canvas.height = canvasHeight;
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+// ===== PREFIX: _dfcnn_ (draw_fcnn helper) =====
 
-	var maxNeurons = Math.max(...layers);
-	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+function _dfcnn_setup_canvas() {
+    var canvas = document.getElementById("fcnn_canvas");
 
-	var layerSpacing = canvasWidth / (layers.length + 1);
-	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
-	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+    if (!canvas) {
+        canvas = document.createElement("canvas");
+        canvas.id = "fcnn_canvas";
+        document.body.appendChild(canvas);
+    }
 
-	var max_conv2d_height = 0;
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-	meta_infos.forEach(function (i, e) {
-		if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
-			var os = i.output_shape;
-			var height = os && os[1] ? os[1] : 0;
-			var width = os && os[2] ? os[2] : 0;
+    var ghw = $("#graphs_here").width();
 
-			if (height > max_conv2d_height) {
-				max_conv2d_height = height;
-			}
-		}
-	});
+    var canvasWidth = Math.max(800, ghw);
+    var canvasHeight = 800;
 
-	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
+    return ctx;
+}
 
-	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
+function _dfcnn_compute_dimensions(layers, meta_infos, canvasWidth, canvasHeight) {
+    var maxNeurons = Math.max(...layers);
+    var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
+    var layerSpacing = canvasWidth / (layers.length + 1);
+    var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
+    var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+
+    var max_conv2d_height = _dfcnn_compute_max_conv2d_height(meta_infos);
+
+    var maxSpacingConv2d = maxSpacing + max_conv2d_height;
+
+    var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
+
+    return {
+        maxNeurons: maxNeurons,
+        maxRadius: maxRadius,
+        layerSpacing: layerSpacing,
+        maxSpacing: maxSpacing,
+        maxShapeSize: maxShapeSize,
+        maxSpacingConv2d: maxSpacingConv2d,
+        font_size: font_size
+    };
+}
+
+function _dfcnn_compute_max_conv2d_height(meta_infos) {
+    var max_conv2d_height = 0;
+
+    meta_infos.forEach(function (i, e) {
+        if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
+            var os = i.output_shape;
+            var height = os && os[1] ? os[1] : 0;
+
+            if (height > max_conv2d_height) {
+                max_conv2d_height = height;
+            }
+        }
+    });
+
+    return max_conv2d_height;
 }
 
 function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
