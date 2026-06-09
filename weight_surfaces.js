@@ -6,19 +6,38 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		max_slices: 8,
 		plot3d: true,
 		plot2d: true,
-		container_width_pct: 0.9
+		container_width_pct: 0.92
 	}, options);
 
-	const title_font_config = { size: 14 };
+	const title_font_config = { size: 15, family: 'Inter, system-ui, sans-serif' };
 
 	if (container_or_id) {
 		try {
 			if (!$("#" + container_or_id).is(":visible") && !force) {
 				return;
 			}
-		} catch (e) {
-			// jQuery ggf. nicht da -> ignore
-		}
+		} catch (e) {}
+	}
+
+	// ─── Helpers ────────────────────────────────────────────────────────────────
+
+	function _dark() {
+		return typeof is_dark_mode !== 'undefined' && is_dark_mode === true;
+	}
+
+	function _colors() {
+		const dark = _dark();
+		return {
+			paper: 'rgba(0,0,0,0)',
+			plot: dark ? 'rgba(20,20,30,0.35)' : 'rgba(255,255,255,0.5)',
+			font: dark ? '#e4e4e8' : '#1a1a2e',
+			grid: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)',
+			axis_line: dark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.15)',
+			tick: dark ? '#b0b0c0' : '#4a4a5a',
+			title: dark ? '#f0f0ff' : '#111128',
+			marker_line: dark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.3)',
+			colorbar_bg: dark ? 'rgba(30,30,50,0.7)' : 'rgba(255,255,255,0.85)'
+		};
 	}
 
 	function make_id(prefix) {
@@ -40,8 +59,9 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 				parent.id = target;
 				document.body.appendChild(parent);
 			}
-		} else if (target instanceof Element) parent = target;
-		else {
+		} else if (target instanceof Element) {
+			parent = target;
+		} else {
 			parent = document.createElement('div');
 			parent.id = make_id('tfjs_weights_parent');
 			document.body.appendChild(parent);
@@ -52,8 +72,10 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 	function show_message_in_container(container, msg) {
 		const el = document.createElement('div');
 		el.textContent = msg;
-		el.style.margin = '6px';
-		el.style.fontWeight = '600';
+		el.style.cssText = 'margin:8px 0;padding:8px 14px;font-weight:600;font-size:13px;border-radius:6px;' +
+			'background:' + (_dark() ? 'rgba(255,180,60,0.12)' : 'rgba(0,0,0,0.04)') + ';' +
+			'color:' + (_dark() ? '#ffcc80' : '#555') + ';' +
+			'border-left:3px solid ' + (_dark() ? '#ffb74d' : '#ccc') + ';';
 		container.appendChild(el);
 	}
 
@@ -62,14 +84,12 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			if (!layer) return [];
 			const w = layer.weights || layer.trainableWeights || (typeof layer.getWeights === 'function' ? layer.getWeights() : []);
 			if (!Array.isArray(w)) return [];
-			const ret = w.map(item => {
+			return w.map(item => {
 				if (!item) return null;
 				if (item.val !== undefined) return item.val;
 				if (item.tensor !== undefined) return item.tensor;
 				return item;
 			});
-
-			return ret;
 		} catch (e) {
 			console.error(e);
 			return [];
@@ -90,10 +110,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			if (!obj) return null;
 			if (typeof array_sync === 'function') {
 				try {
-					if(tensor_is_disposed(obj)) {
-						return null;
-					}
-
+					if (tensor_is_disposed(obj)) return null;
 					return array_sync(obj);
 				} catch (e) {}
 			}
@@ -144,49 +161,113 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		});
 	}
 
-	// create_plot_div: reuse existing plotDiv by stable key if present
+	// ─── Axis Templates ─────────────────────────────────────────────────────────
+
+	function _axis2d(label) {
+		const c = _colors();
+		return {
+			title: { text: label, font: { size: 12, color: c.font, family: 'Inter, system-ui, sans-serif' } },
+			gridcolor: c.grid,
+			gridwidth: 1,
+			zerolinecolor: c.axis_line,
+			zerolinewidth: 1.5,
+			linecolor: c.axis_line,
+			linewidth: 1,
+			tickfont: { size: 10, color: c.tick },
+			showgrid: true,
+			showline: true
+		};
+	}
+
+	function _axis3d(label) {
+		const c = _colors();
+		return {
+			title: { text: label, font: { size: 11, color: c.font, family: 'Inter, system-ui, sans-serif' } },
+			gridcolor: c.grid,
+			gridwidth: 1,
+			zerolinecolor: c.axis_line,
+			tickfont: { size: 9, color: c.tick },
+			backgroundcolor: _dark() ? 'rgba(15,15,25,0.4)' : 'rgba(245,245,255,0.5)',
+			showbackground: true
+		};
+	}
+
+	function _scene(xLabel, yLabel, zLabel) {
+		return {
+			xaxis: _axis3d(xLabel || 'X'),
+			yaxis: _axis3d(yLabel || 'Y'),
+			zaxis: _axis3d(zLabel || 'Z (value)'),
+			aspectmode: 'auto',
+			dragmode: 'turntable'
+		};
+	}
+
+	function _base_layout(titleText, is3d) {
+		const c = _colors();
+		const layout = {
+			title: {
+				text: titleText,
+				font: Object.assign({}, title_font_config, { color: c.title }),
+				x: 0.5,
+				xanchor: 'center'
+			},
+			margin: is3d ? { t: 50, b: 30, l: 30, r: 30 } : { t: 50, b: 55, l: 60, r: 30 },
+			autosize: true,
+			paper_bgcolor: c.paper,
+			plot_bgcolor: c.plot,
+			font: { color: c.font, family: 'Inter, system-ui, sans-serif' }
+		};
+		if (!is3d) {
+			layout.xaxis = _axis2d('Index');
+			layout.yaxis = _axis2d('Value');
+		}
+		return layout;
+	}
+
+	// ─── Plot Div Creation ──────────────────────────────────────────────────────
+
 	function create_plot_div(parent, title_text, plotKey) {
 		try {
-			// stable key generation
 			let safeKey = plotKey;
 			if (!safeKey) {
 				safeKey = (title_text || "plot").replace(/\s+/g, '_').replace(/[^\w-]/g, '');
 			}
-			// try to find existing in parent
 			try {
 				const existing = parent.querySelector('[data-plot-key="' + safeKey + '"]');
-				if (existing) {
-					return existing;
-				}
-			} catch (e) {
-				// selector escape issues -> ignore and create new
-			}
+				if (existing) return existing;
+			} catch (e) {}
 
 			const wrapper = document.createElement('div');
 			const right = document.querySelector("#right_side");
-			const width = right ? right.clientWidth * opts.container_width_pct : 600;
-			wrapper.style.width = width + 'px';
-			wrapper.style.marginBottom = '16px';
-			wrapper.style.boxSizing = 'border-box';
-			wrapper.style.visibility = 'hidden';
+			const width = right ? right.clientWidth * opts.container_width_pct : 640;
+			wrapper.style.cssText = `
+				width: ${width}px;
+				margin-bottom: 20px;
+				box-sizing: border-box;
+				visibility: hidden;
+				border-radius: 10px;
+				box-shadow: ${_dark()
+					? '0 2px 16px rgba(0,0,0,0.5), 0 0 1px rgba(255,255,255,0.06)'
+					: '0 2px 12px rgba(0,0,0,0.06), 0 0 1px rgba(0,0,0,0.1)'};
+				overflow: hidden;
+				background: ${_dark() ? 'rgba(22,22,35,0.6)' : 'rgba(255,255,255,0.7)'};
+				backdrop-filter: blur(4px);
+			`;
 
 			const plotDiv = document.createElement('div');
 			plotDiv.style.width = '100%';
-			plotDiv.style.height = '600px';
+			plotDiv.style.height = '560px';
 			plotDiv.__lastCamera = null;
 			plotDiv.dataset.plotKey = safeKey;
 
-			// keep wrapper responsive
 			try {
 				const ro = new ResizeObserver(() => {
-					const newWidth = right ? right.clientWidth * opts.container_width_pct : 600;
+					const newWidth = right ? right.clientWidth * opts.container_width_pct : 640;
 					wrapper.style.width = newWidth + 'px';
 					safe_plotly_resize(plotDiv);
 				});
 				ro.observe(right || document.body);
-			} catch (e) {
-				// ignore
-			}
+			} catch (e) {}
 
 			wrapper.appendChild(plotDiv);
 			parent.appendChild(wrapper);
@@ -197,55 +278,63 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		}
 	}
 
+	// ─── Plot with Camera Preservation ──────────────────────────────────────────
+
 	async function _plot_preserve_camera(dom, data, layout = {}, config = {}, plotKey) {
 		if (!dom) return;
-		
-		if (!Object.keys(layout).includes("font")) {
-				layout["font"] = {};
-		}
-		layout["font"]["color"] = is_dark_mode == true ? "#ffffff" : "#141414";
 
-		const is3D = data.some(d => ['surface','heatmap','scatter3d'].includes(d.type));
+		const c = _colors();
+		layout.font = layout.font || {};
+		layout.font.color = c.font;
+		layout.font.family = layout.font.family || 'Inter, system-ui, sans-serif';
+
+		// Refined config defaults
+		config = Object.assign({
+			responsive: true,
+			displayModeBar: true,
+			modeBarButtonsToRemove: ['sendDataToCloud', 'lasso2d', 'select2d'],
+			displaylogo: false,
+			toImageButtonOptions: {
+				format: 'png',
+				filename: plotKey || 'weight_plot',
+				scale: 2
+			}
+		}, config);
+
+		const is3D = data.some(d => ['surface', 'heatmap', 'scatter3d', 'isosurface'].includes(d.type) && d.type !== 'heatmap');
 		const uirevKey = plotKey || (dom.__uirevisionKey = dom.__uirevisionKey || ("uirev_" + Math.random().toString(36).slice(2)));
 
-		// Setze uirevision einmalig (wird zwischen Updates beibehalten)
 		layout.uirevision = layout.uirevision || uirevKey;
 		if (is3D) {
 			layout.scene = layout.scene || {};
 			layout.scene.uirevision = layout.scene.uirevision || uirevKey;
 		}
 
-		// Lade Kamera aus Cache
 		const cachedCam = plotKey && window.__tfjs_weights_plot_cameras.has(plotKey)
 			? window.__tfjs_weights_plot_cameras.get(plotKey)
 			: dom.__lastCamera || null;
 
 		if (is3D && cachedCam && !layout.scene.camera) {
-			// Setze Kamera nur, wenn layout.scene.camera noch nicht existiert
 			layout.scene.camera = cachedCam;
 		}
 
-		// Render Plot
 		try {
 			await Plotly.react(dom, data, layout, config);
-		} catch(err) {
+		} catch (err) {
 			console.error("Plotly.react failed", err);
 		}
 
-		// **Force Kamera nach react**, falls Plotly sie zurückgesetzt hat
 		if (is3D && cachedCam) {
 			try {
 				const currentCam = dom._fullLayout?.scene?.camera;
-				// Wenn Kamera unterschiedlich, erzwinge Relayout
 				if (JSON.stringify(currentCam) !== JSON.stringify(cachedCam)) {
-					await Plotly.relayout(dom, {'scene.camera': cachedCam});
+					await Plotly.relayout(dom, { 'scene.camera': cachedCam });
 				}
-			} catch(e) {
+			} catch (e) {
 				console.warn("Forcing cached camera failed", e);
 			}
 		}
 
-		// Event Listener zum sofortigen Speichern von Kamera
 		if (is3D && !dom.__plotly_camera_listeners_attached) {
 			const saveCamera = () => {
 				try {
@@ -255,7 +344,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 						dom.__lastCamera = cam;
 						if (plotKey) window.__tfjs_weights_plot_cameras.set(plotKey, cam);
 					}
-				} catch(e) { console.warn("Camera save failed", e); }
+				} catch (e) { console.warn("Camera save failed", e); }
 			};
 
 			try {
@@ -264,93 +353,228 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 				} else if (Plotly && typeof Plotly.Plots.addListener === 'function') {
 					Plotly.Plots.addListener(dom, 'plotly_relayout', saveCamera);
 				}
-			} catch(e) {
+			} catch (e) {
 				console.warn("Failed to attach camera listener", e);
 			}
-
 			dom.__plotly_camera_listeners_attached = true;
 		}
 
-		// Wrapper sichtbar & resize
 		if (dom.parentNode) dom.parentNode.style.visibility = 'visible';
-		try { safe_plotly_resize(dom); } catch(e) {}
+		try { safe_plotly_resize(dom); } catch (e) {}
 	}
+
+	// ─── Main Render Logic ──────────────────────────────────────────────────────
 
 	async function render_weight_array(parent, arr, title, shape, layerType) {
 		if (!arr || !shape || !finished_loading) return;
 		if (shape.length > 5) {
-			show_message_in_container(parent, 'Too high dimension (rank >=5)');
+			show_message_in_container(parent, `Skipping "${title}": rank ${shape.length} too high (max 5)`);
 			return;
 		}
 
-		// build a stable plotKey per title (you can extend this to include slice index)
 		const baseKey = (title || "plot").replace(/\s+/g, '_').replace(/[^\w-]/g, '');
+		const c = _colors();
 
-		if (shape.length === 0) {
+		// ── Scalar or 1D ──────────────────────────────────────────────────────────
+		if (shape.length <= 1) {
+			const values = shape.length === 0 ? [arr] : arr;
+			const n = values.length;
+			const indices = Array.from({ length: n }, (_, i) => i);
+
+			// Compute normalized positions for gradient coloring
+			const minV = Math.min(...values);
+			const maxV = Math.max(...values);
+			const range = maxV - minV || 1;
+			const normed = values.map(v => (v - minV) / range);
+
 			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-			_plot_preserve_camera(plotDiv, [{ y: [arr], type: 'scatter', mode: 'markers', marker: { size: 15 } }], {
-				title: { text: title, font: title_font_config },
-				margin: { t: 40, b: 40, l: 40, r: 40 },
-				autosize: true,
-				paper_bgcolor: 'rgba(0,0,0,0)',
-				plot_bgcolor: 'rgba(0,0,0,0)'
-			}, { responsive: true }, plotDiv.dataset.plotKey);
-		} else if (shape.length === 1) {
-			const plotDiv = create_plot_div(parent, title, baseKey + "_1d");
-			_plot_preserve_camera(plotDiv, [{ y: arr, type: 'scatter', mode: 'markers', marker: { size: 15 } }], {
-				title: { text: title, font: title_font_config },
-				margin: { t: 40, b: 40, l: 40, r: 40 },
-				autosize: true,
-				paper_bgcolor: 'rgba(0,0,0,0)',
-				plot_bgcolor: 'rgba(0,0,0,0)'
-			}, { responsive: true }, plotDiv.dataset.plotKey);
-		} else if (shape.length === 2) {
+			const layout = _base_layout(title, false);
+			layout.xaxis.title.text = shape.length === 0 ? '' : 'Neuron / Parameter Index';
+			layout.yaxis.title.text = 'Weight Value';
+
+			// Add a subtle horizontal zero line
+			layout.shapes = [{
+				type: 'line', x0: 0, x1: n - 1, y0: 0, y1: 0,
+				line: { color: c.axis_line, width: 1.5, dash: 'dot' }
+			}];
+
+			await _plot_preserve_camera(plotDiv, [{
+				x: indices,
+				y: values,
+				type: 'scatter',
+				mode: n > 200 ? 'markers' : 'markers+lines',
+				marker: {
+					size: n > 500 ? 4 : n > 100 ? 6 : 9,
+					color: normed,
+					colorscale: 'Viridis',
+					showscale: n > 1,
+					colorbar: n > 1 ? {
+						title: { text: 'Value', side: 'right', font: { size: 10, color: c.font } },
+						thickness: 12,
+						len: 0.6,
+						tickfont: { size: 9, color: c.tick }
+					} : undefined,
+					line: { width: 0.5, color: c.marker_line },
+					opacity: 0.88
+				},
+				line: { width: 1.2, color: _dark() ? 'rgba(120,180,255,0.3)' : 'rgba(60,60,180,0.2)' },
+				hovertemplate: 'Index: %{x}<br>Value: %{y:.6f}<extra></extra>'
+			}], layout, {}, plotDiv.dataset.plotKey);
+		}
+
+		// ── 2D Matrix ─────────────────────────────────────────────────────────────
+		else if (shape.length === 2) {
 			const [h, w] = shape;
-
 			if (h >= 1 && w >= 1) {
 				const k2d = baseKey + "_heat";
-				const plotDiv2d = create_plot_div(parent, title + " 2D heatmap", k2d);
-				_plot_preserve_camera(plotDiv2d, [{ z: to_float_matrix(arr), type: 'heatmap', hoverongaps: false }], {
-					title: { text: title + " 2D heatmap", font: title_font_config },
-					margin: { t: 40, b: 40, l: 40, r: 40 },
-					autosize: true,
-					paper_bgcolor: 'rgba(0,0,0,0)',
-					plot_bgcolor: 'rgba(0,0,0,0)'
-				}, { responsive: true }, plotDiv2d.dataset.plotKey);
+				const plotDiv2d = create_plot_div(parent, title + " (Heatmap)", k2d);
+				const layout = _base_layout(title + ' — Weight Matrix Heatmap', false);
+				layout.xaxis.title.text = 'Output Neuron';
+				layout.yaxis.title.text = 'Input Neuron';
+
+				const zData = to_float_matrix(arr);
+				const flatVals = zData.flat();
+				const absMax = Math.max(Math.abs(Math.min(...flatVals)), Math.abs(Math.max(...flatVals))) || 1;
+
+				await _plot_preserve_camera(plotDiv2d, [{
+					z: zData,
+					type: 'heatmap',
+					colorscale: _dark()
+						? [[0, '#0d0887'], [0.25, '#7201a8'], [0.5, '#bd3786'], [0.75, '#ed7953'], [1, '#fdca26']]
+						: 'RdBu',
+					reversescale: !_dark(),
+					zmid: _dark() ? undefined : 0,
+					zmin: _dark() ? undefined : -absMax,
+					zmax: _dark() ? undefined : absMax,
+					hoverongaps: false,
+					hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
+					colorbar: {
+						title: { text: 'Weight', side: 'right', font: { size: 11, color: c.font } },
+						thickness: 14,
+						tickfont: { size: 9, color: c.tick },
+						outlinewidth: 0
+					}
+				}], layout, {}, plotDiv2d.dataset.plotKey);
+
+				// Also render a 3D surface for 2D weights if large enough
+				if (h >= 3 && w >= 3 && opts.plot3d) {
+					const k3d = baseKey + "_surf";
+					const plotDiv3d = create_plot_div(parent, title + " (3D Surface)", k3d);
+					const layout3d = _base_layout(title + ' — Weight Surface', true);
+					layout3d.scene = _scene('Output Neuron', 'Input Neuron', 'Weight Value');
+
+					await _plot_preserve_camera(plotDiv3d, [{
+						z: zData,
+						type: 'surface',
+						colorscale: 'Viridis',
+						lighting: {
+							ambient: 0.6,
+							diffuse: 0.7,
+							specular: 0.3,
+							roughness: 0.5,
+							fresnel: 0.3
+						},
+						lightposition: { x: 1000, y: 1000, z: 2000 },
+						contours: {
+							z: {
+								show: true,
+								usecolormap: true,
+								highlightcolor: _dark() ? '#ffffff' : '#333333',
+								project: { z: true }
+							}
+						},
+						hovertemplate: 'In: %{y}<br>Out: %{x}<br>Weight: %{z:.6f}<extra></extra>',
+						colorbar: {
+							title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+							thickness: 12,
+							tickfont: { size: 9, color: c.tick }
+						}
+					}], layout3d, {}, plotDiv3d.dataset.plotKey);
+				}
 			}
-		} else if (shape.length === 3) {
+		}
+
+		// ── 3D Tensor (e.g. Conv1D kernels) ─────────────────────────────────────
+		else if (shape.length === 3) {
 			const slices = Math.min(shape[2], opts.max_slices);
 			for (let i = 0; i < slices; i++) {
 				await new Promise(r => setTimeout(r, 0));
 				const slice = arr.map(r => r.map(c => c[i]));
 				const key = baseKey + "_slice_" + i;
-				const plotDiv = create_plot_div(parent, `Filter ${i} (${shape[0]}x${shape[1]}x${shape[2]})`, key);
-				_plot_preserve_camera(plotDiv, [{ z: to_float_matrix(slice), type: 'surface' }], {
-					title: { text: `${title}, Filter ${i} 3D`, font: title_font_config },
-					margin: { t: 40, b: 40, l: 40, r: 40 },
-					autosize: true,
-					scene: { aspectmode: 'auto' },
-					paper_bgcolor: 'rgba(0,0,0,0)',
-					plot_bgcolor: 'rgba(0,0,0,0)'
-				}, { responsive: true }, plotDiv.dataset.plotKey);
+				const sliceTitle = `${title} — Filter ${i}/${shape[2]} [${shape[0]}×${shape[1]}]`;
+				const plotDiv = create_plot_div(parent, sliceTitle, key);
+				const layout = _base_layout(sliceTitle, true);
+				layout.scene = _scene('Kernel X', 'Kernel Y', 'Weight Value');
+
+				await _plot_preserve_camera(plotDiv, [{
+					z: to_float_matrix(slice),
+					type: 'surface',
+					colorscale: 'Electric',
+					lighting: {
+						ambient: 0.55,
+						diffuse: 0.65,
+						specular: 0.4,
+						roughness: 0.4,
+						fresnel: 0.2
+					},
+					contours: {
+						z: { show: true, usecolormap: true, project: { z: true } }
+					},
+					hovertemplate: 'X: %{x}<br>Y: %{y}<br>Weight: %{z:.6f}<extra></extra>',
+					colorbar: {
+						title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+						thickness: 12,
+						tickfont: { size: 9, color: c.tick }
+					}
+				}], layout, {}, plotDiv.dataset.plotKey);
 			}
-		} else if (shape.length === 4) {
+		}
+
+		// ── 4D Tensor (e.g. Conv2D kernels) ─────────────────────────────────────
+		else if (shape.length === 4) {
 			const slices = Math.min(shape[3], opts.max_slices);
 			for (let j = 0; j < slices; j++) {
 				await new Promise(r => setTimeout(r, 0));
+				// Take first input channel, j-th output filter
 				const slice4 = arr.map(f => f.map(r => r.map(c => c[j])));
+				// Flatten the first two spatial dims for surface
+				const h = shape[0], w = shape[1], inCh = shape[2];
+				// Show first input channel as representative
+				const surfaceData = slice4.map(row => row.map(col => col[0]));
+
 				const key = baseKey + "_slice4_" + j;
-				const plotDiv4 = create_plot_div(parent, `Filter ${j} (${shape[0]}x${shape[1]}x${shape[2]}x${shape[3]})`, key);
-				_plot_preserve_camera(plotDiv4, [{ z: to_float_matrix(slice4), type: 'surface' }], {
-					title: { text: `${title}, Filter ${j} 3D`, font: title_font_config },
-					margin: { t: 40, b: 40, l: 40, r: 40 },
-					autosize: true,
-					scene: { aspectmode: 'auto' },
-					paper_bgcolor: 'rgba(0,0,0,0)',
-					plot_bgcolor: 'rgba(0,0,0,0)'
-				}, { responsive: true }, plotDiv4.dataset.plotKey);
+				const sliceTitle = `${title} — Output Filter ${j}/${shape[3]} [${h}×${w}×${inCh}]`;
+				const plotDiv4 = create_plot_div(parent, sliceTitle, key);
+				const layout = _base_layout(sliceTitle, true);
+				layout.scene = _scene('Kernel Width', 'Kernel Height', 'Weight Value');
+
+				await _plot_preserve_camera(plotDiv4, [{
+					z: to_float_matrix(surfaceData),
+					type: 'surface',
+					colorscale: 'Plasma',
+					lighting: {
+						ambient: 0.5,
+						diffuse: 0.7,
+						specular: 0.35,
+						roughness: 0.45,
+						fresnel: 0.25
+					},
+					contours: {
+						z: { show: true, usecolormap: true, project: { z: true } },
+						x: { show: true, usecolormap: true, highlightcolor: 'rgba(255,255,255,0.1)', project: { x: false } }
+					},
+					hovertemplate: 'W: %{x}<br>H: %{y}<br>Weight: %{z:.6f}<extra></extra>',
+					colorbar: {
+						title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+						thickness: 12,
+						tickfont: { size: 9, color: c.tick }
+					}
+				}], layout, {}, plotDiv4.dataset.plotKey);
 			}
-		} else if (shape.length === 5) {
+		}
+
+		// ── 5D Tensor (e.g. Conv3D kernels) ─────────────────────────────────────
+		else if (shape.length === 5) {
 			const [kx, ky, kz, in_ch, out_ch] = shape;
 			const slices_out = Math.min(out_ch, opts.max_slices);
 			const slices_in = Math.min(in_ch, opts.max_slices);
@@ -360,9 +584,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 					await new Promise(r => setTimeout(r, 0));
 					const volume = arr.map(x =>
 						x.map(y =>
-							y.map(z =>
-								z[ic][oc]
-							)
+							y.map(z => z[ic][oc])
 						)
 					);
 
@@ -377,55 +599,60 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 							}
 
 					const key = baseKey + "_5d_" + ic + "_" + oc;
-					const plotDiv = create_plot_div(parent, `Kernel ${oc}, Input ${ic}`, key);
+					const volTitle = `${title} — 3D Volume (Out=${oc}, In=${ic}) [${kx}×${ky}×${kz}]`;
+					const plotDiv = create_plot_div(parent, volTitle, key);
+					const layout = _base_layout(volTitle, true);
+					layout.scene = _scene('Kernel X', 'Kernel Y', 'Kernel Z');
+					layout.scene.aspectmode = 'cube';
+
+					const vMin = Math.min(...value);
+					const vMax = Math.max(...value);
 
 					await _plot_preserve_camera(plotDiv, [{
 						type: 'isosurface',
 						x, y, z,
 						value,
 						colorscale: 'Viridis',
-						isomin: Math.min(...value),
-						isomax: Math.max(...value),
-						surface: { show: true, count: 5 },
-						caps: { x: { show: false }, y: { show: false }, z: { show: false } }
-					}], {
-						title: { text: `${title} 3D Volume (in=${ic}, out=${oc})`, font: title_font_config },
-						margin: { t: 40, b: 40, l: 40, r: 40 },
-						scene: { aspectmode: 'cube' },
-						autosize: true,
-						paper_bgcolor: 'rgba(0,0,0,0)',
-						plot_bgcolor: 'rgba(0,0,0,0)'
-					}, { responsive: true }, plotDiv.dataset.plotKey);
+						isomin: vMin + (vMax - vMin) * 0.1,
+						isomax: vMax - (vMax - vMin) * 0.1,
+						surface: { show: true, count: 5, fill: 0.7 },
+						caps: { x: { show: false }, y: { show: false }, z: { show: false } },
+						opacity: 0.6,
+						hovertemplate: 'X: %{x}<br>Y: %{y}<br>Z: %{z}<br>Value: %{value:.6f}<extra></extra>',
+						colorbar: {
+							title: { text: 'Weight', side: 'right', font: { size: 10, color: c.font } },
+							thickness: 12,
+							tickfont: { size: 9, color: c.tick }
+						}
+					}], layout, {}, plotDiv.dataset.plotKey);
 				}
 			}
 		}
 	}
 
+	// ─── Main Execution ─────────────────────────────────────────────────────────
+
 	const parent = ensure_container(container_or_id);
 
 	var spinnerWrapper = null;
 
-	if($("#weight_surfaces_content").html() == "") {
+	if ($("#weight_surfaces_content").html() == "") {
 		spinnerWrapper = document.createElement('div');
 		spinnerWrapper.innerHTML = `<center><div class="spinner"></div></center>`;
 		parent.appendChild(spinnerWrapper);
 	}
 
-	// Reuse container if exists, otherwise create
 	let container = parent.querySelector('#tfjs_weights_container');
 	if (!container) {
 		container = document.createElement('div');
 		container.id = 'tfjs_weights_container';
 		container.style.display = 'block';
+		container.style.padding = '8px 0';
 		parent.appendChild(container);
 	} else {
-		// do not remove existing plot DIVs — we reuse by plotKey in create_plot_div
-		// but remove other non-plot children (like header list) to avoid duplication
-		// keep existing plot wrappers intact
-		// remove everything that is not a descendant plot wrapper with data-plot-key
 		Array.from(container.children).forEach(child => {
-			// keep child if it contains at least one node with data-plot-key
 			if (!child.querySelector || !child.querySelector('[data-plot-key]')) {
+				
 				container.removeChild(child);
 			}
 		});
@@ -433,15 +660,54 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 	try {
 		if (!window.model) {
-			show_message_in_container(container, 'No model found');
+			show_message_in_container(container, 'No model found — please load or train a model first.');
 			return;
 		}
 		const layers = model?.layers || [];
 		if (!layers || layers.length === 0) {
-			show_message_in_container(container, 'Model has no layers');
+			show_message_in_container(container, 'Model has no layers.');
 			return;
 		}
 
+		// Summary header
+		let summaryEl = container.querySelector('#tfjs_weights_summary');
+		if (!summaryEl) {
+			summaryEl = document.createElement('div');
+			summaryEl.id = 'tfjs_weights_summary';
+			summaryEl.style.cssText = `
+				margin: 0 0 18px 0;
+				padding: 12px 18px;
+				border-radius: 8px;
+				font-size: 13px;
+				line-height: 1.7;
+				background: ${_dark() ? 'rgba(40,40,65,0.5)' : 'rgba(240,240,255,0.7)'};
+				border: 1px solid ${_dark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'};
+				color: ${_colors().font};
+				font-family: Inter, system-ui, sans-serif;
+			`;
+			container.insertBefore(summaryEl, container.firstChild);
+		}
+
+		let totalParams = 0;
+		let layerSummaries = [];
+		for (let li = 0; li < layers.length; li++) {
+			const layer = layers[li];
+			const weights = safe_get_layer_weights(layer);
+			if (weights && weights.length > 0) {
+				weights.forEach(w => {
+					const s = shape_from(w);
+					if (s) totalParams += s.reduce((a, b) => a * b, 1);
+				});
+				layerSummaries.push(`<span style="opacity:0.7">L${li}</span> ${layer?.name || 'unnamed'} <span style="opacity:0.5">(${weights.length} tensor${weights.length > 1 ? 's' : ''})</span>`);
+			}
+		}
+		summaryEl.innerHTML = `
+			<strong style="font-size:14px;">🧠 Weight Surfaces</strong> &nbsp;—&nbsp;
+			<span>${layers.length} layers, ${totalParams.toLocaleString()} parameters</span><br>
+			<span style="font-size:11px;opacity:0.7">${layerSummaries.join(' · ')}</span>
+		`;
+
+		// Render each layer's weights
 		for (let li = 0; li < layers.length; li++) {
 			const layer = layers[li];
 			const layer_name = layer?.name || `layer_${li}`;
@@ -452,7 +718,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 
 			for (let wi = 0; wi < weights.length; wi++) {
 				let result = null;
-				// robustly attempt to read tensor
+				// Robustly attempt to read tensor with retries
 				for (let attempt = 0; attempt < 6 && !result; attempt++) {
 					result = await (async () => {
 						try {
@@ -460,6 +726,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 							if (!w) return null;
 							const arr = array_from_tensor_or_array(w);
 							const shape = shape_from(w) || [];
+							if (!arr) return null;
 							return { arr, shape };
 						} catch (e) {
 							return null;
@@ -469,19 +736,20 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 				}
 
 				if (!result) {
-					show_message_in_container(container, 'Cannot display');
+					show_message_in_container(container, `⚠ Layer ${li} (${layer_name}) weight ${wi}: could not read tensor.`);
 					continue;
 				}
 
 				const { arr, shape } = result;
 
-				let title = (wi === 0 ? 'weights' : 'bias');
-				const fullTitle = `Layer ${li} (${layer_name}) ${title}`;
+				let weightLabel = (wi === 0 ? 'Kernel' : wi === 1 ? 'Bias' : `Weight[${wi}]`);
+				const fullTitle = `L${li} "${layer_name}" — ${weightLabel} [${shape.join('×')}]`;
 				await render_weight_array(container, arr, fullTitle, shape, layer?.className || '');
 			}
 		}
 	} catch (e) {
-		console.error(e);
+		console.error("visualize_model_weights error:", e);
+		show_message_in_container(container, '❌ Error visualizing weights: ' + e.message);
 	} finally {
 		try {
 			if (spinnerWrapper && spinnerWrapper.parentNode) {
@@ -491,11 +759,13 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 	}
 };
 
+// ─── Utility: Get model structure string for change detection ────────────────
+
 function get_model_structure_string() {
 	const num_of_layers = model?.layers?.length;
 
 	if (!num_of_layers) {
-		dbg("get_model_structure_md5: No layers found");
+		dbg("get_model_structure_string: No layers found");
 		return null;
 	}
 
@@ -523,10 +793,12 @@ function get_model_structure_string() {
 	return strs.join("\n");
 }
 
+// ─── Entry point: create or update weight surfaces ───────────────────────────
+
 function create_weight_surfaces(force = false) {
 	try {
 		const current_model_structure_string = get_model_structure_string();
-		if(force || current_model_structure_string != last_model_structure_string) {
+		if (force || current_model_structure_string != last_model_structure_string) {
 			$("#weight_surfaces_content").html("");
 		}
 
@@ -534,6 +806,6 @@ function create_weight_surfaces(force = false) {
 
 		visualize_model_weights('weight_surfaces_content', {}, !!force);
 	} catch (e) {
-		console.error(e);
+		console.error("create_weight_surfaces error:", e);
 	}
 }
