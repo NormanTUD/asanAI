@@ -1390,7 +1390,7 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 			_height = Math.min(650, meta_info["output_shape"][1]);
 			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
 		} else if (shapeType == "layernorm") {
-			ctx = draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
+			ctx = draw_layernorm(layer_idx, ctx, meta_info);
 		} else {
 			alert("Unknown shape Type: " + shapeType);
 		}
@@ -1404,53 +1404,53 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 
 // ===== UPDATED: draw_layernorm with hit region =====
 
-function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize) {
-	try {
-		var blockWidth = maxShapeSize * 10;
-		var blockHeight = maxShapeSize * 2.5;
+function draw_layernorm(layer_idx, ctx, meta_info) {
+    // === READ ALL POSITIONS FROM LAYOUT OBJECT ===
+    var layoutLayer = _fcnn_current_layout.layers[layer_idx];
+    var neuronLayout = layoutLayer.neurons[0]; // layernorm has exactly 1 "neuron"
 
-		var x = layerX - blockWidth / 2;
-		var y = layerY - blockHeight / 2;
+    var blockWidth = neuronLayout.w;
+    var blockHeight = neuronLayout.h;
+    var layerX = neuronLayout.x;
+    var layerY = neuronLayout.y;
 
-		var sectionWidth = blockWidth / 3;
+    var x = layerX - blockWidth / 2;
+    var y = layerY - blockHeight / 2;
 
-		ctx.fillStyle = "#e0e0e0";
-		ctx.fillRect(x, y, sectionWidth, blockHeight);
+    var sectionWidth = blockWidth / 3;
 
-		ctx.fillStyle = "#b0d4ff";
-		ctx.fillRect(x + sectionWidth, y, sectionWidth, blockHeight);
+    ctx.fillStyle = "#e0e0e0";
+    ctx.fillRect(x, y, sectionWidth, blockHeight);
 
-		ctx.fillStyle = "#ffd0a0";
-		ctx.fillRect(x + sectionWidth * 2, y, sectionWidth, blockHeight);
+    ctx.fillStyle = "#b0d4ff";
+    ctx.fillRect(x + sectionWidth, y, sectionWidth, blockHeight);
 
-		ctx.beginPath();
-		ctx.rect(x, y, blockWidth, blockHeight);
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = 2;
-		ctx.stroke();
-		ctx.closePath();
+    ctx.fillStyle = "#ffd0a0";
+    ctx.fillRect(x + sectionWidth * 2, y, sectionWidth, blockHeight);
 
-		// Register hit region for tooltip
-		const this_region = {
-			type: "layernorm",
-			shape: "rect",
-			x: x,
-			y: y,
-			w: blockWidth,
-			h: blockHeight,
-			layer_idx: layer_idx,
-			layer_type: meta_info.layer_type || "LayerNormalization",
-			output_shape: meta_info.output_shape || null,
-			input_shape: meta_info.input_shape || null
-		};
-		_register_fcnn_hit_region(this_region);
+    ctx.beginPath();
+    ctx.rect(x, y, blockWidth, blockHeight);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.closePath();
 
-	} catch (e) {
-		if (e && e.message) e = e.message;
-		assert(false, e);
-	}
+    // Register hit region for tooltip
+    var this_region = {
+        type: "layernorm",
+        shape: "rect",
+        x: x,
+        y: y,
+        w: blockWidth,
+        h: blockHeight,
+        layer_idx: layer_idx,
+        layer_type: meta_info.layer_type || "LayerNormalization",
+        output_shape: meta_info.output_shape || null,
+        input_shape: meta_info.input_shape || null
+    };
+    _register_fcnn_hit_region(this_region);
 
-	return ctx;
+    return ctx;
 }
 
 // ===== UPDATED: _draw_flatten with hit region and image =====
