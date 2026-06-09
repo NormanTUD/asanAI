@@ -139,6 +139,7 @@ var ModelPlotter = (() => {
 				input.style.width = '60px';
 				input.addEventListener('input', debounce(update_fn, 300));
 				input.classList.add('no_red_on_error');
+				input.classList.add('show_data');
 				wrap.append(l, input);
 				controls.insertBefore(wrap, msg);
 			}
