@@ -239,7 +239,7 @@ async function draw_fcnn(...args) {
 		return;
 	}
 
-	args_hash = last_fcnn_hash;
+	last_fcnn_hash = args_hash;
 
 	var layers = args[0];
 	var _labels = args[1];
