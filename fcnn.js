@@ -1715,178 +1715,178 @@ function _dln_draw_conv2d_neuron(ctx, j, numNeurons, verticalSpacing, layerY, la
 }
 
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-    try {
-        var meta = get_layer_meta(meta_infos, layer_nr);
-        var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+	try {
+		var meta = get_layer_meta(meta_infos, layer_nr);
+		var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
 
-        var geometry = _dlc_compute_geometry(
-            layer_nr, layers, layerSpacing, meta, next_meta,
-            maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d
-        );
+		var geometry = _dlc_compute_geometry(
+			layer_nr, layers, layerSpacing, meta, next_meta,
+			maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d
+		);
 
-        var weightContext = _dlc_prepare_weight_context(layer_nr, meta_infos);
+		var weightContext = _dlc_prepare_weight_context(layer_nr, meta_infos);
 
-        var renderMode = _dlc_determine_render_mode(geometry);
+		var renderMode = _dlc_determine_render_mode(geometry);
 
-        if (renderMode === "block_convlike") {
-            _dlc_render_block(ctx, geometry, 0.1);
-        } else if (renderMode === "block_heavy") {
-            _dlc_render_block(ctx, geometry, 0.08);
-        } else {
-            _dlc_render_lines(ctx, layer_nr, geometry, canvasHeight, maxRadius, weightContext);
-        }
+		if (renderMode === "block_convlike") {
+			_dlc_render_block(ctx, geometry, 0.1);
+		} else if (renderMode === "block_heavy") {
+			_dlc_render_block(ctx, geometry, 0.08);
+		} else {
+			_dlc_render_lines(ctx, layer_nr, geometry, canvasHeight, maxRadius, weightContext);
+		}
 
-        _dlc_register_hit_region(geometry, layer_nr, weightContext);
+		_dlc_register_hit_region(geometry, layer_nr, weightContext);
 
-    } catch (e) {
-        if (e && e.message) e = e.message;
-        assert(false, e);
-    }
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
+	}
 }
 
 // ===== PREFIX: _dlc_ (draw_layer_connections helper) =====
 
 function _dlc_compute_geometry(layer_nr, layers, layerSpacing, meta, next_meta, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-    var layer_type = meta.layer_type;
-    var next_type = next_meta.layer_type;
+	var layer_type = meta.layer_type;
+	var next_type = next_meta.layer_type;
 
-    var currX = (layer_nr + 1) * layerSpacing + maxRadius;
-    var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+	var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+	var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
 
-    var currNeurons = layers[layer_nr];
-    var nextNeurons = layers[layer_nr + 1];
+	var currNeurons = layers[layer_nr];
+	var nextNeurons = layers[layer_nr + 1];
 
-    if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-        if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
-    }
-    if (next_type === "Flatten" || next_type === "MaxPooling2D") {
-        if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
-    }
+	if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+		if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
+	}
+	if (next_type === "Flatten" || next_type === "MaxPooling2D") {
+		if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
+	}
 
-    if (layer_type === "LayerNormalization") currNeurons = 1;
-    if (next_type === "LayerNormalization") nextNeurons = 1;
+	if (layer_type === "LayerNormalization") currNeurons = 1;
+	if (next_type === "LayerNormalization") nextNeurons = 1;
 
-    var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-    var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+	var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+	var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
 
-    var currYs = new Array(currNeurons);
-    for (var i = 0; i < currNeurons; i++) {
-        currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
-    }
+	var currYs = new Array(currNeurons);
+	for (var i = 0; i < currNeurons; i++) {
+		currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+	}
 
-    var nextYs = new Array(nextNeurons);
-    for (var j = 0; j < nextNeurons; j++) {
-        nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
-    }
+	var nextYs = new Array(nextNeurons);
+	for (var j = 0; j < nextNeurons; j++) {
+		nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+	}
 
-    return {
-        currX: currX,
-        nextX: nextX,
-        currNeurons: currNeurons,
-        nextNeurons: nextNeurons,
-        currYs: currYs,
-        nextYs: nextYs,
-        layer_type: layer_type,
-        next_type: next_type,
-        maxRadius: maxRadius
-    };
+	return {
+		currX: currX,
+		nextX: nextX,
+		currNeurons: currNeurons,
+		nextNeurons: nextNeurons,
+		currYs: currYs,
+		nextYs: nextYs,
+		layer_type: layer_type,
+		next_type: next_type,
+		maxRadius: maxRadius
+	};
 }
 
 function _dlc_prepare_weight_context(layer_nr, meta_infos) {
-    var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+	var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
 
-    var weight_stats = null;
-    var weight_data_sample = null;
+	var weight_stats = null;
+	var weight_data_sample = null;
 
-    if (weightInfo && weightInfo.data) {
-        var sampleLimit = Math.min(weightInfo.data.length, 50000);
-        weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
-        weight_stats = _compute_stats(weight_data_sample);
-    }
+	if (weightInfo && weightInfo.data) {
+		var sampleLimit = Math.min(weightInfo.data.length, 50000);
+		weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
+		weight_stats = _compute_stats(weight_data_sample);
+	}
 
-    return {
-        weightInfo: weightInfo,
-        weight_stats: weight_stats,
-        weight_data_sample: weight_data_sample
-    };
+	return {
+		weightInfo: weightInfo,
+		weight_stats: weight_stats,
+		weight_data_sample: weight_data_sample
+	};
 }
 
 function _dlc_determine_render_mode(geometry) {
-    var currNeurons = geometry.currNeurons;
-    var nextNeurons = geometry.nextNeurons;
+	var currNeurons = geometry.currNeurons;
+	var nextNeurons = geometry.nextNeurons;
 
-    if (currNeurons > 512 || nextNeurons > 512) {
-        return "block_convlike";
-    }
+	if (currNeurons > 512 || nextNeurons > 512) {
+		return "block_convlike";
+	}
 
-    var estimateCount = currNeurons * nextNeurons;
-    var heavyThreshold = 300000;
+	var estimateCount = currNeurons * nextNeurons;
+	var heavyThreshold = 300000;
 
-    if (estimateCount > heavyThreshold) {
-        return "block_heavy";
-    }
+	if (estimateCount > heavyThreshold) {
+		return "block_heavy";
+	}
 
-    return "lines";
+	return "lines";
 }
 
 function _dlc_render_block(ctx, geometry, alpha) {
-    var currYs = geometry.currYs;
-    var nextYs = geometry.nextYs;
-    var currX = geometry.currX;
-    var nextX = geometry.nextX;
+	var currYs = geometry.currYs;
+	var nextYs = geometry.nextYs;
+	var currX = geometry.currX;
+	var nextX = geometry.nextX;
 
-    var yMin = Math.min(currYs[0], nextYs[0]);
-    var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
+	var yMin = Math.min(currYs[0], nextYs[0]);
+	var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
 
-    if (alpha < 0.09) {
-        // "heavy" style: add padding
-        yMin -= 2;
-        yMax += 2;
-    }
+	if (alpha < 0.09) {
+		// "heavy" style: add padding
+		yMin -= 2;
+		yMax += 2;
+	}
 
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = is_dark_mode
-        ? (alpha >= 0.09 ? "#8090b0" : "#9ea3b5")
-        : (alpha >= 0.09 ? "#606784" : "#767b8d");
-    ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
-    ctx.restore();
+	ctx.save();
+	ctx.globalAlpha = alpha;
+	ctx.fillStyle = is_dark_mode
+		? (alpha >= 0.09 ? "#8090b0" : "#9ea3b5")
+		: (alpha >= 0.09 ? "#606784" : "#767b8d");
+	ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
+	ctx.restore();
 }
 
 function _dlc_render_lines(ctx, layer_nr, geometry, canvasHeight, maxRadius, weightContext) {
-    var offInfo = _render_layer_pair_to_offscreen(
-        layer_nr,
-        geometry.currX, geometry.nextX,
-        geometry.currYs, geometry.nextYs,
-        geometry.currX, geometry.nextX,
-        canvasHeight, maxRadius,
-        weightContext.weightInfo
-    );
-    ctx.drawImage(offInfo.canvas, geometry.currX - offInfo.pad, 0);
+	var offInfo = _render_layer_pair_to_offscreen(
+		layer_nr,
+		geometry.currX, geometry.nextX,
+		geometry.currYs, geometry.nextYs,
+		geometry.currX, geometry.nextX,
+		canvasHeight, maxRadius,
+		weightContext.weightInfo
+	);
+	ctx.drawImage(offInfo.canvas, geometry.currX - offInfo.pad, 0);
 }
 
 function _dlc_register_hit_region(geometry, layer_nr, weightContext) {
-    var currYs = geometry.currYs;
-    var nextYs = geometry.nextYs;
-    var maxRadius = geometry.maxRadius;
+	var currYs = geometry.currYs;
+	var nextYs = geometry.nextYs;
+	var maxRadius = geometry.maxRadius;
 
-    var yMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
-    var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
+	var yMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
+	var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
 
-    _register_fcnn_hit_region({
-        type: "connection",
-        shape: "rect",
-        x: geometry.currX,
-        y: yMin,
-        w: geometry.nextX - geometry.currX,
-        h: Math.max(1, yMax - yMin),
-        from_layer: layer_nr,
-        to_layer: layer_nr + 1,
-        from_neurons: geometry.currNeurons,
-        to_neurons: geometry.nextNeurons,
-        weight_stats: weightContext.weight_stats,
-        weight_data: weightContext.weight_data_sample
-    });
+	_register_fcnn_hit_region({
+		type: "connection",
+		shape: "rect",
+		x: geometry.currX,
+		y: yMin,
+		w: geometry.nextX - geometry.currX,
+		h: Math.max(1, yMax - yMin),
+		from_layer: layer_nr,
+		to_layer: layer_nr + 1,
+		from_neurons: geometry.currNeurons,
+		to_neurons: geometry.nextNeurons,
+		weight_stats: weightContext.weight_stats,
+		weight_data: weightContext.weight_data_sample
+	});
 }
 
 // ===== HELPER FUNCTIONS =====
