@@ -1195,48 +1195,94 @@ function _bind_fcnn_canvas_mouse_events() {
 	_bindmouse_attach_global_listeners(state);
 }
 
-async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
+// ===== PREFIX: _dnc_ (_draw_neurons_and_connections helpers) =====
+
+function _dnc_determine_shape_type(layer_type) {
+	if (layer_type.toLowerCase().includes("conv2d")) {
+		return "rectangle_conv2d";
+	} else if (layer_type.toLowerCase().includes("flatten")) {
+		return "rectangle_flatten";
+	} else if (layer_type.toLowerCase().includes("layernormalization")) {
+		return "layernorm";
+	}
+	return "circle";
+}
+
+function _dnc_compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight) {
+	var verticalSpacing = maxSpacing;
+	if (numNeurons * verticalSpacing > canvasHeight) {
+		verticalSpacing = canvasHeight / numNeurons;
+	}
+	return verticalSpacing;
+}
+
+function _dnc_draw_single_layer(ctx, layer_idx, layers, meta_infos, canvasWidth, canvasHeight, layerSpacing, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size) {
+	var meta_info = meta_infos[layer_idx];
+	var layer_type = meta_info["layer_type"];
+	var layerX = (layer_idx + 1) * layerSpacing;
+	var layerY = canvasHeight / 2;
+	var numNeurons = layers[layer_idx];
+	var shapeType = _dnc_determine_shape_type(layer_type);
+	var verticalSpacing = _dnc_compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight);
+
 	var _height = null;
 
-	// Clear all hit regions before redrawing
-	_clear_fcnn_hit_regions();
+	if (shapeType === "circle" || shapeType === "rectangle_conv2d") {
+		ctx = _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
+	} else if (shapeType === "rectangle_flatten") {
+		_height = Math.min(650, meta_info["output_shape"][1]);
+		ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+	} else if (shapeType === "layernorm") {
+		ctx = draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
+	} else {
+		alert("Unknown shape Type: " + shapeType);
+	}
+
+	return { ctx: ctx, _height: _height };
+}
+
+function _dnc_draw_all_layers(ctx, layers, meta_infos, canvasWidth, canvasHeight, layerSpacing, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size) {
+	var _height = null;
 
 	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
-		var meta_info = meta_infos[layer_idx];
-		var layer_type = meta_info["layer_type"];
-		var layerX = (layer_idx + 1) * layerSpacing;
-		var layerY = canvasHeight / 2;
-		var numNeurons = layers[layer_idx];
-		var verticalSpacing = maxSpacing;
-		var shapeType = "circle";
-
-		if (numNeurons * verticalSpacing > canvasHeight) {
-			verticalSpacing = canvasHeight / numNeurons;
-		}
-
-		if (layer_type.toLowerCase().includes("conv2d")) {
-			shapeType = "rectangle_conv2d";
-		} else if (layer_type.toLowerCase().includes("flatten")) {
-			shapeType = "rectangle_flatten";
-		} else if (layer_type.toLowerCase().includes("layernormalization")) {
-			shapeType = "layernorm";
-		}
-
-		if (shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
-		} else if (shapeType == "rectangle_flatten") {
-			_height = Math.min(650, meta_info["output_shape"][1]);
-			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
-		} else if (shapeType == "layernorm") {
-			ctx = draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
-		} else {
-			alert("Unknown shape Type: " + shapeType);
+		var result = _dnc_draw_single_layer(
+			ctx, layer_idx, layers, meta_infos,
+			canvasWidth, canvasHeight, layerSpacing,
+			maxSpacing, maxShapeSize, maxSpacingConv2d, font_size
+		);
+		ctx = result.ctx;
+		if (result._height !== null) {
+			_height = result._height;
 		}
 	}
 
-	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
+	return { ctx: ctx, _height: _height };
+}
 
-	// Bind mouse events after drawing (idempotent - only binds once)
+function _dnc_draw_all_connections(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
+}
+
+// ===== COORDINATOR (original function, now only coordinates) =====
+
+async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
+	_clear_fcnn_hit_regions();
+
+	var drawResult = _dnc_draw_all_layers(
+		ctx, layers, meta_infos,
+		canvasWidth, canvasHeight, layerSpacing,
+		maxSpacing, maxShapeSize, maxSpacingConv2d, font_size
+	);
+
+	var layerY = canvasHeight / 2;
+	var layerX = (layers.length) * layerSpacing;
+
+	_dnc_draw_all_connections(
+		drawResult.ctx, layers, layerSpacing, meta_infos,
+		maxSpacing, canvasHeight, layerY, layerX,
+		maxRadius, drawResult._height, maxSpacingConv2d
+	);
+
 	_bind_fcnn_canvas_mouse_events();
 }
 
