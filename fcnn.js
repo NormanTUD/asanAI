@@ -74,8 +74,6 @@ function _build_weight_histogram_html(weightStats, weightData) {
     `;
 }
 
-// ===== CORE DRAWING FUNCTIONS (UPDATED) =====
-
 async function restart_fcnn(force = 0) {
     if ($("#fcnn_canvas").is(":visible")) {
         if (restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);
@@ -217,8 +215,6 @@ function get_fcnn_data() {
 	return [names, units, meta_infos];
 }
 
-// ===== UPDATED: _draw_neurons_and_connections with hit region registration =====
-
 async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	var _height = null;
 
@@ -264,8 +260,6 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 	_bind_fcnn_canvas_mouse_events();
 }
 
-// ===== UPDATED: _draw_connections_between_layers with hit regions =====
-
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d) {
 	try {
 		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
@@ -276,10 +270,6 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 		assert(false, e);
 	}
 }
-
-// ===== UPDATED: draw_fcnn (main entry) =====
-
-// ===== REFACTORED: draw_fcnn — now a coordinator =====
 
 async function draw_fcnn(...args) {
     assert(args.length == 3, "draw_fcnn must have 3 arguments");
@@ -835,8 +825,6 @@ function _render_rgb_pixels_to_canvas(cx, data3d, rows, cols, scale, mn, sc) {
     }
 }
 
-// ===== REFACTORED MAIN FUNCTION =====
-
 function _make_mini_canvas_rgb_data_url(data3d, maxDisplaySize) {
     // data3d: [rows][cols][3] RGB array
     try {
@@ -1288,8 +1276,6 @@ async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_info
 	_bind_fcnn_canvas_mouse_events();
 }
 
-// ===== UPDATED: draw_layernorm with hit region =====
-
 function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize) {
 	try {
 		var blockWidth = maxShapeSize * 10;
@@ -1338,8 +1324,6 @@ function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY,
 
 	return ctx;
 }
-
-// ===== UPDATED: _draw_flatten with hit region and image =====
 
 function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
 	try {
@@ -1454,8 +1438,6 @@ function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, la
 	return ctx;
 }
 
-// ===== UPDATED: _draw_neurons_or_conv2d with input image hit region =====
-
 function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
 	assert(typeof (ctx) == "object", `ctx is not an object but ${typeof (ctx)}`);
 
@@ -1514,10 +1496,6 @@ function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, vertic
 
 	return ctx;
 }
-
-// ===== UPDATED: draw_layer_neurons with hit regions for each neuron/conv2d =====
-
-// ===== REFACTORED: draw_layer_neurons — now a coordinator =====
 
 function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
     assert(typeof (ctx) == "object", `ctx is not an object but ${typeof (ctx)}`);
@@ -1735,8 +1713,6 @@ function _dln_draw_conv2d_neuron(ctx, j, numNeurons, verticalSpacing, layerY, la
 
     return ctx;
 }
-
-// ===== UPDATED: draw_layer_connections with hit region for connection areas =====
 
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
 	try {
