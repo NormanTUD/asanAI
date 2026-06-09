@@ -988,19 +988,19 @@ async function run_super_quick_tests (quick=0) {
 }
 
 async function test_clicking_on_example_images_for_prediction() {
-	await delay(1000);
+	await delay(3000);
 
 	$(".TRANSLATEME_remove_data_img_predictions").click();
 
-	await delay(1000);
+	await delay(3000);
 
 	test_equal("Starts with example example predictions", $("#training_data_tab").find(".predict_data_img").length, 0); 
 
-	await delay(1000);
+	await delay(3000);
 
 	$($("#training_data_tab").find("img")[0]).click();
 
-	await delay(1000);
+	await delay(3000);
 
 	const nr_of_example_imgs = $("#training_data_tab").find(".predict_data_img").length;
 
@@ -1008,15 +1008,15 @@ async function test_clicking_on_example_images_for_prediction() {
 
 	test_equal("Has now one example prediction", nr_of_example_imgs, 1);
 
-	await delay(1000);
+	await delay(3000);
 
 	$(".TRANSLATEME_remove_data_img_predictions").click();
 
-	await delay(1000);
+	await delay(3000);
 
 	test_equal("Has 0 example predictions after removing them", $("#training_data_tab").find(".predict_data_img").length, 0);
 
-	await delay(1000);
+	await delay(3000);
 
 	test_no_new_errors_or_warnings();
 }
