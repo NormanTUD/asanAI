@@ -3,645 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Q, K, V — Visual Intuition</title>
+    <title>Attention — Watch It Work</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.min.css">
     <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background: #0f0f1a;
-            color: #ddd;
-            padding: 30px 20px;
-            line-height: 1.6;
+            background: #0b0b14;
+            color: #ccc;
+            padding: 20px;
         }
-        .wrap { max-width: 900px; margin: 0 auto; }
-        h1 { text-align: center; color: #7c8cf8; margin-bottom: 10px; font-size: 1.8em; }
-        .subtitle { text-align: center; color: #888; margin-bottom: 40px; }
-        section {
-            background: #181828;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 30px;
-            border: 1px solid #2a2a40;
+        .page { max-width: 1100px; margin: 0 auto; }
+        h1 { color: #aab; font-size: 1.4em; margin-bottom: 6px; }
+        .premise { color: #888; margin-bottom: 30px; font-size: 0.95em; }
+        .scene {
+            position: relative;
+            background: #0e0e1c;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            overflow: hidden;
         }
-        h2 { color: #7c8cf8; margin-bottom: 12px; font-size: 1.3em; }
-        .math-box {
-            background: #1e1e35;
-            border-left: 3px solid #7c8cf8;
-            padding: 12px 16px;
-            margin: 12px 0;
-            border-radius: 4px;
-            overflow-x: auto;
-        }
-        p { margin: 8px 0; }
-        canvas {
-            display: block;
-            margin: 16px auto;
+        canvas { display: block; }
+        .panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(10,10,20,0.85);
+            border: 1px solid #333;
             border-radius: 8px;
-            background: #0a0a18;
-            cursor: crosshair;
+            padding: 10px 14px;
+            font-size: 0.8em;
+            max-width: 240px;
         }
-        .controls {
+        .panel .math-line {
+            margin: 4px 0;
+            padding: 3px 0;
+            border-bottom: 1px solid #222;
+        }
+        .panel .math-line:last-child { border: none; }
+        .controls-bar {
             display: flex;
+            gap: 14px;
             flex-wrap: wrap;
-            gap: 12px;
-            margin: 12px 0;
             align-items: center;
+            padding: 10px 14px;
+            background: #111122;
+            border-top: 1px solid #222;
+            font-size: 0.82em;
         }
-        .controls label { font-size: 0.85em; color: #aaa; }
-        .controls input[type="range"] { width: 140px; accent-color: #7c8cf8; }
-        .controls select {
-            background: #1e1e35; color: #ddd; border: 1px solid #444;
-            padding: 4px 8px; border-radius: 4px;
+        .controls-bar label { color: #777; }
+        .controls-bar input[type="range"] { width: 90px; accent-color: #667eea; vertical-align: middle; }
+        .controls-bar select { background: #1a1a2e; color: #ccc; border: 1px solid #333; padding: 2px 6px; border-radius: 3px; }
+        .controls-bar .v { color: #8af; font-family: monospace; min-width: 28px; display: inline-block; }
+        .story {
+            color: #999;
+            font-size: 0.88em;
+            padding: 8px 14px;
+            background: #0d0d1a;
+            border-top: 1px solid #1a1a2a;
+            line-height: 1.5;
         }
-        .val { font-family: monospace; color: #7c8cf8; font-size: 0.85em; min-width: 35px; display: inline-block; }
-        .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 8px 0; font-size: 0.85em; }
-        .legend span { display: flex; align-items: center; gap: 4px; }
-        .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
-        .note { font-size: 0.9em; color: #999; font-style: italic; margin-top: 8px; }
+        .story b { color: #bbc; }
     </style>
 </head>
 <body>
-<div class="wrap">
-    <h1>Q, K, V — What They Actually Do</h1>
-    <p class="subtitle">Interactive geometric intuition for transformer attention</p>
+<div class="page">
+    <h1>Attention: watch the information flow</h1>
+    <p class="premise">Forget definitions. Here are tokens. Watch how one token decides what to absorb from the others.</p>
 
-    <!-- SECTION 1: Embeddings -->
-    <section>
-        <h2>1. Tokens live as vectors</h2>
-        <p>Each word becomes a point (vector) in space. Similar words → nearby vectors.</p>
-        <div class="math-box" id="math1"></div>
-        <canvas id="c1" width="500" height="500"></canvas>
-        <div class="legend">
-            <span><span class="dot" style="background:#ff6b6b"></span> "cat"</span>
-            <span><span class="dot" style="background:#4ecdc4"></span> "dog"</span>
-            <span><span class="dot" style="background:#ffd93d"></span> "car"</span>
-        </div>
-        <p class="note">Drag the tokens around to move them.</p>
-    </section>
-
-    <!-- SECTION 2: Q and K projections -->
-    <section>
-        <h2>2. Q and K: "What am I looking for?" vs "What do I offer?"</h2>
-        <p>Each token is linearly projected into a <b style="color:#ff6b6b">Query</b> and a <b style="color:#4ecdc4">Key</b>. These are just matrix multiplications — rotations and stretches of the space.</p>
-        <div class="math-box" id="math2"></div>
-        <div class="controls">
-            <label>Rotate Q space:</label>
-            <input type="range" min="0" max="360" value="20" id="qRot" oninput="draw2()">
-            <span class="val" id="qRot-v">20°</span>
-            <label>Rotate K space:</label>
-            <input type="range" min="0" max="360" value="340" id="kRot" oninput="draw2()">
-            <span class="val" id="kRot-v">340°</span>
-        </div>
-        <canvas id="c2" width="500" height="500"></canvas>
-        <div class="legend">
-            <span><span class="dot" style="background:#ff6b6b"></span> Q vectors (solid)</span>
-            <span><span class="dot" style="background:#4ecdc4"></span> K vectors (dashed)</span>
-        </div>
-        <p class="note">The rotation controls simulate what the learned W_Q and W_K matrices do — they re-orient the space so that "relevant" tokens align.</p>
-    </section>
-
-    <!-- SECTION 3: Dot product = alignment -->
-    <section>
-        <h2>3. Attention score = how aligned is Q with K?</h2>
-        <p>The dot product <b>q·k</b> measures how much two vectors point the same way. High alignment → high attention.</p>
-        <div class="math-box" id="math3"></div>
-        <div class="controls">
-            <label>Query token:</label>
-            <select id="qTok" onchange="draw3()">
-                <option value="0">cat</option>
-                <option value="1">dog</option>
-                <option value="2">car</option>
+    <!-- THE ONE SCENE -->
+    <div class="scene">
+        <canvas id="main" width="1100" height="600"></canvas>
+        <div class="panel" id="mathPanel"></div>
+        <div class="controls-bar">
+            <label>Who's asking?</label>
+            <select id="who" onchange="render()">
+                <option value="0">she</option>
+                <option value="1">threw</option>
+                <option value="2">the</option>
+                <option value="3">ball</option>
+                <option value="4">far</option>
             </select>
-            <label>Temperature (√d_k):</label>
-            <input type="range" min="0.3" max="4" step="0.1" value="1.4" id="temp3" oninput="draw3()">
-            <span class="val" id="temp3-v">1.4</span>
+            <label>W_Q twist:</label>
+            <input type="range" min="-90" max="90" value="15" id="qTwist" oninput="render()">
+            <span class="v" id="qTwist-v"></span>
+            <label>W_K twist:</label>
+            <input type="range" min="-90" max="90" value="-10" id="kTwist" oninput="render()">
+            <span class="v" id="kTwist-v"></span>
+            <label>W_V twist:</label>
+            <input type="range" min="-90" max="90" value="40" id="vTwist" oninput="render()">
+            <span class="v" id="vTwist-v"></span>
+            <label>Focus:</label>
+            <input type="range" min="0.2" max="4" step="0.1" value="1" id="focus" oninput="render()">
+            <span class="v" id="focus-v"></span>
         </div>
-        <canvas id="c3" width="500" height="400"></canvas>
-        <p class="note">The dashed lines show the projection of Q onto each K direction. Longer projection = higher score.</p>
-    </section>
-
-    <!-- SECTION 4: Softmax -->
-    <section>
-        <h2>4. Softmax → attention weights (sum to 1)</h2>
-        <div class="math-box" id="math4"></div>
-        <div class="controls">
-            <label>Sharpness:</label>
-            <input type="range" min="0.2" max="5" step="0.1" value="1" id="sharp" oninput="draw4()">
-            <span class="val" id="sharp-v">1.0</span>
-        </div>
-        <canvas id="c4" width="500" height="200"></canvas>
-        <p class="note">Low sharpness → uniform attention. High sharpness → focuses on one token.</p>
-    </section>
-
-    <!-- SECTION 5: Value aggregation -->
-    <section>
-        <h2>5. Output = weighted sum of Values</h2>
-        <p>V vectors carry the "content." The output is pulled toward highly-attended V's.</p>
-        <div class="math-box" id="math5"></div>
-        <div class="controls">
-            <label>V rotation:</label>
-            <input type="range" min="0" max="360" value="60" id="vRot" oninput="draw5()">
-            <span class="val" id="vRot-v">60°</span>
-        </div>
-        <canvas id="c5" width="500" height="500"></canvas>
-        <div class="legend">
-            <span><span class="dot" style="background:#ffd93d"></span> V vectors</span>
-            <span><span class="dot" style="background:#b44dff"></span> Output (weighted sum)</span>
-        </div>
-        <p class="note">The purple star is always inside the "triangle" of V vectors — it's a convex combination.</p>
-    </section>
-
-    <!-- SECTION 6: Putting it all together -->
-    <section>
-        <h2>6. The full picture</h2>
-        <div class="math-box" id="math6"></div>
-        <p>Q and K decide <b>where to look</b>. V decides <b>what to read</b>. The output blends information from all tokens, weighted by relevance.</p>
-        <div class="controls">
-            <label>Query:</label>
-            <select id="qTokFull" onchange="drawFull()">
-                <option value="0">cat</option>
-                <option value="1">dog</option>
-                <option value="2">car</option>
-            </select>
-            <label>W_Q angle:</label>
-            <input type="range" min="0" max="360" value="20" id="qRotF" oninput="drawFull()">
-            <label>W_K angle:</label>
-            <input type="range" min="0" max="360" value="340" id="kRotF" oninput="drawFull()">
-            <label>W_V angle:</label>
-            <input type="range" min="0" max="360" value="60" id="vRotF" oninput="drawFull()">
-            <label>Sharpness:</label>
-            <input type="range" min="0.2" max="5" step="0.1" value="1" id="sharpF" oninput="drawFull()">
-        </div>
-        <canvas id="cFull" width="500" height="500"></canvas>
-        <div class="legend">
-            <span><span class="dot" style="background:#ff6b6b"></span> Q</span>
-            <span><span class="dot" style="background:#4ecdc4"></span> K</span>
-            <span><span class="dot" style="background:#ffd93d"></span> V</span>
-            <span><span class="dot" style="background:#b44dff"></span> Output</span>
-        </div>
-    </section>
+        <div class="story" id="storyText"></div>
+    </div>
 </div>
 
 <script>
-// === GLOBALS ===
-const tokens = [
-    { name: 'cat', pos: [1.8, 1.2], color: '#ff6b6b' },
-    { name: 'dog', pos: [1.5, 0.8], color: '#4ecdc4' },
-    { name: 'car', pos: [-1.0, 1.5], color: '#ffd93d' }
+const canvas = document.getElementById('main');
+const ctx = canvas.getContext('2d');
+
+// Tokens with hand-picked 2D embeddings that make semantic sense
+const toks = [
+    { word: 'she',   emb: [2.0, 0.3],  hue: 0 },
+    { word: 'threw', emb: [0.5, -1.8], hue: 200 },
+    { word: 'the',   emb: [-0.3, 0.1], hue: 50 },
+    { word: 'ball',  emb: [1.2, 1.6],  hue: 120 },
+    { word: 'far',   emb: [-1.5, -1.2], hue: 280 }
 ];
 
-let dragging = -1;
+function color(hue, sat=70, lit=60, alpha=1) {
+    return `hsla(${hue},${sat}%,${lit}%,${alpha})`;
+}
 
-// === UTILS ===
-function rot2d(v, deg) {
+function rot(v, deg) {
     const r = deg * Math.PI / 180;
-    return [v[0]*Math.cos(r) - v[1]*Math.sin(r), v[0]*Math.sin(r) + v[1]*Math.cos(r)];
+    const c = Math.cos(r), s = Math.sin(r);
+    return [v[0]*c - v[1]*s, v[0]*s + v[1]*c];
 }
 function dot(a, b) { return a[0]*b[0] + a[1]*b[1]; }
-function len(v) { return Math.sqrt(v[0]*v[0] + v[1]*v[1]); }
-function scale(v, s) { return [v[0]*s, v[1]*s]; }
-function add(a, b) { return [a[0]+b[0], a[1]+b[1]]; }
+function len(v) { return Math.sqrt(v[0]*v[0]+v[1]*v[1]); }
+function norm(v) { const l = len(v); return l > 0 ? [v[0]/l, v[1]/l] : [0,0]; }
+function lerp(a, b, t) { return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t]; }
 function softmax(arr, temp) {
-    const s = arr.map(x => x / temp);
+    const s = arr.map(x => x/temp);
     const mx = Math.max(...s);
-    const e = s.map(x => Math.exp(x - mx));
-    const sm = e.reduce((a,b) => a+b);
-    return e.map(x => x / sm);
+    const e = s.map(x => Math.exp(x-mx));
+    const sum = e.reduce((a,b)=>a+b);
+    return e.map(x => x/sum);
 }
 
-// Canvas helpers
-function toCanvas(ctx, v, cx, cy, sc) {
-    return [cx + v[0] * sc, cy - v[1] * sc];
-}
-function drawArrow(ctx, from, to, color, width=2, dash=[]) {
-    ctx.save();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    ctx.setLineDash(dash);
-    ctx.beginPath();
-    ctx.moveTo(from[0], from[1]);
-    ctx.lineTo(to[0], to[1]);
-    ctx.stroke();
-    // arrowhead
-    const angle = Math.atan2(to[1]-from[1], to[0]-from[0]);
-    const hl = 8 + width;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(to[0], to[1]);
-    ctx.lineTo(to[0] - hl*Math.cos(angle-0.3), to[1] - hl*Math.sin(angle-0.3));
-    ctx.lineTo(to[0] - hl*Math.cos(angle+0.3), to[1] - hl*Math.sin(angle+0.3));
-    ctx.fill();
-    ctx.restore();
-}
-function drawGrid(ctx, w, h, cx, cy, sc) {
-    ctx.strokeStyle = '#1a1a30';
-    ctx.lineWidth = 1;
-    for (let i = -5; i <= 5; i++) {
-        const x = cx + i * sc;
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-        const y = cy + i * sc;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-    }
-    ctx.strokeStyle = '#2a2a50';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
-}
-function drawLabel(ctx, text, pos, color, offset=[5,-10]) {
-    ctx.fillStyle = color;
-    ctx.font = '13px system-ui';
-    ctx.fillText(text, pos[0]+offset[0], pos[1]+offset[1]);
-}
+function render() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
 
-// === SECTION 1: Embeddings ===
-function draw1() {
-    const c = document.getElementById('c1');
-    const ctx = c.getContext('2d');
-    const w = c.width, h = c.height;
-    const cx = w/2, cy = h/2, sc = 100;
-    ctx.clearRect(0, 0, w, h);
-    drawGrid(ctx, w, h, cx, cy, sc);
+    const qi = parseInt(document.getElementById('who').value);
+    const qTwist = parseFloat(document.getElementById('qTwist').value);
+    const kTwist = parseFloat(document.getElementById('kTwist').value);
+    const vTwist = parseFloat(document.getElementById('vTwist').value);
+    const focus = parseFloat(document.getElementById('focus').value);
 
-    // Axis labels
-    ctx.fillStyle = '#666';
-    ctx.font = '11px system-ui';
-    ctx.fillText('← less animal    more animal →', cx + 10, h - 10);
-    ctx.save();
-    ctx.translate(15, cy - 10);
-    ctx.rotate(-Math.PI/2);
-    ctx.fillText('← less active    more active →', 0, 0);
-    ctx.restore();
+    document.getElementById('qTwist-v').textContent = qTwist + '°';
+    document.getElementById('kTwist-v').textContent = kTwist + '°';
+    document.getElementById('vTwist-v').textContent = vTwist + '°';
+    document.getElementById('focus-v').textContent = focus.toFixed(1);
 
-    tokens.forEach((t, i) => {
-        const p = toCanvas(ctx, t.pos, cx, cy, sc);
-        // vector from origin
-        drawArrow(ctx, [cx, cy], p, t.color, 2.5);
-        // dot
-        ctx.beginPath();
-        ctx.arc(p[0], p[1], 8, 0, Math.PI*2);
-        ctx.fillStyle = t.color;
-        ctx.fill();
-        drawLabel(ctx, t.name, p, t.color);
-    });
-}
+    // Compute Q, K, V
+    const Q = toks.map(t => rot(t.emb, qTwist));
+    const K = toks.map(t => rot(t.emb, kTwist));
+    const V = toks.map(t => rot(t.emb, vTwist));
 
-// Drag support for canvas 1
-const c1 = document.getElementById('c1');
-c1.addEventListener('mousedown', e => {
-    const rect = c1.getBoundingClientRect();
-    const mx = (e.clientX - rect.left) * (c1.width / rect.width);
-    const my = (e.clientY - rect.top) * (c1.height / rect.height);
-    const cx = c1.width/2, cy = c1.height/2, sc = 100;
-    tokens.forEach((t, i) => {
-        const p = toCanvas(null, t.pos, cx, cy, sc);
-        if (Math.hypot(mx-p[0], my-p[1]) < 15) dragging = i;
-    });
-});
-c1.addEventListener('mousemove', e => {
-    if (dragging < 0) return;
-    const rect = c1.getBoundingClientRect();
-    const mx = (e.clientX - rect.left) * (c1.width / rect.width);
-    const my = (e.clientY - rect.top) * (c1.height / rect.height);
-    const cx = c1.width/2, cy = c1.height/2, sc = 100;
-    tokens[dragging].pos = [(mx - cx)/sc, -(my - cy)/sc];
-    drawAll();
-});
-c1.addEventListener('mouseup', () => { dragging = -1; });
-c1.addEventListener('mouseleave', () => { dragging = -1; });
+    // Scores and weights for selected query
+    const scores = K.map(k => dot(Q[qi], k) / 1.4);
+    const weights = softmax(scores, focus);
 
-// === SECTION 2: Q/K projections ===
-function draw2() {
-    const qDeg = parseFloat(document.getElementById('qRot').value);
-    const kDeg = parseFloat(document.getElementById('kRot').value);
-    document.getElementById('qRot-v').textContent = qDeg + '°';
-    document.getElementById('kRot-v').textContent = kDeg + '°';
-
-    const c = document.getElementById('c2');
-    const ctx = c.getContext('2d');
-    const w = c.width, h = c.height;
-    const cx = w/2, cy = h/2, sc = 100;
-    ctx.clearRect(0, 0, w, h);
-    drawGrid(ctx, w, h, cx, cy, sc);
-
-    tokens.forEach((t, i) => {
-        const q = rot2d(t.pos, qDeg);
-        const k = rot2d(t.pos, kDeg);
-        const pq = toCanvas(ctx, q, cx, cy, sc);
-        const pk = toCanvas(ctx, k, cx, cy, sc);
-        drawArrow(ctx, [cx, cy], pq, t.color, 2.5);
-        drawArrow(ctx, [cx, cy], pk, t.color, 1.5, [6, 4]);
-        drawLabel(ctx, 'Q(' + t.name + ')', pq, t.color);
-        drawLabel(ctx, 'K(' + t.name + ')', pk, t.color, [5, 12]);
-    });
-}
-
-// === SECTION 3: Dot product ===
-function draw3() {
-    const qi = parseInt(document.getElementById('qTok').value);
-    const temp = parseFloat(document.getElementById('temp3').value);
-    document.getElementById('temp3-v').textContent = temp.toFixed(1);
-
-    const qDeg = parseFloat(document.getElementById('qRot').value);
-    const kDeg = parseFloat(document.getElementById('kRot').value);
-
-    const q = rot2d(tokens[qi].pos, qDeg);
-    const keys = tokens.map(t => rot2d(t.pos, kDeg));
-
-    const c = document.getElementById('c3');
-    const ctx = c.getContext('2d');
-    const w = c.width, h = c.height;
-    const cx = w/2, cy = h/2, sc = 80;
-    ctx.clearRect(0, 0, w, h);
-    drawGrid(ctx, w, h, cx, cy, sc);
-
-    // Draw Q
-    const pq = toCanvas(ctx, q, cx, cy, sc);
-    drawArrow(ctx, [cx, cy], pq, '#ff6b6b', 3);
-    drawLabel(ctx, 'Q(' + tokens[qi].name + ')', pq, '#ff6b6b');
-
-    // Draw keys and projections
-    keys.forEach((k, i) => {
-        const pk = toCanvas(ctx, k, cx, cy, sc);
-        drawArrow(ctx, [cx, cy], pk, tokens[i].color, 2, [5,3]);
-
-        // projection of q onto k
-        const kLen = len(k);
-        if (kLen > 0.01) {
-            const kUnit = [k[0]/kLen, k[1]/kLen];
-            const projLen = dot(q, kUnit);
-            const projPt = scale(kUnit, projLen);
-            const pp = toCanvas(ctx, projPt, cx, cy, sc);
-            ctx.setLineDash([3,3]);
-            ctx.strokeStyle = tokens[i].color;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(pq[0], pq[1]);
-            ctx.lineTo(pp[0], pp[1]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            // score label
-            const score = (dot(q, k) / temp).toFixed(2);
-            drawLabel(ctx, 'score=' + score, pk, tokens[i].color, [5, 14]);
-        }
-        drawLabel(ctx, 'K(' + tokens[i].name + ')', pk, tokens[i].color);
-    });
-
-    // Also draw bar at bottom
-    const scores = keys.map(k => dot(q, k) / temp);
-    const barY = h - 40;
-    const barW = 80;
-    const maxS = Math.max(...scores.map(Math.abs), 1);
-    ctx.fillStyle = '#1a1a30';
-    ctx.fillRect(0, barY - 30, w, 60);
-    tokens.forEach((t, i) => {
-        const bx = cx + (i - 1) * (barW + 20) - barW/2;
-        const bh = (scores[i] / maxS) * 25;
-        ctx.fillStyle = t.color;
-        ctx.fillRect(bx, barY - Math.max(bh, 0), barW, Math.abs(bh));
-        ctx.fillStyle = '#aaa';
-        ctx.font = '10px monospace';
-        ctx.fillText(scores[i].toFixed(2), bx + 20, barY + 15);
-        ctx.fillText(t.name, bx + 25, barY - 32);
-    });
-}
-
-// === SECTION 4: Softmax ===
-function draw4() {
-    const sharp = parseFloat(document.getElementById('sharp').value);
-    document.getElementById('sharp-v').textContent = sharp.toFixed(1);
-
-    const qi = parseInt(document.getElementById('qTok').value);
-    const qDeg = parseFloat(document.getElementById('qRot').value);
-    const kDeg = parseFloat(document.getElementById('kRot').value);
-    const temp = parseFloat(document.getElementById('temp3').value);
-
-    const q = rot2d(tokens[qi].pos, qDeg);
-    const keys = tokens.map(t => rot2d(t.pos, kDeg));
-    const scores = keys.map(k => dot(q, k) / temp);
-    const weights = softmax(scores, sharp);
-
-    const c = document.getElementById('c4');
-    const ctx = c.getContext('2d');
-    const w = c.width, h = c.height;
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = '#0a0a18';
-    ctx.fillRect(0, 0, w, h);
-
-    const barW = 100;
-    const gap = 40;
-    const startX = (w - tokens.length * (barW + gap) + gap) / 2;
-    const maxH = h - 60;
-
-    tokens.forEach((t, i) => {
-        const x = startX + i * (barW + gap);
-        const bh = weights[i] * maxH;
-        // bar
-        ctx.fillStyle = t.color;
-        ctx.globalAlpha = 0.3 + weights[i] * 0.7;
-        ctx.fillRect(x, h - 30 - bh, barW, bh);
-        ctx.globalAlpha = 1;
-        // border
-        ctx.strokeStyle = t.color;
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x, h - 30 - bh, barW, bh);
-        // label
-        ctx.fillStyle = '#ddd';
-        ctx.font = '13px system-ui';
-        ctx.fillText(t.name, x + 30, h - 12);
-        ctx.fillStyle = t.color;
-        ctx.font = 'bold 14px monospace';
-        ctx.fillText((weights[i] * 100).toFixed(1) + '%', x + 20, h - 35 - bh);
-    });
-
-    ctx.fillStyle = '#888';
-    ctx.font = '11px system-ui';
-    ctx.fillText('Attention weights (sum = 1.0)', startX, 20);
-}
-
-// === SECTION 5: Value aggregation ===
-function draw5() {
-    const vDeg = parseFloat(document.getElementById('vRot').value);
-    document.getElementById('vRot-v').textContent = vDeg + '°';
-
-    const qi = parseInt(document.getElementById('qTok').value);
-    const qDeg = parseFloat(document.getElementById('qRot').value);
-    const kDeg = parseFloat(document.getElementById('kRot').value);
-    const temp = parseFloat(document.getElementById('temp3').value);
-    const sharp = parseFloat(document.getElementById('sharp').value);
-
-    const q = rot2d(tokens[qi].pos, qDeg);
-    const keys = tokens.map(t => rot2d(t.pos, kDeg));
-    const scores = keys.map(k => dot(q, k) / temp);
-    const weights = softmax(scores, sharp);
-    const values = tokens.map(t => rot2d(t.pos, vDeg));
-
-    // output = weighted sum of values
+    // Output
     let output = [0, 0];
-    for (let i = 0; i < tokens.length; i++) {
-        output[0] += weights[i] * values[i][0];
-        output[1] += weights[i] * values[i][1];
+    for (let i = 0; i < toks.length; i++) {
+        output[0] += weights[i] * V[i][0];
+        output[1] += weights[i] * V[i][1];
     }
 
-    const c = document.getElementById('c5');
-    const ctx = c.getContext('2d');
-    const w = c.width, h = c.height;
-    const cx = w/2, cy = h/2, sc = 100;
-    ctx.clearRect(0, 0, w, h);
-    drawGrid(ctx, w, h, cx, cy, sc);
+    // === LAYOUT: Three zones ===
+    // Left: embedding + Q/K space (the "matching" side)
+    // Right: V space + output (the "reading" side)
+    // Middle: the flow of weights connecting them
 
-    // Draw convex hull (triangle)
-    ctx.beginPath();
-    const p0 = toCanvas(ctx, values[0], cx, cy, sc);
-    ctx.moveTo(p0[0], p0[1]);
-    for (let i = 1; i < values.length; i++) {
-        const p = toCanvas(ctx, values[i], cx, cy, sc);
-        ctx.lineTo(p[0], p[1]);
-    }
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(255, 217, 61, 0.05)';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255, 217, 61, 0.3)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    const leftCx = 200, leftCy = 300, sc = 70;
+    const rightCx = 880, rightCy = 300;
+    const midX = 540;
 
-    // Draw V vectors
-    values.forEach((v, i) => {
-        const pv = toCanvas(ctx, v, cx, cy, sc);
-        drawArrow(ctx, [cx, cy], pv, tokens[i].color, 1.5 + weights[i] * 3);
+    // --- Draw left zone: Q and K vectors ---
+    // Subtle zone label
+    ctx.fillStyle = '#333';
+    ctx.font = '11px system-ui';
+    ctx.fillText('MATCHING (Q·K)', leftCx - 50, 22);
+
+    // Grid
+    drawZoneGrid(leftCx, leftCy, sc, 3.5);
+
+    // Draw all K vectors (muted)
+    toks.forEach((t, i) => {
+        const kp = w2c(K[i], leftCx, leftCy, sc);
+        // K as a small circle at the tip
         ctx.beginPath();
-        ctx.arc(pv[0], pv[1], 5 + weights[i] * 10, 0, Math.PI*2);
-        ctx.fillStyle = tokens[i].color;
-        ctx.globalAlpha = 0.4 + weights[i] * 0.6;
+        ctx.arc(kp[0], kp[1], i === qi ? 4 : 6, 0, Math.PI*2);
+        ctx.fillStyle = color(t.hue, 50, 50, i === qi ? 0.3 : 0.7);
         ctx.fill();
-        ctx.globalAlpha = 1;
-        drawLabel(ctx, 'V(' + tokens[i].name + ') ' + (weights[i]*100).toFixed(0) + '%', pv, tokens[i].color);
-    });
-
-    // Draw weighted contributions
-    let cumulative = [cx, cy];
-    ctx.setLineDash([4, 3]);
-    for (let i = 0; i < tokens.length; i++) {
-        const contrib = scale(values[i], weights[i]);
-        const contribCanvas = [contrib[0] * sc, -contrib[1] * sc];
-        const next = [cumulative[0] + contribCanvas[0], cumulative[1] + contribCanvas[1]];
-        ctx.strokeStyle = tokens[i].color;
-        ctx.lineWidth = 1.5;
+        // thin line from origin
         ctx.beginPath();
-        ctx.moveTo(cumulative[0], cumulative[1]);
-        ctx.lineTo(next[0], next[1]);
+        ctx.moveTo(leftCx, leftCy);
+        ctx.lineTo(kp[0], kp[1]);
+        ctx.strokeStyle = color(t.hue, 40, 40, 0.3);
+        ctx.lineWidth = 1;
         ctx.stroke();
-        cumulative = next;
-    }
-    ctx.setLineDash([]);
-
-    // Draw output
-    const po = toCanvas(ctx, output, cx, cy, sc);
-    drawArrow(ctx, [cx, cy], po, '#b44dff', 3);
-    ctx.beginPath();
-    ctx.arc(po[0], po[1], 10, 0, Math.PI*2);
-    ctx.fillStyle = '#b44dff';
-    ctx.fill();
-    // star shape
-    ctx.fillStyle = '#fff';
-    ctx.font = '16px serif';
-    ctx.fillText('★', po[0]-8, po[1]+5);
-    drawLabel(ctx, 'output', po, '#b44dff', [12, -5]);
-}
-
-// === SECTION 6: Full picture ===
-function drawFull() {
-    const qi = parseInt(document.getElementById('qTokFull').value);
-    const qDeg = parseFloat(document.getElementById('qRotF').value);
-    const kDeg = parseFloat(document.getElementById('kRotF').value);
-    const vDeg = parseFloat(document.getElementById('vRotF').value);
-    const sharp = parseFloat(document.getElementById('sharpF').value);
-
-    const q = rot2d(tokens[qi].pos, qDeg);
-    const keys = tokens.map(t => rot2d(t.pos, kDeg));
-    const values = tokens.map(t => rot2d(t.pos, vDeg));
-    const scores = keys.map(k => dot(q, k) / 1.4);
-    const weights = softmax(scores, sharp);
-
-    let output = [0, 0];
-    for (let i = 0; i < tokens.length; i++) {
-        output[0] += weights[i] * values[i][0];
-        output[1] += weights[i] * values[i][1];
-    }
-
-    const c = document.getElementById('cFull');
-    const ctx = c.getContext('2d');
-    const w = c.width, h = c.height;
-    const cx = w/2, cy = h/2, sc = 80;
-    ctx.clearRect(0, 0, w, h);
-    drawGrid(ctx, w, h, cx, cy, sc);
-
-    // Draw Q vector
-    const pq = toCanvas(ctx, q, cx, cy, sc);
-    drawArrow(ctx, [cx, cy], pq, '#ff6b6b', 3);
-    drawLabel(ctx, 'Q(' + tokens[qi].name + ')', pq, '#ff6b6b');
-
-    // Draw K vectors
-    keys.forEach((k, i) => {
-        const pk = toCanvas(ctx, k, cx, cy, sc);
-        drawArrow(ctx, [cx, cy], pk, '#4ecdc4', 1.5, [5, 3]);
-        drawLabel(ctx, 'K(' + tokens[i].name + ')', pk, '#4ecdc4', [5, 12]);
+        // label
+        ctx.fillStyle = color(t.hue, 40, 60, 0.8);
+        ctx.font = '11px system-ui';
+        ctx.fillText('k:' + t.word, kp[0]+8, kp[1]+4);
     });
 
-    // Draw V vectors with weight-based opacity
-    values.forEach((v, i) => {
-        const pv = toCanvas(ctx, v, cx, cy, sc);
-        ctx.globalAlpha = 0.3 + weights[i] * 0.7;
-        drawArrow(ctx, [cx, cy], pv, '#ffd93d', 1.5 + weights[i] * 2.5);
-        ctx.globalAlpha = 1;
-        drawLabel(ctx, 'V(' + tokens[i].name + ') ' + (weights[i]*100).toFixed(0) + '%', pv, '#ffd93d', [5, -12]);
+    // Draw the query vector (bold, from the selected token)
+    const qp = w2c(Q[qi], leftCx, leftCy, sc);
+    ctx.beginPath();
+    ctx.moveTo(leftCx, leftCy);
+    ctx.lineTo(qp[0], qp[1]);
+    ctx.strokeStyle = color(toks[qi].hue, 80, 65);
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    drawArrowTip(ctx, leftCx, leftCy, qp[0], qp[1], color(toks[qi].hue, 80, 65));
+    ctx.fillStyle = color(toks[qi].hue, 80, 70);
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillText('Q:' + toks[qi].word, qp[0]+8, qp[1]-6);
+
+    // Show angle arcs between Q and each K
+    toks.forEach((t, i) => {
+        if (i === qi) return;
+        const kp2 = w2c(K[i], leftCx, leftCy, sc);
+        const angleQ = Math.atan2(-(Q[qi][1]), Q[qi][0]);
+        const angleK = Math.atan2(-(K[i][1]), K[i][0]);
+        // Draw a small arc showing the angle
+        const arcR = 25 + i * 8;
+        ctx.beginPath();
+        ctx.arc(leftCx, leftCy, arcR, Math.min(angleQ, angleK), Math.max(angleQ, angleK));
+        ctx.strokeStyle = color(t.hue, 50, 55, 0.4 + weights[i] * 0.6);
+        ctx.lineWidth = 1 + weights[i] * 3;
+        ctx.stroke();
     });
 
-    // Draw output
-    const po = toCanvas(ctx, output, cx, cy, sc);
-    drawArrow(ctx, [cx, cy], po, '#b44dff', 3.5);
+    // --- Draw right zone: V vectors and output ---
+    ctx.fillStyle = '#333';
+    ctx.font = '11px system-ui';
+    ctx.fillText('READING (V)', rightCx - 30, 22);
+
+    drawZoneGrid(rightCx, rightCy, sc, 3.5);
+
+    // V vectors
+    toks.forEach((t, i) => {
+        const vp = w2c(V[i], rightCx, rightCy, sc);
+        ctx.beginPath();
+        ctx.moveTo(rightCx, rightCy);
+        ctx.lineTo(vp[0], vp[1]);
+        ctx.strokeStyle = color(t.hue, 50, 55, 0.3 + weights[i] * 0.7);
+        ctx.lineWidth = 1 + weights[i] * 4;
+        ctx.stroke();
+        // circle sized by weight
+        ctx.beginPath();
+        ctx.arc(vp[0], vp[1], 4 + weights[i] * 18, 0, Math.PI*2);
+        ctx.fillStyle = color(t.hue, 60, 55, 0.2 + weights[i] * 0.6);
+        ctx.fill();
+        ctx.strokeStyle = color(t.hue, 60, 60, 0.8);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = color(t.hue, 50, 70);
+        ctx.font = '11px system-ui';
+        ctx.fillText(t.word, vp[0]+10+weights[i]*12, vp[1]+4);
+    });
+
+    // Output vector
+    const op = w2c(output, rightCx, rightCy, sc);
     ctx.beginPath();
-    ctx.arc(po[0], po[1], 9, 0, Math.PI * 2);
-    ctx.fillStyle = '#b44dff';
+    ctx.moveTo(rightCx, rightCy);
+    ctx.lineTo(op[0], op[1]);
+    ctx.strokeStyle = '#d4a0ff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    drawArrowTip(ctx, rightCx, rightCy, op[0], op[1], '#d4a0ff');
+    ctx.beginPath();
+    ctx.arc(op[0], op[1], 8, 0, Math.PI*2);
+    ctx.fillStyle = '#d4a0ff';
     ctx.fill();
     ctx.fillStyle = '#fff';
-    ctx.font = '14px serif';
-    ctx.fillText('★', po[0] - 7, po[1] + 5);
-    drawLabel(ctx, 'output', po, '#b44dff', [12, -3]);
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillText('output', op[0]+12, op[1]+4);
 
-    // Info text
-    ctx.fillStyle = '#888';
-    ctx.font = '11px monospace';
-    ctx.fillText(`weights: [${weights.map(w => w.toFixed(3)).join(', ')}]`, 10, h - 10);
-    ctx.fillText(`output: [${output[0].toFixed(3)}, ${output[1].toFixed(3)}]`, 10, h - 25);
+    // --- Draw middle: the flow (weights as streams) ---
+    // Show each token as a horizontal band, with a "pipe" whose thickness = weight
+    const bandH = H / (toks.length + 1);
+    toks.forEach((t, i) => {
+        const y = bandH * (i + 0.8);
+        const w = weights[i];
+
+        // Left dot (K side)
+        const kp = w2c(K[i], leftCx, leftCy, sc);
+        // Right dot (V side)
+        const vp = w2c(V[i], rightCx, rightCy, sc);
+
+        // Draw a flowing curve from K position to V position through the middle
+        const thickness = 1 + w * 20;
+        ctx.beginPath();
+        ctx.moveTo(kp[0], kp[1]);
+        ctx.bezierCurveTo(
+            midX - 60, kp[1],
+            midX + 60, vp[1],
+            vp[0], vp[1]
+        );
+        ctx.strokeStyle = color(t.hue, 55, 55, 0.15 + w * 0.7);
+        ctx.lineWidth = thickness;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Weight label in the middle
+        if (w > 0.05) {
+            const labelX = midX;
+            const labelY = (kp[1] + vp[1]) / 2;
+            ctx.fillStyle = color(t.hue, 40, 70, 0.6 + w * 0.4);
+            ctx.font = `${10 + w * 6}px monospace`;
+            ctx.textAlign = 'center';
+            ctx.fillText((w * 100).toFixed(0) + '%', labelX, labelY);
+            ctx.textAlign = 'left';
+        }
+    });
+
+    // --- Token word list in the center top ---
+    ctx.fillStyle = '#555';
+    ctx.font = '12px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('"' + toks.map(t => t.word).join('  ') + '"', midX, H - 15);
+    ctx.textAlign = 'left';
+
+    // --- Update math panel ---
+    updateMathPanel(qi, scores, weights, output);
+
+    // --- Update story ---
+    const topIdx = weights.indexOf(Math.max(...weights));
+    const storyEl = document.getElementById('storyText');
+    storyEl.innerHTML = `<b>"${toks[qi].word}"</b> is asking: "who's relevant to me?" → ` +
+        `Its Q vector aligns most with <b>"${toks[topIdx].word}"</b>'s K vector (angle is smallest). ` +
+        `So the output is pulled mostly toward <b>"${toks[topIdx].word}"</b>'s V vector ` +
+        `(${(weights[topIdx]*100).toFixed(0)}% weight). ` +
+        `Twist the W_Q/W_K knobs to change <i>what counts as relevant</i>. Twist W_V to change <i>what gets read</i>.`;
 }
 
-// === DRAW ALL ===
-function drawAll() {
-    draw1(); draw2(); draw3(); draw4(); draw5(); drawFull();
+function drawZoneGrid(cx, cy, sc, range) {
+    ctx.strokeStyle = '#181830';
+    ctx.lineWidth = 0.5;
+    for (let i = -Math.floor(range); i <= Math.floor(range); i++) {
+        ctx.beginPath(); ctx.moveTo(cx + i*sc, cy - range*sc); ctx.lineTo(cx + i*sc, cy + range*sc); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx - range*sc, cy + i*sc); ctx.lineTo(cx + range*sc, cy + i*sc); ctx.stroke();
+    }
+    ctx.strokeStyle = '#2a2a45';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx, cy - range*sc); ctx.lineTo(cx, cy + range*sc); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - range*sc, cy); ctx.lineTo(cx + range*sc, cy); ctx.stroke();
 }
 
-// === RENDER MATH ===
-function renderMath() {
-    temml.render(String.raw`\mathbf{x}_i \in \mathbb{R}^{d} \quad \text{— each token is a vector in } d\text{-dimensional space}`, document.getElementById('math1'), {displayMode: true});
-
-    temml.render(String.raw`\mathbf{q}_i = W_Q\,\mathbf{x}_i \qquad \mathbf{k}_i = W_K\,\mathbf{x}_i \qquad \text{(linear projections = rotate/stretch)}`, document.getElementById('math2'), {displayMode: true});
-
-    temml.render(String.raw`\text{score}_{ij} = \frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k}} = \frac{\|\mathbf{q}_i\|\,\|\mathbf{k}_j\|\cos\theta}{\sqrt{d_k}}`, document.getElementById('math3'), {displayMode: true});
-
-    temml.render(String.raw`\alpha_{ij} = \frac{e^{\,\text{score}_{ij}\,/\,\tau}}{\sum_l e^{\,\text{score}_{il}\,/\,\tau}} \qquad \sum_j \alpha_{ij} = 1`, document.getElementById('math4'), {displayMode: true});
-
-    temml.render(String.raw`\mathbf{o}_i = \sum_j \alpha_{ij}\,\mathbf{v}_j \qquad \text{where } \mathbf{v}_j = W_V\,\mathbf{x}_j`, document.getElementById('math5'), {displayMode: true});
-
-    temml.render(String.raw`\text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V`, document.getElementById('math6'), {displayMode: true});
+function w2c(v, cx, cy, sc) {
+    return [cx + v[0]*sc, cy - v[1]*sc];
 }
 
-// === INIT ===
-window.addEventListener('DOMContentLoaded', () => {
-    renderMath();
-    drawAll();
-});
+function drawArrowTip(ctx, x1, y1, x2, y2, col) {
+    const angle = Math.atan2(y2-y1, x2-x1);
+    const hl = 10;
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - hl*Math.cos(angle-0.35), y2 - hl*Math.sin(angle-0.35));
+    ctx.lineTo(x2 - hl*Math.cos(angle+0.35), y2 - hl*Math.sin(angle+0.35));
+    ctx.fill();
+}
+
+function updateMathPanel(qi, scores, weights, output) {
+    const panel = document.getElementById('mathPanel');
+    let html = '';
+    html += `<div class="math-line" id="mp1"></div>`;
+    html += `<div class="math-line" id="mp2"></div>`;
+    html += `<div class="math-line" style="font-family:monospace;font-size:0.85em;color:#8af;">`;
+    html += `scores: [${scores.map(s=>s.toFixed(2)).join(', ')}]<br>`;
+    html += `weights: [${weights.map(w=>(w*100).toFixed(1)+'%').join(', ')}]<br>`;
+    html += `output: [${output[0].toFixed(2)}, ${output[1].toFixed(2)}]`;
+    html += `</div>`;
+    panel.innerHTML = html;
+
+    try {
+        temml.render(String.raw`\alpha_j = \text{softmax}\!\left(\frac{\mathbf{q} \cdot \mathbf{k}_j}{\sqrt{d_k}}\right)`, document.getElementById('mp1'), {displayMode:false});
+        temml.render(String.raw`\mathbf{o} = \textstyle\sum_j \alpha_j \mathbf{v}_j`, document.getElementById('mp2'), {displayMode:false});
+    } catch(e) {}
+}
+
+// Init
+window.addEventListener('DOMContentLoaded', render);
 </script>
 </body>
 </html>
