@@ -1438,63 +1438,96 @@ function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, la
 	return ctx;
 }
 
+// ===== PREFIX: _dnoc_ (draw_neurons_or_conv2d helper) =====
+
+function _dnoc_has_first_layer_rgb_input(layer_idx) {
+    return (
+        Object.keys(layer_states_saved).length &&
+        Object.keys(layer_states_saved).includes("0") &&
+        get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 &&
+        get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3 &&
+        layer_idx == 0
+    );
+}
+
+function _dnoc_get_first_layer_input_data() {
+    var first_layer_input = layer_states_saved["0"]["input"][0];
+    var n = first_layer_input.length;
+    var m = first_layer_input[0].length;
+    var flattened = flatten(first_layer_input);
+    var minVal = Math.min(...flattened);
+    var maxVal = Math.max(...flattened);
+
+    return {
+        first_layer_input: first_layer_input,
+        n: n,
+        m: m,
+        flattened: flattened,
+        minVal: minVal,
+        maxVal: maxVal
+    };
+}
+
+function _dnoc_draw_and_register_input_image(ctx, inputData, font_size) {
+    ctx = draw_first_layer_image(
+        ctx, inputData.maxVal, inputData.minVal,
+        inputData.n, inputData.m,
+        inputData.first_layer_input, font_size
+    );
+
+    var _first_image_x = 10;
+    var _first_image_y = font_size + 10;
+
+    var pixel_stats = _compute_stats(inputData.flattened);
+    var input_image_url = null;
+    try {
+        input_image_url = _make_mini_canvas_rgb_data_url(inputData.first_layer_input, 96);
+    } catch (e) {
+        input_image_url = null;
+    }
+
+    _register_fcnn_hit_region({
+        type: "input_image",
+        shape: "rect",
+        x: _first_image_x,
+        y: _first_image_y,
+        w: inputData.m,
+        h: inputData.n,
+        layer_idx: 0,
+        img_width: inputData.m,
+        img_height: inputData.n,
+        channels: 3,
+        pixel_stats: pixel_stats,
+        image_data_url: input_image_url
+    });
+
+    return ctx;
+}
+
 function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
-	assert(typeof (ctx) == "object", `ctx is not an object but ${typeof (ctx)}`);
+    assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
 
-	var n, m, minVal, maxVal;
+    var n, m, minVal, maxVal;
 
-	if (
-		Object.keys(layer_states_saved).length &&
-		Object.keys(layer_states_saved).includes("0") &&
-		get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 &&
-		get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3 &&
-		layer_idx == 0
-	) {
-		var first_layer_input = layer_states_saved["0"]["input"][0];
+    // Step 1: Handle first-layer RGB input image (if applicable)
+    if (_dnoc_has_first_layer_rgb_input(layer_idx)) {
+        var inputData = _dnoc_get_first_layer_input_data();
+        n = inputData.n;
+        m = inputData.m;
+        minVal = inputData.minVal;
+        maxVal = inputData.maxVal;
 
-		n = first_layer_input.length;
-		m = first_layer_input[0].length;
+        ctx = _dnoc_draw_and_register_input_image(ctx, inputData, font_size);
+    }
 
-		var flattened = flatten(first_layer_input);
+    // Step 2: Draw the layer's neurons (dense circles or conv2d rectangles)
+    ctx = draw_layer_neurons(
+        ctx, canvasWidth, numNeurons, verticalSpacing, layerY,
+        layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal,
+        layerX, shapeType, maxSpacingConv2d, layer_idx, font_size
+    );
 
-		minVal = Math.min(...flattened);
-		maxVal = Math.max(...flattened);
-
-		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
-
-		// Register hit region for the input image
-		var _first_image_x = 10;
-		var _first_image_y = font_size + 10;
-
-		// Build pixel stats and image URL for tooltip
-		var pixel_stats = _compute_stats(flattened);
-		var input_image_url = null;
-		try {
-			input_image_url = _make_mini_canvas_rgb_data_url(first_layer_input, 96);
-		} catch (e) {
-			input_image_url = null;
-		}
-
-		var this_region = {
-			type: "input_image",
-			shape: "rect",
-			x: _first_image_x,
-			y: _first_image_y,
-			w: m,
-			h: n,
-			layer_idx: 0,
-			img_width: m,
-			img_height: n,
-			channels: 3,
-			pixel_stats: pixel_stats,
-			image_data_url: input_image_url
-		};
-		_register_fcnn_hit_region(this_region);
-	}
-
-	ctx = draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
-
-	return ctx;
+    return ctx;
 }
 
 function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
