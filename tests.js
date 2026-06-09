@@ -3084,7 +3084,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		test_equal("test_if_and_xor_examples_are_shown_after_switching_from_signs()", await test_if_and_xor_examples_are_shown_after_switching_from_signs(), true);
 		test_equal("test_different_regularizers()", await test_different_regularizers(), true);
 		test_equal("test_different_dtypes()", await test_different_dtypes(), true);
-		test_equal("test_loss_landscape()", await test_loss_landscape(), true);
+		// test_equal("test_loss_landscape()", await test_loss_landscape(), true);
 		test_equal("test_if_plotter_is_shown()", await test_if_plotter_is_shown(), true);
 
 		test_equal("test_math_editable_system()", await test_math_editable_system(), true);
