@@ -702,7 +702,7 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			}
 		}
 		summaryEl.innerHTML = `
-			<strong style="font-size:14px;">🧠 Weight Surfaces</strong> &nbsp;—&nbsp;
+			<strong style="font-size:14px;">Weight Surfaces</strong> &nbsp;—&nbsp;
 			<span>${layers.length} layers, ${totalParams.toLocaleString()} parameters</span><br>
 			<span style="font-size:11px;opacity:0.7">${layerSummaries.join(' · ')}</span>
 		`;
