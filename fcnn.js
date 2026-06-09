@@ -1,5 +1,179 @@
 "use strict";
 
+// ===== CURRENT LAYOUT STATE =====
+// Stores the last computed layout. Animation will lerp from _fcnn_prev_layout to _fcnn_current_layout.
+
+var _fcnn_current_layout = null;
+var _fcnn_prev_layout = null;
+
+// ===== LAYOUT DATA STRUCTURE =====
+// This module computes WHERE things are, separate from HOW they are drawn.
+// Later, animations will interpolate between two FcnnLayout instances.
+
+/**
+ * @typedef {Object} NeuronLayout
+ * @property {number} x
+ * @property {number} y
+ * @property {number} radius - for circles; 0 for non-circle shapes
+ * @property {string} shapeType - "circle" | "rectangle_conv2d" | "rectangle_flatten" | "layernorm"
+ * @property {number} w - width (for rectangles)
+ * @property {number} h - height (for rectangles)
+ * @property {number} layerIdx
+ * @property {number} neuronIdx
+ */
+
+/**
+ * @typedef {Object} LayerLayout
+ * @property {number} x - horizontal center of this layer
+ * @property {number} layerIdx
+ * @property {string} shapeType
+ * @property {string} layerType
+ * @property {NeuronLayout[]} neurons
+ */
+
+/**
+ * @typedef {Object} FcnnLayout
+ * @property {number} canvasWidth
+ * @property {number} canvasHeight
+ * @property {number} layerSpacing
+ * @property {LayerLayout[]} layers
+ */
+
+/**
+ * Computes the full layout for the FCNN visualization.
+ * Pure function – no side effects, no drawing, no DOM access.
+ *
+ * @param {number[]} layerSizes - number of neurons per layer
+ * @param {Object[]} metaInfos - meta info per layer
+ * @param {number} canvasWidth
+ * @param {number} canvasHeight
+ * @returns {FcnnLayout}
+ */
+function computeFcnnLayout(layerSizes, metaInfos, canvasWidth, canvasHeight) {
+    var maxNeurons = Math.max(...layerSizes);
+    var layerSpacing = canvasWidth / (layerSizes.length + 1);
+    var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layerSizes.length + 1));
+    var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
+    var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layerSizes.length + 1));
+
+    // Compute max conv2d height for spacing
+    var maxConv2dHeight = 0;
+    metaInfos.forEach(function (info) {
+        if (info && info.layer_type && typeof info.layer_type === "string" && info.layer_type.toLowerCase().includes("conv2d")) {
+            var os = info.output_shape;
+            var height = os && os[1] ? os[1] : 0;
+            if (height > maxConv2dHeight) maxConv2dHeight = height;
+        }
+    });
+    var maxSpacingConv2d = maxSpacing + maxConv2dHeight;
+
+    var layoutLayers = [];
+
+    for (var layerIdx = 0; layerIdx < layerSizes.length; layerIdx++) {
+        var meta = metaInfos[layerIdx];
+        var layerType = meta["layer_type"];
+        var layerX = (layerIdx + 1) * layerSpacing;
+        var layerY = canvasHeight / 2;
+        var numNeurons = layerSizes[layerIdx];
+
+        // Determine shape type
+        var shapeType = "circle";
+        if (layerType.toLowerCase().includes("conv2d")) {
+            shapeType = "rectangle_conv2d";
+        } else if (layerType.toLowerCase().includes("flatten")) {
+            shapeType = "rectangle_flatten";
+        } else if (layerType.toLowerCase().includes("layernormalization")) {
+            shapeType = "layernorm";
+        }
+
+        // Compute vertical spacing for this layer
+        var verticalSpacing = (shapeType === "rectangle_conv2d")
+            ? Math.min(maxSpacingConv2d, (canvasHeight / numNeurons) * 0.8)
+            : Math.min(maxSpacing, (canvasHeight / numNeurons) * 0.8);
+
+        var neurons = [];
+
+        if (shapeType === "circle") {
+            for (var j = 0; j < numNeurons; j++) {
+                var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+                var availableSpace = verticalSpacing / 2 - 2;
+                var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
+                neurons.push({
+                    x: layerX,
+                    y: neuronY,
+                    radius: radius,
+                    shapeType: "circle",
+                    w: radius * 2,
+                    h: radius * 2,
+                    layerIdx: layerIdx,
+                    neuronIdx: j
+                });
+            }
+        } else if (shapeType === "rectangle_conv2d") {
+            for (var j = 0; j < numNeurons; j++) {
+                var neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+                var _ww = Number(meta?.input_shape?.[1]) || 10;
+                var _hh = Number(meta?.input_shape?.[2]) || 10;
+                neurons.push({
+                    x: layerX,
+                    y: neuronY,
+                    radius: 0,
+                    shapeType: "rectangle_conv2d",
+                    w: _ww,
+                    h: _hh,
+                    layerIdx: layerIdx,
+                    neuronIdx: j
+                });
+            }
+        } else if (shapeType === "rectangle_flatten") {
+            var flatHeight = Math.min(650, meta["output_shape"] ? meta["output_shape"][1] : 100);
+            var rectSize = maxShapeSize * 2;
+            neurons.push({
+                x: layerX,
+                y: layerY,
+                radius: 0,
+                shapeType: "rectangle_flatten",
+                w: rectSize,
+                h: flatHeight,
+                layerIdx: layerIdx,
+                neuronIdx: 0
+            });
+        } else if (shapeType === "layernorm") {
+            var blockWidth = maxShapeSize * 10;
+            var blockHeight = maxShapeSize * 2.5;
+            neurons.push({
+                x: layerX,
+                y: layerY,
+                radius: 0,
+                shapeType: "layernorm",
+                w: blockWidth,
+                h: blockHeight,
+                layerIdx: layerIdx,
+                neuronIdx: 0
+            });
+        }
+
+        layoutLayers.push({
+            x: layerX,
+            layerIdx: layerIdx,
+            shapeType: shapeType,
+            layerType: layerType,
+            neurons: neurons
+        });
+    }
+
+    return {
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
+        layerSpacing: layerSpacing,
+        maxRadius: maxRadius,
+        maxSpacing: maxSpacing,
+        maxShapeSize: maxShapeSize,
+        maxSpacingConv2d: maxSpacingConv2d,
+        layers: layoutLayers
+    };
+}
+
 // ===== TOOLTIP INFRASTRUCTURE =====
 
 var _fcnn_tooltip_el = null;
@@ -282,16 +456,10 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 async function draw_fcnn(...args) {
 	assert(args.length == 3, "draw_fcnn must have 3 arguments");
 
-	if (is_setting_config) {
-		return;
-	}
+	if (is_setting_config) return;
 
 	var args_hash = await md5(JSON.stringify(args));
-
-	if (last_fcnn_hash == args_hash) {
-		return;
-	}
-
+	if (last_fcnn_hash == args_hash) return;
 	args_hash = last_fcnn_hash;
 
 	var layers = args[0];
@@ -299,7 +467,6 @@ async function draw_fcnn(...args) {
 	var meta_infos = args[2];
 
 	var canvas = document.getElementById("fcnn_canvas");
-
 	if (!canvas) {
 		canvas = document.createElement("canvas");
 		canvas.id = "fcnn_canvas";
@@ -307,9 +474,7 @@ async function draw_fcnn(...args) {
 	}
 
 	var ctx = canvas.getContext("2d", { willReadFrequently: true });
-
 	var ghw = $("#graphs_here").width();
-
 	var canvasWidth = Math.max(800, ghw);
 	var canvasHeight = 800;
 
@@ -317,33 +482,21 @@ async function draw_fcnn(...args) {
 	canvas.height = canvasHeight;
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
+	// === NEW: Compute layout and store it ===
+	_fcnn_prev_layout = _fcnn_current_layout;
+	_fcnn_current_layout = computeFcnnLayout(layers, meta_infos, canvasWidth, canvasHeight);
+
+	// === Existing drawing code continues unchanged ===
 	var maxNeurons = Math.max(...layers);
-	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
-
-	var layerSpacing = canvasWidth / (layers.length + 1);
-	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
-	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
-
-	var max_conv2d_height = 0;
-
-	meta_infos.forEach(function (i, e) {
-		if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
-			var os = i.output_shape;
-			var height = os && os[1] ? os[1] : 0;
-			var width = os && os[2] ? os[2] : 0;
-
-			if (height > max_conv2d_height) {
-				max_conv2d_height = height;
-			}
-		}
-	});
-
-	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
+	var maxRadius = _fcnn_current_layout.maxRadius;
+	var layerSpacing = _fcnn_current_layout.layerSpacing;
+	var maxSpacing = _fcnn_current_layout.maxSpacing;
+	var maxShapeSize = _fcnn_current_layout.maxShapeSize;
+	var maxSpacingConv2d = _fcnn_current_layout.maxSpacingConv2d;
 
 	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
 
 	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
-
 	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
