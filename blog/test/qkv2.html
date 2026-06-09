@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>What Attention Actually Does — Geometrically</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Georgia', serif;
+  background: #0a0a0f;
+  color: #e0e0e0;
+  overflow-x: hidden;
+}
+.scene {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+}
+.scene h2 {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+  color: #fff;
+  text-align: center;
+}
+.scene .subtitle {
+  font-size: 1em;
+  color: #aaa;
+  margin-bottom: 30px;
+  text-align: center;
+  max-width: 700px;
+}
+canvas {
+  border: 1px solid #333;
+  border-radius: 8px;
+  cursor: crosshair;
+}
+.math {
+  background: #151520;
+  border-left: 3px solid #6cf;
+  padding: 12px 18px;
+  margin: 15px 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95em;
+  max-width: 700px;
+  border-radius: 0 6px 6px 0;
+}
+.explanation {
+  max-width: 700px;
+  margin: 15px auto;
+  line-height: 1.6;
+  font-size: 0.95em;
+  color: #ccc;
+}
+.nav {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.nav a {
+  background: #222;
+  color: #6cf;
+  padding: 8px 14px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.8em;
+  transition: background 0.2s;
+}
+.nav a:hover { background: #333; }
+.insight {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 1px solid #6cf;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  max-width: 700px;
+}
+.insight::before {
+  content: "💡 ";
+}
+#scene1 { background: linear-gradient(180deg, #0a0a0f 0%, #0d1117 100%); }
+#scene2 { background: linear-gradient(180deg, #0d1117 0%, #0a0f1a 100%); }
+#scene3 { background: linear-gradient(180deg, #0a0f1a 0%, #0f0a1a 100%); }
+#scene4 { background: linear-gradient(180deg, #0f0a1a 0%, #0a0a0f 100%); }
+.controls {
+  margin: 10px 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.controls button {
+  background: #2a2a3a;
+  color: #6cf;
+  border: 1px solid #6cf;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: all 0.2s;
+}
+.controls button:hover {
+  background: #6cf;
+  color: #000;
+}
+.controls button.active {
+  background: #6cf;
+  color: #000;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#scene1">1. The Core Idea</a>
+  <a href="#scene2">2. Q·K = Alignment</a>
+  <a href="#scene3">3. Softmax = Weights</a>
+  <a href="#scene4">4. V = Movement</a>
+</nav>
+
+<!-- SCENE 1: The fundamental geometric picture -->
+<section class="scene" id="scene1">
+  <h2>Scene 1: What Attention Is</h2>
+  <p class="subtitle">Each token is a point in embedding space. Attention moves each point toward a weighted average of other points — but in a <em>different subspace</em> than the one used to decide the weights.</p>
+
+  <canvas id="c1" width="700" height="500"></canvas>
+  <div class="controls">
+    <button id="btn-reset1">Reset</button>
+    <button id="btn-step1">Step: Apply Attention</button>
+  </div>
+
+  <div class="insight">
+    Attention does NOT lay a surface or a simplicial complex. It computes a <strong>convex combination</strong> of value vectors. The output for each token is a point inside the convex hull of the value vectors, with position determined by query-key similarity.
+  </div>
+
+  <div class="math">
+    Attention(Q, K, V) = softmax(QKᵀ / √d_k) · V
+  </div>
+
+  <div class="explanation">
+    <strong>The geometry:</strong> You have n points (tokens) in ℝᵈ. Each point gets projected into three different subspaces via learned linear maps W_Q, W_K, W_V. The Q-K dot product measures angular alignment in the query-key subspace. This produces a probability distribution (via softmax). Then each token's new representation is the weighted centroid of all value vectors under that distribution. The output lives in the convex hull of the V vectors.
+  </div>
+</section>
+
+<!-- SCENE 2: Q·K geometric meaning -->
+<section class="scene" id="scene2">
+  <h2>Scene 2: Q·K = Cosine Similarity (Scaled)</h2>
+  <p class="subtitle">Click any token to be the "query." Watch how the dot product with every key determines alignment. Parallel = high score. Orthogonal = zero. Opposing = negative.</p>
+
+  <canvas id="c2" width="700" height="500"></canvas>
+  <div class="controls">
+    <button id="btn-reset2">Reset Tokens</button>
+  </div>
+
+  <div class="insight">
+    The Q and K projections define two different "views" of the same point. W_Q asks "what am I looking for?" and W_K asks "what do I advertise?" The dot product q·k measures how well one token's question matches another token's advertisement — purely by the angle between them (scaled by magnitudes).
+  </div>
+
+  <div class="math">
+    score(i,j) = q_i · k_j / √d_k = |q_i||k_j|cos(θ_ij) / √d_k
+  </div>
+
+  <div class="explanation">
+    <strong>Why √d_k?</strong> If q and k are random vectors in ℝᵈ with unit-variance components, their dot product has variance d_k. Dividing by √d_k normalizes this so softmax doesn't saturate. This is just a geometric rescaling to keep angles meaningful regardless of dimension.
+  </div>
+</section>
+
+<!-- SCENE 3: Softmax creates a simplex -->
+<section class="scene" id="scene3">
+  <h2>Scene 3: Softmax Maps Scores onto the Probability Simplex</h2>
+  <p class="subtitle">The raw scores are real numbers. Softmax maps them to a point on the (n-1)-simplex: all weights are positive and sum to 1. This is the "attention pattern."</p>
+
+  <canvas id="c3" width="700" height="500"></canvas>
+  <div class="controls">
+    <button id="btn-uniform">Uniform Attention</button>
+    <button id="btn-sharp">Sharp Attention</button>
+    <button id="btn-medium">Medium</button>
+  </div>
+
+  <div class="insight">
+    Softmax doesn't just normalize — it <strong>exponentiates first</strong>, which amplifies differences. A score of 3 vs 1 becomes e³:e¹ ≈ 20:2.7. This makes attention either spread out (when scores are similar) or concentrate (when one score dominates). The temperature is controlled by 1/√d_k.
+  </div>
+
+  <div class="math">
+    softmax(z_i) = exp(z_i) / Σ_j exp(z_j)
+  </div>
+  <div class="math">
+    Result: a point on the (n-1)-simplex Δⁿ⁻¹ = {w ∈ ℝⁿ : w_i ≥ 0, Σw_i = 1}
+  </div>
+</section>
+
+<!-- SCENE 4: V determines where you move -->
+<section class="scene" id="scene4">
+  <h2>Scene 4: Values = The Payload. Weights Choose the Mixture.</h2>
+  <p class="subtitle">Q and K decide WHO to listen to. V decides WHAT they say. The output is a weighted centroid in value-space. Drag the attention weights to see the output move inside the convex hull.</p>
+
+  <canvas id="c4" width="700" height="500"></canvas>
+  <div class="controls">
+    <button id="btn-reset4">Reset</button>
+  </div>
+
+  <div class="insight">
+    The output for token i is: out_i = Σ_j α_ij · v_j. This is literally a weighted average — a point inside the convex hull of {v_1, ..., v_n}. When attention is sharp (one weight ≈ 1), the output copies one value vector. When diffuse, it's the centroid. Attention interpolates between copying and averaging.
+  </div>
+
+  <div class="math">
+    output_i = Σ_j softmax(q_i · k_j / √d_k) · v_j
+  </div>
+
+  <div class="explanation">
+    <strong>The full picture:</strong> Each token starts as a point x in ℝᵈ. Three linear maps (W_Q, W_K, W_V) project it to three different subspaces. Q and K live in ℝ^{d_k} where alignment is measured. V lives in ℝ^{d_v} where the actual information flows. The output is a convex combination of V vectors, with coefficients determined by Q-K geometry. Then W_O projects back to ℝᵈ. The whole thing is a learned, data-dependent, soft routing of information between positions.
+  </div>
+
+  <div class="explanation" style="border-top: 1px solid #333; padding-top: 15px; margin-top: 20px;">
+    <strong>Summary of the geometry:</strong><br>
+    • <strong>Q, K subspace:</strong> Where "who attends to whom" is decided via angular similarity<br>
+    • <strong>Softmax:</strong> Maps ℝⁿ → Δⁿ⁻¹ (the probability simplex)<br>
+    • <strong>V subspace:</strong> Where actual content lives<br>
+    • <strong>Output:</strong> A point in the convex hull of V vectors (weighted centroid)<br>
+    • <strong>Multi-head:</strong> Multiple independent (Q,K,V) triples in different subspaces, concatenated — lets the model attend to different things simultaneously
+  </div>
+</section>
+
+<script>
+// ============== SCENE 1: Overview ==============
+(function() {
+  const canvas = document.getElementById('c1');
+  const ctx = canvas.getContext('2d');
+  let tokens = [];
+  let values = [];
+  let output = [];
+  let animated = false;
+  let animT = 0;
+
+  function init() {
+    tokens = [
+      {x: 150, y: 200, label: "The", color: "#ff6b6b"},
+      {x: 300, y: 350, label: "cat", color: "#ffd93d"},
+      {x: 450, y: 150, label: "sat", color: "#6bcf7f"},
+      {x: 550, y: 300, label: "down", color: "#6bafcf"},
+    ];
+    // V projections (slightly different positions - the "value" view)
+    values = [
+      {x: 180, y: 230},
+      {x: 320, y: 320},
+      {x: 420, y: 180},
+      {x: 530, y: 280},
+    ];
+    // Attention weights for token 1 ("cat") attending to all
+    // Simulating: cat attends mostly to "sat" and "The"
+    output = [];
+    animated = false;
+    animT = 0;
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw convex hull of values (light)
+    ctx.beginPath();
+    ctx.moveTo(values[0].x, values[0].y);
+    // Simple hull visualization
+    const hull = [0, 2, 3, 1]; // rough order
+    for (let i = 0; i < hull.length; i++) {
+      ctx.lineTo(values[hull[i]].x, values[hull[i]].y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(100, 200, 255, 0.05)";
+    ctx.strokeStyle = "rgba(100, 200, 255, 0.2)";
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = "11px Georgia";
+    ctx.fillStyle = "#456";
+    ctx.fillText("convex hull of V vectors", 280, 400);
+
+    // Draw tokens
+    tokens.forEach((t, i) => {
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = t.color;
+      ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 12px Georgia";
+      ctx.textAlign = "center";
+      ctx.fillText(t.label, t.x, t.y + 4);
+    });
+
+    if (animated) {
+      // Show attention from "cat" (index 1)
+      const weights = [0.25, 0.0, 0.55, 0.20]; // cat attends to: The=0.25, cat=0, sat=0.55, down=0.20
+      const queryIdx = 1;
+
+      // Draw attention lines
+      tokens.forEach((t, i) => {
+        if (i === queryIdx) return;
+        const alpha = weights[i] * animT;
+        ctx.beginPath();
+        ctx.moveTo(tokens[queryIdx].x, tokens[queryIdx].y);
+        ctx.lineTo(t.x, t.y);
+        ctx.strokeStyle = `rgba(255, 255, 100, ${alpha})`;
+        ctx.lineWidth = weights[i] * 6 * animT;
+        ctx.stroke();
+        ctx.lineWidth = 1;
+
+        // Weight label
+        if (animT > 0.5) {
+          ctx.fillStyle = `rgba(255, 255, 200, ${(animT - 0.5) * 2})`;
+          ctx.font = "12px Courier New";
+          ctx.textAlign = "center";
+          const mx = (tokens[queryIdx].x + t.x) / 2;
+          const my = (tokens[queryIdx].y + t.y) / 2;
+          ctx.fillText(weights[i].toFixed(2), mx, my - 10);
+        }
+      });
+
+      // Compute output position (weighted centroid of values)
+      let ox = 0, oy = 0;
+      weights.forEach((w, i) => {
+        ox += w * values[i].x;
+        oy += w * values[i].y;
+      });
+
+      // Draw output point moving
+      const startX = tokens[queryIdx].x;
+      const startY = tokens[queryIdx].y;
+      const curX = startX + (ox - startX) * animT;
+      const curY = startY + (oy - startY) * animT;
+
+      ctx.beginPath();
+      ctx.arc(curX, curY, 12, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 200, 50, ${animT})`;
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+
+      if (animT > 0.8) {
+        ctx.fillStyle = "#fff";
+        ctx.font = "11px Georgia";
+        ctx.textAlign = "left";
+        ctx.fillText("← output for 'cat'", curX + 16, curY + 4);
+        ctx.fillText("(weighted centroid of V vectors)", curX + 16, curY + 18);
+      }
+
+      // Draw value points
+      values.forEach((v, i) => {
+        ctx.beginPath();
+        ctx.arc(v.x, v.y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(100, 200, 255, ${animT * 0.7})`;
+        ctx.fill();
+        if (animT > 0.3) {
+          ctx.fillStyle = `rgba(100, 200, 255, ${animT * 0.7})`;
+          ctx.font = "10px Georgia";
+          ctx.textAlign = "center";
+          ctx.fillText(`v_${tokens[i].label}`, v.x, v.y - 10);
+        }
+      });
+    }
+
+    // Labels
+    ctx.fillStyle = "#888";
+    ctx.font = "12px Georgia";
+    ctx.textAlign = "left";
+    ctx.fillText("Tokens in embedding space (original positions)", 10, 20);
+    if (!animated) {
+      ctx.fillText("Click 'Step: Apply Attention' to see what happens to 'cat'", 10, 480);
+    }
+  }
+
+  document.getElementById('btn-step1').addEventListener('click', () => {
+    animated = true;
+    animT = 0;
+    function anim() {
+      animT += 0.02;
+      if (animT > 1) animT = 1;
+      draw();
+      if (animT < 1) requestAnimationFrame(anim);
+    }
+    anim();
+  });
+
+  document.getElementById('btn-reset1').addEventListener('click', init);
+  init();
+})();
+
+// ============== SCENE 2: Q·K dot product ==============
+(function() {
+  const canvas = document.getElementById('c2');
+  const ctx = canvas.getContext('2d');
+  let tokens = [];
+  let selectedQuery = -1;
+
+  function init() {
+    tokens = [
+      {x: 350, y: 250, qAngle: 0.3, kAngle: 0.5, label: "I", color: "#ff6b6b"},
+      {x: 350, y: 250, qAngle: 1.2, kAngle: 1.0, label: "love", color: "#ffd93d"},
+      {x: 350, y: 250, qAngle: 2.5, kAngle: 0.4, label: "cats", color: "#6bcf7f"},
+      {x: 350, y: 250, qAngle: 4.0, kAngle: 3.8, label: "very", color: "#6bafcf"},
+      {x: 350, y: 250, qAngle: 5.2, kAngle: 5.0, label: "much", color: "#cf6baf"},
+    ];
+    selectedQuery = 0;
+    draw();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const cx = 350, cy = 250, R = 180;
+
+    // Draw unit circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = "#333";
+    ctx.stroke();
+    ctx.fillStyle = "#222";
+    ctx.font = "11px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("Unit circle in Q-K subspace (2D projection)", cx, cy + R + 25);
+
+    // Draw axes
+    ctx.beginPath();
+    ctx.moveTo(cx - R - 20, cy);
+    ctx.lineTo(cx + R + 20, cy);
+    ctx.moveTo(cx, cy - R - 20);
+    ctx.lineTo(cx, cy + R + 20);
+    ctx.strokeStyle = "#222";
+    ctx.stroke();
+
+    // Draw K vectors (what each token advertises)
+    tokens.forEach((t, i) => {
+      const kx = cx + Math.cos(t.kAngle) * R;
+      const ky = cy - Math.sin(t.kAngle) * R;
+
+      // K vector line
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(kx, ky);
+      ctx.strokeStyle = t.color + "88";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.lineWidth = 1;
+
+      // K vector head
+      ctx.beginPath();
+      ctx.arc(kx, ky, 8, 0, Math.PI * 2);
+      ctx.fillStyle = t.color;
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 10px Georgia";
+      ctx.textAlign = "center";
+      ctx.fillText("k", kx, ky + 3);
+
+      // Label
+      ctx.fillStyle = t.color;
+      ctx.font = "12px Georgia";
+      const lx = cx + Math.cos(t.kAngle) * (R + 25);
+      const ly = cy - Math.sin(t.kAngle) * (R + 25);
+      ctx.fillText(`"${t.label}"`, lx, ly);
+    });
+
+    // If a query is selected, draw it and show scores
+    if (selectedQuery >= 0) {
+      const q = tokens[selectedQuery];
+      const qx = cx + Math.cos(q.qAngle) * R * 0.9;
+      const qy = cy - Math.sin(q.qAngle) * R * 0.9;
+
+      // Q vector
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(qx, qy);
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([5, 5]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.lineWidth = 1;
+
+      // Q head
+      ctx.beginPath();
+      ctx.arc(qx, qy, 10, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 11px Georgia";
+      ctx.textAlign = "center";
+      ctx.fillText("Q", qx, qy + 4);
+
+      // Label
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 13px Georgia";
+      ctx.fillText(`Query: "${q.label}"`, cx, 30);
+
+      // Show dot products (cosine similarities)
+      ctx.font = "12px Courier New";
+      ctx.textAlign = "left";
+      let yOff = 60;
+      tokens.forEach((t, i) => {
+        const cosAngle = Math.cos(q.qAngle - t.kAngle);
+        const barWidth = cosAngle * 120;
+
+        ctx.fillStyle = t.color;
+        ctx.fillText(`q·k_"${t.label}" = cos(${((q.qAngle - t.kAngle) * 180 / Math.PI).toFixed(0)}°) = ${cosAngle.toFixed(3)}`, 20, yOff);
+
+        // Bar
+        ctx.fillStyle = cosAngle > 0 ? t.color + "88" : "#ff000088";
+        ctx.fillRect(20, yOff + 4, barWidth, 8);
+
+        yOff += 30;
+      });
+
+      // Draw angle arcs
+      tokens.forEach((t, i) => {
+        if (i === selectedQuery) return;
+        const angleDiff = Math.abs(q.qAngle - t.kAngle);
+        const cosVal = Math.cos(q.qAngle - t.kAngle);
+        if (Math.abs(cosVal) > 0.5) {
+          // Highlight high-similarity pairs
+          const kx = cx + Math.cos(t.kAngle) * R;
+          const ky = cy - Math.sin(t.kAngle) * R;
+          ctx.beginPath();
+          ctx.moveTo(qx, qy);
+          ctx.lineTo(kx, ky);
+          ctx.strokeStyle = `rgba(255, 255, 100, ${Math.abs(cosVal) * 0.5})`;
+          ctx.lineWidth = Math.abs(cosVal) * 4;
+          ctx.stroke();
+          ctx.lineWidth = 1;
+        }
+      });
+    }
+
+    // Instructions
+    ctx.fillStyle = "#666";
+    ctx.font = "11px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("Click on a K vector to change which token is the query", cx, canvas.height - 15);
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const cx = 350, cy = 250, R = 180;
+
+    tokens.forEach((t, i) => {
+      const kx = cx + Math.cos(t.kAngle) * R;
+      const ky = cy - Math.sin(t.kAngle) * R;
+      if (Math.hypot(mx - kx, my - ky) < 20) {
+        selectedQuery = i;
+        draw();
+      }
+    });
+  });
+
+  document.getElementById('btn-reset2').addEventListener('click', () => {
+    // Randomize angles
+    tokens.forEach(t => {
+      t.qAngle = Math.random() * Math.PI * 2;
+      t.kAngle = Math.random() * Math.PI * 2;
+    });
+    draw();
+  });
+
+  init();
+})();
+
+// ============== SCENE 3: Softmax and the simplex ==============
+(function() {
+  const canvas = document.getElementById('c3');
+  const ctx = canvas.getContext('2d');
+  let scores = [2.0, 0.5, -1.0];
+  let mode = 'medium';
+
+  function softmax(arr) {
+    const max = Math.max(...arr);
+    const exps = arr.map(x => Math.exp(x - max));
+    const sum = exps.reduce((a, b) => a + b, 0);
+    return exps.map(e => e / sum);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the 2-simplex (triangle) for 3 tokens
+    const tri = [
+      {x: 350, y: 80},   // top: all weight on token 0
+      {x: 150, y: 420},  // bottom-left: all weight on token 1
+      {x: 550, y: 420},  // bottom-right: all weight on token 2
+    ];
+
+    // Fill triangle
+    ctx.beginPath();
+    ctx.moveTo(tri[0].x, tri[0].y);
+    ctx.lineTo(tri[1].x, tri[1].y);
+    ctx.lineTo(tri[2].x, tri[2].y);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(50, 80, 120, 0.3)";
+    ctx.strokeStyle = "#6cf";
+    ctx.fill();
+    ctx.stroke();
+
+    // Labels at vertices
+    const labels = ["Token A (w=1)", "Token B (w=1)", "Token C (w=1)"];
+    const colors = ["#ff6b6b", "#ffd93d", "#6bcf7f"];
+    tri.forEach((p, i) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = colors[i];
+      ctx.fill();
+      ctx.fillStyle = colors[i];
+      ctx.font = "12px Georgia";
+      ctx.textAlign = "center";
+      const offY = i === 0 ? -15 : 20;
+      ctx.fillText(labels[i], p.x, p.y + offY);
+    });
+
+    // Center = uniform
+    const centerX = (tri[0].x + tri[1].x + tri[2].x) / 3;
+    const centerY = (tri[0].y + tri[1].y + tri[2].y) / 3;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = "#666";
+    ctx.fill();
+    ctx.fillStyle = "#666";
+    ctx.font = "10px Georgia";
+    ctx.fillText("uniform (⅓,⅓,⅓)", centerX + 10, centerY - 5);
+
+    // Compute softmax of current scores
+    const weights = softmax(scores);
+
+    // Map weights to point in triangle (barycentric coordinates)
+    const px = weights[0] * tri[0].x + weights[1] * tri[1].x + weights[2] * tri[2].x;
+    const py = weights[0] * tri[0].y + weights[1] * tri[1].y + weights[2] * tri[2].y;
+
+    // Draw the point
+    ctx.beginPath();
+    ctx.arc(px, py, 12, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff";
+    ctx.fill();
+    ctx.strokeStyle = "#6cf";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "#000";
+    ctx.font = "bold 10px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("α", px, py + 4);
+
+    // Show scores and weights on the side
+    ctx.textAlign = "left";
+    ctx.font = "13px Courier New";
+    let yOff = 50;
+    ctx.fillStyle = "#fff";
+    ctx.fillText("Raw scores (q·k/√d):", 20, yOff);
+    yOff += 25;
+    scores.forEach((s, i) => {
+      ctx.fillStyle = colors[i];
+      ctx.fillText(`  score[${i}] = ${s.toFixed(2)}`, 20, yOff);
+      yOff += 20;
+    });
+    yOff += 10;
+    ctx.fillStyle = "#fff";
+    ctx.fillText("After softmax:", 20, yOff);
+    yOff += 25;
+    weights.forEach((w, i) => {
+      ctx.fillStyle = colors[i];
+      ctx.fillText(`  α[${i}] = ${w.toFixed(4)}`, 20, yOff);
+      // Draw bar
+      ctx.fillRect
+(200, yOff - 10, w * 150, 12);
+      yOff += 22;
+    });
+
+    // Show sum = 1
+    yOff += 10;
+    ctx.fillStyle = "#6cf";
+    ctx.fillText(`  Σ α[i] = ${weights.reduce((a,b) => a+b, 0).toFixed(4)} (always 1)`, 20, yOff);
+
+    // Title
+    ctx.fillStyle = "#fff";
+    ctx.font = "14px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("The 2-Simplex (probability triangle for 3 tokens)", 350, 25);
+    ctx.fillStyle = "#888";
+    ctx.font = "11px Georgia";
+    ctx.fillText("Every attention pattern is a point on this simplex", 350, 45);
+    ctx.fillText("Vertices = hard attention (copy one token). Center = uniform average.", 350, 460);
+  }
+
+  function setScores(s) {
+    scores = s;
+    draw();
+  }
+
+  document.getElementById('btn-uniform').addEventListener('click', () => {
+    setScores([1.0, 1.0, 1.0]);
+    document.querySelectorAll('#scene3 .controls button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-uniform').classList.add('active');
+  });
+  document.getElementById('btn-sharp').addEventListener('click', () => {
+    setScores([10.0, -2.0, -3.0]);
+    document.querySelectorAll('#scene3 .controls button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-sharp').classList.add('active');
+  });
+  document.getElementById('btn-medium').addEventListener('click', () => {
+    setScores([2.0, 0.5, -1.0]);
+    document.querySelectorAll('#scene3 .controls button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-medium').classList.add('active');
+  });
+
+  draw();
+})();
+
+// ============== SCENE 4: Value vectors and convex hull ==============
+(function() {
+  const canvas = document.getElementById('c4');
+  const ctx = canvas.getContext('2d');
+
+  let vPoints = [
+    {x: 200, y: 120, label: "v₁", color: "#ff6b6b"},
+    {x: 520, y: 150, label: "v₂", color: "#ffd93d"},
+    {x: 580, y: 380, label: "v₃", color: "#6bcf7f"},
+    {x: 150, y: 350, label: "v₄", color: "#6bafcf"},
+  ];
+
+  let weights = [0.4, 0.3, 0.2, 0.1];
+  let dragging = -1;
+  let dragType = ''; // 'point' or 'weight'
+
+  // Weight sliders positions
+  const sliderX = 20;
+  const sliderW = 120;
+  const sliderStartY = 380;
+
+  function computeOutput() {
+    let ox = 0, oy = 0;
+    weights.forEach((w, i) => {
+      ox += w * vPoints[i].x;
+      oy += w * vPoints[i].y;
+    });
+    return {x: ox, y: oy};
+  }
+
+  function normalizeWeights(idx) {
+    // Keep weights positive and summing to 1
+    const sum = weights.reduce((a, b) => a + b, 0);
+    if (sum > 0) {
+      weights = weights.map(w => w / sum);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw convex hull (connect points in order)
+    ctx.beginPath();
+    // Sort by angle from centroid for proper hull
+    const cx = vPoints.reduce((s, p) => s + p.x, 0) / 4;
+    const cy = vPoints.reduce((s, p) => s + p.y, 0) / 4;
+    const sorted = [...vPoints].sort((a, b) =>
+      Math.atan2(a.y - cy, a.x - cx) - Math.atan2(b.y - cy, b.x - cx)
+    );
+    ctx.moveTo(sorted[0].x, sorted[0].y);
+    for (let i = 1; i < sorted.length; i++) {
+      ctx.lineTo(sorted[i].x, sorted[i].y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(100, 200, 255, 0.08)";
+    ctx.strokeStyle = "rgba(100, 200, 255, 0.4)";
+    ctx.setLineDash([4, 4]);
+    ctx.stroke();
+    ctx.fill();
+    ctx.setLineDash([]);
+
+    // Label the hull
+    ctx.fillStyle = "rgba(100, 200, 255, 0.5)";
+    ctx.font = "11px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("Convex hull of V vectors", cx, cy + 60);
+    ctx.fillText("(output MUST live inside here)", cx, cy + 75);
+
+    // Draw lines from output to each V point with weight opacity
+    const out = computeOutput();
+    vPoints.forEach((p, i) => {
+      ctx.beginPath();
+      ctx.moveTo(out.x, out.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.strokeStyle = p.color + Math.floor(weights[i] * 200 + 55).toString(16).padStart(2, '0');
+      ctx.lineWidth = weights[i] * 8 + 0.5;
+      ctx.stroke();
+      ctx.lineWidth = 1;
+    });
+
+    // Draw V points
+    vPoints.forEach((p, i) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.lineWidth = 1;
+
+      ctx.fillStyle = "#000";
+      ctx.font = "bold 11px Georgia";
+      ctx.textAlign = "center";
+      ctx.fillText(p.label, p.x, p.y + 4);
+
+      // Weight label near point
+      ctx.fillStyle = "#fff";
+      ctx.font = "11px Courier New";
+      ctx.fillText(`α=${weights[i].toFixed(2)}`, p.x, p.y - 20);
+    });
+
+    // Draw output point
+    ctx.beginPath();
+    ctx.arc(out.x, out.y, 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(out.x, out.y, 10, 0, Math.PI * 2);
+    ctx.strokeStyle = "#ff0";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.lineWidth = 1;
+
+    ctx.fillStyle = "#000";
+    ctx.font = "bold 10px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("out", out.x, out.y + 4);
+
+    // Draw weight sliders
+    ctx.fillStyle = "#fff";
+    ctx.font = "12px Georgia";
+    ctx.textAlign = "left";
+    ctx.fillText("Drag weights (auto-normalized to sum=1):", sliderX, sliderStartY - 15);
+
+    weights.forEach((w, i) => {
+      const y = sliderStartY + i * 28;
+
+      // Track
+      ctx.fillStyle = "#333";
+      ctx.fillRect(sliderX + 30, y, sliderW, 8);
+
+      // Fill
+      ctx.fillStyle = vPoints[i].color;
+      ctx.fillRect(sliderX + 30, y, w * sliderW, 8);
+
+      // Handle
+      const handleX = sliderX + 30 + w * sliderW;
+      ctx.beginPath();
+      ctx.arc(handleX, y + 4, 7, 0, Math.PI * 2);
+      ctx.fillStyle = vPoints[i].color;
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = vPoints[i].color;
+      ctx.font = "11px Courier New";
+      ctx.textAlign = "left";
+      ctx.fillText(vPoints[i].label, sliderX, y + 8);
+      ctx.fillText(w.toFixed(3), sliderX + 30 + sliderW + 10, y + 8);
+    });
+
+    // Info
+    ctx.fillStyle = "#888";
+    ctx.font = "11px Georgia";
+    ctx.textAlign = "center";
+    ctx.fillText("Drag the V points (colored circles) or the weight sliders", 350, 490);
+  }
+
+  canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    // Check sliders
+    weights.forEach((w, i) => {
+      const y = sliderStartY + i * 28;
+      const handleX = sliderX + 30 + w * sliderW;
+      if (Math.hypot(mx - handleX, my - (y + 4)) < 12) {
+        dragging = i;
+        dragType = 'weight';
+        return;
+      }
+    });
+
+    if (dragging >= 0) return;
+
+    // Check V points
+    vPoints.forEach((p, i) => {
+      if (Math.hypot(mx - p.x, my - p.y) < 20) {
+        dragging = i;
+        dragType = 'point';
+      }
+    });
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (dragging < 0) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+
+    if (dragType === 'point') {
+      vPoints[dragging].x = Math.max(20, Math.min(680, mx));
+      vPoints[dragging].y = Math.max(20, Math.min(360, my));
+    } else if (dragType === 'weight') {
+      let newW = (mx - sliderX - 30) / sliderW;
+      newW = Math.max(0.01, Math.min(0.97, newW));
+      weights[dragging] = newW;
+      normalizeWeights(dragging);
+    }
+    draw();
+  });
+
+  canvas.addEventListener('mouseup', () => { dragging = -1; });
+  canvas.addEventListener('mouseleave', () => { dragging = -1; });
+
+  document.getElementById('btn-reset4').addEventListener('click', () => {
+    vPoints = [
+      {x: 200, y: 120, label: "v₁", color: "#ff6b6b"},
+      {x: 520, y: 150, label: "v₂", color: "#ffd93d"},
+      {x: 580, y: 380, label: "v₃", color: "#6bcf7f"},
+      {x: 150, y: 350, label: "v₄", color: "#6bafcf"},
+    ];
+    weights = [0.4, 0.3, 0.2, 0.1];
+    draw();
+  });
+
+  draw();
+})();
+</script>
+
+</body>
+</html>
