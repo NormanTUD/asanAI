@@ -753,7 +753,7 @@ function alter_text_webcam_series () {
 	};
 
 	var s = "&#128248; x " + number;
-	s = s + " (" + formatNumber(1 / nr_of_imgs_per_second) + "/s)";
+	s = s + " (" + formatNumber(nr_of_imgs_per_second) + "/s)";
 
 	$(".webcam_series_button").html(s);
 }
