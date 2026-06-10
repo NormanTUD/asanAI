@@ -2,6 +2,7 @@
 
 // ===== TOOLTIP INFRASTRUCTURE =====
 
+var _fcnn_render_in_progress = false;
 var _fcnn_tooltip_el = null;
 var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
@@ -292,67 +293,81 @@ async function draw_fcnn(...args) {
 		return;
 	}
 
-	args_hash = last_fcnn_hash;
-
-	var layers = args[0];
-	var _labels = args[1];
-	var meta_infos = args[2];
-
-	var canvas = document.getElementById("fcnn_canvas");
-
-	if (!canvas) {
-		canvas = document.createElement("canvas");
-		canvas.id = "fcnn_canvas";
-		document.body.appendChild(canvas);
+	// If a render is already in progress, skip this call.
+	// The next layer change will trigger restart_fcnn again.
+	if (_fcnn_render_in_progress) {
+		return;
 	}
 
-	var ghw = $("#graphs_here").width();
+	_fcnn_render_in_progress = true;
 
-	var canvasWidth = Math.max(800, ghw);
-	var canvasHeight = 800;
+	try {
+		args_hash = last_fcnn_hash;
 
-	// === DOUBLE BUFFER: draw to offscreen canvas first ===
-	var offscreen = document.createElement("canvas");
-	offscreen.width = canvasWidth;
-	offscreen.height = canvasHeight;
-	var ctx = offscreen.getContext("2d", { willReadFrequently: true });
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+		var layers = args[0];
+		var _labels = args[1];
+		var meta_infos = args[2];
 
-	var maxNeurons = Math.max(...layers);
-	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+		var canvas = document.getElementById("fcnn_canvas");
 
-	var layerSpacing = canvasWidth / (layers.length + 1);
-	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
-	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
-
-	var max_conv2d_height = 0;
-
-	meta_infos.forEach(function (i, e) {
-		if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
-			var os = i.output_shape;
-			var height = os && os[1] ? os[1] : 0;
-			var width = os && os[2] ? os[2] : 0;
-
-			if (height > max_conv2d_height) {
-				max_conv2d_height = height;
-			}
+		if (!canvas) {
+			canvas = document.createElement("canvas");
+			canvas.id = "fcnn_canvas";
+			document.body.appendChild(canvas);
 		}
-	});
 
-	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
+		var ghw = $("#graphs_here").width();
 
-	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
+		var canvasWidth = Math.max(800, ghw);
+		var canvasHeight = 800;
 
-	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
+		// === DOUBLE BUFFER: draw to offscreen canvas first ===
+		var offscreen = document.createElement("canvas");
+		offscreen.width = canvasWidth;
+		offscreen.height = canvasHeight;
+		var ctx = offscreen.getContext("2d", { willReadFrequently: true });
+		ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
+		var maxNeurons = Math.max(...layers);
+		var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-	// === ATOMIC SWAP: only now update the visible canvas ===
-	canvas.width = canvasWidth;
-	canvas.height = canvasHeight;
-	var visibleCtx = canvas.getContext("2d", { willReadFrequently: true });
-	visibleCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-	visibleCtx.drawImage(offscreen, 0, 0);
+		var layerSpacing = canvasWidth / (layers.length + 1);
+		var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
+		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+
+		var max_conv2d_height = 0;
+
+		meta_infos.forEach(function (i, e) {
+			if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
+				var os = i.output_shape;
+				var height = os && os[1] ? os[1] : 0;
+				var width = os && os[2] ? os[2] : 0;
+
+				if (height > max_conv2d_height) {
+					max_conv2d_height = height;
+				}
+			}
+		});
+
+		var maxSpacingConv2d = maxSpacing + max_conv2d_height;
+
+		var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
+
+		_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
+
+		await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
+
+		// === ATOMIC SWAP: only now update the visible canvas ===
+		if (canvas.width !== canvasWidth || canvas.height !== canvasHeight) {
+			canvas.width = canvasWidth;
+			canvas.height = canvasHeight;
+		}
+		var visibleCtx = canvas.getContext("2d", { willReadFrequently: true });
+		visibleCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+		visibleCtx.drawImage(offscreen, 0, 0);
+	} finally {
+		_fcnn_render_in_progress = false;
+	}
 }
 
 function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
