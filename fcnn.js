@@ -345,7 +345,6 @@ async function draw_fcnn(...args) {
 			}
 			canvas.width = canvasWidth;
 			canvas.height = canvasHeight;
-			// Immediately repaint the old frame (stretched if needed) so canvas isn't blank
 			if (preservedFrame) {
 				try {
 					var visCtx = canvas.getContext("2d", { willReadFrequently: true });
