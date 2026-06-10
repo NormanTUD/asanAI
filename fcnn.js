@@ -1130,48 +1130,50 @@ function _handle_fcnn_click(e, canvas) {
 	}
 }
 
-async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
-	var _height = null;
+function _determine_shape_type(layer_type) {
+	if (layer_type.toLowerCase().includes("conv2d")) return "rectangle_conv2d";
+	if (layer_type.toLowerCase().includes("flatten")) return "rectangle_flatten";
+	if (layer_type.toLowerCase().includes("layernormalization")) return "layernorm";
+	return "circle";
+}
 
-	// Clear all hit regions before redrawing
+function _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight) {
+	var verticalSpacing = maxSpacing;
+	if (numNeurons * verticalSpacing > canvasHeight) {
+		verticalSpacing = canvasHeight / numNeurons;
+	}
+	return verticalSpacing;
+}
+
+function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth) {
+	var meta_info = meta_infos[layer_idx];
+	var layer_type = meta_info["layer_type"];
+	var layerX = (layer_idx + 1) * layerSpacing;
+	var layerY = canvasHeight / 2;
+	var numNeurons = layers[layer_idx];
+	var verticalSpacing = _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight);
+	var shapeType = _determine_shape_type(layer_type);
+
+	if (shapeType === "circle" || shapeType === "rectangle_conv2d") {
+		return _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
+	} else if (shapeType === "rectangle_flatten") {
+		var _height = Math.min(650, meta_info["output_shape"][1]);
+		return _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+	} else if (shapeType === "layernorm") {
+		return draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
+	}
+	alert("Unknown shape Type: " + shapeType);
+	return ctx;
+}
+
+async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
 	_clear_fcnn_hit_regions();
 
 	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
-		var meta_info = meta_infos[layer_idx];
-		var layer_type = meta_info["layer_type"];
-		var layerX = (layer_idx + 1) * layerSpacing;
-		var layerY = canvasHeight / 2;
-		var numNeurons = layers[layer_idx];
-		var verticalSpacing = maxSpacing;
-		var shapeType = "circle";
-
-		if (numNeurons * verticalSpacing > canvasHeight) {
-			verticalSpacing = canvasHeight / numNeurons;
-		}
-
-		if (layer_type.toLowerCase().includes("conv2d")) {
-			shapeType = "rectangle_conv2d";
-		} else if (layer_type.toLowerCase().includes("flatten")) {
-			shapeType = "rectangle_flatten";
-		} else if (layer_type.toLowerCase().includes("layernormalization")) {
-			shapeType = "layernorm";
-		}
-
-		if (shapeType == "circle" || shapeType == "rectangle_conv2d") {
-			ctx = _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
-		} else if (shapeType == "rectangle_flatten") {
-			_height = Math.min(650, meta_info["output_shape"][1]);
-			ctx = _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
-		} else if (shapeType == "layernorm") {
-			ctx = draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
-		} else {
-			alert("Unknown shape Type: " + shapeType);
-		}
+		ctx = _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth);
 	}
 
-	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d);
-
-	// Bind mouse events after drawing (idempotent - only binds once)
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, canvasHeight / 2, (layers.length) * layerSpacing, maxRadius, null, maxSpacingConv2d);
 	_bind_fcnn_canvas_mouse_events();
 }
 
