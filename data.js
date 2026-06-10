@@ -1576,7 +1576,7 @@ function _augment_custom_rotate(resized_image, label_nr, divide_by, x, y) {
 	}
 
 	// Dispose the 4D tensor we created
-	try { dispose(image_4d); } catch (e) { /* ignore */ }
+	try { dispose(image_4d); } catch (e) { /* ignore */ } // await not possible
 
 	return [x, y];
 }
@@ -1685,7 +1685,7 @@ function _augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y) {
 
 		if (!flipped_4d || tensor_is_disposed(flipped_4d)) {
 			err("[_augment_custom_flip_lr] flipLeftRight returned null/disposed.");
-			try { dispose(image_4d); } catch (e) { /* ignore */ }
+			try { dispose(image_4d); } catch (e) { /* ignore */ } // await not possible
 			return [x, y];
 		}
 
@@ -1705,7 +1705,7 @@ function _augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y) {
 			y.push(label_nr);
 		}
 
-		try { dispose(image_4d); } catch (e) { /* ignore */ }
+		try { dispose(image_4d); } catch (e) { /* ignore */ } // await not possible
 	} catch (e) {
 		err("[_augment_custom_flip_lr] Error: " + e);
 	}
