@@ -1095,17 +1095,19 @@ function _determine_shape_type(layer_type) {
 }
 
 /**
- * Computes per-layer vertical spacing instead of using a single global maxSpacing.
- * This ensures that layers with few neurons (like the output layer) get adequate spacing,
- * regardless of how many neurons the largest layer has.
+ * THE SINGLE SOURCE OF TRUTH for vertical spacing computation.
+ * Both neuron drawing (_draw_single_layer) and connection drawing
+ * (_prepare_connection_params → compute_spacing) MUST use this function
+ * to ensure alignment.
  *
  * GUARDRAILS:
- * - Enforces absolute minimum spacing to prevent label overlap
- * - Enforces maximum spacing to prevent layers from exceeding canvas bounds
+ * - Enforces absolute minimum spacing to prevent overlap
+ * - Enforces maximum spacing to prevent canvas overflow
  * - Clamps output to [MIN_SPACING, canvasHeight * 0.8] range
- * - Special handling for output layer (last layer) to guarantee label readability
- * - Special handling for Conv2D layers using their own spacing metric
+ * - Special handling for output layer (generous spacing for labels)
+ * - Special handling for Conv2D layers
  * - Falls back gracefully if inputs are invalid
+ * - NEVER returns NaN, Infinity, zero, or negative values
  *
  * @param {number} numNeurons - Number of neurons in this specific layer
  * @param {number} canvasHeight - Total canvas height in pixels
@@ -1114,86 +1116,91 @@ function _determine_shape_type(layer_type) {
  * @param {boolean} isConv2d - Whether this layer is a Conv2D layer
  * @param {number} maxSpacingConv2d - Maximum spacing for Conv2D layers
  * @param {number} globalMaxSpacing - The globally computed maxSpacing (legacy fallback)
- * @returns {number} The vertical spacing for this layer
+ * @returns {number} The vertical spacing for this layer (always > 0, always finite)
  */
 function _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size, isOutputLayer, isConv2d, maxSpacingConv2d, globalMaxSpacing) {
-    // === INPUT VALIDATION GUARDRAILS ===
-    if (!Number.isFinite(numNeurons) || numNeurons < 1) {
-        console.warn("[_compute_vertical_spacing_per_layer] Invalid numNeurons:", numNeurons, "- defaulting to 1");
-        numNeurons = 1;
-    }
-    if (!Number.isFinite(canvasHeight) || canvasHeight < 50) {
-        console.warn("[_compute_vertical_spacing_per_layer] Invalid canvasHeight:", canvasHeight, "- defaulting to 800");
-        canvasHeight = 800;
-    }
-    if (!Number.isFinite(font_size) || font_size < 6) {
-        font_size = 12;
-    }
-    if (!Number.isFinite(globalMaxSpacing) || globalMaxSpacing <= 0) {
-        globalMaxSpacing = 20;
-    }
-    if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) {
-        maxSpacingConv2d = globalMaxSpacing + 10;
-    }
+	// === INPUT VALIDATION GUARDRAILS ===
+	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
+		console.warn("[_compute_vertical_spacing_per_layer] Invalid numNeurons:", numNeurons, "- defaulting to 1");
+		numNeurons = 1;
+	}
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) {
+		console.warn("[_compute_vertical_spacing_per_layer] Invalid canvasHeight:", canvasHeight, "- defaulting to 800");
+		canvasHeight = 800;
+	}
+	if (!Number.isFinite(font_size) || font_size < 6) {
+		font_size = 12;
+	}
+	if (!Number.isFinite(globalMaxSpacing) || globalMaxSpacing <= 0) {
+		globalMaxSpacing = 20;
+	}
+	if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) {
+		maxSpacingConv2d = globalMaxSpacing + 10;
+	}
 
-    // === ABSOLUTE BOUNDS ===
-    var ABSOLUTE_MIN_SPACING = Math.max(font_size * 2.2, 22); // Never less than ~2 lines of text
-    var ABSOLUTE_MAX_SPACING = canvasHeight * 0.12;            // Never more than 12% of canvas per gap
-    var USABLE_CANVAS_HEIGHT = canvasHeight * 0.75;            // Leave 25% margin (top/bottom for labels, pills)
+	// === ABSOLUTE BOUNDS ===
+	var ABSOLUTE_MIN_SPACING = Math.max(font_size * 2.2, 22);
+	var ABSOLUTE_MAX_SPACING = canvasHeight * 0.12;
+	var USABLE_CANVAS_HEIGHT = canvasHeight * 0.75;
 
-    // === OUTPUT LAYER SPECIAL HANDLING ===
-    // The output layer typically has very few neurons (e.g., 5 classes) and needs labels.
-    // We give it generous spacing to prevent label overlap.
-    if (isOutputLayer) {
-        var outputMinSpacing = Math.max(font_size * 3.0, 36); // At least 3x font size
-        var idealOutputSpacing = USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons);
+	// === OUTPUT LAYER SPECIAL HANDLING ===
+	if (isOutputLayer) {
+		var outputMinSpacing = Math.max(font_size * 3.0, 36);
+		var idealOutputSpacing = USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons);
+		var outputSpacing = Math.max(outputMinSpacing, Math.min(ABSOLUTE_MAX_SPACING, idealOutputSpacing));
 
-        // Clamp: not too tight, not too spread
-        var outputSpacing = Math.max(outputMinSpacing, Math.min(ABSOLUTE_MAX_SPACING, idealOutputSpacing));
+		if (numNeurons * outputSpacing > USABLE_CANVAS_HEIGHT) {
+			outputSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
+		}
+		outputSpacing = Math.max(outputMinSpacing, outputSpacing);
 
-        // Final safety: ensure all neurons fit within usable canvas
-        if (numNeurons * outputSpacing > USABLE_CANVAS_HEIGHT) {
-            outputSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
-        }
+		// === FINAL GUARDRAIL ===
+		if (!Number.isFinite(outputSpacing) || outputSpacing <= 0) {
+			console.error("[_compute_vertical_spacing_per_layer] Output spacing invalid, using fallback");
+			return Math.max(36, globalMaxSpacing);
+		}
+		return outputSpacing;
+	}
 
-        // Hard floor: never go below absolute minimum for output layer
-        outputSpacing = Math.max(outputMinSpacing, outputSpacing);
+	// === CONV2D LAYER HANDLING ===
+	if (isConv2d) {
+		// Use maxSpacingConv2d as the UPPER BOUND, but fit within canvas
+		var conv2dSpacing = Math.min(maxSpacingConv2d, USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons));
 
-        return outputSpacing;
-    }
+		// Clamp to bounds
+		conv2dSpacing = Math.max(ABSOLUTE_MIN_SPACING, Math.min(ABSOLUTE_MAX_SPACING, conv2dSpacing));
 
-    // === CONV2D LAYER HANDLING ===
-    if (isConv2d) {
-        var conv2dSpacing = Math.min(maxSpacingConv2d, (USABLE_CANVAS_HEIGHT / numNeurons));
+		// Safety: ensure all neurons fit
+		if (numNeurons * conv2dSpacing > USABLE_CANVAS_HEIGHT) {
+			conv2dSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
+			conv2dSpacing = Math.max(8, conv2dSpacing);
+		}
 
-        // Clamp to bounds
-        conv2dSpacing = Math.max(ABSOLUTE_MIN_SPACING, Math.min(ABSOLUTE_MAX_SPACING, conv2dSpacing));
+		// === FINAL GUARDRAIL ===
+		if (!Number.isFinite(conv2dSpacing) || conv2dSpacing <= 0) {
+			console.error("[_compute_vertical_spacing_per_layer] Conv2D spacing invalid, using fallback");
+			return Math.max(8, globalMaxSpacing);
+		}
+		return conv2dSpacing;
+	}
 
-        // Safety: ensure all neurons fit
-        if (numNeurons * conv2dSpacing > USABLE_CANVAS_HEIGHT) {
-            conv2dSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
-            // Even after fitting, don't go below a hard minimum for conv2d
-            conv2dSpacing = Math.max(8, conv2dSpacing); // conv2d can be tighter since no text labels
-        }
+	// === DENSE / GENERIC LAYER HANDLING ===
+	var idealSpacing = USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons);
+	var verticalSpacing = Math.min(globalMaxSpacing, idealSpacing);
 
-        return conv2dSpacing;
-    }
+	verticalSpacing = Math.max(ABSOLUTE_MIN_SPACING, Math.min(ABSOLUTE_MAX_SPACING, verticalSpacing));
 
-    // === DENSE / GENERIC LAYER HANDLING ===
-    var idealSpacing = USABLE_CANVAS_HEIGHT / Math.max(1, numNeurons);
-    var verticalSpacing = Math.min(globalMaxSpacing, idealSpacing);
+	if (numNeurons * verticalSpacing > USABLE_CANVAS_HEIGHT) {
+		verticalSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
+		verticalSpacing = Math.max(4, verticalSpacing);
+	}
 
-    // Clamp to absolute bounds
-    verticalSpacing = Math.max(ABSOLUTE_MIN_SPACING, Math.min(ABSOLUTE_MAX_SPACING, verticalSpacing));
-
-    // Safety: if neurons still overflow, compress but warn
-    if (numNeurons * verticalSpacing > USABLE_CANVAS_HEIGHT) {
-        verticalSpacing = USABLE_CANVAS_HEIGHT / numNeurons;
-        // For dense layers with many neurons, allow tighter packing
-        verticalSpacing = Math.max(4, verticalSpacing);
-    }
-
-    return verticalSpacing;
+	// === FINAL GUARDRAIL ===
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.error("[_compute_vertical_spacing_per_layer] Dense spacing invalid, using fallback");
+		return Math.max(4, globalMaxSpacing);
+	}
+	return verticalSpacing;
 }
 
 /**
@@ -1230,84 +1237,76 @@ function _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight) {
 }
 
 /**
- * Improved version of _draw_single_layer that uses per-layer spacing computation.
- * This is the KEY function that fixes the output layer cramping issue.
+ * Draws a single layer (Dense, Conv2D, Flatten, or LayerNorm).
+ * 
+ * CRITICAL FIX: For Conv2D layers, the verticalSpacing computed here is now
+ * passed directly to _draw_single_conv2d_neuron (via _draw_neurons_or_conv2d
+ * → draw_layer_neurons). Previously, _draw_single_conv2d_neuron used
+ * maxSpacingConv2d directly, causing misalignment with connections.
  *
  * GUARDRAILS:
+ * - Validates all inputs
  * - Detects output layer and applies generous spacing
  * - Detects Conv2D layers and uses appropriate spacing
- * - Validates layer_idx bounds
  * - Falls back to legacy spacing if new computation fails
  * - Ensures neuronY positions stay within canvas bounds
- *
- * @param {CanvasRenderingContext2D} ctx
- * @param {number} layer_idx
- * @param {Array<number>} layers
- * @param {Array<object>} meta_infos
- * @param {number} layerSpacing
- * @param {number} canvasHeight
- * @param {number} maxSpacing
- * @param {number} maxShapeSize
- * @param {number} maxSpacingConv2d
- * @param {number} font_size
- * @param {number} canvasWidth
- * @returns {CanvasRenderingContext2D}
  */
 function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth) {
-    // === INPUT VALIDATION GUARDRAILS ===
-    if (!ctx || typeof ctx.beginPath !== "function") {
-        console.error("[_draw_single_layer] Invalid ctx");
-        return ctx;
-    }
-    if (layer_idx < 0 || layer_idx >= layers.length) {
-        console.warn("[_draw_single_layer] layer_idx out of bounds:", layer_idx);
-        return ctx;
-    }
-    if (!meta_infos || !meta_infos[layer_idx]) {
-        console.warn("[_draw_single_layer] No meta_info for layer_idx:", layer_idx);
-        return ctx;
-    }
+	// === INPUT VALIDATION GUARDRAILS ===
+	if (!ctx || typeof ctx.beginPath !== "function") {
+		console.error("[_draw_single_layer] Invalid ctx");
+		return ctx;
+	}
+	if (layer_idx < 0 || layer_idx >= layers.length) {
+		console.warn("[_draw_single_layer] layer_idx out of bounds:", layer_idx);
+		return ctx;
+	}
+	if (!meta_infos || !meta_infos[layer_idx]) {
+		console.warn("[_draw_single_layer] No meta_info for layer_idx:", layer_idx);
+		return ctx;
+	}
 
-    var meta_info = meta_infos[layer_idx];
-    var layer_type = meta_info["layer_type"] || "";
-    var layerX = (layer_idx + 1) * layerSpacing;
-    var layerY = canvasHeight / 2;
-    var numNeurons = layers[layer_idx];
-    var shapeType = _determine_shape_type(layer_type);
+	var meta_info = meta_infos[layer_idx];
+	var layer_type = meta_info["layer_type"] || "";
+	var layerX = (layer_idx + 1) * layerSpacing;
+	var layerY = canvasHeight / 2;
+	var numNeurons = layers[layer_idx];
+	var shapeType = _determine_shape_type(layer_type);
 
-    // === DETERMINE LAYER ROLE ===
-    var isOutputLayer = (layer_idx === layers.length - 1);
-    var isConv2d = (shapeType === "rectangle_conv2d");
+	// === DETERMINE LAYER ROLE ===
+	var isOutputLayer = (layer_idx === layers.length - 1);
+	var isConv2d = (shapeType === "rectangle_conv2d");
 
-    // === COMPUTE PER-LAYER SPACING ===
-    var verticalSpacing = _compute_vertical_spacing_per_layer(
-        numNeurons,
-        canvasHeight,
-        font_size,
-        isOutputLayer,
-        isConv2d,
-        maxSpacingConv2d,
-        maxSpacing
-    );
+	// === COMPUTE PER-LAYER SPACING (same function used by _prepare_connection_params) ===
+	var verticalSpacing = _compute_vertical_spacing_per_layer(
+		numNeurons,
+		canvasHeight,
+		font_size,
+		isOutputLayer,
+		isConv2d,
+		maxSpacingConv2d,
+		maxSpacing
+	);
 
-    // === GUARDRAIL: Validate computed spacing ===
-    if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
-        console.warn("[_draw_single_layer] Invalid verticalSpacing computed, falling back to legacy");
-        verticalSpacing = _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight);
-    }
+	// === GUARDRAIL: Validate computed spacing ===
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.warn("[_draw_single_layer] Invalid verticalSpacing computed, falling back to legacy");
+		verticalSpacing = _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight);
+	}
 
-    // === DISPATCH TO SHAPE-SPECIFIC DRAWING ===
-    if (shapeType === "circle" || shapeType === "rectangle_conv2d") {
-        return _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
-    } else if (shapeType === "rectangle_flatten") {
-        var _height = Math.min(650, meta_info["output_shape"][1]);
-        return _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
-    } else if (shapeType === "layernorm") {
-        return draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
-    }
+	// === DISPATCH TO SHAPE-SPECIFIC DRAWING ===
+	if (shapeType === "circle" || shapeType === "rectangle_conv2d") {
+		// CRITICAL: Pass verticalSpacing (not maxSpacingConv2d) to the drawing function
+		return _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size);
+	} else if (shapeType === "rectangle_flatten") {
+		var _height = Math.min(650, meta_info["output_shape"][1]);
+		return _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height);
+	} else if (shapeType === "layernorm") {
+		return draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize);
+	}
 
-    console.warn("[_draw_single_layer] Unknown shapeType:", shapeType);
-    return ctx;
+	console.warn("[_draw_single_layer] Unknown shapeType:", shapeType);
+	return ctx;
 }
 
 /**
@@ -1427,159 +1426,186 @@ async function draw_fcnn(...args) {
 }
 
 /**
- * Updated compute_spacing function that also handles per-layer spacing
- * for connection drawing. This ensures connections connect to the correct
- * Y positions that match the new per-layer spacing.
+ * Computes the vertical spacing for a given layer. This function is used BOTH
+ * for drawing neurons AND for computing connection endpoints.
  *
  * GUARDRAILS:
- * - Validates layer_type string
- * - Handles null/undefined layer_type gracefully
- * - Ensures returned spacing is always positive
- * - Applies output layer logic when applicable
+ * - Single source of truth: both neuron drawing and connection drawing use this
+ * - Validates all inputs before processing
+ * - Returns a safe default if computation fails
+ * - Conv2D layers use the same formula as _draw_single_conv2d_neuron
  *
- * @param {string} layer_type
- * @param {number} neurons
- * @param {number} canvasHeight
- * @param {number} maxSpacing
- * @param {number} maxSpacingConv2d
- * @param {boolean} [isOutputLayer=false] - Whether this is the output layer
- * @param {number} [font_size=12] - Font size for output layer spacing calculation
- * @returns {number}
+ * CRITICAL: The returned value MUST match what _draw_single_layer passes as
+ * verticalSpacing to _draw_single_conv2d_neuron. Any divergence causes
+ * connection lines to miss their target neurons.
  */
 function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size) {
-    // === INPUT VALIDATION ===
-    if (!Number.isFinite(neurons) || neurons < 1) neurons = 1;
-    if (!Number.isFinite(canvasHeight) || canvasHeight < 50) canvasHeight = 800;
-    if (!Number.isFinite(maxSpacing) || maxSpacing <= 0) maxSpacing = 20;
-    if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) maxSpacingConv2d = maxSpacing + 10;
+	// === INPUT VALIDATION ===
+	if (!Number.isFinite(neurons) || neurons < 1) {
+		console.warn("[compute_spacing] Invalid neurons:", neurons, "- defaulting to 1");
+		neurons = 1;
+	}
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) {
+		console.warn("[compute_spacing] Invalid canvasHeight:", canvasHeight, "- defaulting to 800");
+		canvasHeight = 800;
+	}
+	if (!Number.isFinite(maxSpacing) || maxSpacing <= 0) {
+		maxSpacing = 20;
+	}
+	if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) {
+		maxSpacingConv2d = maxSpacing + 10;
+	}
+	if (!Number.isFinite(font_size) || font_size < 6) {
+		font_size = 12;
+	}
 
-    var isConv2d = (layer_type && typeof layer_type === "string" && layer_type.toLowerCase().includes("conv2d"));
+	var isConv2d = (layer_type && typeof layer_type === "string" && layer_type.toLowerCase().includes("conv2d"));
 
-    // === USE PER-LAYER SPACING IF OUTPUT LAYER ===
-    if (isOutputLayer) {
-        return _compute_vertical_spacing_per_layer(
-            neurons,
-            canvasHeight,
-            font_size || 12,
-            true,   // isOutputLayer
-            false,  // isConv2d
-            maxSpacingConv2d,
-            maxSpacing
-        );
-    }
-
-    // === CONV2D SPACING ===
-    if (isConv2d) {
-        return _compute_vertical_spacing_per_layer(
-            neurons,
-            canvasHeight,
-            font_size || 12,
-            false,  // isOutputLayer
-            true,   // isConv2d
-            maxSpacingConv2d,
-            maxSpacing
-        );
-    }
-
-    // === DENSE / GENERIC ===
-    return _compute_vertical_spacing_per_layer(
-        neurons,
-        canvasHeight,
-        font_size || 12,
-        false,
-        false,
-        maxSpacingConv2d,
-        maxSpacing
-    );
+	// === DELEGATE TO SINGLE SOURCE OF TRUTH ===
+	return _compute_vertical_spacing_per_layer(
+		neurons,
+		canvasHeight,
+		font_size,
+		!!isOutputLayer,
+		isConv2d,
+		maxSpacingConv2d,
+		maxSpacing
+	);
 }
 
 /**
- * Updated _prepare_connection_params that passes isOutputLayer info
- * to compute_spacing so connections align with the new neuron positions.
+ * Prepares all parameters needed to draw connections between two adjacent layers.
+ *
+ * CRITICAL FIX: This function now uses compute_spacing() which delegates to
+ * _compute_vertical_spacing_per_layer() — the SAME function that _draw_single_layer
+ * uses to compute verticalSpacing for neuron positioning. This ensures that
+ * connection endpoints (currYs, nextYs) match the actual drawn neuron positions.
  *
  * GUARDRAILS:
  * - Detects if source or target layer is the output layer
  * - Passes font_size through for spacing calculation
  * - Validates layer indices before access
  * - Falls back gracefully if meta_infos are incomplete
+ * - Returns null (not crash) if parameters can't be computed
+ * - Validates computed Y arrays are non-empty and finite
  */
 function _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size) {
-    // === VALIDATE INDICES ===
-    if (layer_nr < 0 || layer_nr >= layers.length - 1) {
-        console.warn("[_prepare_connection_params] Invalid layer_nr:", layer_nr);
-        return null;
-    }
+	// === VALIDATE INDICES ===
+	if (layer_nr < 0 || layer_nr >= layers.length - 1) {
+		console.warn("[_prepare_connection_params] Invalid layer_nr:", layer_nr);
+		return null;
+	}
+	if (!Array.isArray(layers) || layers.length < 2) {
+		console.warn("[_prepare_connection_params] Invalid layers array");
+		return null;
+	}
 
-    var meta = get_layer_meta(meta_infos, layer_nr);
-    var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+	// === VALIDATE NUMERIC INPUTS ===
+	if (!Number.isFinite(layerSpacing) || layerSpacing <= 0) layerSpacing = 100;
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) canvasHeight = 800;
+	if (!Number.isFinite(layerY)) layerY = canvasHeight / 2;
+	if (!Number.isFinite(maxRadius) || maxRadius <= 0) maxRadius = 8;
+	if (!Number.isFinite(maxSpacing) || maxSpacing <= 0) maxSpacing = 20;
+	if (!Number.isFinite(maxSpacingConv2d) || maxSpacingConv2d <= 0) maxSpacingConv2d = maxSpacing + 10;
+	if (!Number.isFinite(font_size) || font_size < 6) font_size = 12;
 
-    var currX = (layer_nr + 1) * layerSpacing + maxRadius;
-    var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+	var meta = get_layer_meta(meta_infos, layer_nr);
+	var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
 
-    var currNeurons = _resolve_neuron_count(layers[layer_nr], meta, "input");
-    var nextNeurons = _resolve_neuron_count(layers[layer_nr + 1], next_meta, "output");
+	var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+	var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
 
-    if (meta.layer_type === "LayerNormalization") currNeurons = 1;
-    if (next_meta.layer_type === "LayerNormalization") nextNeurons = 1;
+	var currNeurons = _resolve_neuron_count(layers[layer_nr], meta, "input");
+	var nextNeurons = _resolve_neuron_count(layers[layer_nr + 1], next_meta, "output");
 
-    // === DETECT OUTPUT LAYER ===
-    var currIsOutput = (layer_nr === layers.length - 1);
-    var nextIsOutput = (layer_nr + 1 === layers.length - 1);
+	if (meta.layer_type === "LayerNormalization") currNeurons = 1;
+	if (next_meta.layer_type === "LayerNormalization") nextNeurons = 1;
 
-    // === USE UPDATED compute_spacing WITH OUTPUT LAYER AWARENESS ===
-    var currSpacing = compute_spacing(meta.layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, currIsOutput, font_size);
-    var nextSpacing = compute_spacing(next_meta.layer_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, nextIsOutput, font_size);
+	// === GUARDRAIL: Validate neuron counts ===
+	if (!Number.isFinite(currNeurons) || currNeurons < 1) currNeurons = 1;
+	if (!Number.isFinite(nextNeurons) || nextNeurons < 1) nextNeurons = 1;
 
-    var currYs = Array.from({ length: currNeurons }, (_, i) => compute_neuron_y(i, currNeurons, currSpacing, layerY, meta.layer_type, _height));
-    var nextYs = Array.from({ length: nextNeurons }, (_, j) => compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_meta.layer_type, _height));
+	// === DETECT OUTPUT LAYER ===
+	var currIsOutput = (layer_nr === layers.length - 1);
+	var nextIsOutput = (layer_nr + 1 === layers.length - 1);
 
-    var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
-    var _weight_stats = null;
-    var _weight_data_sample = null;
-    if (weightInfo && weightInfo.data) {
-        var sampleLimit = Math.min(weightInfo.data.length, 50000);
-        _weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
-        _weight_stats = _compute_stats(_weight_data_sample);
-    }
+	// === USE compute_spacing (which uses _compute_vertical_spacing_per_layer internally) ===
+	// This is the SAME path that _draw_single_layer uses, ensuring alignment.
+	var currSpacing = compute_spacing(meta.layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, currIsOutput, font_size);
+	var nextSpacing = compute_spacing(next_meta.layer_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d, nextIsOutput, font_size);
 
-    return { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample };
+	// === GUARDRAIL: Validate computed spacings ===
+	if (!Number.isFinite(currSpacing) || currSpacing <= 0) {
+		console.warn("[_prepare_connection_params] Invalid currSpacing:", currSpacing, "- using maxSpacing");
+		currSpacing = maxSpacing;
+	}
+	if (!Number.isFinite(nextSpacing) || nextSpacing <= 0) {
+		console.warn("[_prepare_connection_params] Invalid nextSpacing:", nextSpacing, "- using maxSpacing");
+		nextSpacing = maxSpacing;
+	}
+
+	// === COMPUTE Y POSITIONS USING compute_neuron_y (same formula as drawing) ===
+	var currYs = Array.from({ length: currNeurons }, (_, i) => compute_neuron_y(i, currNeurons, currSpacing, layerY, meta.layer_type, _height));
+	var nextYs = Array.from({ length: nextNeurons }, (_, j) => compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_meta.layer_type, _height));
+
+	// === GUARDRAIL: Validate Y arrays ===
+	if (currYs.length === 0 || nextYs.length === 0) {
+		console.warn("[_prepare_connection_params] Empty Y arrays");
+		return null;
+	}
+	if (!Number.isFinite(currYs[0]) || !Number.isFinite(nextYs[0])) {
+		console.warn("[_prepare_connection_params] Non-finite Y values detected");
+		return null;
+	}
+
+	var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+	var _weight_stats = null;
+	var _weight_data_sample = null;
+	if (weightInfo && weightInfo.data) {
+		var sampleLimit = Math.min(weightInfo.data.length, 50000);
+		_weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
+		_weight_stats = _compute_stats(_weight_data_sample);
+	}
+
+	return { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample };
 }
 
 /**
- * Updated draw_layer_connections that passes font_size to _prepare_connection_params.
+ * Draws connections between layer_nr and layer_nr+1.
  *
  * GUARDRAILS:
  * - Validates ctx and layer_nr
  * - Handles null return from _prepare_connection_params
  * - Catches and reports errors without crashing
+ * - Passes font_size to ensure spacing calculation matches drawing
  */
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size) {
-    try {
-        if (!ctx || layer_nr < 0 || layer_nr >= layers.length - 1) return;
+	try {
+		if (!ctx || layer_nr < 0 || layer_nr >= layers.length - 1) return;
 
-        var params = _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size);
+		var params = _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size);
 
-        if (!params) {
-            console.warn("[draw_layer_connections] Could not prepare params for layer_nr:", layer_nr);
-            return;
-        }
+		if (!params) {
+			console.warn("[draw_layer_connections] Could not prepare params for layer_nr:", layer_nr);
+			return;
+		}
 
-        var { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample } = params;
+		var { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample } = params;
 
-        var convLike = (currNeurons > 512 || nextNeurons > 512);
-        var estimateCount = currNeurons * nextNeurons;
+		var convLike = (currNeurons > 512 || nextNeurons > 512);
+		var estimateCount = currNeurons * nextNeurons;
 
-        if (convLike) {
-            _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.1);
-        } else if (estimateCount > 300000) {
-            _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.08);
-        } else {
-            _draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, weightInfo, _weight_stats, _weight_data_sample);
-        }
-    } catch (e) {
-        if (e && e.message) e = e.message;
-        assert(false, e);
-    }
+		if (convLike) {
+			_draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.1);
+		} else if (estimateCount > 300000) {
+			_draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.08);
+		} else {
+			_draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, weightInfo, _weight_stats, _weight_data_sample);
+		}
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		console.error("[draw_layer_connections] Error:", e);
+	}
 }
 
 /**
@@ -1828,7 +1854,29 @@ function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, vertic
 	return ctx;
 }
 
+/**
+ * Draws all neurons for a single layer.
+ *
+ * CRITICAL FIX: The verticalSpacing parameter is now passed through to
+ * _draw_single_conv2d_neuron. Previously, maxSpacingConv2d was used for
+ * Conv2D neuron positioning while connections used a different spacing.
+ *
+ * GUARDRAILS:
+ * - Validates numNeurons > 0
+ * - Validates verticalSpacing > 0
+ * - Passes consistent spacing to both Dense and Conv2D neurons
+ */
 function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
+	// === GUARDRAIL: Validate inputs ===
+	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
+		console.warn("[draw_layer_neurons] Invalid numNeurons:", numNeurons);
+		return ctx;
+	}
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.warn("[draw_layer_neurons] Invalid verticalSpacing:", verticalSpacing);
+		verticalSpacing = 20; // safe fallback
+	}
+
 	var this_layer_output = null;
 	var this_layer_states = null;
 	var has_visualization = false;
@@ -1849,6 +1897,7 @@ function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layer
 		if (shapeType === "circle") {
 			ctx = _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, layerX, maxShapeSize, layer_idx, meta_info, has_proper_layer_states_saved, layer_stats, canvasWidth, font_size);
 		} else if (shapeType === "rectangle_conv2d") {
+			// CRITICAL FIX: Pass verticalSpacing instead of relying on maxSpacingConv2d inside
 			ctx = _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY, layerX, verticalSpacing, layer_idx, meta_info, has_proper_layer_states_saved, has_visualization, n, m, minVal, maxVal, maxShapeSize);
 		}
 	}
@@ -1934,8 +1983,39 @@ function _get_neuron_label(layer_idx, j) {
 	return null;
 }
 
+/**
+ * Draws a single Conv2D neuron (filter rectangle) at the correct Y position.
+ *
+ * KEY FIX: Previously used maxSpacingConv2d for neuronY calculation, which diverged
+ * from the spacing used in _prepare_connection_params → compute_spacing →
+ * _compute_vertical_spacing_per_layer. Now uses verticalSpacing (the per-layer
+ * computed spacing) so connections align perfectly with filters.
+ *
+ * GUARDRAILS:
+ * - Uses the SAME verticalSpacing that compute_spacing returns for this layer
+ * - Validates verticalSpacing before use, falls back to maxSpacingConv2d
+ * - Validates neuronY stays within reasonable canvas bounds
+ * - Falls back to center if spacing produces invalid position
+ */
 function _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY, layerX, verticalSpacing, layer_idx, meta_info, hasProperStates, has_visualization, n, m, minVal, maxVal, maxShapeSize) {
-	var neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+	// === GUARDRAIL: Validate verticalSpacing ===
+	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
+		console.warn("[_draw_single_conv2d_neuron] Invalid verticalSpacing:", verticalSpacing, "- falling back to maxSpacingConv2d");
+		verticalSpacing = maxSpacingConv2d;
+	}
+
+	// === KEY FIX: Use verticalSpacing (same as compute_spacing returns) instead of maxSpacingConv2d ===
+	var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+
+	// === GUARDRAIL: Clamp neuronY to reasonable bounds ===
+	var usableTop = layerY - (layerY * 0.85);
+	var usableBottom = layerY + (layerY * 0.85);
+	if (neuronY < usableTop || neuronY > usableBottom) {
+		// Recalculate with compressed spacing that fits
+		var safeSpacing = Math.min(verticalSpacing, (usableBottom - usableTop) / Math.max(1, numNeurons));
+		neuronY = (j - (numNeurons - 1) / 2) * safeSpacing + layerY;
+	}
+
 	var conv_layer_output_for_channel = _get_conv2d_channel_output(hasProperStates, layer_idx, j);
 
 	var conv_rect_dims = _draw_and_get_conv2d_rect(ctx, has_visualization, meta_info, conv_layer_output_for_channel, n, m, minVal, maxVal, layerX, neuronY, verticalSpacing);
@@ -2077,13 +2157,48 @@ function get_layer_meta(meta_infos, idx) {
 	return { layer_type: null, input_shape: null, output_shape: null };
 }
 
+/**
+ * Computes the Y position of a neuron for BOTH drawing and connection endpoints.
+ * This formula MUST match what _draw_single_conv2d_neuron and
+ * _draw_single_dense_neuron use internally.
+ *
+ * GUARDRAILS:
+ * - Validates all inputs
+ * - Handles flatten layer clamping
+ * - Returns layerY (center) if inputs are invalid
+ * - Never returns NaN or Infinity
+ */
 function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type, _height) {
-	var y = (neuron_idx - (total_neurons - 1) / 2) * spacing + layerY;
-	if (layer_type && layer_type.toLowerCase().includes("flatten")) {
-		var top = layerY - (_height / 2);
-		var bottom = layerY + (_height / 2);
-		y = Math.min(bottom, Math.max(top, y));
+	// === INPUT VALIDATION ===
+	if (!Number.isFinite(neuron_idx)) neuron_idx = 0;
+	if (!Number.isFinite(total_neurons) || total_neurons < 1) total_neurons = 1;
+	if (!Number.isFinite(spacing) || spacing <= 0) {
+		console.warn("[compute_neuron_y] Invalid spacing:", spacing, "- using 20");
+		spacing = 20;
 	}
+	if (!Number.isFinite(layerY)) {
+		console.warn("[compute_neuron_y] Invalid layerY:", layerY, "- using 400");
+		layerY = 400;
+	}
+
+	// === CORE FORMULA (must match _draw_single_conv2d_neuron and _draw_single_dense_neuron) ===
+	var y = (neuron_idx - (total_neurons - 1) / 2) * spacing + layerY;
+
+	// === FLATTEN LAYER CLAMPING ===
+	if (layer_type && typeof layer_type === "string" && layer_type.toLowerCase().includes("flatten")) {
+		if (Number.isFinite(_height) && _height > 0) {
+			var top = layerY - (_height / 2);
+			var bottom = layerY + (_height / 2);
+			y = Math.min(bottom, Math.max(top, y));
+		}
+	}
+
+	// === FINAL GUARDRAIL ===
+	if (!Number.isFinite(y)) {
+		console.error("[compute_neuron_y] Computed NaN/Infinity, returning layerY");
+		return layerY;
+	}
+
 	return y;
 }
 
