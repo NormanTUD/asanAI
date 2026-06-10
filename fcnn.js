@@ -148,6 +148,36 @@ async function force_restart_fcnn() {
 	return await restart_fcnn(1);
 }
 
+function _get_layer_name(layer_idx, nr_layers, class_name) {
+	if (layer_idx === 0) return "Input Layer";
+	if (layer_idx === nr_layers - 1) return "Output Layer";
+	return `${class_name} ${layer_idx}`;
+}
+
+function _get_layer_meta_info(layer_idx, class_name, start_layer) {
+	var output_shape_of_layer = "";
+	try {
+		output_shape_of_layer = model.layers[layer_idx].outputShape;
+	} catch (e) {}
+
+	var kernel_size_x = $($(".configtable")[layer_idx]).find(".kernel_size_x").val();
+	var kernel_size_y = $($(".configtable")[layer_idx]).find(".kernel_size_y").val();
+
+	var input_shape_of_layer = "";
+	try {
+		input_shape_of_layer = model.layers[layer_idx].input.shape;
+	} catch (e) {}
+
+	return {
+		layer_type: class_name,
+		nr: start_layer + layer_idx,
+		input_shape: input_shape_of_layer,
+		output_shape: output_shape_of_layer,
+		kernel_size_x: kernel_size_x,
+		kernel_size_y: kernel_size_y
+	};
+}
+
 function get_fcnn_data() {
 	var names = [];
 	var units = [];
@@ -164,54 +194,21 @@ function get_fcnn_data() {
 	}
 
 	var nr_layers = model?.layers?.length;
-
-	if (!nr_layers) {
-		return;
-	}
+	if (!nr_layers) return;
 
 	var start_layer = 0;
 
 	for (var layer_idx = 0; layer_idx < nr_layers; layer_idx++) {
 		var class_name = get_layer_classname_by_nr(layer_idx);
 
-		if (!["Dense", "Flatten", "LayerNormalization"].includes(class_name) && !(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {
+		if (!["Dense", "Flatten", "LayerNormalization"].includes(class_name) &&
+			!(typeof class_name === "string" && class_name.toLowerCase().includes("conv2d"))) {
 			continue;
 		}
 
-		var _unit = get_units_at_layer(layer_idx);
-		if (layer_idx == 0) {
-			names.push("Input Layer");
-		} else if (layer_idx == nr_layers - 1) {
-			names.push("Output Layer");
-		} else {
-			names.push(`${class_name} ${layer_idx}`);
-		}
-
-		units.push(_unit);
-
-		var output_shape_of_layer = "";
-		try {
-			output_shape_of_layer = model.layers[layer_idx].outputShape;
-		} catch (e) {}
-
-		var kernel_size_x = $($(".configtable")[layer_idx]).find(".kernel_size_x").val();
-		var kernel_size_y = $($(".configtable")[layer_idx]).find(".kernel_size_y").val();
-
-		var input_shape_of_layer = "";
-		try {
-			input_shape_of_layer = model.layers[layer_idx].input.shape;
-		} catch(e) {
-
-		}
-
-		meta_infos.push({
-			layer_type: class_name,
-			nr: start_layer + layer_idx,
-			input_shape: input_shape_of_layer,
-			output_shape: output_shape_of_layer,
-			kernel_size_x: kernel_size_x,
-			kernel_size_y: kernel_size_y
-		});
+		units.push(get_units_at_layer(layer_idx));
+		names.push(_get_layer_name(layer_idx, nr_layers, class_name));
+		meta_infos.push(_get_layer_meta_info(layer_idx, class_name, start_layer));
 	}
 
 	return [names, units, meta_infos];
