@@ -2285,27 +2285,27 @@ function computeEntropyBits(probs) {
 }
 
 function buildTemperatureSection(logits, logitValues, temperature) {
-	const probs = softmax(logitValues);
+    const probs = softmax(logitValues);
 
-	const scaledLogitValues = logitValues.map(v => v / temperature);
-	const scaledProbs = softmax(scaledLogitValues);
+    const scaledLogitValues = logitValues.map(v => v / temperature);
+    const scaledProbs = softmax(scaledLogitValues);
 
-	const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
-	const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
+    const scaledProbRows = buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature);
+    const entropySection = buildEntropyLatex(probs, scaledProbs, logits.length, temperature);
 
-	return `
+    return `
 <div style="overflow-x:auto; padding:10px 0;">
 $$
-\\text{softmax}\\!\\left(\\frac{\\text{logit}_w}{\\underbrace{${temperature.toFixed(1)}}_{\\text{Temperature}}}\\right) =
+\\text{softmax}\\!\\left(\\frac{\\underbrace{\\text{logit}_w}_{\\substack{\\text{Raw score} \\\\ \\text{for word } w}}}{\\underbrace{${temperature.toFixed(1)}}_{\\substack{\\text{Temperature} \\\\ T > 1 \\text{ flattens} \\\\ T < 1 \\text{ sharpens}}}}\\right) =
 \\left(\\begin{array}{l|r|r|r}
-\\text{word} & P_{T=1} & P_{T=${temperature.toFixed(1)}} & \\Delta \\\\
+\\text{word} & \\underbrace{P_{T=1}}_{\\substack{\\text{Original} \\\\ \\text{probability}}} & \\underbrace{P_{T=${temperature.toFixed(1)}}}_{\\substack{\\text{Scaled} \\\\ \\text{probability}}} & \\underbrace{\\Delta}_{\\substack{\\text{Change from} \\\\ \\text{scaling}}} \\\\
 \\hline
     ${scaledProbRows}
 \\end{array}\\right)
 $$
 </div>
 
-		${entropySection}`;
+        ${entropySection}`;
 }
 
 function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature) {
@@ -2322,15 +2322,15 @@ function buildTemperatureComparisonRows(logits, probs, scaledProbs, temperature)
 }
 
 function buildEntropyLatex(probs, scaledProbs, vocabSize, temperature) {
-	const entropyOrig = computeEntropyBits(probs);
-	const entropyScaled = computeEntropyBits(scaledProbs);
-	const maxEntropy = Math.log2(vocabSize);
+    const entropyOrig = computeEntropyBits(probs);
+    const entropyScaled = computeEntropyBits(scaledProbs);
+    const maxEntropy = Math.log2(vocabSize);
 
-	return `<div style="overflow-x:auto; padding:10px 0;">
+    return `<div style="overflow-x:auto; padding:10px 0;">
 $$
-H_{T=1} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
-H_{T=${temperature.toFixed(1)}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
-H_{\\max} = \\log_2(${vocabSize}) = ${maxEntropy.toFixed(4)} \\text{ bits}
+\\underbrace{H_{T=1}}_{\\substack{\\text{Entropy of} \\\\ \\text{unscaled distribution} \\\\ \\text{(Temperature = 1)}}} = ${entropyOrig.toFixed(4)} \\text{ bits}, \\quad
+\\underbrace{H_{T=${temperature.toFixed(1)}}}_{\\substack{\\text{Entropy after} \\\\ \\text{temperature scaling} \\\\ \\text{(T = ${temperature.toFixed(1)})}}} = ${entropyScaled.toFixed(4)} \\text{ bits}, \\quad
+\\underbrace{H_{\\max}}_{\\substack{\\text{Maximum possible entropy} \\\\ \\text{(uniform distribution} \\\\ \\text{over all ${vocabSize} words)}}} = \\log_2(${vocabSize}) = ${maxEntropy.toFixed(4)} \\text{ bits}
 $$
 </div>`;
 }
