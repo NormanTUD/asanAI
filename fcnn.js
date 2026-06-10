@@ -1442,7 +1442,6 @@ async function draw_fcnn(...args) {
 function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size) {
 	// === INPUT VALIDATION ===
 	if (!Number.isFinite(neurons) || neurons < 1) {
-		console.warn("[compute_spacing] Invalid neurons:", neurons, "- defaulting to 1");
 		neurons = 1;
 	}
 	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) {
