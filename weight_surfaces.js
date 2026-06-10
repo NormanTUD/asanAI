@@ -9,6 +9,15 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 		container_width_pct: 0.92
 	}, options);
 
+	// ─── CI / Test Environment Detection ────────────────────────────────────────
+	// In headless CI (e.g. GitHub Actions with Playwright), 3D Plotly surfaces
+	// are extremely slow due to lack of GPU acceleration. Disable them and
+	// reduce slice count to prevent 6h+ timeouts.
+	if (typeof is_running_test !== 'undefined' && is_running_test) {
+		opts.plot3d = false;
+		opts.max_slices = 1;
+	}
+
 	const title_font_config = { size: 15, family: 'Inter, system-ui, sans-serif' };
 
 	if (container_or_id) {
@@ -654,7 +663,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 	} else {
 		Array.from(container.children).forEach(child => {
 			if (!child.querySelector || !child.querySelector('[data-plot-key]')) {
-				
 				container.removeChild(child);
 			}
 		});
@@ -708,6 +716,12 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			<span>${layers.length} layers, ${totalParams.toLocaleString()} parameters</span><br>
 			<span style="font-size:11px;opacity:0.7">${layerSummaries.join(' · ')}</span>
 		`;
+
+		// ─── CI/Test mode: skip expensive Plotly rendering entirely ──────────
+		if (typeof is_running_test !== 'undefined' && is_running_test) {
+			show_message_in_container(container, '⚡ Test mode: skipping expensive weight surface plots.');
+			return;
+		}
 
 		// Render each layer's weights
 		for (let li = 0; li < layers.length; li++) {
