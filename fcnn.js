@@ -77,29 +77,12 @@ function _build_weight_histogram_html(weightStats, weightData) {
 }
 
 async function restart_fcnn(force = 0) {
-	if ($("#fcnn_canvas").is(":visible")) {
-		if (restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);
-		restart_fcnn_timeout = setTimeout(() => {
-			restart_fcnn_internal(force); // await not possible
-			restart_fcnn_timeout = null;
-		}, 100);
-	} else {
-		if (!restart_fcnn_pending_visible || force) {
-			restart_fcnn_pending_visible = true;
+	if (restart_fcnn_timeout) clearTimeout(restart_fcnn_timeout);
+	restart_fcnn_timeout = setTimeout(() => {
+		restart_fcnn_internal(force); // await not possible
+		restart_fcnn_timeout = null;
+	}, 100);
 
-			const checkVisible = () => {
-				const el = $("#fcnn_canvas");
-				if (el.length && el.is(":visible")) {
-					restart_fcnn_internal(force); // await not possible
-					restart_fcnn_pending_visible = false;
-				} else {
-					setTimeout(checkVisible, 200);
-				}
-			};
-
-			checkVisible();
-		}
-	}
 }
 
 async function restart_fcnn_internal(force = 0) {
