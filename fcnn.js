@@ -1094,30 +1094,6 @@ function _determine_shape_type(layer_type) {
 	return "circle";
 }
 
-/**
- * THE SINGLE SOURCE OF TRUTH for vertical spacing computation.
- * Both neuron drawing (_draw_single_layer) and connection drawing
- * (_prepare_connection_params → compute_spacing) MUST use this function
- * to ensure alignment.
- *
- * GUARDRAILS:
- * - Enforces absolute minimum spacing to prevent overlap
- * - Enforces maximum spacing to prevent canvas overflow
- * - Clamps output to [MIN_SPACING, canvasHeight * 0.8] range
- * - Special handling for output layer (generous spacing for labels)
- * - Special handling for Conv2D layers
- * - Falls back gracefully if inputs are invalid
- * - NEVER returns NaN, Infinity, zero, or negative values
- *
- * @param {number} numNeurons - Number of neurons in this specific layer
- * @param {number} canvasHeight - Total canvas height in pixels
- * @param {number} font_size - Current font size for label rendering
- * @param {boolean} isOutputLayer - Whether this is the final (output) layer
- * @param {boolean} isConv2d - Whether this layer is a Conv2D layer
- * @param {number} maxSpacingConv2d - Maximum spacing for Conv2D layers
- * @param {number} globalMaxSpacing - The globally computed maxSpacing (legacy fallback)
- * @returns {number} The vertical spacing for this layer (always > 0, always finite)
- */
 function _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size, isOutputLayer, isConv2d, maxSpacingConv2d, globalMaxSpacing) {
 	// === INPUT VALIDATION GUARDRAILS ===
 	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
@@ -1202,21 +1178,6 @@ function _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size
 	return verticalSpacing;
 }
 
-/**
- * Replacement for the old _compute_vertical_spacing function.
- * This is a thin wrapper that maintains backward compatibility while
- * routing to the new per-layer logic.
- *
- * GUARDRAILS:
- * - Validates all inputs before processing
- * - Returns a safe default if computation fails
- * - Logs warnings for edge cases
- *
- * @param {number} numNeurons
- * @param {number} maxSpacing
- * @param {number} canvasHeight
- * @returns {number}
- */
 function _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight) {
     // Legacy behavior preserved as fallback
     if (!Number.isFinite(numNeurons) || numNeurons < 1) {
@@ -1235,21 +1196,6 @@ function _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight) {
     return Math.max(2, verticalSpacing);
 }
 
-/**
- * Draws a single layer (Dense, Conv2D, Flatten, or LayerNorm).
- * 
- * CRITICAL FIX: For Conv2D layers, the verticalSpacing computed here is now
- * passed directly to _draw_single_conv2d_neuron (via _draw_neurons_or_conv2d
- * → draw_layer_neurons). Previously, _draw_single_conv2d_neuron used
- * maxSpacingConv2d directly, causing misalignment with connections.
- *
- * GUARDRAILS:
- * - Validates all inputs
- * - Detects output layer and applies generous spacing
- * - Detects Conv2D layers and uses appropriate spacing
- * - Falls back to legacy spacing if new computation fails
- * - Ensures neuronY positions stay within canvas bounds
- */
 function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth) {
 	// === INPUT VALIDATION GUARDRAILS ===
 	if (!ctx || typeof ctx.beginPath !== "function") {
@@ -1308,23 +1254,6 @@ function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, ca
 	return ctx;
 }
 
-/**
- * Improved version of _compute_fcnn_dimensions that computes a more reasonable
- * global maxSpacing by separating Conv2D neuron counts from Dense neuron counts.
- *
- * GUARDRAILS:
- * - Separates maxNeurons for Dense vs Conv2D layers
- * - Uses only Dense layer neuron counts for maxSpacing calculation
- * - Ensures maxRadius never goes below a usable minimum
- * - Ensures font_size stays within readable bounds
- * - Falls back to safe defaults for edge cases
- *
- * @param {Array<number>} layers - Array of neuron counts per layer
- * @param {number} canvasWidth
- * @param {number} canvasHeight
- * @param {Array<object>} meta_infos - Layer metadata (needed to distinguish layer types)
- * @returns {object} Dimension parameters
- */
 function _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight, meta_infos) {
     // === INPUT VALIDATION ===
     if (!Array.isArray(layers) || layers.length === 0) {
@@ -1374,16 +1303,6 @@ function _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight, meta_infos)
     return { maxNeurons: maxNeuronsAll, maxNeuronsDense, maxNeuronsConv2d, maxRadius, layerSpacing, maxSpacing, maxShapeSize, font_size };
 }
 
-/**
- * Updated draw_fcnn that passes meta_infos to _compute_fcnn_dimensions
- * so it can separate Dense vs Conv2D neuron counts.
- *
- * GUARDRAILS:
- * - Validates argument count and types
- * - Prevents drawing if canvas is not ready
- * - Handles edge case of empty layers array
- * - Clears canvas completely before redraw
- */
 async function draw_fcnn(...args) {
     // === ARGUMENT VALIDATION ===
     assert(args.length == 3, "draw_fcnn must have 3 arguments");
@@ -1424,20 +1343,6 @@ async function draw_fcnn(...args) {
     await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, dims.layerSpacing, canvasHeight, dims.maxSpacing, dims.maxShapeSize, dims.maxRadius, maxSpacingConv2d, dims.font_size);
 }
 
-/**
- * Computes the vertical spacing for a given layer. This function is used BOTH
- * for drawing neurons AND for computing connection endpoints.
- *
- * GUARDRAILS:
- * - Single source of truth: both neuron drawing and connection drawing use this
- * - Validates all inputs before processing
- * - Returns a safe default if computation fails
- * - Conv2D layers use the same formula as _draw_single_conv2d_neuron
- *
- * CRITICAL: The returned value MUST match what _draw_single_layer passes as
- * verticalSpacing to _draw_single_conv2d_neuron. Any divergence causes
- * connection lines to miss their target neurons.
- */
 function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size) {
 	// === INPUT VALIDATION ===
 	if (!Number.isFinite(neurons) || neurons < 1) {
@@ -1471,22 +1376,6 @@ function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpaci
 	);
 }
 
-/**
- * Prepares all parameters needed to draw connections between two adjacent layers.
- *
- * CRITICAL FIX: This function now uses compute_spacing() which delegates to
- * _compute_vertical_spacing_per_layer() — the SAME function that _draw_single_layer
- * uses to compute verticalSpacing for neuron positioning. This ensures that
- * connection endpoints (currYs, nextYs) match the actual drawn neuron positions.
- *
- * GUARDRAILS:
- * - Detects if source or target layer is the output layer
- * - Passes font_size through for spacing calculation
- * - Validates layer indices before access
- * - Falls back gracefully if meta_infos are incomplete
- * - Returns null (not crash) if parameters can't be computed
- * - Validates computed Y arrays are non-empty and finite
- */
 function _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size) {
 	// === VALIDATE INDICES ===
 	if (layer_nr < 0 || layer_nr >= layers.length - 1) {
@@ -1568,15 +1457,6 @@ function _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, 
 	return { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample };
 }
 
-/**
- * Draws connections between layer_nr and layer_nr+1.
- *
- * GUARDRAILS:
- * - Validates ctx and layer_nr
- * - Handles null return from _prepare_connection_params
- * - Catches and reports errors without crashing
- * - Passes font_size to ensure spacing calculation matches drawing
- */
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size) {
 	try {
 		if (!ctx || layer_nr < 0 || layer_nr >= layers.length - 1) return;
@@ -1606,13 +1486,6 @@ function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos,
 	}
 }
 
-/**
- * Updated _draw_connections_between_layers that passes font_size through.
- *
- * GUARDRAILS:
- * - Validates layers array length
- * - Passes font_size to draw_layer_connections
- */
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d, font_size) {
     try {
         if (!Array.isArray(layers) || layers.length < 2) return;
@@ -1626,13 +1499,6 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
     }
 }
 
-/**
- * Updated _draw_neurons_and_connections that passes font_size to the connections function.
- *
- * GUARDRAILS:
- * - Clears hit regions before redraw
- * - Passes font_size consistently
- */
 async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
     _clear_fcnn_hit_regions();
 
@@ -1852,18 +1718,6 @@ function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, vertic
 	return ctx;
 }
 
-/**
- * Draws all neurons for a single layer.
- *
- * CRITICAL FIX: The verticalSpacing parameter is now passed through to
- * _draw_single_conv2d_neuron. Previously, maxSpacingConv2d was used for
- * Conv2D neuron positioning while connections used a different spacing.
- *
- * GUARDRAILS:
- * - Validates numNeurons > 0
- * - Validates verticalSpacing > 0
- * - Passes consistent spacing to both Dense and Conv2D neurons
- */
 function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
 	// === GUARDRAIL: Validate inputs ===
 	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
@@ -1981,20 +1835,6 @@ function _get_neuron_label(layer_idx, j) {
 	return null;
 }
 
-/**
- * Draws a single Conv2D neuron (filter rectangle) at the correct Y position.
- *
- * KEY FIX: Previously used maxSpacingConv2d for neuronY calculation, which diverged
- * from the spacing used in _prepare_connection_params → compute_spacing →
- * _compute_vertical_spacing_per_layer. Now uses verticalSpacing (the per-layer
- * computed spacing) so connections align perfectly with filters.
- *
- * GUARDRAILS:
- * - Uses the SAME verticalSpacing that compute_spacing returns for this layer
- * - Validates verticalSpacing before use, falls back to maxSpacingConv2d
- * - Validates neuronY stays within reasonable canvas bounds
- * - Falls back to center if spacing produces invalid position
- */
 function _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY, layerX, verticalSpacing, layer_idx, meta_info, hasProperStates, has_visualization, n, m, minVal, maxVal, maxShapeSize) {
 	// === GUARDRAIL: Validate verticalSpacing ===
 	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
@@ -2155,17 +1995,6 @@ function get_layer_meta(meta_infos, idx) {
 	return { layer_type: null, input_shape: null, output_shape: null };
 }
 
-/**
- * Computes the Y position of a neuron for BOTH drawing and connection endpoints.
- * This formula MUST match what _draw_single_conv2d_neuron and
- * _draw_single_dense_neuron use internally.
- *
- * GUARDRAILS:
- * - Validates all inputs
- * - Handles flatten layer clamping
- * - Returns layerY (center) if inputs are invalid
- * - Never returns NaN or Infinity
- */
 function compute_neuron_y(neuron_idx, total_neurons, spacing, layerY, layer_type, _height) {
 	// === INPUT VALIDATION ===
 	if (!Number.isFinite(neuron_idx)) neuron_idx = 0;
