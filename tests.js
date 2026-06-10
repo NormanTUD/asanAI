@@ -496,6 +496,40 @@ async function test_show_layer_data_flow() {
 	return true;
 }
 
+async function test_custom_drawn_images_with_augmentation() {
+	set_mode_to_expert();
+
+	$("#auto_augment").prop("checked", true);
+
+	$("#augment_rotate_images").prop("checked", true);
+	$("#augment_invert_images").prop("checked", true);
+	$("#augment_flip_left_right").prop("checked", true);
+
+	const wanted_epochs = 2;
+
+	$("#jump_to_interesting_tab").prop("checked", true);
+
+	$("#custom_image_training_data_small").click();
+
+	await wait_for_two_save_buttons_and_click_them();
+
+	set_epochs(wanted_epochs);
+
+	const ret = await train_neural_network();
+
+	$("#auto_augment").prop("checked", false);
+
+	if(!is_valid_ret_object(ret, wanted_epochs)) {
+		return false;
+	}
+
+	if($("#sketcher").is(":visible")) {
+		return true;
+	}
+
+	return false;
+}
+
 async function test_custom_drawn_images() {
 	const wanted_epochs = 2;
 
@@ -3069,6 +3103,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		await test_resize_time();
 
 		test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
+		test_equal("test_custom_drawn_images_with_augmentation()", await test_custom_drawn_images_with_augmentation(), true);
 		test_equal("test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
