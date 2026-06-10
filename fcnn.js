@@ -1121,7 +1121,6 @@ function _determine_shape_type(layer_type) {
 function _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size, isOutputLayer, isConv2d, maxSpacingConv2d, globalMaxSpacing) {
 	// === INPUT VALIDATION GUARDRAILS ===
 	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
-		console.warn("[_compute_vertical_spacing_per_layer] Invalid numNeurons:", numNeurons, "- defaulting to 1");
 		numNeurons = 1;
 	}
 	if (!Number.isFinite(canvasHeight) || canvasHeight < 50) {
