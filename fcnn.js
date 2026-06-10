@@ -1247,92 +1247,92 @@ function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, ca
 }
 
 function _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight, meta_infos) {
-    // === INPUT VALIDATION ===
-    if (!Array.isArray(layers) || layers.length === 0) {
-        console.warn("[_compute_fcnn_dimensions] Invalid layers array");
-        return { maxNeurons: 1, maxRadius: 8, layerSpacing: 100, maxSpacing: 20, maxShapeSize: 8, font_size: 12 };
-    }
-    if (!Number.isFinite(canvasWidth) || canvasWidth < 100) canvasWidth = 800;
-    if (!Number.isFinite(canvasHeight) || canvasHeight < 100) canvasHeight = 800;
+	// === INPUT VALIDATION ===
+	if (!Array.isArray(layers) || layers.length === 0) {
+		console.warn("[_compute_fcnn_dimensions] Invalid layers array");
+		return { maxNeurons: 1, maxRadius: 8, layerSpacing: 100, maxSpacing: 20, maxShapeSize: 8, font_size: 12 };
+	}
+	if (!Number.isFinite(canvasWidth) || canvasWidth < 100) canvasWidth = 800;
+	if (!Number.isFinite(canvasHeight) || canvasHeight < 100) canvasHeight = 800;
 
-    // === SEPARATE NEURON COUNTS BY LAYER TYPE ===
-    var maxNeuronsAll = Math.max(...layers);
-    var maxNeuronsDense = 1; // Only Dense/output layers for spacing calculation
-    var maxNeuronsConv2d = 1;
+	// === SEPARATE NEURON COUNTS BY LAYER TYPE ===
+	var maxNeuronsAll = Math.max(...layers);
+	var maxNeuronsDense = 1; // Only Dense/output layers for spacing calculation
+	var maxNeuronsConv2d = 1;
 
-    if (meta_infos && Array.isArray(meta_infos)) {
-        for (var i = 0; i < layers.length; i++) {
-            var lt = (meta_infos[i] && meta_infos[i].layer_type) ? meta_infos[i].layer_type.toLowerCase() : "";
-            if (lt.includes("conv2d")) {
-                maxNeuronsConv2d = Math.max(maxNeuronsConv2d, layers[i]);
-            } else if (lt === "dense" || lt === "") {
-                // Dense or unknown → counts toward dense spacing
-                maxNeuronsDense = Math.max(maxNeuronsDense, layers[i]);
-            }
-            // Flatten/LayerNorm don't use neuron-based spacing, so skip
-        }
-    } else {
-        // No meta_infos available → fall back to global max
-        maxNeuronsDense = maxNeuronsAll;
-    }
+	if (meta_infos && Array.isArray(meta_infos)) {
+		for (var i = 0; i < layers.length; i++) {
+			var lt = (meta_infos[i] && meta_infos[i].layer_type) ? meta_infos[i].layer_type.toLowerCase() : "";
+			if (lt.includes("conv2d")) {
+				maxNeuronsConv2d = Math.max(maxNeuronsConv2d, layers[i]);
+			} else if (lt === "dense" || lt === "") {
+				// Dense or unknown → counts toward dense spacing
+				maxNeuronsDense = Math.max(maxNeuronsDense, layers[i]);
+			}
+			// Flatten/LayerNorm don't use neuron-based spacing, so skip
+		}
+	} else {
+		// No meta_infos available → fall back to global max
+		maxNeuronsDense = maxNeuronsAll;
+	}
 
-    // === COMPUTE DIMENSIONS USING DENSE NEURON COUNT ===
-    // maxRadius: based on the densest layer (all types) to keep circles reasonable
-    var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeuronsAll, (canvasWidth / 2) / (layers.length + 1));
-    maxRadius = Math.max(3, maxRadius); // GUARDRAIL: minimum usable radius
+	// === COMPUTE DIMENSIONS USING DENSE NEURON COUNT ===
+	// maxRadius: based on the densest layer (all types) to keep circles reasonable
+	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeuronsAll, (canvasWidth / 2) / (layers.length + 1));
+	maxRadius = Math.max(3, maxRadius); // GUARDRAIL: minimum usable radius
 
-    var layerSpacing = canvasWidth / (layers.length + 1);
+	var layerSpacing = canvasWidth / (layers.length + 1);
 
-    // maxSpacing: based ONLY on Dense layers, not Conv2D filter count
-    var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeuronsDense) * 0.8);
-    maxSpacing = Math.max(8, maxSpacing); // GUARDRAIL: minimum spacing
+	// maxSpacing: based ONLY on Dense layers, not Conv2D filter count
+	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeuronsDense) * 0.8);
+	maxSpacing = Math.max(8, maxSpacing); // GUARDRAIL: minimum spacing
 
-    var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeuronsAll, (canvasWidth / 2) / (layers.length + 1));
-    maxShapeSize = Math.max(3, maxShapeSize); // GUARDRAIL: minimum shape size
+	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeuronsAll, (canvasWidth / 2) / (layers.length + 1));
+	maxShapeSize = Math.max(3, maxShapeSize); // GUARDRAIL: minimum shape size
 
-    var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
+	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
 
-    return { maxNeurons: maxNeuronsAll, maxNeuronsDense, maxNeuronsConv2d, maxRadius, layerSpacing, maxSpacing, maxShapeSize, font_size };
+	return { maxNeurons: maxNeuronsAll, maxNeuronsDense, maxNeuronsConv2d, maxRadius, layerSpacing, maxSpacing, maxShapeSize, font_size };
 }
 
 async function draw_fcnn(...args) {
-    // === ARGUMENT VALIDATION ===
-    assert(args.length == 3, "draw_fcnn must have 3 arguments");
-    if (is_setting_config) return;
+	// === ARGUMENT VALIDATION ===
+	assert(args.length == 3, "draw_fcnn must have 3 arguments");
+	if (is_setting_config) return;
 
-    var args_hash = await md5(JSON.stringify(args));
-    if (last_fcnn_hash == args_hash) return;
-    args_hash = last_fcnn_hash;
+	var args_hash = await md5(JSON.stringify(args));
+	if (last_fcnn_hash == args_hash) return;
+	args_hash = last_fcnn_hash;
 
-    var [layers, _labels, meta_infos] = args;
+	var [layers, _labels, meta_infos] = args;
 
-    // === GUARDRAIL: Validate layers ===
-    if (!Array.isArray(layers) || layers.length === 0) {
-        console.warn("[draw_fcnn] Empty or invalid layers array");
-        return;
-    }
+	// === GUARDRAIL: Validate layers ===
+	if (!Array.isArray(layers) || layers.length === 0) {
+		console.warn("[draw_fcnn] Empty or invalid layers array");
+		return;
+	}
 
-    var canvas = _setup_fcnn_canvas();
-    if (!canvas) {
-        console.error("[draw_fcnn] Could not setup canvas");
-        return;
-    }
+	var canvas = _setup_fcnn_canvas();
+	if (!canvas) {
+		console.error("[draw_fcnn] Could not setup canvas");
+		return;
+	}
 
-    var ctx = canvas.getContext("2d", { willReadFrequently: true });
+	var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-    var ghw = $("#graphs_here").width();
-    var canvasWidth = Math.max(800, ghw);
-    var canvasHeight = 800;
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	var ghw = $("#graphs_here").width();
+	var canvasWidth = Math.max(800, ghw);
+	var canvasHeight = 800;
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    // === PASS meta_infos TO DIMENSIONS COMPUTATION ===
-    var dims = _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight, meta_infos);
-    var maxSpacingConv2d = _compute_max_conv2d_spacing(meta_infos, dims.maxSpacing);
+	// === PASS meta_infos TO DIMENSIONS COMPUTATION ===
+	var dims = _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight, meta_infos);
+	var maxSpacingConv2d = _compute_max_conv2d_spacing(meta_infos, dims.maxSpacing);
 
-    _draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, dims.layerSpacing, _labels, dims.font_size);
-    await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, dims.layerSpacing, canvasHeight, dims.maxSpacing, dims.maxShapeSize, dims.maxRadius, maxSpacingConv2d, dims.font_size);
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, dims.layerSpacing, _labels, dims.font_size);
+	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, dims.layerSpacing, canvasHeight, dims.maxSpacing, dims.maxShapeSize, dims.maxRadius, maxSpacingConv2d, dims.font_size);
 }
 
 function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpacingConv2d, isOutputLayer, font_size) {
