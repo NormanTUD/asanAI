@@ -1223,15 +1223,7 @@ function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, ca
 	var isConv2d = (shapeType === "rectangle_conv2d");
 
 	// === COMPUTE PER-LAYER SPACING (same function used by _prepare_connection_params) ===
-	var verticalSpacing = _compute_vertical_spacing_per_layer(
-		numNeurons,
-		canvasHeight,
-		font_size,
-		isOutputLayer,
-		isConv2d,
-		maxSpacingConv2d,
-		maxSpacing
-	);
+	var verticalSpacing = _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size, isOutputLayer, isConv2d, maxSpacingConv2d, maxSpacing);
 
 	// === GUARDRAIL: Validate computed spacing ===
 	if (!Number.isFinite(verticalSpacing) || verticalSpacing <= 0) {
@@ -1364,16 +1356,10 @@ function compute_spacing(layer_type, neurons, canvasHeight, maxSpacing, maxSpaci
 
 	var isConv2d = (layer_type && typeof layer_type === "string" && layer_type.toLowerCase().includes("conv2d"));
 
+	const double_neg_is_output_layer = !!isOutputLayer;
+
 	// === DELEGATE TO SINGLE SOURCE OF TRUTH ===
-	return _compute_vertical_spacing_per_layer(
-		neurons,
-		canvasHeight,
-		font_size,
-		!!isOutputLayer,
-		isConv2d,
-		maxSpacingConv2d,
-		maxSpacing
-	);
+	return _compute_vertical_spacing_per_layer(neurons, canvasHeight, font_size, double_neg_is_output_layer, isConv2d, maxSpacingConv2d, maxSpacing);
 }
 
 function _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size) {
