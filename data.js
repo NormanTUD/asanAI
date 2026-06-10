@@ -1382,8 +1382,160 @@ function throw_exception_if_x_y_warning() {
 }
 
 function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
-	if(is_auto_augment()) {
-		wrn("Augmenting custom data is disabled because it is not yet fully implemented");
+	if (!is_auto_augment()) {
+		return [x, y];
+	}
+
+	if (!resized_image || tensor_is_disposed(resized_image)) {
+		wrn("[augment_custom_image_data] resized_image is null or disposed, skipping augmentation");
+		return [x, y];
+	}
+
+	try {
+		// Rotation augmentation
+		if ($("#augment_rotate_images").is(":checked")) {
+			[x, y] = augment_custom_rotate(resized_image, label_nr, divide_by, x, y);
+		}
+
+		// Inversion augmentation
+		if ($("#augment_invert_images").is(":checked")) {
+			[x, y] = augment_custom_invert(resized_image, label_nr, divide_by, x, y);
+		}
+
+		// Flip left-right augmentation
+		if ($("#augment_flip_left_right").is(":checked")) {
+			[x, y] = augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y);
+		}
+	} catch (e) {
+		wrn("[augment_custom_image_data] Error during augmentation: " + e);
+	}
+
+	return [x, y];
+}
+
+function augment_custom_rotate(resized_image, label_nr, divide_by, x, y) {
+	if (!resized_image || tensor_is_disposed(resized_image)) {
+		wrn("[augment_custom_rotate] Invalid image tensor, skipping rotation");
+		return [x, y];
+	}
+
+	try {
+		var num_rotations = parse_int($("#number_of_rotations").val());
+		if (!num_rotations || num_rotations <= 0) {
+			num_rotations = 4; // sensible default
+		}
+
+		var degree_step = 360 / num_rotations;
+
+		for (var degree = degree_step; degree < 360; degree += degree_step) {
+			try {
+				l(language[lang]["rotating_image"] + ": " + degree + "°");
+				var augmented_img = rotateWithOffset(resized_image, degrees_to_radians(degree));
+				var augmented_arr = array_sync(augmented_img);
+
+				add_tensor_as_image_to_photos(augmented_img);
+				x.push(augmented_arr);
+				y.push(label_nr);
+
+				// Invert the rotated image if inversion is also checked
+				if ($("#augment_invert_images").is(":checked")) {
+					[x, y] = augment_custom_invert_from_tensor(augmented_img, label_nr, divide_by, x, y, degree);
+				}
+
+				// Flip the rotated image if flip is also checked
+				if ($("#augment_flip_left_right").is(":checked")) {
+					[x, y] = augment_custom_flip_from_tensor(augmented_img, label_nr, x, y, degree);
+				}
+			} catch (e) {
+				wrn("[augment_custom_rotate] Error at degree " + degree + ": " + e);
+			}
+		}
+	} catch (e) {
+		wrn("[augment_custom_rotate] Error: " + e);
+	}
+
+	return [x, y];
+}
+
+function augment_custom_invert(resized_image, label_nr, divide_by, x, y) {
+	if (!resized_image || tensor_is_disposed(resized_image)) {
+		wrn("[augment_custom_invert] Invalid image tensor, skipping inversion");
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["inverted_image"]);
+		var add_value = (-255 / divide_by);
+		var inverted = abs(add(resized_image, add_value));
+		var inverted_arr = array_sync(inverted);
+
+		add_tensor_as_image_to_photos(inverted);
+		x.push(inverted_arr);
+		y.push(label_nr);
+	} catch (e) {
+		wrn("[augment_custom_invert] Error: " + e);
+	}
+
+	return [x, y];
+}
+
+function augment_custom_invert_from_tensor(image_tensor, label_nr, divide_by, x, y, degree) {
+	if (!image_tensor || tensor_is_disposed(image_tensor)) {
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
+		var add_value = (-255 / divide_by);
+		var inverted = abs(add(image_tensor, add_value));
+		var inverted_arr = array_sync(inverted);
+
+		add_tensor_as_image_to_photos(inverted);
+		x.push(inverted_arr);
+		y.push(label_nr);
+	} catch (e) {
+		wrn("[augment_custom_invert_from_tensor] Error: " + e);
+	}
+
+	return [x, y];
+}
+
+function augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y) {
+	if (!resized_image || tensor_is_disposed(resized_image)) {
+		wrn("[augment_custom_flip_lr] Invalid image tensor, skipping flip");
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["flip_left_right"]);
+		var flipped = flipLeftRight(resized_image);
+		var flipped_arr = array_sync(flipped);
+
+		add_tensor_as_image_to_photos(flipped);
+		x.push(flipped_arr);
+		y.push(label_nr);
+	} catch (e) {
+		wrn("[augment_custom_flip_lr] Error: " + e);
+	}
+
+	return [x, y];
+}
+
+function augment_custom_flip_from_tensor(image_tensor, label_nr, x, y, degree) {
+	if (!image_tensor || tensor_is_disposed(image_tensor)) {
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
+		var flipped = flipLeftRight(image_tensor);
+		var flipped_arr = array_sync(flipped);
+
+		add_tensor_as_image_to_photos(flipped);
+		x.push(flipped_arr);
+		y.push(label_nr);
+	} catch (e) {
+		wrn("[augment_custom_flip_from_tensor] Error: " + e);
 	}
 
 	return [x, y];
