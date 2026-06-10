@@ -7,15 +7,9 @@ var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
 
-function _build_weight_histogram_html(weightStats, weightData) {
-    // Build a tiny SVG histogram of weight distribution
-    if (!weightData || !weightStats || weightStats.count < 2) return "";
-
-    var numBins = 30;
+function _compute_histogram_bins(weightData, weightStats, numBins) {
     var bins = new Array(numBins).fill(0);
     var range = weightStats.max - weightStats.min;
-    if (range === 0) return "";
-
     var sampleSize = Math.min(weightData.length, 50000);
     var step = Math.max(1, Math.floor(weightData.length / sampleSize));
 
@@ -23,22 +17,21 @@ function _build_weight_histogram_html(weightStats, weightData) {
         var binIdx = Math.min(numBins - 1, Math.floor(((weightData[i] - weightStats.min) / range) * numBins));
         bins[binIdx]++;
     }
+    return bins;
+}
 
+function _render_histogram_svg(bins, numBins, svgW, svgH, weightStats) {
     var maxBin = Math.max(...bins);
     if (maxBin === 0) return "";
 
-    var svgW = 200;
-    var svgH = 40;
     var barW = svgW / numBins;
-
     var bars = "";
+
     for (var b = 0; b < numBins; b++) {
         var barH = (bins[b] / maxBin) * svgH;
         var x = b * barW;
         var y = svgH - barH;
-
-        // Color: blue for negative side, red for positive side
-        var t = b / (numBins - 1); // 0→1
+        var t = b / (numBins - 1);
         var color;
         if (t < 0.5) {
             var intensity = Math.round(100 + (1 - t * 2) * 155);
@@ -47,11 +40,10 @@ function _build_weight_histogram_html(weightStats, weightData) {
             var intensity = Math.round(100 + (t * 2 - 1) * 155);
             color = `rgb(${intensity}, 60, 60)`;
         }
-
         bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW - 0.5).toFixed(1)}" height="${barH.toFixed(1)}" fill="${color}" opacity="0.8"/>`;
     }
 
-    // Zero line
+    var range = weightStats.max - weightStats.min;
     var zeroX = ((0 - weightStats.min) / range) * svgW;
     var zeroLine = "";
     if (zeroX > 0 && zeroX < svgW) {
@@ -72,6 +64,16 @@ function _build_weight_histogram_html(weightStats, weightData) {
             </div>
         </td></tr>
     `;
+}
+
+function _build_weight_histogram_html(weightStats, weightData) {
+    if (!weightData || !weightStats || weightStats.count < 2) return "";
+    var range = weightStats.max - weightStats.min;
+    if (range === 0) return "";
+
+    var numBins = 30;
+    var bins = _compute_histogram_bins(weightData, weightStats, numBins);
+    return _render_histogram_svg(bins, numBins, 200, 40, weightStats);
 }
 
 // ===== CORE DRAWING FUNCTIONS (UPDATED) =====
@@ -388,102 +390,101 @@ function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, fo
 	return ctx;
 }
 
+function _validate_kernel_inputs(ctx, this_layer_output) {
+    if (!(ctx && typeof ctx.putImageData === "function")) {
+        console.warn("draw_filled_kernel_rectangle: ctx is invalid");
+        return null;
+    }
+    if (!Array.isArray(this_layer_output) || this_layer_output.length === 0) {
+        console.warn("draw_filled_kernel_rectangle: this_layer_output is empty");
+        return null;
+    }
+    let n = this_layer_output.length;
+    let m = Array.isArray(this_layer_output[0]) ? this_layer_output[0].length : 0;
+    if (m === 0) {
+        console.warn("draw_filled_kernel_rectangle: invalid row");
+        return null;
+    }
+    return { n, m };
+}
+
+function _compute_kernel_min_max(n, m, this_layer_output, minVal, maxVal) {
+    var [calcMin, calcMax] = get_min_max_val(n, m, this_layer_output);
+    if (!isFinite(calcMin) || !isFinite(calcMax)) return null;
+
+    minVal = (typeof minVal === "number" && isFinite(minVal)) ? minVal : calcMin;
+    maxVal = (typeof maxVal === "number" && isFinite(maxVal)) ? maxVal : calcMax;
+    if (maxVal === minVal) maxVal = minVal + 1;
+
+    return { minVal, maxVal };
+}
+
+function _build_kernel_image_data(ctx, this_layer_output, n, m, minVal, maxVal) {
+    var scale = 255 / (maxVal - minVal);
+    var imageData;
+    try {
+        imageData = ctx.createImageData(m, n);
+    } catch (e) {
+        console.error("draw_filled_kernel_rectangle: failed to create ImageData", e);
+        return null;
+    }
+
+    for (var x = 0; x < n; x++) {
+        if (!Array.isArray(this_layer_output[x]) || this_layer_output[x].length !== m) continue;
+        for (var y = 0; y < m; y++) {
+            var rawVal = this_layer_output[x][y];
+            if (typeof rawVal !== "number" || !isFinite(rawVal)) continue;
+            var value = Math.floor((rawVal - minVal) * scale);
+            var index = (x * m + y) * 4;
+            var gray = Math.abs(255 - value);
+            imageData.data[index] = gray;
+            imageData.data[index + 1] = gray;
+            imageData.data[index + 2] = gray;
+            imageData.data[index + 3] = 255;
+        }
+    }
+    return imageData;
+}
+
+function _render_kernel_to_canvas(ctx, imageData, meta_info, m, n, layerX, neuronY) {
+    var _ww = Number(meta_info?.input_shape?.[1]);
+    var _hh = Number(meta_info?.input_shape?.[2]);
+    if (!Number.isInteger(_ww) || !Number.isInteger(_hh) || _ww <= 0 || _hh <= 0) {
+        _ww = m;
+        _hh = n;
+    }
+
+    var _x = Math.floor(layerX - _ww / 2);
+    var _y = Math.floor(neuronY - _hh / 2);
+
+    var tempCanvas = document.createElement("canvas");
+    tempCanvas.width = m;
+    tempCanvas.height = n;
+    var tctx = tempCanvas.getContext("2d");
+    tctx.putImageData(imageData, 0, 0);
+    ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
+
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(_x, _y, _ww, _hh);
+}
+
 function draw_filled_kernel_rectangle(ctx, meta_info, this_layer_output, n, m, minVal, maxVal, layerX, neuronY) {
-	try {
-		if (!(ctx && typeof ctx.putImageData === "function")) {
-			console.warn("draw_filled_kernel_rectangle: ctx is invalid or not a 2D canvas context");
-			return ctx;
-		}
+    try {
+        var dims = _validate_kernel_inputs(ctx, this_layer_output);
+        if (!dims) return ctx;
 
-		if (!Array.isArray(this_layer_output) || this_layer_output.length === 0) {
-			console.warn("draw_filled_kernel_rectangle: this_layer_output is empty or not an array");
-			return ctx;
-		}
+        var bounds = _compute_kernel_min_max(dims.n, dims.m, this_layer_output, minVal, maxVal);
+        if (!bounds) return ctx;
 
-		let n = this_layer_output.length;
-		let m = Array.isArray(this_layer_output[0]) ? this_layer_output[0].length : 0;
+        var imageData = _build_kernel_image_data(ctx, this_layer_output, dims.n, dims.m, bounds.minVal, bounds.maxVal);
+        if (!imageData) return ctx;
 
-		if (m === 0) {
-			console.warn("draw_filled_kernel_rectangle: this_layer_output[0] is not a valid row");
-			return ctx;
-		}
-
-		var [calcMin, calcMax] = get_min_max_val(n, m, this_layer_output);
-		if (!isFinite(calcMin) || !isFinite(calcMax)) {
-			console.warn("draw_filled_kernel_rectangle: invalid min/max values", calcMin, calcMax);
-			return ctx;
-		}
-
-		// override given min/max if not valid
-		minVal = (typeof minVal === "number" && isFinite(minVal)) ? minVal : calcMin;
-		maxVal = (typeof maxVal === "number" && isFinite(maxVal)) ? maxVal : calcMax;
-
-		if (maxVal === minVal) {
-			maxVal = minVal + 1;
-		}
-
-		var scale = 255 / (maxVal - minVal);
-		var imageData;
-		try {
-			imageData = ctx.createImageData(m, n);
-		} catch (e) {
-			console.error("draw_filled_kernel_rectangle: failed to create ImageData", e);
-			return ctx;
-		}
-
-		for (var x = 0; x < n; x++) {
-			if (!Array.isArray(this_layer_output[x]) || this_layer_output[x].length !== m) {
-				console.warn("draw_filled_kernel_rectangle: row", x, "has invalid length, skipping");
-				continue;
-			}
-			for (var y = 0; y < m; y++) {
-				var rawVal = this_layer_output[x][y];
-				if (typeof rawVal !== "number" || !isFinite(rawVal)) {
-					console.warn("draw_filled_kernel_rectangle: invalid value at", x, y, "->", rawVal);
-					continue;
-				}
-				var value = Math.floor((rawVal - minVal) * scale);
-				var index = (x * m + y) * 4;
-				var gray = Math.abs(255 - value);
-				imageData.data[index] = gray;
-				imageData.data[index + 1] = gray;
-				imageData.data[index + 2] = gray;
-				imageData.data[index + 3] = 255;
-			}
-		}
-
-		var _ww = Number(meta_info?.input_shape?.[1]);
-		var _hh = Number(meta_info?.input_shape?.[2]);
-		if (!Number.isInteger(_ww) || !Number.isInteger(_hh) || _ww <= 0 || _hh <= 0) {
-			console.warn("draw_filled_kernel_rectangle: invalid input_shape, using fallback size", _ww, _hh);
-			_ww = m;
-			_hh = n;
-		}
-
-		var _x = Math.floor(layerX - _ww / 2);
-		var _y = Math.floor(neuronY - _hh / 2);
-
-		try {
-			// safer scaling path via drawImage
-			var tempCanvas = document.createElement("canvas");
-			tempCanvas.width = m;
-			tempCanvas.height = n;
-			var tctx = tempCanvas.getContext("2d");
-			tctx.putImageData(imageData, 0, 0);
-			ctx.drawImage(tempCanvas, _x, _y, _ww, _hh);
-
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 1;
-			ctx.strokeRect(_x, _y, _ww, _hh);
-		} catch (e) {
-			console.error("draw_filled_kernel_rectangle: failed to render image", e);
-		}
-
-	} catch (err) {
-		console.error("draw_filled_kernel_rectangle: unexpected error", err);
-	}
-
-	return ctx;
+        _render_kernel_to_canvas(ctx, imageData, meta_info, dims.m, dims.n, layerX, neuronY);
+    } catch (err) {
+        console.error("draw_filled_kernel_rectangle: unexpected error", err);
+    }
+    return ctx;
 }
 
 function draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY) {
@@ -1801,79 +1802,85 @@ function get_layer_weight_data(layer_nr, meta_infos) {
 
 var CONNECTION_CANVAS_CACHE = new Map();
 
+function _draw_unweighted_connections(octx, currYs, nextYs, localX1, localX2, dark) {
+    octx.strokeStyle = dark ? "rgba(160, 175, 210, 0.7)" : "rgba(40, 50, 90, 0.55)";
+    octx.globalAlpha = 1.0;
+    octx.beginPath();
+    let count = 0;
+    const CHUNK = 5000;
+
+    for (let i = 0; i < currYs.length; i++) {
+        const y1 = currYs[i];
+        for (let k = 0; k < nextYs.length; k++) {
+            var cpX = (localX1 + localX2) / 2;
+            octx.moveTo(localX1, y1);
+            octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
+            count++;
+            if ((count % CHUNK) === 0) {
+                octx.stroke();
+                octx.beginPath();
+            }
+        }
+    }
+    if (count % CHUNK !== 0) octx.stroke();
+}
+
+function _draw_weighted_connections(octx, currYs, nextYs, localX1, localX2, weightInfo, dark) {
+    var shape = weightInfo.shape;
+    var cols = shape[shape.length - 1];
+    var rows = shape[shape.length - 2];
+
+    for (let i = 0; i < currYs.length; i++) {
+        const y1 = currYs[i];
+        for (let k = 0; k < nextYs.length; k++) {
+            var fi = Math.min(i, rows - 1);
+            var ti = Math.min(k, cols - 1);
+            var idx = fi * cols + ti;
+            var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
+
+            octx.beginPath();
+            octx.strokeStyle = _get_weight_color_themed(w, weightInfo.min, weightInfo.max, dark);
+            var cpX = (localX1 + localX2) / 2;
+            octx.moveTo(localX1, y1);
+            octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
+            octx.stroke();
+        }
+    }
+}
+
 function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
-	var darkFlag = (typeof is_dark_mode !== 'undefined' && is_dark_mode) ? "d" : "l";
-	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
-	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
+    var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+    var darkFlag = dark ? "d" : "l";
+    var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
+    const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
 
-	if (CONNECTION_CANVAS_CACHE.has(key)) {
-		return CONNECTION_CANVAS_CACHE.get(key);
-	}
+    if (CONNECTION_CANVAS_CACHE.has(key)) {
+        return CONNECTION_CANVAS_CACHE.get(key);
+    }
 
-	const pad = Math.ceil(maxRadius + 2);
-	const width = Math.max(1, Math.ceil(nextX - currX) + pad * 2);
-	const height = Math.max(1, canvasHeight);
+    const pad = Math.ceil(maxRadius + 2);
+    const width = Math.max(1, Math.ceil(nextX - currX) + pad * 2);
+    const height = Math.max(1, canvasHeight);
 
-	const off = document.createElement("canvas");
-	off.width = width;
-	off.height = height;
-	const octx = off.getContext("2d");
+    const off = document.createElement("canvas");
+    off.width = width;
+    off.height = height;
+    const octx = off.getContext("2d");
 
-	const shiftX = pad - currX;
-	octx.lineWidth = 1;
+    const shiftX = pad - currX;
+    octx.lineWidth = 1;
 
-	const localX1 = currX + shiftX;
-	const localX2 = nextX + shiftX;
+    const localX1 = currX + shiftX;
+    const localX2 = nextX + shiftX;
 
-	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+    if (!weightInfo) {
+        _draw_unweighted_connections(octx, currYs, nextYs, localX1, localX2, dark);
+    } else {
+        _draw_weighted_connections(octx, currYs, nextYs, localX1, localX2, weightInfo, dark);
+    }
 
-	if (!weightInfo) {
-		// Fallback: single color adapted to theme with sufficient contrast
-		octx.strokeStyle = dark ? "rgba(160, 175, 210, 0.7)" : "rgba(40, 50, 90, 0.55)";
-		octx.globalAlpha = 1.0;
-		octx.beginPath();
-		let count = 0;
-		const CHUNK = 5000;
-		for (let i = 0; i < currYs.length; i++) {
-			const y1 = currYs[i];
-			for (let k = 0; k < nextYs.length; k++) {
-				var cpX = (localX1 + localX2) / 2;
-				octx.moveTo(localX1, y1);
-				octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
-				count++;
-				if ((count % CHUNK) === 0) {
-					octx.stroke();
-					octx.beginPath();
-				}
-			}
-		}
-		if (count % CHUNK !== 0) octx.stroke();
-	} else {
-		// Weight-colored lines
-		var shape = weightInfo.shape;
-		var cols = shape[shape.length - 1];
-		var rows = shape[shape.length - 2];
-
-		for (let i = 0; i < currYs.length; i++) {
-			const y1 = currYs[i];
-			for (let k = 0; k < nextYs.length; k++) {
-				var fi = Math.min(i, rows - 1);
-				var ti = Math.min(k, cols - 1);
-				var idx = fi * cols + ti;
-				var w = (idx >= 0 && idx < weightInfo.data.length) ? weightInfo.data[idx] : 0;
-
-				octx.beginPath();
-				octx.strokeStyle = _get_weight_color_themed(w, weightInfo.min, weightInfo.max, dark);
-				var cpX = (localX1 + localX2) / 2;
-				octx.moveTo(localX1, y1);
-				octx.bezierCurveTo(cpX, y1, cpX, nextYs[k], localX2, nextYs[k]);
-				octx.stroke();
-			}
-		}
-	}
-
-	CONNECTION_CANVAS_CACHE.set(key, { canvas: off, shiftX: shiftX, pad: pad });
-	return CONNECTION_CANVAS_CACHE.get(key);
+    CONNECTION_CANVAS_CACHE.set(key, { canvas: off, shiftX: shiftX, pad: pad });
+    return CONNECTION_CANVAS_CACHE.get(key);
 }
 
 function _get_weight_color_themed(weight, minW, maxW, dark) {
@@ -1917,54 +1924,53 @@ function _get_weight_color_themed(weight, minW, maxW, dark) {
 
 // ===== LAYERS TEXT DRAWING =====
 
+function _draw_layer_pill_badge(ctx, x, labelText, font_size) {
+    ctx.font = `bold ${font_size}px 'Segoe UI', Arial, sans-serif`;
+    var textWidth = ctx.measureText(labelText).width;
+    var pillW = textWidth + 20;
+    var pillH = font_size + 10;
+    var pillX = x - pillW / 2;
+    var pillY = 12;
+
+    ctx.beginPath();
+    _roundRect(ctx, pillX, pillY, pillW, pillH, 8);
+    ctx.fillStyle = is_dark_mode ? 'rgba(60, 70, 110, 0.7)' : 'rgba(70, 100, 200, 0.1)';
+    ctx.fill();
+    ctx.strokeStyle = is_dark_mode ? 'rgba(100, 130, 200, 0.5)' : 'rgba(70, 100, 200, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = is_dark_mode ? '#b0c4ff' : '#2a4494';
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(labelText, x, pillY + pillH / 2);
+    ctx.textBaseline = "alphabetic";
+}
+
+function _draw_layer_shape_info(ctx, x, meta_info, font_size, canvasHeight) {
+    ctx.font = `${font_size - 1}px 'Segoe UI', Arial, sans-serif`;
+    ctx.fillStyle = is_dark_mode ? 'rgba(200,210,230,0.7)' : 'rgba(60,60,80,0.7)';
+    ctx.textAlign = "center";
+
+    if (meta_info.input_shape) {
+        ctx.fillText("In: [" + meta_info.input_shape.filter(n => n).join(", ") + "]", x, canvasHeight - 28);
+    }
+    if (meta_info.output_shape) {
+        ctx.fillText("Out: [" + meta_info.output_shape.filter(n => n).join(", ") + "]", x, canvasHeight - 10);
+    }
+}
+
 function _draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size) {
     try {
         for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
             var x = (layer_idx + 1) * layerSpacing;
 
-            // Draw layer name as a pill badge at the top
             if (_labels && _labels[layer_idx]) {
-                var labelText = _labels[layer_idx];
-                ctx.font = `bold ${font_size}px 'Segoe UI', Arial, sans-serif`;
-                var textWidth = ctx.measureText(labelText).width;
-                var pillW = textWidth + 20;
-                var pillH = font_size + 10;
-                var pillX = x - pillW / 2;
-                var pillY = 12;
-
-                // Pill background
-                ctx.beginPath();
-                _roundRect(ctx, pillX, pillY, pillW, pillH, 8);
-                ctx.fillStyle = is_dark_mode ? 'rgba(60, 70, 110, 0.7)' : 'rgba(70, 100, 200, 0.1)';
-                ctx.fill();
-                ctx.strokeStyle = is_dark_mode ? 'rgba(100, 130, 200, 0.5)' : 'rgba(70, 100, 200, 0.3)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-
-                // Pill text
-                ctx.fillStyle = is_dark_mode ? '#b0c4ff' : '#2a4494';
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText(labelText, x, pillY + pillH / 2);
-                ctx.textBaseline = "alphabetic";
+                _draw_layer_pill_badge(ctx, x, _labels[layer_idx], font_size);
             }
 
-            // Shape info at bottom
             if (meta_infos && meta_infos[layer_idx]) {
-                var meta_info = meta_infos[layer_idx];
-                var _is = meta_info.input_shape;
-                var _os = meta_info.output_shape;
-
-                ctx.font = `${font_size - 1}px 'Segoe UI', Arial, sans-serif`;
-                ctx.fillStyle = is_dark_mode ? 'rgba(200,210,230,0.7)' : 'rgba(60,60,80,0.7)';
-                ctx.textAlign = "center";
-
-                if (_is) {
-                    ctx.fillText("In: [" + _is.filter(n => n).join(", ") + "]", x, canvasHeight - 28);
-                }
-                if (_os) {
-                    ctx.fillText("Out: [" + _os.filter(n => n).join(", ") + "]", x, canvasHeight - 10);
-                }
+                _draw_layer_shape_info(ctx, x, meta_infos[layer_idx], font_size, canvasHeight);
             }
         }
     } catch (e) {
