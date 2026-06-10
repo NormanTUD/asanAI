@@ -306,15 +306,16 @@ async function draw_fcnn(...args) {
 		document.body.appendChild(canvas);
 	}
 
-	var ctx = canvas.getContext("2d", { willReadFrequently: true });
-
 	var ghw = $("#graphs_here").width();
 
 	var canvasWidth = Math.max(800, ghw);
 	var canvasHeight = 800;
 
-	canvas.width = canvasWidth;
-	canvas.height = canvasHeight;
+	// === DOUBLE BUFFER: draw to offscreen canvas first ===
+	var offscreen = document.createElement("canvas");
+	offscreen.width = canvasWidth;
+	offscreen.height = canvasHeight;
+	var ctx = offscreen.getContext("2d", { willReadFrequently: true });
 	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	var maxNeurons = Math.max(...layers);
@@ -345,6 +346,13 @@ async function draw_fcnn(...args) {
 	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
 
 	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
+
+	// === ATOMIC SWAP: only now update the visible canvas ===
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+	var visibleCtx = canvas.getContext("2d", { willReadFrequently: true });
+	visibleCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+	visibleCtx.drawImage(offscreen, 0, 0);
 }
 
 function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
