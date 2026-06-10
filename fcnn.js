@@ -287,49 +287,46 @@ async function draw_fcnn(...args) {
 	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, dims.layerSpacing, canvasHeight, dims.maxSpacing, dims.maxShapeSize, dims.maxRadius, maxSpacingConv2d, dims.font_size);
 }
 
-function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
-	if (maxVal != minVal) {
-		var scale = 255 / (maxVal - minVal);
+function _build_image_data_from_input(ctx, first_layer_input, n, m, minVal, maxVal) {
+	var scale = 255 / (maxVal - minVal);
+	var imageData = ctx.createImageData(m, n);
 
-		var imageData = ctx.createImageData(m, n);
+	for (var row = 0; row < n; row++) {
+		for (var col = 0; col < m; col++) {
+			var dataIndex = (row * m + col) * 4;
+			var red   = Math.max(0, Math.min(255, parse_int((first_layer_input[row][col][0] - minVal) * scale)));
+			var green = Math.max(0, Math.min(255, parse_int((first_layer_input[row][col][1] - minVal) * scale)));
+			var blue  = Math.max(0, Math.min(255, parse_int((first_layer_input[row][col][2] - minVal) * scale)));
 
-		for (var row = 0; row < n; row++) {
-			for (var col = 0; col < m; col++) {
-				var dataIndex = (row * m + col) * 4;
-
-				var red   = parse_int((first_layer_input[row][col][0] - minVal) * scale);
-				var green = parse_int((first_layer_input[row][col][1] - minVal) * scale);
-				var blue  = parse_int((first_layer_input[row][col][2] - minVal) * scale);
-
-				red   = Math.max(0, Math.min(255, red));
-				green = Math.max(0, Math.min(255, green));
-				blue  = Math.max(0, Math.min(255, blue));
-
-				imageData.data[dataIndex + 0] = red;
-				imageData.data[dataIndex + 1] = green;
-				imageData.data[dataIndex + 2] = blue;
-				imageData.data[dataIndex + 3] = 255;
-			}
+			imageData.data[dataIndex + 0] = red;
+			imageData.data[dataIndex + 1] = green;
+			imageData.data[dataIndex + 2] = blue;
+			imageData.data[dataIndex + 3] = 255;
 		}
-
-		var _first_image_x = 10;
-		var _first_image_y = font_size + 10;
-
-		ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, m, n);
-
-		ctx.font = font_size + "px Arial";
-		if (is_dark_mode) {
-			ctx.fillStyle = "white";
-		} else {
-			ctx.fillStyle = "black";
-		}
-		ctx.textAlign = "left";
-		ctx.closePath();
-
-		ctx.strokeStyle = "black";
-		ctx.lineWidth = 1;
-		ctx.strokeRect(_first_image_x, _first_image_y, m, n);
 	}
+	return imageData;
+}
+
+function _draw_image_border_and_label(ctx, x, y, m, n, font_size) {
+	ctx.strokeStyle = "black";
+	ctx.lineWidth = 1;
+	ctx.strokeRect(x, y, m, n);
+
+	ctx.font = font_size + "px Arial";
+	ctx.fillStyle = is_dark_mode ? "white" : "black";
+	ctx.textAlign = "left";
+	ctx.closePath();
+}
+
+function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
+	if (maxVal === minVal) return ctx;
+
+	var imageData = _build_image_data_from_input(ctx, first_layer_input, n, m, minVal, maxVal);
+	var _first_image_x = 10;
+	var _first_image_y = font_size + 10;
+
+	ctx.putImageData(imageData, _first_image_x, _first_image_y, 0, 0, m, n);
+	_draw_image_border_and_label(ctx, _first_image_x, _first_image_y, m, n, font_size);
 
 	return ctx;
 }
@@ -1809,14 +1806,9 @@ function _draw_weighted_connections(octx, currYs, nextYs, localX1, localX2, weig
 	}
 }
 
-function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
-	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
-	var darkFlag = dark ? "d" : "l";
-	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
-	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
-
+function _get_or_create_offscreen_canvas(key, currX, nextX, canvasHeight, maxRadius) {
 	if (CONNECTION_CANVAS_CACHE.has(key)) {
-		return CONNECTION_CANVAS_CACHE.get(key);
+		return { cached: true, ...CONNECTION_CANVAS_CACHE.get(key) };
 	}
 
 	const pad = Math.ceil(maxRadius + 2);
@@ -1826,13 +1818,24 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 	const off = document.createElement("canvas");
 	off.width = width;
 	off.height = height;
-	const octx = off.getContext("2d");
 
-	const shiftX = pad - currX;
+	return { cached: false, canvas: off, pad, shiftX: pad - currX };
+}
+
+function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo) {
+	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+	var darkFlag = dark ? "d" : "l";
+	var wFlag = weightInfo ? ("w" + weightInfo.min.toFixed(3) + "_" + weightInfo.max.toFixed(3)) : "nw";
+	const key = _connection_cache_key(layer_nr, currYs.length, nextYs.length, currX, nextX, 0, 0) + ":" + darkFlag + ":" + wFlag;
+
+	var offscreen = _get_or_create_offscreen_canvas(key, currX, nextX, canvasHeight, maxRadius);
+	if (offscreen.cached) return offscreen;
+
+	const octx = offscreen.canvas.getContext("2d");
 	octx.lineWidth = 1;
 
-	const localX1 = currX + shiftX;
-	const localX2 = nextX + shiftX;
+	const localX1 = currX + offscreen.shiftX;
+	const localX2 = nextX + offscreen.shiftX;
 
 	if (!weightInfo) {
 		_draw_unweighted_connections(octx, currYs, nextYs, localX1, localX2, dark);
@@ -1840,8 +1843,9 @@ function _render_layer_pair_to_offscreen(layer_nr, currXs, nextXs, currYs, nextY
 		_draw_weighted_connections(octx, currYs, nextYs, localX1, localX2, weightInfo, dark);
 	}
 
-	CONNECTION_CANVAS_CACHE.set(key, { canvas: off, shiftX: shiftX, pad: pad });
-	return CONNECTION_CANVAS_CACHE.get(key);
+	var result = { canvas: offscreen.canvas, shiftX: offscreen.shiftX, pad: offscreen.pad };
+	CONNECTION_CANVAS_CACHE.set(key, result);
+	return result;
 }
 
 function _get_weight_color_themed(weight, minW, maxW, dark) {
