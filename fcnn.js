@@ -1051,138 +1051,18 @@ function _build_input_image_tooltip_html(region) {
 
 function _bind_fcnn_canvas_mouse_events() {
     if (_fcnn_canvas_mouse_bound) return;
-
     var canvas = document.getElementById("fcnn_canvas");
     if (!canvas) return;
 
     _fcnn_canvas_mouse_bound = true;
-
     var _last_hit_idx = -1;
 
-    // ===== MOUSEMOVE (tooltip) - unchanged logic =====
     canvas.addEventListener("mousemove", function (e) {
-        try {
-            var rect = canvas.getBoundingClientRect();
-            var scaleX = canvas.width / rect.width;
-            var scaleY = canvas.height / rect.height;
-            var cx = (e.clientX - rect.left) * scaleX;
-            var cy = (e.clientY - rect.top) * scaleY;
-
-            var hit = null;
-            var hitIdx = -1;
-            for (var i = _fcnn_hit_regions.length - 1; i >= 0; i--) {
-                if (_point_in_region(cx, cy, _fcnn_hit_regions[i])) {
-                    hit = _fcnn_hit_regions[i];
-                    hitIdx = i;
-                    break;
-                }
-            }
-
-            if (hitIdx === _last_hit_idx && _fcnn_tooltip_visible) {
-                if (hit && _fcnn_tooltip_el) {
-                    var vw = window.innerWidth;
-                    var vh = window.innerHeight;
-                    var left = e.clientX + 16;
-                    var top = e.clientY + 12;
-                    var tipW = _fcnn_tooltip_el.offsetWidth || 200;
-                    var tipH = _fcnn_tooltip_el.offsetHeight || 100;
-                    if (left + tipW > vw - 10) left = e.clientX - tipW - 10;
-                    if (top + tipH > vh - 10) top = e.clientY - tipH - 10;
-                    if (left < 5) left = 5;
-                    if (top < 5) top = 5;
-                    _fcnn_tooltip_el.style.left = left + "px";
-                    _fcnn_tooltip_el.style.top = top + "px";
-                }
-                return;
-            }
-
-            _last_hit_idx = hitIdx;
-
-            if (hit) {
-                var html = "";
-                switch (hit.type) {
-                    case "neuron":
-                        html = _build_neuron_tooltip_html(hit);
-                        break;
-                    case "conv2d":
-                        html = _build_conv2d_tooltip_html(hit);
-                        break;
-                    case "flatten":
-                        html = _build_flatten_tooltip_html(hit);
-                        break;
-                    case "layernorm":
-                        html = _build_layernorm_tooltip_html(hit);
-                        break;
-                    case "connection":
-                        html = _build_connection_tooltip_html(hit);
-                        break;
-                    case "input_image":
-                        html = _build_input_image_tooltip_html(hit);
-                        break;
-                    default:
-                        html = `<div style="padding:4px;">Element: <b>${hit.type}</b><br>Layer: ${hit.layer_idx !== undefined ? hit.layer_idx : 'N/A'}</div>`;
-                }
-                _show_fcnn_tooltip(html, e.clientX, e.clientY);
-                canvas.style.cursor = "crosshair";
-            } else {
-                _hide_fcnn_tooltip();
-                canvas.style.cursor = "default";
-            }
-        } catch (err) {
-            _hide_fcnn_tooltip();
-            canvas.style.cursor = "default";
-        }
+        _last_hit_idx = _handle_fcnn_mousemove(e, canvas, _last_hit_idx);
     });
 
-    // ===== CLICK HANDLER FOR EDITING =====
     canvas.addEventListener("click", function (e) {
-        try {
-            var rect = canvas.getBoundingClientRect();
-            var scaleX = canvas.width / rect.width;
-            var scaleY = canvas.height / rect.height;
-            var cx = (e.clientX - rect.left) * scaleX;
-            var cy = (e.clientY - rect.top) * scaleY;
-
-            var hit = null;
-            for (var i = _fcnn_hit_regions.length - 1; i >= 0; i--) {
-                if (_point_in_region(cx, cy, _fcnn_hit_regions[i])) {
-                    hit = _fcnn_hit_regions[i];
-                    break;
-                }
-            }
-
-            if (!hit) return;
-
-            // Block editing during training
-            if (typeof started_training !== 'undefined' && started_training) {
-                console.warn("[fcnn_edit] Cannot edit while training is in progress.");
-                return;
-            }
-
-            // Ensure the editable system is loaded
-            if (typeof _fcnn_edit_ensure_popup !== 'function') {
-                console.warn("[fcnn_edit] fcnn_editable.js not loaded.");
-                return;
-            }
-
-            // Hide tooltip when opening editor
-            _hide_fcnn_tooltip();
-
-            switch (hit.type) {
-                case "neuron":
-                    _fcnn_edit_open_neuron_weights(hit, e.clientX, e.clientY);
-                    break;
-                case "connection":
-                    _fcnn_edit_open_weight(hit, e.clientX, e.clientY);
-                    break;
-                default:
-                    // Conv2d, flatten, layernorm, input_image - not directly editable
-                    // but we could show info or do nothing
-                    break;
-            }
-        } catch (err) {
-            console.warn("[fcnn_edit] Click handler error:", err);
-        }
+        _handle_fcnn_click(e, canvas);
     });
 
     canvas.addEventListener("mouseleave", function () {
@@ -1191,7 +1071,6 @@ function _bind_fcnn_canvas_mouse_events() {
         canvas.style.cursor = "default";
     });
 
-    // Also hide on scroll/resize to prevent stale tooltips
     window.addEventListener("scroll", function () {
         _hide_fcnn_tooltip();
         _last_hit_idx = -1;
@@ -1202,6 +1081,98 @@ function _bind_fcnn_canvas_mouse_events() {
         _last_hit_idx = -1;
         _fcnn_canvas_mouse_bound = false;
     });
+}
+
+function _get_canvas_coords(e, canvas) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+    };
+}
+
+function _find_hit_region(cx, cy) {
+    for (var i = _fcnn_hit_regions.length - 1; i >= 0; i--) {
+        if (_point_in_region(cx, cy, _fcnn_hit_regions[i])) {
+            return { region: _fcnn_hit_regions[i], index: i };
+        }
+    }
+    return { region: null, index: -1 };
+}
+
+function _handle_fcnn_mousemove(e, canvas, lastHitIdx) {
+    try {
+        var coords = _get_canvas_coords(e, canvas);
+        var { region: hit, index: hitIdx } = _find_hit_region(coords.x, coords.y);
+
+        if (hitIdx === lastHitIdx && _fcnn_tooltip_visible) {
+            if (hit && _fcnn_tooltip_el) {
+                _reposition_tooltip(e);
+            }
+            return lastHitIdx;
+        }
+
+        if (hit) {
+            var html = _build_tooltip_html_for_region(hit);
+            _show_fcnn_tooltip(html, e.clientX, e.clientY);
+            canvas.style.cursor = "crosshair";
+        } else {
+            _hide_fcnn_tooltip();
+            canvas.style.cursor = "default";
+        }
+        return hitIdx;
+    } catch (err) {
+        _hide_fcnn_tooltip();
+        canvas.style.cursor = "default";
+        return -1;
+    }
+}
+
+function _build_tooltip_html_for_region(hit) {
+    switch (hit.type) {
+        case "neuron": return _build_neuron_tooltip_html(hit);
+        case "conv2d": return _build_conv2d_tooltip_html(hit);
+        case "flatten": return _build_flatten_tooltip_html(hit);
+        case "layernorm": return _build_layernorm_tooltip_html(hit);
+        case "connection": return _build_connection_tooltip_html(hit);
+        case "input_image": return _build_input_image_tooltip_html(hit);
+        default: return `<div>Element: <b>${hit.type}</b></div>`;
+    }
+}
+
+function _reposition_tooltip(e) {
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    var tipW = _fcnn_tooltip_el.offsetWidth || 200;
+    var tipH = _fcnn_tooltip_el.offsetHeight || 100;
+    var left = e.clientX + 16;
+    var top = e.clientY + 12;
+    if (left + tipW > vw - 10) left = e.clientX - tipW - 10;
+    if (top + tipH > vh - 10) top = e.clientY - tipH - 10;
+    if (left < 5) left = 5;
+    if (top < 5) top = 5;
+    _fcnn_tooltip_el.style.left = left + "px";
+    _fcnn_tooltip_el.style.top = top + "px";
+}
+
+function _handle_fcnn_click(e, canvas) {
+    try {
+        var coords = _get_canvas_coords(e, canvas);
+        var { region: hit } = _find_hit_region(coords.x, coords.y);
+        if (!hit) return;
+
+        if (typeof started_training !== 'undefined' && started_training) return;
+        if (typeof _fcnn_edit_ensure_popup !== 'function') return;
+
+        _hide_fcnn_tooltip();
+
+        if (hit.type === "neuron") _fcnn_edit_open_neuron_weights(hit, e.clientX, e.clientY);
+        else if (hit.type === "connection") _fcnn_edit_open_weight(hit, e.clientX, e.clientY);
+    } catch (err) {
+        console.warn("[fcnn_edit] Click handler error:", err);
+    }
 }
 
 async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
@@ -1303,116 +1274,99 @@ function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY,
 // ===== UPDATED: _draw_flatten with hit region and image =====
 
 function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, layerX, layerY, _height) {
-	try {
-		if (meta_info["output_shape"]) {
-			var this_layer_states = null;
+    try {
+        if (!meta_info["output_shape"]) {
+            alert("Has no output shape");
+            return ctx;
+        }
 
-			if (proper_layer_states_saved() && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-				this_layer_states = layer_states_saved[`${layer_idx}`];
-			}
+        var rectSize = maxShapeSize * 2;
+        let localLayerY = canvasHeight / 2;
+        var _width = rectSize;
+        var _x = layerX - _width / 2;
+        var _y = localLayerY - _height / 2;
 
-			var rectSize = maxShapeSize * 2;
+        var this_layer_output = _get_flatten_layer_output(layer_idx);
 
-			let layerY = canvasHeight / 2;
+        _render_flatten_rect(ctx, this_layer_output, _x, _y, _width, _height);
+        _draw_flatten_outline(ctx, _x, _y, _width, _height);
 
-			var _width = rectSize;
+        var { flatten_stats, flatten_image_url } = _compute_flatten_tooltip_data(this_layer_output);
 
-			var _x = layerX - _width / 2;
-			var _y = layerY - _height / 2;
+        _register_fcnn_hit_region({
+            type: "flatten",
+            shape: "rect",
+            x: _x, y: _y, w: _width, h: _height,
+            layer_idx: layer_idx,
+            layer_type: meta_info.layer_type || "Flatten",
+            output_shape: meta_info.output_shape || null,
+            input_shape: meta_info.input_shape || null,
+            flatten_stats: flatten_stats,
+            image_data_url: flatten_image_url
+        });
+    } catch (e) {
+        if (Object.keys(e).includes("message")) e = e.message;
+        assert(false, e);
+    }
+    return ctx;
+}
 
-			var this_layer_output = null;
+function _get_flatten_layer_output(layer_idx) {
+    if (!proper_layer_states_saved() || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return null;
+    var this_layer_states = layer_states_saved[`${layer_idx}`];
+    if (!this_layer_states["output"]) return null;
 
-			if (this_layer_states && this_layer_states["output"]) {
-				var output = this_layer_states["output"];
-				var shape = get_shape_from_array(output);
+    var output = this_layer_states["output"];
+    var shape = get_shape_from_array(output);
+    if (shape.length < 1) return null;
 
-				if (shape.length >= 1) {
-					if (Array.isArray(output)) {
-						this_layer_output = output.flat(Infinity);
-					} else {
-						this_layer_output = [output];
-					}
-				}
+    var flat = Array.isArray(output) ? output.flat(Infinity) : [output];
+    return (flat.length > 0) ? flat : null;
+}
 
-				if (!this_layer_output || this_layer_output.length === 0) {
-					this_layer_output = null;
-				}
-			}
+function _render_flatten_rect(ctx, this_layer_output, _x, _y, _width, _height) {
+    if (this_layer_output && this_layer_output.length > 0) {
+        var normalizedValues = normalizeArray(this_layer_output);
+        var numValues = normalizedValues.length;
+        var lineHeight = _height / numValues;
 
-			if (this_layer_output && this_layer_output.length > 0) {
-				var normalizedValues = normalizeArray(this_layer_output);
+        for (var val_idx = 0; val_idx < numValues; val_idx++) {
+            ctx.beginPath();
+            var colorValue = Math.abs(255 - Math.round(normalizedValues[val_idx]));
+            ctx.fillStyle = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+            ctx.fillRect(_x, _y + val_idx * lineHeight, _width, lineHeight);
+        }
+    } else {
+        ctx.fillStyle = "lightgray";
+        ctx.fillRect(_x, _y, _width, _height);
+    }
+}
 
-				var numValues = normalizedValues.length;
-				var lineHeight = _height / numValues;
+function _draw_flatten_outline(ctx, _x, _y, _width, _height) {
+    ctx.beginPath();
+    ctx.rect(_x, _y, _width, _height);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.closePath();
+}
 
-				for (var val_idx = 0; val_idx < numValues; val_idx++) {
-					ctx.beginPath();
-					var colorValue = Math.abs(255 - Math.round(normalizedValues[val_idx]));
-					var _rgb = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-					ctx.fillStyle = _rgb;
-					ctx.fillRect(_x, _y + val_idx * lineHeight, _width, lineHeight);
-				}
-			} else {
-				ctx.fillStyle = "lightgray";
-				ctx.fillRect(_x, _y, _width, _height);
-			}
-
-			// Outline
-			ctx.beginPath();
-			ctx.rect(_x, _y, _width, _height);
-			ctx.strokeStyle = "black";
-			ctx.lineWidth = 1;
-			ctx.stroke();
-			ctx.closePath();
-
-			// Build flatten stats and image for tooltip
-			var flatten_stats = null;
-			var flatten_image_url = null;
-			if (this_layer_output && this_layer_output.length > 0) {
-				flatten_stats = _compute_stats(this_layer_output);
-
-				// Create a vertical strip image for the flatten layer
-				try {
-					var stripRows = Math.min(this_layer_output.length, 256);
-					var strip2d = [];
-					var step = Math.max(1, Math.floor(this_layer_output.length / stripRows));
-					for (var si = 0; si < stripRows; si++) {
-						strip2d.push([this_layer_output[si * step]]);
-					}
-					flatten_image_url = _make_mini_canvas_data_url(strip2d, 1, stripRows, 128);
-				} catch (imgErr) {
-					flatten_image_url = null;
-				}
-			}
-
-			// Register hit region for flatten
-			const this_region = {
-				type: "flatten",
-				shape: "rect",
-				x: _x,
-				y: _y,
-				w: _width,
-				h: _height,
-				layer_idx: layer_idx,
-				layer_type: meta_info.layer_type || "Flatten",
-				output_shape: meta_info.output_shape || null,
-				input_shape: meta_info.input_shape || null,
-				flatten_stats: flatten_stats,
-				image_data_url: flatten_image_url
-			};
-			_register_fcnn_hit_region(this_region);
-
-		} else {
-			alert("Has no output shape");
-		}
-	} catch (e) {
-		if (Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-		assert(false, e);
-	}
-
-	return ctx;
+function _compute_flatten_tooltip_data(this_layer_output) {
+    var flatten_stats = null;
+    var flatten_image_url = null;
+    if (this_layer_output && this_layer_output.length > 0) {
+        flatten_stats = _compute_stats(this_layer_output);
+        try {
+            var stripRows = Math.min(this_layer_output.length, 256);
+            var strip2d = [];
+            var step = Math.max(1, Math.floor(this_layer_output.length / stripRows));
+            for (var si = 0; si < stripRows; si++) {
+                strip2d.push([this_layer_output[si * step]]);
+            }
+            flatten_image_url = _make_mini_canvas_data_url(strip2d, 1, stripRows, 128);
+        } catch (e) {}
+    }
+    return { flatten_stats, flatten_image_url };
 }
 
 // ===== UPDATED: _draw_neurons_or_conv2d with input image hit region =====
@@ -1479,309 +1433,285 @@ function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, vertic
 // ===== UPDATED: draw_layer_neurons with hit regions for each neuron/conv2d =====
 
 function draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size) {
-	var this_layer_output = null;
-	var this_layer_states = null;
+    var this_layer_output = null;
+    var this_layer_states = null;
+    var has_visualization = false;
 
-	var has_visualization = false;
+    const has_proper_layer_states_saved = proper_layer_states_saved();
 
-	const has_proper_layer_states_saved = proper_layer_states_saved();
+    // Pre-compute layer stats for Dense layers
+    var layer_stats = _compute_layer_stats_for_neurons(shapeType, has_proper_layer_states_saved, layer_idx);
 
-	if (shapeType === "rectangle_conv2d") {
-		for (var j = 0; j < numNeurons; j++) {
-			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-					var tmp_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
-					tmp_output = tmp_output[j];
-					var flat = tmp_output ? flatten(tmp_output) : [];
-					if (flat.length && Math.min(...flat) != Math.max(...flat)) {
-						has_visualization = true;
-						break;
-					}
-				}
-			}
-		}
-	}
+    // Check if conv2d has visualization data
+    if (shapeType === "rectangle_conv2d") {
+        has_visualization = _check_conv2d_has_visualization(numNeurons, has_proper_layer_states_saved, layer_idx);
+    }
 
-	// Compute layer-wide stats for neurons (Dense layers)
-	var layer_flat_output = null;
-	var layer_stats = null;
-	if (shapeType === "circle" && has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-		try {
-			layer_flat_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
-			if (layer_flat_output && layer_flat_output.length > 0) {
-				layer_stats = _compute_stats(layer_flat_output);
-			}
-		} catch (e) {
-			layer_flat_output = null;
-			layer_stats = null;
-		}
-	}
+    for (let j = 0; j < numNeurons; j++) {
+        ctx.beginPath();
 
-	for (let j = 0; j < numNeurons; j++) {
-		ctx.beginPath();
-		var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
-		ctx.beginPath();
+        if (shapeType === "circle") {
+            ctx = _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, layerX, maxShapeSize, layer_idx, meta_info, has_proper_layer_states_saved, layer_stats, canvasWidth, font_size);
+        } else if (shapeType === "rectangle_conv2d") {
+            ctx = _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY, layerX, verticalSpacing, layer_idx, meta_info, has_proper_layer_states_saved, has_visualization, n, m, minVal, maxVal, maxShapeSize);
+        }
+    }
 
-		if (shapeType === "circle") {
-			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-				this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
-			}
+    return ctx;
+}
 
-			var availableSpace = verticalSpacing / 2 - 2;
-			var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
-			if (radius >= 0) {
-				ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
-			} else {
-				log_once(`Found negative radius! Radius: ${radius}, maxShapeSize: ${maxShapeSize}, availableSpace: ${availableSpace}`);
-				return ctx;
-			}
+function _compute_layer_stats_for_neurons(shapeType, hasProperStates, layer_idx) {
+    if (shapeType !== "circle" || !hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) {
+        return null;
+    }
+    try {
+        var layer_flat_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+        if (layer_flat_output && layer_flat_output.length > 0) {
+            return _compute_stats(layer_flat_output);
+        }
+    } catch (e) {}
+    return null;
+}
 
-			ctx = annotate_output_neurons(canvasWidth, ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
+function _check_conv2d_has_visualization(numNeurons, hasProperStates, layer_idx) {
+    if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return false;
+    if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length !== 4) return false;
 
-			// Register neuron hit region
-			var activation_value = null;
-			if (this_layer_output && j < this_layer_output.length) {
-				activation_value = this_layer_output[j];
-			}
+    var tmp_all = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+    for (var j = 0; j < numNeurons; j++) {
+        var flat = tmp_all[j] ? flatten(tmp_all[j]) : [];
+        if (flat.length && Math.min(...flat) !== Math.max(...flat)) {
+            return true;
+        }
+    }
+    return false;
+}
 
-			var this_region = {
-				type: "neuron",
-				shape: "circle",
-				x: layerX,
-				y: neuronY,
-				radius: radius + 2, // slight padding for easier hover
-				layer_idx: layer_idx,
-				neuron_idx: j,
-				layer_type: meta_info.layer_type || "Dense",
-				activation_value: activation_value,
-				layer_stats: layer_stats,
-				output_shape: meta_info.output_shape || null,
-				input_shape: meta_info.input_shape || null,
-				label: (function () {
-					try {
-						var nr_layers = model?.layers?.length;
-						if (layer_idx == nr_layers - 1 && labels && Array.isArray(labels) && labels[j]) {
-							return labels[j];
-						}
-					} catch (e) { }
-					return null;
-				})()
-			};
-			_register_fcnn_hit_region(this_region);
+function _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, layerX, maxShapeSize, layer_idx, meta_info, hasProperStates, layer_stats, canvasWidth, font_size) {
+    var neuronY = (j - (numNeurons - 1) / 2) * verticalSpacing + layerY;
+    var this_layer_output = null;
 
-		} else if (shapeType === "rectangle_conv2d") {
-			neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+    if (hasProperStates && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
+        this_layer_output = flatten(layer_states_saved[`${layer_idx}`]["output"][0]);
+    }
 
-			var conv_layer_output_for_channel = null;
+    var availableSpace = verticalSpacing / 2 - 2;
+    var radius = Math.min(maxShapeSize, Math.max(4, availableSpace));
 
-			if (has_proper_layer_states_saved && layer_states_saved && layer_states_saved[`${layer_idx}`]) {
-				if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length == 4) {
-					this_layer_output = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
-					conv_layer_output_for_channel = this_layer_output[j];
-				}
-			}
+    if (radius < 0) {
+        log_once(`Found negative radius! Radius: ${radius}`);
+        return ctx;
+    }
 
-			var conv_rect_w, conv_rect_h, conv_rect_x, conv_rect_y;
+    ctx = draw_neuron_with_normalized_color(ctx, this_layer_output, layerX, neuronY, radius, j);
+    ctx = annotate_output_neurons(canvasWidth, ctx, layer_idx, numNeurons, j, font_size, layerX, neuronY);
 
-			if (has_visualization) {
-				ctx = draw_filled_kernel_rectangle(ctx, meta_info, conv_layer_output_for_channel, n, m, minVal, maxVal, layerX, neuronY);
+    // Register hit region
+    var activation_value = (this_layer_output && j < this_layer_output.length) ? this_layer_output[j] : null;
+    _register_fcnn_hit_region({
+        type: "neuron",
+        shape: "circle",
+        x: layerX,
+        y: neuronY,
+        radius: radius + 2,
+        layer_idx: layer_idx,
+        neuron_idx: j,
+        layer_type: meta_info.layer_type || "Dense",
+        activation_value: activation_value,
+        layer_stats: layer_stats,
+        output_shape: meta_info.output_shape || null,
+        input_shape: meta_info.input_shape || null,
+        label: _get_neuron_label(layer_idx, j)
+    });
 
-				// Compute rectangle dimensions for hit region
-				var _ww_hit = Number(meta_info?.input_shape?.[1]) || (conv_layer_output_for_channel ? conv_layer_output_for_channel[0].length : 10);
-				var _hh_hit = Number(meta_info?.input_shape?.[2]) || (conv_layer_output_for_channel ? conv_layer_output_for_channel.length : 10);
-				conv_rect_w = _ww_hit;
-				conv_rect_h = _hh_hit;
-				conv_rect_x = layerX - _ww_hit / 2;
-				conv_rect_y = neuronY - _hh_hit / 2;
-			} else {
-				ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
+    return ctx;
+}
 
-				var _ww_empty = Math.min((meta_info["kernel_size_x"] || 3) * 3, verticalSpacing - 2);
-				var _hh_empty = Math.min((meta_info["kernel_size_y"] || 3) * 3, verticalSpacing - 2);
-				conv_rect_w = _ww_empty;
-				conv_rect_h = _hh_empty;
-				conv_rect_x = layerX - _ww_empty / 2;
-				conv_rect_y = neuronY - _hh_empty / 2;
-			}
+function _get_neuron_label(layer_idx, j) {
+    try {
+        var nr_layers = model?.layers?.length;
+        if (layer_idx == nr_layers - 1 && labels && Array.isArray(labels) && labels[j]) {
+            return labels[j];
+        }
+    } catch (e) {}
+    return null;
+}
 
-			// Compute channel stats and mini image for tooltip
-			// *** THIS IS THE FIX: use _make_mini_canvas_data_url_inverted with the same
-			// *** global minVal/maxVal that draw_filled_kernel_rectangle uses ***
-			var channel_stats = null;
-			var channel_image_url = null;
-			if (conv_layer_output_for_channel && Array.isArray(conv_layer_output_for_channel) && conv_layer_output_for_channel.length > 0) {
-				try {
-					var flat_channel = flatten(conv_layer_output_for_channel);
-					channel_stats = _compute_stats(flat_channel);
-					// Use the INVERTED renderer with the SAME global minVal/maxVal
-					// that draw_filled_kernel_rectangle receives, so the tooltip
-					// image is pixel-identical to what's drawn on the canvas.
-					channel_image_url = _make_mini_canvas_data_url_inverted(conv_layer_output_for_channel, conv_layer_output_for_channel[0].length, conv_layer_output_for_channel.length, 80, minVal, maxVal);
-				} catch (e) {
-					channel_stats = null;
-					channel_image_url = null;
-				}
-			}
+function _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY, layerX, verticalSpacing, layer_idx, meta_info, hasProperStates, has_visualization, n, m, minVal, maxVal, maxShapeSize) {
+    var neuronY = (j - (numNeurons - 1) / 2) * maxSpacingConv2d + layerY;
+    var conv_layer_output_for_channel = _get_conv2d_channel_output(hasProperStates, layer_idx, j);
 
-			// Register conv2d hit region
-			var this_region = {
-				type: "conv2d",
-				shape: "rect",
-				x: conv_rect_x,
-				y: conv_rect_y,
-				w: conv_rect_w,
-				h: conv_rect_h,
-				layer_idx: layer_idx,
-				neuron_idx: j,
-				layer_type: meta_info.layer_type || "Conv2D",
-				kernel_size_x: meta_info.kernel_size_x,
-				kernel_size_y: meta_info.kernel_size_y,
-				output_shape: meta_info.output_shape || null,
-				input_shape: meta_info.input_shape || null,
-				channel_stats: channel_stats,
-				image_data_url: channel_image_url
-			};
-			_register_fcnn_hit_region(this_region);
-		}
-	}
+    var conv_rect_dims = _draw_and_get_conv2d_rect(ctx, has_visualization, meta_info, conv_layer_output_for_channel, n, m, minVal, maxVal, layerX, neuronY, verticalSpacing);
 
-	return ctx;
+    // Compute channel stats and image for tooltip
+    var { channel_stats, channel_image_url } = _compute_conv2d_channel_tooltip_data(conv_layer_output_for_channel, minVal, maxVal);
+
+    _register_fcnn_hit_region({
+        type: "conv2d",
+        shape: "rect",
+        x: conv_rect_dims.x,
+        y: conv_rect_dims.y,
+        w: conv_rect_dims.w,
+        h: conv_rect_dims.h,
+        layer_idx: layer_idx,
+        neuron_idx: j,
+        layer_type: meta_info.layer_type || "Conv2D",
+        kernel_size_x: meta_info.kernel_size_x,
+        kernel_size_y: meta_info.kernel_size_y,
+        output_shape: meta_info.output_shape || null,
+        input_shape: meta_info.input_shape || null,
+        channel_stats: channel_stats,
+        image_data_url: channel_image_url
+    });
+
+    return ctx;
+}
+
+function _get_conv2d_channel_output(hasProperStates, layer_idx, j) {
+    if (!hasProperStates || !layer_states_saved || !layer_states_saved[`${layer_idx}`]) return null;
+    if (get_shape_from_array(layer_states_saved[`${layer_idx}`]["output"]).length !== 4) return null;
+    var transformed = transform_array_whd_dwh(layer_states_saved[`${layer_idx}`]["output"][0]);
+    return transformed[j] || null;
+}
+
+function _draw_and_get_conv2d_rect(ctx, has_visualization, meta_info, channelOutput, n, m, minVal, maxVal, layerX, neuronY, verticalSpacing) {
+    if (has_visualization) {
+        ctx = draw_filled_kernel_rectangle(ctx, meta_info, channelOutput, n, m, minVal, maxVal, layerX, neuronY);
+        var _ww = Number(meta_info?.input_shape?.[1]) || (channelOutput ? channelOutput[0].length : 10);
+        var _hh = Number(meta_info?.input_shape?.[2]) || (channelOutput ? channelOutput.length : 10);
+        return { x: layerX - _ww / 2, y: neuronY - _hh / 2, w: _ww, h: _hh };
+    } else {
+        ctx = draw_empty_kernel_rectangle(ctx, meta_info, verticalSpacing, layerX, neuronY);
+        var _ww = Math.min((meta_info["kernel_size_x"] || 3) * 3, verticalSpacing - 2);
+        var _hh = Math.min((meta_info["kernel_size_y"] || 3) * 3, verticalSpacing - 2);
+        return { x: layerX - _ww / 2, y: neuronY - _hh / 2, w: _ww, h: _hh };
+    }
+}
+
+function _compute_conv2d_channel_tooltip_data(channelOutput, minVal, maxVal) {
+    var channel_stats = null;
+    var channel_image_url = null;
+    if (channelOutput && Array.isArray(channelOutput) && channelOutput.length > 0) {
+        try {
+            var flat_channel = flatten(channelOutput);
+            channel_stats = _compute_stats(flat_channel);
+            channel_image_url = _make_mini_canvas_data_url_inverted(channelOutput, channelOutput[0].length, channelOutput.length, 80, minVal, maxVal);
+        } catch (e) {}
+    }
+    return { channel_stats, channel_image_url };
 }
 
 // ===== UPDATED: draw_layer_connections with hit region for connection areas =====
 
 function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
-	try {
-		var meta = get_layer_meta(meta_infos, layer_nr);
-		var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
+    try {
+        var params = _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d);
+        var { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample } = params;
 
-		var layer_type = meta.layer_type;
-		var next_type = next_meta.layer_type;
+        var convLike = (currNeurons > 512 || nextNeurons > 512);
+        var estimateCount = currNeurons * nextNeurons;
 
-		var currX = (layer_nr + 1) * layerSpacing + maxRadius;
-		var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
+        if (convLike) {
+            _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.1);
+        } else if (estimateCount > 300000) {
+            _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, _weight_stats, _weight_data_sample, 0.08);
+        } else {
+            _draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, weightInfo, _weight_stats, _weight_data_sample);
+        }
+    } catch (e) {
+        if (e && e.message) e = e.message;
+        assert(false, e);
+    }
+}
 
-		var currNeurons = layers[layer_nr];
-		var nextNeurons = layers[layer_nr + 1];
+function _prepare_connection_params(layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d) {
+    var meta = get_layer_meta(meta_infos, layer_nr);
+    var next_meta = get_layer_meta(meta_infos, layer_nr + 1);
 
-		if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
-			if (meta.input_shape) currNeurons = meta.input_shape[meta.input_shape.length - 1];
-		}
-		if (next_type === "Flatten" || next_type === "MaxPooling2D") {
-			if (next_meta.output_shape) nextNeurons = Math.min(64, next_meta.output_shape[next_meta.output_shape.length - 1]);
-		}
+    var currX = (layer_nr + 1) * layerSpacing + maxRadius;
+    var nextX = (layer_nr + 2) * layerSpacing - maxRadius;
 
-		if (layer_type === "LayerNormalization") currNeurons = 1;
-		if (next_type === "LayerNormalization") nextNeurons = 1;
+    var currNeurons = _resolve_neuron_count(layers[layer_nr], meta, "input");
+    var nextNeurons = _resolve_neuron_count(layers[layer_nr + 1], next_meta, "output");
 
-		var currSpacing = compute_spacing(layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
-		var nextSpacing = compute_spacing(next_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+    if (meta.layer_type === "LayerNormalization") currNeurons = 1;
+    if (next_meta.layer_type === "LayerNormalization") nextNeurons = 1;
 
-		var currYs = new Array(currNeurons);
-		for (var i = 0; i < currNeurons; i++) currYs[i] = compute_neuron_y(i, currNeurons, currSpacing, layerY, layer_type, _height);
+    var currSpacing = compute_spacing(meta.layer_type, currNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
+    var nextSpacing = compute_spacing(next_meta.layer_type, nextNeurons, canvasHeight, maxSpacing, maxSpacingConv2d);
 
-		var nextYs = new Array(nextNeurons);
-		for (var j = 0; j < nextNeurons; j++) nextYs[j] = compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_type, _height);
+    var currYs = Array.from({ length: currNeurons }, (_, i) => compute_neuron_y(i, currNeurons, currSpacing, layerY, meta.layer_type, _height));
+    var nextYs = Array.from({ length: nextNeurons }, (_, j) => compute_neuron_y(j, nextNeurons, nextSpacing, layerY, next_meta.layer_type, _height));
 
-		var convLike = (currNeurons > 512 || nextNeurons > 512);
+    var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+    var _weight_stats = null;
+    var _weight_data_sample = null;
+    if (weightInfo && weightInfo.data) {
+        var sampleLimit = Math.min(weightInfo.data.length, 50000);
+        _weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
+        _weight_stats = _compute_stats(_weight_data_sample);
+    }
 
-		// Get weight data for this layer pair
-		var weightInfo = get_layer_weight_data(layer_nr, meta_infos);
+    return { currX, nextX, currNeurons, nextNeurons, currYs, nextYs, weightInfo, _weight_stats, _weight_data_sample };
+}
 
-		// Pre-compute weight_stats and weight_data sample for tooltip histogram
-		var _weight_stats = null;
-		var _weight_data_sample = null;
-		if (weightInfo && weightInfo.data) {
-			var sampleLimit = Math.min(weightInfo.data.length, 50000);
-			_weight_data_sample = Array.from(weightInfo.data.slice(0, sampleLimit));
-			_weight_stats = _compute_stats(_weight_data_sample);
-		}
+function _resolve_neuron_count(defaultCount, meta, direction) {
+    var layer_type = meta.layer_type;
+    if (layer_type === "Flatten" || layer_type === "MaxPooling2D") {
+        var shape = direction === "input" ? meta.input_shape : meta.output_shape;
+        if (shape) {
+            var count = shape[shape.length - 1];
+            return direction === "output" ? Math.min(64, count) : count;
+        }
+    }
+    return defaultCount;
+}
 
-		if (convLike) {
-			var yMin = Math.min(currYs[0], nextYs[0]);
-			var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
-			ctx.save();
-			ctx.globalAlpha = 0.1;
-			ctx.fillStyle = is_dark_mode ? "#8090b0" : "#606784";
-			ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
-			ctx.restore();
+function _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr, currNeurons, nextNeurons, weight_stats, weight_data, alpha) {
+    var yMin = Math.min(currYs[0], nextYs[0]);
+    var yMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]);
 
-			// Register connection hit region WITH weight_data for histogram
-			var this_region = {
-				type: "connection",
-				shape: "rect",
-				x: currX,
-				y: yMin,
-				w: nextX - currX,
-				h: Math.max(1, yMax - yMin),
-				from_layer: layer_nr,
-				to_layer: layer_nr + 1,
-				from_neurons: currNeurons,
-				to_neurons: nextNeurons,
-				weight_stats: _weight_stats,
-				weight_data: _weight_data_sample
-			};
-			_register_fcnn_hit_region(this_region);
-			return;
-		}
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = is_dark_mode ? "#8090b0" : "#606784";
+    ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
+    ctx.restore();
 
-		var estimateCount = currNeurons * nextNeurons;
-		var heavyThreshold = 300000;
-		if (estimateCount > heavyThreshold) {
-			var yMinB = Math.min(currYs[0], nextYs[0]) - 2;
-			var yMaxB = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + 2;
-			ctx.save();
-			ctx.globalAlpha = 0.08;
-			ctx.fillStyle = is_dark_mode ? "#9ea3b5" : "#767b8d";
-			ctx.fillRect(currX, yMinB, nextX - currX, Math.max(1, yMaxB - yMinB));
-			ctx.restore();
+    _register_fcnn_hit_region({
+        type: "connection",
+        shape: "rect",
+        x: currX, y: yMin,
+        w: nextX - currX,
+        h: Math.max(1, yMax - yMin),
+        from_layer: layer_nr,
+        to_layer: layer_nr + 1,
+        from_neurons: currNeurons,
+        to_neurons: nextNeurons,
+        weight_stats: weight_stats,
+        weight_data: weight_data
+    });
+}
 
-			// Register connection hit region WITH weight_data for histogram
-			var this_region = {
-				type: "connection",
-				shape: "rect",
-				x: currX,
-				y: yMinB,
-				w: nextX - currX,
-				h: Math.max(1, yMaxB - yMinB),
-				from_layer: layer_nr,
-				to_layer: layer_nr + 1,
-				from_neurons: currNeurons,
-				to_neurons: nextNeurons,
-				weight_stats: _weight_stats,
-				weight_data: _weight_data_sample
-			};
-			_register_fcnn_hit_region(this_region);
-			return;
-		}
+function _draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, weightInfo, weight_stats, weight_data) {
+    var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
+    ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
 
-		// Render with weight colors (or fallback)
-		var offInfo = _render_layer_pair_to_offscreen(layer_nr, currX, nextX, currYs, nextYs, currX, nextX, canvasHeight, maxRadius, weightInfo);
-		ctx.drawImage(offInfo.canvas, currX - offInfo.pad, 0);
+    var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
+    var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
 
-		// Register connection hit region for the rendered area WITH weight_data
-		var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
-		var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
-		var this_region = {
-			type: "connection",
-			shape: "rect",
-			x: currX,
-			y: connYMin,
-			w: nextX - currX,
-			h: Math.max(1, connYMax - connYMin),
-			from_layer: layer_nr,
-			to_layer: layer_nr + 1,
-			from_neurons: currNeurons,
-			to_neurons: nextNeurons,
-			weight_stats: _weight_stats,
-			weight_data: _weight_data_sample
-		};
-		_register_fcnn_hit_region(this_region);
-
-	} catch (e) {
-		if (e && e.message) e = e.message;
-		assert(false, e);
-	}
+    _register_fcnn_hit_region({
+        type: "connection",
+        shape: "rect",
+        x: currX, y: connYMin,
+        w: nextX - currX,
+        h: Math.max(1, connYMax - connYMin),
+        from_layer: layer_nr,
+        to_layer: layer_nr + 1,
+        from_neurons: currNeurons,
+        to_neurons: nextNeurons,
+        weight_stats: weight_stats,
+        weight_data: weight_data
+    });
 }
 
 // ===== HELPER FUNCTIONS =====
