@@ -279,72 +279,66 @@ function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos,
 
 // ===== UPDATED: draw_fcnn (main entry) =====
 
+function _setup_fcnn_canvas() {
+    var canvas = document.getElementById("fcnn_canvas");
+    if (!canvas) {
+        canvas = document.createElement("canvas");
+        canvas.id = "fcnn_canvas";
+        document.body.appendChild(canvas);
+    }
+    return canvas;
+}
+
+function _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight) {
+    var maxNeurons = Math.max(...layers);
+    var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+    var layerSpacing = canvasWidth / (layers.length + 1);
+    var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
+    var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+    var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
+
+    return { maxNeurons, maxRadius, layerSpacing, maxSpacing, maxShapeSize, font_size };
+}
+
+function _compute_max_conv2d_spacing(meta_infos, maxSpacing) {
+    var max_conv2d_height = 0;
+    meta_infos.forEach(function (i) {
+        if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
+            var os = i.output_shape;
+            var height = os && os[1] ? os[1] : 0;
+            if (height > max_conv2d_height) {
+                max_conv2d_height = height;
+            }
+        }
+    });
+    return maxSpacing + max_conv2d_height;
+}
+
 async function draw_fcnn(...args) {
-	assert(args.length == 3, "draw_fcnn must have 3 arguments");
+    assert(args.length == 3, "draw_fcnn must have 3 arguments");
+    if (is_setting_config) return;
 
-	if (is_setting_config) {
-		return;
-	}
+    var args_hash = await md5(JSON.stringify(args));
+    if (last_fcnn_hash == args_hash) return;
+    args_hash = last_fcnn_hash;
 
-	var args_hash = await md5(JSON.stringify(args));
+    var [layers, _labels, meta_infos] = args;
 
-	if (last_fcnn_hash == args_hash) {
-		return;
-	}
+    var canvas = _setup_fcnn_canvas();
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-	args_hash = last_fcnn_hash;
+    var ghw = $("#graphs_here").width();
+    var canvasWidth = Math.max(800, ghw);
+    var canvasHeight = 800;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-	var layers = args[0];
-	var _labels = args[1];
-	var meta_infos = args[2];
+    var dims = _compute_fcnn_dimensions(layers, canvasWidth, canvasHeight);
+    var maxSpacingConv2d = _compute_max_conv2d_spacing(meta_infos, dims.maxSpacing);
 
-	var canvas = document.getElementById("fcnn_canvas");
-
-	if (!canvas) {
-		canvas = document.createElement("canvas");
-		canvas.id = "fcnn_canvas";
-		document.body.appendChild(canvas);
-	}
-
-	var ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-	var ghw = $("#graphs_here").width();
-
-	var canvasWidth = Math.max(800, ghw);
-	var canvasHeight = 800;
-
-	canvas.width = canvasWidth;
-	canvas.height = canvasHeight;
-	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-	var maxNeurons = Math.max(...layers);
-	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
-
-	var layerSpacing = canvasWidth / (layers.length + 1);
-	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
-	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
-
-	var max_conv2d_height = 0;
-
-	meta_infos.forEach(function (i, e) {
-		if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
-			var os = i.output_shape;
-			var height = os && os[1] ? os[1] : 0;
-			var width = os && os[2] ? os[2] : 0;
-
-			if (height > max_conv2d_height) {
-				max_conv2d_height = height;
-			}
-		}
-	});
-
-	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
-
-	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
-
-	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
-
-	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
+    _draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, dims.layerSpacing, _labels, dims.font_size);
+    await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, dims.layerSpacing, canvasHeight, dims.maxSpacing, dims.maxShapeSize, dims.maxRadius, maxSpacingConv2d, dims.font_size);
 }
 
 function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
