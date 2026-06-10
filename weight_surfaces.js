@@ -717,12 +717,6 @@ var visualize_model_weights = async function(container_or_id, options = {}, forc
 			<span style="font-size:11px;opacity:0.7">${layerSummaries.join(' · ')}</span>
 		`;
 
-		// ─── CI/Test mode: skip expensive Plotly rendering entirely ──────────
-		if (typeof is_running_test !== 'undefined' && is_running_test) {
-			show_message_in_container(container, '⚡ Test mode: skipping expensive weight surface plots.');
-			return;
-		}
-
 		// Render each layer's weights
 		for (let li = 0; li < layers.length; li++) {
 			const layer = layers[li];
