@@ -1363,7 +1363,7 @@ function _register_input_image_hit_region(n, m, flattened, first_layer_input, fo
 		input_image_url = _make_mini_canvas_rgb_data_url(first_layer_input, 96);
 	} catch (e) {}
 
-	_register_fcnn_hit_region({
+	const this_region = {
 		type: "input_image",
 		shape: "rect",
 		x: _first_image_x,
@@ -1376,7 +1376,9 @@ function _register_input_image_hit_region(n, m, flattened, first_layer_input, fo
 		channels: 3,
 		pixel_stats: pixel_stats,
 		image_data_url: input_image_url
-	});
+	};
+
+	_register_fcnn_hit_region(this_region);
 }
 
 function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
