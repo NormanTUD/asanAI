@@ -1499,18 +1499,18 @@ function _safe_4d_result_to_array(tensor_4d, caller_name) {
 			arr = array_sync(tensor_4d);
 		} else {
 			err("[" + caller_name + "] Unexpected result shape: " + JSON.stringify(tensor_4d.shape));
-			dispose(tensor_4d);
+			dispose(tensor_4d); // await not possible
 			return null;
 		}
 
 		// Validate the array is not empty
 		if (!arr || !Array.isArray(arr) || arr.length === 0) {
 			err("[" + caller_name + "] array_sync produced empty/invalid result.");
-			dispose(tensor_4d);
+			dispose(tensor_4d); // await not possible
 			return null;
 		}
 
-		dispose(tensor_4d);
+		dispose(tensor_4d); // await not possible
 		return arr;
 	} catch (e) {
 		err("[" + caller_name + "] Failed to convert tensor to array: " + e);
@@ -1606,7 +1606,7 @@ function _augment_custom_invert(resized_image, label_nr, divide_by, x, y) {
 
 		if (!inverted_arr || !Array.isArray(inverted_arr) || inverted_arr.length === 0) {
 			err("[_augment_custom_invert] array_sync of inverted tensor produced invalid result.");
-			dispose(inverted);
+			dispose(inverted); // await not possible
 			return [x, y];
 		}
 
@@ -1614,7 +1614,7 @@ function _augment_custom_invert(resized_image, label_nr, divide_by, x, y) {
 		x.push(inverted_arr);
 		y.push(label_nr);
 
-		dispose(inverted);
+		dispose(inverted); // await not possible
 	} catch (e) {
 		err("[_augment_custom_invert] Error: " + e);
 	}
@@ -1649,7 +1649,7 @@ function _augment_custom_invert_from_array(image_arr, label_nr, divide_by, x, y,
 		var inverted_arr = array_sync(inverted);
 
 		if (!inverted_arr || !Array.isArray(inverted_arr) || inverted_arr.length === 0) {
-			dispose(inverted);
+			dispose(inverted); // await not possible
 			return [x, y];
 		}
 
@@ -1657,7 +1657,7 @@ function _augment_custom_invert_from_array(image_arr, label_nr, divide_by, x, y,
 		x.push(inverted_arr);
 		y.push(label_nr);
 
-		dispose(inverted);
+		dispose(inverted); // await not possible
 	} catch (e) {
 		err("[_augment_custom_invert_from_array] Error: " + e);
 	}
@@ -1696,7 +1696,7 @@ function _augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y) {
 			try {
 				var display_tensor = tensor(flipped_arr);
 				add_tensor_as_image_to_photos(display_tensor);
-				dispose(display_tensor);
+				dispose(display_tensor); // await not possible
 			} catch (e) {
 				// Non-critical, just skip photo display
 			}
