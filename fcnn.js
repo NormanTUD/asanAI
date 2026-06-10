@@ -1324,62 +1324,62 @@ function _compute_flatten_tooltip_data(this_layer_output) {
 	return { flatten_stats, flatten_image_url };
 }
 
-function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
-	assert(typeof (ctx) == "object", `ctx is not an object but ${typeof (ctx)}`);
-
-	var n, m, minVal, maxVal;
-
+function _try_draw_first_layer_input_image(ctx, layer_idx, font_size) {
 	if (
-		Object.keys(layer_states_saved).length &&
-		Object.keys(layer_states_saved).includes("0") &&
-		get_shape_from_array(layer_states_saved["0"]["input"]).length == 4 &&
-		get_shape_from_array(layer_states_saved["0"]["input"])[3] == 3 &&
-		layer_idx == 0
+		!Object.keys(layer_states_saved).length ||
+		!Object.keys(layer_states_saved).includes("0") ||
+		get_shape_from_array(layer_states_saved["0"]["input"]).length !== 4 ||
+		get_shape_from_array(layer_states_saved["0"]["input"])[3] !== 3 ||
+		layer_idx !== 0
 	) {
-		var first_layer_input = layer_states_saved["0"]["input"][0];
-
-		n = first_layer_input.length;
-		m = first_layer_input[0].length;
-
-		var flattened = flatten(first_layer_input);
-
-		minVal = Math.min(...flattened);
-		maxVal = Math.max(...flattened);
-
-		ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
-
-		// Register hit region for the input image
-		var _first_image_x = 10;
-		var _first_image_y = font_size + 10;
-
-		// Build pixel stats and image URL for tooltip
-		var pixel_stats = _compute_stats(flattened);
-		var input_image_url = null;
-		try {
-			input_image_url = _make_mini_canvas_rgb_data_url(first_layer_input, 96);
-		} catch (e) {
-			input_image_url = null;
-		}
-
-		var this_region = {
-			type: "input_image",
-			shape: "rect",
-			x: _first_image_x,
-			y: _first_image_y,
-			w: m,
-			h: n,
-			layer_idx: 0,
-			img_width: m,
-			img_height: n,
-			channels: 3,
-			pixel_stats: pixel_stats,
-			image_data_url: input_image_url
-		};
-		_register_fcnn_hit_region(this_region);
+		return { ctx, n: undefined, m: undefined, minVal: undefined, maxVal: undefined };
 	}
 
-	ctx = draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
+	var first_layer_input = layer_states_saved["0"]["input"][0];
+	var n = first_layer_input.length;
+	var m = first_layer_input[0].length;
+	var flattened = flatten(first_layer_input);
+	var minVal = Math.min(...flattened);
+	var maxVal = Math.max(...flattened);
 
+	ctx = draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size);
+	_register_input_image_hit_region(n, m, flattened, first_layer_input, font_size);
+
+	return { ctx, n, m, minVal, maxVal };
+}
+
+function _register_input_image_hit_region(n, m, flattened, first_layer_input, font_size) {
+	var _first_image_x = 10;
+	var _first_image_y = font_size + 10;
+	var pixel_stats = _compute_stats(flattened);
+	var input_image_url = null;
+	try {
+		input_image_url = _make_mini_canvas_rgb_data_url(first_layer_input, 96);
+	} catch (e) {}
+
+	_register_fcnn_hit_region({
+		type: "input_image",
+		shape: "rect",
+		x: _first_image_x,
+		y: _first_image_y,
+		w: m,
+		h: n,
+		layer_idx: 0,
+		img_width: m,
+		img_height: n,
+		channels: 3,
+		pixel_stats: pixel_stats,
+		image_data_url: input_image_url
+	});
+}
+
+function _draw_neurons_or_conv2d(layer_idx, canvasWidth, numNeurons, ctx, verticalSpacing, layerY, shapeType, layerX, maxShapeSize, meta_info, maxSpacingConv2d, font_size) {
+	assert(typeof(ctx) == "object", `ctx is not an object but ${typeof(ctx)}`);
+
+	var { ctx: updatedCtx, n, m, minVal, maxVal } = _try_draw_first_layer_input_image(ctx, layer_idx, font_size);
+	ctx = updatedCtx;
+
+	ctx = draw_layer_neurons(ctx, canvasWidth, numNeurons, verticalSpacing, layerY, layer_states_saved, maxShapeSize, meta_info, n, m, minVal, maxVal, layerX, shapeType, maxSpacingConv2d, layer_idx, font_size);
 	return ctx;
 }
 
