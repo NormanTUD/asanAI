@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wie ein Transformer modulare Addition lernt</title>
+
+    <!-- Temml for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin-Modern.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+
+    <!-- Plotly for interactive plots -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 80px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 1100px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .slide-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-content::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 3px;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            color: #64ffda;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #64ffda;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        h3 {
+            font-size: 1.4em;
+            color: #80cbc4;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        p, li {
+            font-size: 1.15em;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        ul {
+            padding-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .math-block {
+            background: #1a1a3e;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.3em;
+            overflow-x: auto;
+        }
+
+        .math-inline {
+            display: inline;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #1a3a4a, #1a2a4a);
+            border-left: 4px solid #64ffda;
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .highlight-box.warning {
+            border-left-color: #ffab40;
+            background: linear-gradient(135deg, #3a2a1a, #2a2a1a);
+        }
+
+        .highlight-box.insight {
+            border-left-color: #bb86fc;
+            background: linear-gradient(135deg, #2a1a3a, #1a1a3a);
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .col {
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .plot-container {
+            width: 100%;
+            height: 350px;
+            margin: 15px 0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .canvas-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        canvas.interactive {
+            border-radius: 10px;
+            background: #1a1a2e;
+            cursor: pointer;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .slider-group label {
+            font-size: 1em;
+            color: #aaa;
+            min-width: 80px;
+        }
+
+        .slider-group input[type="range"] {
+            flex: 1;
+            min-width: 150px;
+            accent-color: #64ffda;
+        }
+
+        .slider-group .value-display {
+            font-family: 'Courier New', monospace;
+            color: #64ffda;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        /* Navigation */
+        #nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(15, 15, 35, 0.95);
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        #nav-bar button {
+            background: #1a1a3e;
+            border: 1px solid #444;
+            color: #e0e0e0;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+
+        #nav-bar button:hover {
+            background: #2a2a5e;
+            border-color: #64ffda;
+        }
+
+        #nav-bar button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        #slide-counter {
+            color: #888;
+            font-size: 0.95em;
+            font-family: monospace;
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: #64ffda;
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .shape-badge {
+            display: inline-block;
+            background: #2a1a3a;
+            border: 1px solid #bb86fc;
+            color: #bb86fc;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            background: #1a1a3e;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px 24px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .flow-arrow {
+            color: #64ffda;
+            font-size: 1.5em;
+        }
+
+        .code-block {
+            background: #0d0d1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+            margin: 15px 0;
+            white-space: pre;
+        }
+
+        .emoji-big {
+            font-size: 3em;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .slide { padding: 30px 20px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.4em; }
+            p, li { font-size: 1em; }
+            .two-col { grid-template-columns: 1fr; }
+            .math-block { font-size: 1em; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div id="presentation">
+
+    <!-- SLIDE 1: Title -->
+    <div class="slide active" id="slide-1">
+        <div class="slide-content" style="text-align:center;">
+            <div class="emoji-big">🧠 ⟶ 🔄 ⟶ ✅</div>
+            <h1>Wie ein Transformer<br>modulare Addition lernt</h1>
+            <p style="font-size:1.3em; color:#aaa; margin-top:20px;">
+                Eine interaktive Erklärung, wie ein neuronales Netz<br>
+                <span class="math-inline" data-tex="a + b \mod 113"></span> berechnet
+            </p>
+            <p style="margin-top:40px; color:#666;">Pfeiltasten ← → zum Navigieren</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: The Big Idea -->
+    <div class="slide" id="slide-2">
+        <div class="slide-content">
+            <h2>Die große Idee</h2>
+            <div class="highlight-box insight">
+                <p><strong>Modulare Addition = Drehung auf einem Kreis</strong></p>
+                <p>Wenn du 113 Punkte gleichmäßig auf einem Kreis verteilst, dann ist "+5 mod 113" dasselbe wie "5 Schritte im Uhrzeigersinn weiterdrehen".</p>
+            </div>
+            <div class="canvas-container">
+                <canvas id="circle-canvas" class="interactive" width="400" height="400"></canvas>
+            </div>
+            <div class="slider-group">
+                <label>a =</label>
+                <input type="range" id="slider-a-circle" min="0" max="112" value="17">
+                <span class="value-display" id="val-a-circle">17</span>
+                <label>b =</label>
+                <input type="range" id="slider-b-circle" min="0" max="112" value="29">
+                <span class="value-display" id="val-b-circle">29</span>
+                <label style="color:#64ffda;">a+b mod 113 =</label>
+                <span class="value-display" id="val-sum-circle" style="color:#64ffda;">46</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: Sin and Cos -->
+    <div class="slide" id="slide-3">
+        <div class="slide-content">
+            <h2>Was sind sin und cos?</h2>
+            <p>Ein Punkt auf dem Einheitskreis (Radius = 1) bei Winkel <span class="math-inline" data-tex="\theta"></span>:</p>
+            <div class="math-block" data-tex="x = \cos(\theta), \quad y = \sin(\theta)"></div>
+            <div class="two-col">
+                <div class="col">
+                    <div class="canvas-container">
+                        <canvas id="sincos-canvas" class="interactive" width="350" height="350"></canvas>
+                    </div>
+                    <div class="slider-group">
+                        <label>θ =</label>
+                        <input type="range" id="slider-theta" min="0" max="628" value="60">
+                        <span class="value-display" id="val-theta">0.60</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <h3>Wichtige Werte:</h3>
+                    <ul>
+                        <li><span class="math-inline" data-tex="\theta = 0"></span>: Punkt bei (1, 0) → rechts</li>
+                        <li><span class="math-inline" data-tex="\theta = \frac{\pi}{2}"></span>: Punkt bei (0, 1) → oben</li>
+                        <li><span class="math-inline" data-tex="\theta = \pi"></span>: Punkt bei (-1, 0) → links</li>
+                    </ul>
+                    <div class="highlight-box">
+                        <p><strong>cos(0) = 1 ist das Maximum!</strong><br>
+                        Weil der Punkt bei Winkel 0 die größte x-Koordinate hat.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: Why cos(0) = max matters -->
+    <div class="slide" id="slide-4">
+        <div class="slide-content">
+            <h2>Warum cos(a+b−c) maximal bei c = a+b?</h2>
+            <p>Stell dir vor: Du stehst auf dem Kreis bei Winkel <span class="math-inline" data-tex="w_k(a+b)"></span>. Jetzt drehst du um <span class="math-inline" data-tex="-w_k \cdot c"></span> zurück.</p>
+            <div class="highlight-box insight">
+                <p>Wenn <span class="math-inline" data-tex="c = a+b \mod 113"></span>, dann heben sich Hin- und Rückdrehung auf → Winkel = 0 → <span class="math-inline" data-tex="\cos(0) = 1"></span> = Maximum!</p>
+            </div>
+            <div class="plot-container" id="plot-cos-sweep"></div>
+            <div class="slider-group">
+                <label>a + b =</label>
+                <input type="range" id="slider-ab" min="0" max="225" value="46">
+                <span class="value-display" id="val-ab">46</span>
+                <label>Frequenz k =</label>
+                <input type="range" id="slider-k" min="1" max="56" value="14">
+                <span class="value-display" id="val-k">14</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: Multiple frequencies -->
+    <div class="slide" id="slide-5">
+        <div class="slide-content">
+            <h2>Warum mehrere Frequenzen?</h2>
+            <p>Ein einzelner <span class="math-inline" data-tex="\cos(w_k(a+b-c))"></span> hat sein Maximum bei der richtigen Antwort, aber auch fast-gleich-hohe Werte woanders. Durch <strong>Summe über 5 Frequenzen</strong> → konstruktive Interferenz nur bei der richtigen Antwort!</p>
+            <div class="math-block" data-tex="\text{Logit}(c) = \sum_{k \in \{14, 35, 41, 42, 52\}} \cos\!\left(\frac{2\pi k}{113}(a+b-c)\right)"></div>
+            <div class="plot-container" id="plot-interference"></div>
+            <div class="slider-group">
+                <label>a + b mod 113 =</label>
+                <input type="range" id="slider-ab2" min="0" max="112" value="46">
+                <span class="value-display" id="val-ab2">46</span>
+                <label>Anzahl Frequenzen:</label>
+                <input type="range" id="slider-nfreq" min="1" max="5" value="5">
+                <span class="value-display" id="val-nfreq">5</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: Network Architecture -->
+    <div class="slide" id="slide-6">
+        <div class="slide-content">
+            <h2>Die Netzwerk-Architektur</h2>
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <strong>Eingabe:</strong> a, b als One-Hot-Vektoren <span class="shape-badge">(113,)</span>
+                </div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-step" style="border-color:#64ffda;">
+                    <strong>Layer 0 – Embedding</strong> <span class="shape-badge">(128, 113)</span><br>
+                    Zahlen → Punkte auf Kreisen: <span class="math-inline" data-tex="(\cos(w_k a),\; \sin(w_k a))"></span>
+                </div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-step" style="border-color:#ffab40;">
+                    <strong>Layer 1-1 – Attention (4 Heads)</strong><br>
+                    Bringt Info von a und b zusammen → Produkte <span class="math-inline" data-tex="\cos(w_k a)\cos(w_k b)"></span>
+                </div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-step" style="border-color:#ff5252;">
+                    <strong>Layer 1-2/3/4 – MLP</strong> (128→512→128)<br>
+                    Additionstheorem: Produkte → <span class="math-inline" data-tex="\cos(w_k(a+b))"></span>
+                </div>
+                <div class="flow-arrow">↓</div>
+                <div class="flow-step" style="border-color:#bb86fc;">
+                    <strong>Layer 2 – Unembedding</strong> <span class="shape-badge">(113, 128)</span><br>
+                    Berechne <span class="math-inline" data-tex="\sum_k \cos(w_k(a+b-c))"></span> → Maximum bei richtiger Antwort
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: Embedding Detail -->
+    <div class="slide" id="slide-7">
+        <div class="slide-content">
+            <h2>Layer 0: Embedding</h2>
+            <div class="two-col">
+                <div class="col">
+                    <h3>Was passiert:</h3>
+                    <div class="math-block" data-tex="x_a = W_E \cdot t_a + p_0"></div>
+                    <p><span class="shape-badge">W_E: (128, 113)</span> × <span class="shape-badge">t_a: (113,)</span> → <span class="shape-badge">x_a: (128,)</span></p>
+                    <p>Der 128D-Vektor enthält in bestimmten <strong>2D-Unterräumen</strong> die Koordinaten:</p>
+                    <div class="math-block" data-tex="\begin{aligned}&\text{Richtung } \hat{e}_1: \quad \cos(w_k \cdot a) \\ &\text{Richtung } \hat{e}_2: \quad \sin(w_k \cdot a)\end{aligned}"></div>
+                    <p>für <span class="math-inline" data-tex="k \in \{14, 35, 41, 42, 52\}"></span></p>
+                </div>
+                <div class="col">
+                    <h3>Visualisierung: 2D-Schnitt</h3>
+                    <div class="canvas-container">
+                        <canvas id="embedding-canvas" class="interactive" width="320" height="320"></canvas>
+                    </div>
+                    <div class="slider-group">
+                        <label>Frequenz k:</label>
+                        <input type="range" id="slider-emb-k" min="0" max="4" value="0">
+                        <span class="value-display" id="val-emb-k">14</span>
+                    </div>
+                    <p style="font-size:0.9em; color:#888;">Jeder Punkt = eine Zahl 0–112 auf dem Kreis in diesem 2D-Unterraum</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: Addition Theorem -->
+    <div class="slide" id="slide-8">
+        <div class="slide-content">
+            <h2>Das Additionstheorem (Warum es funktioniert)</h2>
+            <p>Drehung um <span class="math-inline" data-tex="\alpha"></span> = Matrix:</p>
+            <div class="math-block" data-tex="R(\alpha) = \begin{pmatrix} \cos\alpha & -\sin\alpha \\ \sin\alpha & \cos\alpha \end{pmatrix}"></div>
+            <p>Zwei Drehungen hintereinander = Matrixmultiplikation:</p>
+            <div class="math-block" data-tex="R(\alpha) \cdot R(\beta) = R(\alpha + \beta)"></div>
+            <p>Wenn du die Multiplikation ausrechnest (obere linke Ecke):</p>
+            <div class="math-block" data-tex="\cos(\alpha+\beta) = \cos\alpha\cos\beta - \sin\alpha\sin\beta"></div>
+            <div class="highlight-box insight">
+                <p><strong>Intuition:</strong> Drehe um 30°, dann um 50° = Drehe um 80°. Das ist geometrisch offensichtlich. Die Formel fällt einfach aus der Matrixmultiplikation raus!</p>
+            </div>
+            <div class="canvas-container">
+                <canvas id="rotation-canvas" class="interactive" width="500" height="280"></canvas>
+            </div>
+            <div class="slider-group">
+                <label>α =</label>
+                <input type="range" id="slider-alpha" min="0" max="628" value="80">
+                <span class="value-display" id="val-alpha">0.80</span>
+                <label>β =</label>
+                <input type="range" id="slider-beta" min="0" max="628" value="130">
+                <span class="value-display" id="val-beta">1.30</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: Attention -->
+    <div class="slide" id="slide-9">
+        <div class="slide-content">
+            <h2>Layer 1-1: Attention</h2>
+            <h3>Das Problem: Information zusammenbringen</h3>
+            <p>Die Sequenz ist: Position 0 = <span class="math-inline" data-tex="a"></span>, Position 1 = <span class="math-inline" data-tex="b"></span>, Position 2 = <span class="math-inline" data-tex="="></span></p>
+            <p>Wegen causal masking kann "=" nur auf a und b schauen. Attention auf sich selbst ≈ 0.</p>
+
+            <div class="math-block" data-tex="\text{Attn}(=) = \underbrace{\sigma(s)}_{\text{Gewicht auf } a} \cdot V_a + \underbrace{(1-\sigma(s))}_{\text{Gewicht auf } b} \cdot V_b"></div>
+
+            <div class="highlight-box">
+                <p><strong>Softmax über 2 Elemente = Sigmoid:</strong></p>
+                <p><span class="math-inline" data-tex="\text{softmax}(s_a, s_b) = \left(\frac{e^{s_a}}{e^{s_a}+e^{s_b}},\; \frac{e^{s_b}}{e^{s_a}+e^{s_b}}\right) = (\sigma(s_a - s_b),\; \sigma(s_b - s_a))"></span></p>
+            </div>
+
+            <h3>Warum entstehen Produkte?</h3>
+            <p>Attention-Gewicht ≈ <span class="math-inline" data-tex="0.5 + 0.25 \cdot (\cos(w_k a) - \cos(w_k b))"></span></p>
+            <p>Value-Vektor enthält <span class="math-inline" data-tex="\cos(w_k b)"></span></p>
+            <p>Gewicht × Value = <span class="math-inline" data-tex="(0.5 + 0.25\cos(w_k a)) \cdot \cos(w_k b)"></span> → enthält <span class="math-inline" data-tex="\cos(w_k a)\cos(w_k b)"></span> !</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: Attention Interactive -->
+    <div class="slide" id="slide-10">
+        <div class="slide-content">
+            <h2>Attention: Interaktiv</h2>
+            <p>Die Sigmoid-Funktion arbeitet hier annähernd linear (Score-Differenzen sind klein):</p>
+            <div class="plot-container" id="plot-sigmoid"></div>
+            <div class="highlight-box">
+                <p><strong>"Periodische Attention-Scores"</strong> heißt: Wenn du für alle 113 möglichen Werte von <span class="math-inline" data-tex="a"></span> den Score plottest, sieht das wie eine Cosinus-Welle aus. Die gelernten Gewichte <span class="math-inline" data-tex="W_Q, W_K"></span> erzeugen das, weil das Embedding schon sin/cos enthält.</p>
+            </div>
+            <div class="plot-container" id="plot-attn-scores"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 11: MLP -->
+    <div class="slide" id="slide-11">
+        <div class="slide-content">
+            <h2>Layer 1-2/3/4: Das MLP</h2>
+            <h3>Schritt für Schritt mit Shapes:</h3>
+            <div class="code-block">Eingabe:  x ∈ ℝ¹²⁸  (Residual Stream nach Attention)
+                                    enthält Terme wie cos(wₖa)·cos(wₖb)
+
+Schritt 1: h = W_in · x + b_in     W_in: (512, 128)  →  h: (512,)
+            Jede Zeile von W_in "fragt": wie viel von Richtung X steckt in x?
+
+Schritt 2: m = ReLU(h)              m: (512,)
+            Setzt negative Werte auf 0. Ermöglicht nichtlineare Kombination.
+
+Schritt 3: out = W_out · m + b_out  W_out: (128, 512)  →  out: (128,)
+            Kombiniert die 512 Neuronen zurück in 128 Dimensionen.</div>
+
+            <div class="highlight-box insight">
+                <p><strong>Warum 512 statt 128?</strong> Das Netzwerk braucht Produkte (nichtlinear!). Mit ReLU kann man Produkte approximieren, aber dafür braucht man mehr Neuronen. Mehr Platz = mehr verschiedene nichtlineare Funktionen gleichzeitig.</p>
+            </div>
+
+            <h3>Was die Neuronen tun:</h3>
+            <p>84.6% der 512 Neuronen berechnen ein <strong>Grad-2-Polynom einer einzelnen Frequenz</strong>. Z.B.:</p>
+            <div class="math-block" data-tex="\text{Neuron}_i \approx A\cos(w_k a)\cos(w_k b) + B\sin(w_k a)\sin(w_k b) + C"></div>
+            <p>Durch <span class="math-inline" data-tex="W_{out}"></span> werden diese kombiniert zu <span class="math-inline" data-tex="\cos(w_k(a+b))"></span>.</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 12: ReLU trick -->
+    <div class="slide" id="slide-12">
+        <div class="slide-content">
+            <h2>Wie ReLU Produkte berechnet</h2>
+            <p>ReLU(x) = max(0, x). Klingt simpel, aber:</p>
+            <div class="math-block" data-tex="\text{ReLU}(a+b)^2 - \text{ReLU}(a-b)^2 = \begin{cases} (a+b)^2 - (a-b)^2 = 4ab & \text{wenn beide > 0} \\ \text{ähnlich sonst} \end{cases}"></div>
+            <p>Durch geschickte Linearkombinationen von ReLU-Ausgaben kann man <strong>beliebige Polynome</strong> approximieren!</p>
+            <div class="plot-container" id="plot-relu"></div>
+            <div class="slider-group">
+                <label>a =</label>
+                <input type="range" id="slider-relu-a" min="-300" max="300" value="150">
+                <span class="value-display" id="val-relu-a">1.50</span>
+                <label>b =</label>
+                <input type="range" id="slider-relu-b" min="-300" max="300" value="80">
+                <span class="value-display" id="val-relu-b">0.80</span>
+                <label>a·b =</label>
+                <span class="value-display" id="val-relu-product" style="color:#64ffda;">1.20</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 13: Unembedding -->
+    <div class="slide" id="slide-13">
+        <div class="slide-content">
+            <h2>Layer 2: Unembedding</h2>
+            <h3>Die letzte Multiplikation:</h3>
+            <div class="math-block" data-tex="\text{Logits} = W_U \cdot x^{(2)} \quad \quad W_U: (113, 128), \;\; x^{(2)}: (128,) \;\;\rightarrow\;\; \text{Logits}: (113,)"></div>
+            <p>Jede der 113 Zeilen von <span class="math-inline" data-tex="W_U"></span> ist ein "Prototyp-Vektor" für eine Antwort <span class="math-inline" data-tex="c"></span>. Das Skalarprodukt misst: <em>Wie ähnlich ist der aktuelle Zustand dem Prototyp für c?</em></p>
+
+            <h3>Was heißt "Rang 10"?</h3>
+            <div class="highlight-box">
+                <p><strong>Rang</strong> = Anzahl der wirklich unabhängigen Richtungen in einer Matrix.</p>
+                <p>Die Matrix <span class="math-inline" data-tex="W_L = W_U \cdot W_{out}"></span> hat Shape (113, 512), könnte also 113 unabhängige Zeilen haben. Aber sie hat effektiv nur <strong>10 unabhängige Richtungen</strong>: für jede der 5 Frequenzen je ein cos- und ein sin-Vektor.</p>
+            </div>
+
+            <div class="math-block" data-tex="W_L \approx \sum_{k} \underbrace{\vec{\cos}(w_k)}_{\in \mathbb{R}^{113}} \cdot \underbrace{u_k^T}_{\in \mathbb{R}^{512}} + \underbrace{\vec{\sin}(w_k)}_{\in \mathbb{R}^{113}} \cdot \underbrace{v_k^T}_{\in \mathbb{R}^{512}}"></div>
+
+            <p>Dabei ist <span class="math-inline" data-tex="\vec{\cos}(w_k)"></span> ein Vektor mit 113 Einträgen: der <span class="math-inline" data-tex="c"></span>-te Eintrag ist <span class="math-inline" data-tex="\cos(w_k \cdot c)"></span>.</p>
+
+            <div class="highlight-box insight">
+                <p><strong>Intuition:</strong> Die Unembedding-Schicht "fragt" nur 10 Fragen: "Wie viel cos/sin jeder Frequenz steckt im MLP-Output?" Und verteilt die Antworten als Cosinus-Wellen über die 113 Logits.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 14: Final Formula -->
+    <div class="slide" id="slide-14">
+        <div class="slide-content">
+            <h2>Das Endergebnis: Alles zusammen</h2>
+            <p>Wenn man Unembedding × MLP-Output ausrechnet:</p>
+            <div class="math-block" data-tex="\text{Logit}(c) = \sum_k \left[\cos(w_k c) \cdot \underbrace{u_k^T m}_{\approx \cos(w_k(a+b))} + \sin(w_k c) \cdot \underbrace{v_k^T m}_{\approx \sin(w_k(a+b))}\right]"></div>
+            <p>Mit dem Additionstheorem <strong>rückwärts</strong>:</p>
+            <div class="math-block" data-tex="\cos(\alpha)\cos(\beta) + \sin(\alpha)\sin(\beta) = \cos(\alpha - \beta)"></div>
+            <p>wird daraus:</p>
+            <div class="math-block" data-tex="\boxed{\text{Logit}(c) = \sum_{k \in \{14,35,41,42,52\}} \cos\!\left(\frac{2\pi k}{113}(a+b-c)\right)}"></div>
+            <div class="highlight-box insight">
+                <p>🎯 <strong>Maximum bei <span class="math-inline" data-tex="c = a+b \mod 113"></span></strong>, weil dort alle 5 Cosinus-Terme gleichzeitig ihr Maximum (= 1) erreichen. Überall sonst: destruktive Interferenz!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 15: Full Pipeline Interactive -->
+    <div class="slide" id="slide-15">
+        <div class="slide-content">
+            <h2>Die volle Pipeline: Interaktiv</h2>
+            <p>Wähle <span class="math-inline" data-tex="a"></span> und <span class="math-inline" data-tex="b"></span>, und sieh wie das Netzwerk die Antwort berechnet:</p>
+            <div class="slider-group">
+                <label>a =</label>
+                <input type="range" id="slider-pipe-a" min="0" max="112" value="37">
+                <span class="value-display" id="val-pipe-a">37</span>
+                <label>b =</label>
+                <input type="range" id="slider-pipe-b" min="0" max="112" value="68">
+                <span class="value-display" id="val-pipe-b">68</span>
+                <label style="color:#64ffda;">Richtige Antwort:</label>
+                <span class="value-display" id="val-pipe-answer" style="color:#64ffda;">105</span>
+            </div>
+            <div class="plot-container" id="plot-pipeline" style="height:400px;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 16: Summary -->
+    <div class="slide" id="slide-16">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Zusammenfassung</h2>
+            <div class="emoji-big">💡</div>
+            <div style="text-align:left; max-width:800px; margin:0 auto;">
+                <div class="highlight-box" style="margin:15px 0;">
+                    <p><strong>1. Embedding:</strong> Zahlen → Punkte auf Kreisen <span class="math-inline" data-tex="(\cos(w_k a), \sin(w_k a))"></span></p>
+                </div>
+                <div class="highlight-box" style="margin:15px 0; border-left-color:#ffab40;">
+                    <p><strong>2. Attention:</strong> Bringt a und b zusammen → Produkte <span class="math-inline" data-tex="\cos(w_k a)\cos(w_k b)"></span></p>
+                </div>
+                <div class="highlight-box" style="margin:15px 0; border-left-color:#ff5252;">
+                    <p><strong>3. MLP:</strong> Additionstheorem → <span class="math-inline" data-tex="\cos(w_k(a+b))"></span></p>
+                </div>
+                <div class="highlight-box insight" style="margin:15px 0;">
+                    <p><strong>4. Unembedding:</strong> Rückdrehung → <span class="math-inline" data-tex="\sum_k \cos(w_k(a+b-c))"></span> → Maximum bei richtiger Antwort</p>
+                </div>
+            </div>
+            <p style="margin-top:30px; font-size:1.3em; color:#64ffda;">Das Netzwerk hat die diskrete Fourier-Transformation<br>und Rotationsmatrizen <strong>selbst erfunden</strong>! 🤯</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Navigation Bar -->
+<div id="nav-bar">
+    <button id="btn-prev" onclick="prevSlide()">← Zurück</button>
+    <span id="slide-counter">1 / 16</span>
+    <button id="btn-next" onclick="nextSlide()">Weiter →</button>
+</div>
+
+<script>
+// ============================================================
+// FRAMEWORK: Presentation Engine
+// ============================================================
+
+const P = 113;
+const KEY_FREQS = [14, 35, 41, 42, 52];
+
+class Presentation {
+    constructor() {
+        this.currentSlide = 1;
+        this.totalSlides = document.querySelectorAll('.slide').length;
+        this.init();
+    }
+
+    init() {
+        this.updateNav();
+        this.renderAllMath();
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); this.next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); this.prev(); }
+        });
+    }
+
+    goto(n) {
+        if (n < 1 || n > this.totalSlides) return;
+        document.querySelector('.slide.active').classList.remove('active');
+        this.currentSlide = n;
+        document.getElementById(`slide-${n}`).classList.add('active');
+        this.updateNav();
+        // Trigger slide-specific rendering
+        if (this.onSlideChange) this.onSlideChange(n);
+    }
+
+    next() { this.goto(this.currentSlide + 1); }
+    prev() { this.goto(this.currentSlide - 1); }
+
+    updateNav() {
+        document.getElementById('slide-counter').textContent = `${this.currentSlide} / ${this.totalSlides}`;
+        document.getElementById('btn-prev').disabled = this.currentSlide === 1;
+        document.getElementById('btn-next').disabled = this.currentSlide === this.totalSlides;
+        document.getElementById('progress-bar').style.width = `${(this.currentSlide / this.totalSlides) * 100}%`;
+    }
+
+    renderAllMath() {
+        // Render block math
+        document.querySelectorAll('.math-block[data-tex]').forEach(el => {
+            try {
+                el.innerHTML = temml.renderToString(el.getAttribute('data-tex'), { displayMode: true });
+            } catch(e) {
+                el.textContent = el.getAttribute('data-tex');
+            }
+        });
+        // Render inline math
+        document.querySelectorAll('.math-inline[data-tex]').forEach(el => {
+            try {
+                el.innerHTML = temml.renderToString(el.getAttribute('data-tex'), { displayMode: false });
+            } catch(e) {
+                el.textContent = el.getAttribute('data-tex');
+            }
+        });
+    }
+}
+
+// ============================================================
+// FRAMEWORK: Canvas Drawing Utilities
+// ============================================================
+
+class CanvasHelper {
+    constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.w = this.canvas.width;
+        this.h = this.canvas.height;
+        this.cx = this.w / 2;
+        this.cy = this.h / 2;
+    }
+
+    clear() {
+        this.ctx.clearRect(0, 0, this.w, this.h);
+    }
+
+    drawCircle(x, y, r, color = '#444', lineWidth = 1) {
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = lineWidth;
+        this.ctx.stroke();
+    }
+
+    drawFilledCircle(x, y, r, color = '#64ffda') {
+        this.ctx.beginPath();
+        this.ctx.arc(x, y, r, 0, 2 * Math.PI);
+        this.ctx.fillStyle = color;
+        this.ctx.fill();
+    }
+
+    drawLine(x1, y1, x2, y2, color = '#666', lineWidth = 1) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x1, y1);
+        this.ctx.lineTo(x2, y2);
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = lineWidth;
+        this.ctx.stroke();
+    }
+
+    drawArrow(x1, y1, x2, y2, color = '#64ffda', lineWidth = 2) {
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        const headLen = 10;
+        this.ctx.beginPath();
+        this.ctx.moveTo(x1, y1);
+        this.ctx.lineTo(x2, y2);
+        this.ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+        this.ctx.moveTo(x2, y2);
+        this.ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = lineWidth;
+        this.ctx.stroke();
+    }
+
+    drawText(text, x, y, color = '#e0e0e0', size = 12, align = 'center') {
+        this.ctx.font = `${size}px 'Segoe UI', sans-serif`;
+        this.ctx.fillStyle = color;
+        this.ctx.textAlign = align;
+        this.ctx.fillText(text, x, y);
+    }
+
+    angleToXY(angle, radius, cx, cy) {
+        cx = cx || this.cx;
+        cy = cy || this.cy;
+        return {
+            x: cx + radius * Math.cos(angle),
+            y: cy - radius * Math.sin(angle)
+        };
+    }
+}
+
+// ============================================================
+// FRAMEWORK: Plotly Helpers
+// ============================================================
+
+const plotlyLayout = {
+    paper_bgcolor: '#1a1a2e',
+    plot_bgcolor: '#1a1a2e',
+    font: { color: '#e0e0e0', family: 'Segoe UI' },
+    margin: { t: 40, b: 50, l: 60, r: 30 },
+    xaxis: { gridcolor: '#333', zerolinecolor: '#555' },
+    yaxis: { gridcolor: '#333', zerolinecolor: '#555' },
+};
+
+function makePlotlyConfig() {
+    return { responsive: true, displayModeBar: false };
+}
+
+// ============================================================
+// SLIDE 2: Circle Modular Addition
+// ============================================================
+
+function drawCircleSlide() {
+    const ch = new CanvasHelper('circle-canvas');
+    if (!ch.canvas) return;
+
+    const a = parseInt(document.getElementById('slider-a-circle').value);
+    const b = parseInt(document.getElementById('slider-b-circle').value);
+    const sum = (a + b) % P;
+
+    document.getElementById('val-a-circle').textContent = a;
+    document.getElementById('val-b-circle').textContent = b;
+    document.getElementById('val-sum-circle').textContent = sum;
+
+    ch.clear();
+    const R = 160;
+
+    // Draw main circle
+    ch.drawCircle(ch.cx, ch.cy, R, '#333', 2);
+
+    // Draw tick marks for all 113 points (subtle)
+    for (let i = 0; i < P; i++) {
+        const angle = (2 * Math.PI * i / P) - Math.PI / 2;
+        const inner = ch.angleToXY(Math.PI/2 - 2*Math.PI*i/P, R - 4);
+        const outer = ch.angleToXY(Math.PI/2 - 2*Math.PI*i/P, R + 4);
+        ch.drawLine(inner.x, inner.y, outer.x, outer.y, '#444', 1);
+    }
+
+    // Draw point a
+    const angleA = Math.PI/2 - 2 * Math.PI * a / P;
+    const posA = ch.angleToXY(angleA, R);
+    ch.drawFilledCircle(posA.x, posA.y, 8, '#ff5252');
+    ch.drawText(`a=${a}`, posA.x + 15, posA.y - 10, '#ff5252', 14);
+
+    // Draw point b (as arc from a)
+    const angleB = Math.PI/2 - 2 * Math.PI * (a + b) / P;
+    // Draw arc from a to a+b
+    ch.ctx.beginPath();
+    ch.ctx.arc(ch.cx, ch.cy, R - 20, -angleA + Math.PI/2, -angleB + Math.PI/2, false);
+    ch.ctx.strokeStyle = '#ffab40';
+    ch.ctx.lineWidth = 3;
+    ch.ctx.setLineDash([5, 5]);
+    ch.ctx.stroke();
+    ch.ctx.setLineDash([]);
+
+    // Draw arc label
+    const midAngle = angleA + (angleB - angleA) / 2;
+    const midPos = ch.angleToXY(midAngle, R - 35);
+    ch.drawText(`+${b}`, midPos.x, midPos.y, '#ffab40', 13);
+
+    // Draw result point
+    const posSum = ch.angleToXY(angleB, R);
+    ch.drawFilledCircle(posSum.x, posSum.y, 8, '#64ffda');
+    ch.drawText(`${a}+${b}=${sum}`, posSum.x + 15, posSum.y + 15, '#64ffda', 14);
+
+    // Draw 0 marker
+    const pos0 = ch.angleToXY(Math.PI/2, R + 18);
+    ch.drawText('0', pos0.x, pos0.y, '#888', 12);
+}
+
+// ============================================================
+// SLIDE 3: Sin/Cos Canvas
+// ============================================================
+
+function drawSinCosSlide() {
+    const ch = new CanvasHelper('sincos-canvas');
+    if (!ch.canvas) return;
+
+    const theta = parseInt(document.getElementById('slider-theta').value) / 100;
+    document.getElementById('val-theta').textContent = theta.toFixed(2);
+
+    ch.clear();
+    const R = 130;
+
+    // Axes
+    ch.drawLine(ch.cx - R - 20, ch.cy, ch.cx + R + 20, ch.cy, '#555', 1);
+    ch.drawLine(ch.cx, ch.cy - R - 20, ch.cx, ch.cy + R + 20, '#555', 1);
+
+    // Circle
+    ch.drawCircle(ch.cx, ch.cy, R, '#555', 1.5);
+
+    // Point on circle
+    const px = ch.cx + R * Math.cos(theta);
+    const py = ch.cy - R * Math.sin(theta);
+
+    // Radius line
+    ch.drawLine(ch.cx, ch.cy, px, py, '#e0e0e0', 2);
+
+    // cos projection (x)
+    ch.drawLine(px, py, px, ch.cy, '#ff5252', 2);
+    ch.drawLine(ch.cx, ch.cy, px, ch.cy, '#64ffda', 3);
+
+    // sin projection (y)
+    ch.drawLine(ch.cx, ch.cy, ch.cx, py, '#ffab40', 3);
+    ch.drawLine(px, py, ch.cx, py, '#ffab40', 2);
+
+    // Point
+    ch.drawFilledCircle(px, py, 7, '#ffffff');
+
+    // Labels
+    ch.drawText(`cos θ = ${Math.cos(theta).toFixed(2)}`, ch.cx + 60, ch.cy + 20, '#64ffda', 13);
+    ch.drawText(`sin θ = ${Math.sin(theta).toFixed(2)}`, ch.cx - 70, ch.cy - 60, '#ffab40', 13);
+
+    // Angle arc
+    ch.ctx.beginPath();
+    ch.ctx.arc(ch.cx, ch.cy, 30, 0, -theta, theta > 0);
+    ch.ctx.strokeStyle = '#bb86fc';
+    ch.ctx.lineWidth = 2;
+    ch.ctx.stroke();
+    ch.drawText('θ', ch.cx + 38, ch.cy - 10, '#bb86fc', 12);
+
+    // Axis labels
+    ch.drawText('1', ch.cx + R + 12, ch.cy + 15, '#888', 11);
+    ch.drawText('-1', ch.cx - R - 15, ch.cy + 15, '#888', 11);
+    ch.drawText('1', ch.cx + 8, ch.cy - R - 8, '#888', 11);
+}
+
+// ============================================================
+// SLIDE 4: cos(w(a+b-c)) sweep
+// ============================================================
+
+function plotCosSweep() {
+    const ab = parseInt(document.getElementById('slider-ab').value);
+    const k = parseInt(document.getElementById('slider-k').value);
+    document.getElementById('val-ab').textContent = ab;
+    document.getElementById('val-k').textContent = k;
+
+    const w = 2 * Math.PI * k / P;
+    const cs = [];
+    const vals = [];
+    for (let c = 0; c < P; c++) {
+        cs.push(c);
+        vals.push(Math.cos(w * ((ab - c + P) % P)));
+    }
+
+    const correctC = ab % P;
+
+    Plotly.react('plot-cos-sweep', [{
+        x: cs,
+        y: vals,
+        type: 'scatter',
+        mode: 'lines',
+        line: { color: '#64ffda', width: 2 },
+        name: `cos(w_${k}(${ab}-c))`
+    }, {
+        x: [correctC],
+        y: [1],
+        type: 'scatter',
+        mode: 'markers',
+        marker: { color: '#ff5252', size: 12 },
+        name: `c = ${correctC} (Maximum!)`
+    }], {
+        ...plotlyLayout,
+        title: { text: `cos(2π·${k}/113 · (${ab} - c))`, font: { color: '#e0e0e0', size: 14 } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'c (mögliche Antworten)' },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Logit-Beitrag', range: [-1.2, 1.2] },
+        showlegend: true,
+        legend: { font: { color: '#e0e0e0' } }
+    }, makePlotlyConfig());
+}
+
+// ============================================================
+// SLIDE 5: Multiple Frequencies Interference
+// ============================================================
+
+function plotInterference() {
+    const ab = parseInt(document.getElementById('slider-ab2').value);
+    const nfreq = parseInt(document.getElementById('slider-nfreq').value);
+    document.getElementById('val-ab2').textContent = ab;
+    document.getElementById('val-nfreq').textContent = nfreq;
+
+    const freqs = KEY_FREQS.slice(0, nfreq);
+    const cs = [];
+    const vals = [];
+
+    for (let c = 0; c < P; c++) {
+        cs.push(c);
+        let sum = 0;
+        for (const k of freqs) {
+            const w = 2 * Math.PI * k / P;
+            sum += Math.cos(w * ((ab - c + P * 10) % P));
+        }
+        vals.push(sum);
+    }
+
+    const correctC = ab % P;
+    const maxVal = Math.max(...vals);
+
+    Plotly.react('plot-interference', [{
+        x: cs,
+        y: vals,
+        type: 'bar',
+        marker: {
+            color: cs.map(c => c === correctC ? '#64ffda' : '#3a3a6e'),
+        },
+        name: 'Logit(c)'
+    }], {
+        ...plotlyLayout,
+        title: { text: `Σ cos(wₖ(${ab} - c)) mit ${nfreq} Frequenz${nfreq > 1 ? 'en' : ''}`, font: { color: '#e0e0e0', size: 14 } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'c (mögliche Antworten 0–112)' },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Logit(c)' },
+        showlegend: false,
+        annotations: [{
+            x: correctC,
+            y: maxVal + 0.3,
+            text: `c=${correctC} ✓`,
+            showarrow: true,
+            arrowcolor: '#64ffda',
+            font: { color: '#64ffda', size: 13 }
+        }]
+    }, makePlotlyConfig());
+}
+
+// ============================================================
+// SLIDE 7: Embedding Canvas
+// ============================================================
+
+function drawEmbeddingSlide() {
+    const ch = new CanvasHelper('embedding-canvas');
+    if (!ch.canvas) return;
+
+    const kIdx = parseInt(document.getElementById('slider-emb-k').value);
+    const k = KEY_FREQS[kIdx];
+    document.getElementById('val-emb-k').textContent = k;
+
+    ch.clear();
+    const R = 120;
+
+    // Axes
+    ch.drawLine(ch.cx - R - 30, ch.cy, ch.cx + R + 30, ch.cy, '#444', 1);
+    ch.drawLine(ch.cx, ch.cy - R - 30, ch.cx, ch.cy + R + 30, '#444', 1);
+    ch.drawText('cos(wₖ·a)', ch.cx + R + 10, ch.cy - 10, '#888', 10, 'left');
+    ch.drawText('sin(wₖ·a)', ch.cx + 10, ch.cy - R - 15, '#888', 10, 'left');
+
+    // Draw circle
+    ch.drawCircle(ch.cx, ch.cy, R, '#333', 1);
+
+    // Draw all 113 points
+    const w = 2 * Math.PI * k / P;
+    for (let a = 0; a < P; a++) {
+        const angle = w * a;
+        const px = ch.cx + R * Math.cos(angle);
+        const py = ch.cy - R * Math.sin(angle);
+        const alpha = 0.4;
+        ch.ctx.globalAlpha = alpha;
+        ch.drawFilledCircle(px, py, 3, '#64ffda');
+        ch.ctx.globalAlpha = 1;
+    }
+
+    // Highlight a few specific points
+    const highlights = [0, 10, 30, 56, 80];
+    for (const a of highlights) {
+        const angle = w * a;
+        const px = ch.cx + R * Math.cos(angle);
+        const py = ch.cy - R * Math.sin(angle);
+        ch.drawFilledCircle(px, py, 5, '#ff5252');
+        ch.drawText(`${a}`, px + 10, py - 5, '#ff5252', 10);
+    }
+
+    ch.drawText(`Frequenz k=${k}, w = 2π·${k}/113`, ch.cx, ch.h - 15, '#aaa', 11);
+}
+
+// ============================================================
+// SLIDE 8: Rotation Composition Canvas
+// ============================================================
+
+function drawRotationSlide() {
+    const ch = new CanvasHelper('rotation-canvas');
+    if (!ch.canvas) return;
+
+    const alpha = parseInt(document.getElementById('slider-alpha').value) / 100;
+    const beta = parseInt(document.getElementById('slider-beta').value) / 100;
+    document.getElementById('val-alpha').textContent = alpha.toFixed(2);
+    document.getElementById('val-beta').textContent = beta.toFixed(2);
+
+    ch.clear();
+    const R = 100;
+    const cx1 = 130, cx2 = 370, cy = 150;
+
+    // First circle: rotation by alpha
+    ch.drawCircle(cx1, cy, R, '#444', 1.5);
+    ch.drawLine(cx1, cy, cx1 + R, cy, '#666', 1);
+    const pA = { x: cx1 + R * Math.cos(alpha), y: cy - R * Math.sin(alpha) };
+    ch.drawArrow(cx1, cy, pA.x, pA.y, '#ff5252', 2);
+    ch.drawText(`R(α)`, cx1, cy + R + 25, '#ff5252', 13);
+
+    // Arc for alpha
+    ch.ctx.beginPath();
+    ch.ctx.arc(cx1, cy, 35, 0, -alpha, true);
+    ch.ctx.strokeStyle = '#ff5252';
+    ch.ctx.lineWidth = 2;
+    ch.ctx.stroke();
+    ch.drawText('α', cx1 + 42, cy - 12, '#ff5252', 12);
+
+    // Second circle: composition
+    ch.drawCircle(cx2, cy, R, '#444', 1.5);
+    ch.drawLine(cx2, cy, cx2 + R, cy, '#666', 1);
+
+    // Show alpha
+    const pA2 = { x: cx2 + R * Math.cos(alpha), y: cy - R * Math.sin(alpha) };
+    ch.drawArrow(cx2, cy, pA2.x, pA2.y, '#ff5252', 1.5);
+
+    // Show alpha + beta
+    const pAB = { x: cx2 + R * Math.cos(alpha + beta), y: cy - R * Math.sin(alpha + beta) };
+    ch.drawArrow(cx2, cy, pAB.x, pAB.y, '#64ffda', 2.5);
+
+    // Arc for beta (from alpha to alpha+beta)
+    ch.ctx.beginPath();
+    ch.ctx.arc(cx2, cy, 50, -alpha, -(alpha + beta), true);
+    ch.ctx.strokeStyle = '#ffab40';
+    ch.ctx.lineWidth = 2;
+    ch.ctx.stroke();
+    ch.drawText('β', cx2 + 55 * Math.cos(alpha + beta/2), cy - 55 * Math.sin(alpha + beta/2), '#ffab40', 12);
+
+    // Arc for total (alpha + beta)
+    ch.ctx.beginPath();
+    ch.ctx.arc(cx2, cy, 35, 0, -(alpha + beta), true);
+    ch.ctx.strokeStyle = '#64ffda';
+    ch.ctx.lineWidth = 2.5;
+    ch.ctx.stroke();
+
+    ch.drawText(`R(α+β)`, cx2, cy + R + 25, '#64ffda', 13);
+    ch.drawText(`α+β = ${(alpha + beta).toFixed(2)}`, cx2, cy + R + 45, '#aaa', 11);
+
+    // "=" sign between circles
+    ch.drawText('→  R(α)·R(β) =', 250, cy, '#e0e0e0', 14);
+}
+
+// ============================================================
+// SLIDE 10: Sigmoid and Attention Scores
+// ============================================================
+
+function plotSigmoid() {
+    const xs = [];
+    const ys = [];
+    const ys_linear = [];
+    for (let x = -6; x <= 6; x += 0.1) {
+        xs.push(x);
+        ys.push(1 / (1 + Math.exp(-x)));
+        ys_linear.push(0.5 + 0.25 * x);
+    }
+
+    Plotly.react('plot-sigmoid', [{
+        x: xs, y: ys,
+        type: 'scatter', mode: 'lines',
+        line: { color: '#64ffda', width: 2.5 },
+        name: 'σ(z) = 1/(1+e⁻ᶻ)'
+    }, {
+        x: xs, y: ys_linear,
+        type: 'scatter', mode: 'lines',
+        line: { color: '#ffab40', width: 2, dash: 'dash' },
+        name: '0.5 + 0.25z (linear)'
+    }, {
+        x: [-5, 5], y: [1/(1+Math.exp(5)), 1/(1+Math.exp(-5))],
+        type: 'scatter', mode: 'markers',
+        marker: { color: '#ff5252', size: 8 },
+        name: 'Typischer Bereich'
+    }], {
+        ...plotlyLayout,
+        title: { text: 'Sigmoid ≈ linear für kleine Werte', font: { color: '#e0e0e0', size: 14 } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'Score-Differenz z = s_a - s_b', range: [-6.5, 6.5] },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Attention-Gewicht auf a', range: [-0.3, 1.3] },
+        showlegend: true,
+        legend: { font: { color: '#e0e0e0' }, x: 0.02, y: 0.98 }
+    }, makePlotlyConfig());
+}
+
+function plotAttnScores() {
+    const k = 35; // Key frequency for head 0
+    const w = 2 * Math.PI * k / P;
+    const as = [];
+    const scores = [];
+
+    for (let a = 0; a < P; a++) {
+        as.push(a);
+        scores.push(2.5 * Math.cos(w * a) + 0.8 * Math.sin(w * a));
+    }
+
+    Plotly.react('plot-attn-scores', [{
+        x: as, y: scores,
+        type: 'scatter', mode: 'lines+markers',
+        line: { color: '#bb86fc', width: 2 },
+        marker: { color: '#bb86fc', size: 3 },
+        name: 'Attention Score für Token a'
+    }], {
+        ...plotlyLayout,
+        title: { text: 'Attention-Score von Head 0 als Funktion von a (≈ Cosinus-Welle!)', font: { color: '#e0e0e0', size: 13 } },
+        xaxis: { ...plotlyLayout.xaxis, title: 'Wert von a (0–112)' },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Score' },
+        showlegend: false
+    }, makePlotlyConfig());
+}
+
+// ============================================================
+// SLIDE 12: ReLU Product Approximation
+// ============================================================
+
+function plotReLU() {
+    const a = parseInt(document.getElementById('slider-relu-a').value) / 100;
+    const b = parseInt(document.getElementById('slider-relu-b').value) / 100;
+    document.getElementById('val-relu-a').textContent = a.toFixed(2);
+    document.getElementById('val-relu-b').textContent = b.toFixed(2);
+    document.getElementById('val-relu-product').textContent = (a * b).toFixed(2);
+
+    // Show ReLU function and how products emerge
+    const xs = [];
+    const relu_vals = [];
+    const relu_sq = [];
+
+    for (let x = -3; x <= 3; x += 0.05) {
+        xs.push(x);
+        relu_vals.push(Math.max(0, x));
+        relu_sq.push(Math.max(0, x) ** 2);
+    }
+
+    // Show the identity: ReLU(a+b)^2 - ReLU(a-b)^2 ≈ 4ab (when both positive)
+    const relu_apb_sq = Math.max(0, a + b) ** 2;
+    const relu_amb_sq = Math.max(0, a - b) ** 2;
+    const approx_product = (relu_apb_sq - relu_amb_sq) / 4;
+
+    Plotly.react('plot-relu', [{
+        x: xs, y: relu_vals,
+        type: 'scatter', mode: 'lines',
+        line: { color: '#64ffda', width: 2.5 },
+        name: 'ReLU(x)'
+    }, {
+        x: xs, y: relu_sq,
+        type: 'scatter', mode: 'lines',
+        line: { color: '#ffab40', width: 2 },
+        name: 'ReLU(x)²'
+    }, {
+        x: [a + b, a - b],
+        y: [relu_apb_sq, relu_amb_sq],
+        type: 'scatter', mode: 'markers',
+        marker: { color: '#ff5252', size: 10, symbol: 'diamond' },
+        name: `ReLU(a±b)²`
+    }], {
+        ...plotlyLayout,
+        title: {
+            text: `ReLU(${a.toFixed(1)}+${b.toFixed(1)})² - ReLU(${a.toFixed(1)}-${b.toFixed(1)})² = ${(4*approx_product).toFixed(2)} ≈ 4·(${(a*b).toFixed(2)})`,
+            font: { color: '#e0e0e0', size: 12 }
+        },
+        xaxis: { ...plotlyLayout.xaxis, title: 'x', range: [-3.5, 3.5] },
+        yaxis: { ...plotlyLayout.yaxis, title: 'y', range: [-0.5, 9] },
+        showlegend: true,
+        legend: { font: { color: '#e0e0e0' } }
+    }, makePlotlyConfig());
+}
+
+// ============================================================
+// SLIDE 15: Full Pipeline Plot
+// ============================================================
+
+function plotPipeline() {
+    const a = parseInt(document.getElementById('slider-pipe-a').value);
+    const b = parseInt(document.getElementById('slider-pipe-b').value);
+    const answer = (a + b) % P;
+    document.getElementById('val-pipe-a').textContent = a;
+    document.getElementById('val-pipe-b').textContent = b;
+    document.getElementById('val-pipe-answer').textContent = answer;
+
+    // Compute logits using the 5 key frequencies
+    const cs = [];
+    const logits = [];
+
+    for (let c = 0; c < P; c++) {
+        cs.push(c);
+        let logit = 0;
+        for (const k of KEY_FREQS) {
+            const w = 2 * Math.PI * k / P;
+            logit += Math.cos(w * ((a + b - c + P * 10) % P));
+        }
+        logits.push(logit);
+    }
+
+    // Softmax
+    const maxLogit = Math.max(...logits);
+    const expLogits = logits.map(l => Math.exp(l - maxLogit));
+    const sumExp = expLogits.reduce((s, v) => s + v, 0);
+    const probs = expLogits.map(e => e / sumExp);
+
+    // Find top predictions
+    const sorted = probs.map((p, i) => ({p, i})).sort((a, b) => b.p - a.p);
+
+    Plotly.react('plot-pipeline', [{
+        x: cs,
+        y: probs,
+        type: 'bar',
+        marker: {
+            color: cs.map(c => c === answer ? '#64ffda' : '#2a2a5e'),
+        },
+        name: 'P(c)'
+    }], {
+        ...plotlyLayout,
+        title: {
+            text: `${a} + ${b} mod 113 = ${answer} | Vorhersage: c=${sorted[0].i} (P=${(sorted[0].p*100).toFixed(1)}%)`,
+            font: { color: '#e0e0e0', size: 14 }
+        },
+        xaxis: { ...plotlyLayout.xaxis, title: 'c (mögliche Antworten 0–112)' },
+        yaxis: { ...plotlyLayout.yaxis, title: 'Wahrscheinlichkeit P(c)' },
+        showlegend: false,
+        annotations: [{
+            x: answer,
+            y: probs[answer] + 0.02,
+            text: `✓ c=${answer}`,
+            showarrow: true,
+            arrowcolor: '#64ffda',
+            font: { color: '#64ffda', size: 13 }
+        }]
+    }, makePlotlyConfig());
+}
+
+// ============================================================
+// EVENT LISTENERS & INITIALIZATION
+// ============================================================
+
+function setupSliderListeners() {
+    // Slide 2
+    const circleSliders = ['slider-a-circle', 'slider-b-circle'];
+    circleSliders.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', drawCircleSlide);
+    });
+
+    // Slide 3
+    const thetaSlider = document.getElementById('slider-theta');
+    if (thetaSlider) thetaSlider.addEventListener('input', drawSinCosSlide);
+
+    // Slide 4
+    const abSlider = document.getElementById('slider-ab');
+    const kSlider = document.getElementById('slider-k');
+    if (abSlider) abSlider.addEventListener('input', plotCosSweep);
+    if (kSlider) kSlider.addEventListener('input', plotCosSweep);
+
+    // Slide 5
+    const ab2Slider = document.getElementById('slider-ab2');
+    const nfreqSlider = document.getElementById('slider-nfreq');
+    if (ab2Slider) ab2Slider.addEventListener('input', plotInterference);
+    if (nfreqSlider) nfreqSlider.addEventListener('input', plotInterference);
+
+    // Slide 7
+    const embKSlider = document.getElementById('slider-emb-k');
+    if (embKSlider) embKSlider.addEventListener('input', drawEmbeddingSlide);
+
+    // Slide 8
+    const alphaSlider = document.getElementById('slider-alpha');
+    const betaSlider = document.getElementById('slider-beta');
+    if (alphaSlider) alphaSlider.addEventListener('input', drawRotationSlide);
+    if (betaSlider) betaSlider.addEventListener('input', drawRotationSlide);
+
+    // Slide 12
+    const reluASlider = document.getElementById('slider-relu-a');
+    const reluBSlider = document.getElementById('slider-relu-b');
+    if (reluASlider) reluASlider.addEventListener('input', plotReLU);
+    if (reluBSlider) reluBSlider.addEventListener('input', plotReLU);
+
+    // Slide 15
+    const pipeASlider = document.getElementById('slider-pipe-a');
+    const pipeBSlider = document.getElementById('slider-pipe-b');
+    if (pipeASlider) pipeASlider.addEventListener('input', plotPipeline);
+    if (pipeBSlider) pipeBSlider.addEventListener('input', plotPipeline);
+}
+
+// Global presentation instance
+let pres;
+
+function nextSlide() { pres.next(); }
+function prevSlide() { pres.prev(); }
+
+window.addEventListener('DOMContentLoaded', () => {
+    pres = new Presentation();
+    setupSliderListeners();
+
+    // Render slide-specific content when navigating
+    pres.onSlideChange = (n) => {
+        setTimeout(() => {
+            switch(n) {
+                case 2: drawCircleSlide(); break;
+                case 3: drawSinCosSlide(); break;
+                case 4: plotCosSweep(); break;
+                case 5: plotInterference(); break;
+                case 7: drawEmbeddingSlide(); break;
+                case 8: drawRotationSlide(); break;
+                case 10: plotSigmoid(); plotAttnScores(); break;
+                case 12: plotReLU(); break;
+                case 15: plotPipeline(); break;
+            }
+        }, 50);
+    };
+
+    // Initial render for slide 1 (and pre-render slide 2 in case)
+    drawCircleSlide();
+    drawSinCosSlide();
+});
+</script>
+
+</body>
+</html>
