@@ -1514,7 +1514,7 @@ function _safe_4d_result_to_array(tensor_4d, caller_name) {
 		return arr;
 	} catch (e) {
 		err("[" + caller_name + "] Failed to convert tensor to array: " + e);
-		try { dispose(tensor_4d); } catch (de) { /* ignore */ }
+		try { dispose(tensor_4d); } catch (de) { /* ignore */ } // await not possible here
 		return null;
 	}
 }
