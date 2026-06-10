@@ -1288,7 +1288,7 @@ function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, la
 
         var { flatten_stats, flatten_image_url } = _compute_flatten_tooltip_data(this_layer_output);
 
-        _register_fcnn_hit_region({
+	    const this_region = {
             type: "flatten",
             shape: "rect",
             x: _x, y: _y, w: _width, h: _height,
@@ -1298,7 +1298,9 @@ function _draw_flatten(layer_idx, ctx, meta_info, maxShapeSize, canvasHeight, la
             input_shape: meta_info.input_shape || null,
             flatten_stats: flatten_stats,
             image_data_url: flatten_image_url
-        });
+        };
+
+        _register_fcnn_hit_region(this_region);
     } catch (e) {
         if (Object.keys(e).includes("message")) e = e.message;
         assert(false, e);
@@ -1503,7 +1505,7 @@ function _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, 
 
     // Register hit region
     var activation_value = (this_layer_output && j < this_layer_output.length) ? this_layer_output[j] : null;
-    _register_fcnn_hit_region({
+	const this_region = {
         type: "neuron",
         shape: "circle",
         x: layerX,
@@ -1517,7 +1519,8 @@ function _draw_single_dense_neuron(ctx, j, numNeurons, verticalSpacing, layerY, 
         output_shape: meta_info.output_shape || null,
         input_shape: meta_info.input_shape || null,
         label: _get_neuron_label(layer_idx, j)
-    });
+    };
+    _register_fcnn_hit_region(this_region);
 
     return ctx;
 }
@@ -1541,7 +1544,7 @@ function _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY
     // Compute channel stats and image for tooltip
     var { channel_stats, channel_image_url } = _compute_conv2d_channel_tooltip_data(conv_layer_output_for_channel, minVal, maxVal);
 
-    _register_fcnn_hit_region({
+	const this_region = {
         type: "conv2d",
         shape: "rect",
         x: conv_rect_dims.x,
@@ -1557,7 +1560,9 @@ function _draw_single_conv2d_neuron(ctx, j, numNeurons, maxSpacingConv2d, layerY
         input_shape: meta_info.input_shape || null,
         channel_stats: channel_stats,
         image_data_url: channel_image_url
-    });
+    };
+
+    _register_fcnn_hit_region(this_region);
 
     return ctx;
 }
@@ -1672,7 +1677,7 @@ function _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr
     ctx.fillRect(currX, yMin, nextX - currX, Math.max(1, yMax - yMin));
     ctx.restore();
 
-    _register_fcnn_hit_region({
+	const this_region = {
         type: "connection",
         shape: "rect",
         x: currX, y: yMin,
@@ -1684,7 +1689,9 @@ function _draw_connection_block_fill(ctx, currYs, nextYs, currX, nextX, layer_nr
         to_neurons: nextNeurons,
         weight_stats: weight_stats,
         weight_data: weight_data
-    });
+    };
+
+    _register_fcnn_hit_region(this_region);
 }
 
 function _draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, currNeurons, nextNeurons, canvasHeight, maxRadius, weightInfo, weight_stats, weight_data) {
@@ -1694,7 +1701,7 @@ function _draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, cur
     var connYMin = Math.min(currYs[0], nextYs[0]) - maxRadius;
     var connYMax = Math.max(currYs[currYs.length - 1], nextYs[nextYs.length - 1]) + maxRadius;
 
-    _register_fcnn_hit_region({
+	const this_region = {
         type: "connection",
         shape: "rect",
         x: currX, y: connYMin,
@@ -1706,7 +1713,9 @@ function _draw_connection_lines(ctx, layer_nr, currX, nextX, currYs, nextYs, cur
         to_neurons: nextNeurons,
         weight_stats: weight_stats,
         weight_data: weight_data
-    });
+    };
+
+    _register_fcnn_hit_region(this_region);
 }
 
 // ===== HELPER FUNCTIONS =====
