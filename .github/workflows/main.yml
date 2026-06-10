@@ -38,6 +38,7 @@ jobs:
   playwright:
     needs: smoke-tests
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
       matrix:
         os: [ubuntu-22.04, ubuntu-24.04]
