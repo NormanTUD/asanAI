@@ -232,6 +232,15 @@ function _setup_fcnn_canvas() {
 		canvas.id = "fcnn_canvas";
 		document.body.appendChild(canvas);
 	}
+
+	// High-DPI support
+	var dpr = window.devicePixelRatio || 1;
+	var rect = canvas.getBoundingClientRect();
+	canvas.width = rect.width * dpr;
+	canvas.height = rect.height * dpr;
+	var ctx = canvas.getContext("2d");
+	ctx.scale(dpr, dpr);
+
 	return canvas;
 }
 
