@@ -1382,8 +1382,370 @@ function throw_exception_if_x_y_warning() {
 }
 
 function augment_custom_image_data(resized_image, label_nr, divide_by, x, y) {
-	if(is_auto_augment()) {
-		wrn("Augmenting custom data is disabled because it is not yet fully implemented");
+	if (!is_auto_augment()) {
+		return [x, y];
+	}
+
+	// === GUARD: Validate resized_image ===
+	if (!resized_image) {
+		err("[augment_custom_image_data] resized_image is null/undefined. Cannot augment.");
+		return [x, y];
+	}
+
+	if (typeof resized_image !== "object" || !resized_image.shape) {
+		err("[augment_custom_image_data] resized_image is not a valid tensor (no .shape property).");
+		return [x, y];
+	}
+
+	if (tensor_is_disposed(resized_image)) {
+		err("[augment_custom_image_data] resized_image is already disposed. Cannot augment.");
+		return [x, y];
+	}
+
+	// === GUARD: Validate label_nr ===
+	if (typeof label_nr !== "number" || isNaN(label_nr) || label_nr < 0) {
+		err("[augment_custom_image_data] label_nr is invalid: " + label_nr);
+		return [x, y];
+	}
+
+	// === GUARD: Validate divide_by ===
+	if (typeof divide_by !== "number" || isNaN(divide_by) || divide_by === 0) {
+		err("[augment_custom_image_data] divide_by is invalid or zero: " + divide_by);
+		return [x, y];
+	}
+
+	// === GUARD: Validate x and y are arrays ===
+	if (!Array.isArray(x)) {
+		err("[augment_custom_image_data] x is not an array. Type: " + typeof x);
+		return [x, y];
+	}
+
+	if (!Array.isArray(y)) {
+		err("[augment_custom_image_data] y is not an array. Type: " + typeof y);
+		return [x, y];
+	}
+
+	try {
+		// Rotation augmentation
+		if ($("#augment_rotate_images").is(":checked")) {
+			[x, y] = _augment_custom_rotate(resized_image, label_nr, divide_by, x, y);
+		}
+
+		// Inversion augmentation
+		if ($("#augment_invert_images").is(":checked")) {
+			[x, y] = _augment_custom_invert(resized_image, label_nr, divide_by, x, y);
+		}
+
+		// Flip left-right augmentation
+		if ($("#augment_flip_left_right").is(":checked")) {
+			[x, y] = _augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y);
+		}
+	} catch (e) {
+		err("[augment_custom_image_data] Unexpected error during augmentation: " + e);
+	}
+
+	// === FINAL ASSERTION ===
+	if (x.length !== y.length) {
+		err("[augment_custom_image_data] ASSERTION FAILED: x.length (" + x.length + ") !== y.length (" + y.length + ") after augmentation!");
+	}
+
+	return [x, y];
+}
+
+/**
+ * Safely expands a rank-3 tensor to rank-4 for operations that require it.
+ * Returns a NEW tensor (caller must dispose) or null on failure.
+ */
+function _safe_expand_to_4d(tensor_3d, caller_name) {
+	if (!tensor_3d || tensor_is_disposed(tensor_3d)) {
+		err("[" + caller_name + "] Cannot expand: tensor is null or disposed.");
+		return null;
+	}
+
+	if (tensor_3d.shape.length === 4) {
+		// Already rank 4, clone it so caller can safely dispose
+		return tensor_3d.clone();
+	}
+
+	if (tensor_3d.shape.length === 3) {
+		try {
+			return expand_dims(tensor_3d);
+		} catch (e) {
+			err("[" + caller_name + "] expand_dims failed: " + e);
+			return null;
+		}
+	}
+
+	err("[" + caller_name + "] Unexpected tensor rank: " + tensor_3d.shape.length + ", shape: " + JSON.stringify(tensor_3d.shape));
+	return null;
+}
+
+/**
+ * Safely converts a rank-4 tensor result back to a plain JS array (rank 3).
+ * Returns the JS array or null on failure. Disposes the input tensor.
+ */
+function _safe_4d_result_to_array(tensor_4d, caller_name) {
+	if (!tensor_4d || tensor_is_disposed(tensor_4d)) {
+		err("[" + caller_name + "] Result tensor is null or disposed.");
+		return null;
+	}
+
+	try {
+		var arr;
+		if (tensor_4d.shape.length === 4 && tensor_4d.shape[0] === 1) {
+			// Shape [1, H, W, C] -> get first element -> [H, W, C]
+			arr = array_sync(tensor_4d)[0];
+		} else if (tensor_4d.shape.length === 3) {
+			arr = array_sync(tensor_4d);
+		} else {
+			err("[" + caller_name + "] Unexpected result shape: " + JSON.stringify(tensor_4d.shape));
+			dispose(tensor_4d);
+			return null;
+		}
+
+		// Validate the array is not empty
+		if (!arr || !Array.isArray(arr) || arr.length === 0) {
+			err("[" + caller_name + "] array_sync produced empty/invalid result.");
+			dispose(tensor_4d);
+			return null;
+		}
+
+		dispose(tensor_4d);
+		return arr;
+	} catch (e) {
+		err("[" + caller_name + "] Failed to convert tensor to array: " + e);
+		try { dispose(tensor_4d); } catch (de) { /* ignore */ }
+		return null;
+	}
+}
+
+function _augment_custom_rotate(resized_image, label_nr, divide_by, x, y) {
+	var num_rotations = parse_int($("#number_of_rotations").val());
+
+	if (!num_rotations || num_rotations <= 0 || isNaN(num_rotations)) {
+		wrn("[_augment_custom_rotate] Invalid number_of_rotations: " + num_rotations + ", defaulting to 4.");
+		num_rotations = 4;
+	}
+
+	var degree_step = 360 / num_rotations;
+
+	// We need rank 4 for rotateWithOffset
+	var image_4d = _safe_expand_to_4d(resized_image, "_augment_custom_rotate");
+	if (!image_4d) {
+		err("[_augment_custom_rotate] Could not expand resized_image to 4D. Skipping rotation.");
+		return [x, y];
+	}
+
+	for (var degree = degree_step; degree < 360; degree += degree_step) {
+		try {
+			l(language[lang]["rotating_image"] + ": " + degree + "°");
+
+			var radians = degrees_to_radians(degree);
+			if (isNaN(radians)) {
+				err("[_augment_custom_rotate] degrees_to_radians returned NaN for degree " + degree);
+				continue;
+			}
+
+			var rotated_4d = rotateWithOffset(image_4d, radians);
+
+			if (!rotated_4d || tensor_is_disposed(rotated_4d)) {
+				err("[_augment_custom_rotate] rotateWithOffset returned null/disposed at degree " + degree);
+				continue;
+			}
+
+			// Convert to JS array and push
+			var rotated_arr = _safe_4d_result_to_array(rotated_4d, "_augment_custom_rotate@" + degree);
+			if (rotated_arr !== null) {
+				x.push(rotated_arr);
+				y.push(label_nr);
+			}
+
+			// Also invert the rotated image if inversion is checked
+			if ($("#augment_invert_images").is(":checked")) {
+				[x, y] = _augment_custom_invert_from_array(rotated_arr, label_nr, divide_by, x, y, degree);
+			}
+
+			// Also flip the rotated image if flip is checked
+			if ($("#augment_flip_left_right").is(":checked")) {
+				[x, y] = _augment_custom_flip_from_array(rotated_arr, label_nr, x, y, degree);
+			}
+
+		} catch (e) {
+			err("[_augment_custom_rotate] Error at degree " + degree + ": " + e);
+		}
+	}
+
+	// Dispose the 4D tensor we created
+	try { dispose(image_4d); } catch (e) { /* ignore */ }
+
+	return [x, y];
+}
+
+function _augment_custom_invert(resized_image, label_nr, divide_by, x, y) {
+	if (!resized_image || tensor_is_disposed(resized_image)) {
+		err("[_augment_custom_invert] resized_image is null or disposed. Skipping.");
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["inverted_image"]);
+
+		var add_value = (-255 / divide_by);
+
+		// Inversion works on any rank, no need for rank 4
+		var inverted = tidy(() => {
+			return abs(add(resized_image, add_value));
+		});
+
+		if (!inverted || tensor_is_disposed(inverted)) {
+			err("[_augment_custom_invert] Inversion produced null/disposed tensor.");
+			return [x, y];
+		}
+
+		var inverted_arr = array_sync(inverted);
+
+		if (!inverted_arr || !Array.isArray(inverted_arr) || inverted_arr.length === 0) {
+			err("[_augment_custom_invert] array_sync of inverted tensor produced invalid result.");
+			dispose(inverted);
+			return [x, y];
+		}
+
+		add_tensor_as_image_to_photos(inverted);
+		x.push(inverted_arr);
+		y.push(label_nr);
+
+		dispose(inverted);
+	} catch (e) {
+		err("[_augment_custom_invert] Error: " + e);
+	}
+
+	return [x, y];
+}
+
+/**
+ * Invert from a plain JS array (used for combined augmentations like rotate+invert)
+ */
+function _augment_custom_invert_from_array(image_arr, label_nr, divide_by, x, y, degree) {
+	if (!image_arr || !Array.isArray(image_arr) || image_arr.length === 0) {
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["inverted_image_that_has_been_turned"] + " " + degree + "°");
+
+		var add_value = (-255 / divide_by);
+
+		var inverted = tidy(() => {
+			var t = tensor(image_arr);
+			var result = abs(add(t, add_value));
+			return result;
+		});
+
+		if (!inverted || tensor_is_disposed(inverted)) {
+			err("[_augment_custom_invert_from_array] Inversion produced null/disposed tensor.");
+			return [x, y];
+		}
+
+		var inverted_arr = array_sync(inverted);
+
+		if (!inverted_arr || !Array.isArray(inverted_arr) || inverted_arr.length === 0) {
+			dispose(inverted);
+			return [x, y];
+		}
+
+		add_tensor_as_image_to_photos(inverted);
+		x.push(inverted_arr);
+		y.push(label_nr);
+
+		dispose(inverted);
+	} catch (e) {
+		err("[_augment_custom_invert_from_array] Error: " + e);
+	}
+
+	return [x, y];
+}
+
+function _augment_custom_flip_lr(resized_image, label_nr, divide_by, x, y) {
+	if (!resized_image || tensor_is_disposed(resized_image)) {
+		err("[_augment_custom_flip_lr] resized_image is null or disposed. Skipping.");
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["flip_left_right"]);
+
+		// flipLeftRight requires rank 4
+		var image_4d = _safe_expand_to_4d(resized_image, "_augment_custom_flip_lr");
+		if (!image_4d) {
+			err("[_augment_custom_flip_lr] Could not expand to 4D. Skipping flip.");
+			return [x, y];
+		}
+
+		var flipped_4d = flipLeftRight(image_4d);
+
+		if (!flipped_4d || tensor_is_disposed(flipped_4d)) {
+			err("[_augment_custom_flip_lr] flipLeftRight returned null/disposed.");
+			try { dispose(image_4d); } catch (e) { /* ignore */ }
+			return [x, y];
+		}
+
+		var flipped_arr = _safe_4d_result_to_array(flipped_4d, "_augment_custom_flip_lr");
+
+		if (flipped_arr !== null) {
+			// Create a temporary tensor for the photo display
+			try {
+				var display_tensor = tensor(flipped_arr);
+				add_tensor_as_image_to_photos(display_tensor);
+				dispose(display_tensor);
+			} catch (e) {
+				// Non-critical, just skip photo display
+			}
+
+			x.push(flipped_arr);
+			y.push(label_nr);
+		}
+
+		try { dispose(image_4d); } catch (e) { /* ignore */ }
+	} catch (e) {
+		err("[_augment_custom_flip_lr] Error: " + e);
+	}
+
+	return [x, y];
+}
+
+/**
+ * Flip from a plain JS array (used for combined augmentations like rotate+flip)
+ */
+function _augment_custom_flip_from_array(image_arr, label_nr, x, y, degree) {
+	if (!image_arr || !Array.isArray(image_arr) || image_arr.length === 0) {
+		return [x, y];
+	}
+
+	try {
+		l(language[lang]["flip_left_right_that_has_been_turned"] + " " + degree + "°");
+
+		// Create tensor from array, expand to 4D, flip, convert back
+		var flipped_arr = tidy(() => {
+			var t = tensor(image_arr);
+			var t_4d = expand_dims(t);
+			var flipped = flipLeftRight(t_4d);
+
+			if (!flipped) {
+				return null;
+			}
+
+			// Return the [H, W, C] array (first batch element)
+			return array_sync(flipped)[0];
+		});
+
+		if (!flipped_arr || !Array.isArray(flipped_arr) || flipped_arr.length === 0) {
+			return [x, y];
+		}
+
+		x.push(flipped_arr);
+		y.push(label_nr);
+	} catch (e) {
+		err("[_augment_custom_flip_from_array] Error: " + e);
 	}
 
 	return [x, y];
