@@ -1179,21 +1179,21 @@ function _compute_vertical_spacing_per_layer(numNeurons, canvasHeight, font_size
 }
 
 function _compute_vertical_spacing(numNeurons, maxSpacing, canvasHeight) {
-    // Legacy behavior preserved as fallback
-    if (!Number.isFinite(numNeurons) || numNeurons < 1) {
-        return maxSpacing || 20;
-    }
-    if (!Number.isFinite(canvasHeight) || canvasHeight <= 0) {
-        return maxSpacing || 20;
-    }
+	// Legacy behavior preserved as fallback
+	if (!Number.isFinite(numNeurons) || numNeurons < 1) {
+		return maxSpacing || 20;
+	}
+	if (!Number.isFinite(canvasHeight) || canvasHeight <= 0) {
+		return maxSpacing || 20;
+	}
 
-    var verticalSpacing = maxSpacing;
-    if (numNeurons * verticalSpacing > canvasHeight) {
-        verticalSpacing = canvasHeight / numNeurons;
-    }
+	var verticalSpacing = maxSpacing;
+	if (numNeurons * verticalSpacing > canvasHeight) {
+		verticalSpacing = canvasHeight / numNeurons;
+	}
 
-    // GUARDRAIL: Never return zero or negative
-    return Math.max(2, verticalSpacing);
+	// GUARDRAIL: Never return zero or negative
+	return Math.max(2, verticalSpacing);
 }
 
 function _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth) {
@@ -1473,27 +1473,27 @@ function draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos,
 }
 
 function _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, layerX, maxRadius, _height, maxSpacingConv2d, font_size) {
-    try {
-        if (!Array.isArray(layers) || layers.length < 2) return;
+	try {
+		if (!Array.isArray(layers) || layers.length < 2) return;
 
-        for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
-            draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size);
-        }
-    } catch (e) {
-        if (e && e.message) e = e.message;
-        assert(false, e);
-    }
+		for (var layer_nr = 0; layer_nr < layers.length - 1; layer_nr++) {
+			draw_layer_connections(ctx, layer_nr, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, layerY, maxRadius, _height, maxSpacingConv2d, font_size);
+		}
+	} catch (e) {
+		if (e && e.message) e = e.message;
+		assert(false, e);
+	}
 }
 
 async function _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size) {
-    _clear_fcnn_hit_regions();
+	_clear_fcnn_hit_regions();
 
-    for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
-        ctx = _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth);
-    }
+	for (var layer_idx = 0; layer_idx < layers.length; layer_idx++) {
+		ctx = _draw_single_layer(ctx, layer_idx, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxSpacingConv2d, font_size, canvasWidth);
+	}
 
-    _draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, canvasHeight / 2, (layers.length) * layerSpacing, maxRadius, null, maxSpacingConv2d, font_size);
-    _bind_fcnn_canvas_mouse_events();
+	_draw_connections_between_layers(ctx, layers, layerSpacing, meta_infos, maxSpacing, canvasHeight, canvasHeight / 2, (layers.length) * layerSpacing, maxRadius, null, maxSpacingConv2d, font_size);
+	_bind_fcnn_canvas_mouse_events();
 }
 
 function draw_layernorm(layer_idx, ctx, meta_info, canvasHeight, layerX, layerY, maxShapeSize) {
