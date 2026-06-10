@@ -654,52 +654,65 @@ function _compute_stats(arr) {
 	return { min: min, max: max, avg: avg, std: std, count: count, sum: sum };
 }
 
+function _compute_local_min_max(data2d, rows, cols) {
+	var mn = Infinity, mx = -Infinity;
+	for (var r = 0; r < rows; r++) {
+		for (var col = 0; col < cols; col++) {
+			var v = data2d[r][col];
+			if (typeof v === "number" && isFinite(v)) {
+				if (v < mn) mn = v;
+				if (v > mx) mx = v;
+			}
+		}
+	}
+	return { min: mn, max: mx };
+}
+
+function _create_scaled_canvas(rows, cols, maxDisplaySize) {
+	var pixelScale = Math.max(1, Math.floor(maxDisplaySize / Math.max(rows, cols)));
+	var c = document.createElement("canvas");
+	c.width = cols * pixelScale;
+	c.height = rows * pixelScale;
+	return { canvas: c, pixelScale: pixelScale };
+}
+
+function _render_inverted_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale) {
+	for (var r = 0; r < rows; r++) {
+		for (var col = 0; col < cols; col++) {
+			var v = data2d[r][col];
+			var value = Math.floor((v - mn) * scale);
+			var gray = Math.max(0, Math.min(255, Math.abs(255 - value)));
+			cx.fillStyle = `rgb(${gray},${gray},${gray})`;
+			cx.fillRect(col * pixelScale, r * pixelScale, pixelScale, pixelScale);
+		}
+	}
+}
+
 function _make_mini_canvas_data_url_inverted(data2d, width, height, maxDisplaySize, globalMin, globalMax) {
-	// Replicates draw_filled_kernel_rectangle's rendering logic exactly
 	try {
 		if (!data2d || !data2d.length) return null;
 		var rows = data2d.length;
 		var cols = Array.isArray(data2d[0]) ? data2d[0].length : 0;
 		if (cols === 0) return null;
 
-		// Use global min/max if provided, otherwise compute local (fallback)
-		var mn = (typeof globalMin === "number" && isFinite(globalMin)) ? globalMin : Infinity;
-		var mx = (typeof globalMax === "number" && isFinite(globalMax)) ? globalMax : -Infinity;
-		if (mn === Infinity || mx === -Infinity) {
-			for (var r = 0; r < rows; r++) {
-				for (var col = 0; col < cols; col++) {
-					var v = data2d[r][col];
-					if (typeof v === "number" && isFinite(v)) {
-						if (v < mn) mn = v;
-						if (v > mx) mx = v;
-					}
-				}
-			}
+		var mn = (typeof globalMin === "number" && isFinite(globalMin)) ? globalMin : null;
+		var mx = (typeof globalMax === "number" && isFinite(globalMax)) ? globalMax : null;
+
+		if (mn === null || mx === null) {
+			var local = _compute_local_min_max(data2d, rows, cols);
+			mn = mn !== null ? mn : local.min;
+			mx = mx !== null ? mx : local.max;
 		}
 		if (mn === mx) mx = mn + 1;
 
 		var scale = 255 / (mx - mn);
-
 		maxDisplaySize = maxDisplaySize || 64;
-		var pixelScale = Math.max(1, Math.floor(maxDisplaySize / Math.max(rows, cols)));
-		var cw = cols * pixelScale;
-		var ch = rows * pixelScale;
 
-		var c = document.createElement("canvas");
-		c.width = cw;
-		c.height = ch;
+		var { canvas: c, pixelScale } = _create_scaled_canvas(rows, cols, maxDisplaySize);
 		var cx = c.getContext("2d");
 
-		for (var r = 0; r < rows; r++) {
-			for (var col = 0; col < cols; col++) {
-				var v = data2d[r][col];
-				var value = Math.floor((v - mn) * scale);
-				var gray = Math.abs(255 - value);  // INVERT — same as canvas
-				gray = Math.max(0, Math.min(255, gray));
-				cx.fillStyle = `rgb(${gray},${gray},${gray})`;
-				cx.fillRect(col * pixelScale, r * pixelScale, pixelScale, pixelScale);
-			}
-		}
+		_render_inverted_grayscale_pixels(cx, data2d, rows, cols, pixelScale, mn, scale);
+
 		return c.toDataURL("image/png");
 	} catch (e) {
 		return null;
