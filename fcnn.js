@@ -2,10 +2,6 @@
 
 // ===== TOOLTIP INFRASTRUCTURE =====
 
-var _fcnn_render_queued_args = null;
-var _fcnn_last_good_frame = null; // stores last fully-rendered ImageData
-var _fcnn_render_queued = false;
-var _fcnn_render_in_progress = false;
 var _fcnn_tooltip_el = null;
 var _fcnn_tooltip_visible = false;
 var _fcnn_hit_regions = [];
@@ -296,150 +292,59 @@ async function draw_fcnn(...args) {
 		return;
 	}
 
-	// If a render is already in progress, queue this one and bail out.
-	// Store the args so we can use the LATEST data when we retry.
-	if (_fcnn_render_in_progress) {
-		_fcnn_render_queued = true;
-		_fcnn_render_queued_args = args;
-		return;
+	args_hash = last_fcnn_hash;
+
+	var layers = args[0];
+	var _labels = args[1];
+	var meta_infos = args[2];
+
+	var canvas = document.getElementById("fcnn_canvas");
+
+	if (!canvas) {
+		canvas = document.createElement("canvas");
+		canvas.id = "fcnn_canvas";
+		document.body.appendChild(canvas);
 	}
 
-	_fcnn_render_in_progress = true;
+	var ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-	try {
-		last_fcnn_hash = args_hash;
+	var ghw = $("#graphs_here").width();
 
-		var layers = args[0];
-		var _labels = args[1];
-		var meta_infos = args[2];
+	var canvasWidth = Math.max(800, ghw);
+	var canvasHeight = 800;
 
-		var canvas = document.getElementById("fcnn_canvas");
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+	ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-		if (!canvas) {
-			canvas = document.createElement("canvas");
-			canvas.id = "fcnn_canvas";
-			document.body.appendChild(canvas);
-		}
+	var maxNeurons = Math.max(...layers);
+	var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-		var ghw = $("#graphs_here").width();
+	var layerSpacing = canvasWidth / (layers.length + 1);
+	var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
+	var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
 
-		var canvasWidth = Math.max(800, ghw);
-		var canvasHeight = 800;
+	var max_conv2d_height = 0;
 
-		// === STEP 1: If canvas dimensions must change, paint the last good frame
-		// onto the resized canvas immediately to avoid a blank flash ===
-		if (canvas.width !== canvasWidth || canvas.height !== canvasHeight) {
-			var oldWidth = canvas.width;
-			var oldHeight = canvas.height;
-			// Capture current content before resize clears it
-			var preservedFrame = null;
-			if (oldWidth > 0 && oldHeight > 0) {
-				try {
-					var tempSave = document.createElement("canvas");
-					tempSave.width = oldWidth;
-					tempSave.height = oldHeight;
-					var tempCtx = tempSave.getContext("2d");
-					tempCtx.drawImage(canvas, 0, 0);
-					preservedFrame = tempSave;
-				} catch(e) {}
-			}
-			canvas.width = canvasWidth;
-			canvas.height = canvasHeight;
-			if (preservedFrame) {
-				try {
-					var visCtx = canvas.getContext("2d", { willReadFrequently: true });
-					visCtx.drawImage(preservedFrame, 0, 0, canvasWidth, canvasHeight);
-				} catch(e) {}
-			} else if (_fcnn_last_good_frame) {
-				try {
-					var visCtx = canvas.getContext("2d", { willReadFrequently: true });
-					visCtx.drawImage(_fcnn_last_good_frame, 0, 0, canvasWidth, canvasHeight);
-				} catch(e) {}
+	meta_infos.forEach(function (i, e) {
+		if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
+			var os = i.output_shape;
+			var height = os && os[1] ? os[1] : 0;
+			var width = os && os[2] ? os[2] : 0;
+
+			if (height > max_conv2d_height) {
+				max_conv2d_height = height;
 			}
 		}
+	});
 
-		// === STEP 2: Draw everything to a fully offscreen canvas ===
-		var offscreen = document.createElement("canvas");
-		offscreen.width = canvasWidth;
-		offscreen.height = canvasHeight;
-		var ctx = offscreen.getContext("2d", { willReadFrequently: true });
-		ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+	var maxSpacingConv2d = maxSpacing + max_conv2d_height;
 
-		var maxNeurons = Math.max(...layers);
-		var maxRadius = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+	var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
 
-		var layerSpacing = canvasWidth / (layers.length + 1);
-		var maxSpacing = Math.min(maxRadius * 3, (canvasHeight / maxNeurons) * 0.8);
-		var maxShapeSize = Math.min(8, (canvasHeight / 2) / maxNeurons, (canvasWidth / 2) / (layers.length + 1));
+	_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
 
-		var max_conv2d_height = 0;
-
-		meta_infos.forEach(function (i, e) {
-			if (i && i.layer_type && typeof i.layer_type === "string" && i.layer_type.toLowerCase().includes("conv2d")) {
-				var os = i.output_shape;
-				var height = os && os[1] ? os[1] : 0;
-
-				if (height > max_conv2d_height) {
-					max_conv2d_height = height;
-				}
-			}
-		});
-
-		var maxSpacingConv2d = maxSpacing + max_conv2d_height;
-
-		var font_size = Math.max(10, Math.min(16, canvasWidth / (layers.length * 12)));
-
-		// Clear the connection cache so stale uncolored lines don't persist
-		CONNECTION_CANVAS_CACHE.clear();
-
-		_draw_layers_text(layers, meta_infos, ctx, canvasHeight, canvasWidth, layerSpacing, _labels, font_size);
-
-		await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
-
-		// === STEP 3: Check if a newer render was queued while we were working.
-		// If so, DISCARD this frame entirely (it's stale) and let the queued one run. ===
-		if (_fcnn_render_queued) {
-			// Don't paint this stale frame — a newer one is waiting
-			_fcnn_render_in_progress = false;
-			_fcnn_render_queued = false;
-			var nextArgs = _fcnn_render_queued_args;
-			_fcnn_render_queued_args = null;
-			// Immediately start the newer render with latest args
-			if (nextArgs) {
-				draw_fcnn(...nextArgs);
-			} else {
-				restart_fcnn();
-			}
-			return;
-		}
-
-		// === STEP 4: ATOMIC SWAP — paint completed frame in one
-		// synchronous operation with no awaits in between ===
-		var visibleCtx = canvas.getContext("2d", { willReadFrequently: true });
-		visibleCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-		visibleCtx.drawImage(offscreen, 0, 0);
-
-		// === STEP 5: Save this as the last known good frame ===
-		_fcnn_last_good_frame = offscreen;
-
-	} catch (e) {
-		// On error, don't clear the canvas — keep showing the last good frame
-		console.warn("[draw_fcnn] Render error, keeping last good frame:", e);
-	} finally {
-		_fcnn_render_in_progress = false;
-
-		// If a render was queued while we were busy (and we didn't already handle it above)
-		if (_fcnn_render_queued) {
-			_fcnn_render_queued = false;
-			var nextArgs = _fcnn_render_queued_args;
-			_fcnn_render_queued_args = null;
-			if (nextArgs) {
-				draw_fcnn(...nextArgs);
-			} else {
-				restart_fcnn();
-			}
-		}
-	}
+	await _draw_neurons_and_connections(ctx, canvasWidth, layers, meta_infos, layerSpacing, canvasHeight, maxSpacing, maxShapeSize, maxRadius, maxSpacingConv2d, font_size);
 }
 
 function draw_first_layer_image(ctx, maxVal, minVal, n, m, first_layer_input, font_size) {
