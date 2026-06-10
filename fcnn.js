@@ -528,47 +528,47 @@ var _fcnn_hit_regions = [];
 var _fcnn_canvas_mouse_bound = false;
 
 function _get_tooltip_styles(dark) {
-    return `
-        position: fixed;
-        z-index: 999999;
-        pointer-events: none;
-        background: ${dark
-            ? 'linear-gradient(135deg, rgba(20,25,40,0.97), rgba(30,35,55,0.97))'
-            : 'linear-gradient(135deg, rgba(255,255,255,0.99), rgba(245,248,255,0.99))'};
-        color: ${dark ? '#e8ecf4' : '#1a1a2e'};
-        border: 1px solid ${dark ? 'rgba(100,140,255,0.3)' : 'rgba(70,100,200,0.2)'};
-        border-radius: 12px;
-        padding: 14px 18px;
-        font-family: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-        font-size: 12px;
-        line-height: 1.6;
-        max-width: 440px;
-        max-height: 520px;
-        overflow: auto;
-        box-shadow: 0 8px 32px rgba(0,0,0,${dark ? '0.5' : '0.12'}),
-            0 2px 8px rgba(0,0,0,${dark ? '0.3' : '0.06'}),
-            inset 0 1px 0 rgba(255,255,255,${dark ? '0.05' : '0.8'});
-        display: none;
-        transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-            transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-        opacity: 0;
-        transform: translateY(4px) scale(0.98);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+	return `
+	position: fixed;
+	z-index: 999999;
+	pointer-events: none;
+	background: ${dark
+			? 'linear-gradient(135deg, rgba(20,25,40,0.97), rgba(30,35,55,0.97))'
+			: 'linear-gradient(135deg, rgba(255,255,255,0.99), rgba(245,248,255,0.99))'};
+	color: ${dark ? '#e8ecf4' : '#1a1a2e'};
+	border: 1px solid ${dark ? 'rgba(100,140,255,0.3)' : 'rgba(70,100,200,0.2)'};
+	border-radius: 12px;
+	padding: 14px 18px;
+	font-family: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+	font-size: 12px;
+	line-height: 1.6;
+	max-width: 440px;
+	max-height: 520px;
+	overflow: auto;
+	box-shadow: 0 8px 32px rgba(0,0,0,${dark ? '0.5' : '0.12'}),
+	    0 2px 8px rgba(0,0,0,${dark ? '0.3' : '0.06'}),
+	    inset 0 1px 0 rgba(255,255,255,${dark ? '0.05' : '0.8'});
+	display: none;
+	transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+	    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+	opacity: 0;
+	transform: translateY(4px) scale(0.98);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
     `;
 }
 
 function _ensure_fcnn_tooltip() {
-    if (_fcnn_tooltip_el && document.body.contains(_fcnn_tooltip_el)) return _fcnn_tooltip_el;
+	if (_fcnn_tooltip_el && document.body.contains(_fcnn_tooltip_el)) return _fcnn_tooltip_el;
 
-    _fcnn_tooltip_el = document.createElement("div");
-    _fcnn_tooltip_el.id = "fcnn_tooltip_overlay";
+	_fcnn_tooltip_el = document.createElement("div");
+	_fcnn_tooltip_el.id = "fcnn_tooltip_overlay";
 
-    var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
-    _fcnn_tooltip_el.style.cssText = _get_tooltip_styles(dark);
+	var dark = (typeof is_dark_mode !== 'undefined' && is_dark_mode);
+	_fcnn_tooltip_el.style.cssText = _get_tooltip_styles(dark);
 
-    document.body.appendChild(_fcnn_tooltip_el);
-    return _fcnn_tooltip_el;
+	document.body.appendChild(_fcnn_tooltip_el);
+	return _fcnn_tooltip_el;
 }
 
 function _show_fcnn_tooltip(html, mouseX, mouseY) {
