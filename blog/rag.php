@@ -144,9 +144,7 @@ RAG and ICL are **complementary**, not competing. In fact, **RAG feeds into ICL*
 
 ICL relies on whatever the user manually puts in the prompt. RAG **automates the selection** using vector search. The LLM itself doesn't know the difference, it just sees tokens in its context window either way. The magic of RAG is in the retrieval step *before* the LLM runs.
 
-$$
-\underbrace{\text{RAG}}_{\text{automated retrieval}} \;\longrightarrow\; \underbrace{\text{ICL}}_{\text{LLM reads retrieved chunks}}
-$$
+<p>$$ \underbrace{\text{RAG}}_{\text{automated retrieval}} \;\longrightarrow\; \underbrace{\text{ICL}}_{\text{LLM reads retrieved chunks}} $$</p>
 
 ## RAG and Long Context Windows
 
