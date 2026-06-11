@@ -511,6 +511,8 @@ async function test_custom_drawn_images_with_augmentation() {
 
 	$("#custom_image_training_data_small").click();
 
+	await sleep(5000);
+
 	await wait_for_two_save_buttons_and_click_them();
 
 	set_epochs(wanted_epochs);
