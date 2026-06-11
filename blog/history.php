@@ -3,6 +3,7 @@
 <!--
 TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html
 TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks
+TODO https://stats.stackexchange.com/questions/530925/history-of-the-term-early-stopping
 TODO https://people.idsia.ch/~juergen//who-invented-convolutional-neural-networks-28aug2025.html
 -->
 
