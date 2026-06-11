@@ -385,5 +385,5 @@ $$\mathbf{z}_{i} = \sum_{j} \alpha_{i,j} \mathbf{v}_j$$
 <div class="md">
 The diamond you see in the plot is the result of this physics, a word finding its true north by listening to its neighbors.
 
-TODO: Attention doesn't only do it for words that mean different things, it does it for all words and all kinds of relationships.
+It is important to note that attention does not only disambiguate words with multiple meanings like "bank" or "apple." It operates over **every token in the sequence**, refining **all** representations simultaneously. A word like "the" gets contextualized just as much as "bank" does — attention captures syntactic relationships (subject-verb agreement), coreference (linking "she" to "Maria"), temporal reasoning ("before" relating two events), adjectival binding ("red" attaching to "car" rather than "house"), and countless other structural dependencies. The disambiguation examples above are simply the most *visually dramatic* illustration of what is, in reality, a universal mechanism: every word's representation is reshaped by every other word it attends to, regardless of whether the word is ambiguous in isolation.
 </div>
