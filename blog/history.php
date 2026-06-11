@@ -582,18 +582,17 @@ However, Deep Blue's victory represented the pinnacle of specific, hand-crafted 
 
 ## Bridging the Gap: Long Short-Term Memory (LSTM)
 
-### The "Vanishing Gradient" Problem
-Before the late 1990s, Recurrent Neural Networks (RNNs) struggled to learn long-range dependencies. As errors were backpropagated through time, the mathematical signal (the gradient) would shrink exponentially, effectively "vanishing". This meant machines had a very short "memory" and could not connect information at the start of a long sentence to the end.
+### The "Vanishing Gradient" Problem (1991)
+The Fundamental Deep Learning Problem was identified and analyzed in \citeyear{hochreiter1991vanishing} by \citeauthor{hochreiter1991vanishing} in his diploma thesis supervised by Jürgen Schmidhuber. He showed that in typical deep or recurrent networks, back-propagated error signals either shrink rapidly (vanish) or grow out of bounds (explode), making learning impossible for long sequences. Crucially, Hochreiter derived from first principles the concept of a **recurrent residual connection**: a neural unit with the identity activation function connected to itself with weight 1.0, ensuring constant error flow across arbitrarily many time steps.
 
-### The Innovation (1997)
-Sepp Hochreiter and Jürgen Schmidhuber introduced the **\citetitle{lstm} (LSTM)** architecture to solve this.
-* **The Gating Mechanism**: LSTMs use "gates" (Input, Forget, and Output) to regulate the flow of information.
-* **The Constant Error Carousel**: This internal mechanism allows the gradient to flow across long sequences without disappearing, enabling the network to "remember" information for thousands of steps.
+### The Architecture (1995-2000)
+Building on this analysis, Schmidhuber coined the term **\citetitle{lstm}** in a 1995 tech report. The main peer-reviewed publication of \citeyear{lstm} by \citeauthorlastnameand{lstm} is now the most cited AI paper of the 20th century. A critical milestone was the **"vanilla LSTM" architecture with forget gates** (\citeyear{lstm_vanilla}), the variant that everybody uses today (e.g., in Google's TensorFlow). It features gated recurrent residual connections whose gates are initially open (1.0), allowing the network to start with plain residual connections.
+
+### CTC and the Speech Revolution (2006-2015)
+In \citeyear{ctc2006}, the training method **Connectionist Temporal Classification (CTC)** was introduced for simultaneous alignment and recognition of sequences. CTC-trained LSTM was successfully applied to speech in 2007 and became the first superior end-to-end neural speech recognizer. In 2015, this CTC-LSTM combination **dramatically improved Google's speech recognition** on Android smartphones. Google Translate (2016), whose technical paper mentions LSTM over 50 times, was based on two connected LSTMs. By 2017, LSTM also powered Facebook's machine translation (over 30 billion translations per week), Apple's Quicktype on roughly 1 billion iPhones, and the voice of Amazon's Alexa.
 
 ### The Bridge to Modern AI
-LSTMs were the "workhorse" of AI for two decades (approx. 1997–2017).
-* **Era of Dominance**: They powered the first truly functional versions of Google Translate, Apple's Siri, and Amazon's Alexa.
-* **Connectionist Victory**: While "\citetitle{sutton2019bitter}" suggests scale is key, the LSTM was a rare "clever" architectural breakthrough that allowed neural networks to remain viable for language tasks until the **Transformer** and **Self-Attention** took over in 2017.
+LSTMs were the "workhorse" of AI for two decades (approx. 1997–2017). Without the LSTM, the "AI Winter" for natural language processing likely would have lasted much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by implementing a form of persistent memory. The first Large Language Models were based on LSTM as well.
 
 ### Significance
 Without the LSTM, the "AI Winter" for natural language processing likely would have lasted much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by mimicking a form of persistent memory.
