@@ -144,5 +144,16 @@ During the 1980s and 90s, the **Sigmoid** and **Hyperbolic Tangent (Tanh)** func
 
 The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** and **Tanh** "flatten out" (saturate) at high and low input values, their derivatives become nearly zero. In deep networks, multiplying these tiny numbers together during backpropagation caused the signal to disappear before it reached the earliest layers, a phenomenon known as the **vanishing gradient problem**.
 
-This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**, invented by \citeauthor{fukushimarelu} in \citeyear{fukushimarelu} for artificial neural networks, yet first introduced by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f). By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
+This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**, invented by \citeauthor{relufirst} in \citeyear{relufirst} for artificial neural networks, yet first introduced by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f). By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
+</div>
+
+<div class="image-row">
+	<figure>
+		<img src="householderrelu.png" alt="Householders ReLU definition" />
+		<figcaption>A definition of the relu function from \citeauthor{steadystates}, published in \citeyear{steadystates}.</figcaption>
+	</figure>
+	<figure>
+		<img src="fukushimarelu.png" alt="Fukushima ReLU definition" />
+		<figcaption>\citeauthor{relufirst}'s definition of ReLU from \citeyear{relufirst}.</figcaption>
+	</figure>
 </div>
