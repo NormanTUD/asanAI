@@ -314,6 +314,10 @@ This "Symbolic AI" dominated the field for nearly forty years. It was believed t
 
 ## The earliest roots of modern AI
 
+<div class="optional md" data-headline="The First Recurrent Network Architecture: The Lenz-Ising Model (1920-25)">
+Long before digital computers existed, physicists \citeauthor{lenz1920} and his student \citeauthor{ising1925} introduced what is now recognized as the first <b>recurrent neural network architecture</b>. The Ising model describes a lattice of nodes (spins) with feedback connections, where each node influences its neighbors, and the system settles into an equilibrium state in response to input conditions. While it was designed to model ferromagnetism, not computation, its mathematical structure is identical to that of later associative memory networks. In \citeyear{amari1972}, \citeauthor{amari1972} made this recurrent architecture **adaptive**, enabling it to learn to associate input patterns with output patterns by changing its connection weights, creating the first published learning recurrent neural network. Ten years later, the basic equations of Amari's network were republished and its storage capacity analyzed under the name "Hopfield Network."
+</div>
+
 <div class="image-row">
 	<figure>
 		<img src="mcculloch.png" alt="Warren McCulloch" />

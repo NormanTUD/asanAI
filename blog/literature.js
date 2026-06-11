@@ -1,4 +1,23 @@
 window.bibData = {
+	"lenz1920": {
+		title: "Beitrag zum Verständnis der magnetischen Erscheinungen in festen Körpern",
+		author: "Wilhelm Lenz",
+		year: 1920,
+		url: "https://www.physik.uni-rostock.de/storages/uni-rostock/Alle_MNF/Physik/Historisches/Kalenderblaetter_Physik/KB_2013_06_Lenz/Lenz_1920.pdf"
+	},
+	"ising1925": {
+		title: "Beitrag zur Theorie des Ferromagnetismus",
+		author: "Ernst Ising",
+		year: 1925,
+		url: "https://icmp.lviv.ua/ising/books/isingshort.pdf"
+	},
+	"amari1972": {
+		title: "Learning Patterns and Pattern Sequences by Self-Organizing Nets of Threshold Elements",
+		author: "Shunichi Amari",
+		year: 1972,
+		url: "https://ieeexplore.ieee.org/document/1672070/"
+	},
+
 	"ivakhnenko1965": {
 		title: "Cybernetic Predicting Devices",
 		author: "Alexey Grigorevich Ivakhnenko, Valentin Grigorevich Lapa",
