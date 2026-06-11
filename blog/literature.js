@@ -1,4 +1,19 @@
 window.bibData = {
+	"wienerajedrecista": {
+		url: "https://commons.wikimedia.org/wiki/File:Gonzalo_showing_El_Ajedrecista_to_Norbert_Wiener.jpg",
+		author: "Unknown Photographer",
+		title: "Gonzalo showing El Ajedrecista to Norbert Wiener",
+		year: "ca. 1950",
+		alternativetitle: "El Ajedrecista"
+	},
+
+	"torres1914": {
+		title: "El Ajedrecista (The Chess Player)",
+		author: "Leonardo Torres y Quevedo",
+		year: 1914,
+		url: "https://en.wikipedia.org/wiki/El_Ajedrecista"
+	},
+
 	"lenz1920": {
 		title: "Beitrag zum Verständnis der magnetischen Erscheinungen in festen Körpern",
 		author: "Wilhelm Lenz",
