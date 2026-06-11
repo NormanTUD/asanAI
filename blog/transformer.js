@@ -475,8 +475,8 @@ function _vmUpdateResult(resDiv, html) {
 
         // SCOPED math rendering — never global render_temml()
         try {
-            if (typeof renderMathInElement === 'function') {
-                renderMathInElement(resDiv, {
+            if (typeof temml.renderMathInElement === 'function') {
+                temml.renderMathInElement(resDiv, {
                     delimiters: [
                         {left: '$$', right: '$$', display: true},
                         {left: '$',  right: '$',  display: false}
@@ -3082,7 +3082,7 @@ function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
 }
 
 function _renderTemmlOnElements(elements) {
-    if (typeof renderMathInElement !== 'function') {
+    if (typeof temml.renderMathInElement !== 'function') {
         // DO NOT fall back to global render_temml() — it can wipe
         // the vector math input by processing the entire document.
         console.warn('renderMathInElement not available, skipping scoped render');
@@ -3091,7 +3091,7 @@ function _renderTemmlOnElements(elements) {
     elements.forEach(el => {
         if (!el) return;
         try {
-            renderMathInElement(el, {
+            temml.renderMathInElement(el, {
                 delimiters: [
                     {left: '$$', right: '$$', display: true},
                     {left: '$', right: '$', display: false}
@@ -5626,8 +5626,8 @@ function _vmRenderResult(html) {
     
     // Scoped math rendering — NEVER global render_temml()
     try {
-        if (typeof renderMathInElement === 'function') {
-            renderMathInElement(resDiv, {
+        if (typeof temml.renderMathInElement === 'function') {
+            temml.renderMathInElement(resDiv, {
                 delimiters: [
                     {left: '$$', right: '$$', display: true},
                     {left: '$', right: '$', display: false}
