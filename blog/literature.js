@@ -1,4 +1,10 @@
 window.bibData = {
+	"fukushimarelu": {
+		author: "Kunihiko Fukushima",
+		year: 1969,
+		title: "Visual feature extraction by a multilayered network of analog threshold elements",
+		url: "https://ieeexplore.ieee.org/document/4082265"
+	},
 	"schmidhuber1995nplm": {
 		title: "Sequential Neural Text Compression",
 		author: "Jürgen Schmidhuber, Stefan Heil",
