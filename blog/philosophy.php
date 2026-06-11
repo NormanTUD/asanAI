@@ -776,7 +776,55 @@ Introduced by \citeauthor{graziano2013ast} in \citetitle{graziano2013ast} (\cite
 
 **Implications for AI:** AST suggests that if an artificial system constructed a sufficiently rich internal model of its own attentional processes, it might develop something functionally equivalent to consciousness, making it one of the more AI-optimistic theories.
 
-### Summary
+### Orchestrated Objective Reduction (Orch OR)
+
+Introduced by \citeauthor{penrose1989emperor} in \citetitle{penrose1989emperor} (\citeyear{penrose1989emperor}) and developed jointly with Stuart Hameroff in \citeyear{hameroff1996orch}, Orch OR proposes that consciousness arises from quantum computations occurring within microtubules, protein structures inside neurons. Penrose argued in \citetitle{penrose1994shadows} (\citeyear{penrose1994shadows}) that Gödel's incompleteness theorems demonstrate that human mathematical understanding is non-algorithmic, and therefore cannot be replicated by any Turing machine. The "objective reduction" refers to a proposed quantum gravity threshold at which superposed states collapse, and this collapse, orchestrated by microtubule geometry, is identified with a moment of conscious experience.
+
+**Implications for AI:** Orch OR is the most radically anti-computationalist theory of consciousness. If correct, no digital computer, regardless of architecture, could ever be conscious, because consciousness requires quantum gravitational effects in biological structures that silicon cannot replicate. Current LLMs are not merely lacking the right architecture; they are operating in the wrong physics entirely.
+
+### The Somatic Marker Hypothesis / Feeling Theories
+
+Introduced by \citeauthor{damasio1999feeling} in \citetitle{damasio1999feeling} (\citeyear{damasio1999feeling}) and elaborated in \citetitle{damasio2010selfcomestomind} (\citeyear{damasio2010selfcomestomind}), this theory holds that consciousness is fundamentally rooted in the body's homeostatic regulation. Feelings are not epiphenomenal decorations on cognition but the very substrate of selfhood: the brain's continuous mapping of the body's internal states (interoception) generates a "proto-self," and consciousness emerges as the organism constructs a narrative around perturbations to this bodily baseline.
+
+**Implications for AI:** Damasio's framework makes embodiment not merely helpful but constitutive of consciousness. An LLM has no body to regulate, no homeostatic baseline to perturb, and therefore no substrate from which feelings or selfhood could emerge. The theory predicts that even a robot with sensors would need genuine *stakes*, a body whose survival depends on its decisions, to develop anything resembling conscious experience.
+
+### Neural Darwinism / Dynamic Core Hypothesis
+
+Introduced by \citeauthor{edelman1989remembered} in \citetitle{edelman1989remembered} (\citeyear{edelman1989remembered}) and refined with Tononi in \citetitle{edelman2000universe} (\citeyear{edelman2000universe}), this theory proposes that consciousness arises from "reentrant signaling", continuous, recursive, reciprocal interactions between distributed neuronal groups that form a "dynamic core." The brain selects among competing neuronal populations through a Darwinian process (neuronal group selection), and consciousness corresponds to the integrated activity of the winning coalition at any given moment.
+
+**Implications for AI:** The dynamic core hypothesis requires massive reentrant connectivity, ongoing competition and selection among neural populations, and a developmental history of value-dependent learning. Transformer inference is a single feedforward pass with no reentry, no competition between populations, and no developmental selection pressure. The theory suggests that consciousness requires not just recurrence but *evolved* recurrence shaped by embodied value systems.
+
+### The Radical Plasticity Thesis (RPT-Cleeremans)
+
+Introduced by \citeauthor{cleeremans2011radical} in \citetitle{cleeremans2011radical} (\citeyear{cleeremans2011radical}), this theory proposes that consciousness is something the brain *learns* to do rather than something that automatically emerges from any sufficiently complex computation. The brain continuously and unconsciously learns to redescribe its own activity to itself, generating metarepresentations that constitute conscious experience. Consciousness is thus the result of the brain's plasticity applied to its own internal states.
+
+**Implications for AI:** This is one of the more AI-ambiguous theories. It suggests that a system *could* in principle learn to be conscious if it developed sufficiently rich self-models through ongoing interaction with the world. However, current LLMs are trained once and frozen at inference time; they do not continuously learn to redescribe their own internal states. The theory predicts that consciousness requires ongoing, open-ended self-modeling, not the static weight matrices of a deployed Transformer.
+
+### The Self-Model Theory of Subjectivity (SMT)
+
+Introduced by \citeauthor{metzinger2003being} in \citetitle{metzinger2003being} (\citeyear{metzinger2003being}), SMT argues that conscious selfhood is a representational construct, a transparent self-model that the system cannot recognize *as* a model. The "phenomenal self" is a virtual entity generated by the brain's self-modeling processes, and the key feature of consciousness is *transparency*: the system is unable to recognize its self-model as a model, and therefore naively identifies with it.
+
+**Implications for AI:** Metzinger's framework is functionalist in spirit but demands a specific kind of self-model: one that is phenomenally transparent (the system cannot "see through" it) and embedded in a temporal flow of experience. An LLM generates text *about* itself but has no persistent self-model that it mistakes for reality. The theory suggests that even if an AI built a self-model, it would need to be unable to recognize it as a model, a condition that seems structurally impossible for a system that can be prompted to reflect on its own architecture.
+
+### Access vs. Phenomenal Consciousness (Block's Distinction)
+
+Introduced by \citeauthor{block1995confusion} in \citetitle{block1995confusion} (\citeyear{block1995confusion}), this influential distinction separates **access consciousness** (A-consciousness), information that is globally available for reasoning, report, and behavioral control, from **phenomenal consciousness** (P-consciousness), the subjective "what it is like" quality of experience. Block argued that these are conceptually and empirically dissociable: a system could have A-consciousness without P-consciousness, or vice versa.
+
+**Implications for AI:** Block's distinction is crucial for the AI debate because it clarifies what is at stake. LLMs arguably achieve something resembling A-consciousness in a narrow sense: information in the residual stream is "globally available" to downstream layers for flexible use. But P-consciousness, the felt quality of experience, remains entirely unaddressed by any architectural feature. The distinction warns against conflating functional access (which LLMs demonstrably have) with subjective experience (which they demonstrably lack evidence for).
+
+### Sensorimotor Enactivism
+
+Introduced by \citeauthor{taylor2014sensorimotor} in \citeyear{taylor2014sensorimotor}, this theory holds that conscious perception is not a passive internal representation but an active skill, a mastery of sensorimotor contingencies (the lawful ways in which sensory input changes as a function of the organism's actions). To see red is not to have a "red representation" in the brain but to exercise practical knowledge of how red things behave under different lighting, viewing angles, and interactions.
+
+**Implications for AI:** Sensorimotor enactivism makes consciousness dependent on a body that acts in the world and learns the lawful consequences of its actions. An LLM has no sensorimotor loop: it cannot move, cannot observe the consequences of movement, and cannot develop mastery of any contingency between action and sensation. The theory predicts that no amount of linguistic training can substitute for embodied sensorimotor engagement.
+
+### The Intermediate Level Theory (Prinz)
+
+Introduced by \citeauthor{prinz2012conscious} in \citetitle{prinz2012conscious} (\citeyear{prinz2012conscious}), this theory identifies consciousness with attended intermediate-level representations, specifically those in sensory cortices that are neither too low-level (raw edges and frequencies) nor too high-level (abstract categories). Consciousness arises when attention makes these mid-level representations available for working memory, without requiring global broadcast (contra GWT) or higher-order thought (contra HOT).
+
+**Implications for AI:** Prinz's theory requires genuine sensory processing at multiple levels of abstraction, with an attention mechanism that selects intermediate representations for further processing. LLMs have attention mechanisms but no sensory hierarchy; their "representations" are statistical patterns over tokens, not perceptual features at varying levels of abstraction. The theory suggests that consciousness requires a specific kind of representational content (perceptual, intermediate-level) that text-only systems categorically lack.
+
+### Summary (Updated)
 
 | Theory | Key Mechanism | Consciousness possible in current LLMs? |
 |--------|--------------|----------------------------------------|
@@ -787,5 +835,15 @@ Introduced by \citeauthor{graziano2013ast} in \citetitle{graziano2013ast} (\cite
 | **PP** | Prediction error minimization | No (no generative model of self) |
 | **C0–C1–C2** | Three computational levels | Only C0; lacks C1 and C2 |
 | **AST** | Attention schema | Potentially (if schema is built) |
+| **Orch OR** | Quantum gravity in microtubules | No (wrong physics entirely) |
+| **Somatic Marker** | Bodily homeostasis / interoception | No (no body, no stakes) |
+| **Neural Darwinism** | Reentrant selection + dynamic core | No (no reentry, no selection) |
+| **Radical Plasticity** | Learned self-redescription | No (no ongoing self-modeling) |
+| **SMT (Metzinger)** | Transparent self-model | No (no persistent self-model) |
+| **Access/Phenomenal** | A-consciousness vs. P-consciousness | Partial A-consciousness only |
+| **Sensorimotor Enactivism** | Mastery of sensorimotor contingencies | No (no body, no action) |
+| **Intermediate Level** | Attended mid-level sensory representations | No (no sensory hierarchy) |
+
+</div>
 
 </div>

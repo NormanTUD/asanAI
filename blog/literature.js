@@ -1,4 +1,85 @@
 window.bibData = {
+	"penrose1989emperor": {
+		title: "The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics",
+		author: "Roger Penrose",
+		year: 1989,
+		url: "https://0ducks.wordpress.com/wp-content/uploads/2014/12/the-emperors-new-mind-by-roger-penrose.pdf"
+	},
+	"penrose1994shadows": {
+		title: "Shadows of the Mind: A Search for the Missing Science of Consciousness",
+		author: "Roger Penrose",
+		year: 1994,
+		url: "https://altexploit.wordpress.com/wp-content/uploads/2017/07/roger-penrose-shadows-of-the-mind_-a-search-for-the-missing-science-of-consciousness-oxford-university-press-1994.pdf"
+	},
+	"hameroff1996orch": {
+		title: "Orchestrated reduction of quantum coherence in brain microtubules: A model for consciousness",
+		author: "Stuart Hameroff, Roger Penrose",
+		year: 1996,
+		url: "https://www.sciencedirect.com/science/article/pii/0378475496804769"
+	},
+	"damasio1999feeling": {
+		title: "The Feeling of What Happens: Body and Emotion in the Making of Consciousness",
+		author: "Antonio Damasio",
+		year: 1999,
+		url: "https://archive.org/details/feelingofwhathap00dama"
+	},
+	"damasio2010selfcomestomind": {
+		title: "Self Comes to Mind: Constructing the Conscious Brain",
+		author: "Antonio Damasio",
+		year: 2010,
+		url: "https://archive.org/details/selfcomestomindc0000dama"
+	},
+	"edelman1989remembered": {
+		title: "The Remembered Present: A Biological Theory of Consciousness",
+		author: "Gerald M. Edelman",
+		year: 1989,
+		url: "https://archive.org/details/rememberedpresen0000edel"
+	},
+	"edelman2000universe": {
+		title: "A Universe of Consciousness: How Matter Becomes Imagination",
+		author: "Gerald M. Edelman, Giulio Tononi",
+		year: 2000,
+		url: "https://archive.org/details/universeofconsci0000edel"
+	},
+	"prinz2012conscious": {
+		title: "The Conscious Brain: How Attention Engenders Experience",
+		author: "Jesse J. Prinz",
+		year: 2012,
+		url: "https://global.oup.com/academic/product/the-conscious-brain-9780195314595"
+	},
+	"oizumi2014phi": {
+		title: "From the Phenomenology to the Mechanisms of Consciousness: Integrated Information Theory 3.0",
+		author: "Masafumi Oizumi, Larissa Albantakis, Giulio Tononi",
+		year: 2014,
+		url: "https://doi.org/10.1371/journal.pcbi.1003588"
+	},
+	"cleeremans2011radical": {
+		title: "The Radical Plasticity Thesis: How the Brain Learns to be Conscious",
+		author: "Axel Cleeremans",
+		year: 2011,
+		url: "https://doi.org/10.3389/fpsyg.2011.00086"
+	},
+	"metzinger2003being": {
+		title: "Being No One: The Self-Model Theory of Subjectivity",
+		author: "Thomas Metzinger",
+		year: 2003,
+		url: "https://mitpress.mit.edu/9780262633086/being-no-one/"
+	},
+	"block1995confusion": {
+		title: "On a Confusion about a Function of Consciousness",
+		author: "Ned Block",
+		year: 1995,
+		url: "https://doi.org/10.1017/S0140525X00038188"
+	},
+	"taylor2014sensorimotor": {
+		title: "Sensorimotor Theory and Enactivism",
+		author: "J. Kevin O'Regan, Alva Noë",
+		year: 2001,
+		url: "https://doi.org/10.1017/S0140525X01000115"
+	},
+
+
+
 	"distinctmodes": {
 		year: 2000,
 		url: "https://pubmed.ncbi.nlm.nih.gov/11074267/",
