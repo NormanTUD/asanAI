@@ -703,6 +703,17 @@ After the second AI winter, the field shifted back to connectionism. In \citeyea
 
 While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet is essentially a Highway Network variant whose gates are always open, making it an open-gated Highway Net. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
 
+The architectural lineage from LSTM to ResNet can be traced as a clear sequence of innovations transferring the same core principle, constant error flow through residual connections:
+
+- **1991:** Hochreiter's recurrent residual connections solve the vanishing gradient problem
+- **1997:** LSTM introduces plain recurrent residual connections (weight 1.0)
+- **1999-2000:** Vanilla LSTM adds gated recurrent residual connections (gates initially open at 1.0)
+- **2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs
+- **May 2015:** Highway Networks apply gated feedforward residual connections (initially 1.0)
+- **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
+
+This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
+
 ## The Hardware Lottery: How Gamers Saved AI
 
 We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
