@@ -1,4 +1,11 @@
 window.bibData = {
+	"highway2015": {
+		title: "Highway Networks",
+		author: "Rupesh Kumar Srivastava, Klaus Greff, Jürgen Schmidhuber",
+		year: 2015,
+		url: "https://arxiv.org/abs/1505.00387"
+	},
+
 	"lstm_vanilla": {
 		title: "Learning to Forget: Continual Prediction with LSTM",
 		author: "Felix A. Gers, Jürgen Schmidhuber, Fred Cummins",

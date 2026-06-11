@@ -695,6 +695,10 @@ The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit
 ## The Deep Learning Revolution (\citeyear{krizhevsky2012imagenet})
 After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, the \citealternativetitle{krizhevsky2012imagenet} paper demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods. This validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition.
 
+### Highway Networks: The First Very Deep Feedforward NNs (2015)
+
+While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet is essentially a Highway Network variant whose gates are always open, making it an open-gated Highway Net. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
+
 ## The Hardware Lottery: How Gamers Saved AI
 
 We tend to view the progress of AI as a purely mathematical evolution. However, \citeauthor{hooker2020} reminds us of a grounded reality in \citetitle{hooker2020}: the success of an algorithm is often dictated by available hardware rather than intellectual superiority.
