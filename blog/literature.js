@@ -1,4 +1,10 @@
 window.bibData = {
+	"bansal2025syntheticself": {
+		title: "Can LLMs Improve Themselves Using Synthetic Data?",
+		author: "Hritik Bansal, Ashima Suvarna, Gantavya Bhatt, Nanyun Peng, Kai-Wei Chang, Aditya Grover",
+		year: 2025,
+		url: "https://arxiv.org/abs/2508.18302"
+	},
 	"garg2022incontext": {
 		title: "What Can Transformers Learn In-Context? A Case Study of Simple Function Classes",
 		author: "Shivam Garg and Dimitris Tsipras and Percy Liang and Gregory Valiant",

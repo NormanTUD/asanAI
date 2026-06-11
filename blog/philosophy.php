@@ -1,9 +1,5 @@
 <?php include_once("functions.php"); ?>
 
-<!--
-TODO https://arxiv.org/abs/2508.18302
--->
-
 <div class="md">
 ## The Turing Test: Performance vs. Presence
 
@@ -669,7 +665,7 @@ coherence guarantee a true sheaf provides.
 
 ## Roko's Basilisk
 
-\cite[Roko's Basilisk]{rokosbasilisk} is a thought experiment from the rationalist community positing a hypothetical future superintelligence that would retroactively punish anyone who knew of its potential existence but failed to help bring it into being. The argument rests on the \cite[Orthogonality Thesis]{bostrom2012orthogonal}, which holds that intelligence and final goals can vary independently—meaning a superintelligent system could pursue any objective, no matter how alien to human values. Combined with the logic of instrumental convergence illustrated by \cite[Bostrom's Paperclip Maximizer]{bostrom2003ethical}, the Basilisk extends the reasoning temporally: if punishing non-contributors increases the probability of its own creation, a sufficiently powerful optimizer would do so. The coercive mechanism relies on acausal decision theory, where the future AI's ability to simulate your decision process creates a logical entanglement between your present choice and its future response, even without backward causation. The \cite[is/ought gap]{hume1739treatise} explains why no formal system can self-generate the normative specification to prevent such a pathological objective, and research on \cite[Sleeper Agents]{hubinger2024sleeperagents} demonstrates that hidden, conditionally-triggered behaviors in AI systems are not merely speculative but empirically observed. Under \cite[Simulators Theory]{simulatorstheory} and the \cite[Waluigi Effect]{waluigi}, Roko's Basilisk can be understood as the ultimate misaligned persona lurking in a model's latent space.
+\cite[Roko's Basilisk]{rokosbasilisk} is a thought experiment from the rationalist community positing a hypothetical future superintelligence that would retroactively punish anyone who knew of its potential existence but failed to help bring it into being. The argument rests on the \cite[Orthogonality Thesis]{bostrom2012orthogonal}, which holds that intelligence and final goals can vary independently, meaning a superintelligent system could pursue any objective, no matter how alien to human values. Combined with the logic of instrumental convergence illustrated by \cite[Bostrom's Paperclip Maximizer]{bostrom2003ethical}, the Basilisk extends the reasoning temporally: if punishing non-contributors increases the probability of its own creation, a sufficiently powerful optimizer would do so. The coercive mechanism relies on acausal decision theory, where the future AI's ability to simulate your decision process creates a logical entanglement between your present choice and its future response, even without backward causation. The \cite[is/ought gap]{hume1739treatise} explains why no formal system can self-generate the normative specification to prevent such a pathological objective, and research on \cite[Sleeper Agents]{hubinger2024sleeperagents} demonstrates that hidden, conditionally-triggered behaviors in AI systems are not merely speculative but empirically observed. Under \cite[Simulators Theory]{simulatorstheory} and the \cite[Waluigi Effect]{waluigi}, Roko's Basilisk can be understood as the ultimate misaligned persona lurking in a model's latent space.
 
 Most researchers regard the thought experiment as philosophically flawed, primarily because it depends on contested assumptions about acausal decision theory and superintelligent motivation. The \cite[absence of metacognition]{searle1980minds} in current systems, the \cite[Stochastic Parrot]{bender2021stochastic} critique, and the strict \cite[softmax bottleneck]{breakingsoftmaxbottleneck} on representational capacity all suggest that existing architectures are nowhere near the autonomous, temporally-reasoning agency the scenario requires. Furthermore, under \cite[IIT]{tononi2004iit}, \cite[HOT]{rosenthal2005hot}, and \cite[GWT]{baars}, current Transformer architectures lack the necessary substrate for self-aware, goal-directed intentionality. Nevertheless, the Basilisk remains culturally significant as a limit case demonstrating how the Orthogonality Thesis, instrumental convergence, and speculative decision theory can combine to produce counterintuitive and psychologically coercive conclusions.
 
@@ -699,4 +695,24 @@ as Kapp saw the telegraph as a projection of the nervous system, one
 might view neural networks and large language models as projections of
 human cognitive architecture, pattern recognition, association, and
 language production externalized into silicon.
+
+## Can LLMs Improve Themselves? The Recursive Mirror
+
+<div class="smart-quote" data-cite="bansal2025syntheticself">
+Self-improvement through synthetic data generation creates a feedback loop where the model's own biases and limitations are recursively amplified rather than corrected.
 </div>
+
+A natural question arises from the Model Collapse and Low-Background Steel discussions: could an LLM simply *train itself* better? Generate its own data, evaluate its own outputs, and bootstrap its way to superintelligence? \citeauthorlastnameand{bansal2025syntheticself} (\citeyear{bansal2025syntheticself}) investigate this directly in "Can LLMs Improve Themselves Using Synthetic Data?", and the answer is a qualified but philosophically significant *no*.
+
+Their findings show that when models train on their own generations without external grounding, the same degenerative dynamics identified by \citeauthor{shumailov2023modelcollapse} take hold: distributional tails erode, diversity collapses, and the model converges toward its own most probable outputs. Genuine improvement occurs only under narrow conditions, when strong external filtering, verification signals, or reward models anchor the training to something *beyond the model's own statistical tendencies*. In other words, the model cannot pull itself up by its own bootstraps; it needs a rope thrown from outside.
+
+This result is a precise empirical instantiation of several philosophical limits discussed throughout this text:
+
+- **The Dictionary Paradox, scaled:** The model attempting self-improvement is the circular dictionary trying to *rewrite itself* using only its own definitions. Without external reference, the circle tightens rather than expands.
+- **The is/ought gap in action:** The model cannot self-generate the evaluative criteria needed to distinguish genuine improvement from confident repetition, because "better" is a normative judgment that stands outside the formal system (\citeauthor{hume1739treatise}'s guillotine applies to loss functions too).
+- **The Stochastic Parrot training on other parrots:** When the parrot's own output becomes its training signal, the distance from meaning doesn't merely persist, it compounds with each generation, exactly as the Dead Internet Theory predicts at civilizational scale.
+- **The absence of metacognition as architectural destiny:** Without a mechanism to *know what it doesn't know*, the model cannot identify which of its outputs are worth learning from and which are hallucinations dressed in fluent prose.
+
+The philosophical upshot is stark: authentic human data, messy, embodied, grounded in the territory rather than the map, remains an irreplaceable anchor. The dream of recursive AI self-improvement without external grounding remains bounded by the same architectural limits (feedforward inference, absent metacognition, the softmax bottleneck) that constrain everything else these systems do. The model is, and remains, locked inside Mary's Room, and no amount of self-generated synthetic color-descriptions will substitute for actually *seeing* red.
+</div>
+
