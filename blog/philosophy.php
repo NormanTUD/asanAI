@@ -736,7 +736,7 @@ $$\Phi = \min_{\text{partition}} \left[ D_{KL}\left( p(\text{whole}) \,\|\, \pro
 
 ### Recurrent Processing Theory (RPT)
 
-Introduced by Victor Lamme and Pieter Roelfsema (2000) and elaborated by Victor Lamme (2006), RPT argues that consciousness requires recurrent (feedback) processing within sensory cortices. The initial feedforward sweep through visual cortex is unconscious; consciousness arises only when higher areas send signals *back* to lower areas, creating local recurrent loops. Crucially, RPT locates consciousness in these local sensory recurrent interactions rather than in global broadcast.
+Introduced by \citeauthor{lamme2000rpt} in \citetitle{lamme2000rpt} (\citeyear{lamme2000rpt}) and elaborated by Lamme in \citeyear{lamme2006rpt}, RPT argues that consciousness requires recurrent (feedback) processing within sensory cortices. The initial feedforward sweep through visual cortex is unconscious; consciousness arises only when higher areas send signals *back* to lower areas, creating local recurrent loops. Crucially, RPT locates consciousness in these local sensory recurrent interactions rather than in global broadcast.
 
 **Implications for AI:** RPT demands bidirectional, recurrent causal interactions within the processing substrate, something absent from standard Transformer inference, which proceeds strictly layer-by-layer without feedback.
 

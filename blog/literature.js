@@ -1,4 +1,10 @@
 window.bibData = {
+	"distinctmodes": {
+		year: 2000,
+		url: "https://pubmed.ncbi.nlm.nih.gov/11074267/",
+		author: "Pieter Roelfsema, Victor Lamme",
+		title: "The distinct modes of vision offered by feedforward and recurrent processing"
+	},
 	"baars1988gwt": {
 		title: "A Cognitive Theory of Consciousness",
 		author: "Bernard J. Baars",
