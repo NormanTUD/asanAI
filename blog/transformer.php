@@ -461,7 +461,7 @@ We have arrived at the final vector $h_{\text{final}}$ for the last token. To co
 To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\text{last}$ and the word's learned embedding row $w_\text{row}$ from the Unembedding Matrix $W_\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure.
 
 
-The hidden state vector $\mathbf{h}_{\text{last}}$ (represented by `h[pos]`) is dotted against each row $\mathbf{e}_w$ of the unembedding matrix $W_{\text{vocab}}$ to produce the logit for word $w$:
+The hidden state vector $\mathbf{h}_{\text{last}}$ (represented by `h[pos]`) is dotted against each row $\mathbf{e}_w$ of the unembedding matrix $W \substack{\text{vocab}}$ to produce the logit for word $w$:
 </div>
 
 $$\text{logit}_w = \mathbf{h}_{\text{last}} \cdot \mathbf{e}_w = \sum_{k=0}^{d-1} h_k \cdot e_{w,k}$$
