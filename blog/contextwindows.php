@@ -114,9 +114,7 @@ $$
 
 Instead of attending to *all* previous tokens, each token only attends to the most recent $w$ tokens (the "window"):
 
-$$
-\text{Attention}_i = \text{softmax}\left(\frac{Q_i \cdot K_{[i-w:i]}^T}{\sqrt{d_k}}\right) V_{[i-w:i]}
-$$
+<p>$$ \text{Attention}_i = \text{softmax}\left(\frac{Q_i \cdot K_{[i-w:i]}^T}{\sqrt{d_k}}\right) V_{[i-w:i]} $$</p>
 
 With a window of $w = 4096$, a 128K-token sequence uses $O(n \cdot w)$ instead of $O(n^2)$, a massive reduction.
 
@@ -217,9 +215,7 @@ This is one of the most important practical decisions in building LLM applicatio
 
 In practice, the most effective systems combine both:
 
-$$
-\underbrace{\text{RAG retrieves top-20 chunks}}_{\text{from millions of documents}} \;\xrightarrow{\text{inject}}\; \underbrace{\text{Long context processes all 20}}_{\text{model reasons over retrieved set}}
-$$
+<p>$$ \underbrace{\text{RAG retrieves top-20 chunks}}_{\text{from millions of documents}} \;\xrightarrow{\text{inject}}\; \underbrace{\text{Long context processes all 20}}_{\text{model reasons over retrieved set}} $$</p>
 
 RAG handles the *discovery* problem (finding needles in haystacks), while long context handles the *reasoning* problem (synthesizing information across multiple retrieved passages).
 
@@ -298,9 +294,7 @@ The key insight: **memory is always external**. The LLM itself is stateless, it'
 
 For very long-running sessions (like coding agents that run for hours), the context window eventually fills up. **Compaction** summarizes the conversation so far and replaces the full history with a compressed version:
 
-$$
-\underbrace{[S, M_1, M_2, \ldots, M_{100}]}_{\text{Full history (approaching limit)}} \;\xrightarrow{\text{compaction}}\; \underbrace{[S, \text{Summary}, M_{99}, M_{100}]}_{\text{Compressed (fits again)}}
-$$
+<p>$$ \underbrace{[S, M_1, M_2, \ldots, M_{100}]}_{\text{Full history (approaching limit)}} \;\xrightarrow{\text{compaction}}\; \underbrace{[S, \text{Summary}, M_{99}, M_{100}]}_{\text{Compressed (fits again)}} $$</p>
 
 This is lossy, details are inevitably lost in summarization. But combined with external memory files, critical information can persist across compaction boundaries.
 
@@ -315,9 +309,7 @@ The most robust systems combine multiple approaches into a layered architecture:
 | **Long-term memory** | Vector DB + structured files | Across sessions | Unlimited |
 | **Episodic memory** | Timestamped interaction logs | Permanent | Unlimited |
 
-$$
-\text{New session} \;\leftarrow\; \underbrace{\text{System prompt}}_{\text{identity}} + \underbrace{\text{Long-term memories}}_{\text{retrieved from DB}} + \underbrace{\text{User's new message}}_{\text{current turn}}
-$$
+<p>$$ \text{New session} \;\leftarrow\; \underbrace{\text{System prompt}}_{\text{identity}} + \underbrace{\text{Long-term memories}}_{\text{retrieved from DB}} + \underbrace{\text{User's new message}}_{\text{current turn}} $$</p>
 
 ## The KV Cache: The Hidden Memory Tax
 

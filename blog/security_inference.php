@@ -7,9 +7,7 @@ LLMs are powerful but **fragile under adversarial pressure**. Unlike traditional
 
 Prompt injection occurs when an attacker embeds instructions inside user-supplied data that override the system prompt \cite[Greshake et al., 2023]{greshake2023injection}. It is not a single-point failure but a **pipeline-wide risk**: weaknesses can emerge at ingestion, preprocessing, context assembly, or post-processing \cite[Liu et al., 2024]{liu2024formalizing}.
 
-$$
-\underbrace{\text{System Prompt}}_{\text{developer intent}} + \underbrace{\text{User Input containing hidden instructions}}_{\text{attacker payload}} \;\rightarrow\; \text{Model obeys attacker}
-$$
+<p>$$ \underbrace{\text{System Prompt}}_{\text{developer intent}} + \underbrace{\text{User Input containing hidden instructions}}_{\text{attacker payload}} \;\rightarrow\; \text{Model obeys attacker} $$</p>
 
 There are two main variants:
 

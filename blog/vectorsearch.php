@@ -318,9 +318,7 @@ Vector search retrieves candidates quickly but approximately. A **re-ranker** th
 
 A **bi-encoder** embeds query and document separately, fast but can miss subtle interactions. A **cross-encoder** reads query and document *together* as a single input, slow but much more accurate.
 
-$$
-\underbrace{\text{Vector DB: } 1M \rightarrow 50}_{\text{fast, approximate}} \;\xrightarrow{\text{re-ranker}}\; \underbrace{50 \rightarrow 5}_{\text{slow, precise}} \;\rightarrow\; \text{LLM prompt}
-$$
+<p>$$ \underbrace{\text{Vector DB: } 1M \rightarrow 50}_{\text{fast, approximate}} \;\xrightarrow{\text{re-ranker}}\; \underbrace{50 \rightarrow 5}_{\text{slow, precise}} \;\rightarrow\; \text{LLM prompt} $$</p>
 
 This two-stage pipeline is standard in production RAG systems.
 

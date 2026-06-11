@@ -9,7 +9,7 @@ A circuit in a neural network is a computational subgraph: a subset of model com
 
 The key insight from \cite[Elhage et al. (2021)]{elhage2021mathematical} is that the **residual stream** acts as a shared communication bus. Each attention head and MLP layer reads from this bus, performs a computation, and writes its result back. Circuits emerge when specific heads learn to "talk to each other" through this shared medium.
 
-$$\underbrace{x_0}_{\text{embedding}} \xrightarrow{+h_1} \xrightarrow{+h_2} \xrightarrow{+\text{MLP}_1} \xrightarrow{+h_3} \cdots \xrightarrow{+h_L} \underbrace{x_L}_{\text{unembedding}}$$
+<p>$$\underbrace{x_0}_{\text{embedding}} \xrightarrow{+h_1} \xrightarrow{+h_2} \xrightarrow{+\text{MLP}_1} \xrightarrow{+h_3} \cdots \xrightarrow{+h_L} \underbrace{x_L}_{\text{unembedding}}$$</p>
 
 Each arrow represents an additive contribution to the residual stream. A "circuit" is a subset of these contributions that accounts for a particular behavior.
 
