@@ -1,5 +1,9 @@
 <?php include_once("functions.php"); ?>
 
+<!--
+TODO https://stats.stackexchange.com/questions/499109/who-invented-the-concept-of-over-fitting
+-->
+
 <div class="md">
 
 We are giving an Artificial Intelligence, specifically, a single-layer neural network, one deceptively simple task: **"Learn the pattern of a sine wave."**
