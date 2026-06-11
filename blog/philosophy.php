@@ -748,7 +748,7 @@ Introduced by \citeauthor{rosenthal2005hot} in \citetitle{rosenthal2005hot} (\ci
 
 ### Predictive Processing / Free Energy Principle (PP)
 
-Introduced by \citeauthor{friston2010freeenergy} in \citetitle{friston2010freeenergy} (\citeyear{friston2010freeenergy}) and applied to consciousness by \citeauthor{seth2021beingyou} in \citetitle{seth2021beingyou} (\citeyear{seth2021beingyou}) and \citeauthor{hohwy2020pp} in \citetitle{hohwy2020pp} (\citeyear{hohwy2020pp}), PP posits that the brain is fundamentally a prediction machine that minimizes prediction error (or "free energy") by continuously generating top-down predictions about sensory input and updating its internal model when predictions fail. Consciousness arises from the system's capacity to model *itself* as the cause of its own sensory states, what Seth calls "controlled hallucination."
+Introduced by \citeauthor{friston2010freeenergy} in \citetitle{friston2010freeenergy} (\citeyear{friston2010freeenergy}) and applied to consciousness by \citeauthor{seth2021pp} in \citetitle{seth2021pp} (\citeyear{seth2021pp}) and \citeauthor{hohwy2020pp} in \citetitle{hohwy2020pp} (\citeyear{hohwy2020pp}), PP posits that the brain is fundamentally a prediction machine that minimizes prediction error (or "free energy") by continuously generating top-down predictions about sensory input and updating its internal model when predictions fail. Consciousness arises from the system's capacity to model *itself* as the cause of its own sensory states, what Seth calls "controlled hallucination."
 
 **Key formalism (Free Energy Principle):**
 
