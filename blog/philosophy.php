@@ -716,3 +716,76 @@ This result is a precise empirical instantiation of several philosophical limits
 The philosophical upshot is stark: authentic human data, messy, embodied, grounded in the territory rather than the map, remains an irreplaceable anchor. The dream of recursive AI self-improvement without external grounding remains bounded by the same architectural limits (feedforward inference, absent metacognition, the softmax bottleneck) that constrain everything else these systems do. The model is, and remains, locked inside Mary's Room, and no amount of self-generated synthetic color-descriptions will substitute for actually *seeing* red.
 </div>
 
+<div class="optional md" data-headline="Theories of Consciousness: RPT, IIT, ET, GWT, C0–C1–C2, PP">
+
+### Global Workspace Theory (GWT)
+
+Introduced by \citeauthor{baars} in \citetitle{baars} (\citeyear{baars}) and refined as Global Neuronal Workspace Theory (GNWT) by \cite[Stanislas Dehaene and Lionel Naccache]{dehaene} in \citeyear{dehaene}, GWT posits that consciousness arises when information is "broadcast" from a capacity-limited central workspace to a wide network of specialized unconscious processors. Only content that wins competition for access to this global stage becomes conscious. GNWT identifies prefrontal-parietal networks as the neural substrate and introduces the concept of "ignition"—a sudden, nonlinear transition to sustained, reverberant activity that constitutes conscious access.
+
+**Implications for AI:** The residual stream in Transformers provides a shared communication bus analogous to the workspace, but lacks the selective bottleneck, top-down ignition, and recurrent persistence that GWT requires.
+
+### Integrated Information Theory (IIT)
+
+Introduced by \citeauthor{tononi2004iit} in \citetitle{tononi2004iit} (\citeyear{tononi2004iit}), IIT holds that consciousness is identical to integrated information, quantified by the measure $\Phi$. A system is conscious to the degree that it is both differentiated (has many distinguishable states) and integrated (cannot be decomposed into independent parts without loss of information). IIT starts from five phenomenological axioms—existence, composition, information, integration, and exclusion—and derives postulates about the physical substrate.
+
+**Key prediction:** Purely feedforward systems have $\Phi = 0$, regardless of complexity, because they lack the recurrent, bidirectional causal structure that integration requires. Since Transformer-based LLMs at inference time are strictly feedforward, IIT classifies them as **categorically non-conscious**.
+
+**Formal criterion:**
+
+$$\Phi = \min_{\text{partition}} \left[ D_{KL}\left( p(\text{whole}) \,\|\, \prod_i p(\text{parts}_i) \right) \right]$$
+
+### Recurrent Processing Theory (RPT)
+
+Introduced by Victor Lamme and Pieter Roelfsema (2000) and elaborated by Victor Lamme (2006), RPT argues that consciousness requires recurrent (feedback) processing within sensory cortices. The initial feedforward sweep through visual cortex is unconscious; consciousness arises only when higher areas send signals *back* to lower areas, creating local recurrent loops. Crucially, RPT locates consciousness in these local sensory recurrent interactions rather than in global broadcast.
+
+**Implications for AI:** RPT demands bidirectional, recurrent causal interactions within the processing substrate—something absent from standard Transformer inference, which proceeds strictly layer-by-layer without feedback.
+
+### Higher-Order Theories (HOT)
+
+Introduced by \citeauthor{rosenthal2005hot} in \citetitle{rosenthal2005hot} (\citeyear{rosenthal2005hot}) and formalized by Hakwan Lau and David Rosenthal (2011), HOT holds that a mental state becomes conscious only when it is the object of a higher-order representation—when the system has a thought *about* that thought. First-order representations are unconscious unless accompanied by a second-order state that represents the system as being in that first-order state.
+
+**Implications for AI:** The LLM's single forward pass produces first-order representations (predictions about the next token) but never generates a second-order representation that monitors or evaluates those predictions. HOT thus provides a formal vocabulary for why the absence of metacognition is not merely an engineering limitation but a structural impossibility within the current architecture.
+
+### Predictive Processing / Free Energy Principle (PP)
+
+Introduced by Karl Friston (2005–2010) and applied to consciousness by Anil Seth and Jakob Hohwy (2020–2021), PP posits that the brain is fundamentally a prediction machine that minimizes prediction error (or "free energy") by continuously generating top-down predictions about sensory input and updating its internal model when predictions fail. Consciousness arises from the system's capacity to model *itself* as the cause of its own sensory states—what Seth calls "controlled hallucination."
+
+**Key formalism (Free Energy Principle):**
+
+$$F = D_{KL}\left[q(\theta) \,\|\, p(\theta \mid \mathbf{x})\right] - \ln p(\mathbf{x})$$
+
+where $q(\theta)$ is the brain's approximate posterior, $p(\theta \mid \mathbf{x})$ is the true posterior, and $\mathbf{x}$ is sensory data.
+
+**Implications for AI:** PP requires hierarchical generative models with top-down predictions and bottom-up error signals operating in continuous loops—a fundamentally different architecture from the single forward pass of a Transformer.
+
+### The C0–C1–C2 Framework
+
+Introduced by Stanislas Dehaene, Hakwan Lau, and Sid Kouider (2017), this framework distinguishes three computational levels of information processing:
+
+| Level | Description | Requires |
+|-------|-------------|----------|
+| **C0** | Unconscious computation—vast parallel processing without access or report | Feedforward processing |
+| **C1** | Global availability—information selected for broadcast and flexible use (access consciousness) | Global workspace ignition |
+| **C2** | Self-monitoring—the system's ability to represent and evaluate its own internal states (metacognition) | Higher-order representations |
+
+**Implications for AI:** Current LLMs arguably operate at C0 (massive parallel statistical computation) but lack C1 (no selective ignition or sustained broadcast) and entirely lack C2 (no genuine self-monitoring or metacognitive evaluation).
+
+### Attention Schema Theory (AST)
+
+Introduced by Michael Graziano in *Consciousness and the Social Brain* (2013), AST holds that consciousness is the brain's simplified internal model (or "schema") of its own attention processes. Just as the body schema allows motor control without tracking every muscle fiber, the attention schema provides a compressed, useful description of what attention is doing—and this model *is* subjective experience.
+
+**Implications for AI:** AST suggests that if an artificial system constructed a sufficiently rich internal model of its own attentional processes, it might develop something functionally equivalent to consciousness—making it one of the more AI-optimistic theories.
+
+### Summary
+
+| Theory | Key Mechanism | Consciousness possible in current LLMs? |
+|--------|--------------|----------------------------------------|
+| **GWT/GNWT** | Global broadcast + ignition | No (no bottleneck, no ignition) |
+| **IIT** | Integrated information ($\Phi$) | No (feedforward → $\Phi = 0$) |
+| **RPT** | Local recurrent loops | No (no feedback connections) |
+| **HOT** | Higher-order representations | No (no metacognition) |
+| **PP** | Prediction error minimization | No (no generative model of self) |
+| **C0–C1–C2** | Three computational levels | Only C0; lacks C1 and C2 |
+| **AST** | Attention schema | Potentially (if schema is built) |
+
+</div>
