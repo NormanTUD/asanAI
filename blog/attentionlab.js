@@ -1306,7 +1306,169 @@ function _renderQKVSubspaceViz(containerId) {
 	renderProjection('Q');
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   LONG DISTANCE DEPENDENCIES
+   ═══════════════════════════════════════════════════════════════ */
 
+const LDD = {
+    subject: { word: 'cat', color: '#2563eb' },
+    pronoun: { word: 'its', color: '#f59e0b' },
+    distractors: ['that','the','dog','chased','across','the','yard',
+                  'and','through','the','garden','gate','finally','climbed','the'],
+    qk_subject: 3.2,
+    qk_distractor: 0.2,
+    qk_self: 0.5,
+    rnn_decay: 0.82
+};
+
+function updateLDD() {
+    const n = parseInt(document.getElementById('ldd-distance').value);
+    document.getElementById('ldd-distance-val').innerText = n;
+
+    // Build tokens
+    const tokens = [{word:'The', type:'filler'}];
+    tokens.push({word: LDD.subject.word, type:'subject'});
+    for (let i = 0; i < n; i++) tokens.push({word: LDD.distractors[i % LDD.distractors.length], type:'distractor'});
+    tokens.push({word: LDD.pronoun.word, type:'pronoun'});
+
+    const subjectIdx = 1;
+    const pronounIdx = tokens.length - 1;
+    const distance = pronounIdx - subjectIdx;
+
+    // Attention scores from pronoun's perspective
+    const rawScores = tokens.map((tok, i) => {
+        if (i === subjectIdx) return LDD.qk_subject;
+        if (i === pronounIdx) return LDD.qk_self;
+        return LDD.qk_distractor + (Math.random() * 0.1 - 0.05);
+    });
+    const dk = Math.sqrt(64);
+    const scaled = rawScores.map(s => s / dk * 8);
+    const attn = softmax(scaled);
+
+    // Sentence display
+    const sentenceEl = document.getElementById('ldd-sentence');
+    sentenceEl.innerHTML = tokens.map(tok => {
+        let s = 'padding:2px 4px; border-radius:3px; margin:0 1px;';
+        if (tok.type === 'subject') s += `background:#dbeafe; color:${LDD.subject.color}; font-weight:bold;`;
+        else if (tok.type === 'pronoun') s += `background:#fef3c7; color:${LDD.pronoun.color}; font-weight:bold;`;
+        else if (tok.type === 'distractor') s += 'color:#94a3b8;';
+        else s += 'color:#64748b;';
+        return `<span style="${s}">${tok.word}</span>`;
+    }).join(' ') + `<br><span style="font-size:0.8rem; color:#64748b; font-style:normal;">` +
+    `Distance: <b>${distance}</b> tokens between ` +
+    `<span style="color:${LDD.subject.color}; font-weight:bold;">"${LDD.subject.word}"</span> and ` +
+    `<span style="color:${LDD.pronoun.color}; font-weight:bold;">"${LDD.pronoun.word}"</span></span>`;
+
+    // Canvas
+    const canvas = document.getElementById('ldd-canvas');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const padL = 50, padR = 20, padT = 30, padB = 50;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+    const numTokens = tokens.length;
+    const gap = chartW / numTokens;
+    const barW = Math.min(28, gap * 0.65);
+    const maxVal = Math.max(...attn) * 1.2;
+    const toY = v => padT + chartH * (1 - v / maxVal);
+    const toBarX = i => padL + gap * i + gap / 2;
+
+    // Grid
+    ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+    for (let g = 0; g <= 4; g++) {
+        const gy = padT + (chartH / 4) * g;
+        ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(W - padR, gy); ctx.stroke();
+    }
+
+    // Axes
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + chartH); ctx.lineTo(W - padR, padT + chartH); ctx.stroke();
+
+    // Y ticks
+    ctx.font = '10px Inter, system-ui, sans-serif'; ctx.fillStyle = '#94a3b8'; ctx.textAlign = 'right';
+    for (let g = 0; g <= 4; g++) {
+        const val = (maxVal / 4) * (4 - g);
+        ctx.fillText((val * 100).toFixed(0) + '%', padL - 6, padT + (chartH / 4) * g + 4);
+    }
+
+    // Bars
+    tokens.forEach((tok, i) => {
+        const x = toBarX(i);
+        const barH = (attn[i] / maxVal) * chartH;
+        const barY = padT + chartH - barH;
+        let color = '#e2e8f0';
+        if (tok.type === 'subject') color = LDD.subject.color;
+        else if (tok.type === 'pronoun') color = LDD.pronoun.color;
+
+        ctx.globalAlpha = tok.type === 'distractor' ? 0.4 : 0.85;
+        ctx.fillStyle = color;
+        ctx.fillRect(x - barW / 2, barY, barW, barH);
+        ctx.globalAlpha = 1;
+
+        // Labels
+        ctx.save();
+        ctx.translate(x, padT + chartH + 8);
+        if (numTokens > 10) ctx.rotate(-Math.PI / 4);
+        const lc = tok.type === 'subject' ? LDD.subject.color : tok.type === 'pronoun' ? LDD.pronoun.color : '#94a3b8';
+        drawLabel(ctx, tok.word, 0, 0, lc, numTokens > 12 ? 9 : 10, numTokens > 10 ? 'right' : 'center', tok.type !== 'distractor');
+        ctx.restore();
+
+        if (attn[i] > 0.03) drawLabel(ctx, (attn[i]*100).toFixed(0)+'%', x, barY - 8, color, 10, 'center', true);
+    });
+
+    // RNN decay line
+    ctx.beginPath(); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 4]);
+    const rnnStart = attn[subjectIdx];
+    for (let i = subjectIdx; i <= pronounIdx; i++) {
+        const x = toBarX(i);
+        const rnnVal = rnnStart * Math.pow(LDD.rnn_decay, i - subjectIdx);
+        const y = toY(rnnVal);
+        if (i === subjectIdx) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Transformer flat line
+    ctx.beginPath(); ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
+    const tY = toY(attn[subjectIdx]);
+    ctx.moveTo(toBarX(subjectIdx), tY); ctx.lineTo(toBarX(pronounIdx), tY);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    // Legend
+    drawLabel(ctx, '— Transformer (flat)', toBarX(subjectIdx) + 10, tY - 12, '#2563eb', 10, 'left', true);
+    const rnnEndVal = rnnStart * Math.pow(LDD.rnn_decay, distance);
+    drawLabel(ctx, '--- RNN (×' + LDD.rnn_decay + '/step)', toBarX(pronounIdx) + 5, toY(rnnEndVal), '#ef4444', 10, 'left', true);
+
+    // Math summary
+    const rnnFinal = Math.pow(LDD.rnn_decay, distance);
+    const ratio = (1 / rnnFinal);
+    document.getElementById('ldd-math').innerHTML = `<table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+    <tr style="border-bottom:2px solid #cbd5e1; color:#64748b;">
+        <th style="text-align:left; padding:3px 8px;">Model</th>
+        <th style="text-align:left; padding:3px 8px;">Signal after ${distance} steps</th>
+        <th style="text-align:right; padding:3px 8px;">Strength</th>
+    </tr>
+    <tr style="background:#eff6ff;">
+        <td style="color:#2563eb; font-weight:bold; padding:3px 8px;">Transformer</td>
+        <td style="padding:3px 8px; font-family:monospace;">softmax(q·k/√d<sub>k</sub>) — distance-invariant</td>
+        <td style="text-align:right; padding:3px 8px;"><b style="color:#2563eb;">${(attn[subjectIdx]*100).toFixed(1)}%</b></td>
+    </tr>
+    <tr style="background:#fef2f2;">
+        <td style="color:#ef4444; font-weight:bold; padding:3px 8px;">RNN</td>
+        <td style="padding:3px 8px; font-family:monospace;">${LDD.rnn_decay}<sup>${distance}</sup> = ${rnnFinal.toFixed(4)}</td>
+        <td style="text-align:right; padding:3px 8px;"><b style="color:#ef4444;">${(rnnFinal*100).toFixed(1)}%</b></td>
+    </tr>
+    <tr style="border-top:2px solid #1e293b;">
+        <td colspan="2" style="text-align:right; padding:6px 8px; font-weight:bold;">Transformer advantage:</td>
+        <td style="text-align:right; padding:6px 8px;"><b style="color:#059669; font-size:1.1rem;">${ratio.toFixed(1)}×</b></td>
+    </tr></table>`;
+}
 
 // ─────────────────── INITIALIZATION ───────────────────
 
@@ -1318,5 +1480,6 @@ async function loadAttentionModule() {
 	updateAttn1D();
 	updateAttn2D();
 	initQKVSubspaceViz();
+	requestAnimationFrame(updateLDD);
 	return Promise.resolve();
 }

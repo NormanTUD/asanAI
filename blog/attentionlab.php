@@ -1,7 +1,53 @@
 <?php include_once("functions.php"); ?>
 
 <div class="md">
-TODO Long Distance Dependencies
+## Long Distance Dependencies
+
+RNNs propagate information **step by step**, a signal from token 1 to token 50 must survive 49 sequential multiplications. If the weight matrix has spectral radius $< 1$, the signal decays exponentially:
+
+$$\text{Signal}_{1 \to 50} \approx \lambda^{49}, \quad \lambda < 1$$
+
+Self-attention bypasses this entirely. Every token attends to every other in **one step**:
+
+$$\alpha_{i,j} = \text{softmax}\!\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k}}\right)$$
+
+The score depends on **semantic compatibility**, not positional distance. Token 1 can attend to token 500 with the same directness as token 1 attending to token 2.
+
+Drag the slider below to insert distractor tokens between a subject and its pronoun. The Transformer's attention remains flat; an RNN's signal decays with every added step.
+</div>
+
+<div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;
+            margin:15px 0; max-width:720px; margin-left:auto; margin-right:auto;">
+
+    <div style="text-align:center; margin-bottom:8px;">
+        <span style="font-size:1.05rem; font-weight:bold; color:#1e293b;">
+            Long Distance: Transformer vs. RNN signal strength
+        </span>
+    </div>
+
+    <div id="ldd-sentence" style="padding:10px 16px; margin-bottom:14px; background:#fff;
+         border-left:4px solid #2563eb; border-radius:6px; font-style:italic; color:#334155;
+         transition: border-color 0.2s; min-height:50px; line-height:1.6; overflow-x:auto; white-space:nowrap;"></div>
+
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <span style="font-size:0.85rem; color:#64748b; font-weight:bold;">0</span>
+        <input type="range" id="ldd-distance" min="0" max="15" step="1" value="3"
+               style="flex:1; accent-color:#2563eb;" oninput="updateLDD()">
+        <span style="font-size:0.85rem; color:#64748b; font-weight:bold;">15</span>
+        <span id="ldd-distance-val"
+              style="font-size:1.2rem; font-weight:bold; color:#2563eb; min-width:30px; text-align:right;">3</span>
+        <span style="font-size:0.8rem; color:#64748b;">distractors</span>
+    </div>
+
+    <canvas id="ldd-canvas" width="700" height="260"
+            style="display:block; width:100%; height:260px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;"></canvas>
+
+    <div id="ldd-math" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px;
+         border:1px dashed #cbd5e1; overflow-x:auto;"></div>
+</div>
+
+<div class="md">
+This costs $O(L^2)$ memory and compute, doubling context quadruples cost. But for capturing dependencies across distance, **direct access beats sequential propagation**.
 
 In a Transformer model, words don't live in a dictionary; they live in a **Semantic Universe**. Every concept, from "apple" to "existentialism", is assigned a specific coordinate in a high-dimensional map. However, some words suffer from a serious identity crisis.
 
