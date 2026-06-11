@@ -121,7 +121,6 @@ def start_php_server(document_root: str, port: int) -> subprocess.Popen:
     print(f"[php-server] Running on http://localhost:{port}")
     return proc
 
-
 def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
     """Create a Chrome/Chromium WebDriver instance."""
     options = Options()
@@ -131,17 +130,27 @@ def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
+    options.add_argument("--remote-debugging-pipe")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-background-networking")
+    options.add_argument("--disable-software-rasterizer")
 
     # Enable browser logging to capture JS errors
     options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
 
     # Try to find chromium or chrome
-    chrome_binary = shutil.which("chromium-browser") or shutil.which("chromium") or shutil.which("google-chrome")
+    chrome_binary = (
+        shutil.which("chromium-browser")
+        or shutil.which("chromium")
+        or shutil.which("google-chrome")
+    )
     if chrome_binary:
         options.binary_location = chrome_binary
 
     try:
-        service = Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install())
+        service = Service(
+            ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+        )
         driver = webdriver.Chrome(service=service, options=options)
     except Exception:
         try:
@@ -151,7 +160,6 @@ def get_chrome_driver(headless: bool = True) -> webdriver.Chrome:
             driver = webdriver.Chrome(options=options)
 
     return driver
-
 
 def wait_for_page_load(driver: webdriver.Chrome, timeout: int) -> bool:
     """
