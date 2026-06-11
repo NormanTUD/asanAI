@@ -480,12 +480,12 @@ $$H = \begin{pmatrix}
 	h_0 \\
 	h_1 \\
 	\vdots \\
-	h_{n-1}
+	h_{n}
 \end{pmatrix} \in \mathbb{R}^{n \times d_{\text{model}}}$$
 
 The "Migration Map" prints the entire flattened matrix because it wants to show the path of every word. However, the final projection is only interested in the **prediction**:
 
-$$h_{\text{last}} = H[n-1]$$
+$$h_{\text{last}} = H[n]$$
 
 Remember that the $n$ is the number of tokens in the **Inference**-sequence, not in the training sequence, even though the $h_\text{after}$ may be from the training data.
 
