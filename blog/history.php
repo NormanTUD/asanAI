@@ -1,7 +1,6 @@
 <?php include_once("functions.php"); ?>
 
 <!--
-TODO https://arxiv.org/abs/2212.11279
 TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html
 TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks
 -->
