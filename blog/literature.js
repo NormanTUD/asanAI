@@ -1,4 +1,78 @@
 window.bibData = {
+	"baars1988gwt": {
+		title: "A Cognitive Theory of Consciousness",
+		author: "Bernard J. Baars",
+		year: 1988,
+		url: "https://bernardbaars.pbworks.com/f/++++Functions+of+Consciousness.pdf"
+	},
+	"dehaene2001gnwt": {
+		title: "Towards a cognitive neuroscience of consciousness: basic evidence and a workspace framework",
+		author: "Stanislas Dehaene, Lionel Naccache",
+		year: 2001,
+		url: "https://www.unicog.org/publications/DehaeneNaccache_WorkspaceModel_Cognition2001.pdf"
+	},
+	"tononi2004iit": {
+		title: "An information integration theory of consciousness",
+		author: "Giulio Tononi",
+		year: 2004,
+		url: "https://link.springer.com/article/10.1186/1471-2202-5-42"
+	},
+	"lamme2000rpt": {
+		title: "The distinct modes of vision offered by feedforward and recurrent processing",
+		author: "Victor A.F. Lamme, Pieter R. Roelfsema",
+		year: 2000,
+		url: "https://doi.org/10.1016/S0166-2236(00)01657-X"
+	},
+	"lamme2006rpt": {
+		title: "Towards a true neural stance on consciousness",
+		author: "Victor A.F. Lamme",
+		year: 2006,
+		url: "https://doi.org/10.1016/j.tics.2006.09.001"
+	},
+	"rosenthal2005hot": {
+		title: "Consciousness, Interpretation, and Higher-Order Thought",
+		author: "David M. Rosenthal",
+		year: 2005,
+		url: "https://www.davidrosenthal.org/DR-Vienna.pdf"
+	},
+	"lau2011hot": {
+		title: "Empirical support for higher-order theories of conscious awareness",
+		author: "Hakwan Lau, David Rosenthal",
+		year: 2011,
+		url: "https://doi.org/10.1016/j.tics.2011.05.009"
+	},
+	"seth2021pp": {
+		title: "Being You: A New Science of Consciousness",
+		author: "Anil Seth",
+		year: 2021,
+		url: "https://www.anilseth.com/being-you/"
+	},
+	"hohwy2020pp": {
+		title: "New directions in predictive processing",
+		author: "Jakob Hohwy, Anil Seth",
+		year: 2020,
+		url: "https://doi.org/10.1111/mila.12281"
+	},
+	"friston2010freeenergy": {
+		title: "The free-energy principle: a unified brain theory?",
+		author: "Karl Friston",
+		year: 2010,
+		url: "https://doi.org/10.1038/nrn2787"
+	},
+	"dehaene2017c0c1c2": {
+		title: "What is consciousness, and could machines have it?",
+		author: "Stanislas Dehaene, Hakwan Lau, Sid Kouider",
+		year: 2017,
+		url: "https://doi.org/10.1126/science.aan8871"
+	},
+	"graziano2013ast": {
+		title: "Consciousness and the Social Brain",
+		author: "Michael S.A. Graziano",
+		year: 2013,
+		url: "https://global.oup.com/academic/product/consciousness-and-the-social-brain-9780199928644"
+	},
+
+
 	"bansal2025syntheticself": {
 		title: "Can LLMs Improve Themselves Using Synthetic Data?",
 		author: "Hritik Bansal, Ashima Suvarna, Gantavya Bhatt, Nanyun Peng, Kai-Wei Chang, Aditya Grover",
