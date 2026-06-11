@@ -1,4 +1,17 @@
 window.bibData = {
+	"lstm_vanilla": {
+		title: "Learning to Forget: Continual Prediction with LSTM",
+		author: "Felix A. Gers, Jürgen Schmidhuber, Fred Cummins",
+		year: 2000,
+		url: "https://sferics.idsia.ch/pub/juergen/FgGates-NC.pdf"
+	},
+	"ctc2006": {
+		title: "Connectionist Temporal Classification: Labelling Unsegmented Sequence Data with Recurrent Neural Networks",
+		author: "Alex Graves, Santiago Fernandez, Faustino Gomez, Jürgen Schmidhuber",
+		year: 2006,
+		url: "https://www.cs.toronto.edu/~graves/icml_2006.pdf"
+	},
+
 	"wienerajedrecista": {
 		url: "https://commons.wikimedia.org/wiki/File:Gonzalo_showing_El_Ajedrecista_to_Norbert_Wiener.jpg",
 		author: "Unknown Photographer",
