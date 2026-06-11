@@ -745,9 +745,9 @@ class AttentionEngine {
 
 		return `
 <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:24px;">
-	<div>$$ W_Q = ${toMatrix(WQ)} $$</div>
-	<div>$$ W_K = ${toMatrix(WK)} $$</div>
-	<div>$$ W_V = ${toMatrix(WV)} $$</div>
+    <div>$$ \\underbrace{W_Q}_{\\substack{\\textbf{Query Weights} \\\\ \\text{"What am I looking for?"}}} = ${toMatrix(WQ)} $$</div>
+    <div>$$ \\underbrace{W_K}_{\\substack{\\textbf{Key Weights} \\\\ \\text{"What do I contain?"}}} = ${toMatrix(WK)} $$</div>
+    <div>$$ \\underbrace{W_V}_{\\substack{\\textbf{Value Weights} \\\\ \\text{"What do I offer?"}}} = ${toMatrix(WV)} $$</div>
 </div>
 `;
 	}
