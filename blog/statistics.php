@@ -168,7 +168,7 @@ This transforms *any* Normal Distribution into the **Standard Normal Distributio
         <div class="md">
 **Why This Matters for AI: Batch Normalization**, one of the most important techniques in deep learning, is essentially computing Z-scores for every layer's activations during training. At each layer, the network computes:
 
-$$\hat{x}_i = \frac{x_i - \mu_{\text{batch}}}{\sigma_{\text{batch}}}$$
+<p>$$\hat{x}_i = \frac{x_i - \mu_{\text{batch}}}{\sigma_{\text{batch}}}$$</p>
 
 This is the exact same Z-score formula Pearson invented for comparing crab organs to human bones. Without it, the activations in deep networks tend to drift toward extreme values (a problem called **internal covariate shift**), causing gradients to vanish or explode and training to stall. By standardizing activations back to $\mu = 0, \sigma = 1$ at every layer, the network stays in the "sweet spot" where learning is stable and fast. Layer Normalization, used in every Transformer (including GPT), applies the same principle, Pearson's 19th-century insight keeps 21st-century language models from collapsing during training.
         </div>
