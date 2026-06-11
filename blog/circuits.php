@@ -17,7 +17,7 @@ Each arrow represents an additive contribution to the residual stream. A "circui
 
 In a standard Transformer with $L$ layers, each containing multi-head attention and an MLP, the residual stream at position $i$ after all layers is:
 
-$$x_i^{(\text{final})} = x_i^{(0)} + \sum_{\ell=1}^{L} \left( \underbrace{\sum_{h=1}^{H} \text{Attn}_h^{(\ell)}(x^{(\ell-1)})_i}_{\text{attention heads}} + \underbrace{\text{MLP}^{(\ell)}(x^{(\ell-1)})_i}_{\text{MLP layer}} \right)$$
+<p>$$x_i^{(\text{final})} = x_i^{(0)} + \sum_{\ell=1}^{L} \left( \underbrace{\sum_{h=1}^{H} \text{Attn}_h^{(\ell)}(x^{(\ell-1)})_i}_{\text{attention heads}} + \underbrace{\text{MLP}^{(\ell)}(x^{(\ell-1)})_i}_{\text{MLP layer}} \right)$$</p>
 
 where $x_i^{(0)}$ is the token embedding plus positional encoding. Every component's output is simply **added** to the stream. This additive structure is what makes circuits decomposable: we can isolate the contribution of any subset of components.
 
@@ -89,7 +89,7 @@ The key insight is that $W_Q^T W_K$ determines **what the head looks for** (the 
 
 The QK circuit computes a bilinear form that determines the attention pattern:
 
-$$\text{Attention}_{i \to j} \propto \exp\left(x_i^T \underbrace{W_Q^T W_K}_{\text{QK matrix}} x_j / \sqrt{d_k}\right)$$
+<p>$$\text{Attention}_{i \to j} \propto \exp\left(x_i^T \underbrace{W_Q^T W_K}_{\text{QK matrix}} x_j / \sqrt{d_k}\right)$$</p>
 
 If we decompose $W_Q^T W_K$ in the token embedding basis, we can read off which token pairs have high mutual attention.
 
@@ -158,7 +158,7 @@ Induction heads are the canonical example of **K-composition**: the previous-tok
 
 If patching component $C$ causes the model to recover its clean-run prediction, then $C$ is causally important for that prediction.
 
-$$\Delta_C = \text{Logit}_{\text{correct}}(\text{patched}) - \text{Logit}_{\text{correct}}(\text{corrupted})$$
+<p>$$\Delta_C = \text{Logit}_{\text{correct}}(\text{patched}) - \text{Logit}_{\text{correct}}(\text{corrupted})$$</p>
 
 A large $\Delta_C$ means component $C$ is critical for the task.
 </div>

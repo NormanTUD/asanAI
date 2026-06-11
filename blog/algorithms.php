@@ -27,7 +27,7 @@ The trained network implements the following algorithm \cite[Section 4]{nanda202
 
 The key formula that the MLP neurons compute is the **addition theorem**:
 
-$$\cos(\omega_k(a+b)) = \underbrace{\cos(\omega_k a)}_{\text{from embedding of } a} \cdot \underbrace{\cos(\omega_k b)}_{\text{from embedding of } b} - \underbrace{\sin(\omega_k a)}_{\text{from embedding of } a} \cdot \underbrace{\sin(\omega_k b)}_{\text{from embedding of } b}$$
+<p>$$\cos(\omega_k(a+b)) = \underbrace{\cos(\omega_k a)}_{\text{from embedding of } a} \cdot \underbrace{\cos(\omega_k b)}_{\text{from embedding of } b} - \underbrace{\sin(\omega_k a)}_{\text{from embedding of } a} \cdot \underbrace{\sin(\omega_k b)}_{\text{from embedding of } b}$$</p>
 
 And the final logit for each candidate answer $c$ is:
 
