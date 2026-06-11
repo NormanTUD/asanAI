@@ -150,10 +150,10 @@ This bottleneck was finally bypassed when the community embraced the **Rectified
 <div class="image-row">
 	<figure>
 		<img src="householderrelu.png" alt="Householders ReLU definition" />
-		<figcaption>A definition of the relu function from \citeauthor{steadystates}, published in \citeyear{steadystates}.</figcaption>
+		<figcaption class="md">A definition of the relu function from \citeauthor{steadystates}, published in \citeyear{steadystates}.</figcaption>
 	</figure>
 	<figure>
 		<img src="fukushimarelu.png" alt="Fukushima ReLU definition" />
-		<figcaption>\citeauthor{relufirst}'s definition of ReLU from \citeyear{relufirst}.</figcaption>
+		<figcaption class="md">\citeauthor{relufirst}'s definition of ReLU from \citeyear{relufirst}.</figcaption>
 	</figure>
 </div>
