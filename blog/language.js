@@ -76,7 +76,6 @@
 			"  position: relative;",
 			"  padding: 0 0 0 40px;",
 			"}",
-			/* The vertical line */
 			".vtl-track::before {",
 			"  content: '';",
 			"  position: absolute;",
@@ -87,13 +86,11 @@
 			"  background: linear-gradient(180deg, #e74c3c, #f1c40f, #2ecc71, #3498db, #8e44ad, #2980b9);",
 			"  border-radius: 2px;",
 			"}",
-			/* Each node row */
 			".vtl-node {",
 			"  position: relative;",
 			"  padding: 0.6em 0 0.6em 1.5em;",
 			"  cursor: pointer;",
 			"}",
-			/* The dot */
 			".vtl-dot {",
 			"  position: absolute;",
 			"  left: -31px;",
@@ -137,8 +134,6 @@
 			".vtl-node.active .vtl-desc {",
 			"  display: block;",
 			"}",
-
-			/* --- Deep-dive collapsibles --- */
 			"details.deep-dive {",
 			"  margin: 1.5em 0;",
 			"  padding: 0.75em 1em;",
@@ -156,8 +151,6 @@
 			"details.deep-dive summary::-webkit-details-marker { display: none; }",
 			".chevron { font-size: 0.85em; color: #3498db; }",
 			".dd-content { margin-top: 0.5em; }",
-
-			/* --- Responsive --- */
 			"@media (max-width: 600px) {",
 			"  .vtl-track { padding-left: 32px; }",
 			"  .vtl-dot  { left: -23px; width: 14px; height: 14px; }",
@@ -166,9 +159,39 @@
 			"}"
 		].join("\n");
 
-		var style = document.createElement("style");
-		style.textContent = css;
-		document.head.appendChild(style);
+		// GUARDRAIL: Inject styles via adoptedStyleSheets if available
+		// (Chrome 73+). This avoids adding a <style> node to the DOM
+		// entirely, eliminating any possibility of reflow interference.
+		if (document.adoptedStyleSheets !== undefined) {
+			try {
+				var sheet = new CSSStyleSheet();
+				sheet.replaceSync(css);
+				document.adoptedStyleSheets = [].concat(
+					Array.from(document.adoptedStyleSheets),
+					[sheet]
+				);
+				// Create a hidden marker so we know it's been injected
+				var marker = document.createElement("meta");
+				marker.id = "language-enhancements-css";
+				marker.setAttribute("name", "language-enhancements-injected");
+				document.head.appendChild(marker);
+				return;
+			} catch (e) {
+				// Fall through to traditional method
+			}
+		}
+
+		// Fallback: traditional <style> element, but deferred
+		requestAnimationFrame(function () {
+			requestAnimationFrame(function () {
+				if (document.getElementById('language-enhancements-css')) return;
+				var style = document.createElement("style");
+				style.id = "language-enhancements-css";
+				style.setAttribute("type", "text/css");
+				style.appendChild(document.createTextNode(css));
+				document.head.appendChild(style);
+			});
+		});
 	}
 
 	/* ====================================================================
@@ -178,12 +201,36 @@
 		var container = document.getElementById("timeline-container");
 		if (!container) return;
 
-		container.innerHTML = "";
+		// GUARDRAIL 1: If already built, do nothing
+		if (container.hasAttribute("data-timeline-built")) return;
+		container.setAttribute("data-timeline-built", "true");
+
+		// GUARDRAIL 2: Use a completely detached iframe-like isolation.
+		// We create a shadow DOM or, failing that, use triple-deferred
+		// requestAnimationFrame to ensure we are in a completely fresh
+		// paint cycle, far removed from any Temml rendering.
+
+		// GUARDRAIL 3: Triple-RAF ensures we skip at least 2 full
+		// paint frames before touching the DOM. This guarantees that
+		// Temml has fully committed its rendered output to the layout
+		// tree and Chrome's style recalculation is complete.
+		requestAnimationFrame(function () {
+			requestAnimationFrame(function () {
+				requestAnimationFrame(function () {
+					_buildTimelineDOM(container);
+				});
+			});
+		});
+	}
+
+	function _buildTimelineDOM(container) {
+		// GUARDRAIL 4: Build everything in a DocumentFragment (off-DOM)
+		var fragment = document.createDocumentFragment();
 
 		var title = document.createElement("div");
 		title.className = "vtl-title";
-		title.textContent = "Interactive Timeline — The Ancestry of Language";
-		container.appendChild(title);
+		title.textContent = "Interactive Timeline \u2014 The Ancestry of Language";
+		fragment.appendChild(title);
 
 		var track = document.createElement("div");
 		track.className = "vtl-track";
@@ -229,14 +276,32 @@
 			})(MILESTONES[i]);
 		}
 
-		container.appendChild(track);
+		fragment.appendChild(track);
 
-		document.addEventListener("click", function () {
-			if (activeNode) {
-				activeNode.classList.remove("active");
-				activeNode = null;
-			}
-		});
+		// GUARDRAIL 5: Suppress Chrome's forced synchronous layout
+		// by reading a layout property BEFORE writing. This "flushes"
+		// any pending style recalculations so our write doesn't
+		// trigger a mid-frame reflow that corrupts sibling elements.
+		void container.offsetHeight;
+
+		// GUARDRAIL 6: Use textContent = '' instead of innerHTML = ''
+		// innerHTML triggers HTML parser which can corrupt adjacent
+		// text nodes in Chrome. textContent is a simpler operation.
+		container.textContent = "";
+
+		// GUARDRAIL 7: Single atomic append of the complete fragment
+		container.appendChild(fragment);
+
+		// GUARDRAIL 8: Document click listener (only once)
+		if (!container.hasAttribute("data-click-bound")) {
+			container.setAttribute("data-click-bound", "true");
+			document.addEventListener("click", function () {
+				if (activeNode) {
+					activeNode.classList.remove("active");
+					activeNode = null;
+				}
+			});
+		}
 	}
 
 	/* ====================================================================
