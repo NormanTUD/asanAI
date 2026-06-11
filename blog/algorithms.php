@@ -442,7 +442,7 @@ This is why **autoregressive generation is essential**: the model can only execu
 
 The model cannot execute a 19-digit addition in a single forward pass — that would require maintaining ~19 loop iterations worth of state simultaneously. Instead, it generates intermediate tokens that serve as **external memory**:
 
-$$\underbrace{\text{Step 1 output}}_{\text{generated tokens}} \rightarrow \underbrace{\text{becomes input}}_{\text{for next forward pass}} \rightarrow \underbrace{\text{Step 2 output}}_{\text{generated tokens}} \rightarrow \cdots$$
+<p>$$\underbrace{\text{Step 1 output}}_{\text{generated tokens}} \rightarrow \underbrace{\text{becomes input}}_{\text{for next forward pass}} \rightarrow \underbrace{\text{Step 2 output}}_{\text{generated tokens}} \rightarrow \cdots$$</p>
 
 Each forward pass reads the previously generated tokens (which encode the current state) and produces the next step. The context window acts as a tape — exactly like a Turing machine's tape, but with the constraint that it can only be written left-to-right.
 
