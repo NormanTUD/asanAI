@@ -449,6 +449,10 @@ Between the invention of the Perceptron in 1958 and the release of chatGPT, were
 
 While the Anglosphere was still debating the limitations of single-layer perceptrons, deep learning was already being born in the Soviet Union. In \citeyear{ivakhnenko1965}, \citeauthorlastnameand{ivakhnenko1965} published the first general, working learning algorithms for deep multi-layer perceptrons with arbitrarily many hidden layers. Their method, known as the **Group Method of Data Handling (GMDH)**, incrementally grew and trained layers using regression analysis, pruning superfluous units via regularization on a separate validation set. By \citeyear{ivakhnenko1971}, Ivakhnenko described a deep learning network with **8 layers**, trained when compute was millions of times more expensive than today. Their networks learned hierarchical, distributed internal representations of incoming data, two decades before the term "connectionism" became fashionable in the 1980s. This work remained highly cited and popular well into the new millennium, especially in Eastern Europe, yet was largely overlooked in Anglophone accounts of AI history.
 
+### Deep Learning by Stochastic Gradient Descent (1967-68)
+
+Two years after Ivakhnenko's layer-by-layer approach, \citeauthor{adaptivepattern} proposed training multi-layer perceptrons with many layers in end-to-end fashion using stochastic gradient descent (SGD). His student Saito implemented this in a **five-layer MLP with two modifiable layers**, which learned internal representations to classify non-linearly separable pattern classes, demonstrating that hidden units could discover useful features without explicit human engineering. This was achieved when compute was billions of times more expensive than today, and predates the popularization of backpropagation by nearly two decades.
+
 #### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not "linearly separable."
 
@@ -496,6 +500,8 @@ The realization that simple neural networks couldn't handle basic logic gates, c
 * **Funding Collapse:** Major agencies like DARPA slashed research budgets following its release.
 * **Shift in Focus:** Research into connectionism (neural networks) stopped for a decade, shifting instead toward "symbolic AI" and expert systems.
 * **The "Winter":** Connectionism (neural network research) entered a deep freeze for a decade, as the industry shifted toward "symbolic AI" and expert systems.
+
+It is worth noting that this "AI Winter" was primarily an **Anglosphere phenomenon**. Deep learning research remained alive and productive throughout the 1960s and 70s outside the English-speaking world, particularly in the Soviet Union (Ivakhnenko), Japan (Amari, Fukushima), and continental Europe, where funding for such "blue skies" mathematical research continued.
 
 The field only recovered in the 1980s with the popularization of \citealternativetitle{rumelhart1986}, which allowed multi-layer networks to finally solve the XOR problem.
 
