@@ -542,6 +542,8 @@ This paper is a foundational application of **Gradient Descent**, the engine of 
 * **Loss Minimization:** In the paper, the "Error" is extra flight time; in NNs, "Loss" is the prediction error.
 * **Weight Updates:** Just as Kelley adjusted flight parameters (thrust/angle) in small steps, NNs adjust their weights using the same "steepest descent" logic.
 * **Learning Rate:** The paper's "step size" ($\Delta\sigma$) is exactly what we now call the **Learning Rate** in deep learning.
+
+This paper is now recognized as a direct **precursor of backpropagation**. Kelley's method backpropagated derivative information through standard Jacobian matrix calculations from one "stage" to the previous one, anticipating the core logic of the algorithm that would later be generalized by \citeauthor{linnainmaa1970} in \citeyear{linnainmaa1970} and eventually become the foundation of all modern deep learning. See also the related early 1960s work of Stuart Dreyfus and Arthur E. Bryson in control theory.
 </div>
 
 <div class="md">
