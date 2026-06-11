@@ -748,11 +748,11 @@ Introduced by \citeauthor{rosenthal2005hot} in \citetitle{rosenthal2005hot} (\ci
 
 ### Predictive Processing / Free Energy Principle (PP)
 
-Introduced by Karl Friston (2005–2010) and applied to consciousness by Anil Seth and Jakob Hohwy (2020–2021), PP posits that the brain is fundamentally a prediction machine that minimizes prediction error (or "free energy") by continuously generating top-down predictions about sensory input and updating its internal model when predictions fail. Consciousness arises from the system's capacity to model *itself* as the cause of its own sensory states, what Seth calls "controlled hallucination."
+Introduced by \citeauthor{friston2010freeenergy} in \citetitle{friston2010freeenergy} (\citeyear{friston2010freeenergy}) and applied to consciousness by \citeauthor{seth2021beingyou} in \citetitle{seth2021beingyou} (\citeyear{seth2021beingyou}) and \citeauthor{hohwy2020pp} in \citetitle{hohwy2020pp} (\citeyear{hohwy2020pp}), PP posits that the brain is fundamentally a prediction machine that minimizes prediction error (or "free energy") by continuously generating top-down predictions about sensory input and updating its internal model when predictions fail. Consciousness arises from the system's capacity to model *itself* as the cause of its own sensory states, what Seth calls "controlled hallucination."
 
 **Key formalism (Free Energy Principle):**
 
-$$F = D_{KL}\left[q(\theta) \,\|\, p(\theta \mid \mathbf{x})\right] - \ln p(\mathbf{x})$$
+<div>$$F = \underbrace{D_{KL}\left[q(\theta) \,\|\, p(\theta \mid \mathbf{x})\right]}_{\substack{\text{divergence between the brain's} \\ \text{approximate posterior and the} \\ \text{true posterior}}} - \underbrace{\ln p(\mathbf{x})}_{\substack{\text{log-evidence} \\ \text{(model evidence)}}}$$</div>
 
 where $q(\theta)$ is the brain's approximate posterior, $p(\theta \mid \mathbf{x})$ is the true posterior, and $\mathbf{x}$ is sensory data.
 
@@ -760,7 +760,7 @@ where $q(\theta)$ is the brain's approximate posterior, $p(\theta \mid \mathbf{x
 
 ### The C0–C1–C2 Framework
 
-Introduced by Stanislas Dehaene, Hakwan Lau, and Sid Kouider (2017), this framework distinguishes three computational levels of information processing:
+Introduced by \citeauthor{dehaene2017c0c1c2} in \citetitle{dehaene2017c0c1c2} (\citeyear{dehaene2017c0c1c2}), this framework distinguishes three computational levels of information processing:
 
 | Level | Description | Requires |
 |-------|-------------|----------|
@@ -772,7 +772,7 @@ Introduced by Stanislas Dehaene, Hakwan Lau, and Sid Kouider (2017), this framew
 
 ### Attention Schema Theory (AST)
 
-Introduced by Michael Graziano in *Consciousness and the Social Brain* (2013), AST holds that consciousness is the brain's simplified internal model (or "schema") of its own attention processes. Just as the body schema allows motor control without tracking every muscle fiber, the attention schema provides a compressed, useful description of what attention is doing, and this model *is* subjective experience.
+Introduced by \citeauthor{graziano2013ast} in \citetitle{graziano2013ast} (\citeyear{graziano2013ast}), AST holds that consciousness is the brain's simplified internal model (or "schema") of its own attention processes. Just as the body schema allows motor control without tracking every muscle fiber, the attention schema provides a compressed, useful description of what attention is doing, and this model *is* subjective experience.
 
 **Implications for AI:** AST suggests that if an artificial system constructed a sufficiently rich internal model of its own attentional processes, it might develop something functionally equivalent to consciousness, making it one of the more AI-optimistic theories.
 
