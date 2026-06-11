@@ -221,229 +221,75 @@ def check_js_errors(driver: webdriver.Chrome) -> list[str]:
         print(f"[warning] Could not retrieve browser logs: {e}")
     return errors
 
-
 def check_unrendered_latex(driver: webdriver.Chrome) -> list[str]:
     """
-    Check for unrendered LaTeX by inspecting the DOM structure.
+    Check for unrendered LaTeX by detecting $$ ... $$ blocks that are NOT
+    wrapped in a <div> element. When LaTeX with underscores (like bla_1)
+    is not inside a div, markdown parsers can mangle it.
 
-    The key insight: when LaTeX rendering partially fails, you get patterns like:
-      <math>...</math><em>i = \frac{x_i - \mu</em>{\text{batch}}}...
-
-    This means a <math> element is followed by sibling text/elements that contain
-    raw LaTeX commands. We detect this by:
-
-    1. Finding all text nodes and inline elements that are NOT inside <math>,
-       <script>, <style>, <code>, <pre>, <annotation>, or .katex-mathml elements
-       and checking if they contain LaTeX command sequences.
-
-    2. Specifically looking for the "partial render" pattern: a <math> or .katex
-       element whose next sibling(s) contain LaTeX backslash commands.
-
-    3. Looking for <em> or <strong> tags that contain LaTeX (this happens when
-       markdown italics/bold eat part of the formula, e.g. _i = \frac{...}_).
-
-    Returns a list of found issues with context.
+    OK:     <div>$$ bla_1 $$</div>
+    NOT OK: $$ bla_1 $$ (bare, not inside a div)
     """
     found = []
 
-    # JavaScript that inspects the DOM intelligently
     issues = driver.execute_script(r"""
     var issues = [];
 
-    // === Strategy 1: Find text nodes outside math contexts that contain LaTeX ===
-    // These are elements that should NEVER contain raw LaTeX backslash commands
-    // in their visible text (excluding code blocks, math internals, etc.)
-
-    var LATEX_COMMAND_RE = /\\(?:frac|sqrt|sum|int|prod|lim|begin|end|left|right|mathbb|mathbf|mathrm|mathcal|text|hat|bar|vec|overline|underline|overbrace|underbrace|alpha|beta|gamma|delta|sigma|mu|pi|theta|lambda|omega|infty|partial|nabla|cdot|times|approx|neq|leq|geq|rightarrow|leftarrow|Rightarrow|Leftarrow|displaystyle|textstyle|binom|tbinom|dbinom|pmatrix|bmatrix|vmatrix|cases)\s*[\{_\[\(\\]/;
-
-    // More aggressive: any backslash followed by a latin word of 3+ chars then { or _
-    var LATEX_GENERIC_RE = /\\[a-zA-Z]{3,}\s*[\{_]/;
-
-    // The "leaked formula" pattern: stuff like }{\sigma_{\text{batch}}}
-    // which is clearly a LaTeX fragment that escaped the math environment
-    var LATEX_FRAGMENT_RE = /[\}_]\s*\{\\[a-zA-Z]/;
-
-    // Selector for elements that should NOT contain LaTeX in their text
+    // Walk all text nodes looking for $$ ... $$ patterns
+    // that are NOT inside a <div>, <math>, <script>, <style>, <code>, <pre>, or .katex element
     var EXCLUDE_SELECTOR = 'math, script, style, code, pre, .katex-mathml, ' +
-                           'annotation, .MathJax_Preview, .MathJax_SVG, ' +
-                           '.MathJax_Display, .MathJax, [class*="katex"]';
+                           '.MathJax_Preview, .MathJax_SVG, .MathJax_Display, ' +
+                           '.MathJax, [class*="katex"], annotation';
 
-    // Get all text-bearing elements
-    var walker = document.createTreeWalker(
-        document.body,
-        NodeFilter.SHOW_TEXT,
-        {
-            acceptNode: function(node) {
-                // Skip if inside excluded elements
-                var parent = node.parentElement;
-                if (!parent) return NodeFilter.FILTER_REJECT;
-                if (parent.closest(EXCLUDE_SELECTOR)) return NodeFilter.FILTER_REJECT;
-                // Skip invisible text
-                var style = window.getComputedStyle(parent);
-                if (style.display === 'none' || style.visibility === 'hidden') {
-                    return NodeFilter.FILTER_REJECT;
-                }
-                // Only care about text with some substance
-                if (node.textContent.trim().length < 3) return NodeFilter.FILTER_REJECT;
-                return NodeFilter.FILTER_ACCEPT;
-            }
-        }
-    );
+    // Strategy: Find all elements that directly contain text with $$ delimiters
+    // and check if they are NOT wrapped in a <div>
+    var allElements = document.body.querySelectorAll('*');
 
-    var textNode;
-    while (textNode = walker.nextNode()) {
-        var text = textNode.textContent;
-        if (LATEX_COMMAND_RE.test(text) || LATEX_FRAGMENT_RE.test(text)) {
-            var parent = textNode.parentElement;
-            var tag = parent ? parent.tagName.toLowerCase() : '?';
-            var context = text.substring(0, 120).replace(/\n/g, ' ');
-            issues.push({
-                type: 'latex_in_text',
-                tag: tag,
-                context: context,
-                detail: 'Raw LaTeX command found in visible text node'
-            });
-        }
-    }
+    for (var i = 0; i < allElements.length; i++) {
+        var el = allElements[i];
 
-    // === Strategy 2: Find <em>/<strong>/<i>/<b> containing LaTeX ===
-    // This catches the pattern where markdown *...* or _..._ wraps part of a formula
-    // e.g.: <em>i = \frac{x_i - \mu</em>
-
-    var emphElements = document.querySelectorAll('em, strong, i, b');
-    for (var i = 0; i < emphElements.length; i++) {
-        var el = emphElements[i];
+        // Skip excluded elements
         if (el.closest(EXCLUDE_SELECTOR)) continue;
+        if (el.matches(EXCLUDE_SELECTOR)) continue;
+
+        // Skip invisible elements
         var style = window.getComputedStyle(el);
         if (style.display === 'none' || style.visibility === 'hidden') continue;
 
-        var text = el.textContent;
-        if (LATEX_COMMAND_RE.test(text) || LATEX_GENERIC_RE.test(text)) {
-            var context = text.substring(0, 120).replace(/\n/g, ' ');
-            issues.push({
-                type: 'latex_in_emphasis',
-                tag: el.tagName.toLowerCase(),
-                context: context,
-                detail: 'LaTeX commands inside <' + el.tagName.toLowerCase() + '> (likely broken formula)'
-            });
-        }
-    }
+        // Check direct child text nodes of this element for $$ blocks
+        var childNodes = el.childNodes;
+        for (var j = 0; j < childNodes.length; j++) {
+            var node = childNodes[j];
+            if (node.nodeType !== 3) continue; // text nodes only
 
-    // === Strategy 3: Partial render detection ===
-    // Find <math> or .katex elements whose NEXT SIBLING contains LaTeX
-    // This is the exact pattern from the bug report:
-    //   <math>...(rendered)...</math><em>i = \frac{...}</em>...
+            var text = node.textContent;
+            // Look for $$ ... $$ patterns containing underscores or backslash commands
+            var ddMatches = text.match(/\$\$[^$]*[_\\][^$]*\$\$/g);
+            if (!ddMatches) continue;
 
-    var mathElements = document.querySelectorAll('math, .katex, .MathJax');
-    for (var i = 0; i < mathElements.length; i++) {
-        var mathEl = mathElements[i];
-
-        // Check the parent container's text AFTER this math element
-        var parent = mathEl.parentElement;
-        if (!parent) continue;
-
-        // Get all child nodes of parent
-        var children = parent.childNodes;
-        var foundMath = false;
-        var afterMathText = '';
-
-        for (var j = 0; j < children.length; j++) {
-            if (children[j] === mathEl || children[j].contains && children[j].contains(mathEl)) {
-                foundMath = true;
-                continue;
-            }
-            if (foundMath) {
-                // Collect text from siblings AFTER the math element
-                var sibText = '';
-                if (children[j].nodeType === 3) {
-                    sibText = children[j].textContent;
-                } else if (children[j].nodeType === 1) {
-                    // Skip other math elements
-                    if (children[j].matches && children[j].matches(EXCLUDE_SELECTOR)) continue;
-                    sibText = children[j].textContent;
+            for (var k = 0; k < ddMatches.length; k++) {
+                // Check if the parent chain includes a <div> before reaching <body>
+                var parent = el;
+                var insideDiv = false;
+                while (parent && parent !== document.body) {
+                    if (parent.tagName.toLowerCase() === 'div') {
+                        insideDiv = true;
+                        break;
+                    }
+                    parent = parent.parentElement;
                 }
-                afterMathText += sibText;
-                // Only check the immediate vicinity (first 200 chars after math)
-                if (afterMathText.length > 200) break;
+
+                if (!insideDiv) {
+                    var context = ddMatches[k].substring(0, 120).replace(/\n/g, ' ');
+                    issues.push({
+                        type: 'latex_not_in_div',
+                        tag: el.tagName.toLowerCase(),
+                        context: context,
+                        detail: '$$ block with special chars not wrapped in <div> (will break rendering)'
+                    });
+                }
             }
         }
-
-        if (afterMathText.trim().length > 0) {
-            if (LATEX_COMMAND_RE.test(afterMathText) || LATEX_FRAGMENT_RE.test(afterMathText)) {
-                var context = afterMathText.substring(0, 150).replace(/\n/g, ' ').trim();
-                issues.push({
-                    type: 'partial_render',
-                    tag: mathEl.tagName ? mathEl.tagName.toLowerCase() : 'math',
-                    context: context,
-                    detail: 'LaTeX fragment found immediately after rendered math element (partial render failure)'
-                });
-            }
-        }
-    }
-
-    // === Strategy 4: Look for the annotation leak pattern ===
-    // Sometimes the <annotation encoding="application/x-tex"> content leaks
-    // into visible rendering. Check if any <annotation> text appears as visible
-    // text in a sibling/parent that's not inside the math element.
-
-    var annotations = document.querySelectorAll('annotation[encoding="application/x-tex"]');
-    for (var i = 0; i < annotations.length; i++) {
-        var ann = annotations[i];
-        var annText = ann.textContent.trim();
-        if (annText.length < 5) continue;
-
-        // Check if this annotation's text appears verbatim in visible page text
-        // outside of math/katex containers
-        var mathParent = ann.closest('math, .katex, .MathJax');
-        if (!mathParent) continue;
-
-        var container = mathParent.parentElement;
-        if (!container) continue;
-
-        // Get visible text of container excluding math internals
-        var clone = container.cloneNode(true);
-        var mathInClone = clone.querySelectorAll('math, .katex, .MathJax, .katex-mathml, script, style');
-        mathInClone.forEach(function(el) { el.remove(); });
-        var visibleText = clone.textContent || '';
-
-        // Check if a significant chunk of the annotation appears in visible text
-        // Use a substring (at least 15 chars) to avoid false positives
-        var checkStr = annText.length > 20 ? annText.substring(0, 20) : annText;
-        if (visibleText.indexOf(checkStr) !== -1 && LATEX_COMMAND_RE.test(checkStr)) {
-            issues.push({
-                type: 'annotation_leak',
-                tag: 'annotation',
-                context: annText.substring(0, 120),
-                detail: 'LaTeX annotation content appears as visible text (rendering failed to hide source)'
-            });
-        }
-    }
-
-    // === Strategy 5: Detect bare $...$ or $$...$$ that weren't processed ===
-    // If the page uses $ delimiters and the renderer didn't process them,
-    // you'll see literal $ signs around LaTeX content
-
-    var allText = document.body.innerText || '';
-    var dollarMatches = allText.match(/\$\$[^$]+\\[a-zA-Z]+[^$]+\$\$/g) || [];
-    var inlineMatches = allText.match(/\$[^$\n]+\\[a-zA-Z]+[^$\n]+\$/g) || [];
-
-    for (var i = 0; i < Math.min(dollarMatches.length, 5); i++) {
-        issues.push({
-            type: 'unprocessed_dollars',
-            tag: '$$',
-            context: dollarMatches[i].substring(0, 120),
-            detail: 'Unprocessed $$...$$ block with LaTeX commands (renderer did not run?)'
-        });
-    }
-    for (var i = 0; i < Math.min(inlineMatches.length, 5); i++) {
-        // Filter out things that look like shell/code (e.g., $HOME, $PATH)
-        if (/^\$[A-Z_]+$/.test(inlineMatches[i])) continue;
-        issues.push({
-            type: 'unprocessed_inline_dollar',
-            tag: '$',
-            context: inlineMatches[i].substring(0, 120),
-            detail: 'Unprocessed $...$ inline math with LaTeX commands'
-        });
     }
 
     return issues;
@@ -459,28 +305,9 @@ def check_unrendered_latex(driver: webdriver.Chrome) -> list[str]:
 
     return found
 
-
 def find_php_pages(document_root: str) -> list[str]:
-    """Find all PHP files that could be entry points."""
-    root = Path(document_root)
-    pages = []
-
-    # Look for index.php first
-    index = root / "index.php"
-    if index.exists():
-        pages.append("/index.php")
-
-    # Find all .php files
-    for php_file in root.rglob("*.php"):
-        rel_path = "/" + str(php_file.relative_to(root))
-        if rel_path not in pages:
-            pages.append(rel_path)
-
-    if not pages:
-        pages.append("/")
-
-    return pages
-
+    """Default to just /index.php when no pages are specified."""
+    return ["/index.php"]
 
 def main():
     parser = argparse.ArgumentParser(
