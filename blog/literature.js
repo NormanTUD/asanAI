@@ -1,4 +1,16 @@
 window.bibData = {
+	"ivakhnenko1965": {
+		title: "Cybernetic Predicting Devices",
+		author: "Alexey Grigorevich Ivakhnenko, Valentin Grigorevich Lapa",
+		year: 1965,
+		url: "https://gwern.net/doc/ai/1966-ivakhnenko.pdf"
+	},
+	"ivakhnenko1971": {
+		title: "Polynomial Theory of Complex Systems",
+		author: "Alexey Grigorevich Ivakhnenko",
+		year: 1971,
+		url: "https://ieeexplore.ieee.org/document/4308320/"
+	},
 	"penrose1989emperor": {
 		title: "The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics",
 		author: "Roger Penrose",

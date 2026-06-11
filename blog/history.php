@@ -445,6 +445,10 @@ When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}
 
 Between the invention of the Perceptron in 1958 and the release of chatGPT, were 64 years of development, until all Rosenblatt envisioned became true. As such, this is a case of a \citealternativetitle{sleepingbeauty} invention.
 
+### The First Deep Learning (1965)
+
+While the Anglosphere was still debating the limitations of single-layer perceptrons, deep learning was already being born in the Soviet Union. In \citeyear{ivakhnenko1965}, \citeauthorlastnameand{ivakhnenko1965} published the first general, working learning algorithms for deep multi-layer perceptrons with arbitrarily many hidden layers. Their method, known as the **Group Method of Data Handling (GMDH)**, incrementally grew and trained layers using regression analysis, pruning superfluous units via regularization on a separate validation set. By \citeyear{ivakhnenko1971}, Ivakhnenko described a deep learning network with **8 layers**, trained when compute was millions of times more expensive than today. Their networks learned hierarchical, distributed internal representations of incoming data, two decades before the term "connectionism" became fashionable in the 1980s. This work remained highly cited and popular well into the new millennium, especially in Eastern Europe, yet was largely overlooked in Anglophone accounts of AI history.
+
 #### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not "linearly separable."
 
