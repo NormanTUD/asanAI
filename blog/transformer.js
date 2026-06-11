@@ -1864,7 +1864,7 @@ function buildH1NormHtmlForLayer(h0, normH0, gamma, beta, ts, naming) {
 
     <div style="margin-bottom:15px;">
     <p style="font-size:0.85rem; color:#1e40af;">1. Normalize $${hInName}${sup}$ before attention:</p>
-    $$ \\text{LayerNorm}(${hInName}${sup}) = \\underbrace{\\gamma${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{${hInName}${sup} - \\underbrace{\\mu}_{\\text{Mean of } ${hInName}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${hInName}${sup}}} + \\underbrace{\\epsilon}_{${epsilon}}} + \\underbrace{\\beta${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Parameter}}} $$
+    $$ \\text{LayerNorm}(\\underbrace{${hInName}${sup}}_{\\text{${hInStage}}}) = \\underbrace{\\gamma${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Scale Parameter}}} \\underbrace{\\odot}_{\\substack{\\text{Hadamard} \\\\ \\text{Product}}} \\frac{\\underbrace{${hInName}${sup}}_{\\text{${hInStage}}} - \\underbrace{\\mu}_{\\text{Mean of } ${hInName}${sup}}}{\\sqrt{\\underbrace{\\sigma^2}_{\\text{Variance of } ${hInName}${sup}} + \\underbrace{\\epsilon}_{${epsilon}}}} + \\underbrace{\\beta${sup}}_{\\substack{\\text{Learnable} \\\\ \\text{Shift Parameter}}} $$
     <div style="overflow-x:auto; padding-bottom: 10px">
     $$ \\underbrace{${matrixToPmatrixLabeled(normH0, ts, 'after LN')}}_{\\text{LayerNorm}\\left(${hInName}${sup}\\right)} = \\text{LayerNorm}\\!\\left(\\underbrace{${matrixToPmatrixLabeled(h0, ts, hInStage)}}_{${hInName}${sup}},\\; \\underbrace{${vecToPmatrix(gamma)}}_{\\gamma${sup}},\\; \\underbrace{${vecToPmatrix(beta)}}_{\\beta${sup}}\\right) $$
     <br>
@@ -1878,19 +1878,19 @@ function buildH1FinalHtmlForLayer(h0, projectedMHA, multiHeadOutput, h1, WO, ts,
 
 	return `
     <div style="margin-bottom:15px;">
-    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $W^O{${sup}}$ mixes head outputs:</p>
-    $$ \\text{MHA}_{\\text{proj}}${sup} = \\text{Concat}(\\text{Heads}) \\cdot W^O{${sup}} $$
+    <p style="font-size:0.85rem; color:#1e40af;">2. Output projection $\\underbrace{W^O{${sup}}}_{\\text{Output Projection Matrix}}$ mixes head outputs:</p>
+    $$ \\underbrace{\\text{MultiHeadAttention}_{\\text{proj}}${sup}}_{\\text{Projected attention output}} = \\underbrace{\\text{Concat}(\\text{Heads})}_{\\text{Concatenated head contexts}} \\cdot \\underbrace{W^O{${sup}}}_{\\text{Output Projection Matrix}} $$
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_\\text{proj}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts, 'concat heads')}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O{${sup}}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MultiHeadAttention}_{\\text{proj}}${sup}} = \\underbrace{${matrixToPmatrixLabeled(multiHeadOutput, ts, 'concat heads')}}_{\\text{Concat}\\left(\\text{Heads}\\right)} \\cdot \\underbrace{${matrixToPmatrix(WO)}}_{W^O{${sup}}} $$
     </div>
     </div>
 
     <div style="margin-bottom:10px;">
     <p style="font-size:0.85rem; color:#1e40af;">3. Residual connection (Pre-LN: no normalization on sublayer output):</p>
-    $$ ${hOutName}${sup} = ${hInName}${sup} + \\text{MHA}_{\\text{proj}}${sup} $$
+    $$ \\underbrace{${hOutName}${sup}}_{\\text{Output of attention sublayer}} = \\underbrace{${hInName}${sup}}_{\\text{${hInStage}}} + \\underbrace{\\text{MultiHeadAttention}_{\\text{proj}}${sup}}_{\\text{Projected attention output}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px">
-    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts, 'after attn residual')}}_{${hOutName}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts, hInStage)}}_{${hInName}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MHA}_{\\text{proj}}${sup}} $$
+    $$ \\underbrace{${matrixToPmatrixLabeled(h1, ts, 'after attn residual')}}_{${hOutName}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h0, ts, hInStage)}}_{${hInName}${sup}} + \\underbrace{${matrixToPmatrixLabeled(projectedMHA, ts, 'after W^O proj')}}_{\\text{MultiHeadAttention}_{\\text{proj}}${sup}} $$
     </div>
     `;
 }
@@ -3048,7 +3048,7 @@ function _buildFFNExpansionSection(sup, h1name, normed_h1, W1, b1, out_L1, ts) {
     return `
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 1: Expansion + ReLU</strong></p>
 
-    $$ \\text{out}_{L1}${sup} = \\text{ReLU}\\!\\left(\\text{Norm}(${h1name}${sup}) \\cdot W_1${sup} + b_1${sup}\\right) $$
+    $$ \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} = \\underbrace{\\text{ReLU}}_{\\substack{\\text{Activation} \\\\ \\max(0, x)}}\\!\\left(\\underbrace{\\text{Norm}(${h1name}${sup})}_{\\text{Normalized input}} \\cdot \\underbrace{W_1${sup}}_{\\substack{\\text{Expansion} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_1${sup}}_{\\text{Expansion Bias}}\\right) $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
     $$ \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} = \\text{ReLU}\\!\\left( \\underbrace{${matrixToPmatrixLabeled(normed_h1, ts, 'after LN₂')}}_{\\text{Norm}(${h1name}${sup})} \\cdot \\underbrace{${matrixToPmatrix(W1)}}_{W_1${sup}} + \\underbrace{${vecToPmatrix(b1)}}_{b_1${sup}} \\right) $$
@@ -3061,7 +3061,7 @@ function _buildFFNStep2Html(naming, out_L1, W2, b2, out_FFN, ts) {
     return `
     <p style="font-size:0.85rem; color:#1e40af;"><strong>FFN Layer 2: Compression</strong></p>
 
-    $$ \\text{out}_{L2}${sup} = \\text{out}_{L1}${sup} \\cdot W_2${sup} + b_2${sup} $$
+    $$ \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} = \\underbrace{\\text{out}_{L1}${sup}}_{\\text{Hidden layer (expanded)}} \\cdot \\underbrace{W_2${sup}}_{\\substack{\\text{Compression} \\\\ \\text{Weight Matrix}}} + \\underbrace{b_2${sup}}_{\\text{Compression Bias}} $$
 
     <div style="overflow-x:auto; padding-bottom: 10px;">
     $$ \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{Out}_\\text{FFN}${sup}} = \\underbrace{${matrixToPmatrixLabeled(out_L1, ts, 'after ReLU')}}_{\\text{out}_{L1}${sup}} \\cdot \\underbrace{${matrixToPmatrix(W2)}}_{W_2${sup}} + \\underbrace{${vecToPmatrix(b2)}}_{b_2${sup}} $$
@@ -3074,7 +3074,7 @@ function _buildFFNStep3Html(naming, h1, out_FFN, h2, ts) {
     return `
     <div style="margin-bottom:10px;">
     <p style="font-size:0.85rem; color:#1e40af;"><strong>Residual connection</strong> (Pre-LN: no normalization on sublayer output):</p>
-    $$ ${h2name}${sup} = ${h1name}${sup} + \\text{out}_{L2}${sup} $$
+    $$ \\underbrace{${h2name}${sup}}_{\\text{Layer output}} = \\underbrace{${h1name}${sup}}_{\\text{${h1Stage}}} + \\underbrace{\\text{out}_{L2}${sup}}_{\\text{FFN output (compressed)}} $$
     </div>
     <div style="overflow-x:auto; overflow-y: hidden; padding-bottom: 10px;">
     $$ \\underbrace{${matrixToPmatrixLabeled(h2, ts, 'layer output')}}_{${h2name}${sup}} = \\underbrace{${matrixToPmatrixLabeled(h1, ts, h1Stage)}}_{${h1name}${sup}} + \\underbrace{${matrixToPmatrixLabeled(out_FFN, ts, 'FFN output')}}_{\\text{out}_{L2}${sup}} $$
