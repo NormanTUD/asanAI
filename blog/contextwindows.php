@@ -3,9 +3,7 @@
 <div class="md">
 Every time you send a message to an LLM, the model doesn't "remember" your previous conversations from some internal database. It doesn't have a persistent memory like a human brain. Instead, it reads **everything**, the system prompt, the conversation history, any retrieved documents, as a single, flat sequence of tokens. This sequence is the **context window**, and it is the LLM's entire universe of awareness for that single inference.
 
-$$
-\text{Context Window} = [\underbrace{\text{System Prompt}}_{\sim 500 \text{ tokens}} \;|\; \underbrace{\text{Conversation History}}_{\text{variable}} \;|\; \underbrace{\text{Retrieved Docs (RAG)}}_{\text{variable}} \;|\; \underbrace{\text{Current Query}}_{\text{variable}}]
-$$
+<p>$$ \text{Context Window} = [\underbrace{\text{System Prompt}}_{\sim 500 \text{ tokens}} \;|\; \underbrace{\text{Conversation History}}_{\text{variable}} \;|\; \underbrace{\text{Retrieved Docs (RAG)}}_{\text{variable}} \;|\; \underbrace{\text{Current Query}}_{\text{variable}}] $$</p>
 
 **Key insight:** The context window is not "memory" in the human sense. It is a **fixed-size input buffer**. Once it's full, something must be dropped. Once the conversation ends, everything is gone unless explicitly saved externally.
 </div>

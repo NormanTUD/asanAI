@@ -125,7 +125,8 @@ The most powerful circuits arise from **composition**: when the output of one he
 
 ### Q-Composition
 Head B uses the output of Head A as its query:
-$$Q_B = W_Q^B \cdot (\underbrace{x + \text{head}_A(x)}_{\text{residual after A}})$$
+
+<p>$$Q_B = W_Q^B \cdot (\underbrace{x + \text{head}_A(x)}_{\text{residual after A}})$$</p>
 
 Head A's output changes *what Head B looks for*.
 
