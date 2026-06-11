@@ -845,5 +845,3 @@ Introduced by \citeauthor{prinz2012conscious} in \citetitle{prinz2012conscious} 
 | **Intermediate Level** | Attended mid-level sensory representations | No (no sensory hierarchy) |
 
 </div>
-
-</div>
