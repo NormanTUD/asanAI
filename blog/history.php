@@ -3,6 +3,7 @@
 <!--
 TODO https://people.idsia.ch/~juergen/who-invented-backpropagation.html
 TODO https://en.wikipedia.org/wiki/History_of_artificial_neural_networks
+TODO https://people.idsia.ch/~juergen//who-invented-convolutional-neural-networks-28aug2025.html
 -->
 
 <div class="smart-quote" data-cite="processandreality">
