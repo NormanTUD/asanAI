@@ -62,7 +62,7 @@ window.citationGraph = {
 		"werbos1974",          // The true origin of backprop
 		"minskyperceptrons",   // Rebutting the XOR problem
 		"widrow1960adaline",    // Added (Delta rule)
-		"linnainmaa1976",
+		"linnainmaa1970",
 		"rosenblatt1958perceptron",
 		"polyak1964"
 	],

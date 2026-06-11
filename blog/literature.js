@@ -1881,9 +1881,9 @@ window.bibData = {
 		title: "Receptive Fields, Binocular Interaction and Functional Architecture in the Cat's Visual Cortex",
 		author: "David Hubel, Torsten Wiesel"
 	},
-	"linnainmaa1976": {
+	"linnainmaa1970": {
 		author: "Seppo Linnainmaa",
-		year: "1976",
+		year: "1970",
 		title: "Algorithmin kumulatiivinen pyöristysvirhe yksittäisten pyöristysvirheiden osittaisderivatojen summationa",
 		url: "https://papers.baulab.info/papers/also/Linnainmaa-1976.pdf",
 		alternativetitle: "The cumulative rounding error of an algorithm as a sum of partial derivatives of individual rounding errors"
