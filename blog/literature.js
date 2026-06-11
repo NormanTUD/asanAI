@@ -1,4 +1,11 @@
 window.bibData = {
+	"schmidhuber1995nplm": {
+		title: "Sequential Neural Text Compression",
+		author: "Jürgen Schmidhuber, Stefan Heil",
+		year: 1996,
+		url: "https://people.idsia.ch/~juergen/ieeetnn1996.pdf"
+	},
+
 	"highway2015": {
 		title: "Highway Networks",
 		author: "Rupesh Kumar Srivastava, Klaus Greff, Jürgen Schmidhuber",
