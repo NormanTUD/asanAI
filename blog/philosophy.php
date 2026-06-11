@@ -732,7 +732,7 @@ Introduced by \citeauthor{tononi2004iit} in \citetitle{tononi2004iit} (\citeyear
 
 **Formal criterion:**
 
-$$\Phi = \min_{\text{partition}} \left[ D_{KL}\left( p(\text{whole}) \,\|\, \prod_i p(\text{parts}_i) \right) \right]$$
+<div>$$\Phi = \underbrace{\min_{\text{partition}}}_{\substack{\text{search over all} \\ \text{possible bipartitions}}} \left[ \underbrace{D_{KL}}_{\substack{\text{Kullback-Leibler} \\ \text{divergence}}} \left( \underbrace{p(\text{whole})}_{\substack{\text{cause-effect} \\ \text{repertoire of the} \\ \text{intact system}}} \,\|\, \underbrace{\prod_i p(\text{parts}_i)}_{\substack{\text{product of repertoires} \\ \text{of the partitioned} \\ \text{subsystems}}} \right) \right]$$</div>
 
 ### Recurrent Processing Theory (RPT)
 
