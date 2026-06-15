@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laws of Form – Interaktiv</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/Temml-Latin.min.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.24/dist/temml.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Georgia', serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  font-size: 2.2em;
+  margin: 30px 0 10px;
+  color: #f0c040;
+}
+h2 {
+  font-size: 1.5em;
+  margin: 40px 0 15px;
+  color: #80d0ff;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+h3 {
+  font-size: 1.2em;
+  margin: 25px 0 10px;
+  color: #a0e0a0;
+}
+p, li {
+  margin-bottom: 12px;
+  font-size: 1.05em;
+}
+ul { padding-left: 25px; }
+.section {
+  background: #16213e;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 25px 0;
+  border: 1px solid #2a4a7f;
+}
+.interactive-box {
+  background: #0f3460;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 15px 0;
+  border: 1px solid #3a6abf;
+}
+canvas {
+  display: block;
+  margin: 15px auto;
+  border-radius: 8px;
+  cursor: pointer;
+}
+button {
+  background: #f0c040;
+  color: #1a1a2e;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 5px;
+  transition: all 0.2s;
+}
+button:hover {
+  background: #ffd700;
+  transform: scale(1.05);
+}
+button.active {
+  background: #80d0ff;
+}
+.formula {
+  text-align: center;
+  margin: 15px 0;
+  font-size: 1.3em;
+  padding: 10px;
+  background: #0a1628;
+  border-radius: 8px;
+}
+.mark-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
+.mark-symbol {
+  font-size: 3em;
+  color: #f0c040;
+  font-family: monospace;
+  position: relative;
+  display: inline-block;
+  padding: 5px 15px;
+}
+.mark-symbol .top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 10px;
+  height: 3px;
+  background: #f0c040;
+}
+.mark-symbol .right-bar {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  width: 3px;
+  height: 60%;
+  background: #f0c040;
+}
+.explanation {
+  background: #1a3a5c;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border-left: 4px solid #f0c040;
+  margin: 12px 0;
+  font-style: italic;
+}
+.tab-container {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+.tab {
+  padding: 8px 16px;
+  background: #2a4a7f;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+.tab.active {
+  background: #0f3460;
+  color: #f0c040;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+.cross-builder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-height: 80px;
+  padding: 15px;
+  background: #0a1628;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+.cross-elem {
+  border: 2px solid #f0c040;
+  border-radius: 4px;
+  padding: 8px 14px;
+  min-width: 40px;
+  text-align: center;
+  font-size: 1.2em;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.cross-elem:hover {
+  background: rgba(240, 192, 64, 0.1);
+}
+.cross-elem .bar {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+  background: #f0c040;
+}
+.result-display {
+  text-align: center;
+  font-size: 1.5em;
+  padding: 15px;
+  background: #0a2a0a;
+  border-radius: 8px;
+  border: 1px solid #2a6a2a;
+  margin: 10px 0;
+}
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0;
+}
+.step-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #333;
+  transition: all 0.3s;
+}
+.step-dot.active {
+  background: #f0c040;
+}
+.logic-gate {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin: 5px;
+  background: #1a2a4a;
+  border-radius: 8px;
+  border: 1px solid #3a5a8a;
+}
+.truth-table {
+  border-collapse: collapse;
+  margin: 15px auto;
+  font-size: 0.95em;
+}
+.truth-table th, .truth-table td {
+  border: 1px solid #3a5a8a;
+  padding: 8px 14px;
+  text-align: center;
+}
+.truth-table th {
+  background: #2a4a7f;
+  color: #f0c040;
+}
+.truth-table td {
+  background: #0f2040;
+}
+.truth-table tr:hover td {
+  background: #1a3a5c;
+}
+#sandbox-canvas {
+  background: #0a0a1a;
+  border: 2px solid #3a5a8a;
+}
+.toolbar {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.info-badge {
+  display: inline-block;
+  background: #f0c040;
+  color: #1a1a2e;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-left: 8px;
+}
+@media (max-width: 600px) {
+  .container { padding: 10px; }
+  h1 { font-size: 1.6em; }
+  .section { padding: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>⟋ Laws of Form ⟍</h1>
+<p style="text-align:center; color:#888; margin-bottom:30px;">
+  G. Spencer-Brown (1969) – Interaktiv erklärt
+</p>
+
+<!-- ===== SECTION 1: Die Unterscheidung ===== -->
+<div class="section">
+<h2>1. Die Grundidee: Eine Unterscheidung treffen</h2>
+<p>
+  Alles beginnt mit einem einzigen Akt: <strong>Trenne etwas von etwas anderem.</strong>
+  Zeichne eine Grenze. Damit entstehen zwei Seiten – ein „Innen" und ein „Außen".
+</p>
+
+<div class="interactive-box">
+  <p style="text-align:center; margin-bottom:10px;">Klicke in die Fläche, um eine Unterscheidung zu zeichnen:</p>
+  <canvas id="distinction-canvas" width="500" height="300"></canvas>
+  <p id="distinction-text" style="text-align:center; color:#aaa; margin-top:8px;">
+    Noch keine Unterscheidung getroffen.
+  </p>
+</div>
+
+<div class="explanation">
+  Spencer-Brown sagt: „Wir nehmen die Idee der Unterscheidung und die Idee der Bezeichnung als gegeben an, 
+  und dass wir keine Bezeichnung machen können, ohne eine Unterscheidung zu treffen." [[11]]
+</div>
+
+<p>
+  Die <strong>Form der Unterscheidung</strong> ist das Grundelement. Spencer-Brown schreibt sie als ein 
+  spezielles Zeichen – das „Cross" oder die „Mark":
+</p>
+
+<div class="mark-display">
+  <svg width="80" height="60" viewBox="0 0 80 60">
+    <path d="M 5 40 L 5 10 L 70 10" stroke="#f0c040" stroke-width="3" fill="none"/>
+  </svg>
+  <span style="color:#aaa; font-size:1.1em;">= Die Mark (das Kreuz)</span>
+</div>
+
+<p>
+  Diese Mark hat eine <strong>Innenseite</strong> (unter dem Haken) und eine <strong>Außenseite</strong>.
+  Die Innenseite ist der „markierte Zustand" (marked state), die Außenseite der „unmarkierte Zustand" (unmarked state).
+</p>
+</div>
+
+<!-- ===== SECTION 2: Die zwei Axiome ===== -->
+<div class="section">
+<h2>2. Die zwei Axiome (Gesetze)</h2>
+<p>
+  Aus der Unterscheidung ergeben sich genau <strong>zwei Grundgesetze</strong>, 
+  aus denen sich alles Weitere ableiten lässt:
+</p>
+
+<h3>Axiom 1: Das Gesetz des Rufens (Law of Calling)</h3>
+<div class="formula" id="axiom1-formula"></div>
+<div class="interactive-box">
+  <p>Wenn du etwas zweimal benennst, ist es dasselbe wie einmal benennen.</p>
+  <p style="text-align:center; margin:10px 0;">
+    <strong>Doppelt markieren = Einfach markieren</strong>
+  </p>
+  <canvas id="calling-canvas" width="500" height="150"></canvas>
+  <div style="text-align:center; margin-top:10px;">
+    <button onclick="animateCalling()">▶ Animieren: Kondensation</button>
+    <button onclick="resetCalling()">↺ Reset</button>
+  </div>
+</div>
+<div class="explanation">
+  „Der Wert eines erneuten Rufens ist der Wert des Rufens." – Wie wenn du jemanden zweimal beim Namen rufst: 
+  Es ist immer noch dieselbe Person. [[11]]
+</div>
+
+<h3>Axiom 2: Das Gesetz des Kreuzens (Law of Crossing)</h3>
+<div class="formula" id="axiom2-formula"></div>
+<div class="interactive-box">
+  <p>Wenn du eine Grenze überquerst und dann nochmal überquerst, bist du wieder am Anfang.</p>
+  <p style="text-align:center; margin:10px 0;">
+    <strong>Doppelt kreuzen = Nicht kreuzen</strong>
+  </p>
+  <canvas id="crossing-canvas" width="500" height="150"></canvas>
+  <div style="text-align:center; margin-top:10px;">
+    <button onclick="animateCrossing()">▶ Animieren: Aufhebung</button>
+    <button onclick="resetCrossing()">↺ Reset</button>
+  </div>
+</div>
+<div class="explanation">
+  „Der Wert eines erneuten Kreuzens ist nicht der Wert des Kreuzens." – 
+  Wie eine Lichtschalter-Logik: Zweimal drücken = zurück zum Ausgangszustand. [[11]]
+</div>
+</div>
+
+<!-- ===== SECTION 3: Interaktiver Kalkül ===== -->
+<div class="section">
+<h2>3. Rechnen mit Formen – Der Kalkül der Indikationen</h2>
+<p>
+  Mit nur diesen zwei Regeln können wir <strong>rechnen</strong>. Jeder Ausdruck aus verschachtelten Marks 
+  lässt sich auf einen von zwei Zuständen vereinfachen:
+</p>
+<ul>
+  <li><strong>Markiert</strong> (marked) = ⌐ (eine einzelne Mark)</li>
+  <li><strong>Unmarkiert</strong> (unmarked) = (leerer Raum, „nichts")</li>
+</ul>
+
+<div class="interactive-box">
+  <h3 style="text-align:center;">Ausdrucks-Vereinfacher</h3>
+  <p style="text-align:center; color:#aaa;">Baue einen Ausdruck und vereinfache ihn Schritt für Schritt:</p>
+  
+  <div class="toolbar">
+    <button onclick="addMark()">+ Mark hinzufügen</button>
+    <button onclick="nestMark()">⊂ Verschachteln</button>
+    <button onclick="clearExpr()">✕ Leeren</button>
+  </div>
+  
+  <div id="expr-display" class="cross-builder">
+    <span style="color:#666;">Klicke „+ Mark hinzufügen" um zu beginnen</span>
+  </div>
+  
+  <div style="text-align:center; margin:15px 0;">
+    <button onclick="simplifyStep()">→ Vereinfachungsschritt</button>
+    <button onclick="simplifyAll()">⟹ Komplett vereinfachen</button>
+  </div>
+  
+  <div id="expr-result" class="result-display" style="display:none;"></div>
+  <div id="expr-steps" style="color:#aaa; text-align:center; margin-top:8px;"></div>
+</div>
+</div>
+
+<!-- ===== SECTION 4: Logik aufbauen ===== -->
+<div class="section">
+<h2>4. Von Formen zu Logik</h2>
+<p>
+  Das Erstaunliche: Aus diesem minimalen Kalkül lässt sich die <strong>gesamte Aussagenlogik</strong> ableiten!
+  Spencer-Brown zeigt, dass Boolesche Algebra nur eine Interpretation seines Kalküls ist. [[11]]
+</p>
+
+<div class="tab-container">
+  <div class="tab active" onclick="showLogicTab(0)">NOT (Negation)</div>
+  <div class="tab" onclick="showLogicTab(1)">OR (Oder)</div>
+  <div class="tab" onclick="showLogicTab(2)">AND (Und)</div>
+  <div class="tab" onclick="showLogicTab(3)">IMPLIES (→)</div>
+</div>
+
+<div id="logic-tab-0" class="tab-content active">
+  <h3>NOT a (Negation)</h3>
+  <p>Die Negation ist einfach: Setze <em>a</em> in eine Mark hinein.</p>
+  <div class="formula" id="not-formula"></div>
+  <p>Wenn <em>a</em> = markiert (wahr), dann ist das Ergebnis unmarkiert (falsch), und umgekehrt.</p>
+  
+  <div class="interactive-box">
+    <p style="text-align:center;">Klicke um den Wert von <em>a</em> zu wechseln:</p>
+    <div style="text-align:center; margin:10px 0;">
+      <button id="not-toggle" onclick="toggleNot()">a = WAHR (markiert)</button>
+    </div>
+    <div id="not-result" class="result-display">
+      NOT a = FALSCH (unmarkiert)
+    </div>
+  </div>
+</div>
+
+<div id="logic-tab-1" class="tab-content">
+  <h3>a OR b (Disjunktion)</h3>
+  <p>Oder ist noch einfacher: Schreibe <em>a</em> und <em>b</em> nebeneinander in denselben Raum.</p>
+  <div class="formula" id="or-formula"></div>
+  <p>Durch die „Regel der Dominanz": Wenn mindestens eines markiert ist, ist das Ganze markiert.</p>
+  
+  <div class="interactive-box">
+    <div style="text-align:center; margin:10px 0;">
+      <button id="or-a" onclick="toggleOr('a')">a = FALSCH</button>
+      <button id="or-b" onclick="toggleOr('b')">b = FALSCH</button>
+    </div>
+    <div id="or-result" class="result-display">
+      a OR b = FALSCH
+    </div>
+  </div>
+</div>
+
+<div id="logic-tab-2" class="tab-content">
+  <h3>a AND b (Konjunktion)</h3>
+  <p>Und erfordert eine doppelte Negation der Negationen:</p>
+  <div class="formula" id="and-formula"></div>
+  <p>Lies: „Die Mark von (Mark-a zusammen mit Mark-b)" – Beide müssen markiert sein.</p>
+  
+  <div class="interactive-box">
+    <div style="text-align:center; margin:10px 0;">
+      <button id="and-a" onclick="toggleAnd('a')">a = FALSCH</button>
+      <button id="and-b" onclick="toggleAnd('b')">b = FALSCH</button>
+    </div>
+    <div id="and-result" class="result-display">
+      a AND b = FALSCH
+    </div>
+  </div>
+</div>
+
+<div id="logic-tab-3" class="tab-content">
+  <h3>a → b (Implikation)</h3>
+  <p>Die Implikation „wenn a dann b":</p>
+  <div class="formula" id="impl-formula"></div>
+  <p>Lies: „Mark von (a zusammen mit Mark-b)" – Falsch nur wenn a wahr und b falsch.</p>
+  
+  <div class="interactive-box">
+    <div style="text-align:center; margin:10px 0;">
+      <button id="impl-a" onclick="toggleImpl('a')">a = FALSCH</button>
+      <button id="impl-b" onclick="toggleImpl('b')">b = FALSCH</button>
+    </div>
+    <div id="impl-result" class="result-display">
+      a → b = WAHR
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SECTION 5: Wahrheitstabellen ===== -->
+<div class="section">
+<h2>5. Wahrheitstabellen – Visuell</h2>
+<p>Hier siehst du, wie die Spencer-Brown-Formen den klassischen Wahrheitstabellen entsprechen:</p>
+
+<div class="interactive-box">
+  <div style="text-align:center; margin-bottom:10px;">
+    <button onclick="showTruthTable('not')">NOT</button>
+    <button onclick="showTruthTable('or')">OR</button>
+    <button onclick="showTruthTable('and')">AND</button>
+    <button onclick="showTruthTable('implies')">IMPLIES</button>
+    <button onclick="showTruthTable('nand')">NAND (Sheffer)</button>
+  </div>
+  <div id="truth-table-container"></div>
+</div>
+
+<div class="explanation">
+  Spencer-Brown zeigt, dass der Sheffer-Strich (NAND) – aus dem allein die gesamte Logik aufgebaut werden kann – 
+  in seinem Kalkül einfach als <span class="formula" id="sheffer-inline" style="display:inline; padding:2px 8px;"></span> geschrieben wird. [[11]]
+</div>
+</div>
+
+<!-- ===== SECTION 6: Sandbox ===== -->
+<div class="section">
+<h2>6. Sandbox: Zeichne deine eigenen Formen</h2>
+<p>
+  Zeichne verschachtelte Kreise (= Marks/Crosses) und beobachte, wie sie sich vereinfachen.
+  Jeder Kreis ist eine Unterscheidung mit Innen und Außen.
+</p>
+
+<div class="interactive-box">
+  <div class="toolbar">
+    <button onclick="sandboxAddCircle()">○ Kreis zeichnen</button>
+    <button onclick="sandboxNest()">⊂ In letzten verschachteln</button>
+    <button onclick="sandboxEvaluate()">= Auswerten</button>
+    <button onclick="sandboxClear()">✕ Leeren</button>
+  </div>
+  <canvas id="sandbox-canvas" width="700" height="350"></canvas>
+  <div id="sandbox-result" style="text-align:center; margin-top:10px; font-size:1.2em;"></div>
+</div>
+</div>
+
+<!-- ===== SECTION 7: Zusammenfassung ===== -->
+<div class="section">
+<h2>7. Das Große Bild</h2>
+
+<div style="text-align:center; margin:20px 0;">
+  <svg width="600" height="300" viewBox="0 0 600 300" style="max-width:100%;">
+    <!-- Void -->
+    <rect x="10" y="10" width="580" height="280" rx="15" fill="#0a0a1a" stroke="#333" stroke-width="2"/>
+    <text x="300" y="35" text-anchor="middle" fill="#666" font-size="12">VOID (das Leere, der unmarkierte Zustand)</text>
+    
+    <!-- First distinction -->
+    <rect x="50" y="50" width="500" height="200" rx="12" fill="none" stroke="#f0c040" stroke-width="3"/>
+    <text x="300" y="75" text-anchor="middle" fill="#f0c040" font-size="14" font-weight="bold">ERSTE UNTERSCHEIDUNG</text>
+    
+    <!-- Axiom 1 -->
+    <rect x="80" y="95" width="200" height="70" rx="8" fill="#1a3a2a" stroke="#4a8a4a" stroke-width="2"/>
+    <text x="180" y="120" text-anchor="middle" fill="#a0e0a0" font-size="13" font-weight="bold">Axiom 1: Calling</text>
+    <text x="180" y="145" text-anchor="middle" fill="#ccc" font-size="12">⌐⌐ = ⌐</text>
+    
+    <!-- Axiom 2 -->
+    <rect x="320" y="95" width="200" height="70" rx="8" fill="#1a2a3a" stroke="#4a6a8a" stroke-width="2"/>
+    <text x="420" y="120" text-anchor="middle" fill="#80d0ff" font-size="13" font-weight="bold">Axiom 2: Crossing</text>
+    <text x="420" y="145" text-anchor="middle" fill="#ccc" font-size="12">⌐⊂⌐ = (leer)</text>
+    
+    <!-- Arrow down -->
+    <path d="M 300 175 L 300 195" stroke="#f0c040" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f0c040"/></marker></defs>
+    
+    <!-- Algebra -->
+    <rect x="120" y="200" width="360" height="40" rx="8" fill="#2a1a3a" stroke="#8a4aaa" stroke-width="2"/>
+    <text x="300" y="225" text-anchor="middle" fill="#d0a0ff" font-size="13" font-weight="bold">
+      Primäre Algebra → Boolesche Logik → Alles
+    </text>
+  </svg>
+</div>
+
+<p>
+  <strong>Zusammenfassung:</strong> Spencer-Brown zeigt, dass die gesamte Logik (und mehr) aus einem einzigen 
+  Grundakt entsteht – dem Treffen einer Unterscheidung. Die zwei Axiome, die sich daraus ergeben, 
+  sind alles, was man braucht, um die Boolesche Algebra und damit die Aussagenlogik vollständig abzuleiten. [[11]]
+</p>
+
+<div class="explanation">
+  „Ein Universum entsteht, wenn ein Raum getrennt oder auseinandergenommen wird." – G. Spencer-Brown [[11]]
+</div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ===== RENDER FORMULAS =====
+function renderFormula(id, tex) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = temml.renderToString(tex, {displayMode: true});
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderFormula('axiom1-formula', String.raw`\boxed{\text{Mark}\;\text{Mark} = \text{Mark}} \quad\Longleftrightarrow\quad \ulcorner\!\ulcorner = \ulcorner`);
+  renderFormula('axiom2-formula', String.raw`\boxed{\text{Mark}(\text{Mark}(\;)) = (\;)} \quad\Longleftrightarrow\quad \ulcorner\!\lrcorner\!\ulcorner\!\lrcorner = \text{(leer)}`);
+  renderFormula('not-formula', String.raw`\neg a \;=\; \ulcorner a \lrcorner`);
+  renderFormula('or-formula', String.raw`a \lor b \;=\; a\; b \quad\text{(nebeneinander)}`);
+  renderFormula('and-formula', String.raw`a \land b \;=\; \ulcorner\, \ulcorner a \lrcorner\; \ulcorner b \lrcorner\, \lrcorner`);
+  renderFormula('impl-formula', String.raw`a \to b \;=\; \ulcorner\, a\; \ulcorner b \lrcorner\, \lrcorner`);
+  renderFormula('sheffer-inline', String.raw`\ulcorner\, a\; b\, \lrcorner`);
+});
+
+// ===== DISTINCTION CANVAS =====
+const distCanvas = document.getElementById('distinction-canvas');
+const distCtx = distCanvas.getContext('2d');
+let distinctions = [];
+
+function drawDistinctions() {
+  distCtx.clearRect(0, 0, distCanvas.width, distCanvas.height);
+  distCtx.fillStyle = '#0a0a1a';
+  distCtx.fillRect(0, 0, distCanvas.width, distCanvas.height);
+  
+  distinctions.forEach((d, i) => {
+    distCtx.beginPath();
+    distCtx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    distCtx.strokeStyle = `hsl(${40 + i * 30}, 80%, 60%)`;
+    distCtx.lineWidth = 2.5;
+    distCtx.stroke();
+    
+    // Label inside
+    distCtx.fillStyle = `hsl(${40 + i * 30}, 80%, 70%)`;
+    distCtx.font = '12px Georgia';
+    distCtx.textAlign = 'center';
+    distCtx.fillText('innen', d.x, d.y + 4);
+    
+    // Label outside
+    distCtx.fillStyle = '#666';
+    distCtx.fillText('außen', d.x + d.r + 20, d.y);
+  });
+  
+  const txt = document.getElementById('distinction-text');
+  if (distinctions.length === 0) {
+    txt.textContent = 'Noch keine Unterscheidung getroffen.';
+  } else if (distinctions.length === 1) {
+    txt.textContent = '1 Unterscheidung: Es gibt jetzt ein Innen und ein Außen.';
+  } else {
+    txt.textContent = `${distinctions.length} Unterscheidungen: Verschachtelte Räume entstehen.`;
+  }
+}
+
+distCanvas.addEventListener('click', (e) => {
+  const rect = distCanvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const r = 30 + Math.random() * 40;
+  distinctions.push({x, y, r});
+  drawDistinctions();
+});
+
+drawDistinctions();
+
+// ===== CALLING ANIMATION =====
+const callCanvas = document.getElementById('calling-canvas');
+const callCtx = callCanvas.getContext('2d');
+let callingState = 0; // 0 = two marks, 1 = animating, 2 = one mark
+
+function drawCalling(progress) {
+  callCtx.clearRect(0, 0, callCanvas.width, callCanvas.height);
+  callCtx.fillStyle = '#0a0a1a';
+  callCtx.fillRect(0, 0, callCanvas.width, callCanvas.height);
+  
+  // Draw two marks that merge into one
+  const centerX = callCanvas.width / 2;
+  const y = 70;
+  const markWidth = 50;
+  const markHeight = 40;
+  const gap = 30;
+  
+  // Left mark position (moves right during animation)
+  const leftX = centerX - markWidth - gap/2 + progress * (markWidth/2 + gap/2);
+  // Right mark (fades out during animation)
+  const rightX = centerX + gap/2;
+  const rightAlpha = 1 - progress;
+  
+  // Draw left mark (always visible)
+  callCtx.strokeStyle = '#f0c040';
+  callCtx.lineWidth = 3;
+  callCtx.beginPath();
+  callCtx.moveTo(leftX, y + markHeight);
+  callCtx.lineTo(leftX, y);
+  callCtx.lineTo(leftX + markWidth, y);
+  callCtx.stroke();
+  
+  // Draw right mark (fades out)
+  if (rightAlpha > 0.01) {
+    callCtx.strokeStyle = `rgba(240, 192, 64, ${rightAlpha})`;
+    callCtx.beginPath();
+    callCtx.moveTo(rightX, y + markHeight);
+    callCtx.lineTo(rightX, y);
+    callCtx.lineTo(rightX + markWidth, y);
+    callCtx.stroke();
+  }
+  
+  // Labels
+  callCtx.fillStyle = '#aaa';
+  callCtx.font = '14px Georgia';
+  callCtx.textAlign = 'center';
+  if (progress < 0.5) {
+    callCtx.fillText('⌐  ⌐', centerX, y + markHeight + 30);
+  } else {
+    callCtx.fillText('⌐', centerX, y + markHeight + 30);
+  }
+  
+  // Equals sign
+  callCtx.fillStyle = '#80d0ff';
+  callCtx.fillText(progress >= 1 ? '= ⌐  (Kondensation!)' : 'Klicke "Animieren"', centerX, y + markHeight + 55);
+}
+
+function animateCalling() {
+  let progress = 0;
+  const animate = () => {
+    progress += 0.02;
+    if (progress > 1) progress = 1;
+    drawCalling(progress);
+    if (progress < 1) requestAnimationFrame(animate);
+  };
+  animate();
+}
+
+function resetCalling() {
+  drawCalling(0);
+}
+
+drawCalling(0);
+
+// ===== CROSSING ANIMATION =====
+const crossCanvas = document.getElementById('crossing-canvas');
+const crossCtx = crossCanvas.getContext('2d');
+
+function drawCrossing(progress) {
+  crossCtx.clearRect(0, 0, crossCanvas.width, crossCanvas.height);
+  crossCtx.fillStyle = '#0a0a1a';
+  crossCtx.fillRect(0, 0, crossCanvas.width, crossCanvas.height);
+  
+  const centerX = crossCanvas.width / 2;
+  const y = 40;
+  const markWidth = 60;
+  const markHeight = 50;
+  
+  // Outer mark
+  const outerAlpha = 1 - progress;
+  // Inner mark
+  const innerAlpha = 1 - progress;
+  
+  if (outerAlpha > 0.01) {
+    // Outer mark
+    crossCtx.strokeStyle = `rgba(128, 208, 255, ${outerAlpha})`;
+    crossCtx.lineWidth = 3;
+    crossCtx.beginPath();
+    crossCtx.moveTo(centerX - markWidth/2, y + markHeight);
+    crossCtx.lineTo(centerX - markWidth/2, y);
+    crossCtx.lineTo(centerX + markWidth/2, y);
+    crossCtx.stroke();
+    
+    // Inner mark (smaller, nested)
+    crossCtx.strokeStyle = `rgba(240, 192, 64, ${innerAlpha})`;
+    crossCtx.lineWidth = 2.5;
+    crossCtx.beginPath();
+    crossCtx.moveTo(centerX - markWidth/4, y + markHeight - 15);
+    crossCtx.lineTo(centerX - markWidth/4, y + 12);
+    crossCtx.lineTo(centerX + markWidth/4, y + 12);
+    crossCtx.stroke();
+  }
+  
+  // Labels
+  crossCtx.fillStyle = '#aaa';
+  crossCtx.font = '14px Georgia';
+  crossCtx.textAlign = 'center';
+  if (progress < 0.5) {
+    crossCtx.fillText('⌐⌐ (Mark in Mark)', centerX, y + markHeight + 25);
+  } else {
+    crossCtx.fillText('= (leer) — Beide heben sich auf!', centerX, y + markHeight + 25);
+  }
+  
+  crossCtx.fillStyle = '#80d0ff';
+  crossCtx.fillText(progress >= 1 ? '= nichts  (Aufhebung!)' : 'Klicke "Animieren"', centerX, y + markHeight + 50);
+}
+
+function animateCrossing() {
+  let progress = 0;
+  const animate = () => {
+    progress += 0.02;
+    if (progress > 1) progress = 1;
+    drawCrossing(progress);
+    if (progress < 1) requestAnimationFrame(animate);
+  };
+  animate();
+}
+
+function resetCrossing() {
+  drawCrossing(0);
+}
+
+drawCrossing(0);
+
+// ===== EXPRESSION BUILDER =====
+let exprTree = null; // null = empty, {type:'mark', children:[]} or {type:'juxt', items:[]}
+
+class Expr {
+  constructor() {
+    this.items = []; // list of marks at top level
+  }
+  
+  addMark() {
+    this.items.push({type: 'mark', content: []});
+  }
+  
+  nestLast() {
+    if (this.items.length >= 1) {
+      const last = this.items.pop();
+      if (this.items.length >= 1) {
+        const secondLast = this.items[this.items.length - 1];
+        secondLast.content.push(last);
+      } else {
+        this.items.push({type: 'mark', content: [last]});
+      }
+    }
+  }
+  
+  // Evaluate the expression
+  evaluate(items) {
+    if (!items) items = this.items;
+    if (items.length === 0) return 'unmarked';
+    
+    for (let item of items) {
+      if (item.type === 'mark') {
+        // A mark with empty content = marked state
+        // A mark with content = crossing of content's value
+        let innerVal = this.evaluate(item.content);
+        if (innerVal === 'unmarked') {
+          return 'marked'; // empty mark or mark of unmarked = marked
+        }
+      }
+    }
+    
+    // Check if any item is a simple empty mark
+    for (let item of items) {
+      if (item.type === 'mark' && item.content.length === 0) {
+        return 'marked';
+      }
+      if (item.type === 'mark') {
+        let innerVal = this.evaluate(item.content);
+        if (innerVal === 'unmarked') return 'marked';
+      }
+    }
+    
+    // All marks contain marked content -> they all cross to unmarked
+    // Multiple unmarked values juxtaposed = unmarked
+    // But wait - we need to check: if a mark contains marked content, it evaluates to unmarked
+    // Juxtaposition of marks: each mark evaluates independently
+    // If ANY mark evaluates to marked, the whole space is marked (dominance)
+    
+    for (let item of items) {
+      if (item.type === 'mark') {
+        let innerVal = this.evaluate(item.content);
+        // The mark itself evaluates to the CROSSING of its content
+        // If content is marked, crossing gives unmarked
+        // If content is unmarked, crossing gives marked
+        if (innerVal === 'unmarked') return 'marked';
+      }
+    }
+    
+    return 'unmarked';
+  }
+  
+  toHTML(items, depth) {
+    if (!items) items = this.items;
+    if (!depth) depth = 0;
+    if (items.length === 0) return '<span style="color:#666;">∅</span>';
+    
+    let html = '';
+    for (let item of items) {
+      if (item.type === 'mark') {
+        const colors = ['#f0c040', '#80d0ff', '#a0e0a0', '#ff80a0'];
+        const color = colors[depth % colors.length];
+        const inner = item.content.length === 0 ? 
+          '<span style="color:#666; font-size:0.8em;"> </span>' : 
+          this.toHTML(item.content, depth + 1);
+        html += `<span class="cross-elem" style="border-color:${color}; margin:3px;">
+          <span class="bar" style="background:${color};"></span>${inner}</span>`;
+      }
+    }
+    return html;
+  }
+  
+  simplifyDescription() {
+    // Return a text description of simplification steps
+    let steps = [];
+    let items = JSON.parse(JSON.stringify(this.items));
+    
+    let changed = true;
+    let maxIter = 20;
+    while (changed && maxIter-- > 0) {
+      changed = false;
+      
+      // Law of Calling: two adjacent empty marks -> one
+      for (let i = 0; i < items.length - 1; i++) {
+        if (items[i].type === 'mark' && items[i].content.length === 0 &&
+            items[i+1].type === 'mark' && items[i+1].content.length === 0) {
+          items.splice(i+1, 1);
+          steps.push('Kondensation (Axiom 1): ⌐⌐ → ⌐');
+          changed = true;
+          break;
+        }
+      }
+      if (changed) continue;
+      
+      // Law of Crossing: mark containing single empty mark -> nothing
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type === 'mark' && items[i].content.length === 1 &&
+            items[i].content[0].type === 'mark' && items[i].content[0].content.length === 0) {
+          items.splice(i, 1);
+          steps.push('Aufhebung (Axiom 2): ⌐(⌐) → ∅');
+          changed = true;
+          break;
+        }
+      }
+    }
+    
+    let finalVal = items.length === 0 ? 'UNMARKIERT (leer)' : 'MARKIERT (⌐)';
+    return {steps, result: finalVal};
+  }
+}
+
+let currentExpr = new Expr();
+
+function addMark() {
+  currentExpr.addMark();
+  updateExprDisplay();
+}
+
+function nestMark() {
+  currentExpr.nestLast();
+  updateExprDisplay();
+}
+
+function clearExpr() {
+  currentExpr = new Expr();
+  updateExprDisplay();
+  document.getElementById('expr-result').style.display = 'none';
+  document.getElementById('expr-steps').textContent = '';
+}
+
+function updateExprDisplay() {
+  const display = document.getElementById('expr-display');
+  if (currentExpr.items.length === 0) {
+    display.innerHTML = '<span style="color:#666;">Klicke „+ Mark hinzufügen" um zu beginnen</span>';
+  } else {
+    display.innerHTML = currentExpr.toHTML();
+  }
+}
+
+function simplifyStep() {
+  const info = currentExpr.simplifyDescription();
+  const stepsEl = document.getElementById('expr-steps');
+  if (info.steps.length > 0) {
+    stepsEl.innerHTML = info.steps.map(s => `<div>→ ${s}</div>`).join('');
+  } else {
+    stepsEl.textContent = 'Bereits vereinfacht!';
+  }
+}
+
+function simplifyAll() {
+  const info = currentExpr.simplifyDescription();
+  const resultEl = document.getElementById('expr-result');
+  const stepsEl = document.getElementById('expr-steps');
+  
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `<strong>Ergebnis:</strong> ${info.result}`;
+  
+  if (info.steps.length > 0) {
+    stepsEl.innerHTML = info.steps.map(s => `<div style="margin:3px 0;">→ ${s}</div>`).join('');
+  } else {
+    stepsEl.textContent = 'Ausdruck ist bereits einfach.';
+  }
+}
+
+// ===== LOGIC TABS =====
+function showLogicTab(index) {
+  document.querySelectorAll('.tab-content').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+}
+
+// NOT gate
+let notValue = true;
+function toggleNot() {
+  notValue = !notValue;
+  document.getElementById('not-toggle').textContent = 
+    notValue ? 'a = WAHR (markiert)' : 'a = FALSCH (unmarkiert)';
+  document.getElementById('not-result').textContent = 
+    `NOT a = ${notValue ? 'FALSCH (unmarkiert)' : 'WAHR (markiert)'}`;
+}
+
+// OR gate
+let orA = false, orB = false;
+function toggleOr(which) {
+  if (which === 'a') orA = !orA;
+  else orB = !orB;
+  document.getElementById('or-a').textContent = `a = ${orA ? 'WAHR' : 'FALSCH'}`;
+  document.getElementById('or-b').textContent = `b = ${orB ? 'WAHR' : 'FALSCH'}`;
+  const result = orA || orB;
+  document.getElementById('or-result').textContent = `a OR b = ${result ? 'WAHR' : 'FALSCH'}`;
+}
+
+// AND gate
+let andA = false, andB = false;
+function toggleAnd(which) {
+  if (which === 'a') andA = !andA;
+  else andB = !andB;
+  document.getElementById('and-a').textContent = `a = ${andA ? 'WAHR' : 'FALSCH'}`;
+  document.getElementById('and-b').textContent = `b = ${andB ? 'WAHR' : 'FALSCH'}`;
+  const result = andA && andB;
+  document.getElementById('and-result').textContent = `a AND b = ${result ? 'WAHR' : 'FALSCH'}`;
+}
+
+// IMPLIES gate
+let implA = false, implB = false;
+function toggleImpl(which) {
+  if (which === 'a') implA = !implA;
+  else implB = !implB;
+  document.getElementById('impl-a').textContent = `a = ${implA ? 'WAHR' : 'FALSCH'}`;
+  document.getElementById('impl-b').textContent = `b = ${implB ? 'WAHR' : 'FALSCH'}`;
+  const result = !implA || implB;
+  document.getElementById('impl-result').textContent = `a → b = ${result ? 'WAHR' : 'FALSCH'}`;
+}
+
+// ===== TRUTH TABLES =====
+function showTruthTable(op) {
+  const container = document.getElementById('truth-table-container');
+  let html = '<table class="truth-table">';
+  
+  if (op === 'not') {
+    html += '<tr><th>a</th><th>NOT a</th><th>Spencer-Brown</th></tr>';
+    html += '<tr><td>W</td><td>F</td><td>⌐(⌐) = ∅</td></tr>';
+    html += '<tr><td>F</td><td>W</td><td>⌐(∅) = ⌐</td></tr>';
+  } else if (op === 'or') {
+    html += '<tr><th>a</th><th>b</th><th>a OR b</th><th>Spencer-Brown</th></tr>';
+    html += '<tr><td>F</td><td>F</td><td>F</td><td>∅ ∅ = ∅</td></tr>';
+    html += '<tr><td>F</td><td>W</td><td>W</td><td>∅ ⌐ = ⌐</td></tr>';
+    html += '<tr><td>W</td><td>F</td><td>W</td><td>⌐ ∅ = ⌐</td></tr>';
+    html += '<tr><td>W</td><td>W</td><td>W</td><td>⌐ ⌐ = ⌐</td></tr>';
+  } else if (op === 'and') {
+    html += '<tr><th>a</th><th>b</th><th>a AND b</th><th>Spencer-Brown</th></tr>';
+    html += '<tr><td>F</td><td>F</td><td>F</td><td>⌐(⌐(∅) ⌐(∅)) = ∅</td></tr>';
+    html += '<tr><td>F</td><td>W</td><td>F</td><td>⌐(⌐(∅) ⌐(⌐)) = ∅</td></tr>';
+    html += '<tr><td>W</td><td>F</td><td>F</td><td>⌐(⌐(⌐) ⌐(∅)) = ∅</td></tr>';
+    html += '<tr><td>W</td><td>W</td><td>W</td><td>⌐(⌐(⌐) ⌐(⌐)) = ⌐</td></tr>';
+  } else if (op === 'implies') {
+    html += '<tr><th>a</th><th>b</th><th>a → b</th><th>Spencer-Brown</th></tr>';
+    html += '<tr><td>F</td><td>F</td><td>W</td><td>⌐(∅ ⌐(∅)) = ⌐</td></tr>';
+    html += '<tr><td>F</td><td>W</td><td>W</td><td>⌐(∅ ⌐(⌐)) = ⌐</td></tr>';
+    html += '<tr><td>W</td><td>F</td><td>F</td><td>⌐(⌐ ⌐(∅)) = ∅</td></tr>';
+    html += '<tr><td>W</td><td>W</td><td>W</td><td>⌐(⌐ ⌐(⌐)) = ⌐</td></tr>';
+  } else if (op === 'nand') {
+    html += '<tr><th>a</th><th>b</th><th>a NAND b</th><th>Spencer-Brown</th></tr>';
+    html += '<tr><td>F</td><td>F</td><td>W</td><td>⌐(∅ ∅) = ⌐</td></tr>';
+    html += '<tr><td>F</td><td>W</td><td>W</td><td>⌐(∅ ⌐) = ⌐</td></tr>';
+    html += '<tr><td>W</td><td>F</td><td>W</td><td>⌐(⌐ ∅) = ⌐</td></tr>';
+    html += '<tr><td>W</td><td>W</td><td>F</td><td>⌐(⌐ ⌐) = ∅</td></tr>';
+  }
+  
+  html += '</table>';
+  container.innerHTML = html;
+}
+
+showTruthTable('not');
+
+// ===== SANDBOX =====
+let sandboxCircles = [];
+let sandboxNextId = 0;
+
+function sandboxAddCircle() {
+  const canvas = document.getElementById('sandbox-canvas');
+  const x = 100 + Math.random() * (canvas.width - 200);
+  const y = 80 + Math.random() * (canvas.height - 160);
+  const r = 30 + Math.random() * 25;
+  sandboxCircles.push({id: sandboxNextId++, x, y, r, parent: null, children: []});
+  drawSandbox();
+}
+
+function sandboxNest() {
+  if (sandboxCircles.length >= 2) {
+    const last = sandboxCircles[sandboxCircles.length - 1];
+    const secondLast = sandboxCircles[sandboxCircles.length - 2];
+    // Move last inside secondLast
+    last.x = secondLast.x;
+    last.y = secondLast.y;
+    last.r = secondLast.r * 0.5;
+    last.parent = secondLast.id;
+    secondLast.children.push(last.id);
+    drawSandbox();
+  }
+}
+
+function sandboxEvaluate() {
+  // Count nesting depth for each circle
+  // Simple evaluation: count total marks and nesting
+  const result = document.getElementById('sandbox-result');
+  
+  if (sandboxCircles.length === 0) {
+    result.innerHTML = '<span style="color:#aaa;">Ergebnis: UNMARKIERT (leerer Raum)</span>';
+    return;
+  }
+  
+  // Find top-level circles (no parent)
+  const topLevel = sandboxCircles.filter(c => c.parent === null);
+  
+  // Simple evaluation logic
+  let value = evaluateLevel(topLevel);
+  
+  result.innerHTML = value === 'marked' ? 
+    '<span style="color:#f0c040;">⌐ MARKIERT (marked state)</span>' :
+    '<span style="color:#80d0ff;">∅ UNMARKIERT (unmarked state)</span>';
+}
+
+function evaluateLevel(circles) {
+  if (circles.length === 0) return 'unmarked';
+  
+  // Each circle is a mark/cross
+  // If any circle at this level has unmarked content -> the whole level is marked
+  for (let c of circles) {
+    let children = sandboxCircles.filter(sc => sc.parent === c.id);
+    let innerValue = evaluateLevel(children);
+    // A mark crosses: if inner is unmarked, mark evaluates to marked
+    if (innerValue === 'unmarked') return 'marked';
+  }
+  
+  // All marks have marked content -> they all evaluate to unmarked
+  // Multiple unmarked at same level = unmarked (no dominance)
+  return 'unmarked';
+}
+
+function sandboxClear() {
+  sandboxCircles = [];
+  sandboxNextId = 0;
+  drawSandbox();
+  document.getElementById('sandbox-result').innerHTML = '';
+}
+
+function drawSandbox() {
+  const canvas = document.getElementById('sandbox-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0a0a1a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw grid
+  ctx.strokeStyle = '#1a1a3a';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < canvas.width; x += 50) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += 50) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+  }
+  
+  // Draw circles
+  const colors = ['#f0c040', '#80d0ff', '#a0e0a0', '#ff80a0', '#d0a0ff'];
+  sandboxCircles.forEach((c, i) => {
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+    ctx.strokeStyle = colors[i % colors.length];
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    
+    // Label
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.font = '11px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Mark ${i + 1}`, c.x, c.y + c.r + 15);
+    
+    // Inner label
+    ctx.fillStyle = '#555';
+    ctx.font = '10px Georgia';
+    let children = sandboxCircles.filter(sc => sc.parent === c.id);
+    if (children.length === 0) {
+      ctx.fillText('(leer)', c.x, c.y + 4);
+    }
+  });
+  
+  // Instructions
+  ctx.fillStyle = '#444';
+  ctx.font = '12px Georgia';
+  ctx.textAlign = 'left';
+  ctx.fillText('Jeder Kreis = eine Mark (Unterscheidung)', 10, canvas.height - 10);
+}
+
+drawSandbox();
+
+// ===== SANDBOX CLICK TO ADD =====
+document.getElementById('sandbox-canvas').addEventListener('click', (e) => {
+  const canvas = document.getElementById('sandbox-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const r = 25 + Math.random() * 20;
+  sandboxCircles.push({id: sandboxNextId++, x, y, r, parent: null, children: []});
+  drawSandbox();
+});
+
+</script>
+
+</body>
+</html>
