@@ -1325,19 +1325,9 @@ The Windows version followed in 1987 (Excel 2.0), and by the early 1990s, as Win
 | 2016 | Integration with Power BI | Bridge from spreadsheet to enterprise analytics |
 | 2023 | Copilot (AI integration) | Natural language formulas, automated analysis |
 
-### Why Excel Won
-
-Excel's dominance stems from several compounding factors:
-
-1. **The Windows monopoly** — bundled with Microsoft Office, pre-installed on virtually every business PC
-2. **Backward compatibility** — files from 1997 still open in 2026
-3. **The formula language** — intuitive enough for beginners (`=SUM(A1:A10)`), powerful enough for experts (`=INDEX(MATCH(...))`)
-4. **VBA** — turned Excel into a general-purpose programming environment
-5. **Network effects** — everyone uses Excel because everyone else uses Excel
-
 ### Excel as a Programming Language
 
-Excel's formula system is, in computer science terms, a **purely functional, lazy-evaluated, reactive programming language** operating over a two-dimensional namespace. Modern Excel (with LAMBDA, LET, MAP, REDUCE, and dynamic arrays) is **Turing-complete** — capable, in theory, of computing anything any programming language can compute.
+Excel and it's competitor's (like LibreOffice's Calc) formula system is, in computer science terms, a **purely functional, lazy-evaluated, reactive programming language** operating over a two-dimensional namespace. Modern Excel (with LAMBDA, LET, MAP, REDUCE, and dynamic arrays) is **Turing-complete** — capable, in theory, of computing anything any programming language can compute.
 
 The cell formula:
 
