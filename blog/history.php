@@ -1089,6 +1089,50 @@ where $s$ = 1 sign bit, $e$ = 8 exponent bits, $m$ = 23 mantissa bits. The stand
 The theoretical underpinning traces to \cite[*Principia Mathematica*]{russell1910principia} (Russell & Whitehead, 1910), developed computationally by \cite[Alonzo Church]{churchsimplytyped} (simply typed lambda calculus, 1940), \cite[Roger Hindley]{hindleytypes} (1969) and \cite[Robin Milner]{milnertypeinference} (1978) with type inference, and \cite[Per Martin-Löf]{martinloeftypetheory} (dependent types, 1971).
 </div>
 
+<div class="optional md" data-headline="The Invention of Arrays, Pandas, and Related Data Structures">
+
+## Arrays: A History of Structured Data
+
+### Conceptual Roots in Mathematics
+
+The concept of arrays has deep roots in mathematics, particularly in **matrices** and **vectors** from linear algebra. Mathematicians like **Arthur Cayley** (\citeyear{caleymemoirmatrices}) formalized matrix algebra, providing the theoretical underpinning for what would later become the array data structure in computing.
+
+At its core, an array is an ordered, indexed collection of elements stored in contiguous memory. The concept mirrors ancient tools for structured counting — from tally bones with sequential notches (~35,000 BCE) to the Salamis Tablet (c. 300 BC), which mapped abstract numbers to physical grid coordinates, essentially functioning as a two-dimensional array.
+
+### Arrays in Early Computing
+
+The earliest computers (Zuse's Z3, ENIAC) operated on raw binary patterns with no formal distinction between data types. The formalization of arrays as a programming construct emerged with high-level languages:
+
+- **FORTRAN (1957)** — Designed by John Backus at IBM, FORTRAN was the first widely-used high-level language and introduced explicit multi-dimensional arrays for scientific computing. A declaration like `DIMENSION A(10,10)` allocated a $10 \times 10$ matrix in memory.
+- **ALGOL 60 (1960)** — Introduced explicit type declarations and dynamic array bounds.
+- **C (1972)** — Dennis Ritchie's C language exposed arrays as contiguous blocks of memory with pointer arithmetic, giving programmers direct control over memory layout.
+
+### Why Arrays Matter
+
+Arrays map directly to how computer memory works — sequential, indexed storage. Accessing element $i$ of an array takes constant time $O(1)$ because the memory address can be computed directly:
+
+$$\text{address}(A[i]) = \text{base\_address} + i \times \text{element\_size}$$
+
+This efficiency made arrays the foundation for virtually all higher-level data structures (linked lists, hash tables, heaps, etc.) and algorithms (sorting, searching, matrix operations).
+
+---
+
+## NumPy: Efficient Arrays for Python
+
+### The Problem
+
+Python, created by Guido van Rossum in 1991, is an interpreted, dynamically-typed language. Its built-in `list` type is flexible but extremely slow for numerical computation because each element is a full Python object with type information, reference counts, and heap allocation.
+
+### The Solution
+
+**NumPy** (Numerical Python) was created by **Travis Oliphant** in 2005 by unifying two earlier projects: `Numeric` (1995, Jim Hugunin) and `Numarray` (2001, Space Telescope Science Institute). NumPy introduced the `ndarray` — a homogeneous, fixed-type, n-dimensional array stored in contiguous memory, with operations implemented in C and Fortran.
+
+### Key Features
+
+```python
+import numpy as np
+</div>
+
 <div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
 In 1937, a 21-year-old MIT graduate student named Claude Elwood Shannon submitted his master's thesis, \cite[*A Symbolic Analysis of Relay and Switching Circuits*]{shannon1937switching}, which demonstrated that the two-valued Boolean algebra developed by \citeauthor{bool1854} in 1854 could serve as a theoretical foundation for the design of electrical switching circuits. Shannon recognized that the binary states of electrical relay switches, open or closed, on or off, were isomorphic to the truth values of Boolean logic: true and false, 1 and 0. Any arrangement of series and parallel switches could be described by a Boolean expression, and conversely, any Boolean expression could be physically realized as a circuit of relays. His thesis laid the foundations for all digital computing and digital circuits. The utilization of the binary properties of electrical switches to perform logic functions is the basic concept that underlies all electronic digital computer designs, from the earliest relay computers to the GPU clusters training today's large language models.
 </div>
