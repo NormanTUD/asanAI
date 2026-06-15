@@ -1440,6 +1440,8 @@ $$\text{Abstraction} \uparrow \implies \text{Barrier to entry} \downarrow \impli
 The history of "Excel-like things" is fundamentally a history of **making data manipulation accessible to non-programmers**. From Pacioli's ruled ledgers through LANPAR's automatic recalculation, VisiCalc's visual grid, Lotus's integrated charting, Excel's GUI and VBA, Google Sheets' collaboration, to today's AI-powered natural language interfaces — each step removed a layer of technical friction between humans and their data.
 
 The spreadsheet's enduring genius lies not in computational power (Python and SQL are vastly more capable) but in its **cognitive fit**: the two-dimensional grid mirrors how humans naturally think about structured information. Rows are records. Columns are attributes. Cells are facts. Formulas are relationships. This mental model, unchanged since 1979, has proven more durable than any specific technology — and every successor, from Pandas DataFrames to BI dashboards, ultimately pays homage to it.
+
+All these developments, even though they were focussed for the normal user, are now used by data scientists creating systems like LLM as well, as well as the algorithms developed for those tools.
 </div>
 
 <div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
