@@ -1167,15 +1167,7 @@ $$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor
 - Matrix: rank-2 tensor (2D array)
 - Tensor: rank-$n$ (general $n$-dimensional array)
 
-In a neural network forward pass:
-
-$$a^{[l]} = \sigma\left( \cdot1]} + b^{[l]}\right)$$
-
-where $W^{[l]}$ is a weight matrix (2D array),l-1]}$ is the input vector (1D array), $b^{[l]}$ is the bias vector, and $\sigma$ is a non-linear activation function — all represented as tensors/arrays in these frameworks.
-
 ## The Trajectory of Abstraction
-
-The evolution from raw memory to modern data tools follows a clear pattern of increasing abstraction:
 
 | Era | Tool | Abstraction Level |
 |-----|------|-------------------|
@@ -1185,8 +1177,6 @@ The evolution from raw memory to modern data tools follows a clear pattern of in
 | 1995–2005 | NumPy `ndarray` | Vectorized, n-dimensional, C-speed in Python |
 | 2008 | Pandas `DataFrame` | Labeled, heterogeneous, SQL-like operations |
 | 2015–16 | TensorFlow / PyTorch tensors | Auto-differentiable, GPU-accelerated arrays |
-
-Each layer solves David Wheeler's principle: *"Any problem in computer science can be solved by adding another layer of abstraction."* Arrays abstract memory. NumPy abstracts loops. Pandas abstracts data wrangling. Deep learning frameworks abstract gradient computation.
 
 ## Summary
 
