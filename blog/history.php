@@ -1262,7 +1262,7 @@ He partnered with **Bob Frankston**, a skilled MIT programmer, and together they
 
 VisiCalc became the first **"killer application"** — software so compelling that people bought hardware specifically to run it. The Apple II's sales exploded. For the first time, businesses purchased personal computers not as curiosities but as essential tools. As Bricklin later reflected:
 
-> "VisiCalc took 20 hours of recalculation work and turned it into 15 minutes and a few keystrokes."
+"VisiCalc took 20 hours of recalculation work and turned it into 15 minutes and a few keystrokes."
 
 The spreadsheet metaphor — a grid of cells, each containing either a value or a formula — proved so intuitive that it has survived essentially unchanged for over 45 years.
 
