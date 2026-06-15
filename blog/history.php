@@ -1183,6 +1183,238 @@ $$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor
 The invention of arrays was not a single event but an evolutionary process — from mathematical matrices, through FORTRAN's first formal array declarations, to the rich ecosystem of NumPy, Pandas, and tensor libraries we use today. Each step removed a layer of manual effort, allowing practitioners to focus on *what* to compute rather than *how* to compute it, ultimately enabling the data science and AI revolution of the 2020s.
 </div>
 
+<div class="optional md" data-headline="The History of Spreadsheets and the Usability of Computers for Data Work">
+
+## Prelude: The Paper Ledger Era
+
+Long before computers existed, humanity organized data in **tabular form**. Double-entry bookkeeping, formalized by **Luca Pacioli** in his 1494 work *Summa de Arithmetica*, established the grid of rows and columns as the universal language of business data. For nearly 500 years, every accountant, scientist, and clerk worked with ruled paper, pencils, and erasers — manually computing totals, cross-referencing entries, and propagating changes by hand.
+
+The fundamental problem was simple but devastating:
+
+> **If one number changes, every dependent calculation must be redone manually.**
+
+A single error in a ledger could cascade through hundreds of cells, requiring hours of recalculation. This was the pain point that electronic spreadsheets would eventually solve.
+
+## The Mainframe Era: Batch Processing and Punched Cards (1950s–1960s)
+
+### Data Processing Before Interactivity
+
+The earliest computers (ENIAC, UNIVAC, IBM 701) were not interactive. Users submitted jobs on **punched cards** or magnetic tape, waited hours or days, and received printed output. "Working with data" meant:
+
+1. Encoding data onto cards (one row per card)
+2. Writing a FORTRAN or COBOL program to process it
+3. Submitting the job to an operator
+4. Waiting for batch processing
+5. Reading the printed results
+6. Finding errors, correcting cards, resubmitting
+
+This workflow was accessible only to trained programmers and operators. The concept of a non-technical person directly manipulating data on a screen did not yet exist.
+
+### IBM and the Rise of Business Computing
+
+**IBM's System/360** (1964) standardized business computing and introduced the concept of a general-purpose machine that could handle both scientific and commercial workloads. Programs like **RPG** (Report Program Generator, 1959) allowed businesses to produce tabular reports from data files, but the process remained entirely batch-oriented and code-driven.
+
+## The Time-Sharing Revolution (1960s–1970s)
+
+### Interactive Computing Arrives
+
+The invention of **time-sharing systems** — where multiple users could interact with a single computer simultaneously via terminals — was the first step toward making computers usable for data work by non-programmers.
+
+Key milestones:
+
+- **CTSS** (Compatible Time-Sharing System, MIT, 1961) — first demonstration of interactive multi-user computing
+- **Multics** (1964–1969) — ambitious time-sharing OS that influenced Unix
+- **UNIX** (1969, Ken Thompson & Dennis Ritchie at Bell Labs) — made interactive computing practical and portable
+
+### LANPAR: The Invisible Ancestor (1969)
+
+In 1969, **Rene Pardo** and **Remy Landau** invented **LANPAR** (LANguage for Programming Arrays at Random), a system used internally at Bell Labs and AT&T for budgeting. LANPAR introduced a revolutionary concept:
+
+- Cells in a grid could contain **formulas referencing other cells**
+- When one cell changed, all dependent cells **automatically recalculated**
+- Users could enter data in **any order** (hence "at random") — the system resolved dependencies automatically
+
+LANPAR was granted U.S. Patent 4,398,249 in 1983 (filed 1970). It is arguably the first true electronic spreadsheet, but it ran on mainframes, had no visual grid interface, and remained unknown outside AT&T. Its inventors spent decades in patent litigation, largely forgotten by history.
+
+### Autoplan/Autotab (1968)
+
+Around the same time, **General Electric** developed **Autotab**, a mainframe-based system that allowed users to define tables with formulas. It was used for financial planning but, like LANPAR, lacked the interactive visual interface that would later define the spreadsheet.
+
+## VisiCalc: The Spreadsheet That Sold the Personal Computer (1979)
+
+### The Origin Story
+
+In the spring of 1978, **Dan Bricklin**, a Harvard Business School student and former programmer at DEC, sat in an accounting class watching his professor erase and recalculate an entire blackboard of numbers after changing a single assumption. Bricklin envisioned an "electronic blackboard" — a visual grid where changing one number would instantly ripple through all dependent calculations.
+
+He partnered with **Bob Frankston**, a skilled MIT programmer, and together they created **VisiCalc** (Visible Calculator), released in October 1979 for the **Apple II**.
+
+### Why VisiCalc Was Revolutionary
+
+| Feature | Significance |
+|---------|-------------|
+| Visual grid of rows and columns | Users could *see* their data as a table, not as code |
+| Cell references in formulas | `A1 + B1` — intuitive spatial addressing |
+| Automatic recalculation | Change one cell → all dependents update instantly |
+| Immediate feedback | Type a number, see the result — no batch submission |
+| No programming required | Accountants and managers could use it directly |
+
+### The "Killer App"
+
+VisiCalc became the first **"killer application"** — software so compelling that people bought hardware specifically to run it. The Apple II's sales exploded. For the first time, businesses purchased personal computers not as curiosities but as essential tools. As Bricklin later reflected:
+
+> "VisiCalc took 20 hours of recalculation work and turned it into 15 minutes and a few keystrokes."
+
+The spreadsheet metaphor — a grid of cells, each containing either a value or a formula — proved so intuitive that it has survived essentially unchanged for over 45 years.
+
+### The Mathematical Model
+
+A spreadsheet can be formalized as a **directed acyclic graph (DAG)** of cell dependencies. Each cell $C_{i,j}$ contains either a constant $v$ or a function $f$ of other cells:
+
+$$C_{i,j} = f(C_{a,b}, C_{c,d}, \ldots)$$
+
+When any cell's value changes, the system performs a **topological sort** of the dependency graph and recalculates all downstream cells in order:
+
+$$\text{If } C_{1,1} \text{ changes} \implies \text{recalculate all } C_{i,j} \text{ where } C_{1,1} \in \text{deps}(C_{i,j})$$
+
+This automatic propagation of changes through a dependency graph is the core innovation that separates a spreadsheet from a static table.
+
+## Lotus 1-2-3: The IBM PC Era (1983)
+
+### The Shift to IBM
+
+When IBM released the **IBM PC** in 1981, VisiCalc was slow to port. **Mitch Kapor**, a former VisiCalc product manager, seized the opportunity and founded **Lotus Development Corporation**. In January 1983, he released **Lotus 1-2-3**.
+
+### Why "1-2-3"?
+
+The name reflected three integrated capabilities:
+
+1. **Spreadsheet** — the core grid calculation engine
+2. **Charting** — built-in graphing of data (bar charts, line graphs, pie charts)
+3. **Database** — basic sorting, filtering, and querying of tabular data
+
+### Technical Advantages
+
+Lotus 1-2-3 was written in **x86 assembly language**, making it dramatically faster than VisiCalc on IBM PC hardware. It also introduced:
+
+- **Named ranges** — referring to cell groups by name rather than coordinates
+- **Macros** — sequences of keystrokes that could be recorded and replayed, enabling automation
+- **Larger grid sizes** — 2,048 rows × 256 columns (vs. VisiCalc's 254 × 63)
+
+### Market Dominance
+
+Lotus 1-2-3 became the best-selling software in the world and the primary reason businesses bought IBM PCs. It dominated the market from 1983 to approximately 1995, establishing the spreadsheet as the universal tool of business analysis.
+
+## Microsoft Excel: The Graphical Revolution (1985–Present)
+
+### Origins
+
+**Microsoft Excel** was first released in 1985 — for the **Apple Macintosh**, not for DOS. Microsoft recognized that the Mac's graphical user interface (GUI) offered a fundamentally better experience for spreadsheet work: direct manipulation with a mouse, WYSIWYG formatting, and visual selection of cell ranges.
+
+The Windows version followed in 1987 (Excel 2.0), and by the early 1990s, as Windows overtook DOS, Excel began its ascent over Lotus 1-2-3.
+
+### Key Innovations Over Time
+
+| Year | Feature | Impact |
+|------|---------|--------|
+| 1985 | GUI-based interaction | Mouse-driven cell selection, visual formatting |
+| 1993 | Visual Basic for Applications (VBA) | Full programming language embedded in spreadsheet |
+| 1997 | Pivot Tables (refined) | One-click data summarization and cross-tabulation |
+| 2007 | .xlsx format (Office Open XML) | Expanded limits: 1,048,576 rows × 16,384 columns |
+| 2010 | PowerPivot / DAX | In-memory columnar engine for millions of rows |
+| 2013 | Power Query (Get & Transform) | ETL (Extract, Transform, Load) without code |
+| 2016 | Integration with Power BI | Bridge from spreadsheet to enterprise analytics |
+| 2023 | Copilot (AI integration) | Natural language formulas, automated analysis |
+
+### Why Excel Won
+
+Excel's dominance stems from several compounding factors:
+
+1. **The Windows monopoly** — bundled with Microsoft Office, pre-installed on virtually every business PC
+2. **Backward compatibility** — files from 1997 still open in 2026
+3. **The formula language** — intuitive enough for beginners (`=SUM(A1:A10)`), powerful enough for experts (`=INDEX(MATCH(...))`)
+4. **VBA** — turned Excel into a general-purpose programming environment
+5. **Network effects** — everyone uses Excel because everyone else uses Excel
+
+### Excel as a Programming Language
+
+Excel's formula system is, in computer science terms, a **purely functional, lazy-evaluated, reactive programming language** operating over a two-dimensional namespace. Modern Excel (with LAMBDA, LET, MAP, REDUCE, and dynamic arrays) is **Turing-complete** — capable, in theory, of computing anything any programming language can compute.
+
+The cell formula:
+
+```
+=LAMBDA(x, x^2 + 2*x + 1)(5)
+```
+
+is functionally equivalent to:
+
+$$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
+
+## The Competitors and Alternatives
+
+### Quattro Pro (1989)
+
+**Borland's Quattro Pro** challenged Lotus with a better interface and lower price, but ultimately lost to Excel's Windows integration.
+
+### Google Sheets (2006)
+
+**Google Sheets** introduced:
+- **Cloud-native** — no local installation, accessible from any browser
+- **Real-time collaboration** — multiple users editing simultaneously
+- **Version history** — automatic change tracking
+- **Free tier** — democratized access to spreadsheet tools
+
+While less powerful than Excel for complex calculations, Google Sheets proved that for most use cases, collaboration and accessibility matter more than raw computational power.
+
+### LibreOffice Calc (2011)
+
+The open-source alternative, descended from **OpenOffice.org** (2000) and ultimately from **StarCalc** (1985, Star Division, Germany). Provides near-complete Excel compatibility without licensing costs.
+
+### Apple Numbers (2007)
+
+Apple's approach prioritized visual design and ease of use over formula complexity, targeting casual users rather than power analysts.
+
+## Beyond Spreadsheets: The Evolution of Data Usability
+
+### The Database Revolution: From Filing Cabinets to SQL
+
+While spreadsheets handle ad-hoc analysis, **databases** manage structured storage at scale.
+
+- **IMS** (IBM, 1966) — hierarchical database for the Apollo program
+- **CODASYL** (1969) — network model databases
+- **Edgar F. Codd's Relational Model** (1970) — the paper *"A Relational Model of Data for Large Shared Data Banks"* proposed organizing data into **tables** (relations) with rows (tuples) and columns (attributes), queried through a declarative language
+- **SQL** (Structured Query Language, 1974) — developed by Donald Chamberlin and Raymond Boyce at IBM, based on Codd's relational algebra:
+
+$$\sigma_{\text{age} > 30}(\text{Employees}) \equiv \texttt{SELECT * FROM Employees WHERE age > 30}$$
+
+- **Oracle** (1979), **IBM DB2** (1983), **Microsoft SQL Server** (1989) — commercial implementations
+- **MySQL** (1995), **PostgreSQL** (1996) — open-source alternatives that democratized database access
+- **SQLite** (2000) — embedded database requiring no server, now deployed on billions of devices
+
+### Statistical Software: Purpose-Built Data Tools
+
+For researchers who needed more than spreadsheets could offer:
+
+| Software | Year | Purpose |
+|----------|------|---------|
+| **SPSS** | 1968 | Social science statistics (point-and-click interface) |
+| **SAS** | 1976 | Enterprise analytics, clinical trials |
+| **S** (Bell Labs) | 1976 | Statistical computing language |
+| **R** (open-source S) | 1993 | Academic statistics and visualization |
+| **Stata** | 1985 | Econometrics and biostatistics |
+| **MATLAB** | 1984 | Matrix computation, engineering simulation |
+
+Each represented a different trade-off between usability and power. SPSS offered menus and dialogs for non-programmers; R and MATLAB offered programming languages for those willing to learn code.
+
+### The Python Data Stack (2000s–Present)
+
+The modern era consolidated around **Python** as a universal data language:
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+</div>
+
 <div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
 In 1937, a 21-year-old MIT graduate student named Claude Elwood Shannon submitted his master's thesis, \cite[*A Symbolic Analysis of Relay and Switching Circuits*]{shannon1937switching}, which demonstrated that the two-valued Boolean algebra developed by \citeauthor{bool1854} in 1854 could serve as a theoretical foundation for the design of electrical switching circuits. Shannon recognized that the binary states of electrical relay switches, open or closed, on or off, were isomorphic to the truth values of Boolean logic: true and false, 1 and 0. Any arrangement of series and parallel switches could be described by a Boolean expression, and conversely, any Boolean expression could be physically realized as a circuit of relays. His thesis laid the foundations for all digital computing and digital circuits. The utilization of the binary properties of electrical switches to perform logic functions is the basic concept that underlies all electronic digital computer designs, from the earliest relay computers to the GPU clusters training today's large language models.
 </div>
