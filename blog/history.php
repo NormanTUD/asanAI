@@ -1339,30 +1339,6 @@ is functionally equivalent to:
 
 $$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
 
-## The Competitors and Alternatives
-
-### Quattro Pro (1989)
-
-**Borland's Quattro Pro** challenged Lotus with a better interface and lower price, but ultimately lost to Excel's Windows integration.
-
-### Google Sheets (2006)
-
-**Google Sheets** introduced:
-- **Cloud-native** — no local installation, accessible from any browser
-- **Real-time collaboration** — multiple users editing simultaneously
-- **Version history** — automatic change tracking
-- **Free tier** — democratized access to spreadsheet tools
-
-While less powerful than Excel for complex calculations, Google Sheets proved that for most use cases, collaboration and accessibility matter more than raw computational power.
-
-### LibreOffice Calc (2011)
-
-The open-source alternative, descended from **OpenOffice.org** (2000) and ultimately from **StarCalc** (1985, Star Division, Germany). Provides near-complete Excel compatibility without licensing costs.
-
-### Apple Numbers (2007)
-
-Apple's approach prioritized visual design and ease of use over formula complexity, targeting casual users rather than power analysts.
-
 ## Beyond Spreadsheets: The Evolution of Data Usability
 
 ### The Database Revolution: From Filing Cabinets to SQL
