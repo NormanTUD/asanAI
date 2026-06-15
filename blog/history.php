@@ -1371,11 +1371,7 @@ For researchers who needed more than spreadsheets could offer:
 
 Each represented a different trade-off between usability and power. SPSS offered menus and dialogs for non-programmers; R and MATLAB offered programming languages for those willing to learn code.
 
-### Model (beyond what Excel can do)
-
-```
-model = LinearRegression() model.fit(df[["ad_spend"]], df["revenue"])
-```
+### Python
 
 
 The Python stack (Pandas + Matplotlib + Scikit-learn + Jupyter Notebooks) represents the modern equivalent of what VisiCalc did in 1979: making data work accessible to people who think in terms of *problems*, not *implementations*.
