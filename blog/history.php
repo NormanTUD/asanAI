@@ -1191,7 +1191,7 @@ Long before computers existed, humanity organized data in **tabular form**. Doub
 
 The fundamental problem was simple but devastating:
 
-> **If one number changes, every dependent calculation must be redone manually.**
+**If one number changes, every dependent calculation must be redone manually.**
 
 A single error in a ledger could cascade through hundreds of cells, requiring hours of recalculation. This was the pain point that electronic spreadsheets would eventually solve.
 
