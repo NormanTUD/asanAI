@@ -1371,14 +1371,79 @@ For researchers who needed more than spreadsheets could offer:
 
 Each represented a different trade-off between usability and power. SPSS offered menus and dialogs for non-programmers; R and MATLAB offered programming languages for those willing to learn code.
 
-### The Python Data Stack (2000s–Present)
+### Model (beyond what Excel can do)
 
-The modern era consolidated around **Python** as a universal data language:
+```
+model = LinearRegression() model.fit(df[["ad_spend"]], df["revenue"])
+```
 
-```python
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
+
+This stack (Pandas + Matplotlib + Scikit-learn + Jupyter Notebooks) represents the modern equivalent of what VisiCalc did in 1979: making data work accessible to people who think in terms of *problems*, not *implementations*.
+
+### Jupyter Notebooks (2014)
+
+**Project Jupyter** (evolved from IPython, created by Fernando Pérez in 2001) introduced the **computational notebook** — a document combining:
+
+- Executable code cells
+- Rich text (Markdown, LaTeX)
+- Inline visualizations
+- Interactive widgets
+
+This format mirrors the spreadsheet's core insight (immediate feedback, visible results) while extending it to arbitrary programming. A Jupyter notebook is, conceptually, a spreadsheet where each "cell" can contain any computation, not just a formula over a grid.
+
+## Business Intelligence and the "No-Code" Movement
+
+### The BI Stack (2000s–2020s)
+
+As data volumes exceeded what spreadsheets could handle, **Business Intelligence (BI)** tools emerged:
+
+| Tool | Year | Innovation |
+|------|------|------------|
+| **Tableau** | 2003 | Drag-and-drop visual analytics |
+| **QlikView** | 1993 | Associative in-memory data model |
+| **Power BI** | 2015 | Microsoft's cloud BI, integrated with Excel |
+| **Looker** | 2012 | SQL-based semantic modeling |
+| **Metabase** | 2015 | Open-source, question-based interface |
+
+These tools continued the trajectory of abstraction:
+
+$$\text{Punched cards} \to \text{SQL} \to \text{Spreadsheets} \to \text{Drag-and-drop BI} \to \text{Natural language queries}$$
+
+### The AI-Powered Future (2023–Present)
+
+The latest evolution integrates **large language models** directly into data tools:
+
+- **Excel Copilot** — "Create a pivot table showing quarterly revenue by region"
+- **ChatGPT Code Interpreter** — upload a CSV, ask questions in natural language
+- **Pandas AI** — natural language queries over DataFrames
+- **Databricks Assistant** — AI-generated SQL and Python for data engineering
+
+This represents the logical endpoint of the abstraction trajectory: the user describes *what* they want in human language, and the system generates the *how* (formulas, code, queries) automatically.
+
+## The Trajectory of Data Usability
+
+| Era | Tool | Who Could Use It | Barrier to Entry |
+|-----|------|------------------|------------------|
+| Pre-1800s | Paper ledgers | Trained clerks | Literacy, arithmetic |
+| 1890s | Hollerith machines | Trained operators | Physical card encoding |
+| 1950s–60s | Mainframe batch | Programmers only | FORTRAN/COBOL expertise |
+| 1970s | Time-sharing terminals | Technical staff | Command-line fluency |
+| 1979 | VisiCalc | Business professionals | Minimal — visual grid |
+| 1983 | Lotus 1-2-3 | Office workers | Basic computer literacy |
+| 1985–present | Microsoft Excel | Nearly everyone | Almost none |
+| 2006 | Google Sheets | Anyone with internet | None (free, browser-based) |
+| 2010s | BI tools (Tableau, Power BI) | Analysts | Drag-and-drop familiarity |
+| 2020s | AI-powered tools | Anyone who can speak | Natural language |
+
+Each generation reduced the barrier between a human with a question and the data that holds the answer. The progression follows a clear pattern:
+
+$$\text{Abstraction} \uparrow \implies \text{Barrier to entry} \downarrow \implies \text{Number of users} \uparrow$$
+
+## Summary
+
+The history of "Excel-like things" is fundamentally a history of **making data manipulation accessible to non-programmers**. From Pacioli's ruled ledgers through LANPAR's automatic recalculation, VisiCalc's visual grid, Lotus's integrated charting, Excel's GUI and VBA, Google Sheets' collaboration, to today's AI-powered natural language interfaces — each step removed a layer of technical friction between humans and their data.
+
+The spreadsheet's enduring genius lies not in computational power (Python and SQL are vastly more capable) but in its **cognitive fit**: the two-dimensional grid mirrors how humans naturally think about structured information. Rows are records. Columns are attributes. Cells are facts. Formulas are relationships. This mental model, unchanged since 1979, has proven more durable than any specific technology — and every successor, from Pandas DataFrames to BI dashboards, ultimately pays homage to it.
 </div>
 
 <div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
