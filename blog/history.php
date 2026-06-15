@@ -1126,10 +1126,71 @@ Python, created by Guido van Rossum in 1991, is an interpreted, dynamically-type
 
 **NumPy** (Numerical Python) was created by **Travis Oliphant** in 2005 by unifying two earlier projects: `Numeric` (1995, Jim Hugunin) and `Numarray` (2001, Space Telescope Science Institute). NumPy introduced the `ndarray` — a homogeneous, fixed-type, n-dimensional array stored in contiguous memory, with operations implemented in C and Fortran.
 
-### Key Features
 
-```python
-import numpy as np
+### Key Capabilities
+
+- **Labeled axes** — Rows and columns have names, not just integer indices
+- **Missing data handling** — Built-in `NaN` propagation and fill methods
+- **GroupBy operations** — Split-apply-combine pattern for aggregation
+- **Time series support** — Date ranges, frequency conversion, rolling windows
+- **I/O tools** — Read/write CSV, Excel, SQL, Parquet, JSON, HDF5
+- **Alignment** — Automatic data alignment on labels during operations
+
+### Impact
+
+Pandas became the de facto standard for data manipulation in Python, enabling the entire data science workflow:
+
+$$\text{Raw Data} \xrightarrow{\text{Pandas}} \text{Clean Data} \xrightarrow{\text{Scikit-learn / PyTorch}} \text{Model}$$
+
+## The Broader Ecosystem: Related Libraries
+
+### SciPy (2001)
+
+Built on NumPy, **SciPy** (by Travis Oliphant, Pearu Peterson, and Eric Jones) provides algorithms for optimization, integration, interpolation, signal processing, linear algebra, and statistics.
+
+### Matplotlib (2003)
+
+Created by **John D. Hunter**, Matplotlib provides MATLAB-style plotting for Python, enabling visualization of array and DataFrame data.
+
+### Scikit-learn (2007)
+
+Created by **David Cournapeau** and later developed by INRIA researchers, Scikit-learn provides machine learning algorithms (classification, regression, clustering) that operate on NumPy arrays and Pandas DataFrames.
+
+### TensorFlow (2015) and PyTorch (2016)
+
+These deep learning frameworks extend the concept of arrays into **tensors** — multi-dimensional arrays that support automatic differentiation and GPU acceleration. A tensor is simply a generalization of arrays to arbitrary dimensions:
+
+$$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor}$$
+
+- Scalar: rank-0 tensor (single number)
+- Vector: rank-1 tensor (1D array)
+- Matrix: rank-2 tensor (2D array)
+- Tensor: rank-$n$ (general $n$-dimensional array)
+
+In a neural network forward pass:
+
+$$a^{[l]} = \sigma\left( \cdot1]} + b^{[l]}\right)$$
+
+where $W^{[l]}$ is a weight matrix (2D array),l-1]}$ is the input vector (1D array), $b^{[l]}$ is the bias vector, and $\sigma$ is a non-linear activation function — all represented as tensors/arrays in these frameworks.
+
+## The Trajectory of Abstraction
+
+The evolution from raw memory to modern data tools follows a clear pattern of increasing abstraction:
+
+| Era | Tool | Abstraction Level |
+|-----|------|-------------------|
+| 1940s–50s | Raw binary / machine code | Programmer manages every bit |
+| 1957 | FORTRAN arrays | Named, typed, indexed collections |
+| 1972 | C arrays | Contiguous memory with pointer arithmetic |
+| 1995–2005 | NumPy `ndarray` | Vectorized, n-dimensional, C-speed in Python |
+| 2008 | Pandas `DataFrame` | Labeled, heterogeneous, SQL-like operations |
+| 2015–16 | TensorFlow / PyTorch tensors | Auto-differentiable, GPU-accelerated arrays |
+
+Each layer solves David Wheeler's principle: *"Any problem in computer science can be solved by adding another layer of abstraction."* Arrays abstract memory. NumPy abstracts loops. Pandas abstracts data wrangling. Deep learning frameworks abstract gradient computation.
+
+## Summary
+
+The invention of arrays was not a single event but an evolutionary process — from mathematical matrices, through FORTRAN's first formal array declarations, to the rich ecosystem of NumPy, Pandas, and tensor libraries we use today. Each step removed a layer of manual effort, allowing practitioners to focus on *what* to compute rather than *how* to compute it, ultimately enabling the data science and AI revolution of the 2020s.
 </div>
 
 <div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
