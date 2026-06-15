@@ -1115,7 +1115,6 @@ $$\text{address}(A[i]) = \text{base\_address} + i \times \text{element\_size}$$
 
 This efficiency made arrays the foundation for virtually all higher-level data structures (linked lists, hash tables, heaps, etc.) and algorithms (sorting, searching, matrix operations).
 
----
 
 ## NumPy: Efficient Arrays for Python
 
