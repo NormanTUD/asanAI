@@ -1378,7 +1378,7 @@ model = LinearRegression() model.fit(df[["ad_spend"]], df["revenue"])
 ```
 
 
-This stack (Pandas + Matplotlib + Scikit-learn + Jupyter Notebooks) represents the modern equivalent of what VisiCalc did in 1979: making data work accessible to people who think in terms of *problems*, not *implementations*.
+The Python stack (Pandas + Matplotlib + Scikit-learn + Jupyter Notebooks) represents the modern equivalent of what VisiCalc did in 1979: making data work accessible to people who think in terms of *problems*, not *implementations*.
 
 ### Jupyter Notebooks (2014)
 
