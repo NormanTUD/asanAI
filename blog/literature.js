@@ -1,4 +1,10 @@
 window.bibData = {
+	"summaarithmetica": {
+		url: "https://dn790008.ca.archive.org/0/items/summa-de-arithmetica-geometria-proportioni-et-proportionalita/Summa%20de%20arithmetica%2C%20geometria%2C%20proportioni%20et%20proportionalita_text.pdf",
+		title: "Summa de arithmetica",
+		year: 1494,
+		author: "Luca Pacioli"
+	},
 	"schmidhuber1995nplm": {
 		title: "Sequential Neural Text Compression",
 		author: "Jürgen Schmidhuber, Stefan Heil",

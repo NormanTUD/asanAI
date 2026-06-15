@@ -1187,7 +1187,7 @@ The invention of arrays was not a single event but an evolutionary process — f
 
 ## Prelude: The Paper Ledger Era
 
-Long before computers existed, humanity organized data in **tabular form**. Double-entry bookkeeping, formalized by **Luca Pacioli** in his 1494 work *Summa de Arithmetica*, established the grid of rows and columns as the universal language of business data. For nearly 500 years, every accountant, scientist, and clerk worked with ruled paper, pencils, and erasers — manually computing totals, cross-referencing entries, and propagating changes by hand.
+Long before computers existed, humanity organized data in **tabular form**. Double-entry bookkeeping, formalized by **Luca Pacioli** in his 1494 work \citetitle{summaarithmetica}, established the grid of rows and columns as the universal language of business data. For nearly 500 years, every accountant, scientist, and clerk worked with ruled paper, pencils, and erasers — manually computing totals, cross-referencing entries, and propagating changes by hand.
 
 The fundamental problem was simple but devastating:
 
