@@ -551,22 +551,6 @@ function _inject_summary_extras(container) {
 	}
 }
 
-function _format_param_short(val) {
-	try {
-		if (val >= 1e9) return (val / 1e9).toFixed(1) + "B";
-		if (val >= 1e6) return (val / 1e6).toFixed(1) + "M";
-		if (val >= 1e3) return (val / 1e3).toFixed(1) + "K";
-		return Math.round(val).toString();
-	} catch (e) {
-		return "0";
-	}
-}
-
-function _escape_svg(s) {
-	if (!s) return "";
-	return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
 // ============================================================
 // Feature 10: EXPORT BAR
 // ============================================================
