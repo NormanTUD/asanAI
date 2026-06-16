@@ -1525,6 +1525,7 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 	var numCategories = labels.length;
 
 	var margin = 10;
+	var scaleWidth = 40; // Width reserved for the scale on the left
 
 	var _height = $("#canvas_grid_visualization").height();
 
@@ -1532,11 +1533,66 @@ function draw_images_in_grid (images, categories, probabilities, category_overvi
 		_height = 460;
 	}
 
+	// Create a scale canvas on the left
+	var scaleCanvas = document.createElement("canvas");
+	scaleCanvas.width = scaleWidth;
+	scaleCanvas.height = _height;
+	var scaleCtx = scaleCanvas.getContext("2d");
+
+	scaleCtx.fillStyle = "rgba(255, 255, 255, 0)";
+	scaleCtx.fillRect(0, 0, scaleCanvas.width, scaleCanvas.height);
+
+	scaleCtx.font = "12px Arial";
+	if(is_dark_mode) {
+		scaleCtx.fillStyle = "#ffffff";
+		scaleCtx.strokeStyle = "#ffffff";
+	} else {
+		scaleCtx.fillStyle = "#000000";
+		scaleCtx.strokeStyle = "#000000";
+	}
+	scaleCtx.textAlign = "right";
+
+	var graphHeight = _height - margin * 2 - 50; // Account for bottom text area
+	var scaleTop = margin;
+	var scaleBottom = scaleTop + graphHeight;
+
+	// Draw the vertical line for the scale axis
+	scaleCtx.beginPath();
+	scaleCtx.moveTo(scaleWidth - 5, scaleTop);
+	scaleCtx.lineTo(scaleWidth - 5, scaleBottom);
+	scaleCtx.stroke();
+
+	// Draw scale labels and tick marks from 0 to 100
+	var numTicks = 10;
+	for (var tick = 0; tick <= numTicks; tick++) {
+		var value = tick * 10; // 0, 10, 20, ..., 100
+		var yPos = scaleBottom - (value / 100) * graphHeight;
+
+		// Draw tick mark
+		scaleCtx.beginPath();
+		scaleCtx.moveTo(scaleWidth - 10, yPos);
+		scaleCtx.lineTo(scaleWidth - 5, yPos);
+		scaleCtx.stroke();
+
+		// Draw label
+		scaleCtx.fillText(value.toString(), scaleWidth - 12, yPos + 4);
+	}
+
+	// Draw "Certainty %" label rotated
+	scaleCtx.save();
+	scaleCtx.translate(12, scaleTop + graphHeight / 2);
+	scaleCtx.rotate(-Math.PI / 2);
+	scaleCtx.textAlign = "center";
+	scaleCtx.fillText(language[lang]["certainty"] + " in %", 0, 0);
+	scaleCtx.restore();
+
+	// Append scale canvas to DOM first
+	$(scaleCanvas).appendTo($("#canvas_grid_visualization"));
+
 	// create a canvas for each category
 	var canvasses = get_canvasses(numCategories, _height);
 
 	var graphWidth = canvasses[0].width - margin * 2;
-	var graphHeight = canvasses[0].height - margin * 2;
 	var maxProb = 1;
 
 	// draw y-axis labels

@@ -747,7 +747,7 @@
                        'globalAveragePooling2d_description' => 'This layer computes the average of all spatial positions (height and width) for each channel, reducing a full feature map to a single value per channel. You can  think of it as summarizing an entire image into one compact vector by averaging over all pixels. <div class="globalpooling_visual_explanation visual_explanations"></div>',
                        'globalMaxPooling1d_description' => 'This layer picks the maximum value across all time steps for each feature, reducing a sequence to a single summary vector. You can think of it as keeping only the strongest signal from the entire sequence for each feature. <div class="globalpooling_visual_explanation visual_explanations"></div>',
                        'globalMaxPooling2d_description' => 'This layer picks the maximum value across all spatial positions (height and width) for each channel, reducing a full feature map to a single value per channel. You can think of it as keeping only the most prominent activation from the entire image for each channel. <div class="globalpooling_visual_explanation visual_explanations"></div>',
-
+			"certainty" => "Certainty"
 		),
 
 		'de' => array(
@@ -1496,6 +1496,7 @@
 			'globalAveragePooling2d_description' => 'Diese Schicht berechnet den Durchschnitt aller räumlichen Positionen (Höhe und Breite) für jeden Kanal und reduziert eine vollständige Feature-Map auf einen einzigen Wert pro Kanal. Man kann sich vorstellen, dass ein gesamtes Bild durch Mittelwertbildung über alle Pixel zu einem kompakten Vektor zusammengefasst wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
 			'globalMaxPooling1d_description' => 'Diese Schicht wählt den maximalen Wert über alle Zeitschritte für jedes Merkmal aus und reduziert eine Sequenz auf einen einzigen zusammenfassenden Vektor. Man kann sich vorstellen, dass nur das stärkste Signal aus der gesamten Sequenz für jedes Merkmal behalten wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
 			'globalMaxPooling2d_description' => 'Diese Schicht wählt den maximalen Wert über alle räumlichen Positionen (Höhe und Breite) für jeden Kanal aus und reduziert eine vollständige Feature-Map auf einen einzigen Wert pro Kanal. Man kann sich vorstellen, dass nur die stärkste Aktivierung aus dem gesamten Bild für jeden Kanal behalten wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
+			"certainty" => "Sicherheit"
 		)
 	);
 
