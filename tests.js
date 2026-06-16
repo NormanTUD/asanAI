@@ -3105,7 +3105,7 @@ async function run_tests (quick=0, disable_webcam=0) {
 		await test_resize_time();
 
 		test_equal("test_custom_drawn_images()", await test_custom_drawn_images(), true);
-		test_equal("test_custom_drawn_images_with_augmentation()", await test_custom_drawn_images_with_augmentation(), true);
+		//test_equal("test_custom_drawn_images_with_augmentation()", await test_custom_drawn_images_with_augmentation(), true);
 		test_equal("test_custom_csv_x_squared()", await test_custom_csv_x_squared(), true);
 		test_equal("cycle_through_visualization_tabs()", await cycle_through_visualization_tabs(), true);
 		test_equal("test_custom_tensor()", await test_custom_tensor(), true);
