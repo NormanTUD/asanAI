@@ -1947,7 +1947,6 @@ label.buttons_in_custom_images {
     display: block;
 }
 
-.st-table-header:hover,
-.st-table-header:hover th {
+.st-table-header:hover {
     background: inherit;
 }
