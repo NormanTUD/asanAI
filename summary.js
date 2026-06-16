@@ -1201,9 +1201,13 @@ function _inject_tooltip_styles() {
 			"  text-align: left;" +
 			"}" +
 
+			".st-table-header {" +
+			"  background: linear-gradient(135deg, #1e1b4b, #312e81, #3730a3);" +
+			"}" +
+
+
 			/* Gradient table header */
 			".st-table-header th {" +
-			"  background: linear-gradient(135deg, #1e1b4b, #312e81, #3730a3);" +
 			"  color: rgba(255,255,255,0.9);" +
 			"  font-size: 11px;" +
 			"  font-weight: 600;" +
