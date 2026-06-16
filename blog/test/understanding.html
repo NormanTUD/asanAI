@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Understanding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .hero p {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            z-index: 2;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        /* Neural Network Background */
+        #neural-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+        }
+
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 2rem;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        /* Section 1: Connection Formation */
+        #connection-section {
+            background: linear-gradient(180deg, #0a0a0f 0%, #0f0a1a 100%);
+        }
+
+        #connection-canvas {
+            width: 100%;
+            max-width: 800px;
+            height: 500px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            cursor: crosshair;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .instruction {
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Section 2: Pattern Recognition */
+        #pattern-section {
+            background: linear-gradient(180deg, #0f0a1a 0%, #0a0f1a 100%);
+        }
+
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 60px);
+            gap: 8px;
+            margin: 2rem 0;
+        }
+
+        .pattern-cell {
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .pattern-cell:hover {
+            border-color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .pattern-cell.revealed {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .pattern-cell.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+        }
+
+        .pattern-message {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            min-height: 2rem;
+            text-align: center;
+        }
+
+        .pattern-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            background: rgba(102, 126, 234, 0.1);
+            color: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Section 3: Levels of Understanding */
+        #levels-section {
+            background: linear-gradient(180deg, #0a0f1a 0%, #0a1a0f 100%);
+        }
+
+        .levels-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .level-bar {
+            position: relative;
+            padding: 1.5rem;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s;
+            overflow: hidden;
+        }
+
+        .level-bar::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: var(--depth, 0%);
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transition: width 0.6s ease;
+        }
+
+        .level-bar:hover::before {
+            width: 100%;
+        }
+
+        .level-bar h3 {
+            position: relative;
+            z-index: 1;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-bar p {
+            position: relative;
+            z-index: 1;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .level-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .level-bar.expanded .level-detail {
+            max-height: 200px;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        /* Section 4: Compression / Abstraction */
+        #compression-section {
+            background: linear-gradient(180deg, #0a1a0f 0%, #1a0f0a 100%);
+        }
+
+        .compression-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .compression-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .compression-output {
+            display: flex;
+            gap: 2rem;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .compression-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .compression-card h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .compression-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .compression-visual {
+            width: 100%;
+            height: 60px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .compression-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 8px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Section 5: Prediction */
+        #prediction-section {
+            background: linear-gradient(180deg, #1a0f0a 0%, #0f0a1a 100%);
+        }
+
+        .prediction-game {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .sequence-display {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .seq-item {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .seq-item.unknown {
+            border-color: #f093fb;
+            color: #f093fb;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .prediction-input {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .prediction-input input {
+            width: 80px;
+            padding: 0.7rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .prediction-feedback {
+            min-height: 3rem;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .prediction-score {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Section 6: Mental Models */
+        #models-section {
+            background: linear-gradient(180deg, #0f0a1a 0%, #0a0a0f 100%);
+        }
+
+        .model-playground {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .model-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .model-tab {
+            padding: 0.6rem 1.2rem;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .model-tab.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .model-tab:hover {
+            border-color: #667eea;
+        }
+
+        #model-canvas {
+            width: 100%;
+            height: 400px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .model-description {
+            text-align: center;
+            max-width: 500px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* Section 7: The Aha Moment */
+        #aha-section {
+            background: linear-gradient(180deg, #0a0a0f 0%, #0f0a1a 100%);
+        }
+
+        .aha-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .puzzle-box {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            cursor: grab;
+        }
+
+        .puzzle-box:active {
+            cursor: grabbing;
+        }
+
+        #puzzle-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+        }
+
+        .aha-meter {
+            width: 100%;
+            max-width: 400px;
+            height: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .aha-meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #667eea, #f093fb, #ffd700);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Section 8: Transfer */
+        #transfer-section {
+            background: linear-gradient(180deg, #0f0a1a 0%, #0a0a0f 100%);
+        }
+
+        .transfer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .analogy-pairs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            width: 100%;
+        }
+
+        .analogy-box {
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .analogy-box h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .analogy-arrow {
+            font-size: 2rem;
+            color: #f093fb;
+        }
+
+        .transfer-visualization {
+            width: 100%;
+            height: 200px;
+            position: relative;
+        }
+
+        #transfer-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+        }
+
+        /* Section 9: Embodied Understanding */
+        #embodied-section {
+            background: linear-gradient(180deg, #0a0a0f 0%, #0a0f1a 100%);
+        }
+
+        .embodied-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .gravity-sim {
+            width: 100%;
+            height: 400px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0,0,0,0.3);
+        }
+
+        #gravity-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .gravity-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .gravity-controls label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .gravity-controls input[type="range"] {
+            width: 120px;
+            accent-color: #667eea;
+        }
+
+        /* Final Section */
+        #final-section {
+            background: linear-gradient(180deg, #0a0f1a 0%, #0a0a0f 100%);
+            text-align: center;
+        }
+
+        .final-message {
+            max-width: 600px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .final-message em {
+            color: #667eea;
+            font-style: normal;
+        }
+
+        /* Navigation */
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-dot.active {
+            background: #667eea;
+            transform: scale(1.3);
+        }
+
+        .nav-dot:hover {
+            border-color: #667eea;
+            transform: scale(1.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section h2 { font-size: 1.8rem; }
+            .pattern-grid { grid-template-columns: repeat(4, 50px); }
+            .pattern-cell { width: 50px; height: 50px; font-size: 1.2rem; }
+            .nav-dots { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Dots -->
+    <div class="nav-dots" id="nav-dots"></div>
+
+    <!-- Hero -->
+    <div class="hero" id="hero">
+        <canvas id="neural-bg"></canvas>
+        <h1>Understanding<br>Understanding</h1>
+        <p>An interactive exploration of what it means to know</p>
+        <div class="scroll-hint">↓</div>
+    </div>
+
+    <!-- Section 1: Connection Formation -->
+    <div class="section" id="connection-section">
+        <h2>1. Connection</h2>
+        <p class="subtitle">Understanding begins when isolated facts become connected. Click to create nodes, then watch connections form as concepts relate to each other.</p>
+        <canvas id="connection-canvas"></canvas>
+        <div class="instruction">Click anywhere to add concepts. Nodes that are close enough will automatically connect — just like neurons forming synapses when ideas relate.</div>
+    </div>
+
+    <!-- Section 2: Pattern Recognition -->
+    <div class="section" id="pattern-section">
+        <h2>2. Pattern Recognition</h2>
+        <p class="subtitle">Understanding is seeing the pattern hidden in noise. Find the rule governing this grid.</p>
+        <div class="pattern-grid" id="pattern-grid"></div>
+        <div class="pattern-message" id="pattern-message">Click cells to reveal their values. Can you predict the pattern?</div>
+        <div class="pattern-controls">
+            <button class="btn" id="pattern-hint">Hint</button>
+            <button class="btn" id="pattern-reset">New Pattern</button>
+            <button class="btn" id="pattern-reveal">Reveal All</button>
+        </div>
+    </div>
+
+    <!-- Section 3: Levels of Understanding -->
+    <div class="section" id="levels-section">
+        <h2>3. Depth</h2>
+        <p class="subtitle">Understanding isn't binary — it has layers. Click each level to explore.</p>
+        <div class="levels-container" id="levels-container"></div>
+    </div>
+
+    <!-- Section 4: Compression -->
+    <div class="section" id="compression-section">
+        <h2>4. Compression</h2>
+        <p class="subtitle">To understand is to compress. A good theory compresses many observations into few principles. Type anything below.</p>
+        <div class="compression-demo">
+            <textarea class="compression-input" id="compression-input" placeholder="Type or paste any text here... Try something repetitive vs. something random.">The cat sat on the mat. The cat sat on the mat. The cat sat on the mat. The dog sat on the log. The dog sat on the log.</textarea>
+            <div class="compression-output">
+                <div class="compression-card">
+                    <h4>Raw Size</h4>
+                    <div class="value" id="raw-size">0</div>
+                    <div>characters</div>
+                </div>
+                <div class="compression-card">
+                    <h4>Unique Patterns</h4>
+                    <div class="value" id="unique-patterns">0</div>
+                    <div>distinct units</div>
+                </div>
+                <div class="compression-card">
+                    <h4>Compression Ratio</h4>
+                    <div class="value" id="compression-ratio">0%</div>
+                    <div>understood</div>
+                </div>
+            </div>
+            <div class="compression-visual">
+                <div class="compression-bar-fill" id="compression-bar">Understanding = Compression</div>
+            </div>
+            <div class="instruction">More repetition = more compressible = more "understandable." Random noise cannot be compressed — it cannot be understood. This is Kolmogorov complexity.</div>
+        </div>
+    </div>
+
+    <!-- Section 5: Prediction -->
+    <div class="section" id="prediction-section">
+        <h2>5. Prediction</h2>
+        <p class="subtitle">If you truly understand something, you can predict what comes next. Prove your understanding.</p>
+        <div class="prediction-game">
+            <div class="sequence-display" id="sequence-display"></div>
+            <div class="prediction-input">
+                <input type="number" id="prediction-answer" placeholder="?">
+                <button class="btn" id="prediction-submit">Predict</button>
+            </div>
+            <div class="prediction-feedback" id="prediction-feedback"></div>
+            <div class="prediction-score">Score: <span id="pred-score">0</span> / <span id="pred-total">0</span></div>
+            <button class="btn" id="prediction-next">Next Sequence</button>
+        </div>
+    </div>
+
+    <!-- Section 6: Mental Models -->
+    <div class="section" id="models-section">
+        <h2>6. Mental Models</h2>
+        <p class="subtitle">Understanding means building an internal model that mirrors reality. Explore different models of the same phenomenon.</p>
+        <div class="model-playground">
+            <div class="model-tabs" id="model-tabs">
+                <div class="model-tab active" data-model="particle">Particle</div>
+                <div class="model-tab" data-model="wave">Wave</div>
+                <div class="model-tab" data-model="field">Field</div>
+                <div class="model-tab" data-model="math">Mathematical</div>
+            </div>
+            <canvas id="model-canvas"></canvas>
+            <div class="model-description" id="model-description">Click a model to see the same reality through different lenses. Each model captures some truth. Full understanding often requires holding multiple models simultaneously.</div>
+        </div>
+    </div>
+
+    <!-- Section 7: The Aha Moment -->
+    <div class="section" id="aha-section">
+        <h2>7. The Aha! Moment</h2>
+        <p class="subtitle">Rotate the shape below. At first it looks random. Keep rotating until the hidden structure clicks into place.</p>
+        <div class="aha-container">
+            <div class="puzzle-box">
+                <canvas id="puzzle-canvas"></canvas>
+            </div>
+            <div class="aha-meter">
+                <div class="aha-meter-fill" id="aha-fill"></div>
+            </div>
+            <div class="instruction" id="aha-instruction">Drag to rotate. The "aha" moment happens when scattered information suddenly organizes into a coherent whole.</div>
+        </div>
+    </div>
+
+    <!-- Section 8: Transfer -->
+    <div class="section" id="transfer-section">
+        <h2>8. Transfer</h2>
+        <p class="subtitle">True understanding means applying knowledge to new domains. Drag concepts between domains.</p>
+        <div class="transfer-container">
+            <div class="analogy-pairs">
+                <div class="analogy-box">
+                    <h4>Water Flow</h4>
+                    <p>Pressure, pipes, resistance, current</p>
+                </div>
+                <div class="analogy-arrow">⟷</div>
+                <div class="analogy-box">
+                    <h4>Electricity</h4>
+                    <p>Voltage, wires, resistance, current</p>
+                </div>
+            </div>
+            <div class="transfer-visualization">
+                <canvas id="transfer-canvas"></canvas>
+            </div>
+            <div class="analogy-pairs">
+                <div class="analogy-box">
+                    <h4>Evolution</h4>
+                    <p>Mutation, selection, fitness, adaptation</p>
+                </div>
+                <div class="analogy-arrow">⟷</div>
+                <div class="analogy-box">
+                    <h4>Machine Learning</h4>
+                    <p>Randomness, loss function, accuracy, training</p>
+                </div>
+            </div>
+            <div class="instruction">Understanding is recognizing the same abstract structure across different concrete domains. This is the essence of analogy — and of mathematics itself.</div>
+        </div>
+    </div>
+
+    <!-- Section 9: Embodied Understanding -->
+    <div class="section" id="embodied-section">
+        <h2>9. Embodied Intuition</h2>
+        <p class="subtitle">Some understanding lives in the body — in your intuition for physics, timing, and space. Play with gravity.</p>
+        <div class="embodied-container">
+            <div class="gravity-sim">
+                <canvas id="gravity-canvas"></canvas>
+            </div>
+            <div class="gravity-controls">
+                <label>Gravity <input type="range" id="gravity-slider" min="0" max="30" value="10"></label>
+                <label>Bounce <input type="range" id="bounce-slider" min="0" max="100" value="70"></label>
+                <label>Friction <input type="range" id="friction-slider" min="0" max="100" value="5"></label>
+                <button class="btn" id="gravity-reset">Drop New Ball</button>
+            </div>
+            <div class="instruction">Your body "understands" gravity before your mind does. Adjust parameters and notice how quickly your intuition recalibrates. This is embodied cognition.</div>
+        </div>
+    </div>
+
+    <!-- Final Section -->
+    <div class="section" id="final-section">
+        <h2>Understanding is...</h2>
+        <div class="final-message">
+            <p><em>Connection</em> — linking isolated facts into networks</p><br>
+            <p><em>Pattern</em> — seeing regularity in apparent chaos</p><br>
+            <p><em>Depth</em> — knowing at multiple levels simultaneously</p><br>
+            <p><em>Compression</em> — reducing complexity to simple principles</p><br>
+            <p><em>Prediction</em> — knowing what comes next</p><br>
+            <p><em>Modeling</em> — building internal simulations of reality</p><br>
+            <p><em>Insight</em> — the sudden reorganization of information</p><br>
+            <p><em>Transfer</em> — applying structure across domains</p><br>
+            <p><em>Embodiment</em> — knowing in your bones, not just your brain</p><br><br>
+            <p style="opacity: 0.6; font-size: 0.9rem;">You just experienced understanding by <em>doing</em> — which is perhaps the deepest understanding of all.</p>
+        </div>
+    </div>
+
+    <script>
+        // ==================== NEURAL BACKGROUND ====================
+        const neuralCanvas = document.getElementById('neural-bg');
+        const neuralCtx = neuralCanvas.getContext('2d');
+        let neurons = [];
+
+        function initNeural() {
+            neuralCanvas.width = window.innerWidth;
+            neuralCanvas.height = window.innerHeight;
+            neurons = [];
+            for (let i = 0; i < 50; i++) {
+                neurons.push({
+                    x: Math.random() * neuralCanvas.width,
+                    y: Math.random() * neuralCanvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 3 + 1
+                });
+            }
+        }
+
+        function drawNeural() {
+            neuralCtx.clearRect(0, 0, neuralCanvas.width, neuralCanvas.height);
+            neurons.forEach((n, i) => {
+                n.x += n.vx;
+                n.y += n.vy;
+                if (n.x < 0 || n.x > neuralCanvas.width) n.vx *= -1;
+                if (n.y < 0 || n.y > neuralCanvas.height) n.vy *= -1;
+
+                neuralCtx.beginPath();
+                neuralCtx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+                neuralCtx.fillStyle = 'rgba(102, 126, 234, 0.5)';
+                neuralCtx.fill();
+
+                for (let j = i + 1; j < neurons.length; j++) {
+                    const dx = neurons[j].x - n.x;
+                    const dy = neurons[j].y - n.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        neuralCtx.beginPath();
+                        neuralCtx.moveTo(n.x, n.y);
+                        neuralCtx.lineTo(neurons[j].x, neurons[j].y);
+                        neuralCtx.strokeStyle = `rgba(102, 126, 234, ${0.3 * (1 - dist / 150)})`;
+                        neuralCtx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(drawNeural);
+        }
+
+        initNeural();
+        drawNeural();
+        window.addEventListener('resize', initNeural);
+
+        // ==================== SECTION 1: CONNECTION FORMATION ====================
+        const connCanvas = document.getElementById('connection-canvas');
+        const connCtx = connCanvas.getContext('2d');
+        let nodes = [];
+        const concepts = ['Love', 'Math', 'Music', 'Light', 'Time', 'Memory', 'Fear', 'Growth', 'Entropy', 'Language', 'Color', 'Gravity', 'Dreams', 'Logic', 'Rhythm', 'Energy', 'Space', 'Truth', 'Beauty', 'Chaos'];
+        let conceptIndex = 0;
+
+        function resizeConnCanvas() {
+            const rect = connCanvas.getBoundingClientRect();
+            connCanvas.width = rect.width;
+            connCanvas.height = rect.height;
+        }
+        resizeConnCanvas();
+        window.addEventListener('resize', resizeConnCanvas);
+
+        connCanvas.addEventListener('click', (e) => {
+            const rect = connCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            nodes.push({
+                x, y,
+                label: concepts[conceptIndex % concepts.length],
+                connections: [],
+                radius: 8,
+                pulsePhase: Math.random() * Math.PI * 2,
+                color: `hsl(${Math.random() * 60 + 230}, 70%, 65%)`
+            });
+            conceptIndex++;
+
+            // Form connections
+            const newNode = nodes[nodes.length - 1];
+            nodes.forEach((node, i) => {
+                if (node === newNode) return;
+                const dx = node.x - newNode.x;
+                const dy = node.y - newNode.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 200) {
+                    newNode.connections.push(i);
+                    node.connections.push(nodes.length - 1);
+                }
+            });
+        });
+
+        function drawConnections() {
+            connCtx.clearRect(0, 0, connCanvas.width, connCanvas.height);
+            const time = Date.now() * 0.001;
+
+            // Draw connections
+            nodes.forEach((node, i) => {
+                node.connections.forEach(j => {
+                    if (j > i) return;
+                    const other = nodes[j];
+                    const pulse = Math.sin(time * 2 + i + j) * 0.3 + 0.5;
+                    connCtx.beginPath();
+                    connCtx.moveTo(node.x, node.y);
+                    connCtx.lineTo(other.x, other.y);
+                    connCtx.strokeStyle = `rgba(102, 126, 234, ${pulse * 0.6})`;
+                    connCtx.lineWidth = 1.5;
+                    connCtx.stroke();
+
+                    // Traveling pulse
+                    const pulsePos = (Math.sin(time * 3 + i * 0.5) + 1) / 2;
+                    const px = node.x + (other.x - node.x) * pulsePos;
+                    const py = node.y + (other.y - node.y) * pulsePos;
+                    connCtx.beginPath();
+                    connCtx.arc(px, py, 3, 0, Math.PI * 2);
+                    connCtx.fillStyle = `rgba(240, 147, 251, ${pulse})`;
+                    connCtx.fill();
+                });
+            });
+
+            // Draw nodes
+            nodes.forEach((node, i) => {
+                const pulse = Math.sin(time * 2 + node.pulsePhase) * 3;
+                connCtx.beginPath();
+                connCtx.arc(node.x, node.y, node.radius + pulse, 0, Math.PI * 2);
+                connCtx.fillStyle = node.color;
+                connCtx.fill();
+                connCtx.beginPath();
+                connCtx.arc(node.x, node.y, node.radius + pulse + 5, 0, Math.PI * 2);
+                connCtx.strokeStyle = `rgba(102, 126, 234, 0.3)`;
+                connCtx.stroke();
+
+                connCtx.fillStyle = '#e0e0e0';
+                connCtx.font = '11px Georgia';
+                connCtx.textAlign = 'center';
+                connCtx.fillText(node.label, node.x, node.y - 18);
+            });
+
+            requestAnimationFrame(drawConnections);
+        }
+        drawConnections();
+
+        // ==================== SECTION 2: PATTERN RECOGNITION ====================
+        let patternGrid = [];
+        let patternRule = null;
+        let revealedCells = new Set();
+
+        function generatePattern() {
+            patternGrid = [];
+            revealedCells.clear();
+            const rules = [
+                { name: 'sum', fn: (r, c) => r + c, hint: 'Row + Column' },
+                { name: 'product', fn: (r, c) => r * c, hint: 'Row × Column' },
+                { name: 'difference', fn: (r, c) => Math.abs(r - c), hint: '|Row - Column|' },
+                { name: 'modulo', fn: (r, c) => (r + c) % 4, hint: '(Row + Column) mod 4' },
+                { name: 'power', fn: (r, c) => (r + 1) ** 2 + c, hint: '(Row+1)² + Column' },
+                { name: 'fibonacci-ish', fn: (r, c) => r + c + (r > 0 && c > 0 ? 1 : 0), hint: 'Row + Column + (both>0 ? 1 : 0)' }
+            ];
+            patternRule = rules[Math.floor(Math.random() * rules.length)];
+
+            const grid = document.getElementById('pattern-grid');
+            grid.innerHTML = '';
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 6; c++) {
+                    const val = patternRule.fn(r, c);
+                    patternGrid.push({ r, c, val });
+                    const cell = document.createElement('div');
+                    cell.className = 'pattern-cell';
+                    cell.dataset.index = r * 6 + c;
+                    cell.addEventListener('click', () => revealCell(cell, r * 6 + c));
+                    grid.appendChild(cell);
+                }
+            }
+            document.getElementById('pattern-message').textContent = 'Click cells to reveal their values. Can you predict the pattern?';
+        }
+
+        function revealCell(cell, index) {
+            if (revealedCells.has(index)) return;
+            revealedCells.add(index);
+            cell.textContent = patternGrid[index].val;
+            cell.classList.add('revealed');
+
+            if (revealedCells.size >= 12) {
+                document.getElementById('pattern-message').textContent = `Pattern found! Rule: ${patternRule.hint}`;
+                document.querySelectorAll('.pattern-cell').forEach((c, i) => {
+                    c.textContent = patternGrid[i].val;
+                    c.classList.add('correct');
+                });
+            }
+        }
+
+        document.getElementById('pattern-hint').addEventListener('click', () => {
+            document.getElementById('pattern-message').textContent = `Hint: Think about how the position (row, column) relates to the value...`;
+        });
+
+        document.getElementById('pattern-reset').addEventListener('click', generatePattern);
+
+        document.getElementById('pattern-reveal').addEventListener('click', () => {
+            document.querySelectorAll('.pattern-cell').forEach((c, i) => {
+                c.textContent = patternGrid[i].val;
+                c.classList.add('correct');
+            });
+            document.getElementById('pattern-message').textContent = `Rule: ${patternRule.hint}`;
+        });
+
+        generatePattern();
+
+        // ==================== SECTION 3: LEVELS OF UNDERSTANDING ====================
+        const levels = [
+            {
+                title: '1. Recognition',
+                desc: '"I\'ve seen this before"',
+                detail: 'The shallowest level. You can identify something but not explain it. Like recognizing a song without knowing its name or who wrote it.',
+                depth: '15%'
+            },
+            {
+                title: '2. Description',
+                desc: '"I can describe what it does"',
+                detail: 'You can articulate the surface behavior. A child can describe that things fall down, without understanding gravity.',
+                depth: '30%'
+            },
+            {
+                title: '3. Explanation',
+                desc: '"I can explain why"',
+                detail: 'You can provide causal reasoning. You know WHY things fall — mass curves spacetime, creating geodesics that objects follow.',
+                depth: '50%'
+            },
+            {
+                title: '4. Prediction',
+                desc: '"I can predict what will happen"',
+                detail: 'You can use your understanding to forecast outcomes. Given mass and distance, you can calculate gravitational force.',
+                depth: '65%'
+            },
+            {
+                title: '5. Teaching',
+                desc: '"I can make others understand"',
+                detail: 'Feynman\'s test: if you can\'t explain it simply, you don\'t understand it. Teaching requires restructuring knowledge for another mind.',
+                depth: '80%'
+            },
+            {
+                title: '6. Creation',
+                desc: '"I can create something new with it"',
+                detail: 'The deepest level. You understand gravity so well you can design spacecraft trajectories, or theorize about quantum gravity.',
+                depth: '100%'
+            }
+        ];
+
+        const levelsContainer = document.getElementById('levels-container');
+        levels.forEach((level, i) => {
+            const bar = document.createElement('div');
+            bar.className = 'level-bar';
+            bar.style.setProperty('--depth', level.depth);
+            bar.innerHTML = `
+                <h3>${level.title}</h3>
+                <p>${level.desc}</p>
+                <div class="level-detail"><p>${level.detail}</p></div>
+            `;
+            bar.addEventListener('click', () => {
+                bar.classList.toggle('expanded');
+            });
+            levelsContainer.appendChild(bar);
+        });
+
+        // ==================== SECTION 4: COMPRESSION ====================
+        const compressionInput = document.getElementById('compression-input');
+
+        function analyzeCompression() {
+            const text = compressionInput.value;
+            if (!text) return;
+
+            const rawSize = text.length;
+            document.getElementById('raw-size').textContent = rawSize;
+
+            // Simple pattern detection
+            const words = text.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+            const uniqueWords = new Set(words);
+            document.getElementById('unique-patterns').textContent = uniqueWords.size;
+
+            // Compression ratio (simplified)
+            const ratio = rawSize > 0 ? Math.round((1 - uniqueWords.size / words.length) * 100) : 0;
+            const displayRatio = Math.max(0, Math.min(100, ratio));
+            document.getElementById('compression-ratio').textContent = displayRatio + '%';
+            document.getElementById('compression-bar').style.width = displayRatio + '%';
+        }
+
+        compressionInput.addEventListener('input', analyzeCompression);
+        analyzeCompression();
+
+        // ==================== SECTION 5: PREDICTION ====================
+        let currentSequence = [];
+        let sequenceAnswer = 0;
+        let predScore = 0;
+        let predTotal = 0;
+
+        const sequenceGenerators = [
+            { gen: (n) => Array.from({length: n}, (_, i) => i * 2), next: (n) => n * 2, name: 'Even numbers' },
+            { gen: (n) => Array.from({length: n}, (_, i) => i * i), next: (n) => n * n, name: 'Perfect squares' },
+            { gen: (n) => Array.from({length: n}, (_, i) => Math.pow(2, i)), next: (n) => Math.pow(2, n), name: 'Powers of 2' },
+            { gen: (n) => { let a = [1, 1]; for(let i = 2; i < n; i++) a.push(a[i-1]+a[i-2]); return a; }, next: null, name: 'Fibonacci' },
+            { gen: (n) => Array.from({length: n}, (_, i) => i * 3 + 1), next: (n) => n * 3 + 1, name: '3n + 1' },
+            { gen: (n) => Array.from({length: n}, (_, i) => (i + 1) * (i + 2) / 2), next: (n) => (n + 1) * (n + 2) / 2, name: 'Triangular numbers' },
+            { gen: (n) => Array.from({length: n}, (_, i) => i * i + i), next: (n) => n * n + n, name: 'n² + n' },
+        ];
+
+        function generateSequence() {
+            const idx = Math.floor(Math.random() * sequenceGenerators.length);
+            const sg = sequenceGenerators[idx];
+            const len = 5;
+
+            if (sg.name === 'Fibonacci') {
+                currentSequence = [1, 1, 2, 3, 5];
+                sequenceAnswer = 8;
+            } else {
+                currentSequence = sg.gen(len);
+                sequenceAnswer = sg.next ? sg.next(len) : currentSequence[len - 1] + currentSequence[len - 2];
+            }
+
+            const display = document.getElementById('sequence-display');
+            display.innerHTML = '';
+            currentSequence.forEach(val => {
+                const item = document.createElement('div');
+                item.className = 'seq-item';
+                item.textContent = val;
+                display.appendChild(item);
+            });
+            const unknown = document.createElement('div');
+            unknown.className = 'seq-item unknown';
+            unknown.textContent = '?';
+            display.appendChild(unknown);
+
+            document.getElementById('prediction-answer').value = '';
+            document.getElementById('prediction-feedback').textContent = '';
+        }
+
+        document.getElementById('prediction-submit').addEventListener('click', () => {
+            const answer = parseInt(document.getElementById('prediction-answer').value);
+            predTotal++;
+            if (answer === sequenceAnswer) {
+                predScore++;
+                document.getElementById('prediction-feedback').textContent = '✓ Correct! You understood the pattern.';
+                document.getElementById('prediction-feedback').style.color = '#4caf50';
+            } else {
+                document.getElementById('prediction-feedback').textContent = `✗ The answer was ${sequenceAnswer}. Understanding requires more data sometimes.`;
+                document.getElementById('prediction-feedback').style.color = '#f44336';
+            }
+            document.getElementById('pred-score').textContent = predScore;
+            document.getElementById('pred-total').textContent = predTotal;
+        });
+
+        document.getElementById('prediction-next').addEventListener('click', generateSequence);
+        generateSequence();
+
+        // ==================== SECTION 6: MENTAL MODELS ====================
+        const modelCanvas = document.getElementById('model-canvas');
+        const modelCtx = modelCanvas.getContext('2d');
+        let currentModel = 'particle';
+        let modelTime = 0;
+
+        function resizeModelCanvas() {
+            const rect = modelCanvas.getBoundingClientRect();
+            modelCanvas.width = rect.width;
+            modelCanvas.height = rect.height;
+        }
+        resizeModelCanvas();
+        window.addEventListener('resize', resizeModelCanvas);
+
+        const modelDescriptions = {
+            particle: 'The PARTICLE model: Reality as discrete objects bouncing and interacting. Newton saw the world this way — billiard balls following deterministic paths.',
+            wave: 'The WAVE model: Reality as continuous oscillations spreading through space. Light, sound, even matter has wave-like properties. Everything vibrates.',
+            field: 'The FIELD model: Reality as values assigned to every point in space. Temperature, gravity, electromagnetism — invisible fields permeating everything.',
+            math: 'The MATHEMATICAL model: Reality as pure relationships and equations. The most abstract — and often the most powerful — form of understanding.'
+        };
+
+        document.querySelectorAll('.model-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.model-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentModel = tab.dataset.model;
+                document.getElementById('model-description').textContent = modelDescriptions[currentModel];
+            });
+        });
+
+        function drawModel() {
+            modelCtx.clearRect(0, 0, modelCanvas.width, modelCanvas.height);
+            modelTime += 0.02;
+            const w = modelCanvas.width;
+            const h = modelCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            if (currentModel === 'particle') {
+                // Bouncing particles
+                for (let i = 0; i < 20; i++) {
+                    const angle = modelTime * (0.5 + i * 0.1) + i * 0.5;
+                    const radius = 50 + i * 12 + Math.sin(modelTime + i) * 20;
+                    const x = cx + Math.cos(angle) * radius;
+                    const y = cy + Math.sin(angle) * radius;
+                    const size = 4 + Math.sin(modelTime * 2 + i) * 2;
+
+                    modelCtx.beginPath();
+                    modelCtx.arc(x, y, size, 0, Math.PI * 2);
+                    modelCtx.fillStyle = `hsl(${230 + i * 5}, 70%, 65%)`;
+                    modelCtx.fill();
+
+                    // Trails
+                    for (let t = 1; t < 5; t++) {
+                        const ta = angle - t * 0.1;
+                        const tr = 50 + i * 12 + Math.sin(modelTime - t * 0.02 + i) * 20;
+                        const tx = cx + Math.cos(ta) * tr;
+                        const ty = cy + Math.sin(ta) * tr;
+                        modelCtx.beginPath();
+                        modelCtx.arc(tx, ty, size * (1 - t * 0.2), 0, Math.PI * 2);
+                        modelCtx.fillStyle = `hsla(${230 + i * 5}, 70%, 65%, ${0.3 - t * 0.06})`;
+                        modelCtx.fill();
+                    }
+                }
+            } else if (currentModel === 'wave') {
+                // Waves
+                for (let wave = 0; wave < 5; wave++) {
+                    modelCtx.beginPath();
+                    const freq = 0.02 + wave * 0.01;
+                    const amp = 30 + wave * 15;
+                    const phase = modelTime * (1 + wave * 0.3);
+                    for (let x = 0; x < w; x++) {
+                        const y = cy + Math.sin(x * freq + phase) * amp * Math.sin(x * 0.005 + modelTime * 0.5);
+                        if (x === 0) modelCtx.moveTo(x, y);
+                        else modelCtx.lineTo(x, y);
+                    }
+                    modelCtx.strokeStyle = `hsla(${260 + wave * 30}, 70%, 65%, 0.6)`;
+                    modelCtx.lineWidth = 2;
+                    modelCtx.stroke();
+                }
+
+                // Interference pattern
+                for (let x = 0; x < w; x += 4) {
+                    for (let y = 0; y < h; y += 4) {
+                        const d1 = Math.sqrt((x - w * 0.3) ** 2 + (y - h * 0.5) ** 2);
+                        const d2 = Math.sqrt((x - w * 0.7) ** 2 + (y - h * 0.5) ** 2);
+                        const val = Math.sin(d1 * 0.05 - modelTime * 3) + Math.sin(d2 * 0.05 - modelTime * 3);
+                        const alpha = (val + 2) / 4 * 0.15;
+                        modelCtx.fillStyle = `rgba(102, 126, 234, ${alpha})`;
+                        modelCtx.fillRect(x, y, 4, 4);
+                    }
+                }
+            } else if (currentModel === 'field') {
+                // Vector field
+                const gridSize = 30;
+                for (let x = gridSize; x < w; x += gridSize) {
+                    for (let y = gridSize; y < h; y += gridSize) {
+                        const dx = x - cx;
+                        const dy = y - cy;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) + modelTime * 0.5 + Math.sin(dist * 0.01 + modelTime);
+                        const strength = Math.min(1, 200 / (dist + 50));
+                        const len = 12 * strength;
+
+                        const ex = x + Math.cos(angle) * len;
+                        const ey = y + Math.sin(angle) * len;
+
+                        modelCtx.beginPath();
+                        modelCtx.moveTo(x, y);
+                        modelCtx.lineTo(ex, ey);
+                        modelCtx.strokeStyle = `hsla(${270 + dist * 0.3}, 70%, 65%, ${strength * 0.7})`;
+                        modelCtx.lineWidth = 1.5;
+                        modelCtx.stroke();
+
+                        // Arrow head
+                        modelCtx.beginPath();
+                        modelCtx.arc(ex, ey, 2, 0, Math.PI * 2);
+                        modelCtx.fillStyle = `hsla(${270 + dist * 0.3}, 70%, 65%, ${strength * 0.7})`;
+                        modelCtx.fill();
+                    }
+                }
+            } else if (currentModel === 'math') {
+                // Mathematical equations and graphs
+                modelCtx.font = '14px Courier New';
+                modelCtx.fillStyle = 'rgba(102, 126, 234, 0.8)';
+
+                const equations = [
+                    'E = mc²',
+                    '∇ × B = μ₀J + μ₀ε₀∂E/∂t',
+                    'iℏ∂ψ/∂t = Ĥψ',
+                    'F = G(m₁m₂)/r²',
+                    'S = k·ln(Ω)',
+                    'eiπ + 1 = 0',
+                    '∂²u/∂t² = c²∇²u'
+                ];
+
+                equations.forEach((eq, i) => {
+                    const y = 40 + i * 50;
+                    const x = 30 + Math.sin(modelTime + i * 0.7) * 10;
+                    const alpha = 0.4 + Math.sin(modelTime * 2 + i) * 0.3;
+                    modelCtx.fillStyle = `rgba(102, 126, 234, ${alpha})`;
+                    modelCtx.fillText(eq, x, y);
+                });
+
+                // Animated graph
+                modelCtx.beginPath();
+                for (let x = 0; x < w; x++) {
+                    const t = x / w * Math.PI * 4;
+                    const y = h * 0.7 + Math.sin(t + modelTime) * Math.cos(t * 0.5 - modelTime * 0.3) * 60;
+                    if (x === 0) modelCtx.moveTo(x, y);
+                    else modelCtx.lineTo(x, y);
+                }
+                modelCtx.strokeStyle = 'rgba(240, 147, 251, 0.6)';
+                modelCtx.lineWidth = 2;
+                modelCtx.stroke();
+
+                // Coordinate axes
+                modelCtx.beginPath();
+                modelCtx.moveTo(w * 0.1, h * 0.7);
+                modelCtx.lineTo(w * 0.9, h * 0.7);
+                modelCtx.moveTo(w * 0.5, h * 0.4);
+                modelCtx.lineTo(w * 0.5, h * 0.95);
+                modelCtx.strokeStyle = 'rgba(255,255,255,0.2)';
+                modelCtx.lineWidth = 1;
+                modelCtx.stroke();
+            }
+
+            requestAnimationFrame(drawModel);
+        }
+        drawModel();
+
+        // ==================== SECTION 7: AHA MOMENT ====================
+        const puzzleCanvas = document.getElementById('puzzle-canvas');
+        const puzzleCtx = puzzleCanvas.getContext('2d');
+        let puzzleRotX = 0, puzzleRotY = 0;
+        let isDragging = false;
+        let lastMouse = { x: 0, y: 0 };
+        let ahaLevel = 0;
+        let ahaTriggered = false;
+
+        function resizePuzzleCanvas() {
+            puzzleCanvas.width = 300;
+            puzzleCanvas.height = 300;
+        }
+        resizePuzzleCanvas();
+
+        // 3D points that form a word when viewed from the right angle
+        const points3D = [];
+        // Create points that spell "AHA" when viewed from front
+        const letterA1 = [[0,0],[0.5,1],[1,0],[0.2,0.4],[0.8,0.4]];
+        const letterH = [[1.3,0],[1.3,1],[1.3,0.5],[1.8,0.5],[1.8,0],[1.8,1]];
+        const letterA2 = [[2.1,0],[2.6,1],[3.1,0],[2.3,0.4],[2.9,0.4]];
+
+        [...letterA1, ...letterH, ...letterA2].forEach(([x, y]) => {
+            points3D.push({
+                x: (x - 1.5) * 60,
+                y: (y - 0.5) * 60,
+                z: (Math.random() - 0.5) * 120
+            });
+        });
+
+        // Add noise points
+        for (let i = 0; i < 30; i++) {
+            points3D.push({
+                x: (Math.random() - 0.5) * 200,
+                y: (Math.random() - 0.5) * 150,
+                z: (Math.random() - 0.5) * 200
+            });
+        }
+
+        function project(point, rotX, rotY) {
+            // Rotate around Y
+            let x = point.x * Math.cos(rotY) - point.z * Math.sin(rotY);
+            let z = point.x * Math.sin(rotY) + point.z * Math.cos(rotY);
+            let y = point.y;
+
+            // Rotate around X
+            let y2 = y * Math.cos(rotX) - z * Math.sin(rotX);
+            let z2 = y * Math.sin(rotX) + z * Math.cos(rotX);
+
+            const scale = 300 / (300 + z2);
+            return { x: x * scale + 150, y: y2 * scale + 150, z: z2, scale };
+        }
+
+        function drawPuzzle() {
+            puzzleCtx.clearRect(0, 0, 300, 300);
+
+            const projected = points3D.map(p => project(p, puzzleRotX, puzzleRotY));
+
+            // Sort by z for depth
+            const sorted = projected.map((p, i) => ({ ...p, i })).sort((a, b) => a.z - b.z);
+
+            sorted.forEach(p => {
+                const size = 3 * p.scale;
+                const alpha = Math.max(0.2, Math.min(1, (p.z + 200) / 400));
+                puzzleCtx.beginPath();
+                puzzleCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                puzzleCtx.fillStyle = p.i < points3D.length - 30
+                    ? `rgba(102, 126, 234, ${alpha})`
+                    : `rgba(150, 150, 150, ${alpha * 0.5})`;
+                puzzleCtx.fill();
+            });
+
+            // Check if viewing from front (aha angle)
+            const frontness = 1 - Math.min(1, (Math.abs(puzzleRotY % (Math.PI * 2)) + Math.abs(puzzleRotX % (Math.PI * 2))) / 0.5);
+            const normalizedFrontness = Math.max(0, frontness);
+
+            if (normalizedFrontness > 0.7 && !ahaTriggered) {
+                ahaTriggered = true;
+                document.getElementById('aha-instruction').textContent = '💡 AHA! The scattered points form letters when viewed from the right angle! Understanding is finding the right perspective.';
+                document.getElementById('aha-instruction').style.color = '#ffd700';
+            }
+
+            ahaLevel = Math.max(ahaLevel, normalizedFrontness * 100);
+            document.getElementById('aha-fill').style.width = ahaLevel + '%';
+
+            requestAnimationFrame(drawPuzzle);
+        }
+
+        puzzleCanvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastMouse = { x: e.clientX, y: e.clientY };
+        });
+
+        puzzleCanvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - lastMouse.x;
+            const dy = e.clientY - lastMouse.y;
+            puzzleRotY += dx * 0.01;
+            puzzleRotX += dy * 0.01;
+            lastMouse = { x: e
+.clientX, y: e.clientY };
+        });
+
+        puzzleCanvas.addEventListener('mouseup', () => { isDragging = false; });
+        puzzleCanvas.addEventListener('mouseleave', () => { isDragging = false; });
+
+        // Touch support for puzzle
+        puzzleCanvas.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            e.preventDefault();
+        });
+
+        puzzleCanvas.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const dx = e.touches[0].clientX - lastMouse.x;
+            const dy = e.touches[0].clientY - lastMouse.y;
+            puzzleRotY += dx * 0.01;
+            puzzleRotX += dy * 0.01;
+            lastMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            e.preventDefault();
+        });
+
+        puzzleCanvas.addEventListener('touchend', () => { isDragging = false; });
+
+        drawPuzzle();
+
+        // ==================== SECTION 8: TRANSFER ====================
+        const transferCanvas = document.getElementById('transfer-canvas');
+        const transferCtx = transferCanvas.getContext('2d');
+        let transferTime = 0;
+
+        function resizeTransferCanvas() {
+            const rect = transferCanvas.getBoundingClientRect();
+            transferCanvas.width = rect.width;
+            transferCanvas.height = rect.height;
+        }
+        resizeTransferCanvas();
+        window.addEventListener('resize', resizeTransferCanvas);
+
+        function drawTransfer() {
+            transferCtx.clearRect(0, 0, transferCanvas.width, transferCanvas.height);
+            transferTime += 0.02;
+
+            const w = transferCanvas.width;
+            const h = transferCanvas.height;
+            const midY = h / 2;
+
+            // Draw two parallel systems showing structural similarity
+            // Top: Water flow
+            transferCtx.strokeStyle = 'rgba(100, 180, 255, 0.6)';
+            transferCtx.lineWidth = 2;
+            transferCtx.beginPath();
+            for (let x = 0; x < w; x++) {
+                const flow = Math.sin(x * 0.03 - transferTime * 2) * 15;
+                const y = midY - 40 + flow;
+                if (x === 0) transferCtx.moveTo(x, y);
+                else transferCtx.lineTo(x, y);
+            }
+            transferCtx.stroke();
+
+            // Water particles
+            for (let i = 0; i < 15; i++) {
+                const px = ((transferTime * 50 + i * 55) % w);
+                const py = midY - 40 + Math.sin(px * 0.03 - transferTime * 2) * 15;
+                transferCtx.beginPath();
+                transferCtx.arc(px, py, 3, 0, Math.PI * 2);
+                transferCtx.fillStyle = 'rgba(100, 180, 255, 0.8)';
+                transferCtx.fill();
+            }
+
+            // Bottom: Electric current
+            transferCtx.strokeStyle = 'rgba(255, 200, 50, 0.6)';
+            transferCtx.lineWidth = 2;
+            transferCtx.beginPath();
+            for (let x = 0; x < w; x++) {
+                const flow = Math.sin(x * 0.03 - transferTime * 2) * 15;
+                const y = midY + 40 + flow;
+                if (x === 0) transferCtx.moveTo(x, y);
+                else transferCtx.lineTo(x, y);
+            }
+            transferCtx.stroke();
+
+            // Electric particles (electrons)
+            for (let i = 0; i < 15; i++) {
+                const px = ((transferTime * 50 + i * 55) % w);
+                const py = midY + 40 + Math.sin(px * 0.03 - transferTime * 2) * 15;
+                transferCtx.beginPath();
+                transferCtx.arc(px, py, 3, 0, Math.PI * 2);
+                transferCtx.fillStyle = 'rgba(255, 200, 50, 0.8)';
+                transferCtx.fill();
+
+                // Lightning effect
+                if (Math.random() < 0.02) {
+                    transferCtx.beginPath();
+                    transferCtx.moveTo(px, py);
+                    transferCtx.lineTo(px + (Math.random() - 0.5) * 10, py + (Math.random() - 0.5) * 10);
+                    transferCtx.strokeStyle = 'rgba(255, 255, 100, 0.8)';
+                    transferCtx.lineWidth = 1;
+                    transferCtx.stroke();
+                }
+            }
+
+            // Connecting lines showing structural similarity
+            const pulseAlpha = (Math.sin(transferTime * 3) + 1) / 2 * 0.4;
+            transferCtx.setLineDash([5, 5]);
+            for (let i = 0; i < 5; i++) {
+                const x = w * (i + 1) / 6;
+                transferCtx.beginPath();
+                transferCtx.moveTo(x, midY - 25);
+                transferCtx.lineTo(x, midY + 25);
+                transferCtx.strokeStyle = `rgba(240, 147, 251, ${pulseAlpha})`;
+                transferCtx.lineWidth = 1;
+                transferCtx.stroke();
+            }
+            transferCtx.setLineDash([]);
+
+            // Labels
+            transferCtx.font = '12px Georgia';
+            transferCtx.fillStyle = 'rgba(100, 180, 255, 0.8)';
+            transferCtx.fillText('Water Flow →', 10, midY - 60);
+            transferCtx.fillStyle = 'rgba(255, 200, 50, 0.8)';
+            transferCtx.fillText('Electric Current →', 10, midY + 70);
+            transferCtx.fillStyle = 'rgba(240, 147, 251, 0.6)';
+            transferCtx.textAlign = 'center';
+            transferCtx.fillText('Same Structure', w / 2, midY + 5);
+            transferCtx.textAlign = 'left';
+
+            requestAnimationFrame(drawTransfer);
+        }
+        drawTransfer();
+
+        // ==================== SECTION 9: EMBODIED UNDERSTANDING ====================
+        const gravityCanvas = document.getElementById('gravity-canvas');
+        const gravityCtx = gravityCanvas.getContext('2d');
+        let balls = [];
+        let gravityVal = 10;
+        let bounceVal = 0.7;
+        let frictionVal = 0.05;
+
+        function resizeGravityCanvas() {
+            const rect = gravityCanvas.getBoundingClientRect();
+            gravityCanvas.width = rect.width;
+            gravityCanvas.height = rect.height;
+        }
+        resizeGravityCanvas();
+        window.addEventListener('resize', resizeGravityCanvas);
+
+        function createBall() {
+            balls.push({
+                x: Math.random() * gravityCanvas.width * 0.6 + gravityCanvas.width * 0.2,
+                y: 30,
+                vx: (Math.random() - 0.5) * 4,
+                vy: 0,
+                radius: 12 + Math.random() * 15,
+                color: `hsl(${Math.random() * 60 + 230}, 70%, 65%)`,
+                trail: []
+            });
+        }
+
+        createBall();
+
+        document.getElementById('gravity-slider').addEventListener('input', (e) => {
+            gravityVal = parseFloat(e.target.value);
+        });
+
+        document.getElementById('bounce-slider').addEventListener('input', (e) => {
+            bounceVal = parseFloat(e.target.value) / 100;
+        });
+
+        document.getElementById('friction-slider').addEventListener('input', (e) => {
+            frictionVal = parseFloat(e.target.value) / 100;
+        });
+
+        document.getElementById('gravity-reset').addEventListener('click', createBall);
+
+        // Click to add balls
+        gravityCanvas.addEventListener('click', (e) => {
+            const rect = gravityCanvas.getBoundingClientRect();
+            balls.push({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top,
+                vx: (Math.random() - 0.5) * 6,
+                vy: 0,
+                radius: 12 + Math.random() * 15,
+                color: `hsl(${Math.random() * 60 + 230}, 70%, 65%)`,
+                trail: []
+            });
+        });
+
+        function drawGravity() {
+            gravityCtx.clearRect(0, 0, gravityCanvas.width, gravityCanvas.height);
+
+            const w = gravityCanvas.width;
+            const h = gravityCanvas.height;
+
+            // Draw ground
+            gravityCtx.fillStyle = 'rgba(102, 126, 234, 0.1)';
+            gravityCtx.fillRect(0, h - 20, w, 20);
+            gravityCtx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+            gravityCtx.beginPath();
+            gravityCtx.moveTo(0, h - 20);
+            gravityCtx.lineTo(w, h - 20);
+            gravityCtx.stroke();
+
+            // Update and draw balls
+            balls.forEach((ball, index) => {
+                // Physics
+                ball.vy += gravityVal * 0.05;
+                ball.vx *= (1 - frictionVal * 0.1);
+                ball.x += ball.vx;
+                ball.y += ball.vy;
+
+                // Floor collision
+                if (ball.y + ball.radius > h - 20) {
+                    ball.y = h - 20 - ball.radius;
+                    ball.vy *= -bounceVal;
+                    ball.vx *= (1 - frictionVal * 0.5);
+
+                    // Squish effect
+                    ball.squish = 0.3;
+                }
+
+                // Wall collisions
+                if (ball.x - ball.radius < 0) {
+                    ball.x = ball.radius;
+                    ball.vx *= -bounceVal;
+                }
+                if (ball.x + ball.radius > w) {
+                    ball.x = w - ball.radius;
+                    ball.vx *= -bounceVal;
+                }
+
+                // Ceiling
+                if (ball.y - ball.radius < 0) {
+                    ball.y = ball.radius;
+                    ball.vy *= -bounceVal;
+                }
+
+                // Trail
+                ball.trail.push({ x: ball.x, y: ball.y });
+                if (ball.trail.length > 30) ball.trail.shift();
+
+                // Draw trail
+                ball.trail.forEach((point, i) => {
+                    const alpha = i / ball.trail.length * 0.3;
+                    gravityCtx.beginPath();
+                    gravityCtx.arc(point.x, point.y, 2, 0, Math.PI * 2);
+                    gravityCtx.fillStyle = `rgba(102, 126, 234, ${alpha})`;
+                    gravityCtx.fill();
+                });
+
+                // Draw ball with squish
+                const squish = ball.squish || 0;
+                ball.squish = squish * 0.9;
+
+                gravityCtx.save();
+                gravityCtx.translate(ball.x, ball.y);
+                gravityCtx.scale(1 + squish * 0.5, 1 - squish * 0.5);
+
+                gravityCtx.beginPath();
+                gravityCtx.arc(0, 0, ball.radius, 0, Math.PI * 2);
+                gravityCtx.fillStyle = ball.color;
+                gravityCtx.fill();
+
+                // Highlight
+                gravityCtx.beginPath();
+                gravityCtx.arc(-ball.radius * 0.3, -ball.radius * 0.3, ball.radius * 0.3, 0, Math.PI * 2);
+                gravityCtx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                gravityCtx.fill();
+
+                gravityCtx.restore();
+            });
+
+            // Remove balls that have been still for too long (cleanup)
+            if (balls.length > 20) {
+                balls = balls.slice(-15);
+            }
+
+            // Draw gravity indicator
+            gravityCtx.fillStyle = 'rgba(255,255,255,0.4)';
+            gravityCtx.font = '11px Georgia';
+            gravityCtx.fillText(`g = ${gravityVal.toFixed(1)} m/s²`, 10, 20);
+            gravityCtx.fillText(`bounce = ${(bounceVal * 100).toFixed(0)}%`, 10, 35);
+            gravityCtx.fillText(`Click canvas to add balls`, 10, 50);
+
+            requestAnimationFrame(drawGravity);
+        }
+        drawGravity();
+
+        // ==================== NAVIGATION DOTS ====================
+        const sections = ['hero', 'connection-section', 'pattern-section', 'levels-section', 'compression-section', 'prediction-section', 'models-section', 'aha-section', 'transfer-section', 'embodied-section', 'final-section'];
+        const navDots = document.getElementById('nav-dots');
+
+        sections.forEach((id, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.addEventListener('click', () => {
+                document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            });
+            navDots.appendChild(dot);
+        });
+
+        // Update active dot on scroll
+        function updateNavDots() {
+            const scrollPos = window.scrollY + window.innerHeight / 2;
+            sections.forEach((id, i) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const top = el.offsetTop;
+                const bottom = top + el.offsetHeight;
+                const dot = navDots.children[i];
+                if (scrollPos >= top && scrollPos < bottom) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateNavDots);
+        updateNavDots();
+
+        // ==================== SMOOTH REVEAL ON SCROLL ====================
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            observer.observe(section);
+        });
+
+    </script>
+</body>
+</html>
