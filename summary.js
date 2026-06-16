@@ -1342,7 +1342,6 @@ function _inject_tooltip_styles() {
 
 			/* Param count styling */
 			".param-count {" +
-			"  font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;" +
 			"  font-size: 12px;" +
 			"  font-weight: 500;" +
 			"}" +
