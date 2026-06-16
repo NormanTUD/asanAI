@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Products & Coproducts — Interactive Explorer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Latin-Modern.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Georgia', serif;
+  background: #0d1117;
+  color: #e6edf3;
+  min-height: 100vh;
+  padding: 2rem;
+}
+h1 { text-align: center; font-size: 2rem; margin-bottom: 0.5rem; color: #58a6ff; }
+.subtitle { text-align: center; color: #8b949e; margin-bottom: 2rem; font-size: 0.95rem; }
+.tabs {
+  display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 2rem;
+}
+.tab {
+  padding: 0.7rem 1.5rem; border: 1px solid #30363d; border-radius: 8px;
+  background: #161b22; cursor: pointer; color: #8b949e; font-size: 1rem;
+  transition: all 0.2s;
+}
+.tab:hover { border-color: #58a6ff; color: #58a6ff; }
+.tab.active { background: #1f2937; border-color: #58a6ff; color: #58a6ff; font-weight: bold; }
+.panel { display: none; max-width: 1100px; margin: 0 auto; }
+.panel.active { display: block; }
+svg { display: block; margin: 0 auto; }
+.diagram-container {
+  background: #161b22; border: 1px solid #30363d; border-radius: 12px;
+  padding: 1.5rem; margin: 1rem 0;
+}
+.controls {
+  display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+  margin: 1.5rem 0;
+}
+.control-group {
+  background: #1c2128; border: 1px solid #30363d; border-radius: 8px;
+  padding: 1rem 1.2rem; text-align: center;
+}
+.control-group label { display: block; color: #8b949e; font-size: 0.85rem; margin-bottom: 0.4rem; }
+.control-group select, .control-group input[type=range] {
+  background: #0d1117; color: #e6edf3; border: 1px solid #30363d;
+  border-radius: 4px; padding: 0.3rem 0.5rem; font-size: 0.9rem;
+}
+.math-block {
+  background: #1c2128; border-left: 3px solid #58a6ff; padding: 1rem 1.5rem;
+  margin: 1rem 0; border-radius: 0 8px 8px 0; font-size: 1.1rem;
+  overflow-x: auto;
+}
+.insight {
+  background: #1c2128; border-left: 3px solid #f0883e; padding: 1rem 1.5rem;
+  margin: 1rem 0; border-radius: 0 8px 8px 0; color: #f0883e;
+}
+.node-label {
+  font-family: 'Georgia', serif; font-size: 16px; fill: #e6edf3;
+  text-anchor: middle; dominant-baseline: central; pointer-events: none;
+}
+.node-circle {
+  stroke-width: 2; cursor: pointer; transition: all 0.2s;
+}
+.node-circle:hover { stroke-width: 3; filter: brightness(1.3); }
+.arrow { stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+.arrow-product { stroke: #58a6ff; }
+.arrow-coproduct { stroke: #f78166; }
+.arrow-universal { stroke: #7ee787; stroke-dasharray: 6 3; }
+.arrow-projection { stroke: #d2a8ff; }
+.arrow-injection { stroke: #ffa657; }
+.explanation { color: #8b949e; line-height: 1.7; margin: 1rem 0; font-size: 0.95rem; }
+.highlight { color: #58a6ff; font-weight: bold; }
+.highlight-co { color: #f78166; font-weight: bold; }
+.dual-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+@media (max-width: 800px) { .dual-container { grid-template-columns: 1fr; } }
+.element-box {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%; margin: 2px;
+  font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
+  border: 2px solid transparent;
+}
+.element-box:hover { transform: scale(1.2); }
+.element-box.selected { border-color: #fff; transform: scale(1.2); }
+.set-display {
+  display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+  padding: 0.5rem; min-height: 50px; align-items: center;
+}
+.set-container {
+  background: #1c2128; border: 1px solid #30363d; border-radius: 8px;
+  padding: 1rem; margin: 0.5rem 0; text-align: center;
+}
+.set-container h3 { color: #8b949e; font-size: 0.85rem; margin-bottom: 0.5rem; }
+.result-display {
+  background: #0d1117; border: 1px solid #30363d; border-radius: 8px;
+  padding: 1rem; margin: 1rem 0; text-align: center; min-height: 60px;
+}
+.btn {
+  padding: 0.5rem 1rem; border: 1px solid #30363d; border-radius: 6px;
+  background: #21262d; color: #e6edf3; cursor: pointer; font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.btn:hover { border-color: #58a6ff; background: #1f2937; }
+.btn.active { background: #1f6feb; border-color: #58a6ff; }
+#comparison-arrow { font-size: 2rem; color: #8b949e; text-align: center; padding: 1rem; }
+</style>
+</head>
+<body>
+
+<h1>Products ⊗ Coproducts</h1>
+<p class="subtitle">Category Theory — Interactive Visual Explorer</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="showPanel('product')">Product</div>
+  <div class="tab" onclick="showPanel('coproduct')">Coproduct</div>
+  <div class="tab" onclick="showPanel('together')">Duality</div>
+  <div class="tab" onclick="showPanel('sets')">Play with Sets</div>
+</div>
+
+<!-- ===== PRODUCT PANEL ===== -->
+<div class="panel active" id="panel-product">
+  <div class="math-block" id="product-def"></div>
+  <p class="explanation">
+    A <span class="highlight">product</span> of two objects A and B is an object 
+    <span class="highlight">A × B</span> equipped with two <em>projections</em> — arrows that "extract" each component.
+    Its <strong>universal property</strong>: for <em>any</em> object X with arrows to A and B, 
+    there exists a <em>unique</em> arrow from X to A × B making everything commute.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Object X position</label>
+      <input type="range" id="product-x-pos" min="0" max="100" value="50" oninput="drawProduct()">
+    </div>
+    <div class="control-group">
+      <label>Show universal arrow</label>
+      <select id="product-show-universal" onchange="drawProduct()">
+        <option value="0">Hidden</option>
+        <option value="1" selected>Show</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Extra objects</label>
+      <select id="product-extra" onchange="drawProduct()">
+        <option value="0">None</option>
+        <option value="1">One (Y)</option>
+        <option value="2">Two (Y, Z)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <svg id="svg-product" width="700" height="400" viewBox="0 0 700 400"></svg>
+  </div>
+
+  <div class="insight">
+    <strong>Key insight:</strong> Drag the X slider — no matter where X is, the unique dashed arrow always exists. 
+    The product is the "best" object that maps to both A and B. Add extra objects to see they ALL factor through A × B.
+  </div>
+</div>
+
+<!-- ===== COPRODUCT PANEL ===== -->
+<div class="panel" id="panel-coproduct">
+  <div class="math-block" id="coproduct-def"></div>
+  <p class="explanation">
+    A <span class="highlight-co">coproduct</span> of two objects A and B is an object 
+    <span class="highlight-co">A + B</span> equipped with two <em>injections</em> — arrows that "include" each component.
+    Its <strong>universal property</strong>: for <em>any</em> object X with arrows <em>from</em> A and B, 
+    there exists a <em>unique</em> arrow from A + B to X making everything commute.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Object X position</label>
+      <input type="range" id="coproduct-x-pos" min="0" max="100" value="50" oninput="drawCoproduct()">
+    </div>
+    <div class="control-group">
+      <label>Show universal arrow</label>
+      <select id="coproduct-show-universal" onchange="drawCoproduct()">
+        <option value="0">Hidden</option>
+        <option value="1" selected>Show</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Extra objects</label>
+      <select id="coproduct-extra" onchange="drawCoproduct()">
+        <option value="0">None</option>
+        <option value="1">One (Y)</option>
+        <option value="2">Two (Y, Z)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <svg id="svg-coproduct" width="700" height="400" viewBox="0 0 700 400"></svg>
+  </div>
+
+  <div class="insight">
+    <strong>Key insight:</strong> Notice the arrows are <em>reversed</em> compared to the product! 
+    Injections go INTO A+B, and the universal arrow goes OUT of A+B. This is the <em>dual</em> construction.
+  </div>
+</div>
+
+<!-- ===== TOGETHER / DUALITY PANEL ===== -->
+<div class="panel" id="panel-together">
+  <div class="math-block" id="duality-def"></div>
+  <p class="explanation">
+    Products and coproducts are <strong>dual</strong> — one is obtained from the other by reversing all arrows.
+    Watch both diagrams side by side and drag the slider to see the perfect mirror symmetry.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Sync position</label>
+      <input type="range" id="dual-pos" min="0" max="100" value="50" oninput="drawDual()">
+    </div>
+    <div class="control-group">
+      <label>Animate</label>
+      <button class="btn" id="btn-animate" onclick="toggleAnimate()">▶ Play</button>
+    </div>
+  </div>
+
+  <div class="dual-container">
+    <div>
+      <h3 style="text-align:center; color:#58a6ff; margin-bottom:0.5rem;">Product (A × B)</h3>
+      <div class="diagram-container">
+        <svg id="svg-dual-product" width="100%" height="320" viewBox="0 0 500 320"></svg>
+      </div>
+      <div class="math-block" id="dual-product-formula" style="font-size:0.95rem;"></div>
+    </div>
+    <div>
+      <h3 style="text-align:center; color:#f78166; margin-bottom:0.5rem;">Coproduct (A + B)</h3>
+      <div class="diagram-container">
+        <svg id="svg-dual-coproduct" width="100%" height="320" viewBox="0 0 500 320"></svg>
+      </div>
+      <div class="math-block" id="dual-coproduct-formula" style="font-size:0.95rem;"></div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:1.5rem;">
+    <strong>Duality principle:</strong> Every theorem about products automatically gives a theorem about coproducts 
+    (and vice versa) by reversing arrows. In <strong>Set</strong>: product = cartesian product, coproduct = disjoint union.
+  </div>
+</div>
+
+<!-- ===== SETS PANEL ===== -->
+<div class="panel" id="panel-sets">
+  <p class="explanation">
+    In the category <strong>Set</strong>, the product is the <span class="highlight">Cartesian product</span> 
+    and the coproduct is the <span class="highlight-co">disjoint union</span>. 
+    Click elements below to build a morphism and see how the universal property works concretely.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Set A</label>
+      <select id="set-a-size" onchange="rebuildSets()">
+        <option value="2">{ a, b }</option>
+        <option value="3" selected>{ a, b, c }</option>
+        <option value="4">{ a, b, c, d }</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Set B</label>
+      <select id="set-b-size" onchange="rebuildSets()">
+        <option value="2" selected>{ 1, 2 }</option>
+        <option value="3">{ 1, 2, 3 }</option>
+        <option value="4">{ 1, 2, 3, 4 }</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dual-container">
+    <div>
+      <h3 style="text-align:center; color:#58a6ff; margin-bottom:1rem;">Product: A × B (Cartesian Product)</h3>
+      <div class="set-container">
+        <h3>A × B =</h3>
+        <div class="set-display" id="product-set-display"></div>
+      </div>
+      <div class="set-container">
+        <h3>π₁ : A × B → A (first projection)</h3>
+        <div class="result-display" id="proj1-display"></div>
+      </div>
+      <div class="set-container">
+        <h3>π₂ : A × B → B (second projection)</h3>
+        <div class="result-display" id="proj2-display"></div>
+      </div>
+      <div class="set-container">
+        <h3>Click a pair to see projections:</h3>
+        <div class="result-display" id="product-click-result">Click any element of A × B above</div>
+      </div>
+    </div>
+    <div>
+      <h3 style="text-align:center; color:#f78166; margin-bottom:1rem;">Coproduct: A + B (Disjoint Union)</h3>
+      <div class="set-container">
+        <h3>A + B =</h3>
+        <div class="set-display" id="coproduct-set-display"></div>
+      </div>
+      <div class="set-container">
+        <h3>ι₁ : A → A + B (left injection)</h3>
+        <div class="result-display" id="inj1-display"></div>
+      </div>
+      <div class="set-container">
+        <h3>ι₂ : B → A + B (right injection)</h3>
+        <div class="result-display" id="inj2-display"></div>
+      </div>
+      <div class="set-container">
+        <h3>Click an element to see its source:</h3>
+        <div class="result-display" id="coproduct-click-result">Click any element of A + B above</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="math-block" id="sets-universal"></div>
+</div>
+
+<!-- SVG Defs for arrowheads -->
+<svg width="0" height="0">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8b949e"/>
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+    </marker>
+    <marker id="arrowhead-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f78166"/>
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7ee787"/>
+    </marker>
+    <marker id="arrowhead-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#d2a8ff"/>
+    </marker>
+    <marker id="arrowhead-gold" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ffa657"/>
+    </marker>
+  </defs>
+</svg>
+
+<script>
+// ===== PANEL SWITCHING =====
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'product') drawProduct();
+  if (name === 'coproduct') drawCoproduct();
+  if (name === 'together') drawDual();
+  if (name === 'sets') rebuildSets();
+}
+
+// ===== RENDER MATH =====
+function renderMath(id, tex) {
+  const el = document.getElementById(id);
+  el.innerHTML = temml.renderToString(tex, { displayMode: true });
+}
+
+// Initialize math blocks
+renderMath('product-def', String.raw`\text{Product: } \forall X,\; \forall f: X \to A,\; g: X \to B,\; \exists!\, \langle f, g \rangle : X \to A \times B \text{ s.t. } \pi_1 \circ \langle f,g\rangle = f,\; \pi_2 \circ \langle f,g\rangle = g`);
+renderMath('coproduct-def', String.raw`\text{Coproduct: } \forall X,\; \forall f: A \to X,\; g: B \to X,\; \exists!\, [f, g] : A + B \to X \text{ s.t. } [f,g] \circ \iota_1 = f,\; [f,g] \circ \iota_2 = g`);
+renderMath('duality-def', String.raw`\text{Product in } \mathcal{C} \;=\; \text{Coproduct in } \mathcal{C}^{\text{op}} \qquad (\text{reverse all arrows})`);
+
+// ===== DRAWING HELPERS =====
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function drawArrow(svg, x1, y1, x2, y2, cls, markerColor, label, labelOffset) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx*dx + dy*dy);
+  const nx = dx/len, ny = dy/len;
+  // Shorten by radius of nodes
+  const r = 24;
+  const sx = x1 + nx * r, sy = y1 + ny * r;
+  const ex = x2 - nx * r, ey = y2 - ny * r;
+  
+  const line = svgEl('line', {
+    x1: sx, y1: sy, x2: ex, y2: ey,
+    class: cls,
+    'marker-end': `url(#arrowhead-${markerColor})`
+  });
+  line.style.stroke = getComputedStyle(document.documentElement).getPropertyValue('--x') || '';
+  svg.appendChild(line);
+
+  if (label) {
+    const mx = (sx + ex) / 2 + (labelOffset?.x || 0);
+    const my = (sy + ey) / 2 + (labelOffset?.y || 0);
+    const text = svgEl('text', { x: mx, y: my, class: 'node-label', 'font-size': '13px' });
+    text.textContent = label;
+    text.style.fill = markerColor === 'blue' ? '#58a6ff' : markerColor === 'orange' ? '#f78166' : markerColor === 'green' ? '#7ee787' : markerColor === 'purple' ? '#d2a8ff' : '#ffa657';
+    svg.appendChild(text);
+  }
+}
+
+function drawNode(svg, x, y, label, color) {
+  const circle = svgEl('circle', { cx: x, cy: y, r: 22, fill: color + '22', stroke: color, class: 'node-circle' });
+  svg.appendChild(circle);
+  const text = svgEl('text', { x: x, y: y, class: 'node-label' });
+  text.textContent = label;
+  svg.appendChild(text);
+}
+
+function drawCurvedArrow(svg, x1, y1, x2, y2, bend, cls, markerColor, label) {
+  const mx = (x1 + x2) / 2 + bend.x;
+  const my = (y1 + y2) / 2 + bend.y;
+  const r = 24;
+  const dx1 = mx - x1, dy1 = my - y1, len1 = Math.sqrt(dx1*dx1+dy1*dy1);
+  const dx2 = x2 - mx, dy2 = y2 - my, len2 = Math.sqrt(dx2*dx2+dy2*dy2);
+  
+  const path = svgEl('path', {
+    d: `M ${x1 + (dx1/len1)*r} ${y1 + (dy1/len1)*r} Q ${mx} ${my} ${x2 - (dx2/len2)*r} ${y2 - (dy2/len2)*r}`,
+    fill: 'none',
+    stroke: markerColor === 'blue' ? '#58a6ff' : markerColor === 'orange' ? '#f78166' : markerColor === 'green' ? '#7ee787' : markerColor === 'purple' ? '#d2a8ff' : '#ffa657',
+    'stroke-width': 2,
+    'stroke-dasharray': cls.includes('universal') ? '6 3' : 'none',
+    'marker-end': `url(#arrowhead-${markerColor})`
+  });
+  svg.appendChild(path);
+
+  if (label) {
+    const text = svgEl('text', { x: mx, y: my - 8, class: 'node-label', 'font-size': '13px' });
+    text.textContent = label;
+    text.style.fill = markerColor === 'green' ? '#7ee787' : '#8b949e';
+    svg.appendChild(text);
+  }
+}
+
+// ===== PRODUCT DIAGRAM =====
+function drawProduct() {
+  const svg = document.getElementById('svg-product');
+  svg.innerHTML = '';
+  
+  const xPos = +document.getElementById('product-x-pos').value;
+  const showUniv = document.getElementById('product-show-universal').value === '1';
+  const extra = +document.getElementById('product-extra').value;
+
+  // Fixed positions
+  const A = { x: 200, y: 320, label: 'A', color: '#58a6ff' };
+  const B = { x: 500, y: 320, label: 'B', color: '#58a6ff' };
+  const P = { x: 350, y: 200, label: 'A×B', color: '#d2a8ff' };
+  
+  // X position based on slider
+  const X = { x: 150 + xPos * 4, y: 60, label: 'X', color: '#7ee787' };
+
+  // Draw projections: A×B → A and A×B → B
+  drawArrow(svg, P.x, P.y, A.x, A.y, 'arrow arrow-projection', 'purple', 'π₁', { x: -20, y: 0 });
+  drawArrow(svg, P.x, P.y, B.x, B.y, 'arrow arrow-projection', 'purple', 'π₂', { x: 20, y: 0 });
+
+  // Draw f: X → A and g: X → B
+  drawArrow(svg, X.x, X.y, A.x, A.y, 'arrow arrow-product', 'blue', 'f', { x: -18, y: 0 });
+  drawArrow(svg, X.x, X.y, B.x, B.y, 'arrow arrow-product', 'blue', 'g', { x: 18, y: 0 });
+
+  // Universal arrow: X → A×B
+  if (showUniv) {
+    drawArrow(svg, X.x, X.y, P.x, P.y, 'arrow arrow-universal', 'green', '⟨f,g⟩', { x: 18, y: -5 });
+  }
+
+  // Extra objects
+  if (extra >= 1) {
+    const Y = { x: 100, y: 140, label: 'Y', color: '#ffa657' };
+    drawArrow(svg, Y.x, Y.y, A.x, A.y, 'arrow', 'gold', "f'", { x: -15, y: 5 });
+    drawArrow(svg, Y.x, Y.y, B.x, B.y, 'arrow', 'gold', "g'", { x: 0, y: -12 });
+    if (showUniv) drawArrow(svg, Y.x, Y.y, P.x, P.y, 'arrow arrow-universal', 'green', '⟨f\',g\'⟩', { x: -5, y: -12 });
+    drawNode(svg, Y.x, Y.y, Y.label, Y.color);
+  }
+  if (extra >= 2) {
+    const Z = { x: 580, y: 100, label: 'Z', color: '#ffa657' };
+    drawArrow(svg, Z.x, Z.y, A.x, A.y, 'arrow', 'gold', "f''", { x: -10, y: -10 });
+    drawArrow(svg, Z.x, Z.y, B.x, B.y, 'arrow', 'gold', "g''", { x: 15, y: 5 });
+    if (showUniv) drawArrow(svg, Z.x, Z.y, P.x, P.y, 'arrow arrow-universal', 'green', '', { x: 0, y: 0 });
+    drawNode(svg, Z.x, Z.y, Z.label, Z.color);
+  }
+
+  // Draw nodes on top
+  drawNode(svg, A.x, A.y, A.label, A.color);
+  drawNode(svg, B.x, B.y, B.label, B.color);
+  drawNode(svg, P.x, P.y, P.label, P.color);
+  drawNode(svg, X.x, X.y, X.label, X.color);
+}
+
+// ===== COPRODUCT DIAGRAM =====
+function drawCoproduct() {
+  const svg = document.getElementById('svg-coproduct');
+  svg.innerHTML = '';
+  
+  const xPos = +document.getElementById('coproduct-x-pos').value;
+  const showUniv = document.getElementById('coproduct-show-universal').value === '1';
+  const extra = +document.getElementById('coproduct-extra').value;
+
+  // Fixed positions
+  const A = { x: 200, y: 80, label: 'A', color: '#f78166' };
+  const B = { x: 500, y: 80, label: 'B', color: '#f78166' };
+  const C = { x: 350, y: 200, label: 'A+B', color: '#ffa657' };
+  
+  // X position based on slider
+  const X = { x: 150 + xPos * 4, y: 350, label: 'X', color: '#7ee787' };
+
+  // Draw injections: A → A+B and B → A+B
+  drawArrow(svg, A.x, A.y, C.x, C.y, 'arrow arrow-injection', 'gold', 'ι₁', { x: -20, y: 0 });
+  drawArrow(svg, B.x, B.y, C.x, C.y, 'arrow arrow-injection', 'gold', 'ι₂', { x: 20, y: 0 });
+
+  // Draw f: A → X and g: B → X
+  drawArrow(svg, A.x, A.y, X.x, X.y, 'arrow arrow-coproduct', 'orange', 'f', { x: -18, y: 0 });
+  drawArrow(svg, B.x, B.y, X.x, X.y, 'arrow arrow-coproduct', 'orange', 'g', { x: 18, y: 0 });
+
+  // Universal arrow: A+B → X
+  if (showUniv) {
+    drawArrow(svg, C.x, C.y, X.x, X.y, 'arrow arrow-universal', 'green', '[f,g]', { x: 18, y: -5 });
+  }
+
+  // Extra objects
+  if (extra >= 1) {
+    const Y = { x: 100, y: 280, label: 'Y', color: '#d2a8ff' };
+    drawArrow(svg, A.x, A.y, Y.x, Y.y, 'arrow', 'purple', "f'", { x: -15, y: -5 });
+    drawArrow(svg, B.x, B.y, Y.x, Y.y, 'arrow', 'purple', "g'", { x: 0, y: -12 });
+    if (showUniv) drawArrow(svg, C.x, C.y, Y.x, Y.y, 'arrow arrow-universal', 'green', "[f',g']", { x: -15, y: -12 });
+    drawNode(svg, Y.x, Y.y, Y.label, Y.color);
+  }
+  if (extra >= 2) {
+    const Z = { x: 580, y: 320, label: 'Z', color: '#d2a8ff' };
+    drawArrow(svg, A.x, A.y, Z.x, Z.y, 'arrow', 'purple', "f''", { x: -10, y: -10 });
+    drawArrow(svg, B.x, B.y, Z.x, Z.y, 'arrow', 'purple', "g''", { x: 15, y: -5 });
+    if (showUniv) drawArrow(svg, C.x, C.y, Z.x, Z.y, 'arrow arrow-universal', 'green', '', { x: 0, y: 0 });
+    drawNode(svg, Z.x, Z.y, Z.label, Z.color);
+  }
+
+  // Draw nodes on top
+  drawNode(svg, A.x, A.y, A.label, A.color);
+  drawNode(svg, B.x, B.y, B.label, B.color);
+  drawNode(svg, C.x, C.y, C.label, C.color);
+  drawNode(svg, X.x, X.y, X.label, X.color);
+}
+
+// ===== DUAL DIAGRAM =====
+let animating = false;
+let animFrame = null;
+
+function drawDual() {
+  const pos = +document.getElementById('dual-pos').value;
+  drawDualProduct(pos);
+  drawDualCoproduct(pos);
+  
+  renderMath('dual-product-formula', String.raw`\pi_1 \circ \langle f,g\rangle = f \quad \pi_2 \circ \langle f,g\rangle = g`);
+  renderMath('dual-coproduct-formula', String.raw`[f,g] \circ \iota_1 = f \quad [f,g] \circ \iota_2 = g`);
+}
+
+function drawDualProduct(pos) {
+  const svg = document.getElementById('svg-dual-product');
+  svg.innerHTML = '';
+  
+  const A = { x: 120, y: 260, label: 'A', color: '#58a6ff' };
+  const B = { x: 380, y: 260, label: 'B', color: '#58a6ff' };
+  const P = { x: 250, y: 160, label: 'A×B', color: '#d2a8ff' };
+  const X = { x: 100 + pos * 3, y: 50, label: 'X', color: '#7ee787' };
+
+  drawArrow(svg, P.x, P.y, A.x, A.y, 'arrow', 'purple', 'π₁', { x: -18, y: 0 });
+  drawArrow(svg, P.x, P.y, B.x, B.y, 'arrow', 'purple', 'π₂', { x: 18, y: 0 });
+  drawArrow(svg, X.x, X.y, A.x, A.y, 'arrow', 'blue', 'f', { x: -16, y: 0 });
+  drawArrow(svg, X.x, X.y, B.x, B.y, 'arrow', 'blue', 'g', { x: 16, y: 0 });
+  drawArrow(svg, X.x, X.y, P.x, P.y, 'arrow arrow-universal', 'green', '∃!', { x: 14, y: -5 });
+
+  drawNode(svg, A.x, A.y, A.label, A.color);
+  drawNode(svg, B.x, B.y, B.label, B.color);
+  drawNode(svg, P.x, P.y, P.label, P.color);
+  drawNode(svg, X.x, X.y, X.label, X.color);
+}
+
+function drawDualCoproduct(pos) {
+  const svg = document.getElementById('svg-dual-coproduct');
+  svg.innerHTML = '';
+  
+  const A = { x: 120, y: 50, label: 'A', color: '#f78166' };
+  const B = { x: 380, y: 50, label: 'B', color: '#f78166' };
+  const C = { x: 250, y: 150, label: 'A+B', color: '#ffa657' };
+  const X = { x: 100 + pos * 3, y: 270, label: 'X', color: '#7ee787' };
+
+  drawArrow(svg, A.x, A.y, C.x, C.y, 'arrow', 'gold', 'ι₁', { x: -18, y: 0 });
+  drawArrow(svg, B.x, B.y, C.x, C.y, 'arrow', 'gold', 'ι₂', { x: 18, y: 0 });
+  drawArrow(svg, A.x, A.y, X.x, X.y, 'arrow', 'orange', 'f', { x: -16, y: 0 });
+  drawArrow(svg, B.x, B.y, X.x, X.y, 'arrow', 'orange', 'g', { x: 16, y: 0 });
+  drawArrow(svg, C.x, C.y, X.x, X.y, 'arrow arrow-universal', 'green', '∃!', { x: 14, y: -5 });
+
+  drawNode(svg, A.x, A.y, A.label, A.color);
+  drawNode(svg, B.x, B.y, B.label, B.color);
+  drawNode(svg, C.x, C.y, C.label, C.color);
+  drawNode(svg, X.x, X.y, X.label, X.color);
+}
+
+function toggleAnimate() {
+  animating = !animating;
+  const btn = document.getElementById('btn-animate');
+  btn.textContent = animating ? '⏸ Pause' : '▶ Play';
+  btn.classList.toggle('active', animating);
+  if (animating) animate();
+  else cancelAnimationFrame(animFrame);
+}
+
+function animate() {
+  if (!animating) return;
+  const slider = document.getElementById('dual-pos');
+  let val = +slider.value;
+  val += 0.5;
+  if (val > 100) val = 0;
+  slider.value = val;
+  drawDual();
+  animFrame = requestAnimationFrame(animate);
+}
+
+// ===== SETS PANEL =====
+const alphaLabels = ['a', 'b', 'c', 'd', 'e'];
+const numLabels = ['1', '2', '3', '4', '5'];
+
+function rebuildSets() {
+  const sizeA = +document.getElementById('set-a-size').value;
+  const sizeB = +document.getElementById('set-b-size').value;
+  
+  const A = alphaLabels.slice(0, sizeA);
+  const B = numLabels.slice(0, sizeB);
+  
+  // Product display
+  const productDisplay = document.getElementById('product-set-display');
+  productDisplay.innerHTML = '';
+  const pairs = [];
+  for (const a of A) {
+    for (const b of B) {
+      pairs.push([a, b]);
+    }
+  }
+  pairs.forEach(([a, b], i) => {
+    const el = document.createElement('div');
+    el.className = 'element-box';
+    el.style.background = '#58a6ff22';
+    el.style.color = '#58a6ff';
+    el.textContent = `(${a},${b})`;
+    el.style.width = 'auto';
+    el.style.padding = '0 8px';
+    el.style.fontSize = '0.8rem';
+    el.onclick = () => selectProductElement(a, b, el);
+    productDisplay.appendChild(el);
+  });
+
+  // Coproduct display
+  const coproductDisplay = document.getElementById('coproduct-set-display');
+  coproductDisplay.innerHTML = '';
+  const disjoint = [];
+  A.forEach(a => disjoint.push({ val: a, from: 'A' }));
+  B.forEach(b => disjoint.push({ val: b, from: 'B' }));
+  
+  disjoint.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'element-box';
+    el.style.background = item.from === 'A' ? '#f7816622' : '#ffa65722';
+    el.style.color = item.from === 'A' ? '#f78166' : '#ffa657';
+    el.textContent = `${item.val}${item.from === 'A' ? '₁' : '₂'}`;
+    el.style.width = 'auto';
+    el.style.padding = '0 8px';
+    el.onclick = () => selectCoproductElement(item, el);
+    coproductDisplay.appendChild(el);
+  });
+
+  // Projection displays
+  document.getElementById('proj1-display').innerHTML = pairs.map(([a, b]) => 
+    `<span style="color:#d2a8ff;font-size:0.85rem;">(${a},${b}) ↦ ${a}</span>`
+  ).join(' &nbsp;');
+  
+  document.getElementById('proj2-display').innerHTML = pairs.map(([a, b]) => 
+    `<span style="color:#d2a8ff;font-size:0.85rem;">(${a},${b}) ↦ ${b}</span>`
+  ).join(' &nbsp;');
+
+  // Injection displays
+  document.getElementById('inj1-display').innerHTML = A.map(a => 
+    `<span style="color:#f78166;font-size:0.85rem;">${a} ↦ ${a}₁</span>`
+  ).join(' &nbsp;');
+  
+  document.getElementById('inj2-display').innerHTML = B.map(b => 
+    `<span style="color:#ffa657;font-size:0.85rem;">${b} ↦ ${b}₂</span>`
+  ).join(' &nbsp;');
+
+  document.getElementById('product-click-result').textContent = 'Click any element of A × B above';
+  document.getElementById('coproduct-click-result').textContent = 'Click any element of A + B above';
+
+  // Universal property explanation
+  renderMath('sets-universal', String.raw`|A \times B| = |A| \cdot |B| = ${sizeA} \cdot ${sizeB} = ${sizeA * sizeB} \qquad |A + B| = |A| + |B| = ${sizeA} + ${sizeB} = ${sizeA + sizeB}`);
+}
+
+function selectProductElement(a, b, el) {
+  document.querySelectorAll('#product-set-display .element-box').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('product-click-result').innerHTML = 
+    `<span style="color:#d2a8ff;">π₁(${a}, ${b}) = <strong>${a}</strong></span> &nbsp;&nbsp; ` +
+    `<span style="color:#d2a8ff;">π₂(${a}, ${b}) = <strong>${b}</strong></span><br>` +
+    `<span style="color:#8b949e;font-size:0.85rem;">The projections "decompose" the pair back into its components.</span>`;
+}
+
+function selectCoproductElement(item, el) {
+  document.querySelectorAll('#coproduct-set-display .element-box').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  const tag = item.from === 'A' ? '₁' : '₂';
+  const injName = item.from === 'A' ? 'ι₁' : 'ι₂';
+  const color = item.from === 'A' ? '#f78166' : '#ffa657';
+  document.getElementById('coproduct-click-result').innerHTML = 
+    `<span style="color:${color};">${item.val}${tag} came from <strong>${item.from}</strong> via ${injName}</span><br>` +
+    `<span style="color:#8b949e;font-size:0.85rem;">The subscript tag remembers which set it originated from (disjoint union).</span>`;
+}
+
+// ===== INIT =====
+drawProduct();
+setTimeout(() => {
+  drawCoproduct();
+  drawDual();
+  rebuildSets();
+}, 100);
+</script>
+</body>
+</html>
