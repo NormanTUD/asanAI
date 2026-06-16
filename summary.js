@@ -369,7 +369,7 @@ function _build_tooltip_config_section(config) {
 	return (
 		"<div class='st-tip-section'>" +
 		"<div class='st-tip-section-label'>" +
-		"<span class='st-tip-section-icon'>‚öô</span> Configuration</div>" +
+		"<span class='st-tip-section-icon'>&#9881;</span> Configuration</div>" +
 		"<div class='st-tip-config-grid'>" + config_items.join("") + "</div>" +
 		"</div>"
 	);
@@ -395,7 +395,7 @@ function _build_tooltip_params_section(layer_data_entry) {
 	var html =
 		"<div class='st-tip-section'>" +
 		"<div class='st-tip-section-label'>" +
-		"<span class='st-tip-section-icon'>üìä</span> Parameters</div>" +
+		"<span class='st-tip-section-icon'>&#128202;</span> Parameters</div>" +
 		"<div class='st-tip-param-grid'>" +
 		"<div class='st-tip-param-row'><span class='st-tip-param-label'>Total</span>" +
 		"<span class='st-tip-param-value'>" + layer_data_entry.params.toLocaleString() + "</span></div>";
@@ -442,7 +442,7 @@ function _build_tooltip_memory_section(layer_data_entry) {
 	return (
 		"<div class='st-tip-section st-tip-section-memory'>" +
 		"<div class='st-tip-section-label'>" +
-		"<span class='st-tip-section-icon'>üíæ</span> Memory (float32)</div>" +
+		"<span class='st-tip-section-icon'>&#128190;</span> Memory (float32)</div>" +
 		"<div class='st-tip-mem-row'><span class='st-tip-mem-label'>Weights</span>" +
 		"<span class='st-tip-mem-value'>~" + mem_str + "</span></div>" +
 		activation_mem +
@@ -454,10 +454,10 @@ function _build_tooltip_shape_section(layer_data_entry) {
 	return (
 		"<div class='st-tip-section st-tip-section-shapes'>" +
 		"<div class='st-tip-section-label'>" +
-		"<span class='st-tip-section-icon'>üìê</span> Shape Flow</div>" +
+		"<span class='st-tip-section-icon'>&#128256;</span> Shape Flow</div>" +
 		"<div class='st-tip-shape-flow'>" +
 		"<span class='st-tip-shape-box'>" + _escape_html(_format_shape(layer_data_entry.input_shape)) + "</span>" +
-		"<span class='st-tip-shape-arrow'>‚Üí</span>" +
+		"<span class='st-tip-shape-arrow'>&#10132;</span>" +
 		"<span class='st-tip-shape-box st-tip-shape-out'>" + _escape_html(_format_shape(layer_data_entry.output_shape)) + "</span>" +
 		"</div>" +
 		"</div>"
