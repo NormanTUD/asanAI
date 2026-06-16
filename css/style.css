@@ -1942,3 +1942,12 @@ label.buttons_in_custom_images {
         0 12px 30px rgba(0, 0, 0, 0.12),
         inset 0 0 0 1px rgba(100, 150, 255, 0.2);
 }
+
+.param-count {
+    display: block;
+}
+
+.st-table-header:hover,
+.st-table-header:hover th {
+    background: inherit;
+}

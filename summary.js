@@ -1224,6 +1224,12 @@ function _inject_tooltip_styles() {
 			".st-summary-table tbody tr:hover {" +
 			"  background: rgba(99, 102, 241, 0.06);" +
 			"}" +
+
+			".st-table-header:hover {" +
+			"  background: linear-gradient(135deg, #1e1b4b, #312e81, #3730a3) !important;" +
+			"}" +
+
+
 			".st-summary-table tbody tr td {" +
 			"  border-bottom: 1px solid rgba(255,255,255,0.04);" +
 			"}" +
