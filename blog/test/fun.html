@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 The Science of FUN 🧪</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dopamine: #FF6B6B;
+            --serotonin: #4ECDC4;
+            --endorphin: #FFE66D;
+            --oxytocin: #FF8ED4;
+            --flow: #7B68EE;
+            --bg-dark: #1a1a2e;
+            --bg-mid: #16213e;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        #custom-cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--endorphin), var(--dopamine));
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.2s, height 0.2s;
+            mix-blend-mode: screen;
+            box-shadow: 0 0 20px var(--dopamine), 0 0 60px var(--endorphin);
+        }
+
+        #custom-cursor.clicked {
+            width: 50px;
+            height: 50px;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--dopamine), transparent, var(--serotonin), transparent, var(--endorphin), transparent);
+            animation: rotateBg 20s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes rotateBg {
+            to { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(3rem, 10vw, 8rem);
+            text-align: center;
+            background: linear-gradient(45deg, var(--dopamine), var(--endorphin), var(--serotonin), var(--oxytocin), var(--flow));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            opacity: 0.8;
+            margin-top: 1rem;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .scroll-prompt {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s ease infinite;
+            font-size: 2rem;
+            z-index: 2;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Fun Meter */
+        #fun-meter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px 20px;
+            border: 2px solid var(--serotonin);
+            min-width: 200px;
+        }
+
+        #fun-meter h3 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--endorphin);
+        }
+
+        .meter-bar {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .meter-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .meter-fill.dopamine { background: linear-gradient(90deg, var(--dopamine), #ff9a9e); }
+        .meter-fill.serotonin { background: linear-gradient(90deg, var(--serotonin), #a8edea); }
+        .meter-fill.endorphin { background: linear-gradient(90deg, var(--endorphin), #fff3b0); }
+        .meter-fill.oxytocin { background: linear-gradient(90deg, var(--oxytocin), #ffc3e1); }
+
+        .meter-label {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .section-content {
+            max-width: 800px;
+            text-align: center;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        /* Dopamine Section */
+        .dopamine-section {
+            background: linear-gradient(180deg, var(--bg-dark), #2d1b3d);
+        }
+
+        .dopamine-section .section-title { color: var(--dopamine); }
+
+        .reward-button {
+            margin-top: 2rem;
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            font-family: 'Fredoka One', cursive;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, var(--dopamine), #ff9a9e);
+            color: white;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        .reward-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 60px rgba(255, 107, 107, 0.6);
+        }
+
+        .reward-button:active {
+            transform: scale(0.95);
+        }
+
+        .reward-counter {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            color: var(--endorphin);
+            margin-top: 1rem;
+            text-shadow: 0 0 20px var(--endorphin);
+        }
+
+        .reward-message {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            min-height: 2rem;
+            color: var(--oxytocin);
+        }
+
+        /* Flow Section */
+        .flow-section {
+            background: linear-gradient(180deg, #2d1b3d, #1b2d4d);
+        }
+
+        .flow-section .section-title { color: var(--flow); }
+
+        .flow-game {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            border: 2px solid var(--flow);
+            position: relative;
+            overflow: hidden;
+            margin-top: 2rem;
+            cursor: none;
+        }
+
+        .flow-ball {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--flow), #4a3aaa);
+            position: absolute;
+            transition: all 0.08s ease;
+            box-shadow: 0 0 20px var(--flow), 0 0 40px rgba(123, 104, 238, 0.3);
+        }
+
+        .flow-target {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px dashed var(--endorphin);
+            position: absolute;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        .flow-score {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-family: 'Fredoka One', cursive;
+            color: var(--endorphin);
+        }
+
+        .flow-streak {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-family: 'Fredoka One', cursive;
+            color: var(--serotonin);
+        }
+
+        /* Laughter Section */
+        .laughter-section {
+            background: linear-gradient(180deg, #1b2d4d, #1d3d2b);
+        }
+
+        .laughter-section .section-title { color: var(--endorphin); }
+
+        .joke-machine {
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 2px solid var(--endorphin);
+            max-width: 600px;
+            width: 100%;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .joke-text {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .joke-btn {
+            margin-top: 1.5rem;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: 'Fredoka One', cursive;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, var(--endorphin), #ffd93d);
+            color: #333;
+            cursor: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 230, 109, 0.3);
+        }
+
+        .joke-btn:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 15px 50px rgba(255, 230, 109, 0.5);
+        }
+
+        .laugh-meter {
+            margin-top: 1rem;
+            font-size: 2rem;
+        }
+
+        /* Social Section */
+        .social-section {
+            background: linear-gradient(180deg, #1d3d2b, #3d1d2b);
+        }
+
+        .social-section .section-title { color: var(--oxytocin); }
+
+        .hug-zone {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 142, 212, 0.3), transparent);
+            border: 3px dashed var(--oxytocin);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            margin-top: 2rem;
+            cursor: none;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .hug-zone:hover {
+            transform: scale(1.2);
+            background: radial-gradient(circle, rgba(255, 142, 212, 0.6), rgba(255, 142, 212, 0.1));
+            box-shadow: 0 0 60px rgba(255, 142, 212, 0.4);
+        }
+
+        .hug-zone.hugged {
+            animation: hugPulse 0.5s ease;
+        }
+
+        @keyframes hugPulse {
+            0% { transform: scale(1.2); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1.2); }
+        }
+
+        .hug-counter {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            color: var(--oxytocin);
+            margin-top: 1rem;
+        }
+
+        .hug-message {
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+            min-height: 1.5rem;
+        }
+
+        /* Novelty Section */
+        .novelty-section {
+            background: linear-gradient(180deg, #3d1d2b, #1a1a2e);
+        }
+
+        .novelty-section .section-title { color: var(--serotonin); }
+
+        .surprise-boxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            max-width: 600px;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .surprise-box {
+            aspect-ratio: 1;
+            background: rgba(0,0,0,0.4);
+            border-radius: 15px;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .surprise-box::before {
+            content: '?';
+            font-family: 'Fredoka One', cursive;
+            font-size: 2rem;
+            color: var(--serotonin);
+        }
+
+        .surprise-box.revealed::before {
+            content: none;
+        }
+
+        .surprise-box:hover {
+            border-color: var(--serotonin);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.3);
+        }
+
+        .surprise-box.revealed {
+            border-color: var(--endorphin);
+            animation: revealPop 0.5s ease;
+        }
+
+        @keyframes revealPop {
+            0% { transform: scale(1.05); }
+            50% { transform: scale(1.3) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
+
+        /* Brain Diagram */
+        .brain-section {
+            background: linear-gradient(180deg, #1a1a2e, var(--bg-dark));
+        }
+
+        .brain-section .section-title { 
+            background: linear-gradient(45deg, var(--dopamine), var(--serotonin), var(--endorphin));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brain-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin-top: 2rem;
+        }
+
+        .brain-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .brain-region {
+            cursor: none;
+            transition: all 0.3s ease;
+        }
+
+        .brain-region:hover {
+            filter: brightness(1.5);
+            transform-origin: center;
+        }
+
+        .brain-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            max-width: 250px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--serotonin);
+            z-index: 100;
+        }
+
+        .brain-tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Playground Section */
+        .playground-section {
+            background: linear-gradient(180deg, var(--bg-dark), #0f0f23);
+        }
+
+        .playground-section .section-title {
+            background: linear-gradient(45deg, var(--oxytocin), var(--flow), var(--endorphin));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sound-pad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 500px;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .pad-btn {
+            aspect-ratio: 1;
+            border-radius: 15px;
+            border: none;
+            cursor: none;
+            font-size: 2rem;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pad-btn:active {
+            transform: scale(0.9);
+        }
+
+        .pad-btn.active {
+            animation: padGlow 0.3s ease;
+        }
+
+        @keyframes padGlow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); filter: brightness(1.5); }
+            100% { transform: scale(1); }
+        }
+
+        /* Confetti */
+        .confetti-piece {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            animation: confettiFall 3s ease forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Final Section */
+        .final-section {
+            background: linear-gradient(180deg, #0f0f23, #1a1a2e);
+            text-align: center;
+        }
+
+        .final-section .section-title {
+            background: linear-gradient(45deg, var(--dopamine), var(--endorphin), var(--serotonin), var(--oxytocin), var(--flow));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .fun-formula {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(1rem, 3vw, 1.8rem);
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            border: 2px solid var(--flow);
+            max-width: 700px;
+        }
+
+        .fun-formula span {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: none;
+        }
+
+        .fun-formula span:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .f-novelty { background: rgba(78, 205, 196, 0.3); color: var(--serotonin); }
+        .f-challenge { background: rgba(123, 104, 238, 0.3); color: var(--flow); }
+        .f-reward { background: rgba(255, 107, 107, 0.3); color: var(--dopamine); }
+        .f-social { background: rgba(255, 142, 212, 0.3); color: var(--oxytocin); }
+        .f-safety { background: rgba(255, 230, 109, 0.3); color: var(--endorphin); }
+
+        /* Floating emojis */
+        .float-emoji {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 9998;
+            animation: floatUp 2s ease forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #fun-meter {
+                top: 10px;
+                right: 10px;
+                min-width: 150px;
+                padding: 10px 15px;
+            }
+            
+            .sound-pad {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .surprise-boxes {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Wiggle animation for interactive elements */
+        .wiggle {
+            animation: wiggle 0.5s ease;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        /* Tooltip for science facts */
+        .science-note {
+            display: inline-block;
+            border-bottom: 2px dotted var(--serotonin);
+            cursor: none;
+            position: relative;
+        }
+
+        .science-note::after {
+            content: attr(data-note);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.95);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            width: max-content;
+            max-width: 250px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            border: 1px solid var(--serotonin);
+            z-index: 100;
+        }
+
+        .science-note:hover::after {
+            opacity: 1;
+        }
+
+        /* Spinning DNA helix decoration */
+        .dna-decoration {
+            position: absolute;
+            opacity: 0.1;
+            font-size: 5rem;
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="custom-cursor"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Fun Meter -->
+    <div id="fun-meter">
+        <h3>🧠 YOUR BRAIN RIGHT NOW</h3>
+        <div class="meter-label"><span>Dopamine</span><span id="dopamine-val">0%</span></div>
+        <div class="meter-bar"><div class="meter-fill dopamine" id="dopamine-bar"></div></div>
+        <div class="meter-label"><span>Serotonin</span><span id="serotonin-val">0%</span></div>
+        <div class="meter-bar"><div class="meter-fill serotonin" id="serotonin-bar"></div></div>
+        <div class="meter-label"><span>Endorphins</span><span id="endorphin-val">0%</span></div>
+        <div class="meter-bar"><div class="meter-fill endorphin" id="endorphin-bar"></div></div>
+        <div class="meter-label"><span>Oxytocin</span><span id="oxytocin-val">0%</span></div>
+        <div class="meter-bar"><div class="meter-fill oxytocin" id="oxytocin-bar"></div></div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 id="hero-title">WHAT IS FUN?</h1>
+        <p class="hero-subtitle">A scientifically interactive exploration of humanity's favorite feeling</p>
+        <p style="margin-top: 1rem; opacity: 0.6; z-index: 2;">Move your mouse. Click things. <em>Have fun.</em></p>
+        <div class="scroll-prompt">👇</div>
+    </section>
+
+    <!-- Dopamine / Reward Section -->
+    <section class="section dopamine-section" id="dopamine-section">
+        <h2 class="section-title">🧪 Chapter 1: The Dopamine Hit</h2>
+        <div class="section-content">
+            <p>Fun begins with <span class="science-note" data-note="Dopamine is a neurotransmitter that signals reward anticipation. It's released BEFORE the reward, driving motivation.">dopamine</span> — your brain's "wanting" chemical. It doesn't just reward you; it makes you <em>anticipate</em> rewards. That anticipation? That's where fun <em>starts</em>.</p>
+            <p style="margin-top: 1rem;">Try pressing this button. Your brain is already predicting something good will happen. That prediction IS the fun.</p>
+        </div>
+        <button class="reward-button" id="reward-btn">🎰 PRESS FOR DOPAMINE</button>
+        <div class="reward-counter" id="reward-counter">0</div>
+        <div class="reward-message" id="reward-message"></div>
+    </section>
+
+    <!-- Flow Section -->
+    <section class="section flow-section" id="flow-section">
+        <h2 class="section-title">🌊 Chapter 2: The Flow State</h2>
+        <div class="section-content">
+            <p><span class="science-note" data-note="Psychologist Mihaly Csikszentmihalyi identified 'flow' as a state of complete absorption where challenge perfectly matches skill level.">Flow</span> is when fun becomes transcendent. Your prefrontal cortex quiets down, time distorts, and you become one with the activity. It happens when challenge meets skill perfectly.</p>
+            <p style="margin-top: 1rem;">Guide the ball to the targets. As you improve, notice how you stop thinking and start <em>flowing</em>.</p>
+        </div>
+        <div class="flow-game" id="flow-game">
+            <div class="flow-streak" id="flow-streak">🔥 Streak: 0</div>
+            <div class="flow-score" id="flow-score">Score: 0</div>
+            <div class="flow-ball" id="flow-ball"></div>
+            <div class="flow-target" id="flow-target"></div>
+        </div>
+    </section>
+
+    <!-- Laughter Section -->
+    <section class="section laughter-section" id="laughter-section">
+        <h2 class="section-title">😂 Chapter 3: Laughter & Incongruity</h2>
+        <div class="section-content">
+            <p>Laughter is a <span class="science-note" data-note="Laughter triggers endorphin release, reduces cortisol, and activates the ventromedial prefrontal cortex. It evolved as a social bonding signal.">neurological event</span> triggered by <strong>incongruity resolution</strong> — your brain expects one thing, gets another, and the surprise is non-threatening. The relief releases endorphins.</p>
+            <p style="margin-top: 1rem;">Science jokes activate both your analytical and reward circuits simultaneously:</p>
+        </div>
+        <div class="joke-machine">
+            <div class="joke-text" id="joke-text">Press the button for a scientifically-formulated humor stimulus...</div>
+            <button class="joke-btn" id="joke-btn">⚡ GENERATE HUMOR</button>
+            <div class="laugh-meter" id="laugh-meter"></div>
+        </div>
+    </section>
+
+    <!-- Social / Oxytocin Section -->
+    <section class="section social-section" id="social-section">
+        <h2 class="section-title">🤗 Chapter 4: Social Fun & Oxytocin</h2>
+        <div class="section-content">
+            <p>Humans are social creatures. <span class="science-note" data-note="Oxytocin is released during physical touch, eye contact, and social bonding. It reduces amygdala activity (fear) and increases trust.">Oxytocin</span> — the "bonding hormone" — amplifies fun exponentially when shared. Even virtual connection triggers it.</p>
+            <p style="margin-top: 1rem;">Hold your cursor on the heart. Yes, even this simulated warmth activates mirror neurons.</p>
+        </div>
+        <div class="hug-zone" id="hug-zone">💜</div>
+        <div class="hug-counter" id="hug-counter">Warmth level: 0</div>
+        <div class="hug-message" id="hug-message"></div>
+    </section>
+
+    <!-- Novelty Section -->
+    <section class="section novelty-section" id="novelty-section">
+        <h2 class="section-title">✨ Chapter 5: Novelty & Curiosity</h2>
+        <div class="section-content">
+            <p>Your brain's <span class="science-note" data-note="The substantia nigra/ventral tegmental area fires dopamine neurons in response to novel stimuli. This is why exploration feels rewarding.">novelty detection system</span> rewards exploration. Each unknown box below is a micro-adventure. Your anterior cingulate cortex is BEGGING you to click them.</p>
+            <p style="margin-top: 1rem;">Notice how the fun diminishes slightly with each reveal — that's <em>habituation</em>. Novelty is a finite resource!</p>
+        </div>
+        <div class="surprise-boxes" id="surprise-boxes">
+            <div class="surprise-box" data-index="0"></div>
+            <div class="surprise-box" data-index="1"></div>
+            <div class="surprise-box" data-index="2"></div>
+            <div class="surprise-box" data-index="3"></div>
+            <div class="surprise-box" data-index="4"></div>
+            <div class="surprise-box" data-index="5"></div>
+            <div class="surprise-box" data-index="6"></div>
+            <div class="surprise-box" data-index="7"></div>
+            <div class="surprise-box" data-index="8"></div>
+        </div>
+    </section>
+
+    <!-- Sound Playground -->
+    <section class="section playground-section" id="playground-section">
+        <h2 class="section-title">🎵 Chapter 6: Play & Mastery</h2>
+        <div class="section-content">
+            <p><span class="science-note" data-note="Play activates the cerebellum and basal ganglia simultaneously. It's how mammals learn — through low-stakes experimentation with immediate feedback.">Play</span> is the brain's learning mode disguised as fun. When you create patterns below, your motor cortex, auditory cortex, and reward system all synchronize. This is why music, games, and art feel <em>inherently</em> fun.</p>
+            <p style="margin-top: 1rem;">Tap the pads. Make music. Your brain will start predicting patterns — and reward you for creating them.</p>
+        </div>
+        <div class="sound-pad" id="sound-pad">
+            <button class="pad-btn" style="background: linear-gradient(135deg, #FF6B6B, #ee5a24);" data-note="C4">🥁</button>
+            <button class="pad-btn" style="background: linear-gradient(135deg, #FF8ED4, #e056a0);" data-note="D4">🎹</button>
+            <button class="pad-btn" style="background: linear-gradient(135deg, #4ECDC4, #2ecc71);" data-note="E4">🎸</button>
+            <button class="pad-btn" style="background: linear-gradient(135deg, #FFE66D, #f39c12);" data-note="F4">🔔</button>
+            <button class="pad-btn" style="background: linear-gradient(135deg, #7B68EE, #6c5ce7);" data-note="G4">✨</button>
+            <button class="pad-btn" style="background: linear-gradient(135deg, #a29bfe, #74b9ff);" data-note="A4">💫</button>
+            <button class="pad-btn" style="background: linear-gradient(135deg, #fd79a8, #e17055);" data-note="B4">🎶</button>
+            <button class="pad-btn" style="background: linear-gradient(135deg, #00cec9, #0984e3);" data-note="C5">🌟</button>
+        </div>
+    </section>
+
+    <!-- Brain Diagram Section -->
+    <section class="section brain-section" id="brain-section">
+        <h2 class="section-title">🧠 Your Brain on Fun</h2>
+        <div class="section-content">
+            <p>Fun isn't located in one place — it's a symphony of brain regions firing together. Hover over the regions to see how they contribute to your experience of fun.</p>
+        </div>
+        <div class="brain-container" id="brain-container">
+            <svg class="brain-svg" viewBox="0 0 350 350">
+                <!-- Brain outline -->
+                <path d="M175 30 C 80 30, 30 100, 35 175 C 40 250, 80 320, 175 320 C 270 320, 310 250, 315 175 C 320 100, 270 30, 175 30" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                
+                <!-- Prefrontal Cortex -->
+                <ellipse class="brain-region" cx="175" cy="80" rx="60" ry="35" fill="rgba(123, 104, 238, 0.4)" stroke="var(--flow)" stroke-width="2" data-region="prefrontal" style="cursor:none;"/>
+                
+                <!-- Nucleus Accumbens (Reward Center) -->
+                <circle class="brain-region" cx="175" cy="175" r="25" fill="rgba(255, 107, 107, 0.5)" stroke="var(--dopamine)" stroke-width="2" data-region="accumbens" style="cursor:none;"/>
+                
+                <!-- Amygdala -->
+                <ellipse class="brain-region" cx="130" cy="200" rx="20" ry="15" fill="rgba(255, 230, 109, 0.4)" stroke="var(--endorphin)" stroke-width="2" data-region="amygdala" style="cursor:none;"/>
+                
+                <!-- Hippocampus -->
+                <ellipse class="brain-region" cx="220" cy="200" rx="25" ry="15" fill="rgba(78, 205, 196, 0.4)" stroke="var(--serotonin)" stroke-width="2" data-region="hippocampus" style="cursor:none;"/>
+                
+                <!-- VTA -->
+                <circle class="brain-region" cx="175" cy="240" r="18" fill="rgba(255, 142, 212, 0.4)" stroke="var(--oxytocin)" stroke-width="2" data-region="vta" style="cursor:none;"/>
+                
+                <!-- Cerebellum -->
+                <ellipse class="brain-region" cx="175" cy="290" rx="50" ry="25" fill="rgba(78, 205, 196, 0.3)" stroke="var(--serotonin)" stroke-width="2" data-region="cerebellum" style="cursor:none;"/>
+            </svg>
+            <div class="brain-tooltip" id="brain-tooltip"></div>
+        </div>
+    </section>
+
+    <!-- Final Section -->
+    <section class="section final-section" id="final-section">
+        <h2 class="section-title">🎯 The Formula of Fun</h2>
+        <div class="section-content">
+            <p>After all this interaction, your brain has demonstrated the answer. Fun isn't one thing — it's an <em>emergent property</em> of multiple neural systems working in harmony.</p>
+        </div>
+        <div class="fun-formula">
+            <p>FUN = </p>
+            <span class="f-novelty">Novelty</span> +
+            <span class="f-challenge">Optimal Challenge</span> +
+            <span class="f-reward">Reward Anticipation</span> +
+            <span class="f-social">Social Connection</span> +
+            <span class="f-safety">Psychological Safety</span>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">× Attention ÷ Self-consciousness</p>
+        </div>
+        <div class="section-content" style="margin-top: 2rem;">
+            <p>You just experienced all of these. The clicking, the flow game, the jokes, the virtual hug, the mystery boxes, the music — each activated different but overlapping circuits.</p>
+            <p style="margin-top: 1rem;"><strong>Fun is your brain saying: "This is safe, novel, social, and rewarding. Do more of this. This is how we learn and grow."</strong></p>
+            <p style="margin-top: 2rem; font-size: 1.5rem;">Now go have fun in the real world. Your neurons will thank you. 🧠✨</p>
+        </div>
+    </section>
+
+    <script>
+        // ==================== CUSTOM CURSOR ====================
+        const cursor = document.getElementById('custom-cursor');
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mousedown', () => cursor.classList.add('clicked'));
+        document.addEventListener('mouseup', () => cursor.classList.remove('clicked'));
+
+        // ==================== PARTICLE SYSTEM ====================
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color || `hsl(${Math.random() * 360}, 80%, 60%)`;
+                this.size = Math.random() * 4 + 2;
+                this.speedX = (Math.random() - 0.5) * 8;
+                this.speedY = (Math.random() - 0.5) * 8;
+                this.life = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.speedX *= 0.98;
+                this.speedY *= 0.98;
+                this.life -= this.decay;
+                this.size *= 0.99;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function emitParticles(x, y, count = 10, color = null) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            emitParticles(e.clientX, e.clientY, 15);
+        });
+
+        let lastMouseMove = 0;
+        document.addEventListener('mousemove', (e) => {
+            if (Date.now() - lastMouseMove > 50) {
+                particles.push(new Particle(e.clientX, e.clientY));
+                lastMouseMove = Date.now();
+            }
+        });
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.life > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // ==================== FUN METER ====================
+        const funLevels = {
+            dopamine: 0,
+            serotonin: 0,
+            endorphin: 0,
+            oxytocin: 0
+        };
+
+        function updateFunMeter() {
+            Object.keys(funLevels).forEach(key => {
+                const bar = document.getElementById(`${key}-bar`);
+                const val = document.getElementById(`${key}-val`);
+                const level = Math.min(100, Math.max(0, funLevels[key]));
+                bar.style.width = level + '%';
+                val.textContent = Math.round(level) + '%';
+            });
+        }
+
+        function addFun(type, amount) {
+            funLevels[type] = Math.min(100, funLevels[type] + amount);
+            updateFunMeter();
+        }
+
+        // Gradual decay
+        setInterval(() => {
+            Object.keys(funLevels).forEach(key => {
+                funLevels[key] = Math.max(0, funLevels[key] - 0.3);
+            });
+            updateFunMeter();
+        }, 200);
+
+        // ==================== DOPAMINE BUTTON ====================
+        let rewardCount = 0;
+        const rewardBtn = document.getElementById('reward-btn');
+        const rewardCounter = document.getElementById('reward-counter');
+        const rewardMessage = document.getElementById('reward-message');
+
+        const rewardMessages = [
+            "🎉 Dopamine spike detected!",
+            "⚡ Your ventral tegmental area just fired!",
+            "🧠 Prediction confirmed = reward!",
+            "✨ Notice: wanting to press again? That's dopamine!",
+            "🔥 Your nucleus accumbens is LIT",
+            "💫 Reward prediction error: POSITIVE",
+            "🌟 The anticipation was the real fun all along",
+            "🎯 Your brain just said 'do that again!'",
+            "⭐ Intermittent reinforcement engaged!",
+            "🚀 Mesolimbic pathway: ACTIVATED"
+        ];
+
+        const rewardSizes = [1, 1, 1, 2, 1, 1, 5, 1, 1, 1, 3, 1, 10, 1, 1];
+        let rewardIndex = 0;
+
+        rewardBtn.addEventListener('click', () => {
+            const reward = rewardSizes[rewardIndex % rewardSizes.length];
+            rewardCount += reward;
+            rewardCounter.textContent = rewardCount;
+            rewardMessage.textContent = rewardMessages[Math.floor(Math.random() * rewardMessages.length)];
+            rewardIndex++;
+
+            addFun('dopamine', 8 + reward * 2);
+
+            // Visual feedback proportional to reward
+            const rect = rewardBtn.getBoundingClientRect();
+            emitParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, reward * 8, '#FF6B6B');
+
+            if (reward >= 5) {
+                launchConfetti();
+                rewardCounter.style.transform = 'scale(1.5)';
+                setTimeout(() => rewardCounter.style.transform = 'scale(1)', 300);
+            }
+
+            // Variable reward - button text changes
+            if (rewardCount > 20) rewardBtn.textContent = '🎰 MORE DOPAMINE PLEASE';
+            if (rewardCount > 50) rewardBtn.textContent = '🎰 I CANT STOP (that\'s dopamine!)';
+            if (rewardCount > 100) rewardBtn.textContent = '🎰 TOLERANCE IS BUILDING...';
+        });
+
+        // ==================== FLOW GAME ====================
+        const flowGame = document.getElementById('flow-game');
+        const flowBall = document.getElementById('flow-ball');
+        const flowTarget = document.getElementById('flow-target');
+        const flowScoreEl = document.getElementById('flow-score');
+        const flowStreakEl = document.getElementById('flow-streak');
+
+        let flowScore = 0;
+        let flowStreak = 0;
+        let targetX = 0, targetY = 0;
+
+        function placeTarget() {
+            const gameRect = flowGame.getBoundingClientRect();
+            targetX = Math.random() * (gameRect.width - 80) + 10;
+            targetY = Math.random() * (gameRect.height - 80) + 10;
+            flowTarget.style.left = targetX + 'px';
+            flowTarget.style.top = targetY + 'px';
+        }
+
+        placeTarget();
+
+        flowGame.addEventListener('mousemove', (e) => {
+            const rect = flowGame.getBoundingClientRect();
+            const x = e.clientX - rect.left - 20;
+            const y = e.clientY - rect.top - 20;
+            flowBall.style.left = Math.max(0, Math.min(rect.width - 40, x)) + 'px';
+            flowBall.style.top = Math.max(0, Math.min(rect.height - 40, y)) + 'px';
+
+            // Check collision
+            const ballX = parseFloat(flowBall.style.left) + 20;
+            const ballY = parseFloat(flowBall.style.top) + 20;
+            const tX = targetX + 30;
+            const tY = targetY + 30;
+            const dist = Math.sqrt((ballX - tX) ** 2 + (ballY - tY) ** 2);
+
+            if (dist < 40) {
+                flowScore++;
+                flowStreak++;
+                flowScoreEl.textContent = 'Score: ' + flowScore;
+                flowStreakEl.textContent = '🔥 Streak: ' + flowStreak;
+                placeTarget();
+                addFun('dopamine', 5);
+                addFun('serotonin', 3);
+
+                emitParticles(e.clientX, e.clientY, 8, '#7B68EE');
+
+                if (flowStreak > 5) {
+                    flowGame.style.borderColor = '#FFE66D';
+                    flowGame.style.boxShadow = '0 0 30px rgba(255, 230, 109, 0.3)';
+                    addFun('endorphin', 2);
+                }
+                if (flowStreak > 10) {
+                    flowGame.style.borderColor = '#FF6B6B';
+                    flowGame.style.boxShadow = '0 0 50px rgba(255, 107, 107, 0.4)';
+                }
+            }
+        });
+
+        flowGame.addEventListener('mouseleave', () => {
+            flowStreak = 0;
+            flowStreakEl.textContent = '🔥 Streak: 0';
+            flowGame.style.borderColor = 'var(--flow)';
+            flowGame.style.boxShadow = 'none';
+        });
+
+        // ==================== JOKE MACHINE ====================
+        const jokes = [
+            { setup: "Why do neurotransmitters break up?", punchline: "Because one of them had too many attachments. 🧠💔" },
+            { setup: "What did the dopamine say to the serotonin?", punchline: "\"You make me feel stable, but I make things EXCITING.\" ⚡" },
+            { setup: "A neuron walks into a bar...", punchline: "The bartender says, 'Why the long axon?' 🍺" },
+            { setup: "Why is the amygdala terrible at parties?", punchline: "It keeps triggering everyone's fight-or-flight response! 😱🎉" },
+            { setup: "What's a brain's favorite type of music?", punchline: "Anything with a good neural beat. 🎵🧠" },
+            { setup: "Why did the prefrontal cortex go to therapy?", punchline: "It couldn't stop overthinking about the future! 🤔" },
+            { setup: "How does the hippocampus greet people?", punchline: "\"I remember you!\" ...or does it? 🤷‍♂️" },
+            { setup: "Why don't endorphins ever get lonely?", punchline: "Because they're always bonding with receptors! 🤗" },
+            { setup: "What did one synapse say to the other?", punchline: "\"I feel a real connection between us.\" ⚡💕" },
+            { setup: "Why is the cerebellum the best dancer?", punchline: "It has perfect motor coordination and NEVER overthinks the moves! 💃" }
+        ];
+
+        let jokeIndex = 0;
+        const jokeText = document.getElementById('joke-text');
+        const jokeBtn = document.getElementById('joke-btn');
+        const laughMeter = document.getElementById('laugh-meter');
+        let laughCount = 0;
+
+        jokeBtn.addEventListener('click', () => {
+            const joke = jokes[jokeIndex % jokes.length];
+            jokeText.innerHTML = `<div><strong>${joke.setup}</strong><br><br><em>${joke.punchline}</em></div>`;
+            jokeIndex++;
+            laughCount++;
+
+            addFun('endorphin', 10);
+            addFun('dopamine', 5);
+
+            // Update laugh meter with emojis
+            laughMeter.textContent = '😂'.repeat(Math.min(laughCount, 10));
+
+            if (laughCount >= 5) {
+                jokeBtn.textContent = '⚡ MOAR HUMOR (endorphins rising!)';
+            }
+
+            const rect = jokeBtn.getBoundingClientRect();
+            emitParticles(rect.left + rect.width / 2, rect.top, 12, '#FFE66D');
+        });
+
+        // ==================== HUG ZONE ====================
+        const hugZone = document.getElementById('hug-zone');
+        const hugCounter = document.getElementById('hug-counter');
+        const hugMessage = document.getElementById('hug-message');
+        let hugLevel = 0;
+        let hugInterval = null;
+
+        const hugMessages = [
+            "Warmth detected... 🌡️",
+            "Mirror neurons activating... 🪞",
+            "Oxytocin releasing... 💜",
+            "Vagus nerve stimulated... 🌊",
+            "Social bonding circuits: ONLINE 🤝",
+            "You're literally hugging a webpage and it's working 🥹",
+            "Your brain can't tell this isn't real connection 🧠",
+            "Peak oxytocin! You love a purple heart! 💜💜💜"
+        ];
+
+        hugZone.addEventListener('mouseenter', () => {
+            hugInterval = setInterval(() => {
+                hugLevel = Math.min(100, hugLevel + 2);
+                hugCounter.textContent = `Warmth level: ${hugLevel}%`;
+                addFun('oxytocin', 3);
+                addFun('serotonin', 1);
+
+                const msgIndex = Math.min(Math.floor(hugLevel / 13), hugMessages.length - 1);
+                hugMessage.textContent = hugMessages[msgIndex];
+
+                if (hugLevel % 20 === 0) {
+                    hugZone.classList.add('hugged');
+                    setTimeout(() => hugZone.classList.remove('hugged'), 500);
+                    floatEmoji(hugZone, '💜');
+                }
+            }, 100);
+        });
+
+        hugZone.addEventListener('mouseleave', () => {
+            clearInterval(hugInterval);
+        });
+
+        function floatEmoji(element, emoji) {
+            const rect = element.getBoundingClientRect();
+            const el = document.createElement('div');
+            el.className = 'float-emoji';
+            el.textContent = emoji;
+            el.style.left = (rect.left + Math.random() * rect.width) + 'px';
+            el.style.top = rect.top + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 2000);
+        }
+
+        // ==================== SURPRISE BOXES ====================
+        const surpriseContent = [
+            { emoji: '🦕', fact: 'Dinosaurs probably played too! Play behavior is 200M+ years old.' },
+            { emoji: '🎪', fact: 'Rats literally LAUGH (ultrasonic chirps) when tickled!' },
+            { emoji: '🌈', fact: 'Colors activate your reward system — that\'s why rainbows feel fun!' },
+            { emoji: '🎲', fact: 'Uncertainty + safety = maximum fun (that\'s why games work!)' },
+            { emoji: '🧬', fact: 'The gene DRD4-7R is linked to novelty-seeking behavior!' },
+            { emoji: '🐙', fact: 'Octopuses play with objects for no survival reason — pure fun!' },
+            { emoji: '🎭', fact: 'Pretend play develops the prefrontal cortex in children!' },
+            { emoji: '🌊', fact: 'Flow states reduce activity in the default mode network!' },
+            { emoji: '🔮', fact: 'You saved the best for last... or did you? (That\'s peak-end rule!)' }
+        ];
+
+        document.querySelectorAll('.surprise-box').forEach((box, i) => {
+            box.addEventListener('click', () => {
+                if (box.classList.contains('revealed')) return;
+
+                box.classList.add('revealed');
+                box.innerHTML = `<div style="text-align:center;padding:5px;"><div style="font-size:2rem;">${surpriseContent[i].emoji}</div><div style="font-size:0.6rem;margin-top:4px;line-height:1.2;">${surpriseContent[i].fact}</div></div>`;
+
+                addFun('dopamine', 8);
+                addFun('serotonin', 5);
+
+                const rect = box.getBoundingClientRect();
+                emitParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 10, '#4ECDC4');
+
+                // Check if all revealed
+                const allRevealed = document.querySelectorAll('.surprise-box.revealed').length;
+                if (allRevealed === 9) {
+                    launchConfetti();
+                    addFun('endorphin', 20);
+                }
+            });
+        });
+
+        // ==================== SOUND PAD ====================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const noteFreqs = {
+            'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23,
+            'G4': 392.00, 'A4': 440.00, 'B4': 493.88, 'C5': 523.25
+        };
+
+        function playNote(freq, duration = 0.3) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2000, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        document.querySelectorAll('.pad-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const note = btn.dataset.note;
+                playNote(noteFreqs[note], 0.4);
+
+                btn.classList.add('active');
+                setTimeout(() => btn.classList.remove('active'), 300);
+
+                addFun('dopamine', 4);
+                addFun('serotonin', 2);
+                addFun('endorphin', 2);
+
+                const rect = btn.getBoundingClientRect();
+                emitParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 6);
+            });
+
+            // Also support touch
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                btn.click();
+            });
+        });
+
+        // ==================== BRAIN DIAGRAM ====================
+        const brainInfo = {
+            prefrontal: {
+                title: '🧠 Prefrontal Cortex',
+                desc: 'Plans fun, anticipates rewards, and — in flow states — goes QUIET, letting you act without overthinking.'
+            },
+            accumbens: {
+                title: '🎯 Nucleus Accumbens',
+                desc: 'The "reward center." Fires when expectations are exceeded. The heart of pleasure and motivation.'
+            },
+            amygdala: {
+                title: '⚡ Amygdala',
+                desc: 'Must be CALM for fun to happen. Fun requires psychological safety — if this fires too much, fun stops.'
+            },
+            hippocampus: {
+                title: '📚 Hippocampus',
+                desc: 'Encodes fun memories and detects NOVELTY. Without it, nothing would feel new or memorable.'
+            },
+            vta: {
+                title: '💜 Ventral Tegmental Area',
+                desc: 'The dopamine factory. Sends reward signals throughout the brain. The ignition switch of fun.'
+            },
+            cerebellum: {
+                title: '🎵 Cerebellum',
+                desc: 'Coordinates timing, rhythm, and motor play. Essential for dance, music, sports — physical fun!'
+            }
+        };
+
+        const brainTooltip = document.getElementById('brain-tooltip');
+
+        document.querySelectorAll('.brain-region').forEach(region => {
+            region.addEventListener('mouseenter', (e) => {
+                const info = brainInfo[region.dataset.region];
+                brainTooltip.innerHTML = `<strong>${info.title}</strong><br><br>${info.desc}`;
+                brainTooltip.classList.add('visible');
+                addFun('serotonin', 2);
+            });
+
+            region.addEventListener('mousemove', (e) => {
+                const container = document.getElementById('brain-container');
+                const rect = container.getBoundingClientRect();
+                brainTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                brainTooltip.style.top = (e.clientY - rect.top - 60) + 'px';
+            });
+
+            region.addEventListener('mouseleave', () => {
+                brainTooltip.classList.remove('visible');
+            });
+        });
+
+        // ==================== CONFETTI ====================
+        function launchConfetti() {
+            const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#FF8ED4', '#7B68EE', '#a29bfe', '#fd79a8'];
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti-piece';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = Math.random() * 10 + 5 + 'px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 20);
+            }
+        }
+
+        // ==================== SCROLL-BASED FUN ====================
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            const scrollDelta = Math.abs(currentScroll - lastScroll);
+            
+            if (scrollDelta > 5) {
+                addFun('serotonin', 0.5);
+            }
+            lastScroll = currentScroll;
+
+            // Parallax-like effect on hero title
+            const heroTitle = document.getElementById('hero-title');
+            if (heroTitle) {
+                heroTitle.style.transform = `translateY(${currentScroll * 0.3}px) scale(${1 - currentScroll * 0.0005})`;
+                heroTitle.style.opacity = 1 - currentScroll * 0.002;
+            }
+        });
+
+        // ==================== EASTER EGGS ====================
+        
+        // Konami Code
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    konamiIndex = 0;
+                    activateRainbowMode();
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        function activateRainbowMode() {
+            document.body.style.animation = 'rainbowBg 2s linear infinite';
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes rainbowBg {
+                    0% { filter: hue-rotate(0deg); }
+                    100% { filter: hue-rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            launchConfetti();
+            launchConfetti();
+
+            addFun('dopamine', 50);
+            addFun('serotonin', 50);
+            addFun('endorphin', 50);
+            addFun('oxytocin', 50);
+
+            setTimeout(() => {
+                document.body.style.animation = '';
+                style.remove();
+            }, 10000);
+        }
+
+        // Triple click anywhere for bonus
+        let clickCount = 0;
+        let clickTimer = null;
+
+        document.addEventListener('click', () => {
+            clickCount++;
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => {
+                if (clickCount >= 3) {
+                    floatEmojiAtMouse('🎉');
+                    floatEmojiAtMouse('✨');
+                    floatEmojiAtMouse('🧠');
+                    addFun('dopamine', 10);
+                }
+                clickCount = 0;
+            }, 400);
+        });
+
+        function floatEmojiAtMouse(emoji) {
+            const el = document.createElement('div');
+            el.className = 'float-emoji';
+            el.textContent = emoji;
+            el.style.left = (mouseX + (Math.random() - 0.5) * 60) + 'px';
+            el.style.top = mouseY + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 2000);
+        }
+
+        // ==================== SHAKE DETECTION (Mobile) ====================
+        let lastAccel = { x: 0, y: 0, z: 0 };
+        
+        window.addEventListener('devicemotion', (e) => {
+            const accel = e.accelerationIncludingGravity;
+            if (!accel) return;
+            
+            const deltaX = Math.abs(accel.x - lastAccel.x);
+            const deltaY = Math.abs(accel.y - lastAccel.y);
+            const deltaZ = Math.abs(accel.z - lastAccel.z);
+            
+            if (deltaX + deltaY + deltaZ > 30) {
+                launchConfetti();
+                addFun('endorphin', 15);
+                addFun('dopamine', 10);
+            }
+            
+            lastAccel = { x: accel.x, y: accel.y, z: accel.z };
+        });
+
+        // ==================== IDLE DETECTION ====================
+        let idleTimer = null;
+        let idleMessages = [
+            "👀 Your brain craves stimulation... click something!",
+            "🧠 Boredom is just your novelty-seeking system saying 'FEED ME'",
+            "⚡ Fun fact: anticipation of fun activates the same circuits as fun itself!",
+            "🎯 Try the Konami Code: ↑↑↓↓←→←→BA",
+            "💜 Your dopamine levels are dropping... interact with something!"
+        ];
+
+        function resetIdle() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => {
+                const msg = idleMessages[Math.floor(Math.random() * idleMessages.length)];
+                showIdleNotification(msg);
+            }, 15000);
+        }
+
+        function showIdleNotification(msg) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0,0,0,0.9);
+                backdrop-filter: blur(10px);
+                padding: 15px 30px;
+                border-radius: 50px;
+                border: 2px solid var(--serotonin);
+                font-size: 1rem;
+                z-index: 10000;
+                animation: fadeInUp 0.5s ease;
+                cursor: none;
+            `;
+            notif.textContent = msg;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+                    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.style.opacity = '0';
+                notif.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    notif.remove();
+                    style.remove();
+                }, 500);
+            }, 4000);
+        }
+
+        document.addEventListener('mousemove', resetIdle);
+        document.addEventListener('click', resetIdle);
+        document.addEventListener('scroll', resetIdle);
+        resetIdle();
+
+        // ==================== ACHIEVEMENT SYSTEM ====================
+        const achievements = {
+            firstClick: { name: "First Spark ⚡", unlocked: false },
+            tenClicks: { name: "Dopamine Addict 🎰", unlocked: false },
+            flowMaster: { name: "Flow State 🌊", unlocked: false },
+            allBoxes: { name: "Curiosity Satisfied 📦", unlocked: false },
+            hugMaster: { name: "Oxytocin Overflow 💜", unlocked: false },
+            musician: { name: "Neural Musician 🎵", unlocked: false },
+            joker: { name: "Endorphin Engineer 😂", unlocked: false }
+        };
+
+        let totalClicks = 0;
+        let padPlays = 0;
+
+        function checkAchievements() {
+            if (!achievements.firstClick.unlocked && totalClicks >= 1) {
+                unlockAchievement('firstClick');
+            }
+            if (!achievements.tenClicks.unlocked && rewardCount >= 10) {
+                unlockAchievement('tenClicks');
+            }
+            if (!achievements.flowMaster.unlocked && flowScore >= 10) {
+                unlockAchievement('flowMaster');
+            }
+            if (!achievements.allBoxes.unlocked && document.querySelectorAll('.surprise-box.revealed').length === 9) {
+                unlockAchievement('allBoxes');
+            }
+            if (!achievements.hugMaster.unlocked && hugLevel >= 100) {
+                unlockAchievement('hugMaster');
+            }
+            if (!achievements.musician.unlocked && padPlays >= 20) {
+                unlockAchievement('musician');
+            }
+            if (!achievements.joker.unlocked && laughCount >= 5) {
+                unlockAchievement('joker');
+            }
+        }
+
+        function unlockAchievement(key) {
+            achievements[key].unlocked = true;
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                top: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, rgba(255, 230, 109, 0.2), rgba(255, 107, 107, 0.2));
+                backdrop-filter: blur(10px);
+                padding: 15px 30px;
+                border-radius: 15px;
+                border: 2px solid var(--endorphin);
+                font-size: 1.1rem;
+                z-index: 10001;
+                font-family: 'Fredoka One', cursive;
+                text-align: center;
+                animation: achievePop 0.5s ease;
+            `;
+            notif.innerHTML = `🏆 Achievement Unlocked!<br><span style="font-size: 0.9rem; opacity: 0.8;">${achievements[key].name}</span>`;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes achievePop {
+                    0% { transform: translateX(-50%) scale(0); opacity: 0; }
+                    50% { transform: translateX(-50%) scale(1.2); }
+                    100% { transform: translateX(-50%) scale(1); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(notif);
+
+            addFun('dopamine', 20);
+            addFun('endorphin', 15);
+            emitParticles(window.innerWidth / 2, 120, 30, '#FFE66D');
+
+            setTimeout(() => {
+                notif.style.opacity = '0';
+                notif.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    notif.remove();
+                    style.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // Hook into existing interactions for achievements
+        document.addEventListener('click', () => {
+            totalClicks++;
+            checkAchievements();
+        });
+
+        // Override pad clicks to count
+        document.querySelectorAll('.pad-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                padPlays++;
+                checkAchievements();
+            });
+        });
+
+        // Periodic achievement check
+        setInterval(checkAchievements, 1000);
+
+        // ==================== INITIAL WELCOME ====================
+        setTimeout(() => {
+            addFun('serotonin', 10);
+            addFun('dopamine', 5);
+        }, 1000);
+
+        // ==================== TOUCH SUPPORT ====================
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            mouseX = touch.clientX;
+            mouseY = touch.clientY;
+            cursor.style.left = touch.clientX + 'px';
+            cursor.style.top = touch.clientY + 'px';
+        });
+
+        document.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            emitParticles(touch.clientX, touch.clientY, 10);
+        });
+
+        // ==================== PERFORMANCE: LIMIT PARTICLES ====================
+        setInterval(() => {
+            if (particles.length > 200) {
+                particles = particles.slice(-100);
+            }
+        }, 5000);
+
+        console.log('%c🧠 Welcome to the Science of Fun!', 'font-size: 20px; color: #FFE66D; font-weight: bold;');
+        console.log('%cTry the Konami Code for a secret! ↑↑↓↓←→←→BA', 'font-size: 14px; color: #4ECDC4;');
+        console.log('%cYour brain is already having fun reading this console. That\'s novelty-seeking behavior!', 'font-size: 12px; color: #FF8ED4;');
+
+    </script>
+</body>
+</html>
