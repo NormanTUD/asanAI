@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Wanderer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { overflow: hidden; background: #000; font-family: 'Courier New', monospace; }
+        canvas { display: block; cursor: none; }
+        #ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 14px;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            z-index: 10;
+        }
+        #discoveries {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #ffd700;
+            font-size: 14px;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+            text-align: right;
+            z-index: 10;
+        }
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(0,0,0,0.85);
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 30px;
+            color: #fff;
+            text-align: center;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 100;
+            pointer-events: none;
+        }
+        #popup.show { transform: translate(-50%, -50%) scale(1); }
+        #popup h2 { color: #ffd700; margin-bottom: 10px; font-size: 24px; }
+        #popup p { color: #aaa; font-size: 14px; }
+        #cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transition: transform 0.1s, border-color 0.2s;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        #minimap {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 10;
+            pointer-events: none;
+        }
+        #hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+        #combo {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff6600;
+            font-size: 48px;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            text-shadow: 0 0 20px rgba(255,102,0,0.8);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="game"></canvas>
+    <div id="ui">
+        <div id="biome">🌍 The Beginning</div>
+        <div id="depth">Depth: 0</div>
+        <div id="speed">Speed: 1x</div>
+    </div>
+    <div id="discoveries">
+        <div id="found">✨ Discoveries: 0</div>
+        <div id="streak">🔥 Streak: 0</div>
+        <div id="rarest">💎 Rarest: None</div>
+    </div>
+    <div id="popup"><h2></h2><p></p></div>
+    <div id="cursor"></div>
+    <canvas id="minimap"></canvas>
+    <div id="hint">Click & drag to explore • Scroll to zoom • Just wander...</div>
+    <div id="combo"></div>
+
+    <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const minimapCanvas = document.getElementById('minimap');
+    const minimapCtx = minimapCanvas.getContext('2d');
+
+    let W, H;
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        minimapCanvas.width = 150;
+        minimapCanvas.height = 150;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Seeded random
+    function mulberry32(a) {
+        return function() {
+            a |= 0; a = a + 0x6D2B79F5 | 0;
+            var t = Math.imul(a ^ a >>> 15, 1 | a);
+            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        }
+    }
+
+    // Simplex-like noise
+    class Noise {
+        constructor(seed) {
+            this.rng = mulberry32(seed);
+            this.perm = [];
+            for(let i = 0; i < 256; i++) this.perm[i] = i;
+            for(let i = 255; i > 0; i--) {
+                let j = Math.floor(this.rng() * (i + 1));
+                [this.perm[i], this.perm[j]] = [this.perm[j], this.perm[i]];
+            }
+            this.perm = [...this.perm, ...this.perm];
+        }
+        fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+        lerp(a, b, t) { return a + t * (b - a); }
+        grad(hash, x, y) {
+            let h = hash & 7;
+            let u = h < 4 ? x : y;
+            let v = h < 4 ? y : x;
+            return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+        }
+        get(x, y) {
+            let X = Math.floor(x) & 255, Y = Math.floor(y) & 255;
+            x -= Math.floor(x); y -= Math.floor(y);
+            let u = this.fade(x), v = this.fade(y);
+            let A = this.perm[X] + Y, B = this.perm[X + 1] + Y;
+            return this.lerp(
+                this.lerp(this.grad(this.perm[A], x, y), this.grad(this.perm[B], x - 1, y), u),
+                this.lerp(this.grad(this.perm[A + 1], x, y - 1), this.grad(this.perm[B + 1], x - 1, y - 1), u),
+                v
+            );
+        }
+        fbm(x, y, octaves = 4) {
+            let val = 0, amp = 1, freq = 1, max = 0;
+            for(let i = 0; i < octaves; i++) {
+                val += this.get(x * freq, y * freq) * amp;
+                max += amp;
+                amp *= 0.5;
+                freq *= 2;
+            }
+            return val / max;
+        }
+    }
+
+    const noise1 = new Noise(42);
+    const noise2 = new Noise(137);
+    const noise3 = new Noise(256);
+    const noise4 = new Noise(999);
+
+    // Camera
+    let camX = 0, camY = 0;
+    let targetCamX = 0, targetCamY = 0;
+    let zoom = 1, targetZoom = 1;
+    let isDragging = false;
+    let dragStartX, dragStartY, camStartX, camStartY;
+    let velocity = { x: 0, y: 0 };
+    let totalDistance = 0;
+    let discoveries = 0;
+    let streak = 0;
+    let lastDiscoveryTime = 0;
+    let rarestFind = null;
+    let discoveredSet = new Set();
+    let particles = [];
+    let floatingTexts = [];
+    let ambientParticles = [];
+    let creatures = [];
+    let trails = [];
+    let comboTimer = 0;
+    let screenShake = 0;
+    let musicPhase = 0;
+    let autoExploreAngle = 0;
+    let isAutoExploring = false;
+    let visitedChunks = new Set();
+    let secretsFound = [];
+    let totalPlayTime = 0;
+    let lastTime = performance.now();
+
+    // Audio context for procedural sounds
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playTone(freq, duration, type = 'sine', volume = 0.1) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.5, audioCtx.currentTime + duration);
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playDiscoverySound(rarity) {
+        if (!audioCtx) return;
+        const baseFreq = 300 + rarity * 100;
+        playTone(baseFreq, 0.3, 'sine', 0.08);
+        setTimeout(() => playTone(baseFreq * 1.25, 0.2, 'sine', 0.06), 100);
+        setTimeout(() => playTone(baseFreq * 1.5, 0.4, 'triangle', 0.05), 200);
+        if (rarity > 3) {
+            setTimeout(() => playTone(baseFreq * 2, 0.5, 'sine', 0.04), 300);
+        }
+    }
+
+    function playAmbientNote() {
+        if (!audioCtx) return;
+        const biome = getBiome(camX * 0.001, camY * 0.001);
+        const scale = [261, 293, 329, 349, 392, 440, 493, 523];
+        const idx = Math.floor(Math.abs(noise1.get(camX * 0.0001 + musicPhase, camY * 0.0001)) * scale.length);
+        playTone(scale[idx] * (biome.id === 'deep' ? 0.5 : 1), 2, 'sine', 0.02);
+    }
+
+    // Biomes
+    const biomes = [
+        { id: 'meadow', name: '🌸 Crystal Meadows', colors: ['#1a472a', '#2d5a3f', '#4a8c5c', '#7bc67e'], sky: '#0a1628', particle: '#88ff88' },
+        { id: 'ocean', name: '🌊 Luminous Ocean', colors: ['#0a2463', '#1e3a6e', '#3e5c94', '#5b8dd4'], sky: '#020c1f', particle: '#44aaff' },
+        { id: 'desert', name: '🏜️ Singing Sands', colors: ['#8b4513', '#cd853f', '#deb887', '#f5deb3'], sky: '#1a0f05', particle: '#ffcc44' },
+        { id: 'crystal', name: '💎 Crystal Caverns', colors: ['#2d1b4e', '#4a2d7a', '#7b3fa0', '#a855d4'], sky: '#0d0520', particle: '#cc66ff' },
+        { id: 'fire', name: '🔥 Ember Fields', colors: ['#3d0c02', '#6b1a09', '#a02a0c', '#d44411'], sky: '#1a0500', particle: '#ff4400' },
+        { id: 'ice', name: '❄️ Frozen Whispers', colors: ['#1a3a4a', '#2a5a6a', '#4a8a9a', '#7abaca'], sky: '#051520', particle: '#aaeeff' },
+        { id: 'mushroom', name: '🍄 Fungal Gardens', colors: ['#2a1a2a', '#4a2a4a', '#6a3a5a', '#8a4a6a'], sky: '#100810', particle: '#ff88cc' },
+        { id: 'void', name: '🌌 The Void Between', colors: ['#050510', '#0a0a20', '#101030', '#1a1a40'], sky: '#000005', particle: '#4444ff' },
+        { id: 'gold', name: '✨ Golden Realm', colors: ['#3d2b00', '#6b4d00', '#997000', '#c89400'], sky: '#1a1000', particle: '#ffd700' },
+        { id: 'deep', name: '🐙 Abyssal Depths', colors: ['#000a0a', '#001515', '#002020', '#003030'], sky: '#000505', particle: '#00ffcc' },
+    ];
+
+    function getBiome(x, y) {
+        let n = noise1.fbm(x * 0.3, y * 0.3, 3);
+        let n2 = noise2.fbm(x * 0.2 + 100, y * 0.2 + 100, 2);
+        let idx = Math.floor(((n + 1) * 0.5 * 7 + (n2 + 1) * 0.5 * 3)) % biomes.length;
+        return biomes[Math.abs(idx)];
+    }
+
+    function getTerrainHeight(x, y) {
+        return noise1.fbm(x, y, 6) * 0.5 + noise2.fbm(x * 2, y * 2, 3) * 0.25;
+    }
+
+    // Discoveries system
+    const discoveryTypes = [
+        { name: 'Glowing Mushroom', emoji: '🍄', rarity: 1, desc: 'A softly pulsing fungus' },
+        { name: 'Ancient Rune', emoji: '🔮', rarity: 2, desc: 'Whispers of forgotten magic' },
+        { name: 'Crystal Cluster', emoji: '💎', rarity: 2, desc: 'Refracts light into rainbows' },
+        { name: 'Floating Island', emoji: '🏝️', rarity: 3, desc: 'Defies gravity itself' },
+        { name: 'Star Fragment', emoji: '⭐', rarity: 3, desc: 'Fallen from the cosmos' },
+        { name: 'Living Flame', emoji: '🔥', rarity: 2, desc: 'Dances without fuel' },
+        { name: 'Frozen Tear', emoji: '💧', rarity: 3, desc: 'Time stands still within' },
+        { name: 'Golden Beetle', emoji: '🪲', rarity: 2, desc: 'Its shell reflects dreams' },
+        { name: 'Singing Stone', emoji: '🪨', rarity: 1, desc: 'Hums an ancient melody' },
+        { name: 'Ghost Flower', emoji: '🌺', rarity: 2, desc: 'Blooms only when observed' },
+        { name: 'Void Pearl', emoji: '⚫', rarity: 4, desc: 'Contains a tiny universe' },
+        { name: 'Phoenix Feather', emoji: '🪶', rarity: 4, desc: 'Still warm to the touch' },
+        { name: 'Time Crystal', emoji: '⏳', rarity: 5, desc: 'Shows moments yet to come' },
+        { name: 'Dragon Scale', emoji: '🐉', rarity: 4, desc: 'Iridescent and indestructible' },
+        { name: 'Wish Orb', emoji: '🔵', rarity: 5, desc: 'One wish remains inside' },
+        { name: 'Cosmic Egg', emoji: '🥚', rarity: 5, desc: 'Something stirs within...' },
+        { name: 'Rainbow Slime', emoji: '🌈', rarity: 1, desc: 'Jiggles happily at you' },
+        { name: 'Tiny Portal', emoji: '🌀', rarity: 3, desc: 'Leads somewhere impossible' },
+        { name: 'Moon Shard', emoji: '🌙', rarity: 4, desc: 'Glows brighter at night' },
+        { name: 'Eternal Butterfly', emoji: '🦋', rarity: 3, desc: 'Has lived for millennia' },
+        { name: 'Laughing Gem', emoji: '😂', rarity: 2, desc: 'Giggles when you touch it' },
+        { name: 'World Seed', emoji: '🌱', rarity: 5, desc: 'Could grow into anything' },
+        { name: 'Memory Bubble', emoji: '💭', rarity: 3, desc: 'Contains a happy thought' },
+        { name: 'Nebula in a Bottle', emoji: '🫧', rarity: 4, desc: 'Swirls with cosmic dust' },
+        { name: 'THE ARTIFACT', emoji: '👁️', rarity: 6, desc: '...it sees you too.' },
+    ];
+
+    function getDiscoveryAt(wx, wy) {
+        let key = `${Math.floor(wx/200)},${Math.floor(wy/200)}`;
+        let rng = mulberry32(hashStr(key));
+        if (rng() > 0.3) return null; // 30% chance per cell
+
+        let roll = rng();
+        let filtered;
+        if (roll < 0.01) filtered = discoveryTypes.filter(d => d.rarity >= 5);
+        else if (roll < 0.05) filtered = discoveryTypes.filter(d => d.rarity === 4);
+        else if (roll < 0.15) filtered = discoveryTypes.filter(d => d.rarity === 3);
+        else if (roll < 0.4) filtered = discoveryTypes.filter(d => d.rarity === 2);
+        else filtered = discoveryTypes.filter(d => d.rarity === 1);
+
+        let disc = filtered[Math.floor(rng() * filtered.length)];
+        let offsetX = (rng() - 0.5) * 180;
+        let offsetY = (rng() - 0.5) * 180;
+        return { ...disc, x: Math.floor(wx/200) * 200 + offsetX, y: Math.floor(wy/200) * 200 + offsetY, key };
+    }
+
+    function hashStr(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            let c = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + c;
+            hash |= 0;
+        }
+        return hash;
+    }
+
+    // Creatures
+    function spawnCreature(wx, wy) {
+        let rng = mulberry32(hashStr(`creature${Math.floor(wx/500)},${Math.floor(wy/500)}`));
+        if (rng() > 0.4) return;
+
+        const types = [
+            { shape: 'jellyfish', color: '#ff88ff', size: 20 },
+            { shape: 'fish', color: '#88ffff', size: 15 },
+            { shape: 'bird', color: '#ffff88', size: 12 },
+            { shape: 'spirit', color: '#ffffff', size: 25 },
+            { shape: 'blob', color: '#88ff88', size: 18 },
+        ];
+
+        let type = types[Math.floor(rng() * types.length)];
+        let cx = Math.floor(wx/500) * 500 + rng() * 400;
+        let cy = Math.floor(wy/500) * 500 + rng() * 400;
+
+        // Check if already exists
+        let key = `${Math.floor(wx/500)},${Math.floor(wy/500)}`;
+        if (!creatures.find(c => c.key === key)) {
+            creatures.push({
+                ...type, x: cx, y: cy,
+                baseX: cx, baseY: cy,
+                angle: rng() * Math.PI * 2,
+                speed: 0.5 + rng() * 1.5,
+                phase: rng() * Math.PI * 2,
+                key
+            });
+        }
+    }
+
+    // Render terrain
+    function renderTerrain() {
+        const tileSize = Math.max(4, Math.floor(8 / zoom));
+        const startX = Math.floor((camX - W/2/zoom) / tileSize) * tileSize;
+        const startY = Math.floor((camY - H/2/zoom) / tileSize) * tileSize;
+        const endX = camX + W/2/zoom + tileSize;
+        const endY = camY + H/2/zoom + tileSize;
+
+        for (let wy = startY; wy < endY; wy += tileSize) {
+            for (let wx = startX; wx < endX; wx += tileSize) {
+                let nx = wx * 0.003;
+                let ny = wy * 0.003;
+                let height = getTerrainHeight(nx, ny);
+                let biome = getBiome(nx, ny);
+
+                let colorIdx = Math.floor(((height + 1) * 0.5) * biome.colors.length);
+                colorIdx = Math.max(0, Math.min(biome.colors.length - 1, colorIdx));
+                let color = biome.colors[colorIdx];
+
+                // Add shimmer
+                let shimmer = noise3.get(nx * 5 + performance.now() * 0.0003, ny * 5) * 0.1;
+
+                let sx = (wx - camX) * zoom + W/2;
+                let sy = (wy - camY) * zoom + H/2;
+
+                ctx.fillStyle = color;
+                ctx.globalAlpha = 0.9 + shimmer;
+                ctx.fillRect(sx, sy, tileSize * zoom + 1, tileSize * zoom + 1);
+            }
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // Render features (trees, structures, etc)
+    function renderFeatures() {
+        const checkRadius = 600 / zoom;
+        const startX = Math.floor((camX - checkRadius) / 100) * 100;
+        const startY = Math.floor((camY - checkRadius) / 100) * 100;
+
+        for (let wy = startY; wy < camX + checkRadius; wy += 100) {
+            for (let wx = startX; wx < camY + checkRadius; wx += 100) {
+                let rng = mulberry32(hashStr(`feat${Math.floor(wx/100)},${Math.floor(wy/100)}`));
+                if (rng() > 0.6) continue;
+
+                let fx = Math.floor(wx/100) * 100 + rng() * 80;
+                let fy = Math.floor(wy/100) * 100 + rng() * 80;
+                let sx = (fx - camX) * zoom + W/2;
+                let sy = (fy - camY) * zoom + H/2;
+
+                if (sx < -50 || sx > W + 50 || sy < -50 || sy > H + 50) continue;
+
+                let type = rng();
+                let time = performance.now() * 0.001;
+                let biome = getBiome(fx * 0.003, fy * 0.003);
+
+                ctx.save();
+                ctx.translate(sx, sy);
+                let scale = zoom * (0.8 + rng() * 0.4);
+                ctx.scale(scale, scale);
+
+                if (type < 0.2) {
+                    // Tree
+                    let sway = Math.sin(time + fx * 0.01) * 3;
+                    ctx.fillStyle = '#4a2800';
+                    ctx.fillRect(-3, -5, 6, 20);
+                    ctx.fillStyle = biome.id === 'fire' ? '#ff6600' : biome.id === 'ice' ? '#aaeeff' : '#2d8a3e';
+                    ctx.beginPath();
+                    ctx.arc(sway, -15, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Leaves particles
+                    if (Math.random() < 0.01) {
+                        spawnParticle(fx, fy - 15, biome.particle, 2);
+                    }
+                } else if (type < 0.35) {
+                    // Crystal
+                    let glow = Math.sin(time * 2 + fx) * 0.3 + 0.7;
+                    ctx.globalAlpha = glow;
+                    ctx.fillStyle = biome.particle;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -20);
+                    ctx.lineTo(8, 0);
+                    ctx.lineTo(3, 5);
+                    ctx.lineTo(-3, 5);
+                    ctx.lineTo(-8, 0);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = biome.particle;
+                    ctx.fill();
+                } else if (type < 0.45) {
+                    // Ruin/Structure
+                    ctx.fillStyle = '#555';
+                    ctx.fillRect(-12, -8, 4, 16);
+                    ctx.fillRect(8, -5, 4, 13);
+                    ctx.fillRect(-12, -10, 24, 3);
+                    // Glow
+                    ctx.fillStyle = `rgba(${biome.id === 'void' ? '100,100,255' : '255,200,50'}, ${0.3 + Math.sin(time) * 0.2})`;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (type < 0.55) {
+                    // Flower cluster
+                    for (let i = 0; i < 5; i++) {
+                        let angle = (i / 5) * Math.PI * 2 + time * 0.5;
+                        let r = 8 + Math.sin(time + i) * 2;
+                        ctx.fillStyle = `hsl(${(fx * 0.1 + i * 60) % 360}, 80%, 60%)`;
+                        ctx.beginPath();
+                        ctx.arc(Math.cos(angle) * r, Math.sin(angle) * r, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                } else if (type < 0.65) {
+                    // Floating orb
+                    let bobY = Math.sin(time * 1.5 + fx) * 10;
+                    ctx.fillStyle = biome.particle;
+                    ctx.globalAlpha = 0.6 + Math.sin(time * 2) * 0.3;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = biome.particle;
+                    ctx.beginPath();
+                    ctx.arc(0, bobY - 20, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (type < 0.75) {
+                    // Waterfall / stream
+                    ctx.strokeStyle = `rgba(100, 180, 255, ${0.5 + Math.sin(time) * 0.2})`;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    for (let i = 0; i < 30; i++) {
+                        let py = i * 2 - 15;
+                        let px = Math.sin(i * 0.3 + time * 2) * 5;
+                        if (i === 0) ctx.moveTo(px, py);
+                        else ctx.lineTo(px, py);
+                    }
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+        }
+    }
+
+    // Render discoveries
+    function renderDiscoveries() {
+        const checkRadius = 800 / zoom;
+
+        for (let cy = Math.floor((camY - checkRadius) / 200); cy <= Math.floor((camY + checkRadius) / 200); cy++) {
+            for (let cx = Math.floor((camX - checkRadius) / 200); cx <= Math.floor((camX + checkRadius) / 200); cx++) {
+                let disc = getDiscoveryAt(cx * 200 + 100, cy * 200 + 100);
+                if (!disc) continue;
+                if (discoveredSet.has(disc.key)) continue;
+
+                let sx = (disc.x - camX) * zoom + W/2;
+                let sy = (disc.y - camY) * zoom + H/2;
+
+                if (sx < -50 || sx > W + 50 || sy < -50 || sy > H + 50) continue;
+
+                let time = performance.now() * 0.001;
+                let bob = Math.sin(time * 2 + disc.x) * 5 * zoom;
+                let glow = 0.5 + Math.sin(time * 3 + disc.y) * 0.3;
+
+                // Glow effect
+                let gradient = ctx.createRadialGradient(sx, sy + bob, 0, sx, sy + bob, 30 * zoom);
+                let rarityColor = disc.rarity >= 5 ? '#ffd700' : disc.rarity >= 4 ? '#ff44ff' : disc.rarity >= 3 ? '#4488ff' : '#44ff44';
+                gradient.addColorStop(0, rarityColor);
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.globalAlpha = glow;
+                ctx.beginPath();
+                ctx.arc(sx, sy + bob, 30 * zoom, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+
+                // Emoji
+                ctx.font = `${20 * zoom}px serif`;
+                ctx.textAlign = 'center';
+                ctx.fillText(disc.emoji, sx, sy + bob + 7 * zoom);
+
+                // Rarity stars
+                if (disc.rarity >= 3) {
+                    for (let i = 0; i < disc.rarity; i++) {
+                        let starAngle = (i / disc.rarity) * Math.PI * 2 + time;
+                        let starR = 20 * zoom;
+                        ctx.fillStyle = rarityColor;
+                        ctx.globalAlpha = 0.6;
+                        ctx.beginPath();
+                        ctx.arc(sx + Math.cos(starAngle) * starR, sy + bob + Math.sin(starAngle) * starR, 2 * zoom, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.globalAlpha = 1;
+                }
+
+                // Check if player is close enough to discover
+                let dist = Math.hypot(disc.x - camX, disc.y - camY);
+                if (dist < 80) {
+                    discover(disc);
+                }
+            }
+        }
+    }
+
+    function discover(disc) {
+        if (discoveredSet.has(disc.key)) return;
+        discoveredSet.add(disc.key);
+        discoveries++;
+
+        initAudio();
+        playDiscoverySound(disc.rarity);
+
+        let now = performance.now();
+        if (now - lastDiscoveryTime < 5000) {
+            streak++;
+            comboTimer = 2;
+            document.getElementById('combo').textContent = `${streak}x COMBO!`;
+            document.getElementById('combo').style.opacity = '1';
+            document.getElementById('combo').style.fontSize = `${48 + streak * 4}px`;
+            screenShake = Math.min(streak * 2, 15);
+        } else {
+            streak = 1;
+        }
+        lastDiscoveryTime = now;
+
+        if (!rarestFind || disc.rarity > rarestFind.rarity) {
+            rarestFind = disc;
+            document.getElementById('rarest').textContent = `💎 Rarest: ${disc.emoji} ${disc.name}`;
+        }
+
+        // Show popup
+        let popup = document.getElementById('popup');
+        popup.querySelector('h2').textContent = `${disc.emoji} ${disc.name}`;
+        popup.querySelector('p').textContent = `${disc.desc} (${['','★','★★','★★★','★★★★','★★★★★','★★★★★★'][disc.rarity]} Rarity)`;
+        popup.classList.add('show');
+        setTimeout(() => popup.classList.remove('show'), 2000);
+
+        // Explosion of particles
+        for (let i = 0; i < 30 + disc.rarity * 10; i++) {
+            let angle = (i / (30 + disc.rarity * 10)) * Math.PI * 2;
+            let speed = 2 + Math.random() * 4;
+            particles.push({
+                x: disc.x, y: disc.y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 1,
+                decay: 0.01 + Math.random() * 0.02,
+                color: disc.rarity >= 4 ? '#ffd700' : disc.rarity >= 3 ? '#ff44ff' : '#44ff88',
+                size: 3 + Math.random() * 4
+            });
+        }
+
+        // Floating text
+        floatingTexts.push({
+            x: disc.x, y: disc.y,
+            text: `+${disc.rarity * 10} ✨`,
+            life: 1,
+            vy: -1
+        });
+
+        document.getElementById('found').textContent = `✨ Discoveries: ${discoveries}`;
+        document.getElementById('streak').textContent = `🔥 Streak: ${streak}`;
+    }
+
+    function spawnParticle(x, y, color, size) {
+        particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2 - 1,
+            life: 1,
+            decay: 0.02,
+            color,
+            size: size || 3
+        });
+    }
+
+    // Render particles
+    function renderParticles() {
+        for (let i = particles.length - 1; i >= 0; i--) {
+            let p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= p.decay;
+            if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+            let sx = (p.x - camX) * zoom + W/2;
+            let sy = (p.y - camY) * zoom + H/2;
+
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = p.color;
+            ctx.beginPath();
+            ctx.arc(sx, sy, p.size * zoom * p.life, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+    }
+
+    // Render floating texts
+    function renderFloatingTexts() {
+        for (let i = floatingTexts.length - 1; i >= 0; i--) {
+            let ft = floatingTexts[i];
+            ft.y += ft.vy;
+            ft.life -= 0.015;
+            if (ft.life <= 0) { floatingTexts.splice(i, 1); continue; }
+
+            let sx = (ft.x - camX) * zoom + W/2;
+            let sy = (ft.y - camY) * zoom + H/2;
+
+            ctx.globalAlpha = ft.life;
+            ctx.fillStyle = '#ffd700';
+            ctx.font = `bold ${16 * zoom}px monospace`;
+            ctx.textAlign = 'center';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#ffd700';
+            ctx.fillText(ft.text, sx, sy);
+        }
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+    }
+
+    // Render creatures
+    function renderCreatures() {
+        let time = performance.now() * 0.001;
+
+        for (let i = creatures.length - 1; i >= 0; i--) {
+            let c = creatures[i];
+
+            // Movement
+            c.angle += Math.sin(time * 0.5 + c.phase) * 0.02;
+            c.x = c.baseX + Math.cos(c.angle + time * c.speed * 0.3) * 50;
+            c.y = c.baseY + Math.sin(c.angle + time * c.speed * 0.2) * 50;
+
+            let sx = (c.x - camX) * zoom + W/2;
+            let sy = (c.y - camY) * zoom + H/2;
+
+            if (sx < -100 || sx > W + 100 || sy < -100 || sy > H + 100) continue;
+
+            ctx.save();
+            ctx.translate(sx, sy);
+            ctx.scale(zoom, zoom);
+
+            let pulse = 0.8 + Math.sin(time * 3 + c.phase) * 0.2;
+
+            if (c.shape === 'jellyfish') {
+                ctx.fillStyle = c.color;
+                ctx.globalAlpha = 0.7 * pulse;
+                ctx.beginPath();
+                ctx.arc(0, 0, c.size * 0.7, Math.PI, 0);
+                ctx.fill();
+                // Tentacles
+                for (let t = 0; t < 5; t++) {
+                    ctx.strokeStyle = c.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.globalAlpha = 0.5;
+                    ctx.beginPath();
+                    let tx = (t - 2) * 5;
+                    ctx.moveTo(tx, 0);
+                    for (let s = 0; s < 4; s++) {
+                        ctx.lineTo(tx + Math.sin(time * 2 + t + s) * 5, s * 6);
+                    }
+                    ctx.stroke();
+                }
+            } else if (c.shape === 'fish') {
+                ctx.fillStyle = c.color;
+                ctx.globalAlpha = 0.8;
+                let dir = Math.cos(c.angle + time * c.speed * 0.3) > 0 ? 1 : -1;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, c.size, c.size * 0.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                // Tail
+                ctx.beginPath();
+                ctx.moveTo(-c.size * dir, 0);
+                ctx.lineTo(-c.size * 1.5 * dir, -5);
+                ctx.lineTo(-c.size * 1.5 * dir, 5);
+                ctx.closePath();
+                ctx.fill();
+                // Eye
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(c.size * 0.4 * dir, -2, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(c.size * 0.5 * dir, -2, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (c.shape === 'bird') {
+                ctx.fillStyle = c.color;
+                ctx.globalAlpha = 0.9;
+                let wingFlap = Math.sin(time * 8 + c.phase) * 15;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-10, wingFlap);
+                ctx.lineTo(-5, 0);
+                ctx.lineTo(-10, -wingFlap);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(10, wingFlap * 0.8);
+                ctx.lineTo(5, 0);
+                ctx.lineTo(10, -wingFlap * 0.8);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(0, 0, 4, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (c.shape === 'spirit') {
+                ctx.globalAlpha = 0.3 + Math.sin(time * 2 + c.phase) * 0.2;
+                ctx.fillStyle = c.color;
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = c.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, c.size * pulse, 0, Math.PI * 2);
+                ctx.fill();
+                // Inner glow
+                ctx.globalAlpha = 0.6;
+                ctx.beginPath();
+                ctx.arc(0, 0, c.size * 0.5 * pulse, 0, Math.PI * 2);
+                ctx.fill();
+                // Face
+                ctx.fillStyle = '#000';
+                ctx.globalAlpha = 0.5;
+                ctx.beginPath();
+                ctx.arc(-5, -3, 3, 0, Math.PI * 2);
+                ctx.arc(5, -3, 3, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (c.shape === 'blob') {
+                ctx.globalAlpha = 0.7;
+                ctx.fillStyle = c.color;
+                let squish = 1 + Math.sin(time * 4 + c.phase) * 0.2;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, c.size * (2 - squish), c.size * squish, 0, 0, Math.PI * 2);
+                ctx.fill();
+                // Happy face
+                ctx.fillStyle = '#000';
+                ctx.globalAlpha = 0.6;
+                ctx.beginPath();
+                ctx.arc(-4, -3, 2, 0, Math.PI * 2);
+                ctx.arc(4, -3, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(0, 2, 4, 0, Math.PI);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+            // Spawn trail particles
+            if (Math.random() < 0.05) {
+                spawnParticle(c.x, c.y, c.color, 2);
+            }
+        }
+    }
+
+    // Ambient particles (always floating around)
+    function updateAmbientParticles() {
+        let biome = getBiome(camX * 0.003, camY * 0.003);
+
+        while (ambientParticles.length < 50) {
+            ambientParticles.push({
+                x: camX + (Math.random() - 0.5) * W / zoom,
+                y: camY + (Math.random() - 0.5) * H / zoom,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: -Math.random() * 0.5 - 0.2,
+                size: 1 + Math.random() * 3,
+                alpha: Math.random() * 0.5,
+                color: biome.particle
+            });
+        }
+
+        for (let i = ambientParticles.length - 1; i >= 0; i--) {
+            let p = ambientParticles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha += (Math.random() - 0.5) * 0.02;
+            p.alpha = Math.max(0, Math.min(0.6, p.alpha));
+
+            let sx = (p.x - camX) * zoom + W/2;
+            let sy = (p.y - camY) * zoom + H/2;
+
+            if (sx < -50 || sx > W + 50 || sy < -50 || sy > H + 50) {
+                ambientParticles.splice(i, 1);
+                continue;
+            }
+
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(sx, sy, p.size * zoom, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // Render stars in background
+    function renderStars() {
+        let biome = getBiome(camX * 0.003, camY * 0.003);
+        ctx.fillStyle = biome.sky;
+        ctx.fillRect(0, 0, W, H);
+
+        let time = performance.now() * 0.0001;
+        for (let i = 0; i < 100; i++) {
+            let rng = mulberry32(i * 7919);
+            let sx = ((rng() * W * 3 + camX * 0.05 * (1 + rng())) % W + W) % W;
+            let sy = ((rng() * H * 3 + camY * 0.05 * (1 + rng())) % H + H) % H;
+            let twinkle = Math.sin(time * 10 + i) * 0.3 + 0.7;
+            ctx.globalAlpha = twinkle * 0.6;
+            ctx.fillStyle = `hsl(${rng() * 60 + 200}, 50%, 80%)`;
+            ctx.beginPath();
+            ctx.arc(sx, sy, rng() * 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // Render minimap
+    function renderMinimap() {
+        minimapCtx.fillStyle = 'rgba(0,0,0,0.8)';
+        minimapCtx.fillRect(0, 0, 150, 150);
+
+        let scale = 0.01;
+        for (let y = 0; y < 150; y += 3) {
+            for (let x = 0; x < 150; x += 3) {
+                let wx = camX + (x - 75) / scale;
+                let wy = camY + (y - 75) / scale;
+                let biome = getBiome(wx * 0.003, wy * 0.003);
+                let height = getTerrainHeight(wx * 0.003, wy * 0.003);
+                let colorIdx = Math.floor(((height + 1) * 0.5) * biome.colors.length);
+                colorIdx = Math.max(0, Math.min(biome.colors.length - 1, colorIdx));
+                minimapCtx.fillStyle = biome.colors[colorIdx];
+                minimapCtx.fillRect(x, y, 3, 3);
+            }
+        }
+
+        // Player dot
+        minimapCtx.fillStyle = '#fff';
+        minimapCtx.shadowBlur = 5;
+        minimapCtx.shadowColor = '#fff';
+        minimapCtx.beginPath();
+        minimapCtx.arc(75, 75, 3, 0, Math.PI * 2);
+        minimapCtx.fill();
+        minimapCtx.shadowBlur = 0;
+
+        // Direction indicator
+        if (velocity.x !== 0 || velocity.y !== 0) {
+            let angle = Math.atan2(velocity.y, velocity.x);
+            minimapCtx.strokeStyle = '#ffd700';
+            minimapCtx.lineWidth = 2;
+            minimapCtx.beginPath();
+            minimapCtx.moveTo(75, 75);
+            minimapCtx.lineTo(75 + Math.cos(angle) * 15, 75 + Math.sin(angle) * 15);
+            minimapCtx.stroke();
+        }
+    }
+
+    // Trail system
+    function updateTrails() {
+        if (Math.hypot(velocity.x, velocity.y) > 0.5) {
+            trails.push({ x: camX, y: camY, life: 1 });
+        }
+
+        for (let i = trails.length - 1; i >= 0; i--) {
+            trails[i].life -= 0.005;
+            if (trails[i].life <= 0) { trails.splice(i, 1); continue; }
+
+            let t = trails[i];
+            let sx = (t.x - camX) * zoom + W/2;
+            let sy = (t.y - camY) * zoom + H/2;
+
+            if (sx < -10 || sx > W + 10 || sy < -10 || sy > H + 10) continue;
+
+            ctx.globalAlpha = t.life * 0.3;
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(sx, sy, 2 * zoom, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // Render player cursor glow
+    function renderPlayer() {
+        let time = performance.now() * 0.001;
+        let pulse = 0.8 + Math.sin(time * 3) * 0.2;
+
+        // Outer glow
+        let gradient = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 40);
+        gradient.addColorStop(0, 'rgba(255,255,255,0.2)');
+        gradient.addColorStop(0.5, 'rgba(255,255,255,0.05)');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(W/2, H/2, 40 * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inner dot
+        ctx.fillStyle = '#fff';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#fff';
+        ctx.beginPath();
+        ctx.arc(W/2, H/2, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Direction petals when moving
+        let speed = Math.hypot(velocity.x, velocity.y);
+        if (speed > 0.3) {
+            let angle = Math.atan2(velocity.y, velocity.x);
+            ctx.strokeStyle = `rgba(255,255,255,${Math.min(speed * 0.1, 0.5)})`;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 3; i++) {
+                let offset = (time * 5 + i * 5) % 20;
+                ctx.globalAlpha = 1 - offset / 20;
+                ctx.beginPath();
+                ctx.arc(W/2 - Math.cos(angle) * offset, H/2 - Math.sin(angle) * offset, 3 + offset * 0.2, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    // Render vignette
+    function renderVignette() {
+        let gradient = ctx.createRadialGradient(W/2, H/2, W * 0.3, W/2, H/2, W * 0.7);
+        gradient.addColorStop(0, 'transparent');
+        gradient.addColorStop(1, 'rgba(0,0,0,0.4)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, W, H);
+    }
+
+    // Special events
+    let specialEventTimer = 0;
+    function checkSpecialEvents() {
+        specialEventTimer++;
+
+        // Shooting star
+        if (specialEventTimer % 600 === 0 && Math.random() < 0.3) {
+            let startX = Math.random() * W;
+            let startY = Math.random() * H * 0.3;
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    particles.push({
+                        x: camX + (startX + i * 15 - W/2) / zoom,
+                        y: camY + (startY + i * 8 - H/2) / zoom,
+                        vx: 3, vy: 1.5,
+                        life: 1,
+                        decay: 0.05,
+                        color: '#fff',
+                        size: 3 - i * 0.1
+                    });
+                }, i * 20);
+            }
+        }
+
+        // Aurora
+        if (specialEventTimer % 1200 === 0) {
+            for (let i = 0; i < 50; i++) {
+                ambientParticles.push({
+                    x: camX + (Math.random() - 0.5) * W / zoom,
+                    y: camY - H / zoom * 0.3 + Math.random() * 50,
+                    vx: 0.5 + Math.random(),
+                    vy: (Math.random() - 0.5) * 0.2,
+                    size: 2 + Math.random() * 4,
+                    alpha: 0.3,
+                    color: `hsl(${120 + Math.random() * 60}, 80%, 60%)`
+                });
+            }
+        }
+    }
+
+    // Chunk tracking for biome transitions
+    function updateBiomeUI() {
+        let biome = getBiome(camX * 0.003, camY * 0.003);
+        let chunkKey = `${Math.floor(camX / 500)},${Math.floor(camY / 500)}`;
+
+        if (!visitedChunks.has(chunkKey)) {
+            visitedChunks.add(chunkKey);
+
+            // Check if new biome
+            let prevBiome = document.getElementById('biome').textContent;
+            if (prevBiome !== biome.name) {
+                document.getElementById('biome').textContent = biome.name;
+                // Flash effect
+                floatingTexts.push({
+                    x: camX, y: camY - 50,
+                    text: `~ ${biome.name} ~`,
+                    life: 1.5,
+                    vy: -0.5
+                });
+                initAudio();
+                playAmbientNote();
+            }
+        }
+
+        document.getElementById('depth').textContent = `Depth: ${Math.floor(Math.hypot(camX, camY) / 100)}`;
+        document.getElementById('speed').textContent = `Speed: ${Math.max(1, Math.floor(Math.hypot(velocity.x, velocity.y) * 10) / 10)}x`;
+    }
+
+    // Input handling
+    let mouseX = W/2, mouseY = H/2;
+    let keys = {};
+
+    canvas.addEventListener('mousedown', (e) => {
+        initAudio();
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        camStartX = camX;
+        camStartY = camY;
+        isAutoExploring = false;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        document.getElementById('cursor').style.left = (e.clientX - 10) + 'px';
+        document.getElementById('cursor').style.top = (e.clientY - 10) + 'px';
+
+        if (isDragging) {
+            let dx = (e.clientX - dragStartX) / zoom;
+            let dy = (e.clientY - dragStartY) / zoom;
+            targetCamX = camStartX - dx;
+            targetCamY = camStartY - dy;
+            velocity.x = (targetCamX - camX) * 0.5;
+            velocity.y = (targetCamY - camY) * 0.5;
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        isDragging = false;
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        targetZoom *= e.deltaY > 0 ? 0.9 : 1.1;
+        targetZoom = Math.max(0.3, Math.min(5, targetZoom));
+    });
+
+    canvas.addEventListener('dblclick', (e) => {
+        initAudio();
+        // Teleport burst
+        let wx = camX + (e.clientX - W/2) / zoom;
+        let wy = camY + (e.clientY - H/2) / zoom;
+        targetCamX = wx;
+        targetCamY = wy;
+        // Warp particles
+        for (let i = 0; i < 20; i++) {
+            let angle = (i / 20) * Math.PI * 2;
+            particles.push({
+                x: wx, y: wy,
+                vx: Math.cos(angle) * 5,
+                vy: Math.sin(angle) * 5,
+                life: 1, decay: 0.03,
+                color: '#fff', size: 3
+            });
+        }
+        playTone(500, 0.3, 'sine', 0.05);
+    });
+
+    // Keyboard
+    window.addEventListener('keydown', (e) => {
+        keys[e.key.toLowerCase()] = true;
+        initAudio();
+
+        if (e.key === ' ') {
+            isAutoExploring = !isAutoExploring;
+            if (isAutoExploring) {
+                floatingTexts.push({ x: camX, y: camY - 30, text: '🧭 Auto-Exploring...', life: 1.5, vy: -0.5 });
+            }
+        }
+    });
+
+    window.addEventListener('keyup', (e) => {
+        keys[e.key.toLowerCase()] = false;
+    });
+
+    // Touch support
+    let touchStartX, touchStartY;
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        initAudio();
+        isDragging = true;
+        let touch = e.touches[0];
+        dragStartX = touch.clientX;
+        dragStartY = touch.clientY;
+        camStartX = camX;
+        camStartY = camY;
+        isAutoExploring = false;
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (isDragging && e.touches.length === 1) {
+            let touch = e.touches[0];
+            let dx = (touch.clientX - dragStartX) / zoom;
+            let dy = (touch.clientY - dragStartY) / zoom;
+            targetCamX = camStartX - dx;
+            targetCamY = camStartY - dy;
+            velocity.x = (targetCamX - camX) * 0.5;
+            velocity.y = (targetCamY - camY) * 0.5;
+        } else if (e.touches.length === 2) {
+            // Pinch to zoom
+            let dist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            if (touchStartX) {
+                let diff = dist - touchStartX;
+                targetZoom *= 1 + diff * 0.005;
+                targetZoom = Math.max(0.3, Math.min(5, targetZoom));
+            }
+            touchStartX = dist;
+        }
+    });
+
+    canvas.addEventListener('touchend', (e) => {
+        isDragging = false;
+        touchStartX = null;
+    });
+
+    // Auto-explore AI
+    function autoExplore() {
+        if (!isAutoExploring) return;
+
+        let time = performance.now() * 0.001;
+        autoExploreAngle += noise1.get(time * 0.1, 0) * 0.05;
+
+        // Tend toward unexplored areas
+        let bestAngle = autoExploreAngle;
+        let bestScore = -Infinity;
+        for (let a = 0; a < Math.PI * 2; a += Math.PI / 4) {
+            let testX = camX + Math.cos(a) * 500;
+            let testY = camY + Math.sin(a) * 500;
+            let key = `${Math.floor(testX/500)},${Math.floor(testY/500)}`;
+            let score = visitedChunks.has(key) ? 0 : 10;
+            score += noise2.get(testX * 0.001 + time, testY * 0.001) * 3;
+            if (score > bestScore) {
+                bestScore = score;
+                bestAngle = a;
+            }
+        }
+
+        autoExploreAngle += (bestAngle - autoExploreAngle) * 0.02;
+
+        let speed = 3;
+        targetCamX = camX + Math.cos(autoExploreAngle) * speed;
+        targetCamY = camY + Math.sin(autoExploreAngle) * speed;
+        velocity.x = Math.cos(autoExploreAngle) * speed;
+        velocity.y = Math.sin(autoExploreAngle) * speed;
+    }
+
+    // Main game loop
+    function gameLoop() {
+        let now = performance.now();
+        let dt = (now - lastTime) / 16.67; // normalize to ~60fps
+        lastTime = now;
+        totalPlayTime += dt;
+
+        // Keyboard movement
+        let moveSpeed = 5 / zoom;
+        if (keys['w'] || keys['arrowup']) { targetCamY -= moveSpeed; velocity.y = -moveSpeed; isAutoExploring = false; }
+        if (keys['s'] || keys['arrowdown']) { targetCamY += moveSpeed; velocity.y = moveSpeed; isAutoExploring = false; }
+        if (keys['a'] || keys['arrowleft']) { targetCamX -= moveSpeed; velocity.x = -moveSpeed; isAutoExploring = false; }
+        if (keys['d'] || keys['arrowright']) { targetCamX += moveSpeed; velocity.x = moveSpeed; isAutoExploring = false; }
+
+        // Auto explore
+        autoExplore();
+
+        // Smooth camera
+        camX += (targetCamX - camX) * 0.1 * dt;
+        camY += (targetCamY - camY) * 0.1 * dt;
+        zoom += (targetZoom - zoom) * 0.1 * dt;
+
+        // Velocity decay
+        if (!isDragging && !isAutoExploring && !keys['w'] && !keys['s'] && !keys['a'] && !keys['d']) {
+            velocity.x *= 0.95;
+            velocity.y *= 0.95;
+            targetCamX += velocity.x * 0.5;
+            targetCamY += velocity.y * 0.5;
+        }
+
+        // Track distance
+        totalDistance += Math.hypot(velocity.x, velocity.y) * 0.01;
+
+        // Screen shake
+        let shakeX = 0, shakeY = 0;
+        if (screenShake > 0) {
+            shakeX = (Math.random() - 0.5) * screenShake;
+            shakeY = (Math.random() - 0.5) * screenShake;
+            screenShake *= 0.9;
+            if (screenShake < 0.1) screenShake = 0;
+        }
+
+        // Combo timer
+        if (comboTimer > 0) {
+            comboTimer -= 0.016 * dt;
+            if (comboTimer <= 0) {
+                document.getElementById('combo').style.opacity = '0';
+            }
+        }
+
+        // Spawn creatures nearby
+        spawnCreature(camX, camY);
+        spawnCreature(camX + 500, camY);
+        spawnCreature(camX - 500, camY);
+        spawnCreature(camX, camY + 500);
+        spawnCreature(camX, camY - 500);
+
+        // Remove far creatures
+        creatures = creatures.filter(c => Math.hypot(c.baseX - camX, c.baseY - camY) < 1500);
+
+        // Render
+        ctx.save();
+        ctx.translate(shakeX, shakeY);
+
+        renderStars();
+        renderTerrain();
+        renderFeatures();
+        updateTrails();
+        renderDiscoveries();
+        renderCreatures();
+        renderParticles();
+        renderFloatingTexts();
+        updateAmbientParticles();
+        renderPlayer();
+        renderVignette();
+
+        ctx.restore();
+
+        // UI updates
+        updateBiomeUI();
+        checkSpecialEvents();
+
+        // Minimap (render less frequently for performance)
+        if (specialEventTimer % 10 === 0) {
+            renderMinimap();
+        }
+
+        // Ambient music
+        musicPhase += 0.0001;
+        if (specialEventTimer % 300 === 0) {
+            playAmbientNote();
+        }
+
+        // Hint fade
+        if (totalPlayTime > 300) {
+            document.getElementById('hint').style.opacity = Math.max(0, 1 - (totalPlayTime - 300) / 200);
+        }
+
+        // Cursor color based on nearby discoveries
+        let cursorEl = document.getElementById('cursor');
+        let nearDisc = false;
+        for (let cy = Math.floor((camY - 300) / 200); cy <= Math.floor((camY + 300) / 200); cy++) {
+            for (let cx = Math.floor((camX - 300) / 200); cx <= Math.floor((camX + 300) / 200); cx++) {
+                let disc = getDiscoveryAt(cx * 200 + 100, cy * 200 + 100);
+                if (disc && !discoveredSet.has(disc.key)) {
+                    let dist = Math.hypot(disc.x - camX, disc.y - camY);
+                    if (dist < 200) {
+                        nearDisc = true;
+                        cursorEl.style.borderColor = '#ffd700';
+                        cursorEl.style.transform = `scale(${1.2 + Math.sin(performance.now() * 0.005) * 0.2})`;
+                        cursorEl.style.boxShadow = '0 0 15px rgba(255,215,0,0.6)';
+                    }
+                }
+            }
+        }
+        if (!nearDisc) {
+            cursorEl.style.borderColor = '#fff';
+            cursorEl.style.transform = 'scale(1)';
+            cursorEl.style.boxShadow = '0 0 10px rgba(255,255,255,0.3)';
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game
+    gameLoop();
+
+    // Prevent context menu
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Welcome message after a short delay
+    setTimeout(() => {
+        let popup = document.getElementById('popup');
+        popup.querySelector('h2').textContent = '🌍 Welcome, Wanderer';
+        popup.querySelector('p').textContent = 'Drag to explore. Discover wonders. The world is infinite.';
+        popup.classList.add('show');
+        setTimeout(() => popup.classList.remove('show'), 3000);
+    }, 500);
+
+    // Periodic encouragement
+    setInterval(() => {
+        if (discoveries > 0 && Math.random() < 0.3) {
+            let messages = [
+                "What's over that next hill? 🏔️",
+                "You're doing amazing! Keep going! ✨",
+                "There are rarer things out there... 💎",
+                "Try zooming in closer! 🔍",
+                "The void between biomes hides secrets... 🌌",
+                "Double-click to warp! ⚡",
+                "Press SPACE for auto-explore! 🧭",
+                `${discoveries} discoveries! Can you find 'em all? 🏆`,
+                "Every direction holds something new! 🗺️",
+                "The deeper you go, the stranger it gets... 👁️"
+            ];
+            let msg = messages[Math.floor(Math.random() * messages.length)];
+            floatingTexts.push({
+                x: camX + (Math.random() - 0.5) * 200,
+                y: camY - 80,
+                text: msg,
+                life: 2,
+                vy: -0.3
+            });
+        }
+    }, 15000);
+
+    </script>
+</body>
+</html>
