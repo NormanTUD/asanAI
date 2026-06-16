@@ -252,20 +252,15 @@ function build_model_summary_table() {
 				"border-radius:3px; transition:width 0.3s ease;\"></div></div>";
 		}
 
-		// Feature 8: Tooltip
-		var tooltip_content = _build_layer_tooltip(ld.layer_ref);
-		var tooltip_attr = tooltip_content ? (" title=\"" + tooltip_content + "\"") : "";
-		var cursor_style = tooltip_content ? "cursor:help;" : "cursor:default;";
-		var layer_name_cell = "<td class=\"summary-layer-name\"" + tooltip_attr + " style=\"" + cursor_style + "\">" +
-			_escape_html(ld.name) + " <span style=\"opacity:0.7;\">(" + _escape_html(ld.layer_type) + ")</span></td>";
+		// Feature 8: Tooltip via floating DOM element (no ugly title attr)
+		var layer_name_cell = "<td class=\"summary-layer-name\" data-layer-index=\"" + ri + "\">" +
+			"<span class=\"st-layer-name-text\">" + _escape_html(ld.name) + "</span> " +
+			"<span class=\"st-layer-type-badge\">" + _escape_html(ld.layer_type) + "</span></td>";
 
-		// Feature 9: Shape flow arrow
-		var arrow_html = _shape_flow_arrow(ld.input_shape, ld.output_shape);
 
 		var row_html = "<tr>" +
 			layer_name_cell +
 			"<td>" + _escape_html(_format_shape(ld.input_shape)) + "</td>" +
-			"<td class=\"shape-arrow-cell\" style=\"text-align:center; padding:0 4px;\">" + arrow_html + "</td>" +
 			"<td>" + _escape_html(_format_shape(ld.output_shape)) + "</td>" +
 			"<td style=\"min-width:100px;\">" +
 				"<span class=\"param-count\">" + ld.params.toLocaleString() + "</span>" +
@@ -286,12 +281,183 @@ function build_model_summary_table() {
 
 	return "<center>" +
 		"<div id=\"summary_export_bar\"></div>" +
-		"<table id=\"summary_table\" border=\"1\" style=\"border-collapse:collapse;\"><tbody>" +
-		"<tr><th>Layer (type)</th><th>Input Shape</th><th></th><th>Output Shape</th><th>Param Count</th></tr>" +
+		"<table id=\"summary_table\" class=\"st-summary-table\"><tbody>" +
+		"<tr class=\"st-table-header\"><th>Layer (type)</th><th>Input Shape</th><th>Output Shape</th><th>Param Count</th></tr>" +
 		rows.join("\n") +
 		"</tbody></table>" +
 		"<div id=\"summary_cumulative_chart\"></div>" +
 		"</center>";
+}
+
+function _build_layer_tooltip_html(layer_data_entry) {
+	try {
+		if (!layer_data_entry) return "";
+		var layer = layer_data_entry.layer_ref;
+		if (!layer) return "";
+
+		var config = null;
+		if (typeof layer.getConfig === "function") {
+			try { config = layer.getConfig() || {}; } catch (e) { config = {}; }
+		} else if (layer.config) {
+			config = layer.config;
+		} else {
+			config = {};
+		}
+
+		var sections = [];
+
+		// Section 1: Layer identity with icon
+		var type_icon = _get_layer_type_icon(layer_data_entry.layer_type);
+		sections.push(
+			"<div class='st-tip-header'>" +
+			"<div class='st-tip-header-icon'>" + type_icon + "</div>" +
+			"<div class='st-tip-header-text'>" +
+			"<div class='st-tip-name'>" + _escape_html(layer_data_entry.name) + "</div>" +
+			"<div class='st-tip-type'>" + _escape_html(layer_data_entry.layer_type) + "</div>" +
+			"</div>" +
+			"</div>"
+		);
+
+		// Section 2: Configuration (key-value pairs, nicely formatted)
+		if (config && typeof config === "object") {
+			var skip_keys = ["name", "dtype", "batch_input_shape", "batchInputShape", "trainable"];
+			var highlight_keys = ["kernel_size", "kernelSize", "filters", "units", "activation",
+				"padding", "strides", "pool_size", "poolSize", "rate", "momentum", "epsilon"];
+			var config_items = [];
+			var keys = Object.keys(config);
+
+			for (var k = 0; k < keys.length; k++) {
+				var key = keys[k];
+				if (skip_keys.indexOf(key) !== -1) continue;
+				var val = config[key];
+				if (val === null || val === undefined) continue;
+				if (typeof val === "object" && !Array.isArray(val)) {
+					if (val.class_name || val.className) {
+						val = val.class_name || val.className;
+					} else {
+						try { val = JSON.stringify(val); } catch (e2) { val = "[object]"; }
+					}
+				}
+				if (Array.isArray(val)) val = JSON.stringify(val);
+
+				var is_highlight = highlight_keys.indexOf(key) !== -1;
+				var label = _format_config_key(key);
+				config_items.push(
+					"<div class='st-tip-config-row'>" +
+					"<span class='st-tip-config-key" + (is_highlight ? " st-tip-highlight" : "") + "'>" +
+					_escape_html(label) + "</span>" +
+					"<span class='st-tip-config-val" + (is_highlight ? " st-tip-highlight-val" : "") + "'>" +
+					_escape_html(String(val)) + "</span>" +
+					"</div>"
+				);
+			}
+
+			if (config_items.length > 0) {
+				sections.push(
+					"<div class='st-tip-section'>" +
+					"<div class='st-tip-section-label'>" +
+					"<span class='st-tip-section-icon'>⚙</span> Configuration</div>" +
+					"<div class='st-tip-config-grid'>" + config_items.join("") + "</div>" +
+					"</div>"
+				);
+			}
+		}
+
+		// Section 3: Parameters with mini visual bar
+		if (layer_data_entry.params > 0) {
+			var total_model_params = (window._summary_totals && window._summary_totals.total) || 1;
+			var pct = Math.min(100, Math.round((layer_data_entry.params / total_model_params) * 100));
+			var param_html =
+				"<div class='st-tip-section'>" +
+				"<div class='st-tip-section-label'>" +
+				"<span class='st-tip-section-icon'>📊</span> Parameters</div>" +
+				"<div class='st-tip-param-grid'>" +
+				"<div class='st-tip-param-row'><span class='st-tip-param-label'>Total</span>" +
+				"<span class='st-tip-param-value'>" + layer_data_entry.params.toLocaleString() + "</span></div>";
+
+			if (layer_data_entry.trainable_count > 0) {
+				param_html += "<div class='st-tip-param-row'><span class='st-tip-param-label'>Trainable</span>" +
+					"<span class='st-tip-param-value'>" + layer_data_entry.trainable_count.toLocaleString() + "</span></div>";
+			}
+			if (layer_data_entry.non_trainable_count > 0) {
+				param_html += "<div class='st-tip-param-row'><span class='st-tip-param-label'>Non-trainable</span>" +
+					"<span class='st-tip-param-value'>" + layer_data_entry.non_trainable_count.toLocaleString() + "</span></div>";
+			}
+
+			// Mini percentage bar
+			param_html += "<div class='st-tip-pct-bar-container'>" +
+				"<div class='st-tip-pct-bar' style='width:" + pct + "%'></div>" +
+				"</div>" +
+				"<div class='st-tip-pct-label'>" + pct + "% of model parameters</div>";
+
+			param_html += "</div></div>";
+			sections.push(param_html);
+		}
+
+		// Section 4: Memory estimate
+		if (layer_data_entry.params > 0) {
+			var bytes = layer_data_entry.params * 4;
+			var mem_str = _format_memory(bytes);
+			var activation_mem = "";
+			if (layer_data_entry.output_shape) {
+				var shape_arr = Array.isArray(layer_data_entry.output_shape) ? layer_data_entry.output_shape : [];
+				var act_elements = 1;
+				for (var si = 1; si < shape_arr.length; si++) {
+					if (shape_arr[si] != null && Number(shape_arr[si]) > 0) {
+						act_elements *= Number(shape_arr[si]);
+					}
+				}
+				if (act_elements > 1) {
+					activation_mem = "<div class='st-tip-mem-row'><span class='st-tip-mem-label'>Activation/sample</span>" +
+						"<span class='st-tip-mem-value'>~" + _format_memory(act_elements * 4) + "</span></div>";
+				}
+			}
+			sections.push(
+				"<div class='st-tip-section st-tip-section-memory'>" +
+				"<div class='st-tip-section-label'>" +
+				"<span class='st-tip-section-icon'>💾</span> Memory (float32)</div>" +
+				"<div class='st-tip-mem-row'><span class='st-tip-mem-label'>Weights</span>" +
+				"<span class='st-tip-mem-value'>~" + mem_str + "</span></div>" +
+				activation_mem +
+				"</div>"
+			);
+		}
+
+		// Section 5: Shape flow
+		sections.push(
+			"<div class='st-tip-section st-tip-section-shapes'>" +
+			"<div class='st-tip-section-label'>" +
+			"<span class='st-tip-section-icon'>📐</span> Shape Flow</div>" +
+			"<div class='st-tip-shape-flow'>" +
+			"<span class='st-tip-shape-box'>" + _escape_html(_format_shape(layer_data_entry.input_shape)) + "</span>" +
+			"<span class='st-tip-shape-arrow'>→</span>" +
+			"<span class='st-tip-shape-box st-tip-shape-out'>" + _escape_html(_format_shape(layer_data_entry.output_shape)) + "</span>" +
+			"</div>" +
+			"</div>"
+		);
+
+		return "<div class='st-tip-content'>" + sections.join("") + "</div>";
+	} catch (e) {
+		return "";
+	}
+}
+
+function _get_layer_type_icon(layer_type) {
+	if (!layer_type) return "◆";
+	var t = layer_type.toLowerCase();
+	if (t.indexOf("conv") !== -1) return "▦";
+	if (t.indexOf("dense") !== -1 || t.indexOf("linear") !== -1) return "◈";
+	if (t.indexOf("pool") !== -1) return "▤";
+	if (t.indexOf("dropout") !== -1) return "◌";
+	if (t.indexOf("batch") !== -1 || t.indexOf("norm") !== -1) return "≋";
+	if (t.indexOf("flatten") !== -1) return "▬";
+	if (t.indexOf("input") !== -1) return "◉";
+	if (t.indexOf("activation") !== -1) return "⚡";
+	if (t.indexOf("lstm") !== -1 || t.indexOf("gru") !== -1 || t.indexOf("rnn") !== -1) return "↺";
+	if (t.indexOf("embed") !== -1) return "❖";
+	if (t.indexOf("concat") !== -1 || t.indexOf("add") !== -1 || t.indexOf("merge") !== -1) return "⊕";
+	if (t.indexOf("reshape") !== -1) return "⬡";
+	return "◆";
 }
 
 // ============================================================
@@ -345,84 +511,6 @@ function _escape_html(s) {
 		.replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#39;");
-}
-
-// ============================================================
-// Feature 9: Shape flow arrow
-// ============================================================
-function _shape_flow_arrow(input_shape, output_shape) {
-	try {
-		if (!input_shape || !output_shape) {
-			return "<span class=\"shape-arrow\" style=\"color:" + SUMMARY_CONFIG.arrow_color + "\">&rarr;</span>";
-		}
-
-		var in_dims = Array.isArray(input_shape) ? input_shape : [];
-		var out_dims = Array.isArray(output_shape) ? output_shape : [];
-
-		var annotations = [];
-		if (in_dims.length === out_dims.length && in_dims.length > 0) {
-			for (var d = 1; d < in_dims.length; d++) {
-				var i_val = in_dims[d];
-				var o_val = out_dims[d];
-				if (i_val != null && o_val != null && Number(i_val) > 0 && Number(o_val) > 0) {
-					var ratio = Number(i_val) / Number(o_val);
-					if (Math.abs(ratio - 2) < 0.01) { annotations.push("&darr;2&times;"); }
-					else if (Math.abs(ratio - 4) < 0.01) { annotations.push("&darr;4&times;"); }
-					else if (Math.abs(ratio - 0.5) < 0.01) { annotations.push("&uarr;2&times;"); }
-					else if (Math.abs(ratio - 0.25) < 0.01) { annotations.push("&uarr;4&times;"); }
-					else if (Number(o_val) > Number(i_val)) { annotations.push("&uarr;"); }
-					else if (Number(o_val) < Number(i_val)) { annotations.push("&darr;"); }
-				}
-			}
-		}
-
-		var arrow_text = annotations.length > 0 ? annotations.join(" ") : "&rarr;";
-		return "<span class=\"shape-arrow\" title=\"Dimension change\" style=\"color:" + SUMMARY_CONFIG.arrow_color + "; font-weight:bold; font-size:0.85em;\">" + arrow_text + "</span>";
-	} catch (e) {
-		return "<span class=\"shape-arrow\" style=\"color:" + SUMMARY_CONFIG.arrow_color + "\">&rarr;</span>";
-	}
-}
-
-// ============================================================
-// Feature 8: Build tooltip content from layer config
-// ============================================================
-function _build_layer_tooltip(layer) {
-	try {
-		if (!layer) return "";
-		var config = null;
-		if (typeof layer.getConfig === "function") {
-			try { config = layer.getConfig() || {}; } catch (e) { config = {}; }
-		} else if (layer.config) {
-			config = layer.config;
-		} else {
-			return "";
-		}
-
-		if (!config || typeof config !== "object") return "";
-
-		var skip_keys = ["name", "dtype", "batch_input_shape", "batchInputShape"];
-		var entries = [];
-		var keys = Object.keys(config);
-		for (var k = 0; k < keys.length; k++) {
-			var key = keys[k];
-			if (skip_keys.indexOf(key) !== -1) continue;
-			var val = config[key];
-			if (val === null || val === undefined) continue;
-			if (typeof val === "object" && !Array.isArray(val)) {
-				try { val = JSON.stringify(val); } catch (e2) { val = "[object]"; }
-			}
-			if (Array.isArray(val)) {
-				val = JSON.stringify(val);
-			}
-			entries.push(_escape_html(key) + ": " + _escape_html(String(val)));
-		}
-
-		if (entries.length === 0) return "";
-		// Use &#10; for newlines in title attribute
-		return entries.join("&#10;");
-	} catch (e) {
-		return "";
-	}
 }
 
 // ============================================================
@@ -726,151 +814,6 @@ function _flash_btn(btn_el, message, is_success) {
 	}
 }
 
-// ============================================================
-// Feature 8: TOOLTIP STYLES INJECTION
-// ============================================================
-// ============================================================
-// Feature 8: FLOATING DOM TOOLTIP SYSTEM (replaces title attr)
-// ============================================================
-
-/**
- * Build rich tooltip HTML content for a layer.
- * Returns an HTML string (not plain text) with config details,
- * parameter counts, and memory estimates.
- */
-function _build_layer_tooltip_html(layer_data_entry) {
-	try {
-		if (!layer_data_entry) return "";
-		var layer = layer_data_entry.layer_ref;
-		if (!layer) return "";
-
-		var config = null;
-		if (typeof layer.getConfig === "function") {
-			try { config = layer.getConfig() || {}; } catch (e) { config = {}; }
-		} else if (layer.config) {
-			config = layer.config;
-		} else {
-			config = {};
-		}
-
-		var sections = [];
-
-		// Section 1: Layer identity
-		sections.push(
-			"<div class='st-tooltip-section st-tooltip-header'>" +
-			"<strong>" + _escape_html(layer_data_entry.name) + "</strong>" +
-			" <span class='st-tooltip-type'>(" + _escape_html(layer_data_entry.layer_type) + ")</span>" +
-			"</div>"
-		);
-
-		// Section 2: Configuration details
-		if (config && typeof config === "object") {
-			var skip_keys = ["name", "dtype", "batch_input_shape", "batchInputShape", "trainable"];
-			var highlight_keys = ["kernel_size", "kernelSize", "filters", "units", "activation",
-				"padding", "strides", "pool_size", "poolSize", "rate", "momentum", "epsilon"];
-			var config_lines = [];
-			var keys = Object.keys(config);
-
-			for (var k = 0; k < keys.length; k++) {
-				var key = keys[k];
-				if (skip_keys.indexOf(key) !== -1) continue;
-				var val = config[key];
-				if (val === null || val === undefined) continue;
-				if (typeof val === "object" && !Array.isArray(val)) {
-					// Check for nested activation config
-					if (val.class_name || val.className) {
-						val = val.class_name || val.className;
-					} else {
-						try { val = JSON.stringify(val); } catch (e2) { val = "[object]"; }
-					}
-				}
-				if (Array.isArray(val)) {
-					val = JSON.stringify(val);
-				}
-
-				var is_highlight = highlight_keys.indexOf(key) !== -1;
-				var label = _format_config_key(key);
-				config_lines.push(
-					"<span class='" + (is_highlight ? "st-tooltip-key-highlight" : "st-tooltip-key") + "'>" +
-					_escape_html(label) + ":</span> " +
-					"<span class='st-tooltip-val'>" + _escape_html(String(val)) + "</span>"
-				);
-			}
-
-			if (config_lines.length > 0) {
-				sections.push(
-					"<div class='st-tooltip-section st-tooltip-config'>" +
-					"<div class='st-tooltip-section-title'>Configuration</div>" +
-					config_lines.join("<br>") +
-					"</div>"
-				);
-			}
-		}
-
-		// Section 3: Parameter counts
-		var param_lines = [];
-		param_lines.push("Total: <strong>" + (layer_data_entry.params || 0).toLocaleString() + "</strong>");
-		if (layer_data_entry.trainable_count > 0) {
-			param_lines.push("Trainable: " + layer_data_entry.trainable_count.toLocaleString());
-		}
-		if (layer_data_entry.non_trainable_count > 0) {
-			param_lines.push("Non-trainable: " + layer_data_entry.non_trainable_count.toLocaleString());
-		}
-		sections.push(
-			"<div class='st-tooltip-section st-tooltip-params'>" +
-			"<div class='st-tooltip-section-title'>Parameters</div>" +
-			param_lines.join("<br>") +
-			"</div>"
-		);
-
-		// Section 4: Memory estimate (assuming float32 = 4 bytes per param)
-		if (layer_data_entry.params > 0) {
-			var bytes = layer_data_entry.params * 4;
-			var mem_str = _format_memory(bytes);
-			// Also estimate activation memory if output shape is available
-			var activation_mem = "";
-			if (layer_data_entry.output_shape) {
-				var out_elements = _product_of_dims(
-					Array.isArray(layer_data_entry.output_shape) ? layer_data_entry.output_shape : []
-				);
-				if (out_elements > 0) {
-					// Exclude batch dim (first element often null)
-					var shape_arr = Array.isArray(layer_data_entry.output_shape) ? layer_data_entry.output_shape : [];
-					var act_elements = 1;
-					for (var si = 1; si < shape_arr.length; si++) {
-						if (shape_arr[si] != null && Number(shape_arr[si]) > 0) {
-							act_elements *= Number(shape_arr[si]);
-						}
-					}
-					if (act_elements > 1) {
-						activation_mem = "<br>Activation (per sample): ~" + _format_memory(act_elements * 4);
-					}
-				}
-			}
-			sections.push(
-				"<div class='st-tooltip-section st-tooltip-memory'>" +
-				"<div class='st-tooltip-section-title'>Memory (float32)</div>" +
-				"Weights: ~" + mem_str +
-				activation_mem +
-				"</div>"
-			);
-		}
-
-		// Section 5: Shapes
-		sections.push(
-			"<div class='st-tooltip-section st-tooltip-shapes'>" +
-			"<div class='st-tooltip-section-title'>Shapes</div>" +
-			"In: " + _escape_html(_format_shape(layer_data_entry.input_shape)) +
-			"<br>Out: " + _escape_html(_format_shape(layer_data_entry.output_shape)) +
-			"</div>"
-		);
-
-		return "<div class='st-tooltip-inner'>" + sections.join("") + "</div>";
-	} catch (e) {
-		return "";
-	}
-}
-
 /**
  * Format a config key from snake_case/camelCase to readable form
  */
@@ -910,8 +853,8 @@ function _get_or_create_tooltip_el() {
 	el.id = "summary-floating-tooltip";
 	el.className = "st-floating-tooltip";
 	el.style.display = "none";
+	el.style.opacity = "0";
 	el.addEventListener("mouseenter", function() {
-		// Keep tooltip visible when hovering over it
 		if (_summary_tooltip_hide_timeout) {
 			clearTimeout(_summary_tooltip_hide_timeout);
 			_summary_tooltip_hide_timeout = null;
@@ -935,14 +878,18 @@ function _show_tooltip(target_el, html_content) {
 	tooltip.innerHTML = html_content;
 	tooltip.style.display = "block";
 	tooltip.style.opacity = "0";
+	tooltip.style.transform = "translateY(6px)";
 	tooltip.style.pointerEvents = "auto";
 
 	// Position intelligently relative to target
 	_position_tooltip(tooltip, target_el);
 
-	// Fade in
-	tooltip.style.transition = "opacity 0.15s ease";
-	tooltip.style.opacity = "1";
+	// Animate in
+	requestAnimationFrame(function() {
+		tooltip.style.transition = "opacity 0.2s cubic-bezier(0.4,0,0.2,1), transform 0.2s cubic-bezier(0.4,0,0.2,1)";
+		tooltip.style.opacity = "1";
+		tooltip.style.transform = "translateY(0)";
+	});
 }
 
 function _hide_tooltip() {
@@ -953,12 +900,15 @@ function _hide_tooltip() {
 		var tooltip = _summary_tooltip_el;
 		if (tooltip) {
 			tooltip.style.opacity = "0";
+			tooltip.style.transform = "translateY(6px)";
 			setTimeout(function() {
-				if (tooltip) tooltip.style.display = "none";
-			}, 150);
+				if (tooltip && tooltip.style.opacity === "0") {
+					tooltip.style.display = "none";
+				}
+			}, 200);
 		}
 		_summary_tooltip_hide_timeout = null;
-	}, 100); // Small delay to allow moving to tooltip
+	}, 120);
 }
 
 /**
@@ -1012,7 +962,6 @@ function _attach_tooltip_listeners(container) {
 	var cells = container.querySelectorAll(".summary-layer-name[data-layer-index]");
 	for (var i = 0; i < cells.length; i++) {
 		(function(cell) {
-			// Remove any native title to prevent double tooltip
 			cell.removeAttribute("title");
 
 			cell.addEventListener("mouseenter", function() {
@@ -1026,7 +975,7 @@ function _attach_tooltip_listeners(container) {
 					var self = this;
 					_summary_tooltip_timeout = setTimeout(function() {
 						_show_tooltip(self, html);
-					}, 200); // Small delay to avoid flicker
+					}, 200);
 				}
 			});
 
@@ -1050,65 +999,335 @@ function _inject_tooltip_styles() {
 		var style = document.createElement("style");
 		style.id = "summary-tooltip-styles";
 		style.textContent =
-			/* Floating tooltip container */
+			/* ===== GLASSMORPHISM FLOATING TOOLTIP ===== */
 			".st-floating-tooltip {" +
 			"  position: absolute;" +
 			"  z-index: 99999;" +
-			"  background: #1a1a2e;" +
-			"  color: #e0e0e0;" +
-			"  border: 1px solid #333;" +
-			"  border-radius: 8px;" +
+			"  background: rgba(15, 15, 35, 0.85);" +
+			"  backdrop-filter: blur(16px) saturate(180%);" +
+			"  -webkit-backdrop-filter: blur(16px) saturate(180%);" +
+			"  border: 1px solid rgba(255, 255, 255, 0.08);" +
+			"  border-radius: 16px;" +
 			"  padding: 0;" +
-			"  max-width: 380px;" +
-			"  min-width: 220px;" +
-			"  box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.1);" +
-			"  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;" +
-			"  font-size: 12px;" +
-			"  line-height: 1.5;" +
+			"  max-width: 420px;" +
+			"  min-width: 260px;" +
+			"  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1);" +
+			"  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;" +
+			"  font-size: 12.5px;" +
+			"  line-height: 1.55;" +
 			"  pointer-events: auto;" +
 			"  overflow: hidden;" +
+			"  transform: translateY(4px);" +
+			"  transition: opacity 0.2s cubic-bezier(0.4,0,0.2,1), transform 0.2s cubic-bezier(0.4,0,0.2,1);" +
 			"}" +
-			".st-tooltip-inner {" +
-			"  max-height: 400px;" +
+			".st-floating-tooltip[style*='opacity: 1'] {" +
+			"  transform: translateY(0);" +
+			"}" +
+
+			/* Tooltip inner content */
+			".st-tip-content {" +
+			"  max-height: 450px;" +
 			"  overflow-y: auto;" +
+			"  scrollbar-width: thin;" +
+			"  scrollbar-color: rgba(255,255,255,0.15) transparent;" +
 			"}" +
-			".st-tooltip-section {" +
-			"  padding: 8px 12px;" +
-			"  border-bottom: 1px solid #2a2a3e;" +
+			".st-tip-content::-webkit-scrollbar { width: 4px; }" +
+			".st-tip-content::-webkit-scrollbar-track { background: transparent; }" +
+			".st-tip-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }" +
+
+			/* Header */
+			".st-tip-header {" +
+			"  display: flex;" +
+			"  align-items: center;" +
+			"  gap: 12px;" +
+			"  padding: 14px 16px;" +
+			"  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));" +
+			"  border-bottom: 1px solid rgba(255,255,255,0.06);" +
 			"}" +
-			".st-tooltip-section:last-child { border-bottom: none; }" +
-			".st-tooltip-header {" +
-			"  background: #16213e;" +
-			"  padding: 10px 12px;" +
-			"  font-size: 13px;" +
+			".st-tip-header-icon {" +
+			"  width: 36px;" +
+			"  height: 36px;" +
+			"  display: flex;" +
+			"  align-items: center;" +
+			"  justify-content: center;" +
+			"  background: rgba(99, 102, 241, 0.2);" +
+			"  border-radius: 10px;" +
+			"  font-size: 16px;" +
+			"  flex-shrink: 0;" +
 			"}" +
-			".st-tooltip-type { color: #8888aa; font-weight: normal; }" +
-			".st-tooltip-section-title {" +
+			".st-tip-header-text { flex: 1; min-width: 0; }" +
+			".st-tip-name {" +
+			"  font-weight: 600;" +
+			"  font-size: 13.5px;" +
+			"  color: #f0f0ff;" +
+			"  white-space: nowrap;" +
+			"  overflow: hidden;" +
+			"  text-overflow: ellipsis;" +
+			"}" +
+			".st-tip-type {" +
+			"  font-size: 11px;" +
+			"  color: rgba(167, 139, 250, 0.9);" +
+			"  margin-top: 1px;" +
+			"  font-weight: 500;" +
+			"}" +
+
+			/* Sections */
+			".st-tip-section {" +
+			"  padding: 12px 16px;" +
+			"  border-bottom: 1px solid rgba(255,255,255,0.04);" +
+			"}" +
+			".st-tip-section:last-child { border-bottom: none; }" +
+			".st-tip-section-label {" +
 			"  font-size: 10px;" +
 			"  text-transform: uppercase;" +
-			"  letter-spacing: 0.5px;" +
-			"  color: #6c7a89;" +
-			"  margin-bottom: 4px;" +
+			"  letter-spacing: 0.8px;" +
+			"  color: rgba(255,255,255,0.4);" +
+			"  margin-bottom: 8px;" +
 			"  font-weight: 600;" +
+			"  display: flex;" +
+			"  align-items: center;" +
+			"  gap: 6px;" +
 			"}" +
-			".st-tooltip-key-highlight { color: #64b5f6; font-weight: 500; }" +
-			".st-tooltip-key { color: #90a4ae; }" +
-			".st-tooltip-val { color: #e0e0e0; }" +
-			".st-tooltip-config { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }" +
-			".st-tooltip-params { background: #1a2332; }" +
-			".st-tooltip-memory { background: #1a2332; color: #a5d6a7; font-size: 11px; }" +
-			".st-tooltip-shapes { font-family: monospace; font-size: 11px; color: #b0bec5; }" +
+			".st-tip-section-icon { font-size: 12px; }" +
 
-			/* Layer name cell styling */
-			".summary-layer-name { cursor: help; position: relative; }" +
+			/* Config grid */
+			".st-tip-config-grid { display: flex; flex-direction: column; gap: 4px; }" +
+			".st-tip-config-row {" +
+			"  display: flex;" +
+			"  justify-content: space-between;" +
+			"  align-items: baseline;" +
+			"  padding: 3px 8px;" +
+			"  border-radius: 6px;" +
+			"  background: rgba(255,255,255,0.02);" +
+			"  transition: background 0.15s ease;" +
+			"}" +
+			".st-tip-config-row:hover { background: rgba(255,255,255,0.05); }" +
+			".st-tip-config-key {" +
+			"  color: rgba(255,255,255,0.5);" +
+			"  font-size: 11.5px;" +
+			"  font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;" +
+			"}" +
+			".st-tip-config-val {" +
+			"  color: rgba(255,255,255,0.85);" +
+			"  font-size: 11.5px;" +
+			"  font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;" +
+			"  font-weight: 500;" +
+			"}" +
+			".st-tip-highlight { color: rgba(129, 140, 248, 0.95) !important; }" +
+			".st-tip-highlight-val { color: #c4b5fd !important; font-weight: 600; }" +
 
-			/* Bar chart styles */
-			".param-bar-container { display: block; }" +
+			/* Parameters */
+			".st-tip-param-grid { display: flex; flex-direction: column; gap: 4px; }" +
+			".st-tip-param-row {" +
+			"  display: flex;" +
+			"  justify-content: space-between;" +
+			"  align-items: center;" +
+			"}" +
+			".st-tip-param-label { color: rgba(255,255,255,0.5); font-size: 11.5px; }" +
+			".st-tip-param-value { color: #f0f0ff; font-weight: 600; font-size: 12px; font-family: 'SF Mono', monospace; }" +
+			".st-tip-pct-bar-container {" +
+			"  width: 100%;" +
+			"  height: 4px;" +
+			"  background: rgba(255,255,255,0.06);" +
+			"  border-radius: 4px;" +
+			"  margin-top: 8px;" +
+			"  overflow: hidden;" +
+			"}" +
+			".st-tip-pct-bar {" +
+			"  height: 100%;" +
+			"  background: linear-gradient(90deg, #6366f1, #a78bfa);" +
+			"  border-radius: 4px;" +
+			"  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);" +
+			"}" +
+			".st-tip-pct-label {" +
+			"  font-size: 10px;" +
+			"  color: rgba(255,255,255,0.35);" +
+			"  margin-top: 4px;" +
+			"  text-align: right;" +
+			"}" +
+
+			/* Memory */
+			".st-tip-section-memory { background: rgba(16, 185, 129, 0.04); }" +
+			".st-tip-mem-row {" +
+			"  display: flex;" +
+			"  justify-content: space-between;" +
+			"  align-items: center;" +
+			"  padding: 2px 0;" +
+			"}" +
+			".st-tip-mem-label { color: rgba(255,255,255,0.5); font-size: 11.5px; }" +
+			".st-tip-mem-value { color: #6ee7b7; font-weight: 600; font-size: 12px; font-family: 'SF Mono', monospace; }" +
+
+			/* Shape flow */
+			".st-tip-section-shapes { background: rgba(99, 102, 241, 0.03); }" +
+			".st-tip-shape-flow {" +
+			"  display: flex;" +
+			"  align-items: center;" +
+			"  gap: 8px;" +
+			"  justify-content: center;" +
+			"  flex-wrap: wrap;" +
+			"}" +
+			".st-tip-shape-box {" +
+			"  padding: 4px 10px;" +
+			"  background: rgba(255,255,255,0.05);" +
+			"  border: 1px solid rgba(255,255,255,0.1);" +
+			"  border-radius: 8px;" +
+			"  font-family: 'SF Mono', 'JetBrains Mono', monospace;" +
+			"  font-size: 11px;" +
+			"  color: rgba(255,255,255,0.75);" +
+			"}" +
+			".st-tip-shape-out {" +
+			"  border-color: rgba(99, 102, 241, 0.3);" +
+			"  background: rgba(99, 102, 241, 0.08);" +
+			"  color: #c4b5fd;" +
+			"}" +
+			".st-tip-shape-arrow {" +
+			"  color: rgba(167, 139, 250, 0.7);" +
+			"  font-size: 14px;" +
+			"  font-weight: bold;" +
+			"}" +
+
+			/* ===== TABLE STYLING ===== */
+			".st-summary-table {" +
+			"  border-collapse: separate;" +
+			"  border-spacing: 0;" +
+			"  border: 1px solid rgba(255,255,255,0.08);" +
+			"  border-radius: 12px;" +
+			"  overflow: hidden;" +
+			"  width: auto;" +
+			"  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;" +
+			"}" +
+			".st-summary-table th, .st-summary-table td {" +
+			"  padding: 10px 14px;" +
+			"  text-align: left;" +
+			"}" +
+
+			/* Gradient table header */
+			".st-table-header th {" +
+			"  background: linear-gradient(135deg, #1e1b4b, #312e81, #3730a3);" +
+			"  color: rgba(255,255,255,0.9);" +
+			"  font-size: 11px;" +
+			"  font-weight: 600;" +
+			"  text-transform: uppercase;" +
+			"  letter-spacing: 0.6px;" +
+			"  border-bottom: 1px solid rgba(99, 102, 241, 0.3);" +
+			"  white-space: nowrap;" +
+			"}" +
+
+			/* Table rows */
+			".st-summary-table tbody tr {" +
+			"  transition: background 0.2s ease, transform 0.15s ease;" +
+			"}" +
+			".st-summary-table tbody tr:hover {" +
+			"  background: rgba(99, 102, 241, 0.06);" +
+			"}" +
+			".st-summary-table tbody tr td {" +
+			"  border-bottom: 1px solid rgba(255,255,255,0.04);" +
+			"}" +
+
+			/* Layer name cell */
+			".summary-layer-name {" +
+			"  cursor: help;" +
+			"  position: relative;" +
+			"  transition: color 0.15s ease;" +
+			"}" +
+			".summary-layer-name:hover {" +
+			"  color: #a78bfa;" +
+			"}" +
+			".summary-layer-name:hover .st-layer-name-text {" +
+			"  text-decoration: underline;" +
+			"  text-decoration-color: rgba(167, 139, 250, 0.4);" +
+			"  text-underline-offset: 3px;" +
+			"}" +
+			".st-layer-name-text {" +
+			"  font-weight: 500;" +
+			"  transition: text-decoration-color 0.2s ease;" +
+			"}" +
+			".st-layer-type-badge {" +
+			"  display: inline-block;" +
+			"  padding: 1px 7px;" +
+			"  background: rgba(99, 102, 241, 0.12);" +
+			"  border: 1px solid rgba(99, 102, 241, 0.2);" +
+			"  border-radius: 20px;" +
+			"  font-size: 10px;" +
+			"  color: rgba(167, 139, 250, 0.85);" +
+			"  font-weight: 500;" +
+			"  vertical-align: middle;" +
+			"  margin-left: 4px;" +
+			"}" +
+
+			/* Param bar update */
+			".param-bar-container {" +
+			"  display: block;" +
+			"  border-radius: 4px;" +
+			"  overflow: hidden;" +
+			"}" +
+			".param-bar-fill {" +
+			"  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);" +
+			"}" +
+
+			/* Summary totals row */
+			".summary_totals td {" +
+			"  font-size: 12px;" +
+			"  padding: 8px 14px;" +
+			"  background: rgba(255,255,255,0.02);" +
+			"  font-weight: 500;" +
+			"}" +
+
+			/* Shape arrow */
 			".shape-arrow-cell { vertical-align: middle; }" +
-			"[id='summary_param_distribution_chart'] { margin-top: 14px; margin-bottom: 8px; }" +
-			"[id='summary_export_bar'] { margin-top: 8px; margin-bottom: 4px; }" +
+			".shape-arrow {" +
+			"  display: inline-block;" +
+			"  transition: transform 0.2s ease;" +
+			"}" +
+			"tr:hover .shape-arrow { transform: translateX(2px); }" +
 
-			/* Per-layer bar chart */
+			/* Export bar buttons */
+			".summary-export-btn {" +
+			"  display: inline-block;" +
+			"  margin: 4px 3px;" +
+			"  padding: 5px 12px;" +
+			"  font-size: 11px;" +
+			"  cursor: pointer;" +
+			"  border: 1px solid rgba(255,255,255,0.1);" +
+			"  border-radius: 8px;" +
+			"  background: rgba(255,255,255,0.04);" +
+			"  color: rgba(255,255,255,0.7);" +
+			"  user-select: none;" +
+			"  transition: all 0.2s ease;" +
+			"  font-weight: 500;" +
+			"}" +
+			".summary-export-btn:hover {" +
+			"  background: rgba(99, 102, 241, 0.15);" +
+			"  border-color: rgba(99, 102, 241, 0.3);" +
+			"  color: #c4b5fd;" +
+			"  transform: translateY(-1px);" +
+			"  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);" +
+			"}" +
+			".summary-export-btn:active {" +
+			"  transform: translateY(0);" +
+			"  box-shadow: none;" +
+			"}" +
+
+			/* Param count styling */
+			".param-count {" +
+			"  font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;" +
+			"  font-size: 12px;" +
+			"  color: rgba(255,255,255,0.85);" +
+			"  font-weight: 500;" +
+			"}" +
+
+			/* Spinner override for summary */
+			"#summary .spinner {" +
+			"  border-color: rgba(99, 102, 241, 0.2);" +
+			"  border-top-color: #6366f1;" +
+			"}" +
+
+			/* Scrollbar for tooltip content */
+			".st-tip-content::-webkit-scrollbar { width: 4px; }" +
+			".st-tip-content::-webkit-scrollbar-track { background: transparent; }" +
+			".st-tip-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }" +
+
+			/* Bar chart styles (keep existing) */
 			".st-bar-chart-container {" +
 			"  width: 100%; max-width: 700px; margin: 0 auto; padding: 10px 0;" +
 			"}" +
@@ -1118,34 +1337,60 @@ function _inject_tooltip_styles() {
 			".st-bar-label {" +
 			"  width: 140px; min-width: 100px; text-align: right; padding-right: 8px;" +
 			"  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" +
-			"  color: #555; font-family: monospace;" +
+			"  color: rgba(255,255,255,0.5); font-family: 'SF Mono', monospace;" +
 			"}" +
 			".st-bar-track {" +
-			"  flex: 1; height: 18px; background: #f0f0f0; border-radius: 3px;" +
+			"  flex: 1; height: 18px; background: rgba(255,255,255,0.04); border-radius: 6px;" +
 			"  overflow: hidden; position: relative;" +
 			"}" +
 			".st-bar-fill {" +
-			"  height: 100%; border-radius: 3px; transition: width 0.4s ease;" +
+			"  height: 100%; border-radius: 6px; transition: width 0.4s ease;" +
 			"  display: flex; align-items: center; justify-content: flex-end; padding-right: 4px;" +
 			"  font-size: 10px; color: #fff; font-weight: 500; min-width: 0;" +
 			"}" +
 			".st-bar-value {" +
-			"  margin-left: 8px; min-width: 60px; font-size: 11px; color: #666;" +
-			"  font-family: monospace;" +
+			"  margin-left: 8px; min-width: 60px; font-size: 11px; color: rgba(255,255,255,0.5);" +
+			"  font-family: 'SF Mono', monospace;" +
 			"}" +
-			".st-bar-severity-red { background: #e53935; }" +
-			".st-bar-severity-amber { background: #fb8c00; }" +
-			".st-bar-severity-indigo { background: #5c6bc0; }" +
+			".st-bar-severity-red { background: linear-gradient(90deg, #ef4444, #f87171); }" +
+			".st-bar-severity-amber { background: linear-gradient(90deg, #f59e0b, #fbbf24); }" +
+			".st-bar-severity-indigo { background: linear-gradient(90deg, #6366f1, #818cf8); }" +
 			".st-chart-title {" +
-			"  text-align: center; font-size: 11px; color: #888;" +
-			"  margin-bottom: 8px; font-weight: 500;" +
+			"  text-align: center; font-size: 11px; color: rgba(255,255,255,0.4);" +
+			"  margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px;" +
 			"}" +
 			".st-chart-warning {" +
-			"  text-align: center; font-size: 11px; margin-top: 6px; padding: 4px 8px;" +
-			"  border-radius: 4px;" +
+			"  text-align: center; font-size: 11px; margin-top: 6px; padding: 6px 12px;" +
+			"  border-radius: 8px;" +
 			"}" +
-			".st-chart-warning-red { background: #ffebee; color: #c62828; }" +
-			".st-chart-warning-amber { background: #fff3e0; color: #e65100; }";
+			".st-chart-warning-red { background: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }" +
+			".st-chart-warning-amber { background: rgba(245, 158, 11, 0.1); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }" +
+
+			/* Summary totals row */
+			".summary_totals td {" +
+			"  font-size: 12px;" +
+			"  padding: 10px 14px;" +
+			"  background: rgba(255,255,255,0.02);" +
+			"  font-weight: 500;" +
+			"  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;" +
+			"}" +
+
+			/* Export bar container */
+			"[id='summary_export_bar'] { margin-top: 12px; margin-bottom: 8px; }" +
+			"[id='summary_param_distribution_chart'] { margin-top: 14px; margin-bottom: 8px; }" +
+
+			/* Shape arrow cell */
+			".shape-arrow-cell { vertical-align: middle; }" +
+			".shape-arrow {" +
+			"  display: inline-block;" +
+			"  color: " + SUMMARY_CONFIG.arrow_color + ";" +
+			"  transition: transform 0.2s ease, color 0.2s ease;" +
+			"}" +
+			"tr:hover .shape-arrow { transform: translateX(3px); color: #c4b5fd; }" +
+
+			/* Param bar container */
+			".param-bar-container { display: block; border-radius: 4px; overflow: hidden; }" +
+			".param-bar-fill { transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }";
 
 		document.head.appendChild(style);
 	} catch (e) {
