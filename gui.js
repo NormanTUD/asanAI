@@ -5130,7 +5130,7 @@ function replace_nullish_with_unknown_with_ok(value, opts = {}) {
 	return { value: cleaned, ok: all_ok };
 }
 
-async function show_csv_file(disabled_show_head_data) {
+async function show_csv_file(disabled_show_head_data=false) {
 	if (t_show_csv_file) clearTimeout(t_show_csv_file);
 	t_show_csv_file = setTimeout(async function() {
 		await _show_csv_file(disabled_show_head_data);
