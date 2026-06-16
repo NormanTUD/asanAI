@@ -1344,7 +1344,6 @@ function _inject_tooltip_styles() {
 			".param-count {" +
 			"  font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;" +
 			"  font-size: 12px;" +
-			"  color: rgba(255,255,255,0.85);" +
 			"  font-weight: 500;" +
 			"}" +
 
