@@ -295,151 +295,173 @@ function _build_layer_tooltip_html(layer_data_entry) {
 		var layer = layer_data_entry.layer_ref;
 		if (!layer) return "";
 
-		var config = null;
-		if (typeof layer.getConfig === "function") {
-			try { config = layer.getConfig() || {}; } catch (e) { config = {}; }
-		} else if (layer.config) {
-			config = layer.config;
-		} else {
-			config = {};
-		}
-
+		var config = _get_layer_config(layer);
 		var sections = [];
 
-		// Section 1: Layer identity with icon
-		var type_icon = _get_layer_type_icon(layer_data_entry.layer_type);
-		sections.push(
-			"<div class='st-tip-header'>" +
-			"<div class='st-tip-header-icon'>" + type_icon + "</div>" +
-			"<div class='st-tip-header-text'>" +
-			"<div class='st-tip-name'>" + _escape_html(layer_data_entry.name) + "</div>" +
-			"<div class='st-tip-type'>" + _escape_html(layer_data_entry.layer_type) + "</div>" +
-			"</div>" +
-			"</div>"
-		);
+		sections.push(_build_tooltip_header(layer_data_entry));
+		sections.push(_build_tooltip_config_section(config));
+		sections.push(_build_tooltip_params_section(layer_data_entry));
+		sections.push(_build_tooltip_memory_section(layer_data_entry));
+		sections.push(_build_tooltip_shape_section(layer_data_entry));
 
-		// Section 2: Configuration (key-value pairs, nicely formatted)
-		if (config && typeof config === "object") {
-			var skip_keys = ["name", "dtype", "batch_input_shape", "batchInputShape", "trainable"];
-			var highlight_keys = ["kernel_size", "kernelSize", "filters", "units", "activation",
-				"padding", "strides", "pool_size", "poolSize", "rate", "momentum", "epsilon"];
-			var config_items = [];
-			var keys = Object.keys(config);
-
-			for (var k = 0; k < keys.length; k++) {
-				var key = keys[k];
-				if (skip_keys.indexOf(key) !== -1) continue;
-				var val = config[key];
-				if (val === null || val === undefined) continue;
-				if (typeof val === "object" && !Array.isArray(val)) {
-					if (val.class_name || val.className) {
-						val = val.class_name || val.className;
-					} else {
-						try { val = JSON.stringify(val); } catch (e2) { val = "[object]"; }
-					}
-				}
-				if (Array.isArray(val)) val = JSON.stringify(val);
-
-				var is_highlight = highlight_keys.indexOf(key) !== -1;
-				var label = _format_config_key(key);
-				config_items.push(
-					"<div class='st-tip-config-row'>" +
-					"<span class='st-tip-config-key" + (is_highlight ? " st-tip-highlight" : "") + "'>" +
-					_escape_html(label) + "</span>" +
-					"<span class='st-tip-config-val" + (is_highlight ? " st-tip-highlight-val" : "") + "'>" +
-					_escape_html(String(val)) + "</span>" +
-					"</div>"
-				);
-			}
-
-			if (config_items.length > 0) {
-				sections.push(
-					"<div class='st-tip-section'>" +
-					"<div class='st-tip-section-label'>" +
-					"<span class='st-tip-section-icon'>⚙</span> Configuration</div>" +
-					"<div class='st-tip-config-grid'>" + config_items.join("") + "</div>" +
-					"</div>"
-				);
-			}
-		}
-
-		// Section 3: Parameters with mini visual bar
-		if (layer_data_entry.params > 0) {
-			var total_model_params = (window._summary_totals && window._summary_totals.total) || 1;
-			var pct = Math.min(100, Math.round((layer_data_entry.params / total_model_params) * 100));
-			var param_html =
-				"<div class='st-tip-section'>" +
-				"<div class='st-tip-section-label'>" +
-				"<span class='st-tip-section-icon'>📊</span> Parameters</div>" +
-				"<div class='st-tip-param-grid'>" +
-				"<div class='st-tip-param-row'><span class='st-tip-param-label'>Total</span>" +
-				"<span class='st-tip-param-value'>" + layer_data_entry.params.toLocaleString() + "</span></div>";
-
-			if (layer_data_entry.trainable_count > 0) {
-				param_html += "<div class='st-tip-param-row'><span class='st-tip-param-label'>Trainable</span>" +
-					"<span class='st-tip-param-value'>" + layer_data_entry.trainable_count.toLocaleString() + "</span></div>";
-			}
-			if (layer_data_entry.non_trainable_count > 0) {
-				param_html += "<div class='st-tip-param-row'><span class='st-tip-param-label'>Non-trainable</span>" +
-					"<span class='st-tip-param-value'>" + layer_data_entry.non_trainable_count.toLocaleString() + "</span></div>";
-			}
-
-			// Mini percentage bar
-			param_html += "<div class='st-tip-pct-bar-container'>" +
-				"<div class='st-tip-pct-bar' style='width:" + pct + "%'></div>" +
-				"</div>" +
-				"<div class='st-tip-pct-label'>" + pct + "% of model parameters</div>";
-
-			param_html += "</div></div>";
-			sections.push(param_html);
-		}
-
-		// Section 4: Memory estimate
-		if (layer_data_entry.params > 0) {
-			var bytes = layer_data_entry.params * 4;
-			var mem_str = _format_memory(bytes);
-			var activation_mem = "";
-			if (layer_data_entry.output_shape) {
-				var shape_arr = Array.isArray(layer_data_entry.output_shape) ? layer_data_entry.output_shape : [];
-				var act_elements = 1;
-				for (var si = 1; si < shape_arr.length; si++) {
-					if (shape_arr[si] != null && Number(shape_arr[si]) > 0) {
-						act_elements *= Number(shape_arr[si]);
-					}
-				}
-				if (act_elements > 1) {
-					activation_mem = "<div class='st-tip-mem-row'><span class='st-tip-mem-label'>Activation/sample</span>" +
-						"<span class='st-tip-mem-value'>~" + _format_memory(act_elements * 4) + "</span></div>";
-				}
-			}
-			sections.push(
-				"<div class='st-tip-section st-tip-section-memory'>" +
-				"<div class='st-tip-section-label'>" +
-				"<span class='st-tip-section-icon'>💾</span> Memory (float32)</div>" +
-				"<div class='st-tip-mem-row'><span class='st-tip-mem-label'>Weights</span>" +
-				"<span class='st-tip-mem-value'>~" + mem_str + "</span></div>" +
-				activation_mem +
-				"</div>"
-			);
-		}
-
-		// Section 5: Shape flow
-		sections.push(
-			"<div class='st-tip-section st-tip-section-shapes'>" +
-			"<div class='st-tip-section-label'>" +
-			"<span class='st-tip-section-icon'>📐</span> Shape Flow</div>" +
-			"<div class='st-tip-shape-flow'>" +
-			"<span class='st-tip-shape-box'>" + _escape_html(_format_shape(layer_data_entry.input_shape)) + "</span>" +
-			"<span class='st-tip-shape-arrow'>→</span>" +
-			"<span class='st-tip-shape-box st-tip-shape-out'>" + _escape_html(_format_shape(layer_data_entry.output_shape)) + "</span>" +
-			"</div>" +
-			"</div>"
-		);
+		// Filter out empty sections
+		sections = sections.filter(function(s) { return s !== ""; });
 
 		return "<div class='st-tip-content'>" + sections.join("") + "</div>";
 	} catch (e) {
 		return "";
 	}
+}
+
+function _get_layer_config(layer) {
+	if (typeof layer.getConfig === "function") {
+		try { return layer.getConfig() || {}; } catch (e) { return {}; }
+	}
+	if (layer.config) return layer.config;
+	return {};
+}
+
+function _build_tooltip_header(layer_data_entry) {
+	var type_icon = _get_layer_type_icon(layer_data_entry.layer_type);
+	return (
+		"<div class='st-tip-header'>" +
+		"<div class='st-tip-header-icon'>" + type_icon + "</div>" +
+		"<div class='st-tip-header-text'>" +
+		"<div class='st-tip-name'>" + _escape_html(layer_data_entry.name) + "</div>" +
+		"<div class='st-tip-type'>" + _escape_html(layer_data_entry.layer_type) + "</div>" +
+		"</div>" +
+		"</div>"
+	);
+}
+
+function _build_tooltip_config_section(config) {
+	if (!config || typeof config !== "object") return "";
+
+	var skip_keys = ["name", "dtype", "batch_input_shape", "batchInputShape", "trainable"];
+	var highlight_keys = ["kernel_size", "kernelSize", "filters", "units", "activation",
+		"padding", "strides", "pool_size", "poolSize", "rate", "momentum", "epsilon"];
+
+	var config_items = [];
+	var keys = Object.keys(config);
+
+	for (var k = 0; k < keys.length; k++) {
+		var key = keys[k];
+		if (skip_keys.indexOf(key) !== -1) continue;
+		var val = config[key];
+		if (val === null || val === undefined) continue;
+
+		val = _format_config_value(val);
+		var is_highlight = highlight_keys.indexOf(key) !== -1;
+		var label = _format_config_key(key);
+
+		config_items.push(
+			"<div class='st-tip-config-row'>" +
+			"<span class='st-tip-config-key" + (is_highlight ? " st-tip-highlight" : "") + "'>" +
+			_escape_html(label) + "</span>" +
+			"<span class='st-tip-config-val" + (is_highlight ? " st-tip-highlight-val" : "") + "'>" +
+			_escape_html(String(val)) + "</span>" +
+			"</div>"
+		);
+	}
+
+	if (config_items.length === 0) return "";
+
+	return (
+		"<div class='st-tip-section'>" +
+		"<div class='st-tip-section-label'>" +
+		"<span class='st-tip-section-icon'>‚öô</span> Configuration</div>" +
+		"<div class='st-tip-config-grid'>" + config_items.join("") + "</div>" +
+		"</div>"
+	);
+}
+
+function _format_config_value(val) {
+	if (typeof val === "object" && !Array.isArray(val)) {
+		if (val.class_name || val.className) {
+			return val.class_name || val.className;
+		}
+		try { return JSON.stringify(val); } catch (e) { return "[object]"; }
+	}
+	if (Array.isArray(val)) return JSON.stringify(val);
+	return val;
+}
+
+function _build_tooltip_params_section(layer_data_entry) {
+	if (layer_data_entry.params <= 0) return "";
+
+	var total_model_params = (window._summary_totals && window._summary_totals.total) || 1;
+	var pct = Math.min(100, Math.round((layer_data_entry.params / total_model_params) * 100));
+
+	var html =
+		"<div class='st-tip-section'>" +
+		"<div class='st-tip-section-label'>" +
+		"<span class='st-tip-section-icon'>üìä</span> Parameters</div>" +
+		"<div class='st-tip-param-grid'>" +
+		"<div class='st-tip-param-row'><span class='st-tip-param-label'>Total</span>" +
+		"<span class='st-tip-param-value'>" + layer_data_entry.params.toLocaleString() + "</span></div>";
+
+	if (layer_data_entry.trainable_count > 0) {
+		html += "<div class='st-tip-param-row'><span class='st-tip-param-label'>Trainable</span>" +
+			"<span class='st-tip-param-value'>" + layer_data_entry.trainable_count.toLocaleString() + "</span></div>";
+	}
+	if (layer_data_entry.non_trainable_count > 0) {
+		html += "<div class='st-tip-param-row'><span class='st-tip-param-label'>Non-trainable</span>" +
+			"<span class='st-tip-param-value'>" + layer_data_entry.non_trainable_count.toLocaleString() + "</span></div>";
+	}
+
+	html += "<div class='st-tip-pct-bar-container'>" +
+		"<div class='st-tip-pct-bar' style='width:" + pct + "%'></div>" +
+		"</div>" +
+		"<div class='st-tip-pct-label'>" + pct + "% of model parameters</div>";
+
+	html += "</div></div>";
+	return html;
+}
+
+function _build_tooltip_memory_section(layer_data_entry) {
+	if (layer_data_entry.params <= 0) return "";
+
+	var bytes = layer_data_entry.params * 4;
+	var mem_str = _format_memory(bytes);
+
+	var activation_mem = "";
+	if (layer_data_entry.output_shape) {
+		var shape_arr = Array.isArray(layer_data_entry.output_shape) ? layer_data_entry.output_shape : [];
+		var act_elements = 1;
+		for (var si = 1; si < shape_arr.length; si++) {
+			if (shape_arr[si] != null && Number(shape_arr[si]) > 0) {
+				act_elements *= Number(shape_arr[si]);
+			}
+		}
+		if (act_elements > 1) {
+			activation_mem = "<div class='st-tip-mem-row'><span class='st-tip-mem-label'>Activation/sample</span>" +
+				"<span class='st-tip-mem-value'>~" + _format_memory(act_elements * 4) + "</span></div>";
+		}
+	}
+
+	return (
+		"<div class='st-tip-section st-tip-section-memory'>" +
+		"<div class='st-tip-section-label'>" +
+		"<span class='st-tip-section-icon'>üíæ</span> Memory (float32)</div>" +
+		"<div class='st-tip-mem-row'><span class='st-tip-mem-label'>Weights</span>" +
+		"<span class='st-tip-mem-value'>~" + mem_str + "</span></div>" +
+		activation_mem +
+		"</div>"
+	);
+}
+
+function _build_tooltip_shape_section(layer_data_entry) {
+	return (
+		"<div class='st-tip-section st-tip-section-shapes'>" +
+		"<div class='st-tip-section-label'>" +
+		"<span class='st-tip-section-icon'>üìê</span> Shape Flow</div>" +
+		"<div class='st-tip-shape-flow'>" +
+		"<span class='st-tip-shape-box'>" + _escape_html(_format_shape(layer_data_entry.input_shape)) + "</span>" +
+		"<span class='st-tip-shape-arrow'>‚Üí</span>" +
+		"<span class='st-tip-shape-box st-tip-shape-out'>" + _escape_html(_format_shape(layer_data_entry.output_shape)) + "</span>" +
+		"</div>" +
+		"</div>"
+	);
 }
 
 function _get_layer_type_icon(layer_type) {
