@@ -858,23 +858,7 @@ function report_prediction_shape_mismatch(mi, predict_data, e) {
 
 function set_predict_error(msg) {
 	msg = msg.replaceAll(/Error: /g, "");
-
-	var errorHtml = `<div class='predict-error-card glass-panel glass-panel--error animate-slide-down'>
-		<span class='predict-error-icon'>⚠️</span>
-		<span class='predict-error-text'>${msg}</span>
-	</div>`;
-
-	$("#predict_error").html(errorHtml).show();
-
-	// Auto-dismiss after 8 seconds with fade-out
-	clearTimeout(window._predictErrorTimeout);
-	window._predictErrorTimeout = setTimeout(() => {
-		$("#predict_error").addClass("animate-fade-out");
-		setTimeout(() => {
-			$("#predict_error").html("").hide().removeClass("animate-fade-out");
-		}, 300);
-	}, 8000);
-
+	$("#predict_error").html("" + msg).show();
 	dbg(msg);
 }
 
