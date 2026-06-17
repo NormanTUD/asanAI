@@ -74,7 +74,7 @@ $$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text
 
 Most tokens are common words or word fragments. For example, `"understanding"` might be split into `"under"` + `"standing"`, two tokens. This way the model can handle words it has never seen before by combining pieces it *has* seen.
 
-What it splits and where is dependent on the data it has seen. It chooses that automatically.
+What it splits and where is dependent on the data it has seen. It chooses that automatically depending on the training data, and after it has been chosen, it stays fixed.
 </div>
 
 <!-- ============================================================ -->
