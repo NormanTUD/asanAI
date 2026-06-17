@@ -4265,8 +4265,20 @@ function open_popup(name) {
 function close_popup(name) {
 	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
-	assert(typeof(el) == "object", "document.getElementById(" + name + " is not an object");
-	el.style.display = "none";
+	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
+
+	$(el).css({
+		transition: "opacity 0.2s ease-out, transform 0.2s ease-out",
+		opacity: 0,
+		transform: "scale(0.97)"
+	});
+
+	setTimeout(() => {
+		el.style.display = "none";
+		el.style.transform = "";
+		el.style.transition = "";
+		el.style.opacity = "";
+	}, 220);
 }
 
 async function upload_model(evt) {
