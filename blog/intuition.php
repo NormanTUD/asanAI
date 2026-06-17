@@ -106,7 +106,7 @@ A raw token doesn't tell the model anything about what a word *means*. So the mo
 
 $$\text{"king"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$
 
-These vectors live in a high-dimensional space where **words with similar meanings end up close together**. "King" and "queen" are near each other. "Banana" and "monarchy" are far apart. Nobody hand-designs these vectors. The model learns them automatically during training, purely from seeing which words appear in similar contexts across billions of sentences.
+These vectors live in a high-dimensional space where **words with similar meanings end up close together**. "King" and "queen" are close to each other in a sense. "Banana" and "monarchy" are far apart. Nobody hand-designs these vectors. The model learns them automatically during training, purely from seeing which words appear in similar contexts across billions of sentences.
 
 What's remarkable is that this space captures *relationships*, not just similarity. The most famous example:
 
