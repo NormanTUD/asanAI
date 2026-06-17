@@ -122,31 +122,38 @@ Die Achsen haben manchmal interpretierbare Bedeutungen!
 \begin{center}
 \begin{tikzpicture}[scale=0.85,>=Stealth]
 % Text
-\node[font=\large] (text) at (0,4) {``Die Katze sitzt''};
-% Tokens (including space)
-\node[fill=accent1!20,rounded corners,inner sep=5pt,font=\small] (t1) at (-3.5,2.5) {Die};
-\node[fill=gray!20,rounded corners,inner sep=5pt,font=\small] (ts1) at (-1.7,2.5) {\_};
-\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] (t2) at (0,2.5) {Katze};
-\node[fill=gray!20,rounded corners,inner sep=5pt,font=\small] (ts2) at (1.8,2.5) {\_};
-\node[fill=accent3!20,rounded corners,inner sep=5pt,font=\small] (t3) at (3.5,2.5) {sitzt};
-\draw[->,thick] (text.south) -- ++(0,-0.4);
+\node[font=\large] (text) at (0,4.5) {``Die Katze sitzt''};
+\draw[->,thick] (0,3.9) -- (0,3.4);
+% Tokens with numbers
+\node[fill=accent1!20,rounded corners,inner sep=5pt,font=\small] (t1) at (-4,2.8) {Die};
+\node[font=\tiny,gray,above=1pt] at (t1.north) {\#1847};
+\node[fill=gray!20,rounded corners,inner sep=5pt,font=\small] (ts1) at (-2,2.8) {\_};
+\node[font=\tiny,gray,above=1pt] at (ts1.north) {\#220};
+\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] (t2) at (0,2.8) {Katze};
+\node[font=\tiny,gray,above=1pt] at (t2.north) {\#58392};
+\node[fill=gray!20,rounded corners,inner sep=5pt,font=\small] (ts2) at (2,2.8) {\_};
+\node[font=\tiny,gray,above=1pt] at (ts2.north) {\#220};
+\node[fill=accent3!20,rounded corners,inner sep=5pt,font=\small] (t3) at (4,2.8) {sitzt};
+\node[font=\tiny,gray,above=1pt] at (t3.north) {\#71205};
 % Embeddings
-\node[circle,draw,fill=accent1!30,minimum size=0.5cm] (e1) at (-3.5,0.8) {};
-\node[circle,draw,fill=gray!30,minimum size=0.5cm] (es1) at (-1.7,0.8) {};
-\node[circle,draw,fill=accent2!30,minimum size=0.5cm] (e2) at (0,0.8) {};
-\node[circle,draw,fill=gray!30,minimum size=0.5cm] (es2) at (1.8,0.8) {};
-\node[circle,draw,fill=accent3!30,minimum size=0.5cm] (e3) at (3.5,0.8) {};
+\node[circle,draw,fill=accent1!30,minimum size=0.5cm] (e1) at (-4,1) {};
+\node[circle,draw,fill=gray!30,minimum size=0.5cm] (es1) at (-2,1) {};
+\node[circle,draw,fill=accent2!30,minimum size=0.5cm] (e2) at (0,1) {};
+\node[circle,draw,fill=gray!30,minimum size=0.5cm] (es2) at (2,1) {};
+\node[circle,draw,fill=accent3!30,minimum size=0.5cm] (e3) at (4,1) {};
 \draw[->,thin] (t1.south) -- (e1.north);
 \draw[->,thin] (ts1.south) -- (es1.north);
 \draw[->,thin] (t2.south) -- (e2.north);
 \draw[->,thin] (ts2.south) -- (es2.north);
 \draw[->,thin] (t3.south) -- (e3.north);
-% Vectors
-\node[font=\tiny] at (-3.5,0) {[0.23, $-$0.81, 1.02, ...]};
-\node[font=\tiny] at (0,0) {[0.95, 0.12, $-$0.44, ...]};
-\node[font=\tiny] at (3.5,0) {[$-$0.31, 0.67, 0.88, ...]};
+% Vectors - now all five get one
+\node[font=\tiny] at (-4,0.2) {[0.23, $-$0.81, ...]};
+\node[font=\tiny] at (-2,0.2) {[0.05, 0.11, ...]};
+\node[font=\tiny] at (0,0.2) {[0.95, 0.12, ...]};
+\node[font=\tiny] at (2,0.2) {[0.05, 0.11, ...]};
+\node[font=\tiny] at (4,0.2) {[$-$0.31, 0.67, ...]};
 % Position encoding note
-\node[rectangle,draw,fill=accent5!30,rounded corners,inner sep=5pt,font=\small,align=center] at (0,-1.2) {$+$ \textbf{Positional Encoding}: Jeder Punkt bekommt seine Position im Satz dazu};
+\node[rectangle,draw,fill=accent5!30,rounded corners,inner sep=5pt,font=\small,align=center] at (0,-1) {$+$ \textbf{Positional Encoding}: Jeder Punkt bekommt seine Position im Satz dazu};
 \end{tikzpicture}
 \end{center}
 \end{frame}
