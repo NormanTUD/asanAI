@@ -63,7 +63,7 @@
 			<div class="ribbon-toolbar">
 				<table>
 					<tr>
-						<td><span class="TRANSLATEME_loss"></span><sup onclick="losses_popup()">?</sup></td>
+						<td><span class="TRANSLATEME_loss"></span></td>
 						<td style="width: 240px">
 							<select id="loss" onchange="updated_page()" style="width: 200px">
 							</select>
