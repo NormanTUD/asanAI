@@ -1821,15 +1821,27 @@ async function _webcam_predict_text (webcam_prediction, predictions) {
 
 async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	try {
-		var str = "<table class='predict_table'>";
+		var str = "<div class='webcam-predict-overlay glass-panel glass-panel--floating'>";
+		str += "<table class='predict_table predict_table--compact'>";
 
-		for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
-			str += _webcam_prediction_row(predictions_idx, predictions, max_i);
+		for (let i = 0; i < predictions.length; i++) {
+			var label = labels[i % labels.length];
+			var probability = predictions[i];
+			var w = Math.floor(probability * 50);
+			var isHighest = i === max_i;
+
+			var bar = _create_bar_html(w, isHighest, probability);
+			var activeClass = isHighest ? " label_element--active" : "";
+
+			str += `<tr class='predict-row'>`;
+			str += `<td class='label_element${activeClass}'>${label}</td>`;
+			str += `<td class='bar-cell'>${bar}</td>`;
+			str += `</tr>`;
 		}
 
-		str += "</table>";
+		str += "</table></div>";
 
-		webcam_prediction.append(str);
+		webcam_prediction.html(str);
 	} catch (e) {
 		assert(false, extract_error_message(e));
 	}
@@ -1841,29 +1853,32 @@ function _webcam_prediction_row(predictions_idx, predictions, max_i) {
 	assert(typeof(predictions) == "object", "predictions is not an object");
 
 	try {
-		var str = "";
 		var label = labels[predictions_idx % labels.length];
 		var probability = predictions[predictions_idx];
 
 		assert(typeof(probability) == "number", "probability is not a number");
 
 		var w = Math.floor(probability * 50);
-
-		let content;
+		var isHighest = predictions_idx === max_i;
+		var str = "";
 
 		if (show_bars_instead_of_numbers()) {
-			var isHighest = predictions_idx == max_i;
-			content = _create_bar_html(w, isHighest, probability);
+			var bar = _create_bar_html(w, isHighest, probability);
+			str = `<tr class='predict-row${isHighest ? " predict-row--highlight" : ""}'>`;
+			str += `<td class='label_element${isHighest ? " label_element--active" : ""}'>${label}</td>`;
+			str += `<td class='bar-cell'>${bar}</td></tr>`;
 		} else {
-			let prob_text = (probability * 50);
-			if (get_last_layer_activation_function() == "softmax") {
-				prob_text += "%";
+			var displayValue = _format_probability_text(probability);
+			if (isHighest) {
+				str = `<tr class='predict-row predict-row--highlight'>`;
+				str += `<td class='label_element label_element--active'>${label}</td>`;
+				str += `<td><span class='best-result-pill'>${displayValue}</span></td></tr>`;
+			} else {
+				str = `<tr class='predict-row'>`;
+				str += `<td class='label_element'>${label}</td>`;
+				str += `<td class='predict-value'>${displayValue}</td></tr>`;
 			}
-			if (predictions_idx == max_i) prob_text = `<b class='best_result'>${prob_text}</b>`;
-			content = prob_text;
 		}
-
-		str += `<tr><td class='label_element'>${label}</td><td>${content}</td></tr>`;
 
 		return str;
 	} catch (e) {
