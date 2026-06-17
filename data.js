@@ -310,7 +310,7 @@ function _flush_canvas_render_queue() {
     if (!photos) {
         // If photos element doesn't exist, just dispose tensors and bail
         batch.forEach(item => {
-            try { dispose(item.tensor); } catch(e) {}
+            try { dispose(item.tensor); } catch(e) {} // await not possible here
         });
         return;
     }
@@ -337,7 +337,7 @@ function _draw_canvas_batch(batch, index) {
     var item = batch[index];
     try {
         toPixels(item.tensor, item.canvas).then(() => {
-            try { dispose(item.tensor); } catch(e) {}
+            try { dispose(item.tensor); } catch(e) {} // await not possible here
             // Draw next one — stagger slightly to avoid jank
             if (index + 1 < batch.length) {
                 _draw_canvas_batch(batch, index + 1);
@@ -346,14 +346,14 @@ function _draw_canvas_batch(batch, index) {
             // Fallback: try sync-style, log error
             try {
                 console.warn("toPixels failed for canvas:", item.canvas.id, e);
-                dispose(item.tensor);
+                dispose(item.tensor); // await not possible
             } catch(ex) {}
             _draw_canvas_batch(batch, index + 1);
         });
     } catch (e) {
         console.warn("Shape error:", item.tensor.shape);
         try { item.tensor.print(); } catch(ex) {}
-        try { dispose(item.tensor); } catch(ex) {}
+        try { dispose(item.tensor); } catch(ex) {} // await not possible here
         _draw_canvas_batch(batch, index + 1);
     }
 }
@@ -577,7 +577,7 @@ async function download_image_data(skip_real_image_download = 0, dont_show_swal 
     for (let i = 0; i < urls.length; i += maxParallel) {
         const batch = urls.slice(i, i + maxParallel);
         await Promise.all(batch.map((url, idx) =>
-            downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data)
+            downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data) // await not required here
         ));
         // Yield to browser every few batches to allow rendering
         if ((i / maxParallel) % 3 === 0) {
@@ -721,7 +721,7 @@ function createImageElement(url, height, width) {
     }
     img.className = "class_download_img";
     img.decoding = "async"; // Don't block main thread for decode
-    img.onclick = () => predict_data_img(img, "image");
+    img.onclick = () => predict_data_img(img, "image"); // await not possible here
     return img;
 }
 
