@@ -70,8 +70,10 @@ function install_php {
 	fi
 
 	# Prüfe ob der Codename vom Sury-Repository unterstützt wird.
-	# Bekannte unterstützte Codenames (Stand 2026):
-	local SUPPORTED_CODENAMES="bullseye bookworm trixie forky"
+	# HINWEIS: trixie (Debian 13) wird NICHT mehr über Sury installiert,
+	# da Debian 13 bereits nativ PHP 8.4 mitbringt und das Sury-Repo
+	# Paketkonflikte mit php8.4-common verursacht.
+	local SUPPORTED_CODENAMES="bullseye bookworm forky"
 	local USE_SURY=false
 
 	if [ -n "$CODENAME" ]; then
@@ -105,7 +107,7 @@ function install_php {
 
 		apt-get update
 	else
-		echo "Codename '$CODENAME' ist nicht bekannt für Sury. Versuche PHP aus den Standard-Repos zu installieren..."
+		echo "Codename '$CODENAME' wird nicht über Sury installiert. Verwende Standard-Repos..."
 		apt-get update
 	fi
 
@@ -114,9 +116,11 @@ function install_php {
 	for PHP_VERSION in 8.4 8.3 8.2 8.1; do
 		if apt-cache show "libapache2-mod-php${PHP_VERSION}" &>/dev/null; then
 			echo "Installiere PHP ${PHP_VERSION}..."
-			if apt-get install -y "libapache2-mod-php${PHP_VERSION}"; then
+			if apt-get install -y --no-install-recommends "libapache2-mod-php${PHP_VERSION}" "php${PHP_VERSION}-common" "php${PHP_VERSION}-cli" "php${PHP_VERSION}-opcache"; then
 				PHP_INSTALLED=true
 				break
+			else
+				echo "Installation von PHP ${PHP_VERSION} fehlgeschlagen, versuche nächste Version..."
 			fi
 		fi
 	done
@@ -124,7 +128,7 @@ function install_php {
 	# Fallback: Versionsloses Metapaket
 	if [ "$PHP_INSTALLED" = false ]; then
 		echo "Versuche versionsloses libapache2-mod-php Paket..."
-		apt-get install -y libapache2-mod-php || {
+		apt-get install -y --no-install-recommends libapache2-mod-php || {
 			echo "FEHLER: Konnte keine PHP-Version installieren!"
 			exit 10
 		}
