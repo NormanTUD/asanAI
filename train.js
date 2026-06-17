@@ -1677,18 +1677,38 @@ function draw_images_in_grid(images, categories, probabilities, category_overvie
 }
 
 function append_grid_image_to_dom(numCategories, canvasses, _height) {
-	for (let numCategories_idx  = 0; numCategories_idx  < numCategories; numCategories_idx++) {
-		var canvas = canvasses[numCategories_idx];
-		if(canvas) {
-			var containerId = "#canvas_grid_visualization";
-			$(canvas).appendTo($(containerId));
-			if ((numCategories_idx + 1) < numCategories) {
-				$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: ${_height}px"></span>`).appendTo($(containerId));
-			}
-		} else {
-			wrn("[draw_images_in_grid] Canvas could not be appended!");
-		}
-	}
+    const containerId = "#canvas_grid_visualization";
+
+    for (let i = 0; i < numCategories; i++) {
+        const canvas = canvasses[i];
+        if (canvas) {
+            // Add subtle border-radius to canvas
+            $(canvas).css({
+                borderRadius: "8px",
+                verticalAlign: "top"
+            }).appendTo($(containerId));
+
+            if ((i + 1) < numCategories) {
+                // Subtle gradient divider instead of harsh black line
+                $(`<span style="
+                    display: inline-block;
+                    vertical-align: top;
+                    width: 1px;
+                    height: ${_height}px;
+                    background: linear-gradient(
+                        to bottom,
+                        transparent 0%,
+                        ${is_dark_mode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)'} 20%,
+                        ${is_dark_mode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)'} 80%,
+                        transparent 100%
+                    );
+                    margin: 0 2px;
+                "></span>`).appendTo($(containerId));
+            }
+        } else {
+            wrn("[draw_images_in_grid] Canvas could not be appended!");
+        }
+    }
 }
 
 function extractCategoryFromURL(_url, image_element) {
