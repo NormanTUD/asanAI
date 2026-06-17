@@ -2315,3 +2315,45 @@ body:not(.darkmode) .bar-tooltip-raw {
     border-bottom-color: transparent;
     transition: all var(--duration-fast) var(--ease-default);
 }
+
+/* Ribbon icons — springy hover */
+.ribbon_icon {
+    height: 20px;
+    transition: transform var(--duration-fast) var(--ease-spring),
+                opacity var(--duration-fast) var(--ease-default);
+}
+
+.ribbon_icon:hover {
+    transform: scale(1.12);
+    opacity: 0.85;
+}
+
+.ribbon_icon:active {
+    transform: scale(0.92);
+    transition-duration: var(--duration-instant);
+}
+
+/* Symbol buttons */
+.symbol_button {
+    user-select: none;
+    transition: transform var(--duration-fast) var(--ease-spring),
+                opacity var(--duration-fast) var(--ease-default);
+}
+
+.symbol_button:hover {
+    transform: scale(1.08);
+    opacity: 0.8;
+}
+
+.symbol_button:active {
+    transform: scale(0.9);
+    transition-duration: var(--duration-instant);
+}
+
+/* Layer images — subtle lift on hover */
+.layer_image:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+    box-shadow: var(--shadow-md);
+    transition: all var(--duration-fast) var(--ease-spring);
+}
