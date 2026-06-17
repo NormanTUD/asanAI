@@ -875,7 +875,7 @@ function reset_photos() {
 	$("#photos").html("");
 }
 
-async function get_images_and_this_data_and_category_counter_and_x_from_images (images) {
+async function get_images_and_this_data_and_category_counter_and_x_from_images () {
 	reset_photos();
 
 	images = await get_images_force_download();
@@ -1022,7 +1022,7 @@ async function get_default_data() {
 	dbg(`reset_data_div: input_shape_is_image: ${is_image}, input-shape: ${get_input_shape_as_string()}`);
 
 	if(is_image) {
-		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images(images);
+		[this_data, category_counter, x, images, keys] = await get_images_and_this_data_and_category_counter_and_x_from_images();
 
 		[x, y] = await load_and_augment_images_and_y(this_data, x, y);
 
