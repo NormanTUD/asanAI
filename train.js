@@ -605,101 +605,78 @@ function show_plotly_graphs() {
 }
 
 function create_tiny_plot(x, y, y_val, w, h) {
-    try {
-        if (x.length !== y.length) {
-            throw new Error("x and y arrays must have the same size");
-        }
+	try {
+		// Check if x and y arrays have the same size
+		if (x.length !== y.length) {
+			throw new Error("x and y arrays must have the same size");
+		}
 
-        if ((y_val && y_val.length !== x.length) || !y_val) {
-            y_val = [];
-        }
+		if((y_val && y_val.length != x.length) || !y_val) {
+			y_val = [];
+		}
 
-        // Retina-ready canvas (2x pixel density)
-        const dpr = window.devicePixelRatio || 1;
-        const canvas = document.createElement("canvas");
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        canvas.style.width = w + "px";
-        canvas.style.height = h + "px";
-        canvas.style.borderRadius = "6px";
+		// Create a canvas element
+		const canvas = document.createElement("canvas");
+		canvas.width = w;
+		canvas.height = h;
+		const ctx = canvas.getContext("2d");
 
-        const ctx = canvas.getContext("2d");
-        ctx.scale(dpr, dpr);
+		// Define plot parameters
 
-        // Subtle background with glassmorphism
-        ctx.fillStyle = is_dark_mode
-            ? "rgba(30, 30, 40, 0.6)"
-            : "rgba(255, 255, 255, 0.6)";
-        ctx.beginPath();
-        ctx.roundRect(0, 0, w, h, 6);
-        ctx.fill();
+		// Calculate the x-axis scaling factor to fit the entire width
+		const xScale = (w - 2) / (x.length - 1);
 
-        const xScale = (w - 4) / (x.length - 1);
-        const minY = Math.min(Math.min(...y), ...(y_val.length ? y_val : [Infinity]));
-        const maxY = Math.max(Math.max(...y), ...(y_val.length ? y_val : [-Infinity]));
-        const yRange = maxY - minY || 1;
-        const yScale = (h - 4) / yRange;
+		// Find the range of y values
+		const minY = Math.min(Math.min(...y), Math.min(...y_val));
+		const maxY = Math.max(Math.max(...y), Math.max(...y_val));
 
-        // Draw subtle grid lines
-        ctx.strokeStyle = is_dark_mode
-            ? "rgba(255, 255, 255, 0.06)"
-            : "rgba(0, 0, 0, 0.04)";
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i <= 4; i++) {
-            const gridY = 2 + (i / 4) * (h - 4);
-            ctx.beginPath();
-            ctx.moveTo(0, gridY);
-            ctx.lineTo(w, gridY);
-            ctx.stroke();
-        }
+		// Calculate the y-axis scaling factor
+		const yScale = (h - 2) / (maxY - minY);
 
-        // Training loss line with gradient
-        const gradient = ctx.createLinearGradient(0, 0, w, 0);
-        gradient.addColorStop(0, "#007AFF");
-        gradient.addColorStop(1, "#5856D6");
+		// Plot the training loss (in blue)
+		ctx.beginPath();
+		ctx.strokeStyle = "blue";
+		ctx.lineWidth = 2;
 
-        ctx.beginPath();
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = 1.5;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
+		ctx.beginPath();
 
-        for (let i = 0; i < x.length; i++) {
-            const xCoord = 2 + i * xScale;
-            const yCoord = h - 2 - (y[i] - minY) * yScale;
-            if (i === 0) ctx.moveTo(xCoord, yCoord);
-            else ctx.lineTo(xCoord, yCoord);
-        }
-        ctx.stroke();
+		for (let x_idx = 0; x_idx < x.length; x_idx++) {
+			const xCoord = x_idx * xScale;
+			const yCoord = h - (y[x_idx] - minY) * yScale;
+			//log("x, y:", xCoord, yCoord);
+			//log("h, y, y[x_idx], minY, yScale:", h, y, y[x_idx], minY, yScale, "<<<<<<");
+			if (x_idx === 0) {
+				ctx.moveTo(xCoord, yCoord);
+			} else {
+				ctx.lineTo(xCoord, yCoord);
+			}
+		}
 
-        // Validation loss line
-        if (y_val.length) {
-            const valGradient = ctx.createLinearGradient(0, 0, w, 0);
-            valGradient.addColorStop(0, "#FF9500");
-            valGradient.addColorStop(1, "#FF3B30");
+		ctx.stroke();
 
-            ctx.beginPath();
-            ctx.strokeStyle = valGradient;
-            ctx.lineWidth = 1.5;
-            ctx.lineCap = "round";
-            ctx.lineJoin = "round";
+		if(y_val.length) {
+			ctx.beginPath();
+			ctx.strokeStyle = "orange";
+			for (let y_idx = 0; y_idx < y_val.length; y_idx++) {
+				const xCoord = y_idx * xScale;
+				const yCoord = h - (y_val[y_idx] - minY) * yScale;
+				if (y_idx === 0) {
+					ctx.moveTo(xCoord, yCoord);
+				} else {
+					ctx.lineTo(xCoord, yCoord);
+				}
+			}
+			ctx.stroke();
+		}
 
-            for (let i = 0; i < y_val.length; i++) {
-                const xCoord = 2 + i * xScale;
-                const yCoord = h - 2 - (y_val[i] - minY) * yScale;
-                if (i === 0) ctx.moveTo(xCoord, yCoord);
-                else ctx.lineTo(xCoord, yCoord);
-            }
-            ctx.stroke();
-        }
+		return canvas; // Return the canvas element
+	} catch (e) {
+		if(Object.keys(e).includes("message")) {
+			e = e.message;
+		}
 
-        return canvas;
-    } catch (e) {
-        if (Object.keys(e).includes("message")) {
-            e = e.message;
-        }
-        assert(false, e);
-    }
+		assert(false, e);
+	}
 }
 
 function _set_apply_to_original_apply () {
@@ -1543,172 +1520,163 @@ function draw_category_to_training_visualization(canvasses, numCategories, categ
 	}
 }
 
-function draw_images_in_grid(images, categories, probabilities, category_overview) {
-    $("#canvas_grid_visualization").html("");
-    const numCategories = labels.length;
-    const margin = 12;
-    const scaleWidth = 44;
-    const _height = $("#canvas_grid_visualization").height() || 460;
-    const dpr = window.devicePixelRatio || 1;
+function draw_images_in_grid (images, categories, probabilities, category_overview) {
+	$("#canvas_grid_visualization").html("");
+	var numCategories = labels.length;
 
-    // Apple-style font stack
-    const fontFamily = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif";
+	var margin = 10;
+	var scaleWidth = 40; // Width reserved for the scale on the left
 
-    // Scale canvas (left axis)
-    const scaleCanvas = document.createElement("canvas");
-    scaleCanvas.width = scaleWidth * dpr;
-    scaleCanvas.height = _height * dpr;
-    scaleCanvas.style.width = scaleWidth + "px";
-    scaleCanvas.style.height = _height + "px";
-    const scaleCtx = scaleCanvas.getContext("2d");
-    scaleCtx.scale(dpr, dpr);
+	var _height = $("#canvas_grid_visualization").height();
 
-    scaleCtx.fillStyle = "transparent";
-    scaleCtx.fillRect(0, 0, scaleWidth, _height);
+	if(!_height) {
+		_height = 460;
+	}
 
-    scaleCtx.font = `11px ${fontFamily}`;
-    scaleCtx.fillStyle = is_dark_mode ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.55)";
-    scaleCtx.strokeStyle = is_dark_mode ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)";
-    scaleCtx.textAlign = "right";
+	// Create a scale canvas on the left
+	var scaleCanvas = document.createElement("canvas");
+	scaleCanvas.width = scaleWidth;
+	scaleCanvas.height = _height;
+	var scaleCtx = scaleCanvas.getContext("2d");
 
-    const graphHeight = _height - margin * 2 - 50;
-    const scaleTop = margin;
-    const scaleBottom = scaleTop + graphHeight;
+	scaleCtx.fillStyle = "rgba(255, 255, 255, 0)";
+	scaleCtx.fillRect(0, 0, scaleCanvas.width, scaleCanvas.height);
 
-    // Subtle axis line
-    scaleCtx.lineWidth = 0.5;
-    scaleCtx.beginPath();
-    scaleCtx.moveTo(scaleWidth - 5, scaleTop);
-    scaleCtx.lineTo(scaleWidth - 5, scaleBottom);
-    scaleCtx.stroke();
+	scaleCtx.font = "12px Arial";
+	if(is_dark_mode) {
+		scaleCtx.fillStyle = "#ffffff";
+		scaleCtx.strokeStyle = "#ffffff";
+	} else {
+		scaleCtx.fillStyle = "#000000";
+		scaleCtx.strokeStyle = "#000000";
+	}
+	scaleCtx.textAlign = "right";
 
-    // Scale ticks with refined styling
-    const numTicks = 10;
-    for (let tick = 0; tick <= numTicks; tick++) {
-        const value = tick * 10;
-        const yPos = scaleBottom - (value / 100) * graphHeight;
+	var graphHeight = _height - margin * 2 - 50; // Account for bottom text area
+	var scaleTop = margin;
+	var scaleBottom = scaleTop + graphHeight;
 
-        scaleCtx.beginPath();
-        scaleCtx.moveTo(scaleWidth - 9, yPos);
-        scaleCtx.lineTo(scaleWidth - 5, yPos);
-        scaleCtx.stroke();
+	// Draw the vertical line for the scale axis
+	scaleCtx.beginPath();
+	scaleCtx.moveTo(scaleWidth - 5, scaleTop);
+	scaleCtx.lineTo(scaleWidth - 5, scaleBottom);
+	scaleCtx.stroke();
 
-        scaleCtx.fillText(value.toString(), scaleWidth - 12, yPos + 3.5);
-    }
+	// Draw scale labels and tick marks from 0 to 100
+	var numTicks = 10;
+	for (var tick = 0; tick <= numTicks; tick++) {
+		var value = tick * 10; // 0, 10, 20, ..., 100
+		var yPos = scaleBottom - (value / 100) * graphHeight;
 
-    // Rotated label
-    scaleCtx.save();
-    scaleCtx.translate(10, scaleTop + graphHeight / 2);
-    scaleCtx.rotate(-Math.PI / 2);
-    scaleCtx.textAlign = "center";
-    scaleCtx.font = `10px ${fontFamily}`;
-    scaleCtx.fillStyle = is_dark_mode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.4)";
-    scaleCtx.fillText(language[lang]["certainty"] + " %", 0, 0);
-    scaleCtx.restore();
+		// Draw tick mark
+		scaleCtx.beginPath();
+		scaleCtx.moveTo(scaleWidth - 10, yPos);
+		scaleCtx.lineTo(scaleWidth - 5, yPos);
+		scaleCtx.stroke();
 
-    $(scaleCanvas).appendTo($("#canvas_grid_visualization"));
+		// Draw label
+		scaleCtx.fillText(value.toString(), scaleWidth - 12, yPos + 4);
+	}
 
-    // Category canvasses
-    const canvasses = get_canvasses(numCategories, _height);
+	// Draw "Certainty %" label rotated
+	scaleCtx.save();
+	scaleCtx.translate(12, scaleTop + graphHeight / 2);
+	scaleCtx.rotate(-Math.PI / 2);
+	scaleCtx.textAlign = "center";
+	scaleCtx.fillText(language[lang]["certainty"] + " in %", 0, 0);
+	scaleCtx.restore();
 
-    draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin);
+	// Append scale canvas to DOM first
+	$(scaleCanvas).appendTo($("#canvas_grid_visualization"));
 
-    let canvas_img_counter = {};
-    let real_canvas_img_counter = [];
+	// create a canvas for each category
+	var canvasses = get_canvasses(numCategories, _height);
 
-    for (let i = 0; i < images.length; i++) {
-        real_canvas_img_counter[categories[i]] = 0;
-    }
-    for (let i = 0; i < images.length; i++) {
-        canvas_img_counter[categories[i]] = 0;
-        real_canvas_img_counter[categories[i]]++;
-    }
+	var graphWidth = canvasses[0].width - margin * 2;
+	var maxProb = 1;
 
-    let targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]);
+	// draw y-axis labels
 
-    for (let i = 0; i < images.length; i++) {
-        const image = images[i];
-        const category = categories[i];
-        const probability = probabilities[i];
+	draw_category_to_training_visualization(canvasses, numCategories, category_overview, margin);
 
-        if (real_canvas_img_counter[category] > 0) {
-            const canvas_width = canvasses[0].width;
-            targetSize = Math.min(
-                model?.input?.shape[1],
-                model?.input?.shape[2],
-                canvas_width / real_canvas_img_counter[category]
-            );
-        }
+	var canvas_img_counter = {};
+	var real_canvas_img_counter = [];
 
-        const maxProb = 1;
-        const xPos = margin;
-        const yPos = margin + graphHeight - (probability / maxProb) * graphHeight;
-        const canvasIndex = category;
-        const canvas = canvasses[canvasIndex];
+	for (let image_idx = 0; image_idx < images.length; image_idx++) {
+		let category = categories[image_idx];
 
-        if (canvas) {
-            const ctx = canvas.getContext("2d");
-            const scale = targetSize / Math.max(image.width, image.height);
-            const w = image.width * scale;
-            const h = image.height * scale;
+		real_canvas_img_counter[category] = 0;
+	}
 
-            let imageX = xPos - model?.input?.shape[2] / 2;
-            imageX += canvas_img_counter[category] * targetSize;
-            imageX = Math.max(0, parse_int(imageX));
-            const imageY = parse_int(yPos - h / 2);
+	for (let image_idx = 0; image_idx < images.length; image_idx++) {
+		let category = categories[image_idx];
 
-            // Subtle shadow behind image
-            ctx.shadowColor = "rgba(0, 0, 0, 0.12)";
-            ctx.shadowBlur = 6;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 2;
+		canvas_img_counter[category] = 0;
 
-            ctx.drawImage(image, imageX, imageY, w, h);
+		real_canvas_img_counter[category]++;
+	}
 
-            // Reset shadow
-            ctx.shadowColor = "transparent";
-            ctx.shadowBlur = 0;
+	var targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2]); // Change this to the desired size
 
-            canvas_img_counter[category]++;
-        }
-    }
+	// draw x-axis labels and images
+	for (let image_idx = 0; image_idx < images.length; image_idx++) {
+		var image = images[image_idx];
+		var category = categories[image_idx];
+		var probability = probabilities[image_idx];
 
-    append_grid_image_to_dom(numCategories, canvasses, _height);
+		if(real_canvas_img_counter[category] > 0) {
+			var canvas_width = canvasses[0].width;
+
+			targetSize = canvas_width / real_canvas_img_counter[category];
+
+			targetSize = Math.min(model?.input?.shape[1], model?.input?.shape[2], targetSize); // Change this to the desired size
+		}
+
+		var xPos = margin * 1;
+		var yPos = margin + graphHeight - probability / maxProb * graphHeight;
+
+		var canvasIndex = category;
+		var canvas = canvasses[canvasIndex];
+		if(canvas) {
+			var ctx = canvas.getContext("2d");
+
+			// draw image
+			var scale = targetSize / Math.max(image.width, image.height);
+			var w = image.width * scale;
+			var h = image.height * scale;
+
+			var imageX = xPos - model?.input?.shape[2] / 2;
+			imageX += canvas_img_counter[category] * targetSize;
+
+			if(imageX < 0) {
+				imageX = 0;
+			}
+
+			imageX = parse_int(imageX);
+
+			var imageY = parse_int(yPos - h / 2);
+			ctx.drawImage(image, imageX, imageY, w, h);
+
+			canvas_img_counter[category]++;
+		}
+	}
+
+	append_grid_image_to_dom(numCategories, canvasses, _height);
 }
 
 function append_grid_image_to_dom(numCategories, canvasses, _height) {
-    const containerId = "#canvas_grid_visualization";
-
-    for (let i = 0; i < numCategories; i++) {
-        const canvas = canvasses[i];
-        if (canvas) {
-            // Add subtle border-radius to canvas
-            $(canvas).css({
-                borderRadius: "8px",
-                verticalAlign: "top"
-            }).appendTo($(containerId));
-
-            if ((i + 1) < numCategories) {
-                // Subtle gradient divider instead of harsh black line
-                $(`<span style="
-                    display: inline-block;
-                    vertical-align: top;
-                    width: 1px;
-                    height: ${_height}px;
-                    background: linear-gradient(
-                        to bottom,
-                        transparent 0%,
-                        ${is_dark_mode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)'} 20%,
-                        ${is_dark_mode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)'} 80%,
-                        transparent 100%
-                    );
-                    margin: 0 2px;
-                "></span>`).appendTo($(containerId));
-            }
-        } else {
-            wrn("[draw_images_in_grid] Canvas could not be appended!");
-        }
-    }
+	for (let numCategories_idx  = 0; numCategories_idx  < numCategories; numCategories_idx++) {
+		var canvas = canvasses[numCategories_idx];
+		if(canvas) {
+			var containerId = "#canvas_grid_visualization";
+			$(canvas).appendTo($(containerId));
+			if ((numCategories_idx + 1) < numCategories) {
+				$(`<span style="display: inline-block; vertical-align: top; border-left: 1px solid #000; height: ${_height}px"></span>`).appendTo($(containerId));
+			}
+		} else {
+			wrn("[draw_images_in_grid] Canvas could not be appended!");
+		}
+	}
 }
 
 function extractCategoryFromURL(_url, image_element) {

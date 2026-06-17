@@ -219,30 +219,8 @@ function write_optimizer_to_math_tab() {
 		var str = wo2mt_build_output_string(values);
 
 		if (str) {
-			var header = $("#optimizer_variables_header");
-			var div = $("#optimizer_variables_div");
-
-			// Prepare for smooth reveal
-			header.css({
-				"opacity": "0",
-				"transform": "translateY(-4px)",
-				"transition": "opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-			}).show();
-
-			div.css({
-				"opacity": "0",
-				"transform": "translateY(-4px)",
-				"transition": "opacity 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.05s, transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.05s"
-			}).html(str).show();
-
-			// Trigger reflow then animate in
-			requestAnimationFrame(function() {
-				requestAnimationFrame(function() {
-					header.css({ "opacity": "1", "transform": "translateY(0)" });
-					div.css({ "opacity": "1", "transform": "translateY(0)" });
-				});
-			});
-
+			$("#optimizer_variables_header").show();
+			$("#optimizer_variables_div").html(str).show();
 			_temml();
 		} else {
 			hide_and_reset_optimizer_variables();

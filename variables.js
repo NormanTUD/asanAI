@@ -1370,20 +1370,9 @@ var metric_shortnames = {
 
 var valid_initializer_types = ["kernel", "bias", "gamma", "beta", "activity", "moving_variance", "moving_mean", "alpha", "beta", "depthwise", "pointwise"];
 
-function get_unique_seed_for_layer(layer_nr) {
-	// Generates a unique seed per layer based on the layer index.
-	// Uses a simple hash-like approach: multiply by a prime and mod
-	// to keep it in a reasonable range, ensuring different layers
-	// always get different seeds even if they have the same architecture.
-	var base_seed = 1234;
-	var prime = 2654435761; // Knuth's multiplicative hash constant
-	var seed = Math.abs(((layer_nr + 1) * prime + base_seed) % 2147483647);
-	return seed;
-}
-
 var opt = {
 	"initializer_value": "'Value', 'XXX_NAME_XXX_initializer_value', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
-	"initializer_seed": "'Seed', 'XXX_NAME_XXX_initializer_seed', 'number', { 'value': get_unique_seed_for_layer(nr), min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
+	"initializer_seed": "'Seed', 'XXX_NAME_XXX_initializer_seed', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_stddev": "'Stddev', 'XXX_NAME_XXX_initializer_stddev', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_mean": "'Mean', 'XXX_NAME_XXX_initializer_mean', 'number', { 'value': 1, min: -340000000000000000000000000000000000000, max: 340000000000000000000000000000000000000 }, nr, 'XXX_NAME_XXX_initializer_tr'",
 	"initializer_minval": "'Minval', 'XXX_NAME_XXX_initializer_minval', 'number', { 'value': 0 }, nr, 'XXX_NAME_XXX_initializer_tr'",

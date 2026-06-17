@@ -24,67 +24,13 @@ function setup_drawing_board(n, uuid, label_nr) {
 }
 
 function create_images_div(n) {
-	$(`
-		<div class="own_images_counter"
-			style="
-				display: inline-flex;
-				align-items: center;
-				gap: 6px;
-				padding: 6px 14px;
-				margin: 12px 0 8px 0;
-				background: rgba(0, 122, 255, 0.06);
-				border-radius: 20px;
-				font-size: 12px;
-				font-weight: 600;
-				letter-spacing: 0.02em;
-				color: #007AFF;
-				transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-			">
-			<span class="TRANSLATEME_nr_of_images_in_this_category"></span>:
-			<span class="own_images_count"
-				style="
-					background: #007AFF;
-					color: white;
-					border-radius: 10px;
-					padding: 1px 8px;
-					font-size: 11px;
-					font-weight: 700;
-					min-width: 20px;
-					text-align: center;
-					transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-				">0</span>
-		</div>
-		<div class="own_images"
-			style="
-				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-				gap: 10px;
-				padding: 12px;
-				border-radius: 12px;
-				background: rgba(0, 0, 0, 0.02);
-				min-height: 60px;
-				transition: all 0.3s ease;
-			">
-		</div>
-	`).appendTo($(".own_image_upload_container")[n]);
+	$(`<div class="own_images_counter"><span class="TRANSLATEME_nr_of_images_in_this_category"></span>: <span class="own_images_count">0</span></div><div class="own_images"></div>`).appendTo($(".own_image_upload_container")[n]);
 }
 
 function update_image_counters() {
 	$(".own_image_upload_container").each(function(i, container) {
 		var count = $(container).find(".own_image_span").length;
-		var $countEl = $(container).find(".own_images_count");
-		var prevCount = parseInt($countEl.text()) || 0;
-
-		if (prevCount !== count) {
-			$countEl.css({
-				'transform': 'scale(1.3)',
-				'transition': 'transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)'
-			});
-			setTimeout(function() {
-				$countEl.text(count);
-				$countEl.css('transform', 'scale(1)');
-			}, 150);
-		}
+		$(container).find(".own_images_count").text(count);
 	});
 }
 
@@ -108,37 +54,19 @@ function get_upload_container_index() {
 
 async function delete_category(item, uuid) {
 	var category_nr = get_category_nr(item);
-	var $container = $($(".own_image_upload_container")[category_nr]);
 
-	// Animate out with buttery-smooth transition
-	$container.css({
-		'transition': 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-		'opacity': '0',
-		'transform': 'scale(0.95) translateY(-8px)',
-		'max-height': $container.outerHeight() + 'px',
-		'overflow': 'hidden'
-	});
-
-	// Collapse height after fade
-	setTimeout(function() {
-		$container.css({
-			'max-height': '0',
-			'padding': '0 24px',
-			'margin-bottom': '0',
-			'border-color': 'transparent'
-		});
-	}, 200);
-
-	// Remove after animation completes
-	await new Promise(resolve => setTimeout(resolve, 500));
-	$container.remove();
+	$($(".own_image_upload_container")[category_nr]).remove();
 
 	auto_adjust_number_of_neurons($(".own_image_label").length);
+
 	show_or_hide_hide_delete_category();
+
 	enable_train_if_has_custom_images();
+
 	await rename_labels();
 
 	$("#save_button_" + uuid).remove();
+
 	add_label_sidebar();
 }
 
@@ -381,61 +309,37 @@ async function click_on_new_category_or_delete_category_until_number_is_right (n
 }
 
 function delete_own_image(elem) {
+	// Remove the associated segmentation layer controls if they exist
 	var $span = $(elem).parent();
-
-	// Animate the image out
-	$span.css({
-		'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-		'opacity': '0',
-		'transform': 'scale(0.8)',
-		'pointer-events': 'none'
-	});
-
-	setTimeout(function() {
-		// Remove the associated segmentation layer controls if they exist
-		var img_or_canvas = $span.find("img,canvas").not("[id$='_layer']").first();
-		if (img_or_canvas.length && img_or_canvas[0].id) {
-			var layer_id = img_or_canvas[0].id + "_layer";
-			$("#" + layer_id).remove();
-			$("#" + layer_id + "_controls").remove();
-			if (atrament_data[layer_id]) {
-				delete atrament_data[layer_id];
-			}
+	var img_or_canvas = $span.find("img,canvas").not("[id$='_layer']").first();
+	if (img_or_canvas.length && img_or_canvas[0].id) {
+		var layer_id = img_or_canvas[0].id + "_layer";
+		$("#" + layer_id).remove();
+		$("#" + layer_id + "_controls").remove();
+		if (atrament_data[layer_id]) {
+			delete atrament_data[layer_id];
 		}
+	}
 
-		// Remove the <br> after the span if it exists
-		var $next = $span.next();
-		if ($next.is("br")) {
-			$next.remove();
-		}
+	// Remove the <br> after the span if it exists
+	var $next = $span.next();
+	if ($next.is("br")) {
+		$next.remove();
+	}
 
-		$span.remove();
-		enable_train_if_has_custom_images();
-		update_image_counters();
-	}, 300);
+	// Remove only this specific image's span
+	$span.remove();
+
+	enable_train_if_has_custom_images();
+
+	update_image_counters();
 }
 
 function show_or_hide_hide_delete_category() {
-	var $buttons = $(".delete_category_button");
-
 	if ($(".own_image_label").length > 1) {
-		$buttons.each(function() {
-			$(this).css({
-				'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-				'opacity': '1',
-				'transform': 'scale(1)',
-				'pointer-events': 'auto'
-			});
-		});
+		$(".delete_category_button").show();
 	} else {
-		$buttons.each(function() {
-			$(this).css({
-				'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-				'opacity': '0',
-				'transform': 'scale(0.5)',
-				'pointer-events': 'none'
-			});
-		});
+		$(".delete_category_button").hide();
 	}
 }
 
@@ -569,120 +473,4 @@ function blob_to_data_url(blob) {
 		reader.onerror = reject;
 		reader.readAsDataURL(blob);
 	});
-}
-
-function add_label_sidebar() {
-	var LABEL_SIDEBAR_BTN_HTML = $(`<button class="add_category" onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>`)[0];
-
-	var labels_elements = document.querySelectorAll('.own_image_label');
-	if (!labels_elements.length) return;
-
-	var bar = document.getElementById('labelSidebar');
-	var table;
-
-	if (!bar) {
-		var existingStyle = document.querySelector('#labelSidebarStyle');
-		if (!existingStyle) {
-			var css = `
-			#labelSidebar {
-				position: fixed;
-				top: 50%;
-				right: 12px;
-				transform: translateY(-50%);
-				max-height: 80vh;
-				overflow-y: auto;
-				overflow-x: hidden;
-				background: rgba(255, 255, 255, 0.72);
-				backdrop-filter: blur(20px) saturate(180%);
-				-webkit-backdrop-filter: blur(20px) saturate(180%);
-				padding: 12px 8px;
-				z-index: 9999;
-				border: 1px solid rgba(255, 255, 255, 0.35);
-				border-radius: 16px;
-				box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-				transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-			}
-			body.darkmode #labelSidebar {
-				background: rgba(30, 30, 35, 0.72);
-				border-color: rgba(255, 255, 255, 0.08);
-				box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
-			}
-			#labelSidebar table { border-collapse: collapse; width: 100%; }
-			#labelSidebar td {
-				padding: 6px 12px;
-				border: none;
-				cursor: pointer;
-				color: rgba(0, 0, 0, 0.8);
-				font: 13px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-				font-weight: 500;
-				border-radius: 8px;
-				transition: background 0.2s ease;
-			}
-			body.darkmode #labelSidebar td {
-				color: rgba(255, 255, 255, 0.85);
-			}
-			#labelSidebar td:hover {
-				background: rgba(0, 122, 255, 0.08);
-			}
-			body.darkmode #labelSidebar td:hover {
-				background: rgba(0, 122, 255, 0.15);
-			}
-			.flashHighlight {
-				animation: flash 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-			}
-			@keyframes flash {
-				0% { background: rgba(0, 122, 255, 0.2); }
-				100% { background: transparent; }
-			}`;
-			var style = document.createElement('style');
-			style.id = 'labelSidebarStyle';
-			style.appendChild(document.createTextNode(css));
-			document.head.appendChild(style);
-		}
-
-		bar = document.createElement('div');
-		bar.id = 'labelSidebar';
-		table = document.createElement('table');
-		bar.appendChild(LABEL_SIDEBAR_BTN_HTML);
-		bar.appendChild(table);
-		document.body.appendChild(bar);
-	} else {
-		table = bar.querySelector('table');
-		table.innerHTML = '';
-	}
-
-	Array.prototype.forEach.call(labels_elements, function(el, i) {
-		if (!el.id) el.id = 'auto_label_' + i;
-
-		var row = document.createElement('tr');
-		var cell = document.createElement('td');
-		cell.textContent = (el.value || el.textContent || 'label ' + (i + 1));
-		cell.onclick = function() {
-			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-			el.classList.add('flashHighlight');
-			setTimeout(function() { el.classList.remove('flashHighlight'); }, 900);
-		};
-		row.appendChild(cell);
-		table.appendChild(row);
-	});
-
-	function update_sidebar_visibility() {
-		var visibleCount = 0;
-		Array.prototype.forEach.call(labels_elements, function(el, idx) {
-			var hidden = is_hidden_or_has_hidden_parent(el);
-			table.rows[idx].style.display = hidden ? 'none' : '';
-			if (!hidden) visibleCount++;
-		});
-		bar.style.display = visibleCount ? '' : 'none';
-	}
-
-	update_sidebar_visibility();
-
-	if (labelSidebarObserver) labelSidebarObserver.disconnect();
-
-	labelSidebarObserver = new MutationObserver(update_sidebar_visibility);
-	Array.prototype.forEach.call(labels_elements, function(el) {
-		labelSidebarObserver.observe(el, { attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
-	});
-	labelSidebarObserver.observe(document.body, { childList: true, subtree: true });
 }

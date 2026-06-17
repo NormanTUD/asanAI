@@ -2,18 +2,11 @@
 
 function _get_placeholder_prediction_table() {
 	if (labels.length === 0) return "";
-
-	var html = "<div class='predict-table-wrapper glass-panel'>";
-	html += "<table class='predict_table predict_table--loading'><tbody>";
-
+	var html = "<table class='predict_table'><tbody>";
 	for (var i = 0; i < labels.length; i++) {
-		html += "<tr class='predict-row predict-row--skeleton'>"
-			+ "<td class='label_element'>" + labels[i] + "</td>"
-			+ "<td>" + _create_bar_html(0, false, 0) + "</td>"
-			+ "</tr>";
+		html += "<tr><td class='label_element'>" + labels[i] + "</td><td>" + _create_bar_html(0, false, 0) + "</td></tr>";
 	}
-
-	html += "</tbody></table></div>";
+	html += "</tbody></table>";
 	return html;
 }
 
@@ -583,7 +576,7 @@ function get_show_green () {
 }
 
 async function _predict_table(predictions_tensor, desc) {
-	if (!predictions_tensor) {
+	if(!predictions_tensor) {
 		wrn("[_predict_table] predictions_tensor was empty");
 		return;
 	}
@@ -591,35 +584,32 @@ async function _predict_table(predictions_tensor, desc) {
 	try {
 		var predictions = tidy(() => { return predictions_tensor.dataSync(); });
 
-		if (predictions.length) {
+		if(predictions.length) {
 			var max_i = 0;
-			var max_probability = -Infinity;
+			var max_probability = -9999999;
 
-			for (let i = 0; i < predictions.length; i++) {
-				if (predictions[i] > max_probability) {
-					max_probability = predictions[i];
-					max_i = i;
+			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+				let probability = predictions[predictions_idx];
+				if(probability > max_probability) {
+					max_probability = probability;
+					max_i = predictions_idx;
 				}
 			}
 
-			var fullstr = "<div class='predict-table-wrapper glass-panel animate-fade-in'>";
-			fullstr += "<table class='predict_table' role='grid' aria-label='Prediction results'>";
-			fullstr += "<tbody>";
+			var fullstr = "";
 
-			for (let i = 0; i < predictions.length; i++) {
-				var label = labels[i % labels.length];
-				var probability = predictions[i];
+			fullstr += "<table class='predict_table'>";
+
+			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+				var label = labels[predictions_idx % labels.length];
+				let probability = predictions[predictions_idx];
 				var w = Math.floor(probability * 50);
-				var staggerDelay = (i * 40); // ms stagger for entrance
 
-				fullstr += `<tr class='predict-row animate-slide-up' style='animation-delay: ${staggerDelay}ms;'>`;
-				fullstr += _predict_table_row(label, w, max_i, probability, i);
-				fullstr += "</tr>";
+				fullstr += _predict_table_row(label, w, max_i, probability, predictions_idx);
 			}
 
-			fullstr += "</tbody></table></div>";
-
-			if (desc) {
+			fullstr += "</table>";
+			if(desc) {
 				desc.html(fullstr);
 			}
 		}
@@ -1821,27 +1811,15 @@ async function _webcam_predict_text (webcam_prediction, predictions) {
 
 async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	try {
-		var str = "<div class='webcam-predict-overlay glass-panel glass-panel--floating'>";
-		str += "<table class='predict_table predict_table--compact'>";
+		var str = "<table class='predict_table'>";
 
-		for (let i = 0; i < predictions.length; i++) {
-			var label = labels[i % labels.length];
-			var probability = predictions[i];
-			var w = Math.floor(probability * 50);
-			var isHighest = i === max_i;
-
-			var bar = _create_bar_html(w, isHighest, probability);
-			var activeClass = isHighest ? " label_element--active" : "";
-
-			str += `<tr class='predict-row'>`;
-			str += `<td class='label_element${activeClass}'>${label}</td>`;
-			str += `<td class='bar-cell'>${bar}</td>`;
-			str += `</tr>`;
+		for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
+			str += _webcam_prediction_row(predictions_idx, predictions, max_i);
 		}
 
-		str += "</table></div>";
+		str += "</table>";
 
-		webcam_prediction.html(str);
+		webcam_prediction.append(str);
 	} catch (e) {
 		assert(false, extract_error_message(e));
 	}
@@ -1853,32 +1831,29 @@ function _webcam_prediction_row(predictions_idx, predictions, max_i) {
 	assert(typeof(predictions) == "object", "predictions is not an object");
 
 	try {
+		var str = "";
 		var label = labels[predictions_idx % labels.length];
 		var probability = predictions[predictions_idx];
 
 		assert(typeof(probability) == "number", "probability is not a number");
 
 		var w = Math.floor(probability * 50);
-		var isHighest = predictions_idx === max_i;
-		var str = "";
+
+		let content;
 
 		if (show_bars_instead_of_numbers()) {
-			var bar = _create_bar_html(w, isHighest, probability);
-			str = `<tr class='predict-row${isHighest ? " predict-row--highlight" : ""}'>`;
-			str += `<td class='label_element${isHighest ? " label_element--active" : ""}'>${label}</td>`;
-			str += `<td class='bar-cell'>${bar}</td></tr>`;
+			var isHighest = predictions_idx == max_i;
+			content = _create_bar_html(w, isHighest, probability);
 		} else {
-			var displayValue = _format_probability_text(probability);
-			if (isHighest) {
-				str = `<tr class='predict-row predict-row--highlight'>`;
-				str += `<td class='label_element label_element--active'>${label}</td>`;
-				str += `<td><span class='best-result-pill'>${displayValue}</span></td></tr>`;
-			} else {
-				str = `<tr class='predict-row'>`;
-				str += `<td class='label_element'>${label}</td>`;
-				str += `<td class='predict-value'>${displayValue}</td></tr>`;
+			let prob_text = (probability * 50);
+			if (get_last_layer_activation_function() == "softmax") {
+				prob_text += "%";
 			}
+			if (predictions_idx == max_i) prob_text = `<b class='best_result'>${prob_text}</b>`;
+			content = prob_text;
 		}
+
+		str += `<tr><td class='label_element'>${label}</td><td>${content}</td></tr>`;
 
 		return str;
 	} catch (e) {
@@ -1928,28 +1903,21 @@ function draw_bars_or_numbers(predictions_idx, predictions, max) {
 		var label = labels[predictions_idx % labels.length];
 		var val = predictions[0][predictions_idx];
 		var w = Math.floor(val * 50);
-		var isHighest = val === max;
-		var activeClass = isHighest ? " label_element--active" : "";
 
 		var html = "";
-		var cellContent = "";
+
+		let cell_content;
+		var isHighest = val == max;
 
 		if (show_bars_instead_of_numbers()) {
 			var bar = _create_bar_html(w, isHighest, val);
-			cellContent = label
-				? `<td class='label_element${activeClass}'>${label}</td><td class='bar-cell'>${bar}</td>`
-				: `<td class='bar-cell' colspan='2'>${bar}</td>`;
+			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar}</td>` : `<td>${bar}</td>`;
 		} else {
-			var displayValue = isHighest
-				? `<span class='best-result-pill'>${_format_probability_text(val)}</span>`
-				: `<span class='predict-value'>${_format_probability_text(val)}</span>`;
-
-			cellContent = label
-				? `<td class='label_element${activeClass}'>${label}</td><td>${displayValue}</td>`
-				: `<td>${displayValue}</td>`;
+			let value_text = isHighest ? `<b class='best_result'>${predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
+			cell_content = label ? `<td class='label_element'>${label}</td><td>${value_text}</td>` : `<td>${value_text}</td>`;
 		}
 
-		html = `<tr class='predict-row${isHighest ? " predict-row--highlight" : ""}'>${cellContent}</tr>`;
+		html = `<tr>${cell_content}</tr>`;
 
 		return html;
 	} catch (e) {
@@ -2231,40 +2199,35 @@ async function _image_output_handdrawn(predictions_tensor) {
 	}
 }
 
-async function _classification_handdrawn(predictions_tensor, handdrawn_predictions) {
+async function _classification_handdrawn (predictions_tensor, handdrawn_predictions) {
 	try {
-		if (!predictions_tensor) {
+		if(!predictions_tensor) {
 			err(language[lang]["predictions_tensor_not_defined"]);
 			return "";
 		}
 
 		var predictions = predictions_tensor;
-		if (is_tf_tensor(predictions)) {
+		if(is_tf_tensor(predictions)) {
 			predictions = array_sync(predictions_tensor);
 		}
 
 		var max = 0;
-		for (var i = 0; i < predictions[0].length; i++) {
-			if (max < predictions[0][i]) {
-				max = predictions[0][i];
+
+		for (var predictions_idx = 0; predictions_idx < predictions[0].length; predictions_idx++) {
+			if(max < predictions[0][predictions_idx]) {
+				max = predictions[0][predictions_idx];
 			}
 		}
 
-		var html = "<div class='predict-table-wrapper glass-panel animate-fade-in'>";
-		html += "<table class='predict_table'><tbody>";
+		var html = "<table class='predict_table'>";
 
-		for (let i = 0; i < predictions[0].length; i++) {
-			var staggerDelay = i * 35;
-			html += `<tr class='predict-row animate-slide-up' style='animation-delay: ${staggerDelay}ms;'>`;
-			html += draw_bars_or_numbers(i, predictions, max);
-			html += "</tr>";
+		for (let predictions_idx = 0; predictions_idx < predictions[0].length; predictions_idx++) {
+			html += draw_bars_or_numbers(predictions_idx, predictions, max);
 		}
 
-		html += "</tbody></table></div>";
+		html += "</table>";
 
 		handdrawn_predictions.html(html);
-
-		return html;
 	} catch (e) {
 		assert(false, extract_error_message(e));
 	}

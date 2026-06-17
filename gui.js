@@ -627,9 +627,7 @@ function add_seed_option (type, nr) {
 		style = " style=\"display: none\" ";
 	}
 
-	var seed_value = get_unique_seed_for_layer(nr);
-
-	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='" + seed_value + "' /></td></tr>";
+	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
 
 	return res;
 }
@@ -2352,6 +2350,89 @@ function set_rho(val) {
 function set_learning_rate(val) {
 	$("#learningRate_" + get_optimizer()).val(val);
 }
+
+function add_label_sidebar() {
+	var LABEL_SIDEBAR_BTN_HTML = $(`<button class="add_category" onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>`)[0];
+
+	var labels = document.querySelectorAll('.own_image_label');
+	if (!labels.length) return;
+
+	var bar = document.getElementById('labelSidebar');
+	var table;
+
+	if (!bar) {
+		// CSS nur einmal hinzufügen
+		var existingStyle = document.querySelector('#labelSidebarStyle');
+		if (!existingStyle) {
+			var css = '\
+			#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
+				max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
+				padding:6px 8px;z-index:9999;border:1px solid rgba(255,255,255,0.2);\
+				box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
+			#labelSidebar table{border-collapse:collapse;width:100%}\
+			#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
+				color:white;text-shadow:0 0 2px black, 1px 1px 2px black;\
+				font:14px sans-serif}\
+			#labelSidebar td:hover{text-decoration:underline;background:rgba(255,255,255,0.1)}\
+				.flashHighlight{animation:flash 1s ease-out}\
+			@keyframes flash{0%{background:#fffa8b}100%{background:transparent}}';
+			var style = document.createElement('style');
+			style.id = 'labelSidebarStyle';
+			style.appendChild(document.createTextNode(css));
+			document.head.appendChild(style);
+		}
+
+		bar = document.createElement('div');
+		bar.id = 'labelSidebar';
+		table = document.createElement('table');
+		bar.appendChild(LABEL_SIDEBAR_BTN_HTML);
+		bar.appendChild(table);
+		document.body.appendChild(bar);
+	} else {
+		table = bar.querySelector('table');
+		table.innerHTML = '';
+	}
+
+	// Einträge einfügen
+	Array.prototype.forEach.call(labels, function(el, i){
+		if (!el.id) el.id = 'auto_label_' + i;
+
+		var row = document.createElement('tr');
+		var cell = document.createElement('td');
+		cell.textContent = (el.value || el.textContent || 'label ' + (i+1));
+		cell.onclick = function(){
+			el.scrollIntoView({behavior:'smooth',block:'center'});
+			el.classList.add('flashHighlight');
+			setTimeout(function(){ el.classList.remove('flashHighlight'); }, 1100);
+		};
+		row.appendChild(cell);
+		table.appendChild(row);
+	});
+
+	// Sichtbarkeitsprüfung
+	function update_sidebar_visibility() {
+		var visibleCount = 0;
+		Array.prototype.forEach.call(labels, function(el, idx){
+			var hidden = is_hidden_or_has_hidden_parent(el);
+			table.rows[idx].style.display = hidden ? 'none' : '';
+			if (!hidden) visibleCount++;
+		});
+		bar.style.display = visibleCount ? '' : 'none';
+	}
+
+	update_sidebar_visibility();
+
+	// Observer vorbereiten
+	if (labelSidebarObserver) labelSidebarObserver.disconnect();
+
+	labelSidebarObserver = new MutationObserver(update_sidebar_visibility);
+	Array.prototype.forEach.call(labels, function(el){
+		labelSidebarObserver.observe(el, {attributes:true, attributeFilter:['style','class','hidden']});
+	});
+	labelSidebarObserver.observe(document.body, {childList:true, subtree:true});
+}
+
+
 
 function set_optimizer(val, trigger_change = 1) {
 	assert(typeof(val) == "string", val + " is not an string but " + typeof(val));
@@ -4267,20 +4348,8 @@ function open_popup(name) {
 function close_popup(name) {
 	assert(typeof(name) == "string", name + " is not a string but " + typeof(name));
 	var el = document.getElementById(name);
-	assert(typeof(el) == "object", "document.getElementById(" + name + ") is not an object");
-
-	$(el).css({
-		transition: "opacity 0.2s ease-out, transform 0.2s ease-out",
-		opacity: 0,
-		transform: "scale(0.97)"
-	});
-
-	setTimeout(() => {
-		el.style.display = "none";
-		el.style.transform = "";
-		el.style.transition = "";
-		el.style.opacity = "";
-	}, 220);
+	assert(typeof(el) == "object", "document.getElementById(" + name + " is not an object");
+	el.style.display = "none";
 }
 
 async function upload_model(evt) {
@@ -4316,16 +4385,7 @@ async function upload_model(evt) {
 }
 
 function remove_overlay() {
-	var overlays = document.querySelectorAll(".overlay");
-	overlays.forEach(function(overlay) {
-		overlay.style.transition = "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-		overlay.style.opacity = "0";
-		setTimeout(function() {
-			if (overlay.parentNode) {
-				overlay.parentNode.removeChild(overlay);
-			}
-		}, 320);
-	});
+	$(".overlay").remove();
 }
 
 async function upload_weights(evt) {
@@ -7993,75 +8053,68 @@ function ribbon_shower_hack () {
 	}
 }
 
-function show_overlay(text, title = "") {
+function show_overlay(text, title="") {
 	try {
-		var overlay = document.createElement("div");
-		overlay.className = "overlay";
-		Object.assign(overlay.style, {
-			position: "fixed",
-			top: "0",
-			left: "0",
-			width: "100%",
-			height: "100%",
-			display: "flex",
-			flexDirection: "column",
-			alignItems: "center",
-			justifyContent: "center",
-			gap: "16px",
-			userSelect: "none",
-			zIndex: "99999",
-			opacity: "0",
-			transition: "opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-			backdropFilter: "blur(24px) saturate(150%)",
-			WebkitBackdropFilter: "blur(24px) saturate(150%)",
-			background: is_dark_mode
-				? "rgba(10, 10, 15, 0.78)"
-				: "rgba(245, 245, 250, 0.82)"
-		});
+		var bg_color = "white";
+		var text_color = "black";
 
-		if (title) {
-			var titleEl = document.createElement("h2");
-			titleEl.innerHTML = title;
-			Object.assign(titleEl.style, {
-				margin: "0",
-				fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
-				fontSize: "22px",
-				fontWeight: "600",
-				letterSpacing: "-0.02em",
-				color: is_dark_mode ? "rgba(255,255,255,0.92)" : "rgba(0,0,0,0.88)",
-				textAlign: "center",
-				padding: "0 24px"
-			});
-			overlay.appendChild(titleEl);
+		if (is_dark_mode) {
+			bg_color = "black";
+			text_color = "white";
 		}
 
-		if (text) {
-			var textEl = document.createElement("p");
-			textEl.innerHTML = text;
-			Object.assign(textEl.style, {
-				margin: "0",
-				fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
-				fontSize: "15px",
-				fontWeight: "400",
-				color: is_dark_mode ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
-				textAlign: "center",
-				padding: "0 24px",
-				maxWidth: "480px",
-				lineHeight: "1.5"
-			});
-			overlay.appendChild(textEl);
+		var overlay = document.createElement("div");
+		overlay.style.position = "fixed";
+		overlay.style.top = "0";
+		overlay.style.left = "0";
+		overlay.style.width = "100%";
+		overlay.style.height = "100%";
+		overlay.style.opacity = "1";
+		overlay.style.display = "flex";
+		overlay.style.alignItems = "center";
+		overlay.style.justifyContent = "center";
+		overlay.style.userSelect = "none";
+		overlay.style.zIndex = "9999";
+		$(overlay).addClass("overlay");
+
+		if (bg_color.toLowerCase() === "black") {
+			overlay.style.backgroundImage = "radial-gradient(circle at 12% 22%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px), radial-gradient(circle at 32% 38%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px), radial-gradient(circle at 68% 18%, rgba(255,255,255,0.35) 0.5px, transparent 1.5px), radial-gradient(circle at 78% 52%, rgba(255,255,255,0.25) 0.5px, transparent 1.5px), radial-gradient(circle at 52% 76%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px), radial-gradient(circle at 60% 60%, rgba(255,255,255,0.04) 0%, transparent 70%), radial-gradient(circle at 20% 70%, rgba(255,255,255,0.03) 0%, transparent 80%), linear-gradient(180deg, rgba(10,15,35,1) 0%, rgba(0,0,15,1) 100%)";
+		} else if (bg_color.toLowerCase() === "white") {
+			overlay.style.backgroundImage = "linear-gradient( 180deg, rgba(200, 230, 255, 1) 0%, rgba(245, 250, 255, 1) 100% ), radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 60%), radial-gradient(circle at 70% 20%, rgba(255,255,255,0.5) 0%, transparent 70%), radial-gradient(circle at 40% 70%, rgba(255,255,255,0.4) 0%, transparent 65%), radial-gradient(circle at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 70%)";
+		} else {
+			overlay.style.backgroundImage = "linear-gradient(to bottom, " + bg_color + ", #000000)";
+		}
+
+		var textElement = document.createElement("p");
+		textElement.innerHTML = text;
+		textElement.style.textAlign = "center";
+		textElement.style.fontFamily = "Arial, sans-serif";
+		textElement.style.fontSize = "24px";
+		textElement.style.color = text_color;
+		textElement.style.padding = "20px";
+
+		overlay.appendChild(textElement);
+
+		if(title) {
+			var hElement = document.createElement("h1");
+			hElement.innerHTML = title;
+			hElement.style.textAlign = "center";
+			hElement.style.fontFamily = "Arial, sans-serif";
+			hElement.style.fontSize = "24px";
+			hElement.style.color = text_color;
+			hElement.style.padding = "20px";
+
+			overlay.appendChild(hElement);
 		}
 
 		document.body.appendChild(overlay);
 
-		// Trigger entrance animation
-		requestAnimationFrame(() => {
-			overlay.style.opacity = "1";
-		});
+		assert(true, "Overlay displayed successfully.");
 
 		return overlay;
 	} catch (error) {
-		wrn("[show_overlay] Failed to display overlay: " + error);
+		log(language[lang]["an_error_occurred"], error);
+		wrn("[show_overlay] Failed to display overlay.");
 	}
 }
 
