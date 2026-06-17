@@ -1499,7 +1499,6 @@
 			'globalMaxPooling2d_description' => 'Diese Schicht wählt den maximalen Wert über alle räumlichen Positionen (Höhe und Breite) für jeden Kanal aus und reduziert eine vollständige Feature-Map auf einen einzigen Wert pro Kanal. Man kann sich vorstellen, dass nur die stärkste Aktivierung aus dem gesamten Bild für jeden Kanal behalten wird. <div class="globalpooling_visual_explanation visual_explanations"></div>',
 			"certainty" => "Sicherheit",
 		       "error_starting_webcam" => "Fehler beim Starten der Webcam"
-		),
 		)
 	);
 
