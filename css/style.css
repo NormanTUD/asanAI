@@ -1950,3 +1950,67 @@ label.buttons_in_custom_images {
 .st-table-header:hover {
     background: inherit;
 }
+
+.bar {
+	margin-top: 4px;
+	display: inline-block;
+	height: 8px;
+	background-color: rgba(144, 144, 144, 0.2);
+	padding: 0;
+	width: 60px;
+	border-radius: 4px;
+	overflow: hidden;
+	position: relative;
+	cursor: pointer;
+	vertical-align: middle;
+	backdrop-filter: blur(2px);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bar > .bar-fill {
+	background: linear-gradient(90deg, #ff8c00, #ffa940);
+	width: 0%;
+	height: 100%;
+	display: block;
+	border-radius: 4px;
+	transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+	            background-color 0.3s ease,
+	            box-shadow 0.3s ease;
+	box-shadow: 0 0 4px rgba(255, 140, 0, 0.3);
+}
+
+.bar:hover > .bar-fill {
+	box-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
+	filter: brightness(1.15);
+}
+
+.highest_bar {
+	background: linear-gradient(90deg, #0FFF50, #00e676) !important;
+	box-shadow: 0 0 6px rgba(15, 255, 80, 0.4) !important;
+}
+
+.bar:hover .bar-tooltip {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+.bar-tooltip {
+	position: absolute;
+	bottom: calc(100% + 6px);
+	left: 50%;
+	transform: translateX(-50%) translateY(4px);
+	background: rgba(20, 20, 42, 0.95);
+	color: #53d8fb;
+	font-size: 10px;
+	font-family: monospace;
+	padding: 3px 7px;
+	border-radius: 4px;
+	white-space: nowrap;
+	opacity: 0;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	pointer-events: none;
+	z-index: 10;
+	border: 1px solid rgba(83, 216, 251, 0.3);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}

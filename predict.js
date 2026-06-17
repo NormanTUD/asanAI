@@ -4,7 +4,7 @@ function _get_placeholder_prediction_table() {
 	if (labels.length === 0) return "";
 	var html = "<table class='predict_table'><tbody>";
 	for (var i = 0; i < labels.length; i++) {
-		html += "<tr><td class='label_element'>" + labels[i] + "</td><td>" + _create_bar_html(0, false) + "</td></tr>";
+		html += "<tr><td class='label_element'>" + labels[i] + "</td><td>" + _create_bar_html(0, false, 0) + "</td></tr>";
 	}
 	html += "</tbody></table>";
 	return html;
@@ -627,7 +627,7 @@ function _predict_table_row(label, w, max_i, probability, predictions_idx) {
 	var str = "";
 	if (show_bars_instead_of_numbers()) {
 		var isHighest = predictions_idx == max_i && get_show_green();
-		var bar = _create_bar_html(w, isHighest);
+		var bar = _create_bar_html(w, isHighest, probability);
 		str = `<tr><td class='label_element'>${label}</td><td>${bar}</td></tr>`;
 	} else {
 		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
@@ -1449,7 +1449,7 @@ async function _get_example_string_image(examples, count, full_dir) {
 	if (labels.length > 0) {
 		placeholder_table = "<table class='predict_table'><tbody>";
 		for (var lbl_idx = 0; lbl_idx < labels.length; lbl_idx++) {
-			placeholder_table += "<tr><td class='label_element'>" + labels[lbl_idx] + "</td><td>" + _create_bar_html(0, false) + "</td></tr>";
+			placeholder_table += "<tr><td class='label_element'>" + labels[lbl_idx] + "</td><td>" + _create_bar_html(0, false, 0) + "</td></tr>";
 		}
 		placeholder_table += "</tbody></table>";
 	}
@@ -1843,7 +1843,7 @@ function _webcam_prediction_row(predictions_idx, predictions, max_i) {
 
 		if (show_bars_instead_of_numbers()) {
 			var isHighest = predictions_idx == max_i;
-			content = _create_bar_html(w, isHighest);
+			content = _create_bar_html(w, isHighest, probability);
 		} else {
 			let prob_text = (probability * 50);
 			if (get_last_layer_activation_function() == "softmax") {
@@ -1910,7 +1910,7 @@ function draw_bars_or_numbers(predictions_idx, predictions, max) {
 		var isHighest = val == max;
 
 		if (show_bars_instead_of_numbers()) {
-			var bar = _create_bar_html(w, isHighest);
+			var bar = _create_bar_html(w, isHighest, val);
 			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar}</td>` : `<td>${bar}</td>`;
 		} else {
 			let value_text = isHighest ? `<b class='best_result'>${predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
@@ -2328,11 +2328,21 @@ function _is_valid_pixels_source(input) {
     return false;
 }
 
-function _create_bar_html(width, isHighest) {
-	var classes = [];
+function _create_bar_html(width, isHighest, probability) {
+	var classes = ["bar-fill"];
 	if (isHighest) {
 		classes.push("highest_bar");
 	}
-	var classAttr = classes.length ? ` class='${classes.join(" ")}'` : "";
-	return `<span class='bar'><span${classAttr} style='width: ${width}px'></span></span>`;
+	var classAttr = ` class='${classes.join(" ")}'`;
+	
+	// Format the tooltip value
+	var tooltipText = "";
+	if (probability !== undefined && probability !== null) {
+		tooltipText = (probability * 100).toFixed(2) + "%";
+	}
+	
+	var titleAttr = tooltipText ? ` title='${tooltipText}'` : "";
+	var dataAttr = tooltipText ? ` data-value='${tooltipText}'` : "";
+	
+	return `<span class='bar'${titleAttr}${dataAttr}><span${classAttr} style='width: ${width}px'></span>${tooltipText ? `<span class='bar-tooltip'>${tooltipText}</span>` : ""}</span>`;
 }
