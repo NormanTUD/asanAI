@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 Ich bin ein Token – Eine Reise durch das LLM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0f;
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #game-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #stage-info {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 20, 0.85);
+            border: 1px solid #4a9eff;
+            border-radius: 12px;
+            padding: 15px 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(74, 158, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        #stage-info h2 {
+            color: #4a9eff;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        #stage-info p {
+            color: #aaa;
+            font-size: 0.85em;
+        }
+
+        #token-identity {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 20, 0.85);
+            border: 1px solid #ff6b4a;
+            border-radius: 12px;
+            padding: 12px 25px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 107, 74, 0.3);
+        }
+
+        #token-identity span {
+            color: #ff6b4a;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        #progress-bar {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4a9eff, #a855f7, #ff6b4a);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        #narration {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 20, 0.9);
+            border: 1px solid #a855f7;
+            border-radius: 10px;
+            padding: 10px 20px;
+            max-width: 600px;
+            text-align: center;
+            font-size: 0.85em;
+            color: #d4a5ff;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+            transition: opacity 0.5s ease;
+        }
+
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            pointer-events: all;
+        }
+
+        #start-screen h1 {
+            font-size: 2.5em;
+            color: #4a9eff;
+            text-shadow: 0 0 30px rgba(74, 158, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        #start-screen .subtitle {
+            color: #a855f7;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        #start-screen .description {
+            color: #888;
+            max-width: 500px;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-size: 0.9em;
+        }
+
+        #start-btn {
+            pointer-events: all;
+            background: linear-gradient(135deg, #4a9eff, #a855f7);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 30px rgba(74, 158, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        #start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(74, 158, 255, 0.6);
+        }
+
+        #input-section {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #input-section label {
+            color: #aaa;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        #sentence-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #4a9eff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            width: 400px;
+            text-align: center;
+        }
+
+        #sentence-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .stage-label {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            writing-mode: vertical-rl;
+            color: rgba(255,255,255,0.1);
+            font-size: 3em;
+            font-weight: bold;
+            letter-spacing: 5px;
+        }
+
+        #next-btn {
+            position: absolute;
+            bottom: 130px;
+            right: 30px;
+            pointer-events: all;
+            background: rgba(74, 158, 255, 0.2);
+            border: 1px solid #4a9eff;
+            color: #4a9eff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        #next-btn:hover {
+            background: rgba(74, 158, 255, 0.4);
+            box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulsing {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="canvas"></canvas>
+        <div id="ui-overlay">
+            <div id="stage-info" class="hidden">
+                <h2 id="stage-title">Stage 1</h2>
+                <p id="stage-desc">Description</p>
+            </div>
+            <div id="progress-bar" class="hidden">
+                <div id="progress-fill"></div>
+            </div>
+            <div id="narration" class="hidden"></div>
+            <div id="token-identity" class="hidden">
+                <span id="my-token">Du bist: "Hallo"</span>
+            </div>
+            <button id="next-btn" class="hidden">Weiter →</button>
+        </div>
+
+        <div id="start-screen">
+            <h1>🔮 Ich bin ein Token</h1>
+            <p class="subtitle">Eine Reise durch das Innere eines LLM</p>
+            <p class="description">
+                Erlebe die Welt aus der Perspektive eines Tokens. 
+                Werde eingebettet in einen hochdimensionalen Vektorraum, 
+                verbinde dich mit anderen Tokens durch Attention, 
+                durchlaufe neuronale Schichten und finde heraus, 
+                welches Wort als nächstes kommt.
+            </p>
+            <div id="input-section">
+                <label>Gib einen Satz ein (du wirst das letzte Token sein):</label>
+                <input type="text" id="sentence-input" value="Die Katze sitzt auf der" placeholder="Dein Satz...">
+            </div>
+            <button id="start-btn">🚀 Reise starten</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H;
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Game state
+        let gameState = 'start';
+        let currentStage = 0;
+        let tokens = [];
+        let myTokenIndex = -1;
+        let animationTime = 0;
+        let stageTime = 0;
+        let particles = [];
+        let connections = [];
+        let transitionAlpha = 0;
+        let transitioning = false;
+
+        // Token data
+        class Token {
+            constructor(text, index) {
+                this.text = text;
+                this.index = index;
+                this.x = 0;
+                this.y = 0;
+                this.targetX = 0;
+                this.targetY = 0;
+                this.vx = 0;
+                this.vy = 0;
+                this.embedding = [];
+                this.positionalEncoding = [];
+                this.finalEmbedding = [];
+                this.color = `hsl(${(index * 60) % 360}, 70%, 60%)`;
+                this.radius = 20;
+                this.alpha = 1;
+                this.scale = 1;
+                this.attentionWeights = [];
+                this.denseActivations = [];
+                this.glowIntensity = 0;
+            }
+
+            generateEmbedding(dim = 8) {
+                this.embedding = [];
+                // Pseudo-semantic embedding based on char codes
+                for (let i = 0; i < dim; i++) {
+                    let val = 0;
+                    for (let c = 0; c < this.text.length; c++) {
+                        val += Math.sin(this.text.charCodeAt(c) * (i + 1) * 0.1) * 0.5;
+                    }
+                    this.embedding.push(val);
+                }
+            }
+
+            generatePositionalEncoding(dim = 8) {
+                this.positionalEncoding = [];
+                for (let i = 0; i < dim; i++) {
+                    if (i % 2 === 0) {
+                        this.positionalEncoding.push(Math.sin(this.index / Math.pow(10000, i / dim)));
+                    } else {
+                        this.positionalEncoding.push(Math.cos(this.index / Math.pow(10000, (i - 1) / dim)));
+                    }
+                }
+            }
+
+            combinedEmbedding() {
+                this.finalEmbedding = this.embedding.map((v, i) => v + this.positionalEncoding[i]);
+            }
+        }
+
+        // Particle system
+        class Particle {
+            constructor(x, y, color, life = 60) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = (Math.random() - 0.5) * 3;
+                this.life = life;
+                this.maxLife = life;
+                this.color = color;
+                this.size = Math.random() * 3 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                this.life--;
+            }
+
+            draw() {
+                let alpha = this.life / this.maxLife;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * alpha, 0, Math.PI * 2);
+                ctx.fillStyle = this.color.replace(')', `, ${alpha})`).replace('hsl', 'hsla').replace('rgb', 'rgba');
+                ctx.fill();
+            }
+        }
+
+        // Stages
+        const stages = [
+            {
+                title: "🌌 Tokenisierung",
+                desc: "Du wirst aus dem Satz herausgelöst und zu einem Token",
+                narration: "Du warst einmal Teil eines Satzes. Jetzt wirst du herausgelöst – ein eigenständiges Symbol, bereit für die Transformation."
+            },
+            {
+                title: "📐 Embedding – Dein Vektor-Körper",
+                desc: "Du erhältst eine hochdimensionale Darstellung",
+                narration: "Jedes Token wird in einen Vektor umgewandelt – eine Liste von Zahlen, die deine Bedeutung kodieren. Du bekommst deinen 'Körper' im Vektorraum."
+            },
+            {
+                title: "📍 Positional Encoding",
+                desc: "Deine Position im Satz wird eincodiert",
+                narration: "Wo du im Satz stehst, ist wichtig! Sinuswellen verschiedener Frequenzen werden zu deinem Vektor addiert – jetzt weißt du, WO du bist."
+            },
+            {
+                title: "🔗 Self-Attention",
+                desc: "Du verbindest dich mit allen anderen Tokens",
+                narration: "Query, Key, Value – du fragst: 'Wer ist relevant für mich?' Jedes Token antwortet mit unterschiedlicher Stärke. Die Attention-Gewichte bestimmen, wer dich beeinflusst."
+            },
+            {
+                title: "⚡ Feed-Forward / Dense Layers",
+                desc: "Du durchläufst neuronale Schichten",
+                narration: "Matrixmultiplikation, ReLU-Aktivierung, noch eine Schicht... Dein Vektor wird transformiert, komprimiert, erweitert. Neue Bedeutungen entstehen."
+            },
+            {
+                title: "🎯 Output – Nächstes Token finden",
+                desc: "Wahrscheinlichkeitsverteilung über alle möglichen nächsten Tokens",
+                narration: "Dein finaler Vektor wird mit dem gesamten Vokabular verglichen. Softmax erzeugt Wahrscheinlichkeiten. Welches Wort kommt als nächstes?"
+            }
+        ];
+
+        // Candidate next tokens for the output stage
+        let candidateTokens = [];
+
+        function initGame(sentence) {
+            let words = sentence.trim().split(/\s+/);
+            tokens = words.map((w, i) => new Token(w, i));
+            myTokenIndex = tokens.length - 1;
+
+            tokens.forEach(t => {
+                t.generateEmbedding();
+                t.generatePositionalEncoding();
+                t.combinedEmbedding();
+            });
+
+            // Generate attention weights (simplified)
+            tokens.forEach((t, i) => {
+                t.attentionWeights = tokens.map((_, j) => {
+                    // Simulate attention: nearby tokens and semantically related ones get higher weight
+                    let dist = Math.abs(i - j);
+                    let weight = Math.exp(-dist * 0.3) + Math.random() * 0.2;
+                    return weight;
+                });
+                // Normalize (softmax-like)
+                let sum = t.attentionWeights.reduce((a, b) => a + b, 0);
+                t.attentionWeights = t.attentionWeights.map(w => w / sum);
+            });
+
+            // Generate candidate tokens for output
+            const candidates = ["Matte", "Bank", "Straße", "Wiese", "Couch", "Fensterbank", "Terrasse", "Decke"];
+            candidateTokens = candidates.map((text, i) => {
+                let prob = Math.random();
+                return { text, probability: prob, x: 0, y: 0 };
+            });
+            // Make one clearly the winner
+            candidateTokens[0].probability = 0.45;
+            candidateTokens[1].probability = 0.22;
+            candidateTokens[2].probability = 0.12;
+            // Normalize
+            let totalProb = candidateTokens.reduce((s, c) => s + c.probability, 0);
+            candidateTokens.forEach(c => c.probability /= totalProb);
+            candidateTokens.sort((a, b) => b.probability - a.probability);
+
+            currentStage = 0;
+            gameState = 'playing';
+            stageTime = 0;
+            showStageUI();
+        }
+
+        function showStageUI() {
+            document.getElementById('stage-info').classList.remove('hidden');
+            document.getElementById('progress-bar').classList.remove('hidden');
+            document.getElementById('narration').classList.remove('hidden');
+            document.getElementById('token-identity').classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+
+            updateStageUI();
+        }
+
+        function updateStageUI() {
+            let stage = stages[currentStage];
+            document.getElementById('stage-title').textContent = stage.title;
+            document.getElementById('stage-desc').textContent = stage.desc;
+            document.getElementById('narration').textContent = stage.narration;
+            document.getElementById('my-token').textContent = `Du bist: "${tokens[myTokenIndex].text}" (Token #${myTokenIndex})`;
+            document.getElementById('progress-fill').style.width = `${((currentStage + 1) / stages.length) * 100}%`;
+        }
+
+        function nextStage() {
+            if (currentStage < stages.length - 1) {
+                currentStage++;
+                stageTime = 0;
+                updateStageUI();
+                // Burst particles on transition
+                let myToken = tokens[myTokenIndex];
+                for (let i = 0; i < 30; i++) {
+                    particles.push(new Particle(myToken.x, myToken.y, 'hsl(220, 80%, 60%)', 40));
+                }
+            }
+        }
+
+        // Drawing functions for each stage
+        function drawStage0_Tokenization() {
+            // Show the sentence being split into tokens
+            let centerY = H / 2;
+            let totalWidth = tokens.length * 100;
+            let startX = (W - totalWidth) / 2 + 50;
+
+            // Animate tokens separating
+            let progress = Math.min(stageTime / 120, 1);
+            let eased = 1 - Math.pow(1 - progress, 3);
+
+            tokens.forEach((t, i) => {
+                let baseX = W / 2;
+                let targetX = startX + i * 100;
+                t.x = baseX + (targetX - baseX) * eased;
+                t.y = centerY + Math.sin(animationTime * 0.02 + i) * 10;
+                t.targetX = targetX;
+                t.targetY = centerY;
+
+                // Draw token box
+                let isMe = i === myTokenIndex;
+                let glow = isMe ? 20 + Math.sin(animationTime * 0.05) * 10 : 5;
+
+                ctx.save();
+                ctx.shadowBlur = glow;
+                ctx.shadowColor = isMe ? '#ff6b4a' : '#4a9eff';
+
+                ctx.fillStyle = isMe ? 'rgba(255, 107, 74, 0.2)' : 'rgba(74, 158, 255, 0.1)';
+                ctx.strokeStyle = isMe ? '#ff6b4a' : '#4a9eff';
+                ctx.lineWidth = isMe ? 2 : 1;
+
+                let boxW = 80;
+                let boxH = 40;
+                ctx.beginPath();
+                ctx.roundRect(t.x - boxW / 2, t.y - boxH / 2, boxW, boxH, 8);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = isMe ? '#ff6b4a' : '#e0e0e0';
+                ctx.font = isMe ? 'bold 14px Courier New' : '14px Courier New';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`"${t.text}"`, t.x, t.y);
+
+                // Token index
+                ctx.fillStyle = '#666';
+                ctx.font = '10px Courier New';
+                ctx.fillText(`#${i}`, t.x, t.y + 28);
+
+                ctx.restore();
+            });
+
+            // Draw sentence above
+            if (progress < 0.5) {
+                ctx.fillStyle = `rgba(255,255,255,${1 - progress * 2})`;
+                ctx.font = '18px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(tokens.map(t => t.text).join(' '), W / 2, centerY - 80);
+            }
+
+            // Scissors animation
+            if (progress > 0.2 && progress < 0.8) {
+                let scissorProgress = (progress - 0.2) / 0.6;
+                let scissorX = startX - 50 + scissorProgress * totalWidth;
+                ctx.font = '24px serif';
+                ctx.fillText('✂️', scissorX, centerY - 40);
+            }
+        }
+
+        function drawStage1_Embedding() {
+            // Show tokens getting their vector representations
+            let centerY = H / 2;
+            let progress = Math.min(stageTime / 150, 1);
+            let eased = 1 - Math.pow(1 - progress, 3);
+
+            tokens.forEach((t, i) => {
+                let angle = (i / tokens.length) * Math.PI * 2 - Math.PI / 2;
+                let radius = 150;
+                t.x = W / 2 + Math.cos(angle) * radius;
+                t.y = centerY + Math.sin(angle) * radius * 0.6;
+
+                let isMe = i === myTokenIndex;
+
+                // Draw embedding vector visualization
+                if (eased > 0.3) {
+                    let vecProgress = Math.min((eased - 0.3) / 0.7, 1);
+                    let dims = t.embedding;
+                    let barWidth = 8;
+                    let barMaxH = 40;
+
+                    for (let d = 0; d < dims.length; d++) {
+                        let bx = t.x - (dims.length * barWidth) / 2 + d * barWidth;
+                        let by = t.y + 35;
+                        let bh = dims[d] * barMaxH * vecProgress;
+
+                        let hue = isMe ? 20 : 220;
+                        let lightness = 40 + Math.abs(dims[d]) * 30;
+                        ctx.fillStyle = `hsla(${hue}, 70%, ${lightness}%, ${0.7 * vecProgress})`;
+                        ctx.fillRect(bx, by - Math.max(0, bh), barWidth - 2, Math.abs(bh));
+                    }
+                }
+
+                // Draw token
+                let glow = isMe ? 15 : 5;
+                ctx.save();
+                ctx.shadowBlur = glow;
+                ctx.shadowColor = isMe ? '#ff6b4a' : '#4a9eff';
+
+                ctx.beginPath();
+                ctx.arc(t.x, t.y, 25 + (isMe ? 5 : 0), 0, Math.PI * 2);
+                ctx.fillStyle = isMe ? 'rgba(255, 107, 74, 0.3)' : 'rgba(74, 158, 255, 0.15)';
+                ctx.fill();
+                ctx.strokeStyle = isMe ? '#ff6b4a' : '#4a9eff';
+                ctx.lineWidth = isMe ? 2 : 1;
+                ctx.stroke();
+
+                ctx.fillStyle = isMe ? '#ff6b4a' : '#e0e0e0';
+                ctx.font = isMe ? 'bold 12px Courier New' : '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(t.text, t.x, t.y);
+                ctx.restore();
+            });
+
+            // Center label
+            ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
+            ctx.font = '14px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('Vektorraum', W / 2, centerY);
+            ctx.fillText(`dim = ${tokens[0].embedding.length}`, W / 2, centerY + 18);
+
+            // Floating numbers around my token
+            if (eased > 0.5) {
+                let myT = tokens[myTokenIndex];
+                for (let i = 0; i < myT.embedding.length; i++) {
+                    let angle = (i / myT.embedding.length) * Math.PI * 2 + animationTime * 0.01;
+                    let r = 60 + Math.sin(animationTime * 0.03 + i) * 10;
+                    let nx = myT.x + Math.cos(angle) * r;
+                    let ny = myT.y + Math.sin(angle) * r;
+                    ctx.fillStyle = `rgba(255, 107, 74, ${0.5 + Math.sin(animationTime * 0.05 + i) * 0.3})`;
+                    ctx.font = '10px Courier New';
+                    ctx.fillText(myT.embedding[i].toFixed(2), nx, ny);
+                }
+            }
+        }
+
+        function drawStage2_PositionalEncoding() {
+            let centerY = H / 2;
+            let progress = Math.min(stageTime / 150, 1);
+            let eased = 1 - Math.pow(1 - progress, 3);
+
+            // Draw sine waves in background
+            for (let freq = 1; freq <= 4; freq++) {
+                ctx.beginPath();
+                ctx.strokeStyle = `hsla(${freq * 60 + 180}, 60%, 50%, ${0.15 * eased})`;
+                ctx.lineWidth = 1;
+                for (let x = 0; x < W; x += 2) {
+                    let y = centerY - 100 + Math.sin((x / W) * Math.PI * 2 * freq + animationTime * 0.02 * freq) * 30;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // Draw tokens on a line with positional encoding visualization
+            let totalWidth = tokens.length * 110;
+            let startX = (W - totalWidth) / 2 + 55;
+
+            tokens.forEach((t, i) => {
+                t.x = startX + i * 110;
+                t.y = centerY + 50;
+
+                let isMe = i === myTokenIndex;
+
+                // Positional encoding wave arriving
+                if (eased > 0.3) {
+                    let waveProgress = Math.min((eased - 0.3) / 0.5, 1);
+
+                    // Draw PE values as colored bars merging into the token
+                    for (let d = 0; d < t.positionalEncoding.length; d++) {
+                        let sourceY = centerY - 100 + Math.sin((t.x / W) * Math.PI * 2 * (d + 1)) * 30;
+                        let targetY = t.y - 30;
+                        let currentY = sourceY + (targetY - sourceY) * waveProgress;
+
+                        ctx.beginPath();
+                        ctx.strokeStyle = `hsla(${d * 45 + 180}, 70%, 60%, ${0.4 * waveProgress})`;
+                        ctx.lineWidth = 2;
+                        ctx.moveTo(t.x - 20 + d * 6, sourceY);
+                        ctx.lineTo(t.x - 20 + d * 6, currentY);
+                        ctx.stroke();
+
+                        // Value label
+                        if (waveProgress > 0.8 && isMe) {
+                            ctx.fillStyle = `hsla(${d * 45 + 180}, 70%, 60%, 0.7)`;
+                            ctx.font = '9px Courier New';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(t.positionalEncoding[d].toFixed(2), t.x - 20 + d * 6, t.y + 45 + d * 12);
+                        }
+                    }
+                }
+
+                // Draw token
+                let glow = isMe ? 20 : 5;
+                ctx.save();
+                ctx.shadowBlur = glow;
+                ctx.shadowColor = isMe ? '#ff6b4a' : '#4a9eff';
+
+                ctx.beginPath();
+                ctx.arc(t.x, t.y, 28, 0, Math.PI * 2);
+                ctx.fillStyle = isMe ? 'rgba(255, 107, 74, 0.25)' : 'rgba(74, 158, 255, 0.1)';
+                ctx.fill();
+                ctx.strokeStyle = isMe ? '#ff6b4a' : '#4a9eff';
+                ctx.lineWidth = isMe ? 2 : 1;
+                ctx.stroke();
+
+                // Position number
+                ctx.fillStyle = '#a855f7';
+                ctx.font = 'bold 10px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(`pos=${i}`, t.x, t.y - 35);
+
+                ctx.fillStyle = isMe ? '#ff6b4a' : '#e0e0e0';
+                ctx.font = isMe ? 'bold 12px Courier New' : '12px Courier New';
+                ctx.fillText(t.text, t.x, t.y);
+
+                ctx.restore();
+            });
+
+            // Formula display
+            if (eased > 0.7) {
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.8)';
+                ctx.font = '13px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText('x = embedding + PE(pos)', W / 2, H - 150);
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.5)';
+                ctx.font = '11px Courier New';
+                ctx.fillText('PE(pos, 2i) = sin(pos / 10000^(2i/d))', W / 2, H - 130);
+                ctx.fillText('PE(pos, 2i+1) = cos(pos / 10000^(2i/d))', W / 2, H - 115);
+            }
+        }
+
+        function drawStage3_Attention() {
+            let centerY = H / 2;
+            let progress = Math.min(stageTime / 180, 1);
+            let eased = 1 - Math.pow(1 - progress, 3);
+
+            // Arrange tokens in a circle
+            let radius = Math.min(W, H) * 0.25;
+
+            tokens.forEach((t, i) => {
+                let angle = (i / tokens.length) * Math.PI * 2 - Math.PI / 2;
+                t.x = W / 2 + Math.cos(angle) * radius;
+                t.y = centerY + Math.sin(angle) * radius * 0.7;
+            });
+
+            let myToken = tokens[myTokenIndex];
+
+            // Draw attention connections from my token to all others
+            if (eased > 0.2) {
+                let connProgress = Math.min((eased - 0.2) / 0.5, 1);
+
+                tokens.forEach((t, i) => {
+                    if (i === myTokenIndex) return;
+                    let weight = myToken.attentionWeights[i];
+                    let alpha = weight * 3 * connProgress;
+                    let lineWidth = weight * 8 * connProgress;
+
+                    // Animated beam
+                    let beamProgress = (animationTime * 0.02 + i * 0.3) % 1;
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = `hsla(${280 + weight * 100}, 80%, 60%, ${Math.min(alpha, 0.8)})`;
+                    ctx.lineWidth = lineWidth;
+                    ctx.moveTo(myToken.x, myToken.y);
+                    ctx.lineTo(t.x, t.y);
+                    ctx.stroke();
+
+                    // Traveling particle along the connection
+                    let px = myToken.x + (t.x - myToken.x) * beamProgress;
+                    let py = myToken.y + (t.y - myToken.y) * beamProgress;
+                    ctx.beginPath();
+                    ctx.arc(px, py, 3 + weight * 5, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${280 + weight * 100}, 80%, 70%, ${alpha})`;
+                    ctx.fill();
+
+                    // Weight label
+                    let midX = (myToken.x + t.x) / 2;
+                    let midY = (myToken.y + t.y) / 2;
+                    ctx.fillStyle = `rgba(255,255,255, ${0.6 * connProgress})`;
+                    ctx.font = '10px Courier New';
+                    ctx.textAlign = 'center';
+                    ctx.fillText((weight * 100).toFixed(0) + '%', midX, midY - 10);
+                });
+            }
+
+            // Draw tokens
+            tokens.forEach((t, i) => {
+                let isMe = i === myTokenIndex;
+                let weight = isMe ? 1 : myToken.attentionWeights[i];
+
+                ctx.save();
+                ctx.shadowBlur = isMe ? 25 : 5 + weight * 15;
+                ctx.shadowColor = isMe ? '#ff6b4a' : `hsla(${280 + weight * 100}, 80%, 60%, 0.8)`;
+
+                ctx.beginPath();
+                ctx.arc(t.x, t.y, isMe ? 32 : 24 + weight * 8, 0, Math.PI * 2);
+                ctx.fillStyle = isMe ? 'rgba(255, 107, 74, 0.3)' : `rgba(168, 85, 247, ${0.1 + weight * 0.2})`;
+                ctx.fill();
+                ctx.strokeStyle = isMe ? '#ff6b4a' : `hsla(${280 + weight * 100}, 70%, 60%, 0.8)`;
+                ctx.lineWidth = isMe ? 2.5 : 1 + weight * 2;
+                ctx.stroke();
+
+                ctx.fillStyle = isMe ? '#ff6b4a' : '#e0e0e0';
+                ctx.font = isMe ? 'bold 13px Courier New' : '12px Courier New';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(t.text, t.x, t.y);
+
+                ctx.restore();
+            });
+
+            // QKV labels
+            if (eased > 0.6) {
+                ctx.fillStyle = 'rgba(74, 158, 255, 0.7)';
+                ctx.font = '11px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText('Q (Query) = "Was suche ich?"', W / 2, H - 120);
+                ctx.fillText('K (Key) = "Was biete ich an?"', W / 2, H - 105);
+                ctx.fillText('V (Value) = "Was ist mein Inhalt?"', W / 2, H - 90);
+                ctx.fillStyle = 'rgba(168, 85, 247, 0.6)';
+                ctx.fillText('Attention(Q,K,V) = softmax(QK^T / √d) · V', W / 2, H - 70);
+            }
+        }
+
+        function drawStage4_DenseLayers() {
+            let progress = Math.min(stageTime / 200, 1);
+            let eased = 1 - Math.pow(1 - progress, 3);
+
+            let myToken = tokens[myTokenIndex];
+            myToken.x = W * 0.15;
+            myToken.y = H / 2;
+
+            // Draw neural network layers
+            let layers = [
+                { neurons: 8, x: W * 0.3, label: 'Input (d=8)' },
+                { neurons: 16, x: W * 0.45, label: 'Dense 1 (4d=32)' },
+                { neurons: 16, x: W * 0.6, label: 'ReLU' },
+                { neurons: 8, x: W * 0.75, label: 'Dense 2 (d=8)' },
+                { neurons: 8, x: W * 0.88, label: 'Output + LayerNorm' }
+            ];
+
+            // Draw connections between layers
+            let layerProgress = eased * layers.length;
+
+            for (let l = 0; l < layers.length - 1; l++) {
+                if (layerProgress < l + 0.5) break;
+                let connAlpha = Math.min(layerProgress - l, 1) * 0.15;
+
+                let layer1 = layers[l];
+                let layer2 = layers[l + 1];
+
+                for (let n1 = 0; n1 < layer1.neurons; n1++) {
+                    for (let n2 = 0; n2 < layer2.neurons; n2++) {
+                        let y1 = H / 2 + (n1 - layer1.neurons / 2) * 25;
+                        let y2 = H / 2 + (n2 - layer2.neurons / 2) * 25;
+
+                        // Random weight visualization
+                        let weight = Math.sin(n1 * 3.7 + n2 * 2.3 + l * 5.1) * 0.5 + 0.5;
+                        let hue = weight > 0.5 ? 120 : 0;
+
+                        ctx.beginPath();
+                        ctx.strokeStyle = `hsla(${hue}, 60%, 50%, ${connAlpha * weight})`;
+                        ctx.lineWidth = 0.5 + weight;
+                        ctx.moveTo(layer1.x, y1);
+                        ctx.lineTo(layer2.x, y2);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw neurons
+            for (let l = 0; l < layers.length; l++) {
+                let layer = layers[l];
+                let layerAlpha = Math.min(Math.max(layerProgress - l + 0.5, 0), 1);
+
+                for (let n = 0; n < layer.neurons; n++) {
+                    let y = H / 2 + (n - layer.neurons / 2) * 25;
+
+                    // Activation value
+                    let activation = Math.sin(n * 2.1 + l * 3.7 + animationTime * 0.03) * 0.5 + 0.5;
+                    if (l === 2) activation = Math.max(0, activation - 0.3); // ReLU
+
+                    ctx.save();
+                    ctx.globalAlpha = layerAlpha;
+
+                    ctx.beginPath();
+                    ctx.arc(layer.x, y, 8, 0, Math.PI * 2);
+
+                    let hue = l === 2 ? (activation > 0 ? 120 : 0) : 220 + l * 30;
+                    ctx.fillStyle = `hsla(${hue}, 70%, ${30 + activation * 40}%, 0.8)`;
+                    ctx.fill();
+                    ctx.strokeStyle = `hsla(${hue}, 70%, 60%, 0.6)`;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+
+                // Layer label
+                ctx.fillStyle = `rgba(255,255,255, ${Math.min(Math.max(layerProgress - l, 0), 1) * 0.7})`;
+                ctx.font = '10px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(layer.label, layer.x, H / 2 + layer.neurons * 12 + 25);
+            }
+
+            // Draw my token on the left
+            ctx.save();
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ff6b4a';
+            ctx.beginPath();
+            ctx.arc(myToken.x, myToken.y, 30, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 107, 74, 0.3)';
+            ctx.fill();
+            ctx.strokeStyle = '#ff6b4a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.fillStyle = '#ff6b4a';
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(myToken.text, myToken.x, myToken.y);
+            ctx.restore();
+
+            // Arrow from token to network
+            if (eased > 0.1) {
+                let arrowProgress = Math.min((eased - 0.1) / 0.3, 1);
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(255, 107, 74, ${arrowProgress * 0.6})`;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.moveTo(myToken.x + 35, myToken.y);
+                ctx.lineTo(myToken.x + 35 + (layers[0].x - myToken.x - 45) * arrowProgress, myToken.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // Traveling data pulse
+            if (eased > 0.3) {
+                let pulsePos = ((animationTime * 0.01) % 1);
+                let pulseX = layers[0].x + pulsePos * (layers[layers.length - 1].x - layers[0].x);
+                ctx.beginPath();
+                ctx.arc(pulseX, H / 2, 5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 107, 74, 0.8)';
+                ctx.fill();
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#ff6b4a';
+            }
+
+            // Formula
+            if (eased > 0.8) {
+                ctx.fillStyle = 'rgba(74, 158, 255, 0.7)';
+                ctx.font = '11px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText('FFN(x) = max(0, xW₁ + b₁)W₂ + b₂', W / 2, H - 60);
+                ctx.fillText('Output = LayerNorm(x + FFN(x))', W / 2, H - 42);
+            }
+        }
+
+        function drawStage5_Output() {
+            let progress = Math.min(stageTime / 200, 1);
+            let eased = 1 - Math.pow(1 - progress, 3);
+
+            let myToken = tokens[myTokenIndex];
+            myToken.x = W * 0.2;
+            myToken.y = H / 2;
+
+            // Draw my token
+            ctx.save();
+            ctx.shadowBlur = 25;
+            ctx.shadowColor = '#ff6b4a';
+            ctx.beginPath();
+            ctx.arc(myToken.x, myToken.y, 35, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 107, 74, 0.3)';
+            ctx.fill();
+            ctx.strokeStyle = '#ff6b4a';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.fillStyle = '#ff6b4a';
+            ctx.font = 'bold 14px Courier New';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(myToken.text, myToken.x, myToken.y);
+            ctx.fillStyle = 'rgba(255, 107, 74, 0.6)';
+            ctx.font = '10px Courier New';
+            ctx.fillText('(finaler Vektor)', myToken.x, myToken.y + 50);
+            ctx.restore();
+
+            // Draw candidate tokens as a probability distribution
+            let barAreaX = W * 0.45;
+            let barAreaWidth = W * 0.45;
+            let barMaxHeight = H * 0.5;
+            let barSpacing = barAreaWidth / candidateTokens.length;
+
+            // Arrow from token to distribution
+            if (eased > 0.1) {
+                let arrowP = Math.min((eased - 0.1) / 0.3, 1);
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(168, 85, 247, ${arrowP * 0.6})`;
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.moveTo(myToken.x + 40, myToken.y);
+                ctx.lineTo(myToken.x + 40 + (barAreaX - myToken.x - 60) * arrowP, myToken.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Label on arrow
+                if (arrowP > 0.5) {
+                    ctx.fillStyle = `rgba(168, 85, 247, ${(arrowP - 0.5) * 2})`;
+                    ctx.font = '10px Courier New';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('dot product + softmax', (myToken.x + barAreaX) / 2, myToken.y - 15);
+                }
+            }
+
+            // Draw probability bars
+            if (eased > 0.3) {
+                let barProgress = Math.min((eased - 0.3) / 0.5, 1);
+
+                candidateTokens.forEach((c, i) => {
+                    let x = barAreaX + i * barSpacing + barSpacing * 0.2;
+                    let barW = barSpacing * 0.6;
+                    let barH = c.probability * barMaxHeight * barProgress;
+                    let baseY = H * 0.75;
+
+                    // Bar
+                    let hue = i === 0 ? 120 : (i === 1 ? 60 : 220);
+                    let saturation = 70 - i * 5;
+                    let lightness = 50 + (1 - c.probability) * 20;
+
+                    ctx.save();
+                    if (i === 0) {
+                        ctx.shadowBlur = 15 + Math.sin(animationTime * 0.05) * 5;
+                        ctx.shadowColor = 'rgba(74, 255, 100, 0.5)';
+                    }
+
+                    // Gradient bar
+                    let gradient = ctx.createLinearGradient(x, baseY, x, baseY - barH);
+                    gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${lightness}%, 0.6)`);
+                    gradient.addColorStop(1, `hsla(${hue}, ${saturation}%, ${lightness + 20}%, 0.9)`);
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, baseY - barH, barW, barH);
+
+                    ctx.strokeStyle = `hsla(${hue}, ${saturation}%, ${lightness}%, 0.8)`;
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, baseY - barH, barW, barH);
+
+                    ctx.restore();
+
+                    // Token label
+                    ctx.fillStyle = i === 0 ? '#4aff6b' : '#ccc';
+                    ctx.font = i === 0 ? 'bold 12px Courier New' : '11px Courier New';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`"${c.text}"`, x + barW / 2, baseY + 18);
+
+                    // Probability label
+                    if (barProgress > 0.7) {
+                        ctx.fillStyle = i === 0 ? '#4aff6b' : '#999';
+                        ctx.font = '10px Courier New';
+                        ctx.fillText(`${(c.probability * 100).toFixed(1)}%`, x + barW / 2, baseY - barH - 10);
+                    }
+                });
+
+                // Winner highlight
+                if (barProgress > 0.9) {
+                    let winnerX = barAreaX + barSpacing * 0.2 + barSpacing * 0.3;
+                    ctx.fillStyle = `rgba(74, 255, 107, ${0.3 + Math.sin(animationTime * 0.08) * 0.2})`;
+                    ctx.font = 'bold 14px Courier New';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`→ "${candidateTokens[0].text}" wird gewählt! ←`, W * 0.65, H * 0.15);
+
+                    // Show the completed sentence
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.font = '13px Courier New';
+                    let sentence = tokens.map(t => t.text).join(' ') + ' ' + candidateTokens[0].text;
+                    ctx.fillText(sentence, W * 0.65, H * 0.2);
+                }
+            }
+
+            // Softmax formula
+            if (eased > 0.7) {
+                ctx.fillStyle = 'rgba(74, 158, 255, 0.6)';
+                ctx.font = '11px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText('P(token_i) = exp(score_i) / Σ exp(score_j)', W * 0.65, H - 40);
+                ctx.fillText('score = final_vector · vocab_embedding^T', W * 0.65, H - 25);
+            }
+        }
+
+        // Background effects
+        function drawBackground() {
+            // Dark gradient
+            let gradient = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.7);
+            gradient.addColorStop(0, '#12121f');
+            gradient.addColorStop(1, '#0a0a0f');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, W, H);
+
+            // Grid
+            ctx.strokeStyle = 'rgba(74, 158, 255, 0.03)';
+            ctx.lineWidth = 1;
+            let gridSize = 50;
+            for (let x = 0; x < W; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, H);
+                ctx.stroke();
+            }
+            for (let y = 0; y < H; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(W, y);
+                ctx.stroke();
+            }
+
+            // Floating ambient particles
+            for (let i = 0; i < 30; i++) {
+                let x = ((animationTime * 0.3 + i * 137.5) % W);
+                let y = ((animationTime * 0.2 + i * 89.3) % H);
+                let alpha = 0.1 + Math.sin(animationTime * 0.01 + i) * 0.05;
+                ctx.beginPath();
+                ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(74, 158, 255, ${alpha})`;
+                ctx.fill();
+            }
+        }
+
+        // Main game loop
+        function gameLoop() {
+            animationTime++;
+            stageTime++;
+
+            ctx.clearRect(0, 0, W, H);
+            drawBackground();
+
+            if (gameState === 'playing') {
+                switch (currentStage) {
+                    case 0: drawStage0_Tokenization(); break;
+                    case 1: drawStage1_Embedding(); break;
+                    case 2: drawStage2_PositionalEncoding(); break;
+                    case 3: drawStage3_Attention(); break;
+                    case 4: drawStage4_DenseLayers(); break;
+                    case 5: drawStage5_Output(); break;
+                }
+
+                // Update and draw particles
+                particles = particles.filter(p => p.life > 0);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Event listeners
+        document.getElementById('start-btn').addEventListener('click', () => {
+            let sentence = document.getElementById('sentence-input').value.trim();
+            if (!sentence) sentence = "Die Katze sitzt auf der";
+            document.getElementById('start-screen').classList.add('hidden');
+            initGame(sentence);
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            nextStage();
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && gameState === 'start') {
+                document.getElementById('start-btn').click();
+            }
+            if ((e.key === 'ArrowRight' || e.key === ' ') && gameState === 'playing') {
+                nextStage();
+            }
+        });
+
+        // Start the render loop
+        gameLoop();
+    </script>
+</body>
+</html>
