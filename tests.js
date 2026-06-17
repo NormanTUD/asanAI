@@ -1524,7 +1524,7 @@ async function test_check_categorical_predictions () {
 	var all_predictions_are_floats_ok = 1;
 	$(".predict_table td").not(".label_element").each((i, e) => {
 		var got_text = ($(e).text());
-		got_text.replace("%", "");
+		got_text = got_text.replace("%", "");
 		if(!looks_like_number(got_text)) {
 			console.error(`test_check_categorical_predictions: got text '${got_text}', which didn't look like a number`);
 			all_predictions_are_floats_ok = 0;
