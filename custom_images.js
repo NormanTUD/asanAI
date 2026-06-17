@@ -416,10 +416,26 @@ function delete_own_image(elem) {
 }
 
 function show_or_hide_hide_delete_category() {
+	var $buttons = $(".delete_category_button");
+
 	if ($(".own_image_label").length > 1) {
-		$(".delete_category_button").show();
+		$buttons.each(function() {
+			$(this).css({
+				'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				'opacity': '1',
+				'transform': 'scale(1)',
+				'pointer-events': 'auto'
+			});
+		});
 	} else {
-		$(".delete_category_button").hide();
+		$buttons.each(function() {
+			$(this).css({
+				'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				'opacity': '0',
+				'transform': 'scale(0.5)',
+				'pointer-events': 'none'
+			});
+		});
 	}
 }
 
