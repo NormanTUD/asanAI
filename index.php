@@ -84,6 +84,7 @@
 		_js("neural_organism.js");
 		_js("online_python_code_completion.js");
 		_js("explain.js");
+		_js("explain_losses.js");
 		_js("math_editable.js");
 		_js("math_mode.js");
 		_js("feature_maps.js");
