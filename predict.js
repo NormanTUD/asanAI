@@ -2,11 +2,18 @@
 
 function _get_placeholder_prediction_table() {
 	if (labels.length === 0) return "";
-	var html = "<table class='predict_table'><tbody>";
+
+	var html = "<div class='predict-table-wrapper glass-panel'>";
+	html += "<table class='predict_table predict_table--loading'><tbody>";
+
 	for (var i = 0; i < labels.length; i++) {
-		html += "<tr><td class='label_element'>" + labels[i] + "</td><td>" + _create_bar_html(0, false, 0) + "</td></tr>";
+		html += "<tr class='predict-row predict-row--skeleton'>"
+			+ "<td class='label_element'>" + labels[i] + "</td>"
+			+ "<td>" + _create_bar_html(0, false, 0) + "</td>"
+			+ "</tr>";
 	}
-	html += "</tbody></table>";
+
+	html += "</tbody></table></div>";
 	return html;
 }
 
