@@ -1,3 +1,73 @@
+:root {
+    /* Apple-inspired spacing scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-2xl: 64px;
+
+    /* Apple's signature easing curves */
+    --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-physics: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+    /* Duration scale */
+    --duration-instant: 0.1s;
+    --duration-fast: 0.2s;
+    --duration-normal: 0.35s;
+    --duration-slow: 0.5s;
+    --duration-glacial: 0.8s;
+
+    /* Typography — SF Pro inspired */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', ui-monospace, monospace;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* Apple-like colors */
+    --color-accent: #007AFF;
+    --color-accent-hover: #0056CC;
+    --color-success: #34C759;
+    --color-warning: #FF9F0A;
+    --color-danger: #FF3B30;
+    --color-label-primary: rgba(0, 0, 0, 0.85);
+    --color-label-secondary: rgba(0, 0, 0, 0.55);
+    --color-label-tertiary: rgba(0, 0, 0, 0.3);
+    --color-fill-primary: rgba(120, 120, 128, 0.2);
+    --color-fill-secondary: rgba(120, 120, 128, 0.12);
+    --color-fill-tertiary: rgba(120, 120, 128, 0.08);
+    --color-separator: rgba(60, 60, 67, 0.12);
+    --color-bg-primary: #FFFFFF;
+    --color-bg-elevated: rgba(255, 255, 255, 0.8);
+    --color-bg-grouped: #F2F2F7;
+
+    /* Glassmorphism */
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 2px 20px rgba(0, 0, 0, 0.06), 0 0 0 0.5px rgba(0, 0, 0, 0.05);
+    --glass-blur: 20px;
+
+    /* Elevation system (Apple-like layered shadows) */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-xl: 0 24px 80px rgba(0, 0, 0, 0.14), 0 8px 24px rgba(0, 0, 0, 0.08);
+
+    /* Border radius — Apple uses generous, consistent radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 28px;
+    --radius-full: 9999px;
+
+    --img-scale: 1;
+}
+
 html, body {
 	transition: background-color 0.4s ease, color 0.4s ease;
 	scroll-behavior: smooth;
