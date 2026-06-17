@@ -13,6 +13,8 @@ fi
 PASSWORD=${RANDOM}_${RANDOM}
 INSTALL_PATH=/var/www/html
 
+ERRNO=1
+
 run_cmd() {
 	local cmd="$1"
 	shift
@@ -20,8 +22,8 @@ run_cmd() {
 	echo ">> Running: $cmd $*"
 	"$cmd" "$@" || {
 		echo "ERROR: $cmd $* failed"
-			exit "$ERRNO"
-		}
+		exit "$ERRNO"
+	}
 
 	ERRNO=$((ERRNO+1))
 }
@@ -53,33 +55,108 @@ fi
 cd -
 
 function install_apache {
-	apt-get install unzip ca-certificates apt-transport-https lsb-release gnupg apache2 -y
+	apt-get install -y unzip ca-certificates apt-transport-https lsb-release gnupg apache2
 }
 
 function install_php {
-	sudo apt-install -y apt-key
-	wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
-	echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-	apt-get update
+	# Ermittle Debian-Codename
+	local CODENAME
+	CODENAME=$(lsb_release -sc 2>/dev/null || echo "")
 
-	apt-get install	libapache2-mod-php -y
+	# Prüfe ob PHP bereits im Base-Image vorhanden ist (z.B. bei php:apache Docker-Images)
+	if php -v &>/dev/null && dpkg -l | grep -q libapache2-mod-php; then
+		echo "PHP und libapache2-mod-php sind bereits installiert, überspringe Sury-Repository."
+		return 0
+	fi
+
+	# Prüfe ob der Codename vom Sury-Repository unterstützt wird.
+	# Bekannte unterstützte Codenames (Stand 2026):
+	local SUPPORTED_CODENAMES="bullseye bookworm trixie forky"
+	local USE_SURY=false
+
+	if [ -n "$CODENAME" ]; then
+		for supported in $SUPPORTED_CODENAMES; do
+			if [ "$CODENAME" = "$supported" ]; then
+				USE_SURY=true
+				break
+			fi
+		done
+	fi
+
+	if [ "$USE_SURY" = true ]; then
+		echo "Installiere PHP aus dem Sury-Repository für '$CODENAME'..."
+
+		# Moderner Weg: GPG-Key in /usr/share/keyrings ablegen (funktioniert ohne apt-key)
+		local KEYRING_PATH="/usr/share/keyrings/sury-php.gpg"
+
+		# Lade den GPG-Key herunter und speichere ihn als dearmored keyring
+		curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o "$KEYRING_PATH" || {
+			# Fallback: Vielleicht ist der Key bereits im binären Format
+			curl -fsSL https://packages.sury.org/php/apt.gpg -o "$KEYRING_PATH"
+		}
+		chmod 644 "$KEYRING_PATH"
+
+		# Source-Datei mit signed-by erstellen (kein apt-key nötig)
+		cat > /etc/apt/sources.list.d/php-sury.list <<-EOF
+		deb [signed-by=${KEYRING_PATH}] https://packages.sury.org/php/ ${CODENAME} main
+		EOF
+		# Entferne führende Tabs/Spaces aus heredoc
+		sed -i 's/^[[:space:]]*//' /etc/apt/sources.list.d/php-sury.list
+
+		apt-get update
+	else
+		echo "Codename '$CODENAME' ist nicht bekannt für Sury. Versuche PHP aus den Standard-Repos zu installieren..."
+		apt-get update
+	fi
+
+	# Installiere PHP - versuche verschiedene Versionen in absteigender Reihenfolge
+	local PHP_INSTALLED=false
+	for PHP_VERSION in 8.4 8.3 8.2 8.1; do
+		if apt-cache show "libapache2-mod-php${PHP_VERSION}" &>/dev/null; then
+			echo "Installiere PHP ${PHP_VERSION}..."
+			if apt-get install -y "libapache2-mod-php${PHP_VERSION}"; then
+				PHP_INSTALLED=true
+				break
+			fi
+		fi
+	done
+
+	# Fallback: Versionsloses Metapaket
+	if [ "$PHP_INSTALLED" = false ]; then
+		echo "Versuche versionsloses libapache2-mod-php Paket..."
+		apt-get install -y libapache2-mod-php || {
+			echo "FEHLER: Konnte keine PHP-Version installieren!"
+			exit 10
+		}
+	fi
 }
 
 function install_mariadb {
-	apt install mariadb-server mariadb-client -y || {
+	apt-get install -y mariadb-server mariadb-client || {
 		echo "apt install mariadb-server mariadb-client -y failed"
 		exit 10
 	}
 }
 
 function setup_mariadb {
-		mysql -u root <<-EOF
-SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$PASSWORD');
-DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-DELETE FROM mysql.user WHERE User='';
-DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
-FLUSH PRIVILEGES;
-EOF
+	# Warte bis MariaDB bereit ist
+	local retries=10
+	while [ $retries -gt 0 ]; do
+		if mysqladmin ping &>/dev/null; then
+			break
+		fi
+		echo "Warte auf MariaDB..."
+		sleep 2
+		retries=$((retries - 1))
+	done
+
+	mysql -u root <<-EOF
+	SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$PASSWORD');
+	DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+	DELETE FROM mysql.user WHERE User='';
+	DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';
+	FLUSH PRIVILEGES;
+	EOF
 }
 
 echo "$PASSWORD" > /etc/vvzdbpw
@@ -106,7 +183,3 @@ else
 	touch /var/log/asanai_visitors.log /var/log/asanai_referrers.log
 	chmod -R 0666 /var/log/asanai_visitors.log /var/log/asanai_referrers.log
 fi
-
-#if [ -z "${DO_NOT_INSTALL_STUFF_AGAIN:-}" ]; then
-#	cp debuglogs/.htpasswd /etc/apache2/.htpasswd
-#fi
