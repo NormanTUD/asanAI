@@ -605,78 +605,101 @@ function show_plotly_graphs() {
 }
 
 function create_tiny_plot(x, y, y_val, w, h) {
-	try {
-		// Check if x and y arrays have the same size
-		if (x.length !== y.length) {
-			throw new Error("x and y arrays must have the same size");
-		}
+    try {
+        if (x.length !== y.length) {
+            throw new Error("x and y arrays must have the same size");
+        }
 
-		if((y_val && y_val.length != x.length) || !y_val) {
-			y_val = [];
-		}
+        if ((y_val && y_val.length !== x.length) || !y_val) {
+            y_val = [];
+        }
 
-		// Create a canvas element
-		const canvas = document.createElement("canvas");
-		canvas.width = w;
-		canvas.height = h;
-		const ctx = canvas.getContext("2d");
+        // Retina-ready canvas (2x pixel density)
+        const dpr = window.devicePixelRatio || 1;
+        const canvas = document.createElement("canvas");
+        canvas.width = w * dpr;
+        canvas.height = h * dpr;
+        canvas.style.width = w + "px";
+        canvas.style.height = h + "px";
+        canvas.style.borderRadius = "6px";
 
-		// Define plot parameters
+        const ctx = canvas.getContext("2d");
+        ctx.scale(dpr, dpr);
 
-		// Calculate the x-axis scaling factor to fit the entire width
-		const xScale = (w - 2) / (x.length - 1);
+        // Subtle background with glassmorphism
+        ctx.fillStyle = is_dark_mode
+            ? "rgba(30, 30, 40, 0.6)"
+            : "rgba(255, 255, 255, 0.6)";
+        ctx.beginPath();
+        ctx.roundRect(0, 0, w, h, 6);
+        ctx.fill();
 
-		// Find the range of y values
-		const minY = Math.min(Math.min(...y), Math.min(...y_val));
-		const maxY = Math.max(Math.max(...y), Math.max(...y_val));
+        const xScale = (w - 4) / (x.length - 1);
+        const minY = Math.min(Math.min(...y), ...(y_val.length ? y_val : [Infinity]));
+        const maxY = Math.max(Math.max(...y), ...(y_val.length ? y_val : [-Infinity]));
+        const yRange = maxY - minY || 1;
+        const yScale = (h - 4) / yRange;
 
-		// Calculate the y-axis scaling factor
-		const yScale = (h - 2) / (maxY - minY);
+        // Draw subtle grid lines
+        ctx.strokeStyle = is_dark_mode
+            ? "rgba(255, 255, 255, 0.06)"
+            : "rgba(0, 0, 0, 0.04)";
+        ctx.lineWidth = 0.5;
+        for (let i = 0; i <= 4; i++) {
+            const gridY = 2 + (i / 4) * (h - 4);
+            ctx.beginPath();
+            ctx.moveTo(0, gridY);
+            ctx.lineTo(w, gridY);
+            ctx.stroke();
+        }
 
-		// Plot the training loss (in blue)
-		ctx.beginPath();
-		ctx.strokeStyle = "blue";
-		ctx.lineWidth = 2;
+        // Training loss line with gradient
+        const gradient = ctx.createLinearGradient(0, 0, w, 0);
+        gradient.addColorStop(0, "#007AFF");
+        gradient.addColorStop(1, "#5856D6");
 
-		ctx.beginPath();
+        ctx.beginPath();
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = 1.5;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
 
-		for (let x_idx = 0; x_idx < x.length; x_idx++) {
-			const xCoord = x_idx * xScale;
-			const yCoord = h - (y[x_idx] - minY) * yScale;
-			//log("x, y:", xCoord, yCoord);
-			//log("h, y, y[x_idx], minY, yScale:", h, y, y[x_idx], minY, yScale, "<<<<<<");
-			if (x_idx === 0) {
-				ctx.moveTo(xCoord, yCoord);
-			} else {
-				ctx.lineTo(xCoord, yCoord);
-			}
-		}
+        for (let i = 0; i < x.length; i++) {
+            const xCoord = 2 + i * xScale;
+            const yCoord = h - 2 - (y[i] - minY) * yScale;
+            if (i === 0) ctx.moveTo(xCoord, yCoord);
+            else ctx.lineTo(xCoord, yCoord);
+        }
+        ctx.stroke();
 
-		ctx.stroke();
+        // Validation loss line
+        if (y_val.length) {
+            const valGradient = ctx.createLinearGradient(0, 0, w, 0);
+            valGradient.addColorStop(0, "#FF9500");
+            valGradient.addColorStop(1, "#FF3B30");
 
-		if(y_val.length) {
-			ctx.beginPath();
-			ctx.strokeStyle = "orange";
-			for (let y_idx = 0; y_idx < y_val.length; y_idx++) {
-				const xCoord = y_idx * xScale;
-				const yCoord = h - (y_val[y_idx] - minY) * yScale;
-				if (y_idx === 0) {
-					ctx.moveTo(xCoord, yCoord);
-				} else {
-					ctx.lineTo(xCoord, yCoord);
-				}
-			}
-			ctx.stroke();
-		}
+            ctx.beginPath();
+            ctx.strokeStyle = valGradient;
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
 
-		return canvas; // Return the canvas element
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
+            for (let i = 0; i < y_val.length; i++) {
+                const xCoord = 2 + i * xScale;
+                const yCoord = h - 2 - (y_val[i] - minY) * yScale;
+                if (i === 0) ctx.moveTo(xCoord, yCoord);
+                else ctx.lineTo(xCoord, yCoord);
+            }
+            ctx.stroke();
+        }
 
-		assert(false, e);
-	}
+        return canvas;
+    } catch (e) {
+        if (Object.keys(e).includes("message")) {
+            e = e.message;
+        }
+        assert(false, e);
+    }
 }
 
 function _set_apply_to_original_apply () {
