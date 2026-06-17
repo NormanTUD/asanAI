@@ -574,28 +574,66 @@ function blob_to_data_url(blob) {
 function add_label_sidebar() {
 	var LABEL_SIDEBAR_BTN_HTML = $(`<button class="add_category" onclick="add_new_category();">+ <span class="TRANSLATEME_add_category"></span></button>`)[0];
 
-	var labels = document.querySelectorAll('.own_image_label');
-	if (!labels.length) return;
+	var labels_elements = document.querySelectorAll('.own_image_label');
+	if (!labels_elements.length) return;
 
 	var bar = document.getElementById('labelSidebar');
 	var table;
 
 	if (!bar) {
-		// CSS nur einmal hinzufügen
 		var existingStyle = document.querySelector('#labelSidebarStyle');
 		if (!existingStyle) {
-			var css = '\
-			#labelSidebar{position:fixed;top:50%;right:0;transform:translateY(-50%);\
-				max-height:90%;overflow:auto;background:rgba(0,0,0,0.3);\
-				padding:6px 8px;z-index:9999;border:1px solid rgba(255,255,255,0.2);\
-				box-shadow:-2px 0 6px rgba(0,0,0,0.4)}\
-			#labelSidebar table{border-collapse:collapse;width:100%}\
-			#labelSidebar td{padding:3px 6px;border:none;cursor:pointer;\
-				color:white;text-shadow:0 0 2px black, 1px 1px 2px black;\
-				font:14px sans-serif}\
-			#labelSidebar td:hover{text-decoration:underline;background:rgba(255,255,255,0.1)}\
-				.flashHighlight{animation:flash 1s ease-out}\
-			@keyframes flash{0%{background:#fffa8b}100%{background:transparent}}';
+			var css = `
+			#labelSidebar {
+				position: fixed;
+				top: 50%;
+				right: 12px;
+				transform: translateY(-50%);
+				max-height: 80vh;
+				overflow-y: auto;
+				overflow-x: hidden;
+				background: rgba(255, 255, 255, 0.72);
+				backdrop-filter: blur(20px) saturate(180%);
+				-webkit-backdrop-filter: blur(20px) saturate(180%);
+				padding: 12px 8px;
+				z-index: 9999;
+				border: 1px solid rgba(255, 255, 255, 0.35);
+				border-radius: 16px;
+				box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+				transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			body.darkmode #labelSidebar {
+				background: rgba(30, 30, 35, 0.72);
+				border-color: rgba(255, 255, 255, 0.08);
+				box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+			}
+			#labelSidebar table { border-collapse: collapse; width: 100%; }
+			#labelSidebar td {
+				padding: 6px 12px;
+				border: none;
+				cursor: pointer;
+				color: rgba(0, 0, 0, 0.8);
+				font: 13px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+				font-weight: 500;
+				border-radius: 8px;
+				transition: background 0.2s ease;
+			}
+			body.darkmode #labelSidebar td {
+				color: rgba(255, 255, 255, 0.85);
+			}
+			#labelSidebar td:hover {
+				background: rgba(0, 122, 255, 0.08);
+			}
+			body.darkmode #labelSidebar td:hover {
+				background: rgba(0, 122, 255, 0.15);
+			}
+			.flashHighlight {
+				animation: flash 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+			}
+			@keyframes flash {
+				0% { background: rgba(0, 122, 255, 0.2); }
+				100% { background: transparent; }
+			}`;
 			var style = document.createElement('style');
 			style.id = 'labelSidebarStyle';
 			style.appendChild(document.createTextNode(css));
@@ -613,26 +651,24 @@ function add_label_sidebar() {
 		table.innerHTML = '';
 	}
 
-	// Einträge einfügen
-	Array.prototype.forEach.call(labels, function(el, i){
+	Array.prototype.forEach.call(labels_elements, function(el, i) {
 		if (!el.id) el.id = 'auto_label_' + i;
 
 		var row = document.createElement('tr');
 		var cell = document.createElement('td');
-		cell.textContent = (el.value || el.textContent || 'label ' + (i+1));
-		cell.onclick = function(){
-			el.scrollIntoView({behavior:'smooth',block:'center'});
+		cell.textContent = (el.value || el.textContent || 'label ' + (i + 1));
+		cell.onclick = function() {
+			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 			el.classList.add('flashHighlight');
-			setTimeout(function(){ el.classList.remove('flashHighlight'); }, 1100);
+			setTimeout(function() { el.classList.remove('flashHighlight'); }, 900);
 		};
 		row.appendChild(cell);
 		table.appendChild(row);
 	});
 
-	// Sichtbarkeitsprüfung
 	function update_sidebar_visibility() {
 		var visibleCount = 0;
-		Array.prototype.forEach.call(labels, function(el, idx){
+		Array.prototype.forEach.call(labels_elements, function(el, idx) {
 			var hidden = is_hidden_or_has_hidden_parent(el);
 			table.rows[idx].style.display = hidden ? 'none' : '';
 			if (!hidden) visibleCount++;
@@ -642,12 +678,11 @@ function add_label_sidebar() {
 
 	update_sidebar_visibility();
 
-	// Observer vorbereiten
 	if (labelSidebarObserver) labelSidebarObserver.disconnect();
 
 	labelSidebarObserver = new MutationObserver(update_sidebar_visibility);
-	Array.prototype.forEach.call(labels, function(el){
-		labelSidebarObserver.observe(el, {attributes:true, attributeFilter:['style','class','hidden']});
+	Array.prototype.forEach.call(labels_elements, function(el) {
+		labelSidebarObserver.observe(el, { attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
 	});
-	labelSidebarObserver.observe(document.body, {childList:true, subtree:true});
+	labelSidebarObserver.observe(document.body, { childList: true, subtree: true });
 }
