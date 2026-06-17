@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep ResNet Visualisierung – Wie tiefe Netze lernen</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.8em;
+            background: linear-gradient(90deg, #4fc3f7, #ab47bc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .explanation {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 15px 0;
+            border-left: 4px solid #4fc3f7;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .explanation strong { color: #4fc3f7; }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a1a2e;
+            border-radius: 12px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .control-group label {
+            font-size: 0.8em;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        input[type="range"] {
+            width: 150px;
+            accent-color: #4fc3f7;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4fc3f7, #ab47bc);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: transform 0.1s;
+        }
+        button:hover { transform: scale(1.05); }
+        button:active { transform: scale(0.95); }
+        button.secondary {
+            background: #333;
+            border: 1px solid #555;
+        }
+        .canvas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .canvas-panel {
+            background: #111;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+        }
+        .canvas-panel h3 {
+            font-size: 0.85em;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        canvas {
+            border-radius: 8px;
+            background: #000;
+        }
+        .layer-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .info-card {
+            background: #1a1a2e;
+            border-radius: 10px;
+            padding: 12px 18px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .info-card .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4fc3f7;
+        }
+        .info-card .label {
+            font-size: 0.75em;
+            color: #888;
+            margin-top: 4px;
+        }
+        .tabs {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin: 20px 0 10px;
+        }
+        .tab {
+            padding: 8px 16px;
+            border-radius: 8px 8px 0 0;
+            background: #1a1a2e;
+            cursor: pointer;
+            font-size: 0.85em;
+            border: 1px solid #333;
+            border-bottom: none;
+        }
+        .tab.active {
+            background: #2a2a4e;
+            color: #4fc3f7;
+            border-color: #4fc3f7;
+        }
+        .demo-section {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .demo-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #111;
+            border-radius: 12px;
+            overflow-x: auto;
+        }
+        .flow-block {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            text-align: center;
+            min-width: 50px;
+            transition: all 0.3s;
+        }
+        .flow-block.input { background: #1b5e20; }
+        .flow-block.layer { background: #1a237e; }
+        .flow-block.active-layer { background: #4a148c; box-shadow: 0 0 10px #ab47bc; }
+        .flow-block.output { background: #b71c1c; }
+        .flow-arrow { color: #555; font-size: 1.2em; }
+        #vectorDisplay {
+            font-family: monospace;
+            font-size: 0.8em;
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            line-height: 1.8;
+        }
+        .vec-positive { color: #4fc3f7; }
+        .vec-negative { color: #ef5350; }
+        .vec-zero { color: #333; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Wie tiefe ResNets komplexe Dinge lernen</h1>
+
+        <div class="explanation">
+            <strong>Was du hier siehst:</strong> Ein 2D-Punktwolke (rot vs. blau) wird durch ein tiefes Netzwerk mit Skip Connections geschickt. 
+            Jeder Layer gibt jedem Punkt einen <strong>kleinen Schubs</strong>. Nach vielen Layern sind die Klassen getrennt.
+            Du kannst beobachten, wie sich die Punkte Schritt für Schritt bewegen.
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(0)">🌀 Spirale entknoten</div>
+            <div class="tab" onclick="switchTab(1)">📐 Regionen visualisieren</div>
+            <div class="tab" onclick="switchTab(2)">🔢 Vektoren live</div>
+        </div>
+
+        <!-- TAB 0: Spiral Demo -->
+        <div class="demo-section active" id="demo0">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Anzahl Layer</label>
+                    <input type="range" id="numLayers" min="1" max="200" value="50">
+                    <span id="numLayersVal">50</span>
+                </div>
+                <div class="control-group">
+                    <label>Sichtbarer Layer</label>
+                    <input type="range" id="currentLayer" min="0" max="50" value="0">
+                    <span id="currentLayerVal">0 (Input)</span>
+                </div>
+                <div class="control-group">
+                    <label>Schrittgröße</label>
+                    <input type="range" id="stepSize" min="1" max="20" value="8">
+                    <span id="stepSizeVal">0.08</span>
+                </div>
+                <button onclick="trainNetwork()">🎲 Neues Netzwerk</button>
+                <button class="secondary" onclick="animateLayers()">▶️ Animieren</button>
+                <button class="secondary" onclick="stopAnimation()">⏹️ Stop</button>
+            </div>
+
+            <div class="canvas-container">
+                <div class="canvas-panel">
+                    <h3>Transformation bei Layer <span id="layerLabel">0</span></h3>
+                    <canvas id="mainCanvas" width="500" height="500"></canvas>
+                </div>
+                <div class="canvas-panel">
+                    <h3>Delta-Vektoren (Schubs pro Layer)</h3>
+                    <canvas id="deltaCanvas" width="300" height="500"></canvas>
+                </div>
+            </div>
+
+            <div class="layer-info">
+                <div class="info-card">
+                    <div class="value" id="infoSeparation">0%</div>
+                    <div class="label">Lineare Trennbarkeit</div>
+                </div>
+                <div class="info-card">
+                    <div class="value" id="infoDeltaNorm">0.00</div>
+                    <div class="label">Ø Delta-Norm</div>
+                </div>
+                <div class="info-card">
+                    <div class="value" id="infoActiveNeurons">0%</div>
+                    <div class="label">Aktive Neuronen (ReLU)</div>
+                </div>
+            </div>
+
+            <div class="explanation">
+                <strong>Was du beobachten solltest:</strong><br>
+                • Frühe Layer: Große Schubser, Punkte bewegen sich stark<br>
+                • Späte Layer: Winzige Schubser, Punkte bewegen sich kaum noch<br>
+                • Die Spirale wird Schritt für Schritt "aufgerollt" bis die Klassen trennbar sind<br>
+                • Die Delta-Norm (rechts) zeigt: späte Layer tragen immer weniger bei
+            </div>
+        </div>
+
+        <!-- TAB 1: Regions Demo -->
+        <div class="demo-section" id="demo1">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Layer-Tiefe</label>
+                    <input type="range" id="regionLayers" min="1" max="100" value="5">
+                    <span id="regionLayersVal">5</span>
+                </div>
+                <button onclick="drawRegions()">Regionen zeichnen</button>
+            </div>
+
+            <div class="canvas-container">
+                <div class="canvas-panel">
+                    <h3>Entscheidungsregionen (Farbe = Netzwerk-Output)</h3>
+                    <canvas id="regionCanvas" width="500" height="500"></canvas>
+                </div>
+            </div>
+
+            <div class="explanation">
+                <strong>Was du siehst:</strong> Jeder Pixel zeigt, was das Netzwerk für diesen Punkt vorhersagt.
+                Mit mehr Layern werden die Grenzen <strong>feiner und komplexer</strong> – 
+                das ist die exponentielle Zunahme der linearen Regionen in Aktion.
+                Beachte: Wenige Layer = grobe Blöcke. Viele Layer = feine, geschwungene Grenzen.
+            </div>
+        </div>
+
+        <!-- TAB 2: Vector Display -->
+        <div class="demo-section" id="demo2">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Punkt-Index</label>
+                    <input type="range" id="pointIndex" min="0" max="99" value="0">
+                    <span id="pointIndexVal">0</span>
+                </div>
+                <button onclick="showVectors()">Vektoren anzeigen</button>
+            </div>
+
+            <div class="flow-diagram" id="flowDiagram"></div>
+
+            <div id="vectorDisplay">
+                Klicke "Vektoren anzeigen" um zu sehen, wie sich ein einzelner Punkt durch alle Layer bewegt.
+            </div>
+
+            <div class="explanation">
+                <strong>Was du siehst:</strong> Die konkreten Zahlenwerte eines einzelnen Datenpunkts, 
+                wie er durch jedes Layer fließt. <span class="vec-positive">Blau = positiv</span>, 
+                <span class="vec-negative">Rot = negativ</span>, <span class="vec-zero">Grau = 0 (von ReLU gekillt)</span>.
+                Beachte wie die Deltas (Änderungen) mit der Tiefe kleiner werden.
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ============ NEURAL NETWORK SIMULATION ============
+
+    class SimpleResNet {
+        constructor(numLayers, hiddenDim = 16, stepSize = 0.08) {
+            this.numLayers = numLayers;
+            this.hiddenDim = hiddenDim;
+            this.stepSize = stepSize;
+            this.layers = [];
+            this.initWeights();
+        }
+
+        initWeights() {
+            this.layers = [];
+            // Input projection: 2D -> hiddenDim
+            this.W_in = this.randomMatrix(this.hiddenDim, 2, 0.5);
+            this.b_in = new Array(this.hiddenDim).fill(0);
+
+            // Residual blocks
+            for (let i = 0; i < this.numLayers; i++) {
+                // Decreasing step size for later layers (mimics trained networks)
+                let scale = this.stepSize * Math.exp(-i * 0.015);
+                this.layers.push({
+                    W1: this.randomMatrix(this.hiddenDim, this.hiddenDim, scale),
+                    b1: this.randomArray(this.hiddenDim, scale * 0.1),
+                    W2: this.randomMatrix(this.hiddenDim, this.hiddenDim, scale),
+                    b2: this.randomArray(this.hiddenDim, scale * 0.1),
+                });
+            }
+
+            // Output projection: hiddenDim -> 2D (for visualization)
+            this.W_out = this.randomMatrix(2, this.hiddenDim, 0.3);
+        }
+
+        randomMatrix(rows, cols, scale) {
+            let m = [];
+            for (let i = 0; i < rows; i++) {
+                m[i] = [];
+                for (let j = 0; j < cols; j++) {
+                    m[i][j] = (Math.random() - 0.5) * 2 * scale;
+                }
+            }
+            return m;
+        }
+
+        randomArray(n, scale) {
+            return Array.from({length: n}, () => (Math.random() - 0.5) * 2 * scale);
+        }
+
+        matVec(M, v) {
+            return M.map(row => row.reduce((sum, w, j) => sum + w * v[j], 0));
+        }
+
+        relu(v) {
+            return v.map(x => Math.max(0, x));
+        }
+
+        forward(point2D, upToLayer = this.numLayers) {
+            // Project to hidden dim
+            let x = this.matVec(this.W_in, point2D);
+            x = this.relu(x.map((v, i) => v + this.b_in[i]));
+
+            let history = [this.projectTo2D(x)];
+            let deltas = [];
+            let activeRatios = [];
+
+            for (let i = 0; i < Math.min(upToLayer, this.numLayers); i++) {
+                let layer = this.layers[i];
+                // Residual block: x = x + W2 * relu(W1 * x + b1) + b2
+                let h = this.matVec(layer.W1, x);
+                h = h.map((v, j) => v + layer.b1[j]);
+                let preRelu = h.slice();
+                h = this.relu(h);
+
+                let activeCount = h.filter(v => v > 0).length;
+                activeRatios.push(activeCount / h.length);
+
+                let delta = this.matVec(layer.W2, h);
+                delta = delta.map((v, j) => v + layer.b2[j]);
+
+                let deltaNorm = Math.sqrt(delta.reduce((s, v) => s + v*v, 0));
+                deltas.push(deltaNorm);
+
+                // Skip connection
+                x = x.map((v, j) => v + delta[j]);
+
+                history.push(this.projectTo2D(x));
+            }
+
+            return { history, deltas, activeRatios, finalHidden: x };
+        }
+
+        projectTo2D(hiddenVec) {
+            return this.matVec(this.W_out, hiddenVec);
+        }
+
+        classify(point2D) {
+            let result = this.forward(point2D, this.numLayers);
+            let out = result.finalHidden;
+            // Simple: sum of hidden > 0 → class 1, else class 0
+            let sum = out.reduce((s, v) => s + v, 0);
+            return sum > 0 ? 1 : 0;
+        }
+    }
+
+    // ============ DATA GENERATION ============
+
+    function generateSpiral(n = 100) {
+        let points = [];
+        for (let i = 0; i < n; i++) {
+            let t = (i / n) * 3 * Math.PI;
+            let r = (i / n) * 0.8 + 0.1;
+            // Class 0: spiral
+            points.push({
+                x: r * Math.cos(t),
+                y: r * Math.sin(t),
+                cls: 0
+            });
+            // Class 1: offset spiral
+            points.push({
+                x: r * Math.cos(t + Math.PI),
+                y: r * Math.sin(t + Math.PI),
+                cls: 1
+            });
+        }
+        return points;
+    }
+
+    // ============ GLOBAL STATE ============
+
+    let network = null;
+    let points = [];
+    let transformedPoints = [];
+    let allDeltas = [];
+    let animationId = null;
+
+    // ============ INITIALIZATION ============
+
+    function init() {
+        points = generateSpiral(50);
+        trainNetwork();
+        setupSliders();
+    }
+
+    function trainNetwork() {
+        let numLayers = parseInt(document.getElementById('numLayers').value);
+        let stepSize = parseInt(document.getElementById('stepSize').value) / 100;
+
+        network = new SimpleResNet(numLayers, 16, stepSize);
+
+        document.getElementById('currentLayer').max = numLayers;
+        document.getElementById('currentLayer').value = 0;
+
+        computeAllTransformations();
+        drawCurrentState();
+    }
+
+    function computeAllTransformations() {
+        transformedPoints = [];
+        allDeltas = [];
+
+        for (let p of points) {
+            let result = network.forward([p.x, p.y], network.numLayers);
+            transformedPoints.push(result);
+        }
+    }
+
+    function setupSliders() {
+        document.getElementById('numLayers').addEventListener('input', function() {
+            document.getElementById('numLayersVal').textContent = this.value;
+        });
+        document.getElementById('currentLayer').addEventListener('input', function() {
+            let v = parseInt(this.value);
+            document.getElementById('currentLayerVal').textContent = v === 0 ? '0 (Input)' : v;
+            document.getElementById('layerLabel').textContent = v;
+            drawCurrentState();
+        });
+        document.getElementById('stepSize').addEventListener('input', function() {
+            document.getElementById('stepSizeVal').textContent = (this.value / 100).toFixed(2);
+        });
+        document.getElementById('regionLayers').addEventListener('input', function() {
+            document.getElementById('regionLayersVal').textContent = this.value;
+        });
+        document.getElementById('pointIndex').addEventListener('input', function() {
+            document.getElementById('pointIndexVal').textContent = this.value;
+        });
+    }
+
+    // ============ DRAWING ============
+
+    function drawCurrentState() {
+        let layerIdx = parseInt(document.getElementById('currentLayer').value);
+        drawMainCanvas(layerIdx);
+        drawDeltaCanvas();
+        updateInfo(layerIdx);
+    }
+
+    function drawMainCanvas(layerIdx) {
+        let canvas = document.getElementById('mainCanvas');
+        let ctx = canvas.getContext('2d');
+        let w = canvas.width, h = canvas.height;
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, w, h);
+
+        // Draw grid
+        ctx.strokeStyle = '#1a1a2e';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 10; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * w/10, 0);
+            ctx.lineTo(i * w/10, h);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, i * h/10);
+            ctx.lineTo(w, i * h/10);
+            ctx.stroke();
+        }
+
+        // Find bounds for this layer
+        let allX = [], allY = [];
+        for (let tp of transformedPoints) {
+            if (tp.history[layerIdx]) {
+                allX.push(tp.history[layerIdx][0]);
+                allY.push(tp.history[layerIdx][1]);
+            }
+        }
+
+        let minX = Math.min(...allX), maxX = Math.max(...allX);
+        let minY = Math.min(...allY), maxY = Math.max(...allY);
+        let rangeX = maxX - minX || 1;
+        let rangeY = maxY - minY || 1;
+        let range = Math.max(rangeX, rangeY) * 1.2;
+        let centerX = (minX + maxX) / 2;
+        let centerY = (minY + maxY) / 2;
+
+        function toScreen(px, py) {
+            let sx = ((px - centerX) / range + 0.5) * w;
+            let sy = ((py - centerY) / range + 0.5) * h;
+            return [sx, sy];
+        }
+
+        // Draw movement trails (from previous layer)
+        if (layerIdx > 0) {
+            ctx.globalAlpha = 0.3;
+            for (let i = 0; i < transformedPoints.length; i++) {
+                let tp = transformedPoints[i];
+                if (tp.history[layerIdx] && tp.history[layerIdx - 1]) {
+                    let [x1, y1] = toScreen(tp.history[layerIdx-1][0], tp.history[layerIdx-1][1]);
+                    let [x2, y2] = toScreen(tp.history[layerIdx][0], tp.history[layerIdx][1]);
+                    ctx.strokeStyle = points[i].cls === 0 ? '#ef5350' : '#4fc3f7';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // Draw points
+        for (let i = 0; i < transformedPoints.length; i++) {
+            let tp = transformedPoints[i];
+            if (!tp.history[layerIdx]) continue;
+
+            let [sx, sy] = toScreen(tp.history[layerIdx][0], tp.history[layerIdx][1]);
+
+            ctx.beginPath();
+            ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+            ctx.fillStyle = points[i].cls === 0 ? '#ef5350' : '#4fc3f7';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        }
+
+        // Draw separation line attempt
+        ctx.strokeStyle = 'rgba(255,255,0,0.3)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(0, h/2);
+        ctx.lineTo(w, h/2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    function drawDeltaCanvas() {
+        let canvas = document.getElementById('deltaCanvas');
+        let ctx = canvas.getContext('2d');
+        let w = canvas.width, h = canvas.height;
+
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, w, h);
+
+        if (transformedPoints.length === 0) return;
+
+        // Average delta norms per layer
+        let numLayers = network.numLayers;
+        let avgDeltas = [];
+
+        for (let l = 0; l < numLayers; l++) {
+            let sum = 0, count = 0;
+            for (let tp of transformedPoints) {
+                if (tp.deltas[l] !== undefined) {
+                    sum += tp.deltas[l];
+                    count++;
+                }
+            }
+            avgDeltas.push(count > 0 ? sum / count : 0);
+        }
+
+        let maxDelta = Math.max(...avgDeltas) || 1;
+
+        // Draw bars
+        let barWidth = (w - 40) / numLayers;
+        let currentLayer = parseInt(document.getElementById('currentLayer').value);
+
+        ctx.fillStyle = '#333';
+        ctx.fillRect(20, h - 30, w - 40, 1);
+
+        for (let i = 0; i < numLayers; i++) {
+            let barHeight = (avgDeltas[i] / maxDelta) * (h - 60);
+            let x = 20 + i * barWidth;
+            let y = h - 30 - barHeight;
+
+            let hue = 200 - (i / numLayers) * 150;
+            ctx.fillStyle = i === currentLayer - 1 ? '#fff' : `hsl(${hue}, 70%, 50%)`;
+            ctx.fillRect(x, y, Math.max(barWidth - 1, 1), barHeight);
+        }
+
+        // Labels
+        ctx.fillStyle = '#888';
+        ctx.font = '11px monospace';
+        ctx.fillText('Layer 1', 20, h - 10);
+        ctx.fillText(`Layer ${numLayers}`, w - 70, h - 10);
+        ctx.fillText('Delta-Norm ↑', 20, 15);
+
+        // Highlight current
+        if (currentLayer > 0 && currentLayer <= numLayers) {
+            let x = 20 + (currentLayer - 1) * barWidth;
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x - 1, 20, barWidth + 2, h - 50);
+        }
+    }
+
+    function updateInfo(layerIdx) {
+        // Linear separability estimate
+        let separation = estimateSeparability(layerIdx);
+        document.getElementById('infoSeparation').textContent = Math.round(separation * 100) + '%';
+
+        // Average delta norm
+        if (layerIdx > 0) {
+            let sum = 0, count = 0;
+            for (let tp of transformedPoints) {
+                if (tp.deltas[layerIdx - 1] !== undefined) {
+                    sum += tp.deltas[layerIdx - 1];
+                    count++;
+                }
+            }
+            document.getElementById('infoDeltaNorm').textContent = (count > 0 ? sum/count : 0).toFixed(3);
+        } else {
+            document.getElementById('infoDeltaNorm').textContent = '—';
+        }
+
+        // Active neurons
+        if (layerIdx > 0) {
+            let sum = 0, count = 0;
+            for (let tp of transformedPoints) {
+                if (tp.activeRatios[layerIdx - 1] !== undefined) {
+                    sum += tp.activeRatios[layerIdx - 1];
+                    count++;
+                }
+            }
+            document.getElementById('infoActiveNeurons').textContent = Math.round((count > 0 ? sum/count : 0) * 100) + '%';
+        } else {
+            document.getElementById('infoActiveNeurons').textContent = '—';
+        }
+    }
+
+    function estimateSeparability(layerIdx) {
+        // Simple: try to separate by x-coordinate of 2D projection
+        let class0 = [], class1 = [];
+        for (let i = 0; i < transformedPoints.length; i++) {
+            let tp = transformedPoints[i];
+            if (!tp.history[layerIdx]) continue;
+            if (points[i].cls === 0) class0.push(tp.history[layerIdx][0]);
+            else class1.push(tp.history[layerIdx][0]);
+        }
+
+        if (class0.length === 0 || class1.length === 0) return 0;
+
+        // Try multiple thresholds
+        let allVals = [...class0, ...class1].sort((a,b) => a-b);
+        let bestAcc = 0;
+
+        for (let t = 0; t < allVals.length; t += Math.max(1, Math.floor(allVals.length/20))) {
+            let thresh = allVals[t];
+            let correct = 0;
+            correct += class0.filter(v => v < thresh).length;
+            correct += class1.filter(v => v >= thresh).length;
+            let acc = correct / (class0.length + class1.length);
+            bestAcc = Math.max(bestAcc, acc, 1 - acc);
+        }
+
+        // Also try y-coordinate
+        let class0y = [], class1y = [];
+        for (let i = 0; i < transformedPoints.length; i++) {
+            let tp = transformedPoints[i];
+            if (!tp.history[layerIdx]) continue;
+            if (points[i].cls === 0) class0y.push(tp.history[layerIdx][1]);
+            else class1y.push(tp.history[layerIdx][1]);
+        }
+
+        let allValsY = [...class0y, ...class1y].sort((a,b) => a-b);
+        for (let t = 0; t < allValsY.length; t += Math.max(1, Math.floor(allValsY.length/20))) {
+            let thresh = allValsY[t];
+            let correct = 0;
+            correct += class0y.filter(v => v < thresh).length;
+            correct += class1y.filter(v => v >= thresh).length;
+            let acc = correct / (class0y.length + class1y.length);
+            bestAcc = Math.max(bestAcc, acc, 1 - acc);
+        }
+
+        return bestAcc;
+    }
+
+    // ============ ANIMATION ============
+
+    function animateLayers() {
+        stopAnimation();
+        let slider = document.getElementById('currentLayer');
+        let max = parseInt(slider.max);
+        let current = 0;
+        slider.value = 0;
+
+        animationId = setInterval(() => {
+            current++;
+            if (current > max) {
+                stopAnimation();
+                return;
+            }
+            slider.value = current;
+            document.getElementById('currentLayerVal').textContent = current;
+            document.getElementById('layerLabel').textContent = current;
+            drawCurrentState();
+        }, 80);
+    }
+
+    function stopAnimation() {
+        if (animationId) {
+            clearInterval(animationId);
+            animationId = null;
+        }
+    }
+
+    // ============ TAB 1: DECISION REGIONS ============
+
+    function drawRegions() {
+        let canvas = document.getElementById('regionCanvas');
+        let ctx = canvas.getContext('2d');
+        let w = canvas.width, h = canvas.height;
+        let numLayers = parseInt(document.getElementById('regionLayers').value);
+
+        let regionNet = new SimpleResNet(numLayers, 16, 0.1);
+
+        let imageData = ctx.createImageData(w, h);
+        let resolution = 4; // pixel step for speed
+
+        for (let py = 0; py < h; py += resolution) {
+            for (let px = 0; px < w; px += resolution) {
+                // Map pixel to [-1.5, 1.5]
+                let x = (px / w) * 3 - 1.5;
+                let y = (py / h) * 3 - 1.5;
+
+                let result = regionNet.forward([x, y], numLayers);
+                let finalVec = result.finalHidden;
+                let sum = finalVec.reduce((s, v) => s + v, 0);
+
+                // Color based on output
+                let r, g, b;
+                if (sum > 0) {
+                    let intensity = Math.min(1, Math.abs(sum) * 0.3);
+                    r = Math.floor(30 + intensity * 50);
+                    g = Math.floor(100 + intensity * 150);
+                    b = Math.floor(200 + intensity * 55);
+                } else {
+                    let intensity = Math.min(1, Math.abs(sum) * 0.3);
+                    r = Math.floor(200 + intensity * 55);
+                    g = Math.floor(50 + intensity * 30);
+                    b = Math.floor(50 + intensity * 30);
+                }
+
+                // Fill block
+                for (let dy = 0; dy < resolution && py + dy < h; dy++) {
+                    for (let dx = 0; dx < resolution && px + dx < w; dx++) {
+                        let idx = ((py + dy) * w + (px + dx)) * 4;
+                        imageData.data[idx] = r;
+                        imageData.data[idx+1] = g;
+                        imageData.data[idx+2] = b;
+                        imageData.data[idx+3] = 255;
+                    }
+                }
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        // Draw data points on top
+        for (let p of points) {
+            let sx = ((p.x + 1.5) / 3) * w;
+            let sy = ((p.y + 1.5) / 3) * h;
+            ctx.beginPath();
+            ctx.arc(sx, sy, 3, 0, Math.PI * 2);
+            ctx.fillStyle = p.cls === 0 ? '#ff0' : '#0ff';
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Draw region boundary indicators
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px monospace';
+        ctx.fillText(`${numLayers} Layer – Entscheidungsregionen`, 10, 20);
+    }
+
+    // ============ TAB 2: VECTOR DISPLAY ============
+
+    function showVectors() {
+        let pointIdx = parseInt(document.getElementById('pointIndex').value);
+        let p = points[pointIdx];
+        if (!p) return;
+
+        let result = network.forward([p.x, p.y], network.numLayers);
+
+        // Build flow diagram
+        let flowDiv = document.getElementById('flowDiagram');
+        let flowHTML = `<div class="flow-block input">Input<br><small>[${p.x.toFixed(2)}, ${p.y.toFixed(2)}]</small></div>`;
+
+        let numToShow = Math.min(network.numLayers, 20);
+        let step = Math.max(1, Math.floor(network.numLayers / numToShow));
+
+        for (let i = 0; i < network.numLayers; i += step) {
+            let isActive = true;
+            let cls = isActive ? 'layer' : 'layer';
+            flowHTML += `<span class="flow-arrow">→</span>`;
+            flowHTML += `<div class="flow-block ${cls}">L${i+1}<br><small>Δ=${result.deltas[i] ? result.deltas[i].toFixed(3) : '?'}</small></div>`;
+        }
+
+        flowHTML += `<span class="flow-arrow">→</span>`;
+        let finalProj = result.history[result.history.length - 1];
+        flowHTML += `<div class="flow-block output">Out<br><small>[${finalProj[0].toFixed(2)}, ${finalProj[1].toFixed(2)}]</small></div>`;
+        flowDiv.innerHTML = flowHTML;
+
+        // Build vector display
+        let vecDiv = document.getElementById('vectorDisplay');
+        let html = `<strong>Punkt ${pointIdx} | Klasse: ${p.cls === 0 ? '🔴 Rot' : '🔵 Blau'} | Input: [${p.x.toFixed(3)}, ${p.y.toFixed(3)}]</strong>\n\n`;
+
+        // Show first few layers in detail
+        let detailLayers = Math.min(30, network.numLayers);
+        let layerStep = Math.max(1, Math.floor(network.numLayers / detailLayers));
+
+        for (let i = 0; i < network.numLayers; i += layerStep) {
+            let deltaNorm = result.deltas[i] ? result.deltas[i].toFixed(4) : '?';
+            let activeRatio = result.activeRatios[i] ? (result.activeRatios[i] * 100).toFixed(0) : '?';
+            let proj = result.history[i + 1] || result.history[result.history.length - 1];
+
+            let bar = '█'.repeat(Math.round(result.deltas[i] * 50 / (result.deltas[0] || 1)));
+            let emptyBar = '░'.repeat(Math.max(0, 20 - bar.length));
+
+            let deltaColor = result.deltas[i] > result.deltas[0] * 0.5 ? 'vec-positive' : 
+                           result.deltas[i] > result.deltas[0] * 0.1 ? 'vec-negative' : 'vec-zero';
+
+            html += `<span class="${deltaColor}">Layer ${String(i+1).padStart(3)}</span> | `;
+            html += `Δ-Norm: ${deltaNorm.padStart(7)} | `;
+            html += `ReLU aktiv: ${activeRatio.padStart(3)}% | `;
+            html += `<span class="${deltaColor}">${bar}${emptyBar}</span> | `;
+            html += `→ [${proj[0].toFixed(3)}, ${proj[1].toFixed(3)}]\n`;
+        }
+
+        html += `\n<strong>═══════════════════════════════════════════════</strong>\n`;
+        html += `<strong>Beobachtung:</strong>\n`;
+
+        let firstDelta = result.deltas[0] || 1;
+        let lastDelta = result.deltas[result.deltas.length - 1] || 0;
+        let ratio = (lastDelta / firstDelta * 100).toFixed(1);
+
+        html += `• Erster Layer Delta:  ${firstDelta.toFixed(4)}\n`;
+        html += `• Letzter Layer Delta: ${lastDelta.toFixed(4)}\n`;
+        html += `• Verhältnis: Letzter Layer macht nur noch <span class="vec-negative">${ratio}%</span> der Arbeit des ersten Layers\n`;
+        html += `• → Späte Layer = <span class="vec-positive">Feinkorrektur</span>, nicht neue Features!\n`;
+
+        vecDiv.innerHTML = html;
+    }
+
+    // ============ TAB SWITCHING ============
+
+    function switchTab(idx) {
+        document.querySelectorAll('.tab').forEach((t, i) => {
+            t.classList.toggle('active', i === idx);
+        });
+        document.querySelectorAll('.demo-section').forEach((s, i) => {
+            s.classList.toggle('active', i === idx);
+        });
+
+        if (idx === 1) drawRegions();
+        if (idx === 2) showVectors();
+    }
+
+    // ============ START ============
+
+    window.addEventListener('load', init);
+    </script>
+</body>
+</html>
