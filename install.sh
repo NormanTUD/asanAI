@@ -59,15 +59,19 @@ function install_apache {
 }
 
 function install_php {
+	# Prüfe ob PHP bereits funktionsfähig vorhanden ist
+	# (z.B. im offiziellen php:apache Docker-Image, wo PHP aus Quellen kompiliert ist)
+	if php -v &>/dev/null; then
+		local PHP_CURRENT
+		PHP_CURRENT=$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null)
+		echo "PHP ${PHP_CURRENT} ist bereits installiert (vermutlich aus Source kompiliert)."
+		echo "Überspringe PHP-Paketinstallation."
+		return 0
+	fi
+
 	# Ermittle Debian-Codename
 	local CODENAME
 	CODENAME=$(lsb_release -sc 2>/dev/null || echo "")
-
-	# Prüfe ob PHP bereits im Base-Image vorhanden ist (z.B. bei php:apache Docker-Images)
-	if php -v &>/dev/null && dpkg -l | grep -q libapache2-mod-php; then
-		echo "PHP und libapache2-mod-php sind bereits installiert, überspringe Sury-Repository."
-		return 0
-	fi
 
 	# Prüfe ob der Codename vom Sury-Repository unterstützt wird.
 	# HINWEIS: trixie (Debian 13) wird NICHT mehr über Sury installiert,
@@ -88,21 +92,16 @@ function install_php {
 	if [ "$USE_SURY" = true ]; then
 		echo "Installiere PHP aus dem Sury-Repository für '$CODENAME'..."
 
-		# Moderner Weg: GPG-Key in /usr/share/keyrings ablegen (funktioniert ohne apt-key)
 		local KEYRING_PATH="/usr/share/keyrings/sury-php.gpg"
 
-		# Lade den GPG-Key herunter und speichere ihn als dearmored keyring
 		curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o "$KEYRING_PATH" || {
-			# Fallback: Vielleicht ist der Key bereits im binären Format
 			curl -fsSL https://packages.sury.org/php/apt.gpg -o "$KEYRING_PATH"
 		}
 		chmod 644 "$KEYRING_PATH"
 
-		# Source-Datei mit signed-by erstellen (kein apt-key nötig)
 		cat > /etc/apt/sources.list.d/php-sury.list <<-EOF
 		deb [signed-by=${KEYRING_PATH}] https://packages.sury.org/php/ ${CODENAME} main
 		EOF
-		# Entferne führende Tabs/Spaces aus heredoc
 		sed -i 's/^[[:space:]]*//' /etc/apt/sources.list.d/php-sury.list
 
 		apt-get update
@@ -143,7 +142,6 @@ function install_mariadb {
 }
 
 function setup_mariadb {
-	# Warte bis MariaDB bereit ist
 	local retries=10
 	while [ $retries -gt 0 ]; do
 		if mysqladmin ping &>/dev/null; then
