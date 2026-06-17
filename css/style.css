@@ -2014,3 +2014,204 @@ label.buttons_in_custom_images {
 	border: 1px solid rgba(83, 216, 251, 0.3);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
+
+/* ═══════════════════════════════════════════
+   PREDICTION BAR — Gorgeous + Useful
+   ═══════════════════════════════════════════ */
+
+.bar {
+	margin-top: 4px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 10px;
+	background: rgba(144, 144, 144, 0.12);
+	padding: 0;
+	width: 60px;
+	border-radius: 5px;
+	overflow: visible;
+	position: relative;
+	cursor: pointer;
+	vertical-align: middle;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.bar:hover {
+	background: rgba(144, 144, 144, 0.22);
+	border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Fill ── */
+.bar > .bar-fill {
+	background: linear-gradient(90deg, #ff8c00 0%, #ffb347 100%);
+	width: 0%;
+	height: 100%;
+	display: block;
+	border-radius: 5px;
+	transition: width 0.5s var(--ease-physics),
+	            box-shadow 0.3s ease,
+	            filter 0.3s ease;
+	box-shadow: 0 0 6px rgba(255, 140, 0, 0.25),
+	            inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.bar:hover > .bar-fill {
+	box-shadow: 0 0 12px rgba(255, 140, 0, 0.6),
+	            inset 0 1px 0 rgba(255, 255, 255, 0.35);
+	filter: brightness(1.2) saturate(1.1);
+}
+
+/* ── Highest (green) ── */
+.highest_bar {
+	background: linear-gradient(90deg, #0FFF50 0%, #00e676 60%, #69f0ae 100%) !important;
+	box-shadow: 0 0 8px rgba(15, 255, 80, 0.4),
+	            inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.bar:hover > .highest_bar {
+	box-shadow: 0 0 16px rgba(15, 255, 80, 0.7),
+	            inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ── Inline percentage label (always visible) ── */
+.bar-pct-inline {
+	position: absolute;
+	right: -48px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 9px;
+	font-family: 'SF Mono', 'Fira Code', monospace;
+	color: rgba(180, 180, 200, 0.7);
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0.7;
+	transition: opacity 0.2s ease, color 0.2s ease;
+	font-variant-numeric: tabular-nums;
+}
+
+.bar:hover .bar-pct-inline {
+	opacity: 1;
+	color: rgba(220, 220, 240, 1);
+}
+
+/* ── Tooltip (hover detail) ── */
+.bar-tooltip {
+	position: absolute;
+	bottom: calc(100% + 10px);
+	left: 50%;
+	transform: translateX(-50%) translateY(6px);
+	background: rgba(14, 14, 30, 0.97);
+	color: #53d8fb;
+	font-size: 11px;
+	font-family: 'SF Mono', 'Fira Code', monospace;
+	padding: 6px 10px;
+	border-radius: 6px;
+	white-space: nowrap;
+	opacity: 0;
+	transition: opacity 0.25s ease, transform 0.25s var(--ease-physics);
+	pointer-events: none;
+	z-index: 100;
+	border: 1px solid rgba(83, 216, 251, 0.25);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5),
+	            0 0 0 1px rgba(83, 216, 251, 0.1);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	backdrop-filter: blur(8px);
+}
+
+/* Tooltip arrow */
+.bar-tooltip::after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border: 5px solid transparent;
+	border-top-color: rgba(14, 14, 30, 0.97);
+}
+
+.bar:hover .bar-tooltip {
+	opacity: 1;
+	transform: translateX(-50%) translateY(0);
+	pointer-events: auto;
+}
+
+.bar-tooltip-pct {
+	font-size: 12px;
+	font-weight: 600;
+	color: #53d8fb;
+	letter-spacing: 0.02em;
+}
+
+.bar-tooltip-raw {
+	font-size: 9px;
+	color: rgba(160, 170, 190, 0.8);
+	font-weight: 400;
+}
+
+/* ── Animated shimmer on highest bar ── */
+@keyframes barShimmer {
+	0% { background-position: -60px 0; }
+	100% { background-position: 60px 0; }
+}
+
+.highest_bar::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-radius: 5px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(255, 255, 255, 0.15) 50%,
+		transparent 100%
+	);
+	background-size: 60px 100%;
+	animation: barShimmer 2.5s ease-in-out infinite;
+	pointer-events: none;
+}
+
+/* ── Transition for bar width (shared) ── */
+#data_progressbar > div,
+#training_progressbar > div,
+.bar > .bar-fill {
+	transition: width 0.5s var(--ease-physics);
+}
+
+/* ── Light mode adjustments ── */
+body:not(.darkmode) .bar {
+	background: rgba(0, 0, 0, 0.06);
+	border-color: rgba(0, 0, 0, 0.08);
+}
+
+body:not(.darkmode) .bar-pct-inline {
+	color: rgba(60, 60, 80, 0.6);
+}
+
+body:not(.darkmode) .bar:hover .bar-pct-inline {
+	color: rgba(30, 30, 50, 0.9);
+}
+
+body:not(.darkmode) .bar-tooltip {
+	background: rgba(255, 255, 255, 0.97);
+	border-color: rgba(0, 100, 200, 0.2);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+body:not(.darkmode) .bar-tooltip::after {
+	border-top-color: rgba(255, 255, 255, 0.97);
+}
+
+body:not(.darkmode) .bar-tooltip-pct {
+	color: #0066cc;
+}
+
+body:not(.darkmode) .bar-tooltip-raw {
+	color: rgba(80, 80, 100, 0.7);
+}

@@ -2328,21 +2328,34 @@ function _is_valid_pixels_source(input) {
     return false;
 }
 
-function _create_bar_html(width, isHighest, probability) {
+function _format_probability_text(probability) {
+	if (probability === undefined || probability === null) return "";
+	var pct = (probability * 100).toFixed(2);
+	return pct + "%";
+}
+
+function _format_raw_value(probability) {
+	if (probability === undefined || probability === null) return "";
+	return probability.toFixed(6);
+}
+
+function _get_bar_fill_classes(isHighest) {
 	var classes = ["bar-fill"];
-	if (isHighest) {
-		classes.push("highest_bar");
-	}
-	var classAttr = ` class='${classes.join(" ")}'`;
-	
-	// Format the tooltip value
-	var tooltipText = "";
-	if (probability !== undefined && probability !== null) {
-		tooltipText = (probability * 100).toFixed(2) + "%";
-	}
-	
-	var titleAttr = tooltipText ? ` title='${tooltipText}'` : "";
-	var dataAttr = tooltipText ? ` data-value='${tooltipText}'` : "";
-	
-	return `<span class='bar'${titleAttr}${dataAttr}><span${classAttr} style='width: ${width}px'></span>${tooltipText ? `<span class='bar-tooltip'>${tooltipText}</span>` : ""}</span>`;
+	if (isHighest) classes.push("highest_bar");
+	return classes.join(" ");
+}
+
+function _create_bar_html(width, isHighest, probability) {
+	var pctText = _format_probability_text(probability);
+	var rawText = _format_raw_value(probability);
+	var fillClass = _get_bar_fill_classes(isHighest);
+
+	var tooltip = pctText
+		? `<span class='bar-tooltip' style="width: auto; height: auto;"><span class='bar-tooltip-pct'>${pctText}</span></span>`
+		: "";
+
+	return `<span class='bar' title='${rawText}' data-value='${pctText}' data-raw='${rawText}'>`
+		+ `<span class='${fillClass}' style='width: ${width}px'></span>`
+		+ tooltip
+		+ `</span>`;
 }
