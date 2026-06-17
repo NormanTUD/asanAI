@@ -618,7 +618,6 @@ button:disabled:hover {
 	align-items: center;
 	font-size: 11px;
 	font-weight: var(--font-weight-medium);
-	color: var(--color-label-secondary);
 	background: var(--glass-bg);
 	backdrop-filter: blur(20px) saturate(180%);
 	-webkit-backdrop-filter: blur(20px) saturate(180%);
