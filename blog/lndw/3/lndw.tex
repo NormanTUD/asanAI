@@ -36,151 +36,80 @@
 \end{frame}
 
 % ============================================================
-\section{Embeddings Recap}
+\section{Der Embedding Space}
 % ============================================================
 
 \begin{frame}{Wörter sind Punkte im Raum}
 \begin{columns}
-\begin{column}{0.5\textwidth}
-Zur Erinnerung:
+\begin{column}{0.45\textwidth}
 \begin{itemize}
 \item Jedes Wort = ein Punkt
-\item Ähnliche Bedeutung = geringer Winkel
+\item Ähnliche Bedeutung = nah beieinander
 \item Hunderte Dimensionen
 \end{itemize}
-\vspace{0.4cm}
-Die Achsen haben manchmal interpretierbare Bedeutungen!
-\vspace{0.4cm}
-
-\textbf{Jetzt:} Was passiert mit\\diesen Punkten weiter?
+\vspace{0.5cm}
+\textbf{Die Achsen haben manchmal\\interpretierbare Bedeutungen!}
 \end{column}
-\begin{column}{0.5\textwidth}
-\begin{tikzpicture}[scale=0.9]
+\begin{column}{0.55\textwidth}
+\begin{tikzpicture}[scale=0.95]
 \fill[accent3,opacity=0.06] (-0.3,-0.3) rectangle (4.8,4.3);
-% Axes with meaning
 \draw[->,thick,gray] (0,0) -- (4.8,0) node[right,font=\footnotesize] {reich};
 \draw[->,thick,gray] (0,0) -- (0,4.3) node[above,font=\footnotesize] {weiblich};
 \node[font=\footnotesize,gray,below left] at (0,0) {arm};
-\node[font=\footnotesize,gray,left] at (0,0) {männl.};
-% Words
-\node[circle,fill=accent1,inner sep=2pt,label={[font=\scriptsize]right:König}] at (4,0.8) {};
-\node[circle,fill=accent1,inner sep=2pt,label={[font=\scriptsize]right:Königin}] at (4,3.5) {};
-\node[circle,fill=accent2,inner sep=2pt,label={[font=\scriptsize]left:Bauer}] at (0.8,0.5) {};
-\node[circle,fill=accent2,inner sep=2pt,label={[font=\scriptsize]left:Bäuerin}] at (0.8,3.2) {};
-\node[circle,fill=neuronyellow,inner sep=2pt,label={[font=\scriptsize]right:Prinz}] at (3.2,1) {};
-\node[circle,fill=neuronyellow,inner sep=2pt,label={[font=\scriptsize]right:Prinzessin}] at (3.2,3.3) {};
-% Arrows showing pattern
+\node[font=\footnotesize,gray,left] at (0,0.5) {männl.};
+\node[circle,fill=accent1,inner sep=2.5pt,label={[font=\scriptsize]right:König}] at (4,0.8) {};
+\node[circle,fill=accent1,inner sep=2.5pt,label={[font=\scriptsize]right:Königin}] at (4,3.5) {};
+\node[circle,fill=accent2,inner sep=2.5pt,label={[font=\scriptsize]left:Bauer}] at (0.8,0.5) {};
+\node[circle,fill=accent2,inner sep=2.5pt,label={[font=\scriptsize]left:Bäuerin}] at (0.8,3.2) {};
+\node[circle,fill=neuronyellow,inner sep=2.5pt,label={[font=\scriptsize]right:Prinz}] at (3.2,1) {};
+\node[circle,fill=neuronyellow,inner sep=2.5pt,label={[font=\scriptsize]right:Prinzessin}] at (3.2,3.3) {};
 \draw[->,thin,dashed,accent1] (4,0.8) -- (4,3.5);
 \draw[->,thin,dashed,accent2] (0.8,0.5) -- (0.8,3.2);
+\draw[->,thin,dashed,neuronyellow] (3.2,1) -- (3.2,3.3);
 \end{tikzpicture}
 \end{column}
 \end{columns}
 \end{frame}
 
-% ============================================================
-\section{Tokenization}
-% ============================================================
+\begin{frame}{Übersetzung im Embedding Space}
+% BILDPLATZHALTER: Visualisierung wie Übersetzung zwischen Sprachen
+% im Embedding Space als Translation/Rotation von Mannigfaltigkeiten funktioniert
+% Quelle z.B.: Mikolov et al. (2013) - "Exploiting Similarities among Languages"
+% oder: https://arxiv.org/abs/1309.4168
+\begin{center}
+\begin{tikzpicture}[scale=0.8]
+\fill[accent3,opacity=0.05] (-6,-3) rectangle (6,3.5);
+\node[font=\normalsize\bfseries] at (0,3.8) {Übersetzung $\approx$ Rotation + Verschiebung};
 
-\begin{frame}{Wie liest die KI Text?}
-\begin{center}
-\large Die KI liest in \textbf{Tokens}: häufige Silben und Wortteile.
-\end{center}
-\vspace{0.4cm}
-\begin{center}
-\begin{tikzpicture}[node distance=0.12cm]
-\node[font=\Large] (word) at (0,1.5) {``unhappiness''};
-\draw[->,thick] (-1.2,0.9) -- (-1.2,0.4);
-\draw[->,thick] (0,0.9) -- (0,0.4);
-\draw[->,thick] (1.3,0.9) -- (1.3,0.4);
-\node[fill=accent1!30,rounded corners,inner sep=7pt,font=\large] (t1) at (-1.2,0) {un};
-\node[fill=accent2!30,rounded corners,inner sep=7pt,font=\large] (t2) at (0.1,0) {happi};
-\node[fill=accent3!30,rounded corners,inner sep=7pt,font=\large] (t3) at (1.5,0) {ness};
+% German cluster
+\begin{scope}[xshift=-3cm,yshift=0.5cm]
+\draw[thick,accent1,rounded corners,dashed] (-1.8,-1.8) rectangle (1.8,1.8);
+\node[font=\footnotesize,accent1,above] at (0,1.8) {\textbf{Deutsch}};
+\fill[accent1] (-0.5,1) circle (3pt) node[right,font=\tiny] {Katze};
+\fill[accent1] (0.8,0.3) circle (3pt) node[right,font=\tiny] {Hund};
+\fill[accent1] (-0.3,-0.8) circle (3pt) node[right,font=\tiny] {König};
+\fill[accent1] (0.5,-1.3) circle (3pt) node[right,font=\tiny] {Haus};
+\end{scope}
+
+% English cluster
+\begin{scope}[xshift=3cm,yshift=-0.5cm]
+\draw[thick,accent2,rounded corners,dashed] (-1.8,-1.8) rectangle (1.8,1.8);
+\node[font=\footnotesize,accent2,above] at (0,1.8) {\textbf{English}};
+\fill[accent2] (-0.5,1) circle (3pt) node[right,font=\tiny] {cat};
+\fill[accent2] (0.8,0.3) circle (3pt) node[right,font=\tiny] {dog};
+\fill[accent2] (-0.3,-0.8) circle (3pt) node[right,font=\tiny] {king};
+\fill[accent2] (0.5,-1.3) circle (3pt) node[right,font=\tiny] {house};
+\end{scope}
+
+% Transformation arrow
+\draw[->,very thick,neuronyellow] (-0.8,1.5) to[bend left=15] node[above,font=\small] {$R \cdot x + t$} (1.5,1);
+\draw[->,very thick,neuronyellow] (-0.8,-2) to[bend right=15] node[below,font=\small] {Rotation + Translation} (1.5,-1.5);
 \end{tikzpicture}
 \end{center}
-\vspace{0.3cm}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-\small
-\begin{itemize}
-\item Ca. 50k--100k verschiedene Tokens
-\item Häufige Wörter = 1 Token
-\item Seltene = mehrere Tokens
-\end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\small
-\begin{itemize}
-\item ``Strawberry'' $\rightarrow$ [Str][aw][berry]
-\item Die KI sieht keine Buchstaben!
-\item Deshalb: ``Wie viele r?'' ist schwer
-\end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Jedes Token wird zum Punkt}
-\begin{center}
-\begin{tikzpicture}[scale=0.85,>=Stealth]
-% Text
-\node[font=\large] (text) at (0,4.5) {``Die Katze sitzt''};
-\draw[->,thick] (0,3.9) -- (0,3.4);
-% Tokens with numbers
-\node[fill=accent1!20,rounded corners,inner sep=5pt,font=\small] (t1) at (-4,2.8) {Die};
-\node[font=\tiny,gray,above=1pt] at (t1.north) {\#1847};
-\node[fill=gray!20,rounded corners,inner sep=5pt,font=\small] (ts1) at (-2,2.8) {\_};
-\node[font=\tiny,gray,above=1pt] at (ts1.north) {\#220};
-\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] (t2) at (0,2.8) {Katze};
-\node[font=\tiny,gray,above=1pt] at (t2.north) {\#58392};
-\node[fill=gray!20,rounded corners,inner sep=5pt,font=\small] (ts2) at (2,2.8) {\_};
-\node[font=\tiny,gray,above=1pt] at (ts2.north) {\#220};
-\node[fill=accent3!20,rounded corners,inner sep=5pt,font=\small] (t3) at (4,2.8) {sitzt};
-\node[font=\tiny,gray,above=1pt] at (t3.north) {\#71205};
-% Embeddings
-\node[circle,draw,fill=accent1!30,minimum size=0.5cm] (e1) at (-4,1) {};
-\node[circle,draw,fill=gray!30,minimum size=0.5cm] (es1) at (-2,1) {};
-\node[circle,draw,fill=accent2!30,minimum size=0.5cm] (e2) at (0,1) {};
-\node[circle,draw,fill=gray!30,minimum size=0.5cm] (es2) at (2,1) {};
-\node[circle,draw,fill=accent3!30,minimum size=0.5cm] (e3) at (4,1) {};
-\draw[->,thin] (t1.south) -- (e1.north);
-\draw[->,thin] (ts1.south) -- (es1.north);
-\draw[->,thin] (t2.south) -- (e2.north);
-\draw[->,thin] (ts2.south) -- (es2.north);
-\draw[->,thin] (t3.south) -- (e3.north);
-% Vectors - now all five get one
-\node[font=\tiny] at (-4,0.2) {[0.23, $-$0.81, ...]};
-\node[font=\tiny] at (-2,0.2) {[0.05, 0.11, ...]};
-\node[font=\tiny] at (0,0.2) {[0.95, 0.12, ...]};
-\node[font=\tiny] at (2,0.2) {[0.05, 0.11, ...]};
-\node[font=\tiny] at (4,0.2) {[$-$0.31, 0.67, ...]};
-% Position encoding note
-\node[rectangle,draw,fill=accent5!30,rounded corners,inner sep=5pt,font=\small,align=center] at (0,-1) {$+$ \textbf{Positional Encoding}: Jeder Punkt bekommt seine Position im Satz dazu};
-\end{tikzpicture}
-\end{center}
-\end{frame}
-
-\begin{frame}{Positional Encoding: Wo bin ich im Satz?}
-\begin{center}
-\begin{tikzpicture}[scale=0.9]
-% Show that same word at different positions gets different vectors
-\node[font=\small\bfseries] at (0,3.5) {Gleiches Wort, andere Position $\rightarrow$ anderer Punkt!};
-% Position 1
-\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] at (-3,2) {Katze};
-\node[font=\tiny,gray] at (-3,1.4) {Position 2};
-\node[circle,fill=accent2!40,inner sep=3pt] (p1) at (-3,0.5) {};
-% Position 2
-\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] at (0,2) {Katze};
-\node[font=\tiny,gray] at (0,1.4) {Position 7};
-\node[circle,fill=accent2!60,inner sep=3pt] (p2) at (0.3,0.3) {};
-% Position 3
-\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] at (3,2) {Katze};
-\node[font=\tiny,gray] at (3,1.4) {Position 15};
-\node[circle,fill=accent2!80,inner sep=3pt] (p3) at (3.1,0.7) {};
-% Space
-\fill[accent3,opacity=0.05] (-4.5,-0.5) rectangle (4.5,1.2);
-% Explanation
-\node[font=\small,align=center] at (0,-1.2) {Das Encoding nutzt Sinus/Cosinus-Wellen verschiedener Frequenzen --\\wie eine Spirale, die jeder Position einen einzigartigen ``Fingerabdruck'' gibt.};
-\end{tikzpicture}
-\end{center}
+\vspace{0.2cm}
+\centering
+\small Die \textbf{gleiche geometrische Struktur} existiert in beiden Sprachen --\\
+man muss nur die eine Mannigfaltigkeit auf die andere drehen und schieben.
 \end{frame}
 
 % ============================================================
@@ -189,133 +118,87 @@ Die Achsen haben manchmal interpretierbare Bedeutungen!
 
 \begin{frame}{Baustein 1: Das Dense Layer}
 \begin{columns}
-\begin{column}{0.55\textwidth}
-\textbf{Ein Neuron = eine einfache Rechnung:}
-\vspace{0.2cm}
-
-Eingabe: $x = 3$\\[0.2cm]
-Gewicht: $w = 0.5$, Bias: $b = -1$\\[0.2cm]
-$$y = w \cdot x + b = 0.5 \cdot 3 + (-1) = 0.5$$
+\begin{column}{0.5\textwidth}
+\textbf{Ein Neuron = eine Gerade:}
 \vspace{0.3cm}
 
-Das ist nur eine \textbf{Gerade}!\\[0.2cm]
-Egal wie viele Neuronen -- solange alles linear ist, bleibt es eine Gerade.
-\end{column}
-\begin{column}{0.45\textwidth}
-\begin{tikzpicture}[scale=0.75,>=Stealth]
-% Single neuron
-\node[circle,draw,thick,fill=neuronyellow!40,minimum size=1.2cm,font=\small] (n) at (2,2) {$\Sigma$};
-\node[font=\small,left] (x) at (-0.5,2) {$x=3$};
-\draw[->,thick] (x) -- (n) node[midway,above,font=\tiny] {$w{=}0.5$};
-\node[font=\tiny,below=0.1cm of n] {$b{=}{-}1$};
-\node[font=\small,right] (y) at (4,2) {$y=0.5$};
+$$y = w \cdot x + b$$
+\vspace{0.2cm}
+
+\begin{tikzpicture}[scale=0.7,>=Stealth]
+\node[circle,draw,thick,fill=neuronyellow!40,minimum size=1.2cm,font=\small] (n) at (2,0) {$\Sigma$};
+\node[font=\small,left] (x) at (-0.5,0) {$x$};
+\draw[->,thick] (x) -- (n) node[midway,above,font=\tiny] {$w$};
+\node[font=\tiny,below=0.15cm of n] {$+b$};
+\node[font=\small,right] (y) at (4,0) {$y$};
 \draw[->,thick] (n) -- (y);
-% Graph below
-\draw[->,thin,gray] (-0.5,-0.5) -- (4,-0.5) node[right,font=\tiny] {$x$};
-\draw[->,thin,gray] (0,-1) -- (0,1.5) node[above,font=\tiny] {$y$};
-\draw[thick,neuronblue] (-0.3,-1) -- (3.5,0.9);
-\node[font=\tiny,neuronblue] at (3.5,1.3) {$y=0.5x-1$};
+\end{tikzpicture}
+\vspace{0.3cm}
+
+Egal wie viele Neuronen -- linear bleibt linear.
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{tikzpicture}[scale=0.85]
+\draw[->,thin,gray] (-0.5,-1) -- (4.5,-1) node[right,font=\small] {$x$};
+\draw[->,thin,gray] (0,-1.5) -- (0,2.5) node[above,font=\small] {$y$};
+\draw[very thick,neuronblue] (-0.3,-1.3) -- (4,2.2);
+\node[font=\small,neuronblue,right] at (3.5,2.4) {$y=wx+b$};
+\node[font=\small,align=center,gray] at (2,-2.5) {Nur eine Gerade.\\Langweilig!};
 \end{tikzpicture}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Die Lösung: ReLU -- Nichtlinearität!}
+\begin{frame}{Die Lösung: ReLU -- der Knick!}
 \begin{center}
-\begin{tikzpicture}[scale=0.9]
-\node[font=\normalsize\bfseries] at (0,3.5) {ReLU = ``Alles unter Null abschneiden''};
+\begin{tikzpicture}[scale=1.1]
 % ReLU graph
-\draw[->,thin,gray] (-3,0) -- (3,0) node[right,font=\small] {$x$};
-\draw[->,thin,gray] (0,-0.5) -- (0,2.8) node[above,font=\small] {$y$};
+\draw[->,thin,gray] (-3,0) -- (3.5,0) node[right,font=\small] {$x$};
+\draw[->,thin,gray] (0,-0.5) -- (0,3) node[above,font=\small] {$y$};
 \draw[very thick,accent2] (-2.5,0) -- (0,0);
 \draw[very thick,accent2] (0,0) -- (2.5,2.5);
-\node[font=\small] at (0,-1.2) {$\text{ReLU}(x) = \max(0,\; x)$};
-% Annotation
-\node[font=\small,accent1,align=center] at (5,1.5) {Das erzeugt einen\\[2pt]\textbf{Knick}!\\[4pt]Und Knicke sind\\der Schlüssel.};
+\fill[accent2] (0,0) circle (3pt);
+\node[font=\large] at (0,-1.5) {$\text{ReLU}(x) = \max(0,\; x)$};
+\node[font=\normalsize,accent1,align=center] at (5.5,1.5) {\textbf{Der Knick}\\ist der\\Schlüssel!};
+\draw[->,thick,accent1] (4.3,1.2) -- (0.4,0.2);
 \end{tikzpicture}
 \end{center}
 \end{frame}
 
-\begin{frame}{Demo: 2 Neuronen, 2 Layer}
+\begin{frame}{Mehr Knicke = Jede Funktion}
 \begin{center}
-\begin{tikzpicture}[scale=0.75,>=Stealth]
-% Network diagram
-\node[font=\small\bfseries] at (0,5) {Netzwerk:};
-\node[circle,draw,fill=neuronblue!30,minimum size=0.6cm,font=\tiny] (x) at (0,3.5) {$x$};
-\node[circle,draw,fill=neuronyellow!40,minimum size=0.6cm,font=\tiny] (n1) at (2,4.2) {$n_1$};
-\node[circle,draw,fill=neuronyellow!40,minimum size=0.6cm,font=\tiny] (n2) at (2,2.8) {$n_2$};
-\node[circle,draw,fill=neurongreen!40,minimum size=0.6cm,font=\tiny] (y) at (4,3.5) {$y$};
-\draw[->,thick] (x) -- (n1);
-\draw[->,thick] (x) -- (n2);
-\draw[->,thick] (n1) -- (y);
-\draw[->,thick] (n2) -- (y);
-\node[font=\tiny,accent1] at (2,2.2) {+ ReLU};
-\node[font=\tiny,accent1] at (2,4.8) {+ ReLU};
-
-% Step by step graphs
-% Neuron 1
-\begin{scope}[xshift=-4.5cm,yshift=-1.5cm]
-\draw[->,thin,gray] (-1,0) -- (2.5,0);
-\draw[->,thin,gray] (0,-0.3) -- (0,1.8);
-\draw[thick,accent1] (-0.8,0) -- (0.5,0) -- (2.2,1.5);
-\node[font=\tiny\bfseries,below] at (0.8,-0.5) {Neuron 1 nach ReLU};
-\end{scope}
-% Neuron 2
-\begin{scope}[xshift=0cm,yshift=-1.5cm]
-\draw[->,thin,gray] (-1,0) -- (2.5,0);
-\draw[->,thin,gray] (0,-0.3) -- (0,1.8);
-\draw[thick,accent2] (-0.8,0) -- (1.2,0) -- (2.2,0.9);
-\node[font=\tiny\bfseries,below] at (0.8,-0.5) {Neuron 2 nach ReLU};
-\end{scope}
-% Combined
-\begin{scope}[xshift=5cm,yshift=-1.5cm]
-\draw[->,thin,gray] (-1,0) -- (2.5,0);
-\draw[->,thin,gray] (0,-0.3) -- (0,1.8);
-\draw[thick,accent3] (-0.8,0) -- (0.5,0) -- (1.2,0.6) -- (2.2,1.7);
-\fill[accent3] (0.5,0) circle (2pt);
-\fill[accent3] (1.2,0.6) circle (2pt);
-\node[font=\tiny\bfseries,below] at (0.8,-0.5) {Summe: 2 Knicke!};
-\end{scope}
-\end{tikzpicture}
-\end{center}
-\vspace{0.2cm}
-\centering
-\small Jedes Neuron fügt einen möglichen Knick hinzu.\\
-Mehr Neuronen $\rightarrow$ mehr Knicke $\rightarrow$ jede Kurve möglich!
-\end{frame}
-
-\begin{frame}{Mehr Neuronen = Jede Funktion}
-\begin{center}
-\begin{tikzpicture}[scale=0.85]
+\begin{tikzpicture}[scale=0.9]
 % 2 neurons
 \begin{scope}[xshift=-5cm]
 \draw[->,thin,gray] (-1.5,0) -- (1.8,0);
-\draw[->,thin,gray] (0,-0.3) -- (0,2);
+\draw[->,thin,gray] (0,-0.3) -- (0,2.2);
 \draw[very thick,accent1] (-1.2,0.5) -- (0,1.6) -- (1.5,0.3);
 \fill[accent1] (0,1.6) circle (2.5pt);
-\node[font=\small\bfseries,below] at (0,-0.5) {2 Neuronen};
+\node[font=\normalsize\bfseries,below] at (0,-0.5) {2 Neuronen};
+\node[font=\small,gray,below] at (0,-1) {1 Knick};
 \end{scope}
 % 8 neurons
 \begin{scope}[xshift=0cm]
 \draw[->,thin,gray] (-1.5,0) -- (1.8,0);
-\draw[->,thin,gray] (0,-0.3) -- (0,2);
+\draw[->,thin,gray] (0,-0.3) -- (0,2.2);
 \draw[very thick,accent2] (-1.2,0.3) -- (-0.7,1.3) -- (-0.2,0.7) -- (0.3,1.7) -- (0.8,1.1) -- (1.2,1.5);
-\node[font=\small\bfseries,below] at (0,-0.5) {8 Neuronen};
+\node[font=\normalsize\bfseries,below] at (0,-0.5) {8 Neuronen};
+\node[font=\small,gray,below] at (0,-1) {viele Knicke};
 \end{scope}
 % Many neurons
 \begin{scope}[xshift=5cm]
 \draw[->,thin,gray] (-1.5,0) -- (1.8,0);
-\draw[->,thin,gray] (0,-0.3) -- (0,2);
+\draw[->,thin,gray] (0,-0.3) -- (0,2.2);
 \draw[very thick,accent3] plot[smooth,tension=0.8] coordinates {(-1.2,0.4) (-0.7,1.4) (-0.2,0.6) (0.2,1.8) (0.6,1.0) (1.0,1.6) (1.4,1.2)};
-\node[font=\small\bfseries,below] at (0,-0.5) {1000+ Neuronen};
-\node[font=\small,accent3] at (0,-1.1) {$\approx$ alles!};
+\node[font=\normalsize\bfseries,below] at (0,-0.5) {1000+ Neuronen};
+\node[font=\normalsize,accent3,below] at (0,-1) {$\approx$ \textbf{alles!}};
 \end{scope}
 \end{tikzpicture}
 \end{center}
-\vspace{0.4cm}
+\vspace{0.5cm}
 \centering
-\tikz{\node[fill=accent4!30,rounded corners,inner sep=8pt,font=\normalsize,align=center]{
-\textbf{Universal Approximation:} Dense + ReLU + Dense\\
+\tikz{\node[fill=accent4!30,rounded corners,inner sep=10pt,font=\normalsize,align=center]{
+\textbf{Universal Approximation:} Dense + ReLU\\
 kann jede Funktion beliebig genau nachbilden.
 };}
 \end{frame}
@@ -323,7 +206,7 @@ kann jede Funktion beliebig genau nachbilden.
 \begin{frame}{Beispiel: Bewässerung und Ernte}
 \begin{columns}
 \begin{column}{0.5\textwidth}
-\begin{tikzpicture}[scale=0.7]
+\begin{tikzpicture}[scale=0.75]
 \draw[->,thick] (0,0) -- (7,0) node[right,font=\footnotesize] {Uhrzeit};
 \draw[->,thick] (0,0) -- (0,4.2) node[above,font=\footnotesize] {Ertrag};
 \foreach \x/\l in {1/6h, 2.5/10h, 4/14h, 5.5/18h, 7/22h} {
@@ -340,7 +223,7 @@ kann jede Funktion beliebig genau nachbilden.
 \small
 \textbf{Das Netzwerk lernt:}
 \begin{itemize}
-\item Mittags schlecht (Tropfen = Linse)
+\item Mittags schlecht (Verdunstung)
 \item Nachts schlecht (Schnecken)
 \item Morgens/Abends gut
 \end{itemize}
@@ -360,6 +243,113 @@ Es macht was funktioniert -- ohne zu wissen warum.
 \end{frame}
 
 % ============================================================
+\section{Tokenization}
+% ============================================================
+
+\begin{frame}{Wie liest die KI Text?}
+\begin{center}
+\large Die KI liest in \textbf{Tokens}: häufige Silben und Wortteile.
+\end{center}
+\vspace{0.5cm}
+\begin{center}
+\begin{tikzpicture}[node distance=0.12cm]
+\node[font=\Large] (word) at (0,1.5) {``unhappiness''};
+\draw[->,thick] (-1.2,0.9) -- (-1.2,0.4);
+\draw[->,thick] (0,0.9) -- (0,0.4);
+\draw[->,thick] (1.3,0.9) -- (1.3,0.4);
+\node[fill=accent1!30,rounded corners,inner sep=8pt,font=\large] (t1) at (-1.2,0) {un};
+\node[fill=accent2!30,rounded corners,inner sep=8pt,font=\large] (t2) at (0.1,0) {happi};
+\node[fill=accent3!30,rounded corners,inner sep=8pt,font=\large] (t3) at (1.5,0) {ness};
+\end{tikzpicture}
+\end{center}
+\vspace{0.4cm}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item Ca. 50k--100k verschiedene Tokens
+\item Häufige Wörter = 1 Token
+\item Seltene = mehrere Tokens
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item ``Strawberry'' $\rightarrow$ [Str][aw][berry]
+\item Die KI sieht \textbf{keine Buchstaben}!
+\item Deshalb: ``Wie viele r?'' ist schwer
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Jedes Token wird zum Punkt im Embedding Space}
+\begin{center}
+\begin{tikzpicture}[scale=0.85,>=Stealth]
+% Text
+\node[font=\large] (text) at (0,4.5) {``Die Katze sitzt''};
+\draw[->,thick] (0,3.9) -- (0,3.4);
+% Tokens
+\node[fill=accent1!20,rounded corners,inner sep=6pt,font=\small] (t1) at (-3,2.8) {Die};
+\node[fill=accent2!20,rounded corners,inner sep=6pt,font=\small] (t2) at (0,2.8) {Katze};
+\node[fill=accent3!20,rounded corners,inner sep=6pt,font=\small] (t3) at (3,2.8) {sitzt};
+% Embeddings
+\node[circle,draw,fill=accent1!30,minimum size=0.7cm] (e1) at (-3,1) {};
+\node[circle,draw,fill=accent2!30,minimum size=0.7cm] (e2) at (0,1) {};
+\node[circle,draw,fill=accent3!30,minimum size=0.7cm] (e3) at (3,1) {};
+\draw[->,thin] (t1.south) -- (e1.north);
+\draw[->,thin] (t2.south) -- (e2.north);
+\draw[->,thin] (t3.south) -- (e3.north);
+% Vectors
+\node[font=\tiny,gray] at (-3,0.2) {[0.23, $-$0.81, ...]};
+\node[font=\tiny,gray] at (0,0.2) {[0.95, 0.12, ...]};
+\node[font=\tiny,gray] at (3,0.2) {[$-$0.31, 0.67, ...]};
+% Lookup table hint
+\node[font=\small,align=center,gray] at (0,-0.8) {Nachschlagen in einer Tabelle mit $\sim$100k Einträgen};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+% ============================================================
+\section{Positional Encoding}
+% ============================================================
+
+\begin{frame}{Positional Encoding: Wo bin ich im Satz?}
+% BILDPLATZHALTER: Visualisierung der Sinus/Cosinus-Wellen des Positional Encodings
+% z.B. aus "Attention Is All You Need" (Vaswani et al. 2017) oder
+% Jay Alammar's "The Illustrated Transformer"
+% http://jalammar.github.io/illustrated-transformer/
+\begin{center}
+\begin{tikzpicture}[scale=0.85]
+\node[font=\normalsize\bfseries] at (0,4) {Gleiches Wort, andere Position $\rightarrow$ anderer Punkt!};
+
+% Illustration
+\begin{scope}[yshift=1cm]
+\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] at (-4,1.5) {Katze};
+\node[font=\tiny,gray] at (-4,0.9) {Position 2};
+\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] at (0,1.5) {Katze};
+\node[font=\tiny,gray] at (0,0.9) {Position 7};
+\node[fill=accent2!20,rounded corners,inner sep=5pt,font=\small] at (4,1.5) {Katze};
+\node[font=\tiny,gray] at (4,0.9) {Position 15};
+% Arrows
+\draw[->,thick] (-4,0.5) -- (-4,-0.2);
+\draw[->,thick] (0,0.5) -- (0,-0.2);
+\draw[->,thick] (4,0.5) -- (4,-0.2);
+% Results
+\node[font=\tiny] at (-4,-0.6) {[0.95, 0.12, ...] + [1.0, 0.0, ...]};
+\node[font=\tiny] at (0,-0.6) {[0.95, 0.12, ...] + [0.66, 0.74, ...]};
+\node[font=\tiny] at (4,-0.6) {[0.95, 0.12, ...] + [$-$0.76, 0.65, ...]};
+\end{scope}
+
+% Placeholder for sinusoidal graphic
+\node[rectangle,draw,dashed,gray,minimum width=10cm,minimum height=2.5cm,align=center,font=\small] at (0,-2.5) {
+\textbf{[GRAFIK: Sinus/Cosinus-Wellen verschiedener Frequenzen]}\\[3pt]
+\footnotesize Jede Position bekommt einen einzigartigen ``Fingerabdruck''\\
+aus überlagerten Wellen -- wie ein Barcode für die Stelle im Text.
+};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+% ============================================================
 \section{Der Transformer}
 % ============================================================
 
@@ -367,76 +357,216 @@ Es macht was funktioniert -- ohne zu wissen warum.
 \begin{center}
 \large Wir brauchen zwei Bausteine:
 \end{center}
-\vspace{0.3cm}
+\vspace{0.4cm}
 \begin{columns}
-\begin{column}{0.45\textwidth}
+\begin{column}{0.42\textwidth}
 \centering
 \begin{tikzpicture}
-\node[rectangle,draw,fill=accent2!20,rounded corners,minimum width=3.2cm,minimum height=1.3cm,align=center,font=\small] {
-\textbf{Dense + ReLU}\\[2pt]
-Punkte verschieben
+\node[rectangle,draw,fill=accent3!20,rounded corners,minimum width=3.5cm,minimum height=1.5cm,align=center,font=\normalsize] {
+\textbf{Attention}\\[3pt]
+\footnotesize Wörter verbinden
 };
 \end{tikzpicture}
 \end{column}
-\begin{column}{0.1\textwidth}
-\centering\Large $+$
+\begin{column}{0.08\textwidth}
+\centering\Huge $+$
 \end{column}
-\begin{column}{0.45\textwidth}
+\begin{column}{0.42\textwidth}
 \centering
 \begin{tikzpicture}
-\node[rectangle,draw,fill=accent3!20,rounded corners,minimum width=3.2cm,minimum height=1.3cm,align=center,font=\small] {
-\textbf{Attention}\\[2pt]
-Wörter verbinden
+\node[rectangle,draw,fill=accent2!20,rounded corners,minimum width=3.5cm,minimum height=1.5cm,align=center,font=\normalsize] {
+\textbf{Dense + ReLU}\\[3pt]
+\footnotesize Punkte verschieben
 };
 \end{tikzpicture}
 \end{column}
 \end{columns}
-\vspace{0.4cm}
+\vspace{0.5cm}
 \begin{center}
 \begin{tikzpicture}
-\node[rectangle,draw,thick,fill=accent4!15,rounded corners,minimum width=7cm,minimum height=1cm,align=center,font=\normalsize] (layer) {$=$ \textbf{Ein Transformer-Layer}};
-\node[font=\small,below=0.3cm of layer,gray,align=center] {(plus Normalisierung und Residual-Verbindungen\\-- Hilfsmittel die das Training stabilisieren)};
+\node[rectangle,draw,thick,fill=accent4!15,rounded corners,minimum width=8cm,minimum height=1.2cm,align=center,font=\large] (layer) {$=$ \textbf{Ein Transformer-Layer}};
 \end{tikzpicture}
 \end{center}
-\vspace{0.2cm}
+\vspace{0.3cm}
 \centering
 Davon stapelt man \textbf{viele} übereinander (z.B. 96 bei GPT-4).
 \end{frame}
 
-\begin{frame}{Was ist ein Layer?}
+\begin{frame}{Der Residual Stream: Das globale Notizbuch}
 \begin{center}
-\begin{tikzpicture}[scale=0.8,>=Stealth,
-block/.style={rectangle,draw,rounded corners,minimum width=5cm,minimum height=0.7cm,font=\small}]
-% One layer detailed
-\node[block,fill=accent3!20] (attn) at (0,3) {Attention: Wörter tauschen Info aus};
-\node[block,fill=gray!10] (norm1) at (0,2) {\footnotesize Normalisierung + Residual};
-\node[block,fill=accent2!20] (ffn) at (0,1) {Dense+ReLU: ``Nachdenken''};
-\node[block,fill=gray!10] (norm2) at (0,0) {\footnotesize Normalisierung + Residual};
-\draw[->,thick] (0,4) -- (attn.north) node[midway,right,font=\tiny] {Eingabe};
-\draw[->,thick] (attn) -- (norm1);
-\draw[->,thick] (norm1) -- (ffn);
-\draw[->,thick] (ffn) -- (norm2);
-\draw[->,thick] (norm2) -- (0,-0.8) node[midway,right,font=\tiny] {Ausgabe};
-% Brace
-\draw[decorate,decoration={brace,amplitude=6pt,mirror},thick] (-3.2,-0.3) -- (-3.2,3.3);
-\node[font=\small,left,align=right] at (-3.8,1.5) {1 Layer};
-% Right side: stacking
-\begin{scope}[xshift=6.5cm]
-\node[font=\small\bfseries] at (0,4) {Gestapelt:};
-\foreach \i/\c in {0/accent4,1/accent3,2/accent2,3/accent1} {
-\node[rectangle,draw,fill=\c!15,rounded corners,minimum width=2.5cm,minimum height=0.5cm,font=\tiny] (l\i) at (0,3-\i*1) {Layer \the\numexpr\i+1\relax};
+\begin{tikzpicture}[scale=0.8,>=Stealth]
+% Main stream
+\draw[very thick,darkbg] (0,5) -- (0,-2.5);
+\node[font=\normalsize\bfseries,above] at (0,5.2) {Residual Stream};
+
+% Layers reading and writing
+\foreach \i/\y/\name/\col in {1/3.5/Attention Layer 1/accent3, 2/1.5/Dense+ReLU 1/accent2, 3/-0.5/Attention Layer 2/accent3} {
+\node[rectangle,draw,fill=\col!20,rounded corners,minimum width=3.5cm,minimum height=0.7cm,font=\footnotesize] (l\i) at (4.5,\y) {\name};
+\draw[->,thick,\col] (0.15,\y+0.3) -- (l\i.west) node[midway,above,font=\tiny] {lesen};
+\draw[->,thick,\col] (l\i.west) -- (0.15,\y-0.3) node[midway,below,font=\tiny] {$+$ schreiben};
 }
-\node[font=\large] at (0,-1.5) {$\vdots$};
-\node[rectangle,draw,fill=gray!15,rounded corners,minimum width=2.5cm,minimum height=0.5cm,font=\tiny] (lN) at (0,-2.5) {Layer 96};
-\draw[->,thick] (l0) -- (l1);
-\draw[->,thick] (l1) -- (l2);
-\draw[->,thick] (l2) -- (l3);
-\draw[->,thick] (l3) -- (0,-1.1);
-\draw[->,thick] (0,-1.9) -- (lN);
-\end{scope}
+
+% Formula
+\node[rectangle,draw,fill=accent5!30,rounded corners,inner sep=8pt,font=\normalsize] at (0,-3.8) {$x_1 = x_0 + \text{layer}(x_0)$};
+
+% Explanation
+\node[font=\small,align=left] at (-5,1.5) {
+Jeder Layer\\
+\textbf{liest} aus dem\\
+Stream und\\
+\textbf{addiert} sein\\
+Ergebnis dazu.\\[6pt]
+Wie ein\\
+\textbf{gemeinsames}\\
+\textbf{Notizbuch}.
+};
 \end{tikzpicture}
 \end{center}
 \end{frame}
+
+% ============================================================
+\section{Attention}
+% ============================================================
+
+\begin{frame}{Attention: Long-Distance Dependencies}
+\begin{center}
+\begin{tikzpicture}[scale=0.8,>=Stealth]
+% Long sentence
+\node[font=\small,align=center] at (0,4) {\textbf{Ein Wort am Anfang kann die Bedeutung}\\
+\textbf{eines Wortes am Ende bestimmen:}};
+
+% Words in a row
+\foreach \i/\w/\c in {1/Die/accent1, 2/Katze/accent2, 3/die/gray, 4/gestern/gray, 5/aus/gray, 6/dem/gray, 7/Tierheim/neuronyellow, 8/kam/accent3} {
+\node[rectangle,draw,fill=\c!15,rounded corners,minimum width=0.9cm,minimum height=0.55cm,font=\tiny] (w\i) at (\i*1.4-5.6,2) {\w};
+}
+
+% Long-distance attention arrow
+\draw[->,very thick,accent1,opacity=0.8] (w8.north) to[bend left=35] (w2.north);
+\node[font=\footnotesize,accent1,above] at (0,3) {\textbf{Wer} kam?};
+
+\draw[->,thick,neuronyellow,opacity=0.6] (w8.south) to[bend right=25] (w7.south);
+\node[font=\footnotesize,neuronyellow,below] at (2.5,1) {\textbf{Woher}?};
+
+% Explanation
+\node[font=\small,align=center,gray] at (0,-0.3) {
+Attention erlaubt \textbf{direkte Verbindungen} über beliebige Distanzen.\\
+Ohne Attention müsste Information Wort für Wort weitergereicht werden.
+};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}{Attention: Query, Key, Value}
+\begin{center}
+\begin{tikzpicture}[scale=0.8,>=Stealth]
+% The three vectors
+\node[rectangle,draw,fill=accent1!15,rounded corners,inner sep=8pt,font=\normalsize,align=center] (q) at (-4,2.5) {\textbf{Query}\\[2pt]\footnotesize``Was suche ich?''};
+\node[rectangle,draw,fill=accent2!15,rounded corners,inner sep=8pt,font=\normalsize,align=center] (k) at (0,2.5) {\textbf{Key}\\[2pt]\footnotesize``Was biete ich?''};
+\node[rectangle,draw,fill=neuronyellow!20,rounded corners,inner sep=8pt,font=\normalsize,align=center] (v) at (4,2.5) {\textbf{Value}\\[2pt]\footnotesize``Mein Inhalt''};
+
+% Process
+\node[font=\normalsize,align=center] at (0,0) {
+Query $\times$ Key = ``Wie relevant bist du für mich?''\\[6pt]
+Hohe Relevanz $\rightarrow$ Value flie\ss t ein.
+};
+
+% Formula
+\node[rectangle,draw,fill=gray!8,rounded corners,inner sep=6pt,font=\normalsize] at (0,-1.8) {
+$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{Q \cdot K^T}{\sqrt{d}}\right) \cdot V$
+};
+\node[font=\tiny,gray] at (0,-2.8) {(Die Formel ist nur ein gewichtetes Mitteln -- nichts Magisches!)};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}{Multi-Head Attention: Viele Experten gleichzeitig}
+\begin{center}
+\begin{tikzpicture}[scale=0.8,>=Stealth]
+% Heads as experts
+\node[font=\normalsize\bfseries] at (0,4.2) {Jeder Attention Head ist ein Experte für einen ``Fachbereich''};
+
+\node[rectangle,draw,fill=accent1!15,rounded corners,minimum width=2.8cm,minimum height=1.2cm,align=center,font=\footnotesize] (h1) at (-4.5,2) {\textbf{Head 3}\\Grammatik:\\Subjekt $\leftrightarrow$ Verb};
+
+\node[rectangle,draw,fill=accent2!15,rounded corners,minimum width=2.8cm,minimum height=1.2cm,align=center,font=\footnotesize] (h2) at (0,2) {\textbf{Head 7}\\Referenz:\\Pronomen $\rightarrow$ Nomen};
+
+\node[rectangle,draw,fill=accent3!15,rounded corners,minimum width=2.8cm,minimum height=1.2cm,align=center,font=\footnotesize] (h3) at (4.5,2) {\textbf{Head 12}\\Position:\\Was kommt\\nach was?};
+
+% Residual stream
+\draw[very thick,darkbg] (-6,0) -- (6,0);
+\node[font=\small\bfseries,darkbg,right] at (6,0) {Residual Stream};
+
+% Reading and writing
+\foreach \h/\x in {h1/-4.5, h2/0, h3/4.5} {
+\draw[->,thick,gray] (\x,0.15) -- (\h.south);
+\draw[->,thick,accent4] (\h.south) -- (\x,-0.15);
+}
+
+\node[font=\footnotesize,gray] at (-4.5,-0.6) {\textit{lesen}};
+\node[font=\footnotesize,accent4] at (0,-0.6) {\textit{+ schreiben}};
+
+% Note
+\node[font=\small,align=center,gray] at (0,-1.8) {
+Alle Heads lesen aus dem Residual Stream,\\
+arbeiten parallel, und schreiben ihre Ergebnisse zurück.
+};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}{Attention: Long-Distance Dependencies}
+\begin{center}
+\begin{tikzpicture}[scale=0.8,>=Stealth]
+% Long sentence
+\node[font=\small,align=center] at (0,4) {\textbf{Ein Wort am Anfang kann die Bedeutung}\\
+\textbf{eines Wortes am Ende bestimmen:}};
+
+% Words in a row
+\foreach \i/\w/\c in {1/Die/accent1, 2/Katze/accent2, 3/die/gray, 4/gestern/gray, 5/aus/gray, 6/dem/gray, 7/Tierheim/neuronyellow, 8/kam/accent3} {
+\node[rectangle,draw,fill=\c!15,rounded corners,minimum width=0.9cm,minimum height=0.55cm,font=\tiny] (w\i) at (\i*1.4-5.6,2) {\w};
+}
+
+% Long-distance attention arrow
+\draw[->,very thick,accent1,opacity=0.8] (w8.north) to[bend left=35] (w2.north);
+\node[font=\footnotesize,accent1,above] at (0,3) {\textbf{Wer} kam?};
+
+\draw[->,thick,neuronyellow,opacity=0.6] (w8.south) to[bend right=25] (w7.south);
+\node[font=\footnotesize,neuronyellow,below] at (2.5,1) {\textbf{Woher}?};
+
+% Explanation
+\node[font=\small,align=center,gray] at (0,-0.3) {
+Attention erlaubt \textbf{direkte Verbindungen} über beliebige Distanzen.\\
+Ohne Attention müsste Information Wort für Wort weitergereicht werden.
+};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}{Nebeneffekt: ``nicht gut'' $\neq$ ``schlecht''}
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+\fill[accent3,opacity=0.05] (-1.5,-0.5) rectangle (5.5,3.5);
+% Points
+\node[circle,fill=neurongreen!60,inner sep=4pt,font=\footnotesize\bfseries] (gut) at (0.5,2.8) {gut};
+\node[circle,fill=accent1!60,inner sep=4pt,font=\footnotesize\bfseries] (schlecht) at (5,0.5) {schlecht};
+\node[circle,fill=neuronyellow!60,inner sep=3pt,font=\scriptsize] (nichtgut) at (1.2,2.2) {nicht gut};
+% Arrows
+\draw[->,thick,accent2] (gut) -- (nichtgut) node[midway,left,font=\tiny] {kleine Verschiebung};
+\draw[<->,thin,dashed,gray] (nichtgut) -- (schlecht);
+\node[font=\tiny,gray,above,sloped,pos=0.5] at (3,1.3) {weit entfernt!};
+\end{tikzpicture}
+\end{center}
+\vspace{0.3cm}
+\small
+Attention bildet \textbf{gewichtete Summen} -- es mittelt zwischen Punkten.\\
+``nicht'' verschiebt ``gut'' nur leicht. Es gibt keinen ``spring zum Gegenteil''-Mechanismus.
+\vspace{0.2cm}
+
+Negation, Zählen, exakte Logik -- alles schwierig für gewichtete Mittelwerte.
+\end{frame}
+
+% ============================================================
+\section{Was die Layer tun}
+% ============================================================
 
 \begin{frame}{Was macht ein Layer mit den Punkten?}
 \begin{center}
@@ -457,110 +587,30 @@ block/.style={rectangle,draw,rounded corners,minimum width=5cm,minimum height=0.
 \node[font=\small\bfseries] at (1.5,3.5) {Nachher};
 \fill[accent3,opacity=0.06] (0,0) rectangle (3,3.2);
 \fill[accent1] (0.7,2.2) circle (4pt) node[right,font=\tiny] {Die};
-\fill[accent2] (1.8,1.8) circle (4pt) node[right,font=\tiny] {Katze};
-\fill[accent3] (1.3,0.9) circle (4pt) node[right,font=\tiny] {sitzt};
+\fill[accent2] (1.6,1.5) circle (4pt) node[right,font=\tiny] {Katze};
+\fill[accent3] (1.5,0.8) circle (4pt) node[right,font=\tiny] {sitzt};
 \end{scope}
-\end{tikzpicture}
-\end{center}
-\vspace{0.3cm}
-\begin{itemize}
-\item \textbf{Attention} hat ``Katze'' und ``sitzt'' näher zusammengebracht (sie gehören zusammen)
-\item \textbf{Dense+ReLU} hat die Punkte weiter verschoben basierend auf dem neuen Kontext
-\item Nach vielen Layern: ``Katze'' kodiert nicht mehr nur \emph{Katze}, sondern \textbf{``die Katze die hier sitzt''}
-\end{itemize}
-\end{frame}
-
-% ============================================================
-\section{Attention}
-% ============================================================
-
-\begin{frame}{Attention: Jedes Wort schaut alle anderen an}
-\begin{center}
-\begin{tikzpicture}[scale=0.85,>=Stealth]
-% Words in a row
-\foreach \i/\w/\c in {1/Die/accent1, 2/Katze/accent2, 3/die/gray, 4/auf/gray, 5/der/gray, 6/Matte/neuronyellow, 7/sa\ss/accent3} {
-\node[rectangle,draw,fill=\c!15,rounded corners,minimum width=1cm,minimum height=0.6cm,font=\footnotesize] (w\i) at (\i*1.7-1.7,0) {\w};
-}
-% Attention arrows BELOW the words (from "sa\ss")
-\draw[->,thick,accent3,opacity=0.3] (w7.south) to[bend right=20] (w1.south);
-\draw[->,very thick,accent3,opacity=0.9] (w7.south) to[bend right=25] (w2.south);
-\draw[->,thick,accent3,opacity=0.15] (w7.south) to[bend right=20] (w3.south);
-\draw[->,thick,accent3,opacity=0.1] (w7.south) to[bend right=15] (w4.south);
-\draw[->,thick,accent3,opacity=0.1] (w7.south) to[bend right=12] (w5.south);
-\draw[->,thick,accent3,opacity=0.6] (w7.south) to[bend right=10] (w6.south);
-% Labels
-\node[font=\footnotesize,accent2] at (1.7,-2) {\textbf{0.55}};
-\node[font=\footnotesize,neuronyellow] at (8.5,-1.5) {\textbf{0.30}};
-\node[font=\small,accent3,align=center] at (5,-3) {``sa\ss'' fragt: \textbf{Wer} hat gesessen? \textbf{Wo}?\\Und bekommt Info von ``Katze'' und ``Matte''};
-\end{tikzpicture}
-\end{center}
-\end{frame}
-
-\begin{frame}{Attention: Query, Key, Value}
-\begin{center}
-\begin{tikzpicture}[scale=0.8,>=Stealth]
-% The three vectors
-\node[rectangle,draw,fill=accent1!15,rounded corners,inner sep=7pt,font=\small,align=center] (q) at (-4,2) {\textbf{Query} (Q)\\``Was suche ich?''};
-\node[rectangle,draw,fill=accent2!15,rounded corners,inner sep=7pt,font=\small,align=center] (k) at (0,2) {\textbf{Key} (K)\\``Was biete ich?''};
-\node[rectangle,draw,fill=neuronyellow!20,rounded corners,inner sep=7pt,font=\small,align=center] (v) at (4,2) {\textbf{Value} (V)\\``Mein Inhalt''};
-
-% Explanation
-\node[font=\small,align=center] at (0,-0.2) {
-Attention berechnet aus jedem Token-Embedding diese drei Vektoren.\\[3pt]
-Dann: Query $\times$ Key = ``Wie relevant bist du für mich?''\\[3pt]
-Hohe Relevanz $\rightarrow$ Value flie\ss t ein.
+% Explanation below
+\node[font=\small,align=center] at (4.5,-0.5) {
+Die Punkte werden \textbf{verschoben}. In den Verschiebungen\\
+finden die Berechnungen statt -- nicht ``Nähe'' ist das Ziel.
 };
-
-% Formula (compact)
-\node[rectangle,draw,fill=gray!8,rounded corners,inner sep=5pt,font=\small] at (0,-2) {
-$\text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{Q \cdot K^T}{\sqrt{d}}\right) \cdot V$
-};
-\node[font=\tiny,gray] at (0,-2.8) {(Die Formel ist nur ein gewichtetes Mitteln -- nichts Magisches!)};
 \end{tikzpicture}
 \end{center}
-\end{frame}
-
-\begin{frame}{Frühe Layer: Tokens zusammenfügen}
-\begin{center}
-\begin{tikzpicture}[scale=0.9,>=Stealth]
-% Before attention (tokenized)
-\node[font=\small\bfseries] at (0,3) {Tokenisiert:};
-\node[fill=accent1!15,rounded corners,inner sep=4pt,font=\footnotesize] (t1) at (-3,2) {Schiff};
-\node[fill=accent1!15,rounded corners,inner sep=4pt,font=\footnotesize] (t2) at (-1.5,2) {fahrt};
-\node[fill=accent1!15,rounded corners,inner sep=4pt,font=\footnotesize] (t3) at (0,2) {s};
-\node[fill=accent2!15,rounded corners,inner sep=4pt,font=\footnotesize] (t4) at (1.3,2) {ge};
-\node[fill=accent2!15,rounded corners,inner sep=4pt,font=\footnotesize] (t5) at (2.5,2) {sell};
-\node[fill=accent2!15,rounded corners,inner sep=4pt,font=\footnotesize] (t6) at (4,2) {schaft};
-
-% After first layers
-\draw[->,thick,darkbg] (0.5,1.3) -- (0.5,0.7);
-\node[font=\footnotesize,right] at (1,1) {Erste Layer};
-
-\node[font=\small\bfseries] at (0,0) {Nach Layer 1--3:};
-\node[fill=accent1!35,rounded corners,inner sep=6pt,font=\footnotesize] (g1) at (-1.5,-1) {Schifffahrts};
-\node[fill=accent2!35,rounded corners,inner sep=6pt,font=\footnotesize] (g2) at (2,-1) {gesellschaft};
-
-% Arrows
-\draw[->,thin,accent1,dashed] (t1.south) -- (g1.north);
-\draw[->,thin,accent1,dashed] (t2.south) -- (g1.north);
-\draw[->,thin,accent1,dashed] (t3.south) -- (g1.north);
-\draw[->,thin,accent2,dashed] (t4.south) -- (g2.north);
-\draw[->,thin,accent2,dashed] (t5.south) -- (g2.north);
-\draw[->,thin,accent2,dashed] (t6.south) -- (g2.north);
-
-\node[font=\small,gray,align=center] at (0.5,-2.3) {Attention erkennt: ``Diese Tokens gehören zu einem Wort!''};
-\end{tikzpicture}
-\end{center}
+\vspace{0.2cm}
+\centering
+\small Nach vielen Layern: ``Katze'' kodiert nicht mehr nur \emph{Katze},\\
+sondern \textbf{``die Katze die hier sitzt''} -- den gesamten Kontext.
 \end{frame}
 
 \begin{frame}{Spätere Layer: Immer abstrakter}
 \begin{center}
 \begin{tikzpicture}[scale=0.85,
-lbox/.style={rectangle,draw,rounded corners,minimum width=6cm,minimum height=0.8cm,font=\small,align=center}]
-\node[lbox,fill=accent4!20] (l1) at (0,4) {Layer 1--5: Tokens zusammenfügen};
-\node[lbox,fill=accent3!20] (l2) at (0,2.7) {Layer 6--20: Grammatik, Satzstruktur};
-\node[lbox,fill=accent2!20] (l3) at (0,1.4) {Layer 21--60: Bedeutung, Fakten abrufen};
-\node[lbox,fill=accent1!20] (l4) at (0,0.1) {Layer 61+: Abstrakte Schlussfolgerungen};
+lbox/.style={rectangle,draw,rounded corners,minimum width=6.5cm,minimum height=0.8cm,font=\small,align=center}]
+\node[lbox,fill=accent4!20] (l1) at (0,4) {Frühe Layer: Tokens zusammenfügen};
+\node[lbox,fill=accent3!20] (l2) at (0,2.7) {Mittlere Layer: Grammatik, Satzstruktur};
+\node[lbox,fill=accent2!20] (l3) at (0,1.4) {Spätere Layer: Bedeutung, Fakten abrufen};
+\node[lbox,fill=accent1!20] (l4) at (0,0.1) {Letzte Layer: Abstrakte Schlussfolgerungen};
 
 \draw[->,thick] (l1) -- (l2);
 \draw[->,thick] (l2) -- (l3);
@@ -573,36 +623,14 @@ lbox/.style={rectangle,draw,rounded corners,minimum width=6cm,minimum height=0.8
 \node[font=\footnotesize,right=0.3cm,accent1!80!black] at (l4.east) {Logik, Planung};
 
 % Arrow on left
-\draw[->,very thick,gray] (-4.5,4) -- (-4.5,0.1);
-\node[font=\footnotesize,gray,rotate=90] at (-5,2) {Abstrakter};
+\draw[->,very thick,gray] (-4.8,4) -- (-4.8,0.1);
+\node[font=\footnotesize,gray,rotate=90] at (-5.4,2) {Abstrakter};
 \end{tikzpicture}
 \end{center}
 \vspace{0.3cm}
 \centering
-\small Jeder Layer = Attention + Dense. Frühe Layer sind noch verständlich.\\
-Späte Layer? Da wird es mysteriös.
-\end{frame}
-
-\begin{frame}{Nebeneffekt: ``nicht gut'' $\neq$ ``schlecht''}
-\begin{center}
-\begin{tikzpicture}[scale=0.9]
-\fill[accent3,opacity=0.05] (-1.5,-0.5) rectangle (5,3);
-% Points
-\node[circle,fill=neurongreen!60,inner sep=3pt,font=\footnotesize\bfseries] (gut) at (0,2.5) {gut};
-\node[circle,fill=accent1!60,inner sep=3pt,font=\footnotesize\bfseries] (schlecht) at (4.5,0.5) {schlecht};
-\node[circle,fill=neuronyellow!60,inner sep=2pt,font=\tiny] (nichtgut) at (0.6,2) {nicht gut};
-% Arrows
-\draw[->,thick,accent2] (gut) -- (nichtgut);
-\draw[->,thin,dashed,gray] (gut) -- (schlecht);
-\node[font=\tiny,gray,below,sloped] at (2.5,1.7) {erwartet};
-\end{tikzpicture}
-\end{center}
-\vspace{0.2cm}
-\small
-Attention bildet \textbf{gewichtete Summen} -- es mittelt zwischen Punkten. ``nicht'' verschiebt ``gut'' nur leicht. Es gibt keinen ``spring zum Gegenteil''-Mechanismus.
-\vspace{0.2cm}
-
-Das ist eines von vielen Beispielen, wo die Architektur Grenzen setzt: Negation, Zählen, exakte Logik -- alles schwierig für gewichtete Mittelwerte.
+\small Die genauen Grenzen sind flie\ss end und modellabhängig.\\
+Aber das Muster: \textbf{von konkret zu abstrakt} ist konsistent.
 \end{frame}
 
 % ============================================================
@@ -613,31 +641,41 @@ Das ist eines von vielen Beispielen, wo die Architektur Grenzen setzt: Negation,
 \begin{center}
 \begin{tikzpicture}[scale=0.8,>=Stealth]
 % Context
-\node[font=\small,gray] at (0,4) {Input: ``Die flauschige \_\_\_''};
+\node[font=\small,gray] at (0,5) {Input: ``Die flauschige \_\_\_''};
 % Final vector
-\node[circle,draw,thick,fill=accent3!30,minimum size=1.1cm,font=\tiny,align=center] (final) at (0,2.7) {Letzter\\Punkt};
-\node[font=\tiny,right=0.3cm,align=left,gray] at (final.east) {Enthält den gesamten\\Kontext aller Layer};
+\node[circle,draw,thick,fill=accent3!30,minimum size=1.3cm,font=\tiny,align=center] (final) at (0,3.5) {Letzter\\Vektor};
+\node[font=\scriptsize,right=0.4cm,align=left] at (final.east) {
+$\leftarrow$ Letzter Token-Vektor\\
+\phantom{$\leftarrow$} aus dem letzten Layer.\\
+\phantom{$\leftarrow$} Enthält den \textbf{gesamten}\\
+\phantom{$\leftarrow$} bisherigen Kontext.
+};
 % Arrow
-\draw[->,thick] (0,1.9) -- (0,1.2);
-\node[font=\footnotesize,right] at (0.2,1.55) {Skalarprodukt mit allen 100k Token-Embeddings};
+\draw[->,thick] (0,2.6) -- (0,1.8);
+\node[font=\footnotesize,align=center] at (0,2.2) {Skalarprodukt mit\\allen $\sim$100k Token-Embeddings};
 % Bar chart
-\draw[fill=neurongreen!60] (-3.5,0) rectangle (-2.3,-2);
-\draw[fill=neurongreen!40] (-2,0) rectangle (-0.8,-1.5);
-\draw[fill=neurongreen!25] (-0.5,0) rectangle (0.7,-0.9);
-\draw[fill=neurongreen!15] (1,0) rectangle (2.2,-0.5);
-\draw[fill=neurongreen!8] (2.5,0) rectangle (3.7,-0.3);
-\node[font=\tiny] at (-2.9,-2.3) {Katze 35\%};
-\node[font=\tiny] at (-1.4,-1.8) {Hund 22\%};
-\node[font=\tiny] at (0.1,-1.2) {Maus 10\%};
-\node[font=\tiny] at (1.6,-0.8) {Decke 5\%};
-\node[font=\tiny] at (3.1,-0.6) {... 28\%};
+\draw[fill=neurongreen!60] (-3.5,0.5) rectangle (-2.3,-1.5);
+\draw[fill=neurongreen!40] (-2,0.5) rectangle (-0.8,-1);
+\draw[fill=neurongreen!25] (-0.5,0.5) rectangle (0.7,-0.4);
+\draw[fill=neurongreen!15] (1,0.5) rectangle (2.2,0);
+\draw[fill=neurongreen!8] (2.5,0.5) rectangle (3.7,0.2);
+\node[font=\tiny] at (-2.9,-1.8) {Katze 35\%};
+\node[font=\tiny] at (-1.4,-1.3) {Hund 22\%};
+\node[font=\tiny] at (0.1,-0.7) {Maus 10\%};
+\node[font=\tiny] at (1.6,-0.3) {Decke 5\%};
+\node[font=\tiny] at (3.1,-0.1) {... 28\%};
+% Explanation
+\node[font=\small,align=center,gray] at (0,-2.8) {
+Attention und Dense Layer haben die Bedeutungen des\\
+\textbf{gesamten bisherigen Kontextes} in diesen einen Vektor gemischt.
+};
 \end{tikzpicture}
 \end{center}
 \end{frame}
 
 \begin{frame}{Sampling: Zufall und Kontrolle}
 \begin{columns}
-\begin{column}{0.5\textwidth}
+\begin{column}{0.45\textwidth}
 \textbf{Temperature:}
 \begin{itemize}
 \item Niedrig: Fast immer Top-Wort
@@ -648,15 +686,14 @@ Das ist eines von vielen Beispielen, wo die Architektur Grenzen setzt: Negation,
 \begin{itemize}
 \item Nur die besten K Wörter
 \item Rest wird ausgeschlossen
-\item Verhindert Unsinn
 \end{itemize}
 \vspace{0.3cm}
-\small Beides zusammen steuert wie ``kreativ'' vs. ``zuverlässig'' die KI antwortet.
+\small Beides steuert ``kreativ'' vs. ``zuverlässig''.
 \end{column}
-\begin{column}{0.5\textwidth}
-\begin{tikzpicture}[scale=0.6]
+\begin{column}{0.55\textwidth}
+\begin{tikzpicture}[scale=0.65]
 % Low temp
-\node[font=\footnotesize\bfseries] at (1.5,4.5) {Temp niedrig:};
+\node[font=\footnotesize\bfseries] at (1.5,4.8) {Temp niedrig:};
 \draw[fill=accent1!70] (0,0) rectangle (0.9,4);
 \draw[fill=accent1!30] (1.1,0) rectangle (2,1);
 \draw[fill=accent1!10] (2.2,0) rectangle (3.1,0.3);
@@ -664,10 +701,10 @@ Das ist eines von vielen Beispielen, wo die Architektur Grenzen setzt: Negation,
 \node[font=\tiny,below] at (1.55,0) {Hund};
 \node[font=\tiny,below] at (2.65,0) {Tisch};
 \end{tikzpicture}
-\vspace{0.2cm}
-\begin{tikzpicture}[scale=0.6]
+\vspace{0.3cm}
+\begin{tikzpicture}[scale=0.65]
 % High temp
-\node[font=\footnotesize\bfseries] at (1.5,4.5) {Temp hoch:};
+\node[font=\footnotesize\bfseries] at (1.5,4.8) {Temp hoch:};
 \draw[fill=accent2!60] (0,0) rectangle (0.9,2.2);
 \draw[fill=accent2!50] (1.1,0) rectangle (2,1.8);
 \draw[fill=accent2!35] (2.2,0) rectangle (3.1,1.3);
@@ -706,6 +743,10 @@ Wir kennen jeden Baustein. Wir kennen jedes Gewicht.\\[0.2cm]
 \small Wie ein Gehirn: Wir kennen die Neuronen, aber nicht die Gedanken.
 \end{frame}
 
+% ============================================================
+\section{Mechanistic Interpretability}
+% ============================================================
+
 \begin{frame}{Mechanistic Interpretability}
 \begin{center}
 \large Ein junges Forschungsfeld versucht,\\die gelernten Algorithmen zu entschlüsseln.
@@ -725,25 +766,18 @@ Wir kennen jeden Baustein. Wir kennen jedes Gewicht.\\[0.2cm]
 \begin{itemize}
 \item Ein verschwindend geringer Teil ist verstanden
 \item Aber: faszinierende Funde!
-\item Es funktioniert ``gut genug'' -- wir sehen nur nicht warum
+\item Es funktioniert -- wir sehen nur nicht warum
 \end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
 
-% ============================================================
-\section{Faszinierende Entdeckungen}
-% ============================================================
-
 \begin{frame}{Die Weltkarte im Netzwerk}
 % BILDPLATZHALTER: Hier das Bild aus dem Paper einfügen
 % Quelle: Gurnee & Tegmark (2023): "Language Models Represent Space and Time"
-% https://arxiv.org/abs/2310.02207 - Figure 1
-% Auch auf Twitter: https://twitter.com/wesg52/status/1709590673218875620
+% https://arxiv.org/abs/2310.02207
 \begin{center}
-% \includegraphics[width=0.6\textwidth]{world_map_embeddings.png}
-% Platzhalter-Grafik:
-\begin{tikzpicture}[scale=0.55]
+\begin{tikzpicture}[scale=0.6]
 \fill[accent3!8] (-7,-3.5) rectangle (7,3.5);
 \node[font=\normalsize\bfseries] at (0,4) {Städte-Embeddings aus einem LLM};
 \fill[accent1] (-4.5,2.2) circle (3pt) node[above,font=\tiny] {London};
@@ -754,7 +788,7 @@ Wir kennen jeden Baustein. Wir kennen jedes Gewicht.\\[0.2cm]
 \fill[neurongreen] (-0.5,-1.8) circle (3pt) node[below,font=\tiny] {Lagos};
 \fill[neurongreen] (0.8,-2) circle (3pt) node[below,font=\tiny] {Nairobi};
 \fill[neuronyellow] (-5.8,1.5) circle (3pt) node[left,font=\tiny] {New York};
-\fill[neuronyellow] (-5.5,-0.8) circle (3pt) node[left,font=\tiny] {S\~ao Paulo};
+\fill[neuronyellow] (-5.5,-0.8) circle (3pt) node[left,font=\tiny] {São Paulo};
 \fill[gray] (4,-2.5) circle (3pt) node[right,font=\tiny] {Sydney};
 \end{tikzpicture}
 \end{center}
@@ -762,81 +796,6 @@ Wir kennen jeden Baustein. Wir kennen jedes Gewicht.\\[0.2cm]
 \centering
 \small Das Modell hat \textbf{nie eine Karte gesehen}. Nur Text.\\
 Aber die effizienteste Art Entfernungen zu kodieren \emph{ist} eine Karte.
-\end{frame}
-
-\begin{frame}{Modular Addition: Das Netzwerk erfindet Mathe}
-% Quelle: Neel Nanda et al. (2023)
-% "Progress measures for grokking via mechanistic interpretability"
-% https://arxiv.org/abs/2301.05217
-% BILDPLATZHALTER: Figure aus dem Paper (Fourier-Komponenten)
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\textbf{Experiment:}\\
-Trainiere ein kleines Netzwerk auf:
-$$(a + b) \bmod 113$$
-\vspace{0.3cm}
-
-\textbf{Was Forscher im Inneren fanden:}
-\begin{itemize}
-\item Es stellt Zahlen als \textbf{Punkte auf einem Kreis} dar
-\item Addition = Rotation
-\item Es nutzt \textbf{Fourier-Transformation}
-\end{itemize}
-\vspace{0.2cm}
-Niemand hat ihm das beigebracht!\\
-Es hat den effizientesten Algorithmus \textbf{selbst entdeckt}.
-\end{column}
-\begin{column}{0.4\textwidth}
-\begin{tikzpicture}[scale=0.8]
-\draw[thick,accent3] (0,0) circle (2cm);
-\foreach \i in {0,12,...,108} {
-\fill[accent3,opacity=0.4] ({2*cos(\i*360/113)},{2*sin(\i*360/113)}) circle (1.5pt);
-}
-\fill[accent1] ({2*cos(30*360/113)},{2*sin(30*360/113)}) circle (4pt);
-\node[accent1,font=\footnotesize] at ({2.5*cos(30*360/113)},{2.5*sin(30*360/113)}) {$a$};
-\fill[accent2] ({2*cos(70*360/113)},{2*sin(70*360/113)}) circle (4pt);
-\node[accent2,font=\footnotesize] at ({2.5*cos(70*360/113)},{2.5*sin(70*360/113)}) {$b$};
-\fill[neuronyellow] ({2*cos(100*360/113)},{2*sin(100*360/113)}) circle (4pt);
-\node[neuronyellow,font=\footnotesize] at ({2.6*cos(100*360/113)},{2.6*sin(100*360/113)}) {$a{+}b$};
-\draw[->,thick,accent1!60,dashed] ({1.5*cos(30*360/113)},{1.5*sin(30*360/113)}) arc (30*360/113:100*360/113:1.5);
-\end{tikzpicture}
-\end{column}
-\end{columns}
-\end{frame}
-
-% BILDPLATZHALTER-FOLIE
-\begin{frame}{Weitere Visualisierungen}
-% Hier können weitere Bilder eingefügt werden:
-% 1. Attention-Heatmaps: https://github.com/jessevig/bertviz
-% 2. Neuron-Aktivierungen: Anthropic Blog "Scaling Monosemanticity"
-%    https://transformer-circuits.pub/2024/scaling-monosemanticity/
-% 3. Feature Visualization: https://distill.pub/2017/feature-visualization/
-% 4. Grokking-Kurve: Figure 1 aus arXiv:2301.05217
-\begin{center}
-\large\textbf{[Hier: Bilder aus der Forschung]}
-\vspace{0.5cm}
-
-\begin{columns}
-\begin{column}{0.3\textwidth}
-\centering
-% \includegraphics[width=\textwidth]{attention_heatmap.png}
-\tikz{\node[rectangle,draw,dashed,gray,minimum width=3cm,minimum height=2.5cm,align=center,font=\footnotesize]{Attention\\Heatmap};}\\[0.2cm]
-{\tiny BertViz / jessevig}
-\end{column}
-\begin{column}{0.3\textwidth}
-\centering
-% \includegraphics[width=\textwidth]{neuron_features.png}
-\tikz{\node[rectangle,draw,dashed,gray,minimum width=3cm,minimum height=2.5cm,align=center,font=\footnotesize]{Neuron\\Features};}\\[0.2cm]
-{\tiny Anthropic Blog}
-\end{column}
-\begin{column}{0.3\textwidth}
-\centering
-% \includegraphics[width=\textwidth]{grokking_curve.png}
-\tikz{\node[rectangle,draw,dashed,gray,minimum width=3cm,minimum height=2.5cm,align=center,font=\footnotesize]{Grokking\\Kurve};}\\[0.2cm]
-{\tiny Neel Nanda et al.}
-\end{column}
-\end{columns}
-\end{center}
 \end{frame}
 
 \begin{frame}{Was wir wissen -- und was nicht}
@@ -875,14 +834,14 @@ Wir verstehen einen verschwindend geringen Teil davon.\\
 
 \begin{frame}{Der komplette Weg}
 \begin{center}
-\begin{tikzpicture}[scale=0.6,>=Stealth,
-step/.style={rectangle,draw,rounded corners,minimum width=6cm,minimum height=0.6cm,font=\footnotesize,align=center}]
-\node[step,fill=accent5!30] (s1) at (0,6.5) {Text $\rightarrow$ Tokens (Silben-Stücke)};
-\node[step,fill=accent4!30] (s2) at (0,5.2) {Tokens $\rightarrow$ Punkte im Raum (+ Position)};
-\node[step,fill=accent3!20] (s3) at (0,3.9) {Attention: Punkte schauen sich gegenseitig an};
-\node[step,fill=accent2!20] (s4) at (0,2.6) {Dense+ReLU: Punkte werden verschoben};
-\node[step,fill=gray!15] (s5) at (0,1.3) {Wiederhole Attention+Dense viele Male};
-\node[step,fill=accent1!20] (s6) at (0,0) {Letzter Punkt $\rightarrow$ Vergleich $\rightarrow$ nächstes Wort};
+\begin{tikzpicture}[scale=0.65,>=Stealth,
+step/.style={rectangle,draw,rounded corners,minimum width=7cm,minimum height=0.6cm,font=\footnotesize,align=center}]
+\node[step,fill=accent5!30] (s1) at (0,7) {Text $\rightarrow$ Tokens (Silben-Stücke)};
+\node[step,fill=accent4!30] (s2) at (0,5.7) {Tokens $\rightarrow$ Punkte im Embedding Space (+ Position)};
+\node[step,fill=accent3!20] (s3) at (0,4.4) {Attention: Punkte tauschen Info aus (Residual Stream)};
+\node[step,fill=accent2!20] (s4) at (0,3.1) {Dense+ReLU: Punkte werden verschoben};
+\node[step,fill=gray!15] (s5) at (0,1.8) {Wiederhole Attention+Dense viele Male};
+\node[step,fill=accent1!20] (s6) at (0,0.5) {Letzter Vektor $\times$ alle Embeddings $\rightarrow$ nächstes Wort};
 \draw[->,thick] (s1) -- (s2);
 \draw[->,thick] (s2) -- (s3);
 \draw[->,thick] (s3) -- (s4);
@@ -897,15 +856,15 @@ step/.style={rectangle,draw,rounded corners,minimum width=6cm,minimum height=0.6
 
 \begin{frame}{Was wir mitnehmen}
 \begin{enumerate}
-\item \textbf{Tokens:} KI liest in Silben-Stücken
+\item \textbf{Embedding Space:} Wörter sind Punkte -- Bedeutung ist Geometrie
 \item \textbf{Dense + ReLU:} Kann mit genug Neuronen alles berechnen
-\item \textbf{Attention:} Lässt Wörter miteinander kommunizieren
-\item \textbf{Layer:} Frühe = einfach, späte = abstrakt und mysteriös
+\item \textbf{Tokens:} KI liest in Silben-Stücken, nicht in Buchstaben
+\item \textbf{Attention:} Verbindet Wörter über beliebige Distanzen
+\item \textbf{Residual Stream:} Globales Notizbuch, in das alle Layer schreiben
 \item \textbf{Vorhersage:} Immer nur das nächste Wort
-\item \textbf{Emergenz:} Weltkarten, Mathe-Algorithmen entstehen von selbst
 \item \textbf{Black Box:} Wir verstehen fast nichts vom Innenleben -- noch nicht
 \end{enumerate}
-\vspace{0.5cm}
+\vspace{0.4cm}
 \centering
 \tikz{\node[fill=accent3!15,rounded corners,inner sep=8pt,font=\normalsize,align=center]{
 Einfache Bausteine. Unglaubliches Ergebnis.\\
