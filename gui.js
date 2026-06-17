@@ -4264,17 +4264,6 @@ function sources_popup() {
 	open_popup("sources_popup");
 }
 
-function losses_popup() {
-	if ($("#explanation").children().length == 0) {
-		add_loss_functions_to_plotly_visualizer();
-	}
-	open_popup("losses_popup");
-}
-
-function close_losses() {
-	close_popup("losses_popup");
-}
-
 async function manage_download() {
 	if(!get_cookie("session_id") === null) {
 		await save_model();
@@ -6272,143 +6261,6 @@ function check_number_values() {
 			enable_train();
 		}
 	}
-}
-
-function plotly_show_loss_graph() {
-	try {
-		tidy(() => {
-			var y_true_table = [];
-			$(".data_table_y_true").each((i, x) => {
-				y_true_table[i] = [i, parse_float($(x).val())];
-			});
-
-			var y_pred_table = [];
-			$(".data_table_y_pred").each((i, x) => {
-				y_pred_table[i] = [i, parse_float($(x).val())];
-			});
-
-			var y_true = tensor2d(y_true_table);
-			var y_pred = tensor2d(y_pred_table);
-
-			var trace1 = {
-				x: array_sync(y_true).map(x => x[0]),
-				y: array_sync(y_true).map(x => x[1]),
-				mode: "markers",
-				type: "scatter",
-				name: "Ground Truth"
-			};
-
-			var trace2 = {
-				x: array_sync(y_pred).map(x => x[0]),
-				y: array_sync(y_pred).map(x => x[1]),
-				mode: "markers",
-				type: "scatter",
-				name: "Prediction"
-			};
-
-			var plot_data = [trace1, trace2];
-
-			var data = [
-				{ "name": "meanAbsoluteError", "fn": tf_metrics_meanAbsoluteError },
-				{ "name": "meanSquaredError", "fn": tf_metrics_meanSquaredError },
-				{ "name": "meanAbsolutePercentageError", "fn": tf_metrics_meanAbsolutePercentageError },
-				{ "name": "precision", "fn": tf_metrics_precision },
-				{ "name": "cosineProximity", "fn": tf_metrics_cosineProximity },
-				{ "name": "binaryCrossentropy", "fn": tf_metrics_binaryCrossentropy },
-				{ "name": "binaryAccuracy", "fn": tf_metrics_binaryAccuracy },
-				{ "name": "categoricalCrossentropy", "fn": tf_metrics_categoricalCrossentropy },
-				{ "name": "categoricalAccuracy", "fn": tf_metrics_categoricalAccuracy },
-			];
-
-			for (var data_idx = 0; data_idx < data.length; data_idx++) {
-				var fn = data[data_idx]["fn"];
-				var name = data[data_idx]["name"];
-
-				tidy(() => {
-					var loss = fn(y_true, y_pred);
-
-					plot_data.push({
-						x: array_sync(y_pred).map(x => x[0]),
-						y: array_sync(loss),
-						mode: "lines",
-						type: "scatter",
-						name: name
-					});
-				});
-			}
-
-			Plotly.newPlot("explanation", plot_data);
-		});
-	} catch (e) {
-		if(Object.keys(e).includes("message")) {
-			e = e.message;
-		}
-
-		assert(false, e);
-	}
-
-	write_descriptions(); // cannot be async
-
-}
-
-function add_row_to_plotly_loss() {
-	$("#data_table tbody tr:last").clone().insertAfter("#data_table tbody tr:last");
-
-	plotly_show_loss_graph();
-
-	if ($($($($("#table_div").children()[0])[0]).children()[0]).children().length > 3) {
-		$(".delete_row").prop("disabled", false);
-	} else {
-		$(".delete_row").prop("disabled", true);
-	}
-
-	write_descriptions(); // cannot be async
-}
-
-function remove_plotly_table_element(item) {
-	var item_parent_parent = $(item).parent().parent();
-	if (item_parent_parent.parent().children().length <= 4) {
-		$(".delete_row").prop("disabled", true);
-	} else {
-		$(".delete_row").prop("disabled", false);
-	}
-	item_parent_parent.remove();
-	plotly_show_loss_graph();
-
-}
-
-function create_plotly_table() {
-	var str = "<table id=\"data_table\" border=1 style=\"border-collapse: collapse;\">" +
-		"	<tr>" +
-		"		<th>Y true</th>" +
-		"		<th>Y pred</th>" +
-		"		<th>Delete</th>" +
-		"	</tr>" +
-		"	<tr>" +
-		"		<td colspan=3><button onclick=\"add_row_to_plotly_loss()\">Add new data</button></td>" +
-		"	</tr>";
-
-	for (var example_plotly_data_idx = 0; example_plotly_data_idx < example_plotly_data.length; example_plotly_data_idx++) {
-		str += "	<tr>" +
-			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_true" value="${example_plotly_data[example_plotly_data_idx][0]}" /></td>` +
-			`		<td><input onkeyup="plotly_show_loss_graph()" onchange="plotly_show_loss_graph()" type="number" class="data_table_y_pred" value="${example_plotly_data[example_plotly_data_idx][1]}" /></td>` +
-			"		<td>" +
-			"			<button class='delete_row' onclick=\"remove_plotly_table_element(this)\">&#10060;</button>" +
-			"		</td>" +
-			"	</tr>";
-	}
-
-	str += "</table>";
-
-	$("#table_div").html(str);
-
-	write_descriptions(); // cannot be async
-
-}
-
-function add_loss_functions_to_plotly_visualizer() {
-	create_plotly_table();
-	plotly_show_loss_graph();
 }
 
 function set_cookie(name, value, days = 365) {
@@ -9265,5 +9117,4 @@ function close_popups() {
 	close_popup('save_model_dialog');
 	close_popup('upload_dialog');
 	close_popup('sources_popup');
-	close_popup("losses_popup");
 }
