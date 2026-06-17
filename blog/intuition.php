@@ -1,5 +1,11 @@
 <?php include_once("functions.php"); ?>
 
+<!--
+TODO:
+
+Intuition Dense Relu Dense
+-->
+
 <div class="md">
 We can think of LLMs as machines that predict the next most likely word, given a context. Only one word at a time. That word is appended to the input and fed back in, repeating until a special `|endoftext|` token signals the end. In this example, the user enters the text "Once upon a" and lets the LLM continue.
 
