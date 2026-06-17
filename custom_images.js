@@ -108,19 +108,37 @@ function get_upload_container_index() {
 
 async function delete_category(item, uuid) {
 	var category_nr = get_category_nr(item);
+	var $container = $($(".own_image_upload_container")[category_nr]);
 
-	$($(".own_image_upload_container")[category_nr]).remove();
+	// Animate out with buttery-smooth transition
+	$container.css({
+		'transition': 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+		'opacity': '0',
+		'transform': 'scale(0.95) translateY(-8px)',
+		'max-height': $container.outerHeight() + 'px',
+		'overflow': 'hidden'
+	});
+
+	// Collapse height after fade
+	setTimeout(function() {
+		$container.css({
+			'max-height': '0',
+			'padding': '0 24px',
+			'margin-bottom': '0',
+			'border-color': 'transparent'
+		});
+	}, 200);
+
+	// Remove after animation completes
+	await new Promise(resolve => setTimeout(resolve, 500));
+	$container.remove();
 
 	auto_adjust_number_of_neurons($(".own_image_label").length);
-
 	show_or_hide_hide_delete_category();
-
 	enable_train_if_has_custom_images();
-
 	await rename_labels();
 
 	$("#save_button_" + uuid).remove();
-
 	add_label_sidebar();
 }
 
