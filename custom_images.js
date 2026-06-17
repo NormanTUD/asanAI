@@ -72,7 +72,19 @@ function create_images_div(n) {
 function update_image_counters() {
 	$(".own_image_upload_container").each(function(i, container) {
 		var count = $(container).find(".own_image_span").length;
-		$(container).find(".own_images_count").text(count);
+		var $countEl = $(container).find(".own_images_count");
+		var prevCount = parseInt($countEl.text()) || 0;
+
+		if (prevCount !== count) {
+			$countEl.css({
+				'transform': 'scale(1.3)',
+				'transition': 'transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)'
+			});
+			setTimeout(function() {
+				$countEl.text(count);
+				$countEl.css('transform', 'scale(1)');
+			}, 150);
+		}
 	});
 }
 
