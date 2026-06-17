@@ -4,7 +4,7 @@ function _get_placeholder_prediction_table() {
 	if (labels.length === 0) return "";
 	var html = "<table class='predict_table'><tbody>";
 	for (var i = 0; i < labels.length; i++) {
-		html += "<tr><td class='label_element'>" + labels[i] + "</td><td><span class='bar'><span style='width: 0px'></span></span></td></tr>";
+		html += "<tr><td class='label_element'>" + labels[i] + "</td><td>" + _create_bar_html(0, false) + "</td></tr>";
 	}
 	html += "</tbody></table>";
 	return html;
@@ -623,17 +623,15 @@ async function _predict_table(predictions_tensor, desc) {
 	}
 }
 
-function _predict_table_row (label, w, max_i, probability, predictions_idx) {
+function _predict_table_row(label, w, max_i, probability, predictions_idx) {
 	var str = "";
-	if(show_bars_instead_of_numbers()) {
-		str = `<tr><td class='label_element'>${label}</td><td><span class='bar'><span style='width: ${w}px'></span></span></td></tr>`;
-		if(predictions_idx == max_i && get_show_green()) {
-			//str = "<b class='best_result'>" + str + "</b>";
-			str = `<tr><td class='label_element'>${label}</td><td><span class='bar'><span class='highest_bar' style='width: ${w}px'></span></span></td></tr>`;
-		}
+	if (show_bars_instead_of_numbers()) {
+		var isHighest = predictions_idx == max_i && get_show_green();
+		var bar = _create_bar_html(w, isHighest);
+		str = `<tr><td class='label_element'>${label}</td><td>${bar}</td></tr>`;
 	} else {
 		str = "<tr><td class='label_element'>" + label + "</td><td>" + probability + "</td></tr>";
-		if(predictions_idx == max_i && get_show_green()) {
+		if (predictions_idx == max_i && get_show_green()) {
 			str = `<tr><td class='label_element'>${label}</td><td><b class='best_result label_input_element'>${probability}</b></td></tr>`;
 		}
 	}
@@ -1441,7 +1439,7 @@ async function _print_example_predictions () {
 	return count;
 }
 
-async function _get_example_string_image (examples, count, full_dir) {
+async function _get_example_string_image(examples, count, full_dir) {
 	assert(typeof(examples) == "object", "examples is not an object");
 	assert(typeof(count) == "number", "count is not a number");
 	assert(typeof(full_dir) == "string", "full_dir is not a string");
@@ -1451,7 +1449,7 @@ async function _get_example_string_image (examples, count, full_dir) {
 	if (labels.length > 0) {
 		placeholder_table = "<table class='predict_table'><tbody>";
 		for (var lbl_idx = 0; lbl_idx < labels.length; lbl_idx++) {
-			placeholder_table += "<tr><td class='label_element'>" + labels[lbl_idx] + "</td><td><span class='bar'><span style='width: 0px'></span></span></td></tr>";
+			placeholder_table += "<tr><td class='label_element'>" + labels[lbl_idx] + "</td><td>" + _create_bar_html(0, false) + "</td></tr>";
 		}
 		placeholder_table += "</tbody></table>";
 	}
@@ -1462,14 +1460,14 @@ async function _get_example_string_image (examples, count, full_dir) {
 		var img_url = full_dir + "/" + examples[examples_idx];
 		var img_elem = $("img[src$='" + img_url + "']");
 
-		if(img_elem.length) {
+		if (img_elem.length) {
 			try {
 				var img = img_elem;
-				if(Object.keys(img).includes("0")) {
+				if (Object.keys(img).includes("0")) {
 					img = img_elem[0];
 				}
 
-				if($(img).is(":visible")) {
+				if ($(img).is(":visible")) {
 					await predict_demo(img, examples_idx);
 				}
 			} catch (e) {
@@ -1827,7 +1825,7 @@ async function _predict_webcam_html(predictions, webcam_prediction, max_i) {
 	}
 }
 
-function _webcam_prediction_row (predictions_idx, predictions, max_i) {
+function _webcam_prediction_row(predictions_idx, predictions, max_i) {
 	assert(typeof(predictions_idx) == "number", "predictions_idx is not a number");
 	assert(typeof(max_i) == "number", "max_i is not a number");
 	assert(typeof(predictions) == "object", "predictions is not an object");
@@ -1841,20 +1839,17 @@ function _webcam_prediction_row (predictions_idx, predictions, max_i) {
 
 		var w = Math.floor(probability * 50);
 
-		let classes = [];
 		let content;
 
-		if(show_bars_instead_of_numbers()) {
-			if(predictions_idx == max_i) {
-				classes.push("highest_bar");
-			}
-			content = `<span class='bar'><span${classes.length ? ` class='${classes.join(" ")}'` : ""} style='width: ${w}px'></span></span>`;
+		if (show_bars_instead_of_numbers()) {
+			var isHighest = predictions_idx == max_i;
+			content = _create_bar_html(w, isHighest);
 		} else {
 			let prob_text = (probability * 50);
-			if(get_last_layer_activation_function() == "softmax") {
+			if (get_last_layer_activation_function() == "softmax") {
 				prob_text += "%";
 			}
-			if(predictions_idx == max_i) prob_text = `<b class='best_result'>${prob_text}</b>`;
+			if (predictions_idx == max_i) prob_text = `<b class='best_result'>${prob_text}</b>`;
 			content = prob_text;
 		}
 
@@ -1903,7 +1898,7 @@ function tensor_shape_matches_model (_tensor, m = model) {
 	}
 }
 
-function draw_bars_or_numbers (predictions_idx, predictions, max) {
+function draw_bars_or_numbers(predictions_idx, predictions, max) {
 	try {
 		var label = labels[predictions_idx % labels.length];
 		var val = predictions[0][predictions_idx];
@@ -1912,19 +1907,13 @@ function draw_bars_or_numbers (predictions_idx, predictions, max) {
 		var html = "";
 
 		let cell_content;
-		let classes = [];
+		var isHighest = val == max;
 
-		if(val == max) {
-			classes.push("highest_bar");
-		}
-
-		if(show_bars_instead_of_numbers()) {
-			let bar_style = `width: ${w}px`;
-			let inner_span = `<span${classes.length ? ` class='${classes.join(" ")}'` : ""} style='${bar_style}'></span>`;
-			let bar_span = `<span class='bar'>${inner_span}</span>`;
-			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar_span}</td>` : `<td>${bar_span}</td>`;
+		if (show_bars_instead_of_numbers()) {
+			var bar = _create_bar_html(w, isHighest);
+			cell_content = label ? `<td class='label_element'>${label}</td><td>${bar}</td>` : `<td>${bar}</td>`;
 		} else {
-			let value_text = val == max ? `<b class='best_result'>${predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
+			let value_text = isHighest ? `<b class='best_result'>${predictions[0][predictions_idx]}</b>` : (label ? predictions[0][predictions_idx] : predictions[0][predictions_idx]);
 			cell_content = label ? `<td class='label_element'>${label}</td><td>${value_text}</td>` : `<td>${value_text}</td>`;
 		}
 
@@ -2337,4 +2326,13 @@ function _is_valid_pixels_source(input) {
     }
 
     return false;
+}
+
+function _create_bar_html(width, isHighest) {
+	var classes = [];
+	if (isHighest) {
+		classes.push("highest_bar");
+	}
+	var classAttr = classes.length ? ` class='${classes.join(" ")}'` : "";
+	return `<span class='bar'><span${classAttr} style='width: ${width}px'></span></span>`;
 }
