@@ -583,7 +583,7 @@ function get_show_green () {
 }
 
 async function _predict_table(predictions_tensor, desc) {
-	if(!predictions_tensor) {
+	if (!predictions_tensor) {
 		wrn("[_predict_table] predictions_tensor was empty");
 		return;
 	}
@@ -591,32 +591,35 @@ async function _predict_table(predictions_tensor, desc) {
 	try {
 		var predictions = tidy(() => { return predictions_tensor.dataSync(); });
 
-		if(predictions.length) {
+		if (predictions.length) {
 			var max_i = 0;
-			var max_probability = -9999999;
+			var max_probability = -Infinity;
 
-			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
-				let probability = predictions[predictions_idx];
-				if(probability > max_probability) {
-					max_probability = probability;
-					max_i = predictions_idx;
+			for (let i = 0; i < predictions.length; i++) {
+				if (predictions[i] > max_probability) {
+					max_probability = predictions[i];
+					max_i = i;
 				}
 			}
 
-			var fullstr = "";
+			var fullstr = "<div class='predict-table-wrapper glass-panel animate-fade-in'>";
+			fullstr += "<table class='predict_table' role='grid' aria-label='Prediction results'>";
+			fullstr += "<tbody>";
 
-			fullstr += "<table class='predict_table'>";
-
-			for (let predictions_idx = 0; predictions_idx < predictions.length; predictions_idx++) {
-				var label = labels[predictions_idx % labels.length];
-				let probability = predictions[predictions_idx];
+			for (let i = 0; i < predictions.length; i++) {
+				var label = labels[i % labels.length];
+				var probability = predictions[i];
 				var w = Math.floor(probability * 50);
+				var staggerDelay = (i * 40); // ms stagger for entrance
 
-				fullstr += _predict_table_row(label, w, max_i, probability, predictions_idx);
+				fullstr += `<tr class='predict-row animate-slide-up' style='animation-delay: ${staggerDelay}ms;'>`;
+				fullstr += _predict_table_row(label, w, max_i, probability, i);
+				fullstr += "</tr>";
 			}
 
-			fullstr += "</table>";
-			if(desc) {
+			fullstr += "</tbody></table></div>";
+
+			if (desc) {
 				desc.html(fullstr);
 			}
 		}
