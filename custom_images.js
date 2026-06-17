@@ -24,7 +24,49 @@ function setup_drawing_board(n, uuid, label_nr) {
 }
 
 function create_images_div(n) {
-	$(`<div class="own_images_counter"><span class="TRANSLATEME_nr_of_images_in_this_category"></span>: <span class="own_images_count">0</span></div><div class="own_images"></div>`).appendTo($(".own_image_upload_container")[n]);
+	$(`
+		<div class="own_images_counter"
+			style="
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				padding: 6px 14px;
+				margin: 12px 0 8px 0;
+				background: rgba(0, 122, 255, 0.06);
+				border-radius: 20px;
+				font-size: 12px;
+				font-weight: 600;
+				letter-spacing: 0.02em;
+				color: #007AFF;
+				transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+			">
+			<span class="TRANSLATEME_nr_of_images_in_this_category"></span>:
+			<span class="own_images_count"
+				style="
+					background: #007AFF;
+					color: white;
+					border-radius: 10px;
+					padding: 1px 8px;
+					font-size: 11px;
+					font-weight: 700;
+					min-width: 20px;
+					text-align: center;
+					transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+				">0</span>
+		</div>
+		<div class="own_images"
+			style="
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+				gap: 10px;
+				padding: 12px;
+				border-radius: 12px;
+				background: rgba(0, 0, 0, 0.02);
+				min-height: 60px;
+				transition: all 0.3s ease;
+			">
+		</div>
+	`).appendTo($(".own_image_upload_container")[n]);
 }
 
 function update_image_counters() {
