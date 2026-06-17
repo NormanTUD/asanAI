@@ -239,62 +239,492 @@ function assertType(value, type, msg) {
 	if (typeof value !== type) throw new Error(msg);
 }
 
-function createImageElement(url, height, width) {
-	const img = document.createElement("img");
-	img.src = url;
-	if (height) img.height = height;
-	if (width) img.width = width;
-	img.className = "class_download_img";
-	img.onclick = () => predict_data_img(img, "image"); // await not possible here
-	return img;
+// ============ PERFORMANCE CONSTANTS ============
+const CANVAS_RENDER_BATCH_SIZE = 12;
+const CANVAS_RENDER_DELAY = 0; // single rAF yield
+
+// ============ FIXED: add_tensor_as_image_to_photos ============
+// Problem: Appends canvas to DOM then immediately draws — triggers reflow per image.
+// Fix: Batch canvas creation off-DOM, draw to them off-DOM, then append all at once.
+
+if (!window._canvas_render_queue) window._canvas_render_queue = [];
+if (!window._canvas_render_timer) window._canvas_render_timer = null;
+
+function add_tensor_as_image_to_photos(_tensor) {
+    assert(typeof(_tensor) == "object", "_tensor must be an object");
+    assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
+    assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");
+
+    if (_tensor.shape.length == 4) {
+        if (_tensor.shape[0] == 1) {
+            _tensor = tensor(array_sync(_tensor)[0]);
+        } else {
+            for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
+                var this_tensor = tensor(array_sync(_tensor)[tensor_idx]);
+                add_tensor_as_image_to_photos(this_tensor);
+            }
+            return;
+        }
+    }
+
+    // Normalize tensor values for display
+    var display_tensor = tidy(() => {
+        let t = _tensor;
+        var min_in_tensor = array_sync(min(t));
+        if (min_in_tensor < 0) {
+            t = _tf_sub(t, min_in_tensor);
+        }
+        var max_in_tensor = array_sync(max(t));
+        if (max_in_tensor != 0) {
+            t = tf_div(t, max_in_tensor);
+        }
+        return t.clone();
+    });
+
+    // Create canvas OFF-DOM (no reflow triggered)
+    var uuid = uuidv4();
+    var id = "augmented_photo_" + uuid;
+    var canvas = document.createElement("canvas");
+    canvas.id = id;
+
+    // Queue the render task — we'll batch-append and batch-draw
+    window._canvas_render_queue.push({ canvas: canvas, tensor: display_tensor });
+
+    // Schedule flush
+    if (!window._canvas_render_timer) {
+        window._canvas_render_timer = requestAnimationFrame(_flush_canvas_render_queue);
+    }
 }
 
-var _photos_container_visible = undefined;
-function showPhotosContainer() {
-	const container = $("#photoscontainer");
-	if (_photos_container_visible === undefined) {
-		_photos_container_visible = container.css("display") !== "none";
-	}
-	if (!_photos_container_visible) {
-		container.show();
-		_photos_container_visible = true;
-	}
+function _flush_canvas_render_queue() {
+    window._canvas_render_timer = null;
+
+    var queue = window._canvas_render_queue;
+    if (!queue || !queue.length) return;
+
+    // Take a batch
+    var batch = queue.splice(0, CANVAS_RENDER_BATCH_SIZE);
+
+    // Step 1: Append all canvases to DOM in one operation using DocumentFragment
+    var photos = document.getElementById("photos");
+    if (!photos) {
+        // If photos element doesn't exist, just dispose tensors and bail
+        batch.forEach(item => {
+            try { dispose(item.tensor); } catch(e) {}
+        });
+        return;
+    }
+
+    var frag = document.createDocumentFragment();
+    batch.forEach(item => frag.appendChild(item.canvas));
+
+    // Single DOM write — one reflow for the entire batch
+    photos.appendChild(frag);
+
+    // Step 2: Draw to canvases AFTER the single reflow
+    // Use a microtask to ensure the layout is settled
+    _draw_canvas_batch(batch, 0);
+
+    // If more items remain, schedule next batch on next frame
+    if (window._canvas_render_queue.length > 0) {
+        window._canvas_render_timer = requestAnimationFrame(_flush_canvas_render_queue);
+    }
 }
+
+function _draw_canvas_batch(batch, index) {
+    if (index >= batch.length) return;
+
+    var item = batch[index];
+    try {
+        toPixels(item.tensor, item.canvas).then(() => {
+            try { dispose(item.tensor); } catch(e) {}
+            // Draw next one — stagger slightly to avoid jank
+            if (index + 1 < batch.length) {
+                _draw_canvas_batch(batch, index + 1);
+            }
+        }).catch((e) => {
+            // Fallback: try sync-style, log error
+            try {
+                console.warn("toPixels failed for canvas:", item.canvas.id, e);
+                dispose(item.tensor);
+            } catch(ex) {}
+            _draw_canvas_batch(batch, index + 1);
+        });
+    } catch (e) {
+        console.warn("Shape error:", item.tensor.shape);
+        try { item.tensor.print(); } catch(ex) {}
+        try { dispose(item.tensor); } catch(ex) {}
+        _draw_canvas_batch(batch, index + 1);
+    }
+}
+
+// Force-flush all pending canvas renders (call before operations that need all images visible)
+function flush_all_canvas_renders() {
+    return new Promise((resolve) => {
+        if (!window._canvas_render_queue || window._canvas_render_queue.length === 0) {
+            resolve();
+            return;
+        }
+
+        function checkDone() {
+            if (!window._canvas_render_queue || window._canvas_render_queue.length === 0) {
+                resolve();
+            } else {
+                requestAnimationFrame(checkDone);
+            }
+        }
+
+        // Trigger immediate flush
+        if (window._canvas_render_timer) {
+            cancelAnimationFrame(window._canvas_render_timer);
+            window._canvas_render_timer = null;
+        }
+        _flush_canvas_render_queue();
+        requestAnimationFrame(checkDone);
+    });
+}
+
+
+// ============ FIXED: show_data_after_loading ============
+// Problem: Appends canvases in a loop and draws to each immediately.
+// Fix: Create all canvases off-DOM, append in one batch, then draw.
+
+function show_data_after_loading(xy_data, x, divide_by) {
+    if (xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
+        var photos = document.getElementById("photos");
+        if (!photos) return;
+
+        $("#photos").show();
+
+        var frag = document.createDocumentFragment();
+        var canvasItems = [];
+
+        for (var xy_data_idx = 0; xy_data_idx < xy_data.x.shape[0]; xy_data_idx++) {
+            var canvas = document.createElement("canvas");
+            canvas.id = "custom_training_data_img_" + xy_data_idx;
+            frag.appendChild(canvas);
+            canvasItems.push({ canvas: canvas, colors: x[xy_data_idx] });
+        }
+
+        // Single DOM write
+        photos.appendChild(frag);
+
+        // Draw after layout settles — use rAF to batch
+        requestAnimationFrame(() => {
+            _draw_grid_batch(canvasItems, 0);
+        });
+    }
+}
+
+function _draw_grid_batch(items, index) {
+    if (index >= items.length) return;
+
+    // Draw a small batch per frame to avoid jank
+    var end = Math.min(index + CANVAS_RENDER_BATCH_SIZE, items.length);
+    for (var i = index; i < end; i++) {
+        var item = items[i];
+        draw_grid(item.canvas, 1, item.colors, null, null, null, null, "");
+    }
+
+    if (end < items.length) {
+        requestAnimationFrame(() => _draw_grid_batch(items, end));
+    }
+}
+
+
+// ============ FIXED: addPhotoToGallery (already batched, but improved) ============
+// The existing queue_image_dom_append is good. Ensure it uses rAF for flush timing.
 
 function queue_image_dom_append(img) {
-	return new Promise((resolve) => {
-		window._perf_helpers.dom_pending.push({ img, resolve });
-		if (window._perf_helpers.dom_pending.length >= DOM_BATCH_SIZE) {
-			_flush_dom_batch();
-			return;
-		}
-		if (window._perf_helpers.dom_timer) return;
-		window._perf_helpers.dom_timer = setTimeout(() => {
-			_flush_dom_batch();
-		}, DOM_BATCH_TIMEOUT);
-	});
+    return new Promise((resolve) => {
+        window._perf_helpers.dom_pending.push({ img, resolve });
+        if (window._perf_helpers.dom_pending.length >= DOM_BATCH_SIZE) {
+            _flush_dom_batch();
+            return;
+        }
+        if (window._perf_helpers.dom_timer) return;
+        // Use rAF instead of setTimeout for smoother batching
+        window._perf_helpers.dom_timer = requestAnimationFrame(() => {
+            _flush_dom_batch();
+        });
+    });
 }
 
 function _flush_dom_batch() {
-	const pending = window._perf_helpers.dom_pending;
-	if (!pending || !pending.length) {
-		clearTimeout(window._perf_helpers.dom_timer);
-		window._perf_helpers.dom_timer = null;
-		return;
-	}
-	window._perf_helpers.dom_pending = [];
-	clearTimeout(window._perf_helpers.dom_timer);
-	window._perf_helpers.dom_timer = null;
+    const pending = window._perf_helpers.dom_pending;
+    if (!pending || !pending.length) {
+        if (window._perf_helpers.dom_timer) {
+            cancelAnimationFrame(window._perf_helpers.dom_timer);
+            window._perf_helpers.dom_timer = null;
+        }
+        return;
+    }
+    window._perf_helpers.dom_pending = [];
+    if (window._perf_helpers.dom_timer) {
+        cancelAnimationFrame(window._perf_helpers.dom_timer);
+        window._perf_helpers.dom_timer = null;
+    }
 
-	const photos = $("#photos")[0];
-	const frag = document.createDocumentFragment();
-	pending.forEach(p => frag.appendChild(p.img));
-	photos.appendChild(frag);
+    const photos = document.getElementById("photos");
+    if (!photos) {
+        pending.forEach(p => { try { p.resolve(true); } catch(e) {} });
+        return;
+    }
 
-	pending.forEach(p => {
-		try { p.resolve(true); } catch (e) { /* ignore */ }
-	});
+    const frag = document.createDocumentFragment();
+    pending.forEach(p => frag.appendChild(p.img));
+    photos.appendChild(frag);
+
+    // Resolve all after single DOM write
+    pending.forEach(p => {
+        try { p.resolve(true); } catch (e) { /* ignore */ }
+    });
 }
+
+
+// ============ FIXED: add_photo_to_gallery (legacy single-append version) ============
+// Problem: Direct appendChild per image = reflow per image.
+// Fix: Route through the batching system.
+
+function add_photo_to_gallery(url) {
+    assertType(url, "string", "add_photo_to_gallery expects a string");
+    showPhotosContainer();
+    const img = createImageElement(url, height, width);
+    // Use the batched append instead of direct appendChild
+    queue_image_dom_append(img);
+}
+
+
+// ============ FIXED: get_images_force_download ============
+// Ensure we flush all pending DOM operations at the end.
+
+// ============ FIXED: get_images_force_download ============
+// FIX: Declare "images" with var
+
+async function get_images_force_download() {
+    var old_force_download = force_download;
+
+    enable_force_download();
+
+    var images = await download_image_data(0);  // <-- already has "var" but confirming
+
+    if (images.length == 0) {
+        err("Could not find image data");
+    }
+
+    set_force_download(old_force_download);
+
+    await reset_labels();
+
+    // Ensure all batched DOM operations and canvas renders are flushed
+    _flush_dom_batch();
+    await flush_all_canvas_renders();
+
+    return images;
+}
+
+
+// ============ FIXED: download_image_data ============
+// Added: contain/hide #photos during bulk operations to prevent per-append reflow,
+// then show at end. Also ensure proper cleanup of pending queues.
+
+// ============ FIXED: download_image_data ============
+// REMOVED: contentVisibility: "hidden" (was causing "all at once" appearance)
+// REPLACED WITH: CSS containment that still allows progressive rendering
+
+async function download_image_data(skip_real_image_download = 0, dont_show_swal = 0, ignoreme = null, dont_load_into_tf = 0, force_no_download = 0) {
+    assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined");
+
+    const divide_by = parse_float($("#divide_by").val());
+
+    if ((started_training || force_download) && !force_no_download) {
+        dbg("Resetting photos element");
+        $("#photos").html("");
+        window._perf_helpers.dom_pending = [];
+        window._canvas_render_queue = [];
+    }
+
+    headerdatadebug("download_image_data()");
+    show_or_hide_stop_downloading_button(skip_real_image_download, dont_load_into_tf);
+
+    let [urls, keys, data] = await _get_urls_and_keys();
+
+    if (urls === undefined || keys === undefined || data === undefined) {
+        err("download_image_data failed: data is urls, keys or data is undefined");
+        return {};
+    }
+
+    const percentage_div = $("#percentage");
+    reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
+
+    const times = [];
+    $("#data_loading_progress_bar").show();
+    $("#data_progressbar").css("display", "inline-block");
+
+    urls = shuffle(urls);
+
+    window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
+    window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
+
+    // PERF FIX: Use CSS "contain: layout style" to limit reflow scope
+    // but NOT contentVisibility:hidden — so images appear progressively
+    var photosEl = document.getElementById("photos");
+    if (photosEl && !skip_real_image_download) {
+        photosEl.style.contain = "layout style";
+    }
+
+    const maxParallel = 10;
+    for (let i = 0; i < urls.length; i += maxParallel) {
+        const batch = urls.slice(i, i + maxParallel);
+        await Promise.all(batch.map((url, idx) =>
+            downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data)
+        ));
+        // Yield to browser every few batches to allow rendering
+        if ((i / maxParallel) % 3 === 0) {
+            await new Promise(r => requestAnimationFrame(r));
+        }
+    }
+
+    // Flush all pending DOM operations
+    _flush_dom_batch();
+
+    // Remove containment after loading is done
+    if (photosEl && !skip_real_image_download) {
+        photosEl.style.contain = "";
+    }
+
+    // Flush canvas renders
+    await flush_all_canvas_renders();
+
+    shown_skipping_real_msg = false;
+    $("#data_progressbar").css("display", "none");
+    $("#data_loading_progress_bar").hide();
+    stop_downloading_data = false;
+    $("#stop_downloading").hide();
+    set_document_title(original_title);
+    reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
+
+    return data;
+}
+
+
+// ============ FIXED: get_images_and_this_data_and_category_counter_and_x_from_images ============
+// Added flush calls to ensure everything is rendered before proceeding.
+
+// ============ FIXED: get_images_and_this_data_and_category_counter_and_x_from_images ============
+// FIX 1: Added "var" declaration for "images" (strict mode requires it)
+// FIX 2: Also declare all other variables properly
+
+async function get_images_and_this_data_and_category_counter_and_x_from_images() {
+    reset_photos();
+
+    var images = await get_images_force_download();  // <-- FIX: added "var"
+
+    var this_data = [];
+    var keys = [];
+    var x = null;
+    var category_counter = 0;
+
+    for (let [key, value] of Object.entries(images)) {
+        keys.push(key);
+        for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
+            const item = images[key][image_idx];
+            const this_img = { key: key, item: item, category_counter: category_counter };
+            this_data.push(this_img);
+        }
+        labels[category_counter] = key;
+        category_counter++;
+    }
+
+    if (shuffle_data_is_checked()) {
+        this_data = shuffle(this_data);
+    }
+
+    return [this_data, category_counter, x, images, keys];
+}
+
+
+// ============ FIXED: load_and_augment_images_and_y ============
+// Problem: add_tensor_as_image_to_photos is called inside augmentation loops,
+// causing massive reflow. The fix above (batched canvas rendering) handles this,
+// but we also add periodic yields to keep the UI responsive.
+
+// ============ FIXED: load_and_augment_images_and_y ============
+// Declare x properly, yield periodically
+
+async function load_and_augment_images_and_y(this_data, x, y) {
+    x = await get_x_ones_from_image_input_shape();
+
+    for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
+        const this_img = this_data[image_idx];
+        const unresized_image = this_img["item"];
+
+        if (unresized_image === null) {
+            err(`unresized image is null!`);
+        } else {
+            [x, y] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, y);
+            if (y === null || x === null) {
+                return [null, null];
+            }
+        }
+
+        // Yield every 10 images to keep UI responsive
+        if (image_idx % 10 === 9) {
+            await new Promise(r => requestAnimationFrame(r));
+        }
+    }
+
+    // Ensure all queued canvas renders complete
+    await flush_all_canvas_renders();
+
+    return [x, y];
+}
+
+
+// ============ FIXED: showPhotosContainer ============
+// Avoid repeated jQuery lookups and style checks.
+
+var _photos_container_visible = undefined;
+var _photos_container_el = null;
+
+function showPhotosContainer() {
+    if (!_photos_container_el) {
+        _photos_container_el = document.getElementById("photoscontainer");
+    }
+    if (!_photos_container_el) return;
+
+    if (_photos_container_visible === undefined) {
+        _photos_container_visible = _photos_container_el.style.display !== "none" &&
+            getComputedStyle(_photos_container_el).display !== "none";
+    }
+    if (!_photos_container_visible) {
+        _photos_container_el.style.display = "";
+        _photos_container_visible = true;
+    }
+}
+
+
+// ============ FIXED: createImageElement ============
+// Add explicit dimensions to prevent reflow when images load.
+// Also add loading="eager" and decoding="async" for performance.
+
+function createImageElement(url, height, width) {
+    const img = document.createElement("img");
+    img.src = url;
+    if (height) {
+        img.height = height;
+        img.style.height = height + "px";
+    }
+    if (width) {
+        img.width = width;
+        img.style.width = width + "px";
+    }
+    img.className = "class_download_img";
+    img.decoding = "async"; // Don't block main thread for decode
+    img.onclick = () => predict_data_img(img, "image");
+    return img;
+}
+
 
 function addPhotoToGallery(url, height, width) {
 	assertType(url, "string", "add_photo_to_gallery expects a string");
@@ -418,60 +848,7 @@ async function downloadSingleUrl(url, url_idx, urls, percentage_div, old_percent
 	times.push(Date.now() - start_time);
 }
 
-async function download_image_data(skip_real_image_download = 0, dont_show_swal = 0, ignoreme = null, dont_load_into_tf = 0, force_no_download = 0) {
-	assert(["number", "boolean", "undefined"].includes(typeof(skip_real_image_download)), "skip_real_image_download must be number/boolean or undefined");
 
-	const divide_by = parse_float($("#divide_by").val());
-
-	if ((started_training || force_download) && !force_no_download) {
-		dbg("Resetting photos element");
-		$("#photos").html("");
-		window._perf_helpers.dom_pending = [];
-	}
-
-	headerdatadebug("download_image_data()");
-	show_or_hide_stop_downloading_button(skip_real_image_download, dont_load_into_tf);
-
-	let [urls, keys, data] = await _get_urls_and_keys();
-
-	if (urls === undefined || keys === undefined || data === undefined) {
-		err("download_image_data failed: data is urls, keys or data is undefined");
-		return {};
-	}
-
-	const percentage_div = $("#percentage");
-	reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
-
-	const times = [];
-	$("#data_loading_progress_bar").show();
-	$("#data_progressbar").css("display", "inline-block");
-
-	urls = shuffle(urls);
-
-	window._perf_helpers.tf_task_queue = window._perf_helpers.tf_task_queue || [];
-	window._perf_helpers.tf_active = window._perf_helpers.tf_active || 0;
-
-	const maxParallel = 10;
-	for (let i = 0; i < urls.length; i += maxParallel) {
-		const batch = urls.slice(i, i + maxParallel);
-		await Promise.all(batch.map((url, idx) =>
-			downloadSingleUrl(url, i + idx, urls, percentage_div, undefined, times, skip_real_image_download, dont_load_into_tf, keys, data) // await not possible here
-		));
-		await new Promise(r => setTimeout(r, 0));
-	}
-
-	_flush_dom_batch();
-
-	shown_skipping_real_msg = false;
-	$("#data_progressbar").css("display", "none");
-	$("#data_loading_progress_bar").hide();
-	stop_downloading_data = false;
-	$("#stop_downloading").hide();
-	set_document_title(original_title);
-	reset_percentage_div_if_not_skip_real_image_download(percentage_div, skip_real_image_download);
-
-	return data;
-}
 
 // ============
 
@@ -482,62 +859,7 @@ function reset_percentage_div_if_not_skip_real_image_download(percentage_div, sk
 	}
 }
 
-function add_tensor_as_image_to_photos (_tensor) {
-	// TODO
-	assert(typeof(_tensor) == "object", "_tensor must be an object");
-	assert(Object.keys(_tensor).includes("shape"), "_tensor must be an object that contains a shape subkey");
-	assert(_tensor.shape.length >= 3 && _tensor.shape.length <= 4, "_tensor must have 3 or 4 dimensions");
 
-	if(_tensor.shape.length == 4) {
-		if(_tensor.shape[0] == 1) {
-			_tensor = tensor(array_sync(_tensor)[0]);
-		} else {
-			for (var tensor_idx = 0; tensor_idx < _tensor.shape[0]; tensor_idx++) {
-				var this_tensor = tensor(array_sync(_tensor)[tensor_idx]);
-				add_tensor_as_image_to_photos(this_tensor);
-			}
-
-			return;
-		}
-	}
-
-	var uuid = uuidv4();
-	var id = "augmented_photo_" + uuid;
-	//log("image-element-id: ", id);
-	$("#photos").append("<canvas id='" + id + "'></canvas>");
-	//log("toPixels(_tensor, $('#" + id + "')");
-
-	var min_value = 0;
-	var max_value = 0;
-
-	var min_in_tensor = array_sync(min(_tensor));
-
-	if(min_in_tensor < min_value) {
-		min_value = min_in_tensor;
-	}
-
-	if(min_value < 0) {
-		_tensor = _tf_sub(tensor, min_value);
-	}
-
-	var max_in_tensor = array_sync(max(_tensor));
-
-	if(max_in_tensor > max_value) {
-		max_value = max_in_tensor;
-	}
-
-	if(max_value != 0) {
-		_tensor = tidy(() => { return tf_div(_tensor, max_value); });
-	}
-
-	try {
-		toPixels(_tensor, $("#" + id)[0]);
-	} catch (e) {
-		void(0); log("Shape:", _tensor.shape);
-		_tensor.print();
-	}
-
-}
 
 function truncate_text (fullStr, strLen, separator = "...") {
 	typeassert(fullStr, string, "fullStr");
@@ -815,18 +1137,6 @@ async function get_x_and_y_from_txt_files_and_show_when_possible () {
 	return [x, y];
 }
 
-function show_data_after_loading(xy_data, x, divide_by) {
-	if(xy_data.x.shape.length == 4 && xy_data.x.shape[3] == 3) {
-		$("#photos").show();
-		for (var xy_data_idx = 0; xy_data_idx < xy_data.x.shape[0]; xy_data_idx++) {
-			$("#photos").append("<canvas id='custom_training_data_img_" + xy_data_idx + "'></canvas>");
-			const canvas = $("#custom_training_data_img_" + xy_data_idx)[0];
-			const colors = x[xy_data_idx];
-			draw_grid(canvas, 1, colors, null, null, null, null, "");
-		}
-	}
-}
-
 function get_divide_by () {
 	return parse_float($("#divide_by").val());
 }
@@ -853,55 +1163,13 @@ async function get_traindata_from_model_id (this_traindata_struct) {
 	return xy_data;
 }
 
-async function get_images_force_download () {
-	var old_force_download = force_download;
 
-	enable_force_download();
-
-	var images = await download_image_data(0);
-
-	if(images.length == 0) {
-		err("Could not find image data");
-	}
-
-	set_force_download(old_force_download);
-
-	await reset_labels();
-
-	return images;
-}
 
 function reset_photos() {
 	$("#photos").html("");
 }
 
-async function get_images_and_this_data_and_category_counter_and_x_from_images () {
-	reset_photos();
 
-	images = await get_images_force_download();
-
-	var this_data = [];
-	var keys = [];
-	var x = null;
-	var category_counter = 0;
-
-	for (let [key, value] of Object.entries(images)) {
-		keys.push(key);
-		for (var image_idx = 0; image_idx < images[key].length; image_idx++) {
-			const item = images[key][image_idx];
-			const this_img = {key: key, item: item, category_counter: category_counter};
-			this_data.push(this_img);
-		}
-		labels[category_counter] = key;
-		category_counter++;
-	}
-
-	if(shuffle_data_is_checked()) {
-		this_data = shuffle(this_data);
-	}
-
-	return [this_data, category_counter, x, images, keys];
-}
 
 async function dispose_images (images) {
 	for (let [key, value] of Object.entries(images)) {
@@ -1134,25 +1402,7 @@ function get_maps_from_image_element (x, y, maps, image_element, label_nr) {
 	return maps;
 }
 
-async function load_and_augment_images_and_y(this_data, x, y) {
-	x = await get_x_ones_from_image_input_shape();
 
-	for (var image_idx = 0; image_idx < this_data.length; image_idx++) {
-		const this_img = this_data[image_idx];
-		const unresized_image = this_img["item"];
-
-		if (unresized_image === null) {
-			err(`unresized image is null!`);
-		} else {
-			[x, y] = await resize_augment_invert_flip_left_right_rotate(image_idx, unresized_image, this_img, x, y);
-			if (y === null || x === null) {
-				return [null, null, null];
-			}
-		}
-	}
-
-	return [x, y];
-}
 
 async function get_x_ones_from_image_input_shape() {
 	var x = tidy(() => {
@@ -1805,23 +2055,6 @@ function x_y_warning(x_and_y) {
 	}
 
 	return error_messages.join(" ");
-}
-
-function add_photo_to_gallery(url) {
-	const photoscontainer = $("#photoscontainer");
-	if (photoscontainer.css("display") == "none") {
-		photoscontainer.show();
-	}
-
-	const photos = $("#photos")[0];
-	const img = document.createElement("img");
-	img.src = url;
-	img.height = height;
-	img.width = width;
-	img.className = "class_download_img";
-	img.onclick = () => predict_data_img(img, "image"); // await not possible here
-
-	photos.appendChild(img);
 }
 
 async function url_to_tf (url, dont_load_into_tf=0) {
