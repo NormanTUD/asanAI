@@ -4385,7 +4385,16 @@ async function upload_model(evt) {
 }
 
 function remove_overlay() {
-	$(".overlay").remove();
+	var overlays = document.querySelectorAll(".overlay");
+	overlays.forEach(function(overlay) {
+		overlay.style.transition = "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+		overlay.style.opacity = "0";
+		setTimeout(function() {
+			if (overlay.parentNode) {
+				overlay.parentNode.removeChild(overlay);
+			}
+		}, 320);
+	});
 }
 
 async function upload_weights(evt) {
@@ -8053,68 +8062,75 @@ function ribbon_shower_hack () {
 	}
 }
 
-function show_overlay(text, title="") {
+function show_overlay(text, title = "") {
 	try {
-		var bg_color = "white";
-		var text_color = "black";
-
-		if (is_dark_mode) {
-			bg_color = "black";
-			text_color = "white";
-		}
-
 		var overlay = document.createElement("div");
-		overlay.style.position = "fixed";
-		overlay.style.top = "0";
-		overlay.style.left = "0";
-		overlay.style.width = "100%";
-		overlay.style.height = "100%";
-		overlay.style.opacity = "1";
-		overlay.style.display = "flex";
-		overlay.style.alignItems = "center";
-		overlay.style.justifyContent = "center";
-		overlay.style.userSelect = "none";
-		overlay.style.zIndex = "9999";
-		$(overlay).addClass("overlay");
+		overlay.className = "overlay";
+		Object.assign(overlay.style, {
+			position: "fixed",
+			top: "0",
+			left: "0",
+			width: "100%",
+			height: "100%",
+			display: "flex",
+			flexDirection: "column",
+			alignItems: "center",
+			justifyContent: "center",
+			gap: "16px",
+			userSelect: "none",
+			zIndex: "99999",
+			opacity: "0",
+			transition: "opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+			backdropFilter: "blur(24px) saturate(150%)",
+			WebkitBackdropFilter: "blur(24px) saturate(150%)",
+			background: is_dark_mode
+				? "rgba(10, 10, 15, 0.78)"
+				: "rgba(245, 245, 250, 0.82)"
+		});
 
-		if (bg_color.toLowerCase() === "black") {
-			overlay.style.backgroundImage = "radial-gradient(circle at 12% 22%, rgba(255,255,255,0.4) 0.5px, transparent 1.5px), radial-gradient(circle at 32% 38%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px), radial-gradient(circle at 68% 18%, rgba(255,255,255,0.35) 0.5px, transparent 1.5px), radial-gradient(circle at 78% 52%, rgba(255,255,255,0.25) 0.5px, transparent 1.5px), radial-gradient(circle at 52% 76%, rgba(255,255,255,0.3) 0.5px, transparent 1.5px), radial-gradient(circle at 60% 60%, rgba(255,255,255,0.04) 0%, transparent 70%), radial-gradient(circle at 20% 70%, rgba(255,255,255,0.03) 0%, transparent 80%), linear-gradient(180deg, rgba(10,15,35,1) 0%, rgba(0,0,15,1) 100%)";
-		} else if (bg_color.toLowerCase() === "white") {
-			overlay.style.backgroundImage = "linear-gradient( 180deg, rgba(200, 230, 255, 1) 0%, rgba(245, 250, 255, 1) 100% ), radial-gradient(circle at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 60%), radial-gradient(circle at 70% 20%, rgba(255,255,255,0.5) 0%, transparent 70%), radial-gradient(circle at 40% 70%, rgba(255,255,255,0.4) 0%, transparent 65%), radial-gradient(circle at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 70%)";
-		} else {
-			overlay.style.backgroundImage = "linear-gradient(to bottom, " + bg_color + ", #000000)";
+		if (title) {
+			var titleEl = document.createElement("h2");
+			titleEl.innerHTML = title;
+			Object.assign(titleEl.style, {
+				margin: "0",
+				fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+				fontSize: "22px",
+				fontWeight: "600",
+				letterSpacing: "-0.02em",
+				color: is_dark_mode ? "rgba(255,255,255,0.92)" : "rgba(0,0,0,0.88)",
+				textAlign: "center",
+				padding: "0 24px"
+			});
+			overlay.appendChild(titleEl);
 		}
 
-		var textElement = document.createElement("p");
-		textElement.innerHTML = text;
-		textElement.style.textAlign = "center";
-		textElement.style.fontFamily = "Arial, sans-serif";
-		textElement.style.fontSize = "24px";
-		textElement.style.color = text_color;
-		textElement.style.padding = "20px";
-
-		overlay.appendChild(textElement);
-
-		if(title) {
-			var hElement = document.createElement("h1");
-			hElement.innerHTML = title;
-			hElement.style.textAlign = "center";
-			hElement.style.fontFamily = "Arial, sans-serif";
-			hElement.style.fontSize = "24px";
-			hElement.style.color = text_color;
-			hElement.style.padding = "20px";
-
-			overlay.appendChild(hElement);
+		if (text) {
+			var textEl = document.createElement("p");
+			textEl.innerHTML = text;
+			Object.assign(textEl.style, {
+				margin: "0",
+				fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif',
+				fontSize: "15px",
+				fontWeight: "400",
+				color: is_dark_mode ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
+				textAlign: "center",
+				padding: "0 24px",
+				maxWidth: "480px",
+				lineHeight: "1.5"
+			});
+			overlay.appendChild(textEl);
 		}
 
 		document.body.appendChild(overlay);
 
-		assert(true, "Overlay displayed successfully.");
+		// Trigger entrance animation
+		requestAnimationFrame(() => {
+			overlay.style.opacity = "1";
+		});
 
 		return overlay;
 	} catch (error) {
-		log(language[lang]["an_error_occurred"], error);
-		wrn("[show_overlay] Failed to display overlay.");
+		wrn("[show_overlay] Failed to display overlay: " + error);
 	}
 }
 
