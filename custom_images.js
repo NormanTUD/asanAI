@@ -381,30 +381,38 @@ async function click_on_new_category_or_delete_category_until_number_is_right (n
 }
 
 function delete_own_image(elem) {
-	// Remove the associated segmentation layer controls if they exist
 	var $span = $(elem).parent();
-	var img_or_canvas = $span.find("img,canvas").not("[id$='_layer']").first();
-	if (img_or_canvas.length && img_or_canvas[0].id) {
-		var layer_id = img_or_canvas[0].id + "_layer";
-		$("#" + layer_id).remove();
-		$("#" + layer_id + "_controls").remove();
-		if (atrament_data[layer_id]) {
-			delete atrament_data[layer_id];
+
+	// Animate the image out
+	$span.css({
+		'transition': 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+		'opacity': '0',
+		'transform': 'scale(0.8)',
+		'pointer-events': 'none'
+	});
+
+	setTimeout(function() {
+		// Remove the associated segmentation layer controls if they exist
+		var img_or_canvas = $span.find("img,canvas").not("[id$='_layer']").first();
+		if (img_or_canvas.length && img_or_canvas[0].id) {
+			var layer_id = img_or_canvas[0].id + "_layer";
+			$("#" + layer_id).remove();
+			$("#" + layer_id + "_controls").remove();
+			if (atrament_data[layer_id]) {
+				delete atrament_data[layer_id];
+			}
 		}
-	}
 
-	// Remove the <br> after the span if it exists
-	var $next = $span.next();
-	if ($next.is("br")) {
-		$next.remove();
-	}
+		// Remove the <br> after the span if it exists
+		var $next = $span.next();
+		if ($next.is("br")) {
+			$next.remove();
+		}
 
-	// Remove only this specific image's span
-	$span.remove();
-
-	enable_train_if_has_custom_images();
-
-	update_image_counters();
+		$span.remove();
+		enable_train_if_has_custom_images();
+		update_image_counters();
+	}, 300);
 }
 
 function show_or_hide_hide_delete_category() {
