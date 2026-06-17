@@ -627,7 +627,9 @@ function add_seed_option (type, nr) {
 		style = " style=\"display: none\" ";
 	}
 
-	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='1' /></td></tr>";
+	var seed_value = get_unique_seed_for_layer(nr);
+
+	var res = "<tr class='seed_value' " + style + "><td>Seed</td><td><input onchange='updated_page()' type='number' name='seed' class='seed dropout_seed' value='" + seed_value + "' /></td></tr>";
 
 	return res;
 }
