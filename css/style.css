@@ -2293,3 +2293,25 @@ body:not(.darkmode) .bar-tooltip-pct {
 body:not(.darkmode) .bar-tooltip-raw {
 	color: rgba(80, 80, 100, 0.7);
 }
+
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    font-family: var(--font-sans);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.01em;
+    text-transform: capitalize;
+    transition: color var(--duration-fast) var(--ease-default);
+}
+
+.ui-tabs-tab {
+    padding: 4px 8px !important;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    transition: all var(--duration-fast) var(--ease-default);
+}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+    cursor: pointer;
+    user-select: none;
+    background: var(--color-bg-primary);
+    border-bottom-color: transparent;
+    transition: all var(--duration-fast) var(--ease-default);
+}
