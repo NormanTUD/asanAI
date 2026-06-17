@@ -2357,3 +2357,24 @@ body:not(.darkmode) .bar-tooltip-raw {
     box-shadow: var(--shadow-md);
     transition: all var(--duration-fast) var(--ease-spring);
 }
+
+#data_progressbar,
+#training_progressbar {
+    margin-top: var(--space-xs);
+    display: inline-block;
+    height: 3px;
+    background: var(--color-fill-tertiary);
+    padding: 0;
+    width: 100px;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+#data_progressbar > div,
+#training_progressbar > div {
+    background: linear-gradient(90deg, var(--color-accent), #4DA3FF);
+    height: 100%;
+    width: 0%;
+    border-radius: var(--radius-full);
+    transition: width var(--duration-slow) var(--ease-physics);
+}
