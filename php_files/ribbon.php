@@ -571,7 +571,6 @@
 				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank");'>Code</button>
 				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs"></span></button>
 			</div>                                                                                                     
-			<div class="ribbon-group-title" style="margin-top: 5px;"><span class="TRANSLATEME_imprint"></span></div>                            
 		</div>                                                                                                             
 	</div>
 
