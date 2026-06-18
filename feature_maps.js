@@ -1743,13 +1743,8 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		return await _handle_ascent_error(e, recursion, layer_idx, neuron, iterations, start_image);
 	}
 
-	// Phase 3: Finalize with quality check (falls back to ImageNet defaults if user matrix fails)
 	if (useColorDecorrelation && USE_USER_COLOR_CORRELATION) {
-		return await _finalize_ascent_with_quality_check(
-			generated_data, worked, useColorDecorrelation,
-			layer_idx, neuron, iterations, start_image,
-			recursion, previewCanvas, max_neurons
-		);
+		return await _finalize_ascent_with_quality_check(generated_data, worked, useColorDecorrelation, layer_idx, neuron, iterations, start_image, recursion, previewCanvas, max_neurons);
 	}
 
 	return await _finalize_ascent(generated_data, worked, useColorDecorrelation);
