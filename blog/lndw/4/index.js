@@ -3405,250 +3405,401 @@ const TrainingViz = {
 // LOSS LANDSCAPE VISUALIZATION – 3D surface + gradient descent
 // ============================================================
 
-const LossLandscapeViz = {
-    posX: 3.0,
-    posY: -2.5,
-    path: [],
-    stepCount: 0,
-    animating: false,
-    animInterval: null,
-    surfaceRendered: false,
+// ============================================================
+// LOSS LANDSCAPE VISUALIZATION – 3D surface + gradient descent
+// KOMPLETT NEU: Click-to-start, tiefere Täler, höhere Berge,
+// freies Drehen/Zoomen WÄHREND Animation (via Plotly.restyle statt relayout)
+// ============================================================
 
-    // Highly irregular loss function with multiple local minima
+const LossLandscapeViz = {
+	posX: null,
+	posY: null,
+	path: [],
+	stepCount: 0,
+	animating: false,
+	animInterval: null,
+	surfaceRendered: false,
+	plotDiv: null,
+
+	// Dramatischere Loss-Landschaft: tiefere Täler, höhere Berge
 	lossFunction: function(x, y) {
-		const globalMin = -0.8 * Math.exp(-(Math.pow(x + 0.5, 2) + Math.pow(y - 0.3, 2)) * 1.5);
-		const bowl = 0.06 * (x * x + y * y);
-		const ridge = 0.7 * Math.exp(-Math.pow(y - 0.6 * x + 0.5, 2) * 3) * Math.exp(-(x * x + y * y) * 0.08);
-		const localMin = -0.4 * Math.exp(-(Math.pow(x - 2, 2) + Math.pow(y + 1.5, 2)) * 0.8);
-		const localMin2 = -0.3 * Math.exp(-(Math.pow(x + 2, 2) + Math.pow(y + 2, 2)) * 1.0);
-		const bumps = 0.12 * Math.sin(x * 3.7) * Math.cos(y * 2.9);
-		const bumps2 = 0.08 * Math.cos(x * 5.1 + y * 1.3) * Math.sin(y * 4.2 - x * 0.7);
-		const cliff = 0.4 * Math.max(0, Math.sin((x + y) * 1.2)) * Math.exp(-Math.pow(x - 1, 2) * 0.3);
-		const saddle = 0.15 * (x * x - y * y) * Math.exp(-(x * x + y * y) * 0.15);
-		const plateau = 0.3 * Math.exp(-Math.pow(x - 1.5, 2) * 0.5) * Math.exp(-Math.pow(y + 0.5, 2) * 0.5);
-		return bowl + ridge + globalMin + localMin + localMin2 + bumps + bumps2 + cliff + saddle + plateau + 2.2;
+		// Tiefes globales Minimum
+		const globalMin = -2.0 * Math.exp(-(Math.pow(x + 0.3, 2) + Math.pow(y - 0.2, 2)) * 2.0);
+		// Breite Schüssel (sanfter Anstieg nach außen)
+		const bowl = 0.12 * (x * x + y * y);
+		// Hoher Bergrücken
+		const ridge = 1.8 * Math.exp(-Math.pow(y - 0.5 * x + 0.3, 2) * 2.5) * Math.exp(-(x * x + y * y) * 0.04);
+		// Lokales Minimum (mittel tief)
+		const localMin = -1.2 * Math.exp(-(Math.pow(x - 2.2, 2) + Math.pow(y + 1.8, 2)) * 0.9);
+		// Zweites lokales Minimum
+		const localMin2 = -0.8 * Math.exp(-(Math.pow(x + 2.5, 2) + Math.pow(y + 2.2, 2)) * 1.2);
+		// Hohe Bergspitzen
+		const peak1 = 1.5 * Math.exp(-(Math.pow(x - 1.5, 2) + Math.pow(y + 0.5, 2)) * 1.5);
+		const peak2 = 1.2 * Math.exp(-(Math.pow(x + 1.8, 2) + Math.pow(y - 2.0, 2)) * 1.0);
+		// Wellige Textur
+		const bumps = 0.2 * Math.sin(x * 3.2) * Math.cos(y * 2.7);
+		const bumps2 = 0.12 * Math.cos(x * 4.8 + y * 1.5) * Math.sin(y * 3.9 - x * 0.8);
+		// Sattelpunkt
+		const saddle = 0.2 * (x * x - y * y) * Math.exp(-(x * x + y * y) * 0.12);
+		// Steile Klippe
+		const cliff = 0.8 * Math.max(0, Math.sin((x + y) * 1.0)) * Math.exp(-Math.pow(x - 0.5, 2) * 0.2);
+
+		return bowl + ridge + globalMin + localMin + localMin2 + peak1 + peak2 + bumps + bumps2 + saddle + cliff + 3.0;
 	},
 
-    // Numerical gradient
-    gradient: function(x, y) {
-        const eps = 0.005;
-        const dfdx = (this.lossFunction(x + eps, y) - this.lossFunction(x - eps, y)) / (2 * eps);
-        const dfdy = (this.lossFunction(x, y + eps) - this.lossFunction(x, y - eps)) / (2 * eps);
-        return { dx: dfdx, dy: dfdy };
-    },
+	// Numerischer Gradient mit zentraler Differenz
+	gradient: function(x, y) {
+		const eps = 0.004;
+		const dfdx = (this.lossFunction(x + eps, y) - this.lossFunction(x - eps, y)) / (2 * eps);
+		const dfdy = (this.lossFunction(x, y + eps) - this.lossFunction(x, y - eps)) / (2 * eps);
+		return { dx: dfdx, dy: dfdy };
+	},
 
-    getLR: function() {
-        const slider = document.getElementById('loss-lr-slider');
-        return slider ? parseFloat(slider.value) : 0.18;
-    },
+	getLR: function() {
+		const slider = document.getElementById('loss-lr-slider');
+		return slider ? parseFloat(slider.value) : 0.18;
+	},
 
-    reset: function() {
-        this.posX = 3.0;
-        this.posY = -2.5;
-        this.path = [{ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) }];
-        this.stepCount = 0;
-        this.surfaceRendered = false;
-        if (this.animInterval) {
-            clearInterval(this.animInterval);
-            this.animInterval = null;
-            this.animating = false;
-        }
-        const btn = document.getElementById('loss-animate-btn');
-        if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
-        this.renderFull();
-    },
+	// ===== CLICK-TO-START: User klickt auf die Surface =====
+	setupClickHandler: function() {
+		const plotDiv = this.plotDiv;
+		if (!plotDiv) return;
 
-    step: function() {
-        const lr = this.getLR();
-        const grad = this.gradient(this.posX, this.posY);
+		plotDiv.on('plotly_click', (data) => {
+			if (!data || !data.points || data.points.length === 0) return;
+			const point = data.points[0];
 
-        // SGD with small stochastic noise
-        const noise = 0.03;
-        this.posX -= lr * grad.dx + (Math.random() - 0.5) * noise;
-        this.posY -= lr * grad.dy + (Math.random() - 0.5) * noise;
+			// Nur auf Surface-Klicks reagieren (trace 0)
+			if (point.curveNumber !== 0) return;
 
-        // Clamp to bounds
-        this.posX = Math.max(-3.5, Math.min(3.5, this.posX));
-        this.posY = Math.max(-3.5, Math.min(3.5, this.posY));
+			const clickX = point.x;
+			const clickY = point.y;
 
-        this.stepCount++;
-        this.path.push({ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) });
+			if (clickX == null || clickY == null) return;
 
-        this.updatePath();
-        this.updateUI();
-    },
+			// Neuen Startpunkt setzen
+			this.posX = clickX;
+			this.posY = clickY;
+			this.path = [{ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) }];
+			this.stepCount = 0;
 
-    animate: function() {
-        if (this.animating) {
-            clearInterval(this.animInterval);
-            this.animInterval = null;
-            this.animating = false;
-            const btn = document.getElementById('loss-animate-btn');
-            if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
-            return;
-        }
+			// Animation stoppen falls aktiv
+			if (this.animInterval) {
+				clearInterval(this.animInterval);
+				this.animInterval = null;
+				this.animating = false;
+				const btn = document.getElementById('loss-animate-btn');
+				if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
+			}
 
-        this.animating = true;
-        const btn = document.getElementById('loss-animate-btn');
-        if (btn) { btn.textContent = '⏸ Stopp'; btn.style.background = '#ef4444'; }
+			this.updatePathTrace();
+			this.updateStartMarker();
+			this.updateUI();
+		});
+	},
 
-        this.animInterval = setInterval(() => {
-            this.step();
-            if (this.stepCount >= 150) {
-                clearInterval(this.animInterval);
-                this.animInterval = null;
-                this.animating = false;
-                if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
-            }
-        }, 150);
-    },
+	reset: function() {
+		this.posX = 3.0;
+		this.posY = -2.8;
+		this.path = [{ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) }];
+		this.stepCount = 0;
+		this.surfaceRendered = false;
 
-    // Full render: surface + path. Only called on init/reset.
-    renderFull: function() {
-        const plotDiv = document.getElementById('loss-landscape-plot');
-        if (!plotDiv) return;
+		if (this.animInterval) {
+			clearInterval(this.animInterval);
+			this.animInterval = null;
+			this.animating = false;
+		}
+		const btn = document.getElementById('loss-animate-btn');
+		if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
 
-        // Generate surface
-        const n = 70;
-        const xRange = [], yRange = [];
-        for (let i = 0; i < n; i++) {
-            xRange.push(-3.5 + 7 * i / (n - 1));
-            yRange.push(-3.5 + 7 * i / (n - 1));
-        }
-        const zData = [];
-        for (let j = 0; j < n; j++) {
-            const row = [];
-            for (let i = 0; i < n; i++) {
-                row.push(this.lossFunction(xRange[i], yRange[j]));
-            }
-            zData.push(row);
-        }
+		this.renderFull();
+	},
 
-        const surfaceTrace = {
-            x: xRange,
-            y: yRange,
-            z: zData,
-            type: 'surface',
-            colorscale: [
-                [0, '#065f46'], [0.12, '#10b981'], [0.3, '#fbbf24'],
-                [0.55, '#f97316'], [0.8, '#dc2626'], [1, '#7f1d1d']
-            ],
-            opacity: 0.88,
-            showscale: true,
-            colorbar: { title: 'Loss', titleside: 'right', len: 0.5, thickness: 15 },
-            contours: { z: { show: true, usecolormap: true, highlightcolor: "#fff", project: { z: false } } },
-            hovertemplate: 'Gewicht 1: %{x:.2f}<br>Gewicht 2: %{y:.2f}<br>Loss: %{z:.3f}<extra></extra>',
-            lighting: { roughness: 0.6, diffuse: 0.8, specular: 0.3 },
-            name: 'surface'
-        };
+	step: function() {
+		if (this.posX == null) {
+			// Falls noch kein Startpunkt gesetzt
+			this.posX = 3.0;
+			this.posY = -2.8;
+			this.path = [{ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) }];
+		}
 
-        // Path trace (initial)
-        const pathTrace = {
-            x: this.path.map(p => p.x),
-            y: this.path.map(p => p.y),
-            z: this.path.map(p => p.loss + 0.08),
-            type: 'scatter3d',
-            mode: 'lines+markers',
-            name: 'path',
-            line: { color: '#1e40af', width: 7 },
-            marker: { size: 8, color: '#ef4444', symbol: 'diamond' },
-            hovertemplate: 'Schritt %{pointNumber}<br>Loss: %{z:.3f}<extra></extra>'
-        };
+		const lr = this.getLR();
+		const grad = this.gradient(this.posX, this.posY);
 
-        // Start marker
-        const startTrace = {
-            x: [this.path[0].x],
-            y: [this.path[0].y],
-            z: [this.path[0].loss + 0.15],
-            type: 'scatter3d',
-            mode: 'text+markers',
-            text: ['🚀 Start'],
-            textfont: { size: 12, color: '#64748b' },
-            marker: { size: 6, color: '#94a3b8' },
-            showlegend: false,
-            hoverinfo: 'none',
-            name: 'start'
-        };
+		// Gradient Descent mit Momentum-ähnlichem Smoothing
+		const noise = 0.02;
+		const newX = this.posX - lr * grad.dx + (Math.random() - 0.5) * noise;
+		const newY = this.posY - lr * grad.dy + (Math.random() - 0.5) * noise;
 
-        const layout = {
-            margin: { l: 0, r: 0, b: 0, t: 0 },
-            scene: {
-                xaxis: { title: 'Gewicht 1', range: [-3.5, 3.5], gridcolor: '#e2e8f0', titlefont: { size: 12 } },
-                yaxis: { title: 'Gewicht 2', range: [-3.5, 3.5], gridcolor: '#e2e8f0', titlefont: { size: 12 } },
-                zaxis: { title: 'Loss', range: [0, 4.5], gridcolor: '#e2e8f0', titlefont: { size: 12 } },
-                camera: { eye: { x: 1.6, y: 1.6, z: 1.0 } },
-                aspectratio: { x: 1, y: 1, z: 0.6 }
-            },
-            showlegend: false
-        };
+		// Smooth: Interpolation zwischen alt und neu (verhindert Sprünge)
+		this.posX = 0.85 * newX + 0.15 * this.posX;
+		this.posY = 0.85 * newY + 0.15 * this.posY;
 
-        Plotly.newPlot(plotDiv, [surfaceTrace, pathTrace, startTrace], layout, {
-            displayModeBar: false,
-            responsive: true,
-            scrollZoom: true
-        });
+		// Clamp
+		this.posX = Math.max(-3.5, Math.min(3.5, this.posX));
+		this.posY = Math.max(-3.5, Math.min(3.5, this.posY));
 
-        this.surfaceRendered = true;
-        this.updateUI();
-    },
+		this.stepCount++;
+		this.path.push({ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) });
 
-    // Lightweight update: only modify the path trace data. Does NOT touch camera.
-    updatePath: function() {
-        const plotDiv = document.getElementById('loss-landscape-plot');
-        if (!plotDiv || !this.surfaceRendered) {
-            this.renderFull();
-            return;
-        }
+		this.updatePathTrace();
+		this.updateUI();
+	},
 
-        // Trace index 1 is the path trace
-        const pathX = this.path.map(p => p.x);
-        const pathY = this.path.map(p => p.y);
-        const pathZ = this.path.map(p => p.loss + 0.08);
+	animate: function() {
+		if (this.animating) {
+			clearInterval(this.animInterval);
+			this.animInterval = null;
+			this.animating = false;
+			const btn = document.getElementById('loss-animate-btn');
+			if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
+			return;
+		}
 
-        // Marker sizes: small for all, big for last
-        const sizes = this.path.map((_, i) => i === this.path.length - 1 ? 12 : 3);
-        const colors = this.path.map((_, i) => i === this.path.length - 1 ? '#ef4444' : i === 0 ? '#94a3b8' : '#3b82f6');
+		if (this.posX == null) {
+			this.posX = 3.0;
+			this.posY = -2.8;
+			this.path = [{ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) }];
+		}
 
-        // Use Plotly.restyle to update ONLY the path trace (index 1)
-        // This does NOT reset the camera!
-        Plotly.restyle(plotDiv, {
-            x: [pathX],
-            y: [pathY],
-            z: [pathZ],
-            'marker.size': [sizes],
-            'marker.color': [colors]
-        }, [1]);
-    },
+		this.animating = true;
+		const btn = document.getElementById('loss-animate-btn');
+		if (btn) { btn.textContent = '⏸ Stopp'; btn.style.background = '#ef4444'; }
 
-    updateUI: function() {
-        // Update counter
-        const counter = document.getElementById('loss-step-counter');
-        if (counter) {
-            const currentLoss = this.path.length > 0 ? this.path[this.path.length - 1].loss : '?';
-            const lossStr = typeof currentLoss === 'number' ? currentLoss.toFixed(3) : currentLoss;
-            counter.innerHTML = `Schritt: <b>${this.stepCount}</b> | Loss: <b style="color:${this.stepCount > 0 ? '#10b981' : '#64748b'};">${lossStr}</b>`;
-        }
+		this.animInterval = setInterval(() => {
+			this.step();
+			if (this.stepCount >= 200) {
+				clearInterval(this.animInterval);
+				this.animInterval = null;
+				this.animating = false;
+				if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
+			}
+		}, 120);
+	},
 
-        // Update info
-        const infoDiv = document.getElementById('loss-landscape-info');
-        if (infoDiv && this.stepCount > 0) {
-            const startLoss = this.path[0].loss;
-            const currentLoss = this.path[this.path.length - 1].loss;
-            const improvement = ((1 - currentLoss / startLoss) * 100).toFixed(1);
-            const lr = this.getLR();
+	// ===== FULL RENDER: Surface + initial traces =====
+	renderFull: function() {
+		const plotDiv = document.getElementById('loss-landscape-plot');
+		if (!plotDiv) return;
+		this.plotDiv = plotDiv;
 
-            if (this.stepCount >= 60) {
-                infoDiv.innerHTML = `🏆 <b>Konvergiert!</b> Loss von <b>${startLoss.toFixed(2)}</b> auf <b>${currentLoss.toFixed(3)}</b> reduziert (<b>${improvement}%</b> besser). Learning Rate: ${lr}. In der Realität dauert das Tage auf tausenden GPUs!`;
-                infoDiv.style.background = '#dcfce7'; infoDiv.style.borderColor = '#34d399';
-            } else if (this.stepCount >= 25) {
-                infoDiv.innerHTML = `📉 <b>Guter Fortschritt!</b> Verbesserung: <b>${improvement}%</b>. Learning Rate: ${lr}. Das Modell "rutscht" den Gradienten hinab.`;
-                infoDiv.style.background = '#fef3c7'; infoDiv.style.borderColor = '#fbbf24';
-            } else {
-                infoDiv.innerHTML = `🚶 <b>Gradient Descent:</b> Steigung berechnen → bergab gehen. Learning Rate: <b>${lr}</b>. Drehe den Plot frei mit der Maus!`;
-                infoDiv.style.background = '#f0fdf4'; infoDiv.style.borderColor = '#86efac';
-            }
-        }
-    }
+		// Surface generieren
+		const n = 80;
+		const xRange = [], yRange = [];
+		for (let i = 0; i < n; i++) {
+			xRange.push(-3.5 + 7 * i / (n - 1));
+			yRange.push(-3.5 + 7 * i / (n - 1));
+		}
+		const zData = [];
+		for (let j = 0; j < n; j++) {
+			const row = [];
+			for (let i = 0; i < n; i++) {
+				row.push(this.lossFunction(xRange[i], yRange[j]));
+			}
+			zData.push(row);
+		}
+
+		// Trace 0: Surface
+		const surfaceTrace = {
+			x: xRange,
+			y: yRange,
+			z: zData,
+			type: 'surface',
+			colorscale: [
+				[0, '#022c22'], [0.08, '#065f46'], [0.18, '#10b981'],
+				[0.35, '#84cc16'], [0.5, '#fbbf24'],
+				[0.65, '#f97316'], [0.8, '#dc2626'], [1, '#450a0a']
+			],
+			opacity: 0.92,
+			showscale: true,
+			colorbar: { title: 'Loss', titleside: 'right', len: 0.5, thickness: 15 },
+			contours: {
+				z: { show: true, usecolormap: true, highlightcolor: "#fff", project: { z: false } }
+			},
+			hovertemplate: 'W₁: %{x:.2f}<br>W₂: %{y:.2f}<br>Loss: %{z:.3f}<br><i>Klicke hier zum Starten!</i><extra></extra>',
+			lighting: { roughness: 0.5, diffuse: 0.85, specular: 0.4, fresnel: 0.2 },
+			name: 'Loss Surface'
+		};
+
+		// Trace 1: Path (Linie)
+		const pathTrace = {
+			x: this.path.map(p => p.x),
+			y: this.path.map(p => p.y),
+			z: this.path.map(p => p.loss + 0.12),
+			type: 'scatter3d',
+			mode: 'lines+markers',
+			name: 'Gradient Path',
+			line: { color: '#1e40af', width: 8, shape: 'spline', smoothing: 1.3 },
+			marker: {
+				size: this.path.map((_, i) => i === this.path.length - 1 ? 14 : 4),
+				color: this.path.map((_, i) => i === this.path.length - 1 ? '#ef4444' : i === 0 ? '#fbbf24' : '#3b82f6'),
+				symbol: this.path.map((_, i) => i === this.path.length - 1 ? 'diamond' : 'circle'),
+				line: { width: 1, color: '#fff' }
+			},
+			hovertemplate: 'Schritt %{pointNumber}<br>Loss: %{z:.3f}<extra></extra>'
+		};
+
+		// Trace 2: Start-Marker
+		const startTrace = {
+			x: [this.path[0].x],
+			y: [this.path[0].y],
+			z: [this.path[0].loss + 0.25],
+			type: 'scatter3d',
+			mode: 'text+markers',
+			text: ['🚀 Start'],
+			textfont: { size: 13, color: '#1e40af' },
+			textposition: 'top center',
+			marker: { size: 8, color: '#fbbf24', symbol: 'diamond', line: { width: 2, color: '#fff' } },
+			showlegend: false,
+			hoverinfo: 'none',
+			name: 'Start'
+		};
+
+		const layout = {
+			margin: { l: 0, r: 0, b: 0, t: 0 },
+			scene: {
+				xaxis: {
+					title: 'Gewicht 1 (W₁)',
+					range: [-3.5, 3.5],
+					gridcolor: '#e2e8f0',
+					titlefont: { size: 12 },
+					backgroundcolor: '#f8fafc'
+				},
+				yaxis: {
+					title: 'Gewicht 2 (W₂)',
+					range: [-3.5, 3.5],
+					gridcolor: '#e2e8f0',
+					titlefont: { size: 12 },
+					backgroundcolor: '#f8fafc'
+				},
+				zaxis: {
+					title: 'Loss',
+					range: [0, 6.5],
+					gridcolor: '#e2e8f0',
+					titlefont: { size: 12 },
+					backgroundcolor: '#f8fafc'
+				},
+				camera: { eye: { x: 1.5, y: 1.5, z: 0.9 } },
+				aspectratio: { x: 1, y: 1, z: 0.55 },
+				dragmode: 'orbit'
+			},
+			showlegend: false
+		};
+
+		// WICHTIG: scrollZoom + vollständige Interaktion erlauben
+		Plotly.newPlot(plotDiv, [surfaceTrace, pathTrace, startTrace], layout, {
+			displayModeBar: true,
+			modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
+			responsive: true,
+			scrollZoom: true
+		});
+
+		this.surfaceRendered = true;
+		this.setupClickHandler();
+		this.updateUI();
+	},
+
+	// ===== LEICHTGEWICHTIGES UPDATE: Nur Path-Trace ändern =====
+	// Verwendet Plotly.restyle → Kamera/Rotation bleibt UNBERÜHRT
+	updatePathTrace: function() {
+		const plotDiv = this.plotDiv;
+		if (!plotDiv || !this.surfaceRendered) {
+			this.renderFull();
+			return;
+		}
+
+		const pathX = this.path.map(p => p.x);
+		const pathY = this.path.map(p => p.y);
+		const pathZ = this.path.map(p => p.loss + 0.12);
+
+		// Marker-Größen: letzter Punkt groß, erster mittel, Rest klein
+		const sizes = this.path.map((_, i) => {
+			if (i === this.path.length - 1) return 14;
+			if (i === 0) return 8;
+			return 3;
+		});
+
+		// Farben: Start=gold, Ende=rot, Mitte=blau
+		const colors = this.path.map((_, i) => {
+			if (i === this.path.length - 1) return '#ef4444';
+			if (i === 0) return '#fbbf24';
+			// Gradient von blau zu grün je weiter fortgeschritten
+			const t = i / Math.max(1, this.path.length - 1);
+			return t < 0.5 ? '#3b82f6' : '#10b981';
+		});
+
+		const symbols = this.path.map((_, i) => {
+			if (i === this.path.length - 1) return 'diamond';
+			if (i === 0) return 'diamond';
+			return 'circle';
+		});
+
+		// NUR Trace 1 (path) updaten – Plotly.restyle berührt die Kamera NICHT
+		Plotly.restyle(plotDiv, {
+			x: [pathX],
+			y: [pathY],
+			z: [pathZ],
+			'marker.size': [sizes],
+			'marker.color': [colors],
+			'marker.symbol': [symbols]
+		}, [1]);
+	},
+
+	// Start-Marker updaten wenn User woanders klickt
+	updateStartMarker: function() {
+		const plotDiv = this.plotDiv;
+		if (!plotDiv || !this.surfaceRendered) return;
+
+		Plotly.restyle(plotDiv, {
+			x: [[this.path[0].x]],
+			y: [[this.path[0].y]],
+			z: [[this.path[0].loss + 0.25]]
+		}, [2]);
+	},
+
+	updateUI: function() {
+		// Counter
+		const counter = document.getElementById('loss-step-counter');
+		if (counter) {
+			const currentLoss = this.path.length > 0 ? this.path[this.path.length - 1].loss : '?';
+			const lossStr = typeof currentLoss === 'number' ? currentLoss.toFixed(3) : currentLoss;
+			counter.innerHTML = `Schritt: <b>${this.stepCount}</b> | Loss: <b style="color:${this.stepCount > 0 ? '#10b981' : '#64748b'};">${lossStr}</b>`;
+		}
+
+		// Info-Box
+		const infoDiv = document.getElementById('loss-landscape-info');
+		if (infoDiv) {
+			if (this.stepCount === 0) {
+				infoDiv.innerHTML = `👆 <b>Klicke irgendwo auf die Oberfläche</b> um einen Startpunkt zu wählen! Dann klicke <b>"Ein Schritt"</b> oder <b>"Animieren"</b>. Du kannst den Plot <b>jederzeit frei drehen und zoomen</b> (auch während der Animation).`;
+				infoDiv.style.background = '#eff6ff';
+				infoDiv.style.borderColor = '#bfdbfe';
+				infoDiv.style.color = '#1e40af';
+			} else {
+				const startLoss = this.path[0].loss;
+				const currentLoss = this.path[this.path.length - 1].loss;
+				const improvement = ((1 - currentLoss / startLoss) * 100).toFixed(1);
+				const lr = this.getLR();
+
+				if (this.stepCount >= 80 || currentLoss < 1.5) {
+					infoDiv.innerHTML = `🏆 <b>Konvergiert!</b> Loss von <b>${startLoss.toFixed(2)}</b> auf <b>${currentLoss.toFixed(3)}</b> reduziert (<b>${improvement}%</b> besser). LR: ${lr}. Klicke woanders hin für einen neuen Start!`;
+					infoDiv.style.background = '#dcfce7';
+					infoDiv.style.borderColor = '#34d399';
+					infoDiv.style.color = '#166534';
+				} else if (this.stepCount >= 20) {
+					infoDiv.innerHTML = `📉 <b>Guter Fortschritt!</b> Verbesserung: <b>${improvement}%</b>. LR: ${lr}. Drehe den Plot frei – die Animation läuft weiter!`;
+					infoDiv.style.background = '#fef3c7';
+					infoDiv.style.borderColor = '#fbbf24';
+					infoDiv.style.color = '#854d0e';
+				} else {
+					infoDiv.innerHTML = `🔶 <b>Gradient Descent läuft:</b> Steigung → bergab. LR: <b>${lr}</b>. Tipp: Klicke auf einen Berggipfel und beobachte den Abstieg!`;
+					infoDiv.style.background = '#f0fdf4';
+					infoDiv.style.borderColor = '#86efac';
+					infoDiv.style.color = '#166534';
+				}
+			}
+		}
+	}
 };
 
 function loadIntuitionModule() {
