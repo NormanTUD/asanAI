@@ -3,480 +3,792 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Intuition – Vortrag (~30 Min.)</title>
+    <title>LLM Intuition – Präsentation</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/plotly.js@2.35.0/dist/plotly.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Latin.css">
     <script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; line-height: 1.7; color: #1e293b; }
-        h1 { color: #1e40af; font-size: 2em; }
-        h2 { color: #3b82f6; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 50px; }
-        h3 { color: #6366f1; margin-top: 35px; }
-        .demo-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0; }
-        .demo-title { font-size: 1.05rem; font-weight: bold; color: #1e293b; text-align: center; margin-bottom: 12px; }
-        .md { margin: 20px 0; }
-        .plot-container { height: 450px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #1e293b; }
+
+        /* ============ PRESENTATION CONTAINER ============ */
+        #presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ============ SLIDES ============ */
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 80px;
+            background: #ffffff;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: opacity 0.4s ease;
+        }
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+        .slide.slide-entering {
+            display: flex;
+            opacity: 0;
+        }
+
+        /* Slide content wrapper */
+        .slide-content {
+            max-width: 1100px;
+            width: 100%;
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        /* ============ TYPOGRAPHY ============ */
+        .slide h1 { font-size: 2.8em; color: #1e40af; margin-bottom: 20px; line-height: 1.2; }
+        .slide h2 { font-size: 2.2em; color: #3b82f6; margin-bottom: 16px; border-bottom: 3px solid #e2e8f0; padding-bottom: 8px; }
+        .slide h3 { font-size: 1.6em; color: #6366f1; margin-top: 20px; margin-bottom: 12px; }
+        .slide p { font-size: 1.2em; line-height: 1.8; margin-bottom: 14px; color: #334155; }
+        .slide ul, .slide ol { font-size: 1.15em; line-height: 1.8; margin: 12px 0 12px 30px; color: #334155; }
+        .slide li { margin-bottom: 8px; }
+        .slide code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+
+        /* ============ SPECIAL BOXES ============ */
+        .formula-box {
+            background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
+            padding: 24px 32px; margin: 20px 0; text-align: center; font-size: 1.1em;
+        }
+        .formula-box .math-display { font-size: 1.3em; margin: 12px 0; }
+        .key-insight {
+            background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px;
+            padding: 20px 24px; margin: 20px 0; font-size: 1.1em;
+        }
+        .key-insight::before { content: "💡 "; font-size: 1.3em; }
+        .demo-box {
+            background: #f8fafc; padding: 24px; border-radius: 12px;
+            border: 1px solid #e2e8f0; margin: 20px 0; width: 100%;
+        }
+        .demo-title { font-size: 1.1rem; font-weight: bold; color: #1e293b; text-align: center; margin-bottom: 14px; }
+
+        /* ============ IMAGE SUPPORT ============ */
+        .slide-image {
+            max-width: 90%;
+            max-height: 70vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            object-fit: contain;
+            margin: 20px auto;
+            display: block;
+        }
+        .slide-image-caption {
+            text-align: center;
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* ============ FRAGMENTS (reveal on click) ============ */
+        .fragment {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .fragment.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============ NAVIGATION BAR ============ */
+        #nav-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            height: 52px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        #nav-bar button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #e2e8f0;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #nav-bar button:hover { background: rgba(255,255,255,0.2); }
+        #nav-bar button:disabled { opacity: 0.3; cursor: not-allowed; }
+        #nav-bar .nav-center {
+            display: flex; align-items: center; gap: 12px; color: #94a3b8; font-size: 0.85em;
+        }
+        #slide-counter { color: #e2e8f0; font-weight: bold; font-size: 1em; }
+        #progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transition: width 0.4s ease; z-index: 1001;
+        }
+
+        /* ============ SLIDE OVERVIEW (thumbnail grid) ============ */
+        #slide-overview {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.97);
+            z-index: 2000;
+            display: none;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        #slide-overview.visible { display: block; }
+        #slide-overview .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .overview-thumb {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #e2e8f0;
+        }
+        .overview-thumb:hover { border-color: #3b82f6; transform: scale(1.03); }
+        .overview-thumb.current { border-color: #3b82f6; background: #1e3a5f; }
+        .overview-thumb .thumb-number { font-size: 0.75em; color: #64748b; margin-bottom: 4px; }
+        .overview-thumb .thumb-title { font-size: 0.95em; font-weight: 600; }
+
+        /* ============ FULLSCREEN ADJUSTMENTS ============ */
+        :fullscreen #presentation { background: #fff; }
+        :fullscreen .slide { padding: 80px 120px; }
+        :fullscreen .slide h1 { font-size: 3.2em; }
+        :fullscreen .slide h2 { font-size: 2.6em; }
+        :fullscreen .slide p { font-size: 1.35em; }
+
+        /* ============ SPEAKER NOTES (hidden, accessible via console) ============ */
+        .speaker-notes { display: none; }
+
+        /* ============ PLOT CONTAINERS ============ */
+        .plot-container { height: 400px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; }
         .layers-vertical { text-align: center; margin: 10px 0; }
         .bw-cell { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 1em; }
-        button { cursor: pointer; }
-        .formula-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 24px; margin: 18px 0; text-align: center; font-size: 1.1em; }
-        .formula-box .math-display { font-size: 1.2em; margin: 10px 0; }
-        .section-divider { border: none; border-top: 3px solid #3b82f6; margin: 60px 0 40px 0; }
-        .toc { background: #f1f5f9; padding: 20px 30px; border-radius: 12px; margin: 30px 0; }
-        .toc ol { margin: 10px 0; padding-left: 20px; }
-        .toc li { margin: 6px 0; }
-        .toc a { color: #1e40af; text-decoration: none; font-weight: 500; }
-        .toc a:hover { text-decoration: underline; }
-        .key-insight { background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 16px 20px; margin: 20px 0; }
-        .key-insight::before { content: "💡 "; font-size: 1.2em; }
-        .time-marker { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 0.75em; font-weight: bold; padding: 2px 8px; border-radius: 10px; margin-left: 10px; vertical-align: middle; }
+
+        /* ============ ANIMATIONS ============ */
         @keyframes tokenAppear { from { opacity:0; transform:translateY(10px) scale(0.8); } to { opacity:1; transform:translateY(0) scale(1); } }
         @keyframes arPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+        @keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .slide { padding: 30px 24px; }
+            .slide h1 { font-size: 1.8em; }
+            .slide h2 { font-size: 1.5em; }
+            .slide p { font-size: 1em; }
+            #nav-bar { padding: 0 12px; }
+        }
     </style>
 </head>
 <body>
 
-<h1>Wie funktionieren Large Language Models?</h1>
+<!-- Progress Bar -->
+<div id="progress-bar" style="width: 0%;"></div>
 
-<hr class="section-divider">
+<!-- Presentation Container -->
+<div id="presentation">
 
-<!-- ============================================================ -->
-<!-- TEIL 1: EINFÜHRUNG -->
-<!-- ============================================================ -->
-<h2 id="intro">1. Einführung: Was ist ein LLM?</h2>
-
-<div class="md">
-<p>LLMs (Large Language Models) sind Maschinen, die das <b>nächste wahrscheinlichste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal. Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
-</div>
-
-<div class="formula-box">
-    <strong>Die Grundformel:</strong>
-    <div class="math-display">
-        $$\text{Next Word} = \text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}}) \rightarrow \text{time}$$
-    </div>
-    <p style="font-size:0.9em; color:#475569;">Der User gibt "Once upon a" ein → das LLM sagt "time" vorher.</p>
-</div>
-
-<div class="md">
-<p><strong>Der vollständige autoregressive Prozess:</strong></p>
-</div>
-
-<div class="formula-box">
-    <div class="math-display">
-        $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time}}_{\text{Wort 1}}) \rightarrow \underbrace{\text{there}}_{\text{Wort 2}}$$
-    </div>
-    <div class="math-display">
-        $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there}}_{\text{Wörter 1–2}}) \rightarrow \underbrace{\text{was}}_{\text{Wort 3}}$$
-    </div>
-    <div class="math-display">
-        $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there was}}_{\text{Wörter 1–3}}) \rightarrow \underbrace{\text{a}}_{\text{Wort 4}}$$
-    </div>
-    <div class="math-display">
-        $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there was a}}_{\text{Wörter 1–4}}) \rightarrow \underbrace{\text{dragon.}}_{\text{Wort 5}}$$
-    </div>
-    <div class="math-display">
-        $$\text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}} \ \underbrace{\text{time there was a dragon.}}_{\text{Wörter 1–5}}) \rightarrow \underbrace{\texttt{|endoftext|}}_{\text{Stop}}$$
-    </div>
-    <p style="font-size:0.95em; margin-top:12px;"><strong>Endergebnis: "Once upon a time there was a dragon."</strong></p>
-</div>
-
-<!-- AUTOREGRESSIVE LOOP VISUALIZATION -->
-<div class="demo-box">
-    <div class="demo-title">🎅 Die autoregressive Schleife: Ein Wort nach dem anderen</div>
-    <div id="autoregressive-viz" style="min-height:200px;"></div>
-    <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
-        <button id="autoregressive-play" onclick="AutoregressiveViz.animate()" style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; font-weight:bold;">▶ Abspielen</button>
-        <button onclick="AutoregressiveViz.reset()" style="background:#64748b; color:white; border:none; padding:8px 20px; border-radius:8px; font-weight:bold;">↺ Reset</button>
-    </div>
-</div>
-
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- TEIL 2: TOKENISIERUNG -->
-<!-- ============================================================ -->
-<h2 id="tokenization">2. Tokenisierung</h2>
-
-<div class="md">
-<p>Computer verstehen keine Wörter – nur Zahlen. Deshalb wird der Text zuerst in kleine Stücke (<b>Tokens</b>) zerlegt. Tokens können Wörter, Teilwörter oder sogar einzelne Zeichen sein.</p>
-</div>
-
-<div class="formula-box">
-    <div class="math-display">
-        $$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$
-    </div>
-</div>
-
-<div class="md">
-<p>Beispiel für Subword-Tokenisierung: <code>"understanding"</code> → <code>"under"</code> + <code>"standing"</code>. So kann das Modell auch unbekannte Wörter verarbeiten, indem es bekannte Teile kombiniert.</p>
-<p>Die Aufteilung wird automatisch aus den Trainingsdaten gelernt und bleibt danach fest.</p>
-</div>
-
-<div class="demo-box">
-    <div class="demo-title">✂️ Tokenisierung: Text in Stücke zerlegen</div>
-    <input type="text" id="tokenizer-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-size:1em; margin-bottom:12px;" placeholder="z.B. 'The transformer is playing greatly'" value="The transformer is playing greatly">
-    <div id="tokenizer-output" style="min-height:60px;"></div>
-    <div id="tokenizer-stats" style="margin-top:10px;"></div>
-    <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
-        💡 Versuche <b>"understanding"</b> oder <b>"unbreakable"</b> einzugeben, um Subword-Splitting zu sehen.
-    </div>
-</div>
-
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- TEIL 3: EMBEDDING -->
-<!-- ============================================================ -->
-<h2 id="embedding">3. Embedding & Vektor-Arithmetik</h2>
-
-<div class="md">
-<p>Ein rohes Token sagt dem Modell nichts über die <b>Bedeutung</b>. Deshalb wird jedes Token durch einen <b>langen Zahlenvektor</b> ersetzt, der seine Bedeutung repräsentiert:</p>
-</div>
-
-<div class="formula-box">
-    <div class="math-display">
-        $$\text{"king"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$
-    </div>
-</div>
-
-<div class="md">
-<p>Diese Vektoren leben in einem hochdimensionalen Raum, in dem <b>Wörter mit ähnlicher Bedeutung nahe beieinander</b> liegen. "King" und "Queen" sind nah. "Banana" und "Monarchy" sind weit entfernt.</p>
-<p>Niemand designt diese Vektoren von Hand – das Modell lernt sie automatisch beim Training, rein dadurch, dass es beobachtet, welche Wörter in ähnlichen Kontexten vorkommen.</p>
-</div>
-
-<div class="key-insight">
-    <strong>Das berühmteste Beispiel für Vektor-Arithmetik:</strong>
-</div>
-
-<div class="formula-box" style="background:#f0fdf4; border-color:#86efac;">
-    <div class="math-display" style="font-size:1.4em;">
-        $$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$
-    </div>
-    <p style="font-size:0.9em; color:#475569; margin-top:10px;">Die Richtung von "man" zu "woman" repräsentiert das Konzept <em>Geschlecht</em>.<br>Dieselbe Richtung, angewandt auf "king", landet bei "queen".<br><strong>Das Modell wurde das nie explizit gelehrt – es entsteht von selbst!</strong></p>
-</div>
-
-<div class="md">
-<p>Echte Netzwerke nutzen nicht 2 oder 3 Dimensionen, sondern <b>Tausende</b>. Das ist nicht mehr visualisierbar, aber das Grundprinzip bleibt gleich.</p>
-</div>
-
-<div class="demo-box">
-    <div class="demo-title">📍 Embedding-Raum (2D-Projektion)</div>
-    <input type="text" id="embedding-viz-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-size:1em; margin-bottom:8px;" placeholder="z.B. king queen man woman" value="king queen man woman">
-    <div id="embedding-viz-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
-    <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
-        <div style="font-weight:bold; margin-bottom:8px;">🧮 Vektor-Arithmetik ausprobieren</div>
-        <input type="text" id="embedding-arithmetic-input" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;" placeholder="z.B. king - man + woman" onkeyup="EmbeddingViz.doArithmetic()" value="king - man + woman">
-        <div id="embedding-arithmetic-result" style="margin-top:8px;"></div>
-    </div>
-</div>
-
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- TEIL 4: POSITIONAL ENCODING -->
-<!-- ============================================================ -->
-<h2 id="positional">4. Positional Encoding</h2>
-
-<div class="md">
-<p>"The dog bites man" bedeutet etwas völlig anderes als "The man bites dog." Gleiche Wörter, andere Reihenfolge. Deshalb wird jedem Token ein <b>Positionssignal</b> hinzugefügt:</p>
-</div>
-
-<div class="formula-box">
-    <div class="math-display">
-        $$\text{Final Input} = \text{Embedding}(\text{token}) + \text{Position}(\text{index})$$
-    </div>
-</div>
-
-<div class="md">
-<p>Jetzt trägt jedes Token zwei Informationen: <b>Was es ist</b> und <b>wo es steht</b>.</p>
-<p>Das ist nötig, weil die Embedding- und Attention-Operationen <b>keine eingebaute Vorstellung von Reihenfolge</b> haben. Ohne Positional Encoding wären "dog bites man" und "man bites dog" für das Modell identisch.</p>
-</div>
-
-<div class="demo-box">
-    <div class="demo-title">📊 Positional Encoding: Wo bin ich im Satz?</div>
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-        <label style="font-size:0.85em; font-weight:bold;">Dimensionen:</label>
-        <input type="range" id="pe-num-dims" min="2" max="12" step="1" value="8" style="flex:1; accent-color:#8b5cf6;">
-        <span style="font-weight:bold; color:#8b5cf6;">8</span>
-    </div>
-    <div id="positional-encoding-plot" style="height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
-    <div style="font-weight:bold; margin-bottom:6px;">Heatmap</div>
-    <div id="positional-encoding-heatmap" style="height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
-    <div style="font-weight:bold; margin-bottom:6px;">Gleiches Wort, verschiedene Positionen</div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-        <input type="text" id="pe-demo-word" value="cat" style="width:80px; padding:6px; border-radius:6px; border:1px solid #cbd5e1;">
-        <label style="font-size:0.85em;">Pos 1: <input type="number" id="pe-demo-pos1" value="0" min="0" max="19" style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;"></label>
-        <label style="font-size:0.85em;">Pos 2: <input type="number" id="pe-demo-pos2" value="5" min="0" max="19" style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;"></label>
-    </div>
-    <div id="pe-addition-demo"></div>
-</div>
-
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- TEIL 5: TRANSFORMER-SCHICHTEN -->
-<!-- ============================================================ -->
-<h2 id="transformer">5. Die Transformer-Schichten</h2>
-
-<div class="md">
-<p>Dies ist das <b>Herzstück</b> des Modells (eingeführt 2017 von Vaswani et al.). Die Token-Vektoren fließen durch <b>viele gestapelte Schichten</b> (moderne LLMs haben 80+ Schichten). Jede Schicht verfeinert das Verständnis ein wenig mehr.</p>
-</div>
-
-<div class="key-insight">
-    <strong>Der Residual Stream – das "gemeinsame Notizbuch":</strong>
-    <p style="margin:8px 0 0 0;">Statt Daten zu überschreiben, wird das Ergebnis jeder Schicht zum bestehenden Vektor <b>addiert</b>:</p>
-</div>
-
-<div class="formula-box" style="background:#fef3c7; border-color:#fbbf24;">
-    <div class="math-display" style="font-size:1.3em;">
-        $$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$
-    </div>
-    <p style="font-size:0.9em; color:#92400e;">Ursprünglich erfunden gegen das <b>Vanishing Gradient Problem</b>, fungiert der Residual Stream heute als <b>gemeinsames Notizbuch</b>: Jede Schicht liest daraus, denkt nach, und <b>schreibt ihre Erkenntnisse zurück</b>.</p>
-</div>
-
-<!-- 5a: ATTENTION -->
-<h3>5a: Attention – "Welche anderen Wörter sind für <em>dieses</em> Wort wichtig?"</h3>
-
-<div class="md">
-<p>Attention erlaubt dem Modell, <b>andere Tokens anzuschauen</b>, um den Kontext zu verstehen.</p>
-<p><b>Beispiel:</b> In <em>"The cat sat on the mat because <b>it</b> was tired"</em> – worauf bezieht sich "it"? Ein <b>Attention Head</b> vergleicht "it" mit jedem anderen Wort und entscheidet: "it" bezieht sich auf "cat".</p>
-</div>
-
-<div class="key-insight">
-    <strong>Long Distance Dependencies:</strong> Ein Wort am Anfang eines langen Textes kann die Bedeutung eines Wortes am Ende beeinflussen. Attention findet diese Verbindungen über die gesamte <b>Kontextlänge</b> des Modells.
-</div>
-
-<div class="md">
-<p>Attention bewegt das Embedding eines Wortes kontextabhängig zu einem <b>kontextualisierten Embedding</b>. Das ist besonders wichtig bei mehrdeutigen Wörtern wie "bank" (Flussufer vs. Geldinstitut).</p>
-<p>Tippe <b>"bank river"</b> oder <b>"bank money"</b> ein und beobachte, wie der Diamant (das kontextualisierte "bank") zum passenden Nachbarn springt:</p>
-</div>
-
-<div class="layers-vertical">
-    <input type="text" id="trans-input" class="bw-cell" style="width:90%;" value="bank river" oninput="runAttention()">
-    <p>Der Diamant zeigt, wohin "bank" im jeweiligen Kontext wandert.</p>
-</div>
-<div id="transformer-plot" class="plot-container" style="height:450px;"></div>
-
-<div class="md">
-<p>LLMs haben <b>viele Attention Heads parallel</b>, jeder ein kleiner Spezialist: Einer verfolgt Pronomen-Referenzen, ein anderer verbindet Verben mit Objekten, ein dritter erkennt Adjektive bei Nomen.</p>
-<p><em>Wichtig:</em> Nicht alle Attention Heads tun etwas menschlich Interpretierbares. Es sind statistische Muster – sie "wissen" nicht, was Nomen oder Verben sind.</p>
-</div>
-
-<!-- 5b: FEED-FORWARD NETWORK -->
-<h3>5b: Feed-Forward-Netzwerk – "Was schließe ich daraus?"</h3>
-
-<div class="md">
-<p>Wenn Attention das <b>Umschauen</b> ist, dann ist das Feed-Forward-Network (FFN) das <b>Nachdenken</b>. Es ist die <b>Wissensdatenbank</b> des Transformers.</p>
-<p>Das FFN entscheidet, in welche Richtung im Embedding-Raum das kontextualisierte Embedding bewegt werden soll, um näher an ein sinnvolles nächstes Wort zu kommen.</p>
-</div>
-
-<div class="md">
-<p><strong>Die drei Stufen des FFN:</strong></p>
-<ol>
-    <li><b>Die Detektoren (Layer 1):</b> Der Vektor wird expandiert, um Tausende spezifischer Muster zu prüfen. ("Ist das ein französisches Wahrzeichen?" "Geht es um Technologie?")</li>
-    <li><b>Der Filter (Aktivierungsfunktion):</b> ReLU setzt alle negativen Werte auf Null. Nur starke Signale überleben.</li>
-    <li><b>Das Wissen (Layer 2):</b> Für jeden "gefeuerten" Detektor werden assoziierte Fakten zum Token-Vektor addiert.</li>
-</ol>
-</div>
-
-<div class="formula-box">
-    <strong>Die FFN-Formel:</strong>
-    <div class="math-display">
-        $$\text{FFN}(x) = W_2 \cdot \max(0,\; W_1 \cdot x + b_1) + b_2$$
-    </div>
-    <p style="font-size:0.85em; color:#475569;"><span class="math-inline">$W_1$</span> = Detektoren | <span class="math-inline">$\max(0, \ldots)$</span> = ReLU-Filter | <span class="math-inline">$W_2$</span> = Wissensvektoren</p>
-</div>
-
-<div class="md">
-<p>Schauen wir uns das Wort <b>"Apple"</b> an. Durch Attention enthält sein Vektor bereits Kontext-Hinweise. Das FFN reagiert je nach Kontext völlig unterschiedlich:</p>
-</div>
-
-<div class="demo-box" style="max-width:800px;">
-    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
-        <button onclick="FFNViz.setScenario('apple_fruit')" id="btn-ffn-fruit" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold;">🍎 "eating an apple"</button>
-        <button onclick="FFNViz.setScenario('apple_tech')" id="btn-ffn-tech" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold;">💻 "buying an apple"</button>
-    </div>
-    <div id="ffn-viz-container" style="position:relative; height:350px; background:white; border-radius:8px; border:1px solid #e2e8f0; padding:20px; display:flex; justify-content:space-between; align-items:center; overflow:hidden;">
-        <div style="width:120px; text-align:center; z-index:2;">
-            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Input</div>
-            <div id="ffn-input-box" style="background:#e0e7ff; border:2px solid #818cf8; padding:10px; border-radius:8px; font-weight:bold; color:#312e81;">"Apple" + Kontext</div>
+    <!-- ==================== SLIDE 1: Title ==================== -->
+    <div class="slide active" data-title="Titel">
+        <div class="slide-content" style="text-align:center;">
+            <h1>Wie funktionieren<br>Large Language Models?</h1>
+            <p style="font-size:1.4em; color:#64748b; margin-top:30px;">Eine interaktive Einführung</p>
+            <p style="font-size:1em; color:#94a3b8; margin-top:40px;">Pfeiltasten ← → oder Klick zum Navigieren<br>
+            <kbd style="background:#f1f5f9; padding:2px 8px; border-radius:4px; border:1px solid #e2e8f0;">F</kbd> = Vollbild &nbsp;
+            <kbd style="background:#f1f5f9; padding:2px 8px; border-radius:4px; border:1px solid #e2e8f0;">O</kbd> = Übersicht &nbsp;
+            <kbd style="background:#f1f5f9; padding:2px 8px; border-radius:4px; border:1px solid #e2e8f0;">Leertaste</kbd> = Weiter</p>
         </div>
-        <div style="width:180px; text-align:center; z-index:2;">
-            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Detektoren</div>
-            <div id="ffn-detectors" style="display:flex; flex-direction:column; gap:10px;"></div>
+        <div class="speaker-notes">Begrüßung, kurze Vorstellung des Themas.</div>
+    </div>
+
+    <!-- ==================== SLIDE 2: Was ist ein LLM? ==================== -->
+    <div class="slide" data-title="Was ist ein LLM?">
+        <div class="slide-content">
+            <h2>1. Was ist ein LLM?</h2>
+            <p>LLMs sind Maschinen, die das <b>nächste wahrscheinlichste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal.</p>
+            <div class="formula-box fragment">
+                <strong>Die Grundformel:</strong>
+                <div class="math-display">$$\text{Next Word} = \text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}}) \rightarrow \text{time}$$</div>
+            </div>
+            <p class="fragment">Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
         </div>
-        <div style="width:200px; text-align:center; z-index:2;">
-            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Wissen</div>
-            <div id="ffn-facts" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+
+    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->
+    <div class="slide" data-title="Autoregressive Schleife">
+        <div class="slide-content">
+            <h2>Die autoregressive Schleife</h2>
+            <div class="formula-box">
+                <div class="math-display">$$\text{LLM}(\text{Once upon a}) \rightarrow \text{time}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time}) \rightarrow \text{there}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there}) \rightarrow \text{was}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there was}) \rightarrow \text{a}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there was a}) \rightarrow \text{dragon.}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there was a dragon.}) \rightarrow \texttt{|endoftext|}$$</div>
+            </div>
         </div>
-        <div style="width:120px; text-align:center; z-index:2;">
-            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Output</div>
-            <div id="ffn-output-box" style="background:#dcfce7; border:2px solid #34d399; padding:10px; border-radius:8px; font-weight:bold; color:#065f46;">Angereicherter Vektor</div>
+    </div>
+
+    <!-- ==================== SLIDE 4: Autoregressive Demo ==================== -->
+    <div class="slide" data-title="Demo: Autoregressive Schleife">
+        <div class="slide-content">
+            <h2>Demo: Ein Wort nach dem anderen</h2>
+            <div class="demo-box">
+                <div class="demo-title">🎬 Die autoregressive Schleife</div>
+                <div id="autoregressive-viz" style="min-height:200px;"></div>
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+                    <button id="autoregressive-play" onclick="AutoregressiveViz.animate()" style="background:#3b82f6; color:white; border:none; padding:10px 24px; border-radius:8px; font-weight:bold; font-size:1em; cursor:pointer;">▶ Abspielen</button>
+                    <button onclick="AutoregressiveViz.reset()" style="background:#64748b; color:white; border:none; padding:10px 24px; border-radius:8px; font-weight:bold; font-size:1em; cursor:pointer;">↺ Reset</button>
+                </div>
+            </div>
         </div>
-        <svg id="ffn-lines" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none;"></svg>
     </div>
-    <div id="ffn-explanation" style="margin-top:15px; padding:12px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.9em; color:#475569; text-align:center;">Wähle einen Kontext oben.</div>
-</div>
 
-<!-- 5c: ALLES ZUSAMMEN – DER RESIDUAL STREAM -->
-<h3>5c: Alles zusammen – Der Residual Stream</h3>
-
-<div class="md">
-<p>Weder die <b>Attention Heads</b> noch das <b>Feed-Forward-Network</b> werden von Hand konfiguriert. Sie lernen, worauf sie achten sollen, indem sie <b>massive Mengen an Text</b> lesen.</p>
-<p>Das Ergebnis beider Operationen wird einfach zum <b>Residual Stream</b> addiert:</p>
-</div>
-
-<div class="formula-box" style="background:#fef3c7; border-color:#fbbf24;">
-    <div class="math-display" style="font-size:1.2em;">
-        $$\mathbf{x} := \mathbf{x} + \text{Attention}(\mathbf{x})$$
+    <!-- ==================== SLIDE 5: Tokenisierung ==================== -->
+    <div class="slide" data-title="Tokenisierung">
+        <div class="slide-content">
+            <h2>2. Tokenisierung</h2>
+            <p>Computer verstehen keine Wörter – nur Zahlen. Text wird in kleine Stücke (<b>Tokens</b>) zerlegt.</p>
+            <div class="formula-box fragment">
+                <div class="math-display">$$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$</div>
+            </div>
+            <p class="fragment">Subword-Tokenisierung: <code>"understanding"</code> → <code>"under"</code> + <code>"standing"</code></p>
+        </div>
     </div>
-    <div class="math-display" style="font-size:1.2em;">
-        $$\mathbf{x} := \mathbf{x} + \text{FFN}(\mathbf{x})$$
+
+    <!-- ==================== SLIDE 6: Tokenisierung Demo ==================== -->
+    <div class="slide" data-title="Demo: Tokenisierung">
+        <div class="slide-content">
+            <h2>Demo: Tokenisierung</h2>
+            <div class="demo-box">
+                <div class="demo-title">✂️ Text in Stücke zerlegen</div>
+                <input type="text" id="tokenizer-input" style="width:100%; padding:12px; border-radius:8px; border:1px solid #cbd5e1; font-size:1.1em; margin-bottom:14px;" placeholder="z.B. 'The transformer is playing greatly'" value="The transformer is playing greatly">
+                <div id="tokenizer-output" style="min-height:60px;"></div>
+                <div id="tokenizer-stats" style="margin-top:12px;"></div>
+            </div>
+        </div>
     </div>
-    <p style="font-size:0.9em; color:#92400e; margin-top:10px;">Jede Schicht <b>liest</b> aus dem Residual Stream, <b>verarbeitet</b> die Information, und <b>schreibt ihre Erkenntnisse zurück</b>. Nichts geht verloren – Information akkumuliert sich über alle Schichten hinweg.</p>
-</div>
 
-<div class="key-insight">
-    <strong>Warum ist das wichtig?</strong>
-    <ul style="margin:8px 0 0 0;">
-        <li><b>Stabilität:</b> Gradienten können beim Training leichter durch viele Schichten fließen (löst das Vanishing Gradient Problem)</li>
-        <li><b>Akkumulation:</b> Frühe Schichten erkennen einfache Muster (Wortart, Syntax), spätere Schichten komplexe Zusammenhänge (Semantik, Fakten, Logik)</li>
-        <li><b>Flexibilität:</b> Jede Schicht kann entscheiden, "nichts zu tun" (Null addieren) oder stark einzugreifen</li>
-    </ul>
-</div>
-
-<div class="demo-box">
-    <div class="demo-title">🎭 Residual Stream: Schicht für Schicht</div>
-    <div id="residual-stream-plot"></div>
-    <div style="display:flex; align-items:center; gap:14px; margin-top:14px; justify-content:center; flex-wrap:wrap;">
-        <button id="residual-stream-prev" onclick="ResidualStreamViz.prevLayer()" style="padding:9px 18px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc;">← Zurück</button>
-        <span id="residual-stream-layer-label" style="font-weight:bold; font-size:15px; min-width:110px; text-align:center;">Embedding</span>
-        <button id="residual-stream-next" onclick="ResidualStreamViz.nextLayer()" style="padding:9px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:600;">Nächste Schicht →</button>
-        <input type="range" id="residual-stream-layer" min="0" max="3" value="0" oninput="ResidualStreamViz.setLayer(parseInt(this.value))" style="width:140px;">
-        <button onclick="ResidualStreamViz.reset()" style="padding:9px 14px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b;">Reset</button>
+    <!-- ==================== SLIDE 7: Embedding ==================== -->
+    <div class="slide" data-title="Embedding">
+        <div class="slide-content">
+            <h2>3. Embedding & Vektor-Arithmetik</h2>
+            <p>Jedes Token wird durch einen <b>langen Zahlenvektor</b> ersetzt, der seine Bedeutung repräsentiert:</p>
+            <div class="formula-box fragment">
+                <div class="math-display">$$\text{"king"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
+            </div>
+            <div class="key-insight fragment">
+                <strong>Vektor-Arithmetik:</strong>
+                <div class="formula-box" style="background:#f0fdf4; border-color:#86efac; margin-top:12px;">
+                    <div class="math-display" style="font-size:1.4em;">$$\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}$$</div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="residual-stream-info" style="margin-top:14px;"></div>
-</div>
 
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- TEIL 6: DIE FINALE VORHERSAGE -->
-<!-- ============================================================ -->
-<h2 id="prediction">6. Die finale Vorhersage</h2>
-
-<div class="md">
-<p>Nach allen Schichten nimmt das Modell den <b>Vektor des letzten Tokens</b> und erzeugt einen <b>Score für jedes Wort im Vokabular</b> (oft 50.000+ Wörter). Diese Scores werden in Wahrscheinlichkeiten umgewandelt:</p>
-</div>
-
-<div class="formula-box">
-    <div class="math-display">
-        $$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) = 0.002, \quad \ldots$$
+    <!-- ==================== SLIDE 8: Embedding Demo ==================== -->
+    <div class="slide" data-title="Demo: Embedding">
+        <div class="slide-content">
+            <h2>Demo: Embedding-Raum</h2>
+            <div class="demo-box">
+                <div class="demo-title">📍 2D-Projektion des Embedding-Raums</div>
+                <input type="text" id="embedding-viz-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-size:1em; margin-bottom:8px;" placeholder="z.B. king queen man woman" value="king queen man woman">
+                <div id="embedding-viz-plot" style="height:380px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+                <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+                    <div style="font-weight:bold; margin-bottom:8px;">🧮 Vektor-Arithmetik</div>
+                    <input type="text" id="embedding-arithmetic-input" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;" placeholder="z.B. king - man + woman" value="king - man + woman">
+                    <div id="embedding-arithmetic-result" style="margin-top:8px;"></div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<div class="md">
-<p>Das Modell <b>wählt dann ein Wort</b>, meist eines der Top-Kandidaten, mit etwas Zufall, damit es nicht immer dasselbe sagt. Das macht es "kreativ".</p>
-<p><b>Temperature</b> steuert diese Zufälligkeit:</p>
-<ul>
-    <li><b>T → 0 (Greedy):</b> Immer das wahrscheinlichste Wort → deterministisch, aber langweilig</li>
-    <li><b>T = 1 (Balanced):</b> Natürliche Verteilung → guter Mix aus Kohärenz und Kreativität</li>
-    <li><b>T > 1 (Kreativ):</b> Verteilung wird flacher → seltene Wörter bekommen eine Chance</li>
-</ul>
-</div>
-
-<div class="demo-box">
-    <div class="demo-title">🎯 Vorhersage: Wahrscheinlichkeit über Vokabular</div>
-    <div style="font-size:0.85em; color:#64748b; text-align:center; margin-bottom:10px;">
-        Input: "Once upon a" → Was kommt als nächstes?
+    <!-- ==================== SLIDE 9: Positional Encoding ==================== -->
+    <div class="slide" data-title="Positional Encoding">
+        <div class="slide-content">
+            <h2>4. Positional Encoding</h2>
+            <p>"The dog bites man" ≠ "The man bites dog" – gleiche Wörter, andere Reihenfolge!</p>
+            <div class="formula-box fragment">
+                <div class="math-display">$$\text{Final Input} = \text{Embedding}(\text{token}) + \text{Position}(\text{index})$$</div>
+            </div>
+            <p class="fragment">Jetzt trägt jedes Token zwei Informationen: <b>Was es ist</b> und <b>wo es steht</b>.</p>
+        </div>
     </div>
-    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
-        <span style="font-size:0.85em; color:#3b82f6; font-weight:bold;">🎯 Greedy</span>
-        <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
-        <span style="font-size:0.85em; color:#ef4444; font-weight:bold;">🎲 Kreativ</span>
-        <span id="prediction-temp-val" style="font-size:0.9em; font-weight:bold; min-width:120px; text-align:right;">1.00</span>
+
+    <!-- ==================== SLIDE 10: Positional Encoding Demo ==================== -->
+    <div class="slide" data-title="Demo: Positional Encoding">
+        <div class="slide-content">
+            <h2>Demo: Positional Encoding</h2>
+            <div class="demo-box">
+                <div class="demo-title">📊 Sinusoidale Positionskodierung</div>
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                    <label style="font-size:0.85em; font-weight:bold;">Dimensionen:</label>
+                    <input type="range" id="pe-num-dims" min="2" max="12" step="1" value="8" style="flex:1; accent-color:#8b5cf6;">
+                    <span style="font-weight:bold; color:#8b5cf6;">8</span>
+                </div>
+                <div id="positional-encoding-plot" style="height:250px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
+                <div id="positional-encoding-heatmap" style="height:250px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            </div>
+        </div>
     </div>
-    <div id="prediction-plot" style="height:350px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
-    <div id="prediction-info"></div>
-    <div style="margin-top:10px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.8em; color:#64748b;">
-        💡 <b>Temperature</b> steuert die Zufälligkeit. Bei T→0 wird immer das Top-Wort gewählt (greedy).
-        Bei hohem T wird die Verteilung flacher und seltene Wörter bekommen eine Chance – das macht LLMs "kreativ."
-        Das Modell "weiß" die Antwort nicht; es weist Wahrscheinlichkeiten zu und <b>sampelt</b>.
+
+    <!-- ==================== SLIDE 11: Transformer Intro ==================== -->
+    <div class="slide" data-title="Transformer-Schichten">
+        <div class="slide-content">
+            <h2>5. Die Transformer-Schichten</h2>
+            <p>Das <b>Herzstück</b> des Modells. Token-Vektoren fließen durch <b>viele gestapelte Schichten</b> (80+ bei modernen LLMs).</p>
+            <div class="key-insight fragment">
+                <strong>Der Residual Stream – das "gemeinsame Notizbuch":</strong>
+                <div class="formula-box" style="background:#fef3c7; border-color:#fbbf24; margin-top:12px;">
+                    <div class="math-display" style="font-size:1.3em;">$$\mathbf{x} := \mathbf{x} + \text{Layer}(\mathbf{x})$$</div>
+                </div>
+                <p style="margin-top:8px;">Jede Schicht liest, denkt nach, und <b>schreibt ihre Erkenntnisse zurück</b>.</p>
+            </div>
+        </div>
     </div>
+
+    <!-- ==================== SLIDE 12: Attention ==================== -->
+    <div class="slide" data-title="Attention">
+        <div class="slide-content">
+            <h2>5a: Attention</h2>
+            <p>"Welche anderen Wörter sind für <em>dieses</em> Wort wichtig?"</p>
+            <p class="fragment"><b>Beispiel:</b> "The cat sat on the mat because <b>it</b> was tired" – worauf bezieht sich "it"?</p>
+            <div class="key-insight fragment">
+                Attention bewegt das Embedding kontextabhängig. Tippe <b>"bank river"</b> oder <b>"bank money"</b>:
+            </div>
+            <div class="fragment" style="margin-top:16px;">
+                <div class="layers-vertical">
+                    <input type="text" id="trans-input" class="bw-cell" style="width:80%; font-size:1.1em;" value="bank river" oninput="runAttention()">
+                </div>
+                <div id="transformer-plot" class="plot-container" style="height:380px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 13: FFN ==================== -->
+    <div class="slide" data-title="Feed-Forward Network">
+        <div class="slide-content">
+            <h2>5b: Feed-Forward-Netzwerk</h2>
+            <p>Wenn Attention das <b>Umschauen</b> ist, dann ist das FFN das <b>Nachdenken</b> – die Wissensdatenbank.</p>
+            <div class="formula-box fragment">
+                <div class="math-display">$$\text{FFN}(x) = W_2 \cdot \max(0,\; W_1 \cdot x + b_1) + b_2$$</div>
+            </div>
+            <div class="fragment" style="margin-top:20px;">
+                <div class="demo-box" style="max-width:900px;">
+                    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+                        <button onclick="FFNViz.setScenario('apple_fruit')" id="btn-ffn-fruit" style="padding:10px 20px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; font-size:1em; cursor:pointer;">🍎 "eating an apple"</button>
+                        <button onclick="FFNViz.setScenario('apple_tech')" id="btn-ffn-tech" style="padding:10px 20px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; font-size:1em; cursor:pointer;">💻 "buying an apple"</button>
+                    </div>
+                    <div id="ffn-viz-container" style="position:relative; height:300px; background:white; border-radius:8px; border:1px solid #e2e8f0; padding:20px; display:flex; justify-content:space-between; align-items:center; overflow:hidden;">
+                        <div style="width:110px; text-align:center; z-index:2;">
+                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Input</div>
+                            <div id="ffn-input-box" style="background:#e0e7ff; border:2px solid #818cf8; padding:8px; border-radius:8px; font-weight:bold; color:#312e81; font-size:0.85em;">"Apple" + Kontext</div>
+                        </div>
+                        <div style="width:160px; text-align:center; z-index:2;">
+                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Detektoren</div>
+                            <div id="ffn-detectors" style="display:flex; flex-direction:column; gap:8px;"></div>
+                        </div>
+                        <div style="width:180px; text-align:center; z-index:2;">
+                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Wissen</div>
+                            <div id="ffn-facts" style="display:flex; flex-direction:column; gap:8px;"></div>
+                        </div>
+                        <div style="width:110px; text-align:center; z-index:2;">
+                            <div style="font-weight:bold; color:#475569; margin-bottom:6px; font-size:0.85em;">Output</div>
+                            <div id="ffn-output-box" style="background:#dcfce7; border:2px solid #34d399; padding:8px; border-radius:8px; font-weight:bold; color:#065f46; font-size:0.85em;">Angereicherter Vektor</div>
+                        </div>
+                        <svg id="ffn-lines" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none;"></svg>
+                    </div>
+                    <div id="ffn-explanation" style="margin-top:12px; padding:10px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.9em; color:#475569; text-align:center;">Wähle einen Kontext oben.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 14: Residual Stream Demo ==================== -->
+    <div class="slide" data-title="Demo: Residual Stream">
+        <div class="slide-content">
+            <h2>5c: Residual Stream – Schicht für Schicht</h2>
+            <div class="demo-box">
+                <div class="demo-title">🎭 Residual Stream Visualisierung</div>
+                <div id="residual-stream-plot"></div>
+                <div style="display:flex; align-items:center; gap:14px; margin-top:14px; justify-content:center; flex-wrap:wrap;">
+                    <button id="residual-stream-prev" onclick="ResidualStreamViz.prevLayer()" style="padding:9px 18px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; cursor:pointer;">← Zurück</button>
+                    <span id="residual-stream-layer-label" style="font-weight:bold; font-size:15px; min-width:110px; text-align:center;">Embedding</span>
+                    <button id="residual-stream-next" onclick="ResidualStreamViz.nextLayer()" style="padding:9px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:600;">Nächste Schicht →</button>
+                    <input type="range" id="residual-stream-layer" min="0" max="3" value="0" oninput="ResidualStreamViz.setLayer(parseInt(this.value))" style="width:140px;">
+                    <button onclick="ResidualStreamViz.reset()" style="padding:9px 14px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b;">Reset</button>
+                </div>
+                <div id="residual-stream-info" style="margin-top:14px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 15: Finale Vorhersage ==================== -->
+    <div class="slide" data-title="Finale Vorhersage">
+        <div class="slide-content">
+            <h2>6. Die finale Vorhersage</h2>
+            <p>Nach allen Schichten nimmt das Modell den <b>Vektor des letzten Tokens</b> und erzeugt einen <b>Score für jedes Wort im Vokabular</b> (oft 50.000+ Wörter):</p>
+            <div class="formula-box fragment">
+                <div class="math-display">$$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) = 0.002, \quad \ldots$$</div>
+            </div>
+            <p class="fragment"><b>Temperature</b> steuert die Zufälligkeit:</p>
+            <ul class="fragment">
+                <li><b>T → 0 (Greedy):</b> Immer das wahrscheinlichste Wort</li>
+                <li><b>T = 1 (Balanced):</b> Natürliche Verteilung</li>
+                <li><b>T > 1 (Kreativ):</b> Seltene Wörter bekommen eine Chance</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 16: Vorhersage Demo ==================== -->
+    <div class="slide" data-title="Demo: Vorhersage">
+        <div class="slide-content">
+            <h2>Demo: Temperature & Sampling</h2>
+            <div class="demo-box">
+                <div class="demo-title">🎲 Vorhersage: Wahrscheinlichkeit über Vokabular</div>
+                <div style="font-size:0.85em; color:#64748b; text-align:center; margin-bottom:10px;">
+                    Input: "Once upon a" → Was kommt als nächstes?
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                    <span style="font-size:0.85em; color:#3b82f6; font-weight:bold;">🎯 Greedy</span>
+                    <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
+                    <span style="font-size:0.85em; color:#ef4444; font-weight:bold;">🎲 Kreativ</span>
+                    <span id="prediction-temp-val" style="font-size:0.9em; font-weight:bold; min-width:120px; text-align:right;">1.00</span>
+                </div>
+                <div id="prediction-plot" style="height:320px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+                <div id="prediction-info"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 17: Fazit ==================== -->
+    <div class="slide" data-title="Fazit">
+        <div class="slide-content" style="text-align:center;">
+            <h2>7. Fazit & Kernaussage</h2>
+            <div class="key-insight" style="font-size:1.15em; padding:30px; margin-top:30px;">
+                <strong>Es gibt kein "Verstehen"-Modul.</strong><br><br>
+                Keine Grammatikprüfung. Keine Wissensdatenbank im klassischen Sinne.<br>
+                Nur Vektoren, die durch Schichten einfacher Mathematik fließen:<br>
+                <b>Addition, Multiplikation, Vergleich.</b><br><br>
+                Aber genug davon gestapelt – und etwas, das<br>
+                <em style="font-size:1.2em;">sehr nach Verständnis aussieht</em>, entsteht.
+            </div>
+            <div class="formula-box fragment" style="margin-top:30px;">
+                <strong>Der gesamte Prozess:</strong>
+                <div class="math-display" style="font-size:1.1em; margin-top:12px;">
+                    $$\text{Text} \xrightarrow{\text{Tokenize}} \text{Tokens} \xrightarrow{\text{Embed}} \text{Vektoren} \xrightarrow{+\text{Position}} \text{Positionierte Vektoren}$$
+                </div>
+                <div class="math-display" style="font-size:1.1em;">
+                    $$\xrightarrow{\text{N × (Attention + FFN)}} \text{Kontextualisierte Vektoren} \xrightarrow{\text{Softmax}} \text{Nächstes Wort}$$
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE 18: Danke ==================== -->
+    <div class="slide" data-title="Danke!">
+        <div class="slide-content" style="text-align:center;">
+            <h1 style="font-size:3em;">Vielen Dank! 🙏</h1>
+            <p style="font-size:1.5em; color:#64748b; margin-top:30px;">Fragen?</p>
+        </div>
+    </div>
+
+    <!-- ==================== SLIDE: Bild-Vorlage (zum Kopieren) ==================== -->
+    <!--
+    <div class="slide" data-title="Bild-Beispiel">
+        <div class="slide-content" style="text-align:center;">
+            <h2>Bild-Folie</h2>
+            <img class="slide-image" src="dein-bild.png" alt="Beschreibung">
+            <p class="slide-image-caption">Bildunterschrift hier</p>
+        </div>
+    </div>
+    -->
+
+</div><!-- end #presentation -->
+
+<!-- ============ SLIDE OVERVIEW ============ -->
+<div id="slide-overview">
+    <div class="overview-grid" id="overview-grid"></div>
 </div>
 
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- TEIL 7: FAZIT -->
-<!-- ============================================================ -->
-<h2 id="conclusion">7. Fazit & Kernaussage</h2>
-
-<div class="key-insight" style="font-size:1.1em; text-align:center; padding:24px;">
-    <strong>Es gibt kein "Verstehen"-Modul.</strong><br><br>
-    Keine Grammatikprüfung. Keine Wissensdatenbank im klassischen Sinne.<br>
-    Nur Vektoren, die durch Schichten einfacher Mathematik fließen:<br>
-    <b>Addition, Multiplikation, Vergleich.</b><br><br>
-    Aber genug davon gestapelt – und etwas, das<br>
-    <em style="font-size:1.2em;">sehr nach Verständnis aussieht</em>, entsteht.
-</div>
-
-<div class="formula-box" style="margin-top:30px;">
-    <strong>Zusammenfassung des gesamten Prozesses:</strong>
-    <div class="math-display" style="font-size:1.1em; margin-top:12px;">
-        $$\text{Text} \xrightarrow{\text{Tokenize}} \text{Tokens} \xrightarrow{\text{Embed}} \text{Vektoren} \xrightarrow{+\text{Position}} \text{Positionierte Vektoren}$$
+<!-- ============ NAVIGATION BAR ============ -->
+<div id="nav-bar">
+    <button id="btn-prev" onclick="Presentation.prev()">← Zurück</button>
+    <div class="nav-center">
+        <span id="slide-counter">1 / 18</span>
+        <button onclick="Presentation.toggleOverview()" style="background:transparent; border:none; color:#94a3b8; font-size:1.2em; cursor:pointer;" title="Übersicht (O)">▦</button>
+        <button onclick="Presentation.toggleFullscreen()" style="background:transparent; border:none; color:#94a3b8; font-size:1.2em; cursor:pointer;" title="Vollbild (F)">⛶</button>
     </div>
-    <div class="math-display" style="font-size:1.1em;">
-        $$\xrightarrow{\text{N × (Attention + FFN)}} \text{Kontextualisierte Vektoren} \xrightarrow{\text{Softmax}} \text{Nächstes Wort}$$
-    </div>
+    <button id="btn-next" onclick="Presentation.next()">Weiter →</button>
 </div>
 
-<div style="margin-top:40px; padding:20px; background:#f1f5f9; border-radius:12px; text-align:center;">
-    <p style="font-size:1.1em; font-weight:bold; color:#1e40af;">Vielen Dank für die Aufmerksamkeit! 🙏</p>
-    <p style="color:#475569;">Fragen?</p>
-</div>
-
+<!-- ============ SCRIPTS ============ -->
 <script src="intuition.js"></script>
 <script>
-    // Set rootMargin for lazy loading
-    var rootMargin = '200px';
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        loadIntuitionModule();
-        runAttention();
-    });
+// ============================================================
+// PRESENTATION ENGINE
+// ============================================================
+const Presentation = (() => {
+    let currentSlide = 0;
+    let slides = [];
+    let fragmentIndex = {}; // tracks which fragments are visible per slide
+
+    function init() {
+        slides = Array.from(document.querySelectorAll('.slide'));
+        // Initialize fragment tracking
+        slides.forEach((slide, i) => {
+            fragmentIndex[i] = 0;
+        });
+        updateUI();
+        buildOverview();
+    }
+
+    function getFragments(slideIdx) {
+        return Array.from(slides[slideIdx].querySelectorAll('.fragment'));
+    }
+
+    function next() {
+        // First, reveal next fragment on current slide
+        const fragments = getFragments(currentSlide);
+        const visibleCount = fragmentIndex[currentSlide];
+        if (visibleCount < fragments.length) {
+            fragments[visibleCount].classList.add('visible');
+            fragmentIndex[currentSlide]++;
+            return;
+        }
+        // No more fragments, go to next slide
+        if (currentSlide < slides.length - 1) {
+            goTo(currentSlide + 1);
+        }
+    }
+
+    function prev() {
+        // First, hide last visible fragment on current slide
+        const fragments = getFragments(currentSlide);
+        const visibleCount = fragmentIndex[currentSlide];
+        if (visibleCount > 0) {
+            fragments[visibleCount - 1].classList.remove('visible');
+            fragmentIndex[currentSlide]--;
+            return;
+        }
+        // No fragments to hide, go to previous slide
+        if (currentSlide > 0) {
+            goTo(currentSlide - 1, true);
+        }
+    }
+
+    function goTo(idx, showAllFragments = false) {
+        if (idx < 0 || idx >= slides.length) return;
+        slides[currentSlide].classList.remove('active');
+        currentSlide = idx;
+        slides[currentSlide].classList.remove('slide-entering');
+        slides[currentSlide].classList.add('active');
+
+        if (showAllFragments) {
+            // When going back, show all fragments
+            const fragments = getFragments(currentSlide);
+            fragments.forEach(f => f.classList.add('visible'));
+            fragmentIndex[currentSlide] = fragments.length;
+        } else {
+            // Reset fragments when going forward to a new slide
+            const fragments = getFragments(currentSlide);
+            fragments.forEach(f => f.classList.remove('visible'));
+            fragmentIndex[currentSlide] = 0;
+        }
+
+        updateUI();
+        closeOverview();
+
+        // Trigger any lazy-loaded demos on this slide
+        triggerSlideInit(currentSlide);
+    }
+
+    function updateUI() {
+        document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${slides.length}`;
+        document.getElementById('btn-prev').disabled = (currentSlide === 0 && fragmentIndex[0] === 0);
+        document.getElementById('btn-next').disabled = (currentSlide === slides.length - 1 && fragmentIndex[currentSlide] >= getFragments(currentSlide).length);
+        // Progress bar
+        const progress = ((currentSlide) / (slides.length - 1)) * 100;
+        document.getElementById('progress-bar').style.width = progress + '%';
+        // Update overview highlights
+        document.querySelectorAll('.overview-thumb').forEach((thumb, i) => {
+            thumb.classList.toggle('current', i === currentSlide);
+        });
+    }
+
+    function buildOverview() {
+        const grid = document.getElementById('overview-grid');
+        grid.innerHTML = '';
+        slides.forEach((slide, i) => {
+            const title = slide.getAttribute('data-title') || `Folie ${i + 1}`;
+            const thumb = document.createElement('div');
+            thumb.className = 'overview-thumb' + (i === currentSlide ? ' current' : '');
+            thumb.innerHTML = `<div class="thumb-number">Folie ${i + 1}</div><div class="thumb-title">${title}</div>`;
+            thumb.onclick = () => goTo(i);
+            grid.appendChild(thumb);
+        });
+    }
+
+    function toggleOverview() {
+        const ov = document.getElementById('slide-overview');
+        ov.classList.toggle('visible');
+    }
+
+    function closeOverview() {
+        document.getElementById('slide-overview').classList.remove('visible');
+    }
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    function triggerSlideInit(idx) {
+        // Re-trigger Plotly relayout for visible plots
+        const plotDivs = slides[idx].querySelectorAll('[id*="plot"], [id*="viz"]');
+        plotDivs.forEach(div => {
+            if (div.data && div.layout) {
+                Plotly.relayout(div, { autosize: true });
+            }
+        });
+    }
+
+    return { init, next, prev, goTo, toggleOverview, toggleFullscreen, closeOverview };
+})();
+
+// ============================================================
+// KEYBOARD & TOUCH CONTROLS
+// ============================================================
+document.addEventListener('keydown', (e) => {
+    // Don't capture if user is typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    switch(e.key) {
+        case 'ArrowRight':
+        case ' ':
+        case 'Enter':
+            e.preventDefault();
+            Presentation.next();
+            break;
+        case 'ArrowLeft':
+        case 'Backspace':
+            e.preventDefault();
+            Presentation.prev();
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            Presentation.prev();
+            break;
+        case 'ArrowDown':
+            e.preventDefault();
+            Presentation.next();
+            break;
+        case 'f':
+        case 'F':
+            e.preventDefault();
+            Presentation.toggleFullscreen();
+            break;
+        case 'o':
+        case 'O':
+            e.preventDefault();
+            Presentation.toggleOverview();
+            break;
+        case 'Escape':
+            Presentation.closeOverview();
+            break;
+        case 'Home':
+            e.preventDefault();
+            Presentation.goTo(0);
+            break;
+        case 'End':
+            e.preventDefault();
+            Presentation.goTo(document.querySelectorAll('.slide').length - 1);
+            break;
+    }
+});
+
+// Touch/swipe support
+let touchStartX = 0;
+let touchStartY = 0;
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+    // Only trigger if horizontal swipe is dominant
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        if (dx < 0) Presentation.next();
+        else Presentation.prev();
+    }
+}, { passive: true });
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    Presentation.init();
 
     // Render all TeX formulas using Temml
-    document.addEventListener('DOMContentLoaded', function() {
-        // 1. Render all display math in .math-display elements
-        const mathElements = document.querySelectorAll('.math-display');
-        mathElements.forEach(function(el) {
-            let tex = el.textContent.trim();
-            if (tex.startsWith('$$') && tex.endsWith('$$')) {
-                tex = tex.slice(2, -2);
-            }
-            try {
-                el.innerHTML = temml.renderToString(tex, { displayMode: true });
-            } catch(e) {
-                console.warn('Temml render error:', e);
-            }
-        });
-
-        // 2. Render inline $...$ math in .math-inline spans
-        document.querySelectorAll('.math-inline').forEach(function(el) {
-            let tex = el.textContent.trim();
-            if (tex.startsWith('$') && tex.endsWith('$')) {
-                tex = tex.slice(1, -1);
-            }
-            try {
-                el.innerHTML = temml.renderToString(tex, { displayMode: false });
-            } catch(e) {
-                console.warn('Temml inline render error:', e);
-            }
-        });
+    document.querySelectorAll('.math-display').forEach(function(el) {
+        let tex = el.textContent.trim();
+        if (tex.startsWith('$$') && tex.endsWith('$$')) {
+            tex = tex.slice(2, -2);
+        }
+        try {
+            el.innerHTML = temml.renderToString(tex, { displayMode: true });
+        } catch(e) {
+            console.warn('Temml render error:', e);
+        }
     });
+
+    document.querySelectorAll('.math-inline').forEach(function(el) {
+        let tex = el.textContent.trim();
+        if (tex.startsWith('$') && tex.endsWith('$')) {
+            tex = tex.slice(1, -1);
+        }
+        try {
+            el.innerHTML = temml.renderToString(tex, { displayMode: false });
+        } catch(e) {
+            console.warn('Temml inline render error:', e);
+        }
+    });
+
+    // Initialize demos
+    if (typeof loadIntuitionModule === 'function') loadIntuitionModule();
+    if (typeof runAttention === 'function') runAttention();
+});
 </script>
 
 </body>

@@ -9,6 +9,8 @@
 // STEP 1: TOKENIZATION VISUALIZER
 // ============================================================
 
+const rootMargin = "800px";
+
 const TokenizerViz = {
     // Simple mock tokenizer with subword splitting
     vocabulary: {
