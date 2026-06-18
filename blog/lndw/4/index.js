@@ -3021,24 +3021,34 @@ const DimensionViz = {
 // TRAINING VISUALIZATION – Next Token Prediction from multiple texts
 // ============================================================
 
+// ============================================================
+// TRAINING VISUALIZATION – Next Token Prediction
+// ============================================================
+
 const TrainingViz = {
     texts: [
         { full: "Die Katze saß auf der Matte und schnurrte leise.", source: "Wikipedia" },
         { full: "Es war einmal ein König der in einem großen Schloss lebte.", source: "Märchenbuch" },
         { full: "Python ist eine beliebte Programmiersprache für maschinelles Lernen.", source: "Tech-Blog" },
-        { full: "Der Kuchen muss bei 180 Grad für 45 Minuten in den Ofen.", source: "Rezept" },
         { full: "Die Sonne ging langsam hinter den Bergen unter.", source: "Roman" },
         { full: "Neuronale Netze bestehen aus vielen Schichten von Neuronen.", source: "Lehrbuch" },
     ],
 
     currentTextIdx: 0,
-    currentWordIdx: 0,
+    currentWordIdx: 1, // start at 1 so we have at least 1 context word
     autoplayInterval: null,
-    animationTimeout: null,
+    lossHistory: [],
+    totalSteps: 0,
 
     getTokens: function(text) {
-        // Simple whitespace + punctuation split
         return text.replace(/([.,!?;:])/g, ' $1').split(/\s+/).filter(w => w.length > 0);
+    },
+
+    // Simulate a loss value (starts high, decreases with noise over time)
+    simulateLoss: function() {
+        const baseLoss = 4.5 * Math.exp(-this.totalSteps * 0.04) + 0.8;
+        const noise = (Math.random() - 0.5) * 0.4;
+        return Math.max(0.3, baseLoss + noise);
     },
 
     render: function() {
@@ -3047,83 +3057,144 @@ const TrainingViz = {
         if (!container) return;
 
         const textObj = this.texts[this.currentTextIdx];
-        const fullText = textObj.full + " <|endoftext|>";
-        const tokens = this.getTokens(fullText);
+        const fullTextWithEnd = textObj.full + " <|endoftext|>";
+        const tokens = this.getTokens(fullTextWithEnd);
         const cutoff = Math.min(this.currentWordIdx + 1, tokens.length);
 
-        // Build the display
         let html = '';
 
-        // Show source label
-        html += `<div style="font-size:0.75em; color:#94a3b8; margin-bottom:8px; text-align:center;">Quelle: <b>${textObj.source}</b></div>`;
+        // Source label
+        html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">`;
+        html += `<span style="font-size:0.75em; color:#94a3b8;">Quelle: <b>${textObj.source}</b> (Text ${this.currentTextIdx + 1}/${this.texts.length})</span>`;
+        html += `<span style="font-size:0.75em; color:#64748b; background:#f1f5f9; padding:3px 8px; border-radius:4px;">Schritt ${this.totalSteps}</span>`;
+        html += `</div>`;
 
-        // The text with highlighting
-        html += '<div style="background:#f8fafc; border-radius:10px; padding:16px 20px; border:1px solid #e2e8f0; font-size:1.05em; line-height:2; text-align:center;">';
+        // === FULL TEXT always visible (greyed out) with highlighting ===
+        html += '<div style="background:#f8fafc; border-radius:10px; padding:16px 20px; border:1px solid #e2e8f0; font-size:1.05em; line-height:2.2; text-align:left; position:relative;">';
+
+        // Label: "Vollständiger Text (bekannt):"
+        html += `<div style="font-size:0.7em; color:#94a3b8; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Vollständiger Trainingstext (dem System bekannt):</div>`;
 
         tokens.forEach((token, i) => {
+            const isEndToken = token === '<|endoftext|>';
             if (i < cutoff - 1) {
-                // Context (visible, dimmed)
-                html += `<span style="color:#334155; font-weight:500;">${token} </span>`;
+                // Context: seen by model (bold, dark)
+                html += `<span style="color:#1e293b; font-weight:600;">${isEndToken ? '<span style="font-family:monospace; font-size:0.85em; background:#e2e8f0; padding:1px 4px; border-radius:3px;">&lt;|endoftext|&gt;</span>' : token} </span>`;
             } else if (i === cutoff - 1) {
-                // The word being predicted (highlighted as target)
-                const isEndToken = token === '<|endoftext|>';
+                // Target word (highlighted green or yellow for endoftext)
                 if (isEndToken) {
-                    html += `<span style="background:#fef3c7; border:2px solid #f59e0b; padding:2px 8px; border-radius:6px; font-weight:bold; color:#92400e; font-family:monospace; font-size:0.9em;">&lt;|endoftext|&gt;</span> `;
+                    html += `<span style="background:#fef3c7; border:2px solid #f59e0b; padding:2px 8px; border-radius:6px; font-weight:bold; color:#92400e; font-family:monospace; font-size:0.85em; animation: arPulse 1s infinite;">&lt;|endoftext|&gt;</span> `;
                 } else {
-                    html += `<span style="background:#dcfce7; border:2px solid #10b981; padding:2px 8px; border-radius:6px; font-weight:bold; color:#065f46;">${token}</span> `;
+                    html += `<span style="background:#dcfce7; border:2px solid #10b981; padding:2px 8px; border-radius:6px; font-weight:bold; color:#065f46; animation: arPulse 1s infinite;">${token}</span> `;
                 }
             } else {
-                // Hidden (future words)
-                html += `<span style="color:#e2e8f0; background:#f1f5f9; padding:2px 6px; border-radius:4px; margin:0 1px;">███</span> `;
+                // Future: visible but greyed out
+                if (isEndToken) {
+                    html += `<span style="color:#cbd5e1; font-family:monospace; font-size:0.85em;">&lt;|endoftext|&gt;</span> `;
+                } else {
+                    html += `<span style="color:#cbd5e1;">${token} </span>`;
+                }
             }
         });
 
         html += '</div>';
 
-        // Show the prediction task
-        if (cutoff >= 2) {
-            const context = tokens.slice(0, cutoff - 1).join(' ');
-            const target = tokens[cutoff - 1];
-            const isEnd = target === '<|endoftext|>';
+        // === Visual separator: what the model sees vs. what it predicts ===
+        html += `<div style="margin-top:14px; display:flex; align-items:stretch; gap:0; border-radius:10px; overflow:hidden; border:1px solid #e2e8f0;">`;
 
-            html += `<div style="margin-top:14px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">`;
-            html += `<div style="background:#eff6ff; border:1px solid #bfdbfe; padding:8px 14px; border-radius:8px; font-size:0.85em; max-width:60%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">`;
-            html += `<span style="color:#64748b;">Input:</span> <b style="color:#1e40af;">"${context.length > 50 ? '...' + context.slice(-50) : context}"</b>`;
-            html += `</div>`;
-            html += `<span style="font-size:1.3em; color:#3b82f6;">→</span>`;
-            html += `<div style="background:${isEnd ? '#fef3c7' : '#dcfce7'}; border:2px solid ${isEnd ? '#f59e0b' : '#10b981'}; padding:8px 14px; border-radius:8px; font-weight:bold; color:${isEnd ? '#92400e' : '#065f46'}; font-size:0.95em;">`;
-            html += isEnd ? '&lt;|endoftext|&gt;' : `"${target}"`;
-            html += `</div>`;
-            html += `</div>`;
-        }
+        // Left: Model sees
+        html += `<div style="flex:1; padding:12px 16px; background:#eff6ff; border-right:2px solid #3b82f6;">`;
+        html += `<div style="font-size:0.7em; color:#3b82f6; font-weight:bold; margin-bottom:6px;">👁️ MODELL SIEHT:</div>`;
+        const contextTokens = tokens.slice(0, cutoff - 1);
+        const contextStr = contextTokens.join(' ');
+        html += `<div style="font-size:0.9em; color:#1e40af; font-weight:500;">"${contextStr.length > 80 ? '…' + contextStr.slice(-80) : contextStr}"</div>`;
+        html += `</div>`;
+
+        // Right: Must predict
+        html += `<div style="flex:0 0 auto; padding:12px 16px; background:#f0fdf4; min-width:120px; text-align:center;">`;
+        html += `<div style="font-size:0.7em; color:#10b981; font-weight:bold; margin-bottom:6px;">🎯 MUSS VORHERSAGEN:</div>`;
+        const target = tokens[cutoff - 1];
+        const isEnd = target === '<|endoftext|>';
+        html += `<div style="font-size:1.1em; font-weight:bold; color:${isEnd ? '#92400e' : '#065f46'};">${isEnd ? '&lt;|endoftext|&gt;' : '"' + target + '"'}</div>`;
+        html += `</div>`;
+
+        html += `</div>`;
 
         container.innerHTML = html;
 
         // Explanation
         if (explDiv) {
-            if (cutoff <= 1) {
-                explDiv.innerHTML = `📖 Text ${this.currentTextIdx + 1}/${this.texts.length}: Das Modell sieht den Anfang und muss das <b>nächste Wort</b> vorhersagen.`;
-            } else if (tokens[cutoff - 1] === '<|endoftext|>') {
-                explDiv.innerHTML = `🏁 Das Modell muss lernen, wann ein Text <b>zu Ende</b> ist! Das <code>&lt;|endoftext|&gt;</code>-Token signalisiert: "Hier ist Schluss." Dann kommt der nächste Text.`;
+            const loss = this.lossHistory.length > 0 ? this.lossHistory[this.lossHistory.length - 1] : null;
+            if (isEnd) {
+                explDiv.innerHTML = `🏁 Das Modell muss lernen, wann ein Text <b>zu Ende</b> ist! Das <code>&lt;|endoftext|&gt;</code>-Token signalisiert das Ende. Dann kommt der nächste Text.${loss ? ` <b>Loss: ${loss.toFixed(2)}</b>` : ''}`;
             } else {
-                explDiv.innerHTML = `🎯 Das Modell sieht <b>${cutoff - 1} Wörter</b> und muss "<b>${tokens[cutoff - 1]}</b>" vorhersagen. Liegt es falsch → hoher Loss. Liegt es richtig → niedriger Loss.`;
+                explDiv.innerHTML = `🎯 Das Modell sieht <b>${cutoff - 1} Wörter</b> und muss "<b>${target}</b>" vorhersagen. Liegt es falsch → <b>hoher Loss</b>. Liegt es richtig → <b>niedriger Loss</b>. Das Ziel: Loss minimieren!${loss ? ` Aktueller Loss: <b>${loss.toFixed(2)}</b>` : ''}`;
             }
         }
+
+        // Render loss chart
+        this.renderLossChart();
+    },
+
+    renderLossChart: function() {
+        const plotDiv = document.getElementById('training-loss-chart');
+        if (!plotDiv || this.lossHistory.length === 0) return;
+
+        const trace = {
+            x: Array.from({ length: this.lossHistory.length }, (_, i) => i + 1),
+            y: this.lossHistory,
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#ef4444', width: 2.5 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(239,68,68,0.08)',
+            hovertemplate: 'Schritt %{x}<br>Loss: %{y:.3f}<extra></extra>'
+        };
+
+        const layout = {
+            margin: { l: 45, r: 15, b: 30, t: 10 },
+            xaxis: { title: { text: 'Trainingsschritte', font: { size: 10 } }, gridcolor: '#f1f5f9' },
+            yaxis: { title: { text: 'Loss', font: { size: 10 } }, gridcolor: '#f1f5f9', rangemode: 'tozero' },
+            plot_bgcolor: '#fff',
+            showlegend: false,
+            annotations: this.lossHistory.length > 3 ? [{
+                x: this.lossHistory.length,
+                y: this.lossHistory[this.lossHistory.length - 1],
+                text: `${this.lossHistory[this.lossHistory.length - 1].toFixed(2)}`,
+                showarrow: true,
+                arrowhead: 2,
+                ax: -30,
+                ay: -20,
+                font: { size: 11, color: '#ef4444', weight: 'bold' }
+            }] : []
+        };
+
+        Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
     },
 
     nextExample: function() {
         const textObj = this.texts[this.currentTextIdx];
-        const fullText = textObj.full + " <|endoftext|>";
-        const tokens = this.getTokens(fullText);
+        const fullTextWithEnd = textObj.full + " <|endoftext|>";
+        const tokens = this.getTokens(fullTextWithEnd);
 
         this.currentWordIdx++;
+        this.totalSteps++;
+        this.lossHistory.push(this.simulateLoss());
 
         if (this.currentWordIdx >= tokens.length) {
             // Move to next text
             this.currentTextIdx = (this.currentTextIdx + 1) % this.texts.length;
-            this.currentWordIdx = 0;
+            this.currentWordIdx = 1;
         }
 
+        this.render();
+    },
+
+    nextText: function() {
+        this.currentTextIdx = (this.currentTextIdx + 1) % this.texts.length;
+        this.currentWordIdx = 1;
+        this.totalSteps++;
+        this.lossHistory.push(this.simulateLoss());
         this.render();
     },
 
@@ -3134,7 +3205,7 @@ const TrainingViz = {
             this.autoplayInterval = null;
             if (btn) { btn.textContent = '⏩ Autoplay'; btn.style.background = '#fff'; btn.style.color = '#1e293b'; }
         } else {
-            this.autoplayInterval = setInterval(() => this.nextExample(), 1200);
+            this.autoplayInterval = setInterval(() => this.nextExample(), 1000);
             if (btn) { btn.textContent = '⏸ Stopp'; btn.style.background = '#ef4444'; btn.style.color = '#fff'; }
         }
     },

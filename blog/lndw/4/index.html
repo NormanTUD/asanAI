@@ -639,20 +639,17 @@
 <div class="slide" data-title="Training">
     <div class="slide-content">
         <h2>Training: Das nächste Wort vorhersagen</h2>
-        <p>Das Modell bekommt <b>riesige Mengen Text</b> aus dem Internet. Jeder Text endet mit einem speziellen <code>&lt;|endoftext|&gt;</code>-Token.</p>
+        <p>Das Modell bekommt <b>riesige Mengen Text</b>. Jeder Text ist vollständig bekannt – aber das Modell sieht immer nur <b>einen Anfang</b> und muss das nächste Wort vorhersagen.</p>
         <div class="demo-box" style="min-height:auto; padding:20px;">
-            <div class="demo-title">📚 Trainingsbeispiele aus echten Texten</div>
+            <div class="demo-title">📚 Next-Token-Prediction aus echten Texten</div>
             <div id="training-texts-container" style="margin-top:14px;"></div>
-            <div style="display:flex; gap:12px; justify-content:center; margin-top:18px; flex-wrap:wrap;">
-                <button onclick="TrainingViz.nextExample()" style="padding:10px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer; font-size:0.95em;">▶ Nächstes Beispiel</button>
+            <div style="display:flex; gap:12px; justify-content:center; margin-top:16px; flex-wrap:wrap;">
+                <button onclick="TrainingViz.nextExample()" style="padding:10px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer; font-size:0.95em;">▶ Nächstes Wort</button>
+                <button onclick="TrainingViz.nextText()" style="padding:10px 22px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer; font-size:0.95em;">⏭ Nächster Text</button>
                 <button onclick="TrainingViz.toggleAutoplay()" id="training-autoplay-btn" style="padding:10px 22px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer; font-size:0.95em;">⏩ Autoplay</button>
             </div>
-            <div id="training-explanation" style="margin-top:16px; padding:14px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; font-size:0.92em; color:#1e40af; text-align:center;"></div>
-        </div>
-        <div class="key-insight fragment" style="margin-top:16px;">
-            <strong>Loss = Wie falsch lag das Modell?</strong><br>
-            Wenn das Modell "Katze" vorhersagt, aber das richtige Wort "Hund" war, ist der Loss hoch.<br>
-            <b>Ziel: Loss minimieren</b> → das Modell wird immer besser darin, das nächste Wort korrekt vorherzusagen.
+            <div id="training-loss-chart" style="height:140px; margin-top:16px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div id="training-explanation" style="margin-top:12px; padding:14px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe; font-size:0.92em; color:#1e40af; text-align:center;"></div>
         </div>
     </div>
 </div>
@@ -661,7 +658,7 @@
 <div class="slide" data-title="Loss Landscape">
     <div class="slide-content">
         <h2>Loss Landscape – Den Berg hinab</h2>
-        <p>Die <b>Milliarden Parameter</b> des Modells bilden eine riesige "Landschaft". Der Loss ist die Höhe. Training = den tiefsten Punkt finden.</p>
+        <p>Die <b>Milliarden Gewichte</b> des Modells bilden eine riesige "Landschaft". Der Loss ist die Höhe. Training = den tiefsten Punkt finden.</p>
         <div class="demo-box" style="min-height:auto;">
             <div class="demo-title">🏔️ 3D Loss Landscape – Gradient Descent</div>
             <div id="loss-landscape-plot" style="height:420px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
@@ -672,12 +669,11 @@
                 <span id="loss-step-counter" style="font-size:0.9em; color:#64748b; font-weight:bold;">Schritt: 0 | Loss: ?</span>
             </div>
             <div id="loss-landscape-info" style="margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; font-size:0.9em; color:#166534; text-align:center;">
-                Klicke <b>"Ein Schritt"</b> oder <b>"Animieren"</b> um zu sehen, wie das Modell schrittweise den Loss minimiert.
+                Klicke <b>"Ein Schritt"</b> oder <b>"Animieren"</b> um zu sehen, wie das Modell schrittweise den Loss minimiert. <b>Du kannst den 3D-Plot frei drehen!</b>
             </div>
         </div>
     </div>
 </div>
-
 
     <!-- ==================== SLIDE 17: Fazit ==================== -->
     <div class="slide" data-title="Fazit">
