@@ -810,8 +810,160 @@
     </style>
 </div>
 
+<!-- ==================== FOLIE: Vorwärtsdurchlauf Überblick ==================== -->
+<div class="slide" data-title="Vorwärtsdurchlauf: Überblick">
+    <div class="slide-content">
+        <h2>Der Vorwärtsdurchlauf – Punkte die sich bewegen</h2>
+        <p>Ein LLM nimmt Text, macht daraus <b>Punkte in einem konkreten Raum</b>, und verschiebt diese Punkte Schicht für Schicht – bis am Ende ein neues Wort herausfällt.</p>
+        <div class="demo-box" style="min-height:500px;">
+            <div class="demo-title">🎬 "Die Katze saß auf der" → nächstes Wort</div>
+            <div id="forward-pass-3d" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap; align-items:center;">
+                <button onclick="ForwardPassViz.reset()" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">⟲ Reset</button>
+                <button onclick="ForwardPassViz.stepForward()" style="padding:8px 16px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer;">→ Nächster Schritt</button>
+                <button onclick="ForwardPassViz.animateAll()" id="forward-pass-animate-btn" style="padding:8px 16px; border-radius:8px; border:none; background:#10b981; color:#fff; font-weight:bold; cursor:pointer;">⏩ Alles animieren</button>
+                <span id="forward-pass-step-label" style="font-size:0.9em; color:#64748b; font-weight:bold; min-width:120px;">Schritt: Embedding</span>
+            </div>
+            <div id="forward-pass-info" style="margin-top:10px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; font-size:0.9em; color:#1e40af; text-align:center;">
+                Klicke <b>"Nächster Schritt"</b> um zu sehen, wie die Punkte sich durch die Layer bewegen. Du kannst den 3D-Plot jederzeit frei drehen!<br>
+                <span style="font-size:0.8em; color:#64748b;">⚠️ Dies ist eine 3D-Projektion eines 4096+-dimensionalen Raums.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE: Embedding-Raum 3D ==================== -->
+<div class="slide" data-title="Embedding-Raum 3D">
+    <div class="slide-content">
+        <h2>Punkte im Raum – Der Embedding-Space</h2>
+        <p>Jedes Wort ist ein <b>konkreter Punkt</b> mit konkreten Koordinaten. Bedeutung ist als <b>Richtung</b> kodiert – nicht entlang einzelner Achsen, sondern schräg durch viele Dimensionen.</p>
+        <div class="demo-box" style="min-height:520px;">
+            <div class="demo-title">🌐 3D-Projektion des Embedding-Raums (drehen, zoomen!)</div>
+            <div id="embedding-3d-plot" style="height:380px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap; align-items:center;">
+                <button onclick="Embedding3DViz.showArithmetic()" id="emb3d-arith-btn" style="padding:8px 16px; border-radius:8px; border:none; background:#6366f1; color:#fff; font-weight:bold; cursor:pointer;">👑 König − Mann + Frau = ?</button>
+                <button onclick="Embedding3DViz.toggleClusters()" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">☁️ Cluster ein/aus</button>
+                <button onclick="Embedding3DViz.toggleDirections()" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">↗️ Richtungen ein/aus</button>
+            </div>
+            <div id="embedding-3d-info" style="margin-top:8px; padding:10px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; font-size:0.85em; color:#166534; text-align:center;">
+                Reale Dinge haben eine Ordnung untereinander – diese Ordnung propagiert sich durch Sprache ins Modell. Was wir hier sehen ist ein Schnitt durch einen <b>4096-dimensionalen Raum</b>.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE: Attention 3D ==================== -->
+<div class="slide" data-title="Attention – Punkte ziehen sich an">
+    <div class="slide-content">
+        <h2>Attention – Punkte ziehen sich an</h2>
+        <p>Attention verschiebt jeden Punkt <b>in Richtung relevanter anderer Punkte</b>. Frühe Layer: lokale Verschiebung (Subword→Wort). Späte Layer: globale semantische Verschiebung.</p>
+        <div class="demo-box" style="min-height:520px;">
+            <div class="demo-title">🧲 Token-Punkte werden von anderen angezogen</div>
+            <div id="attention-3d-plot" style="height:370px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div style="display:flex; gap:12px; justify-content:center; margin-top:10px; flex-wrap:wrap; align-items:center;">
+                <label style="font-size:0.85em; font-weight:bold; color:#475569;">Layer-Tiefe:</label>
+                <input type="range" id="attention-layer-slider" min="0" max="4" step="1" value="0" style="width:180px; accent-color:#8b5cf6;" oninput="Attention3DViz.setLayer(parseInt(this.value))">
+                <span id="attention-layer-label" style="font-weight:bold; color:#8b5cf6; min-width:80px;">Layer 0 (früh)</span>
+                <button onclick="Attention3DViz.animateLayers()" style="padding:8px 16px; border-radius:8px; border:none; background:#8b5cf6; color:#fff; font-weight:bold; cursor:pointer;">⏩ Durch alle Layer</button>
+            </div>
+            <div id="attention-3d-info" style="margin-top:8px; padding:10px; background:#faf5ff; border-radius:8px; border:1px solid #e9d5ff; font-size:0.85em; color:#6b21a8; text-align:center;">
+                Kausale Maske: Nur Punkte <b>links</b> können ziehen (das Modell kann nicht in die Zukunft schauen). Verschiedene Attention-Köpfe (farbige Linien) bearbeiten verschiedene Aspekte.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE: FFN – Wissensdatenbank ==================== -->
+<div class="slide" data-title="FFN – Punkte verschieben">
+    <div class="slide-content">
+        <h2>FFN – Die Wissensdatenbank verschiebt Punkte</h2>
+        <p>Das Feed-Forward-Netzwerk erkennt Muster und schreibt Wissen als <b>Verschiebungsvektor</b> zurück. Seltene Fakten = kurzer, spezifischer Vektor. Häufige Muster = langer, verteilter Vektor.</p>
+        <div class="demo-box" style="min-height:520px;">
+            <div class="demo-title">🔬 Punkt rein → Detektoren feuern → Punkt verschoben</div>
+            <div id="ffn-3d-plot" style="height:360px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div style="display:flex; gap:12px; justify-content:center; margin-top:10px; flex-wrap:wrap; align-items:center;">
+                <label style="font-size:0.85em; font-weight:bold; color:#475569;">Faktum:</label>
+                <select id="ffn-fact-select" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;" onchange="FFN3DViz.setFact(this.value)">
+                    <option value="rare">Selten: "Hauptstadt von Liechtenstein = Vaduz"</option>
+                    <option value="common">Häufig: "nach Artikel kommt Nomen"</option>
+                    <option value="medium">Mittel: "Katzen sind Tiere"</option>
+                </select>
+                <button onclick="FFN3DViz.animateShift()" style="padding:8px 16px; border-radius:8px; border:none; background:#d97706; color:#fff; font-weight:bold; cursor:pointer;">⏩ Verschiebung zeigen</button>
+            </div>
+            <div id="ffn-3d-info" style="margin-top:8px; padding:10px; background:#fffbeb; border-radius:8px; border:1px solid #fde68a; font-size:0.85em; color:#92400e; text-align:center;">
+                Wenige Neuronen aktiv → kurzer Pfeil (lokales Wissen). Viele Neuronen aktiv → langer Pfeil (verteiltes Muster). Das gesamte System ist <b>deterministisch</b>.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE: Gitter-Verzerrung ==================== -->
+<div class="slide" data-title="Raumverzerrung durch Layer">
+    <div class="slide-content">
+        <h2>Wie der Raum sich verzerrt – Layer für Layer</h2>
+        <p>Jeder Layer ist eine <b>stückweise affine Transformation</b> – er "biegt" den Raum. Unten fast flach, oben stark verzerrt. Das ist das "Twisten" des Bedeutungsraums.</p>
+        <div class="demo-box" style="min-height:520px;">
+            <div class="demo-title">🌀 Gitter-Verzerrung: Wie Layer den Raum biegen</div>
+            <div id="grid-warp-plot" style="height:380px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div style="display:flex; gap:12px; justify-content:center; margin-top:10px; flex-wrap:wrap; align-items:center;">
+                <label style="font-size:0.85em; font-weight:bold; color:#475569;">Layer:</label>
+                <input type="range" id="grid-warp-slider" min="0" max="5" step="1" value="0" style="width:200px; accent-color:#6366f1;" oninput="GridWarpViz.setLayer(parseInt(this.value))">
+                <span id="grid-warp-label" style="font-weight:bold; color:#6366f1; min-width:100px;">Layer 0 (flach)</span>
+                <button onclick="GridWarpViz.animateLayers()" style="padding:8px 16px; border-radius:8px; border:none; background:#6366f1; color:#fff; font-weight:bold; cursor:pointer;">⏩ Animieren</button>
+            </div>
+            <div id="grid-warp-info" style="margin-top:8px; padding:10px; background:#eef2ff; border-radius:8px; border:1px solid #c7d2fe; font-size:0.85em; color:#3730a3; text-align:center;">
+                Unten: fast flaches Gitter (Embedding). Oben: stark verzerrt (nach vielen Layern). Die ReLU-Knickpunkte erzeugen die "Falten" im Raum.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE: Bassins & Konvergenz ==================== -->
+<div class="slide" data-title="Bassins – Deterministische Konvergenz">
+    <div class="slide-content">
+        <h2>Bassins – Viele Wege, ein Ziel</h2>
+        <p>Verschiedene Inputs (verschiedene Sätze über Katzen) werden alle in <b>dieselbe Region</b> geschoben – deterministisch, nicht zufällig. Das sind "Bassins" im Raum.</p>
+        <div class="demo-box" style="min-height:520px;">
+            <div class="demo-title">🎯 Verschiedene Startpunkte → gleiche Zielregion</div>
+            <div id="basins-3d-plot" style="height:380px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div style="display:flex; gap:12px; justify-content:center; margin-top:10px; flex-wrap:wrap; align-items:center;">
+                <button onclick="Basins3DViz.addTrajectory()" style="padding:8px 16px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer;">+ Neuen Satz hinzufügen</button>
+                <button onclick="Basins3DViz.animateAll()" style="padding:8px 16px; border-radius:8px; border:none; background:#10b981; color:#fff; font-weight:bold; cursor:pointer;">⏩ Alle animieren</button>
+                <button onclick="Basins3DViz.reset()" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">⟲ Reset</button>
+            </div>
+            <div id="basins-3d-info" style="margin-top:8px; padding:10px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; font-size:0.85em; color:#166534; text-align:center;">
+                Das System ist <b>intern vollständig deterministisch</b>. Gleicher Input → immer gleicher Output. Zufall existiert nur bei der Gewichts-Initialisierung (vor Training) und beim Sampling (nach dem Durchlauf).
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE: Gesamtbild – Intuition ==================== -->
+<div class="slide" data-title="Gesamtbild – Meine Intuition">
+    <div class="slide-content">
+        <h2>Das Gesamtbild – Meine Intuition</h2>
+        <div class="demo-box" style="min-height:480px;">
+            <div class="demo-title">🧠 Der vollständige Vorwärtsdurchlauf – animiert</div>
+            <div id="intuition-3d-plot" style="height:360px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap;">
+                <button onclick="IntuitionViz.play()" id="intuition-play-btn" style="padding:8px 18px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer;">▶ Abspielen</button>
+                <button onclick="IntuitionViz.reset()" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">⟲ Reset</button>
+            </div>
+            <div id="intuition-info" style="margin-top:8px; padding:10px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; font-size:0.85em; color:#334155; text-align:center;"></div>
+        </div>
+        <div style="margin-top:14px; padding:16px; background:#fffbeb; border:2px dashed #f59e0b; border-radius:12px;">
+            <div style="font-weight:bold; color:#92400e; margin-bottom:6px;">⚠️ Hypothese (spekulativ):</div>
+            <p style="font-size:0.9em; color:#78350f; margin:0;">In Zwischenlayern entstehen <b>kurzlebige Cluster</b> – temporäre Strukturen die sich bilden und wieder auflösen. Diese "Mannigfaltigkeiten" existieren nur zwischen bestimmten Layern und sind dynamisch generiert durch die Durchmischung der Signale.</p>
+        </div>
+        <div class="key-insight" style="margin-top:14px; font-size:0.95em;">
+            <b>Das System ist intern vollständig deterministisch.</b> Zufall nur vor dem Training (Initialisierung) und nach dem Durchlauf (Sampling). Die Magie entsteht durch die Stapelung einfacher Operationen: Addition, Multiplikation, Vergleich – angewandt auf Punkte in einem konkreten Raum. Reale Dinge haben eine Ordnung – diese Ordnung propagiert sich durch Sprache ins Modell.
+        </div>
+    </div>
+</div>
+
 <!-- ============ SCRIPTS ============ -->
 <script src="index.js"></script>
+<script src="intuition.js"></script>
 <script>
 // ============================================================
 // PRESENTATION ENGINE
