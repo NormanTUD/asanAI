@@ -666,10 +666,13 @@
                 <button onclick="LossLandscapeViz.reset()" style="padding:9px 18px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">🔄 Reset</button>
                 <button onclick="LossLandscapeViz.step()" style="padding:9px 18px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer;">📉 Ein Schritt</button>
                 <button onclick="LossLandscapeViz.animate()" id="loss-animate-btn" style="padding:9px 18px; border-radius:8px; border:none; background:#10b981; color:#fff; font-weight:bold; cursor:pointer;">⏩ Animieren</button>
-                <span id="loss-step-counter" style="font-size:0.9em; color:#64748b; font-weight:bold;">Schritt: 0 | Loss: ?</span>
+                <label style="font-size:0.85em; font-weight:bold; color:#475569; margin-left:8px;">Schrittweite:</label>
+                <input type="range" id="loss-lr-slider" min="0.02" max="0.5" step="0.02" value="0.18" style="width:100px; accent-color:#6366f1;" oninput="document.getElementById('loss-lr-val').textContent=this.value">
+                <span id="loss-lr-val" style="font-size:0.85em; font-weight:bold; color:#6366f1; min-width:32px;">0.18</span>
+                <span id="loss-step-counter" style="font-size:0.9em; color:#64748b; font-weight:bold; margin-left:8px;">Schritt: 0 | Loss: ?</span>
             </div>
             <div id="loss-landscape-info" style="margin-top:12px; padding:12px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; font-size:0.9em; color:#166534; text-align:center;">
-                Klicke <b>"Ein Schritt"</b> oder <b>"Animieren"</b> um zu sehen, wie das Modell schrittweise den Loss minimiert. <b>Du kannst den 3D-Plot frei drehen!</b>
+                Klicke <b>"Ein Schritt"</b> oder <b>"Animieren"</b> um zu sehen, wie das Modell schrittweise den Loss minimiert. <b>Du kannst den 3D-Plot jederzeit frei drehen!</b>
             </div>
         </div>
     </div>
