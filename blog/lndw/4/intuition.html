@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Intuition – Kurzübersicht</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js@2.35.0/dist/plotly.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Latin.css">
+    <script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1e293b; }
+        h1 { color: #1e40af; }
+        h2 { color: #3b82f6; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; }
+        h3 { color: #6366f1; }
+        .demo-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 15px 0; }
+        .demo-title { font-size: 1.05rem; font-weight: bold; color: #1e293b; text-align: center; margin-bottom: 12px; }
+        .md { margin: 20px 0; }
+        .plot-container { height: 450px; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .layers-vertical { text-align: center; margin: 10px 0; }
+        .bw-cell { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 1em; }
+        button { cursor: pointer; }
+        @keyframes tokenAppear { from { opacity:0; transform:translateY(10px) scale(0.8); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes arPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+    </style>
+</head>
+<body>
+
+<h1>🧠 Wie funktionieren LLMs?</h1>
+
+<div class="md">
+<p>LLMs sagen das <b>nächste Wort</b> vorher – immer nur eins. Das Wort wird angehängt, und der Prozess wiederholt sich bis ein <code>|endoftext|</code>-Token das Ende signalisiert.</p>
+</div>
+
+<!-- AUTOREGRESSIVE LOOP -->
+<div class="demo-box">
+    <div class="demo-title">🔁 Die autoregressive Schleife</div>
+    <div id="autoregressive-viz" style="min-height:200px;"></div>
+    <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        <button id="autoregressive-play" onclick="AutoregressiveViz.animate()" style="background:#3b82f6; color:white; border:none; padding:8px 20px; border-radius:8px; font-weight:bold;">▶ Abspielen</button>
+        <button onclick="AutoregressiveViz.reset()" style="background:#64748b; color:white; border:none; padding:8px 20px; border-radius:8px; font-weight:bold;">↺ Reset</button>
+    </div>
+</div>
+
+<h2>Schritt 1: Tokenisierung</h2>
+<div class="md"><p>Text wird in kleine Stücke (<b>Tokens</b>) zerlegt – oft Wörter, manchmal Teilwörter.</p></div>
+
+<div class="demo-box">
+    <div class="demo-title">✂️ Tokenisierung</div>
+    <input type="text" id="tokenizer-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-size:1em; margin-bottom:12px;" placeholder="z.B. 'The transformer is playing greatly'" value="The transformer is playing greatly">
+    <div id="tokenizer-output" style="min-height:60px;"></div>
+    <div id="tokenizer-stats" style="margin-top:10px;"></div>
+</div>
+
+<h2>Schritt 2: Embedding</h2>
+<div class="md"><p>Jedes Token wird durch einen <b>Zahlenvektor</b> ersetzt, der seine Bedeutung kodiert. Ähnliche Wörter liegen nah beieinander.</p></div>
+
+<div class="demo-box">
+    <div class="demo-title">📍 Embedding-Raum</div>
+    <input type="text" id="embedding-viz-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-size:1em; margin-bottom:8px;" placeholder="z.B. king queen man woman" value="king queen man woman">
+    <div id="embedding-viz-plot" style="height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+    <div style="margin-top:14px; padding:12px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;">
+        <div style="font-weight:bold; margin-bottom:8px;">🧮 Vektor-Arithmetik</div>
+        <input type="text" id="embedding-arithmetic-input" style="width:100%; padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-family:monospace;" placeholder="z.B. king - man + woman" onkeyup="EmbeddingViz.doArithmetic()" value="king - man + woman">
+        <div id="embedding-arithmetic-result" style="margin-top:8px;"></div>
+    </div>
+</div>
+
+<h2>Schritt 3: Positional Encoding</h2>
+<div class="md"><p>Damit das Modell die <b>Reihenfolge</b> kennt, wird jedem Token ein Positionssignal hinzugefügt.</p></div>
+
+<div class="demo-box">
+    <div class="demo-title">📊 Positional Encoding</div>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <label style="font-size:0.85em; font-weight:bold;">Dimensionen:</label>
+        <input type="range" id="pe-num-dims" min="2" max="12" step="1" value="8" style="flex:1; accent-color:#8b5cf6;">
+        <span style="font-weight:bold; color:#8b5cf6;">8</span>
+    </div>
+    <div id="positional-encoding-plot" style="height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
+    <div style="font-weight:bold; margin-bottom:6px;">Heatmap</div>
+    <div id="positional-encoding-heatmap" style="height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:12px;"></div>
+    <div style="font-weight:bold; margin-bottom:6px;">Gleiches Wort, verschiedene Positionen</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+        <input type="text" id="pe-demo-word" value="cat" style="width:80px; padding:6px; border-radius:6px; border:1px solid #cbd5e1;">
+        <label style="font-size:0.85em;">Pos 1: <input type="number" id="pe-demo-pos1" value="0" min="0" max="19" style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;"></label>
+        <label style="font-size:0.85em;">Pos 2: <input type="number" id="pe-demo-pos2" value="5" min="0" max="19" style="width:50px; padding:4px; border-radius:4px; border:1px solid #cbd5e1;"></label>
+    </div>
+    <div id="pe-addition-demo"></div>
+</div>
+
+<h2>Schritt 4: Transformer-Schichten</h2>
+
+<h3>4a: Attention – „Welche anderen Wörter sind für dieses Wort wichtig?"</h3>
+<div class="md"><p>Attention erlaubt dem Modell, den <b>Kontext</b> zu berücksichtigen. Tippe <b>"bank river"</b> oder <b>"bank money"</b> ein:</p></div>
+
+<div class="layers-vertical">
+    <input type="text" id="trans-input" class="bw-cell" style="width:90%;" value="bank river" oninput="runAttention()">
+    <p>Der Diamant zeigt, wohin „bank" im Kontext wandert.</p>
+</div>
+<div id="transformer-plot" class="plot-container" style="height:450px;"></div>
+
+<h3>4b: Feed-Forward-Netzwerk – „Was schließe ich daraus?"</h3>
+<div class="md"><p>Das FFN ist die <b>Wissensdatenbank</b>. Es erkennt Muster und fügt passendes Wissen hinzu.</p></div>
+
+<div class="demo-box" style="max-width:800px;">
+    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
+        <button onclick="FFNViz.setScenario('apple_fruit')" id="btn-ffn-fruit" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold;">🍎 „eating an apple"</button>
+        <button onclick="FFNViz.setScenario('apple_tech')" id="btn-ffn-tech" style="padding:8px 16px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold;">💻 „buying an apple"</button>
+    </div>
+    <div id="ffn-viz-container" style="position:relative; height:350px; background:white; border-radius:8px; border:1px solid #e2e8f0; padding:20px; display:flex; justify-content:space-between; align-items:center; overflow:hidden;">
+        <div style="width:120px; text-align:center; z-index:2;">
+            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Input</div>
+            <div id="ffn-input-box" style="background:#e0e7ff; border:2px solid #818cf8; padding:10px; border-radius:8px; font-weight:bold; color:#312e81;">"Apple" + Kontext</div>
+        </div>
+        <div style="width:180px; text-align:center; z-index:2;">
+            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Detektoren</div>
+            <div id="ffn-detectors" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+        <div style="width:200px; text-align:center; z-index:2;">
+            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Wissen</div>
+            <div id="ffn-facts" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+        <div style="width:120px; text-align:center; z-index:2;">
+            <div style="font-weight:bold; color:#475569; margin-bottom:8px;">Output</div>
+            <div id="ffn-output-box" style="background:#dcfce7; border:2px solid #34d399; padding:10px; border-radius:8px; font-weight:bold; color:#065f46;">Angereicherter Vektor</div>
+        </div>
+        <svg id="ffn-lines" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none;"></svg>
+    </div>
+    <div id="ffn-explanation" style="margin-top:15px; padding:12px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.9em; color:#475569; text-align:center;">Wähle einen Kontext oben.</div>
+</div>
+
+<h3>4c: Residual Stream</h3>
+<div class="md"><p>Ergebnisse werden zum <b>Residual Stream</b> addiert – nichts geht verloren.</p></div>
+
+<div id="residual-stream-plot"></div>
+<div style="display:flex; align-items:center; gap:14px; margin-top:14px; justify-content:center; flex-wrap:wrap;">
+    <button id="residual-stream-prev" onclick="ResidualStreamViz.prevLayer()" style="padding:9px 18px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc;">← Zurück</button>
+    <span id="residual-stream-layer-label" style="font-weight:bold; font-size:15px; min-width:110px; text-align:center;">Embedding</span>
+    <button id="residual-stream-next" onclick="ResidualStreamViz.nextLayer()" style="padding:9px 22px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:600;">Nächste Schicht →</button>
+    <input type="range" id="residual-stream-layer" min="0" max="3" value="0" oninput="ResidualStreamViz.setLayer(parseInt(this.value))" style="width:140px;">
+    <button onclick="ResidualStreamViz.reset()" style="padding:9px 14px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b;">Reset</button>
+</div>
+<div id="residual-stream-info" style="margin-top:14px;"></div>
+
+<h2>Schritt 5: Die finale Vorhersage</h2>
+<div class="md"><p>Am Ende wird eine <b>Wahrscheinlichkeitsverteilung</b> über das gesamte Vokabular erzeugt. Temperature steuert die Kreativität.</p></div>
+
+<div class="demo-box">
+    <div class="demo-title">🎯 Vorhersage: Wahrscheinlichkeit über Vokabular</div>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+        <span style="font-size:0.85em; color:#3b82f6; font-weight:bold;">🎯 Greedy</span>
+        <input type="range" id="prediction-temperature" min="0.1" max="3.0" step="0.05" value="1.0" style="flex:1; accent-color:#f59e0b;">
+        <span style="font-size:0.85em; color:#ef4444; font-weight:bold;">🎲 Kreativ</span>
+        <span id="prediction-temp-val" style="font-size:0.9em; font-weight:bold; min-width:120px; text-align:right;">1.00</span>
+    </div>
+    <div id="prediction-plot" style="height:350px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+    <div id="prediction-info"></div>
+</div>
+
+<div class="md">
+<h2>Die Kernaussage</h2>
+<p>Es gibt kein „Verstehen"-Modul. Nur Vektoren, die durch Schichten einfacher Mathematik fließen: Addition, Multiplikation, Vergleich. Aber genug davon gestapelt – und etwas, das <em>sehr nach Verständnis aussieht</em>, entsteht.</p>
+</div>
+
+<script src="intuition.js"></script>
+<script>
+    // Set rootMargin for lazy loading
+    var rootMargin = '200px';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        loadIntuitionModule();
+        runAttention();
+    });
+</script>
+
+</body>
+</html>
