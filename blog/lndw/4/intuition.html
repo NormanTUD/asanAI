@@ -261,47 +261,47 @@
         <div class="speaker-notes">Begrüßung, kurze Vorstellung des Themas.</div>
     </div>
 
-    <!-- ==================== SLIDE 2: Was ist ein LLM? ==================== -->
-    <div class="slide" data-title="Was ist ein LLM?">
-        <div class="slide-content">
-            <h2>Was ist ein LLM?</h2>
+<!-- ==================== SLIDE 2: Was ist ein LLM? ==================== -->                                                     
+    <div class="slide" data-title="Was ist ein LLM?">                                                                                
+        <div class="slide-content">                                                                                                  
+            <h2>Was ist ein LLM?</h2>                                                                                                
             <p>LLMs sind Maschinen, die das <b>nächste wahrscheinlichste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal.</p>
-            <div class="formula-box fragment">
-                <strong>Die Grundformel:</strong>
-                <div class="math-display">$$\text{Next Word} = \text{LLM}(\underbrace{\text{Once upon a}}_{\text{User Input}}) \rightarrow \text{time}$$</div>
-            </div>
+            <div class="formula-box fragment">                                                                                       
+                <strong>Die Grundformel:</strong>                                                                                    
+                <div class="math-display">$$\text{Nächstes Wort} = \text{LLM}(\underbrace{\text{Es war einmal}}_{\text{Benutzereingabe}}) \rightarrow \text{ein}$$</div>                                                                                                                                               
+            </div>                                                                                                                   
             <p class="fragment">Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
-        </div>
-    </div>
-
-    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->
-    <div class="slide" data-title="Autoregressive Schleife">
-        <div class="slide-content">
-            <h2>Die autoregressive Schleife</h2>
-            <div class="formula-box">
-                <div class="math-display">$$\text{LLM}(\text{Once upon a}) \rightarrow \text{time}$$</div>
-                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time}) \rightarrow \text{there}$$</div>
-                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there}) \rightarrow \text{was}$$</div>
-                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there was}) \rightarrow \text{a}$$</div>
-                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there was a}) \rightarrow \text{dragon.}$$</div>
-                <div class="math-display fragment">$$\text{LLM}(\text{Once upon a time there was a dragon.}) \rightarrow \texttt{|endoftext|}$$</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== SLIDE 4: Autoregressive Demo ==================== -->
-    <div class="slide" data-title="Demo: Autoregressive Schleife">
-        <div class="slide-content">
-            <h2>Demo: Ein Wort nach dem anderen</h2>
-            <div class="demo-box">
-                <div class="demo-title">🎬 Die autoregressive Schleife</div>
-                <div id="autoregressive-viz" style="min-height:200px;"></div>
-                <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
+        </div>                                                                                                                                        
+    </div>                                                                                                                           
+                                                                                                                                     
+    <!-- ==================== SLIDE 3: Autoregressive Schleife ==================== -->                                              
+    <div class="slide" data-title="Autoregressive Schleife">                                                                         
+        <div class="slide-content">                                                                                                  
+            <h2>Die autoregressive Schleife</h2>                                                                                     
+            <div class="formula-box">                                                                                                
+                <div class="math-display">$$\text{LLM}(\text{Es war einmal}) \rightarrow \text{ein}$$</div>                                                                                                                                                                                                             
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein}) \rightarrow \text{Drache}$$</div>                                                                                                                                                                                                         
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache}) \rightarrow \text{der}$$</div>        
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der}) \rightarrow \text{fliegen}$$</div>      
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen}) \rightarrow \text{konnte.}$$</div>
+                <div class="math-display fragment">$$\text{LLM}(\text{Es war einmal ein Drache der fliegen konnte.}) \rightarrow \texttt{|endoftext|}$$</div>                                                                                                        
+            </div>                                                                                                                                                                                                            
+        </div>                                                                                                                       
+    </div>                                                                                                                           
+                                                                                                                                     
+    <!-- ==================== SLIDE 4: Autoregressive Demo ==================== -->                                                  
+    <div class="slide" data-title="Demo: Autoregressive Schleife">                                                                   
+        <div class="slide-content">                                                                                                  
+            <h2>Demo: Ein Wort nach dem anderen</h2>                                                                                 
+            <div class="demo-box">                                                                                                                                                                                                                                                                                      
+                <div class="demo-title">🎬 Die autoregressive Schleife</div>                                                         
+                <div id="autoregressive-viz" style="min-height:200px;"></div>                                                        
+                <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">                                       
                     <button id="autoregressive-play" onclick="AutoregressiveViz.animate()" style="background:#3b82f6; color:white; border:none; padding:10px 24px; border-radius:8px; font-weight:bold; font-size:1em; cursor:pointer;">▶ Abspielen</button>
-                    <button onclick="AutoregressiveViz.reset()" style="background:#64748b; color:white; border:none; padding:10px 24px; border-radius:8px; font-weight:bold; font-size:1em; cursor:pointer;">↺ Reset</button>
-                </div>
-            </div>
-        </div>
+                    <button onclick="AutoregressiveViz.reset()" style="background:#64748b; color:white; border:none; padding:10px 24px; border-radius:8px; font-weight:bold; font-size:1em; cursor:pointer;">↺ Zurücksetzen</button>
+                </div>                                                                                                               
+            </div>                                                                                                                   
+        </div>                                                                                                                       
     </div>
 
     <!-- ==================== SLIDE 5: Tokenisierung ==================== -->
