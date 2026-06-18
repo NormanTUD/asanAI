@@ -45,13 +45,13 @@
 <div class="toc">
     <strong>📃 Gliederung</strong>
     <ol>
-        <li><a href="#intro">Einführung: Was ist ein LLM?</a> <span class="time-marker">~5 Min.</span></li>
-        <li><a href="#tokenization">Tokenisierung</a> <span class="time-marker">~3 Min.</span></li>
-        <li><a href="#embedding">Embedding & Vektor-Arithmetik</a> <span class="time-marker">~5 Min.</span></li>
-        <li><a href="#positional">Positional Encoding</a> <span class="time-marker">~3 Min.</span></li>
-        <li><a href="#transformer">Transformer-Schichten (Attention + FFN + Residual Stream)</a> <span class="time-marker">~10 Min.</span></li>
-        <li><a href="#prediction">Die finale Vorhersage</a> <span class="time-marker">~3 Min.</span></li>
-        <li><a href="#conclusion">Fazit & Kernaussage</a> <span class="time-marker">~1 Min.</span></li>
+        <li><a href="#intro">Einführung: Was ist ein LLM?</a></li>
+        <li><a href="#tokenization">Tokenisierung</a></li>
+        <li><a href="#embedding">Embedding & Vektor-Arithmetik</a></li>
+        <li><a href="#positional">Positional Encoding</a></li>
+        <li><a href="#transformer">Transformer-Schichten (Attention + FFN + Residual Stream)</a></li>
+        <li><a href="#prediction">Die finale Vorhersage</a></li>
+        <li><a href="#conclusion">Fazit & Kernaussage</a></li>
     </ol>
 </div>
 
@@ -60,7 +60,7 @@
 <!-- ============================================================ -->
 <!-- TEIL 1: EINFÜHRUNG -->
 <!-- ============================================================ -->
-<h2 id="intro">1. Einführung: Was ist ein LLM? <span class="time-marker">~5 Min.</span></h2>
+<h2 id="intro">1. Einführung: Was ist ein LLM?</h2>
 
 <div class="md">
 <p>LLMs (Large Language Models) sind Maschinen, die das <b>nächste wahrscheinlichste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal. Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
@@ -112,7 +112,7 @@
 <!-- ============================================================ -->
 <!-- TEIL 2: TOKENISIERUNG -->
 <!-- ============================================================ -->
-<h2 id="tokenization">2. Tokenisierung <span class="time-marker">~3 Min.</span></h2>
+<h2 id="tokenization">2. Tokenisierung</h2>
 
 <div class="md">
 <p>Computer verstehen keine Wörter – nur Zahlen. Deshalb wird der Text zuerst in kleine Stücke (<b>Tokens</b>) zerlegt. Tokens können Wörter, Teilwörter oder sogar einzelne Zeichen sein.</p>
@@ -144,7 +144,7 @@
 <!-- ============================================================ -->
 <!-- TEIL 3: EMBEDDING -->
 <!-- ============================================================ -->
-<h2 id="embedding">3. Embedding & Vektor-Arithmetik <span class="time-marker">~5 Min.</span></h2>
+<h2 id="embedding">3. Embedding & Vektor-Arithmetik</h2>
 
 <div class="md">
 <p>Ein rohes Token sagt dem Modell nichts über die <b>Bedeutung</b>. Deshalb wird jedes Token durch einen <b>langen Zahlenvektor</b> ersetzt, der seine Bedeutung repräsentiert:</p>
@@ -192,7 +192,7 @@
 <!-- ============================================================ -->
 <!-- TEIL 4: POSITIONAL ENCODING -->
 <!-- ============================================================ -->
-<h2 id="positional">4. Positional Encoding <span class="time-marker">~3 Min.</span></h2>
+<h2 id="positional">4. Positional Encoding</h2>
 
 <div class="md">
 <p>"The dog bites man" bedeutet etwas völlig anderes als "The man bites dog." Gleiche Wörter, andere Reihenfolge. Deshalb wird jedem Token ein <b>Positionssignal</b> hinzugefügt:</p>
@@ -233,7 +233,7 @@
 <!-- ============================================================ -->
 <!-- TEIL 5: TRANSFORMER-SCHICHTEN -->
 <!-- ============================================================ -->
-<h2 id="transformer">5. Die Transformer-Schichten <span class="time-marker">~10 Min.</span></h2>
+<h2 id="transformer">5. Die Transformer-Schichten</h2>
 
 <div class="md">
 <p>Dies ist das <b>Herzstück</b> des Modells (eingeführt 2017 von Vaswani et al.). Die Token-Vektoren fließen durch <b>viele gestapelte Schichten</b> (moderne LLMs haben 80+ Schichten). Jede Schicht verfeinert das Verständnis ein wenig mehr.</p>
@@ -380,7 +380,7 @@
 <!-- ============================================================ -->
 <!-- TEIL 6: DIE FINALE VORHERSAGE -->
 <!-- ============================================================ -->
-<h2 id="prediction">6. Die finale Vorhersage <span class="time-marker">~3 Min.</span></h2>
+<h2 id="prediction">6. Die finale Vorhersage</h2>
 
 <div class="md">
 <p>Nach allen Schichten nimmt das Modell den <b>Vektor des letzten Tokens</b> und erzeugt einen <b>Score für jedes Wort im Vokabular</b> (oft 50.000+ Wörter). Diese Scores werden in Wahrscheinlichkeiten umgewandelt:</p>
@@ -427,7 +427,7 @@
 <!-- ============================================================ -->
 <!-- TEIL 7: FAZIT -->
 <!-- ============================================================ -->
-<h2 id="conclusion">7. Fazit & Kernaussage <span class="time-marker">~1 Min.</span></h2>
+<h2 id="conclusion">7. Fazit & Kernaussage</h2>
 
 <div class="key-insight" style="font-size:1.1em; text-align:center; padding:24px;">
     <strong>Es gibt kein "Verstehen"-Modul.</strong><br><br>
