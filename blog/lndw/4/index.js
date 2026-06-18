@@ -3492,10 +3492,9 @@ const LossLandscapeViz = {
             const dy = Math.abs(e.clientY - self._mouseDownY);
             const dt = Date.now() - self._mouseDownTime;
 
-            // NUR als Click werten wenn: kaum Bewegung UND kurze Dauer
-            if (dx > 5 || dy > 5 || dt > 250) return; // Das war ein Drag → ignorieren
+            // Nur Click, kein Drag
+            if (dx > 4 || dy > 4 || dt > 250) return;
 
-            // 2D Pixel → 3D Welt-Koordinaten projizieren
             const coords = self._pixelToWorld(e.clientX, e.clientY);
             if (!coords) return;
 
@@ -3515,56 +3514,142 @@ const LossLandscapeViz = {
         if (!sceneLayout || !sceneLayout._scene) return null;
 
         const scene = sceneLayout._scene;
-        if (!scene.glplot || !scene.glplot.camera) return null;
+        if (!scene.glplot) return null;
 
-        // Finde den GL-Canvas
+        const glplot = scene.glplot;
+
+        // Finde den Canvas für Pixel-Koordinaten
         const canvas = plotDiv.querySelector('canvas');
         if (!canvas) return null;
-
         const rect = canvas.getBoundingClientRect();
 
-        // Normalisierte Device Coordinates (NDC): -1 bis +1
+        // Normalisierte Device Coordinates (-1 bis +1)
         const ndcX = ((clientX - rect.left) / rect.width) * 2 - 1;
-        const ndcY = -(((clientY - rect.top) / rect.height) * 2 - 1); // Y invertiert
+        const ndcY = -(((clientY - rect.top) / rect.height) * 2 - 1);
 
-        // Kamera-Parameter auslesen
-        const camera = scene.glplot.camera;
-        const eye = camera.eye || [1.5, 1.5, 0.85];
-        const center = camera.center || [0, 0, 0];
+        // Plotly's gl-plot3d speichert die kombinierten Matrizen
+        // model * view * projection = MVP
+        // Wir brauchen die inverse davon
 
-        // Vereinfachte Projektion: Wir nehmen an, der User klickt auf die
-        // "Boden-Ebene" (z ≈ mittlerer Loss). Wir projizieren den NDC-Punkt
-        // basierend auf dem Kamerawinkel auf die XY-Ebene.
+        // Methode: Nutze die dataBox (Plotly's Mapping von Daten → GL-Koordinaten)
+        // und die Camera-Matrix
 
-        // Berechne Kamera-Richtung
-        const camDist = Math.sqrt(eye[0]*eye[0] + eye[1]*eye[1] + eye[2]*eye[2]);
-        const camAzimuth = Math.atan2(eye[1], eye[0]);
-        const camElevation = Math.asin(eye[2] / camDist);
+        const camera = glplot.camera;
+        if (!camera) return null;
 
-        // FOV-basierte Projektion auf XY-Ebene
-        const fov = 0.7; // Ungefähres FOV von Plotly's 3D-Scene
+        // gl-plot3d camera hat: camera.matrix (4x4 view-projection)
+        // Aber einfacher: Wir nutzen die Achsen-Ranges und die Camera-Parameter
+
+        // Plotly normalisiert die Daten in einen [-1,1]³ Würfel basierend auf den Ranges
+        const xRange = sceneLayout.xaxis.range || [-3.5, 3.5];
+        const yRange = sceneLayout.yaxis.range || [-3.5, 3.5];
+
+        // Die Camera hat eye, center, up
+        let eye, center, up;
+
+        // Versuche verschiedene Wege die Camera-Daten zu bekommen
+        if (camera.eye) {
+            eye = [camera.eye.x || camera.eye[0], camera.eye.y || camera.eye[1], camera.eye.z || camera.eye[2]];
+        } else if (glplot.camera && glplot.camera.params) {
+            eye = glplot.camera.params.eye;
+        } else {
+            // Fallback: Aus dem Layout lesen
+            const camLayout = sceneLayout.camera || {};
+            eye = [
+                (camLayout.eye && camLayout.eye.x) || 1.8,
+                (camLayout.eye && camLayout.eye.y) || 1.8,
+                (camLayout.eye && camLayout.eye.z) || 1.0
+            ];
+        }
+
+        if (camera.center) {
+            center = [camera.center.x || camera.center[0] || 0, camera.center.y || camera.center[1] || 0, camera.center.z || camera.center[2] || 0];
+        } else {
+            center = [0, 0, 0];
+        }
+
+        if (camera.up) {
+            up = [camera.up.x || camera.up[0] || 0, camera.up.y || camera.up[1] || 0, camera.up.z || camera.up[2] || 1];
+        } else {
+            up = [0, 0, 1];
+        }
+
+        // Baue View-Matrix (LookAt)
+        const forward = [
+            center[0] - eye[0],
+            center[1] - eye[1],
+            center[2] - eye[2]
+        ];
+        const fLen = Math.sqrt(forward[0]*forward[0] + forward[1]*forward[1] + forward[2]*forward[2]);
+        forward[0] /= fLen; forward[1] /= fLen; forward[2] /= fLen;
+
+        // Right = forward × up
+        const right = [
+            forward[1] * up[2] - forward[2] * up[1],
+            forward[2] * up[0] - forward[0] * up[2],
+            forward[0] * up[1] - forward[1] * up[0]
+        ];
+        const rLen = Math.sqrt(right[0]*right[0] + right[1]*right[1] + right[2]*right[2]);
+        right[0] /= rLen; right[1] /= rLen; right[2] /= rLen;
+
+        // True up = right × forward
+        const trueUp = [
+            right[1] * forward[2] - right[2] * forward[1],
+            right[2] * forward[0] - right[0] * forward[2],
+            right[0] * forward[1] - right[1] * forward[0]
+        ];
+
+        // Ray von der Kamera durch den NDC-Punkt
+        // Perspective projection: FOV ≈ 45° für Plotly
+        const fov = Math.PI / 4;
         const aspect = rect.width / rect.height;
+        const tanHalfFov = Math.tan(fov / 2);
 
-        // Richtungsvektor im Kamera-Space
-        const rayX = ndcX * fov * aspect;
-        const rayY = ndcY * fov;
+        // Ray direction in world space
+        const rayDirX = right[0] * ndcX * tanHalfFov * aspect + trueUp[0] * ndcY * tanHalfFov + forward[0];
+        const rayDirY = right[1] * ndcX * tanHalfFov * aspect + trueUp[1] * ndcY * tanHalfFov + forward[1];
+        const rayDirZ = right[2] * ndcX * tanHalfFov * aspect + trueUp[2] * ndcY * tanHalfFov + forward[2];
 
-        // Rotation in Welt-Space (vereinfacht: nur Azimuth + Elevation)
-        const cosA = Math.cos(camAzimuth);
-        const sinA = Math.sin(camAzimuth);
-        const cosE = Math.cos(camElevation);
-        const sinE = Math.sin(camElevation);
+        // Intersect Ray mit der Z-Ebene (z = mittlerer Loss-Wert in normalisierten Koordinaten)
+        // Plotly normalisiert die Daten: x,y,z jeweils in [-1,1] basierend auf den Ranges
+        // Wir wollen die Ebene z_norm = 0 (Mitte der Z-Range) treffen
 
-        // Projiziere auf XY-Ebene (z=0 relativ zum Center)
-        // Je höher die Kamera, desto größer der sichtbare Bereich
-        const scale = camDist * 0.55; // Empirischer Skalierungsfaktor
+        // Aber einfacher: Intersect mit z_world = 3.5 (mittlerer Loss, da Range 0-7)
+        // In Plotly's normalisiertem Space ist das z_norm = 0
 
-        const worldX = center[0] + (-rayX * cosA - rayY * sinA * sinE) * scale;
-        const worldY = center[1] + (-rayX * sinA + rayY * cosA * sinE) * scale;
+        // Die Kamera-Koordinaten sind bereits in Plotly's normalisiertem Space
+        // eye ist in normalisierten Einheiten (typisch: Distanz ~2-4)
 
-        // Auf den gültigen Bereich clampen
+        // Ray-Plane Intersection: Ebene z = 0 (normalisierter Raum)
+        // P = eye + t * rayDir, wobei P.z = 0
+        // t = -eye.z / rayDir.z
+
+        if (Math.abs(rayDirZ) < 0.001) return null; // Ray parallel zur Ebene
+
+        const t = -eye[2] / rayDirZ;
+        if (t < 0) return null; // Ebene hinter der Kamera
+
+        // Intersection point in normalisiertem Raum
+        const hitNormX = eye[0] + t * rayDirX;
+        const hitNormY = eye[1] + t * rayDirY;
+
+        // Denormalisieren: normalisiert [-1,1] → Daten-Range
+        // Plotly's Normalisierung: norm = (val - center) / halfRange * aspectRatio
+        // Vereinfacht (aspectratio x:y = 1:1):
+        const xCenter = (xRange[0] + xRange[1]) / 2;
+        const yCenter = (yRange[0] + yRange[1]) / 2;
+        const xHalf = (xRange[1] - xRange[0]) / 2;
+        const yHalf = (yRange[1] - yRange[0]) / 2;
+
+        const worldX = xCenter + hitNormX * xHalf;
+        const worldY = yCenter + hitNormY * yHalf;
+
+        // Clamp
         const clampedX = Math.max(-3.4, Math.min(3.4, worldX));
         const clampedY = Math.max(-3.4, Math.min(3.4, worldY));
+
+        // Sanity check: Wenn das Ergebnis total off ist, verwerfen
+        if (isNaN(clampedX) || isNaN(clampedY)) return null;
 
         return { x: clampedX, y: clampedY };
     },
