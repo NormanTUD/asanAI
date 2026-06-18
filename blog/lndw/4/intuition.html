@@ -294,8 +294,8 @@
     <div class="slide" data-title="Tokenisierung">
         <div class="slide-content">
             <h2>Tokenisierung</h2>
-            <p>Computer verstehen keine Wörter – nur Zahlen. Text wird in kleine Stücke (<b>Tokens</b>) zerlegt.</p>
-            <div class="formula-box fragment">
+            <p>Computer verstehen keine Wörter – nur Zahlen. Der Text wird in kleine Stücke (<b>Tokens</b>) zerlegt.</p>
+            <div class="formula-box">
                 <div class="math-display">$$\text{"Es war einmal"} \rightarrow [\text{"Es"}, \ \text{"war"}, \ \text{"einmal"}]$$</div>
             </div>
             <p class="fragment">Subword-Tokenisierung: <code>"Donaudampfschiff fahrt"</code> → <code>"Donau"</code> + <code>"dampf"</code> + <code>"schiff"</code> + <code>"fahrt"</code></p>
@@ -353,7 +353,7 @@
 <div class="slide" data-title="Warum viele Dimensionen?">
     <div class="slide-content">
         <h2>Warum braucht man so viele Dimensionen?</h2>
-        <p class="fragment">Stell dir vor, du musst Wörter so anordnen, dass <b>ähnliche nah beieinander</b> und <b>verschiedene weit weg</b> sind.</p>
+        <p>Stell dir vor, du musst Wörter so anordnen, dass <b>ähnliche nah beieinander</b> und <b>verschiedene weit weg</b> sind.</p>
         <div class="key-insight fragment">
             <strong>Das Problem:</strong> In 1D (einer Zahlenlinie) geht das schon bei 4 Wörtern schief. Jede neue Dimension gibt dir eine neue "Richtung" zum Ausweichen.
         </div>
@@ -905,36 +905,37 @@ document.addEventListener('touchend', (e) => {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
-    Presentation.init();
+	Presentation.init();
 
-    // Render all TeX formulas using Temml
-    document.querySelectorAll('.math-display').forEach(function(el) {
-        let tex = el.textContent.trim();
-        if (tex.startsWith('$$') && tex.endsWith('$$')) {
-            tex = tex.slice(2, -2);
-        }
-        try {
-            el.innerHTML = temml.renderToString(tex, { displayMode: true });
-        } catch(e) {
-            console.warn('Temml render error:', e);
-        }
-    });
+	// Render all TeX formulas using Temml
+	document.querySelectorAll('.math-display').forEach(function(el) {
+		let tex = el.textContent.trim();
+		if (tex.startsWith('$$') && tex.endsWith('$$')) {
+			tex = tex.slice(2, -2);
+		}
+		try {
+			el.innerHTML = temml.renderToString(tex, { displayMode: true });
+		} catch(e) {
+			console.warn('Temml render error:', e);
+		}
+	});
 
-    document.querySelectorAll('.math-inline').forEach(function(el) {
-        let tex = el.textContent.trim();
-        if (tex.startsWith('$') && tex.endsWith('$')) {
-            tex = tex.slice(1, -1);
-        }
-        try {
-            el.innerHTML = temml.renderToString(tex, { displayMode: false });
-        } catch(e) {
-            console.warn('Temml inline render error:', e);
-        }
-    });
+	document.querySelectorAll('.math-inline').forEach(function(el) {
+		let tex = el.textContent.trim();
+		if (tex.startsWith('$') && tex.endsWith('$')) {
+			tex = tex.slice(1, -1);
+		}
+		try {
+			el.innerHTML = temml.renderToString(tex, { displayMode: false });
+		} catch(e) {
+			console.warn('Temml inline render error:', e);
+		}
+	});
 
-    // Initialize demos
-    if (typeof loadIntuitionModule === 'function') loadIntuitionModule();
-    if (typeof runAttention === 'function') runAttention();
+	// Initialize demos
+	if (typeof loadIntuitionModule === 'function') loadIntuitionModule();
+	if (typeof runAttention === 'function') runAttention();
+	$("#dim-btn-1").click()
 });
 </script>
 
