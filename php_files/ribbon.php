@@ -563,18 +563,16 @@
 
 	</div>
 
-
-	<div id="imprint_ribbon" class="ribbon_tab_content" title="code_and_contact">
-		<div class="ribbon-group" style="width: auto;">
-			<div class="ribbon-toolbar">
-				<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
-				<button onclick='window.open("https://arxiv.org/abs/2501.06226", "_blank");' style="width: 200px">Paper</button><br><br>
-				<button onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank");' style="width: 200px">Code</button><br><br>
-				<button style="width: 200px" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs"></span></button>
-			</div>
-			<div class="ribbon-group-title"><span class="TRANSLATEME_imprint"></span></div>
-		</div>
-
+	<div id="imprint_ribbon" class="ribbon_tab_content" title="code_and_contact">                                              
+		<div class="ribbon-group" style="width: auto;">                                                                    
+			<div class="ribbon-toolbar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">                                                                               
+				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button>
+				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://arxiv.org/abs/2501.06226", "_blank");'>Paper</button>
+				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank");'>Code</button>
+				<button style="min-width: 150px; padding: 6px 12px; cursor: pointer;" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs"></span></button>
+			</div>                                                                                                     
+			<div class="ribbon-group-title" style="margin-top: 5px;"><span class="TRANSLATEME_imprint"></span></div>                            
+		</div>                                                                                                             
 	</div>
 
 	<div id='language_shower' style="position: absolute; top: 2px; right: 20px; user-select: none; font-size: 1.5vw">
