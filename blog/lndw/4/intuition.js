@@ -2445,6 +2445,487 @@ function initNNDemos() {
     NNTokenViz.setStep(0);
 }
 
+// ============================================================
+// DIMENSION VISUALIZER – Why do we need so many dimensions?
+// ============================================================
+
+const DimensionViz = {
+    currentDim: 2,
+
+    // Word groups with semantic categories
+    wordGroups: {
+        'Tiere': { words: ['Katze', 'Hund', 'Pferd', 'Vogel', 'Fisch'], color: '#10b981' },
+        'Essen': { words: ['Apfel', 'Brot', 'Kuchen', 'Suppe', 'Käse'], color: '#f59e0b' },
+        'Technik': { words: ['Computer', 'Handy', 'Server', 'Code', 'Chip'], color: '#3b82f6' },
+        'Gefühle': { words: ['Freude', 'Trauer', 'Wut', 'Angst', 'Liebe'], color: '#ef4444' },
+        'Natur': { words: ['Baum', 'Fluss', 'Berg', 'Wolke', 'Stein'], color: '#8b5cf6' },
+    },
+
+    // Seeded random for reproducibility
+    seededRandom: function(seed) {
+        let s = seed;
+        return function() {
+            s = (s * 16807) % 2147483647;
+            return (s - 1) / 2147483646;
+        };
+    },
+
+    // Generate embeddings in N dimensions
+    generateEmbeddings: function(numDims) {
+        const embeddings = {};
+        const rng = this.seededRandom(42);
+        const groups = Object.entries(this.wordGroups);
+
+        groups.forEach(([groupName, groupData], gi) => {
+            // Each group has a "center direction" in the high-dimensional space
+            const groupCenter = Array.from({ length: numDims }, (_, d) => {
+                // In low dims, groups overlap; in high dims, they get unique directions
+                if (numDims <= 3) {
+                    // Force overlap in low dimensions
+                    const angle = (gi / groups.length) * Math.PI * 2;
+                    if (d === 0) return Math.cos(angle) * 2;
+                    if (d === 1) return Math.sin(angle) * 2;
+                    if (d === 2) return (gi % 2 === 0 ? 1 : -1) * 0.5;
+                    return 0;
+                } else {
+                    // In high dims, each group gets its own orthogonal-ish direction
+                    // Use one-hot-like encoding + noise
+                    const baseVal = (d >= gi * (numDims / groups.length) && d < (gi + 1) * (numDims / groups.length)) ? 3.0 : 0;
+                    return baseVal + (rng() - 0.5) * 0.3;
+                }
+            });
+
+            groupData.words.forEach((word, wi) => {
+                // Add within-group variation
+                const vec = groupCenter.map((c, d) => {
+                    const noise = (rng() - 0.5) * (numDims <= 3 ? 1.8 : 0.8);
+                    return c + noise;
+                });
+                embeddings[word] = { vec, group: groupName, color: groupData.color };
+            });
+        });
+
+        return embeddings;
+    },
+
+    // Project high-dimensional vectors to 2D or 3D using simple PCA-like approach
+    projectTo2D: function(embeddings) {
+        const words = Object.keys(embeddings);
+        const vecs = words.map(w => embeddings[w].vec);
+        const numDims = vecs[0].length;
+
+        if (numDims <= 2) {
+            return words.map((w, i) => ({
+                word: w,
+                x: vecs[i][0] || 0,
+                y: vecs[i][1] || 0,
+                group: embeddings[w].group,
+                color: embeddings[w].color
+            }));
+        }
+
+        // Simple projection: use first two principal components (approximate)
+        // Compute mean
+        const mean = Array(numDims).fill(0);
+        vecs.forEach(v => v.forEach((val, d) => mean[d] += val));
+        mean.forEach((_, d) => mean[d] /= vecs.length);
+
+        // Center the data
+        const centered = vecs.map(v => v.map((val, d) => val - mean[d]));
+
+        // Use power iteration to find top 2 directions
+        const findPrincipalComponent = (data, deflated) => {
+            const n = data[0].length;
+            let pc = Array.from({ length: n }, () => Math.random() - 0.5);
+
+            for (let iter = 0; iter < 50; iter++) {
+                // Multiply: new_pc = sum of (data[i] dot pc) * data[i]
+                const newPc = Array(n).fill(0);
+                data.forEach(row => {
+                    const dot = row.reduce((s, v, d) => s + v * pc[d], 0);
+                    row.forEach((v, d) => newPc[d] += dot * v);
+                });
+                // Normalize
+                const norm = Math.sqrt(newPc.reduce((s, v) => s + v * v, 0)) || 1;
+                pc = newPc.map(v => v / norm);
+            }
+            return pc;
+        };
+
+        const pc1 = findPrincipalComponent(centered);
+        // Deflate
+        const deflated = centered.map(row => {
+            const dot = row.reduce((s, v, d) => s + v * pc1[d], 0);
+            return row.map((v, d) => v - dot * pc1[d]);
+        });
+        const pc2 = findPrincipalComponent(deflated);
+
+        return words.map((w, i) => ({
+            word: w,
+            x: centered[i].reduce((s, v, d) => s + v * pc1[d], 0),
+            y: centered[i].reduce((s, v, d) => s + v * pc2[d], 0),
+            group: embeddings[w].group,
+            color: embeddings[w].color
+        }));
+    },
+
+    projectTo3D: function(embeddings) {
+        const words = Object.keys(embeddings);
+        const vecs = words.map(w => embeddings[w].vec);
+        const numDims = vecs[0].length;
+
+        if (numDims <= 3) {
+            return words.map((w, i) => ({
+                word: w,
+                x: vecs[i][0] || 0,
+                y: vecs[i][1] || 0,
+                z: vecs[i][2] || 0,
+                group: embeddings[w].group,
+                color: embeddings[w].color
+            }));
+        }
+
+        // Compute mean
+        const mean = Array(numDims).fill(0);
+        vecs.forEach(v => v.forEach((val, d) => mean[d] += val));
+        mean.forEach((_, d) => mean[d] /= vecs.length);
+        const centered = vecs.map(v => v.map((val, d) => val - mean[d]));
+
+        const findPC = (data) => {
+            const n = data[0].length;
+            let pc = Array.from({ length: n }, () => Math.random() - 0.5);
+            for (let iter = 0; iter < 50; iter++) {
+                const newPc = Array(n).fill(0);
+                data.forEach(row => {
+                    const dot = row.reduce((s, v, d) => s + v * pc[d], 0);
+                    row.forEach((v, d) => newPc[d] += dot * v);
+                });
+                const norm = Math.sqrt(newPc.reduce((s, v) => s + v * v, 0)) || 1;
+                pc = newPc.map(v => v / norm);
+            }
+            return pc;
+        };
+
+        const deflate = (data, pc) => data.map(row => {
+            const dot = row.reduce((s, v, d) => s + v * pc[d], 0);
+            return row.map((v, d) => v - dot * pc[d]);
+        });
+
+        const pc1 = findPC(centered);
+        const d1 = deflate(centered, pc1);
+        const pc2 = findPC(d1);
+        const d2 = deflate(d1, pc2);
+        const pc3 = findPC(d2);
+
+        return words.map((w, i) => ({
+            word: w,
+            x: centered[i].reduce((s, v, d) => s + v * pc1[d], 0),
+            y: centered[i].reduce((s, v, d) => s + v * pc2[d], 0),
+            z: centered[i].reduce((s, v, d) => s + v * pc3[d], 0),
+            group: embeddings[w].group,
+            color: embeddings[w].color
+        }));
+    },
+
+    // Compute pairwise distances and collision metrics
+    computeMetrics: function(embeddings) {
+        const words = Object.keys(embeddings);
+        const n = words.length;
+
+        const distances = { within: [], between: [] };
+
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                const v1 = embeddings[words[i]].vec;
+                const v2 = embeddings[words[j]].vec;
+                const dist = Math.sqrt(v1.reduce((s, val, d) => s + Math.pow(val - v2[d], 2), 0));
+
+                const sameGroup = embeddings[words[i]].group === embeddings[words[j]].group;
+                if (sameGroup) {
+                    distances.within.push(dist);
+                } else {
+                    distances.between.push(dist);
+                }
+            }
+        }
+
+        const avgWithin = distances.within.reduce((a, b) => a + b, 0) / distances.within.length;
+        const avgBetween = distances.between.reduce((a, b) => a + b, 0) / distances.between.length;
+        const separation = avgBetween / avgWithin;
+
+        // Count "collisions" – between-group pairs closer than avg within-group distance
+        const collisions = distances.between.filter(d => d < avgWithin).length;
+        const collisionRate = collisions / distances.between.length;
+
+        return { avgWithin, avgBetween, separation, collisionRate, distances };
+    },
+
+    setDim: function(dim) {
+        this.currentDim = dim;
+
+        // Update buttons
+        [2, 3, 50].forEach(d => {
+            const btn = document.getElementById(`dim-btn-${d}`);
+            if (btn) {
+                btn.style.borderColor = d === dim ? '#3b82f6' : '#cbd5e1';
+                btn.style.background = d === dim ? '#eff6ff' : '#fff';
+                btn.style.borderWidth = d === dim ? '2px' : '1px';
+            }
+        });
+
+        this.render();
+    },
+
+    render: function() {
+        const plotDiv = document.getElementById('dimension-plot');
+        const distPlotDiv = document.getElementById('dimension-distance-plot');
+        if (!plotDiv) return;
+
+        const numDims = this.currentDim;
+        const embeddings = this.generateEmbeddings(numDims);
+        const metrics = this.computeMetrics(embeddings);
+
+        // === Main scatter plot ===
+        if (numDims <= 3) {
+            this.render3DPlot(plotDiv, embeddings, numDims);
+        } else {
+            this.render2DProjection(plotDiv, embeddings, numDims);
+        }
+
+        // === Distance distribution plot ===
+        this.renderDistancePlot(distPlotDiv, metrics, numDims);
+
+        // === Collision info ===
+        const infoSpan = document.getElementById('dim-collision-info');
+        if (infoSpan) {
+            const emoji = metrics.collisionRate > 0.3 ? '🔴' : metrics.collisionRate > 0.1 ? '🟡' : '🟢';
+            infoSpan.innerHTML = `${emoji} Kollisionsrate: <b>${(metrics.collisionRate * 100).toFixed(1)}%</b>`;
+        }
+
+        // === Explanation ===
+        const explDiv = document.getElementById('dimension-explanation');
+        if (explDiv) {
+            if (numDims === 2) {
+                explDiv.innerHTML = `<b>2 Dimensionen:</b> Die Gruppen überlappen stark! "Katze" und "Computer" können fast am gleichen Punkt landen.
+                    <b>Separation: ${metrics.separation.toFixed(2)}x</b> (ideal: >3x).
+                    Das Modell kann Bedeutungen kaum unterscheiden. 🔴`;
+            } else if (numDims === 3) {
+                explDiv.innerHTML = `<b>3 Dimensionen:</b> Etwas besser, aber immer noch viel Überlappung zwischen den Gruppen.
+                    <b>Separation: ${metrics.separation.toFixed(2)}x</b>.
+                    Für 25 Wörter in 5 Kategorien reichen 3 Richtungen nicht aus. 🟡`;
+            } else {
+                explDiv.innerHTML = `<b>50 Dimensionen:</b> Jede Gruppe hat ihre eigene "Richtung" im Raum! Keine Überlappung mehr.
+                    <b>Separation: ${metrics.separation.toFixed(2)}x</b>.
+                    Reale LLMs nutzen 4096–12288 Dimensionen für 50.000+ Wörter mit hunderten Bedeutungsfacetten. 🟢`;
+            }
+        }
+    },
+
+    render3DPlot: function(plotDiv, embeddings, numDims) {
+        const groups = Object.entries(this.wordGroups);
+
+        if (numDims === 2) {
+            const projected = this.projectTo2D(embeddings);
+            const traces = [];
+
+            groups.forEach(([groupName, groupData]) => {
+                const groupPoints = projected.filter(p => p.group === groupName);
+                traces.push({
+                    x: groupPoints.map(p => p.x),
+                    y: groupPoints.map(p => p.y),
+                    text: groupPoints.map(p => p.word),
+                    mode: 'markers+text',
+                    textposition: 'top center',
+                    textfont: { size: 10, color: groupData.color },
+                    marker: { size: 12, color: groupData.color, opacity: 0.8, line: { width: 1, color: '#fff' } },
+                    name: groupName,
+                    type: 'scatter',
+                    hovertemplate: '<b>%{text}</b><br>Gruppe: ' + groupName + '<extra></extra>'
+                });
+            });
+
+            const layout = {
+                margin: { l: 40, r: 20, b: 40, t: 30 },
+                title: { text: '2D Embedding-Raum', font: { size: 13 } },
+                xaxis: { title: 'Dim 1', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
+                yaxis: { title: 'Dim 2', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
+                showlegend: true,
+                legend: { x: 0, y: 1, font: { size: 10 } },
+                plot_bgcolor: '#fff'
+            };
+
+            Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+
+        } else {
+            // 3D plot
+            const projected = this.projectTo3D(embeddings);
+            const traces = [];
+
+            groups.forEach(([groupName, groupData]) => {
+                const groupPoints = projected.filter(p => p.group === groupName);
+                traces.push({
+                    x: groupPoints.map(p => p.x),
+                    y: groupPoints.map(p => p.y),
+                    z: groupPoints.map(p => p.z),
+                    text: groupPoints.map(p => p.word),
+                    mode: 'markers+text',
+                    textposition: 'top center',
+                    textfont: { size: 9, color: groupData.color },
+                    marker: { size: 7, color: groupData.color, opacity: 0.8, line: { width: 0.5, color: '#fff' } },
+                    name: groupName,
+                    type: 'scatter3d',
+                    hovertemplate: '<b>%{text}</b><br>Gruppe: ' + groupName + '<extra></extra>'
+                });
+            });
+
+            const layout = {
+                margin: { l: 0, r: 0, b: 0, t: 30 },
+                title: { text: '3D Embedding-Raum', font: { size: 13 } },
+                scene: {
+                    xaxis: { title: 'Dim 1', gridcolor: '#f1f5f9' },
+                    yaxis: { title: 'Dim 2', gridcolor: '#f1f5f9' },
+                    zaxis: { title: 'Dim 3', gridcolor: '#f1f5f9' },
+                    camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
+                },
+                showlegend: true,
+                legend: { x: 0, y: 1, font: { size: 10 } }
+            };
+
+            Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+        }
+    },
+
+    render2DProjection: function(plotDiv, embeddings, numDims) {
+        const projected = this.projectTo2D(embeddings);
+        const groups = Object.entries(this.wordGroups);
+        const traces = [];
+
+        groups.forEach(([groupName, groupData]) => {
+            const groupPoints = projected.filter(p => p.group === groupName);
+            traces.push({
+                x: groupPoints.map(p => p.x),
+                y: groupPoints.map(p => p.y),
+                text: groupPoints.map(p => p.word),
+                mode: 'markers+text',
+                textposition: 'top center',
+                textfont: { size: 10, color: groupData.color },
+                marker: { size: 12, color: groupData.color, opacity: 0.8, line: { width: 1, color: '#fff' } },
+                name: groupName,
+                type: 'scatter',
+                hovertemplate: '<b>%{text}</b><br>Gruppe: ' + groupName + '<extra></extra>'
+            });
+        });
+
+        // Draw convex-hull-like circles around groups to show separation
+        groups.forEach(([groupName, groupData]) => {
+            const groupPoints = projected.filter(p => p.group === groupName);
+            const cx = groupPoints.reduce((s, p) => s + p.x, 0) / groupPoints.length;
+            const cy = groupPoints.reduce((s, p) => s + p.y, 0) / groupPoints.length;
+            const maxR = Math.max(...groupPoints.map(p => Math.sqrt(Math.pow(p.x - cx, 2) + Math.pow(p.y - cy, 2)))) * 1.2;
+
+            // Circle shape
+            const theta = Array.from({ length: 50 }, (_, i) => i / 49 * 2 * Math.PI);
+            traces.push({
+                x: theta.map(t => cx + maxR * Math.cos(t)),
+                y: theta.map(t => cy + maxR * Math.sin(t)),
+                mode: 'lines',
+                line: { color: groupData.color, width: 1.5, dash: 'dot' },
+                showlegend: false,
+                hoverinfo: 'skip'
+            });
+        });
+
+        const layout = {
+            margin: { l: 40, r: 20, b: 40, t: 30 },
+            title: { text: `${numDims}D → 2D Projektion (PCA)`, font: { size: 13 } },
+            xaxis: { title: 'PC 1', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
+            yaxis: { title: 'PC 2', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
+            showlegend: true,
+            legend: { x: 0, y: 1, font: { size: 10 } },
+            plot_bgcolor: '#fff'
+        };
+
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+    },
+
+    renderDistancePlot: function(plotDiv, metrics, numDims) {
+        if (!plotDiv) return;
+
+        // Histogram of within-group vs between-group distances
+        const trace1 = {
+            x: metrics.distances.within,
+            type: 'histogram',
+            name: 'Innerhalb Gruppe',
+            marker: { color: 'rgba(16,185,129,0.6)', line: { color: '#10b981', width: 1 } },
+            opacity: 0.7,
+            nbinsx: 15
+        };
+
+        const trace2 = {
+            x: metrics.distances.between,
+            type: 'histogram',
+            name: 'Zwischen Gruppen',
+            marker: { color: 'rgba(239,68,68,0.6)', line: { color: '#ef4444', width: 1 } },
+            opacity: 0.7,
+            nbinsx: 15
+        };
+
+        // Add vertical lines for averages
+        const shapes = [
+            {
+                type: 'line', x0: metrics.avgWithin, x1: metrics.avgWithin,
+                y0: 0, y1: 1, yref: 'paper',
+                line: { color: '#10b981', width: 2, dash: 'dash' }
+            },
+            {
+                type: 'line', x0: metrics.avgBetween, x1: metrics.avgBetween,
+                y0: 0, y1: 1, yref: 'paper',
+                line: { color: '#ef4444', width: 2, dash: 'dash' }
+            }
+        ];
+
+        const overlap = metrics.collisionRate > 0.2;
+        const annotations = [
+            {
+                x: metrics.avgWithin, y: 1, yref: 'paper', yanchor: 'bottom',
+                text: `Ø intra: ${metrics.avgWithin.toFixed(1)}`,
+                showarrow: false, font: { size: 10, color: '#10b981' }
+            },
+            {
+                x: metrics.avgBetween, y: 0.9, yref: 'paper', yanchor: 'bottom',
+                text: `Ø inter: ${metrics.avgBetween.toFixed(1)}`,
+                showarrow: false, font: { size: 10, color: '#ef4444' }
+            }
+        ];
+
+        if (overlap) {
+            annotations.push({
+                x: 0.5, y: 0.5, xref: 'paper', yref: 'paper',
+                text: '⚠️ ÜBERLAPPUNG!',
+                showarrow: false,
+                font: { size: 14, color: '#dc2626', weight: 'bold' },
+                bgcolor: 'rgba(254,226,226,0.9)',
+                borderpad: 6
+            });
+        }
+
+        const layout = {
+            margin: { l: 40, r: 20, b: 50, t: 30 },
+            title: { text: `Distanzverteilung (${numDims}D)`, font: { size: 13 } },
+            xaxis: { title: 'Euklidische Distanz', gridcolor: '#f1f5f9' },
+            yaxis: { title: 'Anzahl Paare', gridcolor: '#f1f5f9' },
+            barmode: 'overlay',
+            showlegend: true,
+            legend: { x: 0.6, y: 1, font: { size: 10 } },
+            shapes: shapes,
+            annotations: annotations,
+            plot_bgcolor: '#fff'
+        };
+
+        Plotly.react(plotDiv, [trace1, trace2], layout, { displayModeBar: false, responsive: true });
+    }
+};
+
 function loadIntuitionModule() {
     // CSS animation (same as before, still eager — it's just a style tag)
     const intuitionStyle = document.createElement('style');
@@ -2553,6 +3034,11 @@ function loadIntuitionModule() {
         const nnStepInput = document.getElementById('nn-step-input');
         if (nnStepInput) nnStepInput.addEventListener('input', () => NNStepViz.render());
         NNStepViz.render();
+    });
+
+    // Dimension Visualizer
+    _lazyRegister('dimension-plot', () => {
+        DimensionViz.setDim(2);
     });
 
     // NN Token Prediction Demo

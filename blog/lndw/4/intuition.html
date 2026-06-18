@@ -328,6 +328,33 @@
         </div>
     </div>
 
+	<!-- ==================== SLIDE: Warum so viele Dimensionen? ==================== -->
+	<div class="slide" data-title="Warum viele Dimensionen?">
+	    <div class="slide-content">
+		<h2>Warum braucht man so viele Dimensionen?</h2>
+		<p class="fragment">In 2D oder 3D können sich Bedeutungen <b>nicht genug ausweichen</b>. Wörter, die eigentlich verschieden sind, landen übereinander.</p>
+		<div class="key-insight fragment">
+		    <strong>Kernproblem:</strong> In niedrigen Dimensionen gibt es nicht genug "Richtungen", um alle Bedeutungsunterschiede gleichzeitig darzustellen.
+		</div>
+		<div class="demo-box fragment">
+		    <div class="demo-title">🔬 Experiment: Wie viele Dimensionen braucht man?</div>
+		    <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+			<label style="font-size:0.85em; font-weight:bold;">Dimensionen:</label>
+			<button onclick="DimensionViz.setDim(2)" id="dim-btn-2" style="padding:6px 14px; border-radius:6px; border:2px solid #3b82f6; background:#eff6ff; font-weight:bold; cursor:pointer;">2D</button>
+			<button onclick="DimensionViz.setDim(3)" id="dim-btn-3" style="padding:6px 14px; border-radius:6px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">3D</button>
+			<button onclick="DimensionViz.setDim(50)" id="dim-btn-50" style="padding:6px 14px; border-radius:6px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">50D (projiziert)</button>
+			<span style="margin-left:auto; font-size:0.8em; color:#64748b;" id="dim-collision-info"></span>
+		    </div>
+		    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+			<div id="dimension-plot" style="flex:1; min-width:400px; height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+			<div id="dimension-distance-plot" style="flex:1; min-width:300px; height:400px; background:#fff; border-radius:8px; border:1px solid #e2e8f0;"></div>
+		    </div>
+		    <div id="dimension-explanation" style="margin-top:12px; padding:12px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; font-size:0.9em; color:#1e40af; text-align:center;"></div>
+		</div>
+	    </div>
+	</div>
+
+
     <!-- ==================== SLIDE 9: Positional Encoding ==================== -->
     <div class="slide" data-title="Positional Encoding">
         <div class="slide-content">
