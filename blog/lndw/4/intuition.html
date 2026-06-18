@@ -23,8 +23,6 @@
         button { cursor: pointer; }
         .formula-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 18px 24px; margin: 18px 0; text-align: center; font-size: 1.1em; }
         .formula-box .math-display { font-size: 1.2em; margin: 10px 0; }
-        .speaker-note { background: #fefce8; border-left: 4px solid #facc15; padding: 12px 16px; margin: 14px 0; border-radius: 0 8px 8px 0; font-size: 0.9em; color: #713f12; }
-        .speaker-note::before { content: "🗣 Sprechernotiz: "; font-weight: bold; }
         .section-divider { border: none; border-top: 3px solid #3b82f6; margin: 60px 0 40px 0; }
         .toc { background: #f1f5f9; padding: 20px 30px; border-radius: 12px; margin: 30px 0; }
         .toc ol { margin: 10px 0; padding-left: 20px; }
@@ -68,8 +66,6 @@
 <p>LLMs (Large Language Models) sind Maschinen, die das <b>nächste wahrscheinlichste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal. Dieses Wort wird an den Input angehängt und erneut eingegeben, bis ein spezielles <code>|endoftext|</code>-Token das Ende signalisiert.</p>
 </div>
 
-<div class="speaker-note">Hier das Grundprinzip erklären: LLMs "denken" nicht wie Menschen. Sie berechnen Wahrscheinlichkeiten für das nächste Wort.</div>
-
 <div class="formula-box">
     <strong>Die Grundformel:</strong>
     <div class="math-display">
@@ -111,8 +107,6 @@
     </div>
 </div>
 
-<div class="speaker-note">Demo abspielen und zeigen, wie Wort für Wort generiert wird. Betonen: Das Modell sieht IMMER den gesamten bisherigen Text.</div>
-
 <hr class="section-divider">
 
 <!-- ============================================================ -->
@@ -144,8 +138,6 @@
         💡 Versuche <b>"understanding"</b> oder <b>"unbreakable"</b> einzugeben, um Subword-Splitting zu sehen.
     </div>
 </div>
-
-<div class="speaker-note">Verschiedene Wörter eingeben lassen. Zeigen, dass lange/seltene Wörter in Teile zerlegt werden.</div>
 
 <hr class="section-divider">
 
@@ -194,8 +186,6 @@
         <div id="embedding-arithmetic-result" style="margin-top:8px;"></div>
     </div>
 </div>
-
-<div class="speaker-note">Verschiedene Arithmetik-Beispiele zeigen: "paris - france + germany ≈ berlin", "king - man + woman ≈ queen". Erklären, dass Beziehungen als Richtungen im Raum kodiert sind.</div>
 
 <hr class="section-divider">
 
@@ -289,8 +279,6 @@
 <p><em>Wichtig:</em> Nicht alle Attention Heads tun etwas menschlich Interpretierbares. Es sind statistische Muster – sie "wissen" nicht, was Nomen oder Verben sind.</p>
 </div>
 
-<div class="speaker-note">"bank river" und "bank money" eingeben. Zeigen, wie sich der Diamant bewegt. Erklären: Das IST Attention – Kontext bestimmt Bedeutung.</div>
-
 <!-- 5b: FEED-FORWARD NETWORK -->
 <h3>5b: Feed-Forward-Netzwerk – "Was schließe ich daraus?"</h3>
 
@@ -347,8 +335,6 @@
     <div id="ffn-explanation" style="margin-top:15px; padding:12px; background:#fff; border-radius:8px; border:1px dashed #cbd5e1; font-size:0.9em; color:#475569; text-align:center;">Wähle einen Kontext oben.</div>
 </div>
 
-<div class="speaker-note">Beide Buttons klicken und zeigen, wie dieselben Detektoren unterschiedlich reagieren. Erklären: Das IST das "Wissen" des Modells – gespeichert in den Gewichten W₂.</div>
-
 <!-- 5c: ALLES ZUSAMMEN – DER RESIDUAL STREAM -->
 <h3>5c: Alles zusammen – Der Residual Stream</h3>
 
@@ -388,8 +374,6 @@
     </div>
     <div id="residual-stream-info" style="margin-top:14px;"></div>
 </div>
-
-<div class="speaker-note">Durch die Schichten klicken und zeigen, wie sich der Vektor schrittweise verändert. Betonen: Jede Schicht ADDIERT – sie überschreibt nicht.</div>
 
 <hr class="section-divider">
 
@@ -437,8 +421,6 @@
         Das Modell "weiß" die Antwort nicht; es weist Wahrscheinlichkeiten zu und <b>sampelt</b>.
     </div>
 </div>
-
-<div class="speaker-note">Temperature-Slider bewegen und zeigen, wie sich die Balken verändern. Bei T=0.1 dominiert ein Wort. Bei T=3.0 ist alles fast gleich wahrscheinlich.</div>
 
 <hr class="section-divider">
 
