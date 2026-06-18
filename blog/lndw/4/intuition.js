@@ -2447,482 +2447,483 @@ function initNNDemos() {
 
 // ============================================================
 // DIMENSION VISUALIZER – Why do we need so many dimensions?
+// 1D & 2D: Canvas (clean, static)
+// 3D: Plotly scatter3d (interactive, rotatable)
 // ============================================================
 
 const DimensionViz = {
-    currentDim: 2,
+    currentDim: 1,
+    canvas: null,
+    ctx: null,
 
-    // Word groups with semantic categories
-    wordGroups: {
-        'Tiere': { words: ['Katze', 'Hund', 'Pferd', 'Vogel', 'Fisch'], color: '#10b981' },
-        'Essen': { words: ['Apfel', 'Brot', 'Kuchen', 'Suppe', 'Käse'], color: '#f59e0b' },
-        'Technik': { words: ['Computer', 'Handy', 'Server', 'Code', 'Chip'], color: '#3b82f6' },
-        'Gefühle': { words: ['Freude', 'Trauer', 'Wut', 'Angst', 'Liebe'], color: '#ef4444' },
-        'Natur': { words: ['Baum', 'Fluss', 'Berg', 'Wolke', 'Stein'], color: '#8b5cf6' },
-    },
+    words: [
+        { id: 'king', label: 'König', color: '#3b82f6' },
+        { id: 'queen', label: 'Königin', color: '#ec4899' },
+        { id: 'man', label: 'Mann', color: '#6366f1' },
+        { id: 'woman', label: 'Frau', color: '#f43f5e' },
+        { id: 'cat', label: 'Katze', color: '#10b981' },
+        { id: 'dog', label: 'Hund', color: '#f59e0b' },
+    ],
 
-    // Seeded random for reproducibility
-    seededRandom: function(seed) {
-        let s = seed;
-        return function() {
-            s = (s * 16807) % 2147483647;
-            return (s - 1) / 2147483646;
-        };
-    },
+    shouldBeClose: [
+        ['king', 'queen', 'Königspaar'],
+        ['man', 'woman', 'Geschlechterpaar'],
+        ['king', 'man', 'beide männlich'],
+        ['queen', 'woman', 'beide weiblich'],
+        ['cat', 'dog', 'beide Tiere'],
+    ],
 
-    // Generate embeddings in N dimensions
-    generateEmbeddings: function(numDims) {
-        const embeddings = {};
-        const rng = this.seededRandom(42);
-        const groups = Object.entries(this.wordGroups);
-
-        groups.forEach(([groupName, groupData], gi) => {
-            // Each group has a "center direction" in the high-dimensional space
-            const groupCenter = Array.from({ length: numDims }, (_, d) => {
-                // In low dims, groups overlap; in high dims, they get unique directions
-                if (numDims <= 3) {
-                    // Force overlap in low dimensions
-                    const angle = (gi / groups.length) * Math.PI * 2;
-                    if (d === 0) return Math.cos(angle) * 2;
-                    if (d === 1) return Math.sin(angle) * 2;
-                    if (d === 2) return (gi % 2 === 0 ? 1 : -1) * 0.5;
-                    return 0;
-                } else {
-                    // In high dims, each group gets its own orthogonal-ish direction
-                    // Use one-hot-like encoding + noise
-                    const baseVal = (d >= gi * (numDims / groups.length) && d < (gi + 1) * (numDims / groups.length)) ? 3.0 : 0;
-                    return baseVal + (rng() - 0.5) * 0.3;
-                }
-            });
-
-            groupData.words.forEach((word, wi) => {
-                // Add within-group variation
-                const vec = groupCenter.map((c, d) => {
-                    const noise = (rng() - 0.5) * (numDims <= 3 ? 1.8 : 0.8);
-                    return c + noise;
-                });
-                embeddings[word] = { vec, group: groupName, color: groupData.color };
-            });
-        });
-
-        return embeddings;
-    },
-
-    // Project high-dimensional vectors to 2D or 3D using simple PCA-like approach
-    projectTo2D: function(embeddings) {
-        const words = Object.keys(embeddings);
-        const vecs = words.map(w => embeddings[w].vec);
-        const numDims = vecs[0].length;
-
-        if (numDims <= 2) {
-            return words.map((w, i) => ({
-                word: w,
-                x: vecs[i][0] || 0,
-                y: vecs[i][1] || 0,
-                group: embeddings[w].group,
-                color: embeddings[w].color
-            }));
+    positions: {
+        1: {
+            king:  { x: 0.25 },
+            queen: { x: 0.35 },
+            man:   { x: 0.15 },
+            woman: { x: 0.45 },
+            cat:   { x: 0.75 },
+            dog:   { x: 0.85 },
+        },
+        2: {
+            king:  { x: 0.25, y: 0.30 },
+            queen: { x: 0.25, y: 0.70 },
+            man:   { x: 0.55, y: 0.30 },
+            woman: { x: 0.55, y: 0.70 },
+            cat:   { x: 0.82, y: 0.40 },
+            dog:   { x: 0.82, y: 0.60 },
+        },
+        3: {
+            king:  { x: 1, y: 3, z: 1 },
+            queen: { x: 1, y: 3, z: 3 },
+            man:   { x: 3, y: 3, z: 1 },
+            woman: { x: 3, y: 3, z: 3 },
+            cat:   { x: 2, y: 0.5, z: 1.5 },
+            dog:   { x: 2, y: 0.5, z: 2.5 },
         }
-
-        // Simple projection: use first two principal components (approximate)
-        // Compute mean
-        const mean = Array(numDims).fill(0);
-        vecs.forEach(v => v.forEach((val, d) => mean[d] += val));
-        mean.forEach((_, d) => mean[d] /= vecs.length);
-
-        // Center the data
-        const centered = vecs.map(v => v.map((val, d) => val - mean[d]));
-
-        // Use power iteration to find top 2 directions
-        const findPrincipalComponent = (data, deflated) => {
-            const n = data[0].length;
-            let pc = Array.from({ length: n }, () => Math.random() - 0.5);
-
-            for (let iter = 0; iter < 50; iter++) {
-                // Multiply: new_pc = sum of (data[i] dot pc) * data[i]
-                const newPc = Array(n).fill(0);
-                data.forEach(row => {
-                    const dot = row.reduce((s, v, d) => s + v * pc[d], 0);
-                    row.forEach((v, d) => newPc[d] += dot * v);
-                });
-                // Normalize
-                const norm = Math.sqrt(newPc.reduce((s, v) => s + v * v, 0)) || 1;
-                pc = newPc.map(v => v / norm);
-            }
-            return pc;
-        };
-
-        const pc1 = findPrincipalComponent(centered);
-        // Deflate
-        const deflated = centered.map(row => {
-            const dot = row.reduce((s, v, d) => s + v * pc1[d], 0);
-            return row.map((v, d) => v - dot * pc1[d]);
-        });
-        const pc2 = findPrincipalComponent(deflated);
-
-        return words.map((w, i) => ({
-            word: w,
-            x: centered[i].reduce((s, v, d) => s + v * pc1[d], 0),
-            y: centered[i].reduce((s, v, d) => s + v * pc2[d], 0),
-            group: embeddings[w].group,
-            color: embeddings[w].color
-        }));
     },
 
-    projectTo3D: function(embeddings) {
-        const words = Object.keys(embeddings);
-        const vecs = words.map(w => embeddings[w].vec);
-        const numDims = vecs[0].length;
-
-        if (numDims <= 3) {
-            return words.map((w, i) => ({
-                word: w,
-                x: vecs[i][0] || 0,
-                y: vecs[i][1] || 0,
-                z: vecs[i][2] || 0,
-                group: embeddings[w].group,
-                color: embeddings[w].color
-            }));
-        }
-
-        // Compute mean
-        const mean = Array(numDims).fill(0);
-        vecs.forEach(v => v.forEach((val, d) => mean[d] += val));
-        mean.forEach((_, d) => mean[d] /= vecs.length);
-        const centered = vecs.map(v => v.map((val, d) => val - mean[d]));
-
-        const findPC = (data) => {
-            const n = data[0].length;
-            let pc = Array.from({ length: n }, () => Math.random() - 0.5);
-            for (let iter = 0; iter < 50; iter++) {
-                const newPc = Array(n).fill(0);
-                data.forEach(row => {
-                    const dot = row.reduce((s, v, d) => s + v * pc[d], 0);
-                    row.forEach((v, d) => newPc[d] += dot * v);
-                });
-                const norm = Math.sqrt(newPc.reduce((s, v) => s + v * v, 0)) || 1;
-                pc = newPc.map(v => v / norm);
-            }
-            return pc;
-        };
-
-        const deflate = (data, pc) => data.map(row => {
-            const dot = row.reduce((s, v, d) => s + v * pc[d], 0);
-            return row.map((v, d) => v - dot * pc[d]);
-        });
-
-        const pc1 = findPC(centered);
-        const d1 = deflate(centered, pc1);
-        const pc2 = findPC(d1);
-        const d2 = deflate(d1, pc2);
-        const pc3 = findPC(d2);
-
-        return words.map((w, i) => ({
-            word: w,
-            x: centered[i].reduce((s, v, d) => s + v * pc1[d], 0),
-            y: centered[i].reduce((s, v, d) => s + v * pc2[d], 0),
-            z: centered[i].reduce((s, v, d) => s + v * pc3[d], 0),
-            group: embeddings[w].group,
-            color: embeddings[w].color
-        }));
-    },
-
-    // Compute pairwise distances and collision metrics
-    computeMetrics: function(embeddings) {
-        const words = Object.keys(embeddings);
-        const n = words.length;
-
-        const distances = { within: [], between: [] };
-
-        for (let i = 0; i < n; i++) {
-            for (let j = i + 1; j < n; j++) {
-                const v1 = embeddings[words[i]].vec;
-                const v2 = embeddings[words[j]].vec;
-                const dist = Math.sqrt(v1.reduce((s, val, d) => s + Math.pow(val - v2[d], 2), 0));
-
-                const sameGroup = embeddings[words[i]].group === embeddings[words[j]].group;
-                if (sameGroup) {
-                    distances.within.push(dist);
-                } else {
-                    distances.between.push(dist);
-                }
-            }
-        }
-
-        const avgWithin = distances.within.reduce((a, b) => a + b, 0) / distances.within.length;
-        const avgBetween = distances.between.reduce((a, b) => a + b, 0) / distances.between.length;
-        const separation = avgBetween / avgWithin;
-
-        // Count "collisions" – between-group pairs closer than avg within-group distance
-        const collisions = distances.between.filter(d => d < avgWithin).length;
-        const collisionRate = collisions / distances.between.length;
-
-        return { avgWithin, avgBetween, separation, collisionRate, distances };
+    violations: {
+        1: [
+            { pair: ['queen', 'woman'], reason: 'Königin & Frau sollten nah sein – aber König & Mann sind dazwischen!' },
+        ],
+        2: [],
+        3: [],
     },
 
     setDim: function(dim) {
         this.currentDim = dim;
-
-        // Update buttons
-        [2, 3, 50].forEach(d => {
+        [1, 2, 3].forEach(d => {
             const btn = document.getElementById(`dim-btn-${d}`);
-            if (btn) {
-                btn.style.borderColor = d === dim ? '#3b82f6' : '#cbd5e1';
-                btn.style.background = d === dim ? '#eff6ff' : '#fff';
-                btn.style.borderWidth = d === dim ? '2px' : '1px';
-            }
+            if (btn) btn.classList.toggle('dim-btn-active', d === dim);
         });
-
         this.render();
     },
 
     render: function() {
-        const plotDiv = document.getElementById('dimension-plot');
-        const distPlotDiv = document.getElementById('dimension-distance-plot');
-        if (!plotDiv) return;
+        const container = document.getElementById('dimension-plot');
+        if (!container) return;
 
-        const numDims = this.currentDim;
-        const embeddings = this.generateEmbeddings(numDims);
-        const metrics = this.computeMetrics(embeddings);
+        const dim = this.currentDim;
 
-        // === Main scatter plot ===
-        if (numDims <= 3) {
-            this.render3DPlot(plotDiv, embeddings, numDims);
+        if (dim === 3) {
+            // Use Plotly for 3D
+            this.render3DPlotly(container);
         } else {
-            this.render2DProjection(plotDiv, embeddings, numDims);
+            // Use Canvas for 1D and 2D
+            this.setupCanvas(container);
+            this.ctx.fillStyle = '#fff';
+            this.ctx.fillRect(0, 0, this.canvasW, this.canvasH);
+
+            if (dim === 1) this.render1D(this.canvasW, this.canvasH);
+            else this.render2D(this.canvasW, this.canvasH);
         }
 
-        // === Distance distribution plot ===
-        this.renderDistancePlot(distPlotDiv, metrics, numDims);
-
-        // === Collision info ===
-        const infoSpan = document.getElementById('dim-collision-info');
-        if (infoSpan) {
-            const emoji = metrics.collisionRate > 0.3 ? '🔴' : metrics.collisionRate > 0.1 ? '🟡' : '🟢';
-            infoSpan.innerHTML = `${emoji} Kollisionsrate: <b>${(metrics.collisionRate * 100).toFixed(1)}%</b>`;
-        }
-
-        // === Explanation ===
-        const explDiv = document.getElementById('dimension-explanation');
-        if (explDiv) {
-            if (numDims === 2) {
-                explDiv.innerHTML = `<b>2 Dimensionen:</b> Die Gruppen überlappen stark! "Katze" und "Computer" können fast am gleichen Punkt landen.
-                    <b>Separation: ${metrics.separation.toFixed(2)}x</b> (ideal: >3x).
-                    Das Modell kann Bedeutungen kaum unterscheiden. 🔴`;
-            } else if (numDims === 3) {
-                explDiv.innerHTML = `<b>3 Dimensionen:</b> Etwas besser, aber immer noch viel Überlappung zwischen den Gruppen.
-                    <b>Separation: ${metrics.separation.toFixed(2)}x</b>.
-                    Für 25 Wörter in 5 Kategorien reichen 3 Richtungen nicht aus. 🟡`;
-            } else {
-                explDiv.innerHTML = `<b>50 Dimensionen:</b> Jede Gruppe hat ihre eigene "Richtung" im Raum! Keine Überlappung mehr.
-                    <b>Separation: ${metrics.separation.toFixed(2)}x</b>.
-                    Reale LLMs nutzen 4096–12288 Dimensionen für 50.000+ Wörter mit hunderten Bedeutungsfacetten. 🟢`;
-            }
-        }
+        this.renderExplanation();
     },
 
-    render3DPlot: function(plotDiv, embeddings, numDims) {
-        const groups = Object.entries(this.wordGroups);
+    setupCanvas: function(container) {
+        // Remove any Plotly content
+        container.innerHTML = '';
+        this.canvas = document.createElement('canvas');
+        this.canvas.style.width = '100%';
+        this.canvas.style.height = '100%';
+        this.canvas.style.display = 'block';
+        container.appendChild(this.canvas);
 
-        if (numDims === 2) {
-            const projected = this.projectTo2D(embeddings);
-            const traces = [];
-
-            groups.forEach(([groupName, groupData]) => {
-                const groupPoints = projected.filter(p => p.group === groupName);
-                traces.push({
-                    x: groupPoints.map(p => p.x),
-                    y: groupPoints.map(p => p.y),
-                    text: groupPoints.map(p => p.word),
-                    mode: 'markers+text',
-                    textposition: 'top center',
-                    textfont: { size: 10, color: groupData.color },
-                    marker: { size: 12, color: groupData.color, opacity: 0.8, line: { width: 1, color: '#fff' } },
-                    name: groupName,
-                    type: 'scatter',
-                    hovertemplate: '<b>%{text}</b><br>Gruppe: ' + groupName + '<extra></extra>'
-                });
-            });
-
-            const layout = {
-                margin: { l: 40, r: 20, b: 40, t: 30 },
-                title: { text: '2D Embedding-Raum', font: { size: 13 } },
-                xaxis: { title: 'Dim 1', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
-                yaxis: { title: 'Dim 2', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
-                showlegend: true,
-                legend: { x: 0, y: 1, font: { size: 10 } },
-                plot_bgcolor: '#fff'
-            };
-
-            Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-
-        } else {
-            // 3D plot
-            const projected = this.projectTo3D(embeddings);
-            const traces = [];
-
-            groups.forEach(([groupName, groupData]) => {
-                const groupPoints = projected.filter(p => p.group === groupName);
-                traces.push({
-                    x: groupPoints.map(p => p.x),
-                    y: groupPoints.map(p => p.y),
-                    z: groupPoints.map(p => p.z),
-                    text: groupPoints.map(p => p.word),
-                    mode: 'markers+text',
-                    textposition: 'top center',
-                    textfont: { size: 9, color: groupData.color },
-                    marker: { size: 7, color: groupData.color, opacity: 0.8, line: { width: 0.5, color: '#fff' } },
-                    name: groupName,
-                    type: 'scatter3d',
-                    hovertemplate: '<b>%{text}</b><br>Gruppe: ' + groupName + '<extra></extra>'
-                });
-            });
-
-            const layout = {
-                margin: { l: 0, r: 0, b: 0, t: 30 },
-                title: { text: '3D Embedding-Raum', font: { size: 13 } },
-                scene: {
-                    xaxis: { title: 'Dim 1', gridcolor: '#f1f5f9' },
-                    yaxis: { title: 'Dim 2', gridcolor: '#f1f5f9' },
-                    zaxis: { title: 'Dim 3', gridcolor: '#f1f5f9' },
-                    camera: { eye: { x: 1.5, y: 1.5, z: 1.2 } }
-                },
-                showlegend: true,
-                legend: { x: 0, y: 1, font: { size: 10 } }
-            };
-
-            Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-        }
+        const rect = container.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        this.canvasW = rect.width;
+        this.canvasH = rect.height;
+        this.canvas.width = this.canvasW * dpr;
+        this.canvas.height = this.canvasH * dpr;
+        this.ctx = this.canvas.getContext('2d');
+        this.ctx.scale(dpr, dpr);
     },
 
-    render2DProjection: function(plotDiv, embeddings, numDims) {
-        const projected = this.projectTo2D(embeddings);
-        const groups = Object.entries(this.wordGroups);
-        const traces = [];
+    // ===================== 1D RENDERING =====================
+    render1D: function(W, H) {
+        const ctx = this.ctx;
+        const pos = this.positions[1];
+        const margin = 60;
+        const lineY = H * 0.45;
+        const lineX1 = margin;
+        const lineX2 = W - margin;
+        const lineW = lineX2 - lineX1;
 
-        groups.forEach(([groupName, groupData]) => {
-            const groupPoints = projected.filter(p => p.group === groupName);
-            traces.push({
-                x: groupPoints.map(p => p.x),
-                y: groupPoints.map(p => p.y),
-                text: groupPoints.map(p => p.word),
-                mode: 'markers+text',
-                textposition: 'top center',
-                textfont: { size: 10, color: groupData.color },
-                marker: { size: 12, color: groupData.color, opacity: 0.8, line: { width: 1, color: '#fff' } },
-                name: groupName,
-                type: 'scatter',
-                hovertemplate: '<b>%{text}</b><br>Gruppe: ' + groupName + '<extra></extra>'
-            });
+        // Number line
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(lineX1, lineY);
+        ctx.lineTo(lineX2, lineY);
+        ctx.stroke();
+
+        // Arrows
+        ctx.fillStyle = '#cbd5e1';
+        ctx.beginPath();
+        ctx.moveTo(lineX1, lineY);
+        ctx.lineTo(lineX1 + 10, lineY - 6);
+        ctx.lineTo(lineX1 + 10, lineY + 6);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(lineX2, lineY);
+        ctx.lineTo(lineX2 - 10, lineY - 6);
+        ctx.lineTo(lineX2 - 10, lineY + 6);
+        ctx.fill();
+
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.textAlign = 'center';
+        ctx.fillText('← eine einzige Zahlenlinie →', W / 2, lineY + 55);
+
+        const getX = (id) => lineX1 + pos[id].x * lineW;
+
+        // Violation highlight
+        this.violations[1].forEach(v => {
+            const x1 = getX(v.pair[0]);
+            const x2 = getX(v.pair[1]);
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.15)';
+            ctx.lineWidth = 28;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(Math.min(x1, x2), lineY);
+            ctx.lineTo(Math.max(x1, x2), lineY);
+            ctx.stroke();
+            ctx.lineCap = 'butt';
         });
 
-        // Draw convex-hull-like circles around groups to show separation
-        groups.forEach(([groupName, groupData]) => {
-            const groupPoints = projected.filter(p => p.group === groupName);
-            const cx = groupPoints.reduce((s, p) => s + p.x, 0) / groupPoints.length;
-            const cy = groupPoints.reduce((s, p) => s + p.y, 0) / groupPoints.length;
-            const maxR = Math.max(...groupPoints.map(p => Math.sqrt(Math.pow(p.x - cx, 2) + Math.pow(p.y - cy, 2)))) * 1.2;
+        // Arcs for "should be close" pairs
+        const arcHeights = [55, 75, 95, 65, 85];
+        this.shouldBeClose.forEach(([id1, id2, label], idx) => {
+            const x1 = getX(id1);
+            const x2 = getX(id2);
+            const dist = Math.abs(x1 - x2);
+            const isViolated = this.violations[1].some(v =>
+                (v.pair[0] === id1 && v.pair[1] === id2) ||
+                (v.pair[0] === id2 && v.pair[1] === id1)
+            );
 
-            // Circle shape
-            const theta = Array.from({ length: 50 }, (_, i) => i / 49 * 2 * Math.PI);
+            const arcH = arcHeights[idx] + dist * 0.15;
+            ctx.strokeStyle = isViolated ? '#ef4444' : '#10b981';
+            ctx.lineWidth = 2;
+            ctx.setLineDash(isViolated ? [5, 4] : []);
+            ctx.beginPath();
+            ctx.moveTo(x1, lineY - 16);
+            ctx.quadraticCurveTo((x1 + x2) / 2, lineY - arcH, x2, lineY - 16);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = '10px system-ui';
+            ctx.fillStyle = isViolated ? '#ef4444' : '#10b981';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, (x1 + x2) / 2, lineY - arcH + 10);
+            if (isViolated) {
+                ctx.font = 'bold 10px system-ui';
+                ctx.fillText('✗ zu weit!', (x1 + x2) / 2, lineY - arcH + 22);
+            }
+        });
+
+        // Word dots
+        this.words.forEach(word => {
+            const x = getX(word.id);
+            ctx.beginPath();
+            ctx.arc(x, lineY, 12, 0, Math.PI * 2);
+            ctx.fillStyle = word.color;
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.font = 'bold 13px system-ui';
+            ctx.fillStyle = word.color;
+            ctx.textAlign = 'center';
+            ctx.fillText(word.label, x, lineY + 30);
+        });
+
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = '#ef4444';
+        ctx.textAlign = 'center';
+        ctx.fillText('⚠️ KONFLIKT: Königin sollte nah bei Frau sein – aber König & Mann sind dazwischen!', W / 2, H - 20);
+    },
+
+    // ===================== 2D RENDERING =====================
+    render2D: function(W, H) {
+        const ctx = this.ctx;
+        const pos = this.positions[2];
+        const margin = 70;
+        const areaX = margin;
+        const areaY = 40;
+        const areaW = W - 2 * margin;
+        const areaH = H - 110;
+
+        // Grid
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+            const x = areaX + (areaW * i / 4);
+            ctx.beginPath(); ctx.moveTo(x, areaY); ctx.lineTo(x, areaY + areaH); ctx.stroke();
+            const y = areaY + (areaH * i / 4);
+            ctx.beginPath(); ctx.moveTo(areaX, y); ctx.lineTo(areaX + areaW, y); ctx.stroke();
+        }
+
+        // Axis labels
+        ctx.font = '12px system-ui';
+        ctx.fillStyle = '#94a3b8';
+        ctx.textAlign = 'center';
+        ctx.fillText('← königlich          gewöhnlich →', W / 2, H - 20);
+        ctx.save();
+        ctx.translate(18, H / 2 - 20);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('← männlich          weiblich →', 0, 0);
+        ctx.restore();
+
+        const getXY = (id) => ({
+            x: areaX + pos[id].x * areaW,
+            y: areaY + pos[id].y * areaH
+        });
+
+        // Connections
+        this.shouldBeClose.forEach(([id1, id2, label]) => {
+            const p1 = getXY(id1);
+            const p2 = getXY(id2);
+
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+
+            ctx.font = '10px system-ui';
+            ctx.fillStyle = '#10b981';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, (p1.x + p2.x) / 2, (p1.y + p2.y) / 2 - 8);
+        });
+
+        // Square highlight
+        const kp = getXY('king'), qp = getXY('queen'), mp = getXY('man'), wp = getXY('woman');
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(kp.x, kp.y); ctx.lineTo(qp.x, qp.y);
+        ctx.lineTo(wp.x, wp.y); ctx.lineTo(mp.x, mp.y);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Word dots
+        this.words.forEach(word => {
+            const p = getXY(word.id);
+
+            ctx.beginPath();
+            ctx.arc(p.x + 2, p.y + 2, 14, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.06)';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 13, 0, Math.PI * 2);
+            ctx.fillStyle = word.color;
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            ctx.font = 'bold 13px system-ui';
+            ctx.fillStyle = word.color;
+            ctx.textAlign = 'center';
+            ctx.fillText(word.label, p.x, p.y + 28);
+        });
+
+        ctx.font = 'bold 13px system-ui';
+        ctx.fillStyle = '#10b981';
+        ctx.textAlign = 'center';
+        ctx.fillText('✓ 2D: Das "Bedeutungs-Quadrat" funktioniert! Aber Tiere haben keine eigene Achse.', W / 2, H - 42);
+    },
+
+    // ===================== 3D RENDERING (PLOTLY) =====================
+    render3DPlotly: function(container) {
+        const pos = this.positions[3];
+
+        // Build traces: one per word (for individual colors + labels)
+        const traces = [];
+
+        // Connection lines first (behind points)
+        this.shouldBeClose.forEach(([id1, id2, label]) => {
+            const p1 = pos[id1];
+            const p2 = pos[id2];
             traces.push({
-                x: theta.map(t => cx + maxR * Math.cos(t)),
-                y: theta.map(t => cy + maxR * Math.sin(t)),
+                type: 'scatter3d',
                 mode: 'lines',
-                line: { color: groupData.color, width: 1.5, dash: 'dot' },
+                x: [p1.x, p2.x],
+                y: [p1.y, p2.y],
+                z: [p1.z, p2.z],
+                line: { color: 'rgba(16, 185, 129, 0.4)', width: 4 },
                 showlegend: false,
                 hoverinfo: 'skip'
             });
         });
 
+        // Group words by category for legend
+        const groups = [
+            { name: 'Königlich', ids: ['king', 'queen'], color: '#7c3aed' },
+            { name: 'Gewöhnlich', ids: ['man', 'woman'], color: '#6366f1' },
+            { name: 'Tiere', ids: ['cat', 'dog'], color: '#10b981' },
+        ];
+
+        // Individual word markers with text
+        this.words.forEach(word => {
+            const p = pos[word.id];
+            traces.push({
+                type: 'scatter3d',
+                mode: 'markers+text',
+                x: [p.x],
+                y: [p.y],
+                z: [p.z],
+                marker: {
+                    size: 10,
+                    color: word.color,
+                    opacity: 0.95,
+                    line: { color: '#fff', width: 1.5 }
+                },
+                text: [word.label],
+                textposition: 'top center',
+                textfont: {
+                    size: 13,
+                    color: word.color,
+                    family: 'system-ui, sans-serif',
+                    weight: 700
+                },
+                name: word.label,
+                showlegend: false,
+                hovertemplate: `<b>${word.label}</b><br>Rang: %{x:.1f}<br>Spezies: %{y:.1f}<br>Geschlecht: %{z:.1f}<extra></extra>`
+            });
+        });
+
+        // Annotations as invisible traces for legend
+        groups.forEach(group => {
+            traces.push({
+                type: 'scatter3d',
+                mode: 'markers',
+                x: [null], y: [null], z: [null],
+                marker: { size: 8, color: group.color },
+                name: group.name,
+                showlegend: true
+            });
+        });
+
         const layout = {
-            margin: { l: 40, r: 20, b: 40, t: 30 },
-            title: { text: `${numDims}D → 2D Projektion (PCA)`, font: { size: 13 } },
-            xaxis: { title: 'PC 1', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
-            yaxis: { title: 'PC 2', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
-            showlegend: true,
-            legend: { x: 0, y: 1, font: { size: 10 } },
-            plot_bgcolor: '#fff'
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis: {
+                    title: { text: 'Rang', font: { size: 12, color: '#3b82f6', family: 'system-ui' } },
+                    range: [-0.5, 4.5],
+                    gridcolor: '#e2e8f0',
+                    zerolinecolor: '#cbd5e1',
+                    backgroundcolor: '#f8fafc',
+                    showspikes: false,
+                    tickfont: { size: 10, color: '#94a3b8' }
+                },
+                yaxis: {
+                    title: { text: 'Spezies', font: { size: 12, color: '#10b981', family: 'system-ui' } },
+                    range: [-0.5, 4.5],
+                    gridcolor: '#e2e8f0',
+                    zerolinecolor: '#cbd5e1',
+                    backgroundcolor: '#f8fafc',
+                    showspikes: false,
+                    tickfont: { size: 10, color: '#94a3b8' }
+                },
+                zaxis: {
+                    title: { text: 'Geschlecht', font: { size: 12, color: '#ec4899', family: 'system-ui' } },
+                    range: [-0.5, 4.5],
+                    gridcolor: '#e2e8f0',
+                    zerolinecolor: '#cbd5e1',
+                    backgroundcolor: '#f8fafc',
+                    showspikes: false,
+                    tickfont: { size: 10, color: '#94a3b8' }
+                },
+                camera: {
+                    eye: { x: 1.8, y: 1.8, z: 1.4 },
+                    center: { x: 0, y: 0, z: -0.1 }
+                },
+                aspectmode: 'cube'
+            },
+            legend: {
+                x: 0.02, y: 0.98,
+                font: { size: 11, family: 'system-ui' },
+                bgcolor: 'rgba(255,255,255,0.85)',
+                bordercolor: '#e2e8f0',
+                borderwidth: 1
+            },
+            paper_bgcolor: '#fff',
+            annotations: [{
+                text: '🖱️ Ziehen zum Drehen!',
+                x: 0.98, y: 0.02,
+                xref: 'paper', yref: 'paper',
+                xanchor: 'right', yanchor: 'bottom',
+                showarrow: false,
+                font: { size: 11, color: '#94a3b8', family: 'system-ui' }
+            }]
         };
 
-        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+        const config = {
+            displayModeBar: false,
+            responsive: true,
+            scrollZoom: true
+        };
+
+        // Clear container and render
+        container.innerHTML = '';
+        Plotly.newPlot(container, traces, layout, config);
     },
 
-    renderDistancePlot: function(plotDiv, metrics, numDims) {
-        if (!plotDiv) return;
+    // ===================== EXPLANATION =====================
+    renderExplanation: function() {
+        const explDiv = document.getElementById('dimension-explanation');
+        if (!explDiv) return;
 
-        // Histogram of within-group vs between-group distances
-        const trace1 = {
-            x: metrics.distances.within,
-            type: 'histogram',
-            name: 'Innerhalb Gruppe',
-            marker: { color: 'rgba(16,185,129,0.6)', line: { color: '#10b981', width: 1 } },
-            opacity: 0.7,
-            nbinsx: 15
-        };
+        const dim = this.currentDim;
 
-        const trace2 = {
-            x: metrics.distances.between,
-            type: 'histogram',
-            name: 'Zwischen Gruppen',
-            marker: { color: 'rgba(239,68,68,0.6)', line: { color: '#ef4444', width: 1 } },
-            opacity: 0.7,
-            nbinsx: 15
-        };
-
-        // Add vertical lines for averages
-        const shapes = [
-            {
-                type: 'line', x0: metrics.avgWithin, x1: metrics.avgWithin,
-                y0: 0, y1: 1, yref: 'paper',
-                line: { color: '#10b981', width: 2, dash: 'dash' }
-            },
-            {
-                type: 'line', x0: metrics.avgBetween, x1: metrics.avgBetween,
-                y0: 0, y1: 1, yref: 'paper',
-                line: { color: '#ef4444', width: 2, dash: 'dash' }
-            }
-        ];
-
-        const overlap = metrics.collisionRate > 0.2;
-        const annotations = [
-            {
-                x: metrics.avgWithin, y: 1, yref: 'paper', yanchor: 'bottom',
-                text: `Ø intra: ${metrics.avgWithin.toFixed(1)}`,
-                showarrow: false, font: { size: 10, color: '#10b981' }
-            },
-            {
-                x: metrics.avgBetween, y: 0.9, yref: 'paper', yanchor: 'bottom',
-                text: `Ø inter: ${metrics.avgBetween.toFixed(1)}`,
-                showarrow: false, font: { size: 10, color: '#ef4444' }
-            }
-        ];
-
-        if (overlap) {
-            annotations.push({
-                x: 0.5, y: 0.5, xref: 'paper', yref: 'paper',
-                text: '⚠️ ÜBERLAPPUNG!',
-                showarrow: false,
-                font: { size: 14, color: '#dc2626', weight: 'bold' },
-                bgcolor: 'rgba(254,226,226,0.9)',
-                borderpad: 6
-            });
+        if (dim === 1) {
+            explDiv.style.background = '#fef2f2';
+            explDiv.style.borderColor = '#fecaca';
+            explDiv.style.color = '#991b1b';
+            explDiv.innerHTML = `🔴 <b>1 Dimension (Zahlenlinie):</b> Unmöglich! "König" soll nah bei "Mann" UND nah bei "Königin" sein – 
+                aber dann sind "Königin" und "Frau" automatisch weit weg. Auf einer Linie kann man <b>nicht zwei unabhängige Beziehungen</b> gleichzeitig darstellen.
+                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Für jede unabhängige Beziehung (Rang, Geschlecht, Spezies...) braucht man eine eigene Achse!</span>`;
+        } else if (dim === 2) {
+            explDiv.style.background = '#fefce8';
+            explDiv.style.borderColor = '#fef08a';
+            explDiv.style.color = '#854d0e';
+            explDiv.innerHTML = `🟡 <b>2 Dimensionen (Fläche):</b> Das Bedeutungs-Quadrat funktioniert! Eine Achse für "Rang", eine für "Geschlecht". 
+                Aber: "Katze" und "Hund" haben keine eigene Richtung – sie sind einfach "irgendwo anders". 
+                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Für die Unterscheidung Mensch↔Tier bräuchte man eine <b>dritte</b> Achse!</span>`;
+        } else {
+            explDiv.style.background = '#f0fdf4';
+            explDiv.style.borderColor = '#bbf7d0';
+            explDiv.style.color = '#166534';
+            explDiv.innerHTML = `🟢 <b>3 Dimensionen (Raum):</b> Jetzt hat jede Beziehung ihre eigene Achse! Drehe den Plot – du siehst: 
+                Menschen oben, Tiere unten (Spezies-Achse). König/Königin links, Mann/Frau rechts (Rang-Achse). Männlich vorne, weiblich hinten (Geschlecht-Achse).
+                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Reale Sprache hat <b>hunderte</b> solcher Beziehungen. Deshalb: <b>4096–12288 Dimensionen</b>!</span>`;
         }
-
-        const layout = {
-            margin: { l: 40, r: 20, b: 50, t: 30 },
-            title: { text: `Distanzverteilung (${numDims}D)`, font: { size: 13 } },
-            xaxis: { title: 'Euklidische Distanz', gridcolor: '#f1f5f9' },
-            yaxis: { title: 'Anzahl Paare', gridcolor: '#f1f5f9' },
-            barmode: 'overlay',
-            showlegend: true,
-            legend: { x: 0.6, y: 1, font: { size: 10 } },
-            shapes: shapes,
-            annotations: annotations,
-            plot_bgcolor: '#fff'
-        };
-
-        Plotly.react(plotDiv, [trace1, trace2], layout, { displayModeBar: false, responsive: true });
     }
 };
 
