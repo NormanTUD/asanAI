@@ -3506,6 +3506,8 @@ const LossLandscapeViz = {
 
     // Projiziert Pixel-Koordinaten auf die XY-Ebene der 3D-Scene
     // Nutzt Plotly's interne Scene-Informationen (Camera + Viewport)
+    // ===== FIX 2: Korrekte Pixel→Welt Projektion =====
+    // Liest Plotly's TATSÄCHLICHE Projektionsmatrix aus dem GL-Context
     _pixelToWorld: function(clientX, clientY) {
         const plotDiv = this.plotDiv;
         if (!plotDiv || !plotDiv._fullLayout) return null;
@@ -3518,140 +3520,156 @@ const LossLandscapeViz = {
 
         const glplot = scene.glplot;
 
-        // Finde den Canvas für Pixel-Koordinaten
+        // Canvas für Koordinaten
         const canvas = plotDiv.querySelector('canvas');
         if (!canvas) return null;
         const rect = canvas.getBoundingClientRect();
 
-        // Normalisierte Device Coordinates (-1 bis +1)
+        // NDC (-1 bis +1)
         const ndcX = ((clientX - rect.left) / rect.width) * 2 - 1;
         const ndcY = -(((clientY - rect.top) / rect.height) * 2 - 1);
 
-        // Plotly's gl-plot3d speichert die kombinierten Matrizen
-        // model * view * projection = MVP
-        // Wir brauchen die inverse davon
-
-        // Methode: Nutze die dataBox (Plotly's Mapping von Daten → GL-Koordinaten)
-        // und die Camera-Matrix
-
+        // ===== METHODE: Plotly's gl-plot3d hat eine .camera mit .matrix =====
+        // Das ist die kombinierte Model-View-Projection Matrix (4x4, column-major)
         const camera = glplot.camera;
         if (!camera) return null;
 
-        // gl-plot3d camera hat: camera.matrix (4x4 view-projection)
-        // Aber einfacher: Wir nutzen die Achsen-Ranges und die Camera-Parameter
+        // Versuche die Projektionsmatrix direkt zu bekommen
+        let mvp = null;
 
-        // Plotly normalisiert die Daten in einen [-1,1]³ Würfel basierend auf den Ranges
-        const xRange = sceneLayout.xaxis.range || [-3.5, 3.5];
-        const yRange = sceneLayout.yaxis.range || [-3.5, 3.5];
+        // gl-plot3d speichert camera.matrix als Float32Array(16)
+        if (camera.matrix && camera.matrix.length === 16) {
+            mvp = Array.from(camera.matrix);
+        } else if (camera._view && camera._view.matrix) {
+            mvp = Array.from(camera._view.matrix);
+        }
 
-        // Die Camera hat eye, center, up
-        let eye, center, up;
+        if (mvp) {
+            // Invertiere die MVP-Matrix
+            const inv = this._invertMatrix4(mvp);
+            if (!inv) return null;
 
-        // Versuche verschiedene Wege die Camera-Daten zu bekommen
+            // Unproject: NDC → Welt
+            // Zwei Punkte auf dem Ray: near (z=-1) und far (z=1)
+            const nearWorld = this._mulMatVec4(inv, [ndcX, ndcY, -1, 1]);
+            const farWorld = this._mulMatVec4(inv, [ndcX, ndcY, 1, 1]);
+
+            if (Math.abs(nearWorld[3]) < 1e-10 || Math.abs(farWorld[3]) < 1e-10) return null;
+
+            // Perspective divide
+            const near = [nearWorld[0]/nearWorld[3], nearWorld[1]/nearWorld[3], nearWorld[2]/nearWorld[3]];
+            const far = [farWorld[0]/farWorld[3], farWorld[1]/farWorld[3], farWorld[2]/farWorld[3]];
+
+            // Ray direction
+            const rayDir = [far[0]-near[0], far[1]-near[1], far[2]-near[2]];
+
+            // Intersect mit z = 0.5 (Plotly normalisiert z in [0,1] für den Bereich)
+            // Eigentlich wollen wir die Ebene auf halber Höhe der Loss-Surface treffen
+            // Plotly's interner Raum: x,y,z jeweils in [-0.5, 0.5] * aspectratio
+            // Wir intersecten mit z = 0 (Mitte des z-Bereichs)
+            if (Math.abs(rayDir[2]) < 1e-6) return null;
+
+            const t = (0 - near[2]) / rayDir[2];
+            const hitX = near[0] + t * rayDir[0];
+            const hitY = near[1] + t * rayDir[1];
+
+            // Plotly's interner Raum → Daten-Raum
+            // aspectratio ist {x:1, y:1, z:0.5}
+            // Interner Raum geht von -0.5 bis 0.5 pro Achse (mal aspectratio)
+            // Daten-Raum: x [-3.5, 3.5], y [-3.5, 3.5]
+            const xRange = sceneLayout.xaxis.range || [-3.5, 3.5];
+            const yRange = sceneLayout.yaxis.range || [-3.5, 3.5];
+
+            // Mapping: interner Raum [-0.5, 0.5] → Daten-Raum
+            const worldX = (hitX + 0.5) * (xRange[1] - xRange[0]) + xRange[0];
+            const worldY = (hitY + 0.5) * (yRange[1] - yRange[0]) + yRange[0];
+
+            const clampedX = Math.max(-3.4, Math.min(3.4, worldX));
+            const clampedY = Math.max(-3.4, Math.min(3.4, worldY));
+
+            if (isNaN(clampedX) || isNaN(clampedY)) return null;
+            return { x: clampedX, y: clampedY };
+        }
+
+        // ===== FALLBACK: Einfache Projektion basierend auf Camera-Eye =====
+        // (weniger genau, aber besser als nichts)
+        let eye;
         if (camera.eye) {
-            eye = [camera.eye.x || camera.eye[0], camera.eye.y || camera.eye[1], camera.eye.z || camera.eye[2]];
-        } else if (glplot.camera && glplot.camera.params) {
-            eye = glplot.camera.params.eye;
+            eye = [camera.eye.x || camera.eye[0] || 1.8, camera.eye.y || camera.eye[1] || 1.8, camera.eye.z || camera.eye[2] || 1.0];
         } else {
-            // Fallback: Aus dem Layout lesen
-            const camLayout = sceneLayout.camera || {};
-            eye = [
-                (camLayout.eye && camLayout.eye.x) || 1.8,
-                (camLayout.eye && camLayout.eye.y) || 1.8,
-                (camLayout.eye && camLayout.eye.z) || 1.0
-            ];
+            eye = [1.8, 1.8, 1.0];
         }
 
-        if (camera.center) {
-            center = [camera.center.x || camera.center[0] || 0, camera.center.y || camera.center[1] || 0, camera.center.z || camera.center[2] || 0];
-        } else {
-            center = [0, 0, 0];
-        }
+        // Kamera-Azimuth und Elevation
+        const dist = Math.sqrt(eye[0]*eye[0] + eye[1]*eye[1] + eye[2]*eye[2]);
+        const azimuth = Math.atan2(eye[1], eye[0]);
+        const elevation = Math.asin(Math.min(1, Math.max(-1, eye[2] / dist)));
 
-        if (camera.up) {
-            up = [camera.up.x || camera.up[0] || 0, camera.up.y || camera.up[1] || 0, camera.up.z || camera.up[2] || 1];
-        } else {
-            up = [0, 0, 1];
-        }
-
-        // Baue View-Matrix (LookAt)
-        const forward = [
-            center[0] - eye[0],
-            center[1] - eye[1],
-            center[2] - eye[2]
-        ];
-        const fLen = Math.sqrt(forward[0]*forward[0] + forward[1]*forward[1] + forward[2]*forward[2]);
-        forward[0] /= fLen; forward[1] /= fLen; forward[2] /= fLen;
-
-        // Right = forward × up
-        const right = [
-            forward[1] * up[2] - forward[2] * up[1],
-            forward[2] * up[0] - forward[0] * up[2],
-            forward[0] * up[1] - forward[1] * up[0]
-        ];
-        const rLen = Math.sqrt(right[0]*right[0] + right[1]*right[1] + right[2]*right[2]);
-        right[0] /= rLen; right[1] /= rLen; right[2] /= rLen;
-
-        // True up = right × forward
-        const trueUp = [
-            right[1] * forward[2] - right[2] * forward[1],
-            right[2] * forward[0] - right[0] * forward[2],
-            right[0] * forward[1] - right[1] * forward[0]
-        ];
-
-        // Ray von der Kamera durch den NDC-Punkt
-        // Perspective projection: FOV ≈ 45° für Plotly
-        const fov = Math.PI / 4;
+        // Sichtfeld-Skalierung
+        const fov = 0.45;
         const aspect = rect.width / rect.height;
-        const tanHalfFov = Math.tan(fov / 2);
 
-        // Ray direction in world space
-        const rayDirX = right[0] * ndcX * tanHalfFov * aspect + trueUp[0] * ndcY * tanHalfFov + forward[0];
-        const rayDirY = right[1] * ndcX * tanHalfFov * aspect + trueUp[1] * ndcY * tanHalfFov + forward[1];
-        const rayDirZ = right[2] * ndcX * tanHalfFov * aspect + trueUp[2] * ndcY * tanHalfFov + forward[2];
+        // Kamera-Koordinatensystem
+        const cosA = Math.cos(azimuth), sinA = Math.sin(azimuth);
+        const cosE = Math.cos(elevation), sinE = Math.sin(elevation);
 
-        // Intersect Ray mit der Z-Ebene (z = mittlerer Loss-Wert in normalisierten Koordinaten)
-        // Plotly normalisiert die Daten: x,y,z jeweils in [-1,1] basierend auf den Ranges
-        // Wir wollen die Ebene z_norm = 0 (Mitte der Z-Range) treffen
+        // Right-Vektor (horizontal im Bild)
+        const rightX = -sinA;
+        const rightY = cosA;
 
-        // Aber einfacher: Intersect mit z_world = 3.5 (mittlerer Loss, da Range 0-7)
-        // In Plotly's normalisiertem Space ist das z_norm = 0
+        // Up-Vektor projiziert auf XY-Ebene
+        const upX = -cosA * sinE;
+        const upY = -sinA * sinE;
 
-        // Die Kamera-Koordinaten sind bereits in Plotly's normalisiertem Space
-        // eye ist in normalisierten Einheiten (typisch: Distanz ~2-4)
+        // Skalierung basierend auf Distanz und FOV
+        const scale = dist * fov * 3.5; // 3.5 = halbe Range
 
-        // Ray-Plane Intersection: Ebene z = 0 (normalisierter Raum)
-        // P = eye + t * rayDir, wobei P.z = 0
-        // t = -eye.z / rayDir.z
+        const worldX = -(ndcX * rightX * aspect + ndcY * upX) * scale;
+        const worldY = -(ndcX * rightY * aspect + ndcY * upY) * scale;
 
-        if (Math.abs(rayDirZ) < 0.001) return null; // Ray parallel zur Ebene
-
-        const t = -eye[2] / rayDirZ;
-        if (t < 0) return null; // Ebene hinter der Kamera
-
-        // Intersection point in normalisiertem Raum
-        const hitNormX = eye[0] + t * rayDirX;
-        const hitNormY = eye[1] + t * rayDirY;
-
-        // Denormalisieren: normalisiert [-1,1] → Daten-Range
-        // Plotly's Normalisierung: norm = (val - center) / halfRange * aspectRatio
-        // Vereinfacht (aspectratio x:y = 1:1):
-        const xCenter = (xRange[0] + xRange[1]) / 2;
-        const yCenter = (yRange[0] + yRange[1]) / 2;
-        const xHalf = (xRange[1] - xRange[0]) / 2;
-        const yHalf = (yRange[1] - yRange[0]) / 2;
-
-        const worldX = xCenter + hitNormX * xHalf;
-        const worldY = yCenter + hitNormY * yHalf;
-
-        // Clamp
         const clampedX = Math.max(-3.4, Math.min(3.4, worldX));
         const clampedY = Math.max(-3.4, Math.min(3.4, worldY));
 
-        // Sanity check: Wenn das Ergebnis total off ist, verwerfen
         if (isNaN(clampedX) || isNaN(clampedY)) return null;
-
         return { x: clampedX, y: clampedY };
+    },
+
+    // 4x4 Matrix invertieren (column-major wie WebGL)
+    _invertMatrix4: function(m) {
+        const inv = new Array(16);
+        inv[0] = m[5]*m[10]*m[15] - m[5]*m[11]*m[14] - m[9]*m[6]*m[15] + m[9]*m[7]*m[14] + m[13]*m[6]*m[11] - m[13]*m[7]*m[10];
+        inv[4] = -m[4]*m[10]*m[15] + m[4]*m[11]*m[14] + m[8]*m[6]*m[15] - m[8]*m[7]*m[14] - m[12]*m[6]*m[11] + m[12]*m[7]*m[10];
+        inv[8] = m[4]*m[9]*m[15] - m[4]*m[11]*m[13] - m[8]*m[5]*m[15] + m[8]*m[7]*m[13] + m[12]*m[5]*m[11] - m[12]*m[7]*m[9];
+        inv[12] = -m[4]*m[9]*m[14] + m[4]*m[10]*m[13] + m[8]*m[5]*m[14] - m[8]*m[6]*m[13] - m[12]*m[5]*m[10] + m[12]*m[6]*m[9];
+        inv[1] = -m[1]*m[10]*m[15] + m[1]*m[11]*m[14] + m[9]*m[2]*m[15] - m[9]*m[3]*m[14] - m[13]*m[2]*m[11] + m[13]*m[3]*m[10];
+        inv[5] = m[0]*m[10]*m[15] - m[0]*m[11]*m[14] - m[8]*m[2]*m[15] + m[8]*m[3]*m[14] + m[12]*m[2]*m[11] - m[12]*m[3]*m[10];
+        inv[9] = -m[0]*m[9]*m[15] + m[0]*m[11]*m[13] + m[8]*m[1]*m[15] - m[8]*m[3]*m[13] - m[12]*m[1]*m[11] + m[12]*m[3]*m[9];
+        inv[13] = m[0]*m[9]*m[14] - m[0]*m[10]*m[13] - m[8]*m[1]*m[14] + m[8]*m[2]*m[13] + m[12]*m[1]*m[10] - m[12]*m[2]*m[9];
+        inv[2] = m[1]*m[6]*m[15] - m[1]*m[7]*m[14] - m[5]*m[2]*m[15] + m[5]*m[3]*m[14] + m[13]*m[2]*m[7] - m[13]*m[3]*m[6];
+        inv[6] = -m[0]*m[6]*m[15] + m[0]*m[7]*m[14] + m[4]*m[2]*m[15] - m[4]*m[3]*m[14] - m[12]*m[2]*m[7] + m[12]*m[3]*m[6];
+        inv[10] = m[0]*m[5]*m[15] - m[0]*m[7]*m[13] - m[4]*m[1]*m[15] + m[4]*m[3]*m[13] + m[12]*m[1]*m[7] - m[12]*m[3]*m[5];
+        inv[14] = -m[0]*m[5]*m[14] + m[0]*m[6]*m[13] + m[4]*m[1]*m[14] - m[4]*m[2]*m[13] - m[12]*m[1]*m[6] + m[12]*m[2]*m[5];
+        inv[3] = -m[1]*m[6]*m[11] + m[1]*m[7]*m[10] + m[5]*m[2]*m[11] - m[5]*m[3]*m[10] - m[9]*m[2]*m[7] + m[9]*m[3]*m[6];
+        inv[7] = m[0]*m[6]*m[11] - m[0]*m[7]*m[10] - m[4]*m[2]*m[11] + m[4]*m[3]*m[10] + m[8]*m[2]*m[7] - m[8]*m[3]*m[6];
+        inv[11] = -m[0]*m[5]*m[11] + m[0]*m[7]*m[9] + m[4]*m[1]*m[11] - m[4]*m[3]*m[9] - m[8]*m[1]*m[7] + m[8]*m[3]*m[5];
+        inv[15] = m[0]*m[5]*m[10] - m[0]*m[6]*m[9] - m[4]*m[1]*m[10] + m[4]*m[2]*m[9] + m[8]*m[1]*m[6] - m[8]*m[2]*m[5];
+
+        let det = m[0]*inv[0] + m[1]*inv[4] + m[2]*inv[8] + m[3]*inv[12];
+        if (Math.abs(det) < 1e-10) return null;
+
+        det = 1.0 / det;
+        for (let i = 0; i < 16; i++) inv[i] *= det;
+        return inv;
+    },
+
+    // Matrix4 × Vec4 (column-major)
+    _mulMatVec4: function(m, v) {
+        return [
+            m[0]*v[0] + m[4]*v[1] + m[8]*v[2] + m[12]*v[3],
+            m[1]*v[0] + m[5]*v[1] + m[9]*v[2] + m[13]*v[3],
+            m[2]*v[0] + m[6]*v[1] + m[10]*v[2] + m[14]*v[3],
+            m[3]*v[0] + m[7]*v[1] + m[11]*v[2] + m[15]*v[3]
+        ];
     },
 
     _setStartPoint: function(x, y) {
@@ -3719,8 +3737,6 @@ const LossLandscapeViz = {
 
     animate: function() {
         if (this.animating) {
-            clearInterval(this.animInterval);
-            this.animInterval = null;
             this.animating = false;
             const btn = document.getElementById('loss-animate-btn');
             if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
@@ -3734,15 +3750,25 @@ const LossLandscapeViz = {
         this.animating = true;
         const btn = document.getElementById('loss-animate-btn');
         if (btn) { btn.textContent = '⏸ Stopp'; btn.style.background = '#ef4444'; }
-        this.animInterval = setInterval(() => {
-            this.step();
-            if (this.stepCount >= 200) {
-                clearInterval(this.animInterval);
-                this.animInterval = null;
-                this.animating = false;
-                if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
+
+        const self = this;
+        let lastTime = 0;
+        const stepInterval = 120; // ms zwischen Steps
+
+        function animLoop(timestamp) {
+            if (!self.animating) return;
+            if (timestamp - lastTime >= stepInterval) {
+                lastTime = timestamp;
+                self.step();
+                if (self.stepCount >= 200) {
+                    self.animating = false;
+                    if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
+                    return;
+                }
             }
-        }, 100);
+            requestAnimationFrame(animLoop);
+        }
+        requestAnimationFrame(animLoop);
     },
 
     _renderStartPointSelector: function() {
