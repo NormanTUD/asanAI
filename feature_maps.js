@@ -854,47 +854,6 @@ function _create_init_image(shape, useColorDecorrelation) {
 	});
 }
 
-function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape) {
-	var imageSize = Math.min(fullH, fullW);
-	var numChannels = new_input_shape[new_input_shape.length - 1];
-
-	var jitterMax = Math.max(1, Math.floor(imageSize / 16));
-	var useTransformJitter = _should_use_transform_jitter(fullH, fullW);
-
-	var decayRate = 0.995;
-	var decayInterval = 4;
-
-	var isLastLayer = (layer_idx === model.layers.length - 1);
-	var defaultLR = isLastLayer ? 0.5 : 0.15;
-	var learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
-
-	var tvWeight = 0.0003;
-	var tvInterval = 3;
-
-	// Enable color decorrelation for 3-channel (RGB) image models
-	var useColorDecorrelation = (numChannels === 3);
-
-	var blurPhases = [];
-	if (imageSize >= 16 && iterations >= 12) {
-		var phase1End = Math.floor(iterations * 0.33);
-		var phase2End = Math.floor(iterations * 0.66);
-		blurPhases = [
-			{ until: phase1End, factor: Math.max(2, Math.floor(imageSize / 8)) },
-			{ until: phase2End, factor: Math.max(2, Math.floor(imageSize / 16)) },
-			{ until: iterations, factor: 0 }
-		];
-	} else {
-		blurPhases = [{ until: iterations, factor: 0 }];
-	}
-
-	return {
-		imageSize, numChannels, jitterMax, useTransformJitter,
-		decayRate, decayInterval, learningRate,
-		tvWeight, tvInterval, blurPhases, fullH, fullW,
-		useColorDecorrelation
-	};
-}
-
 // ============================================================================
 // Determine the current blur factor from the phase schedule
 // ============================================================================
@@ -1019,19 +978,6 @@ function _compute_scaled_gradients(grad_function, dataForGrad, useColorDecorrela
 }
 
 // ============================================================================
-// Gradient step: move data in the direction of the gradient
-// ============================================================================
-async function _apply_gradient_step(data, scaledGrads, learningRate) {
-	var updated = tidy(() => {
-		var step = tf_mul(scaledGrads, tf_constant_shape(learningRate, scaledGrads));
-		return tf_add(data, step);
-	});
-	await dispose(scaledGrads);
-	await dispose(data);
-	return updated;
-}
-
-// ============================================================================
 // L2 weight decay: gently shrink activations to prevent runaway values
 // ============================================================================
 async function _apply_l2_decay(data, iteration_idx, decayRate, decayInterval, useColorDecorrelation) {
@@ -1085,16 +1031,6 @@ async function _apply_tv_regularization(data, iteration_idx, tvWeight, tvInterva
 	await dispose(tvGrad);
 	await dispose(data);
 	return tvRegularized;
-}
-
-// ============================================================================
-// Apply gradient step, L2 decay, and TV regularization (orchestrator)
-// ============================================================================
-async function _apply_gradient_update(data, scaledGrads, learningRate, iteration_idx, config) {
-	data = await _apply_gradient_step(data, scaledGrads, learningRate);
-	data = await _apply_l2_decay(data, iteration_idx, config.decayRate, config.decayInterval, config.useColorDecorrelation);
-	data = await _apply_tv_regularization(data, iteration_idx, config.tvWeight, config.tvInterval, config.useColorDecorrelation);
-	return data;
 }
 
 // ============================================================================
@@ -1186,37 +1122,6 @@ async function _maybe_render_preview(data, iteration_idx, iterations, previewInt
 }
 
 // ============================================================================
-// Single iteration of gradient ascent — now a slim orchestrator
-// ============================================================================
-async function _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval) {
-	log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
-
-	if (stop_generating_images) return { data: data, worked: false };
-
-	// Steps 1–2: Apply forward jitter
-	var jitterState = await _apply_forward_jitter(data, config);
-	data = jitterState.data;
-
-	// Steps 3–4: Compute gradients
-	var scaledGrads = await _compute_gradients_for_iteration(data, config, grad_function, iteration_idx);
-
-	if (!scaledGrads) {
-		return { data: data, worked: false };
-	}
-
-	// Steps 5–7: Gradient step, L2 decay, TV regularization
-	data = await _apply_gradient_update(data, scaledGrads, config.learningRate, iteration_idx, config);
-
-	// Steps 8–10: Undo jitter and stabilize dimensions
-	data = await _undo_jitter_and_stabilize(data, jitterState.ox, jitterState.oy, jitterState.rotAngle, jitterState.scaleJitter, config);
-
-	// Step 11: Live preview (with decorrelation-aware rendering)
-	await _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron, config.useColorDecorrelation);
-
-	return { data: data, worked: true };
-}
-
-// ============================================================================
 // Model & gradient function setup
 // ============================================================================
 function _build_aux_model_and_grad(layer_idx, neuron, useColorDecorrelation) {
@@ -1269,21 +1174,6 @@ function _compute_preview_interval(iterations) {
 }
 
 // ============================================================================
-// Run the main gradient ascent loop over all iterations
-// ============================================================================
-async function _run_ascent_loop(data, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval) {
-	var worked = 0;
-
-	for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
-		var result = await _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval);
-		data = result.data;
-		if (result.worked) worked = 1;
-	}
-
-	return { data: data, worked: worked };
-}
-
-// ============================================================================
 // Post-process generated data into image or raw tensor output
 // ============================================================================
 function _postprocess_generated_data(generated_data, full_data) {
@@ -1331,38 +1221,228 @@ async function _handle_ascent_error(e, recursion, layer_idx, neuron, iterations,
 }
 
 // ============================================================================
-// Core gradient ascent — refactored into focused phases
+// Updated _build_ascent_config — now includes Adam hyperparameters
 // ============================================================================
+function _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape) {
+    var imageSize = Math.min(fullH, fullW);
+    var numChannels = new_input_shape[new_input_shape.length - 1];
 
+    var jitterMax = Math.max(1, Math.floor(imageSize / 16));
+    var useTransformJitter = _should_use_transform_jitter(fullH, fullW);
+
+    var decayRate = 0.995;
+    var decayInterval = 4;
+
+    var isLastLayer = (layer_idx === model.layers.length - 1);
+    var defaultLR = isLastLayer ? 0.5 : 0.15;
+    var learningRate = parse_float($("#max_activation_lr").val()) || defaultLR;
+
+    var tvWeight = 0.0003;
+    var tvInterval = 3;
+
+    // Enable color decorrelation for 3-channel (RGB) image models
+    var useColorDecorrelation = (numChannels === 3);
+
+    // Adam optimizer hyperparameters
+    var adam = {
+        beta1: 0.9,
+        beta2: 0.999,
+        epsilon: 1e-8
+    };
+
+    var blurPhases = [];
+    if (imageSize >= 16 && iterations >= 12) {
+        var phase1End = Math.floor(iterations * 0.33);
+        var phase2End = Math.floor(iterations * 0.66);
+        blurPhases = [
+            { until: phase1End, factor: Math.max(2, Math.floor(imageSize / 8)) },
+            { until: phase2End, factor: Math.max(2, Math.floor(imageSize / 16)) },
+            { until: iterations, factor: 0 }
+        ];
+    } else {
+        blurPhases = [{ until: iterations, factor: 0 }];
+    }
+
+    return {
+        imageSize, numChannels, jitterMax, useTransformJitter,
+        decayRate, decayInterval, learningRate,
+        tvWeight, tvInterval, blurPhases, fullH, fullW,
+        useColorDecorrelation, adam
+    };
+}
+
+// ============================================================================
+// Updated _prepare_ascent — initializes Adam moment tensors (m and v)
+// ============================================================================
 /**
- * Phase 1: Build the model, config, and initial image for gradient ascent.
+ * Phase 1: Build the model, config, initial image, and Adam state for gradient ascent.
  * Returns all state needed to run the iteration loop.
  */
 function _prepare_ascent(layer_idx, neuron, iterations, start_image) {
-	var new_input_shape = get_input_shape_with_batch_size();
-	new_input_shape.shift();
+    var new_input_shape = get_input_shape_with_batch_size();
+    new_input_shape.shift();
 
-	var fullH = new_input_shape[0];
-	var fullW = new_input_shape[1];
-	var config = _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape);
+    var fullH = new_input_shape[0];
+    var fullW = new_input_shape[1];
+    var config = _build_ascent_config(layer_idx, iterations, fullH, fullW, new_input_shape);
 
-	var { aux_model, grad_function } = _build_aux_model_and_grad(layer_idx, neuron, config.useColorDecorrelation);
+    var { aux_model, grad_function } = _build_aux_model_and_grad(layer_idx, neuron, config.useColorDecorrelation);
 
-	var data = _initialize_image(start_image, new_input_shape, config.useColorDecorrelation);
+    var data = _initialize_image(start_image, new_input_shape, config.useColorDecorrelation);
 
-	return { aux_model, grad_function, config, data };
+    // Initialize Adam optimizer state: first moment (m) and second moment (v)
+    var adamState = {
+        m: tidy(() => tf.zerosLike(data)),  // First moment estimate
+        v: tidy(() => tf.zerosLike(data)),  // Second moment estimate
+        t: 0                                 // Timestep counter
+    };
+
+    return { aux_model, grad_function, config, data, adamState };
 }
 
+// ============================================================================
+// Updated _apply_gradient_step — uses Adam update rule instead of vanilla SGD
+// ============================================================================
+/**
+ * Adam gradient step: computes bias-corrected first and second moment estimates,
+ * then moves data in the adaptive direction.
+ *
+ * Returns { updatedData, updatedAdamState }
+ */
+async function _apply_gradient_step(data, scaledGrads, learningRate, adamState, adamConfig) {
+    var beta1 = adamConfig.beta1;
+    var beta2 = adamConfig.beta2;
+    var epsilon = adamConfig.epsilon;
+
+    // Increment timestep
+    var t = adamState.t + 1;
+
+    // Compute updated first moment: m = beta1 * m + (1 - beta1) * grads
+    var newM = tidy(() => {
+        return tf.add(
+            tf.mul(adamState.m, tf.scalar(beta1)),
+            tf.mul(scaledGrads, tf.scalar(1.0 - beta1))
+        );
+    });
+
+    // Compute updated second moment: v = beta2 * v + (1 - beta2) * grads^2
+    var newV = tidy(() => {
+        return tf.add(
+            tf.mul(adamState.v, tf.scalar(beta2)),
+            tf.mul(tf.square(scaledGrads), tf.scalar(1.0 - beta2))
+        );
+    });
+
+    // Bias correction
+    var biasCorrection1 = 1.0 - Math.pow(beta1, t);
+    var biasCorrection2 = 1.0 - Math.pow(beta2, t);
+
+    // Compute Adam update: lr * (m_hat / (sqrt(v_hat) + eps))
+    var updated = tidy(() => {
+        var mHat = tf.div(newM, tf.scalar(biasCorrection1));
+        var vHat = tf.div(newV, tf.scalar(biasCorrection2));
+        var denom = tf.add(tf.sqrt(vHat), tf.scalar(epsilon));
+        var step = tf.mul(tf.scalar(learningRate), tf.div(mHat, denom));
+        return tf.add(data, step);
+    });
+
+    // Dispose old state
+    await dispose(adamState.m);
+    await dispose(adamState.v);
+    await dispose(scaledGrads);
+    await dispose(data);
+
+    var updatedAdamState = { m: newM, v: newV, t: t };
+
+    return { updatedData: updated, updatedAdamState: updatedAdamState };
+}
+
+// ============================================================================
+// Updated _apply_gradient_update — passes Adam state through the pipeline
+// ============================================================================
+async function _apply_gradient_update(data, scaledGrads, learningRate, iteration_idx, config, adamState) {
+    var stepResult = await _apply_gradient_step(data, scaledGrads, learningRate, adamState, config.adam);
+    data = stepResult.updatedData;
+    adamState.m = stepResult.updatedAdamState.m;
+    adamState.v = stepResult.updatedAdamState.v;
+    adamState.t = stepResult.updatedAdamState.t;
+
+    data = await _apply_l2_decay(data, iteration_idx, config.decayRate, config.decayInterval, config.useColorDecorrelation);
+    data = await _apply_tv_regularization(data, iteration_idx, config.tvWeight, config.tvInterval, config.useColorDecorrelation);
+
+    return { data: data, adamState: adamState };
+}
+
+// ============================================================================
+// Updated _run_single_iteration — threads Adam state through
+// ============================================================================
+async function _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval, adamState) {
+    log(`Layer ${layer_idx}, neuron ${neuron + 1}/${max_neurons}, iteration ${iteration_idx + 1}/${iterations}`);
+
+    if (stop_generating_images) return { data: data, worked: false, adamState: adamState };
+
+    // Steps 1–2: Apply forward jitter
+    var jitterState = await _apply_forward_jitter(data, config);
+    data = jitterState.data;
+
+    // Steps 3–4: Compute gradients
+    var scaledGrads = await _compute_gradients_for_iteration(data, config, grad_function, iteration_idx);
+
+    if (!scaledGrads) {
+        return { data: data, worked: false, adamState: adamState };
+    }
+
+    // Steps 5–7: Adam gradient step, L2 decay, TV regularization
+    var updateResult = await _apply_gradient_update(data, scaledGrads, config.learningRate, iteration_idx, config, adamState);
+    data = updateResult.data;
+    adamState = updateResult.adamState;
+
+    // Steps 8–10: Undo jitter and stabilize dimensions
+    data = await _undo_jitter_and_stabilize(data, jitterState.ox, jitterState.oy, jitterState.rotAngle, jitterState.scaleJitter, config);
+
+    // Step 11: Live preview (with decorrelation-aware rendering)
+    await _maybe_render_preview(data, iteration_idx, iterations, previewInterval, previewCanvas, layer_idx, neuron, config.useColorDecorrelation);
+
+    return { data: data, worked: true, adamState: adamState };
+}
+
+// ============================================================================
+// Updated _run_ascent_loop — manages Adam state across iterations
+// ============================================================================
+async function _run_ascent_loop(data, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval, adamState) {
+    var worked = 0;
+
+    for (var iteration_idx = 0; iteration_idx < iterations; iteration_idx++) {
+        var result = await _run_single_iteration(data, iteration_idx, iterations, config, grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval, adamState);
+        data = result.data;
+        adamState = result.adamState;
+        if (result.worked) worked = 1;
+    }
+
+    // Dispose Adam state tensors when done
+    await dispose(adamState.m);
+    await dispose(adamState.v);
+
+    return { data: data, worked: worked };
+}
+
+// ============================================================================
+// Updated _execute_ascent_loop — passes adamState from prepared state
+// ============================================================================
 /**
  * Phase 2: Execute the gradient ascent loop and return raw generated data.
  */
 async function _execute_ascent_loop(prepared, iterations, layer_idx, neuron, max_neurons, previewCanvas, previewInterval) {
-	var loopResult = await _run_ascent_loop(prepared.data, iterations, prepared.config, prepared.grad_function, layer_idx, neuron, max_neurons, previewCanvas, previewInterval);
+    var loopResult = await _run_ascent_loop(
+        prepared.data, iterations, prepared.config, prepared.grad_function,
+        layer_idx, neuron, max_neurons, previewCanvas, previewInterval,
+        prepared.adamState
+    );
 
-	return {
-		generated_data: loopResult.data,
-		worked: loopResult.worked
-	};
+    return {
+        generated_data: loopResult.data,
+        worked: loopResult.worked
+    };
 }
 
 /**
