@@ -229,7 +229,7 @@
     <!-- ==================== SLIDE 2: Was ist ein LLM? ==================== -->
     <div class="slide" data-title="Was ist ein LLM?">
         <div class="slide-content">
-            <h2>1. Was ist ein LLM?</h2>
+            <h2>Was ist ein LLM?</h2>
             <p>LLMs sind Maschinen, die das <b>nächste wahrscheinlichste Wort</b> vorhersagen – immer nur <b>ein einziges Wort</b> auf einmal.</p>
             <div class="formula-box fragment">
                 <strong>Die Grundformel:</strong>
@@ -272,7 +272,7 @@
     <!-- ==================== SLIDE 5: Tokenisierung ==================== -->
     <div class="slide" data-title="Tokenisierung">
         <div class="slide-content">
-            <h2>2. Tokenisierung</h2>
+            <h2>Tokenisierung</h2>
             <p>Computer verstehen keine Wörter – nur Zahlen. Text wird in kleine Stücke (<b>Tokens</b>) zerlegt.</p>
             <div class="formula-box fragment">
                 <div class="math-display">$$\text{"Once upon a time"} \rightarrow [\text{"Once"}, \ \text{"upon"}, \ \text{"a"}, \ \text{"time"}]$$</div>
@@ -297,7 +297,7 @@
     <!-- ==================== SLIDE 7: Embedding ==================== -->
     <div class="slide" data-title="Embedding">
         <div class="slide-content">
-            <h2>3. Embedding & Vektor-Arithmetik</h2>
+            <h2>Embedding & Vektor-Arithmetik</h2>
             <p>Jedes Token wird durch einen <b>langen Zahlenvektor</b> ersetzt, der seine Bedeutung repräsentiert:</p>
             <div class="formula-box fragment">
                 <div class="math-display">$$\text{"king"} \rightarrow [0.22, \ 0.85, \ -0.41, \ 0.09, \ \ldots, \ 0.63]$$</div>
@@ -331,7 +331,7 @@
     <!-- ==================== SLIDE 9: Positional Encoding ==================== -->
     <div class="slide" data-title="Positional Encoding">
         <div class="slide-content">
-            <h2>4. Positional Encoding</h2>
+            <h2>Positional Encoding</h2>
             <p>"The dog bites man" ≠ "The man bites dog" – gleiche Wörter, andere Reihenfolge!</p>
             <div class="formula-box fragment">
                 <div class="math-display">$$\text{Final Input} = \text{Embedding}(\text{token}) + \text{Position}(\text{index})$$</div>
@@ -360,7 +360,7 @@
     <!-- ==================== SLIDE 11: Transformer Intro ==================== -->
     <div class="slide" data-title="Transformer-Schichten">
         <div class="slide-content">
-            <h2>5. Die Transformer-Schichten</h2>
+            <h2>Die Transformer-Schichten</h2>
             <p>Das <b>Herzstück</b> des Modells. Token-Vektoren fließen durch <b>viele gestapelte Schichten</b> (80+ bei modernen LLMs).</p>
             <div class="key-insight fragment">
                 <strong>Der Residual Stream – das "gemeinsame Notizbuch":</strong>
@@ -375,7 +375,7 @@
     <!-- ==================== SLIDE 12: Attention ==================== -->
     <div class="slide" data-title="Attention">
         <div class="slide-content">
-            <h2>5a: Attention</h2>
+            <h2>Attention</h2>
             <p>"Welche anderen Wörter sind für <em>dieses</em> Wort wichtig?"</p>
             <p class="fragment"><b>Beispiel:</b> "The cat sat on the mat because <b>it</b> was tired" – worauf bezieht sich "it"?</p>
             <div class="key-insight fragment">
@@ -393,7 +393,7 @@
     <!-- ==================== SLIDE: Neural Net Intro ==================== -->
 <div class="slide" data-title="Neuronales Netz Intro">
     <div class="slide-content">
-        <h2>5b-i: Was ist Dense + ReLU + Dense?</h2>
+        <h2>Was ist Dense + ReLU + Dense?</h2>
         <p>Das einfachste neuronale Netz besteht aus nur <b>drei Schritten</b>:</p>
         <div class="formula-box fragment">
             <div class="math-display">$$f(x) = W_2 \cdot \text{ReLU}(W_1 \cdot x + b_1) + b_2$$</div>
@@ -499,7 +499,7 @@
     <!-- ==================== SLIDE 13: FFN ==================== -->
     <div class="slide" data-title="Feed-Forward Network">
         <div class="slide-content">
-            <h2>5b: Feed-Forward-Netzwerk</h2>
+            <h2>Feed-Forward-Netzwerk</h2>
             <p>Wenn Attention das <b>Umschauen</b> ist, dann ist das FFN das <b>Nachdenken</b> – die Wissensdatenbank.</p>
             <div class="formula-box fragment">
                 <div class="math-display">$$\text{FFN}(x) = W_2 \cdot \max(0,\; W_1 \cdot x + b_1) + b_2$$</div>
@@ -538,7 +538,7 @@
     <!-- ==================== SLIDE 14: Residual Stream Demo ==================== -->
     <div class="slide" data-title="Demo: Residual Stream">
         <div class="slide-content">
-            <h2>5c: Residual Stream – Schicht für Schicht</h2>
+            <h2>Residual Stream – Schicht für Schicht</h2>
             <div class="demo-box">
                 <div class="demo-title">🎭 Residual Stream Visualisierung</div>
                 <div id="residual-stream-plot"></div>
@@ -557,7 +557,7 @@
     <!-- ==================== SLIDE 15: Finale Vorhersage ==================== -->
     <div class="slide" data-title="Finale Vorhersage">
         <div class="slide-content">
-            <h2>6. Die finale Vorhersage</h2>
+            <h2>Die finale Vorhersage</h2>
             <p>Nach allen Schichten nimmt das Modell den <b>Vektor des letzten Tokens</b> und erzeugt einen <b>Score für jedes Wort im Vokabular</b> (oft 50.000+ Wörter):</p>
             <div class="formula-box fragment">
                 <div class="math-display">$$P(\text{"time"}) = 0.72, \quad P(\text{"day"}) = 0.08, \quad P(\text{"hill"}) = 0.002, \quad \ldots$$</div>
@@ -595,7 +595,7 @@
     <!-- ==================== SLIDE 17: Fazit ==================== -->
     <div class="slide" data-title="Fazit">
         <div class="slide-content" style="text-align:center;">
-            <h2>7. Fazit & Kernaussage</h2>
+            <h2>Fazit & Kernaussage</h2>
             <div class="key-insight" style="font-size:1.15em; padding:30px; margin-top:30px;">
                 <strong>Es gibt kein "Verstehen"-Modul.</strong><br><br>
                 Keine Grammatikprüfung. Keine Wissensdatenbank im klassischen Sinne.<br>
