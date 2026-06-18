@@ -2373,3 +2373,9 @@ body:not(.darkmode) .bar-tooltip-raw {
     border-radius: var(--radius-full);
     transition: width var(--duration-slow) var(--ease-physics);
 }
+
+.layer_button_active {
+	box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4);
+	background-color: rgba(0, 0, 0, 0.15);
+	border-style: inset;
+}

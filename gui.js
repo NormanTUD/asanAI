@@ -2773,9 +2773,17 @@ async function toggle_layer_help(item) {
 	// Wenn Help geöffnet wird, Options schließen
 	if (!$help.is(":visible")) {
 		$options.hide();
+		$full_layer.find(".layer_options_button").removeClass("layer_button_active");
 	}
 
 	$help.toggle();
+
+	// Toggle active state
+	if ($help.is(":visible")) {
+		$(item).addClass("layer_button_active");
+	} else {
+		$(item).removeClass("layer_button_active");
+	}
 
 	await write_descriptions(1);
 	await show_visual_explanations(1);
@@ -2791,9 +2799,17 @@ async function toggle_layer_options(item) {
 	// Wenn Options geöffnet werden, Help schließen
 	if (!$options.is(":visible")) {
 		$help.hide();
+		$full_layer.find(".layer_help_button").removeClass("layer_button_active");
 	}
 
 	$options.toggle();
+
+	// Toggle active state
+	if ($options.is(":visible")) {
+		$(item).addClass("layer_button_active");
+	} else {
+		$(item).removeClass("layer_button_active");
+	}
 
 	await write_descriptions(1);
 	await show_visual_explanations(1);
