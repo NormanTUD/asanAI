@@ -390,6 +390,112 @@
         </div>
     </div>
 
+    <!-- ==================== SLIDE: Neural Net Intro ==================== -->
+<div class="slide" data-title="Neuronales Netz Intro">
+    <div class="slide-content">
+        <h2>5b-i: Was ist Dense + ReLU + Dense?</h2>
+        <p>Das einfachste neuronale Netz besteht aus nur <b>drei Schritten</b>:</p>
+        <div class="formula-box fragment">
+            <div class="math-display">$$f(x) = W_2 \cdot \text{ReLU}(W_1 \cdot x + b_1) + b_2$$</div>
+        </div>
+        <ol class="fragment">
+            <li><b>Dense 1:</b> Multipliziere Input mit Gewichten + Bias → viele "Detektoren"</li>
+            <li><b>ReLU:</b> Schneide alles Negative ab → <code>max(0, x)</code></li>
+            <li><b>Dense 2:</b> Kombiniere die aktiven Detektoren zum Output</li>
+        </ol>
+        <div class="key-insight fragment">
+            <strong>Universelle Approximation:</strong> Mit genug Neuronen kann dieses simple Netz <b>jede beliebige stetige Funktion</b> beliebig genau nachbauen – durch Stückelung in lineare Segmente!
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: ReLU Stückelung Demo ==================== -->
+<div class="slide" data-title="Demo: Stückelung">
+    <div class="slide-content">
+        <h2>Demo: Funktionsapproximation durch Stückelung</h2>
+        <div class="demo-box">
+            <div class="demo-title">🧩 Dense + ReLU + Dense approximiert jede Funktion</div>
+            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+                <label style="font-size:0.85em; font-weight:bold;">Zielfunktion:</label>
+                <select id="nn-target-fn" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:0.95em;">
+                    <option value="sin">sin(x)</option>
+                    <option value="quadratic">x²</option>
+                    <option value="abs">|x|</option>
+                    <option value="step">Treppenfunktion</option>
+                    <option value="custom">Wellenform</option>
+                </select>
+                <label style="font-size:0.85em; font-weight:bold; margin-left:12px;">Neuronen (Stücke):</label>
+                <input type="range" id="nn-num-neurons" min="1" max="30" step="1" value="4" style="width:140px; accent-color:#6366f1;">
+                <span id="nn-neuron-count" style="font-weight:bold; color:#6366f1; min-width:30px;">4</span>
+            </div>
+            <div id="nn-approx-plot" style="height:340px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:10px;"></div>
+            <div id="nn-approx-info" style="padding:10px; background:#f0fdf4; border-radius:8px; border:1px solid #86efac; font-size:0.9em; color:#334155; text-align:center;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Schrittweise Berechnung ==================== -->
+<div class="slide" data-title="Demo: Schritt für Schritt">
+    <div class="slide-content">
+        <h2>Demo: Schritt für Schritt durch das Netz</h2>
+        <div class="demo-box">
+            <div class="demo-title">🔬 Beobachte jeden Schritt: Input → Dense → ReLU → Dense → Output</div>
+            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+                <label style="font-size:0.85em; font-weight:bold;">Input x =</label>
+                <input type="range" id="nn-step-input" min="-3" max="3" step="0.1" value="1.5" style="width:160px; accent-color:#3b82f6;">
+                <span id="nn-step-input-val" style="font-weight:bold; color:#3b82f6; min-width:40px;">1.5</span>
+                <button id="nn-step-animate-btn" onclick="NNStepViz.animateSteps()" style="padding:8px 18px; border-radius:8px; border:none; background:#3b82f6; color:#fff; font-weight:bold; cursor:pointer; margin-left:auto;">▶ Animieren</button>
+            </div>
+            <div id="nn-step-viz" style="position:relative; min-height:320px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; padding:20px; overflow-x:auto;"></div>
+            <div id="nn-step-explanation" style="margin-top:10px; padding:10px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe; font-size:0.9em; color:#1e40af; text-align:center;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Verbindung zu Next-Token ==================== -->
+<div class="slide" data-title="NN → Next Token">
+    <div class="slide-content">
+        <h2>Von Dense+ReLU+Dense → Next Token Prediction</h2>
+        <p>Genau dieses Prinzip steckt im <b>Feed-Forward-Netzwerk jeder Transformer-Schicht</b>:</p>
+        <div class="formula-box fragment">
+            <div class="math-display">$$\text{FFN}(x) = W_2 \cdot \text{ReLU}(W_1 \cdot x + b_1) + b_2$$</div>
+        </div>
+        <div class="fragment" style="margin-top:16px;">
+            <div class="key-insight">
+                <strong>Der Zusammenhang:</strong><br><br>
+                1️⃣ <b>Input x</b> = der kontextualisierte Vektor eines Tokens (nach Attention)<br>
+                2️⃣ <b>Dense 1 + ReLU</b> = tausende "Wissens-Detektoren" feuern oder nicht<br>
+                3️⃣ <b>Dense 2</b> = aktive Detektoren schreiben Wissen zurück in den Vektor<br>
+                4️⃣ Am Ende: Vektor → Softmax über Vokabular → <b>nächstes Token</b>
+            </div>
+        </div>
+        <div class="fragment" style="margin-top:16px;">
+            <div class="formula-box" style="background:#fef3c7; border-color:#fbbf24;">
+                <div class="math-display" style="font-size:1.1em;">$$\underbrace{\text{"The cat sat on"}}_{\text{Input}} \xrightarrow{\text{Attention}} \xrightarrow{\text{Dense+ReLU+Dense}} \xrightarrow{\text{Softmax}} \underbrace{P(\text{"the"})=0.42}_{\text{Next Token}}$$</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Demo Token Prediction mit NN ==================== -->
+<div class="slide" data-title="Demo: NN → Token">
+    <div class="slide-content">
+        <h2>Demo: Vom Netz zum nächsten Wort</h2>
+        <div class="demo-box">
+            <div class="demo-title">🎯 Schrittweise: Vektor → FFN → Scores → Softmax → Token</div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;">
+                <button onclick="NNTokenViz.setStep(0)" id="nn-tok-step0" style="padding:8px 14px; border-radius:8px; border:2px solid #3b82f6; background:#eff6ff; font-weight:bold; cursor:pointer;">1. Input-Vektor</button>
+                <button onclick="NNTokenViz.setStep(1)" id="nn-tok-step1" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">2. Dense₁ + ReLU</button>
+                <button onclick="NNTokenViz.setStep(2)" id="nn-tok-step2" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">3. Dense₂ (Scores)</button>
+                <button onclick="NNTokenViz.setStep(3)" id="nn-tok-step3" style="padding:8px 14px; border-radius:8px; border:1px solid #cbd5e1; background:#fff; font-weight:bold; cursor:pointer;">4. Softmax → Token</button>
+            </div>
+            <div id="nn-token-viz" style="min-height:300px; background:#fff; border-radius:8px; border:1px solid #e2e8f0; padding:20px;"></div>
+            <div id="nn-token-explanation" style="margin-top:10px; padding:12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; font-size:0.9em; color:#334155; text-align:center;"></div>
+        </div>
+    </div>
+</div>
+
+
     <!-- ==================== SLIDE 13: FFN ==================== -->
     <div class="slide" data-title="Feed-Forward Network">
         <div class="slide-content">

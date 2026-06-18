@@ -1798,6 +1798,653 @@ function _lazyCreateObserver() {
 // REPLACEMENT INITIALIZATION — call this instead of the old ones
 // ============================================================
 
+// ============================================================
+// NEURAL NET APPROXIMATION VISUALIZER
+// ============================================================
+
+const NNApproxViz = {
+    // Target functions
+    targetFunctions: {
+        sin: x => Math.sin(x * 1.5),
+        quadratic: x => x * x / 4 - 0.5,
+        abs: x => Math.abs(x) / 2,
+        step: x => (x < -1.5 ? -0.5 : x < 0 ? 0.5 : x < 1.5 ? -0.3 : 0.7),
+        custom: x => Math.sin(x * 2) * 0.5 + Math.cos(x * 3) * 0.3,
+    },
+
+    // Fit a simple Dense+ReLU+Dense network to approximate the target
+    // Uses evenly-spaced "hinge points" (ReLU knees) to create piecewise linear approx
+    fitNetwork: function(targetFn, numNeurons, xMin, xMax) {
+        const neurons = [];
+        const step = (xMax - xMin) / (numNeurons + 1);
+
+        // Place hinge points evenly
+        for (let i = 0; i < numNeurons; i++) {
+            const hingeX = xMin + (i + 1) * step;
+            neurons.push({ hingeX, weight: 0, bias: 0 });
+        }
+
+        // For each neuron, compute the slope change needed
+        // We approximate by sampling the target and computing finite differences
+        const samplePoints = 200;
+        const xs = [];
+        const ys = [];
+        for (let i = 0; i <= samplePoints; i++) {
+            const x = xMin + (xMax - xMin) * i / samplePoints;
+            xs.push(x);
+            ys.push(targetFn(x));
+        }
+
+        // Simple least-squares fit for piecewise linear with ReLU basis
+        // Each neuron contributes: w_i * max(0, x - hingeX_i)
+        // Plus a global linear term: a*x + b
+        const N = numNeurons + 2; // neurons + linear + bias
+        const M = xs.length;
+
+        // Build design matrix
+        const A = [];
+        for (let j = 0; j < M; j++) {
+            const row = [1, xs[j]]; // bias and linear
+            for (let i = 0; i < numNeurons; i++) {
+                row.push(Math.max(0, xs[j] - neurons[i].hingeX));
+            }
+            A.push(row);
+        }
+
+        // Solve via normal equations (A^T A) w = A^T y
+        const ATA = Array.from({ length: N }, () => Array(N).fill(0));
+        const ATy = Array(N).fill(0);
+
+        for (let j = 0; j < M; j++) {
+            for (let p = 0; p < N; p++) {
+                ATy[p] += A[j][p] * ys[j];
+                for (let q = 0; q < N; q++) {
+                    ATA[p][q] += A[j][p] * A[j][q];
+                }
+            }
+        }
+
+        // Add small regularization
+        for (let p = 0; p < N; p++) ATA[p][p] += 1e-6;
+
+        // Gaussian elimination
+        const weights = this.solveLinearSystem(ATA, ATy, N);
+
+        return {
+            bias: weights[0],
+            linearWeight: weights[1],
+            neurons: neurons.map((n, i) => ({
+                hingeX: n.hingeX,
+                weight: weights[i + 2]
+            })),
+            evaluate: function(x) {
+                let y = weights[0] + weights[1] * x;
+                for (let i = 0; i < numNeurons; i++) {
+                    y += weights[i + 2] * Math.max(0, x - neurons[i].hingeX);
+                }
+                return y;
+            }
+        };
+    },
+
+    solveLinearSystem: function(A, b, n) {
+        // Gaussian elimination with partial pivoting
+        const aug = A.map((row, i) => [...row, b[i]]);
+
+        for (let col = 0; col < n; col++) {
+            // Pivot
+            let maxRow = col;
+            for (let row = col + 1; row < n; row++) {
+                if (Math.abs(aug[row][col]) > Math.abs(aug[maxRow][col])) maxRow = row;
+            }
+            [aug[col], aug[maxRow]] = [aug[maxRow], aug[col]];
+
+            if (Math.abs(aug[col][col]) < 1e-12) continue;
+
+            for (let row = col + 1; row < n; row++) {
+                const factor = aug[row][col] / aug[col][col];
+                for (let j = col; j <= n; j++) {
+                    aug[row][j] -= factor * aug[col][j];
+                }
+            }
+        }
+
+        // Back substitution
+        const x = Array(n).fill(0);
+        for (let i = n - 1; i >= 0; i--) {
+            if (Math.abs(aug[i][i]) < 1e-12) continue;
+            x[i] = aug[i][n];
+            for (let j = i + 1; j < n; j++) {
+                x[i] -= aug[i][j] * x[j];
+            }
+            x[i] /= aug[i][i];
+        }
+        return x;
+    },
+
+    render: function() {
+        const plotDiv = document.getElementById('nn-approx-plot');
+        if (!plotDiv) return;
+
+        const fnSelect = document.getElementById('nn-target-fn');
+        const neuronSlider = document.getElementById('nn-num-neurons');
+        const fnKey = fnSelect ? fnSelect.value : 'sin';
+        const numNeurons = neuronSlider ? parseInt(neuronSlider.value) : 4;
+
+        // Update label
+        const countLabel = document.getElementById('nn-neuron-count');
+        if (countLabel) countLabel.textContent = numNeurons;
+
+        const targetFn = this.targetFunctions[fnKey];
+        const xMin = -3, xMax = 3;
+
+        // Fit network
+        const network = this.fitNetwork(targetFn, numNeurons, xMin, xMax);
+
+        // Generate plot data
+        const xs = [];
+        const ysTarget = [];
+        const ysApprox = [];
+        for (let i = 0; i <= 300; i++) {
+            const x = xMin + (xMax - xMin) * i / 300;
+            xs.push(x);
+            ysTarget.push(targetFn(x));
+            ysApprox.push(network.evaluate(x));
+        }
+
+        // Hinge points
+        const hingeXs = network.neurons.map(n => n.hingeX);
+        const hingeYs = hingeXs.map(x => network.evaluate(x));
+
+        const traces = [
+            {
+                x: xs, y: ysTarget,
+                mode: 'lines',
+                name: 'Zielfunktion',
+                line: { color: '#94a3b8', width: 3, dash: 'dot' }
+            },
+            {
+                x: xs, y: ysApprox,
+                mode: 'lines',
+                name: `Approximation (${numNeurons} Neuronen)`,
+                line: { color: '#6366f1', width: 3 }
+            },
+            {
+                x: hingeXs, y: hingeYs,
+                mode: 'markers',
+                name: 'ReLU-Knickpunkte',
+                marker: { size: 10, color: '#ef4444', symbol: 'diamond', line: { width: 1, color: '#fff' } }
+            }
+        ];
+
+        const layout = {
+            margin: { l: 50, r: 30, b: 50, t: 20 },
+            xaxis: { title: 'x', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
+            yaxis: { title: 'f(x)', gridcolor: '#f1f5f9', zeroline: true, zerolinecolor: '#e2e8f0' },
+            showlegend: true,
+            legend: { x: 0, y: 1, bgcolor: 'rgba(255,255,255,0.9)', font: { size: 11 } },
+            plot_bgcolor: '#fff'
+        };
+
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+
+        // Info
+        const infoDiv = document.getElementById('nn-approx-info');
+        if (infoDiv) {
+            // Compute MSE
+            let mse = 0;
+            for (let i = 0; i < xs.length; i++) {
+                mse += Math.pow(ysTarget[i] - ysApprox[i], 2);
+            }
+            mse /= xs.length;
+
+            infoDiv.innerHTML = `
+                <b>${numNeurons} Neuronen</b> = <b>${numNeurons} ReLU-Knickpunkte</b> = <b>${numNeurons + 1} lineare Segmente</b>.
+                Je mehr Neuronen, desto feiner die Stückelung!
+                <span style="margin-left:12px; color:#64748b;">MSE: ${mse.toFixed(6)}</span>
+                ${numNeurons >= 15 ? '<br><span style="color:#10b981;">✓ Fast perfekte Approximation!</span>' : ''}
+                ${numNeurons <= 3 ? '<br><span style="color:#f59e0b;">→ Erhöhe die Neuronen für bessere Annäherung</span>' : ''}
+            `;
+        }
+    }
+};
+
+// ============================================================
+// NEURAL NET STEP-BY-STEP VISUALIZER
+// ============================================================
+
+const NNStepViz = {
+    // A small fixed network for demonstration
+    weights1: [0.8, -1.2, 0.5, -0.7],  // 4 neurons, 1 input each
+    biases1: [0.3, 1.0, -0.5, 0.8],
+    weights2: [0.6, -0.4, 0.9, -0.3],  // 4 neurons → 1 output
+    bias2: 0.1,
+
+    currentStep: 4, // 0=input, 1=dense1, 2=relu, 3=dense2, 4=all
+    animating: false,
+
+    compute: function(x) {
+        // Dense 1
+        const z1 = this.weights1.map((w, i) => w * x + this.biases1[i]);
+        // ReLU
+        const a1 = z1.map(v => Math.max(0, v));
+        // Dense 2
+        const output = a1.reduce((sum, a, i) => sum + a * this.weights2[i], 0) + this.bias2;
+        return { x, z1, a1, output };
+    },
+
+    render: function() {
+        const container = document.getElementById('nn-step-viz');
+        if (!container) return;
+
+        const slider = document.getElementById('nn-step-input');
+        const x = slider ? parseFloat(slider.value) : 1.5;
+        const valLabel = document.getElementById('nn-step-input-val');
+        if (valLabel) valLabel.textContent = x.toFixed(1);
+
+        const result = this.compute(x);
+        const step = this.currentStep;
+
+        // Build visualization
+        let html = '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:280px;">';
+
+        // INPUT
+        html += this.renderInputColumn(result.x, step >= 0);
+
+        // Arrow
+        html += this.renderArrow(step >= 1);
+
+        // DENSE 1
+        html += this.renderDense1Column(result.z1, step >= 1);
+
+        // Arrow
+        html += this.renderArrow(step >= 2);
+
+        // ReLU
+        html += this.renderReLUColumn(result.z1, result.a1, step >= 2);
+
+        // Arrow
+        html += this.renderArrow(step >= 3);
+
+        // DENSE 2
+        html += this.renderDense2Column(result.a1, result.output, step >= 3);
+
+        // Arrow
+        html += this.renderArrow(step >= 4);
+
+        // OUTPUT
+        html += this.renderOutputColumn(result.output, step >= 4);
+
+        html += '</div>';
+        container.innerHTML = html;
+
+        // Explanation
+        const explDiv = document.getElementById('nn-step-explanation');
+        if (explDiv) {
+            const explanations = [
+                `<b>Schritt 1:</b> Input x = ${x.toFixed(1)} wird in das Netz eingespeist.`,
+                `<b>Schritt 2 – Dense₁:</b> Jedes Neuron berechnet w·x + b. Die 4 Neuronen erzeugen: [${result.z1.map(v => v.toFixed(2)).join(', ')}]`,
+                `<b>Schritt 3 – ReLU:</b> max(0, z) schneidet negative Werte ab → [${result.a1.map(v => v.toFixed(2)).join(', ')}]. Nur aktive Neuronen "feuern"!`,
+                `<b>Schritt 4 – Dense₂:</b> Die aktiven Werte werden gewichtet summiert: ${result.a1.map((a, i) => `${a.toFixed(2)}×${this.weights2[i]}`).join(' + ')} + ${this.bias2} = <b>${result.output.toFixed(3)}</b>`,
+                `<b>Fertig!</b> Input ${x.toFixed(1)} → Output ${result.output.toFixed(3)}. Jedes Neuron ist ein "Detektor" – ReLU entscheidet, welche feuern.`
+            ];
+            explDiv.innerHTML = explanations[Math.min(step, 4)];
+        }
+    },
+
+    renderInputColumn: function(x, active) {
+        const opacity = active ? '1' : '0.2';
+        return `
+            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
+                <div style="font-size:0.75em; font-weight:bold; color:#64748b; margin-bottom:6px;">INPUT</div>
+                <div style="width:60px; height:60px; border-radius:50%; background:#dbeafe; border:3px solid #3b82f6; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2em; color:#1e40af; margin:0 auto;">
+                    ${x.toFixed(1)}
+                </div>
+            </div>`;
+    },
+
+    renderDense1Column: function(z1, active) {
+        const opacity = active ? '1' : '0.2';
+        let neurons = '';
+        z1.forEach((z, i) => {
+            const bg = z >= 0 ? '#e0e7ff' : '#fee2e2';
+            const border = z >= 0 ? '#818cf8' : '#fca5a5';
+            const color = z >= 0 ? '#312e81' : '#991b1b';
+            neurons += `<div style="padding:4px 8px; border-radius:6px; background:${bg}; border:1px solid ${border}; font-size:0.75em; color:${color}; font-weight:bold; margin:3px 0;">${z.toFixed(2)}</div>`;
+        });
+        return `
+            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
+                <div style="font-size:0.75em; font-weight:bold; color:#6366f1; margin-bottom:6px;">DENSE₁<br><span style="font-weight:normal; font-size:0.85em;">w·x + b</span></div>
+                ${neurons}
+            </div>`;
+    },
+
+    renderReLUColumn: function(z1, a1, active) {
+        const opacity = active ? '1' : '0.2';
+        let neurons = '';
+        a1.forEach((a, i) => {
+            const fired = a > 0;
+            const bg = fired ? '#dcfce7' : '#f1f5f9';
+            const border = fired ? '#34d399' : '#e2e8f0';
+            const color = fired ? '#065f46' : '#94a3b8';
+            const icon = fired ? '🔥' : '❌';
+            neurons += `<div style="padding:4px 8px; border-radius:6px; background:${bg}; border:1px solid ${border}; font-size:0.75em; color:${color}; font-weight:bold; margin:3px 0;">${icon} ${a.toFixed(2)}</div>`;
+        });
+        return `
+            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
+                <div style="font-size:0.75em; font-weight:bold; color:#10b981; margin-bottom:6px;">ReLU<br><span style="font-weight:normal; font-size:0.85em;">max(0, z)</span></div>
+                ${neurons}
+            </div>`;
+    },
+
+    renderDense2Column: function(a1, output, active) {
+        const opacity = active ? '1' : '0.2';
+        return `
+            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
+                <div style="font-size:0.75em; font-weight:bold; color:#d97706; margin-bottom:6px;">DENSE₂<br><span style="font-weight:normal; font-size:0.85em;">Σ wᵢ·aᵢ + b</span></div>
+                <div style="padding:8px 12px; border-radius:8px; background:#fef3c7; border:2px solid #f59e0b; font-weight:bold; color:#92400e; font-size:0.95em;">
+                    ${output.toFixed(3)}
+                </div>
+            </div>`;
+    },
+
+    renderOutputColumn: function(output, active) {
+        const opacity = active ? '1' : '0.2';
+        return `
+            <div style="text-align:center; opacity:${opacity}; transition:opacity 0.4s;">
+                <div style="font-size:0.75em; font-weight:bold; color:#64748b; margin-bottom:6px;">OUTPUT</div>
+                <div style="width:60px; height:60px; border-radius:50%; background:#dcfce7; border:3px solid #10b981; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.1em; color:#065f46; margin:0 auto;">
+                    ${output.toFixed(2)}
+                </div>
+            </div>`;
+    },
+
+    renderArrow: function(active) {
+        const color = active ? '#3b82f6' : '#e2e8f0';
+        return `<div style="font-size:1.5em; color:${color}; transition:color 0.4s;">→</div>`;
+    },
+
+    animateSteps: function() {
+        if (this.animating) return;
+        this.animating = true;
+        this.currentStep = 0;
+        this.render();
+
+        const btn = document.getElementById('nn-step-animate-btn');
+        if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+
+        let step = 0;
+        const interval = setInterval(() => {
+            step++;
+            this.currentStep = step;
+            this.render();
+            if (step >= 4) {
+                clearInterval(interval);
+                this.animating = false;
+                if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+            }
+        }, 900);
+    }
+};
+
+// ============================================================
+// NN → TOKEN PREDICTION STEP-BY-STEP
+// ============================================================
+
+const NNTokenViz = {
+    currentStep: 0,
+
+    // Mock data for "The cat sat on" → predicting next token
+    inputVector: [0.82, -0.31, 0.55, 0.12, -0.67, 0.44, 0.91, -0.23],
+
+    // Simulated Dense1 weights (8 input → 6 hidden neurons)
+    weights1: [
+        [0.5, -0.3, 0.8, 0.1, -0.6, 0.2, 0.4, -0.1],
+        [-0.2, 0.7, -0.1, 0.5, 0.3, -0.8, 0.1, 0.6],
+        [0.3, 0.1, -0.5, 0.9, 0.2, 0.4, -0.3, 0.7],
+        [-0.6, 0.4, 0.2, -0.3, 0.8, 0.1, 0.5, -0.4],
+        [0.1, -0.5, 0.6, 0.3, -0.2, 0.7, -0.8, 0.2],
+        [0.4, 0.2, -0.7, -0.1, 0.5, -0.3, 0.6, 0.1]
+    ],
+    biases1: [0.1, -0.2, 0.3, 0.0, -0.1, 0.2],
+
+    // Dense2 weights (6 hidden → 5 vocab scores)
+    weights2: [
+        [0.9, -0.3, 0.5, 0.2, -0.4, 0.6],
+        [0.2, 0.8, -0.1, 0.4, 0.3, -0.5],
+        [-0.4, 0.1, 0.7, -0.2, 0.6, 0.3],
+        [0.3, -0.6, 0.2, 0.8, -0.1, 0.4],
+        [-0.1, 0.4, -0.3, 0.1, 0.7, -0.2]
+    ],
+    biases2: [0.5, -0.1, 0.2, 0.0, 0.3],
+
+    // Vocabulary for output
+    vocab: ['the', 'a', 'mat', 'floor', 'table'],
+
+    // Compute forward pass
+    compute: function() {
+        const x = this.inputVector;
+
+        // Dense 1: z = W1 * x + b1
+        const z1 = this.weights1.map((row, i) => {
+            const dot = row.reduce((sum, w, j) => sum + w * x[j], 0);
+            return dot + this.biases1[i];
+        });
+
+        // ReLU
+        const a1 = z1.map(v => Math.max(0, v));
+
+        // Dense 2: scores = W2 * a1 + b2
+        const scores = this.weights2.map((row, i) => {
+            const dot = row.reduce((sum, w, j) => sum + w * a1[j], 0);
+            return dot + this.biases2[i];
+        });
+
+        // Softmax
+        const maxScore = Math.max(...scores);
+        const exps = scores.map(s => Math.exp(s - maxScore));
+        const sumExp = exps.reduce((a, b) => a + b, 0);
+        const probs = exps.map(e => e / sumExp);
+
+        return { x, z1, a1, scores, probs };
+    },
+
+    setStep: function(step) {
+        this.currentStep = step;
+        // Update button styles
+        for (let i = 0; i <= 3; i++) {
+            const btn = document.getElementById(`nn-tok-step${i}`);
+            if (btn) {
+                btn.style.borderColor = i === step ? '#3b82f6' : '#cbd5e1';
+                btn.style.background = i === step ? '#eff6ff' : '#fff';
+                btn.style.borderWidth = i === step ? '2px' : '1px';
+            }
+        }
+        this.render();
+    },
+
+    render: function() {
+        const container = document.getElementById('nn-token-viz');
+        const explDiv = document.getElementById('nn-token-explanation');
+        if (!container) return;
+
+        const result = this.compute();
+        const step = this.currentStep;
+
+        let html = '';
+
+        if (step === 0) {
+            // Show input vector
+            html = this.renderInputStep(result);
+        } else if (step === 1) {
+            // Show Dense1 + ReLU
+            html = this.renderDenseReluStep(result);
+        } else if (step === 2) {
+            // Show Dense2 scores
+            html = this.renderScoresStep(result);
+        } else if (step === 3) {
+            // Show Softmax → Token
+            html = this.renderSoftmaxStep(result);
+        }
+
+        container.innerHTML = html;
+
+        // Explanation
+        if (explDiv) {
+            const explanations = [
+                '📥 <b>Input-Vektor:</b> Der kontextualisierte Vektor des letzten Tokens "on" (nach Attention). 8 Dimensionen – in der Realität 4096+.',
+                '🔥 <b>Dense₁ + ReLU:</b> 6 "Wissens-Detektoren" berechnen je einen Score. ReLU zeroed negative Werte → nur relevante Detektoren feuern!',
+                '📊 <b>Dense₂ (Scores):</b> Die aktiven Detektoren werden zu einem Score pro Vokabular-Wort kombiniert. Höherer Score = wahrscheinlicheres Wort.',
+                '🎯 <b>Softmax → Token:</b> Scores werden in Wahrscheinlichkeiten umgewandelt. Das Modell wählt (z.B. "the" mit 38%) – fertig!'
+            ];
+            explDiv.innerHTML = explanations[step];
+        }
+    },
+
+    renderInputStep: function(result) {
+        let html = '<div style="text-align:center;">';
+        html += '<div style="font-size:0.85em; color:#64748b; margin-bottom:12px;">Kontext: <b>"The cat sat on"</b> → Vektor des letzten Tokens <b>"on"</b>:</div>';
+        html += '<div style="display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-bottom:20px;">';
+        result.x.forEach((v, i) => {
+            const intensity = Math.abs(v);
+            const bg = v >= 0 ? `rgba(59,130,246,${0.2 + intensity * 0.6})` : `rgba(239,68,68,${0.2 + intensity * 0.6})`;
+            html += `<div style="width:55px; height:55px; border-radius:8px; background:${bg}; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85em; color:#1e293b; border:1px solid rgba(0,0,0,0.1);">${v.toFixed(2)}</div>`;
+        });
+        html += '</div>';
+        html += '<div style="font-size:0.8em; color:#94a3b8;">← 8 Dimensionen (vereinfacht; real: 4096–12288) →</div>';
+        html += '</div>';
+        return html;
+    },
+
+    renderDenseReluStep: function(result) {
+        let html = '<div style="display:flex; gap:30px; align-items:flex-start; justify-content:center; flex-wrap:wrap;">';
+
+        // Pre-ReLU values
+        html += '<div style="text-align:center;">';
+        html += '<div style="font-size:0.8em; font-weight:bold; color:#6366f1; margin-bottom:8px;">Dense₁ Output (vor ReLU)</div>';
+        result.z1.forEach((z, i) => {
+            const bg = z >= 0 ? '#e0e7ff' : '#fee2e2';
+            const color = z >= 0 ? '#312e81' : '#991b1b';
+            html += `<div style="padding:6px 12px; margin:4px 0; border-radius:6px; background:${bg}; color:${color}; font-weight:bold; font-size:0.85em;">Neuron ${i + 1}: ${z.toFixed(3)}</div>`;
+        });
+        html += '</div>';
+
+        // Arrow
+        html += '<div style="display:flex; align-items:center; font-size:2em; color:#10b981; padding-top:60px;">→<br><span style="font-size:0.4em;">ReLU</span></div>';
+
+        // Post-ReLU values
+        html += '<div style="text-align:center;">';
+        html += '<div style="font-size:0.8em; font-weight:bold; color:#10b981; margin-bottom:8px;">Nach ReLU (max(0, z))</div>';
+        result.a1.forEach((a, i) => {
+            const fired = a > 0;
+            const bg = fired ? '#dcfce7' : '#f1f5f9';
+            const color = fired ? '#065f46' : '#94a3b8';
+            const icon = fired ? '🔥' : '❌';
+            html += `<div style="padding:6px 12px; margin:4px 0; border-radius:6px; background:${bg}; color:${color}; font-weight:bold; font-size:0.85em;">${icon} Neuron ${i + 1}: ${a.toFixed(3)}</div>`;
+        });
+        html += '</div>';
+
+        html += '</div>';
+
+        // Summary
+        const activeCount = result.a1.filter(a => a > 0).length;
+        html += `<div style="text-align:center; margin-top:16px; font-size:0.85em; color:#475569;"><b>${activeCount} von 6</b> Neuronen feuern – nur diese tragen zum Ergebnis bei!</div>`;
+
+        return html;
+    },
+
+    renderScoresStep: function(result) {
+        let html = '<div style="text-align:center;">';
+        html += '<div style="font-size:0.85em; color:#64748b; margin-bottom:14px;">Dense₂ kombiniert aktive Neuronen zu einem <b>Score pro Wort</b>:</div>';
+
+        // Score bars
+        const maxScore = Math.max(...result.scores.map(Math.abs));
+        html += '<div style="max-width:400px; margin:0 auto;">';
+        result.scores.forEach((score, i) => {
+            const width = Math.abs(score) / maxScore * 100;
+            const color = score >= 0 ? '#3b82f6' : '#ef4444';
+            const barDir = score >= 0 ? 'right' : 'left';
+            html += `<div style="display:flex; align-items:center; gap:10px; margin:8px 0;">
+                <span style="width:60px; text-align:right; font-weight:bold; font-size:0.9em;">"${this.vocab[i]}"</span>
+                <div style="flex:1; height:28px; background:#f1f5f9; border-radius:6px; position:relative; overflow:hidden;">
+                    <div style="position:absolute; ${barDir === 'right' ? 'left:50%' : 'right:50%'}; top:0; height:100%; width:${width / 2}%; background:${color}; border-radius:4px; transition:width 0.4s;"></div>
+                </div>
+                <span style="width:50px; font-size:0.85em; font-weight:bold; color:${color};">${score.toFixed(2)}</span>
+            </div>`;
+        });
+        html += '</div>';
+
+        html += '<div style="margin-top:14px; font-size:0.8em; color:#94a3b8;">Höherer Score = Modell "denkt", dieses Wort passt besser als nächstes.</div>';
+        html += '</div>';
+        return html;
+    },
+
+    renderSoftmaxStep: function(result) {
+        let html = '<div style="text-align:center;">';
+        html += '<div style="font-size:0.85em; color:#64748b; margin-bottom:14px;">Softmax wandelt Scores in <b>Wahrscheinlichkeiten</b> um (summieren sich zu 100%):</div>';
+
+        // Sort by probability
+        const items = this.vocab.map((word, i) => ({
+            word, score: result.scores[i], prob: result.probs[i]
+        })).sort((a, b) => b.prob - a.prob);
+
+        html += '<div style="max-width:450px; margin:0 auto;">';
+        items.forEach((item, i) => {
+            const width = item.prob * 100;
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#94a3b8'];
+            const color = colors[i];
+            const isTop = i === 0;
+            html += `<div style="display:flex; align-items:center; gap:10px; margin:10px 0; ${isTop ? 'transform:scale(1.05);' : ''}">
+                <span style="width:60px; text-align:right; font-weight:bold; font-size:${isTop ? '1.1em' : '0.9em'}; color:${isTop ? color : '#475569'};">"${item.word}"</span>
+                <div style="flex:1; height:${isTop ? '34px' : '26px'}; background:#f1f5f9; border-radius:6px; overflow:hidden; position:relative;">
+                    <div style="height:100%; width:${width}%; background:${color}; border-radius:6px; transition:width 0.5s; display:flex; align-items:center; justify-content:flex-end; padding-right:8px;">
+                        ${width > 15 ? `<span style="color:#fff; font-weight:bold; font-size:0.8em;">${(item.prob * 100).toFixed(1)}%</span>` : ''}
+                    </div>
+                    ${width <= 15 ? `<span style="position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:0.75em; color:#64748b;">${(item.prob * 100).toFixed(1)}%</span>` : ''}
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+
+        // Winner
+        const winner = items[0];
+        html += `<div style="margin-top:20px; padding:14px; background:#dcfce7; border-radius:10px; border:2px solid #34d399;">
+            <span style="font-size:1.2em;">🎉 Gewählt: <b style="color:#065f46; font-size:1.3em;">"${winner.word}"</b></span>
+            <span style="color:#64748b; font-size:0.85em; margin-left:10px;">(${(winner.prob * 100).toFixed(1)}% Wahrscheinlichkeit)</span>
+        </div>`;
+
+        html += '</div>';
+        return html;
+    }
+};
+
+
+// ============================================================
+// INITIALIZATION FOR NN DEMOS (add to lazy loading)
+// ============================================================
+
+function initNNDemos() {
+    // NN Approximation Demo
+    const nnTargetFn = document.getElementById('nn-target-fn');
+    const nnNeuronSlider = document.getElementById('nn-num-neurons');
+
+    if (nnTargetFn) {
+        nnTargetFn.addEventListener('change', () => NNApproxViz.render());
+    }
+    if (nnNeuronSlider) {
+        nnNeuronSlider.addEventListener('input', () => NNApproxViz.render());
+    }
+
+    // NN Step-by-Step Demo
+    const nnStepInput = document.getElementById('nn-step-input');
+    if (nnStepInput) {
+        nnStepInput.addEventListener('input', () => NNStepViz.render());
+    }
+
+    // NN Token Prediction Demo
+    NNTokenViz.setStep(0);
+}
+
 function loadIntuitionModule() {
     // CSS animation (same as before, still eager — it's just a style tag)
     const intuitionStyle = document.createElement('style');
@@ -1889,6 +2536,28 @@ function loadIntuitionModule() {
             tempSlider.addEventListener('input', () => PredictionViz.render());
         }
         PredictionViz.render();
+    });
+
+
+    // NN Approximation Demo
+    _lazyRegister('nn-approx-plot', () => {
+        const nnTargetFn = document.getElementById('nn-target-fn');
+        const nnNeuronSlider = document.getElementById('nn-num-neurons');
+        if (nnTargetFn) nnTargetFn.addEventListener('change', () => NNApproxViz.render());
+        if (nnNeuronSlider) nnNeuronSlider.addEventListener('input', () => NNApproxViz.render());
+        NNApproxViz.render();
+    });
+
+    // NN Step-by-Step Demo
+    _lazyRegister('nn-step-viz', () => {
+        const nnStepInput = document.getElementById('nn-step-input');
+        if (nnStepInput) nnStepInput.addEventListener('input', () => NNStepViz.render());
+        NNStepViz.render();
+    });
+
+    // NN Token Prediction Demo
+    _lazyRegister('nn-token-viz', () => {
+        NNTokenViz.setStep(0);
     });
 
     // Start observing everything
