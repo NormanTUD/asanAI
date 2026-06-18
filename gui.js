@@ -2895,7 +2895,7 @@ function option_for_layer(nr) {
 
 	var str = "";
 	str += "<tr>";
-	str += "<td style='width: 160px'>";
+	str += "<td>";
 	str += "<button style='cursor: pointer' class='show_data layer_options_button' onclick='toggle_layer_options(this)'><img src='_gui/icons/settings.svg' class='icon_small' />&nbsp;<span class='TRANSLATEME_settings'></span></button>";
 	str += "<button style='cursor: pointer' class='show_data layer_help_button' onclick='toggle_layer_help(this)'>?</button>";
 	str += "</td>";
