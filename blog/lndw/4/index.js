@@ -3018,10 +3018,6 @@ const DimensionViz = {
 };
 
 // ============================================================
-// TRAINING VISUALIZATION – Next Token Prediction from multiple texts
-// ============================================================
-
-// ============================================================
 // TRAINING VISUALIZATION – Next Token Prediction
 // ============================================================
 
@@ -3034,21 +3030,98 @@ const TrainingViz = {
         { full: "Neuronale Netze bestehen aus vielen Schichten von Neuronen.", source: "Lehrbuch" },
     ],
 
+    // Fake predictions the model might make (sometimes wrong!)
+    fakePredictions: {
+        'Die': ['Der', 'Eine', 'Die'],
+        'Katze': ['Hund', 'Katze', 'Mann'],
+        'saß': ['lief', 'saß', 'ging'],
+        'auf': ['auf', 'unter', 'in'],
+        'der': ['der', 'dem', 'einer'],
+        'Matte': ['Straße', 'Matte', 'Bank'],
+        'und': ['und', 'oder', 'aber'],
+        'schnurrte': ['bellte', 'schnurrte', 'lachte'],
+        'leise': ['laut', 'leise', 'schnell'],
+        '.': ['.', '!', ','],
+        'Es': ['Es', 'Er', 'Sie'],
+        'war': ['war', 'ist', 'wurde'],
+        'einmal': ['einmal', 'immer', 'nie'],
+        'ein': ['ein', 'kein', 'der'],
+        'König': ['Mann', 'König', 'Bauer'],
+        'in': ['in', 'auf', 'vor'],
+        'einem': ['einem', 'dem', 'keinem'],
+        'großen': ['kleinen', 'großen', 'alten'],
+        'Schloss': ['Haus', 'Schloss', 'Wald'],
+        'lebte': ['lebte', 'wohnte', 'starb'],
+        'Python': ['Java', 'Python', 'C++'],
+        'ist': ['ist', 'war', 'wird'],
+        'eine': ['eine', 'keine', 'die'],
+        'beliebte': ['neue', 'beliebte', 'alte'],
+        'Programmiersprache': ['Sprache', 'Programmiersprache', 'Methode'],
+        'für': ['für', 'von', 'mit'],
+        'maschinelles': ['tiefes', 'maschinelles', 'schnelles'],
+        'Lernen': ['Lernen', 'Denken', 'Rechnen'],
+        'Sonne': ['Sonne', 'Mond', 'Nacht'],
+        'ging': ['ging', 'kam', 'fiel'],
+        'langsam': ['schnell', 'langsam', 'plötzlich'],
+        'hinter': ['hinter', 'über', 'vor'],
+        'den': ['den', 'dem', 'der'],
+        'Bergen': ['Wolken', 'Bergen', 'Häusern'],
+        'unter': ['unter', 'auf', 'hervor'],
+        'Neuronale': ['Neuronale', 'Künstliche', 'Große'],
+        'Netze': ['Netze', 'Netzwerke', 'Systeme'],
+        'bestehen': ['bestehen', 'sind', 'haben'],
+        'aus': ['aus', 'von', 'mit'],
+        'vielen': ['vielen', 'wenigen', 'drei'],
+        'Schichten': ['Schichten', 'Teilen', 'Ebenen'],
+        'von': ['von', 'aus', 'mit'],
+        'Neuronen': ['Neuronen', 'Knoten', 'Zellen'],
+        '<|endoftext|>': ['<|endoftext|>', '.', 'und'],
+    },
+
     currentTextIdx: 0,
-    currentWordIdx: 1, // start at 1 so we have at least 1 context word
+    currentWordIdx: 1,
     autoplayInterval: null,
     lossHistory: [],
+    predictionHistory: [], // stores {correct, predicted, target} for each step
     totalSteps: 0,
+    modelCorrectStreak: 0,
 
     getTokens: function(text) {
         return text.replace(/([.,!?;:])/g, ' $1').split(/\s+/).filter(w => w.length > 0);
     },
 
-    // Simulate a loss value (starts high, decreases with noise over time)
-    simulateLoss: function() {
-        const baseLoss = 4.5 * Math.exp(-this.totalSteps * 0.04) + 0.8;
-        const noise = (Math.random() - 0.5) * 0.4;
-        return Math.max(0.3, baseLoss + noise);
+    // Simulate prediction: early on, model is often wrong. Later, more often right.
+    simulatePrediction: function(targetWord) {
+        const candidates = this.fakePredictions[targetWord];
+        if (!candidates) {
+            // Unknown word: model guesses randomly
+            return { predicted: '???', correct: false, confidence: 0.1 };
+        }
+
+        // Probability of being correct increases over time
+        const correctProb = Math.min(0.85, 0.15 + this.totalSteps * 0.015);
+        const isCorrect = Math.random() < correctProb;
+
+        if (isCorrect) {
+            return { predicted: targetWord, correct: true, confidence: 0.3 + correctProb * 0.6 };
+        } else {
+            // Pick a wrong answer
+            const wrongOnes = candidates.filter(c => c !== targetWord);
+            const predicted = wrongOnes.length > 0 ? wrongOnes[Math.floor(Math.random() * wrongOnes.length)] : candidates[0];
+            return { predicted, correct: false, confidence: 0.1 + Math.random() * 0.3 };
+        }
+    },
+
+    // Loss based on prediction correctness
+    simulateLoss: function(prediction) {
+        if (prediction.correct) {
+            // Low loss, with some noise
+            return Math.max(0.1, -Math.log(prediction.confidence) * 0.5 + (Math.random() - 0.5) * 0.2);
+        } else {
+            // High loss
+            const baseLoss = -Math.log(Math.max(0.01, 1 - prediction.confidence)) + 1.5;
+            return Math.min(6, baseLoss + (Math.random() - 0.5) * 0.5);
+        }
     },
 
     render: function() {
@@ -3061,36 +3134,43 @@ const TrainingViz = {
         const tokens = this.getTokens(fullTextWithEnd);
         const cutoff = Math.min(this.currentWordIdx + 1, tokens.length);
 
+        // Get last prediction info
+        const lastPred = this.predictionHistory.length > 0 ? this.predictionHistory[this.predictionHistory.length - 1] : null;
+
         let html = '';
 
-        // Source label
+        // Header with source and step counter
         html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">`;
         html += `<span style="font-size:0.75em; color:#94a3b8;">Quelle: <b>${textObj.source}</b> (Text ${this.currentTextIdx + 1}/${this.texts.length})</span>`;
-        html += `<span style="font-size:0.75em; color:#64748b; background:#f1f5f9; padding:3px 8px; border-radius:4px;">Schritt ${this.totalSteps}</span>`;
+        html += `<span style="font-size:0.75em; color:#64748b; background:#f1f5f9; padding:3px 8px; border-radius:4px;">Trainingsschritt ${this.totalSteps}</span>`;
         html += `</div>`;
 
-        // === FULL TEXT always visible (greyed out) with highlighting ===
+        // === FULL TEXT always visible with highlighting ===
         html += '<div style="background:#f8fafc; border-radius:10px; padding:16px 20px; border:1px solid #e2e8f0; font-size:1.05em; line-height:2.2; text-align:left; position:relative;">';
-
-        // Label: "Vollständiger Text (bekannt):"
-        html += `<div style="font-size:0.7em; color:#94a3b8; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Vollständiger Trainingstext (dem System bekannt):</div>`;
+        html += `<div style="font-size:0.7em; color:#94a3b8; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">📄 Vollständiger Trainingstext (bekannt):</div>`;
 
         tokens.forEach((token, i) => {
             const isEndToken = token === '<|endoftext|>';
+            const displayToken = isEndToken ? '&lt;|endoftext|&gt;' : token;
+
             if (i < cutoff - 1) {
-                // Context: seen by model (bold, dark)
-                html += `<span style="color:#1e293b; font-weight:600;">${isEndToken ? '<span style="font-family:monospace; font-size:0.85em; background:#e2e8f0; padding:1px 4px; border-radius:3px;">&lt;|endoftext|&gt;</span>' : token} </span>`;
-            } else if (i === cutoff - 1) {
-                // Target word (highlighted green or yellow for endoftext)
+                // Context: already processed (bold, dark)
                 if (isEndToken) {
-                    html += `<span style="background:#fef3c7; border:2px solid #f59e0b; padding:2px 8px; border-radius:6px; font-weight:bold; color:#92400e; font-family:monospace; font-size:0.85em; animation: arPulse 1s infinite;">&lt;|endoftext|&gt;</span> `;
+                    html += `<span style="color:#1e293b; font-weight:600; font-family:monospace; font-size:0.85em; background:#e2e8f0; padding:1px 4px; border-radius:3px;">${displayToken}</span> `;
+                } else {
+                    html += `<span style="color:#1e293b; font-weight:600;">${token} </span>`;
+                }
+            } else if (i === cutoff - 1) {
+                // Target word: the one being predicted NOW
+                if (isEndToken) {
+                    html += `<span style="background:#fef3c7; border:2px solid #f59e0b; padding:2px 8px; border-radius:6px; font-weight:bold; color:#92400e; font-family:monospace; font-size:0.85em; animation: arPulse 1s infinite;">${displayToken}</span> `;
                 } else {
                     html += `<span style="background:#dcfce7; border:2px solid #10b981; padding:2px 8px; border-radius:6px; font-weight:bold; color:#065f46; animation: arPulse 1s infinite;">${token}</span> `;
                 }
             } else {
-                // Future: visible but greyed out
+                // Future: visible but greyed out (model can't see these yet)
                 if (isEndToken) {
-                    html += `<span style="color:#cbd5e1; font-family:monospace; font-size:0.85em;">&lt;|endoftext|&gt;</span> `;
+                    html += `<span style="color:#cbd5e1; font-family:monospace; font-size:0.85em;">${displayToken}</span> `;
                 } else {
                     html += `<span style="color:#cbd5e1;">${token} </span>`;
                 }
@@ -3099,7 +3179,7 @@ const TrainingViz = {
 
         html += '</div>';
 
-        // === Visual separator: what the model sees vs. what it predicts ===
+        // === What model sees vs. what it must predict ===
         html += `<div style="margin-top:14px; display:flex; align-items:stretch; gap:0; border-radius:10px; overflow:hidden; border:1px solid #e2e8f0;">`;
 
         // Left: Model sees
@@ -3107,10 +3187,24 @@ const TrainingViz = {
         html += `<div style="font-size:0.7em; color:#3b82f6; font-weight:bold; margin-bottom:6px;">👁️ MODELL SIEHT:</div>`;
         const contextTokens = tokens.slice(0, cutoff - 1);
         const contextStr = contextTokens.join(' ');
-        html += `<div style="font-size:0.9em; color:#1e40af; font-weight:500;">"${contextStr.length > 80 ? '…' + contextStr.slice(-80) : contextStr}"</div>`;
+        html += `<div style="font-size:0.9em; color:#1e40af; font-weight:500;">"${contextStr.length > 70 ? '…' + contextStr.slice(-70) : contextStr}"</div>`;
         html += `</div>`;
 
-        // Right: Must predict
+        // Middle: Model's prediction (if we have one)
+        if (lastPred && this.totalSteps > 0) {
+            const predColor = lastPred.correct ? '#10b981' : '#ef4444';
+            const predBg = lastPred.correct ? '#f0fdf4' : '#fef2f2';
+            const predIcon = lastPred.correct ? '✅' : '❌';
+            html += `<div style="flex:0 0 auto; padding:12px 16px; background:${predBg}; border-right:2px solid ${predColor}; min-width:130px; text-align:center;">`;
+            html += `<div style="font-size:0.7em; color:${predColor}; font-weight:bold; margin-bottom:6px;">${predIcon} MODELL SAGTE:</div>`;
+            html += `<div style="font-size:1em; font-weight:bold; color:${lastPred.correct ? '#065f46' : '#991b1b'}; ${!lastPred.correct ? 'text-decoration:line-through;' : ''}">"${lastPred.predicted}"</div>`;
+            if (!lastPred.correct) {
+                html += `<div style="font-size:0.75em; color:#991b1b; margin-top:4px;">Richtig wäre: "${lastPred.target}"</div>`;
+            }
+            html += `</div>`;
+        }
+
+        // Right: Must predict next
         html += `<div style="flex:0 0 auto; padding:12px 16px; background:#f0fdf4; min-width:120px; text-align:center;">`;
         html += `<div style="font-size:0.7em; color:#10b981; font-weight:bold; margin-bottom:6px;">🎯 MUSS VORHERSAGEN:</div>`;
         const target = tokens[cutoff - 1];
@@ -3120,15 +3214,44 @@ const TrainingViz = {
 
         html += `</div>`;
 
+        // === Prediction accuracy mini-stats ===
+        if (this.predictionHistory.length > 0) {
+            const recent = this.predictionHistory.slice(-20);
+            const correctCount = recent.filter(p => p.correct).length;
+            const accuracy = (correctCount / recent.length * 100).toFixed(0);
+            const lastLoss = this.lossHistory.length > 0 ? this.lossHistory[this.lossHistory.length - 1] : 0;
+
+            html += `<div style="margin-top:10px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; font-size:0.8em;">`;
+            html += `<span style="padding:4px 10px; border-radius:6px; background:#f1f5f9; color:#475569;">Genauigkeit (letzte 20): <b style="color:${accuracy > 60 ? '#10b981' : '#ef4444'};">${accuracy}%</b></span>`;
+            html += `<span style="padding:4px 10px; border-radius:6px; background:#f1f5f9; color:#475569;">Loss: <b style="color:#ef4444;">${lastLoss.toFixed(2)}</b></span>`;
+            html += `<span style="padding:4px 10px; border-radius:6px; background:#f1f5f9; color:#475569;">Gewichte-Updates: <b>${this.totalSteps}</b></span>`;
+            html += `</div>`;
+        }
+
         container.innerHTML = html;
 
         // Explanation
         if (explDiv) {
-            const loss = this.lossHistory.length > 0 ? this.lossHistory[this.lossHistory.length - 1] : null;
-            if (isEnd) {
-                explDiv.innerHTML = `🏁 Das Modell muss lernen, wann ein Text <b>zu Ende</b> ist! Das <code>&lt;|endoftext|&gt;</code>-Token signalisiert das Ende. Dann kommt der nächste Text.${loss ? ` <b>Loss: ${loss.toFixed(2)}</b>` : ''}`;
+            if (lastPred && !lastPred.correct && this.totalSteps > 0) {
+                explDiv.innerHTML = `❌ <b>Falsch!</b> Das Modell sagte "<b>${lastPred.predicted}</b>", aber richtig war "<b>${lastPred.target}</b>". → <b>Hoher Loss (${this.lossHistory[this.lossHistory.length - 1]?.toFixed(2)})</b>. Die Gewichte werden angepasst, damit es beim nächsten Mal besser wird!`;
+                explDiv.style.background = '#fef2f2';
+                explDiv.style.borderColor = '#fecaca';
+                explDiv.style.color = '#991b1b';
+            } else if (lastPred && lastPred.correct && this.totalSteps > 0) {
+                explDiv.innerHTML = `✅ <b>Richtig!</b> Das Modell hat "<b>${lastPred.target}</b>" korrekt vorhergesagt. → <b>Niedriger Loss (${this.lossHistory[this.lossHistory.length - 1]?.toFixed(2)})</b>. Kleine Gewichtsanpassung – es ist schon auf dem richtigen Weg!`;
+                explDiv.style.background = '#f0fdf4';
+                explDiv.style.borderColor = '#bbf7d0';
+                explDiv.style.color = '#166534';
+            } else if (isEnd) {
+                explDiv.innerHTML = `🏁 Das Modell muss lernen, wann ein Text <b>zu Ende</b> ist! Das <code>&lt;|endoftext|&gt;</code>-Token signalisiert: "Hier ist Schluss, nächster Text."`;
+                explDiv.style.background = '#eff6ff';
+                explDiv.style.borderColor = '#bfdbfe';
+                explDiv.style.color = '#1e40af';
             } else {
-                explDiv.innerHTML = `🎯 Das Modell sieht <b>${cutoff - 1} Wörter</b> und muss "<b>${target}</b>" vorhersagen. Liegt es falsch → <b>hoher Loss</b>. Liegt es richtig → <b>niedriger Loss</b>. Das Ziel: Loss minimieren!${loss ? ` Aktueller Loss: <b>${loss.toFixed(2)}</b>` : ''}`;
+                explDiv.innerHTML = `🎯 Das Modell sieht <b>${cutoff - 1} Wörter</b> und muss "<b>${target}</b>" vorhersagen. Klicke <b>"Nächstes Wort"</b> um zu sehen, ob es richtig liegt!`;
+                explDiv.style.background = '#eff6ff';
+                explDiv.style.borderColor = '#bfdbfe';
+                explDiv.style.color = '#1e40af';
             }
         }
 
@@ -3140,24 +3263,51 @@ const TrainingViz = {
         const plotDiv = document.getElementById('training-loss-chart');
         if (!plotDiv || this.lossHistory.length === 0) return;
 
-        const trace = {
-            x: Array.from({ length: this.lossHistory.length }, (_, i) => i + 1),
-            y: this.lossHistory,
-            type: 'scatter',
-            mode: 'lines',
-            line: { color: '#ef4444', width: 2.5 },
-            fill: 'tozeroy',
-            fillcolor: 'rgba(239,68,68,0.08)',
-            hovertemplate: 'Schritt %{x}<br>Loss: %{y:.3f}<extra></extra>'
-        };
+        // Color each point by correct/incorrect
+        const colors = this.predictionHistory.map(p => p.correct ? '#10b981' : '#ef4444');
+
+        const traces = [
+            // Loss line
+            {
+                x: Array.from({ length: this.lossHistory.length }, (_, i) => i + 1),
+                y: this.lossHistory,
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#94a3b8', width: 1.5 },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(148,163,184,0.05)',
+                hovertemplate: 'Schritt %{x}<br>Loss: %{y:.3f}<extra></extra>',
+                showlegend: false,
+            },
+            // Dots colored by correct/wrong
+            {
+                x: Array.from({ length: this.lossHistory.length }, (_, i) => i + 1),
+                y: this.lossHistory,
+                type: 'scatter',
+                mode: 'markers',
+                marker: { color: colors, size: 5, line: { width: 0.5, color: '#fff' } },
+                hovertemplate: 'Schritt %{x}<br>Loss: %{y:.3f}<extra></extra>',
+                showlegend: false,
+            },
+            // Moving average (trend line)
+            {
+                x: Array.from({ length: this.lossHistory.length }, (_, i) => i + 1),
+                y: this.movingAverage(this.lossHistory, 8),
+                type: 'scatter',
+                mode: 'lines',
+                line: { color: '#3b82f6', width: 3 },
+                hovertemplate: 'Trend: %{y:.3f}<extra></extra>',
+                showlegend: false,
+            }
+        ];
 
         const layout = {
             margin: { l: 45, r: 15, b: 30, t: 10 },
             xaxis: { title: { text: 'Trainingsschritte', font: { size: 10 } }, gridcolor: '#f1f5f9' },
-            yaxis: { title: { text: 'Loss', font: { size: 10 } }, gridcolor: '#f1f5f9', rangemode: 'tozero' },
+            yaxis: { title: { text: 'Loss', font: { size: 10 } }, gridcolor: '#f1f5f9', rangemode: 'tozero', range: [0, Math.max(5, ...this.lossHistory) * 1.1] },
             plot_bgcolor: '#fff',
             showlegend: false,
-            annotations: this.lossHistory.length > 3 ? [{
+            annotations: this.lossHistory.length > 5 ? [{
                 x: this.lossHistory.length,
                 y: this.lossHistory[this.lossHistory.length - 1],
                 text: `${this.lossHistory[this.lossHistory.length - 1].toFixed(2)}`,
@@ -3165,11 +3315,25 @@ const TrainingViz = {
                 arrowhead: 2,
                 ax: -30,
                 ay: -20,
-                font: { size: 11, color: '#ef4444', weight: 'bold' }
+                font: { size: 11, color: colors[colors.length - 1], weight: 'bold' }
+            }] : [],
+            shapes: this.lossHistory.length > 10 ? [{
+                type: 'line',
+                x0: 0, x1: this.lossHistory.length,
+                y0: 0.5, y1: 0.5,
+                line: { color: '#10b981', width: 1, dash: 'dot' },
             }] : []
         };
 
-        Plotly.react(plotDiv, [trace], layout, { displayModeBar: false, responsive: true });
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+    },
+
+    movingAverage: function(arr, window) {
+        return arr.map((_, i) => {
+            const start = Math.max(0, i - window + 1);
+            const slice = arr.slice(start, i + 1);
+            return slice.reduce((a, b) => a + b, 0) / slice.length;
+        });
     },
 
     nextExample: function() {
@@ -3177,9 +3341,20 @@ const TrainingViz = {
         const fullTextWithEnd = textObj.full + " <|endoftext|>";
         const tokens = this.getTokens(fullTextWithEnd);
 
+        // Get the target word for this step
+        const target = tokens[Math.min(this.currentWordIdx, tokens.length - 1)];
+
+        // Simulate prediction
+        const prediction = this.simulatePrediction(target);
+        prediction.target = target;
+        this.predictionHistory.push(prediction);
+
+        // Calculate loss based on prediction
+        const loss = this.simulateLoss(prediction);
+        this.lossHistory.push(loss);
+
         this.currentWordIdx++;
         this.totalSteps++;
-        this.lossHistory.push(this.simulateLoss());
 
         if (this.currentWordIdx >= tokens.length) {
             // Move to next text
@@ -3193,8 +3368,16 @@ const TrainingViz = {
     nextText: function() {
         this.currentTextIdx = (this.currentTextIdx + 1) % this.texts.length;
         this.currentWordIdx = 1;
+
+        const textObj = this.texts[this.currentTextIdx];
+        const tokens = this.getTokens(textObj.full + " <|endoftext|>");
+        const target = tokens[0];
+        const prediction = this.simulatePrediction(target);
+        prediction.target = target;
+        this.predictionHistory.push(prediction);
+        this.lossHistory.push(this.simulateLoss(prediction));
         this.totalSteps++;
-        this.lossHistory.push(this.simulateLoss());
+
         this.render();
     },
 
@@ -3205,7 +3388,7 @@ const TrainingViz = {
             this.autoplayInterval = null;
             if (btn) { btn.textContent = '⏩ Autoplay'; btn.style.background = '#fff'; btn.style.color = '#1e293b'; }
         } else {
-            this.autoplayInterval = setInterval(() => this.nextExample(), 1000);
+            this.autoplayInterval = setInterval(() => this.nextExample(), 900);
             if (btn) { btn.textContent = '⏸ Stopp'; btn.style.background = '#ef4444'; btn.style.color = '#fff'; }
         }
     },
@@ -3219,66 +3402,93 @@ const TrainingViz = {
 };
 
 // ============================================================
-// LOSS LANDSCAPE VISUALIZATION – 3D surface + gradient descent path
+// LOSS LANDSCAPE VISUALIZATION – 3D surface + gradient descent
 // ============================================================
 
 const LossLandscapeViz = {
-    // Current position of the "model" on the landscape
-    posX: 2.5,
-    posY: 2.0,
+    posX: 3.0,
+    posY: -2.5,
     path: [],
     stepCount: 0,
     animating: false,
     animInterval: null,
+    plotInitialized: false,
+    savedCamera: null,
 
-    // Loss function: a nice landscape with one global minimum and some local features
+    // Highly irregular loss function with multiple local minima, ridges, valleys
     lossFunction: function(x, y) {
-        // Main bowl centered around (0, 0)
-        const bowl = 0.3 * (x * x + y * y);
-        // A ridge
-        const ridge = 0.5 * Math.exp(-((x - 1) * (x - 1) + (y + 0.5) * (y + 0.5)) * 0.8);
-        // Some bumps
-        const bump1 = 0.3 * Math.exp(-((x + 1.5) * (x + 1.5) + (y - 1) * (y - 1)) * 1.2);
-        const bump2 = 0.2 * Math.sin(x * 1.5) * Math.cos(y * 1.5) * Math.exp(-(x * x + y * y) * 0.05);
-        return bowl + ridge + bump1 + bump2 + 0.5;
+        // Deep global minimum near (-0.5, 0.3)
+        const globalMin = -0.8 * Math.exp(-((x + 0.5) * (x + 0.5) + (y - 0.3) * (y - 0.3)) * 1.5);
+
+        // Broad bowl
+        const bowl = 0.06 * (x * x + y * y);
+
+        // Sharp ridge running diagonally
+        const ridge = 0.7 * Math.exp(-Math.pow(y - 0.6 * x + 0.5, 2) * 3) * Math.exp(-(x * x + y * y) * 0.08);
+
+        // Local minimum trap at (2, -1.5) – model might get stuck here
+        const localMin = -0.4 * Math.exp(-((x - 2) * (x - 2) + (y + 1.5) * (y + 1.5)) * 0.8);
+
+        // Another local minimum at (-2, -2)
+        const localMin2 = -0.3 * Math.exp(-((x + 2) * (x + 2) + (y + 2) * (y + 2)) * 1.0);
+
+        // Bumpy terrain (high frequency noise)
+        const bumps = 0.12 * Math.sin(x * 3.7) * Math.cos(y * 2.9);
+        const bumps2 = 0.08 * Math.cos(x * 5.1 + y * 1.3) * Math.sin(y * 4.2 - x * 0.7);
+
+        // Steep cliff on one side
+        const cliff = 0.4 * Math.max(0, Math.sin((x + y) * 1.2)) * Math.exp(-((x - 1) * (x - 1)) * 0.3);
+
+        // Saddle point region
+        const saddle = 0.15 * (x * x - y * y) * Math.exp(-(x * x + y * y) * 0.15);
+
+        // Plateau region (flat area where gradient is tiny)
+        const plateau = 0.3 * Math.exp(-Math.pow(x - 1.5, 2) * 0.5) * Math.exp(-Math.pow(y + 0.5, 2) * 0.5);
+
+        return bowl + ridge + globalMin + localMin + localMin2 + bumps + bumps2 + cliff + saddle + plateau + 2.2;
     },
 
-    // Gradient (numerical)
+    // Numerical gradient
     gradient: function(x, y) {
-        const eps = 0.01;
+        const eps = 0.005;
         const dfdx = (this.lossFunction(x + eps, y) - this.lossFunction(x - eps, y)) / (2 * eps);
         const dfdy = (this.lossFunction(x, y + eps) - this.lossFunction(x, y - eps)) / (2 * eps);
         return { dx: dfdx, dy: dfdy };
     },
 
     reset: function() {
-        this.posX = 2.5;
-        this.posY = 2.0;
+        this.posX = 3.0;
+        this.posY = -2.5;
         this.path = [{ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) }];
         this.stepCount = 0;
+        this.savedCamera = null;
+        this.plotInitialized = false;
         if (this.animInterval) { clearInterval(this.animInterval); this.animInterval = null; this.animating = false; }
         const btn = document.getElementById('loss-animate-btn');
         if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
-        this.render();
+        this.renderPlot();
     },
 
     step: function() {
-        const lr = 0.15; // learning rate
+        // Save camera before updating
+        this.saveCamera();
+
+        const lr = 0.1; // learning rate
         const grad = this.gradient(this.posX, this.posY);
 
-        // Add some noise (simulating stochastic gradient descent)
-        const noise = 0.02;
+        // SGD with momentum-like noise (simulating mini-batch stochasticity)
+        const noise = 0.04;
         this.posX -= lr * grad.dx + (Math.random() - 0.5) * noise;
         this.posY -= lr * grad.dy + (Math.random() - 0.5) * noise;
 
-        // Clamp to bounds
-        this.posX = Math.max(-3, Math.min(3, this.posX));
-        this.posY = Math.max(-3, Math.min(3, this.posY));
+        // Clamp
+        this.posX = Math.max(-3.5, Math.min(3.5, this.posX));
+        this.posY = Math.max(-3.5, Math.min(3.5, this.posY));
 
         this.stepCount++;
         this.path.push({ x: this.posX, y: this.posY, loss: this.lossFunction(this.posX, this.posY) });
 
-        this.render();
+        this.renderPlot();
     },
 
     animate: function() {
@@ -3297,27 +3507,36 @@ const LossLandscapeViz = {
 
         this.animInterval = setInterval(() => {
             this.step();
-            if (this.stepCount >= 60) {
+            if (this.stepCount >= 100) {
                 clearInterval(this.animInterval);
                 this.animInterval = null;
                 this.animating = false;
                 if (btn) { btn.textContent = '⏩ Animieren'; btn.style.background = '#10b981'; }
             }
-        }, 300);
+        }, 200);
     },
 
-    render: function() {
+    saveCamera: function() {
+        const plotDiv = document.getElementById('loss-landscape-plot');
+        if (plotDiv && plotDiv._fullLayout && plotDiv._fullLayout.scene && plotDiv._fullLayout.scene._scene) {
+            const camera = plotDiv._fullLayout.scene._scene.getCamera();
+            if (camera) {
+                this.savedCamera = JSON.parse(JSON.stringify(camera));
+            }
+        }
+    },
+
+    renderPlot: function() {
         const plotDiv = document.getElementById('loss-landscape-plot');
         if (!plotDiv) return;
 
         // Generate surface data
-        const n = 50;
+        const n = 70;
         const xRange = [], yRange = [];
         for (let i = 0; i < n; i++) {
-            xRange.push(-3 + 6 * i / (n - 1));
-            yRange.push(-3 + 6 * i / (n - 1));
+            xRange.push(-3.5 + 7 * i / (n - 1));
+            yRange.push(-3.5 + 7 * i / (n - 1));
         }
-
         const zData = [];
         for (let j = 0; j < n; j++) {
             const row = [];
@@ -3334,73 +3553,100 @@ const LossLandscapeViz = {
             z: zData,
             type: 'surface',
             colorscale: [
-                [0, '#10b981'],
+                [0, '#065f46'],
+                [0.12, '#10b981'],
                 [0.3, '#fbbf24'],
-                [0.6, '#f97316'],
-                [1, '#ef4444']
+                [0.55, '#f97316'],
+                [0.8, '#dc2626'],
+                [1, '#7f1d1d']
             ],
-            opacity: 0.85,
+            opacity: 0.88,
             showscale: true,
-            colorbar: { title: 'Loss', titleside: 'right', len: 0.6 },
+            colorbar: { title: 'Loss', titleside: 'right', len: 0.5, thickness: 15 },
             contours: {
                 z: { show: true, usecolormap: true, highlightcolor: "#fff", project: { z: false } }
             },
-            hovertemplate: 'Param A: %{x:.2f}<br>Param B: %{y:.2f}<br>Loss: %{z:.3f}<extra></extra>'
+            hovertemplate: 'Gewicht 1: %{x:.2f}<br>Gewicht 2: %{y:.2f}<br>Loss: %{z:.3f}<extra></extra>',
+            lighting: { roughness: 0.6, diffuse: 0.8, specular: 0.3 }
         };
 
         const traces = [surfaceTrace];
 
-        // Path trace (the gradient descent trajectory)
+        // Path trace
         if (this.path.length > 0) {
-            // Elevate path slightly above surface for visibility
             const pathTrace = {
                 x: this.path.map(p => p.x),
                 y: this.path.map(p => p.y),
-                z: this.path.map(p => p.loss + 0.05),
+                z: this.path.map(p => p.loss + 0.08),
                 type: 'scatter3d',
                 mode: 'lines+markers',
                 name: 'Gradient Descent',
-                line: { color: '#1e40af', width: 6 },
+                line: { color: '#1e40af', width: 7 },
                 marker: {
-                    size: this.path.map((_, i) => i === this.path.length - 1 ? 10 : 4),
-                    color: this.path.map((_, i) => i === this.path.length - 1 ? '#ef4444' : '#3b82f6'),
+                    size: this.path.map((_, i) => i === this.path.length - 1 ? 12 : 3),
+                    color: this.path.map((_, i) => i === this.path.length - 1 ? '#ef4444' : i === 0 ? '#94a3b8' : '#3b82f6'),
                     symbol: this.path.map((_, i) => i === this.path.length - 1 ? 'diamond' : 'circle'),
                 },
                 hovertemplate: 'Schritt %{pointNumber}<br>Loss: %{z:.3f}<extra></extra>'
             };
             traces.push(pathTrace);
 
-            // Start point marker
+            // Start label
             if (this.path.length >= 1) {
                 traces.push({
                     x: [this.path[0].x],
                     y: [this.path[0].y],
-                    z: [this.path[0].loss + 0.08],
+                    z: [this.path[0].loss + 0.15],
                     type: 'scatter3d',
-                    mode: 'markers+text',
-                    text: ['Start'],
-                    textposition: 'top center',
-                    textfont: { size: 11, color: '#64748b' },
-                    marker: { size: 8, color: '#94a3b8', symbol: 'circle' },
+                    mode: 'text',
+                    text: ['🚀 Start'],
+                    textfont: { size: 12, color: '#64748b' },
+                    showlegend: false,
+                    hoverinfo: 'none'
+                });
+            }
+
+            // Current position label
+            if (this.path.length > 1) {
+                const last = this.path[this.path.length - 1];
+                traces.push({
+                    x: [last.x],
+                    y: [last.y],
+                    z: [last.loss + 0.2],
+                    type: 'scatter3d',
+                    mode: 'text',
+                    text: [`📍 Loss: ${last.loss.toFixed(3)}`],
+                    textfont: { size: 11, color: '#ef4444' },
                     showlegend: false,
                     hoverinfo: 'none'
                 });
             }
         }
 
+        // IMPORTANT: Read current camera from the plot BEFORE re-rendering
+        let cameraToUse = { eye: { x: 1.6, y: 1.6, z: 1.0 } };
+        if (this.plotInitialized && plotDiv._fullLayout && plotDiv._fullLayout.scene) {
+            const currentCamera = plotDiv._fullLayout.scene._scene ? plotDiv._fullLayout.scene._scene.getCamera() : null;
+            if (currentCamera) {
+                cameraToUse = currentCamera;
+            }
+        }
+
         const layout = {
             margin: { l: 0, r: 0, b: 0, t: 0 },
             scene: {
-                xaxis: { title: 'Parameter A', range: [-3, 3], gridcolor: '#e2e8f0' },
-                yaxis: { title: 'Parameter B', range: [-3, 3], gridcolor: '#e2e8f0' },
-                zaxis: { title: 'Loss', range: [0, 4], gridcolor: '#e2e8f0' },
-                camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } },
-                aspectratio: { x: 1, y: 1, z: 0.7 }
+                xaxis: { title: 'Gewicht 1', range: [-3.5, 3.5], gridcolor: '#e2e8f0', titlefont: { size: 12 } },
+                yaxis: { title: 'Gewicht 2', range: [-3.5, 3.5], gridcolor: '#e2e8f0', titlefont: { size: 12 } },
+                zaxis: { title: 'Loss', range: [0, 4.5], gridcolor: '#e2e8f0', titlefont: { size: 12 } },
+                camera: cameraToUse,
+                aspectratio: { x: 1, y: 1, z: 0.6 }
             },
-            showlegend: false
+            showlegend: false,
+            uirevision: 'loss-landscape-persist' // Prevents full layout reset
         };
 
         Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+        this.plotInitialized = true;
 
         // Update counter
         const counter = document.getElementById('loss-step-counter');
@@ -3417,17 +3663,22 @@ const LossLandscapeViz = {
             const currentLoss = this.path[this.path.length - 1].loss;
             const improvement = ((1 - currentLoss / startLoss) * 100).toFixed(1);
 
-            if (this.stepCount >= 50) {
-                infoDiv.innerHTML = `🎉 <b>Konvergiert!</b> Das Modell hat ein Minimum gefunden. Loss von ${startLoss.toFixed(2)} auf <b>${currentLoss.toFixed(3)}</b> reduziert (${improvement}% besser). In der Realität dauert das Tage auf tausenden GPUs!`;
-            } else if (this.stepCount >= 20) {
-                infoDiv.innerHTML = `📉 <b>Guter Fortschritt!</b> Der Loss sinkt stetig. Das Modell "rutscht" den Gradienten hinab. Verbesserung: <b>${improvement}%</b>`;
+            if (this.stepCount >= 60) {
+                infoDiv.innerHTML = `🎉 <b>Konvergiert!</b> Das Modell hat ein Minimum gefunden. Loss von <b>${startLoss.toFixed(2)}</b> auf <b>${currentLoss.toFixed(3)}</b> reduziert (<b>${improvement}%</b> besser). In der Realität dauert das Tage auf tausenden GPUs!`;
+                infoDiv.style.background = '#dcfce7';
+                infoDiv.style.borderColor = '#34d399';
+            } else if (this.stepCount >= 25) {
+                infoDiv.innerHTML = `📉 <b>Guter Fortschritt!</b> Der Loss sinkt. Das Modell "rutscht" den Gradienten hinab. Verbesserung: <b>${improvement}%</b>. Beachte die unregelmäßige Landschaft – es gibt Hügel und Täler!`;
+                infoDiv.style.background = '#fef3c7';
+                infoDiv.style.borderColor = '#fbbf24';
             } else {
-                infoDiv.innerHTML = `🚶 <b>Gradient Descent:</b> Bei jedem Schritt berechnet das Modell die Steigung (Gradient) und geht ein Stück bergab. Learning Rate = 0.15`;
+                infoDiv.innerHTML = `🚶 <b>Gradient Descent:</b> Bei jedem Schritt berechnet das Modell die Steigung (Gradient) und geht ein Stück bergab. Learning Rate = 0.12. Du kannst den 3D-Plot frei drehen – die Kamera bleibt erhalten!`;
+                infoDiv.style.background = '#f0fdf4';
+                infoDiv.style.borderColor = '#86efac';
             }
         }
     }
 };
-
 
 function loadIntuitionModule() {
     // CSS animation (same as before, still eager — it's just a style tag)
