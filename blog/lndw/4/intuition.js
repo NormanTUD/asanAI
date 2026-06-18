@@ -12,41 +12,54 @@
 const rootMargin = "800px";
 
 // ============================================================
-// STEP 1: TOKENIZATION VISUALIZER — Morphem-basierter BPE
+// STEP 1: TOKENIZATION VISUALIZER — Hybrid: Morphem-Match + Live BPE Fallback
 // ============================================================
 
 const TokenizerViz = {
-    // Bekannte Morpheme / Subwords (simuliert ein vortrainiertes BPE-Vocab)
-    // Alles was hier drin steht, wird NICHT weiter gemergt.
-    knownSubwords: new Set([
-        // Deutsche Morpheme
-        'donau', 'dampf', 'schiff', 'fahrt', 'fahren', 'schifffahrt',
-        'gesellschaft', 'kapitän', 'elektrizität', 'haupt', 'betrieb',
-        'werk', 'bau', 'unter', 'beamte', 'beamten',
-        'un', 'ver', 'be', 'ge', 'er', 'zer', 'ent', 'emp', 'miss',
+    tokenColors: [
+        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+        '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1',
+        '#14b8a6', '#e11d48', '#0ea5e9', '#a855f7', '#d946ef'
+    ],
+
+    // ─── Bekannte Subwords (simuliert ein vortrainiertes BPE-Vocab) ───
+    // Diese werden beim Longest-Match bevorzugt.
+    // Aber: Alles was NICHT hier drin ist, wird trotzdem per BPE zerlegt!
+    knownSubwords: null, // wird in init() als Set erstellt
+
+    _rawSubwords: [
+        // Deutsche Morpheme — Präfixe
+        'un', 'ver', 'be', 'ge', 'er', 'zer', 'ent', 'emp', 'miss', 'vor',
+        'nach', 'aus', 'ein', 'auf', 'ab', 'an', 'über', 'unter', 'durch',
+        'um', 'mit', 'zu', 'bei', 'von', 'hin', 'her', 'weg', 'zurück',
+        // Suffixe
         'ung', 'heit', 'keit', 'lich', 'isch', 'bar', 'sam', 'haft',
-        'chen', 'lein', 'schaft', 'tum', 'nis', 'sal',
-        'vor', 'nach', 'aus', 'ein', 'auf', 'ab', 'an', 'über', 'unter',
-        'durch', 'um', 'mit', 'zu', 'bei', 'von',
-        'tag', 'nacht', 'haus', 'land', 'stadt', 'berg', 'wald', 'feld',
-        'wasser', 'feuer', 'luft', 'erde', 'stein', 'holz', 'gold',
-        'hand', 'kopf', 'herz', 'auge', 'ohr', 'mund', 'fuß', 'arm',
+        'chen', 'lein', 'schaft', 'tum', 'nis', 'sal', 'ig', 'los',
+        // Komposita-Bausteine
+        'donau', 'dampf', 'schiff', 'fahrt', 'schifffahrt',
+        'gesellschaft', 'haupt', 'stadt', 'bahn', 'hof', 'straße',
+        'arbeit', 'geber', 'nehmer', 'platz', 'zeit', 'raum',
+        'hand', 'werk', 'zeug', 'bau', 'stein', 'holz', 'wasser',
+        'feuer', 'luft', 'erde', 'berg', 'wald', 'feld', 'land',
+        'haus', 'tür', 'fenster', 'dach', 'wand', 'boden',
+        'tag', 'nacht', 'morgen', 'abend', 'mittag', 'jahr',
+        'monat', 'woche', 'stunde', 'minute', 'sekunde',
+        'kopf', 'herz', 'auge', 'ohr', 'mund', 'fuß', 'arm', 'bein',
         'kind', 'mann', 'frau', 'mensch', 'tier', 'hund', 'katze',
         'groß', 'klein', 'alt', 'neu', 'gut', 'schlecht', 'schön',
-        'lang', 'kurz', 'hoch', 'tief', 'breit', 'schmal',
-        'gehen', 'kommen', 'stehen', 'laufen', 'fahren', 'fliegen',
-        'sehen', 'hören', 'sprechen', 'denken', 'wissen', 'können',
-        'haben', 'sein', 'werden', 'machen', 'geben', 'nehmen',
-        'ist', 'und', 'oder', 'aber', 'weil', 'dass', 'wenn', 'als',
-        'der', 'die', 'das', 'den', 'dem', 'des', 'ein', 'eine',
-        'ich', 'du', 'wir', 'ihr', 'sie', 'es', 'er',
-        'nicht', 'auch', 'noch', 'schon', 'nur', 'sehr', 'mehr',
+        'lang', 'kurz', 'hoch', 'tief', 'breit', 'schmal', 'schnell',
         'wort', 'satz', 'text', 'buch', 'brief', 'bild', 'lied',
-        'zeit', 'jahr', 'monat', 'woche', 'stunde', 'minute',
-        'arbeit', 'spiel', 'leben', 'liebe', 'freund', 'feind',
-        'lang', 'langes', 'lange', 'langen', 'langer',
+        'spiel', 'leben', 'liebe', 'freund', 'feind', 'kraft',
+        'elektr', 'izität', 'kapitän', 'betrieb', 'beamte',
+        // Ganze kurze Wörter (häufig genug für eigenes Token)
+        'ist', 'und', 'oder', 'aber', 'weil', 'dass', 'wenn', 'als',
+        'der', 'die', 'das', 'den', 'dem', 'des', 'ein', 'eine', 'einer',
+        'ich', 'du', 'wir', 'ihr', 'sie', 'es', 'er', 'man',
+        'nicht', 'auch', 'noch', 'schon', 'nur', 'sehr', 'mehr',
+        'hat', 'haben', 'sein', 'war', 'wird', 'kann', 'muss',
+        'langes', 'lange', 'langen', 'langer',
         'besteht', 'bestehen',
-        // Englische Morpheme
+        // Englisch
         'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been',
         'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
         'can', 'could', 'shall', 'should', 'may', 'might', 'must',
@@ -54,37 +67,46 @@ const TokenizerViz = {
         'cat', 'dog', 'sat', 'on', 'mat', 'hat', 'bat', 'rat',
         'king', 'queen', 'man', 'woman', 'child', 'boy', 'girl',
         'once', 'upon', 'time', 'there', 'here', 'where', 'what',
-        'play', 'ing', 'ed', 'er', 'ly', 'ness', 'ment', 'tion',
-        'pre', 'dis', 'mis', 'over', 'out', 'up', 'down',
-        'un', 're', 'in', 'im', 'ir', 'il',
+        'play', 'ing', 'ed', 'ly', 'ness', 'ment', 'tion', 'sion',
+        'pre', 'dis', 'mis', 'over', 'out', 'up', 'down', 're', 'in',
         'able', 'ible', 'ful', 'less', 'ous', 'ive', 'al', 'ial',
         'trans', 'form', 'under', 'stand', 'break',
         'hello', 'world', 'good', 'great', 'happy', 'love',
-        'dragon', 'drache', 'fliegen', 'konnte',
-    ]),
-
-    // Maximale Subword-Länge für die Suche
-    maxSubwordLen: 12,
-    minSubwordLen: 2,
-
-    tokenColors: [
-        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-        '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1',
-        '#14b8a6', '#e11d48', '#0ea5e9', '#a855f7', '#d946ef'
+        'dragon', 'fly', 'fire', 'ice', 'stone', 'wood',
     ],
 
-    // ─── Greedy Longest-Match Segmentierung ───
-    // Wie ein echter Tokenizer: von links nach rechts das längste bekannte Stück nehmen
+    maxSubwordLen: 14,
+    minSubwordLen: 2,
+
+    // ─── Initialisierung ───
+    init: function() {
+        this.knownSubwords = new Set(this._rawSubwords);
+    },
+
+    // ─── Deterministischer Hash → Pseudo-Vocab-ID ───
+    _hashID: function(str) {
+        let hash = 5381;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) + hash + str.charCodeAt(i)) & 0x7FFFFFFF;
+        }
+        return hash % 50000;
+    },
+
+    // ─── Kernalgorithmus: Greedy Longest Match + BPE Fallback ───
     segmentWord: function(word) {
+        if (!this.knownSubwords) this.init();
         word = word.toLowerCase();
+
+        // Schritt 1: Versuche Greedy Longest Match
         const segments = [];
         let i = 0;
+        let unknownBuffer = ''; // sammelt Zeichen die kein Match haben
 
         while (i < word.length) {
             let bestLen = 0;
             let bestSegment = '';
 
-            // Suche das längste bekannte Subword ab Position i
+            // Suche längstes bekanntes Subword ab Position i
             for (let len = Math.min(this.maxSubwordLen, word.length - i); len >= this.minSubwordLen; len--) {
                 const candidate = word.substring(i, i + len);
                 if (this.knownSubwords.has(candidate)) {
@@ -95,71 +117,158 @@ const TokenizerViz = {
             }
 
             if (bestLen > 0) {
+                // Falls wir unbekannte Zeichen gesammelt haben, erst die ausgeben
+                if (unknownBuffer.length > 0) {
+                    // BPE-Fallback auf den unbekannten Buffer
+                    const fallbackTokens = this._bpeFallback(unknownBuffer);
+                    segments.push(...fallbackTokens);
+                    unknownBuffer = '';
+                }
                 segments.push(bestSegment);
                 i += bestLen;
             } else {
-                // Einzelnes Zeichen als Fallback (unbekannt)
-                segments.push(word[i]);
+                // Kein Match → Zeichen in Buffer sammeln
+                unknownBuffer += word[i];
                 i++;
             }
+        }
+
+        // Rest des Buffers verarbeiten
+        if (unknownBuffer.length > 0) {
+            const fallbackTokens = this._bpeFallback(unknownBuffer);
+            segments.push(...fallbackTokens);
         }
 
         return segments;
     },
 
-    // Deterministischer Hash → Pseudo-Vocab-ID
-    _hashID: function(str) {
-        let hash = 5381;
-        for (let i = 0; i < str.length; i++) {
-            hash = ((hash << 5) + hash + str.charCodeAt(i)) & 0x7FFFFFFF;
+    // ─── BPE Fallback für unbekannte Zeichenfolgen ───
+    // Mergt häufige Buchstabenpaare basierend auf deutschen/englischen Bigramm-Häufigkeiten
+    _commonPairs: new Set([
+        'th', 'he', 'in', 'er', 'an', 'en', 'on', 'at', 'es', 'or',
+        'te', 'of', 'ed', 'is', 'it', 'al', 'ar', 'st', 'to', 'nt',
+        'ng', 'se', 'ha', 'ou', 'io', 'le', 'no', 're', 'hi', 'ea',
+        'ri', 'ro', 'co', 'de', 'ra', 'li', 'ch', 'ei', 'ie', 'au',
+        'sc', 'un', 'ge', 'be', 'ck', 'nd', 'tz', 'pf', 'sch',
+    ]),
+
+    _bpeFallback: function(str) {
+        if (str.length <= 2) return [str];
+
+        // Starte mit Einzelzeichen
+        let tokens = str.split('');
+
+        // Iterativ die häufigsten Paare mergen (max 20 Runden)
+        for (let round = 0; round < 20 && tokens.length > 1; round++) {
+            let bestIdx = -1;
+            let bestScore = -1;
+
+            // Finde das "beste" Paar (basierend auf Häufigkeitstabelle)
+            for (let i = 0; i < tokens.length - 1; i++) {
+                const pair = tokens[i] + tokens[i + 1];
+                // Score: bekanntes Paar = 10, sonst = Länge (längere Merges bevorzugen)
+                let score = tokens[i].length + tokens[i + 1].length;
+                if (this._commonPairs.has(pair)) score += 10;
+                if (this.knownSubwords.has(pair)) score += 100; // Jackpot!
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestIdx = i;
+                }
+            }
+
+            if (bestIdx < 0) break;
+
+            const merged = tokens[bestIdx] + tokens[bestIdx + 1];
+
+            // Wenn der Merge ein bekanntes Subword ergibt → sofort nehmen
+            if (this.knownSubwords.has(merged)) {
+                tokens = [...tokens.slice(0, bestIdx), merged, ...tokens.slice(bestIdx + 2)];
+                continue;
+            }
+
+            // Sonst nur mergen wenn das Paar "häufig" ist oder wir noch sehr fragmentiert sind
+            if (this._commonPairs.has(tokens[bestIdx] + tokens[bestIdx + 1]) || tokens.length > 4) {
+                tokens = [...tokens.slice(0, bestIdx), merged, ...tokens.slice(bestIdx + 2)];
+            } else {
+                break; // Keine sinnvollen Merges mehr
+            }
         }
-        return hash % 50000;
+
+        return tokens;
     },
 
-    // ─── Hauptfunktion ───
+    // ─── Hauptfunktion: Text → Tokens ───
     tokenize: function(text) {
-        // Satzzeichen abtrennen
+        if (!this.knownSubwords) this.init();
+
         const rawWords = text.split(/\s+/).filter(w => w.length > 0);
         const allTokens = [];
 
         rawWords.forEach((rawWord, wordIdx) => {
-            // Satzzeichen am Ende abtrennen
+            // Satzzeichen abtrennen
             let word = rawWord;
-            let punctuation = '';
-            const punctMatch = word.match(/^(.+?)([.,!?;:]+)$/);
-            if (punctMatch) {
-                word = punctMatch[1];
-                punctuation = punctMatch[2];
+            let punctBefore = '';
+            let punctAfter = '';
+
+            const punctMatchAfter = word.match(/^(.+?)([.,!?;:"""'']+)$/);
+            if (punctMatchAfter) {
+                word = punctMatchAfter[1];
+                punctAfter = punctMatchAfter[2];
+            }
+            const punctMatchBefore = word.match(/^(["""'']+)(.+)$/);
+            if (punctMatchBefore) {
+                punctBefore = punctMatchBefore[1];
+                word = punctMatchBefore[2];
             }
 
-            const segments = this.segmentWord(word);
-
-            segments.forEach((seg, segIdx) => {
+            // Satzzeichen vorne
+            if (punctBefore) {
                 allTokens.push({
-                    text: segIdx > 0 ? '##' + seg : seg,
-                    displayText: seg,
-                    id: this._hashID(seg),
-                    isSubword: segIdx > 0,
-                    originalWord: rawWord,
-                    displayOriginal: rawWord,
-                    splitIndex: segIdx,
-                    splitTotal: segments.length + (punctuation ? 1 : 0),
-                    wordIndex: wordIdx
+                    text: punctBefore, displayText: punctBefore,
+                    id: this._hashID(punctBefore), isSubword: false,
+                    originalWord: rawWord, displayOriginal: rawWord,
+                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: true
                 });
-            });
+            }
 
-            // Satzzeichen als eigenes Token
-            if (punctuation) {
+            // Wort segmentieren
+            const lowerWord = word.toLowerCase();
+
+            // Prüfe ob das ganze Wort bekannt ist
+            if (this.knownSubwords.has(lowerWord)) {
                 allTokens.push({
-                    text: punctuation,
-                    displayText: punctuation,
-                    id: this._hashID(punctuation),
-                    isSubword: false,
-                    originalWord: rawWord,
-                    displayOriginal: rawWord,
-                    splitIndex: segments.length,
-                    splitTotal: segments.length + 1,
-                    wordIndex: wordIdx
+                    text: lowerWord, displayText: word.toLowerCase(),
+                    id: this._hashID(lowerWord), isSubword: false,
+                    originalWord: rawWord, displayOriginal: rawWord,
+                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: false
+                });
+            } else {
+                // Segmentieren
+                const segments = this.segmentWord(word);
+                segments.forEach((seg, segIdx) => {
+                    allTokens.push({
+                        text: segIdx > 0 ? '##' + seg : seg,
+                        displayText: seg,
+                        id: this._hashID(seg),
+                        isSubword: segIdx > 0,
+                        originalWord: rawWord,
+                        displayOriginal: rawWord,
+                        splitIndex: segIdx,
+                        splitTotal: segments.length + (punctAfter ? 1 : 0),
+                        wordIndex: wordIdx,
+                        isPunct: false
+                    });
+                });
+            }
+
+            // Satzzeichen hinten
+            if (punctAfter) {
+                allTokens.push({
+                    text: punctAfter, displayText: punctAfter,
+                    id: this._hashID(punctAfter), isSubword: false,
+                    originalWord: rawWord, displayOriginal: rawWord,
+                    splitIndex: 0, splitTotal: 1, wordIndex: wordIdx, isPunct: true
                 });
             }
         });
@@ -189,7 +298,7 @@ const TokenizerViz = {
                 colorIdx++;
             }
             const color = this.tokenColors[colorIdx % this.tokenColors.length];
-            const isSplit = token.splitTotal > 1;
+            const isSplit = token.splitTotal > 1 && !token.isPunct;
             const isSubword = token.isSubword;
 
             html += `
@@ -207,20 +316,20 @@ const TokenizerViz = {
                   title="${token.displayOriginal} → Teil ${token.splitIndex + 1}/${token.splitTotal}">
                     <span style="font-weight:bold; font-size:1.05em; color:${color};">${token.displayText}</span>
                     <span style="font-size:0.65em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
-                    ${isSplit && !token.displayText.match(/^[.,!?;:]+$/) ? `<span style="font-size:0.6em; color:${isSubword ? '#f59e0b' : '#6366f1'};">${isSubword ? '##sub' : 'start▸'}</span>` : ''}
+                    ${isSplit && !token.isPunct ? `<span style="font-size:0.6em; color:${isSubword ? '#f59e0b' : '#6366f1'};">${isSubword ? '##sub' : 'start▸'}</span>` : ''}
                 </div>`;
         });
         html += '</div>';
 
-        // ─── Zerlegungsanzeige für zusammengesetzte Wörter ───
+        // ─── Zerlegungsanzeige ───
         const compoundWords = [];
         const seen = new Set();
         tokens.forEach(t => {
-            if (t.splitTotal > 1 && !seen.has(t.originalWord) && !t.displayText.match(/^[.,!?;:]+$/)) {
+            if (t.splitTotal > 1 && !seen.has(t.originalWord) && !t.isPunct) {
                 seen.add(t.originalWord);
-                const parts = tokens.filter(tok => tok.originalWord === t.originalWord && !tok.displayText.match(/^[.,!?;:]+$/));
+                const parts = tokens.filter(tok => tok.originalWord === t.originalWord && !tok.isPunct);
                 if (parts.length > 1) {
-                    compoundWords.push({ word: t.originalWord, parts: parts.map(p => p.displayText) });
+                    compoundWords.push({ word: t.displayOriginal, parts: parts.map(p => p.displayText) });
                 }
             }
         });
