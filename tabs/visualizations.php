@@ -3,7 +3,7 @@
 		<li><a id="fcnn_tab_label" href="#fcnn_tab"><span class="TRANSLATEME_network_visualization"></span></a></li>
 		<li><a href="#math_tab" onclick="onclick_math_mode(this, event)" id="math_tab_label"><span class="TRANSLATEME_math"></span></a></li>
 		<li style="display: none"><a href="#maximally_activated" id="maximally_activated_label" style="display: none">Feature Maps</a></li>
-		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation function</a></li>
+		<li style="display: none"><a href="#activation_plot_tab" id="activation_plot_tab_label" style="display: none">Activation Function</a></li>
 		<li><a href="#weight_surfaces" onclick="create_weight_surfaces(true)" id="weight_surfaces_tab_label"><span class="TRANSLATEME_weightsurfaces"></span></a></li>
 		<!--<li><a href="#loss_landscape_tab" id="loss_landscape_tab_label"><span class="TRANSLATEME_loss_landscape"></span></a></li>-->
 		<li style="display: none"><a href="#layer_input_groups" id="layer_input_groups_label"><span class="TRANSLATEME_layer_input_groups"></span></a></li>
