@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM-Vorwärtsdurchlauf – Mentales Modell</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .slide {
+            min-height: 100vh;
+            padding: 40px 5%;
+            border-bottom: 2px solid #1a1a3a;
+            position: relative;
+        }
+        .slide h2 {
+            font-size: 2em;
+            color: #7eb8ff;
+            margin-bottom: 10px;
+        }
+        .slide h3 {
+            font-size: 1.3em;
+            color: #a0c4ff;
+            margin-bottom: 20px;
+            font-weight: normal;
+        }
+        .projection-note {
+            background: rgba(126, 184, 255, 0.1);
+            border-left: 3px solid #7eb8ff;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            color: #a0c4ff;
+            border-radius: 0 5px 5px 0;
+        }
+        .hypothesis-box {
+            background: rgba(255, 200, 50, 0.08);
+            border: 2px dashed #ffc832;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        .hypothesis-box::before {
+            content: "⚠️ Hypothese";
+            display: block;
+            font-weight: bold;
+            color: #ffc832;
+            margin-bottom: 8px;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            align-items: center;
+        }
+        .controls button {
+            background: #2a3a5a;
+            color: #7eb8ff;
+            border: 1px solid #3a5a8a;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .controls button:hover {
+            background: #3a5a8a;
+            color: #fff;
+        }
+        .controls button.active {
+            background: #4a7abf;
+            color: #fff;
+        }
+        .controls label {
+            color: #a0c4ff;
+            font-size: 0.9em;
+        }
+        .controls input[type="range"] {
+            width: 200px;
+            accent-color: #7eb8ff;
+        }
+        canvas {
+            border: 1px solid #1a2a4a;
+            border-radius: 8px;
+            display: block;
+            margin: 15px auto;
+            background: #050510;
+        }
+        .plotly-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .explanation {
+            max-width: 900px;
+            line-height: 1.7;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+        .explanation strong {
+            color: #7eb8ff;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .grid-2col { grid-template-columns: 1fr; }
+        }
+        .nav {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .nav a {
+            background: #1a2a4a;
+            color: #7eb8ff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.75em;
+            text-align: center;
+        }
+        .nav a:hover { background: #2a4a7a; }
+        .token-display {
+            display: inline-flex;
+            gap: 3px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .token-chip {
+            background: #1a2a4a;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85em;
+            border: 1px solid #2a4a6a;
+        }
+        .step-indicator {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1a2a4a;
+            border: 1px solid #3a5a8a;
+            transition: all 0.3s;
+        }
+        .step-dot.active {
+            background: #4a7abf;
+            box-shadow: 0 0 8px #4a7abf;
+        }
+        .spectrum-bar {
+            height: 30px;
+            background: linear-gradient(to right, #ff6b6b, #ffd93d, #6bcf7f, #4a9eff);
+            border-radius: 5px;
+            position: relative;
+            margin: 10px 0;
+        }
+        .info-small {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="#slide1">1: Gesamtfluss</a>
+    <a href="#slide2">2: Embedding</a>
+    <a href="#slide3">3: Attention</a>
+    <a href="#slide4">4: FFN</a>
+    <a href="#slide5">5: Gesamtbild</a>
+</nav>
+
+<!-- ==================== FOLIE 1 ==================== -->
+<div class="slide" id="slide1" data-title="Der Gesamtfluss – Vom Text zum nächsten Wort">
+    <h2>Folie 1: Der Gesamtfluss</h2>
+    <h3>Vom Text zum nächsten Wort – Punkte die sich durch einen Raum bewegen</h3>
+    
+    <div class="projection-note">
+        🔍 Was wir hier sehen ist eine 3D-Projektion eines 4096+-dimensionalen Raums – aber die Punkte und ihre Relationen zueinander sind real.
+    </div>
+
+    <div class="explanation">
+        <strong>Eingabe:</strong> "Die Katze saß auf der" → Was kommt als nächstes?
+    </div>
+    
+    <div class="token-display" id="slide1-tokens"></div>
+    
+    <div class="step-indicator" id="slide1-steps"></div>
+    
+    <div class="controls">
+        <button id="s1-btn-tokenize">1. Tokenisieren</button>
+        <button id="s1-btn-embed">2. Embedding</button>
+        <button id="s1-btn-posenc">3. + Position</button>
+        <button id="s1-btn-layers">4. Durch Layer</button>
+        <button id="s1-btn-unembed">5. Unembedding</button>
+        <button id="s1-btn-auto">▶ Auto-Ablauf</button>
+    </div>
+
+    <canvas id="canvas1" width="900" height="500"></canvas>
+
+    <div class="explanation" id="s1-explanation">
+        Klicke die Buttons oben, um jeden Schritt des Vorwärtsdurchlaufs zu sehen. Jedes Token wird zu einem konkreten Punkt im Raum – mit konkreten Koordinaten. Dann fließen diese Punkte durch Layer und werden verschoben.
+    </div>
+
+    <div class="explanation" style="margin-top: 20px; font-size: 0.85em; color: #888;">
+        <strong>Am Rande:</strong> Sogenannte "Glitch Tokens" (z.B. "SolidGoldMagikarp" bei GPT) und Hapax Legomena (Wörter die nur einmal in den Trainingsdaten vorkamen) haben keine sinnvolle Position in diesem Raum – es gab nicht genug Daten, um sie einzuordnen. Sie zeigen: das System braucht statistische Evidenz, um sinnvolle Koordinaten zu lernen.
+    </div>
+</div>
+
+<!-- ==================== FOLIE 2 ==================== -->
+<div class="slide" id="slide2" data-title="Punkte im Raum – Der Embedding-Space">
+    <h2>Folie 2: Punkte im Raum</h2>
+    <h3>Der Embedding-Space – Bedeutung als Geometrie</h3>
+
+    <div class="projection-note">
+        🔍 In Wirklichkeit hat dieser Raum 4096+ Dimensionen – wir sehen hier nur eine 3D-Projektion, aber die Punkte und ihre Relationen sind real. Reale Dinge haben eine Ordnung untereinander – diese Ordnung propagiert sich durch Sprache ins Modell.
+    </div>
+
+    <div class="controls">
+        <button id="s2-btn-clusters">Cluster zeigen</button>
+        <button id="s2-btn-directions">Richtungen zeigen</button>
+        <button id="s2-btn-arithmetic">König - Mann + Frau = ?</button>
+        <button id="s2-btn-geography">Geographie-Cluster</button>
+        <button id="s2-btn-reset">Reset</button>
+    </div>
+
+    <div id="plotly-embed" class="plotly-container"></div>
+
+    <div class="explanation">
+        <strong>Bedeutung ist als Richtungen kodiert</strong> – nicht einzelne Achsen! Eine "Gender-Richtung" geht schräg durch viele Dimensionen. Ebenso gibt es Richtungen für: Zeitform, Konkretheit, Belebtheit, geographische Nähe, Emotionalität, Formalität, und tausende weitere.<br><br>
+        <strong>Vektorarithmetik:</strong> König − Mann + Frau ≈ Königin. Der Punkt bewegt sich sichtbar durch den Raum.<br><br>
+        <strong>Warum?</strong> Hamburg liegt näher an "Elbe" als an "Spree", weil Hamburg <em>tatsächlich</em> an der Elbe liegt. Die Ordnung der realen Welt propagiert sich durch Sprache (Kookkurrenz in Texten) ins Modell.
+    </div>
+</div>
+
+<!-- ==================== FOLIE 3 ==================== -->
+<div class="slide" id="slide3" data-title="Attention – Punkte ziehen sich an">
+    <h2>Folie 3: Attention</h2>
+    <h3>Punkte ziehen sich an – Kontextualisierung im Raum</h3>
+
+    <div class="projection-note">
+        🔍 Kausale Maske: Information fließt nur von früheren zu späteren Tokens (links → rechts). Das letzte Token akkumuliert die meiste Information – wie ein Trichter.
+    </div>
+
+    <div class="controls">
+        <label>Layer-Tiefe: <span id="s3-layer-label">1 (früh)</span></label>
+        <input type="range" id="s3-layer-slider" min="1" max="32" value="1">
+        <button id="s3-btn-animate">▶ Attention animieren</button>
+        <button id="s3-btn-heads">Köpfe zeigen</button>
+        <button id="s3-btn-mask">Kausale Maske</button>
+    </div>
+
+    <canvas id="canvas3" width="900" height="500"></canvas>
+
+    <div class="grid-2col">
+        <div class="explanation">
+            <strong>Frühe Layer (1-8):</strong> Subword-Komposition. "ham" + "burg" → der Punkt wandert in die "Hamburg"-Region. Verschiebung tendenziell lokal, in wenigen Unterdimensionen.<br><br>
+            <strong>Späte Layer (24-32):</strong> Abstrakte semantische Beziehungen. Subjekt-Verb-Zuordnung, Koreferenz. Größere Gesamtverschiebung durch Akkumulation vieler kleiner Schritte.
+        </div>
+        <div class="explanation">
+            <strong>Multi-Head:</strong> Es gibt ~96 parallele Attention-Köpfe, die jeweils in einem Unterraum arbeiten. Einer für Syntax, einer für Koreferenz, einer für Nähe, etc. Verschiedene Farben = verschiedene Köpfe.<br><br>
+            <strong>Residual Stream:</strong> x = x + attention(x). Die vorherige Position bleibt als "Basis" erhalten – jede Schicht schreibt additiv.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FOLIE 4 ==================== -->
+<div class="slide" id="slide4" data-title="FFN – Die Wissensdatenbank verschiebt Punkte">
+    <h2>Folie 4: FFN – Feed-Forward Network</h2>
+    <h3>Pattern-Match → Gate → Write-Knowledge</h3>
+
+    <div class="projection-note">
+        🔍 Die FFN-Neuronen wirken wie überlagerbare Knickpunkt-Funktionen (ReLU-Rampen – stückweise linear, nicht periodisch). Viele einfache Beiträge summieren sich zu einem komplexen Ergebnis.
+    </div>
+
+    <div class="controls">
+        <button id="s4-btn-rare">Seltenes Faktum (Vaduz)</button>
+        <button id="s4-btn-common">Häufiges Muster (Artikel→Nomen)</button>
+        <button id="s4-btn-relu">ReLU-Gating zeigen</button>
+        <button id="s4-btn-basins">Bassins zeigen</button>
+        <button id="s4-btn-grid">Gitter-Verzerrung</button>
+    </div>
+
+    <canvas id="canvas4" width="900" height="500"></canvas>
+
+    <div class="controls">
+        <label>Spektrum (lokal ↔ global): </label>
+        <input type="range" id="s4-spectrum-slider" min="0" max="100" value="0">
+        <span id="s4-spectrum-label">Lokal (wenige Neuronen)</span>
+    </div>
+
+    <div class="explanation">
+        <strong>Dense₁</strong> erkennt Muster ("Ist das ein Tier?", "Folgt nach Präposition?", "Ist das eine Hauptstadt?").<br>
+        <strong>ReLU</strong> gated: negative Werte → 0. Nur aktive Detektoren feuern.<br>
+        <strong>Dense₂</strong> schreibt das zugehörige Wissen als Verschiebungsvektor zurück.<br><br>
+        <strong>Spektrum:</strong> Häufig in Trainingsdaten → über viele Neuronen verteilt (global). Selten → auf wenigen Neuronen konzentriert (lokal). Z.B. "Hauptstadt von Liechtenstein = Vaduz" → wenige Neuronen. "Nach Artikel kommt Nomen" → tausende Neuronen.
+    </div>
+
+    <div class="explanation">
+        <strong>Bassins:</strong> Regionen im Raum, in die viele verschiedene Inputs deterministisch gemappt werden. Viele Pfeile zeigen in dieselbe Region – keine zeitliche Dynamik, sondern eine deterministische Funktion.
+    </div>
+</div>
+
+<!-- ==================== FOLIE 5 ==================== -->
+<div class="slide" id="slide5" data-title="Das Gesamtbild – Meine Intuition">
+    <h2>Folie 5: Das Gesamtbild</h2>
+    <h3>Meine Intuition – Punkte in einem konkreten Raum</h3>
+
+    <div class="controls">
+        <button id="s5-btn-play">▶ Gesamtanimation</button>
+        <button id="s5-btn-grid">Gitter-Verzerrung (Layer 1→32)</button>
+        <button id="s5-btn-clusters">Kurzlebige Cluster</button>
+        <button id="s5-btn-convergence">Konvergenz/Bassins</button>
+    </div>
+
+    <canvas id="canvas5" width="900" height="550"></canvas>
+
+    <div class="hypothesis-box">
+        In Zwischenlayern entstehen kurzlebige Cluster/Mannigfaltigkeiten die sich bilden und auflösen – temporäre Strukturen die nur zwischen bestimmten Layern existieren. Diese sind dynamisch generiert durch die Durchmischung der Signale. (Mechanistic Interpretability-Forschung deutet darauf hin, ist aber noch nicht vollständig bestätigt.)
+    </div>
+
+    <div class="explanation" style="background: rgba(100,200,100,0.08); padding: 20px; border-radius: 8px; border: 1px solid #3a6a3a;">
+        <strong style="color: #6bcf7f; font-size: 1.1em;">Die Kernaussage:</strong><br><br>
+        Das System ist intern <strong>vollständig deterministisch</strong>. Zufall existiert nur bei der Gewichts-Initialisierung vor dem Training und beim Sampling nach dem Durchlauf.<br><br>
+        Die "Magie" entsteht durch die <strong>Stapelung einfacher Operationen</strong>: Addition, Multiplikation, Vergleich – angewandt auf Punkte in einem konkreten Raum.<br><br>
+        <strong>Reale Dinge haben eine Ordnung</strong> – diese Ordnung propagiert sich durch Sprache ins Modell. Hamburg liegt an der Elbe, nicht an der Spree. Das Modell lernt das, weil es in den Texten so steht – und es steht so in den Texten, weil es in der Welt so ist.<br><br>
+        <strong>LayerNorm</strong> begrenzt jeden einzelnen Schritt, aber viele kleine Schritte akkumulieren sich zu großen Verschiebungen. Der Raum in dem die Tokens starten ist derselbe in dem am Ende die Vorhersage gemacht wird.<br><br>
+        <strong>Temperature</strong> ist reines Post-Processing (Skalierung der Logits vor Softmax) – sie verändert nichts am internen Durchlauf.
+    </div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ============================================================
+// FOLIE 1: Der Gesamtfluss
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas1');
+    const ctx = canvas.getContext('2d');
+    const tokens = ["Die", "Katze", "saß", "auf", "der"];
+    const tokenColors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4a9eff', '#c77dff'];
+    
+    // 3D-Punkte für Tokens (simulierte Embedding-Koordinaten)
+    const embedPoints = [
+        {x: 150, y: 280, z: 0.5},
+        {x: 280, y: 200, z: 0.8},
+        {x: 420, y: 320, z: 0.3},
+        {x: 550, y: 250, z: 0.6},
+        {x: 680, y: 290, z: 0.7}
+    ];
+    
+    const posEncOffset = [{x:5,y:-15},{x:-8,y:10},{x:12,y:-5},{x:-3,y:8},{x:7,y:-12}];
+    
+    // Layer-Verschiebungen (simuliert)
+    const layerShifts = [
+        [{x:10,y:-20},{x:-15,y:25},{x:20,y:-10},{x:-5,y:15},{x:30,y:-25}],
+        [{x:-8,y:15},{x:12,y:-18},{x:-10,y:22},{x:18,y:-12},{x:-20,y:30}],
+        [{x:15,y:-10},{x:-20,y:8},{x:5,y:-15},{x:25,y:-20},{x:-15,y:20}]
+    ];
+    
+    let currentStep = 0;
+    let animationFrame = null;
+    let animProgress = 0;
+    let currentPoints = [];
+    let targetPoints = [];
+    let trails = [];
+    
+    function initPoints() {
+        currentPoints = tokens.map((t, i) => ({x: 100 + i * 160, y: 450, z: 0, label: t, color: tokenColors[i]}));
+        targetPoints = currentPoints.map(p => ({...p}));
+        trails = tokens.map(() => []);
+    }
+    
+    function drawAxes() {
+        ctx.strokeStyle = '#2a3a5a';
+        ctx.lineWidth = 1;
+        // X axis
+        ctx.beginPath(); ctx.moveTo(50, 460); ctx.lineTo(850, 460); ctx.stroke();
+        // Y axis
+        ctx.beginPath(); ctx.moveTo(50, 460); ctx.lineTo(50, 40); ctx.stroke();
+        // Z axis (diagonal)
+        ctx.beginPath(); ctx.moveTo(50, 460); ctx.lineTo(150, 380); ctx.stroke();
+        
+        ctx.fillStyle = '#4a6a8a';
+        ctx.font = '11px monospace';
+        ctx.fillText('dim₁', 840, 475);
+        ctx.fillText('dim₂', 30, 35);
+        ctx.fillText('dim₃', 155, 375);
+        
+        // Grid
+        ctx.strokeStyle = '#151525';
+        for(let i = 100; i < 850; i += 80) {
+            ctx.beginPath(); ctx.moveTo(i, 460); ctx.lineTo(i, 40); ctx.stroke();
+        }
+        for(let i = 80; i < 460; i += 80) {
+            ctx.beginPath(); ctx.moveTo(50, i); ctx.lineTo(850, i); ctx.stroke();
+        }
+    }
+    
+    function drawPoint(p, size) {
+        const s = size || 8;
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, s*2);
+        gradient.addColorStop(0, p.color);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, s*2, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, s, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(p.label, p.x, p.y - s - 5);
+    }
+    
+    function drawTrails() {
+        trails.forEach((trail, i) => {
+            if(trail.length < 2) return;
+            ctx.strokeStyle = tokenColors[i] + '60';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(trail[0].x, trail[0].y);
+            for(let j = 1; j < trail.length; j++) {
+                ctx.lineTo(trail[j].x, trail[j].y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+    }
+    
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawAxes();
+        drawTrails();
+        currentPoints.forEach(p => drawPoint(p));
+        
+        // Step label
+        const stepLabels = ['Start', 'Tokenisiert', 'Embedding', '+ Position', 'Nach Layern', 'Unembedding'];
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Schritt: ' + stepLabels[currentStep], 60, 25);
+        
+        // Coordinates display
+        if(currentStep >= 2) {
+            ctx.font = '10px monospace';
+            ctx.fillStyle = '#6a8aaa';
+            currentPoints.forEach((p, i) => {
+                const cx = ((p.x - 450) / 400).toFixed(2);
+                const cy = ((250 - p.y) / 200).toFixed(2);
+                const cz = (p.z || 0).toFixed(2);
+                ctx.fillText(`(${cx}, ${cy}, ${cz})`, p.x - 30, p.y + 20);
+            });
+        }
+    }
+    
+    function animateTo(targets, duration, callback) {
+        const starts = currentPoints.map(p => ({x: p.x, y: p.y, z: p.z}));
+        let startTime = null;
+        
+        function step(timestamp) {
+            if(!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            
+            currentPoints.forEach((p, i) => {
+                p.x = starts[i].x + (targets[i].x - starts[i].x) * ease;
+                p.y = starts[i].y + (targets[i].y - starts[i].y) * ease;
+                p.z = starts[i].z + (targets[i].z - starts[i].z) * ease;
+            });
+            
+            draw();
+            
+            if(progress < 1) {
+                animationFrame = requestAnimationFrame(step);
+            } else {
+                // Save trail points
+                currentPoints.forEach((p, i) => {
+                    trails[i].push({x: p.x, y: p.y});
+                });
+                if(callback) callback();
+            }
+        }
+        animationFrame = requestAnimationFrame(step);
+    }
+    
+    function stepTokenize() {
+        currentStep = 1;
+        const tokenDiv = document.getElementById('slide1-tokens');
+        tokenDiv.innerHTML = tokens.map((t, i) => 
+            `<span class="token-chip" style="border-color:${tokenColors[i]};color:${tokenColors[i]}">${t}</span>`
+        ).join('');
+        
+        currentPoints = tokens.map((t, i) => ({
+            x: 150 + i * 150, y: 430, z: 0, label: t, color: tokenColors[i]
+        }));
+        trails = tokens.map(() => []);
+        draw();
+        document.getElementById('s1-explanation').textContent = 
+            'BPE-Tokenisierung: Der Text wird deterministisch in Tokens zerlegt. Jedes Token bekommt eine ID aus dem Vokabular (~50.000-100.000 Einträge).';
+    }
+    
+    function stepEmbed() {
+        currentStep = 2;
+        const targets = embedPoints.map((p, i) => ({
+            x: p.x, y: p.y, z: p.z, label: tokens[i], color: tokenColors[i]
+        }));
+        animateTo(targets, 1200);
+        document.getElementById('s1-explanation').textContent = 
+            'Embedding: Jedes Token wird auf einen konkreten Punkt im hochdimensionalen Raum gemappt. Die Koordinaten sind gelernte Parameter – z.B. "Katze" → (0.22, 0.85, -0.41, ...) in 4096 Dimensionen.';
+    }
+    
+    function stepPosEnc() {
+        currentStep = 3;
+        const targets = currentPoints.map((p, i) => ({
+            x: p.x + posEncOffset[i].x * 2,
+            y: p.y + posEncOffset[i].y * 2,
+            z: p.z + 0.1,
+            label: p.label, color: p.color
+        }));
+        animateTo(targets, 800);
+        document.getElementById('s1-explanation').textContent = 
+            'Positional Encoding: Zu jedem Punkt wird ein Positionsvektor addiert. Ohne ihn wäre "Hund beißt Mann" = "Mann beißt Hund". Die Position gibt den Tokens eine Ordnung im Satz.';
+    }
+    
+    function stepLayers() {
+        currentStep = 4;
+        let layerIdx = 0;
+        
+        function nextLayer() {
+            if(layerIdx >= layerShifts.length) {
+                document.getElementById('s1-explanation').textContent = 
+                    'Nach 32+ Layern: Jeder Layer verschiebt die Punkte ein Stück (Residual: x = x + layer(x)). Attention kontextualisiert, FFN fügt Wissen hinzu. Das letzte Token ("der") akkumuliert die meiste Information.';
+                return;
+            }
+            const targets = currentPoints.map((p, i) => ({
+                x: p.x + layerShifts[layerIdx][i].x,
+                y: p.y + layerShifts[layerIdx][i].y,
+                z: p.z + 0.05,
+                label: p.label, color: p.color
+            }));
+            animateTo(targets, 800, () => {
+                layerIdx++;
+                setTimeout(nextLayer, 300);
+            });
+        }
+        nextLayer();
+    }
+    
+    function stepUnembed() {
+        currentStep = 5;
+        // The last token moves toward the "prediction zone"
+        const targets = currentPoints.map((p, i) => {
+            if(i === 4) { // "der" - last token
+                return {x: 750, y: 120, z: 0.9, label: '→ "Matte"?', color: '#ffd700'};
+            }
+            return {...p, color: p.color + '60'}; // fade others
+        });
+        animateTo(targets, 1000);
+        
+        // Draw prediction fan
+        setTimeout(() => {
+            ctx.save();
+            ctx.globalAlpha = 0.4;
+            const predictions = [
+                {word: 'Matte', score: 0.35, y: 80},
+                {word: 'Straße', score: 0.20, y: 110},
+                {word: 'Couch', score: 0.15, y: 140},
+                {word: 'Fensterbank', score: 0.10, y: 170}
+            ];
+            predictions.forEach(pred => {
+                ctx.fillStyle = '#ffd700';
+                ctx.fillRect(770, pred.y, pred.score * 200, 18);
+                ctx.fillStyle = '#fff';
+                ctx.font = '11px sans-serif';
+                ctx.fillText(`${pred.word} (${(pred.score*100).toFixed(0)}%)`, 775, pred.y + 13);
+            });
+            ctx.restore();
+        }, 1100);
+        
+        document.getElementById('s1-explanation').textContent = 
+            'Unembedding: Der finale Vektor des letzten Tokens wird per Dot-Product mit allen ~50.000 Token-Embeddings verglichen. Das Token dessen Embedding am nächsten in Richtung des finalen Vektors zeigt, "gewinnt". Dann Softmax → Wahrscheinlichkeitsverteilung → Sampling (hier kommt der einzige Zufall ins Spiel).';
+    }
+    
+    // Button handlers
+    document.getElementById('s1-btn-tokenize').addEventListener('click', () => { initPoints(); stepTokenize(); });
+    document.getElementById('s1-btn-embed').addEventListener('click', stepEmbed);
+    document.getElementById('s1-btn-posenc').addEventListener('click', stepPosEnc);
+    document.getElementById('s1-btn-layers').addEventListener('click', stepLayers);
+    document.getElementById('s1-btn-unembed').addEventListener('click', stepUnembed);
+    document.getElementById('s1-btn-auto').addEventListener('click', () => {
+        initPoints();
+        stepTokenize();
+        setTimeout(stepEmbed, 1000);
+        setTimeout(stepPosEnc, 2500);
+        setTimeout(stepLayers, 3500);
+        setTimeout(stepUnembed, 7000);
+    });
+    
+    // Initial draw
+    initPoints();
+    draw();
+})();
+
+// ============================================================
+// FOLIE 2: Embedding-Space (Plotly 3D)
+// ============================================================
+(function() {
+    // Word embeddings (simulated 3D projections)
+    const words = {
+        // Royalty cluster
+        'König': {x: 2.1, y: 1.8, z: 0.5, cluster: 'royalty'},
+        'Königin': {x: 1.8, y: 2.2, z: 0.7, cluster: 'royalty'},
+        'Prinz': {x: 2.3, y: 1.5, z: 0.3, cluster: 'royalty'},
+        'Krone': {x: 2.0, y: 1.6, z: 0.9, cluster: 'royalty'},
+        // Gender
+        'Mann': {x: 1.5, y: -0.5, z: 0.2, cluster: 'people'},
+        'Frau': {x: 1.2, y: 0.0, z: 0.4, cluster: 'people'},
+        'Junge': {x: 1.7, y: -0.8, z: -0.1, cluster: 'people'},
+        'Mädchen': {x: 1.4, y: -0.3, z: 0.1, cluster: 'people'},
+        // Animals
+        'Katze': {x: -1.5, y: -1.0, z: 1.2, cluster: 'animals'},
+        'Hund': {x: -1.2, y: -1.3, z: 1.0, cluster: 'animals'},
+        'Tier': {x: -1.0, y: -0.8, z: 1.5, cluster: 'animals'},
+        'Vogel': {x: -1.8, y: -0.5, z: 1.8, cluster: 'animals'},
+        // Geography
+        'Hamburg': {x: -0.5, y: 2.5, z: -1.0, cluster: 'geo'},
+        'Elbe': {x: -0.3, y: 2.3, z: -0.8, cluster: 'geo'},
+        'Berlin': {x: 0.2, y: 2.8, z: -1.2, cluster: 'geo'},
+        'Spree': {x: 0.4, y: 2.6, z: -1.0, cluster: 'geo'},
+        'München': {x: 0.8, y: 2.2, z: -1.5, cluster: 'geo'},
+        // Abstract
+        'Liebe': {x: 0.0, y: -2.0, z: -0.5, cluster: 'emotion'},
+        'Hass': {x: 0.3, y: -2.3, z: -0.8, cluster: 'emotion'},
+        'Freude': {x: -0.2, y: -1.8, z: -0.3, cluster: 'emotion'},
+        'Trauer': {x: 0.5, y: -2.5, z: -1.0, cluster: 'emotion'}
+    };
+    
+    const clusterColors = {
+        'royalty': '#ffd700',
+        'people': '#ff6b6b',
+        'animals': '#6bcf7f',
+        'geo': '#4a9eff',
+        'emotion': '#c77dff'
+    };
+    
+    function buildBaseTrace() {
+        const names = Object.keys(words);
+        return {
+            x: names.map(n => words[n].x),
+            y: names.map(n => words[n].y),
+            z: names.map(n => words[n].z),
+            text: names,
+            mode: 'markers+text',
+            type: 'scatter3d',
+            marker: {
+                size: 8,
+                color: names.map(n => clusterColors[words[n].cluster]),
+                opacity: 0.9
+            },
+            textposition: 'top center',
+            textfont: {size: 10, color: '#ccc'},
+            name: 'Wörter'
+        };
+    }
+    
+    const layout = {
+        paper_bgcolor: '#0a0a1a',
+        plot_bgcolor: '#050510',
+        scene: {
+            xaxis: {title: 'Dimension 1 (Projektion)', color: '#4a6a8a', gridcolor: '#1a2a3a'},
+            yaxis: {title: 'Dimension 2 (Projektion)', color: '#4a6a8a', gridcolor: '#1a2a3a'},
+            zaxis: {title: 'Dimension 3 (Projektion)', color: '#4a6a8a', gridcolor: '#1a2a3a'},
+            bgcolor: '#050510'
+        },
+        font: {color: '#ccc'},
+        margin: {l: 0, r: 0, t: 30, b: 0},
+        showlegend: false
+    };
+    
+    function plotBase() {
+        Plotly.newPlot('plotly-embed', [buildBaseTrace()], layout, {responsive: true});
+    }
+    
+    document.getElementById('s2-btn-clusters').addEventListener('click', () => {
+        const traces = [buildBaseTrace()];
+        // Add cluster clouds (mesh3d approximation with scatter)
+        const clusters = ['royalty', 'animals', 'geo', 'emotion', 'people'];
+        clusters.forEach(cl => {
+            const pts = Object.entries(words).filter(([k,v]) => v.cluster === cl);
+            const cx = pts.reduce((s,[k,v]) => s+v.x, 0) / pts.length;
+            const cy = pts.reduce((s,[k,v]) => s+v.y, 0) / pts.length;
+            const cz = pts.reduce((s,[k,v]) => s+v.z, 0) / pts.length;
+            // Cloud sphere
+            const n = 20;
+            const cloudX = [], cloudY = [], cloudZ = [];
+            for(let i = 0; i < n; i++) {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.random() * Math.PI;
+                const r = 0.5 + Math.random() * 0.3;
+                cloudX.push(cx + r * Math.sin(phi) * Math.cos(theta));
+                cloudY.push(cy + r * Math.sin(phi) * Math.sin(theta));
+                cloudZ.push(cz + r * Math.cos(phi));
+            }
+            traces.push({
+                x: cloudX, y: cloudY, z: cloudZ,
+                mode: 'markers',
+                type: 'scatter3d',
+                marker: {size: 15, color: clusterColors[cl], opacity: 0.1},
+                name: cl,
+                showlegend: false
+            });
+        });
+        Plotly.react('plotly-embed', traces, layout);
+    });
+    
+    document.getElementById('s2-btn-directions').addEventListener('click', () => {
+        const traces = [buildBaseTrace()];
+        // Direction arrows as lines
+        const directions = [
+            {from: 'Mann', to: 'Frau', label: 'Gender-Richtung', color: '#ff6b6b'},
+            {from: 'Hamburg', to: 'Berlin', label: 'Geo-Verschiebung', color: '#4a9eff'},
+            {from: 'Hass', to: 'Liebe', label: 'Emotion +', color: '#c77dff'},
+            {from: 'Katze', to: 'Tier', label: 'Abstraktion ↑', color: '#6bcf7f'}
+        ];
+        directions.forEach(d => {
+            const f = words[d.from], t = words[d.to];
+            traces.push({
+                x: [f.x, t.x], y: [f.y, t.y], z: [f.z, t.z],
+                mode: 'lines',
+                type: 'scatter3d',
+                line: {color: d.color, width: 5},
+                name: d.label
+            });
+        });
+        Plotly.react('plotly-embed', traces, {...layout, showlegend: true});
+    });
+    
+    document.getElementById('s2-btn-arithmetic').addEventListener('click', () => {
+        const traces = [buildBaseTrace()];
+        // König - Mann + Frau ≈ Königin
+        const k = words['König'], m = words['Mann'], f = words['Frau'], q = words['Königin'];
+        // Path: König → König-Mann → König-Mann+Frau ≈ Königin
+        const step1 = {x: k.x - (m.x - f.x)*0.3, y: k.y - (m.y - f.y)*0.3, z: k.z - (m.z - f.z)*0.3};
+        const step2 = {x: k.x - m.x + f.x, y: k.y - m.y + f.y, z: k.z - m.z + f.z};
+        
+        traces.push({
+            x: [k.x, step1.x, step2.x],
+            y: [k.y, step1.y, step2.y],
+            z: [k.z, step1.z, step2.z],
+            mode: 'lines+markers',
+            type: 'scatter3d',
+            line: {color: '#ffd700', width: 6},
+            marker: {size: 6, color: '#ffd700'},
+            name: 'König - Mann + Frau'
+        });
+        
+        // Arrow to Königin
+        traces.push({
+            x: [step2.x, q.x],
+            y: [step2.y, q.y],
+            z: [step2.z, q.z],
+            mode: 'lines',
+            type: 'scatter3d',
+            line: {color: '#ffd700', width: 3, dash: 'dash'},
+            name: '≈ Königin'
+        });
+        
+        // Annotation point
+        traces.push({
+            x: [step2.x], y: [step2.y], z: [step2.z],
+            mode: 'markers+text',
+            type: 'scatter3d',
+            marker: {size: 12, color: '#ffd700', symbol: 'diamond'},
+            text: ['König−Mann+Frau'],
+            textposition: 'bottom center',
+            textfont: {color: '#ffd700', size: 11},
+            name: 'Ergebnis'
+        });
+        
+        Plotly.react('plotly-embed', traces, {...layout, showlegend: true});
+    });
+    
+    document.getElementById('s2-btn-geography').addEventListener('click', () => {
+        const traces = [buildBaseTrace()];
+        // Highlight Hamburg-Elbe proximity vs Hamburg-Spree distance
+        const h = words['Hamburg'], e = words['Elbe'], s = words['Spree'];
+        
+        traces.push({
+            x: [h.x, e.x], y: [h.y, e.y], z: [h.z, e.z],
+            mode: 'lines+text',
+            type: 'scatter3d',
+            line: {color: '#00ff88', width: 8},
+            text: ['', 'NAHE (real!)'],
+            textposition: 'top center',
+            textfont: {color: '#00ff88', size: 12},
+            name: 'Hamburg↔Elbe (nah)'
+        });
+        
+        traces.push({
+            x: [h.x, s.x], y: [h.y, s.y], z: [h.z, s.z],
+            mode: 'lines+text',
+            type: 'scatter3d',
+            line: {color: '#ff4444', width: 4, dash: 'dash'},
+            text: ['', 'FERN'],
+            textposition: 'top center',
+            textfont: {color: '#ff4444', size: 12},
+            name: 'Hamburg↔Spree (fern)'
+        });
+        
+        Plotly.react('plotly-embed', traces, {...layout, showlegend: true});
+    });
+    
+    document.getElementById('s2-btn-reset').addEventListener('click', plotBase);
+    
+    // Initial plot
+    plotBase();
+})();
+
+// ============================================================
+// FOLIE 3: Attention
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas3');
+    const ctx = canvas.getContext('2d');
+    
+    const tokens = ["Die", "Katze", "saß", "auf", "der"];
+    const tokenColors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#4a9eff', '#c77dff'];
+    const headColors = ['#ff6b6b', '#4a9eff', '#6bcf7f', '#ffd93d', '#c77dff', '#ff9f43'];
+    
+    let layerDepth = 1;
+    let showHeads = false;
+    let showMask = false;
+    let animating = false;
+    
+    // Token positions in 3D-projected space
+    function getPositions(layer) {
+        const spread = 0.5 + layer * 0.02;
+        const jitter = layer * 2;
+        return [
+            {x: 150 + jitter*0.5, y: 350 - layer*3, label: 'Die'},
+            {x: 300 - jitter*0.3, y: 280 - layer*4, label: 'Katze'},
+            {x: 450 + jitter*0.2, y: 320 - layer*2, label: 'saß'},
+            {x: 580 - jitter*0.4, y: 260 - layer*3.5, label: 'auf'},
+            {x: 720 + jitter*0.1, y: 200 - layer*5, label: 'der'}
+        ];
+    }
+    
+    function drawAttentionScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Background grid
+        ctx.strokeStyle = '#0f1525';
+        ctx.lineWidth = 0.5;
+        for(let i = 0; i < canvas.width; i += 50) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+        for(let i = 0; i < canvas.height; i += 50) {
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+        }
+        
+        // Axes
+        ctx.strokeStyle = '#2a3a5a';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(50, 470); ctx.lineTo(870, 470); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(50, 470); ctx.lineTo(50, 30); ctx.stroke();
+        
+        const positions = getPositions(layerDepth);
+        
+        // Causal mask visualization
+        if(showMask) {
+            ctx.save();
+            for(let i = 0; i < positions.length; i++) {
+                for(let j = i+1; j < positions.length; j++) {
+                    // Blocked connections (future → past)
+                    ctx.strokeStyle = '#ff000030';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([3, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(positions[j].x, positions[j].y);
+                    ctx.lineTo(positions[i].x, positions[i].y);
+                    ctx.stroke();
+                    // X mark
+                    const mx = (positions[i].x + positions[j].x) / 2;
+                    const my = (positions[i].y + positions[j].y) / 2;
+                    ctx.fillStyle = '#ff4444';
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillText('✗', mx - 5, my);
+                }
+            }
+            ctx.setLineDash([]);
+            ctx.restore();
+        }
+        
+        // Attention connections (only past → current, respecting causal mask)
+        if(showHeads) {
+            for(let target = 1; target < positions.length; target++) {
+                for(let source = 0; source <= target; source++) {
+                    const headIdx = (target + source) % headColors.length;
+                    const strength = Math.max(0.1, 1 - Math.abs(target - source) * 0.2 - layerDepth * 0.01);
+                    
+                    ctx.strokeStyle = headColors[headIdx] + Math.floor(strength * 180).toString(16).padStart(2, '0');
+                    ctx.lineWidth = strength * 3;
+                    ctx.beginPath();
+                    ctx.moveTo(positions[source].x, positions[source].y);
+                    ctx.quadraticCurveTo(
+                        (positions[source].x + positions[target].x) / 2,
+                        Math.min(positions[source].y, positions[target].y) - 30 - headIdx * 8,
+                        positions[target].x, positions[target].y
+                    );
+                    ctx.stroke();
+                }
+            }
+            
+            // Legend
+            ctx.font = '10px sans-serif';
+            const headNames = ['Syntax', 'Koreferenz', 'Nähe', 'Semantik', 'Position', 'Muster'];
+            headNames.forEach((name, i) => {
+                ctx.fillStyle = headColors[i];
+                ctx.fillRect(700, 30 + i * 18, 12, 12);
+                ctx.fillStyle = '#aaa';
+                ctx.fillText('Kopf ' + (i+1) + ': ' + name, 718, 40 + i * 18);
+            });
+        }
+        
+        // Draw tokens as points
+        positions.forEach((p, i) => {
+            // Glow
+            const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 25);
+            gradient.addColorStop(0, tokenColors[i] + '80');
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 25, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Point
+            const size = i === positions.length - 1 ? 12 : 8; // Last token bigger (accumulates info)
+            ctx.fillStyle = tokenColors[i];
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(p.label, p.x, p.y - size - 8);
+            
+            // Position indicator
+            ctx.fillStyle = '#666';
+            ctx.font = '9px monospace';
+            ctx.fillText(`pos=${i}`, p.x, p.y + size + 15);
+        });
+        
+        // Trichter-Effekt annotation for last token
+        if(layerDepth > 10) {
+            ctx.save();
+            ctx.strokeStyle = '#ffd70060';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]);
+            const last = positions[positions.length - 1];
+            ctx.beginPath();
+            ctx.arc(last.x, last.y, 35, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#ffd700';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('← akkumuliert Kontext', last.x + 40, last.y);
+            ctx.setLineDash([]);
+            ctx.restore();
+        }
+        
+        // Layer info
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'left';
+        const layerType = layerDepth <= 8 ? '(früh: Subword-Komposition)' : 
+                          layerDepth <= 20 ? '(mittel: syntaktische Beziehungen)' : 
+                          '(spät: semantische Kontextualisierung)';
+        ctx.fillText(`Layer ${layerDepth}/32 ${layerType}`, 60, 25);
+        
+        // Shift magnitude indicator
+        const shiftMag = Math.min(layerDepth * 3, 80);
+        ctx.fillStyle = '#2a3a5a';
+        ctx.fillRect(60, 460, 200, 8);
+        ctx.fillStyle = '#4a9eff';
+        ctx.fillRect(60, 460, shiftMag * 2.5, 8);
+        ctx.fillStyle = '#888';
+        ctx.font = '9px sans-serif';
+        ctx.fillText('Akkumulierte Verschiebung', 60, 455);
+    }
+    
+    // Attention animation
+    function animateAttention() {
+        if(animating) return;
+        animating = true;
+        
+        let frame = 0;
+        const totalFrames = 120;
+        const positions = getPositions(layerDepth);
+        
+        function step() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawAttentionScene();
+            
+            // Animate "pull" effect on last token
+            const progress = frame / totalFrames;
+            const targetIdx = 4; // "der"
+            const target = positions[targetIdx];
+            
+            for(let source = 0; source < targetIdx; source++) {
+                const src = positions[source];
+                const strength = (1 - source * 0.2) * Math.sin(progress * Math.PI);
+                
+                // Animated beam
+                const beamProgress = Math.min(1, progress * 3 - source * 0.3);
+                if(beamProgress > 0) {
+                    ctx.strokeStyle = tokenColors[source] + 'aa';
+                    ctx.lineWidth = 3 * strength;
+                    ctx.beginPath();
+                    ctx.moveTo(src.x, src.y);
+                    const bx = src.x + (target.x - src.x) * beamProgress;
+                    const by = src.y + (target.y - src.y) * beamProgress;
+                    ctx.lineTo(bx, by);
+                    ctx.stroke();
+                    
+                    // Particle at beam end
+                    ctx.fillStyle = tokenColors[source];
+                    ctx.beginPath();
+                    ctx.arc(bx, by, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // Show displacement vector on target
+            if(progress > 0.5) {
+                const dx = -15 + layerDepth * 0.5;
+                const dy = -20 - layerDepth * 0.8;
+                const arrowProgress = (progress - 0.5) * 2;
+                
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(target.x, target.y);
+                ctx.lineTo(target.x + dx * arrowProgress, target.y + dy * arrowProgress);
+                ctx.stroke();
+                
+                // Arrowhead
+                if(arrowProgress > 0.8) {
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.arc(target.x + dx * arrowProgress, target.y + dy * arrowProgress, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            frame++;
+            if(frame < totalFrames) {
+                requestAnimationFrame(step);
+            } else {
+                animating = false;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+    
+    // Event listeners
+    document.getElementById('s3-layer-slider').addEventListener('input', (e) => {
+        layerDepth = parseInt(e.target.value);
+        const label = layerDepth <= 8 ? `${layerDepth} (früh)` : 
+                      layerDepth <= 20 ? `${layerDepth} (mittel)` : `${layerDepth} (spät)`;
+        document.getElementById('s3-layer-label').textContent = label;
+        drawAttentionScene();
+    });
+    
+    document.getElementById('s3-btn-animate').addEventListener('click', animateAttention);
+    document.getElementById('s3-btn-heads').addEventListener('click', () => {
+        showHeads = !showHeads;
+        drawAttentionScene();
+    });
+    document.getElementById('s3-btn-mask').addEventListener('click', () => {
+        showMask = !showMask;
+        drawAttentionScene();
+    });
+    
+    drawAttentionScene();
+})();
+
+// ============================================================
+// FOLIE 4: FFN
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas4');
+    const ctx = canvas.getContext('2d');
+    
+    let currentMode = 'rare'; // 'rare', 'common', 'relu', 'basins', 'grid'
+    let animFrame = null;
+    let animProgress = 0;
+    
+    function drawBackground() {
+        ctx.fillStyle = '#050510';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Grid
+        ctx.strokeStyle = '#0f1525';
+        ctx.lineWidth = 0.5;
+        for(let i = 0; i < canvas.width; i += 40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+        for(let i = 0; i < canvas.height; i += 40) {
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+        }
+        
+        // Axes
+        ctx.strokeStyle = '#2a3a5a';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(50, 470); ctx.lineTo(850, 470); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(50, 470); ctx.lineTo(50, 30); ctx.stroke();
+    }
+    
+    function drawRareFactum() {
+        drawBackground();
+        
+        // Title
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('Seltenes Faktum: "Hauptstadt von Liechtenstein = Vaduz"', 60, 25);
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Wenige Neuronen aktiv → kurzer, spezifischer Verschiebungsvektor', 60, 42);
+        
+        // Input point
+        const startX = 200, startY = 300;
+        ctx.fillStyle = '#4a9eff';
+        ctx.beginPath(); ctx.arc(startX, startY, 10, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('"Liechtenstein"', startX, startY - 18);
+        
+        // Neuron bank (Dense₁)
+        const neuronY = 180;
+        const neurons = 20;
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Dense₁ (Pattern-Detektoren):', 350, neuronY - 20);
+        
+        for(let i = 0; i < neurons; i++) {
+            const nx = 370 + i * 22;
+            const active = (i === 7 || i === 12); // Only 2 neurons fire
+            ctx.fillStyle = active ? '#ffd700' : '#1a2a3a';
+            ctx.beginPath();
+            ctx.arc(nx, neuronY, 8, 0, Math.PI*2);
+            ctx.fill();
+            
+            if(active) {
+                // Glow for active neurons
+                const glow = ctx.createRadialGradient(nx, neuronY, 0, nx, neuronY, 15);
+                glow.addColorStop(0, '#ffd70060');
+                glow.addColorStop(1, 'transparent');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(nx, neuronY, 15, 0, Math.PI*2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = '8px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('✓', nx, neuronY + 3);
+            }
+        }
+        
+        // ReLU label
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('ReLU: 18 von 20 → 0 (inaktiv)', 370, neuronY + 30);
+        ctx.fillStyle = '#6bcf7f';
+        ctx.fillText('Nur 2 Neuronen feuern (lokal kodiert)', 370, neuronY + 45);
+        
+        // Connection from input to active neurons
+        ctx.strokeStyle = '#4a9eff40';
+        ctx.lineWidth = 1;
+        [7, 12].forEach(i => {
+            const nx = 370 + i * 22;
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.quadraticCurveTo(startX + 50, neuronY + 50, nx, neuronY + 8);
+            ctx.stroke();
+        });
+        
+        // Output: short specific displacement vector
+        const endX = 250, endY = 350;
+        ctx.strokeStyle = '#6bcf7f';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        
+        // Arrowhead
+        ctx.fillStyle = '#6bcf7f';
+        ctx.beginPath();
+        ctx.arc(endX, endY, 6, 0, Math.PI*2);
+        ctx.fill();
+        
+        // End point label
+        ctx.fillStyle = '#6bcf7f';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('→ "Vaduz"-Region', endX, endY + 20);
+        ctx.fillStyle = '#888';
+        ctx.font = '9px sans-serif';
+        ctx.fillText('Kurzer Vektor (wenige Neuronen)', endX, endY + 35);
+        
+        // Dense₂ label
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Dense₂: schreibt Verschiebungsvektor', 350, 380);
+        ctx.fillText('Δx = (+0.3, +0.5, -0.1, ...)', 370, 398);
+    }
+    
+    function drawCommonPattern() {
+        drawBackground();
+        
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Häufiges Muster: "Nach Artikel kommt Nomen"', 60, 25);
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Viele Neuronen aktiv → langer, verteilter Verschiebungsvektor', 60, 42);
+        
+        // Input point
+        const startX = 150, startY = 300;
+        ctx.fillStyle = '#4a9eff';
+        ctx.beginPath(); ctx.arc(startX, startY, 10, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('"der" (nach Artikel)', startX, startY - 18);
+        
+        // Neuron bank - many active
+        const neuronY = 180;
+        const neurons = 20;
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Dense₁ (Pattern-Detektoren):', 350, neuronY - 20);
+        
+        for(let i = 0; i < neurons; i++) {
+            const nx = 370 + i * 22;
+            const active = (i % 2 === 0 || i === 3 || i === 7 || i === 11 || i === 15 || i === 19);
+            ctx.fillStyle = active ? '#ffd700' : '#1a2a3a';
+            ctx.beginPath();
+            ctx.arc(nx, neuronY, 8, 0, Math.PI*2);
+            ctx.fill();
+            
+            if(active) {
+                const glow = ctx.createRadialGradient(nx, neuronY, 0, nx, neuronY, 12);
+                glow.addColorStop(0, '#ffd70040');
+                glow.addColorStop(1, 'transparent');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(nx, neuronY, 12, 0, Math.PI*2);
+                ctx.fill();
+            }
+        }
+        
+        ctx.fillStyle = '#6bcf7f';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('ReLU: 15 von 20 feuern (global kodiert)', 370, neuronY + 30);
+        
+        // Many connections
+        for(let i = 0; i < neurons; i++) {
+            const nx = 370 + i * 22;
+            const active = (i % 2 === 0 || i === 3 || i === 7 || i === 11 || i === 15 || i === 19);
+            if(active) {
+                ctx.strokeStyle = '#ffd70030';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.quadraticCurveTo(startX + 80, neuronY + 60, nx, neuronY + 8);
+                ctx.stroke();
+            }
+        }
+        
+        // Output: long distributed displacement vector
+        const endX = 450, endY = 380;
+        ctx.strokeStyle = '#c77dff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#c77dff';
+        ctx.beginPath();
+        ctx.arc(endX, endY, 6, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#c77dff';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('→ "Nomen-erwartend"-Region', endX, endY + 20);
+        ctx.fillStyle = '#888';
+        ctx.font = '9px sans-serif';
+        ctx.fillText('Langer Vektor (viele Neuronen)', endX, endY + 35);
+        
+        // Comparison arrow
+        ctx.strokeStyle = '#ffffff30';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(200, 430);
+        ctx.lineTo(400, 430);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#888';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('← kurz (selten) vs. lang (häufig) →', 300, 445);
+    }
+    
+    function drawReLU() {
+        drawBackground();
+        
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('ReLU-Gating: Knickpunkt-Funktion (stückweise linear)', 60, 25);
+        
+        // Draw ReLU function
+        const ox = 200, oy = 350, scale = 80;
+        
+        // Axes for ReLU plot
+        ctx.strokeStyle = '#4a6a8a';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(ox - 150, oy); ctx.lineTo(ox + 200, oy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ox, oy + 50); ctx.lineTo(ox, oy - 180); ctx.stroke();
+        
+        // ReLU curve
+        ctx.strokeStyle = '#ff6b6b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(ox - 150, oy); // negative part = 0
+        ctx.lineTo(ox, oy);
+        ctx.lineTo(ox + 150, oy - 150); // positive part = x
+        ctx.stroke();
+        
+        // Labels
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('ReLU(x) = max(0, x)', ox + 25, oy - 185);
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.fillText('x < 0 → 0 (Neuron schweigt)', ox - 80, oy + 30);
+        ctx.fillText('x > 0 → x (Neuron feuert)', ox + 100, oy - 100);
+        
+        // Knick point
+        ctx.fillStyle = '#ffd700';
+        ctx.beginPath(); ctx.arc(ox, oy, 6, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '10px sans-serif';
+        ctx.fillText('Knickpunkt', ox, oy + 45);
+        
+        // Multiple ReLU superposition
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Überlagerung vieler ReLU-Rampen:', 500, 80);
+        
+        const ox2 = 650, oy2 = 300;
+        ctx.strokeStyle = '#4a6a8a';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(ox2 - 120, oy2); ctx.lineTo(ox2 + 120, oy2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ox2, oy2 + 80); ctx.lineTo(ox2, oy2 - 120); ctx.stroke();
+        
+        // Individual ReLUs (faint)
+        const offsets = [-60, -30, 0, 30, 60];
+        const weights = [0.3, -0.5, 0.8, -0.2, 0.6];
+        offsets.forEach((off, i) => {
+            ctx.strokeStyle = headColors[i] + '40';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(ox2 - 120, oy2);
+            ctx.lineTo(ox2 + off, oy2);
+            ctx.lineTo(ox2 + 120, oy2 + weights[i] * -80);
+            ctx.stroke();
+        });
+        
+        // Sum (complex curve approximation)
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for(let x = -120; x <= 120; x += 2) {
+            let y = 0;
+            offsets.forEach((off, i) => {
+                const input = x - off;
+                y += weights[i] * Math.max(0, input) * 0.5;
+            });
+            const px = ox2 + x;
+            const py = oy2 - y * 0.8;
+            if(x === -120) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Summe = komplexe Funktion', ox2, oy2 + 100);
+        ctx.fillStyle = '#888';
+        ctx.fillText('(stückweise linear, nicht periodisch)', ox2, oy2 + 115);
+        ctx.fillText('Wie Fourier, aber mit Rampen statt Wellen', ox2, oy2 + 130);
+    }
+    
+    function drawBasins() {
+        drawBackground();
+        
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Bassins: Viele Inputs → eine Region (deterministisch)', 60, 25);
+        
+        // Basin center (attractor region)
+        const basinX = 500, basinY = 280;
+        
+        // Draw basin as glowing region
+        const basinGrad = ctx.createRadialGradient(basinX, basinY, 0, basinX, basinY, 60);
+        basinGrad.addColorStop(0, '#6bcf7f40');
+        basinGrad.addColorStop(0.7, '#6bcf7f15');
+        basinGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = basinGrad;
+        ctx.beginPath();
+        ctx.arc(basinX, basinY, 60, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.strokeStyle = '#6bcf7f40';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.arc(basinX, basinY, 60, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#6bcf7f';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('"Katzen-Region"', basinX, basinY + 80);
+        
+        // Multiple input points converging to basin
+        const inputs = [
+            {x: 150, y: 150, label: '"Die Katze saß..."'},
+            {x: 100, y: 350, label: '"Meine Katze ist..."'},
+            {x: 250, y: 420, label: '"Eine kleine Katze..."'},
+            {x: 180, y: 250, label: '"Katzen sind..."'},
+            {x: 300, y: 100, label: '"Die alte Katze..."'},
+            {x: 80, y: 200, label: '"Unsere Katze hat..."'}
+        ];
+        
+        inputs.forEach((inp, i) => {
+            // Arrow from input to basin
+            ctx.strokeStyle = tokenColors[i % tokenColors.length] + '80';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(inp.x, inp.y);
+            
+            // Curved path toward basin
+            const cpx = (inp.x + basinX) / 2 + (Math.random() - 0.5) * 40;
+            const cpy = (inp.y + basinY) / 2 + (Math.random() - 0.5) * 40;
+            ctx.quadraticCurveTo(cpx, cpy, basinX + (Math.random()-0.5)*30, basinY + (Math.random()-0.5)*30);
+            ctx.stroke();
+            
+            // Input point
+            ctx.fillStyle = tokenColors[i % tokenColors.length];
+            ctx.beginPath();
+            ctx.arc(inp.x, inp.y, 6, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = '#aaa';
+            ctx.font = '9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(inp.label, inp.x, inp.y - 12);
+        });
+        
+        // Second basin
+        const basin2X = 720, basin2Y = 380;
+        const basinGrad2 = ctx.createRadialGradient(basin2X, basin2Y, 0, basin2X, basin2Y, 45);
+        basinGrad2.addColorStop(0, '#4a9eff30');
+        basinGrad2.addColorStop(1, 'transparent');
+        ctx.fillStyle = basinGrad2;
+        ctx.beginPath();
+        ctx.arc(basin2X, basin2Y, 45, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.strokeStyle = '#4a9eff40';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.arc(basin2X, basin2Y, 45, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#4a9eff';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('"Hunde-Region"', basin2X, basin2Y + 60);
+        
+        // Explanation
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Keine zeitliche Dynamik – eine deterministische Funktion.', 60, 480);
+        ctx.fillText('Viele verschiedene Sätze über Katzen → alle landen in derselben Region.', 60, 495);
+    }
+    
+    function drawGridDistortion() {
+        drawBackground();
+        
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Gitter-Verzerrung: Stückweise lineare Transformation (FFN)', 60, 25);
+        ctx.fillStyle = '#888';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Links: Eingabe-Raum (flach) → Rechts: Ausgabe-Raum (verzerrt durch ReLU-Knickpunkte)', 60, 42);
+        
+        // Left grid (uniform)
+        const gridSize = 8;
+        const leftOx = 150, leftOy = 120, cellSize = 35;
+        
+        ctx.strokeStyle = '#3a5a8a40';
+        ctx.lineWidth = 1;
+        for(let i = 0; i <= gridSize; i++) {
+            ctx.beginPath();
+            ctx.moveTo(leftOx + i * cellSize, leftOy);
+            ctx.lineTo(leftOx + i * cellSize, leftOy + gridSize * cellSize);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(leftOx, leftOy + i * cellSize);
+            ctx.lineTo(leftOx + gridSize * cellSize, leftOy + i * cellSize);
+            ctx.stroke();
+        }
+        
+        ctx.fillStyle = '#4a6a8a';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Eingabe', leftOx + gridSize * cellSize / 2, leftOy + gridSize * cellSize + 20);
+        
+        // Right grid (distorted by ReLU-like transformation)
+        const rightOx = 530, rightOy = 120;
+        
+        function transform(x, y) {
+            // Simulate piecewise linear distortion
+            const nx = x / (gridSize * cellSize);
+            const ny = y / (gridSize * cellSize);
+            
+            // Multiple ReLU-like folds
+            let tx = nx;
+            let ty = ny;
+            
+            // Fold 1
+            tx += 0.3 * Math.max(0, nx - 0.3) - 0.2 * Math.max(0, ny - 0.5);
+            ty += 0.4 * Math.max(0, ny - 0.4) + 0.15 * Math.max(0, nx - 0.6);
+            
+            // Fold 2
+            tx -= 0.2 * Math.max(0, 0.7 - nx) * Math.max(0, ny - 0.3);
+            ty += 0.25 * Math.max(0, nx - 0.5) * Math.max(0, 0.8 - ny);
+            
+            return {
+                x: rightOx + tx * gridSize * cellSize,
+                y: rightOy + ty * gridSize * cellSize
+            };
+        }
+        
+        ctx.strokeStyle = '#6bcf7f60';
+        ctx.lineWidth = 1;
+        
+        // Vertical lines (distorted)
+        for(let i = 0; i <= gridSize; i++) {
+            ctx.beginPath();
+            for(let j = 0; j <= gridSize * 4; j++) {
+                const p = transform(i * cellSize, j * cellSize / 4);
+                if(j === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+        }
+        
+        // Horizontal lines (distorted)
+        for(let j = 0; j <= gridSize; j++) {
+            ctx.beginPath();
+            for(let i = 0; i <= gridSize * 4; i++) {
+                const p = transform(i * cellSize / 4, j * cellSize);
+                if(i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+        }
+        
+        ctx.fillStyle = '#4a6a8a';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Ausgabe (verzerrt)', rightOx + gridSize * cellSize / 2, rightOy + gridSize * cellSize + 40);
+        
+        // Arrow between
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(leftOx + gridSize * cellSize + 20, leftOy + gridSize * cellSize / 2);
+        ctx.lineTo(rightOx - 20, rightOy + gridSize * cellSize / 2);
+        ctx.stroke();
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('FFN', (leftOx + gridSize*cellSize + rightOx) / 2, leftOy + gridSize*cellSize/2 - 10);
+        
+        // Highlight knick points
+        ctx.fillStyle = '#ff6b6b';
+        ctx.font = '9px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Knicke = ReLU-Aktivierungsgrenzen', rightOx, rightOy + gridSize * cellSize + 55);
+        ctx.fillText('Jedes Neuron erzeugt eine "Falte" im Raum', rightOx, rightOy + gridSize * cellSize + 70);
+    }
+    
+    // Spectrum slider
+    document.getElementById('s4-spectrum-slider').addEventListener('input', (e) => {
+        const val = parseInt(e.target.value);
+        const label = document.getElementById('s4-spectrum-label');
+        if(val < 30) {
+            label.textContent = 'Lokal (wenige Neuronen) – z.B. "Vaduz ist Hauptstadt von Liechtenstein"';
+            label.style.color = '#ff6b6b';
+        } else if(val < 70) {
+            label.textContent = 'Mittel – z.B. "Hauptstädte liegen an Flüssen"';
+            label.style.color = '#ffd93d';
+        } else {
+            label.textContent = 'Global (viele Neuronen) – z.B. "Nach Artikel kommt Nomen"';
+            label.style.color = '#6bcf7f';
+        }
+    });
+    
+    // Button handlers
+    document.getElementById('s4-btn-rare').addEventListener('click', () => { currentMode = 'rare'; drawRareFactum(); });
+    document.getElementById('s4-btn-common').addEventListener('click', () => { currentMode = 'common'; drawCommonPattern(); });
+    document.getElementById('s4-btn-relu').addEventListener('click', () => { currentMode = 'relu'; drawReLU(); });
+    document.getElementById('s4-btn-basins').addEventListener('click', () => { currentMode = 'basins'; drawBasins(); });
+    document.getElementById('s4-btn-grid').addEventListener('click', () => { currentMode = 'grid'; drawGridDistortion(); });
+    
+    // headColors reference for ReLU viz
+    const headColors = ['#ff6b6b', '#4a9eff', '#6bcf7f', '#ffd93d', '#c77dff', '#ff9f43'];
+    
+    // Initial draw
+    drawRareFactum();
+})();
+
+// ============================================================
+// FOLIE 5: Das Gesamtbild
+// ============================================================
+(function() {
+    const canvas = document.getElementById('canvas5');
+    const ctx = canvas.getContext('2d');
+    
+    let animRunning = false;
+    let currentViz = 'idle';
+    
+    function drawBackground5() {
+        ctx.fillStyle = '#050510';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Subtle grid
+        ctx.strokeStyle = '#0a1020';
+        ctx.lineWidth = 0.5;
+        for(let i = 0; i < canvas.width; i += 30) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+        for(let i = 0; i < canvas.height; i += 30) {
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+        }
+    }
+    
+    function drawFullAnimation() {
+        if(animRunning) return;
+        animRunning = true;
+        
+        const totalFrames = 360;
+        let frame = 0;
+        
+        // Token journey
+        const tokenPath = [];
+        const numLayers = 12;
+        let px = 80, py = 450;
+        tokenPath.push({x: px, y: py});
+        
+        for(let l = 0; l < numLayers; l++) {
+            px += 60 + Math.random() * 20;
+            py -= 25 + Math.random() * 15;
+            // Add some lateral movement
+            px += (Math.random() - 0.5) * 30;
+            tokenPath.push({x: px, y: py});
+        }
+        // Final position
+        tokenPath.push({x: 800, y: 80});
+        
+        function step() {
+            drawBackground5();
+            
+            const progress = frame / totalFrames;
+            
+            // Draw layer boundaries
+            for(let l = 0; l < numLayers; l++) {
+                const lx = 80 + l * 62;
+                ctx.strokeStyle = '#1a2a3a';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(lx, 30);
+                ctx.lineTo(lx, 520);
+                ctx.stroke();
+                
+                if(progress > l / numLayers) {
+                    ctx.fillStyle = '#2a3a5a30';
+                    ctx.fillRect(lx, 30, 62, 490);
+                }
+                
+                ctx.fillStyle = '#3a5a7a';
+                ctx.font = '8px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`L${l+1}`, lx + 31, 525);
+            }
+            
+            // Labels
+            ctx.fillStyle = '#7eb8ff';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Embedding', 50, 480);
+            ctx.fillText('+ PosEnc', 50, 495);
+            ctx.textAlign = 'right';
+            ctx.fillText('Unembedding', 870, 80);
+            ctx.fillText('→ Softmax → Token', 870, 95);
+            
+            // Draw trail
+            const currentPathIdx = Math.min(Math.floor(progress * tokenPath.length), tokenPath.length - 1);
+            
+            ctx.strokeStyle = '#4a9eff60';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for(let i = 0; i <= currentPathIdx; i++) {
+                const p = tokenPath[i];
+                if(i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            }
+            ctx.stroke();
+            
+            // Draw intermediate points (ghost trail)
+            for(let i = 0; i <= currentPathIdx; i++) {
+                const p = tokenPath[i];
+                const alpha = Math.max(0.1, 1 - (currentPathIdx - i) * 0.15);
+                ctx.fillStyle = `rgba(74, 158, 255, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+                ctx.fill();
+            }
+            
+            // Current point (animated)
+            if(currentPathIdx < tokenPath.length) {
+                const cp = tokenPath[currentPathIdx];
+                const subProgress = (progress * tokenPath.length) % 1;
+                
+                // Pulsing glow
+                const glowSize = 15 + Math.sin(frame * 0.1) * 5;
+                const glow = ctx.createRadialGradient(cp.x, cp.y, 0, cp.x, cp.y, glowSize);
+                glow.addColorStop(0, '#4a9eff80');
+                glow.addColorStop(1, 'transparent');
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(cp.x, cp.y, glowSize, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Main point
+                ctx.fillStyle = '#4a9eff';
+                ctx.beginPath();
+                ctx.arc(cp.x, cp.y, 8, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Coordinates
+                ctx.fillStyle = '#aaa';
+                ctx.font = '9px monospace';
+                ctx.textAlign = 'left';
+                const coordX = ((cp.x - 450) / 200).toFixed(2);
+                const coordY = ((275 - cp.y) / 150).toFixed(2);
+                ctx.fillText(`(${coordX}, ${coordY}, ...)`, cp.x + 12, cp.y - 5);
+            }
+            
+            // Attention lines (appear in middle of animation)
+            if(progress > 0.2 && progress < 0.8) {
+                const attAlpha = Math.sin((progress - 0.2) / 0.6 * Math.PI) * 0.4;
+                ctx.strokeStyle = `rgba(255, 215, 0, ${attAlpha})`;
+                ctx.lineWidth = 1;
+                // Show some "pull" lines from earlier positions
+                const pullIdx = Math.min(currentPathIdx, tokenPath.length - 2);
+                for(let i = Math.max(0, pullIdx - 3); i < pullIdx; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(tokenPath[i].x, tokenPath[i].y);
+                    ctx.lineTo(tokenPath[pullIdx].x, tokenPath[pullIdx].y);
+                    ctx.stroke();
+                }
+            }
+            
+            // Unembedding fan at the end
+            if(progress > 0.85) {
+                const fanAlpha = (progress - 0.85) / 0.15;
+                ctx.globalAlpha = fanAlpha;
+                
+                const fanX = 800, fanY = 80;
+                const predictions = [
+                    {word: 'Matte', angle: -0.4, len: 60, score: 0.35},
+                    {word: 'Straße', angle: -0.1, len: 50, score: 0.20},
+                    {word: 'Couch', angle: 0.2, len: 40, score: 0.15},
+                    {word: 'Bank', angle: 0.5, len: 30, score: 0.10}
+                ];
+                
+                predictions.forEach(pred => {
+                    const ex = fanX + Math.cos(pred.angle) * pred.len;
+                    const ey = fanY + Math.sin(pred.angle) * pred.len;
+                    
+                    ctx.strokeStyle = '#ffd700';
+                    ctx.lineWidth = pred.score * 8;
+                    ctx.beginPath();
+                    ctx.moveTo(fanX, fanY);
+                    ctx.lineTo(ex, ey);
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '10px sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`${pred.word} (${(pred.score*100).toFixed(0)}%)`, ex + 5, ey + 4);
+                });
+                
+                ctx.globalAlpha = 1;
+            }
+            
+            // Info text
+            ctx.fillStyle = '#7eb8ff';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'left';
+            if(progress < 0.1) ctx.fillText('Embedding + Positional Encoding...', 60, 540);
+            else if(progress < 0.4) ctx.fillText('Attention: Punkte ziehen sich an...', 60, 540);
+            else if(progress < 0.7) ctx.fillText('FFN: Wissen verschiebt den Punkt...', 60, 540);
+            else if(progress < 0.85) ctx.fillText('Residual Stream akkumuliert...', 60, 540);
+            else ctx.fillText('Unembedding: Winkelvergleich → nächstes Token', 60, 540);
+            
+            frame++;
+            if(frame < totalFrames) {
+                requestAnimationFrame(step);
+            } else {
+                animRunning = false;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+    
+    function drawGridEvolution() {
+        if(animRunning) return;
+        animRunning = true;
+        
+        let frame = 0;
+        const totalFrames = 240;
+        
+        function step() {
+            drawBackground5();
+            
+            const progress = frame / totalFrames;
+            const layerProgress = progress * 32; // Simulate 32 layers
+            
+            ctx.fillStyle = '#7eb8ff';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Gitter-Verzerrung: Layer ${Math.floor(layerProgress) + 1}/32`, 60, 25);
+            ctx.fillStyle = '#888';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Unten flach → oben stark verzerrt (Akkumulation vieler kleiner Schritte)', 60, 42);
+            
+            // Draw evolving grid
+            const gridSize = 12;
+            const ox = 150, oy = 80;
+            const cellW = 50, cellH = 35;
+            
+            ctx.strokeStyle = `rgba(107, 207, 127, ${0.3 + progress * 0.4})`;
+            ctx.lineWidth = 1;
+            
+            // Distortion increases with layer
+            const distortion = progress * 2.5;
+            
+            function distort(x, y) {
+                const nx = x / (gridSize * cellW);
+                const ny = y / (gridSize * cellH);
+                
+                let dx = 0, dy = 0;
+                
+                // Layer-dependent distortion (accumulates)
+                dx += distortion * 15 * Math.max(0, nx - 0.3) * Math.max(0, ny - 0.2);
+                dy += distortion * 10 * Math.max(0, 0.7 - nx) * Math.max(0, ny - 0.4);
+                dx -= distortion * 8 * Math.max(0, nx - 0.6) * Math.max(0, 0.6 - ny);
+                dy -= distortion * 12 * Math.max(0, ny - 0.5) * Math.max(0, nx - 0.4);
+                
+                // Additional folds for later layers
+                if(distortion > 1) {
+                    dx += (distortion - 1) * 10 * Math.max(0, nx - 0.5) * Math.max(0, ny - 0.6);
+                    dy += (distortion - 1) * 8 * Math.max(0, 0.4 - nx) * Math.max(0, 0.5 - ny);
+                }
+                if(distortion > 2) {
+                    dx -= (distortion - 2) * 6 * Math.max(0, nx - 0.2) * Math.max(0, ny - 0.3);
+                    dy += (distortion - 2) * 5 * Math.max(0, nx - 0.7);
+                }
+                
+                return {
+                    x: ox + x + dx,
+                    y: oy + y + dy
+                };
+            }
+            
+            // Draw distorted grid
+            // Vertical lines
+            for(let i = 0; i <= gridSize; i++) {
+                ctx.beginPath();
+                for(let j = 0; j <= gridSize * 3; j++) {
+                    const p = distort(i * cellW, j * cellH / 3);
+                    if(j === 0) ctx.moveTo(p.x, p.y);
+                    else ctx.lineTo(p.x, p.y);
+                }
+                ctx.stroke();
+            }
+            // Horizontal lines
+            for(let j = 0; j <= gridSize; j++) {
+                ctx.beginPath();
+                for(let i = 0; i <= gridSize * 3; i++) {
+                    const p = distort(i * cellW / 3, j * cellH);
+                    if(i === 0) ctx.moveTo(p.x, p.y);
+                    else ctx.lineTo(p.x, p.y);
+                }
+                ctx.stroke();
+            }
+            
+            // Layer progress bar
+            ctx.fillStyle = '#1a2a3a';
+            ctx.fillRect(60, 520, 780, 15);
+            ctx.fillStyle = '#4a7abf';
+            ctx.fillRect(60, 520, 780 * progress, 15);
+            ctx.fillStyle = '#fff';
+            ctx.font = '9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Layer ${Math.floor(layerProgress)+1} / 32`, 450, 532);
+            
+            frame++;
+            if(frame < totalFrames) {
+                requestAnimationFrame(step);
+            } else {
+                animRunning = false;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+    
+    function drawTransientClusters() {
+        if(animRunning) return;
+        animRunning = true;
+        
+        let frame = 0;
+        const totalFrames = 300;
+        
+        // Generate cluster data
+        const clusters = [
+            {cx: 300, cy: 200, r: 50, startLayer: 5, endLayer: 12, color: '#ff6b6b', label: 'Syntax-Cluster'},
+            {cx: 550, cy: 300, r: 40, startLayer: 8, endLayer: 18, color: '#4a9eff', label: 'Semantik-Cluster'},
+            {cx: 200, cy: 380, r: 35, startLayer: 15, endLayer: 22, color: '#6bcf7f', label: 'Fakten-Cluster'},
+            {cx: 650, cy: 150, r: 45, startLayer: 20, endLayer: 28, color: '#ffd93d', label: 'Vorhersage-Cluster'}
+        ];
+        
+        function step() {
+            drawBackground5();
+            
+            const progress = frame / totalFrames;
+            const currentLayer = progress * 32;
+            
+            ctx.fillStyle = '#7eb8ff';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Kurzlebige Cluster (Layer ${Math.floor(currentLayer)+1}/32)`, 60, 25);
+            
+            // Hypothesis marker
+            ctx.strokeStyle = '#ffc832';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(50, 10, 840, 530);
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#ffc832';
+            ctx.font = '9px sans-serif';
+            ctx.fillText('⚠️ HYPOTHESE', 750, 25);
+            
+            // Draw clusters that exist at current layer
+            clusters.forEach(cl => {
+                const layerNorm = currentLayer;
+                if(layerNorm >= cl.startLayer && layerNorm <= cl.endLayer) {
+                    // Fade in and out
+                    const clusterProgress = (layerNorm - cl.startLayer) / (cl.endLayer - cl.startLayer);
+                    const alpha = Math.sin(clusterProgress * Math.PI);
+                    
+                    // Pulsing cloud
+                    const pulseR = cl.r + Math.sin(frame * 0.05) * 5;
+                    
+                    const grad = ctx.createRadialGradient(cl.cx, cl.cy, 0, cl.cx, cl.cy, pulseR);
+                    grad.addColorStop(0, cl.color + Math.floor(alpha * 80).toString(16).padStart(2, '0'));
+                    grad.addColorStop(0.7, cl.color + Math.floor(alpha * 30).toString(16).padStart(2, '0'));
+                    grad.addColorStop(1, 'transparent');
+                    ctx.fillStyle = grad;
+                    ctx.beginPath();
+                    ctx.arc(cl.cx, cl.cy, pulseR, 0, Math.PI*2);
+                    ctx.fill();
+                    
+                    // Border
+                    ctx.strokeStyle = cl.color + Math.floor(alpha * 150).toString(16).padStart(2, '0');
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.arc(cl.cx, cl.cy, pulseR, 0, Math.PI*2);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    // Label
+                    ctx.fillStyle = cl.color;
+                    ctx.globalAlpha = alpha;
+                    ctx.font = '10px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(cl.label, cl.cx, cl.cy + pulseR + 15);
+                    ctx.fillText(`(Layer ${cl.startLayer}-${cl.endLayer})`, cl.cx, cl.cy + pulseR + 28);
+                    ctx.globalAlpha = 1;
+                    
+                    // Scatter points inside cluster
+                    const numPts = 8;
+                    for(let i = 0; i < numPts; i++) {
+                        const angle = (i / numPts) * Math.PI * 2 + frame * 0.01;
+                        const dist = pulseR * 0.5 * (0.5 + Math.random() * 0.5);
+                        const px = cl.cx + Math.cos(angle) * dist * 0.7;
+                        const py = cl.cy + Math.sin(angle) * dist * 0.7;
+                        ctx.fillStyle = cl.color;
+                        ctx.globalAlpha = alpha * 0.7;
+                        ctx.beginPath();
+                        ctx.arc(px, py, 3, 0, Math.PI*2);
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            });
+            
+            // Timeline bar
+            ctx.fillStyle = '#1a2a3a';
+            ctx.fillRect(60, 500, 780, 20);
+            ctx.fillStyle = '#4a7abf';
+            ctx.fillRect(60, 500, 780 * progress, 20);
+            
+            // Cluster existence bars
+            clusters.forEach((cl, i) => {
+                const startX = 60 + (cl.startLayer / 32) * 780;
+                const endX = 60 + (cl.endLayer / 32) * 780;
+                ctx.fillStyle = cl.color + '60';
+                ctx.fillRect(startX, 502 + i * 4, endX - startX, 3);
+            });
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = '9px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Layer ${Math.floor(currentLayer)+1} / 32`, 450, 515);
+            
+            frame++;
+            if(frame < totalFrames) {
+                requestAnimationFrame(step);
+            } else {
+                animRunning = false;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+    
+    function drawConvergence() {
+        drawBackground5();
+        
+        ctx.fillStyle = '#7eb8ff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Konvergenz / Bassins: Deterministische Abbildung vieler Inputs → wenige Regionen', 60, 25);
+        
+        // Multiple starting points
+        const starts = [];
+        for(let i = 0; i < 30; i++) {
+            starts.push({
+                x: 50 + Math.random() * 200,
+                y: 80 + Math.random() * 400,
+                color: `hsl(${Math.random() * 360}, 70%, 60%)`
+            });
+        }
+        
+        // Three basin targets
+        const basins = [
+            {x: 550, y: 150, label: 'Basin A\n("Tier-Konzept")', color: '#6bcf7f'},
+            {x: 600, y: 300, label: 'Basin B\n("Ort-Konzept")', color: '#4a9eff'},
+            {x: 500, y: 430, label: 'Basin C\n("Aktion-Konzept")', color: '#ff6b6b'}
+        ];
+        
+        // Draw basins
+        basins.forEach(b => {
+            const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, 50);
+            grad.addColorStop(0, b.color + '50');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 50, 0, Math.PI*2);
+            ctx.fill();
+            
+            ctx.strokeStyle = b.color + '80';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 50, 0, Math.PI*2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.fillStyle = b.color;
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(b.label.split('\n')[0], b.x, b.y + 60);
+            ctx.fillText(b.label.split('\n')[1], b.x, b.y + 73);
+        });
+        
+        // Draw arrows from starts to basins
+        starts.forEach((s, i) => {
+            const targetBasin = basins[i % 3];
+            
+            // Curved arrow
+            ctx.strokeStyle = s.color + '60';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(s.x, s.y);
+            const cpx = s.x + (targetBasin.x - s.x) * 0.5 + (Math.random() - 0.5) * 60;
+            const cpy = s.y + (targetBasin.y - s.y) * 0.5 + (Math.random() - 0.5) * 60;
+            ctx.quadraticCurveTo(cpx, cpy, 
+                targetBasin.x + (Math.random() - 0.5) * 30,
+                targetBasin.y + (Math.random() - 0.5) * 30);
+            ctx.stroke();
+            
+            // Start point
+            ctx.fillStyle = s.color;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, 3, 0, Math.PI*2);
+            ctx.fill();
+        });
+        
+        // Explanation
+        ctx.fillStyle = '#888';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Deterministisch: Gleicher Input → immer gleicher Output.', 60, 520);
+        ctx.fillText('Verschiedene Inputs können im selben Basin landen (viele-zu-eins Abbildung).', 60, 535);
+    }
+    
+    // Idle state
+    function drawIdle() {
+        drawBackground5();
+        
+        ctx.fillStyle = '#4a6a8a';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Klicke einen Button oben, um die Gesamtanimation zu starten.', canvas.width/2, canvas.height/2);
+        ctx.fillStyle = '#3a5a7a';
+        ctx.font = '11px sans-serif';
+        ctx.fillText('Jede Visualisierung zeigt einen anderen Aspekt des Gesamtbilds.', canvas.width/2, canvas.height/2 + 25);
+    }
+    
+    // Event listeners
+    document.getElementById('s5-btn-play').addEventListener('click', drawFullAnimation);
+    document.getElementById('s5-btn-grid').addEventListener('click', drawGridEvolution);
+    document.getElementById('s5-btn-clusters').addEventListener('click', drawTransientClusters);
+    document.getElementById('s5-btn-convergence').addEventListener('click', drawConvergence);
+    
+    // Initial
+    drawIdle();
+})();
+
+// ============================================================
+// GLOBAL: Smooth scroll for nav links
+// ============================================================
+document.querySelectorAll('.nav a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if(target) {
+            target.scrollIntoView({behavior: 'smooth'});
+        }
+    });
+});
+
+// ============================================================
+// GLOBAL: Resize canvases for high-DPI displays
+// ============================================================
+(function() {
+    const dpr = window.devicePixelRatio || 1;
+    if(dpr > 1) {
+        document.querySelectorAll('canvas').forEach(canvas => {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            const ctx = canvas.getContext('2d');
+        });
+    }
+})();
+</script>
+
+</body>
+</html>
