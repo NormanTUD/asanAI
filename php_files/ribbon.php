@@ -568,6 +568,7 @@
 		<div class="ribbon-group" style="width: auto;">
 			<div class="ribbon-toolbar">
 				<button style="width: 200px" onclick="location.href='mailto:norman.koch@tu-dresden.de'">norman.koch@tu-dresden.de</button><br><br>
+				<button onclick='window.open("https://arxiv.org/abs/2501.06226", "_blank");' style="width: 200px">Paper</button><br><br>
 				<button onclick='window.open("https://github.com/NormanTUD/asanAI/", "_blank");' style="width: 200px">Code</button><br><br>
 				<button style="width: 200px" onclick="sources_popup()"><span class="TRANSLATEME_sources_and_used_programs"></span></button>
 			</div>
