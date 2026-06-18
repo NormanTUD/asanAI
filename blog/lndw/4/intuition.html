@@ -46,12 +46,15 @@
         }
 
         /* Slide content wrapper */
-        .slide-content {
-            max-width: 1100px;
-            width: 100%;
-            max-height: 100%;
-            overflow-y: auto;
-        }
+	.slide-content {
+		max-width: 1100px;
+		width: 100%;
+		/* max-height entfernen oder vergrößern */
+	}
+
+	.slide {
+		padding: 30px 60px 70px 60px; /* oben/seiten reduziert, unten Platz für nav-bar */
+	}
 
         /* ============ TYPOGRAPHY ============ */
         .slide h1 { font-size: 2.8em; color: #1e40af; margin-bottom: 20px; line-height: 1.2; }
@@ -76,6 +79,7 @@
         .demo-box {
             background: #f8fafc; padding: 24px; border-radius: 12px;
             border: 1px solid #e2e8f0; margin: 20px 0; width: 100%;
+	    min-height: 560px;
         }
         .demo-title { font-size: 1.1rem; font-weight: bold; color: #1e293b; text-align: center; margin-bottom: 14px; }
 
