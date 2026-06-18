@@ -2451,6 +2451,13 @@ function initNNDemos() {
 // 3D: Plotly scatter3d (interactive, rotatable)
 // ============================================================
 
+// ============================================================
+// DIMENSION VISUALIZER – Why do we need so many dimensions?
+// 1D: Canvas – shows a real, visible conflict
+// 2D: Canvas – conflict resolved for 4 words, but not for 6
+// 3D: CSS 3D transform – fast, interactive rotation
+// ============================================================
+
 const DimensionViz = {
     currentDim: 1,
     canvas: null,
@@ -2465,48 +2472,80 @@ const DimensionViz = {
         { id: 'dog', label: 'Hund', color: '#f59e0b' },
     ],
 
-    shouldBeClose: [
-        ['king', 'queen', 'Königspaar'],
-        ['man', 'woman', 'Geschlechterpaar'],
-        ['king', 'man', 'beide männlich'],
-        ['queen', 'woman', 'beide weiblich'],
-        ['cat', 'dog', 'beide Tiere'],
+    // Relationships we want to encode:
+    // König ↔ Königin (Paar), Mann ↔ Frau (Paar)
+    // König ↔ Mann (männlich), Königin ↔ Frau (weiblich)
+    // Katze ↔ Hund (Tiere)
+    // König/Königin/Mann/Frau WEIT WEG von Katze/Hund
+
+    // 1D: We MUST choose one ordering. Any ordering breaks something.
+    // Best attempt: group by gender? König-Mann-Hund-Katze-Frau-Königin? Nope.
+    // The fundamental issue: König must be near Mann AND near Königin,
+    // but Mann must be near Frau. So: Mann-König-Königin-Frau works for those...
+    // BUT then König is far from Frau (ok) and Mann is far from Königin (ok)
+    // The REAL conflict: where do Katze/Hund go?
+    // If animals are at the end: Frau is near Katze (wrong!)
+    // If animals are in the middle: they split the human pairs (wrong!)
+    
+    // Let's make the conflict about animals splitting humans:
+    // Ordering: König - Königin - [Katze - Hund] - Mann - Frau
+    // Now König↔Mann are far apart (CONFLICT!) even though both are male.
+    
+    positions1D: {
+        king:  0.12,
+        queen: 0.24,
+        cat:   0.45,
+        dog:   0.55,
+        man:   0.76,
+        woman: 0.88,
+    },
+
+    // The conflicts in 1D:
+    // König ↔ Mann should be close (both male) → but they're far apart!
+    // Königin ↔ Frau should be close (both female) → but they're far apart!
+    conflicts1D: [
+        { pair: ['king', 'man'], label: 'beide männlich – sollten nah sein!' },
+        { pair: ['queen', 'woman'], label: 'beide weiblich – sollten nah sein!' },
     ],
 
-    positions: {
-        1: {
-            king:  { x: 0.25 },
-            queen: { x: 0.35 },
-            man:   { x: 0.15 },
-            woman: { x: 0.45 },
-            cat:   { x: 0.75 },
-            dog:   { x: 0.85 },
-        },
-        2: {
-            king:  { x: 0.25, y: 0.30 },
-            queen: { x: 0.25, y: 0.70 },
-            man:   { x: 0.55, y: 0.30 },
-            woman: { x: 0.55, y: 0.70 },
-            cat:   { x: 0.82, y: 0.40 },
-            dog:   { x: 0.82, y: 0.60 },
-        },
-        3: {
-            king:  { x: 1, y: 3, z: 1 },
-            queen: { x: 1, y: 3, z: 3 },
-            man:   { x: 3, y: 3, z: 1 },
-            woman: { x: 3, y: 3, z: 3 },
-            cat:   { x: 2, y: 0.5, z: 1.5 },
-            dog:   { x: 2, y: 0.5, z: 2.5 },
-        }
+    // What IS close in 1D (works):
+    satisfied1D: [
+        { pair: ['king', 'queen'], label: 'Königspaar ✓' },
+        { pair: ['man', 'woman'], label: 'Geschlechterpaar ✓' },
+        { pair: ['cat', 'dog'], label: 'Tiere ✓' },
+    ],
+
+    positions2D: {
+        king:  { x: 0.22, y: 0.28 },
+        queen: { x: 0.22, y: 0.72 },
+        man:   { x: 0.52, y: 0.28 },
+        woman: { x: 0.52, y: 0.72 },
+        cat:   { x: 0.80, y: 0.42 },
+        dog:   { x: 0.80, y: 0.58 },
     },
 
-    violations: {
-        1: [
-            { pair: ['queen', 'woman'], reason: 'Königin & Frau sollten nah sein – aber König & Mann sind dazwischen!' },
-        ],
-        2: [],
-        3: [],
+    // In 2D: the square works, but animals are just "to the right" –
+    // there's no dedicated axis separating humans from animals.
+    // If we added more animal words, they'd crowd into the human space.
+
+    positions3D: {
+        // x = royalty (0=royal, 1=common)
+        // y = gender (0=male, 1=female)  
+        // z = species (0=human, 1=animal)
+        king:  { x: 0, y: 0, z: 0 },
+        queen: { x: 0, y: 1, z: 0 },
+        man:   { x: 1, y: 0, z: 0 },
+        woman: { x: 1, y: 1, z: 0 },
+        cat:   { x: 0.5, y: 0.5, z: 1 },
+        dog:   { x: 0.5, y: 0.5, z: 1 },
     },
+
+    // 3D rotation state
+    rotX: -25,
+    rotY: 35,
+    dragging: false,
+    lastMouseX: 0,
+    lastMouseY: 0,
 
     setDim: function(dim) {
         this.currentDim = dim;
@@ -2524,14 +2563,11 @@ const DimensionViz = {
         const dim = this.currentDim;
 
         if (dim === 3) {
-            // Use Plotly for 3D
-            this.render3DPlotly(container);
+            this.render3DCSS(container);
         } else {
-            // Use Canvas for 1D and 2D
             this.setupCanvas(container);
             this.ctx.fillStyle = '#fff';
             this.ctx.fillRect(0, 0, this.canvasW, this.canvasH);
-
             if (dim === 1) this.render1D(this.canvasW, this.canvasH);
             else this.render2D(this.canvasW, this.canvasH);
         }
@@ -2540,7 +2576,6 @@ const DimensionViz = {
     },
 
     setupCanvas: function(container) {
-        // Remove any Plotly content
         container.innerHTML = '';
         this.canvas = document.createElement('canvas');
         this.canvas.style.width = '100%';
@@ -2558,174 +2593,193 @@ const DimensionViz = {
         this.ctx.scale(dpr, dpr);
     },
 
-    // ===================== 1D RENDERING =====================
+    // ===================== 1D =====================
     render1D: function(W, H) {
         const ctx = this.ctx;
-        const pos = this.positions[1];
-        const margin = 60;
-        const lineY = H * 0.45;
+        const margin = 50;
+        const lineY = H * 0.50;
         const lineX1 = margin;
         const lineX2 = W - margin;
         const lineW = lineX2 - lineX1;
 
+        const getX = (id) => lineX1 + this.positions1D[id] * lineW;
+
+        // Background
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, W, H);
+
         // Number line
-        ctx.strokeStyle = '#cbd5e1';
+        ctx.strokeStyle = '#e2e8f0';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(lineX1, lineY);
-        ctx.lineTo(lineX2, lineY);
+        ctx.moveTo(lineX1 - 10, lineY);
+        ctx.lineTo(lineX2 + 10, lineY);
         ctx.stroke();
 
-        // Arrows
-        ctx.fillStyle = '#cbd5e1';
-        ctx.beginPath();
-        ctx.moveTo(lineX1, lineY);
-        ctx.lineTo(lineX1 + 10, lineY - 6);
-        ctx.lineTo(lineX1 + 10, lineY + 6);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(lineX2, lineY);
-        ctx.lineTo(lineX2 - 10, lineY - 6);
-        ctx.lineTo(lineX2 - 10, lineY + 6);
-        ctx.fill();
-
-        ctx.font = 'bold 13px system-ui';
-        ctx.fillStyle = '#94a3b8';
-        ctx.textAlign = 'center';
-        ctx.fillText('← eine einzige Zahlenlinie →', W / 2, lineY + 55);
-
-        const getX = (id) => lineX1 + pos[id].x * lineW;
-
-        // Violation highlight
-        this.violations[1].forEach(v => {
-            const x1 = getX(v.pair[0]);
-            const x2 = getX(v.pair[1]);
-            ctx.strokeStyle = 'rgba(239, 68, 68, 0.15)';
-            ctx.lineWidth = 28;
-            ctx.lineCap = 'round';
+        // Tick marks
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 10; i++) {
+            const x = lineX1 + (lineW * i / 10);
             ctx.beginPath();
-            ctx.moveTo(Math.min(x1, x2), lineY);
-            ctx.lineTo(Math.max(x1, x2), lineY);
+            ctx.moveTo(x, lineY - 5);
+            ctx.lineTo(x, lineY + 5);
             ctx.stroke();
-            ctx.lineCap = 'butt';
+        }
+
+        // Draw SATISFIED connections (green, below the line)
+        this.satisfied1D.forEach(({ pair, label }, idx) => {
+            const x1 = getX(pair[0]);
+            const x2 = getX(pair[1]);
+            const arcDepth = 30 + idx * 15;
+
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, lineY + 14);
+            ctx.quadraticCurveTo((x1 + x2) / 2, lineY + arcDepth + 15, x2, lineY + 14);
+            ctx.stroke();
+
+            // Green check label
+            ctx.font = '10px system-ui';
+            ctx.fillStyle = '#10b981';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, (x1 + x2) / 2, lineY + arcDepth + 25);
         });
 
-        // Arcs for "should be close" pairs
-        const arcHeights = [55, 75, 95, 65, 85];
-        this.shouldBeClose.forEach(([id1, id2, label], idx) => {
-            const x1 = getX(id1);
-            const x2 = getX(id2);
-            const dist = Math.abs(x1 - x2);
-            const isViolated = this.violations[1].some(v =>
-                (v.pair[0] === id1 && v.pair[1] === id2) ||
-                (v.pair[0] === id2 && v.pair[1] === id1)
-            );
+        // Draw CONFLICT connections (red, above the line)
+        this.conflicts1D.forEach(({ pair, label }, idx) => {
+            const x1 = getX(pair[0]);
+            const x2 = getX(pair[1]);
+            const arcHeight = 60 + idx * 30;
 
-            const arcH = arcHeights[idx] + dist * 0.15;
-            ctx.strokeStyle = isViolated ? '#ef4444' : '#10b981';
-            ctx.lineWidth = 2;
-            ctx.setLineDash(isViolated ? [5, 4] : []);
+            // Red highlight zone
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.06)';
+            ctx.fillRect(Math.min(x1, x2) - 5, lineY - arcHeight - 10, Math.abs(x2 - x1) + 10, arcHeight + 5);
+
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([6, 4]);
             ctx.beginPath();
-            ctx.moveTo(x1, lineY - 16);
-            ctx.quadraticCurveTo((x1 + x2) / 2, lineY - arcH, x2, lineY - 16);
+            ctx.moveTo(x1, lineY - 14);
+            ctx.quadraticCurveTo((x1 + x2) / 2, lineY - arcHeight, x2, lineY - 14);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            ctx.font = '10px system-ui';
-            ctx.fillStyle = isViolated ? '#ef4444' : '#10b981';
+            // Red X label
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = '#ef4444';
             ctx.textAlign = 'center';
-            ctx.fillText(label, (x1 + x2) / 2, lineY - arcH + 10);
-            if (isViolated) {
-                ctx.font = 'bold 10px system-ui';
-                ctx.fillText('✗ zu weit!', (x1 + x2) / 2, lineY - arcH + 22);
-            }
+            ctx.fillText('✗ ' + label, (x1 + x2) / 2, lineY - arcHeight - 5);
         });
 
-        // Word dots
+        // Draw word dots
         this.words.forEach(word => {
             const x = getX(word.id);
+
+            // White background circle
             ctx.beginPath();
-            ctx.arc(x, lineY, 12, 0, Math.PI * 2);
+            ctx.arc(x, lineY, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+
+            // Colored circle
+            ctx.beginPath();
+            ctx.arc(x, lineY, 13, 0, Math.PI * 2);
             ctx.fillStyle = word.color;
             ctx.fill();
             ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 2;
             ctx.stroke();
 
-            ctx.font = 'bold 13px system-ui';
-            ctx.fillStyle = word.color;
+            // Label above
+            ctx.font = 'bold 12px system-ui';
+            ctx.fillStyle = '#1e293b';
             ctx.textAlign = 'center';
-            ctx.fillText(word.label, x, lineY + 30);
+            ctx.fillText(word.label, x, lineY - 22);
         });
 
-        ctx.font = 'bold 13px system-ui';
-        ctx.fillStyle = '#ef4444';
+        // Title
+        ctx.font = '12px system-ui';
+        ctx.fillStyle = '#94a3b8';
         ctx.textAlign = 'center';
-        ctx.fillText('⚠️ KONFLIKT: Königin sollte nah bei Frau sein – aber König & Mann sind dazwischen!', W / 2, H - 20);
+        ctx.fillText('← nur eine Dimension (Zahlenlinie) →', W / 2, H - 10);
     },
 
-    // ===================== 2D RENDERING =====================
+    // ===================== 2D =====================
     render2D: function(W, H) {
         const ctx = this.ctx;
-        const pos = this.positions[2];
-        const margin = 70;
+        const margin = 65;
         const areaX = margin;
-        const areaY = 40;
+        const areaY = 30;
         const areaW = W - 2 * margin;
-        const areaH = H - 110;
+        const areaH = H - 90;
 
-        // Grid
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, W, H);
+
+        // Subtle grid
         ctx.strokeStyle = '#f1f5f9';
         ctx.lineWidth = 1;
-        for (let i = 0; i <= 4; i++) {
-            const x = areaX + (areaW * i / 4);
+        for (let i = 0; i <= 5; i++) {
+            const x = areaX + (areaW * i / 5);
             ctx.beginPath(); ctx.moveTo(x, areaY); ctx.lineTo(x, areaY + areaH); ctx.stroke();
-            const y = areaY + (areaH * i / 4);
+            const y = areaY + (areaH * i / 5);
             ctx.beginPath(); ctx.moveTo(areaX, y); ctx.lineTo(areaX + areaW, y); ctx.stroke();
         }
 
         // Axis labels
-        ctx.font = '12px system-ui';
+        ctx.font = '11px system-ui';
         ctx.fillStyle = '#94a3b8';
         ctx.textAlign = 'center';
-        ctx.fillText('← königlich          gewöhnlich →', W / 2, H - 20);
+        ctx.fillText('← königlich                    gewöhnlich →', W / 2, H - 12);
         ctx.save();
-        ctx.translate(18, H / 2 - 20);
+        ctx.translate(14, areaY + areaH / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.fillText('← männlich          weiblich →', 0, 0);
+        ctx.fillText('← männlich                    weiblich →', 0, 0);
         ctx.restore();
 
         const getXY = (id) => ({
-            x: areaX + pos[id].x * areaW,
-            y: areaY + pos[id].y * areaH
+            x: areaX + this.positions2D[id].x * areaW,
+            y: areaY + this.positions2D[id].y * areaH
         });
 
-        // Connections
-        this.shouldBeClose.forEach(([id1, id2, label]) => {
+        // Draw ALL connections as green (all satisfied in 2D)
+        const allPairs = [
+            ['king', 'queen', 'Königspaar'],
+            ['man', 'woman', 'Geschlechterpaar'],
+            ['king', 'man', 'männlich'],
+            ['queen', 'woman', 'weiblich'],
+            ['cat', 'dog', 'Tiere'],
+        ];
+
+        allPairs.forEach(([id1, id2, label]) => {
             const p1 = getXY(id1);
             const p2 = getXY(id2);
 
-            ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.45)';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.stroke();
 
-            ctx.font = '10px system-ui';
+            ctx.font = '9px system-ui';
             ctx.fillStyle = '#10b981';
             ctx.textAlign = 'center';
-            ctx.fillText(label, (p1.x + p2.x) / 2, (p1.y + p2.y) / 2 - 8);
+            const mx = (p1.x + p2.x) / 2;
+            const my = (p1.y + p2.y) / 2;
+            ctx.fillText('✓ ' + label, mx, my - 6);
         });
 
-        // Square highlight
+        // Dashed square around king-queen-man-woman
         const kp = getXY('king'), qp = getXY('queen'), mp = getXY('man'), wp = getXY('woman');
         ctx.strokeStyle = 'rgba(99, 102, 241, 0.2)';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 4]);
         ctx.beginPath();
-        ctx.moveTo(kp.x, kp.y); ctx.lineTo(qp.x, qp.y);
-        ctx.lineTo(wp.x, wp.y); ctx.lineTo(mp.x, mp.y);
+        ctx.moveTo(kp.x, kp.y); ctx.lineTo(mp.x, mp.y);
+        ctx.lineTo(wp.x, wp.y); ctx.lineTo(qp.x, qp.y);
         ctx.closePath();
         ctx.stroke();
         ctx.setLineDash([]);
@@ -2735,12 +2789,7 @@ const DimensionViz = {
             const p = getXY(word.id);
 
             ctx.beginPath();
-            ctx.arc(p.x + 2, p.y + 2, 14, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0,0,0,0.06)';
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, 13, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
             ctx.fillStyle = word.color;
             ctx.fill();
             ctx.strokeStyle = '#fff';
@@ -2748,151 +2797,257 @@ const DimensionViz = {
             ctx.stroke();
 
             ctx.font = 'bold 13px system-ui';
-            ctx.fillStyle = word.color;
+            ctx.fillStyle = '#1e293b';
             ctx.textAlign = 'center';
             ctx.fillText(word.label, p.x, p.y + 28);
         });
 
-        ctx.font = 'bold 13px system-ui';
-        ctx.fillStyle = '#10b981';
+        // Note about limitation
+        ctx.font = '11px system-ui';
+        ctx.fillStyle = '#d97706';
         ctx.textAlign = 'center';
-        ctx.fillText('✓ 2D: Das "Bedeutungs-Quadrat" funktioniert! Aber Tiere haben keine eigene Achse.', W / 2, H - 42);
+        ctx.fillText('⚠️ Tiere haben keine eigene Achse – bei mehr Tierwörtern wird es eng!', W / 2, H - 30);
     },
 
-    // ===================== 3D RENDERING (PLOTLY) =====================
-    render3DPlotly: function(container) {
-        const pos = this.positions[3];
+    // ===================== 3D (CSS Transform) =====================
+    render3DCSS: function(container) {
+        container.innerHTML = '';
 
-        // Build traces: one per word (for individual colors + labels)
-        const traces = [];
+        // Create 3D scene with CSS transforms
+        const scene = document.createElement('div');
+        scene.style.cssText = `
+            width: 100%; height: 100%; perspective: 800px;
+            display: flex; align-items: center; justify-content: center;
+            user-select: none; cursor: grab; position: relative;
+        `;
 
-        // Connection lines first (behind points)
-        this.shouldBeClose.forEach(([id1, id2, label]) => {
-            const p1 = pos[id1];
-            const p2 = pos[id2];
-            traces.push({
-                type: 'scatter3d',
-                mode: 'lines',
-                x: [p1.x, p2.x],
-                y: [p1.y, p2.y],
-                z: [p1.z, p2.z],
-                line: { color: 'rgba(16, 185, 129, 0.4)', width: 4 },
-                showlegend: false,
-                hoverinfo: 'skip'
-            });
-        });
+        const cube = document.createElement('div');
+        cube.id = 'dim3d-cube';
+        cube.style.cssText = `
+            width: 280px; height: 280px; position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(${this.rotX}deg) rotateY(${this.rotY}deg);
+            transition: transform 0.05s linear;
+        `;
 
-        // Group words by category for legend
-        const groups = [
-            { name: 'Königlich', ids: ['king', 'queen'], color: '#7c3aed' },
-            { name: 'Gewöhnlich', ids: ['man', 'woman'], color: '#6366f1' },
-            { name: 'Tiere', ids: ['cat', 'dog'], color: '#10b981' },
+        // Draw axes as lines
+        const axisLength = 140;
+        const axes = [
+            { dir: [1, 0, 0], color: '#3b82f6', label: 'Rang' },
+            { dir: [0, 1, 0], color: '#ec4899', label: 'Geschlecht' },
+            { dir: [0, 0, 1], color: '#10b981', label: 'Spezies' },
         ];
 
-        // Individual word markers with text
+        axes.forEach(axis => {
+            // Axis line
+            const line = document.createElement('div');
+            const len = axisLength;
+            const dx = axis.dir[0], dy = axis.dir[1], dz = axis.dir[2];
+
+            line.style.cssText = `
+                position: absolute; left: 50%; top: 50%;
+                width: ${len}px; height: 2px;
+                background: ${axis.color}; opacity: 0.5;
+                transform-origin: 0% 50%;
+                transform: translate3d(0, 0, 0)
+                    rotateY(${dx ? 0 : dz ? 90 : 0}deg)
+                    rotateZ(${dy ? -90 : 0}deg)
+                    rotateX(${0}deg);
+            `;
+
+            // Simpler approach: position axis endpoints
+            const axisEl = document.createElement('div');
+            axisEl.style.cssText = `
+                position: absolute;
+                left: 50%; top: 50%;
+                width: 2px; height: 2px;
+                transform-style: preserve-3d;
+            `;
+
+            // Create axis with SVG line
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '0');
+            svg.setAttribute('height', '0');
+            svg.style.overflow = 'visible';
+            svg.style.position = 'absolute';
+
+            cube.appendChild(axisEl);
+
+            // Axis label
+            const lbl = document.createElement('div');
+            lbl.textContent = axis.label;
+            lbl.style.cssText = `
+                position: absolute; left: 50%; top: 50%;
+                transform: translate3d(${dx * (axisLength + 15)}px, ${-dy * (axisLength + 15)}px, ${dz * (axisLength + 15)}px);
+                font: bold 11px system-ui; color: ${axis.color};
+                white-space: nowrap; pointer-events: none;
+            `;
+            cube.appendChild(lbl);
+        });
+
+        // Draw 3D axis lines using thin divs
+        // X axis
+        this.create3DLine(cube, 0, 0, 0, axisLength, 0, 0, '#3b82f6', 2, 0.5);
+        // Y axis
+        this.create3DLine(cube, 0, 0, 0, 0, -axisLength, 0, '#ec4899', 2, 0.5);
+        // Z axis
+        this.create3DLine(cube, 0, 0, 0, 0, 0, axisLength, '#10b981', 2, 0.5);
+
+        // Draw connection lines between related words
+        const scale = 110;
+        const offset = { x: 0, y: 0, z: 0 };
+
+        const get3DPos = (id) => {
+            const p = this.positions3D[id];
+            return {
+                x: (p.x - 0.5) * scale * 2,
+                y: -(p.y - 0.5) * scale * 2,
+                z: (p.z - 0.5) * scale * 2
+            };
+        };
+
+        // Connection lines
+        const connections = [
+            ['king', 'queen'], ['man', 'woman'], ['king', 'man'],
+            ['queen', 'woman'], ['cat', 'dog']
+        ];
+
+        connections.forEach(([id1, id2]) => {
+            const p1 = get3DPos(id1);
+            const p2 = get3DPos(id2);
+            this.create3DLine(cube, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, '#10b981', 1.5, 0.3);
+        });
+
+        // Place word dots
         this.words.forEach(word => {
-            const p = pos[word.id];
-            traces.push({
-                type: 'scatter3d',
-                mode: 'markers+text',
-                x: [p.x],
-                y: [p.y],
-                z: [p.z],
-                marker: {
-                    size: 10,
-                    color: word.color,
-                    opacity: 0.95,
-                    line: { color: '#fff', width: 1.5 }
-                },
-                text: [word.label],
-                textposition: 'top center',
-                textfont: {
-                    size: 13,
-                    color: word.color,
-                    family: 'system-ui, sans-serif',
-                    weight: 700
-                },
-                name: word.label,
-                showlegend: false,
-                hovertemplate: `<b>${word.label}</b><br>Rang: %{x:.1f}<br>Spezies: %{y:.1f}<br>Geschlecht: %{z:.1f}<extra></extra>`
-            });
+            const p = get3DPos(word.id);
+
+            const dot = document.createElement('div');
+            dot.style.cssText = `
+                position: absolute; left: 50%; top: 50%;
+                width: 24px; height: 24px; border-radius: 50%;
+                background: ${word.color}; border: 2px solid #fff;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                transform: translate3d(${p.x}px, ${p.y}px, ${p.z}px) translate(-50%, -50%);
+                display: flex; align-items: center; justify-content: center;
+            `;
+
+            const label = document.createElement('div');
+            label.textContent = word.label;
+            label.style.cssText = `
+                position: absolute; left: 50%; top: 50%;
+                transform: translate3d(${p.x}px, ${p.y + 20}px, ${p.z}px) translate(-50%, 0);
+                font: bold 12px system-ui; color: ${word.color};
+                white-space: nowrap; pointer-events: none;
+                text-shadow: 0 0 4px #fff, 0 0 4px #fff, 0 0 4px #fff;
+            `;
+
+            cube.appendChild(dot);
+            cube.appendChild(label);
         });
 
-        // Annotations as invisible traces for legend
-        groups.forEach(group => {
-            traces.push({
-                type: 'scatter3d',
-                mode: 'markers',
-                x: [null], y: [null], z: [null],
-                marker: { size: 8, color: group.color },
-                name: group.name,
-                showlegend: true
-            });
+        scene.appendChild(cube);
+        container.appendChild(scene);
+
+        // Drag hint
+        const hint = document.createElement('div');
+        hint.style.cssText = `
+            position: absolute; bottom: 8px; right: 12px;
+            font: 11px system-ui; color: #94a3b8;
+        `;
+        hint.textContent = '🖱️ Ziehen zum Drehen';
+        container.style.position = 'relative';
+        container.appendChild(hint);
+
+        // Axis legend
+        const legend = document.createElement('div');
+        legend.style.cssText = `
+            position: absolute; top: 8px; left: 12px;
+            font: 11px system-ui; line-height: 1.6;
+        `;
+        legend.innerHTML = `
+            <span style="color:#3b82f6">━ Rang</span> (königlich↔gewöhnlich)<br>
+            <span style="color:#ec4899">━ Geschlecht</span> (m↔w)<br>
+            <span style="color:#10b981">━ Spezies</span> (Mensch↔Tier)
+        `;
+        container.appendChild(legend);
+
+        // Mouse drag for rotation
+        scene.addEventListener('mousedown', (e) => {
+            this.dragging = true;
+            this.lastMouseX = e.clientX;
+            this.lastMouseY = e.clientY;
+            scene.style.cursor = 'grabbing';
         });
 
-        const layout = {
-            margin: { l: 0, r: 0, b: 0, t: 0 },
-            scene: {
-                xaxis: {
-                    title: { text: 'Rang', font: { size: 12, color: '#3b82f6', family: 'system-ui' } },
-                    range: [-0.5, 4.5],
-                    gridcolor: '#e2e8f0',
-                    zerolinecolor: '#cbd5e1',
-                    backgroundcolor: '#f8fafc',
-                    showspikes: false,
-                    tickfont: { size: 10, color: '#94a3b8' }
-                },
-                yaxis: {
-                    title: { text: 'Spezies', font: { size: 12, color: '#10b981', family: 'system-ui' } },
-                    range: [-0.5, 4.5],
-                    gridcolor: '#e2e8f0',
-                    zerolinecolor: '#cbd5e1',
-                    backgroundcolor: '#f8fafc',
-                    showspikes: false,
-                    tickfont: { size: 10, color: '#94a3b8' }
-                },
-                zaxis: {
-                    title: { text: 'Geschlecht', font: { size: 12, color: '#ec4899', family: 'system-ui' } },
-                    range: [-0.5, 4.5],
-                    gridcolor: '#e2e8f0',
-                    zerolinecolor: '#cbd5e1',
-                    backgroundcolor: '#f8fafc',
-                    showspikes: false,
-                    tickfont: { size: 10, color: '#94a3b8' }
-                },
-                camera: {
-                    eye: { x: 1.8, y: 1.8, z: 1.4 },
-                    center: { x: 0, y: 0, z: -0.1 }
-                },
-                aspectmode: 'cube'
-            },
-            legend: {
-                x: 0.02, y: 0.98,
-                font: { size: 11, family: 'system-ui' },
-                bgcolor: 'rgba(255,255,255,0.85)',
-                bordercolor: '#e2e8f0',
-                borderwidth: 1
-            },
-            paper_bgcolor: '#fff',
-            annotations: [{
-                text: '🖱️ Ziehen zum Drehen!',
-                x: 0.98, y: 0.02,
-                xref: 'paper', yref: 'paper',
-                xanchor: 'right', yanchor: 'bottom',
-                showarrow: false,
-                font: { size: 11, color: '#94a3b8', family: 'system-ui' }
-            }]
-        };
+        document.addEventListener('mousemove', (e) => {
+            if (!this.dragging) return;
+            const dx = e.clientX - this.lastMouseX;
+            const dy = e.clientY - this.lastMouseY;
+            this.rotY += dx * 0.5;
+            this.rotX += dy * 0.5;
+            this.rotX = Math.max(-80, Math.min(80, this.rotX));
+            cube.style.transform = `rotateX(${this.rotX}deg) rotateY(${this.rotY}deg)`;
+            this.lastMouseX = e.clientX;
+            this.lastMouseY = e.clientY;
+        });
 
-        const config = {
-            displayModeBar: false,
-            responsive: true,
-            scrollZoom: true
-        };
+        document.addEventListener('mouseup', () => {
+            this.dragging = false;
+            scene.style.cursor = 'grab';
+        });
 
-        // Clear container and render
-        container.innerHTML = '';
-        Plotly.newPlot(container, traces, layout, config);
+        // Touch support
+        scene.addEventListener('touchstart', (e) => {
+            this.dragging = true;
+            this.lastMouseX = e.touches[0].clientX;
+            this.lastMouseY = e.touches[0].clientY;
+        });
+
+        scene.addEventListener('touchmove', (e) => {
+            if (!this.dragging) return;
+            e.preventDefault();
+            const dx = e.touches[0].clientX - this.lastMouseX;
+            const dy = e.touches[0].clientY - this.lastMouseY;
+            this.rotY += dx * 0.5;
+            this.rotX += dy * 0.5;
+            this.rotX = Math.max(-80, Math.min(80, this.rotX));
+            cube.style.transform = `rotateX(${this.rotX}deg) rotateY(${this.rotY}deg)`;
+            this.lastMouseX = e.touches[0].clientX;
+            this.lastMouseY = e.touches[0].clientY;
+        });
+
+        scene.addEventListener('touchend', () => { this.dragging = false; });
+    },
+
+    // Helper: create a 3D line between two points using a rotated div
+    create3DLine: function(parent, x1, y1, z1, x2, y2, z2, color, width, opacity) {
+        const dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+        const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (length < 0.1) return;
+
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2;
+        const midZ = (z1 + z2) / 2;
+
+        // Calculate rotation angles
+        const phi = Math.atan2(dy, dx);
+        const theta = Math.acos(dz / length);
+
+        const line = document.createElement('div');
+        line.style.cssText = `
+            position: absolute; left: 50%; top: 50%;
+            width: ${length}px; height: ${width}px;
+            background: ${color}; opacity: ${opacity};
+            border-radius: ${width}px;
+            transform-origin: 50% 50%;
+            transform: translate3d(${midX}px, ${midY}px, ${midZ}px)
+                       rotateZ(${phi * 180 / Math.PI}deg)
+                       rotateY(${(Math.PI / 2 - theta) * 180 / Math.PI}deg)
+                       translate(-50%, -50%);
+            pointer-events: none;
+        `;
+        parent.appendChild(line);
     },
 
     // ===================== EXPLANATION =====================
@@ -2906,23 +3061,26 @@ const DimensionViz = {
             explDiv.style.background = '#fef2f2';
             explDiv.style.borderColor = '#fecaca';
             explDiv.style.color = '#991b1b';
-            explDiv.innerHTML = `🔴 <b>1 Dimension (Zahlenlinie):</b> Unmöglich! "König" soll nah bei "Mann" UND nah bei "Königin" sein – 
-                aber dann sind "Königin" und "Frau" automatisch weit weg. Auf einer Linie kann man <b>nicht zwei unabhängige Beziehungen</b> gleichzeitig darstellen.
-                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Für jede unabhängige Beziehung (Rang, Geschlecht, Spezies...) braucht man eine eigene Achse!</span>`;
+            explDiv.innerHTML = `🔴 <b>1 Dimension:</b> Auf einer Zahlenlinie muss man sich entscheiden: 
+                Entweder König nah bei Königin (Paar) ODER König nah bei Mann (männlich) – aber nicht beides gleichzeitig, 
+                ohne dass die Tiere dazwischen geraten! Hier sind König↔Mann und Königin↔Frau <b>zu weit auseinander</b>.
+                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Eine Linie hat nur <b>eine</b> Richtung – aber wir brauchen mindestens zwei (Rang + Geschlecht)!</span>`;
         } else if (dim === 2) {
             explDiv.style.background = '#fefce8';
             explDiv.style.borderColor = '#fef08a';
             explDiv.style.color = '#854d0e';
-            explDiv.innerHTML = `🟡 <b>2 Dimensionen (Fläche):</b> Das Bedeutungs-Quadrat funktioniert! Eine Achse für "Rang", eine für "Geschlecht". 
-                Aber: "Katze" und "Hund" haben keine eigene Richtung – sie sind einfach "irgendwo anders". 
-                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Für die Unterscheidung Mensch↔Tier bräuchte man eine <b>dritte</b> Achse!</span>`;
+            explDiv.innerHTML = `🟡 <b>2 Dimensionen:</b> Jetzt klappt alles! Eine Achse für Rang (links=königlich, rechts=gewöhnlich), 
+                eine für Geschlecht (oben=m, unten=w). Alle Paare sind nah beieinander. 
+                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">⚠️ Aber: Katze & Hund sind einfach "rechts daneben" – es gibt keine eigene <b>Spezies-Achse</b>. 
+                Bei mehr Tieren wird es eng!</span>`;
         } else {
             explDiv.style.background = '#f0fdf4';
             explDiv.style.borderColor = '#bbf7d0';
             explDiv.style.color = '#166534';
             explDiv.innerHTML = `🟢 <b>3 Dimensionen (Raum):</b> Jetzt hat jede Beziehung ihre eigene Achse! Drehe den Plot – du siehst: 
                 Menschen oben, Tiere unten (Spezies-Achse). König/Königin links, Mann/Frau rechts (Rang-Achse). Männlich vorne, weiblich hinten (Geschlecht-Achse).
-                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Reale Sprache hat <b>hunderte</b> solcher Beziehungen. Deshalb: <b>4096–12288 Dimensionen</b>!</span>`;
+                <br><span style="font-size:0.85em; margin-top:4px; display:inline-block;">→ Reale Sprache hat <b>hunderte</b> solcher Beziehungen (Zeitform, Emotion, Formalität, Thema, Konkretheit...). 
+                Deshalb nutzen LLMs <b>4096–12288 Dimensionen</b> – eine pro Bedeutungsfacette!</span>`;
         }
     }
 };
