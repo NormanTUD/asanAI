@@ -11,41 +11,61 @@
 
 const rootMargin = "800px";
 
-const TokenizerViz = {
-    // Simple mock tokenizer with subword splitting
-    vocabulary: {
-        'once': 1024, 'upon': 2048, 'a': 64, 'time': 3072, 'the': 128,
-        'king': 4096, 'queen': 4097, 'was': 512, 'there': 2560, 'dragon': 5120,
-        'under': 6001, 'standing': 6002, 'understanding': null, // will be split
-        'un': 7001, 'break': 7002, 'able': 7003, 'unbreakable': null,
-        'hello': 8001, 'world': 8002, 'cat': 9001, 'sat': 9002, 'on': 9003,
-        'mat': 9004, 'is': 256, 'good': 3500, 'great': 3501, 'big': 3502,
-        'small': 3503, 'happy': 3600, 'sad': 3601, 'love': 3700, 'hat': 3800,
-        'play': 7010, 'ing': 7011, 'ed': 7012, 'er': 7013, 'ly': 7014,
-        'pre': 7020, 'dict': 7021, 'ion': 7022, 'trans': 7030, 'form': 7031,
-        'predict': null, 'prediction': null, 'transformer': null, 'playing': null,
-        'played': null, 'player': null, 'greatly': null, 'sadly': null,
-        'i': 40, 'you': 41, 'he': 42, 'she': 43, 'it': 44, 'we': 45,
-        'they': 46, 'my': 47, 'your': 48, 'his': 49, 'her': 50,
-        'this': 51, 'that': 52, 'with': 53, 'for': 54, 'not': 55,
-        'but': 56, 'and': 57, 'or': 58, 'in': 59, 'to': 60,
-        'of': 61, 'at': 62, 'by': 63, 'from': 65, 'up': 66,
-        'about': 67, 'into': 68, 'over': 69, 'after': 70,
-    },
+// ============================================================
+// STEP 1: TOKENIZATION VISUALIZER — Morphem-basierter BPE
+// ============================================================
 
-    // Subword splitting rules (simplified BPE-like)
-    splitRules: {
-        'understanding': ['under', 'standing'],
-        'unbreakable': ['un', 'break', 'able'],
-        'prediction': ['pre', 'dict', 'ion'],
-        'predict': ['pre', 'dict'],
-        'transformer': ['trans', 'form', 'er'],
-        'playing': ['play', 'ing'],
-        'played': ['play', 'ed'],
-        'player': ['play', 'er'],
-        'greatly': ['great', 'ly'],
-        'sadly': ['sad', 'ly'],
-    },
+const TokenizerViz = {
+    // Bekannte Morpheme / Subwords (simuliert ein vortrainiertes BPE-Vocab)
+    // Alles was hier drin steht, wird NICHT weiter gemergt.
+    knownSubwords: new Set([
+        // Deutsche Morpheme
+        'donau', 'dampf', 'schiff', 'fahrt', 'fahren', 'schifffahrt',
+        'gesellschaft', 'kapitän', 'elektrizität', 'haupt', 'betrieb',
+        'werk', 'bau', 'unter', 'beamte', 'beamten',
+        'un', 'ver', 'be', 'ge', 'er', 'zer', 'ent', 'emp', 'miss',
+        'ung', 'heit', 'keit', 'lich', 'isch', 'bar', 'sam', 'haft',
+        'chen', 'lein', 'schaft', 'tum', 'nis', 'sal',
+        'vor', 'nach', 'aus', 'ein', 'auf', 'ab', 'an', 'über', 'unter',
+        'durch', 'um', 'mit', 'zu', 'bei', 'von',
+        'tag', 'nacht', 'haus', 'land', 'stadt', 'berg', 'wald', 'feld',
+        'wasser', 'feuer', 'luft', 'erde', 'stein', 'holz', 'gold',
+        'hand', 'kopf', 'herz', 'auge', 'ohr', 'mund', 'fuß', 'arm',
+        'kind', 'mann', 'frau', 'mensch', 'tier', 'hund', 'katze',
+        'groß', 'klein', 'alt', 'neu', 'gut', 'schlecht', 'schön',
+        'lang', 'kurz', 'hoch', 'tief', 'breit', 'schmal',
+        'gehen', 'kommen', 'stehen', 'laufen', 'fahren', 'fliegen',
+        'sehen', 'hören', 'sprechen', 'denken', 'wissen', 'können',
+        'haben', 'sein', 'werden', 'machen', 'geben', 'nehmen',
+        'ist', 'und', 'oder', 'aber', 'weil', 'dass', 'wenn', 'als',
+        'der', 'die', 'das', 'den', 'dem', 'des', 'ein', 'eine',
+        'ich', 'du', 'wir', 'ihr', 'sie', 'es', 'er',
+        'nicht', 'auch', 'noch', 'schon', 'nur', 'sehr', 'mehr',
+        'wort', 'satz', 'text', 'buch', 'brief', 'bild', 'lied',
+        'zeit', 'jahr', 'monat', 'woche', 'stunde', 'minute',
+        'arbeit', 'spiel', 'leben', 'liebe', 'freund', 'feind',
+        'lang', 'langes', 'lange', 'langen', 'langer',
+        'besteht', 'bestehen',
+        // Englische Morpheme
+        'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been',
+        'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+        'can', 'could', 'shall', 'should', 'may', 'might', 'must',
+        'not', 'and', 'or', 'but', 'if', 'then', 'else', 'when',
+        'cat', 'dog', 'sat', 'on', 'mat', 'hat', 'bat', 'rat',
+        'king', 'queen', 'man', 'woman', 'child', 'boy', 'girl',
+        'once', 'upon', 'time', 'there', 'here', 'where', 'what',
+        'play', 'ing', 'ed', 'er', 'ly', 'ness', 'ment', 'tion',
+        'pre', 'dis', 'mis', 'over', 'out', 'up', 'down',
+        'un', 're', 'in', 'im', 'ir', 'il',
+        'able', 'ible', 'ful', 'less', 'ous', 'ive', 'al', 'ial',
+        'trans', 'form', 'under', 'stand', 'break',
+        'hello', 'world', 'good', 'great', 'happy', 'love',
+        'dragon', 'drache', 'fliegen', 'konnte',
+    ]),
+
+    // Maximale Subword-Länge für die Suche
+    maxSubwordLen: 12,
+    minSubwordLen: 2,
 
     tokenColors: [
         '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
@@ -53,101 +73,195 @@ const TokenizerViz = {
         '#14b8a6', '#e11d48', '#0ea5e9', '#a855f7', '#d946ef'
     ],
 
-    animationInProgress: false,
+    // ─── Greedy Longest-Match Segmentierung ───
+    // Wie ein echter Tokenizer: von links nach rechts das längste bekannte Stück nehmen
+    segmentWord: function(word) {
+        word = word.toLowerCase();
+        const segments = [];
+        let i = 0;
 
-    tokenize: function(text) {
-        const words = text.toLowerCase().split(/\s+/).filter(w => w.length > 0);
-        const tokens = [];
+        while (i < word.length) {
+            let bestLen = 0;
+            let bestSegment = '';
 
-        words.forEach(word => {
-            // Check if word needs subword splitting
-            if (this.splitRules[word]) {
-                const parts = this.splitRules[word];
-                parts.forEach((part, idx) => {
-                    tokens.push({
-                        text: idx > 0 ? '##' + part : part,
-                        displayText: part,
-                        id: this.vocabulary[part] || Math.floor(Math.random() * 10000),
-                        isSubword: idx > 0,
-                        originalWord: word,
-                        splitIndex: idx,
-                        splitTotal: parts.length
-                    });
-                });
-            } else if (this.vocabulary[word] != null) {
-                tokens.push({
-                    text: word,
-                    displayText: word,
-                    id: this.vocabulary[word],
-                    isSubword: false,
-                    originalWord: word,
-                    splitIndex: 0,
-                    splitTotal: 1
-                });
+            // Suche das längste bekannte Subword ab Position i
+            for (let len = Math.min(this.maxSubwordLen, word.length - i); len >= this.minSubwordLen; len--) {
+                const candidate = word.substring(i, i + len);
+                if (this.knownSubwords.has(candidate)) {
+                    bestLen = len;
+                    bestSegment = candidate;
+                    break;
+                }
+            }
+
+            if (bestLen > 0) {
+                segments.push(bestSegment);
+                i += bestLen;
             } else {
-                // Unknown word — treat as single token with random ID
-                tokens.push({
-                    text: word,
-                    displayText: word,
-                    id: Math.floor(Math.random() * 50000),
+                // Einzelnes Zeichen als Fallback (unbekannt)
+                segments.push(word[i]);
+                i++;
+            }
+        }
+
+        return segments;
+    },
+
+    // Deterministischer Hash → Pseudo-Vocab-ID
+    _hashID: function(str) {
+        let hash = 5381;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) + hash + str.charCodeAt(i)) & 0x7FFFFFFF;
+        }
+        return hash % 50000;
+    },
+
+    // ─── Hauptfunktion ───
+    tokenize: function(text) {
+        // Satzzeichen abtrennen
+        const rawWords = text.split(/\s+/).filter(w => w.length > 0);
+        const allTokens = [];
+
+        rawWords.forEach((rawWord, wordIdx) => {
+            // Satzzeichen am Ende abtrennen
+            let word = rawWord;
+            let punctuation = '';
+            const punctMatch = word.match(/^(.+?)([.,!?;:]+)$/);
+            if (punctMatch) {
+                word = punctMatch[1];
+                punctuation = punctMatch[2];
+            }
+
+            const segments = this.segmentWord(word);
+
+            segments.forEach((seg, segIdx) => {
+                allTokens.push({
+                    text: segIdx > 0 ? '##' + seg : seg,
+                    displayText: seg,
+                    id: this._hashID(seg),
+                    isSubword: segIdx > 0,
+                    originalWord: rawWord,
+                    displayOriginal: rawWord,
+                    splitIndex: segIdx,
+                    splitTotal: segments.length + (punctuation ? 1 : 0),
+                    wordIndex: wordIdx
+                });
+            });
+
+            // Satzzeichen als eigenes Token
+            if (punctuation) {
+                allTokens.push({
+                    text: punctuation,
+                    displayText: punctuation,
+                    id: this._hashID(punctuation),
                     isSubword: false,
-                    originalWord: word,
-                    splitIndex: 0,
-                    splitTotal: 1
+                    originalWord: rawWord,
+                    displayOriginal: rawWord,
+                    splitIndex: segments.length,
+                    splitTotal: segments.length + 1,
+                    wordIndex: wordIdx
                 });
             }
         });
 
-        return tokens;
+        return allTokens;
     },
 
+    // ─── Rendering ───
     render: function() {
         const input = document.getElementById('tokenizer-input');
         const outputDiv = document.getElementById('tokenizer-output');
         const statsDiv = document.getElementById('tokenizer-stats');
         if (!input || !outputDiv) return;
 
-        const text = input.value || 'Once upon a time';
+        const text = input.value || 'Donaudampfschifffahrt ist ein langes Wort';
         const tokens = this.tokenize(text);
 
-        // Render token chips
-        let html = '<div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; min-height:60px;">';
+        // ─── Token-Chips ───
+        let html = '<div style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center; min-height:60px; align-items:flex-start;">';
+
+        let currentWordIdx = -1;
+        let colorIdx = -1;
+
         tokens.forEach((token, i) => {
-            const color = this.tokenColors[i % this.tokenColors.length];
-            const borderStyle = token.isSubword ? 'border-left:3px dashed ' + color : 'border-left:3px solid ' + color;
+            if (token.wordIndex !== currentWordIdx) {
+                currentWordIdx = token.wordIndex;
+                colorIdx++;
+            }
+            const color = this.tokenColors[colorIdx % this.tokenColors.length];
+            const isSplit = token.splitTotal > 1;
+            const isSubword = token.isSubword;
+
             html += `
                 <div class="token-chip" style="
                     display:inline-flex; flex-direction:column; align-items:center;
-                    padding:8px 14px; background:white; border-radius:8px;
-                    ${borderStyle}; border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0;
-                    box-shadow:0 2px 4px rgba(0,0,0,0.06);
-                    animation: tokenAppear 0.3s ease-out ${i * 0.08}s both;
+                    padding:8px 12px; background:${isSplit ? color + '0a' : '#fff'}; border-radius:8px;
+                    border-left:3px ${isSubword ? 'dashed' : 'solid'} ${color};
+                    border-top:1px solid #e2e8f0; border-right:1px solid #e2e8f0; border-bottom:1px solid #e2e8f0;
+                    box-shadow:0 2px 4px rgba(0,0,0,0.05);
+                    animation: tokenAppear 0.3s ease-out ${i * 0.05}s both;
                     cursor:default; transition: transform 0.15s;
-                " onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                    ${isSubword ? 'margin-left:-3px;' : ''}
+                " onmouseover="this.style.transform='translateY(-3px)'"
+                  onmouseout="this.style.transform='translateY(0)'"
+                  title="${token.displayOriginal} → Teil ${token.splitIndex + 1}/${token.splitTotal}">
                     <span style="font-weight:bold; font-size:1.05em; color:${color};">${token.displayText}</span>
-                    <span style="font-size:0.7em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
-                    ${token.isSubword ? '<span style="font-size:0.6em; color:#f59e0b;">subword</span>' : ''}
+                    <span style="font-size:0.65em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
+                    ${isSplit && !token.displayText.match(/^[.,!?;:]+$/) ? `<span style="font-size:0.6em; color:${isSubword ? '#f59e0b' : '#6366f1'};">${isSubword ? '##sub' : 'start▸'}</span>` : ''}
                 </div>`;
         });
         html += '</div>';
 
+        // ─── Zerlegungsanzeige für zusammengesetzte Wörter ───
+        const compoundWords = [];
+        const seen = new Set();
+        tokens.forEach(t => {
+            if (t.splitTotal > 1 && !seen.has(t.originalWord) && !t.displayText.match(/^[.,!?;:]+$/)) {
+                seen.add(t.originalWord);
+                const parts = tokens.filter(tok => tok.originalWord === t.originalWord && !tok.displayText.match(/^[.,!?;:]+$/));
+                if (parts.length > 1) {
+                    compoundWords.push({ word: t.originalWord, parts: parts.map(p => p.displayText) });
+                }
+            }
+        });
+
+        if (compoundWords.length > 0) {
+            html += `<div style="margin-top:14px; padding:12px 16px; background:#eff6ff; border-radius:10px; border:1px solid #bfdbfe;">`;
+            html += `<div style="font-size:0.8em; font-weight:bold; color:#1e40af; margin-bottom:8px;">🔍 Subword-Zerlegung:</div>`;
+            html += `<div style="display:flex; flex-direction:column; gap:6px;">`;
+
+            compoundWords.forEach(({ word, parts }) => {
+                html += `<div style="font-family:monospace; font-size:0.85em; color:#334155;">`;
+                html += `<span style="color:#64748b;">"${word}"</span> → `;
+                html += parts.map((p, i) => {
+                    const c = this.tokenColors[i % this.tokenColors.length];
+                    return `<span style="background:${c}15; border:1px solid ${c}40; padding:2px 6px; border-radius:4px; color:${c}; font-weight:bold;">${p}</span>`;
+                }).join(' + ');
+                html += ` <span style="color:#94a3b8; font-size:0.85em;">(${parts.length} tokens)</span>`;
+                html += `</div>`;
+            });
+
+            html += `</div></div>`;
+        }
+
         outputDiv.innerHTML = html;
 
-        // Stats
+        // ─── Stats ───
         if (statsDiv) {
-            const subwordCount = tokens.filter(t => t.isSubword).length;
-            const uniqueWords = [...new Set(tokens.map(t => t.originalWord))].length;
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            const splitWordCount = compoundWords.length;
             statsDiv.innerHTML = `
                 <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; font-size:0.85em; color:#475569;">
                     <span><b>${tokens.length}</b> tokens</span>
-                    <span><b>${uniqueWords}</b> words</span>
-                    <span><b>${subwordCount}</b> subword splits</span>
-                    <span>Vocab IDs: [${tokens.map(t => t.id).join(', ')}]</span>
+                    <span><b>${words.length}</b> Wörter</span>
+                    <span><b>${splitWordCount}</b> davon in Subwords zerlegt</span>
+                </div>
+                <div style="margin-top:6px; font-size:0.72em; color:#94a3b8; text-align:center;">
+                    Vocab IDs: [${tokens.map(t => t.id).join(', ')}]
                 </div>`;
         }
     }
 };
-
 
 // ============================================================
 // STEP 2: EMBEDDING VISUALIZER
