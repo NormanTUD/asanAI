@@ -17,7 +17,7 @@ var COLOR_CORRELATION_MATRIX = [
 	[0.04329450, -0.10823626, 0.06494176]
 ];
 
-var COLOR_CORRELATION_STDS = [0.3, 0.59, 0.11]; // approximate ImageNet channel stds
+var COLOR_CORRELATION_STDS = [0.3, 0.59, 0.11];
 var COLOR_CORRELATION_MATRIX_NORMALIZED = null;
 
 var COLOR_CORRELATION_SVD_SQRT = [
@@ -26,16 +26,172 @@ var COLOR_CORRELATION_SVD_SQRT = [
 	[0.27, -0.09, 0.03]
 ];
 
+var USER_COLOR_CORRELATION_MATRIX = null;
+var USE_USER_COLOR_CORRELATION = false;
+
+function compute_color_correlation_from_data(imageTensors) {
+	try {
+		var result = tidy(() => {
+			var pixels;
+
+			if (Array.isArray(imageTensors)) {
+				// Array of [H, W, 3] tensors — flatten and concatenate
+				var flattened = imageTensors.map(function(t) {
+					if (t.shape.length === 4) {
+						// [1, H, W, 3] → [H*W, 3]
+						return tf.reshape(t, [-1, 3]);
+					} else {
+						// [H, W, 3] → [H*W, 3]
+						return tf.reshape(t, [-1, 3]);
+					}
+				});
+				pixels = tf.concat(flattened, 0); // [totalPixels, 3]
+			} else if (imageTensors.shape.length === 4) {
+				// [N, H, W, 3] → [N*H*W, 3]
+				pixels = tf.reshape(imageTensors, [-1, 3]);
+			} else {
+				console.error("compute_color_correlation_from_data: unexpected tensor shape", imageTensors.shape);
+				return null;
+			}
+
+			// Compute mean per channel
+			var mean = pixels.mean(0); // [3]
+
+			// Center the pixels
+			var centered = tf.sub(pixels, mean.expandDims(0)); // [N, 3]
+
+			// Compute covariance matrix: (1/N) * centered^T * centered
+			var n = centered.shape[0];
+			var cov = tf.div(
+				tf.matMul(centered, centered, true, false), // [3, 3]
+				tf.scalar(n)
+			);
+
+			// Compute SVD-like square root via eigendecomposition approximation.
+			// Since tf.js doesn't have a native eigen/SVD for small matrices,
+			// we use a Cholesky-like approach: compute sqrt via iterative method
+			// or use the direct analytical formula for 3x3 symmetric positive-definite.
+			var covData = cov.arraySync();
+
+			// Use analytical Cholesky decomposition for 3x3
+			var L = _cholesky_3x3(covData);
+			if (!L) return null;
+
+			return L;
+		});
+
+		return result;
+	} catch (e) {
+		console.error("Failed to compute color correlation from user data:", e);
+		return null;
+	}
+}
+
+function _cholesky_3x3(A) {
+	var L = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+
+	// L[0][0]
+	if (A[0][0] <= 0) return null;
+	L[0][0] = Math.sqrt(A[0][0]);
+
+	// L[1][0], L[1][1]
+	L[1][0] = A[1][0] / L[0][0];
+	var tmp = A[1][1] - L[1][0] * L[1][0];
+	if (tmp <= 0) return null;
+	L[1][1] = Math.sqrt(tmp);
+
+	// L[2][0], L[2][1], L[2][2]
+	L[2][0] = A[2][0] / L[0][0];
+	L[2][1] = (A[2][1] - L[2][0] * L[1][0]) / L[1][1];
+	tmp = A[2][2] - L[2][0] * L[2][0] - L[2][1] * L[2][1];
+	if (tmp <= 0) return null;
+	L[2][2] = Math.sqrt(tmp);
+
+	return L;
+}
+
+function _normalize_correlation_matrix(m) {
+	var result = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+
+	for (var col = 0; col < 3; col++) {
+		var norm = Math.sqrt(
+			m[0][col] * m[0][col] +
+			m[1][col] * m[1][col] +
+			m[2][col] * m[2][col]
+		);
+		if (norm < 1e-10) norm = 1;
+		for (var row = 0; row < 3; row++) {
+			result[row][col] = m[row][col] / norm;
+		}
+	}
+
+	return result;
+}
+
+function set_color_correlation_from_training_data(imageTensors) {
+	var rawMatrix = compute_color_correlation_from_data(imageTensors);
+
+	if (!rawMatrix) {
+		console.warn("Could not compute color correlation from training data. Using ImageNet defaults.");
+		USE_USER_COLOR_CORRELATION = false;
+		return false;
+	}
+
+	// Validate: check that the matrix isn't degenerate
+	var det = _determinant_3x3(rawMatrix);
+	if (Math.abs(det) < 1e-10) {
+		console.warn("Computed color correlation matrix is near-singular (det=" + det + "). Using ImageNet defaults.");
+		USE_USER_COLOR_CORRELATION = false;
+		return false;
+	}
+
+	// Validate: check that values are in a reasonable range
+	var maxVal = 0;
+	for (var i = 0; i < 3; i++) {
+		for (var j = 0; j < 3; j++) {
+			maxVal = Math.max(maxVal, Math.abs(rawMatrix[i][j]));
+		}
+	}
+	if (maxVal > 100 || maxVal < 1e-6) {
+		console.warn("Computed color correlation matrix has extreme values (max=" + maxVal + "). Using ImageNet defaults.");
+		USE_USER_COLOR_CORRELATION = false;
+		return false;
+	}
+
+	USER_COLOR_CORRELATION_MATRIX = _normalize_correlation_matrix(rawMatrix);
+	USE_USER_COLOR_CORRELATION = true;
+
+	// Invalidate cached inverse
+	COLOR_DECORRELATION_MATRIX = null;
+	COLOR_CORRELATION_MATRIX_NORMALIZED = null;
+
+	console.log("Successfully computed color correlation matrix from training data.");
+	return true;
+}
+
+function _determinant_3x3(m) {
+	var a = m[0][0], b = m[0][1], c = m[0][2];
+	var d = m[1][0], e = m[1][1], f = m[1][2];
+	var g = m[2][0], h = m[2][1], i = m[2][2];
+	return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+}
+
+function reset_color_correlation_to_defaults() {
+	USE_USER_COLOR_CORRELATION = false;
+	USER_COLOR_CORRELATION_MATRIX = null;
+	COLOR_DECORRELATION_MATRIX = null;
+	COLOR_CORRELATION_MATRIX_NORMALIZED = null;
+	console.log("Color correlation reset to ImageNet defaults.");
+}
+
 function _get_color_correlation_matrix() {
+	if (USE_USER_COLOR_CORRELATION && USER_COLOR_CORRELATION_MATRIX) {
+		return USER_COLOR_CORRELATION_MATRIX;
+	}
+
 	if (!COLOR_CORRELATION_MATRIX_NORMALIZED) {
-		// Normalize each column of the SVD sqrt matrix to have unit norm,
-		// then scale by a global factor to keep values in a reasonable range.
 		var m = COLOR_CORRELATION_SVD_SQRT;
-		var result = [
-			[0, 0, 0],
-			[0, 0, 0],
-			[0, 0, 0]
-		];
+		var result = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
 
 		for (var col = 0; col < 3; col++) {
 			var norm = Math.sqrt(
@@ -123,6 +279,94 @@ function _rgb_to_decorrelated(data) {
 		var transformed = tf.matMul(flat, invMatrix, false, true);
 		return tf.reshape(transformed, shape);
 	});
+}
+
+function _assess_color_quality(rgbImage) {
+	return tidy(() => {
+		var pixels = tf.reshape(rgbImage, [-1, 3]);
+
+		// Check for NaN/Inf
+		var hasNan = tf.any(tf.isNaN(pixels)).dataSync()[0];
+		if (hasNan) {
+			return { isGood: false, reason: "NaN values detected in output" };
+		}
+
+		// Check per-channel variance — if any channel has near-zero variance,
+		// the decorrelation may be collapsing that channel
+		var channels = tf.split(pixels, 3, -1);
+		var variances = channels.map(function(ch) {
+			return tf.moments(ch).variance.dataSync()[0];
+		});
+
+		var minVariance = Math.min(variances[0], variances[1], variances[2]);
+		var maxVariance = Math.max(variances[0], variances[1], variances[2]);
+
+		if (minVariance < 1e-6) {
+			return { isGood: false, reason: "Channel collapsed (variance=" + minVariance.toFixed(8) + ")" };
+		}
+
+		// Check variance ratio — if one channel dominates overwhelmingly
+		if (maxVariance / (minVariance + 1e-10) > 100) {
+			return { isGood: false, reason: "Extreme channel imbalance (ratio=" + (maxVariance / minVariance).toFixed(1) + ")" };
+		}
+
+		// Check if output is nearly monochrome (all channels highly correlated)
+		var mean0 = tf.mean(channels[0]).dataSync()[0];
+		var mean1 = tf.mean(channels[1]).dataSync()[0];
+		var mean2 = tf.mean(channels[2]).dataSync()[0];
+
+		// If all means are nearly identical AND variances are similar,
+		// the image is likely grayscale despite color decorrelation
+		var meanRange = Math.max(mean0, mean1, mean2) - Math.min(mean0, mean1, mean2);
+		if (meanRange < 0.02 && maxVariance / (minVariance + 1e-10) < 2) {
+			return { isGood: false, reason: "Output appears monochrome (mean range=" + meanRange.toFixed(4) + ")" };
+		}
+
+		return { isGood: true, reason: "OK" };
+	});
+}
+
+async function _finalize_ascent_with_quality_check(generated_data, worked, useColorDecorrelation, layer_idx, neuron, iterations, start_image, recursion, previewCanvas, max_neurons) {
+	if (!useColorDecorrelation || !USE_USER_COLOR_CORRELATION) {
+		// No user matrix in use — just finalize normally
+		return await _finalize_ascent(generated_data, worked, useColorDecorrelation);
+	}
+
+	// Convert to RGB and assess quality
+	var rgbData = _decorrelated_to_rgb(generated_data);
+	var quality = _assess_color_quality(rgbData);
+
+	if (quality.isGood) {
+		// Good result — proceed normally
+		await dispose(generated_data);
+		var full_data = {};
+		full_data = _postprocess_generated_data(rgbData, full_data);
+		await dispose(rgbData);
+		full_data["worked"] = worked;
+		return full_data;
+	}
+
+	// Bad result — log warning and retry with ImageNet defaults
+	console.warn("Color quality check failed (" + quality.reason + "). Retrying with ImageNet defaults.");
+	await dispose(generated_data);
+	await dispose(rgbData);
+
+	// Temporarily switch to ImageNet defaults
+	var savedUserMatrix = USER_COLOR_CORRELATION_MATRIX;
+	var savedUseUser = USE_USER_COLOR_CORRELATION;
+	USE_USER_COLOR_CORRELATION = false;
+	COLOR_DECORRELATION_MATRIX = null; // Invalidate cache
+
+	try {
+		// Re-run gradient ascent with ImageNet defaults
+		var fallbackResult = await input_gradient_ascent(layer_idx, neuron, iterations, start_image, max_neurons, recursion, previewCanvas);
+		return fallbackResult;
+	} finally {
+		// Restore user settings (don't permanently override user choice)
+		USER_COLOR_CORRELATION_MATRIX = savedUserMatrix;
+		USE_USER_COLOR_CORRELATION = savedUseUser;
+		COLOR_DECORRELATION_MATRIX = null; // Invalidate cache again
+	}
 }
 
 /**
@@ -1486,9 +1730,11 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 	var useColorDecorrelation = false;
 
 	try {
+		// Phase 1: Prepare model, config, initial image, and Adam optimizer state
 		var prepared = _prepare_ascent(layer_idx, neuron, iterations, start_image);
 		useColorDecorrelation = prepared.config.useColorDecorrelation;
 
+		// Phase 2: Execute the gradient ascent loop (with Adam updates)
 		var loopOutput = await _execute_ascent_loop(prepared, iterations, layer_idx, neuron, max_neurons, previewCanvas, previewInterval);
 
 		generated_data = loopOutput.generated_data;
@@ -1497,7 +1743,107 @@ async function input_gradient_ascent(layer_idx, neuron, iterations, start_image,
 		return await _handle_ascent_error(e, recursion, layer_idx, neuron, iterations, start_image);
 	}
 
+	// Phase 3: Finalize with quality check (falls back to ImageNet defaults if user matrix fails)
+	if (useColorDecorrelation && USE_USER_COLOR_CORRELATION) {
+		return await _finalize_ascent_with_quality_check(
+			generated_data, worked, useColorDecorrelation,
+			layer_idx, neuron, iterations, start_image,
+			recursion, previewCanvas, max_neurons
+		);
+	}
+
 	return await _finalize_ascent(generated_data, worked, useColorDecorrelation);
+}
+
+async function gui_compute_color_correlation() {
+	var $status = $("#color_correlation_status");
+	$status.html("Computing color statistics from training data...");
+
+	try {
+		var trainingImages = await _get_training_image_tensors();
+
+		if (!trainingImages || trainingImages.length === 0) {
+			$status.html('<span style="color:orange">No training images available. Using ImageNet defaults.</span>');
+			reset_color_correlation_to_defaults();
+			return;
+		}
+
+		var success = set_color_correlation_from_training_data(trainingImages);
+
+		// Dispose training image tensors if we created them
+		for (var i = 0; i < trainingImages.length; i++) {
+			if (trainingImages[i] && !trainingImages[i].isDisposed) {
+				await dispose(trainingImages[i]);
+			}
+		}
+
+		if (success) {
+			$status.html('<span style="color:green">✓ Color correlation computed from your training data.</span>');
+			$("#use_user_color_correlation").prop("checked", true);
+		} else {
+			$status.html('<span style="color:orange">⚠ Computation failed. Using ImageNet defaults.</span>');
+			$("#use_user_color_correlation").prop("checked", false);
+		}
+	} catch (e) {
+		console.error("gui_compute_color_correlation error:", e);
+		$status.html('<span style="color:red">✗ Error: ' + (e.message || e) + '. Using ImageNet defaults.</span>');
+		reset_color_correlation_to_defaults();
+	}
+}
+
+function gui_toggle_user_color_correlation(checkbox) {
+	USE_USER_COLOR_CORRELATION = checkbox.checked;
+	// Invalidate cached matrices so they're recomputed on next use
+	COLOR_DECORRELATION_MATRIX = null;
+
+	if (checkbox.checked && !USER_COLOR_CORRELATION_MATRIX) {
+		console.warn("No user color correlation matrix computed yet. Will use ImageNet defaults until computed.");
+		USE_USER_COLOR_CORRELATION = false;
+		checkbox.checked = false;
+	}
+}
+
+async function _get_training_image_tensors() {
+	// Attempt to get images from the application's training data store
+	// This adapts to the specific application's data loading mechanism
+	if (typeof get_dataset_as_tensors === "function") {
+		var dataset = await get_dataset_as_tensors();
+		if (dataset && dataset.xs) {
+			// dataset.xs is likely [N, H, W, 3] — split into individual tensors
+			var n = dataset.xs.shape[0];
+			// Use at most 500 images for efficiency
+			var sampleSize = Math.min(n, 500);
+			var tensors = [];
+			for (var i = 0; i < sampleSize; i++) {
+				tensors.push(tidy(() => dataset.xs.slice([i, 0, 0, 0], [1, -1, -1, -1])));
+			}
+			return tensors;
+		}
+	}
+
+	// Fallback: try to get images from loaded training canvases
+	if (typeof get_training_data_as_tensors === "function") {
+		return await get_training_data_as_tensors();
+	}
+
+	// Fallback: try to sample from the current dataset
+	if (typeof x_train !== "undefined" && x_train && x_train.shape) {
+		var n = x_train.shape[0];
+		var sampleSize = Math.min(n, 500);
+		var tensors = [];
+		for (var i = 0; i < sampleSize; i++) {
+			tensors.push(tidy(() => x_train.slice([i, 0, 0, 0], [1, -1, -1, -1])));
+		}
+		return tensors;
+	}
+
+	return null;
+}
+
+function gui_reset_color_correlation() {
+	reset_color_correlation_to_defaults();
+	$("#use_user_color_correlation").prop("checked", false);
+	$("#color_correlation_status").html("Using ImageNet defaults.");
 }
 
 // ============================================================================
