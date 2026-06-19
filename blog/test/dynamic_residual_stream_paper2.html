@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Residual Stream – Interaktiv verstehen</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a0e14;
+            color: #c8d0da;
+            line-height: 1.6;
+            padding: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        h1 { color: #6cb4ff; font-size: 1.6rem; margin-bottom: 0.3rem; }
+        h2 { color: #8fd4a8; font-size: 1.25rem; margin: 2.5rem 0 0.8rem; border-top: 1px solid #1e2a3a; padding-top: 1rem; }
+        p { margin: 0.6rem 0; font-size: 0.95rem; }
+        .subtitle { color: #6a7a8a; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .card {
+            background: #111820;
+            border: 1px solid #1e2a3a;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+        }
+        .insight {
+            border-left: 3px solid #f0a050;
+            padding: 0.6rem 1rem;
+            margin: 0.8rem 0;
+            background: #1a1a10;
+            font-size: 0.9rem;
+        }
+        canvas {
+            display: block;
+            margin: 0.8rem auto;
+            border-radius: 8px;
+            cursor: crosshair;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
+            margin: 0.6rem 0;
+        }
+        .controls label {
+            font-size: 0.82rem;
+            color: #8a9aaa;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        input[type="range"] {
+            width: 120px;
+            accent-color: #6cb4ff;
+        }
+        .val { color: #6cb4ff; font-weight: bold; min-width: 35px; display: inline-block; }
+        .legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.78rem;
+            margin: 0.4rem 0;
+        }
+        .legend span { display: flex; align-items: center; gap: 0.3rem; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        button {
+            background: #1e2a3a;
+            border: 1px solid #3a4a5a;
+            color: #c8d0da;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.82rem;
+        }
+        button:hover { background: #2a3a4a; }
+        .flex { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .flex > * { flex: 1; min-width: 280px; }
+        .num { color: #f0a050; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<h1>🧠 Wie rechnen die inneren Layer eines Transformers?</h1>
+<p class="subtitle">Interaktive Erklärung basierend auf "Dynamics of the Transformer Residual Stream" (Fernando & Guitchounts, 2026)</p>
+
+<!-- ===== SECTION 1: GRUNDMODELL ===== -->
+<h2>1. Dein Punkt fließt durch Layer – aber WIE wird er verschoben?</h2>
+
+<div class="card">
+<p>Jedes Token ist ein Punkt in 4096 Dimensionen. Jeder Layer addiert eine kleine Verschiebung. Aber diese Verschiebung ist zu <span class="num">~98%</span> eine <b>Rotation</b> – nicht ein einfaches "schieb nach links".</p>
+<div class="insight">💡 Stell dir vor: Statt einen Punkt in eine Richtung zu stupsen, <b>dreht</b> jeder Layer Paare von Koordinaten gegeneinander – wie ein Uhrzeiger, der sich gleichzeitig etwas streckt oder schrumpft.</div>
+
+<p>Hier siehst du es: Ein Punkt (weiß) fließt durch Layer. Jeder Layer rotiert ihn in einem 2D-Unterraum.</p>
+
+<canvas id="c1" width="1060" height="280"></canvas>
+<div class="controls">
+    <label>Layer-Anzahl: <input type="range" id="s1layers" min="4" max="32" value="16" oninput="draw1()"><span class="val" id="v1layers">16</span></label>
+    <label>Rotationsstärke: <input type="range" id="s1rot" min="0" max="100" value="60" oninput="draw1()"><span class="val" id="v1rot">0.60</span></label>
+    <label>Streckung: <input type="range" id="s1stretch" min="50" max="150" value="95" oninput="draw1()"><span class="val" id="v1stretch">0.95</span></label>
+    <button onclick="document.getElementById('s1rot').value=0;draw1()">Keine Rotation</button>
+    <button onclick="document.getElementById('s1rot').value=60;draw1()">Trainiert (~98%)</button>
+</div>
+<div class="legend">
+    <span><span class="dot" style="background:#ff6b6b"></span> Early (Mixer)</span>
+    <span><span class="dot" style="background:#ffa040"></span> Mid (Übergang)</span>
+    <span><span class="dot" style="background:#6be87a"></span> Late (Filter)</span>
+    <span><span class="dot" style="background:#fff"></span> Punkt-Trajektorie</span>
+</div>
+</div>
+
+<!-- ===== SECTION 2: MIXER vs FILTER ===== -->
+<h2>2. Frühe Layer = Mixer, Späte Layer = Filter</h2>
+
+<div class="card">
+<p>Das Paper zeigt: Die <b>Art</b> der Operation ändert sich monoton mit der Tiefe.</p>
+<div class="insight">💡 <b>Self-Alignment</b> misst, ob Ein- und Ausgangsrichtung übereinstimmen. Bei 0 = reiner Rotator (Mixer), bei 1 = symmetrisch (Filter). Trainierte Modelle gehen von ~0.04 (Layer 0) zu ~0.70 (Layer 31).</div>
+
+<div class="flex">
+<div>
+<canvas id="c2a" width="500" height="250"></canvas>
+<p style="text-align:center;font-size:0.8rem;color:#8a9aaa">← Früher Layer: Input-Richtung ≠ Output-Richtung</p>
+</div>
+<div>
+<canvas id="c2b" width="500" height="250"></canvas>
+<p style="text-align:center;font-size:0.8rem;color:#8a9aaa">← Später Layer: Input ≈ Output (verstärkt/dämpft)</p>
+</div>
+</div>
+
+<div class="controls">
+    <label>Self-Alignment: <input type="range" id="s2align" min="0" max="100" value="4" oninput="draw2()"><span class="val" id="v2align">0.04</span></label>
+    <label>
+        <select id="s2preset" onchange="let v=this.value;document.getElementById('s2align').value=v;draw2()">
+            <option value="4">Early Layer (~0.04)</option>
+            <option value="30">Mid Layer (~0.30)</option>
+            <option value="65">Late Layer (~0.65)</option>
+        </select>
+    </label>
+</div>
+</div>
+
+<!-- ===== SECTION 3: FLASCHENHALS ===== -->
+<h2>3. Der gelernte Flaschenhals: 4096 → ~7 Dimensionen</h2>
+
+<div class="card">
+<p>Wenn man alle Layer-Rotationen hintereinander ausführt, überleben von <span class="num">4096</span> möglichen Richtungen nur <span class="num">~7</span> end-to-end. Alles andere wird zerrieben.</p>
+<div class="insight">💡 Das ist <b>gelernt</b> – bei zufälligen Gewichten (untrainiert) überleben ~326 Dimensionen. Training installiert aktiv diesen Flaschenhals. Er macht das Netzwerk robust: Rauschen und irrelevante Details werden automatisch rausgefiltert.</div>
+
+<canvas id="c3" width="1060" height="300"></canvas>
+<div class="controls">
+    <label>Trainingsfortschritt: <input type="range" id="s3train" min="0" max="100" value="100" oninput="draw3()"><span class="val" id="v3train">100%</span></label>
+    <label>Non-Normalität (Rotationsstärke): <input type="range" id="s3nonnorm" min="0" max="200" value="100" oninput="draw3()"><span class="val" id="v3nonnorm">1.0</span></label>
+    <button onclick="document.getElementById('s3train').value=0;document.getElementById('s3nonnorm').value=100;draw3()">Untrainiert</button>
+    <button onclick="document.getElementById('s3train').value=100;document.getElementById('s3nonnorm').value=100;draw3()">Trainiert</button>
+    <button onclick="document.getElementById('s3train').value=100;document.getElementById('s3nonnorm').value=0;draw3()">Rotation entfernt (Schur c=0)</button>
+</div>
+</div>
+
+<!-- ===== SECTION 4: WARUM FLASCHENHALS ===== -->
+<h2>4. Woher kommt der Flaschenhals? Vom Umrühren!</h2>
+
+<div class="card">
+<p>Man könnte denken: "Manche Eigenwerte sind < 1, also schrumpfen Signale." Aber <b>nein</b> – der Kollaps kommt von der <b>Nicht-Normalität</b> (dass Ein ≠ Aus-Richtung).</p>
+<div class="insight">💡 Entfernt man mathematisch die Rotation (Schur-Chirurgie, c=0), aber behält die Eigenwerte, steigt der effektive Rang von 7 auf 45 – ein <span class="num">6.4×</span> Anstieg! Der Flaschenhals ist eine Eigenschaft der <b>trainierten Rotationsstruktur</b>.</div>
+
+<canvas id="c4" width="1060" height="280"></canvas>
+<div class="controls">
+    <label>Schur-Dosis c: <input type="range" id="s4dose" min="0" max="200" value="100" oninput="draw4()"><span class="val" id="v4dose">1.00</span></label>
+</div>
+<div class="legend">
+    <span><span class="dot" style="background:#6cb4ff"></span> Llama 3.1 8B</span>
+    <span><span class="dot" style="background:#d4a0ff"></span> OLMo (trainiert)</span>
+    <span><span class="dot" style="background:#6be87a"></span> Gemma 4 E4B</span>
+    <span><span class="dot" style="background:#555"></span> OLMo (untrainiert)</span>
+</div>
+</div>
+
+<!-- ===== SECTION 5: ORCHESTER ===== -->
+<h2>5. Kein Pipeline – ein Orchester ohne Dirigent</h2>
+
+<div class="card">
+<p>Die Layer reden <b>nicht</b> direkt miteinander. Die Überlappung zwischen Output von Layer ℓ und Input von Layer ℓ+1 liegt auf <b>Zufallsniveau</b> (~0.016).</p>
+<div class="insight">💡 Jeder Layer liest aus dem gemeinsamen "Notizbuch" (Residual Stream) und schreibt hinein – aber Layer 5 weiß nicht, was Layer 6 tun wird. Trotzdem funktioniert es, weil das Training die Gewichte so eingestellt hat, dass die Summe aller Rotationen den Punkt an die richtige Stelle bringt.</div>
+
+<canvas id="c5" width="1060" height="260"></canvas>
+<div class="controls">
+    <label>Anzahl "Instrumente" (Layer): <input type="range" id="s5n" min="4" max="32" value="16" oninput="draw5()"><span class="val" id="v5n">16</span></label>
+    <label>Koordination (trainiert vs. zufällig): <input type="range" id="s5coord" min="0" max="100" value="100" oninput="draw5()"><span class="val" id="v5coord">100%</span></label>
+    <button onclick="document.getElementById('s5coord').value=0;draw5()">Zufällig (untrainiert)</button>
+    <button onclick="document.getElementById('s5coord').value=100;draw5()">Trainiert</button>
+</div>
+</div>
+
+<!-- ===== SECTION 6: COMMUNITY BOUNDARIES ===== -->
+<h2>6. Brücken-Dimensionen werden gezielt behandelt</h2>
+
+<div class="card">
+<p>Die 4096 Dimensionen bilden <b>Communities</b> (Cluster korrelierter Einheiten). Manche Dimensionen sind "Brücken" zwischen Communities.</p>
+<div class="insight">💡 <b>Späte Layer verstärken Brücken</b> (sie tragen integrative Info). <b>Frühe Layer unterdrücken Brücken</b> (erst lokale Struktur aufbauen). Dieser Effekt ist gelernt – bei Initialisierung gibt es ihn nicht.</div>
+
+<canvas id="c6" width="1060" height="300"></canvas>
+<div class="controls">
+    <label>Layer-Typ (Self-Alignment): <input type="range" id="s6type" min="0" max="100" value="60" oninput="draw6()"><span class="val" id="v6type">0.60</span></label>
+    <label>Trainingsfortschritt: <input type="range" id="s6train" min="0" max="100" value="100" oninput="draw6()"><span class="val" id="v6train">100%</span></label>
+</div>
+</div>
+
+<!-- ===== SECTION 7: GESAMTBILD ===== -->
+<h2>7. Das Gesamtbild</h2>
+
+<div class="card">
+<canvas id="c7" width="1060" height="350"></canvas>
+<div class="controls">
+    <button onclick="anim7running=!anim7running;if(anim7running)anim7()">▶/⏸ Animation</button>
+    <label>Geschwindigkeit: <input type="range" id="s7speed" min="1" max="30" value="10"><span class="val" id="v7speed">10</span></label>
+</div>
+<p style="font-size:0.85rem;margin-top:0.5rem;">Beobachte: Viele Startpunkte (links) konvergieren auf wenige Richtungen (rechts). Das <b>ist</b> der Flaschenhals – und das <b>ist</b> wie das Modell sinnvolle Antworten liefert: Es filtert aus dem hochdimensionalen Rauschen die ~7 relevanten Signale heraus.</p>
+</div>
+
+<script>
+// ===== HELPERS =====
+function ctx(id) { return document.getElementById(id).getContext('2d'); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function regimeColor(l, L) {
+    const t = l / (L - 1);
+    if (t < 0.15) return '#ff6b6b';
+    if (t < 0.6) return '#ffa040';
+    return '#6be87a';
+}
+
+// ===== SECTION 1: ROTATION TRAJECTORY =====
+function draw1() {
+    const c = ctx('c1');
+    const W = 1060, H = 280;
+    c.clearRect(0, 0, W, H);
+
+    const L = +document.getElementById('s1layers').value;
+    const rot = +document.getElementById('s1rot').value / 100;
+    const stretch = +document.getElementById('s1stretch').value / 100;
+    document.getElementById('v1layers').textContent = L;
+    document.getElementById('v1rot').textContent = rot.toFixed(2);
+    document.getElementById('v1stretch').textContent = stretch.toFixed(2);
+
+    // Draw layer zones
+    const lw = (W - 80) / L;
+    for (let l = 0; l < L; l++) {
+        const x = 40 + l * lw;
+        c.fillStyle = regimeColor(l, L) + '15';
+        c.fillRect(x, 10, lw, H - 20);
+        if (l % Math.max(1, Math.floor(L / 8)) === 0) {
+            c.fillStyle = '#5a6a7a';
+            c.font = '10px monospace';
+            c.fillText('L' + l, x + 2, H - 5);
+        }
+    }
+
+    // Simulate trajectory
+    let px = 0.3, py = 0.0; // start point in normalized coords
+    const points = [[px, py]];
+
+    for (let l = 0; l < L; l++) {
+        const selfAlign = 0.04 + 0.66 * Math.pow(l / (L - 1), 1.5);
+        const rotAngle = rot * (1 - selfAlign) * 0.4 * (1 + 0.3 * Math.sin(l * 1.1));
+        const s = stretch + (1 - stretch) * selfAlign * 0.3;
+
+        // Rotate
+        const nx = px * Math.cos(rotAngle) - py * Math.sin(rotAngle);
+        const ny = px * Math.sin(rotAngle) + py * Math.cos(rotAngle);
+        px = nx * s;
+        py = ny * s;
+
+        // Add small deterministic perturbation (the f_l)
+        px += 0.02 * Math.sin(l * 0.7 + 1);
+        py += 0.02 * Math.cos(l * 0.9 + 2);
+
+        points.push([px, py]);
+    }
+
+    // Map to canvas
+    const cx = W / 2, cy = H / 2;
+    const scale = Math.min(W, H) * 0.35;
+
+    // Draw path
+    c.beginPath();
+    c.strokeStyle = '#ffffff40';
+    c.lineWidth = 1.5;
+    for (let i = 0; i < points.length; i++) {
+        const sx = cx + points[i][0] * scale;
+        const sy = cy - points[i][1] * scale;
+        if (i === 0) c.moveTo(sx, sy); else c.lineTo(sx, sy);
+    }
+    c.stroke();
+
+    // Draw points
+    for (let i = 0; i < points.length; i++) {
+        const sx = cx + points[i][0] * scale;
+        const sy = cy - points[i][1] * scale;
+        c.beginPath();
+        c.arc(sx, sy, i === 0 ? 6 : 4, 0, Math.PI * 2);
+        c.fillStyle = i === 0 ? '#fff' : regimeColor(i - 1, L);
+        c.fill();
+    }
+
+    // Arrow showing rotation
+    if (rot > 0.1) {
+        c.fillStyle = '#6cb4ff';
+        c.font = '11px sans-serif';
+        c.fillText('↻ Rotation ' + (rot * 100).toFixed(0) + '%', 10, 20);
+    }
+}
+
+// ===== SECTION 2: MIXER vs FILTER =====
+function draw2() {
+    const align = +document.getElementById('s2align').value / 100;
+    document.getElementById('v2align').textContent = align.toFixed(2);
+
+    // Left canvas: shows input/output vectors
+    const c = ctx('c2a');
+    const W = 500, H = 250;
+    c.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2;
+    const r = 80;
+
+    // Draw unit circle
+    c.beginPath();
+    c.arc(cx, cy, r, 0, Math.PI * 2);
+    c.strokeStyle = '#2a3a4a';
+    c.lineWidth = 1;
+    c.stroke();
+
+    // Input direction (fixed)
+    const inAngle = 0.3;
+    // Output direction depends on self-alignment
+    const misalign = (1 - align) * Math.PI * 0.45;
+    const outAngle = inAngle + misalign;
+
+    // Draw multiple input vectors
+    const nVecs = 8;
+    for (let i = 0; i < nVecs; i++) {
+        const a = inAngle + (i - nVecs / 2) * 0.15;
+        const outA = a + misalign * (1 + 0.2 * Math.sin(i));
+
+        // Input (blue)
+        c.beginPath();
+        c.moveTo(cx, cy);
+        c.lineTo(cx + Math.cos(a) * r * 0.7, cy - Math.sin(a) * r * 0.7);
+        c.strokeStyle = '#6cb4ff80';
+        c.lineWidth = 2;
+        c.stroke();
+
+        // Output (orange)
+        c.beginPath();
+        c.moveTo(cx, cy);
+        c.lineTo(cx + Math.cos(outA) * r * 0.9, cy - Math.sin(outA) * r * 0.9);
+        c.strokeStyle = '#ffa04080';
+        c.lineWidth = 2;
+        c.stroke();
+    }
+
+    // Labels
+    c.fillStyle = '#6cb4ff';
+    c.font = 'bold 11px sans-serif';
+    c.fillText('INPUT', cx + Math.cos(inAngle) * r + 5, cy - Math.sin(inAngle) * r);
+    c.fillStyle = '#ffa040';
+    c.fillText('OUTPUT', cx + Math.cos(outAngle) * r + 5, cy - Math.sin(outAngle) * r);
+
+    c.fillStyle = '#c8d0da';
+    c.font = '12px sans-serif';
+    c.fillText(`Self-Alignment = ${align.toFixed(2)}`, 10, 20);
+    c.fillStyle = '#8a9aaa';
+    c.font = '10px sans-serif';
+    const desc = align < 0.15 ? 'MIXER – dreht wild um' : align < 0.4 ? 'Übergang' : 'FILTER – verstärkt in gleicher Richtung';
+    c.fillText(desc, 10, 38);
+
+    // Right canvas: effect on a cloud of points
+    const c2 = ctx('c2b');
+    c2.clearRect(0, 0, W, H);
+
+    // Draw a cloud of points before and after
+    const seed = 42;
+    const pts = 60;
+    c2.fillStyle = '#c8d0da';
+    c2.font = '10px sans-serif';
+    c2.fillText('Vorher (grau) → Nachher (farbig)', 10, 15);
+
+    for (let i = 0; i < pts; i++) {
+        const a = (i / pts) * Math.PI * 2;
+        const rad = 30 + 20 * Math.sin(i * 3.7 + seed);
+        const x = cx + Math.cos(a) * rad * 0.5;
+        const y = cy + Math.sin(a) * rad * 0.5;
+
+        // Before
+        c2.beginPath();
+        c2.arc(x, y, 2, 0, Math.PI * 2);
+        c2.fillStyle = '#3a4a5a';
+        c2.fill();
+
+        // After: rotate by misalignment amount
+        const dx = x - cx, dy = y - cy;
+        const rotA = misalign * 0.5;
+        const stretch = 1 + (1 - align) * 0.3;
+        const nx = dx * Math.cos(rotA) - dy * Math.sin(rotA);
+        const ny = dx * Math.sin(rotA) + dy * Math.cos(rotA);
+
+        c2.beginPath();
+        c2.arc(cx + nx * stretch, cy + ny * stretch, 3, 0, Math.PI * 2);
+        c2.fillStyle = align < 0.15 ? '#ff6b6b' : align < 0.4 ? '#ffa040' : '#6be87a';
+        c2.fill();
+
+        // Arrow
+        c2.beginPath();
+        c2.moveTo(x, y);
+        c2.lineTo(cx + nx * stretch, cy + ny * stretch);
+        c2.strokeStyle = (align < 0.15 ? '#ff6b6b' : align < 0.4 ? '#ffa040' : '#6be87a') + '30';
+        c2.lineWidth = 0.8;
+        c2.stroke();
+    }
+}
+
+// ===== SECTION 3: BOTTLENECK =====
+function draw3() {
+    const c = ctx('c3');
+    const W = 1060, H = 300;
+    c.clearRect(0, 0, W, H);
+
+    const train = +document.getElementById('s3train').value / 100;
+    const nonNorm = +document.getElementById('s3nonnorm').value / 100;
+    document.getElementById('v3train').textContent = (train * 100).toFixed(0) + '%';
+    document.getElementById('v3nonnorm').textContent = nonNorm.toFixed(2);
+
+    // Calculate effective rank curve
+    const L = 32;
+    const d = 4096;
+
+    // At train=0, nonnorm=1: erank stays ~326
+    // At train=1, nonnorm=1: erank drops to ~7
+    // At train=1, nonnorm=0: erank ~45
+    const baseRank = lerp(326, 7, train);
+    const nonnormEffect = nonNorm; // 0=no collapse, 1=full collapse, 2=more collapse
+
+    const ranks = [];
+    for (let l = L - 1; l >= 0; l--) {
+        const depth = (L - 1 - l) / (L - 1); // 0 at last layer, 1 at first
+        const fullTrainRank = d * Math.exp(-depth * (3 + nonnormEffect * 3) * train);
+        const untrainedRank = d * Math.exp(-depth * 0.8);
+        const rank = Math.max(1, lerp(untrainedRank, fullTrainRank, train));
+        ranks.push(rank);
+    }
+    ranks.reverse();
+
+    // Draw
+    const padL = 60, padR = 20, padT = 30, padB = 40;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    // Y axis (log scale)
+    const yMin = 0, yMax = Math.log10(d);
+    function toY(rank) { return padT + plotH * (1 - (Math.log10(Math.max(1, rank)) - yMin) / (yMax - yMin)); }
+    function toX(l) { return padL + (l / (L - 1)) * plotW; }
+
+    // Grid
+    c.strokeStyle = '#1e2a3a';
+    c.lineWidth = 0.5;
+    for (let p = 0; p <= 3; p++) {
+        const y = toY(Math.pow(10, p));
+        c.beginPath(); c.moveTo(padL, y); c.lineTo(W - padR, y); c.stroke();
+        c.fillStyle = '#5a6a7a';
+        c.font = '10px monospace';
+        c.fillText(Math.pow(10, p).toString(), 5, y + 4);
+    }
+
+    // Regime backgrounds
+    for (let l = 0; l < L; l++) {
+        c.fillStyle = regimeColor(l, L) + '08';
+        c.fillRect(toX(l), padT, plotW / L, plotH);
+    }
+
+    // Draw curve
+    c.beginPath();
+    c.strokeStyle = '#6cb4ff';
+    c.lineWidth = 3;
+    for (let l = 0; l < L; l++) {
+        const x = toX(l);
+        const y = toY(ranks[l]);
+        if (l === 0) c.moveTo(x, y); else c.lineTo(x, y);
+    }
+    c.stroke();
+
+    // Fill under
+    c.lineTo(toX(L - 1), padT + plotH);
+    c.lineTo(toX(0), padT + plotH);
+    c.closePath();
+    c.fillStyle = '#6cb4ff10';
+    c.fill();
+
+    // Final rank annotation
+    const finalRank = ranks[0];
+    c.fillStyle = '#f0a050';
+    c.font = 'bold 13px sans-serif';
+    c.fillText(`erank ≈ ${finalRank.toFixed(1)} von ${d}`, toX(0) + 5, toY(finalRank) - 10);
+
+    // Axes labels
+    c.fillStyle = '#8a9aaa';
+    c.font = '11px sans-serif';
+    c.fillText('Layer (Injection-Punkt)', W / 2 - 60, H - 5);
+    c.save();
+    c.translate(12, H / 2);
+    c.rotate(-Math.PI / 2);
+    c.fillText('Effective Rank (log)', -40, 0);
+    c.restore();
+}
+
+// ===== SECTION 4: SCHUR DOSE =====
+function draw4() {
+    const c = ctx('c4');
+    const W = 1060, H = 280;
+    c.clearRect(0, 0, W, H);
+
+    const dose = +document.getElementById('s4dose').value / 100;
+    document.getElementById('v4dose').textContent = dose.toFixed(2);
+
+    // Data from paper: erank at various doses
+    function getErank(e0, e1, e2, flat, cv) {
+        if (flat) return e0 * Math.exp(-0.05 * cv);
+        if (cv <= 1) return e0 * Math.pow(e1 / e0, cv);
+        return e1 * Math.pow(e2 / e1, cv - 1);
+    }
+
+    const padL = 60, padR = 30, padT = 30, padB = 40;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+
+    const yMin = 0, yMax = 2.8; // log10 scale
+    function toY(v) { return padT + plotH * (1 - (Math.log10(Math.max(1, v)) - yMin) / (yMax - yMin)); }
+    function toX(cv) { return padL + (cv / 2) * plotW; }
+
+    // Grid
+    c.strokeStyle = '#1e2a3a';
+    c.lineWidth = 0.5;
+    for (let p = 0; p <= 2; p++) {
+        const y = toY(Math.pow(10, p));
+        c.beginPath(); c.moveTo(padL, y); c.lineTo(W - padR, y); c.stroke();
+        c.fillStyle = '#5a6a7a';
+        c.font = '10px monospace';
+        c.fillText(Math.pow(10, p).toString(), 5, y + 4);
+    }
+
+    // Models
+    const models = [
+        { name: 'Llama', e0: 45.4, e1: 7.12, e2: 2.53, flat: false, color: '#6cb4ff' },
+        { name: 'OLMo (trained)', e0: 314, e1: 55.5, e2: 12.4, flat: false, color: '#d4a0ff' },
+        { name: 'Gemma', e0: 39.3, e1: 5.92, e2: 1.60, flat: false, color: '#6be87a' },
+        { name: 'OLMo (step 0)', e0: 326, e1: 310, e2: 295, flat: true, color: '#555' }
+    ];
+
+    // Draw curves
+    const steps = 100;
+    for (const m of models) {
+        c.beginPath();
+        c.strokeStyle = m.color;
+        c.lineWidth = m.flat ? 1.5 : 2.5;
+        if (m.flat) c.setLineDash([5, 5]); else c.setLineDash([]);
+
+        for (let i = 0; i <= steps; i++) {
+            const cv = (i / steps) * 2;
+            const er = getErank(m.e0, m.e1, m.e2, m.flat, cv);
+            const x = toX(cv), y = toY(er);
+            if (i === 0) c.moveTo(x, y); else c.lineTo(x, y);
+        }
+        c.stroke();
+    }
+    c.setLineDash([]);
+
+    // Current dose marker
+    c.beginPath();
+    c.strokeStyle = '#ffa040';
+    c.lineWidth = 2;
+    c.setLineDash([3, 3]);
+    c.moveTo(toX(dose), padT);
+    c.lineTo(toX(dose), padT + plotH);
+    c.stroke();
+    c.setLineDash([]);
+
+    // Dose marker dots
+    for (const m of models) {
+        const er = getErank(m.e0, m.e1, m.e2, m.flat, dose);
+        c.beginPath();
+        c.arc(toX(dose), toY(er), 6, 0, Math.PI * 2);
+        c.fillStyle = m.color;
+        c.fill();
+        c.fillStyle = m.color;
+        c.font = '10px sans-serif';
+        c.fillText(`${m.name}: ${er.toFixed(1)}`, toX(dose) + 10, toY(er) + 4);
+    }
+
+    // Labels
+    c.fillStyle = '#8a9aaa';
+    c.font = '11px sans-serif';
+    c.fillText('Schur-Dosis c', W / 2 - 30, H - 5);
+    c.fillText('c=0: normal', toX(0) - 5, H - 20);
+    c.fillText('c=1: trainiert', toX(1) - 10, H - 20);
+    c.fillText('c=2: verstärkt', toX(2) - 30, H - 20);
+
+    c.save();
+    c.translate(12, H / 2);
+    c.rotate(-Math.PI / 2);
+    c.fillText('Effective Rank (log)', -40, 0);
+    c.restore();
+}
+
+// ===== SECTION 5: ORCHESTRA =====
+function draw5() {
+    const c = ctx('c5');
+    const W = 1060, H = 260;
+    c.clearRect(0, 0, W, H);
+
+    const n = +document.getElementById('s5n').value;
+    const coord = +document.getElementById('s5coord').value / 100;
+    document.getElementById('v5n').textContent = n;
+    document.getElementById('v5coord').textContent = (coord * 100).toFixed(0) + '%';
+
+    const cx = W / 2, cy = H / 2;
+
+    // Target point (where the sum should land)
+    const targetX = cx + 200, targetY = cy - 50;
+
+    // Draw target
+    c.beginPath();
+    c.arc(targetX, targetY, 12, 0, Math.PI * 2);
+    c.strokeStyle = '#7ee787';
+    c.lineWidth = 2;
+    c.stroke();
+    c.fillStyle = '#7ee78740';
+    c.fill();
+    c.fillStyle = '#7ee787';
+    c.font = '11px sans-serif';
+    c.fillText('Ziel (nächstes Token)', targetX + 15, targetY + 4);
+
+    // Start point
+    const startX = cx - 250, startY = cy + 30;
+    c.beginPath();
+    c.arc(startX, startY, 8, 0, Math.PI * 2);
+    c.fillStyle = '#fff';
+    c.fill();
+    c.fillStyle = '#c8d0da';
+    c.fillText('Start (Embedding)', startX - 50, startY + 25);
+
+    // Generate layer contributions (vectors)
+    // When coordinated, they sum to target. When random, they sum to random.
+    const targetDx = targetX - startX;
+    const targetDy = targetY - startY;
+
+    const vectors = [];
+    let sumX = 0, sumY = 0;
+
+    for (let i = 0; i < n; i++) {
+        // Coordinated component (trained)
+        const coordVx = targetDx / n + (Math.sin(i * 2.1) * 30 / n);
+        const coordVy = targetDy / n + (Math.cos(i * 1.7) * 30 / n);
+
+        // Random component (untrained)
+        const randVx = (Math.sin(i * 7.3 + 1) * 150) / n;
+        const randVy = (Math.cos(i * 5.1 + 2) * 150) / n;
+
+        const vx = lerp(randVx, coordVx, coord);
+        const vy = lerp(randVy, coordVy, coord);
+        vectors.push({ vx, vy });
+        sumX += vx;
+        sumY += vy;
+    }
+
+    // Draw vectors as chain
+    let px = startX, py = startY;
+    for (let i = 0; i < n; i++) {
+        const nx = px + vectors[i].vx;
+        const ny = py + vectors[i].vy;
+
+        // Arrow line
+        c.beginPath();
+        c.moveTo(px, py);
+        c.lineTo(nx, ny);
+        c.strokeStyle = regimeColor(i, n) + '90';
+        c.lineWidth = 2;
+        c.stroke();
+
+        // Arrow head
+        const angle = Math.atan2(ny - py, nx - px);
+        c.beginPath();
+        c.moveTo(nx, ny);
+        c.lineTo(nx - 6 * Math.cos(angle - 0.4), ny - 6 * Math.sin(angle - 0.4));
+        c.lineTo(nx - 6 * Math.cos(angle + 0.4), ny - 6 * Math.sin(angle + 0.4));
+        c.fillStyle = regimeColor(i, n);
+        c.fill();
+
+        px = nx;
+        py = ny;
+    }
+
+    // Final point
+    c.beginPath();
+    c.arc(px, py, 7, 0, Math.PI * 2);
+    c.fillStyle = '#ffa040';
+    c.fill();
+
+    // Distance to target
+    const dist = Math.sqrt((px - targetX) ** 2 + (py - targetY) ** 2);
+    c.fillStyle = '#8a9aaa';
+    c.font = '10px sans-serif';
+    c.fillText(`Abstand zum Ziel: ${dist.toFixed(0)}px`, W - 180, 20);
+
+    // Label
+    c.fillStyle = '#c8d0da';
+    c.font = '11px sans-serif';
+    c.fillText(`${n} Layer-Vektoren, Koordination: ${(coord*100).toFixed(0)}%`, 10, 20);
+    c.fillText('Jeder Pfeil = ein Layer. Kein Pfeil "weiß" wohin der nächste zeigt.', 10, 38);
+    c.fillText('Aber trainiert summieren sie sich zum Ziel.', 10, 54);
+}
+
+// ===== SECTION 6: COMMUNITY BOUNDARIES =====
+function draw6() {
+    const c = ctx('c6');
+    const W = 1060, H = 300;
+    c.clearRect(0, 0, W, H);
+
+    const selfAlign = +document.getElementById('s6type').value / 100;
+    const train = +document.getElementById('s6train').value / 100;
+    document.getElementById('v6type').textContent = selfAlign.toFixed(2);
+    document.getElementById('v6train').textContent = (train * 100).toFixed(0) + '%';
+
+    const cohensD = train * (selfAlign - 0.3) * 1.8;
+
+    // Draw communities as clusters
+    const communities = [
+        { cx: 200, cy: 100, r: 70, color: '#6cb4ff' },
+        { cx: 400, cy: 180, r: 80, color: '#d4a0ff' },
+        { cx: 650, cy: 120, r: 65, color: '#ffa040' },
+        { cx: 850, cy: 200, r: 75, color: '#6be87a' }
+    ];
+
+    // Draw community regions
+    for (const comm of communities) {
+        c.beginPath();
+        c.arc(comm.cx, comm.cy, comm.r, 0, Math.PI * 2);
+        c.fillStyle = comm.color + '15';
+        c.strokeStyle = comm.color + '40';
+        c.lineWidth = 1;
+        c.fill();
+        c.stroke();
+    }
+
+    // Draw nodes
+    const nodes = [];
+    const seed = 42;
+    for (let ci = 0; ci < communities.length; ci++) {
+        const comm = communities[ci];
+        for (let i = 0; i < 15; i++) {
+            const angle = (i / 15) * Math.PI * 2 + ci * 0.5;
+            const r = comm.r * 0.6 * (0.5 + 0.5 * Math.sin(i * 3.7 + seed));
+            nodes.push({
+                x: comm.cx + Math.cos(angle) * r,
+                y: comm.cy + Math.sin(angle) * r,
+                community: ci,
+                isBoundary: false
+            });
+        }
+    }
+
+    // Add boundary nodes (between communities)
+    const boundaryNodes = [
+        { x: 300, y: 140, communities: [0, 1] },
+        { x: 520, y: 150, communities: [1, 2] },
+        { x: 750, y: 160, communities: [2, 3] },
+        { x: 430, y: 100, communities: [0, 1, 2] }
+    ];
+
+    for (const bn of boundaryNodes) {
+        nodes.push({ ...bn, isBoundary: true });
+    }
+
+    // Draw edges (sparse)
+    c.lineWidth = 0.5;
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            const dist = Math.sqrt((nodes[i].x - nodes[j].x) ** 2 + (nodes[i].y - nodes[j].y) ** 2);
+            if (dist < 80 && Math.random() < 0.3) {
+                c.beginPath();
+                c.moveTo(nodes[i].x, nodes[i].y);
+                c.lineTo(nodes[j].x, nodes[j].y);
+                c.strokeStyle = '#2a3a4a';
+                c.stroke();
+            }
+        }
+    }
+
+    // Draw nodes with size based on amplification
+    for (const node of nodes) {
+        const baseSize = 4;
+        let amplification = 1;
+
+        if (node.isBoundary) {
+            amplification = 1 + cohensD * 0.8;
+        }
+
+        const size = baseSize * Math.max(0.3, amplification);
+
+        c.beginPath();
+        c.arc(node.x, node.y, size, 0, Math.PI * 2);
+
+        if (node.isBoundary) {
+            c.fillStyle = cohensD > 0 ? '#7ee787' : cohensD < -0.1 ? '#ff6b6b' : '#888';
+            c.strokeStyle = '#fff';
+            c.lineWidth = 1.5;
+            c.stroke();
+        } else {
+            const comm = communities[node.community];
+            c.fillStyle = comm.color + '80';
+        }
+        c.fill();
+    }
+
+    // Info text
+    c.fillStyle = '#c8d0da';
+    c.font = '12px sans-serif';
+    const status = cohensD > 0.1 ? '✅ Brücken-Nodes VERSTÄRKT (größer)' :
+                   cohensD < -0.1 ? '❌ Brücken-Nodes UNTERDRÜCKT (kleiner)' :
+                   '⚖️ Kein Effekt (untrainiert oder Übergang)';
+    c.fillText(status, 10, H - 15);
+    c.fillText(`Cohen's d = ${cohensD.toFixed(3)}`, 10, H - 35);
+
+    c.fillStyle = '#8a9aaa';
+    c.font = '10px sans-serif';
+    c.fillText('Große helle Punkte = Boundary-Nodes (verbinden Communities)', 10, 20);
+    c.fillText(`Self-Alignment = ${selfAlign.toFixed(2)} → ${selfAlign < 0.15 ? 'MIXER (non-normal)' : selfAlign < 0.4 ? 'Übergang' : 'FILTER (symmetrisch)'}`, 10, 36);
+}
+
+// ===== SECTION 7: FULL ANIMATION =====
+let anim7running = true;
+let anim7time = 0;
+let particles7 = [];
+
+function initParticles7() {
+    particles7 = [];
+    for (let i = 0; i < 25; i++) {
+        particles7.push({
+            x: 40 + Math.random() * 30,
+            y: 50 + Math.random() * 250,
+            vx: 0,
+            vy: 0,
+            trail: [],
+            hue: Math.random() * 360,
+            startY: 50 + Math.random() * 250
+        });
+    }
+}
+initParticles7();
+
+function anim7() {
+    if (!anim7running) return;
+
+    const c = ctx('c7');
+    const W = 1060, H = 350;
+    const speed = +document.getElementById('s7speed').value / 10;
+    document.getElementById('v7speed').textContent = document.getElementById('s7speed').value;
+
+    c.fillStyle = 'rgba(10, 14, 20, 0.12)';
+    c.fillRect(0, 0, W, H);
+
+    const L = 32;
+    const layerW = (W - 80) / L;
+
+    // Draw regime backgrounds (faint)
+    for (let l = 0; l < L; l++) {
+        const x = 40 + l * layerW;
+        c.fillStyle = regimeColor(l, L) + '06';
+        c.fillRect(x, 0, layerW, H);
+    }
+
+    // Draw convergence zone (the ~7 dimensions)
+    const funnelTop = H / 2 - 20;
+    const funnelBot = H / 2 + 20;
+    c.fillStyle = '#6cb4ff08';
+    c.fillRect(W - 100, funnelTop, 60, funnelBot - funnelTop);
+    c.strokeStyle = '#6cb4ff30';
+    c.strokeRect(W - 100, funnelTop, 60, funnelBot - funnelTop);
+
+    anim7time += 0.016 * speed;
+
+    for (const p of particles7) {
+        // Determine layer
+        const layerIdx = Math.floor((p.x - 40) / layerW);
+        const clampedLayer = Math.max(0, Math.min(L - 1, layerIdx));
+
+        // Self-alignment increases with depth
+        const selfAlign = 0.04 + 0.66 * Math.pow(clampedLayer / (L - 1), 1.5);
+
+        // Forward velocity
+        p.vx = 1.5 * speed;
+
+        // Rotation (strong in early, weak in late)
+        const rotStrength = (1 - selfAlign) * 0.15 * speed;
+        p.vy += rotStrength * Math.sin(anim7time * 2 + p.hue * 0.05 + clampedLayer * 0.3);
+
+        // Compression toward center (the funneling)
+        const centerY = H / 2;
+        const compressionForce = 0.02 * speed * Math.pow(clampedLayer / (L - 1), 2);
+        p.vy += (centerY - p.y) * compressionForce;
+
+        // Damping
+        p.vy *= 0.95;
+
+        // Move
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Trail
+        p.trail.push({ x: p.x, y: p.y });
+        if (p.trail.length > 60) p.trail.shift();
+
+        // Wrap
+        if (p.x > W - 30) {
+            p.x = 40 + Math.random() * 20;
+            p.y = 50 + Math.random() * 250;
+            p.trail = [];
+            p.vy = 0;
+        }
+
+        // Clamp Y
+        p.y = Math.max(20, Math.min(H - 20, p.y));
+
+        // Draw trail
+        if (p.trail.length > 1) {
+            c.beginPath();
+            for (let t = 0; t < p.trail.length; t++) {
+                if (t === 0) c.moveTo(p.trail[t].x, p.trail[t].y);
+                else c.lineTo(p.trail[t].x, p.trail[t].y);
+            }
+            c.strokeStyle = `hsla(${p.hue}, 60%, 60%, 0.4)`;
+            c.lineWidth = 1.5;
+            c.stroke();
+        }
+
+        // Draw particle
+        const size = 3 + (1 - selfAlign) * 3;
+        c.beginPath();
+        c.arc(p.x, p.y, size, 0, Math.PI * 2);
+        c.fillStyle = regimeColor(clampedLayer, L);
+        c.fill();
+    }
+
+    // Labels
+    c.fillStyle = '#c8d0da';
+    c.font = '11px sans-serif';
+    c.fillText('4096 Dimensionen', 5, 15);
+    c.fillText('~7 überleben', W - 105, funnelTop - 5);
+
+    requestAnimationFrame(anim7);
+}
+
+// ===== INIT =====
+draw1();
+draw2();
+draw3();
+draw4();
+draw5();
+draw6();
+anim7();
+</script>
+
+</body>
+</html>
