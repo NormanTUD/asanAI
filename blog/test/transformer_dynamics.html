@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Dynamics - Interactive Visual Explainer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #0a0a1a 70%);
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #64b5f6, #ce93d8, #f48fb1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            color: #aaa;
+            margin-bottom: 2rem;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+            color: #64b5f6;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #64b5f6;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.8rem;
+            color: #ce93d8;
+        }
+
+        .explanation {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #ccc;
+            max-width: 800px;
+            margin-bottom: 1.5rem;
+        }
+
+        .interactive-container {
+            background: #12122a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .controls label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .controls input[type="range"] {
+            width: 150px;
+            accent-color: #64b5f6;
+        }
+
+        button {
+            background: linear-gradient(135deg, #3949ab, #5c6bc0);
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(57, 73, 171, 0.4);
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+            border: 2px solid #555;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-dot.active {
+            background: #64b5f6;
+            border-color: #64b5f6;
+            box-shadow: 0 0 8px #64b5f6;
+        }
+
+        .nav-dot:hover {
+            border-color: #64b5f6;
+        }
+
+        .key-finding {
+            background: linear-gradient(135deg, #1a237e22, #4a148c22);
+            border-left: 4px solid #ce93d8;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .analogy-box {
+            background: #1a1a3e;
+            border: 1px dashed #64b5f6;
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #90caf9;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 { font-size: 2rem; }
+            section { padding: 2rem 1rem; }
+        }
+
+        .tooltip {
+            position: absolute;
+            background: #222;
+            border: 1px solid #64b5f6;
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 50;
+        }
+
+        .phase-unit-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .phase-unit-btn {
+            background: #1a1a3e;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .phase-unit-btn.active {
+            border-color: #f48fb1;
+            color: #f48fb1;
+            background: #2a1a2e;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-card {
+            background: #12122a;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #64b5f6;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 0.3rem;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.7rem 1.5rem;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.3s;
+        }
+
+        .tab:first-child { border-radius: 8px 0 0 8px; }
+        .tab:last-child { border-radius: 0 8px 8px 0; }
+
+        .tab.active {
+            background: #2a2a5a;
+            color: #64b5f6;
+            border-color: #64b5f6;
+        }
+
+        .info-banner {
+            background: linear-gradient(90deg, #1a237e44, transparent);
+            border-left: 3px solid #64b5f6;
+            padding: 0.8rem 1.2rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #90caf9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="nav-dots" id="navDots"></div>
+
+<div class="hero">
+    <h1>Transformer Dynamics</h1>
+    <p>A neuroscientific approach to understanding how Large Language Models compute — treating the residual stream as a dynamical system evolving across layers.</p>
+    <p style="font-size: 0.9rem; color: #888;">Fernando & Guitchounts, 2025 • Llama 3.1 8B</p>
+    <div class="scroll-hint">↓</div>
+</div>
+
+<!-- Section 1: The Big Idea -->
+<section id="sec-idea">
+    <h2>🧠 The Big Idea</h2>
+    <div class="explanation">
+        Just as neuroscientists study the brain by treating neural populations as dynamical systems evolving over <em>time</em>, this paper treats the transformer's <strong>residual stream</strong> as a dynamical system evolving over <em>layers</em>.
+    </div>
+
+    <div class="analogy-box">
+        🔬 <strong>Analogy:</strong> Imagine watching a ball roll through a landscape. Instead of asking "what does each blade of grass do?", we ask "what is the ball's trajectory? Does it speed up? Does it spiral? Does it get pulled toward certain paths?" That's what this paper does for the information flowing through a transformer.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: The Residual Stream as a River</h3>
+        <canvas id="riverCanvas" width="800" height="300"></canvas>
+        <div class="controls">
+            <label>
+                Layer Depth
+                <input type="range" id="riverLayer" min="0" max="63" value="0">
+                <span id="riverLayerVal">0</span>
+            </label>
+            <button onclick="animateRiver()">▶ Animate Through Layers</button>
+        </div>
+        <p style="text-align:center; margin-top:0.8rem; font-size:0.85rem; color:#888;">
+            Watch how the "river" of activations grows denser and faster as it flows through the 64 sublayers of the transformer.
+        </p>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="number">4096</div>
+            <div class="label">RS Dimensions ("Units")</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">64</div>
+            <div class="label">Sublayers (32 Attn + 32 MLP)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">8B</div>
+            <div class="label">Parameters (Llama 3.1)</div>
+        </div>
+        <div class="stat-card">
+            <div class="number">1000</div>
+            <div class="label">Data Batches Analyzed</div>
+        </div>
+    </div>
+</section>
+
+<!-- Section 2: Activations Grow Dense -->
+<section id="sec-dense">
+    <h2>📈 Finding 1: Activations Grow Dense Over Layers</h2>
+    <div class="explanation">
+        As information passes through the transformer, the activations of individual units in the residual stream systematically <strong>increase in magnitude</strong>. Units tend to preserve their sign (positive stays positive, negative stays negative), and the overall representation becomes "denser" — more units become strongly active.
+    </div>
+
+    <div class="key-finding">
+        <strong>Key Insight:</strong> The residual stream doesn't just passively carry information — it actively amplifies certain representational directions as it progresses through layers.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: Activation Heatmap</h3>
+        <canvas id="heatmapCanvas" width="800" height="400"></canvas>
+        <div class="controls">
+            <label>
+                Number of Units Shown
+                <input type="range" id="numUnits" min="20" max="200" value="100">
+                <span id="numUnitsVal">100</span>
+            </label>
+            <label>
+                Animation Speed
+                <input type="range" id="heatSpeed" min="1" max="10" value="5">
+            </label>
+            <button onclick="resetHeatmap()">Reset</button>
+            <button onclick="animateHeatmap()">▶ Animate</button>
+        </div>
+        <p style="text-align:center; margin-top:0.8rem; font-size:0.85rem; color:#888;">
+            Each column = one layer, each row = one unit. Colors show activation magnitude (blue=negative, red=positive). Notice how activations grow stronger in later layers.
+        </p>
+    </div>
+</section>
+
+<!-- Section 3: Correlations -->
+<section id="sec-corr">
+    <h2>🔗 Finding 2: Strong Continuity Despite No Privileged Basis</h2>
+    <div class="explanation">
+        A surprising finding: individual units in the residual stream maintain <strong>strong correlations</strong> between consecutive layers (r > 0.8 even in early layers). This is unexpected because the residual stream doesn't have a "privileged basis" — the coordinate axes aren't supposed to be meaningful. Yet individual coordinates behave coherently!
+    </div>
+
+    <div class="two-col">
+        <div>
+            <div class="key-finding">
+                <strong>Within-layer transitions</strong> (Attention → MLP within the same layer) show <em>higher</em> correlations than <strong>cross-layer transitions</strong> (MLP → next layer's Attention).
+            </div>
+            <div class="info-banner">
+                This suggests attention operations make smaller changes to the RS vectors than the cross-layer transitions.
+            </div>
+        </div>
+        <div>
+            <div class="key-finding">
+                <strong>Cosine similarity</strong> between consecutive RS vectors also increases over layers — the direction of the full vector becomes increasingly stable.
+            </div>
+        </div>
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: Layer-to-Layer Correlations</h3>
+        <canvas id="corrCanvas" width="800" height="350"></canvas>
+        <div class="controls">
+            <label>
+                Unit Index
+                <input type="range" id="corrUnit" min="0" max="99" value="50">
+                <span id="corrUnitVal">50</span>
+            </label>
+            <button onclick="toggleCorrType()">Toggle: Within/Cross Layer</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div> Within-layer (Attn→MLP)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2196f3"></div> Cross-layer (MLP→Attn+1)</div>
+        </div>
+    </div>
+</section>
+
+<!-- Section 4: Velocity -->
+<section id="sec-velocity">
+    <h2>🚀 Finding 3: The Residual Stream Accelerates</h2>
+    <div class="explanation">
+        The <strong>velocity</strong> of the residual stream — how much the representation changes from one layer to the next — shows a distinct pattern of <strong>acceleration</strong>. Early layers maintain relatively constant velocities, but later layers exhibit increasing velocity, with the steepest acceleration in the last third of the model.
+    </div>
+
+    <div class="analogy-box">
+        🎢 <strong>Analogy:</strong> Think of a roller coaster. The early layers are the slow climb up — steady, gradual changes. The later layers are the descent — rapid, dramatic transformations of the representation. The model "commits" to its final answer with increasing urgency.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: Velocity Profile</h3>
+        <canvas id="velocityCanvas" width="800" height="300"></canvas>
+        <div class="controls">
+            <label>
+                Noise Level
+                <input type="range" id="velNoise" min="0" max="50" value="10">
+            </label>
+            <button onclick="animateVelocity()">▶ Animate Ball</button>
+            <button onclick="resetVelocity()">Reset</button>
+        </div>
+        <p style="text-align:center; margin-top:0.8rem; font-size:0.85rem; color:#888;">
+            The ball moves through layers at the speed indicated by the velocity curve. Watch it accelerate in later layers!
+        </p>
+    </div>
+</section>
+
+<!-- Section 5: Mutual Information -->
+<section id="sec-mi">
+    <h2>📉 Finding 4: Mutual Information Drops Sharply</h2>
+    <div class="explanation">
+        While correlations <em>increase</em> over layers, <strong>mutual information</strong> (MI) between consecutive layers shows a <strong>sharp decline</strong> in early layers. This is a seeming paradox: how can things become more correlated but share less information?
+    </div>
+
+    <div class="key-finding">
+        <strong>Resolution of the Paradox:</strong> Correlation captures only <em>linear</em> relationships. MI captures <em>all</em> dependencies (linear + nonlinear). The drop in MI with rising correlation means the model is <strong>discarding complex nonlinear relationships</strong> in favor of <strong>simpler, linearly-aligned features</strong> in later layers.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: Correlation vs. Mutual Information</h3>
+        <canvas id="miCanvas" width="800" height="350"></canvas>
+        <div class="controls">
+            <button onclick="toggleMIView('both')">Show Both</button>
+            <button onclick="toggleMIView('corr')">Correlation Only</button>
+            <button onclick="toggleMIView('mi')">MI Only</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#ff9800"></div> Correlation (linear)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#9c27b0"></div> Mutual Information (all dependencies)</div>
+        </div>
+    </div>
+
+    <div class="analogy-box">
+        🎨 <strong>Analogy:</strong> Imagine a painter starting with a complex, abstract sketch (high MI, many nonlinear relationships). As they refine the painting, they simplify strokes into clean, predictable lines (high correlation). The final image is simpler in structure but more "aligned" — easier to read.
+    </div>
+</section>
+
+<!-- Section 6: Phase Portraits -->
+<section id="sec-phase">
+    <h2>🌀 Finding 5: Units Trace Unstable Periodic Orbits</h2>
+    <div class="explanation">
+        When plotting each unit's <strong>activation vs. its gradient</strong> (rate of change across layers), the resulting phase portraits reveal <strong>rotational dynamics</strong> — the units spiral outward like unstable periodic orbits. On average, each unit completes <strong>~10.74 rotations</strong> through the 64 sublayers, compared to ~0 for shuffled controls.
+    </div>
+
+    <div class="key-finding">
+        <strong>What this means:</strong> Individual units don't just monotonically increase — they oscillate in a structured, spiral pattern. This is reminiscent of dynamics seen in biological neural circuits.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: Phase Portraits of RS Units</h3>
+        <canvas id="phaseCanvas" width="800" height="400"></canvas>
+        <div class="phase-unit-selector">
+            <button class="phase-unit-btn active" onclick="selectPhaseUnit(0)">Unit 1</button>
+            <button class="phase-unit-btn" onclick="selectPhaseUnit(1)">Unit 2</button>
+            <button class="phase-unit-btn" onclick="selectPhaseUnit(2)">Unit 3</button>
+            <button class="phase-unit-btn" onclick="selectPhaseUnit(3)">Unit 4</button>
+            <button class="phase-unit-btn" onclick="selectPhaseUnit(4)">Unit 5</button>
+            <button class="phase-unit-btn" onclick="selectPhaseUnit(5)">Shuffle Control</button>
+        </div>
+        <div class="controls">
+            <label>
+                Animation Progress
+                <input type="range" id="phaseProgress" min="0" max="63" value="63">
+                <span id="phaseProgressVal">64</span> sublayers
+            </label>
+            <button onclick="animatePhase()">▶ Animate</button>
+        </div>
+    </div>
+</section>
+
+<!-- Section 7: Dimensionality Reduction -->
+<section id="sec-dimred">
+    <h2>🗺️ Finding 6: Curved Trajectories in Low-Dimensional Space</h2>
+    <div class="explanation">
+        Using both a <strong>Compressing Autoencoder</strong> (CAE) and <strong>PCA</strong>, the authors reduced the 4096-dimensional residual stream to just 2 dimensions. The resulting trajectories show a consistent <strong>curved path</strong> that straightens in later layers, with increasing distance between successive layer points.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: RS Trajectory in 2D Reduced Space</h3>
+        <canvas id="trajectoryCanvas" width="800" height="450"></canvas>
+        <div class="controls">
+            <label>
+                Layers Shown
+                <input type="range" id="trajLayers" min="1" max="64" value="64">
+                <span id="trajLayersVal">64</span>
+            </label>
+            <label>
+                Curvature
+                <input type="range" id="trajCurve" min="10" max="100" value="50">
+            </label>
+            <button onclick="animateTrajectory()">▶ Animate</button>
+            <button onclick="resetTrajectory()">Reset</button>
+        </div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#ff5722"></div> Early layers (dense, slow)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#ffeb3b"></div> Middle layers</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div> Late layers (sparse, fast)</div>
+        </div>
+    </div>
+
+    <div class="key-finding">
+        <strong>Key observation:</strong> Early layers distribute variance across many dimensions; later layers require fewer principal components. The representation becomes increasingly low-dimensional as it progresses.
+    </div>
+</section>
+
+<!-- Section 8: Attractor Dynamics / Perturbation -->
+<section id="sec-attractor">
+    <h2>🧲 Finding 7: Self-Correcting Attractor-like Dynamics</h2>
+    <div class="explanation">
+        When the authors <strong>"teleported"</strong> (perturbed) the residual stream to random points in the reduced space at various layers, they discovered <strong>self-correcting behavior</strong>: the trajectories tend to return toward the normal path, especially in <strong>middle layers</strong> (7, 15, 23). Perturbations at the very first or last layers are much harder to recover from.
+    </div>
+
+    <div class="analogy-box">
+        🌊 <strong>Analogy:</strong> Like a river in a valley — if you teleport water to a nearby hillside, it flows back to the riverbed. But if you teleport it to a mountaintop (early layer) or over a waterfall (late layer), it may end up somewhere completely different.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: Perturbation & Self-Correction</h3>
+        <canvas id="attractorCanvas" width="800" height="450"></canvas>
+        <div class="controls">
+            <label>
+                Perturbation Layer
+                <input type="range" id="pertLayer" min="0" max="63" value="15">
+                <span id="pertLayerVal">15</span>
+            </label>
+            <label>
+                Perturbation Strength
+                <input type="range" id="pertStrength" min="1" max="100" value="50">
+            </label>
+            <button onclick="perturbTrajectory()">⚡ Perturb!</button>
+            <button onclick="resetAttractor()">Reset</button>
+        </div>
+        <p style="text-align:center; margin-top:0.8rem; font-size:0.85rem; color:#888;">
+            Click "Perturb!" to teleport the trajectory. Watch how mid-layer perturbations self-correct back toward the normal path (gray), while early/late perturbations diverge.
+        </p>
+    </div>
+</section>
+
+<!-- Section 9: Summary -->
+<section id="sec-summary">
+    <h2>🎯 Summary & Implications</h2>
+
+    <div class="explanation">
+        This paper establishes a <strong>"neuroscience of AI"</strong> framework — applying dynamical systems tools from brain science to understand transformers. Here's what they found:
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin:2rem 0;">
+        <div class="key-finding">
+            <strong>1. Continuity:</strong> Individual RS units maintain strong correlations across layers despite no privileged basis.
+        </div>
+        <div class="key-finding">
+            <strong>2. Densification:</strong> Activations systematically grow in magnitude and the stream accelerates through layers.
+        </div>
+        <div class="key-finding">
+            <strong>3. Information Compression:</strong> Sharp MI drop in early layers suggests fundamental transformation from complex to simple representations.
+        </div>
+        <div class="key-finding">
+            <strong>4. Rotational Dynamics:</strong> Units trace unstable periodic orbits (~10.74 rotations) in phase space.
+        </div>
+        <div class="key-finding">
+            <strong>5. Low-dimensional Flow:</strong> Despite 4096 dimensions, dynamics are remarkably low-dimensional with curved trajectories.
+        </div>
+        <div class="key-finding">
+            <strong>6. Self-correction:</strong> Mid-layer perturbations self-correct, suggesting stable computational channels.
+        </div>
+    </div>
+
+    <div class="analogy-box">
+        🌟 <strong>The Big Picture:</strong> Transformers don't compute via isolated "grandmother cells" or sparse circuits alone. They implement <em>distributed, flowing computations</em> — more like a river system with currents, eddies, and self-correcting channels than a circuit board with discrete components.
+    </div>
+
+    <div class="interactive-container">
+        <h3 style="text-align:center; margin-bottom:1rem;">Interactive: Full Pipeline Visualization</h3>
+        <canvas id="summaryCanvas" width="800" height="300"></canvas>
+        <div class="controls">
+            <button onclick="playSummary()">▶ Play Full Animation</button>
+        </div>
+    </div>
+</section>
+
+<footer style="text-align:center; padding:3rem; color:#666; font-size:0.85rem;">
+    <p>Based on: "Transformer Dynamics: A neuroscientific approach to interpretability of large language models"</p>
+    <p>Fernando & Guitchounts, 2025 (arXiv:2502.12131v1)</p>
+    <p style="margin-top:0.5rem;">Interactive visualization created for educational purposes.</p>
+</footer>
+
+<script>
+// ============ NAVIGATION DOTS ============
+const sections = ['sec-idea', 'sec-dense', 'sec-corr', 'sec-velocity', 'sec-mi', 'sec-phase', 'sec-dimred', 'sec-attractor', 'sec-summary'];
+const navDotsContainer = document.getElementById('navDots');
+sections.forEach((id, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    dot.onclick = () => document.getElementById(id).scrollIntoView({behavior: 'smooth'});
+    navDotsContainer.appendChild(dot);
+});
+
+window.addEventListener('scroll', () => {
+    const dots = document.querySelectorAll('.nav-dot');
+    sections.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+            dots.forEach(d => d.classList.remove('active'));
+            dots[i].classList.add('active');
+        }
+    });
+});
+
+// ============ SECTION 1: RIVER ANIMATION ============
+const riverCanvas = document.getElementById('riverCanvas');
+const riverCtx = riverCanvas.getContext('2d');
+let riverParticles = [];
+let riverAnimId = null;
+
+function initRiverParticles(layer) {
+    const numParticles = 100;
+    riverParticles = [];
+    const density = 0.3 + (layer / 63) * 0.7;
+    const speed = 1 + (layer / 63) *
+ 3;
+    for (let i = 0; i < numParticles; i++) {
+        if (Math.random() < density) {
+            riverParticles.push({
+                x: Math.random() * riverCanvas.width,
+                y: 30 + Math.random() * (riverCanvas.height - 60),
+                speed: speed * (0.5 + Math.random()),
+                size: 2 + Math.random() * 3 * density,
+                opacity: 0.3 + density * 0.7,
+                hue: 200 + (layer / 63) * 60
+            });
+        }
+    }
+}
+
+function drawRiver() {
+    riverCtx.fillStyle = '#0a0a1a';
+    riverCtx.fillRect(0, 0, riverCanvas.width, riverCanvas.height);
+
+    // Draw layer indicator
+    const layer = parseInt(document.getElementById('riverLayer').value);
+    document.getElementById('riverLayerVal').textContent = layer;
+
+    // Draw river banks
+    riverCtx.strokeStyle = '#2a4a6a';
+    riverCtx.lineWidth = 2;
+    riverCtx.beginPath();
+    riverCtx.moveTo(0, 20);
+    riverCtx.lineTo(riverCanvas.width, 20);
+    riverCtx.stroke();
+    riverCtx.beginPath();
+    riverCtx.moveTo(0, riverCanvas.height - 20);
+    riverCtx.lineTo(riverCanvas.width, riverCanvas.height - 20);
+    riverCtx.stroke();
+
+    // Draw layer markers
+    for (let i = 0; i <= 63; i++) {
+        const x = (i / 63) * riverCanvas.width;
+        riverCtx.strokeStyle = i <= layer ? `hsla(${200 + (i/63)*60}, 70%, 60%, 0.3)` : '#1a1a3a';
+        riverCtx.beginPath();
+        riverCtx.moveTo(x, 20);
+        riverCtx.lineTo(x, riverCanvas.height - 20);
+        riverCtx.stroke();
+    }
+
+    // Draw particles
+    riverParticles.forEach(p => {
+        riverCtx.beginPath();
+        riverCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        riverCtx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.opacity})`;
+        riverCtx.fill();
+        p.x += p.speed;
+        if (p.x > riverCanvas.width) p.x = 0;
+    });
+
+    // Label
+    riverCtx.fillStyle = '#aaa';
+    riverCtx.font = '12px sans-serif';
+    riverCtx.fillText(`Layer ${layer}/63 | Density: ${(0.3 + (layer/63)*0.7).toFixed(2)} | Speed: ${(1 + (layer/63)*3).toFixed(1)}x`, 10, riverCanvas.height - 5);
+
+    requestAnimationFrame(drawRiver);
+}
+
+document.getElementById('riverLayer').addEventListener('input', function() {
+    initRiverParticles(parseInt(this.value));
+});
+
+initRiverParticles(0);
+drawRiver();
+
+function animateRiver() {
+    let layer = 0;
+    const interval = setInterval(() => {
+        document.getElementById('riverLayer').value = layer;
+        initRiverParticles(layer);
+        layer++;
+        if (layer > 63) clearInterval(interval);
+    }, 100);
+}
+
+// ============ SECTION 2: HEATMAP ============
+const heatmapCanvas = document.getElementById('heatmapCanvas');
+const heatCtx = heatmapCanvas.getContext('2d');
+let heatmapData = [];
+let heatAnimId = null;
+
+function generateHeatmapData(numUnits) {
+    heatmapData = [];
+    for (let u = 0; u < numUnits; u++) {
+        const row = [];
+        const sign = Math.random() > 0.5 ? 1 : -1;
+        let val = sign * (Math.random() * 0.3);
+        for (let l = 0; l < 64; l++) {
+            // Activations grow denser over layers with some oscillation
+            val += sign * (0.02 + (l / 63) * 0.08) + (Math.random() - 0.5) * 0.1;
+            val += Math.sin(l * 0.5 + u * 0.1) * 0.05; // oscillation
+            row.push(val);
+        }
+        heatmapData.push(row);
+    }
+    // Sort by last layer value
+    heatmapData.sort((a, b) => a[63] - b[63]);
+}
+
+function drawHeatmap(maxLayer = 64) {
+    const numUnits = heatmapData.length;
+    heatCtx.fillStyle = '#0a0a1a';
+    heatCtx.fillRect(0, 0, heatmapCanvas.width, heatmapCanvas.height);
+
+    const cellW = (heatmapCanvas.width - 60) / 64;
+    const cellH = (heatmapCanvas.height - 40) / numUnits;
+
+    for (let u = 0; u < numUnits; u++) {
+        for (let l = 0; l < Math.min(maxLayer, 64); l++) {
+            const val = heatmapData[u][l];
+            const norm = Math.min(Math.abs(val), 5) / 5;
+            let r, g, b;
+            if (val > 0) {
+                r = Math.floor(norm * 255);
+                g = Math.floor(norm * 80);
+                b = 50;
+            } else {
+                r = 50;
+                g = Math.floor(norm * 80);
+                b = Math.floor(norm * 255);
+            }
+            heatCtx.fillStyle = `rgb(${r},${g},${b})`;
+            heatCtx.fillRect(30 + l * cellW, 20 + u * cellH, cellW, cellH);
+        }
+    }
+
+    // Axes
+    heatCtx.fillStyle = '#888';
+    heatCtx.font = '11px sans-serif';
+    heatCtx.fillText('Layer →', heatmapCanvas.width / 2 - 20, heatmapCanvas.height - 5);
+    heatCtx.save();
+    heatCtx.translate(12, heatmapCanvas.height / 2);
+    heatCtx.rotate(-Math.PI / 2);
+    heatCtx.fillText('Units (sorted by final activation)', -60, 0);
+    heatCtx.restore();
+}
+
+document.getElementById('numUnits').addEventListener('input', function() {
+    document.getElementById('numUnitsVal').textContent = this.value;
+    generateHeatmapData(parseInt(this.value));
+    drawHeatmap();
+});
+
+generateHeatmapData(100);
+drawHeatmap();
+
+function animateHeatmap() {
+    let layer = 1;
+    const speed = parseInt(document.getElementById('heatSpeed').value);
+    if (heatAnimId) cancelAnimationFrame(heatAnimId);
+    function step() {
+        drawHeatmap(layer);
+        layer += speed * 0.2;
+        if (layer <= 64) {
+            heatAnimId = requestAnimationFrame(step);
+        }
+    }
+    step();
+}
+
+function resetHeatmap() {
+    if (heatAnimId) cancelAnimationFrame(heatAnimId);
+    generateHeatmapData(parseInt(document.getElementById('numUnits').value));
+    drawHeatmap();
+}
+
+// ============ SECTION 3: CORRELATIONS ============
+const corrCanvas = document.getElementById('corrCanvas');
+const corrCtx = corrCanvas.getContext('2d');
+let showCorrType = 'both';
+
+function generateCorrelationData() {
+    const withinLayer = [];
+    const crossLayer = [];
+    for (let l = 0; l < 63; l++) {
+        // Within-layer correlations are higher
+        const baseWithin = 0.85 + (l / 63) * 0.12 + (Math.random() - 0.5) * 0.03;
+        const baseCross = 0.78 + (l / 63) * 0.15 + (Math.random() - 0.5) * 0.04;
+        withinLayer.push(Math.min(baseWithin, 0.99));
+        crossLayer.push(Math.min(baseCross, 0.98));
+    }
+    return { withinLayer, crossLayer };
+}
+
+let corrData = generateCorrelationData();
+
+function drawCorrelations() {
+    corrCtx.fillStyle = '#0a0a1a';
+    corrCtx.fillRect(0, 0, corrCanvas.width, corrCanvas.height);
+
+    const padding = { left: 60, right: 20, top: 30, bottom: 40 };
+    const w = corrCanvas.width - padding.left - padding.right;
+    const h = corrCanvas.height - padding.top - padding.bottom;
+
+    // Grid
+    corrCtx.strokeStyle = '#1a1a3a';
+    corrCtx.lineWidth = 1;
+    for (let i = 0; i <= 10; i++) {
+        const y = padding.top + (i / 10) * h;
+        corrCtx.beginPath();
+        corrCtx.moveTo(padding.left, y);
+        corrCtx.lineTo(padding.left + w, y);
+        corrCtx.stroke();
+    }
+
+    // Draw within-layer correlations
+    if (showCorrType === 'both' || showCorrType === 'within') {
+        corrCtx.strokeStyle = '#4caf50';
+        corrCtx.lineWidth = 2;
+        corrCtx.beginPath();
+        corrData.withinLayer.forEach((val, i) => {
+            const x = padding.left + (i / 62) * w;
+            const y = padding.top + (1 - (val - 0.5) / 0.5) * h;
+            if (i === 0) corrCtx.moveTo(x, y);
+            else corrCtx.lineTo(x, y);
+        });
+        corrCtx.stroke();
+    }
+
+    // Draw cross-layer correlations
+    if (showCorrType === 'both' || showCorrType === 'cross') {
+        corrCtx.strokeStyle = '#2196f3';
+        corrCtx.lineWidth = 2;
+        corrCtx.beginPath();
+        corrData.crossLayer.forEach((val, i) => {
+            const x = padding.left + (i / 62) * w;
+            const y = padding.top + (1 - (val - 0.5) / 0.5) * h;
+            if (i === 0) corrCtx.moveTo(x, y);
+            else corrCtx.lineTo(x, y);
+        });
+        corrCtx.stroke();
+    }
+
+    // Axes labels
+    corrCtx.fillStyle = '#888';
+    corrCtx.font = '11px sans-serif';
+    corrCtx.fillText('Layer Transition', corrCanvas.width / 2 - 40, corrCanvas.height - 5);
+    corrCtx.save();
+    corrCtx.translate(15, corrCanvas.height / 2);
+    corrCtx.rotate(-Math.PI / 2);
+    corrCtx.fillText('Correlation (r)', -30, 0);
+    corrCtx.restore();
+
+    // Y-axis ticks
+    for (let i = 0; i <= 5; i++) {
+        const val = 0.5 + i * 0.1;
+        const y = padding.top + (1 - (val - 0.5) / 0.5) * h;
+        corrCtx.fillText(val.toFixed(1), padding.left - 30, y + 4);
+    }
+
+    // Unit indicator
+    const unit = document.getElementById('corrUnit').value;
+    document.getElementById('corrUnitVal').textContent = unit;
+    corrCtx.fillStyle = '#ce93d8';
+    corrCtx.font = '12px sans-serif';
+    corrCtx.fillText(`Unit ${unit}`, corrCanvas.width - 80, 20);
+}
+
+document.getElementById('corrUnit').addEventListener('input', function() {
+    corrData = generateCorrelationData();
+    drawCorrelations();
+});
+
+function toggleCorrType() {
+    if (showCorrType === 'both') showCorrType = 'within';
+    else if (showCorrType === 'within') showCorrType = 'cross';
+    else showCorrType = 'both';
+    drawCorrelations();
+}
+
+drawCorrelations();
+
+// ============ SECTION 4: VELOCITY ============
+const velocityCanvas = document.getElementById('velocityCanvas');
+const velCtx = velocityCanvas.getContext('2d');
+let velBallPos = 0;
+let velAnimating = false;
+
+function getVelocityProfile(noise) {
+    const profile = [];
+    for (let l = 0; l < 64; l++) {
+        // Velocity increases especially in last third
+        let v = 50 + 20 * Math.pow(l / 63, 2.5) + (noise / 50) * (Math.random() - 0.5) * 15;
+        // Cross-layer transitions are slightly higher
+        if (l % 2 === 1) v += 5;
+        profile.push(v);
+    }
+    return profile;
+}
+
+function drawVelocity() {
+    velCtx.fillStyle = '#0a0a1a';
+    velCtx.fillRect(0, 0, velocityCanvas.width, velocityCanvas.height);
+
+    const noise = parseInt(document.getElementById('velNoise').value);
+    const profile = getVelocityProfile(noise);
+
+    const padding = { left: 60, right: 30, top: 30, bottom: 40 };
+    const w = velocityCanvas.width - padding.left - padding.right;
+    const h = velocityCanvas.height - padding.top - padding.bottom;
+
+    // Grid
+    velCtx.strokeStyle = '#1a1a3a';
+    for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (i / 5) * h;
+        velCtx.beginPath();
+        velCtx.moveTo(padding.left, y);
+        velCtx.lineTo(padding.left + w, y);
+        velCtx.stroke();
+    }
+
+    // Velocity curve
+    const gradient = velCtx.createLinearGradient(padding.left, 0, padding.left + w, 0);
+    gradient.addColorStop(0, '#ff5722');
+    gradient.addColorStop(0.5, '#ffeb3b');
+    gradient.addColorStop(1, '#4caf50');
+
+    velCtx.strokeStyle = gradient;
+    velCtx.lineWidth = 3;
+    velCtx.beginPath();
+    profile.forEach((v, i) => {
+        const x = padding.left + (i / 63) * w;
+        const y = padding.top + (1 - v / 100) * h;
+        if (i === 0) velCtx.moveTo(x, y);
+        else velCtx.lineTo(x, y);
+    });
+    velCtx.stroke();
+
+    // Fill under curve
+    velCtx.lineTo(padding.left + w, padding.top + h);
+    velCtx.lineTo(padding.left, padding.top + h);
+    velCtx.closePath();
+    velCtx.fillStyle = 'rgba(100, 181, 246, 0.05)';
+    velCtx.fill();
+
+    // Ball
+    if (velBallPos >= 0 && velBallPos < 64) {
+        const bx = padding.left + (velBallPos / 63) * w;
+        const by = padding.top + (1 - profile[Math.floor(velBallPos)] / 100) * h;
+        velCtx.beginPath();
+        velCtx.arc(bx, by, 8, 0, Math.PI * 2);
+        velCtx.fillStyle = '#fff';
+        velCtx.fill();
+        velCtx.shadowColor = '#64b5f6';
+        velCtx.shadowBlur = 15;
+        velCtx.fill();
+        velCtx.shadowBlur = 0;
+    }
+
+    // Labels
+    velCtx.fillStyle = '#888';
+    velCtx.font = '11px sans-serif';
+    velCtx.fillText('Layer', velocityCanvas.width / 2 - 15, velocityCanvas.height - 5);
+    velCtx.save();
+    velCtx.translate(15, velocityCanvas.height / 2);
+    velCtx.rotate(-Math.PI / 2);
+    velCtx.fillText('Velocity ‖V‖', -25, 0);
+    velCtx.restore();
+}
+
+function animateVelocity() {
+    velBallPos = 0;
+    velAnimating = true;
+    const noise = parseInt(document.getElementById('velNoise').value);
+    const profile = getVelocityProfile(noise);
+
+    function step() {
+        if (velBallPos >= 63) {
+            velAnimating = false;
+            return;
+        }
+        // Speed proportional to velocity at current layer
+        const speed = profile[Math.floor(velBallPos)] / 200;
+        velBallPos += speed;
+        drawVelocity();
+        requestAnimationFrame(step);
+    }
+    step();
+}
+
+function resetVelocity() {
+    velBallPos = -1;
+    velAnimating = false;
+    drawVelocity();
+}
+
+drawVelocity();
+
+// ============ SECTION 5: MUTUAL INFORMATION ============
+const miCanvas = document.getElementById('miCanvas');
+const miCtx = miCanvas.getContext('2d');
+let miView = 'both';
+
+function drawMI() {
+    miCtx.fillStyle = '#0a0a1a';
+    miCtx.fillRect(0, 0, miCanvas.width, miCanvas.height);
+
+    const padding = { left: 60, right: 30, top: 30, bottom: 40 };
+    const w = miCanvas.width - padding.left - padding.right;
+    const h = miCanvas.height - padding.top - padding.bottom;
+
+    // Generate data
+    const corrLine = [];
+    const miLine = [];
+    for (let l = 0; l < 63; l++) {
+        // Correlation increases
+        corrLine.push(0.82 + (l / 63) * 0.15 + (Math.random() - 0.5) * 0.02);
+        // MI drops sharply in early layers then stabilizes
+        const miVal = l < 10 ? 2.5 - (l / 10) * 1.8 : 0.7 - (l / 63) * 0.3 + (Math.random() - 0.5) * 0.1;
+        miLine.push(Math.max(miVal, 0.2));
+    }
+
+    // Grid
+    miCtx.strokeStyle = '#1a1a3a';
+    for (let i = 0; i <= 5; i++) {
+        const y = padding.top + (i / 5) * h;
+        miCtx.beginPath();
+        miCtx.moveTo(padding.left, y);
+        miCtx.lineTo(padding.left + w, y);
+        miCtx.stroke();
+    }
+
+    // Draw correlation
+    if (miView === 'both' || miView === 'corr') {
+        miCtx.strokeStyle = '#ff9800';
+        miCtx.lineWidth = 2.5;
+        miCtx.beginPath();
+        corrLine.forEach((val, i) => {
+            const x = padding.left + (i / 62) * w;
+            const y = padding.top + (1 - val) * h;
+            if (i === 0) miCtx.moveTo(x, y);
+            else miCtx.lineTo(x, y);
+        });
+        miCtx.stroke();
+    }
+
+    // Draw MI
+    if (miView === 'both' || miView === 'mi') {
+        miCtx.strokeStyle = '#9c27b0';
+        miCtx.lineWidth = 2.5;
+        miCtx.beginPath();
+        miLine.forEach((val, i) => {
+            const x = padding.left + (i / 62) * w;
+            const y = padding.top + (1 - val / 3) * h;
+            if (i === 0) miCtx.moveTo(x, y);
+            else miCtx.lineTo(x, y);
+        });
+        miCtx.stroke();
+    }
+
+    // Highlight the paradox zone
+    if (miView === 'both') {
+        miCtx.fillStyle = 'rgba(156, 39, 176, 0.05)';
+        miCtx.fillRect(padding.left, padding.top, w * 0.15, h);
+        miCtx.fillStyle = '#ce93d8';
+        miCtx.font = '11px sans-serif';
+        miCtx.fillText('← Sharp MI drop', padding.left + 5, padding.top + 15);
+        miCtx.fillText('   (early layers)', padding.left + 5, padding.top + 30);
+    }
+
+    // Labels
+    miCtx.fillStyle = '#888';
+    miCtx.font = '11px sans-serif';
+    miCtx.fillText('Layer Transition', miCanvas.width / 2 - 40, miCanvas.height - 5);
+    miCtx.save();
+    miCtx.translate(15, miCanvas.height / 2);
+    miCtx.rotate(-Math.PI / 2);
+    miCtx.fillText('Value (normalized)', -40, 0);
+    miCtx.restore();
+}
+
+function toggleMIView(view) {
+    miView = view;
+    drawMI();
+}
+
+drawMI();
+
+// ============ SECTION 6: PHASE PORTRAITS ============
+const phaseCanvas = document.getElementById('phaseCanvas');
+const phaseCtx = phaseCanvas.getContext('2d');
+let currentPhaseUnit = 0;
+let phaseUnitsData = [];
+
+function generatePhaseData() {
+    phaseUnitsData = [];
+    for (let u = 0; u < 5; u++) {
+        const trajectory = [];
+        let activation = (Math.random() - 0.5) * 0.5;
+        let gradient = (Math.random() - 0.5) * 0.3;
+        const freq = 0.8 + Math.random() * 0.5;
+        const growthRate = 1.02 + Math.random() * 0.03;
+
+        for (let l = 0; l < 64; l++) {
+            // Spiral outward with rotational dynamics
+            const angle = freq * l + u * 0.5;
+            const radius = 0.3 * Math.pow(growthRate, l);
+            activation = radius * Math.cos(angle) + (Math.random() - 0.5) * 0.1;
+            gradient = radius * Math.sin(angle) + (Math.random() - 0.5) * 0.1;
+            trajectory.push({ x: activation, y: gradient });
+        }
+        phaseUnitsData.push(trajectory);
+    }
+
+    // Shuffle control - no rotational structure
+    const shuffleTrajectory = [];
+    for (let l = 0; l < 64; l++) {
+        shuffleTrajectory.push({
+            x: (Math.random() - 0.5) * 3,
+            y: (Math.random() - 0.5) * 3
+        });
+    }
+    phaseUnitsData.push(shuffleTrajectory);
+}
+
+function drawPhase() {
+    phaseCtx.fillStyle = '#0a0a1a';
+    phaseCtx.fillRect(0, 0, phaseCanvas.width, phaseCanvas.height);
+
+    const maxLayers = parseInt(document.getElementById('phaseProgress').value) + 1;
+    document.getElementById('phaseProgressVal').textContent = maxLayers;
+
+    const trajectory = phaseUnitsData[currentPhaseUnit];
+    if (!trajectory) return;
+
+    const padding = { left: 60, right: 30, top: 30, bottom: 50 };
+    const w = phaseCanvas.width - padding.left - padding.right;
+    const h = phaseCanvas.height - padding.top - padding.bottom;
+    const cx = padding.left + w / 2;
+    const cy = padding.top + h / 2;
+
+    // Find scale
+    let maxVal = 0;
+    trajectory.forEach(p => {
+        maxVal = Math.max(maxVal, Math.abs(p.x), Math.abs(p.y));
+    });
+    const scale = Math.min(w, h) / (2.5 * maxVal);
+
+    // Draw axes
+    phaseCtx.strokeStyle = '#2a2a4a';
+    phaseCtx.lineWidth = 1;
+    phaseCtx.beginPath();
+    phaseCtx.moveTo(padding.left, cy);
+    phaseCtx.lineTo(padding.left + w, cy);
+    phaseCtx.stroke();
+    phaseCtx.beginPath();
+    phaseCtx.moveTo(cx, padding.top);
+    phaseCtx.lineTo(cx, padding.top + h);
+    phaseCtx.stroke();
+
+    // Draw trajectory
+    phaseCtx.lineWidth = 1.5;
+    for (let l = 0; l < Math.min(maxLayers, trajectory.length) - 1; l++) {
+        const t = l / 63;
+        const hue = currentPhaseUnit === 5 ? 0 : 200 + t * 100;
+        const sat = currentPhaseUnit === 5 ? '0%' : '70%';
+        phaseCtx.strokeStyle = `hsla(${hue}, ${sat}, 60%, ${0.4 + t * 0.6})`;
+        phaseCtx.beginPath();
+        phaseCtx.moveTo(cx + trajectory[l].x * scale, cy - trajectory[l].y * scale);
+        phaseCtx.lineTo(cx + trajectory[l + 1].x * scale, cy - trajectory[l + 1].y * scale);
+        phaseCtx.stroke();
+    }
+
+    // Draw points
+    for (let l = 0; l < Math.min(maxLayers, trajectory.length); l++) {
+        const t = l / 63;
+        const size = 2 + t * 3;
+        phaseCtx.beginPath();
+        phaseCtx.arc(cx + trajectory[l].x * scale, cy - trajectory[l].y * scale, size, 0, Math.PI * 2);
+        if (currentPhaseUnit === 5) {
+            phaseCtx.fillStyle = `rgba(150, 150, 150, ${0.3 + t * 0.5})`;
+        } else {
+            phaseCtx.fillStyle = `hsla(${200 + t * 100}, 70%, 60%, ${0.5 + t * 0.5})`;
+        }
+        phaseCtx.fill();
+    }
+
+    // Start point
+    phaseCtx.beginPath();
+    phaseCtx.arc(cx + trajectory[0].x * scale, cy - trajectory[0].y * scale, 6, 0, Math.PI * 2);
+    phaseCtx.fillStyle = '#4caf50';
+    phaseCtx.fill();
+
+    // Labels
+    phaseCtx.fillStyle = '#888';
+    phaseCtx.font = '11px sans-serif';
+    phaseCtx.fillText('Activation (aˡ)', phaseCanvas.width / 2 - 30, phaseCanvas.height - 10);
+    phaseCtx.save();
+    phaseCtx.translate(15, phaseCanvas.height / 2);
+    phaseCtx.rotate(-Math.PI / 2);
+    phaseCtx.fillText('Gradient (∇aˡ)', -30, 0);
+    phaseCtx.restore();
+
+    // Title
+    phaseCtx.fillStyle = '#ce93d8';
+    phaseCtx.font = '13px sans-serif';
+    const title = currentPhaseUnit === 5 ? 'Shuffle Control (no rotation)' : `Unit ${currentPhaseUnit + 1} — Spiral Outward`;
+    phaseCtx.fillText(title, padding.left + 10, padding.top + 15);
+}
+
+function selectPhaseUnit(idx) {
+    currentPhaseUnit = idx;
+    document.querySelectorAll('.phase-unit-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+    });
+    drawPhase();
+}
+
+function animatePhase() {
+    let progress = 0;
+    function step() {
+        document.getElementById('phaseProgress').value = progress;
+        drawPhase();
+        progress++;
+        if (progress <= 63) requestAnimationFrame(step);
+    }
+    step();
+}
+
+document.getElementById('phaseProgress').addEventListener('input', drawPhase);
+
+generatePhaseData();
+drawPhase();
+
+// ============ SECTION 7: TRAJECTORY ============
+const trajectoryCanvas = document.getElementById('trajectoryCanvas');
+const trajCtx = trajectoryCanvas.getContext('2d');
+let trajAnimPos = 64;
+
+function generateTrajectoryData(curvature) {
+    const points = [];
+    const curveStrength = curvature / 50;
+    for (let l = 0; l < 64; l++) {
+        const t = l / 63;
+        // Curved trajectory that straightens in later layers
+        const x = -3 + t * 7 + Math.sin(t * Math.PI * curveStrength) * (1 - t) * 2;
+        const y = -2 + t * 5 + Math.cos(t * Math.PI * curveStrength * 0.7) * (1 - t) * 1.5;
+        points.push({ x, y, layer: l });
+    }
+    return points;
+}
+
+function drawTrajectory() {
+    trajCtx.fillStyle = '#0a0a1a';
+    trajCtx.fillRect(0, 0, trajectoryCanvas.width, trajectoryCanvas.height);
+
+    const maxLayers = parseInt(document.getElementById('trajLayers').value);
+    document.getElementById('trajLayersVal').textContent = maxLayers;
+    const curvature = parseInt(document.getElementById('trajCurve').value);
+    const points = generateTrajectoryData(curvature);
+
+    const padding = { left: 60, right: 30, top: 30, bottom: 50 };
+    const w = trajectoryCanvas.width - padding.left - padding.right;
+    const h = trajectoryCanvas.height - padding.top - padding.bottom;
+
+    // Scale
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    points.forEach(p => {
+        minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+    });
+
+    const scaleX = w / (maxX - minX + 1);
+    const scaleY = h / (maxY - minY + 1);
+
+    function toScreen(p) {
+        return {
+            x: padding.left + (p.x - minX) * scaleX,
+            y: padding.top + h - (p.y - minY
+) * scaleY
+        };
+    }
+
+    // Draw trajectory
+    for (let l = 0; l < Math.min(maxLayers, points.length) - 1; l++) {
+        const p1 = toScreen(points[l]);
+        const p2 = toScreen(points[l + 1]);
+        const t = l / 63;
+
+        // Color gradient: early=red, mid=yellow, late=green
+        let r, g, b;
+        if (t < 0.33) {
+            r = 255; g = Math.floor(t * 3 * 200); b = 50;
+        } else if (t < 0.66) {
+            r = Math.floor(255 - (t - 0.33) * 3 * 200); g = 200; b = 50;
+        } else {
+            r = 50; g = Math.floor(200 - (t - 0.66) * 3 * 100); b = 50 + Math.floor((t - 0.66) * 3 * 150);
+        }
+
+        trajCtx.strokeStyle = `rgb(${r},${g},${b})`;
+        trajCtx.lineWidth = 2;
+        trajCtx.beginPath();
+        trajCtx.moveTo(p1.x, p1.y);
+        trajCtx.lineTo(p2.x, p2.y);
+        trajCtx.stroke();
+
+        // Draw point
+        trajCtx.beginPath();
+        trajCtx.arc(p1.x, p1.y, 3 + t * 3, 0, Math.PI * 2);
+        trajCtx.fillStyle = `rgba(${r},${g},${b}, 0.8)`;
+        trajCtx.fill();
+    }
+
+    // Draw last point
+    if (maxLayers > 0) {
+        const lastIdx = Math.min(maxLayers - 1, points.length - 1);
+        const lastP = toScreen(points[lastIdx]);
+        trajCtx.beginPath();
+        trajCtx.arc(lastP.x, lastP.y, 8, 0, Math.PI * 2);
+        trajCtx.fillStyle = '#fff';
+        trajCtx.fill();
+        trajCtx.shadowColor = '#4caf50';
+        trajCtx.shadowBlur = 10;
+        trajCtx.fill();
+        trajCtx.shadowBlur = 0;
+    }
+
+    // Draw start marker
+    const startP = toScreen(points[0]);
+    trajCtx.beginPath();
+    trajCtx.arc(startP.x, startP.y, 6, 0, Math.PI * 2);
+    trajCtx.fillStyle = '#ff5722';
+    trajCtx.fill();
+    trajCtx.fillStyle = '#fff';
+    trajCtx.font = '10px sans-serif';
+    trajCtx.fillText('START', startP.x - 15, startP.y - 10);
+
+    // Labels
+    trajCtx.fillStyle = '#888';
+    trajCtx.font = '11px sans-serif';
+    trajCtx.fillText('PC1', trajectoryCanvas.width / 2 - 10, trajectoryCanvas.height - 10);
+    trajCtx.save();
+    trajCtx.translate(15, trajectoryCanvas.height / 2);
+    trajCtx.rotate(-Math.PI / 2);
+    trajCtx.fillText('PC2', -10, 0);
+    trajCtx.restore();
+
+    // Info text
+    trajCtx.fillStyle = '#ce93d8';
+    trajCtx.font = '12px sans-serif';
+    trajCtx.fillText(`Showing ${maxLayers}/64 layers | Curvature: ${curvature}%`, padding.left + 10, padding.top + 15);
+
+    // Show inter-layer distances growing
+    trajCtx.fillStyle = '#666';
+    trajCtx.font = '10px sans-serif';
+    if (maxLayers > 2) {
+        const d1 = Math.sqrt(Math.pow(points[1].x - points[0].x, 2) + Math.pow(points[1].y - points[0].y, 2));
+        const dLast = Math.sqrt(Math.pow(points[maxLayers-1].x - points[maxLayers-2].x, 2) + Math.pow(points[maxLayers-1].y - points[maxLayers-2].y, 2));
+        trajCtx.fillText(`Early step size: ${d1.toFixed(3)} | Late step size: ${dLast.toFixed(3)}`, padding.left + 10, padding.top + 35);
+    }
+}
+
+document.getElementById('trajLayers').addEventListener('input', drawTrajectory);
+document.getElementById('trajCurve').addEventListener('input', drawTrajectory);
+
+function animateTrajectory() {
+    let layer = 1;
+    function step() {
+        document.getElementById('trajLayers').value = layer;
+        document.getElementById('trajLayersVal').textContent = layer;
+        drawTrajectory();
+        layer++;
+        if (layer <= 64) requestAnimationFrame(step);
+    }
+    step();
+}
+
+function resetTrajectory() {
+    document.getElementById('trajLayers').value = 64;
+    document.getElementById('trajLayersVal').textContent = 64;
+    drawTrajectory();
+}
+
+drawTrajectory();
+
+// ============ SECTION 8: ATTRACTOR / PERTURBATION ============
+const attractorCanvas = document.getElementById('attractorCanvas');
+const attrCtx = attractorCanvas.getContext('2d');
+let normalTrajectory = [];
+let perturbedTrajectory = null;
+
+function generateNormalTrajectory() {
+    normalTrajectory = [];
+    for (let l = 0; l < 64; l++) {
+        const t = l / 63;
+        const x = -3 + t * 7 + Math.sin(t * Math.PI * 0.8) * (1 - t) * 1.5;
+        const y = -2 + t * 5 + Math.cos(t * Math.PI * 0.6) * (1 - t) * 1.2;
+        normalTrajectory.push({ x, y });
+    }
+}
+
+function perturbTrajectory() {
+    const pertLayer = parseInt(document.getElementById('pertLayer').value);
+    const pertStrength = parseInt(document.getElementById('pertStrength').value) / 100;
+
+    perturbedTrajectory = [];
+
+    // Copy normal trajectory up to perturbation point
+    for (let l = 0; l < pertLayer; l++) {
+        perturbedTrajectory.push({ ...normalTrajectory[l] });
+    }
+
+    // Apply perturbation
+    const pertX = normalTrajectory[pertLayer].x + (Math.random() - 0.5) * 6 * pertStrength;
+    const pertY = normalTrajectory[pertLayer].y + (Math.random() - 0.5) * 6 * pertStrength;
+    perturbedTrajectory.push({ x: pertX, y: pertY });
+
+    // Self-correction depends on layer
+    // Mid-layers (7, 15, 23) correct better; early and late layers don't
+    let correctionRate;
+    if (pertLayer < 5) {
+        correctionRate = 0.05; // Very slow correction
+    } else if (pertLayer > 55) {
+        correctionRate = 0.02; // Almost no correction, diverges
+    } else if (pertLayer >= 10 && pertLayer <= 45) {
+        correctionRate = 0.25; // Strong correction in mid-layers
+    } else {
+        correctionRate = 0.12;
+    }
+
+    // Generate post-perturbation trajectory with self-correction
+    let currentX = pertX;
+    let currentY = pertY;
+    for (let l = pertLayer + 1; l < 64; l++) {
+        const targetX = normalTrajectory[l].x;
+        const targetY = normalTrajectory[l].y;
+
+        // Move toward normal trajectory with correction rate
+        currentX += (targetX - currentX) * correctionRate + (Math.random() - 0.5) * 0.3;
+        currentY += (targetY - currentY) * correctionRate + (Math.random() - 0.5) * 0.3;
+
+        // Also add the normal forward motion
+        if (l < 63) {
+            const normalDx = normalTrajectory[l].x - normalTrajectory[l - 1].x;
+            const normalDy = normalTrajectory[l].y - normalTrajectory[l - 1].y;
+            currentX += normalDx * (1 - correctionRate);
+            currentY += normalDy * (1 - correctionRate);
+        }
+
+        perturbedTrajectory.push({ x: currentX, y: currentY });
+    }
+
+    drawAttractor();
+}
+
+function drawAttractor() {
+    attrCtx.fillStyle = '#0a0a1a';
+    attrCtx.fillRect(0, 0, attractorCanvas.width, attractorCanvas.height);
+
+    const padding = { left: 50, right: 30, top: 30, bottom: 50 };
+    const w = attractorCanvas.width - padding.left - padding.right;
+    const h = attractorCanvas.height - padding.top - padding.bottom;
+
+    // Find scale from all points
+    let allPoints = [...normalTrajectory];
+    if (perturbedTrajectory) allPoints = [...allPoints, ...perturbedTrajectory];
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    allPoints.forEach(p => {
+        minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+    });
+
+    const rangeX = maxX - minX + 1;
+    const rangeY = maxY - minY + 1;
+    const scaleX = w / rangeX;
+    const scaleY = h / rangeY;
+
+    function toScreen(p) {
+        return {
+            x: padding.left + (p.x - minX) * scaleX,
+            y: padding.top + h - (p.y - minY) * scaleY
+        };
+    }
+
+    // Draw normal trajectory (gray)
+    attrCtx.strokeStyle = 'rgba(150, 150, 150, 0.5)';
+    attrCtx.lineWidth = 2;
+    attrCtx.setLineDash([5, 5]);
+    attrCtx.beginPath();
+    normalTrajectory.forEach((p, i) => {
+        const sp = toScreen(p);
+        if (i === 0) attrCtx.moveTo(sp.x, sp.y);
+        else attrCtx.lineTo(sp.x, sp.y);
+    });
+    attrCtx.stroke();
+    attrCtx.setLineDash([]);
+
+    // Draw normal trajectory points
+    normalTrajectory.forEach((p, i) => {
+        const sp = toScreen(p);
+        attrCtx.beginPath();
+        attrCtx.arc(sp.x, sp.y, 3, 0, Math.PI * 2);
+        attrCtx.fillStyle = 'rgba(150, 150, 150, 0.4)';
+        attrCtx.fill();
+    });
+
+    // Draw perturbed trajectory
+    if (perturbedTrajectory) {
+        const pertLayer = parseInt(document.getElementById('pertLayer').value);
+
+        // Draw pre-perturbation (same as normal)
+        attrCtx.strokeStyle = '#64b5f6';
+        attrCtx.lineWidth = 2.5;
+        attrCtx.beginPath();
+        for (let i = 0; i < Math.min(pertLayer, perturbedTrajectory.length); i++) {
+            const sp = toScreen(perturbedTrajectory[i]);
+            if (i === 0) attrCtx.moveTo(sp.x, sp.y);
+            else attrCtx.lineTo(sp.x, sp.y);
+        }
+        attrCtx.stroke();
+
+        // Draw perturbation point
+        if (pertLayer < perturbedTrajectory.length) {
+            const pertPoint = toScreen(perturbedTrajectory[pertLayer]);
+            attrCtx.beginPath();
+            attrCtx.arc(pertPoint.x, pertPoint.y, 10, 0, Math.PI * 2);
+            attrCtx.fillStyle = '#f44336';
+            attrCtx.fill();
+            attrCtx.strokeStyle = '#fff';
+            attrCtx.lineWidth = 2;
+            attrCtx.stroke();
+
+            // Lightning bolt indicator
+            attrCtx.fillStyle = '#ffeb3b';
+            attrCtx.font = '16px sans-serif';
+            attrCtx.fillText('⚡', pertPoint.x - 8, pertPoint.y - 15);
+        }
+
+        // Draw post-perturbation trajectory
+        attrCtx.strokeStyle = '#f48fb1';
+        attrCtx.lineWidth = 2.5;
+        attrCtx.beginPath();
+        for (let i = pertLayer; i < perturbedTrajectory.length; i++) {
+            const sp = toScreen(perturbedTrajectory[i]);
+            if (i === pertLayer) attrCtx.moveTo(sp.x, sp.y);
+            else attrCtx.lineTo(sp.x, sp.y);
+        }
+        attrCtx.stroke();
+
+        // Draw post-perturbation points
+        for (let i = pertLayer; i < perturbedTrajectory.length; i++) {
+            const sp = toScreen(perturbedTrajectory[i]);
+            const t = (i - pertLayer) / (63 - pertLayer);
+            attrCtx.beginPath();
+            attrCtx.arc(sp.x, sp.y, 2 + t * 2, 0, Math.PI * 2);
+            attrCtx.fillStyle = `rgba(244, 143, 177, ${0.4 + t * 0.6})`;
+            attrCtx.fill();
+        }
+
+        // Draw arrows showing correction direction
+        for (let i = pertLayer + 1; i < Math.min(pertLayer + 12, perturbedTrajectory.length); i++) {
+            const sp = toScreen(perturbedTrajectory[i]);
+            const normalSp = toScreen(normalTrajectory[i]);
+
+            // Arrow from perturbed to normal
+            attrCtx.strokeStyle = 'rgba(76, 175, 80, 0.3)';
+            attrCtx.lineWidth = 1;
+            attrCtx.setLineDash([2, 2]);
+            attrCtx.beginPath();
+            attrCtx.moveTo(sp.x, sp.y);
+            attrCtx.lineTo(normalSp.x, normalSp.y);
+            attrCtx.stroke();
+            attrCtx.setLineDash([]);
+        }
+
+        // Show MSE
+        let mse = 0;
+        let count = 0;
+        for (let i = pertLayer; i < Math.min(perturbedTrajectory.length, normalTrajectory.length); i++) {
+            mse += Math.pow(perturbedTrajectory[i].x - normalTrajectory[i].x, 2) +
+                   Math.pow(perturbedTrajectory[i].y - normalTrajectory[i].y, 2);
+            count++;
+        }
+        mse /= count;
+
+        attrCtx.fillStyle = '#f48fb1';
+        attrCtx.font = '12px sans-serif';
+        attrCtx.fillText(`MSE from normal: ${mse.toFixed(3)}`, attractorCanvas.width - 180, 25);
+
+        // Correction quality label
+        let quality;
+        if (mse < 2) quality = '✓ Strong self-correction';
+        else if (mse < 5) quality = '~ Partial correction';
+        else quality = '✗ Weak/no correction';
+        attrCtx.fillText(quality, attractorCanvas.width - 180, 45);
+    }
+
+    // Labels
+    attrCtx.fillStyle = '#888';
+    attrCtx.font = '11px sans-serif';
+    attrCtx.fillText('PC1', attractorCanvas.width / 2 - 10, attractorCanvas.height - 10);
+    attrCtx.save();
+    attrCtx.translate(15, attractorCanvas.height / 2);
+    attrCtx.rotate(-Math.PI / 2);
+    attrCtx.fillText('PC2', -10, 0);
+    attrCtx.restore();
+
+    // Layer info
+    const pertLayer = parseInt(document.getElementById('pertLayer').value);
+    document.getElementById('pertLayerVal').textContent = pertLayer;
+    attrCtx.fillStyle = '#64b5f6';
+    attrCtx.font = '12px sans-serif';
+    attrCtx.fillText(`Perturbation at layer ${pertLayer}`, padding.left + 10, padding.top + 15);
+
+    // Legend
+    attrCtx.fillStyle = '#888';
+    attrCtx.fillText('Gray dashed = normal trajectory', padding.left + 10, attractorCanvas.height - 30);
+    attrCtx.fillStyle = '#f48fb1';
+    attrCtx.fillText('Pink = perturbed trajectory', padding.left + 10, attractorCanvas.height - 15);
+}
+
+function resetAttractor() {
+    perturbedTrajectory = null;
+    drawAttractor();
+}
+
+document.getElementById('pertLayer').addEventListener('input', function() {
+    document.getElementById('pertLayerVal').textContent = this.value;
+    if (perturbedTrajectory) perturbTrajectory();
+});
+
+document.getElementById('pertStrength').addEventListener('input', function() {
+    if (perturbedTrajectory) perturbTrajectory();
+});
+
+generateNormalTrajectory();
+drawAttractor();
+
+// ============ SECTION 9: SUMMARY ANIMATION ============
+const summaryCanvas = document.getElementById('summaryCanvas');
+const sumCtx = summaryCanvas.getContext('2d');
+let summaryAnimating = false;
+let summaryFrame = 0;
+
+function drawSummaryFrame(frame) {
+    sumCtx.fillStyle = '#0a0a1a';
+    sumCtx.fillRect(0, 0, summaryCanvas.width, summaryCanvas.height);
+
+    const totalFrames = 300;
+    const t = frame / totalFrames;
+
+    // Draw 64 layer columns
+    const colW = summaryCanvas.width / 66;
+    const activeLayer = Math.floor(t * 64);
+
+    for (let l = 0; l < 64; l++) {
+        const x = colW + l * colW;
+        const isActive = l <= activeLayer;
+        const layerT = l / 63;
+
+        // Background column
+        sumCtx.fillStyle = isActive ? `hsla(${220 + layerT * 80}, 50%, 20%, 0.5)` : '#111';
+        sumCtx.fillRect(x, 20, colW - 1, summaryCanvas.height - 40);
+
+        if (isActive) {
+            // Draw activation bars (growing denser)
+            const numBars = Math.floor(5 + layerT * 20);
+            for (let b = 0; b < numBars; b++) {
+                const barY = 30 + (b / numBars) * (summaryCanvas.height - 60);
+                const magnitude = (0.2 + layerT * 0.8) * (0.5 + Math.random() * 0.5);
+                const barH = magnitude * 8;
+                const hue = 200 + layerT * 100;
+                sumCtx.fillStyle = `hsla(${hue}, 70%, 60%, ${0.3 + magnitude * 0.7})`;
+                sumCtx.fillRect(x + 1, barY, colW - 3, barH);
+            }
+        }
+    }
+
+    // Draw flowing particle
+    if (activeLayer < 64) {
+        const px = colW + activeLayer * colW + colW / 2;
+        const py = summaryCanvas.height / 2 + Math.sin(frame * 0.1) * 30;
+        const size = 4 + (activeLayer / 63) * 8;
+
+        sumCtx.beginPath();
+        sumCtx.arc(px, py, size, 0, Math.PI * 2);
+        sumCtx.fillStyle = '#fff';
+        sumCtx.shadowColor = '#64b5f6';
+        sumCtx.shadowBlur = 20;
+        sumCtx.fill();
+        sumCtx.shadowBlur = 0;
+    }
+
+    // Labels
+    sumCtx.fillStyle = '#888';
+    sumCtx.font = '11px sans-serif';
+    sumCtx.fillText('Input', 5, summaryCanvas.height / 2);
+    sumCtx.fillText('Output', summaryCanvas.width - 40, summaryCanvas.height / 2);
+    sumCtx.fillText(`Layer ${activeLayer}/63`, summaryCanvas.width / 2 - 25, 15);
+
+    // Phase info
+    let phaseText;
+    if (activeLayer < 10) phaseText = '🔄 High MI, complex nonlinear relationships';
+    else if (activeLayer < 30) phaseText = '📐 Linearizing, self-correcting, rotational dynamics';
+    else if (activeLayer < 50) phaseText = '🚀 Accelerating, growing denser';
+    else phaseText = '🎯 Final commitment, high velocity, low dimensionality';
+
+    sumCtx.fillStyle = '#ce93d8';
+    sumCtx.font = '13px sans-serif';
+    sumCtx.fillText(phaseText, summaryCanvas.width / 2 - 150, summaryCanvas.height - 10);
+}
+
+function playSummary() {
+    summaryFrame = 0;
+    summaryAnimating = true;
+
+    function step() {
+        if (summaryFrame >= 300) {
+            summaryAnimating = false;
+            return;
+        }
+        drawSummaryFrame(summaryFrame);
+        summaryFrame++;
+        requestAnimationFrame(step);
+    }
+    step();
+}
+
+drawSummaryFrame(0);
+
+// ============ RESPONSIVE CANVAS HANDLING ============
+function resizeCanvases() {
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(canvas => {
+        const container = canvas.parentElement;
+        const maxWidth = container.clientWidth - 40;
+        if (canvas.width > maxWidth) {
+            const ratio = canvas.height / canvas.width;
+            canvas.style.width = maxWidth + 'px';
+            canvas.style.height = (maxWidth * ratio) + 'px';
+        }
+    });
+}
+
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+
+</script>
+</body>
+</html>
